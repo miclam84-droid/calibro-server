@@ -77,17 +77,29 @@ DOMANDA: {domanda}
 
 RISPOSTA (chiara, concreta, col taglio cross-dominio):"""
 
-# ---- Mistral: su Railway con la chiave, in locale stampa il prompt
+# ---- Mistral: chiamata HTTP diretta (nessun SDK, non si rompe) ----
+# Su Railway con la chiave risponde; in locale senza chiave torna None.
 def chiedi_mistral(prompt):
     key = os.environ.get("MISTRAL_API_KEY")
     if not key:
-        return None  # in locale senza chiave: mostriamo solo il prompt costruito
-    from mistralai import Mistral
-    client = Mistral(api_key=key)
-    resp = client.chat.complete(
-        model="mistral-small-latest",
-        messages=[{"role":"user","content":prompt}])
-    return resp.choices[0].message.content
+        return None  # in locale senza chiave: mostriamo solo il contesto costruito
+    import urllib.request
+    body = json.dumps({
+        "model": "mistral-small-latest",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.3
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.mistral.ai/v1/chat/completions",
+        data=body,
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        return data["choices"][0]["message"]["content"]
+    except Exception as e:
+        return f"[errore nella chiamata a Mistral: {e}]"
 
 # ---- endpoint -----------------------------------------------
 @app.route("/")
