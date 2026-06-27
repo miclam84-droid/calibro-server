@@ -1,20 +1,17 @@
 # ============================================================
-# CALIBRO — server. Riceve una domanda, naviga il grafo,
-# costruisce il contesto, chiede a Mistral di rispondere.
-# Stessa forma di Cruscotto: Flask + Postgres + Mistral.
-# Gira in locale (SQLite) per provarlo, identico su Railway (Postgres).
+# CALIBRO — server. Riceve una domanda, naviga il grafo in
+# profondita (risale ai fenomeni), costruisce un contesto ricco,
+# e chiede a Mistral di rispondere SENZA inventare.
+# Flask + grafo (SQLite locale / Postgres su Railway) + Mistral via HTTP.
 # ============================================================
 import os, json, sqlite3, pathlib
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 HERE = pathlib.Path(__file__).parent
-GRAFO = HERE / "grafo"            # la cartella coi seed .sql
+GRAFO = HERE / "grafo"
 
-# ---- DB: SQLite in locale, Postgres su Railway -------------
 def carica_grafo():
-    """In locale costruisce il grafo in memoria dai .sql.
-       Su Railway questa funzione leggerà invece da Postgres."""
     db = sqlite3.connect(":memory:")
     db.row_factory = sqlite3.Row
     schema = (GRAFO/"schema.sql").read_text(encoding="utf-8").replace("JSONB","TEXT")
@@ -23,76 +20,130 @@ def carica_grafo():
         db.executescript(s.read_text(encoding="utf-8"))
     return db
 
-# ---- il cuore: naviga il grafo dato un termine -------------
+# ---- ricerca contesto: profonda, centrata sui fenomeni ----
 def cerca_contesto(db, termine):
-    """Trova i nodi che matchano il termine e il loro vicinato.
-       È il 'recupero strutturato': la base della risposta."""
     t = f"%{termine.lower()}%"
     hit = db.execute(
         "SELECT * FROM nodes WHERE lower(name) LIKE ? ORDER BY "
-        "CASE type WHEN 'Fenomeno' THEN 0 WHEN 'Prodotto' THEN 1 ELSE 2 END LIMIT 5",
-        (t,)).fetchall()
+        "CASE type WHEN 'Fenomeno' THEN 0 WHEN 'Prodotto' THEN 1 "
+        "WHEN 'Errore' THEN 2 ELSE 3 END LIMIT 4", (t,)).fetchall()
     if not hit:
         return None
-    ctx = []
-    for n in hit:
-        nodo = dict(n); nodo["data"] = json.loads(n["data"] or "{}")
-        # archi in uscita e in entrata
-        out = db.execute("""SELECT e.relation, e.data, n.name, n.type, n.domain
-                            FROM edges e JOIN nodes n ON n.id=e.to_id
-                            WHERE e.from_id=?""",(n["id"],)).fetchall()
-        inc = db.execute("""SELECT e.relation, e.data, n.name, n.type, n.domain
-                            FROM edges e JOIN nodes n ON n.id=e.from_id
-                            WHERE e.to_id=?""",(n["id"],)).fetchall()
-        nodo["collegamenti"] = (
-            [{"verso": r["name"], "tipo": r["type"], "dominio": r["domain"],
-              "relazione": r["relation"], "data": json.loads(r["data"] or "{}")} for r in out] +
-            [{"da": r["name"], "tipo": r["type"], "dominio": r["domain"],
-              "relazione": r["relation"], "data": json.loads(r["data"] or "{}")} for r in inc]
-        )
-        ctx.append(nodo)
-    return ctx
 
-# ---- costruisce il prompt per Mistral dal contesto ---------
+    fenomeni = {}
+    def aggiungi_fenomeno(fid):
+        if fid in fenomeni: return
+        f = db.execute("SELECT * FROM nodes WHERE id=? AND type='Fenomeno'", (fid,)).fetchone()
+        if f: fenomeni[fid] = f
+
+    prodotti_interesse = set()
+    for n in hit:
+        if n["type"] == "Fenomeno":
+            aggiungi_fenomeno(n["id"])
+        elif n["type"] == "Prodotto":
+            prodotti_interesse.add(n["id"])
+            for e in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (n["id"],)):
+                aggiungi_fenomeno(e["from_id"])
+        elif n["type"] == "Errore":
+            for e in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='fallisce_come'", (n["id"],)):
+                prodotti_interesse.add(e["from_id"])
+                for f in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (e["from_id"],)):
+                    aggiungi_fenomeno(f["from_id"])
+        else:
+            for e in db.execute("SELECT from_id FROM edges WHERE to_id=?", (n["id"],)):
+                aggiungi_fenomeno(e["from_id"])
+
+    if not fenomeni:
+        for n in hit:
+            fenomeni[n["id"]] = n
+
+    ctx = []
+    for fid, f in fenomeni.items():
+        nodo = dict(f); nodo["data"] = json.loads(f["data"] or "{}")
+        coll = []
+        for e in db.execute("""SELECT e.relation, e.data, n.name, n.type, n.domain, n.id
+                               FROM edges e JOIN nodes n ON n.id=e.to_id
+                               WHERE e.from_id=?""", (fid,)):
+            coll.append({"verso": e["name"], "tipo": e["type"], "dominio": e["domain"],
+                         "relazione": e["relation"], "id": e["id"],
+                         "data": json.loads(e["data"] or "{}")})
+        nodo["collegamenti"] = coll
+        ctx.append(nodo)
+
+    errori = []
+    for pid in prodotti_interesse:
+        for e in db.execute("""SELECT n.name, e.data, n.domain FROM edges e
+                               JOIN nodes n ON n.id=e.to_id
+                               WHERE e.from_id=? AND e.relation='fallisce_come'""", (pid,)):
+            pass
+    # gli errori coi loro 'causa' stanno nel nodo errore stesso
+    for pid in prodotti_interesse:
+        for row in db.execute("""SELECT n.name, n.data, n.domain FROM edges e
+                                 JOIN nodes n ON n.id=e.to_id
+                                 WHERE e.from_id=? AND e.relation='fallisce_come'""", (pid,)):
+            d = json.loads(row["data"] or "{}")
+            if d.get("causa"):
+                errori.append(f"{row['name']} ({row['domain']}): {d['causa']}")
+    return {"fenomeni": ctx, "errori": errori, "prodotti": list(prodotti_interesse)}
+
+# ---- costruisce il prompt -----------------------------------
 def costruisci_prompt(domanda, contesto):
     righe = []
-    for n in contesto:
-        righe.append(f"\n## {n['name']} ({n['type']}, {n['domain']})")
-        if n["data"].get("scheda"): righe.append(n["data"]["scheda"])
-        for c in n["collegamenti"]:
-            altro = c.get("verso") or c.get("da")
-            extra = c["data"].get("target") or c["data"].get("ruolo") or c["data"].get("causa") or ""
-            righe.append(f"  - {c['relazione']}: {altro} ({c['dominio']}) {extra}")
+    for f in contesto["fenomeni"]:
+        righe.append("")
+        righe.append(f"### Fenomeno: {f['name']} ({f['domain']})")
+        if f["data"].get("scheda"):
+            righe.append(f["data"]["scheda"])
+        manif = [c for c in f["collegamenti"] if c["relazione"] == "si_manifesta_in"]
+        misu  = [c for c in f["collegamenti"] if c["relazione"] == "misurato_da"]
+        proc  = [c for c in f["collegamenti"] if c["relazione"] == "realizzato_da"]
+        tecn  = [c for c in f["collegamenti"] if c["relazione"] == "controllato_con"]
+        if misu:
+            righe.append("Si misura con: " + ", ".join(c["verso"] for c in misu))
+        if proc:
+            righe.append("Si realizza con: " + ", ".join(c["verso"] for c in proc))
+        if manif:
+            righe.append("Si manifesta in questi prodotti (coi numeri-bersaglio):")
+            for c in manif:
+                tgt = c["data"].get("target",""); ruolo = c["data"].get("ruolo","")
+                righe.append(f"  - {c['verso']} [{c['dominio']}]: {tgt} — {ruolo}")
+        if tecn:
+            righe.append("Si controlla con: " + ", ".join(c["verso"] for c in tecn))
+    if contesto.get("errori"):
+        righe.append("")
+        righe.append("Errori possibili e loro causa:")
+        for e in contesto["errori"]:
+            righe.append(f"  - {e}")
     contesto_txt = "\n".join(righe)
-    return f"""Sei Calibro, uno strumento che spiega la scienza della ristorazione
-collegando bar, cucina e forno sotto gli stessi fenomeni fisici.
-Rispondi alla domanda usando SOLO il contesto qui sotto, che viene da un grafo
-di conoscenza. Mostra le connessioni cross-dominio quando ci sono.
-Non inventare numeri: usa solo quelli nel contesto.
 
-CONTESTO DAL GRAFO:
-{contesto_txt}
+    regole = (
+        "Sei Calibro, uno strumento che spiega la scienza della ristorazione "
+        "collegando bar, cucina e forno sotto gli stessi fenomeni fisici.\n\n"
+        "REGOLE FERREE:\n"
+        "- Usa SOLO le informazioni nel contesto qui sotto. Non aggiungere esempi, "
+        "prodotti o spiegazioni che non sono nel contesto. Se un dato non c'e, non inventarlo.\n"
+        "- Cita i numeri-bersaglio esatti del contesto (pH, Brix, percentuali, gradi).\n"
+        "- Scrivi in prosa pulita, in italiano, senza asterischi, senza grassetti, senza markdown.\n"
+        "- Mostra la connessione cross-dominio solo se e davvero nel contesto.\n"
+        "- Massimo 6-8 frasi. Concreto, niente fronzoli."
+    )
+    return f"{regole}\n\nCONTESTO DAL GRAFO:\n{contesto_txt}\n\nDOMANDA: {domanda}\n\nRISPOSTA:"
 
-DOMANDA: {domanda}
-
-RISPOSTA (chiara, concreta, col taglio cross-dominio):"""
-
-# ---- Mistral: chiamata HTTP diretta (nessun SDK, non si rompe) ----
-# Su Railway con la chiave risponde; in locale senza chiave torna None.
+# ---- Mistral via HTTP diretto (nessun SDK) ------------------
 def chiedi_mistral(prompt):
     key = os.environ.get("MISTRAL_API_KEY")
     if not key:
-        return None  # in locale senza chiave: mostriamo solo il contesto costruito
+        return None
     import urllib.request
     body = json.dumps({
         "model": "mistral-small-latest",
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.3
+        "messages": [{"role":"user","content":prompt}],
+        "temperature": 0.2
     }).encode("utf-8")
     req = urllib.request.Request(
         "https://api.mistral.ai/v1/chat/completions",
         data=body,
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        headers={"Authorization": f"Bearer {key}", "Content-Type":"application/json"},
         method="POST")
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
@@ -112,22 +163,20 @@ def chiedi():
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
     db = carica_grafo()
-    # estrazione termine ingenua: la parola più lunga (in locale).
-    # Su Railway: Mistral estrae le entità. Qui teniamo semplice e funzionante.
-    parole = [p.strip(".,?!").lower() for p in domanda.split() if len(p) > 4]
+    parole = sorted([p.strip(".,?!").lower() for p in domanda.split() if len(p) > 4], key=len, reverse=True)
     contesto = None
     for p in parole:
         contesto = cerca_contesto(db, p)
-        if contesto: break
-    if not contesto:
+        if contesto and contesto.get("fenomeni"): break
+    if not contesto or not contesto.get("fenomeni"):
         return jsonify({"risposta": None,
                         "nota": "Nessun nodo trovato nel grafo per questa domanda."})
     prompt = costruisci_prompt(domanda, contesto)
     risposta = chiedi_mistral(prompt)
     return jsonify({
-        "trovato": [n["name"] for n in contesto],
-        "prompt_costruito": prompt,       # così vedi COSA il grafo ha estratto
-        "risposta": risposta              # None in locale senza chiave Mistral
+        "trovato": [f["name"] for f in contesto["fenomeni"]],
+        "prompt_costruito": prompt,
+        "risposta": risposta
     })
 
 if __name__ == "__main__":
