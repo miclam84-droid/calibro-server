@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calibro</title>
+<style>
+:root{--bg:#0F1318;--surface:#181E26;--ink:#ECEFF3;--ink2:#A7B0BC;--ink3:#6B7480;--line:#2A3340;--accent:#5BD0E0;--mono:ui-monospace,Menlo,monospace;--sans:ui-sans-serif,system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;padding:32px 18px}
+.wrap{max-width:720px;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3)}
+h1{font-size:26px;font-weight:700;margin:4px 0 6px}
+.sub{color:var(--ink2);font-size:14px;margin-bottom:24px}
+.box{display:flex;gap:10px;margin-bottom:20px}
+input{flex:1;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-family:var(--sans);font-size:15px;padding:13px 15px;border-radius:11px}
+input:focus{outline:none;border-color:var(--accent)}
+button{background:var(--accent);color:#0F1318;border:none;font-weight:600;font-size:15px;padding:13px 22px;border-radius:11px;cursor:pointer}
+.out{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;display:none}
+.out.on{display:block}
+.lab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{font-family:var(--mono);font-size:12px;background:rgba(91,208,224,.12);border:1px solid var(--accent);color:var(--accent);padding:4px 11px;border-radius:20px}
+pre{white-space:pre-wrap;font-family:var(--mono);font-size:12px;color:var(--ink2);line-height:1.6}
+.risposta{font-size:15px;color:var(--ink);white-space:pre-wrap}
+.ex{font-size:13px;color:var(--ink3);margin-top:8px}
+.ex b{color:var(--accent);cursor:pointer}
+</style></head><body><div class="wrap">
+<div class="eyebrow">Calibro · nome di lavoro</div>
+<h1>La scienza nei tuoi gesti</h1>
+<div class="sub">Chiedi qualcosa su bar, cucina o forno. La risposta naviga il grafo dei fenomeni.</div>
+<div class="box">
+  <input id="q" placeholder="perché il mio sour è piatto?" onkeydown="if(event.key==='Enter')chiedi()">
+  <button onclick="chiedi()">Chiedi</button>
+</div>
+<div class="ex">prova: <b onclick="set('perché la mia confettura non prende?')">confettura che non prende</b> · <b onclick="set('come funziona la diluizione di un drink?')">diluizione</b> · <b onclick="set('a che acidità è matura la madre?')">madre</b></div>
+<div class="out" id="out-trovato"><div class="lab">nodi trovati nel grafo</div><div class="chips" id="chips"></div></div>
+<div class="out" id="out-risposta"><div class="lab">risposta</div><div class="risposta" id="risposta"></div></div>
+<div class="out" id="out-prompt"><div class="lab">contesto che il grafo ha costruito (questo va a Mistral)</div><pre id="prompt"></pre></div>
+<script>
+function set(t){document.getElementById('q').value=t;chiedi();}
+async function chiedi(){
+  const d=document.getElementById('q').value.trim(); if(!d)return;
+  const r=await fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:d})});
+  const j=await r.json();
+  if(j.trovato){document.getElementById('out-trovato').classList.add('on');
+    document.getElementById('chips').innerHTML=j.trovato.map(x=>'<span class="chip">'+x+'</span>').join('');}
+  document.getElementById('out-prompt').classList.add('on');
+  document.getElementById('prompt').textContent=j.prompt_costruito||j.nota||'—';
+  if(j.risposta){document.getElementById('out-risposta').classList.add('on');
+    document.getElementById('risposta').textContent=j.risposta;}
+  else{document.getElementById('out-risposta').classList.remove('on');}
+}
+</script>
+</div></body></html>

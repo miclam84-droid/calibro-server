@@ -1,0 +1,4 @@
+flask
+gunicorn
+mistralai
+psycopg2-binary
