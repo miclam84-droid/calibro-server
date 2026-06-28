@@ -137,25 +137,54 @@ def costruisci_prompt(domanda, contesto):
     return f"{regole}\n\nCONTESTO DAL GRAFO:\n{contesto_txt}\n\nDOMANDA: {domanda}\n\nRISPOSTA:"
 
 # ---- Mistral via HTTP diretto (nessun SDK) ------------------
-def chiedi_mistral(prompt):
+def _mistral_raw(prompt, max_tokens=None):
+    """Chiamata Mistral grezza, riusata sia per la risposta sia per l'estrazione entità."""
     key = os.environ.get("MISTRAL_API_KEY")
     if not key:
         return None
     import urllib.request
-    body = json.dumps({
+    payload = {
         "model": "mistral-small-latest",
         "messages": [{"role":"user","content":prompt}],
         "temperature": 0
-    }).encode("utf-8")
+    }
+    if max_tokens:
+        payload["max_tokens"] = max_tokens
+    body = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(
         "https://api.mistral.ai/v1/chat/completions",
         data=body,
         headers={"Authorization": f"Bearer {key}", "Content-Type":"application/json"},
         method="POST")
+    with urllib.request.urlopen(req, timeout=30) as r:
+        data = json.loads(r.read().decode("utf-8"))
+    return data["choices"][0]["message"]["content"]
+
+def estrai_entita(domanda):
+    """Fa estrarre a Mistral i concetti del dominio, per agganciare meglio i nodi del grafo.
+    Esempio: 'perché la carne non rosola?' -> ['rosolatura','carne','Maillard'].
+    Se fallisce, ritorna [] e il chiamante ripiega sulle parole della domanda."""
+    prompt = (
+        "Sei un estrattore di concetti per uno strumento di scienza della ristorazione. "
+        "Dalla domanda qui sotto estrai da 1 a 4 termini-chiave: il fenomeno fisico-chimico "
+        "coinvolto (es. Maillard, acidità, fermentazione, estrazione, carbonatazione, osmosi, "
+        "concentrazione, calore, struttura) e/o il prodotto (es. carne, pane, caffè, confettura). "
+        "Rispondi SOLO con i termini separati da virgola, nient'altro.\n\n"
+        f"Domanda: {domanda}\nTermini:"
+    )
     try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            data = json.loads(r.read().decode("utf-8"))
-        return data["choices"][0]["message"]["content"]
+        out = _mistral_raw(prompt, max_tokens=40)
+        if not out:
+            return []
+        termini = [t.strip(" .\n").lower() for t in out.split(",")]
+        return [t for t in termini if t][:4]
+    except Exception:
+        return []
+
+def chiedi_mistral(prompt):
+    try:
+        out = _mistral_raw(prompt)
+        return out if out is not None else None
     except Exception as e:
         return f"[errore nella chiamata a Mistral: {e}]"
 
@@ -170,10 +199,14 @@ def chiedi():
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
     db = carica_grafo()
-    parole = sorted([p.strip(".,?!").lower() for p in domanda.split() if len(p) > 4], key=len, reverse=True)
+    # estrazione entità: prima provo i termini che estrae Mistral (capisce il dominio),
+    # poi, se non agganciano nulla, ripiego sulle parole della domanda (rete di sicurezza).
+    termini = estrai_entita(domanda) + sorted(
+        [p.strip(".,?!").lower() for p in domanda.split() if len(p) > 4],
+        key=len, reverse=True)
     contesto = None
-    for p in parole:
-        contesto = cerca_contesto(db, p)
+    for t in termini:
+        contesto = cerca_contesto(db, t)
         if contesto and contesto.get("fenomeni"): break
     if not contesto or not contesto.get("fenomeni"):
         return jsonify({"risposta": None,

@@ -7,7 +7,7 @@
 -- ---- NODO CENTRALE -----------------------------------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-acidita', 'Fenomeno', 'Acidità', 'trasversale',
- '{"scheda":"L''acidità è la stessa grandezza fisica in tre mestieri: protoni liberi (pH) e quantità totale di acido (titolabile). Al banco bilancia un sour, in pentola fa rapprendere un gel, al forno fa da orologio alla madre. Una primitiva, tre stanze."}');
+ '{"tipo":"fisico-chimico","scheda":"L''acidità è la stessa grandezza fisica in tre mestieri: protoni liberi (pH) e quantità totale di acido (titolabile). Al banco bilancia un sour, in pentola fa rapprendere un gel, al forno fa da orologio alla madre. Una primitiva, tre stanze."}');
 
 -- ---- CALCOLI / PARAMETRI (misurano il fenomeno) ------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES

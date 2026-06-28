@@ -7,7 +7,7 @@
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-osmosi', 'Fenomeno', 'Osmosi', 'trasversale',
- '{"scheda":"L''acqua attraversa le membrane verso la zona più concentrata di soluto. Sale o zucchero in abbastanza quantità tirano l''acqua FUORI dai microbi e li stressano: è la base della conservazione e della selezione dei fermenti."}');
+ '{"tipo":"fisico-chimico","scheda":"L''acqua attraversa le membrane verso la zona più concentrata di soluto. Sale o zucchero in abbastanza quantità tirano l''acqua FUORI dai microbi e li stressano: è la base della conservazione e della selezione dei fermenti."}');
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('cal-pressione-osm', 'Calcolo', 'Pressione osmotica (% soluto)', 'trasversale', '{"nota":"cresce con la concentrazione del soluto disciolto"}');

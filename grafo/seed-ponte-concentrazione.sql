@@ -8,7 +8,7 @@
 -- ---- NODO CENTRALE -----------------------------------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-concentrazione', 'Fenomeno', 'Concentrazione', 'trasversale',
- '{"scheda":"Quanto soluto c''è in un solvente. È la stessa operazione ovunque: sale sull''acqua della salamoia, zucchero nello sciroppo, acqua sulla farina (baker''s %), caffè estratto nell''acqua (TDS). Cambia il soluto, non la matematica."}');
+ '{"tipo":"fisico-chimico","scheda":"Quanto soluto c''è in un solvente. È la stessa operazione ovunque: sale sull''acqua della salamoia, zucchero nello sciroppo, acqua sulla farina (baker''s %), caffè estratto nell''acqua (TDS). Cambia il soluto, non la matematica."}');
 
 -- ---- CALCOLI / PARAMETRI (misurano il fenomeno) ------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES
