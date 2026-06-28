@@ -145,7 +145,7 @@ def chiedi_mistral(prompt):
     body = json.dumps({
         "model": "mistral-small-latest",
         "messages": [{"role":"user","content":prompt}],
-        "temperature": 0.2
+        "temperature": 0
     }).encode("utf-8")
     req = urllib.request.Request(
         "https://api.mistral.ai/v1/chat/completions",
@@ -180,10 +180,55 @@ def chiedi():
                         "nota": "Nessun nodo trovato nel grafo per questa domanda."})
     prompt = costruisci_prompt(domanda, contesto)
     risposta = chiedi_mistral(prompt)
+    # nodi navigabili: i prodotti/discipline collegati ai fenomeni trovati (per l'esploratore)
+    connessi = []
+    visti = set()
+    for f in contesto["fenomeni"]:
+        for c in f["collegamenti"]:
+            if c["relazione"] == "si_manifesta_in" and c["id"] not in visti:
+                visti.add(c["id"])
+                connessi.append({"id": c["id"], "nome": c["verso"],
+                                 "dominio": c["dominio"],
+                                 "target": c["data"].get("target","")})
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,
-        "risposta": risposta
+        "risposta": risposta,
+        "connessi": connessi
+    })
+
+@app.route("/nodo", methods=["POST"])
+def nodo():
+    """Click su un nodo dalla scheda: interroga il grafo PER ID (non per testo).
+    È il follow-up dell'esploratore — robusto, niente estrazione di entità."""
+    nid = (request.json or {}).get("id","").strip()
+    if not nid:
+        return jsonify({"errore":"id vuoto"}), 400
+    db = carica_grafo()
+    n = db.execute("SELECT * FROM nodes WHERE id=?", (nid,)).fetchone()
+    if not n:
+        return jsonify({"risposta": None, "nota": "Nodo non trovato."})
+    # uso il nome del nodo come termine: ricostruisce il contesto profondo attorno ad esso
+    contesto = cerca_contesto(db, n["name"].split()[0])
+    if not contesto or not contesto.get("fenomeni"):
+        return jsonify({"risposta": None, "nota": "Nessun fenomeno collegato."})
+    domanda = f"Spiegami {n['name']} e i fenomeni che lo governano."
+    prompt = costruisci_prompt(domanda, contesto)
+    risposta = chiedi_mistral(prompt)
+    connessi, visti = [], set()
+    for f in contesto["fenomeni"]:
+        for c in f["collegamenti"]:
+            if c["relazione"] == "si_manifesta_in" and c["id"] not in visti:
+                visti.add(c["id"])
+                connessi.append({"id": c["id"], "nome": c["verso"],
+                                 "dominio": c["dominio"],
+                                 "target": c["data"].get("target","")})
+    return jsonify({
+        "titolo": n["name"],
+        "trovato": [f["name"] for f in contesto["fenomeni"]],
+        "prompt_costruito": prompt,
+        "risposta": risposta,
+        "connessi": connessi
     })
 
 if __name__ == "__main__":

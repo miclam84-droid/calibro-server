@@ -1,54 +1,154 @@
-<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Calibro</title>
 <style>
-:root{--bg:#0F1318;--surface:#181E26;--ink:#ECEFF3;--ink2:#A7B0BC;--ink3:#6B7480;--line:#2A3340;--accent:#5BD0E0;--mono:ui-monospace,Menlo,monospace;--sans:ui-sans-serif,system-ui,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;padding:32px 18px}
-.wrap{max-width:720px;margin:0 auto}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3)}
-h1{font-size:26px;font-weight:700;margin:4px 0 6px}
-.sub{color:var(--ink2);font-size:14px;margin-bottom:24px}
-.box{display:flex;gap:10px;margin-bottom:20px}
-input{flex:1;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-family:var(--sans);font-size:15px;padding:13px 15px;border-radius:11px}
-input:focus{outline:none;border-color:var(--accent)}
-button{background:var(--accent);color:#0F1318;border:none;font-weight:600;font-size:15px;padding:13px 22px;border-radius:11px;cursor:pointer}
-.out{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;display:none}
-.out.on{display:block}
-.lab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.chip{font-family:var(--mono);font-size:12px;background:rgba(91,208,224,.12);border:1px solid var(--accent);color:var(--accent);padding:4px 11px;border-radius:20px}
-pre{white-space:pre-wrap;font-family:var(--mono);font-size:12px;color:var(--ink2);line-height:1.6}
-.risposta{font-size:15px;color:var(--ink);white-space:pre-wrap}
-.ex{font-size:13px;color:var(--ink3);margin-top:8px}
-.ex b{color:var(--accent);cursor:pointer}
-</style></head><body><div class="wrap">
-<div class="eyebrow">Calibro · nome di lavoro</div>
-<h1>La scienza nei tuoi gesti</h1>
-<div class="sub">Chiedi qualcosa su bar, cucina o forno. La risposta naviga il grafo dei fenomeni.</div>
-<div class="box">
-  <input id="q" placeholder="perché il mio sour è piatto?" onkeydown="if(event.key==='Enter')chiedi()">
-  <button onclick="chiedi()">Chiedi</button>
-</div>
-<div class="ex">prova: <b onclick="set('perché la mia confettura non prende?')">confettura che non prende</b> · <b onclick="set('come funziona la diluizione di un drink?')">diluizione</b> · <b onclick="set('a che acidità è matura la madre?')">madre</b></div>
-<div class="out" id="out-trovato"><div class="lab">nodi trovati nel grafo</div><div class="chips" id="chips"></div></div>
-<div class="out" id="out-risposta"><div class="lab">risposta</div><div class="risposta" id="risposta"></div></div>
-<div id="dev-toggle" style="display:none;margin-top:6px"><span onclick="document.getElementById('out-prompt').classList.toggle('on')" style="font-family:var(--mono);font-size:11px;color:var(--ink3);cursor:pointer;letter-spacing:.1em">▸ dettagli tecnici (contesto dal grafo)</span></div>
-<div class="out" id="out-prompt"><div class="lab">contesto che il grafo ha costruito</div><pre id="prompt"></pre></div>
-<script>
-function set(t){document.getElementById('q').value=t;chiedi();}
-async function chiedi(){
-  const d=document.getElementById('q').value.trim(); if(!d)return;
-  const r=await fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:d})});
-  const j=await r.json();
-  if(j.trovato){document.getElementById('out-trovato').classList.add('on');
-    document.getElementById('chips').innerHTML=j.trovato.map(x=>'<span class="chip">'+x+'</span>').join('');}
-  document.getElementById('out-prompt').classList.remove('on');
-  document.getElementById('dev-toggle').style.display='block';
-  document.getElementById('prompt').textContent=j.prompt_costruito||j.nota||'—';
-  if(j.risposta){document.getElementById('out-risposta').classList.add('on');
-    document.getElementById('risposta').textContent=j.risposta;}
-  else{document.getElementById('out-risposta').classList.remove('on');}
+:root{
+  --bg:#0F1318;--surface:#171D25;--surface2:#1E2530;--ink:#ECEFF3;--ink2:#A7B0BC;--ink3:#6B7480;
+  --line:#2A3340;--accent:#5BD0E0;
+  --bar:#5BD0E0;--cucina:#E8A24C;--bakery:#9FD46A;--caffetteria:#C79A6A;--fermentazione:#C792EA;--trasversale:#8FA0B0;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
+  padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 120px);-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:24px 16px 0}
+header{margin-bottom:18px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink3)}
+h1{font-size:23px;font-weight:700;letter-spacing:-.02em;margin:3px 0 5px}
+.sub{color:var(--ink2);font-size:13.5px}
+
+/* schede impilate (storico di consultazione, non bolle di chat) */
+.schede{display:flex;flex-direction:column;gap:14px;margin-top:4px}
+.scheda{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:rise .3s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.s-dom{padding:13px 16px 0}
+.s-q{font-size:13px;color:var(--ink3);font-family:var(--mono);margin-bottom:10px}
+.s-q b{color:var(--ink2);font-weight:500}
+.fenchips{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 12px}
+.fenchip{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;
+  background:rgba(91,208,224,.1);border:1px solid var(--accent);color:var(--accent)}
+.s-body{padding:4px 16px 16px;font-size:15px;color:var(--ink);white-space:pre-wrap}
+.s-conn{padding:0 16px 16px}
+.s-conn-lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.conns{display:flex;gap:7px;flex-wrap:wrap}
+.conn{font-size:13px;padding:6px 12px;border-radius:10px;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);cursor:pointer;transition:.15s;display:flex;align-items:center;gap:7px}
+.conn:hover,.conn:active{border-color:var(--accent);background:rgba(91,208,224,.08)}
+.conn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.conn .tg{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.s-dev{border-top:1px solid var(--line);padding:10px 16px}
+.s-dev summary{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink3);cursor:pointer;list-style:none}
+.s-dev summary::-webkit-details-marker{display:none}
+.s-dev pre{white-space:pre-wrap;font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.6}
+.thinking{padding:18px 16px;color:var(--ink3);font-family:var(--mono);font-size:13px}
+.thinking::after{content:"▱▱▱";animation:dots 1.2s steps(3) infinite}
+@keyframes dots{0%{content:"▰▱▱"}33%{content:"▰▰▱"}66%{content:"▰▰▰"}}
+.empty{color:var(--ink3);font-size:14px;padding:30px 4px;text-align:center;line-height:1.7}
+.empty b{color:var(--accent);cursor:pointer}
+
+/* barra domanda fissa in basso (mobile-first: il pollice ci arriva) */
+.ask{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--bg) 22%);
+  padding:20px 16px calc(env(safe-area-inset-bottom) + 16px)}
+.ask-inner{max-width:680px;margin:0 auto;display:flex;gap:9px}
+input{flex:1;background:var(--surface2);border:1px solid var(--line);color:var(--ink);
+  font-family:var(--sans);font-size:16px;padding:14px 16px;border-radius:13px}
+input:focus{outline:none;border-color:var(--accent)}
+button{background:var(--accent);color:#0F1318;border:none;font-weight:700;font-size:15px;
+  padding:0 20px;border-radius:13px;cursor:pointer;transition:.15s}
+button:disabled{opacity:.4;cursor:default}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Calibro · nome di lavoro</div>
+    <h1>La scienza nei tuoi gesti</h1>
+    <div class="sub">Fai una domanda. La risposta nasce dai fenomeni fisici che attraversano i mestieri.</div>
+  </header>
+  <div class="schede" id="schede">
+    <div class="empty" id="empty">
+      Prova:<br>
+      <b onclick="chiediTesto('perché la mia carne non rosola?')">perché la carne non rosola</b> ·
+      <b onclick="chiediTesto('perché la mia confettura non prende?')">la confettura non prende</b> ·
+      <b onclick="chiediTesto('a che acidità è matura la madre?')">la madre è matura</b>
+    </div>
+  </div>
+</div>
+
+<div class="ask">
+  <div class="ask-inner">
+    <input id="q" placeholder="perché…" autocomplete="off"
+      onkeydown="if(event.key==='Enter')invia()">
+    <button id="btn" onclick="invia()">Chiedi</button>
+  </div>
+</div>
+
+<script>
+const DOMCOL={bar:'--bar',cucina:'--cucina',bakery:'--bakery',caffetteria:'--caffetteria',fermentazione:'--fermentazione',trasversale:'--trasversale'};
+let busy=false;
+
+function setBusy(b){busy=b;document.getElementById('btn').disabled=b;}
+
+function invia(){
+  const q=document.getElementById('q').value.trim();
+  if(!q||busy)return;
+  document.getElementById('q').value='';
+  chiediTesto(q);
+}
+function chiediTesto(q){
+  if(busy)return;
+  const e=document.getElementById('empty'); if(e)e.remove();
+  aggiungiThinking();
+  setBusy(true);
+  fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q})})
+    .then(r=>r.json()).then(j=>render(q,j)).catch(()=>renderErr()).finally(()=>setBusy(false));
+}
+function apriNodo(id,nome){
+  if(busy)return;
+  aggiungiThinking();
+  setBusy(true);
+  fetch('/nodo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})})
+    .then(r=>r.json()).then(j=>render(nome,j,true)).catch(()=>renderErr()).finally(()=>setBusy(false));
+}
+
+function aggiungiThinking(){
+  const d=document.createElement('div');d.className='scheda';d.id='thinking';
+  d.innerHTML='<div class="thinking">sto cercando nel grafo </div>';
+  document.getElementById('schede').prepend(d);
+}
+function render(domanda,j,fromNode){
+  const t=document.getElementById('thinking'); if(t)t.remove();
+  if(!j.risposta){renderNota(domanda,j.nota);return;}
+  const fens=(j.trovato||[]).map(f=>`<span class="fenchip">${f}</span>`).join('');
+  const conns=(j.connessi||[]).map(c=>{
+    const col=`var(${DOMCOL[c.dominio]||'--trasversale'})`;
+    const tg=c.target?`<span class="tg">${c.target}</span>`:'';
+    return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||'').replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${c.nome}${tg}</span>`;
+  }).join('');
+  const card=document.createElement('div');card.className='scheda';
+  card.innerHTML=`
+    <div class="s-dom"><div class="s-q">${fromNode?'▸ ':''}<b>${escape(domanda)}</b></div></div>
+    <div class="fenchips">${fens}</div>
+    <div class="s-body">${escape(j.risposta)}</div>
+    ${conns?`<div class="s-conn"><div class="s-conn-lab">esplora le connessioni</div><div class="conns">${conns}</div></div>`:''}
+    <details class="s-dev"><summary>dettagli tecnici (contesto dal grafo)</summary><pre>${escape(j.prompt_costruito||'')}</pre></details>`;
+  document.getElementById('schede').prepend(card);
+}
+function renderNota(domanda,nota){
+  const card=document.createElement('div');card.className='scheda';
+  card.innerHTML=`<div class="s-dom"><div class="s-q"><b>${escape(domanda)}</b></div></div><div class="s-body" style="color:var(--ink3)">${escape(nota||'Niente trovato nel grafo.')}</div>`;
+  document.getElementById('schede').prepend(card);
+}
+function renderErr(){
+  const t=document.getElementById('thinking'); if(t)t.remove();
+  const card=document.createElement('div');card.className='scheda';
+  card.innerHTML='<div class="s-body" style="color:var(--ink3)">Errore di rete. Riprova.</div>';
+  document.getElementById('schede').prepend(card);
+}
+function escape(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 </script>
-</div></body></html>
+</body>
+</html>
