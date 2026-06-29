@@ -6,59 +6,178 @@
 <title>Calibro</title>
 <style>
 :root{
-  --bg:#0F1318;--surface:#171D25;--surface2:#1E2530;--ink:#ECEFF3;--ink2:#A7B0BC;--ink3:#6B7480;
-  --line:#2A3340;--accent:#5BD0E0;
-  --bar:#5BD0E0;--cucina:#E8A24C;--bakery:#9FD46A;--caffetteria:#C79A6A;--fermentazione:#C792EA;--trasversale:#8FA0B0;
-  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --bg:#16130F;--panel:#1F1B15;--panel2:#272118;--line:#3A3225;
+  --ink:#EDE7DC;--mut:#9C9180;--faint:#6E6657;
+  --cool:#7FD4E0;--warm:#E8A84C;--bad:#D98A6A;--good:#9FC08A;
+  --accent:var(--cool);
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
-  padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 120px);-webkit-font-smoothing:antialiased}
-.wrap{max-width:680px;margin:0 auto;padding:24px 16px 0}
-header{margin-bottom:18px}
-.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink3)}
-h1{font-size:23px;font-weight:700;letter-spacing:-.02em;margin:3px 0 5px}
-.sub{color:var(--ink2);font-size:13.5px}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;line-height:1.55;
+  padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 120px)}
+.wrap{max-width:600px;margin:0 auto;padding:20px 16px 0}
 
-/* schede impilate (storico di consultazione, non bolle di chat) */
-.schede{display:flex;flex-direction:column;gap:14px;margin-top:4px}
-.scheda{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:rise .3s ease}
+/* HEADER */
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:28px;font-weight:600;letter-spacing:-.02em;margin:3px 0 3px}
+.sub{color:var(--mut);font-size:13px;line-height:1.5}
+
+/* NAV PRINCIPALE */
+.mainnav{display:flex;gap:6px;margin:16px 0;background:var(--panel);
+  border:1px solid var(--line);border-radius:13px;padding:4px}
+.mainnav button{flex:1;background:none;border:none;color:var(--mut);
+  font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  padding:11px 8px;border-radius:9px;cursor:pointer;transition:.2s}
+.mainnav button[aria-selected="true"]{background:var(--panel2);color:var(--ink);
+  box-shadow:inset 0 0 0 1px var(--accent)}
+
+/* ==================== SEZIONE CHAT ==================== */
+#view-chat{display:block}
+.schede{display:flex;flex-direction:column;gap:12px}
+.scheda{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;animation:rise .3s ease}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.s-dom{padding:13px 16px 0}
-.s-q{font-size:13px;color:var(--ink3);font-family:var(--mono);margin-bottom:10px}
-.s-q b{color:var(--ink2);font-weight:500}
-.fenchips{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 12px}
+.s-q{padding:12px 16px 0;font-size:12px;color:var(--faint);font-family:var(--mono)}
+.s-q b{color:var(--mut);font-weight:500}
+.fenchips{display:flex;gap:6px;flex-wrap:wrap;padding:8px 16px}
 .fenchip{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;
-  background:rgba(91,208,224,.1);border:1px solid var(--accent);color:var(--accent)}
-.s-body{padding:4px 16px 16px;font-size:15px;color:var(--ink);white-space:pre-wrap}
-.s-conn{padding:0 16px 16px}
-.s-conn-lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
-.conns{display:flex;gap:7px;flex-wrap:wrap}
-.conn{font-size:13px;padding:6px 12px;border-radius:10px;background:var(--surface2);border:1px solid var(--line);
-  color:var(--ink);cursor:pointer;transition:.15s;display:flex;align-items:center;gap:7px}
-.conn:hover,.conn:active{border-color:var(--accent);background:rgba(91,208,224,.08)}
+  background:rgba(127,212,224,.1);border:1px solid var(--cool);color:var(--cool)}
+.s-body{padding:4px 16px 14px;font-size:14.5px;color:var(--ink);white-space:pre-wrap}
+.s-conn{padding:0 16px 14px}
+.s-conn-lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.conns{display:flex;gap:6px;flex-wrap:wrap}
+.conn{font-size:13px;padding:6px 11px;border-radius:9px;
+  background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+  cursor:pointer;transition:.15s;display:flex;align-items:center;gap:6px}
+.conn:hover{border-color:var(--cool);background:rgba(127,212,224,.07)}
 .conn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.conn .tg{font-family:var(--mono);font-size:11px;color:var(--ink3)}
-.s-dev{border-top:1px solid var(--line);padding:10px 16px}
-.s-dev summary{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink3);cursor:pointer;list-style:none}
+.conn .tg{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.s-dev{border-top:1px solid var(--line);padding:8px 16px}
+.s-dev summary{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--faint);
+  cursor:pointer;list-style:none}
 .s-dev summary::-webkit-details-marker{display:none}
-.s-dev pre{white-space:pre-wrap;font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.6}
-.thinking{padding:18px 16px;color:var(--ink3);font-family:var(--mono);font-size:13px}
-.thinking::after{content:"▱▱▱";animation:dots 1.2s steps(3) infinite}
-@keyframes dots{0%{content:"▰▱▱"}33%{content:"▰▰▱"}66%{content:"▰▰▰"}}
-.empty{color:var(--ink3);font-size:14px;padding:30px 4px;text-align:center;line-height:1.7}
-.empty b{color:var(--accent);cursor:pointer}
+.s-dev pre{white-space:pre-wrap;font-family:var(--mono);font-size:10.5px;
+  color:var(--faint);margin-top:8px;line-height:1.6}
+.thinking{padding:16px;color:var(--faint);font-family:var(--mono);font-size:13px}
+.empty-state{color:var(--faint);font-size:13.5px;padding:24px 4px;line-height:1.8}
+.empty-state b{color:var(--cool);cursor:pointer}
 
-/* barra domanda fissa in basso (mobile-first: il pollice ci arriva) */
-.ask{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--bg) 22%);
-  padding:20px 16px calc(env(safe-area-inset-bottom) + 16px)}
-.ask-inner{max-width:680px;margin:0 auto;display:flex;gap:9px}
-input{flex:1;background:var(--surface2);border:1px solid var(--line);color:var(--ink);
-  font-family:var(--sans);font-size:16px;padding:14px 16px;border-radius:13px}
-input:focus{outline:none;border-color:var(--accent)}
-button{background:var(--accent);color:#0F1318;border:none;font-weight:700;font-size:15px;
-  padding:0 20px;border-radius:13px;cursor:pointer;transition:.15s}
-button:disabled{opacity:.4;cursor:default}
+/* barra chat fissa in basso */
+.ask{position:fixed;left:0;right:0;bottom:0;
+  background:linear-gradient(transparent,var(--bg) 24%);
+  padding:18px 16px calc(env(safe-area-inset-bottom) + 14px)}
+.ask-inner{max-width:600px;margin:0 auto;display:flex;gap:8px}
+.ask input{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+  font-family:var(--sans);font-size:16px;padding:13px 15px;border-radius:12px}
+.ask input:focus{outline:none;border-color:var(--cool)}
+.ask button{background:var(--cool);color:#16130F;border:none;font-weight:700;
+  font-size:15px;padding:0 18px;border-radius:12px;cursor:pointer;transition:.15s}
+.ask button:disabled{opacity:.4;cursor:default}
+
+/* ==================== SEZIONE CALCOLA ==================== */
+#view-calc{display:none}
+.subtabs{display:flex;gap:7px;margin:0 0 16px}
+.subtab{flex:1;background:none;border:1px solid var(--line);color:var(--mut);
+  font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  padding:12px 8px;border-radius:11px;cursor:pointer;transition:.2s}
+.subtab .t-sub{display:block;font-size:9.5px;letter-spacing:.04em;color:var(--faint);
+  margin-top:2px;text-transform:none;font-family:var(--sans)}
+.subtab[aria-selected="true"]{color:var(--ink);border-color:var(--accent);
+  box-shadow:inset 0 0 0 1px var(--accent)}
+.cpanel{display:none}.cpanel.on{display:block;animation:rise .3s ease}
+
+/* card calcolatori */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:15px 14px;margin-bottom:13px}
+.card h2{font-size:11px;font-family:var(--mono);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--mut);margin-bottom:12px;font-weight:600}
+.row{display:grid;grid-template-columns:1fr 82px 82px 28px;gap:7px;
+  align-items:center;margin-bottom:7px}
+.row.head{margin-bottom:5px}
+.row.head span{font-size:10px;font-family:var(--mono);letter-spacing:.07em;
+  color:var(--faint);text-transform:uppercase}
+.row.head span:first-child{text-align:left}
+.row.head span:not(:first-child){text-align:center}
+input,select{background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+  font-family:var(--mono);font-size:16px;padding:10px;border-radius:9px;
+  width:100%;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+input[type=number]{text-align:center}
+.row input:first-child{font-family:var(--sans);text-align:left}
+.del{background:none;border:none;color:var(--faint);font-size:20px;cursor:pointer;
+  line-height:1;padding:4px}
+.del:hover{color:var(--bad)}
+.add{background:none;border:1px dashed var(--line);color:var(--mut);width:100%;
+  padding:10px;border-radius:9px;font-family:var(--mono);font-size:12px;
+  cursor:pointer;letter-spacing:.06em;margin-top:4px}
+.add:hover{border-color:var(--accent);color:var(--ink)}
+.chips{display:flex;gap:7px;margin-top:4px;flex-wrap:wrap}
+.chip{flex:1;min-width:88px;background:var(--panel2);border:1px solid var(--line);
+  color:var(--mut);padding:10px;border-radius:10px;cursor:pointer;text-align:center;transition:.2s}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--ink)}
+.chip .c-t{font-size:14px;font-weight:600}.chip .c-s{font-size:11px;font-family:var(--mono);color:var(--accent)}
+.custom-dil{display:flex;align-items:center;gap:11px;margin-top:11px}
+.custom-dil input[type=range]{flex:1;accent-color:var(--accent);-webkit-appearance:auto;
+  background:none;border:none;padding:0}
+.custom-dil .v{font-family:var(--mono);font-size:15px;width:44px;text-align:right;color:var(--accent)}
+.empty{color:var(--mut);font-size:14px;text-align:center;padding:8px 0}
+
+/* readout calcolatori */
+.readout{background:linear-gradient(160deg,var(--panel2),var(--panel));
+  border:1px solid var(--accent);border-radius:15px;padding:18px 15px;
+  margin-bottom:13px;box-shadow:0 0 40px -28px var(--accent)}
+.big{display:flex;align-items:baseline;gap:10px;margin-bottom:13px}
+.big .num{font-family:var(--mono);font-size:44px;font-weight:600;
+  color:var(--accent);letter-spacing:-.02em;line-height:1}
+.big .us{font-size:19px;margin-left:1px;color:var(--accent)}
+.big .lab{font-size:13px;color:var(--mut)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.stat .s-n{font-family:var(--mono);font-size:21px;font-weight:600}
+.stat .s-l{font-size:11.5px;color:var(--mut);margin-top:1px}
+.gauge{margin:12px 0}
+.gauge .g-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.gauge .g-name{font-size:13px;color:var(--ink)}
+.gauge .g-val{font-family:var(--mono);font-size:15px;font-weight:600}
+.track{position:relative;height:7px;background:var(--panel2);border-radius:5px;overflow:hidden}
+.zone{position:absolute;top:0;bottom:0;background:rgba(159,192,138,.25);
+  border-left:1px solid var(--good);border-right:1px solid var(--good)}
+.needle{position:absolute;top:-3px;width:3px;height:13px;background:var(--ink);
+  border-radius:2px;transform:translateX(-50%);transition:left .22s}
+.verdict{font-size:13.5px;margin-top:13px;padding:11px 13px;border-radius:10px;
+  background:var(--panel2);border:1px solid var(--line)}
+.verdict.ok{border-color:var(--good);color:var(--good)}
+.verdict.off{border-color:var(--bad);color:var(--bad)}
+.mini{display:grid;grid-template-columns:1fr 78px 78px;gap:7px;align-items:end;margin-top:5px}
+.mini label{font-size:11px;color:var(--mut);display:block;margin-bottom:4px}
+.mini-out{font-family:var(--mono);font-size:15px;color:var(--accent);margin-top:9px}
+.hint{font-size:12px;color:var(--mut);margin-top:8px}
+.brow{display:grid;grid-template-columns:1fr auto 54px;gap:9px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.brow:last-child{border-bottom:none}
+.brow b{font-family:var(--mono);color:var(--accent);font-size:15px;text-align:right}
+.brow span:last-child{font-family:var(--mono);color:var(--mut);font-size:11px;text-align:right}
+.bsum{margin-top:12px;font-size:12.5px;color:var(--mut);line-height:1.7}
+.bsum b{font-family:var(--mono);color:var(--ink)}
+
+/* schede (il perché) */
+details{background:var(--panel);border:1px solid var(--line);border-radius:15px;
+  margin-bottom:13px;overflow:hidden}
+summary{padding:14px;cursor:pointer;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+  list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:17px;color:var(--mut)}
+details[open] summary::after{content:"–"}
+.scheda-text{padding:0 15px 16px;font-size:14px;color:var(--ink)}
+.scheda-text p{margin-bottom:10px}
+.scheda-text p.q{color:var(--mut);border-left:2px solid var(--accent);padding-left:11px}
+.scheda-text b{color:var(--accent)}
+.scheda-text .calc{font-family:var(--mono);font-size:12px;color:var(--mut);
+  background:var(--panel2);padding:10px 11px;border-radius:8px;margin:10px 0;line-height:1.7}
+.scheda-text .calc b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -66,19 +185,132 @@ button:disabled{opacity:.4;cursor:default}
   <header>
     <div class="eyebrow">Calibro · nome di lavoro</div>
     <h1>La scienza nei tuoi gesti</h1>
-    <div class="sub">Fai una domanda sul tuo mestiere. Sotto la risposta c'è una legge fisica — la stessa che governa un sour, una madre e una confettura. Calibro la rende visibile.</div>
+    <div class="sub">Fai una domanda. Oppure calcola — diluizione, bilanciamento, batch.</div>
   </header>
-  <div class="schede" id="schede">
-    <div class="empty" id="empty">
-      Prova:<br>
-      <b onclick="chiediTesto('perché la mia carne non rosola?')">perché la carne non rosola</b> ·
-      <b onclick="chiediTesto('perché la mia confettura non prende?')">la confettura non prende</b> ·
-      <b onclick="chiediTesto('a che acidità è matura la madre?')">la madre è matura</b>
+
+  <nav class="mainnav" role="tablist">
+    <button id="nav-chiedi" aria-selected="true" onclick="switchView('chat')">Chiedi</button>
+    <button id="nav-calcola" aria-selected="false" onclick="switchView('calc')">Calcola</button>
+  </nav>
+
+  <!-- ===== VISTA CHAT ===== -->
+  <div id="view-chat">
+    <div class="schede" id="schede">
+      <div class="empty-state" id="empty-state">
+        Prova:<br>
+        <b onclick="chiediTesto('perché la mia carne non rosola?')">perché la carne non rosola</b> ·
+        <b onclick="chiediTesto('come bilancio un daiquiri?')">come bilancio un daiquiri</b> ·
+        <b onclick="chiediTesto('a che pH è matura la madre?')">pH della madre</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== VISTA CALCOLA ===== -->
+  <div id="view-calc">
+    <div class="subtabs" role="tablist">
+      <button class="subtab" id="tab-dil" aria-selected="true" onclick="App.setTool('dil')">
+        Diluizione<span class="t-sub">termodinamica</span>
+      </button>
+      <button class="subtab" id="tab-bil" aria-selected="false" onclick="App.setTool('bil')">
+        Bilanciamento<span class="t-sub">chimica del gusto</span>
+      </button>
+    </div>
+
+    <!-- DILUIZIONE -->
+    <div class="cpanel on" id="panel-dil">
+      <div class="card">
+        <h2>Il drink</h2>
+        <div class="row head"><span>Ingrediente</span><span>ml</span><span>Grad. %</span><span></span></div>
+        <div id="ingredienti"></div>
+        <button class="add" onclick="App.addIng()">+ aggiungi ingrediente</button>
+      </div>
+      <div class="card">
+        <h2>Tecnica → diluizione attesa</h2>
+        <div class="chips">
+          <div class="chip" data-dil="22" aria-pressed="true" onclick="App.setTech(this,22)">
+            <div class="c-t">Mescolato</div><div class="c-s">~22%</div>
+          </div>
+          <div class="chip" data-dil="27" aria-pressed="false" onclick="App.setTech(this,27)">
+            <div class="c-t">Shakerato</div><div class="c-s">~27%</div>
+          </div>
+        </div>
+        <div class="custom-dil">
+          <input type="range" id="dilRange" min="0" max="45" value="22" oninput="App.setRange(this.value)">
+          <span class="v" id="dilV">22%</span>
+        </div>
+        <p class="hint">Zone di partenza, non numeri magici. Per tararle: pesa lo shaker prima e dopo.</p>
+      </div>
+      <div class="readout" id="dilOut"></div>
+      <div class="card" id="batchCard">
+        <h2>Batch / pre-batch</h2>
+        <div class="chips">
+          <div class="chip" id="bm-serv" aria-pressed="true" onclick="App.setBatchMode('serv')"><div class="c-t">Per porzioni</div></div>
+          <div class="chip" id="bm-vol" aria-pressed="false" onclick="App.setBatchMode('vol')"><div class="c-t">Per volume</div></div>
+        </div>
+        <div class="mini" style="grid-template-columns:1fr 1fr 1fr;margin-top:11px">
+          <div><label id="bq-lab">porzioni</label><input type="number" id="b-qty" value="20" oninput="App.calcBatch()"></div>
+          <div><label>extra %</label><input type="number" id="b-over" value="10" oninput="App.calcBatch()"></div>
+          <div><label>bottiglia ml</label><input type="number" id="b-bottle" value="700" oninput="App.calcBatch()"></div>
+        </div>
+        <div class="chips" style="margin-top:11px">
+          <div class="chip" id="ps-ice" aria-pressed="true" onclick="App.setServe('ice')"><div class="c-t">Col ghiaccio</div><div class="c-s">acqua dopo</div></div>
+          <div class="chip" id="ps-bottle" aria-pressed="false" onclick="App.setServe('bottle')"><div class="c-t">Imbottigliato</div><div class="c-s">acqua ora</div></div>
+        </div>
+        <p class="hint" id="serveHint"></p>
+        <div id="batchOut"></div>
+      </div>
+      <details><summary id="dilScedSum">Il perché</summary><div class="scheda-text" id="dilSced"></div></details>
+    </div>
+
+    <!-- BILANCIAMENTO -->
+    <div class="cpanel" id="panel-bil">
+      <div class="card">
+        <h2>Lo scheletro del sour</h2>
+        <div class="row" style="grid-template-columns:1fr 78px 78px">
+          <input value="Distillato" id="b-s-name">
+          <input type="number" id="b-s-vol" value="60" oninput="App.calcBil()">
+          <input type="number" id="b-s-abv" value="40" oninput="App.calcBil()">
+        </div>
+        <div class="row head" style="grid-template-columns:1fr 78px 78px"><span></span><span>ml</span><span>grad %</span></div>
+        <div class="row" style="grid-template-columns:1fr 78px 78px;margin-top:4px">
+          <input value="Agrume" id="b-a-name">
+          <input type="number" id="b-a-vol" value="22.5" oninput="App.calcBil()">
+          <input type="number" id="b-a-acid" value="6" step="0.1" oninput="App.calcBil()">
+        </div>
+        <div class="row head" style="grid-template-columns:1fr 78px 78px"><span></span><span>ml</span><span>acido %</span></div>
+        <div class="row" style="grid-template-columns:1fr 78px 78px;margin-top:4px">
+          <select id="b-y-type" onchange="App.calcBil()">
+            <option value="50|1.23">Sciroppo 1:1 (50 Brix)</option>
+            <option value="65|1.31">Sciroppo 2:1 ricco (65 Brix)</option>
+          </select>
+          <input type="number" id="b-y-vol" value="22.5" oninput="App.calcBil()">
+          <span></span>
+        </div>
+        <div class="custom-dil">
+          <input type="range" id="b-dil" min="0" max="40" value="25"
+            oninput="document.getElementById('b-dilV').textContent=this.value+'%';App.calcBil()">
+          <span class="v" id="b-dilV">25%</span>
+        </div>
+        <p class="hint">Il sour si shakera: la diluizione fa parte della ricetta.</p>
+      </div>
+      <div class="readout" id="bilOut"></div>
+      <div class="card">
+        <h2>Pareggiatore di acidità</h2>
+        <p class="hint" style="margin:0 0 10px">Porta arancia, pompelmo o altri succhi al ~6% del lime/limone per rendere la ricetta prevedibile.</p>
+        <div class="mini">
+          <div><label>succo (ml)</label><input type="number" id="aa-vol" value="100" oninput="App.calcAA()"></div>
+          <div><label>acido ora %</label><input type="number" id="aa-cur" value="0.9" step="0.1" oninput="App.calcAA()"></div>
+          <div><label>obiettivo %</label><input type="number" id="aa-tgt" value="6" step="0.1" oninput="App.calcAA()"></div>
+        </div>
+        <div class="mini-out" id="aaOut"></div>
+      </div>
+      <details><summary id="bilScedSum">Il perché</summary><div class="scheda-text" id="bilSced"></div></details>
     </div>
   </div>
 </div>
 
-<div class="ask">
+<!-- barra domanda (chat) -->
+<div class="ask" id="ask-bar">
   <div class="ask-inner">
     <input id="q" placeholder="perché la mia carne non rosola?" autocomplete="off"
       onkeydown="if(event.key==='Enter')invia()">
@@ -86,69 +318,246 @@ button:disabled{opacity:.4;cursor:default}
   </div>
 </div>
 
+<!-- ===== JS CALCOLATORI (nucleo + pacco bar) ===== -->
 <script>
-const DOMCOL={bar:'--bar',cucina:'--cucina',bakery:'--bakery',caffetteria:'--caffetteria',fermentazione:'--fermentazione',trasversale:'--trasversale'};
-let busy=false;
+/* === CORE === */
+const Core=(function(){
+function volumeTotale(i){return i.reduce((s,x)=>s+(+x.vol||0),0)}
+function etanolo(i){return i.reduce((s,x)=>s+(+x.vol||0)*(+x.abv||0)/100,0)}
+function abv(a,v){return v?a/v*100:0}
+function diluisci(vol,p){const w=vol*p/100;return{acqua:w,volumeFinale:vol+w}}
+function concentrazione(g,v){return v?g/v*100:0}
+function pareggiaAcidita(v,a,t){return Math.max(0,(t-a)/100*v)}
+function zuccheroDaSciroppo(v,b,d){return v*d*b/100}
+function acquaDiFusione(m,Ti,Tf){const c=3.9,L=334,cw=4.18;return m*c*(Ti-Tf)/(L+cw*Tf)}
+return{volumeTotale,etanolo,abv,diluisci,concentrazione,pareggiaAcidita,zuccheroDaSciroppo,acquaDiFusione};
+})();
 
-function setBusy(b){busy=b;document.getElementById('btn').disabled=b;}
+/* === SCHEDE BAR === */
+const SchedeBar=[
+{id:"sc-diluizione",titolo:"Freddo e acqua sono lo stesso evento",
+ principio:"Non c'è raffreddamento senza diluizione: sono due facce di un solo fatto fisico.",
+ testo:`Quando agiti o mescoli un drink sul ghiaccio non scegli due cose separate — il freddo e l'acqua arrivano insieme, perché sono lo stesso evento.\n\nIl ghiaccio, per raffreddare, deve sciogliersi. E per sciogliersi assorbe 334 joule per ogni grammo — il calore latente di fusione. Quel calore viene preso dal drink: ecco il freddo. L'acqua che resta è la diluizione. Stessa moneta, due facce.\n\nLa termodinamica predice che un drink raffreddato a zero gradi guadagna intorno al 20-25% di acqua. È lo stesso numero che i barman hanno trovato assaggiando. Il numero operativo lo dà la bilancia — pesa lo shaker prima e dopo.`},
+{id:"sc-bilanciamento",titolo:"Esiste un punto d'equilibrio, e si misura",
+ principio:"Dolce e acido non si dosano a sentimento: hanno un punto di pareggio misurabile.",
+ testo:`Il dolce si legge in Brix: grammi di zucchero per cento grammi di soluzione. Uno sciroppo 1:1 sta a ~50 Brix. L'aspro si legge in acidità titolabile: limone e lime stanno entorno al 6%.\n\nEsiste un equilibrio che vale per la maggioranza dei palati: lo scheletro classico del sour finisce intorno a 16% ABV, 12 Brix, 1,2% acido nel bicchiere. Le tre lancette dello strumento confrontano il tuo drink con questa zona.`},
+{id:"sc-batch",titolo:"Senza ghiaccio al servizio, l'acqua va messa prima",
+ principio:"In un batch imbottigliato non c'è ghiaccio a diluire: la diluizione va pre-aggiunta.",
+ testo:`Batchare non è solo moltiplicare le dosi. Se imbottigli un batch da versare senza shakerare, manca l'acqua che il ghiaccio avrebbe dato. La soluzione è la pre-diluizione: aggiungi adesso l'acqua che il ghiaccio avrebbe aggiunto. Se invece il batch lo servi sul ghiaccio, in bottiglia vanno solo gli ingredienti — sarà più forte e si diluirà nel bicchiere.`}
+];
 
-function invia(){
-  const q=document.getElementById('q').value.trim();
-  if(!q||busy)return;
-  document.getElementById('q').value='';
-  chiediTesto(q);
+/* === PACCO BAR === */
+const PaccoBar={
+ id:"bar",schede:SchedeBar,
+ calcoli:[
+  {id:"diluizione",schedaId:"sc-diluizione",
+   zone:{forza:{min:14,max:19,scala:30,unita:"%"},dolce:{min:9,max:14,scala:25,unita:" g/100ml"},acido:{min:0.9,max:1.4,scala:2.5,unita:"%"}},
+   run({ingredienti,dilPerc}){
+    const V0=Core.volumeTotale(ingredienti),alcol=Core.etanolo(ingredienti);
+    const{acqua,volumeFinale}=Core.diluisci(V0,dilPerc);
+    return{V0,alcol,acqua,volumeFinale,abv0:Core.abv(alcol,V0),abvFinale:Core.abv(alcol,volumeFinale),
+     termoG:Core.acquaDiFusione(V0,20,0),termoPerc:V0?Core.acquaDiFusione(V0,20,0)/V0*100:0};
+   }},
+  {id:"bilanciamento",schedaId:"sc-bilanciamento",
+   run({spirit,agrume,sciroppo,dilPerc}){
+    const sub=spirit.vol+agrume.vol+sciroppo.vol;
+    const{volumeFinale:Vf}=Core.diluisci(sub,dilPerc);
+    const abv=Core.abv(spirit.vol*spirit.abv/100,Vf);
+    const z=Core.zuccheroDaSciroppo(sciroppo.vol,sciroppo.brix,sciroppo.densita);
+    return{Vf,abv,brix:Core.concentrazione(z,Vf),acido:Core.concentrazione(agrume.vol*agrume.acido/100,Vf)};
+   }},
+  {id:"batch",schedaId:"sc-batch",
+   run({ingredienti,dilPerc,modo,qty,over,bottle,serve}){
+    const V0=Core.volumeTotale(ingredienti),alcol=Core.etanolo(ingredienti);
+    const wPer=serve==="bottle"?Core.diluisci(V0,dilPerc).acqua:0;
+    const servVol=V0+wPer,o=1+(over||0)/100;
+    const Neff=modo==="serv"?(qty||0)*o:(servVol?(qty||0)/servVol*o:0);
+    const righe=ingredienti.map(i=>({nome:i.n,ml:i.vol*Neff,bott:bottle?i.vol*Neff/bottle:null}));
+    return{Neff,wPer,acquaTot:wPer*Neff,volumeTot:servVol*Neff,abv:Core.abv(alcol,servVol),serve,righe};
+   }}
+ ],
+ pareggiaAcidita:Core.pareggiaAcidita,
+ scheda(id){return this.schede.find(s=>s.id===id);}
+};
+
+/* === APP BAR (calcolatori) === */
+const App=(function(){
+const PACCO=PaccoBar;
+const calcolo=id=>PACCO.calcoli.find(c=>c.id===id);
+let ing=[{n:"Gin",vol:30,abv:40},{n:"Campari",vol:30,abv:25},{n:"Vermouth rosso",vol:30,abv:16}];
+let dil=22,batchMode="serv",serveMode="ice";
+const $=id=>document.getElementById(id);
+function prosa(sc){
+ let h=`<p class="q">${sc.principio}</p>`;
+ sc.testo.split(/\n\n+/).forEach(p=>h+=`<p>${p.trim()}</p>`);
+ return h;
 }
+function renderIng(){
+ const c=$("ingredienti");c.innerHTML="";
+ ing.forEach((it,i)=>{
+  const r=document.createElement("div");r.className="row";
+  r.innerHTML=`<input value="${it.n}" oninput="App.upd(${i},'n',this.value)">
+   <input type="number" inputmode="decimal" value="${it.vol}" oninput="App.upd(${i},'vol',+this.value||0)">
+   <input type="number" inputmode="decimal" value="${it.abv}" oninput="App.upd(${i},'abv',+this.value||0)">
+   <button class="del" onclick="App.delIng(${i})">×</button>`;
+  c.appendChild(r);
+ });
+}
+function upd(i,k,v){
+ if(k==="vol")v=Math.max(0,v);if(k==="abv")v=Math.min(100,Math.max(0,v));
+ ing[i][k]=v;if(k!=="n"){calcDil();}
+}
+function addIng(){ing.push({n:"",vol:30,abv:0});renderIng();calcDil();}
+function delIng(i){ing.splice(i,1);renderIng();calcDil();}
+function setTech(el,d){
+ document.querySelectorAll(".chip[data-dil]").forEach(c=>c.setAttribute("aria-pressed","false"));
+ el.setAttribute("aria-pressed","true");dil=d;$("dilRange").value=d;$("dilV").textContent=d+"%";calcDil();
+}
+function setRange(v){
+ dil=+v;$("dilV").textContent=v+"%";
+ document.querySelectorAll(".chip[data-dil]").forEach(c=>c.setAttribute("aria-pressed",(+c.dataset.dil===+v)?"true":"false"));
+ calcDil();
+}
+function calcDil(){
+ const c=calcolo("diluizione"),r=c.run({ingredienti:ing,dilPerc:dil}),sc=PACCO.scheda(c.schedaId);
+ $("dilScedSum").textContent="Il perché — "+sc.titolo;
+ if(!ing.length||r.V0<=0){$("dilOut").innerHTML=`<div class="empty">Aggiungi un ingrediente.</div>`;$("dilSced").innerHTML=prosa(sc);calcBatch();return;}
+ $("dilOut").innerHTML=`<div class="big"><div class="num">${r.abvFinale.toFixed(1)}<span class="us">%</span></div>
+  <div class="lab">grado finale (prima: ${r.abv0.toFixed(1)}%)</div></div>
+  <div class="grid2">
+   <div class="stat"><div class="s-n">${r.volumeFinale.toFixed(0)} ml</div><div class="s-l">volume nel bicchiere</div></div>
+   <div class="stat"><div class="s-n">${r.acqua.toFixed(0)} ml</div><div class="s-l">acqua di fusione</div></div>
+  </div>`;
+ $("dilSced").innerHTML=prosa(sc)+`<div class="calc">fisica su questo drink:<br>acqua di fusione = ${r.V0.toFixed(0)} g · 3,9 · 20°C / 334 J/g = <b>${r.termoG.toFixed(0)} g ≈ ${r.termoPerc.toFixed(0)}%</b></div>`;
+ calcBatch();
+}
+function setBatchMode(m){
+ batchMode=m;$("bm-serv").setAttribute("aria-pressed",m==="serv");$("bm-vol").setAttribute("aria-pressed",m==="vol");
+ $("bq-lab").textContent=m==="serv"?"porzioni":"volume ml";$("b-qty").value=m==="serv"?20:1500;calcBatch();
+}
+function setServe(s){
+ serveMode=s;$("ps-ice").setAttribute("aria-pressed",s==="ice");$("ps-bottle").setAttribute("aria-pressed",s==="bottle");
+ $("serveHint").textContent=s==="ice"?"Servito fresco: il ghiaccio aggiunge l'acqua al momento.":"Imbottigliato: l'acqua di diluizione va aggiunta adesso.";
+ calcBatch();
+}
+function calcBatch(){
+ const qty=+$("b-qty").value||0;
+ if(qty<=0||Core.volumeTotale(ing)<=0){$("batchOut").innerHTML=`<div class="empty">Imposta porzioni e un drink.</div>`;return;}
+ const r=calcolo("batch").run({ingredienti:ing,dilPerc:dil,modo:batchMode,qty,over:+$("b-over").value||0,bottle:+$("b-bottle").value||0,serve:serveMode});
+ let rows=r.righe.map(x=>`<div class="brow"><span>${x.nome||"—"}</span><b>${x.ml.toFixed(0)} ml</b><span>${x.bott?x.bott.toFixed(1)+" bott.":""}</span></div>`).join("");
+ if(r.wPer>0)rows+=`<div class="brow"><span>Acqua · pre-diluizione</span><b>${r.acquaTot.toFixed(0)} ml</b><span></span></div>`;
+ const note=serveMode==="ice"?`Grado in bottiglia <b>${r.abv.toFixed(1)}%</b> — si abbassa con il ghiaccio.`:`Grado in bottiglia <b>${r.abv.toFixed(1)}%</b> — pronto da versare.`;
+ $("batchOut").innerHTML=rows+`<div class="bsum">Volume totale <b>${(r.volumeTot/1000).toFixed(2)} L</b> · include il ${(+$("b-over").value||0)}% extra.<br>${note}</div>`;
+}
+function gauge(name,val,z){
+ const pos=Math.min(100,Math.max(0,val/z.scala*100));
+ const zl=z.min/z.scala*100,zw=(z.max-z.min)/z.scala*100;
+ const ok=val>=z.min&&val<=z.max;
+ return{html:`<div class="gauge"><div class="g-top"><span class="g-name">${name}</span>
+  <span class="g-val" style="color:${ok?"var(--good)":"var(--bad)"}">${val.toFixed(z.unita==="%"?2:1)}${z.unita}</span></div>
+  <div class="track"><div class="zone" style="left:${zl}%;width:${zw}%"></div><div class="needle" style="left:${pos}%"></div></div></div>`,ok,val,min:z.min};
+}
+function calcBil(){
+ const c=calcolo("bilanciamento");
+ const rd=id=>Math.max(0,+$(id).value||0);
+ const[brix,dens]=$("b-y-type").value.split("|").map(Number);
+ const r=c.run({spirit:{vol:rd("b-s-vol"),abv:Math.min(100,rd("b-s-abv"))},agrume:{vol:rd("b-a-vol"),acido:rd("b-a-acid")},sciroppo:{vol:rd("b-y-vol"),brix,densita:dens},dilPerc:rd("b-dil")});
+ const gF=gauge("Forza · alcol",r.abv,{min:14,max:19,scala:30,unita:"%"});
+ const gD=gauge("Dolce · zucchero",r.brix,{min:9,max:14,scala:25,unita:" g/100ml"});
+ const gA=gauge("Acido",r.acido,{min:0.9,max:1.4,scala:2.5,unita:"%"});
+ const off=[gF,gD,gA].filter(g=>!g.ok);
+ let v,cls;
+ if(!off.length){v="In equilibrio — i tre assi cadono nella zona classica del sour.";cls="ok";}
+ else{
+  const fix=[];
+  if(!gF.ok)fix.push(gF.val<gF.min?"poco forte: più distillato":"troppo forte: più diluizione");
+  if(!gD.ok)fix.push(gD.val<gD.min?"poco dolce: più sciroppo":"troppo dolce: meno sciroppo");
+  if(!gA.ok)fix.push(gA.val<gA.min?"piatto: più agrume":"troppo aspro: meno agrume");
+  v=fix.join(" · ");cls="off";
+ }
+ $("bilOut").innerHTML=gF.html+gD.html+gA.html+`<div class="verdict ${cls}">${v}</div>`;
+ const sc=PACCO.scheda(c.schedaId);
+ $("bilScedSum").textContent="Il perché — "+sc.titolo;
+ $("bilSced").innerHTML=prosa(sc);
+}
+function calcAA(){
+ const g=PACCO.pareggiaAcidita(+$("aa-vol").value||0,+$("aa-cur").value||0,+$("aa-tgt").value||0);
+ $("aaOut").innerHTML=`Aggiungi <b style="color:var(--warm)">${g.toFixed(1)} g</b> di acido citrico e mescola fino a sciogliere.`;
+}
+function setTool(t){
+ $("tab-dil").setAttribute("aria-selected",t==="dil");
+ $("tab-bil").setAttribute("aria-selected",t==="bil");
+ $("panel-dil").classList.toggle("on",t==="dil");
+ $("panel-bil").classList.toggle("on",t==="bil");
+ document.documentElement.style.setProperty("--accent",t==="dil"?"var(--cool)":"var(--warm)");
+}
+function init(){renderIng();setServe("ice");calcDil();calcBil();calcAA();}
+document.addEventListener("DOMContentLoaded",init);
+return{upd,addIng,delIng,setTech,setRange,calcDil,setBatchMode,setServe,calcBatch,calcBil,calcAA,setTool};
+})();
+
+/* === SWITCH VIEW === */
+function switchView(v){
+ const isChat=v==="chat";
+ document.getElementById("view-chat").style.display=isChat?"block":"none";
+ document.getElementById("view-calc").style.display=isChat?"none":"block";
+ document.getElementById("ask-bar").style.display=isChat?"block":"none";
+ document.getElementById("nav-chiedi").setAttribute("aria-selected",isChat);
+ document.getElementById("nav-calcola").setAttribute("aria-selected",!isChat);
+ document.documentElement.style.setProperty("--accent",isChat?"var(--cool)":"var(--warm)");
+}
+
+/* === CHAT === */
+const DOMCOL={bar:"--cool",cucina:"--warm",bakery:"#9FC08A",caffetteria:"#C79A6A",fermentazione:"#C792EA",trasversale:"#8FA0B0"};
+let busy=false;
+function setBusy(b){busy=b;document.getElementById("btn").disabled=b;}
+function invia(){const q=document.getElementById("q").value.trim();if(!q||busy)return;document.getElementById("q").value="";chiediTesto(q);}
 function chiediTesto(q){
-  if(busy)return;
-  const e=document.getElementById('empty'); if(e)e.remove();
-  aggiungiThinking();
-  setBusy(true);
-  fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q})})
-    .then(r=>r.json()).then(j=>render(q,j)).catch(()=>renderErr()).finally(()=>setBusy(false));
+ if(busy)return;
+ const e=document.getElementById("empty-state");if(e)e.remove();
+ aggiungiThinking();setBusy(true);
+ fetch("/chiedi",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domanda:q})})
+  .then(r=>r.json()).then(j=>render(q,j)).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
 function apriNodo(id,nome){
-  if(busy)return;
-  aggiungiThinking();
-  setBusy(true);
-  fetch('/nodo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})})
-    .then(r=>r.json()).then(j=>render(nome,j,true)).catch(()=>renderErr()).finally(()=>setBusy(false));
+ if(busy)return;aggiungiThinking();setBusy(true);
+ fetch("/nodo",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})})
+  .then(r=>r.json()).then(j=>render(nome,j,true)).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
-
 function aggiungiThinking(){
-  const d=document.createElement('div');d.className='scheda';d.id='thinking';
-  d.innerHTML='<div class="thinking">sto cercando nel grafo </div>';
-  document.getElementById('schede').prepend(d);
+ const d=document.createElement("div");d.className="scheda";d.id="thinking";
+ d.innerHTML='<div class="thinking">sto cercando nel grafo…</div>';
+ document.getElementById("schede").prepend(d);
 }
 function render(domanda,j,fromNode){
-  const t=document.getElementById('thinking'); if(t)t.remove();
-  if(!j.risposta){renderNota(domanda,j.nota);return;}
-  const fens=(j.trovato||[]).map(f=>`<span class="fenchip">${f}</span>`).join('');
-  const conns=(j.connessi||[]).map(c=>{
-    const col=`var(${DOMCOL[c.dominio]||'--trasversale'})`;
-    const tg=c.target?`<span class="tg">${c.target}</span>`:'';
-    return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||'').replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${c.nome}${tg}</span>`;
-  }).join('');
-  const card=document.createElement('div');card.className='scheda';
-  card.innerHTML=`
-    <div class="s-dom"><div class="s-q">${fromNode?'▸ ':''}<b>${escape(domanda)}</b></div></div>
-    <div class="fenchips">${fens}</div>
-    <div class="s-body">${escape(j.risposta)}</div>
-    ${conns?`<div class="s-conn"><div class="s-conn-lab">esplora le connessioni</div><div class="conns">${conns}</div></div>`:''}
-    <details class="s-dev"><summary>dettagli tecnici (contesto dal grafo)</summary><pre>${escape(j.prompt_costruito||'')}</pre></details>`;
-  document.getElementById('schede').prepend(card);
+ const t=document.getElementById("thinking");if(t)t.remove();
+ if(!j.risposta){renderNota(domanda,j.nota);return;}
+ const fens=(j.trovato||[]).map(f=>`<span class="fenchip">${f}</span>`).join("");
+ const conns=(j.connessi||[]).map(c=>{
+  const col=`var(${DOMCOL[c.dominio]||"--faint"})`;
+  const tg=c.target?`<span class="tg">${c.target}</span>`:"";
+  return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||"").replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${c.nome}${tg}</span>`;
+ }).join("");
+ const card=document.createElement("div");card.className="scheda";
+ card.innerHTML=`<div class="s-q">${fromNode?"▸ ":""}<b>${esc(domanda)}</b></div>
+  <div class="fenchips">${fens}</div>
+  <div class="s-body">${esc(j.risposta)}</div>
+  ${conns?`<div class="s-conn"><div class="s-conn-lab">esplora le connessioni</div><div class="conns">${conns}</div></div>`:""}
+  <details class="s-dev"><summary>dettagli tecnici</summary><pre>${esc(j.prompt_costruito||"")}</pre></details>`;
+ document.getElementById("schede").prepend(card);
 }
 function renderNota(domanda,nota){
-  const card=document.createElement('div');card.className='scheda';
-  card.innerHTML=`<div class="s-dom"><div class="s-q"><b>${escape(domanda)}</b></div></div><div class="s-body" style="color:var(--ink3)">${escape(nota||'Niente trovato nel grafo.')}</div>`;
-  document.getElementById('schede').prepend(card);
+ const card=document.createElement("div");card.className="scheda";
+ card.innerHTML=`<div class="s-q"><b>${esc(domanda)}</b></div><div class="s-body" style="color:var(--faint)">${esc(nota||"Niente trovato nel grafo.")}</div>`;
+ document.getElementById("schede").prepend(card);
 }
 function renderErr(){
-  const t=document.getElementById('thinking'); if(t)t.remove();
-  const card=document.createElement('div');card.className='scheda';
-  card.innerHTML='<div class="s-body" style="color:var(--ink3)">Errore di rete. Riprova.</div>';
-  document.getElementById('schede').prepend(card);
+ const t=document.getElementById("thinking");if(t)t.remove();
+ const card=document.createElement("div");card.className="scheda";
+ card.innerHTML='<div class="s-body" style="color:var(--faint)">Errore di rete. Riprova.</div>';
+ document.getElementById("schede").prepend(card);
 }
-function escape(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
 </script>
 </body>
 </html>
