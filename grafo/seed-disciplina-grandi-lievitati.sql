@@ -23,11 +23,9 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-fermentazione','prod-panettone','si_manifesta_in',
  '{"target":"madre stiff 40-45% idr, triplica in 3-4h a 28-30°C, pH uso 4,0-4,1","ruolo":"osmosi dello zucchero riduce i LAB: madre stiff seleziona quelli resistenti"}'),
 -- STRUTTURA: glutine fortissimo
-('fen-struttura','prod-panettone','si_manifesta_in',
- '{"target":"farina W360-420+, proteina 13-14%+","ruolo":"rete glutinica che regge 20-25% burro + 20% uova + frutta: il glutine più forte della panificazione"}'),
+-- fen-struttura->prod-panettone già in seed-ponte-osmosi
 -- ACIDITÀ: pH come orologio (stessa logica della madre normale)
-('fen-acidita','prod-panettone','si_manifesta_in',
- '{"target":"pH madre 4,0-4,1 al momento dell uso","ruolo":"pH troppo basso = panettone acido; troppo alto = lievitazione scarsa; il pHmetro è l orologio del panettone"}'),
+-- fen-acidita->prod-panettone già in seed-ponte-osmosi
 -- fallisce_come
 ('prod-panettone','err-panettone-acido','fallisce_come','{}'),
 ('prod-panettone','err-panettone-collassa','fallisce_come','{}');
