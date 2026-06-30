@@ -4,7 +4,7 @@
 # e chiede a Mistral di rispondere SENZA inventare.
 # Flask + grafo (Postgres su Railway / SQLite in locale) + Mistral via HTTP.
 # ============================================================
-import os, json, sqlite3, pathlib
+import os, json, sqlite3, pathlib, difflib
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
@@ -159,6 +159,51 @@ def cerca_contesto(db, termine):
     return {"fenomeni": ctx, "errori": errori, "prodotti": list(prodotti_interesse)}
 
 # ---- costruisce il prompt -----------------------------------
+_STOPWORD = {"quanto","costa","tempo","oggi","sempre","abbastanza","molto","poco",
+             "questo","quella","quello","perche","perché","dopo","prima","viene",
+             "fanno","fatto","faccio","vorrei","volevo","sento","vedo","sono",
+             "della","dello","delle","degli","quando","dove","come","cosa"}
+
+
+def cerca_fuzzy(db, domanda):
+    """Quando nessun termine estratto matcha ESATTAMENTE un nodo, cerca per
+    SOMIGLIANZA parola-per-parola tra la domanda e i nomi dei nodi del grafo.
+    Gestisce forme diverse della stessa parola (es. 'rosolisce' vs 'rosolata',
+    'lievita' vs 'lievito') senza generare falsi positivi su parole comuni
+    italiane (stopword) o parole troppo corte per essere distintive."""
+    tutti = db.execute("SELECT id, name, type FROM nodes").fetchall()
+    parole_domanda = [p.strip(".,?!").lower() for p in domanda.split()
+                       if len(p) > 4 and p.strip(".,?!").lower() not in _STOPWORD]
+    if not parole_domanda:
+        return None
+
+    candidati = set()
+    for n in tutti:
+        for parola_nodo in n["name"].lower().split():
+            parola_nodo = parola_nodo.strip("(),./")
+            if parola_nodo in _STOPWORD or len(parola_nodo) < 5:
+                continue
+            for p in parole_domanda:
+                if difflib.SequenceMatcher(None, p, parola_nodo).ratio() > 0.8:
+                    candidati.add(n["name"])
+                    break
+
+    for nome in candidati:
+        ctx = cerca_contesto(db, nome)
+        if ctx and ctx.get("fenomeni"):
+            return ctx
+    return None
+
+
+def fenomeni_suggeriti(db):
+    """Ultima rete di sicurezza: se proprio non si trova nulla, non si lascia
+    l'utente con un vicolo cieco. Si mostrano i fenomeni del grafo come punto
+    di partenza — l'utente può cliccare e iniziare da lì."""
+    rows = db.execute(
+        "SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY name").fetchall()
+    return [{"id": r["id"], "nome": r["name"], "dominio": r["domain"],
+             "target": _dati(r["data"]).get("numero_bersaglio", "")} for r in rows]
+
 def costruisci_prompt(domanda, contesto):
     righe = []
     for f in contesto["fenomeni"]:
@@ -280,9 +325,24 @@ def chiedi():
     for t in termini:
         contesto = cerca_contesto(db, t)
         if contesto and contesto.get("fenomeni"): break
+
+    # LIVELLO 2 — niente match esatto: provo per somiglianza sull'intera domanda
     if not contesto or not contesto.get("fenomeni"):
-        return jsonify({"risposta": None,
-                        "nota": "Nessun nodo trovato nel grafo per questa domanda."})
+        contesto = cerca_fuzzy(db, domanda)
+
+    # LIVELLO 3 — ancora niente: non lascio l'utente a un vicolo cieco,
+    # mostro i fenomeni del grafo come punto di partenza cliccabile
+    if not contesto or not contesto.get("fenomeni"):
+        suggeriti = fenomeni_suggeriti(db)
+        return jsonify({
+            "risposta": None,
+            "nota": "Non ho trovato un aggancio preciso nel grafo per questa domanda. "
+                    "Prova a partire da uno di questi fenomeni, o riformula con un "
+                    "ingrediente o un prodotto specifico.",
+            "connessi": [{"id": f["id"], "nome": f["nome"], "dominio": f["dominio"],
+                          "target": f["target"]} for f in suggeriti]
+        })
+
     prompt = costruisci_prompt(domanda, contesto)
     risposta = chiedi_mistral(prompt)
     # nodi navigabili: i prodotti/discipline collegati ai fenomeni trovati (per l'esploratore)

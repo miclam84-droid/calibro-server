@@ -531,7 +531,7 @@ function aggiungiThinking(){
 }
 function render(domanda,j,fromNode){
  const t=document.getElementById("thinking");if(t)t.remove();
- if(!j.risposta){renderNota(domanda,j.nota);return;}
+ if(!j.risposta){renderNota(domanda,j.nota,j.connessi);return;}
  const fens=(j.trovato||[]).map(f=>`<span class="fenchip">${f}</span>`).join("");
  const conns=(j.connessi||[]).map(c=>{
   const col=`var(${DOMCOL[c.dominio]||"--faint"})`;
@@ -546,9 +546,16 @@ function render(domanda,j,fromNode){
   <details class="s-dev"><summary>dettagli tecnici</summary><pre>${esc(j.prompt_costruito||"")}</pre></details>`;
  document.getElementById("schede").prepend(card);
 }
-function renderNota(domanda,nota){
+function renderNota(domanda,nota,connessi){
  const card=document.createElement("div");card.className="scheda";
- card.innerHTML=`<div class="s-q"><b>${esc(domanda)}</b></div><div class="s-body" style="color:var(--faint)">${esc(nota||"Niente trovato nel grafo.")}</div>`;
+ const conns=(connessi||[]).map(c=>{
+  const col=`var(${DOMCOL[c.dominio]||"--faint"})`;
+  const tg=c.target?`<span class="tg">${c.target}</span>`:"";
+  return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||"").replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${c.nome}${tg}</span>`;
+ }).join("");
+ card.innerHTML=`<div class="s-q"><b>${esc(domanda)}</b></div>
+  <div class="s-body" style="color:var(--faint)">${esc(nota||"Niente trovato nel grafo.")}</div>
+  ${conns?`<div class="s-conn"><div class="s-conn-lab">parti da un fenomeno</div><div class="conns">${conns}</div></div>`:""}`;
  document.getElementById("schede").prepend(card);
 }
 function renderErr(){
