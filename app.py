@@ -2,7 +2,7 @@
 # CALIBRO — server. Riceve una domanda, naviga il grafo in
 # profondita (risale ai fenomeni), costruisce un contesto ricco,
 # e chiede a Mistral di rispondere SENZA inventare.
-# Flask + grafo (SQLite locale / Postgres su Railway) + Mistral via HTTP.
+# Flask + grafo (Postgres su Railway / SQLite in locale) + Mistral via HTTP.
 # ============================================================
 import os, json, sqlite3, pathlib
 from flask import Flask, request, jsonify, render_template
@@ -11,7 +11,68 @@ app = Flask(__name__)
 HERE = pathlib.Path(__file__).parent
 GRAFO = HERE / "grafo"
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+
+class _PgRow(dict):
+    """Riga Postgres accessibile come dizionario, per compatibilita con sqlite3.Row
+    (il resto del codice usa n["id"], n["data"], ecc. — qui funziona identico)."""
+    pass
+
+
+class _PgCompat:
+    """Avvolge una connessione Postgres per farla sembrare sqlite3:
+    stessa firma db.execute(sql, params).fetchone()/.fetchall(), stesso
+    accesso a riga come dizionario. Traduce i placeholder '?' in '%s'.
+    Cosi tutte le query esistenti restano IDENTICHE — zero rischio sulla logica."""
+
+    def __init__(self, conn):
+        self._conn = conn
+
+    def execute(self, sql, params=()):
+        cur = self._conn.cursor()
+        cur.execute(sql.replace("?", "%s"), params)
+        if cur.description:
+            cols = [d[0] for d in cur.description]
+            rows = [_PgRow(zip(cols, r)) for r in cur.fetchall()]
+            return _PgCursorResult(rows)
+        self._conn.commit()
+        return _PgCursorResult([])
+
+
+class _PgCursorResult:
+    def __init__(self, rows):
+        self._rows = rows
+
+    def fetchall(self):
+        return self._rows
+
+    def fetchone(self):
+        return self._rows[0] if self._rows else None
+
+    def __iter__(self):
+        return iter(self._rows)
+
+
+_pg_conn = None  # connessione persistente, riusata tra le richieste
+
+
+def _connetti_postgres():
+    global _pg_conn
+    import psycopg2
+    if _pg_conn is None or _pg_conn.closed:
+        _pg_conn = psycopg2.connect(DATABASE_URL)
+    return _PgCompat(_pg_conn)
+
+
 def carica_grafo():
+    """Su Railway (DATABASE_URL impostata): riusa la connessione Postgres,
+    NIENTE ricostruzione a ogni chiamata — il grafo e gia li, caricato una
+    volta con migrate_postgres.py.
+    In locale (nessuna DATABASE_URL): ricostruisce SQLite in memoria dai
+    seed, comodo per lo sviluppo senza dover avere Postgres a portata."""
+    if DATABASE_URL:
+        return _connetti_postgres()
     db = sqlite3.connect(":memory:")
     db.row_factory = sqlite3.Row
     schema = (GRAFO/"schema.sql").read_text(encoding="utf-8").replace("JSONB","TEXT")
@@ -19,6 +80,17 @@ def carica_grafo():
     for s in sorted(GRAFO.glob("seed-*.sql")):
         db.executescript(s.read_text(encoding="utf-8"))
     return db
+
+
+def _dati(campo):
+    """Il campo 'data' arriva come stringa JSON da SQLite, ma già come
+    dict da Postgres (JSONB). Questa funzione gestisce entrambi i casi
+    senza che il resto del codice debba saperlo."""
+    if campo is None:
+        return {}
+    if isinstance(campo, dict):
+        return campo
+    return json.loads(campo or "{}")
 
 # ---- ricerca contesto: profonda, centrata sui fenomeni ----
 def cerca_contesto(db, termine):
@@ -59,14 +131,14 @@ def cerca_contesto(db, termine):
 
     ctx = []
     for fid, f in fenomeni.items():
-        nodo = dict(f); nodo["data"] = json.loads(f["data"] or "{}")
+        nodo = dict(f); nodo["data"] = _dati(f["data"])
         coll = []
         for e in db.execute("""SELECT e.relation, e.data, n.name, n.type, n.domain, n.id
                                FROM edges e JOIN nodes n ON n.id=e.to_id
                                WHERE e.from_id=?""", (fid,)):
             coll.append({"verso": e["name"], "tipo": e["type"], "dominio": e["domain"],
                          "relazione": e["relation"], "id": e["id"],
-                         "data": json.loads(e["data"] or "{}")})
+                         "data": _dati(e["data"])})
         nodo["collegamenti"] = coll
         ctx.append(nodo)
 
@@ -81,7 +153,7 @@ def cerca_contesto(db, termine):
         for row in db.execute("""SELECT n.name, n.data, n.domain FROM edges e
                                  JOIN nodes n ON n.id=e.to_id
                                  WHERE e.from_id=? AND e.relation='fallisce_come'""", (pid,)):
-            d = json.loads(row["data"] or "{}")
+            d = _dati(row["data"])
             if d.get("causa"):
                 errori.append(f"{row['name']} ({row['domain']}): {d['causa']}")
     return {"fenomeni": ctx, "errori": errori, "prodotti": list(prodotti_interesse)}
