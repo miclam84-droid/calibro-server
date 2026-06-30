@@ -5,7 +5,7 @@
 -- Niente nuovi nodi: solo archi si_manifesta_in mancanti.
 -- ============================================================
 
-INSERT OR IGNORE INTO edges (from_id, to_id, relation, data) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 -- SOUR: non solo acidità — anche concentrazione (dolce) e calore (diluizione shake)
 ('fen-concentrazione','prod-sour','si_manifesta_in','{"target":"~12 Brix","ruolo":"la dolcezza che bilancia l acido"}'),
 ('fen-calore','prod-sour','si_manifesta_in','{"target":"27% diluizione","ruolo":"lo shake raffredda e diluisce"}'),
@@ -41,4 +41,5 @@ INSERT OR IGNORE INTO edges (from_id, to_id, relation, data) VALUES
 -- PANETTONE: osmosi + struttura (glutine fortissimo) + acidità (madre pH 4,1) + calore (lievitazione + cottura)
 ('fen-struttura','prod-panettone','si_manifesta_in','{"target":"W360+ glutine fortissimo","ruolo":"regge il peso di uova e burro"}'),
 ('fen-acidita','prod-panettone','si_manifesta_in','{"target":"madre pH 4,1","ruolo":"acidità che dà forza e conservazione"}'),
-('fen-calore','prod-panettone','si_manifesta_in','{"target":"28-30°C lievitazione","ruolo":"la madre stiff tripla in 3-4h"}');
+('fen-calore','prod-panettone','si_manifesta_in','{"target":"28-30°C lievitazione","ruolo":"la madre stiff tripla in 3-4h"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
