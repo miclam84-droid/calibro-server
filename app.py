@@ -298,12 +298,50 @@ def estrai_entita(domanda):
     except Exception:
         return []
 
+def _anthropic_raw(prompt):
+    """Chiamata a Sonnet per la risposta finale — quella che l'utente legge.
+    L'estrazione entità resta su Mistral (compito semplice, non vale il costo).
+    Niente SDK: stesso pattern collaudato della chiamata Mistral, HTTP diretto."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        return None
+    import urllib.request
+    body = json.dumps({
+        "model": "claude-sonnet-4-6",
+        "max_tokens": 600,
+        "temperature": 0,
+        "messages": [{"role": "user", "content": prompt}]
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=body,
+        headers={
+            "x-api-key": key,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json"
+        },
+        method="POST")
+    with urllib.request.urlopen(req, timeout=30) as r:
+        data = json.loads(r.read().decode("utf-8"))
+    # la risposta di Anthropic è una lista di blocchi; prendo il testo
+    return "".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
+
+
 def chiedi_mistral(prompt):
+    """Nome storico mantenuto per non toccare i due punti che la chiamano.
+    Prova Sonnet (qualità migliore sul grafo ricco); se la chiave non c'è
+    o la chiamata fallisce, ripiega su Mistral — il prodotto non si ferma."""
+    try:
+        out = _anthropic_raw(prompt)
+        if out:
+            return out
+    except Exception:
+        pass
     try:
         out = _mistral_raw(prompt)
         return out if out is not None else None
     except Exception as e:
-        return f"[errore nella chiamata a Mistral: {e}]"
+        return f"[errore nella chiamata: {e}]"
 
 # ---- endpoint -----------------------------------------------
 @app.route("/")
