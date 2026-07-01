@@ -399,11 +399,11 @@ body{
 <div class="screen active" id="screen-scopri">
   <div class="card card-pad hook-card">
     <div class="eyebrow">fermentazione</div>
-    <div class="headline">Sai perché il tuo impasto non lievita uguale d'estate?</div>
-    <p class="body-text">Il lievito lavora più in fretta quando fa caldo: la temperatura cambia la velocità di fermentazione, non solo i tempi sulla ricetta.</p>
+    <div class="headline">La temperatura dell'impasto cambia tutto. Non quella del forno.</div>
+    <p class="body-text">Il lievito segue la cinetica chimica: ogni 8°C in più dimezza i tempi. D'estate il bulk finisce in 3 ore, d'inverno in 6 — con lo stesso lievito, la stessa ricetta.</p>
   </div>
-  <button class="cta-main" onclick="switchTab('lezione')">Inizia — senza registrarti</button>
-  <p class="no-login">Niente account per il primo assaggio.</p>
+  <button class="cta-main" onclick="switchTab('lezione')">Entra nel grafo</button>
+  <p class="no-login">Nessuna registrazione richiesta.</p>
   <div class="discipline-row">
     <div class="disc-chip sel" onclick="selDisc(this)">Bar</div>
     <div class="disc-chip" onclick="selDisc(this)">Bakery</div>
@@ -412,10 +412,10 @@ body{
     <div class="disc-chip" onclick="selDisc(this)">Cucina</div>
   </div>
   <div class="card card-pad" style="margin-top:14px">
-    <div class="eyebrow">oggi in evidenza</div>
-    <div class="headline" style="font-size:15px;margin-top:0">Il Q10 — la stessa legge in sei discipline</div>
-    <p class="body-text" style="margin-top:6px">La velocità dei processi biologici raddoppia ogni 10°C. Vale per il pane, i crauti, il cold brew e la pastorizzazione — una sola equazione.</p>
-    <button style="margin-top:12px;background:none;border:none;color:var(--e700);font-size:13px;font-weight:600;cursor:pointer;padding:0;font-family:var(--sans)" onclick="chiediTesto('cos\'è il Q10 e perché cambia tutto in cucina?')">Approfondisci →</button>
+    <div class="eyebrow">principio del giorno</div>
+    <div class="headline" style="font-size:15px;margin-top:0">Q10 — una legge, sei discipline</div>
+    <p class="body-text" style="margin-top:6px">Ogni 8–10°C in più, la velocità dei processi biologici raddoppia. Vale per la fermentazione, la pastorizzazione, il cold brew, la lievitazione. Stessa equazione, contesti diversi.</p>
+    <button style="margin-top:12px;background:none;border:none;color:var(--e700);font-size:13px;font-weight:600;cursor:pointer;padding:0;font-family:var(--sans)" onclick="chiediTesto('Q10 fermentazione temperatura lievitazione')">Approfondisci nel grafo →</button>
   </div>
 </div>
 
@@ -527,6 +527,8 @@ body{
       <div style="display:flex;gap:6px;padding:14px 16px 0">
         <button class="subtab-btn active" id="ctab-dil" onclick="App.setTool('dil')" style="font-size:10px">Diluizione</button>
         <button class="subtab-btn" id="ctab-bil" onclick="App.setTool('bil')" style="font-size:10px">Bilanciamento</button>
+        <button class="subtab-btn" id="ctab-bak" onclick="App.setTool('bak')" style="font-size:10px">Bakery</button>
+        <button class="subtab-btn" id="ctab-caf" onclick="App.setTool('caf')" style="font-size:10px">Caffè</button>
       </div>
 
       <!-- diluizione -->
@@ -613,11 +615,71 @@ body{
           <div class="mini-out" id="aa-out"></div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+      <!-- bakery -->
+      <div id="cpanel-bak" style="display:none">
+        <div class="calc-card">
+          <div class="calc-title">Idratazione (baker's %)</div>
+          <p class="hint" style="margin-bottom:10px">Tutto in percentuale sulla farina = 100%.</p>
+          <div class="mini" style="grid-template-columns:1fr 1fr">
+            <div><label>farina g</label><input class="c-input" type="number" id="bk-flour" value="1000" oninput="App.calcBak()"></div>
+            <div><label>acqua g</label><input class="c-input" type="number" id="bk-water" value="700" oninput="App.calcBak()"></div>
+          </div>
+          <div class="mini-out" id="bk-idr-out"></div>
+          <div class="hint" style="margin-top:12px">Zone: pane comune 65–72% · ciabatta/focaccia 75–85% · pizza napoletana 60–65% · pizza teglia 75–85%</div>
+        </div>
+        <div class="calc-card">
+          <div class="calc-title">Q10 — tempo di fermentazione</div>
+          <p class="hint" style="margin-bottom:10px">Ogni 8°C in più, il tempo si dimezza.</p>
+          <div class="mini">
+            <div><label>tempo base (h)</label><input class="c-input" type="number" id="bk-t-base" value="5" step="0.5" oninput="App.calcQ10()"></div>
+            <div><label>temp. base °C</label><input class="c-input" type="number" id="bk-t-ref" value="24" oninput="App.calcQ10()"></div>
+            <div><label>temp. reale °C</label><input class="c-input" type="number" id="bk-t-real" value="18" oninput="App.calcQ10()"></div>
+          </div>
+          <div class="mini-out" id="bk-q10-out"></div>
+          <div class="hint" style="margin-top:8px">Formula: t = t_base × 2^((T_ref − T_reale) / 8)</div>
+        </div>
+        <div class="calc-card">
+          <div class="calc-title">pH madre — stato di maturità</div>
+          <p class="hint" style="margin-bottom:10px">Inserisci il pH letto sul pHmetro.</p>
+          <div class="mini" style="grid-template-columns:1fr">
+            <div><label>pH attuale</label><input class="c-input" type="number" id="bk-ph" value="4.0" step="0.05" min="3" max="6" oninput="App.calcPH()"></div>
+          </div>
+          <div class="mini-out" id="bk-ph-out"></div>
+          <div class="hint" style="margin-top:8px">5,5 rinfrescata · 4,2–4,0 giovane · 3,9–3,7 matura (usa) · &lt;3,7 sovramatura</div>
+        </div>
+      </div>
 
-<!-- ── BARRA DOMANDA ───────────────────────────────────── -->
+      <!-- caffetteria -->
+      <div id="cpanel-caf" style="display:none">
+        <div class="calc-card">
+          <div class="calc-title">Estrazione — EY% e TDS</div>
+          <p class="hint" style="margin-bottom:10px">Yield % = quanto hai estratto dalla polvere. TDS = quanto è concentrata la bevanda.</p>
+          <div class="mini">
+            <div><label>dose g</label><input class="c-input" type="number" id="cf-dose" value="18" step="0.1" oninput="App.calcEY()"></div>
+            <div><label>bevanda g</label><input class="c-input" type="number" id="cf-bev" value="36" step="0.1" oninput="App.calcEY()"></div>
+            <div><label>TDS %</label><input class="c-input" type="number" id="cf-tds" value="9" step="0.1" oninput="App.calcEY()"></div>
+          </div>
+          <div class="mini-out" id="cf-ey-out"></div>
+        </div>
+        <div class="calc-card">
+          <div class="calc-title">Diagnostica estrazione</div>
+          <div id="cf-diag" style="font-size:13px;color:var(--ink-muted);line-height:1.7;margin-top:4px">—</div>
+          <div class="hint" style="margin-top:10px">
+            Espresso: EY 18–22% · TDS 7–12% · ratio 1:2–3<br>
+            Filtro: EY 18–22% · TDS 1,15–1,55% · ratio 1:15–17<br>
+            Cold brew: EY 12–18% · TDS 1–2%
+          </div>
+        </div>
+        <div class="calc-card">
+          <div class="calc-title">Ratio rapido</div>
+          <p class="hint" style="margin-bottom:10px">Calcola il volume d'acqua dal peso della dose.</p>
+          <div class="mini" style="grid-template-columns:1fr 1fr">
+            <div><label>dose g</label><input class="c-input" type="number" id="cf-r-dose" value="18" step="0.1" oninput="App.calcRatio()"></div>
+            <div><label>ratio 1:</label><input class="c-input" type="number" id="cf-r-ratio" value="2.5" step="0.1" oninput="App.calcRatio()"></div>
+          </div>
+          <div class="mini-out" id="cf-ratio-out"></div>
+        </div>
+      </div> ───────────────────────────────────── -->
 <div class="ask-bar" id="ask-bar">
   <div class="ask-inner">
     <input class="ask-input" id="q" placeholder="chiedi al grafo…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
@@ -823,14 +885,78 @@ const App=(()=>{
   }
 
   function setTool(t){
-    $('cpanel-dil').style.display=t==='dil'?'block':'none';
-    $('cpanel-bil').style.display=t==='bil'?'block':'none';
-    $('ctab-dil').classList.toggle('active',t==='dil');
-    $('ctab-bil').classList.toggle('active',t==='bil');
+    ['dil','bil','bak','caf'].forEach(p=>{
+      const el=document.getElementById('cpanel-'+p);
+      if(el) el.style.display=p===t?'block':'none';
+      const btn=document.getElementById('ctab-'+p);
+      if(btn) btn.classList.toggle('active',p===t);
+    });
   }
 
-  document.addEventListener('DOMContentLoaded',()=>{renderIng();setServe('ice');calcBil();calcAA();});
-  return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool};
+  // ── BAKERY ──────────────────────────────────────────────
+  function calcBak(){
+    const flour=+$('bk-flour').value||0, water=+$('bk-water').value||0;
+    if(!flour){$('bk-idr-out').innerHTML='';return;}
+    const idr=(water/flour*100).toFixed(1);
+    let zona='—';
+    const n=+idr;
+    if(n<65) zona='bassa — pane compatto, crosta dura';
+    else if(n<=72) zona='pane comune';
+    else if(n<=75) zona='zona di transizione';
+    else if(n<=85) zona='alta — ciabatta, focaccia, pizza teglia';
+    else zona='molto alta — impasto-pastella';
+    $('bk-idr-out').innerHTML=`Idratazione <b style="color:var(--e700)">${idr}%</b> · ${zona}`;
+  }
+  function calcQ10(){
+    const tBase=+$('bk-t-base').value||0;
+    const tRef=+$('bk-t-ref').value||24;
+    const tReal=+$('bk-t-real').value||18;
+    if(!tBase){$('bk-q10-out').innerHTML='';return;}
+    const tNew=tBase*Math.pow(2,(tRef-tReal)/8);
+    const dir=tReal<tRef?'più freddo — fermentazione più lenta':'più caldo — fermentazione più veloce';
+    $('bk-q10-out').innerHTML=`Tempo previsto <b style="color:var(--e700)">${tNew.toFixed(1)} h</b> · ${dir}`;
+  }
+  function calcPH(){
+    const ph=+$('bk-ph').value||0;
+    if(!ph){$('bk-ph-out').innerHTML='';return;}
+    let stato='',col='var(--ink-muted)';
+    if(ph>5.2){stato='appena rinfrescata — aspetta';col='var(--ink-muted)';}
+    else if(ph>4.2){stato='giovane — non ancora pronta';col='var(--e300)';}
+    else if(ph>=3.7){stato='matura — usala adesso';col='var(--s500)';}
+    else{stato='sovramatura — troppo acida, rinfresca';col='var(--e700)';}
+    $('bk-ph-out').innerHTML=`<span style="color:${col};font-weight:600">${stato}</span>`;
+  }
+
+  // ── CAFFETTERIA ──────────────────────────────────────────
+  function calcEY(){
+    const dose=+$('cf-dose').value||0;
+    const bev=+$('cf-bev').value||0;
+    const tds=+$('cf-tds').value||0;
+    if(!dose||!bev||!tds){$('cf-ey-out').innerHTML='';$('cf-diag').innerHTML='—';return;}
+    const ey=bev*tds/dose;
+    $('cf-ey-out').innerHTML=`EY <b style="color:var(--e700)">${ey.toFixed(1)}%</b>`;
+    // diagnostica a 4 quadranti
+    let diag='';
+    if(ey<18 && tds<7) diag='<b>Sottoestratto e debole</b> — macinatura più fine o più dose.';
+    else if(ey<18 && tds>=7) diag='<b>Sottoestratto ma concentrato</b> — macinatura più fine, meno dose.';
+    else if(ey>22 && tds<7) diag='<b>Sovrestratto e debole</b> — macinatura più grossa, più dose.';
+    else if(ey>22 && tds>=7) diag='<b>Sovrestratto e concentrato</b> — macinatura più grossa o meno tempo.';
+    else diag=`<b style="color:var(--s500)">Nella zona di equilibrio</b> — EY ${ey.toFixed(1)}%, TDS ${tds}%.`;
+    $('cf-diag').innerHTML=diag;
+  }
+  function calcRatio(){
+    const dose=+$('cf-r-dose').value||0;
+    const ratio=+$('cf-r-ratio').value||0;
+    if(!dose||!ratio){$('cf-ratio-out').innerHTML='';return;}
+    const vol=dose*ratio;
+    $('cf-ratio-out').innerHTML=`<b style="color:var(--e700)">${vol.toFixed(0)} g</b> di acqua (o bevanda finale)`;
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    renderIng();setServe('ice');calcBil();calcAA();
+    calcBak();calcQ10();calcPH();calcEY();calcRatio();
+  });
+  return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
 })();
 </script>
 </body>
