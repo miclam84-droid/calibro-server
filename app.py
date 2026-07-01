@@ -343,6 +343,37 @@ def chiedi_mistral(prompt):
     except Exception as e:
         return f"[errore nella chiamata: {e}]"
 
+def log_evento(tipo, domanda, fenomeni=None, esito=None):
+    """Log minimo per osservabilità: cosa chiedono gli utenti, cosa trova il grafo,
+    dove fallisce. Una riga per evento, tabella separata in Postgres.
+    Wrapped in try/except: se il log fallisce, la risposta arriva lo stesso."""
+    if not DATABASE_URL:
+        return  # in locale non logghiamo
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS log_domande (
+                id SERIAL PRIMARY KEY,
+                ts TIMESTAMPTZ DEFAULT NOW(),
+                tipo TEXT,
+                domanda TEXT,
+                fenomeni_trovati TEXT,
+                esito TEXT
+            )
+        """)
+        cur.execute(
+            "INSERT INTO log_domande (tipo, domanda, fenomeni_trovati, esito) VALUES (%s,%s,%s,%s)",
+            (tipo, domanda[:500],
+             ",".join(fenomeni) if fenomeni else None,
+             esito)
+        )
+        conn.commit()
+        cur.close(); conn.close()
+    except Exception:
+        pass  # mai bloccare la risposta per un log fallito
+
+
 # ---- endpoint -----------------------------------------------
 @app.route("/")
 def home():
@@ -372,6 +403,7 @@ def chiedi():
     # mostro i fenomeni del grafo come punto di partenza cliccabile
     if not contesto or not contesto.get("fenomeni"):
         suggeriti = fenomeni_suggeriti(db)
+        log_evento("fallback", domanda, esito="nessun_nodo")
         return jsonify({
             "risposta": None,
             "nota": "Non ho trovato un aggancio preciso nel grafo per questa domanda. "
@@ -383,6 +415,9 @@ def chiedi():
 
     prompt = costruisci_prompt(domanda, contesto)
     risposta = chiedi_mistral(prompt)
+    log_evento("risposta", domanda,
+               fenomeni=[f["name"] for f in contesto["fenomeni"]],
+               esito="ok" if risposta else "errore_modello")
     # nodi navigabili: i prodotti/discipline collegati ai fenomeni trovati (per l'esploratore)
     connessi = []
     visti = set()
@@ -418,6 +453,9 @@ def nodo():
     domanda = f"Spiegami {n['name']} e i fenomeni che lo governano."
     prompt = costruisci_prompt(domanda, contesto)
     risposta = chiedi_mistral(prompt)
+    log_evento("nodo", n["name"],
+               fenomeni=[f["name"] for f in contesto["fenomeni"]],
+               esito="ok" if risposta else "errore_modello")
     connessi, visti = [], set()
     for f in contesto["fenomeni"]:
         for c in f["collegamenti"]:
