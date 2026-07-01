@@ -6,6 +6,7 @@
 # ============================================================
 import os, json, sqlite3, pathlib, difflib
 from flask import Flask, request, jsonify, render_template
+import motore as Motore
 
 app = Flask(__name__)
 HERE = pathlib.Path(__file__).parent
@@ -471,6 +472,22 @@ def nodo():
         "risposta": risposta,
         "connessi": connessi
     })
+
+@app.route("/calcola", methods=["POST"])
+def calcola():
+    """Endpoint del motore di calcolo deterministico.
+    Riceve {calcolo: str, parametri: dict}, restituisce il risultato esatto.
+    Nessuna AI — numeri calcolati da formule fisiche/chimiche verificate.
+    Usato sia dal frontend (calcolatori) che potenzialmente da tool-calling di Sonnet."""
+    body = request.json or {}
+    nome = body.get("calcolo", "").strip()
+    parametri = body.get("parametri", {})
+    if not nome:
+        return jsonify({"errore": "campo 'calcolo' obbligatorio"}), 400
+    risultato = Motore.esegui(nome, parametri)
+    log_evento("calcolo", nome, esito="ok" if "errore" not in risultato else "errore")
+    return jsonify(risultato)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
