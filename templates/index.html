@@ -4,591 +4,827 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Calibro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#16130F;--panel:#1F1B15;--panel2:#272118;--line:#3A3225;
-  --ink:#EDE7DC;--mut:#9C9180;--faint:#6E6657;
-  --cool:#7FD4E0;--warm:#E8A84C;--bad:#D98A6A;--good:#9FC08A;
-  --accent:var(--cool);
-  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
-  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --bg:#FAF6EE; --surface:#FFFFFF; --ink:#1A1A18; --ink-muted:#6F6A60; --border:#E4DFD3;
+  --e100:#F4E3D2; --e300:#E0AA76; --e500:#C77B3F; --e700:#9A5A28; --e900:#6E3E1A;
+  --s100:#E3EFEC; --s300:#8FBBB0; --s500:#2C6E63; --s700:#1F4F47;
+  --cifra-graphite:#4A4E50; --cifra-p700:#15362F; --cifra-p300:#9CC9BC;
+  --coffee:#3D2B1F;
+  --sans:'Inter',ui-sans-serif,system-ui,sans-serif;
+  --serif:'Lora',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--sans);
   -webkit-font-smoothing:antialiased;line-height:1.55;
-  padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 120px)}
-.wrap{max-width:600px;margin:0 auto;padding:20px 16px 0}
+  min-height:100%;
+  padding-bottom:calc(env(safe-area-inset-bottom) + 72px);
+}
 
-/* HEADER */
-.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint)}
-h1{font-size:28px;font-weight:600;letter-spacing:-.02em;margin:3px 0 3px}
-.sub{color:var(--mut);font-size:13px;line-height:1.5}
+/* ── STATUS BAR + APP BAR ─────────────────────────────── */
+.app-header{
+  position:sticky;top:0;z-index:40;
+  background:var(--coffee);
+  padding-top:env(safe-area-inset-top);
+}
+.app-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px 10px;
+}
+.wordmark{font-family:var(--serif);font-weight:600;font-size:17px;color:#fff;letter-spacing:-.01em}
+.streak{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(199,123,63,.32);border-radius:20px;padding:5px 11px;
+  box-shadow:0 4px 12px rgba(199,123,63,.22);
+}
+.streak-flame{width:14px;height:14px;color:var(--e300)}
+.streak span{font-family:var(--mono);font-size:12px;font-weight:500;color:#fff}
 
-/* NAV PRINCIPALE */
-.mainnav{display:flex;gap:6px;margin:16px 0;background:var(--panel);
-  border:1px solid var(--line);border-radius:13px;padding:4px}
-.mainnav button{flex:1;background:none;border:none;color:var(--mut);
-  font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-  padding:11px 8px;border-radius:9px;cursor:pointer;transition:.2s}
-.mainnav button[aria-selected="true"]{background:var(--panel2);color:var(--ink);
-  box-shadow:inset 0 0 0 1px var(--accent)}
+/* ── TAB BAR ──────────────────────────────────────────── */
+.tab-bar{
+  display:flex;background:var(--coffee);
+  padding:0 12px 12px;gap:2px;
+}
+.tab-btn{
+  flex:1;background:none;border:none;color:#C9BCAE;
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  padding:9px 4px 8px;border-radius:8px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  transition:background .15s,color .15s;
+  -webkit-appearance:none;
+}
+.tab-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+.tab-btn .tab-label{font-size:10px;letter-spacing:.02em}
+.tab-btn.active{
+  background:rgba(199,123,63,.35);color:#fff;
+}
 
-/* ==================== SEZIONE CHAT ==================== */
-#view-chat{display:block}
-.schede{display:flex;flex-direction:column;gap:12px}
-.scheda{background:var(--panel);border:1px solid var(--line);border-radius:16px;
-  overflow:hidden;animation:rise .3s ease}
-@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.s-q{padding:12px 16px 0;font-size:12px;color:var(--faint);font-family:var(--mono)}
-.s-q b{color:var(--mut);font-weight:500}
-.fenchips{display:flex;gap:6px;flex-wrap:wrap;padding:8px 16px}
-.fenchip{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;
-  background:rgba(127,212,224,.1);border:1px solid var(--cool);color:var(--cool)}
-.s-body{padding:4px 16px 14px;font-size:14.5px;color:var(--ink);white-space:pre-wrap}
-.s-conn{padding:0 16px 14px}
-.s-conn-lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+/* ── SCHERMATA WRAPPER ────────────────────────────────── */
+.screen{display:none;padding:0 0 16px;animation:rise .22s ease}
+.screen.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── COMPONENTI COMUNI ────────────────────────────────── */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  margin:14px 16px 0;overflow:hidden;
+}
+.card-pad{padding:18px 16px}
+.eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--s500);margin-bottom:8px;
+}
+.headline{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.35;color:var(--ink)}
+.body-text{font-size:13.5px;color:var(--ink-muted);line-height:1.65;margin-top:10px}
+
+/* ── SCOPRI ───────────────────────────────────────────── */
+.hook-card{text-align:center}
+.hook-card .headline{font-size:19px;margin-top:4px}
+.cta-main{
+  display:block;margin:14px 16px 0;
+  background:var(--e500);color:#fff;
+  font-family:var(--sans);font-weight:600;font-size:14px;
+  padding:14px;border-radius:12px;text-align:center;border:none;
+  box-shadow:0 8px 20px rgba(199,123,63,.32);cursor:pointer;
+  transition:opacity .15s;width:calc(100% - 32px);
+}
+.cta-main:active{opacity:.85}
+.no-login{
+  text-align:center;font-size:11px;color:var(--ink-muted);
+  margin:8px 0 0;padding:0 16px;
+}
+.discipline-row{
+  display:flex;gap:8px;padding:14px 16px 0;overflow-x:auto;
+  scrollbar-width:none;
+}
+.discipline-row::-webkit-scrollbar{display:none}
+.disc-chip{
+  flex-shrink:0;background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:7px 13px;
+  font-size:12px;font-weight:500;color:var(--ink-muted);
+  white-space:nowrap;cursor:pointer;transition:border-color .15s,color .15s;
+}
+.disc-chip:active,.disc-chip.sel{border-color:var(--e500);color:var(--e700)}
+
+/* ── LEZIONE ──────────────────────────────────────────── */
+.lesson-progress{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 16px 0;
+}
+.progress-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--e500);border-radius:2px;transition:width .4s ease}
+.progress-label{font-family:var(--mono);font-size:11px;color:var(--ink-muted);white-space:nowrap}
+.quiz-card{margin:14px 16px 0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px}
+.quiz-q{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.quiz-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 12px;border:1px solid var(--border);border-radius:10px;
+  margin-bottom:8px;cursor:pointer;font-size:13px;color:var(--ink);
+  transition:border-color .15s,background .15s;
+}
+.quiz-opt:last-child{margin-bottom:0}
+.quiz-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;transition:background .15s,border-color .15s}
+.quiz-opt.correct{border-color:var(--s500);background:var(--s100)}
+.quiz-opt.correct .quiz-dot{background:var(--s500);border-color:var(--s500)}
+.quiz-check{margin-left:auto;color:var(--s500);display:none}
+.quiz-opt.correct .quiz-check{display:flex}
+.quiz-check svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+/* ── MAPPA ────────────────────────────────────────────── */
+.map-section-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-muted);
+  padding:16px 16px 8px;
+}
+.fenomeno-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  margin:0 16px 10px;padding:14px 15px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  transition:border-color .15s;
+}
+.fenomeno-card:active{border-color:var(--e500)}
+.fen-icon{
+  width:36px;height:36px;border-radius:50%;background:var(--e100);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.fen-icon svg{width:16px;height:16px;color:var(--e500);stroke:currentColor;fill:none;stroke-width:2}
+.fen-info{flex:1;min-width:0}
+.fen-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.fen-meta{font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
+.fen-progress{
+  font-family:var(--mono);font-size:11px;color:var(--e700);
+  background:var(--e100);border-radius:10px;padding:3px 8px;flex-shrink:0;
+}
+.bridge-card{
+  margin:4px 16px 0;background:var(--cifra-p700);border-radius:14px;
+  padding:18px 16px;box-shadow:0 10px 24px rgba(15,38,34,.25);
+}
+.bridge-eyebrow{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--cifra-p300);margin-bottom:8px;
+}
+.bridge-headline{
+  font-family:var(--serif);font-weight:600;font-size:15px;
+  line-height:1.4;color:#fff;
+}
+.bridge-body{font-size:12.5px;color:var(--cifra-p300);margin-top:8px;line-height:1.55}
+.bridge-cta{
+  display:inline-flex;align-items:center;gap:6px;margin-top:13px;
+  background:var(--cifra-graphite);color:#fff;
+  font-size:12px;font-weight:500;padding:9px 14px;border-radius:8px;
+  border:none;cursor:pointer;
+}
+.bridge-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ── CHIEDI (chat + calcolatori) ─────────────────────── */
+.chiedi-subtabs{
+  display:flex;gap:6px;padding:14px 16px 0;
+}
+.subtab-btn{
+  flex:1;background:none;border:1px solid var(--border);
+  color:var(--ink-muted);font-family:var(--mono);font-size:11px;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 8px;border-radius:10px;cursor:pointer;transition:.15s;
+}
+.subtab-btn.active{border-color:var(--e500);color:var(--e700);background:var(--e100)}
+.chiedi-panel{display:none;padding-top:4px}
+.chiedi-panel.active{display:block}
+
+/* chat schede */
+.schede{display:flex;flex-direction:column;gap:10px;padding:12px 16px 80px}
+.scheda{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;animation:rise .25s ease}
+.s-q{padding:12px 14px 0;font-size:11px;color:var(--ink-muted);font-family:var(--mono)}
+.s-q b{color:var(--ink-muted);font-weight:600}
+.fenchips{display:flex;gap:5px;flex-wrap:wrap;padding:8px 14px}
+.fenchip{
+  font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:20px;
+  background:var(--s100);border:1px solid var(--s300);color:var(--s700);
+}
+.s-body{padding:2px 14px 14px;font-size:14px;color:var(--ink);line-height:1.65;white-space:pre-wrap}
+.s-conn{padding:0 14px 14px}
+.s-conn-lab{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px;
+}
 .conns{display:flex;gap:6px;flex-wrap:wrap}
-.conn{font-size:13px;padding:6px 11px;border-radius:9px;
-  background:var(--panel2);border:1px solid var(--line);color:var(--ink);
-  cursor:pointer;transition:.15s;display:flex;align-items:center;gap:6px}
-.conn:hover{border-color:var(--cool);background:rgba(127,212,224,.07)}
+.conn{
+  font-size:12.5px;padding:7px 11px;border-radius:9px;
+  background:var(--bg);border:1px solid var(--border);color:var(--ink);
+  cursor:pointer;transition:.15s;display:flex;align-items:center;gap:6px;
+}
+.conn:active{border-color:var(--e500)}
 .conn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.conn .tg{font-family:var(--mono);font-size:10px;color:var(--faint)}
-.s-dev{border-top:1px solid var(--line);padding:8px 16px}
-.s-dev summary{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--faint);
-  cursor:pointer;list-style:none}
+.conn .tg{font-family:var(--mono);font-size:10px;color:var(--ink-muted)}
+.s-dev{border-top:1px solid var(--border);padding:8px 14px}
+.s-dev summary{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+  color:var(--ink-muted);cursor:pointer;list-style:none;
+}
 .s-dev summary::-webkit-details-marker{display:none}
-.s-dev pre{white-space:pre-wrap;font-family:var(--mono);font-size:10.5px;
-  color:var(--faint);margin-top:8px;line-height:1.6}
-.thinking{padding:16px;color:var(--mut);font-family:var(--mono);font-size:13px;
-  display:flex;align-items:center;gap:10px}
-.thinking .dots{display:flex;gap:4px}
-.thinking .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);
-  animation:pulse 1.3s ease-in-out infinite}
-.thinking .dot:nth-child(2){animation-delay:.15s}
-.thinking .dot:nth-child(3){animation-delay:.3s}
-@keyframes pulse{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-.thinking .step{transition:opacity .25s}
-.empty-state{color:var(--faint);font-size:13.5px;padding:24px 4px;line-height:1.8}
-.empty-state b{color:var(--cool);cursor:pointer}
+.s-dev pre{white-space:pre-wrap;font-family:var(--mono);font-size:10px;color:var(--ink-muted);margin-top:8px;line-height:1.6}
 
-/* barra chat fissa in basso */
-.ask{position:fixed;left:0;right:0;bottom:0;
-  background:linear-gradient(transparent,var(--bg) 24%);
-  padding:18px 16px calc(env(safe-area-inset-bottom) + 14px)}
-.ask-inner{max-width:600px;margin:0 auto;display:flex;gap:8px}
-.ask input{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
-  font-family:var(--sans);font-size:16px;padding:13px 15px;border-radius:12px}
-.ask input:focus{outline:none;border-color:var(--cool)}
-.ask button{background:var(--cool);color:#16130F;border:none;font-weight:700;
-  font-size:15px;padding:0 18px;border-radius:12px;cursor:pointer;transition:.15s}
-.ask button:disabled{opacity:.4;cursor:default}
+/* thinking */
+.thinking{
+  padding:16px 14px;color:var(--ink-muted);font-family:var(--mono);font-size:13px;
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+}
+.thinking .t-dots{display:flex;gap:4px}
+.thinking .t-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--e500);
+  animation:tpulse 1.3s ease-in-out infinite;
+}
+.thinking .t-dot:nth-child(2){animation-delay:.15s}
+.thinking .t-dot:nth-child(3){animation-delay:.3s}
+@keyframes tpulse{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.thinking .t-step{transition:opacity .25s;font-size:12px}
+.empty-state{
+  text-align:center;padding:32px 16px;color:var(--ink-muted);font-size:13.5px;line-height:1.8;
+}
+.empty-state b{color:var(--e700);cursor:pointer;font-weight:600}
 
-/* ==================== SEZIONE CALCOLA ==================== */
-#view-calc{display:none}
-.subtabs{display:flex;gap:7px;margin:0 0 16px}
-.subtab{flex:1;background:none;border:1px solid var(--line);color:var(--mut);
-  font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-  padding:12px 8px;border-radius:11px;cursor:pointer;transition:.2s}
-.subtab .t-sub{display:block;font-size:9.5px;letter-spacing:.04em;color:var(--faint);
-  margin-top:2px;text-transform:none;font-family:var(--sans)}
-.subtab[aria-selected="true"]{color:var(--ink);border-color:var(--accent);
-  box-shadow:inset 0 0 0 1px var(--accent)}
-.cpanel{display:none}.cpanel.on{display:block;animation:rise .3s ease}
+/* barra domanda */
+.ask-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:linear-gradient(transparent,var(--bg) 28%);
+  padding:16px 16px calc(env(safe-area-inset-bottom) + 12px);
+}
+.ask-inner{display:flex;gap:8px;max-width:600px;margin:0 auto}
+.ask-input{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  color:var(--ink);font-family:var(--sans);font-size:16px;
+  padding:12px 14px;border-radius:12px;outline:none;
+  transition:border-color .15s;
+}
+.ask-input:focus{border-color:var(--e500)}
+.ask-btn{
+  background:var(--e500);color:#fff;border:none;
+  font-family:var(--sans);font-weight:600;font-size:14px;
+  padding:0 18px;border-radius:12px;cursor:pointer;
+  box-shadow:0 4px 12px rgba(199,123,63,.3);
+  transition:opacity .15s;
+}
+.ask-btn:disabled{opacity:.45;cursor:default}
+.ask-btn:active{opacity:.85}
 
-/* card calcolatori */
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;
-  padding:15px 14px;margin-bottom:13px}
-.card h2{font-size:11px;font-family:var(--mono);letter-spacing:.16em;
-  text-transform:uppercase;color:var(--mut);margin-bottom:12px;font-weight:600}
-.row{display:grid;grid-template-columns:1fr 82px 82px 28px;gap:7px;
-  align-items:center;margin-bottom:7px}
-.row.head{margin-bottom:5px}
-.row.head span{font-size:10px;font-family:var(--mono);letter-spacing:.07em;
-  color:var(--faint);text-transform:uppercase}
+/* ── CALCOLATORI (dentro Chiedi) ─────────────────────── */
+.calc-wrap{padding:0 0 80px}
+.calc-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  margin:14px 16px 0;padding:16px;
+}
+.calc-title{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-muted);margin-bottom:12px;
+}
+.row{display:grid;grid-template-columns:1fr 76px 76px 28px;gap:6px;align-items:center;margin-bottom:6px}
+.row.head{margin-bottom:4px}
+.row.head span{font-size:10px;font-family:var(--mono);letter-spacing:.06em;color:var(--ink-muted);text-transform:uppercase;text-align:center}
 .row.head span:first-child{text-align:left}
-.row.head span:not(:first-child){text-align:center}
-input,select{background:var(--panel2);border:1px solid var(--line);color:var(--ink);
-  font-family:var(--mono);font-size:16px;padding:10px;border-radius:9px;
-  width:100%;-webkit-appearance:none;appearance:none}
-input:focus,select:focus{outline:none;border-color:var(--accent)}
-input[type=number]{text-align:center}
-.row input:first-child{font-family:var(--sans);text-align:left}
-.del{background:none;border:none;color:var(--faint);font-size:20px;cursor:pointer;
-  line-height:1;padding:4px}
-.del:hover{color:var(--bad)}
-.add{background:none;border:1px dashed var(--line);color:var(--mut);width:100%;
-  padding:10px;border-radius:9px;font-family:var(--mono);font-size:12px;
-  cursor:pointer;letter-spacing:.06em;margin-top:4px}
-.add:hover{border-color:var(--accent);color:var(--ink)}
-.chips{display:flex;gap:7px;margin-top:4px;flex-wrap:wrap}
-.chip{flex:1;min-width:88px;background:var(--panel2);border:1px solid var(--line);
-  color:var(--mut);padding:10px;border-radius:10px;cursor:pointer;text-align:center;transition:.2s}
-.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--ink)}
-.chip .c-t{font-size:14px;font-weight:600}.chip .c-s{font-size:11px;font-family:var(--mono);color:var(--accent)}
-.custom-dil{display:flex;align-items:center;gap:11px;margin-top:11px}
-.custom-dil input[type=range]{flex:1;accent-color:var(--accent);-webkit-appearance:auto;
-  background:none;border:none;padding:0}
-.custom-dil .v{font-family:var(--mono);font-size:15px;width:44px;text-align:right;color:var(--accent)}
-.empty{color:var(--mut);font-size:14px;text-align:center;padding:8px 0}
-
-/* readout calcolatori */
-.readout{background:linear-gradient(160deg,var(--panel2),var(--panel));
-  border:1px solid var(--accent);border-radius:15px;padding:18px 15px;
-  margin-bottom:13px;box-shadow:0 0 40px -28px var(--accent)}
-.big{display:flex;align-items:baseline;gap:10px;margin-bottom:13px}
-.big .num{font-family:var(--mono);font-size:44px;font-weight:600;
-  color:var(--accent);letter-spacing:-.02em;line-height:1}
-.big .us{font-size:19px;margin-left:1px;color:var(--accent)}
-.big .lab{font-size:13px;color:var(--mut)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.stat .s-n{font-family:var(--mono);font-size:21px;font-weight:600}
-.stat .s-l{font-size:11.5px;color:var(--mut);margin-top:1px}
-.gauge{margin:12px 0}
-.gauge .g-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
-.gauge .g-name{font-size:13px;color:var(--ink)}
-.gauge .g-val{font-family:var(--mono);font-size:15px;font-weight:600}
-.track{position:relative;height:7px;background:var(--panel2);border-radius:5px;overflow:hidden}
-.zone{position:absolute;top:0;bottom:0;background:rgba(159,192,138,.25);
-  border-left:1px solid var(--good);border-right:1px solid var(--good)}
-.needle{position:absolute;top:-3px;width:3px;height:13px;background:var(--ink);
-  border-radius:2px;transform:translateX(-50%);transition:left .22s}
-.verdict{font-size:13.5px;margin-top:13px;padding:11px 13px;border-radius:10px;
-  background:var(--panel2);border:1px solid var(--line)}
-.verdict.ok{border-color:var(--good);color:var(--good)}
-.verdict.off{border-color:var(--bad);color:var(--bad)}
-.mini{display:grid;grid-template-columns:1fr 78px 78px;gap:7px;align-items:end;margin-top:5px}
-.mini label{font-size:11px;color:var(--mut);display:block;margin-bottom:4px}
-.mini-out{font-family:var(--mono);font-size:15px;color:var(--accent);margin-top:9px}
-.hint{font-size:12px;color:var(--mut);margin-top:8px}
-.brow{display:grid;grid-template-columns:1fr auto 54px;gap:9px;align-items:baseline;
-  padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
-.brow:last-child{border-bottom:none}
-.brow b{font-family:var(--mono);color:var(--accent);font-size:15px;text-align:right}
-.brow span:last-child{font-family:var(--mono);color:var(--mut);font-size:11px;text-align:right}
-.bsum{margin-top:12px;font-size:12.5px;color:var(--mut);line-height:1.7}
-.bsum b{font-family:var(--mono);color:var(--ink)}
-
-/* schede (il perché) */
-details{background:var(--panel);border:1px solid var(--line);border-radius:15px;
-  margin-bottom:13px;overflow:hidden}
-summary{padding:14px;cursor:pointer;font-family:var(--mono);font-size:11.5px;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
-  list-style:none;display:flex;justify-content:space-between;align-items:center}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font-size:17px;color:var(--mut)}
-details[open] summary::after{content:"–"}
-.scheda-text{padding:0 15px 16px;font-size:14px;color:var(--ink)}
-.scheda-text p{margin-bottom:10px}
-.scheda-text p.q{color:var(--mut);border-left:2px solid var(--accent);padding-left:11px}
-.scheda-text b{color:var(--accent)}
-.scheda-text .calc{font-family:var(--mono);font-size:12px;color:var(--mut);
-  background:var(--panel2);padding:10px 11px;border-radius:8px;margin:10px 0;line-height:1.7}
-.scheda-text .calc b{color:var(--ink)}
+.c-input{
+  background:var(--bg);border:1px solid var(--border);color:var(--ink);
+  font-family:var(--mono);font-size:15px;padding:9px 8px;border-radius:9px;
+  width:100%;-webkit-appearance:none;appearance:none;outline:none;
+  transition:border-color .15s;
+}
+.c-input:focus{border-color:var(--e500)}
+.c-input[type=number]{text-align:center}
+.c-input-name{font-family:var(--sans);text-align:left!important}
+.c-select{
+  background:var(--bg);border:1px solid var(--border);color:var(--ink);
+  font-family:var(--mono);font-size:12px;padding:9px 8px;border-radius:9px;
+  width:100%;-webkit-appearance:none;appearance:none;outline:none;
+  grid-column:1/-2;
+}
+.del-btn{background:none;border:none;color:var(--ink-muted);font-size:20px;cursor:pointer;padding:2px;line-height:1}
+.del-btn:active{color:var(--e700)}
+.add-btn{
+  width:100%;background:none;border:1px dashed var(--border);
+  color:var(--ink-muted);font-family:var(--mono);font-size:11px;
+  letter-spacing:.06em;padding:10px;border-radius:9px;cursor:pointer;
+  margin-top:4px;transition:border-color .15s,color .15s;
+}
+.add-btn:active{border-color:var(--e500);color:var(--e700)}
+.chips-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{
+  flex:1;min-width:80px;background:var(--bg);border:1px solid var(--border);
+  color:var(--ink-muted);padding:9px 8px;border-radius:9px;
+  cursor:pointer;text-align:center;transition:.15s;
+}
+.chip[aria-pressed=true]{border-color:var(--e500);color:var(--e700);background:var(--e100)}
+.chip .c-t{font-size:13px;font-weight:600}
+.chip .c-s{font-size:11px;font-family:var(--mono);color:var(--e500)}
+.slider-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.slider-row input[type=range]{flex:1;accent-color:var(--e500)}
+.slider-val{font-family:var(--mono);font-size:14px;color:var(--e700);width:40px;text-align:right}
+.hint{font-size:11.5px;color:var(--ink-muted);margin-top:8px;line-height:1.55}
+.readout{
+  background:var(--e100);border:1px solid var(--e300);border-radius:14px;
+  margin:14px 16px 0;padding:16px;
+}
+.readout-big{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+.readout-num{font-family:var(--mono);font-size:40px;font-weight:500;color:var(--e700);line-height:1}
+.readout-unit{font-size:17px;color:var(--e700)}
+.readout-lab{font-size:12px;color:var(--e700)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat .s-n{font-family:var(--mono);font-size:19px;font-weight:500;color:var(--e700)}
+.stat .s-l{font-size:11px;color:var(--e700);margin-top:2px}
+.gauge{margin:10px 0}
+.gauge .g-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.gauge .g-name{font-size:12.5px;color:var(--ink)}
+.gauge .g-val{font-family:var(--mono);font-size:14px;font-weight:500}
+.track{position:relative;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.zone{position:absolute;top:0;bottom:0;background:rgba(44,110,99,.18);border-left:1px solid var(--s300);border-right:1px solid var(--s300)}
+.needle{position:absolute;top:-4px;width:3px;height:14px;background:var(--ink);border-radius:2px;transform:translateX(-50%);transition:left .2s}
+.verdict{font-size:13px;margin-top:12px;padding:11px 12px;border-radius:9px;background:var(--surface);border:1px solid var(--border)}
+.verdict.ok{border-color:var(--s500);color:var(--s700)}
+.verdict.off{border-color:var(--e500);color:var(--e700)}
+.mini{display:grid;grid-template-columns:1fr 72px 72px;gap:6px;align-items:end;margin-top:6px}
+.mini label{font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px}
+.mini-out{font-family:var(--mono);font-size:14px;color:var(--e700);margin-top:10px}
+.batch-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}
+.b-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.b-row:last-child{border-bottom:none}
+.b-row b{font-family:var(--mono);color:var(--e700);font-size:13px}
+.b-sum{margin-top:10px;font-size:12px;color:var(--ink-muted);line-height:1.7}
+.b-sum b{font-family:var(--mono);color:var(--ink)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="eyebrow">Calibro · nome di lavoro</div>
-    <h1>La scienza nei tuoi gesti</h1>
-    <div class="sub">Fai una domanda. Oppure calcola — diluizione, bilanciamento, batch.</div>
-  </header>
 
-  <nav class="mainnav" role="tablist">
-    <button id="nav-chiedi" aria-selected="true" onclick="switchView('chat')">Chiedi</button>
-    <button id="nav-calcola" aria-selected="false" onclick="switchView('calc')">Calcola</button>
+<!-- ── HEADER ─────────────────────────────────────────── -->
+<header class="app-header">
+  <div class="app-bar">
+    <span class="wordmark">Calibro</span>
+    <div class="streak">
+      <svg class="streak-flame" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-2-1-3-1-3 2 1 3 4 3 6a6 6 0 0 1-12 0c0-5 4-6 4-10z"/>
+      </svg>
+      <span id="streak-count">4</span>
+    </div>
+  </div>
+  <nav class="tab-bar" role="tablist">
+    <button class="tab-btn active" id="tab-scopri" onclick="switchTab('scopri')" role="tab">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+      <span class="tab-label">Scopri</span>
+    </button>
+    <button class="tab-btn" id="tab-lezione" onclick="switchTab('lezione')" role="tab">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      <span class="tab-label">Lezione</span>
+    </button>
+    <button class="tab-btn" id="tab-mappa" onclick="switchTab('mappa')" role="tab">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><path d="M6 6h10M6 18h10M4 8v8M20 8v8"/></svg>
+      <span class="tab-label">Mappa</span>
+    </button>
+    <button class="tab-btn" id="tab-chiedi" onclick="switchTab('chiedi')" role="tab">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-label">Chiedi</span>
+    </button>
   </nav>
+</header>
 
-  <!-- ===== VISTA CHAT ===== -->
-  <div id="view-chat">
+<!-- ── SCOPRI ──────────────────────────────────────────── -->
+<div class="screen active" id="screen-scopri">
+  <div class="card card-pad hook-card">
+    <div class="eyebrow">fermentazione</div>
+    <div class="headline">Sai perché il tuo impasto non lievita uguale d'estate?</div>
+    <p class="body-text">Il lievito lavora più in fretta quando fa caldo: la temperatura cambia la velocità di fermentazione, non solo i tempi sulla ricetta.</p>
+  </div>
+  <button class="cta-main" onclick="switchTab('lezione')">Inizia — senza registrarti</button>
+  <p class="no-login">Niente account per il primo assaggio.</p>
+  <div class="discipline-row">
+    <div class="disc-chip sel" onclick="selDisc(this)">Bar</div>
+    <div class="disc-chip" onclick="selDisc(this)">Bakery</div>
+    <div class="disc-chip" onclick="selDisc(this)">Fermentazione</div>
+    <div class="disc-chip" onclick="selDisc(this)">Caffetteria</div>
+    <div class="disc-chip" onclick="selDisc(this)">Cucina</div>
+  </div>
+  <div class="card card-pad" style="margin-top:14px">
+    <div class="eyebrow">oggi in evidenza</div>
+    <div class="headline" style="font-size:15px;margin-top:0">Il Q10 — la stessa legge in sei discipline</div>
+    <p class="body-text" style="margin-top:6px">La velocità dei processi biologici raddoppia ogni 10°C. Vale per il pane, i crauti, il cold brew e la pastorizzazione — una sola equazione.</p>
+    <button style="margin-top:12px;background:none;border:none;color:var(--e700);font-size:13px;font-weight:600;cursor:pointer;padding:0;font-family:var(--sans)" onclick="chiediTesto('cos\'è il Q10 e perché cambia tutto in cucina?')">Approfondisci →</button>
+  </div>
+</div>
+
+<!-- ── LEZIONE ─────────────────────────────────────────── -->
+<div class="screen" id="screen-lezione">
+  <div class="lesson-progress">
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:40%"></div></div>
+    <span class="progress-label" id="prog-label">2 di 5</span>
+  </div>
+  <div class="card card-pad">
+    <div class="eyebrow">fermentazione · passo 2</div>
+    <div class="headline">La temperatura ideale è tra 24 e 26 gradi</div>
+    <p class="body-text">Sopra i 28°C il lievito accelera ma perde controllo del sapore; sotto i 20°C rallenta troppo per i tempi di un servizio normale. La stessa regola Q10 che governa i tuoi crauti.</p>
+  </div>
+  <div class="quiz-card">
+    <div class="quiz-q">A che temperatura il lievito lavora meglio per il pane da banco?</div>
+    <div class="quiz-opt" onclick="selQuiz(this)"><span class="quiz-dot"></span>15–18 gradi</div>
+    <div class="quiz-opt" onclick="selQuiz(this,true)">
+      <span class="quiz-dot"></span>24–26 gradi
+      <span class="quiz-check"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg></span>
+    </div>
+    <div class="quiz-opt" onclick="selQuiz(this)"><span class="quiz-dot"></span>32–35 gradi</div>
+  </div>
+  <div class="card card-pad" style="margin-top:14px">
+    <div class="eyebrow">lo sapevi?</div>
+    <p class="body-text" style="margin-top:0">La stessa legge Q10 governa i tuoi crauti, il cold brew e la pastorizzazione. <b style="color:var(--e700)">Una sola equazione, sei discipline.</b></p>
+    <button style="margin-top:10px;background:none;border:none;color:var(--e700);font-size:13px;font-weight:600;cursor:pointer;padding:0;font-family:var(--sans)" onclick="switchTab('chiedi');setTimeout(()=>chiediTesto('Q10 fermentazione temperatura'),100)">Esplora nel grafo →</button>
+  </div>
+</div>
+
+<!-- ── MAPPA ───────────────────────────────────────────── -->
+<div class="screen" id="screen-mappa">
+  <div class="map-section-label">i tuoi fenomeni</div>
+  <div class="fenomeno-card" onclick="switchTab('chiedi');setTimeout(()=>chiediTesto('acidità pH fermentazione'),100)">
+    <div class="fen-icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="4" stroke-dasharray="2 2"/></svg></div>
+    <div class="fen-info">
+      <div class="fen-name">Acidità</div>
+      <div class="fen-meta">pH 3,5–4,6 · pHmetro</div>
+    </div>
+    <div class="fen-progress">5 nodi</div>
+  </div>
+  <div class="fenomeno-card" onclick="switchTab('chiedi');setTimeout(()=>chiediTesto('fermentazione lattica temperatura'),100)">
+    <div class="fen-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12c0-4 8-4 8 0s-8 4-8 0"/></svg></div>
+    <div class="fen-info">
+      <div class="fen-name">Fermentazione</div>
+      <div class="fen-meta">pH &lt; 4,6 · termometro</div>
+    </div>
+    <div class="fen-progress">7 nodi</div>
+  </div>
+  <div class="fenomeno-card" onclick="switchTab('chiedi');setTimeout(()=>chiediTesto('struttura glutine idratazione'),100)">
+    <div class="fen-icon"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M3 21l18-18" stroke-dasharray="3 3"/><circle cx="12" cy="12" r="6"/></svg></div>
+    <div class="fen-info">
+      <div class="fen-name">Struttura</div>
+      <div class="fen-meta">%W farina · glutine</div>
+    </div>
+    <div class="fen-progress">6 nodi</div>
+  </div>
+  <div class="fenomeno-card" onclick="switchTab('chiedi');setTimeout(()=>chiediTesto('Maillard rosolatura temperatura'),100)">
+    <div class="fen-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6 2 4 7 4 10c0 4 3 7 8 7s8-3 8-7c0-3-2-8-8-8z"/><path d="M8 16c0 2 2 4 4 4s4-2 4-4"/></svg></div>
+    <div class="fen-info">
+      <div class="fen-name">Maillard</div>
+      <div class="fen-meta">140–165°C · colore</div>
+    </div>
+    <div class="fen-progress">4 nodi</div>
+  </div>
+  <div class="fenomeno-card" onclick="switchTab('chiedi');setTimeout(()=>chiediTesto('estrazione caffè EY TDS'),100)">
+    <div class="fen-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v4a8 8 0 0 1-16 0V4z"/><path d="M12 12v8M8 20h8"/></svg></div>
+    <div class="fen-info">
+      <div class="fen-name">Estrazione</div>
+      <div class="fen-meta">EY 18–22% · TDS</div>
+    </div>
+    <div class="fen-progress">5 nodi</div>
+  </div>
+  <div class="map-section-label" style="padding-top:6px">il ponte verso cifra</div>
+  <div class="bridge-card">
+    <div class="bridge-eyebrow">il ponte verso Cifra</div>
+    <div class="bridge-headline">Sai già la scienza. Vuoi vedere cosa ti costa davvero in bottega?</div>
+    <div class="bridge-body">Cifra prende questa stessa ricetta e calcola il food cost reale sui tuoi numeri.</div>
+    <button class="bridge-cta">
+      Scopri Cifra
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ── CHIEDI ──────────────────────────────────────────── -->
+<div class="screen" id="screen-chiedi">
+  <div class="chiedi-subtabs">
+    <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi al grafo</button>
+    <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Calcola</button>
+  </div>
+
+  <!-- chat -->
+  <div class="chiedi-panel active" id="panel-chat">
     <div class="schede" id="schede">
       <div class="empty-state" id="empty-state">
         Prova:<br>
-        <b onclick="chiediTesto('perché la mia carne non rosola?')">perché la carne non rosola</b> ·
-        <b onclick="chiediTesto('come bilancio un daiquiri?')">come bilancio un daiquiri</b> ·
-        <b onclick="chiediTesto('a che pH è matura la madre?')">pH della madre</b>
+        <b onclick="chiediTesto('uso sempre lo stesso lime ma il sour cambia')">perché il sour cambia</b> ·
+        <b onclick="chiediTesto('la madre raddoppia ma il pane non sviluppa')">madre vs pane</b> ·
+        <b onclick="chiediTesto('cold brew sempre debole')">cold brew debole</b>
       </div>
     </div>
   </div>
 
-  <!-- ===== VISTA CALCOLA ===== -->
-  <div id="view-calc">
-    <div class="subtabs" role="tablist">
-      <button class="subtab" id="tab-dil" aria-selected="true" onclick="App.setTool('dil')">
-        Diluizione<span class="t-sub">termodinamica</span>
-      </button>
-      <button class="subtab" id="tab-bil" aria-selected="false" onclick="App.setTool('bil')">
-        Bilanciamento<span class="t-sub">chimica del gusto</span>
-      </button>
-    </div>
+  <!-- calcolatori -->
+  <div class="chiedi-panel" id="panel-calc">
+    <div class="calc-wrap">
+      <!-- subtab calcolatori -->
+      <div style="display:flex;gap:6px;padding:14px 16px 0">
+        <button class="subtab-btn active" id="ctab-dil" onclick="App.setTool('dil')" style="font-size:10px">Diluizione</button>
+        <button class="subtab-btn" id="ctab-bil" onclick="App.setTool('bil')" style="font-size:10px">Bilanciamento</button>
+      </div>
 
-    <!-- DILUIZIONE -->
-    <div class="cpanel on" id="panel-dil">
-      <div class="card">
-        <h2>Il drink</h2>
-        <div class="row head"><span>Ingrediente</span><span>ml</span><span>Grad. %</span><span></span></div>
-        <div id="ingredienti"></div>
-        <button class="add" onclick="App.addIng()">+ aggiungi ingrediente</button>
-      </div>
-      <div class="card">
-        <h2>Tecnica → diluizione attesa</h2>
-        <div class="chips">
-          <div class="chip" data-dil="22" aria-pressed="true" onclick="App.setTech(this,22)">
-            <div class="c-t">Mescolato</div><div class="c-s">~22%</div>
+      <!-- diluizione -->
+      <div id="cpanel-dil">
+        <div class="calc-card">
+          <div class="calc-title">Il drink</div>
+          <div class="row head"><span>ingrediente</span><span>ml</span><span>grad %</span><span></span></div>
+          <div id="ing-list"></div>
+          <button class="add-btn" onclick="App.addIng()">+ aggiungi ingrediente</button>
+        </div>
+        <div class="calc-card">
+          <div class="calc-title">Tecnica</div>
+          <div class="chips-row">
+            <div class="chip" data-dil="22" aria-pressed="true" onclick="App.setTech(this,22)"><div class="c-t">Mescolato</div><div class="c-s">~22%</div></div>
+            <div class="chip" data-dil="27" aria-pressed="false" onclick="App.setTech(this,27)"><div class="c-t">Shakerato</div><div class="c-s">~27%</div></div>
           </div>
-          <div class="chip" data-dil="27" aria-pressed="false" onclick="App.setTech(this,27)">
-            <div class="c-t">Shakerato</div><div class="c-s">~27%</div>
+          <div class="slider-row">
+            <input type="range" min="0" max="45" value="22" id="dil-range" oninput="App.setRange(this.value)">
+            <span class="slider-val" id="dil-v">22%</span>
           </div>
+          <p class="hint">Zona di partenza. Per tararla: pesa lo shaker prima e dopo.</p>
         </div>
-        <div class="custom-dil">
-          <input type="range" id="dilRange" min="0" max="45" value="22" oninput="App.setRange(this.value)">
-          <span class="v" id="dilV">22%</span>
+        <div class="readout" id="dil-out"></div>
+        <div class="calc-card">
+          <div class="calc-title">Batch</div>
+          <div class="chips-row">
+            <div class="chip" id="bm-serv" aria-pressed="true" onclick="App.setBM('serv')"><div class="c-t">Per porzioni</div></div>
+            <div class="chip" id="bm-vol" aria-pressed="false" onclick="App.setBM('vol')"><div class="c-t">Per volume</div></div>
+          </div>
+          <div class="batch-row" style="margin-top:10px">
+            <div><label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px" id="bq-lab">porzioni</label><input class="c-input" type="number" id="b-qty" value="20" oninput="App.calcBatch()"></div>
+            <div><label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px">extra %</label><input class="c-input" type="number" id="b-over" value="10" oninput="App.calcBatch()"></div>
+            <div><label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px">bot. ml</label><input class="c-input" type="number" id="b-bot" value="700" oninput="App.calcBatch()"></div>
+          </div>
+          <div class="chips-row" style="margin-top:10px">
+            <div class="chip" id="ps-ice" aria-pressed="true" onclick="App.setServe('ice')"><div class="c-t">Col ghiaccio</div><div class="c-s">acqua dopo</div></div>
+            <div class="chip" id="ps-bot" aria-pressed="false" onclick="App.setServe('bot')"><div class="c-t">Imbottigliato</div><div class="c-s">acqua ora</div></div>
+          </div>
+          <div id="batch-out"></div>
         </div>
-        <p class="hint">Zone di partenza, non numeri magici. Per tararle: pesa lo shaker prima e dopo.</p>
       </div>
-      <div class="readout" id="dilOut"></div>
-      <div class="card" id="batchCard">
-        <h2>Batch / pre-batch</h2>
-        <div class="chips">
-          <div class="chip" id="bm-serv" aria-pressed="true" onclick="App.setBatchMode('serv')"><div class="c-t">Per porzioni</div></div>
-          <div class="chip" id="bm-vol" aria-pressed="false" onclick="App.setBatchMode('vol')"><div class="c-t">Per volume</div></div>
-        </div>
-        <div class="mini" style="grid-template-columns:1fr 1fr 1fr;margin-top:11px">
-          <div><label id="bq-lab">porzioni</label><input type="number" id="b-qty" value="20" oninput="App.calcBatch()"></div>
-          <div><label>extra %</label><input type="number" id="b-over" value="10" oninput="App.calcBatch()"></div>
-          <div><label>bottiglia ml</label><input type="number" id="b-bottle" value="700" oninput="App.calcBatch()"></div>
-        </div>
-        <div class="chips" style="margin-top:11px">
-          <div class="chip" id="ps-ice" aria-pressed="true" onclick="App.setServe('ice')"><div class="c-t">Col ghiaccio</div><div class="c-s">acqua dopo</div></div>
-          <div class="chip" id="ps-bottle" aria-pressed="false" onclick="App.setServe('bottle')"><div class="c-t">Imbottigliato</div><div class="c-s">acqua ora</div></div>
-        </div>
-        <p class="hint" id="serveHint"></p>
-        <div id="batchOut"></div>
-      </div>
-      <details><summary id="dilScedSum">Il perché</summary><div class="scheda-text" id="dilSced"></div></details>
-    </div>
 
-    <!-- BILANCIAMENTO -->
-    <div class="cpanel" id="panel-bil">
-      <div class="card">
-        <h2>Lo scheletro del sour</h2>
-        <div class="row" style="grid-template-columns:1fr 78px 78px">
-          <input value="Distillato" id="b-s-name">
-          <input type="number" id="b-s-vol" value="60" oninput="App.calcBil()">
-          <input type="number" id="b-s-abv" value="40" oninput="App.calcBil()">
+      <!-- bilanciamento -->
+      <div id="cpanel-bil" style="display:none">
+        <div class="calc-card">
+          <div class="calc-title">Sour</div>
+          <div style="display:grid;grid-template-columns:1fr 72px 72px;gap:6px;margin-bottom:6px">
+            <input class="c-input c-input-name" value="Distillato" id="b-s-name">
+            <input class="c-input" type="number" id="b-s-vol" value="60" oninput="App.calcBil()">
+            <input class="c-input" type="number" id="b-s-abv" value="40" oninput="App.calcBil()">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 72px 72px;gap:6px;margin-bottom:4px">
+            <span></span><span class="hint" style="text-align:center">ml</span><span class="hint" style="text-align:center">grad %</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 72px 72px;gap:6px;margin-bottom:6px">
+            <input class="c-input c-input-name" value="Agrume" id="b-a-name">
+            <input class="c-input" type="number" id="b-a-vol" value="22.5" oninput="App.calcBil()">
+            <input class="c-input" type="number" id="b-a-acid" value="6" step="0.1" oninput="App.calcBil()">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 72px 72px;gap:6px;margin-bottom:4px">
+            <span></span><span class="hint" style="text-align:center">ml</span><span class="hint" style="text-align:center">acido %</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 72px;gap:6px;margin-bottom:6px">
+            <select class="c-select" id="b-y-type" onchange="App.calcBil()">
+              <option value="50|1.23">Sciroppo 1:1 (50 Brix)</option>
+              <option value="65|1.31">Sciroppo 2:1 (65 Brix)</option>
+            </select>
+            <input class="c-input" type="number" id="b-y-vol" value="22.5" oninput="App.calcBil()">
+          </div>
+          <div class="slider-row">
+            <input type="range" min="0" max="40" value="25" id="b-dil" oninput="document.getElementById('b-dilV').textContent=this.value+'%';App.calcBil()">
+            <span class="slider-val" id="b-dilV">25%</span>
+          </div>
         </div>
-        <div class="row head" style="grid-template-columns:1fr 78px 78px"><span></span><span>ml</span><span>grad %</span></div>
-        <div class="row" style="grid-template-columns:1fr 78px 78px;margin-top:4px">
-          <input value="Agrume" id="b-a-name">
-          <input type="number" id="b-a-vol" value="22.5" oninput="App.calcBil()">
-          <input type="number" id="b-a-acid" value="6" step="0.1" oninput="App.calcBil()">
+        <div class="readout" id="bil-out"></div>
+        <div class="calc-card">
+          <div class="calc-title">Pareggiatore acidità</div>
+          <p class="hint" style="margin-bottom:8px">Porta qualsiasi succo al 6% del lime.</p>
+          <div class="mini">
+            <div><label>succo ml</label><input class="c-input" type="number" id="aa-vol" value="100" oninput="App.calcAA()"></div>
+            <div><label>acido %</label><input class="c-input" type="number" id="aa-cur" value="0.9" step="0.1" oninput="App.calcAA()"></div>
+            <div><label>target %</label><input class="c-input" type="number" id="aa-tgt" value="6" step="0.1" oninput="App.calcAA()"></div>
+          </div>
+          <div class="mini-out" id="aa-out"></div>
         </div>
-        <div class="row head" style="grid-template-columns:1fr 78px 78px"><span></span><span>ml</span><span>acido %</span></div>
-        <div class="row" style="grid-template-columns:1fr 78px 78px;margin-top:4px">
-          <select id="b-y-type" onchange="App.calcBil()">
-            <option value="50|1.23">Sciroppo 1:1 (50 Brix)</option>
-            <option value="65|1.31">Sciroppo 2:1 ricco (65 Brix)</option>
-          </select>
-          <input type="number" id="b-y-vol" value="22.5" oninput="App.calcBil()">
-          <span></span>
-        </div>
-        <div class="custom-dil">
-          <input type="range" id="b-dil" min="0" max="40" value="25"
-            oninput="document.getElementById('b-dilV').textContent=this.value+'%';App.calcBil()">
-          <span class="v" id="b-dilV">25%</span>
-        </div>
-        <p class="hint">Il sour si shakera: la diluizione fa parte della ricetta.</p>
       </div>
-      <div class="readout" id="bilOut"></div>
-      <div class="card">
-        <h2>Pareggiatore di acidità</h2>
-        <p class="hint" style="margin:0 0 10px">Porta arancia, pompelmo o altri succhi al ~6% del lime/limone per rendere la ricetta prevedibile.</p>
-        <div class="mini">
-          <div><label>succo (ml)</label><input type="number" id="aa-vol" value="100" oninput="App.calcAA()"></div>
-          <div><label>acido ora %</label><input type="number" id="aa-cur" value="0.9" step="0.1" oninput="App.calcAA()"></div>
-          <div><label>obiettivo %</label><input type="number" id="aa-tgt" value="6" step="0.1" oninput="App.calcAA()"></div>
-        </div>
-        <div class="mini-out" id="aaOut"></div>
-      </div>
-      <details><summary id="bilScedSum">Il perché</summary><div class="scheda-text" id="bilSced"></div></details>
     </div>
   </div>
 </div>
 
-<!-- barra domanda (chat) -->
-<div class="ask" id="ask-bar">
+<!-- ── BARRA DOMANDA ───────────────────────────────────── -->
+<div class="ask-bar" id="ask-bar">
   <div class="ask-inner">
-    <input id="q" placeholder="perché la mia carne non rosola?" autocomplete="off"
-      onkeydown="if(event.key==='Enter')invia()">
-    <button id="btn" onclick="invia()">Chiedi</button>
+    <input class="ask-input" id="q" placeholder="chiedi al grafo…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
+    <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
   </div>
 </div>
 
-<!-- ===== JS CALCOLATORI (nucleo + pacco bar) ===== -->
 <script>
-/* === CORE === */
-const Core=(function(){
-function volumeTotale(i){return i.reduce((s,x)=>s+(+x.vol||0),0)}
-function etanolo(i){return i.reduce((s,x)=>s+(+x.vol||0)*(+x.abv||0)/100,0)}
-function abv(a,v){return v?a/v*100:0}
-function diluisci(vol,p){const w=vol*p/100;return{acqua:w,volumeFinale:vol+w}}
-function concentrazione(g,v){return v?g/v*100:0}
-function pareggiaAcidita(v,a,t){return Math.max(0,(t-a)/100*v)}
-function zuccheroDaSciroppo(v,b,d){return v*d*b/100}
-function acquaDiFusione(m,Ti,Tf){const c=3.9,L=334,cw=4.18;return m*c*(Ti-Tf)/(L+cw*Tf)}
-return{volumeTotale,etanolo,abv,diluisci,concentrazione,pareggiaAcidita,zuccheroDaSciroppo,acquaDiFusione};
-})();
+/* ── NAVIGAZIONE ──────────────────────────────────────── */
+function switchTab(t){
+  ['scopri','lezione','mappa','chiedi'].forEach(s=>{
+    document.getElementById('screen-'+s).classList.toggle('active',s===t);
+    document.getElementById('tab-'+s).classList.toggle('active',s===t);
+  });
+  const askBar=document.getElementById('ask-bar');
+  askBar.style.display=t==='chiedi'?'block':'none';
+}
+function switchSubtab(s){
+  ['chat','calc'].forEach(p=>{
+    document.getElementById('panel-'+p).classList.toggle('active',p===s);
+    document.getElementById('subtab-'+p).classList.toggle('active',p===s);
+  });
+}
+function selDisc(el){
+  document.querySelectorAll('.disc-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+// inizializzazione
+switchTab('scopri');
 
-/* === SCHEDE BAR === */
-const SchedeBar=[
-{id:"sc-diluizione",titolo:"Freddo e acqua sono lo stesso evento",
- principio:"Non c'è raffreddamento senza diluizione: sono due facce di un solo fatto fisico.",
- testo:`Quando agiti o mescoli un drink sul ghiaccio non scegli due cose separate — il freddo e l'acqua arrivano insieme, perché sono lo stesso evento.\n\nIl ghiaccio, per raffreddare, deve sciogliersi. E per sciogliersi assorbe 334 joule per ogni grammo — il calore latente di fusione. Quel calore viene preso dal drink: ecco il freddo. L'acqua che resta è la diluizione. Stessa moneta, due facce.\n\nLa termodinamica predice che un drink raffreddato a zero gradi guadagna intorno al 20-25% di acqua. È lo stesso numero che i barman hanno trovato assaggiando. Il numero operativo lo dà la bilancia — pesa lo shaker prima e dopo.`},
-{id:"sc-bilanciamento",titolo:"Esiste un punto d'equilibrio, e si misura",
- principio:"Dolce e acido non si dosano a sentimento: hanno un punto di pareggio misurabile.",
- testo:`Il dolce si legge in Brix: grammi di zucchero per cento grammi di soluzione. Uno sciroppo 1:1 sta a ~50 Brix. L'aspro si legge in acidità titolabile: limone e lime stanno entorno al 6%.\n\nEsiste un equilibrio che vale per la maggioranza dei palati: lo scheletro classico del sour finisce intorno a 16% ABV, 12 Brix, 1,2% acido nel bicchiere. Le tre lancette dello strumento confrontano il tuo drink con questa zona.`},
-{id:"sc-batch",titolo:"Senza ghiaccio al servizio, l'acqua va messa prima",
- principio:"In un batch imbottigliato non c'è ghiaccio a diluire: la diluizione va pre-aggiunta.",
- testo:`Batchare non è solo moltiplicare le dosi. Se imbottigli un batch da versare senza shakerare, manca l'acqua che il ghiaccio avrebbe dato. La soluzione è la pre-diluizione: aggiungi adesso l'acqua che il ghiaccio avrebbe aggiunto. Se invece il batch lo servi sul ghiaccio, in bottiglia vanno solo gli ingredienti — sarà più forte e si diluirà nel bicchiere.`}
-];
-
-/* === PACCO BAR === */
-const PaccoBar={
- id:"bar",schede:SchedeBar,
- calcoli:[
-  {id:"diluizione",schedaId:"sc-diluizione",
-   zone:{forza:{min:14,max:19,scala:30,unita:"%"},dolce:{min:9,max:14,scala:25,unita:" g/100ml"},acido:{min:0.9,max:1.4,scala:2.5,unita:"%"}},
-   run({ingredienti,dilPerc}){
-    const V0=Core.volumeTotale(ingredienti),alcol=Core.etanolo(ingredienti);
-    const{acqua,volumeFinale}=Core.diluisci(V0,dilPerc);
-    return{V0,alcol,acqua,volumeFinale,abv0:Core.abv(alcol,V0),abvFinale:Core.abv(alcol,volumeFinale),
-     termoG:Core.acquaDiFusione(V0,20,0),termoPerc:V0?Core.acquaDiFusione(V0,20,0)/V0*100:0};
-   }},
-  {id:"bilanciamento",schedaId:"sc-bilanciamento",
-   run({spirit,agrume,sciroppo,dilPerc}){
-    const sub=spirit.vol+agrume.vol+sciroppo.vol;
-    const{volumeFinale:Vf}=Core.diluisci(sub,dilPerc);
-    const abv=Core.abv(spirit.vol*spirit.abv/100,Vf);
-    const z=Core.zuccheroDaSciroppo(sciroppo.vol,sciroppo.brix,sciroppo.densita);
-    return{Vf,abv,brix:Core.concentrazione(z,Vf),acido:Core.concentrazione(agrume.vol*agrume.acido/100,Vf)};
-   }},
-  {id:"batch",schedaId:"sc-batch",
-   run({ingredienti,dilPerc,modo,qty,over,bottle,serve}){
-    const V0=Core.volumeTotale(ingredienti),alcol=Core.etanolo(ingredienti);
-    const wPer=serve==="bottle"?Core.diluisci(V0,dilPerc).acqua:0;
-    const servVol=V0+wPer,o=1+(over||0)/100;
-    const Neff=modo==="serv"?(qty||0)*o:(servVol?(qty||0)/servVol*o:0);
-    const righe=ingredienti.map(i=>({nome:i.n,ml:i.vol*Neff,bott:bottle?i.vol*Neff/bottle:null}));
-    return{Neff,wPer,acquaTot:wPer*Neff,volumeTot:servVol*Neff,abv:Core.abv(alcol,servVol),serve,righe};
-   }}
- ],
- pareggiaAcidita:Core.pareggiaAcidita,
- scheda(id){return this.schede.find(s=>s.id===id);}
-};
-
-/* === APP BAR (calcolatori) === */
-const App=(function(){
-const PACCO=PaccoBar;
-const calcolo=id=>PACCO.calcoli.find(c=>c.id===id);
-let ing=[{n:"Gin",vol:30,abv:40},{n:"Campari",vol:30,abv:25},{n:"Vermouth rosso",vol:30,abv:16}];
-let dil=22,batchMode="serv",serveMode="ice";
-const $=id=>document.getElementById(id);
-function prosa(sc){
- let h=`<p class="q">${sc.principio}</p>`;
- sc.testo.split(/\n\n+/).forEach(p=>h+=`<p>${p.trim()}</p>`);
- return h;
-}
-function renderIng(){
- const c=$("ingredienti");c.innerHTML="";
- ing.forEach((it,i)=>{
-  const r=document.createElement("div");r.className="row";
-  r.innerHTML=`<input value="${it.n}" oninput="App.upd(${i},'n',this.value)">
-   <input type="number" inputmode="decimal" value="${it.vol}" oninput="App.upd(${i},'vol',+this.value||0)">
-   <input type="number" inputmode="decimal" value="${it.abv}" oninput="App.upd(${i},'abv',+this.value||0)">
-   <button class="del" onclick="App.delIng(${i})">×</button>`;
-  c.appendChild(r);
- });
-}
-function upd(i,k,v){
- if(k==="vol")v=Math.max(0,v);if(k==="abv")v=Math.min(100,Math.max(0,v));
- ing[i][k]=v;if(k!=="n"){calcDil();}
-}
-function addIng(){ing.push({n:"",vol:30,abv:0});renderIng();calcDil();}
-function delIng(i){ing.splice(i,1);renderIng();calcDil();}
-function setTech(el,d){
- document.querySelectorAll(".chip[data-dil]").forEach(c=>c.setAttribute("aria-pressed","false"));
- el.setAttribute("aria-pressed","true");dil=d;$("dilRange").value=d;$("dilV").textContent=d+"%";calcDil();
-}
-function setRange(v){
- dil=+v;$("dilV").textContent=v+"%";
- document.querySelectorAll(".chip[data-dil]").forEach(c=>c.setAttribute("aria-pressed",(+c.dataset.dil===+v)?"true":"false"));
- calcDil();
-}
-function calcDil(){
- const c=calcolo("diluizione"),r=c.run({ingredienti:ing,dilPerc:dil}),sc=PACCO.scheda(c.schedaId);
- $("dilScedSum").textContent="Il perché — "+sc.titolo;
- if(!ing.length||r.V0<=0){$("dilOut").innerHTML=`<div class="empty">Aggiungi un ingrediente.</div>`;$("dilSced").innerHTML=prosa(sc);calcBatch();return;}
- $("dilOut").innerHTML=`<div class="big"><div class="num">${r.abvFinale.toFixed(1)}<span class="us">%</span></div>
-  <div class="lab">grado finale (prima: ${r.abv0.toFixed(1)}%)</div></div>
-  <div class="grid2">
-   <div class="stat"><div class="s-n">${r.volumeFinale.toFixed(0)} ml</div><div class="s-l">volume nel bicchiere</div></div>
-   <div class="stat"><div class="s-n">${r.acqua.toFixed(0)} ml</div><div class="s-l">acqua di fusione</div></div>
-  </div>`;
- $("dilSced").innerHTML=prosa(sc)+`<div class="calc">fisica su questo drink:<br>acqua di fusione = ${r.V0.toFixed(0)} g · 3,9 · 20°C / 334 J/g = <b>${r.termoG.toFixed(0)} g ≈ ${r.termoPerc.toFixed(0)}%</b></div>`;
- calcBatch();
-}
-function setBatchMode(m){
- batchMode=m;$("bm-serv").setAttribute("aria-pressed",m==="serv");$("bm-vol").setAttribute("aria-pressed",m==="vol");
- $("bq-lab").textContent=m==="serv"?"porzioni":"volume ml";$("b-qty").value=m==="serv"?20:1500;calcBatch();
-}
-function setServe(s){
- serveMode=s;$("ps-ice").setAttribute("aria-pressed",s==="ice");$("ps-bottle").setAttribute("aria-pressed",s==="bottle");
- $("serveHint").textContent=s==="ice"?"Servito fresco: il ghiaccio aggiunge l'acqua al momento.":"Imbottigliato: l'acqua di diluizione va aggiunta adesso.";
- calcBatch();
-}
-function calcBatch(){
- const qty=+$("b-qty").value||0;
- if(qty<=0||Core.volumeTotale(ing)<=0){$("batchOut").innerHTML=`<div class="empty">Imposta porzioni e un drink.</div>`;return;}
- const r=calcolo("batch").run({ingredienti:ing,dilPerc:dil,modo:batchMode,qty,over:+$("b-over").value||0,bottle:+$("b-bottle").value||0,serve:serveMode});
- let rows=r.righe.map(x=>`<div class="brow"><span>${x.nome||"—"}</span><b>${x.ml.toFixed(0)} ml</b><span>${x.bott?x.bott.toFixed(1)+" bott.":""}</span></div>`).join("");
- if(r.wPer>0)rows+=`<div class="brow"><span>Acqua · pre-diluizione</span><b>${r.acquaTot.toFixed(0)} ml</b><span></span></div>`;
- const note=serveMode==="ice"?`Grado in bottiglia <b>${r.abv.toFixed(1)}%</b> — si abbassa con il ghiaccio.`:`Grado in bottiglia <b>${r.abv.toFixed(1)}%</b> — pronto da versare.`;
- $("batchOut").innerHTML=rows+`<div class="bsum">Volume totale <b>${(r.volumeTot/1000).toFixed(2)} L</b> · include il ${(+$("b-over").value||0)}% extra.<br>${note}</div>`;
-}
-function gauge(name,val,z){
- const pos=Math.min(100,Math.max(0,val/z.scala*100));
- const zl=z.min/z.scala*100,zw=(z.max-z.min)/z.scala*100;
- const ok=val>=z.min&&val<=z.max;
- return{html:`<div class="gauge"><div class="g-top"><span class="g-name">${name}</span>
-  <span class="g-val" style="color:${ok?"var(--good)":"var(--bad)"}">${val.toFixed(z.unita==="%"?2:1)}${z.unita}</span></div>
-  <div class="track"><div class="zone" style="left:${zl}%;width:${zw}%"></div><div class="needle" style="left:${pos}%"></div></div></div>`,ok,val,min:z.min};
-}
-function calcBil(){
- const c=calcolo("bilanciamento");
- const rd=id=>Math.max(0,+$(id).value||0);
- const[brix,dens]=$("b-y-type").value.split("|").map(Number);
- const r=c.run({spirit:{vol:rd("b-s-vol"),abv:Math.min(100,rd("b-s-abv"))},agrume:{vol:rd("b-a-vol"),acido:rd("b-a-acid")},sciroppo:{vol:rd("b-y-vol"),brix,densita:dens},dilPerc:rd("b-dil")});
- const gF=gauge("Forza · alcol",r.abv,{min:14,max:19,scala:30,unita:"%"});
- const gD=gauge("Dolce · zucchero",r.brix,{min:9,max:14,scala:25,unita:" g/100ml"});
- const gA=gauge("Acido",r.acido,{min:0.9,max:1.4,scala:2.5,unita:"%"});
- const off=[gF,gD,gA].filter(g=>!g.ok);
- let v,cls;
- if(!off.length){v="In equilibrio — i tre assi cadono nella zona classica del sour.";cls="ok";}
- else{
-  const fix=[];
-  if(!gF.ok)fix.push(gF.val<gF.min?"poco forte: più distillato":"troppo forte: più diluizione");
-  if(!gD.ok)fix.push(gD.val<gD.min?"poco dolce: più sciroppo":"troppo dolce: meno sciroppo");
-  if(!gA.ok)fix.push(gA.val<gA.min?"piatto: più agrume":"troppo aspro: meno agrume");
-  v=fix.join(" · ");cls="off";
- }
- $("bilOut").innerHTML=gF.html+gD.html+gA.html+`<div class="verdict ${cls}">${v}</div>`;
- const sc=PACCO.scheda(c.schedaId);
- $("bilScedSum").textContent="Il perché — "+sc.titolo;
- $("bilSced").innerHTML=prosa(sc);
-}
-function calcAA(){
- const g=PACCO.pareggiaAcidita(+$("aa-vol").value||0,+$("aa-cur").value||0,+$("aa-tgt").value||0);
- $("aaOut").innerHTML=`Aggiungi <b style="color:var(--warm)">${g.toFixed(1)} g</b> di acido citrico e mescola fino a sciogliere.`;
-}
-function setTool(t){
- $("tab-dil").setAttribute("aria-selected",t==="dil");
- $("tab-bil").setAttribute("aria-selected",t==="bil");
- $("panel-dil").classList.toggle("on",t==="dil");
- $("panel-bil").classList.toggle("on",t==="bil");
- document.documentElement.style.setProperty("--accent",t==="dil"?"var(--cool)":"var(--warm)");
-}
-function init(){renderIng();setServe("ice");calcDil();calcBil();calcAA();}
-document.addEventListener("DOMContentLoaded",init);
-return{upd,addIng,delIng,setTech,setRange,calcDil,setBatchMode,setServe,calcBatch,calcBil,calcAA,setTool};
-})();
-
-/* === SWITCH VIEW === */
-function switchView(v){
- const isChat=v==="chat";
- document.getElementById("view-chat").style.display=isChat?"block":"none";
- document.getElementById("view-calc").style.display=isChat?"none":"block";
- document.getElementById("ask-bar").style.display=isChat?"block":"none";
- document.getElementById("nav-chiedi").setAttribute("aria-selected",isChat);
- document.getElementById("nav-calcola").setAttribute("aria-selected",!isChat);
- document.documentElement.style.setProperty("--accent",isChat?"var(--cool)":"var(--warm)");
+/* ── QUIZ ─────────────────────────────────────────────── */
+function selQuiz(el,correct){
+  const q=el.closest('.quiz-card');
+  q.querySelectorAll('.quiz-opt').forEach(o=>o.classList.remove('correct'));
+  if(correct)el.classList.add('correct');
 }
 
-/* === CHAT === */
-const DOMCOL={bar:"--cool",cucina:"--warm",bakery:"#9FC08A",caffetteria:"#C79A6A",fermentazione:"#C792EA",trasversale:"#8FA0B0"};
+/* ── CHAT / GRAFO ─────────────────────────────────────── */
+const DOMCOL={bar:'#C77B3F',cucina:'#E0AA76',bakery:'#2C6E63',caffetteria:'#9A5A28',fermentazione:'#8FBBB0',trasversale:'#6F6A60'};
 let busy=false;
-function setBusy(b){busy=b;document.getElementById("btn").disabled=b;}
-function invia(){const q=document.getElementById("q").value.trim();if(!q||busy)return;document.getElementById("q").value="";chiediTesto(q);}
+function setBusy(b){busy=b;document.getElementById('ask-btn').disabled=b;}
+function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)return;document.getElementById('q').value='';chiediTesto(q);}
 function chiediTesto(q){
- if(busy)return;
- const e=document.getElementById("empty-state");if(e)e.remove();
- aggiungiThinking();setBusy(true);
- fetch("/chiedi",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domanda:q})})
-  .then(r=>r.json()).then(j=>render(q,j)).catch(()=>renderErr()).finally(()=>setBusy(false));
+  if(busy)return;
+  const e=document.getElementById('empty-state');if(e)e.remove();
+  // assicuriamoci che l'utente sia sulla tab giusta
+  switchTab('chiedi');switchSubtab('chat');
+  aggiungiThinking();setBusy(true);
+  fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q})})
+    .then(r=>r.json()).then(j=>renderRisp(q,j)).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
 function apriNodo(id,nome){
- if(busy)return;aggiungiThinking();setBusy(true);
- fetch("/nodo",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})})
-  .then(r=>r.json()).then(j=>render(nome,j,true)).catch(()=>renderErr()).finally(()=>setBusy(false));
+  if(busy)return;
+  aggiungiThinking();setBusy(true);
+  fetch('/nodo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})})
+    .then(r=>r.json()).then(j=>renderRisp(nome,j,true)).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
 function aggiungiThinking(){
- const d=document.createElement("div");d.className="scheda";d.id="thinking";
- d.innerHTML='<div class="thinking"><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><span class="step" id="thinking-step">consulto il grafo</span></div>';
- document.getElementById("schede").prepend(d);
- // fasi che raccontano davvero cosa succede nel backend (cerca nel grafo,
- // costruisce il contesto, chiede al modello) — non decorazione a caso
- const fasi=["consulto il grafo","raccolgo i fenomeni collegati","scrivo la risposta"];
- let i=0;
- const timer=setInterval(()=>{
-  i=(i+1)%fasi.length;
-  const el=document.getElementById("thinking-step");
-  if(!el){clearInterval(timer);return;}
-  el.style.opacity=0;
-  setTimeout(()=>{el.textContent=fasi[i];el.style.opacity=1;},250);
- },1100);
- // pulizia automatica se la scheda thinking sparisce (risposta arrivata)
- const obs=new MutationObserver(()=>{
-  if(!document.getElementById("thinking")){clearInterval(timer);obs.disconnect();}
- });
- obs.observe(document.getElementById("schede"),{childList:true});
+  const d=document.createElement('div');d.className='scheda';d.id='thinking';
+  d.innerHTML='<div class="thinking"><span class="t-dots"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></span><span class="t-step" id="t-step">consulto il grafo</span></div>';
+  document.getElementById('schede').prepend(d);
+  const fasi=['consulto il grafo','raccolgo i fenomeni','scrivo la risposta'];
+  let i=0;
+  const tmr=setInterval(()=>{
+    i=(i+1)%fasi.length;
+    const el=document.getElementById('t-step');
+    if(!el){clearInterval(tmr);return;}
+    el.style.opacity=0;setTimeout(()=>{if(el){el.textContent=fasi[i];el.style.opacity=1;}},250);
+  },1100);
+  const obs=new MutationObserver(()=>{if(!document.getElementById('thinking')){clearInterval(tmr);obs.disconnect();}});
+  obs.observe(document.getElementById('schede'),{childList:true});
 }
-function render(domanda,j,fromNode){
- const t=document.getElementById("thinking");if(t)t.remove();
- if(!j.risposta){renderNota(domanda,j.nota,j.connessi);return;}
- const fens=(j.trovato||[]).map(f=>`<span class="fenchip">${f}</span>`).join("");
- const conns=(j.connessi||[]).map(c=>{
-  const col=`var(${DOMCOL[c.dominio]||"--faint"})`;
-  const tg=c.target?`<span class="tg">${c.target}</span>`:"";
-  return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||"").replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${c.nome}${tg}</span>`;
- }).join("");
- const card=document.createElement("div");card.className="scheda";
- card.innerHTML=`<div class="s-q">${fromNode?"▸ ":""}<b>${esc(domanda)}</b></div>
-  <div class="fenchips">${fens}</div>
-  <div class="s-body">${esc(j.risposta)}</div>
-  ${conns?`<div class="s-conn"><div class="s-conn-lab">esplora le connessioni</div><div class="conns">${conns}</div></div>`:""}
-  <details class="s-dev"><summary>dettagli tecnici</summary><pre>${esc(j.prompt_costruito||"")}</pre></details>`;
- document.getElementById("schede").prepend(card);
+function renderRisp(domanda,j,fromNode){
+  const t=document.getElementById('thinking');if(t)t.remove();
+  if(!j.risposta){renderNota(domanda,j.nota,j.connessi);return;}
+  const fens=(j.trovato||[]).map(f=>`<span class="fenchip">${esc(f)}</span>`).join('');
+  const conns=(j.connessi||[]).map(c=>{
+    const col=DOMCOL[c.dominio]||'#6F6A60';
+    const tg=c.target?`<span class="tg">${esc(c.target)}</span>`:'';
+    return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||'').replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${esc(c.nome)}${tg}</span>`;
+  }).join('');
+  const card=document.createElement('div');card.className='scheda';
+  card.innerHTML=`<div class="s-q">${fromNode?'▸ ':''}<b>${esc(domanda)}</b></div>
+    <div class="fenchips">${fens}</div>
+    <div class="s-body">${esc(j.risposta)}</div>
+    ${conns?`<div class="s-conn"><div class="s-conn-lab">esplora le connessioni</div><div class="conns">${conns}</div></div>`:''}
+    <details class="s-dev"><summary>dettagli tecnici</summary><pre>${esc(j.prompt_costruito||'')}</pre></details>`;
+  document.getElementById('schede').prepend(card);
 }
 function renderNota(domanda,nota,connessi){
- const card=document.createElement("div");card.className="scheda";
- const conns=(connessi||[]).map(c=>{
-  const col=`var(${DOMCOL[c.dominio]||"--faint"})`;
-  const tg=c.target?`<span class="tg">${c.target}</span>`:"";
-  return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||"").replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${c.nome}${tg}</span>`;
- }).join("");
- card.innerHTML=`<div class="s-q"><b>${esc(domanda)}</b></div>
-  <div class="s-body" style="color:var(--faint)">${esc(nota||"Niente trovato nel grafo.")}</div>
-  ${conns?`<div class="s-conn"><div class="s-conn-lab">parti da un fenomeno</div><div class="conns">${conns}</div></div>`:""}`;
- document.getElementById("schede").prepend(card);
+  const card=document.createElement('div');card.className='scheda';
+  const conns=(connessi||[]).map(c=>{
+    const col=DOMCOL[c.dominio]||'#6F6A60';
+    return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||'').replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${esc(c.nome)}</span>`;
+  }).join('');
+  card.innerHTML=`<div class="s-q"><b>${esc(domanda)}</b></div>
+    <div class="s-body" style="color:var(--ink-muted)">${esc(nota||'Niente trovato nel grafo.')}</div>
+    ${conns?`<div class="s-conn"><div class="s-conn-lab">parti da un fenomeno</div><div class="conns">${conns}</div></div>`:''}`;
+  document.getElementById('schede').prepend(card);
 }
-function renderErr(){
- const t=document.getElementById("thinking");if(t)t.remove();
- const card=document.createElement("div");card.className="scheda";
- card.innerHTML='<div class="s-body" style="color:var(--faint)">Errore di rete. Riprova.</div>';
- document.getElementById("schede").prepend(card);
-}
-function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+function renderErr(){const t=document.getElementById('thinking');if(t)t.remove();const card=document.createElement('div');card.className='scheda';card.innerHTML='<div class="s-body" style="color:var(--ink-muted)">Errore di rete. Riprova.</div>';document.getElementById('schede').prepend(card);}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+/* ── CORE CALCOLATORI ─────────────────────────────────── */
+const Core=(()=>{
+  const vt=i=>i.reduce((s,x)=>s+(+x.vol||0),0);
+  const et=i=>i.reduce((s,x)=>s+(+x.vol||0)*(+x.abv||0)/100,0);
+  const abv=(a,v)=>v?a/v*100:0;
+  const dil=(vol,p)=>{const w=vol*p/100;return{acqua:w,vf:vol+w};};
+  const conc=(g,v)=>v?g/v*100:0;
+  const par=(v,a,t)=>Math.max(0,(t-a)/100*v);
+  const zuc=(v,b,d)=>v*d*b/100;
+  const afus=(m)=>m*3.9*20/334;
+  return{vt,et,abv,dil,conc,par,zuc,afus};
+})();
+
+/* ── APP CALCOLATORI ──────────────────────────────────── */
+const App=(()=>{
+  let ing=[{n:'Gin',vol:30,abv:40},{n:'Campari',vol:30,abv:25},{n:'Vermouth',vol:30,abv:16}];
+  let dil=22,bm='serv',srv='ice';
+  const $=id=>document.getElementById(id);
+  const fmt=(n,d=1)=>isNaN(n)?'—':n.toFixed(d);
+
+  function renderIng(){
+    const c=$('ing-list');c.innerHTML='';
+    ing.forEach((it,i)=>{
+      const r=document.createElement('div');r.className='row';
+      r.innerHTML=`<input class="c-input c-input-name" value="${esc(it.n)}" oninput="App.upd(${i},'n',this.value)">
+        <input class="c-input" type="number" inputmode="decimal" value="${it.vol}" oninput="App.upd(${i},'vol',+this.value||0)">
+        <input class="c-input" type="number" inputmode="decimal" value="${it.abv}" oninput="App.upd(${i},'abv',+this.value||0)">
+        <button class="del-btn" onclick="App.delIng(${i})">×</button>`;
+      c.appendChild(r);
+    });
+    calcDil();
+  }
+  function upd(i,k,v){ing[i][k]=k==='n'?v:Math.max(0,+v||0);if(k!=='n')calcDil();}
+  function addIng(){ing.push({n:'',vol:30,abv:0});renderIng();}
+  function delIng(i){ing.splice(i,1);renderIng();}
+
+  function setTech(el,d){
+    document.querySelectorAll('.chip[data-dil]').forEach(c=>c.setAttribute('aria-pressed','false'));
+    el.setAttribute('aria-pressed','true');dil=d;$('dil-range').value=d;$('dil-v').textContent=d+'%';calcDil();
+  }
+  function setRange(v){
+    dil=+v;$('dil-v').textContent=v+'%';
+    document.querySelectorAll('.chip[data-dil]').forEach(c=>c.setAttribute('aria-pressed',(+c.dataset.dil===+v)+''));
+    calcDil();
+  }
+
+  function calcDil(){
+    if(!ing.length){$('dil-out').innerHTML='<p class="hint" style="padding:16px">Aggiungi un ingrediente.</p>';calcBatch();return;}
+    const V0=Core.vt(ing),al=Core.et(ing);
+    const{acqua,vf}=Core.dil(V0,dil);
+    const abv0=Core.abv(al,V0),abvF=Core.abv(al,vf),tg=Core.afus(V0);
+    $('dil-out').innerHTML=`<div class="readout-big"><div class="readout-num">${fmt(abvF)}<span class="readout-unit">%</span></div><div class="readout-lab">grado finale (era ${fmt(abv0)}%)</div></div>
+      <div class="grid2"><div class="stat"><div class="s-n">${fmt(vf,0)} ml</div><div class="s-l">volume nel bicchiere</div></div><div class="stat"><div class="s-n">${fmt(acqua,0)} ml</div><div class="s-l">acqua di fusione</div></div></div>`;
+    calcBatch();
+  }
+
+  function setBM(m){bm=m;$('bm-serv').setAttribute('aria-pressed',m==='serv');$('bm-vol').setAttribute('aria-pressed',m==='vol');$('bq-lab').textContent=m==='serv'?'porzioni':'volume ml';calcBatch();}
+  function setServe(s){srv=s;$('ps-ice').setAttribute('aria-pressed',s==='ice');$('ps-bot').setAttribute('aria-pressed',s==='bot');calcBatch();}
+
+  function calcBatch(){
+    const qty=+$('b-qty').value||0,over=+$('b-over').value||0,bot=+$('b-bot').value||0;
+    const V0=Core.vt(ing);if(qty<=0||V0<=0){$('batch-out').innerHTML='';return;}
+    const wPer=srv==='bot'?Core.dil(V0,dil).acqua:0;
+    const sv=V0+wPer,o=1+over/100;
+    const Neff=bm==='serv'?qty*o:(sv?qty/sv*o:0);
+    const rows=ing.map(x=>`<div class="b-row"><span>${esc(x.n||'—')}</span><b>${fmt(x.vol*Neff,0)} ml</b></div>`).join('');
+    const wTotal=wPer*Neff,volTot=sv*Neff;
+    $('batch-out').innerHTML=rows+(wPer>0?`<div class="b-row"><span>Acqua pre-diluizione</span><b>${fmt(wTotal,0)} ml</b></div>`:'')+
+      `<div class="b-sum">Totale <b>${fmt(volTot/1000,2)} L</b> · include ${over}% extra</div>`;
+  }
+
+  function gauge(name,val,z){
+    const pos=Math.min(100,Math.max(0,val/z.sc*100));
+    const zl=z.min/z.sc*100,zw=(z.max-z.min)/z.sc*100;
+    const ok=val>=z.min&&val<=z.max;
+    return{html:`<div class="gauge"><div class="g-top"><span class="g-name">${name}</span><span class="g-val" style="color:${ok?'var(--s500)':'var(--e700)'}">${fmt(val,z.dec||1)}${z.u}</span></div><div class="track"><div class="zone" style="left:${zl}%;width:${zw}%"></div><div class="needle" style="left:${pos}%"></div></div></div>`,ok};
+  }
+
+  function calcBil(){
+    const rd=id=>Math.max(0,+$(id).value||0);
+    const[brix,dens]=$('b-y-type').value.split('|').map(Number);
+    const sv=rd('b-s-vol'),sa=Math.min(100,rd('b-s-abv'));
+    const av=rd('b-a-vol'),aa=rd('b-a-acid');
+    const yv=rd('b-y-vol'),bd=rd('b-dil');
+    const sub=sv+av+yv,{vf}=Core.dil(sub,bd);
+    const abvF=Core.abv(sv*sa/100,vf);
+    const z=Core.zuc(yv,brix,dens),brixF=Core.conc(z,vf);
+    const acidF=Core.conc(av*aa/100,vf);
+    const gF=gauge('Forza · alcol',abvF,{min:14,max:19,sc:30,u:'%',dec:1});
+    const gD=gauge('Dolce · Brix',brixF,{min:9,max:14,sc:25,u:' g/100ml',dec:1});
+    const gA=gauge('Acido',acidF,{min:0.9,max:1.4,sc:2.5,u:'%',dec:2});
+    const off=[gF,gD,gA].filter(g=>!g.ok);
+    const v=off.length===0?'In equilibrio — i tre assi cadono nella zona classica del sour.':'Fuori equilibrio: '+[gF.ok?'':'forza',gD.ok?'':'dolce',gA.ok?'':'acido'].filter(Boolean).join(', ')+' da correggere.';
+    $('bil-out').innerHTML=gF.html+gD.html+gA.html+`<div class="verdict ${off.length?'off':'ok'}">${v}</div>`;
+  }
+
+  function calcAA(){
+    const g=Core.par(+$('aa-vol').value||0,+$('aa-cur').value||0,+$('aa-tgt').value||0);
+    $('aa-out').innerHTML=`Aggiungi <b style="color:var(--e700)">${fmt(g,1)} g</b> di acido citrico.`;
+  }
+
+  function setTool(t){
+    $('cpanel-dil').style.display=t==='dil'?'block':'none';
+    $('cpanel-bil').style.display=t==='bil'?'block':'none';
+    $('ctab-dil').classList.toggle('active',t==='dil');
+    $('ctab-bil').classList.toggle('active',t==='bil');
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{renderIng();setServe('ice');calcBil();calcAA();});
+  return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool};
+})();
 </script>
 </body>
 </html>
