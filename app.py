@@ -94,7 +94,85 @@ def _dati(campo):
     return json.loads(campo or "{}")
 
 # ---- ricerca contesto: profonda, centrata sui fenomeni ----
-def cerca_contesto(db, termine):
+def _domanda_chiede_perche(domanda):
+    """True se la domanda chiede il principio sottostante ('perché', 'causa', ecc.)
+    In quel caso includiamo gli archi relation='spiega' nel contesto."""
+    parole = {"perché", "perche", "causa", "principio", "legge", "spiega", "spiegami",
+               "why", "because", "underlying", "behind"}
+    return any(p in domanda.lower() for p in parole)
+
+
+def cerca_contesto(db, termine, domanda=""):
+    t = f"%{termine.lower()}%"
+    hit = db.execute(
+        "SELECT * FROM nodes WHERE lower(name) LIKE ? ORDER BY "
+        "CASE type WHEN 'Fenomeno' THEN 0 WHEN 'Prodotto' THEN 1 "
+        "WHEN 'Errore' THEN 2 ELSE 3 END LIMIT 4", (t,)).fetchall()
+    if not hit:
+        return None
+
+    fenomeni = {}
+    def aggiungi_fenomeno(fid):
+        if fid in fenomeni: return
+        f = db.execute("SELECT * FROM nodes WHERE id=? AND type='Fenomeno'", (fid,)).fetchone()
+        if f: fenomeni[fid] = f
+
+    prodotti_interesse = set()
+    for n in hit:
+        if n["type"] == "Fenomeno":
+            aggiungi_fenomeno(n["id"])
+        elif n["type"] == "Prodotto":
+            prodotti_interesse.add(n["id"])
+            for e in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (n["id"],)):
+                aggiungi_fenomeno(e["from_id"])
+        elif n["type"] == "Errore":
+            for e in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='fallisce_come'", (n["id"],)):
+                prodotti_interesse.add(e["from_id"])
+                for f in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (e["from_id"],)):
+                    aggiungi_fenomeno(f["from_id"])
+        else:
+            for e in db.execute("SELECT from_id FROM edges WHERE to_id=?", (n["id"],)):
+                aggiungi_fenomeno(e["from_id"])
+
+    if not fenomeni:
+        for n in hit:
+            fenomeni[n["id"]] = n
+
+    # include i principi (iper-archi) solo se la domanda chiede il "perché"
+    includi_principi = _domanda_chiede_perche(domanda)
+
+    ctx = []
+    for fid, f in fenomeni.items():
+        nodo = dict(f); nodo["data"] = _dati(f["data"])
+        coll = []
+        for e in db.execute("""SELECT e.relation, e.data, n.name, n.type, n.domain, n.id
+                               FROM edges e JOIN nodes n ON n.id=e.to_id
+                               WHERE e.from_id=?
+                               AND e.relation != 'spiega'""", (fid,)):
+            coll.append({"verso": e["name"], "tipo": e["type"], "dominio": e["domain"],
+                         "relazione": e["relation"], "id": e["id"],
+                         "data": _dati(e["data"])})
+        # aggiungi principi che spiegano questo fenomeno solo se la domanda lo chiede
+        if includi_principi:
+            for e in db.execute("""SELECT n.name, n.id, n.data FROM edges e
+                                   JOIN nodes n ON n.id=e.from_id
+                                   WHERE e.to_id=? AND e.relation='spiega'
+                                   AND n.type='principio'""", (fid,)):
+                d = _dati(e["data"])
+                coll.append({"verso": e["name"], "tipo": "principio", "dominio": "trasversale",
+                             "relazione": "spiega", "id": e["id"], "data": d})
+        nodo["collegamenti"] = coll
+        ctx.append(nodo)
+
+    errori = []
+    for pid in prodotti_interesse:
+        for row in db.execute("""SELECT n.name, n.data, n.domain FROM edges e
+                                 JOIN nodes n ON n.id=e.to_id
+                                 WHERE e.from_id=? AND e.relation='fallisce_come'""", (pid,)):
+            d = _dati(row["data"])
+            if d.get("causa"):
+                errori.append(f"{row['name']} ({row['domain']}): {d['causa']}")
+    return {"fenomeni": ctx, "errori": errori, "prodotti": list(prodotti_interesse)}
     t = f"%{termine.lower()}%"
     hit = db.execute(
         "SELECT * FROM nodes WHERE lower(name) LIKE ? ORDER BY "
@@ -393,7 +471,7 @@ def chiedi():
         key=len, reverse=True)
     contesto = None
     for t in termini:
-        contesto = cerca_contesto(db, t)
+        contesto = cerca_contesto(db, t, domanda)
         if contesto and contesto.get("fenomeni"): break
 
     # LIVELLO 2 — niente match esatto: provo per somiglianza sull'intera domanda
