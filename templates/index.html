@@ -1258,6 +1258,16 @@ const App=(()=>{
     $('cf-ratio-out').innerHTML=`<b style="color:var(--e700)">${vol.toFixed(0)} g</b> di acqua (o bevanda finale)`;
   }
 
+  document.addEventListener('DOMContentLoaded',()=>{
+    renderIng();setServe('ice');calcBil();calcAA();
+    calcBak();calcQ10();calcPH();calcEY();calcRatio();
+    // inizializzazione dinamica
+    caricaHome();
+    caricaLezioneStep(0);
+  });
+  return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
+})();
+
 /* ── FLAVOR NETWORK ───────────────────────────────────── */
 async function cercaAbbinamenti(ingrediente){
   switchTab('chiedi');
@@ -1308,14 +1318,6 @@ async function testaKT(){
   console.log(kt1===false && kt2===true ? '✓ kT VALIDATO' : '✗ VERIFICARE');
   console.groupEnd();
 }
-    renderIng();setServe('ice');calcBil();calcAA();
-    calcBak();calcQ10();calcPH();calcEY();calcRatio();
-    // inizializzazione dinamica
-    caricaHome();
-    caricaLezioneStep(0);
-  });
-  return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
-})();
 </script>
 <!-- ── COOKIE BANNER GDPR (LE1) ─────────────────────────── -->
 <div id="cookie-banner" style="display:none">
