@@ -390,50 +390,59 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 
 <!-- ── SCOPRI ──────────────────────────────────────────── -->
 <div class="screen active" id="screen-scopri">
-  <div class="scheda-hero">
+  <!-- scheda hero dinamica — popolata da /home -->
+  <div class="scheda-hero" id="scopri-hero">
     <div class="hero-hdr">
-      <div class="hero-ey">fenomeno del giorno · fermentazione</div>
-      <h2>La temperatura dell'impasto. Non quella del forno.</h2>
+      <div class="hero-ey" id="scopri-ey">caricamento in corso…</div>
+      <h2 id="scopri-titolo">—</h2>
     </div>
     <div class="hero-body">
-      <p>Il lievito segue la cinetica chimica: ogni 8°C in più, la velocità raddoppia. D'estate il bulk finisce in 3 ore, d'inverno in 6 — con la stessa ricetta.</p>
-      <div class="num-bersaglio">
-        <div class="num-big">24–26<span class="num-unit">°C</span></div>
-        <div class="num-lab">temperatura ottimale lievito</div>
+      <p id="scopri-desc"></p>
+      <div class="num-bersaglio" id="scopri-num" style="display:none">
+        <div class="num-big" id="scopri-num-val"></div>
+        <div class="num-lab" id="scopri-num-lab">numero bersaglio</div>
       </div>
     </div>
   </div>
-  <button class="cta-main" onclick="switchTab('lezione')">Studia questo fenomeno</button>
+  <button class="cta-main" id="scopri-cta" onclick="avviaLezione()">Studia questo fenomeno</button>
   <p class="no-login">Nessuna registrazione richiesta.</p>
   <div class="sec-label">Scegli la tua disciplina</div>
   <div class="disc-list">
-    <div class="disc-item" onclick="switchTab('lezione')">
+    <div class="disc-item" onclick="selezionaDisciplina('bar')">
       <div class="disc-dot"></div>
-      <div class="disc-txt">
-        <div class="disc-n">Bar</div><div class="disc-m">8 fenomeni · in corso</div>
-        <div class="disc-prog"><div class="disc-prog-fill" style="width:60%"></div></div>
-      </div>
+      <div class="disc-txt"><div class="disc-n">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div>
+        <div class="disc-prog"><div class="disc-prog-fill" id="disc-bar-p" style="width:0%"></div></div></div>
       <div class="disc-arr">›</div>
     </div>
-    <div class="disc-item" onclick="switchTab('lezione')">
+    <div class="disc-item" onclick="selezionaDisciplina('bakery')">
       <div class="disc-dot"></div>
-      <div class="disc-txt">
-        <div class="disc-n">Bakery</div><div class="disc-m">7 fenomeni · 20% completato</div>
-        <div class="disc-prog"><div class="disc-prog-fill" style="width:20%"></div></div>
-      </div>
+      <div class="disc-txt"><div class="disc-n">Bakery</div><div class="disc-m" id="disc-bakery-m">caricamento…</div>
+        <div class="disc-prog"><div class="disc-prog-fill" id="disc-bakery-p" style="width:0%"></div></div></div>
+      <div class="disc-arr">›</div>
+    </div>
+    <div class="disc-item" onclick="selezionaDisciplina('cucina')">
+      <div class="disc-dot"></div>
+      <div class="disc-txt"><div class="disc-n">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div>
+        <div class="disc-prog"><div class="disc-prog-fill" id="disc-cucina-p" style="width:0%"></div></div></div>
+      <div class="disc-arr">›</div>
+    </div>
+    <div class="disc-item" onclick="selezionaDisciplina('caffetteria')">
+      <div class="disc-dot"></div>
+      <div class="disc-txt"><div class="disc-n">Caffetteria</div><div class="disc-m" id="disc-caffe-m">caricamento…</div>
+        <div class="disc-prog"><div class="disc-prog-fill" id="disc-caffe-p" style="width:0%"></div></div></div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item off"><div class="disc-dot dim"></div>
-      <div class="disc-txt"><div class="disc-n">Caffetteria</div><div class="disc-m">prossimamente</div></div>
+      <div class="disc-txt"><div class="disc-n">Pasticceria</div><div class="disc-m">prossimamente</div></div>
     </div>
     <div class="disc-item off"><div class="disc-dot dim"></div>
-      <div class="disc-txt"><div class="disc-n">Cucina</div><div class="disc-m">prossimamente</div></div>
+      <div class="disc-txt"><div class="disc-n">Gelateria</div><div class="disc-m">prossimamente</div></div>
     </div>
   </div>
-  <div class="principio-card">
+  <div class="principio-card" id="scopri-principio" style="display:none">
     <div class="princ-ey">principio del giorno</div>
-    <div class="princ-h">kT — la causa sotto il Q10</div>
-    <div class="princ-body">La coda di Boltzmann spiega perché ogni 8°C raddoppia la velocità. Una sola legge, quattro fenomeni: fermentazione, estrazione, carbonatazione, calore.</div>
+    <div class="princ-h" id="princ-nome">—</div>
+    <div class="princ-body" id="princ-desc"></div>
     <button class="princ-link" onclick="switchTab('mappa')">Vedi il principio nella Mappa →</button>
   </div>
 </div>
@@ -442,71 +451,57 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 <div class="screen" id="screen-lezione">
   <div class="les-top">
     <button class="les-back-btn" onclick="switchTab('scopri')">
-      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Fermentazione
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      <span id="les-disciplina-label">Disciplina</span>
     </button>
-    <span class="les-pos">2 / 5</span>
+    <span class="les-pos" id="les-pos">— / —</span>
   </div>
-  <div class="les-bar"><div class="les-bar-fill"></div></div>
-  <div class="scheda-les">
-    <div class="sl-top">
-      <div class="sl-step">temperatura · nodo 2</div>
-      <div class="sl-h">Ogni 8°C in più, il lievito lavora il doppio</div>
-      <div class="sl-p">Il coefficiente Q10 misura l'accelerazione di una reazione biologica per ogni 10°C. Per i lieviti vale circa 2 ogni 8°C — la stessa equazione della pastorizzazione e del cold brew.</div>
-    </div>
-    <div class="sl-dato">
-      <div class="sl-dato-lab">il numero — Q10 fermentazione</div>
-      <div class="sl-dato-val">t = t_base × 2^((T_ref − T) / 8)<br><br>Esempio: 5h a 24°C<br>→ <strong>2.5h a 32°C</strong> · 10h a 16°C</div>
-    </div>
-    <div class="sl-principio">
-      <div class="sl-princ-lab">
-        <div class="sl-princ-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg></div>
-        il principio
+  <div class="les-bar"><div class="les-bar-fill" id="les-bar-fill" style="width:0%"></div></div>
+
+  <!-- contenuto dinamico lezione -->
+  <div id="les-content">
+    <div class="scheda-les">
+      <div class="sl-top">
+        <div class="sl-step" id="les-step-label">caricamento…</div>
+        <div class="sl-h" id="les-nome">—</div>
+        <div class="sl-p" id="les-scheda"></div>
       </div>
-      <div class="sl-princ-val">Il Q10 è la manifestazione operativa della coda di Boltzmann: la frazione di molecole con energia sufficiente cresce come e<sup>−Ea/kT</sup>. È il perché sotto il quanto.</div>
-    </div>
-  </div>
-  <div class="scheda-quiz2">
-    <div class="q2-hdr">
-      <div class="q2-num">verifica · 1 di 2</div>
-      <div class="q2-txt">Un impasto fermentava 6 ore a 20°C. A 28°C quanto ci vuole?</div>
-    </div>
-    <div class="q2-opts">
-      <div class="q2-opt" onclick="selQuiz2(this)"><span class="q2-dot"></span>6 ore — la temperatura non cambia i tempi</div>
-      <div class="q2-opt" onclick="selQuiz2(this,true)">
-        <span class="q2-dot"></span>3 ore — Q10 dimezza ogni 8°C
-        <span class="q2-chk"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg></span>
+      <div class="sl-dato" id="les-dato-box">
+        <div class="sl-dato-lab">il numero bersaglio</div>
+        <div class="sl-dato-val" id="les-target"></div>
       </div>
-      <div class="q2-opt" onclick="selQuiz2(this)"><span class="q2-dot"></span>1.5 ore — troppo caldo fa collassare</div>
+      <div class="sl-principio" id="les-principio-box" style="display:none">
+        <div class="sl-princ-lab">
+          <div class="sl-princ-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg></div>
+          il principio
+        </div>
+        <div class="sl-princ-val" id="les-principio-testo"></div>
+      </div>
     </div>
-    <div class="q2-why">28 − 20 = 8°C → fattore Q10 = 2¹ → 6h ÷ 2 = <strong>3h</strong>. La stessa equazione governa i crauti a 10°C: 4× più lento di 26°C.</div>
+
+    <!-- quiz dinamico -->
+    <div class="scheda-quiz2" id="les-quiz-box" style="display:none">
+      <div class="q2-hdr">
+        <div class="q2-num">verifica</div>
+        <div class="q2-txt" id="quiz-domanda"></div>
+      </div>
+      <div class="q2-opts" id="quiz-opzioni"></div>
+      <div class="q2-why" id="quiz-spiegazione" style="display:none"></div>
+    </div>
   </div>
+
   <div class="les-nav">
-    <button class="les-btn-sec" onclick="switchTab('scopri')">← Indietro</button>
-    <button class="les-btn-pri" onclick="switchTab('mappa')">Avanti →</button>
+    <button class="les-btn-sec" id="les-btn-prec" onclick="lesStep(-1)">← Indietro</button>
+    <button class="les-btn-pri" id="les-btn-succ" onclick="lesStep(1)">Avanti →</button>
   </div>
 </div>
 
 <!-- ── MAPPA ───────────────────────────────────────────── -->
 <div class="screen" id="screen-mappa">
-  <div class="sec-label">Il tuo percorso — fermentazione</div>
-  <div class="percorso">
-    <div class="p-step done">
-      <div class="pnode done"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg></div>
-      <div class="p-info"><div class="p-name">pH e acidità</div>
-        <div class="p-meta">3 nodi · 5 min</div><div class="p-tag done">completato</div></div>
-    </div>
-    <div class="p-step active">
-      <div class="pnode active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg></div>
-      <div class="p-info"><div class="p-name">Temperatura e Q10</div>
-        <div class="p-meta">4 nodi · 7 min</div><div class="p-tag active">in corso</div></div>
-    </div>
-    <div class="p-step lock">
-      <div class="pnode lock"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
-      <div class="p-info"><div class="p-name">Lievito madre e pH</div><div class="p-meta">5 nodi · 8 min</div></div>
-    </div>
-    <div class="p-step lock">
-      <div class="pnode lock"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
-      <div class="p-info"><div class="p-name">Osmosi nei grandi lievitati</div><div class="p-meta">4 nodi · 6 min</div></div>
+  <div class="sec-label" id="mappa-label">Il tuo percorso</div>
+  <div class="percorso" id="mappa-percorso">
+    <div style="padding:20px 14px;color:var(--ink-muted);font-size:13px">
+      Scegli una disciplina in Scopri per vedere il percorso.
     </div>
   </div>
   <div class="sec-label" style="padding-top:4px">Principi trasversali</div>
@@ -526,17 +521,17 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
       <span class="ia-nodo">Carbonatazione</span>
     </div>
   </div>
-  <div class="sec-label" style="padding-top:8px">Abbinamenti molecolari</div>
+  <div class="sec-label" style="padding-top:8px">Perché funzionano insieme</div>
   <div class="flavor-card">
     <div class="fl-header">
       <div class="fl-icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
       <div>
         <div class="fl-eyebrow">Flavor network</div>
-        <div class="fl-name">Abbinamenti per composti aromatici</div>
+        <div class="fl-name">Abbinamenti per composti aromatici condivisi</div>
       </div>
       <div class="fl-badge">prossimamente</div>
     </div>
-    <div class="fl-desc">Due ingredienti si abbinano perché condividono composti volatili. La scienza che permette di creare piatti e drink che funzionano — non solo capire il perché ma progettare il nuovo.</div>
+    <div class="fl-desc">Burro marrone e whisky condividono il furfurale — ecco perché funzionano insieme. La scienza che permette di creare, non solo di capire.</div>
     <div class="fl-esempi">
       <span class="fl-esempio">burro marrone + whisky</span>
       <span class="fl-esempio">caffè + cardamomo</span>
@@ -713,19 +708,242 @@ function switchTab(t){
   });
   const askBar=document.getElementById('ask-bar');
   askBar.style.display=t==='chiedi'?'block':'none';
+  if(t==='scopri') caricaHome();
+  if(t==='mappa' && Matter.disciplina) caricaMappa(Matter.disciplina);
 }
-function switchSubtab(s){
-  ['chat','calc'].forEach(p=>{
-    document.getElementById('panel-'+p).classList.toggle('active',p===s);
-    document.getElementById('subtab-'+p).classList.toggle('active',p===s);
+
+/* ── STATO GLOBALE ────────────────────────────────────── */
+const Matter = {
+  disciplina: 'bar',
+  step: 0,
+  totale: 0,
+  fenomenoId: null
+};
+
+/* ── SCOPRI DINAMICA (FE5) ────────────────────────────── */
+let _homeCached = null;
+async function caricaHome(){
+  if(_homeCached){ renderHome(_homeCached); return; }
+  try {
+    const r = await fetch('/home');
+    if(!r.ok) throw new Error('server error');
+    const j = await r.json();
+    _homeCached = j;
+    renderHome(j);
+    // carica conteggio discipline in parallelo
+    ['bar','bakery','cucina','caffetteria'].forEach(caricaContDisciplina);
+  } catch(e){
+    document.getElementById('scopri-ey').textContent = 'errore caricamento';
+    document.getElementById('scopri-titolo').textContent = 'Riprova tra poco.';
+  }
+}
+
+function renderHome(j){
+  const f = j.fenomeno || {};
+  document.getElementById('scopri-ey').textContent =
+    'fenomeno del giorno · ' + (f.dominio||'');
+  document.getElementById('scopri-titolo').textContent = f.nome || '—';
+  document.getElementById('scopri-desc').textContent = f.scheda_intro || '';
+  const numBox = document.getElementById('scopri-num');
+  if(f.target){
+    document.getElementById('scopri-num-val').textContent = f.target;
+    numBox.style.display='flex';
+  } else { numBox.style.display='none'; }
+  Matter.fenomenoId = f.id;
+  // principio
+  const pc = document.getElementById('scopri-principio');
+  if(j.principio){
+    document.getElementById('princ-nome').textContent = j.principio.nome;
+    document.getElementById('princ-desc').textContent = j.principio.scheda_intro || '';
+    pc.style.display='block';
+  } else { pc.style.display='none'; }
+}
+
+async function caricaContDisciplina(nome){
+  try {
+    const r = await fetch('/disciplina/'+nome);
+    const j = await r.json();
+    const n = j.totale||0;
+    const el = document.getElementById('disc-'+nome.replace('caffetteria','caffe')+'-m');
+    if(el) el.textContent = n + ' fenomeni';
+  } catch(e){}
+}
+
+function selezionaDisciplina(nome){
+  Matter.disciplina = nome;
+  Matter.step = 0;
+  switchTab('lezione');
+}
+
+function avviaLezione(){
+  switchTab('lezione');
+}
+
+/* ── LEZIONE DINAMICA (FE6) ───────────────────────────── */
+async function caricaLezioneStep(step){
+  const disc = Matter.disciplina || 'bar';
+  document.getElementById('les-disciplina-label').textContent =
+    disc.charAt(0).toUpperCase()+disc.slice(1);
+  document.getElementById('les-step-label').textContent = 'caricamento…';
+  document.getElementById('les-nome').textContent = '—';
+  document.getElementById('les-scheda').textContent = '';
+  document.getElementById('les-quiz-box').style.display='none';
+  try {
+    const r = await fetch(`/lezione/${disc}/${step}`);
+    if(!r.ok) throw new Error('server');
+    const j = await r.json();
+    if(j.errore){ document.getElementById('les-nome').textContent = j.errore; return; }
+    Matter.step = j.step;
+    Matter.totale = j.totale_passi;
+    // header
+    document.getElementById('les-pos').textContent = `${j.step+1} / ${j.totale_passi}`;
+    document.getElementById('les-step-label').textContent =
+      (j.fenomeno.dominio||'') + ' · nodo ' + (j.step+1);
+    document.getElementById('les-nome').textContent = j.fenomeno.nome;
+    document.getElementById('les-scheda').textContent = j.fenomeno.scheda||'';
+    // target
+    document.getElementById('les-target').textContent = j.fenomeno.target||'—';
+    // barra progressione
+    const pct = j.totale_passi>1 ? (j.step/(j.totale_passi-1)*100) : 100;
+    document.getElementById('les-bar-fill').style.width = pct+'%';
+    // principio
+    const pb = document.getElementById('les-principio-box');
+    if(j.principio){
+      document.getElementById('les-principio-testo').textContent = j.principio.testo||'';
+      pb.style.display='block';
+    } else { pb.style.display='none'; }
+    // quiz
+    if(j.quiz){
+      renderQuizLezione(j.quiz);
+      document.getElementById('les-quiz-box').style.display='block';
+    }
+    // bottoni nav
+    document.getElementById('les-btn-prec').style.opacity = j.ha_precedente?'1':'0.4';
+    document.getElementById('les-btn-succ').textContent =
+      j.ha_successivo ? 'Avanti →' : 'Vai alla Mappa →';
+  } catch(e){
+    document.getElementById('les-nome').textContent = 'Errore caricamento — riprova.';
+  }
+}
+
+function renderQuizLezione(q){
+  document.getElementById('quiz-domanda').textContent = q.domanda||'';
+  const opts = document.getElementById('quiz-opzioni');
+  opts.innerHTML='';
+  document.getElementById('quiz-spiegazione').style.display='none';
+  (q.opzioni||[]).forEach((op,i)=>{
+    const div=document.createElement('div');
+    div.className='q2-opt';
+    div.innerHTML=`<span class="q2-dot"></span>${esc(op)}
+      ${i===q.corretta?'<span class="q2-chk"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg></span>':''}`;
+    div.onclick=()=>{
+      opts.querySelectorAll('.q2-opt').forEach(o=>o.classList.remove('correct'));
+      if(i===q.corretta){
+        div.classList.add('correct');
+        const sp=document.getElementById('quiz-spiegazione');
+        sp.textContent=q.spiegazione||'';
+        sp.style.display='block';
+      }
+    };
+    opts.appendChild(div);
   });
 }
-function selDisc(el){
-  document.querySelectorAll('.disc-chip').forEach(c=>c.classList.remove('sel'));
-  el.classList.add('sel');
+
+function lesStep(dir){
+  const newStep = Matter.step + dir;
+  if(newStep < 0){ switchTab('scopri'); return; }
+  if(newStep >= Matter.totale){ switchTab('mappa'); return; }
+  caricaLezioneStep(newStep);
 }
-// inizializzazione
-switchTab('scopri');
+
+/* ── MAPPA DINAMICA (FE6b) ────────────────────────────── */
+async function caricaMappa(disc){
+  const label = document.getElementById('mappa-label');
+  const cont = document.getElementById('mappa-percorso');
+  label.textContent = 'Il tuo percorso — ' + disc;
+  cont.innerHTML = '<div style="padding:14px;color:var(--ink-muted);font-size:13px">Caricamento…</div>';
+  try {
+    const r = await fetch('/mappa/'+disc);
+    if(!r.ok) throw new Error('server');
+    const j = await r.json();
+    const fens = j.fenomeni||[];
+    if(!fens.length){
+      cont.innerHTML='<div style="padding:14px;color:var(--ink-muted);font-size:13px">Nessun fenomeno trovato per questa disciplina.</div>';
+      return;
+    }
+    cont.innerHTML = fens.map((f,i)=>{
+      const isFirst = i===0;
+      const isLast = i===fens.length-1;
+      const stato = f.stato||'libero';
+      const nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
+      const tagHtml = stato==='completato'
+        ? '<div class="p-tag done">completato</div>'
+        : isFirst ? '<div class="p-tag active">inizia da qui</div>' : '';
+      const svgIcon = stato==='completato'
+        ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg>'
+        : isFirst
+        ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'
+        : '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
+      const connector = !isLast
+        ? `<div style="position:absolute;left:17px;top:40px;bottom:-10px;width:2px;background:${stato==='completato'?'var(--e300)':'var(--border)'};z-index:0"></div>`
+        : '';
+      return `<div class="p-step ${stato==='completato'?'done':''}" style="cursor:pointer" onclick="vaiAStep(${i})">
+        ${connector}
+        <div class="pnode ${nodeClass}">${svgIcon}</div>
+        <div class="p-info">
+          <div class="p-name">${esc(f.nome)}</div>
+          <div class="p-meta">${esc(f.target||'')}</div>
+          ${tagHtml}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e){
+    cont.innerHTML='<div style="padding:14px;color:var(--e700);font-size:13px">Errore caricamento mappa. Riprova.</div>';
+  }
+}
+
+function vaiAStep(idx){
+  Matter.step = idx;
+  switchTab('lezione');
+}
+
+/* ── IN1: GESTIONE ERRORI ─────────────────────────────── */
+function renderErr(tipo){
+  const t=document.getElementById('thinking');if(t)t.remove();
+  const card=document.createElement('div');card.className='scheda';
+  let msg='';
+  if(tipo==='network') msg='Errore di rete — controlla la connessione e riprova.';
+  else if(tipo==='timeout') msg='Il server ha impiegato troppo — riprova tra qualche secondo.';
+  else if(tipo==='server') msg='Errore del server — stiamo lavorando per risolverlo.';
+  else msg='Qualcosa è andato storto — riprova.';
+  card.innerHTML=`<div class="s-body" style="color:var(--ink-muted)">${msg}</div>`;
+  document.getElementById('schede').prepend(card);
+}
+
+/* ── TE3: VALIDAZIONE KT ──────────────────────────────── */
+// Test automatico: la domanda normale NON deve far apparire kT,
+// la domanda con "perché" DEVE farlo.
+// Funzione di test — chiamabile dalla console del browser per validare.
+async function testaKT(){
+  console.group('TE3 — Validazione kT');
+  // Test 1: domanda normale
+  const r1 = await fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({domanda:'i miei crauti non fermentano'})});
+  const j1 = await r1.json();
+  const kt1 = (j1.risposta||'').toLowerCase().includes('boltzmann') ||
+               (j1.risposta||'').toLowerCase().includes('kt ');
+  console.log('Test 1 (normale) — kT nella risposta:', kt1, '(atteso: false)');
+  // Test 2: domanda con perché
+  const r2 = await fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({domanda:'perché la fermentazione accelera con il caldo?'})});
+  const j2 = await r2.json();
+  const kt2 = (j2.risposta||'').toLowerCase().includes('boltzmann') ||
+               (j2.risposta||'').toLowerCase().includes('kt') ||
+               (j2.trovato||[]).some(f=>f.toLowerCase().includes('principio'));
+  console.log('Test 2 (perché) — kT nella risposta:', kt2, '(atteso: true)');
+  console.log(kt1===false && kt2===true ? '✓ kT VALIDATO' : '✗ VERIFICARE');
+  console.groupEnd();
+}
 
 /* ── QUIZ ─────────────────────────────────────────────── */
 function selQuiz(el,correct){
@@ -977,6 +1195,9 @@ const App=(()=>{
   document.addEventListener('DOMContentLoaded',()=>{
     renderIng();setServe('ice');calcBil();calcAA();
     calcBak();calcQ10();calcPH();calcEY();calcRatio();
+    // inizializzazione dinamica
+    caricaHome();
+    caricaLezioneStep(0);
   });
   return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
 })();
