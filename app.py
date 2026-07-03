@@ -801,6 +801,10 @@ def health():
 
 @app.route("/chiedi", methods=["POST"])
 def chiedi():
+    # IN4: rate limiting per IP
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    if not _check_rate_limit(ip):
+        return jsonify({"errore":"Troppe richieste. Aspetta un minuto e riprova."}), 429
     domanda = (request.json or {}).get("domanda","").strip()
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
@@ -848,11 +852,25 @@ def chiedi():
                 connessi.append({"id": c["id"], "nome": c["verso"],
                                  "dominio": c["dominio"],
                                  "target": c["data"].get("target","")})
+    # log_id per feedback utente (AC5)
+    log_id = None
+    if DATABASE_URL:
+        try:
+            import psycopg2
+            conn2 = psycopg2.connect(DATABASE_URL)
+            cur2 = conn2.cursor()
+            cur2.execute("SELECT id FROM log_domande ORDER BY ts DESC LIMIT 1")
+            row = cur2.fetchone()
+            log_id = row[0] if row else None
+            cur2.close(); conn2.close()
+        except Exception:
+            pass
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,
         "risposta": risposta,
-        "connessi": connessi
+        "connessi": connessi,
+        "log_id": log_id
     })
 
 @app.route("/nodo", methods=["POST"])
@@ -1300,6 +1318,157 @@ def load_flavor():
         click.echo("OK: flavor network caricato")
     except Exception as e:
         click.echo(f"ERRORE: {e}")
+
+
+# ── RATE LIMITING (IN4) ───────────────────────────────────────────
+import time as _time
+_rate_store = {}  # {ip: [timestamp, ...]}
+_RATE_LIMIT = 30   # max 30 richieste
+_RATE_WINDOW = 60  # per minuto
+
+def _check_rate_limit(ip):
+    """Rate limit per IP: 30 richieste/minuto su endpoint AI costosi."""
+    now = _time.time()
+    if ip not in _rate_store:
+        _rate_store[ip] = []
+    # rimuovi richieste fuori dalla finestra
+    _rate_store[ip] = [t for t in _rate_store[ip] if now - t < _RATE_WINDOW]
+    if len(_rate_store[ip]) >= _RATE_LIMIT:
+        return False
+    _rate_store[ip].append(now)
+    return True
+
+
+@app.route("/v1/feedback", methods=["POST"])
+def feedback():
+    """AC5 — Pollice su/giù sulla risposta di Sonnet.
+    Alimenta log_domande con campo feedback per affinare il prompt."""
+    body = request.json or {}
+    log_id = body.get("log_id")
+    voto = body.get("voto")  # 1 = positivo, -1 = negativo
+    nota = body.get("nota", "")
+    if not log_id or voto not in (1, -1):
+        return jsonify({"errore": "log_id e voto (1/-1) obbligatori"}), 400
+    if not DATABASE_URL:
+        return jsonify({"ok": True})
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        # aggiunge colonna feedback se non esiste
+        cur.execute("""
+            ALTER TABLE log_domande
+            ADD COLUMN IF NOT EXISTS feedback INTEGER,
+            ADD COLUMN IF NOT EXISTS feedback_nota TEXT
+        """)
+        cur.execute(
+            "UPDATE log_domande SET feedback=%s, feedback_nota=%s WHERE id=%s",
+            (voto, nota[:200], log_id)
+        )
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
+@app.route("/v1/admin/stats")
+def admin_stats():
+    """GT10 — Admin panel: statistiche base del prodotto."""
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET","matter-init-2026"):
+        return jsonify({"errore":"non autorizzato"}), 403
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        stats = {}
+        # utenti
+        cur.execute("SELECT COUNT(*) FROM utenti WHERE attivo=TRUE")
+        stats["utenti_attivi"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM utenti WHERE piano='pro'")
+        stats["utenti_pro"] = cur.fetchone()[0]
+        # domande
+        cur.execute("SELECT COUNT(*) FROM log_domande")
+        stats["domande_totali"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM log_domande WHERE esito='ok'")
+        stats["risposte_ok"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM log_domande WHERE esito='nessun_nodo'")
+        stats["fallback"] = cur.fetchone()[0]
+        # feedback
+        try:
+            cur.execute("SELECT COUNT(*) FROM log_domande WHERE feedback=1")
+            stats["feedback_positivi"] = cur.fetchone()[0]
+            cur.execute("SELECT COUNT(*) FROM log_domande WHERE feedback=-1")
+            stats["feedback_negativi"] = cur.fetchone()[0]
+        except Exception:
+            stats["feedback_positivi"] = 0
+            stats["feedback_negativi"] = 0
+        # grafo
+        cur.execute("SELECT COUNT(*) FROM nodes")
+        stats["nodi_grafo"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM edges")
+        stats["archi_grafo"] = cur.fetchone()[0]
+        # esperimenti
+        try:
+            cur.execute("SELECT COUNT(*) FROM esperimenti")
+            stats["esperimenti"] = cur.fetchone()[0]
+        except Exception:
+            stats["esperimenti"] = 0
+        # domande ultime 24h
+        cur.execute("SELECT COUNT(*) FROM log_domande WHERE ts > NOW() - INTERVAL '24 hours'")
+        stats["domande_24h"] = cur.fetchone()[0]
+        # top fenomeni cercati
+        cur.execute("""
+            SELECT fenomeni_trovati, COUNT(*) as n
+            FROM log_domande
+            WHERE fenomeni_trovati IS NOT NULL AND ts > NOW() - INTERVAL '7 days'
+            GROUP BY fenomeni_trovati ORDER BY n DESC LIMIT 5
+        """)
+        stats["top_fenomeni_7d"] = [{"fenomeni":r[0],"count":r[1]} for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify(stats)
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
+@app.route("/termini")
+def termini():
+    """LE3 — Termini di servizio."""
+    return """<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Termini di Servizio — Matter</title>
+<style>body{font-family:Georgia,serif;max-width:700px;margin:40px auto;padding:0 20px;line-height:1.7;color:#1A1A18}
+h1{font-size:24px}h2{font-size:18px;margin-top:32px}p,li{font-size:15px}</style>
+</head><body>
+<h1>Termini di Servizio — Matter</h1>
+<p><strong>Ultimo aggiornamento:</strong> luglio 2026</p>
+<h2>Cosa è Matter</h2>
+<p>Matter è uno strumento informativo di supporto per professionisti F&B. Le risposte sono generate da modelli AI (Anthropic/Mistral) sulla base di un grafo di conoscenza scientifica verificata.</p>
+<h2>Limitazioni di responsabilità</h2>
+<p>Le informazioni fornite da Matter hanno scopo esclusivamente informativo e didattico. Non sostituiscono la competenza professionale, la consulenza di esperti alimentari o le normative vigenti in materia di sicurezza alimentare (HACCP). L'utente è l'unico responsabile delle decisioni operative prese sulla base delle informazioni ricevute.</p>
+<h2>Flavor network</h2>
+<p>Gli abbinamenti suggeriti dal flavor network sono ipotesi basate su composti volatili condivisi (dataset scientifico Ahn 2011). Non costituiscono garanzie nutrizionali, mediche o di sicurezza alimentare.</p>
+<h2>Account e abbonamento</h2>
+<p>Il piano Free è gratuito e include funzionalità limitate. Il piano Pro è a pagamento (€11,99/mese) e include l'accesso completo al grafo, alla chat AI e al flavor network. L'abbonamento è rinnovabile mensilmente e cancellabile in qualsiasi momento.</p>
+<h2>Proprietà intellettuale</h2>
+<p>Il grafo di conoscenza, il codice e il design di Matter sono proprietà del titolare. I dati scientifici provengono da fonti pubbliche citate (dataset Ahn CC BY, PubChem NCBI).</p>
+<p><a href="/">← Torna a Matter</a></p>
+</body></html>""", 200, {'Content-Type': 'text/html; charset=utf-8'}
+
+
+@app.route("/static/sw.js")
+def sw():
+    """IN5 — Serve il service worker dalla cartella static."""
+    import pathlib
+    sw_path = pathlib.Path(__file__).parent / "static" / "sw.js"
+    if sw_path.exists():
+        return sw_path.read_text(), 200, {
+            'Content-Type': 'application/javascript',
+            'Service-Worker-Allowed': '/'
+        }
+    return '', 404
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
