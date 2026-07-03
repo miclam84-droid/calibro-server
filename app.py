@@ -173,69 +173,6 @@ def cerca_contesto(db, termine, domanda=""):
             if d.get("causa"):
                 errori.append(f"{row['name']} ({row['domain']}): {d['causa']}")
     return {"fenomeni": ctx, "errori": errori, "prodotti": list(prodotti_interesse)}
-    t = f"%{termine.lower()}%"
-    hit = db.execute(
-        "SELECT * FROM nodes WHERE lower(name) LIKE ? ORDER BY "
-        "CASE type WHEN 'Fenomeno' THEN 0 WHEN 'Prodotto' THEN 1 "
-        "WHEN 'Errore' THEN 2 ELSE 3 END LIMIT 4", (t,)).fetchall()
-    if not hit:
-        return None
-
-    fenomeni = {}
-    def aggiungi_fenomeno(fid):
-        if fid in fenomeni: return
-        f = db.execute("SELECT * FROM nodes WHERE id=? AND type='Fenomeno'", (fid,)).fetchone()
-        if f: fenomeni[fid] = f
-
-    prodotti_interesse = set()
-    for n in hit:
-        if n["type"] == "Fenomeno":
-            aggiungi_fenomeno(n["id"])
-        elif n["type"] == "Prodotto":
-            prodotti_interesse.add(n["id"])
-            for e in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (n["id"],)):
-                aggiungi_fenomeno(e["from_id"])
-        elif n["type"] == "Errore":
-            for e in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='fallisce_come'", (n["id"],)):
-                prodotti_interesse.add(e["from_id"])
-                for f in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (e["from_id"],)):
-                    aggiungi_fenomeno(f["from_id"])
-        else:
-            for e in db.execute("SELECT from_id FROM edges WHERE to_id=?", (n["id"],)):
-                aggiungi_fenomeno(e["from_id"])
-
-    if not fenomeni:
-        for n in hit:
-            fenomeni[n["id"]] = n
-
-    ctx = []
-    for fid, f in fenomeni.items():
-        nodo = dict(f); nodo["data"] = _dati(f["data"])
-        coll = []
-        for e in db.execute("""SELECT e.relation, e.data, n.name, n.type, n.domain, n.id
-                               FROM edges e JOIN nodes n ON n.id=e.to_id
-                               WHERE e.from_id=?""", (fid,)):
-            coll.append({"verso": e["name"], "tipo": e["type"], "dominio": e["domain"],
-                         "relazione": e["relation"], "id": e["id"],
-                         "data": _dati(e["data"])})
-        nodo["collegamenti"] = coll
-        ctx.append(nodo)
-
-    errori = []
-    for pid in prodotti_interesse:
-        for e in db.execute("""SELECT n.name, e.data, n.domain FROM edges e
-                               JOIN nodes n ON n.id=e.to_id
-                               WHERE e.from_id=? AND e.relation='fallisce_come'""", (pid,)):
-            pass
-    # gli errori coi loro 'causa' stanno nel nodo errore stesso
-    for pid in prodotti_interesse:
-        for row in db.execute("""SELECT n.name, n.data, n.domain FROM edges e
-                                 JOIN nodes n ON n.id=e.to_id
-                                 WHERE e.from_id=? AND e.relation='fallisce_come'""", (pid,)):
-            d = _dati(row["data"])
-            if d.get("causa"):
-                errori.append(f"{row['name']} ({row['domain']}): {d['causa']}")
-    return {"fenomeni": ctx, "errori": errori, "prodotti": list(prodotti_interesse)}
 
 # ---- costruisce il prompt -----------------------------------
 _STOPWORD = {"quanto","costa","tempo","oggi","sempre","abbastanza","molto","poco",
@@ -458,6 +395,18 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
 def home():
     return render_template("index.html")
 
+@app.route("/health")
+def health():
+    """IN3 — Endpoint per monitoring (UptimeRobot punta qui).
+    Verifica che Flask risponda E che Postgres sia raggiungibile."""
+    try:
+        db = carica_grafo()
+        r = db.execute("SELECT count(*) as n FROM nodes").fetchone()
+        nodi = r["n"] if r else 0
+        return jsonify({"status": "ok", "nodi": nodi, "ts": time.time()})
+    except Exception as e:
+        return jsonify({"status": "error", "detail": str(e)}), 500
+
 @app.route("/chiedi", methods=["POST"])
 def chiedi():
     domanda = (request.json or {}).get("domanda","").strip()
@@ -550,6 +499,180 @@ def nodo():
         "risposta": risposta,
         "connessi": connessi
     })
+
+import random, time
+
+# cache semplice per il fenomeno del giorno (ruota ogni 24h)
+_cache_home = {"ts": 0, "data": None}
+
+@app.route("/home")
+def home_api():
+    """FE1 — Fenomeno del giorno + principio del giorno.
+    Ruota ogni 24h. Sblocca la tab Scopri dinamica."""
+    global _cache_home
+    now = time.time()
+    if now - _cache_home["ts"] < 86400 and _cache_home["data"]:
+        return jsonify(_cache_home["data"])
+    db = carica_grafo()
+    fenomeni = db.execute(
+        "SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY id"
+    ).fetchall()
+    principi = db.execute(
+        "SELECT id, name, data FROM nodes WHERE type='principio' AND data::text NOT LIKE '%candidato%' ORDER BY id"
+    ).fetchall()
+    if not fenomeni:
+        return jsonify({"errore": "grafo vuoto"})
+    f = random.choice(fenomeni)
+    fd = _dati(f["data"])
+    result = {
+        "fenomeno": {
+            "id": f["id"],
+            "nome": f["name"],
+            "dominio": f["domain"],
+            "target": fd.get("target", ""),
+            "scheda_intro": (fd.get("scheda", "") or "")[:200]
+        }
+    }
+    if principi:
+        p = principi[0]
+        pd = _dati(p["data"])
+        result["principio"] = {
+            "id": p["id"],
+            "nome": p["name"],
+            "scheda_intro": (pd.get("scheda", "") or "")[:200]
+        }
+    _cache_home["ts"] = now
+    _cache_home["data"] = result
+    return jsonify(result)
+
+
+@app.route("/disciplina/<nome>")
+def disciplina(nome):
+    """FE2 — Fenomeni reali di una disciplina, ordinati per percorso didattico.
+    Sblocca Lezione e Mappa dinamiche."""
+    db = carica_grafo()
+    # trova prodotti della disciplina
+    prodotti = db.execute(
+        "SELECT id, name FROM nodes WHERE type='Prodotto' AND lower(domain)=lower(?)",
+        (nome,)
+    ).fetchall()
+    # da ogni prodotto risale ai fenomeni
+    fen_ids = set()
+    for p in prodotti:
+        for e in db.execute(
+            "SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'",
+            (p["id"],)
+        ):
+            fen_ids.add(e["from_id"])
+    if not fen_ids:
+        # fallback: tutti i fenomeni
+        tutti = db.execute(
+            "SELECT id, name, data FROM nodes WHERE type='Fenomeno' ORDER BY name"
+        ).fetchall()
+        fenomeni = [{"id": f["id"], "nome": f["name"],
+                     "target": _dati(f["data"]).get("target", "")} for f in tutti]
+    else:
+        fenomeni = []
+        for fid in sorted(fen_ids):
+            f = db.execute("SELECT id, name, data FROM nodes WHERE id=?", (fid,)).fetchone()
+            if f:
+                fenomeni.append({"id": f["id"], "nome": f["name"],
+                                  "target": _dati(f["data"]).get("target", "")})
+    return jsonify({"disciplina": nome, "fenomeni": fenomeni, "totale": len(fenomeni)})
+
+
+@app.route("/lezione/<disciplina_nome>/<int:step>")
+def lezione(disciplina_nome, step):
+    """FE3 — Nodo del passo corrente + scheda + quiz generato da Sonnet.
+    Il quiz ha sempre: domanda + 3 opzioni + spiegazione matematica."""
+    db = carica_grafo()
+    # recupera fenomeni della disciplina
+    resp = disciplina(disciplina_nome).get_json()
+    fenomeni = resp.get("fenomeni", [])
+    if not fenomeni:
+        return jsonify({"errore": "disciplina non trovata o vuota"})
+    idx = max(0, min(step, len(fenomeni) - 1))
+    f_info = fenomeni[idx]
+    nodo = db.execute("SELECT * FROM nodes WHERE id=?", (f_info["id"],)).fetchone()
+    if not nodo:
+        return jsonify({"errore": "nodo non trovato"})
+    nd = _dati(nodo["data"])
+    scheda = nd.get("scheda", "") or ""
+    target = nd.get("target", "")
+    # principio collegato
+    principio = None
+    pr = db.execute("""SELECT n.name, n.data FROM edges e
+                       JOIN nodes n ON n.id=e.from_id
+                       WHERE e.to_id=? AND e.relation='spiega'
+                       AND n.type='principio'""", (nodo["id"],)).fetchone()
+    if pr:
+        principio = {"nome": pr["name"],
+                     "testo": (_dati(pr["data"]).get("scheda","") or "")[:300]}
+    # quiz generato da Sonnet
+    quiz = None
+    if scheda:
+        quiz_prompt = f"""Crea un quiz su questo fenomeno per un professionista F&B.
+Fenomeno: {nodo['name']}
+Numero bersaglio: {target}
+Contenuto: {scheda[:400]}
+
+Rispondi SOLO con JSON valido, nessun testo prima o dopo:
+{{"domanda":"...","opzioni":["opzione giusta","opzione sbagliata","opzione sbagliata"],"corretta":0,"spiegazione":"spiegazione con il calcolo matematico in 2 righe"}}
+
+La risposta corretta deve essere sempre la prima opzione (indice 0).
+La spiegazione deve includere il numero esatto."""
+        try:
+            raw = chiedi_mistral(quiz_prompt)
+            if raw:
+                import re
+                m = re.search(r'\{.*\}', raw, re.DOTALL)
+                if m:
+                    quiz_data = json.loads(m.group())
+                    # mescola le opzioni
+                    opzioni = quiz_data.get("opzioni", [])
+                    corretta_testo = opzioni[0] if opzioni else ""
+                    random.shuffle(opzioni)
+                    nuovo_idx = opzioni.index(corretta_testo) if corretta_testo in opzioni else 0
+                    quiz = {
+                        "domanda": quiz_data.get("domanda", ""),
+                        "opzioni": opzioni,
+                        "corretta": nuovo_idx,
+                        "spiegazione": quiz_data.get("spiegazione", "")
+                    }
+        except Exception:
+            quiz = None
+    return jsonify({
+        "step": idx,
+        "totale_passi": len(fenomeni),
+        "fenomeno": {
+            "id": nodo["id"],
+            "nome": nodo["name"],
+            "dominio": nodo["domain"],
+            "target": target,
+            "scheda": scheda
+        },
+        "principio": principio,
+        "quiz": quiz,
+        "ha_precedente": idx > 0,
+        "ha_successivo": idx < len(fenomeni) - 1
+    })
+
+
+@app.route("/mappa/<disciplina_nome>")
+def mappa(disciplina_nome):
+    """FE4 — Fenomeni della disciplina con stato libero/completato.
+    Senza account: tutti liberi. Con account (futuro): stato persistente."""
+    resp = disciplina(disciplina_nome).get_json()
+    fenomeni = resp.get("fenomeni", [])
+    # per ora tutti liberi — la progressione arriva con l'account (task AC2)
+    for f in fenomeni:
+        f["stato"] = "libero"
+    return jsonify({
+        "disciplina": disciplina_nome,
+        "fenomeni": fenomeni,
+        "totale": len(fenomeni)
+    })
+
 
 @app.route("/calcola", methods=["POST"])
 def calcola():

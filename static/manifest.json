@@ -1,7 +1,7 @@
 {
-  "name": "Calibro",
-  "short_name": "Calibro",
-  "description": "La scienza nei tuoi gesti — bar, cucina, bakery",
+  "name": "Matter",
+  "short_name": "Matter",
+  "description": "La scienza del mestiere — The science behind the craft",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FAF6EE",
