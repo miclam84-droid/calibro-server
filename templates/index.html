@@ -357,6 +357,19 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .b-row b{font-family:var(--mono);color:var(--e700);font-size:13px}
 .b-sum{margin-top:10px;font-size:12px;color:var(--ink-muted);line-height:1.7}
 .b-sum b{font-family:var(--mono);color:var(--ink)}
+
+/* ── COOKIE BANNER (LE1 — GDPR) ──────────────────────────── */
+#cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:var(--coffee);color:#FAF6EE;padding:14px 16px;
+  display:flex;flex-direction:column;gap:10px;
+  box-shadow:0 -4px 20px rgba(0,0,0,.3)}
+#cookie-banner p{font-size:12px;line-height:1.6;color:rgba(255,255,255,.85)}
+#cookie-banner a{color:var(--e300);text-decoration:underline}
+.cookie-btns{display:flex;gap:8px}
+.cookie-ok{background:var(--e500);color:#fff;border:none;font-size:13px;
+  font-weight:600;padding:10px 18px;border-radius:8px;cursor:pointer;flex:1}
+.cookie-no{background:none;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.3);
+  font-size:12px;padding:10px 14px;border-radius:8px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -1204,5 +1217,27 @@ const App=(()=>{
   });
   return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
 })();
-</script></body>
+</script>
+<!-- ── COOKIE BANNER GDPR (LE1) ─────────────────────────── -->
+<div id="cookie-banner" style="display:none">
+  <p>Matter usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
+  Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral). 
+  <a href="/privacy" target="_blank">Privacy policy</a></p>
+  <div class="cookie-btns">
+    <button class="cookie-ok" onclick="accettaCookie()">Accetto</button>
+    <button class="cookie-no" onclick="rifiutaCookie()">Solo essenziali</button>
+  </div>
+</div>
+
+<script>
+// Cookie banner GDPR
+function _getCookie(n){return document.cookie.split(';').map(c=>c.trim()).find(c=>c.startsWith(n+'='))?.split('=')[1]}
+function _setCookie(n,v,days){const d=new Date();d.setTime(d.getTime()+days*864e5);document.cookie=n+'='+v+';expires='+d.toUTCString()+';path=/;SameSite=Lax'}
+function accettaCookie(){_setCookie('matter_consent','accepted',365);document.getElementById('cookie-banner').style.display='none'}
+function rifiutaCookie(){_setCookie('matter_consent','essential',365);document.getElementById('cookie-banner').style.display='none'}
+// mostra banner se non c'è consenso
+if(!_getCookie('matter_consent')){setTimeout(()=>{document.getElementById('cookie-banner').style.display='flex'},1000)}
+</script>
+
+</body>
 </html>

@@ -468,7 +468,321 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
         pass  # mai bloccare la risposta per un log fallito
 
 
+
+# ── ACCOUNT UTENTE (AC2) ──────────────────────────────────────────
+def _init_account_tables():
+    """Crea le tabelle account se non esistono. Chiamata al primo avvio."""
+    if not DATABASE_URL:
+        return
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS utenti (
+                id          SERIAL PRIMARY KEY,
+                ts          TIMESTAMPTZ DEFAULT NOW(),
+                email       TEXT UNIQUE NOT NULL,
+                password_h  TEXT NOT NULL,
+                piano       TEXT DEFAULT 'free',
+                attivo      BOOLEAN DEFAULT TRUE
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS sessioni (
+                token       TEXT PRIMARY KEY,
+                user_id     INTEGER REFERENCES utenti(id),
+                ts          TIMESTAMPTZ DEFAULT NOW(),
+                scade       TIMESTAMPTZ DEFAULT NOW() + INTERVAL '30 days'
+            )
+        """)
+        conn.commit(); cur.close(); conn.close()
+    except Exception as e:
+        print(f"[account tables] {e}")
+
+def _hash_pw(password):
+    import hashlib, os
+    salt = os.urandom(16).hex()
+    h = hashlib.sha256((salt + password).encode()).hexdigest()
+    return f"{salt}:{h}"
+
+def _verifica_pw(password, stored):
+    import hashlib
+    try:
+        salt, h = stored.split(":")
+        return hashlib.sha256((salt + password).encode()).hexdigest() == h
+    except Exception:
+        return False
+
+def _genera_token():
+    import secrets
+    return secrets.token_urlsafe(32)
+
+def _utente_da_token(token):
+    """Restituisce user_id se il token è valido e non scaduto."""
+    if not DATABASE_URL or not token:
+        return None
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT user_id FROM sessioni WHERE token=%s AND scade > NOW()",
+            (token,))
+        row = cur.fetchone()
+        cur.close(); conn.close()
+        return row[0] if row else None
+    except Exception:
+        return None
+
+@app.route("/v1/auth/registra", methods=["POST"])
+def registra():
+    """AC2 — Registrazione utente con email + password."""
+    body = request.json or {}
+    email = (body.get("email","")).strip().lower()
+    password = body.get("password","")
+    if not email or not password:
+        return jsonify({"errore":"email e password obbligatorie"}), 400
+    if len(password) < 8:
+        return jsonify({"errore":"password minimo 8 caratteri"}), 400
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("INSERT INTO utenti (email, password_h) VALUES (%s,%s) RETURNING id",
+                    (email, _hash_pw(password)))
+        user_id = cur.fetchone()[0]
+        token = _genera_token()
+        cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token, user_id))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"token":token,"piano":"free","messaggio":"Benvenuto in Matter."})
+    except Exception as e:
+        if "unique" in str(e).lower():
+            return jsonify({"errore":"email già registrata"}), 409
+        return jsonify({"errore":str(e)}), 500
+
+@app.route("/v1/auth/login", methods=["POST"])
+def login():
+    """AC2 — Login con email + password, restituisce token sessione."""
+    body = request.json or {}
+    email = (body.get("email","")).strip().lower()
+    password = body.get("password","")
+    if not email or not password:
+        return jsonify({"errore":"email e password obbligatorie"}), 400
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT id, password_h, piano FROM utenti WHERE email=%s AND attivo=TRUE",
+                    (email,))
+        row = cur.fetchone()
+        if not row or not _verifica_pw(password, row[1]):
+            cur.close(); conn.close()
+            return jsonify({"errore":"credenziali non valide"}), 401
+        user_id, _, piano = row
+        token = _genera_token()
+        cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token, user_id))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"token":token,"piano":piano})
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
+
+@app.route("/v1/quaderno", methods=["GET"])
+def quaderno_lista():
+    """AC3 — Lista esperimenti salvati dall'utente."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    if not DATABASE_URL:
+        return jsonify({"esperimenti":[]})
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, nome, disciplina, ts, ph, brix, abv, ey_perc,
+                   temperatura, idratazione, costo_mercato_eur
+            FROM esperimenti WHERE user_id=%s ORDER BY ts DESC LIMIT 50
+        """, (str(user_id),))
+        cols = [d[0] for d in cur.description]
+        rows = [dict(zip(cols,[str(v) if v is not None else None for v in r])) for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"esperimenti":rows,"totale":len(rows)})
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
+@app.route("/v1/quaderno", methods=["POST"])
+def quaderno_salva():
+    """AC3 — Salva un nuovo esperimento nel quaderno."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    body = request.json or {}
+    nome = body.get("nome","").strip()
+    if not nome:
+        return jsonify({"errore":"nome esperimento obbligatorio"}), 400
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO esperimenti
+            (nome, disciplina, note, ph, brix, abv, ey_perc, tds_perc,
+             temperatura, idratazione, ingredienti, fenomeni,
+             costo_mercato_eur, area_mercato, user_id)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            RETURNING id
+        """, (
+            nome,
+            body.get("disciplina"),
+            body.get("note"),
+            body.get("ph"), body.get("brix"), body.get("abv"),
+            body.get("ey_perc"), body.get("tds_perc"),
+            body.get("temperatura"), body.get("idratazione"),
+            json.dumps(body.get("ingredienti",[])),
+            json.dumps(body.get("fenomeni",[])),
+            body.get("costo_mercato_eur"),
+            body.get("area_mercato","it"),
+            str(user_id)
+        ))
+        exp_id = cur.fetchone()[0]
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"id":exp_id,"ok":True})
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
+@app.route("/v1/ricetta/<int:exp_id>")
+def ricetta_per_cifra(exp_id):
+    """AC4 — API per Cifra: espone la ricetta fisica di un esperimento.
+    Cifra legge ingredienti+dosi e applica i suoi prezzi per il food cost reale."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, nome, disciplina, ingredienti, fenomeni,
+                   ph, brix, abv, ey_perc, temperatura, idratazione,
+                   costo_mercato_eur, area_mercato, ts
+            FROM esperimenti WHERE id=%s AND user_id=%s
+        """, (exp_id, str(user_id)))
+        row = cur.fetchone()
+        cur.close(); conn.close()
+        if not row:
+            return jsonify({"errore":"esperimento non trovato"}), 404
+        cols = [d[0] for d in cur.description] if False else [
+            "id","nome","disciplina","ingredienti","fenomeni",
+            "ph","brix","abv","ey_perc","temperatura","idratazione",
+            "costo_mercato_eur","area_mercato","ts"
+        ]
+        d = dict(zip(cols, row))
+        # ingredienti già in JSONB — pronti per Cifra
+        return jsonify({
+            "id": d["id"],
+            "nome": d["nome"],
+            "disciplina": d["disciplina"],
+            "ingredienti": d["ingredienti"] or [],
+            "misure_fisiche": {
+                "ph": d["ph"], "brix": d["brix"], "abv": d["abv"],
+                "ey_perc": d["ey_perc"], "temperatura": d["temperatura"],
+                "idratazione": d["idratazione"]
+            },
+            "fenomeni": d["fenomeni"] or [],
+            "costo_mercato_eur": d["costo_mercato_eur"],
+            "area_mercato": d["area_mercato"],
+            "ts": str(d["ts"]),
+            "nota": "Matter possiede la fisica. Cifra applica i prezzi reali del fornitore."
+        })
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
+@app.route("/v1/auth/logout", methods=["POST"])
+def logout():
+    """AC2 — Invalida il token sessione."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    if not token or not DATABASE_URL:
+        return jsonify({"ok":True})
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("DELETE FROM sessioni WHERE token=%s", (token,))
+        conn.commit(); cur.close(); conn.close()
+    except Exception:
+        pass
+    return jsonify({"ok":True})
+
 # ---- endpoint -----------------------------------------------
+# ── FLAVOR NETWORK (FL3-FL4) ─────────────────────────────────────
+
+@app.route("/v1/abbina/<ingrediente>")
+def abbina(ingrediente):
+    """FL3 — Restituisce ingredienti con composti volatili condivisi.
+    Query deterministica su flavor_abbinamenti — zero AI.
+    Sempre marcato come ipotesi di abbinamento, mai come legge."""
+    if not DATABASE_URL:
+        return jsonify({"ingrediente":ingrediente,"abbinamenti":[],"nota":"flavor network non disponibile"})
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        # cerca per nome esatto o simile
+        cur.execute("""
+            SELECT ingrediente_2, composto, overlap_score
+            FROM flavor_abbinamenti
+            WHERE lower(ingrediente_1) LIKE lower(%s)
+            ORDER BY overlap_score DESC LIMIT 8
+        """, (f"%{ingrediente}%",))
+        rows = cur.fetchall()
+        cur.close(); conn.close()
+        abbinamenti = [
+            {"ingrediente": r[0], "composto": r[1], "overlap": float(r[2]),
+             "perche": f"{ingrediente.replace('_',' ')} e {r[0].replace('_',' ')} condividono {r[1]}"}
+            for r in rows
+        ]
+        return jsonify({
+            "ingrediente": ingrediente,
+            "abbinamenti": abbinamenti,
+            "nota": "Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale",
+            "fonte": "Dataset Ahn 2011 (CC BY) + PubChem"
+        })
+    except Exception as e:
+        # tabella non ancora creata — avvia import
+        return jsonify({
+            "ingrediente": ingrediente,
+            "abbinamenti": [],
+            "nota": "Flavor network in costruzione — usa: python import_flavor_network.py"
+        })
+
+@app.route("/v1/abbina_batch", methods=["POST"])
+def abbina_batch():
+    """FL3b — Abbinamenti per lista di ingredienti (per modulo Produzione Cifra).
+    Cifra passa gli ingredienti disponibili in magazzino, Matter restituisce suggerimenti."""
+    ingredienti = (request.json or {}).get("ingredienti", [])
+    if not ingredienti:
+        return jsonify({"errore":"lista ingredienti vuota"}), 400
+    risultati = {}
+    for ing in ingredienti[:10]:  # limite 10 per chiamata
+        r = abbina(ing).get_json()
+        if r.get("abbinamenti"):
+            risultati[ing] = r["abbinamenti"][:3]
+    return jsonify({"risultati":risultati,"totale_ingredienti":len(ingredienti)})
+
+
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -802,6 +1116,131 @@ def calcola():
     log_evento("calcolo", nome, esito="ok" if "errore" not in risultato else "errore")
     return jsonify(risultato)
 
+
+
+@app.route("/privacy")
+def privacy():
+    """LE2 — Privacy policy (testo minimo legale, da aggiornare con consulente)."""
+    return """<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy — Matter</title>
+<style>body{font-family:Georgia,serif;max-width:700px;margin:40px auto;padding:0 20px;line-height:1.7;color:#1A1A18}
+h1{font-size:24px;margin-bottom:8px}h2{font-size:18px;margin-top:32px}p,li{font-size:15px}</style>
+</head><body>
+<h1>Privacy Policy — Matter</h1>
+<p><strong>Ultimo aggiornamento:</strong> luglio 2026</p>
+<h2>Chi siamo</h2>
+<p>Matter è uno strumento scientifico per professionisti F&B. Il titolare del trattamento è il soggetto che gestisce il servizio.</p>
+<h2>Dati raccolti</h2>
+<ul>
+<li><strong>Domande al grafo:</strong> testo delle domande, fenomeni trovati, tipo di risposta. Conservati per migliorare il servizio.</li>
+<li><strong>Account:</strong> email e password (in hash). Conservati fino alla cancellazione dell'account.</li>
+<li><strong>Cookie tecnici:</strong> necessari per il funzionamento. Nessun cookie di profilazione.</li>
+</ul>
+<h2>Trasferimento dati</h2>
+<p>Le domande sono processate da Anthropic (USA) e Mistral (FR) tramite API. Entrambi dispongono di garanzie adeguate per il trasferimento extra-UE.</p>
+<h2>I tuoi diritti</h2>
+<p>Hai diritto di accesso, rettifica, cancellazione, portabilità e opposizione. Contatta il titolare per esercitarli.</p>
+<h2>Cookie</h2>
+<p>Usiamo solo cookie tecnici essenziali. Puoi rifiutare i cookie non essenziali dal banner.</p>
+<p><a href="/">← Torna a Matter</a></p>
+</body></html>""", 200, {'Content-Type': 'text/html; charset=utf-8'}
+
+
+# ── STRIPE PAGAMENTI (GT8) ────────────────────────────────────────
+
+@app.route("/v1/stripe/checkout", methods=["POST"])
+def stripe_checkout():
+    """GT8 — Crea sessione Stripe Checkout per abbonamento Pro.
+    Richiede STRIPE_SECRET_KEY nelle variabili Railway."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    
+    stripe_key = os.environ.get("STRIPE_SECRET_KEY")
+    if not stripe_key:
+        return jsonify({"errore":"pagamenti non configurati"}), 503
+    
+    try:
+        import urllib.request, urllib.parse
+        # crea sessione checkout Stripe
+        body = urllib.parse.urlencode({
+            "mode": "subscription",
+            "payment_method_types[]": "card",
+            "line_items[0][price]": os.environ.get("STRIPE_PRICE_PRO",""),
+            "line_items[0][quantity]": "1",
+            "success_url": f"{request.host_url}?piano=pro&success=1",
+            "cancel_url": f"{request.host_url}?cancel=1",
+            "metadata[user_id]": str(user_id)
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.stripe.com/v1/checkout/sessions",
+            data=body,
+            headers={"Authorization": f"Bearer {stripe_key}"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read())
+        return jsonify({"checkout_url": data.get("url"), "session_id": data.get("id")})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+@app.route("/v1/stripe/webhook", methods=["POST"])
+def stripe_webhook():
+    """GT8 — Webhook Stripe: aggiorna piano utente a Pro dopo pagamento."""
+    stripe_key = os.environ.get("STRIPE_SECRET_KEY")
+    if not stripe_key:
+        return jsonify({"ok":True})
+    try:
+        payload = request.get_data()
+        data = json.loads(payload)
+        event_type = data.get("type","")
+        if event_type in ("checkout.session.completed","customer.subscription.created"):
+            obj = data.get("data",{}).get("object",{})
+            user_id = obj.get("metadata",{}).get("user_id")
+            if user_id and DATABASE_URL:
+                import psycopg2
+                conn = psycopg2.connect(DATABASE_URL)
+                cur = conn.cursor()
+                cur.execute("UPDATE utenti SET piano='pro' WHERE id=%s", (user_id,))
+                conn.commit(); cur.close(); conn.close()
+    except Exception:
+        pass
+    return jsonify({"ok":True})
+
+
+@app.route("/v1/admin/init", methods=["POST"])
+def admin_init():
+    """Inizializza le tabelle account/quaderno. Da chiamare una volta dalla Console Railway."""
+    secret = request.json.get("secret","") if request.json else ""
+    if secret != os.environ.get("ADMIN_SECRET","matter-init-2026"):
+        return jsonify({"errore":"non autorizzato"}), 403
+    _init_account_tables()
+    # crea anche la tabella esperimenti
+    if DATABASE_URL:
+        try:
+            import psycopg2
+            conn = psycopg2.connect(DATABASE_URL)
+            cur = conn.cursor()
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS esperimenti (
+                    id SERIAL PRIMARY KEY, ts TIMESTAMPTZ DEFAULT NOW(),
+                    nome TEXT NOT NULL, disciplina TEXT, note TEXT,
+                    ph NUMERIC(4,2), brix NUMERIC(5,2), abv NUMERIC(5,2),
+                    ey_perc NUMERIC(5,2), tds_perc NUMERIC(5,2),
+                    temperatura NUMERIC(5,1), idratazione NUMERIC(5,2),
+                    ingredienti JSONB DEFAULT '[]',
+                    fenomeni JSONB DEFAULT '[]',
+                    costo_mercato_eur NUMERIC(8,2), area_mercato TEXT DEFAULT 'it',
+                    user_id TEXT, versione INTEGER DEFAULT 1
+                )
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_esp_user ON esperimenti(user_id, ts DESC)")
+            conn.commit(); cur.close(); conn.close()
+        except Exception as e:
+            return jsonify({"errore":str(e)}), 500
+    return jsonify({"ok":True,"messaggio":"Tabelle create: utenti, sessioni, esperimenti"})
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
