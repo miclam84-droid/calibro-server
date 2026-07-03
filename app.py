@@ -1,5 +1,5 @@
 # ============================================================
-# CALIBRO — server. Riceve una domanda, naviga il grafo in
+# MATTER — server. Riceve una domanda, naviga il grafo in
 # profondita (risale ai fenomeni), costruisce un contesto ricco,
 # e chiede a Mistral di rispondere SENZA inventare.
 # Flask + grafo (Postgres su Railway / SQLite in locale) + Mistral via HTTP.
@@ -92,6 +92,16 @@ def _dati(campo):
     if isinstance(campo, dict):
         return campo
     return json.loads(campo or "{}")
+
+
+def _scheda_lang(data_dict, lang="it"):
+    """GT4 — Legge il campo scheda nel formato multilingua.
+    Supporta sia il formato legacy (stringa) sia il nuovo formato {it:"...", en:"..."}.
+    Quando tutti i nodi saranno migrati al formato dizionario, il fallback legacy si rimuove."""
+    scheda = data_dict.get("scheda", "")
+    if isinstance(scheda, dict):
+        return scheda.get(lang) or scheda.get("it") or ""
+    return scheda or ""
 
 # ---- ricerca contesto: profonda, centrata sui fenomeni ----
 def _domanda_chiede_perche(domanda):
@@ -263,9 +273,15 @@ def costruisci_prompt(domanda, contesto):
         "o numeri che non sono nel contesto. Se un dato non c'e, non inventarlo: dillo.\n"
         "- Cita i numeri-bersaglio esatti del contesto (pH, Brix, percentuali, gradi).\n"
         "- Parti dal fenomeno e dal perche fisico, poi arriva al consiglio concreto.\n"
+        "- Tono da collega a collega: il professionista sa gia fare il suo lavoro, "
+        "tu gli mostri il perche. Non spiegare l'ovvio, non dare lezioni.\n"
         "- Mostra la connessione cross-disciplina solo dove e davvero nel contesto, "
-        "e falla emergere come un fatto naturale, non come un collegamento forzato.\n"
-        "- Prosa pulita in italiano, senza asterischi, grassetti o markdown. Massimo 6-8 frasi."
+        "e falla emergere come un fatto naturale: 'la stessa legge vale anche per i crauti' "
+        "non 'come puoi vedere dall'analisi trasversale...'.\n"
+        "- Se la domanda ha numeri propri dell'utente (ml, grammi, gradi, percentuali), "
+        "usa il tool 'calcola' per dare risultati esatti — non stimare.\n"
+        "- Prosa pulita in italiano, senza asterischi, grassetti o markdown. Massimo 6-8 frasi.\n"
+        "- Non menzionare mai di essere un AI o di usare un grafo — rispondi come uno strumento."
     )
     return f"{regole}\n\nCONTESTO DAL GRAFO:\n{contesto_txt}\n\nDOMANDA: {domanda}\n\nRISPOSTA:"
 
@@ -314,18 +330,42 @@ def estrai_entita(domanda):
     except Exception:
         return []
 
+# ── TOOL DEFINITIONS per tool-calling Sonnet → motore.py ──────────
+_TOOLS = [
+    {
+        "name": "calcola",
+        "description": "Esegui un calcolo deterministico esatto (diluizione, bilanciamento sour, idratazione pane, Q10, estrazione caffè, pareggiamento acidità). Usa questo tool quando la domanda contiene numeri propri dell'utente — non stimare mai, chiama sempre il motore.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "calcolo": {
+                    "type": "string",
+                    "enum": ["diluizione","bilanciamento_sour","idratazione_pane","q10_fermentazione","estrazione_caffe","pareggia_acidita"],
+                    "description": "Il tipo di calcolo da eseguire"
+                },
+                "parametri": {
+                    "type": "object",
+                    "description": "Parametri del calcolo (varia per tipo)"
+                }
+            },
+            "required": ["calcolo","parametri"]
+        }
+    }
+]
+
 def _anthropic_raw(prompt):
-    """Chiamata a Sonnet per la risposta finale — quella che l'utente legge.
-    L'estrazione entità resta su Mistral (compito semplice, non vale il costo).
-    Niente SDK: stesso pattern collaudato della chiamata Mistral, HTTP diretto."""
+    """Chiamata a Sonnet con tool-calling per motore.py.
+    Quando la domanda ha numeri propri dell'utente, Sonnet chiama il motore
+    invece di stimare — risultato deterministico, zero invenzione."""
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
         return None
     import urllib.request
     body = json.dumps({
         "model": "claude-sonnet-4-6",
-        "max_tokens": 600,
+        "max_tokens": 800,
         "temperature": 0,
+        "tools": _TOOLS,
         "messages": [{"role": "user", "content": prompt}]
     }).encode("utf-8")
     req = urllib.request.Request(
@@ -339,8 +379,46 @@ def _anthropic_raw(prompt):
         method="POST")
     with urllib.request.urlopen(req, timeout=30) as r:
         data = json.loads(r.read().decode("utf-8"))
-    # la risposta di Anthropic è una lista di blocchi; prendo il testo
-    return "".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
+
+    # gestisci tool_use: se Sonnet chiama il motore, esegui e dai il risultato
+    testo = []
+    tool_results = []
+    for block in data.get("content", []):
+        if block.get("type") == "text":
+            testo.append(block.get("text",""))
+        elif block.get("type") == "tool_use":
+            tool_id = block.get("id","")
+            tool_input = block.get("input", {})
+            risultato = Motore.esegui(tool_input.get("calcolo",""), tool_input.get("parametri",{}))
+            tool_results.append({
+                "type": "tool_result",
+                "tool_use_id": tool_id,
+                "content": json.dumps(risultato, ensure_ascii=False)
+            })
+
+    # se c'era un tool call, fai una seconda chiamata con il risultato
+    if tool_results:
+        messages = [
+            {"role": "user", "content": prompt},
+            {"role": "assistant", "content": data.get("content", [])},
+            {"role": "user", "content": tool_results}
+        ]
+        body2 = json.dumps({
+            "model": "claude-sonnet-4-6",
+            "max_tokens": 800,
+            "temperature": 0,
+            "messages": messages
+        }).encode("utf-8")
+        req2 = urllib.request.Request(
+            "https://api.anthropic.com/v1/messages",
+            data=body2,
+            headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
+            method="POST")
+        with urllib.request.urlopen(req2, timeout=30) as r2:
+            data2 = json.loads(r2.read().decode("utf-8"))
+        return "".join(b.get("text","") for b in data2.get("content",[]) if b.get("type")=="text")
+
+    return "".join(testo) if testo else None
 
 
 def chiedi_mistral(prompt):
@@ -673,6 +751,41 @@ def mappa(disciplina_nome):
         "totale": len(fenomeni)
     })
 
+
+
+@app.route("/prezzi_mercato/<ingrediente>")
+@app.route("/prezzi_mercato/<ingrediente>/<area>")
+def prezzi_mercato(ingrediente, area="it"):
+    """PR1 — Prezzi di mercato orientativi per area geografica.
+    Fonte attuale: dati medi ISMEA incorporati nel grafo (campo prezzo_mercato).
+    Futuro: aggiornamento automatico via API ISMEA/Eurostat/USDA."""
+    db = carica_grafo()
+    # cerca il nodo prodotto per nome
+    nodi = db.execute(
+        "SELECT id, name, data FROM nodes WHERE lower(name) LIKE lower(?) AND type='Prodotto' LIMIT 5",
+        (f"%{ingrediente}%",)
+    ).fetchall()
+    risultati = []
+    for n in nodi:
+        d = _dati(n["data"])
+        prezzo = d.get(f"prezzo_mercato_{area}") or d.get("prezzo_mercato_it")
+        if prezzo:
+            risultati.append({
+                "ingrediente": n["name"],
+                "id": n["id"],
+                "prezzo": prezzo,
+                "area": area,
+                "fonte": "ISMEA/orientativo",
+                "nota": "Prezzo medio di mercato orientativo — non vincolante"
+            })
+    if not risultati:
+        return jsonify({
+            "ingrediente": ingrediente,
+            "area": area,
+            "prezzo": None,
+            "nota": "Prezzo non disponibile — usa i prezzi del tuo fornitore in Cifra"
+        })
+    return jsonify({"risultati": risultati, "totale": len(risultati)})
 
 @app.route("/calcola", methods=["POST"])
 def calcola():
