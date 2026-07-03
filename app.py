@@ -942,8 +942,7 @@ _cache_home = {"ts": 0, "data": None}
 
 @app.route("/home")
 def home_api():
-    """FE1 — Fenomeno del giorno + principio del giorno.
-    Ruota ogni 24h. Sblocca la tab Scopri dinamica."""
+    """FE1 — Fenomeno del giorno + principio del giorno."""
     global _cache_home
     now = time.time()
     if now - _cache_home["ts"] < 86400 and _cache_home["data"]:
@@ -953,28 +952,37 @@ def home_api():
         "SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY id"
     ).fetchall()
     principi = db.execute(
-        "SELECT id, name, data FROM nodes WHERE type='principio' AND data::text NOT LIKE '%candidato%' ORDER BY id"
+        "SELECT id, name, data FROM nodes WHERE type='principio' ORDER BY id"
     ).fetchall()
     if not fenomeni:
         return jsonify({"errore": "grafo vuoto"})
     f = random.choice(fenomeni)
     fd = _dati(f["data"])
+    scheda = fd.get("scheda", "") or ""
+    # gestisci formato bilingue {"it":"...","en":"..."}
+    if isinstance(scheda, dict):
+        scheda = scheda.get("it", "") or scheda.get("en", "") or ""
     result = {
         "fenomeno": {
             "id": f["id"],
             "nome": f["name"],
             "dominio": f["domain"],
             "target": fd.get("target", ""),
-            "scheda_intro": (fd.get("scheda", "") or "")[:200]
+            "scheda_intro": scheda[:200]
         }
     }
-    if principi:
-        p = principi[0]
+    # filtra principi candidati
+    principi_attivi = [p for p in principi if "candidato" not in str(_dati(p["data"]))]
+    if principi_attivi:
+        p = principi_attivi[0]
         pd = _dati(p["data"])
+        ps = pd.get("scheda", "") or ""
+        if isinstance(ps, dict):
+            ps = ps.get("it", "") or ""
         result["principio"] = {
             "id": p["id"],
             "nome": p["name"],
-            "scheda_intro": (pd.get("scheda", "") or "")[:200]
+            "scheda_intro": ps[:200]
         }
     _cache_home["ts"] = now
     _cache_home["data"] = result
@@ -1033,6 +1041,9 @@ def lezione(disciplina_nome, step):
         return jsonify({"errore": "nodo non trovato"})
     nd = _dati(nodo["data"])
     scheda = nd.get("scheda", "") or ""
+    # gestisci formato bilingue {"it":"...","en":"..."}
+    if isinstance(scheda, dict):
+        scheda = scheda.get("it", "") or scheda.get("en", "") or ""
     target = nd.get("target", "")
     # principio collegato
     principio = None
@@ -1041,8 +1052,10 @@ def lezione(disciplina_nome, step):
                        WHERE e.to_id=? AND e.relation='spiega'
                        AND n.type='principio'""", (nodo["id"],)).fetchone()
     if pr:
-        principio = {"nome": pr["name"],
-                     "testo": (_dati(pr["data"]).get("scheda","") or "")[:300]}
+        pr_scheda = (_dati(pr["data"]).get("scheda","") or "")
+        if isinstance(pr_scheda, dict):
+            pr_scheda = pr_scheda.get("it","") or ""
+        principio = {"nome": pr["name"], "testo": pr_scheda[:300]}
     # quiz generato da Sonnet
     quiz = None
     if scheda:
