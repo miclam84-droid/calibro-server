@@ -41,10 +41,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   color:var(--coffee);letter-spacing:-.01em;line-height:1}
 .wordmark small{display:block;font-family:var(--mono);font-size:10px;font-weight:400;
   letter-spacing:.06em;color:var(--ink-muted);margin-top:2px;text-transform:uppercase}
-.streak{display:flex;align-items:center;gap:5px;background:var(--e100);
-  border:1px solid var(--e300);border-radius:20px;padding:5px 11px}
-.streak-flame{width:13px;height:13px;fill:var(--e500)}
-.streak span{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--e700)}
+#lang-btn{background:none;border:1px solid var(--border);color:var(--ink-muted);
+  font-family:var(--mono);font-size:10px;letter-spacing:.04em;
+  padding:5px 10px;border-radius:7px;cursor:pointer;transition:.15s}
+#lang-btn:active{border-color:var(--e500);color:var(--e700)}
 
 /* ── TAB BAR linea ────────────────────────────────────── */
 .tab-bar{display:flex;background:var(--bg);border-bottom:1px solid var(--border)}
@@ -57,9 +57,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .tab-btn.active{color:var(--coffee);border-bottom-color:var(--e500);font-weight:600}
 
 /* ── SCHERMATE ────────────────────────────────────────── */
-.screen{display:none;padding:0 0 16px;animation:rise .22s ease}
+.screen{display:none;padding:0 0 16px;animation:rise .2s ease}
 .screen.active{display:block}
-@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0}to{opacity:1}}
 
 /* ── SCOPRI ───────────────────────────────────────────── */
 .scheda-hero{margin:14px 14px 0;background:var(--surface);
@@ -112,6 +112,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .les-pos{font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
 .les-bar{height:2px;background:var(--border);margin:0 14px;border-radius:1px;overflow:hidden}
 .les-bar-fill{height:100%;width:40%;background:var(--e500)}
+.les-dots{display:flex;gap:7px;flex-wrap:wrap;padding:12px 14px 2px}
+.les-dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--ink-muted);font-family:var(--mono);font-size:11px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:.15s;flex-shrink:0}
+.les-dot:active{border-color:var(--e500)}
+.les-dot.done{border-color:var(--e300);background:var(--e100);color:var(--e700)}
+.les-dot.current{border-color:var(--e500);background:var(--e500);color:#fff;font-weight:600}
 .scheda-les{margin:12px 14px 0;border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
 .sl-top{background:var(--surface);padding:14px}
 .sl-step{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
@@ -393,11 +401,7 @@ if('serviceWorker' in navigator){
 <header class="app-header">
   <div class="app-bar">
     <div class="wordmark">Matter<small id="payoff-text">La scienza del mestiere</small></div>
-    <button onclick="toggleLang()" id="lang-btn" style="background:none;border:1px solid var(--border);color:var(--ink-muted);font-family:var(--mono);font-size:10px;padding:4px 8px;border-radius:6px;cursor:pointer;margin-right:8px">EN</button>
-    <div class="streak">
-      <svg class="streak-flame" viewBox="0 0 24 24"><path d="M12 2c1 3-2 4-2 7a4 4 0 008 0c0-2-1-3-1-3 2 1 3 4 3 6a6 6 0 01-12 0c0-5 4-6 4-10z"/></svg>
-      <span id="streak-count">4</span>
-    </div>
+    <button onclick="toggleLang()" id="lang-btn">EN</button>
   </div>
   <nav class="tab-bar" role="tablist">
     <button class="tab-btn active" id="tab-scopri" onclick="switchTab('scopri')" role="tab">
@@ -488,6 +492,7 @@ if('serviceWorker' in navigator){
     <span class="les-pos" id="les-pos">— / —</span>
   </div>
   <div class="les-bar"><div class="les-bar-fill" id="les-bar-fill" style="width:0%"></div></div>
+  <div class="les-dots" id="les-dots"></div>
 
   <!-- contenuto dinamico lezione -->
   <div id="les-content">
@@ -726,7 +731,7 @@ if('serviceWorker' in navigator){
 </div>
 
 <!-- barra domanda -->
-<div class="ask-bar" id="ask-bar">
+<div class="ask-bar" id="ask-bar" style="display:none">
   <div class="ask-inner">
     <input class="ask-input" id="q" placeholder="chiedi al grafo…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
     <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
@@ -735,15 +740,35 @@ if('serviceWorker' in navigator){
 
 <script>
 /* ── NAVIGAZIONE ──────────────────────────────────────── */
+let _subtab = 'chat';   // subtab attivo dentro "Chiedi": 'chat' | 'calc'
+
 function switchTab(t){
   ['scopri','lezione','mappa','chiedi'].forEach(s=>{
     document.getElementById('screen-'+s).classList.toggle('active',s===t);
     document.getElementById('tab-'+s).classList.toggle('active',s===t);
   });
+  // la barra domanda serve solo in Chiedi → chat
   const askBar=document.getElementById('ask-bar');
-  askBar.style.display=t==='chiedi'?'block':'none';
+  askBar.style.display=(t==='chiedi' && _subtab==='chat')?'block':'none';
+  // caricamento pigro per schermata (niente fetch inutili all'avvio)
   if(t==='scopri') caricaHome();
+  if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa' && Matter.disciplina) caricaMappa(Matter.disciplina);
+  // posizione deterministica: la schermata parte sempre dall'alto
+  window.scrollTo(0,0);
+}
+
+/* ── SUBTAB dentro Chiedi (chat ↔ calcolatori) ────────── */
+function switchSubtab(name){
+  _subtab = name;
+  ['chat','calc'].forEach(s=>{
+    const panel=document.getElementById('panel-'+s);
+    if(panel) panel.classList.toggle('active',s===name);
+    const btn=document.getElementById('subtab-'+s);
+    if(btn) btn.classList.toggle('active',s===name);
+  });
+  // la barra domanda ha senso solo nella chat
+  document.getElementById('ask-bar').style.display=(name==='chat')?'block':'none';
 }
 
 /* ── STATO GLOBALE ────────────────────────────────────── */
@@ -844,9 +869,9 @@ async function caricaLezioneStep(step){
     Matter.step = j.step;
     Matter.totale = j.totale_passi;
     // header
-    document.getElementById('les-pos').textContent = `${j.step+1} / ${j.totale_passi}`;
+    document.getElementById('les-pos').textContent = `Fenomeno ${j.step+1} di ${j.totale_passi}`;
     document.getElementById('les-step-label').textContent =
-      (j.fenomeno.dominio||'') + ' · nodo ' + (j.step+1);
+      (j.fenomeno.dominio||'') + ' · fenomeno ' + (j.step+1);
     document.getElementById('les-nome').textContent = j.fenomeno.nome;
     document.getElementById('les-scheda').textContent = j.fenomeno.scheda||'';
     // target
@@ -854,6 +879,8 @@ async function caricaLezioneStep(step){
     // barra progressione
     const pct = j.totale_passi>1 ? (j.step/(j.totale_passi-1)*100) : 100;
     document.getElementById('les-bar-fill').style.width = pct+'%';
+    // stepper a puntini: quanti fenomeni, dove sei, salto diretto
+    renderLesDots(j.step, j.totale_passi);
     // principio
     const pb = document.getElementById('les-principio-box');
     if(j.principio){
@@ -872,6 +899,18 @@ async function caricaLezioneStep(step){
   } catch(e){
     document.getElementById('les-nome').textContent = 'Errore caricamento — riprova.';
   }
+}
+
+function renderLesDots(step, totale){
+  const box = document.getElementById('les-dots');
+  if(!box) return;
+  if(!totale || totale < 2){ box.innerHTML=''; return; }
+  let html='';
+  for(let i=0;i<totale;i++){
+    const cls = i===step ? 'current' : (i<step ? 'done' : '');
+    html += `<div class="les-dot ${cls}" onclick="caricaLezioneStep(${i})">${i+1}</div>`;
+  }
+  box.innerHTML = html;
 }
 
 function renderQuizLezione(q){
@@ -905,46 +944,55 @@ function lesStep(dir){
 }
 
 /* ── MAPPA DINAMICA (FE6b) ────────────────────────────── */
-async function caricaMappa(disc){
+const _mappaCache = {};   // { disciplina: [fenomeni] } — niente flicker al rientro
+
+function renderMappa(disc, fens){
   const label = document.getElementById('mappa-label');
   const cont = document.getElementById('mappa-percorso');
   label.textContent = 'Il tuo percorso — ' + disc;
-  cont.innerHTML = '<div style="padding:14px;color:var(--ink-muted);font-size:13px">Caricamento…</div>';
+  if(!fens.length){
+    cont.innerHTML='<div style="padding:14px;color:var(--ink-muted);font-size:13px">Nessun fenomeno trovato per questa disciplina.</div>';
+    return;
+  }
+  // il connettore verticale tra i nodi lo disegna il CSS (.p-step::after):
+  // qui NON lo iniettiamo, per evitare la doppia linea.
+  cont.innerHTML = fens.map((f,i)=>{
+    const isFirst = i===0;
+    const stato = f.stato||'libero';
+    const nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
+    const tagHtml = stato==='completato'
+      ? '<div class="p-tag done">completato</div>'
+      : isFirst ? '<div class="p-tag active">inizia da qui</div>' : '';
+    const svgIcon = stato==='completato'
+      ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg>'
+      : isFirst
+      ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'
+      : '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
+    return `<div class="p-step ${stato==='completato'?'done':''}" style="cursor:pointer" onclick="vaiAStep(${i})">
+      <div class="pnode ${nodeClass}">${svgIcon}</div>
+      <div class="p-info">
+        <div class="p-name">${esc(f.nome)}</div>
+        <div class="p-meta">${esc(f.target||'')}</div>
+        ${tagHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function caricaMappa(disc){
+  // rientro: se già in cache, render immediato, zero placeholder = zero salto
+  if(_mappaCache[disc]){ renderMappa(disc, _mappaCache[disc]); return; }
+  const cont = document.getElementById('mappa-percorso');
+  document.getElementById('mappa-label').textContent = 'Il tuo percorso — ' + disc;
+  // altezza minima durante il load: le sezioni sotto non si spostano
+  cont.innerHTML = '<div style="min-height:160px;padding:14px;color:var(--ink-muted);font-size:13px">Caricamento…</div>';
   try {
     const r = await fetch('/mappa/'+disc);
     if(!r.ok) throw new Error('server');
     const j = await r.json();
     const fens = j.fenomeni||[];
-    if(!fens.length){
-      cont.innerHTML='<div style="padding:14px;color:var(--ink-muted);font-size:13px">Nessun fenomeno trovato per questa disciplina.</div>';
-      return;
-    }
-    cont.innerHTML = fens.map((f,i)=>{
-      const isFirst = i===0;
-      const isLast = i===fens.length-1;
-      const stato = f.stato||'libero';
-      const nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
-      const tagHtml = stato==='completato'
-        ? '<div class="p-tag done">completato</div>'
-        : isFirst ? '<div class="p-tag active">inizia da qui</div>' : '';
-      const svgIcon = stato==='completato'
-        ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg>'
-        : isFirst
-        ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'
-        : '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
-      const connector = !isLast
-        ? `<div style="position:absolute;left:17px;top:40px;bottom:-10px;width:2px;background:${stato==='completato'?'var(--e300)':'var(--border)'};z-index:0"></div>`
-        : '';
-      return `<div class="p-step ${stato==='completato'?'done':''}" style="cursor:pointer" onclick="vaiAStep(${i})">
-        ${connector}
-        <div class="pnode ${nodeClass}">${svgIcon}</div>
-        <div class="p-info">
-          <div class="p-name">${esc(f.nome)}</div>
-          <div class="p-meta">${esc(f.target||'')}</div>
-          ${tagHtml}
-        </div>
-      </div>`;
-    }).join('');
+    _mappaCache[disc] = fens;
+    renderMappa(disc, fens);
   } catch(e){
     cont.innerHTML='<div style="padding:14px;color:var(--e700);font-size:13px">Errore caricamento mappa. Riprova.</div>';
   }
@@ -953,55 +1001,6 @@ async function caricaMappa(disc){
 function vaiAStep(idx){
   Matter.step = idx;
   switchTab('lezione');
-}
-
-/* ── IN1: GESTIONE ERRORI ─────────────────────────────── */
-function renderErr(tipo){
-  const t=document.getElementById('thinking');if(t)t.remove();
-  const card=document.createElement('div');card.className='scheda';
-  let msg='';
-  if(tipo==='network') msg='Errore di rete — controlla la connessione e riprova.';
-  else if(tipo==='timeout') msg='Il server ha impiegato troppo — riprova tra qualche secondo.';
-  else if(tipo==='server') msg='Errore del server — stiamo lavorando per risolverlo.';
-  else msg='Qualcosa è andato storto — riprova.';
-  card.innerHTML=`<div class="s-body" style="color:var(--ink-muted)">${msg}</div>`;
-  document.getElementById('schede').prepend(card);
-}
-
-/* ── TE3: VALIDAZIONE KT ──────────────────────────────── */
-// Test automatico: la domanda normale NON deve far apparire kT,
-// la domanda con "perché" DEVE farlo.
-// Funzione di test — chiamabile dalla console del browser per validare.
-async function testaKT(){
-  console.group('TE3 — Validazione kT');
-  // Test 1: domanda normale
-  const r1 = await fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({domanda:'i miei crauti non fermentano'})});
-  const j1 = await r1.json();
-  const kt1 = (j1.risposta||'').toLowerCase().includes('boltzmann') ||
-               (j1.risposta||'').toLowerCase().includes('kt ');
-  console.log('Test 1 (normale) — kT nella risposta:', kt1, '(atteso: false)');
-  // Test 2: domanda con perché
-  const r2 = await fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({domanda:'perché la fermentazione accelera con il caldo?'})});
-  const j2 = await r2.json();
-  const kt2 = (j2.risposta||'').toLowerCase().includes('boltzmann') ||
-               (j2.risposta||'').toLowerCase().includes('kt') ||
-               (j2.trovato||[]).some(f=>f.toLowerCase().includes('principio'));
-  console.log('Test 2 (perché) — kT nella risposta:', kt2, '(atteso: true)');
-  console.log(kt1===false && kt2===true ? '✓ kT VALIDATO' : '✗ VERIFICARE');
-  console.groupEnd();
-}
-
-/* ── QUIZ ─────────────────────────────────────────────── */
-function selQuiz(el,correct){
-  const q=el.closest('.quiz-card');
-  q.querySelectorAll('.quiz-opt').forEach(o=>o.classList.remove('correct'));
-  if(correct)el.classList.add('correct');
-}
-function selQuiz2(el,correct){
-  const q=el.closest('.scheda-quiz2');
-  if(q){q.querySelectorAll('.q2-opt').forEach(o=>o.classList.remove('correct'));if(correct)el.classList.add('correct');}
 }
 
 /* ── CHAT / GRAFO ─────────────────────────────────────── */
@@ -1261,9 +1260,8 @@ const App=(()=>{
   document.addEventListener('DOMContentLoaded',()=>{
     renderIng();setServe('ice');calcBil();calcAA();
     calcBak();calcQ10();calcPH();calcEY();calcRatio();
-    // inizializzazione dinamica
+    // schermata iniziale = Scopri. La Lezione si carica pigra quando apri la tab.
     caricaHome();
-    caricaLezioneStep(0);
   });
   return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
 })();
