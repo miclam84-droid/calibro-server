@@ -421,6 +421,31 @@ def _anthropic_raw(prompt):
     return "".join(testo) if testo else None
 
 
+def _haiku_raw(prompt, max_tokens=600):
+    """Haiku 4.5 per compiti semplici: quiz, traduzioni. Costo ~4x inferiore a Sonnet."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        return None
+    import urllib.request
+    body = json.dumps({
+        "model": "claude-haiku-4-5",
+        "max_tokens": max_tokens,
+        "temperature": 0,
+        "messages": [{"role": "user", "content": prompt}]
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=body,
+        headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
+        method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        return "".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
+    except Exception:
+        return None
+
+
 def chiedi_mistral(prompt):
     """Nome storico mantenuto per non toccare i due punti che la chiamano.
     Prova Sonnet (qualità migliore sul grafo ricco); se la chiave non c'è
@@ -1032,7 +1057,7 @@ Rispondi SOLO con JSON valido, nessun testo prima o dopo:
 La risposta corretta deve essere sempre la prima opzione (indice 0).
 La spiegazione deve includere il numero esatto."""
         try:
-            raw = chiedi_mistral(quiz_prompt)
+            raw = _haiku_raw(quiz_prompt)  # Haiku: quiz semplice, costo ridotto
             if raw:
                 import re
                 m = re.search(r'\{.*\}', raw, re.DOTALL)
@@ -1264,6 +1289,46 @@ def admin_init():
 # ── FLASK CLI COMMANDS ────────────────────────────────────────────
 import click
 
+
+@app.cli.command("translate-graph")
+def translate_graph():
+    """GT4 - Traduce schede nodi IT->EN con Haiku. Uso: flask translate-graph"""
+    if not DATABASE_URL:
+        click.echo("DATABASE_URL non impostato"); return
+    import psycopg2, time as _t
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute("SELECT id, name, data FROM nodes ORDER BY id")
+    nodi = cur.fetchall()
+    click.echo("Traduzione di " + str(len(nodi)) + " nodi con Haiku 4.5...")
+    tradotti = 0; saltati = 0; errori = 0
+    for nid, nome, data_raw in nodi:
+        d = _dati(data_raw) if data_raw else {}
+        scheda = d.get("scheda","")
+        if not scheda or isinstance(scheda, dict):
+            saltati += 1; continue
+        prompt = (
+            "Traduci questa scheda tecnica dall'italiano all'inglese. "
+            "Mantieni tono tecnico-professionale, numeri esatti e termini scientifici. "
+            "Rispondi SOLO con la traduzione in inglese, niente altro.\n\n"
+            "SCHEDA ITALIANA:\n" + scheda
+        )
+        traduzione = _haiku_raw(prompt, max_tokens=800)
+        if not traduzione:
+            errori += 1; click.echo("  ERRORE: " + nome); continue
+        d["scheda"] = {"it": scheda, "en": traduzione.strip()}
+        cur.execute(
+            "UPDATE nodes SET data = %s::jsonb WHERE id = %s",
+            (json.dumps(d, ensure_ascii=False), nid)
+        )
+        tradotti += 1
+        if tradotti % 10 == 0:
+            conn.commit()
+            click.echo("  " + str(tradotti) + " tradotti...")
+        _t.sleep(0.3)
+    conn.commit(); cur.close(); conn.close()
+    click.echo("FATTO: " + str(tradotti) + " tradotti - " + str(saltati) + " saltati - " + str(errori) + " errori")
+
 @app.cli.command("init-db")
 def init_db():
     """Inizializza tabelle account, sessioni, esperimenti e flavor network.
@@ -1309,8 +1374,7 @@ def init_db():
 
 @app.cli.command("load-flavor")
 def load_flavor():
-    """Carica il flavor network (dataset Ahn) nel database.
-    Uso dalla Console Railway: flask load-flavor"""
+    """Carica il flavor network nel database. Uso: flask load-flavor"""
     click.echo("Caricamento flavor network...")
     try:
         import import_flavor_network
