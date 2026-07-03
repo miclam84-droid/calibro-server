@@ -469,6 +469,7 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
     if not DATABASE_URL:
         return  # in locale non logghiamo
     try:
+        import psycopg2
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
         cur.execute("""
@@ -938,15 +939,19 @@ def nodo():
 import random, time
 
 # cache semplice per il fenomeno del giorno (ruota ogni 24h)
-_cache_home = {"ts": 0, "data": None}
+_cache_home = {}  # { lang: {"ts": float, "data": dict} }
 
 @app.route("/home")
 def home_api():
-    """FE1 — Fenomeno del giorno + principio del giorno."""
+    """FE1 — Fenomeno del giorno + principio del giorno.
+    Supporta ?lang=it|en — default it."""
     global _cache_home
+    lang = request.args.get("lang", "it")
     now = time.time()
-    if now - _cache_home["ts"] < 86400 and _cache_home["data"]:
-        return jsonify(_cache_home["data"])
+    # cache separata per lingua; scade dopo 24h
+    cached = _cache_home.get(lang)
+    if cached and now - cached["ts"] < 86400:
+        return jsonify(cached["data"])
     db = carica_grafo()
     fenomeni = db.execute(
         "SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY id"
@@ -958,34 +963,25 @@ def home_api():
         return jsonify({"errore": "grafo vuoto"})
     f = random.choice(fenomeni)
     fd = _dati(f["data"])
-    scheda = fd.get("scheda", "") or ""
-    # gestisci formato bilingue {"it":"...","en":"..."}
-    if isinstance(scheda, dict):
-        scheda = scheda.get("it", "") or scheda.get("en", "") or ""
     result = {
         "fenomeno": {
             "id": f["id"],
             "nome": f["name"],
             "dominio": f["domain"],
             "target": fd.get("target", ""),
-            "scheda_intro": scheda[:200]
+            "scheda_intro": _scheda_lang(fd, lang)[:200]
         }
     }
-    # filtra principi candidati
     principi_attivi = [p for p in principi if "candidato" not in str(_dati(p["data"]))]
     if principi_attivi:
         p = principi_attivi[0]
         pd = _dati(p["data"])
-        ps = pd.get("scheda", "") or ""
-        if isinstance(ps, dict):
-            ps = ps.get("it", "") or ""
         result["principio"] = {
             "id": p["id"],
             "nome": p["name"],
-            "scheda_intro": ps[:200]
+            "scheda_intro": _scheda_lang(pd, lang)[:200]
         }
-    _cache_home["ts"] = now
-    _cache_home["data"] = result
+    _cache_home[lang] = {"ts": now, "data": result}
     return jsonify(result)
 
 
@@ -1026,10 +1022,10 @@ def disciplina(nome):
 
 @app.route("/lezione/<disciplina_nome>/<int:step>")
 def lezione(disciplina_nome, step):
-    """FE3 — Nodo del passo corrente + scheda + quiz generato da Sonnet.
-    Il quiz ha sempre: domanda + 3 opzioni + spiegazione matematica."""
+    """FE3 — Nodo del passo corrente + scheda + quiz generato da Haiku.
+    Supporta ?lang=it|en — default it."""
+    lang = request.args.get("lang", "it")
     db = carica_grafo()
-    # recupera fenomeni della disciplina
     resp = disciplina(disciplina_nome).get_json()
     fenomeni = resp.get("fenomeni", [])
     if not fenomeni:
@@ -1040,10 +1036,7 @@ def lezione(disciplina_nome, step):
     if not nodo:
         return jsonify({"errore": "nodo non trovato"})
     nd = _dati(nodo["data"])
-    scheda = nd.get("scheda", "") or ""
-    # gestisci formato bilingue {"it":"...","en":"..."}
-    if isinstance(scheda, dict):
-        scheda = scheda.get("it", "") or scheda.get("en", "") or ""
+    scheda = _scheda_lang(nd, lang)
     target = nd.get("target", "")
     # principio collegato
     principio = None
@@ -1052,10 +1045,7 @@ def lezione(disciplina_nome, step):
                        WHERE e.to_id=? AND e.relation='spiega'
                        AND n.type='principio'""", (nodo["id"],)).fetchone()
     if pr:
-        pr_scheda = (_dati(pr["data"]).get("scheda","") or "")
-        if isinstance(pr_scheda, dict):
-            pr_scheda = pr_scheda.get("it","") or ""
-        principio = {"nome": pr["name"], "testo": pr_scheda[:300]}
+        principio = {"nome": pr["name"], "testo": _scheda_lang(_dati(pr["data"]), lang)[:300]}
     # quiz generato da Sonnet
     quiz = None
     if scheda:

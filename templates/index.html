@@ -753,7 +753,10 @@ function switchTab(t){
   // caricamento pigro per schermata (niente fetch inutili all'avvio)
   if(t==='scopri') caricaHome();
   if(t==='lezione') caricaLezioneStep(Matter.step);
-  if(t==='mappa' && Matter.disciplina) caricaMappa(Matter.disciplina);
+  if(t==='mappa'){
+    if(Matter.disciplina) caricaMappa(Matter.disciplina);
+    else document.getElementById('mappa-label').textContent = 'Scegli una disciplina in Scopri per vedere il percorso';
+  }
   // posizione deterministica: la schermata parte sempre dall'alto
   window.scrollTo(0,0);
 }
@@ -773,7 +776,7 @@ function switchSubtab(name){
 
 /* ── STATO GLOBALE ────────────────────────────────────── */
 const Matter = {
-  disciplina: 'bar',
+  disciplina: null,   // null finché l'utente non sceglie una disciplina
   step: 0,
   totale: 0,
   fenomenoId: null
@@ -789,8 +792,10 @@ function toggleLang(){
     _lang === 'it' ? 'La scienza del mestiere' : 'The science behind the craft';
   // invalida cache e ricarica
   _homeCached = null;
+  Object.keys(_mappaCache).forEach(k => delete _mappaCache[k]);
   if(document.getElementById('screen-scopri').classList.contains('active')) caricaHome();
   if(document.getElementById('screen-lezione').classList.contains('active')) caricaLezioneStep(Matter.step);
+  if(document.getElementById('screen-mappa').classList.contains('active') && Matter.disciplina) caricaMappa(Matter.disciplina);
 }
 
 /* ── SCOPRI DINAMICA (FE5) ────────────────────────────── */
@@ -798,7 +803,7 @@ let _homeCached = null;
 async function caricaHome(){
   if(_homeCached){ renderHome(_homeCached); return; }
   try {
-    const r = await fetch('/home');
+    const r = await fetch('/home?lang='+_lang);
     if(!r.ok) throw new Error('server error');
     const j = await r.json();
     _homeCached = j;
@@ -862,7 +867,7 @@ async function caricaLezioneStep(step){
   document.getElementById('les-scheda').textContent = '';
   document.getElementById('les-quiz-box').style.display='none';
   try {
-    const r = await fetch(`/lezione/${disc}/${step}`);
+    const r = await fetch(`/lezione/${disc}/${step}?lang=${_lang}`);
     if(!r.ok) throw new Error('server');
     const j = await r.json();
     if(j.errore){ document.getElementById('les-nome').textContent = j.errore; return; }
@@ -1262,6 +1267,8 @@ const App=(()=>{
     calcBak();calcQ10();calcPH();calcEY();calcRatio();
     // schermata iniziale = Scopri. La Lezione si carica pigra quando apri la tab.
     caricaHome();
+    // IN3 — keep-alive: ping ogni 4 minuti per evitare il cold start di Railway
+    setInterval(()=>fetch('/health').catch(()=>{}), 4*60*1000);
   });
   return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
 })();
