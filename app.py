@@ -1242,5 +1242,64 @@ def admin_init():
             return jsonify({"errore":str(e)}), 500
     return jsonify({"ok":True,"messaggio":"Tabelle create: utenti, sessioni, esperimenti"})
 
+
+# ── FLASK CLI COMMANDS ────────────────────────────────────────────
+import click
+
+@app.cli.command("init-db")
+def init_db():
+    """Inizializza tabelle account, sessioni, esperimenti e flavor network.
+    Uso dalla Console Railway: flask init-db"""
+    click.echo("Inizializzazione database Matter...")
+    _init_account_tables()
+    if DATABASE_URL:
+        try:
+            import psycopg2
+            conn = psycopg2.connect(DATABASE_URL)
+            cur = conn.cursor()
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS esperimenti (
+                    id SERIAL PRIMARY KEY, ts TIMESTAMPTZ DEFAULT NOW(),
+                    nome TEXT NOT NULL, disciplina TEXT, note TEXT,
+                    ph NUMERIC(4,2), brix NUMERIC(5,2), abv NUMERIC(5,2),
+                    ey_perc NUMERIC(5,2), tds_perc NUMERIC(5,2),
+                    temperatura NUMERIC(5,1), idratazione NUMERIC(5,2),
+                    ingredienti JSONB DEFAULT '[]',
+                    fenomeni JSONB DEFAULT '[]',
+                    costo_mercato_eur NUMERIC(8,2), area_mercato TEXT DEFAULT 'it',
+                    user_id TEXT, versione INTEGER DEFAULT 1
+                )
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_esp_user ON esperimenti(user_id, ts DESC)")
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS flavor_abbinamenti (
+                    id SERIAL PRIMARY KEY,
+                    ingrediente_1 TEXT NOT NULL,
+                    ingrediente_2 TEXT NOT NULL,
+                    composto TEXT,
+                    overlap_score NUMERIC(4,2),
+                    fonte TEXT DEFAULT 'ahn_2011',
+                    UNIQUE(ingrediente_1, ingrediente_2)
+                )
+            """)
+            conn.commit(); cur.close(); conn.close()
+            click.echo("OK: tabelle create (utenti, sessioni, esperimenti, flavor_abbinamenti)")
+        except Exception as e:
+            click.echo(f"ERRORE: {e}")
+    else:
+        click.echo("DATABASE_URL non impostato — skip")
+
+@app.cli.command("load-flavor")
+def load_flavor():
+    """Carica il flavor network (dataset Ahn) nel database.
+    Uso dalla Console Railway: flask load-flavor"""
+    click.echo("Caricamento flavor network...")
+    try:
+        import import_flavor_network
+        import_flavor_network.carica_flavor_network()
+        click.echo("OK: flavor network caricato")
+    except Exception as e:
+        click.echo(f"ERRORE: {e}")
+
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
