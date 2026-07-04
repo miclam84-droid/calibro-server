@@ -592,7 +592,7 @@ if('serviceWorker' in navigator){
       Scegli una disciplina in Scopri per vedere il percorso.
     </div>
   </div>
-  <div class="sec-label" style="padding-top:4px">Principi trasversali</div>
+  <div class="sec-label" id="ct-princ-trasv" style="padding-top:4px">Principi trasversali</div>
   <div class="iper-arco">
     <div class="ia-header">
       <div class="ia-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg></div>
@@ -609,7 +609,7 @@ if('serviceWorker' in navigator){
       <span class="ia-nodo">Carbonatazione</span>
     </div>
   </div>
-  <div class="sec-label" style="padding-top:8px">Perché funzionano insieme</div>
+  <div class="sec-label" id="ct-perche-ins" style="padding-top:8px">Perché funzionano insieme</div>
   <div class="flavor-card">
     <div class="fl-header">
       <div class="fl-icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
@@ -629,7 +629,7 @@ if('serviceWorker' in navigator){
       Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale o di sicurezza alimentare.
     </div>
   </div>
-  <div class="sec-label" style="padding-top:4px">Il ponte verso Cifra</div>
+  <div class="sec-label" id="ct-ponte-cifra" style="padding-top:4px">Il ponte verso Cifra</div>
   <div class="bridge-card">
     <div class="bridge-eyebrow">il ponte verso Cifra</div>
     <div class="bridge-headline">Sai già la scienza. Vuoi vedere cosa ti costa davvero in bottega?</div>
@@ -663,42 +663,42 @@ if('serviceWorker' in navigator){
         <button class="subtab-btn" id="ctab-caf" onclick="App.setTool('caf')" style="font-size:10px">Caffè</button>
       </div>
       <div id="cpanel-dil">
-        <div class="calc-card"><div class="calc-title">Il drink</div>
-          <div class="row head"><span>ingrediente</span><span>ml</span><span>grad %</span><span></span></div>
+        <div class="calc-card"><div class="calc-title" id="ct-drink">Il drink</div>
+          <div class="row head"><span id="ct-ing">ingrediente</span><span>ml</span><span>grad %</span><span></span></div>
           <div id="ing-list"></div>
-          <button class="add-btn" onclick="App.addIng()">+ aggiungi ingrediente</button>
+          <button class="add-btn" onclick="App.addIng()" id="ct-add">+ aggiungi ingrediente</button>
         </div>
-        <div class="calc-card"><div class="calc-title">Tecnica</div>
+        <div class="calc-card"><div class="calc-title" id="ct-tecnica">Tecnica</div>
           <div class="chips-row">
-            <div class="chip" data-dil="22" aria-pressed="true" onclick="App.setTech(this,22)"><div class="c-t">Mescolato</div><div class="c-s">~22%</div></div>
-            <div class="chip" data-dil="27" aria-pressed="false" onclick="App.setTech(this,27)"><div class="c-t">Shakerato</div><div class="c-s">~27%</div></div>
+            <div class="chip" data-dil="22" aria-pressed="true" onclick="App.setTech(this,22)"><div class="c-t" id="ct-mesc">Mescolato</div><div class="c-s">~22%</div></div>
+            <div class="chip" data-dil="27" aria-pressed="false" onclick="App.setTech(this,27)"><div class="c-t" id="ct-shak">Shakerato</div><div class="c-s">~27%</div></div>
           </div>
           <div class="slider-row">
             <input type="range" min="0" max="45" value="22" id="dil-range" oninput="App.setRange(this.value)">
             <span class="slider-val" id="dil-v">22%</span>
           </div>
-          <p class="hint">Zona di partenza. Per tararla: pesa lo shaker prima e dopo.</p>
+          <p class="hint" id="ct-hint-dil">Zona di partenza. Per tararla: pesa lo shaker prima e dopo.</p>
         </div>
         <div class="readout" id="dil-out"></div>
-        <div class="calc-card"><div class="calc-title">Batch</div>
+        <div class="calc-card"><div class="calc-title" id="ct-batch">Batch</div>
           <div class="chips-row">
-            <div class="chip" id="bm-serv" aria-pressed="true" onclick="App.setBM('serv')"><div class="c-t">Per porzioni</div></div>
-            <div class="chip" id="bm-vol" aria-pressed="false" onclick="App.setBM('vol')"><div class="c-t">Per volume</div></div>
+            <div class="chip" id="bm-serv" aria-pressed="true" onclick="App.setBM('serv')"><div class="c-t" id="ct-perporz">Per porzioni</div></div>
+            <div class="chip" id="bm-vol" aria-pressed="false" onclick="App.setBM('vol')"><div class="c-t" id="ct-pervol">Per volume</div></div>
           </div>
           <div class="batch-row" style="margin-top:10px">
             <div><label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px" id="bq-lab">porzioni</label><input class="c-input" type="number" id="b-qty" value="20" oninput="App.calcBatch()"></div>
-            <div><label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px">extra %</label><input class="c-input" type="number" id="b-over" value="10" oninput="App.calcBatch()"></div>
-            <div><label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px">bot. ml</label><input class="c-input" type="number" id="b-bot" value="700" oninput="App.calcBatch()"></div>
+            <div><label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px" id="ct-extra">extra %</label><input class="c-input" type="number" id="b-over" value="10" oninput="App.calcBatch()"></div>
+            <div><label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:4px" id="ct-bot">bot. ml</label><input class="c-input" type="number" id="b-bot" value="700" oninput="App.calcBatch()"></div>
           </div>
           <div class="chips-row" style="margin-top:10px">
-            <div class="chip" id="ps-ice" aria-pressed="true" onclick="App.setServe('ice')"><div class="c-t">Col ghiaccio</div><div class="c-s">acqua dopo</div></div>
-            <div class="chip" id="ps-bot" aria-pressed="false" onclick="App.setServe('bot')"><div class="c-t">Imbottigliato</div><div class="c-s">acqua ora</div></div>
+            <div class="chip" id="ps-ice" aria-pressed="true" onclick="App.setServe('ice')"><div class="c-t" id="ct-ice">Col ghiaccio</div><div class="c-s" id="ct-ice-s">acqua dopo</div></div>
+            <div class="chip" id="ps-bot" aria-pressed="false" onclick="App.setServe('bot')"><div class="c-t" id="ct-botg">Imbottigliato</div><div class="c-s" id="ct-botg-s">acqua ora</div></div>
           </div>
           <div id="batch-out"></div>
         </div>
       </div>
       <div id="cpanel-bil" style="display:none">
-        <div class="calc-card"><div class="calc-title">Sour</div>
+        <div class="calc-card"><div class="calc-title" id="ct-sour">Sour</div>
           <div style="display:grid;grid-template-columns:1fr 72px 72px;gap:6px;margin-bottom:6px">
             <input class="c-input c-input-name" value="Distillato" id="b-s-name">
             <input class="c-input" type="number" id="b-s-vol" value="60" oninput="App.calcBil()">
@@ -711,8 +711,8 @@ if('serviceWorker' in navigator){
           </div>
           <div style="display:grid;grid-template-columns:1fr 72px;gap:6px;margin-bottom:6px">
             <select class="c-select" id="b-y-type" onchange="App.calcBil()">
-              <option value="50|1.23">Sciroppo 1:1 (50 Brix)</option>
-              <option value="65|1.31">Sciroppo 2:1 (65 Brix)</option>
+              <option value="50|1.23" id="ct-syr1">Sciroppo 1:1 (50 Brix)</option>
+              <option value="65|1.31" id="ct-syr2">Sciroppo 2:1 (65 Brix)</option>
             </select>
             <input class="c-input" type="number" id="b-y-vol" value="22.5" oninput="App.calcBil()">
           </div>
@@ -722,18 +722,18 @@ if('serviceWorker' in navigator){
           </div>
         </div>
         <div class="readout" id="bil-out"></div>
-        <div class="calc-card"><div class="calc-title">Pareggiatore acidità</div>
-          <p class="hint" style="margin-bottom:8px">Porta qualsiasi succo al 6% del lime.</p>
+        <div class="calc-card"><div class="calc-title" id="ct-par">Pareggiatore acidità</div>
+          <p class="hint" style="margin-bottom:8px" id="ct-par-hint">Porta qualsiasi succo al 6% del lime.</p>
           <div class="mini">
-            <div><label>succo ml</label><input class="c-input" type="number" id="aa-vol" value="100" oninput="App.calcAA()"></div>
-            <div><label>acido %</label><input class="c-input" type="number" id="aa-cur" value="0.9" step="0.1" oninput="App.calcAA()"></div>
-            <div><label>target %</label><input class="c-input" type="number" id="aa-tgt" value="6" step="0.1" oninput="App.calcAA()"></div>
+            <div><label id="ct-succo">succo ml</label><input class="c-input" type="number" id="aa-vol" value="100" oninput="App.calcAA()"></div>
+            <div><label id="ct-acido">acido %</label><input class="c-input" type="number" id="aa-cur" value="0.9" step="0.1" oninput="App.calcAA()"></div>
+            <div><label id="ct-target">target %</label><input class="c-input" type="number" id="aa-tgt" value="6" step="0.1" oninput="App.calcAA()"></div>
           </div>
           <div class="mini-out" id="aa-out"></div>
         </div>
       </div>
       <div id="cpanel-bak" style="display:none">
-        <div class="calc-card"><div class="calc-title">Idratazione (baker's %)</div>
+        <div class="calc-card"><div class="calc-title" id="ct-idr">Idratazione (baker's %)</div>
           <p class="hint" style="margin-bottom:10px">Tutto in percentuale sulla farina = 100%.</p>
           <div class="mini" style="grid-template-columns:1fr 1fr">
             <div><label>farina g</label><input class="c-input" type="number" id="bk-flour" value="1000" oninput="App.calcBak()"></div>
@@ -742,7 +742,7 @@ if('serviceWorker' in navigator){
           <div class="mini-out" id="bk-idr-out"></div>
           <div class="hint" style="margin-top:12px">Zone: pane comune 65–72% · ciabatta/focaccia 75–85% · pizza napoletana 60–65%</div>
         </div>
-        <div class="calc-card"><div class="calc-title">Q10 — tempo di fermentazione</div>
+        <div class="calc-card"><div class="calc-title" id="ct-q10">Q10 — tempo di fermentazione</div>
           <div class="mini">
             <div><label>tempo base (h)</label><input class="c-input" type="number" id="bk-t-base" value="5" step="0.5" oninput="App.calcQ10()"></div>
             <div><label>temp. base °C</label><input class="c-input" type="number" id="bk-t-ref" value="24" oninput="App.calcQ10()"></div>
@@ -750,7 +750,7 @@ if('serviceWorker' in navigator){
           </div>
           <div class="mini-out" id="bk-q10-out"></div>
         </div>
-        <div class="calc-card"><div class="calc-title">pH madre</div>
+        <div class="calc-card"><div class="calc-title" id="ct-ph">pH madre</div>
           <div class="mini" style="grid-template-columns:1fr">
             <div><label>pH attuale</label><input class="c-input" type="number" id="bk-ph" value="4.0" step="0.05" min="3" max="6" oninput="App.calcPH()"></div>
           </div>
@@ -1204,7 +1204,7 @@ const App=(()=>{
     calcBatch();
   }
 
-  function setBM(m){bm=m;$('bm-serv').setAttribute('aria-pressed',m==='serv');$('bm-vol').setAttribute('aria-pressed',m==='vol');$('bq-lab').textContent=m==='serv'?'porzioni':'volume ml';calcBatch();}
+  function setBM(m){bm=m;$('bm-serv').setAttribute('aria-pressed',m==='serv');$('bm-vol').setAttribute('aria-pressed',m==='vol');$('bq-lab').textContent=m==='serv'?_t('ct_bq_serv'):_t('ct_bq_vol');calcBatch();}
   function setServe(s){srv=s;$('ps-ice').setAttribute('aria-pressed',s==='ice');$('ps-bot').setAttribute('aria-pressed',s==='bot');calcBatch();}
 
   function calcBatch(){
@@ -1215,8 +1215,8 @@ const App=(()=>{
     const Neff=bm==='serv'?qty*o:(sv?qty/sv*o:0);
     const rows=ing.map(x=>`<div class="b-row"><span>${esc(x.n||'—')}</span><b>${fmt(x.vol*Neff,0)} ml</b></div>`).join('');
     const wTotal=wPer*Neff,volTot=sv*Neff;
-    $('batch-out').innerHTML=rows+(wPer>0?`<div class="b-row"><span>Acqua pre-diluizione</span><b>${fmt(wTotal,0)} ml</b></div>`:'')+
-      `<div class="b-sum">Totale <b>${fmt(volTot/1000,2)} L</b> · include ${over}% extra</div>`;
+    $('batch-out').innerHTML=rows+(wPer>0?`<div class="b-row"><span>${_t('ct_acqua_pre')}</span><b>${fmt(wTotal,0)} ml</b></div>`:'')+
+      `<div class="b-sum">${_t('ct_totale')} <b>${fmt(volTot/1000,2)} L</b> · ${_t('ct_include')} ${over}% ${_t('ct_extra_lbl')}</div>`;
   }
 
   function gauge(name,val,z){
@@ -1270,7 +1270,7 @@ const App=(()=>{
     else if(n<=75) zona='zona di transizione';
     else if(n<=85) zona='alta — ciabatta, focaccia, pizza teglia';
     else zona='molto alta — impasto-pastella';
-    $('bk-idr-out').innerHTML=`Idratazione <b style="color:var(--e700)">${idr}%</b> · ${zona}`;
+    $('bk-idr-out').innerHTML=`${_t('ct_idr_out')} <b style="color:var(--e700)">${idr}%</b> · ${zona}`;
   }
   function calcQ10(){
     const tBase=+$('bk-t-base').value||0;
@@ -1278,8 +1278,8 @@ const App=(()=>{
     const tReal=+$('bk-t-real').value||18;
     if(!tBase){$('bk-q10-out').innerHTML='';return;}
     const tNew=tBase*Math.pow(2,(tRef-tReal)/8);
-    const dir=tReal<tRef?'più freddo — fermentazione più lenta':'più caldo — fermentazione più veloce';
-    $('bk-q10-out').innerHTML=`Tempo previsto <b style="color:var(--e700)">${tNew.toFixed(1)} h</b> · ${dir}`;
+    const dir=tReal<tRef?_t('ct_q10_freddo'):_t('ct_q10_caldo');
+    $('bk-q10-out').innerHTML=`${_t('ct_q10_out')} <b style="color:var(--e700)">${tNew.toFixed(1)} h</b> · ${dir}`;
   }
   function calcPH(){
     const ph=+$('bk-ph').value||0;
@@ -1445,6 +1445,34 @@ const _strings = {
     pro_desc:'Con Matter Pro continui senza limiti — chat illimitata, Flavor Network, quaderno misure fisiche.',
     passa_pro:'Passa a Pro',
     continua_free:'Continua con il piano gratuito',
+    // calcolatori
+    ct_drink:'Il drink', ct_ing:'ingrediente', ct_add:'+ aggiungi ingrediente',
+    ct_tecnica:'Tecnica', ct_mesc:'Mescolato', ct_shak:'Shakerato',
+    ct_hint_dil:'Zona di partenza. Per tararla: pesa lo shaker prima e dopo.',
+    ct_batch:'Batch', ct_perporz:'Per porzioni', ct_pervol:'Per volume',
+    ct_extra:'extra %', ct_bot:'bot. ml', ct_bq_serv:'porzioni', ct_bq_vol:'volume ml',
+    ct_ice:'Col ghiaccio', ct_ice_s:'acqua dopo',
+    ct_botg:'Imbottigliato', ct_botg_s:'acqua ora',
+    ct_sour:'Sour', ct_syr1:'Sciroppo 1:1 (50 Brix)', ct_syr2:'Sciroppo 2:1 (65 Brix)',
+    ct_par:'Pareggiatore acidità',
+    ct_par_hint:'Porta qualsiasi succo al 6% del lime.',
+    ct_succo:'succo ml', ct_acido:'acido %', ct_target:'target %',
+    ct_idr:"Idratazione (baker's %)",
+    ct_q10:'Q10 — tempo di fermentazione',
+    ct_ph:'pH madre',
+    // output calcolatori
+    ct_idr_out:'Idratazione',
+    ct_q10_freddo:'più freddo — fermentazione più lenta',
+    ct_q10_caldo:'più caldo — fermentazione più veloce',
+    ct_q10_out:'Tempo previsto',
+    // cookie
+    ct_cookie_ok:'Accetto', ct_cookie_no:'Solo essenziali',
+    ct_cookie_txt:'Matter usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral).',
+    // batch output
+    ct_acqua_pre:'Acqua pre-diluizione',
+    ct_totale:'Totale',
+    ct_include:'include',
+    ct_extra_lbl:'extra',
   },
   en:{
     payoff:'The science behind the craft',
@@ -1472,49 +1500,117 @@ const _strings = {
     pro_desc:'With Matter Pro, continue without limits — unlimited chat, Flavor Network, measurements notebook.',
     passa_pro:'Upgrade to Pro',
     continua_free:'Continue with free plan',
+    // calculators
+    ct_drink:'The drink', ct_ing:'ingredient', ct_add:'+ add ingredient',
+    ct_tecnica:'Technique', ct_mesc:'Stirred', ct_shak:'Shaken',
+    ct_hint_dil:'Starting point. To calibrate: weigh the shaker before and after.',
+    ct_batch:'Batch', ct_perporz:'By servings', ct_pervol:'By volume',
+    ct_extra:'extra %', ct_bot:'bot. ml', ct_bq_serv:'servings', ct_bq_vol:'volume ml',
+    ct_ice:'With ice', ct_ice_s:'water added later',
+    ct_botg:'Bottled', ct_botg_s:'water added now',
+    ct_sour:'Sour', ct_syr1:'Syrup 1:1 (50 Brix)', ct_syr2:'Syrup 2:1 (65 Brix)',
+    ct_par:'Acidity equaliser',
+    ct_par_hint:'Bring any juice to 6% like lime.',
+    ct_succo:'juice ml', ct_acido:'acid %', ct_target:'target %',
+    ct_idr:"Hydration (baker's %)",
+    ct_q10:'Q10 — fermentation time',
+    ct_ph:'Starter pH',
+    // calc outputs
+    ct_idr_out:'Hydration',
+    ct_q10_freddo:'cooler — slower fermentation',
+    ct_q10_caldo:'warmer — faster fermentation',
+    ct_q10_out:'Estimated time',
+    // cookie
+    ct_cookie_ok:'Accept', ct_cookie_no:'Essential only',
+    ct_cookie_txt:'Matter uses technical cookies and logs questions to improve the service. No profiling cookies. Responses are AI-generated (Anthropic/Mistral).',
+    // batch output
+    ct_acqua_pre:'Pre-dilution water',
+    ct_totale:'Total',
+    ct_include:'includes',
+    ct_extra_lbl:'extra',
   }
 };
 
 function _t(k){ return (_strings[_lang]||_strings.it)[k]||k; }
 
 function applicaStringheUI(){
-  // payoff
-  document.getElementById('payoff-text').textContent = _t('payoff');
-  document.getElementById('lang-btn').textContent = _lang==='it'?'EN':'IT';
+  const s=id=>{ const el=document.getElementById(id); if(el) return el; };
+  const st=(id,txt)=>{ const el=s(id); if(el) el.textContent=txt; };
+  // payoff e lang btn
+  st('payoff-text',_t('payoff'));
+  document.getElementById('lang-btn').textContent=_lang==='it'?'EN':'IT';
   // tab labels
   document.querySelectorAll('.tab-label').forEach((el,i)=>{
     const keys=['scopri','lezione','mappa','chiedi'];
-    if(keys[i]) el.textContent = _t(keys[i]);
+    if(keys[i]) el.textContent=_t(keys[i]);
   });
   // scopri
-  const ctaMain=document.getElementById('scopri-cta');
-  if(ctaMain) ctaMain.textContent = _t('studia');
-  const noLogin=document.querySelector('.no-login');
-  if(noLogin) noLogin.textContent = _t('nologin');
+  st('scopri-cta',_t('studia'));
+  const noL=document.querySelector('.no-login'); if(noL) noL.textContent=_t('nologin');
   document.querySelectorAll('.sec-label').forEach(el=>{
     if(el.textContent.includes('Scegli la tua')||el.textContent.includes('Choose your'))
-      el.textContent = _t('scegli');
+      el.textContent=_t('scegli');
   });
-  // chiedi placeholder
-  const qInput=document.getElementById('q');
-  if(qInput) qInput.placeholder = _t('chiedi_placeholder');
-  const askBtn=document.getElementById('ask-btn');
-  if(askBtn) askBtn.textContent = _t('chiedi_btn');
-  // subtab buttons
-  const stChat=document.getElementById('subtab-chat');
-  if(stChat) stChat.textContent = _t('chiedi_al_grafo');
-  const stCalc=document.getElementById('subtab-calc');
-  if(stCalc) stCalc.textContent = _t('calcola');
-  // lezione bottoni
-  const btnPrec=document.getElementById('les-btn-prec');
-  if(btnPrec) btnPrec.textContent = _t('indietro');
+  // chiedi
+  const qIn=document.getElementById('q'); if(qIn) qIn.placeholder=_t('chiedi_placeholder');
+  st('ask-btn',_t('chiedi_btn'));
+  st('subtab-chat',_t('chiedi_al_grafo'));
+  st('subtab-calc',_t('calcola'));
+  // lezione
+  st('les-btn-prec',_t('indietro'));
+  // mappa hardcoded
+  st('ct-princ-trasv',_t('principi_trasv'));
+  st('ct-perche-ins',_t('perche_insieme'));
+  st('ct-ponte-cifra',_t('ponte_cifra'));
+  // calcolatori — diluizione
+  st('ct-drink',_t('ct_drink'));
+  st('ct-ing',_t('ct_ing'));
+  st('ct-add',_t('ct_add'));
+  st('ct-tecnica',_t('ct_tecnica'));
+  st('ct-mesc',_t('ct_mesc'));
+  st('ct-shak',_t('ct_shak'));
+  st('ct-hint-dil',_t('ct_hint_dil'));
+  // batch
+  st('ct-batch',_t('ct_batch'));
+  st('ct-perporz',_t('ct_perporz'));
+  st('ct-pervol',_t('ct_pervol'));
+  st('ct-extra',_t('ct_extra'));
+  st('ct-bot',_t('ct_bot'));
+  st('ct-ice',_t('ct_ice'));
+  st('ct-ice-s',_t('ct_ice_s'));
+  st('ct-botg',_t('ct_botg'));
+  st('ct-botg-s',_t('ct_botg_s'));
+  // aggiorna label batch dinamica se visibile
+  const bqLab=document.getElementById('bq-lab');
+  if(bqLab) bqLab.textContent = document.getElementById('bm-serv')?.getAttribute('aria-pressed')==='true'
+    ? _t('ct_bq_serv') : _t('ct_bq_vol');
+  // bilanciamento
+  st('ct-sour',_t('ct_sour'));
+  const syr1=document.getElementById('ct-syr1'); if(syr1) syr1.textContent=_t('ct_syr1');
+  const syr2=document.getElementById('ct-syr2'); if(syr2) syr2.textContent=_t('ct_syr2');
+  st('ct-par',_t('ct_par'));
+  st('ct-par-hint',_t('ct_par_hint'));
+  st('ct-succo',_t('ct_succo'));
+  st('ct-acido',_t('ct_acido'));
+  st('ct-target',_t('ct_target'));
+  // bakery / caffè
+  st('ct-idr',_t('ct_idr'));
+  st('ct-q10',_t('ct_q10'));
+  st('ct-ph',_t('ct_ph'));
+  // cookie banner
+  st('ct-cookie-ok',_t('ct_cookie_ok'));
+  st('ct-cookie-no',_t('ct_cookie_no'));
+  const cTxt=document.getElementById('ct-cookie-txt');
+  if(cTxt) cTxt.childNodes[0].textContent=_t('ct_cookie_txt')+' ';
   // paywall
   document.querySelectorAll('.paywall-sheet h3').forEach(el=>el.textContent=_t('domande_esaurite'));
   document.querySelectorAll('.paywall-sheet p').forEach(el=>el.textContent=_t('pro_desc'));
-  const pwCta=document.querySelector('.pw-cta');
-  if(pwCta) pwCta.textContent=_t('passa_pro');
-  const pwSkip=document.querySelector('.pw-skip');
-  if(pwSkip) pwSkip.textContent=_t('continua_free');
+  const pwCta=document.querySelector('.pw-cta'); if(pwCta) pwCta.textContent=_t('passa_pro');
+  const pwSkip=document.querySelector('.pw-skip'); if(pwSkip) pwSkip.textContent=_t('continua_free');
+  // auth
+  st('auth-tab-login',_t('accedi'));
+  st('auth-tab-reg',_t('registrati'));
+  const authSkip=document.querySelector('.auth-skip a'); if(authSkip) authSkip.textContent=_t('continua_senza');
 }
 async function cercaAbbinamenti(ingrediente){
   switchTab('chiedi');
@@ -1621,12 +1717,12 @@ async function testaKT(){
 
 <!-- ── COOKIE BANNER GDPR (LE1) ─────────────────────────── -->
 <div id="cookie-banner" style="display:none">
-  <p>Matter usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
+  <p id="ct-cookie-txt">Matter usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
   Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral). 
   <a href="/privacy" target="_blank">Privacy policy</a></p>
   <div class="cookie-btns">
-    <button class="cookie-ok" onclick="accettaCookie()">Accetto</button>
-    <button class="cookie-no" onclick="rifiutaCookie()">Solo essenziali</button>
+    <button class="cookie-ok" onclick="accettaCookie()" id="ct-cookie-ok">Accetto</button>
+    <button class="cookie-no" onclick="rifiutaCookie()" id="ct-cookie-no">Solo essenziali</button>
   </div>
 </div>
 
