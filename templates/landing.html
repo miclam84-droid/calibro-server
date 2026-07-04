@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matter — La scienza del mestiere</title>
+<meta name="description" content="La fisica e la chimica sotto ogni gesto al banco. Per chi sa già fare e vuole capire perché.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Schibsted+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2EDE1;--surface:#FAFAF7;--coffee:#3D2B1F;
+  --ink:#1C1A15;--muted:rgba(28,26,21,.55);--faint:rgba(28,26,21,.35);--border:rgba(28,26,21,.09);
+  --e500:#C77B3F;--e300:#E0AA76;--e100:#F4E3D2;--s500:#2C6E63;
+  --serif:'Fraunces',Georgia,serif;--sans:'Schibsted Grotesk',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6;}
+
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+.n-brand{display:flex;flex-direction:column;}
+.n-name{font-family:var(--serif);font-weight:700;font-size:17px;line-height:1.1;}
+.n-pay{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--e500);}
+.n-cta{background:var(--coffee);color:#fff;font-family:var(--sans);font-weight:500;font-size:13px;padding:9px 18px;border-radius:8px;text-decoration:none;}
+
+/* HERO */
+.hero{max-width:700px;margin:0 auto;padding:88px 24px 52px;text-align:center;}
+.h-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--e500);display:block;margin-bottom:22px;}
+.hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(36px,6vw,62px);line-height:1.1;letter-spacing:-.02em;margin-bottom:20px;}
+.hero h1 em{font-style:italic;color:var(--e500);}
+.h-sub{font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:460px;margin:0 auto 36px;line-height:1.65;}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-p{background:var(--coffee);color:#fff;font-family:var(--sans);font-weight:500;font-size:15px;padding:14px 28px;border-radius:10px;text-decoration:none;}
+.btn-s{background:transparent;color:var(--ink);font-family:var(--sans);font-weight:500;font-size:15px;padding:14px 28px;border-radius:10px;text-decoration:none;border:1px solid var(--border);}
+.h-note{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:14px;}
+
+/* APP SHELL */
+.preview{max-width:580px;margin:0 auto 88px;padding:0 24px;}
+.shell{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 2px 4px rgba(28,26,21,.04),0 20px 60px -20px rgba(28,26,21,.16);}
+.sh-top{background:var(--coffee);padding:13px 18px 10px;display:flex;justify-content:space-between;align-items:baseline;}
+.sh-name{font-family:var(--serif);font-weight:700;font-size:15px;color:#fff;}
+.sh-pay{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);}
+.sh-tabs{display:flex;border-bottom:1px solid var(--border);}
+.sh-tab{flex:1;padding:11px 6px;text-align:center;font-family:var(--sans);font-size:12px;color:var(--muted);}
+.sh-tab.on{color:var(--e500);border-bottom:2px solid var(--e500);font-weight:500;}
+.sh-body{padding:18px 16px;}
+.fen-card{background:var(--coffee);border-radius:11px;padding:16px;color:#fff;margin-bottom:14px;}
+.fen-ey{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--e300);margin-bottom:7px;}
+.fen-h{font-family:var(--serif);font-weight:700;font-size:17px;line-height:1.3;margin-bottom:9px;}
+.fen-b{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;margin-bottom:12px;}
+.fen-num{background:rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;display:flex;align-items:baseline;gap:7px;}
+.fen-n{font-family:var(--mono);font-size:24px;font-weight:500;color:var(--e300);}
+.fen-u{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.5);}
+.disc-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:9px;}
+.disc-r{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.disc-r:last-child{border-bottom:none;}
+.disc-l{display:flex;align-items:center;gap:9px;}
+.disc-dot{width:7px;height:7px;border-radius:50%;background:var(--e500);}
+.disc-m{font-family:var(--mono);font-size:11px;color:var(--faint);}
+
+/* DOMANDE */
+.domande{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px;}
+.d-in{max-width:600px;margin:0 auto;}
+.sec-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--e500);display:block;margin-bottom:24px;}
+.domande h2{font-family:var(--serif);font-weight:700;font-size:clamp(24px,4vw,38px);line-height:1.2;letter-spacing:-.01em;margin-bottom:30px;}
+.d-list{display:flex;flex-direction:column;gap:14px;}
+.d-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start;}
+.d-q{font-family:var(--mono);font-size:20px;color:var(--e300);line-height:1;margin-top:1px;flex-shrink:0;}
+.d-t{font-size:15px;line-height:1.55;}
+.d-t strong{font-weight:600;}
+.d-t span{display:block;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.55;}
+
+/* DENTRO */
+.dentro{padding:80px 24px;max-width:840px;margin:0 auto;}
+.dentro h2{font-family:var(--serif);font-weight:700;font-size:clamp(24px,4vw,36px);line-height:1.2;letter-spacing:-.01em;margin-bottom:8px;}
+.dentro-sub{font-size:15px;color:var(--muted);margin-bottom:40px;max-width:460px;}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.feat-ico{width:30px;height:30px;border-radius:8px;background:var(--e100);display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:12px;color:var(--e500);}
+.feat-h{font-family:var(--serif);font-weight:600;font-size:16px;margin-bottom:5px;}
+.feat-b{font-size:13px;color:var(--muted);line-height:1.55;}
+
+/* LEGGE */
+.legge{background:var(--coffee);color:#fff;padding:80px 24px;}
+.l-in{max-width:600px;margin:0 auto;}
+.legge .sec-lbl{color:var(--e300);}
+.legge h2{font-family:var(--serif);font-weight:700;font-size:clamp(24px,4vw,38px);line-height:1.2;letter-spacing:-.01em;margin-bottom:12px;}
+.l-sub{font-size:15px;color:rgba(255,255,255,.6);margin-bottom:32px;line-height:1.6;max-width:460px;}
+.p-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);border-radius:12px;padding:18px;margin-bottom:10px;}
+.p-ey{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#C9B8E8;margin-bottom:6px;}
+.p-h{font-family:var(--serif);font-weight:600;font-size:17px;margin-bottom:6px;}
+.p-b{font-size:13px;color:rgba(255,255,255,.62);line-height:1.55;margin-bottom:11px;}
+.p-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.p-tag{font-family:var(--mono);font-size:10px;border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:3px 10px;color:rgba(255,255,255,.65);}
+
+/* PRICING */
+.pricing{padding:80px 24px;max-width:580px;margin:0 auto;text-align:center;}
+.pricing h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4vw,38px);letter-spacing:-.01em;margin-bottom:8px;}
+.pr-sub{font-size:15px;color:var(--muted);margin-bottom:36px;}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+@media(max-width:480px){.plans{grid-template-columns:1fr;}}
+.plan{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 18px;text-align:left;}
+.plan.pro{background:var(--coffee);border-color:var(--coffee);color:#fff;}
+.pl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.plan.pro .pl{color:var(--e300);}
+.pp{font-family:var(--mono);font-size:28px;font-weight:500;margin-bottom:2px;}
+.ppe{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:16px;}
+.plan.pro .ppe{color:rgba(255,255,255,.5);}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:18px;}
+.plan li{font-size:13px;display:flex;gap:7px;align-items:flex-start;}
+.plan li::before{content:'✓';font-size:11px;color:var(--s500);margin-top:2px;flex-shrink:0;}
+.plan.pro li::before{color:var(--e300);}
+.plan li.no::before{content:'○';color:var(--faint);}
+.plan.pro li.no::before{color:rgba(255,255,255,.25);}
+.pb{display:block;text-align:center;text-decoration:none;font-family:var(--sans);font-weight:500;font-size:14px;padding:11px;border-radius:8px;background:var(--bg);color:var(--ink);border:1px solid var(--border);}
+.plan.pro .pb{background:#fff;color:var(--coffee);border:none;}
+.pr-note{font-family:var(--mono);font-size:11px;color:var(--faint);}
+
+footer{border-top:1px solid var(--border);padding:22px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.ft-b{font-family:var(--serif);font-weight:600;font-size:15px;}
+.ft-links{display:flex;gap:18px;}
+.ft-links a{font-size:12px;color:var(--muted);text-decoration:none;}
+.ft-note{font-family:var(--mono);font-size:10px;color:var(--faint);width:100%;line-height:1.6;margin-top:6px;}
+
+@media(max-width:600px){
+  .hero{padding:52px 18px 36px;}
+  .domande,.dentro,.legge,.pricing{padding:52px 18px;}
+  nav,footer{padding:12px 18px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="n-brand">
+    <span class="n-name">Matter</span>
+    <span class="n-pay">La scienza del mestiere</span>
+  </div>
+  <a href="/app" class="n-cta">Prova gratis</a>
+</nav>
+
+<section class="hero">
+  <span class="h-kicker">Bar · Bakery · Cucina · Caffetteria</span>
+  <h1>Sai <em>farlo.</em><br>Ora capisci perché.</h1>
+  <p class="h-sub">La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa.</p>
+  <div class="cta-row">
+    <a href="/app" class="btn-p">Studia gratis — nessuna carta</a>
+    <a href="#domande" class="btn-s">Come funziona</a>
+  </div>
+  <p class="h-note">Nessuna registrazione per iniziare.</p>
+</section>
+
+<div class="preview" id="app">
+  <div class="shell">
+    <div class="sh-top">
+      <span class="sh-name">Matter</span>
+      <span class="sh-pay">The science behind the craft</span>
+    </div>
+    <div class="sh-tabs">
+      <div class="sh-tab on">Scopri</div>
+      <div class="sh-tab">Lezione</div>
+      <div class="sh-tab">Mappa</div>
+      <div class="sh-tab">Chiedi</div>
+    </div>
+    <div class="sh-body">
+      <div class="fen-card">
+        <div class="fen-ey">Fenomeno del giorno · Fermentazione</div>
+        <div class="fen-h">La temperatura dell'impasto.<br>Non quella del forno.</div>
+        <div class="fen-b">Il lievito segue la cinetica chimica: ogni 8°C in più, la velocità raddoppia. D'estate il bulk finisce in 3 ore, d'inverno in 6 — con la stessa ricetta.</div>
+        <div class="fen-num">
+          <span class="fen-n">24–26</span>
+          <span class="fen-u">°C · temperatura ottimale lievito</span>
+        </div>
+      </div>
+      <div class="disc-lbl">Scegli la tua disciplina</div>
+      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Bar</div><span class="disc-m">9 fenomeni ›</span></div>
+      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Bakery</div><span class="disc-m">13 fenomeni ›</span></div>
+      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Cucina</div><span class="disc-m">16 fenomeni ›</span></div>
+      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Caffetteria</div><span class="disc-m">5 fenomeni ›</span></div>
+    </div>
+  </div>
+</div>
+
+<section class="domande" id="domande">
+  <div class="d-in">
+    <span class="sec-lbl">Le domande che ti porti al banco da anni</span>
+    <h2>Non è la ricetta che cambia.<br>È la fisica sotto.</h2>
+    <div class="d-list">
+      <div class="d-item">
+        <span class="d-q">?</span>
+        <div class="d-t">
+          <strong>Il tuo impasto d'estate fermenta in metà tempo.</strong>
+          <span>Ogni 8°C in più, il lievito lavora il doppio. Si chiama Q10 — la stessa equazione del cold brew e della pastorizzazione.</span>
+        </div>
+      </div>
+      <div class="d-item">
+        <span class="d-q">?</span>
+        <div class="d-t">
+          <strong>Il tuo sour ha sapori diversi ogni settimana.</strong>
+          <span>Stesso lime, stessa ricetta. Il pH del lime varia di quasi un punto tra lotti diversi. Un punto di pH equivale a sei volte più acido.</span>
+        </div>
+      </div>
+      <div class="d-item">
+        <span class="d-q">?</span>
+        <div class="d-t">
+          <strong>Lo sai fare. Non riesci sempre a spiegarlo.</strong>
+          <span>Matter dà il perché scientifico a chi ha già il come pratico. Non sostituisce l'esperienza — la rende trasferibile e replicabile.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dentro">
+  <span class="sec-lbl">Cosa c'è dentro</span>
+  <h2>209 nodi. 13 fenomeni.<br>Un grafo di conoscenza.</h2>
+  <p class="dentro-sub">Funziona nel browser, si installa come app. Nessun App Store necessario.</p>
+  <div class="feat-grid">
+    <div class="feat">
+      <div class="feat-ico">◎</div>
+      <div class="feat-h">Scopri</div>
+      <div class="feat-b">Il fenomeno del giorno dalla tua disciplina. Un principio fisico o chimico con il numero che conta davvero al banco.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">✎</div>
+      <div class="feat-h">Lezione</div>
+      <div class="feat-b">Percorso strutturato per fenomeno. Scheda, numero bersaglio, principio fisico, quiz. Si avanza passo per passo.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">⊞</div>
+      <div class="feat-h">Mappa</div>
+      <div class="feat-b">Il tuo percorso, i principi che attraversano più discipline, la rete degli abbinamenti aromatici per composti condivisi.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-ico">◻</div>
+      <div class="feat-h">Chiedi</div>
+      <div class="feat-b">Chat AI che naviga il grafo. "Perché il mio cold brew è amaro?" Risposta ancorata alla fisica, non alle opinioni. Più i calcolatori tecnici.</div>
+    </div>
+  </div>
+</section>
+
+<section class="legge">
+  <div class="l-in">
+    <span class="sec-lbl">La legge sotto</span>
+    <h2>La stessa fisica<br>in stanze diverse.</h2>
+    <p class="l-sub">La fermentazione del pane, l'estrazione del caffè, la carbonatazione di un cocktail — non sono mestieri separati. Seguono la stessa legge. Matter la mostra.</p>
+    <div class="p-card">
+      <div class="p-ey">Il principio · kT</div>
+      <div class="p-h">kT — energia termica (Boltzmann)</div>
+      <div class="p-b">La causa comune sotto Q10, estrazione, fermentazione e carbonatazione. Non è un numero da misurare al banco — è il perché sotto i numeri. Una sola equazione, quattro mestieri.</div>
+      <div class="p-tags">
+        <span class="p-tag">Calore</span>
+        <span class="p-tag">Estrazione</span>
+        <span class="p-tag">Fermentazione</span>
+        <span class="p-tag">Carbonatazione</span>
+      </div>
+    </div>
+    <div class="p-card">
+      <div class="p-ey">Flavor Network</div>
+      <div class="p-h">Abbinamenti per composti aromatici condivisi</div>
+      <div class="p-b">Burro marrone e whisky condividono il furfurale. Lime e coriandolo la stessa famiglia di terpeni. La scienza che permette di creare, non solo di capire.</div>
+      <div class="p-tags">
+        <span class="p-tag">burro marrone + whisky</span>
+        <span class="p-tag">caffè + cardamomo</span>
+        <span class="p-tag">lime + coriandolo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <span class="sec-lbl">Inizia gratis</span>
+  <h2>Nessuna carta.<br>Nessuna registrazione.</h2>
+  <p class="pr-sub">Entra, scegli la disciplina, studia il primo fenomeno. Passi a Pro quando vuoi di più.</p>
+  <div class="plans">
+    <div class="plan">
+      <div class="pl">Free — sempre</div>
+      <div class="pp">€0</div>
+      <div class="ppe">nessuna scadenza</div>
+      <ul>
+        <li>Fenomeno del giorno</li>
+        <li>Lezioni per tutte le discipline</li>
+        <li>Calcolatori base</li>
+        <li>5 domande al giorno in chat</li>
+        <li class="no">Chat illimitata</li>
+        <li class="no">Flavor Network</li>
+        <li class="no">Quaderno misure</li>
+      </ul>
+      <a href="/app" class="pb">Inizia gratis</a>
+    </div>
+    <div class="plan pro">
+      <div class="pl">Pro</div>
+      <div class="pp">€11,99</div>
+      <div class="ppe">al mese · o €89,99/anno</div>
+      <ul>
+        <li>Tutto il Free</li>
+        <li>Chat illimitata</li>
+        <li>Flavor Network interattivo</li>
+        <li>Quaderno misure fisiche</li>
+        <li>Contenuti in inglese</li>
+        <li>Quiz avanzati</li>
+      </ul>
+      <a href="/app" class="pb">Passa a Pro</a>
+    </div>
+  </div>
+  <p class="pr-note">Pagamento via Stripe. Cancelli quando vuoi.</p>
+</section>
+
+<footer>
+  <span class="ft-b">Matter</span>
+  <div class="ft-links">
+    <a href="/privacy">Privacy</a>
+    <a href="/termini">Termini</a>
+  </div>
+  <p class="ft-note">Matter usa intelligenza artificiale per navigare il grafo di conoscenza. Stai interagendo con un sistema AI — art. 50 EU AI Act.</p>
+</footer>
+
+</body>
+</html>

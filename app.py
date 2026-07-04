@@ -810,7 +810,13 @@ def abbina_batch():
 
 
 @app.route("/")
+def landing():
+    """LP1 — Landing page pubblica. Il CTA porta a /app."""
+    return render_template("landing.html")
+
+@app.route("/app")
 def home():
+    """PWA principale — serve index.html."""
     return render_template("index.html")
 
 @app.route("/health")
