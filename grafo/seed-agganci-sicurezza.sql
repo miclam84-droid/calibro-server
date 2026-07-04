@@ -13,12 +13,9 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 -- Aw → sicurezza
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-aw', 'fen-zona-pericolo', 'inibisce', '{}'),
-('fen-aw', 'fen-shelf-life', 'determina', '{}'),
-('fen-aw', 'fen-atmosfera-modificata', 'interagisce_con', '{}');
 
 -- Calore → sicurezza
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-calore', 'fen-zona-pericolo', 'determina', '{}'),
 ('fen-calore', 'fen-shelf-life', 'influenza', '{}');
 
 -- Osmosi → sicurezza
@@ -38,7 +35,6 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 -- Concentrazione → sicurezza
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-concentrazione', 'fen-zona-pericolo', 'inibisce', '{}'),
-('fen-concentrazione', 'fen-shelf-life', 'influenza', '{}');
 
 -- Prodotti con profilo sicurezza
 INSERT INTO nodes (id, type, name, domain, data) VALUES
