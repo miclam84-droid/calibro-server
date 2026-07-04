@@ -437,6 +437,32 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .auth-msg.err{background:var(--e100);color:var(--e700);display:block}
 .auth-skip{text-align:center;margin-top:18px;font-size:12px;color:var(--ink-muted)}
 .auth-skip a{color:var(--e700);cursor:pointer;font-weight:500}
+
+/* ── ONBOARDING ───────────────────────────────────────── */
+.onb-nudge{margin:10px 14px 0;padding:13px 15px;
+  background:var(--e100);border:1.5px solid var(--e300);
+  border-radius:12px;display:flex;align-items:center;gap:12px;
+  animation:rise .3s ease}
+.onb-nudge-icon{width:32px;height:32px;border-radius:50%;
+  background:var(--e500);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.onb-nudge-icon svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.2}
+.onb-nudge-txt{flex:1}
+.onb-nudge-txt strong{display:block;font-size:13px;font-weight:600;
+  color:var(--e700);line-height:1.3;margin-bottom:2px}
+.onb-nudge-txt span{font-size:12px;color:var(--e700);opacity:.8}
+.onb-nudge-close{background:none;border:none;color:var(--e500);
+  font-size:18px;cursor:pointer;padding:2px;line-height:1;flex-shrink:0}
+.disc-item.onb-highlight{border:1.5px solid var(--e300);background:var(--e100);
+  border-radius:10px;margin:0 -1px}
+.les-complete-nudge{margin:16px 14px 0;padding:14px 16px;
+  background:var(--s100);border:1.5px solid var(--s300);
+  border-radius:12px;display:flex;align-items:center;gap:12px}
+.les-complete-nudge svg{width:20px;height:20px;stroke:var(--s500);fill:none;stroke-width:2;flex-shrink:0}
+.les-complete-nudge-txt{flex:1;font-size:13px;color:var(--s700);line-height:1.4}
+.les-complete-nudge-txt strong{display:block;font-weight:600;margin-bottom:2px}
+.les-complete-btn{background:var(--s500);color:#fff;border:none;
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:8px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
 </style>
 
 <script>
@@ -492,8 +518,19 @@ if('serviceWorker' in navigator){
     </div>
   </div>
   <button class="cta-main" id="scopri-cta" onclick="avviaLezione()">Studia questo fenomeno</button>
-  <p class="no-login">Nessuna registrazione richiesta.</p>
-  <div class="sec-label">Scegli la tua disciplina</div>
+  <p class="no-login" id="ct-nologin-p">Nessuna registrazione richiesta.</p>
+  <!-- nudge primo accesso — visibile solo se l'utente non ha ancora scelto una disciplina -->
+  <div class="onb-nudge" id="onb-nudge" style="display:none">
+    <div class="onb-nudge-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+    <div class="onb-nudge-txt">
+      <strong id="onb-nudge-title">Scegli da dove iniziare</strong>
+      <span id="onb-nudge-sub">Seleziona la tua disciplina qui sotto per la prima lezione</span>
+    </div>
+    <button class="onb-nudge-close" onclick="chiudiNudge()" aria-label="chiudi">×</button>
+  </div>
+  <div class="sec-label" id="ct-scegli-disc">Scegli la tua disciplina</div>
   <div class="disc-list">
     <div class="disc-item" onclick="selezionaDisciplina('bar')">
       <div class="disc-dot"></div>
@@ -581,6 +618,15 @@ if('serviceWorker' in navigator){
   <div class="les-nav">
     <button class="les-btn-sec" id="les-btn-prec" onclick="lesStep(-1)">← Indietro</button>
     <button class="les-btn-pri" id="les-btn-succ" onclick="lesStep(1)">Avanti →</button>
+  </div>
+  <!-- nudge completamento lezione — appare all'ultimo fenomeno -->
+  <div class="les-complete-nudge" id="les-complete-nudge" style="display:none">
+    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+    <div class="les-complete-nudge-txt">
+      <strong id="onb-complete-title">Ottimo lavoro.</strong>
+      <span id="onb-complete-sub">Hai completato la lezione. Vai alla Mappa per vedere il tuo percorso.</span>
+    </div>
+    <button class="les-complete-btn" id="onb-complete-btn" onclick="switchTab('mappa')">Vai alla Mappa</button>
   </div>
 </div>
 
@@ -849,6 +895,34 @@ function toggleLang(){
   if(document.getElementById('screen-mappa').classList.contains('active') && Matter.disciplina) caricaMappa(Matter.disciplina);
 }
 
+/* ── ONBOARDING ───────────────────────────────────────── */
+function _isFirstVisit(){
+  return !localStorage.getItem('matter_onb_done');
+}
+function _segnaOnboardingFatto(){
+  localStorage.setItem('matter_onb_done','1');
+}
+
+function mostraNudgeSeNecessario(){
+  // mostra il nudge solo al primo accesso e se non ha ancora scelto una disciplina
+  if(_isFirstVisit() && !Matter.disciplina){
+    document.getElementById('onb-nudge').style.display='flex';
+  }
+}
+function chiudiNudge(){
+  document.getElementById('onb-nudge').style.display='none';
+}
+
+function mostraCompletamentoLezione(haSuccessivo){
+  const nudge = document.getElementById('les-complete-nudge');
+  if(!haSuccessivo && nudge){
+    nudge.style.display='flex';
+    _segnaOnboardingFatto();
+  } else if(nudge){
+    nudge.style.display='none';
+  }
+}
+
 /* ── SCOPRI DINAMICA (FE5) ────────────────────────────── */
 let _homeCached = null;
 async function caricaHome(){
@@ -879,6 +953,8 @@ function renderHome(j){
     numBox.style.display='flex';
   } else { numBox.style.display='none'; }
   Matter.fenomenoId = f.id;
+  // onboarding: mostra nudge se primo accesso
+  mostraNudgeSeNecessario();
   // principio
   const pc = document.getElementById('scopri-principio');
   if(j.principio){
@@ -901,6 +977,7 @@ async function caricaContDisciplina(nome){
 function selezionaDisciplina(nome){
   Matter.disciplina = nome;
   Matter.step = 0;
+  chiudiNudge();
   switchTab('lezione');
 }
 
@@ -952,6 +1029,8 @@ async function caricaLezioneStep(step){
     document.getElementById('les-btn-prec').style.opacity = j.ha_precedente?'1':'0.4';
     document.getElementById('les-btn-succ').textContent =
       j.ha_successivo ? 'Avanti →' : 'Vai alla Mappa →';
+    // onboarding: nudge completamento all'ultimo fenomeno
+    mostraCompletamentoLezione(j.ha_successivo);
   } catch(e){
     document.getElementById('les-nome').textContent = 'Errore caricamento — riprova.';
   }
@@ -1473,6 +1552,12 @@ const _strings = {
     ct_totale:'Totale',
     ct_include:'include',
     ct_extra_lbl:'extra',
+    // onboarding
+    onb_nudge_title:'Scegli da dove iniziare',
+    onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
+    onb_complete_title:'Ottimo lavoro.',
+    onb_complete_sub:'Hai completato la lezione. Vai alla Mappa per vedere il tuo percorso.',
+    onb_complete_btn:'Vai alla Mappa',
   },
   en:{
     payoff:'The science behind the craft',
@@ -1528,6 +1613,12 @@ const _strings = {
     ct_totale:'Total',
     ct_include:'includes',
     ct_extra_lbl:'extra',
+    // onboarding
+    onb_nudge_title:'Choose where to start',
+    onb_nudge_sub:'Select your discipline below to begin your first lesson',
+    onb_complete_title:'Great work.',
+    onb_complete_sub:'You completed the lesson. Go to the Map to see your path.',
+    onb_complete_btn:'Go to Map',
   }
 };
 
@@ -1611,6 +1702,12 @@ function applicaStringheUI(){
   st('auth-tab-login',_t('accedi'));
   st('auth-tab-reg',_t('registrati'));
   const authSkip=document.querySelector('.auth-skip a'); if(authSkip) authSkip.textContent=_t('continua_senza');
+  // onboarding
+  st('onb-nudge-title',_t('onb_nudge_title'));
+  st('onb-nudge-sub',_t('onb_nudge_sub'));
+  st('onb-complete-title',_t('onb_complete_title'));
+  st('onb-complete-sub',_t('onb_complete_sub'));
+  st('onb-complete-btn',_t('onb_complete_btn'));
 }
 async function cercaAbbinamenti(ingrediente){
   switchTab('chiedi');
