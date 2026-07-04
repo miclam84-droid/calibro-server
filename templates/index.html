@@ -385,6 +385,58 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px;
   transition:.15s}
 .s-feedback button:active{background:var(--e100)}
+
+/* ── PAYWALL MODALE ───────────────────────────────────── */
+#paywall-overlay{position:fixed;inset:0;z-index:200;background:rgba(28,26,21,.55);
+  display:flex;align-items:flex-end;justify-content:center;
+  animation:rise .2s ease}
+#paywall-overlay.hidden{display:none}
+.paywall-sheet{background:var(--surface);border-radius:18px 18px 0 0;
+  padding:28px 22px calc(env(safe-area-inset-bottom)+24px);
+  max-width:480px;width:100%;box-shadow:0 -8px 40px rgba(28,26,21,.18)}
+.pw-badge{background:var(--e100);border-radius:8px;display:inline-block;
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  color:var(--e700);padding:4px 10px;margin-bottom:14px}
+.paywall-sheet h3{font-family:var(--serif);font-size:20px;font-weight:700;
+  line-height:1.3;margin-bottom:8px;color:var(--ink)}
+.paywall-sheet p{font-size:13.5px;color:var(--ink-muted);line-height:1.6;margin-bottom:20px}
+.pw-price{display:flex;align-items:baseline;gap:6px;margin-bottom:20px}
+.pw-price .pw-n{font-family:var(--mono);font-size:32px;font-weight:500;color:var(--coffee)}
+.pw-price .pw-u{font-family:var(--mono);font-size:13px;color:var(--ink-muted)}
+.pw-cta{display:block;width:100%;background:var(--coffee);color:#fff;
+  font-family:var(--sans);font-weight:600;font-size:15px;
+  padding:14px;border-radius:10px;border:none;cursor:pointer;margin-bottom:10px}
+.pw-skip{display:block;width:100%;background:none;border:none;
+  font-size:13px;color:var(--ink-muted);cursor:pointer;padding:6px}
+
+/* ── LOGIN / REGISTRAZIONE ────────────────────────────── */
+.auth-screen{padding:32px 20px;max-width:400px;margin:0 auto}
+.auth-logo{font-family:var(--serif);font-weight:700;font-size:22px;
+  color:var(--coffee);margin-bottom:4px}
+.auth-logo small{display:block;font-family:var(--mono);font-size:10px;
+  color:var(--ink-muted);letter-spacing:.06em;text-transform:uppercase;font-weight:400}
+.auth-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;margin:24px 0 20px}
+.auth-tab{flex:1;background:none;border:none;font-family:var(--sans);
+  font-size:13px;font-weight:500;padding:10px;cursor:pointer;
+  color:var(--ink-muted);transition:.15s}
+.auth-tab.active{background:var(--coffee);color:#fff}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:11px;font-family:var(--mono);
+  letter-spacing:.06em;color:var(--ink-muted);margin-bottom:6px;text-transform:uppercase}
+.auth-input{width:100%;background:var(--surface);border:1px solid var(--border);
+  color:var(--ink);font-family:var(--sans);font-size:16px;
+  padding:12px 14px;border-radius:10px;outline:none;transition:border-color .15s}
+.auth-input:focus{border-color:var(--e500)}
+.auth-btn{display:block;width:100%;background:var(--coffee);color:#fff;
+  font-family:var(--sans);font-weight:600;font-size:15px;
+  padding:14px;border-radius:10px;border:none;cursor:pointer;margin-top:6px}
+.auth-msg{font-size:13px;padding:10px 12px;border-radius:8px;margin-top:12px;
+  display:none;line-height:1.5}
+.auth-msg.ok{background:var(--s100);color:var(--s700);display:block}
+.auth-msg.err{background:var(--e100);color:var(--e700);display:block}
+.auth-skip{text-align:center;margin-top:18px;font-size:12px;color:var(--ink-muted)}
+.auth-skip a{color:var(--e700);cursor:pointer;font-weight:500}
 </style>
 
 <script>
@@ -743,9 +795,10 @@ if('serviceWorker' in navigator){
 let _subtab = 'chat';   // subtab attivo dentro "Chiedi": 'chat' | 'calc'
 
 function switchTab(t){
-  ['scopri','lezione','mappa','chiedi'].forEach(s=>{
+  ['scopri','lezione','mappa','chiedi','auth'].forEach(s=>{
     document.getElementById('screen-'+s).classList.toggle('active',s===t);
-    document.getElementById('tab-'+s).classList.toggle('active',s===t);
+    const tb=document.getElementById('tab-'+s);
+    if(tb) tb.classList.toggle('active',s===t);
   });
   // la barra domanda serve solo in Chiedi → chat
   const askBar=document.getElementById('ask-bar');
@@ -787,9 +840,7 @@ let _lang = 'it';
 /* ── TOGGLE LINGUA IT/EN (GT5) ────────────────────────── */
 function toggleLang(){
   _lang = _lang === 'it' ? 'en' : 'it';
-  document.getElementById('lang-btn').textContent = _lang === 'it' ? 'EN' : 'IT';
-  document.getElementById('payoff-text').textContent =
-    _lang === 'it' ? 'La scienza del mestiere' : 'The science behind the craft';
+  applicaStringheUI();
   // invalida cache e ricarica
   _homeCached = null;
   Object.keys(_mappaCache).forEach(k => delete _mappaCache[k]);
@@ -1015,12 +1066,16 @@ function setBusy(b){busy=b;document.getElementById('ask-btn').disabled=b;}
 function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)return;document.getElementById('q').value='';chiediTesto(q);}
 function chiediTesto(q){
   if(busy)return;
+  // paywall: controlla limite giornaliero (solo per utenti non Pro)
+  if(!_isPro()){
+    const usate=_getDomande();
+    if(usate>=FREE_LIMIT){ apriPaywall(); return; }
+  }
   const e=document.getElementById('empty-state');if(e)e.remove();
-  // assicuriamoci che l'utente sia sulla tab giusta
   switchTab('chiedi');switchSubtab('chat');
   aggiungiThinking();setBusy(true);
   fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q})})
-    .then(r=>r.json()).then(j=>renderRisp(q,j)).catch(()=>renderErr()).finally(()=>setBusy(false));
+    .then(r=>r.json()).then(j=>{_incDomande();renderRisp(q,j);}).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
 function apriNodo(id,nome){
   if(busy)return;
@@ -1273,7 +1328,194 @@ const App=(()=>{
   return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
 })();
 
-/* ── FLAVOR NETWORK ───────────────────────────────────── */
+/* ── PAYWALL — 5 domande/giorno (D1) ─────────────────── */
+function _oggiKey(){ return 'mq_'+new Date().toISOString().slice(0,10); }
+function _getDomande(){ return parseInt(localStorage.getItem(_oggiKey())||'0',10); }
+function _incDomande(){ localStorage.setItem(_oggiKey(), _getDomande()+1); }
+const FREE_LIMIT = 5;
+
+function _isPro(){
+  // legge piano utente da localStorage (impostato al login/webhook Stripe)
+  return localStorage.getItem('matter_piano')==='pro';
+}
+
+function apriPaywall(){
+  document.getElementById('paywall-overlay').classList.remove('hidden');
+}
+function chiudiPaywall(){
+  document.getElementById('paywall-overlay').classList.add('hidden');
+}
+function vaiAPro(){
+  chiudiPaywall();
+  // se non loggato, prima registrazione
+  if(!localStorage.getItem('matter_token')){
+    switchTab('auth');
+    switchAuthTab('reg');
+  } else {
+    // utente già loggato → vai a Stripe
+    fetch('/v1/stripe/checkout',{method:'POST',headers:{'Content-Type':'application/json',
+      'X-Token':localStorage.getItem('matter_token')||''}})
+      .then(r=>r.json()).then(j=>{ if(j.url) window.location.href=j.url; })
+      .catch(()=>{});
+  }
+}
+
+/* ── AUTH — LOGIN / REGISTRAZIONE (AC2) ──────────────── */
+function switchAuthTab(t){
+  ['login','reg'].forEach(s=>{
+    document.getElementById('auth-panel-'+s).style.display = s===t?'block':'none';
+    document.getElementById('auth-tab-'+s).classList.toggle('active',s===t);
+  });
+}
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const pwd=document.getElementById('login-pwd').value;
+  const msg=document.getElementById('login-msg');
+  msg.className='auth-msg'; msg.textContent='';
+  if(!email||!pwd){msg.className='auth-msg err';msg.textContent='Inserisci email e password.';return;}
+  try {
+    const r=await fetch('/v1/auth/login',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pwd})});
+    const j=await r.json();
+    if(j.token){
+      localStorage.setItem('matter_token',j.token);
+      localStorage.setItem('matter_email',email);
+      if(j.piano) localStorage.setItem('matter_piano',j.piano);
+      msg.className='auth-msg ok';msg.textContent='Accesso effettuato.';
+      setTimeout(()=>switchTab('scopri'),800);
+    } else {
+      msg.className='auth-msg err';msg.textContent=j.errore||'Credenziali non valide.';
+    }
+  } catch(e){
+    msg.className='auth-msg err';msg.textContent='Errore di rete. Riprova.';
+  }
+}
+
+async function doRegistra(){
+  const email=document.getElementById('reg-email').value.trim();
+  const pwd=document.getElementById('reg-pwd').value;
+  const msg=document.getElementById('reg-msg');
+  msg.className='auth-msg'; msg.textContent='';
+  if(!email||!pwd){msg.className='auth-msg err';msg.textContent='Inserisci email e password.';return;}
+  if(pwd.length<8){msg.className='auth-msg err';msg.textContent='Password minimo 8 caratteri.';return;}
+  try {
+    const r=await fetch('/v1/auth/registra',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pwd})});
+    const j=await r.json();
+    if(j.ok||j.token){
+      if(j.token){localStorage.setItem('matter_token',j.token);localStorage.setItem('matter_email',email);}
+      msg.className='auth-msg ok';msg.textContent='Account creato. Benvenuto in Matter.';
+      setTimeout(()=>switchTab('scopri'),900);
+    } else {
+      msg.className='auth-msg err';msg.textContent=j.errore||'Registrazione non riuscita.';
+    }
+  } catch(e){
+    msg.className='auth-msg err';msg.textContent='Errore di rete. Riprova.';
+  }
+}
+
+/* ── STRINGHE EN INTERFACCIA (GT5b) ──────────────────── */
+const _strings = {
+  it:{
+    payoff:'La scienza del mestiere',
+    scopri:'Scopri', lezione:'Lezione', mappa:'Mappa', chiedi:'Chiedi',
+    studia:'Studia questo fenomeno', nologin:'Nessuna registrazione richiesta.',
+    scegli:'Scegli la tua disciplina', caricamento:'caricamento…',
+    fenomeno_giorno:'fenomeno del giorno',
+    num_bersaglio:'numero bersaglio',
+    indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai alla Mappa →',
+    principio_del_giorno:'Principio del giorno',
+    vedi_mappa:'Vedi il principio nella Mappa →',
+    chiedi_placeholder:'chiedi al grafo…',
+    chiedi_btn:'Chiedi',
+    chiedi_al_grafo:'Chiedi al grafo',
+    calcola:'Calcola',
+    prova:'Prova:',
+    il_percorso:'Il tuo percorso',
+    scegli_disc_mappa:'Scegli una disciplina in Scopri per vedere il percorso',
+    principi_trasv:'Principi trasversali',
+    perche_insieme:'Perché funzionano insieme',
+    ponte_cifra:'Il ponte verso Cifra',
+    accedi:'Accedi', registrati:'Registrati',
+    continua_senza:'← Continua senza registrarti',
+    domande_esaurite:'Hai usato le 5 domande gratuite di oggi.',
+    pro_desc:'Con Matter Pro continui senza limiti — chat illimitata, Flavor Network, quaderno misure fisiche.',
+    passa_pro:'Passa a Pro',
+    continua_free:'Continua con il piano gratuito',
+  },
+  en:{
+    payoff:'The science behind the craft',
+    scopri:'Discover', lezione:'Lesson', mappa:'Map', chiedi:'Ask',
+    studia:'Study this phenomenon', nologin:'No registration required.',
+    scegli:'Choose your discipline', caricamento:'loading…',
+    fenomeno_giorno:'phenomenon of the day',
+    num_bersaglio:'target number',
+    indietro:'← Back', avanti:'Next →', vai_mappa:'Go to Map →',
+    principio_del_giorno:'Principle of the day',
+    vedi_mappa:'See the principle in the Map →',
+    chiedi_placeholder:'ask the graph…',
+    chiedi_btn:'Ask',
+    chiedi_al_grafo:'Ask the graph',
+    calcola:'Calculate',
+    prova:'Try:',
+    il_percorso:'Your path',
+    scegli_disc_mappa:'Choose a discipline in Discover to see your path',
+    principi_trasv:'Cross-domain principles',
+    perche_insieme:'Why they work together',
+    ponte_cifra:'The bridge to Cifra',
+    accedi:'Sign in', registrati:'Sign up',
+    continua_senza:'← Continue without signing in',
+    domande_esaurite:"You've used your 5 free questions today.",
+    pro_desc:'With Matter Pro, continue without limits — unlimited chat, Flavor Network, measurements notebook.',
+    passa_pro:'Upgrade to Pro',
+    continua_free:'Continue with free plan',
+  }
+};
+
+function _t(k){ return (_strings[_lang]||_strings.it)[k]||k; }
+
+function applicaStringheUI(){
+  // payoff
+  document.getElementById('payoff-text').textContent = _t('payoff');
+  document.getElementById('lang-btn').textContent = _lang==='it'?'EN':'IT';
+  // tab labels
+  document.querySelectorAll('.tab-label').forEach((el,i)=>{
+    const keys=['scopri','lezione','mappa','chiedi'];
+    if(keys[i]) el.textContent = _t(keys[i]);
+  });
+  // scopri
+  const ctaMain=document.getElementById('scopri-cta');
+  if(ctaMain) ctaMain.textContent = _t('studia');
+  const noLogin=document.querySelector('.no-login');
+  if(noLogin) noLogin.textContent = _t('nologin');
+  document.querySelectorAll('.sec-label').forEach(el=>{
+    if(el.textContent.includes('Scegli la tua')||el.textContent.includes('Choose your'))
+      el.textContent = _t('scegli');
+  });
+  // chiedi placeholder
+  const qInput=document.getElementById('q');
+  if(qInput) qInput.placeholder = _t('chiedi_placeholder');
+  const askBtn=document.getElementById('ask-btn');
+  if(askBtn) askBtn.textContent = _t('chiedi_btn');
+  // subtab buttons
+  const stChat=document.getElementById('subtab-chat');
+  if(stChat) stChat.textContent = _t('chiedi_al_grafo');
+  const stCalc=document.getElementById('subtab-calc');
+  if(stCalc) stCalc.textContent = _t('calcola');
+  // lezione bottoni
+  const btnPrec=document.getElementById('les-btn-prec');
+  if(btnPrec) btnPrec.textContent = _t('indietro');
+  // paywall
+  document.querySelectorAll('.paywall-sheet h3').forEach(el=>el.textContent=_t('domande_esaurite'));
+  document.querySelectorAll('.paywall-sheet p').forEach(el=>el.textContent=_t('pro_desc'));
+  const pwCta=document.querySelector('.pw-cta');
+  if(pwCta) pwCta.textContent=_t('passa_pro');
+  const pwSkip=document.querySelector('.pw-skip');
+  if(pwSkip) pwSkip.textContent=_t('continua_free');
+}
 async function cercaAbbinamenti(ingrediente){
   switchTab('chiedi');
   const ing = (ingrediente||'').toLowerCase().replace(/[\s/]+/g,'_');
@@ -1324,6 +1566,59 @@ async function testaKT(){
   console.groupEnd();
 }
 </script>
+<!-- ── PAYWALL MODALE ─────────────────────────────────── -->
+<div id="paywall-overlay" class="hidden" onclick="if(event.target===this)chiudiPaywall()">
+  <div class="paywall-sheet">
+    <div class="pw-badge">Matter Pro</div>
+    <h3>Hai usato le 5 domande gratuite di oggi.</h3>
+    <p>Con Matter Pro continui senza limiti — chat illimitata, Flavor Network, quaderno misure fisiche.</p>
+    <div class="pw-price">
+      <span class="pw-n">€11,99</span>
+      <span class="pw-u">/ mese · cancelli quando vuoi</span>
+    </div>
+    <button class="pw-cta" onclick="vaiAPro()">Passa a Pro</button>
+    <button class="pw-skip" onclick="chiudiPaywall()">Continua con il piano gratuito</button>
+  </div>
+</div>
+
+<!-- ── LOGIN / REGISTRAZIONE ─────────────────────────── -->
+<div class="screen" id="screen-auth">
+  <div class="auth-screen">
+    <div class="auth-logo">Matter<small>La scienza del mestiere</small></div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Accedi</button>
+      <button class="auth-tab" id="auth-tab-reg" onclick="switchAuthTab('reg')">Registrati</button>
+    </div>
+    <div id="auth-panel-login">
+      <div class="auth-field">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="login-email" placeholder="tua@email.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input class="auth-input" type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="auth-btn" onclick="doLogin()">Accedi</button>
+      <div class="auth-msg" id="login-msg"></div>
+    </div>
+    <div id="auth-panel-reg" style="display:none">
+      <div class="auth-field">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="reg-email" placeholder="tua@email.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input class="auth-input" type="password" id="reg-pwd" placeholder="Minimo 8 caratteri" autocomplete="new-password">
+      </div>
+      <button class="auth-btn" onclick="doRegistra()">Crea account gratuito</button>
+      <div class="auth-msg" id="reg-msg"></div>
+    </div>
+    <div class="auth-skip">
+      <a onclick="switchTab('scopri')">← Continua senza registrarti</a>
+    </div>
+  </div>
+</div>
+
 <!-- ── COOKIE BANNER GDPR (LE1) ─────────────────────────── -->
 <div id="cookie-banner" style="display:none">
   <p>Matter usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
