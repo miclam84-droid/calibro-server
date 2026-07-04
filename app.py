@@ -713,9 +713,8 @@ def quaderno_salva():
 @app.route("/v1/ricetta/<int:exp_id>")
 def ricetta_per_cifra(exp_id):
     """AC4 — API per Cifra: espone la ricetta fisica di un esperimento.
-    Cifra legge ingredienti+dosi e applica i suoi prezzi per il food cost reale."""
-    token = request.headers.get("Authorization","").replace("Bearer ","")
-    user_id = _utente_da_token(token)
+    Accetta sia token utente Matter che email+service key Cifra."""
+    user_id = _auth_cifra()
     if not user_id:
         return jsonify({"errore":"autenticazione richiesta"}), 401
     if not DATABASE_URL:
@@ -760,14 +759,77 @@ def ricetta_per_cifra(exp_id):
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
 
+import os as _os
+
+def _auth_cifra():
+    """Risolve l'identità utente per le API Cifra.
+    Accetta due modalità:
+    - Token utente Matter: Authorization: Bearer {token}
+    - Integrazione Cifra: Authorization: Bearer {MATTER_SERVICE_KEY}
+                          X-User-Email: {email_utente}
+    Restituisce user_id (str) o None se non autenticato.
+    """
+    auth = request.headers.get("Authorization","").replace("Bearer ","").strip()
+    service_key = _os.environ.get("MATTER_SERVICE_KEY","")
+
+    # Modalità Cifra: service key + email
+    if service_key and auth == service_key:
+        email = request.headers.get("X-User-Email","").strip().lower()
+        if not email or not DATABASE_URL:
+            return None
+        try:
+            import psycopg2
+            conn = psycopg2.connect(DATABASE_URL)
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM utenti WHERE lower(email)=%s AND attivo=TRUE", (email,))
+            row = cur.fetchone()
+            cur.close(); conn.close()
+            return str(row[0]) if row else None
+        except Exception:
+            return None
+
+    # Modalità utente diretto: token sessione Matter
+    return _utente_da_token(auth)
+
+
+@app.route("/v1/ricette")
+def ricette_per_cifra():
+    """Lista ricette (esperimenti) dell'utente — endpoint Cifra.
+    Cifra passa X-User-Email + MATTER_SERVICE_KEY.
+    Restituisce solo id, nome, disciplina — Cifra chiede i dettagli per ID."""
+    user_id = _auth_cifra()
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, nome, disciplina, ts
+            FROM esperimenti WHERE user_id=%s ORDER BY ts DESC
+        """, (str(user_id),))
+        rows = cur.fetchall()
+        cur.close(); conn.close()
+        return jsonify([{
+            "id": r[0],
+            "nome": r[1],
+            "disciplina": r[2],
+            "ts": str(r[3])
+        } for r in rows])
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
 @app.route("/v1/ricetta/<int:exp_id>/sicurezza")
 def ricetta_sicurezza(exp_id):
     """SEC14 — Profilo di sicurezza alimentare di un esperimento.
+    Accetta sia token utente Matter che email+service key Cifra.
     Formato concordato con Cifra (tutti i campi nullable).
     I valori sono stime orientative basate su modelli scientifici —
     non sostituiscono test microbiologici né certificazioni professionali."""
-    token = request.headers.get("Authorization","").replace("Bearer ","")
-    user_id = _utente_da_token(token)
+    user_id = _auth_cifra()
     if not user_id:
         return jsonify({"errore":"autenticazione richiesta"}), 401
     if not DATABASE_URL:
