@@ -880,8 +880,8 @@ if('serviceWorker' in navigator){
         <div class="calc-card"><div class="calc-title" id="ct-idr">Idratazione (baker's %)</div>
           <p class="hint" style="margin-bottom:10px">Tutto in percentuale sulla farina = 100%.</p>
           <div class="mini" style="grid-template-columns:1fr 1fr">
-            <div><label>farina g</label><input class="c-input" type="number" id="bk-flour" value="1000" oninput="App.calcBak()"></div>
-            <div><label>acqua g</label><input class="c-input" type="number" id="bk-water" value="700" oninput="App.calcBak()"></div>
+            <div><label id="ct-farina">farina g</label><input class="c-input" type="number" id="bk-flour" value="1000" oninput="App.calcBak()"></div>
+            <div><label id="ct-acqua-g">acqua g</label><input class="c-input" type="number" id="bk-water" value="700" oninput="App.calcBak()"></div>
           </div>
           <div class="mini-out" id="bk-idr-out"></div>
           <div class="hint" style="margin-top:12px">Zone: pane comune 65–72% · ciabatta/focaccia 75–85% · pizza napoletana 60–65%</div>
@@ -915,9 +915,9 @@ if('serviceWorker' in navigator){
       <div id="cpanel-caf" style="display:none">
         <div class="calc-card"><div class="calc-title">Estrazione — EY% e TDS</div>
           <div class="mini">
-            <div><label>dose g</label><input class="c-input" type="number" id="cf-dose" value="18" step="0.1" oninput="App.calcEY()"></div>
-            <div><label>bevanda g</label><input class="c-input" type="number" id="cf-bev" value="36" step="0.1" oninput="App.calcEY()"></div>
-            <div><label>TDS %</label><input class="c-input" type="number" id="cf-tds" value="9" step="0.1" oninput="App.calcEY()"></div>
+            <div><label id="ct-dose-ey">dose g</label><input class="c-input" type="number" id="cf-dose" value="18" step="0.1" oninput="App.calcEY()"></div>
+            <div><label id="ct-bevanda-g">bevanda g</label><input class="c-input" type="number" id="cf-bev" value="36" step="0.1" oninput="App.calcEY()"></div>
+            <div><label id="ct-tds">TDS %</label><input class="c-input" type="number" id="cf-tds" value="9" step="0.1" oninput="App.calcEY()"></div>
           </div>
           <div class="mini-out" id="cf-ey-out"></div>
         </div>
@@ -926,8 +926,8 @@ if('serviceWorker' in navigator){
         </div>
         <div class="calc-card"><div class="calc-title">Ratio rapido</div>
           <div class="mini" style="grid-template-columns:1fr 1fr">
-            <div><label>dose g</label><input class="c-input" type="number" id="cf-r-dose" value="18" step="0.1" oninput="App.calcRatio()"></div>
-            <div><label>ratio 1:</label><input class="c-input" type="number" id="cf-r-ratio" value="2.5" step="0.1" oninput="App.calcRatio()"></div>
+            <div><label id="ct-dose-ratio">dose g</label><input class="c-input" type="number" id="cf-r-dose" value="18" step="0.1" oninput="App.calcRatio()"></div>
+            <div><label id="ct-ratio">ratio 1:</label><input class="c-input" type="number" id="cf-r-ratio" value="2.5" step="0.1" oninput="App.calcRatio()"></div>
           </div>
           <div class="mini-out" id="cf-ratio-out"></div>
         </div>
@@ -1029,7 +1029,7 @@ function switchTab(t){
   if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa'){
     if(Matter.disciplina) caricaMappa(Matter.disciplina);
-    else document.getElementById('mappa-label').textContent = 'Scegli una disciplina in Scopri per vedere il percorso';
+    else document.getElementById('mappa-label').textContent = _t('mappa_scegli');
   }
   if(t==='quaderno') caricaQuaderno();
   // posizione deterministica: la schermata parte sempre dall'alto
@@ -1112,8 +1112,8 @@ async function caricaHome(){
     // carica conteggio discipline in parallelo
     ['bar','bakery','cucina','caffetteria'].forEach(caricaContDisciplina);
   } catch(e){
-    document.getElementById('scopri-ey').textContent = 'errore caricamento';
-    document.getElementById('scopri-titolo').textContent = 'Riprova tra poco.';
+    document.getElementById('scopri-ey').textContent = _t('scopri_errore_eyebrow');
+    document.getElementById('scopri-titolo').textContent = _t('scopri_errore_titolo');
   }
 }
 
@@ -1166,7 +1166,7 @@ async function caricaLezioneStep(step){
   const disc = Matter.disciplina || 'bar';
   document.getElementById('les-disciplina-label').textContent =
     disc.charAt(0).toUpperCase()+disc.slice(1);
-  document.getElementById('les-step-label').textContent = 'caricamento…';
+  document.getElementById('les-step-label').textContent = _t('les_caricamento');
   document.getElementById('les-nome').textContent = '—';
   document.getElementById('les-scheda').textContent = '';
   document.getElementById('les-quiz-box').style.display='none';
@@ -1178,7 +1178,7 @@ async function caricaLezioneStep(step){
     Matter.step = j.step;
     Matter.totale = j.totale_passi;
     // header
-    document.getElementById('les-pos').textContent = `Fenomeno ${j.step+1} di ${j.totale_passi}`;
+    document.getElementById('les-pos').textContent = `${_t('les_fenomeno')} ${j.step+1} ${_t('les_di')} ${j.totale_passi}`;
     document.getElementById('les-step-label').textContent =
       (j.fenomeno.dominio||'') + ' · fenomeno ' + (j.step+1);
     document.getElementById('les-nome').textContent = j.fenomeno.nome;
@@ -1208,7 +1208,7 @@ async function caricaLezioneStep(step){
     // onboarding: nudge completamento all'ultimo fenomeno
     mostraCompletamentoLezione(j.ha_successivo);
   } catch(e){
-    document.getElementById('les-nome').textContent = 'Errore caricamento — riprova.';
+    document.getElementById('les-nome').textContent = _t('les_errore');
   }
 }
 
@@ -1260,9 +1260,9 @@ const _mappaCache = {};   // { disciplina: [fenomeni] } — niente flicker al ri
 function renderMappa(disc, fens){
   const label = document.getElementById('mappa-label');
   const cont = document.getElementById('mappa-percorso');
-  label.textContent = 'Il tuo percorso — ' + disc;
+  label.textContent = _t('mappa_percorso') + disc;
   if(!fens.length){
-    cont.innerHTML='<div style="padding:14px;color:var(--ink-muted);font-size:13px">Nessun fenomeno trovato per questa disciplina.</div>';
+    cont.innerHTML=`<div style="padding:14px;color:var(--ink-muted);font-size:13px">${_t('mappa_nessun_fen')}</div>`;
     return;
   }
   // il connettore verticale tra i nodi lo disegna il CSS (.p-step::after):
@@ -1294,9 +1294,9 @@ async function caricaMappa(disc){
   // rientro: se già in cache, render immediato, zero placeholder = zero salto
   if(_mappaCache[disc]){ renderMappa(disc, _mappaCache[disc]); return; }
   const cont = document.getElementById('mappa-percorso');
-  document.getElementById('mappa-label').textContent = 'Il tuo percorso — ' + disc;
+  document.getElementById('mappa-label').textContent = _t('mappa_percorso') + disc;
   // altezza minima durante il load: le sezioni sotto non si spostano
-  cont.innerHTML = '<div style="min-height:160px;padding:14px;color:var(--ink-muted);font-size:13px">Caricamento…</div>';
+  cont.innerHTML = `<div style="min-height:160px;padding:14px;color:var(--ink-muted);font-size:13px">${_t('mappa_caricamento')}</div>`;
   try {
     const r = await fetch('/mappa/'+disc);
     if(!r.ok) throw new Error('server');
@@ -1305,7 +1305,7 @@ async function caricaMappa(disc){
     _mappaCache[disc] = fens;
     renderMappa(disc, fens);
   } catch(e){
-    cont.innerHTML='<div style="padding:14px;color:var(--e700);font-size:13px">Errore caricamento mappa. Riprova.</div>';
+    cont.innerHTML=`<div style="padding:14px;color:var(--e700);font-size:13px">${_t('mappa_errore')}</div>`;
   }
 }
 
@@ -1340,9 +1340,9 @@ function apriNodo(id,nome){
 }
 function aggiungiThinking(){
   const d=document.createElement('div');d.className='scheda';d.id='thinking';
-  d.innerHTML='<div class="thinking"><span class="t-dots"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></span><span class="t-step" id="t-step">consulto il grafo</span></div>';
+  d.innerHTML=`<div class="thinking"><span class="t-dots"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></span><span class="t-step" id="t-step">${_t('chat_thinking')}</span></div>`;
   document.getElementById('schede').prepend(d);
-  const fasi=['consulto il grafo','raccolgo i fenomeni','scrivo la risposta'];
+  const fasi=[_t('chat_thinking'), _lang==='it'?'raccolgo i fenomeni':'gathering phenomena', _lang==='it'?'scrivo la risposta':'writing the answer'];
   let i=0;
   const tmr=setInterval(()=>{
     i=(i+1)%fasi.length;
@@ -1400,7 +1400,7 @@ function renderNota(domanda,nota,connessi){
     ${conns?`<div class="s-conn"><div class="s-conn-lab">parti da un fenomeno</div><div class="conns">${conns}</div></div>`:''}`;
   document.getElementById('schede').prepend(card);
 }
-function renderErr(){const t=document.getElementById('thinking');if(t)t.remove();const card=document.createElement('div');card.className='scheda';card.innerHTML='<div class="s-body" style="color:var(--ink-muted)">Errore di rete. Riprova.</div>';document.getElementById('schede').prepend(card);}
+function renderErr(){const t=document.getElementById('thinking');if(t)t.remove();const card=document.createElement('div');card.className='scheda';card.innerHTML=`<div class="s-body" style="color:var(--ink-muted)">${_t('auth_errore_rete')}</div>`;document.getElementById('schede').prepend(card);}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
 /* ── CORE CALCOLATORI ─────────────────────────────────── */
@@ -1450,11 +1450,11 @@ const App=(()=>{
   }
 
   function calcDil(){
-    if(!ing.length){$('dil-out').innerHTML='<p class="hint" style="padding:16px">Aggiungi un ingrediente.</p>';calcBatch();return;}
+    if(!ing.length){$('dil-out').innerHTML=`<p class="hint" style="padding:16px">${_t('aggiungi_ing')}</p>`;calcBatch();return;}
     const V0=Core.vt(ing),al=Core.et(ing);
     const{acqua,vf}=Core.dil(V0,dil);
     const abv0=Core.abv(al,V0),abvF=Core.abv(al,vf),tg=Core.afus(V0);
-    $('dil-out').innerHTML=`<div class="readout-big"><div class="readout-num">${fmt(abvF)}<span class="readout-unit">%</span></div><div class="readout-lab">grado finale (era ${fmt(abv0)}%)</div></div>
+    $('dil-out').innerHTML=`<div class="readout-big"><div class="readout-num">${fmt(abvF)}<span class="readout-unit">%</span></div><div class="readout-lab">${_t('chat_grado')}${fmt(abv0)}%)</div></div>
       <div class="grid2"><div class="stat"><div class="s-n">${fmt(vf,0)} ml</div><div class="s-l">volume nel bicchiere</div></div><div class="stat"><div class="s-n">${fmt(acqua,0)} ml</div><div class="s-l">acqua di fusione</div></div></div>`;
     calcBatch();
     // aggiorna drink cost in background (non blocca l'UI)
@@ -1503,7 +1503,7 @@ const App=(()=>{
 
   function calcAA(){
     const g=Core.par(+$('aa-vol').value||0,+$('aa-cur').value||0,+$('aa-tgt').value||0);
-    $('aa-out').innerHTML=`Aggiungi <b style="color:var(--e700)">${fmt(g,1)} g</b> di acido citrico.`;
+    $('aa-out').innerHTML=`${_t('aggiungi_acido')} <b style="color:var(--e700)">${fmt(g,1)} g</b> ${_t('acido_citrico')}`;
   }
 
   function setTool(t){
@@ -1649,7 +1649,7 @@ async function doLogin(){
   const pwd=document.getElementById('login-pwd').value;
   const msg=document.getElementById('login-msg');
   msg.className='auth-msg'; msg.textContent='';
-  if(!email||!pwd){msg.className='auth-msg err';msg.textContent='Inserisci email e password.';return;}
+  if(!email||!pwd){msg.className='auth-msg err';msg.textContent=_t('auth_inserisci');return;}
   try {
     const r=await fetch('/v1/auth/login',{method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -1660,13 +1660,13 @@ async function doLogin(){
       localStorage.setItem('matter_email',email);
       if(j.piano) localStorage.setItem('matter_piano',j.piano);
       aggiornaTopbarLogin();
-      msg.className='auth-msg ok';msg.textContent='Accesso effettuato.';
+      msg.className='auth-msg ok';msg.textContent=_t('auth_ok');
       setTimeout(()=>switchTab('scopri'),800);
     } else {
-      msg.className='auth-msg err';msg.textContent=j.errore||'Credenziali non valide.';
+      msg.className='auth-msg err';msg.textContent=j.errore||_t('auth_inserisci');
     }
   } catch(e){
-    msg.className='auth-msg err';msg.textContent='Errore di rete. Riprova.';
+    msg.className='auth-msg err';msg.textContent=_t('auth_errore_rete');
   }
 }
 
@@ -1675,8 +1675,8 @@ async function doRegistra(){
   const pwd=document.getElementById('reg-pwd').value;
   const msg=document.getElementById('reg-msg');
   msg.className='auth-msg'; msg.textContent='';
-  if(!email||!pwd){msg.className='auth-msg err';msg.textContent='Inserisci email e password.';return;}
-  if(pwd.length<8){msg.className='auth-msg err';msg.textContent='Password minimo 8 caratteri.';return;}
+  if(!email||!pwd){msg.className='auth-msg err';msg.textContent=_t('auth_inserisci');return;}
+  if(pwd.length<8){msg.className='auth-msg err';msg.textContent=_t('auth_pwd_corta');return;}
   try {
     const r=await fetch('/v1/auth/registra',{method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -1684,13 +1684,13 @@ async function doRegistra(){
     const j=await r.json();
     if(j.ok||j.token){
       if(j.token){localStorage.setItem('matter_token',j.token);localStorage.setItem('matter_email',email);aggiornaTopbarLogin();}
-      msg.className='auth-msg ok';msg.textContent='Account creato. Benvenuto in Matter.';
+      msg.className='auth-msg ok';msg.textContent=_t('auth_reg_ok');
       setTimeout(()=>switchTab('scopri'),900);
     } else {
       msg.className='auth-msg err';msg.textContent=j.errore||'Registrazione non riuscita.';
     }
   } catch(e){
-    msg.className='auth-msg err';msg.textContent='Errore di rete. Riprova.';
+    msg.className='auth-msg err';msg.textContent=_t('auth_errore_rete');
   }
 }
 
@@ -1737,6 +1737,9 @@ const _strings = {
     ct_idr:"Idratazione (baker's %)",
     ct_q10:'Q10 — tempo di fermentazione',
     ct_ph:'pH madre',
+    ct_farina:'farina g', ct_acqua_g:'acqua g',
+    ct_dose_ey:'dose g', ct_bevanda_g:'bevanda g', ct_tds:'TDS %',
+    ct_dose_ratio:'dose g', ct_ratio:'ratio 1:',
     // output calcolatori
     ct_idr_out:'Idratazione',
     ct_q10_freddo:'più freddo — fermentazione più lenta',
@@ -1777,6 +1780,31 @@ const _strings = {
     ct_flavor_placeholder:'es. limone, caffè, burro…',
     ct_disc_sicurezza:'Sicurezza alimentare',
     ct_disc_sicurezza_sub:'prossimamente',
+    // stringhe dinamiche JS
+    mappa_scegli:'Scegli una disciplina in Scopri per vedere il percorso',
+    mappa_percorso:'Il tuo percorso — ',
+    mappa_nessun_fen:'Nessun fenomeno trovato per questa disciplina.',
+    mappa_caricamento:'Caricamento…',
+    mappa_errore:'Errore caricamento mappa. Riprova.',
+    les_caricamento:'caricamento…',
+    les_errore:'Errore caricamento — riprova.',
+    les_fenomeno:'Fenomeno',
+    les_di:'di',
+    scopri_errore_titolo:'Riprova tra poco.',
+    scopri_errore_eyebrow:'errore caricamento',
+    chat_thinking:'consulto il grafo',
+    chat_grado:'grado finale (era ',
+    aggiungi_ing:'Aggiungi un ingrediente.',
+    aggiungi_acido:'Aggiungi',
+    acido_citrico:'g di acido citrico.',
+    auth_inserisci:'Inserisci email e password.',
+    auth_pwd_corta:'Password minimo 8 caratteri.',
+    auth_ok:'Accesso effettuato.',
+    auth_reg_ok:'Account creato. Benvenuto in Matter.',
+    auth_errore_rete:'Errore di rete. Riprova.',
+    salvato:'✓ Salvato',
+    // disclaimer sicurezza EN con adattamento UK/US
+    ct_sic_disc_uk:'This tool provides indicative estimates based on scientific models. It does not replace official food safety management procedures, HACCP plans, or the advice of a qualified food safety professional.',
     // sicurezza calcolatori
     ct_tab_sic:'Sicurezza',
     ct_sic_shelf:'Shelf life orientativa',
@@ -1839,6 +1867,9 @@ const _strings = {
     ct_idr:"Hydration (baker's %)",
     ct_q10:'Q10 — fermentation time',
     ct_ph:'Starter pH',
+    ct_farina:'flour g', ct_acqua_g:'water g',
+    ct_dose_ey:'dose g', ct_bevanda_g:'beverage g', ct_tds:'TDS %',
+    ct_dose_ratio:'dose g', ct_ratio:'ratio 1:',
     // calc outputs
     ct_idr_out:'Hydration',
     ct_q10_freddo:'cooler — slower fermentation',
@@ -1879,6 +1910,30 @@ const _strings = {
     ct_flavor_placeholder:'e.g. lemon, coffee, butter…',
     ct_disc_sicurezza:'Food safety',
     ct_disc_sicurezza_sub:'coming soon',
+    // dynamic JS strings
+    mappa_scegli:'Choose a discipline in Discover to see your path',
+    mappa_percorso:'Your path — ',
+    mappa_nessun_fen:'No phenomena found for this discipline.',
+    mappa_caricamento:'Loading…',
+    mappa_errore:'Error loading map. Try again.',
+    les_caricamento:'loading…',
+    les_errore:'Loading error — try again.',
+    les_fenomeno:'Phenomenon',
+    les_di:'of',
+    scopri_errore_titolo:'Try again in a moment.',
+    scopri_errore_eyebrow:'loading error',
+    chat_thinking:'searching the graph',
+    chat_grado:'final degree (was ',
+    aggiungi_ing:'Add an ingredient.',
+    aggiungi_acido:'Add',
+    acido_citrico:'g of citric acid.',
+    auth_inserisci:'Enter your email and password.',
+    auth_pwd_corta:'Password must be at least 8 characters.',
+    auth_ok:'Signed in.',
+    auth_reg_ok:'Account created. Welcome to Matter.',
+    auth_errore_rete:'Network error. Try again.',
+    salvato:'✓ Saved',
+    ct_sic_disc_uk:'This tool provides indicative estimates based on scientific models. It does not replace official food safety management procedures, HACCP plans, or the advice of a qualified food safety professional.',
     // sicurezza calcolatori
     ct_tab_sic:'Safety',
     ct_sic_shelf:'Indicative shelf life',
@@ -1968,6 +2023,13 @@ function applicaStringheUI(){
   st('ct-idr',_t('ct_idr'));
   st('ct-q10',_t('ct_q10'));
   st('ct-ph',_t('ct_ph'));
+  st('ct-farina',_t('ct_farina'));
+  st('ct-acqua-g',_t('ct_acqua_g'));
+  st('ct-dose-ey',_t('ct_dose_ey'));
+  st('ct-bevanda-g',_t('ct_bevanda_g'));
+  st('ct-tds',_t('ct_tds'));
+  st('ct-dose-ratio',_t('ct_dose_ratio'));
+  st('ct-ratio',_t('ct_ratio'));
   // cookie banner
   st('ct-cookie-ok',_t('ct_cookie_ok'));
   st('ct-cookie-no',_t('ct_cookie_no'));
@@ -1997,7 +2059,8 @@ function applicaStringheUI(){
   st('ct-sic-aw',_t('ct_sic_aw'));
   st('ct-sic-ph',_t('ct_sic_ph'));
   st('ct-sic-temp',_t('ct_sic_temp'));
-  const shelfDisc=document.getElementById('ct-sic-shelf-disc'); if(shelfDisc) shelfDisc.textContent=_t('ct_sic_shelf_disc');
+  const shelfDisc=document.getElementById('ct-sic-shelf-disc');
+  if(shelfDisc) shelfDisc.textContent = _lang==='en' ? _t('ct_sic_disc_uk') : _t('ct_sic_shelf_disc');
   st('ct-sic-past',_t('ct_sic_past'));
   st('ct-sic-past-hint',_t('ct_sic_past_hint'));
   st('ct-sic-past-t',_t('ct_sic_past_t'));
