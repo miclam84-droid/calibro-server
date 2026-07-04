@@ -27,9 +27,9 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"sintomo":"positività microbiologica in prodotto finito nonostante materie prime conformi","causa":"tagliere/coltello/piano lavoro usato per crudo e poi per cotto senza sanificazione intermedia","correzione":"separazione fisica obbligatoria (colori diversi) + sanificazione documentata tra un uso e l''altro"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-contaminazione', 'proc-separazione-flussi', 'controllato_con', 1.0),
-('fen-contaminazione', 'proc-sanificazione', 'controllato_con', 1.0),
-('fen-contaminazione', 'proc-haccp-ccp', 'controllato_con', 0.9),
-('fen-contaminazione', 'err-cross-contamination', 'fallisce_come', 1.0),
-('fen-zona-pericolo', 'fen-contaminazione', 'amplifica', 0.8),
+('fen-contaminazione', 'proc-separazione-flussi', 'controllato_con', '{}'),
+('fen-contaminazione', 'proc-sanificazione', 'controllato_con', '{}'),
+('fen-contaminazione', 'proc-haccp-ccp', 'controllato_con', '{}'),
+('fen-contaminazione', 'err-cross-contamination', 'fallisce_come', '{}'),
+('fen-zona-pericolo', 'fen-contaminazione', 'amplifica', '{}'),
 ('fen-contaminazione', 'fen-shelf-life', 'riduce', '{}');

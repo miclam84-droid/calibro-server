@@ -11,7 +11,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico","scheda":"Il D-value (decimal reduction time) è il tempo necessario a una data temperatura per ridurre la carica batterica del 90% (1 ciclo logaritmico). Il z-value è la variazione di temperatura necessaria per cambiare il D-value di un fattore 10. Insieme definiscono la cinetica di morte batterica: non è un interruttore on/off, è una curva esponenziale. Come kT governa la cinetica chimica, D-value governa la cinetica microbiologica. La pastorizzazione non sterilizza — riduce la carica a livelli sicuri (riduzione 5–7 log) in tempi e temperature calcolabili.","formula":"D(T) = D_ref × 10^((T_ref - T) / z) — log N(t) = log N0 - t/D(T)"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('principio-dvalue', 'fen-zona-pericolo', 'spiega', 1.0),
-('principio-dvalue', 'fen-shelf-life', 'spiega', 0.9),
-('principio-dvalue', 'fen-calore', 'unifica', 0.9),
+('principio-dvalue', 'fen-zona-pericolo', 'spiega', '{}'),
+('principio-dvalue', 'fen-shelf-life', 'spiega', '{}'),
+('principio-dvalue', 'fen-calore', 'unifica', '{}'),
 ('principio-dvalue', 'fen-fermentazione', 'unifica', '{}');

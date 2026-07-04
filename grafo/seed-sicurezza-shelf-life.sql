@@ -23,10 +23,10 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"sintomo":"prodotto deteriorato prima della data indicata, o scartato troppo presto","causa":"calcolo basato su un solo parametro (es. solo temperatura) ignorando Aw o pH","correzione":"valutare tutti e quattro i parametri combinati; in caso di dubbio, test microbiologico"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-shelf-life', 'cal-shelf-life-stima', 'misurato_da', 1.0),
-('fen-shelf-life', 'proc-hurdle-technology', 'controllato_con', 1.0),
-('fen-shelf-life', 'err-shelf-life-errata', 'fallisce_come', 1.0),
-('fen-aw', 'fen-shelf-life', 'determina', 0.9),
-('fen-acidita', 'fen-shelf-life', 'determina', 0.9),
-('fen-zona-pericolo', 'fen-shelf-life', 'determina', 0.9),
+('fen-shelf-life', 'cal-shelf-life-stima', 'misurato_da', '{}'),
+('fen-shelf-life', 'proc-hurdle-technology', 'controllato_con', '{}'),
+('fen-shelf-life', 'err-shelf-life-errata', 'fallisce_come', '{}'),
+('fen-aw', 'fen-shelf-life', 'determina', '{}'),
+('fen-acidita', 'fen-shelf-life', 'determina', '{}'),
+('fen-zona-pericolo', 'fen-shelf-life', 'determina', '{}'),
 ('fen-concentrazione', 'fen-shelf-life', 'influenza', '{}');

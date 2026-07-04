@@ -27,9 +27,9 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"sintomo":"alimento rientrato in zona di pericolo per tempo indeterminato","causa":"trasporto non refrigerato, abbattimento incompleto, aperture prolungate del frigo","correzione":"non basta riportare in temperatura — il danno microbiologico è già avvenuto; scartare se il tempo in zona pericolo supera 2 ore cumulative"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-zona-pericolo', 'proc-abbattimento', 'controllato_con', 1.0),
-('fen-zona-pericolo', 'proc-catena-freddo', 'controllato_con', 1.0),
-('fen-zona-pericolo', 'cal-doubling-time', 'misurato_da', 1.0),
-('fen-zona-pericolo', 'err-interruzione-catena', 'fallisce_come', 1.0),
-('fen-zona-pericolo', 'fen-fermentazione', 'influenza', 0.8),
+('fen-zona-pericolo', 'proc-abbattimento', 'controllato_con', '{}'),
+('fen-zona-pericolo', 'proc-catena-freddo', 'controllato_con', '{}'),
+('fen-zona-pericolo', 'cal-doubling-time', 'misurato_da', '{}'),
+('fen-zona-pericolo', 'err-interruzione-catena', 'fallisce_come', '{}'),
+('fen-zona-pericolo', 'fen-fermentazione', 'influenza', '{}'),
 ('fen-calore', 'fen-zona-pericolo', 'determina', '{}');
