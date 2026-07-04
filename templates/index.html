@@ -632,6 +632,9 @@ if('serviceWorker' in navigator){
     <div class="disc-item off"><div class="disc-dot dim"></div>
       <div class="disc-txt"><div class="disc-n">Gelateria</div><div class="disc-m">prossimamente</div></div>
     </div>
+    <div class="disc-item off"><div class="disc-dot dim"></div>
+      <div class="disc-txt"><div class="disc-n" id="ct-disc-sicurezza">Sicurezza alimentare</div><div class="disc-m" id="ct-disc-sicurezza-sub">prossimamente</div></div>
+    </div>
   </div>
   <div class="principio-card" id="scopri-principio" style="display:none">
     <div class="princ-ey">principio del giorno</div>
@@ -1688,6 +1691,8 @@ const _strings = {
     // flavor mappa
     ct_flavor_btn:'Cerca',
     ct_flavor_placeholder:'es. limone, caffè, burro…',
+    ct_disc_sicurezza:'Sicurezza alimentare',
+    ct_disc_sicurezza_sub:'prossimamente',
   },
   en:{
     payoff:'The science behind the craft',
@@ -1768,6 +1773,8 @@ const _strings = {
     // flavor mappa
     ct_flavor_btn:'Search',
     ct_flavor_placeholder:'e.g. lemon, coffee, butter…',
+    ct_disc_sicurezza:'Food safety',
+    ct_disc_sicurezza_sub:'coming soon',
   }
 };
 
@@ -1857,6 +1864,8 @@ function applicaStringheUI(){
   st('onb-complete-title',_t('onb_complete_title'));
   st('onb-complete-sub',_t('onb_complete_sub'));
   st('onb-complete-btn',_t('onb_complete_btn'));
+  st('ct-disc-sicurezza',_t('ct_disc_sicurezza'));
+  st('ct-disc-sicurezza-sub',_t('ct_disc_sicurezza_sub'));
   // drink cost / food cost
   st('ct-drinkcost-title',_t('ct_drinkcost_title'));
   st('ct-drinkcost-label',_t('ct_drinkcost_label'));
