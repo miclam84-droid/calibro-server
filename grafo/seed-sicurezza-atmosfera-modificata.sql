@@ -25,6 +25,4 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-atmosfera-modificata', 'proc-sottovuoto', 'realizzato_da', '{}'),
 ('fen-atmosfera-modificata', 'proc-map', 'realizzato_da', '{}'),
 ('fen-atmosfera-modificata', 'err-botulinum-sottovuoto', 'fallisce_come', '{}'),
-('fen-atmosfera-modificata', 'fen-shelf-life', 'influenza', '{}'),
-('fen-acidita', 'fen-atmosfera-modificata', 'interagisce_con', '{}'),
-('fen-aw', 'fen-atmosfera-modificata', 'interagisce_con', '{}');
+('fen-atmosfera-modificata', 'fen-shelf-life', 'influenza', '{}');
