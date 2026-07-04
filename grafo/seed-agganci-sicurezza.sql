@@ -9,7 +9,6 @@
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-acidita', 'fen-zona-pericolo', 'inibisce', '{}'),
 ('fen-acidita', 'fen-contaminazione', 'riduce', '{}'),
-('fen-acidita', 'fen-atmosfera-modificata', 'interagisce_con', '{}');
 
 -- Aw → sicurezza (osmosi come barriera microbiologica)
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
