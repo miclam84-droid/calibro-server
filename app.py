@@ -230,7 +230,7 @@ def fenomeni_suggeriti(db):
     return [{"id": r["id"], "nome": r["name"], "dominio": r["domain"],
              "target": _dati(r["data"]).get("numero_bersaglio", "")} for r in rows]
 
-def costruisci_prompt(domanda, contesto):
+def costruisci_prompt(domanda, contesto, lang="it"):
     righe = []
     for f in contesto["fenomeni"]:
         righe.append("")
@@ -259,30 +259,54 @@ def costruisci_prompt(domanda, contesto):
             righe.append(f"  - {e}")
     contesto_txt = "\n".join(righe)
 
-    regole = (
-        "Sei uno strumento che spiega la ristorazione attraverso i fenomeni fisici "
-        "e chimici che la governano: acidita, concentrazione, calore, osmosi, struttura. "
-        "Questi fenomeni non appartengono a una disciplina: sono le stesse leggi che "
-        "attraversano pasticceria, panificazione, cucina, mixology, caffetteria. "
-        "Una madre, un sour e una confettura obbediscono alla stessa acidita; non sono "
-        "mestieri diversi che si somigliano, sono lo stesso fenomeno in stanze diverse. "
-        "Il tuo compito e rendere visibile questa unita: parti dal fenomeno, mostra il "
-        "numero che lo governa, e fai vedere che la stessa legge ricompare dove non ce lo si aspetta.\n\n"
-        "COME RISPONDERE:\n"
-        "- Usa SOLO le informazioni nel contesto qui sotto. Non aggiungere prodotti, esempi "
-        "o numeri che non sono nel contesto. Se un dato non c'e, non inventarlo: dillo.\n"
-        "- Cita i numeri-bersaglio esatti del contesto (pH, Brix, percentuali, gradi).\n"
-        "- Parti dal fenomeno e dal perche fisico, poi arriva al consiglio concreto.\n"
-        "- Tono da collega a collega: il professionista sa gia fare il suo lavoro, "
-        "tu gli mostri il perche. Non spiegare l'ovvio, non dare lezioni.\n"
-        "- Mostra la connessione cross-disciplina solo dove e davvero nel contesto, "
-        "e falla emergere come un fatto naturale: 'la stessa legge vale anche per i crauti' "
-        "non 'come puoi vedere dall'analisi trasversale...'.\n"
-        "- Se la domanda ha numeri propri dell'utente (ml, grammi, gradi, percentuali), "
-        "usa il tool 'calcola' per dare risultati esatti — non stimare.\n"
-        "- Prosa pulita in italiano, senza asterischi, grassetti o markdown. Massimo 6-8 frasi.\n"
-        "- Non menzionare mai di essere un AI o di usare un grafo — rispondi come uno strumento."
-    )
+    if lang == "en":
+        regole = (
+            "You are a tool that explains food and drink through the physical and chemical "
+            "phenomena that govern them: acidity, concentration, heat, osmosis, structure. "
+            "These phenomena belong to no single discipline — they are the same laws that run "
+            "through pastry, bread, cooking, mixology, and coffee. "
+            "A sourdough starter, a sour cocktail, and a jam all obey the same acidity; they are "
+            "not different crafts that resemble each other — they are the same phenomenon in different rooms. "
+            "Your task is to make this unity visible: start from the phenomenon, show the number "
+            "that governs it, and reveal where the same law appears unexpectedly.\n\n"
+            "HOW TO RESPOND:\n"
+            "- Use ONLY the information in the context below. Do not add products, examples "
+            "or numbers not in the context. If a piece of data is missing, say so — do not invent it.\n"
+            "- Quote the exact target numbers from the context (pH, Brix, percentages, degrees).\n"
+            "- Start from the phenomenon and its physical reason, then give concrete practical advice.\n"
+            "- Tone: colleague to colleague. The professional already knows their craft — "
+            "you show them the why. Don't explain the obvious.\n"
+            "- Show the cross-disciplinary connection only where it genuinely appears in the context.\n"
+            "- If the question contains the user's own numbers (ml, grams, degrees, percentages), "
+            "use the 'calcola' tool to give exact results — do not estimate.\n"
+            "- Clean prose in English, no asterisks, bold or markdown. Maximum 6-8 sentences.\n"
+            "- Never mention being an AI or using a graph — respond as a tool."
+        )
+    else:
+        regole = (
+            "Sei uno strumento che spiega la ristorazione attraverso i fenomeni fisici "
+            "e chimici che la governano: acidita, concentrazione, calore, osmosi, struttura. "
+            "Questi fenomeni non appartengono a una disciplina: sono le stesse leggi che "
+            "attraversano pasticceria, panificazione, cucina, mixology, caffetteria. "
+            "Una madre, un sour e una confettura obbediscono alla stessa acidita; non sono "
+            "mestieri diversi che si somigliano, sono lo stesso fenomeno in stanze diverse. "
+            "Il tuo compito e rendere visibile questa unita: parti dal fenomeno, mostra il "
+            "numero che lo governa, e fai vedere che la stessa legge ricompare dove non ce lo si aspetta.\n\n"
+            "COME RISPONDERE:\n"
+            "- Usa SOLO le informazioni nel contesto qui sotto. Non aggiungere prodotti, esempi "
+            "o numeri che non sono nel contesto. Se un dato non c'e, non inventarlo: dillo.\n"
+            "- Cita i numeri-bersaglio esatti del contesto (pH, Brix, percentuali, gradi).\n"
+            "- Parti dal fenomeno e dal perche fisico, poi arriva al consiglio concreto.\n"
+            "- Tono da collega a collega: il professionista sa gia fare il suo lavoro, "
+            "tu gli mostri il perche. Non spiegare l'ovvio, non dare lezioni.\n"
+            "- Mostra la connessione cross-disciplina solo dove e davvero nel contesto, "
+            "e falla emergere come un fatto naturale: 'la stessa legge vale anche per i crauti' "
+            "non 'come puoi vedere dall'analisi trasversale...'.\n"
+            "- Se la domanda ha numeri propri dell'utente (ml, grammi, gradi, percentuali), "
+            "usa il tool 'calcola' per dare risultati esatti — non stimare.\n"
+            "- Prosa pulita in italiano, senza asterischi, grassetti o markdown. Massimo 6-8 frasi.\n"
+            "- Non menzionare mai di essere un AI o di usare un grafo — rispondi come uno strumento."
+        )
     return f"{regole}\n\nCONTESTO DAL GRAFO:\n{contesto_txt}\n\nDOMANDA: {domanda}\n\nRISPOSTA:"
 
 # ---- Mistral via HTTP diretto (nessun SDK) ------------------
@@ -956,6 +980,7 @@ def chiedi():
     if not _check_rate_limit(ip):
         return jsonify({"errore":"Troppe richieste. Aspetta un minuto e riprova."}), 429
     domanda = (request.json or {}).get("domanda","").strip()
+    lang = (request.json or {}).get("lang", "it")
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
     db = carica_grafo()
@@ -987,7 +1012,7 @@ def chiedi():
                           "target": f["target"]} for f in suggeriti]
         })
 
-    prompt = costruisci_prompt(domanda, contesto)
+    prompt = costruisci_prompt(domanda, contesto, lang=lang)
     risposta = chiedi_mistral(prompt)
     log_evento("risposta", domanda,
                fenomeni=[f["name"] for f in contesto["fenomeni"]],
@@ -1039,7 +1064,7 @@ def nodo():
     if not contesto or not contesto.get("fenomeni"):
         return jsonify({"risposta": None, "nota": "Nessun fenomeno collegato."})
     domanda = f"Spiegami {n['name']} e i fenomeni che lo governano."
-    prompt = costruisci_prompt(domanda, contesto)
+    prompt = costruisci_prompt(domanda, contesto, lang=request.args.get('lang','it'))
     risposta = chiedi_mistral(prompt)
     log_evento("nodo", n["name"],
                fenomeni=[f["name"] for f in contesto["fenomeni"]],
@@ -1173,7 +1198,19 @@ def lezione(disciplina_nome, step):
     # quiz generato da Sonnet
     quiz = None
     if scheda:
-        quiz_prompt = f"""Crea un quiz su questo fenomeno per un professionista F&B.
+        if lang == "en":
+            quiz_prompt = f"""Create a quiz about this phenomenon for an F&B professional.
+Phenomenon: {nodo['name']}
+Target number: {target}
+Content: {scheda[:400]}
+
+Reply ONLY with valid JSON, no text before or after:
+{{"domanda":"...","opzioni":["correct option","wrong option","wrong option"],"corretta":0,"spiegazione":"explanation with the exact mathematical calculation in 2 lines"}}
+
+The correct answer must always be the first option (index 0).
+The explanation must include the exact number."""
+        else:
+            quiz_prompt = f"""Crea un quiz su questo fenomeno per un professionista F&B.
 Fenomeno: {nodo['name']}
 Numero bersaglio: {target}
 Contenuto: {scheda[:400]}
