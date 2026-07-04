@@ -736,7 +736,125 @@ def ricetta_per_cifra(exp_id):
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
 
-@app.route("/v1/auth/logout", methods=["POST"])
+@app.route("/v1/ricetta/<int:exp_id>/sicurezza")
+def ricetta_sicurezza(exp_id):
+    """SEC14 — Profilo di sicurezza alimentare di un esperimento.
+    Formato concordato con Cifra (tutti i campi nullable).
+    I valori sono stime orientative basate su modelli scientifici —
+    non sostituiscono test microbiologici né certificazioni professionali."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, nome, disciplina, ph, brix, abv,
+                   temperatura, idratazione, ingredienti, fenomeni
+            FROM esperimenti WHERE id=%s AND user_id=%s
+        """, (exp_id, str(user_id)))
+        row = cur.fetchone()
+        cur.close(); conn.close()
+        if not row:
+            return jsonify({"errore":"esperimento non trovato"}), 404
+
+        (rid, nome, disc, ph, brix, abv,
+         temp, idratazione, ingredienti, fenomeni) = row
+
+        # ── Stima Aw orientativa ──────────────────────────────
+        # Nessun campo Aw diretto — deriviamo da idratazione e brix
+        aw_stimata = None
+        if brix is not None:
+            # a 65 Brix Aw ≈ 0.85; a 0 Brix Aw ≈ 1.0 (approssimazione lineare)
+            aw_stimata = round(1.0 - float(brix) * 0.0023, 3)
+        elif idratazione is not None:
+            # impasto: idratazione alta → Aw più alta
+            aw_stimata = round(0.95 + float(idratazione) * 0.0004, 3)
+            aw_stimata = min(aw_stimata, 0.99)
+
+        # ── Shelf life orientativa (Hurdle Technology) ───────
+        shelf_life = None
+        zona_pericolo = None
+        flag_rischio = None
+        metodo_conservazione = []
+        note_sicurezza = None
+
+        t_cons = float(temp) if temp else 4.0
+        ph_val = float(ph) if ph else None
+
+        zona_pericolo = (t_cons > 4.0 and t_cons < 60.0)
+
+        # score Hurdle
+        score = 0
+        if aw_stimata is not None:
+            if aw_stimata < 0.60: score += 4
+            elif aw_stimata < 0.85: score += 3
+            elif aw_stimata < 0.93: score += 2
+            elif aw_stimata < 0.97: score += 1
+
+        if ph_val is not None:
+            if ph_val < 3.5: score += 4
+            elif ph_val < 4.0: score += 3
+            elif ph_val < 4.6: score += 2
+            elif ph_val < 5.5: score += 1
+
+        if t_cons <= 4: score += 2
+        elif t_cons <= 8: score += 1
+
+        giorni_map = [1, 2, 4, 7, 14, 30, 90, 180]
+        shelf_life = giorni_map[min(score, 7)]
+
+        # flag rischio
+        if zona_pericolo:
+            flag_rischio = "conservare fuori dalla zona di pericolo (4°C–60°C)"
+            metodo_conservazione = ["refrigerazione"]
+        elif t_cons <= 4:
+            if shelf_life <= 3:
+                flag_rischio = "conservare sotto 4°C — shelf life limitata"
+                metodo_conservazione = ["refrigerazione"]
+            else:
+                flag_rischio = None
+                metodo_conservazione = ["refrigerazione"]
+        else:
+            flag_rischio = "verificare temperatura di conservazione"
+            metodo_conservazione = ["refrigerazione"]
+
+        # metodo aggiuntivo per Aw bassa
+        if aw_stimata and aw_stimata < 0.85:
+            metodo_conservazione.append("conservazione a temperatura ambiente")
+        if ph_val and ph_val < 4.6:
+            metodo_conservazione.append("acidificazione")
+
+        note_sicurezza = (
+            f"shelf life orientativa {shelf_life} giorni a {t_cons}°C"
+            + (f" · pH {ph_val}" if ph_val else "")
+            + (f" · Aw stimata {aw_stimata}" if aw_stimata else "")
+        )
+
+        return jsonify({
+            "id": rid,
+            "nome": nome,
+            "disciplina": disc,
+            "aw_stimata": aw_stimata,
+            "ph_stimato": ph_val,
+            "temperatura_conservazione_max_c": t_cons,
+            "shelf_life_giorni": shelf_life,
+            "zona_pericolo": zona_pericolo,
+            "flag_rischio": flag_rischio,
+            "metodo_conservazione": metodo_conservazione,
+            "note_sicurezza": note_sicurezza,
+            "disclaimer": (
+                "Valori orientativi basati su modelli scientifici. "
+                "Non sostituiscono test microbiologici né la consulenza "
+                "di un professionista HACCP abilitato."
+            )
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
 def logout():
     """AC2 — Invalida il token sessione."""
     token = request.headers.get("Authorization","").replace("Bearer ","")

@@ -939,6 +939,19 @@ if('serviceWorker' in navigator){
 <!-- ── PANNELLO SICUREZZA ──────────────────────────────── -->
 <div id="cpanel-sic" style="display:none;padding:0 0 16px">
 
+  <!-- gate Pro-only — visibile solo se non Pro -->
+  <div id="sic-gate" style="display:none;margin:20px 14px;text-align:center">
+    <div style="background:var(--e100);border:1.5px solid var(--e300);border-radius:14px;padding:24px 20px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--e700);margin-bottom:10px">MATTER PRO</div>
+      <div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px" id="ct-sic-gate-title">Modulo sicurezza alimentare</div>
+      <div style="font-size:13px;color:var(--ink-muted);line-height:1.6;margin-bottom:18px" id="ct-sic-gate-desc">Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Pro.</div>
+      <button onclick="vaiAPro()" style="background:var(--coffee);color:#fff;border:none;font-family:var(--sans);font-weight:600;font-size:14px;padding:12px 24px;border-radius:9px;cursor:pointer;width:100%" id="ct-sic-gate-btn">Passa a Pro — €11,99/mese</button>
+    </div>
+  </div>
+
+  <!-- contenuto Pro — nascosto se non Pro -->
+  <div id="sic-content">
+
   <!-- CALCOLATORE 1: Shelf life orientativa -->
   <div class="calc-card">
     <div class="calc-title" id="ct-sic-shelf">Shelf life orientativa</div>
@@ -989,6 +1002,7 @@ if('serviceWorker' in navigator){
     <p style="font-size:10px;color:var(--ink-muted);margin-top:8px;line-height:1.5" id="ct-sic-cold-disc">Limite sicurezza: massimo 2 ore cumulative in zona pericolo. Oltre: scartare.</p>
   </div>
 
+  </div><!-- fine sic-content -->
 </div>
 <div class="ask-bar" id="ask-bar" style="display:none">
   <div class="ask-inner">
@@ -1499,6 +1513,22 @@ const App=(()=>{
       const btn=document.getElementById('ctab-'+p);
       if(btn) btn.classList.toggle('active',p===t);
     });
+    // SEC13 — gate Pro-only per sicurezza
+    if(t==='sic') _aggiornaSicGate();
+  }
+
+  function _aggiornaSicGate(){
+    const gate = document.getElementById('sic-gate');
+    const content = document.getElementById('sic-content');
+    if(!gate || !content) return;
+    const isPro = _isPro();
+    gate.style.display = isPro ? 'none' : 'block';
+    content.style.display = isPro ? 'block' : 'none';
+    if(isPro){
+      calcShelfLife();
+      calcPastorizzazione();
+      calcCatenaFreddo();
+    }
   }
 
   // ── BAKERY ──────────────────────────────────────────────
@@ -1764,6 +1794,9 @@ const _strings = {
     ct_sic_cold_t:'Temperatura °C',
     ct_sic_cold_time:'Tempo (min)',
     ct_sic_cold_disc:'Limite sicurezza: max 2 ore cumulative in zona pericolo.',
+    ct_sic_gate_title:'Modulo sicurezza alimentare',
+    ct_sic_gate_desc:'Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Pro.',
+    ct_sic_gate_btn:'Passa a Pro — €11,99/mese',
   },
   en:{
     payoff:'The science behind the craft',
@@ -1863,6 +1896,9 @@ const _strings = {
     ct_sic_cold_t:'Temperature °C',
     ct_sic_cold_time:'Time (min)',
     ct_sic_cold_disc:'Safety limit: max 2 cumulative hours in danger zone.',
+    ct_sic_gate_title:'Food safety module',
+    ct_sic_gate_desc:'Indicative shelf life, pasteurisation and cold chain. Available with Matter Pro.',
+    ct_sic_gate_btn:'Upgrade to Pro — €11.99/month',
   }
 };
 
@@ -1971,6 +2007,9 @@ function applicaStringheUI(){
   st('ct-sic-cold-t',_t('ct_sic_cold_t'));
   st('ct-sic-cold-time',_t('ct_sic_cold_time'));
   const coldDisc=document.getElementById('ct-sic-cold-disc'); if(coldDisc) coldDisc.textContent=_t('ct_sic_cold_disc');
+  st('ct-sic-gate-title',_t('ct_sic_gate_title'));
+  st('ct-sic-gate-desc',_t('ct_sic_gate_desc'));
+  st('ct-sic-gate-btn',_t('ct_sic_gate_btn'));
   // drink cost / food cost
   st('ct-drinkcost-title',_t('ct_drinkcost_title'));
   st('ct-drinkcost-label',_t('ct_drinkcost_label'));
