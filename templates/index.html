@@ -475,7 +475,15 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   font-family:var(--sans);font-weight:600;font-size:14px;
   padding:12px 20px;border-radius:9px;cursor:pointer;width:100%;margin-top:4px}
 
-/* ── FLAVOR SEARCH ────────────────────────────────────── */
+/* ── CAP BLUR (Flavor + Quaderno) ────────────────────── */
+.cap-blur{filter:blur(4px);pointer-events:none;user-select:none}
+.cap-lock{display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:var(--e100);border-top:0.5px solid var(--e300)}
+.cap-lock svg{width:15px;height:15px;stroke:var(--e700);fill:none;
+  stroke-width:2;flex-shrink:0}
+.cap-lock-txt{flex:1;font-size:12px;color:var(--e700);line-height:1.4}
+.cap-lock-cta{font-size:11px;font-weight:600;color:var(--coffee);
+  white-space:nowrap;cursor:pointer;font-family:var(--mono)}
 .flavor-search{padding:12px 14px 0}
 .flavor-search-row{display:flex;gap:8px}
 .flavor-input{flex:1;background:var(--surface);border:1px solid var(--flavor-border);
@@ -2178,6 +2186,13 @@ function calcCatenaFreddo(){
 }
 
 /* ── FLAVOR NETWORK MAPPA ─────────────────────────────── */
+const FLAVOR_FREE = 3;
+const QUAD_FREE = 3;
+
+function _oggiKeyFlavor(){ return 'mf_'+new Date().toISOString().slice(0,10); }
+function _getFlavorUse(){ return parseInt(localStorage.getItem(_oggiKeyFlavor())||'0',10); }
+function _incFlavorUse(){ localStorage.setItem(_oggiKeyFlavor(), _getFlavorUse()+1); }
+
 async function cercaFlavorMappa(){
   const q = document.getElementById('flavor-query').value.trim();
   if(!q) return;
@@ -2191,11 +2206,32 @@ async function cercaFlavorMappa(){
       res.innerHTML=`<div style="color:var(--ink-muted);font-size:12px;padding:8px 0">Nessun abbinamento trovato per <b>${esc(q)}</b>.</div>`;
       return;
     }
-    res.innerHTML = j.abbinamenti.map(a=>`
+    _incFlavorUse();
+    const usate = _getFlavorUse();
+    const isPro = _isPro();
+    const tutti = j.abbinamenti;
+    const visibili = isPro ? tutti : tutti.slice(0, FLAVOR_FREE);
+    const nascosti = isPro ? [] : tutti.slice(FLAVOR_FREE);
+
+    let html = visibili.map(a=>`
       <div class="flavor-result-item">
         <span class="flavor-result-name">${esc(a.ingrediente.replace(/_/g,' '))}</span>
         <span class="flavor-result-why">${esc(a.composto||'')} · ${a.overlap||''}</span>
       </div>`).join('');
+
+    if(nascosti.length){
+      html += nascosti.map(a=>`
+        <div class="flavor-result-item cap-blur">
+          <span class="flavor-result-name">${esc(a.ingrediente.replace(/_/g,' '))}</span>
+          <span class="flavor-result-why">${esc(a.composto||'')} · ${a.overlap||''}</span>
+        </div>`).join('');
+      html += `<div class="cap-lock">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+        <span class="cap-lock-txt">${FLAVOR_FREE} abbinamenti liberi per ricerca. Vedi tutto con Pro.</span>
+        <span class="cap-lock-cta" onclick="vaiAPro()">Passa a Pro →</span>
+      </div>`;
+    }
+    res.innerHTML = html;
   } catch(e){
     res.innerHTML=`<div style="color:var(--e700);font-size:12px;padding:8px 0">Errore. Riprova.</div>`;
   }
@@ -2250,6 +2286,13 @@ function apriFormSalva(){
 async function salvaEsperimento(){
   const token = localStorage.getItem('matter_token');
   if(!token){ switchTab('auth'); return; }
+  if(!_isPro()){
+    try {
+      const rc = await fetch('/v1/quaderno',{headers:{'Authorization':'Bearer '+token}});
+      const jc = await rc.json();
+      if((jc.esperimenti||[]).length >= QUAD_FREE){ apriPaywall(); return; }
+    } catch(e){}
+  }
   const nome = document.getElementById('salva-nome').value.trim();
   if(!nome){ document.getElementById('salva-nome').focus(); return; }
   const note = document.getElementById('salva-note').value.trim();
@@ -2267,7 +2310,8 @@ async function salvaEsperimento(){
       document.getElementById('salva-nome').value='';
       document.getElementById('salva-note').value='';
       const btn = document.getElementById('salva-btn');
-      if(btn){ const orig=btn.textContent; btn.textContent='✓ Salvato'; setTimeout(()=>{btn.textContent=orig;},2000); }
+      if(btn){ const orig=btn.textContent; btn.textContent=_t('salvato'); setTimeout(()=>{btn.textContent=orig;},2000); }
+      caricaQuaderno();
     }
   } catch(e){}
 }
@@ -2289,7 +2333,10 @@ async function caricaQuaderno(){
     const esps = j.esperimenti || [];
     if(!esps.length){ if(empty) empty.style.display='block'; if(list) list.innerHTML=''; return; }
     if(empty) empty.style.display='none';
-    if(list) list.innerHTML = esps.map(e=>{
+    const isPro = _isPro();
+    const visibili = isPro ? esps : esps.slice(0, QUAD_FREE);
+    const nascosti = isPro ? [] : esps.slice(QUAD_FREE);
+    let html = visibili.map(e=>{
       const chips=[];
       if(e.abv) chips.push(`ABV ${parseFloat(e.abv).toFixed(1)}%`);
       if(e.ph) chips.push(`pH ${e.ph}`);
@@ -2300,6 +2347,18 @@ async function caricaQuaderno(){
         ${chips.map(c=>`<span class="quad-item-chip">${c}</span>`).join('')}
         ${ts?`<span>${ts}</span>`:''}</div></div>`;
     }).join('');
+    if(nascosti.length){
+      html += nascosti.map(e=>`<div class="quad-item cap-blur">
+        <div class="quad-item-name">${esc(e.nome)}</div>
+        <div class="quad-item-meta">${e.disciplina?`<span>${esc(e.disciplina)}</span>`:''}</div>
+      </div>`).join('');
+      html += `<div class="cap-lock">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--e700);fill:none;stroke-width:2;flex-shrink:0"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+        <span class="cap-lock-txt">${QUAD_FREE} esperimenti gratuiti. Salva senza limite con Pro.</span>
+        <span class="cap-lock-cta" onclick="vaiAPro()">Passa a Pro →</span>
+      </div>`;
+    }
+    if(list) list.innerHTML = html;
   } catch(e){ if(empty) empty.style.display='block'; }
 }
 
