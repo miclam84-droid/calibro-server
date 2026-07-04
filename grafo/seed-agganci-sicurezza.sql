@@ -6,40 +6,40 @@
 -- ============================================================
 
 -- Acidità → sicurezza (stesso pH, angolazione diversa)
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-acidita', 'fen-zona-pericolo', 'inibisce', 0.9),
 ('fen-acidita', 'fen-contaminazione', 'riduce', 0.8),
-('fen-acidita', 'fen-atmosfera-modificata', 'interagisce_con', 0.7);
+('fen-acidita', 'fen-atmosfera-modificata', 'interagisce_con', '{}');
 
 -- Aw → sicurezza (osmosi come barriera microbiologica)
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-aw', 'fen-zona-pericolo', 'inibisce', 0.9),
 ('fen-aw', 'fen-shelf-life', 'determina', 0.95),
-('fen-aw', 'fen-atmosfera-modificata', 'interagisce_con', 0.8);
+('fen-aw', 'fen-atmosfera-modificata', 'interagisce_con', '{}');
 
 -- Calore → sicurezza (stessa fisica, applicazione diversa)
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-calore', 'fen-zona-pericolo', 'determina', 1.0),
-('fen-calore', 'fen-shelf-life', 'influenza', 0.8);
+('fen-calore', 'fen-shelf-life', 'influenza', '{}');
 
 -- Osmosi → sicurezza (sale e zucchero come ostacoli)
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-osmosi', 'fen-zona-pericolo', 'inibisce', 0.8),
-('fen-osmosi', 'fen-shelf-life', 'influenza', 0.8);
+('fen-osmosi', 'fen-shelf-life', 'influenza', '{}');
 
 -- Fermentazione → sicurezza (produce acidi protettivi)
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-fermentazione', 'fen-contaminazione', 'riduce', 0.7),
-('fen-fermentazione', 'fen-shelf-life', 'influenza', 0.8);
+('fen-fermentazione', 'fen-shelf-life', 'influenza', '{}');
 
 -- Maillard → sicurezza (cottura come CCP)
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
-('fen-maillard', 'fen-zona-pericolo', 'supera', 0.7);
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-maillard', 'fen-zona-pericolo', 'supera', '{}');
 
 -- Concentrazione → sicurezza (salamoia, conserve)
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-concentrazione', 'fen-zona-pericolo', 'inibisce', 0.7),
-('fen-concentrazione', 'fen-shelf-life', 'influenza', 0.8);
+('fen-concentrazione', 'fen-shelf-life', 'influenza', '{}');
 
 -- Prodotti specifici che hanno profilo sicurezza
 INSERT INTO nodes (id, type, name, domain, data) VALUES
@@ -54,9 +54,9 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('prod-mousse-cruda', 'Prodotto', 'Preparazione con uova crude', 'sicurezza',
  '{"nota":"prodotto ad alto rischio (Salmonella) — shelf life max 24h a 4°C; pastorizzare le uova se shelf life >24h o se servito a categorie vulnerabili"}');
 
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-zona-pericolo', 'prod-impasto-frigo', 'si_manifesta_in', 0.9),
 ('fen-shelf-life', 'prod-impasto-frigo', 'si_manifesta_in', 1.0),
 ('fen-shelf-life', 'prod-fermentato-lacto', 'si_manifesta_in', 0.9),
 ('fen-contaminazione', 'prod-mousse-cruda', 'si_manifesta_in', 0.9),
-('fen-zona-pericolo', 'prod-mousse-cruda', 'si_manifesta_in', 0.9);
+('fen-zona-pericolo', 'prod-mousse-cruda', 'si_manifesta_in', '{}');

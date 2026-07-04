@@ -21,10 +21,10 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('err-botulinum-sottovuoto', 'Errore', 'C. botulinum in sottovuoto', 'sicurezza',
  '{"sintomo":"prodotto sottovuoto deteriorato senza segni visibili (C. botulinum non produce odori evidenti)","causa":"pH >4,6 + Aw >0,93 + T refrigerazione insufficiente in assenza di O2","correzione":"non aprire; scartare; in ambienti professionali: abbinare sempre sottovuoto ad almeno uno tra pH acido, Aw bassa, T <3°C"}');
 
-INSERT INTO edges (from_id, to_id, relation, weight) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-atmosfera-modificata', 'proc-sottovuoto', 'realizzato_da', 1.0),
 ('fen-atmosfera-modificata', 'proc-map', 'realizzato_da', 1.0),
 ('fen-atmosfera-modificata', 'err-botulinum-sottovuoto', 'fallisce_come', 1.0),
 ('fen-atmosfera-modificata', 'fen-shelf-life', 'influenza', 0.9),
 ('fen-acidita', 'fen-atmosfera-modificata', 'interagisce_con', 0.8),
-('fen-aw', 'fen-atmosfera-modificata', 'interagisce_con', 0.8);
+('fen-aw', 'fen-atmosfera-modificata', 'interagisce_con', '{}');
