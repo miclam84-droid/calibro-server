@@ -438,8 +438,75 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .auth-skip{text-align:center;margin-top:18px;font-size:12px;color:var(--ink-muted)}
 .auth-skip a{color:var(--e700);cursor:pointer;font-weight:500}
 
+/* ── LOGIN TOPBAR BTN ─────────────────────────────────── */
+#login-topbar-btn{background:none;border:1px solid var(--border);
+  color:var(--ink-muted);font-family:var(--mono);font-size:10px;
+  letter-spacing:.04em;padding:5px 10px;border-radius:7px;
+  cursor:pointer;transition:.15s;margin-right:6px}
+#login-topbar-btn.logged{border-color:var(--s300);color:var(--s700)}
+#login-topbar-btn:active{border-color:var(--e500);color:var(--e700)}
+
+/* ── QUADERNO ─────────────────────────────────────────── */
+.quad-empty{text-align:center;padding:40px 20px;color:var(--ink-muted);font-size:13.5px;line-height:1.8}
+.quad-empty b{color:var(--e700);display:block;font-size:15px;margin-bottom:6px}
+.quad-list{padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+.quad-item{background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:14px;cursor:pointer;transition:.15s}
+.quad-item:active{border-color:var(--e500)}
+.quad-item-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.quad-item-meta{font-family:var(--mono);font-size:11px;color:var(--ink-muted);
+  display:flex;gap:10px;flex-wrap:wrap}
+.quad-item-chip{background:var(--e100);color:var(--e700);
+  padding:2px 8px;border-radius:4px;font-size:10px}
+.salva-btn{display:block;width:calc(100% - 28px);margin:12px 14px 0;
+  background:var(--e500);color:#fff;font-family:var(--sans);font-weight:600;
+  font-size:14px;padding:13px;border-radius:8px;border:none;cursor:pointer}
+.salva-form{margin:12px 14px 0;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;padding:14px;display:none}
+.salva-form.open{display:block}
+.salva-row{margin-bottom:10px}
+.salva-row label{display:block;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:5px}
+.salva-input{width:100%;background:var(--bg);border:1px solid var(--border);
+  color:var(--ink);font-family:var(--sans);font-size:15px;
+  padding:10px 12px;border-radius:9px;outline:none;transition:border-color .15s}
+.salva-input:focus{border-color:var(--e500)}
+.salva-confirm{background:var(--coffee);color:#fff;border:none;
+  font-family:var(--sans);font-weight:600;font-size:14px;
+  padding:12px 20px;border-radius:9px;cursor:pointer;width:100%;margin-top:4px}
+
+/* ── FLAVOR SEARCH ────────────────────────────────────── */
+.flavor-search{padding:12px 14px 0}
+.flavor-search-row{display:flex;gap:8px}
+.flavor-input{flex:1;background:var(--surface);border:1px solid var(--flavor-border);
+  color:var(--ink);font-family:var(--sans);font-size:15px;
+  padding:11px 13px;border-radius:10px;outline:none;transition:border-color .15s}
+.flavor-input:focus{border-color:var(--flavor)}
+.flavor-search-btn{background:var(--flavor);color:#fff;border:none;
+  font-family:var(--sans);font-weight:600;font-size:13px;
+  padding:0 16px;border-radius:10px;cursor:pointer;white-space:nowrap}
+.flavor-results{margin-top:10px;padding:0 14px}
+.flavor-result-item{display:flex;align-items:baseline;justify-content:space-between;
+  padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;gap:12px}
+.flavor-result-item:last-child{border-bottom:none}
+.flavor-result-name{font-weight:600;color:var(--flavor)}
+.flavor-result-why{font-size:11px;color:var(--ink-muted);font-family:var(--mono);text-align:right}
+
+/* ── FOOD COST ────────────────────────────────────────── */
+.foodcost-card{margin:12px 14px 0;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;padding:14px}
+.foodcost-title{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-muted);margin-bottom:12px}
+.foodcost-row{display:flex;align-items:center;justify-content:space-between;
+  padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.foodcost-row:last-child{border-bottom:none}
+.foodcost-total{display:flex;align-items:baseline;gap:8px;
+  margin-top:12px;padding:12px;background:var(--e100);
+  border-radius:8px;border-left:3px solid var(--e500)}
+.foodcost-num{font-family:var(--mono);font-size:28px;font-weight:500;color:var(--e700)}
+.foodcost-label{font-size:12px;color:var(--e700)}
+
 /* ── ONBOARDING ───────────────────────────────────────── */
-.onb-nudge{margin:10px 14px 0;padding:13px 15px;
   background:var(--e100);border:1.5px solid var(--e300);
   border-radius:12px;display:flex;align-items:center;gap:12px;
   animation:rise .3s ease}
@@ -479,7 +546,10 @@ if('serviceWorker' in navigator){
 <header class="app-header">
   <div class="app-bar">
     <div class="wordmark">Matter<small id="payoff-text">La scienza del mestiere</small></div>
-    <button onclick="toggleLang()" id="lang-btn">EN</button>
+    <div style="display:flex;align-items:center;gap:6px">
+      <button onclick="apriAccount()" id="login-topbar-btn">Accedi</button>
+      <button onclick="toggleLang()" id="lang-btn">EN</button>
+    </div>
   </div>
   <nav class="tab-bar" role="tablist">
     <button class="tab-btn active" id="tab-scopri" onclick="switchTab('scopri')" role="tab">
@@ -656,22 +726,23 @@ if('serviceWorker' in navigator){
     </div>
   </div>
   <div class="sec-label" id="ct-perche-ins" style="padding-top:8px">Perché funzionano insieme</div>
-  <div class="flavor-card">
+  <div class="flavor-card" id="flavor-card-mappa">
     <div class="fl-header">
       <div class="fl-icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
       <div>
         <div class="fl-eyebrow">Flavor network</div>
         <div class="fl-name">Abbinamenti per composti aromatici condivisi</div>
       </div>
-      <div class="fl-badge">prossimamente</div>
     </div>
-    <div class="fl-desc">Burro marrone e whisky condividono il furfurale — ecco perché funzionano insieme. La scienza che permette di creare, non solo di capire.</div>
-    <div class="fl-esempi">
-      <span class="fl-esempio">burro marrone + whisky</span>
-      <span class="fl-esempio">caffè + cardamomo</span>
-      <span class="fl-esempio">lime + coriandolo</span>
+    <div class="fl-desc">Cerca un ingrediente per scoprire con cosa funziona — e perché.</div>
+    <div class="flavor-search">
+      <div class="flavor-search-row">
+        <input class="flavor-input" type="text" id="flavor-query" placeholder="es. limone, caffè, burro…" onkeydown="if(event.key==='Enter')cercaFlavorMappa()">
+        <button class="flavor-search-btn" onclick="cercaFlavorMappa()" id="ct-flavor-btn">Cerca</button>
+      </div>
+      <div class="flavor-results" id="flavor-results-mappa"></div>
     </div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--flavor);opacity:.7;margin-top:8px;line-height:1.5">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--flavor);opacity:.7;margin-top:12px;line-height:1.5;padding:0 14px 14px">
       Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale o di sicurezza alimentare.
     </div>
   </div>
@@ -742,6 +813,29 @@ if('serviceWorker' in navigator){
           </div>
           <div id="batch-out"></div>
         </div>
+        <!-- drink cost orientativo (bar) -->
+        <div class="foodcost-card" id="drinkcost-card" style="display:none">
+          <div class="foodcost-title" id="ct-drinkcost-title">Drink cost orientativo</div>
+          <div id="drinkcost-rows"></div>
+          <div class="foodcost-total" id="drinkcost-total-box">
+            <div class="foodcost-num" id="drinkcost-total-num">—</div>
+            <div class="foodcost-label" id="ct-drinkcost-label">costo totale orientativo · fonte ISMEA</div>
+          </div>
+          <p style="font-size:11px;color:var(--ink-muted);margin-top:8px;line-height:1.5" id="ct-drinkcost-note">Prezzi medi di mercato orientativi. Per il drink cost reale usa i prezzi del tuo fornitore in Cifra.</p>
+        </div>
+        <!-- salva nel quaderno -->
+        <button class="salva-btn" id="salva-btn" onclick="apriFormSalva()" style="display:none">+ Salva nel quaderno</button>
+        <div class="salva-form" id="salva-form">
+          <div class="salva-row">
+            <label id="ct-salva-nome-label">Nome esperimento</label>
+            <input class="salva-input" type="text" id="salva-nome" placeholder="es. Negroni House">
+          </div>
+          <div class="salva-row">
+            <label id="ct-salva-note-label">Note (opzionale)</label>
+            <input class="salva-input" type="text" id="salva-note" placeholder="es. versione con Campari 24%">
+          </div>
+          <button class="salva-confirm" onclick="salvaEsperimento()" id="ct-salva-confirm">Salva</button>
+        </div>
       </div>
       <div id="cpanel-bil" style="display:none">
         <div class="calc-card"><div class="calc-title" id="ct-sour">Sour</div>
@@ -803,6 +897,16 @@ if('serviceWorker' in navigator){
           <div class="mini-out" id="bk-ph-out"></div>
           <div class="hint" style="margin-top:8px">5,5 rinfrescata · 4,2–4,0 giovane · 3,9–3,7 matura · &lt;3,7 sovramatura</div>
         </div>
+        <!-- food cost orientativo (bakery) -->
+        <div class="foodcost-card" id="foodcost-card-bak" style="display:none">
+          <div class="foodcost-title" id="ct-foodcost-title">Food cost orientativo</div>
+          <div id="foodcost-rows-bak"></div>
+          <div class="foodcost-total">
+            <div class="foodcost-num" id="foodcost-total-bak">—</div>
+            <div class="foodcost-label" id="ct-foodcost-label">costo totale orientativo · fonte ISMEA</div>
+          </div>
+          <p style="font-size:11px;color:var(--ink-muted);margin-top:8px;line-height:1.5" id="ct-foodcost-note">Prezzi medi di mercato orientativi. Per il food cost reale usa i prezzi del tuo fornitore in Cifra.</p>
+        </div>
       </div>
       <div id="cpanel-caf" style="display:none">
         <div class="calc-card"><div class="calc-title">Estrazione — EY% e TDS</div>
@@ -841,7 +945,7 @@ if('serviceWorker' in navigator){
 let _subtab = 'chat';   // subtab attivo dentro "Chiedi": 'chat' | 'calc'
 
 function switchTab(t){
-  ['scopri','lezione','mappa','chiedi','auth'].forEach(s=>{
+  ['scopri','lezione','mappa','chiedi','auth','quaderno'].forEach(s=>{
     document.getElementById('screen-'+s).classList.toggle('active',s===t);
     const tb=document.getElementById('tab-'+s);
     if(tb) tb.classList.toggle('active',s===t);
@@ -856,6 +960,7 @@ function switchTab(t){
     if(Matter.disciplina) caricaMappa(Matter.disciplina);
     else document.getElementById('mappa-label').textContent = 'Scegli una disciplina in Scopri per vedere il percorso';
   }
+  if(t==='quaderno') caricaQuaderno();
   // posizione deterministica: la schermata parte sempre dall'alto
   window.scrollTo(0,0);
 }
@@ -1281,6 +1386,8 @@ const App=(()=>{
     $('dil-out').innerHTML=`<div class="readout-big"><div class="readout-num">${fmt(abvF)}<span class="readout-unit">%</span></div><div class="readout-lab">grado finale (era ${fmt(abv0)}%)</div></div>
       <div class="grid2"><div class="stat"><div class="s-n">${fmt(vf,0)} ml</div><div class="s-l">volume nel bicchiere</div></div><div class="stat"><div class="s-n">${fmt(acqua,0)} ml</div><div class="s-l">acqua di fusione</div></div></div>`;
     calcBatch();
+    // aggiorna drink cost in background (non blocca l'UI)
+    aggiornDrinkCost(ing);
   }
 
   function setBM(m){bm=m;$('bm-serv').setAttribute('aria-pressed',m==='serv');$('bm-vol').setAttribute('aria-pressed',m==='vol');$('bq-lab').textContent=m==='serv'?_t('ct_bq_serv'):_t('ct_bq_vol');calcBatch();}
@@ -1350,6 +1457,8 @@ const App=(()=>{
     else if(n<=85) zona='alta — ciabatta, focaccia, pizza teglia';
     else zona='molto alta — impasto-pastella';
     $('bk-idr-out').innerHTML=`${_t('ct_idr_out')} <b style="color:var(--e700)">${idr}%</b> · ${zona}`;
+    // aggiorna food cost bakery in background
+    aggiornFoodCostBak([{n:'farina',vol:flour},{n:'acqua',vol:water}]);
   }
   function calcQ10(){
     const tBase=+$('bk-t-base').value||0;
@@ -1401,10 +1510,11 @@ const App=(()=>{
     calcBak();calcQ10();calcPH();calcEY();calcRatio();
     // schermata iniziale = Scopri. La Lezione si carica pigra quando apri la tab.
     caricaHome();
+    aggiornaTopbarLogin();
     // IN3 — keep-alive: ping ogni 4 minuti per evitare il cold start di Railway
     setInterval(()=>fetch('/health').catch(()=>{}), 4*60*1000);
   });
-  return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio};
+  return{upd,addIng,delIng,setTech,setRange,calcDil,setBM,setServe,calcBatch,calcBil,calcAA,setTool,calcBak,calcQ10,calcPH,calcEY,calcRatio,getIng:()=>ing};
 })();
 
 /* ── PAYWALL — 5 domande/giorno (D1) ─────────────────── */
@@ -1462,6 +1572,7 @@ async function doLogin(){
       localStorage.setItem('matter_token',j.token);
       localStorage.setItem('matter_email',email);
       if(j.piano) localStorage.setItem('matter_piano',j.piano);
+      aggiornaTopbarLogin();
       msg.className='auth-msg ok';msg.textContent='Accesso effettuato.';
       setTimeout(()=>switchTab('scopri'),800);
     } else {
@@ -1485,7 +1596,7 @@ async function doRegistra(){
       body:JSON.stringify({email,password:pwd})});
     const j=await r.json();
     if(j.ok||j.token){
-      if(j.token){localStorage.setItem('matter_token',j.token);localStorage.setItem('matter_email',email);}
+      if(j.token){localStorage.setItem('matter_token',j.token);localStorage.setItem('matter_email',email);aggiornaTopbarLogin();}
       msg.className='auth-msg ok';msg.textContent='Account creato. Benvenuto in Matter.';
       setTimeout(()=>switchTab('scopri'),900);
     } else {
@@ -1558,6 +1669,25 @@ const _strings = {
     onb_complete_title:'Ottimo lavoro.',
     onb_complete_sub:'Hai completato la lezione. Vai alla Mappa per vedere il tuo percorso.',
     onb_complete_btn:'Vai alla Mappa',
+    // quaderno
+    ct_quad_title:'Quaderno',
+    ct_quad_empty_title:'Nessun esperimento salvato',
+    ct_quad_empty_sub:'Usa i calcolatori e salva le tue misure fisiche qui.',
+    ct_salva_btn:'+ Salva nel quaderno',
+    ct_salva_nome:'Nome esperimento',
+    ct_salva_note:'Note (opzionale)',
+    ct_salva_confirm:'Salva',
+    // drink cost (bar)
+    ct_drinkcost_title:'Drink cost orientativo',
+    ct_drinkcost_label:'costo totale orientativo · fonte ISMEA',
+    ct_drinkcost_note:'Prezzi medi di mercato orientativi. Per il drink cost reale usa i prezzi del tuo fornitore in Cifra.',
+    // food cost (bakery)
+    ct_foodcost_title:'Food cost orientativo',
+    ct_foodcost_label:'costo totale orientativo · fonte ISMEA',
+    ct_foodcost_note:'Prezzi medi di mercato orientativi. Per il food cost reale usa i prezzi del tuo fornitore in Cifra.',
+    // flavor mappa
+    ct_flavor_btn:'Cerca',
+    ct_flavor_placeholder:'es. limone, caffè, burro…',
   },
   en:{
     payoff:'The science behind the craft',
@@ -1619,6 +1749,25 @@ const _strings = {
     onb_complete_title:'Great work.',
     onb_complete_sub:'You completed the lesson. Go to the Map to see your path.',
     onb_complete_btn:'Go to Map',
+    // quaderno
+    ct_quad_title:'Notebook',
+    ct_quad_empty_title:'No saved experiments',
+    ct_quad_empty_sub:'Use the calculators and save your physical measurements here.',
+    ct_salva_btn:'+ Save to notebook',
+    ct_salva_nome:'Experiment name',
+    ct_salva_note:'Notes (optional)',
+    ct_salva_confirm:'Save',
+    // drink cost (bar)
+    ct_drinkcost_title:'Drink cost (indicative)',
+    ct_drinkcost_label:'estimated total · ISMEA source',
+    ct_drinkcost_note:'Indicative market prices. For real drink cost use your supplier prices in Cifra.',
+    // food cost (bakery)
+    ct_foodcost_title:'Food cost (indicative)',
+    ct_foodcost_label:'estimated total · ISMEA source',
+    ct_foodcost_note:'Indicative market prices. For real food cost use your supplier prices in Cifra.',
+    // flavor mappa
+    ct_flavor_btn:'Search',
+    ct_flavor_placeholder:'e.g. lemon, coffee, butter…',
   }
 };
 
@@ -1708,7 +1857,153 @@ function applicaStringheUI(){
   st('onb-complete-title',_t('onb_complete_title'));
   st('onb-complete-sub',_t('onb_complete_sub'));
   st('onb-complete-btn',_t('onb_complete_btn'));
+  // drink cost / food cost
+  st('ct-drinkcost-title',_t('ct_drinkcost_title'));
+  st('ct-drinkcost-label',_t('ct_drinkcost_label'));
+  const dcNote=document.getElementById('ct-drinkcost-note'); if(dcNote) dcNote.textContent=_t('ct_drinkcost_note');
+  st('ct-foodcost-title',_t('ct_foodcost_title'));
+  st('ct-foodcost-label',_t('ct_foodcost_label'));
+  const fcNote=document.getElementById('ct-foodcost-note'); if(fcNote) fcNote.textContent=_t('ct_foodcost_note');
 }
+/* ── FLAVOR NETWORK MAPPA ─────────────────────────────── */
+async function cercaFlavorMappa(){
+  const q = document.getElementById('flavor-query').value.trim();
+  if(!q) return;
+  const res = document.getElementById('flavor-results-mappa');
+  res.innerHTML = `<div style="color:var(--ink-muted);font-size:12px;padding:8px 0">${_t('caricamento')}</div>`;
+  const ing = q.toLowerCase().replace(/\s+/g,'_');
+  try {
+    const r = await fetch('/v1/abbina/'+encodeURIComponent(ing));
+    const j = await r.json();
+    if(!j.abbinamenti || !j.abbinamenti.length){
+      res.innerHTML=`<div style="color:var(--ink-muted);font-size:12px;padding:8px 0">Nessun abbinamento trovato per <b>${esc(q)}</b>.</div>`;
+      return;
+    }
+    res.innerHTML = j.abbinamenti.map(a=>`
+      <div class="flavor-result-item">
+        <span class="flavor-result-name">${esc(a.ingrediente.replace(/_/g,' '))}</span>
+        <span class="flavor-result-why">${esc(a.composto||'')} · ${a.overlap||''}</span>
+      </div>`).join('');
+  } catch(e){
+    res.innerHTML=`<div style="color:var(--e700);font-size:12px;padding:8px 0">Errore. Riprova.</div>`;
+  }
+}
+
+/* ── DRINK COST (bar) e FOOD COST (bakery) ────────────── */
+async function _calcolaCosto(ingredienti, cardId, rowsId, totalId){
+  const card = document.getElementById(cardId);
+  const rows = document.getElementById(rowsId);
+  const totalNum = document.getElementById(totalId);
+  if(!ingredienti || !ingredienti.length){ if(card) card.style.display='none'; return; }
+  if(card) card.style.display='block';
+  if(rows) rows.innerHTML='';
+  let totale = 0;
+  for(const ing of ingredienti){
+    if(!ing.n || !ing.n.trim()) continue;
+    try {
+      const r = await fetch('/prezzi_mercato/'+encodeURIComponent(ing.n.toLowerCase()));
+      const j = await r.json();
+      const prezzo = j.risultati?.[0]?.prezzo || null;
+      if(prezzo && ing.vol){
+        const costo = parseFloat(prezzo) * ing.vol / 1000;
+        totale += costo;
+        if(rows) rows.innerHTML += `<div class="foodcost-row"><span>${esc(ing.n)}</span><span style="font-family:var(--mono);color:var(--e700)">€${costo.toFixed(2)}</span></div>`;
+      } else {
+        if(rows) rows.innerHTML += `<div class="foodcost-row"><span>${esc(ing.n)}</span><span style="font-family:var(--mono);color:var(--ink-muted)">—</span></div>`;
+      }
+    } catch(e){
+      if(rows) rows.innerHTML += `<div class="foodcost-row"><span>${esc(ing.n)}</span><span style="font-family:var(--mono);color:var(--ink-muted)">—</span></div>`;
+    }
+  }
+  if(totalNum) totalNum.textContent = totale > 0 ? `€${totale.toFixed(2)}` : '—';
+}
+
+function aggiornDrinkCost(ingredienti){
+  // bar — usa drinkcost-card
+  _calcolaCosto(ingredienti, 'drinkcost-card', 'drinkcost-rows', 'drinkcost-total-num');
+  const salvaBtnEl = document.getElementById('salva-btn');
+  if(salvaBtnEl) salvaBtnEl.style.display = localStorage.getItem('matter_token') ? 'block' : 'none';
+}
+
+function aggiornFoodCostBak(ingredienti){
+  // bakery — usa foodcost-card-bak
+  _calcolaCosto(ingredienti, 'foodcost-card-bak', 'foodcost-rows-bak', 'foodcost-total-bak');
+}
+
+/* ── QUADERNO ─────────────────────────────────────────── */
+function apriFormSalva(){
+  document.getElementById('salva-form').classList.toggle('open');
+}
+
+async function salvaEsperimento(){
+  const token = localStorage.getItem('matter_token');
+  if(!token){ switchTab('auth'); return; }
+  const nome = document.getElementById('salva-nome').value.trim();
+  if(!nome){ document.getElementById('salva-nome').focus(); return; }
+  const note = document.getElementById('salva-note').value.trim();
+  const abvEl = document.querySelector('.readout-num');
+  const abv = abvEl ? parseFloat(abvEl.textContent) || null : null;
+  try {
+    const r = await fetch('/v1/quaderno', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({nome, note, disciplina: Matter.disciplina||'bar', abv, area_mercato:'it'})
+    });
+    const j = await r.json();
+    if(j.id){
+      document.getElementById('salva-form').classList.remove('open');
+      document.getElementById('salva-nome').value='';
+      document.getElementById('salva-note').value='';
+      const btn = document.getElementById('salva-btn');
+      if(btn){ const orig=btn.textContent; btn.textContent='✓ Salvato'; setTimeout(()=>{btn.textContent=orig;},2000); }
+    }
+  } catch(e){}
+}
+
+async function caricaQuaderno(){
+  const token = localStorage.getItem('matter_token');
+  const empty = document.getElementById('quad-empty');
+  const list = document.getElementById('quad-list');
+  if(!token){
+    if(empty){ empty.style.display='block';
+      const t=empty.querySelector('#ct-quad-empty-title'); if(t) t.textContent=_t('accedi')+' per vedere il tuo quaderno';
+      const s=empty.querySelector('#ct-quad-empty-sub'); if(s) s.textContent='';
+    }
+    if(list) list.innerHTML=''; return;
+  }
+  try {
+    const r = await fetch('/v1/quaderno',{headers:{'Authorization':'Bearer '+token}});
+    const j = await r.json();
+    const esps = j.esperimenti || [];
+    if(!esps.length){ if(empty) empty.style.display='block'; if(list) list.innerHTML=''; return; }
+    if(empty) empty.style.display='none';
+    if(list) list.innerHTML = esps.map(e=>{
+      const chips=[];
+      if(e.abv) chips.push(`ABV ${parseFloat(e.abv).toFixed(1)}%`);
+      if(e.ph) chips.push(`pH ${e.ph}`);
+      if(e.idratazione) chips.push(`Idr ${e.idratazione}%`);
+      const ts=e.ts?new Date(e.ts).toLocaleDateString('it-IT',{day:'numeric',month:'short'}):'';
+      return `<div class="quad-item"><div class="quad-item-name">${esc(e.nome)}</div>
+        <div class="quad-item-meta">${e.disciplina?`<span>${esc(e.disciplina)}</span>`:''}
+        ${chips.map(c=>`<span class="quad-item-chip">${c}</span>`).join('')}
+        ${ts?`<span>${ts}</span>`:''}</div></div>`;
+    }).join('');
+  } catch(e){ if(empty) empty.style.display='block'; }
+}
+
+/* ── LOGIN TOPBAR ─────────────────────────────────────── */
+function apriAccount(){
+  if(localStorage.getItem('matter_token')) switchTab('quaderno');
+  else switchTab('auth');
+}
+function aggiornaTopbarLogin(){
+  const btn=document.getElementById('login-topbar-btn'); if(!btn) return;
+  const token=localStorage.getItem('matter_token');
+  const email=localStorage.getItem('matter_email')||'';
+  if(token){ btn.textContent=email?email.split('@')[0]:'●'; btn.classList.add('logged'); }
+  else { btn.textContent=_t('accedi'); btn.classList.remove('logged'); }
+}
+
 async function cercaAbbinamenti(ingrediente){
   switchTab('chiedi');
   const ing = (ingrediente||'').toLowerCase().replace(/[\s/]+/g,'_');
@@ -1759,6 +2054,24 @@ async function testaKT(){
   console.groupEnd();
 }
 </script>
+<!-- ── QUADERNO ────────────────────────────────────────── -->
+<div class="screen" id="screen-quaderno">
+  <div class="les-top">
+    <button class="les-back-btn" onclick="switchTab('chiedi')">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      Chiedi
+    </button>
+    <span class="les-pos" id="ct-quad-title">Quaderno</span>
+  </div>
+  <div id="quad-content">
+    <div class="quad-empty" id="quad-empty" style="display:none">
+      <b id="ct-quad-empty-title">Nessun esperimento salvato</b>
+      <span id="ct-quad-empty-sub">Usa i calcolatori e salva le tue misure fisiche qui.</span>
+    </div>
+    <div class="quad-list" id="quad-list"></div>
+  </div>
+</div>
+
 <!-- ── PAYWALL MODALE ─────────────────────────────────── -->
 <div id="paywall-overlay" class="hidden" onclick="if(event.target===this)chiudiPaywall()">
   <div class="paywall-sheet">
