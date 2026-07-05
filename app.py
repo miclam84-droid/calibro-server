@@ -1917,12 +1917,6 @@ def feedback():
         return jsonify({"errore": str(e)}), 500
 
 
-@app.route("/admin")
-def admin_ui():
-    """GT10 — Admin UI grafica. Richiede X-Admin-Secret o query param secret."""
-    return render_template("admin.html")
-
-
 @app.route("/v1/admin/stats")
 def admin_stats():
     """GT10 — Admin panel: statistiche base del prodotto."""
@@ -1934,51 +1928,45 @@ def admin_stats():
     try:
         import psycopg2
         conn = psycopg2.connect(DATABASE_URL)
+        conn.autocommit = True  # ogni query è isolata, nessuna transazione che blocca
         cur = conn.cursor()
         stats = {}
+
+        def q(sql, default=0):
+            try:
+                cur.execute(sql)
+                return cur.fetchone()[0]
+            except Exception:
+                return default
+
         # utenti
-        cur.execute("SELECT COUNT(*) FROM utenti WHERE attivo=TRUE")
-        stats["utenti_attivi"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM utenti WHERE piano='pro'")
-        stats["utenti_pro"] = cur.fetchone()[0]
+        stats["utenti_attivi"] = q("SELECT COUNT(*) FROM utenti WHERE attivo=TRUE")
+        stats["utenti_pro"]    = q("SELECT COUNT(*) FROM utenti WHERE piano='pro'")
         # domande
-        cur.execute("SELECT COUNT(*) FROM log_domande")
-        stats["domande_totali"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM log_domande WHERE esito='ok'")
-        stats["risposte_ok"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM log_domande WHERE esito='nessun_nodo'")
-        stats["fallback"] = cur.fetchone()[0]
+        stats["domande_totali"] = q("SELECT COUNT(*) FROM log_domande")
+        stats["risposte_ok"]    = q("SELECT COUNT(*) FROM log_domande WHERE esito='ok'")
+        stats["fallback"]       = q("SELECT COUNT(*) FROM log_domande WHERE esito='nessun_nodo'")
+        stats["domande_24h"]    = q("SELECT COUNT(*) FROM log_domande WHERE ts > NOW() - INTERVAL '24 hours'")
         # feedback
-        try:
-            cur.execute("SELECT COUNT(*) FROM log_domande WHERE feedback=1")
-            stats["feedback_positivi"] = cur.fetchone()[0]
-            cur.execute("SELECT COUNT(*) FROM log_domande WHERE feedback=-1")
-            stats["feedback_negativi"] = cur.fetchone()[0]
-        except Exception:
-            stats["feedback_positivi"] = 0
-            stats["feedback_negativi"] = 0
+        stats["feedback_positivi"] = q("SELECT COUNT(*) FROM log_domande WHERE feedback=1")
+        stats["feedback_negativi"] = q("SELECT COUNT(*) FROM log_domande WHERE feedback=-1")
         # grafo
-        cur.execute("SELECT COUNT(*) FROM nodes")
-        stats["nodi_grafo"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM edges")
-        stats["archi_grafo"] = cur.fetchone()[0]
+        stats["nodi_grafo"]  = q("SELECT COUNT(*) FROM nodes")
+        stats["archi_grafo"] = q("SELECT COUNT(*) FROM edges")
         # esperimenti
+        stats["esperimenti"] = q("SELECT COUNT(*) FROM esperimenti")
+        # top fenomeni 7 giorni
         try:
-            cur.execute("SELECT COUNT(*) FROM esperimenti")
-            stats["esperimenti"] = cur.fetchone()[0]
+            cur.execute("""
+                SELECT fenomeni_trovati, COUNT(*) as n
+                FROM log_domande
+                WHERE fenomeni_trovati IS NOT NULL AND ts > NOW() - INTERVAL '7 days'
+                GROUP BY fenomeni_trovati ORDER BY n DESC LIMIT 5
+            """)
+            stats["top_fenomeni_7d"] = [{"fenomeni":r[0],"count":r[1]} for r in cur.fetchall()]
         except Exception:
-            stats["esperimenti"] = 0
-        # domande ultime 24h
-        cur.execute("SELECT COUNT(*) FROM log_domande WHERE ts > NOW() - INTERVAL '24 hours'")
-        stats["domande_24h"] = cur.fetchone()[0]
-        # top fenomeni cercati
-        cur.execute("""
-            SELECT fenomeni_trovati, COUNT(*) as n
-            FROM log_domande
-            WHERE fenomeni_trovati IS NOT NULL AND ts > NOW() - INTERVAL '7 days'
-            GROUP BY fenomeni_trovati ORDER BY n DESC LIMIT 5
-        """)
-        stats["top_fenomeni_7d"] = [{"fenomeni":r[0],"count":r[1]} for r in cur.fetchall()]
+            stats["top_fenomeni_7d"] = []
+
         cur.close(); conn.close()
         return jsonify(stats)
     except Exception as e:
