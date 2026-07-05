@@ -1704,43 +1704,43 @@ def import_usda():
                 else:
                     raise e
 
-    # ── Ingredienti prioritari per Matter ────────────────────
-    # Selezionati per rilevanza F&B professionale (bar, bakery, cucina, caffetteria)
+    # Ingredienti prioritari per Matter
+    # Dove possibile usiamo fdc_id diretto (più affidabile di query testuale)
+    # fdc_id verificati da USDA FoodData Central Foundation Foods / SR Legacy
     QUERY_MAP = {
-        # Frutta e succhi
-        "lemon juice": {"fenomeno": "fen-acidita", "domain": "bar"},
-        "lime juice":  {"fenomeno": "fen-acidita", "domain": "bar"},
-        "orange juice":{"fenomeno": "fen-acidita", "domain": "bar"},
-        "tomato":      {"fenomeno": "fen-acidita", "domain": "cucina"},
-        "apple raw":   {"fenomeno": "fen-acidita", "domain": "bakery"},
-        "strawberry":  {"fenomeno": "fen-acidita", "domain": "pasticceria"},
-        "raspberry":   {"fenomeno": "fen-acidita", "domain": "pasticceria"},
-        "blueberry":   {"fenomeno": "fen-acidita", "domain": "pasticceria"},
-        # Latticini
-        "whole milk":  {"fenomeno": "fen-coagulazione", "domain": "cucina"},
-        "heavy cream": {"fenomeno": "fen-struttura",    "domain": "cucina"},
-        "butter unsalted": {"fenomeno": "fen-cristallizzazione", "domain": "bakery"},
-        "yogurt plain":{"fenomeno": "fen-fermentazione","domain": "cucina"},
-        # Uova
-        "egg white":   {"fenomeno": "fen-coagulazione", "domain": "cucina"},
-        "egg yolk":    {"fenomeno": "fen-coagulazione", "domain": "cucina"},
+        # Frutta e succhi — query ok, risultati corretti
+        "lemon juice raw": {"fenomeno": "fen-acidita",  "domain": "bar",       "fdc_id": 167747},
+        "lime juice raw":  {"fenomeno": "fen-acidita",  "domain": "bar",       "fdc_id": 168195},
+        "orange juice":    {"fenomeno": "fen-acidita",  "domain": "bar",       "fdc_id": 169098},
+        "tomatoes red raw":{"fenomeno": "fen-acidita",  "domain": "cucina",    "fdc_id": 170457},
+        "apples raw":      {"fenomeno": "fen-acidita",  "domain": "bakery",    "fdc_id": 171688},
+        "strawberries raw":{"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 167762},
+        "raspberries raw": {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 2346410},
+        "blueberries raw": {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 2346411},
+        # Latticini — fdc_id corretti (erano sbagliati)
+        "milk whole 3.25%":{"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 746782},
+        "cream heavy whipping":{"fenomeno":"fen-struttura","domain":"cucina",  "fdc_id": 2346386},
+        "butter unsalted": {"fenomeno": "fen-cristallizzazione","domain":"bakery","fdc_id": 789828},
+        "yogurt plain whole milk":{"fenomeno":"fen-fermentazione","domain":"cucina","fdc_id": 170886},
+        # Uova — egg white aveva 404, usiamo fdc_id diretto
+        "egg white raw":   {"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 172183},
+        "egg yolk raw":    {"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 172185},
         # Cereali
-        "wheat flour": {"fenomeno": "fen-struttura",    "domain": "bakery"},
-        "rye flour":   {"fenomeno": "fen-struttura",    "domain": "bakery"},
-        # Carne e pesce
-        "beef raw":    {"fenomeno": "fen-calore",       "domain": "cucina"},
-        "chicken breast": {"fenomeno": "fen-calore",    "domain": "cucina"},
-        "salmon raw":  {"fenomeno": "fen-calore",       "domain": "cucina"},
+        "wheat flour all-purpose":{"fenomeno":"fen-struttura","domain":"bakery","fdc_id": 168944},
+        "rye flour":       {"fenomeno": "fen-struttura",  "domain": "bakery",  "fdc_id": 2512375},
+        # Carne — fdc_id corretti (erano corned beef e lunchmeat)
+        "beef ground 80% lean raw":{"fenomeno":"fen-calore","domain":"cucina", "fdc_id": 174036},
+        "chicken breast raw":{"fenomeno":"fen-calore",    "domain": "cucina",  "fdc_id": 171477},
+        "salmon atlantic raw":{"fenomeno":"fen-calore",   "domain": "cucina",  "fdc_id": 175167},
         # Zuccheri
-        "sugar granulated": {"fenomeno": "fen-concentrazione", "domain": "pasticceria"},
-        "honey":       {"fenomeno": "fen-concentrazione","domain": "pasticceria"},
-        # Cioccolato e caffè
-        "dark chocolate": {"fenomeno": "fen-cristallizzazione", "domain": "pasticceria"},
-        "coffee brewed":  {"fenomeno": "fen-estrazione",        "domain": "caffetteria"},
-        # Aceto e fermentati
-        "vinegar":     {"fenomeno": "fen-acidita",      "domain": "cucina"},
-        # Funghi
-        "mushroom":    {"fenomeno": "fen-maillard",     "domain": "cucina"},
+        "sugars granulated":{"fenomeno": "fen-concentrazione","domain":"pasticceria","fdc_id": 169655},
+        "honey":           {"fenomeno": "fen-concentrazione","domain":"pasticceria", "fdc_id": 169640},
+        # Cioccolato e caffè — fdc_id corretti
+        "chocolate dark 70-85%":{"fenomeno":"fen-cristallizzazione","domain":"pasticceria","fdc_id": 170272},
+        "coffee brewed espresso":{"fenomeno":"fen-estrazione","domain":"caffetteria","fdc_id": 171890},
+        # Aceto e funghi
+        "vinegar balsamic":{"fenomeno": "fen-acidita",   "domain": "cucina",   "fdc_id": 172241},
+        "mushrooms white raw":{"fenomeno":"fen-maillard", "domain": "cucina",  "fdc_id": 169251},
     }
 
     import psycopg2
@@ -1754,30 +1754,36 @@ def import_usda():
 
     for query, meta in QUERY_MAP.items():
         try:
-            # Cerca il cibo su USDA FDC
-            url = (f"https://api.nal.usda.gov/fdc/v1/foods/search"
-                   f"?query={urllib.request.quote(query)}"
-                   f"&dataType=Foundation,SR%20Legacy"
-                   f"&pageSize=1&api_key={api_key}")
-            data = usda_get(url)
+            fdc_id = meta.get("fdc_id")
 
-            foods = data.get("foods", [])
-            if not foods:
-                click.echo(f"  SALTATO (non trovato): {query}")
-                saltati += 1
-                continue
-
-            food = foods[0]
-            fdc_id = food.get("fdcId")
-            nome_usda = food.get("description", query)
-
-            # Estrai nutrienti rilevanti
-            nutrients = {n["nutrientName"]: n for n in food.get("foodNutrients", [])}
-
-            # Recupera dettaglio
-            detail_url = (f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}"
-                          f"?api_key={api_key}")
-            detail = usda_get(detail_url)
+            if fdc_id:
+                # fdc_id diretto — salta la ricerca testuale
+                detail_url = (f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}"
+                              f"?api_key={api_key}")
+                detail = usda_get(detail_url)
+                nome_usda = detail.get("description", query)
+                nutrients = {n["nutrientName"]: n
+                             for n in detail.get("foodNutrients", [])}
+            else:
+                # Ricerca testuale (fallback)
+                url = (f"https://api.nal.usda.gov/fdc/v1/foods/search"
+                       f"?query={urllib.request.quote(query)}"
+                       f"&dataType=Foundation,SR%20Legacy"
+                       f"&pageSize=1&api_key={api_key}")
+                data = usda_get(url)
+                foods = data.get("foods", [])
+                if not foods:
+                    click.echo(f"  SALTATO (non trovato): {query}")
+                    saltati += 1
+                    continue
+                food = foods[0]
+                fdc_id = food.get("fdcId")
+                nome_usda = food.get("description", query)
+                nutrients = {n["nutrientName"]: n
+                             for n in food.get("foodNutrients", [])}
+                detail_url = (f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}"
+                              f"?api_key={api_key}")
+                detail = usda_get(detail_url)
 
             # Parametri fisici disponibili in FDC
             food_data = {
