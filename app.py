@@ -1917,6 +1917,123 @@ def feedback():
         return jsonify({"errore": str(e)}), 500
 
 
+@app.route("/admin")
+def admin_ui():
+    """GT10 — Admin UI grafica."""
+    return """<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Matter · Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f5ede3;color:#2a1f14;min-height:100vh}
+.top{background:#3d2b1f;color:#f0e0cc;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.top h1{font-size:16px;font-weight:700}.top span{font-size:10px;color:#c4a882}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px}
+.card{background:#fff;border:0.5px solid #e0d4c8;border-radius:12px;padding:20px;margin-bottom:16px}
+.card h2{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7a6a;margin-bottom:12px}
+.row{display:flex;gap:10px}.row input{flex:1;border:1px solid #e0d4c8;border-radius:8px;padding:10px 14px;font-size:14px;background:#f5ede3;outline:none}
+.row input:focus{border-color:#c4622d}
+button{background:#3d2b1f;color:#f0e0cc;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer}
+.err{color:#c4622d;font-size:12px;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.sc{background:#fff;border:0.5px solid #e0d4c8;border-radius:10px;padding:14px}
+.sc .n{font-size:26px;font-weight:700;color:#3d2b1f;font-variant-numeric:tabular-nums}
+.sc .l{font-size:11px;color:#8a7a6a;margin-top:4px}
+.sc.g .n{color:#2e7d52}.sc.o .n{color:#c4622d}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.bar-lbl{width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-t{flex:1;background:#f5ede3;border-radius:4px;height:8px;overflow:hidden}
+.bar-f{height:100%;background:#c4622d;border-radius:4px}
+.bar-n{font-size:11px;color:#8a7a6a;width:28px;text-align:right}
+.big{font-size:24px;font-weight:700;color:#3d2b1f}
+.sub{font-size:11px;color:#8a7a6a;margin-top:3px;margin-bottom:12px}
+#dash{display:none}
+.ref{background:none;border:1px solid #e0d4c8;color:#8a7a6a;font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer}
+@media(max-width:600px){.two{grid-template-columns:1fr}}
+</style></head><body>
+<div class="top"><h1>Matter · Admin</h1><span id="ts"></span></div>
+<div class="wrap">
+<div class="card" id="auth">
+  <h2>Admin Secret</h2>
+  <div class="row">
+    <input type="password" id="sk" placeholder="chiave admin" onkeydown="if(event.key==='Enter')go()">
+    <button onclick="go()">Accedi</button>
+  </div>
+  <div class="err" id="er"></div>
+</div>
+<div id="dash">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <span style="font-size:11px;color:#8a7a6a" id="upd"></span>
+    <button class="ref" onclick="go()">↻ Aggiorna</button>
+  </div>
+  <div class="grid" id="g"></div>
+  <div class="two">
+    <div class="card"><h2>Grafo</h2><div id="grf"></div></div>
+    <div class="card"><h2>Feedback chat</h2><div id="fb"></div></div>
+  </div>
+  <div class="card" style="margin-top:12px"><h2>Top fenomeni — 7 giorni</h2><div id="tf"></div></div>
+</div>
+</div>
+<script>
+let _s='';
+async function go(){
+  const el=document.getElementById('sk');
+  _s=el.value.trim()||_s;
+  if(!_s)return;
+  try{
+    const r=await fetch('/v1/admin/stats',{headers:{'X-Admin-Secret':_s}});
+    if(r.status===403){document.getElementById('er').textContent='Chiave non valida.';return;}
+    const d=await r.json();
+    if(d.errore){document.getElementById('er').textContent=d.errore;return;}
+    document.getElementById('auth').style.display='none';
+    document.getElementById('dash').style.display='block';
+    render(d);
+    const t=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('upd').textContent='Aggiornato '+t;
+    document.getElementById('ts').textContent=t;
+  }catch(e){document.getElementById('er').textContent='Errore di rete.';}
+}
+function e(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function render(d){
+  const items=[
+    {n:d.utenti_attivi,l:'Utenti attivi',c:''},
+    {n:d.utenti_pro,l:'Utenti Pro',c:'g'},
+    {n:d.domande_totali,l:'Domande totali',c:''},
+    {n:d.domande_24h,l:'Domande 24h',c:'o'},
+    {n:d.risposte_ok,l:'Risposte OK',c:'g'},
+    {n:d.fallback,l:'Fallback',c:''},
+    {n:d.esperimenti,l:'Quaderno',c:''},
+  ];
+  document.getElementById('g').innerHTML=items.map(i=>
+    `<div class="sc ${i.c}"><div class="n">${i.n??'—'}</div><div class="l">${i.l}</div></div>`
+  ).join('');
+  document.getElementById('grf').innerHTML=`
+    <div class="big">${(d.nodi_grafo||0).toLocaleString()}</div><div class="sub">nodi nel grafo</div>
+    <div class="big">${(d.archi_grafo||0).toLocaleString()}</div><div class="sub">archi nel grafo</div>`;
+  const p=d.feedback_positivi||0,n=d.feedback_negativi||0,t=p+n;
+  const pct=t>0?Math.round(p/t*100):0;
+  document.getElementById('fb').innerHTML=`
+    <div style="display:flex;gap:20px;margin-bottom:12px">
+      <div><div class="big" style="color:#2e7d52">${p}</div><div class="sub">👍 positivi</div></div>
+      <div><div class="big" style="color:#c4622d">${n}</div><div class="sub">👎 negativi</div></div>
+    </div>
+    <div class="bar-t" style="height:12px;margin-bottom:6px"><div class="bar-f" style="width:${pct}%;background:#2e7d52"></div></div>
+    <div style="font-size:11px;color:#8a7a6a">${pct}% positivi su ${t} totali</div>`;
+  const fen=d.top_fenomeni_7d||[];
+  if(!fen.length){document.getElementById('tf').innerHTML='<div style="font-size:13px;color:#8a7a6a">Nessun dato ancora.</div>';return;}
+  const mx=Math.max(...fen.map(f=>f.count));
+  document.getElementById('tf').innerHTML=fen.map(f=>
+    `<div class="bar-row"><div class="bar-lbl">${e(String(f.fenomeni||'—'))}</div>
+    <div class="bar-t"><div class="bar-f" style="width:${Math.round(f.count/mx*100)}%"></div></div>
+    <div class="bar-n">${f.count}</div></div>`
+  ).join('');
+}
+const p=new URLSearchParams(location.search);
+if(p.get('s')){document.getElementById('sk').value=p.get('s');go();}
+</script></body></html>"""
+
+
 @app.route("/v1/admin/stats")
 def admin_stats():
     """GT10 — Admin panel: statistiche base del prodotto."""
