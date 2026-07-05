@@ -1690,6 +1690,20 @@ def import_usda():
         click.echo("ERRORE: DATABASE_URL non disponibile.")
         return
 
+    def usda_get(url, max_retries=3):
+        """Fetch con retry automatico e timeout generoso."""
+        for attempt in range(max_retries):
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": "Matter/1.0"})
+                resp = urllib.request.urlopen(req, timeout=30)
+                return json.loads(resp.read().decode())
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    click.echo(f"    retry {attempt+1}/{max_retries-1}...")
+                    _t.sleep(2 * (attempt + 1))
+                else:
+                    raise e
+
     # ── Ingredienti prioritari per Matter ────────────────────
     # Selezionati per rilevanza F&B professionale (bar, bakery, cucina, caffetteria)
     QUERY_MAP = {
@@ -1745,9 +1759,7 @@ def import_usda():
                    f"?query={urllib.request.quote(query)}"
                    f"&dataType=Foundation,SR%20Legacy"
                    f"&pageSize=1&api_key={api_key}")
-            req = urllib.request.Request(url, headers={"User-Agent": "Matter/1.0"})
-            resp = urllib.request.urlopen(req, timeout=10)
-            data = json.loads(resp.read().decode())
+            data = usda_get(url)
 
             foods = data.get("foods", [])
             if not foods:
@@ -1762,12 +1774,10 @@ def import_usda():
             # Estrai nutrienti rilevanti
             nutrients = {n["nutrientName"]: n for n in food.get("foodNutrients", [])}
 
-            # Recupera dettaglio per pH (se disponibile)
+            # Recupera dettaglio
             detail_url = (f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}"
                           f"?api_key={api_key}")
-            detail_req = urllib.request.Request(detail_url, headers={"User-Agent": "Matter/1.0"})
-            detail_resp = urllib.request.urlopen(detail_req, timeout=10)
-            detail = json.loads(detail_resp.read().decode())
+            detail = usda_get(detail_url)
 
             # Parametri fisici disponibili in FDC
             food_data = {
