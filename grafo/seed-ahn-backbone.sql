@@ -100,7 +100,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_camembert_cheese', 'ahn_munster_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_munster_cheese', 'ahn_camembert_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_camembert_cheese', 'ahn_sheep_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
-('ahn_sheep_cheese', 'ahn_camembert_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}');
+('ahn_sheep_cheese', 'ahn_camembert_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_camembert_cheese', 'ahn_roquefort_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
@@ -202,7 +203,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peanut_butter', 'ahn_beef', 'abbinamento_aromatico', '{"overlap": 99, "fonte": "Ahn 2011"}'),
 ('ahn_beef', 'ahn_peanut_butter', 'abbinamento_aromatico', '{"overlap": 99, "fonte": "Ahn 2011"}'),
 ('ahn_peanut_butter', 'ahn_chicken_broth', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
-('ahn_chicken_broth', 'ahn_peanut_butter', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}');
+('ahn_chicken_broth', 'ahn_peanut_butter', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peanut_butter', 'ahn_potato_chip', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}'),
@@ -304,7 +306,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bacon', 'ahn_raw_beef', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}'),
 ('ahn_raw_beef', 'ahn_bacon', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}'),
 ('ahn_bacon', 'ahn_beef', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}'),
-('ahn_beef', 'ahn_bacon', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}');
+('ahn_beef', 'ahn_bacon', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bacon', 'ahn_roasted_pork', 'abbinamento_aromatico', '{"overlap": 115, "fonte": "Ahn 2011"}'),
@@ -406,7 +409,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peppermint_oil', 'ahn_jasmine_tea', 'abbinamento_aromatico', '{"overlap": 17, "fonte": "Ahn 2011"}'),
 ('ahn_jasmine_tea', 'ahn_peppermint_oil', 'abbinamento_aromatico', '{"overlap": 17, "fonte": "Ahn 2011"}'),
 ('ahn_apple', 'ahn_orange_juice', 'abbinamento_aromatico', '{"overlap": 30, "fonte": "Ahn 2011"}'),
-('ahn_orange_juice', 'ahn_apple', 'abbinamento_aromatico', '{"overlap": 30, "fonte": "Ahn 2011"}');
+('ahn_orange_juice', 'ahn_apple', 'abbinamento_aromatico', '{"overlap": 30, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apple', 'ahn_white_wine', 'abbinamento_aromatico', '{"overlap": 105, "fonte": "Ahn 2011"}'),
@@ -508,7 +512,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lime', 'ahn_mandarin', 'abbinamento_aromatico', '{"overlap": 53, "fonte": "Ahn 2011"}'),
 ('ahn_mandarin', 'ahn_lime', 'abbinamento_aromatico', '{"overlap": 53, "fonte": "Ahn 2011"}'),
 ('ahn_chinese_cabbage', 'ahn_munster_cheese', 'abbinamento_aromatico', '{"overlap": 2, "fonte": "Ahn 2011"}'),
-('ahn_munster_cheese', 'ahn_chinese_cabbage', 'abbinamento_aromatico', '{"overlap": 2, "fonte": "Ahn 2011"}');
+('ahn_munster_cheese', 'ahn_chinese_cabbage', 'abbinamento_aromatico', '{"overlap": 2, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rutabaga', 'ahn_beer', 'abbinamento_aromatico', '{"overlap": 11, "fonte": "Ahn 2011"}'),
@@ -610,7 +615,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cottage_cheese', 'ahn_romano_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_romano_cheese', 'ahn_cottage_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_cottage_cheese', 'ahn_roquefort_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
-('ahn_roquefort_cheese', 'ahn_cottage_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}');
+('ahn_roquefort_cheese', 'ahn_cottage_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cottage_cheese', 'ahn_emmental_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
@@ -712,7 +718,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_artichoke', 'ahn_orange', 'abbinamento_aromatico', '{"overlap": 6, "fonte": "Ahn 2011"}'),
 ('ahn_orange', 'ahn_artichoke', 'abbinamento_aromatico', '{"overlap": 6, "fonte": "Ahn 2011"}'),
 ('ahn_katsuobushi', 'ahn_cocoa', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}'),
-('ahn_cocoa', 'ahn_katsuobushi', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}');
+('ahn_cocoa', 'ahn_katsuobushi', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_katsuobushi', 'ahn_coffee', 'abbinamento_aromatico', '{"overlap": 32, "fonte": "Ahn 2011"}'),
@@ -814,7 +821,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_coffee', 'ahn_wood', 'abbinamento_aromatico', '{"overlap": 5, "fonte": "Ahn 2011"}'),
 ('ahn_wood', 'ahn_coffee', 'abbinamento_aromatico', '{"overlap": 5, "fonte": "Ahn 2011"}'),
 ('ahn_coffee', 'ahn_black_tea', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}'),
-('ahn_black_tea', 'ahn_coffee', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}');
+('ahn_black_tea', 'ahn_coffee', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_coffee', 'ahn_pork_liver', 'abbinamento_aromatico', '{"overlap": 21, "fonte": "Ahn 2011"}'),
@@ -916,7 +924,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_sesame_seed', 'ahn_seed', 'abbinamento_aromatico', '{"overlap": 17, "fonte": "Ahn 2011"}'),
 ('ahn_seed', 'ahn_black_sesame_seed', 'abbinamento_aromatico', '{"overlap": 17, "fonte": "Ahn 2011"}'),
 ('ahn_black_sesame_seed', 'ahn_nutmeg', 'abbinamento_aromatico', '{"overlap": 12, "fonte": "Ahn 2011"}'),
-('ahn_nutmeg', 'ahn_black_sesame_seed', 'abbinamento_aromatico', '{"overlap": 12, "fonte": "Ahn 2011"}');
+('ahn_nutmeg', 'ahn_black_sesame_seed', 'abbinamento_aromatico', '{"overlap": 12, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_sesame_seed', 'ahn_rapeseed', 'abbinamento_aromatico', '{"overlap": 17, "fonte": "Ahn 2011"}'),
@@ -1018,7 +1027,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cheddar_cheese', 'ahn_emmental_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_emmental_cheese', 'ahn_cheddar_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_cheddar_cheese', 'ahn_parmesan_cheese', 'abbinamento_aromatico', '{"overlap": 134, "fonte": "Ahn 2011"}'),
-('ahn_parmesan_cheese', 'ahn_cheddar_cheese', 'abbinamento_aromatico', '{"overlap": 134, "fonte": "Ahn 2011"}');
+('ahn_parmesan_cheese', 'ahn_cheddar_cheese', 'abbinamento_aromatico', '{"overlap": 134, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cheddar_cheese', 'ahn_swiss_cheese', 'abbinamento_aromatico', '{"overlap": 136, "fonte": "Ahn 2011"}'),
@@ -1120,7 +1130,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orange_flower', 'ahn_carnation', 'abbinamento_aromatico', '{"overlap": 5, "fonte": "Ahn 2011"}'),
 ('ahn_carnation', 'ahn_orange_flower', 'abbinamento_aromatico', '{"overlap": 5, "fonte": "Ahn 2011"}'),
 ('ahn_romano_cheese', 'ahn_provolone_cheese', 'abbinamento_aromatico', '{"overlap": 130, "fonte": "Ahn 2011"}'),
-('ahn_provolone_cheese', 'ahn_romano_cheese', 'abbinamento_aromatico', '{"overlap": 130, "fonte": "Ahn 2011"}');
+('ahn_provolone_cheese', 'ahn_romano_cheese', 'abbinamento_aromatico', '{"overlap": 130, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_romano_cheese', 'ahn_gruyere_cheese', 'abbinamento_aromatico', '{"overlap": 128, "fonte": "Ahn 2011"}'),
@@ -1222,7 +1233,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_clove', 'ahn_anise', 'abbinamento_aromatico', '{"overlap": 9, "fonte": "Ahn 2011"}'),
 ('ahn_anise', 'ahn_clove', 'abbinamento_aromatico', '{"overlap": 9, "fonte": "Ahn 2011"}'),
 ('ahn_goat_cheese', 'ahn_provolone_cheese', 'abbinamento_aromatico', '{"overlap": 129, "fonte": "Ahn 2011"}'),
-('ahn_provolone_cheese', 'ahn_goat_cheese', 'abbinamento_aromatico', '{"overlap": 129, "fonte": "Ahn 2011"}');
+('ahn_provolone_cheese', 'ahn_goat_cheese', 'abbinamento_aromatico', '{"overlap": 129, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_goat_cheese', 'ahn_feta_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
@@ -1324,7 +1336,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wine', 'ahn_violet', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
 ('ahn_violet', 'ahn_wine', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
 ('ahn_wine', 'ahn_shellfish', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
-('ahn_shellfish', 'ahn_wine', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}');
+('ahn_shellfish', 'ahn_wine', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_armagnac', 'ahn_cognac', 'abbinamento_aromatico', '{"overlap": 3, "fonte": "Ahn 2011"}'),
@@ -1426,7 +1439,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_elderberry', 'ahn_raspberry', 'abbinamento_aromatico', '{"overlap": 58, "fonte": "Ahn 2011"}'),
 ('ahn_raspberry', 'ahn_elderberry', 'abbinamento_aromatico', '{"overlap": 58, "fonte": "Ahn 2011"}'),
 ('ahn_roasted_meat', 'ahn_roasted_pork', 'abbinamento_aromatico', '{"overlap": 44, "fonte": "Ahn 2011"}'),
-('ahn_roasted_pork', 'ahn_roasted_meat', 'abbinamento_aromatico', '{"overlap": 44, "fonte": "Ahn 2011"}');
+('ahn_roasted_pork', 'ahn_roasted_meat', 'abbinamento_aromatico', '{"overlap": 44, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mandarin', 'ahn_lemon', 'abbinamento_aromatico', '{"overlap": 56, "fonte": "Ahn 2011"}'),
@@ -1528,7 +1542,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beef', 'ahn_cured_pork', 'abbinamento_aromatico', '{"overlap": 103, "fonte": "Ahn 2011"}'),
 ('ahn_cured_pork', 'ahn_beef', 'abbinamento_aromatico', '{"overlap": 103, "fonte": "Ahn 2011"}'),
 ('ahn_beef', 'ahn_beer', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}'),
-('ahn_beer', 'ahn_beef', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}');
+('ahn_beer', 'ahn_beef', 'abbinamento_aromatico', '{"overlap": 102, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beef', 'ahn_baked_potato', 'abbinamento_aromatico', '{"overlap": 78, "fonte": "Ahn 2011"}'),
@@ -1630,7 +1645,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_port_wine', 'ahn_champagne_wine', 'abbinamento_aromatico', '{"overlap": 128, "fonte": "Ahn 2011"}'),
 ('ahn_champagne_wine', 'ahn_port_wine', 'abbinamento_aromatico', '{"overlap": 128, "fonte": "Ahn 2011"}'),
 ('ahn_port_wine', 'ahn_cognac', 'abbinamento_aromatico', '{"overlap": 90, "fonte": "Ahn 2011"}'),
-('ahn_cognac', 'ahn_port_wine', 'abbinamento_aromatico', '{"overlap": 90, "fonte": "Ahn 2011"}');
+('ahn_cognac', 'ahn_port_wine', 'abbinamento_aromatico', '{"overlap": 90, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_vanilla', 'ahn_green_tea', 'abbinamento_aromatico', '{"overlap": 44, "fonte": "Ahn 2011"}'),
@@ -1732,7 +1748,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_feta_cheese', 'ahn_provolone_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_provolone_cheese', 'ahn_feta_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_feta_cheese', 'ahn_roquefort_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
-('ahn_roquefort_cheese', 'ahn_feta_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}');
+('ahn_roquefort_cheese', 'ahn_feta_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_feta_cheese', 'ahn_emmental_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
@@ -1834,7 +1851,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_swiss_cheese', 'ahn_cream_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_cream_cheese', 'ahn_swiss_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_swiss_cheese', 'ahn_munster_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
-('ahn_munster_cheese', 'ahn_swiss_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}');
+('ahn_munster_cheese', 'ahn_swiss_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_swiss_cheese', 'ahn_cacao', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
@@ -1936,7 +1954,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grape', 'ahn_concord_grape', 'abbinamento_aromatico', '{"overlap": 125, "fonte": "Ahn 2011"}'),
 ('ahn_concord_grape', 'ahn_grape', 'abbinamento_aromatico', '{"overlap": 125, "fonte": "Ahn 2011"}'),
 ('ahn_grape', 'ahn_apple', 'abbinamento_aromatico', '{"overlap": 79, "fonte": "Ahn 2011"}'),
-('ahn_apple', 'ahn_grape', 'abbinamento_aromatico', '{"overlap": 79, "fonte": "Ahn 2011"}');
+('ahn_apple', 'ahn_grape', 'abbinamento_aromatico', '{"overlap": 79, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grape', 'ahn_muscat_grape', 'abbinamento_aromatico', '{"overlap": 125, "fonte": "Ahn 2011"}'),
@@ -2038,7 +2057,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_thai_pepper', 'ahn_tabasco_pepper', 'abbinamento_aromatico', '{"overlap": 38, "fonte": "Ahn 2011"}'),
 ('ahn_tabasco_pepper', 'ahn_thai_pepper', 'abbinamento_aromatico', '{"overlap": 38, "fonte": "Ahn 2011"}'),
 ('ahn_yeast', 'ahn_peanut_butter', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
-('ahn_peanut_butter', 'ahn_yeast', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}');
+('ahn_peanut_butter', 'ahn_yeast', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lima_bean', 'ahn_kidney_bean', 'abbinamento_aromatico', '{"overlap": 87, "fonte": "Ahn 2011"}'),
@@ -2140,7 +2160,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pork', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 97, "fonte": "Ahn 2011"}'),
 ('ahn_roasted_beef', 'ahn_pork', 'abbinamento_aromatico', '{"overlap": 97, "fonte": "Ahn 2011"}'),
 ('ahn_pork', 'ahn_pork_sausage', 'abbinamento_aromatico', '{"overlap": 115, "fonte": "Ahn 2011"}'),
-('ahn_pork_sausage', 'ahn_pork', 'abbinamento_aromatico', '{"overlap": 115, "fonte": "Ahn 2011"}');
+('ahn_pork_sausage', 'ahn_pork', 'abbinamento_aromatico', '{"overlap": 115, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_celery_oil', 'ahn_lovage', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
@@ -2242,7 +2263,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jasmine', 'ahn_carnation', 'abbinamento_aromatico', '{"overlap": 5, "fonte": "Ahn 2011"}'),
 ('ahn_carnation', 'ahn_jasmine', 'abbinamento_aromatico', '{"overlap": 5, "fonte": "Ahn 2011"}'),
 ('ahn_jasmine', 'ahn_green_tea', 'abbinamento_aromatico', '{"overlap": 11, "fonte": "Ahn 2011"}'),
-('ahn_green_tea', 'ahn_jasmine', 'abbinamento_aromatico', '{"overlap": 11, "fonte": "Ahn 2011"}');
+('ahn_green_tea', 'ahn_jasmine', 'abbinamento_aromatico', '{"overlap": 11, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_vinegar', 'ahn_cognac', 'abbinamento_aromatico', '{"overlap": 25, "fonte": "Ahn 2011"}'),
@@ -2344,7 +2366,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_soybean', 'ahn_soybean_oil', 'abbinamento_aromatico', '{"overlap": 4, "fonte": "Ahn 2011"}'),
 ('ahn_soybean_oil', 'ahn_soybean', 'abbinamento_aromatico', '{"overlap": 4, "fonte": "Ahn 2011"}'),
 ('ahn_soybean', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 100, "fonte": "Ahn 2011"}'),
-('ahn_roasted_beef', 'ahn_soybean', 'abbinamento_aromatico', '{"overlap": 100, "fonte": "Ahn 2011"}');
+('ahn_roasted_beef', 'ahn_soybean', 'abbinamento_aromatico', '{"overlap": 100, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_soybean', 'ahn_okra', 'abbinamento_aromatico', '{"overlap": 18, "fonte": "Ahn 2011"}'),
@@ -2446,7 +2469,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_whiskey', 'ahn_parmesan_cheese', 'abbinamento_aromatico', '{"overlap": 67, "fonte": "Ahn 2011"}'),
 ('ahn_parmesan_cheese', 'ahn_whiskey', 'abbinamento_aromatico', '{"overlap": 67, "fonte": "Ahn 2011"}'),
 ('ahn_whiskey', 'ahn_white_wine', 'abbinamento_aromatico', '{"overlap": 72, "fonte": "Ahn 2011"}'),
-('ahn_white_wine', 'ahn_whiskey', 'abbinamento_aromatico', '{"overlap": 72, "fonte": "Ahn 2011"}');
+('ahn_white_wine', 'ahn_whiskey', 'abbinamento_aromatico', '{"overlap": 72, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_whiskey', 'ahn_beer', 'abbinamento_aromatico', '{"overlap": 70, "fonte": "Ahn 2011"}'),
@@ -2548,7 +2572,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mango', 'ahn_strawberry', 'abbinamento_aromatico', '{"overlap": 82, "fonte": "Ahn 2011"}'),
 ('ahn_strawberry', 'ahn_mango', 'abbinamento_aromatico', '{"overlap": 82, "fonte": "Ahn 2011"}'),
 ('ahn_mango', 'ahn_black_tea', 'abbinamento_aromatico', '{"overlap": 79, "fonte": "Ahn 2011"}'),
-('ahn_black_tea', 'ahn_mango', 'abbinamento_aromatico', '{"overlap": 79, "fonte": "Ahn 2011"}');
+('ahn_black_tea', 'ahn_mango', 'abbinamento_aromatico', '{"overlap": 79, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mango', 'ahn_holy_basil', 'abbinamento_aromatico', '{"overlap": 2, "fonte": "Ahn 2011"}'),
@@ -2650,7 +2675,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orange', 'ahn_citrus', 'abbinamento_aromatico', '{"overlap": 51, "fonte": "Ahn 2011"}'),
 ('ahn_citrus', 'ahn_orange', 'abbinamento_aromatico', '{"overlap": 51, "fonte": "Ahn 2011"}'),
 ('ahn_orange', 'ahn_bitter_orange', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}'),
-('ahn_bitter_orange', 'ahn_orange', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}');
+('ahn_bitter_orange', 'ahn_orange', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orange', 'ahn_citrus_peel', 'abbinamento_aromatico', '{"overlap": 40, "fonte": "Ahn 2011"}'),
@@ -2752,7 +2778,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beef_broth', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 4, "fonte": "Ahn 2011"}'),
 ('ahn_roasted_beef', 'ahn_beef_broth', 'abbinamento_aromatico', '{"overlap": 4, "fonte": "Ahn 2011"}'),
 ('ahn_rosemary', 'ahn_balm', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
-('ahn_balm', 'ahn_rosemary', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}');
+('ahn_balm', 'ahn_rosemary', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rosemary', 'ahn_blackberry_brandy', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
@@ -2854,7 +2881,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_garlic', 'ahn_brassica', 'abbinamento_aromatico', '{"overlap": 2, "fonte": "Ahn 2011"}'),
 ('ahn_brassica', 'ahn_garlic', 'abbinamento_aromatico', '{"overlap": 2, "fonte": "Ahn 2011"}'),
 ('ahn_garlic', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 11, "fonte": "Ahn 2011"}'),
-('ahn_roasted_beef', 'ahn_garlic', 'abbinamento_aromatico', '{"overlap": 11, "fonte": "Ahn 2011"}');
+('ahn_roasted_beef', 'ahn_garlic', 'abbinamento_aromatico', '{"overlap": 11, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_garlic', 'ahn_onion', 'abbinamento_aromatico', '{"overlap": 16, "fonte": "Ahn 2011"}'),
@@ -2956,7 +2984,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_tea', 'ahn_licorice', 'abbinamento_aromatico', '{"overlap": 28, "fonte": "Ahn 2011"}'),
 ('ahn_licorice', 'ahn_black_tea', 'abbinamento_aromatico', '{"overlap": 28, "fonte": "Ahn 2011"}'),
 ('ahn_black_tea', 'ahn_parsley', 'abbinamento_aromatico', '{"overlap": 16, "fonte": "Ahn 2011"}'),
-('ahn_parsley', 'ahn_black_tea', 'abbinamento_aromatico', '{"overlap": 16, "fonte": "Ahn 2011"}');
+('ahn_parsley', 'ahn_black_tea', 'abbinamento_aromatico', '{"overlap": 16, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_tea', 'ahn_saffron', 'abbinamento_aromatico', '{"overlap": 5, "fonte": "Ahn 2011"}'),
@@ -3058,7 +3087,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_gruyere_cheese', 'ahn_feta_cheese', 'abbinamento_aromatico', '{"overlap": 128, "fonte": "Ahn 2011"}'),
 ('ahn_feta_cheese', 'ahn_gruyere_cheese', 'abbinamento_aromatico', '{"overlap": 128, "fonte": "Ahn 2011"}'),
 ('ahn_haddock', 'ahn_salmon', 'abbinamento_aromatico', '{"overlap": 64, "fonte": "Ahn 2011"}'),
-('ahn_salmon', 'ahn_haddock', 'abbinamento_aromatico', '{"overlap": 64, "fonte": "Ahn 2011"}');
+('ahn_salmon', 'ahn_haddock', 'abbinamento_aromatico', '{"overlap": 64, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_haddock', 'ahn_eel', 'abbinamento_aromatico', '{"overlap": 64, "fonte": "Ahn 2011"}'),
@@ -3160,7 +3190,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_watercress', 'ahn_beer', 'abbinamento_aromatico', '{"overlap": 7, "fonte": "Ahn 2011"}'),
 ('ahn_beer', 'ahn_watercress', 'abbinamento_aromatico', '{"overlap": 7, "fonte": "Ahn 2011"}'),
 ('ahn_oyster', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}'),
-('ahn_roasted_beef', 'ahn_oyster', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}');
+('ahn_roasted_beef', 'ahn_oyster', 'abbinamento_aromatico', '{"overlap": 23, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_macadamia_nut', 'ahn_roasted_peanut', 'abbinamento_aromatico', '{"overlap": 18, "fonte": "Ahn 2011"}'),
@@ -3262,7 +3293,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sheep_cheese', 'ahn_munster_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_munster_cheese', 'ahn_sheep_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
 ('ahn_sheep_cheese', 'ahn_roquefort_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
-('ahn_roquefort_cheese', 'ahn_sheep_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}');
+('ahn_roquefort_cheese', 'ahn_sheep_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bourbon_whiskey', 'ahn_rum', 'abbinamento_aromatico', '{"overlap": 8, "fonte": "Ahn 2011"}'),
@@ -3364,7 +3396,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tabasco_pepper', 'ahn_green_bell_pepper', 'abbinamento_aromatico', '{"overlap": 36, "fonte": "Ahn 2011"}'),
 ('ahn_green_bell_pepper', 'ahn_tabasco_pepper', 'abbinamento_aromatico', '{"overlap": 36, "fonte": "Ahn 2011"}'),
 ('ahn_tabasco_pepper', 'ahn_cayenne', 'abbinamento_aromatico', '{"overlap": 36, "fonte": "Ahn 2011"}'),
-('ahn_cayenne', 'ahn_tabasco_pepper', 'abbinamento_aromatico', '{"overlap": 36, "fonte": "Ahn 2011"}');
+('ahn_cayenne', 'ahn_tabasco_pepper', 'abbinamento_aromatico', '{"overlap": 36, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_scallop', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 35, "fonte": "Ahn 2011"}'),
@@ -3466,7 +3499,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_beef', 'ahn_clam', 'abbinamento_aromatico', '{"overlap": 48, "fonte": "Ahn 2011"}'),
 ('ahn_clam', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 48, "fonte": "Ahn 2011"}'),
 ('ahn_roasted_beef', 'ahn_onion', 'abbinamento_aromatico', '{"overlap": 32, "fonte": "Ahn 2011"}'),
-('ahn_onion', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 32, "fonte": "Ahn 2011"}');
+('ahn_onion', 'ahn_roasted_beef', 'abbinamento_aromatico', '{"overlap": 32, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_beef', 'ahn_potato', 'abbinamento_aromatico', '{"overlap": 66, "fonte": "Ahn 2011"}'),
@@ -3568,7 +3602,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_berry', 'ahn_raspberry', 'abbinamento_aromatico', '{"overlap": 52, "fonte": "Ahn 2011"}'),
 ('ahn_raspberry', 'ahn_berry', 'abbinamento_aromatico', '{"overlap": 52, "fonte": "Ahn 2011"}'),
 ('ahn_angelica', 'ahn_strawberry', 'abbinamento_aromatico', '{"overlap": 4, "fonte": "Ahn 2011"}'),
-('ahn_strawberry', 'ahn_angelica', 'abbinamento_aromatico', '{"overlap": 4, "fonte": "Ahn 2011"}');
+('ahn_strawberry', 'ahn_angelica', 'abbinamento_aromatico', '{"overlap": 4, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_papaya', 'ahn_strawberry', 'abbinamento_aromatico', '{"overlap": 71, "fonte": "Ahn 2011"}'),
@@ -3670,7 +3705,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_blackberry', 'ahn_strawberry', 'abbinamento_aromatico', '{"overlap": 72, "fonte": "Ahn 2011"}'),
 ('ahn_strawberry', 'ahn_blackberry', 'abbinamento_aromatico', '{"overlap": 72, "fonte": "Ahn 2011"}'),
 ('ahn_blackberry', 'ahn_raspberry', 'abbinamento_aromatico', '{"overlap": 72, "fonte": "Ahn 2011"}'),
-('ahn_raspberry', 'ahn_blackberry', 'abbinamento_aromatico', '{"overlap": 72, "fonte": "Ahn 2011"}');
+('ahn_raspberry', 'ahn_blackberry', 'abbinamento_aromatico', '{"overlap": 72, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lard', 'ahn_cranberry', 'abbinamento_aromatico', '{"overlap": 1, "fonte": "Ahn 2011"}'),
@@ -3740,5 +3776,6 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_chicken_liver', 'ahn_liver', 'abbinamento_aromatico', '{"overlap": 3, "fonte": "Ahn 2011"}'),
 ('ahn_liver', 'ahn_chicken_liver', 'abbinamento_aromatico', '{"overlap": 3, "fonte": "Ahn 2011"}'),
 ('ahn_emmental_cheese', 'ahn_munster_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}'),
-('ahn_munster_cheese', 'ahn_emmental_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}');
+('ahn_munster_cheese', 'ahn_emmental_cheese', 'abbinamento_aromatico', '{"overlap": 127, "fonte": "Ahn 2011"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 

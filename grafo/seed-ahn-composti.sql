@@ -202,7 +202,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_undecanal', 'Composto', 'undecanal', 'chimica', '{"ahn_comp_id": "196", "cas": "112-44-7", "fonte": "Ahn 2011"}'),
 ('comp_2_6_dimethylthiophenol', 'Composto', '2,6-dimethylthiophenol', 'chimica', '{"ahn_comp_id": "197", "cas": "118-72-9", "fonte": "Ahn 2011"}'),
 ('comp_valeric_acid', 'Composto', 'valeric_acid', 'chimica', '{"ahn_comp_id": "198", "cas": "109-52-4", "fonte": "Ahn 2011"}'),
-('comp_2_undecenal', 'Composto', '2-undecenal', 'chimica', '{"ahn_comp_id": "199", "cas": "2463-77-6", "fonte": "Ahn 2011"}');
+('comp_2_undecenal', 'Composto', '2-undecenal', 'chimica', '{"ahn_comp_id": "199", "cas": "2463-77-6", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_butyl_sulfide', 'Composto', 'butyl_sulfide', 'chimica', '{"ahn_comp_id": "200", "cas": "544-40-1", "fonte": "Ahn 2011"}'),
@@ -304,7 +305,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_methyl_3_methylthiopropionate', 'Composto', 'methyl-3-methylthiopropionate', 'chimica', '{"ahn_comp_id": "296", "cas": "13532-18-8", "fonte": "Ahn 2011"}'),
 ('comp_p_a_dimethylbenzyl_alcohol', 'Composto', 'p-a-dimethylbenzyl_alcohol', 'chimica', '{"ahn_comp_id": "297", "cas": "536-50-5", "fonte": "Ahn 2011"}'),
 ('comp_formic_acid', 'Composto', 'formic_acid', 'chimica', '{"ahn_comp_id": "298", "cas": "64-18-6", "fonte": "Ahn 2011"}'),
-('comp_nonanoic_acid', 'Composto', 'nonanoic_acid', 'chimica', '{"ahn_comp_id": "299", "cas": "112-05-0", "fonte": "Ahn 2011"}');
+('comp_nonanoic_acid', 'Composto', 'nonanoic_acid', 'chimica', '{"ahn_comp_id": "299", "cas": "112-05-0", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_cyclohexanecarboxylic_acid', 'Composto', 'cyclohexanecarboxylic_acid', 'chimica', '{"ahn_comp_id": "300", "cas": "98-89-5", "fonte": "Ahn 2011"}'),
@@ -508,7 +510,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_menthyl_isovalerate', 'Composto', 'menthyl_isovalerate', 'chimica', '{"ahn_comp_id": "496", "cas": "16409-46-4", "fonte": "Ahn 2011"}'),
 ('comp_3__methylthio__hexyl_acetate', 'Composto', '3-(methylthio)_hexyl_acetate', 'chimica', '{"ahn_comp_id": "497", "cas": "51755-85-2", "fonte": "Ahn 2011"}'),
 ('comp_ethyl_decanoate', 'Composto', 'ethyl_decanoate', 'chimica', '{"ahn_comp_id": "498", "cas": "110-38-3", "fonte": "Ahn 2011"}'),
-('comp_phenoxyacetic_acid', 'Composto', 'phenoxyacetic_acid', 'chimica', '{"ahn_comp_id": "499", "cas": "122-59-8", "fonte": "Ahn 2011"}');
+('comp_phenoxyacetic_acid', 'Composto', 'phenoxyacetic_acid', 'chimica', '{"ahn_comp_id": "499", "cas": "122-59-8", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp__z__4_propenylphenol', 'Composto', '(z)-4-propenylphenol', 'chimica', '{"ahn_comp_id": "500", "cas": "85960-81-2", "fonte": "Ahn 2011"}'),
@@ -610,7 +613,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_linalyl_isovalerate', 'Composto', 'linalyl_isovalerate', 'chimica', '{"ahn_comp_id": "596", "cas": "1118-27-0", "fonte": "Ahn 2011"}'),
 ('comp_d_hexalactone', 'Composto', 'd-hexalactone', 'chimica', '{"ahn_comp_id": "597", "cas": "823-22-3", "fonte": "Ahn 2011"}'),
 ('comp_benzaldehyde_dimethyl_acetal', 'Composto', 'benzaldehyde_dimethyl_acetal', 'chimica', '{"ahn_comp_id": "598", "cas": "1125-88-8", "fonte": "Ahn 2011"}'),
-('comp_methyl_sulfide', 'Composto', 'methyl_sulfide', 'chimica', '{"ahn_comp_id": "599", "cas": "75-18-3", "fonte": "Ahn 2011"}');
+('comp_methyl_sulfide', 'Composto', 'methyl_sulfide', 'chimica', '{"ahn_comp_id": "599", "cas": "75-18-3", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_propyl_alcohol', 'Composto', 'propyl_alcohol', 'chimica', '{"ahn_comp_id": "600", "cas": "71-23-8", "fonte": "Ahn 2011"}'),
@@ -712,7 +716,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_biphenyl', 'Composto', 'biphenyl', 'chimica', '{"ahn_comp_id": "696", "cas": "92-52-4", "fonte": "Ahn 2011"}'),
 ('comp_2_methyltetrahydrothiophen_3_one', 'Composto', '2-methyltetrahydrothiophen-3-one', 'chimica', '{"ahn_comp_id": "697", "cas": "13679-85-1", "fonte": "Ahn 2011"}'),
 ('comp_b_ionol', 'Composto', 'b-ionol', 'chimica', '{"ahn_comp_id": "698", "cas": "22029-76-1", "fonte": "Ahn 2011"}'),
-('comp_sodium_citrate', 'Composto', 'sodium_citrate', 'chimica', '{"ahn_comp_id": "699", "cas": "68-04-2", "fonte": "Ahn 2011"}');
+('comp_sodium_citrate', 'Composto', 'sodium_citrate', 'chimica', '{"ahn_comp_id": "699", "cas": "68-04-2", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_estragole', 'Composto', 'estragole', 'chimica', '{"ahn_comp_id": "700", "cas": "140-67-0", "fonte": "Ahn 2011"}'),
@@ -814,7 +819,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_2_acetoxy_3_butanone', 'Composto', '2-acetoxy-3-butanone', 'chimica', '{"ahn_comp_id": "796", "cas": "4906-24-5", "fonte": "Ahn 2011"}'),
 ('comp_aconitic_acid', 'Composto', 'aconitic_acid', 'chimica', '{"ahn_comp_id": "797", "cas": "499-12-7", "fonte": "Ahn 2011"}'),
 ('comp_hexyl_alcohol', 'Composto', 'hexyl_alcohol', 'chimica', '{"ahn_comp_id": "798", "cas": "111-27-3", "fonte": "Ahn 2011"}'),
-('comp_1_phenyl_1_2_propanedione', 'Composto', '1-phenyl-1,2-propanedione', 'chimica', '{"ahn_comp_id": "799", "cas": "579-07-7", "fonte": "Ahn 2011"}');
+('comp_1_phenyl_1_2_propanedione', 'Composto', '1-phenyl-1,2-propanedione', 'chimica', '{"ahn_comp_id": "799", "cas": "579-07-7", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_ethyl_formate', 'Composto', 'ethyl_formate', 'chimica', '{"ahn_comp_id": "800", "cas": "109-94-4", "fonte": "Ahn 2011"}'),
@@ -916,7 +922,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_2_6_6_trimethylcyclohex_2_ene_1_4_dione', 'Composto', '2,6,6-trimethylcyclohex-2-ene-1,4-dione', 'chimica', '{"ahn_comp_id": "896", "cas": "1125-21-9", "fonte": "Ahn 2011"}'),
 ('comp_5_methyl_2_hepten_4_one', 'Composto', '5-methyl-2-hepten-4-one', 'chimica', '{"ahn_comp_id": "897", "cas": "81925-81-7", "fonte": "Ahn 2011"}'),
 ('comp_carvone', 'Composto', 'carvone', 'chimica', '{"ahn_comp_id": "898", "cas": "6485-40-1", "fonte": "Ahn 2011"}'),
-('comp_4_methylthio_2_butanone', 'Composto', '4-methylthio-2-butanone', 'chimica', '{"ahn_comp_id": "899", "cas": "3407-39-7", "fonte": "Ahn 2011"}');
+('comp_4_methylthio_2_butanone', 'Composto', '4-methylthio-2-butanone', 'chimica', '{"ahn_comp_id": "899", "cas": "3407-39-7", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_potassium_sorbate', 'Composto', 'potassium_sorbate', 'chimica', '{"ahn_comp_id": "900", "cas": "590-00-1", "fonte": "Ahn 2011"}'),
@@ -1018,7 +1025,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_citronellol', 'Composto', 'citronellol', 'chimica', '{"ahn_comp_id": "996", "cas": "26489-01-0", "fonte": "Ahn 2011"}'),
 ('comp_2_pentadecanone', 'Composto', '2-pentadecanone', 'chimica', '{"ahn_comp_id": "997", "cas": "2345-28-0", "fonte": "Ahn 2011"}'),
 ('comp__e__7_methyl_3_octen_2_one', 'Composto', '(e)-7-methyl-3-octen-2-one', 'chimica', '{"ahn_comp_id": "998", "cas": ".", "fonte": "Ahn 2011"}'),
-('comp_allyl_hexanoate', 'Composto', 'allyl_hexanoate', 'chimica', '{"ahn_comp_id": "999", "cas": "123-68-2", "fonte": "Ahn 2011"}');
+('comp_allyl_hexanoate', 'Composto', 'allyl_hexanoate', 'chimica', '{"ahn_comp_id": "999", "cas": "123-68-2", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_furfuryl_mercaptan', 'Composto', 'furfuryl_mercaptan', 'chimica', '{"ahn_comp_id": "1000", "cas": "98-02-2", "fonte": "Ahn 2011"}'),
@@ -1120,7 +1128,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_2_methyl_1_3_dithiolane', 'Composto', '2-methyl-1,3-dithiolane', 'chimica', '{"ahn_comp_id": "1096", "cas": "5616-51-3", "fonte": "Ahn 2011"}'),
 ('comp_4_hydroxy_3_methyloctanoic_acid_lactone', 'Composto', '4-hydroxy-3-methyloctanoic_acid_lactone', 'chimica', '{"ahn_comp_id": "1097", "cas": "39212-23-2", "fonte": "Ahn 2011"}'),
 ('comp_2_ethyl_4_hydroxy_5_methyl_3_2h__furanone', 'Composto', '2-ethyl-4-hydroxy-5-methyl-3(2h)-furanone', 'chimica', '{"ahn_comp_id": "1098", "cas": "27538-10-9", "fonte": "Ahn 2011"}'),
-('comp_l_arabinose', 'Composto', 'l-arabinose', 'chimica', '{"ahn_comp_id": "1099", "cas": "5328-37-0", "fonte": "Ahn 2011"}');
+('comp_l_arabinose', 'Composto', 'l-arabinose', 'chimica', '{"ahn_comp_id": "1099", "cas": "5328-37-0", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_cis_3_hexenyl_benzoate', 'Composto', 'cis-3-hexenyl_benzoate', 'chimica', '{"ahn_comp_id": "1100", "cas": "25152-85-6", "fonte": "Ahn 2011"}'),
@@ -1129,5 +1138,6 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('comp_1_octen_3_yl_butyrate', 'Composto', '1-octen-3-yl_butyrate', 'chimica', '{"ahn_comp_id": "1103", "cas": "16491-54-6", "fonte": "Ahn 2011"}'),
 ('comp_guaiacol', 'Composto', 'guaiacol', 'chimica', '{"ahn_comp_id": "1104", "cas": "90-05-1", "fonte": "Ahn 2011"}'),
 ('comp_______methyl_5_acetoxyhexanoate', 'Composto', '(+/?)-methyl_5-acetoxyhexanoate', 'chimica', '{"ahn_comp_id": "1105", "cas": "35234-22-1", "fonte": "Ahn 2011"}'),
-('comp_ethyl_sorbate', 'Composto', 'ethyl_sorbate', 'chimica', '{"ahn_comp_id": "1106", "cas": "2396-84-1", "fonte": "Ahn 2011"}');
+('comp_ethyl_sorbate', 'Composto', 'ethyl_sorbate', 'chimica', '{"ahn_comp_id": "1106", "cas": "2396-84-1", "fonte": "Ahn 2011"}')
+ON CONFLICT DO NOTHING;
 

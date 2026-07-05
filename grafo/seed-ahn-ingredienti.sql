@@ -100,7 +100,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_blackberry_juice', 'Prodotto', 'blackberry_juice', 'fruit', '{"ahn_id": "96", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_tomato_juice', 'Prodotto', 'tomato_juice', 'vegetable', '{"ahn_id": "97", "categoria": "vegetable", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_fig', 'Prodotto', 'fig', 'fruit', '{"ahn_id": "98", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_american_storax', 'Prodotto', 'american_storax', 'plant derivative', '{"ahn_id": "99", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_american_storax', 'Prodotto', 'american_storax', 'plant derivative', '{"ahn_id": "99", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_savory', 'Prodotto', 'savory', 'herb', '{"ahn_id": "100", "categoria": "herb", "fonte": "Ahn 2011 CC-BY"}'),
@@ -202,7 +203,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_fennel', 'Prodotto', 'fennel', 'herb', '{"ahn_id": "196", "categoria": "herb", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_radish_oil', 'Prodotto', 'radish_oil', 'plant derivative', '{"ahn_id": "197", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_chamomile', 'Prodotto', 'chamomile', 'flower', '{"ahn_id": "198", "categoria": "flower", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_shellfish', 'Prodotto', 'shellfish', 'fish/seafood', '{"ahn_id": "199", "categoria": "fish/seafood", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_shellfish', 'Prodotto', 'shellfish', 'fish/seafood', '{"ahn_id": "199", "categoria": "fish/seafood", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_milk_fat', 'Prodotto', 'milk_fat', 'dairy', '{"ahn_id": "200", "categoria": "dairy", "fonte": "Ahn 2011 CC-BY"}'),
@@ -304,7 +306,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_tuna', 'Prodotto', 'tuna', 'fish/seafood', '{"ahn_id": "296", "categoria": "fish/seafood", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_cherry_juice', 'Prodotto', 'cherry_juice', 'fruit', '{"ahn_id": "297", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_butter', 'Prodotto', 'butter', 'dairy', '{"ahn_id": "298", "categoria": "dairy", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_hyacinth_oil', 'Prodotto', 'hyacinth_oil', 'plant derivative', '{"ahn_id": "299", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_hyacinth_oil', 'Prodotto', 'hyacinth_oil', 'plant derivative', '{"ahn_id": "299", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_irish_whiskey', 'Prodotto', 'irish_whiskey', 'alcoholic beverage', '{"ahn_id": "300", "categoria": "alcoholic beverage", "fonte": "Ahn 2011 CC-BY"}'),
@@ -406,7 +409,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_milk', 'Prodotto', 'milk', 'dairy', '{"ahn_id": "396", "categoria": "dairy", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_american_peppermint', 'Prodotto', 'american_peppermint', 'herb', '{"ahn_id": "397", "categoria": "herb", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_purple_passion_fruit', 'Prodotto', 'purple_passion_fruit', 'fruit', '{"ahn_id": "398", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_grape', 'Prodotto', 'grape', 'fruit', '{"ahn_id": "399", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_grape', 'Prodotto', 'grape', 'fruit', '{"ahn_id": "399", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_jasmine_oil', 'Prodotto', 'jasmine_oil', 'plant derivative', '{"ahn_id": "400", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
@@ -508,7 +512,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_chickpea', 'Prodotto', 'chickpea', 'vegetable', '{"ahn_id": "496", "categoria": "vegetable", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_dried_green_tea', 'Prodotto', 'dried_green_tea', 'plant derivative', '{"ahn_id": "497", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_kumquat_peel_oil', 'Prodotto', 'kumquat_peel_oil', 'plant derivative', '{"ahn_id": "498", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_dacrydium_franklinii_oil', 'Prodotto', 'dacrydium_franklinii_oil', 'plant derivative', '{"ahn_id": "499", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_dacrydium_franklinii_oil', 'Prodotto', 'dacrydium_franklinii_oil', 'plant derivative', '{"ahn_id": "499", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_artemisia_maritime_oil', 'Prodotto', 'artemisia_maritime_oil', 'plant derivative', '{"ahn_id": "500", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
@@ -610,7 +615,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_japanese_peppermint', 'Prodotto', 'japanese_peppermint', 'herb', '{"ahn_id": "596", "categoria": "herb", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_oak_leaf', 'Prodotto', 'oak_leaf', 'plant', '{"ahn_id": "597", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_brassica', 'Prodotto', 'brassica', 'plant', '{"ahn_id": "598", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_finnish_whiskey', 'Prodotto', 'finnish_whiskey', 'alcoholic beverage', '{"ahn_id": "599", "categoria": "alcoholic beverage", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_finnish_whiskey', 'Prodotto', 'finnish_whiskey', 'alcoholic beverage', '{"ahn_id": "599", "categoria": "alcoholic beverage", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_alpinia_malaccensis', 'Prodotto', 'alpinia_malaccensis', 'plant', '{"ahn_id": "600", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
@@ -712,7 +718,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_swiss_cheese', 'Prodotto', 'swiss_cheese', 'dairy', '{"ahn_id": "696", "categoria": "dairy", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_wild_rice', 'Prodotto', 'wild_rice', 'cereal/crop', '{"ahn_id": "697", "categoria": "cereal/crop", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_chive', 'Prodotto', 'chive', 'vegetable', '{"ahn_id": "698", "categoria": "vegetable", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_sea_buckthorn', 'Prodotto', 'sea_buckthorn', 'fruit', '{"ahn_id": "699", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_sea_buckthorn', 'Prodotto', 'sea_buckthorn', 'fruit', '{"ahn_id": "699", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_lavender_oil', 'Prodotto', 'lavender_oil', 'plant derivative', '{"ahn_id": "700", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
@@ -814,7 +821,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_pinus_communis_oil', 'Prodotto', 'pinus_communis_oil', 'plant derivative', '{"ahn_id": "796", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_melaleuca_bracteata', 'Prodotto', 'melaleuca_bracteata', 'plant', '{"ahn_id": "797", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_mulberry_leaf', 'Prodotto', 'mulberry_leaf', 'plant', '{"ahn_id": "798", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_grape_syrup', 'Prodotto', 'grape_syrup', 'plant derivative', '{"ahn_id": "799", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_grape_syrup', 'Prodotto', 'grape_syrup', 'plant derivative', '{"ahn_id": "799", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_lauraceae', 'Prodotto', 'lauraceae', 'plant', '{"ahn_id": "800", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
@@ -916,7 +924,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_algae', 'Prodotto', 'algae', 'vegetable', '{"ahn_id": "896", "categoria": "vegetable", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_petitgrain_bergamot', 'Prodotto', 'petitgrain_bergamot', 'plant derivative', '{"ahn_id": "897", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_concord_grape', 'Prodotto', 'concord_grape', 'fruit', '{"ahn_id": "898", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_rice_husk', 'Prodotto', 'rice_husk', 'cereal/crop', '{"ahn_id": "899", "categoria": "cereal/crop", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_rice_husk', 'Prodotto', 'rice_husk', 'cereal/crop', '{"ahn_id": "899", "categoria": "cereal/crop", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_eucalyptus_polibrac_tea_oil', 'Prodotto', 'eucalyptus_polibrac_tea_oil', 'plant derivative', '{"ahn_id": "900", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
@@ -1018,7 +1027,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_asarum_arifolium_root_oil', 'Prodotto', 'asarum_arifolium_root_oil', 'plant derivative', '{"ahn_id": "996", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_silk_fibrooin', 'Prodotto', 'silk_fibrooin', 'animal product', '{"ahn_id": "997", "categoria": "animal product", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_olive_oil', 'Prodotto', 'olive_oil', 'plant derivative', '{"ahn_id": "998", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_kencur_oil', 'Prodotto', 'kencur_oil', 'plant derivative', '{"ahn_id": "999", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_kencur_oil', 'Prodotto', 'kencur_oil', 'plant derivative', '{"ahn_id": "999", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_scallop', 'Prodotto', 'scallop', 'fish/seafood', '{"ahn_id": "1000", "categoria": "fish/seafood", "fonte": "Ahn 2011 CC-BY"}'),
@@ -1120,7 +1130,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_smoked_salmon', 'Prodotto', 'smoked_salmon', 'fish/seafood', '{"ahn_id": "1096", "categoria": "fish/seafood", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_acacia_farnesiana', 'Prodotto', 'acacia_farnesiana', 'plant', '{"ahn_id": "1097", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_oatmeal', 'Prodotto', 'oatmeal', 'cereal/crop', '{"ahn_id": "1098", "categoria": "cereal/crop", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_rhododendron_fauriae_leaf', 'Prodotto', 'rhododendron_fauriae_leaf', 'plant', '{"ahn_id": "1099", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_rhododendron_fauriae_leaf', 'Prodotto', 'rhododendron_fauriae_leaf', 'plant', '{"ahn_id": "1099", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_imperatoria', 'Prodotto', 'imperatoria', 'plant', '{"ahn_id": "1100", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
@@ -1222,7 +1233,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_peppermint_oil', 'Prodotto', 'peppermint_oil', 'plant derivative', '{"ahn_id": "1196", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_apple', 'Prodotto', 'apple', 'fruit', '{"ahn_id": "1197", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_wood_spirit', 'Prodotto', 'wood_spirit', 'plant derivative', '{"ahn_id": "1198", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_lime', 'Prodotto', 'lime', 'fruit', '{"ahn_id": "1199", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_lime', 'Prodotto', 'lime', 'fruit', '{"ahn_id": "1199", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_robinia_pseudoacacia_oil', 'Prodotto', 'robinia_pseudoacacia_oil', 'plant derivative', '{"ahn_id": "1200", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
@@ -1324,7 +1336,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_rooibus_tea', 'Prodotto', 'rooibus_tea', 'plant derivative', '{"ahn_id": "1296", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_parsnip', 'Prodotto', 'parsnip', 'vegetable', '{"ahn_id": "1297", "categoria": "vegetable", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_romano_cheese', 'Prodotto', 'romano_cheese', 'dairy', '{"ahn_id": "1298", "categoria": "dairy", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_beech_tar_creosote', 'Prodotto', 'beech_tar_creosote', 'plant derivative', '{"ahn_id": "1299", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_beech_tar_creosote', 'Prodotto', 'beech_tar_creosote', 'plant derivative', '{"ahn_id": "1299", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_eryngium_facidum', 'Prodotto', 'eryngium_facidum', 'plant', '{"ahn_id": "1300", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
@@ -1426,7 +1439,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_wood', 'Prodotto', 'wood', 'plant', '{"ahn_id": "1396", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_satureia_montana', 'Prodotto', 'satureia_montana', 'plant', '{"ahn_id": "1397", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_liquidambar_orientalis_storax', 'Prodotto', 'liquidambar_orientalis_storax', 'plant derivative', '{"ahn_id": "1398", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_vanilla', 'Prodotto', 'vanilla', 'spice', '{"ahn_id": "1399", "categoria": "spice", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_vanilla', 'Prodotto', 'vanilla', 'spice', '{"ahn_id": "1399", "categoria": "spice", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_raw_leek', 'Prodotto', 'raw_leek', 'vegetable', '{"ahn_id": "1400", "categoria": "vegetable", "fonte": "Ahn 2011 CC-BY"}'),
@@ -1528,7 +1542,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_rose_apple', 'Prodotto', 'rose_apple', 'fruit', '{"ahn_id": "1496", "categoria": "fruit", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_sturgeon_caviar', 'Prodotto', 'sturgeon_caviar', 'fish/seafood', '{"ahn_id": "1497", "categoria": "fish/seafood", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_bitter_almond', 'Prodotto', 'bitter_almond', 'nut/seed/pulse', '{"ahn_id": "1498", "categoria": "nut/seed/pulse", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_valerian', 'Prodotto', 'valerian', 'herb', '{"ahn_id": "1499", "categoria": "herb", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_valerian', 'Prodotto', 'valerian', 'herb', '{"ahn_id": "1499", "categoria": "herb", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_algerian_geranium_oil', 'Prodotto', 'algerian_geranium_oil', 'plant derivative', '{"ahn_id": "1500", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
@@ -1560,5 +1575,6 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('ahn_cinnamon_leaf', 'Prodotto', 'cinnamon_leaf', 'plant', '{"ahn_id": "1526", "categoria": "plant", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_green_tea', 'Prodotto', 'green_tea', 'plant derivative', '{"ahn_id": "1527", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
 ('ahn_artemisia_porrecta_oil', 'Prodotto', 'artemisia_porrecta_oil', 'plant derivative', '{"ahn_id": "1528", "categoria": "plant derivative", "fonte": "Ahn 2011 CC-BY"}'),
-('ahn_munster_cheese', 'Prodotto', 'munster_cheese', 'dairy', '{"ahn_id": "1529", "categoria": "dairy", "fonte": "Ahn 2011 CC-BY"}');
+('ahn_munster_cheese', 'Prodotto', 'munster_cheese', 'dairy', '{"ahn_id": "1529", "categoria": "dairy", "fonte": "Ahn 2011 CC-BY"}')
+ON CONFLICT DO NOTHING;
 

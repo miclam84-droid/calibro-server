@@ -100,7 +100,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_andropogon_jwarancusa', 'comp_octanoic_acid', 'contiene_composto', '{}'),
 ('ahn_angelica', 'comp_a_phellandrene', 'contiene_composto', '{}'),
 ('ahn_angelica', 'comp_myrcene', 'contiene_composto', '{}'),
-('ahn_angelica', 'comp_acetaldehyde', 'contiene_composto', '{}');
+('ahn_angelica', 'comp_acetaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_angelica', 'comp_diacetyl', 'contiene_composto', '{}'),
@@ -202,7 +203,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apple', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_apple', 'comp_butyl_stearate', 'contiene_composto', '{}'),
 ('ahn_apple', 'comp_g_undecalactone', 'contiene_composto', '{}'),
-('ahn_apple', 'comp_ethyl_crotonate', 'contiene_composto', '{}');
+('ahn_apple', 'comp_ethyl_crotonate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apple', 'comp_l_malic_acid', 'contiene_composto', '{}'),
@@ -304,7 +306,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apple', 'comp_2_pentyl_acetate', 'contiene_composto', '{}'),
 ('ahn_apple', 'comp_decyl_acetate', 'contiene_composto', '{}'),
 ('ahn_apple', 'comp_isopropyl_benzoate', 'contiene_composto', '{}'),
-('ahn_apple', 'comp_ethyl_hexanoate', 'contiene_composto', '{}');
+('ahn_apple', 'comp_ethyl_hexanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apple', 'comp_cis_5_octen_1_ol', 'contiene_composto', '{}'),
@@ -406,7 +409,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apple_juice', 'comp_ethyl_propionate', 'contiene_composto', '{}'),
 ('ahn_apple_juice', 'comp_ethyl_2_methylbutyrate', 'contiene_composto', '{}'),
 ('ahn_apple_juice', 'comp_propionic_acid', 'contiene_composto', '{}'),
-('ahn_apple_juice', 'comp_2_hexenal', 'contiene_composto', '{}');
+('ahn_apple_juice', 'comp_2_hexenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apple_juice', 'comp_g_hexalactone', 'contiene_composto', '{}'),
@@ -508,7 +512,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apricot', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
 ('ahn_apricot', 'comp_amyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_apricot', 'comp_b_pinene', 'contiene_composto', '{}'),
-('ahn_apricot', 'comp_4_carvomenthenol', 'contiene_composto', '{}');
+('ahn_apricot', 'comp_4_carvomenthenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_apricot', 'comp_ethyl_heptanoate', 'contiene_composto', '{}'),
@@ -610,7 +615,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ashanti_pepper', 'comp_terpinolene', 'contiene_composto', '{}'),
 ('ahn_ashanti_pepper', 'comp_linalyl_acetate', 'contiene_composto', '{}'),
 ('ahn_ashanti_pepper', 'comp_methyl_heptanoate', 'contiene_composto', '{}'),
-('ahn_ashanti_pepper', 'comp_nerolidol', 'contiene_composto', '{}');
+('ahn_ashanti_pepper', 'comp_nerolidol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ashanti_pepper', 'comp_eugenol', 'contiene_composto', '{}'),
@@ -712,7 +718,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_avocado', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_avocado', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
 ('ahn_avocado', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
-('ahn_avocado', 'comp_alpha_terpineol', 'contiene_composto', '{}');
+('ahn_avocado', 'comp_alpha_terpineol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_avocado', 'comp_a_methylbenzyl_acetate', 'contiene_composto', '{}'),
@@ -814,7 +821,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bacon', 'comp_benzyl_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_bacon', 'comp_2_heptanone', 'contiene_composto', '{}'),
 ('ahn_bacon', 'comp_indole', 'contiene_composto', '{}'),
-('ahn_bacon', 'comp_4_methylthiazole', 'contiene_composto', '{}');
+('ahn_bacon', 'comp_4_methylthiazole', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bacon', 'comp_d_l_methionine', 'contiene_composto', '{}'),
@@ -916,7 +924,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_baked_potato', 'comp_methyl_salicylate', 'contiene_composto', '{}'),
 ('ahn_baked_potato', 'comp_linalool', 'contiene_composto', '{}'),
 ('ahn_baked_potato', 'comp_4_heptanone', 'contiene_composto', '{}'),
-('ahn_baked_potato', 'comp_benzaldehyde_dimethyl_acetal', 'contiene_composto', '{}');
+('ahn_baked_potato', 'comp_benzaldehyde_dimethyl_acetal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_baked_potato', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
@@ -1018,7 +1027,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_baked_potato', 'comp_octanoic_acid', 'contiene_composto', '{}'),
 ('ahn_baked_potato', 'comp_dl_phenylalanine', 'contiene_composto', '{}'),
 ('ahn_baked_potato', 'comp_methyl_octanoate', 'contiene_composto', '{}'),
-('ahn_baked_potato', 'comp_hexanoic_acid', 'contiene_composto', '{}');
+('ahn_baked_potato', 'comp_hexanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_baked_potato', 'comp__2_furyl__2_propanone', 'contiene_composto', '{}'),
@@ -1120,7 +1130,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_banana', 'comp_n_hexyl_2_butenoate', 'contiene_composto', '{}'),
 ('ahn_banana', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
 ('ahn_banana', 'comp_n_butyl_2_methylbutyrate', 'contiene_composto', '{}'),
-('ahn_banana', 'comp_ethyl_valerate', 'contiene_composto', '{}');
+('ahn_banana', 'comp_ethyl_valerate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_banana', 'comp_methyl_myristate', 'contiene_composto', '{}'),
@@ -1222,7 +1233,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bantu_beer', 'comp_propionic_acid', 'contiene_composto', '{}'),
 ('ahn_bantu_beer', 'comp_cis_3_hexenal', 'contiene_composto', '{}'),
 ('ahn_bantu_beer', 'comp_3_acetylpyridine', 'contiene_composto', '{}'),
-('ahn_bantu_beer', 'comp_methyl_disulfide', 'contiene_composto', '{}');
+('ahn_bantu_beer', 'comp_methyl_disulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bantu_beer', 'comp_eugenol', 'contiene_composto', '{}'),
@@ -1324,7 +1336,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bantu_beer', 'comp_pyruvaldehyde', 'contiene_composto', '{}'),
 ('ahn_bantu_beer', 'comp_2_oxobutyric_acid', 'contiene_composto', '{}'),
 ('ahn_bantu_beer', 'comp_3_hydroxy_2_pentanone', 'contiene_composto', '{}'),
-('ahn_bantu_beer', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}');
+('ahn_bantu_beer', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bantu_beer', 'comp_ethyl_laurate', 'contiene_composto', '{}'),
@@ -1426,7 +1439,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bartlett_pear', 'comp_propyl_acetate', 'contiene_composto', '{}'),
 ('ahn_bartlett_pear', 'comp_heptyl_acetate', 'contiene_composto', '{}'),
 ('ahn_bartlett_pear', 'comp_amyl_formate', 'contiene_composto', '{}'),
-('ahn_bartlett_pear', 'comp_2_pentyl_acetate', 'contiene_composto', '{}');
+('ahn_bartlett_pear', 'comp_2_pentyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bartlett_pear', 'comp_acetone', 'contiene_composto', '{}'),
@@ -1528,7 +1542,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bean', 'comp_3_methyl_2_butanol', 'contiene_composto', '{}'),
 ('ahn_bean', 'comp_g_hexalactone', 'contiene_composto', '{}'),
 ('ahn_bean', 'comp_p_vinylphenol', 'contiene_composto', '{}'),
-('ahn_bean', 'comp_3_hexanol', 'contiene_composto', '{}');
+('ahn_bean', 'comp_3_hexanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bean', 'comp_3_heptanone', 'contiene_composto', '{}'),
@@ -1630,7 +1645,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beef', 'comp_3_octen_2_one', 'contiene_composto', '{}'),
 ('ahn_beef', 'comp_furfuryl_alcohol', 'contiene_composto', '{}'),
 ('ahn_beef', 'comp_g_nonalactone', 'contiene_composto', '{}'),
-('ahn_beef', 'comp_l_tyrosine', 'contiene_composto', '{}');
+('ahn_beef', 'comp_l_tyrosine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beef', 'comp_g_dodecalactone', 'contiene_composto', '{}'),
@@ -1732,7 +1748,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beef', 'comp_2_methyl_2_pentenal', 'contiene_composto', '{}'),
 ('ahn_beef', 'comp_diacetyl', 'contiene_composto', '{}'),
 ('ahn_beef', 'comp_valeric_acid', 'contiene_composto', '{}'),
-('ahn_beef', 'comp_2_3_5_6_tetramethylpyrazine', 'contiene_composto', '{}');
+('ahn_beef', 'comp_2_3_5_6_tetramethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beef', 'comp_l_phenylalanine', 'contiene_composto', '{}'),
@@ -1834,7 +1851,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beer', 'comp_maltol', 'contiene_composto', '{}'),
 ('ahn_beer', 'comp_2_octanol', 'contiene_composto', '{}'),
 ('ahn_beer', 'comp_2_octanone', 'contiene_composto', '{}'),
-('ahn_beer', 'comp_2_acetylfuran', 'contiene_composto', '{}');
+('ahn_beer', 'comp_2_acetylfuran', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beer', 'comp_nonyl_acetate', 'contiene_composto', '{}'),
@@ -1936,7 +1954,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beer', 'comp_geranyl_isobutyrate', 'contiene_composto', '{}'),
 ('ahn_beer', 'comp_2_pentanol', 'contiene_composto', '{}'),
 ('ahn_beer', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}'),
-('ahn_beer', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}');
+('ahn_beer', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beer', 'comp_oleic_acid', 'contiene_composto', '{}'),
@@ -2038,7 +2057,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beet', 'comp_l_phenylalanine', 'contiene_composto', '{}'),
 ('ahn_beet', 'comp_adipic_acid', 'contiene_composto', '{}'),
 ('ahn_beet_juice', 'comp_adipic_acid', 'contiene_composto', '{}'),
-('ahn_beet_root', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}');
+('ahn_beet_root', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_beet_root', 'comp_2_methoxy_3__1_methylpropyl_pyrazine', 'contiene_composto', '{}'),
@@ -2140,7 +2160,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bergamot_oil', 'comp_linalyl_propionate', 'contiene_composto', '{}'),
 ('ahn_bergamot_peel_oil', 'comp_neryl_propionate', 'contiene_composto', '{}'),
 ('ahn_berry', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
-('ahn_berry', 'comp_terpinyl_acetate', 'contiene_composto', '{}');
+('ahn_berry', 'comp_terpinyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_berry', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
@@ -2242,7 +2263,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bilberry', 'comp_3_penten_2_one', 'contiene_composto', '{}'),
 ('ahn_bilberry', 'comp_methyl_isovalerate', 'contiene_composto', '{}'),
 ('ahn_bilberry', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
-('ahn_bilberry', 'comp_verbenol', 'contiene_composto', '{}');
+('ahn_bilberry', 'comp_verbenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bilberry', 'comp_g_dodecalactone', 'contiene_composto', '{}'),
@@ -2344,7 +2366,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bitter_orange_juice', 'comp_acetal', 'contiene_composto', '{}'),
 ('ahn_bitter_orange_leaf', 'comp_isobutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_bitter_orange_oil', 'comp_acetic_acid', 'contiene_composto', '{}'),
-('ahn_bitter_orange_oil', 'comp_nonyl_alcohol', 'contiene_composto', '{}');
+('ahn_bitter_orange_oil', 'comp_nonyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bitter_orange_oil', 'comp_nonyl_octanoate', 'contiene_composto', '{}'),
@@ -2446,7 +2469,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_chokeberry', 'comp_vanillin', 'contiene_composto', '{}'),
 ('ahn_black_chokeberry', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
 ('ahn_black_chokeberry', 'comp_furfural', 'contiene_composto', '{}'),
-('ahn_black_chokeberry', 'comp_alpha_terpineol', 'contiene_composto', '{}');
+('ahn_black_chokeberry', 'comp_alpha_terpineol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_chokeberry', 'comp_1_octanol', 'contiene_composto', '{}'),
@@ -2548,7 +2572,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_chokecherry', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
 ('ahn_black_chokecherry', 'comp_myrcene', 'contiene_composto', '{}'),
 ('ahn_black_chokecherry', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
-('ahn_black_chokecherry', 'comp_isobutyl_alcohol', 'contiene_composto', '{}');
+('ahn_black_chokecherry', 'comp_isobutyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_chokecherry', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}'),
@@ -2650,7 +2675,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_currant_bud', 'comp_pulegone', 'contiene_composto', '{}'),
 ('ahn_black_currant_bud', 'comp_2_10__pinen_3_ol', 'contiene_composto', '{}'),
 ('ahn_black_currant_bud', 'comp_4_methoxy_2_methyl_2_butanethiol', 'contiene_composto', '{}'),
-('ahn_black_currant_bud', 'comp_3_5_5_trimethyl_1_hexanol', 'contiene_composto', '{}');
+('ahn_black_currant_bud', 'comp_3_5_5_trimethyl_1_hexanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_currant_bud', 'comp_thujan_4_ol', 'contiene_composto', '{}'),
@@ -2752,7 +2778,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_seabream', 'comp_vanillin', 'contiene_composto', '{}'),
 ('ahn_black_seabream', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
 ('ahn_black_seabream', 'comp_vanillin__natural', 'contiene_composto', '{}'),
-('ahn_black_seabream', 'comp_3_octen_2_one', 'contiene_composto', '{}');
+('ahn_black_seabream', 'comp_3_octen_2_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_seabream', 'comp_3_octanone', 'contiene_composto', '{}'),
@@ -2854,7 +2881,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_tea', 'comp_ethyl_acetate', 'contiene_composto', '{}'),
 ('ahn_black_tea', 'comp_3_ethylpyridine', 'contiene_composto', '{}'),
 ('ahn_black_tea', 'comp_trans_2_hexenoic_acid', 'contiene_composto', '{}'),
-('ahn_black_tea', 'comp_hexyl_acetate', 'contiene_composto', '{}');
+('ahn_black_tea', 'comp_hexyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_tea', 'comp_benzyl_alcohol', 'contiene_composto', '{}'),
@@ -2956,7 +2984,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_tea', 'comp_benzyl_formate', 'contiene_composto', '{}'),
 ('ahn_black_tea', 'comp_butyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_black_tea', 'comp_1_octanol', 'contiene_composto', '{}'),
-('ahn_black_tea', 'comp_2_methoxy_4_vinylphenol', 'contiene_composto', '{}');
+('ahn_black_tea', 'comp_2_methoxy_4_vinylphenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_tea', 'comp_2_pentenal', 'contiene_composto', '{}'),
@@ -3058,7 +3087,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_tea', 'comp_citronellic_acid', 'contiene_composto', '{}'),
 ('ahn_black_tea', 'comp_1_methyl_1_cyclopenten_3_one', 'contiene_composto', '{}'),
 ('ahn_black_tea', 'comp_4_hydroxy_2_3_dimethyl_2_4_nonadienoic_acid_gamma_lactone', 'contiene_composto', '{}'),
-('ahn_black_tea', 'comp_nonyl_alcohol', 'contiene_composto', '{}');
+('ahn_black_tea', 'comp_nonyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_black_tea', 'comp_phenylacetic_acid', 'contiene_composto', '{}'),
@@ -3160,7 +3190,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_blackberry', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}'),
 ('ahn_blackberry', 'comp_a_phellandrene', 'contiene_composto', '{}'),
 ('ahn_blackberry', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
-('ahn_blackberry', 'comp_hexyl_alcohol', 'contiene_composto', '{}');
+('ahn_blackberry', 'comp_hexyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_blackberry', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
@@ -3262,7 +3293,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_blue_cheese', 'comp_trans__trans_2_4_octadienal', 'contiene_composto', '{}'),
 ('ahn_blue_cheese', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_blue_cheese', 'comp_ethyl_laurate', 'contiene_composto', '{}'),
-('ahn_blue_cheese', 'comp_decanal', 'contiene_composto', '{}');
+('ahn_blue_cheese', 'comp_decanal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_blue_cheese', 'comp_acetic_acid', 'contiene_composto', '{}'),
@@ -3364,7 +3396,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_blue_cheese', 'comp_isoamyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_blue_cheese', 'comp_isoamyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_blue_cheese', 'comp_n_nonanal', 'contiene_composto', '{}'),
-('ahn_blue_cheese', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_blue_cheese', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_blueberry', 'comp_d_undecalactone', 'contiene_composto', '{}'),
@@ -3466,7 +3499,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bog_blueberry', 'comp_2_hexenal', 'contiene_composto', '{}'),
 ('ahn_bog_blueberry', 'comp_g_hexalactone', 'contiene_composto', '{}'),
 ('ahn_bog_blueberry', 'comp_phosphoric_acid', 'contiene_composto', '{}'),
-('ahn_bog_blueberry', 'comp_phenol', 'contiene_composto', '{}');
+('ahn_bog_blueberry', 'comp_phenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_bog_blueberry', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
@@ -3568,7 +3602,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_beef', 'comp_methyl_propionate', 'contiene_composto', '{}'),
 ('ahn_boiled_beef', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
 ('ahn_boiled_beef', 'comp_3_acetyl_2_5_dimethylthiophene', 'contiene_composto', '{}'),
-('ahn_boiled_beef', 'comp_methyl_sulfide', 'contiene_composto', '{}');
+('ahn_boiled_beef', 'comp_methyl_sulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_beef', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
@@ -3670,7 +3705,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_beef', 'comp_hydrogen_sulfide', 'contiene_composto', '{}'),
 ('ahn_boiled_beef', 'comp_benzenethiol', 'contiene_composto', '{}'),
 ('ahn_boiled_beef', 'comp_l_arginine', 'contiene_composto', '{}'),
-('ahn_boiled_beef', 'comp_6_7_dihydro_2_3_dimethyl_5h_cyclopentapyrazine', 'contiene_composto', '{}');
+('ahn_boiled_beef', 'comp_6_7_dihydro_2_3_dimethyl_5h_cyclopentapyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_beef', 'comp_isopropyl_alcohol', 'contiene_composto', '{}'),
@@ -3772,7 +3808,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_chicken', 'comp_1_hexadecanol', 'contiene_composto', '{}'),
 ('ahn_boiled_chicken', 'comp_propionic_acid', 'contiene_composto', '{}'),
 ('ahn_boiled_chicken', 'comp_styrene', 'contiene_composto', '{}'),
-('ahn_boiled_chicken', 'comp_methyl_disulfide', 'contiene_composto', '{}');
+('ahn_boiled_chicken', 'comp_methyl_disulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_chicken', 'comp_4___2_6_6__trimethyl_cyclohex_1_enyl__but_2_en_4_one', 'contiene_composto', '{}'),
@@ -3874,7 +3911,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_meat', 'comp_2_3_5_trimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_boiled_meat', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_boiled_meat', 'comp_furfuryl_alcohol', 'contiene_composto', '{}'),
-('ahn_boiled_meat', 'comp_g_dodecalactone', 'contiene_composto', '{}');
+('ahn_boiled_meat', 'comp_g_dodecalactone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_meat', 'comp_l_arginine', 'contiene_composto', '{}'),
@@ -3976,7 +4014,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_mutton', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_boiled_mutton', 'comp_2_4_5_trimethyl_thiazole', 'contiene_composto', '{}'),
 ('ahn_boiled_mutton', 'comp_n_nonanal', 'contiene_composto', '{}'),
-('ahn_boiled_mutton', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_boiled_mutton', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_mutton', 'comp_2_nonanone', 'contiene_composto', '{}'),
@@ -4078,7 +4117,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_pork', 'comp_methyl_ethyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_boiled_pork', 'comp_phenol', 'contiene_composto', '{}'),
 ('ahn_boiled_pork', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
-('ahn_boiled_pork', 'comp_2_ethyl_3_methylpyrazine', 'contiene_composto', '{}');
+('ahn_boiled_pork', 'comp_2_ethyl_3_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_boiled_pork', 'comp_octanoic_acid', 'contiene_composto', '{}'),
@@ -4180,7 +4220,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_botrytized_wine', 'comp_l_malic_acid', 'contiene_composto', '{}'),
 ('ahn_botrytized_wine', 'comp_methyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_botrytized_wine', 'comp_isoamyl_isovalerate', 'contiene_composto', '{}'),
-('ahn_botrytized_wine', 'comp_linalyl_acetate', 'contiene_composto', '{}');
+('ahn_botrytized_wine', 'comp_linalyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_botrytized_wine', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
@@ -4282,7 +4323,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_brandy', 'comp_4_hydroxy_3_5_dimethoxybenzaldehyde', 'contiene_composto', '{}'),
 ('ahn_brassica', 'comp_allyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_brassica', 'comp_dimethyl_trisulfide', 'contiene_composto', '{}'),
-('ahn_brazil_nut', 'comp_2_4_nonadienal', 'contiene_composto', '{}');
+('ahn_brazil_nut', 'comp_2_4_nonadienal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_brazil_nut', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
@@ -4384,7 +4426,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_brewed_tea', 'comp_benzyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_brewed_tea', 'comp_hexyl_formate', 'contiene_composto', '{}'),
 ('ahn_brewed_tea', 'comp_trans__trans_2_4_hexadienal', 'contiene_composto', '{}'),
-('ahn_brewed_tea', 'comp_3_penten_2_one', 'contiene_composto', '{}');
+('ahn_brewed_tea', 'comp_3_penten_2_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_brewed_tea', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
@@ -4486,7 +4529,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_brewed_tea', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
 ('ahn_brewed_tea', 'comp__e__2_hexenyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_brewed_tea', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
-('ahn_brewed_tea', 'comp_heptyl_alcohol', 'contiene_composto', '{}');
+('ahn_brewed_tea', 'comp_heptyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_brewed_tea', 'comp__e_e__3_5_octadien_2_one', 'contiene_composto', '{}'),
@@ -4588,7 +4632,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_brown_rice', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_brown_rice', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_brown_rice', 'comp_2_nonenal', 'contiene_composto', '{}'),
-('ahn_brown_rice', 'comp_2_3_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_brown_rice', 'comp_2_3_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_brown_rice', 'comp_2_heptanone', 'contiene_composto', '{}'),
@@ -4690,7 +4735,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_buckwheat', 'comp_2_nonanol', 'contiene_composto', '{}'),
 ('ahn_buckwheat', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
 ('ahn_buckwheat', 'comp_methyl_myristate', 'contiene_composto', '{}'),
-('ahn_buckwheat', 'comp_isophorone', 'contiene_composto', '{}');
+('ahn_buckwheat', 'comp_isophorone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_buckwheat', 'comp_thiazole', 'contiene_composto', '{}'),
@@ -4792,7 +4838,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_butter', 'comp_butter_acids', 'contiene_composto', '{}'),
 ('ahn_butter', 'comp_maltol', 'contiene_composto', '{}'),
 ('ahn_butter', 'comp_2_octanone', 'contiene_composto', '{}'),
-('ahn_butter', 'comp_d_hexalactone', 'contiene_composto', '{}');
+('ahn_butter', 'comp_d_hexalactone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_butter', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
@@ -4894,7 +4941,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_butter', 'comp_2_trans__6_trans_nonadienal', 'contiene_composto', '{}'),
 ('ahn_butter', 'comp_4_hexen_1_ol', 'contiene_composto', '{}'),
 ('ahn_butter', 'comp_phenol', 'contiene_composto', '{}'),
-('ahn_butter', 'comp_methyl_benzoate', 'contiene_composto', '{}');
+('ahn_butter', 'comp_methyl_benzoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_butter', 'comp_octanoic_acid', 'contiene_composto', '{}'),
@@ -4996,7 +5044,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cabernet_sauvignon_grape', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_cabernet_sauvignon_grape', 'comp_2_hydroxybenzoic_acid', 'contiene_composto', '{}'),
 ('ahn_cabernet_sauvignon_grape', 'comp_heptyl_butyrate', 'contiene_composto', '{}'),
-('ahn_cabernet_sauvignon_grape', 'comp_2_octanone', 'contiene_composto', '{}');
+('ahn_cabernet_sauvignon_grape', 'comp_2_octanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cabernet_sauvignon_grape', 'comp_nonyl_acetate', 'contiene_composto', '{}'),
@@ -5098,7 +5147,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cabernet_sauvignon_grape', 'comp_b_ionone', 'contiene_composto', '{}'),
 ('ahn_cabernet_sauvignon_grape', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}'),
 ('ahn_cabernet_sauvignon_grape', 'comp_n_valeraldehyde', 'contiene_composto', '{}'),
-('ahn_cabernet_sauvignon_grape', 'comp_isobutyl_hexanoate', 'contiene_composto', '{}');
+('ahn_cabernet_sauvignon_grape', 'comp_isobutyl_hexanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cabernet_sauvignon_grape', 'comp_myristic_acid', 'contiene_composto', '{}'),
@@ -5200,7 +5250,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cabernet_sauvignon_wine', 'comp__d___l___dl___meso__tartaric_acid', 'contiene_composto', '{}'),
 ('ahn_cabernet_sauvignon_wine', 'comp_linalyl_acetate', 'contiene_composto', '{}'),
 ('ahn_cabernet_sauvignon_wine', 'comp_ethyl_propionate', 'contiene_composto', '{}'),
-('ahn_cabernet_sauvignon_wine', 'comp_propionic_acid', 'contiene_composto', '{}');
+('ahn_cabernet_sauvignon_wine', 'comp_propionic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cabernet_sauvignon_wine', 'comp_ethyl_sorbate', 'contiene_composto', '{}'),
@@ -5302,7 +5353,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cajeput', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
 ('ahn_cajeput_oil', 'comp_eucalyptol', 'contiene_composto', '{}'),
 ('ahn_cajeput_oil', 'comp_terpinyl_acetate', 'contiene_composto', '{}'),
-('ahn_calabash_nutmeg', 'comp_p_isopropylbenzyl_alcohol', 'contiene_composto', '{}');
+('ahn_calabash_nutmeg', 'comp_p_isopropylbenzyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_calabash_nutmeg', 'comp_estragole', 'contiene_composto', '{}'),
@@ -5404,7 +5456,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_california_orange', 'comp_p_mentha_1_4_8__dien_3_one', 'contiene_composto', '{}'),
 ('ahn_california_orange', 'comp_nootkatone', 'contiene_composto', '{}'),
 ('ahn_california_orange', 'comp_neryl_acetate', 'contiene_composto', '{}'),
-('ahn_california_orange', 'comp_cis_3_hexenyl_butyrate', 'contiene_composto', '{}');
+('ahn_california_orange', 'comp_cis_3_hexenyl_butyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_california_orange', 'comp_2_trans__4_trans_decadienal', 'contiene_composto', '{}'),
@@ -5506,7 +5559,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_california_orange_peel', 'comp_isoeugenyl_methyl_ether', 'contiene_composto', '{}'),
 ('ahn_california_orange_peel', 'comp_3_carene', 'contiene_composto', '{}'),
 ('ahn_california_orange_peel', 'comp_trimethylamine', 'contiene_composto', '{}'),
-('ahn_california_orange_peel', 'comp_isoamyl_hexanoate', 'contiene_composto', '{}');
+('ahn_california_orange_peel', 'comp_isoamyl_hexanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_california_orange_peel', 'comp_4_carvomenthenol', 'contiene_composto', '{}'),
@@ -5608,7 +5662,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_camembert_cheese', 'comp_butyl_isobutyrate', 'contiene_composto', '{}'),
 ('ahn_camembert_cheese', 'comp_lactic_acid', 'contiene_composto', '{}'),
 ('ahn_camembert_cheese', 'comp_2_pentanol', 'contiene_composto', '{}'),
-('ahn_camembert_cheese', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_camembert_cheese', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_camembert_cheese', 'comp_n_octanal', 'contiene_composto', '{}'),
@@ -5710,7 +5765,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_camphor', 'comp_carvacrol', 'contiene_composto', '{}'),
 ('ahn_camphor', 'comp_acetaldehyde', 'contiene_composto', '{}'),
 ('ahn_camphor', 'comp_p_menth_3_en_1_ol', 'contiene_composto', '{}'),
-('ahn_camphor', 'comp_4_ethylguaiacol', 'contiene_composto', '{}');
+('ahn_camphor', 'comp_4_ethylguaiacol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_camphor', 'comp_safrole', 'contiene_composto', '{}'),
@@ -5812,7 +5868,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cantaloupe', 'comp_decyl_acetate', 'contiene_composto', '{}'),
 ('ahn_cantaloupe', 'comp_methyl_isobutyrate', 'contiene_composto', '{}'),
 ('ahn_cantaloupe', 'comp_methyl_isovalerate', 'contiene_composto', '{}'),
-('ahn_cantaloupe', 'comp_methyl_thiobutyrate', 'contiene_composto', '{}');
+('ahn_cantaloupe', 'comp_methyl_thiobutyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cantaloupe', 'comp_methyl_acetate', 'contiene_composto', '{}'),
@@ -5914,7 +5971,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cape_gooseberry', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
 ('ahn_cape_gooseberry', 'comp_methyl_3_methylthiopropionate', 'contiene_composto', '{}'),
 ('ahn_cape_gooseberry', 'comp_myrcene', 'contiene_composto', '{}'),
-('ahn_cape_gooseberry', 'comp_heptyl_alcohol', 'contiene_composto', '{}');
+('ahn_cape_gooseberry', 'comp_heptyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cape_gooseberry', 'comp_methyl_laurate', 'contiene_composto', '{}'),
@@ -6016,7 +6074,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_caraway', 'comp_b_caryophyllene', 'contiene_composto', '{}'),
 ('ahn_caraway', 'comp_p_mentha_1_8_dien_7_ol', 'contiene_composto', '{}'),
 ('ahn_caraway_seed', 'comp_carveol', 'contiene_composto', '{}'),
-('ahn_caraway_seed', 'comp_limonene__d__l___and_dl__', 'contiene_composto', '{}');
+('ahn_caraway_seed', 'comp_limonene__d__l___and_dl__', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_caraway_seed', 'comp_dihydrocarveol', 'contiene_composto', '{}'),
@@ -6118,7 +6177,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_carrot', 'comp_lauric_aldehyde', 'contiene_composto', '{}'),
 ('ahn_carrot', 'comp_2_nonenal', 'contiene_composto', '{}'),
 ('ahn_carrot', 'comp_a_phellandrene', 'contiene_composto', '{}'),
-('ahn_carrot', 'comp_bisabolene', 'contiene_composto', '{}');
+('ahn_carrot', 'comp_bisabolene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_carrot', 'comp_isobutyraldehyde', 'contiene_composto', '{}'),
@@ -6220,7 +6280,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_catfish', 'comp_2_methyl_2_pentenal', 'contiene_composto', '{}'),
 ('ahn_catfish', 'comp_valeric_acid', 'contiene_composto', '{}'),
 ('ahn_catfish', 'comp_trans__trans_2_4_hexadienal', 'contiene_composto', '{}'),
-('ahn_catfish', 'comp_1_octen_3_ol', 'contiene_composto', '{}');
+('ahn_catfish', 'comp_1_octen_3_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_catfish', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
@@ -6322,7 +6383,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_caviar', 'comp_2_octenal', 'contiene_composto', '{}'),
 ('ahn_caviar', 'comp_2_nonanone', 'contiene_composto', '{}'),
 ('ahn_cayenne', 'comp_terpinyl_acetate', 'contiene_composto', '{}'),
-('ahn_cayenne', 'comp_methyl_hexanoate', 'contiene_composto', '{}');
+('ahn_cayenne', 'comp_methyl_hexanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cayenne', 'comp_limonene__d__l___and_dl__', 'contiene_composto', '{}'),
@@ -6424,7 +6486,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_celery', 'comp_n_nonanal', 'contiene_composto', '{}'),
 ('ahn_celery_oil', 'comp_3_n_butylphthalide', 'contiene_composto', '{}'),
 ('ahn_celery_root', 'comp_pyruvaldehyde', 'contiene_composto', '{}'),
-('ahn_celery_seed', 'comp_menthone', 'contiene_composto', '{}');
+('ahn_celery_seed', 'comp_menthone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_celery_seed', 'comp_carvone', 'contiene_composto', '{}'),
@@ -6526,7 +6589,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ceylon_tea', 'comp_hexanal', 'contiene_composto', '{}'),
 ('ahn_ceylon_tea', 'comp_geranyl_acetate', 'contiene_composto', '{}'),
 ('ahn_ceylon_tea', 'comp_a_phellandrene', 'contiene_composto', '{}'),
-('ahn_ceylon_tea', 'comp_6_10_dimethyl_5_9_undecadien_2_one', 'contiene_composto', '{}');
+('ahn_ceylon_tea', 'comp_6_10_dimethyl_5_9_undecadien_2_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ceylon_tea', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
@@ -6628,7 +6692,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ceylon_tea_cinnamon_leaf', 'comp_a_phellandrene', 'contiene_composto', '{}'),
 ('ahn_ceylon_tea_citronella_oil', 'comp_n_butyric_acid', 'contiene_composto', '{}'),
 ('ahn_ceylon_tea_citronella_oil', 'comp_citronellal', 'contiene_composto', '{}'),
-('ahn_ceylon_tea_oil', 'comp_cinnamaldehyde', 'contiene_composto', '{}');
+('ahn_ceylon_tea_oil', 'comp_cinnamaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_chamaecyparis_formosensis_oil', 'comp_2_formyl_6_6_dimethyl_bicyclo__3_1_1__hept_2_ene', 'contiene_composto', '{}'),
@@ -6730,7 +6795,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_champagne_wine', 'comp_propyl_acetate', 'contiene_composto', '{}'),
 ('ahn_champagne_wine', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
 ('ahn_champagne_wine', 'comp_propionaldehyde', 'contiene_composto', '{}'),
-('ahn_champagne_wine', 'comp_phenylacetic_acid', 'contiene_composto', '{}');
+('ahn_champagne_wine', 'comp_phenylacetic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_champagne_wine', 'comp_n_hexyl_2_butenoate', 'contiene_composto', '{}'),
@@ -6832,7 +6898,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cheddar_cheese', 'comp_lactic_acid', 'contiene_composto', '{}'),
 ('ahn_cheddar_cheese', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_cheddar_cheese', 'comp_n_octanal', 'contiene_composto', '{}'),
-('ahn_cheddar_cheese', 'comp_hexanoic_acid', 'contiene_composto', '{}');
+('ahn_cheddar_cheese', 'comp_hexanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cheddar_cheese', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
@@ -6934,7 +7001,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cheddar_cheese', 'comp_n_nonanal', 'contiene_composto', '{}'),
 ('ahn_cheddar_cheese', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_cheese', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}'),
-('ahn_cheese', 'comp_2_methyl_3_butenal', 'contiene_composto', '{}');
+('ahn_cheese', 'comp_2_methyl_3_butenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cheese', 'comp_lauric_acid', 'contiene_composto', '{}'),
@@ -7036,7 +7104,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cheese', 'comp_acetoin', 'contiene_composto', '{}'),
 ('ahn_cheese', 'comp_isopropyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_cheese', 'comp_d_decalactone', 'contiene_composto', '{}'),
-('ahn_cheese', 'comp_ethyl_propionate', 'contiene_composto', '{}');
+('ahn_cheese', 'comp_ethyl_propionate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cheese', 'comp_ethyl_2_methylbutyrate', 'contiene_composto', '{}'),
@@ -7138,7 +7207,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cherry', 'comp_ethyl_cinnamate', 'contiene_composto', '{}'),
 ('ahn_cherry', 'comp_heptyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_cherry', 'comp_isobutyraldehyde', 'contiene_composto', '{}'),
-('ahn_cherry', 'comp_hexyl_alcohol', 'contiene_composto', '{}');
+('ahn_cherry', 'comp_hexyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cherry', 'comp_4__methylacetophenone', 'contiene_composto', '{}'),
@@ -7240,7 +7310,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_chicken', 'comp_octanoic_acid', 'contiene_composto', '{}'),
 ('ahn_chicken', 'comp_2_3_diethyl_5_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_chicken', 'comp_delta_tetradecalactone', 'contiene_composto', '{}'),
-('ahn_chicken', 'comp_hydroxynonanoic_acid__d_lactone', 'contiene_composto', '{}');
+('ahn_chicken', 'comp_hydroxynonanoic_acid__d_lactone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_chicken', 'comp_g_nonalactone', 'contiene_composto', '{}'),
@@ -7342,7 +7413,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_chinese_quince', 'comp_5_methylfurfural', 'contiene_composto', '{}'),
 ('ahn_chinese_quince', 'comp_theaspirane', 'contiene_composto', '{}'),
 ('ahn_chinese_quince', 'comp_2_pentadecanone', 'contiene_composto', '{}'),
-('ahn_chinese_quince', 'comp_______heptan_3_yl_butyrate', 'contiene_composto', '{}');
+('ahn_chinese_quince', 'comp_______heptan_3_yl_butyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_chinese_quince', 'comp_ethyl_3_hydroxyhexanoate', 'contiene_composto', '{}'),
@@ -7444,7 +7516,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_chive', 'comp_propyl_disulfide', 'contiene_composto', '{}'),
 ('ahn_chive', 'comp_hydrogen_sulfide', 'contiene_composto', '{}'),
 ('ahn_chive', 'comp_2_methyl_2_pentenal', 'contiene_composto', '{}'),
-('ahn_chive', 'comp_diallyl_polysulfides', 'contiene_composto', '{}');
+('ahn_chive', 'comp_diallyl_polysulfides', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_chive', 'comp_propyl_mercaptan', 'contiene_composto', '{}'),
@@ -7546,7 +7619,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cider', 'comp_phenethyl_isovalerate', 'contiene_composto', '{}'),
 ('ahn_cider', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_cider', 'comp_3_methyl_2_butanol', 'contiene_composto', '{}'),
-('ahn_cider', 'comp_4_ethylguaiacol', 'contiene_composto', '{}');
+('ahn_cider', 'comp_4_ethylguaiacol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cider', 'comp_tolualdehydes__mixed_o___m___p_', 'contiene_composto', '{}'),
@@ -7648,7 +7722,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cinnamon', 'comp_coumarin__prohibited_', 'contiene_composto', '{}'),
 ('ahn_cinnamon', 'comp_5_methylfurfural', 'contiene_composto', '{}'),
 ('ahn_cinnamon', 'comp_phenol', 'contiene_composto', '{}'),
-('ahn_cinnamon', 'comp_estragole', 'contiene_composto', '{}');
+('ahn_cinnamon', 'comp_estragole', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cinnamon', 'comp_linalool', 'contiene_composto', '{}'),
@@ -7750,7 +7825,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_citrus', 'comp_hydrogen_sulfide', 'contiene_composto', '{}'),
 ('ahn_citrus', 'comp_carvyl_acetate', 'contiene_composto', '{}'),
 ('ahn_citrus', 'comp_farnesol', 'contiene_composto', '{}'),
-('ahn_citrus', 'comp_geraniol', 'contiene_composto', '{}');
+('ahn_citrus', 'comp_geraniol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_citrus', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
@@ -7852,7 +7928,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_citrus_peel', 'comp_geraniol', 'contiene_composto', '{}'),
 ('ahn_citrus_peel', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_citrus_peel', 'comp_n_nonanal', 'contiene_composto', '{}'),
-('ahn_citrus_peel_oil', 'comp_3_hexen_1_ol', 'contiene_composto', '{}');
+('ahn_citrus_peel_oil', 'comp_3_hexen_1_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_citrus_peel_oil', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
@@ -7954,7 +8031,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_clam', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
 ('ahn_clam', 'comp_menthone', 'contiene_composto', '{}'),
 ('ahn_clam', 'comp_3_ethylpyridine', 'contiene_composto', '{}'),
-('ahn_clam', 'comp_1_pyrroline', 'contiene_composto', '{}');
+('ahn_clam', 'comp_1_pyrroline', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_clam', 'comp_1_methyl_2_acetylpyrrole', 'contiene_composto', '{}'),
@@ -8056,7 +8134,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cloudberry', 'comp_2_heptanone', 'contiene_composto', '{}'),
 ('ahn_cloudberry', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_cloudberry', 'comp_palmitic_acid', 'contiene_composto', '{}'),
-('ahn_cloudberry', 'comp_2_hexenal', 'contiene_composto', '{}');
+('ahn_cloudberry', 'comp_2_hexenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cloudberry', 'comp_g_hexalactone', 'contiene_composto', '{}'),
@@ -8158,7 +8237,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cocoa', 'comp_methylsulfinylmethane', 'contiene_composto', '{}'),
 ('ahn_cocoa', 'comp_phenethylamine', 'contiene_composto', '{}'),
 ('ahn_cocoa', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
-('ahn_cocoa', 'comp_5_methyl_2_phenyl_2_hexenal', 'contiene_composto', '{}');
+('ahn_cocoa', 'comp_5_methyl_2_phenyl_2_hexenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cocoa', 'comp_maltol', 'contiene_composto', '{}'),
@@ -8260,7 +8340,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cocoa', 'comp_propyl_acetate', 'contiene_composto', '{}'),
 ('ahn_cocoa', 'comp_ethyl_benzoate', 'contiene_composto', '{}'),
 ('ahn_cocoa', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
-('ahn_cocoa', 'comp_propionaldehyde', 'contiene_composto', '{}');
+('ahn_cocoa', 'comp_propionaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cocoa', 'comp_methyl_furoate', 'contiene_composto', '{}'),
@@ -8362,7 +8443,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_coconut', 'comp_propionic_acid', 'contiene_composto', '{}'),
 ('ahn_coconut', 'comp_palmitic_acid', 'contiene_composto', '{}'),
 ('ahn_coconut', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
-('ahn_coconut', 'comp_3_5_diethyl_2_methylpyrazine', 'contiene_composto', '{}');
+('ahn_coconut', 'comp_3_5_diethyl_2_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_coconut', 'comp_nonanoic_acid', 'contiene_composto', '{}'),
@@ -8464,7 +8546,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cod', 'comp_octanoic_acid', 'contiene_composto', '{}'),
 ('ahn_cod', 'comp_s_methyl_thioacetate', 'contiene_composto', '{}'),
 ('ahn_cod', 'comp_1_octen_3_one', 'contiene_composto', '{}'),
-('ahn_cod', 'comp_indole', 'contiene_composto', '{}');
+('ahn_cod', 'comp_indole', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cod', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
@@ -8566,7 +8649,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_coffee', 'comp_furfuryl_thioacetate', 'contiene_composto', '{}'),
 ('ahn_coffee', 'comp_methyl_ethyl_trisulfide', 'contiene_composto', '{}'),
 ('ahn_coffee', 'comp_3_hydroxy_2_pentanone', 'contiene_composto', '{}'),
-('ahn_coffee', 'comp_3_heptanone', 'contiene_composto', '{}');
+('ahn_coffee', 'comp_3_heptanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_coffee', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
@@ -8668,7 +8752,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_coffee', 'comp_3__2_furyl_acrolein', 'contiene_composto', '{}'),
 ('ahn_coffee', 'comp_2_ethylfuran', 'contiene_composto', '{}'),
 ('ahn_coffee', 'comp_furfuryl_mercaptan', 'contiene_composto', '{}'),
-('ahn_coffee', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}');
+('ahn_coffee', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_coffee', 'comp_2_2___thiodimethylene__difuran', 'contiene_composto', '{}'),
@@ -8770,7 +8855,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cognac', 'comp_2_methoxy_4_propylphenol', 'contiene_composto', '{}'),
 ('ahn_cognac', 'comp_1_1_dimethoxyethane', 'contiene_composto', '{}'),
 ('ahn_cognac', 'comp_methyl_acetate', 'contiene_composto', '{}'),
-('ahn_cognac', 'comp_g_nonalactone', 'contiene_composto', '{}');
+('ahn_cognac', 'comp_g_nonalactone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cognac', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}'),
@@ -8872,7 +8958,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cognac', 'comp_2_methylhexanoic_acid', 'contiene_composto', '{}'),
 ('ahn_cognac', 'comp_2_heptenal', 'contiene_composto', '{}'),
 ('ahn_cognac', 'comp_ethyl_2_methylbutyrate', 'contiene_composto', '{}'),
-('ahn_cognac', 'comp_palmitic_acid', 'contiene_composto', '{}');
+('ahn_cognac', 'comp_palmitic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cognac', 'comp_ethyl_myristate', 'contiene_composto', '{}'),
@@ -8974,7 +9061,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_comte_cheese', 'comp_decanal', 'contiene_composto', '{}'),
 ('ahn_comte_cheese', 'comp_acetic_acid', 'contiene_composto', '{}'),
 ('ahn_comte_cheese', 'comp_myrcene', 'contiene_composto', '{}'),
-('ahn_comte_cheese', 'comp_2_nonanone', 'contiene_composto', '{}');
+('ahn_comte_cheese', 'comp_2_nonanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_comte_cheese', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
@@ -9076,7 +9164,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_concord_grape', 'comp_methyl_linoleate__48___methyl_linolenate__52___mix_ture', 'contiene_composto', '{}'),
 ('ahn_concord_grape', 'comp_isopropyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_concord_grape', 'comp_phenethyl_acetate', 'contiene_composto', '{}'),
-('ahn_concord_grape', 'comp_acetone', 'contiene_composto', '{}');
+('ahn_concord_grape', 'comp_acetone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_concord_grape', 'comp_isoamyl_acetate', 'contiene_composto', '{}'),
@@ -9178,7 +9267,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_concord_grape', 'comp_hexyl_isobutyrate', 'contiene_composto', '{}'),
 ('ahn_concord_grape', 'comp_isovaleric_acid', 'contiene_composto', '{}'),
 ('ahn_concord_grape', 'comp_2_heptanol', 'contiene_composto', '{}'),
-('ahn_concord_grape', 'comp_isoamyl_hexanoate', 'contiene_composto', '{}');
+('ahn_concord_grape', 'comp_isoamyl_hexanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_concord_grape', 'comp_4_hydroxy_4_methyl_5_hexenoic_acid_gamma_lactone', 'contiene_composto', '{}'),
@@ -9280,7 +9370,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cooked_apple', 'comp_cis_3_hexen_1_yl_acetate', 'contiene_composto', '{}'),
 ('ahn_cooked_apple', 'comp_isoamyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_cooked_apple', 'comp_lauric_acid', 'contiene_composto', '{}'),
-('ahn_cooked_apple', 'comp_1_decanol', 'contiene_composto', '{}');
+('ahn_cooked_apple', 'comp_1_decanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cooked_apple', 'comp_isoborneol', 'contiene_composto', '{}'),
@@ -9382,7 +9473,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cooked_apple', 'comp_butyl_laurate', 'contiene_composto', '{}'),
 ('ahn_cooked_apple', 'comp_hexyl_isobutyrate', 'contiene_composto', '{}'),
 ('ahn_cooked_apple', 'comp_isovaleric_acid', 'contiene_composto', '{}'),
-('ahn_cooked_apple', 'comp_methyl_2_methylbutyrate', 'contiene_composto', '{}');
+('ahn_cooked_apple', 'comp_methyl_2_methylbutyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cooked_apple', 'comp_2_heptanol', 'contiene_composto', '{}'),
@@ -9484,7 +9576,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_corn', 'comp_l_histidine', 'contiene_composto', '{}'),
 ('ahn_corn', 'comp_l_phenylalanine', 'contiene_composto', '{}'),
 ('ahn_corn', 'comp_2_3_5_trimethylpyrazine', 'contiene_composto', '{}'),
-('ahn_corn', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}');
+('ahn_corn', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_corn', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
@@ -9586,7 +9679,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_corn_mint_oil', 'comp_geraniol', 'contiene_composto', '{}'),
 ('ahn_corn_mint_oil', 'comp_cis_3_hexen_1_yl_acetate', 'contiene_composto', '{}'),
 ('ahn_corn_mint_oil', 'comp_d_piperitone', 'contiene_composto', '{}'),
-('ahn_corn_oil', 'comp_3_hexen_1_ol', 'contiene_composto', '{}');
+('ahn_corn_oil', 'comp_3_hexen_1_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_corn_oil', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}'),
@@ -9688,7 +9782,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cottage_cheese', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_cottage_cheese', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_cottage_cheese', 'comp_2_methylpyrazine', 'contiene_composto', '{}'),
-('ahn_cottage_cheese', 'comp_phenethyl_acetate', 'contiene_composto', '{}');
+('ahn_cottage_cheese', 'comp_phenethyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cottage_cheese', 'comp_pyrazine', 'contiene_composto', '{}'),
@@ -9790,7 +9885,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cottage_cheese', 'comp_4_methyl_2_oxopentanoic_acid', 'contiene_composto', '{}'),
 ('ahn_cottage_cheese', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_cottage_cheese', 'comp_methyl_laurate', 'contiene_composto', '{}'),
-('ahn_cottage_cheese', 'comp_isobutyl_alcohol', 'contiene_composto', '{}');
+('ahn_cottage_cheese', 'comp_isobutyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cottage_cheese', 'comp_n_valeraldehyde', 'contiene_composto', '{}'),
@@ -9892,7 +9988,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cranberry', 'comp_terpinyl_acetate', 'contiene_composto', '{}'),
 ('ahn_cranberry', 'comp_lauric_acid', 'contiene_composto', '{}'),
 ('ahn_cranberry', 'comp_methyl_salicylate', 'contiene_composto', '{}'),
-('ahn_cranberry', 'comp_vanillin', 'contiene_composto', '{}');
+('ahn_cranberry', 'comp_vanillin', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cranberry', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
@@ -9994,7 +10091,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cranberry', 'comp_2_octenal', 'contiene_composto', '{}'),
 ('ahn_crayfish', 'comp_thiazole', 'contiene_composto', '{}'),
 ('ahn_crayfish', 'comp_pyrrole', 'contiene_composto', '{}'),
-('ahn_crayfish', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}');
+('ahn_crayfish', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_crayfish', 'comp_2_heptanone', 'contiene_composto', '{}'),
@@ -10096,7 +10194,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cream_cheese', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_cream_cheese', 'comp_n_octanal', 'contiene_composto', '{}'),
 ('ahn_cream_cheese', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
-('ahn_cream_cheese', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}');
+('ahn_cream_cheese', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cream_cheese', 'comp_butyl_isovalerate', 'contiene_composto', '{}'),
@@ -10198,7 +10297,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_crisp_bread', 'comp_3_methyl_2_oxobutanoic_acid', 'contiene_composto', '{}'),
 ('ahn_crisp_bread', 'comp_acetylpyrazine', 'contiene_composto', '{}'),
 ('ahn_crisp_bread', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
-('ahn_crisp_bread', 'comp_propionaldehyde', 'contiene_composto', '{}');
+('ahn_crisp_bread', 'comp_propionaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_crisp_bread', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
@@ -10300,7 +10400,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_crowberry', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_crowberry', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_crowberry', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}'),
-('ahn_crowberry', 'comp_d_l_valine', 'contiene_composto', '{}');
+('ahn_crowberry', 'comp_d_l_valine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_crowberry', 'comp_carvyl_acetate', 'contiene_composto', '{}'),
@@ -10402,7 +10503,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cucumber', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_cucumber', 'comp_myristaldehyde', 'contiene_composto', '{}'),
 ('ahn_cucumber', 'comp_myristic_acid', 'contiene_composto', '{}'),
-('ahn_cucumber', 'comp_undecanal', 'contiene_composto', '{}');
+('ahn_cucumber', 'comp_undecanal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cucumber', 'comp_trans_2_nonen_1_ol', 'contiene_composto', '{}'),
@@ -10504,7 +10606,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cured_pork', 'comp_5_methylhexanoic_acid', 'contiene_composto', '{}'),
 ('ahn_cured_pork', 'comp_3_5_diethyl_2_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_cured_pork', 'comp_nonanoic_acid', 'contiene_composto', '{}'),
-('ahn_cured_pork', 'comp_taurine', 'contiene_composto', '{}');
+('ahn_cured_pork', 'comp_taurine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cured_pork', 'comp_undecyl_alcohol', 'contiene_composto', '{}'),
@@ -10606,7 +10709,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cured_pork', 'comp_2_heptenal', 'contiene_composto', '{}'),
 ('ahn_cured_pork', 'comp_palmitic_acid', 'contiene_composto', '{}'),
 ('ahn_cured_pork', 'comp_methyl_ethyl_sulfide', 'contiene_composto', '{}'),
-('ahn_cured_pork', 'comp_phenol', 'contiene_composto', '{}');
+('ahn_cured_pork', 'comp_phenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_cured_pork', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
@@ -10708,7 +10812,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_daffodil', 'comp_benzyl_acetate', 'contiene_composto', '{}'),
 ('ahn_daffodil', 'comp_acetaldehyde', 'contiene_composto', '{}'),
 ('ahn_daffodil', 'comp_methyl_benzoate', 'contiene_composto', '{}'),
-('ahn_daffodil', 'comp_isoeugenol', 'contiene_composto', '{}');
+('ahn_daffodil', 'comp_isoeugenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_daffodil', 'comp_camphene', 'contiene_composto', '{}'),
@@ -10810,7 +10915,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_domiati_cheese', 'comp_2_methyl_3_butenal', 'contiene_composto', '{}'),
 ('ahn_domiati_cheese', 'comp_lauric_acid', 'contiene_composto', '{}'),
 ('ahn_domiati_cheese', 'comp_1_decanol', 'contiene_composto', '{}'),
-('ahn_domiati_cheese', 'comp_isoborneol', 'contiene_composto', '{}');
+('ahn_domiati_cheese', 'comp_isoborneol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_domiati_cheese', 'comp_g_hexalactone', 'contiene_composto', '{}'),
@@ -10912,7 +11018,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_domiati_cheese', 'comp_ethyl_propionate', 'contiene_composto', '{}'),
 ('ahn_domiati_cheese', 'comp_ethyl_2_methylbutyrate', 'contiene_composto', '{}'),
 ('ahn_domiati_cheese', 'comp_palmitic_acid', 'contiene_composto', '{}'),
-('ahn_domiati_cheese', 'comp_2_nonanol', 'contiene_composto', '{}');
+('ahn_domiati_cheese', 'comp_2_nonanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_domiati_cheese', 'comp_phenol', 'contiene_composto', '{}'),
@@ -11014,7 +11121,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_black_tea', 'comp_geranyl_acetate', 'contiene_composto', '{}'),
 ('ahn_dried_black_tea', 'comp_a_phellandrene', 'contiene_composto', '{}'),
 ('ahn_dried_black_tea', 'comp_6_10_dimethyl_5_9_undecadien_2_one', 'contiene_composto', '{}'),
-('ahn_dried_black_tea', 'comp_hexyl_alcohol', 'contiene_composto', '{}');
+('ahn_dried_black_tea', 'comp_hexyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_black_tea', 'comp_dihydro_b_ionone', 'contiene_composto', '{}'),
@@ -11116,7 +11224,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_fig', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
 ('ahn_dried_fig', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_dried_fig', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
-('ahn_dried_fig', 'comp_2_pentylfuran', 'contiene_composto', '{}');
+('ahn_dried_fig', 'comp_2_pentylfuran', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_fig', 'comp_2_heptanone', 'contiene_composto', '{}'),
@@ -11218,7 +11327,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_green_tea', 'comp_5_ethyl_2_methylpyridine', 'contiene_composto', '{}'),
 ('ahn_dried_green_tea', 'comp_undecanal', 'contiene_composto', '{}'),
 ('ahn_dried_green_tea', 'comp_valeric_acid', 'contiene_composto', '{}'),
-('ahn_dried_green_tea', 'comp_1_octen_3_ol', 'contiene_composto', '{}');
+('ahn_dried_green_tea', 'comp_1_octen_3_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_green_tea', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
@@ -11320,7 +11430,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_green_tea', 'comp_skatole', 'contiene_composto', '{}'),
 ('ahn_dried_green_tea', 'comp_4_hydroxy_2_3_dimethyl_2_4_nonadienoic_acid_gamma_lactone', 'contiene_composto', '{}'),
 ('ahn_dried_green_tea', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
-('ahn_dried_green_tea', 'comp_phenylacetic_acid', 'contiene_composto', '{}');
+('ahn_dried_green_tea', 'comp_phenylacetic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_green_tea', 'comp_b_ionone', 'contiene_composto', '{}'),
@@ -11422,7 +11533,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_kidney_bean', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_dried_parsley', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
 ('ahn_dried_parsley', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
-('ahn_dried_parsley', 'comp_p_menth_1_ene_9_al', 'contiene_composto', '{}');
+('ahn_dried_parsley', 'comp_p_menth_1_ene_9_al', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dried_parsley', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
@@ -11524,7 +11636,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dwarf_quince', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
 ('ahn_dwarf_quince', 'comp_hexyl_2_methylbutyrate', 'contiene_composto', '{}'),
 ('ahn_dwarf_quince', 'comp_2_nonanone', 'contiene_composto', '{}'),
-('ahn_dwarf_quince', 'comp_isoamyl_benzoate', 'contiene_composto', '{}');
+('ahn_dwarf_quince', 'comp_isoamyl_benzoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_dwarf_quince', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
@@ -11626,7 +11739,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_egg', 'comp_isopropyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_egg', 'comp_3_hexanone', 'contiene_composto', '{}'),
 ('ahn_egg', 'comp_2_ethylfuran', 'contiene_composto', '{}'),
-('ahn_egg', 'comp_1_octanol', 'contiene_composto', '{}');
+('ahn_egg', 'comp_1_octanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_egg', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
@@ -11728,7 +11842,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_elderberry', 'comp_phosphoric_acid', 'contiene_composto', '{}'),
 ('ahn_elderberry', 'comp_phenol', 'contiene_composto', '{}'),
 ('ahn_elderberry', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
-('ahn_elderberry', 'comp_p_mentha_1_8_dien_7_ol', 'contiene_composto', '{}');
+('ahn_elderberry', 'comp_p_mentha_1_8_dien_7_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_elderberry', 'comp_n_octanal', 'contiene_composto', '{}'),
@@ -11830,7 +11945,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_emmental_cheese', 'comp_2_nonanone', 'contiene_composto', '{}'),
 ('ahn_emmental_cheese', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_emmental_cheese', 'comp_4_hydroxybenzaldehyde', 'contiene_composto', '{}'),
-('ahn_emmental_cheese', 'comp_a_methylbenzyl_alcohol', 'contiene_composto', '{}');
+('ahn_emmental_cheese', 'comp_a_methylbenzyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_emmental_cheese', 'comp_2_tridecanone', 'contiene_composto', '{}'),
@@ -11932,7 +12048,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_enokidake', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}'),
 ('ahn_enokidake', 'comp_2_4_nonadienal', 'contiene_composto', '{}'),
 ('ahn_enokidake', 'comp_lauric_acid', 'contiene_composto', '{}'),
-('ahn_enokidake', 'comp_3_5_dimethyl_1_2_4_trithiolane', 'contiene_composto', '{}');
+('ahn_enokidake', 'comp_3_5_dimethyl_1_2_4_trithiolane', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_enokidake', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}'),
@@ -12034,7 +12151,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_enokidake', 'comp_1_hydroxy_2_butanone', 'contiene_composto', '{}'),
 ('ahn_enokidake', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_enokidake', 'comp_b_pinene', 'contiene_composto', '{}'),
-('ahn_enokidake', 'comp_ethyl_pyruvate', 'contiene_composto', '{}');
+('ahn_enokidake', 'comp_ethyl_pyruvate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_enokidake', 'comp_b_ionone', 'contiene_composto', '{}'),
@@ -12136,7 +12254,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_eucalyptus_globulus', 'comp_eucalyptol', 'contiene_composto', '{}'),
 ('ahn_eucalyptus_globulus', 'comp_hexanal', 'contiene_composto', '{}'),
 ('ahn_eucalyptus_globulus', 'comp_cuminaldehyde', 'contiene_composto', '{}'),
-('ahn_eucalyptus_globulus', 'comp_2_formyl_6_6_dimethyl_bicyclo__3_1_1__hept_2_ene', 'contiene_composto', '{}');
+('ahn_eucalyptus_globulus', 'comp_2_formyl_6_6_dimethyl_bicyclo__3_1_1__hept_2_ene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_eucalyptus_globulus_oil', 'comp_eucalyptol', 'contiene_composto', '{}'),
@@ -12238,7 +12357,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_european_cranberry', 'comp_undecanal', 'contiene_composto', '{}'),
 ('ahn_european_cranberry', 'comp_2_methyl_2_pentenal', 'contiene_composto', '{}'),
 ('ahn_european_cranberry', 'comp_valeric_acid', 'contiene_composto', '{}'),
-('ahn_european_cranberry', 'comp_2_undecenal', 'contiene_composto', '{}');
+('ahn_european_cranberry', 'comp_2_undecenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_european_cranberry', 'comp_3_octanol', 'contiene_composto', '{}'),
@@ -12340,7 +12460,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fatty_fish', 'comp_2_heptanone', 'contiene_composto', '{}'),
 ('ahn_fatty_fish', 'comp_indole', 'contiene_composto', '{}'),
 ('ahn_fatty_fish', 'comp_4_methylpentanoic_acid', 'contiene_composto', '{}'),
-('ahn_fatty_fish', 'comp_pyrrolidine', 'contiene_composto', '{}');
+('ahn_fatty_fish', 'comp_pyrrolidine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fatty_fish', 'comp_2_hexenal', 'contiene_composto', '{}'),
@@ -12442,7 +12563,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fennel', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
 ('ahn_fennel', 'comp_acetaldehyde', 'contiene_composto', '{}'),
 ('ahn_fennel', 'comp_3_carene', 'contiene_composto', '{}'),
-('ahn_fennel_oil', 'comp_3_carene', 'contiene_composto', '{}');
+('ahn_fennel_oil', 'comp_3_carene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fennel_oil', 'comp_fenchyl_acetate', 'contiene_composto', '{}'),
@@ -12544,7 +12666,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fermented_russian_black_tea', 'comp_myristic_acid', 'contiene_composto', '{}'),
 ('ahn_fermented_russian_black_tea', 'comp_d_octalactone', 'contiene_composto', '{}'),
 ('ahn_fermented_russian_black_tea', 'comp_4_hydroxy_4_methyl_5_hexenoic_acid_gamma_lactone', 'contiene_composto', '{}'),
-('ahn_fermented_russian_black_tea', 'comp_salicylaldehyde', 'contiene_composto', '{}');
+('ahn_fermented_russian_black_tea', 'comp_salicylaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fermented_russian_black_tea', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}'),
@@ -12646,7 +12769,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fermented_shrimp', 'comp_1_hexadecanol', 'contiene_composto', '{}'),
 ('ahn_fermented_shrimp', 'comp_taurine', 'contiene_composto', '{}'),
 ('ahn_fermented_shrimp', 'comp_______1_phenylethylmercaptan', 'contiene_composto', '{}'),
-('ahn_fermented_shrimp', 'comp_3_5_diethyl_2_methylpyrazine', 'contiene_composto', '{}');
+('ahn_fermented_shrimp', 'comp_3_5_diethyl_2_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fermented_shrimp', 'comp_nonanoic_acid', 'contiene_composto', '{}'),
@@ -12748,7 +12872,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fermented_tea', 'comp_methyl_2_pyrrolyl_ketone', 'contiene_composto', '{}'),
 ('ahn_fermented_tea', 'comp_3_octanol', 'contiene_composto', '{}'),
 ('ahn_fermented_tea', 'comp_decanal', 'contiene_composto', '{}'),
-('ahn_fermented_tea', 'comp_myrcene', 'contiene_composto', '{}');
+('ahn_fermented_tea', 'comp_myrcene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fermented_tea', 'comp_2_nonanone', 'contiene_composto', '{}'),
@@ -12850,7 +12975,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fermented_tea', 'comp_geraniol', 'contiene_composto', '{}'),
 ('ahn_fermented_tea', 'comp_pyridine', 'contiene_composto', '{}'),
 ('ahn_fermented_tea', 'comp_2_3_octanedione', 'contiene_composto', '{}'),
-('ahn_fermented_tea', 'comp_vanillin', 'contiene_composto', '{}');
+('ahn_fermented_tea', 'comp_vanillin', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fermented_tea', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
@@ -12952,7 +13078,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_feta_cheese', 'comp_trans__trans_2_4_octadienal', 'contiene_composto', '{}'),
 ('ahn_feta_cheese', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_feta_cheese', 'comp_decanal', 'contiene_composto', '{}'),
-('ahn_feta_cheese', 'comp_acetic_acid', 'contiene_composto', '{}');
+('ahn_feta_cheese', 'comp_acetic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_feta_cheese', 'comp_myrcene', 'contiene_composto', '{}'),
@@ -13054,7 +13181,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fig', 'comp_2_octanone', 'contiene_composto', '{}'),
 ('ahn_fig', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_fig', 'comp_methyl_acetate', 'contiene_composto', '{}'),
-('ahn_fig', 'comp_2_methylbutyl_acetate', 'contiene_composto', '{}');
+('ahn_fig', 'comp_2_methylbutyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fig', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
@@ -13156,7 +13284,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fish', 'comp_heptanoic_acid', 'contiene_composto', '{}'),
 ('ahn_fish', 'comp_nona_2_trans__6_cis_dienal', 'contiene_composto', '{}'),
 ('ahn_fish', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
-('ahn_fish', 'comp_propyl_alcohol', 'contiene_composto', '{}');
+('ahn_fish', 'comp_propyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fish', 'comp_methyl_mercaptan', 'contiene_composto', '{}'),
@@ -13258,7 +13387,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_frankfurter', 'comp_ethyl_acetate', 'contiene_composto', '{}'),
 ('ahn_frankfurter', 'comp_l_histidine', 'contiene_composto', '{}'),
 ('ahn_frankfurter', 'comp_valeric_acid', 'contiene_composto', '{}'),
-('ahn_frankfurter', 'comp_l_phenylalanine', 'contiene_composto', '{}');
+('ahn_frankfurter', 'comp_l_phenylalanine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_frankfurter', 'comp_2_3_5_trimethylpyrazine', 'contiene_composto', '{}'),
@@ -13360,7 +13490,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_french_bean', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_french_bean', 'comp_2_heptenal', 'contiene_composto', '{}'),
 ('ahn_french_bean', 'comp_palmitic_acid', 'contiene_composto', '{}'),
-('ahn_french_bean', 'comp_4_hexen_1_ol', 'contiene_composto', '{}');
+('ahn_french_bean', 'comp_4_hexen_1_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_french_bean', 'comp_phenol', 'contiene_composto', '{}'),
@@ -13462,7 +13593,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_french_fried_potato', 'comp_2_heptylfuran', 'contiene_composto', '{}'),
 ('ahn_french_fried_potato', 'comp_methyl_mercaptan', 'contiene_composto', '{}'),
 ('ahn_french_fried_potato', 'comp_d_ribose', 'contiene_composto', '{}'),
-('ahn_french_fried_potato', 'comp_nerol', 'contiene_composto', '{}');
+('ahn_french_fried_potato', 'comp_nerol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_french_fried_potato', 'comp_2_ethyl_3_5_6__dimethylpyrazine', 'contiene_composto', '{}'),
@@ -13564,7 +13696,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_french_peppermint', 'comp_l_menthyl_acetate', 'contiene_composto', '{}'),
 ('ahn_french_peppermint', 'comp_methylsulfinylmethane', 'contiene_composto', '{}'),
 ('ahn_french_peppermint', 'comp_p_menthan_2_ol', 'contiene_composto', '{}'),
-('ahn_french_peppermint', 'comp_5_methyl_2_phenyl_2_hexenal', 'contiene_composto', '{}');
+('ahn_french_peppermint', 'comp_5_methyl_2_phenyl_2_hexenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_french_peppermint', 'comp_guaiene', 'contiene_composto', '{}'),
@@ -13666,7 +13799,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_beef', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_fried_beef', 'comp_2_4_5_trimethyl_thiazole', 'contiene_composto', '{}'),
 ('ahn_fried_beef', 'comp_2_methyltetrahydrothiophen_3_one', 'contiene_composto', '{}'),
-('ahn_fried_beef', 'comp_methyl_salicylate', 'contiene_composto', '{}');
+('ahn_fried_beef', 'comp_methyl_salicylate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_beef', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
@@ -13768,7 +13902,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_beef', 'comp_g_valerolactone', 'contiene_composto', '{}'),
 ('ahn_fried_beef', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_fried_beef', 'comp_sulfur_dioxide', 'contiene_composto', '{}'),
-('ahn_fried_beef', 'comp_2_tridecanone', 'contiene_composto', '{}');
+('ahn_fried_beef', 'comp_2_tridecanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_beef', 'comp_3_methyl_2_buten_1_ol', 'contiene_composto', '{}'),
@@ -13870,7 +14005,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_chicken', 'comp_3_octen_2_one', 'contiene_composto', '{}'),
 ('ahn_fried_chicken', 'comp_furfuryl_alcohol', 'contiene_composto', '{}'),
 ('ahn_fried_chicken', 'comp_hydroxynonanoic_acid__d_lactone', 'contiene_composto', '{}'),
-('ahn_fried_chicken', 'comp_g_nonalactone', 'contiene_composto', '{}');
+('ahn_fried_chicken', 'comp_g_nonalactone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_chicken', 'comp_l_tyrosine', 'contiene_composto', '{}'),
@@ -13972,7 +14108,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_chicken', 'comp_2_heptanol', 'contiene_composto', '{}'),
 ('ahn_fried_chicken', 'comp_1_2_ethanedithiol', 'contiene_composto', '{}'),
 ('ahn_fried_chicken', 'comp_d_l_methionine', 'contiene_composto', '{}'),
-('ahn_fried_chicken', 'comp_n_nonanal', 'contiene_composto', '{}');
+('ahn_fried_chicken', 'comp_n_nonanal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_chicken', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}'),
@@ -14074,7 +14211,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_cured_pork', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_fried_cured_pork', 'comp_2_heptenal', 'contiene_composto', '{}'),
 ('ahn_fried_cured_pork', 'comp_palmitic_acid', 'contiene_composto', '{}'),
-('ahn_fried_cured_pork', 'comp_methyl_ethyl_sulfide', 'contiene_composto', '{}');
+('ahn_fried_cured_pork', 'comp_methyl_ethyl_sulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_cured_pork', 'comp_phenol', 'contiene_composto', '{}'),
@@ -14176,7 +14314,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_pork', 'comp_2_5_dimethylthiazole', 'contiene_composto', '{}'),
 ('ahn_fried_pork', 'comp_lauric_aldehyde', 'contiene_composto', '{}'),
 ('ahn_fried_pork', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
-('ahn_fried_pork', 'comp_propionaldehyde', 'contiene_composto', '{}');
+('ahn_fried_pork', 'comp_propionaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_fried_pork', 'comp_2_decenal', 'contiene_composto', '{}'),
@@ -14278,7 +14417,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_garlic', 'comp_methyl_propyl_disulfide', 'contiene_composto', '{}'),
 ('ahn_garlic', 'comp_2_methylpentanal', 'contiene_composto', '{}'),
 ('ahn_garlic', 'comp_allyl_methyl_trisulfide', 'contiene_composto', '{}'),
-('ahn_garlic', 'comp_2_6_dimethoxyphenol', 'contiene_composto', '{}');
+('ahn_garlic', 'comp_2_6_dimethoxyphenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_garlic_mustard', 'comp_allyl_isothiocyanate', 'contiene_composto', '{}'),
@@ -14380,7 +14520,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ginger', 'comp_vanillin', 'contiene_composto', '{}'),
 ('ahn_ginger', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
 ('ahn_ginger', 'comp_thymol', 'contiene_composto', '{}'),
-('ahn_ginger', 'comp_isopulegol', 'contiene_composto', '{}');
+('ahn_ginger', 'comp_isopulegol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ginger', 'comp_3_octanone', 'contiene_composto', '{}'),
@@ -14482,7 +14623,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_globefish', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_globefish', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
 ('ahn_globefish', 'comp_3_octanol', 'contiene_composto', '{}'),
-('ahn_globefish', 'comp__e_e__3_5_octadien_2_one', 'contiene_composto', '{}');
+('ahn_globefish', 'comp__e_e__3_5_octadien_2_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_globefish', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
@@ -14584,7 +14726,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_goat_cheese', 'comp_methyl_2_methylthiobutyrate', 'contiene_composto', '{}'),
 ('ahn_goat_cheese', 'comp_ethyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_goat_cheese', 'comp_2_ethylbutyric_acid', 'contiene_composto', '{}'),
-('ahn_goat_cheese', 'comp_valeric_acid', 'contiene_composto', '{}');
+('ahn_goat_cheese', 'comp_valeric_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_goat_cheese', 'comp_2_3_5_6_tetramethylpyrazine', 'contiene_composto', '{}'),
@@ -14686,7 +14829,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grape', 'comp_6_methyl_3_5_heptadien_2_one', 'contiene_composto', '{}'),
 ('ahn_grape', 'comp_n_octanal', 'contiene_composto', '{}'),
 ('ahn_grape', 'comp_ethyl_anthranilate', 'contiene_composto', '{}'),
-('ahn_grape', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}');
+('ahn_grape', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grape', 'comp_isobutyl_2_butenoate', 'contiene_composto', '{}'),
@@ -14788,7 +14932,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grape_vine', 'comp_benzophenone', 'contiene_composto', '{}'),
 ('ahn_grape_vine', 'comp_ethyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_grape_vine', 'comp_3_phenylpropionic_acid', 'contiene_composto', '{}'),
-('ahn_grape_vine', 'comp_2_pentanone', 'contiene_composto', '{}');
+('ahn_grape_vine', 'comp_2_pentanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grape_vine', 'comp_thujan_4_ol', 'contiene_composto', '{}'),
@@ -14890,7 +15035,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grapefruit_juice', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_grapefruit_juice', 'comp_2_6_10_trimethyl_2_6_10_pentadecatrien_14_one', 'contiene_composto', '{}'),
 ('ahn_grapefruit_juice', 'comp_methyl_linoleate__48___methyl_linolenate__52___mix_ture', 'contiene_composto', '{}'),
-('ahn_grapefruit_juice', 'comp_acetic_acid', 'contiene_composto', '{}');
+('ahn_grapefruit_juice', 'comp_acetic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grapefruit_juice', 'comp_p_menth_3_en_1_ol', 'contiene_composto', '{}'),
@@ -14992,7 +15138,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_green_tea', 'comp_5_hydroxy_7_decenoic_acid_d_lactone', 'contiene_composto', '{}'),
 ('ahn_green_tea', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
 ('ahn_green_tea', 'comp_3_7_dimethyl_1_3_6_octatriene', 'contiene_composto', '{}'),
-('ahn_green_tea', 'comp_2_hexenal', 'contiene_composto', '{}');
+('ahn_green_tea', 'comp_2_hexenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_green_tea', 'comp_menthol', 'contiene_composto', '{}'),
@@ -15094,7 +15241,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_green_tea', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}'),
 ('ahn_green_tea', 'comp_isobutyric_acid', 'contiene_composto', '{}'),
 ('ahn_green_tea', 'comp_2_heptanone', 'contiene_composto', '{}'),
-('ahn_green_tea', 'comp_indole', 'contiene_composto', '{}');
+('ahn_green_tea', 'comp_indole', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_green_tea', 'comp_2_6_6_trimethylcyclohexa_1_3_dienyl_methanal', 'contiene_composto', '{}'),
@@ -15196,7 +15344,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grilled_beef', 'comp_methyl_ethyl_trisulfide', 'contiene_composto', '{}'),
 ('ahn_grilled_beef', 'comp_3_heptanone', 'contiene_composto', '{}'),
 ('ahn_grilled_beef', 'comp_n_octanal', 'contiene_composto', '{}'),
-('ahn_grilled_beef', 'comp_methyl_2_pyrrolyl_ketone', 'contiene_composto', '{}');
+('ahn_grilled_beef', 'comp_methyl_2_pyrrolyl_ketone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grilled_beef', 'comp_2_methyl_1_propanethiol', 'contiene_composto', '{}'),
@@ -15298,7 +15447,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grilled_beef', 'comp_thiazole', 'contiene_composto', '{}'),
 ('ahn_grilled_beef', 'comp_isobutyric_acid', 'contiene_composto', '{}'),
 ('ahn_grilled_beef', 'comp_2_4_5_trimethyl_d_3_oxazoline', 'contiene_composto', '{}'),
-('ahn_grilled_beef', 'comp_2_heptanone', 'contiene_composto', '{}');
+('ahn_grilled_beef', 'comp_2_heptanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grilled_beef', 'comp_indole', 'contiene_composto', '{}'),
@@ -15400,7 +15550,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grilled_pork', 'comp_nonanoic_acid', 'contiene_composto', '{}'),
 ('ahn_grilled_pork', 'comp_taurine', 'contiene_composto', '{}'),
 ('ahn_grilled_pork', 'comp_2_6_dimethylpyridine', 'contiene_composto', '{}'),
-('ahn_grilled_pork', 'comp_disodium_5__guanylate', 'contiene_composto', '{}');
+('ahn_grilled_pork', 'comp_disodium_5__guanylate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grilled_pork', 'comp_2_octanone', 'contiene_composto', '{}'),
@@ -15502,7 +15653,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grilled_pork', 'comp_n_nonanal', 'contiene_composto', '{}'),
 ('ahn_grilled_pork', 'comp_n_valeraldehyde', 'contiene_composto', '{}'),
 ('ahn_grilled_pork', 'comp_myristic_acid', 'contiene_composto', '{}'),
-('ahn_grilled_pork', 'comp_ethyl_methyl_disulfide', 'contiene_composto', '{}');
+('ahn_grilled_pork', 'comp_ethyl_methyl_disulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_grilled_pork', 'comp_d_octalactone', 'contiene_composto', '{}'),
@@ -15604,7 +15756,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_gruyere_cheese', 'comp_styrene', 'contiene_composto', '{}'),
 ('ahn_gruyere_cheese', 'comp_ethyl_isovalerate', 'contiene_composto', '{}'),
 ('ahn_gruyere_cheese', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
-('ahn_gruyere_cheese', 'comp_heptanoic_acid', 'contiene_composto', '{}');
+('ahn_gruyere_cheese', 'comp_heptanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_gruyere_cheese', 'comp_diacetyl', 'contiene_composto', '{}'),
@@ -15706,7 +15859,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_guava', 'comp_p_mentha_1_8_dien_7_al', 'contiene_composto', '{}'),
 ('ahn_guava', 'comp_ethyl_crotonate', 'contiene_composto', '{}'),
 ('ahn_guava', 'comp_phenethyl_acetate', 'contiene_composto', '{}'),
-('ahn_guava', 'comp_g_undecalactone', 'contiene_composto', '{}');
+('ahn_guava', 'comp_g_undecalactone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_guava', 'comp_trans_2_hexenoic_acid', 'contiene_composto', '{}'),
@@ -15808,7 +15962,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_guava', 'comp_phosphoric_acid', 'contiene_composto', '{}'),
 ('ahn_guava', 'comp_2_nonanol', 'contiene_composto', '{}'),
 ('ahn_guava', 'comp_phenol', 'contiene_composto', '{}'),
-('ahn_guava', 'comp_3_phenylpropyl_propionate', 'contiene_composto', '{}');
+('ahn_guava', 'comp_3_phenylpropyl_propionate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_guava', 'comp_methyl_propionate', 'contiene_composto', '{}'),
@@ -15910,7 +16065,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_guineafowl', 'comp_2_nonanone', 'contiene_composto', '{}'),
 ('ahn_guineafowl', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_guineafowl', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
-('ahn_guineafowl', 'comp_guaiacol', 'contiene_composto', '{}');
+('ahn_guineafowl', 'comp_guaiacol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_guineafowl', 'comp_n_valeraldehyde', 'contiene_composto', '{}'),
@@ -16012,7 +16168,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ham', 'comp_2_heptanone', 'contiene_composto', '{}'),
 ('ahn_ham', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_ham', 'comp_d_l_methionine', 'contiene_composto', '{}'),
-('ahn_ham', 'comp_2_acetyl_3_methylpyrazine', 'contiene_composto', '{}');
+('ahn_ham', 'comp_2_acetyl_3_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_ham', 'comp_phenol', 'contiene_composto', '{}'),
@@ -16114,7 +16271,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_herring', 'comp_d_l_methionine', 'contiene_composto', '{}'),
 ('ahn_herring', 'comp_n_nonanal', 'contiene_composto', '{}'),
 ('ahn_herring', 'comp_2_octenal', 'contiene_composto', '{}'),
-('ahn_herring', 'comp_2_3_octanedione', 'contiene_composto', '{}');
+('ahn_herring', 'comp_2_3_octanedione', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_hevea_brasiliensis_flower', 'comp_indole', 'contiene_composto', '{}'),
@@ -16216,7 +16374,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_honey', 'comp_______2__5_methyl_5_vinyltetrahydrofuran_2_yl_propi_onaldehyde', 'contiene_composto', '{}'),
 ('ahn_honey', 'comp_2_heptanol', 'contiene_composto', '{}'),
 ('ahn_honey', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
-('ahn_honey', 'comp_methyl_acetate', 'contiene_composto', '{}');
+('ahn_honey', 'comp_methyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_honey', 'comp_isoamyl_butyrate', 'contiene_composto', '{}'),
@@ -16318,7 +16477,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_hop', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
 ('ahn_hop', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_hop', 'comp_methyl_laurate', 'contiene_composto', '{}'),
-('ahn_hop', 'comp_4_methylpentanoic_acid', 'contiene_composto', '{}');
+('ahn_hop', 'comp_4_methylpentanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_hop', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
@@ -16420,7 +16580,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_hop_oil', 'comp_methyl_laurate', 'contiene_composto', '{}'),
 ('ahn_hop_oil', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_hop_oil', 'comp_b_ionone', 'contiene_composto', '{}'),
-('ahn_hop_oil', 'comp_neryl_propionate', 'contiene_composto', '{}');
+('ahn_hop_oil', 'comp_neryl_propionate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_hop_oil', 'comp_myristic_acid', 'contiene_composto', '{}'),
@@ -16522,7 +16683,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_huckleberry', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_huckleberry', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
 ('ahn_huckleberry', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
-('ahn_huckleberry', 'comp_phenethyl_alcohol', 'contiene_composto', '{}');
+('ahn_huckleberry', 'comp_phenethyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_huckleberry', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
@@ -16624,7 +16786,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_israeli_orange', 'comp_citral__neral_', 'contiene_composto', '{}'),
 ('ahn_israeli_orange', 'comp_n_octanal', 'contiene_composto', '{}'),
 ('ahn_israeli_orange', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
-('ahn_israeli_orange', 'comp_1_octen_3_one', 'contiene_composto', '{}');
+('ahn_israeli_orange', 'comp_1_octen_3_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_israeli_orange', 'comp_borneol', 'contiene_composto', '{}'),
@@ -16726,7 +16889,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_italian_lime', 'comp_nerolidol', 'contiene_composto', '{}'),
 ('ahn_italian_lime', 'comp_eugenol', 'contiene_composto', '{}'),
 ('ahn_italian_lime', 'comp_1_decanol', 'contiene_composto', '{}'),
-('ahn_italian_lime', 'comp_undecyl_alcohol', 'contiene_composto', '{}');
+('ahn_italian_lime', 'comp_undecyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_italian_lime', 'comp_linalool', 'contiene_composto', '{}'),
@@ -16828,7 +16992,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jamaican_rum', 'comp_butyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_jamaican_rum', 'comp_isoamyl_octanoate', 'contiene_composto', '{}'),
 ('ahn_jamaican_rum', 'comp_ethyl_undecanoate', 'contiene_composto', '{}'),
-('ahn_jamaican_rum', 'comp_2_3_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_jamaican_rum', 'comp_2_3_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jamaican_rum', 'comp_4_hydroxybenzoic_acid', 'contiene_composto', '{}'),
@@ -16930,7 +17095,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jamaican_rum', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
 ('ahn_jamaican_rum', 'comp_ethyl_laurate', 'contiene_composto', '{}'),
 ('ahn_jamaican_rum', 'comp_furfuryl_acetate', 'contiene_composto', '{}'),
-('ahn_jamaican_rum', 'comp_heptyl_alcohol', 'contiene_composto', '{}');
+('ahn_jamaican_rum', 'comp_heptyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jamaican_rum', 'comp_acetaldehyde_diisoamyl_acetal', 'contiene_composto', '{}'),
@@ -17032,7 +17198,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_japanese_mint', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_japanese_mint', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_japanese_mint', 'comp_myrcene', 'contiene_composto', '{}'),
-('ahn_japanese_mint', 'comp_b_pinene', 'contiene_composto', '{}');
+('ahn_japanese_mint', 'comp_b_pinene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_japanese_mint', 'comp_acetaldehyde', 'contiene_composto', '{}'),
@@ -17134,7 +17301,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_japanese_plum', 'comp_g_hexalactone', 'contiene_composto', '{}'),
 ('ahn_japanese_plum', 'comp_2_methyl_2_pentenal', 'contiene_composto', '{}'),
 ('ahn_japanese_plum', 'comp_dihydro_b_ionone', 'contiene_composto', '{}'),
-('ahn_japanese_plum', 'comp_1_methylnaphthalene', 'contiene_composto', '{}');
+('ahn_japanese_plum', 'comp_1_methylnaphthalene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_japanese_plum', 'comp_nerol', 'contiene_composto', '{}'),
@@ -17236,7 +17404,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jasmine_tea', 'comp_methyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_jasmine_tea', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
 ('ahn_jasmine_tea', 'comp_p_tolyl_3_methyl_butyrate', 'contiene_composto', '{}'),
-('ahn_jasmine_tea', 'comp_b_pinene', 'contiene_composto', '{}');
+('ahn_jasmine_tea', 'comp_b_pinene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jasmine_tea', 'comp_fenchyl_alcohol', 'contiene_composto', '{}'),
@@ -17338,7 +17507,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jasmine_tea', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_jasmine_tea', 'comp_phenol', 'contiene_composto', '{}'),
 ('ahn_jasmine_tea', 'comp_methyl_benzoate', 'contiene_composto', '{}'),
-('ahn_jasmine_tea', 'comp_2_ethyl_3_methylpyrazine', 'contiene_composto', '{}');
+('ahn_jasmine_tea', 'comp_2_ethyl_3_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_jasmine_tea', 'comp_myrtenol', 'contiene_composto', '{}'),
@@ -17440,7 +17610,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_juniper_berry', 'comp_carvyl_acetate', 'contiene_composto', '{}'),
 ('ahn_juniper_berry', 'comp_geraniol', 'contiene_composto', '{}'),
 ('ahn_juniper_berry', 'comp_verbenol', 'contiene_composto', '{}'),
-('ahn_juniper_berry', 'comp_2_heptanol', 'contiene_composto', '{}');
+('ahn_juniper_berry', 'comp_2_heptanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_juniper_berry', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
@@ -17542,7 +17713,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_katsuobushi', 'comp_phenethylamine', 'contiene_composto', '{}'),
 ('ahn_katsuobushi', 'comp_3_hydroxy_2_pentanone', 'contiene_composto', '{}'),
 ('ahn_katsuobushi', 'comp_3_4_xylenol', 'contiene_composto', '{}'),
-('ahn_katsuobushi', 'comp_nona_2_trans__6_cis_dienal', 'contiene_composto', '{}');
+('ahn_katsuobushi', 'comp_nona_2_trans__6_cis_dienal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_katsuobushi', 'comp_maltol', 'contiene_composto', '{}'),
@@ -17644,7 +17816,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_keta_salmon', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
 ('ahn_keta_salmon', 'comp_5_methylfurfural', 'contiene_composto', '{}'),
 ('ahn_keta_salmon', 'comp_heptanoic_acid', 'contiene_composto', '{}'),
-('ahn_keta_salmon', 'comp_nona_2_trans__6_cis_dienal', 'contiene_composto', '{}');
+('ahn_keta_salmon', 'comp_nona_2_trans__6_cis_dienal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_keta_salmon', 'comp_lauric_aldehyde', 'contiene_composto', '{}'),
@@ -17746,7 +17919,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_kidney_bean', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_kidney_bean', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_kidney_bean', 'comp_methyl_myristate', 'contiene_composto', '{}'),
-('ahn_kidney_bean', 'comp_isopropyl_alcohol', 'contiene_composto', '{}');
+('ahn_kidney_bean', 'comp_isopropyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_kidney_bean', 'comp_isobutyl_butyrate', 'contiene_composto', '{}'),
@@ -17848,7 +18022,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_kohlrabi', 'comp_2_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_kohlrabi', 'comp_methyl_mercaptan', 'contiene_composto', '{}'),
 ('ahn_kohlrabi', 'comp_ethyl_methyl_disulfide', 'contiene_composto', '{}'),
-('ahn_kohlrabi', 'comp_3_methylthiopropyl_isothiocyanate', 'contiene_composto', '{}');
+('ahn_kohlrabi', 'comp_3_methylthiopropyl_isothiocyanate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_kohlrabi', 'comp_2_3_5_trimethylpyrazine', 'contiene_composto', '{}'),
@@ -17950,7 +18125,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_kola_tea', 'comp_4_hydroxy_4_methyl_5_hexenoic_acid_gamma_lactone', 'contiene_composto', '{}'),
 ('ahn_kola_tea', 'comp_salicylaldehyde', 'contiene_composto', '{}'),
 ('ahn_kola_tea', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}'),
-('ahn_kola_tea', 'comp_terpinyl_acetate', 'contiene_composto', '{}');
+('ahn_kola_tea', 'comp_terpinyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_kola_tea', 'comp_cis_3_hexenyl_2_methylbutyrate', 'contiene_composto', '{}'),
@@ -18052,7 +18228,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_krill', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_krill', 'comp_5_methyl_2_thiophenecarboxaldehyde', 'contiene_composto', '{}'),
 ('ahn_krill', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
-('ahn_krill', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}');
+('ahn_krill', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_krill', 'comp_2_or_5_or_6_methoxy_3_methylpyrazine__mixture_of_isomers_', 'contiene_composto', '{}'),
@@ -18154,7 +18331,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lamb', 'comp_octanoic_acid', 'contiene_composto', '{}'),
 ('ahn_lamb', 'comp_dl_phenylalanine', 'contiene_composto', '{}'),
 ('ahn_lamb', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
-('ahn_lamb', 'comp_3_methylpentanoic_acid', 'contiene_composto', '{}');
+('ahn_lamb', 'comp_3_methylpentanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lamb', 'comp_pyridine', 'contiene_composto', '{}'),
@@ -18256,7 +18434,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lavender', 'comp_hexyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_lavender', 'comp_linalyl_acetate', 'contiene_composto', '{}'),
 ('ahn_lavender', 'comp_n_butyric_acid', 'contiene_composto', '{}'),
-('ahn_lavender', 'comp_benzyl_acetate', 'contiene_composto', '{}');
+('ahn_lavender', 'comp_benzyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lavender', 'comp_coumarin__prohibited_', 'contiene_composto', '{}'),
@@ -18358,7 +18537,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lean_fish', 'comp_2_undecenal', 'contiene_composto', '{}'),
 ('ahn_lean_fish', 'comp_isobutyric_acid', 'contiene_composto', '{}'),
 ('ahn_lean_fish', 'comp_cis_6_nonenal', 'contiene_composto', '{}'),
-('ahn_lean_fish', 'comp_2_heptanone', 'contiene_composto', '{}');
+('ahn_lean_fish', 'comp_2_heptanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lean_fish', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
@@ -18460,7 +18640,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lemon', 'comp_terpinyl_propionate', 'contiene_composto', '{}'),
 ('ahn_lemon', 'comp_hexanal', 'contiene_composto', '{}'),
 ('ahn_lemon', 'comp_heptyl_butyrate', 'contiene_composto', '{}'),
-('ahn_lemon', 'comp_nonyl_acetate', 'contiene_composto', '{}');
+('ahn_lemon', 'comp_nonyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lemon', 'comp_b_pinene', 'contiene_composto', '{}'),
@@ -18562,7 +18743,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lemon_flower', 'comp__e__2_hexenyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_lemon_flower', 'comp_benzyl_acetate', 'contiene_composto', '{}'),
 ('ahn_lemon_flower', 'comp_methyl_benzoate', 'contiene_composto', '{}'),
-('ahn_lemon_flower', 'comp_isoeugenol', 'contiene_composto', '{}');
+('ahn_lemon_flower', 'comp_isoeugenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lemon_flower', 'comp_camphene', 'contiene_composto', '{}'),
@@ -18664,7 +18846,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_licorice', 'comp_lauric_acid', 'contiene_composto', '{}'),
 ('ahn_licorice', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
 ('ahn_licorice', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
-('ahn_licorice', 'comp_g_hexalactone', 'contiene_composto', '{}');
+('ahn_licorice', 'comp_g_hexalactone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_licorice', 'comp_thymol', 'contiene_composto', '{}'),
@@ -18766,7 +18949,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lima_bean', 'comp_2_methoxy_3__1_methylpropyl_pyrazine', 'contiene_composto', '{}'),
 ('ahn_lima_bean', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
 ('ahn_lima_bean', 'comp_nerolidol', 'contiene_composto', '{}'),
-('ahn_lima_bean', 'comp_heptanoic_acid', 'contiene_composto', '{}');
+('ahn_lima_bean', 'comp_heptanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lima_bean', 'comp_2_methoxy_3__5_and_6__isopropylpyrazine', 'contiene_composto', '{}'),
@@ -18868,7 +19052,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_limburger_cheese', 'comp_a_methylbenzyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_limburger_cheese', 'comp_2_tridecanone', 'contiene_composto', '{}'),
 ('ahn_limburger_cheese', 'comp_d_l_valine', 'contiene_composto', '{}'),
-('ahn_limburger_cheese', 'comp_trimethylamine', 'contiene_composto', '{}');
+('ahn_limburger_cheese', 'comp_trimethylamine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_limburger_cheese', 'comp_g_decalactone', 'contiene_composto', '{}'),
@@ -18970,7 +19155,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lime', 'comp_carvone', 'contiene_composto', '{}'),
 ('ahn_lime', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
 ('ahn_lime', 'comp_______heptan_3_yl_butyrate', 'contiene_composto', '{}'),
-('ahn_lime', 'comp_farnesol', 'contiene_composto', '{}');
+('ahn_lime', 'comp_farnesol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lime', 'comp_ethyl_butyrate', 'contiene_composto', '{}'),
@@ -19072,7 +19258,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_litchi', 'comp_benzyl_acetoacetate', 'contiene_composto', '{}'),
 ('ahn_litchi', 'comp_carvyl_acetate', 'contiene_composto', '{}'),
 ('ahn_litchi', 'comp_isobutyl_acetate', 'contiene_composto', '{}'),
-('ahn_litchi', 'comp_geraniol', 'contiene_composto', '{}');
+('ahn_litchi', 'comp_geraniol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_litchi', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
@@ -19174,7 +19361,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_long_pepper', 'comp_methyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_long_pepper', 'comp_limonene__d__l___and_dl__', 'contiene_composto', '{}'),
 ('ahn_long_pepper', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
-('ahn_long_pepper', 'comp_fenchyl_alcohol', 'contiene_composto', '{}');
+('ahn_long_pepper', 'comp_fenchyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_long_pepper', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
@@ -19276,7 +19464,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lovage', 'comp_thymol', 'contiene_composto', '{}'),
 ('ahn_lovage', 'comp_3_carene', 'contiene_composto', '{}'),
 ('ahn_lovage', 'comp_cis_3_hexen_1_yl_acetate', 'contiene_composto', '{}'),
-('ahn_lovage', 'comp_n_nonanal', 'contiene_composto', '{}');
+('ahn_lovage', 'comp_n_nonanal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_lovage_leaf', 'comp_a_phellandrene', 'contiene_composto', '{}'),
@@ -19378,7 +19567,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mackerel', 'comp_s_methyl_4_methylpentanethioate', 'contiene_composto', '{}'),
 ('ahn_mackerel', 'comp_phenol', 'contiene_composto', '{}'),
 ('ahn_mackerel', 'comp_1_penten_3_one', 'contiene_composto', '{}'),
-('ahn_mackerel', 'comp_1_penten_3_ol', 'contiene_composto', '{}');
+('ahn_mackerel', 'comp_1_penten_3_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mackerel', 'comp_3_heptanone', 'contiene_composto', '{}'),
@@ -19480,7 +19670,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_malt', 'comp_2_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_malt', 'comp_5h_5_methyl_6_7_dihydrocyclopenta_b_pyrazine', 'contiene_composto', '{}'),
 ('ahn_malt', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
-('ahn_malt', 'comp_pyrazine', 'contiene_composto', '{}');
+('ahn_malt', 'comp_pyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_malt', 'comp_2_methoxy_4_methylphenol', 'contiene_composto', '{}'),
@@ -19582,7 +19773,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_malt_whiskey', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_malt_whiskey', 'comp_2_nonanone', 'contiene_composto', '{}'),
 ('ahn_malt_whiskey', 'comp_diethyl_malate', 'contiene_composto', '{}'),
-('ahn_malt_whiskey', 'comp_isobutyl_hexanoate', 'contiene_composto', '{}');
+('ahn_malt_whiskey', 'comp_isobutyl_hexanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_malt_whiskey', 'comp_2_methoxy_4_methylphenol', 'contiene_composto', '{}'),
@@ -19684,7 +19876,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mandarin_peel_oil', 'comp_geranyl_propionate', 'contiene_composto', '{}'),
 ('ahn_mandarin_peel_oil', 'comp_thujan_4_ol', 'contiene_composto', '{}'),
 ('ahn_mandarin_peel_oil', 'comp_lauryl_acetate', 'contiene_composto', '{}'),
-('ahn_mandarin_peel_oil', 'comp_cuminaldehyde', 'contiene_composto', '{}');
+('ahn_mandarin_peel_oil', 'comp_cuminaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mandarin_peel_oil', 'comp_p_menthan_2_ol', 'contiene_composto', '{}'),
@@ -19786,7 +19979,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mango', 'comp_2_methylvaleric_acid', 'contiene_composto', '{}'),
 ('ahn_mango', 'comp_m_cresol', 'contiene_composto', '{}'),
 ('ahn_mango', 'comp_3_penten_2_one', 'contiene_composto', '{}'),
-('ahn_mango', 'comp_nerol', 'contiene_composto', '{}');
+('ahn_mango', 'comp_nerol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mango', 'comp_ethyl_hexanoate', 'contiene_composto', '{}'),
@@ -19888,7 +20082,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mantis_shrimp', 'comp_methyl_myristate', 'contiene_composto', '{}'),
 ('ahn_mantis_shrimp', 'comp_2_ethyl_5_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_mantis_shrimp', 'comp_2_3_dimethylpyrazine', 'contiene_composto', '{}'),
-('ahn_mantis_shrimp', 'comp_2_heptanone', 'contiene_composto', '{}');
+('ahn_mantis_shrimp', 'comp_2_heptanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mantis_shrimp', 'comp_indole', 'contiene_composto', '{}'),
@@ -19990,7 +20185,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mashed_potato', 'comp_l_lysine', 'contiene_composto', '{}'),
 ('ahn_mashed_potato', 'comp_methyl_octanoate', 'contiene_composto', '{}'),
 ('ahn_mashed_potato', 'comp_2_4_5_trimethyl_thiazole', 'contiene_composto', '{}'),
-('ahn_mashed_potato', 'comp_2_acetylthiazole', 'contiene_composto', '{}');
+('ahn_mashed_potato', 'comp_2_acetylthiazole', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mashed_potato', 'comp_3_ethyl_2_6_dimethylpyrazine', 'contiene_composto', '{}'),
@@ -20092,7 +20288,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mastic_gum_leaf_oil', 'comp_ethyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_mastic_gum_leaf_oil', 'comp_fenchyl_acetate', 'contiene_composto', '{}'),
 ('ahn_mastic_gum_leaf_oil', 'comp_isoeugenyl_methyl_ether', 'contiene_composto', '{}'),
-('ahn_mastic_gum_leaf_oil', 'comp_verbenol', 'contiene_composto', '{}');
+('ahn_mastic_gum_leaf_oil', 'comp_verbenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mastic_gum_leaf_oil', 'comp_2_heptanol', 'contiene_composto', '{}'),
@@ -20194,7 +20391,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_matsutake', 'comp_ethyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_matsutake', 'comp_indole', 'contiene_composto', '{}'),
 ('ahn_matsutake', 'comp_3_phenyl_1_propanol', 'contiene_composto', '{}'),
-('ahn_matsutake', 'comp_propylene_glycol', 'contiene_composto', '{}');
+('ahn_matsutake', 'comp_propylene_glycol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_matsutake', 'comp_dimethyl_trisulfide', 'contiene_composto', '{}'),
@@ -20296,7 +20494,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_meat', 'comp_l_arginine', 'contiene_composto', '{}'),
 ('ahn_meat', 'comp_nonanoic_acid', 'contiene_composto', '{}'),
 ('ahn_meat', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
-('ahn_meat', 'comp_heptanoic_acid', 'contiene_composto', '{}');
+('ahn_meat', 'comp_heptanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_meat', 'comp_phenol', 'contiene_composto', '{}'),
@@ -20398,7 +20597,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_melon', 'comp_cis_3_hexenal', 'contiene_composto', '{}'),
 ('ahn_melon', 'comp_hexyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_melon', 'comp_butyl_butyrate', 'contiene_composto', '{}'),
-('ahn_melon', 'comp_ethyl_2__methylthio_acetate', 'contiene_composto', '{}');
+('ahn_melon', 'comp_ethyl_2__methylthio_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_melon', 'comp_3__methylthio_propanol', 'contiene_composto', '{}'),
@@ -20500,7 +20700,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mexican_lime', 'comp_farnesol', 'contiene_composto', '{}'),
 ('ahn_mexican_lime', 'comp_ethyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_mexican_lime', 'comp_valencene', 'contiene_composto', '{}'),
-('ahn_mexican_lime', 'comp_2_hexenal', 'contiene_composto', '{}');
+('ahn_mexican_lime', 'comp_2_hexenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mexican_lime', 'comp_2_pentanone', 'contiene_composto', '{}'),
@@ -20602,7 +20803,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_milk', 'comp_methyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_milk', 'comp_9_12_octadecadienoic_acid__48___plus_9_12_15_octadeca__trienoinc_acid__52____methyl_esters_', 'contiene_composto', '{}'),
 ('ahn_milk', 'comp_vitamin_b1', 'contiene_composto', '{}'),
-('ahn_milk', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}');
+('ahn_milk', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_milk', 'comp_bis__methylthio_methane', 'contiene_composto', '{}'),
@@ -20704,7 +20906,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mint', 'comp_p_a_a_trimethylbenzyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_mint', 'comp_phenethyl_2_methylbutyrate', 'contiene_composto', '{}'),
 ('ahn_mint', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
-('ahn_mint', 'comp_3_octanol', 'contiene_composto', '{}');
+('ahn_mint', 'comp_3_octanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mint', 'comp_n_nonanal', 'contiene_composto', '{}'),
@@ -20806,7 +21009,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_monkey_orange', 'comp_decanal', 'contiene_composto', '{}'),
 ('ahn_monkey_orange', 'comp_hexyl_2_methylbutyrate', 'contiene_composto', '{}'),
 ('ahn_monkey_orange', 'comp_myrcene', 'contiene_composto', '{}'),
-('ahn_monkey_orange', 'comp_p_mentha_1_4_8__dien_3_one', 'contiene_composto', '{}');
+('ahn_monkey_orange', 'comp_p_mentha_1_4_8__dien_3_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_monkey_orange', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}'),
@@ -20908,7 +21112,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mozzarella_cheese', 'comp_2_octanone', 'contiene_composto', '{}'),
 ('ahn_mozzarella_cheese', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_mozzarella_cheese', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
-('ahn_mozzarella_cheese', 'comp_2_methylpyrazine', 'contiene_composto', '{}');
+('ahn_mozzarella_cheese', 'comp_2_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mozzarella_cheese', 'comp_phenethyl_acetate', 'contiene_composto', '{}'),
@@ -21010,7 +21215,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mozzarella_cheese', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_mozzarella_cheese', 'comp_4_methyl_2_oxopentanoic_acid', 'contiene_composto', '{}'),
 ('ahn_mozzarella_cheese', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
-('ahn_mozzarella_cheese', 'comp_methyl_laurate', 'contiene_composto', '{}');
+('ahn_mozzarella_cheese', 'comp_methyl_laurate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mozzarella_cheese', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
@@ -21112,7 +21318,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mung_bean', 'comp_2_methyltetrahydrofuran_3_one', 'contiene_composto', '{}'),
 ('ahn_mung_bean', 'comp_guaiacol', 'contiene_composto', '{}'),
 ('ahn_mung_bean', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}'),
-('ahn_munster_cheese', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}');
+('ahn_munster_cheese', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_munster_cheese', 'comp_2_methyl_3_butenal', 'contiene_composto', '{}'),
@@ -21214,7 +21421,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_munster_cheese', 'comp_acetoin', 'contiene_composto', '{}'),
 ('ahn_munster_cheese', 'comp_isopropyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_munster_cheese', 'comp_d_decalactone', 'contiene_composto', '{}'),
-('ahn_munster_cheese', 'comp_ethyl_propionate', 'contiene_composto', '{}');
+('ahn_munster_cheese', 'comp_ethyl_propionate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_munster_cheese', 'comp_ethyl_2_methylbutyrate', 'contiene_composto', '{}'),
@@ -21316,7 +21524,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_muscadine_grape', 'comp_isoamyl_laurate', 'contiene_composto', '{}'),
 ('ahn_muscadine_grape', 'comp_propionic_acid', 'contiene_composto', '{}'),
 ('ahn_muscadine_grape', 'comp_cis_3_hexenal', 'contiene_composto', '{}'),
-('ahn_muscadine_grape', 'comp_styrene', 'contiene_composto', '{}');
+('ahn_muscadine_grape', 'comp_styrene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_muscadine_grape', 'comp_hexyl_hexanoate', 'contiene_composto', '{}'),
@@ -21418,7 +21627,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_muscat_grape', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
 ('ahn_muscat_grape', 'comp_isobutyl_2_butenoate', 'contiene_composto', '{}'),
 ('ahn_muscat_grape', 'comp_1_penten_3_one', 'contiene_composto', '{}'),
-('ahn_muscat_grape', 'comp_ethyl_anthranilate', 'contiene_composto', '{}');
+('ahn_muscat_grape', 'comp_ethyl_anthranilate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_muscat_grape', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
@@ -21520,7 +21730,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mushroom', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_mushroom', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_mushroom', 'comp_4_hydroxy_3_methoxybenzoic_acid', 'contiene_composto', '{}'),
-('ahn_mushroom', 'comp_allyl_heptanoate', 'contiene_composto', '{}');
+('ahn_mushroom', 'comp_allyl_heptanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mushroom', 'comp_isopropyl_formate', 'contiene_composto', '{}'),
@@ -21622,7 +21833,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mushroom', 'comp_2_methyltetrahydrofuran_3_one', 'contiene_composto', '{}'),
 ('ahn_mushroom', 'comp_salicylaldehyde', 'contiene_composto', '{}'),
 ('ahn_mushroom', 'comp_n_nonanal', 'contiene_composto', '{}'),
-('ahn_mushroom', 'comp_2_octenal', 'contiene_composto', '{}');
+('ahn_mushroom', 'comp_2_octenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mushroom', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}'),
@@ -21724,7 +21936,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_muskmelon', 'comp_propyl_propionate', 'contiene_composto', '{}'),
 ('ahn_muskmelon', 'comp_6_10_dimethyl_5_9_undecadien_2_one', 'contiene_composto', '{}'),
 ('ahn_muskmelon', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
-('ahn_muskmelon', 'comp_nonyl_alcohol', 'contiene_composto', '{}');
+('ahn_muskmelon', 'comp_nonyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_muskmelon', 'comp_methyl_laurate', 'contiene_composto', '{}'),
@@ -21826,7 +22039,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mutton', 'comp_phenol', 'contiene_composto', '{}'),
 ('ahn_mutton', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_mutton', 'comp_n_octanal', 'contiene_composto', '{}'),
-('ahn_mutton', 'comp_trans__trans_2_4_octadienal', 'contiene_composto', '{}');
+('ahn_mutton', 'comp_trans__trans_2_4_octadienal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_mutton', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
@@ -21928,7 +22142,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_myrtleberry', 'comp_2_hexenal', 'contiene_composto', '{}'),
 ('ahn_myrtleberry', 'comp_g_hexalactone', 'contiene_composto', '{}'),
 ('ahn_myrtleberry', 'comp_phosphoric_acid', 'contiene_composto', '{}'),
-('ahn_myrtleberry', 'comp_phenol', 'contiene_composto', '{}');
+('ahn_myrtleberry', 'comp_phenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_myrtleberry', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
@@ -22030,7 +22245,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_navy_bean', 'comp_vanillin', 'contiene_composto', '{}'),
 ('ahn_navy_bean', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
 ('ahn_navy_bean', 'comp_2_isobutyl_3_methoxypyrazine', 'contiene_composto', '{}'),
-('ahn_navy_bean', 'comp_3_octanone', 'contiene_composto', '{}');
+('ahn_navy_bean', 'comp_3_octanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_navy_bean', 'comp_2_pentanol', 'contiene_composto', '{}'),
@@ -22132,7 +22348,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_neroli', 'comp_linalyl_acetate', 'contiene_composto', '{}'),
 ('ahn_neroli', 'comp_methyl_anthranilate', 'contiene_composto', '{}'),
 ('ahn_neroli', 'comp_neryl_acetate', 'contiene_composto', '{}'),
-('ahn_neroli', 'comp_benzyl_alcohol', 'contiene_composto', '{}');
+('ahn_neroli', 'comp_benzyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_neroli', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
@@ -22234,7 +22451,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_oat', 'comp_5_methylfurfural', 'contiene_composto', '{}'),
 ('ahn_oat', 'comp_n_octanal', 'contiene_composto', '{}'),
 ('ahn_oat', 'comp_octanoic_acid', 'contiene_composto', '{}'),
-('ahn_oat', 'comp_nona_2_trans__6_cis_dienal', 'contiene_composto', '{}');
+('ahn_oat', 'comp_nona_2_trans__6_cis_dienal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_oat', 'comp_isophorone', 'contiene_composto', '{}'),
@@ -22336,7 +22554,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_olive', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_olive', 'comp_4_methoxy_2_methyl_2_butanethiol', 'contiene_composto', '{}'),
 ('ahn_olive', 'comp_phosphoric_acid', 'contiene_composto', '{}'),
-('ahn_olive', 'comp_4_hexen_1_ol', 'contiene_composto', '{}');
+('ahn_olive', 'comp_4_hexen_1_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_olive', 'comp_1_2_dimethoxybenzene', 'contiene_composto', '{}'),
@@ -22438,7 +22657,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_onion', 'comp_allyl_methyl_trisulfide', 'contiene_composto', '{}'),
 ('ahn_onion', 'comp_1_methylnaphthalene', 'contiene_composto', '{}'),
 ('ahn_onion', 'comp_2_nonanone', 'contiene_composto', '{}'),
-('ahn_onion_juice', 'comp_dimethyl_trisulfide', 'contiene_composto', '{}');
+('ahn_onion_juice', 'comp_dimethyl_trisulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_onion_juice', 'comp_allyl_isothiocyanate', 'contiene_composto', '{}'),
@@ -22540,7 +22760,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orange', 'comp_butyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_orange', 'comp_undecanal', 'contiene_composto', '{}'),
 ('ahn_orange', 'comp_valeric_acid', 'contiene_composto', '{}'),
-('ahn_orange', 'comp_3_carene', 'contiene_composto', '{}');
+('ahn_orange', 'comp_3_carene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orange', 'comp_p_cresol', 'contiene_composto', '{}'),
@@ -22642,7 +22863,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orange_juice', 'comp_2_octenal', 'contiene_composto', '{}'),
 ('ahn_orange_leaf', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
 ('ahn_orange_leaf', 'comp_guaiacol', 'contiene_composto', '{}'),
-('ahn_orange_leaf_oil', 'comp_phenylacetaldehyde', 'contiene_composto', '{}');
+('ahn_orange_leaf_oil', 'comp_phenylacetaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orange_oil', 'comp_limonene__d__l___and_dl__', 'contiene_composto', '{}'),
@@ -22744,7 +22966,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orris_root', 'comp_a_irone', 'contiene_composto', '{}'),
 ('ahn_orthodon', 'comp_acetophenone', 'contiene_composto', '{}'),
 ('ahn_orthodon_asaroniferum_oil', 'comp_bisabolene', 'contiene_composto', '{}'),
-('ahn_orthodon_citraliferum', 'comp_geranyl_acetate', 'contiene_composto', '{}');
+('ahn_orthodon_citraliferum', 'comp_geranyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_orthodon_linalooliferum', 'comp_linalool', 'contiene_composto', '{}'),
@@ -22846,7 +23069,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_papaya', 'comp_6_10_dimethyl_5_9_undecadien_2_one', 'contiene_composto', '{}'),
 ('ahn_papaya', 'comp_______2_methyl_1_butanol', 'contiene_composto', '{}'),
 ('ahn_papaya', 'comp_isoamyl_acetate', 'contiene_composto', '{}'),
-('ahn_papaya', 'comp_isobutyl_benzoate', 'contiene_composto', '{}');
+('ahn_papaya', 'comp_isobutyl_benzoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_papaya', 'comp_isobutyl_acetate', 'contiene_composto', '{}'),
@@ -22948,7 +23172,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_parmesan_cheese', 'comp_1_decanol', 'contiene_composto', '{}'),
 ('ahn_parmesan_cheese', 'comp_isoborneol', 'contiene_composto', '{}'),
 ('ahn_parmesan_cheese', 'comp_g_hexalactone', 'contiene_composto', '{}'),
-('ahn_parmesan_cheese', 'comp_hexyl_acetate', 'contiene_composto', '{}');
+('ahn_parmesan_cheese', 'comp_hexyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_parmesan_cheese', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}'),
@@ -23050,7 +23275,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_parmesan_cheese', 'comp_diacetyl', 'contiene_composto', '{}'),
 ('ahn_parmesan_cheese', 'comp_3__methylthio_propanol', 'contiene_composto', '{}'),
 ('ahn_parmesan_cheese', 'comp_lauric_aldehyde', 'contiene_composto', '{}'),
-('ahn_parmesan_cheese', 'comp_methyl_butyrate', 'contiene_composto', '{}');
+('ahn_parmesan_cheese', 'comp_methyl_butyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_parmesan_cheese', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
@@ -23152,7 +23378,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_parsnip', 'comp_n_butyric_acid', 'contiene_composto', '{}'),
 ('ahn_parsnip_fruit', 'comp__d___l___dl___meso__tartaric_acid', 'contiene_composto', '{}'),
 ('ahn_parsnip_fruit', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}'),
-('ahn_parsnip_fruit', 'comp_methyl_3_methylthiopropionate', 'contiene_composto', '{}');
+('ahn_parsnip_fruit', 'comp_methyl_3_methylthiopropionate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_parsnip_fruit', 'comp_heptyl_butyrate', 'contiene_composto', '{}'),
@@ -23254,7 +23481,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_passion_fruit', 'comp_ethyl_isovalerate', 'contiene_composto', '{}'),
 ('ahn_passion_fruit', 'comp_hexyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_passion_fruit', 'comp_5_methylfurfural', 'contiene_composto', '{}'),
-('ahn_passion_fruit', 'comp_heptanoic_acid', 'contiene_composto', '{}');
+('ahn_passion_fruit', 'comp_heptanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_passion_fruit', 'comp_ethyl_3_phenylpropionate', 'contiene_composto', '{}'),
@@ -23356,7 +23584,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pea', 'comp_nona_2_trans__6_cis_dienal', 'contiene_composto', '{}'),
 ('ahn_pea', 'comp_methyl_heptanoate', 'contiene_composto', '{}'),
 ('ahn_pea', 'comp__e__2_octen_1_ol', 'contiene_composto', '{}'),
-('ahn_pea', 'comp_2_methoxy_3__5_and_6__isopropylpyrazine', 'contiene_composto', '{}');
+('ahn_pea', 'comp_2_methoxy_3__5_and_6__isopropylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pea', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
@@ -23458,7 +23687,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peach', 'comp_cis_3_hexen_1_yl_acetate', 'contiene_composto', '{}'),
 ('ahn_peach', 'comp_propyl_acetate', 'contiene_composto', '{}'),
 ('ahn_peach', 'comp_ethyl_benzoate', 'contiene_composto', '{}'),
-('ahn_peach', 'comp_2_octanone', 'contiene_composto', '{}');
+('ahn_peach', 'comp_2_octanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peach', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
@@ -23560,7 +23790,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peanut', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_peanut', 'comp_2_heptenal', 'contiene_composto', '{}'),
 ('ahn_peanut', 'comp_palmitic_acid', 'contiene_composto', '{}'),
-('ahn_peanut', 'comp_2_4_pentadienal', 'contiene_composto', '{}');
+('ahn_peanut', 'comp_2_4_pentadienal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peanut', 'comp_2_pentanone', 'contiene_composto', '{}'),
@@ -23662,7 +23893,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peanut_butter', 'comp_furfuryl_acetate', 'contiene_composto', '{}'),
 ('ahn_peanut_butter', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_peanut_butter', 'comp_butyraldehyde', 'contiene_composto', '{}'),
-('ahn_peanut_butter', 'comp_2_3_octanedione', 'contiene_composto', '{}');
+('ahn_peanut_butter', 'comp_2_3_octanedione', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peanut_butter', 'comp_3_ethyl_2_6_dimethylpyrazine', 'contiene_composto', '{}'),
@@ -23764,7 +23996,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pear', 'comp_butyl_acetate', 'contiene_composto', '{}'),
 ('ahn_pear', 'comp_hexyl_acetate', 'contiene_composto', '{}'),
 ('ahn_pear', 'comp_isopropyl_acetate', 'contiene_composto', '{}'),
-('ahn_pear', 'comp_isoamyl_octanoate', 'contiene_composto', '{}');
+('ahn_pear', 'comp_isoamyl_octanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pear', 'comp_isopropyl_alcohol', 'contiene_composto', '{}'),
@@ -23866,7 +24099,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pecan', 'comp_2_nonanone', 'contiene_composto', '{}'),
 ('ahn_pecan', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_pecan', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}'),
-('ahn_pecan', 'comp_3_heptanone', 'contiene_composto', '{}');
+('ahn_pecan', 'comp_3_heptanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pecan', 'comp_n_valeraldehyde', 'contiene_composto', '{}'),
@@ -23968,7 +24202,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peppermint', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
 ('ahn_peppermint', 'comp_phenylacetic_acid', 'contiene_composto', '{}'),
 ('ahn_peppermint', 'comp_eucalyptol', 'contiene_composto', '{}'),
-('ahn_peppermint', 'comp_p_cymene', 'contiene_composto', '{}');
+('ahn_peppermint', 'comp_p_cymene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peppermint', 'comp_5_ethyl_2_methylpyridine', 'contiene_composto', '{}'),
@@ -24070,7 +24305,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peppermint_oil', 'comp_p_cymene', 'contiene_composto', '{}'),
 ('ahn_peppermint_oil', 'comp_pulegone', 'contiene_composto', '{}'),
 ('ahn_peppermint_oil', 'comp_5_ethyl_2_methylpyridine', 'contiene_composto', '{}'),
-('ahn_peppermint_oil', 'comp_phenethyl_acetate', 'contiene_composto', '{}');
+('ahn_peppermint_oil', 'comp_phenethyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_peppermint_oil', 'comp_4_methyl_2_phenyl_2_pentenal', 'contiene_composto', '{}'),
@@ -24172,7 +24408,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pike', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_pike', 'comp_2_3_5_trithiahexane', 'contiene_composto', '{}'),
 ('ahn_pike', 'comp_2_nonenal', 'contiene_composto', '{}'),
-('ahn_pike', 'comp_2_undecenal', 'contiene_composto', '{}');
+('ahn_pike', 'comp_2_undecenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pike', 'comp_isobutyric_acid', 'contiene_composto', '{}'),
@@ -24274,7 +24511,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pilchard', 'comp_d_l_methionine', 'contiene_composto', '{}'),
 ('ahn_pilchard', 'comp_n_nonanal', 'contiene_composto', '{}'),
 ('ahn_pilchard', 'comp_2_octenal', 'contiene_composto', '{}'),
-('ahn_pilchard', 'comp_2_3_octanedione', 'contiene_composto', '{}');
+('ahn_pilchard', 'comp_2_3_octanedione', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pimenta', 'comp_eugenyl_methyl_ether', 'contiene_composto', '{}'),
@@ -24376,7 +24614,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pineapple', 'comp_methyl_isobutyrate', 'contiene_composto', '{}'),
 ('ahn_pineapple', 'comp_methyl_isovalerate', 'contiene_composto', '{}'),
 ('ahn_pineapple', 'comp_valeric_acid', 'contiene_composto', '{}'),
-('ahn_pineapple', 'comp_ethyl_cinnamate', 'contiene_composto', '{}');
+('ahn_pineapple', 'comp_ethyl_cinnamate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pineapple', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
@@ -24478,7 +24717,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pinto_bean', 'comp_isobutyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_pinto_bean', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_pinto_bean', 'comp_2_heptenal', 'contiene_composto', '{}'),
-('ahn_pinto_bean', 'comp_palmitic_acid', 'contiene_composto', '{}');
+('ahn_pinto_bean', 'comp_palmitic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pinto_bean', 'comp_4_hexen_1_ol', 'contiene_composto', '{}'),
@@ -24580,7 +24820,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_plum', 'comp_g_nonalactone', 'contiene_composto', '{}'),
 ('ahn_plum', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}'),
 ('ahn_plum', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
-('ahn_plum', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}');
+('ahn_plum', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_plum', 'comp_methyl_myristate', 'contiene_composto', '{}'),
@@ -24682,7 +24923,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pomelo_peel', 'comp_octyl_acetate', 'contiene_composto', '{}'),
 ('ahn_popcorn', 'comp_2_4_nonadienal', 'contiene_composto', '{}'),
 ('ahn_popcorn', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}'),
-('ahn_popcorn', 'comp_vanillin', 'contiene_composto', '{}');
+('ahn_popcorn', 'comp_vanillin', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_popcorn', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
@@ -24784,7 +25026,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_porcini', 'comp_oleic_acid', 'contiene_composto', '{}'),
 ('ahn_porcini', 'comp_propionic_acid', 'contiene_composto', '{}'),
 ('ahn_porcini', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
-('ahn_porcini', 'comp_5_methylfurfural', 'contiene_composto', '{}');
+('ahn_porcini', 'comp_5_methylfurfural', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_porcini', 'comp_heptanoic_acid', 'contiene_composto', '{}'),
@@ -24886,7 +25129,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pork', 'comp_lauryl_alcohol', 'contiene_composto', '{}'),
 ('ahn_pork', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_pork', 'comp_2_3_pentanedione', 'contiene_composto', '{}'),
-('ahn_pork', 'comp_2_hexenal', 'contiene_composto', '{}');
+('ahn_pork', 'comp_2_hexenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pork', 'comp_furfuryl_alcohol', 'contiene_composto', '{}'),
@@ -24988,7 +25232,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pork_sausage', 'comp_3_5_dimethyl_1_2_4_trithiolane', 'contiene_composto', '{}'),
 ('ahn_pork_sausage', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}'),
 ('ahn_pork_sausage', 'comp_methylcyclopentenolone', 'contiene_composto', '{}'),
-('ahn_pork_sausage', 'comp_1_octanol', 'contiene_composto', '{}');
+('ahn_pork_sausage', 'comp_1_octanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pork_sausage', 'comp_adipic_acid', 'contiene_composto', '{}'),
@@ -25090,7 +25335,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pork_sausage', 'comp_dl_phenylalanine', 'contiene_composto', '{}'),
 ('ahn_pork_sausage', 'comp_diethyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_pork_sausage', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
-('ahn_pork_sausage', 'comp_3_5_dimethyl_1_2_cyclopentadione', 'contiene_composto', '{}');
+('ahn_pork_sausage', 'comp_3_5_dimethyl_1_2_cyclopentadione', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pork_sausage', 'comp_pyridine', 'contiene_composto', '{}'),
@@ -25192,7 +25438,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_port_wine', 'comp_heptanoic_acid', 'contiene_composto', '{}'),
 ('ahn_port_wine', 'comp_diacetyl', 'contiene_composto', '{}'),
 ('ahn_port_wine', 'comp_3__methylthio_propanol', 'contiene_composto', '{}'),
-('ahn_port_wine', 'comp_propyl_acetate', 'contiene_composto', '{}');
+('ahn_port_wine', 'comp_propyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_port_wine', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
@@ -25294,7 +25541,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_potato', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_potato', 'comp_2_4_5_trimethyl_thiazole', 'contiene_composto', '{}'),
 ('ahn_potato', 'comp_2_acetylthiazole', 'contiene_composto', '{}'),
-('ahn_potato', 'comp_3_ethyl_2_6_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_potato', 'comp_3_ethyl_2_6_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_potato', 'comp_biphenyl', 'contiene_composto', '{}'),
@@ -25396,7 +25644,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pouching_tea', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_pouching_tea', 'comp_4__methylacetophenone', 'contiene_composto', '{}'),
 ('ahn_pouching_tea', 'comp_p_mentha_1_8_dien_7_al', 'contiene_composto', '{}'),
-('ahn_pouching_tea', 'comp_phenethyl_acetate', 'contiene_composto', '{}');
+('ahn_pouching_tea', 'comp_phenethyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pouching_tea', 'comp_isoamyl_formate', 'contiene_composto', '{}'),
@@ -25498,7 +25747,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pouching_tea', 'comp_isobutyric_acid', 'contiene_composto', '{}'),
 ('ahn_pouching_tea', 'comp_2_heptanone', 'contiene_composto', '{}'),
 ('ahn_pouching_tea', 'comp_indole', 'contiene_composto', '{}'),
-('ahn_pouching_tea', 'comp_3_phenyl_1_propanol', 'contiene_composto', '{}');
+('ahn_pouching_tea', 'comp_3_phenyl_1_propanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_pouching_tea', 'comp_cis_3_hexenyl_benzoate', 'contiene_composto', '{}'),
@@ -25600,7 +25850,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_provolone_cheese', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}'),
 ('ahn_provolone_cheese', 'comp_2_methyl_3_butenal', 'contiene_composto', '{}'),
 ('ahn_provolone_cheese', 'comp_lauric_acid', 'contiene_composto', '{}'),
-('ahn_provolone_cheese', 'comp_1_decanol', 'contiene_composto', '{}');
+('ahn_provolone_cheese', 'comp_1_decanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_provolone_cheese', 'comp_isoborneol', 'contiene_composto', '{}'),
@@ -25702,7 +25953,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_provolone_cheese', 'comp_2_butanone', 'contiene_composto', '{}'),
 ('ahn_provolone_cheese', 'comp_4_methyloctanoic_acid', 'contiene_composto', '{}'),
 ('ahn_provolone_cheese', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
-('ahn_provolone_cheese', 'comp_phenethyl_alcohol', 'contiene_composto', '{}');
+('ahn_provolone_cheese', 'comp_phenethyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_provolone_cheese', 'comp_l_arginine', 'contiene_composto', '{}'),
@@ -25804,7 +26056,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_quince', 'comp_hexyl_acetate', 'contiene_composto', '{}'),
 ('ahn_quince', 'comp_dihydro_b_ionol', 'contiene_composto', '{}'),
 ('ahn_quince', 'comp_isobutyl_propionate', 'contiene_composto', '{}'),
-('ahn_quince', 'comp_1_octanol', 'contiene_composto', '{}');
+('ahn_quince', 'comp_1_octanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_quince', 'comp_2_methoxy_4_vinylphenol', 'contiene_composto', '{}'),
@@ -25906,7 +26159,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rabbiteye_blueberry', 'comp_n_nonanal', 'contiene_composto', '{}'),
 ('ahn_radish', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_radish', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
-('ahn_radish', 'comp_3_methylthiopropyl_isothiocyanate', 'contiene_composto', '{}');
+('ahn_radish', 'comp_3_methylthiopropyl_isothiocyanate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_radish', 'comp_lauric_acid', 'contiene_composto', '{}'),
@@ -26008,7 +26262,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raspberry', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
 ('ahn_raspberry', 'comp_d_camphor', 'contiene_composto', '{}'),
 ('ahn_raspberry', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
-('ahn_raspberry', 'comp_myrcene', 'contiene_composto', '{}');
+('ahn_raspberry', 'comp_myrcene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raspberry', 'comp_2_nonanone', 'contiene_composto', '{}'),
@@ -26110,7 +26365,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_asparagus', 'comp_2_acetylthiazole', 'contiene_composto', '{}'),
 ('ahn_raw_asparagus', 'comp_2_pentanol', 'contiene_composto', '{}'),
 ('ahn_raw_bean', 'comp_2_4_nonadienal', 'contiene_composto', '{}'),
-('ahn_raw_bean', 'comp_jasmone', 'contiene_composto', '{}');
+('ahn_raw_bean', 'comp_jasmone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_bean', 'comp_lauric_acid', 'contiene_composto', '{}'),
@@ -26212,7 +26468,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_beef', 'comp_2_isobutyl_3_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_raw_beef', 'comp_trans__trans_2_4_hexadienal', 'contiene_composto', '{}'),
 ('ahn_raw_beef', 'comp_lauryl_alcohol', 'contiene_composto', '{}'),
-('ahn_raw_beef', 'comp_l_tyrosine', 'contiene_composto', '{}');
+('ahn_raw_beef', 'comp_l_tyrosine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_beef', 'comp_g_dodecalactone', 'contiene_composto', '{}'),
@@ -26314,7 +26571,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_beef', 'comp_g_nonalactone', 'contiene_composto', '{}'),
 ('ahn_raw_beef', 'comp_s_methyl_thioacetate', 'contiene_composto', '{}'),
 ('ahn_raw_beef', 'comp_2_nonenal', 'contiene_composto', '{}'),
-('ahn_raw_beef', 'comp_4_acetyl_2_methylpyrimidine', 'contiene_composto', '{}');
+('ahn_raw_beef', 'comp_4_acetyl_2_methylpyrimidine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_beef', 'comp_thiazole', 'contiene_composto', '{}'),
@@ -26416,7 +26674,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_cabbage', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
 ('ahn_raw_cabbage', 'comp_methylsulfinylmethane', 'contiene_composto', '{}'),
 ('ahn_raw_cabbage', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
-('ahn_raw_cabbage', 'comp_4_heptanone', 'contiene_composto', '{}');
+('ahn_raw_cabbage', 'comp_4_heptanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_cabbage', 'comp_diacetyl', 'contiene_composto', '{}'),
@@ -26518,7 +26777,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_chicken', 'comp_3_octanone', 'contiene_composto', '{}'),
 ('ahn_raw_chicken', 'comp_2_pentanol', 'contiene_composto', '{}'),
 ('ahn_raw_chicken', 'comp_4_hexene_3_one', 'contiene_composto', '{}'),
-('ahn_raw_chicken', 'comp_2_methyl_3_tetrahydrofuranthiol', 'contiene_composto', '{}');
+('ahn_raw_chicken', 'comp_2_methyl_3_tetrahydrofuranthiol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_chicken', 'comp_1_hexadecanol', 'contiene_composto', '{}'),
@@ -26620,7 +26880,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_fatty_fish', 'comp_2_nonenal', 'contiene_composto', '{}'),
 ('ahn_raw_fatty_fish', 'comp_2_undecenal', 'contiene_composto', '{}'),
 ('ahn_raw_fatty_fish', 'comp_isobutyric_acid', 'contiene_composto', '{}'),
-('ahn_raw_fatty_fish', 'comp_cis_6_nonenal', 'contiene_composto', '{}');
+('ahn_raw_fatty_fish', 'comp_cis_6_nonenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_fatty_fish', 'comp_2_heptanone', 'contiene_composto', '{}'),
@@ -26722,7 +26983,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_fish', 'comp_l_lysine', 'contiene_composto', '{}'),
 ('ahn_raw_fish', 'comp_n_valeraldehyde', 'contiene_composto', '{}'),
 ('ahn_raw_fish', 'comp_myristic_acid', 'contiene_composto', '{}'),
-('ahn_raw_fish', 'comp_propionic_acid', 'contiene_composto', '{}');
+('ahn_raw_fish', 'comp_propionic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_fish', 'comp_trimethylamine', 'contiene_composto', '{}'),
@@ -26824,7 +27086,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_lean_fish', 'comp_trans__trans_2_4_hexadienal', 'contiene_composto', '{}'),
 ('ahn_raw_lean_fish', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_raw_lean_fish', 'comp_p_cresol', 'contiene_composto', '{}'),
-('ahn_raw_lean_fish', 'comp_3_hexen_1_ol', 'contiene_composto', '{}');
+('ahn_raw_lean_fish', 'comp_3_hexen_1_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_lean_fish', 'comp_s_methyl_3_methylbutanethioate', 'contiene_composto', '{}'),
@@ -26926,7 +27189,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_pea', 'comp_2_pentenal', 'contiene_composto', '{}'),
 ('ahn_raw_pea', 'comp_2_methoxy_3__1_methylpropyl_pyrazine', 'contiene_composto', '{}'),
 ('ahn_raw_pea', 'comp_styrene', 'contiene_composto', '{}'),
-('ahn_raw_pea', 'comp_methyl_disulfide', 'contiene_composto', '{}');
+('ahn_raw_pea', 'comp_methyl_disulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_pea', 'comp_1_2_dimethoxybenzene', 'contiene_composto', '{}'),
@@ -27028,7 +27292,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_peanut', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_raw_peanut', 'comp_4_hydroxybenzaldehyde', 'contiene_composto', '{}'),
 ('ahn_raw_peanut', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
-('ahn_raw_peanut', 'comp_2_trans__4_trans_decadienal', 'contiene_composto', '{}');
+('ahn_raw_peanut', 'comp_2_trans__4_trans_decadienal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_peanut', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
@@ -27130,7 +27395,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_pork', 'comp_dimethyl_trisulfide', 'contiene_composto', '{}'),
 ('ahn_raw_pork', 'comp_2_pentanone', 'contiene_composto', '{}'),
 ('ahn_raw_pork', 'comp_g_hexalactone', 'contiene_composto', '{}'),
-('ahn_raw_pork', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_raw_pork', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_pork', 'comp_n_octanal', 'contiene_composto', '{}'),
@@ -27232,7 +27498,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_potato', 'comp_2_methyl_5_vinylpyrazine', 'contiene_composto', '{}'),
 ('ahn_raw_potato', 'comp_g_hexalactone', 'contiene_composto', '{}'),
 ('ahn_raw_potato', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}'),
-('ahn_raw_potato', 'comp_n_octanal', 'contiene_composto', '{}');
+('ahn_raw_potato', 'comp_n_octanal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_potato', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
@@ -27334,7 +27601,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_turkey', 'comp_2_5_dimethylthiazole', 'contiene_composto', '{}'),
 ('ahn_raw_turkey', 'comp_2_octanone', 'contiene_composto', '{}'),
 ('ahn_raw_turkey', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
-('ahn_raw_turkey', 'comp_propionaldehyde', 'contiene_composto', '{}');
+('ahn_raw_turkey', 'comp_propionaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_raw_turkey', 'comp_2_methylpyrazine', 'contiene_composto', '{}'),
@@ -27436,7 +27704,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_red_bean', 'comp_2_heptanol', 'contiene_composto', '{}'),
 ('ahn_red_bean', 'comp_theobromine', 'contiene_composto', '{}'),
 ('ahn_red_bean', 'comp_2_3_5_6_tetramethylpyrazine', 'contiene_composto', '{}'),
-('ahn_red_bean', 'comp_g_butyrolactone', 'contiene_composto', '{}');
+('ahn_red_bean', 'comp_g_butyrolactone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_red_bean', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
@@ -27538,7 +27807,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_red_kidney_bean', 'comp_2_3_5_trimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_red_kidney_bean', 'comp_3_penten_2_one', 'contiene_composto', '{}'),
 ('ahn_red_kidney_bean', 'comp_2_3_pentanedione', 'contiene_composto', '{}'),
-('ahn_red_kidney_bean', 'comp_furfuryl_alcohol', 'contiene_composto', '{}');
+('ahn_red_kidney_bean', 'comp_furfuryl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_red_kidney_bean', 'comp_1_methylnaphthalene', 'contiene_composto', '{}'),
@@ -27640,7 +27910,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_red_meat', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_red_meat', 'comp_d_l_methionine', 'contiene_composto', '{}'),
 ('ahn_red_meat', 'comp_2_acetyl_3_methylpyrazine', 'contiene_composto', '{}'),
-('ahn_red_meat', 'comp_phenol', 'contiene_composto', '{}');
+('ahn_red_meat', 'comp_phenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_red_meat', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}'),
@@ -27742,7 +28013,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_red_wine', 'comp_3_phenylpropionic_acid', 'contiene_composto', '{}'),
 ('ahn_red_wine', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_red_wine', 'comp_g_decalactone', 'contiene_composto', '{}'),
-('ahn_red_wine', 'comp_phenethyl_hexanoate', 'contiene_composto', '{}');
+('ahn_red_wine', 'comp_phenethyl_hexanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_red_wine', 'comp_2_nonanone', 'contiene_composto', '{}'),
@@ -27844,7 +28116,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_reunion_geranium', 'comp_diacetyl', 'contiene_composto', '{}'),
 ('ahn_rhizopus', 'comp_diethyl_malate', 'contiene_composto', '{}'),
 ('ahn_rhododendron_fauriae_leaf', 'comp_piperine', 'contiene_composto', '{}'),
-('ahn_rhodophyllus_icterus', 'comp_p_dimethoxybenzene', 'contiene_composto', '{}');
+('ahn_rhodophyllus_icterus', 'comp_p_dimethoxybenzene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rhodotorula_glutinis', 'comp_10_undecenoic_acid', 'contiene_composto', '{}'),
@@ -27946,7 +28219,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rice_bran', 'comp_skatole', 'contiene_composto', '{}'),
 ('ahn_rice_bran', 'comp_4__methylacetophenone', 'contiene_composto', '{}'),
 ('ahn_rice_bran', 'comp_p_vinylphenol', 'contiene_composto', '{}'),
-('ahn_rice_bran', 'comp_propyl_alcohol', 'contiene_composto', '{}');
+('ahn_rice_bran', 'comp_propyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rice_bran', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
@@ -28048,7 +28322,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_beef', 'comp_2_4_5_trimethyl_thiazole', 'contiene_composto', '{}'),
 ('ahn_roasted_beef', 'comp_2_methyltetrahydrothiophen_3_one', 'contiene_composto', '{}'),
 ('ahn_roasted_beef', 'comp_methyl_salicylate', 'contiene_composto', '{}'),
-('ahn_roasted_beef', 'comp_alpha_terpineol', 'contiene_composto', '{}');
+('ahn_roasted_beef', 'comp_alpha_terpineol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_beef', 'comp_isopentylamine', 'contiene_composto', '{}'),
@@ -28150,7 +28425,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_beef', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_roasted_beef', 'comp_isophorone', 'contiene_composto', '{}'),
 ('ahn_roasted_beef', 'comp_1_penten_3_one', 'contiene_composto', '{}'),
-('ahn_roasted_beef', 'comp_trans__trans_2_4_octadienal', 'contiene_composto', '{}');
+('ahn_roasted_beef', 'comp_trans__trans_2_4_octadienal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_beef', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
@@ -28252,7 +28528,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_chicken', 'comp_ethyl_acetate', 'contiene_composto', '{}'),
 ('ahn_roasted_chicken', 'comp_isoamyl_formate', 'contiene_composto', '{}'),
 ('ahn_roasted_chicken', 'comp_g_undecalactone', 'contiene_composto', '{}'),
-('ahn_roasted_chicken', 'comp_3_ethylpyridine', 'contiene_composto', '{}');
+('ahn_roasted_chicken', 'comp_3_ethylpyridine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_chicken', 'comp_disodium_5__inosinate', 'contiene_composto', '{}'),
@@ -28354,7 +28631,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_chicken', 'comp_4_ethylbenzaldehyde', 'contiene_composto', '{}'),
 ('ahn_roasted_chicken', 'comp_1_penten_3_ol', 'contiene_composto', '{}'),
 ('ahn_roasted_chicken', 'comp_2_ethyl_3_methylpyrazine', 'contiene_composto', '{}'),
-('ahn_roasted_chicken', 'comp_octanoic_acid', 'contiene_composto', '{}');
+('ahn_roasted_chicken', 'comp_octanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_chicken', 'comp_dl_phenylalanine', 'contiene_composto', '{}'),
@@ -28456,7 +28734,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_cocoa', 'comp_2_3_diethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_roasted_cocoa', 'comp_valeric_acid', 'contiene_composto', '{}'),
 ('ahn_roasted_cocoa', 'comp_2_3_5_6_tetramethylpyrazine', 'contiene_composto', '{}'),
-('ahn_roasted_cocoa', 'comp_amyl_butyrate', 'contiene_composto', '{}');
+('ahn_roasted_cocoa', 'comp_amyl_butyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_cocoa', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
@@ -28558,7 +28837,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_cocoa', 'comp_theobromine', 'contiene_composto', '{}'),
 ('ahn_roasted_cocoa', 'comp_ethyl_cinnamate', 'contiene_composto', '{}'),
 ('ahn_roasted_cocoa', 'comp_methyl_acetate', 'contiene_composto', '{}'),
-('ahn_roasted_cocoa', 'comp_3_hexenoic_acid', 'contiene_composto', '{}');
+('ahn_roasted_cocoa', 'comp_3_hexenoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_cocoa', 'comp_n_hexyl_2_butenoate', 'contiene_composto', '{}'),
@@ -28660,7 +28940,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_filbert', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_roasted_filbert', 'comp_styrene', 'contiene_composto', '{}'),
 ('ahn_roasted_filbert', 'comp_3_acetylpyridine', 'contiene_composto', '{}'),
-('ahn_roasted_filbert', 'comp_5_methylfurfural', 'contiene_composto', '{}');
+('ahn_roasted_filbert', 'comp_5_methylfurfural', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_filbert', 'comp_4_5_dihydro_3__2h_thiophenone', 'contiene_composto', '{}'),
@@ -28762,7 +29043,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_green_tea', 'comp_m_cresol', 'contiene_composto', '{}'),
 ('ahn_roasted_green_tea', 'comp_3_5_diethyl_2_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_roasted_green_tea', 'comp_2_6_dimethylpyridine', 'contiene_composto', '{}'),
-('ahn_roasted_green_tea', 'comp_methylsulfinylmethane', 'contiene_composto', '{}');
+('ahn_roasted_green_tea', 'comp_methylsulfinylmethane', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_green_tea', 'comp_2_octanone', 'contiene_composto', '{}'),
@@ -28864,7 +29146,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_green_tea', 'comp_2_methoxy_4_vinylphenol', 'contiene_composto', '{}'),
 ('ahn_roasted_green_tea', 'comp_2_pentenal', 'contiene_composto', '{}'),
 ('ahn_roasted_green_tea', 'comp_2_5_diethyl_3_methylpyrazine', 'contiene_composto', '{}'),
-('ahn_roasted_green_tea', 'comp_formic_acid', 'contiene_composto', '{}');
+('ahn_roasted_green_tea', 'comp_formic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_green_tea', 'comp_nonanoic_acid', 'contiene_composto', '{}'),
@@ -28966,7 +29249,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_hazelnut', 'comp_2_octen_4_one', 'contiene_composto', '{}'),
 ('ahn_roasted_hazelnut', 'comp_dimethyl_succinate', 'contiene_composto', '{}'),
 ('ahn_roasted_hazelnut', 'comp_l_arginine', 'contiene_composto', '{}'),
-('ahn_roasted_lamb', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}');
+('ahn_roasted_lamb', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_lamb', 'comp_lauric_acid', 'contiene_composto', '{}'),
@@ -29068,7 +29352,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_malt', 'comp_maltol', 'contiene_composto', '{}'),
 ('ahn_roasted_malt', 'comp_n_furfuryl_pyrrole', 'contiene_composto', '{}'),
 ('ahn_roasted_malt', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
-('ahn_roasted_malt', 'comp_2_methylpyrazine', 'contiene_composto', '{}');
+('ahn_roasted_malt', 'comp_2_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_malt', 'comp_5h_5_methyl_6_7_dihydrocyclopenta_b_pyrazine', 'contiene_composto', '{}'),
@@ -29170,7 +29455,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_mate', 'comp_lauryl_alcohol', 'contiene_composto', '{}'),
 ('ahn_roasted_mate', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_roasted_mate', 'comp_2_3_pentanedione', 'contiene_composto', '{}'),
-('ahn_roasted_mate', 'comp_2_methoxy_4_propylphenol', 'contiene_composto', '{}');
+('ahn_roasted_mate', 'comp_2_methoxy_4_propylphenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_mate', 'comp_g_nonalactone', 'contiene_composto', '{}'),
@@ -29272,7 +29558,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_onion', 'comp_propionaldehyde', 'contiene_composto', '{}'),
 ('ahn_roasted_onion', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_roasted_onion', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
-('ahn_roasted_onion', 'comp_methyl_1_propenyl_disulfide', 'contiene_composto', '{}');
+('ahn_roasted_onion', 'comp_methyl_1_propenyl_disulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_onion', 'comp_methyl_mercaptan', 'contiene_composto', '{}'),
@@ -29374,7 +29661,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_peanut', 'comp_trans__trans_2_4_octadienal', 'contiene_composto', '{}'),
 ('ahn_roasted_peanut', 'comp_1_buten_1_yl_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_roasted_peanut', 'comp_methyl_furoate', 'contiene_composto', '{}'),
-('ahn_roasted_peanut', 'comp_decanal', 'contiene_composto', '{}');
+('ahn_roasted_peanut', 'comp_decanal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_peanut', 'comp_g_valerolactone', 'contiene_composto', '{}'),
@@ -29476,7 +29764,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_pecan', 'comp_b_pinene', 'contiene_composto', '{}'),
 ('ahn_roasted_pecan', 'comp_2_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_roasted_pecan', 'comp_2_ethyl_3_5_6__dimethylpyrazine', 'contiene_composto', '{}'),
-('ahn_roasted_pecan', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_roasted_pecan', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_pecan', 'comp_undecanal', 'contiene_composto', '{}'),
@@ -29578,7 +29867,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_pork', 'comp_6_10_dimethyl_5_9_undecadien_2_one', 'contiene_composto', '{}'),
 ('ahn_roasted_pork', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_roasted_pork', 'comp_2_methyltetrahydrothiophen_3_one', 'contiene_composto', '{}'),
-('ahn_roasted_pork', 'comp_paraldehyde', 'contiene_composto', '{}');
+('ahn_roasted_pork', 'comp_paraldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_pork', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
@@ -29680,7 +29970,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_shrimp', 'comp_3__methylthio_propanol', 'contiene_composto', '{}'),
 ('ahn_roasted_shrimp', 'comp_2_octanone', 'contiene_composto', '{}'),
 ('ahn_roasted_shrimp', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
-('ahn_roasted_shrimp', 'comp_methyl_mercaptan', 'contiene_composto', '{}');
+('ahn_roasted_shrimp', 'comp_methyl_mercaptan', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_shrimp', 'comp_4_methyl_3_penten_2_one', 'contiene_composto', '{}'),
@@ -29782,7 +30073,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_turkey', 'comp_pyridine', 'contiene_composto', '{}'),
 ('ahn_roasted_turkey', 'comp_2_nonanone', 'contiene_composto', '{}'),
 ('ahn_roasted_turkey', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
-('ahn_roasted_turkey', 'comp_isobutyl_alcohol', 'contiene_composto', '{}');
+('ahn_roasted_turkey', 'comp_isobutyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roasted_turkey', 'comp_n_nonanal', 'contiene_composto', '{}'),
@@ -29884,7 +30176,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_romano_cheese', 'comp_furfuryl_alcohol', 'contiene_composto', '{}'),
 ('ahn_romano_cheese', 'comp_s_methyl_3_methylbutanethioate', 'contiene_composto', '{}'),
 ('ahn_romano_cheese', 'comp_methyl_hexanoate', 'contiene_composto', '{}'),
-('ahn_romano_cheese', 'comp_2_3_5_trithiahexane', 'contiene_composto', '{}');
+('ahn_romano_cheese', 'comp_2_3_5_trithiahexane', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_romano_cheese', 'comp_ethyl_3_methylpentanoate', 'contiene_composto', '{}'),
@@ -29986,7 +30279,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_romano_cheese', 'comp_d_octalactone', 'contiene_composto', '{}'),
 ('ahn_romano_cheese', 'comp_isovaleric_acid', 'contiene_composto', '{}'),
 ('ahn_romano_cheese', 'comp_5__and_6_decenoic_acid', 'contiene_composto', '{}'),
-('ahn_romano_cheese', 'comp_2_heptanol', 'contiene_composto', '{}');
+('ahn_romano_cheese', 'comp_2_heptanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_romano_cheese', 'comp_isoamyl_hexanoate', 'contiene_composto', '{}'),
@@ -30088,7 +30382,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rooibus_tea', 'comp_2_methyl_3_butenal', 'contiene_composto', '{}'),
 ('ahn_rooibus_tea', 'comp_lauric_acid', 'contiene_composto', '{}'),
 ('ahn_rooibus_tea', 'comp_vanillin__natural', 'contiene_composto', '{}'),
-('ahn_rooibus_tea', 'comp_hexyl_acetate', 'contiene_composto', '{}');
+('ahn_rooibus_tea', 'comp_hexyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rooibus_tea', 'comp_butyl_alcohol', 'contiene_composto', '{}'),
@@ -30190,7 +30485,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roquefort_cheese', 'comp_formic_acid', 'contiene_composto', '{}'),
 ('ahn_roquefort_cheese', 'comp_nonanoic_acid', 'contiene_composto', '{}'),
 ('ahn_roquefort_cheese', 'comp_ethyl_octanoate', 'contiene_composto', '{}'),
-('ahn_roquefort_cheese', 'comp_2_6_dimethylpyridine', 'contiene_composto', '{}');
+('ahn_roquefort_cheese', 'comp_2_6_dimethylpyridine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roquefort_cheese', 'comp_2_hydroxybenzoic_acid', 'contiene_composto', '{}'),
@@ -30292,7 +30588,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roquefort_cheese', 'comp_n_propyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_roquefort_cheese', 'comp_methyl_octanoate', 'contiene_composto', '{}'),
 ('ahn_roquefort_cheese', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
-('ahn_roquefort_cheese', 'comp_4_methyl_2_oxopentanoic_acid', 'contiene_composto', '{}');
+('ahn_roquefort_cheese', 'comp_4_methyl_2_oxopentanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roquefort_cheese', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
@@ -30394,7 +30691,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rose_wine', 'comp_4_hydroxy_3_5_dimethoxybenzaldehyde', 'contiene_composto', '{}'),
 ('ahn_rose_wine', 'comp_g_nonalactone', 'contiene_composto', '{}'),
 ('ahn_rose_wine', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}'),
-('ahn_rose_wine', 'comp_s_methyl_thioacetate', 'contiene_composto', '{}');
+('ahn_rose_wine', 'comp_s_methyl_thioacetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rose_wine', 'comp_isoamyl_octanoate', 'contiene_composto', '{}'),
@@ -30496,7 +30794,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rose_wine', 'comp_isoamyl_butyrate', 'contiene_composto', '{}'),
 ('ahn_rose_wine', 'comp_guaiacol', 'contiene_composto', '{}'),
 ('ahn_rose_wine', 'comp_4_hydroxy_3_methyloctanoic_acid_lactone', 'contiene_composto', '{}'),
-('ahn_rose_wine', 'comp_3_hydroxy_4_phenylbutan_2_one', 'contiene_composto', '{}');
+('ahn_rose_wine', 'comp_3_hydroxy_4_phenylbutan_2_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_roselle', 'comp_citric_acid', 'contiene_composto', '{}'),
@@ -30598,7 +30897,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rum', 'comp_p_mentha_1_3_diene', 'contiene_composto', '{}'),
 ('ahn_rum', 'comp_thiazole', 'contiene_composto', '{}'),
 ('ahn_rum', 'comp_butyl_alcohol', 'contiene_composto', '{}'),
-('ahn_rum', 'comp_n_propyl_hexanoate', 'contiene_composto', '{}');
+('ahn_rum', 'comp_n_propyl_hexanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rum', 'comp_isoamyl_octanoate', 'contiene_composto', '{}'),
@@ -30700,7 +31000,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rum', 'comp_ethyl_myristate', 'contiene_composto', '{}'),
 ('ahn_rum', 'comp_ethyl_nonanoate', 'contiene_composto', '{}'),
 ('ahn_rum', 'comp_2_nonanol', 'contiene_composto', '{}'),
-('ahn_rum', 'comp_geranyl_acetate', 'contiene_composto', '{}');
+('ahn_rum', 'comp_geranyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rum', 'comp_2_heptanol', 'contiene_composto', '{}'),
@@ -30802,7 +31103,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_russian_cheese', 'comp_nonyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_russian_cheese', 'comp_a_methylbenzyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_russian_cheese', 'comp_2_tridecanone', 'contiene_composto', '{}'),
-('ahn_russian_cheese', 'comp_d_l_valine', 'contiene_composto', '{}');
+('ahn_russian_cheese', 'comp_d_l_valine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_russian_cheese', 'comp_trimethylamine', 'contiene_composto', '{}'),
@@ -30904,7 +31206,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rye_bread', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}'),
 ('ahn_rye_bread', 'comp_2_methoxy_4_vinylphenol', 'contiene_composto', '{}'),
 ('ahn_rye_bread', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
-('ahn_rye_bread', 'comp_propionic_acid', 'contiene_composto', '{}');
+('ahn_rye_bread', 'comp_propionic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_rye_bread', 'comp_formic_acid', 'contiene_composto', '{}'),
@@ -31006,7 +31309,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sage', 'comp_isoborneol', 'contiene_composto', '{}'),
 ('ahn_sage', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}'),
 ('ahn_sage', 'comp_methyl_isovalerate', 'contiene_composto', '{}'),
-('ahn_sage', 'comp_eucalyptol', 'contiene_composto', '{}');
+('ahn_sage', 'comp_eucalyptol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sage', 'comp_myrcene', 'contiene_composto', '{}'),
@@ -31108,7 +31412,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_salmon', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_salmon', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
 ('ahn_salmon', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
-('ahn_salmon', 'comp_2_undecenal', 'contiene_composto', '{}');
+('ahn_salmon', 'comp_2_undecenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_salmon', 'comp_cis_6_nonenal', 'contiene_composto', '{}'),
@@ -31210,7 +31515,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_satsuma', 'comp_3_methyl_2_buten_1_ol', 'contiene_composto', '{}'),
 ('ahn_satsuma', 'comp_d_l_valine', 'contiene_composto', '{}'),
 ('ahn_satsuma', 'comp_hydrogen_sulfide', 'contiene_composto', '{}'),
-('ahn_satsuma', 'comp_carvyl_acetate', 'contiene_composto', '{}');
+('ahn_satsuma', 'comp_carvyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_satsuma', 'comp_farnesol', 'contiene_composto', '{}'),
@@ -31312,7 +31618,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sauvignon_blanc_grape', 'comp_2_pentanol', 'contiene_composto', '{}'),
 ('ahn_sauvignon_blanc_grape', 'comp__d___l___dl___meso__tartaric_acid', 'contiene_composto', '{}'),
 ('ahn_sauvignon_blanc_grape', 'comp_isoamyl_laurate', 'contiene_composto', '{}'),
-('ahn_sauvignon_blanc_grape', 'comp_propionic_acid', 'contiene_composto', '{}');
+('ahn_sauvignon_blanc_grape', 'comp_propionic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sauvignon_blanc_grape', 'comp_cis_3_hexenal', 'contiene_composto', '{}'),
@@ -31414,7 +31721,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sauvignon_grape', 'comp_n_octanal', 'contiene_composto', '{}'),
 ('ahn_sauvignon_grape', 'comp_ethyl_anthranilate', 'contiene_composto', '{}'),
 ('ahn_sauvignon_grape', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
-('ahn_sauvignon_grape', 'comp_isobutyl_2_butenoate', 'contiene_composto', '{}');
+('ahn_sauvignon_grape', 'comp_isobutyl_2_butenoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sauvignon_grape', 'comp_1_penten_3_one', 'contiene_composto', '{}'),
@@ -31516,7 +31824,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_scallop', 'comp_trimethylamine', 'contiene_composto', '{}'),
 ('ahn_scallop', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
 ('ahn_scallop', 'comp_palmitic_acid', 'contiene_composto', '{}'),
-('ahn_scallop', 'comp_2_acetyl_3_methylpyrazine', 'contiene_composto', '{}');
+('ahn_scallop', 'comp_2_acetyl_3_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_scallop', 'comp_dimethyl_trisulfide', 'contiene_composto', '{}'),
@@ -31618,7 +31927,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_scotch_spearmint_oil', 'comp_propionaldehyde', 'contiene_composto', '{}'),
 ('ahn_scotch_spearmint_oil', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_scotch_spearmint_oil', 'comp_methyl_phenethyl_ether', 'contiene_composto', '{}'),
-('ahn_scotch_spearmint_oil', 'comp_p_mentha_1_8_dien_7_al', 'contiene_composto', '{}');
+('ahn_scotch_spearmint_oil', 'comp_p_mentha_1_8_dien_7_al', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_scotch_spearmint_oil', 'comp_phenethyl_butyrate', 'contiene_composto', '{}'),
@@ -31720,7 +32030,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_seal', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
 ('ahn_seal', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}'),
 ('ahn_seal', 'comp_3_octanone', 'contiene_composto', '{}'),
-('ahn_seal', 'comp_1_octanol', 'contiene_composto', '{}');
+('ahn_seal', 'comp_1_octanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_seal', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
@@ -31822,7 +32133,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_seychelles_tea', 'comp_2_6_dimethylpyridine', 'contiene_composto', '{}'),
 ('ahn_seychelles_tea', 'comp_methylsulfinylmethane', 'contiene_composto', '{}'),
 ('ahn_seychelles_tea', 'comp_cinnamaldehyde', 'contiene_composto', '{}'),
-('ahn_seychelles_tea', 'comp_2_octanone', 'contiene_composto', '{}');
+('ahn_seychelles_tea', 'comp_2_octanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_seychelles_tea', 'comp_2_6_6_trimethyl_1_2_cyclohexen_1_carboxaldehyde', 'contiene_composto', '{}'),
@@ -31924,7 +32236,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_seychelles_tea', 'comp_1_methylnaphthalene', 'contiene_composto', '{}'),
 ('ahn_seychelles_tea', 'comp_1_1_dimethoxyethane', 'contiene_composto', '{}'),
 ('ahn_seychelles_tea', 'comp_g_nonalactone', 'contiene_composto', '{}'),
-('ahn_seychelles_tea', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}');
+('ahn_seychelles_tea', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_seychelles_tea', 'comp_isobutyric_acid', 'contiene_composto', '{}'),
@@ -32026,7 +32339,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sheep_cheese', 'comp_ethyl_acetate', 'contiene_composto', '{}'),
 ('ahn_sheep_cheese', 'comp_isoamyl_acetate', 'contiene_composto', '{}'),
 ('ahn_sheep_cheese', 'comp_2_3_5_trimethylpyrazine', 'contiene_composto', '{}'),
-('ahn_sheep_cheese', 'comp_lauryl_alcohol', 'contiene_composto', '{}');
+('ahn_sheep_cheese', 'comp_lauryl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sheep_cheese', 'comp_furfuryl_alcohol', 'contiene_composto', '{}'),
@@ -32128,7 +32442,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sheep_cheese', 'comp_d_octalactone', 'contiene_composto', '{}'),
 ('ahn_sheep_cheese', 'comp_isovaleric_acid', 'contiene_composto', '{}'),
 ('ahn_sheep_cheese', 'comp_5__and_6_decenoic_acid', 'contiene_composto', '{}'),
-('ahn_sheep_cheese', 'comp_2_heptanol', 'contiene_composto', '{}');
+('ahn_sheep_cheese', 'comp_2_heptanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sheep_cheese', 'comp_isoamyl_hexanoate', 'contiene_composto', '{}'),
@@ -32230,7 +32545,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sherry', 'comp_2_methyltetrahydrothiophen_3_one', 'contiene_composto', '{}'),
 ('ahn_sherry', 'comp_vanillin', 'contiene_composto', '{}'),
 ('ahn_sherry', 'comp_ethyl_hexanoate', 'contiene_composto', '{}'),
-('ahn_sherry', 'comp_alpha_terpineol', 'contiene_composto', '{}');
+('ahn_sherry', 'comp_alpha_terpineol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sherry', 'comp_isopentylamine', 'contiene_composto', '{}'),
@@ -32332,7 +32648,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_shiitake', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_shiitake', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_shiitake', 'comp_4_hydroxy_3_methoxybenzoic_acid', 'contiene_composto', '{}'),
-('ahn_shiitake', 'comp_allyl_heptanoate', 'contiene_composto', '{}');
+('ahn_shiitake', 'comp_allyl_heptanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_shiitake', 'comp_methyl_linoleate__48___methyl_linolenate__52___mix_ture', 'contiene_composto', '{}'),
@@ -32434,7 +32751,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_shiitake', 'comp_isovaleric_acid', 'contiene_composto', '{}'),
 ('ahn_shiitake', 'comp_methyl_2_methylbutyrate', 'contiene_composto', '{}'),
 ('ahn_shiitake', 'comp_2_methyltetrahydrofuran_3_one', 'contiene_composto', '{}'),
-('ahn_shiitake', 'comp_salicylaldehyde', 'contiene_composto', '{}');
+('ahn_shiitake', 'comp_salicylaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_shiitake', 'comp_n_nonanal', 'contiene_composto', '{}'),
@@ -32536,7 +32854,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_skim_milk', 'comp_2_6_dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_skim_milk', 'comp_benzothiazole', 'contiene_composto', '{}'),
 ('ahn_skim_milk', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}'),
-('ahn_smoke', 'comp_4_methyl_2_6_dimethoxyphenol', 'contiene_composto', '{}');
+('ahn_smoke', 'comp_4_methyl_2_6_dimethoxyphenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoke', 'comp_4_ethyl_2_6_dimethoxyphenol', 'contiene_composto', '{}'),
@@ -32638,7 +32957,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_fish', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
 ('ahn_smoked_fish', 'comp_4_methyl_2_6_dimethoxyphenol', 'contiene_composto', '{}'),
 ('ahn_smoked_fish', 'comp_vanillin__natural', 'contiene_composto', '{}'),
-('ahn_smoked_fish', 'comp_3_octen_2_one', 'contiene_composto', '{}');
+('ahn_smoked_fish', 'comp_3_octen_2_one', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_fish', 'comp_3_octanone', 'contiene_composto', '{}'),
@@ -32740,7 +33060,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_herring', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
 ('ahn_smoked_herring', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
 ('ahn_smoked_herring', 'comp_s_methyl_3_methylbutanethioate', 'contiene_composto', '{}'),
-('ahn_smoked_herring', 'comp_hydrogen_sulfide', 'contiene_composto', '{}');
+('ahn_smoked_herring', 'comp_hydrogen_sulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_herring', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
@@ -32842,7 +33163,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_pork', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_smoked_pork', 'comp_1_methyl_1_cyclopenten_3_one', 'contiene_composto', '{}'),
 ('ahn_smoked_pork', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
-('ahn_smoked_pork', 'comp_3_methyl_2_buten_1_ol', 'contiene_composto', '{}');
+('ahn_smoked_pork', 'comp_3_methyl_2_buten_1_ol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_pork', 'comp_benzoic_acid', 'contiene_composto', '{}'),
@@ -32944,7 +33266,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_pork_belly', 'comp_4_methylthiazole', 'contiene_composto', '{}'),
 ('ahn_smoked_pork_belly', 'comp_d_l_methionine', 'contiene_composto', '{}'),
 ('ahn_smoked_pork_belly', 'comp_2_acetyl_3_methylpyrazine', 'contiene_composto', '{}'),
-('ahn_smoked_pork_belly', 'comp_dimethyl_trisulfide', 'contiene_composto', '{}');
+('ahn_smoked_pork_belly', 'comp_dimethyl_trisulfide', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_pork_belly', 'comp_2_pentanone', 'contiene_composto', '{}'),
@@ -33046,7 +33369,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_salmon', 'comp_butylamine', 'contiene_composto', '{}'),
 ('ahn_smoked_salmon', 'comp_propyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_smoked_salmon', 'comp_b_pinene', 'contiene_composto', '{}'),
-('ahn_smoked_salmon', 'comp_methyl_mercaptan', 'contiene_composto', '{}');
+('ahn_smoked_salmon', 'comp_methyl_mercaptan', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_salmon', 'comp_methyl_thiobutyrate', 'contiene_composto', '{}'),
@@ -33148,7 +33472,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_sausage', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
 ('ahn_smoked_sausage', 'comp_pyridine', 'contiene_composto', '{}'),
 ('ahn_smoked_sausage', 'comp_2_nonanone', 'contiene_composto', '{}'),
-('ahn_smoked_sausage', 'comp_heptyl_alcohol', 'contiene_composto', '{}');
+('ahn_smoked_sausage', 'comp_heptyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_smoked_sausage', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
@@ -33250,7 +33575,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_snap_bean', 'comp_vanillin', 'contiene_composto', '{}'),
 ('ahn_snap_bean', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
 ('ahn_snap_bean', 'comp_2_isobutyl_3_methoxypyrazine', 'contiene_composto', '{}'),
-('ahn_snap_bean', 'comp_3_octanone', 'contiene_composto', '{}');
+('ahn_snap_bean', 'comp_3_octanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_snap_bean', 'comp_2_pentanol', 'contiene_composto', '{}'),
@@ -33352,7 +33678,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_soursop', 'comp_pyridine', 'contiene_composto', '{}'),
 ('ahn_soursop', 'comp_methyl_2_hexenoate', 'contiene_composto', '{}'),
 ('ahn_soursop', 'comp_methyl_3_hydroxyhexanoate', 'contiene_composto', '{}'),
-('ahn_soursop', 'comp_methyl_nicotinate', 'contiene_composto', '{}');
+('ahn_soursop', 'comp_methyl_nicotinate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_soursop', 'comp_methyl_3_phenylpropionate', 'contiene_composto', '{}'),
@@ -33454,7 +33781,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_soybean', 'comp_2_methoxy_4_vinylphenol', 'contiene_composto', '{}'),
 ('ahn_soybean', 'comp_2_pentenal', 'contiene_composto', '{}'),
 ('ahn_soybean', 'comp_2_5_diethyl_3_methylpyrazine', 'contiene_composto', '{}'),
-('ahn_soybean', 'comp_nonanoic_acid', 'contiene_composto', '{}');
+('ahn_soybean', 'comp_nonanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_soybean', 'comp_methylsulfinylmethane', 'contiene_composto', '{}'),
@@ -33556,7 +33884,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_soybean', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_soybean', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_soybean', 'comp_2_methoxy_3__5_and_6__isopropylpyrazine', 'contiene_composto', '{}'),
-('ahn_soybean', 'comp_2_ethyl_5_methylpyrazine', 'contiene_composto', '{}');
+('ahn_soybean', 'comp_2_ethyl_5_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_soybean', 'comp_butyl_acetate', 'contiene_composto', '{}'),
@@ -33658,7 +33987,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sparkling_wine', 'comp_4__2_6_6_trimethyl_cyclohexa_1_3_dienyl_but_2_en_4_one', 'contiene_composto', '{}'),
 ('ahn_sparkling_wine', 'comp_s_methyl_thioacetate', 'contiene_composto', '{}'),
 ('ahn_sparkling_wine', 'comp_isoamyl_octanoate', 'contiene_composto', '{}'),
-('ahn_sparkling_wine', 'comp_decanoic_acid', 'contiene_composto', '{}');
+('ahn_sparkling_wine', 'comp_decanoic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sparkling_wine', 'comp_2_heptanone', 'contiene_composto', '{}'),
@@ -33760,7 +34090,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sparkling_wine', 'comp_2_heptanol', 'contiene_composto', '{}'),
 ('ahn_sparkling_wine', 'comp_isoamyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_sparkling_wine', 'comp_4_hydroxy_4_methyl_5_hexenoic_acid_gamma_lactone', 'contiene_composto', '{}'),
-('ahn_sparkling_wine', 'comp_isoamyl_butyrate', 'contiene_composto', '{}');
+('ahn_sparkling_wine', 'comp_isoamyl_butyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sparkling_wine', 'comp_guaiacol', 'contiene_composto', '{}'),
@@ -33862,7 +34193,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_spirea_ulmaria_oil', 'comp_piperonal', 'contiene_composto', '{}'),
 ('ahn_split_pea', 'comp_1_methylnaphthalene', 'contiene_composto', '{}'),
 ('ahn_squash', 'comp_trans_2_nonen_1_ol', 'contiene_composto', '{}'),
-('ahn_squid', 'comp_3_ethyl_2_6_dimethylpyrazine', 'contiene_composto', '{}');
+('ahn_squid', 'comp_3_ethyl_2_6_dimethylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_squid', 'comp_indole', 'contiene_composto', '{}'),
@@ -33964,7 +34296,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_starfruit', 'comp_p_menthan_2_one', 'contiene_composto', '{}'),
 ('ahn_starfruit', 'comp_______heptan_3_yl_butyrate', 'contiene_composto', '{}'),
 ('ahn_starfruit', 'comp_propyl_acetate', 'contiene_composto', '{}'),
-('ahn_starfruit', 'comp_methyl_butyrate', 'contiene_composto', '{}');
+('ahn_starfruit', 'comp_methyl_butyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_starfruit', 'comp_dimethyl_succinate', 'contiene_composto', '{}'),
@@ -34066,7 +34399,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_strawberry', 'comp_isoamyl_octanoate', 'contiene_composto', '{}'),
 ('ahn_strawberry', 'comp_2_heptanone', 'contiene_composto', '{}'),
 ('ahn_strawberry', 'comp_ethyl_butyrate', 'contiene_composto', '{}'),
-('ahn_strawberry', 'comp_hexyl_octanoate', 'contiene_composto', '{}');
+('ahn_strawberry', 'comp_hexyl_octanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_strawberry', 'comp_n_butyric_acid', 'contiene_composto', '{}'),
@@ -34168,7 +34502,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_strawberry', 'comp_2_methyl_3_pentenoic_acid', 'contiene_composto', '{}'),
 ('ahn_strawberry', 'comp_2_heptenal', 'contiene_composto', '{}'),
 ('ahn_strawberry', 'comp_ethyl_2_methylbutyrate', 'contiene_composto', '{}'),
-('ahn_strawberry', 'comp_octyl_butyrate', 'contiene_composto', '{}');
+('ahn_strawberry', 'comp_octyl_butyrate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_strawberry', 'comp_palmitic_acid', 'contiene_composto', '{}'),
@@ -34270,7 +34605,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sturgeon_caviar', 'comp_2_octenal', 'contiene_composto', '{}'),
 ('ahn_sudachi', 'comp_2_6_dimethyl_5_heptenal', 'contiene_composto', '{}'),
 ('ahn_sugarcane', 'comp_pyruvic_acid', 'contiene_composto', '{}'),
-('ahn_sugarcane', 'comp_aconitic_acid', 'contiene_composto', '{}');
+('ahn_sugarcane', 'comp_aconitic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sumac', 'comp_tannic_acid', 'contiene_composto', '{}'),
@@ -34372,7 +34708,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_sweetfish', 'comp_2_octenal', 'contiene_composto', '{}'),
 ('ahn_sweetfish', 'comp_2_3_octanedione', 'contiene_composto', '{}'),
 ('ahn_swiss_cheese', 'comp_4_methyl_2_pentanone', 'contiene_composto', '{}'),
-('ahn_swiss_cheese', 'comp_2_methyl_3_butenal', 'contiene_composto', '{}');
+('ahn_swiss_cheese', 'comp_2_methyl_3_butenal', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_swiss_cheese', 'comp_lauric_acid', 'contiene_composto', '{}'),
@@ -34474,7 +34811,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_swiss_cheese', 'comp_ethyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_swiss_cheese', 'comp_valeric_acid', 'contiene_composto', '{}'),
 ('ahn_swiss_cheese', 'comp_2_3_5_6_tetramethylpyrazine', 'contiene_composto', '{}'),
-('ahn_swiss_cheese', 'comp_methyl_acetate', 'contiene_composto', '{}');
+('ahn_swiss_cheese', 'comp_methyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_swiss_cheese', 'comp_isobutyric_acid', 'contiene_composto', '{}'),
@@ -34576,7 +34914,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tamarind', 'comp_vanillin__natural', 'contiene_composto', '{}'),
 ('ahn_tamarind', 'comp_pyrrole', 'contiene_composto', '{}'),
 ('ahn_tamarind', 'comp_3__methylthio__propionaldehyde', 'contiene_composto', '{}'),
-('ahn_tamarind', 'comp_9_12_octadecadienoic_acid__48___plus_9_12_15_octadeca__trienoinc_acid__52____methyl_esters_', 'contiene_composto', '{}');
+('ahn_tamarind', 'comp_9_12_octadecadienoic_acid__48___plus_9_12_15_octadeca__trienoinc_acid__52____methyl_esters_', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tamarind', 'comp_1_octanol', 'contiene_composto', '{}'),
@@ -34678,7 +35017,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tangerine', 'comp_d_l_valine', 'contiene_composto', '{}'),
 ('ahn_tangerine', 'comp_hydrogen_sulfide', 'contiene_composto', '{}'),
 ('ahn_tangerine', 'comp_carvyl_acetate', 'contiene_composto', '{}'),
-('ahn_tangerine', 'comp_farnesol', 'contiene_composto', '{}');
+('ahn_tangerine', 'comp_farnesol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tangerine', 'comp_geraniol', 'contiene_composto', '{}'),
@@ -34780,7 +35120,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tea', 'comp__e__2_hexenyl_hexanoate', 'contiene_composto', '{}'),
 ('ahn_tea', 'comp_methyl_2_pyrrolyl_ketone', 'contiene_composto', '{}'),
 ('ahn_tea', 'comp_hexyl_butyrate', 'contiene_composto', '{}'),
-('ahn_tea', 'comp_3_octanol', 'contiene_composto', '{}');
+('ahn_tea', 'comp_3_octanol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tea', 'comp_6_methyl_5_hepten_2_one', 'contiene_composto', '{}'),
@@ -34882,7 +35223,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tea', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_tea_leaf_oil', 'comp_isobutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_tea_leaf_oil', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
-('ahn_tea_oil', 'comp_phenylacetaldehyde', 'contiene_composto', '{}');
+('ahn_tea_oil', 'comp_phenylacetaldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tea_oil', 'comp_o_cresol', 'contiene_composto', '{}'),
@@ -34984,7 +35326,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_thymus', 'comp_2_hexenal', 'contiene_composto', '{}'),
 ('ahn_thymus', 'comp_menthol', 'contiene_composto', '{}'),
 ('ahn_thymus', 'comp_methyl_2_methylbutyrate', 'contiene_composto', '{}'),
-('ahn_thymus', 'comp_geranyl_acetate', 'contiene_composto', '{}');
+('ahn_thymus', 'comp_geranyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_thymus', 'comp_isobornyl_acetate', 'contiene_composto', '{}'),
@@ -35086,7 +35429,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tilsit_cheese', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
 ('ahn_tilsit_cheese', 'comp_butylamine', 'contiene_composto', '{}'),
 ('ahn_tilsit_cheese', 'comp_2_methylvaleric_acid', 'contiene_composto', '{}'),
-('ahn_tilsit_cheese', 'comp_methyl_mercaptan', 'contiene_composto', '{}');
+('ahn_tilsit_cheese', 'comp_methyl_mercaptan', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tilsit_cheese', 'comp_ethyl_heptanoate', 'contiene_composto', '{}'),
@@ -35188,7 +35532,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_toasted_sesame_seed', 'comp_3_heptanone', 'contiene_composto', '{}'),
 ('ahn_toasted_sesame_seed', 'comp_2_5_diethyl_3_methylpyrazine', 'contiene_composto', '{}'),
 ('ahn_toasted_sesame_seed', 'comp_propionic_acid', 'contiene_composto', '{}'),
-('ahn_toasted_sesame_seed', 'comp_5_methylfurfural', 'contiene_composto', '{}');
+('ahn_toasted_sesame_seed', 'comp_5_methylfurfural', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_toasted_sesame_seed', 'comp_2_3_5_trimethylpyrazine', 'contiene_composto', '{}'),
@@ -35290,7 +35635,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tomato', 'comp_3_methyl_2_buten_1_ol', 'contiene_composto', '{}'),
 ('ahn_tomato', 'comp_2_trans__4_trans_decadienal', 'contiene_composto', '{}'),
 ('ahn_tomato', 'comp_propionic_acid', 'contiene_composto', '{}'),
-('ahn_tomato', 'comp_a_ionone', 'contiene_composto', '{}');
+('ahn_tomato', 'comp_a_ionone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tomato', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
@@ -35392,7 +35738,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_trassi', 'comp_2_trans__6_trans_nonadienal', 'contiene_composto', '{}'),
 ('ahn_trassi', 'comp_methyl_disulfide', 'contiene_composto', '{}'),
 ('ahn_trassi', 'comp_5_methylfurfural', 'contiene_composto', '{}'),
-('ahn_trassi', 'comp_phenol', 'contiene_composto', '{}');
+('ahn_trassi', 'comp_phenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_trassi', 'comp_4_ethylbenzaldehyde', 'contiene_composto', '{}'),
@@ -35494,7 +35841,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tuna', 'comp_3_hexen_1_ol', 'contiene_composto', '{}'),
 ('ahn_tuna', 'comp_s_methyl_3_methylbutanethioate', 'contiene_composto', '{}'),
 ('ahn_tuna', 'comp_2_methylbutyraldehyde', 'contiene_composto', '{}'),
-('ahn_tuna', 'comp_s_methyl_thioacetate', 'contiene_composto', '{}');
+('ahn_tuna', 'comp_s_methyl_thioacetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_tuna', 'comp_2_3_5_trithiahexane', 'contiene_composto', '{}'),
@@ -35596,7 +35944,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_turkey', 'comp_n_nonanal', 'contiene_composto', '{}'),
 ('ahn_turkey', 'comp_2_5_dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_turkmenistan_sunguli_oil', 'comp_2_tridecenal', 'contiene_composto', '{}'),
-('ahn_turmeric', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}');
+('ahn_turmeric', 'comp_p_mentha_1_4_diene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_turmeric', 'comp_a_phellandrene', 'contiene_composto', '{}'),
@@ -35698,7 +36047,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_uncured_boiled_pork', 'comp_2_ethyl_3_5_6__dimethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_uncured_boiled_pork', 'comp_undecanal', 'contiene_composto', '{}'),
 ('ahn_uncured_boiled_pork', 'comp_valeric_acid', 'contiene_composto', '{}'),
-('ahn_uncured_boiled_pork', 'comp_cyclopentanone', 'contiene_composto', '{}');
+('ahn_uncured_boiled_pork', 'comp_cyclopentanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_uncured_boiled_pork', 'comp_1_octen_3_ol', 'contiene_composto', '{}'),
@@ -35800,7 +36150,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_uncured_pork', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
 ('ahn_uncured_pork', 'comp_isopentylamine', 'contiene_composto', '{}'),
 ('ahn_uncured_pork', 'comp_9_12_octadecadienoic_acid__48___plus_9_12_15_octadeca__trienoinc_acid__52____methyl_esters_', 'contiene_composto', '{}'),
-('ahn_uncured_pork', 'comp_3_octanone', 'contiene_composto', '{}');
+('ahn_uncured_pork', 'comp_3_octanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_uncured_pork', 'comp_2_methyl_3_tetrahydrofuranthiol', 'contiene_composto', '{}'),
@@ -35902,7 +36253,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_uncured_smoked_pork', 'comp_hexyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_uncured_smoked_pork', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
 ('ahn_uncured_smoked_pork', 'comp_methyl_2_pyrrolyl_ketone', 'contiene_composto', '{}'),
-('ahn_uncured_smoked_pork', 'comp_2_methyl_1_propanethiol', 'contiene_composto', '{}');
+('ahn_uncured_smoked_pork', 'comp_2_methyl_1_propanethiol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_uncured_smoked_pork', 'comp_decanal', 'contiene_composto', '{}'),
@@ -36004,7 +36356,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_vanilla', 'comp_methyl_myristate', 'contiene_composto', '{}'),
 ('ahn_vanilla', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
 ('ahn_vanilla', 'comp_vanillin__natural', 'contiene_composto', '{}'),
-('ahn_vanilla', 'comp_benzyl_formate', 'contiene_composto', '{}');
+('ahn_vanilla', 'comp_benzyl_formate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_vanilla', 'comp_methyl_hexanoate', 'contiene_composto', '{}'),
@@ -36106,7 +36459,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_veal', 'comp_2_heptanone', 'contiene_composto', '{}'),
 ('ahn_veal', 'comp_3_methylbutyraldehyde', 'contiene_composto', '{}'),
 ('ahn_veal', 'comp_d_l_methionine', 'contiene_composto', '{}'),
-('ahn_veal', 'comp_2_acetyl_3_methylpyrazine', 'contiene_composto', '{}');
+('ahn_veal', 'comp_2_acetyl_3_methylpyrazine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_veal', 'comp_phenol', 'contiene_composto', '{}'),
@@ -36208,7 +36562,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_vitis_labrusca_oil', 'comp_methyl_anthranilate', 'contiene_composto', '{}'),
 ('ahn_wallflower', 'comp_p_tolyl_acetate', 'contiene_composto', '{}'),
 ('ahn_walnut', 'comp_phenethyl_alcohol', 'contiene_composto', '{}'),
-('ahn_walnut', 'comp_2_octanone', 'contiene_composto', '{}');
+('ahn_walnut', 'comp_2_octanone', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_walnut', 'comp_dimethyl_succinate', 'contiene_composto', '{}'),
@@ -36310,7 +36665,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_whale', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_whale', 'comp_isobutyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_whale', 'comp_guaiacol', 'contiene_composto', '{}'),
-('ahn_whale', 'comp_n_valeraldehyde', 'contiene_composto', '{}');
+('ahn_whale', 'comp_n_valeraldehyde', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_whale', 'comp_2_ethylpyrazine', 'contiene_composto', '{}'),
@@ -36412,7 +36768,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wheat_bread', 'comp_2_ethylpyrazine', 'contiene_composto', '{}'),
 ('ahn_wheat_bread', 'comp_2_acetylpyridine', 'contiene_composto', '{}'),
 ('ahn_wheat_bread', 'comp_2_methyltetrahydrofuran_3_one', 'contiene_composto', '{}'),
-('ahn_wheat_bread', 'comp_isoamyl_alcohol', 'contiene_composto', '{}');
+('ahn_wheat_bread', 'comp_isoamyl_alcohol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wheat_bread', 'comp_n_nonanal', 'contiene_composto', '{}'),
@@ -36514,7 +36871,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_whiskey', 'comp_ethyl_octadecanoate', 'contiene_composto', '{}'),
 ('ahn_whiskey', 'comp_p_ethylphenol', 'contiene_composto', '{}'),
 ('ahn_whiskey', 'comp_nonanoic_acid', 'contiene_composto', '{}'),
-('ahn_whiskey', 'comp_ethyl_octanoate', 'contiene_composto', '{}');
+('ahn_whiskey', 'comp_ethyl_octanoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_whiskey', 'comp_2_6_dimethylpyridine', 'contiene_composto', '{}'),
@@ -36616,7 +36974,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_white_bread', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
 ('ahn_white_bread', 'comp_lauric_acid', 'contiene_composto', '{}'),
 ('ahn_white_bread', 'comp_2_pentylfuran', 'contiene_composto', '{}'),
-('ahn_white_bread', 'comp_propionic_acid', 'contiene_composto', '{}');
+('ahn_white_bread', 'comp_propionic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_white_bread', 'comp_formic_acid', 'contiene_composto', '{}'),
@@ -36718,7 +37077,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_white_wine', 'comp_a_methylbenzyl_alcohol', 'contiene_composto', '{}'),
 ('ahn_white_wine', 'comp__e__3_7_dimethyl_1_5_7_octatrien_3_ol', 'contiene_composto', '{}'),
 ('ahn_white_wine', 'comp_neryl_acetate', 'contiene_composto', '{}'),
-('ahn_white_wine', 'comp_3_phenylpropionic_acid', 'contiene_composto', '{}');
+('ahn_white_wine', 'comp_3_phenylpropionic_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_white_wine', 'comp_isoamyl_alcohol', 'contiene_composto', '{}'),
@@ -36820,7 +37180,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_white_wine', 'comp_hexyl_octanoate', 'contiene_composto', '{}'),
 ('ahn_white_wine', 'comp_indole', 'contiene_composto', '{}'),
 ('ahn_white_wine', 'comp_3_phenyl_1_propanol', 'contiene_composto', '{}'),
-('ahn_white_wine', 'comp_pyrrolidine', 'contiene_composto', '{}');
+('ahn_white_wine', 'comp_pyrrolidine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_white_wine', 'comp_2_pentanone', 'contiene_composto', '{}'),
@@ -36922,7 +37283,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_whitefish', 'comp_methyl_thiobutyrate', 'contiene_composto', '{}'),
 ('ahn_whitefish', 'comp_undecanal', 'contiene_composto', '{}'),
 ('ahn_whitefish', 'comp_2_methyl_2_pentenal', 'contiene_composto', '{}'),
-('ahn_whitefish', 'comp_valeric_acid', 'contiene_composto', '{}');
+('ahn_whitefish', 'comp_valeric_acid', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_whitefish', 'comp_trans__trans_2_4_hexadienal', 'contiene_composto', '{}'),
@@ -37024,7 +37386,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wild_berry', 'comp_2_methylbutyric_acid', 'contiene_composto', '{}'),
 ('ahn_wild_berry', 'comp_a_phellandrene', 'contiene_composto', '{}'),
 ('ahn_wild_berry', 'comp_hexanoic_acid', 'contiene_composto', '{}'),
-('ahn_wild_berry', 'comp_myrcene', 'contiene_composto', '{}');
+('ahn_wild_berry', 'comp_myrcene', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wild_berry', 'comp_heptyl_alcohol', 'contiene_composto', '{}'),
@@ -37126,7 +37489,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wild_strawberry', 'comp_phenylacetaldehyde', 'contiene_composto', '{}'),
 ('ahn_wild_strawberry', 'comp_methyl_sulfide', 'contiene_composto', '{}'),
 ('ahn_wild_strawberry', 'comp_methyl_benzoate', 'contiene_composto', '{}'),
-('ahn_wild_strawberry', 'comp_isoamyl_acetate', 'contiene_composto', '{}');
+('ahn_wild_strawberry', 'comp_isoamyl_acetate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wild_strawberry', 'comp_verbenol', 'contiene_composto', '{}'),
@@ -37228,7 +37592,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wine', 'comp_2_nonanone', 'contiene_composto', '{}'),
 ('ahn_wine', 'comp_2_methyltetrahydrothiophen_3_one', 'contiene_composto', '{}'),
 ('ahn_wine', 'comp_vanillin', 'contiene_composto', '{}'),
-('ahn_wine', 'comp_alpha_terpineol', 'contiene_composto', '{}');
+('ahn_wine', 'comp_alpha_terpineol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wine', 'comp_l_malic_acid', 'contiene_composto', '{}'),
@@ -37330,7 +37695,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wort', 'comp_2_nonenal', 'contiene_composto', '{}'),
 ('ahn_wort', 'comp_alpha_terpineol', 'contiene_composto', '{}'),
 ('ahn_wort', 'comp_vanillin__natural', 'contiene_composto', '{}'),
-('ahn_wort', 'comp_4_propenyl_2_6_dimethoxyphenol', 'contiene_composto', '{}');
+('ahn_wort', 'comp_4_propenyl_2_6_dimethoxyphenol', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_wort', 'comp_pyrrole', 'contiene_composto', '{}'),
@@ -37432,7 +37798,8 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_yellow_passion_fruit', 'comp_hexyl_benzoate', 'contiene_composto', '{}'),
 ('ahn_yellow_passion_fruit_juice', 'comp_g_undecalactone', 'contiene_composto', '{}'),
 ('ahn_yellow_passion_fruit_juice', 'comp_ethyl_cinnamate', 'contiene_composto', '{}'),
-('ahn_yellow_passion_fruit_juice', 'comp_methyl_p_hydroxybenzoate', 'contiene_composto', '{}');
+('ahn_yellow_passion_fruit_juice', 'comp_methyl_p_hydroxybenzoate', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_yellow_passion_fruit_juice', 'comp_2_2_6_trimethylcyclohexanone', 'contiene_composto', '{}'),
@@ -37515,5 +37882,6 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('ahn_zanthoxylum_rhetsa_oil', 'comp_4_carvomenthenol', 'contiene_composto', '{}'),
 ('ahn_zingiberaceae', 'comp_borneol', 'contiene_composto', '{}'),
 ('ahn_zingiberaceae', 'comp_p_a_dimethylbenzyl_alcohol', 'contiene_composto', '{}'),
-('ahn_zucchini', 'comp_l__and_dl_alanine', 'contiene_composto', '{}');
+('ahn_zucchini', 'comp_l__and_dl_alanine', 'contiene_composto', '{}')
+ON CONFLICT DO NOTHING;
 
