@@ -1868,34 +1868,29 @@ def import_pubchem():
 
     # Composti aromatici chiave per F&B — PubChem CID verificati
     # Fonte: PubChem NIH, pubblico dominio
+    # Solo nomi Ahn verificati come presenti nel grafo
     COMPOSTI = {
-        # Agrumi
-        "limonene":     {"cid": 440917,  "aroma": "agrumato, fresco",          "ingr": ["lemon","lime","orange"]},
-        "linalool":     {"cid": 6549,    "aroma": "floreale, lavanda",          "ingr": ["lemon","coriander","bergamot"]},
-        "citral":       {"cid": 638011,  "aroma": "limone intenso",             "ingr": ["lemon","lime","lemongrass"]},
-        "geraniol":     {"cid": 637566,  "aroma": "rosa, floreale",             "ingr": ["lemon","rose","geranium"]},
-        # Spezie e erbe
-        "eugenol":      {"cid": 3314,    "aroma": "chiodi di garofano, speziato","ingr": ["clove","cinnamon","basil"]},
-        "carvone":      {"cid": 16724,   "aroma": "menta, cumino",              "ingr": ["spearmint","caraway","dill"]},
-        "menthol":      {"cid": 16666,   "aroma": "menta, fresco",              "ingr": ["peppermint","spearmint"]},
-        "thymol":       {"cid": 6989,    "aroma": "timo, erbaceo",              "ingr": ["thyme","oregano"]},
-        # Frutta
-        "ethyl_acetate":{"cid": 8857,    "aroma": "fruttato, solvente",         "ingr": ["strawberry","pineapple","wine"]},
-        "isoamyl_acetate":{"cid":31276,  "aroma": "banana, fruttato",           "ingr": ["banana","pear"]},
-        "hexanal":      {"cid": 6184,    "aroma": "erbaceo, mela verde",        "ingr": ["apple","grass","cucumber"]},
-        "furfural":     {"cid": 7362,    "aroma": "caramello, mandorla",        "ingr": ["brown_butter","whiskey","coffee"]},
-        # Caffè e cioccolato
-        "2_furfurylthiol":{"cid":13036,  "aroma": "caffè tostato",              "ingr": ["coffee","roasted"]},
-        "vanillin":     {"cid": 1183,    "aroma": "vaniglia, dolce",            "ingr": ["vanilla","chocolate","oak"]},
-        "guaiacol":     {"cid": 460,     "aroma": "affumicato, speziato",       "ingr": ["whiskey","smoked","coffee"]},
-        # Fermentazione
-        "diacetyl":     {"cid": 650,     "aroma": "burro, cremoso",             "ingr": ["butter","wine","beer"]},
-        "ethanol":      {"cid": 702,     "aroma": "alcolico",                   "ingr": ["wine","beer","spirits"]},
-        "acetic_acid":  {"cid": 176,     "aroma": "aceto, pungente",            "ingr": ["vinegar","wine","sourdough"]},
-        "lactic_acid":  {"cid": 107689,  "aroma": "lattico, acidulo",           "ingr": ["yogurt","sourdough","wine"]},
-        # Maillard e tostatura
-        "2_acetylpyrazine":{"cid":13318, "aroma": "pane tostato, nocciola",     "ingr": ["bread","coffee","peanut"]},
-        "maltol":       {"cid": 10458,   "aroma": "caramello, zucchero cotto",  "ingr": ["caramel","bread","chocolate"]},
+        "limonene":        {"cid": 440917, "aroma": "agrumato, fresco",           "ingr": ["lemon","lime","orange_peel"]},
+        "linalool":        {"cid": 6549,   "aroma": "floreale, lavanda",           "ingr": ["lemon","coriander"]},
+        "citral":          {"cid": 638011, "aroma": "limone intenso",              "ingr": ["lemon","lime"]},
+        "geraniol":        {"cid": 637566, "aroma": "rosa, floreale",              "ingr": ["lemon"]},
+        "eugenol":         {"cid": 3314,   "aroma": "chiodi di garofano, speziato","ingr": ["clove","cinnamon","basil"]},
+        "carvone":         {"cid": 16724,  "aroma": "menta, cumino",               "ingr": ["spearmint","caraway","dill"]},
+        "menthol":         {"cid": 16666,  "aroma": "menta, fresco",               "ingr": ["peppermint","spearmint"]},
+        "thymol":          {"cid": 6989,   "aroma": "timo, erbaceo",               "ingr": ["thyme","oregano"]},
+        "ethyl_acetate":   {"cid": 8857,   "aroma": "fruttato, solvente",          "ingr": ["strawberry","pineapple","wine"]},
+        "isoamyl_acetate": {"cid": 31276,  "aroma": "banana, fruttato",            "ingr": ["banana","pear"]},
+        "hexanal":         {"cid": 6184,   "aroma": "erbaceo, mela verde",         "ingr": ["apple","cucumber"]},
+        "furfural":        {"cid": 7362,   "aroma": "caramello, mandorla",         "ingr": ["butter","whiskey","coffee"]},
+        "2_furfurylthiol": {"cid": 13036,  "aroma": "caffè tostato",               "ingr": ["coffee","roasted_hazelnut"]},
+        "vanillin":        {"cid": 1183,   "aroma": "vaniglia, dolce",             "ingr": ["tahiti_vanilla","butter","whiskey"]},
+        "guaiacol":        {"cid": 460,    "aroma": "affumicato, speziato",        "ingr": ["whiskey","coffee","smoked_sausage"]},
+        "diacetyl":        {"cid": 650,    "aroma": "burro, cremoso",              "ingr": ["butter","butterfat","wine"]},
+        "ethanol":         {"cid": 702,    "aroma": "alcolico",                    "ingr": ["wine","beer"]},
+        "acetic_acid":     {"cid": 176,    "aroma": "aceto, pungente",             "ingr": ["vinegar","wine"]},
+        "lactic_acid":     {"cid": 107689, "aroma": "lattico, acidulo",            "ingr": ["yogurt","wine"]},
+        "2_acetylpyrazine":{"cid": 13318,  "aroma": "pane tostato, nocciola",      "ingr": ["bread","coffee","roasted_hazelnut"]},
+        "maltol":          {"cid": 10458,  "aroma": "caramello, zucchero cotto",   "ingr": ["bread","butter"]},
     }
 
     import psycopg2
@@ -1956,7 +1951,7 @@ def import_pubchem():
 
             importati += 1
             click.echo(f"  OK: {nome} (CID:{cid}) — {meta['aroma']}")
-            _t.sleep(0.2)
+            _t.sleep(0.5)
 
         except Exception as ex:
             click.echo(f"  ERRORE {nome}: {ex}")
