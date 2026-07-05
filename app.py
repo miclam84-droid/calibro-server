@@ -1718,7 +1718,7 @@ def import_usda():
         "raspberries raw": {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 2346410},
         "blueberries raw": {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 2346411},
         # Latticini — fdc_id corretti (erano sbagliati)
-        "milk whole 3.25%":{"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 746782},
+        "milk whole 3.25%":{"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 171265},
         "cream heavy whipping":{"fenomeno":"fen-struttura","domain":"cucina",  "fdc_id": 2346386},
         "butter unsalted": {"fenomeno": "fen-cristallizzazione","domain":"bakery","fdc_id": 789828},
         "yogurt plain whole milk":{"fenomeno":"fen-fermentazione","domain":"cucina","fdc_id": 170886},
@@ -1852,6 +1852,119 @@ def import_usda():
     cur.close()
     conn.close()
     click.echo(f"\nFATTO: {tradotti} importati · {saltati} saltati · {errori} errori")
+
+
+@app.cli.command("import-pubchem")
+def import_pubchem():
+    """DS7 — Importa composti aromatici da PubChem NIH (pubblico dominio, no key).
+    Per ogni ingrediente prioritario cerca i composti volatili rilevanti
+    e crea nodi Composto puliti (senza dipendenza da Fenaroli/Ahn).
+    Uso: flask import-pubchem"""
+    import urllib.request, json, re, time as _t
+
+    if not DATABASE_URL:
+        click.echo("ERRORE: DATABASE_URL non disponibile.")
+        return
+
+    # Composti aromatici chiave per F&B — PubChem CID verificati
+    # Fonte: PubChem NIH, pubblico dominio
+    COMPOSTI = {
+        # Agrumi
+        "limonene":     {"cid": 440917,  "aroma": "agrumato, fresco",          "ingr": ["lemon","lime","orange"]},
+        "linalool":     {"cid": 6549,    "aroma": "floreale, lavanda",          "ingr": ["lemon","coriander","bergamot"]},
+        "citral":       {"cid": 638011,  "aroma": "limone intenso",             "ingr": ["lemon","lime","lemongrass"]},
+        "geraniol":     {"cid": 637566,  "aroma": "rosa, floreale",             "ingr": ["lemon","rose","geranium"]},
+        # Spezie e erbe
+        "eugenol":      {"cid": 3314,    "aroma": "chiodi di garofano, speziato","ingr": ["clove","cinnamon","basil"]},
+        "carvone":      {"cid": 16724,   "aroma": "menta, cumino",              "ingr": ["spearmint","caraway","dill"]},
+        "menthol":      {"cid": 16666,   "aroma": "menta, fresco",              "ingr": ["peppermint","spearmint"]},
+        "thymol":       {"cid": 6989,    "aroma": "timo, erbaceo",              "ingr": ["thyme","oregano"]},
+        # Frutta
+        "ethyl_acetate":{"cid": 8857,    "aroma": "fruttato, solvente",         "ingr": ["strawberry","pineapple","wine"]},
+        "isoamyl_acetate":{"cid":31276,  "aroma": "banana, fruttato",           "ingr": ["banana","pear"]},
+        "hexanal":      {"cid": 6184,    "aroma": "erbaceo, mela verde",        "ingr": ["apple","grass","cucumber"]},
+        "furfural":     {"cid": 7362,    "aroma": "caramello, mandorla",        "ingr": ["brown_butter","whiskey","coffee"]},
+        # Caffè e cioccolato
+        "2_furfurylthiol":{"cid":13036,  "aroma": "caffè tostato",              "ingr": ["coffee","roasted"]},
+        "vanillin":     {"cid": 1183,    "aroma": "vaniglia, dolce",            "ingr": ["vanilla","chocolate","oak"]},
+        "guaiacol":     {"cid": 460,     "aroma": "affumicato, speziato",       "ingr": ["whiskey","smoked","coffee"]},
+        # Fermentazione
+        "diacetyl":     {"cid": 650,     "aroma": "burro, cremoso",             "ingr": ["butter","wine","beer"]},
+        "ethanol":      {"cid": 702,     "aroma": "alcolico",                   "ingr": ["wine","beer","spirits"]},
+        "acetic_acid":  {"cid": 176,     "aroma": "aceto, pungente",            "ingr": ["vinegar","wine","sourdough"]},
+        "lactic_acid":  {"cid": 107689,  "aroma": "lattico, acidulo",           "ingr": ["yogurt","sourdough","wine"]},
+        # Maillard e tostatura
+        "2_acetylpyrazine":{"cid":13318, "aroma": "pane tostato, nocciola",     "ingr": ["bread","coffee","peanut"]},
+        "maltol":       {"cid": 10458,   "aroma": "caramello, zucchero cotto",  "ingr": ["caramel","bread","chocolate"]},
+    }
+
+    import psycopg2
+    conn = psycopg2.connect(DATABASE_URL)
+    conn.autocommit = True
+    cur = conn.cursor()
+
+    importati = 0
+    errori = 0
+
+    for nome, meta in COMPOSTI.items():
+        try:
+            cid = meta["cid"]
+            # Fetch dettaglio da PubChem
+            url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/JSON"
+            req = urllib.request.Request(url, headers={"User-Agent": "Matter/1.0"})
+            resp = urllib.request.urlopen(req, timeout=20)
+            data = json.loads(resp.read().decode())
+
+            compound = data.get("PC_Compounds", [{}])[0]
+            props = {}
+            for p in compound.get("props", []):
+                urn = p.get("urn", {})
+                label = urn.get("label", "") + "_" + urn.get("name", "")
+                val = p.get("value", {})
+                v = val.get("sval") or val.get("fval") or val.get("ival")
+                if v: props[label.lower()] = v
+
+            formula = props.get("molecular formula_", "")
+            iupac   = props.get("iupac name_preferred", "") or props.get("iupac name_traditional", "")
+            mw      = props.get("molecular weight_", "")
+
+            node_id = "pub_" + re.sub(r"[^a-z0-9]", "_", nome.lower())
+            node_data = json.dumps({
+                "pubchem_cid": cid,
+                "formula": formula,
+                "iupac": iupac,
+                "mw": mw,
+                "aroma": meta["aroma"],
+                "ingredienti_tipici": meta["ingr"],
+                "fonte": "PubChem NIH, pubblico dominio"
+            }, ensure_ascii=False)
+
+            cur.execute("""
+                INSERT INTO nodes (id, type, name, domain, data)
+                VALUES (%s, 'Composto', %s, 'chimica', %s)
+                ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data
+            """, (node_id, nome.replace("_", " "), node_data))
+
+            # Archi verso nodi Ahn corrispondenti
+            for ingr in meta["ingr"]:
+                ahn_id = "ahn_" + ingr.lower().replace(" ", "_")
+                cur.execute("""
+                    INSERT INTO edges (from_id, to_id, relation, data)
+                    VALUES (%s, %s, 'contiene_composto', '{}')
+                    ON CONFLICT DO NOTHING
+                """, (ahn_id, node_id))
+
+            importati += 1
+            click.echo(f"  OK: {nome} (CID:{cid}) — {meta['aroma']}")
+            _t.sleep(0.2)
+
+        except Exception as ex:
+            click.echo(f"  ERRORE {nome}: {ex}")
+            errori += 1
+
+    cur.close(); conn.close()
+    click.echo(f"\nFATTO: {importati} composti importati · {errori} errori")
+    click.echo("Fonte: PubChem NIH — pubblico dominio, nessuna restrizione commerciale.")
 
 
 @app.cli.command("load-flavor")
