@@ -1757,13 +1757,20 @@ def import_usda():
             fdc_id = meta.get("fdc_id")
 
             if fdc_id:
-                # fdc_id diretto — salta la ricerca testuale
+                # fdc_id diretto — struttura JSON diversa dalla ricerca
                 detail_url = (f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}"
                               f"?api_key={api_key}")
                 detail = usda_get(detail_url)
                 nome_usda = detail.get("description", query)
-                nutrients = {n["nutrientName"]: n
-                             for n in detail.get("foodNutrients", [])}
+                # nel dettaglio diretto: n["nutrient"]["name"] e n["amount"]
+                nutrients = {}
+                for n in detail.get("foodNutrients", []):
+                    nutrient_obj = n.get("nutrient", {})
+                    name = nutrient_obj.get("name")
+                    amount = n.get("amount")
+                    if name and amount is not None:
+                        nutrients[name] = {"value": amount,
+                                           "unitName": nutrient_obj.get("unitName","")}
             else:
                 # Ricerca testuale (fallback)
                 url = (f"https://api.nal.usda.gov/fdc/v1/foods/search"
@@ -1779,8 +1786,11 @@ def import_usda():
                 food = foods[0]
                 fdc_id = food.get("fdcId")
                 nome_usda = food.get("description", query)
-                nutrients = {n["nutrientName"]: n
-                             for n in food.get("foodNutrients", [])}
+                # nella ricerca: n["nutrientName"] e n["value"]
+                nutrients = {n["nutrientName"]: {"value": n.get("value"),
+                                                  "unitName": n.get("unitName","")}
+                             for n in food.get("foodNutrients", [])
+                             if n.get("nutrientName")}
                 detail_url = (f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}"
                               f"?api_key={api_key}")
                 detail = usda_get(detail_url)
