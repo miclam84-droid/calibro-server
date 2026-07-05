@@ -869,6 +869,114 @@ def ricette_per_cifra():
         return jsonify({"errore": str(e)}), 500
 
 
+def _calcola_profilo_sicurezza(ph=None, brix=None, aw=None, idratazione=None,
+                               temperatura=4.0, nome=None, disciplina=None):
+    """Helper condiviso per il calcolo del profilo sicurezza alimentare.
+    Usato sia dall'endpoint con ricetta salvata che dall'endpoint stateless Cifra.
+    Tutti i parametri sono opzionali — i valori mancanti restano None.
+    """
+    # ── Stima Aw ────────────────────────────────────────────
+    aw_stimata = aw  # se Cifra la manda direttamente, usiamo quella
+    if aw_stimata is None:
+        if brix is not None:
+            aw_stimata = round(1.0 - float(brix) * 0.0023, 3)
+        elif idratazione is not None:
+            aw_stimata = round(0.95 + float(idratazione) * 0.0004, 3)
+            aw_stimata = min(aw_stimata, 0.99)
+
+    t_cons = float(temperatura) if temperatura else 4.0
+    ph_val = float(ph) if ph else None
+    zona_pericolo = (t_cons > 4.0 and t_cons < 60.0)
+
+    # ── Score Hurdle Technology ──────────────────────────────
+    score = 0
+    if aw_stimata is not None:
+        if aw_stimata < 0.60: score += 4
+        elif aw_stimata < 0.85: score += 3
+        elif aw_stimata < 0.93: score += 2
+        elif aw_stimata < 0.97: score += 1
+    if ph_val is not None:
+        if ph_val < 3.5: score += 4
+        elif ph_val < 4.0: score += 3
+        elif ph_val < 4.6: score += 2
+        elif ph_val < 5.5: score += 1
+    if t_cons <= 4: score += 2
+    elif t_cons <= 8: score += 1
+
+    giorni_map = [1, 2, 4, 7, 14, 30, 90, 180]
+    shelf_life = giorni_map[min(score, 7)]
+
+    # ── Flag rischio ─────────────────────────────────────────
+    metodo_conservazione = []
+    if zona_pericolo:
+        flag_rischio = "conservare fuori dalla zona di pericolo (4°C–60°C)"
+        metodo_conservazione = ["refrigerazione"]
+    elif t_cons <= 4:
+        flag_rischio = "conservare sotto 4°C — shelf life limitata" if shelf_life <= 3 else None
+        metodo_conservazione = ["refrigerazione"]
+    else:
+        flag_rischio = "verificare temperatura di conservazione"
+        metodo_conservazione = ["refrigerazione"]
+
+    if aw_stimata and aw_stimata < 0.85:
+        metodo_conservazione.append("conservazione a temperatura ambiente")
+    if ph_val and ph_val < 4.6:
+        metodo_conservazione.append("acidificazione")
+
+    note = (f"shelf life orientativa {shelf_life} giorni a {t_cons}°C"
+            + (f" · pH {ph_val}" if ph_val else "")
+            + (f" · Aw {aw_stimata}" if aw_stimata else ""))
+
+    return {
+        "aw_stimata": aw_stimata,
+        "ph_stimato": ph_val,
+        "temperatura_conservazione_max_c": t_cons,
+        "shelf_life_giorni": shelf_life,
+        "zona_pericolo": zona_pericolo,
+        "flag_rischio": flag_rischio,
+        "metodo_conservazione": metodo_conservazione,
+        "note_sicurezza": note,
+        "disclaimer": (
+            "Valori orientativi basati su modelli scientifici. "
+            "Non sostituiscono test microbiologici né la consulenza "
+            "di un professionista HACCP abilitato."
+        )
+    }
+
+
+@app.route("/v1/sicurezza", methods=["POST"])
+def sicurezza_stateless():
+    """SEC15 — Endpoint stateless per Cifra.
+    Calcola il profilo di sicurezza da parametri in input,
+    senza che la ricetta esista su Matter.
+    Auth: Authorization: Bearer {MATTER_SERVICE_KEY} (no X-User-Email richiesta).
+    """
+    auth = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
+    service_key = _os.environ.get("MATTER_SERVICE_KEY", "")
+    if not service_key or auth != service_key:
+        return jsonify({"errore": "autenticazione richiesta"}), 401
+
+    body = request.json or {}
+    nome       = body.get("nome")
+    disciplina = body.get("disciplina")
+    ph         = body.get("ph")
+    brix       = body.get("brix")
+    aw         = body.get("aw")
+    idratazione = body.get("idratazione")
+    temperatura = body.get("temperatura_conservazione_c", 4.0)
+    ingredienti = body.get("ingredienti", [])  # lista [{nome, quantita_g}] — per ora loggata, non usata nel calcolo
+
+    profilo = _calcola_profilo_sicurezza(
+        ph=ph, brix=brix, aw=aw, idratazione=idratazione,
+        temperatura=temperatura, nome=nome, disciplina=disciplina
+    )
+    profilo["nome"] = nome
+    profilo["disciplina"] = disciplina
+    profilo["ingredienti_ricevuti"] = len(ingredienti)
+
+    return jsonify(profilo)
+
+
 @app.route("/v1/ricetta/<int:exp_id>/sicurezza")
 def ricetta_sicurezza(exp_id):
     """SEC14 — Profilo di sicurezza alimentare di un esperimento.
@@ -898,94 +1006,15 @@ def ricetta_sicurezza(exp_id):
         (rid, nome, disc, ph, brix, abv,
          temp, idratazione, ingredienti, fenomeni) = row
 
-        # ── Stima Aw orientativa ──────────────────────────────
-        # Nessun campo Aw diretto — deriviamo da idratazione e brix
-        aw_stimata = None
-        if brix is not None:
-            # a 65 Brix Aw ≈ 0.85; a 0 Brix Aw ≈ 1.0 (approssimazione lineare)
-            aw_stimata = round(1.0 - float(brix) * 0.0023, 3)
-        elif idratazione is not None:
-            # impasto: idratazione alta → Aw più alta
-            aw_stimata = round(0.95 + float(idratazione) * 0.0004, 3)
-            aw_stimata = min(aw_stimata, 0.99)
-
-        # ── Shelf life orientativa (Hurdle Technology) ───────
-        shelf_life = None
-        zona_pericolo = None
-        flag_rischio = None
-        metodo_conservazione = []
-        note_sicurezza = None
-
-        t_cons = float(temp) if temp else 4.0
-        ph_val = float(ph) if ph else None
-
-        zona_pericolo = (t_cons > 4.0 and t_cons < 60.0)
-
-        # score Hurdle
-        score = 0
-        if aw_stimata is not None:
-            if aw_stimata < 0.60: score += 4
-            elif aw_stimata < 0.85: score += 3
-            elif aw_stimata < 0.93: score += 2
-            elif aw_stimata < 0.97: score += 1
-
-        if ph_val is not None:
-            if ph_val < 3.5: score += 4
-            elif ph_val < 4.0: score += 3
-            elif ph_val < 4.6: score += 2
-            elif ph_val < 5.5: score += 1
-
-        if t_cons <= 4: score += 2
-        elif t_cons <= 8: score += 1
-
-        giorni_map = [1, 2, 4, 7, 14, 30, 90, 180]
-        shelf_life = giorni_map[min(score, 7)]
-
-        # flag rischio
-        if zona_pericolo:
-            flag_rischio = "conservare fuori dalla zona di pericolo (4°C–60°C)"
-            metodo_conservazione = ["refrigerazione"]
-        elif t_cons <= 4:
-            if shelf_life <= 3:
-                flag_rischio = "conservare sotto 4°C — shelf life limitata"
-                metodo_conservazione = ["refrigerazione"]
-            else:
-                flag_rischio = None
-                metodo_conservazione = ["refrigerazione"]
-        else:
-            flag_rischio = "verificare temperatura di conservazione"
-            metodo_conservazione = ["refrigerazione"]
-
-        # metodo aggiuntivo per Aw bassa
-        if aw_stimata and aw_stimata < 0.85:
-            metodo_conservazione.append("conservazione a temperatura ambiente")
-        if ph_val and ph_val < 4.6:
-            metodo_conservazione.append("acidificazione")
-
-        note_sicurezza = (
-            f"shelf life orientativa {shelf_life} giorni a {t_cons}°C"
-            + (f" · pH {ph_val}" if ph_val else "")
-            + (f" · Aw stimata {aw_stimata}" if aw_stimata else "")
+        profilo = _calcola_profilo_sicurezza(
+            ph=ph, brix=brix, aw=None, idratazione=idratazione,
+            temperatura=float(temp) if temp else 4.0,
+            nome=nome, disciplina=disc
         )
-
-        return jsonify({
-            "id": rid,
-            "nome": nome,
-            "disciplina": disc,
-            "aw_stimata": aw_stimata,
-            "ph_stimato": ph_val,
-            "temperatura_conservazione_max_c": t_cons,
-            "shelf_life_giorni": shelf_life,
-            "zona_pericolo": zona_pericolo,
-            "flag_rischio": flag_rischio,
-            "metodo_conservazione": metodo_conservazione,
-            "note_sicurezza": note_sicurezza,
-            "disclaimer": (
-                "Valori orientativi basati su modelli scientifici. "
-                "Non sostituiscono test microbiologici né la consulenza "
-                "di un professionista HACCP abilitato."
-            )
-        })
+        profilo["id"] = rid
+        profilo["nome"] = nome
+        profilo["disciplina"] = disc
+        return jsonify(profilo)
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
 def logout():
