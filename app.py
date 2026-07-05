@@ -1917,6 +1917,12 @@ def feedback():
         return jsonify({"errore": str(e)}), 500
 
 
+@app.route("/admin")
+def admin_ui():
+    """GT10 — Admin UI grafica. Richiede X-Admin-Secret o query param secret."""
+    return render_template("admin.html")
+
+
 @app.route("/v1/admin/stats")
 def admin_stats():
     """GT10 — Admin panel: statistiche base del prodotto."""
