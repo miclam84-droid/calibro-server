@@ -117,7 +117,7 @@ def cerca_contesto(db, termine, domanda=""):
     hit = db.execute(
         "SELECT * FROM nodes WHERE lower(name) LIKE ? ORDER BY "
         "CASE type WHEN 'Fenomeno' THEN 0 WHEN 'Prodotto' THEN 1 "
-        "WHEN 'Errore' THEN 2 ELSE 3 END LIMIT 4", (t,)).fetchall()
+        "WHEN 'Errore' THEN 2 ELSE 3 END LIMIT 8", (t,)).fetchall()
     if not hit:
         return None
 
@@ -128,11 +128,30 @@ def cerca_contesto(db, termine, domanda=""):
         if f: fenomeni[fid] = f
 
     prodotti_interesse = set()
+    prodotti_fisici = {}   # id → dati fisici (pH, Aw, ecc.)
+
     for n in hit:
         if n["type"] == "Fenomeno":
             aggiungi_fenomeno(n["id"])
         elif n["type"] == "Prodotto":
             prodotti_interesse.add(n["id"])
+            d = _dati(n["data"])
+            # raccoglie parametri fisici se presenti
+            fisici = {}
+            for k in ("ph_min","ph_max","ph_note","aw_min","aw_max",
+                      "acidita_titolabile_pct","coagulazione_t","t_sicurezza",
+                      "variabilita","abv_pct","tds_pct","brix_sciroppo_1_1",
+                      "cristallizzazione_t","proteine_pct","fonte"):
+                if k in d:
+                    fisici[k] = d[k]
+            if fisici:
+                fisici["nome"] = n["name"]
+                prodotti_fisici[n["id"]] = fisici
+            # risali al fenomeno via governato_da o si_manifesta_in
+            for e in db.execute(
+                "SELECT to_id FROM edges WHERE from_id=? AND relation IN ('governato_da','si_manifesta_in')",
+                (n["id"],)):
+                aggiungi_fenomeno(e["to_id"])
             for e in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (n["id"],)):
                 aggiungi_fenomeno(e["from_id"])
         elif n["type"] == "Errore":
@@ -148,7 +167,6 @@ def cerca_contesto(db, termine, domanda=""):
         for n in hit:
             fenomeni[n["id"]] = n
 
-    # include i principi (iper-archi) solo se la domanda chiede il "perché"
     includi_principi = _domanda_chiede_perche(domanda)
 
     ctx = []
@@ -162,7 +180,6 @@ def cerca_contesto(db, termine, domanda=""):
             coll.append({"verso": e["name"], "tipo": e["type"], "dominio": e["domain"],
                          "relazione": e["relation"], "id": e["id"],
                          "data": _dati(e["data"])})
-        # aggiungi principi che spiegano questo fenomeno solo se la domanda lo chiede
         if includi_principi:
             for e in db.execute("""SELECT n.name, n.id, n.data FROM edges e
                                    JOIN nodes n ON n.id=e.from_id
@@ -182,7 +199,13 @@ def cerca_contesto(db, termine, domanda=""):
             d = _dati(row["data"])
             if d.get("causa"):
                 errori.append(f"{row['name']} ({row['domain']}): {d['causa']}")
-    return {"fenomeni": ctx, "errori": errori, "prodotti": list(prodotti_interesse)}
+
+    return {
+        "fenomeni": ctx,
+        "errori": errori,
+        "prodotti": list(prodotti_interesse),
+        "prodotti_fisici": list(prodotti_fisici.values())  # nuovo
+    }
 
 # ---- costruisce il prompt -----------------------------------
 _STOPWORD = {"quanto","costa","tempo","oggi","sempre","abbastanza","molto","poco",
@@ -258,6 +281,32 @@ def costruisci_prompt(domanda, contesto, lang="it"):
         for e in contesto["errori"]:
             righe.append(f"  - {e}")
     contesto_txt = "\n".join(righe)
+
+    # Aggiungi parametri fisici ingredienti se presenti
+    fisici = contesto.get("prodotti_fisici", [])
+    if fisici:
+        righe_f = ["\n### Parametri fisici ingredienti (dal dataset Matter):"]
+        for p in fisici:
+            nome = p.get("nome", "?")
+            r = f"  {nome}:"
+            if "ph_min" in p and "ph_max" in p:
+                r += f" pH {p['ph_min']}-{p['ph_max']}"
+            if "ph_note" in p:
+                r += f" ({p['ph_note']})"
+            if "variabilita" in p:
+                r += f" · variabilità: {p['variabilita']}"
+            if "aw_min" in p:
+                r += f" · Aw {p['aw_min']}-{p.get('aw_max','?')}"
+            if "coagulazione_t" in p:
+                r += f" · coagulazione: {p['coagulazione_t']}"
+            if "t_sicurezza" in p:
+                r += f" · T sicurezza: {p['t_sicurezza']}"
+            if "acidita_titolabile_pct" in p:
+                r += f" · acidità titolabile: {p['acidita_titolabile_pct']}%"
+            if "fonte" in p:
+                r += f" · fonte: {p['fonte']}"
+            righe_f.append(r)
+        contesto_txt += "\n".join(righe_f)
 
     if lang == "en":
         regole = (
