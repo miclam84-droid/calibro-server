@@ -1674,6 +1674,160 @@ def init_db():
     else:
         click.echo("DATABASE_URL non impostato — skip")
 
+@app.cli.command("import-usda")
+def import_usda():
+    """DS4 — Importa parametri fisici da USDA FoodData Central.
+    Richiede variabile d'ambiente USDA_API_KEY su Railway.
+    Uso: flask import-usda"""
+    import urllib.request, json, re, time as _t
+
+    api_key = _os.environ.get("USDA_API_KEY", "")
+    if not api_key:
+        click.echo("ERRORE: variabile USDA_API_KEY non impostata su Railway.")
+        return
+
+    if not DATABASE_URL:
+        click.echo("ERRORE: DATABASE_URL non disponibile.")
+        return
+
+    # ── Ingredienti prioritari per Matter ────────────────────
+    # Selezionati per rilevanza F&B professionale (bar, bakery, cucina, caffetteria)
+    QUERY_MAP = {
+        # Frutta e succhi
+        "lemon juice": {"fenomeno": "fen-acidita", "domain": "bar"},
+        "lime juice":  {"fenomeno": "fen-acidita", "domain": "bar"},
+        "orange juice":{"fenomeno": "fen-acidita", "domain": "bar"},
+        "tomato":      {"fenomeno": "fen-acidita", "domain": "cucina"},
+        "apple raw":   {"fenomeno": "fen-acidita", "domain": "bakery"},
+        "strawberry":  {"fenomeno": "fen-acidita", "domain": "pasticceria"},
+        "raspberry":   {"fenomeno": "fen-acidita", "domain": "pasticceria"},
+        "blueberry":   {"fenomeno": "fen-acidita", "domain": "pasticceria"},
+        # Latticini
+        "whole milk":  {"fenomeno": "fen-coagulazione", "domain": "cucina"},
+        "heavy cream": {"fenomeno": "fen-struttura",    "domain": "cucina"},
+        "butter unsalted": {"fenomeno": "fen-cristallizzazione", "domain": "bakery"},
+        "yogurt plain":{"fenomeno": "fen-fermentazione","domain": "cucina"},
+        # Uova
+        "egg white":   {"fenomeno": "fen-coagulazione", "domain": "cucina"},
+        "egg yolk":    {"fenomeno": "fen-coagulazione", "domain": "cucina"},
+        # Cereali
+        "wheat flour": {"fenomeno": "fen-struttura",    "domain": "bakery"},
+        "rye flour":   {"fenomeno": "fen-struttura",    "domain": "bakery"},
+        # Carne e pesce
+        "beef raw":    {"fenomeno": "fen-calore",       "domain": "cucina"},
+        "chicken breast": {"fenomeno": "fen-calore",    "domain": "cucina"},
+        "salmon raw":  {"fenomeno": "fen-calore",       "domain": "cucina"},
+        # Zuccheri
+        "sugar granulated": {"fenomeno": "fen-concentrazione", "domain": "pasticceria"},
+        "honey":       {"fenomeno": "fen-concentrazione","domain": "pasticceria"},
+        # Cioccolato e caffè
+        "dark chocolate": {"fenomeno": "fen-cristallizzazione", "domain": "pasticceria"},
+        "coffee brewed":  {"fenomeno": "fen-estrazione",        "domain": "caffetteria"},
+        # Aceto e fermentati
+        "vinegar":     {"fenomeno": "fen-acidita",      "domain": "cucina"},
+        # Funghi
+        "mushroom":    {"fenomeno": "fen-maillard",     "domain": "cucina"},
+    }
+
+    import psycopg2
+    conn = psycopg2.connect(DATABASE_URL)
+    conn.autocommit = False
+    cur = conn.cursor()
+
+    tradotti = 0
+    saltati = 0
+    errori = 0
+
+    for query, meta in QUERY_MAP.items():
+        try:
+            # Cerca il cibo su USDA FDC
+            url = (f"https://api.nal.usda.gov/fdc/v1/foods/search"
+                   f"?query={urllib.request.quote(query)}"
+                   f"&dataType=Foundation,SR%20Legacy"
+                   f"&pageSize=1&api_key={api_key}")
+            req = urllib.request.Request(url, headers={"User-Agent": "Matter/1.0"})
+            resp = urllib.request.urlopen(req, timeout=10)
+            data = json.loads(resp.read().decode())
+
+            foods = data.get("foods", [])
+            if not foods:
+                click.echo(f"  SALTATO (non trovato): {query}")
+                saltati += 1
+                continue
+
+            food = foods[0]
+            fdc_id = food.get("fdcId")
+            nome_usda = food.get("description", query)
+
+            # Estrai nutrienti rilevanti
+            nutrients = {n["nutrientName"]: n for n in food.get("foodNutrients", [])}
+
+            # Recupera dettaglio per pH (se disponibile)
+            detail_url = (f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}"
+                          f"?api_key={api_key}")
+            detail_req = urllib.request.Request(detail_url, headers={"User-Agent": "Matter/1.0"})
+            detail_resp = urllib.request.urlopen(detail_req, timeout=10)
+            detail = json.loads(detail_resp.read().decode())
+
+            # Parametri fisici disponibili in FDC
+            food_data = {
+                "fdc_id": fdc_id,
+                "nome_usda": nome_usda,
+                "fonte": "USDA FoodData Central CC0",
+                "fenomeno": meta["fenomeno"],
+            }
+
+            # Acqua (proxy per Aw)
+            water = nutrients.get("Water")
+            if water:
+                water_pct = float(water.get("value", 0))
+                if water_pct > 0:
+                    # Aw approssimata da % acqua (semplificazione)
+                    food_data["water_pct"] = water_pct
+                    food_data["aw_nota"] = f"contenuto acqua: {water_pct}% (Aw stimata dalla composizione)"
+
+            # Energia, proteine, grassi per contesto
+            energia = nutrients.get("Energy")
+            if energia:
+                food_data["energia_kcal"] = float(energia.get("value", 0))
+
+            proteine = nutrients.get("Protein")
+            if proteine:
+                food_data["proteine_pct"] = float(proteine.get("value", 0))
+
+            # Nodo ID nel grafo
+            node_id = "usda_" + re.sub(r"[^a-z0-9]", "_", query.lower().strip())
+
+            # Upsert nodo
+            cur.execute("""
+                INSERT INTO nodes (id, type, name, domain, data)
+                VALUES (%s, 'Prodotto', %s, %s, %s)
+                ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data
+            """, (node_id, nome_usda, meta["domain"], json.dumps(food_data, ensure_ascii=False)))
+
+            # Arco verso fenomeno
+            cur.execute("""
+                INSERT INTO edges (from_id, to_id, relation, data)
+                VALUES (%s, %s, 'governato_da', '{}')
+                ON CONFLICT DO NOTHING
+            """, (node_id, meta["fenomeno"]))
+
+            tradotti += 1
+            click.echo(f"  OK: {query} → {nome_usda} (fdc_id:{fdc_id})")
+
+            _t.sleep(0.3)  # rispetta rate limit USDA (1000/h)
+
+        except Exception as e:
+            click.echo(f"  ERRORE {query}: {e}")
+            errori += 1
+            continue
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    click.echo(f"\nFATTO: {tradotti} importati · {saltati} saltati · {errori} errori")
+
+
 @app.cli.command("load-flavor")
 def load_flavor():
     """Carica il flavor network nel database. Uso: flask load-flavor"""
