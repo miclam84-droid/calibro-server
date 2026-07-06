@@ -9,7 +9,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Matter">
 <link rel="manifest" href="/static/manifest.json">
-<link rel="apple-touch-icon" href="/static/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="/static/icons/favicon-32.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
 <title>Matter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -2263,6 +2265,7 @@ function chiudiOnbOverlay(){
   const overlay = document.getElementById('onb-overlay');
   if(overlay) overlay.classList.add('hidden');
   localStorage.setItem('matter_onb_done','1');
+  chiudiNudge();  // (c) onboarding fatto: il nudge sparisce e non riappare (gated su matter_onb_done)
 }
 
 /* ── FLAVOR NETWORK MAPPA ─────────────────────────────── */
