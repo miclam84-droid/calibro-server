@@ -1221,8 +1221,15 @@ async function caricaLezioneStep(step){
       (j.fenomeno.dominio||'') + ' · fenomeno ' + (j.step+1);
     document.getElementById('les-nome').textContent = j.fenomeno.nome;
     document.getElementById('les-scheda').textContent = j.fenomeno.scheda||'';
-    // target
-    document.getElementById('les-target').textContent = j.fenomeno.target||'—';
+    // target — mostra la box solo se il fenomeno ha un numero-bersaglio,
+    // coerente con lo Scopri; niente "—" spoglio quando il dato non c'è
+    const datoBox = document.getElementById('les-dato-box');
+    if(j.fenomeno.target){
+      document.getElementById('les-target').textContent = j.fenomeno.target;
+      datoBox.style.display = '';
+    } else {
+      datoBox.style.display = 'none';
+    }
     // stepper a puntini: quanti fenomeni, dove sei, salto diretto
     renderLesDots(j.step, j.totale_passi);
     // principio
