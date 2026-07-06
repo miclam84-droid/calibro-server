@@ -103,6 +103,30 @@ def _scheda_lang(data_dict, lang="it"):
         return scheda.get(lang) or scheda.get("it") or ""
     return scheda or ""
 
+
+def _numero_bersaglio(data_dict):
+    """Legge il numero-bersaglio di un nodo Fenomeno in modo canonico.
+    Il seed usa la chiave 'numero_bersaglio'; il fallback 'target' copre
+    eventuali nodi legacy. Fonte unica di verità per home, disciplina e lezione,
+    così la chiave non torna a divergere tra i lettori."""
+    if not data_dict:
+        return ""
+    return data_dict.get("numero_bersaglio") or data_dict.get("target") or ""
+
+
+def _intro(testo, n=200):
+    """Anteprima breve che NON taglia a metà parola. Tronca all'ultimo spazio
+    entro n caratteri e aggiunge l'ellissi, così non compaiono monconi come
+    'fa da orologi'. Se il testo è già corto, resta intero."""
+    testo = (testo or "").strip()
+    if len(testo) <= n:
+        return testo
+    taglio = testo[:n]
+    sp = taglio.rfind(" ")
+    if sp > 0:
+        taglio = taglio[:sp]
+    return taglio.rstrip(" ,.;:—-") + "…"
+
 # ---- ricerca contesto: profonda, centrata sui fenomeni ----
 def _domanda_chiede_perche(domanda):
     """True se la domanda chiede il principio sottostante ('perché', 'causa', ecc.)
@@ -251,7 +275,7 @@ def fenomeni_suggeriti(db):
     rows = db.execute(
         "SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY name").fetchall()
     return [{"id": r["id"], "nome": r["name"], "dominio": r["domain"],
-             "target": _dati(r["data"]).get("numero_bersaglio", "")} for r in rows]
+             "target": _numero_bersaglio(_dati(r["data"]))} for r in rows]
 
 def costruisci_prompt(domanda, contesto, lang="it"):
     righe = []
@@ -1255,8 +1279,8 @@ def home_api():
             "id": f["id"],
             "nome": f["name"],
             "dominio": f["domain"],
-            "target": fd.get("target", ""),
-            "scheda_intro": _scheda_lang(fd, lang)[:200]
+            "target": _numero_bersaglio(fd),
+            "scheda_intro": _intro(_scheda_lang(fd, lang))
         }
     }
     principi_attivi = [p for p in principi if "candidato" not in str(_dati(p["data"]))]
@@ -1266,7 +1290,7 @@ def home_api():
         result["principio"] = {
             "id": p["id"],
             "nome": p["name"],
-            "scheda_intro": _scheda_lang(pd, lang)[:200]
+            "scheda_intro": _intro(_scheda_lang(pd, lang))
         }
     _cache_home[lang] = {"ts": now, "data": result}
     return jsonify(result)
@@ -1296,14 +1320,14 @@ def disciplina(nome):
             "SELECT id, name, data FROM nodes WHERE type='Fenomeno' ORDER BY name"
         ).fetchall()
         fenomeni = [{"id": f["id"], "nome": f["name"],
-                     "target": _dati(f["data"]).get("target", "")} for f in tutti]
+                     "target": _numero_bersaglio(_dati(f["data"]))} for f in tutti]
     else:
         fenomeni = []
         for fid in sorted(fen_ids):
             f = db.execute("SELECT id, name, data FROM nodes WHERE id=?", (fid,)).fetchone()
             if f:
                 fenomeni.append({"id": f["id"], "nome": f["name"],
-                                  "target": _dati(f["data"]).get("target", "")})
+                                  "target": _numero_bersaglio(_dati(f["data"]))})
     return jsonify({"disciplina": nome, "fenomeni": fenomeni, "totale": len(fenomeni)})
 
 
@@ -1324,7 +1348,7 @@ def lezione(disciplina_nome, step):
         return jsonify({"errore": "nodo non trovato"})
     nd = _dati(nodo["data"])
     scheda = _scheda_lang(nd, lang)
-    target = nd.get("target", "")
+    target = _numero_bersaglio(nd)
     # principio collegato
     principio = None
     pr = db.execute("""SELECT n.name, n.data FROM edges e
