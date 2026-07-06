@@ -53,6 +53,30 @@ def main():
     schema_sql = (GRAFO / "schema.sql").read_text(encoding="utf-8")
     cur.execute(schema_sql)
 
+    # ── 3b. Cache traduzioni (persistente, NON viene mai truncata) ──
+    # Le schede EN vivono qui: il TRUNCATE svuota nodes/edges ma non
+    # questa tabella, cosi l'inglese non sparisce piu a ogni reseed.
+    print("Preparo la cache traduzioni...")
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS traduzioni (
+            it_text TEXT PRIMARY KEY,
+            en_text TEXT
+        )
+    """)
+    # Raccolgo l'inglese GIA presente nei nodi (formato {it,en}) nella cache,
+    # PRIMA di svuotare: quello che translate-graph ha gia tradotto viene
+    # catturato qui una volta per tutte.
+    cur.execute("""
+        INSERT INTO traduzioni (it_text, en_text)
+        SELECT data->'scheda'->>'it', data->'scheda'->>'en'
+        FROM nodes
+        WHERE jsonb_typeof(data->'scheda') = 'object'
+          AND data->'scheda'->>'en' IS NOT NULL
+          AND data->'scheda'->>'it' IS NOT NULL
+        ON CONFLICT (it_text) DO UPDATE SET en_text = EXCLUDED.en_text
+    """)
+    print(f"  Traduzioni raccolte in cache: {cur.rowcount}")
+
     # ── 4. Pulizia ─────────────────────────────────────────────────
     print("Pulizia tabelle grafo (nodes + edges)...")
     cur.execute("TRUNCATE TABLE edges, nodes CASCADE")
@@ -73,6 +97,23 @@ def main():
             print(f"  ERRORE in {s.name}: {e}")
             conn.rollback()
             sys.exit(1)
+
+    # ── 6b. Riapplica l'inglese dalla cache ────────────────────────
+    # Ogni scheda-stringa italiana per cui esiste una traduzione in cache
+    # torna bilingue {it,en} SENZA chiamare Haiku. L'inglese non si perde.
+    print("Riapplico le traduzioni EN dalla cache...")
+    cur.execute("""
+        UPDATE nodes n
+        SET data = jsonb_set(
+                n.data, '{scheda}',
+                jsonb_build_object('it', n.data->'scheda', 'en', to_jsonb(t.en_text))
+            )
+        FROM traduzioni t
+        WHERE jsonb_typeof(n.data->'scheda') = 'string'
+          AND (n.data->>'scheda') = t.it_text
+          AND t.en_text IS NOT NULL
+    """)
+    print(f"  Schede tornate bilingui: {cur.rowcount}")
 
     # ── 7. Commit e verifica integrità ─────────────────────────────
     print("Verifico l'integrità finale del grafo (commit)...")
