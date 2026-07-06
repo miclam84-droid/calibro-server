@@ -110,8 +110,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   display:flex;align-items:center;gap:4px;background:none;border:none;font-family:var(--sans)}
 .les-back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
 .les-pos{font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
-.les-bar{height:2px;background:var(--border);margin:0 14px;border-radius:1px;overflow:hidden}
-.les-bar-fill{height:100%;width:40%;background:var(--e500)}
+.les-bar{height:3px;background:var(--border);margin:0;border-radius:0;overflow:hidden}
+.les-bar-fill{height:100%;width:0%;background:var(--e500);transition:width .4s ease}
 .les-dots{display:flex;gap:7px;flex-wrap:wrap;padding:12px 14px 2px}
 .les-dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);
   background:var(--surface);color:var(--ink-muted);font-family:var(--mono);font-size:11px;
@@ -120,16 +120,16 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .les-dot:active{border-color:var(--e500)}
 .les-dot.done{border-color:var(--e300);background:var(--e100);color:var(--e700)}
 .les-dot.current{border-color:var(--e500);background:var(--e500);color:#fff;font-weight:600}
-.scheda-les{margin:12px 14px 0;border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
-.sl-top{background:var(--surface);padding:14px}
+.scheda-les{margin:12px 14px 0;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.sl-top{background:var(--surface);padding:18px 16px 14px}
 .sl-step{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--s500);margin-bottom:6px}
-.sl-h{font-family:var(--serif);font-size:17px;font-weight:700;line-height:1.35;color:var(--ink)}
-.sl-p{font-size:13.5px;color:var(--ink-muted);line-height:1.65;margin-top:8px}
-.sl-dato{background:var(--s100);border-top:1px solid var(--s300);padding:12px 14px}
-.sl-dato-lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+.sl-h{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.2;color:var(--ink);margin-bottom:10px}
+.sl-p{font-size:14px;color:var(--ink-muted);line-height:1.7;margin-top:0}
+.sl-dato{background:#fff;border-top:2.5px solid var(--e500);padding:14px 16px}
+.sl-dato-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--s700);margin-bottom:5px}
-.sl-dato-val{font-family:var(--mono);font-size:12.5px;color:var(--s700);line-height:1.7}
+.sl-dato-val{font-family:var(--mono);font-size:14px;color:var(--e700);line-height:1.7;font-weight:500}
 .sl-principio{background:var(--princ-light);border-top:1px solid var(--princ-border);padding:12px 14px}
 .sl-princ-lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--princ);margin-bottom:5px;
@@ -514,6 +514,29 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .foodcost-num{font-family:var(--mono);font-size:28px;font-weight:500;color:var(--e700)}
 .foodcost-label{font-size:12px;color:var(--e700)}
 
+/* ── ONBOARDING OVERLAY ───────────────────────────────── */
+#onb-overlay{position:fixed;inset:0;z-index:300;background:rgba(28,20,12,.72);
+  display:flex;align-items:flex-end;justify-content:center;
+  animation:fadeInOvl .25s ease}
+#onb-overlay.hidden{display:none}
+.onb-sheet{background:var(--surface);border-radius:20px 20px 0 0;
+  padding:28px 24px 36px;width:100%;max-width:480px;
+  animation:slideUpOvl .3s ease}
+@keyframes slideUpOvl{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeInOvl{from{opacity:0}to{opacity:1}}
+.onb-title-ovl{font-family:var(--serif);font-size:22px;font-weight:700;
+  color:var(--ink);margin-bottom:22px;line-height:1.2}
+.onb-steps{display:flex;flex-direction:column;gap:18px;margin-bottom:28px}
+.onb-step{display:flex;align-items:flex-start;gap:14px}
+.onb-step-num{width:28px;height:28px;border-radius:50%;background:var(--e500);
+  color:#fff;font-family:var(--mono);font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.onb-step-title{font-weight:600;font-size:14px;color:var(--ink);margin-bottom:2px}
+.onb-step-sub{font-size:13px;color:var(--ink-muted);line-height:1.5}
+.onb-cta-btn{display:block;width:100%;background:var(--coffee);color:#f0e0cc;
+  border:none;border-radius:10px;padding:15px;font-family:var(--sans);
+  font-weight:600;font-size:15px;cursor:pointer}
+
 /* ── ONBOARDING ───────────────────────────────────────── */
   background:var(--e100);border:1.5px solid var(--e300);
   border-radius:12px;display:flex;align-items:center;gap:12px;
@@ -596,7 +619,7 @@ if('serviceWorker' in navigator){
     </div>
   </div>
   <button class="cta-main" id="scopri-cta" onclick="avviaLezione()">Studia questo fenomeno</button>
-  <p class="no-login" id="ct-nologin-p">Nessuna registrazione richiesta.</p>
+  <p class="no-login" id="ct-nologin-p">Inizia senza registrarti.</p>
   <!-- nudge primo accesso — visibile solo se l'utente non ha ancora scelto una disciplina -->
   <div class="onb-nudge" id="onb-nudge" style="display:none">
     <div class="onb-nudge-icon">
@@ -770,7 +793,7 @@ if('serviceWorker' in navigator){
 <div class="screen" id="screen-chiedi">
   <div class="chiedi-subtabs">
     <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi al grafo</button>
-    <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Calcola</button>
+    <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Calcolatori</button>
   </div>
   <div class="chiedi-panel active" id="panel-chat">
     <div class="schede" id="schede">
@@ -1187,15 +1210,16 @@ async function caricaLezioneStep(step){
     Matter.totale = j.totale_passi;
     // header
     document.getElementById('les-pos').textContent = `${_t('les_fenomeno')} ${j.step+1} ${_t('les_di')} ${j.totale_passi}`;
+    // aggiorna progress bar
+    const pct = j.totale_passi > 0 ? Math.round((j.step+1)/j.totale_passi*100) : 0;
+    const barFill = document.getElementById('les-bar-fill');
+    if(barFill) barFill.style.width = pct + '%';
     document.getElementById('les-step-label').textContent =
       (j.fenomeno.dominio||'') + ' · fenomeno ' + (j.step+1);
     document.getElementById('les-nome').textContent = j.fenomeno.nome;
     document.getElementById('les-scheda').textContent = j.fenomeno.scheda||'';
     // target
     document.getElementById('les-target').textContent = j.fenomeno.target||'—';
-    // barra progressione
-    const pct = j.totale_passi>1 ? (j.step/(j.totale_passi-1)*100) : 100;
-    document.getElementById('les-bar-fill').style.width = pct+'%';
     // stepper a puntini: quanti fenomeni, dove sei, salto diretto
     renderLesDots(j.step, j.totale_passi);
     // principio
@@ -1281,14 +1305,19 @@ function renderMappa(disc, fens){
     const nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
     const tagHtml = stato==='completato'
       ? '<div class="p-tag done">completato</div>'
-      : isFirst ? '<div class="p-tag active">inizia da qui</div>' : '';
+      : isFirst ? '<div class="p-tag active">inizia da qui</div>'
+      : '<div class="p-tag lock" style="color:var(--e500);opacity:.5;font-size:10px;font-family:var(--mono)">in attesa</div>';
     const svgIcon = stato==='completato'
       ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg>'
       : isFirst
       ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'
       : '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
+    // nodi bloccati: bordo terracotta 0.3 opacity invece di grigio piatto
+    const nodeStyle = stato==='lock'
+      ? 'border:1px solid rgba(196,98,45,0.3);background:var(--surface);'
+      : '';
     return `<div class="p-step ${stato==='completato'?'done':''}" style="cursor:pointer" onclick="vaiAStep(${i})">
-      <div class="pnode ${nodeClass}">${svgIcon}</div>
+      <div class="pnode ${nodeClass}" style="${nodeStyle}">${svgIcon}</div>
       <div class="p-info">
         <div class="p-name">${esc(f.nome)}</div>
         <div class="p-meta">${esc(f.target||'')}</div>
@@ -1606,6 +1635,7 @@ const App=(()=>{
     // schermata iniziale = Scopri. La Lezione si carica pigra quando apri la tab.
     caricaHome();
     aggiornaTopbarLogin();
+    mostraOnbOverlay();
     // IN3 — keep-alive: ping ogni 4 minuti per evitare il cold start di Railway
     setInterval(()=>fetch('/health').catch(()=>{}), 4*60*1000);
   });
@@ -1707,7 +1737,7 @@ const _strings = {
   it:{
     payoff:'La scienza del mestiere',
     scopri:'Scopri', lezione:'Lezione', mappa:'Mappa', chiedi:'Chiedi',
-    studia:'Studia questo fenomeno', nologin:'Nessuna registrazione richiesta.',
+    studia:'Studia questo fenomeno', nologin:'Inizia senza registrarti.',
     scegli:'Scegli la tua disciplina', caricamento:'caricamento…',
     fenomeno_giorno:'fenomeno del giorno',
     num_bersaglio:'numero bersaglio',
@@ -1762,7 +1792,14 @@ const _strings = {
     ct_include:'include',
     ct_extra_lbl:'extra',
     // onboarding
-    onb_nudge_title:'Scegli da dove iniziare',
+    onb_ovl_title:'Come funziona Matter',
+    onb_s1_title:'Scegli la tua disciplina',
+    onb_s1_sub:'Bar, Bakery, Cucina, Caffetteria — ogni disciplina ha il suo percorso di fenomeni fisici.',
+    onb_s2_title:'Studia il fenomeno',
+    onb_s2_sub:'Ogni lezione ha un numero bersaglio — il parametro fisico che governa quel gesto al banco.',
+    onb_s3_title:'Chiedi al grafo',
+    onb_s3_sub:'Fai una domanda reale — un problema del tuo lavoro. Il grafo risponde con i numeri, non con le opinioni.',
+    onb_ovl_cta:'Inizia',
     onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
     onb_complete_title:'Ottimo lavoro.',
     onb_complete_sub:'Hai completato la lezione. Vai alla Mappa per vedere il tuo percorso.',
@@ -1809,7 +1846,7 @@ const _strings = {
     auth_pwd_corta:'Password minimo 8 caratteri.',
     auth_ok:'Accesso effettuato.',
     auth_reg_ok:'Account creato. Benvenuto in Matter.',
-    auth_errore_rete:'Errore di rete. Riprova.',
+    auth_errore_rete:'Il grafo non risponde. Riprova tra un momento.',
     salvato:'✓ Salvato',
     // disclaimer sicurezza EN con adattamento UK/US
     ct_sic_disc_uk:'This tool provides indicative estimates based on scientific models. It does not replace official food safety management procedures, HACCP plans, or the advice of a qualified food safety professional.',
@@ -1892,7 +1929,14 @@ const _strings = {
     ct_include:'includes',
     ct_extra_lbl:'extra',
     // onboarding
-    onb_nudge_title:'Choose where to start',
+    onb_ovl_title:'How Matter works',
+    onb_s1_title:'Choose your discipline',
+    onb_s1_sub:'Bar, Bakery, Kitchen, Coffee — each discipline has its own path through physical phenomena.',
+    onb_s2_title:'Study the phenomenon',
+    onb_s2_sub:'Each lesson has a target number — the physical parameter that governs that gesture at the bench.',
+    onb_s3_title:'Ask the graph',
+    onb_s3_sub:'Ask a real question — a problem from your work. The graph answers with numbers, not opinions.',
+    onb_ovl_cta:'Start',
     onb_nudge_sub:'Select your discipline below to begin your first lesson',
     onb_complete_title:'Great work.',
     onb_complete_sub:'You completed the lesson. Go to the Map to see your path.',
@@ -1939,7 +1983,7 @@ const _strings = {
     auth_pwd_corta:'Password must be at least 8 characters.',
     auth_ok:'Signed in.',
     auth_reg_ok:'Account created. Welcome to Matter.',
-    auth_errore_rete:'Network error. Try again.',
+    auth_errore_rete:'The graph is not responding. Try again in a moment.',
     salvato:'✓ Saved',
     ct_sic_disc_uk:'This tool provides indicative estimates based on scientific models. It does not replace official food safety management procedures, HACCP plans, or the advice of a qualified food safety professional.',
     // sicurezza calcolatori
@@ -2053,6 +2097,14 @@ function applicaStringheUI(){
   st('auth-tab-reg',_t('registrati'));
   const authSkip=document.querySelector('.auth-skip a'); if(authSkip) authSkip.textContent=_t('continua_senza');
   // onboarding
+  st('onb-ovl-title',_t('onb_ovl_title'));
+  st('onb-s1-title',_t('onb_s1_title'));
+  st('onb-s1-sub',_t('onb_s1_sub'));
+  st('onb-s2-title',_t('onb_s2_title'));
+  st('onb-s2-sub',_t('onb_s2_sub'));
+  st('onb-s3-title',_t('onb_s3_title'));
+  st('onb-s3-sub',_t('onb_s3_sub'));
+  st('onb-ovl-cta',_t('onb_ovl_cta'));
   st('onb-nudge-title',_t('onb_nudge_title'));
   st('onb-nudge-sub',_t('onb_nudge_sub'));
   st('onb-complete-title',_t('onb_complete_title'));
@@ -2183,6 +2235,18 @@ function calcCatenaFreddo(){
     ×${moltiplicatore < 1000 ? moltiplicatore.toFixed(0) : '>1000'} batteri</span>
     <span style="font-size:12px;color:var(--ink-muted);margin-left:8px">rischio ${rischio}</span>
     <div style="font-size:11px;color:var(--ink-muted);margin-top:4px">${ore.toFixed(1)}h in zona pericolo · doubling time ~${dt_T.toFixed(0)} min a ${T}°C</div>`;
+}
+
+/* ── ONBOARDING OVERLAY ──────────────────────────────── */
+function mostraOnbOverlay(){
+  if(localStorage.getItem('matter_onb_done')) return;
+  const overlay = document.getElementById('onb-overlay');
+  if(overlay) overlay.classList.remove('hidden');
+}
+function chiudiOnbOverlay(){
+  const overlay = document.getElementById('onb-overlay');
+  if(overlay) overlay.classList.add('hidden');
+  localStorage.setItem('matter_onb_done','1');
 }
 
 /* ── FLAVOR NETWORK MAPPA ─────────────────────────────── */
@@ -2440,6 +2504,37 @@ async function testaKT(){
       <span id="ct-quad-empty-sub">Usa i calcolatori e salva le tue misure fisiche qui.</span>
     </div>
     <div class="quad-list" id="quad-list"></div>
+  </div>
+</div>
+
+<!-- ── ONBOARDING OVERLAY ────────────────────────────── -->
+<div id="onb-overlay" class="hidden">
+  <div class="onb-sheet">
+    <div class="onb-title-ovl" id="onb-ovl-title">Come funziona Matter</div>
+    <div class="onb-steps">
+      <div class="onb-step">
+        <div class="onb-step-num">1</div>
+        <div>
+          <div class="onb-step-title" id="onb-s1-title">Scegli la tua disciplina</div>
+          <div class="onb-step-sub" id="onb-s1-sub">Bar, Bakery, Cucina, Caffetteria — ogni disciplina ha il suo percorso di fenomeni fisici.</div>
+        </div>
+      </div>
+      <div class="onb-step">
+        <div class="onb-step-num">2</div>
+        <div>
+          <div class="onb-step-title" id="onb-s2-title">Studia il fenomeno</div>
+          <div class="onb-step-sub" id="onb-s2-sub">Ogni lezione ha un numero bersaglio — il parametro fisico che governa quel gesto al banco.</div>
+        </div>
+      </div>
+      <div class="onb-step">
+        <div class="onb-step-num">3</div>
+        <div>
+          <div class="onb-step-title" id="onb-s3-title">Chiedi al grafo</div>
+          <div class="onb-step-sub" id="onb-s3-sub">Fai una domanda reale — un problema del tuo lavoro. Il grafo risponde con i numeri, non con le opinioni.</div>
+        </div>
+      </div>
+    </div>
+    <button class="onb-cta-btn" id="onb-ovl-cta" onclick="chiudiOnbOverlay()">Inizia</button>
   </div>
 </div>
 
