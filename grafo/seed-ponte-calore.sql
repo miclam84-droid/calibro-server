@@ -10,7 +10,7 @@
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-calore', 'Fenomeno', 'Calore / cinetica termica', 'trasversale',
- '{"tipo":"fisico-chimico","scheda":"La temperatura governa due cose: la VELOCITÀ delle reazioni (raddoppia ogni ~8-10°C, è il Q10) e i CAMBI DI STATO (sciogliere, vaporizzare, che costano calore latente). È la stessa fisica sotto il ghiaccio che si scioglie, l''impasto che lievita e la carne che pastorizza."}');
+ '{"tipo":"fisico-chimico","numero_bersaglio":"calore latente fusione ghiaccio 334 J/g · Q10: tempo x2 ogni ~8-10°C","scheda":"La temperatura governa due cose: la VELOCITÀ delle reazioni (raddoppia ogni ~8-10°C, è il Q10) e i CAMBI DI STATO (sciogliere, vaporizzare, che costano calore latente). È la stessa fisica sotto il ghiaccio che si scioglie, l''impasto che lievita e la carne che pastorizza."}');
 
 -- ---- CALCOLI / PARAMETRI -----------------------------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES

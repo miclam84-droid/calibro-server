@@ -657,11 +657,17 @@ if('serviceWorker' in navigator){
         <div class="disc-prog"><div class="disc-prog-fill" id="disc-caffe-p" style="width:0%"></div></div></div>
       <div class="disc-arr">›</div>
     </div>
-    <div class="disc-item off"><div class="disc-dot dim"></div>
-      <div class="disc-txt"><div class="disc-n">Pasticceria</div><div class="disc-m">prossimamente</div></div>
+    <div class="disc-item" onclick="selezionaDisciplina('pasticceria')">
+      <div class="disc-dot"></div>
+      <div class="disc-txt"><div class="disc-n">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div>
+        <div class="disc-prog"><div class="disc-prog-fill" id="disc-pasticceria-p" style="width:0%"></div></div></div>
+      <div class="disc-arr">›</div>
     </div>
-    <div class="disc-item off"><div class="disc-dot dim"></div>
-      <div class="disc-txt"><div class="disc-n">Gelateria</div><div class="disc-m">prossimamente</div></div>
+    <div class="disc-item" onclick="selezionaDisciplina('gelateria')">
+      <div class="disc-dot"></div>
+      <div class="disc-txt"><div class="disc-n">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div>
+        <div class="disc-prog"><div class="disc-prog-fill" id="disc-gelateria-p" style="width:0%"></div></div></div>
+      <div class="disc-arr">›</div>
     </div>
     <div class="disc-item off"><div class="disc-dot dim"></div>
       <div class="disc-txt"><div class="disc-n" id="ct-disc-sicurezza">Sicurezza alimentare</div><div class="disc-m" id="ct-disc-sicurezza-sub">prossimamente</div></div>
@@ -1144,7 +1150,7 @@ async function caricaHome(){
     _homeCached = j;
     renderHome(j);
     // carica conteggio discipline in parallelo
-    ['bar','bakery','cucina','caffetteria'].forEach(caricaContDisciplina);
+    ['bar','bakery','cucina','caffetteria','pasticceria','gelateria'].forEach(caricaContDisciplina);
   } catch(e){
     document.getElementById('scopri-ey').textContent = _t('scopri_errore_eyebrow');
     document.getElementById('scopri-titolo').textContent = _t('scopri_errore_titolo');

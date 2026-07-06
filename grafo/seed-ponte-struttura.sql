@@ -8,7 +8,7 @@
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-struttura', 'Fenomeno', 'Struttura / colloidi', 'trasversale',
- '{"tipo":"fisico-chimico","scheda":"Una rete molecolare che intrappola qualcosa e dà struttura a un fluido. Il glutine intrappola il CO2 nel pane; la pectina intrappola l''acqua nel gel; gli idrocolloidi (xantano, psyllium) fanno da rete dove il glutine manca."}');
+ '{"tipo":"fisico-chimico","numero_bersaglio":"misurato via altri numeri — gel pectina: >=60 Brix + pH 3,0-3,3 · glutine: test velo · idrocolloidi 0,2-1%","scheda":"Una rete molecolare che intrappola qualcosa e dà struttura a un fluido. Il glutine intrappola il CO2 nel pane; la pectina intrappola l''acqua nel gel; gli idrocolloidi (xantano, psyllium) fanno da rete dove il glutine manca."}');
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('cal-proteine',  'Calcolo', 'Forza farina (W / % proteine)', 'bakery', '{"nota":"più proteine = glutine più forte"}'),

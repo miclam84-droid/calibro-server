@@ -8,7 +8,7 @@
 -- ---- NODO CENTRALE -----------------------------------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-concentrazione', 'Fenomeno', 'Concentrazione', 'trasversale',
- '{"tipo":"fisico-chimico","scheda":"Quanto soluto c''è in un solvente. È la stessa operazione ovunque: sale sull''acqua della salamoia, zucchero nello sciroppo, acqua sulla farina (baker''s %), caffè estratto nell''acqua (TDS). Cambia il soluto, non la matematica."}');
+ '{"tipo":"fisico-chimico","numero_bersaglio":"% soluto/solvente — sour ~16% ABV / ~12 Brix · salamoia 2-3% · idratazione pane 60-85% · EY caffe 18-22%","scheda":"Quanto soluto c''è in un solvente. È la stessa operazione ovunque: sale sull''acqua della salamoia, zucchero nello sciroppo, acqua sulla farina (baker''s %), caffè estratto nell''acqua (TDS). Cambia il soluto, non la matematica."}');
 
 -- ---- CALCOLI / PARAMETRI (misurano il fenomeno) ------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES
