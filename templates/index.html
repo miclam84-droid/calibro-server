@@ -742,6 +742,30 @@ if('serviceWorker' in navigator){
       Scegli una disciplina in Scopri per vedere il percorso.
     </div>
   </div>
+
+  <!-- Flavor network subito dopo il percorso — più visibile -->
+  <div class="sec-label" id="ct-perche-ins" style="padding-top:8px">Abbinamenti aromatici</div>
+  <div class="flavor-card" id="flavor-card-mappa">
+    <div class="fl-header">
+      <div class="fl-icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
+      <div>
+        <div class="fl-eyebrow">Flavor network</div>
+        <div class="fl-name">Con cosa funziona questo ingrediente — e perché</div>
+      </div>
+    </div>
+    <div class="fl-desc">Scrivi un ingrediente e scopri gli abbinamenti per composti aromatici condivisi.</div>
+    <div class="flavor-search">
+      <div class="flavor-search-row">
+        <input class="flavor-input" type="text" id="flavor-query" placeholder="es. limone, caffè, burro…" onkeydown="if(event.key==='Enter')cercaFlavorMappa()">
+        <button class="flavor-search-btn" onclick="cercaFlavorMappa()" id="ct-flavor-btn">Cerca</button>
+      </div>
+      <div class="flavor-results" id="flavor-results-mappa"></div>
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--flavor);opacity:.7;margin-top:12px;line-height:1.5;padding:0 14px 14px">
+      Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale o di sicurezza alimentare.
+    </div>
+  </div>
+
   <div class="sec-label" id="ct-princ-trasv" style="padding-top:4px">Principi trasversali</div>
   <div class="iper-arco">
     <div class="ia-header">
@@ -759,27 +783,6 @@ if('serviceWorker' in navigator){
       <span class="ia-nodo">Carbonatazione</span>
     </div>
   </div>
-  <div class="sec-label" id="ct-perche-ins" style="padding-top:8px">Perché funzionano insieme</div>
-  <div class="flavor-card" id="flavor-card-mappa">
-    <div class="fl-header">
-      <div class="fl-icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
-      <div>
-        <div class="fl-eyebrow">Flavor network</div>
-        <div class="fl-name">Abbinamenti per composti aromatici condivisi</div>
-      </div>
-    </div>
-    <div class="fl-desc">Cerca un ingrediente per scoprire con cosa funziona — e perché.</div>
-    <div class="flavor-search">
-      <div class="flavor-search-row">
-        <input class="flavor-input" type="text" id="flavor-query" placeholder="es. limone, caffè, burro…" onkeydown="if(event.key==='Enter')cercaFlavorMappa()">
-        <button class="flavor-search-btn" onclick="cercaFlavorMappa()" id="ct-flavor-btn">Cerca</button>
-      </div>
-      <div class="flavor-results" id="flavor-results-mappa"></div>
-    </div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--flavor);opacity:.7;margin-top:12px;line-height:1.5;padding:0 14px 14px">
-      Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale o di sicurezza alimentare.
-    </div>
-  </div>
   <div class="sec-label" id="ct-ponte-cifra" style="padding-top:4px">Il ponte verso Cifra</div>
   <div class="bridge-card">
     <div class="bridge-eyebrow">il ponte verso Cifra</div>
@@ -792,7 +795,7 @@ if('serviceWorker' in navigator){
 <!-- ── CHIEDI ──────────────────────────────────────────── -->
 <div class="screen" id="screen-chiedi">
   <div class="chiedi-subtabs">
-    <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi al grafo</button>
+    <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi a Matter</button>
     <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Calcolatori</button>
   </div>
   <div class="chiedi-panel active" id="panel-chat">
@@ -1037,7 +1040,7 @@ if('serviceWorker' in navigator){
 </div>
 <div class="ask-bar" id="ask-bar" style="display:none">
   <div class="ask-inner">
-    <input class="ask-input" id="q" placeholder="chiedi al grafo…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
+    <input class="ask-input" id="q" placeholder="chiedi a Matter…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
     <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
   </div>
 </div>
@@ -1744,9 +1747,9 @@ const _strings = {
     indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai alla Mappa →',
     principio_del_giorno:'Principio del giorno',
     vedi_mappa:'Vedi il principio nella Mappa →',
-    chiedi_placeholder:'chiedi al grafo…',
+    chiedi_placeholder:'chiedi a Matter…',
     chiedi_btn:'Chiedi',
-    chiedi_al_grafo:'Chiedi al grafo',
+    chiedi_al_grafo:'Chiedi a Matter',
     calcola:'Calcola',
     prova:'Prova:',
     il_percorso:'Il tuo percorso',
@@ -1797,8 +1800,8 @@ const _strings = {
     onb_s1_sub:'Bar, Bakery, Cucina, Caffetteria — ogni disciplina ha il suo percorso di fenomeni fisici.',
     onb_s2_title:'Studia il fenomeno',
     onb_s2_sub:'Ogni lezione ha un numero bersaglio — il parametro fisico che governa quel gesto al banco.',
-    onb_s3_title:'Chiedi al grafo',
-    onb_s3_sub:'Fai una domanda reale — un problema del tuo lavoro. Il grafo risponde con i numeri, non con le opinioni.',
+    onb_s3_title:'Chiedi a Matter',
+    onb_s3_sub:'Fai una domanda reale — un problema del tuo lavoro. Matter risponde con i numeri, non con le opinioni.',
     onb_ovl_cta:'Inizia',
     onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
     onb_complete_title:'Ottimo lavoro.',
@@ -1837,7 +1840,7 @@ const _strings = {
     les_di:'di',
     scopri_errore_titolo:'Riprova tra poco.',
     scopri_errore_eyebrow:'errore caricamento',
-    chat_thinking:'consulto il grafo',
+    chat_thinking:'consulto Matter',
     chat_grado:'grado finale (era ',
     aggiungi_ing:'Aggiungi un ingrediente.',
     aggiungi_acido:'Aggiungi',
@@ -1881,9 +1884,9 @@ const _strings = {
     indietro:'← Back', avanti:'Next →', vai_mappa:'Go to Map →',
     principio_del_giorno:'Principle of the day',
     vedi_mappa:'See the principle in the Map →',
-    chiedi_placeholder:'ask the graph…',
+    chiedi_placeholder:'ask Matter…',
     chiedi_btn:'Ask',
-    chiedi_al_grafo:'Ask the graph',
+    chiedi_al_grafo:'Ask Matter',
     calcola:'Calculate',
     prova:'Try:',
     il_percorso:'Your path',
@@ -1934,8 +1937,8 @@ const _strings = {
     onb_s1_sub:'Bar, Bakery, Kitchen, Coffee — each discipline has its own path through physical phenomena.',
     onb_s2_title:'Study the phenomenon',
     onb_s2_sub:'Each lesson has a target number — the physical parameter that governs that gesture at the bench.',
-    onb_s3_title:'Ask the graph',
-    onb_s3_sub:'Ask a real question — a problem from your work. The graph answers with numbers, not opinions.',
+    onb_s3_title:'Ask Matter',
+    onb_s3_sub:'Ask a real question — a problem from your work. Matter answers with numbers, not opinions.',
     onb_ovl_cta:'Start',
     onb_nudge_sub:'Select your discipline below to begin your first lesson',
     onb_complete_title:'Great work.',
@@ -1974,7 +1977,7 @@ const _strings = {
     les_di:'of',
     scopri_errore_titolo:'Try again in a moment.',
     scopri_errore_eyebrow:'loading error',
-    chat_thinking:'searching the graph',
+    chat_thinking:'asking Matter',
     chat_grado:'final degree (was ',
     aggiungi_ing:'Add an ingredient.',
     aggiungi_acido:'Add',
@@ -2529,8 +2532,8 @@ async function testaKT(){
       <div class="onb-step">
         <div class="onb-step-num">3</div>
         <div>
-          <div class="onb-step-title" id="onb-s3-title">Chiedi al grafo</div>
-          <div class="onb-step-sub" id="onb-s3-sub">Fai una domanda reale — un problema del tuo lavoro. Il grafo risponde con i numeri, non con le opinioni.</div>
+          <div class="onb-step-title" id="onb-s3-title">Chiedi a Matter</div>
+          <div class="onb-step-sub" id="onb-s3-sub">Fai una domanda reale — un problema del tuo lavoro. Matter risponde con i numeri, non con le opinioni.</div>
         </div>
       </div>
     </div>
