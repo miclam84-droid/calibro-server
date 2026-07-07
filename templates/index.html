@@ -70,11 +70,13 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .hero-hdr h2{font-family:var(--serif);font-size:17px;font-weight:700;color:#fff;line-height:1.35}
 .hero-body{padding:14px 16px}
 .hero-body p{font-size:13.5px;color:var(--ink-muted);line-height:1.65}
-.num-bersaglio{display:flex;align-items:baseline;gap:8px;margin-top:13px;
+.num-bersaglio{display:flex;align-items:flex-start;gap:10px;margin-top:13px;
   padding:11px 13px;background:var(--e100);border-radius:8px;border-left:3px solid var(--e500)}
-.num-big{font-family:var(--mono);font-size:30px;font-weight:500;color:var(--e700);line-height:1}
+.num-big{flex:1;font-family:var(--mono);font-size:28px;font-weight:500;color:var(--e700);line-height:1.05}
+.num-big.medio{font-size:18px;line-height:1.35}
+.num-big.lungo{font-size:15px;line-height:1.5}
 .num-unit{font-family:var(--mono);font-size:13px;color:var(--e700)}
-.num-lab{font-size:11.5px;color:var(--e700)}
+.num-lab{font-size:11px;color:var(--e700);white-space:nowrap;margin-top:4px;opacity:.85}
 .cta-main{display:block;margin:12px 14px 0;background:var(--coffee);color:#fff;
   font-weight:600;font-size:14px;padding:13px;border-radius:8px;
   text-align:center;border:none;cursor:pointer;width:calc(100% - 28px)}
@@ -1165,7 +1167,11 @@ function renderHome(j){
   document.getElementById('scopri-desc').textContent = f.scheda_intro || '';
   const numBox = document.getElementById('scopri-num');
   if(f.target){
-    document.getElementById('scopri-num-val').textContent = f.target;
+    const nv = document.getElementById('scopri-num-val');
+    nv.textContent = f.target;
+    nv.classList.remove('medio','lungo');
+    if(f.target.length > 48) nv.classList.add('lungo');
+    else if(f.target.length > 22) nv.classList.add('medio');
     numBox.style.display='flex';
   } else { numBox.style.display='none'; }
   Matter.fenomenoId = f.id;
