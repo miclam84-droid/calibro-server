@@ -6,7 +6,7 @@ Richiede DATABASE_URL (Railway la fornisce automaticamente).
 Versione robusta: termina le connessioni attive prima del TRUNCATE
 per non bloccarsi mai, anche con l'app Flask live.
 """
-import os, pathlib, sys
+import os, pathlib, sys, subprocess
 import psycopg2
 
 HERE = pathlib.Path(__file__).parent
@@ -132,6 +132,21 @@ def main():
 
     cur.close()
     conn.close()
+
+    # ── 8. Ripristino import esterni (USDA + PubChem) ──────────────
+    # Questi dati NON stanno nei seed (si caricano via API), quindi il
+    # TRUNCATE li cancellerebbe a ogni reseed. Rilanciandoli qui in
+    # automatico, sopravvivono a ogni migrate senza doverli ricordare.
+    print("\nRipristino import esterni (USDA + PubChem)...")
+    for nome, cmd in (("USDA", ["flask", "import-usda"]),
+                      ("PubChem", ["flask", "import-pubchem"])):
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+            ultima = (r.stdout.strip().splitlines() or ["(nessun output)"])[-1]
+            print(f"  {nome}: {ultima}")
+        except Exception as e:
+            print(f"  {nome} NON ripristinato ({e}). Rilancia a mano: {' '.join(cmd)}")
+
 
 if __name__ == "__main__":
     main()
