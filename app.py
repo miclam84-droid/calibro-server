@@ -297,8 +297,9 @@ def costruisci_prompt(domanda, contesto, lang="it"):
     for f in contesto["fenomeni"]:
         righe.append("")
         righe.append(f"### Fenomeno: {f['name']} ({f['domain']})")
-        if f["data"].get("scheda"):
-            righe.append(f["data"]["scheda"])
+        sch = _scheda_lang(f["data"], lang)
+        if sch:
+            righe.append(sch)
         manif = [c for c in f["collegamenti"] if c["relazione"] == "si_manifesta_in"]
         misu  = [c for c in f["collegamenti"] if c["relazione"] == "misurato_da"]
         proc  = [c for c in f["collegamenti"] if c["relazione"] == "realizzato_da"]
