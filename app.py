@@ -2353,7 +2353,71 @@ def import_pubchem():
     click.echo("Fonte: PubChem NIH — pubblico dominio, nessuna restrizione commerciale.")
 
 
-@app.cli.command("load-flavor")
+@app.cli.command("import-contrasto")
+def import_contrasto():
+    """Aggiunge dati fisici per abbinamento per contrasto (grassi, zuccheri,
+    sodio, amaro_index) ai nodi ingredienti esistenti. Eseguito in automatico
+    dal migrate dopo ogni reseed. Fonti: USDA FoodData Central (CC0)."""
+    if not DATABASE_URL:
+        click.echo("DATABASE_URL non impostata — skip."); return
+    DATI = {
+        "prod_limone":   {"grassi_pct":0.2,"zuccheri_pct":2.5,"sodio_mg100g":2,"amaro_index":1,"profilo_contrasto":"acido"},
+        "prod_lime":     {"grassi_pct":0.2,"zuccheri_pct":1.7,"sodio_mg100g":2,"amaro_index":1,"profilo_contrasto":"acido"},
+        "prod_arancia":  {"grassi_pct":0.1,"zuccheri_pct":8.3,"sodio_mg100g":0,"amaro_index":0,"profilo_contrasto":"acido-dolce"},
+        "prod_pomodoro": {"grassi_pct":0.1,"zuccheri_pct":2.4,"sodio_mg100g":5,"amaro_index":0,"profilo_contrasto":"acido"},
+        "prod_aceto":    {"grassi_pct":0.0,"zuccheri_pct":0.1,"sodio_mg100g":0,"amaro_index":2,"profilo_contrasto":"acido-amaro"},
+        "prod_fragola":  {"grassi_pct":0.3,"zuccheri_pct":5.1,"sodio_mg100g":5,"amaro_index":0,"profilo_contrasto":"acido"},
+        "prod_lampone":  {"grassi_pct":0.3,"zuccheri_pct":5.7,"sodio_mg100g":1,"amaro_index":0,"profilo_contrasto":"acido"},
+        "prod_mirtillo": {"grassi_pct":0.5,"zuccheri_pct":9.9,"sodio_mg100g":1,"amaro_index":0,"profilo_contrasto":"acido"},
+        "prod_mela":     {"grassi_pct":0.2,"zuccheri_pct":10.1,"sodio_mg100g":1,"amaro_index":0,"profilo_contrasto":"dolce-acido"},
+        "prod_vino_bianco":  {"grassi_pct":0.4,"zuccheri_pct":4.3,"sodio_mg100g":3,"amaro_index":3,"profilo_contrasto":"acido-amaro"},
+        "prod_vino_rosso":   {"grassi_pct":0.0,"zuccheri_pct":2.6,"sodio_mg100g":5,"amaro_index":4,"profilo_contrasto":"amaro-acido"},
+        "prod_burro":    {"grassi_pct":81.1,"zuccheri_pct":0.1,"sodio_mg100g":11,"amaro_index":0,"profilo_contrasto":"grasso"},
+        "prod_panna":    {"grassi_pct":36.0,"zuccheri_pct":3.4,"sodio_mg100g":40,"amaro_index":0,"profilo_contrasto":"grasso"},
+        "prod_latte":    {"grassi_pct":3.7,"zuccheri_pct":4.8,"sodio_mg100g":44,"amaro_index":0,"profilo_contrasto":"grasso-dolce"},
+        "prod_salmone":  {"grassi_pct":20.0,"zuccheri_pct":0.0,"sodio_mg100g":55,"amaro_index":0,"profilo_contrasto":"grasso"},
+        "prod_tonno":    {"grassi_pct":15.0,"zuccheri_pct":0.0,"sodio_mg100g":70,"amaro_index":0,"profilo_contrasto":"grasso"},
+        "prod_manzo":    {"grassi_pct":9.0,"zuccheri_pct":0.0,"sodio_mg100g":70,"amaro_index":0,"profilo_contrasto":"grasso-proteico"},
+        "prod_pollo":    {"grassi_pct":3.6,"zuccheri_pct":0.0,"sodio_mg100g":65,"amaro_index":0,"profilo_contrasto":"proteico"},
+        "prod_uovo_tuorlo":  {"grassi_pct":9.5,"zuccheri_pct":0.4,"sodio_mg100g":124,"amaro_index":0,"profilo_contrasto":"grasso-proteico"},
+        "prod_uovo_albume":  {"grassi_pct":0.1,"zuccheri_pct":0.7,"sodio_mg100g":166,"amaro_index":0,"profilo_contrasto":"proteico"},
+        "prod_cioccolato_fondente": {"grassi_pct":43.0,"zuccheri_pct":22.0,"sodio_mg100g":1,"amaro_index":4,"profilo_contrasto":"amaro-grasso"},
+        "prod_caffe_espresso": {"grassi_pct":0.2,"zuccheri_pct":0.0,"sodio_mg100g":2,"amaro_index":4,"profilo_contrasto":"amaro"},
+        "prod_caffe_filtro":  {"grassi_pct":0.0,"zuccheri_pct":0.0,"sodio_mg100g":2,"amaro_index":3,"profilo_contrasto":"amaro"},
+        "prod_birra":    {"grassi_pct":0.6,"zuccheri_pct":3.8,"sodio_mg100g":4,"amaro_index":3,"profilo_contrasto":"amaro-acido"},
+        "prod_porcini":  {"grassi_pct":3.5,"zuccheri_pct":2.0,"sodio_mg100g":8,"amaro_index":2,"profilo_contrasto":"amaro-aromatico"},
+        "prod_shiitake": {"grassi_pct":0.5,"zuccheri_pct":1.0,"sodio_mg100g":8,"amaro_index":2,"profilo_contrasto":"amaro-umami"},
+        "prod_zucchero": {"grassi_pct":0.0,"zuccheri_pct":82.0,"sodio_mg100g":1,"amaro_index":0,"profilo_contrasto":"dolce"},
+        "prod_miele":    {"grassi_pct":0.0,"zuccheri_pct":82.0,"sodio_mg100g":4,"amaro_index":0,"profilo_contrasto":"dolce-aromatico"},
+        "prod_yogurt":   {"grassi_pct":0.1,"zuccheri_pct":3.5,"sodio_mg100g":36,"amaro_index":0,"profilo_contrasto":"dolce-acido"},
+        "prod_vaniglia": {"grassi_pct":0.1,"zuccheri_pct":0.0,"sodio_mg100g":5,"amaro_index":1,"profilo_contrasto":"aromatico"},
+        "prod_cannella": {"grassi_pct":1.2,"zuccheri_pct":1.0,"sodio_mg100g":10,"amaro_index":2,"profilo_contrasto":"aromatico-amaro"},
+        "prod_soia":     {"grassi_pct":1.5,"zuccheri_pct":6.0,"sodio_mg100g":400,"amaro_index":1,"profilo_contrasto":"salato-umami"},
+        "prod_fagiolo":  {"grassi_pct":0.5,"zuccheri_pct":1.0,"sodio_mg100g":9,"amaro_index":3,"profilo_contrasto":"umami-amaro"},
+        "prod_farina_frumento": {"grassi_pct":0.4,"zuccheri_pct":0.4,"sodio_mg100g":8,"amaro_index":2,"profilo_contrasto":"umami"},
+        "prod_rum":      {"grassi_pct":0.0,"zuccheri_pct":0.0,"sodio_mg100g":1,"amaro_index":1,"profilo_contrasto":"alcolico-speziato","abv_pct":40},
+        "prod_whiskey":  {"grassi_pct":0.0,"zuccheri_pct":0.0,"sodio_mg100g":0,"amaro_index":2,"profilo_contrasto":"alcolico-torbato","abv_pct":40},
+        "prod_cognac":   {"grassi_pct":0.0,"zuccheri_pct":0.0,"sodio_mg100g":0,"amaro_index":2,"profilo_contrasto":"alcolico-invecchiato","abv_pct":40},
+        "prod_farina_segale":  {"grassi_pct":1.0,"zuccheri_pct":0.0,"sodio_mg100g":2,"amaro_index":0,"profilo_contrasto":"neutro-base"},
+        "prod_lievito_madre":  {"grassi_pct":0.7,"zuccheri_pct":3.2,"sodio_mg100g":10,"amaro_index":3,"profilo_contrasto":"acido-vivo"},
+    }
+    import psycopg2, json as _j
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    aggiornati = 0; saltati = 0
+    for node_id, extra in DATI.items():
+        cur.execute("SELECT data FROM nodes WHERE id=%s", (node_id,))
+        row = cur.fetchone()
+        if not row:
+            saltati += 1; continue
+        d = row[0] if isinstance(row[0], dict) else _j.loads(row[0])
+        d.update(extra)
+        cur.execute("UPDATE nodes SET data=%s::jsonb WHERE id=%s", (_j.dumps(d), node_id))
+        aggiornati += 1
+    conn.commit(); cur.close(); conn.close()
+    click.echo(f"  Contrasto: {aggiornati} aggiornati · {saltati} saltati")
+
+
 def load_flavor():
     """Carica il flavor network nel database. Uso: flask load-flavor"""
     click.echo("Caricamento flavor network...")

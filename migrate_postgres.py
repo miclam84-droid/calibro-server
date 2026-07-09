@@ -139,7 +139,8 @@ def main():
     # automatico, sopravvivono a ogni migrate senza doverli ricordare.
     print("\nRipristino import esterni (USDA + PubChem)...")
     for nome, cmd in (("USDA", ["flask", "import-usda"]),
-                      ("PubChem", ["flask", "import-pubchem"])):
+                      ("PubChem", ["flask", "import-pubchem"]),
+                      ("Contrasto", ["flask", "import-contrasto"])):
         try:
             r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
             ultima = (r.stdout.strip().splitlines() or ["(nessun output)"])[-1]
