@@ -27,10 +27,4 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-cristallizzazione', 'prod-gelato-cioccolato', 'si_manifesta_in',
  '{"target":"cristalli ghiaccio <50 micron","causa":"Il cacao altera la struttura dei cristalli: la mantecatura rapida li tiene piccoli. Se il gelato al cioccolato si scongela e riconggela, i cristalli crescono e la texture diventa granulosa"}');
 
--- fix archi orfani preesistenti (prod-drink-freddo e prod-sousvide referenziati ma mai creati)
-INSERT INTO nodes (id, type, name, domain, data) VALUES
-('prod-drink-freddo', 'Prodotto', 'Drink servito freddo / su ghiaccio', 'bar',
- '{"target":"servizio 0-5C · ghiaccio come diluente e raffreddante · concentrazione si abbassa durante il servizio","strumento":"termometro"}'),
-('prod-sousvide', 'Prodotto', 'Cottura sous vide', 'cucina',
- '{"target":"temperatura core 55-85C secondo il taglio · tempo lungo (1-72h) · struttura controllata senza sovracottura","strumento":"circolatore termico · termometro a sonda"}')
-ON CONFLICT DO NOTHING;
+-- (prod-drink-freddo e prod-sousvide definiti in seed-ponte-calore.sql)
