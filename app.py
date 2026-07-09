@@ -1328,6 +1328,8 @@ def abbina(ingrediente):
             "lemon juice":"succo di limone","orange juice":"succo d'arancia",
             "apple juice":"succo di mela","tomato juice":"succo di pomodoro",
             "black coffee":"caffè nero","roasted coffee":"caffè tostato",
+            "black tea":"tè nero","green tea":"tè verde","white tea":"tè bianco",
+            "chamomile":"camomilla","peppermint":"menta piperita",
             "dark chocolate":"cioccolato fondente","milk chocolate":"cioccolato al latte",
             "caramel":"caramello","maple syrup":"sciroppo d'acero",
             "saffron":"zafferano","turmeric":"curcuma","cardamom":"cardamomo",

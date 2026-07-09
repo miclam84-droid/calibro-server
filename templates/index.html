@@ -54,7 +54,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   align-items:center;gap:3px;transition:.15s;margin-bottom:-1px;-webkit-appearance:none}
 .tab-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
 .tab-btn .tab-label{font-size:10px;letter-spacing:.02em}
-.tab-btn.active{color:var(--coffee);border-bottom-color:var(--e500);font-weight:600}
+.tab-btn.active{color:var(--ink);border-bottom-color:var(--e500);font-weight:600}
 
 /* ── SCHERMATE ────────────────────────────────────────── */
 .screen{display:none;padding:0 0 16px;animation:rise .2s ease}
@@ -170,7 +170,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .les-nav{display:flex;gap:8px;padding:12px 14px 0}
 .les-btn-sec{flex:1;background:none;border:1.5px solid var(--border);color:var(--ink-muted);
   font-size:13px;font-weight:500;padding:11px;border-radius:8px;cursor:pointer}
-.les-btn-pri{flex:2;background:var(--coffee);color:#fff;font-size:13px;
+.les-btn-pri{flex:2;background:var(--s500);color:#fff;font-size:13px;
   font-weight:600;padding:11px;border-radius:8px;border:none;cursor:pointer}
 
 /* ── MAPPA ────────────────────────────────────────────── */
@@ -388,7 +388,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 
 /* ── COOKIE BANNER (LE1 — GDPR) ──────────────────────────── */
 #cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:100;
-  background:var(--coffee);color:#FAF6EE;padding:14px 16px;
+  background:var(--ink);color:#FAF6EE;padding:14px 16px;
   display:flex;flex-direction:column;gap:10px;
   box-shadow:0 -4px 20px rgba(0,0,0,.3)}
 #cookie-banner p{font-size:12px;line-height:1.6;color:rgba(255,255,255,.85)}
@@ -421,9 +421,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   line-height:1.3;margin-bottom:8px;color:var(--ink)}
 .paywall-sheet p{font-size:13.5px;color:var(--ink-muted);line-height:1.6;margin-bottom:20px}
 .pw-price{display:flex;align-items:baseline;gap:6px;margin-bottom:20px}
-.pw-price .pw-n{font-family:var(--mono);font-size:32px;font-weight:500;color:var(--coffee)}
+.pw-price .pw-n{font-family:var(--mono);font-size:32px;font-weight:700;font-family:var(--serif);color:var(--e700)}
 .pw-price .pw-u{font-family:var(--mono);font-size:13px;color:var(--ink-muted)}
-.pw-cta{display:block;width:100%;background:var(--coffee);color:#fff;
+.pw-cta{display:block;width:100%;background:var(--s500);color:#fff;
   font-family:var(--sans);font-weight:600;font-size:15px;
   padding:14px;border-radius:10px;border:none;cursor:pointer;margin-bottom:10px}
 .pw-skip{display:block;width:100%;background:none;border:none;
@@ -432,7 +432,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 /* ── LOGIN / REGISTRAZIONE ────────────────────────────── */
 .auth-screen{padding:32px 20px;max-width:400px;margin:0 auto}
 .auth-logo{font-family:var(--serif);font-weight:700;font-size:22px;
-  color:var(--coffee);margin-bottom:4px}
+  color:var(--e700);margin-bottom:4px}
 .auth-logo small{display:block;font-family:var(--mono);font-size:10px;
   color:var(--ink-muted);letter-spacing:.06em;text-transform:uppercase;font-weight:400}
 .auth-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:10px;
@@ -440,7 +440,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .auth-tab{flex:1;background:none;border:none;font-family:var(--sans);
   font-size:13px;font-weight:500;padding:10px;cursor:pointer;
   color:var(--ink-muted);transition:.15s}
-.auth-tab.active{background:var(--coffee);color:#fff}
+.auth-tab.active{background:var(--s500);color:#fff}
 .auth-field{margin-bottom:14px}
 .auth-field label{display:block;font-size:11px;font-family:var(--mono);
   letter-spacing:.06em;color:var(--ink-muted);margin-bottom:6px;text-transform:uppercase}
@@ -448,7 +448,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   color:var(--ink);font-family:var(--sans);font-size:16px;
   padding:12px 14px;border-radius:10px;outline:none;transition:border-color .15s}
 .auth-input:focus{border-color:var(--e500)}
-.auth-btn{display:block;width:100%;background:var(--coffee);color:#fff;
+.auth-btn{display:block;width:100%;background:var(--s500);color:#fff;
   font-family:var(--sans);font-weight:600;font-size:15px;
   padding:14px;border-radius:10px;border:none;cursor:pointer;margin-top:6px}
 .auth-msg{font-size:13px;padding:10px 12px;border-radius:8px;margin-top:12px;
@@ -491,7 +491,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   color:var(--ink);font-family:var(--sans);font-size:15px;
   padding:10px 12px;border-radius:9px;outline:none;transition:border-color .15s}
 .salva-input:focus{border-color:var(--e500)}
-.salva-confirm{background:var(--coffee);color:#fff;border:none;
+.salva-confirm{background:var(--s500);color:#fff;border:none;
   font-family:var(--sans);font-weight:600;font-size:14px;
   padding:12px 20px;border-radius:9px;cursor:pointer;width:100%;margin-top:4px}
 
@@ -502,7 +502,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .cap-lock svg{width:15px;height:15px;stroke:var(--e700);fill:none;
   stroke-width:2;flex-shrink:0}
 .cap-lock-txt{flex:1;font-size:12px;color:var(--e700);line-height:1.4}
-.cap-lock-cta{font-size:11px;font-weight:600;color:var(--coffee);
+.cap-lock-cta{font-size:11px;font-weight:600;color:var(--e700);
   white-space:nowrap;cursor:pointer;font-family:var(--mono)}
 .flavor-search{padding:12px 14px 0}
 .flavor-search-row{display:flex;gap:8px}
@@ -1013,7 +1013,7 @@ if('serviceWorker' in navigator){
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--e700);margin-bottom:10px">MATTER PRO</div>
       <div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px" id="ct-sic-gate-title">Modulo sicurezza alimentare</div>
       <div style="font-size:13px;color:var(--ink-muted);line-height:1.6;margin-bottom:18px" id="ct-sic-gate-desc">Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Pro.</div>
-      <button onclick="vaiAPro()" style="background:var(--coffee);color:#fff;border:none;font-family:var(--sans);font-weight:600;font-size:14px;padding:12px 24px;border-radius:9px;cursor:pointer;width:100%" id="ct-sic-gate-btn">Passa a Pro — €11,99/mese</button>
+      <button onclick="vaiAPro()" style="background:var(--s500);color:#fff;border:none;font-family:var(--sans);font-weight:600;font-size:14px;padding:12px 24px;border-radius:9px;cursor:pointer;width:100%" id="ct-sic-gate-btn">Passa a Pro — €11,99/mese</button>
     </div>
   </div>
 
@@ -1830,6 +1830,10 @@ const _strings = {
     chiedi_btn:'Chiedi',
     chiedi_title:'Chiedi a Matter',
     chiedi_sub:'Un problema reale del tuo lavoro — rispondo con i numeri, non con le opinioni.',
+    sup_titolo:'Hai bisogno di aiuto?',
+    sup_sub:'Descrivi il problema. Ti risponderemo entro 24 ore via email.',
+    sup_placeholder:'Es. Non riesco ad aprire la lezione…',
+    sup_invia:'Invia richiesta',
     chiedi_al_grafo:'Chiedi a Matter',
     calcola:'Calcola',
     prova:'Prova:',
@@ -1969,6 +1973,10 @@ const _strings = {
     chiedi_btn:'Ask',
     chiedi_title:'Ask Matter',
     chiedi_sub:'A real question from your work — I answer with numbers, not opinions.',
+    sup_titolo:'Need help?',
+    sup_sub:'Describe the problem. We\'ll reply within 24 hours by email.',
+    sup_placeholder:'E.g. I can\'t open the lesson…',
+    sup_invia:'Send request',
     chiedi_al_grafo:'Ask Matter',
     calcola:'Calculate',
     prova:'Try:',
@@ -2120,6 +2128,11 @@ function applicaStringheUI(){
   st('ask-btn',_t('chiedi_btn'));
   st('ct-chiedi-title',_t('chiedi_title'));
   st('ct-chiedi-sub',_t('chiedi_sub'));
+  st('sup-titolo',_t('sup_titolo'));
+  st('sup-sub',_t('sup_sub'));
+  st('sup-btn-inv',_t('sup_invia'));
+  const supTxt=document.getElementById('sup-testo');
+  if(supTxt) supTxt.placeholder=_t('sup_placeholder');
   st('subtab-chat',_t('chiedi_al_grafo'));
   st('subtab-calc',_t('calcola'));
   // lezione
@@ -2767,7 +2780,7 @@ if(!_getCookie('matter_consent')){setTimeout(()=>{document.getElementById('cooki
   font-family:var(--sans);resize:vertical;outline:none;margin-bottom:10px}
 .sup-sheet textarea:focus{border-color:var(--e500)}
 .sup-actions{display:flex;gap:10px}
-.sup-actions .btn-inv{background:var(--coffee);color:#fff;border:none;border-radius:9px;
+.sup-actions .btn-inv{background:var(--e500);color:#fff;border:none;border-radius:9px;
   padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;flex:1}
 .sup-actions .btn-ann{background:none;border:1px solid var(--border);color:var(--s600);
   border-radius:9px;padding:10px 14px;font-size:13px;cursor:pointer}
