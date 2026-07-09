@@ -657,38 +657,50 @@ if('serviceWorker' in navigator){
   <div class="disc-list">
     <div class="disc-item" onclick="selezionaDisciplina('bar')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-bar-nome">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div></div>
       <div class="disc-chip" id="disc-bar-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('bakery')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Bakery</div><div class="disc-m" id="disc-bakery-m">caricamento…</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-bakery-nome">Panificazione</div><div class="disc-m" id="disc-bakery-m">caricamento…</div></div>
       <div class="disc-chip" id="disc-bakery-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('cucina')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-cucina-nome">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div></div>
       <div class="disc-chip" id="disc-cucina-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('caffetteria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Caffetteria</div><div class="disc-m" id="disc-caffe-m">caricamento…</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-caffe-nome">Caffè</div><div class="disc-m" id="disc-caffe-m">caricamento…</div></div>
       <div class="disc-chip" id="disc-caffe-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('pasticceria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-pasticceria-nome">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div></div>
       <div class="disc-chip" id="disc-pasticceria-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('gelateria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-gelateria-nome">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div></div>
       <div class="disc-chip" id="disc-gelateria-chip">—</div>
+      <div class="disc-arr">›</div>
+    </div>
+    <div class="disc-item" onclick="selezionaDisciplina('vino')">
+      <div class="disc-dot"></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-vino-nome">Vino</div><div class="disc-m" id="disc-vino-m">caricamento…</div></div>
+      <div class="disc-chip" id="disc-vino-chip">—</div>
+      <div class="disc-arr">›</div>
+    </div>
+    <div class="disc-item" onclick="selezionaDisciplina('birra')">
+      <div class="disc-dot"></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-birra-nome">Birra</div><div class="disc-m" id="disc-birra-m">caricamento…</div></div>
+      <div class="disc-chip" id="disc-birra-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item off"><div class="disc-dot dim"></div>
@@ -1179,7 +1191,7 @@ async function caricaHome(){
     _homeCached = j;
     renderHome(j);
     // carica conteggio discipline in parallelo
-    ['bar','bakery','cucina','caffetteria','pasticceria','gelateria'].forEach(caricaContDisciplina);
+    ['bar','bakery','cucina','caffetteria','pasticceria','gelateria','vino','birra'].forEach(caricaContDisciplina);
   } catch(e){
     document.getElementById('scopri-ey').textContent = _t('scopri_errore_eyebrow');
     document.getElementById('scopri-titolo').textContent = _t('scopri_errore_titolo');
@@ -1834,6 +1846,9 @@ const _strings = {
     sup_sub:'Descrivi il problema. Ti risponderemo entro 24 ore via email.',
     sup_placeholder:'Es. Non riesco ad aprire la lezione…',
     sup_invia:'Invia richiesta',
+    disc_bar:'Bar', disc_bakery:'Panificazione', disc_cucina:'Cucina',
+    disc_caffetteria:'Caffè', disc_pasticceria:'Pasticceria',
+    disc_gelateria:'Gelateria', disc_vino:'Vino', disc_birra:'Birra',
     chiedi_al_grafo:'Chiedi a Matter',
     calcola:'Calcola',
     prova:'Prova:',
@@ -1977,6 +1992,9 @@ const _strings = {
     sup_sub:'Describe the problem. We\'ll reply within 24 hours by email.',
     sup_placeholder:'E.g. I can\'t open the lesson…',
     sup_invia:'Send request',
+    disc_bar:'Bar', disc_bakery:'Baking', disc_cucina:'Cooking',
+    disc_caffetteria:'Coffee', disc_pasticceria:'Pastry',
+    disc_gelateria:'Gelato', disc_vino:'Wine', disc_birra:'Beer',
     chiedi_al_grafo:'Ask Matter',
     calcola:'Calculate',
     prova:'Try:',
@@ -2133,6 +2151,13 @@ function applicaStringheUI(){
   st('sup-btn-inv',_t('sup_invia'));
   const supTxt=document.getElementById('sup-testo');
   if(supTxt) supTxt.placeholder=_t('sup_placeholder');
+  // nomi discipline
+  ['bar','bakery','cucina','pasticceria','gelateria','vino','birra'].forEach(d=>{
+    const el=document.getElementById('disc-'+d+'-nome');
+    if(el) el.textContent=_t('disc_'+d);
+  });
+  const caffe=document.getElementById('disc-caffe-nome');
+  if(caffe) caffe.textContent=_t('disc_caffetteria');
   st('subtab-chat',_t('chiedi_al_grafo'));
   st('subtab-calc',_t('calcola'));
   // lezione
