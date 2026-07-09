@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="/static/icon-192.png">
 <title>Matter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#FAF6EE; --surface:#FFFFFF; --ink:#1A1A18; --ink-muted:#6F6A60; --border:#E4DFD3;
@@ -23,7 +23,7 @@
   --princ:#2C6E63; --princ-light:#E3EFEC; --princ-border:#8FBBB0;
   --flavor:#A0522D; --flavor-light:#FDF0E8; --flavor-border:#D4956A;
   --sans:'Inter',ui-sans-serif,system-ui,sans-serif;
-  --serif:'Lora',Georgia,serif;
+  --serif:'Fraunces',Georgia,serif;
   --mono:'IBM Plex Mono',ui-monospace,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -35,12 +35,12 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 
 /* ── HEADER leggero ───────────────────────────────────── */
 .app-header{position:sticky;top:0;z-index:40;background:var(--bg);
-  border-bottom:2.5px solid var(--coffee);padding-top:env(safe-area-inset-top)}
+  border-bottom:2px solid var(--e300);padding-top:env(safe-area-inset-top)}
 .app-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 18px 11px}
-.wordmark{font-family:var(--serif);font-weight:700;font-size:19px;
-  color:var(--coffee);letter-spacing:-.01em;line-height:1}
-.wordmark small{display:block;font-family:var(--mono);font-size:10px;font-weight:400;
-  letter-spacing:.06em;color:var(--e500);margin-top:2px;text-transform:uppercase}
+.wordmark{font-family:var(--serif);font-weight:700;font-size:20px;
+  color:var(--ink);letter-spacing:-.02em;line-height:1}
+.wordmark small{display:block;font-family:var(--sans);font-size:10px;font-weight:500;
+  letter-spacing:.04em;color:var(--e500);margin-top:2px;text-transform:uppercase}
 #lang-btn{background:none;border:1px solid var(--border);color:var(--ink-muted);
   font-family:var(--mono);font-size:10px;letter-spacing:.04em;
   padding:5px 10px;border-radius:7px;cursor:pointer;transition:.15s}
@@ -64,36 +64,46 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 /* ── SCOPRI ───────────────────────────────────────────── */
 .scheda-hero{margin:14px 14px 0;background:var(--surface);
   border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
-.hero-hdr{background:var(--coffee);padding:14px 16px}
-.hero-ey{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
-  text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:5px}
-.hero-hdr h2{font-family:var(--serif);font-size:17px;font-weight:700;color:#fff;line-height:1.35}
+.hero-hdr{background:var(--e100);border-bottom:2px solid var(--e300);padding:14px 16px}
+.hero-ey{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--e700);margin-bottom:6px;opacity:.85}
+.hero-hdr h2{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--ink);line-height:1.25}
 .hero-body{padding:14px 16px}
 .hero-body p{font-size:13.5px;color:var(--ink-muted);line-height:1.65}
-.num-bersaglio{display:flex;align-items:flex-start;gap:10px;margin-top:13px;
-  padding:11px 13px;background:var(--e100);border-radius:8px;border-left:3px solid var(--e500)}
-.num-big{flex:1;font-family:var(--mono);font-size:28px;font-weight:500;color:var(--e700);line-height:1.05}
-.num-big.medio{font-size:18px;line-height:1.35}
-.num-big.lungo{font-size:15px;line-height:1.5}
-.num-unit{font-family:var(--mono);font-size:13px;color:var(--e700)}
-.num-lab{font-size:11px;color:var(--e700);white-space:nowrap;margin-top:4px;opacity:.85}
-.cta-main{display:block;margin:12px 14px 0;background:var(--coffee);color:#fff;
+.num-bersaglio{display:flex;align-items:stretch;gap:0;margin-top:14px;
+  background:#fff;border-radius:10px;border:1px solid var(--border);
+  border-left:3px solid var(--s500);overflow:hidden}
+.num-bersaglio-inner{flex:1;padding:11px 14px}
+.num-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--s500);margin-bottom:5px}
+.num-big{font-family:var(--serif);font-size:26px;font-weight:700;
+  color:var(--e700);line-height:1.1;margin-bottom:2px}
+.num-big.medio{font-size:17px;line-height:1.35}
+.num-big.lungo{font-size:13.5px;line-height:1.5;font-weight:600}
+.num-unit{font-size:11px;color:var(--ink-muted);font-family:var(--sans)}
+.cta-main{display:block;margin:14px 14px 0;background:var(--s500);color:#fff;
   font-weight:600;font-size:14px;padding:13px;border-radius:8px;
   text-align:center;border:none;cursor:pointer;width:calc(100% - 28px)}
 .no-login{text-align:center;font-size:11px;color:var(--ink-muted);margin-top:6px;padding:0 14px}
 .sec-label{padding:16px 14px 8px;font-family:var(--mono);font-size:10px;
   letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
-.disc-list{border:1.5px solid var(--border);border-radius:12px;margin:0 14px;overflow:hidden}
-.disc-item{display:flex;align-items:center;gap:12px;padding:12px 14px;
-  background:var(--surface);border-bottom:1px solid var(--border);cursor:pointer}
+.disc-list{border:1px solid var(--border);border-radius:14px;margin:0 14px;overflow:hidden;background:var(--surface)}
+.disc-item{display:flex;align-items:center;gap:12px;padding:14px 16px;
+  background:var(--surface);border-bottom:1px solid var(--border);cursor:pointer;
+  transition:background .15s}
+.disc-item:active{background:var(--e100)}
 .disc-item:last-child{border-bottom:none}
-.disc-item.off{opacity:.55;cursor:default}
-.disc-dot{width:8px;height:8px;border-radius:50%;background:var(--e500);flex-shrink:0}
+.disc-item.off{opacity:.45;cursor:default}
+.disc-dot{width:9px;height:9px;border-radius:50%;background:var(--e500);flex-shrink:0}
 .disc-dot.dim{background:var(--border)}
 .disc-txt{flex:1}
-.disc-n{font-size:14px;font-weight:600;color:var(--ink)}
+.disc-n{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--ink)}
 .disc-item.off .disc-n{color:var(--ink-muted)}
-.disc-m{font-family:var(--mono);font-size:11px;color:var(--ink-muted);margin-top:2px}
+.disc-m{font-size:11.5px;color:var(--ink-muted);margin-top:2px}
+.disc-chip{font-family:var(--mono);font-size:9.5px;font-weight:600;
+  background:var(--e100);color:var(--e700);border-radius:20px;
+  padding:2px 8px;white-space:nowrap;flex-shrink:0}
+.disc-arr{color:var(--border);font-size:18px;font-weight:300;margin-left:4px}
 .disc-prog{margin-top:5px;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
 .disc-prog-fill{height:100%;background:var(--e500)}
 .principio-card{margin:10px 14px 0;background:var(--surface);
@@ -126,20 +136,21 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .sl-top{background:var(--surface);padding:18px 16px 14px}
 .sl-step{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--s500);margin-bottom:6px}
-.sl-h{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.2;color:var(--ink);margin-bottom:10px}
-.sl-p{font-size:14px;color:var(--ink-muted);line-height:1.7;margin-top:0}
-.sl-dato{background:#fff;border-top:2.5px solid var(--e500);padding:14px 16px}
-.sl-dato-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--s700);margin-bottom:5px}
-.sl-dato-val{font-family:var(--mono);font-size:14px;color:var(--e700);line-height:1.7;font-weight:500}
-.sl-principio{background:var(--princ-light);border-top:1px solid var(--princ-border);padding:12px 14px}
+.sl-h{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1.15;color:var(--ink);margin-bottom:12px}
+.sl-p{font-size:14.5px;color:var(--ink-muted);line-height:1.75;margin-top:0}
+.sl-dato{background:#fff;border:1px solid var(--border);border-left:3px solid var(--s500);
+  border-radius:10px;padding:12px 16px;margin:14px 0}
+.sl-dato-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--s500);margin-bottom:5px}
+.sl-dato-val{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--e700);line-height:1.2}
+.sl-principio{background:var(--princ-light);border-radius:10px;padding:12px 14px;margin:10px 0}
 .sl-princ-lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--princ);margin-bottom:5px;
+  text-transform:uppercase;color:var(--s500);margin-bottom:4px;
   display:flex;align-items:center;gap:6px}
 .sl-princ-icon{width:14px;height:14px;background:var(--princ);border-radius:50%;
   display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 .sl-princ-icon svg{width:8px;height:8px;stroke:#fff;fill:none;stroke-width:2.5}
-.sl-princ-val{font-size:12.5px;color:var(--princ);line-height:1.6}
+.sl-princ-val{font-size:13px;color:var(--s700);line-height:1.6}
 .scheda-quiz2{margin:10px 14px 0;border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
 .q2-hdr{background:var(--surface);padding:13px 14px;border-bottom:1px solid var(--border)}
 .q2-num{font-family:var(--mono);font-size:10px;color:var(--ink-muted);margin-bottom:4px}
@@ -615,8 +626,10 @@ if('serviceWorker' in navigator){
     <div class="hero-body">
       <p id="scopri-desc"></p>
       <div class="num-bersaglio" id="scopri-num" style="display:none">
-        <div class="num-big" id="scopri-num-val"></div>
-        <div class="num-lab" id="scopri-num-lab">numero bersaglio</div>
+        <div class="num-bersaglio-inner">
+          <div class="num-lab" id="scopri-num-lab">numero bersaglio</div>
+          <div class="num-big" id="scopri-num-val"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -637,38 +650,38 @@ if('serviceWorker' in navigator){
   <div class="disc-list">
     <div class="disc-item" onclick="selezionaDisciplina('bar')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div>
-        <div class="disc-prog"><div class="disc-prog-fill" id="disc-bar-p" style="width:0%"></div></div></div>
+      <div class="disc-txt"><div class="disc-n">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div></div>
+      <div class="disc-chip" id="disc-bar-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('bakery')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Bakery</div><div class="disc-m" id="disc-bakery-m">caricamento…</div>
-        <div class="disc-prog"><div class="disc-prog-fill" id="disc-bakery-p" style="width:0%"></div></div></div>
+      <div class="disc-txt"><div class="disc-n">Bakery</div><div class="disc-m" id="disc-bakery-m">caricamento…</div></div>
+      <div class="disc-chip" id="disc-bakery-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('cucina')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div>
-        <div class="disc-prog"><div class="disc-prog-fill" id="disc-cucina-p" style="width:0%"></div></div></div>
+      <div class="disc-txt"><div class="disc-n">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div></div>
+      <div class="disc-chip" id="disc-cucina-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('caffetteria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Caffetteria</div><div class="disc-m" id="disc-caffe-m">caricamento…</div>
-        <div class="disc-prog"><div class="disc-prog-fill" id="disc-caffe-p" style="width:0%"></div></div></div>
+      <div class="disc-txt"><div class="disc-n">Caffetteria</div><div class="disc-m" id="disc-caffe-m">caricamento…</div></div>
+      <div class="disc-chip" id="disc-caffe-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('pasticceria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div>
-        <div class="disc-prog"><div class="disc-prog-fill" id="disc-pasticceria-p" style="width:0%"></div></div></div>
+      <div class="disc-txt"><div class="disc-n">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div></div>
+      <div class="disc-chip" id="disc-pasticceria-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('gelateria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div>
-        <div class="disc-prog"><div class="disc-prog-fill" id="disc-gelateria-p" style="width:0%"></div></div></div>
+      <div class="disc-txt"><div class="disc-n">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div></div>
+      <div class="disc-chip" id="disc-gelateria-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item off"><div class="disc-dot dim"></div>
@@ -1193,8 +1206,11 @@ async function caricaContDisciplina(nome){
     const r = await fetch('/disciplina/'+nome);
     const j = await r.json();
     const n = j.totale||0;
-    const el = document.getElementById('disc-'+nome.replace('caffetteria','caffe')+'-m');
-    if(el) el.textContent = n + ' fenomeni';
+    const key = nome.replace('caffetteria','caffe');
+    const elM = document.getElementById('disc-'+key+'-m');
+    if(elM) elM.textContent = n + ' fenomeni';
+    const elChip = document.getElementById('disc-'+key+'-chip');
+    if(elChip) elChip.textContent = n;
   } catch(e){}
 }
 
