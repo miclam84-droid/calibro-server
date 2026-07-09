@@ -1899,7 +1899,9 @@ def quiz_nodo(node_id):
                               VALUES (%s,%s,%s) ON CONFLICT (node_id, lang) DO NOTHING""",
                             (node_id, lang, json.dumps(base)))
         conn.commit(); cur.close(); conn.close()
-    except Exception:
+    except Exception as _eq:
+        import traceback as _tb
+        print(f"QUIZ ERROR {node_id}: {_eq}\n{_tb.format_exc()[:500]}", flush=True)
         return jsonify({"quiz": None})
     if not base:
         return jsonify({"quiz": None})
