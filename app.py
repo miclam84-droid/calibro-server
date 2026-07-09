@@ -1848,20 +1848,29 @@ La spiegazione deve includere il numero esatto."""
     try:
         raw = _haiku_raw(quiz_prompt)
         if raw:
-            import re
-            m = re.search(r'\{.*\}', raw, re.DOTALL)
+            import re as _re
+            # rimuove caratteri di controllo che rompono json.loads
+            raw = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', raw)
+            m = _re.search(r'\{.*\}', raw, _re.DOTALL)
             if m:
-                quiz_data = json.loads(m.group())
+                try:
+                    quiz_data = json.loads(m.group())
+                except Exception as _je:
+                    print(f"QUIZ PARSE ERROR ({nome}): {_je} | raw: {raw[:200]}", flush=True)
+                    return None
                 opzioni = quiz_data.get("opzioni", [])
                 if not opzioni:
                     return None
                 return {
                     "domanda": quiz_data.get("domanda", ""),
-                    "opzioni": opzioni,        # corretta = indice 0
+                    "opzioni": opzioni,
                     "corretta": 0,
                     "spiegazione": quiz_data.get("spiegazione", "")
                 }
-    except Exception:
+            else:
+                print(f"QUIZ NO JSON ({nome}): raw={raw[:200]}", flush=True)
+    except Exception as _e:
+        print(f"QUIZ EXCEPTION ({nome}): {_e}", flush=True)
         return None
     return None
 
