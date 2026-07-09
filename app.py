@@ -2195,6 +2195,7 @@ button{background:#3d2b1f;color:#f0e0cc;border:none;border-radius:8px;padding:10
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
     <span style="font-size:11px;color:#8a7a6a" id="upd"></span>
     <button class="ref" onclick="go()">↻ Aggiorna</button>
+    <a id="lnk-ass" href="#" class="ref" style="text-decoration:none;margin-left:10px">⚠ Assistenza →</a>
   </div>
   <div class="grid" id="g"></div>
   <div class="two">
@@ -2260,6 +2261,7 @@ function render(d){
 }
 const p=new URLSearchParams(location.search);
 if(p.get('s')){document.getElementById('sk').value=p.get('s');go();}
+document.getElementById('lnk-ass').href='/admin/assistenza?s='+(p.get('s')||'');
 </script></body></html>"""
 
 
@@ -2317,6 +2319,309 @@ def admin_stats():
         return jsonify(stats)
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
+
+
+def _invia_email_resend(to, subject, body_html, body_text=None):
+    """Invia email via Resend. Mittente: onboarding@resend.dev (sandbox) finché
+    non viene verificato un dominio proprio — allora cambiare RESEND_FROM.
+    Ritorna True se ok, False se fallisce (mai blocca il flusso chiamante)."""
+    api_key = os.environ.get("RESEND_API_KEY", "")
+    if not api_key:
+        return False
+    mittente = os.environ.get("RESEND_FROM", "onboarding@resend.dev")
+    try:
+        import urllib.request, json as _json
+        payload = _json.dumps({
+            "from": f"Matter <{mittente}>",
+            "to": [to],
+            "subject": subject,
+            "html": body_html,
+            "text": body_text or body_html
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.resend.com/emails",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return r.status == 200
+    except Exception:
+        return False
+
+
+def _admin_autenticato():
+    """True se la request porta un ADMIN_SECRET valido (header o query param ?s=)."""
+    secret = request.headers.get("X-Admin-Secret","") or request.args.get("s","")
+    return bool(os.environ.get("ADMIN_SECRET")) and secret == os.environ.get("ADMIN_SECRET")
+
+
+@app.route("/v1/supporto", methods=["POST"])
+def supporto():
+    """Richiesta di supporto utente. Salva in log_domande con tipo='supporto',
+    risponde subito via Haiku (solo info prodotto). Appare prioritaria nell'admin."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    body = request.json or {}
+    testo = body.get("testo","").strip()
+    if not testo:
+        return jsonify({"errore":"testo vuoto"}), 400
+
+    if DATABASE_URL:
+        try:
+            import psycopg2
+            conn = psycopg2.connect(DATABASE_URL)
+            cur = conn.cursor()
+            cur.execute(
+                "INSERT INTO log_domande (tipo, domanda, esito, user_id) VALUES (%s,%s,%s,%s)",
+                ("supporto", testo[:1000], "ricevuto", str(user_id) if user_id else None))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    system_supporto = (
+        "Sei il supporto di Matter, strumento scientifico per professionisti F&B "
+        "(bar, bakery, pasticceria, gelateria, caffetteria, cucina). "
+        "Aiuta con domande su come usare l'app: lezioni, chat, flavor network, account, Pro. "
+        "Non inventare funzionalita' non esistenti. Se non sai, di' che il team "
+        "risponde via email entro 24 ore. Massimo 4 frasi, tono diretto e caldo."
+    )
+    risposta = None
+    try:
+        resp = _haiku_raw(system_supporto + "\n\nUtente: " + testo, max_tokens=300)
+        if resp:
+            risposta = resp
+    except Exception:
+        pass
+    if not risposta:
+        risposta = ("Non riesco a rispondere in questo momento. "
+                    "Il tuo messaggio e' stato registrato — ti risponderemo via email entro 24 ore.")
+
+    # notifica admin (tu) — arriva subito sulla tua Gmail
+    admin_email = os.environ.get("MATTER_ADMIN_EMAIL", "miclam84@gmail.com")
+    _invia_email_resend(
+        to=admin_email,
+        subject="⚠ Nuova richiesta supporto — Matter",
+        body_html=(f"<p><strong>Nuova richiesta di supporto su Matter.</strong></p>"
+                   f"<p><strong>Utente:</strong> {str(user_id) if user_id else 'non loggato'}</p>"
+                   f"<p><strong>Messaggio:</strong><br>{testo}</p>"
+                   f"<p><a href='/admin/assistenza'>Apri pannello assistenza →</a></p>"),
+        body_text=f"Nuova richiesta supporto Matter.\nUtente: {user_id}\n\n{testo}"
+    )
+
+    return jsonify({"risposta": risposta})
+
+
+@app.route("/admin/assistenza")
+def admin_assistenza():
+    """Pannello supporto admin: richieste esplicite (30g) + chat recenti (7g)."""
+    if not _admin_autenticato():
+        return "<p>Non autorizzato.</p>", 403
+    if not DATABASE_URL:
+        return "<p>DB non disponibile.</p>", 503
+    s = request.args.get("s","")
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT l.user_id, l.domanda, l.ts,
+                   COALESCE(u.email,'—') as email,
+                   COALESCE(u.piano,'free') as piano
+            FROM log_domande l
+            LEFT JOIN utenti u ON u.id::text = l.user_id
+            WHERE l.tipo='supporto' AND l.ts > NOW() - INTERVAL '30 days'
+            ORDER BY l.ts DESC LIMIT 30
+        """)
+        supporti = cur.fetchall()
+        cur.execute("""
+            SELECT l.user_id, l.domanda, l.ts, l.esito,
+                   COALESCE(u.email,'—') as email
+            FROM log_domande l
+            LEFT JOIN utenti u ON u.id::text = l.user_id
+            WHERE l.tipo IN ('risposta','fallback')
+            AND l.ts > NOW() - INTERVAL '7 days'
+            ORDER BY l.ts DESC LIMIT 50
+        """)
+        chat = cur.fetchall()
+        cur.close(); conn.close()
+    except Exception as e:
+        return f"<p>Errore: {e}</p>", 503
+
+    html_sup = ""
+    for r in supporti:
+        uid = r[0] or ""; em = r[3]; pi = r[4]; ts = str(r[2])[:16]; dom = (r[1] or "")[:120]
+        link = f"/admin/assistenza/{uid}?s={s}" if uid else "#"
+        html_sup += (f'<div class="sup-row"><div class="sup-top"><span class="badge">⚠ Supporto</span>'
+                     f'<span class="ts">{ts}</span><span class="em">{em} · {pi}</span></div>'
+                     f'<div class="dom">{dom}</div>'
+                     f'<a href="{link}" class="btn-a">Rispondi →</a></div>')
+    if not html_sup:
+        html_sup = '<p class="niente">Nessuna richiesta di supporto negli ultimi 30 giorni.</p>'
+
+    html_chat = ""
+    for r in chat:
+        uid = r[0] or ""; ts = str(r[2])[:16]; dom = (r[1] or "")[:100]; em = r[4]; esito = r[3] or ""
+        link = f"/admin/assistenza/{uid}?s={s}" if uid else "#"
+        cls = " fall" if esito=="nessun_nodo" else ""
+        html_chat += (f'<div class="chat-row{cls}"><span class="ts">{ts}</span>'
+                      f'<span class="em">{em}</span>'
+                      f'<div class="dom">{dom}</div>'
+                      f'<a href="{link}" class="btn-b">Apri →</a></div>')
+    if not html_chat:
+        html_chat = '<p class="niente">Nessuna chat negli ultimi 7 giorni.</p>'
+
+    return f"""<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Matter · Assistenza</title>
+<style>*{{box-sizing:border-box;margin:0;padding:0}}
+body{{font-family:system-ui,sans-serif;background:#f5ede3;color:#2a1f14}}
+.top{{background:#3d2b1f;color:#f0e0cc;padding:14px 24px;display:flex;align-items:center;gap:16px}}
+.top h1{{font-size:16px;font-weight:700}}.top a{{color:#c4a882;font-size:12px;text-decoration:none}}
+.wrap{{max-width:900px;margin:0 auto;padding:20px 16px}}
+h2{{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7a6a;margin:20px 0 10px}}
+.sup-row{{background:#fff;border:1.5px solid #c4622d;border-radius:10px;padding:14px;margin-bottom:10px}}
+.chat-row{{background:#fff;border:0.5px solid #e0d4c8;border-radius:10px;padding:12px;margin-bottom:8px}}
+.chat-row.fall{{border-color:#c4a040}}
+.sup-top{{margin-bottom:6px}}
+.badge{{background:#c4622d;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;margin-right:6px}}
+.ts{{font-size:11px;color:#8a7a6a;margin-right:8px}}.em{{font-size:12px;font-weight:600}}
+.dom{{font-size:13px;color:#5a4a3a;margin:6px 0 8px}}
+.btn-a{{background:#3d2b1f;color:#f0e0cc;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none}}
+.btn-b{{background:none;border:1px solid #e0d4c8;color:#8a7a6a;border-radius:7px;padding:5px 12px;font-size:12px;cursor:pointer;text-decoration:none}}
+.niente{{font-size:13px;color:#8a7a6a;padding:10px 0}}</style></head><body>
+<div class="top"><h1>Matter · Assistenza</h1><a href="/admin?s={s}">← Admin</a></div>
+<div class="wrap">
+<h2>⚠ Richieste supporto — ultimi 30 giorni</h2>{html_sup}
+<h2>Chat recenti — ultimi 7 giorni</h2>{html_chat}
+</div></body></html>""", 200, {"Content-Type": "text/html; charset=utf-8"}
+
+
+@app.route("/admin/assistenza/<user_id>/invia", methods=["POST"])
+def admin_invia_risposta(user_id):
+    """Invia risposta supporto via Resend all'utente, dalla scheda admin."""
+    if not _admin_autenticato():
+        return "<p>Non autorizzato.</p>", 403
+    s = request.args.get("s","")
+    email_dest = request.form.get("email","").strip()
+    testo = request.form.get("testo_risposta","").strip()
+    if not email_dest or not testo:
+        return f"<p>Dati mancanti.</p><a href='/admin/assistenza/{user_id}?s={s}'>← Torna</a>"
+    ok = _invia_email_resend(
+        to=email_dest,
+        subject="Risposta dal supporto Matter",
+        body_html=(f"<p>Ciao,</p><p>{testo.replace(chr(10),'<br>')}</p>"
+                   f"<p>— Il team Matter</p>"),
+        body_text=testo
+    )
+    esito = "✓ Email inviata." if ok else "✗ Invio fallito — controlla RESEND_API_KEY."
+    return (f"<p style='font-family:system-ui;padding:20px'>{esito}<br>"
+            f"<a href='/admin/assistenza/{user_id}?s={s}'>← Torna alla scheda</a></p>")
+
+
+@app.route("/admin/assistenza/<user_id>")
+def admin_assistenza_utente(user_id):
+    """Scheda utente: contesto account + ultime interazioni + risposta Sonnet + mailto."""
+    if not _admin_autenticato():
+        return "<p>Non autorizzato.</p>", 403
+    if not DATABASE_URL:
+        return "<p>DB non disponibile.</p>", 503
+    s = request.args.get("s","")
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT email, piano FROM utenti WHERE id=%s", (user_id,))
+        u = cur.fetchone(); email = u[0] if u else "—"; piano = u[1] if u else "free"
+        cur.execute("SELECT tipo, domanda, ts, esito FROM log_domande WHERE user_id=%s ORDER BY ts DESC LIMIT 20", (user_id,))
+        domande = cur.fetchall()
+        cur.execute("SELECT COUNT(*) FROM log_domande WHERE user_id=%s AND esito='ok'", (user_id,))
+        n_ok = cur.fetchone()[0]
+        cur.execute("SELECT fenomeni_trovati FROM log_domande WHERE user_id=%s AND fenomeni_trovati IS NOT NULL ORDER BY ts DESC LIMIT 1", (user_id,))
+        r = cur.fetchone(); ultima_disc = r[0] if r else "—"
+        cur.close(); conn.close()
+    except Exception as e:
+        return f"<p>Errore: {e}</p>", 503
+
+    # Genera risposta Sonnet solo se richiesto (?genera=1)
+    risposta_ai = ""
+    if request.args.get("genera") == "1" and domande:
+        ultime = [d[1] for d in domande if d[0]!="supporto"][:3]
+        sup_list = [d[1] for d in domande if d[0]=="supporto"][:2]
+        ctx_str = f"Utente: {email} | piano: {piano} | risposte ok: {n_ok} | ultima disciplina: {ultima_disc}"
+        prompt_admin = (
+            f"Contesto: {ctx_str}\n"
+            f"Ultime domande: {'; '.join(ultime)}\n"
+            f"Richieste supporto: {'; '.join(sup_list) if sup_list else 'nessuna'}\n\n"
+            "Scrivi una risposta di supporto breve (max 4 frasi), diretta e calda."
+        )
+        try:
+            import anthropic as _ac
+            client = _ac.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY",""))
+            msg = client.messages.create(model="claude-sonnet-4-6", max_tokens=300,
+                messages=[{"role":"user","content":prompt_admin}])
+            risposta_ai = msg.content[0].text if msg.content else ""
+        except Exception:
+            risposta_ai = ""
+
+    righe = ""
+    for d in domande:
+        tp = d[0] or "chat"; dom = (d[1] or "")[:200]; ts = str(d[2])[:16]; es = d[3] or ""
+        cls = "sup" if tp=="supporto" else ("err" if es=="nessun_nodo" else "ok")
+        righe += (f'<div class="msg {cls}"><span class="ts">{ts}</span>'
+                  f'<span class="tipo">{tp}</span><div class="testo">{dom}</div></div>')
+
+    ai_html = ""
+    if risposta_ai:
+        ai_html = (f'<div class="ai-box"><div class="ai-lbl">Risposta Sonnet</div>'
+                   f'<div class="ai-testo">{risposta_ai}</div>'
+                   f'<form method="POST" action="/admin/assistenza/{user_id}/invia?s={s}" style="margin-top:12px">'
+                   f'<input type="hidden" name="email" value="{email}">'
+                   f'<textarea name="testo_risposta" style="width:100%;min-height:80px;border:1px solid #b2d8cc;'
+                   f'border-radius:8px;padding:10px;font-size:14px;font-family:system-ui;margin-bottom:10px">'
+                   f'{risposta_ai}</textarea>'
+                   f'<button type="submit" class="btn-mail">✉ Invia via email</button>'
+                   f'</form></div>')
+
+    return f"""<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Matter · {email}</title>
+<style>*{{box-sizing:border-box;margin:0;padding:0}}
+body{{font-family:system-ui,sans-serif;background:#f5ede3;color:#2a1f14}}
+.top{{background:#3d2b1f;color:#f0e0cc;padding:14px 24px;display:flex;align-items:center;gap:16px}}
+.top h1{{font-size:16px;font-weight:700}}.top a{{color:#c4a882;font-size:12px;text-decoration:none}}
+.wrap{{max-width:800px;margin:0 auto;padding:20px 16px}}
+.card{{background:#fff;border:0.5px solid #e0d4c8;border-radius:12px;padding:18px;margin-bottom:14px}}
+h2{{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7a6a;margin-bottom:10px}}
+.meta{{font-size:13px;line-height:1.8}}
+.btn-gen{{background:#3d2b1f;color:#f0e0cc;border:none;border-radius:8px;padding:9px 18px;
+  font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;margin-top:10px}}
+.msg{{border-radius:8px;padding:9px 12px;margin-bottom:7px;font-size:13px}}
+.msg.sup{{background:#fdf0ec;border-left:3px solid #c4622d}}
+.msg.err{{background:#fdf8ec;border-left:3px solid #c4a040}}
+.msg.ok{{background:#f5f5f5;border-left:3px solid #e0d4c8}}
+.ts{{font-size:10px;color:#8a7a6a;margin-right:6px}}
+.tipo{{font-size:10px;background:#e0d4c8;border-radius:10px;padding:1px 6px;margin-right:6px}}
+.testo{{margin-top:4px}}
+.ai-box{{background:#f0f7f4;border:1px solid #b2d8cc;border-radius:10px;padding:16px;margin-top:12px}}
+.ai-lbl{{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#2C6E63;margin-bottom:8px}}
+.ai-testo{{font-size:14px;line-height:1.6;color:#1a2f28;margin-bottom:12px}}
+.btn-mail{{background:#2C6E63;color:#fff;border:none;border-radius:8px;padding:9px 18px;
+  font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}}</style></head><body>
+<div class="top"><h1>Matter · Utente</h1>
+<a href="/admin/assistenza?s={s}">← Assistenza</a>
+<a href="/admin?s={s}">← Admin</a></div>
+<div class="wrap">
+<div class="card"><h2>Account</h2>
+<div class="meta">Email: <strong>{email}</strong> · Piano: <strong>{piano}</strong><br>
+Risposte ok: <strong>{n_ok}</strong> · Ultima disciplina: <strong>{ultima_disc}</strong></div>
+<a href="/admin/assistenza/{user_id}?s={s}&genera=1" class="btn-gen">Genera risposta Sonnet</a>
+{ai_html}</div>
+<div class="card"><h2>Ultime 20 interazioni</h2>{righe}</div>
+</div></body></html>""", 200, {"Content-Type": "text/html; charset=utf-8"}
 
 
 @app.route("/termini")
