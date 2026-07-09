@@ -1217,42 +1217,99 @@ def cancella_account():
 
 @app.route("/v1/abbina/<ingrediente>")
 def abbina(ingrediente):
-    """FL3 — Restituisce ingredienti con composti volatili condivisi.
-    Query deterministica su flavor_abbinamenti — zero AI.
-    Sempre marcato come ipotesi di abbinamento, mai come legge."""
+    """FL3 — Abbinamenti aromatici dal grafo Ahn 2011 (edges abbinamento_aromatico).
+    Cerca per nome italiano (con mappa di traduzione) o inglese direttamente.
+    Sempre marcato come ipotesi eurisitca, mai come legge."""
+    # mappa italiano → nome Ahn (inglese con underscore)
+    ALIAS_IT = {
+        "pomodoro":"tomato","limone":"lemon","aglio":"garlic","cipolla":"onion",
+        "burro":"butter","panna":"cream","latte":"milk","uova":"egg","uovo":"egg",
+        "basilico":"basil","prezzemolo":"parsley","rosmarino":"rosemary",
+        "timo":"thyme","menta":"mint","cannella":"cinnamon","vaniglia":"vanilla",
+        "cioccolato":"chocolate","caffe":"coffee","caffè":"coffee",
+        "fragola":"strawberry","lampone":"raspberry","mela":"apple",
+        "pera":"pear","banana":"banana","arancia":"orange","limetta":"lime","lime":"lime",
+        "zenzero":"ginger","pepe":"black_pepper","sale":"salt",
+        "aceto":"vinegar","vino":"wine","birra":"beer","rum":"rum",
+        "whisky":"whiskey","gin":"gin","vodka":"vodka",
+        "salmone":"salmon","tonno":"tuna","gambero":"shrimp",
+        "manzo":"beef","pollo":"chicken","maiale":"pork","agnello":"lamb",
+        "formaggio":"cheese","parmigiano":"parmesan","mozzarella":"mozzarella",
+        "olio":"olive_oil","olio d oliva":"olive_oil","sesamo":"sesame",
+        "mandorla":"almond","nocciola":"hazelnut","noci":"walnut","noce":"walnut",
+        "caffè espresso":"espresso","espresso":"espresso",
+        "ananas":"pineapple","mango":"mango","cocco":"coconut",
+        "zucca":"pumpkin","carota":"carrot","sedano":"celery",
+        "funghi":"mushroom","porcini":"porcini_mushroom",
+        "tè":"tea","te":"tea","miele":"honey","zucchero":"sugar",
+        "peperoncino":"chili","peperone":"bell_pepper","melanzana":"eggplant",
+    }
+    # normalizza l'input
+    ing_norm = ingrediente.lower().replace("-","_").replace(" ","_")
+    ing_it = ingrediente.lower().replace("_"," ")
+    # cerca alias italiano
+    ahn_name = ALIAS_IT.get(ing_it) or ALIAS_IT.get(ing_norm.replace("_"," "))
+    # se non c'è alias, prova diretto
+    search_terms = []
+    if ahn_name:
+        search_terms.append(f"ahn_{ahn_name}")
+        search_terms.append(f"ahn_{ahn_name.replace(' ','_')}")
+    search_terms.append(f"ahn_{ing_norm}")
+    search_terms.append(f"ahn_{ing_norm.replace('_',' ')}")
+
     if not DATABASE_URL:
-        return jsonify({"ingrediente":ingrediente,"abbinamenti":[],"nota":"flavor network non disponibile"})
+        return jsonify({"ingrediente":ingrediente,"abbinamenti":[],
+                        "nota":"flavor network non disponibile"})
     try:
-        import psycopg2
+        import psycopg2, json as _j
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
-        # cerca per nome esatto o simile
-        cur.execute("""
-            SELECT ingrediente_2, composto, overlap_score
-            FROM flavor_abbinamenti
-            WHERE lower(ingrediente_1) LIKE lower(%s)
-            ORDER BY overlap_score DESC LIMIT 8
-        """, (f"%{ingrediente}%",))
-        rows = cur.fetchall()
+        rows = []
+        for term in search_terms:
+            cur.execute("""
+                SELECT e.to_id, n.name,
+                       (e.data->>'overlap')::numeric as overlap
+                FROM edges e
+                JOIN nodes n ON n.id = e.to_id
+                WHERE e.relation = 'abbinamento_aromatico'
+                AND (lower(e.from_id) = lower(%s)
+                     OR lower(e.from_id) LIKE lower(%s))
+                ORDER BY overlap DESC NULLS LAST LIMIT 8
+            """, (term, f"%{term}%"))
+            rows = cur.fetchall()
+            if rows: break
+        # fallback: cerca per nome parziale
+        if not rows:
+            cur.execute("""
+                SELECT e.to_id, n.name,
+                       (e.data->>'overlap')::numeric as overlap
+                FROM edges e
+                JOIN nodes n ON n.id = e.to_id
+                WHERE e.relation = 'abbinamento_aromatico'
+                AND lower(e.from_id) LIKE lower(%s)
+                ORDER BY overlap DESC NULLS LAST LIMIT 8
+            """, (f"%{ing_norm.replace('_','%')}%",))
+            rows = cur.fetchall()
         cur.close(); conn.close()
-        abbinamenti = [
-            {"ingrediente": r[0], "composto": r[1], "overlap": float(r[2]),
-             "perche": f"{ingrediente.replace('_',' ')} e {r[0].replace('_',' ')} condividono {r[1]}"}
-            for r in rows
-        ]
+        abbinamenti = []
+        for r in rows:
+            nome_pulito = r[1].replace("_"," ").title()
+            overlap = float(r[2]) if r[2] else 0
+            abbinamenti.append({
+                "ingrediente": nome_pulito,
+                "composto": f"{overlap:.0f} composti in comune",
+                "overlap": overlap,
+                "perche": f"condividono {overlap:.0f} composti aromatici"
+            })
         return jsonify({
             "ingrediente": ingrediente,
             "abbinamenti": abbinamenti,
             "nota": "Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale",
-            "fonte": "Dataset Ahn 2011 (CC BY) + PubChem"
+            "fonte": "Dataset Ahn 2011 (CC BY)"
         })
     except Exception as e:
-        # tabella non ancora creata — avvia import
-        return jsonify({
-            "ingrediente": ingrediente,
-            "abbinamenti": [],
-            "nota": "Flavor network in costruzione — usa: python import_flavor_network.py"
-        })
+        return jsonify({"ingrediente":ingrediente,"abbinamenti":[],
+                        "nota":f"Errore: {str(e)}"}), 500
 
 @app.route("/v1/contrasto/<ingrediente>")
 def contrasto(ingrediente):
