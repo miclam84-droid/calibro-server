@@ -1223,6 +1223,7 @@ async function caricaLezioneStep(step){
     if(j.errore){ document.getElementById('les-nome').textContent = j.errore; return; }
     Matter.step = j.step;
     Matter.totale = j.totale_passi;
+    Matter.nodoCorrente = j.fenomeno.id;
     // header
     document.getElementById('les-pos').textContent = `${_t('les_fenomeno')} ${j.step+1} ${_t('les_di')} ${j.totale_passi}`;
     // aggiorna progress bar
@@ -1250,11 +1251,9 @@ async function caricaLezioneStep(step){
       document.getElementById('les-principio-testo').textContent = j.principio.testo||'';
       pb.style.display='block';
     } else { pb.style.display='none'; }
-    // quiz
-    if(j.quiz){
-      renderQuizLezione(j.quiz);
-      document.getElementById('les-quiz-box').style.display='block';
-    }
+    // quiz: caricato a parte (lazy), così la lezione appare subito.
+    // La prima volta il server lo genera, poi è in cache e istantaneo.
+    caricaQuizLezione(j.fenomeno.id);
     // bottoni nav
     document.getElementById('les-btn-prec').style.opacity = j.ha_precedente?'1':'0.4';
     document.getElementById('les-btn-succ').textContent =
@@ -1276,6 +1275,21 @@ function renderLesDots(step, totale){
     html += `<div class="les-dot ${cls}" onclick="caricaLezioneStep(${i})">${i+1}</div>`;
   }
   box.innerHTML = html;
+}
+
+async function caricaQuizLezione(nodeId){
+  const box = document.getElementById('les-quiz-box');
+  box.style.display='none';
+  try {
+    const r = await fetch(`/quiz/${nodeId}?lang=${_lang}`);
+    if(!r.ok) return;
+    const j = await r.json();
+    // guardia anti-race: se hai già cambiato passo, non mostrare un quiz vecchio
+    if(j.quiz && Matter.nodoCorrente === nodeId){
+      renderQuizLezione(j.quiz);
+      box.style.display='block';
+    }
+  } catch(e){ /* nessun quiz: la lezione resta comunque completa */ }
 }
 
 function renderQuizLezione(q){

@@ -1357,51 +1357,10 @@ def lezione(disciplina_nome, step):
                        AND n.type='principio'""", (nodo["id"],)).fetchone()
     if pr:
         principio = {"nome": pr["name"], "testo": _scheda_lang(_dati(pr["data"]), lang)[:300]}
-    # quiz generato da Sonnet
+    # quiz: NON piu generato qui. Era una chiamata Haiku sincrona (~5s) a ogni
+    # apertura della lezione: quello era il collo di bottiglia. Ora la lezione
+    # torna subito e il quiz si prende da /quiz/<node_id> (lazy + cache).
     quiz = None
-    if scheda:
-        if lang == "en":
-            quiz_prompt = f"""Create a quiz about this phenomenon for an F&B professional.
-Phenomenon: {nodo['name']}
-Target number: {target}
-Content: {scheda[:400]}
-
-Reply ONLY with valid JSON, no text before or after:
-{{"domanda":"...","opzioni":["correct option","wrong option","wrong option"],"corretta":0,"spiegazione":"explanation with the exact mathematical calculation in 2 lines"}}
-
-The correct answer must always be the first option (index 0).
-The explanation must include the exact number."""
-        else:
-            quiz_prompt = f"""Crea un quiz su questo fenomeno per un professionista F&B.
-Fenomeno: {nodo['name']}
-Numero bersaglio: {target}
-Contenuto: {scheda[:400]}
-
-Rispondi SOLO con JSON valido, nessun testo prima o dopo:
-{{"domanda":"...","opzioni":["opzione giusta","opzione sbagliata","opzione sbagliata"],"corretta":0,"spiegazione":"spiegazione con il calcolo matematico in 2 righe"}}
-
-La risposta corretta deve essere sempre la prima opzione (indice 0).
-La spiegazione deve includere il numero esatto."""
-        try:
-            raw = _haiku_raw(quiz_prompt)  # Haiku: quiz semplice, costo ridotto
-            if raw:
-                import re
-                m = re.search(r'\{.*\}', raw, re.DOTALL)
-                if m:
-                    quiz_data = json.loads(m.group())
-                    # mescola le opzioni
-                    opzioni = quiz_data.get("opzioni", [])
-                    corretta_testo = opzioni[0] if opzioni else ""
-                    random.shuffle(opzioni)
-                    nuovo_idx = opzioni.index(corretta_testo) if corretta_testo in opzioni else 0
-                    quiz = {
-                        "domanda": quiz_data.get("domanda", ""),
-                        "opzioni": opzioni,
-                        "corretta": nuovo_idx,
-                        "spiegazione": quiz_data.get("spiegazione", "")
-                    }
-        except Exception:
-            quiz = None
     return jsonify({
         "step": idx,
         "totale_passi": len(fenomeni),
@@ -1417,6 +1376,99 @@ La spiegazione deve includere il numero esatto."""
         "ha_precedente": idx > 0,
         "ha_successivo": idx < len(fenomeni) - 1
     })
+
+
+def _genera_quiz(nome, target, scheda, lang="it"):
+    """Genera un quiz con Haiku (chiamata lenta, ~5s). Ritorna il quiz base
+    con la risposta corretta all'indice 0 — lo shuffle avviene alla consegna.
+    Usato da /quiz con cache: Haiku si paga una volta sola per nodo+lingua."""
+    if not scheda:
+        return None
+    if lang == "en":
+        quiz_prompt = f"""Create a quiz about this phenomenon for an F&B professional.
+Phenomenon: {nome}
+Target number: {target}
+Content: {scheda[:400]}
+
+Reply ONLY with valid JSON, no text before or after:
+{{"domanda":"...","opzioni":["correct option","wrong option","wrong option"],"corretta":0,"spiegazione":"explanation with the exact mathematical calculation in 2 lines"}}
+
+The correct answer must always be the first option (index 0).
+The explanation must include the exact number."""
+    else:
+        quiz_prompt = f"""Crea un quiz su questo fenomeno per un professionista F&B.
+Fenomeno: {nome}
+Numero bersaglio: {target}
+Contenuto: {scheda[:400]}
+
+Rispondi SOLO con JSON valido, nessun testo prima o dopo:
+{{"domanda":"...","opzioni":["opzione giusta","opzione sbagliata","opzione sbagliata"],"corretta":0,"spiegazione":"spiegazione con il calcolo matematico in 2 righe"}}
+
+La risposta corretta deve essere sempre la prima opzione (indice 0).
+La spiegazione deve includere il numero esatto."""
+    try:
+        raw = _haiku_raw(quiz_prompt)
+        if raw:
+            import re
+            m = re.search(r'\{.*\}', raw, re.DOTALL)
+            if m:
+                quiz_data = json.loads(m.group())
+                opzioni = quiz_data.get("opzioni", [])
+                if not opzioni:
+                    return None
+                return {
+                    "domanda": quiz_data.get("domanda", ""),
+                    "opzioni": opzioni,        # corretta = indice 0
+                    "corretta": 0,
+                    "spiegazione": quiz_data.get("spiegazione", "")
+                }
+    except Exception:
+        return None
+    return None
+
+
+@app.route("/quiz/<node_id>")
+def quiz_nodo(node_id):
+    """Quiz di un nodo, lazy + cache. La lezione non lo genera piu (era ~5s).
+    Prima volta: Haiku + salva in quiz_cache. Poi: istantaneo dalla cache.
+    quiz_cache vive in Postgres, non viene truncata dal migrate."""
+    lang = request.args.get("lang", "it")
+    db = carica_grafo()
+    db.execute("""CREATE TABLE IF NOT EXISTS quiz_cache (
+        node_id TEXT, lang TEXT, quiz_json TEXT,
+        PRIMARY KEY (node_id, lang))""")
+    base = None
+    row = db.execute("SELECT quiz_json FROM quiz_cache WHERE node_id=? AND lang=?",
+                     (node_id, lang)).fetchone()
+    if row:
+        try:
+            base = json.loads(row["quiz_json"])
+        except Exception:
+            base = None
+    if base is None:
+        nodo = db.execute("SELECT * FROM nodes WHERE id=?", (node_id,)).fetchone()
+        if not nodo:
+            return jsonify({"quiz": None})
+        nd = _dati(nodo["data"])
+        base = _genera_quiz(nodo["name"], _numero_bersaglio(nd),
+                            _scheda_lang(nd, lang), lang)
+        if base:
+            db.execute("""INSERT INTO quiz_cache (node_id, lang, quiz_json)
+                          VALUES (?,?,?) ON CONFLICT (node_id, lang) DO NOTHING""",
+                       (node_id, lang, json.dumps(base)))
+    if not base:
+        return jsonify({"quiz": None})
+    # shuffle delle opzioni alla consegna (varieta senza ri-pagare Haiku)
+    opzioni = list(base.get("opzioni", []))
+    corretta_testo = opzioni[base.get("corretta", 0)] if opzioni else ""
+    random.shuffle(opzioni)
+    nuovo_idx = opzioni.index(corretta_testo) if corretta_testo in opzioni else 0
+    return jsonify({"quiz": {
+        "domanda": base.get("domanda", ""),
+        "opzioni": opzioni,
+        "corretta": nuovo_idx,
+        "spiegazione": base.get("spiegazione", "")
+    }})
 
 
 @app.route("/mappa/<disciplina_nome>")
