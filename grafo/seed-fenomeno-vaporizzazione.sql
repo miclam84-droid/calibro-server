@@ -16,13 +16,11 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "strumento":"termometro forno · bilancia (rapporto acqua:farina)",
    "scheda":"La terza lievitazione, dopo quella biologica (lieviti) e quella chimica (bicarbonato): e il vapore acqueo che gonfia. Il meccanismo e fisico puro: a 100C l acqua diventa vapore e occupa 1700 volte il volume iniziale. Se l impasto ha abbastanza umidita (50-60% tra acqua e uova) e il forno e abbastanza caldo (200-220C), quella pressione gonfia la struttura dall interno prima che le proteine e gli amidi si solidifichino. Il choux ne e l esempio piu puro: nessun lievito, nessun bicarbonato, solo acqua intrappolata che esplode in vapore. Stesso meccanismo nella sfoglia (gli strati di burro trattengono il vapore tra i foglio di pasta) e nel souffle. Il numero che governa e duplice: quanta acqua c e nell impasto e a che temperatura entra il forno. Troppo freddo: poca pressione, non gonfia. Troppo caldo: la crosta si solidifica prima che il vapore abbia finito di espandere."}');
 
+-- prod-choux e prod-souffle nuovi; prod-sfoglia gia definito in seed-ponte-calore.sql
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('prod-choux', 'Prodotto', 'Pasta choux (eclair, bigne)', 'pasticceria',
  '{"target":"acqua+burro portati a bollore · farina aggiunta e cotta · uova incorporate: umidita totale ~55-60% · forno 200-210C · MAI aprire lo sportello prima della fine",
    "strumento":"termometro forno · bilancia"}'),
-('prod-sfoglia', 'Prodotto', 'Pasta sfoglia', 'pasticceria',
- '{"target":"strati di burro (27-29C per laminare) intrappolano vapore tra i fogli · forno 200-220C per spingere lo strato · 700-1000 strati nel classico",
-   "strumento":"termometro forno + termometro a contatto (burro)"}'),
 ('prod-souffle', 'Prodotto', 'Souffle', 'cucina',
  '{"target":"albumi montati + base calda · forno 180-190C · vapore + aria nelle bolle degli albumi · mangiare subito: il vapore si condensa e il souffle crolla",
    "strumento":"termometro forno"}');
