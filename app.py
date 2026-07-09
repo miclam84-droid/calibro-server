@@ -2550,6 +2550,29 @@ def import_contrasto():
     click.echo(f"  Contrasto: {aggiornati} aggiornati · {saltati} saltati")
 
 
+@app.cli.command("import-settore")
+def import_settore():
+    """Aggiunge campo 'settore':'f&b' a tutti i nodi esistenti (retrocompatibile).
+    Prepara l'architettura per l'espansione a mestieri non F&B (ceramica, falegnameria, ecc.)
+    senza toccare i 55 seed esistenti. Eseguito in automatico dal migrate."""
+    if not DATABASE_URL:
+        click.echo("  Settore: DATABASE_URL non impostata — skip."); return
+    import psycopg2, json as _j
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    # aggiorna solo i nodi che non hanno ancora il campo settore
+    cur.execute("SELECT id, data FROM nodes WHERE data->>'settore' IS NULL")
+    rows = cur.fetchall()
+    aggiornati = 0
+    for node_id, data_raw in rows:
+        d = data_raw if isinstance(data_raw, dict) else _j.loads(data_raw or '{}')
+        d['settore'] = 'f&b'
+        cur.execute("UPDATE nodes SET data=%s::jsonb WHERE id=%s", (_j.dumps(d), node_id))
+        aggiornati += 1
+    conn.commit(); cur.close(); conn.close()
+    click.echo(f"  Settore: {aggiornati} nodi aggiornati con settore=f&b")
+
+
 def load_flavor():
     """Carica il flavor network nel database. Uso: flask load-flavor"""
     click.echo("Caricamento flavor network...")

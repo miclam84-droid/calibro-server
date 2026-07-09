@@ -140,7 +140,8 @@ def main():
     print("\nRipristino import esterni (USDA + PubChem)...")
     for nome, cmd in (("USDA", ["flask", "import-usda"]),
                       ("PubChem", ["flask", "import-pubchem"]),
-                      ("Contrasto", ["flask", "import-contrasto"])):
+                      ("Contrasto", ["flask", "import-contrasto"]),
+                      ("Settore", ["flask", "import-settore"])):
         try:
             r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
             ultima = (r.stdout.strip().splitlines() or ["(nessun output)"])[-1]
