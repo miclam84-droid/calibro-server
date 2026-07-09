@@ -1051,6 +1051,7 @@ if('serviceWorker' in navigator){
     <input class="ask-input" id="q" placeholder="chiedi a Matter…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
     <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
   </div>
+  <button class="btn-supporto" onclick="aprireSupporto()">? Chiedi supporto</button>
 </div>
 
 <script>
@@ -2608,7 +2609,34 @@ async function testaKT(){
       </div>
       <button class="auth-btn" onclick="doLogin()">Accedi</button>
       <div class="auth-msg" id="login-msg"></div>
+      <div style="text-align:center;margin-top:12px">
+        <a onclick="mostraResetForm()" style="font-size:12px;color:var(--s500);cursor:pointer">
+          Password dimenticata?
+        </a>
+      </div>
     </div>
+    <!-- pannello reset password -->
+    <div id="auth-panel-reset" style="display:none">
+      <div class="auth-field">
+        <label id="reset-lbl-email">La tua email</label>
+        <input class="auth-input" type="email" id="reset-email" placeholder="tua@email.com">
+      </div>
+      <button class="auth-btn" id="reset-btn" onclick="doResetRichiesta()">Invia link di reset</button>
+      <div class="auth-msg" id="reset-msg"></div>
+      <div style="text-align:center;margin-top:12px">
+        <a onclick="switchAuthTab('login')" style="font-size:12px;color:var(--s500);cursor:pointer">
+          ← Torna al login
+        </a>
+      </div>
+    </div>
+    <!-- pannello nuova password (da link reset) -->
+    <div id="auth-panel-nuova-pw" style="display:none">
+      <div class="auth-field">
+        <label>Nuova password</label>
+        <input class="auth-input" type="password" id="nuova-pw" placeholder="Minimo 8 caratteri" autocomplete="new-password">
+      </div>
+      <button class="auth-btn" onclick="doResetConferma()">Salva nuova password</button>
+      <div class="auth-msg" id="nuova-pw-msg"></div>
     <div id="auth-panel-reg" style="display:none">
       <div class="auth-field">
         <label>Email</label>
@@ -2648,5 +2676,138 @@ function rifiutaCookie(){_setCookie('matter_consent','essential',365);document.g
 if(!_getCookie('matter_consent')){setTimeout(()=>{document.getElementById('cookie-banner').style.display='flex'},1000)}
 </script>
 
+<!-- ── SUPPORTO ─────────────────────────────────────────── -->
+<style>
+.btn-supporto{font-size:11px;letter-spacing:.04em;color:var(--s500);background:none;
+  border:1px solid var(--border);border-radius:9px;padding:5px 12px;cursor:pointer;
+  margin-top:6px;display:block}
+.btn-supporto:hover{color:var(--teal);border-color:var(--teal)}
+.sup-modal{position:fixed;inset:0;background:rgba(33,31,26,.42);z-index:200;
+  display:none;align-items:flex-end;justify-content:center}
+.sup-modal.show{display:flex}
+.sup-sheet{background:var(--ivory);border-radius:20px 20px 0 0;padding:24px;
+  width:100%;max-width:560px}
+.sup-sheet h3{font-family:var(--serif);font-size:17px;margin-bottom:6px}
+.sup-sheet p{font-size:13px;color:var(--s600);margin-bottom:12px}
+.sup-sheet textarea{width:100%;min-height:90px;border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;
+  font-family:var(--sans);resize:vertical;outline:none;margin-bottom:10px}
+.sup-sheet textarea:focus{border-color:var(--e500)}
+.sup-actions{display:flex;gap:10px}
+.sup-actions .btn-inv{background:var(--coffee);color:#fff;border:none;border-radius:9px;
+  padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;flex:1}
+.sup-actions .btn-ann{background:none;border:1px solid var(--border);color:var(--s600);
+  border-radius:9px;padding:10px 14px;font-size:13px;cursor:pointer}
+#sup-fb{font-size:13px;margin-top:10px;display:none}
+</style>
+
+<div class="sup-modal" id="sup-modal" onclick="chiudiSupporto()">
+  <div class="sup-sheet" onclick="event.stopPropagation()">
+    <h3 id="sup-titolo">Hai bisogno di aiuto?</h3>
+    <p id="sup-sub">Descrivi il problema. Ti risponderemo entro 24 ore via email.</p>
+    <textarea id="sup-testo" placeholder="Es. Non riesco ad aprire la lezione…"></textarea>
+    <div class="sup-actions">
+      <button class="btn-inv" onclick="inviaSupporto()" id="sup-btn-inv">Invia richiesta</button>
+      <button class="btn-ann" onclick="chiudiSupporto()">Annulla</button>
+    </div>
+    <div id="sup-fb"></div>
+  </div>
+</div>
+
+<script>
+/* ── SUPPORTO ──────────────────────────────────────────── */
+function aprireSupporto(){
+  document.getElementById('sup-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('sup-testo').focus(),100);
+}
+function chiudiSupporto(){
+  document.getElementById('sup-modal').classList.remove('show');
+  document.getElementById('sup-testo').value='';
+  const fb=document.getElementById('sup-fb');
+  fb.style.display='none'; fb.textContent='';
+}
+async function inviaSupporto(){
+  const testo=document.getElementById('sup-testo').value.trim();
+  if(!testo) return;
+  const btn=document.getElementById('sup-btn-inv');
+  btn.disabled=true; btn.textContent='Invio…';
+  const fb=document.getElementById('sup-fb');
+  try{
+    const tok=localStorage.getItem('matter_token')||'';
+    const r=await fetch('/v1/supporto',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+      body:JSON.stringify({testo})
+    });
+    const d=await r.json();
+    fb.textContent=d.risposta||'Richiesta inviata. Ti risponderemo via email.';
+    fb.style.color='var(--teal)'; fb.style.display='block';
+    document.getElementById('sup-testo').value='';
+    setTimeout(chiudiSupporto,5000);
+  }catch(e){
+    fb.textContent='Errore di rete. Scrivi a supporto@matter.app';
+    fb.style.color='var(--e700)'; fb.style.display='block';
+  }finally{
+    btn.disabled=false; btn.textContent='Invia richiesta';
+  }
+}
+
+/* ── RESET PASSWORD ──────────────────────────────────────────── */
+function mostraResetForm(){
+  ['auth-panel-login','auth-panel-reg'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const rp=document.getElementById('auth-panel-reset');
+  if(rp) rp.style.display='block';
+}
+async function doResetRichiesta(){
+  const email=(document.getElementById('reset-email').value||'').trim();
+  const msg=document.getElementById('reset-msg');
+  const btn=document.getElementById('reset-btn');
+  if(!email){msg.textContent='Inserisci la tua email.';return;}
+  btn.disabled=true; btn.textContent='Invio…';
+  try{
+    const r=await fetch('/v1/auth/reset-richiesta',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const d=await r.json();
+    msg.textContent=d.messaggio||'Controlla la tua email.';
+    msg.style.color='var(--teal)';
+  }catch(e){msg.textContent='Errore di rete.';}
+  finally{btn.disabled=false;btn.textContent='Invia link di reset';}
+}
+async function doResetConferma(){
+  const pw=(document.getElementById('nuova-pw').value||'').trim();
+  const msg=document.getElementById('nuova-pw-msg');
+  const tok=new URLSearchParams(location.search).get('reset')||'';
+  if(!pw||pw.length<8){msg.textContent='Password minimo 8 caratteri.';return;}
+  try{
+    const r=await fetch('/v1/auth/reset-conferma',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:tok,password:pw})});
+    const d=await r.json();
+    if(d.ok){
+      msg.textContent=d.messaggio||'Password aggiornata!';
+      msg.style.color='var(--teal)';
+      history.replaceState({},'','/app');
+      setTimeout(()=>switchAuthTab('login'),2000);
+    }else{
+      msg.textContent=d.errore||'Errore.';
+      msg.style.color='var(--e700)';
+    }
+  }catch(e){msg.textContent='Errore di rete.';}
+}
+// rileva ?reset=TOKEN nell'URL e mostra la schermata nuova password
+(function(){
+  const tok=new URLSearchParams(location.search).get('reset');
+  if(tok){
+    switchTab('auth');
+    ['auth-panel-login','auth-panel-reg','auth-panel-reset'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.style.display='none';
+    });
+    const np=document.getElementById('auth-panel-nuova-pw');
+    if(np) np.style.display='block';
+  }
+})();
+</script>
 </body>
 </html>

@@ -1101,6 +1101,117 @@ def logout():
         pass
     return jsonify({"ok":True})
 
+
+# ── RESET PASSWORD (AC6) ──────────────────────────────────────────
+
+@app.route("/v1/auth/reset-richiesta", methods=["POST"])
+def reset_richiesta():
+    """Passo 1: genera token e manda link via Resend.
+    Risponde sempre uguale (non rivela se l'email esiste)."""
+    body = request.json or {}
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    if not _check_rate_limit(ip):
+        return jsonify({"errore":"Troppi tentativi. Aspetta un minuto."}), 429
+    email = (body.get("email","")).strip().lower()
+    if not email or not DATABASE_URL:
+        return jsonify({"ok":True,"messaggio":"Se l'email è registrata riceverai un link."})
+    try:
+        import psycopg2, secrets as _sec
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS reset_token (
+            token TEXT PRIMARY KEY,
+            email TEXT NOT NULL,
+            ts    TIMESTAMPTZ DEFAULT NOW(),
+            scade TIMESTAMPTZ DEFAULT NOW() + INTERVAL '1 hour',
+            usato BOOLEAN DEFAULT FALSE)""")
+        cur.execute("SELECT id FROM utenti WHERE email=%s AND attivo=TRUE", (email,))
+        if cur.fetchone():
+            tok = _sec.token_urlsafe(32)
+            cur.execute("INSERT INTO reset_token (token,email) VALUES (%s,%s)", (tok, email))
+            conn.commit()
+            base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
+            link = f"{base}/app?reset={tok}"
+            _invia_email_resend(
+                to=email,
+                subject="Reimposta la tua password — Matter",
+                body_html=(f"<p>Hai richiesto il reset della password di Matter.</p>"
+                           f"<p><a href='{link}'>Clicca qui per reimpostare la password</a></p>"
+                           f"<p>Il link scade tra 1 ora.</p>"),
+                body_text=f"Reset password Matter:\n{link}\n\nIl link scade tra 1 ora."
+            )
+        cur.close(); conn.close()
+    except Exception:
+        pass
+    return jsonify({"ok":True,"messaggio":"Se l'email è registrata riceverai un link."})
+
+
+@app.route("/v1/auth/reset-conferma", methods=["POST"])
+def reset_conferma():
+    """Passo 2: token dal link + nuova password."""
+    body = request.json or {}
+    tok = (body.get("token","")).strip()
+    nuova_pw = body.get("password","")
+    if not tok or not nuova_pw:
+        return jsonify({"errore":"token e password obbligatori"}), 400
+    if len(nuova_pw) < 8:
+        return jsonify({"errore":"password minimo 8 caratteri"}), 400
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT email FROM reset_token WHERE token=%s AND scade>NOW() AND usato=FALSE", (tok,))
+        row = cur.fetchone()
+        if not row:
+            cur.close(); conn.close()
+            return jsonify({"errore":"Link non valido o scaduto. Richiedine uno nuovo."}), 400
+        email = row[0]
+        cur.execute("UPDATE utenti SET password_h=%s WHERE email=%s", (_hash_pw(nuova_pw), email))
+        cur.execute("UPDATE reset_token SET usato=TRUE WHERE token=%s", (tok,))
+        cur.execute("DELETE FROM sessioni WHERE user_id=(SELECT id FROM utenti WHERE email=%s)", (email,))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ok":True,"messaggio":"Password aggiornata. Puoi fare login con la nuova password."})
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
+
+# ── CANCELLAZIONE ACCOUNT GDPR (AC7) ─────────────────────────────
+
+@app.route("/v1/auth/cancella-account", methods=["DELETE"])
+def cancella_account():
+    """Self-service GDPR: anonimizza email e hash, invalida sessioni.
+    Richiede token attivo + conferma password."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    body = request.json or {}
+    password = body.get("password","")
+    if not password:
+        return jsonify({"errore":"inserisci la password per confermare"}), 400
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+    try:
+        import psycopg2, secrets as _sec
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("SELECT password_h FROM utenti WHERE id=%s AND attivo=TRUE", (user_id,))
+        row = cur.fetchone()
+        if not row or not _verifica_pw(password, row[0]):
+            cur.close(); conn.close()
+            return jsonify({"errore":"password non corretta"}), 401
+        anon = f"deleted_{_sec.token_hex(8)}@matter.deleted"
+        cur.execute("UPDATE utenti SET email=%s, password_h='DELETED', attivo=FALSE WHERE id=%s",
+                    (anon, user_id))
+        cur.execute("DELETE FROM sessioni WHERE user_id=%s", (user_id,))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ok":True,"messaggio":"Account cancellato. I tuoi dati sono stati rimossi."})
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
+
 # ---- endpoint -----------------------------------------------
 # ── FLAVOR NETWORK (FL3-FL4) ─────────────────────────────────────
 
