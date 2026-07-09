@@ -1226,7 +1226,8 @@ def abbina(ingrediente):
         "burro":"butter","panna":"cream","latte":"milk","uova":"egg","uovo":"egg",
         "basilico":"basil","prezzemolo":"parsley","rosmarino":"rosemary",
         "timo":"thyme","menta":"mint","cannella":"cinnamon","vaniglia":"vanilla",
-        "cioccolato":"chocolate","caffe":"coffee","caffè":"coffee",
+        "cioccolato":"cocoa","cacao":"cacao","cioccolato fondente":"roasted_cocoa",
+        "caffe":"coffee","caffè":"coffee",
         "fragola":"strawberry","lampone":"raspberry","mela":"apple",
         "pera":"pear","banana":"banana","arancia":"orange","limetta":"lime","lime":"lime",
         "zenzero":"ginger","pepe":"black_pepper","sale":"salt",
@@ -1632,6 +1633,10 @@ def chiedi():
             cur2.close(); conn2.close()
         except Exception:
             pass
+    # sanitizza la risposta: rimuove caratteri di controllo che rompono il JSON
+    import re as _re
+    if risposta:
+        risposta = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', risposta)
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,
@@ -1863,29 +1868,39 @@ def quiz_nodo(node_id):
     Prima volta: Haiku + salva in quiz_cache. Poi: istantaneo dalla cache.
     quiz_cache vive in Postgres, non viene truncata dal migrate."""
     lang = request.args.get("lang", "it")
-    db = carica_grafo()
-    db.execute("""CREATE TABLE IF NOT EXISTS quiz_cache (
-        node_id TEXT, lang TEXT, quiz_json TEXT,
-        PRIMARY KEY (node_id, lang))""")
-    base = None
-    row = db.execute("SELECT quiz_json FROM quiz_cache WHERE node_id=? AND lang=?",
-                     (node_id, lang)).fetchone()
-    if row:
-        try:
-            base = json.loads(row["quiz_json"])
-        except Exception:
-            base = None
-    if base is None:
-        nodo = db.execute("SELECT * FROM nodes WHERE id=?", (node_id,)).fetchone()
-        if not nodo:
-            return jsonify({"quiz": None})
-        nd = _dati(nodo["data"])
-        base = _genera_quiz(nodo["name"], _numero_bersaglio(nd),
-                            _scheda_lang(nd, lang), lang)
-        if base:
-            db.execute("""INSERT INTO quiz_cache (node_id, lang, quiz_json)
-                          VALUES (?,?,?) ON CONFLICT (node_id, lang) DO NOTHING""",
-                       (node_id, lang, json.dumps(base)))
+    if not DATABASE_URL:
+        return jsonify({"quiz": None})
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        # crea la tabella se non esiste (sopravvive al migrate)
+        cur.execute("""CREATE TABLE IF NOT EXISTS quiz_cache (
+            node_id TEXT, lang TEXT, quiz_json TEXT,
+            PRIMARY KEY (node_id, lang))""")
+        cur.execute("SELECT quiz_json FROM quiz_cache WHERE node_id=%s AND lang=%s",
+                    (node_id, lang))
+        row = cur.fetchone()
+        base = None
+        if row:
+            try: base = json.loads(row[0])
+            except Exception: base = None
+        if base is None:
+            cur.execute("SELECT id, name, data FROM nodes WHERE id=%s", (node_id,))
+            nrow = cur.fetchone()
+            if not nrow:
+                cur.close(); conn.close()
+                return jsonify({"quiz": None})
+            nd = _dati(nrow[2])
+            base = _genera_quiz(nrow[1], _numero_bersaglio(nd),
+                                _scheda_lang(nd, lang), lang)
+            if base:
+                cur.execute("""INSERT INTO quiz_cache (node_id, lang, quiz_json)
+                              VALUES (%s,%s,%s) ON CONFLICT (node_id, lang) DO NOTHING""",
+                            (node_id, lang, json.dumps(base)))
+        conn.commit(); cur.close(); conn.close()
+    except Exception:
+        return jsonify({"quiz": None})
     if not base:
         return jsonify({"quiz": None})
     # shuffle delle opzioni alla consegna (varieta senza ri-pagare Haiku)
