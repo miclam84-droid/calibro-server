@@ -25,8 +25,9 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('prod-madre',     'Prodotto', 'Lievito madre', 'bakery', '{}'),
 ('prod-crauti',    'Prodotto', 'Crauti / kimchi', 'cucina', '{}'),
 ('prod-yogurt',    'Prodotto', 'Yogurt', 'cucina', '{}'),
-('prod-vino',      'Prodotto', 'Vino', 'fermentazione', '{}'),
-('prod-kombucha',  'Prodotto', 'Kombucha', 'bar', '{}');
+('prod-vino',      'Prodotto', 'Vino', 'bar', '{}'),
+('prod-kombucha',  'Prodotto', 'Kombucha', 'bar', '{}'),
+('prod-lievito-birra','Prodotto','Lievito di birra (fresco/secco)','bakery','{"target":"attivo 25-35°C · dosaggio ~2-3% sul peso farina (fresco) · muore oltre 50-55°C","strumento":"bilancia + termometro"}');
 -- prod-birra-carb e prod-sour esistono gia: la fermentazione li tocca
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
@@ -51,6 +52,7 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-fermentazione','prod-vino','si_manifesta_in','{"target":"lieviti + eventuale malolattica","ruolo":"zucchero dell''uva in alcol, poi ammorbidimento lattico"}'),
 ('fen-fermentazione','prod-kombucha','si_manifesta_in','{"target":"SCOBY, 1-2 settimane","ruolo":"te zuccherato fermentato, acido e leggermente frizzante"}'),
 ('fen-fermentazione','prod-birra-carb','si_manifesta_in','{"target":"lieviti birrari","ruolo":"mosto del malto in alcol e CO2"}'),
+('fen-fermentazione','prod-lievito-birra','si_manifesta_in','{"target":"25-35°C, dosaggio 2-3%","ruolo":"il lievito comune del fornaio: CO2 rapida per la lievitazione biologica di ogni giorno"}'),
 -- fallisce_come
 ('prod-madre','err-madre-debole','fallisce_come','{}'),
 ('prod-vino','err-ferm-bloccata','fallisce_come','{}');

@@ -25,7 +25,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('prod-soda',       'Prodotto', 'Soda / acqua gassata', 'bar', '{}'),
 ('prod-spritz',     'Prodotto', 'Cocktail carbonato', 'bar', '{}'),
-('prod-birra-carb', 'Prodotto', 'Birra (carbonazione)', 'fermentazione', '{}'),
+('prod-birra-carb', 'Prodotto', 'Birra (carbonatazione)', 'bar', '{}'),
 ('prod-spumante',   'Prodotto', 'Spumante / champagne', 'fermentazione', '{}');
 -- prod-impasto (il pane) esiste già: la CO2 della lievitazione lo tocca
 

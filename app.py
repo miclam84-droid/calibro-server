@@ -94,13 +94,28 @@ def _dati(campo):
     return json.loads(campo or "{}")
 
 
+def _pulisci_traduzione(t):
+    """Toglie intestazioni spurie che Haiku a volte antepone alla traduzione
+    (es. 'ENGLISH TECHNICAL SHEET:'), indotte dal prompt: facevano sembrare la
+    scheda EN un titolo. Difesa in lettura, così pulisce anche il gia' salvato."""
+    if not t:
+        return t
+    import re
+    t = t.strip()
+    t = re.sub(r'^(ENGLISH\s+)?TECHNICAL\s+SHEET\s*:?\s*', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'^(ENGLISH\s+)?SHEET\s*:?\s*', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'^SCHEDA(\s+(TECNICA|ITALIANA))?\s*:?\s*', '', t, flags=re.IGNORECASE)
+    t = re.sub(r'^(Translation|Traduzione)\s*:?\s*', '', t, flags=re.IGNORECASE)
+    return t.strip()
+
+
 def _scheda_lang(data_dict, lang="it"):
     """GT4 — Legge il campo scheda nel formato multilingua.
     Supporta sia il formato legacy (stringa) sia il nuovo formato {it:"...", en:"..."}.
     Quando tutti i nodi saranno migrati al formato dizionario, il fallback legacy si rimuove."""
     scheda = data_dict.get("scheda", "")
     if isinstance(scheda, dict):
-        return scheda.get(lang) or scheda.get("it") or ""
+        return _pulisci_traduzione(scheda.get(lang) or scheda.get("it") or "")
     return scheda or ""
 
 
@@ -622,16 +637,31 @@ def _init_account_tables():
         print(f"[account tables] {e}")
 
 def _hash_pw(password):
-    import hashlib, os
-    salt = os.urandom(16).hex()
-    h = hashlib.sha256((salt + password).encode()).hexdigest()
-    return f"{salt}:{h}"
+    """KDF forte (pbkdf2/scrypt via werkzeug). Sostituisce lo SHA-256 veloce,
+    che era forzabile in caso di fuga del DB."""
+    from werkzeug.security import generate_password_hash
+    return generate_password_hash(password)
+
+def _e_hash_legacy(stored):
+    """True se lo hash è nel vecchio formato debole 'salt:hash' (SHA-256),
+    da rigenerare col KDF forte al primo login."""
+    return bool(stored) and not str(stored).startswith(("pbkdf2:", "scrypt:", "argon2:"))
 
 def _verifica_pw(password, stored):
-    import hashlib
+    """True se la password combacia. Gestisce sia i nuovi hash werkzeug sia
+    i vecchi 'salt:hash' SHA-256 (che vanno migrati al primo login)."""
+    if not stored:
+        return False
+    if _e_hash_legacy(stored):
+        import hashlib
+        try:
+            salt, h = str(stored).split(":")
+            return hashlib.sha256((salt + password).encode()).hexdigest() == h
+        except Exception:
+            return False
+    from werkzeug.security import check_password_hash
     try:
-        salt, h = stored.split(":")
-        return hashlib.sha256((salt + password).encode()).hexdigest() == h
+        return check_password_hash(stored, password)
     except Exception:
         return False
 
@@ -660,6 +690,9 @@ def _utente_da_token(token):
 def registra():
     """AC2 — Registrazione utente con email + password."""
     body = request.json or {}
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    if not _check_rate_limit(ip):
+        return jsonify({"errore":"Troppi tentativi. Aspetta un minuto e riprova."}), 429
     email = (body.get("email","")).strip().lower()
     password = body.get("password","")
     if not email or not password:
@@ -688,6 +721,9 @@ def registra():
 def login():
     """AC2 — Login con email + password, restituisce token sessione."""
     body = request.json or {}
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    if not _check_rate_limit(ip):
+        return jsonify({"errore":"Troppi tentativi. Aspetta un minuto e riprova."}), 429
     email = (body.get("email","")).strip().lower()
     password = body.get("password","")
     if not email or not password:
@@ -704,7 +740,15 @@ def login():
         if not row or not _verifica_pw(password, row[1]):
             cur.close(); conn.close()
             return jsonify({"errore":"credenziali non valide"}), 401
-        user_id, _, piano = row
+        user_id, stored_hash, piano = row
+        # migrazione trasparente: se lo hash è ancora il vecchio SHA-256, al
+        # primo login corretto lo rigeneriamo col KDF forte. Zero attrito utente.
+        if _e_hash_legacy(stored_hash):
+            try:
+                cur.execute("UPDATE utenti SET password_h=%s WHERE id=%s",
+                            (_hash_pw(password), user_id))
+            except Exception:
+                pass
         token = _genera_token()
         cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token, user_id))
         conn.commit(); cur.close(); conn.close()
@@ -1635,7 +1679,7 @@ def stripe_webhook():
 def admin_init():
     """Inizializza le tabelle account/quaderno. Da chiamare una volta dalla Console Railway."""
     secret = request.json.get("secret","") if request.json else ""
-    if secret != os.environ.get("ADMIN_SECRET","matter-init-2026"):
+    if (not os.environ.get("ADMIN_SECRET")) or secret != os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore":"non autorizzato"}), 403
     _init_account_tables()
     # crea anche la tabella esperimenti
@@ -1686,15 +1730,15 @@ def translate_graph():
         if not scheda or isinstance(scheda, dict):
             saltati += 1; continue
         prompt = (
-            "Traduci questa scheda tecnica dall'italiano all'inglese. "
-            "Mantieni tono tecnico-professionale, numeri esatti e termini scientifici. "
-            "Rispondi SOLO con la traduzione in inglese, niente altro.\n\n"
-            "SCHEDA ITALIANA:\n" + scheda
+            "Translate the following Italian technical text into English. "
+            "Keep the technical-professional tone, exact numbers and scientific terms. "
+            "Output ONLY the translated text, with no title, no header, no label, "
+            "no quotes — just the translation.\n\n" + scheda
         )
         traduzione = _haiku_raw(prompt, max_tokens=800)
         if not traduzione:
             errori += 1; click.echo("  ERRORE: " + nome); continue
-        d["scheda"] = {"it": scheda, "en": traduzione.strip()}
+        d["scheda"] = {"it": scheda, "en": _pulisci_traduzione(traduzione)}
         cur.execute(
             "UPDATE nodes SET data = %s::jsonb WHERE id = %s",
             (json.dumps(d, ensure_ascii=False), nid)
@@ -2222,7 +2266,7 @@ if(p.get('s')){document.getElementById('sk').value=p.get('s');go();}
 def admin_stats():
     """GT10 — Admin panel: statistiche base del prodotto."""
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET","matter-init-2026"):
+    if (not os.environ.get("ADMIN_SECRET")) or secret != os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"errore":"database non disponibile"}), 503
