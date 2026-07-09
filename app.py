@@ -1268,14 +1268,26 @@ def contrasto(ingrediente):
         import psycopg2
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
-        # trova il nodo dell'ingrediente cercato
+        # trova il nodo dell'ingrediente cercato — preferisce nodi con dati contrasto
         cur.execute("""
             SELECT id, name, data FROM nodes
             WHERE type='Prodotto'
             AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+            AND (data->>'profilo_contrasto') IS NOT NULL
+            ORDER BY length(name) ASC
             LIMIT 1
         """, (f"%{ingrediente}%", f"%{ingrediente.replace(' ','_')}%"))
         row = cur.fetchone()
+        if not row:
+            # fallback: cerca anche senza dati contrasto
+            cur.execute("""
+                SELECT id, name, data FROM nodes
+                WHERE type='Prodotto'
+                AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+                ORDER BY length(name) ASC
+                LIMIT 1
+            """, (f"%{ingrediente}%", f"%{ingrediente.replace(' ','_')}%"))
+            row = cur.fetchone()
         if not row:
             cur.close(); conn.close()
             return jsonify({"ingrediente": ingrediente, "contrasti": [],
