@@ -549,12 +549,16 @@ def _haiku_raw(prompt, max_tokens=600):
         data=body,
         headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
         method="POST")
-    try:
-        with urllib.request.urlopen(req, timeout=20) as r:
-            data = json.loads(r.read().decode("utf-8"))
-        return "".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
-    except Exception:
-        return None
+    # timeout 45s + 1 retry per gestire server freddo o latenza Anthropic
+    for attempt in range(2):
+        try:
+            with urllib.request.urlopen(req, timeout=45) as r:
+                data = json.loads(r.read().decode("utf-8"))
+            return "".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
+        except Exception:
+            if attempt == 0:
+                import time as _t; _t.sleep(2)
+    return None
 
 
 def chiedi_mistral(prompt):
