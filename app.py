@@ -1299,6 +1299,8 @@ def chiedi():
         return jsonify({"errore":"Troppe richieste. Aspetta un minuto e riprova."}), 429
     domanda = (request.json or {}).get("domanda","").strip()
     lang = (request.json or {}).get("lang", "it")
+    # mini-history: ultimi scambi passati dal frontend (zero DB, solo memoria sessione)
+    history = (request.json or {}).get("history", [])
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
     db = carica_grafo()
@@ -1331,6 +1333,14 @@ def chiedi():
         })
 
     prompt = costruisci_prompt(domanda, contesto, lang=lang)
+    # se ci sono scambi precedenti, li prependo al prompt per dare continuità
+    if history:
+        hist_txt = "\n".join(
+            f"Domanda precedente: {h['q']}\nRisposta precedente (sintesi): {h['r']}"
+            for h in history[-3:] if h.get('q') and h.get('r')
+        )
+        if hist_txt:
+            prompt = f"Contesto della conversazione in corso:\n{hist_txt}\n\n---\n{prompt}"
     risposta = chiedi_mistral(prompt)
     log_evento("risposta", domanda,
                fenomeni=[f["name"] for f in contesto["fenomeni"]],

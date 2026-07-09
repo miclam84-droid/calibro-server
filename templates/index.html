@@ -1393,6 +1393,11 @@ const DOMCOL={bar:'#C77B3F',cucina:'#E0AA76',bakery:'#2C6E63',caffetteria:'#9A5A
 let busy=false;
 function setBusy(b){busy=b;document.getElementById('ask-btn').disabled=b;}
 function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)return;document.getElementById('q').value='';chiediTesto(q);}
+
+// mini-history: ultimi 3 scambi in memoria (resettata al refresh, zero DB)
+const _chatHistory=[];
+const _HISTORY_MAX=3;
+
 function chiediTesto(q){
   if(busy)return;
   // paywall: controlla limite giornaliero (solo per utenti non Pro)
@@ -1403,8 +1408,19 @@ function chiediTesto(q){
   const e=document.getElementById('empty-state');if(e)e.remove();
   switchTab('chiedi');switchSubtab('chat');
   aggiungiThinking();setBusy(true);
-  fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q})})
-    .then(r=>r.json()).then(j=>{_incDomande();renderRisp(q,j);}).catch(()=>renderErr()).finally(()=>setBusy(false));
+  // passa gli ultimi scambi per dare continuità alla conversazione
+  const history=_chatHistory.slice(-_HISTORY_MAX);
+  fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({domanda:q, history})})
+    .then(r=>r.json()).then(j=>{
+      _incDomande();
+      // aggiorna history con questo scambio
+      if(j.risposta){
+        _chatHistory.push({q, r:j.risposta.slice(0,300)});
+        if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2);
+      }
+      renderRisp(q,j);
+    }).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
 function apriNodo(id,nome){
   if(busy)return;
