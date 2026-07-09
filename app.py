@@ -1291,9 +1291,36 @@ def abbina(ingrediente):
             """, (f"%{ing_norm.replace('_','%')}%",))
             rows = cur.fetchall()
         cur.close(); conn.close()
+        NOMI_IT = {
+            "roasted beef":"manzo arrosto","beef":"manzo","chicken":"pollo",
+            "pork":"maiale","lamb":"agnello","turkey":"tacchino",
+            "salmon":"salmone","tuna":"tonno","shrimp":"gambero","cod":"merluzzo",
+            "tomato":"pomodoro","garlic":"aglio","onion":"cipolla","carrot":"carota",
+            "celery":"sedano","mushroom":"fungo","porcini mushroom":"porcini",
+            "potato":"patata","eggplant":"melanzana","bell pepper":"peperone",
+            "pumpkin":"zucca","zucchini":"zucchine",
+            "apple":"mela","pear":"pera","strawberry":"fragola","raspberry":"lampone",
+            "blueberry":"mirtillo","orange":"arancia","lemon":"limone","lime":"lime",
+            "banana":"banana","pineapple":"ananas","mango":"mango","coconut":"cocco",
+            "butter":"burro","cream":"panna","milk":"latte","cheese":"formaggio",
+            "parmesan":"parmigiano","mozzarella":"mozzarella","yogurt":"yogurt",
+            "egg":"uovo","olive oil":"olio d'oliva","sesame":"sesamo",
+            "almond":"mandorla","hazelnut":"nocciola","walnut":"noce","peanut":"arachide",
+            "coffee":"caffè","espresso":"espresso","tea":"tè","cocoa":"cacao",
+            "chocolate":"cioccolato","vanilla":"vaniglia","honey":"miele","sugar":"zucchero",
+            "basil":"basilico","rosemary":"rosmarino","thyme":"timo","mint":"menta",
+            "parsley":"prezzemolo","cinnamon":"cannella","ginger":"zenzero",
+            "black pepper":"pepe nero","chili":"peperoncino",
+            "red wine":"vino rosso","white wine":"vino bianco","beer":"birra",
+            "rum":"rum","whiskey":"whisky","gin":"gin","vodka":"vodka",
+            "vinegar":"aceto","soy sauce":"salsa di soia",
+            "roasted peanut":"arachide tostata","roasted almond":"mandorla tostata",
+            "black tea":"tè nero","green tea":"tè verde",
+        }
         abbinamenti = []
         for r in rows:
-            nome_pulito = r[1].replace("_"," ").title()
+            nome_en = r[1].replace("_"," ").lower()
+            nome_pulito = NOMI_IT.get(nome_en, r[1].replace("_"," ").title())
             overlap = float(r[2]) if r[2] else 0
             abbinamenti.append({
                 "ingrediente": nome_pulito,
