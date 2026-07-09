@@ -768,6 +768,7 @@ if('serviceWorker' in navigator){
         <button class="flavor-search-btn" onclick="cercaFlavorMappa()" id="ct-flavor-btn">Cerca</button>
       </div>
       <div class="flavor-results" id="flavor-results-mappa"></div>
+      <div class="flavor-results" id="contrasto-results-mappa"></div>
     </div>
     <div style="font-family:var(--mono);font-size:10px;color:var(--flavor);opacity:.7;margin-top:12px;line-height:1.5;padding:0 14px 14px">
       Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale o di sicurezza alimentare.
@@ -2349,6 +2350,28 @@ async function cercaFlavorMappa(){
       </div>`;
     }
     res.innerHTML = html;
+
+    // ── abbinamento per contrasto (fisico-percettivo) ────────
+    const resC = document.getElementById('contrasto-results-mappa');
+    if(resC){
+      resC.innerHTML=`<div style="color:var(--ink-muted);font-size:12px;padding:4px 0">${_t('caricamento')}</div>`;
+      try{
+        const rc = await fetch('/v1/contrasto/'+encodeURIComponent(ing));
+        const jc = await rc.json();
+        if(jc.contrasti && jc.contrasti.length){
+          resC.innerHTML = '<div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin:10px 0 6px">per contrasto</div>' +
+            jc.contrasti.map(c=>`
+              <div class="flavor-result-item">
+                <span class="flavor-result-name" style="color:var(--teal)">${esc(c.ingrediente.replace(/_/g,' '))}</span>
+                <span class="flavor-result-why" style="color:var(--teal);opacity:.8">${esc(c.meccanismo.replace(/_/g,' '))}</span>
+              </div>
+              <div style="font-size:11px;color:var(--ink-muted);padding:0 0 6px 0;line-height:1.4">${esc(c.perche)}</div>
+            `).join('');
+        } else {
+          resC.innerHTML='';
+        }
+      }catch(e){ resC.innerHTML=''; }
+    }
   } catch(e){
     res.innerHTML=`<div style="color:var(--e700);font-size:12px;padding:8px 0">Errore. Riprova.</div>`;
   }

@@ -1254,7 +1254,156 @@ def abbina(ingrediente):
             "nota": "Flavor network in costruzione — usa: python import_flavor_network.py"
         })
 
-@app.route("/v1/abbina_batch", methods=["POST"])
+@app.route("/v1/contrasto/<ingrediente>")
+def contrasto(ingrediente):
+    """FL5 — Abbinamento per contrasto fisico-percettivo.
+    Logica: acido taglia il grasso · dolce smorza l'amaro · sale sopprime l'amaro
+            grasso porta e ammorbidisce l'acido.
+    Usa i dati di grassi_pct, zuccheri_pct, sodio_mg100g, ph_min dal grafo.
+    Sempre marcato come euristico — è fisica percettiva, non legge."""
+    if not DATABASE_URL:
+        return jsonify({"ingrediente": ingrediente, "contrasti": [],
+                        "nota": "database non disponibile"})
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        # trova il nodo dell'ingrediente cercato
+        cur.execute("""
+            SELECT id, name, data FROM nodes
+            WHERE type='Prodotto'
+            AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+            LIMIT 1
+        """, (f"%{ingrediente}%", f"%{ingrediente.replace(' ','_')}%"))
+        row = cur.fetchone()
+        if not row:
+            cur.close(); conn.close()
+            return jsonify({"ingrediente": ingrediente, "contrasti": [],
+                            "nota": "Ingrediente non trovato nel grafo con dati di contrasto."})
+
+        node_id, node_name, data_raw = row
+        import json as _json
+        d = data_raw if isinstance(data_raw, dict) else _json.loads(data_raw)
+
+        grassi = float(d.get("grassi_pct", 0) or 0)
+        zuccheri = float(d.get("zuccheri_pct", 0) or 0)
+        ph = float(d.get("ph_min", 7) or 7)
+        amaro = float(d.get("amaro_index", 0) or 0)
+        sodio = float(d.get("sodio_mg100g", 0) or 0)
+        profilo = d.get("profilo_contrasto", "")
+
+        # determina il tipo di contrasto necessario
+        regole = []
+        if ph < 4.5:
+            regole.append(("acido", "taglia_grasso",
+                           "L'acido taglia il grasso: il pH basso emulsiona e pulisce la bocca"))
+        if grassi > 10:
+            regole.append(("grasso", "richiede_acido",
+                           "Il grasso porta e ammorbidisce: cerca un acido per bilanciare"))
+        if amaro >= 3:
+            regole.append(("amaro", "smorzato_da_dolce",
+                           "Il dolce smorza l'amaro: zuccheri e grassi riducono la percezione amara"))
+        if amaro >= 2:
+            regole.append(("amaro", "smorzato_da_sale",
+                           "Il sale sopprime l'amaro: piccole quantità di sodio riducono l'amaro percepito"))
+        if zuccheri > 15:
+            regole.append(("dolce", "bilanciato_da_acido",
+                           "Il dolce vuole acido: senza contrasto acido il dolce stanca e satura"))
+        if sodio > 200:
+            regole.append(("salato", "amplificato_da_acido",
+                           "Il salato si amplifica con l'acido: together esaltano entrambi i sapori"))
+
+        if not regole:
+            cur.close(); conn.close()
+            return jsonify({
+                "ingrediente": node_name, "contrasti": [],
+                "nota": "Profilo neutro — questo ingrediente non ha un contrasto dominante evidente.",
+                "tipo": "contrasto"
+            })
+
+        # cerca ingredienti con il profilo opposto
+        contrasti = []
+        visti = set()
+        for profilo_cercato, meccanismo, spiegazione in regole:
+            if profilo_cercato == "acido":
+                # cerca grassi
+                cur.execute("""
+                    SELECT id, name, data FROM nodes
+                    WHERE type='Prodotto'
+                    AND (data->>'grassi_pct')::numeric > 8
+                    AND id != %s
+                    ORDER BY (data->>'grassi_pct')::numeric DESC LIMIT 3
+                """, (node_id,))
+            elif profilo_cercato == "grasso":
+                # cerca acidi
+                cur.execute("""
+                    SELECT id, name, data FROM nodes
+                    WHERE type='Prodotto'
+                    AND (data->>'ph_min')::numeric < 4.5
+                    AND id != %s
+                    ORDER BY (data->>'ph_min')::numeric ASC LIMIT 3
+                """, (node_id,))
+            elif profilo_cercato == "amaro" and meccanismo == "smorzato_da_dolce":
+                # cerca dolci
+                cur.execute("""
+                    SELECT id, name, data FROM nodes
+                    WHERE type='Prodotto'
+                    AND (data->>'zuccheri_pct')::numeric > 10
+                    AND id != %s
+                    ORDER BY (data->>'zuccheri_pct')::numeric DESC LIMIT 3
+                """, (node_id,))
+            elif profilo_cercato == "amaro" and meccanismo == "smorzato_da_sale":
+                # cerca salati
+                cur.execute("""
+                    SELECT id, name, data FROM nodes
+                    WHERE type='Prodotto'
+                    AND (data->>'sodio_mg100g')::numeric > 100
+                    AND id != %s
+                    ORDER BY (data->>'sodio_mg100g')::numeric DESC LIMIT 2
+                """, (node_id,))
+            elif profilo_cercato == "dolce":
+                # cerca acidi
+                cur.execute("""
+                    SELECT id, name, data FROM nodes
+                    WHERE type='Prodotto'
+                    AND (data->>'ph_min')::numeric < 4.0
+                    AND id != %s
+                    ORDER BY (data->>'ph_min')::numeric ASC LIMIT 3
+                """, (node_id,))
+            elif profilo_cercato == "salato":
+                # cerca acidi
+                cur.execute("""
+                    SELECT id, name, data FROM nodes
+                    WHERE type='Prodotto'
+                    AND (data->>'ph_min')::numeric < 4.5
+                    AND id != %s
+                    ORDER BY (data->>'ph_min')::numeric ASC LIMIT 2
+                """, (node_id,))
+            else:
+                continue
+
+            for r in cur.fetchall():
+                rid, rname, rdata = r
+                if rid not in visti:
+                    visti.add(rid)
+                    contrasti.append({
+                        "ingrediente": rname,
+                        "meccanismo": meccanismo,
+                        "perche": spiegazione
+                    })
+
+        cur.close(); conn.close()
+        return jsonify({
+            "ingrediente": node_name,
+            "contrasti": contrasti[:6],
+            "nota": "Abbinamento per contrasto fisico-percettivo — euristico, non legge",
+            "tipo": "contrasto"
+        })
+    except Exception as e:
+        return jsonify({"ingrediente": ingrediente, "contrasti": [],
+                        "nota": f"Errore: {str(e)}"}), 500
+
+
 def abbina_batch():
     """FL3b — Abbinamenti per lista di ingredienti (per modulo Produzione Cifra).
     Cifra passa gli ingredienti disponibili in magazzino, Matter restituisce suggerimenti."""
