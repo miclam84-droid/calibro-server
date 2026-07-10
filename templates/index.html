@@ -1819,9 +1819,9 @@ async function doRegistra(){
       body:JSON.stringify({email,password:pwd})});
     const j=await r.json();
     if(j.ok||j.token){
-      if(j.token){localStorage.setItem('matter_token',j.token);localStorage.setItem('matter_email',email);aggiornaTopbarLogin();}
-      msg.className='auth-msg ok';msg.textContent=_t('auth_reg_ok');
-      setTimeout(()=>switchTab('scopri'),900);
+      if(j.verifica_richiesta){
+        msg.className='auth-msg ok';msg.textContent='Account creato! Controlla la tua email per attivarlo.';
+      } else if(j.token){localStorage.setItem('matter_token',j.token);localStorage.setItem('matter_email',email);aggiornaTopbarLogin();msg.className='auth-msg ok';msg.textContent=_t('auth_reg_ok');setTimeout(()=>switchTab('scopri'),900);}
     } else {
       msg.className='auth-msg err';msg.textContent=j.errore||'Registrazione non riuscita.';
     }
@@ -2922,6 +2922,40 @@ async function doResetConferma(){
     const np=document.getElementById('auth-panel-nuova-pw');
     if(np) np.style.display='block';
   }
+})();
+
+// rileva ?verifica=TOKEN nell'URL → attiva account automaticamente
+(function(){
+  const tok=new URLSearchParams(location.search).get('verifica');
+  if(!tok) return;
+  // Mostra messaggio di attesa
+  document.addEventListener('DOMContentLoaded',()=>{
+    switchTab('auth');
+  });
+  fetch('/v1/auth/verifica-email',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:tok})
+  })
+  .then(r=>r.json())
+  .then(j=>{
+    if(j.ok && j.token){
+      // Account attivato — salva sessione e vai all'app
+      localStorage.setItem('ml_token', j.token);
+      localStorage.setItem('ml_piano', j.piano||'free');
+      // Pulisce il token dall'URL
+      history.replaceState({},'','/app');
+      // Mostra messaggio di benvenuto e ricarica
+      alert('Email confermata! Benvenuto in Matter Lab.');
+      location.reload();
+    } else {
+      alert(j.errore||'Link non valido o scaduto. Prova a registrarti di nuovo.');
+      history.replaceState({},'','/app');
+    }
+  })
+  .catch(()=>{
+    alert('Errore di rete. Riprova.');
+  });
 })();
 </script>
 </body>

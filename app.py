@@ -599,7 +599,7 @@ def _utente_da_token(token):
 
 @app.route("/v1/auth/registra", methods=["POST"])
 def registra():
-    """AC2 — Registrazione utente con email + password."""
+    """AC2 — Registrazione: crea utente attivo=FALSE → email verifica → utente clicca → attivo=TRUE."""
     body = request.json or {}
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     if not _check_rate_limit(ip):
@@ -613,19 +613,72 @@ def registra():
     if not DATABASE_URL:
         return jsonify({"errore":"database non disponibile"}), 503
     try:
+        import psycopg2, secrets as _sec
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS verifica_email (
+            token TEXT PRIMARY KEY, email TEXT NOT NULL,
+            ts TIMESTAMPTZ DEFAULT NOW(),
+            scade TIMESTAMPTZ DEFAULT NOW() + INTERVAL '24 hours',
+            usato BOOLEAN DEFAULT FALSE)""")
+        cur.execute(
+            "INSERT INTO utenti (email, password_h, attivo) VALUES (%s,%s,FALSE) RETURNING id",
+            (email, _hash_pw(password))
+        )
+        user_id = cur.fetchone()[0]
+        tok = _sec.token_urlsafe(32)
+        cur.execute("INSERT INTO verifica_email (token,email) VALUES (%s,%s)", (tok, email))
+        conn.commit(); cur.close(); conn.close()
+        base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
+        link = f"{base}/app?verifica={tok}"
+        _invia_email_resend(
+            to=email,
+            subject="Conferma la tua email — Matter Lab",
+            body_html=(
+                f"<p style='font-family:sans-serif'>Benvenuto in <strong>Matter Lab</strong>.</p>"
+                f"<p style='font-family:sans-serif'>Conferma la tua email per attivare l'account:</p>"
+                f"<p><a href='{link}' style='background:#2C6E63;color:#fff;padding:12px 24px;"
+                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>"
+                f"Attiva il mio account</a></p>"
+                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Link valido 24 ore.</p>"
+            ),
+            body_text=f"Benvenuto in Matter Lab.\n\nConferma email:\n{link}\n\nLink valido 24 ore."
+        )
+        return jsonify({"ok":True,"messaggio":"Account creato. Controlla la tua email per attivarlo.","verifica_richiesta":True})
+    except Exception as e:
+        if "unique" in str(e).lower():
+            return jsonify({"errore":"email gia registrata"}), 409
+        return jsonify({"errore":str(e)}), 500
+
+
+@app.route("/v1/auth/verifica-email", methods=["POST"])
+def verifica_email_route():
+    """AC2b — Attiva account dal token email. Ritorna token sessione."""
+    body = request.json or {}
+    tok = (body.get("token","")).strip()
+    if not tok or not DATABASE_URL:
+        return jsonify({"errore":"token mancante"}), 400
+    try:
         import psycopg2
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
-        cur.execute("INSERT INTO utenti (email, password_h) VALUES (%s,%s) RETURNING id",
-                    (email, _hash_pw(password)))
-        user_id = cur.fetchone()[0]
-        token = _genera_token()
-        cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token, user_id))
+        cur.execute(
+            "SELECT email FROM verifica_email WHERE token=%s AND scade>NOW() AND usato=FALSE", (tok,)
+        )
+        row = cur.fetchone()
+        if not row:
+            cur.close(); conn.close()
+            return jsonify({"errore":"Link non valido o scaduto. Registrati di nuovo."}), 400
+        email = row[0]
+        cur.execute("UPDATE utenti SET attivo=TRUE WHERE email=%s", (email,))
+        cur.execute("UPDATE verifica_email SET usato=TRUE WHERE token=%s", (tok,))
+        cur.execute("SELECT id, piano FROM utenti WHERE email=%s", (email,))
+        user_id, piano = cur.fetchone()
+        token_sess = _genera_token()
+        cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token_sess, user_id))
         conn.commit(); cur.close(); conn.close()
-        return jsonify({"token":token,"piano":"free","messaggio":"Benvenuto in Matter."})
+        return jsonify({"ok":True,"token":token_sess,"piano":piano or "free","messaggio":"Email confermata. Benvenuto in Matter Lab."})
     except Exception as e:
-        if "unique" in str(e).lower():
-            return jsonify({"errore":"email già registrata"}), 409
         return jsonify({"errore":str(e)}), 500
 
 @app.route("/v1/auth/login", methods=["POST"])
