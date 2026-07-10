@@ -32,7 +32,7 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-crioscopia', 'prod-sorbetto', 'si_manifesta_in',
+('fen-crioscopia', 'prod-gelato-cristalli', 'si_manifesta_in',
  '{"target":"PAC 290-330 (senza grassi) · Brix 24-30%","causa":"Senza grassi il sorbetto ha bisogno di PAC piu alto per raggiungere la stessa morbidezza"}')
 ON CONFLICT (from_id, to_id, relation) DO NOTHING;
 
