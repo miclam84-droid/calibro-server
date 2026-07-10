@@ -372,7 +372,28 @@ def costruisci_prompt(domanda, contesto, lang="it"):
             "- Never mention being an AI or using a graph."
         )
     else:
+        import datetime as _dt
+        _oggi = _dt.date.today()
+        _mese = _oggi.month
+        _stagione = (
+            "inverno (dicembre-febbraio)" if _mese in (12,1,2) else
+            "primavera (marzo-maggio)"   if _mese in (3,4,5) else
+            "estate (giugno-agosto)"     if _mese in (6,7,8) else
+            "autunno (settembre-novembre)"
+        )
+        _prodotti_stagione = {
+            "estate":    "pomodori, zucchine, melanzane, peperoni, basilico, fichi, albicocche, pesche, more, anguria, melone",
+            "autunno":   "funghi porcini, tartufo, zucca, mele, pere, uva, fichi d'India, cachi, radicchio, castagne, cavolo",
+            "inverno":   "agrumi (arance, mandarini, limoni), cavolo nero, verza, broccoli, finocchi, carciofi, topinambur, cardi",
+            "primavera": "asparagi, piselli, fave, carciofi, spinaci, agretti, fragole, ciliegie, erbe fresche (menta, erba cipollina)",
+        }
+        _stagione_key = _stagione.split(" ")[0]
+        _frutti = _prodotti_stagione.get(_stagione_key, "")
         regole = (
+            f"Data odierna: {_oggi.strftime('%d %B %Y')} — siamo in {_stagione}.\n"
+            f"Ingredienti di stagione ora disponibili: {_frutti}.\n"
+            f"Quando suggerisci abbinamenti o ingredienti, usa SOLO prodotti di stagione "
+            f"a meno che la domanda non riguardi esplicitamente prodotti fuori stagione.\n\n"
             "Sei uno strumento che spiega la ristorazione attraverso i fenomeni fisici "
             "e chimici che la governano: acidita, concentrazione, calore, osmosi, struttura. "
             "Questi fenomeni non appartengono a una disciplina: sono le stesse leggi che "
@@ -1249,6 +1270,64 @@ def abbina(ingrediente):
         "funghi":"mushroom","porcini":"porcini_mushroom",
         "tè":"tea","te":"tea","miele":"honey","zucchero":"sugar",
         "peperoncino":"chili","peperone":"bell_pepper","melanzana":"eggplant",
+        # salumi e carni italiane
+        "salame":"salami","salumi":"salami","prosciutto":"prosciutto",
+        "pancetta":"bacon","guanciale":"guanciale","mortadella":"mortadella",
+        "speck":"smoked_ham","nduja":"nduja","salsiccia":"pork_sausage",
+        "bresaola":"beef","lardo":"lard","coppa":"pork",
+        # formaggi italiani
+        "ricotta":"ricotta","pecorino":"pecorino","grana":"parmesan",
+        "gorgonzola":"blue_cheese","taleggio":"cheese","asiago":"cheese",
+        "scamorza":"cheese","provolone":"provolone","caciocavallo":"cheese",
+        "burrata":"mozzarella","stracciatella":"mozzarella",
+        # verdure stagionali
+        "zucchine":"zucchini","pomodorino":"tomato","ciliegino":"tomato",
+        "pomodoro":"tomato","basilico":"basil","rucola":"arugula",
+        "radicchio":"radicchio","cicoria":"chicory","finocchio":"fennel",
+        "carciofo":"artichoke","asparago":"asparagus","pisello":"pea",
+        "fava":"fava_bean","spinaci":"spinach","spinacio":"spinach",
+        "zucca":"pumpkin","cavolo":"cabbage","cavolfiore":"cauliflower",
+        "broccolo":"broccoli","bietola":"beet","barbabietola":"beet",
+        "fagiolino":"green_bean","fagiolo":"bean","ceci":"chickpea",
+        "lenticchie":"lentil","cipollotto":"onion","porro":"leek",
+        # frutta
+        "fico":"fig","albicocca":"apricot","pesca":"peach","nettarina":"peach",
+        "susina":"plum","prugna":"plum","caco":"persimmon","cachi":"persimmon",
+        "melograno":"pomegranate","mora":"blackberry","ribes":"currant",
+        "lampone":"raspberry","mirtillo":"blueberry","fragola":"strawberry",
+        "arancia":"orange","pompelmo":"grapefruit","bergamotto":"bergamot",
+        "cedro":"citron","uva":"grape","castagna":"chestnut",
+        # pesce
+        "baccalà":"cod","acciuga":"anchovy","alice":"anchovy",
+        "seppia":"squid","polpo":"octopus","calamaro":"squid",
+        "orata":"sea_bream","branzino":"sea_bass","sgombro":"mackerel",
+        "vongola":"clam","cozza":"mussel","ostrica":"oyster",
+        # pasta e cereali
+        "pasta":"pasta","riso":"rice","farro":"spelt","orzo":"barley",
+        "mais":"corn","farina":"flour","pane":"bread",
+        # condimenti e grassi
+        "olio extravergine":"olive_oil","evo":"olive_oil",
+        "burro di cacao":"cocoa_butter","tahini":"sesame",
+        "aceto balsamico":"balsamic_vinegar","salsa di soia":"soy_sauce",
+        # erbe aromatiche
+        "maggiorana":"marjoram","origano":"oregano","salvia":"sage",
+        "alloro":"bay_leaf","prezzemolo":"parsley","erba cipollina":"chive",
+        "finocchietto":"fennel","dragoncello":"tarragon",
+        # spezie
+        "noce moscata":"nutmeg","cardamomo":"cardamom","curcuma":"turmeric",
+        "zafferano":"saffron","anice stellato":"star_anise",
+        "chiodo di garofano":"clove","paprica":"paprika",
+        # distillati e vini
+        "amaro":"amaro","campari":"amaro","aperol":"amaro",
+        "grappa":"grappa","cognac":"cognac","brandy":"brandy",
+        "prosecco":"sparkling_wine","champagne":"sparkling_wine",
+        "vino rosso":"red_wine","vino bianco":"white_wine",
+        "marsala":"wine","vermouth":"vermouth",
+        # dolci e dessert
+        "cioccolato fondente":"dark_chocolate","cioccolato al latte":"milk_chocolate",
+        "cioccolato bianco":"white_chocolate","cacao":"cocoa",
+        "caramello":"caramel","vaniglia":"vanilla","cannella":"cinnamon",
+        "pistacchio":"pistachio","mandorle":"almond",
     }
     # normalizza l'input
     ing_norm = ingrediente.lower().replace("-","_").replace(" ","_")

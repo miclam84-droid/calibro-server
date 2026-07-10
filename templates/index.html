@@ -1089,7 +1089,7 @@ if('serviceWorker' in navigator){
     <input class="ask-input" id="q" placeholder="chiedi a Matter Lab…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
     <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
   </div>
-  <button class="btn-supporto" onclick="aprireSupporto()">? Chiedi supporto</button>
+  <button class="btn-supporto" onclick="aprireSupporto()">Supporto</button>
 </div>
 
 <script>
@@ -1487,7 +1487,11 @@ function aggiungiThinking(){
 function renderRisp(domanda,j,fromNode){
   const t=document.getElementById('thinking');if(t)t.remove();
   if(!j.risposta){renderNota(domanda,j.nota,j.connessi);return;}
-  const fens=(j.trovato||[]).map(f=>`<span class="fenchip">${esc(f)}</span>`).join('');
+  const fens=(j.trovato||[]).map(f=>{
+    const match=(j.connessi||[]).find(c=>c.nome===f);
+    const fid=match?match.id:'';
+    return `<span class="fenchip" style="cursor:pointer;text-decoration:underline dotted" onclick="${fid?`apriNodo('${fid}','${f.replace(/'/g,"\'")}')`:'switchTab(\"lezione\")'}" title="Esplora fenomeno">${esc(f)}</span>`;
+  }).join('');
   const conns=(j.connessi||[]).map(c=>{
     const col=DOMCOL[c.dominio]||'#6F6A60';
     const tg=c.target?`<span class="tg">${esc(c.target)}</span>`:'';
@@ -2789,7 +2793,7 @@ if(!_getCookie('matter_consent')){setTimeout(()=>{document.getElementById('cooki
 
 <!-- ── SUPPORTO ─────────────────────────────────────────── -->
 <style>
-.btn-supporto{font-size:11px;letter-spacing:.04em;color:var(--s500);background:none;
+.btn-supporto{font-size:12px;letter-spacing:.02em;color:var(--muted);background:none;
   border:1px solid var(--border);border-radius:9px;padding:5px 12px;cursor:pointer;
   margin-top:6px;display:block}
 .btn-supporto:hover{color:var(--teal);border-color:var(--teal)}
