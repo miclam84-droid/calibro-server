@@ -1300,7 +1300,7 @@ def abbina(ingrediente):
             """, (term, f"%{term}%"))
             rows = cur.fetchall()
             if rows: break
-        # fallback: cerca per nome parziale
+        # fallback 1: cerca per nome parziale
         if not rows:
             cur.execute("""
                 SELECT e.to_id, n.name,
@@ -1312,6 +1312,25 @@ def abbina(ingrediente):
                 ORDER BY overlap DESC NULLS LAST LIMIT 8
             """, (f"%{ing_norm.replace('_','%')}%",))
             rows = cur.fetchall()
+        # fallback 2: cerca nella mappa nomi italiani (flavor_nomi_it)
+        if not rows:
+            try:
+                cur.execute("""
+                    SELECT e.to_id, n.name,
+                           (e.data->>'overlap')::numeric as overlap
+                    FROM edges e
+                    JOIN nodes n ON n.id = e.to_id
+                    JOIN flavor_nomi_it fi ON fi.node_id = e.from_id
+                    WHERE e.relation = 'abbinamento_aromatico'
+                    AND (lower(fi.nome_it) LIKE lower(%s)
+                         OR lower(fi.nome_en) LIKE lower(%s))
+                    ORDER BY overlap DESC NULLS LAST LIMIT 8
+                """, (f"%{ing_it}%", f"%{ing_it}%"))
+                rows = cur.fetchall()
+                if rows:
+                    print(f"[NOMI_IT] '{ingrediente}' trovato via flavor_nomi_it", flush=True)
+            except Exception as _fi_err:
+                pass  # tabella non ancora popolata
         # fallback 2: ricerca semantica via embeddings OpenAI
         if not rows:
             try:
