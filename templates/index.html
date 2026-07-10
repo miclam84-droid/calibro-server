@@ -7,10 +7,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Matter">
+<meta name="apple-mobile-web-app-title" content="Matter Lab">
 <link rel="manifest" href="/static/manifest.json">
 <link rel="apple-touch-icon" href="/static/icon-192.png">
-<title>Matter</title>
+<title>Matter Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
@@ -596,7 +596,7 @@ if('serviceWorker' in navigator){
 <body>
 <header class="app-header">
   <div class="app-bar">
-    <div class="wordmark">Matter<small id="payoff-text">La scienza del mestiere</small></div>
+    <div class="wordmark">Matter Lab<small id="payoff-text">Science &amp; Craft</small></div>
     <div style="display:flex;align-items:center;gap:6px">
       <button onclick="apriAccount()" id="login-topbar-btn">Accedi</button>
       <button onclick="toggleLang()" id="lang-btn">EN</button>
@@ -836,14 +836,14 @@ if('serviceWorker' in navigator){
 <!-- ── CHIEDI ──────────────────────────────────────────── -->
 <div class="screen" id="screen-chiedi">
   <div class="chiedi-subtabs">
-    <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi a Matter</button>
+    <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi a Matter Lab</button>
     <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Calcolatori</button>
   </div>
   <div class="chiedi-panel active" id="panel-chat">
     <div class="schede" id="schede">
       <div class="empty-state" id="empty-state">
         <div class="empty-icon">✦</div>
-        <div class="empty-title" id="ct-chiedi-title">Chiedi a Matter</div>
+        <div class="empty-title" id="ct-chiedi-title">Chiedi a Matter Lab</div>
         <div class="empty-sub" id="ct-chiedi-sub">Un problema reale del tuo lavoro — rispondo con i numeri, non con le opinioni.</div>
         <div class="sugg-grid">
           <button class="sugg-pill" onclick="chiediTesto('uso sempre lo stesso lime ma il sour cambia ogni sera, perché?')">Perché il sour cambia? →</button>
@@ -1024,7 +1024,7 @@ if('serviceWorker' in navigator){
     <div style="background:var(--e100);border:1.5px solid var(--e300);border-radius:14px;padding:24px 20px">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--e700);margin-bottom:10px">MATTER PRO</div>
       <div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px" id="ct-sic-gate-title">Modulo sicurezza alimentare</div>
-      <div style="font-size:13px;color:var(--ink-muted);line-height:1.6;margin-bottom:18px" id="ct-sic-gate-desc">Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Pro.</div>
+      <div style="font-size:13px;color:var(--ink-muted);line-height:1.6;margin-bottom:18px" id="ct-sic-gate-desc">Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Lab Pro.</div>
       <button onclick="vaiAPro()" style="background:var(--s500);color:#fff;border:none;font-family:var(--sans);font-weight:600;font-size:14px;padding:12px 24px;border-radius:9px;cursor:pointer;width:100%" id="ct-sic-gate-btn">Passa a Pro — €11,99/mese</button>
     </div>
   </div>
@@ -1086,7 +1086,7 @@ if('serviceWorker' in navigator){
 </div>
 <div class="ask-bar" id="ask-bar" style="display:none">
   <div class="ask-inner">
-    <input class="ask-input" id="q" placeholder="chiedi a Matter…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
+    <input class="ask-input" id="q" placeholder="chiedi a Matter Lab…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
     <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
   </div>
   <button class="btn-supporto" onclick="aprireSupporto()">? Chiedi supporto</button>
@@ -1829,7 +1829,7 @@ async function doRegistra(){
 /* ── STRINGHE EN INTERFACCIA (GT5b) ──────────────────── */
 const _strings = {
   it:{
-    payoff:'La scienza del mestiere',
+    payoff:'Science &amp; Craft',
     scopri:'Scopri', lezione:'Lezione', mappa:'Mappa', chiedi:'Chiedi',
     studia:'Studia questo fenomeno', nologin:'Inizia senza registrarti.',
     scegli:'Scegli la tua disciplina', caricamento:'caricamento…',
@@ -1838,9 +1838,9 @@ const _strings = {
     indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai alla Mappa →',
     principio_del_giorno:'Principio del giorno',
     vedi_mappa:'Vedi il principio nella Mappa →',
-    chiedi_placeholder:'chiedi a Matter…',
+    chiedi_placeholder:'chiedi a Matter Lab…',
     chiedi_btn:'Chiedi',
-    chiedi_title:'Chiedi a Matter',
+    chiedi_title:'Chiedi a Matter Lab',
     chiedi_sub:'Un problema reale del tuo lavoro — rispondo con i numeri, non con le opinioni.',
     sup_titolo:'Hai bisogno di aiuto?',
     sup_sub:'Descrivi il problema. Ti risponderemo entro 24 ore via email.',
@@ -1849,7 +1849,7 @@ const _strings = {
     disc_bar:'Bar', disc_bakery:'Panificazione', disc_cucina:'Cucina',
     disc_caffetteria:'Caffè', disc_pasticceria:'Pasticceria',
     disc_gelateria:'Gelateria', disc_vino:'Vino', disc_birra:'Birra',
-    chiedi_al_grafo:'Chiedi a Matter',
+    chiedi_al_grafo:'Chiedi a Matter Lab',
     calcola:'Calcola',
     prova:'Prova:',
     il_percorso:'Il tuo percorso',
@@ -1888,19 +1888,19 @@ const _strings = {
     ct_q10_out:'Tempo previsto',
     // cookie
     ct_cookie_ok:'Accetto', ct_cookie_no:'Solo essenziali',
-    ct_cookie_txt:'Matter usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral).',
+    ct_cookie_txt:'Matter Lab usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral).',
     // batch output
     ct_acqua_pre:'Acqua pre-diluizione',
     ct_totale:'Totale',
     ct_include:'include',
     ct_extra_lbl:'extra',
     // onboarding
-    onb_ovl_title:'Come funziona Matter',
+    onb_ovl_title:'Come funziona Matter Lab',
     onb_s1_title:'Scegli la tua disciplina',
     onb_s1_sub:'Bar, Bakery, Cucina, Caffetteria — ogni disciplina ha il suo percorso di fenomeni fisici.',
     onb_s2_title:'Studia il fenomeno',
     onb_s2_sub:'Ogni lezione ha un numero bersaglio — il parametro fisico che governa quel gesto al banco.',
-    onb_s3_title:'Chiedi a Matter',
+    onb_s3_title:'Chiedi a Matter Lab',
     onb_s3_sub:'Fai una domanda reale — un problema del tuo lavoro. Matter risponde con i numeri, non con le opinioni.',
     onb_ovl_cta:'Inizia',
     onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
@@ -1940,7 +1940,7 @@ const _strings = {
     les_di:'di',
     scopri_errore_titolo:'Riprova tra poco.',
     scopri_errore_eyebrow:'errore caricamento',
-    chat_thinking:'consulto Matter',
+    chat_thinking:'consulto Matter Lab',
     chat_grado:'grado finale (era ',
     aggiungi_ing:'Aggiungi un ingrediente.',
     aggiungi_acido:'Aggiungi',
@@ -1971,7 +1971,7 @@ const _strings = {
     ct_sic_cold_time:'Tempo (min)',
     ct_sic_cold_disc:'Limite sicurezza: max 2 ore cumulative in zona pericolo.',
     ct_sic_gate_title:'Modulo sicurezza alimentare',
-    ct_sic_gate_desc:'Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Pro.',
+    ct_sic_gate_desc:'Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Lab Pro.',
     ct_sic_gate_btn:'Passa a Pro — €11,99/mese',
   },
   en:{
@@ -1984,9 +1984,9 @@ const _strings = {
     indietro:'← Back', avanti:'Next →', vai_mappa:'Go to Map →',
     principio_del_giorno:'Principle of the day',
     vedi_mappa:'See the principle in the Map →',
-    chiedi_placeholder:'ask Matter…',
+    chiedi_placeholder:'ask Matter Lab…',
     chiedi_btn:'Ask',
-    chiedi_title:'Ask Matter',
+    chiedi_title:'Ask Matter Lab',
     chiedi_sub:'A real question from your work — I answer with numbers, not opinions.',
     sup_titolo:'Need help?',
     sup_sub:'Describe the problem. We\'ll reply within 24 hours by email.',
@@ -1995,7 +1995,7 @@ const _strings = {
     disc_bar:'Bar', disc_bakery:'Baking', disc_cucina:'Cooking',
     disc_caffetteria:'Coffee', disc_pasticceria:'Pastry',
     disc_gelateria:'Gelato', disc_vino:'Wine', disc_birra:'Beer',
-    chiedi_al_grafo:'Ask Matter',
+    chiedi_al_grafo:'Ask Matter Lab',
     calcola:'Calculate',
     prova:'Try:',
     il_percorso:'Your path',
@@ -2034,19 +2034,19 @@ const _strings = {
     ct_q10_out:'Estimated time',
     // cookie
     ct_cookie_ok:'Accept', ct_cookie_no:'Essential only',
-    ct_cookie_txt:'Matter uses technical cookies and logs questions to improve the service. No profiling cookies. Responses are AI-generated (Anthropic/Mistral).',
+    ct_cookie_txt:'Matter Lab uses technical cookies and logs questions to improve the service. No profiling cookies. Responses are AI-generated (Anthropic/Mistral).',
     // batch output
     ct_acqua_pre:'Pre-dilution water',
     ct_totale:'Total',
     ct_include:'includes',
     ct_extra_lbl:'extra',
     // onboarding
-    onb_ovl_title:'How Matter works',
+    onb_ovl_title:'How Matter Lab works',
     onb_s1_title:'Choose your discipline',
     onb_s1_sub:'Bar, Bakery, Kitchen, Coffee — each discipline has its own path through physical phenomena.',
     onb_s2_title:'Study the phenomenon',
     onb_s2_sub:'Each lesson has a target number — the physical parameter that governs that gesture at the bench.',
-    onb_s3_title:'Ask Matter',
+    onb_s3_title:'Ask Matter Lab',
     onb_s3_sub:'Ask a real question — a problem from your work. Matter answers with numbers, not opinions.',
     onb_ovl_cta:'Start',
     onb_nudge_sub:'Select your discipline below to begin your first lesson',
@@ -2086,7 +2086,7 @@ const _strings = {
     les_di:'of',
     scopri_errore_titolo:'Try again in a moment.',
     scopri_errore_eyebrow:'loading error',
-    chat_thinking:'asking Matter',
+    chat_thinking:'asking Matter Lab',
     chat_grado:'final degree (was ',
     aggiungi_ing:'Add an ingredient.',
     aggiungi_acido:'Add',
@@ -2658,7 +2658,7 @@ async function testaKT(){
 <!-- ── ONBOARDING OVERLAY ────────────────────────────── -->
 <div id="onb-overlay" class="hidden">
   <div class="onb-sheet">
-    <div class="onb-title-ovl" id="onb-ovl-title">Come funziona Matter</div>
+    <div class="onb-title-ovl" id="onb-ovl-title">Come funziona Matter Lab</div>
     <div class="onb-steps">
       <div class="onb-step">
         <div class="onb-step-num">1</div>
@@ -2677,7 +2677,7 @@ async function testaKT(){
       <div class="onb-step">
         <div class="onb-step-num">3</div>
         <div>
-          <div class="onb-step-title" id="onb-s3-title">Chiedi a Matter</div>
+          <div class="onb-step-title" id="onb-s3-title">Chiedi a Matter Lab</div>
           <div class="onb-step-sub" id="onb-s3-sub">Fai una domanda reale — un problema del tuo lavoro. Matter risponde con i numeri, non con le opinioni.</div>
         </div>
       </div>
@@ -2704,7 +2704,7 @@ async function testaKT(){
 <!-- ── LOGIN / REGISTRAZIONE ─────────────────────────── -->
 <div class="screen" id="screen-auth">
   <div class="auth-screen">
-    <div class="auth-logo">Matter<small>La scienza del mestiere</small></div>
+    <div class="auth-logo">Matter Lab<small>Science &amp; Craft</small></div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Accedi</button>
       <button class="auth-tab" id="auth-tab-reg" onclick="switchAuthTab('reg')">Registrati</button>
@@ -2768,7 +2768,7 @@ async function testaKT(){
 
 <!-- ── COOKIE BANNER GDPR (LE1) ─────────────────────────── -->
 <div id="cookie-banner" style="display:none">
-  <p id="ct-cookie-txt">Matter usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
+  <p id="ct-cookie-txt">Matter Lab usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
   Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral). 
   <a href="/privacy" target="_blank">Privacy policy</a></p>
   <div class="cookie-btns">
