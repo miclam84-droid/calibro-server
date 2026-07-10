@@ -30,4 +30,4 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-osmosi','prod-salamoia','si_manifesta_in','{"target":"2-3% sale","ruolo":"asciuga i patogeni, salva i lattici"}'),
 ('fen-osmosi','prod-confettura','si_manifesta_in','{"target":"65 Brix","ruolo":"lo zucchero blocca i microbi: conserva"}'),
 ('fen-osmosi','prod-panettone','si_manifesta_in','{"target":"LM stiff 40-45%","ruolo":"zucchero stressa il lievito: serve madre forte"}'),
-('prod-panettone','err-panettone-fermo','fallisce_come','{}');
+('prod-panettone','err-panettone-fermo','fallisce_come','{}') ON CONFLICT (from_id, to_id, relation) DO NOTHING;
