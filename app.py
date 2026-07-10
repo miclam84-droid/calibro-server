@@ -419,27 +419,9 @@ def costruisci_prompt(domanda, contesto, lang="it"):
 
 # ---- Mistral via HTTP diretto (nessun SDK) ------------------
 def _mistral_raw(prompt, max_tokens=None):
-    """Chiamata Mistral grezza, riusata sia per la risposta sia per l'estrazione entità."""
-    key = os.environ.get("MISTRAL_API_KEY")
-    if not key:
-        return None
-    import urllib.request
-    payload = {
-        "model": "mistral-small-latest",
-        "messages": [{"role":"user","content":prompt}],
-        "temperature": 0
-    }
-    if max_tokens:
-        payload["max_tokens"] = max_tokens
-    body = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(
-        "https://api.mistral.ai/v1/chat/completions",
-        data=body,
-        headers={"Authorization": f"Bearer {key}", "Content-Type":"application/json"},
-        method="POST")
-    with urllib.request.urlopen(req, timeout=30) as r:
-        data = json.loads(r.read().decode("utf-8"))
-    return data["choices"][0]["message"]["content"]
+    """Wrapper retrocompatibile → AI Gateway compat_mistral_raw."""
+    import ai_gateway as GW
+    return GW.compat_mistral_raw(prompt, max_tokens=max_tokens)
 
 def estrai_entita(domanda):
     """Fa estrarre a Mistral i concetti del dominio, per agganciare meglio i nodi del grafo.
@@ -486,125 +468,32 @@ _TOOLS = [
 ]
 
 def _anthropic_raw(prompt):
-    """Chiamata a Sonnet con tool-calling per motore.py.
-    Quando la domanda ha numeri propri dell'utente, Sonnet chiama il motore
-    invece di stimare — risultato deterministico, zero invenzione."""
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if not key:
-        return None
-    import urllib.request
-    body = json.dumps({
-        "model": "claude-sonnet-4-6",
-        "max_tokens": 800,
-        "temperature": 0,
-        "tools": _TOOLS,
-        "messages": [{"role": "user", "content": prompt}]
-    }).encode("utf-8")
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        data=body,
-        headers={
-            "x-api-key": key,
-            "anthropic-version": "2023-06-01",
-            "Content-Type": "application/json"
-        },
-        method="POST")
-    with urllib.request.urlopen(req, timeout=30) as r:
-        data = json.loads(r.read().decode("utf-8"))
-
-    # gestisci tool_use: se Sonnet chiama il motore, esegui e dai il risultato
-    testo = []
-    tool_results = []
-    for block in data.get("content", []):
-        if block.get("type") == "text":
-            testo.append(block.get("text",""))
-        elif block.get("type") == "tool_use":
-            tool_id = block.get("id","")
-            tool_input = block.get("input", {})
-            risultato = Motore.esegui(tool_input.get("calcolo",""), tool_input.get("parametri",{}))
-            tool_results.append({
-                "type": "tool_result",
-                "tool_use_id": tool_id,
-                "content": json.dumps(risultato, ensure_ascii=False)
-            })
-
-    # se c'era un tool call, fai una seconda chiamata con il risultato
-    if tool_results:
-        messages = [
-            {"role": "user", "content": prompt},
-            {"role": "assistant", "content": data.get("content", [])},
-            {"role": "user", "content": tool_results}
-        ]
-        body2 = json.dumps({
-            "model": "claude-sonnet-4-6",
-            "max_tokens": 800,
-            "temperature": 0,
-            "messages": messages
-        }).encode("utf-8")
-        req2 = urllib.request.Request(
-            "https://api.anthropic.com/v1/messages",
-            data=body2,
-            headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
-            method="POST")
-        with urllib.request.urlopen(req2, timeout=30) as r2:
-            data2 = json.loads(r2.read().decode("utf-8"))
-        return "".join(b.get("text","") for b in data2.get("content",[]) if b.get("type")=="text")
-
-    return "".join(testo) if testo else None
+    """Wrapper retrocompatibile → AI Gateway route_chat."""
+    import ai_gateway as GW
+    return GW.route_chat(prompt, tools=_TOOLS)
 
 
 def _haiku_raw(prompt, max_tokens=600):
-    """Haiku 4.5 per compiti semplici: quiz, traduzioni. Costo ~4x inferiore a Sonnet."""
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if not key:
-        return None
-    import urllib.request
-    body = json.dumps({
-        "model": "claude-haiku-4-5",
-        "max_tokens": max_tokens,
-        "temperature": 0,
-        "messages": [{"role": "user", "content": prompt}]
-    }).encode("utf-8")
-    # timeout 45s + 1 retry — req ricreato a ogni tentativo (urllib consuma il body al primo uso)
-    for attempt in range(2):
-        try:
-            req = urllib.request.Request(
-                "https://api.anthropic.com/v1/messages",
-                data=body,
-                headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
-                method="POST")
-            with urllib.request.urlopen(req, timeout=45) as r:
-                data = json.loads(r.read().decode("utf-8"))
-            return "".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
-        except Exception as _e:
-            print(f"HAIKU attempt {attempt+1} failed: {_e}", flush=True)
-            if attempt == 0:
-                import time as _t; _t.sleep(2)
-    return None
+    """Wrapper retrocompatibile → AI Gateway route_fast."""
+    import ai_gateway as GW
+    return GW.route_fast(prompt, max_tokens=max_tokens)
 
 
 def chiedi_mistral(prompt):
-    """Nome storico mantenuto per non toccare i due punti che la chiamano.
-    Prova Sonnet (qualità migliore sul grafo ricco); se la chiave non c'è
-    o la chiamata fallisce, ripiega su Mistral — il prodotto non si ferma."""
+    """Nome storico mantenuto — ora usa AI Gateway route_chat con fallback automatico."""
+    import ai_gateway as GW
     try:
-        out = _anthropic_raw(prompt)
+        out = GW.route_chat(prompt, tools=_TOOLS)
         if out:
             return out
-    except Exception:
-        pass
-    try:
-        out = _mistral_raw(prompt)
-        return out if out is not None else None
     except Exception as e:
-        return f"[errore nella chiamata: {e}]"
+        print(f"[GW] route_chat fallito in chiedi_mistral: {e}", flush=True)
+    return None
 
 def log_evento(tipo, domanda, fenomeni=None, esito=None):
-    """Log minimo per osservabilità: cosa chiedono gli utenti, cosa trova il grafo,
-    dove fallisce. Una riga per evento, tabella separata in Postgres.
-    Wrapped in try/except: se il log fallisce, la risposta arriva lo stesso."""
+    """Log minimo per osservabilità. Ritorna id del log per feedback (AC5)."""
     if not DATABASE_URL:
-        return  # in locale non logghiamo
+        return None
     try:
         import psycopg2
         conn = psycopg2.connect(DATABASE_URL)
@@ -613,26 +502,21 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
             CREATE TABLE IF NOT EXISTS log_domande (
                 id SERIAL PRIMARY KEY,
                 ts TIMESTAMPTZ DEFAULT NOW(),
-                tipo TEXT,
-                domanda TEXT,
-                fenomeni_trovati TEXT,
-                esito TEXT
+                tipo TEXT, domanda TEXT,
+                fenomeni_trovati TEXT, esito TEXT
             )
         """)
         cur.execute(
-            "INSERT INTO log_domande (tipo, domanda, fenomeni_trovati, esito) VALUES (%s,%s,%s,%s)",
-            (tipo, domanda[:500],
-             ",".join(fenomeni) if fenomeni else None,
-             esito)
+            "INSERT INTO log_domande (tipo, domanda, fenomeni_trovati, esito) VALUES (%s,%s,%s,%s) RETURNING id",
+            (tipo, domanda[:500], ",".join(fenomeni) if fenomeni else None, esito)
         )
-        conn.commit()
-        cur.close(); conn.close()
+        log_id = cur.fetchone()[0]
+        conn.commit(); cur.close(); conn.close()
+        return log_id
     except Exception:
-        pass  # mai bloccare la risposta per un log fallito
+        return None
 
 
-
-# ── ACCOUNT UTENTE (AC2) ──────────────────────────────────────────
 def _init_account_tables():
     """Crea le tabelle account se non esistono. Chiamata al primo avvio."""
     if not DATABASE_URL:
@@ -1719,7 +1603,8 @@ def chiedi():
         if hist_txt:
             prompt = f"Contesto della conversazione in corso:\n{hist_txt}\n\n---\n{prompt}"
     risposta = chiedi_mistral(prompt)
-    log_evento("risposta", domanda,
+    # log_evento ritorna l'id della riga inserita (RETURNING id) — fix log_id bug
+    log_id = log_evento("risposta", domanda,
                fenomeni=[f["name"] for f in contesto["fenomeni"]],
                esito="ok" if risposta else "errore_modello")
     # nodi navigabili: i prodotti/discipline collegati ai fenomeni trovati (per l'esploratore)
@@ -1732,19 +1617,7 @@ def chiedi():
                 connessi.append({"id": c["id"], "nome": c["verso"],
                                  "dominio": c["dominio"],
                                  "target": c["data"].get("target","")})
-    # log_id per feedback utente (AC5)
-    log_id = None
-    if DATABASE_URL:
-        try:
-            import psycopg2
-            conn2 = psycopg2.connect(DATABASE_URL)
-            cur2 = conn2.cursor()
-            cur2.execute("SELECT id FROM log_domande ORDER BY ts DESC LIMIT 1")
-            row = cur2.fetchone()
-            log_id = row[0] if row else None
-            cur2.close(); conn2.close()
-        except Exception:
-            pass
+
     # sanitizza la risposta: rimuove caratteri di controllo che rompono il JSON
     # \x00-\x1f = tutti i control chars eccetto \x09 (tab) \x0a (newline) \x0d (CR)
     # ma dentro un campo JSON anche newline e CR devono essere escaped — jsonify lo fa
