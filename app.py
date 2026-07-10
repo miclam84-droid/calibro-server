@@ -544,18 +544,19 @@ def _haiku_raw(prompt, max_tokens=600):
         "temperature": 0,
         "messages": [{"role": "user", "content": prompt}]
     }).encode("utf-8")
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        data=body,
-        headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
-        method="POST")
-    # timeout 45s + 1 retry per gestire server freddo o latenza Anthropic
+    # timeout 45s + 1 retry — req ricreato a ogni tentativo (urllib consuma il body al primo uso)
     for attempt in range(2):
         try:
+            req = urllib.request.Request(
+                "https://api.anthropic.com/v1/messages",
+                data=body,
+                headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
+                method="POST")
             with urllib.request.urlopen(req, timeout=45) as r:
                 data = json.loads(r.read().decode("utf-8"))
             return "".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
-        except Exception:
+        except Exception as _e:
+            print(f"HAIKU attempt {attempt+1} failed: {_e}", flush=True)
             if attempt == 0:
                 import time as _t; _t.sleep(2)
     return None
@@ -1849,17 +1850,28 @@ La spiegazione deve includere il numero esatto."""
         raw = _haiku_raw(quiz_prompt)
         if raw:
             import re as _re
+            print(f"QUIZ RAW ({nome}): {raw[:300]}", flush=True)
             # rimuove caratteri di controllo che rompono json.loads
             raw = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', raw)
-            m = _re.search(r'\{.*\}', raw, _re.DOTALL)
+            # cerca il blocco JSON — anche se Haiku aggiunge testo prima/dopo
+            m = _re.search(r'\{.*?\}', raw, _re.DOTALL)
+            if not m:
+                # prova a cercare pattern più ampio
+                m = _re.search(r'\{.*\}', raw, _re.DOTALL)
             if m:
                 try:
                     quiz_data = json.loads(m.group())
                 except Exception as _je:
-                    print(f"QUIZ PARSE ERROR ({nome}): {_je} | raw: {raw[:200]}", flush=True)
-                    return None
+                    # prova a pulire apostrofi non escaped
+                    cleaned = m.group().replace("'", '"')
+                    try:
+                        quiz_data = json.loads(cleaned)
+                    except Exception:
+                        print(f"QUIZ PARSE ERROR ({nome}): {_je} | raw: {raw[:300]}", flush=True)
+                        return None
                 opzioni = quiz_data.get("opzioni", [])
-                if not opzioni:
+                if not opzioni or len(opzioni) < 2:
+                    print(f"QUIZ NO OPZIONI ({nome}): {quiz_data}", flush=True)
                     return None
                 return {
                     "domanda": quiz_data.get("domanda", ""),
@@ -1868,7 +1880,7 @@ La spiegazione deve includere il numero esatto."""
                     "spiegazione": quiz_data.get("spiegazione", "")
                 }
             else:
-                print(f"QUIZ NO JSON ({nome}): raw={raw[:200]}", flush=True)
+                print(f"QUIZ NO JSON ({nome}): raw={raw[:300]}", flush=True)
     except Exception as _e:
         print(f"QUIZ EXCEPTION ({nome}): {_e}", flush=True)
         return None
