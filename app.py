@@ -1312,6 +1312,31 @@ def abbina(ingrediente):
                 ORDER BY overlap DESC NULLS LAST LIMIT 8
             """, (f"%{ing_norm.replace('_','%')}%",))
             rows = cur.fetchall()
+        # fallback 2: ricerca semantica via embeddings OpenAI
+        if not rows:
+            try:
+                import flavor_embeddings as FE, psycopg2 as _pg
+                sem = FE.search_by_embedding(ingrediente, top_k=3)
+                for _nid, _nname, _sim in sem:
+                    if _sim > 0.72:
+                        _c2 = _pg.connect(DATABASE_URL)
+                        _cur2 = _c2.cursor()
+                        _cur2.execute("""
+                            SELECT e.to_id, n.name,
+                                   (e.data->>'overlap')::numeric as overlap
+                            FROM edges e
+                            JOIN nodes n ON n.id = e.to_id
+                            WHERE e.relation = 'abbinamento_aromatico'
+                            AND e.from_id = %s
+                            ORDER BY overlap DESC NULLS LAST LIMIT 8
+                        """, (_nid,))
+                        rows = _cur2.fetchall()
+                        _cur2.close(); _c2.close()
+                        if rows:
+                            print(f"[EMBED] '{ingrediente}' → '{_nname}' (sim={_sim:.2f})", flush=True)
+                            break
+            except Exception as _ee:
+                print(f"[EMBED FALLBACK] {_ee}", flush=True)
         cur.close(); conn.close()
         NOMI_IT = {
             "roasted beef":"manzo arrosto","beef":"manzo","chicken":"pollo",
