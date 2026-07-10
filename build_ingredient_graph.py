@@ -609,22 +609,6 @@ def salva_in_grafo(conn, ingrediente, disciplina, profilo):
     nid = node_id(ingrediente)
     nome_it = profilo.get("nomi", {}).get("it", ingrediente)
 
-    # Crea tabella nomi multilingua se non esiste
-    cur.execute("""CREATE TABLE IF NOT EXISTS ingredienti_nomi (
-        node_id TEXT REFERENCES nodes(id) ON DELETE CASCADE,
-        lang    TEXT NOT NULL,
-        nome    TEXT NOT NULL,
-        PRIMARY KEY (node_id, lang)
-    )""")
-
-    # Crea tabella di tracking build
-    cur.execute("""CREATE TABLE IF NOT EXISTS ingredient_build_log (
-        node_id     TEXT PRIMARY KEY,
-        disciplina  TEXT,
-        ts          TIMESTAMPTZ DEFAULT NOW(),
-        tokens_used INTEGER DEFAULT 0
-    )""")
-
     # Inserisci nodo principale
     cur.execute("""
         INSERT INTO nodes (id, type, name, domain, data)
@@ -724,10 +708,32 @@ def status():
         cur.close(); conn.close()
 
 
+def init_tables():
+    """Crea le tabelle necessarie una volta sola."""""
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS ingredienti_nomi (
+        node_id TEXT,
+        lang    TEXT NOT NULL,
+        nome    TEXT NOT NULL,
+        PRIMARY KEY (node_id, lang)
+    )""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS ingredient_build_log (
+        node_id     TEXT PRIMARY KEY,
+        disciplina  TEXT,
+        ts          TIMESTAMPTZ DEFAULT NOW(),
+        tokens_used INTEGER DEFAULT 0
+    )""")
+    conn.commit(); cur.close(); conn.close()
+
+
 def build(discipline=None, test=False):
     """Genera e salva i profili ingredienti."""
     if not DATABASE_URL or not OPENAI_KEY:
         print("DATABASE_URL o OPENAI_API_KEY non configurata"); return
+
+    # Crea tabelle una volta sola prima di tutto
+    init_tables()
 
     conn = psycopg2.connect(DATABASE_URL)
 
@@ -761,19 +767,14 @@ def build(discipline=None, test=False):
         try:
             profilo, usage = gpt_ingrediente(ing, disc)
             tok = usage.get("total_tokens", 0)
-            # Savepoint per isolare ogni ingrediente dal resto
-            _cur_sp = conn.cursor()
-            _cur_sp.execute("SAVEPOINT sp_ing")
-            _cur_sp.close()
+            # Connessione fresca per ogni ingrediente — zero transaction pollution
+            conn_ing = psycopg2.connect(DATABASE_URL)
             try:
-                nid = salva_in_grafo(conn, ing, disc, profilo)
-                _cur_r = conn.cursor()
-                _cur_r.execute("RELEASE SAVEPOINT sp_ing")
-                _cur_r.close()
+                nid = salva_in_grafo(conn_ing, ing, disc, profilo)
+                conn_ing.close()
             except Exception as db_e:
-                _cur_rb = conn.cursor()
-                _cur_rb.execute("ROLLBACK TO SAVEPOINT sp_ing")
-                _cur_rb.close()
+                try: conn_ing.rollback(); conn_ing.close()
+                except: pass
                 raise db_e
             token_tot += tok
             ok += 1
