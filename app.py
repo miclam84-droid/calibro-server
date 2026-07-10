@@ -1613,10 +1613,55 @@ def chiedi():
         return jsonify({"errore":"Troppe richieste. Aspetta un minuto e riprova."}), 429
     domanda = (request.json or {}).get("domanda","").strip()
     lang = (request.json or {}).get("lang", "it")
-    # mini-history: ultimi scambi passati dal frontend (zero DB, solo memoria sessione)
     history = (request.json or {}).get("history", [])
+    token_sess = (request.json or {}).get("token","") or request.headers.get("X-Token","")
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
+
+    # ── TRIAL / PAYWALL ─────────────────────────────────────────────────
+    trial_info = {}
+    if DATABASE_URL:
+        try:
+            import psycopg2, datetime as _dt
+            conn_t = psycopg2.connect(DATABASE_URL)
+            cur_t = conn_t.cursor()
+            cur_t.execute("""CREATE TABLE IF NOT EXISTS trial_chat (
+                id SERIAL PRIMARY KEY, ip TEXT, user_id INTEGER,
+                ts TIMESTAMPTZ DEFAULT NOW())""")
+            user_id_t = _utente_da_token(token_sess) if token_sess else None
+            piano_t = "free"
+            if user_id_t:
+                cur_t.execute("SELECT piano FROM utenti WHERE id=%s", (user_id_t,))
+                rp = cur_t.fetchone()
+                piano_t = rp[0] if rp else "free"
+            if piano_t != "pro":
+                if user_id_t:
+                    cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE user_id=%s", (user_id_t,))
+                else:
+                    cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE ip=%s AND ts > NOW() - INTERVAL '7 days'", (ip,))
+                rt = cur_t.fetchone()
+                n_chat = int(rt[0]) if rt else 0
+                prima = rt[1] if rt else None
+                giorni = (_dt.datetime.now(_dt.timezone.utc) - prima).days if prima else 0
+                if n_chat >= 5 or giorni >= 7:
+                    cur_t.close(); conn_t.close()
+                    return jsonify({"errore":"trial_esaurito","n_chat":n_chat,
+                        "messaggio":"Hai usato le 5 chat di prova. Passa a Pro per continuare.",
+                        "trial_esaurito":True}), 402
+                if user_id_t:
+                    cur_t.execute("INSERT INTO trial_chat (user_id,ip) VALUES (%s,%s)", (user_id_t, ip))
+                else:
+                    cur_t.execute("INSERT INTO trial_chat (ip) VALUES (%s)", (ip,))
+                conn_t.commit()
+                n_usate = n_chat + 1
+                trial_info = {"trial_attivo":True,"chat_usate":n_usate,
+                    "chat_rimaste":max(0,5-n_usate),
+                    "notifica":n_usate==3,"ultimo":n_usate>=5}
+            cur_t.close(); conn_t.close()
+        except Exception as _te:
+            print(f"[TRIAL] {_te}", flush=True)
+    # ── FINE TRIAL ──────────────────────────────────────────────────────
+
     db = carica_grafo()
     # estrazione entità: prima provo i termini che estrae Mistral (capisce il dominio),
     # poi, se non agganciano nulla, ripiego sulle parole della domanda (rete di sicurezza).
@@ -1685,7 +1730,8 @@ def chiedi():
         "prompt_costruito": prompt,
         "risposta": risposta,
         "connessi": connessi,
-        "log_id": log_id
+        "log_id": log_id,
+        "trial": trial_info
     })
 
 @app.route("/nodo", methods=["POST"])

@@ -1451,17 +1451,35 @@ function chiediTesto(q){
   aggiungiThinking();setBusy(true);
   // passa gli ultimi scambi per dare continuità alla conversazione
   const history=_chatHistory.slice(-_HISTORY_MAX);
+  const _tok=localStorage.getItem('matter_token')||'';
   fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({domanda:q, history})})
-    .then(r=>r.json()).then(j=>{
+    body:JSON.stringify({domanda:q, history, token:_tok})})
+    .then(r=>{
+      if(r.status===402) return r.json().then(j=>{throw {trial:true,...j};});
+      return r.json();
+    }).then(j=>{
       _incDomande();
-      // aggiorna history con questo scambio
       if(j.risposta){
         _chatHistory.push({q, r:j.risposta.slice(0,300)});
         if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2);
       }
+      // Gestione trial
+      const tr=j.trial||{};
+      if(tr.notifica){
+        mostraNotificaTrial(tr.chat_rimaste);
+      }
+      if(tr.ultimo){
+        mostraPopupPro('ultima_chat');
+      }
       renderRisp(q,j);
-    }).catch(()=>renderErr()).finally(()=>setBusy(false));
+    }).catch(e=>{
+      if(e&&e.trial){
+        mostraPopupPro('esaurito');
+        const t=document.getElementById('thinking');if(t)t.remove();
+      } else {
+        renderErr();
+      }
+    }).finally(()=>setBusy(false));
 }
 function apriNodo(id,nome){
   if(busy)return;
@@ -2911,6 +2929,32 @@ async function doResetConferma(){
     }
   }catch(e){msg.textContent='Errore di rete.';}
 }
+
+// ── TRIAL FUNCTIONS ─────────────────────────────────────────
+function mostraNotificaTrial(rimaste){
+  const old=document.querySelector('.trial-banner');if(old)old.remove();
+  const b=document.createElement('div');b.className='trial-banner';
+  b.textContent=`Hai ancora ${rimaste} chat di prova. Passa a Pro per continuare.`;
+  document.body.appendChild(b);
+  setTimeout(()=>{if(b.parentNode)b.remove();},5000);
+}
+function mostraPopupPro(motivo){
+  const old=document.querySelector('.trial-popup-overlay');if(old)old.remove();
+  const overlay=document.createElement('div');overlay.className='trial-popup-overlay';
+  const titolo=motivo==='esaurito'?'Hai usato le 5 chat di prova':'Ultima chat di prova';
+  const testo=motivo==='esaurito'
+    ?'Per continuare a esplorare la fisica del mestiere, passa al piano Pro.'
+    :'Questa è la tua ultima chat gratuita. Passa a Pro per continuare senza limiti.';
+  overlay.innerHTML=`<div class="trial-popup">
+    <h3>${titolo}</h3>
+    <p>${testo}</p>
+    <a href="/app" class="btn-pro" onclick="overlay.remove();switchTab('auth')">Passa a Pro — €11,99/mese</a>
+    <button class="btn-skip" onclick="this.closest('.trial-popup-overlay').remove()">Continua in free</button>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+}
+
 // rileva ?reset=TOKEN nell'URL e mostra la schermata nuova password
 (function(){
   const tok=new URLSearchParams(location.search).get('reset');
