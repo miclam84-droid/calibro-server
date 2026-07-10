@@ -1344,8 +1344,13 @@ def abbina(ingrediente):
         }
         abbinamenti = []
         for r in rows:
-            nome_en = r[1].replace("_"," ").lower()
-            nome_pulito = NOMI_IT.get(nome_en, r[1].replace("_"," ").title())
+            nome_en = r[1].replace("_"," ").lower() if r[1] else ""
+            # fallback: se manca la traduzione IT usa il nome Ahn in Title Case
+            nome_fallback = r[1].replace("_"," ").title() if r[1] else "sconosciuto"
+            nome_pulito = NOMI_IT.get(nome_en, nome_fallback)
+            # salta i nodi senza nome
+            if not nome_pulito or nome_pulito == "sconosciuto":
+                continue
             overlap = float(r[2]) if r[2] else 0
             abbinamenti.append({
                 "ingrediente": nome_pulito,
@@ -1507,10 +1512,33 @@ def contrasto(ingrediente):
                 rid, rname, rdata = r
                 if rid not in visti:
                     visti.add(rid)
+                    import json as _j2
+                    rd = rdata if isinstance(rdata, dict) else _j2.loads(rdata or "{}")
+                    # spiegazione personalizzata per coppia
+                    if meccanismo == "taglia_grasso":
+                        perche = (f"{node_name} (pH {ph:.1f}) taglia il grasso di {rname}: "
+                                  f"l'acidità emulsiona e pulisce la bocca dopo il grasso")
+                    elif meccanismo == "richiede_acido":
+                        perche = (f"Il grasso di {node_name} ammorbidisce e porta: "
+                                  f"{rname} (pH {float(rd.get('ph_min',3)):.1f}) bilancia con acidità")
+                    elif meccanismo == "smorzato_da_dolce":
+                        perche = (f"L'amaro di {node_name} viene smorzato dai {rd.get('zuccheri_pct','?')}% "
+                                  f"di zuccheri in {rname} — il dolce riduce la percezione amara")
+                    elif meccanismo == "smorzato_da_sale":
+                        perche = (f"Il sodio in {rname} ({rd.get('sodio_mg100g','?')}mg/100g) "
+                                  f"sopprime l'amaro di {node_name} — piccole quantità bastano")
+                    elif meccanismo == "bilanciato_da_acido":
+                        perche = (f"Il dolce di {node_name} satura senza contrasto: "
+                                  f"{rname} (pH {float(rd.get('ph_min',3)):.1f}) taglia e rinfresca")
+                    elif meccanismo == "amplificato_da_acido":
+                        perche = (f"Il salato di {node_name} si esalta con l'acido di {rname}: "
+                                  f"insieme amplificano entrambi i sapori")
+                    else:
+                        perche = spiegazione
                     contrasti.append({
                         "ingrediente": rname,
                         "meccanismo": meccanismo,
-                        "perche": spiegazione
+                        "perche": perche
                     })
 
         cur.close(); conn.close()
@@ -1639,9 +1667,14 @@ def chiedi():
         except Exception:
             pass
     # sanitizza la risposta: rimuove caratteri di controllo che rompono il JSON
+    # \x00-\x1f = tutti i control chars eccetto \x09 (tab) \x0a (newline) \x0d (CR)
+    # ma dentro un campo JSON anche newline e CR devono essere escaped — jsonify lo fa
+    # il problema reale è i caratteri \x00-\x08 \x0b \x0c \x0e-\x1f che non sono mai validi
     import re as _re
     if risposta:
-        risposta = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', risposta)
+        risposta = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', risposta)
+        # normalizza newline multipli in uno solo
+        risposta = _re.sub(r'\n{3,}', '\n\n', risposta).strip()
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,
@@ -1754,20 +1787,39 @@ def disciplina(nome):
             (p["id"],)
         ):
             fen_ids.add(e["from_id"])
+    # Priorità per disciplina: fenomeni fondamentali prima, poi gli altri
+    PRIORITA = {
+        "bar":          ["fen-acidita","fen-diluizione","fen-concentrazione","fen-carbonatazione","fen-estrazione","fen-emulsione","fen-crioscopia","fen-osmosi","fen-ossidazione"],
+        "caffetteria":  ["fen-estrazione","fen-estrazione-caffe","fen-concentrazione","fen-pressione","fen-trasferimento-calore","fen-acidita","fen-attivita-enzimatica"],
+        "panificazione":["fen-acidita","fen-fermentazione","fen-fermentazione-lattica","fen-idrolisi","fen-gelatinizzazione","fen-retrogradazione","fen-concentrazione","fen-osmosi","fen-autolisi"],
+        "cucina":       ["fen-maillard","fen-denaturazione","fen-coagulazione","fen-emulsione","fen-acidita","fen-osmosi","fen-trasferimento-calore","fen-punto-fumo"],
+        "pasticceria":  ["fen-emulsione","fen-cristallizzazione","fen-caramellizzazione","fen-maillard","fen-gelatinizzazione","fen-denaturazione","fen-sineresi"],
+        "gelateria":    ["fen-crioscopia","fen-cristallizzazione-ghiaccio","fen-overrun","fen-concentrazione","fen-emulsione"],
+        "vino":         ["fen-acidita","fen-malolattica","fen-ossidazione","fen-fermentazione","fen-tannini","fen-chiarificazione"],
+        "birra":        ["fen-fermentazione","fen-carbonatazione","fen-amilolisi","fen-acidita","fen-ossidazione","fen-attivita-enzimatica"],
+    }
+    priorita_disc = PRIORITA.get(nome.lower(), [])
+
     if not fen_ids:
-        # fallback: tutti i fenomeni
         tutti = db.execute(
             "SELECT id, name, data FROM nodes WHERE type='Fenomeno' ORDER BY name"
         ).fetchall()
         fenomeni = [{"id": f["id"], "nome": f["name"],
                      "target": _numero_bersaglio(_dati(f["data"]))} for f in tutti]
     else:
-        fenomeni = []
-        for fid in sorted(fen_ids):
+        fenomeni_raw = []
+        for fid in fen_ids:
             f = db.execute("SELECT id, name, data FROM nodes WHERE id=?", (fid,)).fetchone()
             if f:
-                fenomeni.append({"id": f["id"], "nome": f["name"],
-                                  "target": _numero_bersaglio(_dati(f["data"]))})
+                fenomeni_raw.append({"id": f["id"], "nome": f["name"],
+                                     "target": _numero_bersaglio(_dati(f["data"]))})
+        # ordina: prima i prioritari (nell'ordine della lista), poi gli altri alfabetici
+        def _sort_key(f):
+            try:
+                return (0, priorita_disc.index(f["id"]))
+            except ValueError:
+                return (1, f["nome"])
+        fenomeni = sorted(fenomeni_raw, key=_sort_key)
     return jsonify({"disciplina": nome, "fenomeni": fenomeni, "totale": len(fenomeni)})
 
 
