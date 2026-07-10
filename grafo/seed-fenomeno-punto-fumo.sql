@@ -4,7 +4,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "target":"Burro: 130-150°C · EVO raffinato: 160-190°C · olio di arachide: 230°C · burro chiarificato: 250°C · strutto: 180°C",
    "strumento":"Termometro a sonda o infrarossi",
    "principio":"Il punto di fumo è la temperatura alla quale un grasso inizia a decomporsi visibilmente (fuma) producendo acroleina e altri composti tossici. Dipende dal contenuto di acidi grassi liberi: più alto è (olio vergine), più basso è il punto di fumo. Il burro fuma presto perché contiene acqua e proteine del latte che bruciano prima del grasso.",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-punto-fumo', 'prod-carne-rosolata', 'si_manifesta_in',
  '{"target":"Padella a 200-220°C — usare olio con punto fumo alto (arachide, avocado)","causa":"La rosolatura richiede temperature superiori al punto di fumo di burro e EVO — servono grassi stabili ad alta temperatura"}'),

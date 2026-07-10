@@ -4,7 +4,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "target":"T di innesco: 140°C · zona ottimale crosta pane: 150-165°C · carne: 140-160°C · caffè tostato: 195-205°C · pH: +1 unità pH raddoppia la velocità della reazione",
    "strumento":"Termometro IR · sonda · colorimetro",
    "principio":"La reazione di Maillard (già in grafo) descrive il meccanismo. Questo nodo descrive il CONTROLLO: come si modula la velocità e il risultato. Tre leve: (1) Temperatura — più alta = più veloce ma rischio bruciatura. (2) pH — ambiente alcalino accelera Maillard (brezel con idrossido di sodio, biscotto con bicarbonato). (3) Umidità — superficie asciutta è prerequisito per T>100°C. Queste leve spiegano perché stessa ricetta dà colori diversi.",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-maillard-controllo', 'prod-impasto', 'si_manifesta_in',
  '{"target":"pH >12 in soluzione NaOH 3-4% · crosta bruno scura intensa · T forno 220-230°C","causa":"La lisciva (idrossido di sodio) alza il pH della superficie al di sopra di 12: Maillard avviene molto più rapidamente dando la caratteristica crosta scura e il sapore distintivo"}'),

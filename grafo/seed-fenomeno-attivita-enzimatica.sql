@@ -4,7 +4,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "target":"Beta-amilasi: attiva 62-65°C (birra secca) · Alfa-amilasi: attiva 68-72°C (birra corposa) · Proteasi: 45-55°C · Inattivazione enzimi: >75-80°C",
    "strumento":"Termometro (la T è lo strumento di controllo)",
    "principio":"Gli enzimi sono catalizzatori biologici che accelerano reazioni chimiche a T specifiche. Ogni enzima ha una finestra di temperatura ottimale oltre la quale viene inattivato irreversibilmente (denaturato). In F&B: il mash birra usa enzimi per convertire amido in zuccheri, il lievito madre usa proteasi per sviluppare glutine, il caffè verde contiene enzimi che si inattivano con la torrefazione.",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-attivita-enzimatica', 'prod-birra-lager', 'si_manifesta_in',
  '{"target":"Mash a 62-65°C: birra secca (beta-amilasi) · 68-72°C: birra corposa (alfa-amilasi)","causa":"La temperatura del mash seleziona quale enzima è più attivo: beta-amilasi produce zuccheri fermentabili (secco), alfa-amilasi produce destrine non fermentabili (corpo)"}'),
@@ -15,4 +16,5 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-attivita-enzimatica', 'prod-carne-stagionata', 'si_manifesta_in',
  '{"target":"Frollatura a 2-4°C: 7-28 giorni · enzimi muscolari (catepsine) rompono le proteine migliorando tenerezza","causa":"Le catepsine (enzimi proteolitici) nella carne continuano ad agire dopo la macellazione a T controllata — la frollatura è attività enzimatica controllata"}'),
 ('fen-attivita-enzimatica', 'fen-fermentazione', 'influenza',
- '{"nota":"La fermentazione è guidata dagli enzimi dei microrganismi — i lieviti producono zimasi (enzima) che converte gli zuccheri in alcol e CO2"}');
+ '{"nota":"La fermentazione è guidata dagli enzimi dei microrganismi — i lieviti producono zimasi (enzima) che converte gli zuccheri in alcol e CO2"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;

@@ -4,7 +4,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "target":"Botaniche a freddo: 4-8°C · 12-48h · A caldo: 60-70°C · 1-4h · Ratio solido/liquido: 1:5 – 1:20",
    "strumento":"Termometro · bilancia · timer",
    "principio":"L infusione trasferisce composti aromatici solubili da un solido a un liquido solvente. La velocità di trasferimento dipende dalla temperatura (più alta = più veloce ma rischio di estrarre composti indesiderati), dalla dimensione delle particelle (più piccole = più superficie = più rapida) e dalla polarità del solvente (alcol estrae aromi diversi dall acqua).",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-infusione', 'prod-bitter', 'si_manifesta_in',
  '{"target":"Botaniche in alcol 65-70%: 2-4 settimane a T ambiente al riparo dalla luce","causa":"L alcol ad alta concentrazione estrae i composti aromatici liposolubili che l acqua non riesce a estrarre — ideale per radici, cortecce, botaniche"}'),

@@ -4,7 +4,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "target":"Impasto: 20-60 min a 18-22C prima dell aggiunta di sale e lievito · Sur lies vino: 6-36 mesi",
    "strumento":"Timer · test windowpane (impasto) · analisi sensoriale (vino)",
    "principio":"Autolisi significa auto-digestione. Nell impasto: le proteine e gli enzimi della farina iniziano a idrolizzarsi spontaneamente non appena vengono idratati, sviluppando il glutine senza lavorazione meccanica. Nel vino: i lieviti morti si lisano rilasciando aminoacidi e polisaccaridi che arricchiscono la struttura.",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-autolisi', 'prod-impasto', 'si_manifesta_in',

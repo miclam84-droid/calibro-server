@@ -45,21 +45,50 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 -- ARCHI — tutto parte dal Fenomeno
 -- ============================================================
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
--- misurato_da
-('fen-acidita','cal-ph','misurato_da','{}'),
-('fen-acidita','cal-titolabile','misurato_da','{}'),
-('fen-acidita','cal-brix','misurato_da','{"nota":"l''acidità si bilancia contro la dolcezza"}'),
--- realizzato_da
-('fen-acidita','proc-ferm-lattica','realizzato_da','{}'),
-('fen-acidita','proc-aggiunta','realizzato_da','{}'),
--- si_manifesta_in  ← il cross-dominio vive qui
-('fen-acidita','prod-sour','si_manifesta_in','{"target":"1,0-1,5% titolabile","ruolo":"bilancia il dolce"}'),
-('fen-acidita','prod-pane-madre','si_manifesta_in','{"target":"pH 3,7-3,9","ruolo":"orologio della maturità"}'),
-('fen-acidita','prod-confettura','si_manifesta_in','{"target":"pH 3,0-3,3","ruolo":"attiva il gel di pectina"}'),
--- controllato_con
-('fen-acidita','tec-pareggiatore','controllato_con','{}'),
-('fen-acidita','tec-lettura-ph','controllato_con','{}'),
--- fallisce_come  (il prodotto fallisce quando l'acidità è fuori finestra)
-('prod-sour','err-sour-piatto','fallisce_come','{}'),
-('prod-pane-madre','err-madre-sovra','fallisce_come','{}'),
-('prod-confettura','err-conf-liquida','fallisce_come','{}');
+('fen-acidita','cal-ph','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','cal-titolabile','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','cal-brix','misurato_da','{"nota":"l''acidità si bilancia contro la dolcezza"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','proc-ferm-lattica','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','proc-aggiunta','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','prod-sour','si_manifesta_in','{"target":"1,0-1,5% titolabile","ruolo":"bilancia il dolce"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','prod-pane-madre','si_manifesta_in','{"target":"pH 3,7-3,9","ruolo":"orologio della maturità"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','prod-confettura','si_manifesta_in','{"target":"pH 3,0-3,3","ruolo":"attiva il gel di pectina"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','tec-pareggiatore','controllato_con','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-acidita','tec-lettura-ph','controllato_con','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('prod-sour','err-sour-piatto','fallisce_come','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('prod-pane-madre','err-madre-sovra','fallisce_come','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+

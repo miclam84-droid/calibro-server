@@ -42,21 +42,54 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 -- ARCHI — tutto parte da Concentrazione
 -- ============================================================
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
--- misurato_da (incluso cal-brix che già esiste)
-('fen-concentrazione','cal-bakerpct','misurato_da','{}'),
-('fen-concentrazione','cal-salepct','misurato_da','{}'),
-('fen-concentrazione','cal-tds','misurato_da','{}'),
-('fen-concentrazione','cal-brix','misurato_da','{"nota":"il Brix è concentrazione di zucchero"}'),
--- realizzato_da
-('fen-concentrazione','proc-dissoluzione','realizzato_da','{}'),
-('fen-concentrazione','proc-evaporazione','realizzato_da','{}'),
--- si_manifesta_in  ← quattro stanze
-('fen-concentrazione','prod-sciroppo','si_manifesta_in','{"target":"50 Brix (1:1) o 65 (2:1)","ruolo":"dolcezza dosabile"}'),
-('fen-concentrazione','prod-caffe','si_manifesta_in','{"target":"EY 18-22% / TDS 1,15-1,55%","ruolo":"forza ed estrazione"}'),
-('fen-concentrazione','prod-salamoia','si_manifesta_in','{"target":"2-3% sale","ruolo":"selezione dei microbi"}'),
-('fen-concentrazione','prod-impasto','si_manifesta_in','{"target":"60-85% idratazione","ruolo":"struttura della mollica"}'),
-('fen-concentrazione','prod-confettura','si_manifesta_in','{"target":"65 Brix","ruolo":"set del gel"}'),
--- fallisce_come
-('prod-impasto','err-impasto-molle','fallisce_come','{}'),
-('prod-caffe','err-caffe-acido','fallisce_come','{}'),
-('prod-salamoia','err-ferm-molle','fallisce_come','{}');
+('fen-concentrazione','cal-bakerpct','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','cal-salepct','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','cal-tds','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','cal-brix','misurato_da','{"nota":"il Brix è concentrazione di zucchero"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','proc-dissoluzione','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','proc-evaporazione','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','prod-sciroppo','si_manifesta_in','{"target":"50 Brix (1:1) o 65 (2:1)","ruolo":"dolcezza dosabile"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','prod-caffe','si_manifesta_in','{"target":"EY 18-22% / TDS 1,15-1,55%","ruolo":"forza ed estrazione"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','prod-salamoia','si_manifesta_in','{"target":"2-3% sale","ruolo":"selezione dei microbi"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','prod-impasto','si_manifesta_in','{"target":"60-85% idratazione","ruolo":"struttura della mollica"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-concentrazione','prod-confettura','si_manifesta_in','{"target":"65 Brix","ruolo":"set del gel"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('prod-impasto','err-impasto-molle','fallisce_come','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('prod-caffe','err-caffe-acido','fallisce_come','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+

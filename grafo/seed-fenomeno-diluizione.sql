@@ -9,7 +9,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "strumento":"Bilancia (peso prima/dopo) · jigger graduato",
    "principio":"Shakerare o mescolare con ghiaccio non raffredda soltanto: aggiunge acqua al drink. Il ghiaccio si scioglie assorbendo calore (334 J/g di calore latente) e l acqua prodotta diluisce il cocktail. I due effetti sono inseparabili — non si può raffreddare senza diluire.",
    "formula":"% diluizione = (peso_finale - peso_iniziale) / peso_finale × 100 · ABV_finale = ABV_iniziale × (1 - %diluizione/100)",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-diluizione', 'prod-sour', 'si_manifesta_in',
@@ -21,4 +22,5 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-diluizione', 'fen-crioscopia', 'influenza',
  '{"nota":"La diluizione abbassa la concentrazione di alcol che a sua volta modifica il punto di congelamento del drink — i due fenomeni si intrecciano"}'),
 ('fen-diluizione', 'fen-concentrazione', 'influenza',
- '{"nota":"Diluizione e concentrazione sono inversi: ogni aggiunta di acqua abbassa la concentrazione di tutti i soluti"}');
+ '{"nota":"Diluizione e concentrazione sono inversi: ogni aggiunta di acqua abbassa la concentrazione di tutti i soluti"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;

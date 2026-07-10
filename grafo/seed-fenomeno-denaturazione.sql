@@ -4,7 +4,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "target":"Miosina (carne): 50°C · albumina uovo: 60-65°C · collagene→gelatina: >55°C prolungato · actina: 65°C (carne secca)",
    "strumento":"Termometro a sonda",
    "principio":"Le proteine sono catene ripiegaste in strutture tridimensionali tenute da legami deboli. Il calore rompe questi legami e la proteina perde la sua forma originale (denatura). È irreversibile. Temperature diverse denaturano proteine diverse — da qui il controllo preciso della cottura.",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-denaturazione', 'prod-carne-rosolata', 'si_manifesta_in',
  '{"target":"Miosina 50°C (tenerezza), actina 65°C (durezza)","causa":"La cottura a 55-57°C denatura la miosina (tenerezza) senza raggiungere l actina (durezza) — principio del sous-vide medium-rare"}'),

@@ -42,22 +42,58 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 -- ARCHI
 -- ============================================================
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
--- misurato_da
-('fen-calore','cal-q10','misurato_da','{}'),
-('fen-calore','cal-calorelatente','misurato_da','{}'),
-('fen-calore','cal-pastorizz','misurato_da','{}'),
--- realizzato_da
-('fen-calore','proc-fusione','realizzato_da','{}'),
-('fen-calore','proc-vaporizz','realizzato_da','{}'),
-('fen-calore','proc-denaturazione','realizzato_da','{}'),
-('fen-calore','proc-ferm-lattica','realizzato_da','{"nota":"la temperatura governa la velocità della fermentazione (Q10)"}'),
--- si_manifesta_in
-('fen-calore','prod-drink-freddo','si_manifesta_in','{"target":"22-27% diluizione","ruolo":"raffredda e diluisce insieme"}'),
-('fen-calore','prod-sousvide','si_manifesta_in','{"target":"55-65°C","ruolo":"denatura senza seccare"}'),
-('fen-calore','prod-sfoglia','si_manifesta_in','{"target":"burro 13-18°C","ruolo":"vapore che gonfia gli strati"}'),
-('fen-calore','prod-pane-madre','si_manifesta_in','{"target":"Q10: raddoppia ogni 8°C","ruolo":"governa il tempo di lievitazione"}'),
-('fen-calore','prod-impasto','si_manifesta_in','{"target":"DDT 24-26°C","ruolo":"temperatura impasto = velocità"}'),
--- fallisce_come
-('prod-drink-freddo','err-drink-annacquato','fallisce_come','{}'),
-('prod-sousvide','err-carne-secca','fallisce_come','{}'),
-('prod-sfoglia','err-sfoglia-piatta','fallisce_come','{}');
+('fen-calore','cal-q10','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','cal-calorelatente','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','cal-pastorizz','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','proc-fusione','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','proc-vaporizz','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','proc-denaturazione','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','proc-ferm-lattica','realizzato_da','{"nota":"la temperatura governa la velocità della fermentazione (Q10)"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','prod-drink-freddo','si_manifesta_in','{"target":"22-27% diluizione","ruolo":"raffredda e diluisce insieme"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','prod-sousvide','si_manifesta_in','{"target":"55-65°C","ruolo":"denatura senza seccare"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','prod-sfoglia','si_manifesta_in','{"target":"burro 13-18°C","ruolo":"vapore che gonfia gli strati"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','prod-pane-madre','si_manifesta_in','{"target":"Q10: raddoppia ogni 8°C","ruolo":"governa il tempo di lievitazione"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-calore','prod-impasto','si_manifesta_in','{"target":"DDT 24-26°C","ruolo":"temperatura impasto = velocità"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('prod-drink-freddo','err-drink-annacquato','fallisce_come','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('prod-sousvide','err-carne-secca','fallisce_come','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+

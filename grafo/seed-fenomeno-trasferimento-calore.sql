@@ -9,7 +9,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "strumento":"Termometro a sonda · termocoppia · sonda a infrarossi",
    "principio":"Il calore si trasferisce per conduzione (solido-solido), convezione (fluidi) e irraggiamento. In cucina: la padella conduce, l acqua conveziona, il forno irradia. La velocità di trasferimento dipende dalla differenza di temperatura (ΔT), dalla superficie di contatto e dalla conducibilità termica del materiale. Il ghiaccio assorbe 334 J/g per sciogliersi — 80 volte più del semplice raffreddamento a 0°C.",
    "formula":"Q = m × c × ΔT (calore sensibile) · Q = m × L (calore latente di fusione)",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-trasferimento-calore', 'prod-sour', 'si_manifesta_in',
@@ -23,4 +24,5 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-trasferimento-calore', 'fen-maillard', 'influenza',
  '{"nota":"La velocità di trasferimento di calore determina se si raggiunge la T di Maillard (140°C+) in superficie — metodi diversi (boiling, arrosto, friggere) producono risultati opposti"}'),
 ('fen-trasferimento-calore', 'fen-caramellizzazione', 'influenza',
- '{"nota":"La caramellizzazione richiede T≥160°C — il trasferimento di calore deve essere abbastanza rapido da raggiungere questa soglia in superficie senza bruciare il centro"}');
+ '{"nota":"La caramellizzazione richiede T≥160°C — il trasferimento di calore deve essere abbastanza rapido da raggiungere questa soglia in superficie senza bruciare il centro"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;

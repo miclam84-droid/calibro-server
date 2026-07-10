@@ -9,7 +9,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "strumento":"Manometro · pressostato macchina espresso · manometro keg",
    "principio":"La pressione è forza per unità di superficie (Pa, bar, atm). In F&B: la pressione aumenta la solubilità dei gas (legge di Henry — già in grafo come principio), modifica il punto di ebollizione dell acqua e permette l estrazione espresso che a pressione ambiente non sarebbe possibile.",
    "formula":"Legge di Henry: C = kH × P · Punto ebollizione: aumenta con P (pentola a pressione)",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-pressione', 'prod-espresso', 'si_manifesta_in',
@@ -21,4 +22,5 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-pressione', 'prod-impasto', 'si_manifesta_in',
  '{"target":"Vapore nel forno: pressione parziale H2O alta nei primi 15 min","causa":"Il vapore nei primi minuti di cottura mantiene la crosta elastica permettendo la massima espansione prima che si solidifichi"}'),
 ('fen-pressione', 'fen-carbonatazione', 'influenza',
- '{"nota":"La pressione è la variabile principale della carbonatazione: la CO2 si scioglie proporzionalmente alla pressione applicata (legge di Henry)"}');
+ '{"nota":"La pressione è la variabile principale della carbonatazione: la CO2 si scioglie proporzionalmente alla pressione applicata (legge di Henry)"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;

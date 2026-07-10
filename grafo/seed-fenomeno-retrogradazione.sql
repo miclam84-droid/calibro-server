@@ -4,7 +4,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "target":"Massima velocità a 4-7°C (frigo) · quasi nulla a -18°C o >60°C · pane raffermo in 1-3 giorni a T ambiente",
    "strumento":"Termometro · texture test (tattile o durometro)",
    "principio":"Dopo la gelatinizzazione (cottura), le catene di amido si riarrangiano lentamente formando una struttura cristallina più rigida. È il processo che fa raffermire il pane. La retrogradazione è accelerata dal freddo (il frigo rende il pane raffermo più velocemente del bancone). Si rallenta al di sotto di -18°C (congelamento) o al di sopra di 60°C (riscaldamento).",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-retrogradazione', 'prod-impasto', 'si_manifesta_in',
  '{"target":"Raffermimento in 1-3 giorni a T ambiente · accelerato in frigo (4-7°C = zona critica)","causa":"L amylopectina nel pane retrograda lentamente a T ambiente, rapidamente in frigo — conservare a T ambiente o congelare, mai in frigo"}'),

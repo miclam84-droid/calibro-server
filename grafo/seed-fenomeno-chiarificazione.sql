@@ -4,7 +4,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "target":"NTU target <5 (brillante) · <1 (cristallino) · torbido >50 NTU",
    "strumento":"Torbidimetro (NTU) · visivo strutturato",
    "principio":"La torbidità è causata da particelle in sospensione (proteine, pectine, tannini, cellule) che diffondono la luce. La chiarificazione rimuove queste particelle per sedimentazione, filtrazione, flocculazione (aggiunta di sostanze che aggregano le particelle in fiocchi più pesanti che precipitano) o centrifugazione.",
-   "settore":"f&b"}');
+   "settore":"f&b"}')
+ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-chiarificazione', 'prod-vino-bianco', 'si_manifesta_in',
  '{"target":"NTU <5 dopo chiarificazione · bentonite 50-150g/hL per proteine","causa":"Le proteine instabili nel vino bianco precipitano con il calore (casse proteica) — la bentonite le lega prima che il vino sia in bottiglia"}'),
@@ -13,4 +14,5 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-chiarificazione', 'prod-salsa-addensata', 'si_manifesta_in',
  '{"target":"Consommé: NTU <2 (trasparente come acqua dorata) · tecnica: raft di albumi","causa":"Gli albumi coagulano catturando le particelle torbide del brodo — il raft sale in superficie trascinando con sé le impurità"}'),
 ('fen-chiarificazione', 'fen-ossidazione', 'influenza',
- '{"nota":"La chiarificazione riduce la torbidità ma può aumentare l esposizione all ossigeno: liquidi più limpidi contengono meno antiossidanti naturali"}');
+ '{"nota":"La chiarificazione riduce la torbidità ma può aumentare l esposizione all ossigeno: liquidi più limpidi contengono meno antiossidanti naturali"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;

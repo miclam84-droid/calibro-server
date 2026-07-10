@@ -30,12 +30,34 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('err-mollica-fitta', 'Errore', 'Mollica fitta / pane basso', 'bakery', '{"causa":"glutine poco sviluppato o farina debole"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-struttura','cal-proteine','misurato_da','{}'),
-('fen-struttura','cal-windowpane','misurato_da','{}'),
-('fen-struttura','proc-glutine','realizzato_da','{}'),
-('fen-struttura','proc-gelificazione','realizzato_da','{}'),
-('fen-struttura','proc-idrocolloidi','realizzato_da','{}'),
-('fen-struttura','prod-impasto','si_manifesta_in','{"target":"glutine sviluppato","ruolo":"rete che intrappola il CO2"}'),
-('fen-struttura','prod-confettura','si_manifesta_in','{"target":"pectina + 65 Brix + pH 3,0-3,3","ruolo":"rete che intrappola l''acqua"}'),
-('fen-struttura','prod-injera','si_manifesta_in','{"target":"amido + idrocolloidi","ruolo":"struttura senza glutine"}'),
-('prod-impasto','err-mollica-fitta','fallisce_come','{}');
+('fen-struttura','cal-proteine','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-struttura','cal-windowpane','misurato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-struttura','proc-glutine','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-struttura','proc-gelificazione','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-struttura','proc-idrocolloidi','realizzato_da','{}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-struttura','prod-impasto','si_manifesta_in','{"target":"glutine sviluppato","ruolo":"rete che intrappola il CO2"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-struttura','prod-confettura','si_manifesta_in','{"target":"pectina + 65 Brix + pH 3,0-3,3","ruolo":"rete che intrappola l''acqua"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
+('fen-struttura','prod-injera','si_manifesta_in','{"target":"amido + idrocolloidi","ruolo":"struttura senza glutine"}')
+ON CONFLICT (from_id, to_id, relation) DO NOTHING;
+
