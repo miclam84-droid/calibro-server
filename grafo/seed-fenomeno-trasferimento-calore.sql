@@ -12,11 +12,11 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "settore":"f&b"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-trasferimento-calore', 'prod-cocktail-sour', 'si_manifesta_in',
+('fen-trasferimento-calore', 'prod-sour', 'si_manifesta_in',
  '{"target":"T finale drink: -5/-7°C (shake) · tempo: 10-12s","causa":"Il calore si trasferisce dal liquido al ghiaccio: 334 J/g per sciogliere + 4,18 J/g°C per raffreddare. In 10s si raggiunge l equilibrio"}'),
-('fen-trasferimento-calore', 'prod-bistecca', 'si_manifesta_in',
+('fen-trasferimento-calore', 'prod-carne-rosolata', 'si_manifesta_in',
  '{"target":"T interna target: 55-57°C (medium rare) · gradiente esterno-interno: 20-30°C","causa":"La crosta a 150°C e l interno a 55°C: la conduzione è lenta nella carne (bassa conducibilità termica)"}'),
-('fen-trasferimento-calore', 'prod-pane-lievitazione', 'si_manifesta_in',
+('fen-trasferimento-calore', 'prod-impasto', 'si_manifesta_in',
  '{"target":"T interna cottura: 96-98°C · T crosta: 150-200°C","causa":"Il trasferimento di calore nel pane è più lento al centro che in superficie — da qui il gradiente interno/esterno"}'),
 ('fen-trasferimento-calore', 'prod-espresso', 'si_manifesta_in',
  '{"target":"T acqua estrazione: 90-96°C · ΔT da group head: -2-4°C","causa":"La temperatura dell acqua al gruppo cade leggermente rispetto alla caldaia: il trasferimento termico attraverso il metallo perde calore"}'),

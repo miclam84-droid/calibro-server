@@ -9,7 +9,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-estrazione-caffe', 'prod-espresso', 'si_manifesta_in',
  '{"target":"TDS 7-12% · EY 18-22% · ratio 1:2-2,5 (dose:bevanda)","causa":"L espresso è altamente concentrato rispetto al filtro perché usa meno acqua e più pressione: stesso EY target, TDS molto più alto"}'),
-('fen-estrazione-caffe', 'prod-caffe-filtro', 'si_manifesta_in',
+('fen-estrazione-caffe', 'prod-filtro', 'si_manifesta_in',
  '{"target":"TDS 1,15-1,55% (SCA Gold Cup) · EY 18-22% · ratio 1:15-17","causa":"Il caffè filtro usa molta più acqua dell espresso: stessa EY, TDS 10 volte inferiore — è meno forte ma non meno estratto"}'),
 ('fen-estrazione-caffe', 'prod-cold-brew', 'si_manifesta_in',
  '{"target":"Ratio 1:5-8 (concentrato) o 1:10-15 (ready-to-drink) · EY 15-20% (più basso: T fredda)","causa":"A freddo l estrazione è più lenta e meno completa: si usa più dose e più tempo (12-24h) per raggiungere EY accettabile"}'),

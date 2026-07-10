@@ -12,11 +12,11 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "settore":"f&b"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-diluizione', 'prod-cocktail-sour', 'si_manifesta_in',
+('fen-diluizione', 'prod-sour', 'si_manifesta_in',
  '{"target":"~27% acqua (shake energico 10-12s)","causa":"Lo shake produce più contatto ghiaccio-liquido dello stir: più scioglimento, più diluizione, più raffreddamento"}'),
-('fen-diluizione', 'prod-cocktail-stirred', 'si_manifesta_in',
+('fen-diluizione', 'prod-negroni', 'si_manifesta_in',
  '{"target":"~20-22% acqua (stir 30-40 giri)","causa":"Lo stir mescola senza aerare: meno scioglimento dello shake, diluizione più controllata e precisa"}'),
-('fen-diluizione', 'prod-cocktail-built', 'si_manifesta_in',
+('fen-diluizione', 'prod-spritz', 'si_manifesta_in',
  '{"target":"10-15% acqua (dipende da tempo e tipo di ghiaccio)","causa":"I drink built sul ghiaccio si diluiscono lentamente mentre vengono consumati — il timing è un ingrediente"}'),
 ('fen-diluizione', 'fen-crioscopia', 'influenza',
  '{"nota":"La diluizione abbassa la concentrazione di alcol che a sua volta modifica il punto di congelamento del drink — i due fenomeni si intrecciano"}'),

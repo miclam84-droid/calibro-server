@@ -5,7 +5,7 @@
 -- Nodo già esistente nel seed ponte — solo archi aggiuntivi
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('fen-osmosi', 'prod-verdure-fermentate', 'si_manifesta_in',
+('fen-osmosi', 'prod-fermentato-lacto', 'si_manifesta_in',
  '{"target":"Sale 2-3% su peso totale (verdure + acqua)","causa":"La pressione osmotica del sale seleziona i microorganismi: i patogeni si disidratano, i lattobacilli resistono e producono acido lattico"}'),
 ('fen-osmosi', 'prod-confettura', 'si_manifesta_in',
  '{"target":"≥65° Brix (zucchero)","causa":"Ad alta concentrazione di zucchero l acqua libera è così bassa che i microorganismi non possono crescere — conservazione per osmosi, non per acidità"}'),
