@@ -4,7 +4,7 @@
 
 -- Nodo già esistente nel seed ponte — solo archi aggiuntivi
 
-INSERT OR IGNORE INTO edges (from_id, to_id, relation, data) VALUES
+INSERT INTO edges (from_id, to_id, relation, data) VALUES
 -- BAR
 ('fen-concentrazione', 'prod-sciroppo-semplice', 'si_manifesta_in',
  '{"target":"50-65° Brix (1:1 = 50°Bx, 2:1 = 66°Bx)","causa":"Il rapporto zucchero/acqua determina dolcezza, viscosità e shelf life dello sciroppo"}'),
@@ -25,4 +25,4 @@ INSERT OR IGNORE INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-concentrazione', 'fen-crioscopia', 'influenza',
  '{"nota":"La concentrazione di soluti determina l abbassamento del punto di congelamento — i due fenomeni sono inseparabili nel gelato"}'),
 ('fen-concentrazione', 'fen-estrazione', 'influenza',
- '{"nota":"L estrazione è il processo che porta un soluto in soluzione — la concentrazione è il risultato misurabile"}');
+ '{"nota":"L estrazione è il processo che porta un soluto in soluzione — la concentrazione è il risultato misurabile"}') ON CONFLICT (from_id, to_id, relation) DO NOTHING;
