@@ -20,6 +20,7 @@ Uso (Railway Console):
 import os, sys, json, time, re
 import urllib.request
 import psycopg2
+import psycopg2.extras
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 OPENAI_KEY   = os.environ.get("OPENAI_API_KEY", "")
@@ -636,7 +637,7 @@ def salva_in_grafo(conn, ingrediente, disciplina, profilo):
         nid,
         nome_it,
         disciplina,
-        json.dumps(profilo, ensure_ascii=False)
+        psycopg2.extras.Json(profilo)
     ))
 
     # Salva nomi multilingua
@@ -679,11 +680,11 @@ def salva_in_grafo(conn, ingrediente, disciplina, profilo):
                     INSERT INTO edges (from_id, to_id, relation, data)
                     VALUES (%s, %s, 'abbinamento_aromatico', %s)
                     ON CONFLICT (from_id, to_id, relation) DO NOTHING
-                """, (nid, row[0], json.dumps({
+                """, (nid, row[0], psycopg2.extras.Json({
                     "overlap": abb.get("overlap_score", 0),
                     "composti": abb.get("composti_condivisi", []),
                     "meccanismo": abb.get("meccanismo", "")
-                }, ensure_ascii=False)))
+                })))
 
     # Log
     cur.execute("""
@@ -760,15 +761,28 @@ def build(discipline=None, test=False):
         try:
             profilo, usage = gpt_ingrediente(ing, disc)
             tok = usage.get("total_tokens", 0)
-            nid = salva_in_grafo(conn, ing, disc, profilo)
+            # Savepoint per isolare ogni ingrediente dal resto
+            _cur_sp = conn.cursor()
+            _cur_sp.execute("SAVEPOINT sp_ing")
+            _cur_sp.close()
+            try:
+                nid = salva_in_grafo(conn, ing, disc, profilo)
+                _cur_r = conn.cursor()
+                _cur_r.execute("RELEASE SAVEPOINT sp_ing")
+                _cur_r.close()
+            except Exception as db_e:
+                _cur_rb = conn.cursor()
+                _cur_rb.execute("ROLLBACK TO SAVEPOINT sp_ing")
+                _cur_rb.close()
+                raise db_e
             token_tot += tok
             ok += 1
-            costo = token_tot * 0.000000375  # ~media input+output GPT-4o-mini
+            costo = token_tot * 0.000000375
             print(f"  [{i+1}/{len(da_fare)}] ✓ {ing[:40]} → {nid} ({tok} tok, ${costo:.4f} tot)")
-            time.sleep(0.15)  # rate limit gentile
+            time.sleep(0.15)
         except Exception as e:
             errori += 1
-            print(f"  [{i+1}/{len(da_fare)}] ✗ {ing[:40]}: {str(e)[:60]}")
+            print(f"  [{i+1}/{len(da_fare)}] ✗ {ing[:40]}: {str(e)[:80]}")
 
     conn.close()
     costo_finale = token_tot * 0.000000375
