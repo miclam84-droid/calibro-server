@@ -3212,63 +3212,50 @@ def feedback():
 
 @app.route("/admin/build")
 def admin_build_page():
-    """Pagina build ingredienti — accesso via ?s=SECRET"""
-    import html as _html
+    import json as _j
     secret = request.args.get("s","")
     if secret != os.environ.get("ADMIN_SECRET",""):
         return "<h2>Secret non valido</h2>", 403
-    s_escaped = _html.escape(secret, quote=True)
-    return """<!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Build Ingredienti</title>
-<style>
-body{font-family:sans-serif;background:#FAF6EE;padding:30px;max-width:600px;margin:0 auto}
-h1{font-family:Georgia,serif;color:#1A1A18;margin-bottom:8px}
-p{color:#6B6257;margin-bottom:20px}
-button{padding:14px 28px;border:none;border-radius:10px;font-size:15px;
-  cursor:pointer;margin:6px 4px;color:#fff;font-family:sans-serif}
-#log{background:#1A1A18;color:#90EE90;padding:20px;border-radius:10px;
-  font-family:monospace;font-size:12px;margin-top:20px;min-height:120px;
-  white-space:pre-wrap;word-break:break-all;line-height:1.5}
-</style></head>
-<body>
-<h1>Build Dataset Ingredienti</h1>
-<p>Genera i profili scientifici per tutti gli ingredienti F&amp;B nel grafo.</p>
-<input type="hidden" id="sec" value="""" + s_escaped + """">
-<button style="background:#C77B3F" onclick="avvia()">&#9658; Avvia build</button>
-<button style="background:#2C6E63" onclick="stato()">&#8635; Stato</button>
-<div id="log">Clicca Stato per vedere i progressi...</div>
-<script>
-function getS(){ return document.getElementById('sec').value; }
-function log(t){ document.getElementById('log').textContent = t; }
-async function avvia(){
-  log('Avvio in corso...');
-  try {
-    var r = await fetch('/admin/build-ingredienti', {
-      method: 'POST',
-      headers: { 'X-Admin-Secret': getS(), 'Content-Type': 'application/json' },
-      body: '{}'
-    });
-    var j = await r.json();
-    log(JSON.stringify(j, null, 2));
-    setTimeout(stato, 3000);
-  } catch(e) { log('Errore: ' + e.message); }
-}
-async function stato(){
-  try {
-    var r = await fetch('/admin/build-status', {
-      headers: { 'X-Admin-Secret': getS() }
-    });
-    var j = await r.json();
-    if(j.errore){ log('Errore: ' + j.errore); return; }
-    var disc = Object.entries(j.per_disciplina || {})
-      .map(function(e){ return '  ' + e[0] + ': ' + e[1]; }).join('\n');
-    log('Generati: ' + (j.totale_generati||0) + ' ingredienti\nNodi nel grafo: ' + (j.nodi_ingrediente||0) + '\n\nPer disciplina:\n' + (disc||'  nessuno ancora'));
-  } catch(e) { log('Errore: ' + e.message); }
-}
-</script>
-</body></html>"""
+    # usa json.dumps per rendere il secret safe per JS
+    s = _j.dumps(secret)
+    page = (
+        "<!DOCTYPE html><html><head><meta charset=UTF-8>"
+        "<meta name=viewport content='width=device-width,initial-scale=1'>"
+        "<title>Build Ingredienti</title>"
+        "<style>"
+        "body{font-family:sans-serif;background:#FAF6EE;padding:30px;max-width:600px;margin:0 auto}"
+        "h1{font-family:Georgia,serif;color:#1A1A18}"
+        "button{padding:14px 28px;border:none;border-radius:10px;font-size:15px;cursor:pointer;margin:6px 4px;color:#fff}"
+        "#log{background:#1A1A18;color:#90EE90;padding:20px;border-radius:10px;font-family:monospace;font-size:12px;margin-top:20px;min-height:120px;white-space:pre-wrap}"
+        "</style></head><body>"
+        "<h1>Build Dataset Ingredienti</h1>"
+        "<p>Genera i profili scientifici per tutti gli ingredienti F&amp;B.</p>"
+        "<button style='background:#C77B3F' onclick='avvia()'>&#9658; Avvia build</button>"
+        "<button style='background:#2C6E63' onclick='stato()'>&#8635; Stato</button>"
+        "<div id=log>Premi Stato per vedere i progressi...</div>"
+        "<script>"
+        "var S=" + s + ";"
+        "async function avvia(){"
+        "document.getElementById('log').textContent='Avvio...';"
+        "try{"
+        "var r=await fetch('/admin/build-ingredienti',{method:'POST',headers:{'X-Admin-Secret':S,'Content-Type':'application/json'},body:'{}'});"
+        "var j=await r.json();"
+        "document.getElementById('log').textContent=JSON.stringify(j,null,2);"
+        "setTimeout(stato,3000);"
+        "}catch(e){document.getElementById('log').textContent='Errore: '+e;}"
+        "}"
+        "async function stato(){"
+        "try{"
+        "var r=await fetch('/admin/build-status',{headers:{'X-Admin-Secret':S}});"
+        "var j=await r.json();"
+        "if(j.errore){document.getElementById('log').textContent='Errore: '+j.errore;return;}"
+        "var d=Object.entries(j.per_disciplina||{}).map(function(e){return '  '+e[0]+': '+e[1];}).join('\n');"
+        "document.getElementById('log').textContent='Generati: '+(j.totale_generati||0)+' | Nodi: '+(j.nodi_ingrediente||0)+'\n\n'+d;"
+        "}catch(e){document.getElementById('log').textContent='Errore: '+e;}"
+        "}"
+        "</script></body></html>"
+    )
+    return page
 
 
 @app.route("/admin/build-ingredienti", methods=["POST"])
