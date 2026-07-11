@@ -1,4 +1,48 @@
-<!DOCTYPE html>
+<
+
+  const STRINGS_ES = {
+    scopri_ey:'Fenómeno del día',
+    scopri_cta:'Estudia este fenómeno',
+    scopri_errore_eyebrow:'Error al cargar',
+    scopri_errore_titolo:'Sin conexión',
+    les_step:'Paso',
+    les_di:'de',
+    les_quiz_titolo:'Quiz',
+    les_quiz_btn:'Comprobar',
+    les_quiz_corr:'¡Correcto!',
+    les_quiz_err:'No exactamente.',
+    chiedi_title:'Preguntar',
+    chiedi_sub:'Un fenómeno físico para cada gesto profesional',
+    chiedi_al_grafo:'Preguntar a Matter Lab',
+    calcola:'Calcular',
+    onb_s1_title:'La física del oficio',
+    onb_s1_sub:'Fenómenos físicos y químicos bajo cada gesto profesional.',
+    onb_s2_title:'Números objetivo',
+    onb_s2_sub:'Cada fenómeno tiene un número medible. Matter Lab te lo da.',
+    onb_s3_title:'Preguntar a Matter Lab',
+    onb_s3_sub:'Haz preguntas reales del trabajo diario.',
+    auth_email:'Email',
+    auth_pwd:'Contraseña',
+    auth_login:'Iniciar sesión',
+    auth_reg:'Crear cuenta',
+    auth_reg_ok:'Cuenta creada. ¡Bienvenido a Matter Lab!',
+    auth_errore_rete:'Error de red. Inténtalo de nuevo.',
+    auth_inserisci:'Introduce email y contraseña',
+    auth_logout:'Cerrar sesión',
+    payoff:'Science & Craft',
+    mappa_title:'Mapa de conocimiento',
+    flavor_title:'Red de sabores',
+    flavor_cerca:'buscar ingrediente...',
+    flavor_btn:'Buscar',
+    contrasto_title:'Maridaje por contraste',
+    quaderno_title:'Cuaderno',
+    quaderno_vuoto:'Sin experimentos guardados.',
+    quaderno_salva:'Guardar en el cuaderno',
+    supporto:'Soporte',
+    ct_cookie_txt:'Matter Lab usa cookies técnicas y registra las preguntas para mejorar el servicio.',
+    ct_disc_sicurezza:'Seguridad alimentaria',
+    ct_disc_sicurezza_sub:'HACCP · Aw · vida útil · zonas de peligro',
+  };!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -742,8 +786,14 @@ if('serviceWorker' in navigator){
       <div class="disc-chip" id="disc-birra-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
-    <div class="disc-item off"><div class="disc-dot dim"></div>
-      <div class="disc-txt"><div class="disc-n" id="ct-disc-sicurezza">Sicurezza alimentare</div><div class="disc-m" id="ct-disc-sicurezza-sub">prossimamente</div></div>
+    <div class="disc-item pro-only" onclick="selezionaDisciplina('sicurezza')">
+      <div class="disc-dot" style="background:var(--terra)"></div>
+      <div class="disc-txt">
+        <div class="disc-n" id="ct-disc-sicurezza">Sicurezza alimentare</div>
+        <div class="disc-m" id="ct-disc-sicurezza-sub">HACCP · Aw · shelf life · zone pericolo</div>
+      </div>
+      <div class="disc-chip" style="color:var(--terra);border-color:var(--terra)">Pro</div>
+      <div class="disc-arr">›</div>
     </div>
   </div>
   <div class="principio-card" id="scopri-principio" style="display:none">
@@ -948,6 +998,7 @@ if('serviceWorker' in navigator){
         </div>
         <!-- salva nel quaderno -->
         <button class="salva-btn" id="salva-btn" onclick="apriFormSalva()" style="display:none">+ Salva nel quaderno</button>
+      <button class="salva-btn" id="costo-btn" onclick="calcolaCosto()" style="display:none;background:var(--terra)">€ Calcola costo</button>
         <div class="salva-form" id="salva-form">
           <div class="salva-row">
             <label id="ct-salva-nome-label">Nome esperimento</label>
@@ -2183,6 +2234,38 @@ const _strings = {
     ct_sic_gate_title:'Food safety module',
     ct_sic_gate_desc:'Indicative shelf life, pasteurisation and cold chain. Available with Matter Pro.',
     ct_sic_gate_btn:'Upgrade to Pro — €11.99/month',
+  },
+  es:{
+    payoff:'Science & Craft',
+    scopri:'Descubrir', lezione:'Lección', mappa:'Mapa', chiedi:'Preguntar',
+    studia:'Estudia este fenómeno', nologin:'Empieza sin registrarte.',
+    scopri_ey:'Fenómeno del día', scopri_cta:'Estudia este fenómeno',
+    scopri_errore_eyebrow:'Error al cargar', scopri_errore_titolo:'Sin conexión',
+    les_step:'Paso', les_di:'de',
+    les_quiz_titolo:'Quiz', les_quiz_btn:'Comprobar',
+    les_quiz_corr:'¡Correcto!', les_quiz_err:'No exactamente.',
+    chiedi_title:'Preguntar a Matter Lab',
+    chiedi_sub:'Un fenómeno físico para cada gesto profesional',
+    chiedi_al_grafo:'Preguntar', calcola:'Calcular',
+    auth_email:'Email', auth_pwd:'Contraseña',
+    auth_login:'Iniciar sesión', auth_reg:'Crear cuenta',
+    auth_reg_ok:'¡Cuenta creada. Bienvenido a Matter Lab!',
+    auth_errore_rete:'Error de red.', auth_inserisci:'Introduce email y contraseña',
+    auth_logout:'Cerrar sesión',
+    mappa_title:'Mapa de conocimiento F&B',
+    flavor_title:'Red de sabores',
+    flavor_cerca:'buscar ingrediente...',
+    contrasto_title:'Maridaje por contraste',
+    quaderno_title:'Cuaderno',
+    quaderno_vuoto:'Sin experimentos guardados.',
+    quaderno_salva:'Guardar en el cuaderno',
+    supporto:'Soporte',
+    ct_cookie_txt:'Matter Lab usa cookies técnicas para funcionar.',
+    ct_disc_sicurezza:'Seguridad alimentaria',
+    ct_disc_sicurezza_sub:'HACCP · Aw · vida útil · zonas de peligro',
+    ct_sic_gate_title:'Módulo de seguridad alimentaria',
+    ct_sic_gate_desc:'Shelf life orientativa, pasteurización y cadena de frío.',
+    ct_sic_gate_btn:'Mejorar a Pro — €11,99/mes',
   }
 };
 
@@ -2997,6 +3080,58 @@ function mostraPopupPro(motivo){
   document.body.appendChild(overlay);
   overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
 }
+
+
+  // Registra Service Worker PWA
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', ()=>{
+      navigator.serviceWorker.register('/sw.js', {scope:'/'})
+        .then(r=>console.log('[SW] registrato:', r.scope))
+        .catch(e=>console.log('[SW] errore:', e));
+    });
+  }
+
+
+// ── CALCOLA COSTO ─────────────────────────────────────────────
+function mostraCostoBtn(){
+  const btn=document.getElementById('costo-btn');
+  if(btn) btn.style.display='inline-flex';
+}
+async function calcolaCosto(){
+  const tok=localStorage.getItem('matter_token')||'';
+  // Raccoglie ingredienti dalla scheda attuale (dal DOM o dal motore)
+  const ingredienti=_ultimi_ingredienti||[];
+  if(!ingredienti.length){
+    alert('Salva prima la ricetta nel quaderno per calcolare il costo.');
+    return;
+  }
+  try{
+    const r=await fetch('/v1/quaderno/0/costo',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+      body:JSON.stringify({ingredienti})
+    });
+    const j=await r.json();
+    if(j.costo_totale_eur!==undefined){
+      const fc=j.food_cost_pct?` (food cost ${j.food_cost_pct}%)`:'';
+      const suggeriti=j.prezzi_vendita_suggeriti||{};
+      const msg=[
+        `Costo ingredienti: €${j.costo_totale_eur.toFixed(2)}${fc}`,
+        ``,
+        `Prezzo vendita suggerito:`,
+        `  Food cost 25%: €${suggeriti.fc_25pct||'—'}`,
+        `  Food cost 30%: €${suggeriti.fc_30pct||'—'}`,
+        `  Food cost 33%: €${suggeriti.fc_33pct||'—'}`,
+        ``,
+        `Fonte: ${j.fonte||'Matter Lab / ISMEA orientativo'}`
+      ].join('\n');
+      alert(msg);
+    }
+  }catch(e){
+    alert('Errore nel calcolo costo: '+e.message);
+  }
+}
+let _ultimi_ingredienti=[];
 
 // rileva ?reset=TOKEN nell'URL e mostra la schermata nuova password
 (function(){

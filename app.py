@@ -789,6 +789,337 @@ def quaderno_salva():
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
 
+
+@app.route("/v1/prezzi/<ingrediente>")
+def prezzi_ingrediente(ingrediente):
+    """Restituisce il prezzo orientativo di mercato per un ingrediente.
+    Cerca prima nei nodi Ingrediente del grafo (dataset Matter Lab),
+    poi nei nodi Prodotto con costo_mercato_eur popolato."""
+    lang = request.args.get("lang","it")
+    ing_norm = ingrediente.lower().replace("-"," ")
+    if not DATABASE_URL:
+        return jsonify({"ingrediente":ingrediente,"prezzi":[]})
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        # Cerca nel dataset proprietario (nodi Ingrediente)
+        cur.execute("""
+            SELECT id, name, data
+            FROM nodes
+            WHERE type='Ingrediente'
+            AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+            LIMIT 3
+        """, (f"%{ing_norm}%", f"%ing-{ing_norm.replace(' ','-')}%"))
+        rows = cur.fetchall()
+        prezzi = []
+        for row in rows:
+            d = row[2] if isinstance(row[2], dict) else json.loads(row[2] or "{}")
+            params = d.get("parametri_fisici", {})
+            # Cerca costo nei parametri fisici del profilo
+            costo = d.get("costo_mercato_eur") or params.get("costo_mercato_eur")
+            if not costo:
+                # Stima da categoria
+                cat = d.get("categoria","")
+                costo = _stima_costo_categoria(cat)
+            prezzi.append({
+                "nome": row[1],
+                "costo_eur_kg": costo,
+                "categoria": d.get("categoria",""),
+                "fonte": "Matter Lab / ISMEA orientativo",
+                "nota": "Prezzo orientativo di mercato. Per prezzi fornitore reali usa Cifra."
+            })
+        cur.close(); conn.close()
+        return jsonify({"ingrediente":ingrediente,"prezzi":prezzi})
+    except Exception as e:
+        return jsonify({"ingrediente":ingrediente,"prezzi":[],"errore":str(e)})
+
+
+def _stima_costo_categoria(categoria):
+    """Stima orientativa del costo per categoria merceologica (€/kg o €/L)."""
+    COSTI = {
+        "distillati": 35.0, "liquori": 20.0, "vino": 8.0, "birra": 3.5,
+        "succhi": 4.0, "sciroppi": 5.0, "frutta fresca": 3.5,
+        "verdure": 2.0, "carni": 12.0, "salumi": 18.0, "pesce": 15.0,
+        "latticini": 4.0, "formaggi": 14.0, "uova": 3.0,
+        "farine": 1.5, "zuccheri": 1.2, "grassi": 6.0,
+        "spezie": 25.0, "erbe aromatiche": 8.0,
+        "cioccolato": 12.0, "cacao": 8.0,
+        "caffè": 18.0, "tè": 12.0,
+        "frutta secca": 20.0, "paste frutta secca": 35.0,
+        "luppoli": 30.0, "malti": 2.5, "lieviti": 5.0,
+        "uve": 2.0, "gelatine": 20.0, "addensanti": 15.0,
+    }
+    cat_low = categoria.lower() if categoria else ""
+    for k, v in COSTI.items():
+        if k in cat_low or cat_low in k:
+            return v
+    return 5.0  # default generico
+
+
+@app.route("/v1/quaderno/<int:exp_id>/costo", methods=["GET","POST"])
+def quaderno_calcola_costo(exp_id):
+    """Calcola il food/drink cost di un esperimento nel quaderno.
+
+    GET: calcola costo con ingredienti e quantità già salvati
+    POST: calcola costo con ingredienti passati nel body
+    {
+      "ingredienti": [
+        {"nome": "bourbon", "quantita_ml": 50},
+        {"nome": "lime", "quantita_g": 22}
+      ],
+      "prezzo_vendita": 12.0  # opzionale
+    }
+    """
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+
+    body = request.json or {}
+    ingredienti_input = body.get("ingredienti", [])
+
+    if not DATABASE_URL:
+        return jsonify({"errore":"database non disponibile"}), 503
+
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+
+        # Se GET, leggi ingredienti dall'esperimento salvato
+        if request.method == "GET":
+            cur.execute("SELECT ingredienti FROM esperimenti WHERE id=%s AND user_id=%s",
+                       (exp_id, str(user_id)))
+            row = cur.fetchone()
+            if not row:
+                cur.close(); conn.close()
+                return jsonify({"errore":"esperimento non trovato"}), 404
+            ingredienti_input = json.loads(row[0] or "[]")
+
+        # Calcola costo per ogni ingrediente
+        dettaglio = []
+        costo_totale = 0.0
+
+        for ing in ingredienti_input:
+            nome = ing.get("nome","").lower()
+            # Quantità — supporta ml, g, cl, oz, pz
+            qty_ml = float(ing.get("quantita_ml", ing.get("ml", 0)) or 0)
+            qty_g  = float(ing.get("quantita_g",  ing.get("g",  0)) or 0)
+            qty_cl = float(ing.get("quantita_cl", ing.get("cl", 0)) or 0)
+            qty_oz = float(ing.get("quantita_oz", ing.get("oz", 0)) or 0)
+            qty_pz = float(ing.get("quantita_pz", ing.get("pz", 0)) or 0)
+
+            # Normalizza tutto in grammi (approssimazione: 1ml ≈ 1g per liquidi)
+            qty_totale_g = qty_g + qty_ml + (qty_cl * 10) + (qty_oz * 28.35) + (qty_pz * 100)
+
+            # Cerca il prezzo nel grafo
+            cur.execute("""
+                SELECT name, data FROM nodes
+                WHERE type='Ingrediente'
+                AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+                LIMIT 1
+            """, (f"%{nome}%", f"%ing-{nome.replace(' ','-')}%"))
+            ing_row = cur.fetchone()
+
+            costo_eur_kg = 5.0  # default
+            fonte = "stima generica"
+            categoria = ""
+            if ing_row:
+                d = ing_row[1] if isinstance(ing_row[1], dict) else json.loads(ing_row[1] or "{}")
+                categoria = d.get("categoria","")
+                costo_eur_kg = (d.get("costo_mercato_eur") or
+                               _stima_costo_categoria(categoria))
+                fonte = "Matter Lab / ISMEA orientativo"
+
+            costo_porzione = (qty_totale_g / 1000) * costo_eur_kg
+            costo_totale += costo_porzione
+
+            dettaglio.append({
+                "ingrediente": nome,
+                "quantita_g": round(qty_totale_g, 1),
+                "costo_eur_kg": costo_eur_kg,
+                "costo_porzione_eur": round(costo_porzione, 3),
+                "categoria": categoria,
+                "fonte": fonte
+            })
+
+        # Food cost percentuale
+        prezzo_vendita = float(body.get("prezzo_vendita", 0) or 0)
+        food_cost_pct = (costo_totale / prezzo_vendita * 100) if prezzo_vendita > 0 else None
+
+        # Prezzo vendita suggerito a diversi food cost target
+        suggeriti = {
+            "fc_25pct": round(costo_totale / 0.25, 2),
+            "fc_30pct": round(costo_totale / 0.30, 2),
+            "fc_33pct": round(costo_totale / 0.33, 2),
+        }
+
+        cur.close(); conn.close()
+        return jsonify({
+            "exp_id": exp_id,
+            "costo_totale_eur": round(costo_totale, 3),
+            "dettaglio": dettaglio,
+            "food_cost_pct": round(food_cost_pct, 1) if food_cost_pct else None,
+            "prezzo_vendita": prezzo_vendita or None,
+            "prezzi_vendita_suggeriti": suggeriti,
+            "nota": "Prezzi orientativi di mercato. Per prezzi fornitore reali usa Cifra.",
+            "fonte": "Matter Lab / ISMEA"
+        })
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
+
+@app.route("/v1/strumenti")
+@app.route("/v1/strumenti/<disciplina>")
+def strumenti(disciplina=None):
+    """Restituisce gli strumenti di misura per disciplina.
+    Ogni strumento ha: nome, misura, numero_bersaglio, link_amazon."""
+    STRUMENTI_DB = {
+        "bar": [
+            {"nome":"pH-metro da banco","misura":"pH","target":"0-14","amazon":"https://www.amazon.it/s?k=phmetro+digitale+professionale","prezzo_approx":"€25-80"},
+            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"0-85°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+professionale","prezzo_approx":"€15-60"},
+            {"nome":"Bilancia di precisione 0.1g","misura":"grammi","target":"0-500g","amazon":"https://www.amazon.it/s?k=bilancia+precisione+0.1g+cocktail","prezzo_approx":"€20-50"},
+            {"nome":"Alcolimetro/ebulliometro","misura":"ABV%","target":"0-100%","amazon":"https://www.amazon.it/s?k=alcolimetro+digitale","prezzo_approx":"€30-150"},
+            {"nome":"Termometro digitale sonda","misura":"°C","target":"-50/+300°C","amazon":"https://www.amazon.it/s?k=termometro+digitale+sonda+cucina","prezzo_approx":"€10-40"},
+            {"nome":"Jigger graduato","misura":"ml","target":"5-60ml","amazon":"https://www.amazon.it/s?k=jigger+professionale+graduato","prezzo_approx":"€5-25"},
+        ],
+        "caffe": [
+            {"nome":"Rifrattometro TDS caffè (VST/Atago)","misura":"TDS%","target":"1.15-1.55% filtro · 7-12% espresso","amazon":"https://www.amazon.it/s?k=rifrattometro+caffe+tds","prezzo_approx":"€50-300"},
+            {"nome":"Bilancia barista 0.1g con timer","misura":"grammi + tempo","target":"ratio 1:2-17","amazon":"https://www.amazon.it/s?k=bilancia+barista+timer+professionale","prezzo_approx":"€25-150"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"90-96°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+caffetteria","prezzo_approx":"€10-40"},
+            {"nome":"Manometro espresso","misura":"bar","target":"9 bar","amazon":"https://www.amazon.it/s?k=manometro+macchina+espresso","prezzo_approx":"€15-60"},
+        ],
+        "panificazione": [
+            {"nome":"pH-metro","misura":"pH","target":"pH madre: 3.7-3.9","amazon":"https://www.amazon.it/s?k=phmetro+lievito+madre","prezzo_approx":"€25-80"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"96-98°C interno pane","amazon":"https://www.amazon.it/s?k=termometro+sonda+forno+pane","prezzo_approx":"€10-40"},
+            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"baker%","amazon":"https://www.amazon.it/s?k=bilancia+professionale+panificazione","prezzo_approx":"€20-80"},
+            {"nome":"Igrometro forno","misura":"umidità%","target":"80-90% primi minuti cottura","amazon":"https://www.amazon.it/s?k=igrometro+forno+cottura+pane","prezzo_approx":"€15-50"},
+            {"nome":"Acidimetro titolabile","misura":"acido lattico%","target":"0.5-2%","amazon":"https://www.amazon.it/s?k=kit+acidita+titolabile+vino","prezzo_approx":"€20-60"},
+        ],
+        "pasticceria": [
+            {"nome":"Termometro digitale sonda","misura":"°C","target":"crema 82-84°C · caramello 160°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+pasticceria","prezzo_approx":"€10-40"},
+            {"nome":"Bilancia 0.1g","misura":"grammi","target":"precisione fondamentale","amazon":"https://www.amazon.it/s?k=bilancia+precisione+pasticceria","prezzo_approx":"€20-50"},
+            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"sciroppi · confetture ≥65°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+pasticceria","prezzo_approx":"€15-60"},
+            {"nome":"Termometro IR (infrarossi)","misura":"°C","target":"temperaggio cioccolato 28-32°C","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina+professionale","prezzo_approx":"€20-60"},
+        ],
+        "gelateria": [
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"-10/-12°C servizio · -18°C conservazione","amazon":"https://www.amazon.it/s?k=termometro+sonda+gelateria+professionale","prezzo_approx":"€10-40"},
+            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"POD/PAC mix gelato","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+gelateria","prezzo_approx":"€15-60"},
+            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"overrun: peso × volume","amazon":"https://www.amazon.it/s?k=bilancia+professionale+gelateria","prezzo_approx":"€20-80"},
+            {"nome":"Misuratore Aw (attività acqua)","misura":"Aw","target":"<0.85 per sicurezza","amazon":"https://www.amazon.it/s?k=misuratore+attivita+acqua+aw","prezzo_approx":"€200-800"},
+        ],
+        "vino": [
+            {"nome":"pH-metro da banco","misura":"pH","target":"pH vino 3.0-3.8","amazon":"https://www.amazon.it/s?k=phmetro+enologico+vino","prezzo_approx":"€25-150"},
+            {"nome":"Kit acidità volatile","misura":"g/L acido acetico","target":"<0.6 g/L","amazon":"https://www.amazon.it/s?k=kit+acidita+volatile+vino","prezzo_approx":"€20-80"},
+            {"nome":"Rifrattometro mosto","misura":"°Brix/Babo","target":"maturità uva","amazon":"https://www.amazon.it/s?k=rifrattometro+mosto+uva","prezzo_approx":"£15-50"},
+            {"nome":"Alcoolmetro Gay-Lussac","misura":"ABV%","target":"vino 10-15% vol","amazon":"https://www.amazon.it/s?k=alcoolmetro+gay+lussac+vino","prezzo_approx":"€10-40"},
+            {"nome":"Kit SO2 libera/totale","misura":"mg/L","target":"SO2 libera 20-40 mg/L","amazon":"https://www.amazon.it/s?k=kit+analisi+so2+vino","prezzo_approx":"€30-100"},
+        ],
+        "birra": [
+            {"nome":"Densimetro/areometro","misura":"densità/OG/FG","target":"OG 1.040-1.080","amazon":"https://www.amazon.it/s?k=densimetro+birra+homebrewing","prezzo_approx":"€5-20"},
+            {"nome":"Rifrattometro birra","misura":"°Brix/Plato","target":"attenuation%","amazon":"https://www.amazon.it/s?k=rifrattometro+birra+professionale","prezzo_approx":"€15-50"},
+            {"nome":"pH-metro digitale","misura":"pH","target":"mash pH 5.2-5.4","amazon":"https://www.amazon.it/s?k=phmetro+digitale+birra","prezzo_approx":"€25-80"},
+            {"nome":"Termometro sonda","misura":"°C","target":"mash 62-72°C · lagerizzazione 0-2°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+birra+homebrewing","prezzo_approx":"€10-40"},
+            {"nome":"Manometro CO2 keg","misura":"bar","target":"carbonatazione 1.5-3 bar","amazon":"https://www.amazon.it/s?k=manometro+co2+fusto+birra","prezzo_approx":"€15-50"},
+        ],
+        "cucina": [
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"manzo MR 55-57°C · pollo 74°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+cucina+professionale","prezzo_approx":"€10-40"},
+            {"nome":"pH-metro","misura":"pH","target":"fermentati pH<4.6","amazon":"https://www.amazon.it/s?k=phmetro+cucina+fermentati","prezzo_approx":"€25-80"},
+            {"nome":"Termometro IR infrarossi","misura":"°C","target":"olio frittura 170-180°C","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina","prezzo_approx":"€20-60"},
+            {"nome":"Bilancia precisione 1g","misura":"grammi","target":"dosaggi sale/acido","amazon":"https://www.amazon.it/s?k=bilancia+precisione+cucina+professionale","prezzo_approx":"€20-50"},
+            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"confetture ≥65°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+marmellata","prezzo_approx":"€15-60"},
+        ],
+    }
+
+    if disciplina:
+        disc_norm = disciplina.lower().replace("caffetteria","caffe")
+        strumenti_disc = STRUMENTI_DB.get(disc_norm, [])
+        return jsonify({"disciplina":disciplina,"strumenti":strumenti_disc})
+
+    # Tutti
+    return jsonify({"strumenti":STRUMENTI_DB})
+
+
+@app.route("/v1/stt", methods=["POST"])
+def stt():
+    """Trascrizione audio via OpenAI Whisper (AI Gateway route_stt).
+    Accetta audio WebM/MP4/WAV/M4A da browser.
+    Pro-only: il barman parla al banco, l app trascrive e risponde."""
+    token = request.headers.get("X-Token","") or (request.json or {}).get("token","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    # verifica piano pro
+    if DATABASE_URL:
+        try:
+            import psycopg2
+            conn_p = psycopg2.connect(DATABASE_URL)
+            cur_p = conn_p.cursor()
+            cur_p.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
+            row_p = cur_p.fetchone()
+            cur_p.close(); conn_p.close()
+            if not row_p or row_p[0] != "pro":
+                return jsonify({"errore":"Whisper è disponibile nel piano Pro"}), 403
+        except Exception:
+            pass
+    if "audio" not in request.files:
+        return jsonify({"errore":"file audio mancante"}), 400
+    audio_file = request.files["audio"]
+    audio_bytes = audio_file.read()
+    lang = request.args.get("lang","it")
+    try:
+        import ai_gateway as GW
+        testo = GW.route_stt(audio_bytes, filename=audio_file.filename or "audio.webm", language=lang)
+        if not testo:
+            return jsonify({"errore":"trascrizione vuota"}), 422
+        return jsonify({"trascrizione":testo,"lang":lang})
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
+
+@app.route("/v1/vision", methods=["POST"])
+def vision():
+    """Analisi immagine via OpenAI Vision gpt-4o-mini.
+    Accetta foto di schede tecniche, etichette, piatti.
+    Pro-only."""
+    token = request.headers.get("X-Token","") or (request.json or {}).get("token","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    if DATABASE_URL:
+        try:
+            import psycopg2
+            conn_v = psycopg2.connect(DATABASE_URL)
+            cur_v = conn_v.cursor()
+            cur_v.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
+            row_v = cur_v.fetchone()
+            cur_v.close(); conn_v.close()
+            if not row_v or row_v[0] != "pro":
+                return jsonify({"errore":"Vision è disponibile nel piano Pro"}), 403
+        except Exception:
+            pass
+    if "immagine" not in request.files:
+        return jsonify({"errore":"immagine mancante"}), 400
+    img_file = request.files["immagine"]
+    img_bytes = img_file.read()
+    media_type = img_file.content_type or "image/jpeg"
+    lang = request.args.get("lang","it")
+    prompt = (
+        "Sei un esperto di chimica degli alimenti. "
+        "Analizza questa immagine e identifica: "
+        "1) Se è una scheda tecnica: estrai tutti i parametri fisici (pH, Aw, Brix, ABV, temperatura, ecc.) "
+        "2) Se è un piatto/drink: identifica gli ingredienti principali e suggerisci i fenomeni fisici rilevanti "
+        "3) Se è un'etichetta: estrai ingredienti, valori nutrizionali, parametri rilevanti. "
+        f"Rispondi in {'italiano' if lang=='it' else 'English'}, in modo sintetico e professionale."
+    )
+    try:
+        import ai_gateway as GW
+        risposta = GW.route_vision(img_bytes, prompt, media_type=media_type)
+        return jsonify({"analisi":risposta,"lang":lang})
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
 @app.route("/v1/ricetta/<int:exp_id>")
 def ricetta_per_cifra(exp_id):
     """AC4 — API per Cifra: espone la ricetta fisica di un esperimento.
@@ -1691,6 +2022,22 @@ def landing():
 def home():
     """PWA principale — serve index.html."""
     return render_template("index.html")
+
+
+@app.route("/manifest.json")
+def manifest():
+    """PWA manifest."""
+    from flask import send_from_directory
+    return send_from_directory("static", "manifest.json", mimetype="application/manifest+json")
+
+
+@app.route("/sw.js")
+def service_worker():
+    """PWA Service Worker."""
+    from flask import send_from_directory
+    resp = send_from_directory("static", "sw.js", mimetype="application/javascript")
+    resp.headers["Service-Worker-Allowed"] = "/"
+    return resp
 
 @app.route("/health")
 def health():
