@@ -1331,6 +1331,61 @@ def abbina(ingrediente):
                     print(f"[NOMI_IT] '{ingrediente}' trovato via flavor_nomi_it", flush=True)
             except Exception as _fi_err:
                 pass  # tabella non ancora popolata
+        # fallback 3: dataset proprietario Matter Lab (nodi Ingrediente)
+        if not rows:
+            try:
+                cur.execute("""
+                    SELECT e.to_id, n.name,
+                           COALESCE((e.data->>'overlap')::numeric, 50) as overlap
+                    FROM edges e
+                    JOIN nodes n ON n.id = e.to_id
+                    WHERE e.relation = 'abbinamento_aromatico'
+                    AND e.from_id IN (
+                        SELECT id FROM nodes WHERE type='Ingrediente'
+                        AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+                    )
+                    ORDER BY overlap DESC NULLS LAST LIMIT 8
+                """, (f"%{ing_it}%", f"%ing-{ing_norm.replace('_','-')}%"))
+                rows = cur.fetchall()
+                if rows:
+                    print(f"[ML] '{ingrediente}' trovato via nodi Ingrediente", flush=True)
+            except Exception as _ml_e:
+                print(f"[ML ERR] {_ml_e}", flush=True)
+        # fallback 4: abbinamenti da profilo sensoriale proprietario
+        if not rows:
+            try:
+                cur.execute("""
+                    SELECT id, name, data FROM nodes
+                    WHERE type='Ingrediente'
+                    AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+                    LIMIT 1
+                """, (f"%{ing_it}%", f"%ing-{ing_norm.replace('_','-')}%"))
+                ing_row = cur.fetchone()
+                if ing_row:
+                    ing_data = ing_row[2] if isinstance(ing_row[2], dict) else json.loads(ing_row[2] or "{}")
+                    result_props = []
+                    for a in ing_data.get("abbinamenti",{}).get("molecolari",[])[:5]:
+                        result_props.append({
+                            "ingrediente": a.get("ingrediente_it", a.get("ingrediente_en","?")),
+                            "composto": f"{a.get('overlap_score',0)} composti condivisi",
+                            "overlap": float(a.get("overlap_score",0)),
+                            "perche": a.get("meccanismo","affinità aromatica")
+                        })
+                    for a in ing_data.get("abbinamenti",{}).get("contrasto",[])[:3]:
+                        result_props.append({
+                            "ingrediente": a.get("ingrediente_it","?"),
+                            "composto": "contrasto",
+                            "overlap": 30.0,
+                            "perche": a.get("perche","contrasto fisico-percettivo")
+                        })
+                    if result_props:
+                        cur.close(); conn.close()
+                        return jsonify({"ingrediente":ingrediente,"abbinamenti":result_props,
+                            "fonte":"dataset Matter Lab",
+                            "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
+            except Exception as _pe:
+                print(f"[PROP ERR] {_pe}", flush=True)
+
         # fallback 2: ricerca semantica via embeddings OpenAI
         if not rows:
             try:

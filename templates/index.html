@@ -641,6 +641,45 @@ if('serviceWorker' in navigator){
     </div>
   </div>
   <button class="cta-main" id="scopri-cta" onclick="avviaLezione()">Studia questo fenomeno</button>
+
+  <!-- ── LOOP GUIDATO: fenomeno → abbinamento → chiedi → quaderno ── -->
+  <div class="loop-guidato" id="loop-guidato" style="display:none">
+    <div class="loop-label">Esplora il percorso</div>
+    <div class="loop-steps">
+      <div class="loop-step" onclick="avviaLezione()">
+        <div class="loop-step-ico">✎</div>
+        <div class="loop-step-txt">
+          <strong id="loop-fen-nome">Fenomeno</strong>
+          <span>Studia la fisica</span>
+        </div>
+        <div class="loop-step-arr">›</div>
+      </div>
+      <div class="loop-step" onclick="switchTab('mappa');setTimeout(()=>document.getElementById('flavor-input')&&document.getElementById('flavor-input').focus(),300)">
+        <div class="loop-step-ico">⊞</div>
+        <div class="loop-step-txt">
+          <strong>Flavor Network</strong>
+          <span>Abbinamenti molecolari</span>
+        </div>
+        <div class="loop-step-arr">›</div>
+      </div>
+      <div class="loop-step" onclick="switchTab('chiedi')">
+        <div class="loop-step-ico">◎</div>
+        <div class="loop-step-txt">
+          <strong>Chiedi</strong>
+          <span>Applica alla tua ricetta</span>
+        </div>
+        <div class="loop-step-arr">›</div>
+      </div>
+      <div class="loop-step" onclick="switchTab('quaderno')">
+        <div class="loop-step-ico">◻</div>
+        <div class="loop-step-txt">
+          <strong>Quaderno</strong>
+          <span>Salva misure e costo</span>
+        </div>
+        <div class="loop-step-arr">›</div>
+      </div>
+    </div>
+  </div>
   <p class="no-login" id="ct-nologin-p">Inizia senza registrarti.</p>
   <!-- nudge primo accesso — visibile solo se l'utente non ha ancora scelto una disciplina -->
   <div class="onb-nudge" id="onb-nudge" style="display:none">
@@ -1203,6 +1242,10 @@ function renderHome(j){
   document.getElementById('scopri-ey').textContent =
     'fenomeno del giorno · ' + (f.dominio||'');
   document.getElementById('scopri-titolo').textContent = f.nome || '—';
+    const _loop = document.getElementById('loop-guidato');
+    const _loopFen = document.getElementById('loop-fen-nome');
+    if(_loop) _loop.style.display='block';
+    if(_loopFen) _loopFen.textContent = f.nome || 'Fenomeno';
   document.getElementById('scopri-desc').textContent = f.scheda_intro || '';
   const numBox = document.getElementById('scopri-num');
   if(f.target){
