@@ -3422,16 +3422,19 @@ def admin_seed_sicurezza():
             continue
         try:
             sql = open(f, encoding="utf-8").read()
-            # Esegui statement per statement
-            for stmt in sql.split(";"):
-                stmt = stmt.strip()
-                if stmt and not stmt.startswith("--"):
-                    try:
-                        cur.execute(stmt)
-                    except Exception as e:
-                        if "duplicate" not in str(e).lower():
-                            errori.append(f"{f}: {str(e)[:60]}")
-            ok.append(f)
+            # Usa savepoint per isolare ogni file
+            cur.execute(f"SAVEPOINT sp_{ok.__len__()}")
+            try:
+                cur.execute(sql)
+                cur.execute(f"RELEASE SAVEPOINT sp_{ok.__len__()}")
+                ok.append(f)
+            except Exception as e:
+                cur.execute(f"ROLLBACK TO SAVEPOINT sp_{ok.__len__()}")
+                err_msg = str(e)[:80]
+                if "already exists" in err_msg or "duplicate" in err_msg.lower():
+                    ok.append(f"(già presente) {f}")
+                else:
+                    errori.append(f"{f}: {err_msg}")
         except Exception as e:
             errori.append(f"{f}: {str(e)[:60]}")
     conn.commit(); cur.close(); conn.close()
