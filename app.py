@@ -866,8 +866,15 @@ def prezzi_ingrediente(ingrediente):
         return jsonify({"ingrediente":ingrediente,"prezzi":[],"errore":str(e)})
 
 
-def _stima_costo_categoria(categoria):
-    """Stima orientativa del costo per categoria merceologica (€/kg o €/L)."""
+def _stima_costo_categoria(categoria, nome=None):
+    """Stima orientativa del costo per categoria merceologica (€/kg o €/L).
+    Usa prezzi ISMEA se disponibili per nome specifico."""
+    # Prima cerca per nome specifico nei prezzi ISMEA
+    if nome:
+        nome_low = nome.lower()
+        for k, v in _PREZZI_ISMEA.items():
+            if k in nome_low or nome_low in k:
+                return v
     COSTI = {
         "distillati": 35.0, "liquori": 20.0, "vino": 8.0, "birra": 3.5,
         "succhi": 4.0, "sciroppi": 5.0, "frutta fresca": 3.5,
@@ -3336,6 +3343,99 @@ def admin_build_status():
         })
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
+
+
+
+# Prezzi orientativi ISMEA 2024-2025 per ingredienti principali F&B
+# Fonte: ISMEA mercati, prezzi all'ingrosso
+_PREZZI_ISMEA = {
+    # Carni (€/kg)
+    "manzo": 8.50, "vitello": 9.20, "maiale": 4.80, "agnello": 9.80,
+    "pollo": 2.90, "tacchino": 3.20, "coniglio": 5.50,
+    # Salumi (€/kg)
+    "prosciutto crudo": 14.00, "prosciutto cotto": 8.50, "salame": 9.00,
+    "pancetta": 6.50, "mortadella": 5.20, "speck": 13.00,
+    "bresaola": 18.00, "guanciale": 8.00, "nduja": 12.00,
+    # Pesce (€/kg)
+    "salmone": 12.00, "tonno": 15.00, "branzino": 14.00, "orata": 12.00,
+    "baccalà": 9.00, "gamberi": 16.00, "cozze": 3.50, "vongole": 6.00,
+    "acciughe": 5.00, "polpo": 8.00, "calamaro": 7.00,
+    # Verdure (€/kg)
+    "pomodoro": 1.20, "melanzana": 1.50, "zucchina": 1.30, "peperone": 2.00,
+    "carota": 0.80, "cipolla": 0.90, "aglio": 3.50, "patata": 0.70,
+    "spinaci": 2.50, "rucola": 3.00, "finocchio": 1.20, "carciofo": 2.80,
+    "asparagi": 4.50, "funghi champignon": 3.50, "porcini": 18.00,
+    # Frutta (€/kg)
+    "limone": 1.50, "arancia": 1.20, "fragola": 4.00, "pesca": 2.50,
+    "albicocca": 2.80, "mela": 1.20, "pera": 1.50, "uva": 2.00,
+    "banana": 1.20, "ananas": 2.50, "mango": 4.50, "lime": 3.00,
+    # Latticini (€/kg o L)
+    "latte": 0.95, "panna fresca": 2.80, "burro": 5.50,
+    "mozzarella di bufala": 8.50, "parmigiano reggiano": 12.00,
+    "pecorino romano": 9.00, "ricotta": 4.50, "gorgonzola": 10.00,
+    # Farine e cereali (€/kg)
+    "farina 00": 0.85, "farina integrale": 1.20, "semola rimacinata": 1.00,
+    "riso carnaroli": 3.20, "riso basmati": 2.50, "farro": 2.00,
+    # Oli e grassi (€/L o kg)
+    "olio extravergine": 7.50, "olio di girasole": 2.50,
+    # Distillati (€/L)
+    "gin": 15.00, "vodka": 10.00, "rum bianco": 10.00, "rum scuro": 12.00,
+    "whisky": 18.00, "bourbon": 16.00, "tequila": 18.00, "mezcal": 25.00,
+    "cognac": 30.00, "grappa": 12.00,
+    # Vino (€/L)
+    "vino rosso": 3.50, "vino bianco": 3.00, "prosecco": 4.50,
+    # Spezie (€/kg)
+    "pepe nero": 15.00, "cannella": 12.00, "curcuma": 8.00,
+    "zafferano": 1500.00, "cardamomo": 25.00, "vaniglia": 200.00,
+    # Zuccheri (€/kg)
+    "zucchero": 1.20, "miele": 8.00, "sciroppo di agave": 6.00,
+    # Cioccolato (€/kg)
+    "cioccolato fondente 70%": 8.00, "cioccolato al latte": 6.50,
+    "cioccolato bianco": 7.00, "cacao in polvere": 9.00,
+}
+
+
+@app.route("/admin/seed-sicurezza", methods=["POST"])
+def admin_seed_sicurezza():
+    """Esegue i seed di sicurezza alimentare nel DB Postgres."""
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    if not DATABASE_URL:
+        return jsonify({"errore":"no db"}), 503
+    import psycopg2, glob, os as _os
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    seed_files = [
+        "grafo/seed-fenomeno-aw.sql",
+        "grafo/seed-sicurezza-zona-pericolo.sql",
+        "grafo/seed-sicurezza-shelf-life.sql",
+        "grafo/seed-sicurezza-contaminazione.sql",
+        "grafo/seed-sicurezza-atmosfera-modificata.sql",
+        "grafo/seed-agganci-sicurezza.sql",
+        "grafo/seed-principio-dvalue.sql",
+    ]
+    ok = []; errori = []
+    for f in seed_files:
+        if not _os.path.exists(f):
+            errori.append(f"{f}: non trovato")
+            continue
+        try:
+            sql = open(f, encoding="utf-8").read()
+            # Esegui statement per statement
+            for stmt in sql.split(";"):
+                stmt = stmt.strip()
+                if stmt and not stmt.startswith("--"):
+                    try:
+                        cur.execute(stmt)
+                    except Exception as e:
+                        if "duplicate" not in str(e).lower():
+                            errori.append(f"{f}: {str(e)[:60]}")
+            ok.append(f)
+        except Exception as e:
+            errori.append(f"{f}: {str(e)[:60]}")
+    conn.commit(); cur.close(); conn.close()
+    return jsonify({"ok": ok, "errori": errori})
 
 
 @app.route("/admin")
