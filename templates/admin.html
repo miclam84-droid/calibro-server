@@ -86,7 +86,23 @@
       </div>
       <div class="section">
         <h3>Feedback chat</h3>
-        <div id="feedback-stats"></div>
+        
+  <div style="margin:24px 0;padding:20px;background:#FAF6EE;border:1px solid #E2D8C4;border-radius:12px">
+    <div style="font-family:Georgia,serif;font-size:16px;font-weight:700;margin-bottom:8px">Dataset Ingredienti</div>
+    <div id="build-status" style="font-size:13px;color:#6B6257;margin-bottom:14px">Clicca "Aggiorna stato" per vedere lo stato del build.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button id="btn-build" onclick="buildIngredienti()"
+        style="background:#C77B3F;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;font-family:sans-serif">
+        ▶ Avvia build ingredienti
+      </button>
+      <button onclick="aggiornaBuildStatus(document.getElementById('secret-input').value)"
+        style="background:#2C6E63;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;font-family:sans-serif">
+        ↻ Aggiorna stato
+      </button>
+    </div>
+  </div>
+
+  <div id="feedback-stats"></div>
       </div>
     </div>
 
