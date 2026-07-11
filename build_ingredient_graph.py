@@ -467,7 +467,133 @@ INGREDIENTI = {
         "cloruro di sodio (sale)","solfato di magnesio (sale epsom)",
         "acido lattico (per abbassare pH mash)","acido fosforico",
     ],
+
+    # ── CUCINA ASIATICA ──────────────────────────────────────
+    "cucina_asiatica": [
+        # Salse e condimenti asiatici
+        "salsa di soia tamari","salsa di soia light","salsa di soia dark",
+        "salsa di pesce (nam pla)","salsa di ostriche","salsa hoisin",
+        "pasta di miso bianco (shiro miso)","pasta di miso rosso (aka miso)",
+        "pasta di miso d'orzo (mugi miso)","pasta di sesamo (tahini)",
+        "pasta di tamarindo","salsa teriyaki","salsa ponzu",
+        "aceto di riso seasoned","aceto di riso unseasoned",
+        "salsa sriracha","pasta di curry rosso","pasta di curry verde",
+        "pasta di curry giallo","pasta sambal oelek","pasta gochujang",
+        "pasta doenjang (fermented soybean)","pasta di gamberi (belachan)",
+        # Spezie e aromi asiatici
+        "zenzero fresco","galangal (laos)","lemongrass (citronella)",
+        "foglie di kaffir lime","foglie di curry","foglie di pandano",
+        "curcuma fresca","wasabi fresco","wasabi in pasta",
+        "pepe di Sichuan","pepe lungo di Giava","pepe di Tellicherry",
+        "cardamomo nero","macis","fiore di sale hawaiano nero",
+        "sale nero himalayano","sale affumicato giapponese",
+        "dashi (brodo di kombu e katsuobushi)","kombu","katsuobushi (bonito)",
+        "niboshi (sardine essiccate)","shiitake essiccato",
+        # Ingredienti umami asiatici
+        "glutammato monosodico (MSG)","estratto di lievito",
+        "pasta di acciughe","colatura di alici di Cetara",
+        "garum moderno","katsuobushi (fiocchi di bonito)",
+        "tobiko (uova di pesce volante)","ikura (uova di salmone)",
+        "uni (ricci di mare giapponesi)","miso di pesce",
+        # Noodles e carboidrati asiatici
+        "soba (grano saraceno)","udon","ramen (grano)","somen",
+        "vermicelli di riso","pasta di riso largo (pho)",
+        "pasta di mung bean (cellophane noodles)",
+        "pasta udon fresca","gnocchi di riso (tang yuan)",
+        # Tofu e derivati soia
+        "tofu morbido (silken)","tofu firm","tofu extra-firm",
+        "tofu affumicato","tempeh","edamame","natto",
+        "okara (polpa di soia)","latte di soia",
+        # Alghe
+        "kombu (Saccharina japonica)","wakame","nori","hijiki",
+        "dulse","spirulina","chlorella","agar agar",
+        # Frutte e verdure asiatiche
+        "daikon","bok choy","pak choi","cavolo napa","cavolo cinese",
+        "germogli di bambù","germogli di fagioli mung",
+        "lotus root (loto)","taro","yam cinese (nagaimo)",
+        "jackfruit (frutto del pane)","durian","rambutan","mangostino",
+        "longan","lychee fresco","carambola (starfruit)",
+        "yuzu","sudachi","kabosu","calamansi",
+    ],
+
+    # ── CUCINA MEDIORIENTALE ──────────────────────────────────
+    "cucina_mediorientale": [
+        # Spezie mediorientali
+        "za'atar (miscela)","sumac","harissa","ras el hanout",
+        "baharat","dukkah","chermoula","advieh (persiano)",
+        "aleppo pepper","urfa biber","maras pepper",
+        "semi di nigella (kalonji)","semi di fieno greco",
+        "semi di cumino nero","asafoetida (hing)",
+        "acqua di rose","acqua di fiori d'arancio mediorientale",
+        "pasta di melograno (molasses)","succo di melograno fresco",
+        # Legumi e cereali mediorientali
+        "ceci (hummus grade)","fave essiccate","lenticchie rosse decorticate",
+        "freekeh (grano verde tostato)","bulgur fino","bulgur grosso",
+        "couscous marocchino","couscous israeliano (ptitim)",
+        "teff","sorgo","farro selvatico",
+        # Latticini mediorientali
+        "labneh (yogurt colato)","ayran","kishk",
+        "halloumi","akkawi","shanklish","jibneh baida",
+        # Frutta secca e dolciumi
+        "datteri Medjool","datteri Deglet Nour","fichi secchi turchi",
+        "albicocche secche turche","prugne secche","uvetta sultanina dorata",
+        "pistacchio Antep","pistacchio Siirt","halva di sesamo",
+        "pasta di dattero","sciroppo di melograno",
+        # Erbe mediorientali
+        "prezzemolo a foglia piatta (grande quantità)","menta secca",
+        "aneto fresco","coriandolo fresco","fieno greco fresco",
+        "sumac in foglie","foglie di vite fresche",
+    ],
+
+    # ── CUCINA LATINOAMERICANA ────────────────────────────────
+    "cucina_latinoamericana": [
+        # Peperoncini
+        "ancho (poblano essiccato)","mulato","pasilla","guajillo",
+        "chipotle (jalapeño affumicato)","morita","negro (chilhuacle)",
+        "cascabel","árbol","serrano","habanero","scotch bonnet",
+        "aji amarillo","aji panca","aji limo","rocoto",
+        "peperoncino de agua","chile de agua oaxacano",
+        # Ingredienti latinoamericani
+        "masa harina (nixtamal)","epazote","hierba santa",
+        "hoja de aguacate (foglia di avocado)","achiote (annatto)",
+        "recado rojo","recado negro","pipian verde","mole negro",
+        "mole rojo","mole poblano","adobo mexicano",
+        "creme de leite (panna brasiliana)","requeijão",
+        "queso fresco","queso oaxaca","cotija","crema mexicana",
+        "chayote","jicama","nopales (cactus)","huitlacoche (fungo del mais)",
+        "plantain (platano da cuocere)","yuca (manioca)","malanga","ñame",
+        "pisco (peruviano)","singani","chicha de jora",
+        "aguardente de cana","rum cachaça agricola",
+    ],
+
+    # ── FERMENTATI E INGREDIENTI SPECIALI ────────────────────
+    "fermentati": [
+        # Fermentati globali
+        "kimchi maturo","kimchi fresco","kimchi bianco (baek kimchi)",
+        "kombucha (base)","kefir d'acqua","kefir di latte",
+        "kvass (fermentato di pane)","tepache (fermentato di ananas)",
+        "rejuvelac","jun (miele + tè verde fermentato)",
+        "shrub (aceto di frutta+zucchero)","fire cider",
+        "garum di manzo","garum di agnello","garum di funghi",
+        "garum vegetale","colatura di alici moderna",
+        "miso di noci","miso di ceci","miso di lenticchie",
+        "amazake","shio koji","sake kasu (fecce di sake)",
+        "vinegar mother (madre dell'aceto)","aceto di pompelmo",
+        "aceto di cocco","aceto di bambù affumicato",
+        # Ingredienti modernist
+        "lecitina di soia (emulsificante)","lecitina di girasole",
+        "metilcellulosa","idrossipropil metilcellulosa (HPMC)",
+        "agar agar (tipo forte)","iota carragenina","kappa carragenina",
+        "gomma xantano","gomma di guar","gomma di carrube (LBG)",
+        "gomma gellan (low acyl)","gomma gellan (high acyl)",
+        "alginato di sodio","cloruro di calcio (per sferificazione)",
+        "lattato di calcio","citrato di sodio","glucono delta-lattone (GDL)",
+        "maltodestrina tapioca (Tapioca Maltodextrin N-Zorbit)",
+        "destrosio","isomalt (per decorazioni)",
+        "inulina","fibra di cicoria","amido di patata modificato",
+    ],
 }
+
 
 # ── PROMPT TEMPLATE ───────────────────────────────────────────────────────────
 PROMPT_TEMPLATE = """Sei un esperto di chimica degli alimenti e scienza sensoriale con accesso alla letteratura scientifica (Food Chemistry, Journal of Agricultural and Food Chemistry, Meat Science, LWT, Flavour and Fragrance Journal, McGee On Food and Cooking).

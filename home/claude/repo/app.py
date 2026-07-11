@@ -372,28 +372,7 @@ def costruisci_prompt(domanda, contesto, lang="it"):
             "- Never mention being an AI or using a graph."
         )
     else:
-        import datetime as _dt
-        _oggi = _dt.date.today()
-        _mese = _oggi.month
-        _stagione = (
-            "inverno (dicembre-febbraio)" if _mese in (12,1,2) else
-            "primavera (marzo-maggio)"   if _mese in (3,4,5) else
-            "estate (giugno-agosto)"     if _mese in (6,7,8) else
-            "autunno (settembre-novembre)"
-        )
-        _prodotti_stagione = {
-            "estate":    "pomodori, zucchine, melanzane, peperoni, basilico, fichi, albicocche, pesche, more, anguria, melone",
-            "autunno":   "funghi porcini, tartufo, zucca, mele, pere, uva, fichi d'India, cachi, radicchio, castagne, cavolo",
-            "inverno":   "agrumi (arance, mandarini, limoni), cavolo nero, verza, broccoli, finocchi, carciofi, topinambur, cardi",
-            "primavera": "asparagi, piselli, fave, carciofi, spinaci, agretti, fragole, ciliegie, erbe fresche (menta, erba cipollina)",
-        }
-        _stagione_key = _stagione.split(" ")[0]
-        _frutti = _prodotti_stagione.get(_stagione_key, "")
         regole = (
-            f"Data odierna: {_oggi.strftime('%d %B %Y')} — siamo in {_stagione}.\n"
-            f"Ingredienti di stagione ora disponibili: {_frutti}.\n"
-            f"Quando suggerisci abbinamenti o ingredienti, usa SOLO prodotti di stagione "
-            f"a meno che la domanda non riguardi esplicitamente prodotti fuori stagione.\n\n"
             "Sei uno strumento che spiega la ristorazione attraverso i fenomeni fisici "
             "e chimici che la governano: acidita, concentrazione, calore, osmosi, struttura. "
             "Questi fenomeni non appartengono a una disciplina: sono le stesse leggi che "
@@ -419,9 +398,27 @@ def costruisci_prompt(domanda, contesto, lang="it"):
 
 # ---- Mistral via HTTP diretto (nessun SDK) ------------------
 def _mistral_raw(prompt, max_tokens=None):
-    """Wrapper retrocompatibile → AI Gateway compat_mistral_raw."""
-    import ai_gateway as GW
-    return GW.compat_mistral_raw(prompt, max_tokens=max_tokens)
+    """Chiamata Mistral grezza, riusata sia per la risposta sia per l'estrazione entità."""
+    key = os.environ.get("MISTRAL_API_KEY")
+    if not key:
+        return None
+    import urllib.request
+    payload = {
+        "model": "mistral-small-latest",
+        "messages": [{"role":"user","content":prompt}],
+        "temperature": 0
+    }
+    if max_tokens:
+        payload["max_tokens"] = max_tokens
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.mistral.ai/v1/chat/completions",
+        data=body,
+        headers={"Authorization": f"Bearer {key}", "Content-Type":"application/json"},
+        method="POST")
+    with urllib.request.urlopen(req, timeout=30) as r:
+        data = json.loads(r.read().decode("utf-8"))
+    return data["choices"][0]["message"]["content"]
 
 def estrai_entita(domanda):
     """Fa estrarre a Mistral i concetti del dominio, per agganciare meglio i nodi del grafo.
@@ -468,32 +465,125 @@ _TOOLS = [
 ]
 
 def _anthropic_raw(prompt):
-    """Wrapper retrocompatibile → AI Gateway route_chat."""
-    import ai_gateway as GW
-    return GW.route_chat(prompt, tools=_TOOLS)
+    """Chiamata a Sonnet con tool-calling per motore.py.
+    Quando la domanda ha numeri propri dell'utente, Sonnet chiama il motore
+    invece di stimare — risultato deterministico, zero invenzione."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        return None
+    import urllib.request
+    body = json.dumps({
+        "model": "claude-sonnet-4-6",
+        "max_tokens": 800,
+        "temperature": 0,
+        "tools": _TOOLS,
+        "messages": [{"role": "user", "content": prompt}]
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=body,
+        headers={
+            "x-api-key": key,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json"
+        },
+        method="POST")
+    with urllib.request.urlopen(req, timeout=30) as r:
+        data = json.loads(r.read().decode("utf-8"))
+
+    # gestisci tool_use: se Sonnet chiama il motore, esegui e dai il risultato
+    testo = []
+    tool_results = []
+    for block in data.get("content", []):
+        if block.get("type") == "text":
+            testo.append(block.get("text",""))
+        elif block.get("type") == "tool_use":
+            tool_id = block.get("id","")
+            tool_input = block.get("input", {})
+            risultato = Motore.esegui(tool_input.get("calcolo",""), tool_input.get("parametri",{}))
+            tool_results.append({
+                "type": "tool_result",
+                "tool_use_id": tool_id,
+                "content": json.dumps(risultato, ensure_ascii=False)
+            })
+
+    # se c'era un tool call, fai una seconda chiamata con il risultato
+    if tool_results:
+        messages = [
+            {"role": "user", "content": prompt},
+            {"role": "assistant", "content": data.get("content", [])},
+            {"role": "user", "content": tool_results}
+        ]
+        body2 = json.dumps({
+            "model": "claude-sonnet-4-6",
+            "max_tokens": 800,
+            "temperature": 0,
+            "messages": messages
+        }).encode("utf-8")
+        req2 = urllib.request.Request(
+            "https://api.anthropic.com/v1/messages",
+            data=body2,
+            headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
+            method="POST")
+        with urllib.request.urlopen(req2, timeout=30) as r2:
+            data2 = json.loads(r2.read().decode("utf-8"))
+        return "".join(b.get("text","") for b in data2.get("content",[]) if b.get("type")=="text")
+
+    return "".join(testo) if testo else None
 
 
 def _haiku_raw(prompt, max_tokens=600):
-    """Wrapper retrocompatibile → AI Gateway route_fast."""
-    import ai_gateway as GW
-    return GW.route_fast(prompt, max_tokens=max_tokens)
+    """Haiku 4.5 per compiti semplici: quiz, traduzioni. Costo ~4x inferiore a Sonnet."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        return None
+    import urllib.request
+    body = json.dumps({
+        "model": "claude-haiku-4-5",
+        "max_tokens": max_tokens,
+        "temperature": 0,
+        "messages": [{"role": "user", "content": prompt}]
+    }).encode("utf-8")
+    # timeout 45s + 1 retry — req ricreato a ogni tentativo (urllib consuma il body al primo uso)
+    for attempt in range(2):
+        try:
+            req = urllib.request.Request(
+                "https://api.anthropic.com/v1/messages",
+                data=body,
+                headers={"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
+                method="POST")
+            with urllib.request.urlopen(req, timeout=45) as r:
+                data = json.loads(r.read().decode("utf-8"))
+            return "".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
+        except Exception as _e:
+            print(f"HAIKU attempt {attempt+1} failed: {_e}", flush=True)
+            if attempt == 0:
+                import time as _t; _t.sleep(2)
+    return None
 
 
 def chiedi_mistral(prompt):
-    """Nome storico mantenuto — ora usa AI Gateway route_chat con fallback automatico."""
-    import ai_gateway as GW
+    """Nome storico mantenuto per non toccare i due punti che la chiamano.
+    Prova Sonnet (qualità migliore sul grafo ricco); se la chiave non c'è
+    o la chiamata fallisce, ripiega su Mistral — il prodotto non si ferma."""
     try:
-        out = GW.route_chat(prompt, tools=_TOOLS)
+        out = _anthropic_raw(prompt)
         if out:
             return out
+    except Exception:
+        pass
+    try:
+        out = _mistral_raw(prompt)
+        return out if out is not None else None
     except Exception as e:
-        print(f"[GW] route_chat fallito in chiedi_mistral: {e}", flush=True)
-    return None
+        return f"[errore nella chiamata: {e}]"
 
 def log_evento(tipo, domanda, fenomeni=None, esito=None):
-    """Log minimo per osservabilità. Ritorna id del log per feedback (AC5)."""
+    """Log minimo per osservabilità: cosa chiedono gli utenti, cosa trova il grafo,
+    dove fallisce. Una riga per evento, tabella separata in Postgres.
+    Wrapped in try/except: se il log fallisce, la risposta arriva lo stesso."""
     if not DATABASE_URL:
-        return None
+        return  # in locale non logghiamo
     try:
         import psycopg2
         conn = psycopg2.connect(DATABASE_URL)
@@ -502,21 +592,26 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
             CREATE TABLE IF NOT EXISTS log_domande (
                 id SERIAL PRIMARY KEY,
                 ts TIMESTAMPTZ DEFAULT NOW(),
-                tipo TEXT, domanda TEXT,
-                fenomeni_trovati TEXT, esito TEXT
+                tipo TEXT,
+                domanda TEXT,
+                fenomeni_trovati TEXT,
+                esito TEXT
             )
         """)
         cur.execute(
-            "INSERT INTO log_domande (tipo, domanda, fenomeni_trovati, esito) VALUES (%s,%s,%s,%s) RETURNING id",
-            (tipo, domanda[:500], ",".join(fenomeni) if fenomeni else None, esito)
+            "INSERT INTO log_domande (tipo, domanda, fenomeni_trovati, esito) VALUES (%s,%s,%s,%s)",
+            (tipo, domanda[:500],
+             ",".join(fenomeni) if fenomeni else None,
+             esito)
         )
-        log_id = cur.fetchone()[0]
-        conn.commit(); cur.close(); conn.close()
-        return log_id
+        conn.commit()
+        cur.close(); conn.close()
     except Exception:
-        return None
+        pass  # mai bloccare la risposta per un log fallito
 
 
+
+# ── ACCOUNT UTENTE (AC2) ──────────────────────────────────────────
 def _init_account_tables():
     """Crea le tabelle account se non esistono. Chiamata al primo avvio."""
     if not DATABASE_URL:
@@ -599,7 +694,7 @@ def _utente_da_token(token):
 
 @app.route("/v1/auth/registra", methods=["POST"])
 def registra():
-    """AC2 — Registrazione: crea utente attivo=FALSE → email verifica → utente clicca → attivo=TRUE."""
+    """AC2 — Registrazione utente con email + password."""
     body = request.json or {}
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     if not _check_rate_limit(ip):
@@ -613,72 +708,19 @@ def registra():
     if not DATABASE_URL:
         return jsonify({"errore":"database non disponibile"}), 503
     try:
-        import psycopg2, secrets as _sec
-        conn = psycopg2.connect(DATABASE_URL)
-        cur = conn.cursor()
-        cur.execute("""CREATE TABLE IF NOT EXISTS verifica_email (
-            token TEXT PRIMARY KEY, email TEXT NOT NULL,
-            ts TIMESTAMPTZ DEFAULT NOW(),
-            scade TIMESTAMPTZ DEFAULT NOW() + INTERVAL '24 hours',
-            usato BOOLEAN DEFAULT FALSE)""")
-        cur.execute(
-            "INSERT INTO utenti (email, password_h, attivo) VALUES (%s,%s,FALSE) RETURNING id",
-            (email, _hash_pw(password))
-        )
-        user_id = cur.fetchone()[0]
-        tok = _sec.token_urlsafe(32)
-        cur.execute("INSERT INTO verifica_email (token,email) VALUES (%s,%s)", (tok, email))
-        conn.commit(); cur.close(); conn.close()
-        base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
-        link = f"{base}/app?verifica={tok}"
-        _invia_email_resend(
-            to=email,
-            subject="Conferma la tua email — Matter Lab",
-            body_html=(
-                f"<p style='font-family:sans-serif'>Benvenuto in <strong>Matter Lab</strong>.</p>"
-                f"<p style='font-family:sans-serif'>Conferma la tua email per attivare l'account:</p>"
-                f"<p><a href='{link}' style='background:#2C6E63;color:#fff;padding:12px 24px;"
-                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>"
-                f"Attiva il mio account</a></p>"
-                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Link valido 24 ore.</p>"
-            ),
-            body_text=f"Benvenuto in Matter Lab.\n\nConferma email:\n{link}\n\nLink valido 24 ore."
-        )
-        return jsonify({"ok":True,"messaggio":"Account creato. Controlla la tua email per attivarlo.","verifica_richiesta":True})
-    except Exception as e:
-        if "unique" in str(e).lower():
-            return jsonify({"errore":"email gia registrata"}), 409
-        return jsonify({"errore":str(e)}), 500
-
-
-@app.route("/v1/auth/verifica-email", methods=["POST"])
-def verifica_email_route():
-    """AC2b — Attiva account dal token email. Ritorna token sessione."""
-    body = request.json or {}
-    tok = (body.get("token","")).strip()
-    if not tok or not DATABASE_URL:
-        return jsonify({"errore":"token mancante"}), 400
-    try:
         import psycopg2
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
-        cur.execute(
-            "SELECT email FROM verifica_email WHERE token=%s AND scade>NOW() AND usato=FALSE", (tok,)
-        )
-        row = cur.fetchone()
-        if not row:
-            cur.close(); conn.close()
-            return jsonify({"errore":"Link non valido o scaduto. Registrati di nuovo."}), 400
-        email = row[0]
-        cur.execute("UPDATE utenti SET attivo=TRUE WHERE email=%s", (email,))
-        cur.execute("UPDATE verifica_email SET usato=TRUE WHERE token=%s", (tok,))
-        cur.execute("SELECT id, piano FROM utenti WHERE email=%s", (email,))
-        user_id, piano = cur.fetchone()
-        token_sess = _genera_token()
-        cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token_sess, user_id))
+        cur.execute("INSERT INTO utenti (email, password_h) VALUES (%s,%s) RETURNING id",
+                    (email, _hash_pw(password)))
+        user_id = cur.fetchone()[0]
+        token = _genera_token()
+        cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token, user_id))
         conn.commit(); cur.close(); conn.close()
-        return jsonify({"ok":True,"token":token_sess,"piano":piano or "free","messaggio":"Email confermata. Benvenuto in Matter Lab."})
+        return jsonify({"token":token,"piano":"free","messaggio":"Benvenuto in Matter."})
     except Exception as e:
+        if "unique" in str(e).lower():
+            return jsonify({"errore":"email già registrata"}), 409
         return jsonify({"errore":str(e)}), 500
 
 @app.route("/v1/auth/login", methods=["POST"])
@@ -786,337 +828,6 @@ def quaderno_salva():
         exp_id = cur.fetchone()[0]
         conn.commit(); cur.close(); conn.close()
         return jsonify({"id":exp_id,"ok":True})
-    except Exception as e:
-        return jsonify({"errore":str(e)}), 500
-
-
-@app.route("/v1/prezzi/<ingrediente>")
-def prezzi_ingrediente(ingrediente):
-    """Restituisce il prezzo orientativo di mercato per un ingrediente.
-    Cerca prima nei nodi Ingrediente del grafo (dataset Matter Lab),
-    poi nei nodi Prodotto con costo_mercato_eur popolato."""
-    lang = request.args.get("lang","it")
-    ing_norm = ingrediente.lower().replace("-"," ")
-    if not DATABASE_URL:
-        return jsonify({"ingrediente":ingrediente,"prezzi":[]})
-    try:
-        import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
-        cur = conn.cursor()
-        # Cerca nel dataset proprietario (nodi Ingrediente)
-        cur.execute("""
-            SELECT id, name, data
-            FROM nodes
-            WHERE type='Ingrediente'
-            AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
-            LIMIT 3
-        """, (f"%{ing_norm}%", f"%ing-{ing_norm.replace(' ','-')}%"))
-        rows = cur.fetchall()
-        prezzi = []
-        for row in rows:
-            d = row[2] if isinstance(row[2], dict) else json.loads(row[2] or "{}")
-            params = d.get("parametri_fisici", {})
-            # Cerca costo nei parametri fisici del profilo
-            costo = d.get("costo_mercato_eur") or params.get("costo_mercato_eur")
-            if not costo:
-                # Stima da categoria
-                cat = d.get("categoria","")
-                costo = _stima_costo_categoria(cat)
-            prezzi.append({
-                "nome": row[1],
-                "costo_eur_kg": costo,
-                "categoria": d.get("categoria",""),
-                "fonte": "Matter Lab / ISMEA orientativo",
-                "nota": "Prezzo orientativo di mercato. Per prezzi fornitore reali usa Cifra."
-            })
-        cur.close(); conn.close()
-        return jsonify({"ingrediente":ingrediente,"prezzi":prezzi})
-    except Exception as e:
-        return jsonify({"ingrediente":ingrediente,"prezzi":[],"errore":str(e)})
-
-
-def _stima_costo_categoria(categoria):
-    """Stima orientativa del costo per categoria merceologica (€/kg o €/L)."""
-    COSTI = {
-        "distillati": 35.0, "liquori": 20.0, "vino": 8.0, "birra": 3.5,
-        "succhi": 4.0, "sciroppi": 5.0, "frutta fresca": 3.5,
-        "verdure": 2.0, "carni": 12.0, "salumi": 18.0, "pesce": 15.0,
-        "latticini": 4.0, "formaggi": 14.0, "uova": 3.0,
-        "farine": 1.5, "zuccheri": 1.2, "grassi": 6.0,
-        "spezie": 25.0, "erbe aromatiche": 8.0,
-        "cioccolato": 12.0, "cacao": 8.0,
-        "caffè": 18.0, "tè": 12.0,
-        "frutta secca": 20.0, "paste frutta secca": 35.0,
-        "luppoli": 30.0, "malti": 2.5, "lieviti": 5.0,
-        "uve": 2.0, "gelatine": 20.0, "addensanti": 15.0,
-    }
-    cat_low = categoria.lower() if categoria else ""
-    for k, v in COSTI.items():
-        if k in cat_low or cat_low in k:
-            return v
-    return 5.0  # default generico
-
-
-@app.route("/v1/quaderno/<int:exp_id>/costo", methods=["GET","POST"])
-def quaderno_calcola_costo(exp_id):
-    """Calcola il food/drink cost di un esperimento nel quaderno.
-
-    GET: calcola costo con ingredienti e quantità già salvati
-    POST: calcola costo con ingredienti passati nel body
-    {
-      "ingredienti": [
-        {"nome": "bourbon", "quantita_ml": 50},
-        {"nome": "lime", "quantita_g": 22}
-      ],
-      "prezzo_vendita": 12.0  # opzionale
-    }
-    """
-    token = request.headers.get("Authorization","").replace("Bearer ","")
-    user_id = _utente_da_token(token)
-    if not user_id:
-        return jsonify({"errore":"autenticazione richiesta"}), 401
-
-    body = request.json or {}
-    ingredienti_input = body.get("ingredienti", [])
-
-    if not DATABASE_URL:
-        return jsonify({"errore":"database non disponibile"}), 503
-
-    try:
-        import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
-        cur = conn.cursor()
-
-        # Se GET, leggi ingredienti dall'esperimento salvato
-        if request.method == "GET":
-            cur.execute("SELECT ingredienti FROM esperimenti WHERE id=%s AND user_id=%s",
-                       (exp_id, str(user_id)))
-            row = cur.fetchone()
-            if not row:
-                cur.close(); conn.close()
-                return jsonify({"errore":"esperimento non trovato"}), 404
-            ingredienti_input = json.loads(row[0] or "[]")
-
-        # Calcola costo per ogni ingrediente
-        dettaglio = []
-        costo_totale = 0.0
-
-        for ing in ingredienti_input:
-            nome = ing.get("nome","").lower()
-            # Quantità — supporta ml, g, cl, oz, pz
-            qty_ml = float(ing.get("quantita_ml", ing.get("ml", 0)) or 0)
-            qty_g  = float(ing.get("quantita_g",  ing.get("g",  0)) or 0)
-            qty_cl = float(ing.get("quantita_cl", ing.get("cl", 0)) or 0)
-            qty_oz = float(ing.get("quantita_oz", ing.get("oz", 0)) or 0)
-            qty_pz = float(ing.get("quantita_pz", ing.get("pz", 0)) or 0)
-
-            # Normalizza tutto in grammi (approssimazione: 1ml ≈ 1g per liquidi)
-            qty_totale_g = qty_g + qty_ml + (qty_cl * 10) + (qty_oz * 28.35) + (qty_pz * 100)
-
-            # Cerca il prezzo nel grafo
-            cur.execute("""
-                SELECT name, data FROM nodes
-                WHERE type='Ingrediente'
-                AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
-                LIMIT 1
-            """, (f"%{nome}%", f"%ing-{nome.replace(' ','-')}%"))
-            ing_row = cur.fetchone()
-
-            costo_eur_kg = 5.0  # default
-            fonte = "stima generica"
-            categoria = ""
-            if ing_row:
-                d = ing_row[1] if isinstance(ing_row[1], dict) else json.loads(ing_row[1] or "{}")
-                categoria = d.get("categoria","")
-                costo_eur_kg = (d.get("costo_mercato_eur") or
-                               _stima_costo_categoria(categoria))
-                fonte = "Matter Lab / ISMEA orientativo"
-
-            costo_porzione = (qty_totale_g / 1000) * costo_eur_kg
-            costo_totale += costo_porzione
-
-            dettaglio.append({
-                "ingrediente": nome,
-                "quantita_g": round(qty_totale_g, 1),
-                "costo_eur_kg": costo_eur_kg,
-                "costo_porzione_eur": round(costo_porzione, 3),
-                "categoria": categoria,
-                "fonte": fonte
-            })
-
-        # Food cost percentuale
-        prezzo_vendita = float(body.get("prezzo_vendita", 0) or 0)
-        food_cost_pct = (costo_totale / prezzo_vendita * 100) if prezzo_vendita > 0 else None
-
-        # Prezzo vendita suggerito a diversi food cost target
-        suggeriti = {
-            "fc_25pct": round(costo_totale / 0.25, 2),
-            "fc_30pct": round(costo_totale / 0.30, 2),
-            "fc_33pct": round(costo_totale / 0.33, 2),
-        }
-
-        cur.close(); conn.close()
-        return jsonify({
-            "exp_id": exp_id,
-            "costo_totale_eur": round(costo_totale, 3),
-            "dettaglio": dettaglio,
-            "food_cost_pct": round(food_cost_pct, 1) if food_cost_pct else None,
-            "prezzo_vendita": prezzo_vendita or None,
-            "prezzi_vendita_suggeriti": suggeriti,
-            "nota": "Prezzi orientativi di mercato. Per prezzi fornitore reali usa Cifra.",
-            "fonte": "Matter Lab / ISMEA"
-        })
-    except Exception as e:
-        return jsonify({"errore":str(e)}), 500
-
-
-@app.route("/v1/strumenti")
-@app.route("/v1/strumenti/<disciplina>")
-def strumenti(disciplina=None):
-    """Restituisce gli strumenti di misura per disciplina.
-    Ogni strumento ha: nome, misura, numero_bersaglio, link_amazon."""
-    STRUMENTI_DB = {
-        "bar": [
-            {"nome":"pH-metro da banco","misura":"pH","target":"0-14","amazon":"https://www.amazon.it/s?k=phmetro+digitale+professionale","prezzo_approx":"€25-80"},
-            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"0-85°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+professionale","prezzo_approx":"€15-60"},
-            {"nome":"Bilancia di precisione 0.1g","misura":"grammi","target":"0-500g","amazon":"https://www.amazon.it/s?k=bilancia+precisione+0.1g+cocktail","prezzo_approx":"€20-50"},
-            {"nome":"Alcolimetro/ebulliometro","misura":"ABV%","target":"0-100%","amazon":"https://www.amazon.it/s?k=alcolimetro+digitale","prezzo_approx":"€30-150"},
-            {"nome":"Termometro digitale sonda","misura":"°C","target":"-50/+300°C","amazon":"https://www.amazon.it/s?k=termometro+digitale+sonda+cucina","prezzo_approx":"€10-40"},
-            {"nome":"Jigger graduato","misura":"ml","target":"5-60ml","amazon":"https://www.amazon.it/s?k=jigger+professionale+graduato","prezzo_approx":"€5-25"},
-        ],
-        "caffe": [
-            {"nome":"Rifrattometro TDS caffè (VST/Atago)","misura":"TDS%","target":"1.15-1.55% filtro · 7-12% espresso","amazon":"https://www.amazon.it/s?k=rifrattometro+caffe+tds","prezzo_approx":"€50-300"},
-            {"nome":"Bilancia barista 0.1g con timer","misura":"grammi + tempo","target":"ratio 1:2-17","amazon":"https://www.amazon.it/s?k=bilancia+barista+timer+professionale","prezzo_approx":"€25-150"},
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"90-96°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+caffetteria","prezzo_approx":"€10-40"},
-            {"nome":"Manometro espresso","misura":"bar","target":"9 bar","amazon":"https://www.amazon.it/s?k=manometro+macchina+espresso","prezzo_approx":"€15-60"},
-        ],
-        "panificazione": [
-            {"nome":"pH-metro","misura":"pH","target":"pH madre: 3.7-3.9","amazon":"https://www.amazon.it/s?k=phmetro+lievito+madre","prezzo_approx":"€25-80"},
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"96-98°C interno pane","amazon":"https://www.amazon.it/s?k=termometro+sonda+forno+pane","prezzo_approx":"€10-40"},
-            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"baker%","amazon":"https://www.amazon.it/s?k=bilancia+professionale+panificazione","prezzo_approx":"€20-80"},
-            {"nome":"Igrometro forno","misura":"umidità%","target":"80-90% primi minuti cottura","amazon":"https://www.amazon.it/s?k=igrometro+forno+cottura+pane","prezzo_approx":"€15-50"},
-            {"nome":"Acidimetro titolabile","misura":"acido lattico%","target":"0.5-2%","amazon":"https://www.amazon.it/s?k=kit+acidita+titolabile+vino","prezzo_approx":"€20-60"},
-        ],
-        "pasticceria": [
-            {"nome":"Termometro digitale sonda","misura":"°C","target":"crema 82-84°C · caramello 160°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+pasticceria","prezzo_approx":"€10-40"},
-            {"nome":"Bilancia 0.1g","misura":"grammi","target":"precisione fondamentale","amazon":"https://www.amazon.it/s?k=bilancia+precisione+pasticceria","prezzo_approx":"€20-50"},
-            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"sciroppi · confetture ≥65°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+pasticceria","prezzo_approx":"€15-60"},
-            {"nome":"Termometro IR (infrarossi)","misura":"°C","target":"temperaggio cioccolato 28-32°C","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina+professionale","prezzo_approx":"€20-60"},
-        ],
-        "gelateria": [
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"-10/-12°C servizio · -18°C conservazione","amazon":"https://www.amazon.it/s?k=termometro+sonda+gelateria+professionale","prezzo_approx":"€10-40"},
-            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"POD/PAC mix gelato","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+gelateria","prezzo_approx":"€15-60"},
-            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"overrun: peso × volume","amazon":"https://www.amazon.it/s?k=bilancia+professionale+gelateria","prezzo_approx":"€20-80"},
-            {"nome":"Misuratore Aw (attività acqua)","misura":"Aw","target":"<0.85 per sicurezza","amazon":"https://www.amazon.it/s?k=misuratore+attivita+acqua+aw","prezzo_approx":"€200-800"},
-        ],
-        "vino": [
-            {"nome":"pH-metro da banco","misura":"pH","target":"pH vino 3.0-3.8","amazon":"https://www.amazon.it/s?k=phmetro+enologico+vino","prezzo_approx":"€25-150"},
-            {"nome":"Kit acidità volatile","misura":"g/L acido acetico","target":"<0.6 g/L","amazon":"https://www.amazon.it/s?k=kit+acidita+volatile+vino","prezzo_approx":"€20-80"},
-            {"nome":"Rifrattometro mosto","misura":"°Brix/Babo","target":"maturità uva","amazon":"https://www.amazon.it/s?k=rifrattometro+mosto+uva","prezzo_approx":"£15-50"},
-            {"nome":"Alcoolmetro Gay-Lussac","misura":"ABV%","target":"vino 10-15% vol","amazon":"https://www.amazon.it/s?k=alcoolmetro+gay+lussac+vino","prezzo_approx":"€10-40"},
-            {"nome":"Kit SO2 libera/totale","misura":"mg/L","target":"SO2 libera 20-40 mg/L","amazon":"https://www.amazon.it/s?k=kit+analisi+so2+vino","prezzo_approx":"€30-100"},
-        ],
-        "birra": [
-            {"nome":"Densimetro/areometro","misura":"densità/OG/FG","target":"OG 1.040-1.080","amazon":"https://www.amazon.it/s?k=densimetro+birra+homebrewing","prezzo_approx":"€5-20"},
-            {"nome":"Rifrattometro birra","misura":"°Brix/Plato","target":"attenuation%","amazon":"https://www.amazon.it/s?k=rifrattometro+birra+professionale","prezzo_approx":"€15-50"},
-            {"nome":"pH-metro digitale","misura":"pH","target":"mash pH 5.2-5.4","amazon":"https://www.amazon.it/s?k=phmetro+digitale+birra","prezzo_approx":"€25-80"},
-            {"nome":"Termometro sonda","misura":"°C","target":"mash 62-72°C · lagerizzazione 0-2°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+birra+homebrewing","prezzo_approx":"€10-40"},
-            {"nome":"Manometro CO2 keg","misura":"bar","target":"carbonatazione 1.5-3 bar","amazon":"https://www.amazon.it/s?k=manometro+co2+fusto+birra","prezzo_approx":"€15-50"},
-        ],
-        "cucina": [
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"manzo MR 55-57°C · pollo 74°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+cucina+professionale","prezzo_approx":"€10-40"},
-            {"nome":"pH-metro","misura":"pH","target":"fermentati pH<4.6","amazon":"https://www.amazon.it/s?k=phmetro+cucina+fermentati","prezzo_approx":"€25-80"},
-            {"nome":"Termometro IR infrarossi","misura":"°C","target":"olio frittura 170-180°C","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina","prezzo_approx":"€20-60"},
-            {"nome":"Bilancia precisione 1g","misura":"grammi","target":"dosaggi sale/acido","amazon":"https://www.amazon.it/s?k=bilancia+precisione+cucina+professionale","prezzo_approx":"€20-50"},
-            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"confetture ≥65°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+marmellata","prezzo_approx":"€15-60"},
-        ],
-    }
-
-    if disciplina:
-        disc_norm = disciplina.lower().replace("caffetteria","caffe")
-        strumenti_disc = STRUMENTI_DB.get(disc_norm, [])
-        return jsonify({"disciplina":disciplina,"strumenti":strumenti_disc})
-
-    # Tutti
-    return jsonify({"strumenti":STRUMENTI_DB})
-
-
-@app.route("/v1/stt", methods=["POST"])
-def stt():
-    """Trascrizione audio via OpenAI Whisper (AI Gateway route_stt).
-    Accetta audio WebM/MP4/WAV/M4A da browser.
-    Pro-only: il barman parla al banco, l app trascrive e risponde."""
-    token = request.headers.get("X-Token","") or (request.json or {}).get("token","")
-    user_id = _utente_da_token(token)
-    if not user_id:
-        return jsonify({"errore":"autenticazione richiesta"}), 401
-    # verifica piano pro
-    if DATABASE_URL:
-        try:
-            import psycopg2
-            conn_p = psycopg2.connect(DATABASE_URL)
-            cur_p = conn_p.cursor()
-            cur_p.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
-            row_p = cur_p.fetchone()
-            cur_p.close(); conn_p.close()
-            if not row_p or row_p[0] != "pro":
-                return jsonify({"errore":"Whisper è disponibile nel piano Pro"}), 403
-        except Exception:
-            pass
-    if "audio" not in request.files:
-        return jsonify({"errore":"file audio mancante"}), 400
-    audio_file = request.files["audio"]
-    audio_bytes = audio_file.read()
-    lang = request.args.get("lang","it")
-    try:
-        import ai_gateway as GW
-        testo = GW.route_stt(audio_bytes, filename=audio_file.filename or "audio.webm", language=lang)
-        if not testo:
-            return jsonify({"errore":"trascrizione vuota"}), 422
-        return jsonify({"trascrizione":testo,"lang":lang})
-    except Exception as e:
-        return jsonify({"errore":str(e)}), 500
-
-
-@app.route("/v1/vision", methods=["POST"])
-def vision():
-    """Analisi immagine via OpenAI Vision gpt-4o-mini.
-    Accetta foto di schede tecniche, etichette, piatti.
-    Pro-only."""
-    token = request.headers.get("X-Token","") or (request.json or {}).get("token","")
-    user_id = _utente_da_token(token)
-    if not user_id:
-        return jsonify({"errore":"autenticazione richiesta"}), 401
-    if DATABASE_URL:
-        try:
-            import psycopg2
-            conn_v = psycopg2.connect(DATABASE_URL)
-            cur_v = conn_v.cursor()
-            cur_v.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
-            row_v = cur_v.fetchone()
-            cur_v.close(); conn_v.close()
-            if not row_v or row_v[0] != "pro":
-                return jsonify({"errore":"Vision è disponibile nel piano Pro"}), 403
-        except Exception:
-            pass
-    if "immagine" not in request.files:
-        return jsonify({"errore":"immagine mancante"}), 400
-    img_file = request.files["immagine"]
-    img_bytes = img_file.read()
-    media_type = img_file.content_type or "image/jpeg"
-    lang = request.args.get("lang","it")
-    prompt = (
-        "Sei un esperto di chimica degli alimenti. "
-        "Analizza questa immagine e identifica: "
-        "1) Se è una scheda tecnica: estrai tutti i parametri fisici (pH, Aw, Brix, ABV, temperatura, ecc.) "
-        "2) Se è un piatto/drink: identifica gli ingredienti principali e suggerisci i fenomeni fisici rilevanti "
-        "3) Se è un'etichetta: estrai ingredienti, valori nutrizionali, parametri rilevanti. "
-        f"Rispondi in {'italiano' if lang=='it' else 'English'}, in modo sintetico e professionale."
-    )
-    try:
-        import ai_gateway as GW
-        risposta = GW.route_vision(img_bytes, prompt, media_type=media_type)
-        return jsonify({"analisi":risposta,"lang":lang})
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
 
@@ -1538,64 +1249,6 @@ def abbina(ingrediente):
         "funghi":"mushroom","porcini":"porcini_mushroom",
         "tè":"tea","te":"tea","miele":"honey","zucchero":"sugar",
         "peperoncino":"chili","peperone":"bell_pepper","melanzana":"eggplant",
-        # salumi e carni italiane
-        "salame":"salami","salumi":"salami","prosciutto":"prosciutto",
-        "pancetta":"bacon","guanciale":"guanciale","mortadella":"mortadella",
-        "speck":"smoked_ham","nduja":"nduja","salsiccia":"pork_sausage",
-        "bresaola":"beef","lardo":"lard","coppa":"pork",
-        # formaggi italiani
-        "ricotta":"ricotta","pecorino":"pecorino","grana":"parmesan",
-        "gorgonzola":"blue_cheese","taleggio":"cheese","asiago":"cheese",
-        "scamorza":"cheese","provolone":"provolone","caciocavallo":"cheese",
-        "burrata":"mozzarella","stracciatella":"mozzarella",
-        # verdure stagionali
-        "zucchine":"zucchini","pomodorino":"tomato","ciliegino":"tomato",
-        "pomodoro":"tomato","basilico":"basil","rucola":"arugula",
-        "radicchio":"radicchio","cicoria":"chicory","finocchio":"fennel",
-        "carciofo":"artichoke","asparago":"asparagus","pisello":"pea",
-        "fava":"fava_bean","spinaci":"spinach","spinacio":"spinach",
-        "zucca":"pumpkin","cavolo":"cabbage","cavolfiore":"cauliflower",
-        "broccolo":"broccoli","bietola":"beet","barbabietola":"beet",
-        "fagiolino":"green_bean","fagiolo":"bean","ceci":"chickpea",
-        "lenticchie":"lentil","cipollotto":"onion","porro":"leek",
-        # frutta
-        "fico":"fig","albicocca":"apricot","pesca":"peach","nettarina":"peach",
-        "susina":"plum","prugna":"plum","caco":"persimmon","cachi":"persimmon",
-        "melograno":"pomegranate","mora":"blackberry","ribes":"currant",
-        "lampone":"raspberry","mirtillo":"blueberry","fragola":"strawberry",
-        "arancia":"orange","pompelmo":"grapefruit","bergamotto":"bergamot",
-        "cedro":"citron","uva":"grape","castagna":"chestnut",
-        # pesce
-        "baccalà":"cod","acciuga":"anchovy","alice":"anchovy",
-        "seppia":"squid","polpo":"octopus","calamaro":"squid",
-        "orata":"sea_bream","branzino":"sea_bass","sgombro":"mackerel",
-        "vongola":"clam","cozza":"mussel","ostrica":"oyster",
-        # pasta e cereali
-        "pasta":"pasta","riso":"rice","farro":"spelt","orzo":"barley",
-        "mais":"corn","farina":"flour","pane":"bread",
-        # condimenti e grassi
-        "olio extravergine":"olive_oil","evo":"olive_oil",
-        "burro di cacao":"cocoa_butter","tahini":"sesame",
-        "aceto balsamico":"balsamic_vinegar","salsa di soia":"soy_sauce",
-        # erbe aromatiche
-        "maggiorana":"marjoram","origano":"oregano","salvia":"sage",
-        "alloro":"bay_leaf","prezzemolo":"parsley","erba cipollina":"chive",
-        "finocchietto":"fennel","dragoncello":"tarragon",
-        # spezie
-        "noce moscata":"nutmeg","cardamomo":"cardamom","curcuma":"turmeric",
-        "zafferano":"saffron","anice stellato":"star_anise",
-        "chiodo di garofano":"clove","paprica":"paprika",
-        # distillati e vini
-        "amaro":"amaro","campari":"amaro","aperol":"amaro",
-        "grappa":"grappa","cognac":"cognac","brandy":"brandy",
-        "prosecco":"sparkling_wine","champagne":"sparkling_wine",
-        "vino rosso":"red_wine","vino bianco":"white_wine",
-        "marsala":"wine","vermouth":"vermouth",
-        # dolci e dessert
-        "cioccolato fondente":"dark_chocolate","cioccolato al latte":"milk_chocolate",
-        "cioccolato bianco":"white_chocolate","cacao":"cocoa",
-        "caramello":"caramel","vaniglia":"vanilla","cannella":"cinnamon",
-        "pistacchio":"pistachio","mandorle":"almond",
     }
     # normalizza l'input
     ing_norm = ingrediente.lower().replace("-","_").replace(" ","_")
@@ -1631,7 +1284,7 @@ def abbina(ingrediente):
             """, (term, f"%{term}%"))
             rows = cur.fetchall()
             if rows: break
-        # fallback 1: cerca per nome parziale
+        # fallback: cerca per nome parziale
         if not rows:
             cur.execute("""
                 SELECT e.to_id, n.name,
@@ -1643,105 +1296,6 @@ def abbina(ingrediente):
                 ORDER BY overlap DESC NULLS LAST LIMIT 8
             """, (f"%{ing_norm.replace('_','%')}%",))
             rows = cur.fetchall()
-        # fallback 2: cerca nella mappa nomi italiani (flavor_nomi_it)
-        if not rows:
-            try:
-                cur.execute("""
-                    SELECT e.to_id, n.name,
-                           (e.data->>'overlap')::numeric as overlap
-                    FROM edges e
-                    JOIN nodes n ON n.id = e.to_id
-                    JOIN flavor_nomi_it fi ON fi.node_id = e.from_id
-                    WHERE e.relation = 'abbinamento_aromatico'
-                    AND (lower(fi.nome_it) LIKE lower(%s)
-                         OR lower(fi.nome_en) LIKE lower(%s))
-                    ORDER BY overlap DESC NULLS LAST LIMIT 8
-                """, (f"%{ing_it}%", f"%{ing_it}%"))
-                rows = cur.fetchall()
-                if rows:
-                    print(f"[NOMI_IT] '{ingrediente}' trovato via flavor_nomi_it", flush=True)
-            except Exception as _fi_err:
-                pass  # tabella non ancora popolata
-        # fallback 3: dataset proprietario Matter Lab (nodi Ingrediente)
-        if not rows:
-            try:
-                cur.execute("""
-                    SELECT e.to_id, n.name,
-                           COALESCE((e.data->>'overlap')::numeric, 50) as overlap
-                    FROM edges e
-                    JOIN nodes n ON n.id = e.to_id
-                    WHERE e.relation = 'abbinamento_aromatico'
-                    AND e.from_id IN (
-                        SELECT id FROM nodes WHERE type='Ingrediente'
-                        AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
-                    )
-                    ORDER BY overlap DESC NULLS LAST LIMIT 8
-                """, (f"%{ing_it}%", f"%ing-{ing_norm.replace('_','-')}%"))
-                rows = cur.fetchall()
-                if rows:
-                    print(f"[ML] '{ingrediente}' trovato via nodi Ingrediente", flush=True)
-            except Exception as _ml_e:
-                print(f"[ML ERR] {_ml_e}", flush=True)
-        # fallback 4: abbinamenti da profilo sensoriale proprietario
-        if not rows:
-            try:
-                cur.execute("""
-                    SELECT id, name, data FROM nodes
-                    WHERE type='Ingrediente'
-                    AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
-                    LIMIT 1
-                """, (f"%{ing_it}%", f"%ing-{ing_norm.replace('_','-')}%"))
-                ing_row = cur.fetchone()
-                if ing_row:
-                    ing_data = ing_row[2] if isinstance(ing_row[2], dict) else json.loads(ing_row[2] or "{}")
-                    result_props = []
-                    for a in ing_data.get("abbinamenti",{}).get("molecolari",[])[:5]:
-                        result_props.append({
-                            "ingrediente": a.get("ingrediente_it", a.get("ingrediente_en","?")),
-                            "composto": f"{a.get('overlap_score',0)} composti condivisi",
-                            "overlap": float(a.get("overlap_score",0)),
-                            "perche": a.get("meccanismo","affinità aromatica")
-                        })
-                    for a in ing_data.get("abbinamenti",{}).get("contrasto",[])[:3]:
-                        result_props.append({
-                            "ingrediente": a.get("ingrediente_it","?"),
-                            "composto": "contrasto",
-                            "overlap": 30.0,
-                            "perche": a.get("perche","contrasto fisico-percettivo")
-                        })
-                    if result_props:
-                        cur.close(); conn.close()
-                        return jsonify({"ingrediente":ingrediente,"abbinamenti":result_props,
-                            "fonte":"dataset Matter Lab",
-                            "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
-            except Exception as _pe:
-                print(f"[PROP ERR] {_pe}", flush=True)
-
-        # fallback 2: ricerca semantica via embeddings OpenAI
-        if not rows:
-            try:
-                import flavor_embeddings as FE, psycopg2 as _pg
-                sem = FE.search_by_embedding(ingrediente, top_k=3)
-                for _nid, _nname, _sim in sem:
-                    if _sim > 0.72:
-                        _c2 = _pg.connect(DATABASE_URL)
-                        _cur2 = _c2.cursor()
-                        _cur2.execute("""
-                            SELECT e.to_id, n.name,
-                                   (e.data->>'overlap')::numeric as overlap
-                            FROM edges e
-                            JOIN nodes n ON n.id = e.to_id
-                            WHERE e.relation = 'abbinamento_aromatico'
-                            AND e.from_id = %s
-                            ORDER BY overlap DESC NULLS LAST LIMIT 8
-                        """, (_nid,))
-                        rows = _cur2.fetchall()
-                        _cur2.close(); _c2.close()
-                        if rows:
-                            print(f"[EMBED] '{ingrediente}' → '{_nname}' (sim={_sim:.2f})", flush=True)
-                            break
-            except Exception as _ee:
-                print(f"[EMBED FALLBACK] {_ee}", flush=True)
         cur.close(); conn.close()
         NOMI_IT = {
             "roasted beef":"manzo arrosto","beef":"manzo","chicken":"pollo",
@@ -1790,13 +1344,8 @@ def abbina(ingrediente):
         }
         abbinamenti = []
         for r in rows:
-            nome_en = r[1].replace("_"," ").lower() if r[1] else ""
-            # fallback: se manca la traduzione IT usa il nome Ahn in Title Case
-            nome_fallback = r[1].replace("_"," ").title() if r[1] else "sconosciuto"
-            nome_pulito = NOMI_IT.get(nome_en, nome_fallback)
-            # salta i nodi senza nome
-            if not nome_pulito or nome_pulito == "sconosciuto":
-                continue
+            nome_en = r[1].replace("_"," ").lower()
+            nome_pulito = NOMI_IT.get(nome_en, r[1].replace("_"," ").title())
             overlap = float(r[2]) if r[2] else 0
             abbinamenti.append({
                 "ingrediente": nome_pulito,
@@ -1958,33 +1507,10 @@ def contrasto(ingrediente):
                 rid, rname, rdata = r
                 if rid not in visti:
                     visti.add(rid)
-                    import json as _j2
-                    rd = rdata if isinstance(rdata, dict) else _j2.loads(rdata or "{}")
-                    # spiegazione personalizzata per coppia
-                    if meccanismo == "taglia_grasso":
-                        perche = (f"{node_name} (pH {ph:.1f}) taglia il grasso di {rname}: "
-                                  f"l'acidità emulsiona e pulisce la bocca dopo il grasso")
-                    elif meccanismo == "richiede_acido":
-                        perche = (f"Il grasso di {node_name} ammorbidisce e porta: "
-                                  f"{rname} (pH {float(rd.get('ph_min',3)):.1f}) bilancia con acidità")
-                    elif meccanismo == "smorzato_da_dolce":
-                        perche = (f"L'amaro di {node_name} viene smorzato dai {rd.get('zuccheri_pct','?')}% "
-                                  f"di zuccheri in {rname} — il dolce riduce la percezione amara")
-                    elif meccanismo == "smorzato_da_sale":
-                        perche = (f"Il sodio in {rname} ({rd.get('sodio_mg100g','?')}mg/100g) "
-                                  f"sopprime l'amaro di {node_name} — piccole quantità bastano")
-                    elif meccanismo == "bilanciato_da_acido":
-                        perche = (f"Il dolce di {node_name} satura senza contrasto: "
-                                  f"{rname} (pH {float(rd.get('ph_min',3)):.1f}) taglia e rinfresca")
-                    elif meccanismo == "amplificato_da_acido":
-                        perche = (f"Il salato di {node_name} si esalta con l'acido di {rname}: "
-                                  f"insieme amplificano entrambi i sapori")
-                    else:
-                        perche = spiegazione
                     contrasti.append({
                         "ingrediente": rname,
                         "meccanismo": meccanismo,
-                        "perche": perche
+                        "perche": spiegazione
                     })
 
         cur.close(); conn.close()
@@ -2023,22 +1549,6 @@ def home():
     """PWA principale — serve index.html."""
     return render_template("index.html")
 
-
-@app.route("/manifest.json")
-def manifest():
-    """PWA manifest."""
-    from flask import send_from_directory
-    return send_from_directory("static", "manifest.json", mimetype="application/manifest+json")
-
-
-@app.route("/sw.js")
-def service_worker():
-    """PWA Service Worker."""
-    from flask import send_from_directory
-    resp = send_from_directory("static", "sw.js", mimetype="application/javascript")
-    resp.headers["Service-Worker-Allowed"] = "/"
-    return resp
-
 @app.route("/health")
 def health():
     """IN3 — Endpoint per monitoring (UptimeRobot punta qui).
@@ -2059,55 +1569,10 @@ def chiedi():
         return jsonify({"errore":"Troppe richieste. Aspetta un minuto e riprova."}), 429
     domanda = (request.json or {}).get("domanda","").strip()
     lang = (request.json or {}).get("lang", "it")
+    # mini-history: ultimi scambi passati dal frontend (zero DB, solo memoria sessione)
     history = (request.json or {}).get("history", [])
-    token_sess = (request.json or {}).get("token","") or request.headers.get("X-Token","")
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
-
-    # ── TRIAL / PAYWALL ─────────────────────────────────────────────────
-    trial_info = {}
-    if DATABASE_URL:
-        try:
-            import psycopg2, datetime as _dt
-            conn_t = psycopg2.connect(DATABASE_URL)
-            cur_t = conn_t.cursor()
-            cur_t.execute("""CREATE TABLE IF NOT EXISTS trial_chat (
-                id SERIAL PRIMARY KEY, ip TEXT, user_id INTEGER,
-                ts TIMESTAMPTZ DEFAULT NOW())""")
-            user_id_t = _utente_da_token(token_sess) if token_sess else None
-            piano_t = "free"
-            if user_id_t:
-                cur_t.execute("SELECT piano FROM utenti WHERE id=%s", (user_id_t,))
-                rp = cur_t.fetchone()
-                piano_t = rp[0] if rp else "free"
-            if piano_t != "pro":
-                if user_id_t:
-                    cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE user_id=%s", (user_id_t,))
-                else:
-                    cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE ip=%s AND ts > NOW() - INTERVAL '7 days'", (ip,))
-                rt = cur_t.fetchone()
-                n_chat = int(rt[0]) if rt else 0
-                prima = rt[1] if rt else None
-                giorni = (_dt.datetime.now(_dt.timezone.utc) - prima).days if prima else 0
-                if n_chat >= 5 or giorni >= 7:
-                    cur_t.close(); conn_t.close()
-                    return jsonify({"errore":"trial_esaurito","n_chat":n_chat,
-                        "messaggio":"Hai usato le 5 chat di prova. Passa a Pro per continuare.",
-                        "trial_esaurito":True}), 402
-                if user_id_t:
-                    cur_t.execute("INSERT INTO trial_chat (user_id,ip) VALUES (%s,%s)", (user_id_t, ip))
-                else:
-                    cur_t.execute("INSERT INTO trial_chat (ip) VALUES (%s)", (ip,))
-                conn_t.commit()
-                n_usate = n_chat + 1
-                trial_info = {"trial_attivo":True,"chat_usate":n_usate,
-                    "chat_rimaste":max(0,5-n_usate),
-                    "notifica":n_usate==3,"ultimo":n_usate>=5}
-            cur_t.close(); conn_t.close()
-        except Exception as _te:
-            print(f"[TRIAL] {_te}", flush=True)
-    # ── FINE TRIAL ──────────────────────────────────────────────────────
-
     db = carica_grafo()
     # estrazione entità: prima provo i termini che estrae Mistral (capisce il dominio),
     # poi, se non agganciano nulla, ripiego sulle parole della domanda (rete di sicurezza).
@@ -2147,8 +1612,7 @@ def chiedi():
         if hist_txt:
             prompt = f"Contesto della conversazione in corso:\n{hist_txt}\n\n---\n{prompt}"
     risposta = chiedi_mistral(prompt)
-    # log_evento ritorna l'id della riga inserita (RETURNING id) — fix log_id bug
-    log_id = log_evento("risposta", domanda,
+    log_evento("risposta", domanda,
                fenomeni=[f["name"] for f in contesto["fenomeni"]],
                esito="ok" if risposta else "errore_modello")
     # nodi navigabili: i prodotti/discipline collegati ai fenomeni trovati (per l'esploratore)
@@ -2161,23 +1625,29 @@ def chiedi():
                 connessi.append({"id": c["id"], "nome": c["verso"],
                                  "dominio": c["dominio"],
                                  "target": c["data"].get("target","")})
-
+    # log_id per feedback utente (AC5)
+    log_id = None
+    if DATABASE_URL:
+        try:
+            import psycopg2
+            conn2 = psycopg2.connect(DATABASE_URL)
+            cur2 = conn2.cursor()
+            cur2.execute("SELECT id FROM log_domande ORDER BY ts DESC LIMIT 1")
+            row = cur2.fetchone()
+            log_id = row[0] if row else None
+            cur2.close(); conn2.close()
+        except Exception:
+            pass
     # sanitizza la risposta: rimuove caratteri di controllo che rompono il JSON
-    # \x00-\x1f = tutti i control chars eccetto \x09 (tab) \x0a (newline) \x0d (CR)
-    # ma dentro un campo JSON anche newline e CR devono essere escaped — jsonify lo fa
-    # il problema reale è i caratteri \x00-\x08 \x0b \x0c \x0e-\x1f che non sono mai validi
     import re as _re
     if risposta:
-        risposta = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', risposta)
-        # normalizza newline multipli in uno solo
-        risposta = _re.sub(r'\n{3,}', '\n\n', risposta).strip()
+        risposta = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', risposta)
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,
         "risposta": risposta,
         "connessi": connessi,
-        "log_id": log_id,
-        "trial": trial_info
+        "log_id": log_id
     })
 
 @app.route("/nodo", methods=["POST"])
@@ -2284,39 +1754,20 @@ def disciplina(nome):
             (p["id"],)
         ):
             fen_ids.add(e["from_id"])
-    # Priorità per disciplina: fenomeni fondamentali prima, poi gli altri
-    PRIORITA = {
-        "bar":          ["fen-acidita","fen-diluizione","fen-concentrazione","fen-carbonatazione","fen-estrazione","fen-emulsione","fen-crioscopia","fen-osmosi","fen-ossidazione"],
-        "caffetteria":  ["fen-estrazione","fen-estrazione-caffe","fen-concentrazione","fen-pressione","fen-trasferimento-calore","fen-acidita","fen-attivita-enzimatica"],
-        "panificazione":["fen-acidita","fen-fermentazione","fen-fermentazione-lattica","fen-idrolisi","fen-gelatinizzazione","fen-retrogradazione","fen-concentrazione","fen-osmosi","fen-autolisi"],
-        "cucina":       ["fen-maillard","fen-denaturazione","fen-coagulazione","fen-emulsione","fen-acidita","fen-osmosi","fen-trasferimento-calore","fen-punto-fumo"],
-        "pasticceria":  ["fen-emulsione","fen-cristallizzazione","fen-caramellizzazione","fen-maillard","fen-gelatinizzazione","fen-denaturazione","fen-sineresi"],
-        "gelateria":    ["fen-crioscopia","fen-cristallizzazione-ghiaccio","fen-overrun","fen-concentrazione","fen-emulsione"],
-        "vino":         ["fen-acidita","fen-malolattica","fen-ossidazione","fen-fermentazione","fen-tannini","fen-chiarificazione"],
-        "birra":        ["fen-fermentazione","fen-carbonatazione","fen-amilolisi","fen-acidita","fen-ossidazione","fen-attivita-enzimatica"],
-    }
-    priorita_disc = PRIORITA.get(nome.lower(), [])
-
     if not fen_ids:
+        # fallback: tutti i fenomeni
         tutti = db.execute(
             "SELECT id, name, data FROM nodes WHERE type='Fenomeno' ORDER BY name"
         ).fetchall()
         fenomeni = [{"id": f["id"], "nome": f["name"],
                      "target": _numero_bersaglio(_dati(f["data"]))} for f in tutti]
     else:
-        fenomeni_raw = []
-        for fid in fen_ids:
+        fenomeni = []
+        for fid in sorted(fen_ids):
             f = db.execute("SELECT id, name, data FROM nodes WHERE id=?", (fid,)).fetchone()
             if f:
-                fenomeni_raw.append({"id": f["id"], "nome": f["name"],
-                                     "target": _numero_bersaglio(_dati(f["data"]))})
-        # ordina: prima i prioritari (nell'ordine della lista), poi gli altri alfabetici
-        def _sort_key(f):
-            try:
-                return (0, priorita_disc.index(f["id"]))
-            except ValueError:
-                return (1, f["nome"])
-        fenomeni = sorted(fenomeni_raw, key=_sort_key)
+                fenomeni.append({"id": f["id"], "nome": f["name"],
+                                  "target": _numero_bersaglio(_dati(f["data"]))})
     return jsonify({"disciplina": nome, "fenomeni": fenomeni, "totale": len(fenomeni)})
 
 
@@ -3205,76 +2656,6 @@ def feedback():
         )
         conn.commit(); cur.close(); conn.close()
         return jsonify({"ok": True})
-    except Exception as e:
-        return jsonify({"errore": str(e)}), 500
-
-
-@app.route("/admin/build-ingredienti", methods=["POST"])
-def admin_build_ingredienti():
-    """Lancia il build del dataset ingredienti in un thread background.
-    Autenticato con ADMIN_SECRET. Non dipende dalla Console Railway.
-    
-    POST /admin/build-ingredienti
-    Header: X-Admin-Secret: <ADMIN_SECRET>
-    Body: {"discipline": ["bar","cucina"]}  # opzionale, default = all
-    
-    Risposta immediata — il build gira in background.
-    Controlla lo stato con GET /admin/build-status
-    """
-    secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
-        return jsonify({"errore":"non autorizzato"}), 403
-    
-    body = request.json or {}
-    discipline = body.get("discipline", None)  # None = tutte
-    
-    import threading
-    
-    def _run_build():
-        try:
-            import build_ingredient_graph as BIG
-            BIG.build(discipline=discipline)
-        except Exception as e:
-            print(f"[BUILD] errore: {e}", flush=True)
-    
-    t = threading.Thread(target=_run_build, daemon=True)
-    t.start()
-    
-    return jsonify({
-        "ok": True,
-        "messaggio": "Build avviato in background. Controlla /admin/build-status per lo stato.",
-        "discipline": discipline or "tutte"
-    })
-
-
-@app.route("/admin/build-status")
-def admin_build_status():
-    """Stato del dataset ingredienti."""
-    secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
-        return jsonify({"errore":"non autorizzato"}), 403
-    if not DATABASE_URL:
-        return jsonify({"errore":"no db"}), 503
-    try:
-        import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT disciplina, COUNT(*) as n
-            FROM ingredient_build_log
-            GROUP BY disciplina ORDER BY n DESC
-        """)
-        per_disc = {r[0]: r[1] for r in cur.fetchall()}
-        cur.execute("SELECT COUNT(*) FROM ingredient_build_log")
-        totale = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Ingrediente'")
-        nodi = cur.fetchone()[0]
-        cur.close(); conn.close()
-        return jsonify({
-            "totale_generati": totale,
-            "nodi_ingrediente": nodi,
-            "per_disciplina": per_disc
-        })
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
 

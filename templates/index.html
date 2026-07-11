@@ -1176,6 +1176,25 @@ if('serviceWorker' in navigator){
 </div>
 <div class="ask-bar" id="ask-bar" style="display:none">
   <div class="ask-inner">
+    <!-- Input nascosto per foto -->
+    <input type="file" id="foto-input" accept="image/*" capture="environment"
+           style="display:none" onchange="inviaFoto(this)">
+    <!-- Bottone fotocamera -->
+    <button class="ask-ico-btn" id="btn-camera" onclick="document.getElementById('foto-input').click()"
+            title="Fotografa scheda tecnica, etichetta o piatto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </button>
+    <!-- Bottone microfono -->
+    <button class="ask-ico-btn" id="btn-mic" onclick="toggleMic()"
+            title="Parla al banco — chiedi con la voce">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+        <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
+      </svg>
+    </button>
     <input class="ask-input" id="q" placeholder="chiedi a Matter Lab…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
     <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
   </div>
