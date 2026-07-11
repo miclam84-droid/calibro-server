@@ -935,10 +935,10 @@ if('serviceWorker' in navigator){
         <div class="empty-title" id="ct-chiedi-title">Chiedi a Matter Lab</div>
         <div class="empty-sub" id="ct-chiedi-sub">Un problema reale del tuo lavoro — rispondo con i numeri, non con le opinioni.</div>
         <div class="sugg-grid">
-          <button class="sugg-pill" onclick="chiediTesto('uso sempre lo stesso lime ma il sour cambia ogni sera, perché?')">Perché il sour cambia? →</button>
-          <button class="sugg-pill" onclick="chiediTesto('la madre raddoppia regolarmente ma il pane non sviluppa in cottura')">Madre ok, pane no →</button>
-          <button class="sugg-pill" onclick="chiediTesto('perché la fermentazione accelera con il caldo')">Fermentazione e temperatura →</button>
-          <button class="sugg-pill" onclick="chiediTesto('come misuro correttamente il pH di un impasto')">Come misuro il pH →</button>
+          <button class="sugg-pill" id="pill1" onclick="chiediPill(0)"></button>
+          <button class="sugg-pill" id="pill2" onclick="chiediPill(1)"></button>
+          <button class="sugg-pill" id="pill3" onclick="chiediPill(2)"></button>
+          <button class="sugg-pill" id="pill4" onclick="chiediPill(3)"></button>
         </div>
       </div>
     </div>
@@ -1372,9 +1372,12 @@ async function caricaLezioneStep(step){
   document.getElementById('les-scheda').textContent = '';
   document.getElementById('les-quiz-box').style.display='none';
   try {
-    const r = await fetch(`/lezione/${disc}/${step}?lang=${_lang}`);
+    const tok = localStorage.getItem('matter_token')||'';
+    const r = await fetch(`/lezione/${disc}/${step}?lang=${_lang}&token=${tok}`);
+    if(r.status===402){ mostraPopupPro('lezione'); return; }
     if(!r.ok) throw new Error('server');
     const j = await r.json();
+    if(j.paywall){ mostraPopupPro('lezione'); return; }
     if(j.errore){ document.getElementById('les-nome').textContent = j.errore; return; }
     Matter.step = j.step;
     Matter.totale = j.totale_passi;
@@ -3151,6 +3154,47 @@ async function calcolaCosto(){
   }
 }
 let _ultimi_ingredienti=[];
+
+
+// ── PILL CHAT BILINGUE ──────────────────────────────────────
+var _PILLS = {
+  it: [
+    {q: 'uso sempre lo stesso lime ma il sour cambia ogni sera, perché?', l: 'Perché il sour cambia? →'},
+    {q: 'la madre raddoppia regolarmente ma il pane non sviluppa in cottura', l: 'Madre ok, pane no →'},
+    {q: 'perché la fermentazione accelera con il caldo', l: 'Fermentazione e temperatura →'},
+    {q: 'come misuro correttamente il pH di un impasto', l: 'Come misuro il pH →'},
+  ],
+  en: [
+    {q: 'I always use the same lime but my sour tastes different every night, why?', l: 'Why does the sour change? →'},
+    {q: 'my starter doubles fine but the bread does not spring in the oven', l: 'Starter ok, no spring →'},
+    {q: 'why does fermentation speed up in warm weather', l: 'Fermentation & temperature →'},
+    {q: 'how do I correctly measure pH in a dough', l: 'How to measure pH →'},
+  ],
+  es: [
+    {q: 'uso siempre el mismo lima pero el sour cambia cada noche, ¿por qué?', l: '¿Por qué cambia el sour? →'},
+    {q: 'mi masa madre dobla bien pero el pan no desarrolla en el horno', l: 'Masa madre ok, sin desarrollo →'},
+    {q: 'por qué la fermentación se acelera con el calor', l: 'Fermentación y temperatura →'},
+    {q: 'cómo mido correctamente el pH de una masa', l: 'Cómo mido el pH →'},
+  ]
+};
+function aggiornaPills() {
+  var lang = _lang || 'it';
+  var pills = _PILLS[lang] || _PILLS.it;
+  ['pill1','pill2','pill3','pill4'].forEach(function(id, i) {
+    var el = document.getElementById(id);
+    if (el && pills[i]) {
+      el.textContent = pills[i].l;
+      el.dataset.q = pills[i].q;
+    }
+  });
+}
+function chiediPill(i) {
+  var lang = _lang || 'it';
+  var pills = _PILLS[lang] || _PILLS.it;
+  if (pills[i]) chiediTesto(pills[i].q);
+}
+// Aggiorna le pill quando cambia la lingua
+var _origSetLang = typeof setLang === 'function' ? setLang : null;
 
 // rileva ?reset=TOKEN nell'URL e mostra la schermata nuova password
 (function(){

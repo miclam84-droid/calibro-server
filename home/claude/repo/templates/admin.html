@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matter — Admin</title>
+<style>
+  :root {
+    --coffee: #3d2b1f;
+    --e500: #c4622d;
+    --e100: #f5ede3;
+    --border: #e0d4c8;
+    --ink: #2a1f14;
+    --ink-muted: #8a7a6a;
+    --s700: #2e7d52;
+    --s100: #e8f5ee;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Schibsted Grotesk', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  body { font-family: var(--sans); background: var(--e100); color: var(--ink); min-height: 100vh }
+  .topbar { background: var(--coffee); color: #f0e0cc; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between }
+  .topbar h1 { font-size: 16px; font-weight: 700; letter-spacing: .02em }
+  .topbar span { font-family: var(--mono); font-size: 10px; color: #c4a882; letter-spacing: .1em }
+  .container { max-width: 900px; margin: 0 auto; padding: 24px 16px }
+  .auth-card { background: #fff; border: 0.5px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px }
+  .auth-card h2 { font-size: 14px; color: var(--ink-muted); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 12px }
+  .input-row { display: flex; gap: 10px }
+  input[type=password] { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; outline: none; background: var(--e100) }
+  input[type=password]:focus { border-color: var(--e500) }
+  button { background: var(--coffee); color: #f0e0cc; border: none; border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer }
+  button:active { opacity: .85 }
+  .error { color: var(--e500); font-size: 12px; margin-top: 8px; font-family: var(--mono) }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px }
+  .stat-card { background: #fff; border: 0.5px solid var(--border); border-radius: 10px; padding: 16px }
+  .stat-num { font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--coffee); line-height: 1 }
+  .stat-label { font-size: 11px; color: var(--ink-muted); margin-top: 5px; letter-spacing: .04em }
+  .stat-card.green .stat-num { color: var(--s700) }
+  .stat-card.orange .stat-num { color: var(--e500) }
+  .section { background: #fff; border: 0.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px }
+  .section h3 { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 12px }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px }
+  .bar-label { width: 160px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px }
+  .bar-track { flex: 1; background: var(--e100); border-radius: 4px; height: 8px; overflow: hidden }
+  .bar-fill { height: 100%; background: var(--e500); border-radius: 4px; transition: width .4s }
+  .bar-count { font-family: var(--mono); font-size: 11px; color: var(--ink-muted); width: 32px; text-align: right }
+  .refresh-btn { background: none; border: 1px solid var(--border); color: var(--ink-muted); font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: var(--mono) }
+  .last-update { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); margin-top: 4px }
+  #dashboard { display: none }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr } .grid { grid-template-columns: 1fr 1fr } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>Matter · Admin</h1>
+  <span id="last-update"></span>
+</div>
+<div class="container">
+
+  <!-- Auth -->
+  <div class="auth-card" id="auth-card">
+    <h2>Admin Secret</h2>
+    <div class="input-row">
+      <input type="password" id="secret-input" placeholder="inserisci la chiave admin" onkeydown="if(event.key==='Enter')carica()">
+      <button onclick="carica()">Accedi</button>
+    </div>
+    <div class="error" id="auth-error"></div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--ink-muted)" id="update-label"></div>
+      <button class="refresh-btn" onclick="carica()">↻ Aggiorna</button>
+    </div>
+
+    <!-- Metriche principali -->
+    <div class="grid" id="grid-main"></div>
+
+    <!-- Due colonne: grafo + feedback -->
+    <div class="two-col">
+      <div class="section">
+        <h3>Grafo</h3>
+        <div id="grafo-stats"></div>
+      </div>
+      <div class="section">
+        <h3>Feedback chat</h3>
+        
+  <div style="margin:24px 0;padding:20px;background:#FAF6EE;border:1px solid #E2D8C4;border-radius:12px">
+    <div style="font-family:Georgia,serif;font-size:16px;font-weight:700;margin-bottom:8px">Dataset Ingredienti</div>
+    <div id="build-status" style="font-size:13px;color:#6B6257;margin-bottom:14px">Clicca "Aggiorna stato" per vedere lo stato del build.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button id="btn-build" onclick="buildIngredienti()"
+        style="background:#C77B3F;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;font-family:sans-serif">
+        ▶ Avvia build ingredienti
+      </button>
+      <button onclick="aggiornaBuildStatus(document.getElementById('secret-input').value)"
+        style="background:#2C6E63;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;font-family:sans-serif">
+        ↻ Aggiorna stato
+      </button>
+    </div>
+  </div>
+
+  <div id="feedback-stats"></div>
+      </div>
+    </div>
+
+    <!-- Top fenomeni -->
+    <div class="section" style="margin-top:12px">
+      <h3>Top fenomeni — ultimi 7 giorni</h3>
+      <div id="top-fenomeni"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let _secret = '';
+
+async function carica() {
+  const input = document.getElementById('secret-input');
+  _secret = input.value.trim() || _secret;
+  if (!_secret) return;
+
+  try {
+    const r = await fetch('/v1/admin/stats', {
+      headers: { 'X-Admin-Secret': _secret }
+    });
+    if (r.status === 403) {
+      document.getElementById('auth-error').textContent = 'Chiave non valida.';
+      return;
+    }
+    const d = await r.json();
+    if (d.errore) {
+      document.getElementById('auth-error').textContent = d.errore;
+      return;
+    }
+
+    document.getElementById('auth-card').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    renderStats(d);
+
+    const now = new Date().toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('update-label').textContent = 'Aggiornato alle ' + now;
+    document.getElementById('last-update').textContent = now;
+  } catch(e) {
+    document.getElementById('auth-error').textContent = 'Errore di rete.';
+  }
+}
+
+function renderStats(d) {
+  // Metriche principali
+  const main = [
+    { num: d.utenti_attivi,  label: 'Utenti attivi',    cls: '' },
+    { num: d.utenti_pro,     label: 'Utenti Pro',        cls: 'green' },
+    { num: d.domande_totali, label: 'Domande totali',    cls: '' },
+    { num: d.domande_24h,    label: 'Domande 24h',       cls: 'orange' },
+    { num: d.risposte_ok,    label: 'Risposte OK',       cls: 'green' },
+    { num: d.fallback,       label: 'Fallback (no nodo)',cls: '' },
+    { num: d.esperimenti,    label: 'Esperimenti quaderno', cls: '' },
+  ];
+  document.getElementById('grid-main').innerHTML = main.map(m =>
+    `<div class="stat-card ${m.cls}">
+      <div class="stat-num">${m.num ?? '—'}</div>
+      <div class="stat-label">${m.label}</div>
+    </div>`
+  ).join('');
+
+  // Grafo
+  const tot = d.nodi_grafo || 0;
+  const archi = d.archi_grafo || 0;
+  document.getElementById('grafo-stats').innerHTML = `
+    <div style="font-family:var(--mono);font-size:24px;font-weight:600;color:var(--coffee)">${tot.toLocaleString()}</div>
+    <div style="font-size:11px;color:var(--ink-muted);margin-bottom:12px">nodi nel grafo</div>
+    <div style="font-family:var(--mono);font-size:24px;font-weight:600;color:var(--coffee)">${archi.toLocaleString()}</div>
+    <div style="font-size:11px;color:var(--ink-muted)">archi nel grafo</div>
+  `;
+
+  // Feedback
+  const pos = d.feedback_positivi || 0;
+  const neg = d.feedback_negativi || 0;
+  const tot_fb = pos + neg;
+  const pct = tot_fb > 0 ? Math.round(pos/tot_fb*100) : 0;
+  document.getElementById('feedback-stats').innerHTML = `
+    <div style="display:flex;gap:20px;margin-bottom:14px">
+      <div><div style="font-family:var(--mono);font-size:22px;color:var(--s700)">${pos}</div><div style="font-size:11px;color:var(--ink-muted)">👍 positivi</div></div>
+      <div><div style="font-family:var(--mono);font-size:22px;color:var(--e500)">${neg}</div><div style="font-size:11px;color:var(--ink-muted)">👎 negativi</div></div>
+    </div>
+    <div class="bar-track" style="height:12px;margin-bottom:6px">
+      <div class="bar-fill" style="width:${pct}%;background:var(--s700)"></div>
+    </div>
+    <div style="font-size:11px;color:var(--ink-muted);font-family:var(--mono)">${pct}% positivi su ${tot_fb} totali</div>
+  `;
+
+  // Top fenomeni
+  const fenomeni = d.top_fenomeni_7d || [];
+  if (!fenomeni.length) {
+    document.getElementById('top-fenomeni').innerHTML =
+      '<div style="font-size:13px;color:var(--ink-muted)">Nessun dato ancora.</div>';
+    return;
+  }
+  const maxN = Math.max(...fenomeni.map(f => f.count));
+  document.getElementById('top-fenomeni').innerHTML = fenomeni.map(f =>
+    `<div class="bar-row">
+      <div class="bar-label">${esc(String(f.fenomeni || '—'))}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(f.count/maxN*100)}%"></div></div>
+      <div class="bar-count">${f.count}</div>
+    </div>`
+  ).join('');
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Auto-carica se secret in URL: /admin?s=CHIAVE
+const params = new URLSearchParams(location.search);
+if (params.get('s')) {
+  document.getElementById('secret-input').value = params.get('s');
+  carica();
+}
+</script>
+</body>
+</html>
+ 

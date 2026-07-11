@@ -371,6 +371,37 @@ def costruisci_prompt(domanda, contesto, lang="it"):
             "- Clean prose, no asterisks, bold or markdown. Maximum 6-8 sentences.\n"
             "- Never mention being an AI or using a graph."
         )
+    elif lang == "es":
+        import datetime as _dt
+        _oggi = _dt.date.today()
+        _mese = _oggi.month
+        _stagione_es = (
+            "invierno (diciembre-febrero)" if _mese in (12,1,2) else
+            "primavera (marzo-mayo)"       if _mese in (3,4,5) else
+            "verano (junio-agosto)"        if _mese in (6,7,8) else
+            "otono (septiembre-noviembre)"
+        )
+        _frutti_es = {
+            "verano":    "tomates, calabacines, berenjenas, pimientos, albahaca, melocotones, sandía, melón",
+            "otono":     "setas, trufa, calabaza, manzanas, peras, uvas, castanas, col",
+            "invierno":  "cítricos (naranjas, mandarinas, limones), col, brocoli, hinojo, alcachofas",
+            "primavera": "espárragos, guisantes, habas, alcachofas, espinacas, fresas, cerezas",
+        }.get(_stagione_es.split(" ")[0], "")
+        regole = (
+            f"Hoy es {_oggi.strftime('%d/%m/%Y')} — estamos en {_stagione_es}.\n"
+            f"Ingredientes de temporada: {_frutti_es}.\n"
+            f"Usa SOLO productos de temporada salvo que la pregunta lo especifique.\n\n"
+            "Eres una herramienta que explica la gastronomía a través de los fenómenos físicos "
+            "y químicos: acidez, concentración, calor, ósmosis, estructura.\n\n"
+            "CÓMO RESPONDER:\n"
+            "- Ancla la respuesta al fenómeno físico del contexto y muestra el número objetivo.\n"
+            "- Usa los números exactos del contexto. Si no están, usa tu conocimiento científico.\n"
+            "- Nunca expliques tu razonamiento ni menciones el grafo. Responde directamente.\n"
+            "- Tono de colega a colega: muestra el porqué físico. Sin lecciones.\n"
+            "- Si hay números del usuario (ml, gramos, grados), usa la herramienta calcola.\n"
+            "- Prosa limpia en español, sin markdown. Máximo 6-8 frases.\n"
+            "- Nunca menciones ser una IA."
+        )
     else:
         import datetime as _dt
         _oggi = _dt.date.today()
@@ -2322,9 +2353,27 @@ def disciplina(nome):
 
 @app.route("/lezione/<disciplina_nome>/<int:step>")
 def lezione(disciplina_nome, step):
-    """FE3 — Nodo del passo corrente + scheda + quiz generato da Haiku.
-    Supporta ?lang=it|en — default it."""
+    """FE3 — Nodo del passo corrente + scheda + quiz.
+    step 0 = free · step 1+ = Pro only."""
     lang = request.args.get("lang", "it")
+    token = request.args.get("token","") or request.headers.get("X-Token","")
+    if step > 0 and DATABASE_URL:
+        try:
+            import psycopg2
+            _conn_l = psycopg2.connect(DATABASE_URL)
+            _cur_l = _conn_l.cursor()
+            uid = _utente_da_token(token)
+            piano = "free"
+            if uid:
+                _cur_l.execute("SELECT piano FROM utenti WHERE id=%s", (uid,))
+                r = _cur_l.fetchone()
+                piano = r[0] if r else "free"
+            _cur_l.close(); _conn_l.close()
+            if piano != "pro":
+                return jsonify({"errore":"pro_required","paywall":True,
+                    "messaggio":"Le lezioni dalla 2 in poi sono disponibili con Matter Lab Pro."}), 402
+        except Exception:
+            pass
     db = carica_grafo()
     resp = disciplina(disciplina_nome).get_json()
     fenomeni = resp.get("fenomeni", [])
