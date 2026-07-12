@@ -916,6 +916,175 @@ def build(discipline=None, test=False):
     print(f"\nCompletato: {ok} OK, {errori} errori | Token: {token_tot} | Costo: ${costo_finale:.3f}")
 
 
+
+def build_archi():
+    """Crea gli archi abbinamento_aromatico tra nodi Ingrediente già nel grafo.
+    Va eseguito DOPO la build completa — legge i dati JSON già salvati
+    e collega i nodi che si trovano nel grafo per nome.
+    """
+    if not DATABASE_URL:
+        print("DATABASE_URL non configurata"); return
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+
+    # Leggi tutti i nodi Ingrediente con i loro abbinamenti
+    cur.execute("""
+        SELECT id, name, data FROM nodes
+        WHERE type = 'Ingrediente'
+        AND data IS NOT NULL
+    """)
+    nodi = cur.fetchall()
+    print(f"Nodi Ingrediente trovati: {len(nodi)}")
+
+    archi_creati = 0
+    archi_saltati = 0
+
+    for nid, nome, data_raw in nodi:
+        d = data_raw if isinstance(data_raw, dict) else {}
+        abbinamenti = d.get("abbinamenti", {})
+
+        # Molecolari
+        for abb in abbinamenti.get("molecolari", []):
+            target_it = abb.get("ingrediente_it", "")
+            target_en = abb.get("ingrediente_en", "")
+            for target in [target_it, target_en]:
+                if not target or target == "?":
+                    continue
+                cur.execute("""
+                    SELECT id FROM nodes
+                    WHERE type IN ('Prodotto','Ingrediente')
+                    AND (lower(name) = lower(%s) OR lower(name) LIKE lower(%s))
+                    LIMIT 1
+                """, (target, f"%{target}%"))
+                row = cur.fetchone()
+                if row and row[0] != nid:
+                    try:
+                        cur.execute("""
+                            INSERT INTO edges (from_id, to_id, relation, data)
+                            VALUES (%s, %s, 'abbinamento_aromatico', %s)
+                            ON CONFLICT (from_id, to_id, relation) DO NOTHING
+                        """, (nid, row[0], psycopg2.extras.Json({
+                            "overlap": abb.get("overlap_score", 0),
+                            "composti": abb.get("composti_condivisi", []),
+                            "meccanismo": abb.get("meccanismo", ""),
+                            "fonte": "dataset Matter Lab"
+                        })))
+                        archi_creati += 1
+                        break
+                    except Exception:
+                        archi_saltati += 1
+                        break
+
+        # Contrasto
+        for abb in abbinamenti.get("contrasto", []):
+            target_it = abb.get("ingrediente_it", "")
+            if not target_it or target_it == "?":
+                continue
+            cur.execute("""
+                SELECT id FROM nodes
+                WHERE type IN ('Prodotto','Ingrediente')
+                AND lower(name) LIKE lower(%s)
+                LIMIT 1
+            """, (f"%{target_it}%",))
+            row = cur.fetchone()
+            if row and row[0] != nid:
+                try:
+                    cur.execute("""
+                        INSERT INTO edges (from_id, to_id, relation, data)
+                        VALUES (%s, %s, 'abbinamento_contrasto', %s)
+                        ON CONFLICT (from_id, to_id, relation) DO NOTHING
+                    """, (nid, row[0], psycopg2.extras.Json({
+                        "tipo": abb.get("tipo", ""),
+                        "perche": abb.get("perche", ""),
+                        "fenomeno": abb.get("fenomeno_matter", ""),
+                        "fonte": "dataset Matter Lab"
+                    })))
+                    archi_creati += 1
+                except Exception:
+                    archi_saltati += 1
+
+        # Fenomeni collegati
+        for fen_id in d.get("fenomeni_collegati", []):
+            if not fen_id:
+                continue
+            cur.execute("SELECT 1 FROM nodes WHERE id=%s", (fen_id,))
+            if cur.fetchone():
+                try:
+                    cur.execute("""
+                        INSERT INTO edges (from_id, to_id, relation, data)
+                        VALUES (%s, %s, 'si_manifesta_in', '{}')
+                        ON CONFLICT (from_id, to_id, relation) DO NOTHING
+                    """, (fen_id, nid))
+                    archi_creati += 1
+                except Exception:
+                    archi_saltati += 1
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    print(f"Archi creati: {archi_creati} | Saltati: {archi_saltati}")
+
+
+def build_target_numbers():
+    """Aggiunge target number ai nodi Ingrediente dai parametri fisici nel JSON.
+    Popola il campo target nel nodo per renderlo visibile nelle lezioni.
+    """
+    if not DATABASE_URL:
+        print("DATABASE_URL non configurata"); return
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT id, name, data FROM nodes
+        WHERE type = 'Ingrediente'
+        AND data IS NOT NULL
+        AND (data->>'target' IS NULL OR data->>'target' = '')
+    """)
+    nodi = cur.fetchall()
+    print(f"Nodi senza target: {len(nodi)}")
+
+    aggiornati = 0
+    for nid, nome, data_raw in nodi:
+        d = data_raw if isinstance(data_raw, dict) else {}
+        params = d.get("parametri_fisici", {})
+        profilo = d.get("profilo_sensoriale", {})
+
+        # Costruisci target da parametri fisici
+        target_parts = []
+        if params.get("ph"):
+            target_parts.append(f"pH {params['ph']}")
+        if params.get("aw"):
+            target_parts.append(f"Aw {params['aw']}")
+        if params.get("brix"):
+            target_parts.append(f"{params['brix']}°Brix")
+        if params.get("abv_pct"):
+            target_parts.append(f"{params['abv_pct']}% ABV")
+        if params.get("temperatura_servizio_c"):
+            target_parts.append(f"T servizio {params['temperatura_servizio_c']}°C")
+
+        # Fallback: usa categorie aromatiche
+        if not target_parts:
+            cats = d.get("categorie_aromatiche", [])
+            if cats:
+                target_parts.append(" · ".join(cats[:2]))
+
+        if target_parts:
+            target = " · ".join(target_parts)
+            d["target"] = target
+            try:
+                cur.execute("""
+                    UPDATE nodes SET data = %s WHERE id = %s
+                """, (psycopg2.extras.Json(d), nid))
+                aggiornati += 1
+            except Exception as e:
+                print(f"  ✗ {nome}: {e}")
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    print(f"Nodi aggiornati con target: {aggiornati}")
+
+
 if __name__ == "__main__":
     if "--status" in sys.argv:
         status()
@@ -923,6 +1092,10 @@ if __name__ == "__main__":
         build(test=True)
     elif "--all" in sys.argv:
         build()
+    elif "--archi" in sys.argv:
+        build_archi()
+    elif "--targets" in sys.argv:
+        build_target_numbers()
     elif "--discipline" in sys.argv:
         idx = sys.argv.index("--discipline")
         disc = sys.argv[idx+1] if idx+1 < len(sys.argv) else None

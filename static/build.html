@@ -20,6 +20,8 @@ button{padding:14px 28px;border:none;border-radius:10px;font-size:15px;cursor:po
 <button style="background:#8B4513" onclick="avviaDisc('fermentati')">Fermentati</button>
 <button style="background:#2C6E63" onclick="stato()">Stato</button>
 <button style="background:#6B6257;margin-top:12px" onclick="seedSicurezza()">Seed sicurezza alimentare</button>
+<button style="background:#4A4A8A;margin-top:6px" onclick="buildArchi()">Crea archi abbinamento</button>
+<button style="background:#4A6B4A;margin-top:6px" onclick="buildTargets()">Popola target number</button>
 <div id="log">Premi Stato per vedere i progressi...</div>
 <script>
 function getS() {
@@ -39,6 +41,32 @@ function avvia() {
   }).catch(function(e) {
     document.getElementById('log').textContent = 'Errore: ' + e;
   });
+}
+async function buildArchi(){
+  document.getElementById('log').textContent = 'Creazione archi in corso (può richiedere 2-3 min)...';
+  try {
+    var r = await fetch('/admin/build-archi', {
+      method: 'POST',
+      headers: { 'X-Admin-Secret': getS(), 'Content-Type': 'application/json' }
+    });
+    var j = await r.json();
+    document.getElementById('log').textContent = JSON.stringify(j, null, 2);
+  } catch(e) {
+    document.getElementById('log').textContent = 'Errore: ' + e;
+  }
+}
+async function buildTargets(){
+  document.getElementById('log').textContent = 'Popolamento target number...';
+  try {
+    var r = await fetch('/admin/build-targets', {
+      method: 'POST',
+      headers: { 'X-Admin-Secret': getS(), 'Content-Type': 'application/json' }
+    });
+    var j = await r.json();
+    document.getElementById('log').textContent = JSON.stringify(j, null, 2);
+  } catch(e) {
+    document.getElementById('log').textContent = 'Errore: ' + e;
+  }
 }
 async function seedSicurezza(){
   document.getElementById('log').textContent = 'Seed sicurezza in corso...';

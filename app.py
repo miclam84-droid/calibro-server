@@ -2435,6 +2435,17 @@ Reply ONLY with valid JSON, no text before or after:
 
 The correct answer must always be the first option (index 0).
 The explanation must include the exact number."""
+    elif lang == "es":
+        quiz_prompt = f"""Crea un quiz sobre este fenómeno para un profesional F&B.
+Fenómeno: {nome}
+Número objetivo: {target}
+Contenido: {scheda[:400]}
+
+Responde SOLO con JSON válido, ningún texto antes o después:
+{{"domanda":"...","opzioni":["opción correcta","opción incorrecta","opción incorrecta"],"corretta":0,"spiegazione":"explicación con el cálculo matemático en 2 líneas"}}
+
+La respuesta correcta debe ser siempre la primera opción (índice 0).
+La explicación debe incluir el número exacto."""
     else:
         quiz_prompt = f"""Crea un quiz su questo fenomeno per un professionista F&B.
 Fenomeno: {nome}
@@ -3268,6 +3279,43 @@ def admin_build_page():
         return "<h2>Secret non valido</h2>", 403
     from flask import send_from_directory
     return send_from_directory("static", "build.html")
+
+
+
+@app.route("/admin/build-archi", methods=["POST"])
+def admin_build_archi():
+    """Crea archi abbinamento tra nodi Ingrediente già nel grafo."""
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    import threading
+    def _run():
+        try:
+            import build_ingredient_graph as BIG
+            BIG.build_archi()
+        except Exception as e:
+            print(f"[ARCHI] errore: {e}", flush=True)
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+    return jsonify({"ok": True, "messaggio": "Creazione archi avviata in background (~2-3 min)"})
+
+
+@app.route("/admin/build-targets", methods=["POST"])
+def admin_build_targets():
+    """Popola target number nei nodi Ingrediente."""
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    import threading
+    def _run():
+        try:
+            import build_ingredient_graph as BIG
+            BIG.build_target_numbers()
+        except Exception as e:
+            print(f"[TARGETS] errore: {e}", flush=True)
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+    return jsonify({"ok": True, "messaggio": "Popolamento target avviato in background (~1 min)"})
 
 
 @app.route("/admin/build-ingredienti", methods=["POST"])
