@@ -3441,6 +3441,120 @@ def admin_seed_sicurezza():
     return jsonify({"ok": ok, "errori": errori})
 
 
+
+@app.route("/cookie-policy")
+def cookie_policy():
+    lang = request.args.get("lang","it")
+    if lang == "en":
+        titolo = "Cookie Policy"
+        corpo = """<h2>Cookie Policy</h2>
+<p>Matter Lab uses only technical cookies necessary for the service to function. No profiling or advertising cookies are used.</p>
+<h3>Cookies used</h3>
+<ul>
+<li><strong>matter_token</strong> — authentication token, stored in localStorage. Duration: session.</li>
+<li><strong>ml_lang</strong> — language preference. Duration: persistent.</li>
+<li><strong>matter_disc</strong> — selected discipline. Duration: persistent.</li>
+</ul>
+<p>No third-party cookies. No data shared with advertising platforms.</p>
+<p>For information: <a href="mailto:privacy@matterlab.app">privacy@matterlab.app</a></p>"""
+    elif lang == "es":
+        titolo = "Política de Cookies"
+        corpo = """<h2>Política de Cookies</h2>
+<p>Matter Lab utiliza únicamente cookies técnicas necesarias para el funcionamiento del servicio. No se utilizan cookies de perfilado ni publicitarias.</p>
+<h3>Cookies utilizadas</h3>
+<ul>
+<li><strong>matter_token</strong> — token de autenticación, almacenado en localStorage. Duración: sesión.</li>
+<li><strong>ml_lang</strong> — preferencia de idioma. Duración: persistente.</li>
+<li><strong>matter_disc</strong> — disciplina seleccionada. Duración: persistente.</li>
+</ul>
+<p>Sin cookies de terceros. Sin datos compartidos con plataformas publicitarias.</p>"""
+    else:
+        titolo = "Cookie Policy"
+        corpo = """<h2>Cookie Policy</h2>
+<p>Matter Lab utilizza esclusivamente cookie tecnici necessari al funzionamento del servizio. Non vengono utilizzati cookie di profilazione né pubblicitari.</p>
+<h3>Cookie utilizzati</h3>
+<ul>
+<li><strong>matter_token</strong> — token di autenticazione, memorizzato in localStorage. Durata: sessione.</li>
+<li><strong>ml_lang</strong> — preferenza lingua. Durata: persistente.</li>
+<li><strong>matter_disc</strong> — disciplina selezionata. Durata: persistente.</li>
+</ul>
+<p>Nessun cookie di terze parti. Nessun dato condiviso con piattaforme pubblicitarie.</p>
+<p>Per informazioni: <a href="mailto:privacy@matterlab.app">privacy@matterlab.app</a></p>"""
+    return _pagina_legale(titolo, corpo)
+
+
+@app.route("/come-funziona-ai")
+def come_funziona_ai():
+    lang = request.args.get("lang","it")
+    if lang == "en":
+        titolo = "How the AI works"
+        corpo = """<h2>How Matter Lab AI works</h2>
+<p>Matter Lab uses AI language models to answer your questions about food science.</p>
+<h3>Models used</h3>
+<ul>
+<li><strong>Claude (Anthropic)</strong> — main chat. Answers questions about physical and chemical phenomena.</li>
+<li><strong>Haiku (Anthropic)</strong> — quiz generation and fast translations.</li>
+<li><strong>Whisper (OpenAI)</strong> — voice transcription (Pro only).</li>
+<li><strong>GPT-4o Vision (OpenAI)</strong> — image analysis of technical sheets (Pro only).</li>
+</ul>
+<h3>What AI does and does not do</h3>
+<ul>
+<li>AI answers based on the Matter Lab knowledge graph (physical phenomena, target numbers, scientific principles).</li>
+<li>AI does not replace a food technologist or HACCP consultant.</li>
+<li>Shelf life values are indicative estimates, not certifications.</li>
+<li>Every AI response includes a disclaimer.</li>
+</ul>
+<h3>Your data</h3>
+<p>Questions are logged anonymously to improve the service. No personal data is shared with AI providers beyond what is necessary to generate the response.</p>
+<p>EU AI Act: Matter Lab is a general-purpose AI tool for professional education. It does not make autonomous decisions affecting people.</p>"""
+    else:
+        titolo = "Come funziona l'AI"
+        corpo = """<h2>Come funziona l'AI di Matter Lab</h2>
+<p>Matter Lab utilizza modelli linguistici AI per rispondere alle tue domande sulla scienza degli alimenti.</p>
+<h3>Modelli utilizzati</h3>
+<ul>
+<li><strong>Claude (Anthropic)</strong> — chat principale. Risponde alle domande sui fenomeni fisici e chimici.</li>
+<li><strong>Haiku (Anthropic)</strong> — generazione quiz e traduzioni rapide.</li>
+<li><strong>Whisper (OpenAI)</strong> — trascrizione vocale (solo Pro).</li>
+<li><strong>GPT-4o Vision (OpenAI)</strong> — analisi foto schede tecniche (solo Pro).</li>
+</ul>
+<h3>Cosa fa e non fa l'AI</h3>
+<ul>
+<li>L'AI risponde basandosi sul grafo di conoscenza di Matter Lab (fenomeni fisici, numeri bersaglio, principi scientifici).</li>
+<li>L'AI non sostituisce un tecnologo alimentare né un consulente HACCP.</li>
+<li>I valori di shelf life sono stime orientative, non certificazioni.</li>
+<li>Ogni risposta AI include un disclaimer.</li>
+</ul>
+<h3>I tuoi dati</h3>
+<p>Le domande vengono registrate in forma anonima per migliorare il servizio. Nessun dato personale viene condiviso con i provider AI oltre a quanto necessario per generare la risposta.</p>
+<p>EU AI Act: Matter Lab è uno strumento AI a uso generale per la formazione professionale. Non prende decisioni autonome che riguardano le persone.</p>"""
+    return _pagina_legale(titolo, corpo)
+
+
+def _pagina_legale(titolo, corpo):
+    """Wrapper HTML per pagine legali."""
+    return f"""<!DOCTYPE html>
+<html lang="it"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{titolo} — Matter Lab</title>
+<style>
+body{{font-family:sans-serif;background:#FAF6EE;color:#1A1A18;max-width:680px;margin:0 auto;padding:30px 20px}}
+h1{{font-family:Georgia,serif;color:#2C6E63;font-size:22px;margin-bottom:4px}}
+h2{{font-family:Georgia,serif;font-size:18px;margin-top:28px}}
+h3{{font-size:14px;font-weight:600;margin-top:20px;color:#2C6E63}}
+p,li{{font-size:14px;line-height:1.7;color:#3A3830}}
+a{{color:#2C6E63}}
+.back{{display:inline-block;margin-bottom:20px;color:#2C6E63;text-decoration:none;font-size:13px}}
+</style>
+</head><body>
+<a href="/app" class="back">← Matter Lab</a>
+<h1>Matter Lab</h1>
+{corpo}
+<p style="margin-top:40px;font-size:12px;color:#999">Ultimo aggiornamento: luglio 2026</p>
+</body></html>"""
+
+
 @app.route("/admin")
 def admin_ui():
     """GT10 — Admin UI grafica."""

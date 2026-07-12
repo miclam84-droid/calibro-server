@@ -2938,7 +2938,7 @@ async function testaKT(){
 
 <!-- ── COOKIE BANNER GDPR (LE1) ─────────────────────────── -->
 <div id="cookie-banner" style="display:none">
-  <p id="ct-cookie-txt">Matter Lab usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
+  <p id="ct-cookie-txt">Matter Lab usa cookie tecnici. <a href="/cookie-policy" style="color:var(--teal)">Cookie Policy</a>. Matter Lab usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
   Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral). 
   <a href="/privacy" target="_blank">Privacy policy</a></p>
   <div class="cookie-btns">
@@ -3195,6 +3195,88 @@ function chiediPill(i) {
 }
 // Aggiorna le pill quando cambia la lingua
 var _origSetLang = typeof setLang === 'function' ? setLang : null;
+
+
+// ── FOTOCAMERA (Vision) ────────────────────────────────────────
+async function inviaFoto(input){
+  if(!input||!input.files||!input.files[0]) return;
+  var file = input.files[0];
+  var tok = localStorage.getItem('matter_token')||'';
+  var previewUrl = URL.createObjectURL(file);
+  var card = document.createElement('div');
+  card.className = 'scheda';
+  card.innerHTML = '<div class="s-q">📷 Analisi immagine</div>'
+    + '<img src="'+previewUrl+'" style="max-width:100%;max-height:180px;border-radius:10px;margin:8px 0">'
+    + '<div class="s-body" style="color:var(--muted);font-size:13px">Analisi in corso…</div>';
+  var schede = document.getElementById('schede');
+  if(schede){ schede.prepend(card); schede.scrollTop=0; }
+  try {
+    var fd = new FormData();
+    fd.append('immagine', file);
+    var r = await fetch('/v1/vision?lang='+(_lang||'it'), {
+      method:'POST', headers:{'X-Token':tok}, body:fd
+    });
+    var j = await r.json();
+    var body = card.querySelector('.s-body');
+    if(j.analisi){
+      body.textContent = j.analisi;
+    } else if(j.errore && j.errore.indexOf('Pro')>=0){
+      body.textContent = 'Disponibile con Matter Lab Pro.';
+      if(typeof mostraPopupPro==='function') mostraPopupPro('vision');
+    } else {
+      body.textContent = j.errore||'Errore analisi.';
+    }
+  } catch(e){
+    var b = card.querySelector('.s-body');
+    if(b) b.textContent = 'Errore di rete.';
+  }
+  input.value = '';
+}
+
+// ── MICROFONO (Whisper STT) ─────────────────────────────────────
+var _mediaRec = null, _audioChunks = [];
+async function toggleMic(){
+  var btn = document.getElementById('btn-mic');
+  if(_mediaRec && _mediaRec.state==='recording'){
+    _mediaRec.stop();
+    if(btn){ btn.classList.remove('recording'); btn.title='Parla al banco'; }
+    return;
+  }
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    _audioChunks = [];
+    _mediaRec = new MediaRecorder(stream, {mimeType:'audio/webm'});
+    _mediaRec.ondataavailable = function(e){ if(e.data.size>0) _audioChunks.push(e.data); };
+    _mediaRec.onstop = async function(){
+      stream.getTracks().forEach(function(t){t.stop();});
+      if(btn) btn.classList.add('processing');
+      var blob = new Blob(_audioChunks, {type:'audio/webm'});
+      await inviaAudio(blob);
+      if(btn) btn.classList.remove('processing');
+    };
+    _mediaRec.start();
+    if(btn){ btn.classList.add('recording'); btn.title='Tocca per fermare'; }
+  } catch(e){ alert('Microfono non disponibile: '+e.message); }
+}
+async function inviaAudio(blob){
+  var tok = localStorage.getItem('matter_token')||'';
+  try {
+    var fd = new FormData();
+    fd.append('audio', blob, 'audio.webm');
+    var r = await fetch('/v1/stt?lang='+(_lang||'it'), {
+      method:'POST', headers:{'X-Token':tok}, body:fd
+    });
+    var j = await r.json();
+    if(j.trascrizione){
+      var q = document.getElementById('q');
+      if(q){ q.value=j.trascrizione; q.focus(); setTimeout(function(){invia();},800); }
+    } else if(j.errore && j.errore.indexOf('Pro')>=0){
+      if(typeof mostraPopupPro==='function') mostraPopupPro('stt');
+    } else {
+      alert(j.errore||'Trascrizione non riuscita.');
+    }
+  } catch(e){ alert('Errore: '+e.message); }
+}
 
 // rileva ?reset=TOKEN nell'URL e mostra la schermata nuova password
 (function(){
