@@ -1700,9 +1700,14 @@ def abbina(ingrediente):
                     print(f"[NOMI_IT] '{ingrediente}' trovato via flavor_nomi_it", flush=True)
             except Exception as _fi_err:
                 pass  # tabella non ancora popolata
-        # Se Ahn ha trovato meno di 3 risultati, prova comunque il dataset proprietario
-        if rows and len(rows) < 3:
-            rows = []  # reset per tentare il dataset proprietario più ricco
+        # Se Ahn ha trovato meno di 4 risultati, o tutti con lo stesso overlap (match fasullo),
+        # prova il dataset proprietario più ricco
+        if rows and len(rows) < 4:
+            rows = []
+        elif rows:
+            overlaps = set(r[2] for r in rows if r[2] is not None)
+            if len(overlaps) == 1:  # tutti lo stesso overlap = Ahn non ha dati reali
+                rows = []
 
         # fallback 3: dataset proprietario Matter Lab (nodi Ingrediente)
         if not rows:
