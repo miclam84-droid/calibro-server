@@ -1763,6 +1763,38 @@ def abbina(ingrediente):
                         return jsonify({"ingrediente":ingrediente,"abbinamenti":result_props,
                             "fonte":"dataset Matter Lab",
                             "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
+                    # Nodo trovato ma senza abbinamenti nel JSON — genera via AI
+                    if ing_row:
+                        _nome_ing = ing_row[1]
+                        _cat = (ing_row[2] if isinstance(ing_row[2],dict) else {}).get("categoria","")
+                        _profilo = (ing_row[2] if isinstance(ing_row[2],dict) else {}).get("categorie_aromatiche",[])
+                        _ai_prompt = (
+                            f"Sei un esperto di chimica degli alimenti. "
+                            f"Dammi 5 abbinamenti per '{_nome_ing}' ({_cat}, profilo: {', '.join(_profilo[:3])}) "
+                            f"con il meccanismo fisico-chimico per ognuno. "
+                            f"Formato JSON: {{abbinamenti:[{{ingrediente_it:str,meccanismo:str,overlap_score:int}}]}}"
+                        )
+                        try:
+                            _ai_raw = _haiku_raw(_ai_prompt)
+                            if _ai_raw:
+                                import re as _re2
+                                _m = _re2.search(r'\{.*\}', _ai_raw, _re2.DOTALL)
+                                if _m:
+                                    _ai_data = json.loads(_m.group())
+                                    _ai_abbs = _ai_data.get("abbinamenti",[])
+                                    result_props = [{"ingrediente":a.get("ingrediente_it","?"),
+                                        "composto":f"{a.get('overlap_score',50)} composti condivisi",
+                                        "overlap":float(a.get("overlap_score",50)),
+                                        "perche":a.get("meccanismo","affinità aromatica")}
+                                        for a in _ai_abbs[:5]]
+                                    if result_props:
+                                        cur.close(); conn.close()
+                                        return jsonify({"ingrediente":ingrediente,
+                                            "abbinamenti":result_props,
+                                            "fonte":"Matter Lab AI",
+                                            "nota":"Abbinamenti generati da AI su profilo sensoriale"})
+                        except Exception as _ai_e:
+                            print(f"[AI ABB] {_ai_e}", flush=True)
             except Exception as _pe:
                 print(f"[PROP ERR] {_pe}", flush=True)
 
