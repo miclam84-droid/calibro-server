@@ -1727,12 +1727,19 @@ def abbina(ingrediente):
         # fallback 4: abbinamenti da profilo sensoriale proprietario
         if not rows:
             try:
+                # Cerca con più varianti del nome
+                _ing_id = f"ing-{ing_norm.replace(' ','-').replace('_','-')}"
                 cur.execute("""
                     SELECT id, name, data FROM nodes
                     WHERE type='Ingrediente'
-                    AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+                    AND (
+                        lower(name) LIKE lower(%s)
+                        OR lower(id) LIKE lower(%s)
+                        OR lower(id) = lower(%s)
+                        OR lower(name) = lower(%s)
+                    )
                     LIMIT 1
-                """, (f"%{ing_it}%", f"%ing-{ing_norm.replace('_','-')}%"))
+                """, (f"%{ing_it}%", f"%{_ing_id}%", _ing_id, ing_it))
                 ing_row = cur.fetchone()
                 if ing_row:
                     ing_data = ing_row[2] if isinstance(ing_row[2], dict) else json.loads(ing_row[2] or "{}")
