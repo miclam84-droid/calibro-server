@@ -1680,12 +1680,13 @@ def abbina(ingrediente):
                     _pre_abbs.append({"ingrediente":a.get("ingrediente_it","?"),
                         "composto":"contrasto","overlap":30.0,
                         "perche":a.get("perche","contrasto fisico-percettivo")})
-                if _pre_abbs:
+                # Integra con AI se abbinamenti sono meno di 4
+                if _pre_abbs and len(_pre_abbs) >= 4:
                     cur.close(); conn.close()
                     return jsonify({"ingrediente":ingrediente,"abbinamenti":_pre_abbs,
                         "fonte":"dataset Matter Lab",
                         "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
-                # Nodo trovato ma senza abbinamenti — usa AI
+                # Nodo trovato ma con pochi abbinamenti — arricchisci con AI
                 _cat_pre = _pre_data.get("categoria","")
                 _prof_pre = _pre_data.get("categorie_aromatiche",[])
                 _ai_pre = ("Dammi 5 abbinamenti per " + str(ingrediente) +
