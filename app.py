@@ -1656,6 +1656,62 @@ def abbina(ingrediente):
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
         rows = []
+
+        # Pre-check: se non c'è alias Ahn, prova prima il dataset proprietario
+        if not ahn_name:
+            _ing_id_pre = f"ing-{ing_norm.replace(' ','-').replace('_','-')}"
+            cur.execute("""
+                SELECT id, name, data FROM nodes
+                WHERE type='Ingrediente'
+                AND (lower(name) = lower(%s) OR lower(id) = lower(%s)
+                     OR lower(name) LIKE lower(%s))
+                LIMIT 1
+            """, (ing_it, _ing_id_pre, f"%{ing_it}%"))
+            _pre_row = cur.fetchone()
+            if _pre_row:
+                _pre_data = _pre_row[2] if isinstance(_pre_row[2], dict) else _j.loads(_pre_row[2] or "{}")
+                _pre_abbs = []
+                for a in _pre_data.get("abbinamenti",{}).get("molecolari",[])[:5]:
+                    _pre_abbs.append({"ingrediente":a.get("ingrediente_it",a.get("ingrediente_en","?")),
+                        "composto":f"{a.get('overlap_score',50)} composti condivisi",
+                        "overlap":float(a.get("overlap_score",50)),
+                        "perche":a.get("meccanismo","affinità aromatica")})
+                for a in _pre_data.get("abbinamenti",{}).get("contrasto",[])[:2]:
+                    _pre_abbs.append({"ingrediente":a.get("ingrediente_it","?"),
+                        "composto":"contrasto","overlap":30.0,
+                        "perche":a.get("perche","contrasto fisico-percettivo")})
+                if _pre_abbs:
+                    cur.close(); conn.close()
+                    return jsonify({"ingrediente":ingrediente,"abbinamenti":_pre_abbs,
+                        "fonte":"dataset Matter Lab",
+                        "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
+                # Nodo trovato ma senza abbinamenti — usa AI
+                _cat_pre = _pre_data.get("categoria","")
+                _prof_pre = _pre_data.get("categorie_aromatiche",[])
+                _ai_pre = ("Dammi 5 abbinamenti per " + str(ingrediente) +
+                           " (" + str(_cat_pre) + ") con meccanismo fisico-chimico. "
+                           "JSON: {abbinamenti:[{ingrediente_it:str,meccanismo:str,overlap_score:int}]}")
+                try:
+                    _raw_pre = _haiku_raw(_ai_pre)
+                    if _raw_pre:
+                        import re as _re_pre
+                        _mp = _re_pre.search(r'\{.*\}', _raw_pre, _re_pre.DOTALL)
+                        if _mp:
+                            _dp = _j.loads(_mp.group())
+                            _ap = _dp.get("abbinamenti",[])
+                            if _ap:
+                                cur.close(); conn.close()
+                                return jsonify({"ingrediente":ingrediente,
+                                    "abbinamenti":[{"ingrediente":a.get("ingrediente_it","?"),
+                                        "composto":"abbinamento aromatico",
+                                        "overlap":float(a.get("overlap_score",50)),
+                                        "perche":a.get("meccanismo","affinità aromatica")}
+                                        for a in _ap[:5]],
+                                    "fonte":"Matter Lab AI",
+                                    "nota":"Abbinamenti generati da AI su profilo sensoriale"})
+                except Exception:
+                    pass
+
         for term in search_terms:
             cur.execute("""
                 SELECT e.to_id, n.name,
