@@ -1579,7 +1579,7 @@ def abbina(ingrediente):
         # salumi e carni italiane
         "salame":"salami","salumi":"salami","prosciutto":"prosciutto",
         "pancetta":"bacon","guanciale":"guanciale","mortadella":"mortadella",
-        "speck":"smoked_ham","nduja":"nduja","salsiccia":"pork_sausage",
+        "speck":"smoked_ham","salsiccia":"pork_sausage",
         "bresaola":"beef","lardo":"lard","coppa":"pork",
         # formaggi italiani
         "ricotta":"ricotta","pecorino":"pecorino","grana":"parmesan",
