@@ -1700,6 +1700,10 @@ def abbina(ingrediente):
                     print(f"[NOMI_IT] '{ingrediente}' trovato via flavor_nomi_it", flush=True)
             except Exception as _fi_err:
                 pass  # tabella non ancora popolata
+        # Se Ahn ha trovato meno di 3 risultati, prova comunque il dataset proprietario
+        if rows and len(rows) < 3:
+            rows = []  # reset per tentare il dataset proprietario più ricco
+
         # fallback 3: dataset proprietario Matter Lab (nodi Ingrediente)
         if not rows:
             try:
@@ -1867,25 +1871,16 @@ def contrasto(ingrediente):
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
         # trova il nodo dell'ingrediente cercato — preferisce nodi con dati contrasto
+        # Cerca in Prodotto E Ingrediente
         cur.execute("""
             SELECT id, name, data FROM nodes
-            WHERE type='Prodotto'
+            WHERE type IN ('Prodotto','Ingrediente')
             AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
-            AND (data->>'profilo_contrasto') IS NOT NULL
-            ORDER BY length(name) ASC
+            ORDER BY CASE WHEN (data->>'profilo_contrasto') IS NOT NULL THEN 0 ELSE 1 END,
+                     length(name) ASC
             LIMIT 1
-        """, (f"%{ingrediente}%", f"%{ingrediente.replace(' ','_')}%"))
+        """, (f"%{ingrediente}%", f"%ing-{ingrediente.lower().replace(' ','-')}%"))
         row = cur.fetchone()
-        if not row:
-            # fallback: cerca anche senza dati contrasto
-            cur.execute("""
-                SELECT id, name, data FROM nodes
-                WHERE type='Prodotto'
-                AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
-                ORDER BY length(name) ASC
-                LIMIT 1
-            """, (f"%{ingrediente}%", f"%{ingrediente.replace(' ','_')}%"))
-            row = cur.fetchone()
         if not row:
             cur.close(); conn.close()
             return jsonify({"ingrediente": ingrediente, "contrasti": [],
@@ -1939,7 +1934,7 @@ def contrasto(ingrediente):
                 # cerca grassi
                 cur.execute("""
                     SELECT id, name, data FROM nodes
-                    WHERE type='Prodotto'
+                    WHERE type IN ('Prodotto','Ingrediente')
                     AND (data->>'grassi_pct')::numeric > 8
                     AND id != %s
                     ORDER BY (data->>'grassi_pct')::numeric DESC LIMIT 3
@@ -1948,7 +1943,7 @@ def contrasto(ingrediente):
                 # cerca acidi
                 cur.execute("""
                     SELECT id, name, data FROM nodes
-                    WHERE type='Prodotto'
+                    WHERE type IN ('Prodotto','Ingrediente')
                     AND (data->>'ph_min')::numeric < 4.5
                     AND id != %s
                     ORDER BY (data->>'ph_min')::numeric ASC LIMIT 3
@@ -1957,7 +1952,7 @@ def contrasto(ingrediente):
                 # cerca dolci
                 cur.execute("""
                     SELECT id, name, data FROM nodes
-                    WHERE type='Prodotto'
+                    WHERE type IN ('Prodotto','Ingrediente')
                     AND (data->>'zuccheri_pct')::numeric > 10
                     AND id != %s
                     ORDER BY (data->>'zuccheri_pct')::numeric DESC LIMIT 3
@@ -1966,7 +1961,7 @@ def contrasto(ingrediente):
                 # cerca salati
                 cur.execute("""
                     SELECT id, name, data FROM nodes
-                    WHERE type='Prodotto'
+                    WHERE type IN ('Prodotto','Ingrediente')
                     AND (data->>'sodio_mg100g')::numeric > 100
                     AND id != %s
                     ORDER BY (data->>'sodio_mg100g')::numeric DESC LIMIT 2
@@ -1975,7 +1970,7 @@ def contrasto(ingrediente):
                 # cerca acidi
                 cur.execute("""
                     SELECT id, name, data FROM nodes
-                    WHERE type='Prodotto'
+                    WHERE type IN ('Prodotto','Ingrediente')
                     AND (data->>'ph_min')::numeric < 4.0
                     AND id != %s
                     ORDER BY (data->>'ph_min')::numeric ASC LIMIT 3
@@ -1984,7 +1979,7 @@ def contrasto(ingrediente):
                 # cerca acidi
                 cur.execute("""
                     SELECT id, name, data FROM nodes
-                    WHERE type='Prodotto'
+                    WHERE type IN ('Prodotto','Ingrediente')
                     AND (data->>'ph_min')::numeric < 4.5
                     AND id != %s
                     ORDER BY (data->>'ph_min')::numeric ASC LIMIT 2
