@@ -13,7 +13,11 @@ button{padding:14px 28px;border:none;border-radius:10px;font-size:15px;cursor:po
 <body>
 <h1>Build Dataset Ingredienti</h1>
 <p>Genera i profili per tutti gli ingredienti F&B.</p>
-<button style="background:#C77B3F" onclick="avvia()">Avvia build</button>
+<button style="background:#C77B3F" onclick="avvia()">Avvia build (tutti)</button>
+<button style="background:#8B4513" onclick="avviaDisc('cucina_asiatica')">Asiatica</button>
+<button style="background:#8B4513" onclick="avviaDisc('cucina_mediorientale')">Mediorientale</button>
+<button style="background:#8B4513" onclick="avviaDisc('cucina_latinoamericana')">Latinoamericana</button>
+<button style="background:#8B4513" onclick="avviaDisc('fermentati')">Fermentati</button>
 <button style="background:#2C6E63" onclick="stato()">Stato</button>
 <button style="background:#6B6257;margin-top:12px" onclick="seedSicurezza()">Seed sicurezza alimentare</button>
 <div id="log">Premi Stato per vedere i progressi...</div>
