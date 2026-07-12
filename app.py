@@ -1798,6 +1798,34 @@ def abbina(ingrediente):
             except Exception as _pe:
                 print(f"[PROP ERR] {_pe}", flush=True)
 
+        # fallback 5: AI diretto se nessun nodo trovato nel grafo
+        if not rows:
+            try:
+                _ai_prompt5 = (
+                    "Sei un esperto di chimica degli alimenti. "
+                    + "Dammi 5 abbinamenti per " + str(ingrediente) + " con meccanismo fisico-chimico. "
+                    + "Rispondi SOLO in JSON: {abbinamenti:[{ingrediente_it:str,meccanismo:str,overlap_score:int}]}"
+                )
+                _ai_raw5 = _haiku_raw(_ai_prompt5)
+                if _ai_raw5:
+                    import re as _re5
+                    _m5 = _re5.search(r'\{.*\}', _ai_raw5, _re5.DOTALL)
+                    if _m5:
+                        _ai_data5 = json.loads(_m5.group())
+                        _abbs5 = _ai_data5.get("abbinamenti",[])
+                        if _abbs5:
+                            cur.close(); conn.close()
+                            return jsonify({"ingrediente":ingrediente,
+                                "abbinamenti":[{"ingrediente":a.get("ingrediente_it","?"),
+                                    "composto":"abbinamento aromatico",
+                                    "overlap":float(a.get("overlap_score",50)),
+                                    "perche":a.get("meccanismo","affinità aromatica")}
+                                    for a in _abbs5[:5]],
+                                "fonte":"Matter Lab AI",
+                                "nota":"Abbinamenti generati da AI — ingrediente non ancora nel dataset molecolare"})
+            except Exception as _ai5_e:
+                print(f"[AI5] {_ai5_e}", flush=True)
+
         # fallback 2: ricerca semantica via embeddings OpenAI
         if not rows:
             try:
