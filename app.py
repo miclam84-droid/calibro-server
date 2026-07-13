@@ -733,6 +733,43 @@ def verifica_email_route():
         token_sess = _genera_token()
         cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token_sess, user_id))
         conn.commit(); cur.close(); conn.close()
+        # Invia email di benvenuto
+        lang_w = request.args.get("lang","it")
+        base_w = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
+        if lang_w == "en":
+            _w_sub  = "Welcome to Matter Lab"
+            _w_body = (
+                f"<p style='font-family:sans-serif'>Your account is active. Welcome to <strong>Matter Lab</strong>.</p>"
+                f"<p style='font-family:sans-serif'>Start with the phenomenon of the day in your discipline, "
+                f"then explore the flavor network and ask questions in the chat.</p>"
+                f"<p><a href='{base_w}/app' style='background:#2C6E63;color:#fff;padding:12px 24px;"
+                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>Open Matter Lab</a></p>"
+                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Science & Craft</p>"
+            )
+        elif lang_w == "es":
+            _w_sub  = "Bienvenido a Matter Lab"
+            _w_body = (
+                f"<p style='font-family:sans-serif'>Tu cuenta está activa. Bienvenido a <strong>Matter Lab</strong>.</p>"
+                f"<p style='font-family:sans-serif'>Empieza con el fenómeno del día en tu disciplina, "
+                f"luego explora la red de sabores y haz preguntas en el chat.</p>"
+                f"<p><a href='{base_w}/app' style='background:#2C6E63;color:#fff;padding:12px 24px;"
+                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>Abrir Matter Lab</a></p>"
+                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Science & Craft</p>"
+            )
+        else:
+            _w_sub  = "Benvenuto in Matter Lab"
+            _w_body = (
+                f"<p style='font-family:sans-serif'>Il tuo account è attivo. Benvenuto in <strong>Matter Lab</strong>.</p>"
+                f"<p style='font-family:sans-serif'>Inizia con il fenomeno del giorno nella tua disciplina, "
+                f"poi esplora il flavor network e fai domande in chat.</p>"
+                f"<p><a href='{base_w}/app' style='background:#2C6E63;color:#fff;padding:12px 24px;"
+                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>Apri Matter Lab</a></p>"
+                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Science & Craft</p>"
+            )
+        try:
+            _invia_email_resend(to=email, subject=_w_sub, body_html=_w_body)
+        except Exception:
+            pass  # non bloccare il login se l'email di benvenuto fallisce
         return jsonify({"ok":True,"token":token_sess,"piano":piano or "free","messaggio":"Email confermata. Benvenuto in Matter Lab."})
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
