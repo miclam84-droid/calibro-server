@@ -119,6 +119,62 @@ def _scheda_lang(data_dict, lang="it"):
     return scheda or ""
 
 
+
+def _scheda_tradotta(node_id, data_dict, lang, conn):
+    """Traduzione lazy della scheda: se non esiste per la lingua richiesta,
+    la genera con Haiku e la salva nel nodo. Una volta sola per nodo+lingua."""
+    if lang == "it":
+        return _scheda_lang(data_dict, "it")
+    
+    scheda = data_dict.get("scheda", "")
+    
+    # Se è già un dizionario con la lingua richiesta, usa quella
+    if isinstance(scheda, dict):
+        if scheda.get(lang):
+            return _pulisci_traduzione(scheda[lang])
+        scheda_it = scheda.get("it", "") or ""
+    else:
+        scheda_it = scheda or ""
+        scheda = {"it": scheda_it}
+    
+    if not scheda_it:
+        return ""
+    
+    # Genera traduzione con Haiku
+    if lang == "en":
+        prompt = (f"Translate this Italian F&B technical sheet to English. "
+                  f"Keep technical terms, numbers, and scientific accuracy. "
+                  f"Output ONLY the translation, no headers or labels:\n\n{scheda_it[:1500]}")
+    elif lang == "es":
+        prompt = (f"Traduce esta ficha técnica italiana de F&B al español. "
+                  f"Mantén los términos técnicos, números y precisión científica. "
+                  f"Escribe SOLO la traducción, sin encabezados ni etiquetas:\n\n{scheda_it[:1500]}")
+    else:
+        return scheda_it
+    
+    try:
+        traduzione = _haiku_raw(prompt, max_tokens=800)
+        traduzione = _pulisci_traduzione(traduzione)
+        if traduzione:
+            scheda[lang] = traduzione
+            # Salva nel nodo
+            if conn and node_id:
+                import psycopg2.extras as _psx
+                cur = conn.cursor()
+                data_dict["scheda"] = scheda
+                cur.execute(
+                    "UPDATE nodes SET data = %s WHERE id = %s",
+                    (_psx.Json(data_dict), node_id)
+                )
+                conn.commit()
+                cur.close()
+            return traduzione
+    except Exception as _te:
+        print(f"[TRAD] {node_id} {lang}: {_te}", flush=True)
+    
+    return scheda_it  # fallback IT
+
+
 def _numero_bersaglio(data_dict):
     """Legge il numero-bersaglio di un nodo Fenomeno in modo canonico.
     Il seed usa la chiave 'numero_bersaglio'; il fallback 'target' copre
@@ -2578,7 +2634,7 @@ def lezione(disciplina_nome, step):
     if not nodo:
         return jsonify({"errore": "nodo non trovato"})
     nd = _dati(nodo["data"])
-    scheda = _scheda_lang(nd, lang)
+    scheda = _scheda_tradotta(nodo["id"], nd, lang, conn) if lang != "it" else _scheda_lang(nd, lang)
     target = _numero_bersaglio(nd)
     # principio collegato
     principio = None
@@ -2597,7 +2653,7 @@ def lezione(disciplina_nome, step):
         "totale_passi": len(fenomeni),
         "fenomeno": {
             "id": nodo["id"],
-            "nome": nodo["name"],
+            "nome": _traduci_nome(nodo["name"], lang),
             "dominio": nodo["domain"],
             "target": target,
             "scheda": scheda
@@ -3881,6 +3937,54 @@ _PREZZI_ISMEA = {
     "cioccolato fondente 70%": 8.00, "cioccolato al latte": 6.50,
     "cioccolato bianco": 7.00, "cacao in polvere": 9.00,
 }
+
+
+
+# Traduzioni statiche nomi fenomeni e discipline (IT→EN→ES)
+_NOME_TRAD = {
+    "en": {
+        # Fenomeni
+        "Acidità": "Acidity", "Fermentazione lattica": "Lactic fermentation",
+        "Fermentazione acetica": "Acetic fermentation", "Maillard": "Maillard reaction",
+        "Caramellizzazione": "Caramelization", "Gelatinizzazione": "Gelatinization",
+        "Emulsione": "Emulsion", "Cristallizzazione": "Crystallization",
+        "Osmosi": "Osmosis", "Denaturazione": "Denaturation",
+        "Carbonatazione": "Carbonation", "Estrazione": "Extraction",
+        "Concentrazione": "Concentration", "Idratazione": "Hydration",
+        "Struttura del glutine": "Gluten structure", "Lievitazione": "Leavening",
+        "Temperatura": "Temperature", "pH": "pH", "Aw": "Water activity",
+        "Shelf life": "Shelf life", "Zona di pericolo": "Danger zone",
+        "Contaminazione": "Contamination",
+        # Discipline
+        "Bar": "Bar", "Cucina": "Kitchen", "Panificazione": "Baking",
+        "Pasticceria": "Pastry", "Gelateria": "Gelato", "Caffè": "Coffee",
+        "Vino": "Wine", "Birra": "Beer", "Sicurezza alimentare": "Food safety",
+    },
+    "es": {
+        # Fenomeni
+        "Acidità": "Acidez", "Fermentazione lattica": "Fermentación láctica",
+        "Fermentazione acetica": "Fermentación acética", "Maillard": "Reacción de Maillard",
+        "Caramellizzazione": "Caramelización", "Gelatinizzazione": "Gelatinización",
+        "Emulsione": "Emulsión", "Cristallizzazione": "Cristalización",
+        "Osmosi": "Ósmosis", "Denaturazione": "Desnaturalización",
+        "Carbonatazione": "Carbonatación", "Estrazione": "Extracción",
+        "Concentrazione": "Concentración", "Idratazione": "Hidratación",
+        "Struttura del glutine": "Estructura del gluten", "Lievitazione": "Leudado",
+        "Temperatura": "Temperatura", "pH": "pH", "Aw": "Actividad de agua",
+        "Shelf life": "Vida útil", "Zona di pericolo": "Zona de peligro",
+        "Contaminazione": "Contaminación",
+        # Discipline
+        "Bar": "Bar", "Cucina": "Cocina", "Panificazione": "Panadería",
+        "Pasticceria": "Pastelería", "Gelateria": "Heladería", "Caffè": "Café",
+        "Vino": "Vino", "Birra": "Cerveza", "Sicurezza alimentare": "Seguridad alimentaria",
+    }
+}
+
+def _traduci_nome(nome, lang):
+    """Traduce il nome di un fenomeno o disciplina nella lingua richiesta."""
+    if not nome or lang == "it":
+        return nome
+    return _NOME_TRAD.get(lang, {}).get(nome, nome)
 
 
 @app.route("/admin/seed-sicurezza", methods=["POST"])
