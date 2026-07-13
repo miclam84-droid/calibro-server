@@ -16,6 +16,7 @@ button{padding:14px 28px;border:none;border-radius:10px;font-size:15px;cursor:po
 <button style="background:#C77B3F" onclick="avviaBatch()">Avvia build (batch auto)</button>
 <button style="background:#8B4513" onclick="avvia()">Build completo (background)</button>
 <button style="background:#1A6B1A" onclick="buildContinuo()" id="btn-continuo">▶▶ Build server (non si ferma)</button>
+<button style="background:#006B6B" onclick="buildCron()" id="btn-cron">⚡ Build rapido (1 per sec)</button>
 <button style="background:#8B4513" onclick="avviaDisc('cucina_asiatica')">Asiatica</button>
 <button style="background:#8B4513" onclick="avviaDisc('cucina_mediorientale')">Mediorientale</button>
 <button style="background:#8B4513" onclick="avviaDisc('cucina_latinoamericana')">Latinoamericana</button>
@@ -99,6 +100,30 @@ async function seedSicurezza(){
   } catch(e) {
     document.getElementById('log').textContent = 'Errore: ' + e;
   }
+}
+var _cronTimer = null;
+async function buildCron(){
+  var btn = document.getElementById('btn-cron');
+  if(_cronTimer){
+    clearInterval(_cronTimer);
+    _cronTimer = null;
+    btn.textContent = '⚡ Build rapido (1 per sec)';
+    btn.style.background = '#006B6B';
+    return;
+  }
+  btn.textContent = '⏸ Ferma build rapido';
+  btn.style.background = '#8B0000';
+  var tot = 0;
+  _cronTimer = setInterval(async function(){
+    try {
+      var r = await fetch('/admin/build-cron?s='+getS());
+      var j = await r.json();
+      if(!j.ok){ clearInterval(_cronTimer); _cronTimer=null; btn.textContent='⚡ Build rapido'; document.getElementById('log').textContent='Errore: '+(j.errore||'?'); return; }
+      if(j.completato){ clearInterval(_cronTimer); _cronTimer=null; btn.textContent='✓ COMPLETATO'; document.getElementById('log').textContent='COMPLETATO! Totale: '+j.totale; return; }
+      tot++;
+      document.getElementById('log').textContent = 'Generati questa sessione: '+tot+'\nUltimo: '+j.ingrediente+' ('+j.disciplina+')\nTotale DB: '+j.totale;
+    } catch(e){ /* ignora errori singoli */ }
+  }, 1100);
 }
 async function buildContinuo(){
   var btn = document.getElementById('btn-continuo');

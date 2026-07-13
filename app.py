@@ -3513,6 +3513,68 @@ def admin_debug_ingredienti():
 
 
 
+
+@app.route("/admin/build-cron", methods=["POST","GET"])
+def admin_build_cron():
+    """Endpoint per cron job — genera UN ingrediente per chiamata.
+    Railway può chiamarlo ogni 30 secondi via cron.
+    Alternativa: chiamarlo in loop dal browser con setInterval.
+    """
+    secret = request.args.get("s","") or request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    if not DATABASE_URL or not os.environ.get("OPENAI_API_KEY"):
+        return jsonify({"ok":False,"errore":"config mancante"}), 503
+    try:
+        import psycopg2, importlib
+        import build_ingredient_graph as BIG
+        importlib.reload(BIG)
+
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT node_id FROM ingredient_build_log")
+            gia_fatti = {r[0] for r in cur.fetchall()}
+        except Exception:
+            gia_fatti = set()
+        cur.close(); conn.close()
+
+        # Trova il prossimo
+        prossimo = None
+        for d, ings in BIG.INGREDIENTI.items():
+            for ing in ings:
+                if BIG.node_id(ing) not in gia_fatti:
+                    prossimo = (d, ing)
+                    break
+            if prossimo:
+                break
+
+        if not prossimo:
+            return jsonify({"ok":True,"completato":True,"totale":len(gia_fatti)})
+
+        d, ing = prossimo
+        profilo, usage = BIG.gpt_ingrediente(ing, d)
+        conn_ing = psycopg2.connect(DATABASE_URL)
+        try:
+            BIG.salva_in_grafo(conn_ing, ing, d, profilo)
+            conn_ing.close()
+        except Exception as db_e:
+            try: conn_ing.rollback(); conn_ing.close()
+            except: pass
+            return jsonify({"ok":False,"errore":str(db_e)[:80]})
+
+        return jsonify({
+            "ok": True,
+            "completato": False,
+            "ingrediente": ing,
+            "disciplina": d,
+            "totale": len(gia_fatti) + 1,
+            "token": usage.get("total_tokens",0)
+        })
+    except Exception as e:
+        return jsonify({"ok":False,"errore":str(e)[:100]}), 500
+
+
 @app.route("/admin/build-continuo", methods=["POST"])
 def admin_build_continuo():
     """Build continuo in background con checkpoint su DB.
