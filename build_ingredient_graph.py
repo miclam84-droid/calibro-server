@@ -1173,3 +1173,4 @@ if __name__ == "__main__":
             print("Specifica la disciplina: bar|cucina|panificazione|pasticceria|gelateria|caffe|vino|birra")
     else:
         print(__doc__)
+
