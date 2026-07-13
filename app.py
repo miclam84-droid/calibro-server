@@ -3494,6 +3494,76 @@ def admin_build_targets():
     return jsonify({"ok": True, "messaggio": "Popolamento target avviato in background (~1 min)"})
 
 
+
+@app.route("/admin/build-batch", methods=["POST"])
+def admin_build_batch():
+    """Genera un batch di N ingredienti e si ferma.
+    Non va in timeout perché è sincrono e limitato.
+    Chiamare ripetutamente finché totale_generati non aumenta.
+    Body: {"n": 20, "discipline": ["cucina"]}  # opzionali
+    """
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    body = request.json or {}
+    n = int(body.get("n", 20))
+    discipline = body.get("discipline", None)
+    if not DATABASE_URL or not os.environ.get("OPENAI_API_KEY"):
+        return jsonify({"errore":"DATABASE_URL o OPENAI_API_KEY mancante"}), 503
+    try:
+        import build_ingredient_graph as BIG
+        import psycopg2
+        # Prendi gli ingredienti non ancora generati
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT node_id FROM ingredient_build_log")
+            gia_fatti = {r[0] for r in cur.fetchall()}
+        except Exception:
+            gia_fatti = set()
+        cur.close(); conn.close()
+
+        DISC = discipline or list(BIG.INGREDIENTI.keys())
+        da_fare = [(d, ing) for d in DISC
+                   for ing in BIG.INGREDIENTI.get(d, [])
+                   if BIG.node_id(ing) not in gia_fatti]
+
+        da_fare = da_fare[:n]
+        if not da_fare:
+            return jsonify({"ok": True, "generati": 0, "messaggio": "Nessun ingrediente da generare"})
+
+        ok = 0; errori = []; token_tot = 0
+        for disc, ing in da_fare:
+            try:
+                profilo, usage = BIG.gpt_ingrediente(ing, disc)
+                tok = usage.get("total_tokens", 0)
+                conn_ing = psycopg2.connect(DATABASE_URL)
+                try:
+                    BIG.salva_in_grafo(conn_ing, ing, disc, profilo)
+                    conn_ing.close()
+                except Exception as db_e:
+                    try: conn_ing.rollback(); conn_ing.close()
+                    except: pass
+                    errori.append(f"{ing}: {str(db_e)[:40]}")
+                    continue
+                token_tot += tok
+                ok += 1
+            except Exception as e:
+                errori.append(f"{ing}: {str(e)[:40]}")
+
+        costo = token_tot * 0.000000375
+        return jsonify({
+            "ok": True,
+            "generati": ok,
+            "errori": len(errori),
+            "token": token_tot,
+            "costo": f"${costo:.3f}",
+            "prossimo_batch": len(da_fare) - ok > 0
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
 @app.route("/admin/build-ingredienti", methods=["POST"])
 def admin_build_ingredienti():
     """Lancia il build del dataset ingredienti in un thread background.
