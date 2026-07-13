@@ -3495,6 +3495,23 @@ def admin_build_targets():
 
 
 
+
+@app.route("/admin/debug-ingredienti")
+def admin_debug_ingredienti():
+    """Debug: mostra quanti ingredienti vede il server nel modulo."""
+    secret = request.args.get("s","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    try:
+        import importlib, build_ingredient_graph as BIG
+        importlib.reload(BIG)
+        per_disc = {d: len(ings) for d, ings in BIG.INGREDIENTI.items()}
+        totale = sum(per_disc.values())
+        return jsonify({"totale": totale, "per_disciplina": per_disc})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
 @app.route("/admin/build-batch", methods=["POST"])
 def admin_build_batch():
     """Genera un batch di N ingredienti e si ferma.
