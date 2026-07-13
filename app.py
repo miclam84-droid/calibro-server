@@ -809,8 +809,9 @@ def registra():
         )
         return jsonify({"ok":True,"messaggio":_msg,"verifica_richiesta":True})
     except Exception as e:
+        lang_reg_fallback = (request.json or {}).get("lang","it")
         if "unique" in str(e).lower():
-            return jsonify({"errore":_err("email_gia_registrata", lang_reg)}), 409
+            return jsonify({"errore":_err("email_gia_registrata", lang_reg_fallback)}), 409
         return jsonify({"errore":str(e)}), 500
 
 
