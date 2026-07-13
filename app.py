@@ -2634,7 +2634,18 @@ def lezione(disciplina_nome, step):
     if not nodo:
         return jsonify({"errore": "nodo non trovato"})
     nd = _dati(nodo["data"])
-    scheda = _scheda_tradotta(nodo["id"], nd, lang, conn) if lang != "it" else _scheda_lang(nd, lang)
+    if lang != "it":
+        import psycopg2 as _pg
+        try:
+            _conn_trad = _pg.connect(DATABASE_URL) if DATABASE_URL else None
+        except Exception:
+            _conn_trad = None
+        scheda = _scheda_tradotta(nodo["id"], nd, lang, _conn_trad)
+        if _conn_trad:
+            try: _conn_trad.close()
+            except: pass
+    else:
+        scheda = _scheda_lang(nd, lang)
     target = _numero_bersaglio(nd)
     # principio collegato
     principio = None
