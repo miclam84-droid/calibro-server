@@ -4119,11 +4119,32 @@ _NOME_TRAD = {
     }
 }
 
-def _traduci_nome(nome, lang):
-    """Traduce il nome di un fenomeno o disciplina nella lingua richiesta."""
+def _traduci_nome(nome, lang, conn=None):
+    """Traduce il nome di un fenomeno o disciplina nella lingua richiesta.
+    Se non trovato nel dizionario statico, usa Haiku e salva nel DB."""
     if not nome or lang == "it":
         return nome
-    return _NOME_TRAD.get(lang, {}).get(nome, nome)
+    # Cerca nel dizionario statico
+    tradotto = _NOME_TRAD.get(lang, {}).get(nome)
+    if tradotto:
+        return tradotto
+    # Traduzione lazy via Haiku
+    if lang == "en":
+        prompt = f"Translate this Italian F&B technical term to English (2-5 words max): {nome}"
+    elif lang == "es":
+        prompt = f"Traduce este término técnico italiano de F&B al español (2-5 palabras): {nome}"
+    else:
+        return nome
+    try:
+        trad = _haiku_raw(prompt, max_tokens=20)
+        if trad:
+            trad = trad.strip().strip('"').strip("'")
+            # Salva nel dizionario statico per questa sessione
+            _NOME_TRAD.setdefault(lang, {})[nome] = trad
+            return trad
+    except Exception:
+        pass
+    return nome
 
 
 @app.route("/admin/seed-sicurezza", methods=["POST"])
