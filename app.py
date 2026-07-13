@@ -3511,7 +3511,8 @@ def admin_build_batch():
     if not DATABASE_URL or not os.environ.get("OPENAI_API_KEY"):
         return jsonify({"errore":"DATABASE_URL o OPENAI_API_KEY mancante"}), 503
     try:
-        import build_ingredient_graph as BIG
+        import importlib, build_ingredient_graph as BIG
+        importlib.reload(BIG)  # forza rilettura file aggiornato
         import psycopg2
         # Prendi gli ingredienti non ancora generati
         conn = psycopg2.connect(DATABASE_URL)
