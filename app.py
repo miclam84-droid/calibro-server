@@ -3512,6 +3512,84 @@ def admin_debug_ingredienti():
         return jsonify({"errore": str(e)}), 500
 
 
+
+@app.route("/admin/build-continuo", methods=["POST"])
+def admin_build_continuo():
+    """Build continuo in background con checkpoint su DB.
+    Gira finché non finisce — non dipende dal browser.
+    Usa threading con loop interno che salva ogni ingrediente.
+    """
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    if not DATABASE_URL or not os.environ.get("OPENAI_API_KEY"):
+        return jsonify({"errore":"DATABASE_URL o OPENAI_API_KEY mancante"}), 503
+
+    import threading, importlib
+
+    def _run_continuo():
+        import psycopg2, importlib, time as _time
+        try:
+            import build_ingredient_graph as BIG
+            importlib.reload(BIG)
+        except Exception as e:
+            print(f"[BUILD_C] import error: {e}", flush=True)
+            return
+
+        print(f"[BUILD_C] Avvio build continuo — {sum(len(v) for v in BIG.INGREDIENTI.values())} ingredienti totali", flush=True)
+        
+        while True:
+            # Prendi il prossimo ingrediente non ancora fatto
+            try:
+                conn = psycopg2.connect(DATABASE_URL)
+                cur = conn.cursor()
+                try:
+                    cur.execute("SELECT node_id FROM ingredient_build_log")
+                    gia_fatti = {r[0] for r in cur.fetchall()}
+                except Exception:
+                    gia_fatti = set()
+                cur.close(); conn.close()
+            except Exception as e:
+                print(f"[BUILD_C] DB error: {e}", flush=True)
+                _time.sleep(5)
+                continue
+
+            # Trova il prossimo da fare
+            prossimo = None
+            for d, ings in BIG.INGREDIENTI.items():
+                for ing in ings:
+                    if BIG.node_id(ing) not in gia_fatti:
+                        prossimo = (d, ing)
+                        break
+                if prossimo:
+                    break
+
+            if not prossimo:
+                print(f"[BUILD_C] COMPLETATO! Totale: {len(gia_fatti)}", flush=True)
+                break
+
+            d, ing = prossimo
+            try:
+                profilo, usage = BIG.gpt_ingrediente(ing, d)
+                conn_ing = psycopg2.connect(DATABASE_URL)
+                try:
+                    BIG.salva_in_grafo(conn_ing, ing, d, profilo)
+                    conn_ing.close()
+                except Exception as db_e:
+                    try: conn_ing.rollback(); conn_ing.close()
+                    except: pass
+                tok = usage.get("total_tokens",0)
+                print(f"[BUILD_C] ✓ {ing[:40]} ({tok} tok)", flush=True)
+            except Exception as e:
+                print(f"[BUILD_C] ✗ {ing[:40]}: {str(e)[:60]}", flush=True)
+            
+            _time.sleep(0.2)
+
+    t = threading.Thread(target=_run_continuo, daemon=True)
+    t.start()
+    return jsonify({"ok": True, "messaggio": "Build continuo avviato — gira in background fino al completamento. Controlla /admin/build-status per lo stato."})
+
+
 @app.route("/admin/build-batch", methods=["POST"])
 def admin_build_batch():
     """Genera un batch di N ingredienti e si ferma.

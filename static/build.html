@@ -15,6 +15,7 @@ button{padding:14px 28px;border:none;border-radius:10px;font-size:15px;cursor:po
 <p>Genera i profili per tutti gli ingredienti F&B.</p>
 <button style="background:#C77B3F" onclick="avviaBatch()">Avvia build (batch auto)</button>
 <button style="background:#8B4513" onclick="avvia()">Build completo (background)</button>
+<button style="background:#1A6B1A" onclick="buildContinuo()" id="btn-continuo">▶▶ Build server (non si ferma)</button>
 <button style="background:#8B4513" onclick="avviaDisc('cucina_asiatica')">Asiatica</button>
 <button style="background:#8B4513" onclick="avviaDisc('cucina_mediorientale')">Mediorientale</button>
 <button style="background:#8B4513" onclick="avviaDisc('cucina_latinoamericana')">Latinoamericana</button>
@@ -97,6 +98,24 @@ async function seedSicurezza(){
       (j.errori&&j.errori.length ? '\nErrori: ' + j.errori.join(', ') : '');
   } catch(e) {
     document.getElementById('log').textContent = 'Errore: ' + e;
+  }
+}
+async function buildContinuo(){
+  var btn = document.getElementById('btn-continuo');
+  btn.textContent = '⏳ Avviato — controlla Stato';
+  btn.disabled = true;
+  try {
+    var r = await fetch('/admin/build-continuo', {
+      method:'POST',
+      headers:{'X-Admin-Secret':getS(),'Content-Type':'application/json'}
+    });
+    var j = await r.json();
+    document.getElementById('log').textContent = j.messaggio || JSON.stringify(j);
+    // Auto-aggiorna stato ogni 30 secondi
+    setInterval(stato, 30000);
+  } catch(e) {
+    document.getElementById('log').textContent = 'Errore: ' + e;
+    btn.disabled = false;
   }
 }
 var _batchRunning = false;
