@@ -99,6 +99,43 @@ async function seedSicurezza(){
     document.getElementById('log').textContent = 'Errore: ' + e;
   }
 }
+var _batchRunning = false;
+async function avviaBatch(){
+  if(_batchRunning){ _batchRunning=false; document.getElementById('log').textContent += '\nFermato.'; return; }
+  _batchRunning = true;
+  var totOk = 0;
+  document.getElementById('log').textContent = 'Build batch avviato — premi di nuovo per fermare...';
+  while(_batchRunning){
+    try {
+      var r = await fetch('/admin/build-batch', {
+        method:'POST',
+        headers:{'X-Admin-Secret':getS(),'Content-Type':'application/json'},
+        body:JSON.stringify({n:15})
+      });
+      var j = await r.json();
+      if(j.errore){ document.getElementById('log').textContent += '\nErrore: '+j.errore; break; }
+      totOk += j.generati||0;
+      document.getElementById('log').textContent = 'Generati in questa sessione: '+totOk+'\nUltimo batch: '+j.generati+' ok, '+j.errori+' errori, costo '+j.costo;
+      if(!j.prossimo_batch){ document.getElementById('log').textContent += '\n\nCOMPLETATO!'; _batchRunning=false; break; }
+      await new Promise(res=>setTimeout(res,500));
+    } catch(e){
+      document.getElementById('log').textContent += '\nErrore: '+e; break;
+    }
+  }
+  _batchRunning = false;
+}
+async function avviaDisc(disc){
+  document.getElementById('log').textContent = 'Avvio build disciplina: ' + disc + '...';
+  try {
+    var r = await fetch('/admin/build-ingredienti', {
+      method:'POST', headers:{'X-Admin-Secret':getS(),'Content-Type':'application/json'},
+      body:JSON.stringify({discipline:[disc]})
+    });
+    var j = await r.json();
+    document.getElementById('log').textContent = JSON.stringify(j,null,2);
+    setTimeout(stato,5000);
+  } catch(e){ document.getElementById('log').textContent='Errore: '+e; }
+}
 function stato() {
   fetch('/admin/build-status', {
     headers: { 'X-Admin-Secret': getS() }
