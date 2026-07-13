@@ -109,6 +109,55 @@ def _pulisci_traduzione(t):
     return t.strip()
 
 
+
+def _err(codice, lang="it"):
+    """Restituisce il messaggio di errore nella lingua richiesta."""
+    MSGS = {
+        "email_gia_registrata": {
+            "it": "email già registrata",
+            "en": "email already registered",
+            "es": "email ya registrado"
+        },
+        "credenziali_non_valide": {
+            "it": "credenziali non valide",
+            "en": "invalid credentials",
+            "es": "credenciales no válidas"
+        },
+        "email_password_obbligatorie": {
+            "it": "email e password obbligatorie",
+            "en": "email and password required",
+            "es": "email y contraseña requeridos"
+        },
+        "account_non_attivo": {
+            "it": "Account non ancora attivo. Controlla la tua email.",
+            "en": "Account not yet active. Check your email.",
+            "es": "Cuenta aún no activa. Revisa tu email."
+        },
+        "troppi_tentativi": {
+            "it": "Troppi tentativi. Aspetta un minuto e riprova.",
+            "en": "Too many attempts. Wait a minute and try again.",
+            "es": "Demasiados intentos. Espera un minuto e inténtalo de nuevo."
+        },
+        "autenticazione_richiesta": {
+            "it": "autenticazione richiesta",
+            "en": "authentication required",
+            "es": "autenticación requerida"
+        },
+        "pro_required": {
+            "it": "Le lezioni dalla 2 in poi sono disponibili con Matter Lab Pro.",
+            "en": "Lessons from step 2 onwards are available with Matter Lab Pro.",
+            "es": "Las lecciones desde el paso 2 están disponibles con Matter Lab Pro."
+        },
+        "trial_esaurito": {
+            "it": "Hai esaurito le 5 chat di prova.",
+            "en": "You have used all 5 trial chats.",
+            "es": "Has agotado las 5 conversaciones de prueba."
+        },
+    }
+    msg = MSGS.get(codice, {})
+    return msg.get(lang) or msg.get("it") or codice
+
+
 def _scheda_lang(data_dict, lang="it"):
     """GT4 — Legge il campo scheda nel formato multilingua.
     Supporta sia il formato legacy (stringa) sia il nuovo formato {it:"...", en:"..."}.
@@ -425,7 +474,8 @@ def costruisci_prompt(domanda, contesto, lang="it"):
             "- If the question contains specific numbers (ml, grams, degrees, percentages), "
             "use the 'calcola' tool for exact results.\n"
             "- Clean prose, no asterisks, bold or markdown. Maximum 6-8 sentences.\n"
-            "- Never mention being an AI or using a graph."
+            "- Never mention being an AI or using a graph.\n"
+            "IMPORTANT: Always respond in English, regardless of the language of the technical context provided."
         )
     elif lang == "es":
         import datetime as _dt
@@ -456,7 +506,8 @@ def costruisci_prompt(domanda, contesto, lang="it"):
             "- Tono de colega a colega: muestra el porqué físico. Sin lecciones.\n"
             "- Si hay números del usuario (ml, gramos, grados), usa la herramienta calcola.\n"
             "- Prosa limpia en español, sin markdown. Máximo 6-8 frases.\n"
-            "- Nunca menciones ser una IA."
+            "- Nunca menciones ser una IA.\n"
+            "IMPORTANTE: Responde SIEMPRE en español, independientemente del idioma del contexto técnico proporcionado."
         )
     else:
         import datetime as _dt
@@ -690,11 +741,11 @@ def registra():
     body = request.json or {}
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     if not _check_rate_limit(ip):
-        return jsonify({"errore":"Troppi tentativi. Aspetta un minuto e riprova."}), 429
+        return jsonify({"errore":_err("troppi_tentativi", body.get("lang","it"))}), 429
     email = (body.get("email","")).strip().lower()
     password = body.get("password","")
     if not email or not password:
-        return jsonify({"errore":"email e password obbligatorie"}), 400
+        return jsonify({"errore":_err("email_password_obbligatorie", body.get("lang","it"))}), 400
     if len(password) < 8:
         return jsonify({"errore":"password minimo 8 caratteri"}), 400
     if not DATABASE_URL:
@@ -759,7 +810,7 @@ def registra():
         return jsonify({"ok":True,"messaggio":_msg,"verifica_richiesta":True})
     except Exception as e:
         if "unique" in str(e).lower():
-            return jsonify({"errore":"email gia registrata"}), 409
+            return jsonify({"errore":_err("email_gia_registrata", lang_reg)}), 409
         return jsonify({"errore":str(e)}), 500
 
 
@@ -836,11 +887,11 @@ def login():
     body = request.json or {}
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     if not _check_rate_limit(ip):
-        return jsonify({"errore":"Troppi tentativi. Aspetta un minuto e riprova."}), 429
+        return jsonify({"errore":_err("troppi_tentativi", body.get("lang","it"))}), 429
     email = (body.get("email","")).strip().lower()
     password = body.get("password","")
     if not email or not password:
-        return jsonify({"errore":"email e password obbligatorie"}), 400
+        return jsonify({"errore":_err("email_password_obbligatorie", body.get("lang","it"))}), 400
     if not DATABASE_URL:
         return jsonify({"errore":"database non disponibile"}), 503
     try:
@@ -852,7 +903,7 @@ def login():
         row = cur.fetchone()
         if not row or not _verifica_pw(password, row[1]):
             cur.close(); conn.close()
-            return jsonify({"errore":"credenziali non valide"}), 401
+            return jsonify({"errore":_err("credenziali_non_valide", body.get("lang","it"))}), 401
         user_id, stored_hash, piano = row
         # migrazione trasparente: se lo hash è ancora il vecchio SHA-256, al
         # primo login corretto lo rigeneriamo col KDF forte. Zero attrito utente.
@@ -2620,7 +2671,7 @@ def lezione(disciplina_nome, step):
             _cur_l.close(); _conn_l.close()
             if piano != "pro":
                 return jsonify({"errore":"pro_required","paywall":True,
-                    "messaggio":"Le lezioni dalla 2 in poi sono disponibili con Matter Lab Pro."}), 402
+                    "messaggio":_err("pro_required", lang)}), 402
         except Exception:
             pass
     db = carica_grafo()
