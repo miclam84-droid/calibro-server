@@ -2157,6 +2157,184 @@ def abbina(ingrediente):
         return jsonify({"ingrediente":ingrediente,"abbinamenti":[],
                         "nota":f"Errore: {str(e)}"}), 500
 
+
+
+def _personalizza_abbinamenti(abbinamenti, profilo_utente):
+    """Riordina gli abbinamenti in base al profilo sensoriale utente.
+    Gli ingredienti con profilo simile a quello dell'utente vengono prima."""
+    if not DATABASE_URL or not abbinamenti:
+        return abbinamenti
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        scored = []
+        for abb in abbinamenti:
+            nome = abb.get("ingrediente","")
+            cur.execute("""
+                SELECT data FROM nodes WHERE type='Ingrediente'
+                AND lower(name) LIKE lower(%s) LIMIT 1
+            """, (f"%{nome}%",))
+            row = cur.fetchone()
+            score = abb.get("overlap", 0)
+            if row:
+                d = row[0] if isinstance(row[0], dict) else {}
+                ps = d.get("profilo_sensoriale", {})
+                # Calcola similarità coseno semplificata
+                dims = ["acido","dolce","amaro","salato","umami","grasso","piccante","astringente","affumicato"]
+                dot = sum(
+                    profilo_utente.get(dim, 5) * (ps.get(dim, {}).get("valore", 5) if isinstance(ps.get(dim), dict) else float(ps.get(dim, 5)))
+                    for dim in dims
+                )
+                score = abb.get("overlap", 0) * 0.5 + dot * 0.5
+            scored.append((score, abb))
+        cur.close(); conn.close()
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return [x[1] for x in scored]
+    except Exception:
+        return abbinamenti
+
+
+# ── SOMMELIER DIGITALE v1 ────────────────────────────────────────────────────
+
+@app.route("/v1/profilo-sensoriale", methods=["GET"])
+def get_profilo_sensoriale():
+    """Restituisce il profilo sensoriale dell'utente (9 dimensioni, pesi 0-10)."""
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    if not DATABASE_URL:
+        return jsonify({"profilo": _profilo_default()})
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        # Aggiungi colonna se non esiste
+        cur.execute("""
+            ALTER TABLE utenti
+            ADD COLUMN IF NOT EXISTS profilo_sensoriale JSONB DEFAULT '{}'::jsonb
+        """)
+        cur.execute("SELECT profilo_sensoriale FROM utenti WHERE id=%s", (user_id,))
+        row = cur.fetchone()
+        conn.commit(); cur.close(); conn.close()
+        profilo = row[0] if row and row[0] else _profilo_default()
+        return jsonify({"profilo": profilo, "interazioni": profilo.get("_n", 0)})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
+@app.route("/v1/feedback-abbinamento", methods=["POST"])
+def feedback_abbinamento():
+    """Registra il feedback (like/dislike) su un abbinamento e aggiorna il profilo sensoriale.
+    Body: {"ingrediente": "lime", "abbinamento": "zucchero", "voto": 1, "disciplina": "bar"}
+    voto: 1=like, -1=dislike
+    """
+    token = request.headers.get("Authorization","").replace("Bearer ","")
+    user_id = _utente_da_token(token)
+    if not user_id:
+        return jsonify({"errore":"autenticazione richiesta"}), 401
+    body = request.json or {}
+    ingrediente = body.get("ingrediente","")
+    abbinamento = body.get("abbinamento","")
+    voto = int(body.get("voto", 0))
+    disciplina = body.get("disciplina","")
+    if voto not in (1, -1) or not ingrediente:
+        return jsonify({"errore":"voto deve essere 1 o -1, ingrediente obbligatorio"}), 400
+    if not DATABASE_URL:
+        return jsonify({"ok": True})
+    try:
+        import psycopg2, psycopg2.extras
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        # Leggi profilo attuale
+        cur.execute("SELECT profilo_sensoriale FROM utenti WHERE id=%s", (user_id,))
+        row = cur.fetchone()
+        profilo = row[0] if row and row[0] else _profilo_default()
+        # Aggiorna profilo in base al voto e al profilo sensoriale dell'ingrediente
+        profilo = _aggiorna_profilo(profilo, ingrediente, abbinamento, voto, disciplina)
+        # Salva profilo aggiornato
+        cur.execute(
+            "UPDATE utenti SET profilo_sensoriale=%s WHERE id=%s",
+            (psycopg2.extras.Json(profilo), user_id)
+        )
+        # Salva log feedback
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS feedback_abbinamenti (
+                id SERIAL PRIMARY KEY,
+                user_id TEXT,
+                ingrediente TEXT,
+                abbinamento TEXT,
+                voto INTEGER,
+                disciplina TEXT,
+                ts TIMESTAMPTZ DEFAULT NOW()
+            )
+        """)
+        cur.execute("""
+            INSERT INTO feedback_abbinamenti (user_id, ingrediente, abbinamento, voto, disciplina)
+            VALUES (%s,%s,%s,%s,%s)
+        """, (str(user_id), ingrediente, abbinamento, voto, disciplina))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ok": True, "profilo": profilo, "interazioni": profilo.get("_n", 0)})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
+def _profilo_default():
+    """Profilo sensoriale neutro di partenza (tutti i pesi a 5)."""
+    return {
+        "acido": 5.0, "dolce": 5.0, "amaro": 5.0,
+        "salato": 5.0, "umami": 5.0, "grasso": 5.0,
+        "piccante": 5.0, "astringente": 5.0, "affumicato": 5.0,
+        "_n": 0  # numero di interazioni
+    }
+
+
+def _aggiorna_profilo(profilo, ingrediente, abbinamento, voto, disciplina):
+    """Aggiorna il profilo sensoriale dell'utente in base al feedback.
+    Usa un learning rate decrescente: le prime interazioni pesano di più.
+    """
+    import psycopg2
+    # Cerca il profilo sensoriale dell'ingrediente abbinato nel DB
+    if not DATABASE_URL:
+        return profilo
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT data FROM nodes
+            WHERE type='Ingrediente'
+            AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+            LIMIT 1
+        """, (f"%{abbinamento}%", f"%ing-{abbinamento.lower().replace(' ','-')}%"))
+        row = cur.fetchone()
+        cur.close(); conn.close()
+        if not row:
+            return profilo
+        d = row[0] if isinstance(row[0], dict) else {}
+        ps = d.get("profilo_sensoriale", {})
+    except Exception:
+        return profilo
+
+    # Learning rate decrescente: lr = 0.3 / (1 + n/10)
+    n = profilo.get("_n", 0)
+    lr = 0.3 / (1 + n / 10)
+
+    dim_map = {
+        "acido": "acido", "dolce": "dolce", "amaro": "amaro",
+        "salato": "salato", "umami": "umami", "grasso": "grasso",
+        "piccante": "piccante", "astringente": "astringente", "affumicato": "affumicato"
+    }
+    for dim in dim_map:
+        ing_val = ps.get(dim, {})
+        ing_score = ing_val.get("valore", 5) if isinstance(ing_val, dict) else float(ing_val or 5)
+        delta = lr * voto * (ing_score - 5)  # sposta verso il profilo dell'ingrediente se like, via se dislike
+        profilo[dim] = max(0.0, min(10.0, profilo.get(dim, 5.0) + delta))
+
+    profilo["_n"] = n + 1
+    return profilo
+
+
 @app.route("/v1/contrasto/<ingrediente>")
 def contrasto(ingrediente):
     """FL5 — Abbinamento per contrasto fisico-percettivo.

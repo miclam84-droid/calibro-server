@@ -2582,11 +2582,16 @@ async function cercaFlavorMappa(){
     const tutti = j.abbinamenti;
     const visibili = isPro ? tutti : tutti.slice(0, FLAVOR_FREE);
     const nascosti = isPro ? [] : tutti.slice(FLAVOR_FREE);
+    const _ingFlavor = ing; // ingrediente cercato
 
     let html = visibili.map(a=>`
-      <div class="flavor-result-item">
+      <div class="flavor-result-item" style="align-items:center">
         <span class="flavor-result-name">${esc(a.ingrediente.replace(/_/g,' '))}</span>
-        <span class="flavor-result-why">${esc(a.composto||'')} · ${a.overlap||''}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="flavor-result-why">${esc(a.composto||'')} · ${a.overlap||''}</span>
+          <button onclick="feedbackAbb('${esc(a.ingrediente)}','${esc(_ingFlavor)}',1,this)" title="Mi piace" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px;opacity:.5" class="fb-btn">👍</button>
+          <button onclick="feedbackAbb('${esc(a.ingrediente)}','${esc(_ingFlavor)}',-1,this)" title="Non mi piace" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px;opacity:.5" class="fb-btn">👎</button>
+        </div>
       </div>`).join('');
 
     if(nascosti.length){
