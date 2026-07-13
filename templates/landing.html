@@ -142,18 +142,25 @@ footer{border-top:1px solid var(--border);padding:24px 28px;display:flex;align-i
     <span class="n-name">Matter Lab</span>
     <span class="n-pay">Science &amp; Craft</span>
   </div>
-  <a href="/app" class="n-cta">Prova gratis</a>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:flex;gap:4px">
+      <button onclick="setLang('it')" id="l-it" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">IT</button>
+      <button onclick="setLang('en')" id="l-en" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">EN</button>
+      <button onclick="setLang('es')" id="l-es" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">ES</button>
+    </div>
+    <a href="/app" class="n-cta" id="nav-cta">Prova gratis</a>
+  </div>
 </nav>
 
 <section class="hero">
-  <span class="h-kicker">Bar · Bakery · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra</span>
-  <h1>Sai <em>farlo.</em><br>Ora capisci perché.</h1>
-  <p class="h-sub">La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa ogni giorno.</p>
+  <span class="h-kicker" id="l-kicker">Bar · Bakery · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra</span>
+  <h1 id="l-h1">Sai <em>farlo.</em><br>Ora capisci perché.</h1>
+  <p class="h-sub" id="l-sub">La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa ogni giorno.</p>
   <div class="cta-row">
-    <a href="/app" class="btn-p">Studia gratis — nessuna carta</a>
-    <a href="#domande" class="btn-s">Come funziona</a>
+    <a href="/app" class="btn-p" id="l-cta1">Studia gratis — nessuna carta</a>
+    <a href="#domande" class="btn-s" id="l-cta2">Come funziona</a>
   </div>
-  <p class="h-note">5 domande in chat gratis. Nessuna registrazione per iniziare.</p>
+  <p class="h-note" id="l-note">5 domande in chat gratis. Nessuna registrazione per iniziare.</p>
 </section>
 
 <div class="preview">
@@ -318,9 +325,66 @@ footer{border-top:1px solid var(--border);padding:24px 28px;display:flex;align-i
   <div class="ft-links">
     <a href="/privacy">Privacy</a>
     <a href="/termini">Termini</a>
+    <a href="/cookie-policy">Cookie Policy</a>
+    <a href="/trust">Trust Center</a>
+    <a href="/come-funziona-ai">AI</a>
   </div>
   <p class="ft-note">Matter Lab usa intelligenza artificiale per navigare il grafo di conoscenza F&B. Stai interagendo con un sistema AI — art. 50 EU AI Act. Le risposte sono generate da Anthropic/Mistral e possono contenere errori.</p>
 </footer>
 
+
+<script>
+var _TEXTS = {
+  it: {
+    kicker: "Bar · Bakery · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra",
+    h1: "Sai <em>farlo.</em><br>Ora capisci perché.",
+    sub: "La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa ogni giorno.",
+    cta1: "Studia gratis — nessuna carta",
+    cta2: "Come funziona",
+    note: "5 domande in chat gratis. Nessuna registrazione per iniziare.",
+    navcta: "Prova gratis"
+  },
+  en: {
+    kicker: "Bar · Bakery · Kitchen · Coffee · Pastry · Gelato · Wine · Beer",
+    h1: "You know <em>how.</em><br>Now understand why.",
+    sub: "The physics and chemistry behind every professional gesture. For those who already have years of craft and want to understand the laws governing what they do every day.",
+    cta1: "Study free — no credit card",
+    cta2: "How it works",
+    note: "5 free chat questions. No registration to start.",
+    navcta: "Try free"
+  },
+  es: {
+    kicker: "Bar · Panadería · Cocina · Café · Pastelería · Heladería · Vino · Cerveza",
+    h1: "Sabes <em>hacerlo.</em><br>Ahora entiende por qué.",
+    sub: "La física y la química detrás de cada gesto profesional. Para quienes ya tienen años de oficio y quieren entender las leyes que gobiernan lo que hacen cada día.",
+    cta1: "Estudia gratis — sin tarjeta",
+    cta2: "Cómo funciona",
+    note: "5 preguntas de chat gratis. Sin registro para empezar.",
+    navcta: "Probar gratis"
+  }
+};
+var _lang = localStorage.getItem('ml_lang_landing') || navigator.language.slice(0,2) || 'it';
+if(!_TEXTS[_lang]) _lang = 'it';
+
+function setLang(l) {
+  _lang = l;
+  localStorage.setItem('ml_lang_landing', l);
+  var t = _TEXTS[l];
+  document.getElementById('l-kicker').textContent = t.kicker;
+  document.getElementById('l-h1').innerHTML = t.h1;
+  document.getElementById('l-sub').textContent = t.sub;
+  document.getElementById('l-cta1').textContent = t.cta1;
+  document.getElementById('l-cta2').textContent = t.cta2;
+  document.getElementById('l-note').textContent = t.note;
+  document.getElementById('nav-cta').textContent = t.navcta;
+  ['it','en','es'].forEach(function(x){
+    var btn = document.getElementById('l-'+x);
+    if(btn) btn.style.background = x===l ? 'var(--teal)' : 'transparent';
+    if(btn) btn.style.color = x===l ? '#fff' : 'var(--ink)';
+    if(btn) btn.style.borderColor = x===l ? 'var(--teal)' : 'var(--border)';
+  });
+}
+setLang(_lang);
+</script>
 </body>
 </html>
