@@ -22,6 +22,7 @@ button{padding:14px 28px;border:none;border-radius:10px;font-size:15px;cursor:po
 <button style="background:#6B6257;margin-top:12px" onclick="seedSicurezza()">Seed sicurezza alimentare</button>
 <button style="background:#4A4A8A;margin-top:6px" onclick="buildArchi()">Crea archi abbinamento</button>
 <button style="background:#4A6B4A;margin-top:6px" onclick="buildTargets()">Popola target number</button>
+<button style="background:#2C4A6B;margin-top:6px" onclick="migrateModello()">Migrate DB modello</button>
 <div id="log">Premi Stato per vedere i progressi...</div>
 <script>
 function getS() {
@@ -48,6 +49,20 @@ async function buildArchi(){
     var r = await fetch('/admin/build-archi', {
       method: 'POST',
       headers: { 'X-Admin-Secret': getS(), 'Content-Type': 'application/json' }
+    });
+    var j = await r.json();
+    document.getElementById('log').textContent = JSON.stringify(j, null, 2);
+  } catch(e) {
+    document.getElementById('log').textContent = 'Errore: ' + e;
+  }
+}
+async function migrateModello(){
+  document.getElementById('log').textContent = 'Migrate in corso...';
+  try {
+    var r = await fetch('/v1/admin/migrate-modello', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({secret: getS()})
     });
     var j = await r.json();
     document.getElementById('log').textContent = JSON.stringify(j, null, 2);
