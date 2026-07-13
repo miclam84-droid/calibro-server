@@ -662,20 +662,45 @@ def registra():
         conn.commit(); cur.close(); conn.close()
         base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
         link = f"{base}/app?verifica={tok}"
+        lang_reg = request.json.get("lang","it") if request.json else "it"
+        if lang_reg == "en":
+            _subj = "Confirm your email — Matter Lab"
+            _btn  = "Activate my account"
+            _p1   = "Welcome to <strong>Matter Lab</strong>."
+            _p2   = "Confirm your email to activate your account:"
+            _p3   = "Link valid for 24 hours."
+            _txt  = f"Welcome to Matter Lab.\n\nConfirm email:\n{link}\n\nLink valid 24 hours."
+            _msg  = "Account created. Check your email to activate it."
+        elif lang_reg == "es":
+            _subj = "Confirma tu email — Matter Lab"
+            _btn  = "Activar mi cuenta"
+            _p1   = "Bienvenido a <strong>Matter Lab</strong>."
+            _p2   = "Confirma tu email para activar tu cuenta:"
+            _p3   = "Enlace válido 24 horas."
+            _txt  = f"Bienvenido a Matter Lab.\n\nConfirma email:\n{link}\n\nEnlace válido 24 horas."
+            _msg  = "Cuenta creada. Revisa tu email para activarla."
+        else:
+            _subj = "Conferma la tua email — Matter Lab"
+            _btn  = "Attiva il mio account"
+            _p1   = "Benvenuto in <strong>Matter Lab</strong>."
+            _p2   = "Conferma la tua email per attivare l'account:"
+            _p3   = "Link valido 24 ore."
+            _txt  = f"Benvenuto in Matter Lab.\n\nConferma email:\n{link}\n\nLink valido 24 ore."
+            _msg  = "Account creato. Controlla la tua email per attivarlo."
         _invia_email_resend(
             to=email,
-            subject="Conferma la tua email — Matter Lab",
+            subject=_subj,
             body_html=(
-                f"<p style='font-family:sans-serif'>Benvenuto in <strong>Matter Lab</strong>.</p>"
-                f"<p style='font-family:sans-serif'>Conferma la tua email per attivare l'account:</p>"
+                f"<p style='font-family:sans-serif'>{_p1}</p>"
+                f"<p style='font-family:sans-serif'>{_p2}</p>"
                 f"<p><a href='{link}' style='background:#2C6E63;color:#fff;padding:12px 24px;"
                 f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>"
-                f"Attiva il mio account</a></p>"
-                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Link valido 24 ore.</p>"
+                f"{_btn}</a></p>"
+                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>{_p3}</p>"
             ),
-            body_text=f"Benvenuto in Matter Lab.\n\nConferma email:\n{link}\n\nLink valido 24 ore."
+            body_text=_txt
         )
-        return jsonify({"ok":True,"messaggio":"Account creato. Controlla la tua email per attivarlo.","verifica_richiesta":True})
+        return jsonify({"ok":True,"messaggio":_msg,"verifica_richiesta":True})
     except Exception as e:
         if "unique" in str(e).lower():
             return jsonify({"errore":"email gia registrata"}), 409
@@ -3634,6 +3659,126 @@ def admin_seed_sicurezza():
     conn.commit(); cur.close(); conn.close()
     return jsonify({"ok": ok, "errori": errori})
 
+
+
+
+@app.route("/trust")
+@app.route("/trust-center")
+def trust_center():
+    lang = request.args.get("lang","it")
+    if lang == "en":
+        titolo = "Trust Center"
+        corpo = """<h2>Trust Center</h2>
+<p>Matter Lab is built on transparency. This page explains who we are, what data we collect, which AI systems we use, and how we protect your information.</p>
+
+<h3>Who we are</h3>
+<p>Matter Lab is an educational tool for F&B professionals developed by Michele Lamorte, Naples, Italy. P.IVA: pending registration.</p>
+
+<h3>AI systems used</h3>
+<ul>
+<li><strong>Claude Sonnet (Anthropic)</strong> — main chat responses</li>
+<li><strong>Claude Haiku (Anthropic)</strong> — quiz generation, fast tasks</li>
+<li><strong>Whisper (OpenAI)</strong> — voice transcription (Pro only)</li>
+<li><strong>GPT-4o Vision (OpenAI)</strong> — image analysis (Pro only)</li>
+<li><strong>Mistral Small</strong> — fallback for fast tasks</li>
+<li><strong>OpenAI Embeddings</strong> — semantic search in flavor network</li>
+</ul>
+
+<h3>Data we collect</h3>
+<ul>
+<li>Email address — for authentication only</li>
+<li>Questions asked in chat — stored anonymously to improve the service</li>
+<li>Notebook entries — saved by the user, visible only to the user</li>
+<li>Usage data — chat count, trial status</li>
+</ul>
+
+<h3>Data we do NOT collect</h3>
+<ul>
+<li>Payment data (handled by Stripe, not stored by us)</li>
+<li>Location data</li>
+<li>Device fingerprinting</li>
+<li>Advertising tracking</li>
+</ul>
+
+<h3>Data retention</h3>
+<p>Account data is retained until you delete your account. Anonymous question logs are retained for 12 months. You can request deletion at any time: <a href="mailto:privacy@matterlab.app">privacy@matterlab.app</a></p>
+
+<h3>AI response disclaimer</h3>
+<p>Matter Lab AI responses are generated by language models and may contain errors. They do not replace advice from qualified food technologists or HACCP consultants. Shelf life values are indicative estimates only.</p>
+
+<h3>Contact</h3>
+<p>For privacy, data, or AI-related questions: <a href="mailto:privacy@matterlab.app">privacy@matterlab.app</a></p>"""
+    elif lang == "es":
+        titolo = "Centro de Confianza"
+        corpo = """<h2>Centro de Confianza</h2>
+<p>Matter Lab se construye sobre la transparencia. Esta página explica quiénes somos, qué datos recopilamos, qué sistemas de IA utilizamos y cómo protegemos tu información.</p>
+
+<h3>Quiénes somos</h3>
+<p>Matter Lab es una herramienta educativa para profesionales F&B desarrollada por Michele Lamorte, Nápoles, Italia.</p>
+
+<h3>Sistemas de IA utilizados</h3>
+<ul>
+<li><strong>Claude Sonnet (Anthropic)</strong> — respuestas del chat principal</li>
+<li><strong>Claude Haiku (Anthropic)</strong> — generación de quiz, tareas rápidas</li>
+<li><strong>Whisper (OpenAI)</strong> — transcripción de voz (solo Pro)</li>
+<li><strong>GPT-4o Vision (OpenAI)</strong> — análisis de imágenes (solo Pro)</li>
+<li><strong>Mistral Small</strong> — fallback para tareas rápidas</li>
+<li><strong>OpenAI Embeddings</strong> — búsqueda semántica en la red de sabores</li>
+</ul>
+
+<h3>Datos que recopilamos</h3>
+<ul>
+<li>Dirección de email — solo para autenticación</li>
+<li>Preguntas del chat — almacenadas anónimamente para mejorar el servicio</li>
+<li>Entradas del cuaderno — guardadas por el usuario, visibles solo para el usuario</li>
+<li>Datos de uso — contador de chats, estado del trial</li>
+</ul>
+
+<h3>Contacto</h3>
+<p>Para preguntas sobre privacidad o IA: <a href="mailto:privacy@matterlab.app">privacy@matterlab.app</a></p>"""
+    else:
+        titolo = "Trust Center"
+        corpo = """<h2>Trust Center</h2>
+<p>Matter Lab è costruito sulla trasparenza. Questa pagina spiega chi siamo, quali dati raccogliamo, quali sistemi AI utilizziamo e come proteggiamo le tue informazioni.</p>
+
+<h3>Chi siamo</h3>
+<p>Matter Lab è uno strumento educativo per professionisti F&B sviluppato da Michele Lamorte, Napoli, Italia. P.IVA: in fase di registrazione.</p>
+
+<h3>Sistemi AI utilizzati</h3>
+<ul>
+<li><strong>Claude Sonnet (Anthropic)</strong> — risposte chat principali</li>
+<li><strong>Claude Haiku (Anthropic)</strong> — generazione quiz, task veloci</li>
+<li><strong>Whisper (OpenAI)</strong> — trascrizione vocale (solo Pro)</li>
+<li><strong>GPT-4o Vision (OpenAI)</strong> — analisi foto schede tecniche (solo Pro)</li>
+<li><strong>Mistral Small</strong> — fallback per task veloci</li>
+<li><strong>OpenAI Embeddings</strong> — ricerca semantica nel flavor network</li>
+</ul>
+
+<h3>Dati che raccogliamo</h3>
+<ul>
+<li>Indirizzo email — solo per autenticazione</li>
+<li>Domande poste in chat — conservate in forma anonima per migliorare il servizio</li>
+<li>Voci del Quaderno — salvate dall'utente, visibili solo all'utente</li>
+<li>Dati di utilizzo — contatore chat, stato trial</li>
+</ul>
+
+<h3>Dati che NON raccogliamo</h3>
+<ul>
+<li>Dati di pagamento (gestiti da Stripe, non conservati da noi)</li>
+<li>Dati di geolocalizzazione</li>
+<li>Device fingerprinting</li>
+<li>Tracking pubblicitario</li>
+</ul>
+
+<h3>Conservazione dati</h3>
+<p>I dati dell'account vengono conservati fino alla cancellazione. I log anonimi delle domande vengono conservati per 12 mesi. Puoi richiedere la cancellazione in qualsiasi momento: <a href="mailto:privacy@matterlab.app">privacy@matterlab.app</a></p>
+
+<h3>Disclaimer risposte AI</h3>
+<p>Le risposte AI di Matter Lab sono generate da modelli linguistici e possono contenere errori. Non sostituiscono il parere di tecnici alimentari o consulenti HACCP qualificati. I valori di shelf life sono stime orientative.</p>
+
+<h3>Contatti</h3>
+<p>Per domande su privacy, dati o AI: <a href="mailto:privacy@matterlab.app">privacy@matterlab.app</a></p>"""
+    return _pagina_legale(titolo, corpo)
 
 
 @app.route("/cookie-policy")
