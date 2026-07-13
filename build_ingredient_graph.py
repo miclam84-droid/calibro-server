@@ -113,6 +113,74 @@ INGREDIENTI = {
         "finferli","trombette dei morti","tartufo nero","tartufo bianco",
         # Legumi
         "ceci","lenticchie rosse","lenticchie verdi","fagioli borlotti",
+        "fagioli cannellini","fagioli neri","fave secche","piselli secchi","edamame",
+        # Cereali e pasta
+        "riso Carnaroli","riso Arborio","riso Vialone Nano","riso basmati",
+        "riso jasmine","pasta di semola","pasta all'uovo","gnocchi",
+        "farro","orzo perlato","quinoa","bulgur","polenta","couscous",
+        # Latticini
+        "burro","panna fresca","latte intero","mozzarella di bufala",
+        "fior di latte","burrata","stracciatella","ricotta","mascarpone",
+        "parmigiano reggiano","grana padano","pecorino romano",
+        "pecorino sardo","gorgonzola","taleggio","fontina","asiago",
+        "provolone","caciocavallo","scamorza","brie","camembert",
+        # Uova
+        "uova di gallina","uova di quaglia","uova di anatra",
+        # Condimenti e grassi
+        "olio extravergine di oliva fruttato","olio extravergine leggero",
+        "olio di sesamo","olio di arachide","strutto","burro chiarificato",
+        "aceto di vino rosso","aceto di vino bianco","aceto balsamico",
+        "aceto balsamico tradizionale","aceto di mele","aceto di riso",
+        "salsa di soia","salsa worcestershire","miso bianco","miso rosso",
+        "pasta di tamarindo","colatura di alici","garum",
+        # Erbe aromatiche
+        "basilico genovese","prezzemolo","origano","rosmarino","timo",
+        "salvia","alloro","dragoncello","maggiorana","mentuccia",
+        "erba cipollina","aneto","cerfoglio","santoreggia",
+        # Spezie cucina
+        "pepe nero","pepe bianco","pepe di Sichuan","pepe lungo",
+        "peperoncino calabrese","peperoncino habanero","paprica dolce",
+        "paprica affumicata","curcuma","zafferano","cannella","cardamomo",
+        "cumino","coriandolo secco","anice stellato","noce moscata",
+        "chiodo di garofano","ginepro","finocchio selvatico","sumac",
+        "za'atar","ras el hanout","garam masala","curry","harissa",
+        # Frutta in cucina
+        "limone","arancia","pompelmo","lime","melograno","fico",
+        "albicocca","pesca","prugna","mela verde","pera","cachi",
+        "castagna","dattero","uvetta","pomodoro secco",
+        # Frutta secca e semi
+        "mandorle","nocciole","pinoli","noci","pistacchi","anacardi",
+        "noci pecan","noci di macadamia","semi di sesamo","semi di lino",
+        "semi di zucca","semi di girasole","semi di papavero",
+        # Altro cucina
+        "pane raffermo","pangrattato","acciughe sott'olio","capperi",
+        "olive taggiasche","olive Kalamata","olive verdi",
+        "peperoni in agrodolce","melanzane sott'olio","crostini",
+        "anatra","coniglio","cinghiale","cervo","quaglia","piccione",
+        # Salumi
+        "prosciutto crudo","prosciutto cotto","salame","pancetta","guanciale",
+        "lardo","coppa","bresaola","mortadella","speck","nduja","salsiccia",
+        "cotechino","zampone","porchetta","lardo di Colonnata",
+        # Pesce e frutti di mare
+        "branzino","orata","salmone","tonno","sgombro","acciughe",
+        "sardine","merluzzo","baccalà","polpo","calamaro","seppia",
+        "gamberi","scampi","astice","granchio","cozze","vongole",
+        "ostriche","capesante","ricci di mare","bottarga","caviale",
+        # Verdure
+        "pomodoro","pomodorino ciliegino","pomodoro San Marzano",
+        "melanzana","zucchina","peperone rosso","peperone giallo",
+        "peperone verde","carota","cipolla bianca","cipolla rossa",
+        "aglio","scalogno","porri","finocchio","sedano","sedano rapa",
+        "rucola","spinaci","cicoria","radicchio rosso","catalogna",
+        "bietola","cavolo nero","verza","cavolfiore","broccoli",
+        "carciofo","asparagi bianchi","asparagi verdi","piselli",
+        "fave","fagiolini","zucca","topinambur","barbabietola",
+        "patata","patata dolce","rapanelli","cetriolo","avocado",
+        # Funghi
+        "porcini","champignon","shiitake","pleurotus","gallinacci",
+        "finferli","trombette dei morti","tartufo nero","tartufo bianco",
+        # Legumi
+        "ceci","lenticchie rosse","lenticchie verdi","fagioli borlotti",
         "fagioli cannellini","fagioli neri","fave","piselli secchi","edamame",
         # Cereali e pasta
         "riso Carnaroli","riso Arborio","riso Vialone Nano","riso basmati",
