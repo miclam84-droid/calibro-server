@@ -3548,7 +3548,11 @@ def admin_build_batch():
 
         da_fare = da_fare[:n]
         if not da_fare:
-            return jsonify({"ok": True, "generati": 0, "messaggio": "Nessun ingrediente da generare"})
+            return jsonify({"ok": True, "generati": 0, 
+                "messaggio": "Nessun ingrediente da generare",
+                "debug": {"totale_lista": sum(len(v) for v in BIG.INGREDIENTI.values()),
+                          "gia_fatti": len(gia_fatti),
+                          "da_fare_totale": sum(1 for d in BIG.INGREDIENTI for ing in BIG.INGREDIENTI[d] if BIG.node_id(ing) not in gia_fatti)}})
 
         ok = 0; errori = []; token_tot = 0
         for disc, ing in da_fare:
