@@ -660,7 +660,209 @@ INGREDIENTI = {
         "destrosio","isomalt (per decorazioni)",
         "inulina","fibra di cicoria","amido di patata modificato",
     ],
+    "superfood": [
+        "moringa in polvere","Lion's Mane (fungo della criniera di leone)",
+        "cacao cerimoniale","spirulina in polvere","chlorella in polvere",
+        "ashwagandha","maca in polvere","baobab in polvere",
+        "lucuma in polvere","mesquite in polvere","camu camu",
+        "acai in polvere","goji essiccati","semi di canapa",
+        "semi di chia","semi di lino dorato","semi di nigella",
+        "curcuma fresca","zenzero fresco (dose terapeutica)",
+        "pepe nero (piperina)","cannella di Ceylon (alta dose)",
+        "cardamomo (uso ayurvedico)","tulsi (basilico sacro)",
+        "kombucha madre (SCOBY)","kefir granuli",
+        "lievito nutritivo (nutritional yeast)",
+        "aceto di sidro di mele non filtrato",
+    ],
+
+    # ── CUCINA GIAPPONESE ─────────────────────────────────────────
+    "cucina_giapponese": [
+        # Basi umami giapponesi
+        "dashi (brodo base)","katsuobushi (fiocchi di bonito)",
+        "kombu (per dashi)","niboshi (sardine essiccate per dashi)",
+        "shiitake essiccato (per dashi)","hondashi (dashi istantaneo)",
+        # Salse e condimenti
+        "salsa di soia Tamari (senza glutine)","salsa di soia Shoyu",
+        "salsa di soia Shiro (bianca)","mirin (vino di riso dolce)",
+        "sake da cucina","ponzu","mentsuyu","tsuyu",
+        "salsa teriyaki artigianale","yakiniku tare",
+        "goma dare (salsa di sesamo)","miso bianco (Shiro miso)",
+        "miso rosso (Aka miso)","miso d'orzo (Mugi miso)",
+        "miso di riso (Kome miso)","shio koji",
+        # Aceti giapponesi
+        "aceto di riso giapponese","aceto di prugna (ume)",
+        # Spezie e aromi
+        "yuzu kosho (pasta di yuzu e peperoncino)",
+        "shichimi togarashi (7 spezie)","sansho in polvere",
+        "wasabi fresco","wasabi in pasta","karashi (senape giapponese)",
+        "furikake","togarashi (peperoncino giapponese)",
+        # Erbe e foglie
+        "shiso (perilla verde)","shiso rosso",
+        "foglie di mitsuba","myoga (zenzero giapponese)",
+        "nori (alga)","wakame","hijiki","ao nori (polvere di alga)",
+        # Soja e derivati
+        "tofu silken (morbidissimo)","tofu firm","tofu age (fritto)",
+        "aburaage (tofu fritto piatto)","natto","okara",
+        "yuba (pelle di tofu)","kinako (farina di soia tostata)",
+        # Amidi e farine
+        "katakuriko (amido di patata giapponese)",
+        "kuzu (amido di radice di kudzu)","shiratamako",
+        "joshinko (farina di riso)","hanako (farina glutinosa)",
+        # Dolcificanti
+        "mirin dolce","amazake","pasta di azuki (anko)",
+        "pasta di azuki bianco (shiro an)",
+        # Pasta e riso
+        "riso giapponese a grana corta","riso sushi",
+        "soba fresca","udon fresca","somen","ramen (noodles)",
+        "shirataki (konjac noodles)","konbu tsukudani",
+    ],
+
+    # ── CUCINA INDIANA ────────────────────────────────────────────
+    "cucina_indiana": [
+        # Grassi e latticini
+        "ghee (burro chiarificato indiano)","paneer",
+        "dahi (yogurt indiano)","lassi","chaas (buttermilk)",
+        "malai (panna indiana)","khoya (latte ridotto)",
+        # Farine e legumi
+        "besan (farina di ceci)","atta (farina integrale di grano duro)",
+        "maida (farina bianca indiana)","sooji/rava (semolino)",
+        "dal masoor (lenticchie rosse)","dal chana (ceci spezzati)",
+        "dal urad (lenticchie nere)","dal moong (fagioli mung)",
+        "rajma (fagioli rossi)","chole (ceci secchi)",
+        # Spezie singole
+        "amchur (mango secco in polvere)","kokum",
+        "chaat masala","garam masala","panch phoron",
+        "kasuri methi (fieno greco essiccato)","ajwain (timo selvatico)",
+        "asafetida (hing)","kala namak (sale nero)","loomi (lime essiccato)",
+        "tamarindo in pasta","tamarindo in blocco",
+        "curry leaves fresche","curry leaves essiccate",
+        "polvere di mango","polvere di melograno (anardana)",
+        # Spezie macinate
+        "curcuma fresca indiana","pepe lungo",
+        "cardamomo nero (spezia affumicata)","macis indiano",
+        "semi di cumino nero","semi di fieno greco",
+        "semi di senape nera","semi di senape gialla",
+        # Paste e salse
+        "pasta di zenzero-aglio","pasta di tamarindo",
+        "pasta di coriandolo fresco","chutney di menta",
+        "chutney di tamarindo","pickle di lime (achar)",
+        # Risi speciali
+        "riso basmati aged (invecchiato)","riso rosso Kerala",
+        "riso nero (forbidden rice)","poha (riso soffiato)",
+    ],
+
+    # ── DRINK ANALCOLICI E LOW-ABV ───────────────────────────────
+    "analcolici": [
+        # Basi fermentate
+        "kombucha naturale","kombucha allo zenzero",
+        "kefir d'acqua naturale","jun (miele + tè verde fermentato)",
+        "tepache (fermentato di ananas)","kvass (fermentato di pane)",
+        "rejuvelac","shrub all'aceto (base)",
+        "drinking vinegar all'ibisco","drinking vinegar al lampone",
+        # Basi non alcoliche per cocktail
+        "verjus bianco","verjus rosso",
+        "succo di uva bianca non fermentato",
+        "succo di uva rossa non fermentato",
+        "succo di melograno fresco","acqua di cocco fresca",
+        "acqua di cocco fermentata","succo di aloe vera",
+        # Concentrati e sciroppi speciali
+        "sciroppo di ibisco concentrato","sciroppo di tamarindo",
+        "sciroppo di rose","shrub all'agrume e aceto",
+        "concentrato di sambuco","concentrato di zenzero piccante",
+        # Tè e infusi per cocktail
+        "cold brew tè verde","cold brew tè nero",
+        "cold brew tè oolong","infuso di ibisco freddo",
+        "infuso di lavanda freddo","karkadé concentrato",
+        "tè chai concentrato","tè matcha shaken",
+        # Bitter analcolici
+        "bitter analcolico all'arancia","bitter analcolico alle erbe",
+        "amaro analcolico",
+        # Latti vegetali per cocktail
+        "latte di avena barista","latte di mandorla non zuccherato",
+        "latte di cocco barista","latte di macadamia barista",
+        "latte di riso","latte di canapa",
+    ],
+
+    # ── FORMAGGI ITALIANI DOP MANCANTI ──────────────────────────
+    "formaggi_italiani": [
+        "Castelmagno DOP","Bitto DOP","Valtellina Casera DOP",
+        "Ragusano DOP","Canestrato Pugliese DOP",
+        "Fiore Sardo DOP","Puzzone di Moena","Spressa delle Giudicarie DOP",
+        "Nostrano Valtrompia DOP","Formaggio di Malga",
+        "Murazzano DOP","Robiola di Roccaverano DOP",
+        "Squacquerone di Romagna DOP","Raviggiolo",
+        "Stracchino","Quartirolo Lombardo DOP",
+        "Branzi","Branzi stagionato","Agrì di Valtorta",
+        "Monte Veronese DOP","Asiago d'allevo DOP",
+        "Asiago pressato DOP","Montasio DOP",
+        "Latteria Turnaria","Malga fresca","Malga stagionata",
+        "Cacio di Roma","Cacio Fiore","Pecorino di Pienza",
+        "Pecorino di Farindola","Pecorino di Norcia",
+        "Caciocavallo Podolico","Caciocavallo silano DOP",
+        "Provola affumicata","Provola dei Nebrodi",
+        "Piacentinu Ennese DOP","Vastedda della Valle del Belìce DOP",
+        "Ricotta di bufala campana DOP","Ricotta romana DOP",
+        "Ricotta salata","Ricotta infornata","Ricotta affumicata",
+        "Mozzarella di giornata","Fior di latte campano",
+        "Burrata di Andria IGP","Stracciatella di bufala",
+    ],
+
+    # ── ACETI SPECIALI ────────────────────────────────────────────
+    "aceti_speciali": [
+        "aceto di Jerez (Sherry vinegar)","aceto di Champagne",
+        "aceto di malto inglese","aceto nero cinese (Chinkiang)",
+        "aceto di canna da zucchero","aceto di cocco",
+        "aceto di miele","aceto di prugna giapponese (umeboshi)",
+        "aceto di fico","aceto di melograno",
+        "aceto di sidro non filtrato (con madre)",
+        "aceto balsamico di Modena IGP giovane",
+        "aceto balsamico tradizionale di Modena DOP 12 anni",
+        "aceto balsamico tradizionale di Reggio Emilia DOP",
+        "aceto di vino bianco secco","aceto di vino rosso corposo",
+        "aceto di riso seasoned (condito)","aceto di riso unseasoned",
+        "aceto di birra","aceto di lampone","aceto di fico d'india",
+    ],
+
+    # ── INGREDIENTI MODERNIST ─────────────────────────────────────
+    "modernist": [
+        # Idrocolloidi avanzati
+        "metilcellulosa (HPMC — gelifica a caldo)",
+        "agar agar tipo forte (batterio)","gellan gum low acyl",
+        "gellan gum high acyl","gomma tara","gomma arabica pura",
+        "farina di semi di carrube (LBG)","pectina LM (low methoxyl)",
+        "pectina HM (high methoxyl)","pectina NH (nappage)",
+        "pectina 325 NH95","alginato di sodio",
+        "cloruro di calcio (per sferificazione base)",
+        "lattato di calcio (per sferificazione inversa)",
+        "citrato di sodio (tampone pH + emulsione)",
+        "glucono delta-lattone (GDL — acidificante progressivo)",
+        # Emulsionanti e stabilizzanti
+        "lecitina di soia in polvere","lecitina di girasole",
+        "mono e digliceridi (E471)","PGPR (E476)",
+        "polisorbato 80 (E433)","sucroestere (E473)",
+        # Texturizzanti
+        "transglutaminasi (colla della carne)",
+        "maltodestrina di tapioca (N-Zorbit — assorbe grassi)",
+        "destrosio fine","isomalt in polvere",
+        "trealosio (conserva freschezza)","eritritolo",
+        "polidestrosio (fibra bulking agent)",
+        # Coloranti naturali professionali
+        "carbone vegetale attivo in polvere",
+        "spirulina blu (ficocianina)","betanina (rosso barbabietola)",
+        "curcumina (giallo turmerico)","antociani (viola cavolo rosso)",
+        "clorofilla (verde)","annatto (arancio — E160b)",
+        "lycopene (rosso pomodoro)","carotene beta (arancio)",
+        # Enzimi
+        "amilasi fungina","proteasi vegetale","lipasi",
+        "lattasi (per intolleranza lattosio)","invertasi",
+        "glucosio ossidasi",
+        # Gases
+        "azoto liquido (LN2)","protossido di azoto (N2O — panna montata)",
+        "CO2 cartucce (per carbonatazione)",
+        "anidride carbonica alimentare",
+    ],
 }
+
 
 
 # ── PROMPT TEMPLATE ───────────────────────────────────────────────────────────
