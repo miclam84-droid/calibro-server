@@ -878,7 +878,9 @@ def verifica_email_route():
             _invia_email_resend(to=email, subject=_w_sub, body_html=_w_body)
         except Exception:
             pass  # non bloccare il login se l'email di benvenuto fallisce
-        return jsonify({"ok":True,"token":token_sess,"piano":piano or "free","messaggio":"Email confermata. Benvenuto in Matter Lab."})
+        lang_conf = request.args.get("lang", request.json.get("lang","it") if request.json else "it")
+        _conf_msg = {"en":"Email confirmed. Welcome to Matter Lab.", "es":"Email confirmado. Bienvenido a Matter Lab."}.get(lang_conf, "Email confermata. Benvenuto in Matter Lab.")
+        return jsonify({"ok":True,"token":token_sess,"piano":piano or "free","messaggio":_conf_msg})
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
 
@@ -4006,7 +4008,7 @@ _PREZZI_ISMEA = {
 # Traduzioni statiche nomi fenomeni e discipline (IT→EN→ES)
 _NOME_TRAD = {
     "en": {
-        # Fenomeni
+        # Fenomeni completi (52)
         "Acidità": "Acidity", "Fermentazione lattica": "Lactic fermentation",
         "Fermentazione acetica": "Acetic fermentation", "Maillard": "Maillard reaction",
         "Caramellizzazione": "Caramelization", "Gelatinizzazione": "Gelatinization",
@@ -4015,16 +4017,38 @@ _NOME_TRAD = {
         "Carbonatazione": "Carbonation", "Estrazione": "Extraction",
         "Concentrazione": "Concentration", "Idratazione": "Hydration",
         "Struttura del glutine": "Gluten structure", "Lievitazione": "Leavening",
-        "Temperatura": "Temperature", "pH": "pH", "Aw": "Water activity",
-        "Shelf life": "Shelf life", "Zona di pericolo": "Danger zone",
-        "Contaminazione": "Contamination",
+        "Ossidazione": "Oxidation", "Riduzione": "Reduction",
+        "Fermentazione alcolica": "Alcoholic fermentation", "Fermentazione": "Fermentation",
+        "Distillazione": "Distillation", "Infusione": "Infusion",
+        "Macerazione": "Maceration", "Filtrazione": "Filtration",
+        "Pastorizzazione": "Pasteurization", "Sterilizzazione": "Sterilization",
+        "Calore / cinetica termica": "Heat / thermal kinetics",
+        "Pressione": "Pressure", "Viscosità": "Viscosity",
+        "Tensione superficiale": "Surface tension", "Diffusione": "Diffusion",
+        "Coagulazione": "Coagulation", "Proteolisi": "Proteolysis",
+        "Lipolisi": "Lipolysis", "Amidolisi": "Starch hydrolysis",
+        "Fermentazione malolattica": "Malolactic fermentation",
+        "Invecchiamento": "Aging", "Affinamento": "Maturation",
+        "Tostatura": "Roasting", "Affumicatura": "Smoking",
+        "Essiccazione": "Drying", "Salatura": "Salting",
+        "Fermentazione lattica spontanea": "Wild lactic fermentation",
+        "Attività enzimatica": "Enzymatic activity",
+        "Reazione di Bruno": "Browning reaction",
+        "Struttura": "Structure", "Tessitura": "Texture",
+        "Colore": "Color", "Aroma": "Aroma",
+        # Sicurezza
+        "Zona di pericolo": "Danger zone", "Shelf life": "Shelf life",
+        "Aw": "Water activity", "Contaminazione": "Contamination",
+        "Atmosfera modificata": "Modified atmosphere",
         # Discipline
         "Bar": "Bar", "Cucina": "Kitchen", "Panificazione": "Baking",
         "Pasticceria": "Pastry", "Gelateria": "Gelato", "Caffè": "Coffee",
         "Vino": "Wine", "Birra": "Beer", "Sicurezza alimentare": "Food safety",
+        "Cucina asiatica": "Asian cuisine", "Cucina indiana": "Indian cuisine",
+        "Cucina giapponese": "Japanese cuisine",
     },
     "es": {
-        # Fenomeni
+        # Fenomeni completi (52)
         "Acidità": "Acidez", "Fermentazione lattica": "Fermentación láctica",
         "Fermentazione acetica": "Fermentación acética", "Maillard": "Reacción de Maillard",
         "Caramellizzazione": "Caramelización", "Gelatinizzazione": "Gelatinización",
@@ -4033,13 +4057,35 @@ _NOME_TRAD = {
         "Carbonatazione": "Carbonatación", "Estrazione": "Extracción",
         "Concentrazione": "Concentración", "Idratazione": "Hidratación",
         "Struttura del glutine": "Estructura del gluten", "Lievitazione": "Leudado",
-        "Temperatura": "Temperatura", "pH": "pH", "Aw": "Actividad de agua",
-        "Shelf life": "Vida útil", "Zona di pericolo": "Zona de peligro",
-        "Contaminazione": "Contaminación",
+        "Ossidazione": "Oxidación", "Riduzione": "Reducción",
+        "Fermentazione alcolica": "Fermentación alcohólica", "Fermentazione": "Fermentación",
+        "Distillazione": "Destilación", "Infusione": "Infusión",
+        "Macerazione": "Maceración", "Filtrazione": "Filtración",
+        "Pastorizzazione": "Pasteurización", "Sterilizzazione": "Esterilización",
+        "Calore / cinetica termica": "Calor / cinética térmica",
+        "Pressione": "Presión", "Viscosità": "Viscosidad",
+        "Tensione superficiale": "Tensión superficial", "Diffusione": "Difusión",
+        "Coagulazione": "Coagulación", "Proteolisi": "Proteólisis",
+        "Lipolisi": "Lipólisis", "Amidolisi": "Hidrólisis del almidón",
+        "Fermentazione malolattica": "Fermentación maloláctica",
+        "Invecchiamento": "Envejecimiento", "Affinamento": "Maduración",
+        "Tostatura": "Tostado", "Affumicatura": "Ahumado",
+        "Essiccazione": "Secado", "Salatura": "Salazón",
+        "Fermentazione lattica spontanea": "Fermentación láctica espontánea",
+        "Attività enzimatica": "Actividad enzimática",
+        "Reazione di Bruno": "Reacción de pardeamiento",
+        "Struttura": "Estructura", "Tessitura": "Textura",
+        "Colore": "Color", "Aroma": "Aroma",
+        # Sicurezza
+        "Zona di pericolo": "Zona de peligro", "Shelf life": "Vida útil",
+        "Aw": "Actividad de agua", "Contaminazione": "Contaminación",
+        "Atmosfera modificata": "Atmósfera modificada",
         # Discipline
         "Bar": "Bar", "Cucina": "Cocina", "Panificazione": "Panadería",
         "Pasticceria": "Pastelería", "Gelateria": "Heladería", "Caffè": "Café",
         "Vino": "Vino", "Birra": "Cerveza", "Sicurezza alimentare": "Seguridad alimentaria",
+        "Cucina asiatica": "Cocina asiática", "Cucina indiana": "Cocina india",
+        "Cucina giapponese": "Cocina japonesa",
     }
 }
 

@@ -1365,8 +1365,12 @@ function avviaLezione(){
 /* ── LEZIONE DINAMICA (FE6) ───────────────────────────── */
 async function caricaLezioneStep(step){
   const disc = Matter.disciplina || 'bar';
-  document.getElementById('les-disciplina-label').textContent =
-    disc.charAt(0).toUpperCase()+disc.slice(1);
+  var _discMap={'bar':'disc_bar','cucina':'disc_cucina','panificazione':'disc_panificazione',
+    'pasticceria':'disc_pasticceria','gelateria':'disc_gelateria','caffe':'disc_caffe',
+    'vino':'disc_vino','birra':'disc_birra','sicurezza':'disc_sicurezza'};
+  var _discKey=_discMap[disc];
+  var _discNomeUI=(_discKey&&_lang!=='it')?(_t(_discKey)||disc.charAt(0).toUpperCase()+disc.slice(1)):(disc.charAt(0).toUpperCase()+disc.slice(1));
+  document.getElementById('les-disciplina-label').textContent = _discNomeUI;
   document.getElementById('les-step-label').textContent = _t('les_caricamento');
   document.getElementById('les-nome').textContent = '—';
   document.getElementById('les-scheda').textContent = '';
@@ -2125,6 +2129,9 @@ const _strings = {
     chiedi_placeholder:'ask Matter Lab…',
     chiedi_btn:'Ask',
     chiedi_title:'Ask Matter Lab',
+    disc_bar:'Bar', disc_cucina:'Kitchen', disc_panificazione:'Baking',
+    disc_pasticceria:'Pastry', disc_gelateria:'Gelato', disc_caffe:'Coffee',
+    disc_vino:'Wine', disc_birra:'Beer', disc_sicurezza:'Food safety',
     chiedi_sub:'A real question from your work — I answer with numbers, not opinions.',
     sup_titolo:'Need help?',
     sup_sub:'Describe the problem. We\'ll reply within 24 hours by email.',
@@ -2267,6 +2274,9 @@ const _strings = {
     les_quiz_titolo:'Quiz', les_quiz_btn:'Comprobar',
     les_quiz_corr:'¡Correcto!', les_quiz_err:'No exactamente.',
     chiedi_title:'Preguntar a Matter Lab',
+    disc_bar:'Bar', disc_cucina:'Cocina', disc_panificazione:'Panadería',
+    disc_pasticceria:'Pastelería', disc_gelateria:'Heladería', disc_caffe:'Café',
+    disc_vino:'Vino', disc_birra:'Cerveza', disc_sicurezza:'Seguridad alimentaria',
     chiedi_sub:'Un fenómeno físico para cada gesto profesional',
     chiedi_al_grafo:'Preguntar', calcola:'Calcular',
     auth_email:'Email', auth_pwd:'Contraseña',
@@ -3082,17 +3092,19 @@ async function doResetConferma(){
 function mostraNotificaTrial(rimaste){
   const old=document.querySelector('.trial-banner');if(old)old.remove();
   const b=document.createElement('div');b.className='trial-banner';
-  b.textContent=`Hai ancora ${rimaste} chat di prova. Passa a Pro per continuare.`;
+  var _tb={'it':`Hai ancora ${rimaste} chat di prova. Passa a Pro per continuare.`,'en':`You have ${rimaste} free chats left. Upgrade to Pro to continue.`,'es':`Te quedan ${rimaste} chats gratuitos. Actualiza a Pro para continuar.`};
+  b.textContent=_tb[_lang]||_tb['it'];
   document.body.appendChild(b);
   setTimeout(()=>{if(b.parentNode)b.remove();},5000);
 }
 function mostraPopupPro(motivo){
   const old=document.querySelector('.trial-popup-overlay');if(old)old.remove();
   const overlay=document.createElement('div');overlay.className='trial-popup-overlay';
-  const titolo=motivo==='esaurito'?'Hai usato le 5 chat di prova':'Ultima chat di prova';
+  const _pt={'it':{'esaurito':'Hai usato le 5 chat di prova','ultimo':'Ultima chat di prova'},'en':{'esaurito':'You have used all 5 trial chats','ultimo':'Last free chat'},'es':{'esaurito':'Has usado las 5 conversaciones de prueba','ultimo':'Último chat gratuito'}};
+  const titolo=(_pt[_lang]||_pt['it'])[motivo==='esaurito'?'esaurito':'ultimo'];
   const testo=motivo==='esaurito'
     ?'Per continuare a esplorare la fisica del mestiere, passa al piano Pro.'
-    :'Questa è la tua ultima chat gratuita. Passa a Pro per continuare senza limiti.';
+    :({'it':'Questa è la tua ultima chat gratuita. Passa a Pro per continuare senza limiti.','en':'This is your last free chat. Upgrade to Pro to continue without limits.','es':'Este es tu último chat gratuito. Actualiza a Pro para continuar sin límites.'}[_lang]||'Questa è la tua ultima chat gratuita.');
   overlay.innerHTML=`<div class="trial-popup">
     <h3>${titolo}</h3>
     <p>${testo}</p>
