@@ -2843,6 +2843,28 @@ def stripe_webhook():
     return jsonify({"ok":True})
 
 
+@app.route("/v1/admin/migrate-modello", methods=["POST"])
+def admin_migrate_modello():
+    """Aggiunge colonna modello a log_domande se non esiste."""
+    secret = request.json.get("secret","") if request.json else ""
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    if not DATABASE_URL:
+        return jsonify({"errore":"no db"}), 503
+    try:
+        import psycopg2
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            ALTER TABLE log_domande
+            ADD COLUMN IF NOT EXISTS modello TEXT
+        """)
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
 @app.route("/v1/admin/init", methods=["POST"])
 def admin_init():
     """Inizializza le tabelle account/quaderno. Da chiamare una volta dalla Console Railway."""
@@ -3658,7 +3680,28 @@ def cookie_policy():
 @app.route("/come-funziona-ai")
 def come_funziona_ai():
     lang = request.args.get("lang","it")
-    if lang == "en":
+    if lang == "es":
+        titolo = "Cómo funciona la IA"
+        corpo = """<h2>Cómo funciona la IA de Matter Lab</h2>
+<p>Matter Lab utiliza modelos de lenguaje IA para responder tus preguntas sobre ciencia gastronómica.</p>
+<h3>Modelos utilizados</h3>
+<ul>
+<li><strong>Claude (Anthropic)</strong> — chat principal. Responde sobre fenómenos físicos y químicos.</li>
+<li><strong>Haiku (Anthropic)</strong> — generación de quiz y traducciones rápidas.</li>
+<li><strong>Whisper (OpenAI)</strong> — transcripción de voz (solo Pro).</li>
+<li><strong>GPT-4o Vision (OpenAI)</strong> — análisis de fotos de fichas técnicas (solo Pro).</li>
+</ul>
+<h3>Qué hace y no hace la IA</h3>
+<ul>
+<li>La IA responde basándose en el grafo de conocimiento de Matter Lab (fenómenos físicos, números objetivo).</li>
+<li>La IA no reemplaza a un tecnólogo alimentario ni a un consultor HACCP.</li>
+<li>Los valores de vida útil son estimaciones orientativas, no certificaciones.</li>
+<li>Cada respuesta de IA incluye un aviso legal.</li>
+</ul>
+<h3>Tus datos</h3>
+<p>Las preguntas se registran de forma anónima para mejorar el servicio. Ningún dato personal se comparte con los proveedores de IA más allá de lo necesario para generar la respuesta.</p>
+<p>EU AI Act: Matter Lab es una herramienta de IA de uso general para formación profesional.</p>"""
+    elif lang == "en":
         titolo = "How the AI works"
         corpo = """<h2>How Matter Lab AI works</h2>
 <p>Matter Lab uses AI language models to answer your questions about food science.</p>
