@@ -5141,5 +5141,51 @@ def sw():
         }
     return '', 404
 
+@app.route("/admin/export-ingredienti-csv")
+def admin_export_ingredienti_csv():
+    """Export CSV dei profili sensoriali degli ingredienti per Anomaly Detection."""
+    if not _admin_autenticato():
+        return "Non autorizzato.", 403
+    if not DATABASE_URL:
+        return "DB non disponibile.", 503
+
+    import csv, io, psycopg2
+
+    DIMS = ["acido", "dolce", "amaro", "salato", "umami",
+            "grasso", "piccante", "astringente", "affumicato"]
+
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, name, domain, data
+            FROM nodes
+            WHERE type = 'Ingrediente'
+            ORDER BY name
+        """)
+        righe = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return f"Errore DB: {e}", 503
+
+    out = io.StringIO()
+    writer = csv.writer(out)
+    writer.writerow(["id", "nome", "disciplina"] + DIMS)
+
+    for r in righe:
+        node_id, nome, disciplina, data = r
+        d = data if isinstance(data, dict) else json.loads(data or "{}")
+        ps = d.get("profilo_sensoriale", {})
+        valori = [ps.get(dim, "") for dim in DIMS]
+        writer.writerow([node_id, nome, disciplina] + valori)
+
+    csv_bytes = out.getvalue().encode("utf-8")
+    return csv_bytes, 200, {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": "attachment; filename=ingredienti_sensoriali.csv"
+    }
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
