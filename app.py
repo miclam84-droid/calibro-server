@@ -617,11 +617,11 @@ def _haiku_raw(prompt, max_tokens=600):
     return GW.route_fast(prompt, max_tokens=max_tokens)
 
 
-def chiedi_mistral(prompt):
+def chiedi_mistral(prompt, history=None):
     """Nome storico mantenuto — ora usa AI Gateway route_chat con fallback automatico."""
     import ai_gateway as GW
     try:
-        out = GW.route_chat(prompt, tools=_TOOLS)
+        out = GW.route_chat(prompt, tools=_TOOLS, history=history)
         if out:
             return out
     except Exception as e:
@@ -1729,8 +1729,8 @@ def abbina(ingrediente):
         "pomodoro":"tomato","limone":"lemon","aglio":"garlic","cipolla":"onion",
         "burro":"butter","panna":"cream","latte":"milk","uova":"egg","uovo":"egg",
         "basilico":"basil","prezzemolo":"parsley","rosmarino":"rosemary",
-        "timo":"thyme","menta":"mint","cannella":"cinnamon","vaniglia":"vanilla",
-        "cioccolato":"cocoa","cacao":"cacao","cioccolato fondente":"roasted_cocoa",
+        "timo":"thyme","menta":"mint",
+        "cioccolato":"cocoa",
         "caffe":"coffee","caffè":"coffee",
         "fragola":"strawberry","lampone":"raspberry","mela":"apple",
         "pera":"pear","banana":"banana","arancia":"orange","limetta":"lime","lime":"lime",
@@ -1760,11 +1760,11 @@ def abbina(ingrediente):
         "burrata":"mozzarella","stracciatella":"mozzarella",
         # verdure stagionali
         "zucchine":"zucchini","pomodorino":"tomato","ciliegino":"tomato",
-        "pomodoro":"tomato","basilico":"basil","rucola":"arugula",
+        "rucola":"arugula",
         "radicchio":"radicchio","cicoria":"chicory","finocchio":"fennel",
         "carciofo":"artichoke","asparago":"asparagus","pisello":"pea",
         "fava":"fava_bean","spinaci":"spinach","spinacio":"spinach",
-        "zucca":"pumpkin","cavolo":"cabbage","cavolfiore":"cauliflower",
+        "cavolo":"cabbage","cavolfiore":"cauliflower",
         "broccolo":"broccoli","bietola":"beet","barbabietola":"beet",
         "fagiolino":"green_bean","fagiolo":"bean","ceci":"chickpea",
         "lenticchie":"lentil","cipollotto":"onion","porro":"leek",
@@ -1772,8 +1772,8 @@ def abbina(ingrediente):
         "fico":"fig","albicocca":"apricot","pesca":"peach","nettarina":"peach",
         "susina":"plum","prugna":"plum","caco":"persimmon","cachi":"persimmon",
         "melograno":"pomegranate","mora":"blackberry","ribes":"currant",
-        "lampone":"raspberry","mirtillo":"blueberry","fragola":"strawberry",
-        "arancia":"orange","pompelmo":"grapefruit","bergamotto":"bergamot",
+        "mirtillo":"blueberry",
+        "pompelmo":"grapefruit","bergamotto":"bergamot",
         "cedro":"citron","uva":"grape","castagna":"chestnut",
         # pesce
         "baccalà":"cod","acciuga":"anchovy","alice":"anchovy",
@@ -1789,7 +1789,7 @@ def abbina(ingrediente):
         "aceto balsamico":"balsamic_vinegar","salsa di soia":"soy_sauce",
         # erbe aromatiche
         "maggiorana":"marjoram","origano":"oregano","salvia":"sage",
-        "alloro":"bay_leaf","prezzemolo":"parsley","erba cipollina":"chive",
+        "alloro":"bay_leaf","erba cipollina":"chive",
         "finocchietto":"fennel","dragoncello":"tarragon",
         # spezie
         "noce moscata":"nutmeg","cardamomo":"cardamom","curcuma":"turmeric",
@@ -2594,7 +2594,7 @@ def chiedi():
                 piano_t = rp[0] if rp else "free"
             if piano_t != "pro":
                 if user_id_t:
-                    cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE user_id=%s", (user_id_t,))
+                    cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE user_id=%s AND ts > NOW() - INTERVAL '7 days'", (user_id_t,))
                 else:
                     cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE ip=%s AND ts > NOW() - INTERVAL '7 days'", (ip,))
                 rt = cur_t.fetchone()
@@ -2650,15 +2650,14 @@ def chiedi():
         })
 
     prompt = costruisci_prompt(domanda, contesto, lang=lang)
-    # se ci sono scambi precedenti, li prependo al prompt per dare continuità
+    # history strutturata: passa i turni precedenti come messages[], non come testo
+    history_msgs = []
     if history:
-        hist_txt = "\n".join(
-            f"Domanda precedente: {h['q']}\nRisposta precedente (sintesi): {h['r']}"
-            for h in history[-3:] if h.get('q') and h.get('r')
-        )
-        if hist_txt:
-            prompt = f"Contesto della conversazione in corso:\n{hist_txt}\n\n---\n{prompt}"
-    risposta = chiedi_mistral(prompt)
+        for h in history[-3:]:
+            if h.get('q') and h.get('r'):
+                history_msgs.append({"role": "user", "content": h['q']})
+                history_msgs.append({"role": "assistant", "content": h['r']})
+    risposta = chiedi_mistral(prompt, history=history_msgs)
     # log_evento ritorna l'id della riga inserita (RETURNING id) — fix log_id bug
     log_id = log_evento("risposta", domanda,
                fenomeni=[f["name"] for f in contesto["fenomeni"]],

@@ -18,15 +18,12 @@ def diluizione(ingredienti: list, dil_perc: float) -> dict:
     vol_fin = vol0 + acqua
     abv0 = etanolo / vol0 * 100
     abv_fin = etanolo / vol_fin * 100
-    # stima termodinamica acqua di fusione
-    acqua_teo = vol0 * 3.9 * 20 / 334
     return {
         "calcolo": "diluizione",
         "vol_iniziale_ml": round(vol0, 1),
         "abv_iniziale_perc": round(abv0, 1),
         "diluizione_perc": dil_perc,
         "acqua_fusione_ml": round(acqua, 1),
-        "acqua_fusione_teo_ml": round(acqua_teo, 1),
         "vol_finale_ml": round(vol_fin, 1),
         "abv_finale_perc": round(abv_fin, 1),
         "spiegazione": (
@@ -88,12 +85,14 @@ def idratazione_pane(farina_g, acqua_g) -> dict:
         zona = "molto bassa — pane compatto, crosta dura (crackers, pane di semola)"
     elif idr < 65:
         zona = "bassa — pizza napoletana (60-65%), ciabatta compatta"
+    elif idr == 65:
+        zona = "limite superiore pizza napoletana / standard pane comune e baguette (65-72%)"
     elif idr < 72:
-        zona = "standard — pane comune, baguette"
+        zona = "standard — pane comune, baguette (65-72%)"
     elif idr < 80:
-        zona = "alta — ciabatta, focaccia, pizza romana"
+        zona = "alta — ciabatta, focaccia, pizza romana (72-80%)"
     else:
-        zona = "molto alta — pastella, pane in cassetta"
+        zona = "molto alta — pastella, pane in cassetta (>80%)"
     return {
         "calcolo": "idratazione_pane",
         "farina_g": farina_g,
@@ -165,7 +164,21 @@ def pareggia_acidita(vol_ml, acido_cur_perc, acido_tgt_perc) -> dict:
     """Grammi di acido citrico da aggiungere per portare un succo al target."""
     if vol_ml <= 0:
         return {"errore": "volume zero"}
-    g = max(0, (acido_tgt_perc - acido_cur_perc) / 100 * vol_ml)
+    if acido_tgt_perc <= acido_cur_perc:
+        return {
+            "calcolo": "pareggia_acidita",
+            "vol_ml": vol_ml,
+            "acido_attuale_perc": acido_cur_perc,
+            "acido_target_perc": acido_tgt_perc,
+            "acido_citrico_g": 0,
+            "spiegazione": (
+                f"Il succo è già a {acido_cur_perc}% di acidità titolabile, "
+                f"superiore al target di {acido_tgt_perc}%. "
+                f"L'acido citrico aggiunge acidità, non la rimuove: "
+                f"per abbassare l'acidità devi diluire con acqua o aggiungere un tampone basico."
+            )
+        }
+    g = (acido_tgt_perc - acido_cur_perc) / 100 * vol_ml
     return {
         "calcolo": "pareggia_acidita",
         "vol_ml": vol_ml,
