@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Zucchero: 200g/100ml a 20°C · sale: 35,7g/100ml · acido citrico: 73g/100ml · CO2: 1,7g/L a 0°C (Henry)",
    "strumento":"Bilancia · rifrattometro · termometro",
-   "principio":"La solubilità è la quantità massima di un soluto che si può sciogliere in un solvente a una data temperatura. Dipende dalla temperatura (di solito aumenta con T per i solidi, diminuisce per i gas), dalla polarità del solvente e del soluto, e dal pH. In F&B: la solubilità governa sciroppi saturi, soluzioni acide, macerati, salamoie.",
+   "principio":"La solubilità è la quantità massima di un soluto che si può sciogliere in un solvente in condizioni definite di temperatura e pressione. Dipende dalla temperatura (per i solidi aumenta con T, per i gas diminuisce), dalla polarità del solvente (simile scioglie simile: l''acqua scioglie sali e zuccheri, l''alcol scioglie terpeni ed esteri), e dal pH (gli acidi deboli sono più solubili a pH basico). In F&B: uno sciroppo satura più facilmente a freddo e può cristallizzare — per evitarlo si aggiunge glucosio o un acido che abbassa la saturazione del saccarosio. La CO₂ è più solubile a freddo e ad alta pressione: la legge di Henry governa sia la carbonatazione che la perdita di bollicine.",
    "formula":"Solubilità = g soluto / 100g solvente a T costante",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;

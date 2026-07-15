@@ -9,7 +9,7 @@
 -- ---- NODO CENTRALE -----------------------------------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-maillard', 'Fenomeno', 'Reazione di Maillard', 'trasversale',
- '{"tipo":"fisico-chimico","scheda":"L''imbrunimento non-enzimatico: zuccheri riducenti + amminoacidi che, scaldati, generano centinaia di composti aromatici (pirazine tostate, furani, dichetoni burrosi) e il colore bruno. Procede a qualsiasi temperatura ma diventa rapido sopra ~110°C e corre forte tra 140 e 165°C; la velocità raddoppia ogni ~10°C. Accelera con pH alto (alcalino), rallenta in acido. Diverso dalla caramellizzazione, che è solo zucchero senza proteine.","numero_bersaglio":"soglia 140-165°C, pH>6 accelera"}');
+ '{"tipo":"fisico-chimico","scheda":"La reazione di Maillard è la condensazione tra un gruppo amminico (aminoacidi liberi) e un gruppo carbonilico (zuccheri riducenti) ad alta temperatura. Produce centinaia di composti aromatici — pirazine, furani, maltolo — e i pigmenti bruni (melanoidine). Non è caramellizzazione: richiede proteine oltre agli zuccheri. Tre condizioni sono necessarie: temperatura >140°C, superficie asciutta (l'acqua non supera i 100°C), e presenza di zuccheri riducenti e aminoacidi. Questa è la ragione per cui l'umidità inibisce la doratura: asciugare la superficie prima di cuocere non è un dettaglio estetico, è una condizione fisica. Il pH alcalino (bicarbonato, idrossido di sodio nel brezel) accelera la reazione — da qui il colore intenso tipico dei prodotti da forno alcalini.","numero_bersaglio":"soglia 140-165°C, pH>6 accelera"}');
 
 -- ---- CALCOLI / PARAMETRI (misurano il fenomeno) ------------
 -- riusa cal-q10 (temperatura) e cal-ph? no: dichiaro i parametri propri ma li collego
@@ -20,7 +20,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 -- ---- PROCESSI ----------------------------------------------
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('proc-imbrunimento', 'Processo', 'Imbrunimento non-enzimatico', 'trasversale',
- '{"tipo":"fisico-chimico","scheda":"Zucchero riducente + amminoacido + calore. La superficie deve essere asciutta: finché c''è acqua libera la temperatura resta a 100°C e Maillard non parte. Per questo si asciuga la carne prima di rosolare."}');
+ '{"tipo":"fisico-chimico","scheda":"La reazione di Maillard è la condensazione tra un gruppo amminico (aminoacidi liberi) e un gruppo carbonilico (zuccheri riducenti) ad alta temperatura. Produce centinaia di composti aromatici — pirazine, furani, maltolo — e i pigmenti bruni (melanoidine). Non è caramellizzazione: richiede proteine oltre agli zuccheri. Tre condizioni sono necessarie: temperatura >140°C, superficie asciutta (l'acqua non supera i 100°C), e presenza di zuccheri riducenti e aminoacidi. Questa è la ragione per cui l'umidità inibisce la doratura: asciugare la superficie prima di cuocere non è un dettaglio estetico, è una condizione fisica. Il pH alcalino (bicarbonato, idrossido di sodio nel brezel) accelera la reazione — da qui il colore intenso tipico dei prodotti da forno alcalini."}');
 
 -- ---- PRODOTTI (dove si manifesta — le discipline EMERGONO) -
 INSERT INTO nodes (id, type, name, domain, data) VALUES

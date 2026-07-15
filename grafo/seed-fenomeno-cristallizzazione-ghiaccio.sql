@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Cristalli ottimali: <50 micron (cremoso) · Cristalli difetto: >100 micron (sabbioso) · T servizio gelato: -10/-12°C · T abbattimento: -18°C",
    "strumento":"Termometro · abbattitore (termometro integrato)",
-   "principio":"Quando un liquido si congela, l acqua forma cristalli di ghiaccio. La dimensione dei cristalli dipende dalla velocità di congelamento: più veloce = cristalli piccoli (cremosi), più lento = cristalli grandi (sabbiosi). Nel gelato l obiettivo è cristalli <50 micron non percepibili dalla lingua. I cicli di scongelamento/congelamento (sbalzi termici) fanno crescere i cristalli.",
+   "principio":"La dimensione dei cristalli di ghiaccio determina la texture del gelato: cristalli sotto i 50 micron non sono percepibili dalla lingua (cremoso), sopra i 100 micron danno sensazione sabbiosa. La velocità di congelamento è la leva principale: abbattimento rapido produce cristalli piccoli e omogenei, congelamento lento produce cristalli grandi. I cicli di scongelamento e ricongelamento (sbalzi termici nella catena del freddo) fanno crescere i cristalli per ricristallizzazione — è la ragione principale del degrado qualitativo durante lo stoccaggio. Gli stabilizzanti (farina di semi di carruba, guar, xantano) rallentano la ricristallizzazione intrappolando acqua libera.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

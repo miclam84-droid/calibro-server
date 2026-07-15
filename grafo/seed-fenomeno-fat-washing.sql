@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Ratio grasso/distillato: 1:4 – 1:6 (peso) · T contatto: 20-25°C · 1-4h · T solidificazione burro: 4-10°C",
    "strumento":"Termometro · bilancia · freezer",
-   "principio":"I composti aromatici liposolubili (che si sciolgono nei grassi ma non nell acqua) si trasferiscono in un grasso fuso, che poi viene mescolato con un distillato. Il grasso si scioglie parzialmente nell alcol trasferendo gli aromi. Poi si congela: il grasso solidifica e si separa dall alcol aromatizzato, che viene filtrato. Tecnica di Dave Arnold.",
+   "principio":"I composti aromatici liposolubili non si trasferiscono in soluzioni acquose, ma si sciolgono nell''alcol ad alta gradazione. Il fat washing sfrutta questo principio: un grasso aromatico (burro nocciola, olio di sesamo, pancetta) viene fuso e mescolato con un distillato; a contatto con l''alcol cede i propri composti aromatici liposolubili. Si abbatte in frigo: il grasso solidifica e si separa, l''alcol resta aromatizzato e limpido. Il distillato risultante porta aromi impossibili da ottenere per infusione in acqua. È una tecnica di Dave Arnold che ha ridefinito le possibilità del bar moderno. La qualità del grasso determina tutto: grasso di qualità superiore produce distillato di qualità superiore.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

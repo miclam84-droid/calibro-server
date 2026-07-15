@@ -15,7 +15,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "numero_bersaglio":"amilasi: alfa ~65-75C, beta ~60-65C · pH 4,4-5,5 · DE (dextrose equivalent) 0-100 = grado di conversione dell amido in zuccheri",
    "strumento":"termometro (temperatura di conversione) · DE / rifrattometro",
-   "scheda":"L amilasi spezza l amido in zuccheri, aggiungendo acqua ai legami. Due enzimi lavorano a temperature diverse: la alfa-amilasi (65-75C) taglia le catene lunghe e liquefa, la beta-amilasi (60-65C) stacca maltosio dalle estremita. Scegliendo la temperatura scegli il risultato: e la fisica del mash della birra (mosto piu o meno fermentabile), della dolcezza della madre, del malto. Il DE misura quanto lontano e andata la conversione, da 0 (amido intatto) a 100 (glucosio puro). L amido deve prima gelatinizzare perche l enzima lo raggiunga. E una delle tre facce dell idrolisi: enzima + acqua che spezzano un legame."}');
+   "scheda":"L'amilolisi è la degradazione enzimatica dell'amido in zuccheri più semplici. Beta-amilasi e alfa-amilasi attaccano le catene di amilosio e amilopectina in punti diversi: la beta produce maltosio (fermentabile), l'alfa produce destrine (non fermentabili, contribuiscono al corpo). Nella produzione della birra, la temperatura del mash determina quale enzima è più attivo e quindi il profilo fermentescibile del mosto. A 65°C prevale la beta-amilasi: birra secca e alcolica. A 68-70°C prevale l'alfa: birra corposa con più residuo dolce. Nel lievito madre, le amilasi presenti nella farina convertono l'amido in zuccheri che alimentano i lieviti — la maturazione del pane dipende anche da questo equilibrio."}');
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('prod-malto', 'Prodotto', 'Malto (orzo maltato)', 'bar',
@@ -48,7 +48,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "numero_bersaglio":"proteasi ~45-55C, pH 5,5-8 · grado di idrolisi DH% (tipico 16-35%) = quanto la proteina e spezzata in peptidi e amminoacidi",
    "strumento":"grado di idrolisi (DH%) · tempo x temperatura",
-   "scheda":"Le proteasi spezzano le proteine in peptidi e amminoacidi liberi, e molti di quei frammenti sanno di umami. E la scienza della frollatura della carne (enzimi che ammorbidiscono e concentrano il sapore per settimane al freddo), del garum, dei formaggi stagionati, della salsa di soia col koji. Il grado di idrolisi (DH%) dice quanto lontano e andata: poco per un ammorbidimento, molto per un concentrato di sapore. Le stesse proteasi rilassano il glutine nell autolisi del pane. E il rovescio della coagulazione: li si costruisce una rete di proteine, qui la si smonta. Seconda faccia dell idrolisi."}');
+   "scheda":"L'amilolisi è la degradazione enzimatica dell'amido in zuccheri più semplici. Beta-amilasi e alfa-amilasi attaccano le catene di amilosio e amilopectina in punti diversi: la beta produce maltosio (fermentabile), l'alfa produce destrine (non fermentabili, contribuiscono al corpo). Nella produzione della birra, la temperatura del mash determina quale enzima è più attivo e quindi il profilo fermentescibile del mosto. A 65°C prevale la beta-amilasi: birra secca e alcolica. A 68-70°C prevale l'alfa: birra corposa con più residuo dolce. Nel lievito madre, le amilasi presenti nella farina convertono l'amido in zuccheri che alimentano i lieviti — la maturazione del pane dipende anche da questo equilibrio."}');
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('prod-garum', 'Prodotto', 'Garum / colatura', 'cucina',
@@ -79,7 +79,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "numero_bersaglio":"numero di acidita / acidi grassi liberi (FFA%) = grado di lipolisi · e la leva della piccantezza dei formaggi erborinati",
    "strumento":"numero di acidita (titolazione)",
-   "scheda":"Le lipasi spezzano i grassi in acidi grassi liberi e glicerolo. Quegli acidi grassi corti e medi danno note pungenti e piccanti: e la lipolisi, controllata, a fare la piccantezza di un pecorino stagionato o di un erborinato. Il numero di acidita misura quanti acidi grassi liberi si sono formati. E una lama a doppio taglio: voluta nel formaggio, e invece l inizio enzimatico dell irrancidimento quando non la vuoi. Confina con l ossidazione: la lipolisi libera gli acidi grassi, l ossidazione poi li trasforma in aldeidi rancide. Terza faccia dell idrolisi."}');
+   "scheda":"L'amilolisi è la degradazione enzimatica dell'amido in zuccheri più semplici. Beta-amilasi e alfa-amilasi attaccano le catene di amilosio e amilopectina in punti diversi: la beta produce maltosio (fermentabile), l'alfa produce destrine (non fermentabili, contribuiscono al corpo). Nella produzione della birra, la temperatura del mash determina quale enzima è più attivo e quindi il profilo fermentescibile del mosto. A 65°C prevale la beta-amilasi: birra secca e alcolica. A 68-70°C prevale l'alfa: birra corposa con più residuo dolce. Nel lievito madre, le amilasi presenti nella farina convertono l'amido in zuccheri che alimentano i lieviti — la maturazione del pane dipende anche da questo equilibrio."}');
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('prod-formaggio-stagionato', 'Prodotto', 'Formaggio stagionato / erborinato', 'cucina',

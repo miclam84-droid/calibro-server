@@ -9,7 +9,7 @@
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-fermentazione', 'Fenomeno', 'Fermentazione', 'trasversale',
- '{"tipo":"biologico","scheda":"Un organismo vivo - lieviti, batteri lattici - mangia zuccheri e produce acidi, alcol, CO2, aromi. Non e una legge fisica: e biologia. Il pH che scende e l''orologio (i batteri lattici acidificano: ottimo a pH 5-5,5, lavorano fino a 3,6); la temperatura governa la velocita in modo non-lineare (lactobacilli ottimali a 32-33°C, fermi sotto 4°C e sopra 41°C). Il numero misura l''EFFETTO dell''organismo, mai la causa. Per questo e l''unico fenomeno di tipo biologico: dietro non c''e una legge, c''e qualcosa di vivo.","numero_bersaglio":"pH 3,4-4,2 (effetto); 32-33°C ottimo lattici; acido 1,5-2,5%"}');
+ '{"tipo":"biologico","scheda":"Il Saccharomyces cerevisiae converte gli zuccheri semplici in etanolo e CO₂ in assenza di ossigeno. La fermentazione alcolica è il processo fondamentale di birra, vino, pane e distillati. La temperatura di fermentazione influenza direttamente il profilo aromatico: fermentazioni a bassa temperatura (10-15°C per i lager) producono birre pulite con pochi esteri; ad alta temperatura (18-22°C per le ale) si producono più esteri e fenoli, tipici delle birre belghe e inglesi. I lieviti producono anche composti secondari (alcoli superiori, esteri, diacetile) che definiscono il carattere del prodotto finale. Il lievito muore oltre i 50-55°C — per questo il pane in forno non continua a lievitare dopo la prima fase di cottura.","numero_bersaglio":"pH 3,4-4,2 (effetto); 32-33°C ottimo lattici; acido 1,5-2,5%"}');
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('cal-quoziente-ferm', 'Calcolo', 'Quoziente di fermentazione', 'trasversale',
@@ -18,7 +18,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 -- proc-ferm-lattica esiste già nel ponte acidità (lì realizza l'acidità): solo arco, niente reinserimento
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('proc-ferm-alcolica', 'Processo', 'Fermentazione alcolica', 'fermentazione',
- '{"tipo":"biologico","scheda":"I lieviti (Saccharomyces) trasformano zuccheri in alcol + CO2. E il vino, la birra, la base alcolica di ogni distillato, e la spinta del lievito nel pane (qui conta la CO2, non l''alcol che evapora in forno)."}');
+ '{"tipo":"biologico","scheda":"Il Saccharomyces cerevisiae converte gli zuccheri semplici in etanolo e CO₂ in assenza di ossigeno. La fermentazione alcolica è il processo fondamentale di birra, vino, pane e distillati. La temperatura di fermentazione influenza direttamente il profilo aromatico: fermentazioni a bassa temperatura (10-15°C per i lager) producono birre pulite con pochi esteri; ad alta temperatura (18-22°C per le ale) si producono più esteri e fenoli, tipici delle birre belghe e inglesi. I lieviti producono anche composti secondari (alcoli superiori, esteri, diacetile) che definiscono il carattere del prodotto finale. Il lievito muore oltre i 50-55°C — per questo il pane in forno non continua a lievitare dopo la prima fase di cottura."}');
 
 -- PRODOTTI-PROVA: la fermentazione e il fenomeno PIU trasversale
 INSERT INTO nodes (id, type, name, domain, data) VALUES

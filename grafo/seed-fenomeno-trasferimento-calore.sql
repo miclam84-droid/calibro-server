@@ -7,7 +7,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Calore specifico acqua: 4,18 J/g°C · ghiaccio latente: 334 J/g · pastorizzazione: 72°C×15s o 63°C×30min",
    "strumento":"Termometro a sonda · termocoppia · sonda a infrarossi",
-   "principio":"Il calore si trasferisce per conduzione (solido-solido), convezione (fluidi) e irraggiamento. In cucina: la padella conduce, l acqua conveziona, il forno irradia. La velocità di trasferimento dipende dalla differenza di temperatura (ΔT), dalla superficie di contatto e dalla conducibilità termica del materiale. Il ghiaccio assorbe 334 J/g per sciogliersi — 80 volte più del semplice raffreddamento a 0°C.",
+   "principio":"Il calore si trasferisce per conduzione (contatto diretto solido-solido, es. padella-carne), convezione (movimento del fluido, es. acqua bollente, forno a convezione) e irraggiamento (trasmissione elettromagnetica, es. griglia, salamandra, microonde). La velocità dipende dal gradiente di temperatura (ΔT), dalla superficie di contatto e dalla conducibilità termica del materiale. Il ghiaccio è un caso particolare: per sciogliersi da 0°C a 0°C assorbe 334 J/g — 80 volte l''energia necessaria per riscaldare un grammo d''acqua di 1°C. Questo è il motivo per cui il ghiaccio raffredda in modo così efficiente. Il principio della pastorizzazione (combinazione tempo×temperatura) si basa sulla distruzione logaritmica dei patogeni — la stessa riduzione batterica si ottiene a temperature diverse con tempi diversi.",
    "formula":"Q = m × c × ΔT (calore sensibile) · Q = m × L (calore latente di fusione)",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;

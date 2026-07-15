@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"biologico",
    "target":"pH sicuro fermentati: <4,6 · pH madre matura: 3,7-3,9 · Acido lattico prodotto: 0,5-2,0%",
    "strumento":"pH-metro · acidità titolabile",
-   "principio":"I batteri lattici (Lactobacillus, Leuconostoc) convertono gli zuccheri in acido lattico senza ossigeno. L acido lattico abbassa il pH creando un ambiente ostile ai patogeni. È il meccanismo di conservazione di kimchi, crauti, yogurt, kefir, miso, lievito madre. Distinta dalla fermentazione alcolica (lieviti → alcol) e dalla fermentazione acetica (acetobatteri → acido acetico).",
+   "principio":"I batteri lattici (Lactobacillus, Leuconostoc, Pediococcus) convertono gli zuccheri in acido lattico in assenza di ossigeno. L''acidità prodotta abbassa il pH a livelli che inibiscono la crescita dei patogeni, rendendo il prodotto microbiologicamente stabile senza pastorizzazione né conservanti. È il meccanismo alla base di kimchi, crauti, yogurt, kefir, miso, lievito madre e salumi fermentati. La fermentazione omolattica produce solo acido lattico (sapore pulito, acido); quella eterolattica produce anche CO₂ e acido acetico (sapore più complesso). Nel lievito madre, il rapporto tra acido lattico e acetico dipende da temperatura e idratazione — a temperature più alte e idratazioni maggiori prevale il lattico.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

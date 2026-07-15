@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"biologico",
    "target":"Impasto: 20-60 min a 18-22C prima dell aggiunta di sale e lievito · Sur lies vino: 6-36 mesi",
    "strumento":"Timer · test windowpane (impasto) · analisi sensoriale (vino)",
-   "principio":"Autolisi significa auto-digestione. Nell impasto: le proteine e gli enzimi della farina iniziano a idrolizzarsi spontaneamente non appena vengono idratati, sviluppando il glutine senza lavorazione meccanica. Nel vino: i lieviti morti si lisano rilasciando aminoacidi e polisaccaridi che arricchiscono la struttura.",
+   "principio":"L''autolisi è l''idrolisi spontanea delle proteine e degli amidi della farina ad opera dei propri enzimi, non appena vengono idratati. Non serve lavorazione meccanica: bastano farina, acqua e tempo. Il risultato è una rete glutinica già parzialmente sviluppata prima ancora di impastare, con meno sforzo meccanico necessario e una struttura finale più estensibile. Per il panettiere è uno strumento per migliorare la lavorabilità degli impasti ad alta idratazione. Nel vino sur lies, i lieviti esauriti si lisano cedendo al liquido polisaccaridi e aminoacidi che aggiungono rotondità e complessità strutturale — è la tecnica base dello Champagne e dei grandi bianchi borgognoni.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 

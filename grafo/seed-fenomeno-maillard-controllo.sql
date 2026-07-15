@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"T di innesco: 140°C · zona ottimale crosta pane: 150-165°C · carne: 140-160°C · caffè tostato: 195-205°C · pH: +1 unità pH raddoppia la velocità della reazione",
    "strumento":"Termometro IR · sonda · colorimetro",
-   "principio":"La reazione di Maillard (già in grafo) descrive il meccanismo. Questo nodo descrive il CONTROLLO: come si modula la velocità e il risultato. Tre leve: (1) Temperatura — più alta = più veloce ma rischio bruciatura. (2) pH — ambiente alcalino accelera Maillard (brezel con idrossido di sodio, biscotto con bicarbonato). (3) Umidità — superficie asciutta è prerequisito per T>100°C. Queste leve spiegano perché stessa ricetta dà colori diversi.",
+   "principio":"Le tre leve per controllare la Maillard sono temperatura, pH e umidità superficiale. Temperatura più alta accelera la reazione ma aumenta il rischio di bruciatura e produzione di acrilammide (>180°C con asparagina). pH alcalino accelera significativamente: ogni unità in più raddoppia la velocità di reazione — il brezel con idrossido di sodio (pH 12-13) è la forma più estrema. L''umidità è il freno: finché c''è acqua in superficie la temperatura non supera i 100°C. Asciugare la superficie (a forno aperto, con aria, con uovo) è un''operazione tecnica, non estetica. Stessa ricetta, stesso forno, stesso tempo: forno umido vs secco produce colori e sapori radicalmente diversi.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

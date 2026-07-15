@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Perdita acqua accettabile: <2% · Difetto visibile: >5% · Accelerata a T>15°C o per agitazione meccanica",
    "strumento":"Bilancia (peso prima/dopo nel tempo) · temperatura · osservazione visiva",
-   "principio":"La sineresi è la separazione spontanea di liquido (siero) da un gel o una struttura colloide. Avviene quando le catene polimeriche del gel si contraggono espellendo l acqua intrappolata. È il liquido che appare sullo yogurt, sulla panna cotta dopo 24h, sulla crema pasticcera conservata, sui fermentati. Non è sempre un difetto.",
+   "principio":"La sineresi è la separazione spontanea di liquido libero da una struttura gel o colloide. Le catene polimeriche che formano il gel (proteine, agar, pectine, amidi) si contraggono nel tempo espellendo l''acqua intrappolata. È il liquido che appare sulla superficie dello yogurt, della panna cotta dopo 24h, della crema pasticcera conservata in frigo, dei fermentati. Non è sempre un difetto: nello yogurt greco è un processo controllato e voluto. Negli altri casi si minimizza con stabilizzanti (gomme, amidi modificati) che legano l''acqua libera riducendone la mobilità. La temperatura di conservazione è determinante: temperature più alte accelerano la contrazione del gel.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

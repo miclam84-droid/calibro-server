@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"TDS filtro: 1,15-1,55% · TDS espresso: 7-12% · EY: 18-22% · Ratio filtro: 1:15-17 · Ratio espresso: 1:2-3",
    "strumento":"Rifrattometro digitale (VST, Atago) · bilancia di precisione",
-   "principio":"L estrazione del caffè è descritta da due variabili indipendenti: TDS (Total Dissolved Solids = concentrazione nella tazza) e EY (Extraction Yield = % di composti estratti dalla polvere). TDS misura il quanto è forte il caffè. EY misura quanto efficacemente hai estratto. Sotto 18% EY: acido, sottosviluppato. Sopra 22%: amaro, astringente.",
+   "principio":"L''estrazione del caffè è descritta da due variabili indipendenti: TDS (concentrazione dei solidi disciolti nella tazza) e EY (percentuale di composti estratti dalla polvere). TDS dice quanto è forte il caffè; EY dice quanto efficacemente è stata estratta la polvere. Si può avere alto TDS con basso EY (poco caffè estratto in poca acqua) o basso TDS con alto EY (molto caffè estratto in tanta acqua). Sotto il 18% EY il caffè è sottoestratto: acido, piatto, privo di dolcezza. Sopra il 22% è sovrestratto: amaro, astringente, legnoso. La macinatura fine aumenta la superficie di contatto e accelera l''estrazione; il tempo di contatto, la pressione e la temperatura agiscono sulla stessa leva. EY si calcola: (peso bevanda × TDS%) / dose polvere.",
    "formula":"EY% = (peso_bevanda × TDS%) / dose_caffè · TDS misurato con rifrattometro",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;

@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Gelato artigianale: 20-35% · Sorbetto: 0-20% · Gelato industriale: 50-100% · Soft serve: 33-45%",
    "strumento":"Bilancia + contenitore calibrato: overrun% = ((vol_finale - vol_iniziale) / vol_iniziale) × 100",
-   "principio":"L overrun è la percentuale di aria incorporata nel gelato durante la mantecatura. Più aria = gelato più leggero, meno denso, che fonde più rapidamente. Il gelato artigianale ha meno aria del gelato industriale — si sente nella consistenza più cremosa e densa.",
+   "principio":"L''overrun è la percentuale di aria incorporata nel gelato durante la mantecatura, calcolata come (volume finale - volume iniziale) / volume iniziale × 100. Un gelato con 30% overrun ha il 30% del suo volume finale costituito da aria. Più aria significa gelato più leggero, meno denso, che fonde più rapidamente e pesa meno per volume. Il gelato artigianale a basso overrun (20-35%) ha consistenza più densa e cremosa, fonde più lentamente, ha sapore più intenso per grammo. Il gelato industriale ad alto overrun (50-100%) è economicamente più conveniente perché si vende volume, non peso. Il sorbetto ha overrun quasi nullo perché l''acqua (priva di grassi) non trattiene l''aria efficacemente.",
    "formula":"Overrun% = (peso_mix_stesso_volume - peso_gelato) / peso_gelato × 100",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;

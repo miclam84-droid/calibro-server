@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Massima velocità a 4-7°C (frigo) · quasi nulla a -18°C o >60°C · pane raffermo in 1-3 giorni a T ambiente",
    "strumento":"Termometro · texture test (tattile o durometro)",
-   "principio":"Dopo la gelatinizzazione (cottura), le catene di amido si riarrangiano lentamente formando una struttura cristallina più rigida. È il processo che fa raffermire il pane. La retrogradazione è accelerata dal freddo (il frigo rende il pane raffermo più velocemente del bancone). Si rallenta al di sotto di -18°C (congelamento) o al di sopra di 60°C (riscaldamento).",
+   "principio":"Dopo la gelatinizzazione (cottura), le catene di amilosio e amilopectina, disperse nel gel acquoso, iniziano a riorientarsi e a formare nuovi legami tra di loro, producendo una struttura cristallina più rigida. È la retrogradazione, ed è il processo che fa raffermire il pane e la polenta, e che rende la pasta fredda meno digeribile. La velocità di retrogradazione è massima intorno a 4-7°C — il frigo accelera il raffermimento del pane rispetto al bancone. Al di sotto di -18°C il processo si blocca quasi completamente (congelamento); al di sopra di 60°C le strutture già formate si sciolgono di nuovo (reversibile con il calore). È per questo che il pane riscaldato a 60°C+ recupera parte della morbidezza originale.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

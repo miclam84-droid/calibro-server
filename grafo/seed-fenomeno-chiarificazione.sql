@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"NTU target <5 (brillante) · <1 (cristallino) · torbido >50 NTU",
    "strumento":"Torbidimetro (NTU) · visivo strutturato",
-   "principio":"La torbidità è causata da particelle in sospensione (proteine, pectine, tannini, cellule) che diffondono la luce. La chiarificazione rimuove queste particelle per sedimentazione, filtrazione, flocculazione (aggiunta di sostanze che aggregano le particelle in fiocchi più pesanti che precipitano) o centrifugazione.",
+   "principio":"La torbidità è causata da particelle colloidali in sospensione — proteine, pectine, tannini, cellule di lievito — che diffondono la luce. La chiarificazione le rimuove per sedimentazione naturale (tempo), filtrazione (dimensione pori), flocculazione (aggiunta di collanti come bentonite, gelatina, colla di pesce che aggregano le particelle in fiocchi pesanti che precipitano) o centrifugazione. In mixology: il latte washing usa le proteine del latte per flocculare i tannini e i composti colorati di un liquido, ottenendo un cocktail limpido con struttura morbida. La chiarificazione non è solo estetica: cambia texture, stabilità e in alcuni casi il profilo aromatico.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

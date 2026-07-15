@@ -7,7 +7,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Espresso: 9 bar · spumante: 5-6 bar · carbonatazione forzata birra: 1,5-3 bar a 0-4°C",
    "strumento":"Manometro · pressostato macchina espresso · manometro keg",
-   "principio":"La pressione è forza per unità di superficie (Pa, bar, atm). In F&B: la pressione aumenta la solubilità dei gas (legge di Henry — già in grafo come principio), modifica il punto di ebollizione dell acqua e permette l estrazione espresso che a pressione ambiente non sarebbe possibile.",
+   "principio":"La pressione modifica due parametri critici in F&B: la solubilità dei gas (legge di Henry — più pressione = più gas disciolto) e il punto di ebollizione dei liquidi (più pressione = ebollizione a temperatura più alta). L''estrazione espresso a 9 bar è possibile solo sotto pressione: a pressione atmosferica l''acqua a 93°C non supererebbe la resistenza del panetto di caffè compresso. La pentola a pressione cuoce a 120°C invece di 100°C perché la pressione sopra 1 bar innalza il punto di ebollizione dell''acqua. Il mantecatore del gelato lavora a pressione ridotta per incorporare più aria. La carbonatazione forzata della birra (spunding valve) è un''applicazione diretta della legge di Henry.",
    "formula":"Legge di Henry: C = kH × P · Punto ebollizione: aumenta con P (pentola a pressione)",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;

@@ -27,7 +27,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
    "strumento":"planetaria + valutazione (picco)"}'),
 ('prod-semifreddo', 'Prodotto', 'Semifreddo', 'gelateria',
  '{"target":"overrun alto (meringa/panna montate) · niente mantecazione · PAC/zuccheri per non ghiacciare duro",
-   "strumento":"bilancia + calcolo PAC"}')
+   "strumento":"bilancia + calcolo PAC", "principio":"Il montaggio incorpora aria in un liquido grasso creando una schiuma stabile. Nella panna, i globuli di grasso si aggregano attorno alle bolle d''aria formando una rete che le intrappola. Temperatura critica: la panna deve essere fredda (2-4°C) perché i cristalli di grasso parzialmente solidificati forniscono la struttura rigida necessaria a stabilizzare la schiuma. Panna a temperatura ambiente non monta perché i globuli di grasso, completamente liquidi, non si aggregano. Zucchero e aromi si aggiungono a fine montaggio per non interferire con la struttura. Montatura eccessiva fa separare il grasso in burro — la struttura collassa irreversibilmente."}')
 ON CONFLICT (id) DO NOTHING;
 
 -- archi: Montaggio si_manifesta_in

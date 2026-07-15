@@ -9,7 +9,7 @@
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-carbonatazione', 'Fenomeno', 'Carbonatazione', 'trasversale',
- '{"tipo":"fisico-chimico","scheda":"CO2 disciolta in un liquido sotto pressione. La legge di Henry la governa: piu pressione = piu gas disciolto, piu temperatura = meno gas. Si misura in volumi di CO2 (1 volume = 1L di gas per 1L di liquido). La CO2 puo essere iniettata (soda, force carbonation) o prodotta dai lieviti (birra, spumante, kombucha). Lo stesso gas, nel pane, resta intrappolato nel glutine invece di sfuggire dal liquido: stessa CO2, due destini.","numero_bersaglio":"volumi di CO2: 1-2,5 (frutta) fino a 5-6 (champagne)"}');
+ '{"tipo":"fisico-chimico","scheda":"La carbonatazione è la dissoluzione di CO₂ in un liquido secondo la legge di Henry: la quantità di gas disciolto è proporzionale alla pressione e inversamente proporzionale alla temperatura. Raffreddare il liquido prima di carbonatare aumenta la resa. La CO₂ disciolta forma acido carbonico (H₂CO₃), che abbassa il pH del drink di 0,3-0,5 unità — effetto percettivo rilevante sull'equilibrio acido-dolce. Nella pratica del bar: un mixer caldo o un bicchiere caldo fanno uscire la CO₂ prima che raggiunga il palato. Il ghiaccio non è solo raffreddamento: abbassa la temperatura del sistema e mantiene la carbonatazione più a lungo.","numero_bersaglio":"volumi di CO2: 1-2,5 (frutta) fino a 5-6 (champagne)"}');
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('cal-volumi-co2', 'Calcolo', 'Volumi di CO2', 'trasversale',
@@ -17,9 +17,9 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('proc-carb-forzata', 'Processo', 'Carbonatazione forzata', 'bar',
- '{"tipo":"fisico-chimico","scheda":"CO2 spinta nel liquido freddo sotto pressione in un contenitore sigillato. Freddo = serve meno pressione per gli stessi volumi (Henry). E come si fanno soda e cocktail carbonati al banco."}'),
+ '{"tipo":"fisico-chimico","scheda":"La carbonatazione è la dissoluzione di CO₂ in un liquido secondo la legge di Henry: la quantità di gas disciolto è proporzionale alla pressione e inversamente proporzionale alla temperatura. Raffreddare il liquido prima di carbonatare aumenta la resa. La CO₂ disciolta forma acido carbonico (H₂CO₃), che abbassa il pH del drink di 0,3-0,5 unità — effetto percettivo rilevante sull'equilibrio acido-dolce. Nella pratica del bar: un mixer caldo o un bicchiere caldo fanno uscire la CO₂ prima che raggiunga il palato. Il ghiaccio non è solo raffreddamento: abbassa la temperatura del sistema e mantiene la carbonatazione più a lungo."}'),
 ('proc-carb-fermentativa', 'Processo', 'Carbonatazione da fermentazione', 'fermentazione',
- '{"tipo":"biologico-fisico","scheda":"I lieviti producono CO2 mangiando zucchero. In un contenitore chiuso (bottiglia, autoclave) la CO2 non scappa e si scioglie nel liquido: e la presa di spuma dello spumante e il bottle conditioning della birra. Stesso gas della lievitazione del pane."}');
+ '{"tipo":"biologico-fisico","scheda":"La carbonatazione è la dissoluzione di CO₂ in un liquido secondo la legge di Henry: la quantità di gas disciolto è proporzionale alla pressione e inversamente proporzionale alla temperatura. Raffreddare il liquido prima di carbonatare aumenta la resa. La CO₂ disciolta forma acido carbonico (H₂CO₃), che abbassa il pH del drink di 0,3-0,5 unità — effetto percettivo rilevante sull'equilibrio acido-dolce. Nella pratica del bar: un mixer caldo o un bicchiere caldo fanno uscire la CO₂ prima che raggiunga il palato. Il ghiaccio non è solo raffreddamento: abbassa la temperatura del sistema e mantiene la carbonatazione più a lungo."}');
 
 -- PRODOTTI-PROVA: discipline emergono (bar, fermentazione, e il ponte col pane)
 INSERT INTO nodes (id, type, name, domain, data) VALUES

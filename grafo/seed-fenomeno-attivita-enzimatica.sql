@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"biologico",
    "target":"Beta-amilasi: attiva 62-65°C (birra secca) · Alfa-amilasi: attiva 68-72°C (birra corposa) · Proteasi: 45-55°C · Inattivazione enzimi: >75-80°C",
    "strumento":"Termometro (la T è lo strumento di controllo)",
-   "principio":"Gli enzimi sono catalizzatori biologici che accelerano reazioni chimiche a T specifiche. Ogni enzima ha una finestra di temperatura ottimale oltre la quale viene inattivato irreversibilmente (denaturato). In F&B: il mash birra usa enzimi per convertire amido in zuccheri, il lievito madre usa proteasi per sviluppare glutine, il caffè verde contiene enzimi che si inattivano con la torrefazione.",
+   "principio":"Gli enzimi sono proteine catalitiche con una finestra di temperatura precisa: fuori da quella finestra rallentano o si inattivano irreversibilmente. Nel mash della birra, la scelta di temperatura tra 62 e 72°C non è arbitraria — determina il rapporto tra zuccheri fermentabili e destrine non fermentabili, cioè la secchezza o il corpo finale della birra. Nel lievito madre, le proteasi rompono i legami del glutine durante la maturazione rendendolo più estensibile. Nel caffè verde, gli enzimi responsabili degli aromi fruttati vengono inattivati dalla torrefazione — la differenza tra una tostatura chiara e una scura è anche una differenza enzimatica. Temperatura e tempo sono le due leve: stessa temperatura ma tempi diversi producono risultati diversi.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

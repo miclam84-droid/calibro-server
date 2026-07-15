@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Miosina (carne): 50°C · albumina uovo: 60-65°C · collagene→gelatina: >55°C prolungato · actina: 65°C (carne secca)",
    "strumento":"Termometro a sonda",
-   "principio":"Le proteine sono catene ripiegaste in strutture tridimensionali tenute da legami deboli. Il calore rompe questi legami e la proteina perde la sua forma originale (denatura). È irreversibile. Temperature diverse denaturano proteine diverse — da qui il controllo preciso della cottura.",
+   "principio":"Le proteine sono catene di aminoacidi piegate in strutture tridimensionali tenute da legami idrogeno, ponti disolfuro e interazioni idrofobiche. Il calore rompe questi legami e la catena si dispiega (denatura). La denaturazione è irreversibile e cambia radicalmente la texture di carne, pesce e uova. Temperature diverse denaturano proteine diverse in sequenza: per questo la cottura sous vide a temperatura precisa permette di scegliere esattamente quale proteina attivare. Il collagene è un caso speciale: denatura e si reidrolizza in gelatina a temperature superiori a 55-70°C mantenute nel tempo — è il principio delle cotture lunghe (brasati, stracotti).",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

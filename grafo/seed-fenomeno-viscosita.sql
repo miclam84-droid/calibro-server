@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Acqua: 1 cP · latte intero: 2 cP · olio oliva: 100-200 cP · miele: 2.000-10.000 cP · caramello: 1.000-50.000 cP",
    "strumento":"Test spatola/filo (al banco) · cup Ford · viscosimetro rotazionale (lab)",
-   "principio":"La viscosità misura la resistenza di un fluido allo scorrimento. Nel lavoro quotidiano il professionista valuta la viscosità con il test spatola: una salsa nappa (copre e scivola lentamente) ha viscosità diversa da una che cola. La reologia studia come la viscosità cambia con temperatura, agitazione e pH — fondamentale per salse, caramelli, ganache, gelati.",
+   "principio":"La viscosità misura la resistenza di un fluido allo scorrimento sotto un gradiente di pressione o velocità. I fluidi newtoniani (acqua, oli semplici) hanno viscosità costante indipendentemente dalla velocità di scorrimento. I fluidi non-newtoniani (salse, gel, schiume) cambiano viscosità con l''agitazione: pseudoplastici come la maionese diventano più fluidi se agitati (shear-thinning); dilatanti come alcune sospensioni di amido diventano più viscosi sotto sforzo. La temperatura abbassa quasi sempre la viscosità: il miele freddo non cola, quello caldo sì. In pratica: una salsa che \"nappa\" (copre e scivola lentamente da una spatola) ha viscosità 100-500 cP; una crema che cola è sotto i 50 cP. Il controllo della viscosità è il controllo della texture finale.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

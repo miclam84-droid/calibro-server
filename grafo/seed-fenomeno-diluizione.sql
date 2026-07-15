@@ -7,7 +7,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Shake: 25-28% acqua sul volume finale · Stir: 18-22% · Build: 10-15%",
    "strumento":"Bilancia (peso prima/dopo) · jigger graduato",
-   "principio":"Shakerare o mescolare con ghiaccio non raffredda soltanto: aggiunge acqua al drink. Il ghiaccio si scioglie assorbendo calore (334 J/g di calore latente) e l acqua prodotta diluisce il cocktail. I due effetti sono inseparabili — non si può raffreddare senza diluire.",
+   "principio":"Raffreddare e diluire sono lo stesso processo fisico: il ghiaccio assorbe calore dall''ambiente circostante (334 J per ogni grammo che si scioglie) e l''acqua prodotta entra nel drink. Non esiste raffreddamento senza diluizione, e la quantità di acqua aggiunta dipende da quanto ghiaccio si è sciolto. Lo shake produce più diluizione dello stir perché il movimento aumenta il contatto ghiaccio-liquido e accelera lo scioglimento. Un cocktail shakerato 10 secondi ha diluizione diversa da uno shakerato 15 secondi — e il profilo alcolico, la texture e la temperatura cambiano di conseguenza. La diluizione non è un effetto collaterale: è un ingrediente da calcolare. ABV finale = ABV iniziale × (volume iniziale / volume finale).",
    "formula":"% diluizione = (peso_finale - peso_iniziale) / peso_finale × 100 · ABV_finale = ABV_iniziale × (1 - %diluizione/100)",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;

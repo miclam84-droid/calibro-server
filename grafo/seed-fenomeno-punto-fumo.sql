@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"fisico-chimico",
    "target":"Burro: 130-150°C · EVO raffinato: 160-190°C · olio di arachide: 230°C · burro chiarificato: 250°C · strutto: 180°C",
    "strumento":"Termometro a sonda o infrarossi",
-   "principio":"Il punto di fumo è la temperatura alla quale un grasso inizia a decomporsi visibilmente (fuma) producendo acroleina e altri composti tossici. Dipende dal contenuto di acidi grassi liberi: più alto è (olio vergine), più basso è il punto di fumo. Il burro fuma presto perché contiene acqua e proteine del latte che bruciano prima del grasso.",
+   "principio":"Il punto di fumo è la temperatura alla quale un grasso inizia a decomporsi visibilmente producendo fumo, acroleina e composti tossici. È determinato principalmente dal contenuto di acidi grassi liberi (AGL): più alti sono, più basso è il punto di fumo. L''olio extravergine d''oliva non raffinato ha molti AGL e aromi volatili che bruciano presto; l''olio raffinato ha meno AGL e punto di fumo più alto. Il burro fuma intorno a 130-150°C perché contiene acqua (evapora producendo schiuma) e proteine del latte (bruciano prima del grasso). Il burro chiarificato — privato di acqua e proteine — resiste fino a 250°C. La raffinazione degli oli industriali serve principalmente ad alzare il punto di fumo per la frittura.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES

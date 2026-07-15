@@ -8,7 +8,7 @@
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('fen-estrazione', 'Fenomeno', 'Estrazione', 'trasversale',
- '{"tipo":"fisico-chimico","scheda":"Portare i composti solubili da un solido a un liquido: il caffè dalla polvere, gli aromi dalle botaniche, il sapore dalle ossa. Due numeri indipendenti la governano: EY% (extraction yield) = quanto hai tirato fuori dal solido; TDS% = quanto è concentrata la bevanda finale. Si muovono separati: puoi avere forte ma sotto-estratto (ristretto) o debole ma sovra-estratto (lungo diluito). La leva sono macinatura, temperatura, tempo, rapporto.","numero_bersaglio":"EY 18-22% (zona dolce); TDS dipende dal metodo"}');
+ '{"tipo":"fisico-chimico","scheda":"L'estrazione è il trasferimento di composti solubili da una matrice solida a un solvente liquido. Le variabili sono sempre le stesse indipendentemente dal prodotto: temperatura (più alta = più veloce, ma rischio di estrarre composti indesiderati), tempo di contatto, dimensione delle particelle (più piccole = più superficie = più rapida estrazione), polarità del solvente (l'alcol estrae composti diversi dall'acqua, i grassi estraggono i liposolubili). L'acqua estrae zuccheri, acidi, caffeina, tannini. L'alcol estrae terpeni, esteri, polifenoli. I grassi estraggono i composti aromatici liposolubili. Conoscere la polarità è scegliere il solvente giusto per l'obiettivo.","numero_bersaglio":"EY 18-22% (zona dolce); TDS dipende dal metodo"}');
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('cal-ey', 'Calcolo', 'Extraction yield EY%', 'trasversale',
@@ -16,9 +16,9 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('proc-estrazione-acqua', 'Processo', 'Estrazione in acqua', 'trasversale',
- '{"tipo":"fisico-chimico","scheda":"Acqua calda scioglie prima acidi, poi zuccheri, infine composti amari/astringenti. Fermarsi al punto giusto (EY 18-22% per il caffè) prende il dolce senza l''amaro. Macinatura fine, temperatura alta, tempo lungo = più estrazione."}'),
+ '{"tipo":"fisico-chimico","scheda":"L'estrazione è il trasferimento di composti solubili da una matrice solida a un solvente liquido. Le variabili sono sempre le stesse indipendentemente dal prodotto: temperatura (più alta = più veloce, ma rischio di estrarre composti indesiderati), tempo di contatto, dimensione delle particelle (più piccole = più superficie = più rapida estrazione), polarità del solvente (l'alcol estrae composti diversi dall'acqua, i grassi estraggono i liposolubili). L'acqua estrae zuccheri, acidi, caffeina, tannini. L'alcol estrae terpeni, esteri, polifenoli. I grassi estraggono i composti aromatici liposolubili. Conoscere la polarità è scegliere il solvente giusto per l'obiettivo."}'),
 ('proc-estrazione-alcol', 'Processo', 'Estrazione in alcol (infusione)', 'bar',
- '{"tipo":"fisico-chimico","scheda":"L''alcol è un solvente più potente dell''acqua per molti aromi: estrae oli essenziali e composti delle botaniche che l''acqua non prende. È la base di bitter, amari, gin infusi, vermouth."}');
+ '{"tipo":"fisico-chimico","scheda":"L'estrazione è il trasferimento di composti solubili da una matrice solida a un solvente liquido. Le variabili sono sempre le stesse indipendentemente dal prodotto: temperatura (più alta = più veloce, ma rischio di estrarre composti indesiderati), tempo di contatto, dimensione delle particelle (più piccole = più superficie = più rapida estrazione), polarità del solvente (l'alcol estrae composti diversi dall'acqua, i grassi estraggono i liposolubili). L'acqua estrae zuccheri, acidi, caffeina, tannini. L'alcol estrae terpeni, esteri, polifenoli. I grassi estraggono i composti aromatici liposolubili. Conoscere la polarità è scegliere il solvente giusto per l'obiettivo."}');
 
 -- PRODOTTI-PROVA: le discipline EMERGONO (caffetteria, bar, cucina, fermentazione)
 INSERT INTO nodes (id, type, name, domain, data) VALUES

@@ -3,7 +3,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
  '{"tipo":"biologico",
    "target":"Aceto: acido acetico 5-8% · Volatile acidity vino (difetto): >0,6 g/L HAc · Birra: volatile acidity difetto >0,3 g/L",
    "strumento":"Acidità volatile (distillazione) · pH-metro",
-   "principio":"Gli acetobatteri (Acetobacter, Gluconobacter) convertono l alcol in acido acetico in presenza di ossigeno. È il meccanismo di produzione dell aceto (voluto) ma anche del difetto di volatile acidity nel vino e nella birra (non voluto). La fermentazione acetica richiede ossigeno: nei vini protetti dall aria non avviene.",
+   "principio":"Gli acetobatteri (Acetobacter, Gluconobacter) convertono l''etanolo in acido acetico usando l''ossigeno come agente ossidante. È un processo aerobico — richiede ossigeno, a differenza della fermentazione alcolica e lattica. Nella produzione di aceto è il processo voluto; nel vino e nella birra è il principale difetto da contaminazione. L''igiene delle attrezzature e la protezione dall''ossigeno (solfiti nel vino, CO₂ di copertura nella birra) sono le misure preventive standard. La volatile acidity (VA) si misura in g/L di acido acetico; valori elevati producono l''odore pungente di aceto che maschera tutti gli altri aromi del prodotto.",
    "settore":"f&b"}')
 ON CONFLICT (id) DO NOTHING;
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
