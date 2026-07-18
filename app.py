@@ -1719,6 +1719,155 @@ def cancella_account():
 # ---- endpoint -----------------------------------------------
 # ── FLAVOR NETWORK (FL3-FL4) ─────────────────────────────────────
 
+@app.route("/v1/composti/<ingrediente>")
+def composti_ingrediente(ingrediente):
+    """FL4 — Composti aromatici di un ingrediente da PubChem NIH (pubblico dominio).
+    Restituisce i composti volatili con profilo aromatico."""
+    import unicodedata
+    def _norm(s):
+        s = s.lower().strip()
+        s = unicodedata.normalize("NFD", s)
+        s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+        return s.replace(" ","_").replace("-","_")
+
+    ALIAS_IT = {
+        "limone":"lemon","lime":"lime","arancia":"orange_peel","arancia_dolce":"sweet_orange",
+        "pompelmo":"grapefruit","bergamotto":"bergamot","mandarino":"mandarin",
+        "yuzu":"yuzu","cedro":"citrus","agrumi":"citrus",
+        "aglio":"garlic","cipolla":"onion","scalogno":"shallot","porro":"leek",
+        "burro":"butter","panna":"cream","latte":"milk","uova":"egg","uovo":"egg",
+        "vaniglia":"vanilla","caffe":"coffee","caffè":"coffee","espresso":"coffee",
+        "menta":"peppermint","menta piperita":"peppermint","menta verde":"spearmint",
+        "basilico":"basil","timo":"thyme","origano":"oregano","rosmarino":"rosemary",
+        "salvia":"sage","finocchio":"fennel","aneto":"dill","coriandolo":"coriander",
+        "prezzemolo":"parsley","erba cipollina":"chive","maggiorana":"marjoram",
+        "lavanda":"lavender","dragoncello":"tarragon","menta romana":"spearmint",
+        "cannella":"cinnamon","garofano":"clove","noce moscata":"nutmeg",
+        "zenzero":"ginger","pepe nero":"black_pepper","pepe":"black_pepper",
+        "cardamomo":"cardamom","cumino":"cumin","curcuma":"turmeric",
+        "zafferano":"saffron","anice":"anise","anice stellato":"star_anise",
+        "fieno greco":"fenugreek","paprika":"paprika","peperoncino":"chili",
+        "senape":"mustard","rafano":"horseradish","wasabi":"wasabi",
+        "nocciola tostata":"roasted_hazelnut","nocciola":"hazelnut",
+        "mandorla":"almond","noce":"walnut","pistacchio":"pistachio",
+        "cocco":"coconut","arachide":"peanut","sesamo":"sesame","pino":"pine",
+        "cioccolato":"chocolate","cacao":"cocoa","cioccolato fondente":"dark_chocolate",
+        "cioccolato al latte":"chocolate",
+        "lampone":"raspberry","fragola":"strawberry","mela":"apple","mela verde":"apple",
+        "pera":"pear","banana":"banana","ananas":"pineapple","mango":"mango",
+        "pesca":"peach","albicocca":"apricot","prugna":"plum","susina":"plum",
+        "ciliegia":"cherry","uva":"grape","fico":"fig","melograno":"pomegranate",
+        "melone":"melon","anguria":"watermelon","kiwi":"kiwi","papaya":"papaya",
+        "mirtillo":"blueberry","ribes nero":"black_currant","ribes rosso":"red_currant",
+        "mora":"blackberry","uva spina":"gooseberry","sambuco":"elderberry",
+        "pomodoro":"tomato","cetriolo":"cucumber","carota":"carrot",
+        "sedano":"celery","patata":"potato","patata dolce":"sweet_potato",
+        "barbabietola":"beet","ravanello":"radish","carciofo":"artichoke",
+        "asparago":"asparagus","peperone":"bell_pepper","melanzana":"eggplant",
+        "zucchina":"zucchini","zucca":"pumpkin","spinaci":"spinach",
+        "cavolo":"cabbage","cavolfiore":"cauliflower","broccoli":"broccoli",
+        "mais":"corn","piselli":"pea","funghi":"mushroom","tartufo":"truffle",
+        "funghi porcini":"mushroom","fungo":"mushroom",
+        "vino":"wine","vino bianco":"white_wine","vino rosso":"red_wine",
+        "champagne":"champagne","prosecco":"wine","spumante":"wine",
+        "birra":"beer","birra ipa":"beer_ipa","birra weizen":"beer_weizen",
+        "birra lager":"beer_lager","birra stout":"stout","birra porter":"porter",
+        "whiskey":"whiskey","whisky":"scotch_whisky","bourbon":"bourbon",
+        "rum":"rum","gin":"gin","vodka":"vodka","tequila":"tequila",
+        "cognac":"cognac","brandy":"brandy","mezcal":"mezcal",
+        "grappa":"grappa","sherry":"sherry","porto":"port",
+        "aceto":"vinegar","aceto balsamico":"vinegar","salsa di soia":"soy_sauce",
+        "miso":"miso","kimchi":"kimchi","crauti":"sauerkraut","kefir":"kefir",
+        "yogurt":"yogurt","yogurt greco":"yogurt",
+        "parmigiano":"parmesan","parmigiano reggiano":"parmesan",
+        "cheddar":"cheddar","brie":"brie","camembert":"camembert",
+        "mozzarella":"mozzarella","ricotta":"ricotta","grana":"parmesan",
+        "formaggio capra":"goat_cheese","gorgonzola":"blue_cheese",
+        "roquefort":"blue_cheese","formaggio erborinato":"blue_cheese",
+        "pane":"bread","pane di segale":"rye_bread","pasta madre":"sourdough",
+        "lievito madre":"sourdough","lievito":"yeast","malto":"malt",
+        "luppolo":"hops","orzo":"barley","frumento":"wheat",
+        "manzo":"beef","maiale":"pork","pollo":"chicken","agnello":"lamb",
+        "anatra":"duck","tacchino":"turkey","pancetta":"bacon","prosciutto":"ham",
+        "salsiccia":"sausage","carne arrosto":"roasted_meat","brodo":"broth",
+        "salmone":"salmon","tonno":"tuna","merluzzo":"cod","acciuga":"anchovy",
+        "gamberetto":"shrimp","ostrica":"oyster","vongola":"clam",
+        "calamaro":"squid","anguilla":"eel","pesce":"fish",
+        "olio oliva":"olive_oil","olio di oliva":"olive_oil","olio":"olive_oil",
+        "strutto":"lard","grasso":"fat","miele":"honey","sciroppo acero":"maple_syrup",
+        "caramello":"caramel","zucchero":"sugar","sale":"salt",
+        "the verde":"green_tea","tè verde":"green_tea",
+        "the nero":"black_tea","tè nero":"black_tea",
+        "the":"black_tea","tè":"black_tea","matcha":"matcha",
+        "camomilla":"chamomile","rosa":"rose","gelsomino":"jasmine",
+        "ginepro":"juniper","rabarbaro":"rhubarb",
+        "popcorn":"popcorn","patatine":"potato_chip",
+        "affumicato":"smoked_food","carne affumicata":"smoked_meat",
+    }
+
+    ing_lower = ingrediente.lower().strip()
+    ing_norm = _norm(ingrediente)
+    ahn_name = ALIAS_IT.get(ing_lower) or ALIAS_IT.get(ing_norm.replace("_"," ")) or ing_norm
+
+    try:
+        db = carica_grafo()
+        conn = db["conn"]
+        cur = conn.cursor()
+
+        # Cerca composti PubChem collegati a questo ingrediente
+        cur.execute('''
+            SELECT DISTINCT n.id, n.name, n.data
+            FROM nodes n
+            JOIN edges e ON e.to_id = n.id
+            WHERE e.from_id = ANY(%s)
+            AND e.relation = \'contiene_composto\'
+            AND n.id LIKE \'pub_%%\'
+            ORDER BY n.name
+            LIMIT 15
+        ''', ([
+            f"ahn_{ahn_name}",
+            f"ahn_{ahn_name.replace('_',' ')}",
+            f"ahn_{ahn_name.replace(' ','_')}",
+        ],))
+
+        rows = cur.fetchall()
+
+        # Fallback fuzzy
+        if not rows:
+            cur.execute('''
+                SELECT DISTINCT n.id, n.name, n.data
+                FROM nodes n
+                JOIN edges e ON e.to_id = n.id
+                JOIN nodes ing ON e.from_id = ing.id
+                WHERE ing.name ILIKE %s
+                AND e.relation = \'contiene_composto\'
+                AND n.id LIKE \'pub_%%\'
+                ORDER BY n.name LIMIT 10
+            ''', (f"%{ahn_name.replace('_',' ')}%",))
+            rows = cur.fetchall()
+
+        composti = []
+        for row in rows:
+            nid, nome, data = row
+            d = data if isinstance(data, dict) else {}
+            composti.append({
+                "nome": nome.replace("_"," "),
+                "aroma": d.get("aroma",""),
+                "formula": d.get("formula",""),
+                "pubchem_cid": d.get("pubchem_cid",""),
+                "fonte": "PubChem NIH"
+            })
+
+        return jsonify({
+            "ingrediente": ingrediente,
+            "composti": composti,
+            "nota": "Composti aromatici volatili principali — PubChem NIH (pubblico dominio)",
+            "count": len(composti)
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e), "composti": []}), 500
+
+
 @app.route("/v1/abbina/<ingrediente>")
 def abbina(ingrediente):
     """FL3 — Abbinamenti aromatici dal grafo Ahn 2011 (edges abbinamento_aromatico).
