@@ -3574,39 +3574,104 @@ def import_usda():
     # Dove possibile usiamo fdc_id diretto (più affidabile di query testuale)
     # fdc_id verificati da USDA FoodData Central Foundation Foods / SR Legacy
     QUERY_MAP = {
-        # Frutta e succhi — query ok, risultati corretti
+        # Frutta e succhi
         "lemon juice raw": {"fenomeno": "fen-acidita",  "domain": "bar",       "fdc_id": 167747},
         "lime juice raw":  {"fenomeno": "fen-acidita",  "domain": "bar",       "fdc_id": 168195},
         "orange juice":    {"fenomeno": "fen-acidita",  "domain": "bar",       "fdc_id": 169098},
+        "grapefruit juice raw": {"fenomeno": "fen-acidita", "domain": "bar",   "fdc_id": 169106},
         "tomatoes red raw":{"fenomeno": "fen-acidita",  "domain": "cucina",    "fdc_id": 170457},
         "apples raw":      {"fenomeno": "fen-acidita",  "domain": "bakery",    "fdc_id": 171688},
         "strawberries raw":{"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 167762},
         "raspberries raw": {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 2346410},
         "blueberries raw": {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 2346411},
-        # Latticini — fdc_id corretti (erano sbagliati)
+        "peaches raw":     {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 169928},
+        "apricots raw":    {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 171697},
+        "cherries raw":    {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 171719},
+        "mango raw":       {"fenomeno": "fen-concentrazione","domain": "pasticceria","fdc_id": 169910},
+        "pineapple raw":   {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 169949},
+        "banana raw":      {"fenomeno": "fen-concentrazione","domain": "pasticceria","fdc_id": 173944},
+        "pears raw":       {"fenomeno": "fen-acidita",  "domain": "pasticceria","fdc_id": 169943},
+        "grapes red raw":  {"fenomeno": "fen-fermentazione","domain": "vino",  "fdc_id": 174683},
+        "pomegranate raw": {"fenomeno": "fen-acidita",  "domain": "bar",       "fdc_id": 169134},
+        # Latticini
         "milk whole 3.25%":{"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 171265},
         "cream heavy whipping":{"fenomeno":"fen-struttura","domain":"cucina",  "fdc_id": 2346386},
         "butter unsalted": {"fenomeno": "fen-cristallizzazione","domain":"bakery","fdc_id": 789828},
         "yogurt plain whole milk":{"fenomeno":"fen-fermentazione","domain":"cucina","fdc_id": 170886},
-        # Uova — egg white aveva 404, usiamo fdc_id diretto
+        "cheese parmesan": {"fenomeno": "fen-fermentazione","domain": "cucina","fdc_id": 173420},
+        "cheese cheddar":  {"fenomeno": "fen-fermentazione","domain": "cucina","fdc_id": 173414},
+        "cream cheese":    {"fenomeno": "fen-struttura", "domain": "pasticceria","fdc_id": 173417},
+        "sour cream":      {"fenomeno": "fen-fermentazione","domain": "cucina","fdc_id": 170862},
+        "buttermilk":      {"fenomeno": "fen-fermentazione","domain": "bakery","fdc_id": 170874},
+        # Uova
         "egg white raw":   {"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 172183},
         "egg yolk raw":    {"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 172185},
-        # Cereali
+        "egg whole raw":   {"fenomeno": "fen-coagulazione","domain": "cucina", "fdc_id": 171287},
+        # Cereali e farine
         "wheat flour all-purpose":{"fenomeno":"fen-struttura","domain":"bakery","fdc_id": 168944},
         "rye flour":       {"fenomeno": "fen-struttura",  "domain": "bakery",  "fdc_id": 2512375},
-        # Carne — fdc_id corretti (erano corned beef e lunchmeat)
+        "bread sourdough": {"fenomeno": "fen-fermentazione","domain": "bakery","fdc_id": 172686},
+        "oat flour":       {"fenomeno": "fen-struttura",  "domain": "bakery",  "fdc_id": 173903},
+        "rice white raw":  {"fenomeno": "fen-concentrazione","domain": "cucina","fdc_id": 169756},
+        "barley raw":      {"fenomeno": "fen-fermentazione","domain": "birra", "fdc_id": 169700},
+        # Carne
         "beef ground 80% lean raw":{"fenomeno":"fen-calore","domain":"cucina", "fdc_id": 174036},
         "chicken breast raw":{"fenomeno":"fen-calore",    "domain": "cucina",  "fdc_id": 171477},
         "salmon atlantic raw":{"fenomeno":"fen-calore",   "domain": "cucina",  "fdc_id": 175167},
-        # Zuccheri
+        "pork loin raw":   {"fenomeno": "fen-calore",     "domain": "cucina",  "fdc_id": 167903},
+        "lamb raw":        {"fenomeno": "fen-calore",     "domain": "cucina",  "fdc_id": 174404},
+        "turkey breast raw":{"fenomeno": "fen-calore",   "domain": "cucina",  "fdc_id": 171497},
+        "tuna raw":        {"fenomeno": "fen-calore",     "domain": "cucina",  "fdc_id": 175159},
+        "shrimp raw":      {"fenomeno": "fen-calore",     "domain": "cucina",  "fdc_id": 175178},
+        "anchovy raw":     {"fenomeno": "fen-acidita",    "domain": "cucina",  "fdc_id": 174178},
+        # Verdure
+        "garlic raw":      {"fenomeno": "fen-osmosi",     "domain": "cucina",  "fdc_id": 169230},
+        "onion raw":       {"fenomeno": "fen-osmosi",     "domain": "cucina",  "fdc_id": 170000},
+        "carrots raw":     {"fenomeno": "fen-acidita",    "domain": "cucina",  "fdc_id": 170393},
+        "cucumber raw":    {"fenomeno": "fen-osmosi",     "domain": "cucina",  "fdc_id": 168409},
+        "bell pepper raw": {"fenomeno": "fen-acidita",    "domain": "cucina",  "fdc_id": 170108},
+        "spinach raw":     {"fenomeno": "fen-osmosi",     "domain": "cucina",  "fdc_id": 168462},
+        "cabbage raw":     {"fenomeno": "fen-fermentazione","domain": "cucina","fdc_id": 169975},
+        "potato raw":      {"fenomeno": "fen-calore",     "domain": "cucina",  "fdc_id": 170026},
+        "sweet potato raw":{"fenomeno": "fen-calore",    "domain": "cucina",  "fdc_id": 168482},
+        "beets raw":       {"fenomeno": "fen-osmosi",     "domain": "cucina",  "fdc_id": 169145},
+        "asparagus raw":   {"fenomeno": "fen-osmosi",     "domain": "cucina",  "fdc_id": 168390},
+        "broccoli raw":    {"fenomeno": "fen-osmosi",     "domain": "cucina",  "fdc_id": 170379},
+        # Oli e grassi
+        "olive oil":       {"fenomeno": "fen-punto-fumo", "domain": "cucina",  "fdc_id": 171413},
+        "coconut oil":     {"fenomeno": "fen-cristallizzazione","domain":"pasticceria","fdc_id": 172337},
+        "lard":            {"fenomeno": "fen-punto-fumo", "domain": "cucina",  "fdc_id": 173411},
+        # Zuccheri e dolcificanti
         "sugars granulated":{"fenomeno": "fen-concentrazione","domain":"pasticceria","fdc_id": 169655},
         "honey":           {"fenomeno": "fen-concentrazione","domain":"pasticceria", "fdc_id": 169640},
-        # Cioccolato e caffè — fdc_id corretti
+        "maple syrup":     {"fenomeno": "fen-concentrazione","domain":"pasticceria", "fdc_id": 169661},
+        "molasses":        {"fenomeno": "fen-concentrazione","domain":"pasticceria", "fdc_id": 169652},
+        # Cioccolato e caffè
         "chocolate dark 70-85%":{"fenomeno":"fen-cristallizzazione","domain":"pasticceria","fdc_id": 170272},
+        "cocoa powder":    {"fenomeno": "fen-maillard",   "domain": "pasticceria","fdc_id": 169593},
         "coffee brewed espresso":{"fenomeno":"fen-estrazione","domain":"caffetteria","fdc_id": 171890},
-        # Aceto e funghi
+        "coffee brewed filtered":{"fenomeno":"fen-estrazione","domain":"caffetteria","fdc_id": 171889},
+        "tea black brewed":{"fenomeno": "fen-estrazione", "domain": "caffetteria","fdc_id": 171917},
+        "tea green brewed":{"fenomeno": "fen-estrazione", "domain": "caffetteria","fdc_id": 171920},
+        # Aceti e fermentati
         "vinegar balsamic":{"fenomeno": "fen-acidita",   "domain": "cucina",   "fdc_id": 172241},
+        "vinegar apple cider":{"fenomeno": "fen-fermentazione","domain": "cucina","fdc_id": 173468},
+        "sauerkraut":      {"fenomeno": "fen-fermentazione","domain": "cucina", "fdc_id": 169279},
+        "miso":            {"fenomeno": "fen-fermentazione","domain": "cucina", "fdc_id": 172444},
+        "soy sauce":       {"fenomeno": "fen-fermentazione","domain": "cucina", "fdc_id": 172234},
+        # Funghi
         "mushrooms white raw":{"fenomeno":"fen-maillard", "domain": "cucina",  "fdc_id": 169251},
+        "mushrooms shiitake raw":{"fenomeno":"fen-maillard","domain":"cucina", "fdc_id": 169253},
+        # Frutta secca
+        "almonds raw":     {"fenomeno": "fen-maillard",   "domain": "pasticceria","fdc_id": 170567},
+        "hazelnuts raw":   {"fenomeno": "fen-maillard",   "domain": "pasticceria","fdc_id": 170581},
+        "walnuts raw":     {"fenomeno": "fen-maillard",   "domain": "pasticceria","fdc_id": 170187},
+        "coconut raw":     {"fenomeno": "fen-concentrazione","domain":"pasticceria","fdc_id": 169910},
+        # Spezie
+        "ginger raw":      {"fenomeno": "fen-osmosi",     "domain": "bar",      "fdc_id": 169231},
+        "cinnamon ground": {"fenomeno": "fen-maillard",   "domain": "pasticceria","fdc_id": 171320},
+        "black pepper":    {"fenomeno": "fen-estrazione", "domain": "cucina",   "fdc_id": 170931},
+        "vanilla extract": {"fenomeno": "fen-estrazione", "domain": "pasticceria","fdc_id": 170627},
     }
 
     import psycopg2
