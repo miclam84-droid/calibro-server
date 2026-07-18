@@ -283,9 +283,18 @@ def cerca_contesto(db, termine, domanda=""):
             # raccoglie parametri fisici se presenti
             fisici = {}
             for k in ("ph_min","ph_max","ph_note","aw_min","aw_max",
-                      "acidita_titolabile_pct","coagulazione_t","t_sicurezza",
-                      "variabilita","abv_pct","tds_pct","brix_sciroppo_1_1",
-                      "cristallizzazione_t","proteine_pct","fonte"):
+                      "acidita_titolabile_pct","acidita_titolabile_g_l",
+                      "coagulazione_t","t_sicurezza","variabilita",
+                      "abv_pct","abv_min","abv_max",
+                      "tds_pct","tds_pct_min","tds_pct_max",
+                      "ey_pct_min","ey_pct_max",
+                      "brix","brix_min","brix_max","brix_sciroppo_1_1",
+                      "punto_fumo_c","ibu_min","ibu_max","co2_volumi",
+                      "sale_pct","overrun_pct_min","overrun_pct_max",
+                      "t_servizio","t_conservazione",
+                      "t_beta_amilasi","t_alfa_amilasi","t_caramellizzazione",
+                      "grassi_pct","acidita_libera_pct_max",
+                      "cristallizzazione_t","proteine_pct","note","fonte"):
                 if k in d:
                     fisici[k] = d[k]
             if fisici:
@@ -448,6 +457,44 @@ def costruisci_prompt(domanda, contesto, lang="it"):
                 r += f" · T sicurezza: {p['t_sicurezza']}"
             if "acidita_titolabile_pct" in p:
                 r += f" · acidità titolabile: {p['acidita_titolabile_pct']}%"
+            if "acidita_titolabile_g_l" in p:
+                r += f" · acidità titolabile: {p['acidita_titolabile_g_l']} g/L"
+            if "brix" in p:
+                r += f" · {p['brix']}°Brix"
+            if "brix_min" in p and "brix_max" in p:
+                r += f" · {p['brix_min']}-{p['brix_max']}°Brix"
+            if "abv_min" in p and "abv_max" in p:
+                r += f" · ABV {p['abv_min']}-{p['abv_max']}%"
+            if "tds_pct_min" in p and "tds_pct_max" in p:
+                r += f" · TDS {p['tds_pct_min']}-{p['tds_pct_max']}%"
+            if "ey_pct_min" in p and "ey_pct_max" in p:
+                r += f" · EY {p['ey_pct_min']}-{p['ey_pct_max']}%"
+            if "punto_fumo_c" in p:
+                r += f" · punto fumo: {p['punto_fumo_c']}°C"
+            if "ibu_min" in p and "ibu_max" in p:
+                r += f" · IBU {p['ibu_min']}-{p['ibu_max']}"
+            if "co2_volumi" in p:
+                r += f" · CO₂: {p['co2_volumi']} volumi"
+            if "sale_pct" in p:
+                r += f" · sale: {p['sale_pct']}%"
+            if "overrun_pct_min" in p:
+                r += f" · overrun: {p['overrun_pct_min']}-{p.get('overrun_pct_max','?')}%"
+            if "t_servizio" in p:
+                r += f" · T servizio: {p['t_servizio']}"
+            if "t_conservazione" in p:
+                r += f" · T conservazione: {p['t_conservazione']}"
+            if "t_beta_amilasi" in p:
+                r += f" · beta-amilasi: {p['t_beta_amilasi']}"
+            if "t_alfa_amilasi" in p:
+                r += f" · alfa-amilasi: {p['t_alfa_amilasi']}"
+            if "t_caramellizzazione" in p:
+                r += f" · caramellizzazione: {p['t_caramellizzazione']}"
+            if "grassi_pct" in p:
+                r += f" · grassi: {p['grassi_pct']}%"
+            if "acidita_libera_pct_max" in p:
+                r += f" · acidità libera max: {p['acidita_libera_pct_max']}%"
+            if "note" in p:
+                r += f" · note: {p['note']}"
             if "fonte" in p:
                 r += f" · fonte: {p['fonte']}"
             righe_f.append(r)
