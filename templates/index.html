@@ -2315,8 +2315,9 @@ function _t(k){ return (_strings[_lang]||_strings.it)[k]||k; }
 function applicaStringheUI(){
   const s=id=>{ const el=document.getElementById(id); if(el) return el; };
   const st=(id,txt)=>{ const el=s(id); if(el) el.textContent=txt; };
+  const sth=(id,html)=>{ const el=s(id); if(el) el.innerHTML=html; };
   // payoff e lang btn
-  st('payoff-text',_t('payoff'));
+  sth('payoff-text',_t('payoff'));
   document.getElementById('lang-btn').textContent=_lang==='it'?'EN':'IT';
   // tab labels
   document.querySelectorAll('.tab-label').forEach((el,i)=>{
@@ -2923,7 +2924,7 @@ async function testaKT(){
 <!-- ── LOGIN / REGISTRAZIONE ─────────────────────────── -->
 <div class="screen" id="screen-auth">
   <div class="auth-screen">
-    <div class="auth-logo">Matter Lab<small>Science &amp; Craft</small></div>
+    <div class="auth-logo">Matter Lab<small>Science & Craft</small></div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Accedi</button>
       <button class="auth-tab" id="auth-tab-reg" onclick="switchAuthTab('reg')">Registrati</button>
@@ -2967,6 +2968,7 @@ async function testaKT(){
       </div>
       <button class="auth-btn" onclick="doResetConferma()">Salva nuova password</button>
       <div class="auth-msg" id="nuova-pw-msg"></div>
+    </div>
     <div id="auth-panel-reg" style="display:none">
       <div class="auth-field">
         <label>Email</label>
