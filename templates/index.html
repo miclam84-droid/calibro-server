@@ -1880,6 +1880,7 @@ const App=(()=>{
     caricaHome();
     aggiornaTopbarLogin();
     mostraOnbOverlay();
+    aggiornaPills();
     // IN3 — keep-alive: ping ogni 4 minuti per evitare il cold start di Railway
     setInterval(()=>fetch('/health').catch(()=>{}), 4*60*1000);
   });
