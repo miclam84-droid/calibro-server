@@ -56,6 +56,33 @@ class _PgCursorResult:
 
 
 _pg_conn = None  # connessione persistente, riusata tra le richieste
+# ── CONNECTION POOL Postgres ─────────────────────────────
+_pg_pool = None
+
+def _get_pool():
+    global _pg_pool
+    if _pg_pool is None and DATABASE_URL:
+        from psycopg2 import pool as _pgpool
+        _pg_pool = _pgpool.ThreadedConnectionPool(1, 10, DATABASE_URL)
+    return _pg_pool
+
+def _get_conn():
+    """Prende una connessione dal pool. Usare con contesto try/finally + _release_conn."""
+    p = _get_pool()
+    if p:
+        return p.getconn()
+    return None
+
+def _release_conn(conn):
+    """Rilascia la connessione al pool."""
+    p = _get_pool()
+    if p and conn:
+        try:
+            p.putconn(conn)
+        except Exception:
+            pass
+
+
 
 
 def _connetti_postgres():
@@ -681,7 +708,7 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
         return None
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             CREATE TABLE IF NOT EXISTS log_domande (
@@ -696,7 +723,7 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
             (tipo, domanda[:500], ",".join(fenomeni) if fenomeni else None, esito)
         )
         log_id = cur.fetchone()[0]
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         return log_id
     except Exception:
         return None
@@ -708,7 +735,7 @@ def _init_account_tables():
         return
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             CREATE TABLE IF NOT EXISTS utenti (
@@ -728,7 +755,7 @@ def _init_account_tables():
                 scade       TIMESTAMPTZ DEFAULT NOW() + INTERVAL '30 days'
             )
         """)
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
     except Exception as e:
         print(f"[account tables] {e}")
 
@@ -771,13 +798,13 @@ def _utente_da_token(token):
         return None
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute(
             "SELECT user_id FROM sessioni WHERE token=%s AND scade > NOW()",
             (token,))
         row = cur.fetchone()
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         return row[0] if row else None
     except Exception:
         return None
@@ -799,7 +826,7 @@ def registra():
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2, secrets as _sec
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""CREATE TABLE IF NOT EXISTS verifica_email (
             token TEXT PRIMARY KEY, email TEXT NOT NULL,
@@ -813,7 +840,7 @@ def registra():
         user_id = cur.fetchone()[0]
         tok = _sec.token_urlsafe(32)
         cur.execute("INSERT INTO verifica_email (token,email) VALUES (%s,%s)", (tok, email))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
         link = f"{base}/app?verifica={tok}"
         lang_reg = request.json.get("lang","it") if request.json else "it"
@@ -871,14 +898,14 @@ def verifica_email_route():
         return jsonify({"errore":"token mancante"}), 400
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute(
             "SELECT email FROM verifica_email WHERE token=%s AND scade>NOW() AND usato=FALSE", (tok,)
         )
         row = cur.fetchone()
         if not row:
-            cur.close(); conn.close()
+            cur.close(); _release_conn(conn)
             return jsonify({"errore":"Link non valido o scaduto. Registrati di nuovo."}), 400
         email = row[0]
         cur.execute("UPDATE utenti SET attivo=TRUE WHERE email=%s", (email,))
@@ -887,7 +914,7 @@ def verifica_email_route():
         user_id, piano = cur.fetchone()
         token_sess = _genera_token()
         cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token_sess, user_id))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         # Invia email di benvenuto
         lang_w = request.args.get("lang","it")
         base_w = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
@@ -946,13 +973,13 @@ def login():
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("SELECT id, password_h, piano FROM utenti WHERE email=%s AND attivo=TRUE",
                     (email,))
         row = cur.fetchone()
         if not row or not _verifica_pw(password, row[1]):
-            cur.close(); conn.close()
+            cur.close(); _release_conn(conn)
             return jsonify({"errore":_err("credenziali_non_valide", body.get("lang","it"))}), 401
         user_id, stored_hash, piano = row
         # migrazione trasparente: se lo hash è ancora il vecchio SHA-256, al
@@ -965,7 +992,7 @@ def login():
                 pass
         token = _genera_token()
         cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token, user_id))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"token":token,"piano":piano})
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
@@ -982,7 +1009,7 @@ def quaderno_lista():
         return jsonify({"esperimenti":[]})
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             SELECT id, nome, disciplina, ts, ph, brix, abv, ey_perc,
@@ -991,7 +1018,7 @@ def quaderno_lista():
         """, (str(user_id),))
         cols = [d[0] for d in cur.description]
         rows = [dict(zip(cols,[str(v) if v is not None else None for v in r])) for r in cur.fetchall()]
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         return jsonify({"esperimenti":rows,"totale":len(rows)})
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
@@ -1011,7 +1038,7 @@ def quaderno_salva():
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO esperimenti
@@ -1034,7 +1061,7 @@ def quaderno_salva():
             str(user_id)
         ))
         exp_id = cur.fetchone()[0]
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"id":exp_id,"ok":True})
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
@@ -1051,7 +1078,7 @@ def prezzi_ingrediente(ingrediente):
         return jsonify({"ingrediente":ingrediente,"prezzi":[]})
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         # Cerca nel dataset proprietario (nodi Ingrediente)
         cur.execute("""
@@ -1079,7 +1106,7 @@ def prezzi_ingrediente(ingrediente):
                 "fonte": "Matter Lab / ISMEA orientativo",
                 "nota": "Prezzo orientativo di mercato. Per prezzi fornitore reali usa Cifra."
             })
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         return jsonify({"ingrediente":ingrediente,"prezzi":prezzi})
     except Exception as e:
         return jsonify({"ingrediente":ingrediente,"prezzi":[],"errore":str(e)})
@@ -1141,7 +1168,7 @@ def quaderno_calcola_costo(exp_id):
 
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
 
         # Se GET, leggi ingredienti dall'esperimento salvato
@@ -1150,7 +1177,7 @@ def quaderno_calcola_costo(exp_id):
                        (exp_id, str(user_id)))
             row = cur.fetchone()
             if not row:
-                cur.close(); conn.close()
+                cur.close(); _release_conn(conn)
                 return jsonify({"errore":"esperimento non trovato"}), 404
             ingredienti_input = json.loads(row[0] or "[]")
 
@@ -1212,7 +1239,7 @@ def quaderno_calcola_costo(exp_id):
             "fc_33pct": round(costo_totale / 0.33, 2),
         }
 
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         return jsonify({
             "exp_id": exp_id,
             "costo_totale_eur": round(costo_totale, 3),
@@ -1311,7 +1338,7 @@ def stt():
     if DATABASE_URL:
         try:
             import psycopg2
-            conn_p = psycopg2.connect(DATABASE_URL)
+            conn_p = _get_conn()
             cur_p = conn_p.cursor()
             cur_p.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
             row_p = cur_p.fetchone()
@@ -1347,7 +1374,7 @@ def vision():
     if DATABASE_URL:
         try:
             import psycopg2
-            conn_v = psycopg2.connect(DATABASE_URL)
+            conn_v = _get_conn()
             cur_v = conn_v.cursor()
             cur_v.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
             row_v = cur_v.fetchone()
@@ -1388,7 +1415,7 @@ def ricetta_per_cifra(exp_id):
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             SELECT id, nome, disciplina, ingredienti, fenomeni,
@@ -1397,7 +1424,7 @@ def ricetta_per_cifra(exp_id):
             FROM esperimenti WHERE id=%s AND user_id=%s
         """, (exp_id, str(user_id)))
         row = cur.fetchone()
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         if not row:
             return jsonify({"errore":"esperimento non trovato"}), 404
         cols = [d[0] for d in cur.description] if False else [
@@ -1446,11 +1473,11 @@ def _auth_cifra():
             return None
         try:
             import psycopg2
-            conn = psycopg2.connect(DATABASE_URL)
+            conn = _get_conn()
             cur = conn.cursor()
             cur.execute("SELECT id FROM utenti WHERE lower(email)=%s AND attivo=TRUE", (email,))
             row = cur.fetchone()
-            cur.close(); conn.close()
+            cur.close(); _release_conn(conn)
             return str(row[0]) if row else None
         except Exception:
             return None
@@ -1471,14 +1498,14 @@ def ricette_per_cifra():
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             SELECT id, nome, disciplina, ts
             FROM esperimenti WHERE user_id=%s ORDER BY ts DESC
         """, (str(user_id),))
         rows = cur.fetchall()
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         return jsonify([{
             "id": r[0],
             "nome": r[1],
@@ -1611,7 +1638,7 @@ def ricetta_sicurezza(exp_id):
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             SELECT id, nome, disciplina, ph, brix, abv,
@@ -1619,7 +1646,7 @@ def ricetta_sicurezza(exp_id):
             FROM esperimenti WHERE id=%s AND user_id=%s
         """, (exp_id, str(user_id)))
         row = cur.fetchone()
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         if not row:
             return jsonify({"errore":"esperimento non trovato"}), 404
 
@@ -1644,10 +1671,10 @@ def logout():
         return jsonify({"ok":True})
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("DELETE FROM sessioni WHERE token=%s", (token,))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
     except Exception:
         pass
     return jsonify({"ok":True})
@@ -1668,7 +1695,7 @@ def reset_richiesta():
         return jsonify({"ok":True,"messaggio":"Se l'email è registrata riceverai un link."})
     try:
         import psycopg2, secrets as _sec
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""CREATE TABLE IF NOT EXISTS reset_token (
             token TEXT PRIMARY KEY,
@@ -1691,7 +1718,7 @@ def reset_richiesta():
                            f"<p>Il link scade tra 1 ora.</p>"),
                 body_text=f"Reset password Matter:\n{link}\n\nIl link scade tra 1 ora."
             )
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
     except Exception:
         pass
     return jsonify({"ok":True,"messaggio":"Se l'email è registrata riceverai un link."})
@@ -1711,18 +1738,18 @@ def reset_conferma():
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("SELECT email FROM reset_token WHERE token=%s AND scade>NOW() AND usato=FALSE", (tok,))
         row = cur.fetchone()
         if not row:
-            cur.close(); conn.close()
+            cur.close(); _release_conn(conn)
             return jsonify({"errore":"Link non valido o scaduto. Richiedine uno nuovo."}), 400
         email = row[0]
         cur.execute("UPDATE utenti SET password_h=%s WHERE email=%s", (_hash_pw(nuova_pw), email))
         cur.execute("UPDATE reset_token SET usato=TRUE WHERE token=%s", (tok,))
         cur.execute("DELETE FROM sessioni WHERE user_id=(SELECT id FROM utenti WHERE email=%s)", (email,))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"ok":True,"messaggio":"Password aggiornata. Puoi fare login con la nuova password."})
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
@@ -1746,18 +1773,18 @@ def cancella_account():
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2, secrets as _sec
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("SELECT password_h FROM utenti WHERE id=%s AND attivo=TRUE", (user_id,))
         row = cur.fetchone()
         if not row or not _verifica_pw(password, row[0]):
-            cur.close(); conn.close()
+            cur.close(); _release_conn(conn)
             return jsonify({"errore":"password non corretta"}), 401
         anon = f"deleted_{_sec.token_hex(8)}@matter.deleted"
         cur.execute("UPDATE utenti SET email=%s, password_h='DELETED', attivo=FALSE WHERE id=%s",
                     (anon, user_id))
         cur.execute("DELETE FROM sessioni WHERE user_id=%s", (user_id,))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"ok":True,"messaggio":"Account cancellato. I tuoi dati sono stati rimossi."})
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
@@ -2022,7 +2049,7 @@ def abbina(ingrediente):
                         "nota":"flavor network non disponibile"})
     try:
         import psycopg2, json as _j
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         rows = []
 
@@ -2051,7 +2078,7 @@ def abbina(ingrediente):
                         "perche":a.get("perche","contrasto fisico-percettivo")})
                 # Integra con AI se abbinamenti sono meno di 4
                 if _pre_abbs and len(_pre_abbs) >= 4:
-                    cur.close(); conn.close()
+                    cur.close(); _release_conn(conn)
                     return jsonify({"ingrediente":ingrediente,"abbinamenti":_pre_abbs,
                         "fonte":"dataset Matter Lab",
                         "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
@@ -2070,7 +2097,7 @@ def abbina(ingrediente):
                             _dp = _j.loads(_mp.group())
                             _ap = _dp.get("abbinamenti",[])
                             if _ap:
-                                cur.close(); conn.close()
+                                cur.close(); _release_conn(conn)
                                 return jsonify({"ingrediente":ingrediente,
                                     "abbinamenti":[{"ingrediente":a.get("ingrediente_it","?"),
                                         "composto":"abbinamento aromatico",
@@ -2190,7 +2217,7 @@ def abbina(ingrediente):
                             "perche": a.get("perche","contrasto fisico-percettivo")
                         })
                     if result_props:
-                        cur.close(); conn.close()
+                        cur.close(); _release_conn(conn)
                         return jsonify({"ingrediente":ingrediente,"abbinamenti":result_props,
                             "fonte":"dataset Matter Lab",
                             "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
@@ -2219,7 +2246,7 @@ def abbina(ingrediente):
                                         "perche":a.get("meccanismo","affinità aromatica")}
                                         for a in _ai_abbs[:5]]
                                     if result_props:
-                                        cur.close(); conn.close()
+                                        cur.close(); _release_conn(conn)
                                         return jsonify({"ingrediente":ingrediente,
                                             "abbinamenti":result_props,
                                             "fonte":"Matter Lab AI",
@@ -2245,7 +2272,7 @@ def abbina(ingrediente):
                         _ai_data5 = json.loads(_m5.group())
                         _abbs5 = _ai_data5.get("abbinamenti",[])
                         if _abbs5:
-                            cur.close(); conn.close()
+                            cur.close(); _release_conn(conn)
                             return jsonify({"ingrediente":ingrediente,
                                 "abbinamenti":[{"ingrediente":a.get("ingrediente_it","?"),
                                     "composto":"abbinamento aromatico",
@@ -2282,7 +2309,7 @@ def abbina(ingrediente):
                             break
             except Exception as _ee:
                 print(f"[EMBED FALLBACK] {_ee}", flush=True)
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         NOMI_IT = {
             "roasted beef":"manzo arrosto","beef":"manzo","chicken":"pollo",
             "pork":"maiale","lamb":"agnello","turkey":"tacchino",
@@ -2363,7 +2390,7 @@ def _personalizza_abbinamenti(abbinamenti, profilo_utente):
         return abbinamenti
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         scored = []
         for abb in abbinamenti:
@@ -2385,7 +2412,7 @@ def _personalizza_abbinamenti(abbinamenti, profilo_utente):
                 )
                 score = abb.get("overlap", 0) * 0.5 + dot * 0.5
             scored.append((score, abb))
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         scored.sort(key=lambda x: x[0], reverse=True)
         return [x[1] for x in scored]
     except Exception:
@@ -2405,7 +2432,7 @@ def get_profilo_sensoriale():
         return jsonify({"profilo": _profilo_default()})
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         # Aggiungi colonna se non esiste
         cur.execute("""
@@ -2414,7 +2441,7 @@ def get_profilo_sensoriale():
         """)
         cur.execute("SELECT profilo_sensoriale FROM utenti WHERE id=%s", (user_id,))
         row = cur.fetchone()
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         profilo = row[0] if row and row[0] else _profilo_default()
         return jsonify({"profilo": profilo, "interazioni": profilo.get("_n", 0)})
     except Exception as e:
@@ -2442,7 +2469,7 @@ def feedback_abbinamento():
         return jsonify({"ok": True})
     try:
         import psycopg2, psycopg2.extras
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         # Leggi profilo attuale
         cur.execute("SELECT profilo_sensoriale FROM utenti WHERE id=%s", (user_id,))
@@ -2471,7 +2498,7 @@ def feedback_abbinamento():
             INSERT INTO feedback_abbinamenti (user_id, ingrediente, abbinamento, voto, disciplina)
             VALUES (%s,%s,%s,%s,%s)
         """, (str(user_id), ingrediente, abbinamento, voto, disciplina))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"ok": True, "profilo": profilo, "interazioni": profilo.get("_n", 0)})
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
@@ -2496,7 +2523,7 @@ def _aggiorna_profilo(profilo, ingrediente, abbinamento, voto, disciplina):
     if not DATABASE_URL:
         return profilo
     try:
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             SELECT data FROM nodes
@@ -2505,7 +2532,7 @@ def _aggiorna_profilo(profilo, ingrediente, abbinamento, voto, disciplina):
             LIMIT 1
         """, (f"%{abbinamento}%", f"%ing-{abbinamento.lower().replace(' ','-')}%"))
         row = cur.fetchone()
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         if not row:
             return profilo
         d = row[0] if isinstance(row[0], dict) else {}
@@ -2544,7 +2571,7 @@ def contrasto(ingrediente):
                         "nota": "database non disponibile"})
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         # trova il nodo dell'ingrediente cercato — preferisce nodi con dati contrasto
         # Cerca in Prodotto E Ingrediente
@@ -2558,7 +2585,7 @@ def contrasto(ingrediente):
         """, (f"%{ingrediente}%", f"%ing-{ingrediente.lower().replace(' ','-')}%"))
         row = cur.fetchone()
         if not row:
-            cur.close(); conn.close()
+            cur.close(); _release_conn(conn)
             return jsonify({"ingrediente": ingrediente, "contrasti": [],
                             "nota": "Ingrediente non trovato nel grafo con dati di contrasto."})
 
@@ -2595,7 +2622,7 @@ def contrasto(ingrediente):
                            "Il salato si amplifica con l'acido: together esaltano entrambi i sapori"))
 
         if not regole:
-            cur.close(); conn.close()
+            cur.close(); _release_conn(conn)
             return jsonify({
                 "ingrediente": node_name, "contrasti": [],
                 "nota": "Profilo neutro — questo ingrediente non ha un contrasto dominante evidente.",
@@ -2696,7 +2723,7 @@ def contrasto(ingrediente):
                         "perche": perche
                     })
 
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         return jsonify({
             "ingrediente": node_name,
             "contrasti": contrasti[:6],
@@ -2778,7 +2805,7 @@ def chiedi():
     if DATABASE_URL:
         try:
             import psycopg2, datetime as _dt
-            conn_t = psycopg2.connect(DATABASE_URL)
+            conn_t = _get_conn()
             cur_t = conn_t.cursor()
             cur_t.execute("""CREATE TABLE IF NOT EXISTS trial_chat (
                 id SERIAL PRIMARY KEY, ip TEXT, user_id INTEGER,
@@ -3037,7 +3064,7 @@ def lezione(disciplina_nome, step):
     if step > 0 and DATABASE_URL:
         try:
             import psycopg2
-            _conn_l = psycopg2.connect(DATABASE_URL)
+            _conn_l = _get_conn()
             _cur_l = _conn_l.cursor()
             uid = _utente_da_token(token)
             piano = "free"
@@ -3194,7 +3221,7 @@ def quiz_nodo(node_id):
         return jsonify({"quiz": None})
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         # crea la tabella se non esiste (sopravvive al migrate)
         cur.execute("""CREATE TABLE IF NOT EXISTS quiz_cache (
@@ -3211,7 +3238,7 @@ def quiz_nodo(node_id):
             cur.execute("SELECT id, name, data FROM nodes WHERE id=%s", (node_id,))
             nrow = cur.fetchone()
             if not nrow:
-                cur.close(); conn.close()
+                cur.close(); _release_conn(conn)
                 return jsonify({"quiz": None})
             nd = _dati(nrow[2])
             base = _genera_quiz(nrow[1], _numero_bersaglio(nd),
@@ -3220,7 +3247,7 @@ def quiz_nodo(node_id):
                 cur.execute("""INSERT INTO quiz_cache (node_id, lang, quiz_json)
                               VALUES (%s,%s,%s) ON CONFLICT (node_id, lang) DO NOTHING""",
                             (node_id, lang, json.dumps(base)))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
     except Exception as _eq:
         import traceback as _tb
         print(f"QUIZ ERROR {node_id}: {_eq}\n{_tb.format_exc()[:500]}", flush=True)
@@ -3391,10 +3418,10 @@ def stripe_webhook():
             user_id = obj.get("metadata",{}).get("user_id")
             if user_id and DATABASE_URL:
                 import psycopg2
-                conn = psycopg2.connect(DATABASE_URL)
+                conn = _get_conn()
                 cur = conn.cursor()
                 cur.execute("UPDATE utenti SET piano='pro' WHERE id=%s", (user_id,))
-                conn.commit(); cur.close(); conn.close()
+                conn.commit(); cur.close(); _release_conn(conn)
     except Exception:
         pass
     return jsonify({"ok":True})
@@ -3410,13 +3437,13 @@ def admin_migrate_modello():
         return jsonify({"errore":"no db"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             ALTER TABLE log_domande
             ADD COLUMN IF NOT EXISTS modello TEXT
         """)
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
@@ -3433,7 +3460,7 @@ def admin_init():
     if DATABASE_URL:
         try:
             import psycopg2
-            conn = psycopg2.connect(DATABASE_URL)
+            conn = _get_conn()
             cur = conn.cursor()
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS esperimenti (
@@ -3449,7 +3476,7 @@ def admin_init():
                 )
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_esp_user ON esperimenti(user_id, ts DESC)")
-            conn.commit(); cur.close(); conn.close()
+            conn.commit(); cur.close(); _release_conn(conn)
         except Exception as e:
             return jsonify({"errore":str(e)}), 500
     return jsonify({"ok":True,"messaggio":"Tabelle create: utenti, sessioni, esperimenti"})
@@ -3465,7 +3492,7 @@ def translate_graph():
     if not DATABASE_URL:
         click.echo("DATABASE_URL non impostato"); return
     import psycopg2, time as _t
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = _get_conn()
     cur = conn.cursor()
     cur.execute("SELECT id, name, data FROM nodes ORDER BY id")
     nodi = cur.fetchall()
@@ -3495,7 +3522,7 @@ def translate_graph():
             conn.commit()
             click.echo("  " + str(tradotti) + " tradotti...")
         _t.sleep(0.3)
-    conn.commit(); cur.close(); conn.close()
+    conn.commit(); cur.close(); _release_conn(conn)
     click.echo("FATTO: " + str(tradotti) + " tradotti - " + str(saltati) + " saltati - " + str(errori) + " errori")
 
 @app.cli.command("init-db")
@@ -3507,7 +3534,7 @@ def init_db():
     if DATABASE_URL:
         try:
             import psycopg2
-            conn = psycopg2.connect(DATABASE_URL)
+            conn = _get_conn()
             cur = conn.cursor()
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS esperimenti (
@@ -3534,7 +3561,7 @@ def init_db():
                     UNIQUE(ingrediente_1, ingrediente_2)
                 )
             """)
-            conn.commit(); cur.close(); conn.close()
+            conn.commit(); cur.close(); _release_conn(conn)
             click.echo("OK: tabelle create (utenti, sessioni, esperimenti, flavor_abbinamenti)")
         except Exception as e:
             click.echo(f"ERRORE: {e}")
@@ -3676,7 +3703,7 @@ def import_usda():
     }
 
     import psycopg2
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = _get_conn()
     conn.autocommit = False
     cur = conn.cursor()
 
@@ -3782,7 +3809,7 @@ def import_usda():
 
     conn.commit()
     cur.close()
-    conn.close()
+    _release_conn(conn)
     click.echo(f"\nFATTO: {tradotti} importati · {saltati} saltati · {errori} errori")
 
 
@@ -3826,7 +3853,7 @@ def import_pubchem():
     }
 
     import psycopg2
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = _get_conn()
     conn.autocommit = True
     cur = conn.cursor()
 
@@ -3889,7 +3916,7 @@ def import_pubchem():
             click.echo(f"  ERRORE {nome}: {ex}")
             errori += 1
 
-    cur.close(); conn.close()
+    cur.close(); _release_conn(conn)
     click.echo(f"\nFATTO: {importati} composti importati · {errori} errori")
     click.echo("Fonte: PubChem NIH — pubblico dominio, nessuna restrizione commerciale.")
 
@@ -3943,7 +3970,7 @@ def import_contrasto():
         "prod_lievito_madre":  {"grassi_pct":0.7,"zuccheri_pct":3.2,"sodio_mg100g":10,"amaro_index":3,"profilo_contrasto":"acido-vivo"},
     }
     import psycopg2, json as _j
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = _get_conn()
     cur = conn.cursor()
     aggiornati = 0; saltati = 0
     for node_id, extra in DATI.items():
@@ -3955,7 +3982,7 @@ def import_contrasto():
         d.update(extra)
         cur.execute("UPDATE nodes SET data=%s::jsonb WHERE id=%s", (_j.dumps(d), node_id))
         aggiornati += 1
-    conn.commit(); cur.close(); conn.close()
+    conn.commit(); cur.close(); _release_conn(conn)
     click.echo(f"  Contrasto: {aggiornati} aggiornati · {saltati} saltati")
 
 
@@ -3967,7 +3994,7 @@ def import_settore():
     if not DATABASE_URL:
         click.echo("  Settore: DATABASE_URL non impostata — skip."); return
     import psycopg2, json as _j
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = _get_conn()
     cur = conn.cursor()
     # aggiorna solo i nodi che non hanno ancora il campo settore
     cur.execute("SELECT id, data FROM nodes WHERE data->>'settore' IS NULL")
@@ -3978,7 +4005,7 @@ def import_settore():
         d['settore'] = 'f&b'
         cur.execute("UPDATE nodes SET data=%s::jsonb WHERE id=%s", (_j.dumps(d), node_id))
         aggiornati += 1
-    conn.commit(); cur.close(); conn.close()
+    conn.commit(); cur.close(); _release_conn(conn)
     click.echo(f"  Settore: {aggiornati} nodi aggiornati con settore=f&b")
 
 
@@ -4026,7 +4053,7 @@ def feedback():
         return jsonify({"ok": True})
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         # aggiunge colonna feedback se non esiste
         cur.execute("""
@@ -4038,7 +4065,7 @@ def feedback():
             "UPDATE log_domande SET feedback=%s, feedback_nota=%s WHERE id=%s",
             (voto, nota[:200], log_id)
         )
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
@@ -4127,14 +4154,14 @@ def admin_build_cron():
         import build_ingredient_graph as BIG
         importlib.reload(BIG)
 
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         try:
             cur.execute("SELECT node_id FROM ingredient_build_log")
             gia_fatti = {r[0] for r in cur.fetchall()}
         except Exception:
             gia_fatti = set()
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
 
         # Trova il prossimo
         prossimo = None
@@ -4151,7 +4178,7 @@ def admin_build_cron():
 
         d, ing = prossimo
         profilo, usage = BIG.gpt_ingrediente(ing, d)
-        conn_ing = psycopg2.connect(DATABASE_URL)
+        conn_ing = _get_conn()
         try:
             BIG.salva_in_grafo(conn_ing, ing, d, profilo)
             conn_ing.close()
@@ -4200,14 +4227,14 @@ def admin_build_continuo():
         while True:
             # Prendi il prossimo ingrediente non ancora fatto
             try:
-                conn = psycopg2.connect(DATABASE_URL)
+                conn = _get_conn()
                 cur = conn.cursor()
                 try:
                     cur.execute("SELECT node_id FROM ingredient_build_log")
                     gia_fatti = {r[0] for r in cur.fetchall()}
                 except Exception:
                     gia_fatti = set()
-                cur.close(); conn.close()
+                cur.close(); _release_conn(conn)
             except Exception as e:
                 print(f"[BUILD_C] DB error: {e}", flush=True)
                 _time.sleep(5)
@@ -4230,7 +4257,7 @@ def admin_build_continuo():
             d, ing = prossimo
             try:
                 profilo, usage = BIG.gpt_ingrediente(ing, d)
-                conn_ing = psycopg2.connect(DATABASE_URL)
+                conn_ing = _get_conn()
                 try:
                     BIG.salva_in_grafo(conn_ing, ing, d, profilo)
                     conn_ing.close()
@@ -4269,14 +4296,14 @@ def admin_build_batch():
         importlib.reload(BIG)  # forza rilettura file aggiornato
         import psycopg2
         # Prendi gli ingredienti non ancora generati
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         try:
             cur.execute("SELECT node_id FROM ingredient_build_log")
             gia_fatti = {r[0] for r in cur.fetchall()}
         except Exception:
             gia_fatti = set()
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
 
         DISC = discipline or list(BIG.INGREDIENTI.keys())
         da_fare = [(d, ing) for d in DISC
@@ -4296,7 +4323,7 @@ def admin_build_batch():
             try:
                 profilo, usage = BIG.gpt_ingrediente(ing, disc)
                 tok = usage.get("total_tokens", 0)
-                conn_ing = psycopg2.connect(DATABASE_URL)
+                conn_ing = _get_conn()
                 try:
                     BIG.salva_in_grafo(conn_ing, ing, disc, profilo)
                     conn_ing.close()
@@ -4371,7 +4398,7 @@ def admin_build_status():
         return jsonify({"errore":"no db"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             SELECT disciplina, COUNT(*) as n
@@ -4383,7 +4410,7 @@ def admin_build_status():
         totale = cur.fetchone()[0]
         cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Ingrediente'")
         nodi = cur.fetchone()[0]
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         return jsonify({
             "totale_generati": totale,
             "nodi_ingrediente": nodi,
@@ -4595,7 +4622,7 @@ def admin_seed_sicurezza():
     if not DATABASE_URL:
         return jsonify({"errore":"no db"}), 503
     import psycopg2, glob, os as _os
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = _get_conn()
     cur = conn.cursor()
     seed_files = [
         "grafo/seed-fenomeno-aw.sql",
@@ -4628,7 +4655,7 @@ def admin_seed_sicurezza():
                     errori.append(f"{f}: {err_msg}")
         except Exception as e:
             errori.append(f"{f}: {str(e)[:60]}")
-    conn.commit(); cur.close(); conn.close()
+    conn.commit(); cur.close(); _release_conn(conn)
     return jsonify({"ok": ok, "errori": errori})
 
 
@@ -5049,7 +5076,7 @@ def admin_stats():
         return jsonify({"errore":"database non disponibile"}), 503
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         conn.autocommit = True  # ogni query è isolata, nessuna transazione che blocca
         cur = conn.cursor()
         stats = {}
@@ -5089,7 +5116,7 @@ def admin_stats():
         except Exception:
             stats["top_fenomeni_7d"] = []
 
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
         return jsonify(stats)
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
@@ -5147,12 +5174,12 @@ def supporto():
     if DATABASE_URL:
         try:
             import psycopg2
-            conn = psycopg2.connect(DATABASE_URL)
+            conn = _get_conn()
             cur = conn.cursor()
             cur.execute(
                 "INSERT INTO log_domande (tipo, domanda, esito, user_id) VALUES (%s,%s,%s,%s)",
                 ("supporto", testo[:1000], "ricevuto", str(user_id) if user_id else None))
-            conn.commit(); cur.close(); conn.close()
+            conn.commit(); cur.close(); _release_conn(conn)
         except Exception:
             pass
 
@@ -5199,7 +5226,7 @@ def admin_assistenza():
     s = request.args.get("s","")
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("""
             SELECT l.user_id, l.domanda, l.ts,
@@ -5221,7 +5248,7 @@ def admin_assistenza():
             ORDER BY l.ts DESC LIMIT 50
         """)
         chat = cur.fetchall()
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
     except Exception as e:
         return f"<p>Errore: {e}</p>", 503
 
@@ -5306,7 +5333,7 @@ def admin_assistenza_utente(user_id):
     s = request.args.get("s","")
     try:
         import psycopg2
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = _get_conn()
         cur = conn.cursor()
         cur.execute("SELECT email, piano FROM utenti WHERE id=%s", (user_id,))
         u = cur.fetchone(); email = u[0] if u else "—"; piano = u[1] if u else "free"
@@ -5316,7 +5343,7 @@ def admin_assistenza_utente(user_id):
         n_ok = cur.fetchone()[0]
         cur.execute("SELECT fenomeni_trovati FROM log_domande WHERE user_id=%s AND fenomeni_trovati IS NOT NULL ORDER BY ts DESC LIMIT 1", (user_id,))
         r = cur.fetchone(); ultima_disc = r[0] if r else "—"
-        cur.close(); conn.close()
+        cur.close(); _release_conn(conn)
     except Exception as e:
         return f"<p>Errore: {e}</p>", 503
 
