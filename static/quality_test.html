@@ -193,7 +193,7 @@ async function testCalc(calc, params, attesa) {
   try {
     const body = {calcolo: calc, parametri: params};
     // Prova endpoint principale
-    const r = await fetch(`${base}/v1/calcola`, {
+    const r = await fetch(`${base}/calcola`, {
       method:'POST', headers:{'Content-Type':'application/json', 'X-Token': token},
       body: JSON.stringify(body)
     });
