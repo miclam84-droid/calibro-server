@@ -3055,6 +3055,8 @@ def disciplina(nome):
     return jsonify({"disciplina": nome, "fenomeni": fenomeni, "totale": len(fenomeni)})
 
 
+_lezione_cache = {}  # cache fenomeni per disciplina {nome: [fenomeni]}
+
 @app.route("/lezione/<disciplina_nome>/<int:step>")
 def lezione(disciplina_nome, step):
     """FE3 — Nodo del passo corrente + scheda + quiz.
@@ -3072,15 +3074,17 @@ def lezione(disciplina_nome, step):
                 _cur_l.execute("SELECT piano FROM utenti WHERE id=%s", (uid,))
                 r = _cur_l.fetchone()
                 piano = r[0] if r else "free"
-            _cur_l.close(); _conn_l.close()
+            _cur_l.close(); _release_conn(_conn_l)
             if piano != "pro":
                 return jsonify({"errore":"pro_required","paywall":True,
                     "messaggio":_err("pro_required", lang)}), 402
         except Exception:
             pass
     db = carica_grafo()
-    resp = disciplina(disciplina_nome).get_json()
-    fenomeni = resp.get("fenomeni", [])
+    if disciplina_nome not in _lezione_cache:
+        resp = disciplina(disciplina_nome).get_json()
+        _lezione_cache[disciplina_nome] = resp.get("fenomeni", [])
+    fenomeni = _lezione_cache[disciplina_nome]
     if not fenomeni:
         return jsonify({"errore": "disciplina non trovata o vuota"})
     idx = max(0, min(step, len(fenomeni) - 1))
@@ -3097,7 +3101,7 @@ def lezione(disciplina_nome, step):
             _conn_trad = None
         scheda = _scheda_tradotta(nodo["id"], nd, lang, _conn_trad)
         if _conn_trad:
-            try: _conn_trad.close()
+            try: _release_conn(_conn_trad)
             except: pass
     else:
         scheda = _scheda_lang(nd, lang)
