@@ -1940,6 +1940,8 @@ def composti_ingrediente(ingrediente):
             "count": len(composti)
         })
     except Exception as e:
+        try: _release_conn(conn)
+        except: pass
         return jsonify({"errore": str(e), "composti": []}), 500
 
 
@@ -3288,6 +3290,7 @@ def mappa(disciplina_nome):
 
 
 
+@app.route("/prezzi_mercato/<ingrediente>")
 @app.route("/prezzi_mercato/<ingrediente>")
 @app.route("/prezzi_mercato/<ingrediente>/<area>")
 def prezzi_mercato(ingrediente, area="it"):
