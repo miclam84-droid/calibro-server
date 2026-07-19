@@ -935,6 +935,26 @@ if('serviceWorker' in navigator){
       <span class="ia-nodo">Carbonatazione</span>
     </div>
   </div>
+
+  <!-- ── STRUMENTI DI MISURA ──────────────────────────── -->
+  <div class="sec-label" style="padding-top:4px">Strumenti di misura</div>
+  <div id="strumenti-card" style="margin:0 14px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px">Gli strumenti per misurare i numeri bersaglio</div>
+    <div id="strumenti-list" style="display:flex;flex-direction:column;gap:8px">
+      <div style="color:var(--ink-muted);font-size:13px">Scegli una disciplina per vedere gli strumenti.</div>
+    </div>
+  </div>
+
+  <!-- ── SOMMELIER DIGITALE ───────────────────────────── -->
+  <div class="sec-label" style="padding-top:4px">Sommelier digitale</div>
+  <div id="sommelier-card" style="margin:0 14px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px">Impara i tuoi abbinamenti preferiti</div>
+    <div style="font-size:13px;color:var(--ink-muted);line-height:1.5;margin-bottom:10px">Usa 👍 e 👎 sugli abbinamenti del Flavor Network. Il sistema impara e riordina i risultati in base ai tuoi gusti.</div>
+    <div id="sommelier-stats" style="font-family:var(--mono);font-size:11px;color:var(--ink-muted)"></div>
+    <button onclick="caricaProfiloSensoriale()" style="margin-top:8px;background:var(--teal);color:#fff;border:none;font-family:var(--sans);font-weight:600;font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer">Vedi il tuo profilo sensoriale</button>
+    <div id="profilo-sensoriale" style="display:none;margin-top:12px"></div>
+  </div>
+
   <div class="sec-label" id="ct-ponte-cifra" style="padding-top:4px">Il ponte verso Cifra</div>
   <div class="bridge-card">
     <div class="bridge-eyebrow">il ponte verso Cifra</div>
@@ -1240,7 +1260,7 @@ function switchTab(t){
   if(t==='scopri') caricaHome();
   if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa'){
-    if(Matter.disciplina) caricaMappa(Matter.disciplina);
+    if(Matter.disciplina) { caricaMappa(Matter.disciplina); caricaStrumenti(Matter.disciplina); }
     else document.getElementById('mappa-label').textContent = _t('mappa_scegli');
   }
   if(t==='quaderno') caricaQuaderno();
@@ -2714,6 +2734,58 @@ async function caricaComposti(ingrediente) {
   }
 }
 
+
+/* ── STRUMENTI DI MISURA ────────────────────────────────── */
+async function caricaStrumenti(disciplina) {
+  const list = document.getElementById('strumenti-list');
+  if(!list || !disciplina) return;
+  try {
+    const disc_norm = disciplina.toLowerCase().replace('caffetteria','caffe').replace('panificazione','panificazione');
+    const r = await fetch('/v1/strumenti/' + encodeURIComponent(disc_norm));
+    const j = await r.json();
+    const items = j.strumenti || [];
+    if(!items.length) { list.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Nessuno strumento per questa disciplina.</div>'; return; }
+    list.innerHTML = items.map(s => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">${esc(s.nome)}</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--ink-muted);margin-top:2px">${esc(s.misura)} · ${esc(s.target)} · ${esc(s.prezzo_approx||'')}</div>
+        </div>
+        <a href="${esc(s.amazon)}" target="_blank" rel="noopener" style="background:var(--e500);color:#fff;font-family:var(--mono);font-size:10px;font-weight:600;padding:6px 10px;border-radius:6px;text-decoration:none;white-space:nowrap;flex-shrink:0;margin-left:10px">Vedi →</a>
+      </div>`).join('');
+  } catch(e) {
+    list.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Errore caricamento strumenti.</div>';
+  }
+}
+
+/* ── SOMMELIER DIGITALE ─────────────────────────────────── */
+async function caricaProfiloSensoriale() {
+  const div = document.getElementById('profilo-sensoriale');
+  if(!div) return;
+  div.style.display = 'block';
+  div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Caricamento...</div>';
+  try {
+    const token = localStorage.getItem('matter_token') || '';
+    if(!token) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Accedi per vedere il tuo profilo sensoriale.</div>'; return; }
+    const r = await fetch('/v1/profilo-sensoriale', {headers:{'X-Token':token}});
+    const j = await r.json();
+    if(j.errore) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Fai almeno 5 valutazioni per vedere il profilo.</div>'; return; }
+    const dim = j.dimensioni || {};
+    const html = Object.entries(dim).map(([k,v]) => `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-muted);width:80px;text-transform:uppercase">${k}</div>
+        <div style="flex:1;background:var(--border);border-radius:4px;height:6px">
+          <div style="background:var(--teal);width:${Math.round((v/10)*100)}%;height:6px;border-radius:4px"></div>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--teal);width:24px;text-align:right">${v.toFixed(1)}</div>
+      </div>`).join('');
+    div.innerHTML = html || '<div style="color:var(--ink-muted);font-size:13px">Nessun dato ancora.</div>';
+  } catch(e) {
+    div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Errore caricamento profilo.</div>';
+  }
+}
+
+/* ── FINE STRUMENTI E SOMMELIER ─────────────────────────── */
 /* ── DRINK COST (bar) e FOOD COST (bakery) ────────────── */
 async function _calcolaCosto(ingredienti, cardId, rowsId, totalId){
   const card = document.getElementById(cardId);
