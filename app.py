@@ -1884,8 +1884,8 @@ def composti_ingrediente(ingrediente):
     ahn_name = ALIAS_IT.get(ing_lower) or ALIAS_IT.get(ing_norm.replace("_"," ")) or ing_norm
 
     try:
-        db = carica_grafo()
-        conn = db["conn"]
+        conn = _get_conn()
+        conn.autocommit = True
         cur = conn.cursor()
 
         # Cerca composti PubChem collegati a questo ingrediente
@@ -3004,6 +3004,7 @@ def home_api():
 
 
 @app.route("/disciplina/<nome>")
+@app.route("/v1/disciplina/<nome>")
 def disciplina(nome):
     """FE2 — Fenomeni reali di una disciplina, ordinati per percorso didattico.
     Sblocca Lezione e Mappa dinamiche."""
@@ -3290,7 +3291,6 @@ def mappa(disciplina_nome):
 
 
 
-@app.route("/prezzi_mercato/<ingrediente>")
 @app.route("/prezzi_mercato/<ingrediente>")
 @app.route("/prezzi_mercato/<ingrediente>/<area>")
 def prezzi_mercato(ingrediente, area="it"):
