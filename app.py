@@ -3403,7 +3403,7 @@ def stripe_checkout():
         )
         with urllib.request.urlopen(req, timeout=15) as r:
             data = json.loads(r.read())
-        return jsonify({"checkout_url": data.get("url"), "session_id": data.get("id")})
+        return jsonify({"url": data.get("url"), "checkout_url": data.get("url"), "session_id": data.get("id")})
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
 
