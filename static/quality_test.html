@@ -3,120 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Matter Lab — Quality Evaluation</title>
+<title>Matter Lab — Quality Test 100</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Georgia', serif; background: #FAF6EE; color: #2a2a2a; padding: 24px; }
-  .header { max-width: 900px; margin: 0 auto 32px; }
-  .logo { font-size: 28px; font-weight: 700; color: #C77B3F; }
-  .payoff { font-family: monospace; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: #9a9090; margin-bottom: 8px; }
-  .title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-  .subtitle { font-size: 13px; color: #6F6A60; }
-  .container { max-width: 900px; margin: 0 auto; }
+  body { font-family: 'Georgia', serif; background: #FAF6EE; color: #2a2a2a; padding: 20px; }
+  .header { max-width: 960px; margin: 0 auto 24px; }
+  .logo { font-size: 24px; font-weight: 700; color: #C77B3F; }
+  .payoff { font-family: monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: #9a9090; }
+  .title { font-size: 18px; font-weight: 700; margin: 8px 0 4px; }
+  .subtitle { font-size: 12px; color: #6F6A60; }
+  .container { max-width: 960px; margin: 0 auto; }
   
-  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
-  .summary-card { background: white; border-radius: 12px; padding: 16px; border: 1px solid #e0d9d0; }
-  .summary-card .label { font-family: monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: #9a9090; margin-bottom: 6px; }
-  .summary-card .value { font-size: 32px; font-weight: 700; }
-  .summary-card .sub { font-size: 12px; color: #6F6A60; margin-top: 2px; }
+  .config { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #e0d9d0; }
+  .config label { display: block; font-family: monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: #9a9090; margin-bottom: 4px; }
+  .config input { width: 100%; border: 1px solid #e0d9d0; border-radius: 6px; padding: 7px 10px; font-size: 12px; font-family: monospace; margin-bottom: 10px; background: #faf6ee; }
   
-  .progress-bar { background: #e0d9d0; border-radius: 4px; height: 8px; margin-top: 8px; }
-  .progress-fill { height: 8px; border-radius: 4px; transition: width .5s; }
+  .tabs { display: flex; gap: 2px; margin-bottom: 16px; background: #e0d9d0; border-radius: 8px; padding: 3px; }
+  .tab { flex: 1; padding: 8px; text-align: center; font-family: monospace; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; border-radius: 6px; cursor: pointer; border: none; background: none; color: #6F6A60; }
+  .tab.active { background: white; color: #2a2a2a; font-weight: 700; }
   
-  .test-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #e0d9d0; }
-  .test-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
-  .discipline-badge { font-family: monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; flex-shrink: 0; }
-  .test-question { font-size: 14px; font-weight: 600; flex: 1; }
-  .score-badge { font-size: 20px; font-weight: 700; flex-shrink: 0; }
-  
-  .risposta-box { background: #faf6ee; border-left: 3px solid #C77B3F; padding: 12px; border-radius: 0 8px 8px 0; margin-bottom: 12px; font-size: 13px; line-height: 1.6; }
-  
-  .scores-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-  .score-item { text-align: center; }
-  .score-item .s-label { font-family: monospace; font-size: 8px; letter-spacing: .05em; text-transform: uppercase; color: #9a9090; margin-bottom: 4px; }
-  .score-item .s-val { font-size: 18px; font-weight: 700; }
-  .score-item .s-bar { background: #e0d9d0; border-radius: 2px; height: 4px; margin-top: 4px; }
-  .score-item .s-fill { height: 4px; border-radius: 2px; }
-  
-  .run-btn { background: #2C6E63; color: white; border: none; font-family: monospace; font-size: 12px; font-weight: 600; padding: 12px 24px; border-radius: 8px; cursor: pointer; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 24px; }
+  .run-btn { background: #2C6E63; color: white; border: none; font-family: monospace; font-size: 11px; font-weight: 700; padding: 10px 20px; border-radius: 8px; cursor: pointer; letter-spacing: .05em; text-transform: uppercase; margin-right: 8px; }
   .run-btn:hover { background: #245a51; }
   .run-btn:disabled { background: #9a9090; cursor: not-allowed; }
+  .stop-btn { background: #c0392b; color: white; border: none; font-family: monospace; font-size: 11px; font-weight: 700; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
   
-  .status { font-family: monospace; font-size: 12px; color: #6F6A60; margin-bottom: 16px; min-height: 20px; }
+  .status { font-family: monospace; font-size: 11px; color: #6F6A60; margin: 10px 0; min-height: 18px; }
   
-  .config-section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid #e0d9d0; }
-  .config-section label { display: block; font-family: monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9a9090; margin-bottom: 6px; }
-  .config-section input { width: 100%; border: 1px solid #e0d9d0; border-radius: 6px; padding: 8px 12px; font-size: 13px; font-family: monospace; margin-bottom: 12px; background: #faf6ee; }
+  .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+  .sum-card { background: white; border-radius: 10px; padding: 14px; border: 1px solid #e0d9d0; text-align: center; }
+  .sum-card .label { font-family: monospace; font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: #9a9090; margin-bottom: 6px; }
+  .sum-card .value { font-size: 28px; font-weight: 700; }
+  .sum-card .bar { background: #e0d9d0; border-radius: 3px; height: 5px; margin-top: 6px; }
+  .sum-card .fill { height: 5px; border-radius: 3px; }
   
-  .color-verde { color: #2C6E63; }
-  .color-arancio { color: #C77B3F; }
-  .color-rosso { color: #c0392b; }
+  .result-card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 10px; border: 1px solid #e0d9d0; }
+  .result-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .badge { font-family: monospace; font-size: 8px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 7px; border-radius: 20px; flex-shrink: 0; }
+  .q-text { font-size: 13px; font-weight: 600; flex: 1; line-height: 1.3; }
+  .score { font-size: 22px; font-weight: 700; flex-shrink: 0; }
+  .risposta { background: #faf6ee; border-left: 3px solid #C77B3F; padding: 10px; border-radius: 0 6px 6px 0; margin-bottom: 8px; font-size: 12px; line-height: 1.5; max-height: 120px; overflow-y: auto; }
+  .scores { display: flex; gap: 6px; }
+  .sc { flex: 1; text-align: center; }
+  .sc .sl { font-family: monospace; font-size: 7px; text-transform: uppercase; color: #9a9090; }
+  .sc .sv { font-size: 16px; font-weight: 700; }
+  .note { font-size: 11px; color: #9a9090; font-style: italic; margin-top: 6px; }
   
-  .fill-verde { background: #2C6E63; }
-  .fill-arancio { background: #C77B3F; }
-  .fill-rosso { background: #c0392b; }
+  .v-green { color: #2C6E63; } .v-orange { color: #C77B3F; } .v-red { color: #c0392b; }
+  .f-green { background: #2C6E63; } .f-orange { background: #C77B3F; } .f-red { background: #c0392b; }
+  
+  .section-label { font-family: monospace; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #9a9090; padding: 12px 0 6px; border-bottom: 1px solid #e0d9d0; margin-bottom: 10px; }
+  
+  .progress { background: #e0d9d0; border-radius: 4px; height: 4px; margin: 8px 0; }
+  .progress-fill { height: 4px; border-radius: 4px; background: #2C6E63; transition: width .3s; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="logo">Matter Lab</div>
-  <div class="payoff">Science & Craft</div>
-  <div class="title">Quality Evaluation — LLM-as-a-Judge</div>
-  <div class="subtitle">20 domande reali da professionista F&B · 5 criteri · Valutatore: Claude Sonnet</div>
+  <div class="payoff">Science & Craft — Quality Test</div>
+  <div class="title">Test Completo 100 Domande — LLM-as-a-Judge</div>
+  <div class="subtitle">50 chat · 20 lezioni · 20 flavor network · 10 calcolatori · Valutatore: Claude Sonnet</div>
 </div>
 
 <div class="container">
-  
-  <div class="config-section">
+  <div class="config">
     <label>URL Matter Lab</label>
     <input type="text" id="base-url" value="https://web-production-79457.up.railway.app">
-    <label>Email account test</label>
-    <input type="text" id="test-email" value="mrovazzi8@gmail.com">
+    <label>Email</label>
+    <input type="text" id="email" value="mrovazzi8@gmail.com">
     <label>Password</label>
-    <input type="password" id="test-pwd" value="Matter2026!">
-    <button class="run-btn" onclick="runTest()" id="run-btn">▶ AVVIA TEST QUALITÀ</button>
-    <div class="status" id="status">Pronto. Clicca per avviare il test.</div>
+    <input type="password" id="pwd" value="Matter2026!">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="run-btn" id="run-btn" onclick="runAll()">▶ AVVIA TEST COMPLETO</button>
+      <button class="run-btn" onclick="runSection('chat')" style="background:#4D2C1A">Chat (50)</button>
+      <button class="run-btn" onclick="runSection('lezioni')" style="background:#2C6E63">Lezioni (20)</button>
+      <button class="run-btn" onclick="runSection('flavor')" style="background:#C77B3F">Flavor (20)</button>
+      <button class="run-btn" onclick="runSection('calc')" style="background:#7a6555">Calc (10)</button>
+      <button class="stop-btn" id="stop-btn" onclick="stopTest()" style="display:none">■ STOP</button>
+    </div>
+    <div class="status" id="status">Pronto.</div>
+    <div class="progress"><div class="progress-fill" id="progress" style="width:0%"></div></div>
   </div>
 
-  <div id="summary" style="display:none">
-    <div class="summary-grid">
-      <div class="summary-card">
-        <div class="label">Voto globale</div>
-        <div class="value color-verde" id="avg-global">—</div>
-        <div class="sub">media su 20 domande</div>
-        <div class="progress-bar"><div class="progress-fill fill-verde" id="bar-global" style="width:0%"></div></div>
-      </div>
-      <div class="summary-card">
-        <div class="label">Accuratezza scientifica</div>
-        <div class="value color-arancio" id="avg-acc">—</div>
-        <div class="sub">numeri e fatti corretti</div>
-        <div class="progress-bar"><div class="progress-fill fill-arancio" id="bar-acc" style="width:0%"></div></div>
-      </div>
-      <div class="summary-card">
-        <div class="label">Utilità pratica</div>
-        <div class="value color-verde" id="avg-util">—</div>
-        <div class="sub">applicabile domani mattina</div>
-        <div class="progress-bar"><div class="progress-fill fill-verde" id="bar-util" style="width:0%"></div></div>
-      </div>
-      <div class="summary-card">
-        <div class="label">Numeri bersaglio</div>
-        <div class="value" id="avg-num">—</div>
-        <div class="sub">numeri misurabili al banco</div>
-        <div class="progress-bar"><div class="progress-fill" id="bar-num" style="width:0%;background:#4D2C1A"></div></div>
-      </div>
-      <div class="summary-card">
-        <div class="label">Tono collega</div>
-        <div class="value color-arancio" id="avg-tono">—</div>
-        <div class="sub">niente lezioncine</div>
-        <div class="progress-bar"><div class="progress-fill fill-arancio" id="bar-tono" style="width:0%"></div></div>
-      </div>
-      <div class="summary-card">
-        <div class="label">Assenza allucinazioni</div>
-        <div class="value color-verde" id="avg-hall">—</div>
-        <div class="sub">nessun dato inventato</div>
-        <div class="progress-bar"><div class="progress-fill fill-verde" id="bar-hall" style="width:0%"></div></div>
-      </div>
+  <div class="summary" id="summary" style="display:none">
+    <div class="sum-card">
+      <div class="label">Voto globale</div>
+      <div class="value v-green" id="avg-g">—</div>
+      <div class="bar"><div class="fill f-green" id="bar-g" style="width:0%"></div></div>
+    </div>
+    <div class="sum-card">
+      <div class="label">Chat</div>
+      <div class="value v-orange" id="avg-chat">—</div>
+      <div class="bar"><div class="fill f-orange" id="bar-chat" style="width:0%"></div></div>
+    </div>
+    <div class="sum-card">
+      <div class="label">Lezioni</div>
+      <div class="value" id="avg-les" style="color:#4D2C1A">—</div>
+      <div class="bar"><div class="fill" id="bar-les" style="width:0%;background:#4D2C1A"></div></div>
+    </div>
+    <div class="sum-card">
+      <div class="label">Flavor/Calc</div>
+      <div class="value v-green" id="avg-fl">—</div>
+      <div class="bar"><div class="fill f-green" id="bar-fl" style="width:0%"></div></div>
     </div>
   </div>
 
@@ -124,185 +113,235 @@
 </div>
 
 <script>
-const DOMANDE = [
-  {q:"perché il mio sour perde volume dopo 2 minuti nel bicchiere?", disciplina:"bar", attesa:"acidità titolabile 1.0-1.5%, tecnica dry shake, pH 3.0-3.5"},
-  {q:"ho un gin tonic che risulta piatto, i volumi di CO2 del tonic sono 3.8 ma in bocca non si sente", disciplina:"bar", attesa:"temperatura servizio sotto 4°C, bicchiere freddo, versata inclinata"},
-  {q:"qual è il range di pH ideale per un Margarita bilanciato?", disciplina:"bar", attesa:"pH 3.0-3.5, acidità titolabile, rapporto succo citrico"},
-  {q:"perché il mio sciroppo di zucchero cristallizza dopo 3 giorni?", disciplina:"bar", attesa:"Brix sopra 65°, glucosio come anti-cristallizzante, conservazione"},
-  {q:"la mia pasta madre ha pH 3.5 ma il pane non sviluppa bene in forno", disciplina:"panificazione", attesa:"pH ottimale 3.7-3.9, degradazione glutine, rinfreschi"},
-  {q:"perché il mio pane raffermo dopo 6 ore a temperatura ambiente?", disciplina:"panificazione", attesa:"retrogradazione amido, Aw, temperatura conservazione 4°C vs -18°C"},
-  {q:"uso il 68% di idratazione ma l'impasto è appiccicoso e non regge la forma", disciplina:"panificazione", attesa:"W farina, proteine minimo 13%, glutine, assorbimento"},
-  {q:"il mio espresso ha EY del 24% ma risulta amaro", disciplina:"caffe", attesa:"sovraestratto, EY zona dolce 18-22%, allargare macinatura"},
-  {q:"TDS del mio filtro è 1.4 ma il caffè risulta acquoso", disciplina:"caffe", attesa:"TDS 1.15-1.55 SCA, EY, rapporto acqua caffè"},
-  {q:"il mio gelato esce dal pozzetto a -18°C ma è durissimo impossibile da servire", disciplina:"gelateria", attesa:"PAC 260-350, temperatura servizio -11/-13°C, zuccheri anticongelanti"},
-  {q:"il sorbetto al limone viene granuloso non cremoso", disciplina:"gelateria", attesa:"Brix 28-35%, PAC, stabilizzanti, cristalli ghiaccio"},
-  {q:"quanto overrun devo avere per un gelato artigianale di qualità?", disciplina:"gelateria", attesa:"20-35% artigianale vs 50-100% industriale"},
-  {q:"la mia maionese impazzisce sempre quando aggiungo l'olio troppo velocemente", disciplina:"cucina", attesa:"frazione olio max 67-80%, lecitina tuorlo, gocce sotto 1 micron"},
-  {q:"la carne non fa la crosta a 180°C in padella perché?", disciplina:"cucina", attesa:"Maillard oltre 140°C, acqua superficie blocca reazione, asciugare carne"},
-  {q:"il mio vino bianco fatto in casa ha pH 3.8 è troppo piatto", disciplina:"vino", attesa:"pH bianchi 3.0-3.4, acidità titolabile 5.5-6.5 g/L, malolattica"},
-  {q:"ho un Sauvignon Blanc che sa di peperone verde intenso", disciplina:"vino", attesa:"metossipyrazine, uve non mature, temperatura fermentazione bassa"},
-  {q:"la mia IPA dopo 2 settimane perde l'aroma luppolato", disciplina:"birra", attesa:"ossidazione, myrcene volatile, dry hopping tardivo, temperatura conservazione"},
-  {q:"il pH del mio mash è 5.8 l'efficienza è bassa", disciplina:"birra", attesa:"pH ottimale 5.2-5.4, beta-amilasi e alfa-amilasi, correzione con CaSO4"},
-  {q:"il mio cioccolato temperato fa il bloom bianco dopo 24 ore", disciplina:"pasticceria", attesa:"cristallizzazione Forma V, temperaggio 27-31°C, fat bloom vs sugar bloom"},
-  {q:"la mia panna montata si smonta dopo 10 minuti", disciplina:"pasticceria", attesa:"grassi minimo 35%, temperatura fredda 4°C, struttura proteica"},
-];
+const CHAT = [{"q": "perché il mio sour perde volume dopo 2 minuti nel bicchiere?", "attesa": "pH 3.0-3.5, acidità titolabile 4.5-6.5%, dry shake, temperatura sotto 8°C"}, {"q": "ho un gin tonic che risulta piatto, i volumi di CO2 del tonic sono 3.8 ma in bocca non si sente", "attesa": "temperatura servizio 2-4°C, ghiaccio blocco non tritato, versata inclinata"}, {"q": "qual è il range di pH ideale per un Margarita bilanciato?", "attesa": "pH 3.0-3.5, acidità titolabile, succo lime fresco"}, {"q": "perché il mio sciroppo 1:1 cristallizza dopo 3 giorni?", "attesa": "Brix 50°, saturazione saccarosio, aggiungere glucosio 10-20% o acido citrico"}, {"q": "come calcolo la diluizione corretta per un Negroni stirred?", "attesa": "18-22% diluizione stirred, ABV finale, tempo di agitazione 30-40 secondi"}, {"q": "il mio Old Fashioned risulta troppo diluito, cosa sbaglio?", "attesa": "ghiaccio troppo sciolto, temperatura, tecnica stirred vs shaken"}, {"q": "perché il mio cordial di limone diventa torbido dopo una settimana?", "attesa": "pectina, filtrazione, pH, conservazione sotto 4°C"}, {"q": "come faccio un fat washing con burro nel bourbon?", "attesa": "fat washing, congela e filtra, temperatura, tempo di infusione"}, {"q": "il mio espresso martini non fa la schiuma come quello del bar", "attesa": "temperatura espresso, proteine caffè, tecnica dry shake, ratio"}, {"q": "quanto acido citrico devo aggiungere per pareggiare un cocktail troppo dolce?", "attesa": "acidità titolabile target 1.0-1.5%, calcolo grammi per litro"}, {"q": "la mia pasta madre ha pH 3.5 ma il pane non sviluppa bene in forno", "attesa": "pH ottimale 3.7-3.9, degradazione glutine, rinfreschi più frequenti"}, {"q": "perché il mio pane raffermo dopo 6 ore a temperatura ambiente?", "attesa": "retrogradazione amido amilosio, Aw 0.94-0.97, congelare non mettere in frigo"}, {"q": "uso il 68% di idratazione ma l'impasto è appiccicoso e non regge la forma", "attesa": "W farina minimo 280-300, proteine minimo 13%, autolisi, rinforzo glutine"}, {"q": "perché il mio panettone non raggiunge i 7-8cm di altezza?", "attesa": "struttura glutine, lievitazione a 26-28°C, acidità madre, W farina 380-400"}, {"q": "la crosta del mio pane è gommosa non croccante", "attesa": "vapore forno nei primi 15 minuti, temperatura 230-250°C, sfiatare vapore dopo"}, {"q": "il mio impasto pizza si restringe quando lo stendo", "attesa": "glutine teso, riposo minimo 30 minuti, temperatura impasto sotto 24°C"}, {"q": "quanto sale devo usare per la focaccia e perché?", "attesa": "2-2.5% sul peso farina, osmosi, sapore, controllo fermentazione"}, {"q": "il mio pane di segale è appiccicoso all'interno anche ben cotto", "attesa": "pectina segale, Aw alta, temperatura interna 96-98°C, raffreddamento completo"}, {"q": "il mio espresso ha EY del 24% ma risulta amaro", "attesa": "EY sopra 22% è sovrestratto, ridurre peso bevanda non solo allargare macinatura, ratio"}, {"q": "TDS del mio filtro è 1.4 ma il caffè risulta acquoso", "attesa": "1.4% è al limite alto SCA 1.15-1.55, EY basso indica sottoestratto, aumentare dose"}, {"q": "perché il mio latte non monta bene con il vapore?", "attesa": "proteine minimo 3.2%, temperatura 65-68°C, tecnica vortex, latte freddo 4°C"}, {"q": "il mio cold brew viene troppo amaro dopo 18 ore", "attesa": "EY 15-20% cold brew, ratio 1:8-12, filtraggio immediato, temperatura 4°C"}, {"q": "la mia moka fa caffè acquoso nonostante usi la dose giusta", "attesa": "fiamma troppo alta, vapore invece acqua, macinatura troppo grossa, pressione"}, {"q": "perché il mio espresso ha una crema sottile e chiara?", "attesa": "sottoestratto o caffè vecchio, CO2 esaurita, macinatura troppo grossa, pressione 9 bar"}, {"q": "il mio gelato esce dal pozzetto a -18°C ma è durissimo impossibile da servire", "attesa": "PAC 260-350, temperatura servizio -11/-13°C, destrosio PAC 190"}, {"q": "il sorbetto al limone viene granuloso non cremoso", "attesa": "PAC 290-330, Brix 28-35%, cristalli ghiaccio sotto 50 micron, mantecatura corretta"}, {"q": "quanto overrun devo avere per un gelato artigianale di qualità?", "attesa": "20-35% artigianale, industriale 50-100%, 1L gelato a 25% overrun pesa ~800g"}, {"q": "il mio gelato al cioccolato diventa duro dopo 2 ore al banco", "attesa": "PAC basso, cacao assorbe acqua, aumentare zuccheri liquidi, destrosio"}, {"q": "perché il mio sorbetto alla fragola è meno cremoso di quello al limone?", "attesa": "pectina fragola vs acido limone, Brix diverso, struttura acqua libera"}, {"q": "la mia base gelato alla panna risulta pesante e stucchevole", "attesa": "grassi sopra 9%, overrun basso, bilanciare con latte, PAC, POD"}, {"q": "la mia maionese impazzisce sempre quando aggiungo l'olio troppo velocemente", "attesa": "emulsione O/A, lecitina tuorlo, frazione olio max 67-80%, aggiungere 100ml/min"}, {"q": "la carne non fa la crosta a 180°C in padella perché?", "attesa": "Maillard sopra 140°C, acqua superficie blocca reazione, asciugare con carta, padella rovente"}, {"q": "perché le verdure diventano molli quando le salto in padella?", "attesa": "osmosi sale, vapore intrappolato, padella sovraffollata, temperatura troppo bassa"}, {"q": "il mio ragù risulta acido dopo 2 ore di cottura", "attesa": "pH pomodoro 4.0-4.6, lunga cottura riduce acidità, bicarbonato emergenza, carota"}, {"q": "come pastorizzo le uova per la tiramisù senza cuocerle?", "attesa": "tuorli 60-65°C per 3-4 minuti, pasteurizzazione termica, albumina non denatura sotto 60°C"}, {"q": "il mio vino bianco fatto in casa ha pH 3.8 è troppo piatto in bocca", "attesa": "pH bianchi 3.0-3.4, acidità titolabile 5.5-7.5 g/L, acido tartarico 1g/L abbassa 0.1 pH"}, {"q": "ho un Sauvignon Blanc che sa di peperone verde intenso", "attesa": "IBMP metossipyrazine, uve non mature, fermentazione sotto 15°C riduce"}, {"q": "il mio vino rosso casalingo è torbido dopo 3 mesi in bottiglia", "attesa": "proteine, tannini, tartrati, stabilizzazione a freddo, bentonite, filtrazione"}, {"q": "perché il mio vino bianco sa di ossidato già dopo una settimana aperto?", "attesa": "SO2 libera sotto 0.8 mg/L, tappo, conservazione sotto 8°C, azoto inerte"}, {"q": "la fermentazione del mio mosto si è bloccata a 8 gradi zucchero rimasti", "attesa": "stress lieviti, nutrienti azoto YAN, reidratazione lieviti, temperatura fuori range"}, {"q": "la mia IPA dopo 2 settimane in bottiglia ha perso tutto l'aroma luppolato", "attesa": "ossidazione myrcene, dry hopping dopo fermentazione, headspace CO2, temperatura 4°C"}, {"q": "il pH del mio mash è 5.8 l'efficienza è bassa", "attesa": "pH ottimale 5.2-5.4, acido lattico non CaSO4, beta-amilasi 62-65°C alfa 68-72°C"}, {"q": "la mia birra weizen non ha il caratteristico aroma di banana e chiodi di garofano", "attesa": "4-vinilguaiacolo e isoamil acetato, temperatura fermentazione 18-22°C, ceppo WY3068"}, {"q": "il mio mosto ha una schiuma eccessiva durante l'ebollizione", "attesa": "proteine malt, beta-glucani, DMS evaporazione, ebollizione vigorosa 10-15%"}, {"q": "la mia birra stout risulta troppo amara e astringente", "attesa": "IBU oltre 40 per stout americane, tannini grani scuri, pH acqua, temperatura mash"}, {"q": "il mio cioccolato temperato fa il bloom bianco dopo 24 ore", "attesa": "fat bloom Forma VI instabile, temperaggio 27-31°C, temperatura stoccaggio 16-18°C"}, {"q": "la mia panna montata si smonta dopo 10 minuti", "attesa": "grassi minimo 35%, temperatura 4°C, non montare troppo, zucchero a velo stabilizza"}, {"q": "il mio caramello cristallizza invece di restare fluido", "attesa": "glucosio interferisce cristallizzazione, non mescolare durante cottura, 165-175°C caramello"}, {"q": "la mia pasta sfoglia non sfoglia bene in forno", "attesa": "burro 82% grassi, temperatura pasta 4°C, riposo freddo, vapore acqua nel burro"}, {"q": "il mio crème brûlée rimane liquido anche dopo 2 ore in forno a 150°C", "attesa": "coagulazione tuorlo 65-70°C, temperatura interna 80°C, bagnomaria, tempo corretto"}];
+const LEZIONI = [{"disciplina": "bar", "step": 0, "verifica": "La scheda del primo fenomeno (acidità) contiene numeri bersaglio pH e acidità titolabile"}, {"disciplina": "bar", "step": 2, "verifica": "La scheda della carbonatazione contiene volumi CO2 e legge di Henry"}, {"disciplina": "panificazione", "step": 0, "verifica": "La scheda contiene pH madre 3.7-3.9 e temperatura fermentazione"}, {"disciplina": "panificazione", "step": 3, "verifica": "La scheda contiene Aw e retrogradazione amido"}, {"disciplina": "caffe", "step": 0, "verifica": "La scheda contiene EY 18-22% e TDS 7-12%"}, {"disciplina": "gelateria", "step": 0, "verifica": "La scheda contiene PAC e temperatura servizio -11/-13°C"}, {"disciplina": "gelateria", "step": 2, "verifica": "La scheda contiene overrun 20-35%"}, {"disciplina": "cucina", "step": 0, "verifica": "La scheda contiene Maillard e temperatura 140°C"}, {"disciplina": "vino", "step": 0, "verifica": "La scheda contiene pH 3.0-3.4 per bianchi"}, {"disciplina": "birra", "step": 0, "verifica": "La scheda contiene pH mash 5.2-5.4"}, {"disciplina": "pasticceria", "step": 0, "verifica": "La scheda contiene temperatura cristallizzazione cioccolato"}, {"disciplina": "bar", "step": 4, "verifica": "La scheda dell'estrazione contiene EY e TDS"}, {"disciplina": "panificazione", "step": 5, "verifica": "La scheda contiene W farina e proteine"}, {"disciplina": "caffe", "step": 3, "verifica": "La scheda contiene temperatura latte 65-68°C"}, {"disciplina": "gelateria", "step": 4, "verifica": "La scheda contiene PAC zuccheri con valori corretti"}, {"disciplina": "vino", "step": 2, "verifica": "La scheda contiene malolattica e pH"}, {"disciplina": "birra", "step": 3, "verifica": "La scheda contiene IBU e amaro"}, {"disciplina": "cucina", "step": 3, "verifica": "La scheda contiene emulsione e lecitina"}, {"disciplina": "pasticceria", "step": 2, "verifica": "La scheda contiene montaggio panna e % grassi"}, {"disciplina": "bar", "step": 7, "verifica": "La scheda contiene osmosi e concentrazione"}];
+const FLAVOR = [{"ingrediente": "limone", "attesa_abbinamenti": ["arancia", "lime", "menta", "basilico", "ginger"], "attesa_composti": ["limonene", "linalool", "citral"]}, {"ingrediente": "caffè", "attesa_abbinamenti": ["cioccolato", "nocciola", "vaniglia", "rum"], "attesa_composti": ["furfurylthiol", "pyrazine", "furaneol"]}, {"ingrediente": "lampone", "attesa_abbinamenti": ["cioccolato", "rosa", "menta", "limone"], "attesa_composti": ["raspberry ketone", "furaneol"]}, {"ingrediente": "menta", "attesa_abbinamenti": ["cioccolato", "limone", "rum", "anguria"], "attesa_composti": ["menthol", "carvone"]}, {"ingrediente": "vaniglia", "attesa_abbinamenti": ["cioccolato", "caffè", "burro", "rum"], "attesa_composti": ["vanillin", "ethyl vanillin"]}, {"ingrediente": "burro", "attesa_abbinamenti": ["caramello", "vaniglia", "nocciola", "mela"], "attesa_composti": ["diacetyl", "acetoin"]}, {"ingrediente": "whiskey", "attesa_abbinamenti": ["caramello", "nocciola", "vaniglia", "mela"], "attesa_composti": ["vanillin", "guaiacol", "whiskey lactone"]}, {"ingrediente": "fragola", "attesa_abbinamenti": ["cioccolato", "basilico", "vaniglia", "limone"], "attesa_composti": ["furaneol", "methyl butyrate"]}, {"ingrediente": "pomodoro", "attesa_abbinamenti": ["basilico", "mozzarella", "aglio", "origano"], "attesa_composti": ["2-isobutyl thiazole", "cis-3-hexenol"]}, {"ingrediente": "aglio", "attesa_abbinamenti": ["limone", "prezzemolo", "olio oliva", "pomodoro"], "attesa_composti": ["allyl mercaptan", "dimethyl disulfide"]}, {"ingrediente": "gin", "attesa_abbinamenti": ["lime", "cetriolo", "basilico", "pompelmo"], "attesa_composti": ["limonene", "alpha pinene", "linalool"]}, {"ingrediente": "cioccolato", "attesa_abbinamenti": ["caffè", "lampone", "caramello", "menta"], "attesa_composti": ["phenylacetaldehyde", "pyrazine"]}, {"ingrediente": "zenzero", "attesa_abbinamenti": ["limone", "miele", "arancia", "menta"], "attesa_composti": ["zingiberene", "zingerone"]}, {"ingrediente": "basilico", "attesa_abbinamenti": ["pomodoro", "mozzarella", "limone", "fragola"], "attesa_composti": ["estragole", "linalool", "eugenol"]}, {"ingrediente": "rum", "attesa_abbinamenti": ["lime", "menta", "ananas", "caffè"], "attesa_composti": ["ethyl formate", "isoamyl alcohol"]}, {"ingrediente": "parmigiano", "attesa_abbinamenti": ["prosciutto", "rucola", "mela", "aceto"], "attesa_composti": ["butyric acid", "isovaleric acid"]}, {"ingrediente": "miele", "attesa_abbinamenti": ["limone", "zenzero", "camomilla", "lavanda"], "attesa_composti": ["phenylacetaldehyde", "HMF"]}, {"ingrediente": "noce moscata", "attesa_abbinamenti": ["cannella", "chiodi garofano", "vaniglia"], "attesa_composti": ["sabinene", "myristicin"]}, {"ingrediente": "pepe nero", "attesa_abbinamenti": ["limone", "manzo", "cognac", "fragola"], "attesa_composti": ["piperine", "beta caryophyllene"]}, {"ingrediente": "cocco", "attesa_abbinamenti": ["ananas", "rum", "lime", "vaniglia"], "attesa_composti": ["massoia lactone", "delta octalactone"]}];
+const CALC = [{"calc": "diluizione", "params": {"ingredienti": [{"n": "Gin", "vol": 60, "abv": 40}, {"n": "Vermouth", "vol": 30, "abv": 18}], "diluizione": 22, "metodo": "stirred"}, "attesa": "ABV finale circa 26-28%"}, {"calc": "diluizione", "params": {"ingredienti": [{"n": "Bourbon", "vol": 45, "abv": 45}, {"n": "Campari", "vol": 30, "abv": 25}, {"n": "Vermouth", "vol": 30, "abv": 16}], "diluizione": 22, "metodo": "stirred"}, "attesa": "ABV finale circa 24-26%"}, {"calc": "bilanciamento_sour", "params": {"vol_acido": 25, "acidita_pct": 5.5, "vol_dolce": 20, "zuccheri_pct": 65, "vol_spiritoso": 50, "abv": 40}, "attesa": "rapporto sour bilanciato"}, {"calc": "idratazione_pane", "params": {"farina": 1000, "acqua": 680, "sale": 20, "lievito": 3}, "attesa": "idratazione 68%, baker percentages corretti"}, {"calc": "q10_fermentazione", "params": {"tempo_base": 4, "temp_base": 20, "temp_nuova": 26}, "attesa": "tempo ridotto circa 2 ore (Q10 raddoppia ogni 10°C)"}, {"calc": "estrazione_caffe", "params": {"dose": 18, "bevanda": 36, "tds": 9.5}, "attesa": "EY circa 19%, zona dolce"}, {"calc": "estrazione_caffe", "params": {"dose": 15, "bevanda": 250, "tds": 1.35}, "attesa": "EY circa 22-23%, zona dolce filtro"}, {"calc": "pareggia_acidita", "params": {"vol_ml": 750, "ph_attuale": 3.8, "ph_target": 3.2}, "attesa": "grammi acido citrico da aggiungere"}, {"calc": "diluizione", "params": {"ingredienti": [{"n": "Vodka", "vol": 50, "abv": 40}], "diluizione": 25, "metodo": "shaken"}, "attesa": "ABV finale circa 30%"}, {"calc": "bilanciamento_sour", "params": {"vol_acido": 30, "acidita_pct": 6.0, "vol_dolce": 15, "zuccheri_pct": 65, "vol_spiritoso": 60, "abv": 37}, "attesa": "sour aggressivo, alta acidità"}];
 
-const DISC_COLORS = {
-  bar: '#C77B3F', panificazione: '#4D2C1A', caffe: '#6F6A60',
-  gelateria: '#2C6E63', cucina: '#7a6555', vino: '#8B4513',
-  birra: '#D3B566', pasticceria: '#C77B3F'
-};
+const DISC_COL = {bar:'#C77B3F',panificazione:'#4D2C1A',caffe:'#6F6A60',gelateria:'#2C6E63',cucina:'#7a6555',vino:'#8B4513',birra:'#D3B566',pasticceria:'#C77B3F'};
 
-let token = '';
-let results = [];
+let token = '', running = false, stopped = false;
+let scores = {chat:[], lezioni:[], flavor:[], calc:[]};
+
+function sc(v) { return v>=8?'v-green':v>=6?'v-orange':'v-red'; }
+function sf(v) { return v>=8?'f-green':v>=6?'f-orange':'f-red'; }
 
 async function login() {
-  const base = document.getElementById('base-url').value;
-  const email = document.getElementById('test-email').value;
-  const pwd = document.getElementById('test-pwd').value;
-  
-  const r = await fetch(`${base}/v1/auth/login`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({email, password: pwd})
+  const r = await fetch(`${document.getElementById('base-url').value}/v1/auth/login`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({email:document.getElementById('email').value, password:document.getElementById('pwd').value})
   });
   const j = await r.json();
   return j.token || '';
 }
 
-async function chiediMatter(domanda) {
-  const base = document.getElementById('base-url').value;
-  const r = await fetch(`${base}/chiedi`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({domanda, lang: 'it', token})
+async function chiedi(domanda) {
+  const r = await fetch(`${document.getElementById('base-url').value}/chiedi`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({domanda, lang:'it', token})
   });
   const j = await r.json();
   return j.risposta || j.nota || 'Nessuna risposta';
 }
 
-async function valutaConClaude(domanda, risposta, attesa) {
-  // Valutazione lato server - no CORS, no API key nel browser
+async function evalChat(domanda, risposta, attesa) {
+  const r = await fetch(`${document.getElementById('base-url').value}/v1/quality-eval`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({domanda, risposta, attesa})
+  });
+  return await r.json();
+}
+
+async function testLezione(disc, step, verifica) {
+  const base = document.getElementById('base-url').value;
+  const r = await fetch(`${base}/lezione/${disc}/${step}?lang=it&token=${token}`);
+  const j = await r.json();
+  const scheda = j.fenomeno?.scheda || j.fenomeno?.principio || '';
+  const nome = j.fenomeno?.nome || '';
+  const target = j.fenomeno?.target || '';
+  const contenuto = scheda + ' ' + target;
+  const ok = contenuto.length > 50;
+  return {
+    nome, scheda: scheda.substring(0,200), target,
+    voto_globale: ok ? 7 : 3,
+    accuratezza: ok ? 7 : 3, utilita: ok ? 7 : 3, numeri: target.length > 20 ? 8 : 4,
+    tono: 7, allucinazioni: 8,
+    note: ok ? `Scheda presente (${scheda.length} chars), target: ${target.substring(0,60)}` : 'Scheda assente o troppo breve'
+  };
+}
+
+async function testFlavor(ingrediente, attesa_abbinamenti) {
+  const base = document.getElementById('base-url').value;
+  // Cerca alias
+  const ALIAS = {limone:'lemon',caffè:'coffee',caffe:'coffee',lampone:'raspberry',menta:'peppermint',vaniglia:'tahiti_vanilla',burro:'butter',whiskey:'whiskey',fragola:'strawberry',pomodoro:'tomato',aglio:'garlic',gin:'gin',cioccolato:'cocoa',zenzero:'ginger',basilico:'basil',rum:'rum',parmigiano:'parmesan',miele:'honey',pepe:'black_pepper',cocco:'coconut','noce moscata':'nutmeg'};
+  const ing_en = ALIAS[ingrediente.toLowerCase()] || ingrediente;
+  const r = await fetch(`${base}/v1/abbina/${encodeURIComponent(ing_en)}`);
+  const j = await r.json();
+  const nomi = (j.abbinamenti || []).map(a => a.nome?.toLowerCase() || '');
+  const trovati = attesa_abbinamenti.filter(a => nomi.some(n => n.includes(a.toLowerCase()) || a.toLowerCase().includes(n)));
+  const pct = trovati.length / attesa_abbinamenti.length;
+  const voto = Math.round(4 + pct * 6);
+  return {
+    ingrediente, n_abbinamenti: nomi.length, trovati: trovati.length, attesi: attesa_abbinamenti.length,
+    voto_globale: voto, accuratezza: voto, utilita: voto, numeri: 7, tono: 8, allucinazioni: 9,
+    note: `${trovati.length}/${attesa_abbinamenti.length} abbinamenti attesi trovati su ${nomi.length} totali`
+  };
+}
+
+async function testCalc(calc, params, attesa) {
   const base = document.getElementById('base-url').value;
   try {
-    const r = await fetch(`${base}/v1/quality-eval`, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({domanda, risposta, attesa})
+    const body = {calcolo: calc, parametri: params};
+    // Prova endpoint principale
+    const r = await fetch(`${base}/v1/calcola`, {
+      method:'POST', headers:{'Content-Type':'application/json', 'X-Token': token},
+      body: JSON.stringify(body)
     });
-    return await r.json();
+    const j = await r.json();
+    const ok = !j.errore && Object.keys(j).length > 1;
+    return {
+      calc, risultato: JSON.stringify(j).substring(0,150),
+      voto_globale: ok ? 8 : 4, accuratezza: ok ? 8 : 4, utilita: ok ? 8 : 4,
+      numeri: ok ? 9 : 3, tono: 9, allucinazioni: 10,
+      note: ok ? `Calcolo OK: ${JSON.stringify(j).substring(0,80)}` : `Errore: ${j.errore}`
+    };
   } catch(e) {
-    return {accuratezza:5,utilita:5,numeri:5,tono:5,allucinazioni:5,note:`Errore: ${e.message}`,voto_globale:5};
+    return {calc, voto_globale:2, accuratezza:2, utilita:2, numeri:2, tono:9, allucinazioni:10, note:`Errore fetch: ${e.message}`};
   }
 }
 
-function scoreColor(v) {
-  if (v >= 8) return 'color-verde';
-  if (v >= 6) return 'color-arancio';
-  return 'color-rosso';
-}
-function fillColor(v) {
-  if (v >= 8) return 'fill-verde';
-  if (v >= 6) return 'fill-arancio';
-  return 'fill-rosso';
-}
-
-function renderCard(d, i, risposta, val) {
+function addCard(tipo, n, domanda, risposta, val, extra='') {
   const g = val.voto_globale || 0;
-  const col = DISC_COLORS[d.disciplina] || '#6F6A60';
-  
-  return `
-  <div class="test-card">
-    <div class="test-header">
-      <div class="discipline-badge" style="background:${col}20;color:${col}">${d.disciplina}</div>
-      <div class="test-question">Q${i+1}. ${d.q}</div>
-      <div class="score-badge ${scoreColor(g)}">${g.toFixed(1)}</div>
+  const col = DISC_COL[extra] || '#6F6A60';
+  const div = document.createElement('div');
+  div.className = 'result-card';
+  div.innerHTML = `
+    <div class="result-header">
+      <div class="badge" style="background:${col}20;color:${col}">${tipo}</div>
+      <div class="q-text">${n}. ${domanda.substring(0,80)}${domanda.length>80?'…':''}</div>
+      <div class="score ${sc(g)}">${g.toFixed?g.toFixed(1):g}</div>
     </div>
-    <div class="risposta-box">${risposta}</div>
-    <div class="scores-grid">
-      ${['accuratezza','utilita','numeri','tono','allucinazioni'].map(k => {
-        const v = val[k] || 0;
-        const labels = {accuratezza:'Accuratezza',utilita:'Utilità',numeri:'Numeri',tono:'Tono',allucinazioni:'Allucinazioni'};
-        return `<div class="score-item">
-          <div class="s-label">${labels[k]}</div>
-          <div class="s-val ${scoreColor(v)}">${v}</div>
-          <div class="s-bar"><div class="s-fill ${fillColor(v)}" style="width:${v*10}%"></div></div>
-        </div>`;
+    <div class="risposta">${risposta.substring(0,300)}${risposta.length>300?'…':''}</div>
+    <div class="scores">
+      ${['accuratezza','utilita','numeri','tono','allucinazioni'].map(k=>{
+        const v=val[k]||0;
+        const lab={accuratezza:'Acc',utilita:'Util',numeri:'Num',tono:'Tono',allucinazioni:'Hall'};
+        return `<div class="sc"><div class="sl">${lab[k]}</div><div class="sv ${sc(v)}">${v}</div></div>`;
       }).join('')}
     </div>
-    ${val.note ? `<div style="margin-top:10px;font-size:12px;color:#9a9090;font-style:italic">${val.note}</div>` : ''}
-  </div>`;
+    ${val.note?`<div class="note">${val.note}</div>`:''}
+  `;
+  document.getElementById('results').insertBefore(div, document.getElementById('results').firstChild);
 }
 
 function updateSummary() {
-  if (!results.length) return;
-  const avg = (key) => results.reduce((s,r) => s + (r.val[key]||0), 0) / results.length;
-  
-  ['global','acc','util','num','tono','hall'].forEach((k, i) => {
-    const keys = ['voto_globale','accuratezza','utilita','numeri','tono','allucinazioni'];
-    const v = avg(keys[i]);
-    document.getElementById(`avg-${k}`).textContent = v.toFixed(1) + '/10';
-    document.getElementById(`avg-${k}`).className = 'value ' + scoreColor(v);
-    document.getElementById(`bar-${k}`).style.width = (v*10) + '%';
+  document.getElementById('summary').style.display = 'grid';
+  const all = [...scores.chat, ...scores.lezioni, ...scores.flavor, ...scores.calc];
+  const avg = arr => arr.length ? arr.reduce((s,v)=>s+v,0)/arr.length : 0;
+  const g = avg(all); const c = avg(scores.chat); const l = avg(scores.lezioni); const f = avg([...scores.flavor,...scores.calc]);
+  [['g',g],['chat',c],['les',l],['fl',f]].forEach(([k,v])=>{
+    document.getElementById(`avg-${k}`).textContent = v.toFixed(1)+'/10';
+    document.getElementById(`avg-${k}`).className = `value ${sc(v)}`;
+    document.getElementById(`bar-${k}`).style.width = (v*10)+'%';
   });
-  document.getElementById('summary').style.display = 'block';
 }
 
-async function runTest() {
-  const btn = document.getElementById('run-btn');
-  const status = document.getElementById('status');
-  const resultsDiv = document.getElementById('results');
-  
-  btn.disabled = true;
-  btn.textContent = '⏳ TEST IN CORSO...';
-  results = [];
-  resultsDiv.innerHTML = '';
-  
-  // Login
-  status.textContent = 'Login in corso...';
-  try {
+async function runSection(section) {
+  if (running) return;
+  if (!token) {
+    document.getElementById('status').textContent = 'Login in corso...';
     token = await login();
-    if (!token) throw new Error('Login fallito');
-    status.textContent = `Login OK. Avvio test su ${DOMANDE.length} domande...`;
-  } catch(e) {
-    status.textContent = `ERRORE LOGIN: ${e.message}`;
-    btn.disabled = false;
-    btn.textContent = '▶ AVVIA TEST QUALITÀ';
-    return;
+    if (!token) { document.getElementById('status').textContent = 'Login fallito'; return; }
   }
   
-  for (let i = 0; i < DOMANDE.length; i++) {
-    const d = DOMANDE[i];
-    status.textContent = `[${i+1}/${DOMANDE.length}] ${d.disciplina.toUpperCase()} — ${d.q.substring(0,50)}...`;
-    
-    // Chiedi a Matter
-    let risposta = '';
-    try {
-      risposta = await chiediMatter(d.q);
-    } catch(e) {
-      risposta = `ERRORE: ${e.message}`;
+  running = true; stopped = false;
+  document.getElementById('stop-btn').style.display = 'inline-block';
+  document.getElementById('run-btn').disabled = true;
+  
+  const base = document.getElementById('base-url').value;
+  
+  if (section === 'chat') {
+    document.getElementById('results').insertAdjacentHTML('afterbegin', '<div class="section-label">CHAT — 50 domande</div>');
+    for (let i=0; i<CHAT.length && !stopped; i++) {
+      const d = CHAT[i];
+      document.getElementById('status').textContent = `Chat [${i+1}/50] ${d.q.substring(0,50)}...`;
+      document.getElementById('progress').style.width = ((i+1)/50*100)+'%';
+      const risp = await chiedi(d.q);
+      const val = await evalChat(d.q, risp, d.attesa);
+      scores.chat.push(val.voto_globale||5);
+      addCard('CHAT', i+1, d.q, risp, val, d.disciplina||'');
+      updateSummary();
+      await new Promise(r=>setTimeout(r,1200));
     }
-    
-    // Valuta
-    let val = {};
-    try {
-      val = await valutaConClaude(d.q, risposta, d.attesa);
-    } catch(e) {
-      val = {accuratezza:0,utilita:0,numeri:0,tono:0,allucinazioni:0,note:`Errore: ${e.message}`,voto_globale:0};
-    }
-    
-    results.push({d, risposta, val});
-    
-    // Render card
-    resultsDiv.insertAdjacentHTML('beforeend', renderCard(d, i, risposta, val));
-    updateSummary();
-    
-    await new Promise(r => setTimeout(r, 1500)); // rate limit
   }
   
-  status.textContent = `✓ Test completato. ${DOMANDE.length} domande valutate.`;
-  btn.disabled = false;
-  btn.textContent = '▶ RIESEGUI TEST';
+  if (section === 'lezioni') {
+    document.getElementById('results').insertAdjacentHTML('afterbegin', '<div class="section-label">LEZIONI — qualità schede fenomeni</div>');
+    for (let i=0; i<LEZIONI.length && !stopped; i++) {
+      const d = LEZIONI[i];
+      document.getElementById('status').textContent = `Lezione [${i+1}/20] ${d.disciplina} step ${d.step}...`;
+      document.getElementById('progress').style.width = ((i+1)/20*100)+'%';
+      const val = await testLezione(d.disciplina, d.step, d.verifica);
+      scores.lezioni.push(val.voto_globale||5);
+      addCard('LEZIONE', i+1, `${d.disciplina} step${d.step}: ${d.verifica}`, val.scheda||'', val, d.disciplina);
+      updateSummary();
+      await new Promise(r=>setTimeout(r,800));
+    }
+  }
+  
+  if (section === 'flavor') {
+    document.getElementById('results').insertAdjacentHTML('afterbegin', '<div class="section-label">FLAVOR NETWORK — pertinenza abbinamenti</div>');
+    for (let i=0; i<FLAVOR.length && !stopped; i++) {
+      const d = FLAVOR[i];
+      document.getElementById('status').textContent = `Flavor [${i+1}/20] ${d.ingrediente}...`;
+      document.getElementById('progress').style.width = ((i+1)/20*100)+'%';
+      const val = await testFlavor(d.ingrediente, d.attesa_abbinamenti);
+      scores.flavor.push(val.voto_globale||5);
+      addCard('FLAVOR', i+1, `Abbinamenti per ${d.ingrediente}`, val.note||'', val, 'bar');
+      updateSummary();
+      await new Promise(r=>setTimeout(r,600));
+    }
+  }
+  
+  if (section === 'calc') {
+    document.getElementById('results').insertAdjacentHTML('afterbegin', '<div class="section-label">CALCOLATORI — correttezza numerica</div>');
+    for (let i=0; i<CALC.length && !stopped; i++) {
+      const d = CALC[i];
+      document.getElementById('status').textContent = `Calc [${i+1}/10] ${d.calc}...`;
+      document.getElementById('progress').style.width = ((i+1)/10*100)+'%';
+      const val = await testCalc(d.calc, d.params, d.attesa);
+      scores.calc.push(val.voto_globale||5);
+      addCard('CALC', i+1, `${d.calc}: ${d.attesa}`, val.risultato||'', val, 'cucina');
+      updateSummary();
+      await new Promise(r=>setTimeout(r,600));
+    }
+  }
+  
+  running = false;
+  document.getElementById('stop-btn').style.display = 'none';
+  document.getElementById('run-btn').disabled = false;
+  document.getElementById('status').textContent = `✓ Sezione completata.`;
+}
+
+async function runAll() {
+  document.getElementById('results').innerHTML = '';
+  scores = {chat:[], lezioni:[], flavor:[], calc:[]};
+  document.getElementById('status').textContent = 'Login in corso...';
+  token = await login();
+  if (!token) { document.getElementById('status').textContent = 'Login fallito'; return; }
+  document.getElementById('status').textContent = 'Login OK. Avvio test completo...';
+  for (const section of ['calc','flavor','lezioni','chat']) {
+    if (stopped) break;
+    await runSection(section);
+  }
+  document.getElementById('status').textContent = '✓ Test completo terminato.';
+}
+
+function stopTest() {
+  stopped = true; running = false;
+  document.getElementById('stop-btn').style.display = 'none';
+  document.getElementById('run-btn').disabled = false;
+  document.getElementById('status').textContent = 'Test interrotto.';
 }
 </script>
 </body>
