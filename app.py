@@ -1001,7 +1001,9 @@ def login():
 @app.route("/v1/quaderno", methods=["GET"])
 def quaderno_lista():
     """AC3 — Lista esperimenti salvati dall'utente."""
-    token = request.headers.get("Authorization","").replace("Bearer ","")
+    token = (request.headers.get("Authorization","").replace("Bearer ","") or
+               request.headers.get("X-Token","") or
+               (request.json or {}).get("token",""))
     user_id = _utente_da_token(token)
     if not user_id:
         return jsonify({"errore":"autenticazione richiesta"}), 401

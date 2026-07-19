@@ -962,8 +962,8 @@ if('serviceWorker' in navigator){
   <div class="sec-label" id="ct-ponte-cifra" style="padding-top:4px">Il ponte verso Cifra</div>
   <div class="bridge-card">
     <div class="bridge-eyebrow">il ponte verso Cifra</div>
-    <div class="bridge-headline">Sai già la scienza. Vuoi vedere cosa ti costa davvero in bottega?</div>
-    <div class="bridge-body">Cifra prende questa stessa ricetta e calcola il food cost reale sui tuoi numeri.</div>
+    <div class="bridge-headline">Conosci la fisica. Cifra ti dà il controllo dei numeri.</div>
+    <div class="bridge-body">Margini, food cost, fornitori, movimenti. Cifra è il gestionale che ragiona — costruito per chi sa già come funziona la materia.</div>
     <button class="bridge-cta">Scopri Cifra <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   </div>
 </div>
@@ -1264,8 +1264,10 @@ function switchTab(t){
   if(t==='scopri') caricaHome();
   if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa'){
-    if(Matter.disciplina) { caricaMappa(Matter.disciplina); caricaStrumenti(Matter.disciplina); }
-    else document.getElementById('mappa-label').textContent = _t('mappa_scegli');
+    const _disc = Matter.disciplina || 'bar';
+    caricaMappa(_disc);
+    caricaStrumenti(_disc);
+    if(!Matter.disciplina) document.getElementById('mappa-label').textContent = _t('mappa_scegli');
   }
   if(t==='quaderno') caricaQuaderno();
   // posizione deterministica: la schermata parte sempre dall'alto
@@ -1985,9 +1987,11 @@ function vaiAPro(){
     switchAuthTab('reg');
   } else {
     // utente già loggato → vai a Stripe
-    fetch('/v1/stripe/checkout',{method:'POST',headers:{'Content-Type':'application/json',
-      'X-Token':localStorage.getItem('matter_token')||''}})
-      .then(r=>r.json()).then(j=>{ if(j.url) window.location.href=j.url; })
+    const _tk = localStorage.getItem('matter_token')||'';
+    fetch('/v1/stripe/checkout',{method:'POST',
+      headers:{'Content-Type':'application/json','X-Token':_tk,'Authorization':'Bearer '+_tk},
+      body:JSON.stringify({token:_tk})})
+      .then(r=>r.json()).then(j=>{ if(j.url) window.location.href=j.url; else if(j.checkout_url) window.location.href=j.checkout_url; })
       .catch(()=>{});
   }
 }
