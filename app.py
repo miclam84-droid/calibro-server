@@ -1862,20 +1862,21 @@ def composti_ingrediente(ingrediente):
         cur = conn.cursor()
 
         # Cerca composti PubChem collegati a questo ingrediente
+        ahn_ids = [
+            f"ahn_{ahn_name}",
+            f"ahn_{ahn_name.replace('_',' ')}",
+            f"ahn_{ahn_name.replace(' ','_')}",
+        ]
         cur.execute('''
             SELECT DISTINCT n.id, n.name, n.data
             FROM nodes n
             JOIN edges e ON e.to_id = n.id
-            WHERE e.from_id = ANY(%s)
-            AND e.relation = \'contiene_composto\'
-            AND n.id LIKE \'pub_%%\'
+            WHERE e.from_id IN %s
+            AND e.relation = 'contiene_composto'
+            AND n.id LIKE 'pub_%%'
             ORDER BY n.name
             LIMIT 15
-        ''', ([
-            f"ahn_{ahn_name}",
-            f"ahn_{ahn_name.replace('_',' ')}",
-            f"ahn_{ahn_name.replace(' ','_')}",
-        ],))
+        ''', (tuple(ahn_ids),))
 
         rows = cur.fetchall()
 
