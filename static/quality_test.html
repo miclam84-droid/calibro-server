@@ -161,16 +161,20 @@ async function testLezione(disc, step, verifica) {
   const target = j.fenomeno?.target || '';
   
   if (!scheda || scheda.length < 50) {
-    return {nome, scheda:'', target, voto_globale:2, accuratezza:2, utilita:2, numeri:2, tono:5, allucinazioni:8, note:'Scheda assente o troppo breve'};
+    return {nome, scheda:'', target, voto_globale:2, accuratezza:2, utilita:2, numeri:2, tono:5, allucinazioni:8, 
+            note:`Scheda assente (${scheda.length} chars) per ${nome || disc+' step'+step}`};
   }
   
-  // Valuta con LLM
-  const domanda = `Lezione ${disc} step ${step}: ${verifica}`;
-  const risposta = `Nome fenomeno: ${nome}. Scheda: ${scheda} Target numerico: ${target}`;
-  const attesa = `Scheda completa con numeri bersaglio, applicazione pratica, errori comuni. Verifica: ${verifica}`;
+  // Valuta la qualità della scheda del fenomeno trovato (non quello atteso)
+  const domanda = `Valuta la qualità didattica di questa scheda sul fenomeno "${nome}" per la disciplina ${disc}`;
+  const risposta = `FENOMENO: ${nome}
+TARGET NUMERICO: ${target}
+SCHEDA: ${scheda}`;
+  const attesa = `Scheda con: definizione fisica precisa, numeri bersaglio misurabili (temperature, pH, percentuali), 
+    applicazione pratica immediata al banco, errori comuni da evitare. Tono da collega a collega.`;
   
   const val = await evalChat(domanda, risposta, attesa);
-  val.note = (val.note || '') + ` | Scheda ${scheda.length} chars`;
+  val.note = `${nome} (step${step}) | ${val.note || ''} | ${scheda.length} chars`;
   return val;
 }
 
