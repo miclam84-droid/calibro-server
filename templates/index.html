@@ -793,11 +793,16 @@ if('serviceWorker' in navigator){
 </script>
 </head>
 <body>
-<header class="app-header">
+<header class="app-header" style="position:relative">
   <div class="app-bar">
     <div class="wordmark">Matter Lab<small id="payoff-text">Science &amp; Craft</small></div>
     <div style="display:flex;align-items:center;gap:6px">
       <button onclick="apriAccount()" id="login-topbar-btn">Accedi</button>
+      <div id="account-menu" style="display:none;position:absolute;top:48px;right:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 0;z-index:300;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.08)">
+        <div style="padding:8px 14px;font-family:var(--mono);font-size:10px;color:var(--ink-muted);letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border);margin-bottom:4px" id="account-menu-email"></div>
+        <div onclick="switchTab('quaderno');chiudiAccountMenu()" style="padding:8px 14px;font-size:13px;cursor:pointer;color:var(--ink)" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background=''">📓 Quaderno</div>
+        <div onclick="doLogout()" style="padding:8px 14px;font-size:13px;cursor:pointer;color:var(--e700)" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background=''">← Esci</div>
+      </div>
       <button onclick="toggleLang()" id="lang-btn">EN</button>
     </div>
   </div>
@@ -3253,8 +3258,35 @@ async function caricaQuaderno(){
 
 /* ── LOGIN TOPBAR ─────────────────────────────────────── */
 function apriAccount(){
-  if(localStorage.getItem('matter_token')) switchTab('quaderno');
-  else switchTab('auth');
+  const token = localStorage.getItem('matter_token');
+  if(token){
+    const menu = document.getElementById('account-menu');
+    const emailEl = document.getElementById('account-menu-email');
+    const email = localStorage.getItem('matter_email') || '';
+    if(emailEl) emailEl.textContent = email;
+    if(menu){
+      const isOpen = menu.style.display !== 'none';
+      menu.style.display = isOpen ? 'none' : 'block';
+      if(!isOpen){
+        // chiudi cliccando fuori
+        setTimeout(()=>document.addEventListener('click', chiudiAccountMenu, {once:true}), 50);
+      }
+    }
+  } else {
+    switchTab('auth');
+  }
+}
+function chiudiAccountMenu(){
+  const menu = document.getElementById('account-menu');
+  if(menu) menu.style.display = 'none';
+}
+function doLogout(){
+  localStorage.removeItem('matter_token');
+  localStorage.removeItem('matter_email');
+  localStorage.removeItem('matter_piano');
+  chiudiAccountMenu();
+  aggiornaTopbarLogin();
+  switchTab('scopri');
 }
 function aggiornaTopbarLogin(){
   const btn=document.getElementById('login-topbar-btn'); if(!btn) return;
@@ -3471,33 +3503,42 @@ if(!_getCookie('matter_consent')){setTimeout(()=>{document.getElementById('cooki
   border:1px solid var(--border);border-radius:9px;padding:5px 12px;cursor:pointer;
   margin-top:6px;display:block}
 .btn-supporto:hover{color:var(--teal);border-color:var(--teal)}
-.sup-modal{position:fixed;inset:0;background:rgba(33,31,26,.42);z-index:200;
-  display:none;align-items:flex-end;justify-content:center}
+.sup-modal{position:fixed;inset:0;background:rgba(28,26,21,.6);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:20px}
 .sup-modal.show{display:flex}
-.sup-sheet{background:var(--ivory);border-radius:20px 20px 0 0;padding:24px;
-  width:100%;max-width:560px}
-.sup-sheet h3{font-family:var(--serif);font-size:17px;margin-bottom:6px}
-.sup-sheet p{font-size:13px;color:var(--s600);margin-bottom:12px}
-.sup-sheet textarea{width:100%;min-height:90px;border:1px solid var(--border);
-  border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;
-  font-family:var(--sans);resize:vertical;outline:none;margin-bottom:10px}
-.sup-sheet textarea:focus{border-color:var(--e500)}
-.sup-actions{display:flex;gap:10px}
-.sup-actions .btn-inv{background:var(--e500);color:#fff;border:none;border-radius:9px;
-  padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;flex:1}
-.sup-actions .btn-ann{background:none;border:1px solid var(--border);color:var(--s600);
-  border-radius:9px;padding:10px 14px;font-size:13px;cursor:pointer}
-#sup-fb{font-size:13px;margin-top:10px;display:none}
+.sup-sheet{background:var(--surface);border-radius:16px;padding:28px;
+  width:100%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+.sup-sheet-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.sup-sheet-icon{width:32px;height:32px;border-radius:8px;background:var(--e100);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sup-sheet h3{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink);margin:0}
+.sup-sheet p{font-size:13px;color:var(--ink-muted);margin:0 0 16px;line-height:1.5}
+.sup-sheet textarea{width:100%;min-height:100px;border:1px solid var(--border);
+  border-radius:10px;padding:11px 13px;font-size:13px;background:var(--ivory);
+  font-family:var(--sans);resize:none;outline:none;margin-bottom:14px;
+  color:var(--ink);line-height:1.5}
+.sup-sheet textarea:focus{border-color:var(--e500);background:#fff}
+.sup-actions{display:flex;gap:8px;justify-content:flex-end}
+.sup-actions .btn-inv{background:var(--e500);color:#fff;border:none;border-radius:8px;
+  padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)}
+.sup-actions .btn-inv:hover{background:var(--e700)}
+.sup-actions .btn-ann{background:none;border:1px solid var(--border);color:var(--ink-muted);
+  border-radius:8px;padding:10px 16px;font-size:13px;cursor:pointer;font-family:var(--sans)}
+.sup-actions .btn-ann:hover{border-color:var(--ink-muted)}
+#sup-fb{font-size:12px;margin-top:10px;text-align:center;display:none}
 </style>
 
 <div class="sup-modal" id="sup-modal" onclick="chiudiSupporto()">
   <div class="sup-sheet" onclick="event.stopPropagation()">
-    <h3 id="sup-titolo">Hai bisogno di aiuto?</h3>
+    <div class="sup-sheet-header">
+      <div class="sup-sheet-icon">💬</div>
+      <h3 id="sup-titolo">Hai bisogno di aiuto?</h3>
+    </div>
     <p id="sup-sub">Descrivi il problema. Ti risponderemo entro 24 ore via email.</p>
     <textarea id="sup-testo" placeholder="Es. Non riesco ad aprire la lezione…"></textarea>
     <div class="sup-actions">
-      <button class="btn-inv" onclick="inviaSupporto()" id="sup-btn-inv">Invia richiesta</button>
       <button class="btn-ann" onclick="chiudiSupporto()">Annulla</button>
+      <button class="btn-inv" onclick="inviaSupporto()" id="sup-btn-inv">Invia richiesta</button>
     </div>
     <div id="sup-fb"></div>
   </div>
