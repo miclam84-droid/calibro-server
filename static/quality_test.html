@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Matter Lab — Quality Evaluation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: #FAF6EE; color: #2a2a2a; padding: 24px; }
+  .header { max-width: 900px; margin: 0 auto 32px; }
+  .logo { font-size: 28px; font-weight: 700; color: #C77B3F; }
+  .payoff { font-family: monospace; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: #9a9090; margin-bottom: 8px; }
+  .title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #6F6A60; }
+  .container { max-width: 900px; margin: 0 auto; }
+  
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+  .summary-card { background: white; border-radius: 12px; padding: 16px; border: 1px solid #e0d9d0; }
+  .summary-card .label { font-family: monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: #9a9090; margin-bottom: 6px; }
+  .summary-card .value { font-size: 32px; font-weight: 700; }
+  .summary-card .sub { font-size: 12px; color: #6F6A60; margin-top: 2px; }
+  
+  .progress-bar { background: #e0d9d0; border-radius: 4px; height: 8px; margin-top: 8px; }
+  .progress-fill { height: 8px; border-radius: 4px; transition: width .5s; }
+  
+  .test-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #e0d9d0; }
+  .test-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .discipline-badge { font-family: monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; flex-shrink: 0; }
+  .test-question { font-size: 14px; font-weight: 600; flex: 1; }
+  .score-badge { font-size: 20px; font-weight: 700; flex-shrink: 0; }
+  
+  .risposta-box { background: #faf6ee; border-left: 3px solid #C77B3F; padding: 12px; border-radius: 0 8px 8px 0; margin-bottom: 12px; font-size: 13px; line-height: 1.6; }
+  
+  .scores-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .score-item { text-align: center; }
+  .score-item .s-label { font-family: monospace; font-size: 8px; letter-spacing: .05em; text-transform: uppercase; color: #9a9090; margin-bottom: 4px; }
+  .score-item .s-val { font-size: 18px; font-weight: 700; }
+  .score-item .s-bar { background: #e0d9d0; border-radius: 2px; height: 4px; margin-top: 4px; }
+  .score-item .s-fill { height: 4px; border-radius: 2px; }
+  
+  .run-btn { background: #2C6E63; color: white; border: none; font-family: monospace; font-size: 12px; font-weight: 600; padding: 12px 24px; border-radius: 8px; cursor: pointer; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 24px; }
+  .run-btn:hover { background: #245a51; }
+  .run-btn:disabled { background: #9a9090; cursor: not-allowed; }
+  
+  .status { font-family: monospace; font-size: 12px; color: #6F6A60; margin-bottom: 16px; min-height: 20px; }
+  
+  .config-section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid #e0d9d0; }
+  .config-section label { display: block; font-family: monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9a9090; margin-bottom: 6px; }
+  .config-section input { width: 100%; border: 1px solid #e0d9d0; border-radius: 6px; padding: 8px 12px; font-size: 13px; font-family: monospace; margin-bottom: 12px; background: #faf6ee; }
+  
+  .color-verde { color: #2C6E63; }
+  .color-arancio { color: #C77B3F; }
+  .color-rosso { color: #c0392b; }
+  
+  .fill-verde { background: #2C6E63; }
+  .fill-arancio { background: #C77B3F; }
+  .fill-rosso { background: #c0392b; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Matter Lab</div>
+  <div class="payoff">Science & Craft</div>
+  <div class="title">Quality Evaluation — LLM-as-a-Judge</div>
+  <div class="subtitle">20 domande reali da professionista F&B · 5 criteri · Valutatore: Claude Sonnet</div>
+</div>
+
+<div class="container">
+  
+  <div class="config-section">
+    <label>URL Matter Lab</label>
+    <input type="text" id="base-url" value="https://web-production-79457.up.railway.app">
+    <label>Email account test</label>
+    <input type="text" id="test-email" value="mrovazzi8@gmail.com">
+    <label>Password</label>
+    <input type="password" id="test-pwd" value="Matter2026!">
+    <button class="run-btn" onclick="runTest()" id="run-btn">▶ AVVIA TEST QUALITÀ</button>
+    <div class="status" id="status">Pronto. Clicca per avviare il test.</div>
+  </div>
+
+  <div id="summary" style="display:none">
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="label">Voto globale</div>
+        <div class="value color-verde" id="avg-global">—</div>
+        <div class="sub">media su 20 domande</div>
+        <div class="progress-bar"><div class="progress-fill fill-verde" id="bar-global" style="width:0%"></div></div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Accuratezza scientifica</div>
+        <div class="value color-arancio" id="avg-acc">—</div>
+        <div class="sub">numeri e fatti corretti</div>
+        <div class="progress-bar"><div class="progress-fill fill-arancio" id="bar-acc" style="width:0%"></div></div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Utilità pratica</div>
+        <div class="value color-verde" id="avg-util">—</div>
+        <div class="sub">applicabile domani mattina</div>
+        <div class="progress-bar"><div class="progress-fill fill-verde" id="bar-util" style="width:0%"></div></div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Numeri bersaglio</div>
+        <div class="value" id="avg-num">—</div>
+        <div class="sub">numeri misurabili al banco</div>
+        <div class="progress-bar"><div class="progress-fill" id="bar-num" style="width:0%;background:#4D2C1A"></div></div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Tono collega</div>
+        <div class="value color-arancio" id="avg-tono">—</div>
+        <div class="sub">niente lezioncine</div>
+        <div class="progress-bar"><div class="progress-fill fill-arancio" id="bar-tono" style="width:0%"></div></div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Assenza allucinazioni</div>
+        <div class="value color-verde" id="avg-hall">—</div>
+        <div class="sub">nessun dato inventato</div>
+        <div class="progress-bar"><div class="progress-fill fill-verde" id="bar-hall" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="results"></div>
+</div>
+
+<script>
+const DOMANDE = [
+  {q:"perché il mio sour perde volume dopo 2 minuti nel bicchiere?", disciplina:"bar", attesa:"acidità titolabile 1.0-1.5%, tecnica dry shake, pH 3.0-3.5"},
+  {q:"ho un gin tonic che risulta piatto, i volumi di CO2 del tonic sono 3.8 ma in bocca non si sente", disciplina:"bar", attesa:"temperatura servizio sotto 4°C, bicchiere freddo, versata inclinata"},
+  {q:"qual è il range di pH ideale per un Margarita bilanciato?", disciplina:"bar", attesa:"pH 3.0-3.5, acidità titolabile, rapporto succo citrico"},
+  {q:"perché il mio sciroppo di zucchero cristallizza dopo 3 giorni?", disciplina:"bar", attesa:"Brix sopra 65°, glucosio come anti-cristallizzante, conservazione"},
+  {q:"la mia pasta madre ha pH 3.5 ma il pane non sviluppa bene in forno", disciplina:"panificazione", attesa:"pH ottimale 3.7-3.9, degradazione glutine, rinfreschi"},
+  {q:"perché il mio pane raffermo dopo 6 ore a temperatura ambiente?", disciplina:"panificazione", attesa:"retrogradazione amido, Aw, temperatura conservazione 4°C vs -18°C"},
+  {q:"uso il 68% di idratazione ma l'impasto è appiccicoso e non regge la forma", disciplina:"panificazione", attesa:"W farina, proteine minimo 13%, glutine, assorbimento"},
+  {q:"il mio espresso ha EY del 24% ma risulta amaro", disciplina:"caffe", attesa:"sovraestratto, EY zona dolce 18-22%, allargare macinatura"},
+  {q:"TDS del mio filtro è 1.4 ma il caffè risulta acquoso", disciplina:"caffe", attesa:"TDS 1.15-1.55 SCA, EY, rapporto acqua caffè"},
+  {q:"il mio gelato esce dal pozzetto a -18°C ma è durissimo impossibile da servire", disciplina:"gelateria", attesa:"PAC 260-350, temperatura servizio -11/-13°C, zuccheri anticongelanti"},
+  {q:"il sorbetto al limone viene granuloso non cremoso", disciplina:"gelateria", attesa:"Brix 28-35%, PAC, stabilizzanti, cristalli ghiaccio"},
+  {q:"quanto overrun devo avere per un gelato artigianale di qualità?", disciplina:"gelateria", attesa:"20-35% artigianale vs 50-100% industriale"},
+  {q:"la mia maionese impazzisce sempre quando aggiungo l'olio troppo velocemente", disciplina:"cucina", attesa:"frazione olio max 67-80%, lecitina tuorlo, gocce sotto 1 micron"},
+  {q:"la carne non fa la crosta a 180°C in padella perché?", disciplina:"cucina", attesa:"Maillard oltre 140°C, acqua superficie blocca reazione, asciugare carne"},
+  {q:"il mio vino bianco fatto in casa ha pH 3.8 è troppo piatto", disciplina:"vino", attesa:"pH bianchi 3.0-3.4, acidità titolabile 5.5-6.5 g/L, malolattica"},
+  {q:"ho un Sauvignon Blanc che sa di peperone verde intenso", disciplina:"vino", attesa:"metossipyrazine, uve non mature, temperatura fermentazione bassa"},
+  {q:"la mia IPA dopo 2 settimane perde l'aroma luppolato", disciplina:"birra", attesa:"ossidazione, myrcene volatile, dry hopping tardivo, temperatura conservazione"},
+  {q:"il pH del mio mash è 5.8 l'efficienza è bassa", disciplina:"birra", attesa:"pH ottimale 5.2-5.4, beta-amilasi e alfa-amilasi, correzione con CaSO4"},
+  {q:"il mio cioccolato temperato fa il bloom bianco dopo 24 ore", disciplina:"pasticceria", attesa:"cristallizzazione Forma V, temperaggio 27-31°C, fat bloom vs sugar bloom"},
+  {q:"la mia panna montata si smonta dopo 10 minuti", disciplina:"pasticceria", attesa:"grassi minimo 35%, temperatura fredda 4°C, struttura proteica"},
+];
+
+const DISC_COLORS = {
+  bar: '#C77B3F', panificazione: '#4D2C1A', caffe: '#6F6A60',
+  gelateria: '#2C6E63', cucina: '#7a6555', vino: '#8B4513',
+  birra: '#D3B566', pasticceria: '#C77B3F'
+};
+
+let token = '';
+let results = [];
+
+async function login() {
+  const base = document.getElementById('base-url').value;
+  const email = document.getElementById('test-email').value;
+  const pwd = document.getElementById('test-pwd').value;
+  
+  const r = await fetch(`${base}/v1/auth/login`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({email, password: pwd})
+  });
+  const j = await r.json();
+  return j.token || '';
+}
+
+async function chiediMatter(domanda) {
+  const base = document.getElementById('base-url').value;
+  const r = await fetch(`${base}/chiedi`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({domanda, lang: 'it', token})
+  });
+  const j = await r.json();
+  return j.risposta || j.nota || 'Nessuna risposta';
+}
+
+async function valutaConClaude(domanda, risposta, attesa) {
+  const prompt = `Sei un esperto valutatore di sistemi AI per professionisti F&B.
+
+DOMANDA: ${domanda}
+RISPOSTA DEL SISTEMA: ${risposta}
+ELEMENTI ATTESI: ${attesa}
+
+Valuta su 5 criteri (0-10) e rispondi SOLO in JSON:
+{"accuratezza":0-10,"utilita":0-10,"numeri":0-10,"tono":0-10,"allucinazioni":0-10,"note":"max 30 parole sul punto critico","voto_globale":0-10}
+
+CRITERI:
+- accuratezza: numeri e fatti fisici/chimici corretti
+- utilita: applicabile domani mattina al banco
+- numeri: include numeri specifici misurabili
+- tono: collega a collega, no lezioni ovvie  
+- allucinazioni: nessun dato inventato o approssimato male`;
+
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 300,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const j = await r.json();
+    const testo = j.content?.[0]?.text || '{}';
+    return JSON.parse(testo.replace(/```json|```/g,'').trim());
+  } catch(e) {
+    return {accuratezza:5,utilita:5,numeri:5,tono:5,allucinazioni:5,note:'Errore valutazione',voto_globale:5};
+  }
+}
+
+function scoreColor(v) {
+  if (v >= 8) return 'color-verde';
+  if (v >= 6) return 'color-arancio';
+  return 'color-rosso';
+}
+function fillColor(v) {
+  if (v >= 8) return 'fill-verde';
+  if (v >= 6) return 'fill-arancio';
+  return 'fill-rosso';
+}
+
+function renderCard(d, i, risposta, val) {
+  const g = val.voto_globale || 0;
+  const col = DISC_COLORS[d.disciplina] || '#6F6A60';
+  
+  return `
+  <div class="test-card">
+    <div class="test-header">
+      <div class="discipline-badge" style="background:${col}20;color:${col}">${d.disciplina}</div>
+      <div class="test-question">Q${i+1}. ${d.q}</div>
+      <div class="score-badge ${scoreColor(g)}">${g.toFixed(1)}</div>
+    </div>
+    <div class="risposta-box">${risposta}</div>
+    <div class="scores-grid">
+      ${['accuratezza','utilita','numeri','tono','allucinazioni'].map(k => {
+        const v = val[k] || 0;
+        const labels = {accuratezza:'Accuratezza',utilita:'Utilità',numeri:'Numeri',tono:'Tono',allucinazioni:'Allucinazioni'};
+        return `<div class="score-item">
+          <div class="s-label">${labels[k]}</div>
+          <div class="s-val ${scoreColor(v)}">${v}</div>
+          <div class="s-bar"><div class="s-fill ${fillColor(v)}" style="width:${v*10}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${val.note ? `<div style="margin-top:10px;font-size:12px;color:#9a9090;font-style:italic">${val.note}</div>` : ''}
+  </div>`;
+}
+
+function updateSummary() {
+  if (!results.length) return;
+  const avg = (key) => results.reduce((s,r) => s + (r.val[key]||0), 0) / results.length;
+  
+  ['global','acc','util','num','tono','hall'].forEach((k, i) => {
+    const keys = ['voto_globale','accuratezza','utilita','numeri','tono','allucinazioni'];
+    const v = avg(keys[i]);
+    document.getElementById(`avg-${k}`).textContent = v.toFixed(1) + '/10';
+    document.getElementById(`avg-${k}`).className = 'value ' + scoreColor(v);
+    document.getElementById(`bar-${k}`).style.width = (v*10) + '%';
+  });
+  document.getElementById('summary').style.display = 'block';
+}
+
+async function runTest() {
+  const btn = document.getElementById('run-btn');
+  const status = document.getElementById('status');
+  const resultsDiv = document.getElementById('results');
+  
+  btn.disabled = true;
+  btn.textContent = '⏳ TEST IN CORSO...';
+  results = [];
+  resultsDiv.innerHTML = '';
+  
+  // Login
+  status.textContent = 'Login in corso...';
+  try {
+    token = await login();
+    if (!token) throw new Error('Login fallito');
+    status.textContent = `Login OK. Avvio test su ${DOMANDE.length} domande...`;
+  } catch(e) {
+    status.textContent = `ERRORE LOGIN: ${e.message}`;
+    btn.disabled = false;
+    btn.textContent = '▶ AVVIA TEST QUALITÀ';
+    return;
+  }
+  
+  for (let i = 0; i < DOMANDE.length; i++) {
+    const d = DOMANDE[i];
+    status.textContent = `[${i+1}/${DOMANDE.length}] ${d.disciplina.toUpperCase()} — ${d.q.substring(0,50)}...`;
+    
+    // Chiedi a Matter
+    let risposta = '';
+    try {
+      risposta = await chiediMatter(d.q);
+    } catch(e) {
+      risposta = `ERRORE: ${e.message}`;
+    }
+    
+    // Valuta
+    let val = {};
+    try {
+      val = await valutaConClaude(d.q, risposta, d.attesa);
+    } catch(e) {
+      val = {accuratezza:0,utilita:0,numeri:0,tono:0,allucinazioni:0,note:`Errore: ${e.message}`,voto_globale:0};
+    }
+    
+    results.push({d, risposta, val});
+    
+    // Render card
+    resultsDiv.insertAdjacentHTML('beforeend', renderCard(d, i, risposta, val));
+    updateSummary();
+    
+    await new Promise(r => setTimeout(r, 1500)); // rate limit
+  }
+  
+  status.textContent = `✓ Test completato. ${DOMANDE.length} domande valutate.`;
+  btn.disabled = false;
+  btn.textContent = '▶ RIESEGUI TEST';
+}
+</script>
+</body>
+</html>

@@ -2779,6 +2779,12 @@ def service_worker():
     resp.headers["Service-Worker-Allowed"] = "/"
     return resp
 
+@app.route("/quality-test")
+def quality_test():
+    """Tool di test qualità interno — LLM-as-a-Judge"""
+    with open(os.path.join(os.path.dirname(__file__), "static", "quality_test.html"), "r") as f:
+        return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
+
 @app.route("/health")
 def health():
     """IN3 — Endpoint per monitoring (UptimeRobot punta qui).
