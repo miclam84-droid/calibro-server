@@ -2779,6 +2779,58 @@ def service_worker():
     resp.headers["Service-Worker-Allowed"] = "/"
     return resp
 
+@app.route("/v1/quality-eval", methods=["POST"])
+def quality_eval():
+    """Endpoint di quality evaluation - LLM-as-a-Judge lato server.
+    Riceve domanda + risposta, valuta con Claude e restituisce i voti."""
+    import ai_gateway as GW
+    body = request.json or {}
+    domanda = body.get("domanda", "")
+    risposta = body.get("risposta", "")
+    attesa = body.get("attesa", "")
+    
+    if not domanda or not risposta:
+        return jsonify({"errore": "domanda e risposta obbligatorie"}), 400
+    
+    prompt = f"""Sei un esperto valutatore di sistemi AI per professionisti F&B (bar, panificazione, caffe, gelateria, cucina, vino, birra, pasticceria).
+
+DOMANDA POSTA DAL PROFESSIONISTA:
+{domanda}
+
+RISPOSTA DEL SISTEMA AI:
+{risposta}
+
+ELEMENTI TECNICI ATTESI:
+{attesa}
+
+Valuta su 5 criteri (0-10). Rispondi SOLO in JSON senza markdown:
+{{"accuratezza":0,"utilita":0,"numeri":0,"tono":0,"allucinazioni":0,"note":"max 25 parole sul punto critico","voto_globale":0}}
+
+CRITERI:
+- accuratezza: numeri e fatti fisici/chimici corretti e precisi
+- utilita: applicabile domani mattina al banco
+- numeri: include numeri specifici misurabili (pH, temperature, percentuali)
+- tono: collega a collega senza lezioncine ovvie
+- allucinazioni: nessun dato inventato o approssimato male"""
+
+    try:
+        risposta_eval = GW.route_chat(
+            system="Sei un valutatore tecnico. Rispondi SOLO in JSON valido, nessun altro testo.",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=300
+        )
+        import re as _re
+        testo = risposta_eval.strip()
+        # Estrai JSON
+        match = _re.search(r'\{.*\}', testo, _re.DOTALL)
+        if match:
+            result = json.loads(match.group())
+        else:
+            result = json.loads(testo)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"errore": str(e), "accuratezza":5,"utilita":5,"numeri":5,"tono":5,"allucinazioni":5,"voto_globale":5,"note":"Errore valutazione"}), 500
+
 @app.route("/quality-test")
 def quality_test():
     """Tool di test qualità interno — LLM-as-a-Judge"""

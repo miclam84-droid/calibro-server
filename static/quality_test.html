@@ -182,37 +182,17 @@ async function chiediMatter(domanda) {
 }
 
 async function valutaConClaude(domanda, risposta, attesa) {
-  const prompt = `Sei un esperto valutatore di sistemi AI per professionisti F&B.
-
-DOMANDA: ${domanda}
-RISPOSTA DEL SISTEMA: ${risposta}
-ELEMENTI ATTESI: ${attesa}
-
-Valuta su 5 criteri (0-10) e rispondi SOLO in JSON:
-{"accuratezza":0-10,"utilita":0-10,"numeri":0-10,"tono":0-10,"allucinazioni":0-10,"note":"max 30 parole sul punto critico","voto_globale":0-10}
-
-CRITERI:
-- accuratezza: numeri e fatti fisici/chimici corretti
-- utilita: applicabile domani mattina al banco
-- numeri: include numeri specifici misurabili
-- tono: collega a collega, no lezioni ovvie  
-- allucinazioni: nessun dato inventato o approssimato male`;
-
+  // Valutazione lato server - no CORS, no API key nel browser
+  const base = document.getElementById('base-url').value;
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
+    const r = await fetch(`${base}/v1/quality-eval`, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 300,
-        messages: [{role:'user', content: prompt}]
-      })
+      body: JSON.stringify({domanda, risposta, attesa})
     });
-    const j = await r.json();
-    const testo = j.content?.[0]?.text || '{}';
-    return JSON.parse(testo.replace(/```json|```/g,'').trim());
+    return await r.json();
   } catch(e) {
-    return {accuratezza:5,utilita:5,numeri:5,tono:5,allucinazioni:5,note:'Errore valutazione',voto_globale:5};
+    return {accuratezza:5,utilita:5,numeri:5,tono:5,allucinazioni:5,note:`Errore: ${e.message}`,voto_globale:5};
   }
 }
 
