@@ -2814,11 +2814,7 @@ CRITERI:
 - allucinazioni: nessun dato inventato o approssimato male"""
 
     try:
-        risposta_eval = GW.route_chat(
-            system="Sei un valutatore tecnico. Rispondi SOLO in JSON valido, nessun altro testo.",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=300
-        )
+        risposta_eval = GW.route_chat(prompt)
         import re as _re
         testo = risposta_eval.strip()
         # Estrai JSON
