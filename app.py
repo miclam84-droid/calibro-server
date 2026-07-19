@@ -1342,7 +1342,7 @@ def stt():
             cur_p = conn_p.cursor()
             cur_p.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
             row_p = cur_p.fetchone()
-            cur_p.close(); conn_p.close()
+            cur_p.close(); _release_conn(conn_p)
             if not row_p or row_p[0] != "pro":
                 return jsonify({"errore":"Whisper è disponibile nel piano Pro"}), 403
         except Exception:
@@ -1378,7 +1378,7 @@ def vision():
             cur_v = conn_v.cursor()
             cur_v.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
             row_v = cur_v.fetchone()
-            cur_v.close(); conn_v.close()
+            cur_v.close(); _release_conn(conn_v)
             if not row_v or row_v[0] != "pro":
                 return jsonify({"errore":"Vision è disponibile nel piano Pro"}), 403
         except Exception:
@@ -2303,7 +2303,7 @@ def abbina(ingrediente):
                             ORDER BY overlap DESC NULLS LAST LIMIT 8
                         """, (_nid,))
                         rows = _cur2.fetchall()
-                        _cur2.close(); _c2.close()
+                        _cur2.close(); _release_conn(_c2)
                         if rows:
                             print(f"[EMBED] '{ingrediente}' → '{_nname}' (sim={_sim:.2f})", flush=True)
                             break
@@ -2826,7 +2826,7 @@ def chiedi():
                 prima = rt[1] if rt else None
                 giorni = (_dt.datetime.now(_dt.timezone.utc) - prima).days if prima else 0
                 if n_chat >= 5 or giorni >= 7:
-                    cur_t.close(); conn_t.close()
+                    cur_t.close(); _release_conn(conn_t)
                     return jsonify({"errore":"trial_esaurito","n_chat":n_chat,
                         "messaggio":"Hai usato le 5 chat di prova. Passa a Pro per continuare.",
                         "trial_esaurito":True}), 402
@@ -2839,7 +2839,7 @@ def chiedi():
                 trial_info = {"trial_attivo":True,"chat_usate":n_usate,
                     "chat_rimaste":max(0,5-n_usate),
                     "notifica":n_usate==3,"ultimo":n_usate>=5}
-            cur_t.close(); conn_t.close()
+            cur_t.close(); _release_conn(conn_t)
         except Exception as _te:
             print(f"[TRIAL] {_te}", flush=True)
     # ── FINE TRIAL ──────────────────────────────────────────────────────
@@ -4185,9 +4185,9 @@ def admin_build_cron():
         conn_ing = _get_conn()
         try:
             BIG.salva_in_grafo(conn_ing, ing, d, profilo)
-            conn_ing.close()
+            _release_conn(conn_ing)
         except Exception as db_e:
-            try: conn_ing.rollback(); conn_ing.close()
+            try: conn_ing.rollback(); _release_conn(conn_ing)
             except: pass
             return jsonify({"ok":False,"errore":str(db_e)[:80]})
 
@@ -4264,9 +4264,9 @@ def admin_build_continuo():
                 conn_ing = _get_conn()
                 try:
                     BIG.salva_in_grafo(conn_ing, ing, d, profilo)
-                    conn_ing.close()
+                    _release_conn(conn_ing)
                 except Exception as db_e:
-                    try: conn_ing.rollback(); conn_ing.close()
+                    try: conn_ing.rollback(); _release_conn(conn_ing)
                     except: pass
                 tok = usage.get("total_tokens",0)
                 print(f"[BUILD_C] ✓ {ing[:40]} ({tok} tok)", flush=True)
@@ -4330,9 +4330,9 @@ def admin_build_batch():
                 conn_ing = _get_conn()
                 try:
                     BIG.salva_in_grafo(conn_ing, ing, disc, profilo)
-                    conn_ing.close()
+                    _release_conn(conn_ing)
                 except Exception as db_e:
-                    try: conn_ing.rollback(); conn_ing.close()
+                    try: conn_ing.rollback(); _release_conn(conn_ing)
                     except: pass
                     errori.append(f"{ing}: {str(db_e)[:40]}")
                     continue

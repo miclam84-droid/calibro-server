@@ -10,6 +10,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Matter Lab">
 <link rel="manifest" href="/static/manifest.json">
+<link rel="icon" type="image/png" href="/static/icons/favicon-32.png" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="/static/icons/favicon-32.svg">
 <link rel="apple-touch-icon" href="/static/icon-192.png">
 <title>Matter Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1383,6 +1385,28 @@ function avviaLezione(){
 }
 
 /* ── LEZIONE DINAMICA (FE6) ───────────────────────────── */
+// Cache fenomeni lato client per navigazione istantanea
+const _lesCache = {};
+
+async function _precaricaLezione(disc, lang, tok) {
+  // Precarica i fenomeni in background dopo il primo caricamento
+  try {
+    const jobs = [];
+    for(let i = 1; i < (Matter.totale || 30); i++) {
+      if(!_lesCache[disc+'_'+i]) {
+        jobs.push(
+          fetch(`/lezione/${disc}/${i}?lang=${lang}&token=${tok}`)
+            .then(r => r.ok ? r.json() : null)
+            .then(j => { if(j && !j.errore && !j.paywall) _lesCache[disc+'_'+i] = j; })
+            .catch(()=>{})
+        );
+      }
+      if(jobs.length >= 3) { await Promise.all(jobs.splice(0,3)); }
+    }
+    if(jobs.length) await Promise.all(jobs);
+  } catch(e) {}
+}
+
 async function caricaLezioneStep(step){
   const disc = Matter.disciplina || 'bar';
   var _discMap={'bar':'disc_bar','cucina':'disc_cucina','panificazione':'disc_panificazione',
@@ -1397,10 +1421,15 @@ async function caricaLezioneStep(step){
   document.getElementById('les-quiz-box').style.display='none';
   try {
     const tok = localStorage.getItem('matter_token')||'';
-    const r = await fetch(`/lezione/${disc}/${step}?lang=${_lang}&token=${tok}`);
-    if(r.status===402){ mostraPopupPro('lezione'); return; }
-    if(!r.ok) throw new Error('server');
-    const j = await r.json();
+    // Usa cache se disponibile (precaricamento in background)
+    let j = _lesCache[disc+'_'+step];
+    if(!j) {
+      const r = await fetch(`/lezione/${disc}/${step}?lang=${_lang}&token=${tok}`);
+      if(r.status===402){ mostraPopupPro('lezione'); return; }
+      if(!r.ok) throw new Error('server');
+      j = await r.json();
+      _lesCache[disc+'_'+step] = j;
+    }
     if(j.paywall){ mostraPopupPro('lezione'); return; }
     if(j.errore){ document.getElementById('les-nome').textContent = j.errore; return; }
     Matter.step = j.step;
@@ -1442,6 +1471,10 @@ async function caricaLezioneStep(step){
       j.ha_successivo ? 'Avanti →' : 'Vai alla Mappa →';
     // onboarding: nudge completamento all'ultimo fenomeno
     mostraCompletamentoLezione(j.ha_successivo);
+    // Precarica i prossimi step in background
+    if(step === 0) {
+      setTimeout(() => _precaricaLezione(disc, _lang, localStorage.getItem('matter_token')||''), 500);
+    }
   } catch(e){
     document.getElementById('les-nome').textContent = _t('les_errore');
   }
