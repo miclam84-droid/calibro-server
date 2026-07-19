@@ -640,6 +640,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .loop-step-txt b{display:block;font-size:14px;font-weight:600;color:var(--ink);margin-bottom:1px}
 .loop-step-txt span{font-size:12px;color:var(--ink-muted)}
 .loop-step-arr{color:var(--ink-muted);font-size:18px;flex-shrink:0}
+
+.s-actions{display:flex;gap:8px;padding:8px 14px 10px;border-top:1px solid var(--border)}
+.s-action-btn{background:none;border:1px solid var(--border);color:var(--ink-muted);font-family:var(--mono);font-size:10px;font-weight:500;padding:5px 10px;border-radius:6px;cursor:pointer;transition:.15s}
+.s-action-btn:hover{background:var(--surface);color:var(--ink)}
 </style>
 
 <script>
@@ -1732,6 +1736,10 @@ function renderRisp(domanda,j,fromNode){
     ${conns?`<div class="s-conn"><div class="s-conn-lab">esplora le connessioni</div><div class="conns">${conns}</div></div>`:''}
     ${flavorChip}
     ${feedbackHtml}
+    <div class="s-actions">
+      <button class="s-action-btn" onclick="copiaRisposta(this)" title="Copia testo">📋 Copia</button>
+      <button class="s-action-btn" onclick="scaricaPDF(this)" title="Salva PDF">⬇ PDF</button>
+    </div>
     `;
   document.getElementById('schede').prepend(card);
 }
@@ -2786,6 +2794,63 @@ async function caricaProfiloSensoriale() {
 }
 
 /* ── FINE STRUMENTI E SOMMELIER ─────────────────────────── */
+
+/* ── AZIONI RISPOSTA (copia, PDF) ───────────────────────── */
+function copiaRisposta(btn) {
+  const card = btn.closest('.scheda');
+  const domanda = card.querySelector('.s-q b')?.textContent || '';
+  const risposta = card.querySelector('.s-body')?.textContent || '';
+  const testo = `${domanda}\n\n${risposta}`;
+  navigator.clipboard.writeText(testo).then(() => {
+    btn.textContent = '✓ Copiato';
+    setTimeout(() => btn.textContent = '📋 Copia', 2000);
+  }).catch(() => {
+    btn.textContent = '✗ Errore';
+    setTimeout(() => btn.textContent = '📋 Copia', 2000);
+  });
+}
+
+function scaricaPDF(btn) {
+  const card = btn.closest('.scheda');
+  const domanda = card.querySelector('.s-q b')?.textContent || 'Risposta';
+  const risposta = card.querySelector('.s-body')?.textContent || '';
+  const fenchips = Array.from(card.querySelectorAll('.fenchip')).map(f => f.textContent).join(', ');
+  const oggi = new Date().toLocaleDateString('it-IT');
+  
+  // Genera HTML del PDF
+  const html = `<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>${domanda.substring(0,60)}</title>
+<style>
+  body{font-family:Georgia,serif;max-width:600px;margin:40px auto;color:#2a2a2a;line-height:1.6}
+  .logo{font-family:'Arial',sans-serif;font-size:22px;font-weight:700;color:#C77B3F;margin-bottom:4px}
+  .payoff{font-family:'Courier New',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#9a9090;margin-bottom:32px}
+  .domanda{font-size:18px;font-weight:700;color:#2a2a2a;margin-bottom:8px}
+  .fenomeni{font-family:'Courier New',monospace;font-size:10px;color:#C77B3F;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+  .risposta{font-size:14px;line-height:1.8;color:#333;margin-bottom:32px}
+  .footer{font-family:'Courier New',monospace;font-size:9px;color:#9a9090;border-top:1px solid #eee;padding-top:12px}
+</style>
+</head>
+<body>
+<div class="logo">Matter Lab</div>
+<div class="payoff">Science & Craft</div>
+<div class="domanda">${domanda}</div>
+${fenchips ? `<div class="fenomeni">Fenomeni: ${fenchips}</div>` : ''}
+<div class="risposta">${risposta.replace(/\n/g,'<br>')}</div>
+<div class="footer">Generato da Matter Lab · ${oggi} · matter-lab.com<br>Risposta generata da AI su base scientifica — verifica con fonti professionali.</div>
+</body>
+</html>`;
+
+  // Apri finestra di stampa
+  const w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(() => w.print(), 500);
+}
+/* ── FINE AZIONI RISPOSTA ───────────────────────────────── */
 /* ── DRINK COST (bar) e FOOD COST (bakery) ────────────── */
 async function _calcolaCosto(ingredienti, cardId, rowsId, totalId){
   const card = document.getElementById(cardId);
