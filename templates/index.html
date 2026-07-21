@@ -260,10 +260,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .num-bersaglio-inner{flex:1;padding:11px 14px}
 .num-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--s500);margin-bottom:5px}
-.num-big{font-family:var(--serif);font-size:26px;font-weight:700;
-  color:var(--e700);line-height:1.1;margin-bottom:2px}
-.num-big.medio{font-size:17px;line-height:1.35}
-.num-big.lungo{font-size:13.5px;line-height:1.5;font-weight:600}
+.num-big{font-family:var(--mono);font-size:28px;font-weight:700;
+  color:var(--e700);line-height:1.1;margin-bottom:2px;letter-spacing:-.01em}
+.num-big.medio{font-size:20px;line-height:1.35}
+.num-big.lungo{font-size:14px;line-height:1.5;font-weight:600}
 .num-unit{font-size:11px;color:var(--ink-muted);font-family:var(--sans)}
 .cta-main{display:block;margin:14px 14px 0;background:var(--s500);color:#fff;
   font-weight:600;font-size:14px;padding:13px;border-radius:8px;
@@ -1444,6 +1444,7 @@ function switchTab(t){
     const _disc = Matter.disciplina || 'bar';
     caricaMappa(_disc);
     caricaStrumenti(_disc);
+    if(window.innerWidth >= 900) caricaStrumentiSidebar(_disc);
     if(!Matter.disciplina) document.getElementById('mappa-label').textContent = _t('mappa_scegli');
   }
   if(t==='quaderno') caricaQuaderno();
@@ -3103,6 +3104,28 @@ async function caricaComposti(ingrediente) {
   }
 }
 
+
+/* ── STRUMENTI SIDEBAR DESKTOP ────────────────────────────── */
+async function caricaStrumentiSidebar(disciplina) {
+  const sb = document.getElementById('sidebar-strumenti');
+  if(!sb) return;
+  try {
+    const disc_norm = (disciplina||'bar').toLowerCase().replace('caffetteria','caffe').replace('bakery','panificazione');
+    const r = await fetch('/v1/strumenti/' + encodeURIComponent(disc_norm));
+    const j = await r.json();
+    const items = (j.strumenti || []).slice(0, 3);
+    if(!items.length) { sb.textContent = 'Nessuno strumento'; return; }
+    sb.innerHTML = items.map(s => 
+      `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--ink)">${esc(s.nome)}</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--ink-muted)">${esc(s.misura)} · ${esc(s.prezzo_approx||'')}</div>
+        </div>
+        <a href="${esc(s.amazon)}" target="_blank" style="font-family:var(--mono);font-size:9px;color:var(--teal);text-decoration:none">Vedi →</a>
+      </div>`
+    ).join('');
+  } catch(e) { sb.textContent = 'Caricamento...'; }
+}
 
 /* ── STRUMENTI DI MISURA ────────────────────────────────── */
 async function caricaStrumenti(disciplina) {

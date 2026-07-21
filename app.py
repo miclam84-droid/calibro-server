@@ -2851,6 +2851,19 @@ def quality_test():
     with open(os.path.join(os.path.dirname(__file__), "static", "quality_test.html"), "r") as f:
         return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
 
+@app.route("/.well-known/assetlinks.json")
+def assetlinks():
+    """Google Play TWA — Digital Asset Links. 
+    Sostituire package_name e sha256 con i valori reali prima del deploy su Play Store."""
+    return jsonify([{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.matterlab.app",
+            "sha256_cert_fingerprints": ["SOSTITUIRE_CON_SHA256_DEL_KEYSTORE"]
+        }
+    }])
+
 @app.route("/health")
 def health():
     """IN3 — Endpoint per monitoring (UptimeRobot punta qui).
