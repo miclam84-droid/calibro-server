@@ -327,7 +327,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   border-radius:10px;padding:12px 16px;margin:14px 0}
 .sl-dato-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--s500);margin-bottom:5px}
-.sl-dato-val{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--e700);line-height:1.2}
+.sl-dato-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--e700);line-height:1.3;letter-spacing:-.01em}
 .sl-principio{background:var(--princ-light);border-radius:10px;padding:12px 14px;margin:10px 0}
 .sl-princ-lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--s500);margin-bottom:4px;
@@ -912,55 +912,55 @@ if('serviceWorker' in navigator){
     <button class="onb-nudge-close" onclick="chiudiNudge()" aria-label="chiudi">×</button>
   </div>
   <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--ink-muted);padding:10px 14px 0;display:flex;flex-wrap:wrap;gap:6px 14px">
-    <span>52 fenomeni</span><span>·</span><span>1.530 ingredienti</span><span>·</span><span>33.696 connessioni</span><span>·</span><span>6 calcolatori</span>
+    <span id="db-numbers-text">52 fenomeni · 1.530 ingredienti · 33.696 connessioni · 6 calcolatori</span>
   </div>
   <div class="sec-label" id="ct-scegli-disc">Scegli la tua disciplina</div>
   <div class="disc-list">
     <div class="disc-item" onclick="selezionaDisciplina('bar')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n" id="disc-bar-nome">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div><div class="disc-kw">Acidità · Diluizione · Carbonatazione · Emulsione</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-bar-nome">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div><div class="disc-kw" id="disc-kw-bar"></div></div>
       <div class="disc-chip" id="disc-bar-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('bakery')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n" id="disc-bakery-nome">Panificazione</div><div class="disc-m" id="disc-bakery-m">caricamento…</div><div class="disc-kw">Struttura · Fermentazione · Osmosi · Retrogradazione</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-bakery-nome">Panificazione</div><div class="disc-m" id="disc-bakery-m">caricamento…</div><div class="disc-kw" id="disc-kw-bakery"></div></div>
       <div class="disc-chip" id="disc-bakery-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('cucina')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n" id="disc-cucina-nome">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div><div class="disc-kw">Maillard · Denaturazione · Calore · Emulsione</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-cucina-nome">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div><div class="disc-kw" id="disc-kw-cucina"></div></div>
       <div class="disc-chip" id="disc-cucina-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('caffetteria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n" id="disc-caffe-nome">Caffè</div><div class="disc-m" id="disc-caffe-m">caricamento…</div><div class="disc-kw">Estrazione · Tostatura · Pressione · Solubilità</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-caffe-nome">Caffè</div><div class="disc-m" id="disc-caffe-m">caricamento…</div><div class="disc-kw" id="disc-kw-caffe"></div></div>
       <div class="disc-chip" id="disc-caffe-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('pasticceria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n" id="disc-pasticceria-nome">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div><div class="disc-kw">Cristallizzazione · Struttura · Caramellizzazione · Montaggio</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-pasticceria-nome">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div><div class="disc-kw" id="disc-kw-pasticceria"></div></div>
       <div class="disc-chip" id="disc-pasticceria-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('gelateria')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n" id="disc-gelateria-nome">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div><div class="disc-kw">Crioscopia · Overrun · Cristalli · PAC</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-gelateria-nome">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div><div class="disc-kw" id="disc-kw-gelateria"></div></div>
       <div class="disc-chip" id="disc-gelateria-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('vino')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n" id="disc-vino-nome">Vino</div><div class="disc-m" id="disc-vino-m">caricamento…</div><div class="disc-kw">Fermentazione · Malolattica · Acidità · Chiarificazione</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-vino-nome">Vino</div><div class="disc-m" id="disc-vino-m">caricamento…</div><div class="disc-kw" id="disc-kw-vino"></div></div>
       <div class="disc-chip" id="disc-vino-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('birra')">
       <div class="disc-dot"></div>
-      <div class="disc-txt"><div class="disc-n" id="disc-birra-nome">Birra</div><div class="disc-m" id="disc-birra-m">caricamento…</div><div class="disc-kw">Mash · Luppolo · Fermentazione · Carbonatazione</div></div>
+      <div class="disc-txt"><div class="disc-n" id="disc-birra-nome">Birra</div><div class="disc-m" id="disc-birra-m">caricamento…</div><div class="disc-kw" id="disc-kw-birra"></div></div>
       <div class="disc-chip" id="disc-birra-chip">—</div>
       <div class="disc-arr">›</div>
     </div>
@@ -2179,6 +2179,8 @@ const App=(()=>{
     aggiornaTopbarLogin();
     mostraOnbOverlay();
     aggiornaPills();
+    // Desktop: precarica strumenti sidebar con disciplina default
+    if(window.innerWidth >= 900) caricaStrumentiSidebar('bar');
     // IN3 — keep-alive: ping ogni 4 minuti per evitare il cold start di Railway
     setInterval(()=>fetch('/health').catch(()=>{}), 4*60*1000);
   });
@@ -2282,7 +2284,16 @@ const _strings = {
   it:{
     payoff:'Science &amp; Craft',
     scopri:'Scopri', lezione:'Lezione', mappa:'Mappa', chiedi:'Chiedi',
-    studia:'Esplora il fenomeno', nologin:'Inizia senza registrarti.',
+    studia:'Esplora il fenomeno', nologin:'Inizia senza registrarti.',,
+    disc_kw_bar:'Acidità · Diluizione · Carbonatazione · Emulsione',
+    disc_kw_bakery:'Struttura · Fermentazione · Osmosi · Retrogradazione',
+    disc_kw_cucina:'Maillard · Denaturazione · Calore · Emulsione',
+    disc_kw_caffe:'Estrazione · Tostatura · Pressione · Solubilità',
+    disc_kw_pasticceria:'Cristallizzazione · Struttura · Caramellizzazione · Montaggio',
+    disc_kw_gelateria:'Crioscopia · Overrun · Cristalli · PAC',
+    disc_kw_vino:'Fermentazione · Malolattica · Acidità · Chiarificazione',
+    disc_kw_birra:'Mash · Luppolo · Fermentazione · Carbonatazione',
+    db_numbers:'52 fenomeni · 1.530 ingredienti · 33.696 connessioni · 6 calcolatori',
     scegli:'Scegli la tua disciplina', caricamento:'caricamento…',
     fenomeno_giorno:'fenomeno del giorno',
     num_bersaglio:'numero bersaglio',
@@ -2428,7 +2439,16 @@ const _strings = {
   en:{
     payoff:'The science behind the craft',
     scopri:'Discover', lezione:'Lesson', mappa:'Map', chiedi:'Ask',
-    studia:'Explore the phenomenon', nologin:'No registration required.',
+    studia:'Explore the phenomenon', nologin:'No registration required.',,
+    disc_kw_bar:'Acidity · Dilution · Carbonation · Emulsion',
+    disc_kw_bakery:'Structure · Fermentation · Osmosis · Retrogradation',
+    disc_kw_cucina:'Maillard · Denaturation · Heat · Emulsion',
+    disc_kw_caffe:'Extraction · Roasting · Pressure · Solubility',
+    disc_kw_pasticceria:'Crystallization · Structure · Caramelization · Mounting',
+    disc_kw_gelateria:'Cryoscopy · Overrun · Crystals · PAC',
+    disc_kw_vino:'Fermentation · Malolactic · Acidity · Clarification',
+    disc_kw_birra:'Mash · Hops · Fermentation · Carbonation',
+    db_numbers:'52 phenomena · 1,530 ingredients · 33,696 connections · 6 calculators',
     scegli:'Choose your discipline', caricamento:'loading…',
     fenomeno_giorno:'phenomenon of the day',
     num_bersaglio:'target number',
@@ -2576,7 +2596,16 @@ const _strings = {
   es:{
     payoff:'Science & Craft',
     scopri:'Descubrir', lezione:'Lección', mappa:'Mapa', chiedi:'Preguntar',
-    studia:'Explora el fenómeno', nologin:'Empieza sin registrarte.',
+    studia:'Explora el fenómeno', nologin:'Empieza sin registrarte.',,
+    disc_kw_bar:'Acidez · Dilución · Carbonatación · Emulsión',
+    disc_kw_bakery:'Estructura · Fermentación · Ósmosis · Retrogradación',
+    disc_kw_cucina:'Maillard · Desnaturalización · Calor · Emulsión',
+    disc_kw_caffe:'Extracción · Tostado · Presión · Solubilidad',
+    disc_kw_pasticceria:'Cristalización · Estructura · Caramelización · Montaje',
+    disc_kw_gelateria:'Crioscopia · Overrun · Cristales · PAC',
+    disc_kw_vino:'Fermentación · Maloláctica · Acidez · Clarificación',
+    disc_kw_birra:'Mash · Lúpulo · Fermentación · Carbonatación',
+    db_numbers:'52 fenómenos · 1.530 ingredientes · 33.696 conexiones · 6 calculadoras',
     scopri_ey:'Fenómeno del día', scopri_cta:'Estudia este fenómeno',
     scopri_errore_eyebrow:'Error al cargar', scopri_errore_titolo:'Sin conexión',
     les_step:'Paso', les_di:'de',
@@ -2753,6 +2782,11 @@ function applicaStringheUI(){
   const sth=(id,html)=>{ const el=s(id); if(el) el.innerHTML=html; };
   // payoff e lang btn
   sth('payoff-text',_t('payoff'));
+  // Aggiorna keyword discipline e database numbers con la lingua corrente
+  const _dkw = ['bar','bakery','cucina','caffe','pasticceria','gelateria','vino','birra'];
+  _dkw.forEach(d => { const el = s('disc-kw-'+d); if(el) el.textContent = _t('disc_kw_'+d)||''; });
+  const _dbn = s('db-numbers-text');
+  if(_dbn) _dbn.textContent = _t('db_numbers')||'';
   document.getElementById('lang-btn').textContent=_lang==='it'?'EN':'IT';
   // tab labels
   document.querySelectorAll('.tab-label').forEach((el,i)=>{
