@@ -254,7 +254,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .hero-body{padding:14px 16px}
 .hero-body p{font-size:13.5px;color:var(--ink-muted);line-height:1.65}
 .num-bersaglio{display:flex;align-items:stretch;gap:0;margin-top:14px;
-  background:var(--e500);border-radius:12px;overflow:hidden}
+  background:#C77B3F;border-radius:12px;overflow:hidden}
 .num-bersaglio-inner{flex:1;padding:14px 16px}
 .num-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
   text-transform:uppercase;color:rgba(250,246,238,.75);margin-bottom:6px}
@@ -317,11 +317,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   text-transform:uppercase;color:var(--s500);margin-bottom:6px}
 .sl-h{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1.15;color:var(--ink);margin-bottom:12px}
 .sl-p{font-size:14.5px;color:var(--ink-muted);line-height:1.75;margin-top:0}
-.sl-dato{background:var(--e500);border:none;border-radius:12px;
+.sl-dato{background:#C77B3F;border:none;border-radius:12px;
   border-radius:10px;padding:12px 16px;margin:14px 0}
 .sl-dato-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--s500);margin-bottom:5px}
-.sl-dato-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ivory);line-height:1.3;letter-spacing:-.01em}
+.sl-dato-val{font-family:var(--mono);font-size:18px;font-weight:700;color:#FAF6EE;line-height:1.3;letter-spacing:-.01em}
 .sl-principio{background:var(--princ-light);border-radius:10px;padding:12px 14px;margin:10px 0}
 .sl-princ-lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--s500);margin-bottom:4px;
@@ -1902,7 +1902,7 @@ function renderRisp(domanda,j,fromNode){
           const col = labelColors[label] || 'var(--ink-muted)';
           const isNum = label === 'NUMERO' || label === 'NUMBER' || label === 'NÚMERO';
           const isAct = label === 'AZIONE' || label === 'ACTION' || label === 'ACCIÓN' || label === 'NUMERO' || label === 'NUMBER' || label === 'NÚMERO';
-        const tagBg = isAct ? 'var(--e500)' : 'var(--s600)';
+        const tagBg = isAct ? '#C77B3F' : '#2C6E63';
         html += '<div class="s-block">' +
             '<div class="s-block-label" style="background:'+tagBg+'">' + esc(label) + '</div>' +
             '<div class="s-block-body"' + (isNum ? ' style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--e700)"' : '') + '>' + esc(val) + '</div>' +
