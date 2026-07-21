@@ -2964,13 +2964,22 @@ def chiedi():
         risposta = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', risposta)
         # normalizza newline multipli in uno solo
         risposta = _re.sub(r'\n{3,}', '\n\n', risposta).strip()
+    # Aggrega numeri bersaglio dai fenomeni trovati
+    numeri_bersaglio = []
+    for f in contesto["fenomeni"]:
+        t = f.get("data", {}).get("target", "") or f.get("target", "")
+        if t and t not in numeri_bersaglio:
+            numeri_bersaglio.append(t)
+    numero_bersaglio_agg = " · ".join(numeri_bersaglio[:2]) if numeri_bersaglio else ""
+
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,
         "risposta": risposta,
         "connessi": connessi,
         "log_id": log_id,
-        "trial": trial_info
+        "trial": trial_info,
+        "numero_bersaglio": numero_bersaglio_agg
     })
 
 @app.route("/nodo", methods=["POST"])
