@@ -1918,7 +1918,44 @@ function renderRisp(domanda,j,fromNode){
   card.innerHTML=`<div class="s-q">${fromNode?'▸ ':''}<b>${esc(domanda)}</b></div>
     <div class="fenchips">${fens}</div>
     ${numBox}
-    <div class="s-body">${esc(j.risposta)}</div>
+    ${(()=>{
+      const r = j.risposta || '';
+      // Prova a parsare risposta strutturata con label IT/EN/ES
+      const labelsIT = ['PROBLEMA','PERCHÉ','NUMERO','MISURA','AZIONE'];
+      const labelsEN = ['PROBLEM','WHY','NUMBER','MEASURE','ACTION'];
+      const labelsES = ['PROBLEMA','POR QUÉ','NÚMERO','MIDE','ACCIÓN'];
+      const allLabels = [...labelsIT, ...labelsEN, ...labelsES];
+      const labelColors = {
+        'PROBLEMA':'var(--ink-muted)','PROBLEM':'var(--ink-muted)','PROBLEMA':'var(--ink-muted)',
+        'PERCHÉ':'var(--ink-muted)','WHY':'var(--ink-muted)','POR QUÉ':'var(--ink-muted)',
+        'NUMERO':'var(--e700)','NUMBER':'var(--e700)','NÚMERO':'var(--e700)',
+        'MISURA':'var(--teal)','MEASURE':'var(--teal)','MIDE':'var(--teal)',
+        'AZIONE':'var(--ink)','ACTION':'var(--ink)','ACCIÓN':'var(--ink)',
+      };
+      // Cerca se la risposta ha la struttura con label
+      const hasStructure = allLabels.some(l => r.includes(l + ':'));
+      if(!hasStructure) return '<div class="s-body">'+esc(r)+'</div>';
+      // Parsa i blocchi
+      const lines = r.split('\n').filter(l => l.trim());
+      let html = '<div class="s-blocks">';
+      lines.forEach(line => {
+        const match = line.match(/^([A-ZÀÁÉÍÓÚÜÑ\s]+?):\s*(.+)$/);
+        if(match && allLabels.some(l => match[1].trim() === l)) {
+          const label = match[1].trim();
+          const val = match[2].trim();
+          const col = labelColors[label] || 'var(--ink-muted)';
+          const isNum = label === 'NUMERO' || label === 'NUMBER' || label === 'NÚMERO';
+          html += '<div class="s-block">' +
+            '<div class="s-block-label" style="color:'+col+'">' + esc(label) + '</div>' +
+            '<div class="s-block-body"' + (isNum ? ' style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--e700)"' : '') + '>' + esc(val) + '</div>' +
+            '</div>';
+        } else {
+          html += '<div class="s-block"><div class="s-block-body">' + esc(line) + '</div></div>';
+        }
+      });
+      html += '</div>';
+      return html;
+    })()}
     <div class="s-ai-label">Risposta generata da AI · Matter usa modelli linguistici per elaborare le risposte</div>
     ${conns?`<div class="s-conn"><div class="s-conn-lab">esplora le connessioni</div><div class="conns">${conns}</div></div>`:''}
     ${flavorChip}
