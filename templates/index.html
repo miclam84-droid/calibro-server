@@ -303,8 +303,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .les-pos{font-family:var(--mono);font-size:11px;color:var(--ink-muted)}
 .les-bar{height:3px;background:var(--border);margin:0;border-radius:0;overflow:hidden}
 .les-bar-fill{height:100%;width:0%;background:var(--e500);transition:width .4s ease}
-.les-dots{display:flex;gap:7px;flex-wrap:wrap;padding:12px 14px 2px}
-.les-dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);
+.les-dots{display:flex;gap:7px;flex-wrap:nowrap;overflow-x:auto;padding:12px 14px 2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.les-dots::-webkit-scrollbar{display:none}
+.les-dot{width:32px;height:32px;flex-shrink:0;border-radius:50%;border:1.5px solid var(--border);
   background:var(--surface);color:var(--ink-muted);font-family:var(--mono);font-size:11px;
   display:flex;align-items:center;justify-content:center;cursor:pointer;
   transition:.15s;flex-shrink:0}
