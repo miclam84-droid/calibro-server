@@ -4,7 +4,7 @@
 # e chiede a Mistral di rispondere SENZA inventare.
 # Flask + grafo (Postgres su Railway / SQLite in locale) + Mistral via HTTP.
 # ============================================================
-import os, json, sqlite3, pathlib, difflib
+import os, json, sqlite3, pathlib, difflib, uuid
 from flask import Flask, request, jsonify, render_template
 import motore as Motore
 
@@ -1742,6 +1742,132 @@ def reset_richiesta():
     except Exception:
         pass
     return jsonify({"ok":True,"messaggio":"Se l'email è registrata riceverai un link."})
+
+
+# ── SSO DEEP LINK — Token generator per Cifra ─────────────────
+@app.route("/v1/token/generate", methods=["POST"])
+def token_generate():
+    """Genera un token monouso per SSO Matter → Cifra.
+    Autenticato con token sessione Matter (utente loggato).
+    Body: {email, ricetta_id}
+    Returns: {token, expires_at}
+    """
+    auth = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
+    user_id = _utente_da_token(auth)
+    if not user_id:
+        return jsonify({"errore": "non autenticato"}), 401
+
+    data = request.get_json(silent=True) or {}
+    ricetta_id = data.get("ricetta_id")
+    email = data.get("email", "").strip().lower()
+
+    if not email:
+        return jsonify({"errore": "email obbligatoria"}), 400
+
+    token = str(uuid.uuid4())
+
+    try:
+        import datetime
+        conn = _get_conn()
+        cur = conn.cursor()
+        # Crea tabella se non esiste
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS sso_tokens (
+                token TEXT PRIMARY KEY,
+                email TEXT NOT NULL,
+                ricetta_id INTEGER,
+                expires_at TIMESTAMP NOT NULL,
+                used BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT NOW()
+            )
+        """)
+        expires_at = datetime.datetime.utcnow() + datetime.timedelta(minutes=15)
+        cur.execute(
+            "INSERT INTO sso_tokens (token, email, ricetta_id, expires_at) VALUES (%s, %s, %s, %s)",
+            (token, email, ricetta_id, expires_at)
+        )
+        conn.commit()
+        cur.close()
+        _release_conn(conn)
+        return jsonify({
+            "token": token,
+            "expires_at": expires_at.isoformat() + "Z",
+            "deep_link": f"https://cruscotto-production.up.railway.app/import?matter_token={token}&matter_email={email}" + (f"&ricetta_id={ricetta_id}" if ricetta_id else "")
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
+@app.route("/v1/token/verify")
+def token_verify():
+    """Verifica un token SSO monouso (burn after read).
+    Autenticato con MATTER_SERVICE_KEY.
+    Query param: ?token=...
+    Returns: {valid, email, ricetta_id}
+    """
+    service_key = os.environ.get("MATTER_SERVICE_KEY", "")
+    auth = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
+    if not service_key or auth != service_key:
+        return jsonify({"errore": "non autorizzato"}), 403
+
+    token = request.args.get("token", "").strip()
+    if not token:
+        return jsonify({"valid": False, "errore": "token mancante"}), 400
+
+    try:
+        import datetime
+        conn = _get_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT email, ricetta_id, expires_at, used FROM sso_tokens WHERE token=%s",
+            (token,)
+        )
+        row = cur.fetchone()
+
+        if not row:
+            cur.close(); _release_conn(conn)
+            return jsonify({"valid": False, "errore": "token non trovato"})
+
+        email, ricetta_id, expires_at, used = row["email"] if hasattr(row, "__getitem__") else row
+
+        # Gestisci sia dict che tuple
+        if isinstance(row, dict):
+            email = row["email"]
+            ricetta_id = row["ricetta_id"]
+            expires_at = row["expires_at"]
+            used = row["used"]
+        else:
+            email, ricetta_id, expires_at, used = row
+
+        if used:
+            cur.close(); _release_conn(conn)
+            return jsonify({"valid": False, "errore": "token già usato"})
+
+        now = datetime.datetime.utcnow()
+        if isinstance(expires_at, str):
+            expires_at = datetime.datetime.fromisoformat(expires_at.replace("Z", ""))
+        if expires_at.tzinfo is not None:
+            expires_at = expires_at.replace(tzinfo=None)
+
+        if now > expires_at:
+            cur.close(); _release_conn(conn)
+            return jsonify({"valid": False, "errore": "token scaduto"})
+
+        # Burn — marca come usato
+        cur.execute("UPDATE sso_tokens SET used=TRUE WHERE token=%s", (token,))
+        conn.commit()
+        cur.close()
+        _release_conn(conn)
+
+        return jsonify({
+            "valid": True,
+            "email": email,
+            "ricetta_id": ricetta_id
+        })
+    except Exception as e:
+        return jsonify({"valid": False, "errore": str(e)}), 500
+
+
 
 
 @app.route("/v1/auth/reset-conferma", methods=["POST"])
