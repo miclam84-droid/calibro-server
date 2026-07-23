@@ -4319,15 +4319,15 @@ def admin_insert_test_ricetta():
         user_id = row[0] if isinstance(row, (list, tuple)) else row["id"]
         # Inserisci 3 ricette di test
         ricette = [
-            ("Negroni House", "Gin 30ml · Campari 30ml · Vermut rosso 30ml", '["Gin","Campari","Vermut rosso"]'),
-            ("Sour al limone", "Bourbon 45ml · Succo limone 22ml · Sciroppo 15ml", '["Bourbon","Limone","Sciroppo semplice"]'),
-            ("Focaccia madre", "Farina 1kg · Acqua 750ml · Sale 20g · Lievito madre 200g", '["Farina","Acqua","Sale","Lievito madre"]'),
+            ("Negroni House", "bar", '["Gin","Campari","Vermut rosso"]', None, None, 22.0),
+            ("Sour al limone", "bar", '["Bourbon","Limone","Sciroppo semplice"]', 3.2, None, None),
+            ("Focaccia madre", "panificazione", '["Farina","Acqua","Sale","Lievito madre"]', 3.8, None, None),
         ]
         ids = []
-        for nome, risposta, ing in ricette:
+        for nome, disc, ing, ph, brix, abv in ricette:
             cur.execute(
-                "INSERT INTO esperimenti (user_id, domanda, risposta, ingredienti, ts) VALUES (%s, %s, %s, %s::jsonb, NOW()) RETURNING id",
-                (user_id, f"Come faccio il {nome}?", risposta, ing)
+                "INSERT INTO esperimenti (user_id, nome, disciplina, ingredienti, ph, brix, abv, ts) VALUES (%s, %s, %s, %s::jsonb, %s, %s, %s, NOW()) RETURNING id",
+                (user_id, nome, disc, ing, ph, brix, abv)
             )
             ids.append(cur.fetchone()[0])
         conn.commit()
