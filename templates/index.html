@@ -1097,7 +1097,7 @@ if('serviceWorker' in navigator){
     <div class="bridge-eyebrow">il ponte verso Cifra</div>
     <div class="bridge-headline">Conosci la fisica. Cifra ti dà il controllo dei numeri.</div>
     <div class="bridge-body">Margini, food cost, fornitori, movimenti. Cifra è il gestionale che ragiona — costruito per chi sa già come funziona la materia.</div>
-    <button class="bridge-cta">Scopri Cifra <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <button class="bridge-cta" onclick="importaCifra()">Importa in Cifra <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   </div>
 </div>
 
@@ -3095,6 +3095,35 @@ async function caricaComposti(ingrediente) {
   }
 }
 
+
+/* ── SSO CIFRA ─────────────────────────────────────────── */
+async function importaCifra(ricetta_id) {
+  const token = localStorage.getItem('matter_token');
+  const email = localStorage.getItem('matter_email');
+  if (!token || !email) {
+    alert('Devi essere loggato per importare in Cifra.');
+    switchTab('auth');
+    return;
+  }
+  try {
+    const r = await fetch('/v1/token/generate', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email, ricetta_id: ricetta_id || null })
+    });
+    const d = await r.json();
+    if (d.deep_link) {
+      window.open(d.deep_link, '_blank');
+    } else {
+      alert('Errore nella generazione del link: ' + (d.errore || 'sconosciuto'));
+    }
+  } catch(e) {
+    alert('Errore di connessione: ' + e.message);
+  }
+}
 
 /* ── STRUMENTI DI MISURA ────────────────────────────────── */
 async function caricaStrumenti(disciplina) {
