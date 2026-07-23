@@ -4301,6 +4301,42 @@ def feedback():
 
 
 
+@app.route("/admin/insert-test-ricetta")
+def admin_insert_test_ricetta():
+    """Inserisce una ricetta di test per mrovazzi8@gmail.com — uso singolo."""
+    secret = request.args.get("s", "")
+    if secret != os.environ.get("ADMIN_SECRET", ""):
+        return "Forbidden", 403
+    try:
+        conn = _get_conn()
+        cur = conn.cursor()
+        # Trova user_id
+        cur.execute("SELECT id FROM utenti WHERE email='mrovazzi8@gmail.com'")
+        row = cur.fetchone()
+        if not row:
+            cur.close(); _release_conn(conn)
+            return jsonify({"errore": "utente non trovato"}), 404
+        user_id = row[0] if isinstance(row, (list, tuple)) else row["id"]
+        # Inserisci 3 ricette di test
+        ricette = [
+            ("Negroni House", "Gin 30ml · Campari 30ml · Vermut rosso 30ml", '["Gin","Campari","Vermut rosso"]'),
+            ("Sour al limone", "Bourbon 45ml · Succo limone 22ml · Sciroppo 15ml", '["Bourbon","Limone","Sciroppo semplice"]'),
+            ("Focaccia madre", "Farina 1kg · Acqua 750ml · Sale 20g · Lievito madre 200g", '["Farina","Acqua","Sale","Lievito madre"]'),
+        ]
+        ids = []
+        for nome, risposta, ing in ricette:
+            cur.execute(
+                "INSERT INTO esperimenti (user_id, domanda, risposta, ingredienti, ts) VALUES (%s, %s, %s, %s::jsonb, NOW()) RETURNING id",
+                (user_id, f"Come faccio il {nome}?", risposta, ing)
+            )
+            ids.append(cur.fetchone()[0])
+        conn.commit()
+        cur.close()
+        _release_conn(conn)
+        return jsonify({"ok": True, "ids": ids, "messaggio": f"3 ricette inserite per user_id {user_id}"})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
 @app.route("/admin/build")
 def admin_build_page():
     secret = request.args.get("s","")
