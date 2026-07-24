@@ -3601,6 +3601,49 @@ if(!_getCookie('matter_consent')){setTimeout(()=>{document.getElementById('cooki
 
 <!-- ── SUPPORTO ─────────────────────────────────────────── -->
 <style>
+
+/* ── TRIAL POPUP ────────────────────────────────────────── */
+.trial-popup-overlay{position:fixed;inset:0;background:rgba(28,24,18,.72);z-index:500;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.trial-popup{background:var(--surface);border-radius:20px;padding:32px 24px 28px;
+  width:100%;max-width:360px;box-shadow:0 12px 48px rgba(0,0,0,.22);
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:0}
+.trial-popup-badge{font-family:var(--mono);font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--teal);background:rgba(44,110,99,.1);
+  padding:4px 12px;border-radius:20px;margin-bottom:16px}
+.trial-popup-icon{font-size:36px;margin-bottom:12px;line-height:1}
+.trial-popup h3{font-family:var(--serif);font-size:22px;font-weight:700;
+  color:var(--ink);line-height:1.2;margin-bottom:10px}
+.trial-popup-sub{font-size:13px;color:var(--ink-muted);line-height:1.55;
+  margin-bottom:22px}
+.trial-popup-features{width:100%;display:flex;flex-direction:column;gap:8px;
+  margin-bottom:24px}
+.trial-popup-feat{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--ivory);border-radius:10px;text-align:left}
+.trial-popup-feat-icon{font-family:var(--mono);font-size:12px;color:var(--teal);
+  min-width:18px}
+.trial-popup-feat-text{font-size:13px;color:var(--ink);line-height:1.4}
+.trial-popup-price{font-family:var(--mono);font-size:28px;font-weight:700;
+  color:var(--e500);margin-bottom:4px;letter-spacing:-.01em}
+.trial-popup-price-note{font-size:11px;color:var(--ink-muted);margin-bottom:20px;
+  font-family:var(--mono);letter-spacing:.04em}
+.trial-popup-cta{display:block;width:100%;background:var(--teal);color:#fff;
+  border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;
+  font-family:var(--sans);cursor:pointer;text-decoration:none;
+  text-align:center;margin-bottom:12px;transition:background .15s}
+.trial-popup-cta:hover{background:#235a52}
+.trial-popup-skip{background:none;border:none;font-size:12px;color:var(--ink-muted);
+  cursor:pointer;font-family:var(--sans);padding:4px;text-decoration:underline;
+  text-underline-offset:3px}
+.trial-popup-skip:hover{color:var(--ink)}
+.trial-banner{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:var(--ivory);font-size:12px;font-family:var(--mono);
+  padding:8px 16px;border-radius:20px;z-index:400;white-space:nowrap;
+  animation:slideUp .3s ease;pointer-events:none}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
 .btn-supporto{font-size:12px;letter-spacing:.02em;color:var(--muted);background:none;
   border:1px solid var(--border);border-radius:9px;padding:5px 12px;cursor:pointer;
   margin-top:6px;display:block}
@@ -3740,25 +3783,118 @@ function mostraNotificaTrial(rimaste){
 }
 function mostraPopupPro(motivo){
   const old=document.querySelector('.trial-popup-overlay');if(old)old.remove();
-  // Mostra popup solo nella tab Chiedi (non in lezione)
+  // Mostra popup solo nella tab Chiedi per motivazioni chat
   if(motivo === 'ultima_chat' || motivo === 'esaurito') {
     const chiediScreen=document.getElementById('screen-chiedi');
     if(!chiediScreen||!chiediScreen.classList.contains('active')) return;
   }
-  const overlay=document.createElement('div');overlay.className='trial-popup-overlay';
-  const _pt={'it':{'esaurito':'Hai usato le 5 chat di prova','ultimo':'Ultima chat di prova'},'en':{'esaurito':'You have used all 5 trial chats','ultimo':'Last free chat'},'es':{'esaurito':'Has usado las 5 conversaciones de prueba','ultimo':'Último chat gratuito'}};
-  const titolo=(_pt[_lang]||_pt['it'])[motivo==='esaurito'?'esaurito':'ultimo'];
-  const testo=motivo==='esaurito'
-    ?'Per continuare a esplorare la fisica del mestiere, passa al piano Pro.'
-    :({'it':'Questa è la tua ultima chat gratuita. Passa a Pro per continuare senza limiti.','en':'This is your last free chat. Upgrade to Pro to continue without limits.','es':'Este es tu último chat gratuito. Actualiza a Pro para continuar sin límites.'}[_lang]||'Questa è la tua ultima chat gratuita.');
-  overlay.innerHTML=`<div class="trial-popup">
-    <h3>${titolo}</h3>
-    <p>${testo}</p>
-    <a href="/app" class="btn-pro" onclick="overlay.remove();switchTab('auth')">Passa a Pro — €11,99/mese</a>
-    <button class="btn-skip" onclick="this.closest('.trial-popup-overlay').remove()">Continua in free</button>
-  </div>`;
+
+  // Contenuti per lingua e motivo
+  const _COPY = {
+    it: {
+      badge: 'Matter Lab Pro',
+      icon_chat: '◎',
+      icon_lesson: '◈',
+      title_esaurito: 'Hai usato le 5 chat gratuite',
+      title_ultimo: 'Ultima chat gratuita',
+      title_lezione: 'Fenomeno riservato a Pro',
+      title_lezione_locked: 'Fenomeno riservato a Pro',
+      sub_esaurito: 'Continua a usare la scienza del mestiere senza limiti.',
+      sub_ultimo: 'Ancora una risposta e poi dovrai scegliere.',
+      sub_lezione: 'I fenomeni avanzati sono disponibili con il piano Pro.',
+      feat1: '∞  Chat illimitate con numeri reali',
+      feat2: '◈  Tutti i fenomeni di ogni disciplina',
+      feat3: '⊞  6 calcolatori senza restrizioni',
+      feat4: '◎  Flavor Network completo',
+      price: '€11,99',
+      period: '/mese · Disdici quando vuoi',
+      cta: 'Passa a Pro',
+      skip_esaurito: 'Torna alla home',
+      skip_altro: 'Continua in free',
+    },
+    en: {
+      badge: 'Matter Lab Pro',
+      icon_chat: '◎',
+      icon_lesson: '◈',
+      title_esaurito: 'You've used all 5 free chats',
+      title_ultimo: 'Last free chat',
+      title_lezione: 'Advanced phenomenon — Pro only',
+      title_lezione_locked: 'Advanced phenomenon — Pro only',
+      sub_esaurito: 'Keep using the science of your craft without limits.',
+      sub_ultimo: 'One more answer, then you'll need to choose.',
+      sub_lezione: 'Advanced phenomena are available with the Pro plan.',
+      feat1: '∞  Unlimited chats with real numbers',
+      feat2: '◈  All phenomena, all disciplines',
+      feat3: '⊞  6 calculators, no limits',
+      feat4: '◎  Full Flavor Network',
+      price: '€11.99',
+      period: '/month · Cancel anytime',
+      cta: 'Upgrade to Pro',
+      skip_esaurito: 'Back to home',
+      skip_altro: 'Continue free',
+    },
+    es: {
+      badge: 'Matter Lab Pro',
+      icon_chat: '◎',
+      icon_lesson: '◈',
+      title_esaurito: 'Has usado los 5 chats gratuitos',
+      title_ultimo: 'Último chat gratuito',
+      title_lezione: 'Fenómeno avanzado — solo Pro',
+      title_lezione_locked: 'Fenómeno avanzado — solo Pro',
+      sub_esaurito: 'Sigue usando la ciencia de tu oficio sin límites.',
+      sub_ultimo: 'Una respuesta más y tendrás que elegir.',
+      sub_lezione: 'Los fenómenos avanzados están disponibles con el plan Pro.',
+      feat1: '∞  Chats ilimitados con números reales',
+      feat2: '◈  Todos los fenómenos, todas las disciplinas',
+      feat3: '⊞  6 calculadoras sin restricciones',
+      feat4: '◎  Flavor Network completo',
+      price: '€11,99',
+      period: '/mes · Cancela cuando quieras',
+      cta: 'Pasarse a Pro',
+      skip_esaurito: 'Volver al inicio',
+      skip_otro: 'Continuar gratis',
+    }
+  };
+
+  const C = _COPY[_lang] || _COPY['it'];
+  const isChat = motivo === 'esaurito' || motivo === 'ultima_chat';
+  const isLesson = motivo === 'lezione' || motivo === 'lezione_locked';
+
+  const titolo = motivo === 'esaurito' ? C.title_esaurito
+    : motivo === 'ultima_chat' ? C.title_ultimo
+    : motivo === 'lezione' ? C.title_lezione
+    : C.title_lezione_locked;
+
+  const sub = motivo === 'esaurito' ? C.sub_esaurito
+    : motivo === 'ultima_chat' ? C.sub_ultimo
+    : C.sub_lezione;
+
+  const skipLabel = motivo === 'esaurito'
+    ? (C.skip_esaurito || 'Torna alla home')
+    : (C.skip_altro || C.skip_otro || 'Continua in free');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'trial-popup-overlay';
+  overlay.innerHTML = `
+    <div class="trial-popup" onclick="event.stopPropagation()">
+      <div class="trial-popup-badge">${C.badge}</div>
+      <div class="trial-popup-icon">${isChat ? C.icon_chat : C.icon_lesson}</div>
+      <h3>${titolo}</h3>
+      <p class="trial-popup-sub">${sub}</p>
+      <div class="trial-popup-features">
+        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${C.feat1.split(' ')[0]}</span><span class="trial-popup-feat-text">${C.feat1.split('  ')[1]}</span></div>
+        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${C.feat2.split(' ')[0]}</span><span class="trial-popup-feat-text">${C.feat2.split('  ')[1]}</span></div>
+        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${C.feat3.split(' ')[0]}</span><span class="trial-popup-feat-text">${C.feat3.split('  ')[1]}</span></div>
+        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${C.feat4.split(' ')[0]}</span><span class="trial-popup-feat-text">${C.feat4.split('  ')[1]}</span></div>
+      </div>
+      <div class="trial-popup-price">${C.price}</div>
+      <div class="trial-popup-price-note">${C.period}</div>
+      <button class="trial-popup-cta" onclick="document.querySelector('.trial-popup-overlay').remove();switchTab('auth')">${C.cta}</button>
+      <button class="trial-popup-skip" onclick="${motivo === 'esaurito' ? "document.querySelector('.trial-popup-overlay').remove();switchTab('scopri')" : "document.querySelector('.trial-popup-overlay').remove()"}">${skipLabel}</button>
+    </div>`;
+
   document.body.appendChild(overlay);
-  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  overlay.addEventListener('click', e => { if(e.target === overlay) overlay.remove(); });
 }
 
 
