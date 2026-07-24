@@ -4327,6 +4327,122 @@ def feedback():
 
 
 
+@app.route("/admin/update-schede")
+def admin_update_schede():
+    """Aggiorna le schede fenomeni nel DB con contenuto specifico per disciplina."""
+    secret = request.args.get("s", "")
+    if secret != os.environ.get("ADMIN_SECRET", ""):
+        return "Forbidden", 403
+
+    # Schede aggiornate — fenomeni base con contenuto specifico
+    SCHEDE = {
+        "fen-acidita": {
+            "scheda": """L'acidità è la concentrazione di protoni liberi (H⁺) in soluzione, espressa come pH (scala logaritmica inversa) e come acidità titolabile (quantità totale di acidi, in %).
+
+Al banco del bar: il lime fresco ha acidità titolabile 5-6%, il limone 4.5-5.5%, l'arancia 0.6-0.9%. Un sour bilanciato ha acidità titolabile 1.0-1.5% nel bicchiere finito — sotto quella soglia il drink è piatto, sopra è aggressivo. Il pH da solo non basta: puoi avere pH basso ma poca massa acida.
+
+In panificazione: la pasta madre lavora a pH 3.7-3.9. Sotto 3.5 i lieviti si inibiscono, sopra 4.2 l'impasto manca di struttura. I LAB producono acido lattico (morbido, pH ~2.9) e acetico (tagliente, pKa 4.75).
+
+In vino: pH 3.0-3.4 per bianchi freschi, 3.4-3.6 per rossi. L'acidità tartarica (principale nel vino) non si degrada con la cottura. La malolattica converte il malico (pH ~3.4) in lattico (pH ~3.9), ammorbidendo il vino.
+
+Numero bersaglio: pH 3.7-3.9 pasta madre · sour 1.0-1.5% titolabile · vino bianco pH 3.0-3.4""",
+            "target": "pH 3.7-3.9 pasta madre · sour 1.0-1.5% titolabile · vino bianco pH 3.0-3.4"
+        },
+        "fen-carbonatazione": {
+            "scheda": """La carbonatazione è la quantità di CO₂ disciolta in un liquido, espressa in volumi (1 volume = 1L di CO₂ per 1L di liquido) o g/L.
+
+Legge di Henry: la solubilità della CO₂ è proporzionale alla pressione e inversamente proporzionale alla temperatura. Ogni grado in più riduce la CO₂ disciolta. Un bicchiere a temperatura ambiente disperde le bollicine in secondi.
+
+Numeri al banco: cocktail/highball 2.5-3.5 vol · birra 2.0-3.0 vol · champagne/spumante 5.0-6.0 vol · water kefir 1.5-2.5 vol.
+
+Errori comuni: bicchiere caldo, ghiaccio tritato (superficie enorme = CO₂ dispersa rapidamente), mescolare dopo la versata. Il dry shake prima della carbonatazione distrugge le bollicine.
+
+Servizio: bicchiere a 0-2°C, ghiaccio in blocco, versata inclinata a 45°, nessun mescolamento dopo.
+
+Numero bersaglio: gin tonic 3.8 vol · birra artigianale 2.0-2.8 vol · prosecco 4.0-5.5 vol""",
+            "target": "gin tonic 3.8 vol · birra 2.0-3.0 vol · champagne 5.0-6.0 vol"
+        },
+        "fen-concentrazione": {
+            "scheda": """La concentrazione è il rapporto soluto/solvente in una soluzione. Si esprime in % (p/p o v/v), Brix (°Bx = g zucchero/100g soluzione), ABV (alcol per volume), TDS (solidi totali disciolti).
+
+Al banco: un sour ha ~16% ABV nel bicchiere finito, 10-12 Brix. Lo sciroppo semplice è 50 Brix (1:1 p/p), il rich syrup 66 Brix (2:1). Il tonic commerciale è ~8 Brix.
+
+In panificazione: idratazione 60-85% (acqua/farina). Sale 2-2.5% sulla farina — sopra inibisce i lieviti, sotto la struttura glutinica è debole. Zucchero >35% nel panettone crea stress osmotico.
+
+In gelateria: mix gelato 32-38 Brix totali. TDS espresso 7-12%, EY 18-22%.
+
+Concentrare per evaporazione aumenta Brix ma può bruciare gli aromi volatili a >80°C. Concentrare per freddo (freeze concentration) preserva gli aromi.
+
+Numero bersaglio: sciroppo 1:1 = 50 Brix · sour finito 10-12 Brix · salamoia 2-3%""",
+            "target": "sciroppo 1:1 = 50 Brix · sour finito 10-12 Brix · salamoia 2-3%"
+        },
+        "fen-fermentazione": {
+            "scheda": """La fermentazione è la conversione anaerobica degli zuccheri in alcol + CO₂ (alcolica) o acidi organici (lattica, acetica) da parte di lieviti e batteri.
+
+Saccharomyces cerevisiae: attivo 18-35°C, ottimale 20-28°C. Produce 1g etanolo per 1.7g glucosio. Inibito da pH <3.5, alcol >15%, Aw <0.92, zucchero >35%.
+
+In pasta madre: Kazachstania humilis (ex Candida humilis) domina la flora lievitante, tollerando pH fino a 3.5 e acido acetico. I LAB (Lactobacillus sanfranciscensis) lavorano in parallelo producendo acido lattico e acetico in rapporto dipendente da temperatura e idratazione.
+
+In birra: fermentazione alta (ale) 18-22°C, bassa (lager) 8-14°C. Densità iniziale (OG) 1.040-1.080, finale (FG) 1.008-1.020. Efficienza mash 75-85%.
+
+Q10 = 2: ogni 8-10°C in più raddoppia la velocità di fermentazione. Fondamentale in estate.
+
+Numero bersaglio: fermentazione pasta madre 24-27°C · birra ale 18-22°C · lager 8-14°C · Q10 bulk 6-10h a 24°C""",
+            "target": "pasta madre 24-27°C · ale 18-22°C · lager 8-14°C · Q10 raddoppia ogni 8-10°C"
+        },
+        "fen-osmosi": {
+            "scheda": """L'osmosi è il passaggio spontaneo dell'acqua attraverso una membrana semipermeabile da zona a bassa concentrazione soluti verso zona ad alta concentrazione (gradiente osmotico).
+
+In panificazione: il sale va aggiunto DOPO il lievito — in contatto diretto crea un gradiente osmotico che disidrata le cellule di lievito, inibendo la fermentazione. Salamoia sicura: 2-3% sale sul peso totale. Il panettone ha zucchero >35%: crea osmosi anche senza sale aggiunto.
+
+In gelateria: zuccheri iperosmotici (glucosio, fruttosio, destrosio) abbassano il punto di congelamento per depressione del punto crioscopico. PAC destrosio = 190, saccarosio = 100, fruttosio = 190.
+
+In fermentazione: zucchero >35% inibisce S.cerevisiae per stress osmotico (Aw <0.92). Miele Aw <0.60: nessun microrganismo cresce.
+
+In cottura: il sale sulle verdure crea osmosi che estrae l'acqua dalle cellule — ecco perché diventano molli se salate troppo presto.
+
+Numero bersaglio: salamoia sicura 2-3% · panettone zucchero max 35% · miele Aw <0.60""",
+            "target": "salamoia 2-3% · panettone zucchero max 35% · Aw miele <0.60"
+        },
+    }
+
+    try:
+        conn = _get_conn()
+        cur = conn.cursor()
+        updated = []
+        for node_id, data in SCHEDE.items():
+            # Leggi il nodo
+            cur.execute("SELECT id, data FROM nodes WHERE id=%s", (node_id,))
+            row = cur.fetchone()
+            if not row:
+                updated.append(f"{node_id}: NON TROVATO")
+                continue
+            
+            import json
+            nd = row["data"] if isinstance(row["data"], dict) else json.loads(row["data"])
+            
+            # Aggiorna scheda e target
+            nd["scheda"] = data["scheda"]
+            nd["target"] = data["target"]
+            
+            cur.execute(
+                "UPDATE nodes SET data=%s WHERE id=%s",
+                (json.dumps(nd, ensure_ascii=False), node_id)
+            )
+            updated.append(f"{node_id}: OK ({len(data['scheda'])} chars)")
+        
+        conn.commit()
+        cur.close()
+        _release_conn(conn)
+        
+        # Invalida cache lezioni
+        global _lezione_cache
+        _lezione_cache = {}
+        
+        return jsonify({"ok": True, "aggiornati": updated})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
 @app.route("/admin/insert-test-ricetta")
 def admin_insert_test_ricetta():
     """Inserisce una ricetta di test per mrovazzi8@gmail.com — uso singolo."""
