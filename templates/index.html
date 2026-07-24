@@ -1378,7 +1378,7 @@ if('serviceWorker' in navigator){
     <input class="ask-input" id="q" placeholder="chiedi a Matter Lab…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
     <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
   </div>
-  <button class="btn-supporto" onclick="aprireSupporto()">Supporto</button>
+
 </div>
 
 <script>
@@ -1590,7 +1590,7 @@ async function caricaLezioneStep(step){
       j = await r.json();
       _lesCache[disc+'_'+step] = j;
     }
-    if(j.paywall){ mostraPopupPro('lezione'); return; }
+    if(j.paywall){ mostraPopupPro('lezione_locked'); return; }
     if(j.errore){ document.getElementById('les-nome').textContent = j.errore; return; }
     Matter.step = j.step;
     Matter.totale = j.totale_passi;
@@ -1604,7 +1604,7 @@ async function caricaLezioneStep(step){
     document.getElementById('les-step-label').textContent =
       (j.fenomeno.dominio||'') + ' · fenomeno ' + (j.step+1);
     document.getElementById('les-nome').textContent = j.fenomeno.nome;
-    document.getElementById('les-scheda').textContent = j.fenomeno.scheda||'';
+    document.getElementById('les-scheda').textContent = j.fenomeno.scheda || 'Scheda in aggiornamento.';
     // target — mostra la box solo se il fenomeno ha un numero-bersaglio,
     // coerente con lo Scopri; niente "—" spoglio quando il dato non c'è
     const datoBox = document.getElementById('les-dato-box');
@@ -3740,6 +3740,11 @@ function mostraNotificaTrial(rimaste){
 }
 function mostraPopupPro(motivo){
   const old=document.querySelector('.trial-popup-overlay');if(old)old.remove();
+  // Mostra popup solo nella tab Chiedi (non in lezione)
+  if(motivo === 'ultima_chat' || motivo === 'esaurito') {
+    const chiediScreen=document.getElementById('screen-chiedi');
+    if(!chiediScreen||!chiediScreen.classList.contains('active')) return;
+  }
   const overlay=document.createElement('div');overlay.className='trial-popup-overlay';
   const _pt={'it':{'esaurito':'Hai usato le 5 chat di prova','ultimo':'Ultima chat di prova'},'en':{'esaurito':'You have used all 5 trial chats','ultimo':'Last free chat'},'es':{'esaurito':'Has usado las 5 conversaciones de prueba','ultimo':'Último chat gratuito'}};
   const titolo=(_pt[_lang]||_pt['it'])[motivo==='esaurito'?'esaurito':'ultimo'];
@@ -3812,22 +3817,22 @@ let _ultimi_ingredienti=[];
 // ── PILL CHAT BILINGUE ──────────────────────────────────────
 var _PILLS = {
   it: [
-    {q: 'uso sempre lo stesso lime ma il sour cambia ogni sera, perché?', l: 'Perché il sour cambia? →'},
-    {q: 'la madre raddoppia regolarmente ma il pane non sviluppa in cottura', l: 'Madre ok, pane no →'},
-    {q: 'perché la fermentazione accelera con il caldo', l: 'Fermentazione e temperatura →'},
-    {q: 'come misuro correttamente il pH di un impasto', l: 'Come misuro il pH →'},
+    {q: 'uso sempre lo stesso lime ma il sour cambia ogni sera — perché?', l: 'Il sour non è mai uguale →'},
+    {q: 'il mio impasto con lievito madre fermenta bene ma il pane non cresce in forno — cosa succede?', l: 'Il pane non cresce in forno →'},
+    {q: 'd\'estate la fermentazione va troppo veloce e l\'impasto va oltre — come lo controllo?', l: 'Fermentazione fuori controllo →'},
+    {q: 'come misuro il pH di un impasto o di un cocktail al banco?', l: 'Come misuro il pH →'},
   ],
   en: [
-    {q: 'why does my espresso taste different every morning with the same recipe?', l: 'Espresso inconsistency →'},
-    {q: 'what is the Maillard reaction and how does it affect crust color?', l: 'Maillard & crust →'},
-    {q: 'how does water activity affect shelf life in pastry?', l: 'Water activity & shelf life →'},
-    {q: 'why does my ganache split when I reheat it?', l: 'Ganache emulsion →'},
+    {q: 'my espresso tastes different every morning with the same recipe — why?', l: 'Espresso never the same →'},
+    {q: 'my bread crust is pale even at high temperature — what am I missing?', l: 'Pale crust at high heat →'},
+    {q: 'my ganache splits every time I reheat it — how do I fix it?', l: 'Ganache keeps splitting →'},
+    {q: 'how do I measure water activity to predict shelf life?', l: 'Shelf life & water activity →'},
   ],
   es: [
-    {q: '¿por qué mi espresso sabe diferente cada mañana con la misma receta?', l: 'Inconsistencia espresso →'},
-    {q: '¿qué es la reacción de Maillard y cómo afecta al color de la corteza?', l: 'Maillard y corteza →'},
-    {q: '¿cómo afecta la actividad del agua a la vida útil en pastelería?', l: 'Actividad del agua →'},
-    {q: '¿por qué se separa mi ganache cuando la recaliento?', l: 'Emulsión de ganache →'},
+    {q: '¿por qué mi espresso sabe diferente cada mañana con la misma receta?', l: 'El espresso nunca es igual →'},
+    {q: '¿por qué mi pan no sube en el horno aunque la masa fermenta bien?', l: 'El pan no sube en el horno →'},
+    {q: '¿cómo controlo la fermentación cuando hace mucho calor?', l: 'Fermentación fuera de control →'},
+    {q: '¿cómo mido el pH de una masa o de un cóctel?', l: 'Cómo mido el pH →'},
   ]
 };
 function aggiornaPills() {
