@@ -4404,6 +4404,173 @@ In cottura: il sale sulle verdure crea osmosi che estrae l'acqua dalle cellule �
 Numero bersaglio: salamoia sicura 2-3% · panettone zucchero max 35% · miele Aw <0.60""",
             "target": "salamoia 2-3% · panettone zucchero max 35% · Aw miele <0.60"
         },
+        "fen-emulsione": {
+            "scheda": """Un'emulsione è una dispersione stabile di due liquidi immiscibili (acqua e olio) stabilizzata da molecole anfifile (emulsionanti) che si posizionano all'interfaccia abbassando la tensione superficiale.
+
+Maionese e salse: le lecitine del tuorlo (fosfatidilcolina) stabilizzano gocce d'olio di 0.5-20 micron. Temperatura ottimale degli ingredienti: 18-20°C. Aggiungere l'olio a 1-2 ml/s — più veloce e le gocce coalescono. Il pH 4.0-4.5 (limone/aceto) stabilizza ulteriormente l'emulsione per carica elettrostatica.
+
+Panna montata: emulsione aria/grassi. Temperatura critica: 4-8°C — sopra i 10°C i cristalli di grasso fondono e la schiuma collassa. Panna minimo 35% grassi.
+
+Latte: emulsione naturale stabilizzata da caseine (80%) e sieroproteine (20%). Temperatura vapore: 65-68°C. Sopra 70°C le sieroproteine denaturano e la schiuma diventa instabile.
+
+Ganache: emulsione cioccolato/panna. Ratio panna/cioccolato 1:1 per ganache morbida, 1:2 per tartufabile. Temperatura di emulsione: 40-45°C. Cristallizzazione tipo V a 27-29°C.
+
+Numero bersaglio: maionese pH 4.0-4.5 · panna montata 4-8°C · latte vapore 65-68°C · ganache emulsione 40-45°C""",
+            "target": "maionese pH 4.0-4.5 · panna montata 4-8°C · latte vapore 65-68°C"
+        },
+        "fen-maillard": {
+            "scheda": """La reazione di Maillard è la condensazione non enzimatica tra un aminoacido e uno zucchero riducente (reazione di Amadori) che produce centinaia di composti aromatici bruni a >140°C.
+
+Tre leve al banco: (1) Temperatura — superficie deve superare 140°C. Il vapore la blocca a 100°C: asciuga bene prima di cuocere. (2) pH — ambienti alcalini (bicarbonato, pH >7) accelerano la reazione: ecco perché i bretzel si immergono in soda caustica. pH acido la rallenta. (3) Umidità — Aw <0.6 in superficie favorisce la reazione. Forno ventilato o griglia asciuga meglio del forno statico.
+
+In panetteria: crosta bruna richiede 150-200°C in superficie. Vapore nei primi 15 minuti impedisce la crosta — poi si apre il forno per asciugare. Zuccheri riducenti (maltosio dal malto) migliorano la doratura.
+
+In bar/cocktail: caramellare il bordo di un bicchiere con zucchero brucia (150-180°C) attiva Maillard. Il caffè tostato deve 800+ composti aromatici a questa reazione.
+
+Errore comune: padella a 180°C troppo bassa — serve almeno 200°C in superficie per reazione rapida. Carne umida = vapore = blocco Maillard.
+
+Numero bersaglio: >140°C per innesco · 150-200°C per crosta · pH >7 accelera · Aw <0.6 in superficie""",
+            "target": ">140°C innesco · 150-200°C crosta · pH >7 accelera · Aw <0.6 superficie"
+        },
+        "fen-denaturazione": {
+            "scheda": """La denaturazione è la perdita irreversibile della struttura tridimensionale di una proteina per effetto di calore, pH estremo, sale o agitazione meccanica. Le catene proteiche si srotolano esponendo i gruppi idrofobici interni.
+
+Temperature critiche al banco:
+· Miosina (carne rossa): 50°C → cottura al rosa, succosa
+· Actina (carne): 65-70°C → carne asciutta, stopposa  
+· Albume (uovo): inizia a 63°C, completo a 82°C
+· Tuorlo: inizia a 65°C, sodo a 70°C
+· Latte (sieroproteine): 65-68°C → schiuma stabile cappuccino; sopra 70°C schiuma instabile
+· Collagene → gelatina: >70°C prolungato (brasato 3-6h a 80-90°C)
+
+Errori comuni: latte cappuccino sopra 70°C perde capacità schiumogena. Uova pastorizzate a 63°C per 3-5 minuti (Salmonella inattivata). Panna montata sopra 10°C: le proteine non trattengono le bolle.
+
+Sous vide sfrutta la denaturazione selettiva: 52°C per 1h denatura miosina (tenera) senza denaturare actina (succosa).
+
+Numero bersaglio: miosina 50°C · uovo fondente 63-65°C · latte cappuccino 65-68°C · collagene→gelatina >70°C x 3h""",
+            "target": "miosina 50°C · uovo fondente 63-65°C · latte vapore 65-68°C · collagene>gelatina 70°C"
+        },
+        "fen-cristallizzazione": {
+            "scheda": """La cristallizzazione è l'organizzazione di molecole in strutture ordinate ripetitive. In F&B riguarda principalmente zuccheri, grassi e ghiaccio.
+
+Zucchero/caramello: il saccarosio cristallizza in soluzione sovrasatura (>67 Brix a 20°C). Per evitarlo: aggiungere glucosio (10-20%) che interferisce con la formazione reticolare, o sciroppo invertito. Temperatura sciroppo 1:1: cuocere a 105-110°C per stabilizzare. Nuclei di cristallizzazione (granelli di zucchero, residui) innescano la cristallizzazione — mantieni gli utensili puliti.
+
+Cioccolato (burro di cacao): 6 forme cristalline. Solo la Forma V (beta) dà lucentezza e snap. Temperaggio: fondere a 45-50°C → raffreddare a 27°C → risalire a 31-32°C (fondente) o 29-30°C (latte). Bloom bianco = transizione Forma V→VI per temperatura instabile o stoccaggio errato.
+
+Gelato: cristalli di ghiaccio <50 micron = cremoso, >100 micron = granuloso. Mantecazione rapida + zuccheri (PAC alto) = cristalli fini. Temperatura uscita mantecatore: -6/-8°C.
+
+Numero bersaglio: sciroppo stabile 105-110°C · temperaggio fondente 31-32°C · gelato cristalli <50 micron · stoccaggio cioccolato 16-18°C""",
+            "target": "sciroppo 105-110°C · temperaggio fondente 31-32°C · cristalli gelato <50 micron"
+        },
+        "fen-estrazione": {
+            "scheda": """L'estrazione è il trasferimento di composti solubili da una matrice solida a un solvente liquido per diffusione. La velocità dipende da temperatura, granulometria, pressione e rapporto soluto/solvente.
+
+Caffè espresso: EY (Extraction Yield) 18-22% = percentuale di caffè estratta dalla dose. TDS 7-12% = solidi disciolti nella tazza. Ratio 1:2 (18g → 36g). Temperatura acqua 90-96°C. Tempo 25-30s. Sotto 18% EY: acido e piatto. Sopra 22%: amaro e legnoso.
+
+Caffè filtro: TDS target 1.15-1.55%, EY 18-22%, ratio 1:15-1:17. Temperatura 90-96°C. Tempo 3-4 minuti.
+
+Cold brew: EY 18-20%, ratio 1:8-1:10, 12-24h a 4-18°C. Bassa temperatura = estrazione lenta, meno acidità, meno caffeina. Sopra 18h: tannini amari.
+
+Moka: TDS 1.2-1.8%, temperatura in estrazione 85-92°C. Fiamma bassa = estrazione più lenta e uniforme.
+
+Errori comuni: macinatura troppo grossa = sotto-estrazione (acido), troppo fine = sovra-estrazione (amaro). Temperatura acqua <85°C blocca l'estrazione degli esteri aromatici.
+
+Numero bersaglio: espresso EY 18-22% · TDS espresso 7-12% · filtro TDS 1.15-1.55% · temperatura 90-96°C""",
+            "target": "espresso EY 18-22% · TDS 7-12% · temperatura 90-96°C · ratio 1:2"
+        },
+        "fen-gelatinizzazione": {
+            "scheda": """La gelatinizzazione è il rigonfiamento irreversibile dei granuli di amido in acqua calda (>60°C) con perdita della struttura cristallina e formazione di un gel. Segue la retrogradazione: ricristallizzazione parziale al raffreddamento.
+
+Temperature di gelatinizzazione per amido:
+· Frumento: 58-64°C
+· Mais: 62-72°C  
+· Patata: 58-66°C
+· Riso: 68-78°C
+· Segale: 57-70°C (più bassa = problema in panificazione)
+
+In panificazione: l'amido gelatinizza in cottura trattenendo l'acqua nella mollica. La segale ha enzimi amilolitici attivi fino a 70°C — senza pH 4.0-4.5 (pasta acida) degradano l'amido gelatinizzato e il pane è appiccicoso. Temperatura interna minima pane di segale: 96-98°C.
+
+Retrogradazione: l'amilosio ricristallizza in poche ore (raffermamento veloce), l'amilopectina in giorni. Conservazione a 4°C accelera la retrogradazione — il freezer (-18°C) la blocca.
+
+Crema pasticcera: amido mais o frumento come addensante. Cuoci a 82-85°C per 1-2 minuti per inattivare le amilasi della farina.
+
+Numero bersaglio: gelatinizzazione frumento 58-64°C · segale 57-70°C · crema pasticcera 82-85°C · retrogradazione massima 4-8°C""",
+            "target": "gelatinizzazione frumento 58-64°C · pane segale T interna 96-98°C · crema 82-85°C"
+        },
+        "fen-ossidazione": {
+            "scheda": """L'ossidazione è la reazione di molecole organiche con l'ossigeno, che degrada aromi, colori e strutture. In F&B è la principale causa di deterioramento qualitativo.
+
+In vino: l'ossigeno dissolto reagisce con polifenoli e alcoli formando aldeidi (acetaldeide = sherry/mela appassita) e composti bruniti. SO₂ libera >25 mg/L protegge il vino bianco. Temperatura: ogni 10°C in più raddoppia la velocità di ossidazione. Vino bianco aperto: consumare entro 24-48h conservato a 4°C.
+
+In birra: ossigeno residuo >0.5 mg/L accelera il day-light skunking (mercaptani) e l'ossidazione degli aromi luppolati. IPA: consumare entro 30 giorni dall'imbottigliamento. Stout: più resistente per presenza di antiossidanti dai malti tostati.
+
+In olio: ossidazione degli acidi grassi polinsaturi (linoleico, linolenico) = irrancidimento. Punto fumo: olio extravergine 180-210°C, olio di girasole ad alto oleico 230°C. Conservare al buio e <20°C.
+
+In caffè: la CO₂ nel caffè appena tostato protegge dall'ossigeno. Degassing 3-7 giorni post-tostatura. Dopo 30 giorni gli aromi volatili si degradano per ossidazione.
+
+Numero bersaglio: SO₂ libera vino bianco >25 mg/L · O₂ residuo birra <0.5 mg/L · olio extravergine punto fumo 180-210°C""",
+            "target": "SO₂ vino >25 mg/L · O₂ birra <0.5 mg/L · punto fumo EVO 180-210°C"
+        },
+        "fen-crioscopia": {
+            "scheda": """L'abbassamento crioscopico è la depressione del punto di congelamento di una soluzione rispetto al solvente puro, proporzionale alla concentrazione di soluti (legge di Raoult).
+
+In gelateria: ogni soluto abbassa il punto di congelamento di una quantità proporzionale al suo PAC (Potere Anti-Congelante, relativo al saccarosio = 100).
+
+PAC degli zuccheri principali:
+· Saccarosio: 100
+· Destrosio (glucosio): 190
+· Fruttosio: 190
+· Lattosio: 40
+· Sorbitolo: 190
+· Maltodestrine: 0-25 (in base al DE)
+
+Calcolo PAC totale: somma di (grammi zucchero × PAC) / 1000. Target gelato artigianale cremoso: PAC 260-320. Sorbetto: PAC 300-380 (no grassi = cristalli più grandi).
+
+Temperatura di servizio: gelato -11/-13°C (spatolabile), sorbetto -13/-15°C. Temperatura pozzetto conservazione: -18°C (cristalli stabili).
+
+Errore comune: PAC basso = gelato durissimo a -18°C e granuloso in bocca. PAC troppo alto = gelato troppo morbido, si scioglie al banco.
+
+Numero bersaglio: PAC gelato 260-320 · sorbetto 300-380 · T servizio -11/-13°C · T conservazione -18°C""",
+            "target": "PAC gelato 260-320 · sorbetto 300-380 · T servizio -11/-13°C"
+        },
+        "fen-overrun": {
+            "scheda": """L'overrun è la percentuale di aria incorporata nel gelato durante la mantecazione, calcolata come: (volume finale - volume iniziale) / volume iniziale × 100.
+
+Formula pratica: se 1L di mix diventa 1.3L di gelato → overrun = 30%.
+
+Target per categoria:
+· Gelato artigianale italiano: 20-35%
+· Gelato industriale: 50-100%
+· Sorbetto: 10-20% (meno aria per struttura più densa)
+· Semifreddo: 80-120% (struttura aerea)
+
+Effetti dell'overrun: più aria = più morbido, si scioglie più velocemente, sapore meno intenso. Meno aria = più denso, freddo in bocca più intenso, più difficile da spalmare.
+
+Controllo: pesa 1L di gelato appena uscito dal mantecatore. Gelato a 35% overrun = 750g/L. Gelato a 25% = 800g/L. Gelato industriale a 80% = 550g/L.
+
+Temperatura uscita mantecatore: -6/-8°C. Abbattitore rapido a -40°C per bloccare la crescita dei cristalli prima dello stoccaggio.
+
+Errore comune: overrun troppo alto (>40%) nel gelato artigianale = prodotto acquoso, si scioglie subito, sapore diluito.
+
+Numero bersaglio: overrun artigianale 20-35% · peso gelato 750-800g/L · T uscita mantecatore -6/-8°C""",
+            "target": "overrun artigianale 20-35% · peso 750-800g/L · T uscita mantecatore -6/-8°C"
+        },
+        "fen-diluizione": {
+            "scheda": """La diluizione in miscelazione è l'aggiunta di acqua (da fusione del ghiaccio o da mixing) a una soluzione alcolica, riducendo l'ABV e modificando la struttura sensoriale del drink.
+
+Shake: 20-28% di diluizione sul volume finale. L'agitazione violenta frantuma il ghiaccio aumentando la superficie di contatto e accelerando la fusione. Temperatura finale: -2/-4°C.
+
+Stir: 15-22% di diluizione. Ghiaccio intero, contatto più lento. Temperatura finale: -4/-6°C. Meno diluizione per drink spirit-forward (Negroni, Manhattan, Old Fashioned).
+
+Build: 10-18% di diluizione. Il ghiaccio nel bicchiere fonde lentamente durante il consumo — la diluizione aumenta nel tempo.
+
+Calcolo: ABV finale = (ml spirito × ABV spirito) / (ml totali). Con Negroni 30+30+30ml a 40%+16%+25%: ABV pre-diluizione = 27%. Con 20% diluizione: 90ml → 108ml, ABV finale ≈ 22.5%.
+
+Errore comune: ghiaccio in piccoli cubetti nello shaker = troppe superfici = diluizione eccessiva (>30%). Usa ghiaccio in blocchi grandi.
+
+Numero bersaglio: shake 20-28% diluizione · stir 15-22% · T finale shake -2/-4°C · Negroni stirred ABV finale 22-24%""",
+            "target": "shake 20-28% diluizione · stir 15-22% · T finale -4/-6°C"
+        },
     }
 
     try:
