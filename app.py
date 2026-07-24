@@ -4419,7 +4419,9 @@ Numero bersaglio: salamoia sicura 2-3% · panettone zucchero max 35% · miele Aw
                 continue
             
             import json
-            nd = row["data"] if isinstance(row["data"], dict) else json.loads(row["data"])
+            # row può essere tuple (id, data) o _PgRow dict-like
+            raw_data = row[1] if isinstance(row, (list, tuple)) else row["data"]
+            nd = raw_data if isinstance(raw_data, dict) else json.loads(raw_data)
             
             # Aggiorna scheda e target
             nd["scheda"] = data["scheda"]
