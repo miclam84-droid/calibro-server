@@ -643,6 +643,7 @@ def costruisci_prompt(domanda, contesto, lang="it"):
             "MISURA: [come si misura al banco — strumento e metodo]\n"
             "AZIONE: [cosa fare concretamente — max 2 frasi]\n"
             "Non usare markdown, asterischi, grassetti. Solo il formato sopra.\n"
+            "- ERRORI DA EVITARE: il glutine non contiene collagene; acidi citrico e malico non sono volatili; pasta madre pH ottimale 4.2-4.5; latte vapore 65-68°C; non inventare dati numerici.\\n"
             "- Non menzionare mai di essere un AI o di usare un grafo."
         )
     return f"{regole}\n\nCONTESTO DAL GRAFO:\n{contesto_txt}\n\nDOMANDA: {domanda}\n\nRISPOSTA:"
@@ -3257,7 +3258,23 @@ def disciplina(nome):
     }
     priorita_disc = PRIORITA.get(nome.lower(), [])
 
-    if not fen_ids:
+    # Se la disciplina ha una lista di priorità definita, usa SOLO quei fenomeni
+    # nell'ordine esatto — evita che fenomeni di altre discipline finiscano nel percorso
+    if priorita_disc:
+        fenomeni = []
+        for fid in priorita_disc:
+            f = db.execute("SELECT id, name, data FROM nodes WHERE id=?", (fid,)).fetchone()
+            if f:
+                fenomeni.append({"id": f["id"], "nome": f["name"],
+                                 "target": _numero_bersaglio(_dati(f["data"]))})
+        # Aggiungi gli altri fenomeni della disciplina non in priorità
+        for fid in fen_ids:
+            if fid not in priorita_disc:
+                f = db.execute("SELECT id, name, data FROM nodes WHERE id=?", (fid,)).fetchone()
+                if f:
+                    fenomeni.append({"id": f["id"], "nome": f["name"],
+                                     "target": _numero_bersaglio(_dati(f["data"]))})
+    elif not fen_ids:
         tutti = db.execute(
             "SELECT id, name, data FROM nodes WHERE type='Fenomeno' ORDER BY name"
         ).fetchall()
@@ -3270,7 +3287,6 @@ def disciplina(nome):
             if f:
                 fenomeni_raw.append({"id": f["id"], "nome": f["name"],
                                      "target": _numero_bersaglio(_dati(f["data"]))})
-        # ordina: prima i prioritari (nell'ordine della lista), poi gli altri alfabetici
         def _sort_key(f):
             try:
                 return (0, priorita_disc.index(f["id"]))
