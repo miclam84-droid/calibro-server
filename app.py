@@ -4343,7 +4343,7 @@ Al banco del bar: il lime fresco ha acidità titolabile 5-6%, il limone 4.5-5.5%
 
 In panificazione: la pasta madre lavora a pH 3.7-3.9. Sotto 3.5 i lieviti si inibiscono, sopra 4.2 l'impasto manca di struttura. I LAB producono acido lattico (morbido, pH ~2.9) e acetico (tagliente, pKa 4.75).
 
-In vino: pH 3.0-3.4 per bianchi freschi, 3.4-3.6 per rossi. L'acidità tartarica (principale nel vino) non si degrada con la cottura. La malolattica converte il malico (pH ~3.4) in lattico (pH ~3.9), ammorbidendo il vino.
+In vino: pH 3.0-3.4 per bianchi freschi, 3.3-3.5 per rossi. L'acidità tartarica (principale nel vino) non si degrada con la cottura. La malolattica converte il malico (pH ~3.4) in lattico (pH ~3.9), ammorbidendo il vino.
 
 Numero bersaglio: pH 3.7-3.9 pasta madre · sour 1.0-1.5% titolabile · vino bianco pH 3.0-3.4""",
             "target": "pH 3.7-3.9 pasta madre · sour 1.0-1.5% titolabile · vino bianco pH 3.0-3.4"
@@ -4381,7 +4381,7 @@ Numero bersaglio: sciroppo 1:1 = 50 Brix · sour finito 10-12 Brix · salamoia 2
 
 Saccharomyces cerevisiae: attivo 18-35°C, ottimale 20-28°C. Produce 1g etanolo per 1.7g glucosio. Inibito da pH <3.5, alcol >15%, Aw <0.92, zucchero >35%.
 
-In pasta madre: Kazachstania humilis (ex Candida humilis) domina la flora lievitante, tollerando pH fino a 3.5 e acido acetico. I LAB (Lactobacillus sanfranciscensis) lavorano in parallelo producendo acido lattico e acetico in rapporto dipendente da temperatura e idratazione.
+In pasta madre: Kazachstania humilis (ex Candida humilis) domina la flora lievitante, tollerando pH fino a 3.5 e acido acetico. I LAB (Lactobacillus sanfranciscensis) lavorano in parallelo producendo acido lattico e acetico in rapporto dipendente da temperatura e idratazione. pKa acido acetico = 4.76, pKa acido lattico = 3.86.
 
 In birra: fermentazione alta (ale) 18-22°C, bassa (lager) 8-14°C. Densità iniziale (OG) 1.040-1.080, finale (FG) 1.008-1.020. Efficienza mash 75-85%.
 
@@ -4427,7 +4427,7 @@ In panetteria: crosta bruna richiede 150-200°C in superficie. Vapore nei primi 
 
 In bar/cocktail: caramellare il bordo di un bicchiere con zucchero brucia (150-180°C) attiva Maillard. Il caffè tostato deve 800+ composti aromatici a questa reazione.
 
-Errore comune: padella a 180°C troppo bassa — serve almeno 200°C in superficie per reazione rapida. Carne umida = vapore = blocco Maillard.
+Errore comune: padella a 160-170°C troppo bassa — serve almeno 180°C in superficie per reazione rapida. Target ottimale padella preriscaldata: 200-220°C. Carne umida = vapore = blocco Maillard.
 
 Numero bersaglio: >140°C per innesco · 150-200°C per crosta · pH >7 accelera · Aw <0.6 in superficie""",
             "target": ">140°C innesco · 150-200°C crosta · pH >7 accelera · Aw <0.6 superficie"
@@ -4488,7 +4488,7 @@ Temperature di gelatinizzazione per amido:
 · Riso: 68-78°C
 · Segale: 57-70°C (più bassa = problema in panificazione)
 
-In panificazione: l'amido gelatinizza in cottura trattenendo l'acqua nella mollica. La segale ha enzimi amilolitici attivi fino a 70°C — senza pH 4.0-4.5 (pasta acida) degradano l'amido gelatinizzato e il pane è appiccicoso. Temperatura interna minima pane di segale: 96-98°C.
+In panificazione: l'amido gelatinizza in cottura trattenendo l'acqua nella mollica. La segale ha enzimi amilolitici attivi fino a 70°C — senza pH 4.0-4.5 (pasta acida) degradano l'amido gelatinizzato e il pane è appiccicoso. Temperatura interna minima pane di segale: 93-96°C.
 
 Retrogradazione: l'amilosio ricristallizza in poche ore (raffermamento veloce), l'amilopectina in giorni. Conservazione a 4°C accelera la retrogradazione — il freezer (-18°C) la blocca.
 
@@ -4522,7 +4522,7 @@ PAC degli zuccheri principali:
 · Fruttosio: 190
 · Lattosio: 40
 · Sorbitolo: 190
-· Maltodestrine: 0-25 (in base al DE)
+· Maltodestrine: 10-15 (DE 10-20)
 
 Calcolo PAC totale: somma di (grammi zucchero × PAC) / 1000. Target gelato artigianale cremoso: PAC 260-320. Sorbetto: PAC 300-380 (no grassi = cristalli più grandi).
 
