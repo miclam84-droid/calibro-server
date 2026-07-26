@@ -1429,11 +1429,23 @@ const Matter = {
   fenomenoId: null
 };
 
-let _lang = 'it';
+let _lang = (function(){
+  const ok = ['it','en','es'];
+  try {
+    const u = new URLSearchParams(location.search).get('lang');
+    if (u && ok.includes(u)) return u;
+    const s = localStorage.getItem('matter_lang');
+    if (s && ok.includes(s)) return s;
+    const nav = (navigator.language || 'it').slice(0,2).toLowerCase();
+    if (ok.includes(nav)) return nav;
+  } catch(e){}
+  return 'it';
+})();
 
 /* ── TOGGLE LINGUA IT/EN (GT5) ────────────────────────── */
 function toggleLang(){
-  _lang = _lang === 'it' ? 'en' : 'it';
+  _lang = _lang === 'it' ? 'en' : (_lang === 'en' ? 'es' : 'it');
+  try { localStorage.setItem('matter_lang', _lang); } catch(e){}
   applicaStringheUI();
   // invalida cache e ricarica
   _homeCached = null;
@@ -2744,7 +2756,7 @@ function applicaStringheUI(){
   _dkw.forEach(d => { const el = s('disc-kw-'+d); if(el) el.textContent = _t('disc_kw_'+d)||''; });
   const _dbn = s('db-numbers-text');
   if(_dbn) _dbn.textContent = _t('db_numbers')||'';
-  document.getElementById('lang-btn').textContent=_lang==='it'?'EN':'IT';
+  document.getElementById('lang-btn').textContent=_lang.toUpperCase();
   // tab labels
   document.querySelectorAll('.tab-label').forEach((el,i)=>{
     const keys=['scopri','lezione','mappa','chiedi'];
