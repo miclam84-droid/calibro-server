@@ -17,6 +17,10 @@ from auth import (_init_account_tables, _hash_pw, _e_hash_legacy, _verifica_pw,
 
 app = Flask(__name__)
 
+# ── Blueprint route ──────────────────────────────────────
+from routes.pwa import bp as pwa_bp
+app.register_blueprint(pwa_bp)
+
 
 def _pulisci_traduzione(t):
     """Toglie intestazioni spurie che Haiku a volte antepone alla traduzione
@@ -2725,31 +2729,11 @@ def abbina_batch():
     return jsonify({"risultati":risultati,"totale_ingredienti":len(ingredienti)})
 
 
-@app.route("/")
-def landing():
-    """LP1 — Landing page pubblica. Il CTA porta a /app."""
-    return render_template("landing.html")
-
-@app.route("/app")
-def home():
-    """PWA principale — serve index.html."""
-    return render_template("index.html")
 
 
-@app.route("/manifest.json")
-def manifest():
-    """PWA manifest."""
-    from flask import send_from_directory
-    return send_from_directory("static", "manifest.json", mimetype="application/manifest+json")
 
 
-@app.route("/sw.js")
-def service_worker():
-    """PWA Service Worker."""
-    from flask import send_from_directory
-    resp = send_from_directory("static", "sw.js", mimetype="application/javascript")
-    resp.headers["Service-Worker-Allowed"] = "/"
-    return resp
+
 
 @app.route("/v1/quality-eval", methods=["POST"])
 def quality_eval():
@@ -2805,30 +2789,7 @@ def quality_test():
     with open(os.path.join(os.path.dirname(__file__), "static", "quality_test.html"), "r") as f:
         return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
 
-@app.route("/.well-known/assetlinks.json")
-def assetlinks():
-    """Google Play TWA — Digital Asset Links. 
-    Sostituire package_name e sha256 con i valori reali prima del deploy su Play Store."""
-    return jsonify([{
-        "relation": ["delegate_permission/common.handle_all_urls"],
-        "target": {
-            "namespace": "android_app",
-            "package_name": "com.matterlab.app",
-            "sha256_cert_fingerprints": ["SOSTITUIRE_CON_SHA256_DEL_KEYSTORE"]
-        }
-    }])
 
-@app.route("/health")
-def health():
-    """IN3 — Endpoint per monitoring (UptimeRobot punta qui).
-    Verifica che Flask risponda E che Postgres sia raggiungibile."""
-    try:
-        db = carica_grafo()
-        r = db.execute("SELECT count(*) as n FROM nodes").fetchone()
-        nodi = r["n"] if r else 0
-        return jsonify({"status": "ok", "nodi": nodi, "ts": time.time()})
-    except Exception as e:
-        return jsonify({"status": "error", "detail": str(e)}), 500
 
 @app.route("/chiedi", methods=["POST"])
 def chiedi():
@@ -5843,17 +5804,6 @@ h1{font-size:24px}h2{font-size:18px;margin-top:32px}p,li{font-size:15px}</style>
 </body></html>""", 200, {'Content-Type': 'text/html; charset=utf-8'}
 
 
-@app.route("/static/sw.js")
-def sw():
-    """IN5 — Serve il service worker dalla cartella static."""
-    import pathlib
-    sw_path = pathlib.Path(__file__).parent / "static" / "sw.js"
-    if sw_path.exists():
-        return sw_path.read_text(), 200, {
-            'Content-Type': 'application/javascript',
-            'Service-Worker-Allowed': '/'
-        }
-    return '', 404
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
