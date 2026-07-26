@@ -21,6 +21,41 @@ app = Flask(__name__)
 from routes.pwa import bp as pwa_bp
 app.register_blueprint(pwa_bp)
 
+# ── Osservabilità: logging errori/lentezze + hook richieste ──
+import time as _time, traceback as _traceback
+import oss
+
+@app.before_request
+def _oss_start():
+    request._t0 = _time.time()
+
+@app.after_request
+def _oss_after(resp):
+    # logga risposte gestite con 5xx o richieste lente (>2s). Mai bloccante.
+    try:
+        dur = int((_time.time() - getattr(request, "_t0", _time.time())) * 1000)
+        if resp.status_code >= 500:
+            oss.log_write("ERROR", request.path, None, f"HTTP {resp.status_code}", None, dur)
+        elif dur > 2000:
+            oss.log_write("WARN", request.path, None, f"lento {dur}ms", None, dur)
+    except Exception:
+        pass
+    return resp
+
+@app.teardown_request
+def _oss_teardown(exc):
+    # cattura le eccezioni non gestite (after_request non gira in quel caso).
+    if exc is not None:
+        try:
+            dur = int((_time.time() - getattr(request, "_t0", _time.time())) * 1000)
+            oss.log_write("ERROR", getattr(request, "path", "?"), None,
+                          str(exc), _traceback.format_exc(), dur)
+        except Exception:
+            pass
+
+from routes.admin_panel import bp as admin_panel_bp
+app.register_blueprint(admin_panel_bp)
+
 
 def _pulisci_traduzione(t):
     """Toglie intestazioni spurie che Haiku a volte antepone alla traduzione
