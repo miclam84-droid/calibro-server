@@ -8,117 +8,14 @@ import os, json, sqlite3, pathlib, difflib, uuid
 from flask import Flask, request, jsonify, render_template
 import motore as Motore
 
+# ── Fondazione estratta (config/db/auth) ──
+from config import HERE, GRAFO, DATABASE_URL
+from db import (_PgRow, _PgCompat, _PgCursorResult, _get_pool, _get_conn,
+                _release_conn, _connetti_postgres, carica_grafo, _dati)
+from auth import (_init_account_tables, _hash_pw, _e_hash_legacy, _verifica_pw,
+                  _genera_token, _utente_da_token)
+
 app = Flask(__name__)
-HERE = pathlib.Path(__file__).parent
-GRAFO = HERE / "grafo"
-
-DATABASE_URL = os.environ.get("DATABASE_URL")
-
-
-class _PgRow(dict):
-    """Riga Postgres accessibile come dizionario, per compatibilita con sqlite3.Row
-    (il resto del codice usa n["id"], n["data"], ecc. — qui funziona identico)."""
-    pass
-
-
-class _PgCompat:
-    """Avvolge una connessione Postgres per farla sembrare sqlite3:
-    stessa firma db.execute(sql, params).fetchone()/.fetchall(), stesso
-    accesso a riga come dizionario. Traduce i placeholder '?' in '%s'.
-    Cosi tutte le query esistenti restano IDENTICHE — zero rischio sulla logica."""
-
-    def __init__(self, conn):
-        self._conn = conn
-
-    def execute(self, sql, params=()):
-        cur = self._conn.cursor()
-        cur.execute(sql.replace("?", "%s"), params)
-        if cur.description:
-            cols = [d[0] for d in cur.description]
-            rows = [_PgRow(zip(cols, r)) for r in cur.fetchall()]
-            return _PgCursorResult(rows)
-        self._conn.commit()
-        return _PgCursorResult([])
-
-
-class _PgCursorResult:
-    def __init__(self, rows):
-        self._rows = rows
-
-    def fetchall(self):
-        return self._rows
-
-    def fetchone(self):
-        return self._rows[0] if self._rows else None
-
-    def __iter__(self):
-        return iter(self._rows)
-
-
-_pg_conn = None  # connessione persistente, riusata tra le richieste
-# ── CONNECTION POOL Postgres ─────────────────────────────
-_pg_pool = None
-
-def _get_pool():
-    global _pg_pool
-    if _pg_pool is None and DATABASE_URL:
-        from psycopg2 import pool as _pgpool
-        _pg_pool = _pgpool.ThreadedConnectionPool(1, 10, DATABASE_URL)
-    return _pg_pool
-
-def _get_conn():
-    """Prende una connessione dal pool. Usare con contesto try/finally + _release_conn."""
-    p = _get_pool()
-    if p:
-        return p.getconn()
-    return None
-
-def _release_conn(conn):
-    """Rilascia la connessione al pool."""
-    p = _get_pool()
-    if p and conn:
-        try:
-            p.putconn(conn)
-        except Exception:
-            pass
-
-
-
-
-def _connetti_postgres():
-    global _pg_conn
-    import psycopg2
-    if _pg_conn is None or _pg_conn.closed:
-        _pg_conn = psycopg2.connect(DATABASE_URL)
-    return _PgCompat(_pg_conn)
-
-
-def carica_grafo():
-    """Su Railway (DATABASE_URL impostata): riusa la connessione Postgres,
-    NIENTE ricostruzione a ogni chiamata — il grafo e gia li, caricato una
-    volta con migrate_postgres.py.
-    In locale (nessuna DATABASE_URL): ricostruisce SQLite in memoria dai
-    seed, comodo per lo sviluppo senza dover avere Postgres a portata."""
-    if DATABASE_URL:
-        return _connetti_postgres()
-    db = sqlite3.connect(":memory:")
-    db.row_factory = sqlite3.Row
-    schema = (GRAFO/"schema.sql").read_text(encoding="utf-8").replace("JSONB","TEXT")
-    db.executescript(schema)
-    for s in sorted(GRAFO.glob("seed-*.sql")):
-        db.executescript(s.read_text(encoding="utf-8"))
-    return db
-
-
-def _dati(campo):
-    """Il campo 'data' arriva come stringa JSON da SQLite, ma già come
-    dict da Postgres (JSONB). Questa funzione gestisce entrambi i casi
-    senza che il resto del codice debba saperlo."""
-    if campo is None:
-        return {}
-    if isinstance(campo, dict):
-        return campo
-    return json.loads(campo or "{}")
 
 
 def _pulisci_traduzione(t):
@@ -757,86 +654,6 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
     except Exception:
         return None
 
-
-def _init_account_tables():
-    """Crea le tabelle account se non esistono. Chiamata al primo avvio."""
-    if not DATABASE_URL:
-        return
-    try:
-        import psycopg2
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS utenti (
-                id          SERIAL PRIMARY KEY,
-                ts          TIMESTAMPTZ DEFAULT NOW(),
-                email       TEXT UNIQUE NOT NULL,
-                password_h  TEXT NOT NULL,
-                piano       TEXT DEFAULT 'free',
-                attivo      BOOLEAN DEFAULT TRUE
-            )
-        """)
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS sessioni (
-                token       TEXT PRIMARY KEY,
-                user_id     INTEGER REFERENCES utenti(id),
-                ts          TIMESTAMPTZ DEFAULT NOW(),
-                scade       TIMESTAMPTZ DEFAULT NOW() + INTERVAL '30 days'
-            )
-        """)
-        conn.commit(); cur.close(); _release_conn(conn)
-    except Exception as e:
-        print(f"[account tables] {e}")
-
-def _hash_pw(password):
-    """KDF forte (pbkdf2/scrypt via werkzeug). Sostituisce lo SHA-256 veloce,
-    che era forzabile in caso di fuga del DB."""
-    from werkzeug.security import generate_password_hash
-    return generate_password_hash(password)
-
-def _e_hash_legacy(stored):
-    """True se lo hash è nel vecchio formato debole 'salt:hash' (SHA-256),
-    da rigenerare col KDF forte al primo login."""
-    return bool(stored) and not str(stored).startswith(("pbkdf2:", "scrypt:", "argon2:"))
-
-def _verifica_pw(password, stored):
-    """True se la password combacia. Gestisce sia i nuovi hash werkzeug sia
-    i vecchi 'salt:hash' SHA-256 (che vanno migrati al primo login)."""
-    if not stored:
-        return False
-    if _e_hash_legacy(stored):
-        import hashlib
-        try:
-            salt, h = str(stored).split(":")
-            return hashlib.sha256((salt + password).encode()).hexdigest() == h
-        except Exception:
-            return False
-    from werkzeug.security import check_password_hash
-    try:
-        return check_password_hash(stored, password)
-    except Exception:
-        return False
-
-def _genera_token():
-    import secrets
-    return secrets.token_urlsafe(32)
-
-def _utente_da_token(token):
-    """Restituisce user_id se il token è valido e non scaduto."""
-    if not DATABASE_URL or not token:
-        return None
-    try:
-        import psycopg2
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT user_id FROM sessioni WHERE token=%s AND scade > NOW()",
-            (token,))
-        row = cur.fetchone()
-        cur.close(); _release_conn(conn)
-        return row[0] if row else None
-    except Exception:
-        return None
 
 @app.route("/v1/auth/registra", methods=["POST"])
 def registra():
