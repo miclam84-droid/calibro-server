@@ -56,6 +56,30 @@ def _oss_teardown(exc):
 from routes.admin_panel import bp as admin_panel_bp
 app.register_blueprint(admin_panel_bp)
 
+@app.route("/admin/schede-export")
+def _schede_export():
+    """Export sola-lettura di tutte le schede fenomeni (IT/EN/ES) per revisione
+    testi. Nessuna AI, veloce. Auth ADMIN_SECRET."""
+    if request.args.get("s", "") != os.environ.get("ADMIN_SECRET", ""):
+        return "Forbidden", 403
+    db = carica_grafo()
+    rows = db.execute("SELECT id, name, data FROM nodes").fetchall()
+    out = []
+    for r in rows:
+        rid = r["id"]
+        if not str(rid).startswith("fen-"):
+            continue
+        nd = _dati(r["data"])
+        out.append({
+            "id": rid,
+            "nome": r["name"],
+            "it": _scheda_lang(nd, "it"),
+            "en": _scheda_lang(nd, "en"),
+            "es": _scheda_lang(nd, "es"),
+            "target": _numero_bersaglio(nd),
+        })
+    return jsonify(out)
+
 
 def _pulisci_traduzione(t):
     """Toglie intestazioni spurie che Haiku a volte antepone alla traduzione
