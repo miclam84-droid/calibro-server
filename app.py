@@ -56,6 +56,85 @@ def _oss_teardown(exc):
 from routes.admin_panel import bp as admin_panel_bp
 app.register_blueprint(admin_panel_bp)
 
+# ── Correzione ortografica deterministica schede (accenti + apostrofi) ──
+_ACC_MAP = {
+ 'perche':'perché','poiche':'poiché','affinche':'affinché','benche':'benché','finche':'finché',
+ 'giacche':'giacché','nonche':'nonché','sicche':'sicché','piu':'più','gia':'già','cosi':'così',
+ 'puo':'può','cioe':'cioè','citta':'città','qualita':'qualità','quantita':'quantità','acidita':'acidità',
+ 'umidita':'umidità','densita':'densità','viscosita':'viscosità','proprieta':'proprietà','varieta':'varietà',
+ 'possibilita':'possibilità','capacita':'capacità','stabilita':'stabilità','solubilita':'solubilità',
+ 'attivita':'attività','velocita':'velocità','unita':'unità','realta':'realtà','polarita':'polarità',
+ 'morbidita':'morbidità','fluidita':'fluidità','fragilita':'fragilità','porosita':'porosità',
+ 'plasticita':'plasticità','elasticita':'elasticità','intensita':'intensità','necessita':'necessità',
+ 'omogeneita':'omogeneità','affinita':'affinità','complessita':'complessità','specificita':'specificità',
+ 'gravita':'gravità','identita':'identità','integrita':'integrità','salinita':'salinità',
+ 'alcalinita':'alcalinità','reattivita':'reattività','sensibilita':'sensibilità','solidita':'solidità'}
+
+def _corregge_it(t):
+    """Correzioni ortografiche INEQUIVOCABILI su testo italiano: accenti su parole
+    che senza accento non esistono, e apostrofo nelle elisioni l'/dell'/all'…
+    Non tocca 'e/è' (ambiguo) né la 'L' unità (mg/L)."""
+    if not isinstance(t, str) or not t:
+        return t
+    import re as _re
+    def _repl(m):
+        w = m.group(0); c = _ACC_MAP[w.lower()]
+        return (c[0].upper() + c[1:]) if w[0].isupper() else c
+    for wrong in _ACC_MAP:
+        t = _re.sub(r"(?<![A-Za-zàèéìòùÀÈÉÌÒÙ'])" + wrong + r"(?![A-Za-zàèéìòùÀÈÉÌÒÙ])",
+                    _repl, t, flags=_re.I)
+    t = _re.sub(r"(?<![A-Za-zàèéìòù/'])([Ll])\s+(?=[aeiouAEIOUàèéìòù])", r"\1'", t)
+    t = _re.sub(r"\b(dell|all|dall|nell|sull|coll|quell)\s+(?=[aeiouAEIOUàèéìòù])",
+                r"\1'", t, flags=_re.I)
+    t = _re.sub(r"\bun p[oò]\b(?!')", "un po'", t)
+    return t
+
+
+@app.route("/admin/fix-schede-testi")
+def _fix_schede_testi():
+    """Applica le correzioni ortografiche alle schede fenomeni nel DB.
+    ?dry=1 -> anteprima (non scrive). Auth ADMIN_SECRET."""
+    if request.args.get("s", "") != os.environ.get("ADMIN_SECRET", ""):
+        return "Forbidden", 403
+    dry = request.args.get("dry") == "1"
+    db = carica_grafo()
+    rows = db.execute("SELECT id, name, data FROM nodes").fetchall()
+    import psycopg2.extras as _psx
+    conn = _get_conn() if not dry else None
+    report = []
+    for r in rows:
+        rid = r["id"]
+        if not str(rid).startswith("fen-"):
+            continue
+        nd = _dati(r["data"])
+        changed = False
+        campi = []
+        sch = nd.get("scheda")
+        if isinstance(sch, str):
+            new = _corregge_it(sch)
+            if new != sch:
+                nd["scheda"] = new; changed = True; campi.append("scheda")
+        elif isinstance(sch, dict) and isinstance(sch.get("it"), str):
+            new = _corregge_it(sch["it"])
+            if new != sch["it"]:
+                sch["it"] = new; changed = True; campi.append("scheda")
+        for campo in ("numero_bersaglio", "target"):
+            v = nd.get(campo)
+            if isinstance(v, str):
+                new = _corregge_it(v)
+                if new != v:
+                    nd[campo] = new; changed = True; campi.append(campo)
+        if changed:
+            report.append({"id": rid, "campi": campi})
+            if not dry:
+                cur = conn.cursor()
+                cur.execute("UPDATE nodes SET data = %s WHERE id = %s", (_psx.Json(nd), rid))
+                conn.commit(); cur.close()
+    if conn:
+        _release_conn(conn)
+    return jsonify({"dry": dry, "schede_modificate": len(report), "dettaglio": report})
+
+
 @app.route("/admin/schede-export")
 def _schede_export():
     """Export sola-lettura di tutte le schede fenomeni (IT/EN/ES) per revisione
