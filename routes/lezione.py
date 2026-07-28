@@ -8,7 +8,7 @@ from ai import (_scheda_tradotta, _intro, _numero_bersaglio as _nb, _genera_quiz
 from contenuto import _scheda_lang, _numero_bersaglio
 from utils import _err
 from config import DATABASE_URL
-import os, json, time
+import os, json, time, random
 import ai_gateway as GW
 bp = Blueprint("lezione", __name__)
 
