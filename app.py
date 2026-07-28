@@ -13,7 +13,9 @@ from config import HERE, GRAFO, DATABASE_URL
 from db import (_PgRow, _PgCompat, _PgCursorResult, _get_pool, _get_conn,
                 _release_conn, _connetti_postgres, carica_grafo, _dati)
 from auth import (_init_account_tables, _hash_pw, _e_hash_legacy, _verifica_pw,
-                  _genera_token, _utente_da_token)
+                  _genera_token, _utente_da_token, _admin_autenticato)
+from contenuto import (_pulisci_traduzione, _scheda_lang, _numero_bersaglio, _corregge_it)
+from notifiche import _invia_email_resend
 
 app = Flask(__name__)
 
@@ -59,37 +61,7 @@ from routes.legal import bp as legal_bp
 app.register_blueprint(legal_bp)
 
 # ── Correzione ortografica deterministica schede (accenti + apostrofi) ──
-_ACC_MAP = {
- 'perche':'perché','poiche':'poiché','affinche':'affinché','benche':'benché','finche':'finché',
- 'giacche':'giacché','nonche':'nonché','sicche':'sicché','piu':'più','gia':'già','cosi':'così',
- 'puo':'può','cioe':'cioè','citta':'città','qualita':'qualità','quantita':'quantità','acidita':'acidità',
- 'umidita':'umidità','densita':'densità','viscosita':'viscosità','proprieta':'proprietà','varieta':'varietà',
- 'possibilita':'possibilità','capacita':'capacità','stabilita':'stabilità','solubilita':'solubilità',
- 'attivita':'attività','velocita':'velocità','unita':'unità','realta':'realtà','polarita':'polarità',
- 'morbidita':'morbidità','fluidita':'fluidità','fragilita':'fragilità','porosita':'porosità',
- 'plasticita':'plasticità','elasticita':'elasticità','intensita':'intensità','necessita':'necessità',
- 'omogeneita':'omogeneità','affinita':'affinità','complessita':'complessità','specificita':'specificità',
- 'gravita':'gravità','identita':'identità','integrita':'integrità','salinita':'salinità',
- 'alcalinita':'alcalinità','reattivita':'reattività','sensibilita':'sensibilità','solidita':'solidità'}
 
-def _corregge_it(t):
-    """Correzioni ortografiche INEQUIVOCABILI su testo italiano: accenti su parole
-    che senza accento non esistono, e apostrofo nelle elisioni l'/dell'/all'…
-    Non tocca 'e/è' (ambiguo) né la 'L' unità (mg/L)."""
-    if not isinstance(t, str) or not t:
-        return t
-    import re as _re
-    def _repl(m):
-        w = m.group(0); c = _ACC_MAP[w.lower()]
-        return (c[0].upper() + c[1:]) if w[0].isupper() else c
-    for wrong in _ACC_MAP:
-        t = _re.sub(r"(?<![A-Za-zàèéìòùÀÈÉÌÒÙ'])" + wrong + r"(?![A-Za-zàèéìòùÀÈÉÌÒÙ])",
-                    _repl, t, flags=_re.I)
-    t = _re.sub(r"(?<![A-Za-zàèéìòù/'])([Ll])\s+(?=[aeiouAEIOUàèéìòù])", r"\1'", t)
-    t = _re.sub(r"\b(dell|all|dall|nell|sull|coll|quell)\s+(?=[aeiouAEIOUàèéìòù])",
-                r"\1'", t, flags=_re.I)
-    t = _re.sub(r"\bun p[oò]\b(?!')", "un po'", t)
-    return t
 
 
 @app.route("/admin/fix-schede-testi")
@@ -162,19 +134,6 @@ def _schede_export():
     return jsonify(out)
 
 
-def _pulisci_traduzione(t):
-    """Toglie intestazioni spurie che Haiku a volte antepone alla traduzione
-    (es. 'ENGLISH TECHNICAL SHEET:'), indotte dal prompt: facevano sembrare la
-    scheda EN un titolo. Difesa in lettura, così pulisce anche il gia' salvato."""
-    if not t:
-        return t
-    import re
-    t = t.strip()
-    t = re.sub(r'^(ENGLISH\s+)?TECHNICAL\s+SHEET\s*:?\s*', '', t, flags=re.IGNORECASE)
-    t = re.sub(r'^(ENGLISH\s+)?SHEET\s*:?\s*', '', t, flags=re.IGNORECASE)
-    t = re.sub(r'^SCHEDA(\s+(TECNICA|ITALIANA))?\s*:?\s*', '', t, flags=re.IGNORECASE)
-    t = re.sub(r'^(Translation|Traduzione)\s*:?\s*', '', t, flags=re.IGNORECASE)
-    return t.strip()
 
 
 
@@ -226,14 +185,6 @@ def _err(codice, lang="it"):
     return msg.get(lang) or msg.get("it") or codice
 
 
-def _scheda_lang(data_dict, lang="it"):
-    """GT4 — Legge il campo scheda nel formato multilingua.
-    Supporta sia il formato legacy (stringa) sia il nuovo formato {it:"...", en:"..."}.
-    Quando tutti i nodi saranno migrati al formato dizionario, il fallback legacy si rimuove."""
-    scheda = data_dict.get("scheda", "")
-    if isinstance(scheda, dict):
-        return _pulisci_traduzione(scheda.get(lang) or scheda.get("it") or "")
-    return scheda or ""
 
 
 
@@ -292,14 +243,6 @@ def _scheda_tradotta(node_id, data_dict, lang, conn):
     return scheda_it  # fallback IT
 
 
-def _numero_bersaglio(data_dict):
-    """Legge il numero-bersaglio di un nodo Fenomeno in modo canonico.
-    Il seed usa la chiave 'numero_bersaglio'; il fallback 'target' copre
-    eventuali nodi legacy. Fonte unica di verità per home, disciplina e lezione,
-    così la chiave non torna a divergere tra i lettori."""
-    if not data_dict:
-        return ""
-    return data_dict.get("numero_bersaglio") or data_dict.get("target") or ""
 
 
 def _intro(testo, n=200):
@@ -5311,42 +5254,8 @@ def admin_stats():
         return jsonify({"errore": str(e)}), 500
 
 
-def _invia_email_resend(to, subject, body_html, body_text=None):
-    """Invia email via Resend. Mittente: onboarding@resend.dev (sandbox) finché
-    non viene verificato un dominio proprio — allora cambiare RESEND_FROM.
-    Ritorna True se ok, False se fallisce (mai blocca il flusso chiamante)."""
-    api_key = os.environ.get("RESEND_API_KEY", "")
-    if not api_key:
-        return False
-    mittente = os.environ.get("RESEND_FROM", "onboarding@resend.dev")
-    try:
-        import urllib.request, json as _json
-        payload = _json.dumps({
-            "from": f"Matter <{mittente}>",
-            "to": [to],
-            "subject": subject,
-            "html": body_html,
-            "text": body_text or body_html
-        }).encode()
-        req = urllib.request.Request(
-            "https://api.resend.com/emails",
-            data=payload,
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json"
-            },
-            method="POST"
-        )
-        with urllib.request.urlopen(req, timeout=10) as r:
-            return r.status == 200
-    except Exception:
-        return False
 
 
-def _admin_autenticato():
-    """True se la request porta un ADMIN_SECRET valido (header o query param ?s=)."""
-    secret = request.headers.get("X-Admin-Secret","") or request.args.get("s","")
-    return bool(os.environ.get("ADMIN_SECRET")) and secret == os.environ.get("ADMIN_SECRET")
 
 
 @app.route("/v1/supporto", methods=["POST"])

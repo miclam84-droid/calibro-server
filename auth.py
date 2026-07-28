@@ -2,8 +2,17 @@
 # auth.py — account: tabelle utenti/sessioni, hashing e verifica password,
 # token di sessione. Estratto da app.py senza modifiche di comportamento.
 # ============================================================
+import os
+from flask import request
+
 from config import DATABASE_URL
 from db import _get_conn, _release_conn
+
+
+def _admin_autenticato():
+    """True se la request porta un ADMIN_SECRET valido (header o query param ?s=)."""
+    secret = request.headers.get("X-Admin-Secret", "") or request.args.get("s", "")
+    return bool(os.environ.get("ADMIN_SECRET")) and secret == os.environ.get("ADMIN_SECRET")
 
 
 def _init_account_tables():
