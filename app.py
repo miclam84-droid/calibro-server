@@ -8,7 +8,7 @@ import os, json, sqlite3, pathlib, difflib, uuid
 from flask import Flask, request, jsonify, render_template
 import motore as Motore
 
-# ── Fondazione estratta (config/db/auth) ──
+# ── Fondazione ──────────────────────────────────────────
 from config import HERE, GRAFO, DATABASE_URL
 from db import (_PgRow, _PgCompat, _PgCursorResult, _get_pool, _get_conn,
                 _release_conn, _connetti_postgres, carica_grafo, _dati)
@@ -18,13 +18,55 @@ from contenuto import (_pulisci_traduzione, _scheda_lang, _numero_bersaglio, _co
 from notifiche import _invia_email_resend
 from ai import (_scheda_tradotta, _intro, _domanda_chiede_perche, cerca_contesto,
                costruisci_prompt, _mistral_raw, estrai_entita, _anthropic_raw,
-               _haiku_raw, chiedi_mistral)
+               _haiku_raw, chiedi_mistral, cerca_fuzzy, fenomeni_suggeriti,
+               log_evento, _genera_quiz, _traduci_nome)
+from cifra_utils import _auth_cifra, _stima_costo_categoria, _calcola_profilo_sicurezza
+from utils import (_err, _check_rate_limit, _rate_store, _RATE_LIMIT, _RATE_WINDOW,
+                   _profilo_default, _aggiorna_profilo)
+
+# ── Fondazione estratta (config/db/auth) ──
+from config import HERE, GRAFO, DATABASE_URL
+from db import (_PgRow, _PgCompat, _PgCursorResult, _get_pool, _get_conn,
+                _release_conn, _connetti_postgres, carica_grafo, _dati)
+from auth import (_init_account_tables, _hash_pw, _e_hash_legacy, _verifica_pw,
+                  _genera_token, _utente_da_token)
 
 app = Flask(__name__)
 
+# ── Blueprint ───────────────────────────────────────────
+from routes.pwa import bp as pwa_bp; app.register_blueprint(pwa_bp)
+from routes.admin_panel import bp as admin_panel_bp; app.register_blueprint(admin_panel_bp)
+from routes.legal import bp as legal_bp; app.register_blueprint(legal_bp)
+from routes.admin import bp as admin_bp; app.register_blueprint(admin_bp)
+from routes.auth_routes import bp as auth_routes_bp; app.register_blueprint(auth_routes_bp)
+
+# ── OSS hooks ───────────────────────────────────────────
+import time as _time, traceback as _traceback
+import oss
+
+@app.before_request
+def _oss_start():
+    request._t0 = _time.time()
+
+@app.after_request
+def _oss_after(resp):
+    try:
+        dur=int((_time.time()-getattr(request,'_t0',_time.time()))*1000)
+        if resp.status_code>=500: oss.log_write('ERROR',request.path,None,f'HTTP {resp.status_code}',None,dur)
+        elif dur>2000: oss.log_write('WARN',request.path,None,f'lento {dur}ms',None,dur)
+    except Exception: pass
+    return resp
+
+@app.teardown_request
+def _oss_teardown(exc):
+    if exc is not None:
+        try:
+            dur=int((_time.time()-getattr(request,'_t0',_time.time()))*1000)
+            oss.log_write('ERROR',getattr(request,'path','?'),None,str(exc),_traceback.format_exc(),dur)
+        except Exception: pass
+
+
 # ── Blueprint route ──────────────────────────────────────
-from routes.pwa import bp as pwa_bp
-app.register_blueprint(pwa_bp)
 
 # ── Osservabilità: logging errori/lentezze + hook richieste ──
 import time as _time, traceback as _traceback
@@ -58,12 +100,6 @@ def _oss_teardown(exc):
         except Exception:
             pass
 
-from routes.admin_panel import bp as admin_panel_bp
-app.register_blueprint(admin_panel_bp)
-from routes.legal import bp as legal_bp
-app.register_blueprint(legal_bp)
-from routes.admin import bp as admin_bp
-app.register_blueprint(admin_bp)
 
 # ── Correzione ortografica deterministica schede (accenti + apostrofi) ──
 
@@ -76,52 +112,6 @@ app.register_blueprint(admin_bp)
 
 
 
-def _err(codice, lang="it"):
-    """Restituisce il messaggio di errore nella lingua richiesta."""
-    MSGS = {
-        "email_gia_registrata": {
-            "it": "email già registrata",
-            "en": "email already registered",
-            "es": "email ya registrado"
-        },
-        "credenziali_non_valide": {
-            "it": "credenziali non valide",
-            "en": "invalid credentials",
-            "es": "credenciales no válidas"
-        },
-        "email_password_obbligatorie": {
-            "it": "email e password obbligatorie",
-            "en": "email and password required",
-            "es": "email y contraseña requeridos"
-        },
-        "account_non_attivo": {
-            "it": "Account non ancora attivo. Controlla la tua email.",
-            "en": "Account not yet active. Check your email.",
-            "es": "Cuenta aún no activa. Revisa tu email."
-        },
-        "troppi_tentativi": {
-            "it": "Troppi tentativi. Aspetta un minuto e riprova.",
-            "en": "Too many attempts. Wait a minute and try again.",
-            "es": "Demasiados intentos. Espera un minuto e inténtalo de nuevo."
-        },
-        "autenticazione_richiesta": {
-            "it": "autenticazione richiesta",
-            "en": "authentication required",
-            "es": "autenticación requerida"
-        },
-        "pro_required": {
-            "it": "Le lezioni dalla 2 in poi sono disponibili con Matter Lab Pro.",
-            "en": "Lessons from step 2 onwards are available with Matter Lab Pro.",
-            "es": "Las lecciones desde el paso 2 están disponibles con Matter Lab Pro."
-        },
-        "trial_esaurito": {
-            "it": "Hai esaurito le 5 chat di prova.",
-            "en": "You have used all 5 trial chats.",
-            "es": "Has agotado las 5 conversaciones de prueba."
-        },
-    }
-    msg = MSGS.get(codice, {})
-    return msg.get(lang) or msg.get("it") or codice
 
 
 
@@ -143,44 +133,8 @@ _STOPWORD = {"quanto","costa","tempo","oggi","sempre","abbastanza","molto","poco
              "della","dello","delle","degli","quando","dove","come","cosa"}
 
 
-def cerca_fuzzy(db, domanda):
-    """Quando nessun termine estratto matcha ESATTAMENTE un nodo, cerca per
-    SOMIGLIANZA parola-per-parola tra la domanda e i nomi dei nodi del grafo.
-    Gestisce forme diverse della stessa parola (es. 'rosolisce' vs 'rosolata',
-    'lievita' vs 'lievito') senza generare falsi positivi su parole comuni
-    italiane (stopword) o parole troppo corte per essere distintive."""
-    tutti = db.execute("SELECT id, name, type FROM nodes").fetchall()
-    parole_domanda = [p.strip(".,?!").lower() for p in domanda.split()
-                       if len(p) > 4 and p.strip(".,?!").lower() not in _STOPWORD]
-    if not parole_domanda:
-        return None
-
-    candidati = set()
-    for n in tutti:
-        for parola_nodo in n["name"].lower().split():
-            parola_nodo = parola_nodo.strip("(),./")
-            if parola_nodo in _STOPWORD or len(parola_nodo) < 5:
-                continue
-            for p in parole_domanda:
-                if difflib.SequenceMatcher(None, p, parola_nodo).ratio() > 0.8:
-                    candidati.add(n["name"])
-                    break
-
-    for nome in candidati:
-        ctx = cerca_contesto(db, nome)
-        if ctx and ctx.get("fenomeni"):
-            return ctx
-    return None
 
 
-def fenomeni_suggeriti(db):
-    """Ultima rete di sicurezza: se proprio non si trova nulla, non si lascia
-    l'utente con un vicolo cieco. Si mostrano i fenomeni del grafo come punto
-    di partenza — l'utente può cliccare e iniziare da lì."""
-    rows = db.execute(
-        "SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY name").fetchall()
-    return [{"id": r["id"], "nome": r["name"], "dominio": r["domain"],
-             "target": _numero_bersaglio(_dati(r["data"]))} for r in rows]
 
 
 # ---- Mistral via HTTP diretto (nessun SDK) ------------------
@@ -214,220 +168,11 @@ _TOOLS = [
 
 
 
-def log_evento(tipo, domanda, fenomeni=None, esito=None):
-    """Log minimo per osservabilità. Ritorna id del log per feedback (AC5)."""
-    if not DATABASE_URL:
-        return None
-    try:
-        import psycopg2
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS log_domande (
-                id SERIAL PRIMARY KEY,
-                ts TIMESTAMPTZ DEFAULT NOW(),
-                tipo TEXT, domanda TEXT,
-                fenomeni_trovati TEXT, esito TEXT
-            )
-        """)
-        cur.execute(
-            "INSERT INTO log_domande (tipo, domanda, fenomeni_trovati, esito) VALUES (%s,%s,%s,%s) RETURNING id",
-            (tipo, domanda[:500], ",".join(fenomeni) if fenomeni else None, esito)
-        )
-        log_id = cur.fetchone()[0]
-        conn.commit(); cur.close(); _release_conn(conn)
-        return log_id
-    except Exception:
-        return None
 
 
-@app.route("/v1/auth/registra", methods=["POST"])
-def registra():
-    """AC2 — Registrazione: crea utente attivo=FALSE → email verifica → utente clicca → attivo=TRUE."""
-    body = request.json or {}
-    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
-    if not _check_rate_limit(ip):
-        return jsonify({"errore":_err("troppi_tentativi", body.get("lang","it"))}), 429
-    email = (body.get("email","")).strip().lower()
-    password = body.get("password","")
-    if not email or not password:
-        return jsonify({"errore":_err("email_password_obbligatorie", body.get("lang","it"))}), 400
-    if len(password) < 8:
-        return jsonify({"errore":"password minimo 8 caratteri"}), 400
-    if not DATABASE_URL:
-        return jsonify({"errore":"database non disponibile"}), 503
-    try:
-        import psycopg2, secrets as _sec
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute("""CREATE TABLE IF NOT EXISTS verifica_email (
-            token TEXT PRIMARY KEY, email TEXT NOT NULL,
-            ts TIMESTAMPTZ DEFAULT NOW(),
-            scade TIMESTAMPTZ DEFAULT NOW() + INTERVAL '24 hours',
-            usato BOOLEAN DEFAULT FALSE)""")
-        cur.execute(
-            "INSERT INTO utenti (email, password_h, attivo) VALUES (%s,%s,FALSE) RETURNING id",
-            (email, _hash_pw(password))
-        )
-        user_id = cur.fetchone()[0]
-        tok = _sec.token_urlsafe(32)
-        cur.execute("INSERT INTO verifica_email (token,email) VALUES (%s,%s)", (tok, email))
-        conn.commit(); cur.close(); _release_conn(conn)
-        base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
-        link = f"{base}/app?verifica={tok}"
-        lang_reg = request.json.get("lang","it") if request.json else "it"
-        if lang_reg == "en":
-            _subj = "Confirm your email — Matter Lab"
-            _btn  = "Activate my account"
-            _p1   = "Welcome to <strong>Matter Lab</strong>."
-            _p2   = "Confirm your email to activate your account:"
-            _p3   = "Link valid for 24 hours."
-            _txt  = f"Welcome to Matter Lab.\n\nConfirm email:\n{link}\n\nLink valid 24 hours."
-            _msg  = "Account created. Check your email to activate it."
-        elif lang_reg == "es":
-            _subj = "Confirma tu email — Matter Lab"
-            _btn  = "Activar mi cuenta"
-            _p1   = "Bienvenido a <strong>Matter Lab</strong>."
-            _p2   = "Confirma tu email para activar tu cuenta:"
-            _p3   = "Enlace válido 24 horas."
-            _txt  = f"Bienvenido a Matter Lab.\n\nConfirma email:\n{link}\n\nEnlace válido 24 horas."
-            _msg  = "Cuenta creada. Revisa tu email para activarla."
-        else:
-            _subj = "Conferma la tua email — Matter Lab"
-            _btn  = "Attiva il mio account"
-            _p1   = "Benvenuto in <strong>Matter Lab</strong>."
-            _p2   = "Conferma la tua email per attivare l'account:"
-            _p3   = "Link valido 24 ore."
-            _txt  = f"Benvenuto in Matter Lab.\n\nConferma email:\n{link}\n\nLink valido 24 ore."
-            _msg  = "Account creato. Controlla la tua email per attivarlo."
-        _invia_email_resend(
-            to=email,
-            subject=_subj,
-            body_html=(
-                f"<p style='font-family:sans-serif'>{_p1}</p>"
-                f"<p style='font-family:sans-serif'>{_p2}</p>"
-                f"<p><a href='{link}' style='background:#2C6E63;color:#fff;padding:12px 24px;"
-                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>"
-                f"{_btn}</a></p>"
-                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>{_p3}</p>"
-            ),
-            body_text=_txt
-        )
-        return jsonify({"ok":True,"messaggio":_msg,"verifica_richiesta":True})
-    except Exception as e:
-        lang_reg_fallback = (request.json or {}).get("lang","it")
-        if "unique" in str(e).lower():
-            return jsonify({"errore":_err("email_gia_registrata", lang_reg_fallback)}), 409
-        return jsonify({"errore":str(e)}), 500
 
 
-@app.route("/v1/auth/verifica-email", methods=["POST"])
-def verifica_email_route():
-    """AC2b — Attiva account dal token email. Ritorna token sessione."""
-    body = request.json or {}
-    tok = (body.get("token","")).strip()
-    if not tok or not DATABASE_URL:
-        return jsonify({"errore":"token mancante"}), 400
-    try:
-        import psycopg2
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT email FROM verifica_email WHERE token=%s AND scade>NOW() AND usato=FALSE", (tok,)
-        )
-        row = cur.fetchone()
-        if not row:
-            cur.close(); _release_conn(conn)
-            return jsonify({"errore":"Link non valido o scaduto. Registrati di nuovo."}), 400
-        email = row[0]
-        cur.execute("UPDATE utenti SET attivo=TRUE WHERE email=%s", (email,))
-        cur.execute("UPDATE verifica_email SET usato=TRUE WHERE token=%s", (tok,))
-        cur.execute("SELECT id, piano FROM utenti WHERE email=%s", (email,))
-        user_id, piano = cur.fetchone()
-        token_sess = _genera_token()
-        cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token_sess, user_id))
-        conn.commit(); cur.close(); _release_conn(conn)
-        # Invia email di benvenuto
-        lang_w = request.args.get("lang","it")
-        base_w = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
-        if lang_w == "en":
-            _w_sub  = "Welcome to Matter Lab"
-            _w_body = (
-                f"<p style='font-family:sans-serif'>Your account is active. Welcome to <strong>Matter Lab</strong>.</p>"
-                f"<p style='font-family:sans-serif'>Start with the phenomenon of the day in your discipline, "
-                f"then explore the flavor network and ask questions in the chat.</p>"
-                f"<p><a href='{base_w}/app' style='background:#2C6E63;color:#fff;padding:12px 24px;"
-                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>Open Matter Lab</a></p>"
-                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Science & Craft</p>"
-            )
-        elif lang_w == "es":
-            _w_sub  = "Bienvenido a Matter Lab"
-            _w_body = (
-                f"<p style='font-family:sans-serif'>Tu cuenta está activa. Bienvenido a <strong>Matter Lab</strong>.</p>"
-                f"<p style='font-family:sans-serif'>Empieza con el fenómeno del día en tu disciplina, "
-                f"luego explora la red de sabores y haz preguntas en el chat.</p>"
-                f"<p><a href='{base_w}/app' style='background:#2C6E63;color:#fff;padding:12px 24px;"
-                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>Abrir Matter Lab</a></p>"
-                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Science & Craft</p>"
-            )
-        else:
-            _w_sub  = "Benvenuto in Matter Lab"
-            _w_body = (
-                f"<p style='font-family:sans-serif'>Il tuo account è attivo. Benvenuto in <strong>Matter Lab</strong>.</p>"
-                f"<p style='font-family:sans-serif'>Inizia con il fenomeno del giorno nella tua disciplina, "
-                f"poi esplora il flavor network e fai domande in chat.</p>"
-                f"<p><a href='{base_w}/app' style='background:#2C6E63;color:#fff;padding:12px 24px;"
-                f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>Apri Matter Lab</a></p>"
-                f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Science & Craft</p>"
-            )
-        try:
-            _invia_email_resend(to=email, subject=_w_sub, body_html=_w_body)
-        except Exception:
-            pass  # non bloccare il login se l'email di benvenuto fallisce
-        lang_conf = request.args.get("lang", request.json.get("lang","it") if request.json else "it")
-        _conf_msg = {"en":"Email confirmed. Welcome to Matter Lab.", "es":"Email confirmado. Bienvenido a Matter Lab."}.get(lang_conf, "Email confermata. Benvenuto in Matter Lab.")
-        return jsonify({"ok":True,"token":token_sess,"piano":piano or "free","messaggio":_conf_msg})
-    except Exception as e:
-        return jsonify({"errore":str(e)}), 500
 
-@app.route("/v1/auth/login", methods=["POST"])
-def login():
-    """AC2 — Login con email + password, restituisce token sessione."""
-    body = request.json or {}
-    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
-    if not _check_rate_limit(ip):
-        return jsonify({"errore":_err("troppi_tentativi", body.get("lang","it"))}), 429
-    email = (body.get("email","")).strip().lower()
-    password = body.get("password","")
-    if not email or not password:
-        return jsonify({"errore":_err("email_password_obbligatorie", body.get("lang","it"))}), 400
-    if not DATABASE_URL:
-        return jsonify({"errore":"database non disponibile"}), 503
-    try:
-        import psycopg2
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute("SELECT id, password_h, piano FROM utenti WHERE email=%s AND attivo=TRUE",
-                    (email,))
-        row = cur.fetchone()
-        if not row or not _verifica_pw(password, row[1]):
-            cur.close(); _release_conn(conn)
-            return jsonify({"errore":_err("credenziali_non_valide", body.get("lang","it"))}), 401
-        user_id, stored_hash, piano = row
-        # migrazione trasparente: se lo hash è ancora il vecchio SHA-256, al
-        # primo login corretto lo rigeneriamo col KDF forte. Zero attrito utente.
-        if _e_hash_legacy(stored_hash):
-            try:
-                cur.execute("UPDATE utenti SET password_h=%s WHERE id=%s",
-                            (_hash_pw(password), user_id))
-            except Exception:
-                pass
-        token = _genera_token()
-        cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token, user_id))
-        conn.commit(); cur.close(); _release_conn(conn)
-        return jsonify({"token":token,"piano":piano})
-    except Exception as e:
-        return jsonify({"errore":str(e)}), 500
 
 
 @app.route("/v1/quaderno", methods=["GET"])
@@ -546,33 +291,6 @@ def prezzi_ingrediente(ingrediente):
         return jsonify({"ingrediente":ingrediente,"prezzi":[],"errore":str(e)})
 
 
-def _stima_costo_categoria(categoria, nome=None):
-    """Stima orientativa del costo per categoria merceologica (€/kg o €/L).
-    Usa prezzi ISMEA se disponibili per nome specifico."""
-    # Prima cerca per nome specifico nei prezzi ISMEA
-    if nome:
-        nome_low = nome.lower()
-        for k, v in _PREZZI_ISMEA.items():
-            if k in nome_low or nome_low in k:
-                return v
-    COSTI = {
-        "distillati": 35.0, "liquori": 20.0, "vino": 8.0, "birra": 3.5,
-        "succhi": 4.0, "sciroppi": 5.0, "frutta fresca": 3.5,
-        "verdure": 2.0, "carni": 12.0, "salumi": 18.0, "pesce": 15.0,
-        "latticini": 4.0, "formaggi": 14.0, "uova": 3.0,
-        "farine": 1.5, "zuccheri": 1.2, "grassi": 6.0,
-        "spezie": 25.0, "erbe aromatiche": 8.0,
-        "cioccolato": 12.0, "cacao": 8.0,
-        "caffè": 18.0, "tè": 12.0,
-        "frutta secca": 20.0, "paste frutta secca": 35.0,
-        "luppoli": 30.0, "malti": 2.5, "lieviti": 5.0,
-        "uve": 2.0, "gelatine": 20.0, "addensanti": 15.0,
-    }
-    cat_low = categoria.lower() if categoria else ""
-    for k, v in COSTI.items():
-        if k in cat_low or cat_low in k:
-            return v
-    return 5.0  # default generico
 
 
 @app.route("/v1/quaderno/<int:exp_id>/costo", methods=["GET","POST"])
@@ -889,35 +607,6 @@ def ricetta_per_cifra(exp_id):
 
 import os as _os
 
-def _auth_cifra():
-    """Risolve l'identità utente per le API Cifra.
-    Accetta due modalità:
-    - Token utente Matter: Authorization: Bearer {token}
-    - Integrazione Cifra: Authorization: Bearer {MATTER_SERVICE_KEY}
-                          X-User-Email: {email_utente}
-    Restituisce user_id (str) o None se non autenticato.
-    """
-    auth = request.headers.get("Authorization","").replace("Bearer ","").strip()
-    service_key = _os.environ.get("MATTER_SERVICE_KEY","")
-
-    # Modalità Cifra: service key + email
-    if service_key and auth == service_key:
-        email = request.headers.get("X-User-Email","").strip().lower()
-        if not email or not DATABASE_URL:
-            return None
-        try:
-            import psycopg2
-            conn = _get_conn()
-            cur = conn.cursor()
-            cur.execute("SELECT id FROM utenti WHERE lower(email)=%s AND attivo=TRUE", (email,))
-            row = cur.fetchone()
-            cur.close(); _release_conn(conn)
-            return str(row[0]) if row else None
-        except Exception:
-            return None
-
-    # Modalità utente diretto: token sessione Matter
-    return _utente_da_token(auth)
 
 
 @app.route("/v1/ricette")
@@ -950,79 +639,6 @@ def ricette_per_cifra():
         return jsonify({"errore": str(e)}), 500
 
 
-def _calcola_profilo_sicurezza(ph=None, brix=None, aw=None, idratazione=None,
-                               temperatura=4.0, nome=None, disciplina=None):
-    """Helper condiviso per il calcolo del profilo sicurezza alimentare.
-    Usato sia dall'endpoint con ricetta salvata che dall'endpoint stateless Cifra.
-    Tutti i parametri sono opzionali — i valori mancanti restano None.
-    """
-    # ── Stima Aw ────────────────────────────────────────────
-    aw_stimata = aw  # se Cifra la manda direttamente, usiamo quella
-    if aw_stimata is None:
-        if brix is not None:
-            aw_stimata = round(1.0 - float(brix) * 0.0023, 3)
-        elif idratazione is not None:
-            aw_stimata = round(0.95 + float(idratazione) * 0.0004, 3)
-            aw_stimata = min(aw_stimata, 0.99)
-
-    t_cons = float(temperatura) if temperatura else 4.0
-    ph_val = float(ph) if ph else None
-    zona_pericolo = (t_cons > 4.0 and t_cons < 60.0)
-
-    # ── Score Hurdle Technology ──────────────────────────────
-    score = 0
-    if aw_stimata is not None:
-        if aw_stimata < 0.60: score += 4
-        elif aw_stimata < 0.85: score += 3
-        elif aw_stimata < 0.93: score += 2
-        elif aw_stimata < 0.97: score += 1
-    if ph_val is not None:
-        if ph_val < 3.5: score += 4
-        elif ph_val < 4.0: score += 3
-        elif ph_val < 4.6: score += 2
-        elif ph_val < 5.5: score += 1
-    if t_cons <= 4: score += 2
-    elif t_cons <= 8: score += 1
-
-    giorni_map = [1, 2, 4, 7, 14, 30, 90, 180]
-    shelf_life = giorni_map[min(score, 7)]
-
-    # ── Flag rischio ─────────────────────────────────────────
-    metodo_conservazione = []
-    if zona_pericolo:
-        flag_rischio = "conservare fuori dalla zona di pericolo (4°C–60°C)"
-        metodo_conservazione = ["refrigerazione"]
-    elif t_cons <= 4:
-        flag_rischio = "conservare sotto 4°C — shelf life limitata" if shelf_life <= 3 else None
-        metodo_conservazione = ["refrigerazione"]
-    else:
-        flag_rischio = "verificare temperatura di conservazione"
-        metodo_conservazione = ["refrigerazione"]
-
-    if aw_stimata and aw_stimata < 0.85:
-        metodo_conservazione.append("conservazione a temperatura ambiente")
-    if ph_val and ph_val < 4.6:
-        metodo_conservazione.append("acidificazione")
-
-    note = (f"shelf life orientativa {shelf_life} giorni a {t_cons}°C"
-            + (f" · pH {ph_val}" if ph_val else "")
-            + (f" · Aw {aw_stimata}" if aw_stimata else ""))
-
-    return {
-        "aw_stimata": aw_stimata,
-        "ph_stimato": ph_val,
-        "temperatura_conservazione_max_c": t_cons,
-        "shelf_life_giorni": shelf_life,
-        "zona_pericolo": zona_pericolo,
-        "flag_rischio": flag_rischio,
-        "metodo_conservazione": metodo_conservazione,
-        "note_sicurezza": note,
-        "disclaimer": (
-            "Valori orientativi basati su modelli scientifici. "
-            "Non sostituiscono test microbiologici né la consulenza "
-            "di un professionista HACCP abilitato."
-        )
-    }
 
 
 @app.route("/v1/sicurezza", methods=["POST"])
@@ -1116,46 +732,6 @@ def logout():
 
 # ── RESET PASSWORD (AC6) ──────────────────────────────────────────
 
-@app.route("/v1/auth/reset-richiesta", methods=["POST"])
-def reset_richiesta():
-    """Passo 1: genera token e manda link via Resend.
-    Risponde sempre uguale (non rivela se l'email esiste)."""
-    body = request.json or {}
-    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
-    if not _check_rate_limit(ip):
-        return jsonify({"errore":"Troppi tentativi. Aspetta un minuto."}), 429
-    email = (body.get("email","")).strip().lower()
-    if not email or not DATABASE_URL:
-        return jsonify({"ok":True,"messaggio":"Se l'email è registrata riceverai un link."})
-    try:
-        import psycopg2, secrets as _sec
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute("""CREATE TABLE IF NOT EXISTS reset_token (
-            token TEXT PRIMARY KEY,
-            email TEXT NOT NULL,
-            ts    TIMESTAMPTZ DEFAULT NOW(),
-            scade TIMESTAMPTZ DEFAULT NOW() + INTERVAL '1 hour',
-            usato BOOLEAN DEFAULT FALSE)""")
-        cur.execute("SELECT id FROM utenti WHERE email=%s AND attivo=TRUE", (email,))
-        if cur.fetchone():
-            tok = _sec.token_urlsafe(32)
-            cur.execute("INSERT INTO reset_token (token,email) VALUES (%s,%s)", (tok, email))
-            conn.commit()
-            base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
-            link = f"{base}/app?reset={tok}"
-            _invia_email_resend(
-                to=email,
-                subject="Reimposta la tua password — Matter",
-                body_html=(f"<p>Hai richiesto il reset della password di Matter.</p>"
-                           f"<p><a href='{link}'>Clicca qui per reimpostare la password</a></p>"
-                           f"<p>Il link scade tra 1 ora.</p>"),
-                body_text=f"Reset password Matter:\n{link}\n\nIl link scade tra 1 ora."
-            )
-        cur.close(); _release_conn(conn)
-    except Exception:
-        pass
-    return jsonify({"ok":True,"messaggio":"Se l'email è registrata riceverai un link."})
 
 
 # ── SSO DEEP LINK — Token generator per Cifra ─────────────────
@@ -1284,70 +860,10 @@ def token_verify():
 
 
 
-@app.route("/v1/auth/reset-conferma", methods=["POST"])
-def reset_conferma():
-    """Passo 2: token dal link + nuova password."""
-    body = request.json or {}
-    tok = (body.get("token","")).strip()
-    nuova_pw = body.get("password","")
-    if not tok or not nuova_pw:
-        return jsonify({"errore":"token e password obbligatori"}), 400
-    if len(nuova_pw) < 8:
-        return jsonify({"errore":"password minimo 8 caratteri"}), 400
-    if not DATABASE_URL:
-        return jsonify({"errore":"database non disponibile"}), 503
-    try:
-        import psycopg2
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute("SELECT email FROM reset_token WHERE token=%s AND scade>NOW() AND usato=FALSE", (tok,))
-        row = cur.fetchone()
-        if not row:
-            cur.close(); _release_conn(conn)
-            return jsonify({"errore":"Link non valido o scaduto. Richiedine uno nuovo."}), 400
-        email = row[0]
-        cur.execute("UPDATE utenti SET password_h=%s WHERE email=%s", (_hash_pw(nuova_pw), email))
-        cur.execute("UPDATE reset_token SET usato=TRUE WHERE token=%s", (tok,))
-        cur.execute("DELETE FROM sessioni WHERE user_id=(SELECT id FROM utenti WHERE email=%s)", (email,))
-        conn.commit(); cur.close(); _release_conn(conn)
-        return jsonify({"ok":True,"messaggio":"Password aggiornata. Puoi fare login con la nuova password."})
-    except Exception as e:
-        return jsonify({"errore":str(e)}), 500
 
 
 # ── CANCELLAZIONE ACCOUNT GDPR (AC7) ─────────────────────────────
 
-@app.route("/v1/auth/cancella-account", methods=["DELETE"])
-def cancella_account():
-    """Self-service GDPR: anonimizza email e hash, invalida sessioni.
-    Richiede token attivo + conferma password."""
-    token = request.headers.get("Authorization","").replace("Bearer ","")
-    user_id = _utente_da_token(token)
-    if not user_id:
-        return jsonify({"errore":"autenticazione richiesta"}), 401
-    body = request.json or {}
-    password = body.get("password","")
-    if not password:
-        return jsonify({"errore":"inserisci la password per confermare"}), 400
-    if not DATABASE_URL:
-        return jsonify({"errore":"database non disponibile"}), 503
-    try:
-        import psycopg2, secrets as _sec
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute("SELECT password_h FROM utenti WHERE id=%s AND attivo=TRUE", (user_id,))
-        row = cur.fetchone()
-        if not row or not _verifica_pw(password, row[0]):
-            cur.close(); _release_conn(conn)
-            return jsonify({"errore":"password non corretta"}), 401
-        anon = f"deleted_{_sec.token_hex(8)}@matter.deleted"
-        cur.execute("UPDATE utenti SET email=%s, password_h='DELETED', attivo=FALSE WHERE id=%s",
-                    (anon, user_id))
-        cur.execute("DELETE FROM sessioni WHERE user_id=%s", (user_id,))
-        conn.commit(); cur.close(); _release_conn(conn)
-        return jsonify({"ok":True,"messaggio":"Account cancellato. I tuoi dati sono stati rimossi."})
-    except Exception as e:
-        return jsonify({"errore":str(e)}), 500
 
 
 # ---- endpoint -----------------------------------------------
@@ -2066,59 +1582,8 @@ def feedback_abbinamento():
         return jsonify({"errore": str(e)}), 500
 
 
-def _profilo_default():
-    """Profilo sensoriale neutro di partenza (tutti i pesi a 5)."""
-    return {
-        "acido": 5.0, "dolce": 5.0, "amaro": 5.0,
-        "salato": 5.0, "umami": 5.0, "grasso": 5.0,
-        "piccante": 5.0, "astringente": 5.0, "affumicato": 5.0,
-        "_n": 0  # numero di interazioni
-    }
 
 
-def _aggiorna_profilo(profilo, ingrediente, abbinamento, voto, disciplina):
-    """Aggiorna il profilo sensoriale dell'utente in base al feedback.
-    Usa un learning rate decrescente: le prime interazioni pesano di più.
-    """
-    import psycopg2
-    # Cerca il profilo sensoriale dell'ingrediente abbinato nel DB
-    if not DATABASE_URL:
-        return profilo
-    try:
-        conn = _get_conn()
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT data FROM nodes
-            WHERE type='Ingrediente'
-            AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
-            LIMIT 1
-        """, (f"%{abbinamento}%", f"%ing-{abbinamento.lower().replace(' ','-')}%"))
-        row = cur.fetchone()
-        cur.close(); _release_conn(conn)
-        if not row:
-            return profilo
-        d = row[0] if isinstance(row[0], dict) else {}
-        ps = d.get("profilo_sensoriale", {})
-    except Exception:
-        return profilo
-
-    # Learning rate decrescente: lr = 0.3 / (1 + n/10)
-    n = profilo.get("_n", 0)
-    lr = 0.3 / (1 + n / 10)
-
-    dim_map = {
-        "acido": "acido", "dolce": "dolce", "amaro": "amaro",
-        "salato": "salato", "umami": "umami", "grasso": "grasso",
-        "piccante": "piccante", "astringente": "astringente", "affumicato": "affumicato"
-    }
-    for dim in dim_map:
-        ing_val = ps.get(dim, {})
-        ing_score = ing_val.get("valore", 5) if isinstance(ing_val, dict) else float(ing_val or 5)
-        delta = lr * voto * (ing_score - 5)  # sposta verso il profilo dell'ingrediente se like, via se dislike
-        profilo[dim] = max(0.0, min(10.0, profilo.get(dim, 5.0) + delta))
-
-    profilo["_n"] = n + 1
-    return profilo
 
 
 @app.route("/v1/contrasto/<ingrediente>")
@@ -2694,84 +2159,6 @@ def lezione(disciplina_nome, step):
     })
 
 
-def _genera_quiz(nome, target, scheda, lang="it"):
-    """Genera un quiz con Haiku (chiamata lenta, ~5s). Ritorna il quiz base
-    con la risposta corretta all'indice 0 — lo shuffle avviene alla consegna.
-    Usato da /quiz con cache: Haiku si paga una volta sola per nodo+lingua."""
-    if not scheda:
-        return None
-    if lang == "en":
-        quiz_prompt = f"""Create a quiz about this phenomenon for an F&B professional.
-Phenomenon: {nome}
-Target number: {target}
-Content: {scheda[:400]}
-
-Reply ONLY with valid JSON, no text before or after:
-{{"domanda":"...","opzioni":["correct option","wrong option","wrong option"],"corretta":0,"spiegazione":"explanation with the exact mathematical calculation in 2 lines"}}
-
-The correct answer must always be the first option (index 0).
-The explanation must include the exact number."""
-    elif lang == "es":
-        quiz_prompt = f"""Crea un quiz sobre este fenómeno para un profesional F&B.
-Fenómeno: {nome}
-Número objetivo: {target}
-Contenido: {scheda[:400]}
-
-Responde SOLO con JSON válido, ningún texto antes o después:
-{{"domanda":"...","opzioni":["opción correcta","opción incorrecta","opción incorrecta"],"corretta":0,"spiegazione":"explicación con el cálculo matemático en 2 líneas"}}
-
-La respuesta correcta debe ser siempre la primera opción (índice 0).
-La explicación debe incluir el número exacto."""
-    else:
-        quiz_prompt = f"""Crea un quiz su questo fenomeno per un professionista F&B.
-Fenomeno: {nome}
-Numero bersaglio: {target}
-Contenuto: {scheda[:400]}
-
-Rispondi SOLO con JSON valido, nessun testo prima o dopo:
-{{"domanda":"...","opzioni":["opzione giusta","opzione sbagliata","opzione sbagliata"],"corretta":0,"spiegazione":"spiegazione con il calcolo matematico in 2 righe"}}
-
-La risposta corretta deve essere sempre la prima opzione (indice 0).
-La spiegazione deve includere il numero esatto."""
-    try:
-        raw = _haiku_raw(quiz_prompt)
-        if raw:
-            import re as _re
-            print(f"QUIZ RAW ({nome}): {raw[:300]}", flush=True)
-            # rimuove caratteri di controllo che rompono json.loads
-            raw = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', raw)
-            # cerca il blocco JSON — anche se Haiku aggiunge testo prima/dopo
-            m = _re.search(r'\{.*?\}', raw, _re.DOTALL)
-            if not m:
-                # prova a cercare pattern più ampio
-                m = _re.search(r'\{.*\}', raw, _re.DOTALL)
-            if m:
-                try:
-                    quiz_data = json.loads(m.group())
-                except Exception as _je:
-                    # prova a pulire apostrofi non escaped
-                    cleaned = m.group().replace("'", '"')
-                    try:
-                        quiz_data = json.loads(cleaned)
-                    except Exception:
-                        print(f"QUIZ PARSE ERROR ({nome}): {_je} | raw: {raw[:300]}", flush=True)
-                        return None
-                opzioni = quiz_data.get("opzioni", [])
-                if not opzioni or len(opzioni) < 2:
-                    print(f"QUIZ NO OPZIONI ({nome}): {quiz_data}", flush=True)
-                    return None
-                return {
-                    "domanda": quiz_data.get("domanda", ""),
-                    "opzioni": opzioni,
-                    "corretta": 0,
-                    "spiegazione": quiz_data.get("spiegazione", "")
-                }
-            else:
-                print(f"QUIZ NO JSON ({nome}): raw={raw[:300]}", flush=True)
-    except Exception as _e:
-        print(f"QUIZ EXCEPTION ({nome}): {_e}", flush=True)
-        return None
-    return None
 
 
 @app.route("/quiz/<node_id>")
@@ -3507,21 +2894,7 @@ def load_flavor():
 
 # ── RATE LIMITING (IN4) ───────────────────────────────────────────
 import time as _time
-_rate_store = {}  # {ip: [timestamp, ...]}
-_RATE_LIMIT = 30   # max 30 richieste
-_RATE_WINDOW = 60  # per minuto
 
-def _check_rate_limit(ip):
-    """Rate limit per IP: 30 richieste/minuto su endpoint AI costosi."""
-    now = _time.time()
-    if ip not in _rate_store:
-        _rate_store[ip] = []
-    # rimuovi richieste fuori dalla finestra
-    _rate_store[ip] = [t for t in _rate_store[ip] if now - t < _RATE_WINDOW]
-    if len(_rate_store[ip]) >= _RATE_LIMIT:
-        return False
-    _rate_store[ip].append(now)
-    return True
 
 
 @app.route("/v1/feedback", methods=["POST"])
@@ -3747,32 +3120,6 @@ _NOME_TRAD = {
     }
 }
 
-def _traduci_nome(nome, lang, conn=None):
-    """Traduce il nome di un fenomeno o disciplina nella lingua richiesta.
-    Se non trovato nel dizionario statico, usa Haiku e salva nel DB."""
-    if not nome or lang == "it":
-        return nome
-    # Cerca nel dizionario statico
-    tradotto = _NOME_TRAD.get(lang, {}).get(nome)
-    if tradotto:
-        return tradotto
-    # Traduzione lazy via Haiku
-    if lang == "en":
-        prompt = f"Translate this Italian F&B technical term to English (2-5 words max): {nome}"
-    elif lang == "es":
-        prompt = f"Traduce este término técnico italiano de F&B al español (2-5 palabras): {nome}"
-    else:
-        return nome
-    try:
-        trad = _haiku_raw(prompt, max_tokens=20)
-        if trad:
-            trad = trad.strip().strip('"').strip("'")
-            # Salva nel dizionario statico per questa sessione
-            _NOME_TRAD.setdefault(lang, {})[nome] = trad
-            return trad
-    except Exception:
-        pass
-    return nome
 
 
 

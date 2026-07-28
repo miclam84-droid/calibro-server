@@ -462,3 +462,174 @@ def chiedi_mistral(prompt, history=None):
     except Exception as e:
         print(f"[GW] route_chat fallito in chiedi_mistral: {e}", flush=True)
     return None
+
+
+def cerca_fuzzy(db, domanda):
+    """Quando nessun termine estratto matcha ESATTAMENTE un nodo, cerca per
+    SOMIGLIANZA parola-per-parola tra la domanda e i nomi dei nodi del grafo.
+    Gestisce forme diverse della stessa parola (es. 'rosolisce' vs 'rosolata',
+    'lievita' vs 'lievito') senza generare falsi positivi su parole comuni
+    italiane (stopword) o parole troppo corte per essere distintive."""
+    tutti = db.execute("SELECT id, name, type FROM nodes").fetchall()
+    parole_domanda = [p.strip(".,?!").lower() for p in domanda.split()
+                       if len(p) > 4 and p.strip(".,?!").lower() not in _STOPWORD]
+    if not parole_domanda:
+        return None
+
+    candidati = set()
+    for n in tutti:
+        for parola_nodo in n["name"].lower().split():
+            parola_nodo = parola_nodo.strip("(),./")
+            if parola_nodo in _STOPWORD or len(parola_nodo) < 5:
+                continue
+            for p in parole_domanda:
+                if difflib.SequenceMatcher(None, p, parola_nodo).ratio() > 0.8:
+                    candidati.add(n["name"])
+                    break
+
+    for nome in candidati:
+        ctx = cerca_contesto(db, nome)
+        if ctx and ctx.get("fenomeni"):
+            return ctx
+    return None
+
+def fenomeni_suggeriti(db):
+    """Ultima rete di sicurezza: se proprio non si trova nulla, non si lascia
+    l'utente con un vicolo cieco. Si mostrano i fenomeni del grafo come punto
+    di partenza — l'utente può cliccare e iniziare da lì."""
+    rows = db.execute(
+        "SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY name").fetchall()
+    return [{"id": r["id"], "nome": r["name"], "dominio": r["domain"],
+             "target": _numero_bersaglio(_dati(r["data"]))} for r in rows]
+
+def log_evento(tipo, domanda, fenomeni=None, esito=None):
+    """Log minimo per osservabilità. Ritorna id del log per feedback (AC5)."""
+    if not DATABASE_URL:
+        return None
+    try:
+        import psycopg2
+        conn = _get_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS log_domande (
+                id SERIAL PRIMARY KEY,
+                ts TIMESTAMPTZ DEFAULT NOW(),
+                tipo TEXT, domanda TEXT,
+                fenomeni_trovati TEXT, esito TEXT
+            )
+        """)
+        cur.execute(
+            "INSERT INTO log_domande (tipo, domanda, fenomeni_trovati, esito) VALUES (%s,%s,%s,%s) RETURNING id",
+            (tipo, domanda[:500], ",".join(fenomeni) if fenomeni else None, esito)
+        )
+        log_id = cur.fetchone()[0]
+        conn.commit(); cur.close(); _release_conn(conn)
+        return log_id
+    except Exception:
+        return None
+
+def _genera_quiz(nome, target, scheda, lang="it"):
+    """Genera un quiz con Haiku (chiamata lenta, ~5s). Ritorna il quiz base
+    con la risposta corretta all'indice 0 — lo shuffle avviene alla consegna.
+    Usato da /quiz con cache: Haiku si paga una volta sola per nodo+lingua."""
+    if not scheda:
+        return None
+    if lang == "en":
+        quiz_prompt = f"""Create a quiz about this phenomenon for an F&B professional.
+Phenomenon: {nome}
+Target number: {target}
+Content: {scheda[:400]}
+
+Reply ONLY with valid JSON, no text before or after:
+{{"domanda":"...","opzioni":["correct option","wrong option","wrong option"],"corretta":0,"spiegazione":"explanation with the exact mathematical calculation in 2 lines"}}
+
+The correct answer must always be the first option (index 0).
+The explanation must include the exact number."""
+    elif lang == "es":
+        quiz_prompt = f"""Crea un quiz sobre este fenómeno para un profesional F&B.
+Fenómeno: {nome}
+Número objetivo: {target}
+Contenido: {scheda[:400]}
+
+Responde SOLO con JSON válido, ningún texto antes o después:
+{{"domanda":"...","opzioni":["opción correcta","opción incorrecta","opción incorrecta"],"corretta":0,"spiegazione":"explicación con el cálculo matemático en 2 líneas"}}
+
+La respuesta correcta debe ser siempre la primera opción (índice 0).
+La explicación debe incluir el número exacto."""
+    else:
+        quiz_prompt = f"""Crea un quiz su questo fenomeno per un professionista F&B.
+Fenomeno: {nome}
+Numero bersaglio: {target}
+Contenuto: {scheda[:400]}
+
+Rispondi SOLO con JSON valido, nessun testo prima o dopo:
+{{"domanda":"...","opzioni":["opzione giusta","opzione sbagliata","opzione sbagliata"],"corretta":0,"spiegazione":"spiegazione con il calcolo matematico in 2 righe"}}
+
+La risposta corretta deve essere sempre la prima opzione (indice 0).
+La spiegazione deve includere il numero esatto."""
+    try:
+        raw = _haiku_raw(quiz_prompt)
+        if raw:
+            import re as _re
+            print(f"QUIZ RAW ({nome}): {raw[:300]}", flush=True)
+            # rimuove caratteri di controllo che rompono json.loads
+            raw = _re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', raw)
+            # cerca il blocco JSON — anche se Haiku aggiunge testo prima/dopo
+            m = _re.search(r'\{.*?\}', raw, _re.DOTALL)
+            if not m:
+                # prova a cercare pattern più ampio
+                m = _re.search(r'\{.*\}', raw, _re.DOTALL)
+            if m:
+                try:
+                    quiz_data = json.loads(m.group())
+                except Exception as _je:
+                    # prova a pulire apostrofi non escaped
+                    cleaned = m.group().replace("'", '"')
+                    try:
+                        quiz_data = json.loads(cleaned)
+                    except Exception:
+                        print(f"QUIZ PARSE ERROR ({nome}): {_je} | raw: {raw[:300]}", flush=True)
+                        return None
+                opzioni = quiz_data.get("opzioni", [])
+                if not opzioni or len(opzioni) < 2:
+                    print(f"QUIZ NO OPZIONI ({nome}): {quiz_data}", flush=True)
+                    return None
+                return {
+                    "domanda": quiz_data.get("domanda", ""),
+                    "opzioni": opzioni,
+                    "corretta": 0,
+                    "spiegazione": quiz_data.get("spiegazione", "")
+                }
+            else:
+                print(f"QUIZ NO JSON ({nome}): raw={raw[:300]}", flush=True)
+    except Exception as _e:
+        print(f"QUIZ EXCEPTION ({nome}): {_e}", flush=True)
+        return None
+    return None
+
+def _traduci_nome(nome, lang, conn=None):
+    """Traduce il nome di un fenomeno o disciplina nella lingua richiesta.
+    Se non trovato nel dizionario statico, usa Haiku e salva nel DB."""
+    if not nome or lang == "it":
+        return nome
+    # Cerca nel dizionario statico
+    tradotto = _NOME_TRAD.get(lang, {}).get(nome)
+    if tradotto:
+        return tradotto
+    # Traduzione lazy via Haiku
+    if lang == "en":
+        prompt = f"Translate this Italian F&B technical term to English (2-5 words max): {nome}"
+    elif lang == "es":
+        prompt = f"Traduce este término técnico italiano de F&B al español (2-5 palabras): {nome}"
+    else:
+        return nome
+    try:
+        trad = _haiku_raw(prompt, max_tokens=20)
+        if trad:
+            trad = trad.strip().strip('"').strip("'")
+            # Salva nel dizionario statico per questa sessione
+            _NOME_TRAD.setdefault(lang, {})[nome] = trad
+            return trad
+    except Exception:
+        pass
+    return nome
