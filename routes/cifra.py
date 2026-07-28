@@ -323,7 +323,7 @@ def sicurezza_stateless():
     Auth: Authorization: Bearer {MATTER_SERVICE_KEY} (no X-User-Email richiesta).
     """
     auth = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
-    service_key = _os.environ.get("MATTER_SERVICE_KEY", "")
+    service_key = os.environ.get("MATTER_SERVICE_KEY", "")
     if not service_key or auth != service_key:
         return jsonify({"errore": "autenticazione richiesta"}), 401
 
