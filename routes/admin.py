@@ -468,9 +468,12 @@ Numero bersaglio: shake 20-28% diluizione · stir 15-22% · T finale shake -2/-4
         cur.close()
         _release_conn(conn)
         
-        # Invalida cache lezioni
-        global _lezione_cache
-        _lezione_cache = {}
+        # Invalida cache lezioni (la variabile vive in routes.lezione)
+        try:
+            from routes.lezione import _lezione_cache as _lc
+            _lc.clear()
+        except Exception:
+            pass
         
         return jsonify({"ok": True, "aggiornati": updated})
     except Exception as e:

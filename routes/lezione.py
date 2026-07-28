@@ -12,6 +12,9 @@ import os, json
 import ai_gateway as GW
 bp = Blueprint("lezione", __name__)
 
+_cache_home = {}       # { lang: {"ts": float, "data": dict} }
+_lezione_cache = {}    # { disciplina_nome: [fenomeni] }
+
 
 @bp.route("/home")
 def home_api():
