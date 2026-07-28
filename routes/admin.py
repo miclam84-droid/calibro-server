@@ -134,7 +134,8 @@ CRITERI:
 @bp.route("/quality-test")
 def quality_test():
     """Tool di test qualità interno — LLM-as-a-Judge"""
-    with open(os.path.join(os.path.dirname(__file__), "static", "quality_test.html"), "r") as f:
+    from config import HERE
+    with open(os.path.join(str(HERE), "static", "quality_test.html"), "r") as f:
         return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
 
 @bp.route("/v1/admin/migrate-modello", methods=["POST"])
