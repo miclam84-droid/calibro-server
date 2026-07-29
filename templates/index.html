@@ -70,6 +70,8 @@
     chat_grado:'grado final (era ',
     chat_thinking:'consultando Matter Lab',
     chiedi_btn:'Preguntar',
+    foto_analisi_titolo:'Análisis de foto',
+    foto_analisi_loading:'Identificando ingredientes y botellas…',
     chiedi_placeholder:'pregunta a Matter Lab…',
     continua_free:'Continuar con el plan gratuito',
     continua_senza:'← Continuar sin registrarse',
@@ -2318,6 +2320,8 @@ const _strings = {
     vedi_mappa:'Vedi il principio nella Mappa →',
     chiedi_placeholder:'chiedi a Matter Lab…',
     chiedi_btn:'Chiedi',
+    foto_analisi_titolo:'Analisi foto',
+    foto_analisi_loading:'Riconosco ingredienti e bottiglie…',
     chiedi_title:'Chiedi a Matter Lab',
     chiedi_sub:'Un problema reale del tuo lavoro — rispondo con i numeri, non con le opinioni.',
     sup_titolo:'Hai bisogno di aiuto?',
@@ -2473,6 +2477,8 @@ const _strings = {
     vedi_mappa:'See the principle in the Map →',
     chiedi_placeholder:'ask Matter Lab…',
     chiedi_btn:'Ask',
+    foto_analisi_titolo:'Photo analysis',
+    foto_analisi_loading:'Identifying ingredients and bottles…',
     chiedi_title:'Ask Matter Lab',
     disc_bar:'Bar', disc_cucina:'Kitchen', disc_panificazione:'Baking',
     disc_pasticceria:'Pastry', disc_gelateria:'Gelato', disc_caffe:'Coffee',
@@ -4056,32 +4062,76 @@ async function inviaFoto(input){
   var file = input.files[0];
   var tok = localStorage.getItem('matter_token')||'';
   var previewUrl = URL.createObjectURL(file);
+  // card con preview + skeleton
   var card = document.createElement('div');
   card.className = 'scheda';
-  card.innerHTML = '<div class="s-q">📷 Analisi immagine</div>'
-    + '<img src="'+previewUrl+'" style="max-width:100%;max-height:180px;border-radius:10px;margin:8px 0">'
-    + '<div class="s-body" style="color:var(--muted);font-size:13px">Analisi in corso…</div>';
+  card.innerHTML =
+    '<div class="s-q">📷 '+(_t('foto_analisi_titolo')||'Analisi immagine')+'</div>'
+    +'<img src="'+previewUrl+'" style="max-width:100%;max-height:200px;border-radius:10px;margin:8px 0;object-fit:cover">'
+    +'<div class="s-body foto-loading" style="color:var(--muted);font-size:13px">'
+    +(_t('foto_analisi_loading')||'Riconosco gli ingredienti…')+'</div>';
   var schede = document.getElementById('schede');
   if(schede){ schede.prepend(card); schede.scrollTop=0; }
   try {
     var fd = new FormData();
     fd.append('immagine', file);
-    var r = await fetch('/v1/vision?lang='+(_lang||'it'), {
-      method:'POST', headers:{'X-Token':tok}, body:fd
+    var r = await fetch('/v1/foto-analisi?lang='+(_lang||'it'), {
+      method:'POST', body:fd
     });
     var j = await r.json();
     var body = card.querySelector('.s-body');
-    if(j.analisi){
-      body.textContent = j.analisi;
-    } else if(j.errore && j.errore.indexOf('Pro')>=0){
-      body.textContent = 'Disponibile con Matter Lab Pro.';
-      if(typeof mostraPopupPro==='function') mostraPopupPro('vision');
+    body.className = 's-body';
+    if(j.errore){
+      body.textContent = j.errore;
     } else {
-      body.textContent = j.errore||'Errore analisi.';
+      // build rich output
+      var html = '';
+      // ingredienti trovati
+      if(j.ingredienti_riconosciuti && j.ingredienti_riconosciuti.length>0){
+        var nomi = j.ingredienti_riconosciuti.map(function(i){ return i.nodo_nome; }).join(', ');
+        html += '<div class="s-block s-block-scient" style="margin-bottom:8px">'
+          +'<span class="s-label">Riconosciuti</span>'
+          +'<span class="s-val">'+nomi+'</span></div>';
+      }
+      if(j.ingredienti_sconosciuti && j.ingredienti_sconosciuti.length>0){
+        html += '<div style="font-size:11px;color:var(--muted);margin-bottom:6px">Non trovati nel grafo: '
+          +j.ingredienti_sconosciuti.join(', ')+'</div>';
+      }
+      // abbinamenti aromatici
+      if(j.abbinamenti && j.abbinamenti.length>0){
+        html += '<div class="s-block" style="margin-bottom:8px">'
+          +'<span class="s-label">Abbinamenti aromatici</span>';
+        j.abbinamenti.forEach(function(a){
+          html += '<div style="font-size:12px;padding:2px 0">🔗 <b>'+a.a+'</b> + <b>'+a.b+'</b> — '+a.perche+'</div>';
+        });
+        html += '</div>';
+      }
+      // fenomeni
+      if(j.fenomeni && j.fenomeni.length>0){
+        html += '<div class="s-block" style="margin-bottom:8px">'
+          +'<span class="s-label">Fenomeni fisici</span>';
+        j.fenomeni.forEach(function(f){
+          html += '<div style="font-size:12px;padding:2px 0">⚗️ <b>'+f.nome+'</b>'
+            +(f.target?' · <span style="color:var(--terracotta)">'+f.target+'</span>':'')+'</div>';
+        });
+        html += '</div>';
+      }
+      // output scientifico
+      if(j.output_scientifico){
+        html += '<div class="s-block s-block-action" style="margin-top:8px">'
+          +'<span class="s-label">Analisi</span>'
+          +'<p style="margin:4px 0 0;font-size:13px;line-height:1.5">'+j.output_scientifico+'</p></div>';
+      }
+      // coverage
+      if(j.meta){
+        html += '<div style="font-size:10px;color:var(--muted);margin-top:8px;text-align:right">'
+          +'Copertura grafo: '+j.meta.coverage+' ('+j.meta.trovati_grafo+'/'+j.meta.totale_visione+')</div>';
+      }
+      body.innerHTML = html || 'Nessun ingrediente riconosciuto.';
     }
   } catch(e){
     var b = card.querySelector('.s-body');
-    if(b) b.textContent = 'Errore di rete.';
+    if(b) b.textContent = 'Errore di rete: '+e.message;
   }
   input.value = '';
 }

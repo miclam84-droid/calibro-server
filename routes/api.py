@@ -1038,3 +1038,38 @@ def prezzi_mercato(ingrediente, area="it"):
             "nota": "Prezzo non disponibile — usa i prezzi del tuo fornitore in Cifra"
         })
     return jsonify({"risultati": risultati, "totale": len(risultati)})
+
+
+@bp.route("/v1/foto-analisi", methods=["POST"])
+def foto_analisi():
+    """Pipeline foto → analisi scientifica.
+    Riceve immagine multipart (campo 'immagine') o JSON con base64 (campo 'immagine_b64').
+    Restituisce ingredienti riconosciuti, abbinamenti aromatici, fenomeni fisici, output AI.
+    Non richiede autenticazione Pro (feature in beta aperta per raccogliere dati di matching)."""
+    lang = request.args.get("lang", request.json.get("lang", "it") if request.is_json else "it")
+
+    # lettura immagine — multipart o base64
+    img_bytes = None
+    media_type = "image/jpeg"
+    if "immagine" in request.files:
+        f = request.files["immagine"]
+        img_bytes = f.read()
+        media_type = f.content_type or "image/jpeg"
+    elif request.is_json and request.json.get("immagine_b64"):
+        import base64
+        raw_b64 = request.json["immagine_b64"]
+        # gestisce sia il raw base64 sia il data-url
+        if "," in raw_b64:
+            header, raw_b64 = raw_b64.split(",", 1)
+            media_type = header.split(":")[1].split(";")[0] if ":" in header else "image/jpeg"
+        img_bytes = base64.b64decode(raw_b64)
+    if not img_bytes:
+        return jsonify({"errore": "immagine mancante — invia 'immagine' (multipart) o 'immagine_b64' (base64)"}), 400
+
+    try:
+        from foto import analizza_foto
+        risultato = analizza_foto(img_bytes, media_type=media_type, lang=lang)
+        return jsonify(risultato)
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
