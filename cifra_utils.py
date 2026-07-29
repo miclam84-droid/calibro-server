@@ -3,6 +3,7 @@
 # autenticazione service key, costo categoria, profilo sicurezza.
 # ============================================================
 import os, json
+from flask import request
 from db import _get_conn, _release_conn
 from config import DATABASE_URL
 
