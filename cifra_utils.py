@@ -46,7 +46,7 @@ def _auth_cifra():
     Restituisce user_id (str) o None se non autenticato.
     """
     auth = request.headers.get("Authorization","").replace("Bearer ","").strip()
-    service_key = _os.environ.get("MATTER_SERVICE_KEY","")
+    service_key = os.environ.get("MATTER_SERVICE_KEY","")
 
     # Modalità Cifra: service key + email
     if service_key and auth == service_key:
