@@ -5,6 +5,7 @@
 import os, json
 from flask import request
 from db import _get_conn, _release_conn
+from auth import _utente_da_token
 from config import DATABASE_URL
 
 
