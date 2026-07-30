@@ -789,19 +789,28 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 @keyframes mtnShimmer{0%{background-position:-360px 0}100%{background-position:360px 0}}
 @media (prefers-reduced-motion: no-preference){
   .screen.active{animation:mtnScreen .34s cubic-bezier(.2,.7,.2,1) both}
-  #screen-scopri.intro #scopri-hero{animation:mtnRise .55s .04s both cubic-bezier(.2,.7,.2,1)}
-  #screen-scopri.intro #scopri-cta{animation:mtnRise .55s .12s both cubic-bezier(.2,.7,.2,1)}
-  #screen-scopri.intro #scopri-principio{animation:mtnRise .55s .18s both cubic-bezier(.2,.7,.2,1)}
+  /* ingresso in sequenza — generico per TUTTE le schermate */
+  .screen.intro > *{animation:mtnRise .5s both cubic-bezier(.2,.7,.2,1)}
+  .screen.intro > *:nth-child(1){animation-delay:.04s}
+  .screen.intro > *:nth-child(2){animation-delay:.10s}
+  .screen.intro > *:nth-child(3){animation-delay:.16s}
+  .screen.intro > *:nth-child(4){animation-delay:.22s}
+  .screen.intro > *:nth-child(5){animation-delay:.28s}
+  .screen.intro > *:nth-child(6){animation-delay:.34s}
+  .screen.intro > *:nth-child(7){animation-delay:.40s}
+  .screen.intro > *:nth-child(8){animation-delay:.46s}
+  .screen.intro > *:nth-child(n+9){animation-delay:.52s}
+  /* Scopri conserva anche la cascata delle card disciplina */
   #screen-scopri.intro .disc-item{animation:mtnRise .5s both cubic-bezier(.2,.7,.2,1)}
-  #screen-scopri.intro .disc-item:nth-child(1){animation-delay:.20s}
-  #screen-scopri.intro .disc-item:nth-child(2){animation-delay:.25s}
-  #screen-scopri.intro .disc-item:nth-child(3){animation-delay:.30s}
-  #screen-scopri.intro .disc-item:nth-child(4){animation-delay:.35s}
-  #screen-scopri.intro .disc-item:nth-child(5){animation-delay:.40s}
-  #screen-scopri.intro .disc-item:nth-child(6){animation-delay:.45s}
-  #screen-scopri.intro .disc-item:nth-child(7){animation-delay:.50s}
-  #screen-scopri.intro .disc-item:nth-child(8){animation-delay:.55s}
-  #screen-scopri.intro .disc-item:nth-child(9){animation-delay:.60s}
+  #screen-scopri.intro .disc-item:nth-child(1){animation-delay:.30s}
+  #screen-scopri.intro .disc-item:nth-child(2){animation-delay:.35s}
+  #screen-scopri.intro .disc-item:nth-child(3){animation-delay:.40s}
+  #screen-scopri.intro .disc-item:nth-child(4){animation-delay:.45s}
+  #screen-scopri.intro .disc-item:nth-child(5){animation-delay:.50s}
+  #screen-scopri.intro .disc-item:nth-child(6){animation-delay:.55s}
+  #screen-scopri.intro .disc-item:nth-child(7){animation-delay:.60s}
+  #screen-scopri.intro .disc-item:nth-child(8){animation-delay:.65s}
+  #screen-scopri.intro .disc-item:nth-child(9){animation-delay:.70s}
   #scopri-hero.loading #scopri-ey,#scopri-hero.loading #scopri-titolo,#scopri-hero.loading #scopri-desc{
     color:transparent!important;border-radius:6px;
     background:linear-gradient(90deg,#ece5d8 25%,#f5efe4 50%,#ece5d8 75%);background-size:720px 100%;
@@ -1422,12 +1431,13 @@ if('serviceWorker' in navigator){
 /* ── NAVIGAZIONE ──────────────────────────────────────── */
 let _subtab = 'chat';   // subtab attivo dentro "Chiedi": 'chat' | 'calc'
 
-function playIntroScopri(){
-  // fa ripartire l'ingresso in sequenza dello Scopri (rimuove+riflusso+riaggiunge)
-  const s=document.getElementById('screen-scopri');
+function playIntro(screenId){
+  // fa (ri)partire l'ingresso in sequenza di una schermata
+  const s=document.getElementById(screenId);
   if(!s) return;
   s.classList.remove('intro'); void s.offsetWidth; s.classList.add('intro');
 }
+function playIntroScopri(){ playIntro('screen-scopri'); }
 function switchTab(t){
   ['scopri','lezione','mappa','chiedi','auth','quaderno'].forEach(s=>{
     document.getElementById('screen-'+s).classList.toggle('active',s===t);
@@ -1438,7 +1448,7 @@ function switchTab(t){
   const askBar=document.getElementById('ask-bar');
   askBar.style.display=(t==='chiedi' && _subtab==='chat')?'block':'none';
   // caricamento pigro per schermata (niente fetch inutili all'avvio)
-  if(t==='scopri'){ caricaHome(); playIntroScopri(); }
+  if(t==='scopri'){ caricaHome(); }
   if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa'){
     const _disc = Matter.disciplina || 'bar';
@@ -1447,6 +1457,8 @@ function switchTab(t){
     if(!Matter.disciplina) document.getElementById('mappa-label').textContent = _t('mappa_scegli');
   }
   if(t==='quaderno') caricaQuaderno();
+  // ingresso in sequenza per la schermata attivata (movimento coerente ovunque)
+  playIntro('screen-'+t);
   // posizione deterministica: la schermata parte sempre dall'alto
   window.scrollTo(0,0);
 }
