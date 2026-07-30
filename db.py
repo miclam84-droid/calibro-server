@@ -1,6 +1,6 @@
 # ============================================================
 # db.py — layer dati: compatibilita Postgres/SQLite, connection pool,
-# caricamento grafo, helper _dati. Estratto da app.py senza modifiche.
+# caricamento grafo, helper _dati.
 # ============================================================
 import sqlite3
 import json
@@ -9,29 +9,45 @@ from config import DATABASE_URL, GRAFO
 
 
 class _PgRow(dict):
-    """Riga Postgres accessibile come dizionario, per compatibilita con sqlite3.Row
-    (il resto del codice usa n["id"], n["data"], ecc. — qui funziona identico)."""
+    """Riga Postgres accessibile come dizionario, per compatibilita con sqlite3.Row."""
     pass
 
 
 class _PgCompat:
-    """Avvolge una connessione Postgres per farla sembrare sqlite3:
-    stessa firma db.execute(sql, params).fetchone()/.fetchall(), stesso
-    accesso a riga come dizionario. Traduce i placeholder '?' in '%s'.
-    Cosi tutte le query esistenti restano IDENTICHE — zero rischio sulla logica."""
-
-    def __init__(self, conn):
-        self._conn = conn
+    """Avvolge il POOL Postgres per farla sembrare sqlite3.
+    Ogni execute() prende una connessione dal pool, esegue, e la rilascia.
+    Thread-safe: nessuna connessione globale condivisa tra richieste.
+    Le route non cambiano nulla — usano db.execute() identico a prima.
+    """
 
     def execute(self, sql, params=()):
-        cur = self._conn.cursor()
-        cur.execute(sql.replace("?", "%s"), params)
-        if cur.description:
-            cols = [d[0] for d in cur.description]
-            rows = [_PgRow(zip(cols, r)) for r in cur.fetchall()]
-            return _PgCursorResult(rows)
-        self._conn.commit()
-        return _PgCursorResult([])
+        p = _get_pool()
+        if not p:
+            raise RuntimeError("Postgres pool non disponibile")
+        conn = None
+        try:
+            conn = p.getconn()
+            if conn is None:
+                raise RuntimeError("Pool esaurito")
+            cur = conn.cursor()
+            cur.execute(sql.replace("?", "%s"), params)
+            if cur.description:
+                cols = [d[0] for d in cur.description]
+                rows = [_PgRow(zip(cols, r)) for r in cur.fetchall()]
+                cur.close()
+                return _PgCursorResult(rows)
+            conn.commit()
+            cur.close()
+            return _PgCursorResult([])
+        except Exception:
+            if conn:
+                try: conn.rollback()
+                except Exception: pass
+            raise
+        finally:
+            if conn:
+                try: p.putconn(conn)
+                except Exception: pass
 
 
 class _PgCursorResult:
@@ -48,7 +64,6 @@ class _PgCursorResult:
         return iter(self._rows)
 
 
-_pg_conn = None  # connessione persistente, riusata tra le richieste
 # ── CONNECTION POOL Postgres ─────────────────────────────
 _pg_pool = None
 
@@ -56,21 +71,19 @@ def _get_pool():
     global _pg_pool
     if _pg_pool is None and DATABASE_URL:
         from psycopg2 import pool as _pgpool
-        # max 5 connessioni — Railway Postgres starter ha ~20 conn totali,
-        # divise tra pool + connessione grafo + Postgres overhead.
-        # Un pool da 10 esaurisce facilmente il limite; 5 è più sicuro.
-        _pg_pool = _pgpool.ThreadedConnectionPool(1, 5, DATABASE_URL)
+        # max 8 connessioni — con _PgCompat che rilascia subito dopo ogni execute,
+        # non c'è più la connessione globale persistente. Possiamo salire da 5 a 8
+        # perché il ciclo vita è brevissimo (acquire → execute → release).
+        _pg_pool = _pgpool.ThreadedConnectionPool(2, 8, DATABASE_URL)
     return _pg_pool
 
 def _get_conn():
-    """Prende una connessione dal pool. Usare con contesto try/finally + _release_conn."""
+    """Prende una connessione dal pool. Usare con try/finally + _release_conn."""
     p = _get_pool()
     if p:
         try:
             return p.getconn()
         except Exception:
-            # pool esaurito: non crashare con 500 — restituisce None
-            # e il chiamante gestisce il caso (di solito già fa il check)
             return None
     return None
 
@@ -84,24 +97,12 @@ def _release_conn(conn):
             pass
 
 
-
-
-def _connetti_postgres():
-    global _pg_conn
-    import psycopg2
-    if _pg_conn is None or _pg_conn.closed:
-        _pg_conn = psycopg2.connect(DATABASE_URL)
-    return _PgCompat(_pg_conn)
-
-
 def carica_grafo():
-    """Su Railway (DATABASE_URL impostata): riusa la connessione Postgres,
-    NIENTE ricostruzione a ogni chiamata — il grafo e gia li, caricato una
-    volta con migrate_postgres.py.
-    In locale (nessuna DATABASE_URL): ricostruisce SQLite in memoria dai
-    seed, comodo per lo sviluppo senza dover avere Postgres a portata."""
+    """Su Railway (DATABASE_URL impostata): restituisce un _PgCompat che usa il pool.
+    Ogni execute() prende e rilascia una connessione — thread-safe.
+    In locale: SQLite in memoria dai seed."""
     if DATABASE_URL:
-        return _connetti_postgres()
+        return _PgCompat()
     db = sqlite3.connect(":memory:")
     db.row_factory = sqlite3.Row
     schema = (GRAFO/"schema.sql").read_text(encoding="utf-8").replace("JSONB","TEXT")
@@ -113,8 +114,7 @@ def carica_grafo():
 
 def _dati(campo):
     """Il campo 'data' arriva come stringa JSON da SQLite, ma già come
-    dict da Postgres (JSONB). Questa funzione gestisce entrambi i casi
-    senza che il resto del codice debba saperlo."""
+    dict da Postgres (JSONB). Gestisce entrambi i casi."""
     if campo is None:
         return {}
     if isinstance(campo, dict):
