@@ -9,45 +9,25 @@ from config import DATABASE_URL, GRAFO
 
 
 class _PgRow(dict):
-    """Riga Postgres accessibile come dizionario, per compatibilita con sqlite3.Row."""
+    """Riga Postgres accessibile come dizionario."""
     pass
 
 
 class _PgCompat:
-    """Avvolge il POOL Postgres per farla sembrare sqlite3.
-    Ogni execute() prende una connessione dal pool, esegue, e la rilascia.
-    Thread-safe: nessuna connessione globale condivisa tra richieste.
-    Le route non cambiano nulla — usano db.execute() identico a prima.
-    """
+    """Avvolge una connessione Postgres per farla sembrare sqlite3."""
+
+    def __init__(self, conn):
+        self._conn = conn
 
     def execute(self, sql, params=()):
-        p = _get_pool()
-        if not p:
-            raise RuntimeError("Postgres pool non disponibile")
-        conn = None
-        try:
-            conn = p.getconn()
-            if conn is None:
-                raise RuntimeError("Pool esaurito")
-            cur = conn.cursor()
-            cur.execute(sql.replace("?", "%s"), params)
-            if cur.description:
-                cols = [d[0] for d in cur.description]
-                rows = [_PgRow(zip(cols, r)) for r in cur.fetchall()]
-                cur.close()
-                return _PgCursorResult(rows)
-            conn.commit()
-            cur.close()
-            return _PgCursorResult([])
-        except Exception:
-            if conn:
-                try: conn.rollback()
-                except Exception: pass
-            raise
-        finally:
-            if conn:
-                try: p.putconn(conn)
-                except Exception: pass
+        cur = self._conn.cursor()
+        cur.execute(sql.replace("?", "%s"), params)
+        if cur.description:
+            cols = [d[0] for d in cur.description]
+            rows = [_PgRow(zip(cols, r)) for r in cur.fetchall()]
+            return _PgCursorResult(rows)
+        self._conn.commit()
+        return _PgCursorResult([])
 
 
 class _PgCursorResult:
@@ -64,21 +44,18 @@ class _PgCursorResult:
         return iter(self._rows)
 
 
-# ── CONNECTION POOL Postgres ─────────────────────────────
+_pg_conn = None
 _pg_pool = None
 
 def _get_pool():
     global _pg_pool
     if _pg_pool is None and DATABASE_URL:
         from psycopg2 import pool as _pgpool
-        # max 8 connessioni — con _PgCompat che rilascia subito dopo ogni execute,
-        # non c'è più la connessione globale persistente. Possiamo salire da 5 a 8
-        # perché il ciclo vita è brevissimo (acquire → execute → release).
-        _pg_pool = _pgpool.ThreadedConnectionPool(2, 8, DATABASE_URL)
+        _pg_pool = _pgpool.ThreadedConnectionPool(1, 5, DATABASE_URL)
     return _pg_pool
 
 def _get_conn():
-    """Prende una connessione dal pool. Usare con try/finally + _release_conn."""
+    """Prende una connessione dal pool."""
     p = _get_pool()
     if p:
         try:
@@ -97,12 +74,17 @@ def _release_conn(conn):
             pass
 
 
+def _connetti_postgres():
+    global _pg_conn
+    import psycopg2
+    if _pg_conn is None or _pg_conn.closed:
+        _pg_conn = psycopg2.connect(DATABASE_URL)
+    return _PgCompat(_pg_conn)
+
+
 def carica_grafo():
-    """Su Railway (DATABASE_URL impostata): restituisce un _PgCompat che usa il pool.
-    Ogni execute() prende e rilascia una connessione — thread-safe.
-    In locale: SQLite in memoria dai seed."""
     if DATABASE_URL:
-        return _PgCompat()
+        return _connetti_postgres()
     db = sqlite3.connect(":memory:")
     db.row_factory = sqlite3.Row
     schema = (GRAFO/"schema.sql").read_text(encoding="utf-8").replace("JSONB","TEXT")
@@ -113,8 +95,6 @@ def carica_grafo():
 
 
 def _dati(campo):
-    """Il campo 'data' arriva come stringa JSON da SQLite, ma già come
-    dict da Postgres (JSONB). Gestisce entrambi i casi."""
     if campo is None:
         return {}
     if isinstance(campo, dict):

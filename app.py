@@ -11,7 +11,7 @@ import motore as Motore
 # ── Fondazione ──────────────────────────────────────────
 from config import HERE, GRAFO, DATABASE_URL
 from db import (_PgRow, _PgCompat, _PgCursorResult, _get_pool, _get_conn,
-                _release_conn, carica_grafo, _dati)
+                _release_conn, _connetti_postgres, carica_grafo, _dati)
 from auth import (_init_account_tables, _hash_pw, _e_hash_legacy, _verifica_pw,
                   _genera_token, _utente_da_token, _admin_autenticato)
 from contenuto import (_pulisci_traduzione, _scheda_lang, _numero_bersaglio, _corregge_it)
@@ -27,7 +27,7 @@ from utils import (_err, _check_rate_limit, _rate_store, _RATE_LIMIT, _RATE_WIND
 # ── Fondazione estratta (config/db/auth) ──
 from config import HERE, GRAFO, DATABASE_URL
 from db import (_PgRow, _PgCompat, _PgCursorResult, _get_pool, _get_conn,
-                _release_conn, carica_grafo, _dati)
+                _release_conn, _connetti_postgres, carica_grafo, _dati)
 from auth import (_init_account_tables, _hash_pw, _e_hash_legacy, _verifica_pw,
                   _genera_token, _utente_da_token)
 
