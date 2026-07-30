@@ -877,6 +877,53 @@ a:focus-visible,input:focus-visible{
 @media (prefers-reduced-motion: reduce){
   .disc-item,.cta-main{transition:none}
 }
+
+/* ── LAYOUT DESKTOP (≥768px) — sidebar verticale + contenuto ampio ── */
+@media (min-width: 768px) {
+  .app-header{
+    position:fixed;top:0;left:0;bottom:0;width:200px;height:100vh;
+    border-bottom:none;border-right:1px solid var(--border);
+    display:flex;flex-direction:column;padding-top:0;z-index:40;
+    overflow-y:auto
+  }
+  .app-bar{
+    padding:24px 20px 16px;border-bottom:1px solid var(--border);
+    flex-direction:column;align-items:flex-start;gap:6px
+  }
+  .wordmark{font-size:17px}
+  .tab-bar{
+    flex-direction:column;border-bottom:none;flex:1;
+    padding:8px 0;gap:2px
+  }
+  .tab-btn{
+    flex-direction:row;justify-content:flex-start;gap:12px;
+    padding:10px 20px;border-bottom:none;
+    border-left:3px solid transparent;border-radius:0;
+    font-size:13px;width:100%;text-align:left
+  }
+  .tab-btn.active{
+    border-left-color:var(--e500);
+    border-bottom-color:transparent;
+    background:var(--surface)
+  }
+  .tab-btn i.ph{font-size:18px;flex-shrink:0}
+  .tab-btn .tab-label{display:block}
+  .screen{
+    margin-left:200px;
+    max-width:860px;
+    padding:28px 40px 40px
+  }
+  .ask-bar{left:200px;padding-left:40px;padding-right:40px}
+  .ask-inner{max-width:760px}
+  .disc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .scheda-hero{padding:22px 26px}
+}
+@media (min-width:1100px){
+  .app-header{width:220px}
+  .screen{margin-left:220px;max-width:940px;padding:32px 52px 48px}
+  .ask-bar{left:220px;padding-left:52px;padding-right:52px}
+  .disc-grid{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 
 <script>
