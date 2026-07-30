@@ -55,14 +55,21 @@ def _get_pool():
     return _pg_pool
 
 def _get_conn():
-    """Prende una connessione dal pool."""
+    """Prende una connessione dal pool.
+    Solleva RuntimeError se il pool è esaurito — così i try/except esistenti
+    nelle route catturano l'errore invece di crashare con AttributeError su None."""
     p = _get_pool()
     if p:
         try:
-            return p.getconn()
-        except Exception:
-            return None
-    return None
+            conn = p.getconn()
+            if conn is None:
+                raise RuntimeError("Pool esaurito")
+            return conn
+        except RuntimeError:
+            raise
+        except Exception as e:
+            raise RuntimeError(f"Pool non disponibile: {e}") from e
+    raise RuntimeError("Database non configurato")
 
 def _release_conn(conn):
     """Rilascia la connessione al pool."""
