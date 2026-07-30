@@ -1694,8 +1694,12 @@ async function caricaLezioneStep(step){
   var _discNomeUI=(_discKey&&_lang!=='it')?(_t(_discKey)||disc.charAt(0).toUpperCase()+disc.slice(1)):(disc.charAt(0).toUpperCase()+disc.slice(1));
   document.getElementById('les-disciplina-label').textContent = _discNomeUI;
   document.getElementById('les-step-label').textContent = _t('les_caricamento');
-  document.getElementById('les-nome').textContent = '—';
-  document.getElementById('les-scheda').textContent = '';
+  const _lNome=document.getElementById('les-nome');
+  const _lSch=document.getElementById('les-scheda');
+  const _lTgt=document.getElementById('les-target');
+  _lNome.textContent='\u00a0'; _lNome.classList.add('skel');
+  _lSch.textContent='\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0'; _lSch.classList.add('skel');
+  if(_lTgt){ _lTgt.textContent='\u00a0\u00a0\u00a0\u00a0'; _lTgt.classList.add('skel'); }
   document.getElementById('les-quiz-box').style.display='none';
   try {
     const tok = localStorage.getItem('matter_token')||'';
@@ -1721,6 +1725,9 @@ async function caricaLezioneStep(step){
     if(barFill) barFill.style.width = pct + '%';
     document.getElementById('les-step-label').textContent =
       (j.fenomeno.dominio||'') + ' · fenomeno ' + (j.step+1);
+    ['les-nome','les-scheda','les-target'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.classList.remove('skel');
+    });
     document.getElementById('les-nome').textContent = j.fenomeno.nome;
     document.getElementById('les-scheda').textContent = j.fenomeno.scheda || 'Scheda in aggiornamento.';
     // target — mostra la box solo se il fenomeno ha un numero-bersaglio,
@@ -1754,6 +1761,9 @@ async function caricaLezioneStep(step){
       setTimeout(() => _precaricaLezione(disc, _lang, localStorage.getItem('matter_token')||''), 500);
     }
   } catch(e){
+    ['les-nome','les-scheda','les-target'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.classList.remove('skel');
+    });
     document.getElementById('les-nome').textContent = _t('les_errore');
   }
 }
@@ -1862,7 +1872,9 @@ async function caricaMappa(disc){
   const cont = document.getElementById('mappa-percorso');
   document.getElementById('mappa-label').textContent = _t('mappa_percorso') + disc;
   // altezza minima durante il load: le sezioni sotto non si spostano
-  cont.innerHTML = `<div style="min-height:160px;padding:14px;color:var(--ink-muted);font-size:13px">${_t('mappa_caricamento')}</div>`;
+  cont.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;padding:4px 0">`
+    +['80%','65%','75%','55%'].map(w=>`<div class="skel" style="height:52px;border-radius:10px;width:${w}">&nbsp;</div>`).join('')
+    +'</div>';
   try {
     const r = await fetch('/mappa/'+disc);
     if(!r.ok) throw new Error('server');
@@ -4189,7 +4201,7 @@ async function inviaFoto(input){
         html += '<div style="font-size:10px;color:var(--muted);margin-top:8px;text-align:right">'
           +'Copertura grafo: '+j.meta.coverage+' ('+j.meta.trovati_grafo+'/'+j.meta.totale_visione+')</div>';
       }
-      body.innerHTML = html || 'Nessun ingrediente riconosciuto.';
+      body.innerHTML = html || '<div style="color:var(--ink-muted);font-size:13px;text-align:center;padding:8px 0"><i class="ph ph-camera-slash" style="font-size:22px;display:block;margin-bottom:6px"></i>Nessun ingrediente riconoscibile — prova con una foto più nitida.</div>';
     }
   } catch(e){
     var b = card.querySelector('.s-body');
