@@ -826,6 +826,48 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 }
 .disc-item:active{transform:translateY(-1px) scale(.996)}
 .cta-main:active{transform:translateY(0) scale(.99)}
+
+/* ── Feedback interazione globale (push C) ──────────────── */
+.les-back-btn,.les-btn-pri,.les-btn-sec,.les-complete-btn,.subtab-btn,
+.s-action-btn,.flavor-search-btn,.add-btn,.salva-btn,.auth-btn,.onb-cta-btn,
+.princ-link,.disc-chip,.fenchip,.loop-step,.flavor-card,.flavor-result-item,
+.calc-card,.foodcost-card,.quad-item,.bridge-card,.ask-ico-btn,.fb-btn{
+  transition:transform .16s cubic-bezier(.2,.7,.2,1),box-shadow .16s ease,
+             background-color .16s ease,border-color .16s ease;
+}
+@media (hover:hover){
+  .loop-step:hover,.flavor-card:hover,.flavor-result-item:hover,.calc-card:hover,
+  .foodcost-card:hover,.quad-item:hover,.bridge-card:hover,.disc-chip:hover,
+  .fenchip:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(44,110,99,.10)}
+  .les-btn-pri:hover,.les-complete-btn:hover,.flavor-search-btn:hover,
+  .salva-btn:hover,.auth-btn:hover,.onb-cta-btn:hover{transform:translateY(-1px)}
+  .ask-ico-btn:hover,.fb-btn:hover{opacity:1;transform:scale(1.08)}
+  .s-action-btn:hover,.subtab-btn:hover,.les-back-btn:hover{background:var(--e100)}
+}
+.les-back-btn:active,.les-btn-pri:active,.les-btn-sec:active,.les-complete-btn:active,
+.subtab-btn:active,.s-action-btn:active,.flavor-search-btn:active,.add-btn:active,
+.salva-btn:active,.auth-btn:active,.onb-cta-btn:active,.princ-link:active,
+.disc-chip:active,.fenchip:active,.loop-step:active,.flavor-card:active,
+.flavor-result-item:active,.calc-card:active,.foodcost-card:active,
+.quad-item:active,.bridge-card:active,.ask-ico-btn:active,.fb-btn:active{
+  transform:scale(.97)
+}
+/* focus-ring coerente per accessibilità */
+button:focus-visible,.disc-item:focus-visible,.loop-step:focus-visible,
+a:focus-visible,input:focus-visible{
+  outline:2px solid var(--e400);outline-offset:2px;border-radius:8px
+}
+/* skeleton shimmer riutilizzabile */
+.skel{background:linear-gradient(90deg,#ece5d8 25%,#f5efe4 50%,#ece5d8 75%);
+  background-size:720px 100%;animation:mtnShimmer 1.15s infinite linear;
+  border-radius:6px;color:transparent!important}
+@media (prefers-reduced-motion: reduce){
+  .les-back-btn,.les-btn-pri,.les-btn-sec,.les-complete-btn,.subtab-btn,
+  .s-action-btn,.flavor-search-btn,.add-btn,.salva-btn,.auth-btn,.onb-cta-btn,
+  .princ-link,.disc-chip,.fenchip,.loop-step,.flavor-card,.flavor-result-item,
+  .calc-card,.foodcost-card,.quad-item,.bridge-card,.ask-ico-btn,.fb-btn{transition:none}
+  .skel{animation:none}
+}
 @media (prefers-reduced-motion: reduce){
   .disc-item,.cta-main{transition:none}
 }
