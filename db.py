@@ -56,14 +56,22 @@ def _get_pool():
     global _pg_pool
     if _pg_pool is None and DATABASE_URL:
         from psycopg2 import pool as _pgpool
-        _pg_pool = _pgpool.ThreadedConnectionPool(1, 10, DATABASE_URL)
+        # max 5 connessioni — Railway Postgres starter ha ~20 conn totali,
+        # divise tra pool + connessione grafo + Postgres overhead.
+        # Un pool da 10 esaurisce facilmente il limite; 5 è più sicuro.
+        _pg_pool = _pgpool.ThreadedConnectionPool(1, 5, DATABASE_URL)
     return _pg_pool
 
 def _get_conn():
     """Prende una connessione dal pool. Usare con contesto try/finally + _release_conn."""
     p = _get_pool()
     if p:
-        return p.getconn()
+        try:
+            return p.getconn()
+        except Exception:
+            # pool esaurito: non crashare con 500 — restituisce None
+            # e il chiamante gestisce il caso (di solito già fa il check)
+            return None
     return None
 
 def _release_conn(conn):
