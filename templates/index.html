@@ -825,6 +825,15 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   #scopri-hero.loading #scopri-desc{min-height:2.4em;display:block}
 }
 .disc-item{transition:transform .18s cubic-bezier(.2,.7,.2,1),box-shadow .18s ease,border-color .15s}
+/* dashboard numeri Home */
+.db-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.db-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+.db-stat-val{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--e500);line-height:1;letter-spacing:-.02em}
+.db-stat-lab{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+/* numero bersaglio sopra il titolo hero */
+.hero-num-top{background:var(--e500);border-radius:10px;padding:14px 18px;margin-bottom:14px}
+.hero-num-top-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,246,238,0.7);margin-bottom:5px}
+.hero-num-top-val{font-family:var(--mono);font-size:30px;font-weight:700;color:#FAF6EE;line-height:1.1}
 .cta-main{transition:transform .16s cubic-bezier(.2,.7,.2,1),box-shadow .2s ease}
 @media (hover:hover){
   .disc-item:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(44,110,99,.14)}
@@ -971,8 +980,34 @@ if('serviceWorker' in navigator){
 </header>
 <div class="screen active" id="screen-scopri">
   <div class="lab-area-header"><span class="lab-area-label">// ESPLORAZIONE FENOMENI</span></div>
+
+  <!-- ── DASHBOARD NUMERI ── -->
+  <div class="db-stats">
+    <div class="db-stat">
+      <div class="db-stat-val">52</div>
+      <div class="db-stat-lab">Fenomeni</div>
+    </div>
+    <div class="db-stat">
+      <div class="db-stat-val">1.530</div>
+      <div class="db-stat-lab">Ingredienti</div>
+    </div>
+    <div class="db-stat">
+      <div class="db-stat-val">33.696</div>
+      <div class="db-stat-lab">Connessioni aromatiche</div>
+    </div>
+    <div class="db-stat">
+      <div class="db-stat-val">6</div>
+      <div class="db-stat-lab">Calcolatori</div>
+    </div>
+  </div>
+
   <!-- scheda hero dinamica — popolata da /home -->
   <div class="scheda-hero" id="scopri-hero">
+    <!-- numero bersaglio in cima — visibile solo quando presente -->
+    <div class="hero-num-top" id="scopri-num-top" style="display:none">
+      <div class="hero-num-top-lab">il numero bersaglio</div>
+      <div class="hero-num-top-val" id="scopri-num-top-val"></div>
+    </div>
     <div class="hero-hdr">
       <div class="hero-ey" id="scopri-ey">caricamento in corso…</div>
       <h2 id="scopri-titolo">—</h2>
@@ -1659,6 +1694,13 @@ function renderHome(j){
   document.getElementById('scopri-ey').textContent =
     'fenomeno del giorno · ' + (f.dominio||'');
   document.getElementById('scopri-titolo').textContent = f.nome || '—';
+  // numero bersaglio in cima all'hero
+  const _nt=document.getElementById('scopri-num-top');
+  const _ntv=document.getElementById('scopri-num-top-val');
+  if(_nt && _ntv && f.target){
+    _ntv.textContent=f.target;
+    _nt.style.display='block';
+  } else if(_nt){ _nt.style.display='none'; }
     const _loop = document.getElementById('loop-guidato');
     const _loopFen = document.getElementById('loop-fen-nome');
     if(_loop) _loop.style.display='block';
@@ -2418,7 +2460,11 @@ async function doRegistra(){
 const _strings = {
   it:{
     payoff:'Science &amp; Craft',
-    scopri:'Scopri', lezione:'Lezione', mappa:'Mappa', chiedi:'Chiedi',
+    scopri:'Scopri', lezione:'Lezione', mappa:'Mappa', db_fenomeni:'Fenomeni',
+    db_ingredienti:'Ingredienti',
+    db_connessioni:'Connessioni aromatiche',
+    db_calcolatori:'Calcolatori',
+    chiedi:'Chiedi',
     studia:'Esplora il fenomeno', nologin:'Inizia senza registrarti.',
     disc_kw_bar:'Acidità · Diluizione · Carbonatazione · Emulsione',
     disc_kw_bakery:'Struttura · Fermentazione · Osmosi · Retrogradazione',
@@ -2576,7 +2622,11 @@ const _strings = {
   },
   en:{
     payoff:'The science behind the craft',
-    scopri:'Discover', lezione:'Lesson', mappa:'Map', chiedi:'Ask',
+    scopri:'Discover', lezione:'Lesson', mappa:'Map', db_fenomeni:'Phenomena',
+    db_ingredienti:'Ingredients',
+    db_connessioni:'Aromatic connections',
+    db_calcolatori:'Calculators',
+    chiedi:'Ask',
     studia:'Explore the phenomenon', nologin:'No registration required.',
     disc_kw_bar:'Acidity · Dilution · Carbonation · Emulsion',
     disc_kw_bakery:'Structure · Fermentation · Osmosis · Retrogradation',
@@ -2736,7 +2786,11 @@ const _strings = {
   },
   es:{
     payoff:'Science & Craft',
-    scopri:'Descubrir', lezione:'Lección', mappa:'Mapa', chiedi:'Preguntar',
+    scopri:'Descubrir', lezione:'Lección', mappa:'Mapa', db_fenomeni:'Fenómenos',
+    db_ingredienti:'Ingredientes',
+    db_connessioni:'Conexiones aromáticas',
+    db_calcolatori:'Calculadoras',
+    chiedi:'Preguntar',
     studia:'Explora el fenómeno', nologin:'Empieza sin registrarte.',
     disc_kw_bar:'Acidez · Dilución · Carbonatación · Emulsión',
     disc_kw_bakery:'Estructura · Fermentación · Ósmosis · Retrogradación',
