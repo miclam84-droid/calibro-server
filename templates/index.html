@@ -834,6 +834,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .hero-num-top{background:var(--e500);border-radius:10px;padding:14px 18px;margin-bottom:14px}
 .hero-num-top-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,246,238,0.7);margin-bottom:5px}
 .hero-num-top-val{font-family:var(--mono);font-size:30px;font-weight:700;color:#FAF6EE;line-height:1.1}
+/* tab mappa atlante */
+.mappa-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mappa-tabs::-webkit-scrollbar{display:none}
+.mappa-tab{flex-shrink:0;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:10px 14px;cursor:pointer;transition:color .15s,border-color .15s}
+.mappa-tab.active{color:var(--e500);border-bottom-color:var(--e500)}
+.mappa-tab:hover{color:var(--ink)}
+.mappa-panel{display:none}
+.mappa-panel.active{display:block}
 .cta-main{transition:transform .16s cubic-bezier(.2,.7,.2,1),box-shadow .2s ease}
 @media (hover:hover){
   .disc-item:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(44,110,99,.14)}
@@ -1199,88 +1207,105 @@ if('serviceWorker' in navigator){
 <!-- ── MAPPA ───────────────────────────────────────────── -->
 <div class="screen" id="screen-mappa">
   <div class="lab-area-header"><span class="lab-area-label">// MAPPA DEL LABORATORIO</span></div>
-  <div class="sec-label" id="mappa-label">Il tuo percorso</div>
-  <div class="percorso" id="mappa-percorso">
-    <div style="padding:20px 14px;color:var(--ink-muted);font-size:13px">
-      Scegli una disciplina in Scopri per vedere il percorso.
+
+  <!-- ── TAB ORIZZONTALI MAPPA ── -->
+  <div class="mappa-tabs" id="mappa-tabs" role="tablist">
+    <button class="mappa-tab active" id="mtab-fenomeni" onclick="switchMappaTab('fenomeni')" role="tab">Fenomeni</button>
+    <button class="mappa-tab" id="mtab-flavor" onclick="switchMappaTab('flavor')" role="tab">Flavor</button>
+    <button class="mappa-tab" id="mtab-principi" onclick="switchMappaTab('principi')" role="tab">Principi</button>
+    <button class="mappa-tab" id="mtab-strumenti" onclick="switchMappaTab('strumenti')" role="tab">Strumenti</button>
+    <button class="mappa-tab" id="mtab-sommelier" onclick="switchMappaTab('sommelier')" role="tab">Sommelier</button>
+  </div>
+
+  <!-- ── PANNELLO FENOMENI ── -->
+  <div class="mappa-panel active" id="mpanel-fenomeni">
+    <div class="sec-label" id="mappa-label">Il tuo percorso</div>
+    <div class="percorso" id="mappa-percorso">
+      <div style="padding:20px 14px;color:var(--ink-muted);font-size:13px">
+        Scegli una disciplina in Scopri per vedere il percorso.
+      </div>
     </div>
   </div>
 
-  <!-- Flavor network subito dopo il percorso — più visibile -->
-  <div class="sec-label" id="ct-perche-ins" style="padding-top:8px">Abbinamenti aromatici</div>
-  <div class="flavor-card" id="flavor-card-mappa">
-    <div class="fl-header">
-      <div class="fl-icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
-      <div>
-        <div class="fl-eyebrow">Flavor network</div>
-        <div class="fl-name">Con cosa funziona questo ingrediente — e perché</div>
-      </div>
-    </div>
-    <div class="fl-desc">Scrivi un ingrediente e scopri gli abbinamenti per composti aromatici condivisi.</div>
-    <div class="flavor-search">
-      <div class="flavor-search-row">
-        <input class="flavor-input" type="text" id="flavor-query" placeholder="es. limone, caffè, burro…" onkeydown="if(event.key==='Enter')cercaFlavorMappa()">
-        <button class="flavor-search-btn" onclick="cercaFlavorMappa()" id="ct-flavor-btn">Cerca</button>
-      </div>
-      <div class="flavor-results" id="flavor-results-mappa"></div>
-      <div class="flavor-results" id="contrasto-results-mappa"></div>
-      <div id="composti-section" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(44,110,99,0.06);border-left:3px solid var(--teal);border-radius:3px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <span style="font-family:var(--serif);font-size:13px;font-weight:700;color:var(--teal)" data-i18n="composti_titolo">Composti aromatici</span>
-          <span style="font-family:var(--mono);font-size:9px;color:var(--ink-muted);letter-spacing:.08em;text-transform:uppercase">PubChem NIH · pubblico dominio</span>
+  <!-- ── PANNELLO FLAVOR ── -->
+  <div class="mappa-panel" id="mpanel-flavor">
+    <div class="flavor-card" id="flavor-card-mappa">
+      <div class="fl-header">
+        <div class="fl-icon"><svg viewBox="0 0 24 24"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
+        <div>
+          <div class="fl-eyebrow">Flavor network</div>
+          <div class="fl-name">Con cosa funziona questo ingrediente — e perché</div>
         </div>
-        <div id="composti-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+      <div class="fl-desc">Scrivi un ingrediente e scopri gli abbinamenti per composti aromatici condivisi.</div>
+      <div class="flavor-search">
+        <div class="flavor-search-row">
+          <input class="flavor-input" type="text" id="flavor-query" placeholder="es. limone, caffè, burro…" onkeydown="if(event.key==='Enter')cercaFlavorMappa()">
+          <button class="flavor-search-btn" onclick="cercaFlavorMappa()" id="ct-flavor-btn">Cerca</button>
+        </div>
+        <div class="flavor-results" id="flavor-results-mappa"></div>
+        <div class="flavor-results" id="contrasto-results-mappa"></div>
+        <div id="composti-section" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(44,110,99,0.06);border-left:3px solid var(--teal);border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-family:var(--serif);font-size:13px;font-weight:700;color:var(--teal)" data-i18n="composti_titolo">Composti aromatici</span>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--ink-muted);letter-spacing:.08em;text-transform:uppercase">PubChem NIH · pubblico dominio</span>
+          </div>
+          <div id="composti-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--flavor);opacity:.7;margin-top:12px;line-height:1.5;padding:0 14px 14px">
+        Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale o di sicurezza alimentare.
       </div>
     </div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--flavor);opacity:.7;margin-top:12px;line-height:1.5;padding:0 14px 14px">
-      Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale o di sicurezza alimentare.
-    </div>
   </div>
 
-  <div class="sec-label" id="ct-princ-trasv" style="padding-top:4px">Principi trasversali</div>
-  <div class="iper-arco">
-    <div class="ia-header">
-      <div class="ia-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg></div>
-      <div>
-        <div class="ia-eyebrow">Il principio</div>
-        <div class="ia-name">kT — energia termica (Boltzmann)</div>
+  <!-- ── PANNELLO PRINCIPI ── -->
+  <div class="mappa-panel" id="mpanel-principi">
+    <div class="iper-arco">
+      <div class="ia-header">
+        <div class="ia-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg></div>
+        <div>
+          <div class="ia-eyebrow">Il principio trasversale</div>
+          <div class="ia-name">kT — energia termica (Boltzmann)</div>
+        </div>
+      </div>
+      <div class="ia-desc">La causa comune sotto Q10, estrazione, fermentazione e carbonatazione. Non è un numero da misurare al banco — è il perché sotto i numeri.</div>
+      <div class="ia-nodi">
+        <span class="ia-nodo">Calore</span>
+        <span class="ia-nodo">Estrazione</span>
+        <span class="ia-nodo">Fermentazione</span>
+        <span class="ia-nodo">Carbonatazione</span>
       </div>
     </div>
-    <div class="ia-desc">La causa comune sotto Q10, estrazione, fermentazione e carbonatazione. Non è un numero da misurare al banco — è il perché sotto i numeri.</div>
-    <div class="ia-nodi">
-      <span class="ia-nodo">Calore</span>
-      <span class="ia-nodo">Estrazione</span>
-      <span class="ia-nodo">Fermentazione</span>
-      <span class="ia-nodo">Carbonatazione</span>
+  </div>
+
+  <!-- ── PANNELLO STRUMENTI ── -->
+  <div class="mappa-panel" id="mpanel-strumenti">
+    <div style="margin:0 0 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px">Gli strumenti per misurare i numeri bersaglio</div>
+      <div id="strumenti-list" style="display:flex;flex-direction:column;gap:8px">
+        <div style="color:var(--ink-muted);font-size:13px">Scegli una disciplina per vedere gli strumenti.</div>
+      </div>
     </div>
   </div>
 
-  <!-- ── STRUMENTI DI MISURA ──────────────────────────── -->
-  <div class="sec-label" style="padding-top:4px">Strumenti di misura</div>
-  <div id="strumenti-card" style="margin:0 14px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px">
-    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px">Gli strumenti per misurare i numeri bersaglio</div>
-    <div id="strumenti-list" style="display:flex;flex-direction:column;gap:8px">
-      <div style="color:var(--ink-muted);font-size:13px">Scegli una disciplina per vedere gli strumenti.</div>
+  <!-- ── PANNELLO SOMMELIER ── -->
+  <div class="mappa-panel" id="mpanel-sommelier">
+    <div style="margin:0 0 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px">Impara i tuoi abbinamenti preferiti</div>
+      <div style="font-size:13px;color:var(--ink-muted);line-height:1.5;margin-bottom:10px">Usa <i class="ph ph-thumbs-up"></i> e <i class="ph ph-thumbs-down"></i> sugli abbinamenti del Flavor Network. Il sistema impara e riordina i risultati in base ai tuoi gusti.</div>
+      <div id="sommelier-stats" style="font-family:var(--mono);font-size:11px;color:var(--ink-muted)"></div>
+      <button onclick="caricaProfiloSensoriale()" style="margin-top:8px;background:var(--teal);color:#fff;border:none;font-family:var(--sans);font-weight:600;font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer">Vedi il tuo profilo sensoriale</button>
+      <div id="profilo-sensoriale" style="display:none;margin-top:12px"></div>
+    </div>
+    <div class="bridge-card">
+      <div class="bridge-eyebrow">il ponte verso Cifra</div>
+      <div class="bridge-headline">Conosci la fisica. Cifra ti dà il controllo dei numeri.</div>
+      <div class="bridge-body">Margini, food cost, fornitori, movimenti. Cifra è il gestionale che ragiona — costruito per chi sa già come funziona la materia.</div>
+      <button class="bridge-cta" onclick="importaCifra()">Importa in Cifra <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </div>
 
-  <!-- ── SOMMELIER DIGITALE ───────────────────────────── -->
-  <div class="sec-label" style="padding-top:4px">Sommelier digitale</div>
-  <div id="sommelier-card" style="margin:0 14px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px">
-    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px">Impara i tuoi abbinamenti preferiti</div>
-    <div style="font-size:13px;color:var(--ink-muted);line-height:1.5;margin-bottom:10px">Usa <i class="ph ph-thumbs-up"></i> e <i class="ph ph-thumbs-down"></i> sugli abbinamenti del Flavor Network. Il sistema impara e riordina i risultati in base ai tuoi gusti.</div>
-    <div id="sommelier-stats" style="font-family:var(--mono);font-size:11px;color:var(--ink-muted)"></div>
-    <button onclick="caricaProfiloSensoriale()" style="margin-top:8px;background:var(--teal);color:#fff;border:none;font-family:var(--sans);font-weight:600;font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer">Vedi il tuo profilo sensoriale</button>
-    <div id="profilo-sensoriale" style="display:none;margin-top:12px"></div>
-  </div>
-
-  <div class="sec-label" id="ct-ponte-cifra" style="padding-top:4px">Il ponte verso Cifra</div>
-  <div class="bridge-card">
-    <div class="bridge-eyebrow">il ponte verso Cifra</div>
-    <div class="bridge-headline">Conosci la fisica. Cifra ti dà il controllo dei numeri.</div>
-    <div class="bridge-body">Margini, food cost, fornitori, movimenti. Cifra è il gestionale che ragiona — costruito per chi sa già come funziona la materia.</div>
-    <button class="bridge-cta" onclick="importaCifra()">Importa in Cifra <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-  </div>
 </div>
 
 <!-- ── CHIEDI ──────────────────────────────────────────── -->
@@ -1568,6 +1593,17 @@ function playIntro(screenId){
   if(!s) return;
   s.classList.remove('intro'); void s.offsetWidth; s.classList.add('intro');
 }
+function switchMappaTab(tab){
+  // tab buttons
+  document.querySelectorAll('.mappa-tab').forEach(b=>b.classList.toggle('active',b.id==='mtab-'+tab));
+  // pannelli
+  document.querySelectorAll('.mappa-panel').forEach(p=>p.classList.toggle('active',p.id==='mpanel-'+tab));
+  // se si va su Flavor, focus sull'input
+  if(tab==='flavor'){
+    setTimeout(()=>{const i=document.getElementById('flavor-query');if(i)i.focus();},200);
+  }
+}
+
 function playIntroScopri(){ playIntro('screen-scopri'); }
 function switchTab(t){
   ['scopri','lezione','mappa','chiedi','auth','quaderno'].forEach(s=>{
