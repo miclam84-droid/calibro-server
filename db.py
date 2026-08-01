@@ -47,6 +47,46 @@ class _PgCursorResult:
 _pg_conn = None
 _pg_pool = None
 
+
+class _PgCompatPool:
+    """Versione thread-safe di _PgCompat.
+    Ogni execute() prende una connessione dal pool, esegue, e la rilascia
+    nel finally. Nessuna connessione globale — safe per richieste concorrenti.
+    Le route usano db.execute() identico a prima — zero modifiche."""
+
+    def execute(self, sql, params=()):
+        p = _get_pool()
+        if not p:
+            raise RuntimeError("Pool Postgres non disponibile")
+        conn = None
+        try:
+            conn = p.getconn()
+            if conn is None:
+                raise RuntimeError("Pool esaurito — riprova tra un momento")
+            cur = conn.cursor()
+            cur.execute(sql.replace("?", "%s"), params)
+            if cur.description:
+                cols = [d[0] for d in cur.description]
+                rows = [_PgRow(zip(cols, r)) for r in cur.fetchall()]
+                cur.close()
+                return _PgCursorResult(rows)
+            conn.commit()
+            cur.close()
+            return _PgCursorResult([])
+        except Exception:
+            if conn:
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
+            raise
+        finally:
+            if conn:
+                try:
+                    p.putconn(conn)
+                except Exception:
+                    pass
+
 def _get_pool():
     global _pg_pool
     if _pg_pool is None and DATABASE_URL:
@@ -90,8 +130,12 @@ def _connetti_postgres():
 
 
 def carica_grafo():
+    """Restituisce un oggetto db compatibile con sqlite3.
+    Su Postgres: _PgCompatPool — thread-safe, ogni execute prende e rilascia
+    una connessione dal pool. Zero connessioni globali.
+    In locale: sqlite3 in memoria dai seed."""
     if DATABASE_URL:
-        return _connetti_postgres()
+        return _PgCompatPool()
     db = sqlite3.connect(":memory:")
     db.row_factory = sqlite3.Row
     schema = (GRAFO/"schema.sql").read_text(encoding="utf-8").replace("JSONB","TEXT")
