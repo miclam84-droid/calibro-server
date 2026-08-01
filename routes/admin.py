@@ -1300,7 +1300,8 @@ def admin_add_fenomeni():
                 "scheda": f.get("it",""),
                 "scheda_en": f.get("en",""),
                 "scheda_es": f.get("es",""),
-                "target": f.get("target",""),
+                "numero_bersaglio": f.get("target",""),
+                "target": f.get("target",""),  # compatibilità legacy
                 "disciplina": f.get("disciplina","trasversale"),
             }
             cur.execute("""
