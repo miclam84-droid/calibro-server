@@ -59,10 +59,18 @@ class _PgCompatPool:
         if not p:
             raise RuntimeError("Pool Postgres non disponibile")
         conn = None
+        # retry fino a 3 volte con backoff se il pool è esaurito
+        import time as _time
+        for attempt in range(3):
+            try:
+                conn = p.getconn()
+                break
+            except Exception:
+                if attempt < 2:
+                    _time.sleep(0.05 * (attempt + 1))
+                else:
+                    raise RuntimeError("Pool esaurito — riprova tra un momento")
         try:
-            conn = p.getconn()
-            if conn is None:
-                raise RuntimeError("Pool esaurito — riprova tra un momento")
             cur = conn.cursor()
             cur.execute(sql.replace("?", "%s"), params)
             if cur.description:
@@ -91,7 +99,10 @@ def _get_pool():
     global _pg_pool
     if _pg_pool is None and DATABASE_URL:
         from psycopg2 import pool as _pgpool
-        _pg_pool = _pgpool.ThreadedConnectionPool(1, 5, DATABASE_URL)
+        # Pool 2-10: Railway Postgres starter ha ~20-25 connessioni totali.
+        # Con _PgCompatPool che rilascia subito dopo ogni execute (non mantiene
+        # connessioni aperte), possiamo salire a 10 senza rischio di saturare.
+        _pg_pool = _pgpool.ThreadedConnectionPool(2, 10, DATABASE_URL)
     return _pg_pool
 
 def _get_conn():
