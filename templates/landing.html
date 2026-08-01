@@ -133,6 +133,15 @@ footer{border-top:1px solid var(--border);padding:24px 28px;display:flex;align-i
   nav,footer{padding:14px 20px;}
   .preview{padding:0 20px;}
 }
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+
 </style>
 </head>
 <body>
@@ -152,7 +161,7 @@ footer{border-top:1px solid var(--border);padding:24px 28px;display:flex;align-i
   </div>
 </nav>
 
-<section class="hero">
+<section class="hero reveal">
   <span class="h-kicker" id="l-kicker">Bar · Bakery · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra</span>
   <h1 id="l-h1">Sai <em>farlo.</em><br>Ora capisci perché.</h1>
   <p class="h-sub" id="l-sub">La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa ogni giorno.</p>
@@ -194,7 +203,7 @@ footer{border-top:1px solid var(--border);padding:24px 28px;display:flex;align-i
   </div>
 </div>
 
-<section class="domande" id="domande">
+<section class="domande reveal" id="domande">
   <div class="d-in">
     <span class="sec-lbl">Le domande che ti porti al banco da anni</span>
     <h2>Non è la ricetta che cambia.<br>È la fisica sotto.</h2>
@@ -224,27 +233,27 @@ footer{border-top:1px solid var(--border);padding:24px 28px;display:flex;align-i
   </div>
 </section>
 
-<section class="dentro">
+<section class="dentro reveal">
   <span class="sec-lbl">Cosa c'è dentro</span>
   <h2>3.005 nodi. 52 fenomeni.<br>Un grafo di conoscenza F&B.</h2>
   <p class="dentro-sub">Funziona nel browser, si installa come app. Nessun App Store necessario.</p>
   <div class="feat-grid">
-    <div class="feat">
+    <div class="feat reveal reveal-delay-1">
       <div class="feat-ico">◎</div>
       <div class="feat-h">Scopri</div>
       <div class="feat-b">Il fenomeno del giorno dalla tua disciplina. Un principio fisico o chimico con il numero-bersaglio misurabile al banco.</div>
     </div>
-    <div class="feat">
+    <div class="feat reveal reveal-delay-2">
       <div class="feat-ico">✎</div>
       <div class="feat-h">Lezione</div>
       <div class="feat-b">Percorso strutturato per fenomeno. Scheda, numero bersaglio, principio fisico, quiz generato da AI. Si avanza passo per passo.</div>
     </div>
-    <div class="feat">
+    <div class="feat reveal reveal-delay-3">
       <div class="feat-ico">⊞</div>
       <div class="feat-h">Flavor Network</div>
       <div class="feat-b">Abbinamenti per composti aromatici condivisi (dataset Ahn 2011). E abbinamenti per contrasto fisico-percettivo: acido/grasso, dolce/amaro.</div>
     </div>
-    <div class="feat">
+    <div class="feat reveal reveal-delay-4">
       <div class="feat-ico">◻</div>
       <div class="feat-h">Chiedi</div>
       <div class="feat-b">Chat AI che naviga il grafo. Risposta ancorata alla fisica, non alle opinioni. Con calcolatori deterministici: sour, diluizione, Q10, TDS caffè.</div>
@@ -385,6 +394,15 @@ function setLang(l) {
   });
 }
 setLang(_lang);
+</script>
+
+<script>
+(function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');}});
+  },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
 </script>
 </body>
 </html>
