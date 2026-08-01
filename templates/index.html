@@ -318,6 +318,12 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .les-dot.done{border-color:var(--e300);background:var(--e100);color:var(--e700)}
 .les-dot.current{border-color:var(--e500);background:var(--e500);color:#fff;font-weight:600}
 .scheda-les{margin:12px 14px 0;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+/* quando ti serve */
+.sl-quando{padding:14px 16px 10px;border-bottom:1px solid var(--border);background:rgba(44,110,99,0.05)}
+.sl-quando-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.sl-quando-list{display:flex;flex-direction:column;gap:5px}
+.sl-quando-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink-muted);line-height:1.4}
+.sl-quando-item::before{content:'✔';color:var(--teal);flex-shrink:0;font-size:11px;margin-top:1px}
 .sl-top{background:var(--surface);padding:18px 16px 14px}
 .sl-step{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--s500);margin-bottom:6px}
@@ -1160,6 +1166,11 @@ if('serviceWorker' in navigator){
   <!-- contenuto dinamico lezione -->
   <div id="les-content">
     <div class="scheda-les">
+      <!-- QUANDO TI SERVE — sopra la teoria -->
+      <div class="sl-quando" id="les-quando-box" style="display:none">
+        <div class="sl-quando-lab">Quando ti serve</div>
+        <div class="sl-quando-list" id="les-quando-list"></div>
+      </div>
       <div class="sl-top">
         <div class="sl-step" id="les-step-label">caricamento…</div>
         <div class="sl-h" id="les-nome">—</div>
@@ -1605,6 +1616,46 @@ function switchMappaTab(tab){
 }
 
 function playIntroScopri(){ playIntro('screen-scopri'); }
+
+function _quandoCasi(nome, disc){
+  // mappa fenomeno → casi pratici "quando ti serve"
+  const n=(nome||'').toLowerCase();
+  const d=(disc||'').toLowerCase();
+  const MAP={
+    'acidit': ['Il tuo sour è diverso ogni settimana','Il lievito madre non sale come ieri','La confettura non gelifica','Il mash della birra non fermenta bene'],
+    'ph': ['Il tuo sour è diverso ogni settimana','Il lievito madre non sale come ieri','La confettura non gelifica','Il mash della birra non fermenta bene'],
+    'dilui': ['Il cocktail esce troppo alcolico o troppo piatto','L\'ABV finale non corrisponde alla ricetta','Il ghiaccio cambia il drink in modo inatteso'],
+    'carbonat': ['La birra perde gas troppo in fretta','Il cocktail gassato non regge nel bicchiere','La pressione in fusto non è costante'],
+    'emulsio': ['La maionese si rompe','Il condimento si separa','La crema non monta','La ganache impazzisce'],
+    'carameliz': ['La crostatura è pallida anche ad alta temperatura','Il caramello cristallizza','Il colore del pane non è uniforme'],
+    'ferment': ['Il lievito madre non cresce','La birra non fermenta','Il vino si arresta prima del previsto'],
+    'estrazion': ['L\'espresso è sottoestratto o sovrastratto','Il caffè filtro è amaro o piatto','La resa non è costante tra le sessioni'],
+    'gelat': ['Il gelato è troppo duro appena fuori dal blast','La texture cambia dopo il mantenimento','Il prodotto cede troppo velocemente'],
+    'cristall': ['Il cioccolato ha le venature bianche','Il gelato fa i cristalli di ghiaccio','La ganache è granulosa'],
+    'q10': ['La fermentazione va troppo veloce o troppo lenta','La maturazione cambia a seconda della stagione','La shelf life non è costante'],
+    'attivit': ['Il prodotto ammuffisce prima del previsto','La conserva non regge i tempi dichiarati','Il pane secco troppo in fretta'],
+    'brix': ['Lo sciroppo è più dolce o meno dolce del solito','La frutta ha resa diversa tra lotti','Il dessert è troppo dolce o insipido'],
+    'maillard': ['La carne non prende colore','Il pane ha la crosta pallida','Il caffè tostato ha note piatte'],
+    'grasso': ['La fat washing non rende gli aromi attesi','L\'infusione lipofila è debole','Il burro aromatizzato perde profumo'],
+    'colloide': ['La salsa è troppo liquida o troppo densa','Il brodo non lega','La crema si separa in cottura'],
+    'proteina': ['La meringa piange','Il soufflé si sgonfia','La crema si straccia'],
+    'meringa': ['La meringa piange','Il soufflé si sgonfia','La crema si straccia'],
+  };
+  for(const key in MAP){ if(n.includes(key)) return MAP[key]; }
+  // fallback per disciplina
+  const DISC={
+    'bar': ['Il cocktail non è replicabile tra un turno e l\'altro','L\'ABV non corrisponde alla ricetta','Il bilanciamento acido-dolce cambia'],
+    'panificazione': ['L\'impasto non lievita come ieri','La crosta non è uniforme','Il pane perde umidità troppo in fretta'],
+    'pasticceria': ['La crema si straccia','Il cioccolato non tempera','Il biscotto è troppo duro o troppo morbido'],
+    'cucina': ['La salsa si separa','La carne non prende colore','Il brodo non ha struttura'],
+    'gelateria': ['Il gelato è troppo duro','La texture cambia dopo il mantenimento','Il prodotto cede troppo in vetrina'],
+    'caffe': ['L\'espresso non è costante','La resa cambia tra le sessioni','Il latte non monta bene'],
+    'vino': ['La fermentazione si arresta','Il vino ossidata troppo in fretta','L\'acidità non è bilanciata'],
+    'birra': ['La fermentazione va troppo veloce','La birra perde gas in fretta','Il mash non fermenta bene'],
+  };
+  for(const key in DISC){ if(d.includes(key)) return DISC[key]; }
+  return [];
+}
 function switchTab(t){
   ['scopri','lezione','mappa','chiedi','auth','quaderno'].forEach(s=>{
     document.getElementById('screen-'+s).classList.toggle('active',s===t);
@@ -1854,6 +1905,16 @@ async function caricaLezioneStep(step){
       const el=document.getElementById(id); if(el) el.classList.remove('skel');
     });
     document.getElementById('les-nome').textContent = j.fenomeno.nome;
+    // popola "Quando ti serve"
+    const _wbox=document.getElementById('les-quando-box');
+    const _wlist=document.getElementById('les-quando-list');
+    if(_wbox && _wlist){
+      const _casi = _quandoCasi(j.fenomeno.nome, j.fenomeno.disciplina||Matter.disciplina||'');
+      if(_casi.length){
+        _wlist.innerHTML=_casi.map(c=>`<div class="sl-quando-item">${c}</div>`).join('');
+        _wbox.style.display='block';
+      } else { _wbox.style.display='none'; }
+    }
     document.getElementById('les-scheda').textContent = j.fenomeno.scheda || 'Scheda in aggiornamento.';
     // target — mostra la box solo se il fenomeno ha un numero-bersaglio,
     // coerente con lo Scopri; niente "—" spoglio quando il dato non c'è
