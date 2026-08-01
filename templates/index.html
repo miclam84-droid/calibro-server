@@ -71,6 +71,7 @@
     chat_grado:'grado final (era ',
     chat_thinking:'consultando Matter Lab',
     chiedi_btn:'Preguntar',
+    onb_nudge_title:'¿Listo en el banco?',
     ai_disclosure:'Respuestas generadas por un asistente de IA.',
     foto_analisi_titolo:'Análisis de foto',
     foto_analisi_loading:'Identificando ingredientes y botellas…',
@@ -203,7 +204,10 @@
 <style>
 :root{
   --bg:#FAF6EE; --surface:#FFFFFF; --ink:#1A1A18; --ink-muted:#6F6A60; --border:#E4DFD3;
-  --e100:#F4E3D2; --e300:#E0AA76; --e500:#C77B3F; --e700:#9A5A28; --e900:#6E3E1A;
+  /* Havana come primario (gold caldo) — accenti, numeri, CTA */
+  --e100:#F9F1DC; --e300:#EDD99A; --e500:#D3B566; --e700:#A8893D; --e900:#7A6020;
+  /* Terracotta come secondario — hover, warning, accenti secondari */
+  --terra:#C77B3F; --terra-light:#F4E3D2; --terra-dark:#9A5A28;
   --s100:#E3EFEC; --s300:#8FBBB0; --s500:#2C6E63; --s700:#1F4F47;
   --cifra-graphite:#4A4E50; --cifra-p700:#15362F; --cifra-p300:#9CC9BC;
   --coffee:#3D2B1F;
@@ -319,11 +323,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .les-dot.current{border-color:var(--e500);background:var(--e500);color:#fff;font-weight:600}
 .scheda-les{margin:12px 14px 0;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
 /* quando ti serve */
-.sl-quando{padding:14px 16px 10px;border-bottom:1px solid var(--border);background:rgba(44,110,99,0.05)}
-.sl-quando-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
-.sl-quando-list{display:flex;flex-direction:column;gap:5px}
-.sl-quando-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink-muted);line-height:1.4}
-.sl-quando-item::before{content:'✔';color:var(--teal);flex-shrink:0;font-size:11px;margin-top:1px}
+.sl-quando{padding:16px 18px 14px;border-bottom:1px solid var(--border);background:rgba(44,110,99,0.05)}
+.sl-quando-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--s500);margin-bottom:10px}
+.sl-quando-list{display:flex;flex-direction:column;gap:0}
+.sl-quando-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink-muted);line-height:1.5;margin-bottom:10px}
+.sl-quando-item::before{content:'✔';color:var(--s500);flex-shrink:0;font-size:11px;margin-top:2px}
 .sl-top{background:var(--surface);padding:18px 16px 14px}
 .sl-step{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--s500);margin-bottom:6px}
@@ -492,8 +496,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .sugg-pill:active{background:var(--e100);border-color:var(--e300)}
 .ask-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;
   background:linear-gradient(transparent,var(--bg) 28%);
-  padding:16px 16px calc(env(safe-area-inset-bottom) + 12px)}
-.ask-inner{display:flex;gap:8px;max-width:600px;margin:0 auto}
+  padding:10px 16px calc(env(safe-area-inset-bottom) + 10px)}
+.ask-inner{display:flex;flex-direction:column;gap:8px;max-width:600px;margin:0 auto}
+.ask-input-row{display:flex;align-items:center;gap:8px}
+.ask-media-row{display:flex;gap:12px;padding:0 2px}
 .ask-ico-btn i.ph{font-size:20px;line-height:1;color:currentColor}
 /* EU AI Act Art. 50 — disclosure badge */
 .ai-disclosure{display:flex;align-items:center;gap:5px;padding:3px 14px 2px;
@@ -504,9 +510,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   color:var(--ink);font-family:var(--sans);font-size:16px;
   padding:12px 14px;border-radius:12px;outline:none;transition:border-color .15s}
 .ask-input:focus{border-color:var(--e500)}
-.ask-btn{background:var(--e500);color:#fff;border:none;font-family:var(--sans);
-  font-weight:600;font-size:14px;padding:0 18px;border-radius:12px;cursor:pointer;
-  box-shadow:0 4px 12px rgba(199,123,63,.3);transition:opacity .15s}
+.ask-btn{background:var(--e500);color:var(--ink);border:none;
+  width:44px;height:44px;border-radius:50%;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 2px 8px rgba(211,181,102,.35);transition:transform .15s,background .15s}
+.ask-btn:active{transform:scale(.93)}
 .ask-btn:disabled{opacity:.45;cursor:default}
 
 /* ── CALCOLATORI ──────────────────────────────────────── */
@@ -832,14 +840,15 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 }
 .disc-item{transition:transform .18s cubic-bezier(.2,.7,.2,1),box-shadow .18s ease,border-color .15s}
 /* dashboard numeri Home */
-.db-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
-.db-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:3px}
-.db-stat-val{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--e500);line-height:1;letter-spacing:-.02em}
-.db-stat-lab{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+.db-stats{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.db-stat{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;text-align:center;border-right:1px solid var(--border)}
+.db-stat:last-child{border-right:none}
+.db-stat-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--e500);line-height:1;letter-spacing:-.02em}
+.db-stat-lab{font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
 /* numero bersaglio sopra il titolo hero */
-.hero-num-top{background:var(--e500);border-radius:10px;padding:14px 18px;margin-bottom:14px}
-.hero-num-top-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,246,238,0.7);margin-bottom:5px}
-.hero-num-top-val{font-family:var(--mono);font-size:30px;font-weight:700;color:#FAF6EE;line-height:1.1}
+.hero-num-top{background:var(--surface);border-left:4px solid var(--e500);border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:14px}
+.hero-num-top-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--e700);margin-bottom:6px}
+.hero-num-top-val{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--ink);line-height:1.6}
 /* tab mappa atlante */
 .mappa-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .mappa-tabs::-webkit-scrollbar{display:none}
@@ -1578,18 +1587,24 @@ if('serviceWorker' in navigator){
     <!-- Input nascosto per foto -->
     <input type="file" id="foto-input" accept="image/*" capture="environment"
            style="display:none" onchange="inviaFoto(this)">
-    <!-- Bottone fotocamera -->
-    <button class="ask-ico-btn" id="btn-camera" onclick="document.getElementById('foto-input').click()"
-            title="Fotografa scheda tecnica, etichetta o piatto">
-      <i class="ph ph-camera" aria-hidden="true"></i>
-    </button>
-    <!-- Bottone microfono -->
-    <button class="ask-ico-btn" id="btn-mic" onclick="toggleMic()"
-            title="Parla al banco — chiedi con la voce">
-      <i class="ph ph-microphone" aria-hidden="true"></i>
-    </button>
-    <input class="ask-input" id="q" placeholder="chiedi a Matter Lab…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
-    <button class="ask-btn" id="ask-btn" onclick="invia()">Chiedi</button>
+    <!-- Riga input: campo testo + bottone invio -->
+    <div class="ask-input-row">
+      <input class="ask-input" id="q" placeholder="chiedi a Matter Lab…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
+      <button class="ask-btn" id="ask-btn" onclick="invia()" aria-label="Invia">
+        <i class="ph ph-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+    <!-- Riga media: fotocamera e microfono -->
+    <div class="ask-media-row">
+      <button class="ask-ico-btn" id="btn-camera" onclick="document.getElementById('foto-input').click()"
+              title="Fotografa scheda tecnica, etichetta o piatto">
+        <i class="ph ph-camera" aria-hidden="true"></i>
+      </button>
+      <button class="ask-ico-btn" id="btn-mic" onclick="toggleMic()"
+              title="Parla al banco — chiedi con la voce">
+        <i class="ph ph-microphone" aria-hidden="true"></i>
+      </button>
+    </div>
   </div>
 
 </div>
@@ -2580,6 +2595,7 @@ const _strings = {
     vedi_mappa:'Vedi il principio nella Mappa →',
     chiedi_placeholder:'chiedi a Matter Lab…',
     chiedi_btn:'Chiedi',
+    onb_nudge_title:'Pronto al banco?',
     ai_disclosure:'Risposte generate da un assistente AI.',
     foto_analisi_titolo:'Analisi foto',
     foto_analisi_loading:'Riconosco ingredienti e bottiglie…',
@@ -2742,6 +2758,7 @@ const _strings = {
     vedi_mappa:'See the principle in the Map →',
     chiedi_placeholder:'ask Matter Lab…',
     chiedi_btn:'Ask',
+    onb_nudge_title:'Ready at the bench?',
     ai_disclosure:'Responses generated by an AI assistant.',
     foto_analisi_titolo:'Photo analysis',
     foto_analisi_loading:'Identifying ingredients and bottles…',
