@@ -486,7 +486,7 @@ def abbina(ingrediente):
                 WHERE e.relation = 'abbinamento_aromatico'
                 AND (lower(e.from_id) = lower(%s)
                      OR lower(e.from_id) LIKE lower(%s))
-                ORDER BY overlap DESC NULLS LAST LIMIT 8
+                ORDER BY overlap DESC NULLS LAST LIMIT 15
             """, (term, f"%{term}%"))
             rows = cur.fetchall()
             if rows: break
@@ -499,7 +499,7 @@ def abbina(ingrediente):
                 JOIN nodes n ON n.id = e.to_id
                 WHERE e.relation = 'abbinamento_aromatico'
                 AND lower(e.from_id) LIKE lower(%s)
-                ORDER BY overlap DESC NULLS LAST LIMIT 8
+                ORDER BY overlap DESC NULLS LAST LIMIT 15
             """, (f"%{ing_norm.replace('_','%')}%",))
             rows = cur.fetchall()
         # fallback 2: cerca nella mappa nomi italiani (flavor_nomi_it)
@@ -514,7 +514,7 @@ def abbina(ingrediente):
                     WHERE e.relation = 'abbinamento_aromatico'
                     AND (lower(fi.nome_it) LIKE lower(%s)
                          OR lower(fi.nome_en) LIKE lower(%s))
-                    ORDER BY overlap DESC NULLS LAST LIMIT 8
+                    ORDER BY overlap DESC NULLS LAST LIMIT 15
                 """, (f"%{ing_it}%", f"%{ing_it}%"))
                 rows = cur.fetchall()
                 if rows:
@@ -543,7 +543,7 @@ def abbina(ingrediente):
                         SELECT id FROM nodes WHERE type='Ingrediente'
                         AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
                     )
-                    ORDER BY overlap DESC NULLS LAST LIMIT 8
+                    ORDER BY overlap DESC NULLS LAST LIMIT 15
                 """, (f"%{ing_it}%", f"%ing-{ing_norm.replace('_','-')}%"))
                 rows = cur.fetchall()
                 if rows:
@@ -668,7 +668,7 @@ def abbina(ingrediente):
                             JOIN nodes n ON n.id = e.to_id
                             WHERE e.relation = 'abbinamento_aromatico'
                             AND e.from_id = %s
-                            ORDER BY overlap DESC NULLS LAST LIMIT 8
+                            ORDER BY overlap DESC NULLS LAST LIMIT 15
                         """, (_nid,))
                         rows = _cur2.fetchall()
                         _cur2.close(); _release_conn(_c2)
