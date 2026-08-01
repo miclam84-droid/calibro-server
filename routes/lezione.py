@@ -80,14 +80,14 @@ def disciplina(nome):
             fen_ids.add(e["from_id"])
     # Priorità per disciplina: fenomeni fondamentali prima, poi gli altri
     PRIORITA = {
-        "bar":          ["fen-acidita","fen-diluizione","fen-concentrazione","fen-carbonatazione","fen-estrazione","fen-emulsione","fen-crioscopia","fen-osmosi","fen-ossidazione"],
+        "bar":          ["fen-acidita","fen-diluizione","fen-concentrazione","fen-carbonatazione","fen-estrazione","fen-emulsione","fen-crioscopia","fen-osmosi","fen-ossidazione","fen-clarificazione-cocktail","fen-batch-cocktail","fen-fat-washing"],
         "caffetteria":  ["fen-estrazione","fen-estrazione-caffe","fen-concentrazione","fen-pressione","fen-trasferimento-calore","fen-acidita","fen-attivita-enzimatica"],
-        "panificazione":["fen-acidita","fen-fermentazione","fen-fermentazione-lattica","fen-idrolisi","fen-gelatinizzazione","fen-retrogradazione","fen-concentrazione","fen-osmosi","fen-autolisi"],
+        "panificazione":["fen-acidita","fen-fermentazione","fen-fermentazione-lattica","fen-maglia-glutinica","fen-lievitazione","fen-crosta","fen-sale-impasto","fen-gelatinizzazione","fen-retrogradazione","fen-concentrazione","fen-osmosi","fen-autolisi"],
         "cucina":       ["fen-maillard","fen-denaturazione","fen-coagulazione","fen-emulsione","fen-acidita","fen-osmosi","fen-trasferimento-calore","fen-punto-fumo"],
         "pasticceria":  ["fen-emulsione","fen-cristallizzazione","fen-caramellizzazione","fen-maillard","fen-gelatinizzazione","fen-denaturazione","fen-sineresi"],
-        "gelateria":    ["fen-crioscopia","fen-cristallizzazione-ghiaccio","fen-overrun","fen-concentrazione","fen-emulsione"],
-        "vino":         ["fen-acidita","fen-malolattica","fen-ossidazione","fen-fermentazione","fen-tannini","fen-chiarificazione"],
-        "birra":        ["fen-fermentazione","fen-carbonatazione","fen-amilolisi","fen-acidita","fen-ossidazione","fen-attivita-enzimatica"],
+        "gelateria":    ["fen-crioscopia","fen-cristallizzazione-ghiaccio","fen-overrun","fen-concentrazione","fen-emulsione","fen-pac-gelateria"],
+        "vino":         ["fen-acidita","fen-malolattica","fen-ossidazione","fen-fermentazione","fen-tannini","fen-chiarificazione","fen-solforosa","fen-maturazione-legno"],
+        "birra":        ["fen-fermentazione","fen-carbonatazione","fen-amilolisi","fen-acidita","fen-ossidazione","fen-attivita-enzimatica","fen-mash-enzimi","fen-isomerizzazione-luppolo"],
     }
     priorita_disc = PRIORITA.get(nome.lower(), [])
 
