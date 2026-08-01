@@ -1272,3 +1272,48 @@ Risposte ok: <strong>{n_ok}</strong> · Ultima disciplina: <strong>{ultima_disc}
 {ai_html}</div>
 <div class="card"><h2>Ultime 20 interazioni</h2>{righe}</div>
 </div></body></html>""", 200, {"Content-Type": "text/html; charset=utf-8"}
+
+
+@bp.route("/admin/add-fenomeni", methods=["POST"])
+def admin_add_fenomeni():
+    """Aggiunge o aggiorna nodi fenomeno nel grafo.
+    Body JSON: lista di {id, nome, it, en, es, target}.
+    Fa UPSERT — safe da chiamare più volte."""
+    import os, json as _j
+    from db import _get_conn, _release_conn
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    body = request.json or {}
+    fenomeni = body.get("fenomeni", [])
+    if not fenomeni:
+        return jsonify({"errore":"lista fenomeni vuota"}), 400
+    conn = _get_conn(); ok = 0; errori = []
+    try:
+        cur = conn.cursor()
+        for f in fenomeni:
+            fid = f.get("id","").strip()
+            nome = f.get("nome","").strip()
+            if not fid or not nome:
+                errori.append(f"id o nome mancante: {f}"); continue
+            data = {
+                "scheda": f.get("it",""),
+                "scheda_en": f.get("en",""),
+                "scheda_es": f.get("es",""),
+                "target": f.get("target",""),
+                "disciplina": f.get("disciplina","trasversale"),
+            }
+            cur.execute("""
+                INSERT INTO nodes (id, type, name, domain, data)
+                VALUES (%s, 'Fenomeno', %s, 'matter', %s::jsonb)
+                ON CONFLICT (id) DO UPDATE
+                  SET name = EXCLUDED.name,
+                      data = EXCLUDED.data
+            """, (fid, nome, _j.dumps(data, ensure_ascii=False)))
+            ok += 1
+        conn.commit(); cur.close()
+    except Exception as e:
+        errori.append(str(e))
+    finally:
+        _release_conn(conn)
+    return jsonify({"inseriti": ok, "errori": errori})
