@@ -958,10 +958,14 @@ a:focus-visible,input:focus-visible{
 /* ── LAYOUT DESKTOP (≥768px) — sidebar verticale + contenuto ampio ── */
 @media (min-width: 768px) {
   .app-header{
-    position:fixed;top:0;left:0;bottom:0;width:200px;height:100vh;
+    position:fixed !important;top:0;left:0;bottom:0;width:200px;height:100vh;
     border-bottom:none;border-right:1px solid var(--border);
     display:flex;flex-direction:column;padding-top:0;z-index:40;
     overflow-y:auto
+  }
+  /* su desktop il contenuto deve iniziare dopo la sidebar fixed */
+  body > .screen, .screen {
+    margin-top: 0 !important;
   }
   .app-bar{
     padding:24px 20px 16px;border-bottom:1px solid var(--border);
