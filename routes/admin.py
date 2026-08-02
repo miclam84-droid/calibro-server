@@ -1397,33 +1397,4 @@ def admin_add_ricette():
     finally:
         _release_conn(conn)
     return jsonify({"inserite":ok,"errori":errori})
-
-
-@bp.route("/v1/ricette")
-def api_ricette():
-    """Lista ricette per disciplina. ?disc=bar&lang=it"""
-    from db import carica_grafo
-    disc = request.args.get("disc","")
-    lang = request.args.get("lang","it")
-    db = carica_grafo()
-    try:
-        if disc:
-            rows = db.execute("SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette WHERE disciplina=%s ORDER BY nome",(disc,))
-        else:
-            rows = db.execute("SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette ORDER BY disciplina,nome")
-        import json as _j
-        result=[]
-        for r in rows:
-            desc = r[3] or ""
-            if lang=="en" and r[7]: desc=r[7]
-            elif lang=="es" and r[8]: desc=r[8]
-            result.append({
-                "id":r[0],"nome":r[1],"disciplina":r[2],
-                "descrizione":desc,
-                "fenomeni":r[4] if isinstance(r[4],list) else (_j.loads(r[4]) if r[4] else []),
-                "numeri":r[5] if isinstance(r[5],dict) else (_j.loads(r[5]) if r[5] else {}),
-                "punto_critico":r[6] or ""
-            })
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"errore":str(e)}),500
+# /v1/ricette è definita in routes/api.py
