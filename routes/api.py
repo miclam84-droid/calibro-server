@@ -332,21 +332,26 @@ def api_ricette_list():
                 "SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette ORDER BY disciplina,nome"
             )
         result=[]
-        for r in rows:
-            desc = r[3] or ""
-            if lang=="en" and r[7]: desc=r[7]
-            elif lang=="es" and r[8]: desc=r[8]
-            def _parse(v):
-                if v is None: return None
-                if isinstance(v,(list,dict)): return v
-                try: return _j.loads(v)
-                except: return v
+        cols=["id","nome","disciplina","descrizione","fenomeni","numeri","punto_critico","scheda_en","scheda_es"]
+        def _row(r):
+            if hasattr(r,"keys"): return dict(r)
+            return dict(zip(cols,r))
+        def _parse(v):
+            if v is None: return None
+            if isinstance(v,(list,dict)): return v
+            try: return _j.loads(v)
+            except: return v
+        for row in rows:
+            r=_row(row)
+            desc = r.get("descrizione") or ""
+            if lang=="en" and r.get("scheda_en"): desc=r["scheda_en"]
+            elif lang=="es" and r.get("scheda_es"): desc=r["scheda_es"]
             result.append({
-                "id":r[0],"nome":r[1],"disciplina":r[2],
+                "id":r.get("id",""),"nome":r.get("nome",""),"disciplina":r.get("disciplina",""),
                 "descrizione":desc,
-                "fenomeni":_parse(r[4]) or [],
-                "numeri":_parse(r[5]) or {},
-                "punto_critico":r[6] or ""
+                "fenomeni":_parse(r.get("fenomeni")) or [],
+                "numeri":_parse(r.get("numeri")) or {},
+                "punto_critico":r.get("punto_critico") or ""
             })
         return jsonify(result)
     except Exception as e:
