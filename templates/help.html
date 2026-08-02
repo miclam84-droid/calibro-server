@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Help — Matter Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAF6EE;--surface:#fff;--ink:#1A1A18;--muted:#6F6A60;
+  --border:#E4DFD3;--e500:#D3B566;--terra:#C77B3F;--teal:#2C6E63;
+  --sans:'Inter',sans-serif;--serif:'Fraunces',serif;--mono:'IBM Plex Mono',monospace;
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+/* nav */
+.nav{background:var(--bg);border-bottom:2px solid var(--e500);padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.nav-logo{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);text-decoration:none}
+.nav-logo small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra)}
+.nav-back{font-family:var(--mono);font-size:11px;color:var(--teal);text-decoration:none;letter-spacing:.06em}
+/* layout */
+.container{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+/* hero */
+.help-hero{margin-bottom:40px}
+.help-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.help-title{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--ink);line-height:1.1;margin-bottom:12px}
+.help-sub{font-size:16px;color:var(--muted);line-height:1.6}
+/* search */
+.help-search{margin:28px 0;position:relative}
+.help-search input{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:10px;
+  font-family:var(--sans);font-size:15px;background:var(--surface);color:var(--ink);outline:none}
+.help-search input:focus{border-color:var(--e500)}
+/* sezioni */
+.help-section{margin-bottom:40px}
+.section-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+/* card FAQ */
+.faq-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:10px;overflow:hidden}
+.faq-q{padding:16px 18px;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:12px}
+.faq-q:hover{background:rgba(211,181,102,0.06)}
+.faq-arrow{font-size:18px;color:var(--e500);flex-shrink:0;transition:transform .2s}
+.faq-card.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{display:none;padding:0 18px 16px;font-size:14px;color:var(--muted);line-height:1.7;border-top:1px solid var(--border)}
+.faq-card.open .faq-a{display:block}
+.faq-a strong{color:var(--ink)}
+.faq-a code{font-family:var(--mono);font-size:13px;background:rgba(44,110,99,0.08);
+  padding:2px 6px;border-radius:4px;color:var(--teal)}
+/* numero target highlight */
+.num-highlight{background:var(--surface);border-left:3px solid var(--e500);
+  padding:10px 14px;border-radius:0 6px 6px 0;margin:10px 0;font-family:var(--mono);
+  font-size:13px;color:var(--ink)}
+/* supporto box */
+.support-box{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;
+  padding:24px;margin-top:40px}
+.support-title{font-family:var(--serif);font-size:20px;font-weight:700;margin-bottom:8px}
+.support-sub{font-size:14px;color:var(--muted);margin-bottom:16px}
+.support-box textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);
+  border-radius:8px;font-family:var(--sans);font-size:14px;resize:vertical;min-height:100px;
+  color:var(--ink);background:var(--bg);outline:none}
+.support-box textarea:focus{border-color:var(--e500)}
+.support-btn{margin-top:10px;background:var(--teal);color:#fff;border:none;
+  font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.06em;
+  padding:12px 20px;border-radius:8px;cursor:pointer;width:100%}
+.support-reply{display:none;margin-top:12px;padding:12px 14px;background:rgba(44,110,99,0.06);
+  border-left:3px solid var(--teal);border-radius:0 6px 6px 0;font-size:14px;color:var(--ink)}
+/* pills */
+.pill{display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:.1em;
+  text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-right:6px}
+.pill-teal{background:rgba(44,110,99,0.1);color:var(--teal)}
+.pill-terra{background:rgba(199,123,63,0.1);color:var(--terra)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="/app">
+    Matter Lab
+    <small>Science & Craft</small>
+  </a>
+  <a class="nav-back" href="/app">← Torna all'app</a>
+</nav>
+
+<div class="container">
+
+  <div class="help-hero">
+    <div class="help-eyebrow">Centro assistenza</div>
+    <h1 class="help-title">Come possiamo aiutarti?</h1>
+    <p class="help-sub">Trova risposta alle domande più comuni o contattaci direttamente.</p>
+  </div>
+
+  <!-- INIZIARE -->
+  <div class="help-section" id="sec-iniziare">
+    <div class="section-label">Iniziare</div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Come funziona Matter Lab?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Matter Lab contiene <strong>91 fenomeni fisici</strong> con i numeri bersaglio misurabili al banco — pH, temperatura, Brix, ABV, attività dell'acqua e molto altro. Ogni fenomeno ha una scheda scientifica, i casi pratici in cui ti serve, e un calcolatore o formula operativa.<br><br>
+        Hai quattro aree: <strong>Scopri</strong> (fenomeno del giorno + disciplina), <strong>Lezione</strong> (percorso guidato), <strong>Mappa</strong> (atlante completo + Flavor Network + Ricette), <strong>Chiedi</strong> (chat AI che risponde con numeri, non opinioni).
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Devo registrarmi per usarlo?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        No. Puoi iniziare subito senza account. La registrazione è necessaria solo per salvare i tuoi progressi e accedere a tutte le funzionalità Pro. Il piano gratuito include il primo fenomeno per disciplina, 5 chat al mese e i calcolatori base.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Come scelgo la mia disciplina?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Nella schermata <strong>Scopri</strong>, scorri verso il basso fino a "Scegli la tua disciplina". Le opzioni disponibili sono: Bar, Panificazione, Pasticceria, Gelateria, Cucina, Caffetteria, Vino, Birra. Puoi cambiarla in qualsiasi momento — i tuoi progressi restano salvati per disciplina.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Posso installarlo come app?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Sì. Matter Lab è una PWA (Progressive Web App) — funziona nel browser ma si installa come app nativa. Su Android: apri Chrome → menu tre puntini → "Aggiungi alla schermata Home". Su iOS: Safari → icona condivisione → "Aggiungi a schermata Home". Su Google Play Store: cerca "Matter Lab" (in arrivo).
+      </div>
+    </div>
+  </div>
+
+  <!-- FENOMENI E NUMERI -->
+  <div class="help-section" id="sec-fenomeni">
+    <div class="section-label">Fenomeni e numeri bersaglio</div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Cos'è un "numero bersaglio"?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        È il parametro fisico misurabile che governa un fenomeno al banco. Non è una regola empirica — è il valore che uno strumento ti dà e che ti dice se sei nella zona corretta.<br><br>
+        Esempio per l'acidità del sour:
+        <div class="num-highlight">pH 4,5–6,5% · acidità titolabile · variazione naturale tra lotti</div>
+        Se sei fuori da questo range, il drink non torna uguale — indipendentemente dalla tecnica.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Quanti fenomeni ci sono?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Attualmente <strong>91 fenomeni</strong> coperti in 8 discipline: Bar (32), Cucina (34), Pasticceria (21), Birra (16), Panificazione (16), Caffetteria (16), Vino (13), Gelateria (13). Il database viene aggiornato regolarmente.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Che strumenti mi servono per usare i numeri bersaglio?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Dipende dalla disciplina. I più utili in assoluto sono:
+        <br><br>
+        <span class="pill pill-teal">Bar / Cucina</span> pH-metro digitale (€25-80) · Rifrattometro Brix (€15-60) · Bilancia 0.1g<br>
+        <span class="pill pill-teal">Caffetteria</span> Rifrattometro TDS (€50-300) · Bilancia con timer<br>
+        <span class="pill pill-teal">Panificazione</span> pH-metro · Termometro sonda · Igrometro forno<br>
+        <span class="pill pill-teal">Gelateria</span> Termometro sonda · Rifrattometro Brix<br><br>
+        Nella sezione <strong>Mappa → Strumenti</strong> trovi la lista completa per la tua disciplina con link per acquistarli.
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT AI -->
+  <div class="help-section" id="sec-chat">
+    <div class="section-label">Chat AI — Chiedi</div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Come funziona la chat "Chiedi a Matter Lab"?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Descrivi un problema reale del tuo lavoro — la chat risponde con la struttura <strong>PROBLEMA / PERCHÉ / NUMERO / MISURA / AZIONE</strong>. Non ottieni opinioni generiche — ottieni il numero da misurare e l'azione da fare.<br><br>
+        Esempio: "Il mio lievito madre non sale bene" → risposta con pH target (3.7-3.9), temperatura ottimale (26-28°C) e azione correttiva specifica.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Posso mandare una foto?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Sì — usa il bottone fotocamera nella barra chat. Matter Lab riconosce ingredienti, bottiglie ed etichette dalla foto, poi mostra gli abbinamenti aromatici e i fenomeni fisici correlati. Funzione in beta — funziona meglio con foto chiare e ben illuminate.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Posso usare la voce?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Sì — usa il bottone microfono nella barra chat. Parla la tua domanda e Matter Lab la trascrive e risponde. Utile quando hai le mani occupate al banco.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Le risposte sono generate da AI — sono affidabili?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        La chat AI usa il grafo scientifico proprietario di Matter Lab come fonte primaria — non risponde "a memoria" come un chatbot generico. I numeri bersaglio vengono estratti dal database verificato.<br><br>
+        Come richiesto dal <strong>Regolamento AI Act UE Art. 50</strong>, ogni risposta è chiaramente identificata come generata da un assistente AI. Per decisioni critiche (sicurezza alimentare, allergie, dosaggi medici) consulta sempre un professionista qualificato.
+      </div>
+    </div>
+  </div>
+
+  <!-- FLAVOR NETWORK -->
+  <div class="help-section" id="sec-flavor">
+    <div class="section-label">Flavor Network</div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Cos'è il Flavor Network?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        È un database di <strong>1.530 ingredienti</strong> connessi da <strong>33.696 legami aromatici</strong> basati sui composti volatili condivisi. Se limone e basilico condividono molti composti aromatici, è molto probabile che si abbinino bene.<br><br>
+        Trovalo in <strong>Mappa → Flavor</strong>: scrivi un ingrediente e vedi i 15 abbinamenti con più composti in comune, con la spiegazione chimica di ogni connessione.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Da dove vengono i dati degli abbinamenti?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        I dati aromatici derivano dal dataset Ahn 2011 (ricerca scientifica peer-reviewed sui composti volatili degli alimenti), integrato con dati PubChem NIH e USDA. I composti sono di pubblico dominio. Gli abbinamenti sono <strong>ipotesi scientifiche</strong> basate su composti condivisi — non garanzie di gusto.
+      </div>
+    </div>
+  </div>
+
+  <!-- RICETTE -->
+  <div class="help-section" id="sec-ricette">
+    <div class="section-label">Ricette scientifiche</div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Le ricette di Matter Lab sono diverse dalle ricette normali?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Sì. Le ricette Matter Lab non sono ricette da copiare — sono ricette da capire. Ogni ricetta mostra:<br><br>
+        • I <strong>fenomeni fisici</strong> coinvolti nella preparazione<br>
+        • I <strong>numeri bersaglio</strong> da controllare durante il processo<br>
+        • Il <strong>punto critico</strong> — il momento in cui una misurazione decide il risultato<br><br>
+        Esempio: il Whiskey Sour bilanciato non ti dice solo "25ml di succo di limone" — ti dice di misurare il pH del succo prima di usarlo, perché varia del 40% tra un lotto e l'altro.
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCOUNT E PIANO -->
+  <div class="help-section" id="sec-account">
+    <div class="section-label">Account e piano Pro</div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Cosa include il piano gratuito?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Il piano gratuito include: primo fenomeno per disciplina · 5 chat AI al mese · calcolatori base · accesso parziale al Flavor Network · lezione introduttiva. Non richiede carta di credito.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Cosa include il piano Pro?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Il piano Pro (€19,99/mese) include tutto il contenuto senza limiti: 91+ fenomeni · chat AI illimitata · Flavor Network completo (1.530 ingredienti) · tutte le ricette scientifiche · analisi foto · aggiornamenti continui del database.
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Come cancello l'abbonamento?
+        <span class="faq-arrow">›</span>
+      </div>
+      <div class="faq-a">
+        Puoi cancellare in qualsiasi momento dal tuo account → Gestisci abbonamento. La cancellazione è immediata e non ci sono penali. L'accesso Pro rimane attivo fino alla fine del periodo già pagato.
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPPORTO DIRETTO -->
+  <div class="support-box" id="supporto">
+    <div class="support-title">Non hai trovato risposta?</div>
+    <p class="support-sub">Scrivi qui il tuo problema — ti rispondo direttamente.</p>
+    <textarea id="support-text" placeholder="Descrivi il tuo problema o la tua domanda…"></textarea>
+    <button class="support-btn" onclick="inviaRichiestaSupporto()">Invia richiesta</button>
+    <div class="support-reply" id="support-reply"></div>
+  </div>
+
+</div>
+
+<script>
+function toggleFaq(el){
+  const card=el.closest('.faq-card');
+  card.classList.toggle('open');
+}
+
+// ricerca FAQ
+const searchInput=document.querySelector('.help-search input');
+if(searchInput){
+  searchInput.addEventListener('input',function(){
+    const q=this.value.toLowerCase();
+    document.querySelectorAll('.faq-card').forEach(card=>{
+      const txt=card.textContent.toLowerCase();
+      card.style.display=q&&!txt.includes(q)?'none':'block';
+    });
+  });
+}
+
+// supporto
+async function inviaRichiestaSupporto(){
+  const txt=document.getElementById('support-text').value.trim();
+  if(!txt) return;
+  const btn=document.querySelector('.support-btn');
+  btn.textContent='Invio…'; btn.disabled=true;
+  try{
+    const r=await fetch('/v1/supporto',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({testo:txt})
+    });
+    const j=await r.json();
+    const reply=document.getElementById('support-reply');
+    reply.textContent=j.risposta||'Messaggio ricevuto. Ti rispondo presto.';
+    reply.style.display='block';
+    btn.textContent='Inviato ✓';
+  }catch{
+    btn.textContent='Riprova';
+    btn.disabled=false;
+  }
+}
+</script>
+</body>
+</html>

@@ -16,6 +16,11 @@ def landing():
     """LP1 — Landing page pubblica. Il CTA porta a /app."""
     return render_template("landing.html")
 
+@bp.route("/help")
+def help_page():
+    """Pagina help pubblica."""
+    return render_template("help.html")
+
 @bp.route("/app")
 def home():
     """PWA principale — serve index.html."""
