@@ -3476,6 +3476,8 @@ function chiudiOnbOverlay(){
   const overlay = document.getElementById('onb-overlay');
   if(overlay) overlay.classList.add('hidden');
   localStorage.setItem('matter_onb_done','1');
+  // assicura che la home carichi dopo aver chiuso l'overlay
+  if(typeof caricaHome === 'function') caricaHome();
 }
 
 /* ── FLAVOR NETWORK MAPPA ─────────────────────────────── */
