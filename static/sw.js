@@ -1,6 +1,6 @@
-// Matter Lab Service Worker v1
-const CACHE = 'matter-lab-v1';
-const PRECACHE = ['/app', '/static/manifest.json'];
+// Matter Lab Service Worker v3 — cache invalidata 02/08/2026
+const CACHE = 'matter-lab-v3';
+const PRECACHE = ['/static/manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)));
@@ -15,9 +15,10 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Solo GET, non le API
+  // Solo GET, non le API — /app sempre network-first (mai dalla cache)
   if (e.request.method !== 'GET') return;
   if (e.request.url.includes('/v1/') || e.request.url.includes('/chiedi')) return;
+  if (e.request.url.endsWith('/app') || e.request.url.includes('/app?')) return;
   e.respondWith(
     fetch(e.request).catch(() => caches.match(e.request))
   );
