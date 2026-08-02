@@ -352,7 +352,8 @@ def api_ricette_list():
             })
         return jsonify(result)
     except Exception as e:
-        return jsonify({"errore":str(e)}), 500
+        import traceback
+        return jsonify({"errore":str(e),"type":type(e).__name__,"tb":traceback.format_exc()[-300:]}), 500
 
 @bp.route("/v1/abbina/<ingrediente>")
 def abbina(ingrediente):
