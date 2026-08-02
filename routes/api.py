@@ -332,17 +332,14 @@ def api_ricette_list():
                 "SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette ORDER BY disciplina,nome"
             )
         result=[]
-        cols=["id","nome","disciplina","descrizione","fenomeni","numeri","punto_critico","scheda_en","scheda_es"]
-        def _row(r):
-            if hasattr(r,"keys"): return dict(r)
-            return dict(zip(cols,r))
         def _parse(v):
             if v is None: return None
             if isinstance(v,(list,dict)): return v
             try: return _j.loads(v)
             except: return v
         for row in rows:
-            r=_row(row)
+            # _PgRow è un dict — accesso diretto per chiave
+            r = dict(row) if hasattr(row,"keys") else dict(zip(["id","nome","disciplina","descrizione","fenomeni","numeri","punto_critico","scheda_en","scheda_es"], row))
             desc = r.get("descrizione") or ""
             if lang=="en" and r.get("scheda_en"): desc=r["scheda_en"]
             elif lang=="es" and r.get("scheda_es"): desc=r["scheda_es"]
