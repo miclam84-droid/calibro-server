@@ -311,6 +311,47 @@ def composti_ingrediente(ingrediente):
         except: pass
         return jsonify({"errore": str(e), "composti": []}), 500
 
+
+
+@bp.route("/v1/ricette")
+def api_ricette_list():
+    """Lista ricette ancorate ai fenomeni. ?disc=bar&lang=it"""
+    import json as _j
+    from db import carica_grafo
+    disc = request.args.get("disc","")
+    lang = request.args.get("lang","it")
+    db = carica_grafo()
+    try:
+        if disc:
+            rows = db.execute(
+                "SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette WHERE disciplina=%s ORDER BY nome",
+                (disc,)
+            )
+        else:
+            rows = db.execute(
+                "SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette ORDER BY disciplina,nome"
+            )
+        result=[]
+        for r in rows:
+            desc = r[3] or ""
+            if lang=="en" and r[7]: desc=r[7]
+            elif lang=="es" and r[8]: desc=r[8]
+            def _parse(v):
+                if v is None: return None
+                if isinstance(v,(list,dict)): return v
+                try: return _j.loads(v)
+                except: return v
+            result.append({
+                "id":r[0],"nome":r[1],"disciplina":r[2],
+                "descrizione":desc,
+                "fenomeni":_parse(r[4]) or [],
+                "numeri":_parse(r[5]) or {},
+                "punto_critico":r[6] or ""
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"errore":str(e)}), 500
+
 @bp.route("/v1/abbina/<ingrediente>")
 def abbina(ingrediente):
     """FL3 — Abbinamenti aromatici dal grafo Ahn 2011 (edges abbinamento_aromatico).
@@ -739,6 +780,17 @@ def abbina(ingrediente):
                 "overlap": overlap,
                 "perche": f"condividono {overlap:.0f} composti aromatici"
             })
+        # deduplica per nome (possono esserci nodi EN e IT con lo stesso nome)
+        seen_nomi = set()
+        abbinamenti_dedup = []
+        for a in sorted(abbinamenti, key=lambda x: -x["overlap"]):
+            n_lower = a["ingrediente"].lower().strip()
+            if n_lower not in seen_nomi:
+                seen_nomi.add(n_lower)
+                abbinamenti_dedup.append(a)
+            if len(abbinamenti_dedup) >= 15:
+                break
+        abbinamenti = abbinamenti_dedup
         return jsonify({
             "ingrediente": ingrediente,
             "abbinamenti": abbinamenti,
