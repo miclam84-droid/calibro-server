@@ -1318,3 +1318,112 @@ def admin_add_fenomeni():
     finally:
         _release_conn(conn)
     return jsonify({"inseriti": ok, "errori": errori})
+
+
+@bp.route("/admin/setup-ricette", methods=["POST"])
+def admin_setup_ricette():
+    """Crea la tabella ricette se non esiste. Idempotente."""
+    import os
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    from db import _get_conn, _release_conn
+    conn=_get_conn(); ok=False
+    try:
+        cur=conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS ricette (
+                id          TEXT PRIMARY KEY,
+                nome        TEXT NOT NULL,
+                disciplina  TEXT NOT NULL,
+                descrizione TEXT,
+                ingredienti JSONB,
+                fenomeni    JSONB,
+                numeri      JSONB,
+                punto_critico TEXT,
+                scheda_en   TEXT,
+                scheda_es   TEXT,
+                ts          TIMESTAMPTZ DEFAULT NOW()
+            )
+        """)
+        conn.commit(); cur.close(); ok=True
+    except Exception as e:
+        return jsonify({"errore":str(e)}),500
+    finally:
+        _release_conn(conn)
+    return jsonify({"ok":ok,"messaggio":"tabella ricette pronta"})
+
+
+@bp.route("/admin/add-ricette", methods=["POST"])
+def admin_add_ricette():
+    """UPSERT ricette scientifiche nel DB.
+    Body JSON: {ricette: [{id, nome, disciplina, descrizione, ingredienti, fenomeni, numeri, punto_critico, scheda_en, scheda_es}]}"""
+    import os, json as _j
+    from db import _get_conn, _release_conn
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    body = request.json or {}
+    ricette = body.get("ricette",[])
+    if not ricette:
+        return jsonify({"errore":"lista vuota"}),400
+    conn=_get_conn(); ok=0; errori=[]
+    try:
+        cur=conn.cursor()
+        for r in ricette:
+            rid=r.get("id","").strip()
+            if not rid: errori.append("id mancante"); continue
+            cur.execute("""
+                INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,numeri,punto_critico,scheda_en,scheda_es)
+                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s)
+                ON CONFLICT (id) DO UPDATE SET
+                  nome=EXCLUDED.nome, disciplina=EXCLUDED.disciplina,
+                  descrizione=EXCLUDED.descrizione, ingredienti=EXCLUDED.ingredienti,
+                  fenomeni=EXCLUDED.fenomeni, numeri=EXCLUDED.numeri,
+                  punto_critico=EXCLUDED.punto_critico,
+                  scheda_en=EXCLUDED.scheda_en, scheda_es=EXCLUDED.scheda_es,
+                  ts=NOW()
+            """,(rid, r.get("nome",""), r.get("disciplina",""),
+                 r.get("descrizione",""),
+                 _j.dumps(r.get("ingredienti",[]),ensure_ascii=False),
+                 _j.dumps(r.get("fenomeni",[]),ensure_ascii=False),
+                 _j.dumps(r.get("numeri",{}),ensure_ascii=False),
+                 r.get("punto_critico",""),
+                 r.get("scheda_en",""), r.get("scheda_es","")))
+            ok+=1
+        conn.commit(); cur.close()
+    except Exception as e:
+        errori.append(str(e))
+    finally:
+        _release_conn(conn)
+    return jsonify({"inserite":ok,"errori":errori})
+
+
+@bp.route("/v1/ricette")
+def api_ricette():
+    """Lista ricette per disciplina. ?disc=bar&lang=it"""
+    from db import carica_grafo
+    disc = request.args.get("disc","")
+    lang = request.args.get("lang","it")
+    db = carica_grafo()
+    try:
+        if disc:
+            rows = db.execute("SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette WHERE disciplina=%s ORDER BY nome",(disc,))
+        else:
+            rows = db.execute("SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette ORDER BY disciplina,nome")
+        import json as _j
+        result=[]
+        for r in rows:
+            desc = r[3] or ""
+            if lang=="en" and r[7]: desc=r[7]
+            elif lang=="es" and r[8]: desc=r[8]
+            result.append({
+                "id":r[0],"nome":r[1],"disciplina":r[2],
+                "descrizione":desc,
+                "fenomeni":r[4] if isinstance(r[4],list) else (_j.loads(r[4]) if r[4] else []),
+                "numeri":r[5] if isinstance(r[5],dict) else (_j.loads(r[5]) if r[5] else {}),
+                "punto_critico":r[6] or ""
+            })
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"errore":str(e)}),500
