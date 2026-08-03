@@ -1398,3 +1398,19 @@ def admin_add_ricette():
         _release_conn(conn)
     return jsonify({"inserite":ok,"errori":errori})
 # /v1/ricette è definita in routes/api.py
+
+
+@bp.route("/admin/test-ai")
+def admin_test_ai():
+    """Test diretto dell'AI gateway. Solo per debug."""
+    import os
+    secret = request.args.get("s","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    import ai_gateway as GW
+    try:
+        out = GW.route_chat("Rispondi con una parola: OK")
+        return jsonify({"risultato": out, "ok": bool(out)})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-500:]})
