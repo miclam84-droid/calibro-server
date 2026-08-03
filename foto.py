@@ -162,7 +162,8 @@ def _trova_nodo(db, termine: str):
 
 
 def _abbinamenti_tra(db, nodi_ids: list, max_pairs: int = 5) -> list:
-    """Coppie di ingredienti con overlap aromatico alto tra i nodi trovati."""
+    """Coppie di ingredienti con overlap aromatico alto tra i nodi trovati.
+    Gli abbinamenti sono edge con relation='abbinamento_aromatico', overlap in data->>'overlap'."""
     if len(nodi_ids) < 2:
         return []
     pairs = []
@@ -170,14 +171,16 @@ def _abbinamenti_tra(db, nodi_ids: list, max_pairs: int = 5) -> list:
         for j in range(i + 1, len(nodi_ids)):
             a, b = nodi_ids[i], nodi_ids[j]
             row = db.execute(
-                """SELECT overlap, score FROM abbinamento_aromatico
-                   WHERE (ing_a=? AND ing_b=?) OR (ing_a=? AND ing_b=?)
+                """SELECT (data->>'overlap')::numeric AS overlap
+                   FROM edges
+                   WHERE relation='abbinamento_aromatico'
+                   AND ((from_id=? AND to_id=?) OR (from_id=? AND to_id=?))
                    LIMIT 1""",
                 (a, b, b, a)
             ).fetchone()
             if row:
-                pairs.append({"a": a, "b": b,
-                               "overlap": row["overlap"], "score": row["score"]})
+                ov = row["overlap"] if hasattr(row,"keys") else row[0]
+                pairs.append({"a": a, "b": b, "overlap": float(ov or 0), "score": float(ov or 0)})
     pairs.sort(key=lambda x: x["overlap"] or 0, reverse=True)
     return pairs[:max_pairs]
 
@@ -188,7 +191,7 @@ def _fenomeni_rilevanti(db, nodi_ids: list) -> list:
     fenomeni = []
     for nid in nodi_ids:
         for e in db.execute(
-            "SELECT to_id FROM edges WHERE from_id=? AND type='si_manifesta_in'", (nid,)
+            "SELECT to_id FROM edges WHERE from_id=? AND relation='si_manifesta_in'", (nid,)
         ).fetchall():
             fid = e["to_id"]
             if fid in seen:
