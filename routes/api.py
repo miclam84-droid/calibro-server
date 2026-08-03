@@ -79,6 +79,87 @@ def abbina_bevanda():
     })
 
 
+# ── ATTREZZATURA per tecnica ────────────────────────────────────────────
+ATTREZZATURA_TECNICA = {
+    "tec-shake": ["shaker boston professionale", "strainer cocktail", "jigger dosatore"],
+    "tec-stir": ["mixing glass yarai", "bar spoon", "julep strainer"],
+    "tec-muddle": ["muddler professionale", "pestello cocktail"],
+    "tec-milk-punch": ["colino fine maglia", "carta filtro superbag"],
+    "tec-fat-washing-tecnica": ["contenitore infusione", "colino fine"],
+    "tec-carbonatazione-tecnica": ["soda maker professionale", "cilindro co2"],
+    "tec-estrazione-espresso": ["macchina espresso", "macinacaffe conico", "tamper 58mm"],
+    "tec-tamping": ["tamper 58mm calibrato", "tamping station"],
+    "tec-pour-over": ["v60 hario", "kettle collo cigno", "bilancia caffe"],
+    "tec-vaporizzazione-latte": ["lancia vapore", "bricco montalatte acciaio", "termometro latte"],
+    "tec-mantecatura": ["mantecatore gelato domestico", "spatola gelato"],
+    "tec-pastorizzazione-gelato": ["pastorizzatore", "termometro cucina digitale"],
+    "tec-bilanciamento-mix": ["rifrattometro brix", "bilancia precisione 0.1g"],
+    "tec-raschiatura-granita": ["vassoio inox basso", "forchetta granita"],
+    "tec-temperaggio": ["termometro cioccolato", "marmo temperaggio", "spatola offset"],
+    "tec-laminazione": ["matterello professionale", "raschietto pasta"],
+    "tec-macaronage": ["tappetino macaron silicone", "sac a poche", "bocchette lisce"],
+    "tec-cottura-zucchero": ["termometro zucchero", "pentolino rame"],
+    "tec-montatura": ["planetaria", "frusta acciaio", "ciotola inox"],
+    "tec-impasto": ["planetaria gancio", "tarocco pasta"],
+    "tec-pieghe": ["ciotola impasto", "tarocco"],
+    "tec-formatura": ["banneton cestino lievitazione", "tarocco"],
+    "tec-scoring": ["lame scoring pane grignette", "coltello lametta"],
+    "tec-autolisi": ["ciotola grande", "bilancia cucina"],
+    "tec-sous-vide-tecnica": ["roner sous vide", "sacchetti sottovuoto", "macchina sottovuoto"],
+    "tec-frittura": ["termometro frittura", "friggitrice", "ragno frittura"],
+    "tec-brasatura-tecnica": ["cocotte ghisa", "termometro sonda"],
+    "tec-emulsione": ["frullatore immersione", "frusta"],
+    "tec-tagli": ["coltello chef professionale", "tagliere", "acciaino affilatura"],
+    "tec-fermentazione-lattica": ["barattoli fermentazione", "pesi fermentazione vetro"],
+    "tec-affumicatura": ["affumicatore", "chips legno affumicatura"],
+    "tec-curing": ["contenitore stagionatura", "bilancia precisione"],
+    "tec-mash": ["pentola cotta birra", "termometro mash", "mulino malto"],
+    "tec-dry-hopping-tecnica": ["sacchetto luppolo", "fermentatore"],
+    "tec-vinificazione-bianco": ["densimetro mosto", "damigiana", "gorgogliatore"],
+    "tec-macerazione": ["tino fermentazione", "follatore"],
+}
+
+@bp.route("/v1/attrezzatura/<tecnica_id>")
+def attrezzatura_tecnica(tecnica_id):
+    """Utensili consigliati per una tecnica, con link affiliati Amazon (tag via env AMAZON_TAG)."""
+    utensili = ATTREZZATURA_TECNICA.get(tecnica_id, [])
+    if not utensili:
+        return jsonify({"tecnica": tecnica_id, "attrezzatura": [],
+                        "nota": "Nessuna attrezzatura specifica mappata per questa tecnica."})
+    from urllib.parse import quote_plus
+    tag = os.environ.get("AMAZON_TAG", "")
+    items = []
+    for u in utensili:
+        q = quote_plus(u)
+        url = f"https://www.amazon.it/s?k={q}"
+        if tag:
+            url += f"&tag={tag}"
+        items.append({"nome": u, "url": url})
+    return jsonify({
+        "tecnica": tecnica_id,
+        "attrezzatura": items,
+        "disclosure": "Link affiliati: acquistando tramite questi link supporti Matter Lab senza costi aggiuntivi."
+    })
+
+@bp.route("/v1/prodotto")
+def prodotto_affiliato():
+    """Link affiliato per un prodotto/ingrediente specializzato. ?q=destrosio+gelateria"""
+    query = request.args.get("q", "").strip()
+    if not query:
+        return jsonify({"errore": "query mancante (?q=...)"}), 400
+    from urllib.parse import quote_plus
+    tag = os.environ.get("AMAZON_TAG", "")
+    q = quote_plus(query)
+    url = f"https://www.amazon.it/s?k={q}"
+    if tag:
+        url += f"&tag={tag}"
+    return jsonify({
+        "query": query,
+        "url": url,
+        "disclosure": "Link affiliato: acquistando tramite questo link supporti Matter Lab senza costi aggiuntivi."
+    })
+
+
 @bp.route("/v1/strumenti")
 @bp.route("/v1/strumenti/<disciplina>")
 def strumenti(disciplina=None):
