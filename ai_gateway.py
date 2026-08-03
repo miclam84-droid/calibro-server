@@ -244,8 +244,11 @@ def route_chat(prompt, tools=None, history=None):
         else:
             out = "".join(testo)
 
+        print(f"[GW] out prima di sanitize: '{str(out)[:100]}'", flush=True)
         if out:
-            return _sanitize(out)
+            sanitized = _sanitize(out)
+            print(f"[GW] sanitized: '{str(sanitized)[:100]}'", flush=True)
+            return sanitized
 
     except Exception as e:
         import traceback
