@@ -333,7 +333,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   text-transform:uppercase;color:var(--s500);margin-bottom:6px}
 .sl-h{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1.15;color:var(--ink);margin-bottom:12px}
 .sl-p{font-size:14.5px;color:var(--ink-muted);line-height:1.75;margin-top:0}
-.sl-dato{background:#C77B3F;border:none;border-radius:12px;
+.sl-dato{background:var(--surface);border-left:4px solid var(--e500);border-radius:0 8px 8px 0;
   border-radius:10px;padding:12px 16px;margin:14px 0}
 .sl-dato-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--s500);margin-bottom:5px}
@@ -1984,7 +1984,14 @@ function selezionaDisciplina(nome){
 }
 
 function avviaLezione(){
+  // naviga alla lezione del fenomeno del giorno se disponibile
+  const disc = Matter.disciplina || localStorage.getItem('matter_disc') || 'bar';
+  const fenId = Matter.fenomenoId;
   switchTab('lezione');
+  if(fenId && disc){
+    // trova lo step del fenomeno nella disciplina e carica direttamente
+    setTimeout(()=>{ _caricaLezionePerId(disc, fenId); }, 100);
+  }
 }
 
 /* ── LEZIONE DINAMICA (FE6) ───────────────────────────── */
@@ -2008,6 +2015,25 @@ async function _precaricaLezione(disc, lang, tok) {
     }
     if(jobs.length) await Promise.all(jobs);
   } catch(e) {}
+}
+
+async function _caricaLezionePerId(disc, fenId){
+  // trova lo step del fenomeno nella disciplina e carica la lezione giusta
+  try {
+    const r = await fetch(`/disciplina/${disc}?lang=${_lang}`);
+    if(!r.ok) return;
+    const j = await r.json();
+    const fenomeni = j.fenomeni || [];
+    const idx = fenomeni.findIndex(f => f.id === fenId);
+    if(idx >= 0){
+      Matter.disciplina = disc;
+      Matter.step = idx;
+      Matter.totale = fenomeni.length;
+      caricaLezioneStep(idx);
+    } else {
+      caricaLezioneStep(0);
+    }
+  } catch(e){ caricaLezioneStep(0); }
 }
 
 async function caricaLezioneStep(step){
@@ -2228,7 +2254,7 @@ function vaiAStep(idx){
 }
 
 /* ── CHAT / GRAFO ─────────────────────────────────────── */
-const DOMCOL={bar:'#C77B3F',cucina:'#E0AA76',bakery:'#2C6E63',caffetteria:'#9A5A28',fermentazione:'#8FBBB0',trasversale:'#6F6A60'};
+const DOMCOL={bar:'#D3B566',cucina:'#E0AA76',bakery:'#2C6E63',caffetteria:'#9A5A28',fermentazione:'#8FBBB0',trasversale:'#6F6A60'};
 let busy=false;
 function setBusy(b){busy=b;document.getElementById('ask-btn').disabled=b;}
 function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)return;document.getElementById('q').value='';chiediTesto(q);}
@@ -2368,7 +2394,7 @@ function renderRisp(domanda,j,fromNode){
           const col = labelColors[label] || 'var(--ink-muted)';
           const isNum = label === 'NUMERO' || label === 'NUMBER' || label === 'NÚMERO';
           const isAct = label === 'AZIONE' || label === 'ACTION' || label === 'ACCIÓN' || label === 'NUMERO' || label === 'NUMBER' || label === 'NÚMERO';
-        const tagBg = isAct ? '#C77B3F' : '#2C6E63';
+        const tagBg = isAct ? '#2C6E63' : '#8FBBB0';
         html += '<div class="s-block">' +
             '<div class="s-block-label" style="background:'+tagBg+'">' + esc(label) + '</div>' +
             '<div class="s-block-body"' + (isNum ? ' style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--e700)"' : '') + '>' + esc(val) + '</div>' +
@@ -3701,10 +3727,10 @@ function scaricaPDF(btn) {
 <title>${domanda.substring(0,60)}</title>
 <style>
   body{font-family:Georgia,serif;max-width:600px;margin:40px auto;color:#2a2a2a;line-height:1.6}
-  .logo{font-family:'Arial',sans-serif;font-size:22px;font-weight:700;color:#C77B3F;margin-bottom:4px}
+  .logo{font-family:'Arial',sans-serif;font-size:22px;font-weight:700;color:#D3B566;margin-bottom:4px}
   .payoff{font-family:'Courier New',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#9a9090;margin-bottom:32px}
   .domanda{font-size:18px;font-weight:700;color:#2a2a2a;margin-bottom:8px}
-  .fenomeni{font-family:'Courier New',monospace;font-size:10px;color:#C77B3F;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+  .fenomeni{font-family:'Courier New',monospace;font-size:10px;color:#D3B566;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
   .risposta{font-size:14px;line-height:1.8;color:#333;margin-bottom:32px}
   .footer{font-family:'Courier New',monospace;font-size:9px;color:#9a9090;border-top:1px solid #eee;padding-top:12px}
 </style>
@@ -4540,8 +4566,8 @@ async function inviaFoto(input){
         html += '<div class="s-block" style="margin-bottom:8px">'
           +'<span class="s-label">Fenomeni fisici</span>';
         j.fenomeni.forEach(function(f){
-          html += '<div style="font-size:12px;padding:2px 0"><i class=\'ph ph-flask\' style=\'color:var(--terracotta)\'></i> <b>'+f.nome+'</b>'
-            +(f.target?' · <span style="color:var(--terracotta)">'+f.target+'</span>':'')+'</div>';
+          html += '<div style="font-size:12px;padding:2px 0"><i class=\'ph ph-flask\' style=\'color:var(--e500)\'></i> <b>'+f.nome+'</b>'
+            +(f.target?' · <span style="color:var(--e500)">'+f.target+'</span>':'')+'</div>';
         });
         html += '</div>';
       }
