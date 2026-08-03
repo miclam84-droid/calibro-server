@@ -185,6 +185,27 @@ def _abbinamenti_tra(db, nodi_ids: list, max_pairs: int = 5) -> list:
     return pairs[:max_pairs]
 
 
+def _top_abbinamenti_per_ingrediente(db, node_id, node_name, max_n=4):
+    """Per un singolo ingrediente, i suoi migliori abbinamenti aromatici dal grafo.
+    Usato come fallback quando gli ingredienti fotografati non hanno edge diretti tra loro."""
+    out = []
+    try:
+        rows = db.execute(
+            """SELECT n.name, (e.data->>'overlap')::numeric AS overlap
+               FROM edges e JOIN nodes n ON n.id = e.to_id
+               WHERE e.relation='abbinamento_aromatico'
+               AND (lower(e.from_id) = lower(?) OR lower(e.from_id) LIKE lower(?))
+               ORDER BY overlap DESC NULLS LAST LIMIT ?""",
+            (node_id, f"%{node_name.lower()}%", max_n)
+        ).fetchall()
+        for row in rows:
+            r = dict(row) if hasattr(row, "keys") else {"name": row[0], "overlap": row[1]}
+            out.append({"ingrediente": r.get("name"), "overlap": float(r.get("overlap") or 0)})
+    except Exception:
+        pass
+    return out
+
+
 def _fenomeni_rilevanti(db, nodi_ids: list) -> list:
     """Fenomeni collegati agli ingredienti trovati."""
     seen = set()
@@ -285,6 +306,17 @@ def analizza_foto(image_bytes: bytes, media_type: str = "image/jpeg",
             "perche": f"condividono {int(p['overlap'] or 0)} composti aromatici",
         })
 
+    # suggerimenti per ingrediente (fallback quando gli abbinamenti diretti sono pochi)
+    suggerimenti_per_ingrediente = []
+    if len(abbinamenti) < 2:
+        for r in riconosciuti:
+            top = _top_abbinamenti_per_ingrediente(db, r["nodo_id"], r["nodo_nome"])
+            if top:
+                suggerimenti_per_ingrediente.append({
+                    "ingrediente": r["nodo_nome"],
+                    "abbina_con": top,
+                })
+
     # ── 4) FENOMENI collegati ─────────────────────────────────────────────────
     fenomeni_rows = _fenomeni_rilevanti(db, nodi_ids)
     fenomeni = []
@@ -352,6 +384,7 @@ def analizza_foto(image_bytes: bytes, media_type: str = "image/jpeg",
         "ingredienti_riconosciuti": riconosciuti,
         "ingredienti_sconosciuti": sconosciuti,
         "abbinamenti": abbinamenti,
+        "suggerimenti_per_ingrediente": suggerimenti_per_ingrediente,
         "fenomeni": fenomeni,
         "output_scientifico": output,
         "meta": {
