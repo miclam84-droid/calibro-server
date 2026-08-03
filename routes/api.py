@@ -402,6 +402,59 @@ def api_tecniche_list():
         import traceback
         return jsonify({"errore":str(e),"tb":traceback.format_exc()[-300:]}), 500
 
+@bp.route("/v1/tecnica/<tec_id>")
+def api_tecnica_dettaglio(tec_id):
+    """Dettaglio di una tecnica: scheda completa + ricette che la usano + fenomeni sfruttati."""
+    import json as _j
+    from db import carica_grafo
+    lang = request.args.get("lang","it")
+    db = carica_grafo()
+    try:
+        # la tecnica
+        row = db.execute("SELECT id, name, data FROM nodes WHERE id=%s AND type='Tecnica'", (tec_id,)).fetchone()
+        if not row:
+            return jsonify({"errore":"tecnica non trovata"}), 404
+        r = dict(row) if hasattr(row,"keys") else {"id":row[0],"name":row[1],"data":row[2]}
+        data = r.get("data") or {}
+        if isinstance(data,str):
+            try: data=_j.loads(data)
+            except: data={}
+        scheda = data.get("scheda","")
+        if lang=="en" and data.get("scheda_en"): scheda=data["scheda_en"]
+        elif lang=="es" and data.get("scheda_es"): scheda=data["scheda_es"]
+
+        # ricette che usano questa tecnica (JSONB contains)
+        ricette = []
+        try:
+            rows = db.execute(
+                "SELECT id, nome, disciplina FROM ricette WHERE tecniche @> %s::jsonb ORDER BY nome",
+                (_j.dumps([tec_id]),)
+            ).fetchall()
+            for rr in rows:
+                rd = dict(rr) if hasattr(rr,"keys") else {"id":rr[0],"nome":rr[1],"disciplina":rr[2]}
+                ricette.append(rd)
+        except Exception:
+            pass
+
+        # fenomeni sfruttati (dalla data)
+        fenomeni = data.get("fenomeni_sfruttati",[])
+
+        return jsonify({
+            "id": r.get("id",""),
+            "nome": r.get("name",""),
+            "famiglia": data.get("famiglia",""),
+            "disciplina": data.get("disciplina",""),
+            "scheda": scheda,
+            "numeri": data.get("numeri",""),
+            "esecuzione": data.get("esecuzione",""),
+            "errori_comuni": data.get("errori_comuni",""),
+            "fenomeni_sfruttati": fenomeni,
+            "ricette_che_la_usano": ricette
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore":str(e),"tb":traceback.format_exc()[-300:]}), 500
+
 @bp.route("/v1/abbina/<ingrediente>")
 def abbina(ingrediente):
     """FL3 — Abbinamenti aromatici dal grafo Ahn 2011 (edges abbinamento_aromatico).
