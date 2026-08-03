@@ -453,10 +453,16 @@ def _haiku_raw(prompt, max_tokens=600):
     return GW.route_fast(prompt, max_tokens=max_tokens)
 
 def chiedi_mistral(prompt, history=None):
-    """Nome storico mantenuto — ora usa AI Gateway route_chat con fallback automatico."""
+    """Nome storico mantenuto — ora usa AI Gateway route_chat con fallback automatico.
+    I tools (calcola) vengono passati solo se il prompt contiene numeri — altrimenti
+    Sonnet tende a fare tool_use su domande semplici esaurendo i token."""
     import ai_gateway as GW
+    import re as _re2
+    # passa tools solo se ci sono numeri/unità nella domanda
+    _ha_numeri = bool(_re2.search(r'\d+[\s,.]?\d*\s*(ml|g|kg|°|%|bar|L|cl)', prompt[-500:]))
+    _tools_da_usare = _TOOLS if _ha_numeri else None
     try:
-        out = GW.route_chat(prompt, tools=_TOOLS, history=history)
+        out = GW.route_chat(prompt, tools=_tools_da_usare, history=history)
         if out:
             return out
     except Exception as e:
