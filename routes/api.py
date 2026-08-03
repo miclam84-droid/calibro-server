@@ -324,12 +324,12 @@ def api_ricette_list():
     try:
         if disc:
             rows = db.execute(
-                "SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette WHERE disciplina=%s ORDER BY nome",
+                "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es FROM ricette WHERE disciplina=%s ORDER BY nome",
                 (disc,)
             )
         else:
             rows = db.execute(
-                "SELECT id,nome,disciplina,descrizione,fenomeni,numeri,punto_critico,scheda_en,scheda_es FROM ricette ORDER BY disciplina,nome"
+                "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es FROM ricette ORDER BY disciplina,nome"
             )
         result=[]
         def _parse(v):
@@ -338,17 +338,20 @@ def api_ricette_list():
             try: return _j.loads(v)
             except: return v
         for row in rows:
-            # _PgRow è un dict — accesso diretto per chiave
-            r = dict(row) if hasattr(row,"keys") else dict(zip(["id","nome","disciplina","descrizione","fenomeni","numeri","punto_critico","scheda_en","scheda_es"], row))
+            r = dict(row) if hasattr(row,"keys") else dict(zip(["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es"], row))
             desc = r.get("descrizione") or ""
             if lang=="en" and r.get("scheda_en"): desc=r["scheda_en"]
             elif lang=="es" and r.get("scheda_es"): desc=r["scheda_es"]
             result.append({
                 "id":r.get("id",""),"nome":r.get("nome",""),"disciplina":r.get("disciplina",""),
                 "descrizione":desc,
+                "ingredienti":_parse(r.get("ingredienti")) or [],
                 "fenomeni":_parse(r.get("fenomeni")) or [],
+                "tecniche":_parse(r.get("tecniche")) or [],
                 "numeri":_parse(r.get("numeri")) or {},
-                "punto_critico":r.get("punto_critico") or ""
+                "punto_critico":r.get("punto_critico") or "",
+                "abbinamenti":_parse(r.get("abbinamenti")) or {},
+                "vino_birra":_parse(r.get("vino_birra")) or {}
             })
         return jsonify(result)
     except Exception as e:

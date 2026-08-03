@@ -1357,7 +1357,8 @@ def admin_setup_ricette():
 @bp.route("/admin/add-ricette", methods=["POST"])
 def admin_add_ricette():
     """UPSERT ricette scientifiche nel DB.
-    Body JSON: {ricette: [{id, nome, disciplina, descrizione, ingredienti, fenomeni, numeri, punto_critico, scheda_en, scheda_es}]}"""
+    Body JSON: {ricette: [{id, nome, disciplina, descrizione, ingredienti, fenomeni,
+                tecniche, numeri, punto_critico, abbinamenti, vino_birra, scheda_en, scheda_es}]}"""
     import os, json as _j
     from db import _get_conn, _release_conn
     secret = request.headers.get("X-Admin-Secret","")
@@ -1370,25 +1371,37 @@ def admin_add_ricette():
     conn=_get_conn(); ok=0; errori=[]
     try:
         cur=conn.cursor()
+        # migrazione idempotente: aggiungi colonne nuove se non esistono
+        for col in ["tecniche JSONB", "abbinamenti JSONB", "vino_birra JSONB"]:
+            cname = col.split()[0]
+            try:
+                cur.execute(f"ALTER TABLE ricette ADD COLUMN IF NOT EXISTS {col}")
+            except Exception as me:
+                errori.append(f"migrazione {cname}: {me}")
+        conn.commit()
         for r in ricette:
             rid=r.get("id","").strip()
             if not rid: errori.append("id mancante"); continue
             cur.execute("""
-                INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,numeri,punto_critico,scheda_en,scheda_es)
-                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s)
+                INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es)
+                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s,%s)
                 ON CONFLICT (id) DO UPDATE SET
                   nome=EXCLUDED.nome, disciplina=EXCLUDED.disciplina,
                   descrizione=EXCLUDED.descrizione, ingredienti=EXCLUDED.ingredienti,
-                  fenomeni=EXCLUDED.fenomeni, numeri=EXCLUDED.numeri,
-                  punto_critico=EXCLUDED.punto_critico,
+                  fenomeni=EXCLUDED.fenomeni, tecniche=EXCLUDED.tecniche,
+                  numeri=EXCLUDED.numeri, punto_critico=EXCLUDED.punto_critico,
+                  abbinamenti=EXCLUDED.abbinamenti, vino_birra=EXCLUDED.vino_birra,
                   scheda_en=EXCLUDED.scheda_en, scheda_es=EXCLUDED.scheda_es,
                   ts=NOW()
             """,(rid, r.get("nome",""), r.get("disciplina",""),
                  r.get("descrizione",""),
                  _j.dumps(r.get("ingredienti",[]),ensure_ascii=False),
                  _j.dumps(r.get("fenomeni",[]),ensure_ascii=False),
+                 _j.dumps(r.get("tecniche",[]),ensure_ascii=False),
                  _j.dumps(r.get("numeri",{}),ensure_ascii=False),
                  r.get("punto_critico",""),
+                 _j.dumps(r.get("abbinamenti",{}),ensure_ascii=False),
+                 _j.dumps(r.get("vino_birra",{}),ensure_ascii=False),
                  r.get("scheda_en",""), r.get("scheda_es","")))
             ok+=1
         conn.commit(); cur.close()
