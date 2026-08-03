@@ -5,7 +5,7 @@
 # Dipende da: db (carica_grafo/_dati), contenuto (_scheda_lang/
 # _numero_bersaglio/_pulisci_traduzione), config (DATABASE_URL).
 # ============================================================
-import os, json
+import os, json, difflib, re
 import ai_gateway as GW
 
 from db import carica_grafo, _dati, _get_conn, _release_conn
