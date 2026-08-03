@@ -464,6 +464,11 @@ def chiedi_mistral(prompt, history=None):
     return None
 
 
+_STOPWORD = {"quanto","costa","tempo","oggi","sempre","abbastanza","molto","poco",
+             "questo","quella","quello","perche","perché","dopo","prima","viene",
+             "fanno","fatto","faccio","vorrei","volevo","sento","vedo","sono",
+             "della","dello","delle","degli","quando","dove","come","cosa"}
+
 def cerca_fuzzy(db, domanda):
     """Quando nessun termine estratto matcha ESATTAMENTE un nodo, cerca per
     SOMIGLIANZA parola-per-parola tra la domanda e i nomi dei nodi del grafo.
