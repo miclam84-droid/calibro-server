@@ -355,6 +355,50 @@ def api_ricette_list():
         import traceback
         return jsonify({"errore":str(e),"type":type(e).__name__,"tb":traceback.format_exc()[-300:]}), 500
 
+@bp.route("/v1/tecniche")
+def api_tecniche_list():
+    """Lista tecniche (nodi type='Tecnica'). ?disc=cucina&lang=it&famiglia=calore_secco"""
+    import json as _j
+    from db import carica_grafo
+    disc = request.args.get("disc","")
+    lang = request.args.get("lang","it")
+    famiglia = request.args.get("famiglia","")
+    db = carica_grafo()
+    try:
+        rows = db.execute(
+            "SELECT id, name, data FROM nodes WHERE type='Tecnica' ORDER BY name"
+        ).fetchall()
+        result = []
+        for row in rows:
+            r = dict(row) if hasattr(row,"keys") else {"id":row[0],"name":row[1],"data":row[2]}
+            data = r.get("data") or {}
+            if isinstance(data, str):
+                try: data = _j.loads(data)
+                except: data = {}
+            # filtro per disciplina
+            if disc and data.get("disciplina") not in (disc, "trasversale"):
+                continue
+            if famiglia and data.get("famiglia") != famiglia:
+                continue
+            scheda = data.get("scheda","")
+            if lang=="en" and data.get("scheda_en"): scheda = data["scheda_en"]
+            elif lang=="es" and data.get("scheda_es"): scheda = data["scheda_es"]
+            result.append({
+                "id": r.get("id",""),
+                "nome": r.get("name",""),
+                "famiglia": data.get("famiglia",""),
+                "disciplina": data.get("disciplina",""),
+                "scheda": scheda,
+                "numeri": data.get("numeri",""),
+                "esecuzione": data.get("esecuzione",""),
+                "errori_comuni": data.get("errori_comuni",""),
+                "fenomeni_sfruttati": data.get("fenomeni_sfruttati",[]),
+            })
+        return jsonify(result)
+    except Exception as e:
+        import traceback
+        return jsonify({"errore":str(e),"tb":traceback.format_exc()[-300:]}), 500
+
 @bp.route("/v1/abbina/<ingrediente>")
 def abbina(ingrediente):
     """FL3 — Abbinamenti aromatici dal grafo Ahn 2011 (edges abbinamento_aromatico).

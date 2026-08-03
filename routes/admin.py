@@ -1446,3 +1446,63 @@ def admin_test_ai():
         results["anthropic_with_tools"] = {"errore": str(e)}
 
     return jsonify(results)
+
+
+@bp.route("/admin/add-tecniche", methods=["POST"])
+def admin_add_tecniche():
+    """Aggiunge o aggiorna nodi Tecnica nel grafo + edge 'sfrutta' verso i fenomeni.
+    Body JSON: {tecniche: [{id, nome, famiglia, disciplina, it, en, es,
+                            numeri, esecuzione, errori, fenomeni_sfruttati: [id...]}]}
+    UPSERT — safe da chiamare più volte."""
+    import os, json as _j
+    from db import _get_conn, _release_conn
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    body = request.json or {}
+    tecniche = body.get("tecniche", [])
+    if not tecniche:
+        return jsonify({"errore":"lista tecniche vuota"}), 400
+    conn = _get_conn(); ok = 0; edge_ok = 0; errori = []
+    try:
+        cur = conn.cursor()
+        for t in tecniche:
+            tid = t.get("id","").strip()
+            nome = t.get("nome","").strip()
+            if not tid or not nome:
+                errori.append(f"id o nome mancante: {t}"); continue
+            data = {
+                "famiglia": t.get("famiglia",""),
+                "disciplina": t.get("disciplina","trasversale"),
+                "scheda": t.get("it",""),
+                "scheda_en": t.get("en",""),
+                "scheda_es": t.get("es",""),
+                "numeri": t.get("numeri",""),
+                "esecuzione": t.get("esecuzione",""),
+                "errori_comuni": t.get("errori",""),
+                "fenomeni_sfruttati": t.get("fenomeni_sfruttati",[]),
+            }
+            cur.execute("""
+                INSERT INTO nodes (id, type, name, domain, data)
+                VALUES (%s, 'Tecnica', %s, 'matter', %s::jsonb)
+                ON CONFLICT (id) DO UPDATE
+                  SET name = EXCLUDED.name, data = EXCLUDED.data
+            """, (tid, nome, _j.dumps(data, ensure_ascii=False)))
+            ok += 1
+            # crea edge 'sfrutta' verso ogni fenomeno collegato
+            for fen_id in t.get("fenomeni_sfruttati", []):
+                try:
+                    cur.execute("""
+                        INSERT INTO edges (from_id, to_id, relation)
+                        VALUES (%s, %s, 'sfrutta')
+                        ON CONFLICT DO NOTHING
+                    """, (tid, fen_id))
+                    edge_ok += 1
+                except Exception as ee:
+                    errori.append(f"edge {tid}->{fen_id}: {ee}")
+        conn.commit(); cur.close()
+    except Exception as e:
+        errori.append(str(e))
+    finally:
+        _release_conn(conn)
+    return jsonify({"inserite": ok, "edge_create": edge_ok, "errori": errori})
