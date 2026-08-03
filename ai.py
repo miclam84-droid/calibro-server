@@ -8,6 +8,29 @@
 import os, json, difflib, re
 import ai_gateway as GW
 
+# Tool definitions per il calcolatore deterministico
+_TOOLS = [
+    {
+        "name": "calcola",
+        "description": "Esegui un calcolo deterministico esatto (diluizione, bilanciamento sour, idratazione pane, Q10, estrazione caffe, pareggiamento acidita). Usa questo tool quando la domanda contiene numeri propri dell'utente.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "calcolo": {
+                    "type": "string",
+                    "enum": ["diluizione","bilanciamento_sour","idratazione_pane","q10_fermentazione","estrazione_caffe","pareggia_acidita"],
+                    "description": "Il tipo di calcolo da eseguire"
+                },
+                "parametri": {
+                    "type": "object",
+                    "description": "Parametri del calcolo"
+                }
+            },
+            "required": ["calcolo","parametri"]
+        }
+    }
+]
+
 from db import carica_grafo, _dati, _get_conn, _release_conn
 from contenuto import _scheda_lang, _numero_bersaglio, _pulisci_traduzione
 from config import DATABASE_URL
