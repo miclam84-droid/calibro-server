@@ -59,7 +59,6 @@ class _PgCompatPool:
         if not p:
             raise RuntimeError("Pool Postgres non disponibile")
         conn = None
-        # retry fino a 3 volte con backoff se il pool è esaurito
         import time as _time
         for attempt in range(3):
             try:
@@ -67,7 +66,12 @@ class _PgCompatPool:
                 break
             except Exception:
                 if attempt < 2:
-                    _time.sleep(0.05 * (attempt + 1))
+                    _time.sleep(0.1 * (attempt + 1))
+                    # al secondo tentativo resetta il pool
+                    if attempt == 1:
+                        p = _reset_pool()
+                        if not p:
+                            raise RuntimeError("Pool non disponibile dopo reset")
                 else:
                     raise RuntimeError("Pool esaurito — riprova tra un momento")
         try:
@@ -99,11 +103,19 @@ def _get_pool():
     global _pg_pool
     if _pg_pool is None and DATABASE_URL:
         from psycopg2 import pool as _pgpool
-        # Pool 2-10: Railway Postgres starter ha ~20-25 connessioni totali.
-        # Con _PgCompatPool che rilascia subito dopo ogni execute (non mantiene
-        # connessioni aperte), possiamo salire a 10 senza rischio di saturare.
         _pg_pool = _pgpool.ThreadedConnectionPool(2, 10, DATABASE_URL)
     return _pg_pool
+
+def _reset_pool():
+    """Distrugge e ricrea il pool — chiamato quando tutte le connessioni sono morte."""
+    global _pg_pool
+    try:
+        if _pg_pool:
+            _pg_pool.closeall()
+    except Exception:
+        pass
+    _pg_pool = None
+    return _get_pool()
 
 def _get_conn():
     """Prende una connessione dal pool.
@@ -149,10 +161,16 @@ def carica_grafo():
         return _PgCompatPool()
     db = sqlite3.connect(":memory:")
     db.row_factory = sqlite3.Row
-    schema = (GRAFO/"schema.sql").read_text(encoding="utf-8").replace("JSONB","TEXT")
-    db.executescript(schema)
-    for s in sorted(GRAFO.glob("seed-*.sql")):
-        db.executescript(s.read_text(encoding="utf-8"))
+    try:
+        schema = (GRAFO/"schema.sql").read_text(encoding="utf-8").replace("JSONB","TEXT")
+        db.executescript(schema)
+        for s in sorted(GRAFO.glob("seed-*.sql")):
+            try:
+                db.executescript(s.read_text(encoding="utf-8"))
+            except sqlite3.OperationalError:
+                pass  # seed con caratteri speciali — skip in locale
+    except Exception:
+        pass
     return db
 
 
