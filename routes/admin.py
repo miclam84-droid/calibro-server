@@ -1391,7 +1391,8 @@ def admin_add_ricette():
                   fenomeni=EXCLUDED.fenomeni, tecniche=EXCLUDED.tecniche,
                   numeri=EXCLUDED.numeri, punto_critico=EXCLUDED.punto_critico,
                   abbinamenti=EXCLUDED.abbinamenti, vino_birra=EXCLUDED.vino_birra,
-                  scheda_en=EXCLUDED.scheda_en, scheda_es=EXCLUDED.scheda_es,
+                  scheda_en=COALESCE(NULLIF(EXCLUDED.scheda_en,''), ricette.scheda_en),
+                  scheda_es=COALESCE(NULLIF(EXCLUDED.scheda_es,''), ricette.scheda_es),
                   ts=NOW()
             """,(rid, r.get("nome",""), r.get("disciplina",""),
                  r.get("descrizione",""),
