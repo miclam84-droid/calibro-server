@@ -11,6 +11,50 @@ import os, json
 import ai_gateway as GW
 bp = Blueprint("api", __name__)
 
+# ── AFFILIATI VINO/BIRRA ────────────────────────────────────────────────
+# Tag affiliato da impostare dopo l'iscrizione ai programmi (ottobre 2026).
+# Struttura come Amazon Associates per gli strumenti: link di ricerca verso
+# e-commerce, il tag si aggiunge in coda quando disponibile.
+AFFILIATE_TAGS = {
+    "tannico": os.environ.get("TANNICO_TAG", ""),      # es. "?ref=matterlab"
+    "vivino": os.environ.get("VIVINO_TAG", ""),
+    "callmewine": os.environ.get("CALLMEWINE_TAG", ""),
+}
+
+def _link_vino_birra(query, categoria="vino"):
+    """Genera link di ricerca verso e-commerce per un vino/birra.
+    Il tag affiliato viene aggiunto se configurato (via env var)."""
+    from urllib.parse import quote_plus
+    q = quote_plus(query)
+    links = []
+    if categoria in ("vino", "wine"):
+        links = [
+            {"store": "Tannico", "url": f"https://www.tannico.it/catalogsearch/result/?q={q}{AFFILIATE_TAGS['tannico']}"},
+            {"store": "Vivino", "url": f"https://www.vivino.com/search/wines?q={q}{AFFILIATE_TAGS['vivino']}"},
+            {"store": "Callmewine", "url": f"https://www.callmewine.com/ricerca?q={q}{AFFILIATE_TAGS['callmewine']}"},
+        ]
+    else:  # birra
+        links = [
+            {"store": "Vivino", "url": f"https://www.vivino.com/search?q={q}{AFFILIATE_TAGS['vivino']}"},
+            {"store": "Amazon", "url": f"https://www.amazon.it/s?k={q}+birra+artigianale"},
+        ]
+    return links
+
+@bp.route("/v1/abbina-bevanda")
+def abbina_bevanda():
+    """Dato un abbinamento vino/birra (query testuale), restituisce i link e-commerce.
+    ?q=Barolo&cat=vino  oppure  ?q=IPA&cat=birra"""
+    query = request.args.get("q", "").strip()
+    cat = request.args.get("cat", "vino")
+    if not query:
+        return jsonify({"errore": "query mancante (?q=...)"}), 400
+    return jsonify({
+        "query": query,
+        "categoria": cat,
+        "links": _link_vino_birra(query, cat),
+        "disclosure": "Link affiliati: acquistando tramite questi link supporti Matter Lab senza costi aggiuntivi."
+    })
+
 
 @bp.route("/v1/strumenti")
 @bp.route("/v1/strumenti/<disciplina>")
@@ -1227,4 +1271,6 @@ def foto_analisi():
         return jsonify(risultato)
     except Exception as e:
         import traceback
-        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+        tb = traceback.format_exc()
+        print(f"[FOTO ERRORE] {e}\n{tb}", flush=True)
+        return jsonify({"errore": str(e), "trace": tb[-600:]}), 500
