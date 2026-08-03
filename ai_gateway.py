@@ -30,7 +30,7 @@ _ANTHROPIC_URL  = "https://api.anthropic.com/v1/messages"
 _MISTRAL_URL    = "https://api.mistral.ai/v1/chat/completions"
 _OPENAI_URL     = "https://api.openai.com/v1"
 
-_MODEL_SONNET   = "claude-sonnet-4-6"
+_MODEL_SONNET   = "claude-sonnet-4-5"
 _MODEL_HAIKU    = "claude-haiku-4-5"
 _MODEL_MISTRAL  = "mistral-small-latest"
 _MODEL_EMBED    = "text-embedding-3-small"
@@ -248,15 +248,21 @@ def route_chat(prompt, tools=None, history=None):
             return _sanitize(out)
 
     except Exception as e:
-        print(f"[GW] Sonnet fallito: {e} — fallback Mistral", flush=True)
+        import traceback
+        print(f"[GW] Sonnet fallito: {e}", flush=True)
+        print(f"[GW] Sonnet traceback: {traceback.format_exc()[-500:]}", flush=True)
 
     # Fallback: Mistral
     try:
         out, _ = _mistral_call(prompt)
-        return _sanitize(out)
+        if out:
+            return _sanitize(out)
+        print(f"[GW] Mistral returned empty", flush=True)
     except Exception as e:
+        import traceback
         print(f"[GW] Mistral fallito: {e}", flush=True)
-        return None
+        print(f"[GW] Mistral traceback: {traceback.format_exc()[-300:]}", flush=True)
+    return None
 
 
 def route_fast(prompt, max_tokens=600):
