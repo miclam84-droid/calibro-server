@@ -103,12 +103,14 @@ def feedback():
 
 @bp.route("/v1/supporto", methods=["POST"])
 def supporto():
-    """Richiesta di supporto utente. Salva in log_domande con tipo='supporto',
-    risponde subito via Haiku (solo info prodotto). Appare prioritaria nell'admin."""
+    """Chatbot di supporto in-app. Salva in log_domande con tipo='supporto',
+    risponde via Haiku (solo info prodotto reali), supporta la cronologia multi-turno.
+    Notifica l'admin via email."""
     token = request.headers.get("Authorization","").replace("Bearer ","")
     user_id = _utente_da_token(token)
     body = request.json or {}
     testo = body.get("testo","").strip()
+    history = body.get("history", [])  # [{ruolo, testo}, ...] per il multi-turno
     if not testo:
         return jsonify({"errore":"testo vuoto"}), 400
 
@@ -125,22 +127,34 @@ def supporto():
             pass
 
     system_supporto = (
-        "Sei il supporto di Matter, strumento scientifico per professionisti F&B "
-        "(bar, bakery, pasticceria, gelateria, caffetteria, cucina). "
-        "Aiuta con domande su come usare l'app: lezioni, chat, flavor network, account, Pro. "
-        "Non inventare funzionalita' non esistenti. Se non sai, di' che il team "
-        "risponde via email entro 24 ore. Massimo 4 frasi, tono diretto e caldo."
+        "Sei l'assistente di supporto di Matter Lab, strumento scientifico per professionisti F&B "
+        "(bar, panificazione, pasticceria, gelateria, caffetteria, cucina, vino, birra). "
+        "COSA FA MATTER LAB: spiega la scienza del mestiere — 103 fenomeni fisici/chimici con numeri "
+        "bersaglio misurabili al banco, 47 tecniche con esecuzione passo-passo, 53+ ricette ancorate "
+        "a fenomeni e tecniche, un flavor network di 1.530 ingredienti per gli abbinamenti (per analogia "
+        "e per contrasto), e una feature foto che riconosce ingredienti e bottiglie suggerendo abbinamenti. "
+        "SEZIONI: Scopri (fenomeni), Lezione (percorso guidato), Mappa (atlante), Chiedi (assistente AI). "
+        "Piano Pro a 19,99€/mese, con prova gratuita. "
+        "Aiuta l'utente a usare l'app. NON inventare funzioni inesistenti. Se non sai o è un problema "
+        "tecnico, di' che il team risponde via email entro 24 ore. Massimo 4 frasi, tono diretto e caldo."
     )
+    # costruisci il contesto multi-turno
+    conversazione = ""
+    for h in history[-6:]:  # ultimi 6 messaggi
+        ruolo = "Utente" if h.get("ruolo") == "utente" else "Assistente"
+        conversazione += f"{ruolo}: {h.get('testo','')}\n"
+    conversazione += f"Utente: {testo}"
+
     risposta = None
     try:
-        resp = _haiku_raw(system_supporto + "\n\nUtente: " + testo, max_tokens=300)
+        resp = _haiku_raw(system_supporto + "\n\n" + conversazione, max_tokens=350)
         if resp:
             risposta = resp
     except Exception:
         pass
     if not risposta:
         risposta = ("Non riesco a rispondere in questo momento. "
-                    "Il tuo messaggio e' stato registrato — ti risponderemo via email entro 24 ore.")
+                    "Il tuo messaggio è stato registrato — ti risponderemo via email entro 24 ore.")
 
     # notifica admin (tu) — arriva subito sulla tua Gmail
     admin_email = os.environ.get("MATTER_ADMIN_EMAIL", "miclam84@gmail.com")
