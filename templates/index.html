@@ -500,7 +500,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .ask-inner{display:flex;flex-direction:column;gap:8px;max-width:600px;margin:0 auto}
 .ask-input-row{display:flex;align-items:center;gap:8px}
 .ask-media-row{display:flex;gap:12px;padding:0 2px}
-.ask-ico-btn i.ph{font-size:20px;line-height:1;color:currentColor}
+.ask-ico-btn i.ph{font-size:16px;line-height:1;color:var(--ink-muted)}
 /* EU AI Act Art. 50 — disclosure badge */
 .ai-disclosure{display:flex;align-items:center;gap:5px;padding:3px 14px 2px;
   font-family:var(--mono);font-size:10px;color:var(--ink-muted);letter-spacing:.01em}
@@ -1051,7 +1051,7 @@ if('serviceWorker' in navigator){
   </nav>
 </header>
 <div class="screen active" id="screen-scopri">
-  <div class="lab-area-header"><span class="lab-area-label">// ESPLORAZIONE FENOMENI</span></div>
+  <div class="lab-area-header"><span class="lab-area-label">ESPLORAZIONE FENOMENI</span></div>
 
   <!-- ── DASHBOARD NUMERI ── -->
   <div class="db-stats">
@@ -1210,7 +1210,7 @@ if('serviceWorker' in navigator){
 
 <!-- ── LEZIONE ─────────────────────────────────────────── -->
 <div class="screen" id="screen-lezione">
-  <div class="lab-area-header"><span class="lab-area-label">// PERCORSO GUIDATO</span></div>
+  <div class="lab-area-header"><span class="lab-area-label">PERCORSO GUIDATO</span></div>
   <div class="les-top">
     <button class="les-back-btn" onclick="switchTab('scopri')">
       <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
@@ -1275,7 +1275,7 @@ if('serviceWorker' in navigator){
 
 <!-- ── MAPPA ───────────────────────────────────────────── -->
 <div class="screen" id="screen-mappa">
-  <div class="lab-area-header"><span class="lab-area-label">// MAPPA DEL LABORATORIO</span></div>
+  <div class="lab-area-header"><span class="lab-area-label">MAPPA DEL LABORATORIO</span></div>
 
   <!-- ── TAB ORIZZONTALI MAPPA ── -->
   <div class="mappa-tabs" id="mappa-tabs" role="tablist">
@@ -1404,7 +1404,7 @@ if('serviceWorker' in navigator){
 
 <!-- ── CHIEDI ──────────────────────────────────────────── -->
 <div class="screen" id="screen-chiedi">
-  <div class="lab-area-header"><span class="lab-area-label">// ASSISTENTE DA BANCO</span></div>
+  <div class="lab-area-header"><span class="lab-area-label">ASSISTENTE DA BANCO</span></div>
   <div class="chiedi-subtabs">
     <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi a Matter Lab</button>
     <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Calcolatori</button>
@@ -2779,8 +2779,8 @@ const _strings = {
     ponte_cifra:'Il ponte verso Cifra',
     accedi:'Accedi', registrati:'Registrati',
     continua_senza:'← Continua senza registrarti',
-    domande_esaurite:'Hai usato le 5 domande gratuite di oggi.',
-    pro_desc:'Con Matter Pro continui senza limiti — chat illimitata, Flavor Network, quaderno misure fisiche.',
+    domande_esaurite:'Hai usato le chat gratuite del tuo trial.',
+    pro_desc:'Con Matter Pro: chat illimitata · 91 fenomeni completi · Flavor Network · Ricette scientifiche.',
     passa_pro:'Passa a Pro',
     continua_free:'Continua con il piano gratuito',
     // calcolatori
@@ -2817,11 +2817,11 @@ const _strings = {
     // onboarding
     onb_ovl_title:'Come funziona Matter Lab',
     onb_s1_title:'Scegli la tua disciplina',
-    onb_s1_sub:'Bar, Bakery, Cucina, Caffetteria — ogni disciplina ha il suo percorso di fenomeni fisici.',
+    onb_s1_sub:'Bar, Panificazione, Cucina, Caffetteria e altro — ogni disciplina ha le sue leggi fisiche.',
     onb_s2_title:'Studia il fenomeno',
-    onb_s2_sub:'Ogni lezione ha un numero bersaglio — il parametro fisico che governa quel gesto al banco.',
+    onb_s2_sub:'Ogni fenomeno ha un numero che puoi misurare. Quello che devi sapere quando qualcosa non torna.',
     onb_s3_title:'Chiedi a Matter Lab',
-    onb_s3_sub:'Fai una domanda reale — un problema del tuo lavoro. Matter risponde con i numeri, non con le opinioni.',
+    onb_s3_sub:'Descrivi un problema del tuo lavoro. Ricevi numeri da misurare e azioni concrete — non consigli generici.',
     onb_ovl_cta:'Inizia',
     onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
     onb_complete_title:'Percorso completato.',
@@ -3995,21 +3995,21 @@ async function testaKT(){
         <div class="onb-step-num">1</div>
         <div>
           <div class="onb-step-title" id="onb-s1-title">Scegli la tua disciplina</div>
-          <div class="onb-step-sub" id="onb-s1-sub">Bar, Bakery, Cucina, Caffetteria — ogni disciplina ha il suo percorso di fenomeni fisici.</div>
+          <div class="onb-step-sub" id="onb-s1-sub">Bar, Panificazione, Cucina, Caffetteria e altro — ogni disciplina ha le sue leggi fisiche.</div>
         </div>
       </div>
       <div class="onb-step">
         <div class="onb-step-num">2</div>
         <div>
           <div class="onb-step-title" id="onb-s2-title">Studia il fenomeno</div>
-          <div class="onb-step-sub" id="onb-s2-sub">Ogni lezione ha un numero bersaglio — il parametro fisico che governa quel gesto al banco.</div>
+          <div class="onb-step-sub" id="onb-s2-sub">Ogni fenomeno ha un numero che puoi misurare. Quello che devi sapere quando qualcosa non torna.</div>
         </div>
       </div>
       <div class="onb-step">
         <div class="onb-step-num">3</div>
         <div>
           <div class="onb-step-title" id="onb-s3-title">Chiedi a Matter Lab</div>
-          <div class="onb-step-sub" id="onb-s3-sub">Fai una domanda reale — un problema del tuo lavoro. Matter risponde con i numeri, non con le opinioni.</div>
+          <div class="onb-step-sub" id="onb-s3-sub">Descrivi un problema del tuo lavoro. Ricevi numeri da misurare e azioni concrete — non consigli generici.</div>
         </div>
       </div>
     </div>
@@ -4021,10 +4021,10 @@ async function testaKT(){
 <div id="paywall-overlay" class="hidden" onclick="if(event.target===this)chiudiPaywall()">
   <div class="paywall-sheet">
     <div class="pw-badge">Matter Pro</div>
-    <h3>Hai usato le 5 domande gratuite di oggi.</h3>
-    <p>Con Matter Pro continui senza limiti — chat illimitata, Flavor Network, quaderno misure fisiche.</p>
+    <h3>Hai usato le chat gratuite del tuo trial.</h3>
+    <p>Con Matter Pro: chat illimitata · 91 fenomeni completi · Flavor Network · Ricette scientifiche.</p>
     <div class="pw-price">
-      <span class="pw-n">€11,99</span>
+      <span class="pw-n">€19,99</span>
       <span class="pw-u">/ mese · cancelli quando vuoi</span>
     </div>
     <button class="pw-cta" onclick="vaiAPro()">Passa a Pro</button>
