@@ -1402,41 +1402,47 @@ def admin_add_ricette():
 
 @bp.route("/admin/test-ai")
 def admin_test_ai():
-    """Test diretto dell'AI gateway. Solo per debug."""
+    """Test diretto dell'AI gateway."""
     import os, traceback
     secret = request.args.get("s","")
     if secret != os.environ.get("ADMIN_SECRET",""):
         return jsonify({"errore":"non autorizzato"}), 403
     import ai_gateway as GW
-    
-    # test 1: risposta semplice
+
+    results = {}
+
+    # test 1: route_chat semplice
     try:
-        out1 = GW.route_chat("Rispondi con una sola parola: OK")
-        test1 = {"ok": bool(out1), "risposta": out1}
+        out = GW.route_chat("Rispondi con una parola: OK")
+        results["route_chat"] = {"ok": bool(out), "risposta": out}
     except Exception as e:
-        test1 = {"ok": False, "errore": str(e), "tb": traceback.format_exc()[-300:]}
-    
-    # test 2: prompt chat F&B senza tools
+        results["route_chat"] = {"ok": False, "errore": str(e)}
+
+    # test 2: anthropic senza tools
     try:
-        out2 = GW._anthropic_call("claude-sonnet-4-5", 
-            [{"role":"user","content":"Rispondi: PROBLEMA: test PERCHÉ: test NUMERO: 7 MISURA: pH-metro AZIONE: misura"}],
-            max_tokens=100, temperature=0, tools=None)
-        data = out2[0]
+        data, _ = GW._anthropic_call("claude-sonnet-4-5",
+            [{"role":"user","content":"Di solo: OK"}],
+            max_tokens=10, temperature=0, tools=None)
         testo = " ".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
-        test2 = {"ok": bool(testo), "testo": testo[:200], "stop_reason": data.get("stop_reason"), "content_types": [b.get("type") for b in data.get("content",[])]}
+        results["anthropic_no_tools"] = {
+            "ok": bool(testo), "testo": testo,
+            "stop_reason": data.get("stop_reason"),
+            "types": [b.get("type") for b in data.get("content",[])]
+        }
     except Exception as e:
-        test2 = {"ok": False, "errore": str(e)}
-    
-    # test 3: con tools (come fa route_chat)
-    from ai import _TOOLS
+        results["anthropic_no_tools"] = {"ok": False, "errore": str(e), "tb": traceback.format_exc()[-300:]}
+
+    # test 3: anthropic con tools (simulazione chat)
     try:
-        _p3 = "il mio sour e troppo acido\n\nCONTESTO: acidita titolabile\n\nRISPOSTA:"
-        out3 = GW._anthropic_call("claude-sonnet-4-5",
-            [{"role":"user","content":_p3}],
-            max_tokens=300, temperature=0, tools=_TOOLS)
-        data3 = out3[0]
-        test3 = {"stop_reason": data3.get("stop_reason"), "content_types": [b.get("type") for b in data3.get("content",[])], "testo": " ".join(b.get("text","") for b in data3.get("content",[]) if b.get("type")=="text")[:200]}
+        from app import _TOOLS as TOOLS
+        data2, _ = GW._anthropic_call("claude-sonnet-4-5",
+            [{"role":"user","content":"sour acido\n\nRISPOSTA:"}],
+            max_tokens=50, temperature=0, tools=TOOLS)
+        results["anthropic_with_tools"] = {
+            "stop_reason": data2.get("stop_reason"),
+            "types": [b.get("type") for b in data2.get("content",[])]
+        }
     except Exception as e:
-        test3 = {"errore": str(e)}
-    
-    return jsonify({"test1_simple": test1, "test2_no_tools": test2, "test3_with_tools": test3})
+        results["anthropic_with_tools"] = {"errore": str(e)}
+
+    return jsonify(results)
