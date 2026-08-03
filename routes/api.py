@@ -40,16 +40,40 @@ def _link_vino_birra(query, categoria="vino"):
         ]
     return links
 
+
+def _estrai_nome_bevanda(testo):
+    """Estrae un nome di vino/birra ricercabile dal testo descrittivo dell'abbinamento.
+    Es. 'Un rosso strutturato (Barolo, Amarone)' → 'Barolo'.
+    Cerca prima nomi tra parentesi (spesso i nomi propri), poi parole capitalizzate."""
+    import re as _re
+    if not testo:
+        return ""
+    # 1) nomi tra parentesi (es. "(Barolo, Amarone)")
+    m = _re.search(r"\(([^)]+)\)", testo)
+    if m:
+        primo = m.group(1).split(",")[0].split("/")[0].strip()
+        if primo:
+            return primo
+    # 2) parole capitalizzate (nomi propri di vini/birre)
+    parole = _re.findall(r"\b([A-ZÀ-Ù][a-zà-ù]{2,}(?:\s[A-ZÀ-Ù][a-zà-ù]+)?)\b", testo)
+    ignora = {"Un", "Una", "Uno", "Il", "La", "Le", "Lo", "Per", "Con"}
+    for p in parole:
+        if p.split()[0] not in ignora:
+            return p
+    return ""
+
+
 @bp.route("/v1/genera-ricetta", methods=["POST"])
 def genera_ricetta_endpoint():
     """Recipe Builder AI: genera una ricetta strutturata dai dati reali del grafo.
-    Body JSON: {richiesta: 'un dolce al cioccolato', disciplina: 'pasticceria', lang: 'it'}
-    I numeri e i fenomeni vengono dal grafo, l'AI compone la struttura."""
+    Body JSON: {richiesta: 'un dolce al cioccolato', disciplina: 'pasticceria', lang: 'it', salva: false}
+    Se salva=true, persiste la ricetta generata nel DB (con id ric-gen-<slug>)."""
     from db import carica_grafo
     body = request.json or {}
     richiesta = body.get("richiesta", "").strip()
     disciplina = body.get("disciplina", "cucina")
     lang = body.get("lang", "it")
+    salva = bool(body.get("salva", False))
     if not richiesta:
         return jsonify({"errore": "richiesta mancante (es. 'un dolce al cioccolato')"}), 400
     try:
@@ -58,6 +82,35 @@ def genera_ricetta_endpoint():
         risultato = genera_ricetta(db, richiesta, disciplina=disciplina, lang=lang)
         if risultato.get("errore"):
             return jsonify(risultato), 422
+        # salvataggio opzionale
+        if salva and risultato.get("nome"):
+            try:
+                import re as _re, json as _j2, unicodedata
+                from db import _get_conn, _release_conn
+                nome = risultato["nome"]
+                slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+                slug = _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:40]
+                rid = f"ric-gen-{slug}"
+                conn = _get_conn(); cur = conn.cursor()
+                cur.execute("""
+                    INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es)
+                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s,%s)
+                    ON CONFLICT (id) DO NOTHING
+                """, (rid, nome, disciplina, risultato.get("descrizione",""),
+                      _j2.dumps(risultato.get("ingredienti",[]),ensure_ascii=False),
+                      _j2.dumps(risultato.get("fenomeni",[]),ensure_ascii=False),
+                      _j2.dumps(risultato.get("tecniche",[]),ensure_ascii=False),
+                      _j2.dumps(risultato.get("numeri",{}),ensure_ascii=False),
+                      risultato.get("punto_critico",""),
+                      _j2.dumps(risultato.get("abbinamenti",{}),ensure_ascii=False),
+                      _j2.dumps(risultato.get("vino_birra",{}),ensure_ascii=False),
+                      "", ""))
+                conn.commit(); cur.close(); _release_conn(conn)
+                risultato["_salvata"] = True
+                risultato["id"] = rid
+            except Exception as se:
+                risultato["_salvata"] = False
+                risultato["_errore_salvataggio"] = str(se)
         return jsonify(risultato)
     except Exception as e:
         import traceback
@@ -490,6 +543,21 @@ def api_ricette_list():
             desc = r.get("descrizione") or ""
             if lang=="en" and r.get("scheda_en"): desc=r["scheda_en"]
             elif lang=="es" and r.get("scheda_es"): desc=r["scheda_es"]
+            vb = _parse(r.get("vino_birra")) or {}
+            # arricchisci con link affiliati estratti dal testo
+            if isinstance(vb, dict) and vb:
+                vb_arricchito = dict(vb)
+                if vb.get("vino"):
+                    nome_v = _estrai_nome_bevanda(vb["vino"])
+                    if nome_v:
+                        vb_arricchito["vino_links"] = _link_vino_birra(nome_v, "vino")
+                        vb_arricchito["vino_query"] = nome_v
+                if vb.get("birra"):
+                    nome_b = _estrai_nome_bevanda(vb["birra"])
+                    if nome_b:
+                        vb_arricchito["birra_links"] = _link_vino_birra(nome_b, "birra")
+                        vb_arricchito["birra_query"] = nome_b
+                vb = vb_arricchito
             result.append({
                 "id":r.get("id",""),"nome":r.get("nome",""),"disciplina":r.get("disciplina",""),
                 "descrizione":desc,
@@ -499,7 +567,7 @@ def api_ricette_list():
                 "numeri":_parse(r.get("numeri")) or {},
                 "punto_critico":r.get("punto_critico") or "",
                 "abbinamenti":_parse(r.get("abbinamenti")) or {},
-                "vino_birra":_parse(r.get("vino_birra")) or {}
+                "vino_birra":vb
             })
         return jsonify(result)
     except Exception as e:
