@@ -72,6 +72,45 @@ def chiedi():
             print(f"[TRIAL] {_te}", flush=True)
     # ── FINE TRIAL ──────────────────────────────────────────────────────
 
+    # ── DOMANDE SULL'APP: risposta fissa operativa prima del grafo ──────
+    _dl = domanda.lower()
+    _kw_app = ["cosa posso fare","cosa fai","cosa puoi fare","come funziona",
+               "a cosa servi","a cosa serve","come si usa","come funzione",
+               "cosa sei","cosa fa quest","cosa fa l'app","cosa fa questa app",
+               "come ti uso","come inizio","da dove inizio","chi sei","help",
+               "aiutami a capire","spiegami l'app","cosa offri"]
+    if any(k in _dl for k in _kw_app):
+        _risp = {
+            "it": ("PROBLEMA: Vuoi sapere cosa puoi fare qui.\n"
+                   "PERCHÉ: Matter Lab è uno strumento scientifico per chi lavora nel food & beverage — non un ricettario, ma il perché fisico e chimico dietro ogni gesto del mestiere.\n"
+                   "NUMERO: 103 fenomeni · 47 tecniche · 53 ricette, tutti con numeri da controllare al banco.\n"
+                   "MISURA: Fammi una domanda tecnica reale — 'perché il mio sour cambia ogni volta', 'il lievito madre non sale', 'la maionese impazzisce' — e ti do la spiegazione con i numeri.\n"
+                   "AZIONE: Puoi anche fotografare ingredienti o bottiglie per scoprire abbinamenti e fenomeni, o esplorare la Mappa per disciplina."),
+            "en": ("PROBLEM: You want to know what you can do here.\n"
+                   "WHY: Matter Lab is a scientific tool for food & beverage professionals — not a recipe book, but the physics and chemistry behind every move of the craft.\n"
+                   "NUMBER: 103 phenomena · 47 techniques · 53 recipes, all with numbers to control at the bench.\n"
+                   "MEASURE: Ask me a real technical question — 'why does my sour change every time', 'my sourdough won't rise' — and I'll explain with the numbers.\n"
+                   "ACTION: You can also photograph ingredients or bottles to discover pairings and phenomena, or explore the Map by discipline."),
+            "es": ("PROBLEMA: Quieres saber qué puedes hacer aquí.\n"
+                   "POR QUÉ: Matter Lab es una herramienta científica para profesionales del food & beverage — no un recetario, sino la física y química detrás de cada gesto del oficio.\n"
+                   "NÚMERO: 103 fenómenos · 47 técnicas · 53 recetas, todos con números para controlar en la barra.\n"
+                   "MEDIDA: Hazme una pregunta técnica real — 'por qué mi sour cambia cada vez', 'mi masa madre no sube' — y te lo explico con los números.\n"
+                   "ACCIÓN: También puedes fotografiar ingredientes o botellas para descubrir maridajes y fenómenos, o explorar el Mapa por disciplina."),
+        }.get(lang, None)
+        if _risp is None:
+            _risp = {"it":"","en":"","es":""}.get("it")
+        if not _risp:
+            _risp = ("PROBLEMA: Vuoi sapere cosa puoi fare qui.\n"
+                     "PERCHÉ: Matter Lab spiega la scienza del mestiere F&B.\n"
+                     "AZIONE: Fammi una domanda tecnica reale del tuo lavoro.")
+        return jsonify({
+            "risposta": _risp,
+            "trovato": ["Matter Lab"],
+            "connessi": [],
+            "trial": trial_info
+        })
+    # ── FINE DOMANDE APP ────────────────────────────────────────────────
+
     db = carica_grafo()
     # estrazione entità: prima provo i termini che estrae Mistral (capisce il dominio),
     # poi, se non agganciano nulla, ripiego sulle parole della domanda (rete di sicurezza).
