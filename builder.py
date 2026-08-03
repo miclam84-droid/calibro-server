@@ -98,9 +98,11 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
             abbinamenti.append({"ingrediente": t, "abbina_con": ab})
 
     # 3) costruisci il contesto testuale per l'AI (solo dati reali)
+    # nomi tecniche puliti (senza i numeri incorporati) per evitare che l'AI li copi nel campo tecniche
     tec_str = "; ".join(
-        f"{t['nome']} (numeri: {t['numeri'][:60]})" for t in tecniche[:10]
+        f"{t['nome']} [numeri: {t['numeri'][:60]}]" for t in tecniche[:10]
     ) if tecniche else "nessuna tecnica disponibile"
+    nomi_tecniche_validi = [t['nome'] for t in tecniche]
 
     fen_str = "; ".join(
         f"{f['nome']} → {f['target']}" for f in fenomeni[:10] if f['target']
@@ -145,6 +147,18 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         if not m:
             return {"errore": "output non-JSON", "raw": raw[:200]}
         ricetta = _j.loads(m.group(0))
+        # pulizia: normalizza i nomi tecniche (l'AI a volte copia la label con i numeri)
+        if "tecniche" in ricetta and isinstance(ricetta["tecniche"], list):
+            pulite = []
+            for t in ricetta["tecniche"]:
+                if not isinstance(t, str):
+                    continue
+                # rimuovi tutto dopo '[' o '(' (i numeri incorporati)
+                nome_pulito = t.split("[")[0].split("(numeri")[0].strip()
+                # match con un nome valido se possibile
+                match = next((v for v in nomi_tecniche_validi if v.lower() in nome_pulito.lower() or nome_pulito.lower() in v.lower()), nome_pulito)
+                pulite.append(match)
+            ricetta["tecniche"] = pulite
         ricetta["_generata"] = True
         ricetta["disciplina"] = disciplina
         ricetta["_disclaimer"] = "Ricetta generata dall'AI sui dati scientifici del grafo. Verifica i numeri al banco."
