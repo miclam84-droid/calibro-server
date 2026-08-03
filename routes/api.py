@@ -40,6 +40,29 @@ def _link_vino_birra(query, categoria="vino"):
         ]
     return links
 
+@bp.route("/v1/genera-ricetta", methods=["POST"])
+def genera_ricetta_endpoint():
+    """Recipe Builder AI: genera una ricetta strutturata dai dati reali del grafo.
+    Body JSON: {richiesta: 'un dolce al cioccolato', disciplina: 'pasticceria', lang: 'it'}
+    I numeri e i fenomeni vengono dal grafo, l'AI compone la struttura."""
+    from db import carica_grafo
+    body = request.json or {}
+    richiesta = body.get("richiesta", "").strip()
+    disciplina = body.get("disciplina", "cucina")
+    lang = body.get("lang", "it")
+    if not richiesta:
+        return jsonify({"errore": "richiesta mancante (es. 'un dolce al cioccolato')"}), 400
+    try:
+        from builder import genera_ricetta
+        db = carica_grafo()
+        risultato = genera_ricetta(db, richiesta, disciplina=disciplina, lang=lang)
+        if risultato.get("errore"):
+            return jsonify(risultato), 422
+        return jsonify(risultato)
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+
 @bp.route("/v1/abbina-bevanda")
 def abbina_bevanda():
     """Dato un abbinamento vino/birra (query testuale), restituisce i link e-commerce.
