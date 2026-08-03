@@ -1082,6 +1082,20 @@ def abbina(ingrediente):
             "saffron":"zafferano","turmeric":"curcuma","cardamom":"cardamomo",
             "clove":"chiodo di garofano","nutmeg":"noce moscata","anise":"anice",
             "lavender":"lavanda","rose":"rosa","jasmine":"gelsomino",
+            "citrus":"agrumi","citrus peel":"scorza d'agrumi","bitter orange":"arancia amara",
+            "lemongrass":"citronella","kumquat":"kumquat","bergamot":"bergamotto",
+            "grapefruit":"pompelmo","yuzu":"yuzu","blood orange":"arancia rossa",
+            "elderflower":"fiori di sambuco","hibiscus":"ibisco","juniper":"ginepro",
+            "coriander":"coriandolo","fennel":"finocchio","dill":"aneto","tarragon":"dragoncello",
+            "sage":"salvia","oregano":"origano","marjoram":"maggiorana","bay leaf":"alloro",
+            "star anise":"anice stellato","licorice":"liquirizia","cocoa powder":"cacao in polvere",
+            "roasted almond":"mandorla tostata","pistachio":"pistacchio","pecan":"noce pecan",
+            "cashew":"anacardo","macadamia":"macadamia","chestnut":"castagna",
+            "cranberry":"mirtillo rosso","blackberry":"mora","cherry":"ciliegia","peach":"pesca",
+            "apricot":"albicocca","plum":"prugna","melon":"melone","watermelon":"anguria",
+            "passion fruit":"frutto della passione","lychee":"litchi","papaya":"papaya",
+            "guava":"guava","kiwi":"kiwi","pomegranate":"melograno","date":"dattero",
+            "raisin":"uvetta","prune":"prugna secca","currant":"ribes",
         }
         abbinamenti = []
         for r in rows:
@@ -1100,13 +1114,19 @@ def abbina(ingrediente):
                 "perche": f"condividono {overlap:.0f} composti aromatici"
             })
         # deduplica per nome (possono esserci nodi EN e IT con lo stesso nome)
+        # ed esclude l'auto-abbinamento (l'ingrediente cercato con se stesso)
+        _cercato = ingrediente.lower().strip()
         seen_nomi = set()
         abbinamenti_dedup = []
         for a in sorted(abbinamenti, key=lambda x: -x["overlap"]):
             n_lower = a["ingrediente"].lower().strip()
-            if n_lower not in seen_nomi:
-                seen_nomi.add(n_lower)
-                abbinamenti_dedup.append(a)
+            if n_lower in seen_nomi:
+                continue
+            # salta se è l'ingrediente stesso (self-match)
+            if n_lower == _cercato or n_lower == NOMI_IT.get(_cercato, "").lower():
+                continue
+            seen_nomi.add(n_lower)
+            abbinamenti_dedup.append(a)
             if len(abbinamenti_dedup) >= 15:
                 break
         abbinamenti = abbinamenti_dedup
