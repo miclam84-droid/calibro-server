@@ -1520,3 +1520,44 @@ def admin_add_tecniche():
     finally:
         _release_conn(conn)
     return jsonify({"inserite": ok, "edge_create": edge_ok, "errori": errori})
+
+
+@bp.route("/admin/ritraduce-ricette", methods=["POST"])
+def admin_ritraduce_ricette():
+    """Rigenera scheda_en/es per le ricette date, traducendo la descrizione IT con Haiku.
+    Body JSON: {ids: [id1, id2...]}. Solo per riparare traduzioni perse."""
+    import os, json as _j
+    from db import _get_conn, _release_conn
+    from ai import _haiku_raw
+    secret = request.headers.get("X-Admin-Secret","")
+    if secret != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    body = request.json or {}
+    ids = body.get("ids", [])
+    if not ids:
+        return jsonify({"errore":"lista ids vuota"}), 400
+    conn = _get_conn(); ok = 0; errori = []
+    try:
+        cur = conn.cursor()
+        for rid in ids:
+            cur.execute("SELECT descrizione FROM ricette WHERE id=%s", (rid,))
+            row = cur.fetchone()
+            if not row:
+                errori.append(f"{rid} non trovato"); continue
+            desc_it = row[0] if not hasattr(row,"keys") else row["descrizione"]
+            if not desc_it:
+                errori.append(f"{rid} senza descrizione"); continue
+            try:
+                en = _haiku_raw(f"Traduci in inglese questo testo culinario, mantenendo il tono. Rispondi SOLO con la traduzione, senza preamboli:\n\n{desc_it}", max_tokens=300)
+                es = _haiku_raw(f"Traduci in spagnolo questo testo culinario, mantenendo il tono. Rispondi SOLO con la traduzione, senza preamboli:\n\n{desc_it}", max_tokens=300)
+                cur.execute("UPDATE ricette SET scheda_en=%s, scheda_es=%s WHERE id=%s",
+                            ((en or "").strip(), (es or "").strip(), rid))
+                ok += 1
+            except Exception as te:
+                errori.append(f"{rid}: {te}")
+        conn.commit(); cur.close()
+    except Exception as e:
+        errori.append(str(e))
+    finally:
+        _release_conn(conn)
+    return jsonify({"tradotte": ok, "errori": errori})
