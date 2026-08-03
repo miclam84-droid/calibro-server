@@ -204,7 +204,7 @@ def route_chat(prompt, tools=None, history=None):
     try:
         data, _ = _anthropic_call(
             _MODEL_SONNET, messages,
-            max_tokens=900, temperature=0,
+            max_tokens=1500, temperature=0,
             tools=tools
         )
 
@@ -235,7 +235,7 @@ def route_chat(prompt, tools=None, history=None):
             ]
             data2, _ = _anthropic_call(
                 _MODEL_SONNET, messages2,
-                max_tokens=900, temperature=0
+                max_tokens=1500, temperature=0
             )
             out = "".join(
                 b.get("text", "") for b in data2.get("content", [])
