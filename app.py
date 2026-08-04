@@ -60,6 +60,13 @@ def _oss_after(resp):
         if resp.status_code>=500: oss.log_write('ERROR',request.path,None,f'HTTP {resp.status_code}',None,dur)
         elif dur>2000: oss.log_write('WARN',request.path,None,f'lento {dur}ms',None,dur)
     except Exception: pass
+    # CORS per gli endpoint pubblici /v1/ (permette chiamate cross-origin dal frontend/PWA)
+    try:
+        if request.path.startswith('/v1/'):
+            resp.headers['Access-Control-Allow-Origin'] = '*'
+            resp.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+            resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Admin-Secret'
+    except Exception: pass
     return resp
 
 @app.teardown_request
