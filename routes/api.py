@@ -213,6 +213,35 @@ def prodotto_affiliato():
     })
 
 
+@bp.route("/v1/lievitazione-meteo", methods=["GET", "POST"])
+def lievitazione_meteo():
+    """Misura attiva automatica: adatta i tempi di lievitazione al meteo reale.
+    GET  ?lat=&lon=&tempo_base=4
+    POST {lat, lon, tempo_base}
+    Usa Open-Meteo (temp+umidità) + Q10 (cinetica fermentazione)."""
+    if request.method == "POST":
+        body = request.json or {}
+        lat = body.get("lat"); lon = body.get("lon")
+        tempo_base = body.get("tempo_base", 4.0)
+    else:
+        lat = request.args.get("lat"); lon = request.args.get("lon")
+        tempo_base = request.args.get("tempo_base", 4.0)
+    if lat is None or lon is None:
+        return jsonify({"errore": "posizione mancante (lat/lon)"}), 400
+    try:
+        lat = float(lat); lon = float(lon); tempo_base = float(tempo_base)
+    except (TypeError, ValueError):
+        return jsonify({"errore": "lat/lon/tempo_base non validi"}), 400
+    try:
+        from meteo_lievitazione import adatta_lievitazione
+        risultato = adatta_lievitazione(lat, lon, tempo_base_ore=tempo_base)
+        if risultato.get("errore"):
+            return jsonify(risultato), 503
+        return jsonify(risultato)
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+
 @bp.route("/v1/strumenti")
 @bp.route("/v1/strumenti/<disciplina>")
 def strumenti(disciplina=None):
