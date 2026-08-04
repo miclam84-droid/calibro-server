@@ -223,9 +223,11 @@ def lievitazione_meteo():
         body = request.json or {}
         lat = body.get("lat"); lon = body.get("lon")
         tempo_base = body.get("tempo_base", 4.0)
+        lang = body.get("lang", "it")
     else:
         lat = request.args.get("lat"); lon = request.args.get("lon")
         tempo_base = request.args.get("tempo_base", 4.0)
+        lang = request.args.get("lang", "it")
     if lat is None or lon is None:
         return jsonify({"errore": "posizione mancante (lat/lon)"}), 400
     try:
@@ -234,7 +236,7 @@ def lievitazione_meteo():
         return jsonify({"errore": "lat/lon/tempo_base non validi"}), 400
     try:
         from meteo_lievitazione import adatta_lievitazione
-        risultato = adatta_lievitazione(lat, lon, tempo_base_ore=tempo_base)
+        risultato = adatta_lievitazione(lat, lon, tempo_base_ore=tempo_base, lang=lang)
         if risultato.get("errore"):
             return jsonify(risultato), 503
         return jsonify(risultato)
