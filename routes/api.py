@@ -54,9 +54,12 @@ def _estrai_nome_bevanda(testo):
         primo = m.group(1).split(",")[0].split("/")[0].strip()
         if primo:
             return primo
-    # 2) parole capitalizzate (nomi propri di vini/birre)
-    parole = _re.findall(r"\b([A-ZÀ-Ù][a-zà-ù]{2,}(?:\s[A-ZÀ-Ù][a-zà-ù]+)?)\b", testo)
-    ignora = {"Un", "Una", "Uno", "Il", "La", "Le", "Lo", "Per", "Con"}
+    # 2) parole capitalizzate (nomi propri/stili di vini/birre)
+    # rimuovo prima gli articoli iniziali così non "mangiano" la parola dello stile
+    ignora = {"Un", "Una", "Uno", "Il", "La", "Le", "Lo", "Per", "Con", "Dalle", "Delle", "Dei"}
+    # togli gli articoli capitalizzati dal testo prima del match
+    testo_pulito = _re.sub(r"\b(Un|Una|Uno|Il|La|Le|Lo|Per|Con)\b\s*", "", testo)
+    parole = _re.findall(r"\b([A-ZÀ-Ù][a-zà-ù]{2,}(?:\s[A-ZÀ-Ù][a-zà-ù]+)?)\b", testo_pulito)
     for p in parole:
         if p.split()[0] not in ignora:
             return p
