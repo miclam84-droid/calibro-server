@@ -889,3 +889,23 @@ a:focus-visible,input:focus-visible{
 .foto-audio-btn{display:inline-flex;align-items:center;gap:5px;background:var(--signal);color:var(--paper-hi);border:none;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;cursor:pointer;border-radius:0;flex-shrink:0}
 .foto-audio-btn:hover{background:var(--accent)}
 .foto-audio-btn:disabled{opacity:.6;cursor:default}
+
+/* flavor network — stile strumento (override angoli netti) */
+.flavor-card{background:var(--paper-hi);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0;margin:12px 14px 0}
+.fl-icon{background:var(--accent);border-radius:0}
+.flavor-input{border:1.5px solid var(--line-strong);border-radius:0;font-family:var(--mono);font-size:14px;background:var(--paper-hi)}
+.flavor-input:focus{border-color:var(--accent)}
+.flavor-search-btn{background:var(--accent);border-radius:0;font-family:var(--mono);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.flavor-result-name{color:var(--ink);font-family:var(--mono);font-size:13px}
+.flavor-result-why{color:var(--accent)}
+
+/* calcolatori — stile strumento (override angoli netti) */
+.calc-card{background:var(--paper-hi);border:1px solid var(--border);border-radius:0}
+.foodcost-card{background:var(--paper-hi);border:1px solid var(--border);border-left:3px solid var(--signal);border-radius:0}
+.calc-input,.calc-field input{border-radius:0 !important;font-family:var(--mono)}
+
+/* uniformazione bordi — card contenitori a angoli netti (i badge/pillole restano tondi) */
+.disc-list,.disc-item,.scheda-les,.scheda-quiz2,.principio-card{border-radius:0 !important}
+.disc-list{border-left:none;border-right:none}
+.disc-item{border-left:3px solid transparent}
+.disc-item:hover{border-left-color:var(--accent)}
