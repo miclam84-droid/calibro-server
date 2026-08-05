@@ -919,3 +919,10 @@ a:focus-visible,input:focus-visible{
 .les-strum-nome{font-size:13px;font-weight:600;color:var(--ink)}
 .les-strum-meta{font-family:var(--mono);font-size:10px;color:var(--ink-muted)}
 .les-strum-cta{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--signal);white-space:nowrap;display:flex;align-items:center;gap:3px}
+
+/* onboarding — identità nuova (override) */
+.onb-sheet{background:var(--paper);border-radius:0;border-top:3px solid var(--accent)}
+.onb-title-ovl{font-family:var(--serif);color:var(--ink)}
+.onb-step-num{border-radius:0;background:var(--accent);font-family:var(--mono);font-weight:700}
+.onb-cta-btn{background:var(--signal);border-radius:0;font-weight:700}
+.onb-step-title{font-family:var(--sans)}
