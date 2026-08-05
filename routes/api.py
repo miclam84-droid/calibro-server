@@ -3,7 +3,7 @@
 # Dipende da: db, ai, contenuto, utils.
 from flask import Blueprint, request, jsonify
 from db import carica_grafo, _dati, _get_conn, _release_conn
-from ai import estrai_entita, cerca_contesto
+from ai import estrai_entita, cerca_contesto, _haiku_raw
 from contenuto import _scheda_lang, _numero_bersaglio
 from utils import _profilo_default, _aggiorna_profilo
 from config import DATABASE_URL

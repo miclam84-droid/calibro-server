@@ -6,6 +6,7 @@ from db import _get_conn, _release_conn
 from auth import _utente_da_token
 from notifiche import _invia_email_resend
 from config import DATABASE_URL
+from ai import _haiku_raw
 import os, json
 bp = Blueprint("misc", __name__)
 
@@ -130,7 +131,7 @@ def supporto():
         "Sei l'assistente di supporto di Matter Lab, strumento scientifico per professionisti F&B "
         "(bar, panificazione, pasticceria, gelateria, caffetteria, cucina, vino, birra). "
         "COSA FA MATTER LAB: spiega la scienza del mestiere — 103 fenomeni fisici/chimici con numeri "
-        "bersaglio misurabili al banco, 47 tecniche con esecuzione passo-passo, 53+ ricette ancorate "
+        "bersaglio misurabili al banco, 59 tecniche con esecuzione passo-passo, 54+ ricette ancorate "
         "a fenomeni e tecniche, un flavor network di 1.530 ingredienti per gli abbinamenti (per analogia "
         "e per contrasto), e una feature foto che riconosce ingredienti e bottiglie suggerendo abbinamenti. "
         "SEZIONI: Scopri (fenomeni), Lezione (percorso guidato), Mappa (atlante), Chiedi (assistente AI). "
