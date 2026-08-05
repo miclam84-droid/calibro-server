@@ -440,7 +440,7 @@ function renderHome(j){
   } else if(_nt){ _nt.style.display='none'; }
     const _loop = document.getElementById('loop-guidato');
     const _loopFen = document.getElementById('loop-fen-nome');
-    if(_loop) _loop.style.display='block';
+    if(_loop) _loop.style.display='none';
     if(_loopFen) _loopFen.textContent = f.nome || 'Fenomeno';
   document.getElementById('scopri-desc').textContent = f.scheda_intro || '';
   const numBox = document.getElementById('scopri-num');
