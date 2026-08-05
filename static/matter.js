@@ -2772,6 +2772,32 @@ var _origSetLang = typeof setLang === 'function' ? setLang : null;
 
 
 // ── FOTOCAMERA (Vision) ────────────────────────────────────────
+// ── AGGANCIO AL LOOP dalla foto ──────────────────────────────
+async function _fotoStudiaFenomeno(fenId){
+  // apre la scheda del fenomeno via /nodo (ha già target + scheda)
+  if(!fenId) return;
+  try {
+    const r = await fetch('/nodo', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({id: fenId, lang: _lang||'it'})});
+    const j = await r.json();
+    const disc = j.disciplina || (j.nodo && j.nodo.disciplina);
+    if(disc){ switchTab('lezione'); setTimeout(function(){ _caricaLezionePerId(disc, fenId); }, 150); return; }
+  } catch(e){}
+  // fallback: porta alla chat con domanda pronta sul fenomeno
+  switchTab('chiedi');
+  setTimeout(function(){ var q=document.getElementById('q'); if(q){ q.value='Spiegami il fenomeno e il suo numero bersaglio'; q.focus(); } }, 300);
+}
+function _fotoVaiFlavor(nome){
+  switchTab('mappa');
+  setTimeout(function(){
+    if(typeof switchMappaTab==='function') switchMappaTab('flavor');
+    setTimeout(function(){
+      var inp=document.getElementById('flavor-input');
+      if(inp){ inp.value=nome; if(typeof cercaFlavor==='function') cercaFlavor(); }
+    }, 300);
+  }, 200);
+}
+
 async function inviaFoto(input){
   if(!input||!input.files||!input.files[0]) return;
   var file = input.files[0];
@@ -2801,12 +2827,16 @@ async function inviaFoto(input){
     } else {
       // build rich output
       var html = '';
-      // ingredienti trovati
+      // ingredienti trovati — cliccabili → flavor network
       if(j.ingredienti_riconosciuti && j.ingredienti_riconosciuti.length>0){
-        var nomi = j.ingredienti_riconosciuti.map(function(i){ return i.nodo_nome; }).join(', ');
         html += '<div class="s-block s-block-scient" style="margin-bottom:8px">'
-          +'<span class="s-label">Riconosciuti</span>'
-          +'<span class="s-val">'+nomi+'</span></div>';
+          +'<span class="s-label">Riconosciuti</span><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">';
+        j.ingredienti_riconosciuti.forEach(function(i){
+          var nome = (i.nodo_nome||'').replace(/'/g,"\\'");
+          html += '<button class="foto-chip" onclick="_fotoVaiFlavor(\''+nome+'\')">'
+            +esc(i.nodo_nome)+' <i class="ph ph-arrow-right"></i></button>';
+        });
+        html += '</div></div>';
       }
       if(j.ingredienti_sconosciuti && j.ingredienti_sconosciuti.length>0){
         html += '<div style="font-size:11px;color:var(--muted);margin-bottom:6px">Non trovati nel grafo: '
@@ -2817,17 +2847,20 @@ async function inviaFoto(input){
         html += '<div class="s-block" style="margin-bottom:8px">'
           +'<span class="s-label">Abbinamenti aromatici</span>';
         j.abbinamenti.forEach(function(a){
-          html += '<div style="font-size:12px;padding:2px 0"><i class=\'ph ph-link\' style=\'color:var(--flavor)\'></i> <b>'+a.a+'</b> + <b>'+a.b+'</b> — '+a.perche+'</div>';
+          html += '<div style="font-size:12px;padding:2px 0"><i class=\'ph ph-link\' style=\'color:var(--flavor)\'></i> <b>'+esc(a.a)+'</b> + <b>'+esc(a.b)+'</b> — '+esc(a.perche)+'</div>';
         });
         html += '</div>';
       }
-      // fenomeni
+      // fenomeni — CLICCABILI → studia la lezione (aggancio al loop)
       if(j.fenomeni && j.fenomeni.length>0){
         html += '<div class="s-block" style="margin-bottom:8px">'
-          +'<span class="s-label">Fenomeni fisici</span>';
+          +'<span class="s-label">Studia il fenomeno</span>';
         j.fenomeni.forEach(function(f){
-          html += '<div style="font-size:12px;padding:2px 0"><i class=\'ph ph-flask\' style=\'color:var(--e500)\'></i> <b>'+f.nome+'</b>'
-            +(f.target?' · <span style="color:var(--e500)">'+f.target+'</span>':'')+'</div>';
+          var fid = (f.id||'').replace(/'/g,"\\'");
+          html += '<button class="foto-fen" onclick="_fotoStudiaFenomeno(\''+fid+'\')">'
+            +'<i class=\'ph ph-flask\' style=\'color:var(--accent)\'></i> <b>'+esc(f.nome)+'</b>'
+            +(f.target?' · <span style="color:var(--accent);font-family:var(--mono);font-size:11px">'+esc(f.target)+'</span>':'')
+            +' <i class="ph ph-arrow-right" style="margin-left:auto"></i></button>';
         });
         html += '</div>';
       }
@@ -2835,7 +2868,17 @@ async function inviaFoto(input){
       if(j.output_scientifico){
         html += '<div class="s-block s-block-action" style="margin-top:8px">'
           +'<span class="s-label">Analisi</span>'
-          +'<p style="margin:4px 0 0;font-size:13px;line-height:1.5">'+j.output_scientifico+'</p></div>';
+          +'<p style="margin:4px 0 0;font-size:13px;line-height:1.5">'+esc(j.output_scientifico)+'</p></div>';
+      }
+      // AGGANCIO AL LOOP — prossimi passi
+      if(j.ingredienti_riconosciuti && j.ingredienti_riconosciuti.length>0){
+        html += '<div class="foto-loop">'
+          +'<span class="foto-loop-lab">Continua nel laboratorio</span>'
+          +'<button class="foto-loop-btn" onclick="switchTab(\'chiedi\');setTimeout(function(){var q=document.getElementById(\'q\');if(q){q.value=\''
+          + (j.ingredienti_riconosciuti[0].nodo_nome||'').replace(/'/g,"\\'")
+          +' — come lo lavoro?\';q.focus();}},300)"><i class="ph ph-chat-circle"></i> Chiedi come lavorarlo</button>'
+          +'<button class="foto-loop-btn" onclick="switchTab(\'mappa\');setTimeout(function(){if(typeof switchMappaTab===\'function\')switchMappaTab(\'ricette\');},300)"><i class="ph ph-cards"></i> Ricette che lo usano</button>'
+          +'</div>';
       }
       // coverage
       if(j.meta){
