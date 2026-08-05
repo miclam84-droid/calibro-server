@@ -837,3 +837,7 @@ a:focus-visible,input:focus-visible{
 .mtr-dbband span{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--paper-hi);text-transform:uppercase}
 
 .mtr-sec-label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink);font-weight:700;padding:18px 18px 8px;border-bottom:1.5px solid var(--line-strong);margin:0 0 0}
+
+/* header di sezione — stile strumento (override nuovo) */
+.lab-area-header{padding:12px 18px 8px;border-bottom:1.5px solid var(--line-strong);margin:0}
+.lab-area-label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink);font-weight:700}
