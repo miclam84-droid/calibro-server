@@ -2773,6 +2773,33 @@ var _origSetLang = typeof setLang === 'function' ? setLang : null;
 
 // ── FOTOCAMERA (Vision) ────────────────────────────────────────
 // ── AGGANCIO AL LOOP dalla foto ──────────────────────────────
+async function _fotoAscolta(btn, testo){
+  if(!testo) return;
+  // se sta già suonando, ferma
+  if(window._fotoAudio && !window._fotoAudio.paused){
+    window._fotoAudio.pause(); window._fotoAudio = null;
+    btn.innerHTML = '<i class="ph ph-speaker-high"></i> Ascolta'; return;
+  }
+  var orig = btn.innerHTML;
+  btn.innerHTML = '<i class="ph ph-circle-notch ph-spin"></i> …';
+  btn.disabled = true;
+  try {
+    var r = await fetch('/v1/tts', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({testo: testo, lang: _lang||'it', voce:'onyx'})});
+    if(!r.ok){ throw new Error('tts '+r.status); }
+    var blob = await r.blob();
+    var url = URL.createObjectURL(blob);
+    var audio = new Audio(url);
+    window._fotoAudio = audio;
+    btn.innerHTML = '<i class="ph ph-pause"></i> Pausa';
+    btn.disabled = false;
+    audio.onended = function(){ btn.innerHTML = '<i class="ph ph-speaker-high"></i> Ascolta'; window._fotoAudio=null; };
+    audio.play();
+  } catch(e){
+    btn.innerHTML = orig; btn.disabled = false;
+    // fallo silenzioso: l'audio è un di più, non deve rompere l'esperienza
+  }
+}
 async function _fotoStudiaFenomeno(fenId){
   // apre la scheda del fenomeno via /nodo (ha già target + scheda)
   if(!fenId) return;
@@ -2866,8 +2893,12 @@ async function inviaFoto(input){
       }
       // output scientifico
       if(j.output_scientifico){
+        var _txtAudio = (j.output_scientifico||'').replace(/'/g,"\\'").replace(/\n/g,' ');
         html += '<div class="s-block s-block-action" style="margin-top:8px">'
+          +'<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'
           +'<span class="s-label">Analisi</span>'
+          +'<button class="foto-audio-btn" onclick="_fotoAscolta(this,\''+_txtAudio+'\')"><i class="ph ph-speaker-high"></i> Ascolta</button>'
+          +'</div>'
           +'<p style="margin:4px 0 0;font-size:13px;line-height:1.5">'+esc(j.output_scientifico)+'</p></div>';
       }
       // AGGANCIO AL LOOP — prossimi passi

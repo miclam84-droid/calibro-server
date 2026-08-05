@@ -1500,3 +1500,26 @@ def foto_analisi():
         tb = traceback.format_exc()
         print(f"[FOTO ERRORE] {e}\n{tb}", flush=True)
         return jsonify({"errore": str(e), "trace": tb[-600:]}), 500
+
+
+@bp.route("/v1/tts", methods=["POST"])
+def tts():
+    """Text-to-speech per l'output della feature foto.
+    Riceve {testo, lang?, voce?} e restituisce audio MP3.
+    Solo per l'output foto (non per tutta la chat) per contenere i costi."""
+    from flask import Response
+    body = request.json or {}
+    testo = (body.get("testo") or "").strip()
+    if not testo:
+        return jsonify({"errore": "testo mancante"}), 400
+    voce = body.get("voce", "onyx")  # onyx=maschile caldo, nova=femminile
+    lang = body.get("lang", "it")
+    try:
+        import ai_gateway as GW
+        audio = GW.tts_openai(testo, voce=voce, lang=lang)
+        if not audio:
+            return jsonify({"errore": "audio non generato"}), 500
+        return Response(audio, mimetype="audio/mpeg",
+                        headers={"Content-Disposition": "inline; filename=matter.mp3"})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500

@@ -154,6 +154,28 @@ def _mistral_call(prompt, max_tokens=None):
 
 
 # ── Adapter OpenAI ───────────────────────────────────────────────────────────
+def tts_openai(testo, voce="onyx", lang="it"):
+    """Text-to-speech via OpenAI. Ritorna bytes audio MP3 (o None se errore).
+    Costo: ~$15/1M caratteri (tts-1). Un output foto ~600 char = ~$0.009."""
+    key = os.environ.get("OPENAI_API_KEY")
+    if not key:
+        raise ValueError("OPENAI_API_KEY non configurata")
+    # limito la lunghezza per sicurezza sui costi (max ~1200 char = ~$0.018)
+    testo = (testo or "").strip()[:1200]
+    if not testo:
+        return None
+    payload = {"model": "tts-1", "voice": voce, "input": testo}
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        f"{_OPENAI_URL}/audio/speech",
+        data=body,
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        method="POST"
+    )
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read()  # audio MP3 binario
+
+
 def _openai_call(endpoint, payload, timeout=30):
     """Chiamata grezza all'API OpenAI. Ritorna (data_dict, latency_ms)."""
     key = os.environ.get("OPENAI_API_KEY")
@@ -244,11 +266,8 @@ def route_chat(prompt, tools=None, history=None):
         else:
             out = "".join(testo)
 
-        print(f"[GW] out prima di sanitize: '{str(out)[:100]}'", flush=True)
         if out:
-            sanitized = _sanitize(out)
-            print(f"[GW] sanitized: '{str(sanitized)[:100]}'", flush=True)
-            return sanitized
+            return _sanitize(out)
 
     except Exception as e:
         import traceback

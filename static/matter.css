@@ -884,3 +884,8 @@ a:focus-visible,input:focus-visible{
 .cookie-btns{display:flex;gap:8px;flex-shrink:0}
 .cookie-ok{background:var(--accent);color:var(--paper-hi);border:none;font-family:var(--sans);font-size:12px;font-weight:700;padding:8px 14px;cursor:pointer;border-radius:0}
 .cookie-no{background:none;color:var(--paper-hi);border:1px solid var(--border);font-size:12px;padding:8px 12px;cursor:pointer;border-radius:0}
+
+/* pulsante ascolta audio sull'output foto */
+.foto-audio-btn{display:inline-flex;align-items:center;gap:5px;background:var(--signal);color:var(--paper-hi);border:none;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;cursor:pointer;border-radius:0;flex-shrink:0}
+.foto-audio-btn:hover{background:var(--accent)}
+.foto-audio-btn:disabled{opacity:.6;cursor:default}
