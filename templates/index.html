@@ -659,11 +659,11 @@ if('serviceWorker' in navigator){
     <div class="ask-media-row">
       <button class="ask-ico-btn" id="btn-camera" onclick="document.getElementById('foto-input').click()"
               title="Fotografa scheda tecnica, etichetta o piatto">
-        <i class="ph ph-camera" aria-hidden="true"></i>
+        <i class="ph ph-camera" aria-hidden="true"></i><span>Foto</span>
       </button>
       <button class="ask-ico-btn" id="btn-mic" onclick="toggleMic()"
               title="Parla al banco — chiedi con la voce">
-        <i class="ph ph-microphone" aria-hidden="true"></i>
+        <i class="ph ph-microphone" aria-hidden="true"></i><span>Voce</span>
       </button>
     </div>
   </div>
@@ -803,9 +803,7 @@ if('serviceWorker' in navigator){
 
 <!-- ── COOKIE BANNER GDPR (LE1) ─────────────────────────── -->
 <div id="cookie-banner" style="display:none">
-  <p id="ct-cookie-txt">Matter Lab usa cookie tecnici. <a href="/cookie-policy" style="color:var(--teal)">Cookie Policy</a> · <a href="/trust" style="color:var(--teal)">Trust Center</a>. Matter Lab usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. 
-  Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral). 
-  <a href="/privacy" target="_blank">Privacy policy</a></p>
+  <p id="ct-cookie-txt">Cookie tecnici, nessuna profilazione. <a href="/privacy" target="_blank">Privacy</a></p>
   <div class="cookie-btns">
     <button class="cookie-ok" onclick="accettaCookie()" id="ct-cookie-ok">Accetto</button>
     <button class="cookie-no" onclick="rifiutaCookie()" id="ct-cookie-no">Solo essenziali</button>
