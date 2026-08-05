@@ -841,3 +841,9 @@ a:focus-visible,input:focus-visible{
 /* header di sezione — stile strumento (override nuovo) */
 .lab-area-header{padding:12px 18px 8px;border-bottom:1.5px solid var(--line-strong);margin:0}
 .lab-area-label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink);font-weight:700}
+
+/* scheda lezione — numero bersaglio come display strumento (fix leggibilità + identità) */
+.sl-dato{background:var(--ink);border-left:3px solid var(--accent);border-radius:0;padding:14px 16px;margin:16px 0}
+.sl-dato-lab{color:var(--s300)}
+.sl-dato-val{font-size:22px;color:var(--accent);font-weight:700}
+.sl-h{font-family:var(--serif)}
