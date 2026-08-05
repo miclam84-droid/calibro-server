@@ -649,6 +649,7 @@ if('serviceWorker' in navigator){
            style="display:none" onchange="inviaFoto(this)">
     <!-- Riga input: campo testo + bottone invio -->
     <div class="ask-input-row">
+      <span class="ask-prompt">&gt;</span>
       <input class="ask-input" id="q" placeholder="chiedi a Matter Lab…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
       <button class="ask-btn" id="ask-btn" onclick="invia()" aria-label="Invia">
         <i class="ph ph-arrow-right" aria-hidden="true"></i>
