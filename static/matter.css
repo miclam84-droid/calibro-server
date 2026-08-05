@@ -909,3 +909,13 @@ a:focus-visible,input:focus-visible{
 .disc-list{border-left:none;border-right:none}
 .disc-item{border-left:3px solid transparent}
 .disc-item:hover{border-left-color:var(--accent)}
+
+/* strumento nella lezione (Parte B — appare col numero-bersaglio) */
+.les-strumento{margin:12px 14px 0;padding:0}
+.les-strum-lab{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:6px}
+.les-strum-card{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--paper-hi);border:1px solid var(--border);border-left:3px solid var(--signal);padding:11px 13px;text-decoration:none;cursor:pointer}
+.les-strum-card:hover{border-color:var(--signal)}
+.les-strum-info{display:flex;flex-direction:column;gap:2px}
+.les-strum-nome{font-size:13px;font-weight:600;color:var(--ink)}
+.les-strum-meta{font-family:var(--mono);font-size:10px;color:var(--ink-muted)}
+.les-strum-cta{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--signal);white-space:nowrap;display:flex;align-items:center;gap:3px}

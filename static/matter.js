@@ -263,6 +263,10 @@ function switchMappaTab(tab){
   if(tab==='ricette'){
     _caricaRicette(_ricetteDisciplina||'');
   }
+  // se si va su Strumenti, caricali (default bar se nessuna disciplina) — Parte A
+  if(tab==='strumenti'){
+    caricaStrumenti(Matter.disciplina || '');
+  }
 }
 
 function playIntroScopri(){ playIntro('screen-scopri'); }
@@ -598,8 +602,10 @@ async function caricaLezioneStep(step){
     if(j.fenomeno.target){
       document.getElementById('les-target').textContent = j.fenomeno.target;
       datoBox.style.display = '';
+      _caricaStrumentoPerFenomeno(disc, j.fenomeno.nome, j.fenomeno.target);
     } else {
       datoBox.style.display = 'none';
+      var sb=document.getElementById('les-strumento-box'); if(sb) sb.style.display='none';
     }
     // stepper a puntini: quanti fenomeni, dove sei, salto diretto
     renderLesDots(j.step, j.totale_passi);
@@ -2149,7 +2155,8 @@ async function importaCifra(ricetta_id) {
 /* ── STRUMENTI DI MISURA ────────────────────────────────── */
 async function caricaStrumenti(disciplina) {
   const list = document.getElementById('strumenti-list');
-  if(!list || !disciplina) return;
+  if(!list) return;
+  if(!disciplina) disciplina = 'bar';  // Parte A: mostra sempre qualcosa (default bar)
   try {
     const disc_norm = disciplina.toLowerCase().replace('caffetteria','caffe').replace('panificazione','panificazione');
     const r = await fetch('/v1/strumenti/' + encodeURIComponent(disc_norm));
@@ -2773,6 +2780,48 @@ var _origSetLang = typeof setLang === 'function' ? setLang : null;
 
 // ── FOTOCAMERA (Vision) ────────────────────────────────────────
 // ── AGGANCIO AL LOOP dalla foto ──────────────────────────────
+// ── STRUMENTO per misurare il numero-bersaglio del fenomeno (Parte B) ──
+async function _caricaStrumentoPerFenomeno(disc, fenNome, target){
+  var box = document.getElementById('les-strumento-box');
+  var cont = document.getElementById('les-strumento-content');
+  if(!box || !cont) return;
+  try {
+    var dnorm = _normDisc(disc);
+    var r = await fetch('/v1/strumenti/' + encodeURIComponent(dnorm));
+    var j = await r.json();
+    var items = j.strumenti || [];
+    if(!items.length){ box.style.display='none'; return; }
+    // scelgo lo strumento più pertinente: matching parole tra misura/target strumento e fenomeno/target
+    var testo = ((fenNome||'') + ' ' + (target||'')).toLowerCase();
+    var best = null, bestScore = 0;
+    items.forEach(function(s){
+      var chiavi = ((s.misura||'') + ' ' + (s.target||'') + ' ' + (s.nome||'')).toLowerCase();
+      var score = 0;
+      // parole chiave sensoriali comuni
+      ['ph','brix','°c','temperatura','abv','alcol','grammi','peso','bar','tds','densità','so2','umidità','aw','acidità'].forEach(function(k){
+        if(testo.indexOf(k)>=0 && chiavi.indexOf(k)>=0) score += 2;
+      });
+      if(score > bestScore){ bestScore = score; best = s; }
+    });
+    if(!best){ best = items[0]; } // fallback: il primo strumento della disciplina
+    cont.innerHTML =
+      '<a class="les-strum-card" href="'+esc(best.amazon)+'" target="_blank" rel="noopener sponsored">'
+      +'<div class="les-strum-info">'
+      +'<span class="les-strum-nome">'+esc(best.nome)+'</span>'
+      +'<span class="les-strum-meta">'+esc(best.misura)+' · '+esc(best.prezzo_approx||'')+'</span>'
+      +'</div>'
+      +'<span class="les-strum-cta">Vedi <i class="ph ph-arrow-up-right"></i></span>'
+      +'</a>';
+    box.style.display = '';
+  } catch(e){ box.style.display='none'; }
+}
+function _normDisc(d){
+  var m = {bar:'bar',bakery:'panificazione',panificazione:'panificazione',cucina:'cucina',
+    caffetteria:'caffe',caffe:'caffe',pasticceria:'pasticceria',gelateria:'gelateria',
+    vino:'vino',birra:'birra'};
+  return m[(d||'').toLowerCase()] || (d||'').toLowerCase();
+}
+
 async function _fotoAscolta(btn, testo){
   if(!testo) return;
   // se sta già suonando, ferma

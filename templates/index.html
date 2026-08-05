@@ -221,6 +221,11 @@ if('serviceWorker' in navigator){
         <div class="sl-dato-lab">il numero bersaglio</div>
         <div class="sl-dato-val" id="les-target"></div>
       </div>
+      <!-- STRUMENTO per misurare questo numero (Parte B) -->
+      <div class="les-strumento" id="les-strumento-box" style="display:none">
+        <span class="les-strum-lab">Per misurarlo ti serve</span>
+        <div id="les-strumento-content"></div>
+      </div>
       <div class="sl-principio" id="les-principio-box" style="display:none">
         <div class="sl-princ-lab">
           <div class="sl-princ-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg></div>
@@ -340,7 +345,7 @@ if('serviceWorker' in navigator){
     <div style="margin:0 0 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px">Gli strumenti per misurare i numeri bersaglio</div>
       <div id="strumenti-list" style="display:flex;flex-direction:column;gap:8px">
-        <div style="color:var(--ink-muted);font-size:13px">Scegli una disciplina per vedere gli strumenti.</div>
+        <div style="color:var(--ink-muted);font-size:13px">Scegli una disciplina in Scopri per vedere i suoi strumenti — oppure guarda quelli del bar qui sotto.</div>
       </div>
     </div>
   </div>
