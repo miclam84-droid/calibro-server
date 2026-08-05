@@ -2164,13 +2164,14 @@ async function caricaStrumenti(disciplina) {
     const items = j.strumenti || [];
     if(!items.length) { list.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Nessuno strumento per questa disciplina.</div>'; return; }
     list.innerHTML = items.map(s => `
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--ink)">${esc(s.nome)}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--ink-muted);margin-top:2px">${esc(s.misura)} · ${esc(s.target)} · ${esc(s.prezzo_approx||'')}</div>
+      <a class="strum-card" href="${esc(s.amazon)}" target="_blank" rel="noopener sponsored">
+        <div class="strum-card-head">
+          <div class="strum-card-nome">${esc(s.nome)}</div>
+          <span class="strum-card-vedi">Vedi <i class="ph ph-arrow-up-right"></i></span>
         </div>
-        <a href="${esc(s.amazon)}" target="_blank" rel="noopener" style="background:var(--e500);color:#fff;font-family:var(--mono);font-size:10px;font-weight:600;padding:6px 10px;border-radius:6px;text-decoration:none;white-space:nowrap;flex-shrink:0;margin-left:10px">Vedi →</a>
-      </div>`).join('');
+        <div class="strum-card-meta"><span class="strum-card-mis">${esc(s.misura)}</span><span class="strum-card-sep">·</span><span>${esc(s.target)}</span><span class="strum-card-sep">·</span><span class="strum-card-prezzo">${esc(s.prezzo_approx||'')}</span></div>
+        ${s.uso ? `<div class="strum-card-uso">${esc(s.uso)}</div>` : ''}
+      </a>`).join('');
   } catch(e) {
     list.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Errore caricamento strumenti.</div>';
   }
@@ -2185,21 +2186,29 @@ async function caricaProfiloSensoriale() {
   try {
     const token = localStorage.getItem('matter_token') || '';
     if(!token) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Accedi per vedere il tuo profilo sensoriale.</div>'; return; }
-    const r = await fetch('/v1/profilo-sensoriale', {headers:{'X-Token':token}});
+    const r = await fetch('/v1/profilo-sensoriale', {headers:{'Authorization':'Bearer '+token}});
+    if(!r.ok){ div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Fai qualche valutazione sugli abbinamenti per costruire il tuo profilo.</div>'; return; }
     const j = await r.json();
-    if(j.errore) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Fai almeno 5 valutazioni per vedere il profilo.</div>'; return; }
-    const dim = j.dimensioni || {};
+    if(j.errore) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Fai qualche valutazione sugli abbinamenti per costruire il tuo profilo.</div>'; return; }
+    // il profilo ha le dimensioni sensoriali (escludo le chiavi interne che iniziano con _)
+    const profilo = j.profilo || {};
+    const dim = {};
+    Object.entries(profilo).forEach(([k,v]) => { if(!k.startsWith('_') && typeof v === 'number') dim[k]=v; });
+    if(Object.keys(dim).length === 0){
+      div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Il tuo profilo si costruisce man mano che valuti gli abbinamenti con 👍 e 👎.</div>';
+      return;
+    }
     const html = Object.entries(dim).map(([k,v]) => `
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-muted);width:80px;text-transform:uppercase">${k}</div>
-        <div style="flex:1;background:var(--border);border-radius:4px;height:6px">
-          <div style="background:var(--teal);width:${Math.round((v/10)*100)}%;height:6px;border-radius:4px"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-muted);width:82px;text-transform:uppercase">${esc(k)}</div>
+        <div style="flex:1;background:var(--border);height:8px">
+          <div style="background:var(--accent);width:${Math.round((v/10)*100)}%;height:8px"></div>
         </div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--teal);width:24px;text-align:right">${v.toFixed(1)}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);width:26px;text-align:right">${Number(v).toFixed(1)}</div>
       </div>`).join('');
-    div.innerHTML = html || '<div style="color:var(--ink-muted);font-size:13px">Nessun dato ancora.</div>';
+    div.innerHTML = html;
   } catch(e) {
-    div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Errore caricamento profilo.</div>';
+    div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Il profilo non è disponibile ora. Riprova tra poco.</div>';
   }
 }
 

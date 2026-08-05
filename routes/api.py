@@ -254,58 +254,58 @@ def strumenti(disciplina=None):
     Ogni strumento ha: nome, misura, numero_bersaglio, link_amazon."""
     STRUMENTI_DB = {
         "bar": [
-            {"nome":"pH-metro da banco","misura":"pH","target":"0-14","amazon":"https://www.amazon.it/s?k=phmetro+digitale+professionale","prezzo_approx":"€25-80"},
-            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"0-85°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+professionale","prezzo_approx":"€15-60"},
-            {"nome":"Bilancia di precisione 0.1g","misura":"grammi","target":"0-500g","amazon":"https://www.amazon.it/s?k=bilancia+precisione+0.1g+cocktail","prezzo_approx":"€20-50"},
-            {"nome":"Alcolimetro/ebulliometro","misura":"ABV%","target":"0-100%","amazon":"https://www.amazon.it/s?k=alcolimetro+digitale","prezzo_approx":"€30-150"},
-            {"nome":"Termometro digitale sonda","misura":"°C","target":"-50/+300°C","amazon":"https://www.amazon.it/s?k=termometro+digitale+sonda+cucina","prezzo_approx":"€10-40"},
-            {"nome":"Jigger graduato","misura":"ml","target":"5-60ml","amazon":"https://www.amazon.it/s?k=jigger+professionale+graduato","prezzo_approx":"€5-25"},
+            {"nome":"pH-metro da banco","misura":"pH","target":"0-14","uso":"Misura l'acidità reale del cocktail. Un sour equilibrato sta tra pH 3,0 e 3,4 — sotto è aggressivo, sopra è piatto.","amazon":"https://www.amazon.it/s?k=phmetro+digitale+professionale","prezzo_approx":"€25-80"},
+            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"0-85°","uso":"Legge lo zucchero disciolto in sciroppi e liquori. Ti dà la dolcezza esatta invece di andare a occhio.","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+professionale","prezzo_approx":"€15-60"},
+            {"nome":"Bilancia di precisione 0.1g","misura":"grammi","target":"0-500g","uso":"Pesa acidi, zuccheri e soluzioni con precisione 0,1g. La base per ricette ripetibili al decimo.","amazon":"https://www.amazon.it/s?k=bilancia+precisione+0.1g+cocktail","prezzo_approx":"€20-50"},
+            {"nome":"Alcolimetro/ebulliometro","misura":"ABV%","target":"0-100%","uso":"Verifica il grado alcolico finale del drink. Utile per batch e pre-mix dove l'ABV deve essere costante.","amazon":"https://www.amazon.it/s?k=alcolimetro+digitale","prezzo_approx":"€30-150"},
+            {"nome":"Termometro digitale sonda","misura":"°C","target":"-50/+300°C","uso":"Controlla la temperatura di servizio e degli infusi. La T finale di un drink shakerato sta tra -4 e -6°C.","amazon":"https://www.amazon.it/s?k=termometro+digitale+sonda+cucina","prezzo_approx":"€10-40"},
+            {"nome":"Jigger graduato","misura":"ml","target":"5-60ml","uso":"Dosa i volumi al millilitro. La differenza tra un drink ripetibile e uno che cambia ogni volta.","amazon":"https://www.amazon.it/s?k=jigger+professionale+graduato","prezzo_approx":"€5-25"},
         ],
         "caffe": [
-            {"nome":"Rifrattometro TDS caffè (VST/Atago)","misura":"TDS%","target":"1.15-1.55% filtro · 7-12% espresso","amazon":"https://www.amazon.it/s?k=rifrattometro+caffe+tds","prezzo_approx":"€50-300"},
-            {"nome":"Bilancia barista 0.1g con timer","misura":"grammi + tempo","target":"ratio 1:2-17","amazon":"https://www.amazon.it/s?k=bilancia+barista+timer+professionale","prezzo_approx":"€25-150"},
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"90-96°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+caffetteria","prezzo_approx":"€10-40"},
-            {"nome":"Manometro espresso","misura":"bar","target":"9 bar","amazon":"https://www.amazon.it/s?k=manometro+macchina+espresso","prezzo_approx":"€15-60"},
+            {"nome":"Rifrattometro TDS caffè (VST/Atago)","misura":"TDS%","target":"1.15-1.55% filtro · 7-12% espresso","uso":"Misura la concentrazione dell'estratto. Filtro ben fatto sta a 1,15-1,55% TDS, espresso a 7-12%.","amazon":"https://www.amazon.it/s?k=rifrattometro+caffe+tds","prezzo_approx":"€50-300"},
+            {"nome":"Bilancia barista 0.1g con timer","misura":"grammi + tempo","target":"ratio 1:2-17","uso":"Pesa dose e resa col tempo. La base per un ratio costante (1:2 espresso, 1:16 filtro).","amazon":"https://www.amazon.it/s?k=bilancia+barista+timer+professionale","prezzo_approx":"€25-150"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"90-96°C","uso":"Controlla la temperatura dell'acqua. L'estrazione ideale sta tra 90 e 96°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+caffetteria","prezzo_approx":"€10-40"},
+            {"nome":"Manometro espresso","misura":"bar","target":"9 bar","uso":"Verifica la pressione in erogazione. Lo standard è 9 bar — fuori range l'estrazione cambia.","amazon":"https://www.amazon.it/s?k=manometro+macchina+espresso","prezzo_approx":"€15-60"},
         ],
         "panificazione": [
-            {"nome":"pH-metro","misura":"pH","target":"pH madre: 3.7-3.9","amazon":"https://www.amazon.it/s?k=phmetro+lievito+madre","prezzo_approx":"€25-80"},
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"96-98°C interno pane","amazon":"https://www.amazon.it/s?k=termometro+sonda+forno+pane","prezzo_approx":"€10-40"},
-            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"baker%","amazon":"https://www.amazon.it/s?k=bilancia+professionale+panificazione","prezzo_approx":"€20-80"},
-            {"nome":"Igrometro forno","misura":"umidità%","target":"80-90% primi minuti cottura","amazon":"https://www.amazon.it/s?k=igrometro+forno+cottura+pane","prezzo_approx":"€15-50"},
-            {"nome":"Acidimetro titolabile","misura":"acido lattico%","target":"0.5-2%","amazon":"https://www.amazon.it/s?k=kit+acidita+titolabile+vino","prezzo_approx":"€20-60"},
+            {"nome":"pH-metro","misura":"pH","target":"pH madre: 3.7-3.9","uso":"Legge l'acidità della madre. Una madre in forza sta a pH 3,7-3,9: sotto è troppo acida, sopra è debole.","amazon":"https://www.amazon.it/s?k=phmetro+lievito+madre","prezzo_approx":"€25-80"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"96-98°C interno pane","uso":"Controlla la temperatura dell'acqua. L'estrazione ideale sta tra 90 e 96°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+forno+pane","prezzo_approx":"€10-40"},
+            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"baker%","uso":"Pesa gli ingredienti in baker's percentage. La precisione fa la differenza sull'idratazione.","amazon":"https://www.amazon.it/s?k=bilancia+professionale+panificazione","prezzo_approx":"€20-80"},
+            {"nome":"Igrometro forno","misura":"umidità%","target":"80-90% primi minuti cottura","uso":"Controlla l'umidità in camera. I primi minuti a 80-90% danno crosta e sviluppo giusti.","amazon":"https://www.amazon.it/s?k=igrometro+forno+cottura+pane","prezzo_approx":"€15-50"},
+            {"nome":"Acidimetro titolabile","misura":"acido lattico%","target":"0.5-2%","uso":"Misura l'acidità totale, non solo il pH. Dice quanto acido c'è davvero da tamponare.","amazon":"https://www.amazon.it/s?k=kit+acidita+titolabile+vino","prezzo_approx":"€20-60"},
         ],
         "pasticceria": [
-            {"nome":"Termometro digitale sonda","misura":"°C","target":"crema 82-84°C · caramello 160°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+pasticceria","prezzo_approx":"€10-40"},
-            {"nome":"Bilancia 0.1g","misura":"grammi","target":"precisione fondamentale","amazon":"https://www.amazon.it/s?k=bilancia+precisione+pasticceria","prezzo_approx":"€20-50"},
-            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"sciroppi · confetture ≥65°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+pasticceria","prezzo_approx":"€15-60"},
-            {"nome":"Termometro IR (infrarossi)","misura":"°C","target":"temperaggio cioccolato 28-32°C","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina+professionale","prezzo_approx":"€20-60"},
+            {"nome":"Termometro digitale sonda","misura":"°C","target":"crema 82-84°C · caramello 160°C","uso":"Controlla creme e zuccheri cotti. Crema inglese a 82-84°C, caramello a 160°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+pasticceria","prezzo_approx":"€10-40"},
+            {"nome":"Bilancia 0.1g","misura":"grammi","target":"precisione fondamentale","uso":"In pasticceria la precisione è tutto: 0,1g cambia la resa di meringhe e gel.","amazon":"https://www.amazon.it/s?k=bilancia+precisione+pasticceria","prezzo_approx":"€20-50"},
+            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"sciroppi · confetture ≥65°","uso":"Misura lo zucchero di sciroppi e confetture. Gelificazione sopra i 65° Brix.","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+pasticceria","prezzo_approx":"€15-60"},
+            {"nome":"Termometro IR (infrarossi)","misura":"°C","target":"temperaggio cioccolato 28-32°C","uso":"Legge la superficie senza contatto. Fondamentale per il temperaggio (28-32°C).","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina+professionale","prezzo_approx":"€20-60"},
         ],
         "gelateria": [
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"-10/-12°C servizio · -18°C conservazione","amazon":"https://www.amazon.it/s?k=termometro+sonda+gelateria+professionale","prezzo_approx":"€10-40"},
-            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"POD/PAC mix gelato","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+gelateria","prezzo_approx":"€15-60"},
-            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"overrun: peso × volume","amazon":"https://www.amazon.it/s?k=bilancia+professionale+gelateria","prezzo_approx":"€20-80"},
-            {"nome":"Misuratore Aw (attività acqua)","misura":"Aw","target":"<0.85 per sicurezza","amazon":"https://www.amazon.it/s?k=misuratore+attivita+acqua+aw","prezzo_approx":"€200-800"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"-10/-12°C servizio · -18°C conservazione","uso":"Controlla la temperatura dell'acqua. L'estrazione ideale sta tra 90 e 96°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+gelateria+professionale","prezzo_approx":"€10-40"},
+            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"POD/PAC mix gelato","uso":"Misura lo zucchero di sciroppi e confetture. Gelificazione sopra i 65° Brix.","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+gelateria","prezzo_approx":"€15-60"},
+            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"overrun: peso × volume","uso":"Pesa gli ingredienti in baker's percentage. La precisione fa la differenza sull'idratazione.","amazon":"https://www.amazon.it/s?k=bilancia+professionale+gelateria","prezzo_approx":"€20-80"},
+            {"nome":"Misuratore Aw (attività acqua)","misura":"Aw","target":"<0.85 per sicurezza","uso":"Misura l'acqua libera. Sotto 0,85 il prodotto è sicuro dalla proliferazione.","amazon":"https://www.amazon.it/s?k=misuratore+attivita+acqua+aw","prezzo_approx":"€200-800"},
         ],
         "vino": [
-            {"nome":"pH-metro da banco","misura":"pH","target":"pH vino 3.0-3.8","amazon":"https://www.amazon.it/s?k=phmetro+enologico+vino","prezzo_approx":"€25-150"},
-            {"nome":"Kit acidità volatile","misura":"g/L acido acetico","target":"<0.6 g/L","amazon":"https://www.amazon.it/s?k=kit+acidita+volatile+vino","prezzo_approx":"€20-80"},
-            {"nome":"Rifrattometro mosto","misura":"°Brix/Babo","target":"maturità uva","amazon":"https://www.amazon.it/s?k=rifrattometro+mosto+uva","prezzo_approx":"£15-50"},
-            {"nome":"Alcoolmetro Gay-Lussac","misura":"ABV%","target":"vino 10-15% vol","amazon":"https://www.amazon.it/s?k=alcoolmetro+gay+lussac+vino","prezzo_approx":"€10-40"},
-            {"nome":"Kit SO2 libera/totale","misura":"mg/L","target":"SO2 libera 20-40 mg/L","amazon":"https://www.amazon.it/s?k=kit+analisi+so2+vino","prezzo_approx":"€30-100"},
+            {"nome":"pH-metro da banco","misura":"pH","target":"pH vino 3.0-3.8","uso":"Legge l'acidità del vino. Bianchi freschi a pH 3,0-3,4, rossi 3,4-3,6.","amazon":"https://www.amazon.it/s?k=phmetro+enologico+vino","prezzo_approx":"€25-150"},
+            {"nome":"Kit acidità volatile","misura":"g/L acido acetico","target":"<0.6 g/L","uso":"Misura l'acido acetico. Sopra 0,6 g/L il vino sa di aceto: difetto da tenere sotto controllo.","amazon":"https://www.amazon.it/s?k=kit+acidita+volatile+vino","prezzo_approx":"€20-80"},
+            {"nome":"Rifrattometro mosto","misura":"°Brix/Babo","target":"maturità uva","uso":"Misura gli zuccheri dell'uva. Dice quando l'uva è matura per la vendemmia.","amazon":"https://www.amazon.it/s?k=rifrattometro+mosto+uva","prezzo_approx":"£15-50"},
+            {"nome":"Alcoolmetro Gay-Lussac","misura":"ABV%","target":"vino 10-15% vol","uso":"Verifica il grado del vino finito, tipicamente 10-15% vol.","amazon":"https://www.amazon.it/s?k=alcoolmetro+gay+lussac+vino","prezzo_approx":"€10-40"},
+            {"nome":"Kit SO2 libera/totale","misura":"mg/L","target":"SO2 libera 20-40 mg/L","uso":"Misura l'anidride solforosa. La SO2 libera va tenuta a 20-40 mg/L per proteggere il vino.","amazon":"https://www.amazon.it/s?k=kit+analisi+so2+vino","prezzo_approx":"€30-100"},
         ],
         "birra": [
-            {"nome":"Densimetro/areometro","misura":"densità/OG/FG","target":"OG 1.040-1.080","amazon":"https://www.amazon.it/s?k=densimetro+birra+homebrewing","prezzo_approx":"€5-20"},
-            {"nome":"Rifrattometro birra","misura":"°Brix/Plato","target":"attenuation%","amazon":"https://www.amazon.it/s?k=rifrattometro+birra+professionale","prezzo_approx":"€15-50"},
-            {"nome":"pH-metro digitale","misura":"pH","target":"mash pH 5.2-5.4","amazon":"https://www.amazon.it/s?k=phmetro+digitale+birra","prezzo_approx":"€25-80"},
-            {"nome":"Termometro sonda","misura":"°C","target":"mash 62-72°C · lagerizzazione 0-2°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+birra+homebrewing","prezzo_approx":"€10-40"},
-            {"nome":"Manometro CO2 keg","misura":"bar","target":"carbonatazione 1.5-3 bar","amazon":"https://www.amazon.it/s?k=manometro+co2+fusto+birra","prezzo_approx":"€15-50"},
+            {"nome":"Densimetro/areometro","misura":"densità/OG/FG","target":"OG 1.040-1.080","uso":"Misura la densità del mosto. OG prima della fermentazione (1.040-1.080), FG dopo.","amazon":"https://www.amazon.it/s?k=densimetro+birra+homebrewing","prezzo_approx":"€5-20"},
+            {"nome":"Rifrattometro birra","misura":"°Brix/Plato","target":"attenuation%","uso":"Legge i gradi Plato. Comodo per controlli veloci durante la cotta.","amazon":"https://www.amazon.it/s?k=rifrattometro+birra+professionale","prezzo_approx":"€15-50"},
+            {"nome":"pH-metro digitale","misura":"pH","target":"mash pH 5.2-5.4","uso":"Controlla il pH del mash. La zona giusta è 5,2-5,4 per l'azione degli enzimi.","amazon":"https://www.amazon.it/s?k=phmetro+digitale+birra","prezzo_approx":"€25-80"},
+            {"nome":"Termometro sonda","misura":"°C","target":"mash 62-72°C · lagerizzazione 0-2°C","uso":"Governa le soste enzimatiche del mash (62-72°C) e la lagerizzazione.","amazon":"https://www.amazon.it/s?k=termometro+sonda+birra+homebrewing","prezzo_approx":"€10-40"},
+            {"nome":"Manometro CO2 keg","misura":"bar","target":"carbonatazione 1.5-3 bar","uso":"Regola la carbonatazione in fusto, tra 1,5 e 3 bar secondo lo stile.","amazon":"https://www.amazon.it/s?k=manometro+co2+fusto+birra","prezzo_approx":"€15-50"},
         ],
         "cucina": [
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"manzo MR 55-57°C · pollo 74°C","amazon":"https://www.amazon.it/s?k=termometro+sonda+cucina+professionale","prezzo_approx":"€10-40"},
-            {"nome":"pH-metro","misura":"pH","target":"fermentati pH<4.6","amazon":"https://www.amazon.it/s?k=phmetro+cucina+fermentati","prezzo_approx":"€25-80"},
-            {"nome":"Termometro IR infrarossi","misura":"°C","target":"olio frittura 170-180°C","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina","prezzo_approx":"€20-60"},
-            {"nome":"Bilancia precisione 1g","misura":"grammi","target":"dosaggi sale/acido","amazon":"https://www.amazon.it/s?k=bilancia+precisione+cucina+professionale","prezzo_approx":"€20-50"},
-            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"confetture ≥65°","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+marmellata","prezzo_approx":"€15-60"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"manzo MR 55-57°C · pollo 74°C","uso":"Controlla la temperatura dell'acqua. L'estrazione ideale sta tra 90 e 96°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+cucina+professionale","prezzo_approx":"€10-40"},
+            {"nome":"pH-metro","misura":"pH","target":"fermentati pH<4.6","uso":"Legge l'acidità della madre. Una madre in forza sta a pH 3,7-3,9: sotto è troppo acida, sopra è debole.","amazon":"https://www.amazon.it/s?k=phmetro+cucina+fermentati","prezzo_approx":"€25-80"},
+            {"nome":"Termometro IR infrarossi","misura":"°C","target":"olio frittura 170-180°C","uso":"Legge la superficie: olio di frittura ideale a 170-180°C.","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina","prezzo_approx":"€20-60"},
+            {"nome":"Bilancia precisione 1g","misura":"grammi","target":"dosaggi sale/acido","uso":"Dosaggi esatti di sale e acidi, dove l'occhio sbaglia.","amazon":"https://www.amazon.it/s?k=bilancia+precisione+cucina+professionale","prezzo_approx":"€20-50"},
+            {"nome":"Rifrattometro Brix","misura":"°Brix","target":"confetture ≥65°","uso":"Misura lo zucchero di sciroppi e confetture. Gelificazione sopra i 65° Brix.","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+marmellata","prezzo_approx":"€15-60"},
         ],
     }
 
@@ -1198,7 +1198,9 @@ def get_profilo_sensoriale():
         profilo = row[0] if row and row[0] else _profilo_default()
         return jsonify({"profilo": profilo, "interazioni": profilo.get("_n", 0)})
     except Exception as e:
-        return jsonify({"errore": str(e)}), 500
+        # non far crashare la UI: restituisci un profilo di default con nota
+        print(f"[PROFILO ERRORE] {e}", flush=True)
+        return jsonify({"profilo": _profilo_default(), "interazioni": 0})
 
 @bp.route("/v1/feedback-abbinamento", methods=["POST"])
 def feedback_abbinamento():
