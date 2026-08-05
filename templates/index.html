@@ -64,155 +64,125 @@ if('serviceWorker' in navigator){
   </nav>
 </header>
 <div class="screen active" id="screen-scopri">
-  <div class="lab-area-header"><span class="lab-area-label">ESPLORAZIONE FENOMENI</span></div>
-
-  <!-- ── DASHBOARD NUMERI ── -->
-  <div class="db-stats">
-    <div class="db-stat">
-      <div class="db-stat-val">91</div>
-      <div class="db-stat-lab">Fenomeni</div>
-    </div>
-    <div class="db-stat">
-      <div class="db-stat-val">1.530</div>
-      <div class="db-stat-lab">Ingredienti</div>
-    </div>
-    <div class="db-stat">
-      <div class="db-stat-val">33.696</div>
-      <div class="db-stat-lab">Connessioni aromatiche</div>
-    </div>
-    <div class="db-stat">
-      <div class="db-stat-val">6</div>
-      <div class="db-stat-lab">Calcolatori</div>
-    </div>
+  <!-- MANIFESTO -->
+  <div class="mtr-manifesto">
+    <span class="mtr-manifesto-tag">La scienza del mestiere</span>
+    <span class="mtr-manifesto-claim">Ogni gesto ha un numero.</span>
   </div>
 
-  <!-- scheda hero dinamica — popolata da /home -->
-  <div class="scheda-hero" id="scopri-hero">
-    <!-- numero bersaglio in cima — visibile solo quando presente -->
-    <div class="hero-num-top" id="scopri-num-top" style="display:none">
-      <div class="hero-num-top-lab">il numero bersaglio</div>
-      <div class="hero-num-top-val" id="scopri-num-top-val"></div>
+  <!-- GAUGE — numero bersaglio del giorno (popolato da /home) -->
+  <div class="scheda-hero mtr-gauge" id="scopri-hero">
+    <div class="mtr-gauge-top">
+      <span class="mtr-gauge-label" id="scopri-ey">caricamento…</span>
+      <span class="mtr-gauge-num-top" id="scopri-num-top" style="display:none">
+        <span id="scopri-num-top-val"></span>
+      </span>
     </div>
-    <div class="hero-hdr">
-      <div class="hero-ey" id="scopri-ey">caricamento in corso…</div>
-      <h2 id="scopri-titolo">—</h2>
-    </div>
-    <div class="hero-body">
+    <h2 class="mtr-gauge-titolo" id="scopri-titolo">—</h2>
+    <div class="mtr-gauge-body">
       <p id="scopri-desc"></p>
-      <div class="num-bersaglio" id="scopri-num" style="display:none">
+      <div class="num-bersaglio mtr-gauge-num" id="scopri-num" style="display:none">
         <div class="num-bersaglio-inner">
-          <div class="num-lab" id="scopri-num-lab">numero bersaglio</div>
+          <div class="num-lab" id="scopri-num-lab">il numero bersaglio</div>
           <div class="num-big" id="scopri-num-val"></div>
         </div>
       </div>
     </div>
+    <button class="cta-main mtr-gauge-cta" id="scopri-cta" onclick="avviaLezione()">Esplora il fenomeno</button>
   </div>
-  <button class="cta-main" id="scopri-cta" onclick="avviaLezione()">Esplora il fenomeno</button>
 
-  <!-- ── LOOP GUIDATO: fenomeno → abbinamento → chiedi → quaderno ── -->
+  <!-- DASHBOARD NUMERI — stile strumento -->
+  <div class="db-stats mtr-stats">
+    <div class="db-stat"><div class="db-stat-val">91</div><div class="db-stat-lab">Fenomeni</div></div>
+    <div class="db-stat"><div class="db-stat-val">1.530</div><div class="db-stat-lab">Ingredienti</div></div>
+    <div class="db-stat"><div class="db-stat-val">33.696</div><div class="db-stat-lab">Connessioni</div></div>
+    <div class="db-stat"><div class="db-stat-val">6</div><div class="db-stat-lab">Calcolatori</div></div>
+  </div>
+
+  <!-- LOOP GUIDATO -->
   <div class="loop-guidato" id="loop-guidato" style="display:none">
     <div class="loop-label">Esplora il percorso</div>
     <div class="loop-steps">
       <div class="loop-step" onclick="avviaLezione()">
         <div class="loop-step-ico">✎</div>
-        <div class="loop-step-txt">
-          <strong id="loop-fen-nome">Fenomeno</strong>
-          <span>Analizza</span>
-        </div>
+        <div class="loop-step-txt"><strong id="loop-fen-nome">Fenomeno</strong><span>Analizza</span></div>
         <div class="loop-step-arr">›</div>
       </div>
       <div class="loop-step" onclick="switchTab('mappa');setTimeout(()=>document.getElementById('flavor-input')&&document.getElementById('flavor-input').focus(),300)">
         <div class="loop-step-ico">⊞</div>
-        <div class="loop-step-txt">
-          <strong>Flavor Network</strong>
-          <span>Abbinamenti molecolari</span>
-        </div>
+        <div class="loop-step-txt"><strong>Flavor Network</strong><span>Abbinamenti molecolari</span></div>
         <div class="loop-step-arr">›</div>
       </div>
       <div class="loop-step" onclick="switchTab('chiedi')">
         <div class="loop-step-ico"><i class="ph ph-chat-circle"></i></div>
-        <div class="loop-step-txt">
-          <strong>Chiedi</strong>
-          <span>Applica alla tua ricetta</span>
-        </div>
+        <div class="loop-step-txt"><strong>Chiedi</strong><span>Applica alla tua ricetta</span></div>
         <div class="loop-step-arr">›</div>
       </div>
       <div class="loop-step" onclick="switchTab('quaderno')">
         <div class="loop-step-ico"><i class="ph ph-notebook"></i></div>
-        <div class="loop-step-txt">
-          <strong>Quaderno</strong>
-          <span>Salva misure e costo</span>
-        </div>
+        <div class="loop-step-txt"><strong>Quaderno</strong><span>Salva misure e costo</span></div>
         <div class="loop-step-arr">›</div>
       </div>
     </div>
   </div>
   <p class="no-login" id="ct-nologin-p">Inizia senza registrarti.</p>
-  <!-- nudge primo accesso — visibile solo se l'utente non ha ancora scelto una disciplina -->
+
+  <!-- nudge primo accesso -->
   <div class="onb-nudge" id="onb-nudge" style="display:none">
-    <div class="onb-nudge-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-    </div>
+    <div class="onb-nudge-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
     <div class="onb-nudge-txt">
       <strong id="onb-nudge-title">Scegli da dove iniziare</strong>
       <span id="onb-nudge-sub">Seleziona la tua disciplina qui sotto per la prima lezione</span>
     </div>
     <button class="onb-nudge-close" onclick="chiudiNudge()" aria-label="chiudi">×</button>
   </div>
-  <div style="background:var(--s600);padding:10px 16px;margin:0;text-align:center">
-    <span id="db-numbers-text" style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ivory);text-transform:uppercase">52 fenomeni · 1.530 ingredienti · 33.696 connessioni · 6 calcolatori</span>
+
+  <!-- banda database -->
+  <div class="mtr-dbband">
+    <span id="db-numbers-text">91 fenomeni · 1.530 ingredienti · 33.696 connessioni · 6 calcolatori</span>
   </div>
-  <div class="sec-label" id="ct-scegli-disc">Scegli la tua disciplina</div>
+
+  <!-- DISCIPLINE -->
+  <div class="sec-label mtr-sec-label" id="ct-scegli-disc">Scegli la tua disciplina</div>
   <div class="disc-list">
     <div class="disc-item" onclick="selezionaDisciplina('bar')">
       <div class="disc-txt"><div class="disc-n" id="disc-bar-nome">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div><div class="disc-kw" id="disc-kw-bar"></div></div>
-      <div class="disc-chip" id="disc-bar-chip">—</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-chip" id="disc-bar-chip">—</div><div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('bakery')">
       <div class="disc-txt"><div class="disc-n" id="disc-bakery-nome">Panificazione</div><div class="disc-m" id="disc-bakery-m">caricamento…</div><div class="disc-kw" id="disc-kw-bakery"></div></div>
-      <div class="disc-chip" id="disc-bakery-chip">—</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-chip" id="disc-bakery-chip">—</div><div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('cucina')">
       <div class="disc-txt"><div class="disc-n" id="disc-cucina-nome">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div><div class="disc-kw" id="disc-kw-cucina"></div></div>
-      <div class="disc-chip" id="disc-cucina-chip">—</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-chip" id="disc-cucina-chip">—</div><div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('caffetteria')">
       <div class="disc-txt"><div class="disc-n" id="disc-caffe-nome">Caffè</div><div class="disc-m" id="disc-caffe-m">caricamento…</div><div class="disc-kw" id="disc-kw-caffe"></div></div>
-      <div class="disc-chip" id="disc-caffe-chip">—</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-chip" id="disc-caffe-chip">—</div><div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('pasticceria')">
       <div class="disc-txt"><div class="disc-n" id="disc-pasticceria-nome">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div><div class="disc-kw" id="disc-kw-pasticceria"></div></div>
-      <div class="disc-chip" id="disc-pasticceria-chip">—</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-chip" id="disc-pasticceria-chip">—</div><div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('gelateria')">
       <div class="disc-txt"><div class="disc-n" id="disc-gelateria-nome">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div><div class="disc-kw" id="disc-kw-gelateria"></div></div>
-      <div class="disc-chip" id="disc-gelateria-chip">—</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-chip" id="disc-gelateria-chip">—</div><div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('vino')">
       <div class="disc-txt"><div class="disc-n" id="disc-vino-nome">Vino</div><div class="disc-m" id="disc-vino-m">caricamento…</div><div class="disc-kw" id="disc-kw-vino"></div></div>
-      <div class="disc-chip" id="disc-vino-chip">—</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-chip" id="disc-vino-chip">—</div><div class="disc-arr">›</div>
     </div>
     <div class="disc-item" onclick="selezionaDisciplina('birra')">
       <div class="disc-txt"><div class="disc-n" id="disc-birra-nome">Birra</div><div class="disc-m" id="disc-birra-m">caricamento…</div><div class="disc-kw" id="disc-kw-birra"></div></div>
-      <div class="disc-chip" id="disc-birra-chip">—</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-chip" id="disc-birra-chip">—</div><div class="disc-arr">›</div>
     </div>
     <div class="disc-item pro-only" onclick="selezionaDisciplina('sicurezza')">
-      <div class="disc-txt">
-        <div class="disc-n" id="ct-disc-sicurezza">Sicurezza alimentare</div>
-        <div class="disc-m" id="ct-disc-sicurezza-sub">HACCP · Aw · shelf life · zone pericolo</div>
-      </div>
-      <div class="disc-chip" style="color:var(--terra);border-color:var(--terra)">Pro</div>
-      <div class="disc-arr">›</div>
+      <div class="disc-txt"><div class="disc-n" id="ct-disc-sicurezza">Sicurezza alimentare</div><div class="disc-m" id="ct-disc-sicurezza-sub">HACCP · Aw · shelf life · zone pericolo</div></div>
+      <div class="disc-chip" style="color:var(--terra);border-color:var(--terra)">Pro</div><div class="disc-arr">›</div>
     </div>
   </div>
+
   <div class="principio-card" id="scopri-principio" style="display:none">
     <div class="princ-ey">principio del giorno</div>
     <div class="princ-h" id="princ-nome">—</div>
