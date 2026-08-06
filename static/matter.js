@@ -2354,11 +2354,16 @@ async function caricaQuaderno(){
   const empty = document.getElementById('quad-empty');
   const list = document.getElementById('quad-list');
   if(!token){
-    if(empty){ empty.style.display='block';
-      const t=empty.querySelector('#ct-quad-empty-title'); if(t) t.textContent=_t('accedi')+' per vedere il tuo quaderno';
-      const s=empty.querySelector('#ct-quad-empty-sub'); if(s) s.textContent='';
-    }
-    if(list) list.innerHTML=''; return;
+    if(empty) empty.style.display='none';
+    if(list) list.innerHTML = `
+      <div class="quad-hero">
+        <div class="quad-hero-icon"><i class="ph ph-notebook"></i></div>
+        <div class="quad-hero-title">Il tuo quaderno da banco</div>
+        <div class="quad-hero-sub">Salva le misure che calcoli — diluizioni, pH, idratazione, food cost — e ritrovale quando ti servono. Ogni numero che colpisci, registrato.</div>
+        <button class="quad-hero-btn" onclick="apriAccount()"><i class="ph ph-sign-in"></i> Accedi per iniziare</button>
+        <div class="quad-hero-note">Gratis. Nessuna carta richiesta.</div>
+      </div>`;
+    return;
   }
   try {
     const r = await fetch('/v1/quaderno',{headers:{'Authorization':'Bearer '+token}});
