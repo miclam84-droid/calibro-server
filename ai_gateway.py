@@ -36,6 +36,7 @@ _MODEL_MISTRAL  = "mistral-small-latest"
 _MODEL_EMBED    = "text-embedding-3-small"
 _MODEL_WHISPER  = "whisper-1"
 _MODEL_VISION   = "gpt-4o-mini"
+_MODEL_GPT_CHAT = "gpt-4o-mini"   # chat economica per domande semplici (routing)
 _MODEL_MODERAT  = "omni-moderation-latest"
 
 # Costi stimati per MTok (USD) — per logging
@@ -201,6 +202,44 @@ def _openai_call(endpoint, payload, timeout=30):
 
 # ── ROUTE PUBBLICHE ───────────────────────────────────────────────────────────
 
+def _gpt_chat(prompt, history=None, max_tokens=1500):
+    """Chat via GPT-4o mini (economico). Per domande semplici senza tool.
+    Ritorna testo o None."""
+    messages = []
+    if history:
+        for h in history[-6:]:
+            # normalizzo il formato Anthropic → OpenAI (content può essere lista)
+            c = h.get("content", "")
+            if isinstance(c, list):
+                c = " ".join(b.get("text", "") for b in c if isinstance(b, dict) and b.get("type") == "text")
+            messages.append({"role": h.get("role", "user"), "content": c})
+    messages.append({"role": "user", "content": prompt})
+    try:
+        data, _ = _openai_call("chat/completions", {
+            "model": _MODEL_GPT_CHAT,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": 0
+        })
+        return (data.get("choices", [{}])[0].get("message", {}).get("content") or "").strip() or None
+    except Exception as e:
+        print(f"[GW] GPT chat fallito: {e}", flush=True)
+        return None
+
+
+def _serve_tool(prompt):
+    """Decide se una domanda ha bisogno del tool-calling (grafo/calcolo) o è
+    informativa semplice. Semplice → modello economico. Complessa → Sonnet+tool.
+    Segnale: presenza di unità di misura, numeri, o verbi operativi di calcolo."""
+    p = (prompt or "").lower()
+    # unità di misura e simboli che indicano una domanda operativa/quantitativa
+    segnali = ["°c", "°", "ph", "brix", "abv", "%", "grammi", " g ", "ml", " kg",
+               "bar", "tds", "so2", "aw", "titolabil", "densità", "rapporto",
+               "quanto", "calcola", "dose", "dosaggio", "resa", "percentuale",
+               "temperatura", "quantità", "proporzion"]
+    return any(s in p for s in segnali)
+
+
 def route_chat(prompt, tools=None, history=None):
     """
     Route principale per la chat F&B.
@@ -222,7 +261,18 @@ def route_chat(prompt, tools=None, history=None):
         messages.extend(history[-6:])  # max 3 scambi precedenti
     messages.append({"role": "user", "content": prompt})
 
-    # Tentativo 1: Sonnet con tool-calling
+    # ── ROUTING PER DIFFICOLTÀ ──────────────────────────────────────────────
+    # Domanda semplice/informativa (nessuna unità di misura, nessun calcolo):
+    # prova prima GPT-4o mini (30-50x più economico di Sonnet). Se fallisce o
+    # torna vuoto, cade su Sonnet. Le domande operative saltano questo e vanno
+    # direttamente a Sonnet con tool-calling (dove la qualità conta).
+    if not _serve_tool(prompt):
+        out = _gpt_chat(prompt, history=history, max_tokens=1500)
+        if out:
+            return _sanitize(out)
+        print("[GW] GPT vuoto su domanda semplice → provo Sonnet", flush=True)
+
+    # Tentativo 1: Sonnet con tool-calling (domande operative o fallback)
     try:
         data, _ = _anthropic_call(
             _MODEL_SONNET, messages,
@@ -274,7 +324,16 @@ def route_chat(prompt, tools=None, history=None):
         print(f"[GW] Sonnet fallito: {e}", flush=True)
         print(f"[GW] Sonnet traceback: {traceback.format_exc()[-500:]}", flush=True)
 
-    # Fallback: Mistral
+    # Fallback 1: GPT-4o mini (economico, quasi sempre disponibile)
+    try:
+        out = _gpt_chat(prompt, history=history)
+        if out:
+            print("[GW] fallback GPT ok", flush=True)
+            return _sanitize(out)
+    except Exception as e:
+        print(f"[GW] GPT fallback fallito: {e}", flush=True)
+
+    # Fallback 2: Mistral
     try:
         out, _ = _mistral_call(prompt)
         if out:
