@@ -1558,3 +1558,33 @@ def admin_crea_colonna_profilo():
         except Exception:
             pass
         return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/diag-profilo")
+def admin_diag_profilo():
+    """Diagnostica: cattura l'errore esatto dell'endpoint profilo. /admin/diag-profilo?s=SECRET"""
+    import os as _os, traceback as _tb
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+    out = {}
+    # test 1: _utente_da_token con token vuoto
+    try:
+        out["utente_da_token_vuoto"] = repr(_utente_da_token(""))
+    except Exception as e:
+        out["utente_da_token_vuoto"] = "CRASH: " + repr(e) + "\n" + _tb.format_exc()[-400:]
+    # test 2: _profilo_default
+    try:
+        out["profilo_default"] = "ok" if _profilo_default() else "vuoto"
+    except Exception as e:
+        out["profilo_default"] = "CRASH: " + repr(e)
+    # test 3: query sulla colonna
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("SELECT profilo_sensoriale FROM utenti LIMIT 1")
+        cur.fetchone(); cur.close(); _release_conn(conn)
+        out["query_colonna"] = "ok"
+    except Exception as e:
+        try: conn.rollback(); _release_conn(conn)
+        except Exception: pass
+        out["query_colonna"] = "CRASH: " + repr(e)[:200]
+    return jsonify(out)
