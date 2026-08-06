@@ -968,3 +968,18 @@ a:focus-visible,input:focus-visible{
 .quad-hero-btn{display:inline-flex;align-items:center;gap:8px;background:var(--signal);color:var(--paper-hi);border:none;font-family:var(--sans);font-size:14px;font-weight:700;padding:12px 22px;cursor:pointer}
 .quad-hero-btn:hover{background:var(--accent)}
 .quad-hero-note{font-family:var(--mono);font-size:10px;color:var(--ink-muted);margin-top:12px;letter-spacing:.04em}
+
+/* Auth — identità nuova (override) */
+.auth-logo{color:var(--ink)}
+.auth-tabs{border:1.5px solid var(--line-strong);border-radius:0}
+.auth-tab.active{background:var(--ink);color:var(--paper-hi)}
+.auth-input{background:var(--paper-hi);border:1.5px solid var(--line-strong);border-radius:0;font-size:16px}
+.auth-input:focus{border-color:var(--accent)}
+.auth-btn{background:var(--signal);border-radius:0;font-weight:700}
+.auth-btn:hover{background:var(--accent)}
+.auth-msg{border-radius:0}
+.auth-msg.ok{background:#E8F0EE;color:var(--signal);display:block}
+.auth-msg.err{background:#F6E5DE;color:var(--accent);display:block}
+.auth-field label{color:var(--ink-muted)}
+/* i link "password dimenticata" ecc — colore coerente */
+#screen-auth a[onclick]{color:var(--signal) !important}
