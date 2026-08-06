@@ -7,7 +7,7 @@ import os, json, traceback, time
 from flask import Blueprint, request, jsonify
 
 from db import carica_grafo, _dati, _get_conn, _release_conn
-from auth import _admin_autenticato
+from auth import _admin_autenticato, _init_account_tables
 from contenuto import (_scheda_lang, _numero_bersaglio, _pulisci_traduzione, _corregge_it)
 from notifiche import _invia_email_resend
 import oss

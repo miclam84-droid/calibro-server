@@ -7,6 +7,7 @@ from ai import (_scheda_tradotta, _intro, _numero_bersaglio as _nb, _genera_quiz
                _traduci_nome, log_evento)
 from contenuto import _scheda_lang, _numero_bersaglio
 from utils import _err
+from auth import _utente_da_token
 from config import DATABASE_URL
 import os, json, time, random
 import ai_gateway as GW
@@ -80,14 +81,14 @@ def disciplina(nome):
             fen_ids.add(e["from_id"])
     # Priorità per disciplina: fenomeni fondamentali prima, poi gli altri
     PRIORITA = {
-        "bar":          ["fen-acidita","fen-diluizione","fen-concentrazione","fen-carbonatazione","fen-estrazione","fen-emulsione","fen-crioscopia","fen-osmosi","fen-ossidazione","fen-clarificazione-cocktail","fen-batch-cocktail","fen-texture-agents","fen-ghiaccio-cocktail","fen-fat-washing","fen-infusione"],
-        "caffetteria":  ["fen-estrazione","fen-estrazione-caffe","fen-concentrazione","fen-pressione","fen-trasferimento-calore","fen-acidita","fen-attivita-enzimatica","fen-temperatura-latte","fen-tostatura-caffe","fen-water-recipe-caffe","fen-cold-brew"],
-        "panificazione":["fen-acidita","fen-fermentazione","fen-fermentazione-lattica","fen-maglia-glutinica","fen-lievitazione","fen-crosta","fen-sale-impasto","fen-enzimi-farina","fen-shelf-life-pane","fen-poolish-biga","fen-laminazione","fen-gelatinizzazione","fen-retrogradazione","fen-concentrazione","fen-osmosi","fen-autolisi","fen-idratazione-impasto","fen-lievitazione-chimica"],
-        "cucina":       ["fen-maillard","fen-denaturazione","fen-coagulazione","fen-emulsione","fen-acidita","fen-osmosi","fen-trasferimento-calore","fen-punto-fumo","fen-cottura-sous-vide","fen-gelificazione","fen-brodo-fondo","fen-frittura","fen-brasatura","fen-salamoia","fen-gelatinizzazione-salse"],
-        "pasticceria":  ["fen-emulsione","fen-cristallizzazione","fen-caramellizzazione","fen-maillard","fen-gelatinizzazione","fen-denaturazione","fen-sineresi","fen-gelificazione","fen-temperaggio-cioccolato","fen-ganache","fen-souffle","fen-pasta-frolla","fen-montatura-panna","fen-zucchero-cottura","fen-meringa","fen-crema-pasticcera"],
-        "gelateria":    ["fen-crioscopia","fen-cristallizzazione-ghiaccio","fen-overrun","fen-concentrazione","fen-emulsione","fen-pac-gelateria","fen-stabilizzanti-gelato","fen-bilanciamento-gelato","fen-overrun-controllo","fen-sorbetto"],
-        "vino":         ["fen-acidita","fen-malolattica","fen-ossidazione","fen-fermentazione","fen-tannini","fen-chiarificazione","fen-solforosa","fen-maturazione-legno","fen-estrazione-polifenoli","fen-rifermentazione","fen-acidita-volatile","fen-brett","fen-affinamento-vino"],
-        "birra":        ["fen-fermentazione","fen-carbonatazione","fen-amilolisi","fen-acidita","fen-ossidazione","fen-attivita-enzimatica","fen-mash-enzimi","fen-isomerizzazione-luppolo","fen-dry-hopping","fen-lagering","fen-fermentazione-alta-bassa","fen-efficienza-birra","fen-acqua-birra"],
+        "bar":          ["fen-acidita","fen-diluizione","fen-concentrazione","fen-carbonatazione","fen-estrazione","fen-emulsione","fen-crioscopia","fen-osmosi","fen-ossidazione","fen-clarificazione-cocktail","fen-batch-cocktail","fen-texture-agents","fen-ghiaccio-cocktail","fen-fat-washing"],
+        "caffetteria":  ["fen-estrazione","fen-estrazione-caffe","fen-concentrazione","fen-pressione","fen-trasferimento-calore","fen-acidita","fen-attivita-enzimatica","fen-temperatura-latte","fen-tostatura-caffe","fen-water-recipe-caffe"],
+        "panificazione":["fen-acidita","fen-fermentazione","fen-fermentazione-lattica","fen-maglia-glutinica","fen-lievitazione","fen-crosta","fen-sale-impasto","fen-enzimi-farina","fen-shelf-life-pane","fen-poolish-biga","fen-laminazione","fen-gelatinizzazione","fen-retrogradazione","fen-concentrazione","fen-osmosi","fen-autolisi"],
+        "cucina":       ["fen-maillard","fen-denaturazione","fen-coagulazione","fen-emulsione","fen-acidita","fen-osmosi","fen-trasferimento-calore","fen-punto-fumo","fen-cottura-sous-vide","fen-gelificazione","fen-brodo-fondo","fen-frittura"],
+        "pasticceria":  ["fen-emulsione","fen-cristallizzazione","fen-caramellizzazione","fen-maillard","fen-gelatinizzazione","fen-denaturazione","fen-sineresi","fen-gelificazione","fen-temperaggio-cioccolato","fen-ganache","fen-souffle","fen-pasta-frolla","fen-montatura-panna","fen-zucchero-cottura"],
+        "gelateria":    ["fen-crioscopia","fen-cristallizzazione-ghiaccio","fen-overrun","fen-concentrazione","fen-emulsione","fen-pac-gelateria","fen-stabilizzanti-gelato","fen-bilanciamento-gelato","fen-overrun-controllo"],
+        "vino":         ["fen-acidita","fen-malolattica","fen-ossidazione","fen-fermentazione","fen-tannini","fen-chiarificazione","fen-solforosa","fen-maturazione-legno","fen-estrazione-polifenoli","fen-rifermentazione","fen-acidita-volatile","fen-brett"],
+        "birra":        ["fen-fermentazione","fen-carbonatazione","fen-amilolisi","fen-acidita","fen-ossidazione","fen-attivita-enzimatica","fen-mash-enzimi","fen-isomerizzazione-luppolo","fen-dry-hopping","fen-lagering","fen-fermentazione-alta-bassa","fen-efficienza-birra"],
     }
     priorita_disc = PRIORITA.get(nome.lower(), [])
 

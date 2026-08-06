@@ -8,6 +8,7 @@ from ai import (cerca_contesto, costruisci_prompt, chiedi_mistral, estrai_entita
                cerca_fuzzy, fenomeni_suggeriti, log_evento)
 from contenuto import _scheda_lang, _numero_bersaglio
 from utils import _err, _check_rate_limit
+from auth import _utente_da_token
 from config import DATABASE_URL
 import os, json
 import motore as Motore
