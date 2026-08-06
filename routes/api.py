@@ -1187,19 +1187,23 @@ def get_profilo_sensoriale():
         import psycopg2
         conn = _get_conn()
         cur = conn.cursor()
-        # Aggiungi colonna se non esiste
-        cur.execute("""
-            ALTER TABLE utenti
-            ADD COLUMN IF NOT EXISTS profilo_sensoriale JSONB DEFAULT '{}'::jsonb
-        """)
-        cur.execute("SELECT profilo_sensoriale FROM utenti WHERE id=%s", (user_id,))
-        row = cur.fetchone()
-        conn.commit(); cur.close(); _release_conn(conn)
-        profilo = row[0] if row and row[0] else _profilo_default()
+        try:
+            cur.execute("SELECT profilo_sensoriale FROM utenti WHERE id=%s", (user_id,))
+            row = cur.fetchone()
+            profilo = row[0] if row and row[0] else _profilo_default()
+        except Exception:
+            # la colonna potrebbe non esistere ancora: rollback pulito e default
+            conn.rollback()
+            profilo = _profilo_default()
+        cur.close(); _release_conn(conn)
         return jsonify({"profilo": profilo, "interazioni": profilo.get("_n", 0)})
     except Exception as e:
-        # non far crashare la UI: restituisci un profilo di default con nota
+        # non far crashare la UI: restituisci un profilo di default
         print(f"[PROFILO ERRORE] {e}", flush=True)
+        try:
+            conn.rollback(); _release_conn(conn)
+        except Exception:
+            pass
         return jsonify({"profilo": _profilo_default(), "interazioni": 0})
 
 @bp.route("/v1/feedback-abbinamento", methods=["POST"])
@@ -1255,7 +1259,12 @@ def feedback_abbinamento():
         conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"ok": True, "profilo": profilo, "interazioni": profilo.get("_n", 0)})
     except Exception as e:
-        return jsonify({"errore": str(e)}), 500
+        try:
+            conn.rollback(); _release_conn(conn)
+        except Exception:
+            pass
+        print(f"[FEEDBACK ERRORE] {e}", flush=True)
+        return jsonify({"ok": False, "errore": "non salvato"}), 200
 
 @bp.route("/v1/contrasto/<ingrediente>")
 def contrasto(ingrediente):
@@ -1524,4 +1533,28 @@ def tts():
         return Response(audio, mimetype="audio/mpeg",
                         headers={"Content-Disposition": "inline; filename=matter.mp3"})
     except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/crea-colonna-profilo")
+def admin_crea_colonna_profilo():
+    """Crea la colonna profilo_sensoriale UNA VOLTA (non ad ogni richiesta).
+    Uso: /admin/crea-colonna-profilo?s=SECRET"""
+    import os as _os
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+    if not DATABASE_URL:
+        return jsonify({"ok": True, "nota": "no db"})
+    try:
+        conn = _get_conn()
+        cur = conn.cursor()
+        cur.execute("ALTER TABLE utenti ADD COLUMN IF NOT EXISTS profilo_sensoriale JSONB DEFAULT '{}'::jsonb")
+        conn.commit()
+        cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "messaggio": "colonna profilo_sensoriale creata/verificata"})
+    except Exception as e:
+        try:
+            conn.rollback(); _release_conn(conn)
+        except Exception:
+            pass
         return jsonify({"errore": str(e)}), 500
