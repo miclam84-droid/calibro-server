@@ -1008,3 +1008,9 @@ a:focus-visible,input:focus-visible{
 .mtr-gauge-num .num-big.lungo{font-size:15px;line-height:1.45}
 /* la descrizione (il perché) respira, viene prima del numero */
 .mtr-gauge-body #scopri-desc{font-size:14px;line-height:1.6;color:var(--paper-hi);opacity:.92;margin-bottom:4px}
+
+/* teatro caricamento foto — fase che avanza con puntino animato */
+.foto-loading{color:var(--ink-muted);font-size:13px;display:flex;align-items:center;gap:8px}
+.foto-load-fase{font-family:var(--mono);font-size:12.5px}
+.foto-loading::before{content:'';width:8px;height:8px;background:var(--accent);border-radius:50%;flex-shrink:0;animation:fotopulse 1s ease-in-out infinite}
+@keyframes fotopulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}

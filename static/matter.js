@@ -2954,16 +2954,28 @@ async function inviaFoto(input){
   card.innerHTML =
     '<div class="s-q"><i class="ph ph-camera"></i> '+(_t('foto_analisi_titolo')||'Analisi immagine')+'</div>'
     +'<img src="'+previewUrl+'" style="max-width:100%;max-height:200px;border-radius:10px;margin:8px 0;object-fit:cover">'
-    +'<div class="s-body foto-loading" style="color:var(--muted);font-size:13px">'
-    +(_t('foto_analisi_loading')||'Riconosco gli ingredienti…')+'</div>';
+    +'<div class="s-body foto-loading"><span class="foto-load-fase" id="foto-load-fase">Riconosco gli ingredienti…</span></div>';
   var schede = document.getElementById('schede');
   if(schede){ schede.prepend(card); schede.scrollTop=0; }
+  // TEATRO del caricamento: fasi che avanzano mentre l'AI lavora
+  var _fasi = (_lang==='en')
+    ? ['Recognizing ingredients…','Searching the phenomena…','Finding the target numbers…','Almost there…']
+    : (_lang==='es')
+    ? ['Reconozco los ingredientes…','Busco los fenómenos…','Encuentro los números objetivo…','Casi listo…']
+    : ['Riconosco gli ingredienti…','Cerco i fenomeni collegati…','Trovo i numeri-bersaglio…','Ci siamo quasi…'];
+  var _fi = 0;
+  var _faseEl = card.querySelector('#foto-load-fase');
+  var _teatro = setInterval(function(){
+    _fi++;
+    if(_fi < _fasi.length && _faseEl){ _faseEl.textContent = _fasi[_fi]; }
+  }, 1400);
   try {
     var fd = new FormData();
     fd.append('immagine', file);
     var r = await fetch('/v1/foto-analisi?lang='+(_lang||'it'), {
       method:'POST', body:fd
     });
+    clearInterval(_teatro);
     var j = await r.json();
     var body = card.querySelector('.s-body');
     body.className = 's-body';
@@ -3037,6 +3049,7 @@ async function inviaFoto(input){
       body.innerHTML = html || '<div style="color:var(--ink-muted);font-size:13px;text-align:center;padding:8px 0"><i class="ph ph-camera-slash" style="font-size:22px;display:block;margin-bottom:6px"></i>Nessun ingrediente riconoscibile — prova con una foto più nitida.</div>';
     }
   } catch(e){
+    clearInterval(_teatro);
     var b = card.querySelector('.s-body');
     if(b) b.textContent = 'Errore di rete: '+e.message;
   }
