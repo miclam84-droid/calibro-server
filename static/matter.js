@@ -2359,12 +2359,22 @@ async function caricaQuaderno(){
   if(!token){
     if(empty) empty.style.display='none';
     if(list) list.innerHTML = `
-      <div class="quad-hero">
-        <div class="quad-hero-icon"><i class="ph ph-notebook"></i></div>
-        <div class="quad-hero-title">Il tuo quaderno da banco</div>
-        <div class="quad-hero-sub">Salva le misure che calcoli — diluizioni, pH, idratazione, food cost — e ritrovale quando ti servono. Ogni numero che colpisci, registrato.</div>
-        <button class="quad-hero-btn" onclick="apriAccount()"><i class="ph ph-sign-in"></i> Accedi per iniziare</button>
-        <div class="quad-hero-note">Gratis. Nessuna carta richiesta.</div>
+      <div class="quad-empty-wrap">
+        <!-- anteprima sfocata di un quaderno già compilato: l'utente desidera possederlo -->
+        <div class="quad-preview" aria-hidden="true">
+          <div class="quad-prev-row"><span class="qp-date">24/08 · 18:40</span><span class="qp-name">Batch Negrono ×12</span><span class="qp-val">dil 22% <b>OK</b></span></div>
+          <div class="quad-prev-row"><span class="qp-date">24/08 · 11:05</span><span class="qp-name">Pasta madre rinfresco</span><span class="qp-val">pH 3.8 <b>OK</b></span></div>
+          <div class="quad-prev-row"><span class="qp-date">23/08 · 22:10</span><span class="qp-name">Sour bilanciato</span><span class="qp-val">acidità 1.3% <b>OK</b></span></div>
+          <div class="quad-prev-row"><span class="qp-date">23/08 · 16:30</span><span class="qp-name">Focaccia 80%</span><span class="qp-val">idr 80% <b>OK</b></span></div>
+          <div class="quad-prev-row"><span class="qp-date">22/08 · 09:15</span><span class="qp-name">Espresso dial-in</span><span class="qp-val">TDS 9.2% <b>OK</b></span></div>
+        </div>
+        <div class="quad-hero quad-hero-over">
+          <div class="quad-hero-icon"><i class="ph ph-notebook"></i></div>
+          <div class="quad-hero-title">Costruisci il tuo metodo</div>
+          <div class="quad-hero-sub">Ogni misura che salvi — diluizioni, pH, idratazione, food cost — diventa il tuo archivio operativo. Non stai imparando: stai costruendo il tuo modo di lavorare.</div>
+          <button class="quad-hero-btn" onclick="apriAccount()"><i class="ph ph-plus"></i> Salva la tua prima misura</button>
+          <div class="quad-hero-note">Gratis. Nessuna carta richiesta.</div>
+        </div>
       </div>`;
     return;
   }
