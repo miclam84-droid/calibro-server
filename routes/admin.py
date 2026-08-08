@@ -1632,3 +1632,35 @@ def admin_genera_ganci():
     return jsonify({"generati": len(fatti), "saltati": len(saltati),
                     "batch_pieno": len(fatti) >= limite,
                     "dettaglio_generati": fatti[:20], "dettaglio_saltati": saltati[:20]})
+
+
+@bp.route("/admin/diag-trial")
+def admin_diag_trial():
+    """Diagnostica il gate trial: mostra se _trial_consentito funziona o va in fail-open."""
+    import os as _os
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    from utils import _trial_consentito
+    out = {}
+    # provo a contare gli usi per un IP di test
+    test_ip = "1.2.3.4-diag"
+    # prima chiamata
+    ok1, info1 = _trial_consentito(None, test_ip, tipo="diag", limite=3)
+    out["chiamata_1"] = {"ok": ok1, "info": info1}
+    ok2, info2 = _trial_consentito(None, test_ip, tipo="diag", limite=3)
+    out["chiamata_2"] = {"ok": ok2, "info": info2}
+    ok3, info3 = _trial_consentito(None, test_ip, tipo="diag", limite=3)
+    out["chiamata_3"] = {"ok": ok3, "info": info3}
+    ok4, info4 = _trial_consentito(None, test_ip, tipo="diag", limite=3)
+    out["chiamata_4_deve_bloccare"] = {"ok": ok4, "info": info4}
+    # conto diretto nel DB per conferma
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM trial_uso WHERE ip=%s", (test_ip,))
+        out["righe_nel_db"] = cur.fetchone()[0]
+        # pulisco il test
+        cur.execute("DELETE FROM trial_uso WHERE ip=%s", (test_ip,))
+        conn.commit(); cur.close(); _release_conn(conn)
+    except Exception as e:
+        out["errore_db"] = str(e)
+    return jsonify(out)
