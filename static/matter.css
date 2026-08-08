@@ -994,3 +994,8 @@ a:focus-visible,input:focus-visible{
 /* badge contesto sopra l'input chat */
 #chat-contesto-badge{align-items:center;gap:6px;margin:0 2px 8px;padding:5px 10px;background:var(--ink);color:var(--paper-hi);font-family:var(--mono);font-size:10px;letter-spacing:.04em;cursor:pointer;border-left:3px solid var(--accent);width:fit-content}
 #chat-contesto-badge::before{content:'✕ ';color:var(--accent)}
+
+/* scheda strutturata — spezza il muro + evidenzia i valori */
+.sl-p .sch-p, p.sch-p{font-size:14.5px;color:var(--ink-muted);line-height:1.7;margin:0 0 12px}
+.sl-p .sch-p:last-child, p.sch-p:last-child{margin-bottom:0}
+.sch-num{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:13.5px;white-space:nowrap}

@@ -595,7 +595,7 @@ async function caricaLezioneStep(step){
         _wbox.style.display='block';
       } else { _wbox.style.display='none'; }
     }
-    document.getElementById('les-scheda').textContent = j.fenomeno.scheda || 'Scheda in aggiornamento.';
+    _formattaScheda(document.getElementById('les-scheda'), j.fenomeno.scheda || 'Scheda in aggiornamento.');
     // target — mostra la box solo se il fenomeno ha un numero-bersaglio,
     // coerente con lo Scopri; niente "—" spoglio quando il dato non c'è
     const datoBox = document.getElementById('les-dato-box');
@@ -2891,6 +2891,31 @@ function _fotoVaiFlavor(nome){
 }
 
 // ── APPROFONDISCI NELLA CHAT col contesto della scheda ──────────
+// ── FORMATTA LA SCHEDA: spezza il muro + evidenzia i valori ──────
+function _formattaScheda(el, testo){
+  if(!el) return;
+  testo = (testo || '').trim();
+  if(!testo){ el.textContent = 'Scheda in aggiornamento.'; return; }
+  var reNB = /\s*Numero bersaglio\s*:\s*/i;
+  if(reNB.test(testo)){ testo = testo.split(reNB)[0].trim(); }
+  var frasi = testo.replace(/([.!?])\s+(?=[A-ZÀ-Ù])/g, '$1|SPLIT|').split('|SPLIT|');
+  function evidenzia(s){
+    var d = document.createElement('div'); d.textContent = s; s = d.innerHTML;
+    s = s.replace(/(\b\d+[.,]?\d*\s?(?:°C|°|%|g\/L|mg\/L|g\b|ml\b|bar\b|µm|Brix|Plato|ABV|Aw|kg\b|h\b|min\b)|\bpH\s?\d+[.,]?\d*(?:-\d+[.,]?\d*)?)/gi,
+      '<span class="sch-num">$1</span>');
+    return s;
+  }
+  var html = ''; var buf = [];
+  frasi.forEach(function(f, i){
+    buf.push(f.trim());
+    if(buf.length >= 2 || i === frasi.length - 1){
+      html += '<p class="sch-p">' + evidenzia(buf.join(' ')) + '</p>';
+      buf = [];
+    }
+  });
+  el.innerHTML = html;
+}
+
 function _approfondisciInChat(){
   // prende il fenomeno della lezione corrente e apre la chat già contestualizzata
   var nome = (document.getElementById('les-nome')?.textContent || '').trim();
