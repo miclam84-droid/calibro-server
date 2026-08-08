@@ -123,3 +123,53 @@ def _aggiorna_profilo(profilo, ingrediente, abbinamento, voto, disciplina):
 
     profilo["_n"] = n + 1
     return profilo
+
+def _trial_consentito(user_id, ip, tipo="varie", limite=5):
+    """Gate trial/pro condiviso (chat, foto, voce).
+    Ritorna (consentito: bool, info: dict).
+    - se piano='pro' → sempre consentito
+    - altrimenti conta gli usi in trial_uso (per user_id o ip) su 7 giorni
+    - blocca a >= limite usi o >= 7 giorni dal primo
+    Registra l'uso se consentito.
+    """
+    import datetime as _dt
+    from db import _get_conn, _release_conn
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        # tabella unificata usi trial (foto/voce/chat) — creata se non esiste
+        cur.execute("""CREATE TABLE IF NOT EXISTS trial_uso (
+            id SERIAL PRIMARY KEY, user_id TEXT, ip TEXT, tipo TEXT,
+            ts TIMESTAMPTZ DEFAULT NOW())""")
+        conn.commit()
+        piano = "free"
+        if user_id:
+            cur.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
+            r = cur.fetchone()
+            piano = (r[0] if r else "free") or "free"
+        if piano == "pro":
+            cur.close(); _release_conn(conn)
+            return True, {"pro": True}
+        # conteggio usi
+        if user_id:
+            cur.execute("SELECT COUNT(*), MIN(ts) FROM trial_uso WHERE user_id=%s AND ts > NOW() - INTERVAL '7 days'", (user_id,))
+        else:
+            cur.execute("SELECT COUNT(*), MIN(ts) FROM trial_uso WHERE ip=%s AND ts > NOW() - INTERVAL '7 days'", (ip,))
+        rt = cur.fetchone()
+        n = int(rt[0]) if rt and rt[0] else 0
+        prima = rt[1] if rt else None
+        giorni = (_dt.datetime.now(_dt.timezone.utc) - prima).days if prima else 0
+        if n >= limite or giorni >= 7:
+            cur.close(); _release_conn(conn)
+            return False, {"trial_esaurito": True, "usi": n}
+        # registra l'uso
+        cur.execute("INSERT INTO trial_uso (user_id, ip, tipo) VALUES (%s,%s,%s)", (user_id, ip, tipo))
+        conn.commit(); cur.close(); _release_conn(conn)
+        return True, {"trial_attivo": True, "usi": n + 1, "rimasti": max(0, limite - n - 1)}
+    except Exception as e:
+        # in caso di errore DB: non bloccare (fail-open) ma logga
+        print(f"[TRIAL] errore: {e}", flush=True)
+        try:
+            conn.rollback(); _release_conn(conn)
+        except Exception:
+            pass
+        return True, {"errore_check": True}

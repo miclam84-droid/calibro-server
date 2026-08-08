@@ -1482,7 +1482,15 @@ def foto_analisi():
     """Pipeline foto → analisi scientifica.
     Riceve immagine multipart (campo 'immagine') o JSON con base64 (campo 'immagine_b64').
     Restituisce ingredienti riconosciuti, abbinamenti aromatici, fenomeni fisici, output AI.
-    Non richiede autenticazione Pro (feature in beta aperta per raccogliere dati di matching)."""
+    Gate trial/pro: la foto costa (OpenAI Vision), quindi limitata all'assaggio."""
+    from utils import _trial_consentito
+    _ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    _tok = (request.form.get("token") or request.args.get("token") or request.headers.get("X-Token","") or "")
+    _uid = _utente_da_token(_tok) if _tok else None
+    _ok, _info = _trial_consentito(_uid, _ip, tipo="foto", limite=5)
+    if not _ok:
+        return jsonify({"errore": "trial_esaurito", "trial_esaurito": True,
+            "messaggio": "Hai esaurito le prove gratuite. Passa a Pro per usare la foto senza limiti."}), 402
     lang = request.args.get("lang", request.json.get("lang", "it") if request.is_json else "it")
 
     # lettura immagine — multipart o base64
@@ -1524,6 +1532,15 @@ def tts():
     testo = (body.get("testo") or "").strip()
     if not testo:
         return jsonify({"errore": "testo mancante"}), 400
+    # gate trial/pro: l'audio costa (OpenAI TTS)
+    from utils import _trial_consentito
+    _ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    _tok = (body.get("token") or request.headers.get("X-Token","") or "")
+    _uid = _utente_da_token(_tok) if _tok else None
+    _ok, _info = _trial_consentito(_uid, _ip, tipo="foto", limite=5)
+    if not _ok:
+        return jsonify({"errore": "trial_esaurito", "trial_esaurito": True,
+            "messaggio": "Hai esaurito le prove gratuite. Passa a Pro per l'audio."}), 402
     voce = body.get("voce", "onyx")  # onyx=maschile caldo, nova=femminile
     lang = body.get("lang", "it")
     try:
