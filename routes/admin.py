@@ -1685,3 +1685,41 @@ def admin_diag_ip():
     except Exception as e:
         out["errore"] = str(e)
     return jsonify(out)
+
+
+@bp.route("/admin/analizza-target")
+def admin_analizza_target():
+    """Analizza tutti i target dei fenomeni: quali sono numeri puliti, quali frasi discorsive.
+    Uso: /admin/analizza-target?s=SECRET"""
+    import os as _os, re as _re
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    conn = _get_conn(); cur = conn.cursor()
+    cur.execute("SELECT id, data FROM nodes WHERE id LIKE %s", ("fen-%",))
+    righe = cur.fetchall()
+    puliti = []; sporchi = []; vuoti = []
+    for node_id, data in righe:
+        nd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+        target = nd.get("target", "")
+        if isinstance(target, dict): target = target.get("it", "") or ""
+        nome = nd.get("nome") or node_id
+        if not target:
+            vuoti.append(nome); continue
+        # euristica "sporco": contiene verbi/frasi, "=", "grado di", parole lunghe senza numeri nel primo pezzo
+        primo = _re.split(r"\s*[·;]\s*", target)[0].strip()
+        # sporco se il primo pezzo è lungo (>14 char) E contiene molte lettere senza pattern numerico chiaro
+        ha_numero = bool(_re.search(r"\d", primo))
+        parole = len(primo.split())
+        e_frase = ("=" in target or "grado di" in target.lower() or "indice" in primo.lower()
+                   or (parole > 4) or (not ha_numero and parole > 2))
+        if e_frase:
+            sporchi.append({"id": node_id, "nome": nome, "target": target[:90]})
+        else:
+            puliti.append({"nome": nome, "primo": primo[:40]})
+    cur.close(); _release_conn(conn)
+    return jsonify({
+        "totale": len(righe),
+        "puliti": len(puliti), "sporchi": len(sporchi), "vuoti": len(vuoti),
+        "esempi_sporchi": sporchi[:25],
+        "esempi_puliti": puliti[:10]
+    })
