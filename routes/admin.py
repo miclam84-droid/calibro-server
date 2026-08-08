@@ -1575,6 +1575,7 @@ def admin_genera_ganci():
         return "Forbidden", 403
     solo = request.args.get("solo", "")
     rigenera = request.args.get("rigenera", "") == "1"
+    limite = int(request.args.get("limite", "12"))  # batch per evitare timeout
 
     conn = _get_conn()
     cur = conn.cursor()
@@ -1588,6 +1589,8 @@ def admin_genera_ganci():
     fatti = []
     saltati = []
     for node_id, data in righe:
+        if len(fatti) >= limite:  # batch: mi fermo, la prossima chiamata continua
+            break
         nd = data if isinstance(data, dict) else (json.loads(data) if data else {})
         scheda = nd.get("scheda", "")
         if isinstance(scheda, dict):
@@ -1627,4 +1630,5 @@ def admin_genera_ganci():
     cur.close()
     _release_conn(conn)
     return jsonify({"generati": len(fatti), "saltati": len(saltati),
+                    "batch_pieno": len(fatti) >= limite,
                     "dettaglio_generati": fatti[:20], "dettaglio_saltati": saltati[:20]})
