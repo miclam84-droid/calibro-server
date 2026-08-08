@@ -983,3 +983,14 @@ a:focus-visible,input:focus-visible{
 .auth-field label{color:var(--ink-muted)}
 /* i link "password dimenticata" ecc — colore coerente */
 #screen-auth a[onclick]{color:var(--signal) !important}
+
+/* Approfondisci nella chat (dalla scheda lezione) */
+.les-approfondisci{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin:12px 14px 0;max-width:calc(100% - 28px);background:var(--ink);border:none;border-left:3px solid var(--accent);padding:13px 15px;cursor:pointer;text-align:left}
+.les-approfondisci:hover{background:#1d2830}
+.les-appr-txt{display:flex;flex-direction:column;gap:2px}
+.les-appr-lab{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.les-appr-main{font-size:14px;font-weight:600;color:var(--paper-hi)}
+.les-approfondisci i.ph{color:var(--paper-hi);font-size:18px;flex-shrink:0}
+/* badge contesto sopra l'input chat */
+#chat-contesto-badge{align-items:center;gap:6px;margin:0 2px 8px;padding:5px 10px;background:var(--ink);color:var(--paper-hi);font-family:var(--mono);font-size:10px;letter-spacing:.04em;cursor:pointer;border-left:3px solid var(--accent);width:fit-content}
+#chat-contesto-badge::before{content:'✕ ';color:var(--accent)}

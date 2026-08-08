@@ -25,6 +25,7 @@ def chiedi():
     domanda = (request.json or {}).get("domanda","").strip()
     lang = (request.json or {}).get("lang", "it")
     history = (request.json or {}).get("history", [])
+    contesto_scheda = (request.json or {}).get("contesto") or None
     token_sess = (request.json or {}).get("token","") or request.headers.get("X-Token","")
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
@@ -143,7 +144,20 @@ def chiedi():
                           "target": f["target"]} for f in suggeriti]
         })
 
-    prompt = costruisci_prompt(domanda, contesto, lang=lang)
+    # se la domanda arriva da una scheda lezione, inietto il contesto così
+    # la chat risponde già informata su QUEL fenomeno
+    domanda_arricchita = domanda
+    if contesto_scheda and isinstance(contesto_scheda, dict):
+        fen = (contesto_scheda.get("fenomeno") or "").strip()
+        tgt = (contesto_scheda.get("target") or "").strip()
+        if fen:
+            _ctx_txt = f"[L'utente sta studiando la scheda del fenomeno '{fen}'"
+            if tgt:
+                _ctx_txt += f" (numero bersaglio: {tgt})"
+            _ctx_txt += ". Rispondi restando su questo fenomeno, applicandolo al suo caso specifico.] "
+            domanda_arricchita = _ctx_txt + domanda
+
+    prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
     # history strutturata: passa i turni precedenti come messages[], non come testo
     history_msgs = []
     if history:

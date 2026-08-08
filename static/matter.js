@@ -783,8 +783,10 @@ function chiediTesto(q){
   // passa gli ultimi scambi per dare continuità alla conversazione
   const history=_chatHistory.slice(-_HISTORY_MAX);
   const _tok=localStorage.getItem('matter_token')||'';
+  // se arrivo da una scheda lezione, passo il contesto così la chat risponde già informata
+  const _ctx = window._chatContesto || null;
   fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({domanda:q, history, token:_tok})})
+    body:JSON.stringify({domanda:q, history, token:_tok, contesto:_ctx})})
     .then(r=>{
       if(r.status===402) return r.json().then(j=>{throw {trial:true,...j};});
       return r.json();
@@ -2886,6 +2888,37 @@ function _fotoVaiFlavor(nome){
       if(inp){ inp.value=nome; if(typeof cercaFlavor==='function') cercaFlavor(); }
     }, 300);
   }, 200);
+}
+
+// ── APPROFONDISCI NELLA CHAT col contesto della scheda ──────────
+function _approfondisciInChat(){
+  // prende il fenomeno della lezione corrente e apre la chat già contestualizzata
+  var nome = (document.getElementById('les-nome')?.textContent || '').trim();
+  var disc = (Matter && Matter.disciplina) ? Matter.disciplina : '';
+  if(!nome || nome === '—'){ switchTab('chiedi'); return; }
+  // salvo il contesto: la chat lo antepone al prompt così risponde informata
+  window._chatContesto = {
+    fenomeno: nome,
+    disciplina: disc,
+    scheda: (document.getElementById('les-scheda')?.textContent || '').slice(0, 600),
+    target: (document.getElementById('les-target')?.textContent || '')
+  };
+  switchTab('chiedi');
+  setTimeout(function(){
+    var q = document.getElementById('q');
+    if(q){
+      q.value = nome + ' — nel mio caso specifico: ';
+      q.focus();
+      // porta il cursore in fondo
+      q.setSelectionRange(q.value.length, q.value.length);
+    }
+    // mostro un indicatore che la chat sa di cosa stiamo parlando
+    var badge = document.getElementById('chat-contesto-badge');
+    if(badge){
+      badge.textContent = 'Contesto: ' + nome;
+      badge.style.display = 'inline-flex';
+    }
+  }, 300);
 }
 
 async function inviaFoto(input){
