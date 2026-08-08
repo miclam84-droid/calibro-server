@@ -999,3 +999,12 @@ a:focus-visible,input:focus-visible{
 .sl-p .sch-p, p.sch-p{font-size:14.5px;color:var(--ink-muted);line-height:1.7;margin:0 0 12px}
 .sl-p .sch-p:last-child, p.sch-p:last-child{margin-bottom:0}
 .sch-num{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:13.5px;white-space:nowrap}
+
+/* numero-bersaglio come EROE nella home (più protagonista) */
+.mtr-gauge-num{margin:14px 0 4px}
+.mtr-gauge-num .num-lab{color:var(--accent);opacity:.8}
+.mtr-gauge-num .num-big{font-size:28px;line-height:1.15}
+.mtr-gauge-num .num-big.medio{font-size:21px}
+.mtr-gauge-num .num-big.lungo{font-size:15px;line-height:1.45}
+/* la descrizione (il perché) respira, viene prima del numero */
+.mtr-gauge-body #scopri-desc{font-size:14px;line-height:1.6;color:var(--paper-hi);opacity:.92;margin-bottom:4px}

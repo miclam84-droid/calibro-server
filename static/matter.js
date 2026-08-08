@@ -435,17 +435,14 @@ function renderHome(j){
   document.getElementById('scopri-ey').textContent =
     'fenomeno del giorno · ' + (f.dominio||'');
   document.getElementById('scopri-titolo').textContent = f.nome || '—';
-  // numero bersaglio in cima all'hero
+  // numero in cima RIMOSSO (era ridondante col numero-eroe sotto) — meno "dato grezzo" all'impatto
   const _nt=document.getElementById('scopri-num-top');
-  const _ntv=document.getElementById('scopri-num-top-val');
-  if(_nt && _ntv && f.target){
-    _ntv.textContent=f.target;
-    _nt.style.display='block';
-  } else if(_nt){ _nt.style.display='none'; }
+  if(_nt){ _nt.style.display='none'; }
     const _loop = document.getElementById('loop-guidato');
     const _loopFen = document.getElementById('loop-fen-nome');
     if(_loop) _loop.style.display='none';
     if(_loopFen) _loopFen.textContent = f.nome || 'Fenomeno';
+  // prima il PERCHÉ (descrizione), poi il numero-eroe
   document.getElementById('scopri-desc').textContent = f.scheda_intro || '';
   const numBox = document.getElementById('scopri-num');
   if(f.target){
