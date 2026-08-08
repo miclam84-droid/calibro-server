@@ -824,15 +824,15 @@ a:focus-visible,input:focus-visible{
 .mtr-manifesto-tag{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700}
 .mtr-manifesto-claim{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--ink-muted)}
 
-/* GAUGE scuro col numero bersaglio */
-.mtr-gauge{background:var(--ink);color:var(--paper);margin:14px 16px;padding:0;position:relative;overflow:hidden;border-radius:var(--radius-card)}
-.mtr-gauge::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent)}
-.mtr-gauge-top{display:flex;align-items:center;justify-content:space-between;padding:16px 22px 0}
-.mtr-gauge-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--s300)}
+/* GAUGE chiaro — editoriale, il numero-eroe è protagonista in arancio */
+.mtr-gauge{background:var(--paper-hi);color:var(--ink);margin:14px 16px;padding:0;position:relative;overflow:hidden;border-radius:var(--radius-card);border:var(--border-soft);box-shadow:var(--shadow-card)}
+.mtr-gauge::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--accent)}
+.mtr-gauge-top{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 0}
+.mtr-gauge-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 .mtr-gauge-num-top{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--accent)}
-.mtr-gauge-titolo{font-family:var(--serif);font-weight:700;font-size:21px;color:var(--paper);padding:6px 22px 0;margin:0;line-height:1.15}
-.mtr-gauge-body{padding:8px 16px 4px}
-.mtr-gauge-body p{font-size:13px;color:var(--s300);line-height:1.5;margin:0 0 10px}
+.mtr-gauge-titolo{font-family:var(--serif);font-weight:700;font-size:22px;color:var(--ink);padding:8px 22px 0;margin:0;line-height:1.15}
+.mtr-gauge-body{padding:8px 22px 4px}
+.mtr-gauge-body p{font-size:14px;color:var(--ink-muted);line-height:1.6;margin:0 0 10px}
 .mtr-gauge-num{margin:0 0 12px}
 .mtr-gauge-num .num-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--s300);margin-bottom:3px}
 .mtr-gauge-num .num-big{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
@@ -857,8 +857,10 @@ a:focus-visible,input:focus-visible{
 /* scheda lezione — numero bersaglio come display strumento (fix leggibilità + identità) */
 .sl-dato{background:var(--ink);border-left:3px solid var(--accent);border-radius:var(--radius-card-sm);padding:18px 20px;margin:16px 0}
 .sl-dato-lab{color:var(--s300);font-family:var(--sans);font-weight:700}
-.sl-dato .target-eroe{font-size:26px}
-.sl-dato .target-cond-lab{border-top-color:rgba(227,232,232,.15)}
+.sl-dato .target-eroe{font-size:26px;color:var(--paper-hi)}
+.sl-dato .target-lab{color:var(--accent)}
+.sl-dato .target-cond{color:var(--paper-hi);opacity:.9}
+.sl-dato .target-cond-lab{color:var(--paper-lo);border-top-color:rgba(227,232,232,.15)}
 .sl-h{font-family:var(--serif)}
 
 /* chat Chiedi — stile terminale (mockup) */
@@ -1071,10 +1073,10 @@ a:focus-visible,input:focus-visible{
 /* ═══ NUMERO-BERSAGLIO — eroe + condizioni (result first, morbido) ═══ */
 .target-hero{margin:0;padding:16px 22px 4px}
 .target-lab{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.target-eroe{font-family:var(--mono);font-weight:700;font-size:30px;line-height:1.15;color:var(--paper-hi);letter-spacing:-.01em;word-break:break-word;margin-bottom:16px}
-.target-cond-lab{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-lo);margin-bottom:8px;padding-top:14px;border-top:1px solid rgba(227,232,232,.15)}
+.target-eroe{font-family:var(--mono);font-weight:700;font-size:30px;line-height:1.15;color:var(--ink);letter-spacing:-.01em;word-break:break-word;margin-bottom:16px}
+.target-cond-lab{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px;padding-top:14px;border-top:1px solid var(--border)}
 .target-grid{display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:4px}
-.target-cond{font-family:var(--mono);font-size:13px;color:var(--paper-hi);opacity:.9}
+.target-cond{font-family:var(--mono);font-size:13px;color:var(--ink-muted)}
 @keyframes targetAtterra{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:translateY(0)}}
 .target-eroe{animation:targetAtterra .3s ease-out both}
 @media (prefers-reduced-motion: reduce){.target-eroe{animation:none}}
