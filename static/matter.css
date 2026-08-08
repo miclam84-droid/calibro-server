@@ -1014,3 +1014,6 @@ a:focus-visible,input:focus-visible{
 .foto-load-fase{font-family:var(--mono);font-size:12.5px}
 .foto-loading::before{content:'';width:8px;height:8px;background:var(--accent);border-radius:50%;flex-shrink:0;animation:fotopulse 1s ease-in-out infinite}
 @keyframes fotopulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+
+/* domanda-gancio: apre la lezione col "perché" */
+.sl-gancio{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--ink);line-height:1.35;margin:6px 0 14px;padding-left:12px;border-left:3px solid var(--accent)}

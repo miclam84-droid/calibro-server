@@ -593,6 +593,12 @@ async function caricaLezioneStep(step){
       } else { _wbox.style.display='none'; }
     }
     _formattaScheda(document.getElementById('les-scheda'), j.fenomeno.scheda || 'Scheda in aggiornamento.');
+    // domanda-gancio sopra la scheda (apre col "perché", non col "cos'è")
+    var _gel = document.getElementById('les-gancio');
+    if(_gel){
+      if(j.fenomeno.gancio){ _gel.textContent = j.fenomeno.gancio; _gel.style.display='block'; }
+      else { _gel.style.display='none'; }
+    }
     // target — mostra la box solo se il fenomeno ha un numero-bersaglio,
     // coerente con lo Scopri; niente "—" spoglio quando il dato non c'è
     const datoBox = document.getElementById('les-dato-box');

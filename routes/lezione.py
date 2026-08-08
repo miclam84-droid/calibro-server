@@ -198,7 +198,8 @@ def lezione(disciplina_nome, step):
             "nome": _traduci_nome(nodo["name"], lang),
             "dominio": nodo["domain"],
             "target": target,
-            "scheda": scheda
+            "scheda": scheda,
+            "gancio": (nd.get("gancio") if lang == "it" else "") or ""
         },
         "principio": principio,
         "quiz": quiz,

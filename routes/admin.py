@@ -1561,3 +1561,68 @@ def admin_ritraduce_ricette():
     finally:
         _release_conn(conn)
     return jsonify({"tradotte": ok, "errori": errori})
+
+
+@bp.route("/admin/genera-ganci")
+def admin_genera_ganci():
+    """Genera UNA domanda-gancio per ogni fenomeno, partendo dalla scheda esistente.
+    La domanda apre la lezione ('Perché...?') invece del secco 'X è...'.
+    Generata con GPT-4o mini (economico), salvata nel campo data.gancio.
+    Uso: /admin/genera-ganci?s=SECRET  (aggiungi &solo=fen-acidita per testarne uno)"""
+    import ai_gateway as GW
+    secret = request.args.get("s", "")
+    if secret != os.environ.get("ADMIN_SECRET", ""):
+        return "Forbidden", 403
+    solo = request.args.get("solo", "")
+    rigenera = request.args.get("rigenera", "") == "1"
+
+    conn = _get_conn()
+    cur = conn.cursor()
+    # prendo tutti i fenomeni (nodi con scheda) — o solo quello richiesto
+    if solo:
+        cur.execute("SELECT id, data FROM nodes WHERE id=%s", (solo,))
+    else:
+        cur.execute("SELECT id, data FROM nodes WHERE tipo='fenomeno' OR id LIKE 'fen-%%'")
+    righe = cur.fetchall()
+
+    fatti = []
+    saltati = []
+    for node_id, data in righe:
+        nd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+        scheda = nd.get("scheda", "")
+        if isinstance(scheda, dict):
+            scheda = scheda.get("it", "") or ""
+        nome = nd.get("nome") or node_id.replace("fen-", "").replace("-", " ")
+        if not scheda:
+            saltati.append(node_id); continue
+        if nd.get("gancio") and not rigenera:
+            saltati.append(node_id + " (già presente)"); continue
+
+        # prompt secco: una domanda pratica che un professionista si fa DAVVERO
+        prompt = (
+            f"Sei un tecnico del food & beverage. Ecco la scheda del fenomeno '{nome}':\n\n"
+            f"{scheda[:800]}\n\n"
+            "Scrivi UNA sola domanda pratica, corta (max 12 parole), che un professionista "
+            "al banco si fa davvero e a cui questo fenomeno risponde. "
+            "Deve iniziare con 'Perché' o 'Come' o 'Quando'. Concreta, non teorica. "
+            "Esempio buono: 'Perché due sour identici hanno sapore diverso?'. "
+            "Rispondi SOLO con la domanda, niente altro."
+        )
+        try:
+            gancio = GW._gpt_chat(prompt, max_tokens=40)
+            if gancio:
+                gancio = gancio.strip().strip('"').split("\n")[0][:120]
+                nd["gancio"] = gancio
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                            (json.dumps(nd, ensure_ascii=False), node_id))
+                fatti.append({"id": node_id, "gancio": gancio})
+            else:
+                saltati.append(node_id + " (no output)")
+        except Exception as e:
+            saltati.append(f"{node_id} (errore: {str(e)[:40]})")
+
+    conn.commit()
+    cur.close()
+    _release_conn(conn)
+    return jsonify({"generati": len(fatti), "saltati": len(saltati),
+                    "dettaglio_generati": fatti[:20], "dettaglio_saltati": saltati[:20]})
