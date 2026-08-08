@@ -855,9 +855,10 @@ a:focus-visible,input:focus-visible{
 .lab-area-label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink);font-weight:700}
 
 /* scheda lezione — numero bersaglio come display strumento (fix leggibilità + identità) */
-.sl-dato{background:var(--ink);border-left:3px solid var(--accent);border-radius:0;padding:14px 16px;margin:16px 0}
-.sl-dato-lab{color:var(--s300)}
-.sl-dato-val{font-size:22px;color:var(--accent);font-weight:700}
+.sl-dato{background:var(--ink);border-left:3px solid var(--accent);border-radius:var(--radius-card-sm);padding:18px 20px;margin:16px 0}
+.sl-dato-lab{color:var(--s300);font-family:var(--sans);font-weight:700}
+.sl-dato .target-eroe{font-size:26px}
+.sl-dato .target-cond-lab{border-top-color:rgba(227,232,232,.15)}
 .sl-h{font-family:var(--serif)}
 
 /* chat Chiedi — stile terminale (mockup) */

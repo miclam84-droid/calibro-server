@@ -597,7 +597,7 @@ async function caricaLezioneStep(step){
     // coerente con lo Scopri; niente "—" spoglio quando il dato non c'è
     const datoBox = document.getElementById('les-dato-box');
     if(j.fenomeno.target){
-      document.getElementById('les-target').textContent = j.fenomeno.target;
+      _renderTarget(document.getElementById('les-target'), j.fenomeno.target, false);
       datoBox.style.display = '';
       _caricaStrumentoPerFenomeno(disc, j.fenomeno.nome, j.fenomeno.target);
     } else {
@@ -2899,13 +2899,13 @@ function _fotoVaiFlavor(nome){
 
 // ── APPROFONDISCI NELLA CHAT col contesto della scheda ──────────
 // ── RENDER TARGET: eroe primario + parametri secondari (result first) ──
-function _renderTarget(box, target){
+function _renderTarget(box, target, mostraLabel){
   if(!box) return;
-  // spezzo sui separatori · o ; — il primo è l'EROE, gli altri parametri
   var parti = target.split(/\s*[·;]\s*/).map(function(s){return s.trim();}).filter(Boolean);
   var eroe = parti[0] || target;
   var params = parti.slice(1);
-  var html = '<div class="target-lab">target</div>';
+  var html = '';
+  if(mostraLabel !== false) html += '<div class="target-lab">target</div>';
   html += '<div class="target-eroe">' + _esc(eroe) + '</div>';
   if(params.length){
     html += '<div class="target-cond-lab">condizioni</div><div class="target-grid">';
