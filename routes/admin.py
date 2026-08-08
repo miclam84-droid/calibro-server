@@ -1723,3 +1723,69 @@ def admin_analizza_target():
         "esempi_sporchi": sporchi[:25],
         "esempi_puliti": puliti[:10]
     })
+
+
+@bp.route("/admin/proponi-target")
+def admin_proponi_target():
+    """Genera proposte di target pulito (eroe + condizioni) per i fenomeni con target discorsivo.
+    NON salva: mostra le proposte per revisione. Aggiungi &salva=1 per salvare.
+    Uso: /admin/proponi-target?s=SECRET"""
+    import os as _os, re as _re
+    import ai_gateway as GW
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    salva = request.args.get("salva", "") == "1"
+    solo = request.args.get("solo", "")
+
+    conn = _get_conn(); cur = conn.cursor()
+    if solo:
+        cur.execute("SELECT id, data FROM nodes WHERE id=%s", (solo,))
+    else:
+        cur.execute("SELECT id, data FROM nodes WHERE id LIKE %s", ("fen-%",))
+    righe = cur.fetchall()
+
+    proposte = []
+    for node_id, data in righe:
+        nd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+        target = nd.get("target", "")
+        if isinstance(target, dict): target = target.get("it", "") or ""
+        if not target: continue
+        nome = nd.get("nome") or node_id
+        primo = _re.split(r"\s*[·;]\s*", target)[0].strip()
+        ha_numero = bool(_re.search(r"\d", primo))
+        parole = len(primo.split())
+        e_frase = ("=" in target or "grado di" in target.lower() or "indice" in primo.lower()
+                   or (parole > 4) or (not ha_numero and parole > 2))
+        if not e_frase and not solo:
+            continue
+
+        prompt = (
+            f"Fenomeno F&B: '{nome}'. Target grezzo dal database:\n\"{target}\"\n\n"
+            "Riscrivilo secondo questa grammatica RIGIDA:\n"
+            "- EROE: il valore misurabile principale, numero+unità, MASSIMO 10 caratteri "
+            "(es. 'pH 3.7-3.9', 'FFA <1%', '>35% grasso', '9 bar'). MAI una frase, MAI verbi, MAI '='.\n"
+            "- CONDIZIONI: gli altri valori misurabili, separati da ' · ', ognuno corto.\n"
+            "Rispondi SOLO in JSON: {\"eroe\":\"...\",\"condizioni\":\"... · ...\"}\n"
+            "Se non c'è un numero chiaro, eroe = la sigla/valore più sintetico possibile.\n"
+            "NON inventare numeri non presenti nel target grezzo."
+        )
+        try:
+            raw = GW._gpt_chat(prompt, max_tokens=120)
+            raw = (raw or "").strip().replace("```json","").replace("```","").strip()
+            prop = json.loads(raw)
+            eroe = (prop.get("eroe") or "").strip()[:60]
+            cond = (prop.get("condizioni") or "").strip()
+            nuovo_target = eroe + (" · " + cond if cond else "")
+            proposte.append({"id": node_id, "nome": nome, "prima": target[:90],
+                             "eroe": eroe, "condizioni": cond, "nuovo": nuovo_target})
+            if salva and eroe:
+                nd["target_originale"] = target  # backup
+                nd["target"] = nuovo_target
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                            (json.dumps(nd, ensure_ascii=False), node_id))
+        except Exception as e:
+            proposte.append({"id": node_id, "nome": nome, "errore": str(e)[:60], "prima": target[:90]})
+
+    if salva: conn.commit()
+    cur.close(); _release_conn(conn)
+    return jsonify({"proposte": proposte, "salvate": salva, "totale": len(proposte)})
