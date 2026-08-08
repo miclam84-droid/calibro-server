@@ -19,6 +19,16 @@
   --paper:#D4DCDC; --paper-hi:#E3E8E8; --line-strong:#141D22; --signal:#12545D; --accent:#CB5A22;
   /* variabili orfane dopo il cambio palette — mappate ai valori nuovi */
   --ivory:#E3E8E8; --teal:#12545D; --e400:#D3854F; --muted:#52626A;
+  /* ═══ DESIGN SYSTEM v2 — "premium scientific instrument": morbido fuori, preciso dentro ═══ */
+  --radius-card:18px;      /* card principali */
+  --radius-card-sm:14px;   /* card secondarie */
+  --radius-btn:13px;       /* pulsanti e input */
+  --radius-pill:999px;     /* pills / quick prompt */
+  --pad-card:22px;         /* padding interno card */
+  --gap-section:32px;      /* spazio tra sezioni */
+  --shadow-card:0 2px 8px rgba(20,29,34,.06), 0 8px 24px rgba(20,29,34,.04);
+  --border-soft:1px solid rgba(20,29,34,.10);
+  --paper-lo:#9aa8a8;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%}
@@ -815,18 +825,18 @@ a:focus-visible,input:focus-visible{
 .mtr-manifesto-claim{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--ink-muted)}
 
 /* GAUGE scuro col numero bersaglio */
-.mtr-gauge{background:var(--ink);color:var(--paper);margin:14px 16px;padding:0;position:relative;overflow:hidden;border-radius:0}
+.mtr-gauge{background:var(--ink);color:var(--paper);margin:14px 16px;padding:0;position:relative;overflow:hidden;border-radius:var(--radius-card)}
 .mtr-gauge::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent)}
-.mtr-gauge-top{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 0}
-.mtr-gauge-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--s300)}
+.mtr-gauge-top{display:flex;align-items:center;justify-content:space-between;padding:16px 22px 0}
+.mtr-gauge-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--s300)}
 .mtr-gauge-num-top{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--accent)}
-.mtr-gauge-titolo{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--paper);padding:4px 16px 0;margin:0;line-height:1.1}
+.mtr-gauge-titolo{font-family:var(--serif);font-weight:700;font-size:21px;color:var(--paper);padding:6px 22px 0;margin:0;line-height:1.15}
 .mtr-gauge-body{padding:8px 16px 4px}
 .mtr-gauge-body p{font-size:13px;color:var(--s300);line-height:1.5;margin:0 0 10px}
 .mtr-gauge-num{margin:0 0 12px}
 .mtr-gauge-num .num-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--s300);margin-bottom:3px}
 .mtr-gauge-num .num-big{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
-.mtr-gauge-cta{margin:0;width:100%;border-radius:0;background:var(--accent);color:var(--paper);font-weight:700;border:none;padding:14px;font-family:var(--sans);font-size:14px;cursor:pointer}
+.mtr-gauge-cta{margin:8px 22px 22px;width:calc(100% - 44px);border-radius:var(--radius-btn);background:var(--accent);color:var(--paper);font-weight:700;border:none;padding:14px;font-family:var(--sans);font-size:14px;cursor:pointer}
 
 /* STATS a griglia strumento */
 .mtr-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-left:1px solid var(--border);margin:16px 0 0}
@@ -1059,15 +1069,16 @@ a:focus-visible,input:focus-visible{
   .zone,.gauge{animation:none}
 }
 
-/* ═══ NUMERO-BERSAGLIO MONUMENTALE — la firma di Matter ═══ */
-.target-hero{margin:18px 0 16px;padding:0}
-.target-hero-lab{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.target-hero-val{font-family:var(--mono);font-weight:700;font-size:30px;line-height:1.15;color:var(--paper-hi);letter-spacing:-.01em;word-break:break-word;overflow-wrap:break-word}
-.target-hero-val.medio{font-size:23px}
-.target-hero-val.lungo{font-size:18px;line-height:1.35}
+/* ═══ NUMERO-BERSAGLIO — eroe + condizioni (result first, morbido) ═══ */
+.target-hero{margin:0;padding:16px 22px 4px}
+.target-lab{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.target-eroe{font-family:var(--mono);font-weight:700;font-size:30px;line-height:1.15;color:var(--paper-hi);letter-spacing:-.01em;word-break:break-word;margin-bottom:16px}
+.target-cond-lab{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-lo);margin-bottom:8px;padding-top:14px;border-top:1px solid rgba(227,232,232,.15)}
+.target-grid{display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:4px}
+.target-cond{font-family:var(--mono);font-size:13px;color:var(--paper-hi);opacity:.9}
 @keyframes targetAtterra{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:translateY(0)}}
-.target-hero-val{animation:targetAtterra .3s ease-out both}
-@media (prefers-reduced-motion: reduce){.target-hero-val{animation:none}}
+.target-eroe{animation:targetAtterra .3s ease-out both}
+@media (prefers-reduced-motion: reduce){.target-eroe{animation:none}}
 
 /* ═══ RISULTATO CALCOLATORE MONUMENTALE (la schermata che converte) ═══ */
 .readout-big{flex-direction:column;align-items:flex-start;gap:2px;margin-bottom:16px;padding:16px;background:var(--ink);border-left:4px solid var(--accent)}

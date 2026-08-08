@@ -439,14 +439,10 @@ function renderHome(j){
     const _loopFen = document.getElementById('loop-fen-nome');
     if(_loop) _loop.style.display='none';
     if(_loopFen) _loopFen.textContent = f.nome || 'Fenomeno';
-  // il numero-bersaglio MONUMENTALE (la firma di Matter)
+  // il numero-bersaglio: TARGET primario (eroe) + condizioni secondarie
   const numBox = document.getElementById('scopri-num');
   if(f.target){
-    const nv = document.getElementById('scopri-num-val');
-    nv.textContent = f.target;
-    nv.classList.remove('medio','lungo');
-    if(f.target.length > 44) nv.classList.add('lungo');
-    else if(f.target.length > 20) nv.classList.add('medio');
+    _renderTarget(numBox, f.target);
     numBox.style.display='block';
   } else { numBox.style.display='none'; }
   // poi il PERCHÉ (descrizione), sotto il numero
@@ -2902,6 +2898,26 @@ function _fotoVaiFlavor(nome){
 }
 
 // ── APPROFONDISCI NELLA CHAT col contesto della scheda ──────────
+// ── RENDER TARGET: eroe primario + parametri secondari (result first) ──
+function _renderTarget(box, target){
+  if(!box) return;
+  // spezzo sui separatori · o ; — il primo è l'EROE, gli altri parametri
+  var parti = target.split(/\s*[·;]\s*/).map(function(s){return s.trim();}).filter(Boolean);
+  var eroe = parti[0] || target;
+  var params = parti.slice(1);
+  var html = '<div class="target-lab">target</div>';
+  html += '<div class="target-eroe">' + _esc(eroe) + '</div>';
+  if(params.length){
+    html += '<div class="target-cond-lab">condizioni</div><div class="target-grid">';
+    params.forEach(function(p){
+      html += '<div class="target-cond">' + _esc(p) + '</div>';
+    });
+    html += '</div>';
+  }
+  box.innerHTML = html;
+}
+function _esc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
 // ── FORMATTA LA SCHEDA: spezza il muro + evidenzia i valori ──────
 function _formattaScheda(el, testo){
   if(!el) return;
