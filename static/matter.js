@@ -435,24 +435,22 @@ function renderHome(j){
   document.getElementById('scopri-ey').textContent =
     'fenomeno del giorno · ' + (f.dominio||'');
   document.getElementById('scopri-titolo').textContent = f.nome || '—';
-  // numero in cima RIMOSSO (era ridondante col numero-eroe sotto) — meno "dato grezzo" all'impatto
-  const _nt=document.getElementById('scopri-num-top');
-  if(_nt){ _nt.style.display='none'; }
     const _loop = document.getElementById('loop-guidato');
     const _loopFen = document.getElementById('loop-fen-nome');
     if(_loop) _loop.style.display='none';
     if(_loopFen) _loopFen.textContent = f.nome || 'Fenomeno';
-  // prima il PERCHÉ (descrizione), poi il numero-eroe
-  document.getElementById('scopri-desc').textContent = f.scheda_intro || '';
+  // il numero-bersaglio MONUMENTALE (la firma di Matter)
   const numBox = document.getElementById('scopri-num');
   if(f.target){
     const nv = document.getElementById('scopri-num-val');
     nv.textContent = f.target;
     nv.classList.remove('medio','lungo');
-    if(f.target.length > 48) nv.classList.add('lungo');
-    else if(f.target.length > 22) nv.classList.add('medio');
-    numBox.style.display='flex';
+    if(f.target.length > 44) nv.classList.add('lungo');
+    else if(f.target.length > 20) nv.classList.add('medio');
+    numBox.style.display='block';
   } else { numBox.style.display='none'; }
+  // poi il PERCHÉ (descrizione), sotto il numero
+  document.getElementById('scopri-desc').textContent = f.scheda_intro || '';
   Matter.fenomenoId = f.id;
   // onboarding: mostra nudge se primo accesso
   mostraNudgeSeNecessario();

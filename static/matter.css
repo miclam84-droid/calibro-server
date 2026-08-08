@@ -1058,3 +1058,13 @@ a:focus-visible,input:focus-visible{
   .needle{transition:none}
   .zone,.gauge{animation:none}
 }
+
+/* ═══ NUMERO-BERSAGLIO MONUMENTALE — la firma di Matter ═══ */
+.target-hero{margin:18px 0 16px;padding:0}
+.target-hero-lab{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.target-hero-val{font-family:var(--mono);font-weight:700;font-size:30px;line-height:1.15;color:var(--paper-hi);letter-spacing:-.01em;word-break:break-word;overflow-wrap:break-word}
+.target-hero-val.medio{font-size:23px}
+.target-hero-val.lungo{font-size:18px;line-height:1.35}
+@keyframes targetAtterra{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:translateY(0)}}
+.target-hero-val{animation:targetAtterra .3s ease-out both}
+@media (prefers-reduced-motion: reduce){.target-hero-val{animation:none}}

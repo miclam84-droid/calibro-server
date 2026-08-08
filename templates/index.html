@@ -67,36 +67,24 @@ if('serviceWorker' in navigator){
   <!-- MANIFESTO -->
   <div class="mtr-manifesto">
     <span class="mtr-manifesto-tag">La scienza del mestiere</span>
-    <span class="mtr-manifesto-claim">Ogni gesto ha un numero.</span>
+    <span class="mtr-manifesto-claim">Ogni gesto ha un numero. Matter ti dice quale.</span>
   </div>
 
-  <!-- GAUGE — numero bersaglio del giorno (popolato da /home) -->
+  <!-- GAUGE — numero bersaglio del giorno come EROE (popolato da /home) -->
   <div class="scheda-hero mtr-gauge" id="scopri-hero">
     <div class="mtr-gauge-top">
       <span class="mtr-gauge-label" id="scopri-ey">caricamento…</span>
-      <span class="mtr-gauge-num-top" id="scopri-num-top" style="display:none">
-        <span id="scopri-num-top-val"></span>
-      </span>
     </div>
     <h2 class="mtr-gauge-titolo" id="scopri-titolo">—</h2>
+    <!-- NUMERO-BERSAGLIO MONUMENTALE (la firma di Matter) -->
+    <div class="target-hero" id="scopri-num" style="display:none">
+      <div class="target-hero-lab">il numero bersaglio</div>
+      <div class="target-hero-val" id="scopri-num-val"></div>
+    </div>
     <div class="mtr-gauge-body">
       <p id="scopri-desc"></p>
-      <div class="num-bersaglio mtr-gauge-num" id="scopri-num" style="display:none">
-        <div class="num-bersaglio-inner">
-          <div class="num-lab" id="scopri-num-lab">il numero bersaglio</div>
-          <div class="num-big" id="scopri-num-val"></div>
-        </div>
-      </div>
     </div>
     <button class="cta-main mtr-gauge-cta" id="scopri-cta" onclick="avviaLezione()">Esplora il fenomeno</button>
-  </div>
-
-  <!-- DASHBOARD NUMERI — stile strumento -->
-  <div class="db-stats mtr-stats">
-    <div class="db-stat"><div class="db-stat-val">91</div><div class="db-stat-lab">Fenomeni</div></div>
-    <div class="db-stat"><div class="db-stat-val">1.530</div><div class="db-stat-lab">Ingredienti</div></div>
-    <div class="db-stat"><div class="db-stat-val">33.696</div><div class="db-stat-lab">Connessioni</div></div>
-    <div class="db-stat"><div class="db-stat-val">6</div><div class="db-stat-lab">Calcolatori</div></div>
   </div>
 
   <!-- LOOP GUIDATO -->
