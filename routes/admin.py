@@ -1582,7 +1582,7 @@ def admin_genera_ganci():
     if solo:
         cur.execute("SELECT id, data FROM nodes WHERE id=%s", (solo,))
     else:
-        cur.execute("SELECT id, data FROM nodes WHERE tipo='fenomeno' OR id LIKE 'fen-%%'")
+        cur.execute("SELECT id, data FROM nodes WHERE id LIKE %s", ("fen-%",))
     righe = cur.fetchall()
 
     fatti = []
