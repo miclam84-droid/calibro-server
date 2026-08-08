@@ -1600,13 +1600,15 @@ def admin_genera_ganci():
 
         # prompt secco: una domanda pratica che un professionista si fa DAVVERO
         prompt = (
-            f"Sei un tecnico del food & beverage. Ecco la scheda del fenomeno '{nome}':\n\n"
+            f"Ecco la scheda del fenomeno '{nome}' (food & beverage):\n\n"
             f"{scheda[:800]}\n\n"
-            "Scrivi UNA sola domanda pratica, corta (max 12 parole), che un professionista "
-            "al banco si fa davvero e a cui questo fenomeno risponde. "
-            "Deve iniziare con 'Perché' o 'Come' o 'Quando'. Concreta, non teorica. "
-            "Esempio buono: 'Perché due sour identici hanno sapore diverso?'. "
-            "Rispondi SOLO con la domanda, niente altro."
+            "Scrivi UNA domanda che catturi la CURIOSITÀ di un professionista e lo faccia "
+            "fermare a leggere. Deve toccare un problema frustrante o un fatto controintuitivo "
+            "che questo fenomeno spiega. Corta (max 11 parole), inizia con Perché/Come/Quando. "
+            "NON deve essere un manuale ('come fare X'), ma un enigma pratico ('perché X succede'). "
+            "Esempi ottimi: 'Perché due sour identici hanno sapore diverso?' · "
+            "'Perché il pane di oggi non è come ieri?' · 'Perché la panna monta male d'estate?'. "
+            "Rispondi SOLO con la domanda."
         )
         try:
             gancio = GW._gpt_chat(prompt, max_tokens=40)
