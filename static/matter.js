@@ -707,25 +707,25 @@ function renderMappa(disc, fens){
     const isFirst = i===0;
     const stato = f.stato||'libero';
     const nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
+    // il target diventa il NUMERO protagonista: estraggo solo l'eroe (primo pezzo)
+    const targetEroe = (f.target||'').split(/\s*[·;]\s*/)[0].trim();
     const tagHtml = stato==='completato'
-      ? '<div class="p-tag done">completato</div>'
-      : isFirst ? '<div class="p-tag active">inizia da qui</div>'
-      : '<div class="p-tag lock" style="color:var(--e500);opacity:.5;font-size:10px;font-family:var(--mono)">in attesa</div>';
+      ? '<span class="p-tag done">completato</span>'
+      : isFirst ? '<span class="p-tag active">inizia da qui</span>'
+      : '<span class="p-tag prolock">Pro</span>';
     const svgIcon = stato==='completato'
       ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg>'
       : isFirst
       ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'
       : '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
-    // nodi bloccati: bordo terracotta 0.3 opacity invece di grigio piatto
     const nodeStyle = stato==='lock'
       ? 'border:1px solid rgba(196,98,45,0.3);background:var(--surface);'
       : '';
     return `<div class="p-step ${stato==='completato'?'done':''}" style="cursor:pointer" onclick="vaiAStep(${i})">
       <div class="pnode ${nodeClass}" style="${nodeStyle}">${svgIcon}</div>
       <div class="p-info">
-        <div class="p-name">${esc(f.nome)}</div>
-        <div class="p-meta">${esc(f.target||'')}</div>
-        ${tagHtml}
+        <div class="p-name-row"><span class="p-name">${esc(f.nome)}</span>${tagHtml}</div>
+        ${targetEroe?`<div class="p-target">${esc(targetEroe)}</div>`:''}
       </div>
     </div>`;
   }).join('');

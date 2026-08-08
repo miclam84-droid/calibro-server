@@ -377,17 +377,16 @@ if('serviceWorker' in navigator){
 
   <!-- ── PANNELLO SOMMELIER ── -->
   <div class="mappa-panel" id="mpanel-sommelier">
-    <div style="margin:0 0 12px;background:var(--paper-hi);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0;padding:14px">
-      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Impara i tuoi abbinamenti preferiti</div>
-      <div style="font-size:13px;color:var(--ink-muted);line-height:1.5;margin-bottom:10px">Usa <i class="ph ph-thumbs-up"></i> e <i class="ph ph-thumbs-down"></i> sugli abbinamenti del Flavor Network. Il sistema impara e riordina i risultati in base ai tuoi gusti.</div>
-      <div id="sommelier-stats" style="font-family:var(--mono);font-size:11px;color:var(--ink-muted)"></div>
-      <button onclick="caricaProfiloSensoriale()" style="margin-top:8px;background:var(--signal);color:var(--paper-hi);border:none;font-family:var(--sans);font-weight:700;font-size:12px;padding:9px 14px;border-radius:0;cursor:pointer">Vedi il tuo profilo sensoriale</button>
-      <div id="profilo-sensoriale" style="display:none;margin-top:12px"></div>
+    <div class="somm-hero">
+      <div class="somm-hero-lab">Il tuo profilo sensoriale</div>
+      <div class="somm-hero-desc">Usa <i class="ph ph-thumbs-up"></i> e <i class="ph ph-thumbs-down"></i> sugli abbinamenti del Flavor Network. Matter impara i tuoi gusti e riordina i risultati su misura.</div>
+      <div id="sommelier-stats" class="somm-stats"></div>
+      <button class="somm-cta" onclick="caricaProfiloSensoriale()">Vedi il tuo profilo sensoriale <i class="ph ph-arrow-right"></i></button>
+      <div id="profilo-sensoriale" style="display:none;margin-top:14px"></div>
     </div>
-    <div class="bridge-card">
-      <div class="bridge-eyebrow">il prossimo passo · Cifra</div>
+    <div class="bridge-card bridge-ecosistema">
+      <div class="bridge-eyebrow">prossimo livello · ecosistema Galileo</div>
       <div class="bridge-headline">Sai che numero colpire. Cifra ti dice quanto ti costa.</div>
-      <div class="bridge-body">Food cost per piatto, margini, prezzi dei fornitori, sprechi. Il gestionale che parte dalla ricetta e arriva al conto.</div>
       <button class="bridge-cta" onclick="importaCifra()">Scopri Cifra <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </div>
