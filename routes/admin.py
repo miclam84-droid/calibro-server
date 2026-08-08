@@ -1664,3 +1664,24 @@ def admin_diag_trial():
     except Exception as e:
         out["errore_db"] = str(e)
     return jsonify(out)
+
+
+@bp.route("/admin/diag-ip")
+def admin_diag_ip():
+    """Mostra quale IP vede il backend e quante righe trial_uso ci sono per tipo."""
+    import os as _os
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    out = {"ip_visto": ip, "x_forwarded_for": request.headers.get("X-Forwarded-For", "(assente)"),
+           "remote_addr": request.remote_addr}
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("SELECT tipo, COUNT(*), COUNT(DISTINCT ip) FROM trial_uso GROUP BY tipo")
+        out["usi_per_tipo"] = [{"tipo": r[0], "totale": r[1], "ip_distinti": r[2]} for r in cur.fetchall()]
+        cur.execute("SELECT ip, COUNT(*) FROM trial_uso WHERE tipo='foto' GROUP BY ip ORDER BY COUNT(*) DESC LIMIT 5")
+        out["top_ip_foto"] = [{"ip": r[0], "usi": r[1]} for r in cur.fetchall()]
+        cur.close(); _release_conn(conn)
+    except Exception as e:
+        out["errore"] = str(e)
+    return jsonify(out)
