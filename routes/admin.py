@@ -1792,3 +1792,28 @@ def admin_proponi_target():
     if salva: conn.commit()
     cur.close(); _release_conn(conn)
     return jsonify({"proposte": proposte, "salvate": salva, "totale": len(proposte)})
+
+
+@bp.route("/admin/set-target")
+def admin_set_target():
+    """Imposta manualmente il target di un fenomeno.
+    Uso: /admin/set-target?s=SECRET&id=fen-x&target=...(url-encoded)"""
+    import os as _os
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    node_id = request.args.get("id", "")
+    nuovo = request.args.get("target", "")
+    if not node_id or not nuovo:
+        return jsonify({"errore": "id e target obbligatori"}), 400
+    conn = _get_conn(); cur = conn.cursor()
+    cur.execute("SELECT data FROM nodes WHERE id=%s", (node_id,))
+    row = cur.fetchone()
+    if not row:
+        cur.close(); _release_conn(conn)
+        return jsonify({"errore": "fenomeno non trovato"}), 404
+    nd = row[0] if isinstance(row[0], dict) else json.loads(row[0])
+    vecchio = nd.get("target", "")
+    nd["target"] = nuovo
+    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nd, ensure_ascii=False), node_id))
+    conn.commit(); cur.close(); _release_conn(conn)
+    return jsonify({"ok": True, "id": node_id, "prima": vecchio[:80], "dopo": nuovo})
