@@ -1046,3 +1046,15 @@ a:focus-visible,input:focus-visible{
   .mtr-gauge-num .num-big, .num-bersaglio .num-big, .sch-num{animation:none}
   .cta-main:active, .ask-btn:active{transform:none}
 }
+
+/* 3. Barra misura-vs-target: l'ago scorre verso il valore, la zona compare */
+.needle{transition:left .45s cubic-bezier(.22,.61,.36,1)}
+.zone{animation:zoneCompare .4s ease-out both}
+@keyframes zoneCompare{from{opacity:0;transform:scaleX(.7)}to{opacity:1;transform:scaleX(1)}}
+/* la barra intera compare con un fade quando il calcolo produce il risultato */
+.gauge{animation:gaugeIn .35s ease-out both}
+@keyframes gaugeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){
+  .needle{transition:none}
+  .zone,.gauge{animation:none}
+}
