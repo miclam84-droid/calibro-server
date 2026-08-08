@@ -2978,10 +2978,19 @@ async function inviaFoto(input){
   try {
     var fd = new FormData();
     fd.append('immagine', file);
+    var _ftok = localStorage.getItem('matter_token')||'';
+    if(_ftok) fd.append('token', _ftok);
     var r = await fetch('/v1/foto-analisi?lang='+(_lang||'it'), {
       method:'POST', body:fd
     });
     clearInterval(_teatro);
+    if(r.status===402){
+      // foto è funzione Pro: mostra il paywall invece dell'errore
+      card.remove();
+      if(typeof mostraPopupPro==='function') mostraPopupPro('foto');
+      else if(typeof apriPaywall==='function') apriPaywall();
+      input.value=''; return;
+    }
     var j = await r.json();
     var body = card.querySelector('.s-body');
     body.className = 's-body';

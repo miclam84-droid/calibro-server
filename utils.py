@@ -173,3 +173,23 @@ def _trial_consentito(user_id, ip, tipo="varie", limite=5):
         except Exception:
             pass
         return True, {"errore_check": True}
+
+
+def _e_pro(user_id):
+    """True solo se l'utente è Pro. Per feature riservate agli abbonati (foto, voce)."""
+    if not user_id:
+        return False
+    from db import _get_conn, _release_conn
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
+        r = cur.fetchone()
+        cur.close(); _release_conn(conn)
+        return bool(r and r[0] == "pro")
+    except Exception as e:
+        print(f"[E_PRO] errore: {e}", flush=True)
+        try:
+            _release_conn(conn)
+        except Exception:
+            pass
+        return False  # in dubbio, NON dà accesso (fail-closed: protegge i costi)
