@@ -1020,3 +1020,29 @@ a:focus-visible,input:focus-visible{
 
 /* badge PRO sui pulsanti riservati agli abbonati */
 .pro-badge{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.08em;background:var(--accent);color:var(--paper-hi);padding:2px 5px;margin-left:5px;border-radius:2px;vertical-align:middle}
+
+/* ── ANIMAZIONI CHIRURGICHE (strumento, non fintech) ──────────── */
+/* 1. Comparsa numero-bersaglio: atterraggio preciso, 250ms */
+@keyframes numAtterra{
+  0%{opacity:0;transform:translateY(-4px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+.mtr-gauge-num .num-big, .num-bersaglio .num-big{
+  animation:numAtterra .25s ease-out both;
+}
+/* i valori evidenziati nelle schede: comparsa appena percettibile in sequenza */
+@keyframes schNumFade{from{opacity:.3}to{opacity:1}}
+.sch-num{animation:schNumFade .3s ease-out both}
+
+/* 2. Feedback tap microscopico sui pulsanti (già transizione, aggiungo l'active preciso) */
+.cta-main:active, .ask-btn:active, .quad-hero-btn:active, .auth-btn:active,
+.bridge-cta:active, .les-approfondisci:active, .flavor-search-btn:active{
+  transform:scale(.97);
+  transition:transform .06s ease-out;
+}
+
+/* rispetta chi preferisce meno movimento (accessibilità) */
+@media (prefers-reduced-motion: reduce){
+  .mtr-gauge-num .num-big, .num-bersaglio .num-big, .sch-num{animation:none}
+  .cta-main:active, .ask-btn:active{transform:none}
+}
