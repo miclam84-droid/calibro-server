@@ -1761,12 +1761,15 @@ def admin_proponi_target():
 
         prompt = (
             f"Fenomeno F&B: '{nome}'. Target grezzo dal database:\n\"{target}\"\n\n"
-            "Riscrivilo secondo questa grammatica RIGIDA:\n"
-            "- EROE: il valore misurabile principale, numero+unità, MASSIMO 10 caratteri "
-            "(es. 'pH 3.7-3.9', 'FFA <1%', '>35% grasso', '9 bar'). MAI una frase, MAI verbi, MAI '='.\n"
-            "- CONDIZIONI: gli altri valori misurabili, separati da ' · ', ognuno corto.\n"
+            "Riscrivilo secondo questa grammatica RIGIDA per un professionista al banco:\n"
+            "- EROE: il valore che il professionista deve COLPIRE più spesso nel lavoro reale, "
+            "con la sua ETICHETTA CORTA + numero+unità, MASSIMO 16 caratteri "
+            "(es. 'burro 50-60%', 'raddoppio 1-2h', 'AV <0.6 g/L', 'espresso 9 bar'). "
+            "L'etichetta serve a capire COSA è il numero. MAI una frase lunga, MAI verbi, MAI '=', MAI costanti di formula.\n"
+            "- CONDIZIONI: gli altri valori operativi con etichetta corta, separati da ' · ' "
+            "(es. 'brisée 30-40% · riposo 4°C · forno 160-175°C'). Scarta costanti di formula (es. ×131.25) e dati puramente fisici.\n"
+            "Scegli come EROE il caso d'uso PIÙ COMUNE, non il primo della lista.\n"
             "Rispondi SOLO in JSON: {\"eroe\":\"...\",\"condizioni\":\"... · ...\"}\n"
-            "Se non c'è un numero chiaro, eroe = la sigla/valore più sintetico possibile.\n"
             "NON inventare numeri non presenti nel target grezzo."
         )
         try:
