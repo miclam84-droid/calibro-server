@@ -91,10 +91,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .no-login{text-align:center;font-size:11px;color:var(--ink-muted);margin-top:6px;padding:0 14px}
 .sec-label{padding:16px 14px 8px;font-family:var(--mono);font-size:10px;
   letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
-.disc-list{border:1px solid var(--border);border-radius:14px;margin:0 14px;overflow:hidden;background:var(--surface)}
-.disc-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .15s}
-.disc-item:active{background:var(--e100)}
-.disc-item:last-child{border-bottom:none}
+.disc-list{margin:0 16px;display:flex;flex-direction:column;gap:12px}
+.disc-item{background:var(--surface);border:var(--border-soft);border-radius:var(--radius-card);padding:18px 20px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:box-shadow .18s, transform .12s;box-shadow:var(--shadow-card)}
+.disc-item:active{transform:scale(.99);background:var(--e100)}
+.disc-item:last-child{border-bottom:var(--border-soft)}
 .disc-item.off{opacity:.45;cursor:default}
 .disc-dot{width:9px;height:9px;border-radius:50%;background:var(--e500);flex-shrink:0}
 .disc-dot.dim{background:var(--border)}
@@ -103,8 +103,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .disc-item.off .disc-n{color:var(--ink-muted)}
 .disc-m{font-size:11.5px;color:var(--ink-muted);margin-top:2px}
 .disc-kw{font-family:var(--mono);font-size:9px;color:var(--ink-muted);letter-spacing:.04em;margin-top:3px;line-height:1.4}
-.disc-chip{background:var(--ink);color:var(--paper-hi);font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0}
-.disc-arr{color:var(--border);font-size:18px;font-weight:300;margin-left:4px}
+.disc-chip{background:var(--ink);color:var(--paper-hi);font-family:var(--mono);font-size:12px;font-weight:700;padding:4px 11px;border-radius:var(--radius-pill);flex-shrink:0}
+.disc-arr{color:var(--accent);font-size:20px;font-weight:400;margin-left:4px}
 .disc-prog{margin-top:5px;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
 .disc-prog-fill{height:100%;background:var(--e500)}
 .principio-card{margin:10px 14px 0;background:var(--surface);
@@ -862,14 +862,14 @@ a:focus-visible,input:focus-visible{
 .sl-h{font-family:var(--serif)}
 
 /* chat Chiedi — stile terminale (mockup) */
-.ask-input-row{display:flex;align-items:center;gap:8px;background:var(--paper-hi);border:1.5px solid var(--line-strong);border-radius:0;padding:2px 6px}
+.ask-input-row{display:flex;align-items:center;gap:8px;background:var(--paper-hi);border:1.5px solid var(--line-strong);border-radius:var(--radius-btn);padding:2px 6px}
 .ask-prompt{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:16px;flex-shrink:0;padding-left:6px}
 .ask-input{font-family:var(--mono);font-size:13px;background:none;border:none}
-.ask-btn{background:var(--signal);border-radius:0;color:var(--paper-hi)}
+.ask-btn{background:var(--signal);border-radius:var(--radius-btn);color:var(--paper-hi)}
 .ask-btn:hover{background:var(--accent)}
 
 /* feature foto — elementi cliccabili (aggancio al loop) */
-.foto-chip{font-family:var(--mono);font-size:12px;background:var(--paper-hi);border:1px solid var(--border);color:var(--ink);padding:5px 10px;border-radius:0;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.foto-chip{font-family:var(--mono);font-size:12px;background:var(--paper-hi);border:1px solid var(--border);color:var(--ink);padding:5px 10px;border-radius:var(--radius-pill);cursor:pointer;display:inline-flex;align-items:center;gap:5px}
 .foto-chip:hover{border-color:var(--accent);color:var(--accent)}
 .foto-fen{display:flex;align-items:center;gap:7px;width:100%;text-align:left;background:var(--paper-hi);border:1px solid var(--border);border-left:3px solid var(--accent);padding:9px 11px;margin:4px 0;cursor:pointer;font-size:13px;color:var(--ink)}
 .foto-fen:hover{background:var(--surface)}
@@ -880,7 +880,7 @@ a:focus-visible,input:focus-visible{
 
 /* icone foto/voce — stile strumento con etichetta (override) */
 .ask-media-row{display:flex;gap:8px;padding:8px 2px 0}
-.ask-ico-btn{display:inline-flex;align-items:center;gap:7px;background:var(--paper-hi);border:1.5px solid var(--line-strong);border-radius:0;padding:8px 14px;cursor:pointer;transition:none}
+.ask-ico-btn{display:inline-flex;align-items:center;gap:7px;background:var(--paper-hi);border:1.5px solid var(--line-strong);border-radius:var(--radius-btn);padding:8px 14px;cursor:pointer;transition:transform .12s}
 .ask-ico-btn i.ph{font-size:17px;line-height:1;color:var(--accent)}
 .ask-ico-btn span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ink)}
 .ask-ico-btn:hover{background:var(--surface);border-color:var(--accent)}
@@ -894,33 +894,31 @@ a:focus-visible,input:focus-visible{
 #cookie-banner p{font-size:12px;line-height:1.4;color:var(--paper-hi);margin:0;flex:1;min-width:180px}
 #cookie-banner a{color:var(--accent);text-decoration:underline}
 .cookie-btns{display:flex;gap:8px;flex-shrink:0}
-.cookie-ok{background:var(--accent);color:var(--paper-hi);border:none;font-family:var(--sans);font-size:12px;font-weight:700;padding:8px 14px;cursor:pointer;border-radius:0}
-.cookie-no{background:none;color:var(--paper-hi);border:1px solid var(--border);font-size:12px;padding:8px 12px;cursor:pointer;border-radius:0}
+.cookie-ok{background:var(--accent);color:var(--paper-hi);border:none;font-family:var(--sans);font-size:12px;font-weight:700;padding:8px 14px;cursor:pointer;border-radius:var(--radius-btn)}
+.cookie-no{background:none;color:var(--paper-hi);border:1px solid var(--border);font-size:12px;padding:8px 12px;cursor:pointer;border-radius:var(--radius-btn)}
 
 /* pulsante ascolta audio sull'output foto */
-.foto-audio-btn{display:inline-flex;align-items:center;gap:5px;background:var(--signal);color:var(--paper-hi);border:none;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;cursor:pointer;border-radius:0;flex-shrink:0}
+.foto-audio-btn{display:inline-flex;align-items:center;gap:5px;background:var(--signal);color:var(--paper-hi);border:none;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;cursor:pointer;border-radius:var(--radius-pill);flex-shrink:0}
 .foto-audio-btn:hover{background:var(--accent)}
 .foto-audio-btn:disabled{opacity:.6;cursor:default}
 
 /* flavor network — stile strumento (override angoli netti) */
-.flavor-card{background:var(--paper-hi);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0;margin:12px 14px 0}
+.flavor-card{background:var(--paper-hi);border:var(--border-soft);border-left:3px solid var(--accent);border-radius:var(--radius-card);margin:12px 16px 0;box-shadow:var(--shadow-card)}
 .fl-icon{background:var(--accent);border-radius:0}
-.flavor-input{border:1.5px solid var(--line-strong);border-radius:0;font-family:var(--mono);font-size:14px;background:var(--paper-hi)}
+.flavor-input{border:1.5px solid var(--line-strong);border-radius:var(--radius-btn);font-family:var(--mono);font-size:14px;background:var(--paper-hi)}
 .flavor-input:focus{border-color:var(--accent)}
-.flavor-search-btn{background:var(--accent);border-radius:0;font-family:var(--mono);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.flavor-search-btn{background:var(--accent);border-radius:var(--radius-btn);font-family:var(--mono);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
 .flavor-result-name{color:var(--ink);font-family:var(--mono);font-size:13px}
 .flavor-result-why{color:var(--accent)}
 
 /* calcolatori — stile strumento (override angoli netti) */
-.calc-card{background:var(--paper-hi);border:1px solid var(--border);border-radius:0}
-.foodcost-card{background:var(--paper-hi);border:1px solid var(--border);border-left:3px solid var(--signal);border-radius:0}
-.calc-input,.calc-field input{border-radius:0 !important;font-family:var(--mono)}
+.calc-card{background:var(--paper-hi);border:var(--border-soft);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
+.foodcost-card{background:var(--paper-hi);border:var(--border-soft);border-left:3px solid var(--signal);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
+.calc-input,.calc-field input{border-radius:var(--radius-btn) !important;font-family:var(--mono)}
 
 /* uniformazione bordi — card contenitori a angoli netti (i badge/pillole restano tondi) */
-.disc-list,.disc-item,.scheda-les,.scheda-quiz2,.principio-card{border-radius:0 !important}
-.disc-list{border-left:none;border-right:none}
-.disc-item{border-left:3px solid transparent}
-.disc-item:hover{border-left-color:var(--accent)}
+.scheda-les,.scheda-quiz2,.principio-card{border-radius:var(--radius-card-sm)}
+.disc-item:hover{box-shadow:0 6px 18px rgba(20,29,34,.10)}
 
 /* strumento nella lezione (Parte B — appare col numero-bersaglio) */
 .les-strumento{margin:12px 14px 0;padding:0}
@@ -933,10 +931,10 @@ a:focus-visible,input:focus-visible{
 .les-strum-cta{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--signal);white-space:nowrap;display:flex;align-items:center;gap:3px}
 
 /* onboarding — identità nuova (override) */
-.onb-sheet{background:var(--paper);border-radius:0;border-top:3px solid var(--accent)}
+.onb-sheet{background:var(--paper);border-radius:var(--radius-card) var(--radius-card) 0 0;border-top:3px solid var(--accent)}
 .onb-title-ovl{font-family:var(--serif);color:var(--ink)}
-.onb-step-num{border-radius:0;background:var(--accent);font-family:var(--mono);font-weight:700}
-.onb-cta-btn{background:var(--signal);border-radius:0;font-weight:700}
+.onb-step-num{border-radius:var(--radius-btn);background:var(--accent);font-family:var(--mono);font-weight:700}
+.onb-cta-btn{background:var(--signal);border-radius:var(--radius-btn);font-weight:700}
 .onb-step-title{font-family:var(--sans)}
 
 /* card strumenti — curate con contesto d'uso */
@@ -953,8 +951,8 @@ a:focus-visible,input:focus-visible{
 .strum-card-uso{font-family:var(--sans);font-size:12.5px;line-height:1.5;color:var(--ink-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 
 /* card ponte Cifra — bottone invitante (era grigio spento) + angoli netti */
-.bridge-card{border-radius:0;border-left:3px solid var(--cifra-p300)}
-.bridge-cta{background:var(--cifra-p300);color:var(--cifra-p700);font-weight:700;border-radius:0;font-family:var(--sans);font-size:13px;padding:11px 16px}
+.bridge-card{border-radius:var(--radius-card-sm);border-left:3px solid var(--cifra-p300)}
+.bridge-cta{background:var(--cifra-p300);color:var(--cifra-p700);font-weight:700;border-radius:var(--radius-btn);font-family:var(--sans);font-size:13px;padding:11px 16px}
 .bridge-cta:hover{background:#fff}
 .bridge-headline{font-family:var(--serif);color:#fff}
 
@@ -982,13 +980,13 @@ a:focus-visible,input:focus-visible{
 
 /* Auth — identità nuova (override) */
 .auth-logo{color:var(--ink)}
-.auth-tabs{border:1.5px solid var(--line-strong);border-radius:0}
+.auth-tabs{border:1.5px solid var(--line-strong);border-radius:var(--radius-btn);overflow:hidden}
 .auth-tab.active{background:var(--ink);color:var(--paper-hi)}
-.auth-input{background:var(--paper-hi);border:1.5px solid var(--line-strong);border-radius:0;font-size:16px}
+.auth-input{background:var(--paper-hi);border:1.5px solid var(--line-strong);border-radius:var(--radius-btn);font-size:16px}
 .auth-input:focus{border-color:var(--accent)}
-.auth-btn{background:var(--signal);border-radius:0;font-weight:700}
+.auth-btn{background:var(--signal);border-radius:var(--radius-btn);font-weight:700}
 .auth-btn:hover{background:var(--accent)}
-.auth-msg{border-radius:0}
+.auth-msg{border-radius:var(--radius-btn)}
 .auth-msg.ok{background:#E8F0EE;color:var(--signal);display:block}
 .auth-msg.err{background:#F6E5DE;color:var(--accent);display:block}
 .auth-field label{color:var(--ink-muted)}
