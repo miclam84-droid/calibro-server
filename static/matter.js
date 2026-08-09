@@ -2416,6 +2416,7 @@ let _mbVoci = [];      // voci selezionate per il menù
 let _mbTemplate = 'editorial';
 
 function creaMenu(){
+  var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
   _mbStep = 1; _mbVoci = []; _mbTemplate = 'editorial';
   document.getElementById('mb-nome').value = '';
   document.getElementById('mb-locale').value = '';
@@ -2429,6 +2430,7 @@ let _mfFiles = [];       // File scelti
 let _mfIngredienti = []; // ingredienti riconosciuti/confermati
 
 function creaMenuDaFoto(){
+  var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
   _mfFiles = []; _mfIngredienti = [];
   document.getElementById('mf-thumbs').innerHTML = '';
   document.getElementById('mf-analizza').style.display = 'none';
@@ -2539,15 +2541,18 @@ function _mfRenderProposte(j){
   cont.innerHTML = _mfProposte.map((p,i)=>{
     const ing = p.ingredienti.join(' · ');
     const tipoLab = p.tipo==='triangolo' ? 'Combinazione a tre' : (p.esplorativa ? 'Da esplorare' : 'Coppia aromatica');
-    const proofConn = p.esplorativa
-      ? '<span class="mf-proof-item explora">da provare al banco</span>'
-      : `<span class="mf-proof-item">${p.proof.connessioni_aromatiche} connessioni aromatiche</span>`;
+    const forza = p.esplorativa ? 'Ipotesi da provare al banco'
+      : (p.connessioni>=6 ? 'Connessione molto forte' : p.connessioni>=3 ? 'Connessione forte' : 'Connessione presente');
+    const proofBadge = p.esplorativa
+      ? '<span class="mf-badge esplora">da esplorare</span>'
+      : `<span class="mf-badge molecole">${p.proof.connessioni_aromatiche} connessioni aromatiche</span>`;
     return `<div class="mf-prop${p.esplorativa?' esplora':''}">
       <div class="mf-prop-tipo">${tipoLab}</div>
       <div class="mf-prop-ing">${_esc(ing)}</div>
-      <div class="mf-prop-proof">
-        <span class="mf-proof-item">${p.proof.ingredienti_disponibili} ingredienti</span>
-        ${proofConn}
+      <div class="mf-prop-forza">${forza}</div>
+      <div class="mf-prop-badges">
+        <span class="mf-badge">${p.proof.ingredienti_disponibili} ingredienti tuoi</span>
+        ${proofBadge}
       </div>
       <button class="mf-prop-btn" onclick="mfVaiAlLaboratorio(${i})">Porta al laboratorio →</button>
     </div>`;

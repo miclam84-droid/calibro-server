@@ -1197,7 +1197,8 @@ a:focus-visible,input:focus-visible{
 
 /* ═══ BUILDER CREA MENÙ ═══ */
 .menu-builder,.menu-anteprima{position:fixed;inset:0;background:var(--paper);z-index:200;overflow-y:auto;display:flex;flex-direction:column}
-.menu-builder.hidden,.menu-anteprima.hidden{display:none}
+.menu-builder.hidden,.menu-anteprima.hidden{display:none!important}
+.menu-builder,.menu-anteprima,#menu-foto{z-index:400}
 .mb-top{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--paper);z-index:2}
 .mb-close{background:none;border:none;cursor:pointer;padding:4px}
 .mb-close svg{width:22px;height:22px;stroke:var(--ink);stroke-width:2;fill:none}
@@ -1313,3 +1314,16 @@ a:focus-visible,input:focus-visible{
 .mf-finalizza-bar{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--paper-hi);border-top:1px solid var(--border);padding:14px 18px;box-shadow:0 -4px 20px rgba(20,29,34,.08)}
 .mf-finalizza-bar span{font-family:var(--sans);font-weight:700;font-size:14px;color:var(--ink)}
 .mf-finalizza-bar button{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-btn);padding:12px 20px;font-family:var(--sans);font-weight:700;font-size:14px;cursor:pointer}
+
+/* card proposte desiderabili (badge teal, forza connessione) */
+.mf-prop-forza{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--signal);margin-bottom:12px}
+.mf-prop.esplora .mf-prop-forza{color:var(--ink-muted)}
+.mf-prop-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.mf-badge{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:rgba(18,84,93,.08);color:var(--signal);border:1px solid rgba(18,84,93,.15)}
+.mf-badge.molecole{background:rgba(18,84,93,.1);color:var(--signal)}
+.mf-badge.esplora{font-family:var(--sans);text-transform:uppercase;letter-spacing:.03em;background:rgba(203,90,34,.08);color:var(--accent);border-color:rgba(203,90,34,.15)}
+
+/* pulsanti laboratorio: primaria a tutta larghezza arancio, verifica come link */
+.mf-lab-add{width:100%;background:var(--accent);color:#fff;border:none;border-radius:12px;height:52px;font-family:var(--sans);font-weight:600;font-size:16px;cursor:pointer;margin-top:8px}
+.mf-lab-add:active{transform:scale(.99)}
+.mf-lab-ricalcola{display:block;width:100%;background:none;border:none;color:var(--ink-muted);font-family:var(--sans);font-size:13px;text-decoration:underline;padding:12px;margin-top:4px;cursor:pointer}
