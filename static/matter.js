@@ -602,12 +602,15 @@ async function caricaLezioneStep(step){
     const datoBox = document.getElementById('les-dato-box');
     if(j.fenomeno.target){
       _renderTarget(document.getElementById('les-target'), j.fenomeno.target, false);
+      var _mi=document.getElementById('les-mirino-intro');
       renderMirino(document.getElementById('les-mirino'), j.fenomeno.nome, j.fenomeno.target);
+      if(_mi) _mi.style.display = document.getElementById('les-mirino').style.display==='none'?'none':'';
       datoBox.style.display = '';
       _caricaStrumentoPerFenomeno(disc, j.fenomeno.nome, j.fenomeno.target);
     } else {
       datoBox.style.display = 'none';
       var _mir=document.getElementById('les-mirino'); if(_mir) _mir.style.display='none';
+      var _mii=document.getElementById('les-mirino-intro'); if(_mii) _mii.style.display='none';
       var sb=document.getElementById('les-strumento-box'); if(sb) sb.style.display='none';
     }
     // stepper a puntini: quanti fenomeni, dove sei, salto diretto

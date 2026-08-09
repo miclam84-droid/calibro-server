@@ -274,7 +274,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   background:var(--s100);border:1px solid var(--s300);color:var(--s700)}
 .s-body{padding:2px 14px 14px;font-size:14px;color:var(--ink);line-height:1.65;white-space:pre-wrap}
 .s-conn{padding:0 14px 14px}
-.s-conn-lab{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+.s-conn-lab{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.02em;
   text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px}
 .conns{display:flex;gap:6px;flex-wrap:wrap}
 .conn{font-size:12.5px;padding:7px 11px;border-radius:9px;
@@ -282,7 +282,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   cursor:pointer;transition:.15s;display:flex;align-items:center;gap:6px}
 .conn:active{border-color:var(--e500)}
 .conn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.conn .tg{font-family:var(--mono);font-size:10px;color:var(--ink-muted)}
+.conn .tg{font-family:var(--sans);font-size:11px;color:var(--ink-muted)}
 .s-ai-label{font-family:var(--sans);font-size:11px;color:var(--ink-muted);
   padding:6px 14px;border-top:1px solid var(--border);letter-spacing:.03em;
   display:flex;align-items:center;gap:5px}
@@ -492,7 +492,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   border-radius:12px;padding:14px;cursor:pointer;transition:.15s}
 .quad-item:active{border-color:var(--e500)}
 .quad-item-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
-.quad-item-meta{font-family:var(--mono);font-size:11px;color:var(--ink-muted);
+.quad-item-meta{font-family:var(--sans);font-size:12px;color:var(--ink-muted);
   display:flex;gap:10px;flex-wrap:wrap}
 .quad-item-chip{background:var(--e100);color:var(--e700);
   padding:2px 8px;border-radius:4px;font-size:10px}
@@ -930,7 +930,7 @@ a:focus-visible,input:focus-visible{
 .les-strum-card:hover{border-color:var(--signal)}
 .les-strum-info{display:flex;flex-direction:column;gap:2px}
 .les-strum-nome{font-size:13px;font-weight:600;color:var(--ink)}
-.les-strum-meta{font-family:var(--mono);font-size:10px;color:var(--ink-muted)}
+.les-strum-meta{font-family:var(--sans);font-size:12px;color:var(--ink-muted)}
 .les-strum-cta{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--signal);white-space:nowrap;display:flex;align-items:center;gap:3px}
 
 /* onboarding — identità nuova (override) */
@@ -1253,3 +1253,11 @@ a:focus-visible,input:focus-visible{
 .tpl-classic{font-family:Georgia,serif}
 .mb-tpl-prev.tpl-classic{background:#f8f5ef;color:#3a2f22;font-family:Georgia,serif}
 .ma-export-nota{text-align:center;font-family:var(--sans);font-size:13px;color:var(--ink-muted);margin-top:20px;line-height:1.5}
+
+/* Mirino protagonista: intro che lo annuncia */
+.mirino-intro{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink);margin:18px 0 2px;padding-top:4px}
+.mirino{margin-top:8px;border-left:3px solid var(--accent)}
+
+/* Fix calcolatore: risultato STICKY in basso, leggibile col telefono sul banco */
+#panel-calc .readout{position:sticky;bottom:12px;z-index:5;box-shadow:0 6px 24px rgba(20,29,34,.14);margin-top:16px}
+#panel-calc .readout .readout-big{margin-bottom:0}
