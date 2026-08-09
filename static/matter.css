@@ -1298,3 +1298,5 @@ a:focus-visible,input:focus-visible{
 .mf-proof-item{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--target-green);background:rgba(88,122,104,.12);padding:4px 10px;border-radius:var(--radius-pill)}
 .mf-prop-btn{width:100%;background:var(--ink);color:var(--paper-hi);border:none;border-radius:var(--radius-btn);padding:12px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer}
 .mf-prop-btn:active{transform:scale(.98)}
+.mf-prop.esplora{border-left:3px solid var(--ink-muted)}
+.mf-proof-item.explora{background:rgba(20,29,34,.06);color:var(--ink-muted)}

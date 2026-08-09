@@ -2537,13 +2537,16 @@ function _mfRenderProposte(j){
   }
   cont.innerHTML = _mfProposte.map((p,i)=>{
     const ing = p.ingredienti.join(' · ');
-    const tipoLab = p.tipo==='triangolo' ? 'Combinazione a tre' : 'Coppia aromatica';
-    return `<div class="mf-prop">
+    const tipoLab = p.tipo==='triangolo' ? 'Combinazione a tre' : (p.esplorativa ? 'Da esplorare' : 'Coppia aromatica');
+    const proofConn = p.esplorativa
+      ? '<span class="mf-proof-item explora">da provare al banco</span>'
+      : `<span class="mf-proof-item">${p.proof.connessioni_aromatiche} connessioni aromatiche</span>`;
+    return `<div class="mf-prop${p.esplorativa?' esplora':''}">
       <div class="mf-prop-tipo">${tipoLab}</div>
       <div class="mf-prop-ing">${_esc(ing)}</div>
       <div class="mf-prop-proof">
         <span class="mf-proof-item">${p.proof.ingredienti_disponibili} ingredienti</span>
-        <span class="mf-proof-item">${p.proof.connessioni_aromatiche} connessioni aromatiche</span>
+        ${proofConn}
       </div>
       <button class="mf-prop-btn" onclick="mfVaiAlLaboratorio(${i})">Porta al laboratorio →</button>
     </div>`;

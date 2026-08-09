@@ -1261,6 +1261,18 @@ def menu_proposte():
         # ordino le coppie per forza del legame
         coppie.sort(key=lambda x: -x["forza"])
 
+        # FALLBACK: se ci sono poche connessioni forti, aggiungo proposte esplorative
+        # (combinazioni degli ingredienti disponibili, con forza dichiarata onestamente)
+        nomi = list(ahn_map.keys())
+        if len(coppie) < 2 and len(nomi) >= 2:
+            esistenti = {frozenset([c["a"],c["b"]]) for c in coppie}
+            for i in range(len(nomi)):
+                for j in range(i+1, len(nomi)):
+                    fs = frozenset([nomi[i], nomi[j]])
+                    if fs not in esistenti:
+                        coppie.append({"a": nomi[i], "b": nomi[j], "forza": 0, "esplorativa": True})
+                        esistenti.add(fs)
+
         # costruisco le proposte: coppie forti + triangoli (A-B-C tutti connessi)
         proposte = []
         # 1) triangoli: tre ingredienti tutti connessi tra loro
@@ -1279,16 +1291,20 @@ def menu_proposte():
                             "proof": {"ingredienti_disponibili": 3, "connessioni_aromatiche": conns}
                         })
                         usati_tri |= {a,b,c}
-        # 2) coppie forti non già coperte da un triangolo
+        # 2) coppie non già coperte da un triangolo
         for c in coppie[:6]:
             if not ({c["a"],c["b"]} <= usati_tri):
+                esplorativa = c.get("esplorativa") or c["forza"]==0
                 proposte.append({
                     "tipo": "coppia", "ingredienti": [c["a"], c["b"]],
                     "connessioni": c["forza"],
-                    "proof": {"ingredienti_disponibili": 2, "connessioni_aromatiche": c["forza"]}
+                    "esplorativa": esplorativa,
+                    "proof": {"ingredienti_disponibili": 2,
+                              "connessioni_aromatiche": c["forza"],
+                              "nota": "da esplorare al banco" if esplorativa else "legame verificato"}
                 })
-        # ordino: triangoli prima, poi per connessioni
-        proposte.sort(key=lambda p: (0 if p["tipo"]=="triangolo" else 1, -p["connessioni"]))
+        # ordino: triangoli prima, poi legami forti, poi esplorative
+        proposte.sort(key=lambda p: (0 if p["tipo"]=="triangolo" else 1, 1 if p.get("esplorativa") else 0, -p["connessioni"]))
 
         return jsonify({
             "ingredienti": ingredienti,
