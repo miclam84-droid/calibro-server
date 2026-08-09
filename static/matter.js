@@ -2437,8 +2437,9 @@ function creaMenuDaFoto(){
 }
 function chiudiMenuFoto(){ document.getElementById('menu-foto').classList.add('hidden'); }
 function _mfMostraFase(f){
-  ['foto','loading','valida','proposte'].forEach(x=>{
-    document.getElementById('mf-fase-'+x).style.display = x===f?'block':'none';
+  ['foto','loading','valida','proposte','lab'].forEach(x=>{
+    var el=document.getElementById('mf-fase-'+x);
+    if(el) el.style.display = x===f?'block':'none';
   });
 }
 
@@ -2554,8 +2555,77 @@ function _mfRenderProposte(j){
 }
 function mfVaiAlLaboratorio(i){
   const p = _mfProposte[i];
-  // Step 3 (tecniche + target col Mirino) — prossimo blocco.
-  alert('Proposta scelta: '+p.ingredienti.join(' · ')+'\n\n(Il laboratorio con tecniche e Mirino arriva nel prossimo step)');
+  _mfPropCorrente = p;
+  // preparo la fase laboratorio: nome voce + mirino su un target-guida + valida
+  document.getElementById('mf-lab-ing').textContent = p.ingredienti.join(' · ');
+  document.getElementById('mf-lab-nome').value = '';
+  // target-guida per una drink list: diluizione (numero misurabile universale al banco)
+  var box = document.getElementById('mf-lab-mirino');
+  renderMirino(box, p.ingredienti.join(' · '), 'diluizione 20-28%');
+  document.getElementById('mf-lab-stato').textContent = '';
+  document.getElementById('mf-lab-stato').className = 'mf-lab-stato';
+  _mfMostraFase('lab');
+}
+let _mfPropCorrente = null;
+
+function mfValidaVoce(){
+  // controllo se il mirino è stato misurato (feedback presente)
+  var box = document.getElementById('mf-lab-mirino');
+  var misurato = box && box.querySelector('.mirino-feedback');
+  var st = document.getElementById('mf-lab-stato');
+  if(misurato){
+    st.textContent = '✓ Voce verificata al banco';
+    st.className = 'mf-lab-stato ok';
+    _mfVoceValidata = true;
+  } else {
+    st.textContent = 'Misura la diluizione col Mirino per verificare la voce (oppure aggiungila come non verificata).';
+    st.className = 'mf-lab-stato warn';
+  }
+}
+let _mfVoceValidata = false;
+
+function mfAggiungiAlMenu(){
+  var nome = document.getElementById('mf-lab-nome').value.trim();
+  if(!nome){ document.getElementById('mf-lab-nome').focus(); return; }
+  var p = _mfPropCorrente;
+  // creo/aggiorno un menù "da foto" in localStorage con questa voce
+  var voce = {
+    _src: 'foto'+Date.now(),
+    nome: nome,
+    target: _mfVoceValidata ? 'diluizione 20-28%' : '',
+    ingredienti: p.ingredienti,
+    stato: _mfVoceValidata ? 'verified' : 'unverified'
+  };
+  // aggiungo al "menù in costruzione" foto (bozza in memoria + persistito)
+  _mfVociMenu = _mfVociMenu || [];
+  _mfVociMenu.push(voce);
+  _mfVoceValidata = false;
+  // feedback e torno alle proposte per aggiungere altre voci
+  var st = document.getElementById('mf-lab-stato');
+  st.textContent = '✓ "'+nome+'" aggiunta al menù ('+_mfVociMenu.length+' voci). Scegli un\'altra combinazione o finalizza.';
+  st.className = 'mf-lab-stato ok';
+  setTimeout(function(){ _mfMostraFase('proposte'); _mfAggiornaFinalizza(); }, 900);
+}
+let _mfVociMenu = [];
+
+function _mfAggiornaFinalizza(){
+  var bar = document.getElementById('mf-finalizza-bar');
+  if(!bar) return;
+  if(_mfVociMenu.length){
+    bar.style.display = 'flex';
+    document.getElementById('mf-finalizza-count').textContent = _mfVociMenu.length + (_mfVociMenu.length===1?' voce':' voci');
+  } else bar.style.display = 'none';
+}
+
+function mfFinalizzaMenu(){
+  if(!_mfVociMenu.length) return;
+  // passo le voci al builder Crea Menù (step grafica): riuso _mbVoci + builder step 3
+  _mbVoci = _mfVociMenu.map(function(v){ return {_src:v._src, nome:v.nome, target:v.target, stato:v.stato}; });
+  document.getElementById('mb-nome').value = 'Menù di stagione';
+  chiudiMenuFoto();
+  _mbTemplate = 'editorial';
+  document.getElementById('menu-builder').classList.remove('hidden');
+  _mbMostraStep(3); // vai diretto alla grafica: le voci ci sono già
 }
 
 

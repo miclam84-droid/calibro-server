@@ -832,6 +832,25 @@ if('serviceWorker' in navigator){
     <div class="mb-sub">Ogni combinazione nasce da connessioni aromatiche reali tra i tuoi ingredienti — non da un'invenzione. Portala al laboratorio per darle i numeri.</div>
     <div class="mf-proposte" id="mf-proposte"></div>
   </div>
+  <!-- FASE E: laboratorio (tecnica + Mirino + valida) -->
+  <div class="mf-fase" id="mf-fase-lab" style="display:none">
+    <div class="mb-eyebrow">Laboratorio</div>
+    <div class="mb-h">Dai i numeri a questa voce</div>
+    <div class="mf-lab-ing" id="mf-lab-ing"></div>
+    <input class="mb-input" id="mf-lab-nome" placeholder="Dai un nome alla voce (es. Strawberry Sour)" maxlength="50">
+    <div class="mf-lab-mirino-lab">Verifica al banco</div>
+    <div class="mirino" id="mf-lab-mirino"></div>
+    <div class="mf-lab-stato" id="mf-lab-stato"></div>
+    <div class="mf-lab-actions">
+      <button class="mf-lab-valida" onclick="mfValidaVoce()">Verifica</button>
+      <button class="mf-lab-add" onclick="mfAggiungiAlMenu()">Aggiungi al menù →</button>
+    </div>
+  </div>
+  <!-- barra finalizza (sempre visibile quando ci sono voci) -->
+  <div class="mf-finalizza-bar" id="mf-finalizza-bar" style="display:none">
+    <span id="mf-finalizza-count">0 voci</span>
+    <button onclick="mfFinalizzaMenu()">Finalizza il menù →</button>
+  </div>
 </div>
 
 <!-- ── ONBOARDING OVERLAY ────────────────────────────── -->
