@@ -313,8 +313,11 @@ function _quandoCasi(nome, disc){
 function switchTab(t){
   ['scopri','lezione','mappa','chiedi','auth','quaderno'].forEach(s=>{
     document.getElementById('screen-'+s).classList.toggle('active',s===t);
+  });
+  // le tab visibili sono 4: scopri, mappa(=Lab), chiedi, quaderno. Lezione non ha tab propria.
+  ['scopri','mappa','chiedi','quaderno'].forEach(s=>{
     const tb=document.getElementById('tab-'+s);
-    if(tb) tb.classList.toggle('active',s===t);
+    if(tb) tb.classList.toggle('active', s===t || (t==='lezione' && s==='scopri'));
   });
   // la barra domanda serve solo in Chiedi → chat
   const askBar=document.getElementById('ask-bar');
@@ -324,6 +327,7 @@ function switchTab(t){
   if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa'){
     const _disc = Matter.disciplina || 'bar';
+    if(typeof switchMappaTab==='function') switchMappaTab('fenomeni');
     caricaMappa(_disc);
     caricaStrumenti(_disc);
     if(!Matter.disciplina) document.getElementById('mappa-label').textContent = _t('mappa_scegli');
