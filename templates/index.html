@@ -782,9 +782,14 @@ if('serviceWorker' in navigator){
     <span class="mb-title">Anteprima</span>
     <button class="mb-next" onclick="esportaMenu()">Esporta</button>
   </div>
+  <div class="ma-vista-toggle">
+    <button class="ma-tg active" id="ma-tg-cliente" onclick="_maSwitchVista('cliente')">Carta cliente</button>
+    <button class="ma-tg" id="ma-tg-staff" onclick="_maSwitchVista('staff')">Scheda di linea</button>
+  </div>
   <div class="ma-scroll">
     <div class="ma-render tpl-editorial" id="ma-render"></div>
-    <div class="ma-export-nota">L'anteprima è gratuita. L'esportazione del PDF stampabile è inclusa in <b>Matter Pro</b>.</div>
+    <div class="mas-render" id="mas-render" style="display:none"></div>
+    <div class="ma-export-nota">La <b>Carta cliente</b> è per il tavolo. La <b>Scheda di linea</b>, coi numeri-bersaglio, è per lo staff in cucina. L'export PDF di entrambe è incluso in <b>Matter Pro</b>.</div>
   </div>
 </div>
 

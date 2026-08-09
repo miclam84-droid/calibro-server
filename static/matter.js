@@ -2735,17 +2735,46 @@ function apriAnteprima(menu){
   const ov = document.getElementById('menu-anteprima');
   const tpl = menu.template || 'editorial';
   const voci = menu.voci || [];
-  const corpo = voci.map(v=>{
+  _maMenuCorrente = menu;
+  // VISTA CLIENTE: elegante, solo nome + ingredienti descrittivi
+  const corpoCliente = voci.map(v=>{
     const sigillo = v.stato==='verified' ? '<span class="ma-verif">✓</span>' : '';
-    return `<div class="ma-voce"><div class="ma-voce-nome">${_esc(v.nome)}${sigillo}</div>${v.target?`<div class="ma-voce-tgt">${_esc(v.target)}</div>`:''}</div>`;
+    const ingr = (v.ingredienti && v.ingredienti.length) ? v.ingredienti.join(' · ') : '';
+    return `<div class="ma-voce"><div class="ma-voce-nome">${_esc(v.nome)}${sigillo}</div>${ingr?`<div class="ma-voce-desc">${_esc(ingr)}</div>`:''}</div>`;
   }).join('');
   document.getElementById('ma-render').className = 'ma-render tpl-'+tpl;
   document.getElementById('ma-render').innerHTML =
     `<div class="ma-head"><div class="ma-locale">${_esc(menu.locale||'Il tuo locale')}</div>
      <div class="ma-nome">${_esc(menu.nome||'Drink List')}</div></div>
-     <div class="ma-voci">${corpo}</div>
+     <div class="ma-voci">${corpoCliente}</div>
      <div class="ma-foot">Verificato da Matter</div>`;
+  // VISTA STAFF: scheda di linea coi numeri-bersaglio
+  const corpoStaff = voci.map(v=>{
+    const ingr = (v.ingredienti && v.ingredienti.length) ? v.ingredienti.join(' · ') : '—';
+    const tgt = v.target ? `<div class="mas-voce-target">TARGET · ${_esc(v.target)}</div>` : '';
+    const stato = v.stato==='verified' ? '<span class="mas-verif">✓ verificato al banco</span>' : '<span class="mas-nonverif">da verificare</span>';
+    return `<div class="mas-voce">
+      <div class="mas-voce-nome">${_esc(v.nome)} ${stato}</div>
+      <div class="mas-voce-ing">${_esc(ingr)}</div>
+      ${tgt}
+    </div>`;
+  }).join('');
+  document.getElementById('mas-render').innerHTML =
+    `<div class="mas-head"><div class="mas-locale">${_esc(menu.locale||'Il tuo locale')} · scheda di linea</div>
+     <div class="mas-nome">${_esc(menu.nome||'Drink List')}</div></div>
+     <div class="mas-voci">${corpoStaff}</div>
+     <div class="mas-foot">Scheda operativa — i numeri che lo staff deve colpire · Matter</div>`;
+  _maSwitchVista('cliente');
   ov.classList.remove('hidden');
+}
+let _maMenuCorrente = null;
+function _maSwitchVista(v){
+  document.getElementById('ma-render').style.display = v==='cliente'?'block':'none';
+  document.getElementById('mas-render').style.display = v==='staff'?'block':'none';
+  var tc=document.getElementById('ma-tg-cliente'), ts=document.getElementById('ma-tg-staff');
+  if(tc) tc.classList.toggle('active', v==='cliente');
+  if(ts) ts.classList.toggle('active', v==='staff');
+  document.body.setAttribute('data-print-vista', v);
 }
 function chiudiAnteprima(){ document.getElementById('menu-anteprima').classList.add('hidden'); caricaMenuSalvati(); }
 
