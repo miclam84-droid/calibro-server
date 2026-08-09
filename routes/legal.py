@@ -336,7 +336,7 @@ h1{font-size:24px}h2{font-size:18px;margin-top:32px}p,li{font-size:15px}</style>
 <h2>Flavor network</h2>
 <p>Gli abbinamenti suggeriti dal flavor network sono ipotesi basate su composti volatili condivisi (dataset scientifico Ahn 2011). Non costituiscono garanzie nutrizionali, mediche o di sicurezza alimentare.</p>
 <h2>Account e abbonamento</h2>
-<p>Il piano Free è gratuito e include funzionalità limitate. Il piano Pro è a pagamento (€11,99/mese) e include l'accesso completo al grafo, alla chat AI e al flavor network. L'abbonamento è rinnovabile mensilmente e cancellabile in qualsiasi momento.</p>
+<p>Il piano Free è gratuito e include funzionalità limitate. Il piano Pro è a pagamento (€19,99/mese) e include l'accesso completo al grafo, alla chat AI e al flavor network. L'abbonamento è rinnovabile mensilmente e cancellabile in qualsiasi momento.</p>
 <h2>Proprietà intellettuale</h2>
 <p>Il grafo di conoscenza, il codice e il design di Matter sono proprietà del titolare. I dati scientifici provengono da fonti pubbliche citate (dataset Ahn CC BY, PubChem NCBI).</p>
 <p><a href="/">← Torna a Matter</a></p>

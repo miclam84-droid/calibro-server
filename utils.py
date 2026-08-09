@@ -125,49 +125,58 @@ def _aggiorna_profilo(profilo, ingrediente, abbinamento, voto, disciplina):
     return profilo
 
 def _trial_consentito(user_id, ip, tipo="varie", limite=5):
-    """Gate trial/pro condiviso (chat, foto, voce).
-    Ritorna (consentito: bool, info: dict).
-    - se piano='pro' → sempre consentito
-    - altrimenti conta gli usi in trial_uso (per user_id o ip) su 7 giorni
-    - blocca a >= limite usi o >= 7 giorni dal primo
-    Registra l'uso se consentito.
+    """Gate a PUNTI (struttura OpenAI).
+    FREE: 5 assaggi chat TOTALI (non a tempo). Foto/voce mai (sono solo-Pro via _e_pro).
+    PRO: fair use interno a punti (~budget €5/mese di costo AI), invisibile all'utente.
+    Ritorna (consentito: bool, info: dict). Le funzioni gratis (atlante/mirino/calcolatori) non passano di qui.
     """
-    import datetime as _dt
     from db import _get_conn, _release_conn
+    # punti per tipo di chiamata (riflettono il costo relativo)
+    PUNTI = {"chat": 1, "chat_operativa": 3, "foto": 5, "voce": 3, "diag": 1, "varie": 1}
+    punti_uso = PUNTI.get(tipo, 1)
+    FREE_ASSAGGI = 5        # assaggi chat totali per il free
+    PRO_PUNTI_MESE = 300   # fair use Pro: ~budget interno mensile
     try:
         conn = _get_conn(); cur = conn.cursor()
-        # tabella unificata usi trial (foto/voce/chat) — creata se non esiste
         cur.execute("""CREATE TABLE IF NOT EXISTS trial_uso (
             id SERIAL PRIMARY KEY, user_id TEXT, ip TEXT, tipo TEXT,
-            ts TIMESTAMPTZ DEFAULT NOW())""")
+            costo_cent REAL DEFAULT 1.0, punti INTEGER DEFAULT 1, ts TIMESTAMPTZ DEFAULT NOW())""")
+        cur.execute("ALTER TABLE trial_uso ADD COLUMN IF NOT EXISTS punti INTEGER DEFAULT 1")
         conn.commit()
         piano = "free"
         if user_id:
             cur.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
             r = cur.fetchone()
             piano = (r[0] if r else "free") or "free"
+
         if piano == "pro":
+            # PRO: fair use a punti sugli ultimi 30 giorni
+            if user_id:
+                cur.execute("SELECT COALESCE(SUM(punti),0) FROM trial_uso WHERE user_id=%s AND ts > NOW() - INTERVAL '30 days'", (user_id,))
+                usati = int(cur.fetchone()[0] or 0)
+                if usati + punti_uso > PRO_PUNTI_MESE:
+                    cur.close(); _release_conn(conn)
+                    return False, {"pro": True, "fair_use": True, "punti_usati": usati}
+                cur.execute("INSERT INTO trial_uso (user_id, ip, tipo, punti) VALUES (%s,%s,%s,%s)", (user_id, ip, tipo, punti_uso))
+                conn.commit()
             cur.close(); _release_conn(conn)
             return True, {"pro": True}
-        # conteggio usi
+
+        # FREE: solo la chat ha assaggi; foto/voce sono bloccate altrove (_e_pro)
+        # conto gli assaggi chat totali (senza finestra temporale: 5 e basta)
         if user_id:
-            cur.execute("SELECT COUNT(*), MIN(ts) FROM trial_uso WHERE user_id=%s AND ts > NOW() - INTERVAL '7 days'", (user_id,))
+            cur.execute("SELECT COUNT(*) FROM trial_uso WHERE user_id=%s AND tipo IN ('chat','chat_operativa','varie')", (user_id,))
         else:
-            cur.execute("SELECT COUNT(*), MIN(ts) FROM trial_uso WHERE ip=%s AND ts > NOW() - INTERVAL '7 days'", (ip,))
-        rt = cur.fetchone()
-        n = int(rt[0]) if rt and rt[0] else 0
-        prima = rt[1] if rt else None
-        giorni = (_dt.datetime.now(_dt.timezone.utc) - prima).days if prima else 0
-        if n >= limite or giorni >= 7:
+            cur.execute("SELECT COUNT(*) FROM trial_uso WHERE ip=%s AND tipo IN ('chat','chat_operativa','varie')", (ip,))
+        n = int(cur.fetchone()[0] or 0)
+        if n >= FREE_ASSAGGI:
             cur.close(); _release_conn(conn)
-            return False, {"trial_esaurito": True, "usi": n}
-        # registra l'uso
-        cur.execute("INSERT INTO trial_uso (user_id, ip, tipo) VALUES (%s,%s,%s)", (user_id, ip, tipo))
+            return False, {"assaggi_finiti": True, "usati": n, "totali": FREE_ASSAGGI}
+        cur.execute("INSERT INTO trial_uso (user_id, ip, tipo, punti) VALUES (%s,%s,%s,%s)", (user_id, ip, tipo, punti_uso))
         conn.commit(); cur.close(); _release_conn(conn)
-        return True, {"trial_attivo": True, "usi": n + 1, "rimasti": max(0, limite - n - 1)}
+        return True, {"assaggio": True, "usati": n + 1, "rimasti": max(0, FREE_ASSAGGI - n - 1)}
     except Exception as e:
-        # in caso di errore DB: non bloccare (fail-open) ma logga
-        print(f"[TRIAL] errore: {e}", flush=True)
+        print(f"[GATE] errore: {e}", flush=True)
         try:
             conn.rollback(); _release_conn(conn)
         except Exception:

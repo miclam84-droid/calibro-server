@@ -87,18 +87,24 @@ def chiedi():
                 rp = cur_t.fetchone()
                 piano_t = rp[0] if rp else "free"
             if piano_t != "pro":
+                # 5 assaggi chat TOTALI (struttura OpenAI: non a tempo, 5 e basta)
                 if user_id_t:
-                    cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE user_id=%s AND ts > NOW() - INTERVAL '7 days'", (user_id_t,))
+                    cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE user_id=%s", (user_id_t,))
                 else:
-                    cur_t.execute("SELECT COUNT(*), MIN(ts) FROM trial_chat WHERE ip=%s AND ts > NOW() - INTERVAL '7 days'", (ip,))
+                    cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE ip=%s", (ip,))
                 rt = cur_t.fetchone()
-                n_chat = int(rt[0]) if rt else 0
-                prima = rt[1] if rt else None
-                giorni = (_dt.datetime.now(_dt.timezone.utc) - prima).days if prima else 0
-                if n_chat >= 5 or giorni >= 7:
+                n_chat = int(rt[0]) if rt and rt[0] else 0
+                if n_chat >= 5:
                     cur_t.close(); _release_conn(conn_t)
                     return jsonify({"errore":"trial_esaurito","n_chat":n_chat,
-                        "messaggio":"Hai usato le 5 chat di prova. Passa a Pro per continuare.",
+                        "messaggio":"Hai visto cosa può fare Matter.",
+                        "paywall":{
+                          "titolo":"Hai visto cosa può fare Matter.",
+                          "sottotitolo":"Hai usato i tuoi 5 assaggi gratuiti. Da qui Matter può continuare a lavorare con te:",
+                          "vantaggi":["Analisi operative dei tuoi problemi","Foto di impasti e preparazioni","Risposte a voce, mani libere","Ragionamento sui tuoi valori","Indicazioni personalizzate"],
+                          "prezzo":"€19,99 / mese",
+                          "cta":"Continua con Matter →",
+                          "nota":"L'Atlante, il Mirino e i Calcolatori restano gratuiti."},
                         "trial_esaurito":True}), 402
                 if user_id_t:
                     cur_t.execute("INSERT INTO trial_chat (user_id,ip) VALUES (%s,%s)", (user_id_t, ip))
