@@ -598,10 +598,12 @@ async function caricaLezioneStep(step){
     const datoBox = document.getElementById('les-dato-box');
     if(j.fenomeno.target){
       _renderTarget(document.getElementById('les-target'), j.fenomeno.target, false);
+      renderMirino(document.getElementById('les-mirino'), j.fenomeno.nome, j.fenomeno.target);
       datoBox.style.display = '';
       _caricaStrumentoPerFenomeno(disc, j.fenomeno.nome, j.fenomeno.target);
     } else {
       datoBox.style.display = 'none';
+      var _mir=document.getElementById('les-mirino'); if(_mir) _mir.style.display='none';
       var sb=document.getElementById('les-strumento-box'); if(sb) sb.style.display='none';
     }
     // stepper a puntini: quanti fenomeni, dove sei, salto diretto
@@ -2898,6 +2900,117 @@ function _fotoVaiFlavor(nome){
 }
 
 // ── APPROFONDISCI NELLA CHAT col contesto della scheda ──────────
+// ══════════ MIRINO OPERATIVO — il loop VEDI→MISURA→CONFRONTA→DECIDI→RIMISURA ══════════
+// Estrae il range numerico da un target testuale. "pH 3.7-3.9" -> {min:3.7,max:3.9,unita:'pH'}
+function _parseRange(target){
+  if(!target) return null;
+  // primo pezzo (eroe) del target
+  var eroe = target.split(/\s*[·;]\s*/)[0].trim();
+  // cerca un range "a-b" o "a–b" (numeri con . o ,)
+  var m = eroe.match(/(-?\d+(?:[.,]\d+)?)\s*[-–—]\s*(-?\d+(?:[.,]\d+)?)/);
+  if(m){
+    var lo=parseFloat(m[1].replace(',','.')), hi=parseFloat(m[2].replace(',','.'));
+    return {min:Math.min(lo,hi), max:Math.max(lo,hi), raw:eroe};
+  }
+  // singola soglia ">35", "<1", "≥9"
+  var s = eroe.match(/([<>≤≥]=?)\s*(-?\d+(?:[.,]\d+)?)/);
+  if(s){
+    var v=parseFloat(s[2].replace(',','.')), op=s[1];
+    if(op.indexOf('>')>=0||op.indexOf('≥')>=0) return {min:v, max:v*1.5||v+1, raw:eroe, soglia:'min'};
+    if(op.indexOf('<')>=0||op.indexOf('≤')>=0) return {min:v*0.5, max:v, raw:eroe, soglia:'max'};
+  }
+  // valore singolo "9 bar"
+  var u = eroe.match(/(-?\d+(?:[.,]\d+)?)/);
+  if(u){ var vv=parseFloat(u[1].replace(',','.')); return {min:vv*0.9, max:vv*1.1, raw:eroe, singolo:vv}; }
+  return null; // nessun numero: fenomeno qualitativo, niente mirino
+}
+
+// Costruisce il Mirino in STATO 1 (solo target, invito a misurare)
+function renderMirino(box, fenomeno, target, azioneFn){
+  if(!box) return;
+  var r = _parseRange(target);
+  if(!r){ box.style.display='none'; return; } // niente numero → niente mirino
+  box.style.display='';
+  box._range = r; box._fenomeno = fenomeno; box._azioneFn = azioneFn||null;
+  var span = r.max - r.min;
+  // scala: estendo il range su ciascun lato per mostrare anche valori fuori
+  var margine = Math.max(span*0.9, span>0?span:1);
+  var loScale = r.min - margine, hiScale = r.max + margine;
+  box._scale = {lo:loScale, hi:hiScale};
+  // percentuali zona target sulla barra
+  var pTargetLo = ((r.min - loScale)/(hiScale-loScale))*100;
+  var pTargetHi = ((r.max - loScale)/(hiScale-loScale))*100;
+  var pCentro = (pTargetLo+pTargetHi)/2;
+  box.innerHTML =
+    '<div class="mirino-head"><span class="mirino-lab">target</span>'+
+    '<span class="mirino-target">'+_esc(r.raw)+'</span></div>'+
+    '<div class="mirino-track-wrap">'+
+      '<div class="mirino-track">'+
+        '<div class="mirino-zone mzone-low" style="width:'+pTargetLo+'%"></div>'+
+        '<div class="mirino-zone mzone-target" style="width:'+(pTargetHi-pTargetLo)+'%"></div>'+
+        '<div class="mirino-zone mzone-high" style="width:'+(100-pTargetHi)+'%"></div>'+
+      '</div>'+
+      '<div class="mirino-target-lab" style="left:'+pCentro+'%">zona target</div>'+
+    '</div>'+
+    '<div class="mirino-scale"><span>'+_fmtN(loScale)+'</span><span>'+_fmtN(r.min)+'</span><span>'+_fmtN(r.max)+'</span><span>'+_fmtN(hiScale)+'</span></div>'+
+    '<div class="mirino-input-row">'+
+      '<span class="mirino-input-lab">Misura il tuo valore</span>'+
+      '<input class="mirino-input" type="text" inputmode="decimal" placeholder="—" id="mirino-val-'+box.id+'">'+
+      '<button class="mirino-confronta" onclick="confrontaMirino(\''+box.id+'\')">Confronta</button>'+
+    '</div>';
+}
+
+function _fmtN(n){
+  if(Math.abs(n)>=100) return Math.round(n).toString();
+  if(Math.abs(n)>=10) return (Math.round(n*10)/10).toString().replace('.',',');
+  return (Math.round(n*100)/100).toString().replace('.',',');
+}
+
+// STATO 2: l'utente ha inserito il valore → scarto + azione + rimisura
+function confrontaMirino(boxId){
+  var box = document.getElementById(boxId); if(!box||!box._range) return;
+  var inp = document.getElementById('mirino-val-'+boxId);
+  var val = parseFloat((inp.value||'').replace(',','.'));
+  if(isNaN(val)) { inp.focus(); return; }
+  var r = box._range, sc = box._scale;
+  var dentro = val >= r.min && val <= r.max;
+  var pCursore = Math.max(0, Math.min(100, ((val - sc.lo)/(sc.hi-sc.lo))*100));
+  // scarto
+  var scarto = dentro ? 0 : (val < r.min ? val-r.min : val-r.max);
+  var scartoTxt = dentro ? 'nel range · nella zona target'
+    : (scarto>0?'+':'')+_fmtN(scarto)+' fuori target';
+  // azione (delega al chiamante se fornita, altrimenti generica per direzione)
+  var azione;
+  if(box._azioneFn) azione = box._azioneFn(val, r, dentro);
+  else if(dentro) azione = 'Sei nel range. Puoi procedere.';
+  else if(val < r.min) azione = 'Il valore è sotto il target. Interviene secondo la tecnica del fenomeno e rimisura.';
+  else azione = 'Il valore è sopra il target. Interviene secondo la tecnica del fenomeno e rimisura.';
+  // aggiungo il cursore sulla barra
+  var track = box.querySelector('.mirino-track-wrap');
+  var old = box.querySelector('.mirino-cursor'); if(old) old.remove();
+  var cur = document.createElement('div');
+  cur.className='mirino-cursor'; cur.style.left=pCursore+'%';
+  cur.innerHTML='<span class="mirino-cursor-val">'+_fmtN(val)+'</span>';
+  track.appendChild(cur);
+  // feedback block
+  var fb = box.querySelector('.mirino-feedback'); if(fb) fb.remove();
+  var div = document.createElement('div');
+  div.className='mirino-feedback';
+  div.innerHTML =
+    '<div class="mirino-scarto '+(dentro?'dentro':'fuori')+'">'+_esc(scartoTxt)+'</div>'+
+    '<div class="mirino-azione-lab">cosa fare</div>'+
+    '<div class="mirino-azione">'+_esc(azione)+'</div>'+
+    '<button class="mirino-rimisura" onclick="resetMirino(\''+box.id+'\')">Rimisura</button>';
+  box.appendChild(div);
+  // nascondo la riga input (è stata "consumata")
+  var ir = box.querySelector('.mirino-input-row'); if(ir) ir.style.display='none';
+}
+
+function resetMirino(boxId){
+  var box=document.getElementById(boxId); if(!box) return;
+  renderMirino(box, box._fenomeno, box._range.raw, box._azioneFn);
+}
+
 // ── RENDER TARGET: eroe primario + parametri secondari (result first) ──
 function _renderTarget(box, target, mostraLabel){
   if(!box) return;

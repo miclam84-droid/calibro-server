@@ -1119,3 +1119,40 @@ a:focus-visible,input:focus-visible{
 .bridge-ecosistema .bridge-eyebrow{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cifra-p300);margin-bottom:6px}
 .bridge-ecosistema .bridge-headline{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--paper-hi);line-height:1.4;margin-bottom:12px}
 .bridge-ecosistema .bridge-cta{background:var(--cifra-p300);color:var(--cifra-p700)}
+
+/* ═══════════ MIRINO OPERATIVO — il loop VEDI→MISURA→CONFRONTA→DECIDI→RIMISURA ═══════════ */
+:root{ --target-green:#587A68; --target-green-bg:rgba(88,122,104,.18); --err-soft:rgba(20,29,34,.06); }
+.mirino{background:var(--paper-hi);border:var(--border-soft);border-radius:var(--radius-card);padding:20px;box-shadow:var(--shadow-card);margin:14px 0}
+.mirino-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.mirino-lab{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.mirino-target{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--teal)}
+/* la barra: zona target verde desaturato al centro, fuori-range neutro (non rosso acceso) */
+.mirino-track-wrap{position:relative;height:44px;margin:22px 0 8px}
+.mirino-track{display:flex;width:100%;height:14px;border-radius:999px;overflow:hidden;position:absolute;top:15px}
+.mirino-zone{height:100%}
+.mzone-low{background:var(--err-soft)}
+.mzone-target{background:var(--target-green-bg);border-left:2px solid var(--target-green);border-right:2px solid var(--target-green)}
+.mzone-high{background:var(--err-soft)}
+.mirino-target-lab{position:absolute;top:32px;font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--target-green);transform:translateX(-50%)}
+/* cursore del valore utente */
+.mirino-cursor{position:absolute;top:8px;width:4px;height:28px;background:var(--accent);border-radius:2px;transition:left .45s cubic-bezier(.25,.8,.25,1)}
+.mirino-cursor::before{content:'';position:absolute;top:-5px;left:-4px;width:12px;height:12px;background:var(--accent);border-radius:50%}
+.mirino-cursor-val{position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:13px;font-weight:700;white-space:nowrap;background:var(--accent);color:#fff;padding:2px 7px;border-radius:5px}
+/* scala numerica */
+.mirino-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink-muted);margin-top:2px;padding:0 2px}
+/* input misura (STATO 1) */
+.mirino-input-row{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.mirino-input-lab{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink);flex:1}
+.mirino-input{width:88px;padding:10px 12px;border:1.5px solid var(--line-strong);border-radius:var(--radius-btn);font-family:var(--mono);font-size:16px;font-weight:700;text-align:center;background:var(--paper-hi);color:var(--ink)}
+.mirino-input:focus{border-color:var(--accent);outline:none}
+.mirino-confronta{background:var(--signal);color:#fff;border:none;font-family:var(--sans);font-weight:700;font-size:13px;padding:10px 16px;border-radius:var(--radius-btn);cursor:pointer;white-space:nowrap}
+.mirino-confronta:active{transform:scale(.97)}
+/* feedback (STATO 2) */
+.mirino-feedback{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.mirino-scarto{font-family:var(--mono);font-size:13px;font-weight:700;margin-bottom:8px}
+.mirino-scarto.dentro{color:var(--target-green)}
+.mirino-scarto.fuori{color:var(--accent)}
+.mirino-azione-lab{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:4px}
+.mirino-azione{font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--ink);margin-bottom:14px}
+.mirino-rimisura{width:100%;background:var(--ink);color:#fff;border:none;padding:12px;border-radius:var(--radius-btn);font-family:var(--sans);font-weight:700;font-size:14px;cursor:pointer}
+.mirino-rimisura:active{transform:scale(.99)}
