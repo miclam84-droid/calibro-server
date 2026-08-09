@@ -346,11 +346,12 @@ def route_chat(prompt, tools=None, history=None):
     return None
 
 
-def route_fast(prompt, max_tokens=600):
+def route_fast(prompt, max_tokens=600, temperature=0):
     """
     Route per task rapidi e a basso costo.
     Provider: Haiku 4.5 con retry → fallback Mistral.
     Usa per: quiz, traduzioni, classificazioni, entity extraction.
+    temperature: 0 per task deterministici, >0 per task creativi (naming).
 
     Returns:
         str: testo della risposta
@@ -361,7 +362,7 @@ def route_fast(prompt, max_tokens=600):
             messages = [{"role": "user", "content": prompt}]
             data, _ = _anthropic_call(
                 _MODEL_HAIKU, messages,
-                max_tokens=max_tokens, temperature=0
+                max_tokens=max_tokens, temperature=temperature
             )
             out = "".join(
                 b.get("text", "") for b in data.get("content", [])

@@ -1334,16 +1334,18 @@ def menu_naming():
     tipo = {"bar":"cocktail/drink", "bakery":"lievitato/pizza", "cucina":"piatto"}.get(disciplina, "piatto o drink")
     tec_str = f" La tecnica usata è: {tecnica}." if tecnica else ""
     prompt = (
-        f"Sei un menu writer professionista per locali F&B di qualità. "
-        f"Proponi UN SOLO nome breve ed elegante (max 5 parole) per una voce di menù ({tipo}) "
-        f"che usa questi ingredienti: {ing_str}.{tec_str} "
-        f"Il nome deve essere evocativo ma professionale, adatto a una carta reale. "
-        f"NON inventare ingredienti che non ci sono. NON aggiungere spiegazioni, virgolette o punteggiatura finale. "
-        f"Rispondi SOLO col nome, nient'altro."
+        f"Sei un menu writer di alto livello per locali F&B. "
+        f"Inventa UN nome breve, evocativo e originale (2-4 parole) per una voce di menù ({tipo}) "
+        f"a base di: {ing_str}.{tec_str} "
+        f"REGOLA FONDAMENTALE: NON elencare gli ingredienti. Crea un nome vero, come su una carta reale. "
+        f"Esempi dello stile giusto: ingredienti fragola/basilico/limone → 'Rosso Giardino' o 'Basil Smash'; "
+        f"polpo/limone/prezzemolo → 'Mediterraneo' o 'Scoglio'; gin/pompelmo → 'Pompelmo Bruciato'. "
+        f"Esempi SBAGLIATI (mai così): 'Fragola, Basilico e Limone', 'Polpo con Limone'. "
+        f"Rispondi SOLO col nome inventato, senza virgolette né punteggiatura finale."
     )
     try:
         import ai_gateway as GW
-        nome = GW.route_fast(prompt, max_tokens=24)
+        nome = GW.route_fast(prompt, max_tokens=24, temperature=0.9)
         # pulizia: prima riga, senza virgolette, max ~50 char
         nome = (nome or "").strip().split("\n")[0].strip().strip('"').strip("'")[:50]
         return jsonify({"nome": nome, "ingredienti": ingredienti})
