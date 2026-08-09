@@ -1157,3 +1157,12 @@ a:focus-visible,input:focus-visible{
 .mirino-azione{font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--ink);margin-bottom:14px}
 .mirino-rimisura{width:100%;background:var(--ink);color:#fff;border:none;padding:12px;border-radius:var(--radius-btn);font-family:var(--sans);font-weight:700;font-size:14px;cursor:pointer}
 .mirino-rimisura:active{transform:scale(.99)}
+
+/* ═══ ESPLORA LA SCIENZA — sotto-mappe come approfondimenti del fenomeno ═══ */
+.les-esplora{margin:20px 0 8px;padding-top:18px;border-top:1px solid var(--border)}
+.les-esplora-lab{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:12px}
+.les-esplora-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.les-esplora-btn{display:flex;flex-direction:column;align-items:flex-start;gap:3px;background:var(--paper-hi);border:var(--border-soft);border-radius:var(--radius-card-sm);padding:14px;cursor:pointer;text-align:left;transition:box-shadow .15s}
+.les-esplora-btn:active{transform:scale(.98)}
+.lee-q{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink)}
+.lee-a{font-family:var(--mono);font-size:11px;color:var(--accent)}
