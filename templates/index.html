@@ -714,31 +714,33 @@ if('serviceWorker' in navigator){
 <!-- ── ONBOARDING OVERLAY ────────────────────────────── -->
 <div id="onb-overlay" class="hidden">
   <div class="onb-sheet">
-    <div class="onb-title-ovl" id="onb-ovl-title">Come funziona Matter Lab</div>
-    <div class="onb-steps">
-      <div class="onb-step">
-        <div class="onb-step-num">1</div>
-        <div>
-          <div class="onb-step-title" id="onb-s1-title">Scegli la tua disciplina</div>
-          <div class="onb-step-sub" id="onb-s1-sub">Bar, Panificazione, Cucina, Caffetteria e altro — ogni disciplina ha le sue leggi fisiche.</div>
-        </div>
-      </div>
-      <div class="onb-step">
-        <div class="onb-step-num">2</div>
-        <div>
-          <div class="onb-step-title" id="onb-s2-title">Studia il fenomeno</div>
-          <div class="onb-step-sub" id="onb-s2-sub">Ogni fenomeno ha un numero che puoi misurare. Quello che devi sapere quando qualcosa non torna.</div>
-        </div>
-      </div>
-      <div class="onb-step">
-        <div class="onb-step-num">3</div>
-        <div>
-          <div class="onb-step-title" id="onb-s3-title">Chiedi a Matter Lab</div>
-          <div class="onb-step-sub" id="onb-s3-sub">Descrivi un problema del tuo lavoro. Ricevi numeri da misurare e azioni concrete — non consigli generici.</div>
-        </div>
+    <!-- STEP 1: profilazione per mestiere -->
+    <div class="onb-fase" id="onb-fase-1">
+      <div class="onb-eyebrow">Iniziamo</div>
+      <div class="onb-title-ovl">Cosa fai?</div>
+      <div class="onb-sub-ovl">Matter parte dal tuo mestiere e ti mostra i numeri che contano al banco.</div>
+      <div class="onb-mestieri" id="onb-mestieri">
+        <button class="onb-mestiere" onclick="onbScegliMestiere('bar','Bar')">🍸 Bar</button>
+        <button class="onb-mestiere" onclick="onbScegliMestiere('bakery','Panificazione')">🍞 Panificazione</button>
+        <button class="onb-mestiere" onclick="onbScegliMestiere('cucina','Cucina')">🍳 Cucina</button>
+        <button class="onb-mestiere" onclick="onbScegliMestiere('caffe','Caffetteria')">☕ Caffetteria</button>
+        <button class="onb-mestiere" onclick="onbScegliMestiere('gelato','Gelateria')">🍦 Gelateria</button>
+        <button class="onb-mestiere" onclick="onbScegliMestiere('vino','Vino')">🍷 Vino</button>
+        <button class="onb-mestiere" onclick="onbScegliMestiere('birra','Birra')">🍺 Birra</button>
       </div>
     </div>
-    <button class="onb-cta-btn" id="onb-ovl-cta" onclick="chiudiOnbOverlay()">Inizia</button>
+    <!-- STEP 2: il primo numero (riempito da JS) -->
+    <div class="onb-fase" id="onb-fase-2" style="display:none">
+      <div class="onb-eyebrow" id="onb-f2-ey">il tuo mestiere</div>
+      <div class="onb-title-ovl">Ecco il primo numero<br>che puoi misurare oggi.</div>
+      <div class="onb-primo-num" id="onb-primo-num">
+        <div class="onb-pn-fen" id="onb-pn-fen">—</div>
+        <div class="onb-pn-target" id="onb-pn-target">—</div>
+      </div>
+      <div class="onb-sub-ovl">Questo è il modo in cui Matter lavora: ogni tecnica ha un numero che puoi controllare. Misura, confronta, correggi.</div>
+      <button class="onb-cta-btn" onclick="onbVaiAllaLezione()">Misura questo →</button>
+      <button class="onb-skip" onclick="chiudiOnbOverlay()">Esplora liberamente</button>
+    </div>
   </div>
 </div>
 

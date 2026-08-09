@@ -1166,3 +1166,15 @@ a:focus-visible,input:focus-visible{
 .les-esplora-btn:active{transform:scale(.98)}
 .lee-q{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--ink)}
 .lee-a{font-family:var(--mono);font-size:11px;color:var(--accent)}
+
+/* ═══ ONBOARDING PROFILAZIONE ═══ */
+.onb-eyebrow{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.onb-sub-ovl{font-family:var(--sans);font-size:14px;line-height:1.55;color:var(--ink-muted);margin:10px 0 18px}
+.onb-mestieri{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.onb-mestiere{display:flex;align-items:center;gap:8px;background:var(--paper-hi);border:var(--border-soft);border-radius:var(--radius-btn);padding:15px 14px;font-family:var(--sans);font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;transition:box-shadow .15s, transform .1s}
+.onb-mestiere:active{transform:scale(.97)}
+.onb-mestiere:hover{box-shadow:var(--shadow-card)}
+.onb-primo-num{background:var(--ink);border-left:4px solid var(--accent);border-radius:var(--radius-card-sm);padding:20px;margin:16px 0}
+.onb-pn-fen{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--paper-hi);margin-bottom:8px}
+.onb-pn-target{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);line-height:1.1}
+.onb-skip{display:block;width:100%;background:none;border:none;color:var(--ink-muted);font-family:var(--sans);font-size:13px;padding:12px;margin-top:8px;cursor:pointer;text-decoration:underline}

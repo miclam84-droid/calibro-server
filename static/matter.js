@@ -2023,6 +2023,37 @@ function chiudiOnbOverlay(){
   if(typeof caricaHome === 'function') caricaHome();
 }
 
+// ── ONBOARDING PROFILAZIONE: mestiere → primo numero → lezione ──
+let _onbMestiere = null;
+async function onbScegliMestiere(disc, label){
+  _onbMestiere = disc;
+  Matter.disciplina = disc;
+  document.getElementById('onb-f2-ey').textContent = label;
+  // carico il primo fenomeno della disciplina per mostrare il primo numero
+  try{
+    const r = await fetch('/mappa/'+disc);
+    const j = await r.json();
+    const primo = (j.fenomeni||[])[0];
+    if(primo){
+      document.getElementById('onb-pn-fen').textContent = primo.nome || '';
+      const eroe = (primo.target||'').split(/\s*[·;]\s*/)[0].trim();
+      document.getElementById('onb-pn-target').textContent = eroe || primo.target || '';
+      _onbPrimoFen = primo;
+    }
+  }catch(e){ /* se fallisce, passo comunque alla fase 2 */ }
+  document.getElementById('onb-fase-1').style.display='none';
+  document.getElementById('onb-fase-2').style.display='block';
+}
+let _onbPrimoFen = null;
+function onbVaiAllaLezione(){
+  localStorage.setItem('matter_onb_done','1');
+  const overlay = document.getElementById('onb-overlay');
+  if(overlay) overlay.classList.add('hidden');
+  // porto l'utente nella lezione della sua disciplina, al primo fenomeno
+  if(_onbMestiere){ selezionaDisciplina(_onbMestiere); }
+  else if(typeof caricaHome === 'function'){ caricaHome(); }
+}
+
 /* ── FLAVOR NETWORK MAPPA ─────────────────────────────── */
 const FLAVOR_FREE = 3;
 const QUAD_FREE = 3;
