@@ -1383,3 +1383,6 @@ a:focus-visible,input:focus-visible{
 /* transizione morbida tra le fasi */
 .mf-fase{animation:mfFaseIn .35s ease}
 @keyframes mfFaseIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* hint nome suggerito dall'AI */
+.mf-nome-hint{font-family:var(--sans);font-size:11px;color:var(--signal);margin:-8px 0 12px 4px;font-style:italic}

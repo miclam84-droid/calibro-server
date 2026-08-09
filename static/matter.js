@@ -2597,6 +2597,8 @@ function mfVaiAlLaboratorio(i){
   _mfPropCorrente = p;
   document.getElementById('mf-lab-ing').textContent = p.ingredienti.join(' · ');
   document.getElementById('mf-lab-nome').value = '';
+  document.getElementById('mf-lab-nome').placeholder = 'Trovo un nome…';
+  _mfSuggerisciNome(p);
   document.getElementById('mf-lab-stato').textContent = '';
   document.getElementById('mf-lab-stato').className = 'mf-lab-stato';
   // carico le tecniche pertinenti alla disciplina dell'utente
@@ -2608,6 +2610,28 @@ function mfVaiAlLaboratorio(i){
   _mfMostraFase('lab');
 }
 let _mfPropCorrente = null;
+
+async function _mfSuggerisciNome(p){
+  var campo = document.getElementById('mf-lab-nome');
+  var cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
+  try{
+    var r = await fetch('/v1/menu/naming', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ingredienti:p.ingredienti, disciplina:cfg.disc, tecnica:(_mfTecnicaScelta?_mfTecnicaScelta.nome:'')})});
+    var j = await r.json();
+    // pre-compilo SOLO se l'utente non ha già scritto qualcosa
+    if(j.nome && !campo.value.trim()){
+      campo.value = j.nome;
+      campo.placeholder = 'Dai un nome alla voce';
+      // segnale discreto che è un suggerimento
+      var hint = document.getElementById('mf-nome-hint');
+      if(hint) hint.style.display = 'block';
+    } else {
+      campo.placeholder = 'Dai un nome alla voce (es. Strawberry Sour)';
+    }
+  }catch(e){
+    campo.placeholder = 'Dai un nome alla voce (es. Strawberry Sour)';
+  }
+}
 
 async function _mfCaricaTecniche(){
   var cont = document.getElementById('mf-lab-tecniche');

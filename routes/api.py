@@ -1319,6 +1319,39 @@ def menu_proposte():
         return jsonify({"errore": str(e), "proposte": []}), 500
 
 
+@bp.route("/v1/menu/naming", methods=["POST"])
+def menu_naming():
+    """FEATURE MENÙ — nome suggerito per una voce (l'AI nomina, non inventa la scienza).
+    Riceve {ingredienti:[...], disciplina, tecnica?}. Restituisce un nome breve e
+    suggestivo. L'utente resta padrone: è solo una proposta pre-compilata."""
+    body = request.json or {}
+    ingredienti = body.get("ingredienti", [])
+    disciplina = (body.get("disciplina") or "").strip()
+    tecnica = (body.get("tecnica") or "").strip()
+    if not ingredienti:
+        return jsonify({"nome": ""})
+    ing_str = ", ".join(str(i) for i in ingredienti[:6])
+    tipo = {"bar":"cocktail/drink", "bakery":"lievitato/pizza", "cucina":"piatto"}.get(disciplina, "piatto o drink")
+    tec_str = f" La tecnica usata è: {tecnica}." if tecnica else ""
+    prompt = (
+        f"Sei un menu writer professionista per locali F&B di qualità. "
+        f"Proponi UN SOLO nome breve ed elegante (max 5 parole) per una voce di menù ({tipo}) "
+        f"che usa questi ingredienti: {ing_str}.{tec_str} "
+        f"Il nome deve essere evocativo ma professionale, adatto a una carta reale. "
+        f"NON inventare ingredienti che non ci sono. NON aggiungere spiegazioni, virgolette o punteggiatura finale. "
+        f"Rispondi SOLO col nome, nient'altro."
+    )
+    try:
+        import ai_gateway as GW
+        nome = GW.route_fast(prompt, max_tokens=24)
+        # pulizia: prima riga, senza virgolette, max ~50 char
+        nome = (nome or "").strip().split("\n")[0].strip().strip('"').strip("'")[:50]
+        return jsonify({"nome": nome, "ingredienti": ingredienti})
+    except Exception as e:
+        print(f"[NAMING ERRORE] {e}", flush=True)
+        return jsonify({"nome": "", "errore": str(e)})
+
+
 @bp.route("/v1/menu/tecniche", methods=["POST"])
 def menu_tecniche():
     """FEATURE MENÙ — tecniche pertinenti per una voce di menù.
