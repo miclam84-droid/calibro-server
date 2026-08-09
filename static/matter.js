@@ -437,7 +437,7 @@ function renderHome(j){
   const f = j.fenomeno || {};
   { const _h=document.getElementById('scopri-hero'); if(_h) _h.classList.remove('loading'); }
   document.getElementById('scopri-ey').textContent =
-    'fenomeno del giorno · ' + (f.dominio||'');
+    'oggi al banco · ' + (f.dominio||'');
   document.getElementById('scopri-titolo').textContent = f.nome || '—';
     const _loop = document.getElementById('loop-guidato');
     const _loopFen = document.getElementById('loop-fen-nome');
@@ -1250,7 +1250,7 @@ const _strings = {
     db_connessioni:'Connessioni aromatiche',
     db_calcolatori:'Calcolatori',
     chiedi:'Chiedi',
-    studia:'Esplora il fenomeno', nologin:'Inizia senza registrarti.',
+    studia:'Misura questo →', nologin:'',
     disc_kw_bar:'Acidità · Diluizione · Carbonatazione · Emulsione',
     disc_kw_bakery:'Struttura · Fermentazione · Osmosi · Retrogradazione',
     disc_kw_cucina:'Maillard · Denaturazione · Calore · Emulsione',
@@ -1759,7 +1759,7 @@ const _strings = {
   }
 };
 
-function _t(k){ return (_strings[_lang]||_strings.it)[k]||k; }
+function _t(k){ var v=(_strings[_lang]||_strings.it)[k]; return (v!==undefined&&v!==null)?v:k; }
 
 function applicaStringheUI(){
   const s=id=>{ const el=document.getElementById(id); if(el) return el; };
@@ -1780,7 +1780,7 @@ function applicaStringheUI(){
   });
   // scopri
   st('scopri-cta',_t('studia'));
-  const noL=document.querySelector('.no-login'); if(noL) noL.textContent=_t('nologin');
+  const noL=document.querySelector('.no-login'); if(noL){ var _nl=_t('nologin'); noL.textContent=_nl; noL.style.display=_nl?'':'none'; }
   document.querySelectorAll('.sec-label').forEach(el=>{
     if(el.textContent.includes('Scegli la tua')||el.textContent.includes('Choose your'))
       el.textContent=_t('scegli');

@@ -820,9 +820,10 @@ a:focus-visible,input:focus-visible{
 }
 
 /* ===== HOME SCOPRI — layout mockup approvato (05/08) ===== */
-.mtr-manifesto{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.mtr-manifesto{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
 .mtr-manifesto-tag{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700}
-.mtr-manifesto-claim{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--ink-muted)}
+.mtr-manifesto-claim{font-family:var(--serif);font-weight:700;font-size:23px;line-height:1.2;color:var(--ink)}
+.mtr-manifesto-sub{font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--ink-muted)}
 
 /* GAUGE chiaro — editoriale, il numero-eroe è protagonista in arancio */
 .mtr-gauge{background:var(--paper-hi);color:var(--ink);margin:14px 16px;padding:0;position:relative;overflow:hidden;border-radius:var(--radius-card);border:var(--border-soft);box-shadow:var(--shadow-card)}
