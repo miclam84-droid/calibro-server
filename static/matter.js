@@ -2561,17 +2561,49 @@ function _mfRenderProposte(j){
 function mfVaiAlLaboratorio(i){
   const p = _mfProposte[i];
   _mfPropCorrente = p;
-  // preparo la fase laboratorio: nome voce + mirino su un target-guida + valida
   document.getElementById('mf-lab-ing').textContent = p.ingredienti.join(' · ');
   document.getElementById('mf-lab-nome').value = '';
-  // target-guida per una drink list: diluizione (numero misurabile universale al banco)
-  var box = document.getElementById('mf-lab-mirino');
-  renderMirino(box, p.ingredienti.join(' · '), 'diluizione 20-28%');
   document.getElementById('mf-lab-stato').textContent = '';
   document.getElementById('mf-lab-stato').className = 'mf-lab-stato';
+  // carico le tecniche pertinenti alla disciplina dell'utente
+  _mfCaricaTecniche();
+  // target-guida iniziale: diluizione (drink). Verrà sostituito se scegli una tecnica.
+  var box = document.getElementById('mf-lab-mirino');
+  renderMirino(box, p.ingredienti.join(' · '), 'diluizione 20-28%');
   _mfMostraFase('lab');
 }
 let _mfPropCorrente = null;
+
+async function _mfCaricaTecniche(){
+  var cont = document.getElementById('mf-lab-tecniche');
+  if(!cont) return;
+  var disc = (typeof Matter!=='undefined' && Matter.disciplina) ? Matter.disciplina : 'bar';
+  cont.innerHTML = '<div class="mf-tec-lab">Carico le tecniche…</div>';
+  try{
+    var r = await fetch('/v1/menu/tecniche', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({disciplina: disc})});
+    var j = await r.json();
+    var tecniche = (j.tecniche||[]).slice(0,8);
+    if(!tecniche.length){ cont.innerHTML=''; return; }
+    _mfTecniche = tecniche;
+    cont.innerHTML = '<div class="mf-tec-lab">Tecniche che puoi usare — tocca per tarare il Mirino sul suo numero</div>' +
+      tecniche.map(function(t,idx){
+        return '<button class="mf-tec" onclick="mfScegliTecnica('+idx+')">'+
+          '<span class="mf-tec-nome">'+_esc(t.nome)+'</span>'+
+          '<span class="mf-tec-num">'+_esc((t.numeri||'').split('·')[0].trim())+'</span></button>';
+      }).join('');
+  }catch(e){ cont.innerHTML=''; }
+}
+let _mfTecniche = [];
+function mfScegliTecnica(idx){
+  var t = _mfTecniche[idx];
+  if(!t) return;
+  // taro il Mirino sul numero-bersaglio della tecnica scelta
+  var box = document.getElementById('mf-lab-mirino');
+  renderMirino(box, _mfPropCorrente.ingredienti.join(' · '), t.numeri);
+  document.querySelectorAll('.mf-tec').forEach(function(b,i){ b.classList.toggle('active', i===idx); });
+  _mfTecnicaScelta = t;
+}
+let _mfTecnicaScelta = null;
 
 function mfValidaVoce(){
   // controllo se il mirino è stato misurato (feedback presente)
@@ -2597,7 +2629,8 @@ function mfAggiungiAlMenu(){
   var voce = {
     _src: 'foto'+Date.now(),
     nome: nome,
-    target: _mfVoceValidata ? 'diluizione 20-28%' : '',
+    target: _mfTecnicaScelta ? _mfTecnicaScelta.numeri : (_mfVoceValidata ? 'diluizione 20-28%' : ''),
+    tecnica: _mfTecnicaScelta ? _mfTecnicaScelta.nome : '',
     ingredienti: p.ingredienti,
     stato: _mfVoceValidata ? 'verified' : 'unverified'
   };
@@ -2605,6 +2638,7 @@ function mfAggiungiAlMenu(){
   _mfVociMenu = _mfVociMenu || [];
   _mfVociMenu.push(voce);
   _mfVoceValidata = false;
+  _mfTecnicaScelta = null;
   // feedback e torno alle proposte per aggiungere altre voci
   var st = document.getElementById('mf-lab-stato');
   st.textContent = '✓ "'+nome+'" aggiunta al menù ('+_mfVociMenu.length+' voci). Scegli un\'altra combinazione o finalizza.';

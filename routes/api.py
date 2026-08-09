@@ -1319,6 +1319,46 @@ def menu_proposte():
         return jsonify({"errore": str(e), "proposte": []}), 500
 
 
+@bp.route("/v1/menu/tecniche", methods=["POST"])
+def menu_tecniche():
+    """FEATURE MENÙ — tecniche pertinenti per una voce di menù.
+    Riceve {disciplina:'cucina'|'bar'|..., ingredienti:[...]}. Restituisce le tecniche
+    del database (nodi Tecnica) pertinenti alla disciplina, coi loro numeri-bersaglio.
+    Serve nel laboratorio: 'cosa posso farci' con i target verificabili col Mirino."""
+    import json as _j
+    from db import carica_grafo
+    body = request.json or {}
+    disc = (body.get("disciplina") or "").strip()
+    lang = body.get("lang","it")
+    db = carica_grafo()
+    try:
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE type='Tecnica' ORDER BY name").fetchall()
+        tecniche = []
+        for row in rows:
+            r = dict(row) if hasattr(row,"keys") else {"id":row[0],"name":row[1],"data":row[2]}
+            data = r.get("data") or {}
+            if isinstance(data,str):
+                try: data = _j.loads(data)
+                except: data = {}
+            # filtro per disciplina (trasversale sempre incluso)
+            if disc and data.get("disciplina") not in (disc, "trasversale"):
+                continue
+            numeri = data.get("numeri","")
+            if not numeri: continue  # solo tecniche con numeri-bersaglio
+            tecniche.append({
+                "id": r.get("id",""),
+                "nome": r.get("name",""),
+                "famiglia": data.get("famiglia",""),
+                "numeri": numeri,
+                "esecuzione": (data.get("esecuzione","") or "")[:200],
+            })
+        return jsonify({"disciplina": disc, "tecniche": tecniche, "totale": len(tecniche)})
+    except Exception as e:
+        import traceback
+        print(f"[TECNICHE ERRORE] {e}\n{traceback.format_exc()[-400:]}", flush=True)
+        return jsonify({"errore": str(e), "tecniche": []}), 500
+
+
 @bp.route("/v1/profilo-sensoriale", methods=["GET"])
 def get_profilo_sensoriale():
     """Restituisce il profilo sensoriale dell'utente (9 dimensioni, pesi 0-10)."""

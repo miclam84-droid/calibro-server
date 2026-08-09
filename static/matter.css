@@ -1352,3 +1352,11 @@ a:focus-visible,input:focus-visible{
   #ma-render, #mas-render{ position:absolute; left:0; top:0; width:100%; box-shadow:none; margin:0; border-radius:0; padding:40px }
   .ma-vista-toggle, .mb-top, .ma-export-nota{ display:none!important }
 }
+
+/* tecniche nel laboratorio */
+.mf-lab-tecniche{margin:16px 0}
+.mf-tec-lab{font-family:var(--sans);font-size:12px;color:var(--ink-muted);margin-bottom:10px;line-height:1.5}
+.mf-tec{display:inline-flex;flex-direction:column;align-items:flex-start;gap:2px;background:var(--paper-hi);border:var(--border-soft);border-radius:var(--radius-btn);padding:10px 14px;margin:0 8px 8px 0;cursor:pointer;text-align:left}
+.mf-tec.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.mf-tec-nome{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink)}
+.mf-tec-num{font-family:var(--mono);font-size:11px;color:var(--accent)}
