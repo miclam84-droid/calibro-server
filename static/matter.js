@@ -2905,28 +2905,41 @@ function _fotoVaiFlavor(nome){
 
 // ── APPROFONDISCI NELLA CHAT col contesto della scheda ──────────
 // ══════════ MIRINO OPERATIVO — il loop VEDI→MISURA→CONFRONTA→DECIDI→RIMISURA ══════════
-// Estrae il range numerico da un target testuale. "pH 3.7-3.9" -> {min:3.7,max:3.9,unita:'pH'}
+// Estrae il range numerico da un target testuale. Scansiona TUTTI i pezzi
+// (eroe + condizioni) finché trova un numero utile. "pH · 3.7-3.9" o "pH 3.7-3.9" funzionano.
 function _parseRange(target){
   if(!target) return null;
-  // primo pezzo (eroe) del target
-  var eroe = target.split(/\s*[·;]\s*/)[0].trim();
-  // cerca un range "a-b" o "a–b" (numeri con . o ,)
-  var m = eroe.match(/(-?\d+(?:[.,]\d+)?)\s*[-–—]\s*(-?\d+(?:[.,]\d+)?)/);
-  if(m){
-    var lo=parseFloat(m[1].replace(',','.')), hi=parseFloat(m[2].replace(',','.'));
-    return {min:Math.min(lo,hi), max:Math.max(lo,hi), raw:eroe};
+  var pezzi = target.split(/\s*[·;]\s*/).map(function(s){return s.trim();}).filter(Boolean);
+  // provo ogni pezzo: prima chi ha un range esplicito, poi soglie, poi valore singolo
+  function tenta(txt){
+    // range "a-b"
+    var m = txt.match(/(-?\d+(?:[.,]\d+)?)\s*[-–—]\s*(-?\d+(?:[.,]\d+)?)/);
+    if(m){
+      var lo=parseFloat(m[1].replace(',','.')), hi=parseFloat(m[2].replace(',','.'));
+      // etichetta = testo prima del numero (es. "pH", "burro")
+      var lab = txt.slice(0, m.index).replace(/[:=]/g,'').trim();
+      return {min:Math.min(lo,hi), max:Math.max(lo,hi), raw:txt, etichetta:lab};
+    }
+    // soglia "<1" ">35" "≥9"
+    var s = txt.match(/([<>≤≥]=?)\s*(-?\d+(?:[.,]\d+)?)/);
+    if(s){
+      var v=parseFloat(s[2].replace(',','.')), op=s[1];
+      var lab2 = txt.slice(0, s.index).replace(/[:=]/g,'').trim();
+      if(op.indexOf('>')>=0||op.indexOf('≥')>=0) return {min:v, max:v+Math.max(v*0.5,1), raw:txt, soglia:'min', etichetta:lab2};
+      if(op.indexOf('<')>=0||op.indexOf('≤')>=0) return {min:Math.max(0,v-Math.max(v*0.5,1)), max:v, raw:txt, soglia:'max', etichetta:lab2};
+    }
+    return null;
   }
-  // singola soglia ">35", "<1", "≥9"
-  var s = eroe.match(/([<>≤≥]=?)\s*(-?\d+(?:[.,]\d+)?)/);
-  if(s){
-    var v=parseFloat(s[2].replace(',','.')), op=s[1];
-    if(op.indexOf('>')>=0||op.indexOf('≥')>=0) return {min:v, max:v*1.5||v+1, raw:eroe, soglia:'min'};
-    if(op.indexOf('<')>=0||op.indexOf('≤')>=0) return {min:v*0.5, max:v, raw:eroe, soglia:'max'};
+  // 1) cerco un range/soglia esplicito in qualsiasi pezzo
+  for(var i=0;i<pezzi.length;i++){ var r=tenta(pezzi[i]); if(r) return r; }
+  // 2) fallback: primo pezzo con un numero singolo → range ±10%
+  for(var j=0;j<pezzi.length;j++){
+    var u=pezzi[j].match(/(-?\d+(?:[.,]\d+)?)/);
+    if(u){ var vv=parseFloat(u[1].replace(',','.'));
+      var lab3=pezzi[j].slice(0,u.index).replace(/[:=]/g,'').trim();
+      return {min:vv*0.9, max:vv*1.1, raw:pezzi[j], singolo:vv, etichetta:lab3}; }
   }
-  // valore singolo "9 bar"
-  var u = eroe.match(/(-?\d+(?:[.,]\d+)?)/);
-  if(u){ var vv=parseFloat(u[1].replace(',','.')); return {min:vv*0.9, max:vv*1.1, raw:eroe, singolo:vv}; }
-  return null; // nessun numero: fenomeno qualitativo, niente mirino
+  return null; // nessun numero: fenomeno qualitativo
 }
 
 // Costruisce il Mirino in STATO 1 (solo target, invito a misurare)
