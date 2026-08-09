@@ -2390,6 +2390,7 @@ async function salvaEsperimento(){
 
 // ── QUADERNO: toggle Misure / Menù ──
 function switchQuaderno(vista){
+  if(vista==='menu'){ var _o=document.getElementById('onb-overlay'); if(_o) _o.classList.add('hidden'); }
   document.getElementById('quad-pane-misure').style.display = vista==='misure'?'':'none';
   document.getElementById('quad-pane-menu').style.display = vista==='menu'?'':'none';
   document.getElementById('qtg-misure').classList.toggle('active', vista==='misure');
@@ -2414,6 +2415,26 @@ function caricaMenuSalvati(){
 let _mbStep = 1;
 let _mbVoci = [];      // voci selezionate per il menù
 let _mbTemplate = 'editorial';
+
+// categoria di menù scelta (drink_list, pizzeria, ristorante, carta_vini, carta_birre)
+let _mbCategoria = 'drink_list';
+let _mbCategoriaLabel = 'Drink list';
+const _MB_CAT_CFG = {
+  drink_list:  {label:'Drink list',        disc:'bar',    min:8,  max:12, targetGuida:'diluizione 20-28%', unita:'drink'},
+  pizzeria:    {label:'Menù pizzeria',      disc:'bakery', min:6,  max:14, targetGuida:'idratazione 60-65%', unita:'pizze'},
+  ristorante:  {label:'Menù ristorante',    disc:'cucina', min:8,  max:20, targetGuida:'cuore 52-58°C',      unita:'piatti'},
+  carta_vini:  {label:'Carta dei vini',     disc:'cucina', min:10, max:40, targetGuida:'servizio 8-18°C',    unita:'etichette'},
+  carta_birre: {label:'Carta delle birre',  disc:'bar',    min:6,  max:20, targetGuida:'servizio 4-8°C',     unita:'birre'},
+};
+function mbScegliCategoria(cat, label){
+  _mbCategoria = cat;
+  _mbCategoriaLabel = label;
+  document.getElementById('mm-title').textContent = label;
+  document.getElementById('mm-cat-lab').textContent = label;
+  var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
+  document.getElementById('menu-modo').classList.remove('hidden');
+}
+function chiudiModo(){ document.getElementById('menu-modo').classList.add('hidden'); }
 
 function creaMenu(){
   var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
@@ -2567,9 +2588,10 @@ function mfVaiAlLaboratorio(i){
   document.getElementById('mf-lab-stato').className = 'mf-lab-stato';
   // carico le tecniche pertinenti alla disciplina dell'utente
   _mfCaricaTecniche();
-  // target-guida iniziale: diluizione (drink). Verrà sostituito se scegli una tecnica.
+  // target-guida iniziale secondo la categoria del menù
+  var cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
   var box = document.getElementById('mf-lab-mirino');
-  renderMirino(box, p.ingredienti.join(' · '), 'diluizione 20-28%');
+  renderMirino(box, p.ingredienti.join(' · '), cfg.targetGuida);
   _mfMostraFase('lab');
 }
 let _mfPropCorrente = null;
@@ -2577,7 +2599,8 @@ let _mfPropCorrente = null;
 async function _mfCaricaTecniche(){
   var cont = document.getElementById('mf-lab-tecniche');
   if(!cont) return;
-  var disc = (typeof Matter!=='undefined' && Matter.disciplina) ? Matter.disciplina : 'bar';
+  var cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
+  var disc = cfg.disc;
   cont.innerHTML = '<div class="mf-tec-lab">Carico le tecniche…</div>';
   try{
     var r = await fetch('/v1/menu/tecniche', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({disciplina: disc})});
@@ -2626,10 +2649,11 @@ function mfAggiungiAlMenu(){
   if(!nome){ document.getElementById('mf-lab-nome').focus(); return; }
   var p = _mfPropCorrente;
   // creo/aggiorno un menù "da foto" in localStorage con questa voce
+  var cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
   var voce = {
     _src: 'foto'+Date.now(),
     nome: nome,
-    target: _mfTecnicaScelta ? _mfTecnicaScelta.numeri : (_mfVoceValidata ? 'diluizione 20-28%' : ''),
+    target: _mfTecnicaScelta ? _mfTecnicaScelta.numeri : (_mfVoceValidata ? cfg.targetGuida : ''),
     tecnica: _mfTecnicaScelta ? _mfTecnicaScelta.nome : '',
     ingredienti: p.ingredienti,
     stato: _mfVoceValidata ? 'verified' : 'unverified'
@@ -2659,8 +2683,9 @@ function _mfAggiornaFinalizza(){
 function mfFinalizzaMenu(){
   if(!_mfVociMenu.length) return;
   // passo le voci al builder Crea Menù (step grafica): riuso _mbVoci + builder step 3
-  _mbVoci = _mfVociMenu.map(function(v){ return {_src:v._src, nome:v.nome, target:v.target, stato:v.stato}; });
-  document.getElementById('mb-nome').value = 'Menù di stagione';
+  _mbVoci = _mfVociMenu.map(function(v){ return {_src:v._src, nome:v.nome, target:v.target, stato:v.stato, ingredienti:v.ingredienti, tecnica:v.tecnica}; });
+  var cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
+  document.getElementById('mb-nome').value = cfg.label;
   chiudiMenuFoto();
   _mbTemplate = 'editorial';
   document.getElementById('menu-builder').classList.remove('hidden');
@@ -2671,7 +2696,8 @@ function mfFinalizzaMenu(){
 function _mbMostraStep(n){
   _mbStep = n;
   [1,2,3].forEach(s=> document.getElementById('mb-step-'+s).style.display = s===n?'block':'none');
-  const titoli = {1:'Nuova drink list', 2:'Componi la carta', 3:'Stile della carta'};
+  const cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
+  const titoli = {1:'Nuovo · '+cfg.label, 2:'Componi la carta', 3:'Stile della carta'};
   document.getElementById('mb-step-title').textContent = titoli[n];
   document.getElementById('mb-next').style.display = n<3 ? '' : 'none';
   if(n===2) _mbCaricaValidati();
@@ -2732,9 +2758,10 @@ function _mbAggiornaEquilibrio(){
   const n = _mbVoci.length;
   const verif = _mbVoci.filter(v=>v.stato==='verified').length;
   if(!n){ box.innerHTML=''; return; }
+  const cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
   let msg = '';
-  if(n < 8) msg = `Hai <b>${n}</b> ${n===1?'voce':'voci'}. Per una drink list equilibrata te ne servono <b>8-12</b>.`;
-  else if(n <= 12) msg = `<b>${n} voci</b> — una carta ben dimensionata.`;
+  if(n < cfg.min) msg = `Hai <b>${n}</b> ${n===1?'voce':'voci'}. Per ${cfg.label.toLowerCase()} equilibrata te ne servono <b>${cfg.min}-${cfg.max}</b>.`;
+  else if(n <= cfg.max) msg = `<b>${n} voci</b> — una carta ben dimensionata.`;
   else msg = `<b>${n} voci</b> — carta ampia. Valuta se snellire per non confondere il cliente.`;
   const nonVerif = n - verif;
   box.innerHTML = `<div class="mb-eq-riga">${msg}</div>` +
@@ -2749,7 +2776,7 @@ function mbScegliTemplate(t){
 function mbGenera(){
   const nome = document.getElementById('mb-nome').value.trim();
   const locale = document.getElementById('mb-locale').value.trim();
-  const menu = {nome, locale, tipo:'drink list', template:_mbTemplate, voci:_mbVoci, creato: Date.now()};
+  const menu = {nome, locale, tipo:_mbCategoriaLabel, categoria:_mbCategoria, template:_mbTemplate, voci:_mbVoci, creato: Date.now()};
   // salvo in localStorage (v1)
   let menus = [];
   try { menus = JSON.parse(localStorage.getItem('matter_menus')||'[]'); } catch(e){}

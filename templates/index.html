@@ -721,18 +721,39 @@ if('serviceWorker' in navigator){
     <div id="quad-pane-menu" style="display:none">
       <div class="menu-intro">
         <div class="menu-intro-lab">Dal banco alla carta</div>
-        <div class="menu-intro-txt">Trasforma i tuoi esperimenti validati in un menù pronto per il locale. Ogni voce porta con sé i numeri che l'hanno resa giusta.</div>
+        <div class="menu-intro-txt">Scegli cosa vuoi creare. Ogni voce porterà con sé i numeri che l'hanno resa giusta.</div>
       </div>
-      <button class="menu-crea-btn" onclick="creaMenu()">
-        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        Crea una nuova drink list
-      </button>
-      <button class="menu-crea-btn menu-crea-foto" onclick="creaMenuDaFoto()">
-        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Parti dagli ingredienti che hai
-      </button>
+      <div class="menu-cat-grid" id="menu-cat-grid">
+        <button class="menu-cat" data-cat="drink_list" onclick="mbScegliCategoria('drink_list','Drink list')">🍸<span>Drink list</span></button>
+        <button class="menu-cat" data-cat="pizzeria" onclick="mbScegliCategoria('pizzeria','Menù pizzeria')">🍕<span>Pizzeria</span></button>
+        <button class="menu-cat" data-cat="ristorante" onclick="mbScegliCategoria('ristorante','Menù ristorante')">🍽️<span>Ristorante</span></button>
+        <button class="menu-cat" data-cat="carta_vini" onclick="mbScegliCategoria('carta_vini','Carta dei vini')">🍷<span>Carta vini</span></button>
+        <button class="menu-cat" data-cat="carta_birre" onclick="mbScegliCategoria('carta_birre','Carta delle birre')">🍺<span>Carta birre</span></button>
+      </div>
       <div class="menu-list" id="menu-list"></div>
     </div>
+  </div>
+</div>
+
+<!-- ══ SCELTA MODALITÀ (dopo la categoria) ══ -->
+<div id="menu-modo" class="menu-builder hidden">
+  <div class="mb-top">
+    <button class="mb-close" onclick="chiudiModo()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="mb-title" id="mm-title">Nuovo menù</span>
+    <span style="width:40px"></span>
+  </div>
+  <div class="mb-step">
+    <div class="mb-eyebrow" id="mm-cat-lab">Categoria</div>
+    <div class="mb-h">Da dove vuoi partire?</div>
+    <button class="menu-crea-btn menu-crea-foto" onclick="chiudiModo();creaMenuDaFoto()">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Fotografa gli ingredienti che hai
+    </button>
+    <button class="menu-crea-btn" onclick="chiudiModo();creaMenu()" style="margin-top:10px">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Parti dai tuoi esperimenti
+    </button>
+    <div class="mb-sub" style="margin-top:16px">La foto è il modo più veloce: Matter riconosce gli ingredienti, trova le connessioni e ti propone le combinazioni.</div>
   </div>
 </div>
 
