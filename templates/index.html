@@ -703,11 +703,83 @@ if('serviceWorker' in navigator){
     <span class="les-pos" id="ct-quad-title">Quaderno</span>
   </div>
   <div id="quad-content">
-    <div class="quad-empty" id="quad-empty" style="display:none">
-      <b id="ct-quad-empty-title">Nessun esperimento salvato</b>
-      <span id="ct-quad-empty-sub">Usa i calcolatori e salva le tue misure fisiche qui.</span>
+    <!-- TOGGLE: il Quaderno è dove ciò che validi diventa qualcosa -->
+    <div class="quad-toggle">
+      <button class="quad-tg-btn active" id="qtg-misure" onclick="switchQuaderno('misure')">Misure</button>
+      <button class="quad-tg-btn" id="qtg-menu" onclick="switchQuaderno('menu')">Menù</button>
     </div>
-    <div class="quad-list" id="quad-list"></div>
+    <!-- PANNELLO MISURE -->
+    <div id="quad-pane-misure">
+      <div class="quad-empty" id="quad-empty" style="display:none">
+        <b id="ct-quad-empty-title">Nessun esperimento salvato</b>
+        <span id="ct-quad-empty-sub">Usa i calcolatori e salva le tue misure fisiche qui.</span>
+      </div>
+      <div class="quad-list" id="quad-list"></div>
+    </div>
+    <!-- PANNELLO MENÙ -->
+    <div id="quad-pane-menu" style="display:none">
+      <div class="menu-intro">
+        <div class="menu-intro-lab">Dal banco alla carta</div>
+        <div class="menu-intro-txt">Trasforma i tuoi esperimenti validati in un menù pronto per il locale. Ogni voce porta con sé i numeri che l'hanno resa giusta.</div>
+      </div>
+      <button class="menu-crea-btn" onclick="creaMenu()">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Crea una nuova drink list
+      </button>
+      <div class="menu-list" id="menu-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BUILDER CREA MENÙ (Drink List v1) ══ -->
+<div id="menu-builder" class="menu-builder hidden">
+  <div class="mb-top">
+    <button class="mb-close" onclick="chiudiBuilder()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="mb-title" id="mb-step-title">Nuova drink list</span>
+    <button class="mb-next" id="mb-next" onclick="mbAvanti()">Avanti</button>
+  </div>
+  <!-- STEP 1: identità -->
+  <div class="mb-step" id="mb-step-1">
+    <div class="mb-eyebrow">Passo 1 di 3 · Identità</div>
+    <div class="mb-h">Come si chiama la tua carta?</div>
+    <input class="mb-input" id="mb-nome" placeholder="Es. Signature List · Autunno 2026" maxlength="60">
+    <div class="mb-sub">Il nome del locale e lo stile grafico li scegli alla fine.</div>
+  </div>
+  <!-- STEP 2: composizione -->
+  <div class="mb-step" id="mb-step-2" style="display:none">
+    <div class="mb-eyebrow">Passo 2 di 3 · Composizione</div>
+    <div class="mb-h">Scegli le voci dai tuoi esperimenti</div>
+    <div class="mb-validati" id="mb-validati"></div>
+    <button class="mb-add-manuale" onclick="mbAggiungiManuale()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Aggiungi una voce nuova</button>
+    <div class="mb-equilibrio" id="mb-equilibrio"></div>
+  </div>
+  <!-- STEP 3: grafica -->
+  <div class="mb-step" id="mb-step-3" style="display:none">
+    <div class="mb-eyebrow">Passo 3 di 3 · Grafica</div>
+    <div class="mb-h">Scegli lo stile della carta</div>
+    <div class="mb-templates">
+      <button class="mb-tpl active" data-tpl="editorial" onclick="mbScegliTemplate('editorial')">
+        <div class="mb-tpl-prev tpl-editorial">Aa</div><span>Editorial</span><small>Fine dining</small></button>
+      <button class="mb-tpl" data-tpl="modern" onclick="mbScegliTemplate('modern')">
+        <div class="mb-tpl-prev tpl-modern">Aa</div><span>Modern</span><small>Cocktail bar</small></button>
+      <button class="mb-tpl" data-tpl="classic" onclick="mbScegliTemplate('classic')">
+        <div class="mb-tpl-prev tpl-classic">Aa</div><span>Classic</span><small>Tradizione</small></button>
+    </div>
+    <input class="mb-input" id="mb-locale" placeholder="Nome del locale" maxlength="40">
+    <button class="mb-genera" onclick="mbGenera()">Vedi l'anteprima →</button>
+  </div>
+</div>
+
+<!-- ══ ANTEPRIMA MENÙ + EXPORT ══ -->
+<div id="menu-anteprima" class="menu-anteprima hidden">
+  <div class="mb-top">
+    <button class="mb-close" onclick="chiudiAnteprima()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <span class="mb-title">Anteprima</span>
+    <button class="mb-next" onclick="esportaMenu()">Esporta</button>
+  </div>
+  <div class="ma-scroll">
+    <div class="ma-render tpl-editorial" id="ma-render"></div>
+    <div class="ma-export-nota">L'anteprima è gratuita. L'esportazione del PDF stampabile è inclusa in <b>Matter Pro</b>.</div>
   </div>
 </div>
 

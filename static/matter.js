@@ -2385,6 +2385,170 @@ async function salvaEsperimento(){
   } catch(e){}
 }
 
+// ── QUADERNO: toggle Misure / Menù ──
+function switchQuaderno(vista){
+  document.getElementById('quad-pane-misure').style.display = vista==='misure'?'':'none';
+  document.getElementById('quad-pane-menu').style.display = vista==='menu'?'':'none';
+  document.getElementById('qtg-misure').classList.toggle('active', vista==='misure');
+  document.getElementById('qtg-menu').classList.toggle('active', vista==='menu');
+  if(vista==='menu') caricaMenuSalvati();
+}
+
+function caricaMenuSalvati(){
+  // v1: i menù stanno in localStorage (poi sync backend/Cifra in v2)
+  const list = document.getElementById('menu-list');
+  let menus = [];
+  try { menus = JSON.parse(localStorage.getItem('matter_menus')||'[]'); } catch(e){}
+  if(!menus.length){ list.innerHTML=''; return; }
+  list.innerHTML = '<div class="menu-list-lab">I tuoi menù</div>' + menus.map((m,i)=>
+    `<div class="menu-card" onclick="apriMenu(${i})">
+      <div class="menu-card-nome">${_esc(m.nome||'Drink list')}</div>
+      <div class="menu-card-meta">${(m.voci||[]).length} voci · ${m.tipo||'drink list'}</div>
+    </div>`).join('');
+}
+
+// ══════════ BUILDER CREA MENÙ (Drink List v1) ══════════
+let _mbStep = 1;
+let _mbVoci = [];      // voci selezionate per il menù
+let _mbTemplate = 'editorial';
+
+function creaMenu(){
+  _mbStep = 1; _mbVoci = []; _mbTemplate = 'editorial';
+  document.getElementById('mb-nome').value = '';
+  document.getElementById('mb-locale').value = '';
+  _mbMostraStep(1);
+  document.getElementById('menu-builder').classList.remove('hidden');
+}
+function chiudiBuilder(){ document.getElementById('menu-builder').classList.add('hidden'); }
+
+function _mbMostraStep(n){
+  _mbStep = n;
+  [1,2,3].forEach(s=> document.getElementById('mb-step-'+s).style.display = s===n?'block':'none');
+  const titoli = {1:'Nuova drink list', 2:'Componi la carta', 3:'Stile della carta'};
+  document.getElementById('mb-step-title').textContent = titoli[n];
+  document.getElementById('mb-next').style.display = n<3 ? '' : 'none';
+  if(n===2) _mbCaricaValidati();
+}
+
+function mbAvanti(){
+  if(_mbStep===1){
+    const nome = document.getElementById('mb-nome').value.trim();
+    if(!nome){ document.getElementById('mb-nome').focus(); return; }
+    _mbMostraStep(2);
+  } else if(_mbStep===2){
+    if(!_mbVoci.length){ alert('Aggiungi almeno una voce alla carta.'); return; }
+    _mbMostraStep(3);
+  }
+}
+
+// carica gli esperimenti validati dal Quaderno (le misure salvate)
+function _mbCaricaValidati(){
+  const cont = document.getElementById('mb-validati');
+  let misure = [];
+  try { misure = JSON.parse(localStorage.getItem('matter_quaderno')||'[]'); } catch(e){}
+  // trasformo le misure salvate in voci candidate; ognuna ha uno stato di validazione
+  if(!misure.length){
+    cont.innerHTML = '<div class="mb-vuoto">Non hai ancora esperimenti salvati nel Quaderno. Puoi aggiungere voci manualmente qui sotto — appariranno come <b>non verificate</b> finché non le misuri.</div>';
+    _mbAggiornaEquilibrio(); return;
+  }
+  cont.innerHTML = '<div class="mb-val-lab">Dai tuoi esperimenti validati</div>' + misure.map((m,i)=>{
+    const nome = m.nome || m.fenomeno || ('Preparazione '+(i+1));
+    const target = m.target || m.valore || '';
+    const inMenu = _mbVoci.some(v=>v._src==='quad'+i);
+    return `<div class="mb-vcand ${inMenu?'sel':''}" onclick="mbToggleVoce('quad${i}','${_esc(nome).replace(/'/g,"")}','${_esc(target).replace(/'/g,"")}',true)">
+      <div class="mb-vcand-info"><span class="mb-vcand-nome">${_esc(nome)}</span>
+      ${target?`<span class="mb-vcand-tgt">${_esc(target)}</span>`:''}</div>
+      <div class="mb-vcand-stato verified">✓ verificato</div>
+      <div class="mb-vcand-check">${inMenu?'✓':'+'}</div>
+    </div>`;
+  }).join('');
+  _mbAggiornaEquilibrio();
+}
+
+function mbToggleVoce(src, nome, target, verificato){
+  const idx = _mbVoci.findIndex(v=>v._src===src);
+  if(idx>=0) _mbVoci.splice(idx,1);
+  else _mbVoci.push({_src:src, nome, target, stato: verificato?'verified':'unverified'});
+  _mbCaricaValidati();
+}
+
+function mbAggiungiManuale(){
+  const nome = prompt('Nome della voce (es. Negroni Sbagliato):');
+  if(!nome||!nome.trim()) return;
+  _mbVoci.push({_src:'man'+Date.now(), nome:nome.trim(), target:'', stato:'unverified'});
+  _mbCaricaValidati();
+}
+
+// EQUILIBRIO DELLA CARTA (il valore di Matter, non un generatore qualunque)
+function _mbAggiornaEquilibrio(){
+  const box = document.getElementById('mb-equilibrio');
+  const n = _mbVoci.length;
+  const verif = _mbVoci.filter(v=>v.stato==='verified').length;
+  if(!n){ box.innerHTML=''; return; }
+  let msg = '';
+  if(n < 8) msg = `Hai <b>${n}</b> ${n===1?'voce':'voci'}. Per una drink list equilibrata te ne servono <b>8-12</b>.`;
+  else if(n <= 12) msg = `<b>${n} voci</b> — una carta ben dimensionata.`;
+  else msg = `<b>${n} voci</b> — carta ampia. Valuta se snellire per non confondere il cliente.`;
+  const nonVerif = n - verif;
+  box.innerHTML = `<div class="mb-eq-riga">${msg}</div>` +
+    (nonVerif>0 ? `<div class="mb-eq-warn">⚠ ${nonVerif} ${nonVerif===1?'voce non verificata':'voci non verificate'} al banco. Puoi pubblicarle, ma senza il sigillo “verificato da Matter”.</div>` : `<div class="mb-eq-ok">✓ Tutte le voci sono verificate al banco.</div>`);
+}
+
+function mbScegliTemplate(t){
+  _mbTemplate = t;
+  document.querySelectorAll('.mb-tpl').forEach(b=> b.classList.toggle('active', b.dataset.tpl===t));
+}
+
+function mbGenera(){
+  const nome = document.getElementById('mb-nome').value.trim();
+  const locale = document.getElementById('mb-locale').value.trim();
+  const menu = {nome, locale, tipo:'drink list', template:_mbTemplate, voci:_mbVoci, creato: Date.now()};
+  // salvo in localStorage (v1)
+  let menus = [];
+  try { menus = JSON.parse(localStorage.getItem('matter_menus')||'[]'); } catch(e){}
+  menus.unshift(menu);
+  localStorage.setItem('matter_menus', JSON.stringify(menus));
+  chiudiBuilder();
+  apriAnteprima(menu);
+}
+
+function apriMenu(i){
+  let menus=[]; try{ menus=JSON.parse(localStorage.getItem('matter_menus')||'[]'); }catch(e){}
+  if(menus[i]) apriAnteprima(menus[i]);
+}
+
+// ANTEPRIMA GRAFICA del menù + export (Pro)
+function apriAnteprima(menu){
+  const ov = document.getElementById('menu-anteprima');
+  const tpl = menu.template || 'editorial';
+  const voci = menu.voci || [];
+  const corpo = voci.map(v=>{
+    const sigillo = v.stato==='verified' ? '<span class="ma-verif">✓</span>' : '';
+    return `<div class="ma-voce"><div class="ma-voce-nome">${_esc(v.nome)}${sigillo}</div>${v.target?`<div class="ma-voce-tgt">${_esc(v.target)}</div>`:''}</div>`;
+  }).join('');
+  document.getElementById('ma-render').className = 'ma-render tpl-'+tpl;
+  document.getElementById('ma-render').innerHTML =
+    `<div class="ma-head"><div class="ma-locale">${_esc(menu.locale||'Il tuo locale')}</div>
+     <div class="ma-nome">${_esc(menu.nome||'Drink List')}</div></div>
+     <div class="ma-voci">${corpo}</div>
+     <div class="ma-foot">Verificato da Matter</div>`;
+  ov.classList.remove('hidden');
+}
+function chiudiAnteprima(){ document.getElementById('menu-anteprima').classList.add('hidden'); caricaMenuSalvati(); }
+
+function esportaMenu(){
+  // export PDF = Pro (paywall)
+  const tok = localStorage.getItem('matter_token');
+  const piano = localStorage.getItem('matter_piano');
+  if(piano!=='pro'){
+    if(typeof mostraPopupPro==='function'){ mostraPopupPro('menu_export'); }
+    else alert('L\'esportazione del menù è una funzione Pro.');
+    return;
+  }
+  // Pro: genero il PDF (v1: stampa del contenitore anteprima)
+  window.print();
+}
+
 async function caricaQuaderno(){
   const token = localStorage.getItem('matter_token');
   const empty = document.getElementById('quad-empty');
