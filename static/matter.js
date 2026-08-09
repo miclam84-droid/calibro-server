@@ -2464,6 +2464,19 @@ function _mfMostraFase(f){
     var el=document.getElementById('mf-fase-'+x);
     if(el) el.style.display = x===f?'block':'none';
   });
+  // filo narrativo: evidenzio lo step corrente e quelli superati
+  var filo = document.getElementById('mf-filo');
+  if(filo){
+    var ordine = ['foto','valida','proposte','lab'];
+    // durante il loading tengo evidenziato lo step di destinazione logico
+    var fase = (f==='loading') ? 'valida' : f;
+    var idx = ordine.indexOf(fase);
+    filo.querySelectorAll('.mf-filo-step').forEach(function(s){
+      var si = ordine.indexOf(s.getAttribute('data-fase'));
+      s.classList.toggle('done', si < idx);
+      s.classList.toggle('active', si === idx);
+    });
+  }
 }
 
 function mfFileScelti(ev){

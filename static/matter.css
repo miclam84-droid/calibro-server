@@ -1368,3 +1368,18 @@ a:focus-visible,input:focus-visible{
 .menu-cat:hover{box-shadow:var(--shadow-card)}
 .menu-cat span{font-family:var(--sans);font-size:14px;font-weight:700;color:var(--ink)}
 .menu-cat[data-cat="drink_list"]{grid-column:1 / -1}
+
+/* filo narrativo del flusso feature-foto */
+.mf-filo{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;gap:4px;border-bottom:1px solid var(--border);background:var(--paper)}
+.mf-filo-step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;position:relative}
+.mf-filo-step:not(:last-child)::after{content:'';position:absolute;top:5px;left:60%;width:80%;height:2px;background:var(--border)}
+.mf-filo-step.done:not(:last-child)::after{background:var(--target-green)}
+.mf-filo-dot{width:11px;height:11px;border-radius:50%;background:var(--border);border:2px solid var(--paper);z-index:1;transition:all .3s}
+.mf-filo-step.active .mf-filo-dot{background:var(--accent);box-shadow:0 0 0 4px rgba(203,90,34,.15)}
+.mf-filo-step.done .mf-filo-dot{background:var(--target-green)}
+.mf-filo-lab{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-muted);text-align:center;line-height:1.2}
+.mf-filo-step.active .mf-filo-lab{color:var(--accent)}
+.mf-filo-step.done .mf-filo-lab{color:var(--target-green)}
+/* transizione morbida tra le fasi */
+.mf-fase{animation:mfFaseIn .35s ease}
+@keyframes mfFaseIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
