@@ -2424,6 +2424,98 @@ function creaMenu(){
 }
 function chiudiBuilder(){ document.getElementById('menu-builder').classList.add('hidden'); }
 
+// ══════════ MENÙ DA FOTO INGREDIENTI (feature killer) — Step 1 ══════════
+let _mfFiles = [];       // File scelti
+let _mfIngredienti = []; // ingredienti riconosciuti/confermati
+
+function creaMenuDaFoto(){
+  _mfFiles = []; _mfIngredienti = [];
+  document.getElementById('mf-thumbs').innerHTML = '';
+  document.getElementById('mf-analizza').style.display = 'none';
+  _mfMostraFase('foto');
+  document.getElementById('menu-foto').classList.remove('hidden');
+}
+function chiudiMenuFoto(){ document.getElementById('menu-foto').classList.add('hidden'); }
+function _mfMostraFase(f){
+  ['foto','loading','valida'].forEach(x=>{
+    document.getElementById('mf-fase-'+x).style.display = x===f?'block':'none';
+  });
+}
+
+function mfFileScelti(ev){
+  const nuovi = Array.from(ev.target.files||[]).slice(0, 6 - _mfFiles.length);
+  _mfFiles = _mfFiles.concat(nuovi).slice(0,6);
+  const cont = document.getElementById('mf-thumbs');
+  cont.innerHTML = _mfFiles.map((f,i)=>{
+    const url = URL.createObjectURL(f);
+    return `<div class="mf-thumb"><img src="${url}"><button onclick="mfRimuoviFoto(${i})">×</button></div>`;
+  }).join('');
+  document.getElementById('mf-analizza').style.display = _mfFiles.length?'block':'none';
+}
+function mfRimuoviFoto(i){ _mfFiles.splice(i,1); mfFileScelti({target:{files:[]}}); }
+
+async function mfAnalizza(){
+  if(!_mfFiles.length) return;
+  _mfMostraFase('loading');
+  _mfTeatro();
+  // converto le immagini in base64
+  const b64s = await Promise.all(_mfFiles.map(f=>new Promise(res=>{
+    const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(f);
+  })));
+  try{
+    const tok = localStorage.getItem('matter_token')||'';
+    const r = await fetch('/v1/menu/riconosci-ingredienti', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({immagini_b64: b64s, token: tok})
+    });
+    const j = await r.json();
+    _mfIngredienti = (j.ingredienti||[]).map(x=>({nome:x.nome, categoria:x.categoria, sel:true}));
+    _mfRenderValida();
+    _mfMostraFase('valida');
+  }catch(e){
+    alert('Non sono riuscito a leggere le foto. Riprova con una foto più chiara.');
+    _mfMostraFase('foto');
+  }
+}
+
+function _mfTeatro(){
+  const steps = ['Riconosco gli ingredienti','Controllo le corrispondenze','Cerco connessioni aromatiche','Cerco tecniche applicabili','Preparo le combinazioni'];
+  const cont = document.getElementById('mf-load-steps');
+  cont.innerHTML = '';
+  steps.forEach((s,i)=> setTimeout(()=>{
+    if(document.getElementById('mf-fase-loading').style.display==='none') return;
+    cont.innerHTML += `<div class="mf-load-step">✓ ${s}</div>`;
+  }, i*700));
+}
+
+function _mfRenderValida(){
+  const cont = document.getElementById('mf-ingredienti');
+  if(!_mfIngredienti.length){
+    cont.innerHTML = '<div class="mb-vuoto">Non ho riconosciuto ingredienti nelle foto. Aggiungili a mano qui sotto.</div>';
+    return;
+  }
+  cont.innerHTML = _mfIngredienti.map((ing,i)=>
+    `<div class="mf-ing ${ing.sel?'sel':'off'}" onclick="mfToggleIng(${i})">
+      <span class="mf-ing-nome">${_esc(ing.nome)}</span>
+      <span class="mf-ing-cat">${_esc(ing.categoria||'')}</span>
+      <span class="mf-ing-x">${ing.sel?'✓':'+'}</span>
+    </div>`).join('');
+}
+function mfToggleIng(i){ _mfIngredienti[i].sel = !_mfIngredienti[i].sel; _mfRenderValida(); }
+function mfAggiungiIng(){
+  const nome = prompt('Nome dell\'ingrediente:');
+  if(!nome||!nome.trim()) return;
+  _mfIngredienti.push({nome:nome.trim(), categoria:'', sel:true});
+  _mfRenderValida();
+}
+function mfConferma(){
+  const confermati = _mfIngredienti.filter(x=>x.sel);
+  if(!confermati.length){ alert('Conferma almeno un ingrediente.'); return; }
+  // Step 2 (grafo-RAG: connessioni + proposte) — prossimo blocco
+  alert('Ingredienti confermati: '+confermati.map(x=>x.nome).join(', ')+'\n\n(Il motore delle proposte arriva nel prossimo step)');
+}
+
+
 function _mbMostraStep(n){
   _mbStep = n;
   [1,2,3].forEach(s=> document.getElementById('mb-step-'+s).style.display = s===n?'block':'none');

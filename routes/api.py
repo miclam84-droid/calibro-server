@@ -1520,6 +1520,73 @@ def foto_analisi():
         return jsonify({"errore": str(e), "trace": tb[-600:]}), 500
 
 
+@bp.route("/v1/menu/riconosci-ingredienti", methods=["POST"])
+def riconosci_ingredienti():
+    """FEATURE MENÙ DA FOTO — Step 1: riconoscimento ingredienti.
+    Riceve una o più immagini (multipart 'immagini' multiple, o JSON con 'immagini_b64' lista).
+    Usa Vision in JSON Mode con schema rigido. Restituisce lista ingredienti da validare.
+    Freemium: il RICONOSCIMENTO è gratis (effetto WOW). La generazione del menù sarà Pro.
+    Costo contenuto: 1 chiamata Vision per foto (max 6)."""
+    import base64, json as _json
+    # raccolgo le immagini (max 6)
+    imgs = []  # lista di (bytes, media_type)
+    if request.files:
+        for key in request.files:
+            for f in request.files.getlist(key):
+                imgs.append((f.read(), f.content_type or "image/jpeg"))
+    elif request.is_json and request.json.get("immagini_b64"):
+        for raw in request.json["immagini_b64"][:6]:
+            mt = "image/jpeg"
+            if "," in raw:
+                header, raw = raw.split(",", 1)
+                mt = header.split(":")[1].split(";")[0] if ":" in header else "image/jpeg"
+            imgs.append((base64.b64decode(raw), mt))
+    imgs = imgs[:6]
+    if not imgs:
+        return jsonify({"errore": "nessuna immagine — invia 'immagini' (multipart) o 'immagini_b64' (lista base64)"}), 400
+
+    # prompt JSON Mode rigido: solo materie prime alimentari, no stoviglie/sfondo
+    prompt = (
+        "Sei un assistente per chef e bartender. Analizza l'immagine e identifica SOLO gli "
+        "ingredienti alimentari e le materie prime commestibili (frutta, verdura, carne, pesce, "
+        "erbe, spezie, distillati, vini, latticini, farine). IGNORA stoviglie, contenitori, "
+        "cassette, sfondi, mani, utensili. Rispondi ESCLUSIVAMENTE con un oggetto JSON valido, "
+        "senza testo prima o dopo, in questo schema:\n"
+        '{"ingredienti":[{"nome":"<nome italiano>","categoria":"<proteine|vegetali|frutta|erbe|spezie|distillati|vini|latticini|farine|altro>","confidenza":<0-1>}]}'
+        "\nSe non riconosci nulla di commestibile, restituisci {\"ingredienti\":[]}."
+    )
+    tutti = {}  # dedup per nome
+    try:
+        from ai_gateway import route_vision
+        for img_bytes, mt in imgs:
+            out = route_vision(img_bytes, prompt, media_type=mt)
+            # estraggo il JSON dalla risposta (robusto a eventuali backtick)
+            txt = (out or "").strip()
+            if txt.startswith("```"):
+                txt = txt.strip("`")
+                if txt.startswith("json"): txt = txt[4:]
+            i0, i1 = txt.find("{"), txt.rfind("}")
+            if i0 >= 0 and i1 > i0:
+                try:
+                    parsed = _json.loads(txt[i0:i1+1])
+                    for ing in parsed.get("ingredienti", []):
+                        nome = (ing.get("nome") or "").strip()
+                        if not nome: continue
+                        key = nome.lower()
+                        if key not in tutti or (ing.get("confidenza",0) > tutti[key].get("confidenza",0)):
+                            tutti[key] = {"nome": nome,
+                                          "categoria": ing.get("categoria","altro"),
+                                          "confidenza": round(float(ing.get("confidenza",0.8)),2)}
+                except Exception:
+                    pass
+        lista = sorted(tutti.values(), key=lambda x: -x["confidenza"])
+        return jsonify({"ingredienti": lista, "totale": len(lista), "foto_analizzate": len(imgs)})
+    except Exception as e:
+        import traceback
+        print(f"[RICONOSCI ERRORE] {e}\n{traceback.format_exc()[-500:]}", flush=True)
+        return jsonify({"errore": str(e)}), 500
+
+
 @bp.route("/v1/tts", methods=["POST"])
 def tts():
     """Text-to-speech per l'output della feature foto.
