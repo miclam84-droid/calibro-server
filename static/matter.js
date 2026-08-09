@@ -2437,7 +2437,7 @@ function creaMenuDaFoto(){
 }
 function chiudiMenuFoto(){ document.getElementById('menu-foto').classList.add('hidden'); }
 function _mfMostraFase(f){
-  ['foto','loading','valida'].forEach(x=>{
+  ['foto','loading','valida','proposte'].forEach(x=>{
     document.getElementById('mf-fase-'+x).style.display = x===f?'block':'none';
   });
 }
@@ -2508,11 +2508,51 @@ function mfAggiungiIng(){
   _mfIngredienti.push({nome:nome.trim(), categoria:'', sel:true});
   _mfRenderValida();
 }
-function mfConferma(){
-  const confermati = _mfIngredienti.filter(x=>x.sel);
+async function mfConferma(){
+  const confermati = _mfIngredienti.filter(x=>x.sel).map(x=>x.nome);
   if(!confermati.length){ alert('Conferma almeno un ingrediente.'); return; }
-  // Step 2 (grafo-RAG: connessioni + proposte) — prossimo blocco
-  alert('Ingredienti confermati: '+confermati.map(x=>x.nome).join(', ')+'\n\n(Il motore delle proposte arriva nel prossimo step)');
+  _mfMostraFase('loading');
+  document.getElementById('mf-load-steps').innerHTML = '<div class="mf-load-step">✓ Cerco le connessioni aromatiche nel Flavor Network</div>';
+  try{
+    const r = await fetch('/v1/menu/proposte', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ingredienti: confermati, tipo:'drink_list'})
+    });
+    const j = await r.json();
+    _mfProposte = j.proposte || [];
+    _mfRenderProposte(j);
+    _mfMostraFase('proposte');
+  }catch(e){
+    alert('Non sono riuscito a trovare le combinazioni. Riprova.');
+    _mfMostraFase('valida');
+  }
+}
+
+let _mfProposte = [];
+function _mfRenderProposte(j){
+  const cont = document.getElementById('mf-proposte');
+  if(!_mfProposte.length){
+    cont.innerHTML = '<div class="mb-vuoto">Non ho trovato connessioni aromatiche forti tra questi ingredienti nel Flavor Network. Puoi comunque creare voci manualmente dal builder.</div>';
+    return;
+  }
+  cont.innerHTML = _mfProposte.map((p,i)=>{
+    const ing = p.ingredienti.join(' · ');
+    const tipoLab = p.tipo==='triangolo' ? 'Combinazione a tre' : 'Coppia aromatica';
+    return `<div class="mf-prop">
+      <div class="mf-prop-tipo">${tipoLab}</div>
+      <div class="mf-prop-ing">${_esc(ing)}</div>
+      <div class="mf-prop-proof">
+        <span class="mf-proof-item">${p.proof.ingredienti_disponibili} ingredienti</span>
+        <span class="mf-proof-item">${p.proof.connessioni_aromatiche} connessioni aromatiche</span>
+      </div>
+      <button class="mf-prop-btn" onclick="mfVaiAlLaboratorio(${i})">Porta al laboratorio →</button>
+    </div>`;
+  }).join('');
+}
+function mfVaiAlLaboratorio(i){
+  const p = _mfProposte[i];
+  // Step 3 (tecniche + target col Mirino) — prossimo blocco.
+  alert('Proposta scelta: '+p.ingredienti.join(' · ')+'\n\n(Il laboratorio con tecniche e Mirino arriva nel prossimo step)');
 }
 
 

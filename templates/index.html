@@ -825,6 +825,13 @@ if('serviceWorker' in navigator){
     <button class="mf-add-ing" onclick="mfAggiungiIng()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Aggiungi un ingrediente</button>
     <button class="mb-genera" onclick="mfConferma()">Trova le combinazioni →</button>
   </div>
+  <!-- FASE D: proposte (dal grafo, col proof) -->
+  <div class="mf-fase" id="mf-fase-proposte" style="display:none">
+    <div class="mb-eyebrow">Combinazioni fondate sul Flavor Network</div>
+    <div class="mb-h">Ecco cosa puoi farci</div>
+    <div class="mb-sub">Ogni combinazione nasce da connessioni aromatiche reali tra i tuoi ingredienti — non da un'invenzione. Portala al laboratorio per darle i numeri.</div>
+    <div class="mf-proposte" id="mf-proposte"></div>
+  </div>
 </div>
 
 <!-- ── ONBOARDING OVERLAY ────────────────────────────── -->

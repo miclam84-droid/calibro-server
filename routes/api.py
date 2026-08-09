@@ -12,6 +12,44 @@ import os, json
 import ai_gateway as GW
 bp = Blueprint("api", __name__)
 
+# mappa italiano → nome Ahn (inglese), condivisa tra /abbina e /menu/proposte
+_ALIAS_AHN = {
+    "pomodoro":"tomato","limone":"lemon","aglio":"garlic","cipolla":"onion",
+    "burro":"butter","panna":"cream","latte":"milk","uova":"egg","uovo":"egg",
+    "basilico":"basil","prezzemolo":"parsley","rosmarino":"rosemary","timo":"thyme","menta":"mint",
+    "cioccolato":"cocoa","caffe":"coffee","caffè":"coffee","espresso":"espresso",
+    "fragola":"strawberry","lampone":"raspberry","mela":"apple","pera":"pear","banana":"banana",
+    "arancia":"orange","limetta":"lime","lime":"lime","zenzero":"ginger","pepe":"black_pepper",
+    "sale":"salt","aceto":"vinegar","vino":"wine","birra":"beer","rum":"rum","whisky":"whiskey",
+    "gin":"gin","vodka":"vodka","salmone":"salmon","tonno":"tuna","gambero":"shrimp",
+    "manzo":"beef","pollo":"chicken","maiale":"pork","agnello":"lamb","formaggio":"cheese",
+    "parmigiano":"parmesan","mozzarella":"mozzarella","olio":"olive_oil","sesamo":"sesame",
+    "mandorla":"almond","nocciola":"hazelnut","noci":"walnut","ananas":"pineapple","mango":"mango",
+    "cocco":"coconut","zucca":"pumpkin","carota":"carrot","sedano":"celery","funghi":"mushroom",
+    "tè":"tea","te":"tea","miele":"honey","zucchero":"sugar","peperoncino":"chili","melanzana":"eggplant",
+    "prosciutto":"prosciutto","pancetta":"bacon","gorgonzola":"blue_cheese","ricotta":"ricotta",
+    "pecorino":"pecorino","zucchine":"zucchini","rucola":"arugula","radicchio":"radicchio",
+    "finocchio":"fennel","carciofo":"artichoke","asparago":"asparagus","spinaci":"spinach",
+    "cavolo":"cabbage","broccolo":"broccoli","fico":"fig","albicocca":"apricot","pesca":"peach",
+    "prugna":"plum","melograno":"pomegranate","mirtillo":"blueberry","pompelmo":"grapefruit",
+    "bergamotto":"bergamot","uva":"grape","castagna":"chestnut","baccalà":"cod","acciuga":"anchovy",
+    "polpo":"octopus","calamaro":"squid","orata":"sea_bream","branzino":"sea_bass","sgombro":"mackerel",
+    "vongola":"clam","cozza":"mussel","ostrica":"oyster","riso":"rice","farina":"flour","pane":"bread",
+    "salvia":"sage","alloro":"bay_leaf","origano":"oregano","noce moscata":"nutmeg","cardamomo":"cardamom",
+    "zafferano":"saffron","cannella":"cinnamon","vaniglia":"vanilla","pistacchio":"pistachio",
+    "campari":"amaro","aperol":"amaro","amaro":"amaro","vermouth":"vermouth","prosecco":"sparkling_wine",
+    "cacao":"cocoa","caramello":"caramel","cetriolo":"cucumber","anguria":"watermelon","melone":"melon",
+}
+def _alias_ahn(nome):
+    """Mappa un nome ingrediente (IT o EN) al nodo Ahn, o None."""
+    if not nome: return None
+    k = nome.lower().strip().replace("_"," ")
+    if k in _ALIAS_AHN: return _ALIAS_AHN[k]
+    # prova diretto (già inglese)
+    kn = k.replace(" ","_")
+    return _ALIAS_AHN.get(k) or (kn if kn.isalpha() or "_" in kn else None)
+
+
 # ── AFFILIATI VINO/BIRRA ────────────────────────────────────────────────
 # Tag affiliato da impostare dopo l'iscrizione ai programmi (ottobre 2026).
 # Struttura come Amazon Associates per gli strumenti: link di ricerca verso
@@ -1174,6 +1212,96 @@ def abbina(ingrediente):
     except Exception as e:
         return jsonify({"ingrediente":ingrediente,"abbinamenti":[],
                         "nota":f"Errore: {str(e)}"}), 500
+
+@bp.route("/v1/menu/proposte", methods=["POST"])
+def menu_proposte():
+    """FEATURE MENÙ DA FOTO — Step 2: motore delle proposte (grafo-RAG deterministico).
+    Riceve {ingredienti:[nomi], tipo:'drink_list'}. Trova le CONNESSIONI REALI nel Flavor
+    Network tra gli ingredienti forniti (composti aromatici condivisi), le raggruppa in
+    proposte (coppie forti + triangoli), ognuna con un 'proof' verificabile.
+    Nessuna allucinazione: le connessioni vengono SOLO dal grafo, non inventate dall'AI.
+    Freemium: gratis vede il riconoscimento + le prime 2 proposte; il resto è Pro."""
+    body = request.json or {}
+    ingredienti = [x.strip() for x in (body.get("ingredienti") or []) if x and x.strip()]
+    if len(ingredienti) < 2:
+        return jsonify({"errore": "servono almeno 2 ingredienti", "proposte": []}), 400
+
+    # mappo ogni ingrediente al suo nodo Ahn (helper condiviso _alias_ahn)
+    ahn_map = {}  # nome_utente -> ahn_name
+    for ing in ingredienti:
+        a = _alias_ahn(ing)
+        if a: ahn_map[ing] = a
+
+    if not DATABASE_URL or len(ahn_map) < 2:
+        return jsonify({"ingredienti": ingredienti, "proposte": [],
+                        "nota": "Connessioni non disponibili per questi ingredienti."})
+
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        # per ogni COPPIA di ingredienti mappati, conto i composti condivisi (forza del legame)
+        coppie = []
+        items = list(ahn_map.items())
+        for i in range(len(items)):
+            for j in range(i+1, len(items)):
+                n1, a1 = items[i]; n2, a2 = items[j]
+                # cerco l'edge di abbinamento tra i due nodi; overlap = forza del legame
+                cur.execute("""
+                    SELECT COALESCE(MAX((e.data->>'overlap')::numeric), 0)
+                    FROM edges e
+                    WHERE e.relation='abbinamento_aromatico'
+                      AND ((lower(e.from_id)=lower(%s) AND lower(e.to_id)=lower(%s))
+                        OR (lower(e.from_id)=lower(%s) AND lower(e.to_id)=lower(%s)))
+                """, (f"ahn_{a1}", f"ahn_{a2}", f"ahn_{a2}", f"ahn_{a1}"))
+                r = cur.fetchone()
+                forza = int(float(r[0])) if r and r[0] else 0
+                if forza > 0:
+                    coppie.append({"a": n1, "b": n2, "forza": forza})
+        cur.close(); _release_conn(conn)
+
+        # ordino le coppie per forza del legame
+        coppie.sort(key=lambda x: -x["forza"])
+
+        # costruisco le proposte: coppie forti + triangoli (A-B-C tutti connessi)
+        proposte = []
+        # 1) triangoli: tre ingredienti tutti connessi tra loro
+        conn_set = {(c["a"], c["b"]) for c in coppie} | {(c["b"], c["a"]) for c in coppie}
+        usati_tri = set()
+        nomi = list(ahn_map.keys())
+        for i in range(len(nomi)):
+            for j in range(i+1, len(nomi)):
+                for k in range(j+1, len(nomi)):
+                    a, b, c = nomi[i], nomi[j], nomi[k]
+                    if (a,b) in conn_set and (b,c) in conn_set and (a,c) in conn_set:
+                        conns = sum(1 for c2 in coppie if set([c2["a"],c2["b"]]) <= set([a,b,c]))
+                        proposte.append({
+                            "tipo": "triangolo", "ingredienti": [a,b,c],
+                            "connessioni": conns,
+                            "proof": {"ingredienti_disponibili": 3, "connessioni_aromatiche": conns}
+                        })
+                        usati_tri |= {a,b,c}
+        # 2) coppie forti non già coperte da un triangolo
+        for c in coppie[:6]:
+            if not ({c["a"],c["b"]} <= usati_tri):
+                proposte.append({
+                    "tipo": "coppia", "ingredienti": [c["a"], c["b"]],
+                    "connessioni": c["forza"],
+                    "proof": {"ingredienti_disponibili": 2, "connessioni_aromatiche": c["forza"]}
+                })
+        # ordino: triangoli prima, poi per connessioni
+        proposte.sort(key=lambda p: (0 if p["tipo"]=="triangolo" else 1, -p["connessioni"]))
+
+        return jsonify({
+            "ingredienti": ingredienti,
+            "ingredienti_mappati": list(ahn_map.keys()),
+            "proposte": proposte[:8],
+            "totale": len(proposte),
+            "fonte": "Dataset Ahn 2011 (CC BY) — connessioni per composti aromatici condivisi"
+        })
+    except Exception as e:
+        import traceback
+        print(f"[PROPOSTE ERRORE] {e}\n{traceback.format_exc()[-500:]}", flush=True)
+        return jsonify({"errore": str(e), "proposte": []}), 500
+
 
 @bp.route("/v1/profilo-sensoriale", methods=["GET"])
 def get_profilo_sensoriale():
