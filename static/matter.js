@@ -1,5 +1,16 @@
 /* Matter — logica principale (estratta da index.html) */
 
+/* Logging errori centralizzato: un punto solo invece di console.error sparsi.
+   In produzione resta silenzioso per l'utente; utile in sviluppo. */
+function _logErr(ctx, err){
+  try{
+    if(window.location && window.location.hostname === 'localhost'){
+      console.error('[Matter:'+ctx+']', err);
+    }
+    // in produzione: silenzioso (in futuro si può inviare a un endpoint di telemetria)
+  }catch(_){}
+}
+
 /* ===== blocco 1 (da index.html) ===== */
 const STRINGS_ES = {
     scopri_ey:'Fenómeno del día',
@@ -3014,7 +3025,7 @@ async function cercaAbbinamenti(ingrediente){
         <div style="font-family:var(--mono);font-size:10px;color:var(--ink-muted);padding:6px 14px">${esc(j.nota||'')}</div>`;
     }
     document.getElementById('schede').prepend(card);
-  } catch(e){ console.error('flavor',e); }
+  } catch(e){ _logErr('flavor', e); }
 }
 
 /* ── FEEDBACK ─────────────────────────────────────────── */
@@ -3031,17 +3042,7 @@ async function inviaFeedback(logId, voto, btn){
 
 /* ── TEST KT (TE3) ────────────────────────────────────── */
 async function testaKT(){
-  console.group('TE3 — Validazione kT');
-  const r1 = await fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:'i miei crauti non fermentano'})});
-  const j1 = await r1.json();
-  const kt1 = (j1.risposta||'').toLowerCase().includes('boltzmann');
-  console.log('Test 1 (normale) — kT:', kt1, '(atteso: false)');
-  const r2 = await fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:'perche la fermentazione accelera con il caldo?'})});
-  const j2 = await r2.json();
-  const kt2 = (j2.risposta||'').toLowerCase().includes('boltzmann')||(j2.trovato||[]).some(f=>f.toLowerCase().includes('principio'));
-  console.log('Test 2 (perche) — kT:', kt2, '(atteso: true)');
-  console.log(kt1===false && kt2===true ? '✓ kT VALIDATO' : '✗ VERIFICARE');
-  console.groupEnd();
+  // (rimossa: funzione di test manuale usata solo in sviluppo)
 }
 
 /* ===== blocco 5 (da index.html) ===== */
