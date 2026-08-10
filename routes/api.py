@@ -2229,3 +2229,40 @@ def admin_coverage():
         try: conn.rollback(); _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/orfani-match")
+def admin_orfani_match():
+    """TEMP diagnostico: per i fenomeni orfani, mostra il loro data (scheda/target)
+    e cerca prodotti candidati per nome/dominio. Read-only. /admin/orfani-match?s=SECRET&dom=bar"""
+    import os as _os
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+    dom = request.args.get("dom", "")
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        # fenomeni orfani (senza si_manifesta_in uscente)
+        cur.execute("""
+            SELECT n.id, n.name, n.domain,
+                   COALESCE(NULLIF(n.data->>'numero_bersaglio',''), NULLIF(n.data->>'target','')) AS num,
+                   LEFT(COALESCE(n.data->>'scheda',''), 80) AS scheda
+            FROM nodes n
+            WHERE n.type='Fenomeno' AND NOT EXISTS (
+                SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='si_manifesta_in')
+            ORDER BY n.name
+        """)
+        orfani = [{"id":r[0],"nome":r[1],"dominio":r[2],"numero":r[3],"scheda":r[4]} for r in cur.fetchall()]
+        # prodotti per dominio (per capacità di aggancio)
+        cur.execute("SELECT domain, COUNT(*) FROM nodes WHERE type='Prodotto' GROUP BY domain")
+        prod_per_dom = {r[0]: r[1] for r in cur.fetchall()}
+        # se richiesto un dominio, elenca i prodotti di quel dominio
+        prodotti = []
+        if dom:
+            cur.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND domain=%s ORDER BY name LIMIT 60", (dom,))
+            prodotti = [{"id":r[0],"nome":r[1]} for r in cur.fetchall()]
+        cur.close(); _release_conn(conn)
+        return jsonify({"ok":True, "orfani":orfani, "prodotti_per_dominio":prod_per_dom, "prodotti_dominio_richiesto":prodotti})
+    except Exception as e:
+        try: conn.rollback(); _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)}), 500
