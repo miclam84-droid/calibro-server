@@ -2781,6 +2781,14 @@ function mfAggiungiAlMenu(){
   var st = document.getElementById('mf-lab-stato');
   st.textContent = '✓ "'+nome+'" aggiunta al menù ('+_mfVociMenu.length+' voci). Scegli un\'altra combinazione o finalizza.';
   st.className = 'mf-lab-stato ok';
+  // conferma visiva sul bottone stesso (chiude il ciclo: l'azione ha prodotto qualcosa)
+  var btn = document.querySelector('.mf-lab-add');
+  if(btn){
+    var testoOrig = btn.textContent;
+    btn.textContent = '✓ Aggiunto al menù';
+    btn.classList.add('mf-add-done');
+    setTimeout(function(){ btn.textContent = testoOrig; btn.classList.remove('mf-add-done'); }, 800);
+  }
   setTimeout(function(){ _mfMostraFase('proposte'); _mfAggiornaFinalizza(); }, 900);
 }
 let _mfVociMenu = [];

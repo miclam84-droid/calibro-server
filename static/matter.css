@@ -1428,3 +1428,12 @@ a:focus-visible,input:focus-visible{
   .mf-grafo-nodo{opacity:1;transform:scale(1);transition:none}
   .mf-grafo-link{stroke-dashoffset:0 !important;transition:none}
 }
+
+/* Conferma sul bottone "Aggiungi al menù" (chiude il ciclo) */
+.mf-add-done{background:var(--target-green) !important;transition:background .2s ease}
+/* Feedback fisico al tocco: una grammatica sola per tutte le card/bottoni interattivi */
+.menu-cat:active,.mf-prop:active,.mf-tec-card:active,.disc-card:active,.les-card:active{transform:scale(.985);transition:transform .12s ease}
+.menu-cat,.mf-prop,.mf-tec-card,.disc-card,.les-card{transition:transform .14s ease}
+@media (prefers-reduced-motion: reduce){
+  .menu-cat:active,.mf-prop:active,.mf-tec-card:active,.disc-card:active,.les-card:active{transform:none}
+}
