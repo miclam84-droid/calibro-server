@@ -2568,3 +2568,55 @@ def admin_errori_diag():
         try: conn.rollback(); _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/collega-errori", methods=["POST","GET"])
+def admin_collega_errori():
+    """Collega gli Errori ai Fenomeni (relazione fallisce_come). Archi nel codice, idempotente.
+    È il cuore della longevità/ritenzione: l'utente col problema al banco risale al fenomeno.
+    /admin/collega-errori?s=SECRET&gruppo=bar"""
+    import os as _os, json as _json
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+    gruppo = request.args.get("gruppo", "bar")
+
+    # (fenomeno, errore, sintomo/nota diagnostica)
+    ARCHI_ERR = {
+        "bar": [
+            ("fen-acidita","err-sour-piatto","Sour piatto: acidità troppo bassa, manca tensione (pH sopra range)"),
+            ("fen-acidita","err-sour-squilibrato","Sour squilibrato: rapporto acido/zucchero fuori bilanciamento"),
+            ("fen-diluizione","err-drink-annacquato","Drink annacquato: diluizione eccessiva (shake troppo lungo o ghiaccio bagnato)"),
+            ("fen-diluizione","err-stirred-acquoso","Stirred acquoso: diluizione oltre il 22% (stir troppo lungo)"),
+            ("fen-ghiaccio-cocktail","err-stirred-caldo","Stirred non abbastanza freddo: tempo di stir insufficiente o ghiaccio piccolo"),
+            ("fen-ghiaccio-cocktail","err-collins-acquoso","Collins acquoso: ghiaccio che fonde troppo, diluizione non controllata"),
+            ("fen-pressione","err-collins-piatto","Collins/Spritz piatto: carbonatazione persa (pressione insufficiente o servizio lento)"),
+            ("fen-pressione","err-bevanda-scarica","Bevanda scarica: volumi di CO2 sotto target (2-4 bar)"),
+            ("fen-cold-brew","err-caffe-acido","Caffè acido/sottoestratto: estrazione a freddo troppo breve o macinatura troppo grossa"),
+        ],
+    }
+    archi = ARCHI_ERR.get(gruppo, [])
+    if gruppo == "all":
+        archi = [a for lst in ARCHI_ERR.values() for a in lst]
+    if not archi:
+        return jsonify({"errore": f"gruppo '{gruppo}' non definito", "gruppi": list(ARCHI_ERR.keys())+["all"]}), 400
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        inseriti, saltati, mancanti = 0, 0, []
+        for fen, err, nota in archi:
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE id IN (%s,%s)", (fen, err))
+            if cur.fetchone()[0] != 2:
+                mancanti.append({"fenomeno": fen, "errore": err}); continue
+            cur.execute("""
+                INSERT INTO edges (from_id, to_id, relation, data)
+                VALUES (%s, %s, 'fallisce_come', %s)
+                ON CONFLICT (from_id, to_id, relation) DO NOTHING
+            """, (fen, err, _json.dumps({"sintomo": nota})))
+            if cur.rowcount > 0: inseriti += 1
+            else: saltati += 1
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "gruppo": gruppo, "inseriti": inseriti,
+                        "gia_presenti": saltati, "nodi_mancanti": mancanti})
+    except Exception as e:
+        try: conn.rollback(); _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)}), 500
