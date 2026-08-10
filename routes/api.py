@@ -2620,3 +2620,57 @@ def admin_collega_errori():
         try: conn.rollback(); _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/collega-ponti", methods=["POST","GET"])
+def admin_collega_ponti():
+    """Crea i PONTI TRASVERSALI tra fenomeni di discipline diverse che condividono
+    la stessa fisica/chimica (relazione 'unifica'). Sono il motore della longevità:
+    l'utente scopre che una legge che usa nei cocktail governa anche la pasticceria.
+    Ogni ponte ha la spiegazione scientifica del legame. /admin/collega-ponti?s=SECRET"""
+    import os as _os, json as _json
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+
+    # (fenomeno_A, fenomeno_B, legge_condivisa) — i 6 ponti su cui OpenAI+Gemini convergono.
+    # Ogni ponte è bidirezionale concettualmente ma lo inseriamo come arco 'unifica'.
+    PONTI = [
+        # 1. CRIOSCOPIA: bar ↔ gelateria
+        ("fen-crioscopia","fen-bilanciamento-gelato",
+         "Abbassamento crioscopico: la stessa legge che regola la spatolabilità del gelato (PAC, punto di congelamento -6/-9°C) governa la texture dei frozen cocktail e la fusione del ghiaccio da miscelazione."),
+        # 2. OSMOSI: cucina/fermentati ↔ pasticceria/canditura
+        ("fen-osmosi","fen-salamoia",
+         "Pressione osmotica: la stessa legge che estrae l'acqua vegetale nella salamoia (2-3%) e nella fermentazione lattica governa la canditura della frutta e lo sciroppo osmotico dei grandi lievitati."),
+        # 3. EMULSIONE: cucina ↔ pasticceria ↔ bar
+        ("fen-emulsione","fen-fat-washing",
+         "Stabilità dell'emulsione: la frazione olio critica (67-80%) che fa impazzire una maionese è la stessa legge della ganache e del fat washing nei cocktail strutturati."),
+        # 4. MAILLARD: cucina ↔ caffè ↔ birra
+        ("fen-maillard-controllo","fen-tostatura-caffe",
+         "Reazione di Maillard: zuccheri riducenti + amminoacidi col calore secco. Unisce la crosta della bistecca, la tostatura del caffè specialty e i malti scuri della birra."),
+        # 5. IDROCOLLOIDI/AGAR: bar/chiarificazioni ↔ pasticceria/gel
+        ("fen-gelificazione","fen-clarificazione-cocktail",
+         "Reticolazione idrocolloidale: l'agar allo 0.3-0.5% che chiarifica un cocktail (gel filtration) è lo stesso processo che stabilizza un gel specchio in pasticceria."),
+        # 6. AMILASI: bakery ↔ birra
+        ("fen-enzimi-farina","fen-mash-enzimi",
+         "Attività amilasica: alfa e beta-amilasi che scompongono l'amido in zuccheri fermentabili. Lega il riposo del poolish/biga al mash (ammostamento) del birraio."),
+    ]
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        inseriti, saltati, mancanti = 0, 0, []
+        for a, b, legge in PONTI:
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE id IN (%s,%s)", (a, b))
+            if cur.fetchone()[0] != 2:
+                mancanti.append({"A": a, "B": b}); continue
+            cur.execute("""
+                INSERT INTO edges (from_id, to_id, relation, data)
+                VALUES (%s, %s, 'unifica', %s)
+                ON CONFLICT (from_id, to_id, relation) DO NOTHING
+            """, (a, b, _json.dumps({"legge_condivisa": legge})))
+            if cur.rowcount > 0: inseriti += 1
+            else: saltati += 1
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "inseriti": inseriti, "gia_presenti": saltati, "nodi_mancanti": mancanti})
+    except Exception as e:
+        try: conn.rollback(); _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)}), 500
