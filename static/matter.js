@@ -2479,6 +2479,16 @@ function _mfMostraFase(f){
     var el=document.getElementById('mf-fase-'+x);
     if(el) el.style.display = x===f?'block':'none';
   });
+  // titolo dinamico dell'header per fase (bug: prima restava "Parti dagli ingredienti")
+  var titoli = {
+    foto:'Parti dagli ingredienti',
+    loading:'Sto leggendo il banco…',
+    valida:'Conferma cosa hai',
+    proposte:'Cosa puoi farci',
+    lab:'Dai i numeri a questa voce'
+  };
+  var t = document.getElementById('mf-title');
+  if(t && titoli[f]) t.textContent = titoli[f];
   // filo narrativo: evidenzio lo step corrente e quelli superati
   var filo = document.getElementById('mf-filo');
   if(filo){
@@ -2617,11 +2627,12 @@ function mfVaiAlLaboratorio(i){
   document.getElementById('mf-lab-stato').textContent = '';
   document.getElementById('mf-lab-stato').className = 'mf-lab-stato';
   // carico le tecniche pertinenti alla disciplina dell'utente
+  _mfTecnicaScelta = null;
   _mfCaricaTecniche();
-  // target-guida iniziale secondo la categoria del menù
-  var cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
+  // Mirino in stato NEUTRO finché l'utente non sceglie una tecnica
+  // (bug: prima mostrava il target di categoria — es. "cuore 52-58°C" — anche su card diverse)
   var box = document.getElementById('mf-lab-mirino');
-  renderMirino(box, p.ingredienti.join(' · '), cfg.targetGuida);
+  renderMirinoNeutro(box);
   _mfMostraFase('lab');
 }
 let _mfPropCorrente = null;
@@ -3480,6 +3491,17 @@ function _parseRange(target){
       return {min:vv*0.9, max:vv*1.1, raw:pezzi[j], singolo:vv, etichetta:lab3}; }
   }
   return null; // nessun numero: fenomeno qualitativo
+}
+
+// Stato NEUTRO del Mirino: nessuna tecnica scelta ancora → invito, non un target finto
+function renderMirinoNeutro(box){
+  if(!box) return;
+  box.style.display='';
+  box._range = null;
+  box.innerHTML = '<div class="mirino-neutro">'
+    + '<div class="mirino-neutro-ico">◎</div>'
+    + '<div class="mirino-neutro-txt">Scegli una tecnica per vedere il numero da colpire</div>'
+    + '</div>';
 }
 
 // Costruisce il Mirino in STATO 1 (solo target, invito a misurare)
