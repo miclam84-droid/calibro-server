@@ -1417,3 +1417,14 @@ a:focus-visible,input:focus-visible{
 @keyframes mfFaseEnter{ from{opacity:0; transform:translateX(8px)} to{opacity:1; transform:translateX(0)} }
 .mf-fase-enter{ animation:mfFaseEnter .22s cubic-bezier(.22,1,.36,1) both }
 @media (prefers-reduced-motion: reduce){ .mf-fase-enter{ animation:none } }
+
+/* Mini-grafo connessioni nelle proposte: mostra che Matter TROVA la relazione */
+.mf-grafo{display:block;margin:4px 0 10px}
+.mf-grafo-nodo{opacity:0;transform:scale(0);transform-origin:center;transition:opacity .25s ease,transform .3s cubic-bezier(.34,1.4,.64,1)}
+.mf-grafo-nodo.shown{opacity:1;transform:scale(1)}
+.mf-grafo-link{transition:stroke-dashoffset .5s cubic-bezier(.4,0,.2,1)}
+.mf-grafo-link.drawn{stroke-dashoffset:0 !important}
+@media (prefers-reduced-motion: reduce){
+  .mf-grafo-nodo{opacity:1;transform:scale(1);transition:none}
+  .mf-grafo-link{stroke-dashoffset:0 !important;transition:none}
+}

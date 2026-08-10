@@ -2617,6 +2617,7 @@ function _mfRenderProposte(j){
       : `<span class="mf-badge molecole">${p.proof.connessioni_aromatiche} connessioni aromatiche</span>`;
     return `<div class="mf-prop${p.esplorativa?' esplora':''}">
       <div class="mf-prop-tipo">${tipoLab}</div>
+      ${_mfGrafoConnessioni(p.ingredienti, p.esplorativa)}
       <div class="mf-prop-ing">${_esc(ing)}</div>
       <div class="mf-prop-forza">${forza}</div>
       <div class="mf-prop-badges">
@@ -2626,6 +2627,46 @@ function _mfRenderProposte(j){
       <button class="mf-prop-btn" onclick="mfVaiAlLaboratorio(${i})">Porta al laboratorio →</button>
     </div>`;
   }).join('');
+  // animo le connessioni dopo il render (si disegnano una dopo l'altra)
+  requestAnimationFrame(function(){
+    cont.querySelectorAll('.mf-grafo-link').forEach(function(l,idx){
+      setTimeout(function(){ l.classList.add('drawn'); }, 120 + idx*90);
+    });
+    cont.querySelectorAll('.mf-grafo-nodo').forEach(function(n,idx){
+      setTimeout(function(){ n.classList.add('shown'); }, idx*70);
+    });
+  });
+}
+
+// Mini-grafo delle connessioni: gli ingredienti come nodi, le relazioni come linee che si disegnano.
+// Mostra che Matter TROVA una relazione, non la inventa. Solo i nodi della proposta, non un grafo caotico.
+function _mfGrafoConnessioni(ingredienti, esplorativa){
+  var n = ingredienti.length;
+  if(n < 2) return '';
+  var W = 260, H = 64, r = 5;
+  var cx = W/2, cy = H/2;
+  // dispongo i nodi in orizzontale, equidistanti
+  var pts = [];
+  for(var k=0;k<n;k++){
+    var x = (n===1) ? cx : (30 + k*(W-60)/(n-1));
+    pts.push({x:x, y:cy});
+  }
+  var col = esplorativa ? 'var(--ink-muted)' : 'var(--target-green)';
+  var svg = '<svg class="mf-grafo" viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" aria-hidden="true">';
+  // linee tra nodi consecutivi (e per il triangolo, chiudo il cerchio)
+  var links = [];
+  for(var a=0;a<n;a++) for(var b=a+1;b<n;b++) links.push([a,b]);
+  links.forEach(function(pair){
+    var p1=pts[pair[0]], p2=pts[pair[1]];
+    var len = Math.hypot(p2.x-p1.x, p2.y-p1.y);
+    svg += '<line class="mf-grafo-link" x1="'+p1.x+'" y1="'+p1.y+'" x2="'+p2.x+'" y2="'+p2.y+'" '
+        + 'stroke="'+col+'" stroke-width="1.5" stroke-dasharray="'+len+'" stroke-dashoffset="'+len+'"/>';
+  });
+  pts.forEach(function(pt){
+    svg += '<circle class="mf-grafo-nodo" cx="'+pt.x+'" cy="'+pt.y+'" r="'+r+'" fill="'+col+'"/>';
+  });
+  svg += '</svg>';
+  return svg;
 }
 function mfVaiAlLaboratorio(i){
   const p = _mfProposte[i];
