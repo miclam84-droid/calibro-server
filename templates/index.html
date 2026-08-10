@@ -358,7 +358,7 @@ if('serviceWorker' in navigator){
           <div class="ia-name">kT — energia termica (Boltzmann)</div>
         </div>
       </div>
-      <div class="ia-desc">La causa comune sotto Q10, estrazione, fermentazione e carbonatazione. Non è un numero da misurare al banco — è il perché sotto i numeri.</div>
+      <div class="ia-desc"><b>La temperatura non è caldo o freddo: è la misura di quanto le molecole si agitano.</b> Più si agitano, più si urtano, più ogni reazione corre. È la stessa agitazione sotto l'estrazione, la fermentazione, il gas che resta in un liquido, la regola del +10°C. Una sola causa, quattro mestieri.</div>
       <div class="ia-nodi">
         <span class="ia-nodo">Calore</span>
         <span class="ia-nodo">Estrazione</span>
@@ -708,11 +708,7 @@ if('serviceWorker' in navigator){
 <!-- ── QUADERNO ────────────────────────────────────────── -->
 <div class="screen" id="screen-quaderno">
   <div class="les-top">
-    <button class="les-back-btn" onclick="switchTab('chiedi')">
-      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-      Chiedi
-    </button>
-    <span class="les-pos" id="ct-quad-title">Quaderno</span>
+    <span class="les-pos" id="ct-quad-title" style="font-weight:700">Quaderno</span>
   </div>
   <div id="quad-content">
     <!-- TOGGLE: il Quaderno è dove ciò che validi diventa qualcosa -->
@@ -735,11 +731,11 @@ if('serviceWorker' in navigator){
         <div class="menu-intro-txt">Scegli cosa vuoi creare. Ogni voce porterà con sé i numeri che l'hanno resa giusta.</div>
       </div>
       <div class="menu-cat-grid" id="menu-cat-grid">
-        <button class="menu-cat" data-cat="drink_list" onclick="mbScegliCategoria('drink_list','Drink list')">🍸<span>Drink list</span></button>
-        <button class="menu-cat" data-cat="pizzeria" onclick="mbScegliCategoria('pizzeria','Menù pizzeria')">🍕<span>Pizzeria</span></button>
-        <button class="menu-cat" data-cat="ristorante" onclick="mbScegliCategoria('ristorante','Menù ristorante')">🍽️<span>Ristorante</span></button>
-        <button class="menu-cat" data-cat="carta_vini" onclick="mbScegliCategoria('carta_vini','Carta dei vini')">🍷<span>Carta vini</span></button>
-        <button class="menu-cat" data-cat="carta_birre" onclick="mbScegliCategoria('carta_birre','Carta delle birre')">🍺<span>Carta birre</span></button>
+        <button class="menu-cat" data-cat="drink_list" onclick="mbScegliCategoria('drink_list','Drink list')"><i class="ph ph-martini"></i><span>Drink list</span></button>
+        <button class="menu-cat" data-cat="pizzeria" onclick="mbScegliCategoria('pizzeria','Menù pizzeria')"><i class="ph ph-pizza"></i><span>Pizzeria</span></button>
+        <button class="menu-cat" data-cat="ristorante" onclick="mbScegliCategoria('ristorante','Menù ristorante')"><i class="ph ph-fork-knife"></i><span>Ristorante</span></button>
+        <button class="menu-cat" data-cat="carta_vini" onclick="mbScegliCategoria('carta_vini','Carta dei vini')"><i class="ph ph-wine"></i><span>Carta vini</span></button>
+        <button class="menu-cat" data-cat="carta_birre" onclick="mbScegliCategoria('carta_birre','Carta delle birre')"><i class="ph ph-beer-stein"></i><span>Carta birre</span></button>
       </div>
       <div class="menu-list" id="menu-list"></div>
     </div>
@@ -755,16 +751,16 @@ if('serviceWorker' in navigator){
   </div>
   <div class="mb-step">
     <div class="mb-eyebrow" id="mm-cat-lab">Categoria</div>
-    <div class="mb-h">Da dove vuoi partire?</div>
-    <button class="menu-crea-btn menu-crea-foto" onclick="chiudiModo();creaMenuDaFoto()">
+    <div class="mb-h">Comincia dal banco</div>
+    <div class="mb-sub" style="margin-top:8px;margin-bottom:22px">Fotografa gli ingredienti che vuoi studiare. Matter li riconosce, trova le connessioni reali tra loro e ti mostra cosa puoi farci — con i numeri giusti.</div>
+    <button class="menu-crea-btn menu-crea-primaria" onclick="chiudiModo();creaMenuDaFoto()">
       <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      Fotografa gli ingredienti che hai
+      Fotografa gli ingredienti
     </button>
-    <button class="menu-crea-btn" onclick="chiudiModo();creaMenu()" style="margin-top:10px">
-      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-      Parti dai tuoi esperimenti
+    <div class="menu-crea-oppure"><span>oppure</span></div>
+    <button class="menu-crea-btn menu-crea-secondaria" onclick="chiudiModo();creaMenu()">
+      Parti dagli esperimenti che hai già validato
     </button>
-    <div class="mb-sub" style="margin-top:16px">La foto è il modo più veloce: Matter riconosce gli ingredienti, trova le connessioni e ti propone le combinazioni.</div>
   </div>
 </div>
 

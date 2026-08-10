@@ -627,7 +627,7 @@ async function caricaLezioneStep(step){
     // bottoni nav
     document.getElementById('les-btn-prec').style.opacity = j.ha_precedente?'1':'0.4';
     document.getElementById('les-btn-succ').textContent =
-      j.ha_successivo ? 'Avanti →' : 'Vai alla Mappa →';
+      j.ha_successivo ? 'Avanti →' : 'Vai all\'Atlante →';
     // onboarding: nudge completamento all'ultimo fenomeno
     mostraCompletamentoLezione(j.ha_successivo);
     // Precarica i prossimi step in background
@@ -858,9 +858,9 @@ function renderRisp(domanda,j,fromNode){
   const trovati = j.trovato || [];
   const flavorChip = trovati.length > 0
     ? `<div class="s-conn" style="border-top:1px solid var(--border)">
-        <div class="s-conn-lab" style="color:var(--flavor)">cerca abbinamenti nella Mappa →</div>
+        <div class="s-conn-lab" style="color:var(--flavor)">cerca abbinamenti nell'Atlante →</div>
         <div class="conns"><span class="conn" style="color:var(--flavor);border-color:var(--flavor-border)" onclick="switchTab('mappa')">
-          <span class="dot" style="background:var(--flavor)"></span>Vai alla Mappa aromatica →
+          <span class="dot" style="background:var(--flavor)"></span>Vai all'Atlante aromatico →
         </span></div>
       </div>` : '';
   // AC5: feedback
@@ -1249,6 +1249,7 @@ const _strings = {
   it:{
     payoff:'Science &amp; Craft',
     scopri:'Scopri', lezione:'Lezione', mappa:'Mappa', db_fenomeni:'Fenomeni',
+    tab_atlante:'Atlante', tab_chiedi:'Chiedi', tab_quaderno:'Quaderno',
     db_ingredienti:'Ingredienti',
     db_connessioni:'Connessioni aromatiche',
     db_calcolatori:'Calcolatori',
@@ -1266,9 +1267,9 @@ const _strings = {
     scegli:'Scegli la tua disciplina', caricamento:'caricamento…',
     fenomeno_giorno:'fenomeno del giorno',
     num_bersaglio:'numero bersaglio',
-    indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai alla Mappa →',
+    indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai all\'Atlante →',
     principio_del_giorno:'Principio del giorno',
-    vedi_mappa:'Vedi il principio nella Mappa →',
+    vedi_mappa:'Vedi il principio nell\'Atlante →',
     chiedi_placeholder:'chiedi a Matter Lab…',
     chiedi_btn:'Chiedi',
     onb_nudge_title:'Pronto al banco?',
@@ -1340,8 +1341,8 @@ const _strings = {
     onb_ovl_cta:'Inizia',
     onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
     onb_complete_title:'Percorso completato.',
-    onb_complete_sub:'Hai completato la lezione. Vai alla Mappa per vedere il tuo percorso.',
-    onb_complete_btn:'Vai alla Mappa',
+    onb_complete_sub:'Hai completato la lezione. Vai all\'Atlante per vedere il tuo percorso.',
+    onb_complete_btn:'Vai all\'Atlante',
     // quaderno
     ct_quad_title:'Quaderno',
     ct_quad_empty_title:'Nessun esperimento salvato',
@@ -1412,6 +1413,7 @@ const _strings = {
   en:{
     payoff:'The science behind the craft',
     scopri:'Discover', lezione:'Lesson', mappa:'Map', db_fenomeni:'Phenomena',
+    tab_atlante:'Atlas', tab_chiedi:'Ask', tab_quaderno:'Notebook',
     db_ingredienti:'Ingredients',
     db_connessioni:'Aromatic connections',
     db_calcolatori:'Calculators',
@@ -1429,7 +1431,7 @@ const _strings = {
     scegli:'Choose your discipline', caricamento:'loading…',
     fenomeno_giorno:'phenomenon of the day',
     num_bersaglio:'target number',
-    indietro:'← Back', avanti:'Next →', vai_mappa:'Go to Map →',
+    indietro:'← Back', avanti:'Next →', vai_mappa:'Go to Atlas →',
     principio_del_giorno:'Principle of the day',
     vedi_mappa:'See the principle in the Map →',
     chiedi_placeholder:'ask Matter Lab…',
@@ -1776,9 +1778,9 @@ function applicaStringheUI(){
   const _dbn = s('db-numbers-text');
   if(_dbn) _dbn.textContent = _t('db_numbers')||'';
   document.getElementById('lang-btn').textContent=_lang.toUpperCase();
-  // tab labels
+  // tab labels — Scopri · Atlante · Chiedi · Quaderno (allineate ai contenuti)
   document.querySelectorAll('.tab-label').forEach((el,i)=>{
-    const keys=['scopri','lezione','mappa','chiedi'];
+    const keys=['scopri','tab_atlante','tab_chiedi','tab_quaderno'];
     if(keys[i]) el.textContent=_t(keys[i]);
   });
   // scopri
