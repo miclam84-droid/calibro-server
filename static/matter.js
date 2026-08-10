@@ -3813,14 +3813,37 @@ function confrontaMirino(boxId){
   var fb = box.querySelector('.mirino-feedback'); if(fb) fb.remove();
   var div = document.createElement('div');
   div.className='mirino-feedback';
+  // disclaimer HACCP: SOLO sui parametri critici di sicurezza alimentare (non su tutto)
+  var haccp = _isParametroCritico(box._fenomeno) ?
+    '<div class="mirino-haccp">I valori sono modelli predittivi a scopo analitico. '
+    + 'L\'operatore è l\'unico responsabile del rispetto dei protocolli HACCP e della '
+    + 'validazione ufficiale della stabilità microbiologica degli alimenti somministrati.</div>' : '';
   div.innerHTML =
     '<div class="mirino-scarto '+(dentro?'dentro':'fuori')+'">'+_esc(scartoTxt)+'</div>'+
     '<div class="mirino-azione-lab">cosa fare</div>'+
     '<div class="mirino-azione">'+_esc(azione)+'</div>'+
+    haccp+
     '<button class="mirino-rimisura" onclick="resetMirino(\''+box.id+'\')">Rimisura</button>';
   box.appendChild(div);
   // nascondo la riga input (è stata "consumata")
   var ir = box.querySelector('.mirino-input-row'); if(ir) ir.style.display='none';
+}
+
+// Riconosce se un fenomeno tocca la SICUREZZA ALIMENTARE (→ serve disclaimer HACCP).
+// Deterministico: match su parole-chiave nel nome del fenomeno/tecnica. Conservativo:
+// nel dubbio su parametri di conservazione/microbiologia, meglio mostrarlo.
+function _isParametroCritico(fenomeno){
+  var n = (fenomeno||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  var critici = [
+    'fermentazion','fermentat','abbattiment','abbattut','conservazion','conserva',
+    'sottovuoto','sotto vuoto','pastorizzazion','pastorizz','sterilizzazion',
+    'botulin','clostridium','salmonell','listeria','patogen','microbiolog','carica batterica',
+    'temperatura a cuore','cuore del','catena del freddo','abbattitore',
+    'ph', 'attivita dell\'acqua','attivita acqua','aw','water activity',
+    'marinatur','salamoia','curing','stagionatur','essiccazion','affumicatur',
+    'lievito madre','pasta madre','kombucha','koji','miso','garum','lacto'
+  ];
+  return critici.some(function(k){ return n.indexOf(k)>=0; });
 }
 
 function resetMirino(boxId){
