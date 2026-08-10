@@ -2266,3 +2266,57 @@ def admin_orfani_match():
         try: conn.rollback(); _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/collega-orfani", methods=["POST","GET"])
+def admin_collega_orfani():
+    """Collega i fenomeni orfani ai prodotti (relazione si_manifesta_in).
+    Gli archi sono definiti nel codice (non SQL da fuori = sicuro). Idempotente.
+    /admin/collega-orfani?s=SECRET&gruppo=bar"""
+    import os as _os, json as _json
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+    gruppo = request.args.get("gruppo", "bar")
+
+    # Archi definiti nel codice: (fenomeno, prodotto, target, causa)
+    ARCHI = {
+        "bar": [
+            ("fen-batch-cocktail","prod-negroni","diluizione 20-25% da replicare · acqua vol×0.22 · T <4°C","Il batch pre-diluito replica la diluizione dello stir: senza acqua aggiunta il drink risulta troppo forte"),
+            ("fen-batch-cocktail","prod-manhattan","diluizione 20-25% · shelf life 2-3 sett a <4°C","Manhattan in batch: la diluizione va pre-calcolata perché non c'è il ghiaccio a scioglierla al momento"),
+            ("fen-clarificazione-cocktail","prod-sour","agar 0.3-0.5g/L · NTU <10 · perdita aromi <5%","Il sour clarificato diventa limpido mantenendo l'acidità: l'agar intrappola le particelle"),
+            ("fen-clarificazione-cocktail","prod-daiquiri","agar 0.3-0.5g/L · gel 4°C · NTU <10","Daiquiri clarificato: la gel filtration rimuove la torbidità del lime mantenendo il profilo aromatico"),
+            ("fen-ghiaccio-cocktail","prod-old-fashioned","stirring 30-45s · diluizione 15-18% · T -4/-6°C","L'Old Fashioned si mescola: il ghiaccio raffredda e diluisce lentamente fino al punto di equilibrio"),
+            ("fen-ghiaccio-cocktail","prod-drink-freddo","shake 10-15s diluizione 20-25% · stir 30-45s 15-18%","Shaking vs stirring determinano diluizione e temperatura finali diverse: il ghiaccio è l'ingrediente invisibile"),
+            ("fen-texture-agents","prod-whiskey-sour","albume 2-3cl · dry shake 10-15s · aquafaba 3-4cl","Il Whiskey Sour con albume: il dry shake denatura le proteine creando la schiuma stabile"),
+            ("fen-texture-agents","prod-sour","albume 2-3cl · xantano 0.1-0.3g/L · glicerina 5-10ml/L","Gli agenti di texture danno corpo e schiuma al sour: albume per la foam, xantano per la viscosità"),
+            ("fen-cold-brew","prod-caffe","rapporto 1:8 concentrato / 1:15 pronto · macinatura grossa · 12-24h · pH 5.2-6.3","Il cold brew estrae a freddo per 12-24h: meno acidità e amaro rispetto all'estrazione a caldo"),
+            ("fen-estrazione-polifenoli","prod-bitter","macerazione 7-21 giorni · T 25-28°C · IPT 50-80","Il bitter estrae polifenoli e principi amari dalle botaniche per macerazione idroalcolica"),
+            ("fen-estrazione-polifenoli","prod-vino-rosso","macerazione 7-21 giorni · antociani >200 mg/L · IPT 50-80","La macerazione delle bucce nel vino rosso estrae antociani (colore) e tannini (struttura)"),
+        ],
+    }
+    archi = ARCHI.get(gruppo, [])
+    if not archi:
+        return jsonify({"errore": f"gruppo '{gruppo}' non definito", "gruppi": list(ARCHI.keys())}), 400
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        inseriti, saltati, mancanti = 0, 0, []
+        for fen, prod, target, causa in archi:
+            # verifica che entrambi i nodi esistano
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE id IN (%s,%s)", (fen, prod))
+            if cur.fetchone()[0] != 2:
+                mancanti.append({"fenomeno": fen, "prodotto": prod})
+                continue
+            cur.execute("""
+                INSERT INTO edges (from_id, to_id, relation, data)
+                VALUES (%s, %s, 'si_manifesta_in', %s)
+                ON CONFLICT (from_id, to_id, relation) DO NOTHING
+            """, (fen, prod, _json.dumps({"target": target, "causa": causa})))
+            if cur.rowcount > 0: inseriti += 1
+            else: saltati += 1
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "gruppo": gruppo, "inseriti": inseriti,
+                        "gia_presenti": saltati, "nodi_mancanti": mancanti})
+    except Exception as e:
+        try: conn.rollback(); _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)}), 500
