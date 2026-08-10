@@ -2293,10 +2293,69 @@ def admin_collega_orfani():
             ("fen-estrazione-polifenoli","prod-bitter","macerazione 7-21 giorni · T 25-28°C · IPT 50-80","Il bitter estrae polifenoli e principi amari dalle botaniche per macerazione idroalcolica"),
             ("fen-estrazione-polifenoli","prod-vino-rosso","macerazione 7-21 giorni · antociani >200 mg/L · IPT 50-80","La macerazione delle bucce nel vino rosso estrae antociani (colore) e tannini (struttura)"),
         ],
+        "pasticceria": [
+            ("fen-crema-pasticcera","prod-creme-pasticcera","T finale 82-85°C · amido 80-100g/L · tuorli 6-8/L · gelatinizza da 62°C","La crema pasticcera coagula i tuorli e gelatinizza l'amido: sotto 82°C resta liquida, sopra 85°C stracci"),
+            ("fen-ganache","prod-ganache","panna/cioccolato 1:1 morbida · 1:2 soda · T panna 80-85°C","La ganache è un'emulsione: la panna calda scioglie il cioccolato e il grasso si disperde nell'acqua"),
+            ("fen-meringa","prod-meringa","zucchero/albume 2:1 · italiana 118-121°C · svizzera 45-50°C · pH 4-5","La meringa è schiuma proteica: lo zucchero stabilizza l'albume montato, l'acido abbassa il pH per la stabilità"),
+            ("fen-montatura-panna","prod-panna-montata","grasso >35% · T panna 4-6°C · non oltre 80% volume","La panna monta solo fredda e con grasso >35%: le bolle d'aria sono stabilizzate dai globuli di grasso"),
+            ("fen-pasta-frolla","prod-biscotti","burro 50-60% (sablée) · riposo 30-60 min 4°C","La frolla impermeabilizza il glutine col burro: più grasso = più friabile, il riposo rilassa la maglia"),
+            ("fen-temperaggio-cioccolato","prod-cioccolato-temperato","fondente 31-32°C · latte 29-30°C · bianco 28-29°C","Il temperaggio cristallizza il burro di cacao nella forma beta stabile: lucido, croccante, che non fiorisce"),
+            ("fen-zucchero-cottura","prod-caramello","palline 112-115°C · hard crack 149-154°C · caramello 160-180°C","Gli stadi di cottura dello zucchero dipendono dalla temperatura: ogni soglia dà una consistenza diversa"),
+            ("fen-souffle","prod-choux","T forno 170-180°C · 12-15 min · neve ferma","Il soufflé sale per l'aria nella montata proteica che si espande col calore: apri il forno e collassa"),
+            ("fen-gelificazione","prod-creme-brulee","gelatina 6-12g/L · agar 2-5g/L · pectina HM 5-15g/L · pH <3.5","La gelificazione crea un reticolo che intrappola il liquido: ogni gelificante ha dosi e temperature proprie"),
+            ("fen-laminazione","prod-sfoglia","T burro 14-16°C · strati 27-55 · riposo 20-30 min 4°C","La laminazione alterna strati di pasta e burro: il vapore li separa in cottura creando la sfogliatura"),
+        ],
+        "bakery": [
+            ("fen-idratazione-impasto","prod-ciabatta","ciabatta 75-85% · focaccia 80-90% · farina W>300","L'idratazione determina la struttura: più acqua = alveolatura più aperta, ma serve farina forte"),
+            ("fen-maglia-glutinica","prod-pane-madre","W 280-350 · P/L 0.5-0.8 · idratazione 65-80%","La maglia glutinica trattiene i gas della lievitazione: si sviluppa con l'impasto e l'idratazione corretta"),
+            ("fen-poolish-biga","prod_lievito_madre","poolish 1:1 · 0.1-0.3% lievito · 8-16h 18-20°C","I pre-fermentati sviluppano aromi e forza prima dell'impasto finale: poolish liquido, biga solida"),
+            ("fen-sale-impasto","prod-impasto","1.8-2.2% su farina · mai sul lievito · Aw ~0.97","Il sale rinforza il glutine e regola la fermentazione: a contatto diretto disidrata e uccide il lievito"),
+            ("fen-enzimi-farina","prod_farina_frumento","Falling Number 280-350s · proteina 11-14% · amilasi 150-300 FU","Gli enzimi della farina (amilasi, proteasi) determinano panificabilità: il Falling Number li misura"),
+            ("fen-shelf-life-pane","prod-pane-conservazione","Aw fresco 0.96-0.97 · shelf life 2-4 giorni · muffe <0.8","Il pane raffermma per retrogradazione dell'amido; l'Aw alta favorisce le muffe: sono due degradi diversi"),
+            ("fen-lievitazione","prod-focaccia","raddoppio 1-2h a 24°C · madre 3-5h a 28°C","La lievitazione produce CO₂ che gonfia l'impasto: tempo e temperatura governano il raddoppio"),
+            ("fen-crosta","prod-baguette","crosta 160-220°C · vapore primi 12-15 min · colore L* 60-70","La crosta si forma per Maillard + gelatinizzazione superficiale: il vapore iniziale ritarda e migliora la doratura"),
+        ],
+        "gelateria": [
+            ("fen-bilanciamento-gelato","fis_gelato_base","zuccheri 180-220g/kg · grassi 60-110g/kg · solidi 380-420g/kg · PAC 280-320","Il bilanciamento del mix determina cremosità e spatolabilità: zuccheri, grassi e solidi vanno in equilibrio"),
+            ("fen-pac-gelateria","prod-gelato-cioccolato","PAC 250-350/kg · congelamento -6.25/-8.75°C · servizio -11/-13°C","Il Potere Anticongelante degli zuccheri decide a che temperatura il gelato resta spatolabile"),
+            ("fen-sorbetto","fis_sorbet_base","zuccheri 26-32% · residuo secco 30-36% · PAC 26-30 · frutta 40-60%","Il sorbetto si bilancia senza grassi: gli zuccheri fanno da anticongelante e da struttura"),
+            ("fen-overrun-controllo","prod-stracciatella","overrun artigianale 20-35% · T uscita -6/-8°C","L'overrun è l'aria incorporata: troppo poca = gelato duro, troppa = gelato gommoso e povero"),
+            ("fen-stabilizzanti-gelato","prod-semifreddo","stabilizzanti 3-8g/kg · carruba 0.2-0.5g/kg · emulsionanti 2-5g/kg","Gli stabilizzanti legano l'acqua libera e impediscono i cristalli di ghiaccio grandi: struttura più liscia"),
+        ],
+        "birra": [
+            ("fen-isomerizzazione-luppolo","prod-birra-ipa","lager 8-15 IBU · IPA 40-100 IBU · BU/GU 0.5-1.0","L'isomerizzazione degli alfa-acidi del luppolo in bollitura crea l'amaro: gli IBU lo misurano"),
+            ("fen-efficienza-birra","fis_beer_mash","efficienza mash 75-85% · attenuazione 70-85% · ABV=(OG-FG)×131.25","L'efficienza di birrificazione lega OG, FG e ABV: quanto zucchero estrai e quanto ne fermenti"),
+            ("fen-lagering","prod-birra-lager","T 0-4°C · 4-12 settimane · diacetile <0.10 mg/L · NTU <5","Il lagering matura la birra a freddo: riassorbe il diacetile e chiarifica per precipitazione"),
+            ("fen-dry-hopping","prod-birra-ipa","dry hopping 2-10g/L · T 2-12°C · 7-14 giorni","Il dry hopping aromatizza a freddo senza amaro: estrae oli essenziali del luppolo per solo aroma"),
+            ("fen-fermentazione-alta-bassa","prod-birra-lager","ale 15-24°C 5-10gg · lager 4-12°C 7-14gg + lagering","Lieviti ad alta (ale) e bassa (lager) fermentazione lavorano a temperature diverse dando profili diversi"),
+            ("fen-mash-enzimi","fis_beer_mash","saccarificazione 64-68°C · pH mash 5.2-5.4 · 60-90 min","Il mash attiva le amilasi che spezzano l'amido del malto in zuccheri fermentabili: la temperatura sceglie il profilo"),
+            ("fen-acqua-birra","fis_beer_mash","pH mash 5.2-5.6 · calcio 50-150 mg/L · SO₄/Cl >2:1 hoppy","Il profilo dell'acqua (sali, pH) modella l'estrazione e il carattere: solfati per l'amaro, cloruri per il maltato"),
+            ("fen-rifermentazione","prod-spumante-base","pressione 4.5-6.5 atm · liqueur 20-24g/L · sur lies 12+ mesi","La rifermentazione in bottiglia produce CO₂ e pressione: la spumantizzazione classica affina sui lieviti"),
+        ],
+        "vino": [
+            ("fen-acidita-volatile","prod-vino-ossidato","AV <0.6 g/L sano · limite 1.08-1.20 g/L · soglia 0.6-0.9 g/L","L'acidità volatile (acido acetico) è un difetto: sopra soglia dà sentori di aceto e smalto"),
+            ("fen-affinamento-vino","prod-vino-rosso","micro-ossigenazione 1-2 mg/L/anno · T 12-15°C · umidità 70-80%","L'affinamento in bottiglia è evoluzione riduttiva: micro-ossigeno lento che ammorbidisce e complessa"),
+            ("fen-solforosa","prod_vino_bianco","SO₂ libero 25-35 mg/L · molecolare 0.5-0.8 mg/L · pH 3.2-3.4","La solforosa protegge da ossidazione e microbi: la frazione molecolare (dipende dal pH) è quella attiva"),
+            ("fen-brett","prod-vino-rosso","4-EP <230 μg/L · 4-EG <33 μg/L · SO₂ molecolare >0.5 mg/L","Il Brettanomyces produce fenoli volatili (sentori di stalla, cerotto): la solforosa lo previene"),
+            ("fen-maturazione-legno","prod-vino-rosso","barrique 6-18 mesi · O₂ 20-40 mL/L/anno · tannini eluibili","La maturazione in legno cede tannini e aromi e permette micro-ossigenazione controllata"),
+        ],
+        "caffetteria": [
+            ("fen-tostatura-caffe","prod-caffe-tostato","primo crack 196-205°C · sviluppo 12-20% · riposo 7-14gg","La tostatura sviluppa gli aromi via Maillard e caramellizzazione: il primo crack segna l'inizio dello sviluppo"),
+            ("fen-water-recipe-caffe","prod-espresso","TDS 75-250 mg/L · Ca 50-75 · Mg 10-30 · alcalinità 40-75","La ricetta dell'acqua governa l'estrazione: minerali e alcalinità cambiano cosa e quanto si estrae"),
+            ("fen-temperatura-latte","prod-espresso","T finale 60-65°C · mai sopra 70°C · aria +20-30% · pH 6.6-6.8","La montatura del latte incorpora aria e denatura le proteine: sopra 70°C sa di cotto e la schiuma collassa"),
+        ],
+        "cucina": [
+            ("fen-brasatura","prod-carne-sousvide","T 80-85°C · 2-4h · collagene da 68°C · rosolatura >140°C","La brasatura converte il collagene in gelatina a bassa temperatura e lunga cottura: carne che si sfalda"),
+            ("fen-brodo-fondo","prod-brodo","T 85-95°C sobbollire · pollo 3-4h · vitello 6-8h · gelatina >2%","Il brodo estrae collagene e gelatina dalle ossa a lungo sobbollire: mai bollire o diventa torbido"),
+            ("fen-cottura-sous-vide","prod-sousvide","pollo 63°C×4h · manzo 57°C×2h · pesce 52-55°C×30min","Il sous-vide cuoce a temperatura esatta e costante: il cuore raggiunge il target senza superarlo"),
+            ("fen-salamoia","prod-carne-stagionata","salamoia 5-8% sale · pollo 4-12h · dry brine 12-24h","La salamoia idrata e insaporisce per osmosi e denatura le proteine: carne più succosa in cottura"),
+        ],
     }
     archi = ARCHI.get(gruppo, [])
+    if gruppo == "all":
+        archi = [a for lst in ARCHI.values() for a in lst]
     if not archi:
-        return jsonify({"errore": f"gruppo '{gruppo}' non definito", "gruppi": list(ARCHI.keys())}), 400
+        return jsonify({"errore": f"gruppo '{gruppo}' non definito", "gruppi": list(ARCHI.keys()) + ["all"]}), 400
     try:
         conn = _get_conn(); cur = conn.cursor()
         inseriti, saltati, mancanti = 0, 0, []
