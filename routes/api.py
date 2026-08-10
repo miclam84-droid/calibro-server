@@ -2218,6 +2218,61 @@ def admin_coverage():
         except Exception:
             pass
 
+        # ── LONGEVITÀ (Exploration Depth + Deep-Connectivity Score) ──
+        # Misura la PROFONDITÀ RAMIFICATA di ogni fenomeno: quante ramificazioni
+        # attive ha (errori, tecniche, strumenti, connessioni concettuali).
+        # È la metrica dell'"inesauribilità": un fenomeno con molte ramificazioni
+        # può essere esplorato per mesi. Un pozzo, non una biblioteca.
+        # Exploration Depth per fenomeno = errori + tecniche + strumenti + ponti.
+        # Deep-Connectivity Score globale = media di (errori+strumenti+ponti) per fenomeno.
+        longevita = {}
+        try:
+            # per ogni fenomeno conto le ramificazioni per tipo di relazione
+            cur.execute("""
+                SELECT f.id, f.name, f.domain,
+                    COUNT(*) FILTER (WHERE e.relation='fallisce_come')     AS errori,
+                    COUNT(*) FILTER (WHERE e.relation='realizzato_da')     AS tecniche,
+                    COUNT(*) FILTER (WHERE e.relation='controllato_con')   AS strumenti,
+                    COUNT(*) FILTER (WHERE e.relation IN ('governato_da','sfrutta','unifica','spiega')) AS ponti
+                FROM nodes f
+                LEFT JOIN edges e ON e.from_id = f.id
+                WHERE f.type='Fenomeno'
+                GROUP BY f.id, f.name, f.domain
+            """)
+            righe = cur.fetchall()
+            n_fen = len(righe)
+            somma_expl = 0        # exploration depth totale
+            somma_dcs = 0         # (errori+strumenti+ponti) totale, per il DCS
+            con_errori = 0        # fenomeni con almeno 1 errore
+            con_tecnica = 0
+            distribuzione = {"core": 0, "secondary": 0, "passive": 0}  # per classe di profondità
+            fen_poveri = []       # fenomeni con 0-1 ramificazioni (candidati a stratificazione)
+            for fid, nome, dom, err, tec, strum, ponti in righe:
+                expl = err + tec + strum + ponti   # exploration depth del fenomeno
+                somma_expl += expl
+                somma_dcs += err + strum + ponti
+                if err > 0: con_errori += 1
+                if tec > 0: con_tecnica += 1
+                # classe di profondità (soglie da OpenAI: core 5-8, secondary 3-5, passive 1-3)
+                if expl >= 5:   distribuzione["core"] += 1
+                elif expl >= 3: distribuzione["secondary"] += 1
+                else:           distribuzione["passive"] += 1
+                if expl <= 1:
+                    fen_poveri.append({"id": fid, "nome": nome, "dominio": dom, "ramificazioni": expl})
+            longevita = {
+                "fenomeni_analizzati": n_fen,
+                "exploration_depth_media": round(somma_expl / n_fen, 2) if n_fen else 0,
+                "deep_connectivity_score": round(somma_dcs / n_fen, 2) if n_fen else 0,
+                "dcs_soglia_target": 3.5,
+                "fenomeni_con_errori": con_errori,
+                "fenomeni_con_errori_pct": round(100.0 * con_errori / n_fen, 1) if n_fen else 0,
+                "fenomeni_con_tecnica": con_tecnica,
+                "distribuzione_profondita": distribuzione,
+                "fenomeni_poveri": sorted(fen_poveri, key=lambda x: x["ramificazioni"])[:30],
+            }
+        except Exception:
+            pass
+
         cur.close(); _release_conn(conn)
 
         # SCORE sintetico per disciplina: combina ampiezza (prodotti) e profondità (connessioni)
@@ -2253,6 +2308,7 @@ def admin_coverage():
             "score_per_disciplina": score,
             "ingredient_coverage": ingredient_coverage,
             "menu_ready_coverage": menu_ready,
+            "longevita": longevita,
             "archi_per_relazione": archi_per_relazione,
             "buchi": {
                 "fenomeni_senza_prodotti": fenomeni_orfani,
