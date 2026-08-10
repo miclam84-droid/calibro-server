@@ -2184,6 +2184,40 @@ def admin_coverage():
             "coverage_forte_pct": round(100.0 * ing_verso_fenomeno / ing_totali, 1) if ing_totali else 0,
         }
 
+        # ── MENU-READY COVERAGE ──
+        # Un prodotto è "menu-ready" quando percorre il percorso completo verificato:
+        # prodotto ← si_manifesta_in ← Fenomeno (con numero-bersaglio) → realizzato_da → Tecnica/Processo.
+        # È la metrica che misura quanto la feature foto→menù può produrre proposte AZIONABILI,
+        # non solo quante connessioni esistono. Calcolata per disciplina.
+        menu_ready = {}
+        try:
+            cur.execute("""
+                SELECT p.domain,
+                       COUNT(DISTINCT p.id) AS prodotti_tot,
+                       COUNT(DISTINCT CASE WHEN mr.pid IS NOT NULL THEN p.id END) AS prodotti_ready
+                FROM nodes p
+                LEFT JOIN (
+                    -- prodotti che hanno un percorso completo fen(con target)→tecnica
+                    SELECT e1.to_id AS pid
+                    FROM edges e1
+                    JOIN nodes f ON f.id = e1.from_id AND f.type = 'Fenomeno'
+                    JOIN edges e2 ON e2.from_id = f.id AND e2.relation = 'realizzato_da'
+                    JOIN nodes t ON t.id = e2.to_id AND t.type IN ('Tecnica','Processo')
+                    WHERE e1.relation = 'si_manifesta_in'
+                      AND COALESCE(NULLIF(f.data->>'numero_bersaglio',''), NULLIF(f.data->>'target','')) IS NOT NULL
+                ) mr ON mr.pid = p.id
+                WHERE p.type = 'Prodotto' AND p.domain IS NOT NULL
+                GROUP BY p.domain
+            """)
+            for dom, tot, ready in cur.fetchall():
+                menu_ready[dom] = {
+                    "prodotti": tot,
+                    "menu_ready": ready,
+                    "pct": round(100.0 * ready / tot, 1) if tot else 0,
+                }
+        except Exception:
+            pass
+
         cur.close(); _release_conn(conn)
 
         # SCORE sintetico per disciplina: combina ampiezza (prodotti) e profondità (connessioni)
@@ -2218,6 +2252,7 @@ def admin_coverage():
             },
             "score_per_disciplina": score,
             "ingredient_coverage": ingredient_coverage,
+            "menu_ready_coverage": menu_ready,
             "archi_per_relazione": archi_per_relazione,
             "buchi": {
                 "fenomeni_senza_prodotti": fenomeni_orfani,
