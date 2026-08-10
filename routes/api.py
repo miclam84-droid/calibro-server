@@ -2386,38 +2386,39 @@ def admin_tecniche_diag():
     import os as _os
     if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
         return jsonify({"errore": "non autorizzato"}), 403
+    dom = request.args.get("dom", "bar")
     try:
         conn = _get_conn(); cur = conn.cursor()
         # tutte le tecniche e processi
         cur.execute("SELECT id, name, type, domain FROM nodes WHERE type IN ('Tecnica','Processo') ORDER BY type, name")
         tecniche = [{"id":r[0],"nome":r[1],"tipo":r[2],"dominio":r[3]} for r in cur.fetchall()]
-        # fenomeni collegati a prodotti bar (via si_manifesta_in) che NON hanno realizzato_da
+        # fenomeni collegati a prodotti del dominio (via si_manifesta_in) che NON hanno realizzato_da
         cur.execute("""
             SELECT DISTINCT f.id, f.name,
                    COALESCE(NULLIF(f.data->>'numero_bersaglio',''), NULLIF(f.data->>'target','')) AS num
             FROM nodes f
             JOIN edges e1 ON e1.from_id=f.id AND e1.relation='si_manifesta_in'
-            JOIN nodes p ON p.id=e1.to_id AND p.type='Prodotto' AND p.domain='bar'
+            JOIN nodes p ON p.id=e1.to_id AND p.type='Prodotto' AND p.domain=%s
             WHERE f.type='Fenomeno'
               AND NOT EXISTS (SELECT 1 FROM edges e2 WHERE e2.from_id=f.id AND e2.relation='realizzato_da')
             ORDER BY f.name
-        """)
+        """, (dom,))
         fen_bar_senza_tecnica = [{"id":r[0],"nome":r[1],"numero":r[2]} for r in cur.fetchall()]
-        # fenomeni bar CHE HANNO già una tecnica (per riferimento)
+        # fenomeni del dominio CHE HANNO già una tecnica (per riferimento)
         cur.execute("""
             SELECT DISTINCT f.name, t.name AS tecnica
             FROM nodes f
             JOIN edges e1 ON e1.from_id=f.id AND e1.relation='si_manifesta_in'
-            JOIN nodes p ON p.id=e1.to_id AND p.type='Prodotto' AND p.domain='bar'
+            JOIN nodes p ON p.id=e1.to_id AND p.type='Prodotto' AND p.domain=%s
             JOIN edges e2 ON e2.from_id=f.id AND e2.relation='realizzato_da'
             JOIN nodes t ON t.id=e2.to_id
             WHERE f.type='Fenomeno' ORDER BY f.name
-        """)
+        """, (dom,))
         fen_bar_con_tecnica = [{"fenomeno":r[0],"tecnica":r[1]} for r in cur.fetchall()]
         cur.close(); _release_conn(conn)
-        return jsonify({"ok":True, "tecniche_totali":len(tecniche), "tecniche":tecniche,
-                        "fen_bar_senza_tecnica":fen_bar_senza_tecnica,
-                        "fen_bar_con_tecnica":fen_bar_con_tecnica})
+        return jsonify({"ok":True, "dominio":dom, "tecniche_totali":len(tecniche), "tecniche":tecniche,
+                        "fen_senza_tecnica":fen_bar_senza_tecnica,
+                        "fen_con_tecnica":fen_bar_con_tecnica})
     except Exception as e:
         try: conn.rollback(); _release_conn(conn)
         except Exception: pass
