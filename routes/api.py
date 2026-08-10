@@ -2535,41 +2535,6 @@ def admin_collega_tecniche():
         return jsonify({"errore": str(e)}), 500
 
 
-@bp.route("/admin/errori-diag")
-def admin_errori_diag():
-    """TEMP: elenca gli Errori esistenti + i fenomeni senza errori collegati. Read-only."""
-    import os as _os
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
-        return jsonify({"errore": "non autorizzato"}), 403
-    try:
-        conn = _get_conn(); cur = conn.cursor()
-        # tutti gli errori
-        cur.execute("SELECT id, name, domain, LEFT(COALESCE(data->>'scheda',data->>'descrizione',''),90) FROM nodes WHERE type='Errore' ORDER BY domain, name")
-        errori = [{"id":r[0],"nome":r[1],"dominio":r[2],"desc":r[3]} for r in cur.fetchall()]
-        # errori GIÀ collegati a un fenomeno (fallisce_come)
-        cur.execute("""
-            SELECT f.name, er.name FROM edges e
-            JOIN nodes f ON f.id=e.from_id AND f.type='Fenomeno'
-            JOIN nodes er ON er.id=e.to_id AND er.type='Errore'
-            WHERE e.relation='fallisce_come' ORDER BY f.name
-        """)
-        gia_collegati = [{"fenomeno":r[0],"errore":r[1]} for r in cur.fetchall()]
-        # errori NON collegati a nessun fenomeno
-        cur.execute("""
-            SELECT id, name, domain FROM nodes er WHERE er.type='Errore'
-            AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.to_id=er.id AND e.relation='fallisce_come')
-            ORDER BY domain, name
-        """)
-        errori_orfani = [{"id":r[0],"nome":r[1],"dominio":r[2]} for r in cur.fetchall()]
-        cur.close(); _release_conn(conn)
-        return jsonify({"ok":True, "errori_totali":len(errori), "errori":errori,
-                        "gia_collegati":gia_collegati, "errori_orfani":errori_orfani})
-    except Exception as e:
-        try: conn.rollback(); _release_conn(conn)
-        except Exception: pass
-        return jsonify({"errore": str(e)}), 500
-
-
 @bp.route("/admin/collega-errori", methods=["POST","GET"])
 def admin_collega_errori():
     """Collega gli Errori ai Fenomeni (relazione fallisce_come). Archi nel codice, idempotente.
