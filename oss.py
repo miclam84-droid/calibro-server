@@ -151,6 +151,56 @@ def metriche():
         except Exception:
             pass
 
+        # ── FUNNEL di conversione (tabella funnel_eventi, ultimi 30gg) ──
+        # Esposto al Galileo Control Panel: eventi, conversioni tra stadi,
+        # e attribuzione content->paid. Difensivo: se la tabella non esiste
+        # ancora (nessun evento), tutto torna a 0/[] senza far fallire il resto.
+        funnel = {
+            "signup_30gg": 0, "activation_30gg": 0, "paywall_30gg": 0, "paid_30gg": 0,
+            "conv_signup_activation_pct": None,
+            "conv_activation_paywall_pct": None,
+            "conv_paywall_paid_pct": None,
+            "conv_signup_paid_pct": None,
+            "content_to_paid": [],
+        }
+        try:
+            cur.execute("SELECT to_regclass('funnel_eventi')")
+            if cur.fetchone()[0]:
+                # utenti unici per stadio negli ultimi 30 giorni
+                def _stage(evt):
+                    return _scalar(cur,
+                        "SELECT COUNT(DISTINCT COALESCE(user_id, email)) FROM funnel_eventi "
+                        "WHERE evento = '%s' AND ts > NOW() - INTERVAL '30 days' "
+                        "AND (user_id IS NOT NULL OR email IS NOT NULL)" % evt)
+                s = _stage("signup"); a = _stage("activation")
+                p = _stage("paywall_hit"); pd = _stage("paid")
+                funnel["signup_30gg"] = s
+                funnel["activation_30gg"] = a
+                funnel["paywall_30gg"] = p
+                funnel["paid_30gg"] = pd
+                def _pct(x, y): return round(100.0 * x / y, 1) if y else None
+                funnel["conv_signup_activation_pct"] = _pct(a, s)
+                funnel["conv_activation_paywall_pct"] = _pct(p, a)
+                funnel["conv_paywall_paid_pct"] = _pct(pd, p)
+                funnel["conv_signup_paid_pct"] = _pct(pd, s)
+                # content -> paid: paganti per campagna/contenuto UTM
+                try:
+                    cur.execute(
+                        "SELECT COALESCE(utm_campaign,'(nessuna)'), "
+                        "COALESCE(utm_content,'(nessuno)'), COUNT(*) "
+                        "FROM funnel_eventi WHERE evento='paid' "
+                        "AND ts > NOW() - INTERVAL '30 days' "
+                        "GROUP BY utm_campaign, utm_content ORDER BY COUNT(*) DESC LIMIT 10")
+                    funnel["content_to_paid"] = [
+                        {"campagna": r[0], "contenuto": r[1], "paganti": int(r[2])}
+                        for r in cur.fetchall()
+                    ]
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        out["funnel"] = funnel
+
         cur.close()
     except Exception:
         pass
