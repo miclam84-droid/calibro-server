@@ -1412,3 +1412,8 @@ a:focus-visible,input:focus-visible{
 .mirino-neutro{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:32px 20px;text-align:center;color:var(--ink-muted)}
 .mirino-neutro-ico{font-size:34px;color:var(--signal);opacity:.5;line-height:1}
 .mirino-neutro-txt{font-family:var(--sans);font-size:14px;max-width:240px;line-height:1.4}
+
+/* Transizione d'entrata tra le fasi del flusso foto→menù (opacity + lieve scorrimento) */
+@keyframes mfFaseEnter{ from{opacity:0; transform:translateX(8px)} to{opacity:1; transform:translateX(0)} }
+.mf-fase-enter{ animation:mfFaseEnter .22s cubic-bezier(.22,1,.36,1) both }
+@media (prefers-reduced-motion: reduce){ .mf-fase-enter{ animation:none } }

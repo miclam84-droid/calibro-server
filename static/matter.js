@@ -2477,7 +2477,17 @@ function chiudiMenuFoto(){ document.getElementById('menu-foto').classList.add('h
 function _mfMostraFase(f){
   ['foto','loading','valida','proposte','lab'].forEach(x=>{
     var el=document.getElementById('mf-fase-'+x);
-    if(el) el.style.display = x===f?'block':'none';
+    if(!el) return;
+    if(x===f){
+      el.style.display='block';
+      // transizione d'entrata: la fase non appare di colpo, entra con un lieve scorrimento
+      el.classList.remove('mf-fase-enter');
+      void el.offsetWidth; // reflow per riavviare l'animazione
+      el.classList.add('mf-fase-enter');
+    } else {
+      el.style.display='none';
+      el.classList.remove('mf-fase-enter');
+    }
   });
   // titolo dinamico dell'header per fase (bug: prima restava "Parti dagli ingredienti")
   var titoli = {
