@@ -2463,8 +2463,43 @@ def admin_collega_tecniche():
             ("fen-solubilita","tec-cottura-zucchero","Solubilità zuccheri: sciroppi (saccarosio 200g/100ml a 20°C)"),
             ("fen-cristallizzazione-ghiaccio","tec-shake","Cristallizzazione del ghiaccio in miscelazione: cristalli <50 micron"),
         ],
+        "pasticceria": [
+            ("fen-temperaggio-cioccolato","tec-temperaggio","Temperaggio: cristallizzazione beta stabile del burro di cacao (fondente 31-32°C)"),
+            ("fen-meringa","tec-montatura","Meringa: montatura dell'albume in schiuma proteica stabile"),
+            ("fen-montatura-panna","tec-montatura","Montatura panna: incorporazione d'aria stabilizzata dai grassi (panna >35%)"),
+            ("fen-souffle","tec-montatura","Soufflé: montata proteica che si espande col calore in forno"),
+            ("fen-zucchero-cottura","tec-cottura-zucchero","Stadi di cottura dello zucchero: dal filo (112°C) al caramello (160-180°C)"),
+            ("fen-gelificazione","tec-gelificazione-agar","Gelificazione: reticolo che intrappola il liquido (gelatina/agar/pectina)"),
+            ("fen-ganache","tec-emulsione","Ganache: emulsione grasso-acqua tra cioccolato e panna"),
+            ("fen-emulsione","tec-emulsione","Emulsione: dispersione stabile di due fasi immiscibili"),
+            ("fen-crema-pasticcera","tec-montatura","Crema pasticcera: coagulazione controllata dei tuorli con amido"),
+            ("fen-pasta-frolla","tec-impasto","Pasta frolla: impasto che impermeabilizza il glutine col burro"),
+            ("fen-caramellizzazione","tec-cottura-zucchero","Caramellizzazione: pirolisi degli zuccheri sopra i 160°C"),
+            ("fen-cristallizzazione","tec-temperaggio","Cristallizzazione controllata (burro di cacao, zuccheri)"),
+            ("fen-montaggio","tec-montatura","Montaggio/overrun: incorporazione d'aria controllata"),
+            ("fen-gelatinizzazione","tec-cottura-zucchero","Gelatinizzazione dell'amido: rigonfiamento in acqua calda (62-70°C)"),
+        ],
+        "caffetteria": [
+            ("fen-estrazione-caffe","tec-estrazione-espresso","Estrazione espresso: 9 bar, TDS/EY nel range corretto"),
+            ("fen-tostatura-caffe","tec-mash" if False else "tec-croccante","Tostatura: sviluppo aromatico via Maillard fino al primo crack (196-205°C)"),
+            ("fen-temperatura-latte","tec-vaporizzazione-latte","Vaporizzazione del latte: montatura a 60-65°C, mai sopra 70°C"),
+            ("fen-water-recipe-caffe","tec-pour-over","Water recipe: mineralità e pH dell'acqua per l'estrazione filtro"),
+            ("fen-maillard-controllo","tec-croccante","Maillard: reazione di imbrunimento controllata per temperatura"),
+        ],
+        "birra": [
+            ("fen-mash-enzimi","tec-mash","Saccarificazione del mash: enzimi amilasici a 64-68°C"),
+            ("fen-amilolisi","tec-mash","Amilolisi: le amilasi spezzano l'amido in zuccheri fermentabili"),
+            ("fen-efficienza-birra","tec-mash","Efficienza: quanto zucchero si estrae nel mash (75-85%)"),
+            ("fen-fermentazione-lattica","tec-fermentazione-lattica","Fermentazione lattica: acidificazione controllata (sour/lambic)"),
+        ],
+        "vino": [
+            ("fen-ossidazione","tec-macerazione","Ossidazione controllata in macerazione/affinamento"),
+            ("fen-tannini","tec-macerazione","Estrazione tannini per macerazione delle bucce"),
+        ],
     }
     archi = ARCHI_TEC.get(gruppo, [])
+    if gruppo == "all":
+        archi = [a for lst in ARCHI_TEC.values() for a in lst]
     if not archi:
         return jsonify({"errore": f"gruppo '{gruppo}' non definito", "gruppi": list(ARCHI_TEC.keys())}), 400
     try:
