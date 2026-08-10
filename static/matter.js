@@ -2526,6 +2526,78 @@ function mfFileScelti(ev){
 }
 function mfRimuoviFoto(i){ _mfFiles.splice(i,1); mfFileScelti({target:{files:[]}}); }
 
+// ── SCANNER CODICE A BARRE (prodotti confezionati via Open Food Facts) ──
+var _mfBarcodeStream = null, _mfBarcodeLoop = null, _mfBarcodeDetector = null;
+async function mfApriBarcode(){
+  var ov = document.getElementById('mf-scanner');
+  var stato = document.getElementById('mf-scanner-stato');
+  ov.classList.remove('hidden');
+  // se il browser non supporta BarcodeDetector, resta solo l'inserimento manuale
+  if(!('BarcodeDetector' in window)){
+    stato.textContent = 'Fotocamera non disponibile su questo browser — digita il codice qui sotto.';
+    var v = document.getElementById('mf-scanner-video'); if(v) v.style.display='none';
+    document.getElementById('mf-barcode-input').focus();
+    return;
+  }
+  try{
+    _mfBarcodeDetector = new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']});
+    _mfBarcodeStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    var video = document.getElementById('mf-scanner-video');
+    video.srcObject = _mfBarcodeStream; await video.play();
+    stato.textContent = 'Inquadra il codice a barre del prodotto';
+    _mfBarcodeScanLoop(video);
+  }catch(e){
+    stato.textContent = 'Non riesco ad aprire la fotocamera — digita il codice qui sotto.';
+    document.getElementById('mf-barcode-input').focus();
+  }
+}
+async function _mfBarcodeScanLoop(video){
+  if(!_mfBarcodeDetector || !video) return;
+  try{
+    var codes = await _mfBarcodeDetector.detect(video);
+    if(codes && codes.length){
+      var raw = (codes[0].rawValue||'').replace(/\D/g,'');
+      if(raw.length>=8){ mfChiudiBarcode(); _mfBarcodeCerca(raw); return; }
+    }
+  }catch(e){}
+  _mfBarcodeLoop = requestAnimationFrame(function(){ _mfBarcodeScanLoop(video); });
+}
+function mfChiudiBarcode(){
+  if(_mfBarcodeLoop){ cancelAnimationFrame(_mfBarcodeLoop); _mfBarcodeLoop=null; }
+  if(_mfBarcodeStream){ _mfBarcodeStream.getTracks().forEach(function(t){t.stop();}); _mfBarcodeStream=null; }
+  var ov=document.getElementById('mf-scanner'); if(ov) ov.classList.add('hidden');
+}
+function mfBarcodeManuale(){
+  var v = (document.getElementById('mf-barcode-input').value||'').replace(/\D/g,'');
+  if(v.length<8){ document.getElementById('mf-scanner-stato').textContent='Servono almeno 8 cifre.'; return; }
+  mfChiudiBarcode(); _mfBarcodeCerca(v);
+}
+async function _mfBarcodeCerca(codice){
+  var stato = document.getElementById('mf-scanner-stato');
+  try{
+    var r = await fetch('/v1/menu/barcode/'+encodeURIComponent(codice));
+    var j = await r.json();
+    if(!j.trovato){
+      _mfToast('Prodotto non trovato. Puoi inserirlo a mano tra gli ingredienti.');
+      return;
+    }
+    // aggiungo il prodotto come ingrediente "confezionato" alla lista validata
+    _mfIngredienti = _mfIngredienti || [];
+    _mfIngredienti.push({ nome: j.nome, categoria: 'confezionato', sel: true, _barcode: codice, _allergeni: j.allergeni||[] });
+    _mfToast('✓ "'+j.nome+'" aggiunto'+(j.allergeni&&j.allergeni.length?' · allergeni: '+j.allergeni.join(', '):''));
+    // se sono ancora nella fase foto, porto l'utente alla validazione per confermare
+    if(typeof _mfRenderValida==='function'){ _mfRenderValida(); _mfMostraFase('valida'); }
+  }catch(e){
+    _mfToast('Open Food Facts non raggiungibile. Riprova o inserisci a mano.');
+  }
+}
+function _mfToast(msg){
+  var t = document.getElementById('mf-toast');
+  if(!t){ t=document.createElement('div'); t.id='mf-toast'; t.className='mf-toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
 async function mfAnalizza(){
   if(!_mfFiles.length) return;
   _mfMostraFase('loading');

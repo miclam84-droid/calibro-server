@@ -846,7 +846,28 @@ if('serviceWorker' in navigator){
       <span>Scatta o carica le foto</span>
     </label>
     <div class="mf-thumbs" id="mf-thumbs"></div>
+    <div class="mf-oppure">oppure</div>
+    <button class="mf-barcode-btn" id="mf-barcode-btn" onclick="mfApriBarcode()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14M22 5v14"/></svg>
+      <span>Scansiona un prodotto confezionato</span>
+    </button>
     <button class="mb-genera" id="mf-analizza" onclick="mfAnalizza()" style="display:none">Leggi il mio banco →</button>
+  </div>
+  <!-- SCANNER codice a barre (overlay) -->
+  <div class="mf-scanner hidden" id="mf-scanner">
+    <div class="mf-scanner-box">
+      <div class="mf-scanner-head">
+        <span>Inquadra il codice a barre</span>
+        <button class="mf-scanner-close" onclick="mfChiudiBarcode()">✕</button>
+      </div>
+      <video id="mf-scanner-video" playsinline muted></video>
+      <div class="mf-scanner-mirino"></div>
+      <div class="mf-scanner-stato" id="mf-scanner-stato">Avvio fotocamera…</div>
+      <div class="mf-scanner-manuale">
+        <input type="text" id="mf-barcode-input" inputmode="numeric" placeholder="oppure digita il codice (8–14 cifre)">
+        <button onclick="mfBarcodeManuale()">Cerca</button>
+      </div>
+    </div>
   </div>
   <!-- FASE B: riconoscimento (teatro) -->
   <div class="mf-fase" id="mf-fase-loading" style="display:none">

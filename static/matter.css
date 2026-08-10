@@ -1445,3 +1445,26 @@ a:focus-visible,input:focus-visible{
 .ma-allerg{font-family:var(--sans);font-size:12px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.05);color:var(--ink)}
 .ma-allergeni-avviso{font-family:var(--sans);font-size:10.5px;line-height:1.4;color:var(--ink-muted);font-style:italic}
 .mas-voce-allerg{font-family:var(--sans);font-size:11px;color:var(--ink-muted);margin-top:3px}
+
+/* Opzione barcode nella fase foto */
+.mf-oppure{text-align:center;font-family:var(--sans);font-size:12px;color:var(--ink-muted);margin:14px 0 10px;position:relative}
+.mf-barcode-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border:1.5px dashed var(--teal,#12545D);border-radius:13px;background:transparent;color:var(--teal,#12545D);font-family:var(--sans);font-size:15px;font-weight:600;cursor:pointer;transition:background .15s ease}
+.mf-barcode-btn:active{transform:scale(.985)}
+.mf-barcode-btn svg{width:22px;height:22px}
+/* Scanner overlay */
+.mf-scanner{position:fixed;inset:0;z-index:9999;background:rgba(10,14,17,.92);display:flex;align-items:center;justify-content:center;padding:20px}
+.mf-scanner.hidden{display:none}
+.mf-scanner-box{width:100%;max-width:420px;background:var(--card,#D4DCDC);border-radius:18px;overflow:hidden}
+.mf-scanner-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-family:var(--sans);font-weight:600;color:var(--ink,#141D22)}
+.mf-scanner-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink,#141D22);padding:0 4px}
+#mf-scanner-video{width:100%;height:240px;object-fit:cover;background:#000;display:block}
+.mf-scanner-mirino{height:3px;background:var(--accent,#CB5A22);margin:-120px 40px 0;position:relative;z-index:2;border-radius:2px;box-shadow:0 0 8px var(--accent,#CB5A22);animation:mfScanline 2s ease-in-out infinite}
+@keyframes mfScanline{0%,100%{transform:translateY(-60px)}50%{transform:translateY(60px)}}
+.mf-scanner-stato{padding:14px 16px 8px;font-family:var(--sans);font-size:13px;color:var(--ink-muted);text-align:center}
+.mf-scanner-manuale{display:flex;gap:8px;padding:8px 16px 18px}
+.mf-scanner-manuale input{flex:1;padding:11px 12px;border:1px solid rgba(0,0,0,.2);border-radius:10px;font-family:var(--sans);font-size:14px}
+.mf-scanner-manuale button{padding:11px 18px;background:var(--teal,#12545D);color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-weight:600;cursor:pointer}
+@media (prefers-reduced-motion: reduce){.mf-scanner-mirino{animation:none}}
+/* Toast */
+.mf-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink,#141D22);color:#fff;padding:13px 20px;border-radius:12px;font-family:var(--sans);font-size:14px;max-width:88%;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:10000}
+.mf-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
