@@ -2128,10 +2128,12 @@ def admin_coverage():
         fenomeni_orfani = [{"id": r[0], "nome": r[1]} for r in cur.fetchall()]
 
         # 6. BUCHI — fenomeni senza numero-bersaglio nel data (regola di partizione)
+        # Il numero canonico è numero_bersaglio OPPURE target (fallback legacy),
+        # come fa contenuto._numero_bersaglio (fonte unica di verità).
         cur.execute("""
             SELECT id, name FROM nodes
             WHERE type='Fenomeno'
-              AND (data->>'numero_bersaglio' IS NULL OR data->>'numero_bersaglio'='')
+              AND COALESCE(NULLIF(data->>'numero_bersaglio',''), NULLIF(data->>'target','')) IS NULL
             ORDER BY name
         """)
         fenomeni_senza_target = [{"id": r[0], "nome": r[1]} for r in cur.fetchall()]
@@ -2152,6 +2154,35 @@ def admin_coverage():
         # 8. prodotti per dominio (ampiezza)
         cur.execute("SELECT COALESCE(domain,'(nessuno)'), COUNT(*) FROM nodes WHERE type='Prodotto' GROUP BY domain ORDER BY COUNT(*) DESC")
         prodotti_per_dominio = [{"disciplina": r[0], "prodotti": r[1]} for r in cur.fetchall()]
+
+        # 9. INGREDIENT COVERAGE (metrica-chiave per foto→menù):
+        # % di ingredienti con almeno un arco verso un fenomeno/tecnica/prodotto.
+        # Un ingrediente "coperto" = ha almeno una connessione uscente o entrante utile.
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Ingrediente'")
+        ing_totali = cur.fetchone()[0]
+        cur.execute("""
+            SELECT COUNT(DISTINCT n.id) FROM nodes n
+            WHERE n.type='Ingrediente' AND (
+                EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id)
+                OR EXISTS (SELECT 1 FROM edges e WHERE e.to_id=n.id)
+            )
+        """)
+        ing_connessi = cur.fetchone()[0]
+        # ingredienti con percorso verso un FENOMENO (coverage "forte")
+        cur.execute("""
+            SELECT COUNT(DISTINCT n.id) FROM nodes n
+            JOIN edges e ON (e.from_id=n.id OR e.to_id=n.id)
+            JOIN nodes f ON (f.id=e.from_id OR f.id=e.to_id) AND f.type='Fenomeno'
+            WHERE n.type='Ingrediente'
+        """)
+        ing_verso_fenomeno = cur.fetchone()[0]
+        ingredient_coverage = {
+            "ingredienti_totali": ing_totali,
+            "ingredienti_connessi": ing_connessi,
+            "ingredienti_verso_fenomeno": ing_verso_fenomeno,
+            "coverage_pct": round(100.0 * ing_connessi / ing_totali, 1) if ing_totali else 0,
+            "coverage_forte_pct": round(100.0 * ing_verso_fenomeno / ing_totali, 1) if ing_totali else 0,
+        }
 
         cur.close(); _release_conn(conn)
 
@@ -2186,6 +2217,7 @@ def admin_coverage():
                 "nodi_per_tipo": nodi_per_tipo,
             },
             "score_per_disciplina": score,
+            "ingredient_coverage": ingredient_coverage,
             "archi_per_relazione": archi_per_relazione,
             "buchi": {
                 "fenomeni_senza_prodotti": fenomeni_orfani,
