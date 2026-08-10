@@ -2878,12 +2878,101 @@ function mfFinalizzaMenu(){
   if(!_mfVociMenu.length) return;
   // passo le voci al builder Crea Menù (step grafica): riuso _mbVoci + builder step 3
   _mbVoci = _mfVociMenu.map(function(v){ return {_src:v._src, nome:v.nome, target:v.target, stato:v.stato, ingredienti:v.ingredienti, tecnica:v.tecnica}; });
+  // PRIMA della grafica: mostro il profilo del menù (schermata "IL TUO MENÙ")
+  _mostraProfiloMenu();
+}
+
+// Analizza il menù costruito: voci, ingredienti totali/riutilizzati, basi condivise, allergeni.
+function _analizzaProfiloMenu(voci){
+  var conteggio = {};       // ingrediente → in quante voci compare
+  var totVoci = voci.length;
+  var verificate = 0;
+  voci.forEach(function(v){
+    if(v.stato==='verified') verificate++;
+    var visti = {};
+    (v.ingredienti||[]).forEach(function(ing){
+      var k = (ing||'').toLowerCase().trim(); if(!k||visti[k]) return; visti[k]=1;
+      conteggio[k] = (conteggio[k]||0)+1;
+    });
+  });
+  var tuttiIng = Object.keys(conteggio);
+  // ingredienti riutilizzati = presenti in 2+ voci (basi condivise, meno scarti)
+  var riutilizzati = tuttiIng.filter(function(k){ return conteggio[k]>=2; })
+                             .sort(function(a,b){ return conteggio[b]-conteggio[a]; });
+  var allerg = (typeof allergeniMenu==='function') ? allergeniMenu(voci) : [];
+  return {
+    totVoci: totVoci,
+    verificate: verificate,
+    totIngredienti: tuttiIng.length,
+    riutilizzati: riutilizzati,   // array di nomi
+    conteggio: conteggio,
+    allergeni: allerg
+  };
+}
+
+function _mostraProfiloMenu(){
+  var voci = _mbVoci || [];
+  var pr = _analizzaProfiloMenu(voci);
+  var ov = document.getElementById('menu-profilo');
+  // costruisco l'overlay una volta sola
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id = 'menu-profilo';
+    ov.className = 'menu-profilo-ov hidden';
+    document.body.appendChild(ov);
+  }
+  // riepilogo ingredienti riutilizzati (le "basi condivise": efficienza, meno scarti)
+  var basiHtml = pr.riutilizzati.length
+    ? '<div class="mp-basi-lista">' + pr.riutilizzati.slice(0,8).map(function(k){
+        return '<span class="mp-base">'+_esc(k)+' <b>×'+pr.conteggio[k]+'</b></span>';
+      }).join('') + '</div>'
+    : '<div class="mp-basi-vuoto">Nessun ingrediente condiviso tra le voci — ogni preparazione è indipendente.</div>';
+  var allergHtml = pr.allergeni.length
+    ? '<div class="mp-allerg-lista">' + pr.allergeni.map(function(a){
+        return '<span class="mp-allerg">'+(typeof numeroAllergene==='function'?numeroAllergene(a)+' · ':'')+_esc(a)+'</span>';
+      }).join('') + '</div>'
+    : '<div class="mp-basi-vuoto">Nessun allergene rilevato automaticamente.</div>';
+
+  ov.innerHTML =
+    '<div class="mp-box">'
+    + '<div class="mp-head">'
+    +   '<div class="mp-eyebrow">Il tuo menù</div>'
+    +   '<button class="mp-close" onclick="chiudiProfiloMenu()">✕</button>'
+    + '</div>'
+    + '<div class="mp-title">Ecco cosa hai costruito</div>'
+    // tre numeri-chiave
+    + '<div class="mp-stats">'
+    +   '<div class="mp-stat"><div class="mp-stat-n">'+pr.totVoci+'</div><div class="mp-stat-l">'+(pr.totVoci===1?'voce':'voci')+'</div></div>'
+    +   '<div class="mp-stat"><div class="mp-stat-n">'+pr.totIngredienti+'</div><div class="mp-stat-l">ingredienti</div></div>'
+    +   '<div class="mp-stat"><div class="mp-stat-n">'+pr.verificate+'</div><div class="mp-stat-l">verificate</div></div>'
+    + '</div>'
+    // basi condivise
+    + '<div class="mp-sez-lab">Basi condivise</div>'
+    + '<div class="mp-sez-sub">Ingredienti usati in più preparazioni: meno acquisti, meno scarti.</div>'
+    + basiHtml
+    // allergeni
+    + '<div class="mp-sez-lab">Allergeni del menù</div>'
+    + allergHtml
+    // food cost — gancio Cifra (bloccato)
+    + '<div class="mp-cifra">'
+    +   '<div class="mp-cifra-row"><span class="mp-cifra-lab">Food cost del menù</span><span class="mp-cifra-lock">🔒 Cifra</span></div>'
+    +   '<div class="mp-cifra-sub">Sai se ci guadagni? Calcola food cost e margini con Cifra.</div>'
+    + '</div>'
+    // azioni
+    + '<button class="mp-cta" onclick="_profiloVaiGrafica()">Crea la carta grafica →</button>'
+    + '<button class="mp-cta-sec" onclick="chiudiProfiloMenu()">Torna al laboratorio</button>'
+    + '</div>';
+  ov.classList.remove('hidden');
+}
+function chiudiProfiloMenu(){ var ov=document.getElementById('menu-profilo'); if(ov) ov.classList.add('hidden'); }
+function _profiloVaiGrafica(){
+  chiudiProfiloMenu();
   var cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
   document.getElementById('mb-nome').value = cfg.label;
   chiudiMenuFoto();
   _mbTemplate = 'editorial';
   document.getElementById('menu-builder').classList.remove('hidden');
-  _mbMostraStep(3); // vai diretto alla grafica: le voci ci sono già
+  _mbMostraStep(3); // le voci ci sono già
 }
 
 
