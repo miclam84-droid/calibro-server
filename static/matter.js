@@ -1810,6 +1810,7 @@ const _strings = {
   }
 };
 
+function _L(o){ return o[_lang] || o.it; }
 function _t(k){ var v=(_strings[_lang]||_strings.it)[k]; return (v!==undefined&&v!==null)?v:k; }
 
 function applicaStringheUI(){
@@ -2232,7 +2233,7 @@ async function importaCifra(ricetta_id) {
     if (d.deep_link) {
       window.open(d.deep_link, '_blank');
     } else {
-      alert('Errore nella generazione del link: ' + (d.errore || 'sconosciuto'));
+      alert(_L({it:'Errore nella generazione del link: ',en:'Error generating link: ',es:'Error al generar el enlace: '}) + (d.errore || _L({it:'sconosciuto',en:'unknown',es:'desconocido'})));
     }
   } catch(e) {
     alert('Errore di connessione: ' + e.message);
@@ -2524,11 +2525,11 @@ function _mfMostraFase(f){
   });
   // titolo dinamico dell'header per fase (bug: prima restava "Parti dagli ingredienti")
   var titoli = {
-    foto:'Parti dagli ingredienti',
+    foto:_L({it:'Parti dagli ingredienti',en:'Start from ingredients',es:'Empieza por los ingredientes'}),
     loading:'Sto leggendo il banco…',
     valida:'Conferma cosa hai',
     proposte:'Cosa puoi farci',
-    lab:'Dai i numeri a questa voce'
+    lab:_L({it:'Dai i numeri a questa voce',en:'Give this item its numbers',es:'Dale los números a este elemento'})
   };
   var t = document.getElementById('mf-title');
   if(t && titoli[f]) t.textContent = titoli[f];
@@ -2567,7 +2568,7 @@ async function mfApriBarcode(){
   ov.classList.remove('hidden');
   // se il browser non supporta BarcodeDetector, resta solo l'inserimento manuale
   if(!('BarcodeDetector' in window)){
-    stato.textContent = 'Fotocamera non disponibile su questo browser — digita il codice qui sotto.';
+    stato.textContent = _L({it:'Fotocamera non disponibile su questo browser — digita il codice qui sotto.',en:'Camera not available on this browser — type the code below.',es:'Cámara no disponible en este navegador — escribe el código abajo.'});
     var v = document.getElementById('mf-scanner-video'); if(v) v.style.display='none';
     document.getElementById('mf-barcode-input').focus();
     return;
@@ -2577,10 +2578,10 @@ async function mfApriBarcode(){
     _mfBarcodeStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
     var video = document.getElementById('mf-scanner-video');
     video.srcObject = _mfBarcodeStream; await video.play();
-    stato.textContent = 'Inquadra il codice a barre del prodotto';
+    stato.textContent = _L({it:'Inquadra il codice a barre del prodotto',en:'Point the camera at the product barcode',es:'Enfoca el código de barras del producto'});
     _mfBarcodeScanLoop(video);
   }catch(e){
-    stato.textContent = 'Non riesco ad aprire la fotocamera — digita il codice qui sotto.';
+    stato.textContent = _L({it:'Non riesco ad aprire la fotocamera — digita il codice qui sotto.',en:'Cannot open the camera — type the code below.',es:'No puedo abrir la cámara — escribe el código abajo.'});
     document.getElementById('mf-barcode-input').focus();
   }
 }
@@ -2611,7 +2612,7 @@ async function _mfBarcodeCerca(codice){
     var r = await fetch('/v1/menu/barcode/'+encodeURIComponent(codice));
     var j = await r.json();
     if(!j.trovato){
-      _mfToast('Prodotto non trovato. Puoi inserirlo a mano tra gli ingredienti.');
+      _mfToast(_L({it:'Prodotto non trovato. Puoi inserirlo a mano tra gli ingredienti.',en:'Product not found. You can add it manually to the ingredients.',es:'Producto no encontrado. Puedes añadirlo a mano entre los ingredientes.'}));
       return;
     }
     // aggiungo il prodotto come ingrediente "confezionato" alla lista validata
@@ -2650,13 +2651,13 @@ async function mfAnalizza(){
     _mfRenderValida();
     _mfMostraFase('valida');
   }catch(e){
-    alert('Non sono riuscito a leggere le foto. Riprova con una foto più chiara.');
+    alert(_L({it:'Non sono riuscito a leggere le foto. Riprova con una foto più chiara.',en:'Could not read the photos. Try again with a clearer photo.',es:'No pude leer las fotos. Inténtalo con una foto más clara.'}));
     _mfMostraFase('foto');
   }
 }
 
 function _mfTeatro(){
-  const steps = ['Riconosco gli ingredienti','Controllo le corrispondenze','Cerco connessioni aromatiche','Cerco tecniche applicabili','Preparo le combinazioni'];
+  const steps = _L({it:['Riconosco gli ingredienti','Controllo le corrispondenze','Cerco connessioni aromatiche','Cerco tecniche applicabili','Preparo le combinazioni'],en:['Recognizing ingredients','Checking matches','Finding aroma connections','Finding applicable techniques','Preparing combinations'],es:['Reconociendo ingredientes','Comprobando coincidencias','Buscando conexiones aromáticas','Buscando técnicas aplicables','Preparando combinaciones']});
   const cont = document.getElementById('mf-load-steps');
   cont.innerHTML = '';
   steps.forEach((s,i)=> setTimeout(()=>{
@@ -2687,7 +2688,7 @@ function mfAggiungiIng(){
 }
 async function mfConferma(){
   const confermati = _mfIngredienti.filter(x=>x.sel).map(x=>x.nome);
-  if(!confermati.length){ alert('Conferma almeno un ingrediente.'); return; }
+  if(!confermati.length){ alert(_L({it:'Conferma almeno un ingrediente.',en:'Confirm at least one ingredient.',es:'Confirma al menos un ingrediente.'})); return; }
   _mfMostraFase('loading');
   document.getElementById('mf-load-steps').innerHTML = '<div class="mf-load-step">✓ Cerco le connessioni aromatiche nel Flavor Network</div>';
   try{
@@ -2803,15 +2804,15 @@ async function _mfSuggerisciNome(p){
     // pre-compilo SOLO se l'utente non ha già scritto qualcosa
     if(j.nome && !campo.value.trim()){
       campo.value = j.nome;
-      campo.placeholder = 'Dai un nome alla voce';
+      campo.placeholder = _L({it:'Dai un nome alla voce',en:'Name this item',es:'Dale un nombre al elemento'});
       // segnale discreto che è un suggerimento
       var hint = document.getElementById('mf-nome-hint');
       if(hint) hint.style.display = 'block';
     } else {
-      campo.placeholder = 'Dai un nome alla voce (es. Strawberry Sour)';
+      campo.placeholder = _L({it:'Dai un nome alla voce (es. Strawberry Sour)',en:'Name this item (e.g. Strawberry Sour)',es:'Dale un nombre (ej. Strawberry Sour)'});
     }
   }catch(e){
-    campo.placeholder = 'Dai un nome alla voce (es. Strawberry Sour)';
+    campo.placeholder = _L({it:'Dai un nome alla voce (es. Strawberry Sour)',en:'Name this item (e.g. Strawberry Sour)',es:'Dale un nombre (ej. Strawberry Sour)'});
   }
 }
 
@@ -2857,7 +2858,7 @@ function mfValidaVoce(){
     st.className = 'mf-lab-stato ok';
     _mfVoceValidata = true;
   } else {
-    st.textContent = 'Misura la diluizione col Mirino per verificare la voce (oppure aggiungila come non verificata).';
+    st.textContent = _L({it:'Misura la diluizione col Mirino per verificare la voce (oppure aggiungila come non verificata).',en:'Measure dilution with the Mirino to verify the item (or add it as unverified).',es:'Mide la dilución con el Mirino para verificar el elemento (o añádelo como no verificado).'});
     st.className = 'mf-lab-stato warn';
   }
 }
@@ -3015,7 +3016,7 @@ function _mbMostraStep(n){
   _mbStep = n;
   [1,2,3].forEach(s=> document.getElementById('mb-step-'+s).style.display = s===n?'block':'none');
   const cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
-  const titoli = {1:'Nuovo · '+cfg.label, 2:'Componi la carta', 3:'Stile della carta'};
+  const titoli = {1:_L({it:'Nuovo · ',en:'New · ',es:'Nuevo · '})+cfg.label, 2:_L({it:'Componi la carta',en:'Build the menu',es:'Compón la carta'}), 3:_L({it:'Stile della carta',en:'Menu style',es:'Estilo de la carta'})};
   document.getElementById('mb-step-title').textContent = titoli[n];
   document.getElementById('mb-next').style.display = n<3 ? '' : 'none';
   if(n===2) _mbCaricaValidati();
@@ -3027,7 +3028,7 @@ function mbAvanti(){
     if(!nome){ document.getElementById('mb-nome').focus(); return; }
     _mbMostraStep(2);
   } else if(_mbStep===2){
-    if(!_mbVoci.length){ alert('Aggiungi almeno una voce alla carta.'); return; }
+    if(!_mbVoci.length){ alert(_L({it:'Aggiungi almeno una voce alla carta.',en:'Add at least one item to the menu.',es:'Añade al menos un elemento a la carta.'})); return; }
     _mbMostraStep(3);
   }
 }
@@ -3257,7 +3258,7 @@ function esportaMenu(){
   const piano = localStorage.getItem('matter_piano');
   if(piano!=='pro'){
     if(typeof mostraPopupPro==='function'){ mostraPopupPro('menu_export'); }
-    else alert('L\'esportazione del menù è una funzione Pro.');
+    else alert(_L({it:'L\'esportazione del menù è una funzione Pro.',en:'Menu export is a Pro feature.',es:'La exportación del menú es una función Pro.'}));
     return;
   }
   // Pro: genero il PDF (v1: stampa del contenitore anteprima)
@@ -3635,7 +3636,7 @@ async function calcolaCosto(){
   // Raccoglie ingredienti dalla scheda attuale (dal DOM o dal motore)
   const ingredienti=_ultimi_ingredienti||[];
   if(!ingredienti.length){
-    alert('Salva prima la ricetta nel quaderno per calcolare il costo.');
+    alert(_L({it:'Salva prima la ricetta nel quaderno per calcolare il costo.',en:'Save the recipe to the notebook first to calculate the cost.',es:'Guarda primero la receta en el cuaderno para calcular el coste.'}));
     return;
   }
   try{
