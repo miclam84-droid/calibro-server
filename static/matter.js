@@ -1,3 +1,36 @@
+/* ===== FUNNEL TRACKING — base per i KPI del pannello =====
+   Cattura gli UTM all'arrivo (persistono in localStorage per l'attribuzione content→paid)
+   e invia gli eventi chiave del funnel al backend. Silenzioso e non-bloccante. */
+(function _catturaUTM(){
+  try{
+    var q = new URLSearchParams(window.location.search);
+    var u = {};
+    ['source','medium','campaign','content'].forEach(function(k){
+      var v = q.get('utm_'+k); if(v) u[k]=v;
+    });
+    if(Object.keys(u).length){
+      // first-touch: non sovrascrivo se già presente (il primo contatto conta)
+      if(!localStorage.getItem('matter_utm')){
+        localStorage.setItem('matter_utm', JSON.stringify(u));
+      }
+      // last-touch: sempre aggiornato
+      localStorage.setItem('matter_utm_last', JSON.stringify(u));
+    }
+  }catch(_){}
+})();
+function _trackFunnel(evento, meta){
+  try{
+    var utm = {};
+    try{ utm = JSON.parse(localStorage.getItem('matter_utm')||'{}'); }catch(_){}
+    var email = localStorage.getItem('matter_email') || null;
+    // non blocco l'esperienza utente: fire-and-forget
+    fetch('/v1/funnel/track', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ evento: evento, email: email, meta: meta||null, utm: utm })
+    }).catch(function(){});
+  }catch(_){}
+}
+
 /* Matter — logica principale (estratta da index.html) */
 
 /* Logging errori centralizzato: un punto solo invece di console.error sparsi.
@@ -1246,7 +1279,7 @@ async function doRegistra(){
     if(j.ok||j.token){
       if(j.verifica_richiesta){
         msg.className='auth-msg ok';msg.textContent='Account creato! Controlla la tua email per attivarlo.';
-      } else if(j.token){localStorage.setItem('matter_token',j.token);localStorage.setItem('matter_email',email);aggiornaTopbarLogin();msg.className='auth-msg ok';msg.textContent=_t('auth_reg_ok');setTimeout(()=>switchTab('scopri'),900);}
+      } else if(j.token){localStorage.setItem('matter_token',j.token);localStorage.setItem('matter_email',email);_trackFunnel('signup');aggiornaTopbarLogin();msg.className='auth-msg ok';msg.textContent=_t('auth_reg_ok');setTimeout(()=>switchTab('scopri'),900);}
     } else {
       msg.className='auth-msg err';msg.textContent=j.errore||'Registrazione non riuscita.';
     }
@@ -2913,6 +2946,8 @@ function _analizzaProfiloMenu(voci){
 function _mostraProfiloMenu(){
   var voci = _mbVoci || [];
   var pr = _analizzaProfiloMenu(voci);
+  _trackFunnel('photo_menu', {voci: pr.totVoci, ingredienti: pr.totIngredienti});
+  if(!window._ahaTracked){ window._ahaTracked=true; _trackFunnel('activation', {via:'foto_menu'}); }
   var ov = document.getElementById('menu-profilo');
   // costruisco l'overlay una volta sola
   if(!ov){
@@ -3463,6 +3498,7 @@ function mostraNotificaTrial(rimaste){
   setTimeout(()=>{if(b.parentNode)b.remove();},5000);
 }
 function mostraPopupPro(motivo){
+  _trackFunnel('paywall_hit', {motivo: motivo||'?'});
   const old=document.querySelector('.trial-popup-overlay');if(old)old.remove();
   // Mostra popup solo nella tab Chiedi per motivazioni chat
   if(motivo === 'ultima_chat' || motivo === 'esaurito') {
@@ -3865,6 +3901,8 @@ function confrontaMirino(boxId){
   var inp = document.getElementById('mirino-val-'+boxId);
   var val = parseFloat((inp.value||'').replace(',','.'));
   if(isNaN(val)) { inp.focus(); return; }
+  // Aha Moment: primo uso reale del Mirino (una volta per sessione)
+  if(!window._ahaTracked){ window._ahaTracked=true; _trackFunnel('activation', {via:'mirino'}); }
   var r = box._range, sc = box._scale;
   var dentro = val >= r.min && val <= r.max;
   var pCursore = Math.max(0, Math.min(100, ((val - sc.lo)/(sc.hi-sc.lo))*100));

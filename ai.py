@@ -536,6 +536,55 @@ def fenomeni_suggeriti(db):
     return [{"id": r["id"], "nome": r["name"], "dominio": r["domain"],
              "target": _numero_bersaglio(_dati(r["data"]))} for r in rows]
 
+def log_funnel(evento, user_id=None, email=None, meta=None, utm=None):
+    """Traccia gli eventi del FUNNEL di conversione (distinti dall'uso in log_domande).
+    Eventi canonici: 'signup', 'activation' (Aha Moment), 'paywall_hit', 'checkout', 'paid', 'churn'.
+    - user_id/email: chi (email hashata a monte se serve privacy; qui accetta l'id utente)
+    - meta: dict JSON con dettagli (es. quale feature ha dato l'Aha, quale paywall)
+    - utm: dict con source/medium/campaign/content per l'attribuzione content→paid
+    Base per i KPI del pannello: conversione, retention, content→paid. Silenzioso se il DB non c'è."""
+    if not DATABASE_URL:
+        return None
+    try:
+        import json as _json
+        conn = _get_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS funnel_eventi (
+                id SERIAL PRIMARY KEY,
+                ts TIMESTAMPTZ DEFAULT NOW(),
+                evento TEXT NOT NULL,
+                user_id TEXT,
+                email TEXT,
+                meta JSONB,
+                utm_source TEXT, utm_medium TEXT, utm_campaign TEXT, utm_content TEXT
+            )
+        """)
+        # indici per le query del pannello (idempotenti)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_funnel_evento ON funnel_eventi(evento)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_funnel_ts ON funnel_eventi(ts)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_funnel_user ON funnel_eventi(user_id)")
+        u = utm or {}
+        cur.execute("""
+            INSERT INTO funnel_eventi
+              (evento, user_id, email, meta, utm_source, utm_medium, utm_campaign, utm_content)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id
+        """, (
+            evento[:40],
+            str(user_id)[:80] if user_id else None,
+            (email or "")[:160] or None,
+            _json.dumps(meta) if meta else None,
+            (u.get("source") or "")[:80] or None,
+            (u.get("medium") or "")[:80] or None,
+            (u.get("campaign") or "")[:120] or None,
+            (u.get("content") or "")[:120] or None,
+        ))
+        fid = cur.fetchone()[0]
+        conn.commit(); cur.close(); _release_conn(conn)
+        return fid
+    except Exception:
+        return None
+
 def log_evento(tipo, domanda, fenomeni=None, esito=None):
     """Log minimo per osservabilità. Ritorna id del log per feedback (AC5)."""
     if not DATABASE_URL:

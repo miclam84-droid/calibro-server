@@ -1968,3 +1968,106 @@ def admin_diag_profilo():
         except Exception: pass
         out["query_colonna"] = "CRASH: " + repr(e)[:200]
     return jsonify(out)
+
+
+# ══════════════════════════════════════════════════════════════════
+# FUNNEL / KPI — tracking eventi di conversione + dashboard read-only
+# Base per il pannello di controllo. Registra da subito così al lancio c'è storico.
+# ══════════════════════════════════════════════════════════════════
+
+@bp.route("/v1/funnel/track", methods=["POST"])
+def funnel_track():
+    """Riceve un evento del funnel dal frontend e lo registra.
+    Body JSON: {evento, user_id?, email?, meta?, utm?{source,medium,campaign,content}}
+    Eventi canonici: signup, activation, paywall_hit, checkout, paid, churn.
+    Pubblico ma rate-limited: il frontend lo chiama nei momenti chiave del funnel."""
+    from flask import request as _rq, jsonify as _js
+    from ai import log_funnel
+    _ip = _rq.headers.get("X-Forwarded-For", _rq.remote_addr or "?").split(",")[0].strip()
+    if not _check_rate_limit(_ip):
+        return _js({"ok": False, "errore": "rate_limit"}), 429
+    d = request.get_json(silent=True) or {}
+    evento = (d.get("evento") or "").strip()
+    CANONICI = {"signup", "activation", "paywall_hit", "checkout", "paid", "churn",
+                "landing_view", "trial_start", "photo_menu", "mirino_use"}
+    if evento not in CANONICI:
+        return jsonify({"ok": False, "errore": "evento_non_valido"}), 400
+    fid = log_funnel(
+        evento,
+        user_id=d.get("user_id"),
+        email=d.get("email"),
+        meta=d.get("meta"),
+        utm=d.get("utm"),
+    )
+    return jsonify({"ok": True, "id": fid})
+
+
+@bp.route("/admin/kpi")
+def admin_kpi():
+    """Dashboard KPI read-only (base del pannello). /admin/kpi?s=SECRET&giorni=30
+    Restituisce conteggi per evento, conversioni tra stadi, e content→paid via UTM.
+    NON scrive nulla: sola lettura. Il pannello front-end consumerà questo JSON."""
+    import os as _os
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+    if not DATABASE_URL:
+        return jsonify({"ok": True, "nota": "no db"})
+    try:
+        giorni = int(request.args.get("giorni", 30))
+    except Exception:
+        giorni = 30
+    giorni = max(1, min(giorni, 365))
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        # la tabella potrebbe non esistere ancora (nessun evento registrato)
+        cur.execute("SELECT to_regclass('funnel_eventi')")
+        if not cur.fetchone()[0]:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "vuoto": True, "nota": "nessun evento ancora registrato"})
+        # 1. conteggio per evento nel periodo
+        cur.execute("""
+            SELECT evento, COUNT(*) FROM funnel_eventi
+            WHERE ts > NOW() - (%s || ' days')::interval
+            GROUP BY evento
+        """, (giorni,))
+        per_evento = {r[0]: r[1] for r in cur.fetchall()}
+        # 2. utenti unici per stadio (conversione del funnel)
+        cur.execute("""
+            SELECT evento, COUNT(DISTINCT COALESCE(user_id, email)) FROM funnel_eventi
+            WHERE ts > NOW() - (%s || ' days')::interval AND (user_id IS NOT NULL OR email IS NOT NULL)
+            GROUP BY evento
+        """, (giorni,))
+        unici = {r[0]: r[1] for r in cur.fetchall()}
+        # 3. content→paid: paganti per campagna/contenuto UTM
+        cur.execute("""
+            SELECT COALESCE(utm_campaign,'(nessuna)'), COALESCE(utm_content,'(nessuno)'), COUNT(*)
+            FROM funnel_eventi
+            WHERE evento='paid' AND ts > NOW() - (%s || ' days')::interval
+            GROUP BY utm_campaign, utm_content ORDER BY COUNT(*) DESC LIMIT 20
+        """, (giorni,))
+        content_paid = [{"campagna": r[0], "contenuto": r[1], "paganti": r[2]} for r in cur.fetchall()]
+        cur.close(); _release_conn(conn)
+        # conversioni chiave (guardrail: evita divisione per zero)
+        def _pct(a, b): return round(100.0 * a / b, 1) if b else None
+        sign = unici.get("signup", 0)
+        act = unici.get("activation", 0)
+        pw = unici.get("paywall_hit", 0)
+        paid = unici.get("paid", 0)
+        conversioni = {
+            "signup_to_activation_pct": _pct(act, sign),
+            "activation_to_paywall_pct": _pct(pw, act),
+            "paywall_to_paid_pct": _pct(paid, pw),
+            "signup_to_paid_pct": _pct(paid, sign),
+        }
+        return jsonify({
+            "ok": True,
+            "periodo_giorni": giorni,
+            "eventi_totali": per_evento,
+            "utenti_unici_per_stadio": unici,
+            "conversioni": conversioni,
+            "content_to_paid": content_paid,
+        })
+    except Exception as e:
+        try: conn.rollback(); _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)}), 500
