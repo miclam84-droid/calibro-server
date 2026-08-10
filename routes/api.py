@@ -2071,3 +2071,129 @@ def admin_kpi():
         try: conn.rollback(); _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)}), 500
+
+
+# ══════════════════════════════════════════════════════════════════
+# GRAPH COVERAGE SCORE — diagnostica del grafo (profondità + ampiezza)
+# Read-only. Misura quanto è coperta ogni disciplina: base decisionale
+# per sapere DOVE il grafo è debole, sia in profondità che in ampiezza.
+# ══════════════════════════════════════════════════════════════════
+
+@bp.route("/admin/coverage")
+def admin_coverage():
+    """Graph Coverage Score. /admin/coverage?s=SECRET
+    Analizza il grafo reale (nodes+edges) e restituisce, per disciplina:
+    fenomeni, prodotti, tecniche, errori, densità di connessioni, e i buchi
+    (fenomeni senza prodotti collegati, prodotti orfani, target mancanti).
+    Non scrive nulla."""
+    import os as _os
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+    if not DATABASE_URL:
+        return jsonify({"ok": True, "nota": "no db"})
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("SELECT to_regclass('nodes')")
+        if not cur.fetchone()[0]:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "vuoto": True, "nota": "grafo non presente"})
+
+        # 1. conteggio nodi per tipo
+        cur.execute("SELECT type, COUNT(*) FROM nodes GROUP BY type")
+        nodi_per_tipo = {r[0]: r[1] for r in cur.fetchall()}
+
+        # 2. nodi per dominio × tipo (la mappa disciplina × copertura)
+        cur.execute("SELECT COALESCE(domain,'(nessuno)'), type, COUNT(*) FROM nodes GROUP BY domain, type")
+        per_dominio = {}
+        for dom, tp, n in cur.fetchall():
+            per_dominio.setdefault(dom, {})[tp] = n
+
+        # 3. archi per relazione
+        cur.execute("SELECT relation, COUNT(*) FROM edges GROUP BY relation ORDER BY COUNT(*) DESC")
+        archi_per_relazione = {r[0]: r[1] for r in cur.fetchall()}
+        cur.execute("SELECT COUNT(*) FROM edges")
+        archi_totali = cur.fetchone()[0]
+
+        # 4. densità: archi / nodi (quanto è connesso il grafo)
+        n_nodi = sum(nodi_per_tipo.values())
+        densita = round(archi_totali / n_nodi, 2) if n_nodi else 0
+
+        # 5. BUCHI — fenomeni senza prodotti collegati (si_manifesta_in)
+        cur.execute("""
+            SELECT n.id, n.name FROM nodes n
+            WHERE n.type='Fenomeno' AND NOT EXISTS (
+                SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='si_manifesta_in')
+            ORDER BY n.name
+        """)
+        fenomeni_orfani = [{"id": r[0], "nome": r[1]} for r in cur.fetchall()]
+
+        # 6. BUCHI — fenomeni senza numero-bersaglio nel data (regola di partizione)
+        cur.execute("""
+            SELECT id, name FROM nodes
+            WHERE type='Fenomeno'
+              AND (data->>'numero_bersaglio' IS NULL OR data->>'numero_bersaglio'='')
+            ORDER BY name
+        """)
+        fenomeni_senza_target = [{"id": r[0], "nome": r[1]} for r in cur.fetchall()]
+
+        # 7. COVERAGE per disciplina: fenomeni collegati a prodotti di quel dominio
+        cur.execute("""
+            SELECT p.domain, COUNT(DISTINCT e.from_id) AS fenomeni_attivi, COUNT(*) AS connessioni
+            FROM edges e
+            JOIN nodes p ON p.id=e.to_id AND p.type='Prodotto'
+            WHERE e.relation='si_manifesta_in' AND p.domain IS NOT NULL
+            GROUP BY p.domain ORDER BY connessioni DESC
+        """)
+        coverage_disciplina = [
+            {"disciplina": r[0], "fenomeni_collegati": r[1], "connessioni": r[2]}
+            for r in cur.fetchall()
+        ]
+
+        # 8. prodotti per dominio (ampiezza)
+        cur.execute("SELECT COALESCE(domain,'(nessuno)'), COUNT(*) FROM nodes WHERE type='Prodotto' GROUP BY domain ORDER BY COUNT(*) DESC")
+        prodotti_per_dominio = [{"disciplina": r[0], "prodotti": r[1]} for r in cur.fetchall()]
+
+        cur.close(); _release_conn(conn)
+
+        # SCORE sintetico per disciplina: combina ampiezza (prodotti) e profondità (connessioni)
+        prod_map = {d["disciplina"]: d["prodotti"] for d in prodotti_per_dominio}
+        conn_map = {d["disciplina"]: d["connessioni"] for d in coverage_disciplina}
+        fen_map = {d["disciplina"]: d["fenomeni_collegati"] for d in coverage_disciplina}
+        discipline = sorted(set(list(prod_map.keys()) + list(conn_map.keys())))
+        score = []
+        for d in discipline:
+            if d == "(nessuno)": continue
+            prodotti = prod_map.get(d, 0)
+            connessioni = conn_map.get(d, 0)
+            fenomeni = fen_map.get(d, 0)
+            # densità applicativa: connessioni per prodotto (quanto è "spiegato" ogni prodotto)
+            dens_app = round(connessioni / prodotti, 2) if prodotti else 0
+            score.append({
+                "disciplina": d,
+                "prodotti": prodotti,              # ampiezza
+                "fenomeni_collegati": fenomeni,    # profondità (varietà)
+                "connessioni": connessioni,        # profondità (densità)
+                "densita_applicativa": dens_app,   # connessioni/prodotto
+            })
+        score.sort(key=lambda x: x["connessioni"], reverse=True)
+
+        return jsonify({
+            "ok": True,
+            "sintesi": {
+                "nodi_totali": n_nodi,
+                "archi_totali": archi_totali,
+                "densita_grafo": densita,
+                "nodi_per_tipo": nodi_per_tipo,
+            },
+            "score_per_disciplina": score,
+            "archi_per_relazione": archi_per_relazione,
+            "buchi": {
+                "fenomeni_senza_prodotti": fenomeni_orfani,
+                "fenomeni_senza_numero_bersaglio": fenomeni_senza_target,
+            },
+            "dettaglio_nodi_per_disciplina": per_dominio,
+        })
+    except Exception as e:
+        try: conn.rollback(); _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)}), 500
