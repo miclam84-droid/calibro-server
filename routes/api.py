@@ -2422,3 +2422,68 @@ def admin_tecniche_diag():
         try: conn.rollback(); _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/collega-tecniche", methods=["POST","GET"])
+def admin_collega_tecniche():
+    """Collega i fenomeni bar alle tecniche (relazione realizzato_da).
+    Archi definiti nel codice = sicuro. Idempotente. Ogni arco ha una nota causale.
+    /admin/collega-tecniche?s=SECRET&gruppo=bar"""
+    import os as _os, json as _json
+    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+        return jsonify({"errore": "non autorizzato"}), 403
+    gruppo = request.args.get("gruppo", "bar")
+
+    # (fenomeno, tecnica, nota) — abbinamenti tecnici verificati sui dati reali
+    ARCHI_TEC = {
+        "bar": [
+            ("fen-diluizione","tec-shake","Lo shake diluisce del 20-28% raffreddando a -4/-6°C"),
+            ("fen-diluizione","tec-stir","Lo stir diluisce del 15-22%, più controllato dello shake"),
+            ("fen-ghiaccio-cocktail","tec-shake","Il ghiaccio nello shake: 10-15s, diluizione 20-25%"),
+            ("fen-ghiaccio-cocktail","tec-stir","Il ghiaccio nello stir: 30-45s, diluizione 15-18%"),
+            ("fen-batch-cocktail","tec-stir","Il batch replica la diluizione dello stir pre-calcolata"),
+            ("fen-clarificazione-cocktail","tec-milk-punch","Milk punch: clarificazione al latte, NTU finale <10"),
+            ("fen-clarificazione-cocktail","tec-chiarifica","Chiarifica con agar 0.3-0.5g/L, gel a 4°C"),
+            ("fen-fat-washing","tec-fat-washing-tecnica","Fat washing: ratio grasso/spirito 1:4-1:6, contatto 20-25°C"),
+            ("fen-infusione","tec-macerazione","Infusione/macerazione: fredda 24-72h o calda 50-60°C"),
+            ("fen-cold-brew","tec-macerazione","Cold brew: macerazione a freddo prolungata 12-24h"),
+            ("fen-estrazione-polifenoli","tec-macerazione","Estrazione polifenoli per macerazione 7-21 giorni"),
+            ("fen-texture-agents","tec-shake","Dry shake 10-15s per la schiuma proteica (albume/aquafaba)"),
+            ("fen-pressione","tec-carbonatazione-tecnica","Carbonatazione: 2-4 bar per i sodati custom"),
+            ("fen-rifermentazione","tec-carbonatazione-tecnica","Rifermentazione: pressione 4.5-6.5 atm in bottiglia"),
+            ("fen-chiarificazione","tec-chiarifica","Chiarifica e stabilizzazione: NTU <5 brillante, <1 cristallino"),
+            ("fen-isomerizzazione-luppolo","tec-mash","Isomerizzazione in bollitura del mash: 8-100 IBU secondo stile"),
+            ("fen-dry-hopping","tec-dry-hopping-tecnica","Dry hopping 2-10g/L a freddo 2-12°C per 7-14 giorni"),
+            ("fen-lagering","tec-lagerizzazione","Lagerizzazione: maturazione a freddo 0-4°C, 4-12 settimane"),
+            ("fen-fermentazione-alta-bassa","tec-lagerizzazione","Bassa fermentazione (lager) matura a freddo"),
+            ("fen-macerazione" if False else "fen-maturazione-legno","tec-macerazione","Maturazione ed estrazione dal legno per contatto prolungato"),
+            ("fen-fermentazione-acetica","tec-fermentazione-lattica","Fermentazione acetica: processo fermentativo controllato (5-8% acido acetico)"),
+            ("fen-malolattica","tec-fermentazione-lattica","Malolattica: conversione acido malico→lattico"),
+            ("fen-solubilita","tec-cottura-zucchero","Solubilità zuccheri: sciroppi (saccarosio 200g/100ml a 20°C)"),
+            ("fen-cristallizzazione-ghiaccio","tec-shake","Cristallizzazione del ghiaccio in miscelazione: cristalli <50 micron"),
+        ],
+    }
+    archi = ARCHI_TEC.get(gruppo, [])
+    if not archi:
+        return jsonify({"errore": f"gruppo '{gruppo}' non definito", "gruppi": list(ARCHI_TEC.keys())}), 400
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        inseriti, saltati, mancanti = 0, 0, []
+        for fen, tec, nota in archi:
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE id IN (%s,%s)", (fen, tec))
+            if cur.fetchone()[0] != 2:
+                mancanti.append({"fenomeno": fen, "tecnica": tec}); continue
+            cur.execute("""
+                INSERT INTO edges (from_id, to_id, relation, data)
+                VALUES (%s, %s, 'realizzato_da', %s)
+                ON CONFLICT (from_id, to_id, relation) DO NOTHING
+            """, (fen, tec, _json.dumps({"nota": nota})))
+            if cur.rowcount > 0: inseriti += 1
+            else: saltati += 1
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "gruppo": gruppo, "inseriti": inseriti,
+                        "gia_presenti": saltati, "nodi_mancanti": mancanti})
+    except Exception as e:
+        try: conn.rollback(); _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)}), 500
