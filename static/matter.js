@@ -2926,20 +2926,33 @@ function apriAnteprima(menu){
     return `<div class="ma-voce"><div class="ma-voce-nome">${_esc(v.nome)}${sigillo}</div>${ingr?`<div class="ma-voce-desc">${_esc(ingr)}</div>`:''}</div>`;
   }).join('');
   document.getElementById('ma-render').className = 'ma-render tpl-'+tpl;
+  // blocco allergeni (Reg. UE 1169/2011): derivato dagli ingredienti, con avviso di verifica
+  var allMenu = (typeof allergeniMenu==='function') ? allergeniMenu(voci) : [];
+  var bloccoAllergeni = allMenu.length
+    ? `<div class="ma-allergeni">
+         <div class="ma-allergeni-tit">Allergeni presenti nel menù</div>
+         <div class="ma-allergeni-lista">${allMenu.map(function(a){return '<span class="ma-allerg">'+numeroAllergene(a)+' · '+_esc(a)+'</span>';}).join('')}</div>
+         <div class="ma-allergeni-avviso">Rilevati automaticamente dagli ingredienti. Verifica sempre la composizione effettiva e le informazioni del fornitore (contaminazioni, sostituzioni, ingredienti composti).</div>
+       </div>`
+    : '';
   document.getElementById('ma-render').innerHTML =
     `<div class="ma-head"><div class="ma-locale">${_esc(menu.locale||'Il tuo locale')}</div>
      <div class="ma-nome">${_esc(menu.nome||'Drink List')}</div></div>
      <div class="ma-voci">${corpoCliente}</div>
+     ${bloccoAllergeni}
      <div class="ma-foot">Verificato da Matter</div>`;
   // VISTA STAFF: scheda di linea coi numeri-bersaglio
   const corpoStaff = voci.map(v=>{
     const ingr = (v.ingredienti && v.ingredienti.length) ? v.ingredienti.join(' · ') : '—';
     const tgt = v.target ? `<div class="mas-voce-target">TARGET · ${_esc(v.target)}</div>` : '';
     const stato = v.stato==='verified' ? '<span class="mas-verif">✓ verificato al banco</span>' : '<span class="mas-nonverif">da verificare</span>';
+    var av = (typeof derivaAllergeni==='function') ? derivaAllergeni(v.ingredienti||[]).allergeni : [];
+    const allerg = av.length ? `<div class="mas-voce-allerg">Allergeni: ${av.map(function(a){return numeroAllergene(a)+' '+_esc(a);}).join(' · ')}</div>` : '';
     return `<div class="mas-voce">
       <div class="mas-voce-nome">${_esc(v.nome)} ${stato}</div>
       <div class="mas-voce-ing">${_esc(ingr)}</div>
       ${tgt}
+      ${allerg}
     </div>`;
   }).join('');
   document.getElementById('mas-render').innerHTML =
@@ -2960,6 +2973,87 @@ function _maSwitchVista(v){
   document.body.setAttribute('data-print-vista', v);
 }
 function chiudiAnteprima(){ document.getElementById('menu-anteprima').classList.add('hidden'); caricaMenuSalvati(); }
+
+// ── MOTORE ALLERGENI (Reg. UE 1169/2011) ──────────────────────────────
+// Deriva i 14 allergeni obbligatori dagli ingredienti del menù. Deterministico, zero AI.
+// Mappa ingrediente(IT, lowercase, senza accenti) → allergene UE. Match su parola intera/inclusione.
+var _ALLERGENI_MAP = {
+  // Glutine
+  'glutine':'Glutine','farina':'Glutine','frumento':'Glutine','grano':'Glutine','pane':'Glutine','pasta':'Glutine',
+  'orzo':'Glutine','segale':'Glutine','avena':'Glutine','farro':'Glutine','couscous':'Glutine','bulgur':'Glutine',
+  'pangrattato':'Glutine','birra':'Glutine','malto':'Glutine','seitan':'Glutine','biscotto':'Glutine','impasto':'Glutine',
+  // Crostacei
+  'gambero':'Crostacei','gamberi':'Crostacei','gamberetto':'Crostacei','scampo':'Crostacei','scampi':'Crostacei',
+  'aragosta':'Crostacei','granchio':'Crostacei','astice':'Crostacei','mazzancolla':'Crostacei','crostacei':'Crostacei',
+  // Uova
+  'uovo':'Uova','uova':'Uova','tuorlo':'Uova','albume':'Uova','maionese':'Uova','frittata':'Uova','meringa':'Uova',
+  // Pesce
+  'pesce':'Pesce','tonno':'Pesce','salmone':'Pesce','acciuga':'Pesce','acciughe':'Pesce','alice':'Pesce','alici':'Pesce',
+  'baccala':'Pesce','merluzzo':'Pesce','branzino':'Pesce','orata':'Pesce','sgombro':'Pesce','colatura':'Pesce','bottarga':'Pesce',
+  // Arachidi
+  'arachide':'Arachidi','arachidi':'Arachidi','burro di arachidi':'Arachidi','noccioline':'Arachidi',
+  // Soia
+  'soia':'Soia','tofu':'Soia','edamame':'Soia','tempeh':'Soia','salsa di soia':'Soia','miso':'Soia',
+  // Latte
+  'latte':'Latte','burro':'Latte','panna':'Latte','formaggio':'Latte','mozzarella':'Latte','parmigiano':'Latte',
+  'pecorino':'Latte','ricotta':'Latte','mascarpone':'Latte','yogurt':'Latte','gorgonzola':'Latte','stracciatella':'Latte',
+  'grana':'Latte','provola':'Latte','scamorza':'Latte','fontina':'Latte','caciocavallo':'Latte','gelato':'Latte','besciamella':'Latte',
+  // Frutta a guscio
+  'mandorla':'Frutta a guscio','mandorle':'Frutta a guscio','nocciola':'Frutta a guscio','nocciole':'Frutta a guscio',
+  'noce':'Frutta a guscio','noci':'Frutta a guscio','pistacchio':'Frutta a guscio','pistacchi':'Frutta a guscio',
+  'anacardo':'Frutta a guscio','anacardi':'Frutta a guscio','pinoli':'Frutta a guscio','pinolo':'Frutta a guscio','noce pecan':'Frutta a guscio',
+  // Sedano
+  'sedano':'Sedano',
+  // Senape
+  'senape':'Senape','mostarda':'Senape',
+  // Sesamo
+  'sesamo':'Sesamo','tahina':'Sesamo','tahini':'Sesamo','gomasio':'Sesamo',
+  // Solfiti
+  'vino':'Solfiti','aceto':'Solfiti','aceto balsamico':'Solfiti','frutta secca':'Solfiti',
+  // Lupini
+  'lupini':'Lupini','lupino':'Lupini',
+  // Molluschi
+  'cozza':'Molluschi','cozze':'Molluschi','vongola':'Molluschi','vongole':'Molluschi','calamaro':'Molluschi','calamari':'Molluschi',
+  'polpo':'Molluschi','seppia':'Molluschi','seppie':'Molluschi','ostrica':'Molluschi','ostriche':'Molluschi','totano':'Molluschi','moscardino':'Molluschi',
+};
+var _ALLERGENI_ORDINE = ['Glutine','Crostacei','Uova','Pesce','Arachidi','Soia','Latte','Frutta a guscio','Sedano','Senape','Sesamo','Solfiti','Lupini','Molluschi'];
+
+function _normAllerg(s){
+  return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+}
+// Deriva gli allergeni da una lista di ingredienti (stringhe). Ritorna {allergeni:[], perIngrediente:{}}
+function derivaAllergeni(ingredienti){
+  var trovati = [];
+  var perIng = {};
+  (ingredienti||[]).forEach(function(ing){
+    var n = _normAllerg(ing);
+    if(!n) return;
+    for(var chiave in _ALLERGENI_MAP){
+      // match se la chiave è parola intera o compare nell'ingrediente
+      var re = new RegExp('(^|\\s|\\b)'+chiave.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|\\b|\\s|$)');
+      if(n===chiave || re.test(n) || n.indexOf(chiave)>=0){
+        var a = _ALLERGENI_MAP[chiave];
+        if(trovati.indexOf(a)<0) trovati.push(a);
+        (perIng[ing] = perIng[ing]||[]).push(a);
+      }
+    }
+  });
+  // ordino secondo la lista UE
+  trovati.sort(function(a,b){ return _ALLERGENI_ORDINE.indexOf(a)-_ALLERGENI_ORDINE.indexOf(b); });
+  return {allergeni:trovati, perIngrediente:perIng};
+}
+// Riepilogo allergeni per l'intero menù (tutte le voci)
+function allergeniMenu(voci){
+  var tutti = [];
+  (voci||[]).forEach(function(v){
+    var r = derivaAllergeni(v.ingredienti||[]);
+    r.allergeni.forEach(function(a){ if(tutti.indexOf(a)<0) tutti.push(a); });
+  });
+  tutti.sort(function(a,b){ return _ALLERGENI_ORDINE.indexOf(a)-_ALLERGENI_ORDINE.indexOf(b); });
+  return tutti;
+}
+// Numero UE dell'allergene (1-14) per la convenzione "Allergeni: 1 · 3 · 7"
+function numeroAllergene(nome){ return _ALLERGENI_ORDINE.indexOf(nome)+1; }
 
 function esportaMenu(){
   // export PDF = Pro (paywall)

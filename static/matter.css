@@ -1437,3 +1437,11 @@ a:focus-visible,input:focus-visible{
 @media (prefers-reduced-motion: reduce){
   .menu-cat:active,.mf-prop:active,.mf-tec-card:active,.disc-card:active,.les-card:active{transform:none}
 }
+
+/* Blocco allergeni nel menù (Reg. UE 1169/2011) */
+.ma-allergeni{margin-top:22px;padding-top:16px;border-top:1px solid rgba(0,0,0,.12)}
+.ma-allergeni-tit{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px}
+.ma-allergeni-lista{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ma-allerg{font-family:var(--sans);font-size:12px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.05);color:var(--ink)}
+.ma-allergeni-avviso{font-family:var(--sans);font-size:10.5px;line-height:1.4;color:var(--ink-muted);font-style:italic}
+.mas-voce-allerg{font-family:var(--sans);font-size:11px;color:var(--ink-muted);margin-top:3px}

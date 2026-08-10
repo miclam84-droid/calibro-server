@@ -1747,6 +1747,74 @@ def foto_analisi():
         return jsonify({"errore": str(e), "trace": tb[-600:]}), 500
 
 
+# ── 14 allergeni obbligatori UE (Reg. 1169/2011) — mappa tag OFF → nome IT ──
+_ALLERGENI_UE = {
+    "gluten":"Glutine", "crustaceans":"Crostacei", "eggs":"Uova", "fish":"Pesce",
+    "peanuts":"Arachidi", "soybeans":"Soia", "milk":"Latte", "nuts":"Frutta a guscio",
+    "celery":"Sedano", "mustard":"Senape", "sesame-seeds":"Sesamo", "sulphur-dioxide-and-sulphites":"Solfiti",
+    "lupin":"Lupini", "molluscs":"Molluschi",
+}
+
+def _mappa_allergeni_off(tags):
+    """Converte i tag allergeni di Open Food Facts (es. 'en:milk') nei 14 nomi UE in italiano.
+    Deterministico: nessuna AI. Ritorna lista ordinata di nomi IT riconosciuti."""
+    out = []
+    for t in (tags or []):
+        chiave = t.split(":")[-1].strip().lower() if ":" in t else t.strip().lower()
+        nome = _ALLERGENI_UE.get(chiave)
+        if nome and nome not in out:
+            out.append(nome)
+    return out
+
+@bp.route("/v1/menu/barcode/<codice>", methods=["GET"])
+def barcode_lookup(codice):
+    """Scan codice a barre → prodotto confezionato via Open Food Facts.
+    Deterministico e GRATIS (nessuna AI, nessuna chiave): riconosce prodotti di dispensa
+    senza chiamata Vision. Restituisce nome, ingredienti, allergeni UE.
+    Fonte: Open Food Facts (ODbL, uso commerciale consentito con attribuzione)."""
+    import urllib.request, urllib.error
+    codice = "".join(ch for ch in (codice or "") if ch.isdigit())
+    if not (8 <= len(codice) <= 14):
+        return jsonify({"errore": "codice a barre non valido"}), 400
+    # solo i campi che servono (riduce il payload, come raccomanda OFF)
+    campi = "product_name,product_name_it,brands,ingredients_text,ingredients_text_it,allergens_tags,image_front_small_url"
+    url = f"https://world.openfoodfacts.org/api/v2/product/{codice}?fields={campi}"
+    req = urllib.request.Request(url, headers={"User-Agent": "MatterLab/1.0 (matterlab.app) - contact via app"})
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            data = json.loads(resp.read().decode("utf-8", "ignore"))
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return jsonify({"trovato": False, "codice": codice,
+                            "messaggio": "Prodotto non in Open Food Facts. Inseriscilo a mano."}), 200
+        return jsonify({"errore": f"Open Food Facts non raggiungibile ({e.code})"}), 502
+    except Exception:
+        return jsonify({"errore": "Open Food Facts non raggiungibile. Riprova o inserisci a mano."}), 502
+
+    # status 0 = codice valido ma prodotto assente (OFF risponde 200 anche in questo caso)
+    if not data or data.get("status") == 0 or not data.get("product"):
+        return jsonify({"trovato": False, "codice": codice,
+                        "messaggio": "Prodotto non trovato. Inseriscilo a mano."}), 200
+
+    p = data["product"]
+    nome = (p.get("product_name_it") or p.get("product_name") or "").strip()
+    marca = (p.get("brands") or "").split(",")[0].strip()
+    ingredienti_txt = (p.get("ingredients_text_it") or p.get("ingredients_text") or "").strip()
+    allergeni = _mappa_allergeni_off(p.get("allergens_tags"))
+    return jsonify({
+        "trovato": True,
+        "codice": codice,
+        "nome": nome or (marca or "Prodotto senza nome"),
+        "marca": marca,
+        "ingredienti_testo": ingredienti_txt,
+        "allergeni": allergeni,
+        "immagine": p.get("image_front_small_url", ""),
+        "fonte": "Open Food Facts",
+        # onestà: il dato è crowdsourced, non una fonte normativa
+        "avviso": "Dati da Open Food Facts. Verifica sempre la composizione effettiva.",
+    })
+
+
 @bp.route("/v1/menu/riconosci-ingredienti", methods=["POST"])
 def riconosci_ingredienti():
     """FEATURE MENÙ DA FOTO — Step 1: riconoscimento ingredienti.
