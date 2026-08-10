@@ -1132,7 +1132,8 @@ a:focus-visible,input:focus-visible{
 .mirino-track{display:flex;width:100%;height:14px;border-radius:999px;overflow:hidden;position:absolute;top:15px}
 .mirino-zone{height:100%}
 .mzone-low{background:var(--err-soft)}
-.mzone-target{background:var(--target-green-bg);border-left:2px solid var(--target-green);border-right:2px solid var(--target-green)}
+.mzone-target{background:var(--target-green-bg);border-left:2px solid var(--target-green);border-right:2px solid var(--target-green);transition:box-shadow .3s ease}
+.mzone-target.mzone-hit{box-shadow:0 0 0 2px var(--target-green), 0 0 12px 1px var(--target-green)}
 .mzone-high{background:var(--err-soft)}
 .mirino-target-lab{position:absolute;top:32px;font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--target-green);transform:translateX(-50%)}
 /* cursore del valore utente */

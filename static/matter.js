@@ -3564,13 +3564,26 @@ function confrontaMirino(boxId){
   else if(dentro) azione = 'Sei nel range. Puoi procedere.';
   else if(val < r.min) azione = 'Il valore è sotto il target. Interviene secondo la tecnica del fenomeno e rimisura.';
   else azione = 'Il valore è sopra il target. Interviene secondo la tecnica del fenomeno e rimisura.';
-  // aggiungo il cursore sulla barra
+  // aggiungo il cursore sulla barra — animato: nasce da sinistra e scorre alla misura
   var track = box.querySelector('.mirino-track-wrap');
   var old = box.querySelector('.mirino-cursor'); if(old) old.remove();
   var cur = document.createElement('div');
-  cur.className='mirino-cursor'; cur.style.left=pCursore+'%';
+  cur.className='mirino-cursor'; cur.style.left='0%';
   cur.innerHTML='<span class="mirino-cursor-val">'+_fmtN(val)+'</span>';
   track.appendChild(cur);
+  // forzo un reflow poi animo verso la posizione reale (transizione via CSS)
+  void cur.offsetWidth;
+  cur.style.left=pCursore+'%';
+  // se dentro il target, la zona verde fa un glow sobrio a fine corsa
+  if(dentro){
+    var zt = box.querySelector('.mzone-target');
+    if(zt){
+      setTimeout(function(){
+        zt.classList.add('mzone-hit');
+        setTimeout(function(){ zt.classList.remove('mzone-hit'); }, 900);
+      }, 380); // dopo che il cursore è arrivato
+    }
+  }
   // feedback block
   var fb = box.querySelector('.mirino-feedback'); if(fb) fb.remove();
   var div = document.createElement('div');
