@@ -10,9 +10,12 @@ from db import _get_conn, _release_conn
 
 
 def _admin_autenticato():
-    """True se la request porta un ADMIN_SECRET valido (header o query param ?s=)."""
+    """True se la request porta un ADMIN_SECRET valido (header o query param ?s=).
+    Confronto timing-safe (hmac.compare_digest) per non esporre il segreto via timing."""
+    import hmac
+    atteso = os.environ.get("ADMIN_SECRET") or ""
     secret = request.headers.get("X-Admin-Secret", "") or request.args.get("s", "")
-    return bool(os.environ.get("ADMIN_SECRET")) and secret == os.environ.get("ADMIN_SECRET")
+    return bool(atteso) and hmac.compare_digest(str(secret), str(atteso))
 
 
 def _init_account_tables():

@@ -3,7 +3,7 @@
 # assistenza, statistiche, migrazione). Auth via ADMIN_SECRET.
 # Dipende da: db, auth, contenuto, notifiche, oss, ai_gateway.
 # ============================================================
-import os, json, traceback, time
+import os, json, traceback, time, hmac
 from flask import Blueprint, request, jsonify
 
 from db import carica_grafo, _dati, _get_conn, _release_conn
@@ -19,7 +19,7 @@ bp = Blueprint("admin", __name__)
 def _fix_schede_testi():
     """Applica le correzioni ortografiche alle schede fenomeni nel DB.
     ?dry=1 -> anteprima (non scrive). Auth ADMIN_SECRET."""
-    if request.args.get("s", "") != os.environ.get("ADMIN_SECRET", ""):
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     dry = request.args.get("dry") == "1"
     db = carica_grafo()
@@ -63,7 +63,7 @@ def _fix_schede_testi():
 def _schede_export():
     """Export sola-lettura di tutte le schede fenomeni (IT/EN/ES) per revisione
     testi. Nessuna AI, veloce. Auth ADMIN_SECRET."""
-    if request.args.get("s", "") != os.environ.get("ADMIN_SECRET", ""):
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     db = carica_grafo()
     rows = db.execute("SELECT id, name, data FROM nodes").fetchall()
@@ -142,7 +142,7 @@ def quality_test():
 def admin_migrate_modello():
     """Aggiunge colonna modello a log_domande se non esiste."""
     secret = request.json.get("secret","") if request.json else ""
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"errore":"no db"}), 503
@@ -163,7 +163,7 @@ def admin_migrate_modello():
 def admin_init():
     """Inizializza le tabelle account/quaderno. Da chiamare una volta dalla Console Railway."""
     secret = request.json.get("secret","") if request.json else ""
-    if (not os.environ.get("ADMIN_SECRET")) or secret != os.environ.get("ADMIN_SECRET"):
+    if (not os.environ.get("ADMIN_SECRET")) or not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET"))):
         return jsonify({"errore":"non autorizzato"}), 403
     _init_account_tables()
     # crea anche la tabella esperimenti
@@ -195,7 +195,7 @@ def admin_init():
 def admin_update_schede():
     """Aggiorna le schede fenomeni nel DB con contenuto specifico per disciplina."""
     secret = request.args.get("s", "")
-    if secret != os.environ.get("ADMIN_SECRET", ""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
 
     # Schede aggiornate — fenomeni base con contenuto specifico
@@ -483,7 +483,7 @@ Numero bersaglio: shake 20-28% diluizione · stir 15-22% · T finale shake -2/-4
 def admin_insert_test_ricetta():
     """Inserisce una ricetta di test per mrovazzi8@gmail.com — uso singolo."""
     secret = request.args.get("s", "")
-    if secret != os.environ.get("ADMIN_SECRET", ""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     try:
         conn = _get_conn()
@@ -518,7 +518,7 @@ def admin_insert_test_ricetta():
 @bp.route("/admin/build")
 def admin_build_page():
     secret = request.args.get("s","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "<h2>Secret non valido</h2>", 403
     from flask import send_from_directory
     return send_from_directory("static", "build.html")
@@ -527,7 +527,7 @@ def admin_build_page():
 def admin_build_archi():
     """Crea archi abbinamento tra nodi Ingrediente già nel grafo."""
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     import threading
     def _run():
@@ -544,7 +544,7 @@ def admin_build_archi():
 def admin_build_targets():
     """Popola target number nei nodi Ingrediente."""
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     import threading
     def _run():
@@ -561,7 +561,7 @@ def admin_build_targets():
 def admin_debug_ingredienti():
     """Debug: mostra quanti ingredienti vede il server nel modulo."""
     secret = request.args.get("s","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     try:
         import importlib, build_ingredient_graph as BIG
@@ -579,7 +579,7 @@ def admin_build_cron():
     Alternativa: chiamarlo in loop dal browser con setInterval.
     """
     secret = request.args.get("s","") or request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL or not os.environ.get("OPENAI_API_KEY"):
         return jsonify({"ok":False,"errore":"config mancante"}), 503
@@ -639,7 +639,7 @@ def admin_build_continuo():
     Usa threading con loop interno che salva ogni ingrediente.
     """
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL or not os.environ.get("OPENAI_API_KEY"):
         return jsonify({"errore":"DATABASE_URL o OPENAI_API_KEY mancante"}), 503
@@ -716,7 +716,7 @@ def admin_build_batch():
     Body: {"n": 20, "discipline": ["cucina"]}  # opzionali
     """
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     body = request.json or {}
     n = int(body.get("n", 20))
@@ -794,7 +794,7 @@ def admin_build_ingredienti():
     Controlla lo stato con GET /admin/build-status
     """
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     
     body = request.json or {}
@@ -822,7 +822,7 @@ def admin_build_ingredienti():
 def admin_build_status():
     """Stato del dataset ingredienti."""
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"errore":"no db"}), 503
@@ -853,7 +853,7 @@ def admin_build_status():
 def admin_seed_sicurezza():
     """Esegue i seed di sicurezza alimentare nel DB Postgres."""
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"errore":"no db"}), 503
@@ -1016,7 +1016,7 @@ document.getElementById('lnk-ass').href='/admin/assistenza?s='+(p.get('s')||'');
 def admin_stats():
     """GT10 — Admin panel: statistiche base del prodotto."""
     secret = request.headers.get("X-Admin-Secret","")
-    if (not os.environ.get("ADMIN_SECRET")) or secret != os.environ.get("ADMIN_SECRET"):
+    if (not os.environ.get("ADMIN_SECRET")) or not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET"))):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"errore":"database non disponibile"}), 503
@@ -1282,7 +1282,7 @@ def admin_add_fenomeni():
     import os, json as _j
     from db import _get_conn, _release_conn
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     body = request.json or {}
     fenomeni = body.get("fenomeni", [])
@@ -1325,7 +1325,7 @@ def admin_setup_ricette():
     """Crea la tabella ricette se non esiste. Idempotente."""
     import os
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     from db import _get_conn, _release_conn
     conn=_get_conn(); ok=False
@@ -1362,7 +1362,7 @@ def admin_add_ricette():
     import os, json as _j
     from db import _get_conn, _release_conn
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     body = request.json or {}
     ricette = body.get("ricette",[])
@@ -1419,7 +1419,7 @@ def admin_test_ai():
     """Test diretto dell'AI gateway."""
     import os, traceback
     secret = request.args.get("s","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     import ai_gateway as GW
 
@@ -1471,7 +1471,7 @@ def admin_add_tecniche():
     import os, json as _j
     from db import _get_conn, _release_conn
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     body = request.json or {}
     tecniche = body.get("tecniche", [])
@@ -1530,7 +1530,7 @@ def admin_ritraduce_ricette():
     from db import _get_conn, _release_conn
     from ai import _haiku_raw
     secret = request.headers.get("X-Admin-Secret","")
-    if secret != os.environ.get("ADMIN_SECRET",""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
     body = request.json or {}
     ids = body.get("ids", [])
@@ -1571,7 +1571,7 @@ def admin_genera_ganci():
     Uso: /admin/genera-ganci?s=SECRET  (aggiungi &solo=fen-acidita per testarne uno)"""
     import ai_gateway as GW
     secret = request.args.get("s", "")
-    if secret != os.environ.get("ADMIN_SECRET", ""):
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     solo = request.args.get("solo", "")
     rigenera = request.args.get("rigenera", "") == "1"

@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify
 from db import carica_grafo, _dati, _get_conn, _release_conn
 from ai import estrai_entita, cerca_contesto, _haiku_raw
 from contenuto import _scheda_lang, _numero_bersaglio
-from utils import _profilo_default, _aggiorna_profilo
+from utils import _profilo_default, _aggiorna_profilo, _check_rate_limit
 from auth import _utente_da_token
 from config import DATABASE_URL
 import os, json
@@ -1324,6 +1324,10 @@ def menu_naming():
     """FEATURE MENÙ — nome suggerito per una voce (l'AI nomina, non inventa la scienza).
     Riceve {ingredienti:[...], disciplina, tecnica?}. Restituisce un nome breve e
     suggestivo. L'utente resta padrone: è solo una proposta pre-compilata."""
+    from flask import request as _rq, jsonify as _js
+    _ip = _rq.headers.get("X-Forwarded-For", _rq.remote_addr or "?").split(",")[0].strip()
+    if not _check_rate_limit(_ip):
+        return _js({"errore": "Troppe richieste. Attendi un momento."}), 429
     body = request.json or {}
     ingredienti = body.get("ingredienti", [])
     disciplina = (body.get("disciplina") or "").strip()
@@ -1702,6 +1706,10 @@ def foto_analisi():
     Riceve immagine multipart (campo 'immagine') o JSON con base64 (campo 'immagine_b64').
     Restituisce ingredienti riconosciuti, abbinamenti aromatici, fenomeni fisici, output AI.
     Gate: FOTO SOLO PRO (feature riservata agli abbonati, costa OpenAI Vision)."""
+    from flask import request as _rq, jsonify as _js
+    _ip = _rq.headers.get("X-Forwarded-For", _rq.remote_addr or "?").split(",")[0].strip()
+    if not _check_rate_limit(_ip):
+        return _js({"errore": "Troppe richieste. Attendi un momento."}), 429
     from utils import _e_pro
     _tok = (request.form.get("token") or request.args.get("token") or request.headers.get("X-Token","") or "")
     _uid = _utente_da_token(_tok) if _tok else None
@@ -1746,6 +1754,10 @@ def riconosci_ingredienti():
     Usa Vision in JSON Mode con schema rigido. Restituisce lista ingredienti da validare.
     Freemium: il RICONOSCIMENTO è gratis (effetto WOW). La generazione del menù sarà Pro.
     Costo contenuto: 1 chiamata Vision per foto (max 6)."""
+    from flask import request as _rq, jsonify as _js
+    _ip = _rq.headers.get("X-Forwarded-For", _rq.remote_addr or "?").split(",")[0].strip()
+    if not _check_rate_limit(_ip):
+        return _js({"errore": "Troppe richieste. Attendi un momento."}), 429
     import base64, json as _json
     # raccolgo le immagini (max 6)
     imgs = []  # lista di (bytes, media_type)

@@ -60,12 +60,22 @@ def _oss_after(resp):
         if resp.status_code>=500: oss.log_write('ERROR',request.path,None,f'HTTP {resp.status_code}',None,dur)
         elif dur>2000: oss.log_write('WARN',request.path,None,f'lento {dur}ms',None,dur)
     except Exception: pass
-    # CORS per gli endpoint pubblici /v1/ (permette chiamate cross-origin dal frontend/PWA)
+    # CORS ristretto: solo origini fidate (il dominio di produzione + sviluppo locale).
+    # Le richieste same-origin dalla PWA non passano di qui; questo blocca solo
+    # i siti terzi che tentano di consumare gli endpoint AI dal browser di un utente.
     try:
         if request.path.startswith('/v1/'):
-            resp.headers['Access-Control-Allow-Origin'] = '*'
-            resp.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-            resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Admin-Secret'
+            origin = request.headers.get('Origin', '')
+            _allow = {
+                'https://web-production-79457.up.railway.app',
+                'https://matterlab.app', 'https://www.matterlab.app',
+                'http://localhost:5001', 'http://127.0.0.1:5001',
+            }
+            if origin in _allow:
+                resp.headers['Access-Control-Allow-Origin'] = origin
+                resp.headers['Vary'] = 'Origin'
+                resp.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+                resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Admin-Secret'
     except Exception: pass
     return resp
 
@@ -1020,4 +1030,6 @@ _PREZZI_ISMEA = {
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    # debug solo se esplicitamente richiesto in locale (mai in produzione).
+    _debug = os.environ.get("FLASK_DEBUG", "").lower() in ("1", "true", "yes")
+    app.run(debug=_debug, port=5001)
