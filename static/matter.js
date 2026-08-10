@@ -1579,6 +1579,8 @@ const _strings = {
   es:{
     payoff:'Science & Craft',
     scopri:'Descubrir', lezione:'Lección', mappa:'Mapa', db_fenomeni:'Fenómenos',
+    tab_atlante:'Atlas', tab_chiedi:'Pregunta', tab_quaderno:'Cuaderno',
+    foto_analisi_titolo:'Análisis foto', foto_analisi_loading:'Reconozco ingredientes y botellas…',
     db_ingredienti:'Ingredientes',
     db_connessioni:'Conexiones aromáticas',
     db_calcolatori:'Calculadoras',

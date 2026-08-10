@@ -123,6 +123,25 @@ def _oss_teardown(exc):
             pass
 
 
+@app.errorhandler(500)
+@app.errorhandler(Exception)
+def _handle_uncaught(e):
+    """Handler globale: qualsiasi eccezione non gestita non restituisce più
+    uno stack trace crudo, ma una risposta pulita. JSON per le API, testo per il resto.
+    L'eccezione è già loggata da teardown_request."""
+    from werkzeug.exceptions import HTTPException
+    # lascio passare i 4xx voluti (404, 403, 400...) senza trasformarli
+    if isinstance(e, HTTPException) and e.code and e.code < 500:
+        return e
+    try:
+        p = request.path or ""
+    except Exception:
+        p = ""
+    if p.startswith("/v1/") or p in ("/chiedi", "/calcola", "/nodo") or p.startswith("/api/"):
+        return jsonify({"errore": "Si è verificato un problema temporaneo. Riprova tra poco."}), 500
+    return "Si è verificato un problema temporaneo. Riprova tra poco.", 500
+
+
 # ── Correzione ortografica deterministica schede (accenti + apostrofi) ──
 
 
