@@ -665,6 +665,8 @@ async function caricaLezioneStep(step){
       document.getElementById('les-principio-testo').textContent = j.principio.testo||'';
       pb.style.display='block';
     } else { pb.style.display='none'; }
+    // ═══ SCAVA — le quattro porte per andare più a fondo (longevità) ═══
+    renderScava(j.scava, j.fenomeno.nome);
     // quiz: caricato a parte (lazy), così la lezione appare subito.
     // La prima volta il server lo genera, poi è in cache e istantaneo.
     caricaQuizLezione(j.fenomeno.id);
@@ -4267,3 +4269,83 @@ async function inviaAudio(blob){
     alert('Errore di rete. Riprova.');
   });
 })();
+
+// ═══ SCAVA — motore della longevità reso visibile ═══
+// A fine scheda, quattro porte per andare più a fondo nel fenomeno.
+// Mostra SOLO le porte che hanno dati reali (niente vicoli ciechi).
+function renderScava(scava, nomeFen){
+  var box = document.getElementById('les-scava-box');
+  if(!box) return;
+  if(!scava){ box.style.display='none'; return; }
+  var porte = [];
+  // 1. ERRORI — il cuore della ritenzione (l'utente col problema risale al fenomeno)
+  if(scava.errori && scava.errori.length){
+    porte.push({
+      cls:'scava-errori', ico:'⚠',
+      tit: _L({it:'Vedi gli errori', en:'See the errors', es:'Ver los errores'}),
+      sub: scava.errori.length + ' ' + (scava.errori.length===1?
+        _L({it:'errore tipico',en:'typical error',es:'error típico'}):
+        _L({it:'errori tipici',en:'typical errors',es:'errores típicos'})),
+      dett: scava.errori.map(function(e){
+        return '<div class="scava-item"><b>'+_esc(e.nome)+'</b>'+
+               (e.sintomo?'<span>'+_esc(e.sintomo)+'</span>':'')+'</div>';
+      }).join('')
+    });
+  }
+  // 2. CONNESSIONI trasversali — la scoperta cross-disciplina (il "pozzo")
+  if(scava.connessioni && scava.connessioni.length){
+    porte.push({
+      cls:'scava-conn', ico:'⇄',
+      tit: _L({it:'Scopri una connessione', en:'Discover a connection', es:'Descubre una conexión'}),
+      sub: scava.connessioni.length + ' ' +
+        _L({it:'ponte tra discipline',en:'cross-discipline bridge',es:'puente entre disciplinas'}) +
+        (scava.connessioni.length>1?'i':''),
+      dett: scava.connessioni.map(function(c){
+        return '<div class="scava-item"><b>'+_esc(c.nome)+
+               (c.dominio?' <span class="scava-dom">'+_esc(c.dominio)+'</span>':'')+'</b>'+
+               (c.legame?'<span>'+_esc(c.legame)+'</span>':'')+'</div>';
+      }).join('')
+    });
+  }
+  // 3. TECNICHE — come si realizza
+  if(scava.tecniche && scava.tecniche.length){
+    porte.push({
+      cls:'scava-tec', ico:'⚙',
+      tit: _L({it:'Vedi la tecnica', en:'See the technique', es:'Ver la técnica'}),
+      sub: scava.tecniche.map(function(t){return t.nome;}).join(' · '),
+      dett: ''
+    });
+  }
+  // 4. STRUMENTI — con cosa si misura
+  if(scava.strumenti && scava.strumenti.length){
+    porte.push({
+      cls:'scava-strum', ico:'◎',
+      tit: _L({it:'Come si misura', en:'How to measure', es:'Cómo se mide'}),
+      sub: scava.strumenti.map(function(s){return s.nome;}).join(' · '),
+      dett: ''
+    });
+  }
+  if(!porte.length){ box.style.display='none'; return; }
+  var html = '<div class="scava-titolo">'+
+    _L({it:'Scava più a fondo',en:'Dig deeper',es:'Excava más'})+'</div>'+
+    '<div class="scava-porte">';
+  porte.forEach(function(p, i){
+    html += '<button class="scava-porta '+p.cls+'" onclick="toggleScavaPorta('+i+')">'+
+      '<span class="scava-ico">'+p.ico+'</span>'+
+      '<span class="scava-txt"><span class="scava-porta-tit">'+_esc(p.tit)+'</span>'+
+      '<span class="scava-porta-sub">'+_esc(p.sub)+'</span></span>'+
+      (p.dett?'<span class="scava-freccia">›</span>':'')+
+      '</button>'+
+      (p.dett?'<div class="scava-dett" id="scava-dett-'+i+'" style="display:none">'+p.dett+'</div>':'');
+  });
+  html += '</div>';
+  box.innerHTML = html;
+  box.style.display = 'block';
+}
+
+function toggleScavaPorta(i){
+  var d = document.getElementById('scava-dett-'+i);
+  if(!d) return;
+  var aperto = d.style.display !== 'none';
+  d.style.display = aperto ? 'none' : 'block';
+}

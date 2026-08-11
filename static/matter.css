@@ -1500,3 +1500,36 @@ a:focus-visible,input:focus-visible{
 .mp-cta{width:100%;padding:15px;background:var(--accent,#CB5A22);color:#fff;border:none;border-radius:13px;font-family:var(--sans);font-size:16px;font-weight:600;cursor:pointer;margin-bottom:9px}
 .mp-cta:active{transform:scale(.985)}
 .mp-cta-sec{width:100%;padding:13px;background:transparent;color:var(--ink-muted);border:none;font-family:var(--sans);font-size:14px;cursor:pointer}
+
+/* ═══ SCAVA — motore della longevità (le quattro porte a fine scheda) ═══ */
+.les-scava{margin:20px 0 8px}
+.scava-titolo{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;font-weight:700}
+.scava-porte{display:flex;flex-direction:column;gap:8px}
+.scava-porta{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:var(--surface);border:1px solid rgba(20,29,34,.10);border-radius:var(--radius-btn);
+  padding:13px 15px;cursor:pointer;transition:transform .12s ease,border-color .15s,box-shadow .15s;
+  box-shadow:var(--shadow-card)}
+.scava-porta:active{transform:scale(.985)}
+.scava-porta .scava-ico{font-size:18px;flex-shrink:0;width:26px;text-align:center}
+.scava-errori .scava-ico{color:#C0663B}
+.scava-conn .scava-ico{color:var(--s500)}
+.scava-tec .scava-ico{color:var(--accent)}
+.scava-strum .scava-ico{color:var(--s500)}
+.scava-txt{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.scava-porta-tit{font-family:var(--serif);font-size:14.5px;font-weight:600;color:var(--ink)}
+.scava-porta-sub{font-size:12px;color:var(--ink-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scava-conn .scava-porta-sub{white-space:normal}
+.scava-freccia{font-size:20px;color:var(--ink-muted);flex-shrink:0;opacity:.6}
+.scava-dett{padding:6px 4px 10px 40px;display:flex;flex-direction:column;gap:8px;animation:scavaOpen .2s ease-out}
+@keyframes scavaOpen{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.scava-item{font-size:13px;line-height:1.5;color:var(--ink);display:flex;flex-direction:column;gap:2px;
+  padding:8px 10px;background:var(--bg);border-radius:9px;border-left:2px solid var(--accent)}
+.scava-conn .scava-item{border-left-color:var(--s500)}
+.scava-item b{font-weight:600}
+.scava-item span{color:var(--ink-muted);font-size:12px}
+.scava-dom{font-family:var(--mono);font-size:9px;background:var(--s100);color:var(--s700);
+  padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;vertical-align:middle}
+@media (prefers-reduced-motion: reduce){
+  .scava-porta:active{transform:none}
+  .scava-dett{animation:none}
+}

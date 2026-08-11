@@ -190,6 +190,48 @@ def lezione(disciplina_nome, step):
     # apertura della lezione: quello era il collo di bottiglia. Ora la lezione
     # torna subito e il quiz si prende da /quiz/<node_id> (lazy + cache).
     quiz = None
+    # ═══ SCAVA — le ramificazioni del fenomeno (motore della longevità) ═══
+    # Quattro "porte" per andare più a fondo: errori, tecniche, connessioni, strumenti.
+    # Mostriamo solo quelle che hanno dati VERI (niente porte vuote).
+    scava = {"errori": [], "tecniche": [], "connessioni": [], "strumenti": []}
+    try:
+        _fid = nodo["id"]
+        # errori (fallisce_come): il cuore della ritenzione
+        for row in db.execute("""SELECT n.name, e.data FROM edges e
+                JOIN nodes n ON n.id=e.to_id
+                WHERE e.from_id=? AND e.relation='fallisce_come'""", (_fid,)).fetchall():
+            _d = _dati(row["data"]) if row["data"] else {}
+            scava["errori"].append({"nome": _traduci_nome(row["name"], lang),
+                                    "sintomo": _d.get("sintomo","")})
+        # tecniche (realizzato_da)
+        for row in db.execute("""SELECT n.name FROM edges e
+                JOIN nodes n ON n.id=e.to_id
+                WHERE e.from_id=? AND e.relation='realizzato_da'""", (_fid,)).fetchall():
+            scava["tecniche"].append({"nome": _traduci_nome(row["name"], lang)})
+        # connessioni trasversali (unifica): la scoperta cross-disciplina
+        for row in db.execute("""SELECT n.name, n.domain, e.data FROM edges e
+                JOIN nodes n ON n.id=e.to_id
+                WHERE e.from_id=? AND e.relation='unifica'""", (_fid,)).fetchall():
+            _d = _dati(row["data"]) if row["data"] else {}
+            scava["connessioni"].append({"nome": _traduci_nome(row["name"], lang),
+                                         "dominio": row["domain"] or "",
+                                         "legame": _d.get("legge_condivisa","")})
+        # anche i ponti in entrata (unifica verso questo fenomeno)
+        for row in db.execute("""SELECT n.name, n.domain, e.data FROM edges e
+                JOIN nodes n ON n.id=e.from_id
+                WHERE e.to_id=? AND e.relation='unifica'""", (_fid,)).fetchall():
+            _d = _dati(row["data"]) if row["data"] else {}
+            scava["connessioni"].append({"nome": _traduci_nome(row["name"], lang),
+                                         "dominio": row["domain"] or "",
+                                         "legame": _d.get("legge_condivisa","")})
+        # strumenti (controllato_con)
+        for row in db.execute("""SELECT n.name FROM edges e
+                JOIN nodes n ON n.id=e.to_id
+                WHERE e.from_id=? AND e.relation='controllato_con'""", (_fid,)).fetchall():
+            scava["strumenti"].append({"nome": _traduci_nome(row["name"], lang)})
+    except Exception:
+        pass
+
     return jsonify({
         "step": idx,
         "totale_passi": len(fenomeni),
@@ -203,6 +245,7 @@ def lezione(disciplina_nome, step):
         },
         "principio": principio,
         "quiz": quiz,
+        "scava": scava,
         "ha_precedente": idx > 0,
         "ha_successivo": idx < len(fenomeni) - 1
     })
