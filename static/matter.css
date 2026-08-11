@@ -2,25 +2,25 @@
 :root{
   /* IDENTITÀ APPROVATA (home v1-final): carta fredda, ink petrolio, arancio-ossido */
   --bg:#D4DCDC; --surface:#E3E8E8; --ink:#141D22; --ink-muted:#52626A; --border:#9AA9AB;
-  /* accento primario ricalibrato: arancio meno terroso, contrasto WCAG migliore (era #CB5A22) */
-  --e100:#F1E0D5; --e300:#E0A87E; --e500:#C2521C; --e700:#9F431F; --e900:#8A3A12;
+  /* accento primario: arancio VIVO cinabro, non più terroso (era #CB5A22 fangoso) */
+  --e100:#FBE4D5; --e300:#F0A878; --e500:#E24E12; --e700:#C0410F; --e900:#93330C;
   /* terracotta/secondario allineato all'accento */
-  --terra:#C2521C; --terra-light:#F1E0D5; --terra-dark:#9F431F;
+  --terra:#E24E12; --terra-light:#FBE4D5; --terra-dark:#C0410F;
   /* teal segnale (era simile, ora petrolio più profondo) */
   --s100:#D3E0E0; --s300:#5E9BA3; --s500:#12545D; --s700:#0D3D44;
   --cifra-graphite:#4A4E50; --cifra-p700:#15362F; --cifra-p300:#9CC9BC;
   --coffee:#141D22;
   --princ:#12545D; --princ-light:#D3E0E0; --princ-border:#5E9BA3;
-  --flavor:#C2521C; --flavor-light:#F1E0D5; --flavor-border:#E0A87E;
+  --flavor:#E24E12; --flavor-light:#F1E0D5; --flavor-border:#E0A87E;
   /* ═══ LIVELLO SEMANTICO (disciplina colore): teal=scienza, arancio=azione/bersaglio, ink=struttura ═══ */
   --science:#12545D; --science-dark:#0D3D44; --science-soft:#D3E0E0;
-  --target:#C2521C; --target-dark:#9F431F; --target-soft:#F0DDD3;
+  --target:#E24E12; --target-dark:#C0410F; --target-soft:#F0DDD3;
   --dark-card:#141D22; /* fondo card-strumento per numeri-bersaglio (firma visiva Matter) */
   /* tipografia approvata: via serif Fraunces, dentro Archivo Expanded + Space Mono */
   --sans:'Archivo',ui-sans-serif,system-ui,sans-serif;
   --serif:'Archivo Expanded','Archivo',sans-serif;
   --mono:'Space Mono',ui-monospace,monospace;
-  --paper:#D4DCDC; --paper-hi:#E3E8E8; --line-strong:#141D22; --signal:#12545D; --accent:#C2521C;
+  --paper:#D4DCDC; --paper-hi:#E3E8E8; --line-strong:#141D22; --signal:#12545D; --accent:#E24E12;
   /* variabili orfane dopo il cambio palette — mappate ai valori nuovi */
   --ivory:#E3E8E8; --teal:#12545D; --e400:#D3854F; --muted:#52626A;
   /* ═══ DESIGN SYSTEM v2 — "premium scientific instrument": morbido fuori, preciso dentro ═══ */
@@ -100,7 +100,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .disc-item:active{transform:scale(.99);background:var(--e100)}
 .disc-item:last-child{border-bottom:var(--border-soft)}
 .disc-item.off{opacity:.45;cursor:default}
-.disc-dot{width:9px;height:9px;border-radius:50%;background:var(--e500);flex-shrink:0}
+.disc-dot{width:9px;height:9px;border-radius:50%;background:var(--science);flex-shrink:0}
 .disc-dot.dim{background:var(--border)}
 .disc-txt{flex:1}
 .disc-n{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--ink)}
@@ -825,15 +825,15 @@ a:focus-visible,input:focus-visible{
 
 /* ===== HOME SCOPRI — layout mockup approvato (05/08) ===== */
 .mtr-manifesto{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
-.mtr-manifesto-tag{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.mtr-manifesto-tag{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--science);font-weight:700}
 .mtr-manifesto-claim{font-family:var(--serif);font-weight:700;font-size:23px;line-height:1.2;color:var(--ink)}
 .mtr-manifesto-sub{font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--ink-muted)}
 
 /* GAUGE chiaro — editoriale, il numero-eroe è protagonista in arancio */
 .mtr-gauge{background:var(--paper-hi);color:var(--ink);margin:14px 16px;padding:0;position:relative;overflow:hidden;border-radius:var(--radius-card);border:var(--border-soft);box-shadow:var(--shadow-card)}
-.mtr-gauge::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--accent)}
+.mtr-gauge::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--science)}
 .mtr-gauge-top{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 0}
-.mtr-gauge-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.mtr-gauge-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--science)}
 .mtr-gauge-num-top{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--accent)}
 .mtr-gauge-titolo{font-family:var(--serif);font-weight:700;font-size:22px;color:var(--ink);padding:8px 22px 0;margin:0;line-height:1.15}
 .mtr-gauge-body{padding:8px 22px 4px}
