@@ -830,19 +830,19 @@ a:focus-visible,input:focus-visible{
 .mtr-manifesto-sub{font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--ink-muted)}
 
 /* GAUGE chiaro — editoriale, il numero-eroe è protagonista in arancio */
-.mtr-gauge{background:var(--paper-hi);color:var(--ink);margin:14px 16px;padding:0;position:relative;overflow:hidden;border-radius:var(--radius-card);border:var(--border-soft);box-shadow:var(--shadow-card)}
+.mtr-gauge{background:var(--paper-hi);color:var(--ink);margin:14px 16px;padding:16px 6px 18px;position:relative;overflow:hidden;border-radius:var(--radius-card);border:var(--border-soft);box-shadow:var(--shadow-card);display:flex;flex-direction:column}
 .mtr-gauge::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--science)}
 .mtr-gauge-top{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 0}
 .mtr-gauge-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--science)}
 .mtr-gauge-num-top{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--accent)}
 .mtr-gauge-titolo{font-family:var(--serif);font-weight:700;font-size:22px;color:var(--ink);padding:8px 22px 0;margin:0;line-height:1.15}
-.mtr-gauge-body{padding:8px 22px 4px}
+.mtr-gauge-body{padding:12px 22px 0}
 .mtr-gauge-body p{font-size:14px;color:var(--ink-muted);line-height:1.6;margin:0 0 10px}
 .mtr-gauge-num{margin:0 0 12px}
 .mtr-gauge-num .num-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--s300);margin-bottom:3px}
 .mtr-gauge-num .num-big{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
 /* CTA disciplinata: outline sobrio, non blocco arancione pieno */
-.mtr-gauge-cta{margin:8px 22px 22px;width:calc(100% - 44px);border-radius:var(--radius-btn);background:transparent;color:var(--ink);font-weight:700;border:1.5px solid var(--border);padding:13px;font-family:var(--sans);font-size:14px;cursor:pointer;transition:transform .12s ease,border-color .12s ease}
+.mtr-gauge-cta{margin:16px 22px 0;width:calc(100% - 44px);border-radius:var(--radius-btn);background:transparent;color:var(--ink);font-weight:700;border:1.5px solid var(--border);padding:13px;font-family:var(--sans);font-size:14px;cursor:pointer;transition:transform .12s ease,border-color .12s ease}
 .mtr-gauge-cta:active{transform:scale(.98)}
 .mtr-gauge-cta:hover{border-color:var(--target)}
 
@@ -1026,7 +1026,7 @@ a:focus-visible,input:focus-visible{
 .mtr-gauge-num .num-big.medio{font-size:21px}
 .mtr-gauge-num .num-big.lungo{font-size:15px;line-height:1.45}
 /* la descrizione (il perché) respira, viene prima del numero */
-.mtr-gauge-body #scopri-desc{font-size:14px;line-height:1.6;color:var(--paper-hi);opacity:.92;margin-bottom:4px}
+.mtr-gauge-body #scopri-desc{font-size:14px;line-height:1.55;color:var(--muted);margin-bottom:0}
 
 /* teatro caricamento foto — fase che avanza con puntino animato */
 .foto-loading{color:var(--ink-muted);font-size:13px;display:flex;align-items:center;gap:8px}
