@@ -2,21 +2,25 @@
 :root{
   /* IDENTITÀ APPROVATA (home v1-final): carta fredda, ink petrolio, arancio-ossido */
   --bg:#D4DCDC; --surface:#E3E8E8; --ink:#141D22; --ink-muted:#52626A; --border:#9AA9AB;
-  /* accento primario ora = arancio-ossido (era Havana gold). Nomi invariati per compatibilità */
-  --e100:#F1E0D5; --e300:#E0A87E; --e500:#CB5A22; --e700:#AE4A18; --e900:#8A3A12;
+  /* accento primario ricalibrato: arancio meno terroso, contrasto WCAG migliore (era #CB5A22) */
+  --e100:#F1E0D5; --e300:#E0A87E; --e500:#C2521C; --e700:#9F431F; --e900:#8A3A12;
   /* terracotta/secondario allineato all'accento */
-  --terra:#CB5A22; --terra-light:#F1E0D5; --terra-dark:#AE4A18;
+  --terra:#C2521C; --terra-light:#F1E0D5; --terra-dark:#9F431F;
   /* teal segnale (era simile, ora petrolio più profondo) */
   --s100:#D3E0E0; --s300:#5E9BA3; --s500:#12545D; --s700:#0D3D44;
   --cifra-graphite:#4A4E50; --cifra-p700:#15362F; --cifra-p300:#9CC9BC;
   --coffee:#141D22;
   --princ:#12545D; --princ-light:#D3E0E0; --princ-border:#5E9BA3;
-  --flavor:#CB5A22; --flavor-light:#F1E0D5; --flavor-border:#E0A87E;
+  --flavor:#C2521C; --flavor-light:#F1E0D5; --flavor-border:#E0A87E;
+  /* ═══ LIVELLO SEMANTICO (disciplina colore): teal=scienza, arancio=azione/bersaglio, ink=struttura ═══ */
+  --science:#12545D; --science-dark:#0D3D44; --science-soft:#D3E0E0;
+  --target:#C2521C; --target-dark:#9F431F; --target-soft:#F0DDD3;
+  --dark-card:#141D22; /* fondo card-strumento per numeri-bersaglio (firma visiva Matter) */
   /* tipografia approvata: via serif Fraunces, dentro Archivo Expanded + Space Mono */
   --sans:'Archivo',ui-sans-serif,system-ui,sans-serif;
   --serif:'Archivo Expanded','Archivo',sans-serif;
   --mono:'Space Mono',ui-monospace,monospace;
-  --paper:#D4DCDC; --paper-hi:#E3E8E8; --line-strong:#141D22; --signal:#12545D; --accent:#CB5A22;
+  --paper:#D4DCDC; --paper-hi:#E3E8E8; --line-strong:#141D22; --signal:#12545D; --accent:#C2521C;
   /* variabili orfane dopo il cambio palette — mappate ai valori nuovi */
   --ivory:#E3E8E8; --teal:#12545D; --e400:#D3854F; --muted:#52626A;
   /* ═══ DESIGN SYSTEM v2 — "premium scientific instrument": morbido fuori, preciso dentro ═══ */
@@ -837,7 +841,10 @@ a:focus-visible,input:focus-visible{
 .mtr-gauge-num{margin:0 0 12px}
 .mtr-gauge-num .num-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--s300);margin-bottom:3px}
 .mtr-gauge-num .num-big{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
-.mtr-gauge-cta{margin:8px 22px 22px;width:calc(100% - 44px);border-radius:var(--radius-btn);background:var(--accent);color:var(--paper);font-weight:700;border:none;padding:14px;font-family:var(--sans);font-size:14px;cursor:pointer}
+/* CTA disciplinata: outline sobrio, non blocco arancione pieno */
+.mtr-gauge-cta{margin:8px 22px 22px;width:calc(100% - 44px);border-radius:var(--radius-btn);background:transparent;color:var(--ink);font-weight:700;border:1.5px solid var(--border);padding:13px;font-family:var(--sans);font-size:14px;cursor:pointer;transition:transform .12s ease,border-color .12s ease}
+.mtr-gauge-cta:active{transform:scale(.98)}
+.mtr-gauge-cta:hover{border-color:var(--target)}
 
 /* STATS a griglia strumento */
 .mtr-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-left:1px solid var(--border);margin:16px 0 0}
@@ -1073,11 +1080,14 @@ a:focus-visible,input:focus-visible{
 
 /* ═══ NUMERO-BERSAGLIO — eroe + condizioni (result first, morbido) ═══ */
 .target-hero{margin:0;padding:16px 22px 4px}
-.target-lab{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.target-eroe{font-family:var(--mono);font-weight:700;font-size:30px;line-height:1.15;color:var(--ink);letter-spacing:-.01em;word-break:break-word;margin-bottom:16px}
-.target-cond-lab{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px;padding-top:14px;border-top:1px solid var(--border)}
+/* numero-bersaglio Home = card-strumento scura (firma visiva: chiaro esplori, scuro trovi la misura) */
+#scopri-num{background:var(--dark-card);border-radius:var(--radius-card-sm);padding:18px 20px;margin-bottom:4px;position:relative;overflow:hidden}
+#scopri-num::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:var(--target)}
+.target-lab{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--target);margin-bottom:8px}
+.target-eroe{font-family:var(--mono);font-weight:700;font-size:30px;line-height:1.15;color:#FAF6EE;letter-spacing:-.01em;word-break:break-word;margin-bottom:16px}
+.target-cond-lab{font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--s300);margin-bottom:8px;padding-top:14px;border-top:1px solid rgba(211,224,224,.18)}
 .target-grid{display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:4px}
-.target-cond{font-family:var(--mono);font-size:13px;color:var(--ink-muted)}
+.target-cond{font-family:var(--mono);font-size:13px;color:var(--science-soft)}
 @keyframes targetAtterra{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:translateY(0)}}
 .target-eroe{animation:targetAtterra .3s ease-out both}
 @media (prefers-reduced-motion: reduce){.target-eroe{animation:none}}
