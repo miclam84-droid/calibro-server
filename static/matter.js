@@ -4307,13 +4307,18 @@ function renderScava(scava, nomeFen){
       }).join('')
     });
   }
-  // 3. TECNICHE — come si realizza
+  // 3. TECNICHE — come si realizza (con la nota: effetto sul numero)
   if(scava.tecniche && scava.tecniche.length){
     porte.push({
       cls:'scava-tec', ico:'⚙',
-      tit: _L({it:'Vedi la tecnica', en:'See the technique', es:'Ver la técnica'}),
-      sub: scava.tecniche.map(function(t){return t.nome;}).join(' · '),
-      dett: ''
+      tit: _L({it:'Vedi le tecniche', en:'See the techniques', es:'Ver las técnicas'}),
+      sub: scava.tecniche.length + ' ' + (scava.tecniche.length===1?
+        _L({it:'tecnica',en:'technique',es:'técnica'}):
+        _L({it:'tecniche',en:'techniques',es:'técnicas'})),
+      dett: scava.tecniche.map(function(t){
+        return '<div class="scava-item"><b>'+_esc(t.nome)+'</b>'+
+               (t.nota?'<span>'+_esc(t.nota)+'</span>':'')+'</div>';
+      }).join('')
     });
   }
   // 4. STRUMENTI — con cosa si misura

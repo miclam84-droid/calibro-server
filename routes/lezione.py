@@ -221,10 +221,12 @@ def lezione(disciplina_nome, step):
             scava["errori"].append({"nome": _pulisci_nome(_traduci_nome(row["name"], lang)),
                                     "sintomo": _d.get("sintomo","")})
         # tecniche (realizzato_da)
-        for row in db.execute("""SELECT n.name FROM edges e
+        for row in db.execute("""SELECT n.name, n.data FROM edges e
                 JOIN nodes n ON n.id=e.to_id
                 WHERE e.from_id=? AND e.relation='realizzato_da'""", (_fid,)).fetchall():
-            scava["tecniche"].append({"nome": _pulisci_nome(_traduci_nome(row["name"], lang))})
+            _dt = _dati(row["data"]) if row["data"] else {}
+            scava["tecniche"].append({"nome": _pulisci_nome(_traduci_nome(row["name"], lang)),
+                                      "nota": _dt.get("nota","")})
         # connessioni trasversali (unifica): la scoperta cross-disciplina
         for row in db.execute("""SELECT n.name, n.domain, e.data FROM edges e
                 JOIN nodes n ON n.id=e.to_id
