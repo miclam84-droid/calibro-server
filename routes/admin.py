@@ -1285,8 +1285,11 @@ def admin_seed_errori():
     if not DATABASE_URL:
         return jsonify({"errore":"no db"}), 503
     import glob as _glob, os as _os
-    conn = _get_conn()
-    cur = conn.cursor()
+    try:
+        conn = _get_conn()
+        cur = conn.cursor()
+    except Exception as e:
+        return jsonify({"errore":"connessione fallita", "dettaglio": str(e)[:200]}), 500
     seed_files = sorted(_glob.glob("grafo/seed-errori-*.sql")) + \
                  sorted(_glob.glob("grafo/seed-tecniche-*.sql"))
     ok = []; errori = []
@@ -1300,15 +1303,19 @@ def admin_seed_errori():
                 ok.append(f)
             except Exception as e:
                 cur.execute(f"ROLLBACK TO SAVEPOINT sp_{len(ok)+len(errori)}")
-                em = str(e)[:80]
+                em = str(e)[:150]
                 if "already exists" in em or "duplicate" in em.lower():
                     ok.append(f"(già presente) {f}")
                 else:
                     errori.append(f"{f}: {em}")
         except Exception as e:
-            errori.append(f"{f}: {str(e)[:60]}")
-    conn.commit(); cur.close(); _release_conn(conn)
-    return jsonify({"ok": ok, "errori": errori, "totale_file": len(seed_files)})
+            errori.append(f"{f}: {str(e)[:120]}")
+    try:
+        conn.commit(); cur.close(); _release_conn(conn)
+    except Exception as e:
+        return jsonify({"ok": ok, "errori": errori, "commit_error": str(e)[:150]}), 500
+    return jsonify({"ok": ok, "errori": errori, "totale_file": len(seed_files),
+                    "seed_trovati": seed_files})
 
 
 @bp.route("/admin/add-fenomeni", methods=["POST"])
