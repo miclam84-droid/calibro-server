@@ -1284,7 +1284,15 @@ def admin_verifica_errori():
     db = carica_grafo()
     fenomeni = ["fen-diluizione","fen-fat-washing","fen-concentrazione",
                 "fen-carbonatazione","fen-estrazione","fen-crioscopia",
-                "fen-denaturazione","fen-punto-fumo","fen-osmosi","fen-sineresi"]
+                "fen-denaturazione","fen-punto-fumo","fen-osmosi","fen-sineresi",
+                "fen-solubilita","fen-viscosita","fen-ossidazione",
+                "fen-temperaggio-cioccolato","fen-ganache","fen-souffle",
+                "fen-meringa","fen-montatura-panna","fen-retrogradazione",
+                "fen-maglia-glutinica","fen-lievitazione","fen-crosta",
+                "fen-enzimi-farina","fen-sale-impasto",
+                "fen-mash-enzimi","fen-isomerizzazione-luppolo","fen-acidita-volatile",
+                "fen-pac-gelateria","fen-cristallizzazione-ghiaccio","fen-overrun",
+                "fen-bilanciamento-gelato"]
     out = {}
     tot = 0
     for fid in fenomeni:
