@@ -1297,8 +1297,11 @@ def admin_seed_errori():
                 stmt = stmt.strip()
                 if not stmt:
                     continue
+                # psycopg2 interpreta % come placeholder: raddoppio i % letterali
+                # (i seed non usano parametri, sono INSERT con valori inline)
+                stmt_safe = stmt.replace("%", "%%")
                 try:
-                    db.execute(stmt)
+                    db.execute(stmt_safe)
                     stmt_ok += 1
                 except Exception as e:
                     em = str(e).lower()
