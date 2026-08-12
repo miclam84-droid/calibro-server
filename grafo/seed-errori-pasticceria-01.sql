@@ -12,7 +12,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
   '{"causa":"schiuma instabile o cottura sbagliata: albumi montati male, forno aperto durante la cottura, o base troppo pesante. La rete proteica non trattiene il vapore. Servire subito"}'),
 ('err-meringa-granulosa', 'Errore', 'Meringa granulosa e che rilascia sciroppo', 'pasticceria',
   '{"causa":"albumi sovra-montati o zucchero non sciolto: la rete proteica collassa ed espelle liquido (weeping). Aggiungere lo zucchero gradualmente e non superare il picco fermo"}'),
-('err-panna-burro', 'Errore', 'Panna montata che diventa burrosa', 'pasticceria',
+('err-panna-burrosa', 'Errore', 'Panna montata che diventa burrosa', 'pasticceria',
   '{"causa":"sovra-montatura: la membrana dei globuli di grasso si rompe e il grasso si aggrega. Panna e ciotola devono essere ben fredde (4 gradi C) e fermarsi al picco morbido"}'),
 ('err-pane-raffermo-veloce', 'Errore', 'Dolce/pane che diventa raffermo in fretta', 'pasticceria',
   '{"causa":"retrogradazione dell amido: le catene di amilosio si riorganizzano ed espellono acqua. Accelerata dal freddo di frigo. Rallentata da zuccheri, grassi e conservazione a temperatura ambiente sigillata"}');
@@ -23,5 +23,5 @@ INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-ganache','err-ganache-impazzita','fallisce_come','{"sintomo":"separata e oleosa"}'),
 ('fen-souffle','err-souffle-sgonfio','fallisce_come','{"sintomo":"si sgonfia subito"}'),
 ('fen-meringa','err-meringa-granulosa','fallisce_come','{"sintomo":"granulosa, rilascia sciroppo"}'),
-('fen-montatura-panna','err-panna-burro','fallisce_come','{"sintomo":"diventa burrosa"}'),
+('fen-montatura-panna','err-panna-burrosa','fallisce_come','{"sintomo":"diventa burrosa"}'),
 ('fen-retrogradazione','err-pane-raffermo-veloce','fallisce_come','{"sintomo":"raffermo in fretta"}');
