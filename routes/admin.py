@@ -1276,46 +1276,42 @@ Risposte ok: <strong>{n_ok}</strong> · Ultima disciplina: <strong>{ultima_disc}
 
 @bp.route("/admin/seed-errori", methods=["POST"])
 def admin_seed_errori():
-    """Applica in modo incrementale tutti i seed-errori-*.sql e seed-tecniche-*.sql.
-    Idempotente: i file già applicati (duplicati) vengono saltati senza errore.
-    NON ricostruisce il grafo — aggiunge solo nodi Errore/Tecnica e archi."""
+    """Applica in modo incrementale i seed-errori-*.sql e seed-tecniche-*.sql.
+    Usa carica_grafo().execute() (l'astrazione _PgCompatPool che funziona in
+    produzione), eseguendo ogni statement separatamente. Idempotente: i duplicati
+    vengono saltati. NON ricostruisce il grafo."""
     secret = request.headers.get("X-Admin-Secret","")
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore":"non autorizzato"}), 403
-    if not DATABASE_URL:
-        return jsonify({"errore":"no db"}), 503
-    import glob as _glob, os as _os
-    try:
-        conn = _get_conn()
-        cur = conn.cursor()
-    except Exception as e:
-        return jsonify({"errore":"connessione fallita", "dettaglio": str(e)[:200]}), 500
+    import glob as _glob
+    db = carica_grafo()
     seed_files = sorted(_glob.glob("grafo/seed-errori-*.sql")) + \
                  sorted(_glob.glob("grafo/seed-tecniche-*.sql"))
-    ok = []; errori = []
+    ok = []; errori = []; stmt_ok = 0; stmt_skip = 0
     for f in seed_files:
         try:
             sql = open(f, encoding="utf-8").read()
-            cur.execute(f"SAVEPOINT sp_{len(ok)+len(errori)}")
-            try:
-                cur.execute(sql)
-                cur.execute(f"RELEASE SAVEPOINT sp_{len(ok)+len(errori)}")
-                ok.append(f)
-            except Exception as e:
-                cur.execute(f"ROLLBACK TO SAVEPOINT sp_{len(ok)+len(errori)}")
-                em = str(e)[:150]
-                if "already exists" in em or "duplicate" in em.lower():
-                    ok.append(f"(già presente) {f}")
-                else:
-                    errori.append(f"{f}: {em}")
+            # rimuove i commenti -- e spezza in statement singoli
+            clean = "\n".join(l for l in sql.split("\n") if not l.strip().startswith("--"))
+            for stmt in clean.split(";"):
+                stmt = stmt.strip()
+                if not stmt:
+                    continue
+                try:
+                    db.execute(stmt)
+                    stmt_ok += 1
+                except Exception as e:
+                    em = str(e).lower()
+                    if "duplicate" in em or "already exists" in em or "unique" in em:
+                        stmt_skip += 1
+                    else:
+                        errori.append(f"{f}: {str(e)[:120]}")
+            ok.append(f)
         except Exception as e:
             errori.append(f"{f}: {str(e)[:120]}")
-    try:
-        conn.commit(); cur.close(); _release_conn(conn)
-    except Exception as e:
-        return jsonify({"ok": ok, "errori": errori, "commit_error": str(e)[:150]}), 500
-    return jsonify({"ok": ok, "errori": errori, "totale_file": len(seed_files),
-                    "seed_trovati": seed_files})
+    return jsonify({"file_processati": ok, "statement_ok": stmt_ok,
+                    "statement_saltati_duplicati": stmt_skip,
+                    "errori": errori, "totale_file": len(seed_files)})
 
 
 @bp.route("/admin/add-fenomeni", methods=["POST"])

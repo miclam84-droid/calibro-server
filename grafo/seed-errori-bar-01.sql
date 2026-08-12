@@ -4,9 +4,7 @@
 -- ============================================================
 
 INSERT INTO nodes (id, type, name, domain, data) VALUES
--- DILUIZIONE
-('err-drink-annacquato', 'Errore', 'Drink annacquato, sapore spento', 'bar',
-  '{"causa":"troppa acqua di fusione: ghiaccio piccolo/bagnato o mescolato/shakerato troppo a lungo. La diluizione supera il 25-30% e diluisce aromi e alcol"}'),
+-- DILUIZIONE (nota: err-drink-annacquato esiste già in seed-ponte-calore, non lo riduplico)
 ('err-drink-forte-caldo', 'Errore', 'Drink troppo forte e poco freddo', 'bar',
   '{"causa":"diluizione insufficiente: ghiaccio troppo grande o tempo troppo breve. Sotto il 20% di diluizione l alcol resta aggressivo e la temperatura non scende abbastanza"}'),
 ('err-negroni-variabile', 'Errore', 'Negroni diverso ogni volta a parità di ricetta', 'bar',
@@ -23,8 +21,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
   '{"causa":"concentrazione di zucchero troppo bassa (sotto ~50 Brix): acqua libera sufficiente per lieviti e batteri. Aumentare i Brix o conservare a freddo"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
--- diluizione
-('prod-sour','err-drink-annacquato','fallisce_come','{}'),
+-- diluizione (err-drink-annacquato già collegato in ponte-calore)
 ('prod-negroni','err-drink-forte-caldo','fallisce_come','{}'),
 ('prod-negroni','err-negroni-variabile','fallisce_come','{}'),
 -- fat washing
