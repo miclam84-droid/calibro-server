@@ -1295,13 +1295,18 @@ def admin_verifica_errori():
                 "fen-bilanciamento-gelato"]
     out = {}
     tot = 0
+    tot_tec = 0
     for fid in fenomeni:
         try:
             rows = db.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
                 WHERE e.from_id=? AND e.relation='fallisce_come'""", (fid,)).fetchall()
             names = [r["name"] if hasattr(r,"keys") else r[0] for r in rows]
-            out[fid] = names
+            trows = db.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                WHERE e.from_id=? AND e.relation='realizzato_da'""", (fid,)).fetchall()
+            tnames = [r["name"] if hasattr(r,"keys") else r[0] for r in trows]
+            out[fid] = {"errori": names, "tecniche": tnames}
             tot += len(names)
+            tot_tec += len(tnames)
         except Exception as e:
             out[fid] = f"ERR: {str(e)[:60]}"
     # conteggio totale errori nel grafo
@@ -1311,6 +1316,7 @@ def admin_verifica_errori():
     except Exception:
         n_err = "?"
     return jsonify({"fenomeni": out, "errori_collegati_totali": tot,
+                    "tecniche_collegate_totali": tot_tec,
                     "nodi_errore_nel_grafo": n_err})
 
 
