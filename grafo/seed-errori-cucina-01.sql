@@ -18,8 +18,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
   '{"causa":"sineresi: il gel proteico si contrae ed espelle acqua. Causata da eccesso di acidità, temperatura troppo alta in coagulazione, o rottura del coagulo. Coagulare a temperatura controllata"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('prod-creme-inglese','err-uovo-stracciato','fallisce_come','{}'),
-('prod-carne-rosolata','err-carne-stopposa','fallisce_come','{}'),
-('prod-carne-rosolata','err-olio-bruciato','fallisce_come','{}'),
-('prod-fermentato-lacto','err-verdura-flaccida','fallisce_come','{}'),
-('prod-yogurt','err-yogurt-siero','fallisce_come','{}');
+('fen-denaturazione','err-uovo-stracciato','fallisce_come','{"sintomo":"crema stracciata, granulosa"}'),
+('fen-denaturazione','err-carne-stopposa','fallisce_come','{"sintomo":"carne asciutta e stopposa"}'),
+('fen-punto-fumo','err-olio-bruciato','fallisce_come','{"sintomo":"olio che fuma, sapore acre"}'),
+('fen-osmosi','err-verdura-flaccida','fallisce_come','{"sintomo":"verdura molle e acquosa"}'),
+('fen-sineresi','err-yogurt-siero','fallisce_come','{"sintomo":"siero in superficie"}');

@@ -21,12 +21,10 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
   '{"causa":"concentrazione di zucchero troppo bassa (sotto ~50 Brix): acqua libera sufficiente per lieviti e batteri. Aumentare i Brix o conservare a freddo"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
--- diluizione (err-drink-annacquato già collegato in ponte-calore)
-('prod-negroni','err-drink-forte-caldo','fallisce_come','{}'),
-('prod-negroni','err-negroni-variabile','fallisce_come','{}'),
--- fat washing
-('prod-gin','err-fatwash-unto','fallisce_come','{}'),
-('prod-bitter','err-fatwash-poco-aroma','fallisce_come','{}'),
--- concentrazione
-('prod-sciroppo','err-sciroppo-cristallizza','fallisce_come','{}'),
-('prod-sciroppo','err-sciroppo-fermenta','fallisce_come','{}');
+-- fenomeno → errore (modello SCAVA). err-drink-annacquato già collegato altrove.
+('fen-diluizione','err-drink-forte-caldo','fallisce_come','{"sintomo":"drink aggressivo e poco freddo"}'),
+('fen-diluizione','err-negroni-variabile','fallisce_come','{"sintomo":"stesso drink diverso ogni turno"}'),
+('fen-fat-washing','err-fatwash-unto','fallisce_come','{"sintomo":"distillato velato/unto"}'),
+('fen-fat-washing','err-fatwash-poco-aroma','fallisce_come','{"sintomo":"aroma assente"}'),
+('fen-concentrazione','err-sciroppo-cristallizza','fallisce_come','{"sintomo":"cristalli nello sciroppo"}'),
+('fen-concentrazione','err-sciroppo-fermenta','fallisce_come','{"sintomo":"bollicine, sciroppo torbido"}');

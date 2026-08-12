@@ -17,8 +17,8 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
   '{"causa":"pochi soluti anticongelanti (zucchero/alcol): senza abbassamento crioscopico l acqua congela compatta. Aumentare zucchero o aggiungere una punta di alcol per tenerlo morbido"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
-('prod-spritz','err-spritz-piatto','fallisce_come','{}'),
-('prod-spritz','err-spritz-schiuma','fallisce_come','{}'),
-('prod-bitter','err-bitter-amaro-slegato','fallisce_come','{}'),
-('prod-te-infuso','err-infuso-debole','fallisce_come','{}'),
-('prod-semifreddo','err-semifreddo-duro','fallisce_come','{}');
+('fen-carbonatazione','err-spritz-piatto','fallisce_come','{"sintomo":"poche bollicine, piatto"}'),
+('fen-carbonatazione','err-spritz-schiuma','fallisce_come','{"sintomo":"schiuma che trabocca"}'),
+('fen-estrazione','err-bitter-amaro-slegato','fallisce_come','{"sintomo":"amaro duro e slegato"}'),
+('fen-estrazione','err-infuso-debole','fallisce_come','{"sintomo":"aroma debole"}'),
+('fen-crioscopia','err-semifreddo-duro','fallisce_come','{"sintomo":"troppo duro da servire"}');
