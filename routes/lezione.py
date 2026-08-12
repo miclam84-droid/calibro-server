@@ -90,7 +90,12 @@ def disciplina(nome):
         "vino":         ["fen-acidita","fen-malolattica","fen-ossidazione","fen-fermentazione","fen-tannini","fen-chiarificazione","fen-solforosa","fen-maturazione-legno","fen-estrazione-polifenoli","fen-rifermentazione","fen-acidita-volatile","fen-brett"],
         "birra":        ["fen-fermentazione","fen-carbonatazione","fen-amilolisi","fen-acidita","fen-ossidazione","fen-attivita-enzimatica","fen-mash-enzimi","fen-isomerizzazione-luppolo","fen-dry-hopping","fen-lagering","fen-fermentazione-alta-bassa","fen-efficienza-birra"],
     }
-    priorita_disc = PRIORITA.get(nome.lower(), [])
+    # Alias: l'app usa a volte nomi diversi per la stessa disciplina.
+    # Senza questi, 'caffe'/'bakery' cadono nel fallback che restituisce TUTTI i 101 fenomeni.
+    ALIAS = {"caffe": "caffetteria", "coffee": "caffetteria",
+             "bakery": "panificazione", "pane": "panificazione"}
+    nome_key = ALIAS.get(nome.lower(), nome.lower())
+    priorita_disc = PRIORITA.get(nome_key, [])
 
     # Se la disciplina ha una lista di priorità definita, usa SOLO quei fenomeni
     # nell'ordine esatto — evita che fenomeni di altre discipline finiscano nel percorso
@@ -109,11 +114,12 @@ def disciplina(nome):
                     fenomeni.append({"id": f["id"], "nome": f["name"],
                                      "target": _numero_bersaglio(_dati(f["data"]))})
     elif not fen_ids:
-        tutti = db.execute(
-            "SELECT id, name, data FROM nodes WHERE type='Fenomeno' ORDER BY name"
-        ).fetchall()
-        fenomeni = [{"id": f["id"], "nome": f["name"],
-                     "target": _numero_bersaglio(_dati(f["data"]))} for f in tutti]
+        # Disciplina non riconosciuta e senza prodotti collegati.
+        # NON restituiamo tutti i 101 fenomeni globali (esperienza pessima):
+        # meglio un set vuoto con flag, così il frontend può mostrare
+        # "disciplina in arrivo" invece di un elenco caotico e non pertinente.
+        return jsonify({"disciplina": nome, "fenomeni": [], "totale": 0,
+                        "non_disponibile": True})
     else:
         fenomeni_raw = []
         for fid in fen_ids:
