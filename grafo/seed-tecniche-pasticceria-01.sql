@@ -11,7 +11,7 @@ INSERT INTO nodes (id, type, name, domain, data) VALUES
 ('tec-panna-fredda', 'Tecnica', 'Panna e ciotola a 4 gradi C, stop al picco morbido', 'pasticceria',
   '{"nota":"tutto ben freddo e fermati al picco morbido: i globuli di grasso intrappolano aria senza rompersi. Evita che la panna diventi burrosa"}'),
 ('tec-conservazione-amido', 'Tecnica', 'Gestione retrogradazione (zuccheri, grassi, sigillo)', 'pasticceria',
-  '{"nota":"zuccheri e grassi rallentano la retrogradazione dell amido; conserva a temperatura ambiente sigillato (NON in frigo, che la accelera). Prolunga la morbidezza"}');
+  '{"nota":"zuccheri e grassi rallentano la retrogradazione dell amido, conserva a temperatura ambiente sigillato (NON in frigo, che la accelera). Prolunga la morbidezza"}');
 
 INSERT INTO edges (from_id, to_id, relation, data) VALUES
 ('fen-temperaggio-cioccolato','tec-temperaggio-curve','realizzato_da','{}'),
