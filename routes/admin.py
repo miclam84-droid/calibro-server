@@ -1274,6 +1274,38 @@ Risposte ok: <strong>{n_ok}</strong> · Ultima disciplina: <strong>{ultima_disc}
 </div></body></html>""", 200, {"Content-Type": "text/html; charset=utf-8"}
 
 
+@bp.route("/admin/verifica-errori", methods=["GET"])
+def admin_verifica_errori():
+    """Verifica quali errori (fallisce_come) sono collegati ai fenomeni.
+    Usa carica_grafo() — funziona anche per fenomeni Pro senza login."""
+    secret = request.args.get("s","") or request.headers.get("X-Admin-Secret","")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore":"non autorizzato"}), 403
+    db = carica_grafo()
+    fenomeni = ["fen-diluizione","fen-fat-washing","fen-concentrazione",
+                "fen-carbonatazione","fen-estrazione","fen-crioscopia",
+                "fen-denaturazione","fen-punto-fumo","fen-osmosi","fen-sineresi"]
+    out = {}
+    tot = 0
+    for fid in fenomeni:
+        try:
+            rows = db.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                WHERE e.from_id=? AND e.relation='fallisce_come'""", (fid,)).fetchall()
+            names = [r["name"] if hasattr(r,"keys") else r[0] for r in rows]
+            out[fid] = names
+            tot += len(names)
+        except Exception as e:
+            out[fid] = f"ERR: {str(e)[:60]}"
+    # conteggio totale errori nel grafo
+    try:
+        r = db.execute("SELECT COUNT(*) FROM nodes WHERE type='Errore'").fetchall()
+        n_err = (r[0]["count"] if hasattr(r[0],"keys") else r[0][0]) if r else 0
+    except Exception:
+        n_err = "?"
+    return jsonify({"fenomeni": out, "errori_collegati_totali": tot,
+                    "nodi_errore_nel_grafo": n_err})
+
+
 @bp.route("/admin/seed-errori", methods=["POST"])
 def admin_seed_errori():
     """Applica in modo incrementale i seed-errori-*.sql e seed-tecniche-*.sql.
