@@ -60,6 +60,51 @@ def _log(provider, model, route, latency_ms, tokens_in=0, tokens_out=0, error=No
         f"cost=${cost_usd:.6f}" + (f" err={error}" if error else ""),
         flush=True
     )
+    # Scrittura in tabella ai_usage_log per il pannello costi.
+    # NON deve MAI bloccare o rallentare la risposta all'utente: se il DB
+    # è lento o giù, il log si perde ma la chiamata AI va comunque a buon fine.
+    _log_db(provider, model, route, latency_ms, tokens_in, tokens_out, cost_usd, error)
+
+
+def _log_db(provider, model, route, latency_ms, tokens_in, tokens_out, cost_usd, error):
+    # Attribuzione per-utente: rimandata alla v2 (serve passare user_id in modo
+    # thread-safe, allineato al modello condiviso con Cifra/Galileo). Per ora
+    # tracciamo costo totale/periodo/modello/errori — il 90% del valore.
+    try:
+        from config import DATABASE_URL
+        if not DATABASE_URL:
+            return
+        from db import _get_conn, _release_conn
+        conn = _get_conn()
+        try:
+            cur = conn.cursor()
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS ai_usage_log (
+                    id BIGSERIAL PRIMARY KEY,
+                    ts TIMESTAMPTZ DEFAULT NOW(),
+                    user_id TEXT,
+                    provider TEXT,
+                    model TEXT,
+                    route TEXT,
+                    tokens_in INTEGER DEFAULT 0,
+                    tokens_out INTEGER DEFAULT 0,
+                    cost_usd NUMERIC(12,8) DEFAULT 0,
+                    latency_ms INTEGER DEFAULT 0,
+                    error TEXT
+                )
+            """)
+            cur.execute("""
+                INSERT INTO ai_usage_log
+                    (provider, model, route, tokens_in, tokens_out, cost_usd, latency_ms, error)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            """, (provider, model, route, tokens_in, tokens_out,
+                  cost_usd, int(latency_ms or 0), (str(error)[:200] if error else None)))
+            conn.commit(); cur.close()
+        finally:
+            _release_conn(conn)
+    except Exception:
+        # Log best-effort: qualsiasi errore qui viene ingoiato per non impattare l'utente.
+        pass
 
 
 # ── Sanitize output ──────────────────────────────────────────────────────────

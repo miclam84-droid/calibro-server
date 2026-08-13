@@ -1062,6 +1062,34 @@ def admin_stats():
         except Exception:
             stats["top_fenomeni_7d"] = []
 
+        # ═══ COSTI AI (dal ai_usage_log) ═══
+        # Costi aggregati per capire in tempo reale se l'uso AI erode il margine.
+        stats["costo_oggi_usd"]      = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE") or 0)
+        stats["costo_7g_usd"]        = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'") or 0)
+        stats["costo_30g_usd"]       = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '30 days'") or 0)
+        stats["chiamate_ai_oggi"]    = q("SELECT COUNT(*) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
+        stats["errori_ai_24h"]       = q("SELECT COUNT(*) FROM ai_usage_log WHERE error IS NOT NULL AND ts > NOW() - INTERVAL '24 hours'")
+        # costo per modello (7 giorni)
+        try:
+            cur.execute("""
+                SELECT model, COUNT(*) as chiamate, COALESCE(SUM(cost_usd),0) as costo
+                FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'
+                GROUP BY model ORDER BY costo DESC
+            """)
+            stats["costo_per_modello_7g"] = [{"model":r[0],"chiamate":r[1],"costo_usd":float(r[2])} for r in cur.fetchall()]
+        except Exception:
+            stats["costo_per_modello_7g"] = []
+        # costo per route/feature (7 giorni) — quale feature costa di più
+        try:
+            cur.execute("""
+                SELECT route, COUNT(*) as chiamate, COALESCE(SUM(cost_usd),0) as costo
+                FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'
+                GROUP BY route ORDER BY costo DESC
+            """)
+            stats["costo_per_route_7g"] = [{"route":r[0],"chiamate":r[1],"costo_usd":float(r[2])} for r in cur.fetchall()]
+        except Exception:
+            stats["costo_per_route_7g"] = []
+
         cur.close(); _release_conn(conn)
         return jsonify(stats)
     except Exception as e:
