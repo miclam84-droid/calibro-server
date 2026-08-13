@@ -1543,3 +1543,23 @@ a:focus-visible,input:focus-visible{
   .scava-porta:active{transform:none}
   .scava-dett{animation:none}
 }
+
+/* ═══ SCHEDA RISPOSTA CHAT — stili mancanti (fix "sembra codice rotto") ═══ */
+/* Il numero bersaglio: box petrolio scuro, numero in mono, ben staccato */
+.s-num-box{margin:12px 14px 4px;background:var(--ink);border-radius:12px;padding:14px 16px}
+.s-num-label{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8FBBB0;margin-bottom:6px}
+.s-num-val{font-family:var(--mono);font-size:18px;font-weight:700;color:#fff;line-height:1.35}
+
+/* I blocchi strutturati PROBLEMA/PERCHÉ/NUMERO/MISURA/AZIONE */
+.s-blocks{padding:6px 14px 12px;display:flex;flex-direction:column;gap:12px}
+.s-block{display:flex;flex-direction:column;gap:5px}
+.s-block-label{align-self:flex-start;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:3px 9px;border-radius:6px}
+.s-block-body{font-family:var(--sans);font-size:14px;line-height:1.6;color:var(--ink)}
+
+/* Etichetta "risposta generata da AI" e azioni */
+.s-ai-label{padding:8px 14px 0;font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--ink-muted);opacity:.75;line-height:1.4}
+.s-conn{padding:10px 14px 4px}
+.s-conn-lab{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:6px}
+.s-actions{display:flex;gap:8px;padding:10px 14px 14px}
+.s-action-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-family:var(--mono);font-size:11px;color:var(--ink-muted);cursor:pointer;display:flex;align-items:center;gap:5px}
+.s-action-btn:active{border-color:var(--e500);color:var(--e700)}
