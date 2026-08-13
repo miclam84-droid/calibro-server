@@ -1032,6 +1032,10 @@ def admin_stats():
                 cur.execute(sql)
                 return cur.fetchone()[0]
             except Exception:
+                # una query fallita avvelena la transazione Postgres:
+                # rollback così le query successive funzionano
+                try: conn.rollback()
+                except Exception: pass
                 return default
 
         # utenti
@@ -1064,11 +1068,18 @@ def admin_stats():
 
         # ═══ COSTI AI (dal ai_usage_log) ═══
         # Costi aggregati per capire in tempo reale se l'uso AI erode il margine.
-        stats["costo_oggi_usd"]      = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE") or 0)
-        stats["costo_7g_usd"]        = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'") or 0)
-        stats["costo_30g_usd"]       = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '30 days'") or 0)
-        stats["chiamate_ai_oggi"]    = q("SELECT COUNT(*) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
-        stats["errori_ai_24h"]       = q("SELECT COUNT(*) FROM ai_usage_log WHERE error IS NOT NULL AND ts > NOW() - INTERVAL '24 hours'")
+        # Tutto il blocco è protetto: se ai_usage_log ha problemi, il pannello
+        # continua a funzionare (mostra il resto) invece di rompersi.
+        try:
+            stats["costo_oggi_usd"]      = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE") or 0)
+            stats["costo_7g_usd"]        = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'") or 0)
+            stats["costo_30g_usd"]       = float(q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '30 days'") or 0)
+            stats["chiamate_ai_oggi"]    = q("SELECT COUNT(*) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
+            stats["errori_ai_24h"]       = q("SELECT COUNT(*) FROM ai_usage_log WHERE error IS NOT NULL AND ts > NOW() - INTERVAL '24 hours'")
+        except Exception:
+            try: conn.rollback()
+            except Exception: pass
+            stats["costo_oggi_usd"] = stats.get("costo_oggi_usd", 0)
         # costo per modello (7 giorni)
         try:
             cur.execute("""
