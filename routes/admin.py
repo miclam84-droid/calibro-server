@@ -1048,23 +1048,27 @@ def admin_stats_debug():
 
 @bp.route("/v1/admin/stats-debug2")
 def admin_stats_debug2():
-    """Esegue admin_stats VERO in un try che espone il traceback."""
+    """Esegue admin_stats VERO e prova a SERIALIZZARE la risposta (dove nasce il 500)."""
     secret = request.headers.get("X-Admin-Secret","") or request.args.get("s","")
     if (not os.environ.get("ADMIN_SECRET")) or not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET"))):
         return jsonify({"errore":"non autorizzato"}), 403
     import traceback as _tb
     try:
-        # chiama la logica reale di admin_stats catturando il vero errore
         with __import__("contextlib").redirect_stdout(__import__("io").StringIO()):
             resp = admin_stats()
-        # se admin_stats ritorna una tupla (jsonify, code) con code 500, estrai
-        if isinstance(resp, tuple) and len(resp) == 2 and resp[1] == 500:
-            import json as _js
-            body = resp[0].get_data(as_text=True)
-            return jsonify({"stato": "admin_stats ha restituito 500", "body": body[:500]})
-        return jsonify({"stato": "admin_stats OK", "tipo": str(type(resp))})
+        # estrai la Response (può essere Response o tupla)
+        r = resp[0] if isinstance(resp, tuple) else resp
+        code = resp[1] if isinstance(resp, tuple) else 200
+        # PROVA A LEGGERE IL BODY: è qui che il Decimal esplode se il provider non copre
+        try:
+            body = r.get_data(as_text=True)
+            return jsonify({"stato": f"admin_stats code={code}", "body_len": len(body),
+                            "body_inizio": body[:300]})
+        except Exception as se:
+            return jsonify({"stato": "SERIALIZZAZIONE FALLISCE", "errore_serial": str(se),
+                            "traceback": _tb.format_exc()[-1500:]}), 200
     except Exception as e:
-        return jsonify({"stato": "eccezione catturata", "errore": str(e),
+        return jsonify({"stato": "eccezione in admin_stats", "errore": str(e),
                         "traceback": _tb.format_exc()[-1500:]}), 200
 
 
