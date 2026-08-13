@@ -182,12 +182,26 @@ def quaderno_calcola_costo(exp_id):
             qty_totale_g = qty_g + qty_ml + (qty_cl * 10) + (qty_oz * 28.35) + (qty_pz * 100)
 
             # Cerca il prezzo nel grafo
+            # Match a 3 livelli: (1) id stabile esatto, (2) alias nel data JSONB, (3) LIKE nome (fallback)
+            nome_id = f"ing-{nome.replace(' ','-')}"
             cur.execute("""
                 SELECT name, data FROM nodes
                 WHERE type='Ingrediente'
-                AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+                AND (
+                    lower(id) = lower(%s)
+                    OR lower(data->>'aliases') LIKE lower(%s)
+                    OR lower(name) LIKE lower(%s)
+                    OR lower(id) LIKE lower(%s)
+                )
+                ORDER BY
+                    CASE
+                        WHEN lower(id) = lower(%s) THEN 1
+                        WHEN lower(data->>'aliases') LIKE lower(%s) THEN 2
+                        ELSE 3
+                    END
                 LIMIT 1
-            """, (f"%{nome}%", f"%ing-{nome.replace(' ','-')}%"))
+            """, (nome_id, f'%"{nome}"%', f"%{nome}%", f"%{nome_id}%",
+                  nome_id, f'%"{nome}"%'))
             ing_row = cur.fetchone()
 
             costo_eur_kg = 5.0  # default

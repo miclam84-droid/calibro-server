@@ -1332,7 +1332,8 @@ def admin_seed_errori():
     import glob as _glob
     db = carica_grafo()
     seed_files = sorted(_glob.glob("grafo/seed-errori-*.sql")) + \
-                 sorted(_glob.glob("grafo/seed-tecniche-*.sql"))
+                 sorted(_glob.glob("grafo/seed-tecniche-*.sql")) + \
+                 sorted(_glob.glob("grafo/seed-ingredienti-*.sql"))
     ok = []; errori = []; stmt_ok = 0; stmt_skip = 0
     for f in seed_files:
         try:
@@ -1906,3 +1907,89 @@ def admin_set_target():
     cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nd, ensure_ascii=False), node_id))
     conn.commit(); cur.close(); _release_conn(conn)
     return jsonify({"ok": True, "id": node_id, "prima": vecchio[:80], "dopo": nuovo})
+
+
+# ═══ PONTE FOOD COST — vocabolario ingredienti + arricchimento ricette (Blocco A/B) ═══
+
+# Mappa alias→ing-id costruita dal vocabolario bar (deve restare allineata al seed-ingredienti-bar.sql)
+_ING_ALIAS = {}
+def _build_alias_map():
+    global _ING_ALIAS
+    if _ING_ALIAS:
+        return _ING_ALIAS
+    db = carica_grafo()
+    rows = db.execute("SELECT id, name, data FROM nodes WHERE type='Ingrediente'").fetchall()
+    for r in rows:
+        iid = r["id"]; nome = r["name"]
+        data = r["data"] if isinstance(r["data"], dict) else json.loads(r["data"] or "{}")
+        _ING_ALIAS[nome.lower()] = iid
+        for a in (data.get("aliases") or []):
+            _ING_ALIAS[a.lower()] = iid
+    return _ING_ALIAS
+
+def _match_ing_id(nome_ric):
+    """Match nome ricetta → ing-id via alias (più lunghi prima, per precisione)."""
+    amap = _build_alias_map()
+    n = (nome_ric or "").lower()
+    for alias in sorted(amap.keys(), key=lambda x: -len(x)):
+        if alias in n:
+            return amap[alias]
+    return None
+
+@bp.route("/admin/arricchisci-ricette", methods=["POST", "GET"])
+def admin_arricchisci_ricette():
+    """Blocco B: aggiunge ing-id stabile + scarto_pct alle voci ricetta esistenti.
+    Match automatico nome→ing-id via alias. Idempotente. Auth ADMIN_SECRET.
+    ?dry=1 -> anteprima senza scrivere. ?disc=bar -> solo una disciplina.
+    Convenzione scarto: scarto_pct (0 default). Neutra: Cifra può convertire in resa_pct.
+    """
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    dry = request.args.get("dry") == "1"
+    solo_disc = request.args.get("disc")  # opzionale: filtra per disciplina
+    db = carica_grafo()
+    try:
+        rows = db.execute("SELECT id, nome, disciplina, ingredienti FROM ricette").fetchall()
+    except Exception as e:
+        return jsonify({"errore": f"lettura ricette: {e}"}), 500
+
+    report = {"ricette_totali": len(rows), "aggiornate": 0, "voci_matchate": 0,
+              "voci_totali": 0, "non_matchati": [], "dettaglio": []}
+    for r in rows:
+        ric_id, nome, disc, ingredienti = r["id"], r["nome"], r["disciplina"], r["ingredienti"]
+        if solo_disc and disc != solo_disc:
+            continue
+        ings = ingredienti if isinstance(ingredienti, list) else json.loads(ingredienti or "[]")
+        if not ings:
+            continue
+        cambiato = False
+        for ing in ings:
+            if not isinstance(ing, dict):
+                continue
+            report["voci_totali"] += 1
+            # aggiungi ing_id se manca
+            if not ing.get("ing_id"):
+                mid = _match_ing_id(ing.get("nome", ""))
+                if mid:
+                    ing["ing_id"] = mid
+                    report["voci_matchate"] += 1
+                    cambiato = True
+                else:
+                    report["non_matchati"].append(ing.get("nome", ""))
+            else:
+                report["voci_matchate"] += 1
+            # aggiungi scarto_pct se manca (default 0 = nessuno scarto)
+            if "scarto_pct" not in ing:
+                ing["scarto_pct"] = 0
+                cambiato = True
+        if cambiato and not dry:
+            db.execute("UPDATE ricette SET ingredienti=%s::jsonb WHERE id=%s",
+                       (json.dumps(ings, ensure_ascii=False), ric_id))
+            report["aggiornate"] += 1
+        elif cambiato:
+            report["aggiornate"] += 1  # conta anche in dry per l'anteprima
+        report["dettaglio"].append({"id": ric_id, "nome": nome, "disc": disc,
+                                     "voci": len(ings)})
+    report["dry_run"] = dry
+    report["copertura_pct"] = round(100 * report["voci_matchate"] / max(report["voci_totali"], 1))
+    return jsonify(report)
