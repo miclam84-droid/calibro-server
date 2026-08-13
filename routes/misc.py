@@ -50,26 +50,83 @@ def stripe_checkout():
 
 @bp.route("/v1/stripe/webhook", methods=["POST"])
 def stripe_webhook():
-    """GT8 — Webhook Stripe: aggiorna piano utente a Pro dopo pagamento."""
+    """GT8 — Webhook Stripe: aggiorna piano utente a Pro dopo pagamento.
+    Irrobustito: verifica firma (se configurata), idempotenza via stripe_events,
+    e gestione errori corretta (500 se il DB fallisce → Stripe riprova).
+    """
     stripe_key = os.environ.get("STRIPE_SECRET_KEY")
     if not stripe_key:
-        return jsonify({"ok":True})
+        # Stripe non configurato (pre-P.IVA): accetta senza agire.
+        return jsonify({"ok": True})
+
+    payload = request.get_data()
+
+    # 1. Verifica firma Stripe se il webhook secret è configurato (sicurezza).
+    webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
+    if webhook_secret:
+        try:
+            import stripe as _stripe
+            sig = request.headers.get("Stripe-Signature", "")
+            event = _stripe.Webhook.construct_event(payload, sig, webhook_secret)
+            data = event  # oggetto verificato
+        except Exception:
+            # firma non valida → rifiuta (non è Stripe o payload manomesso)
+            return jsonify({"errore": "firma non valida"}), 400
+    else:
+        # nessun secret configurato: parsing diretto (modalità test/sandbox)
+        try:
+            data = json.loads(payload)
+        except Exception:
+            return jsonify({"errore": "payload non valido"}), 400
+
+    event_id = data.get("id", "")
+    event_type = data.get("type", "")
+
+    if event_type not in ("checkout.session.completed", "customer.subscription.created"):
+        return jsonify({"ok": True, "ignorato": event_type})
+
+    obj = data.get("data", {}).get("object", {})
+    user_id = obj.get("metadata", {}).get("user_id")
+    if not user_id or not DATABASE_URL:
+        return jsonify({"ok": True, "nota": "nessun user_id o db"})
+
+    # 2. Idempotenza + 3. gestione errori corretta.
+    # Se il DB fallisce, restituiamo 500: Stripe riprova (non perdiamo il pagamento).
     try:
-        payload = request.get_data()
-        data = json.loads(payload)
-        event_type = data.get("type","")
-        if event_type in ("checkout.session.completed","customer.subscription.created"):
-            obj = data.get("data",{}).get("object",{})
-            user_id = obj.get("metadata",{}).get("user_id")
-            if user_id and DATABASE_URL:
-                import psycopg2
-                conn = _get_conn()
-                cur = conn.cursor()
-                cur.execute("UPDATE utenti SET piano='pro' WHERE id=%s", (user_id,))
-                conn.commit(); cur.close(); _release_conn(conn)
-    except Exception:
-        pass
-    return jsonify({"ok":True})
+        import psycopg2
+        conn = _get_conn()
+        cur = conn.cursor()
+        # tabella eventi processati (idempotenza) — creata al volo se non esiste
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS stripe_events (
+                event_id TEXT PRIMARY KEY,
+                event_type TEXT,
+                user_id TEXT,
+                ts TIMESTAMPTZ DEFAULT NOW()
+            )
+        """)
+        # se l'evento è già stato processato, esci senza riscrivere
+        if event_id:
+            cur.execute("SELECT 1 FROM stripe_events WHERE event_id=%s", (event_id,))
+            if cur.fetchone():
+                cur.close(); _release_conn(conn)
+                return jsonify({"ok": True, "gia_processato": event_id})
+        # attiva Pro + registra l'evento nella stessa transazione (atomico)
+        cur.execute("UPDATE utenti SET piano='pro' WHERE id=%s", (user_id,))
+        if event_id:
+            cur.execute(
+                "INSERT INTO stripe_events (event_id, event_type, user_id) VALUES (%s,%s,%s) ON CONFLICT (event_id) DO NOTHING",
+                (event_id, event_type, str(user_id)))
+        conn.commit(); cur.close(); _release_conn(conn)
+    except Exception as e:
+        # NON silenziare: 500 → Stripe riprova l'invio
+        try:
+            conn.rollback(); _release_conn(conn)
+        except Exception:
+            pass
+        return jsonify({"errore": "elaborazione fallita", "dettaglio": str(e)[:100]}), 500
+
+    return jsonify({"ok": True, "attivato_pro": user_id})
 
 @bp.route("/v1/feedback", methods=["POST"])
 def feedback():
