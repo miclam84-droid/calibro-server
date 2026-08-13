@@ -252,9 +252,13 @@ def analizza_foto(image_bytes: bytes, media_type: str = "image/jpeg",
         f"Analizza questa immagine e identifica TUTTI gli ingredienti alimentari "
         f"o le bottiglie visibili. "
         f"Restituisci SOLO un elenco JSON nel formato: "
-        f'[{{"nome": "...", "tipo": "ingrediente|bottiglia", "certezza": "alta|media|bassa"}}] '
+        f'[{{"nome": "...", "categoria": "...", "tipo": "ingrediente|bottiglia", "certezza": "alta|media|bassa"}}] '
         f"con i nomi in {PROMPT_LINGUA}. "
-        f"Se è una bottiglia, includi anche la categoria (gin, rum, vino rosso, birra IPA, ecc.). "
+        f"IMPORTANTE: il campo 'categoria' deve contenere l'ingrediente GENERICO, non la marca. "
+        f"Esempi: 'Malfy Gin' -> categoria 'gin'; 'Tanqueray' -> categoria 'gin'; "
+        f"'Bombay Sapphire' -> categoria 'gin'; 'Campari' -> categoria 'bitter'; "
+        f"'Martini Rosso' -> categoria 'vermut rosso'; una mela -> categoria 'mela'. "
+        f"Se è un prodotto di marca, 'nome' = come lo leggi sull'etichetta, 'categoria' = l'ingrediente generico. "
         f"Niente testo extra, solo il JSON."
     )
     try:
@@ -276,19 +280,26 @@ def analizza_foto(image_bytes: bytes, media_type: str = "image/jpeg",
 
     for item in items:
         nome = item.get("nome", "").strip()
-        if not nome:
+        categoria = item.get("categoria", "").strip()
+        if not nome and not categoria:
             continue
-        nodo, metodo = _trova_nodo(db, nome)
+        # prova prima il nome (es. "succo di limone"), poi la categoria
+        # (es. "Malfy Gin" non è nel grafo, ma la sua categoria "gin" sì)
+        nodo, metodo = _trova_nodo(db, nome) if nome else (None, None)
+        if not nodo and categoria:
+            nodo, metodo = _trova_nodo(db, categoria)
+            if nodo:
+                metodo = "categoria"
         if nodo:
             riconosciuti.append({
-                "termine": nome,
+                "termine": nome or categoria,
                 "nodo_id": nodo["id"],
                 "nodo_nome": nodo["name"],
                 "metodo": metodo,
                 "tipo": item.get("tipo", "ingrediente"),
             })
         else:
-            sconosciuti.append(nome)
+            sconosciuti.append(nome or categoria)
 
     nodi_ids = [r["nodo_id"] for r in riconosciuti]
 
