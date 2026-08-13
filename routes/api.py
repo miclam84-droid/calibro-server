@@ -1361,7 +1361,7 @@ def abbina(ingrediente):
                     f"Solo ingredienti reali e comuni, nessuna marca. "
                     f'Rispondi SOLO con JSON: {{"abbinamenti":["...","...","..."]}}'
                 )
-                _raw = _haiku_raw(_prompt_ai)
+                _raw = GW.route_free(_prompt_ai, max_tokens=300)
                 if _raw:
                     import re as _re, json as _js
                     _m = _re.search(r'\{.*\}', _raw, _re.DOTALL)

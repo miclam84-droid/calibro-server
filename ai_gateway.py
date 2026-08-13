@@ -29,10 +29,12 @@ import re
 _ANTHROPIC_URL  = "https://api.anthropic.com/v1/messages"
 _MISTRAL_URL    = "https://api.mistral.ai/v1/chat/completions"
 _OPENAI_URL     = "https://api.openai.com/v1"
+_GEMINI_URL     = "https://generativelanguage.googleapis.com/v1beta/models"
 
 _MODEL_SONNET   = "claude-sonnet-4-5"
 _MODEL_HAIKU    = "claude-haiku-4-5"
 _MODEL_MISTRAL  = "mistral-small-latest"
+_MODEL_GEMINI   = "gemini-2.5-flash"
 _MODEL_EMBED    = "text-embedding-3-small"
 _MODEL_WHISPER  = "whisper-1"
 _MODEL_VISION   = "gpt-4o-mini"
@@ -198,6 +200,50 @@ def _mistral_call(prompt, max_tokens=None):
         tokens_out=usage.get("completion_tokens", 0)
     )
     return data["choices"][0]["message"]["content"], latency
+
+
+def _gemini_call(prompt, max_tokens=None):
+    """Chiamata grezza all'API Gemini (piano free). Ritorna (testo, latency_ms).
+    Rete di sicurezza gratuita accanto a Mistral, per compiti semplici e fallback."""
+    key = os.environ.get("GEMINI_API_KEY")
+    if not key:
+        raise ValueError("GEMINI_API_KEY non configurata")
+
+    url = f"{_GEMINI_URL}/{_MODEL_GEMINI}:generateContent"
+    payload = {"contents": [{"parts": [{"text": prompt}]}]}
+    if max_tokens:
+        payload["generationConfig"] = {"maxOutputTokens": max_tokens}
+
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=body,
+        headers={
+            "x-goog-api-key": key,
+            "Content-Type": "application/json"
+        },
+        method="POST"
+    )
+    t0 = time.time()
+    with urllib.request.urlopen(req, timeout=30) as r:
+        data = json.loads(r.read().decode("utf-8"))
+    latency = (time.time() - t0) * 1000
+
+    # estrai il testo dalla struttura candidates[0].content.parts[0].text
+    testo = ""
+    try:
+        testo = data["candidates"][0]["content"]["parts"][0]["text"]
+    except (KeyError, IndexError):
+        testo = ""
+
+    usage = data.get("usageMetadata", {})
+    _log(
+        "gemini", _MODEL_GEMINI, "call",
+        latency,
+        tokens_in=usage.get("promptTokenCount", 0),
+        tokens_out=usage.get("candidatesTokenCount", 0)
+    )
+    return testo, latency
 
 
 # ── Adapter OpenAI ───────────────────────────────────────────────────────────
@@ -389,6 +435,15 @@ def route_chat(prompt, tools=None, history=None):
         import traceback
         print(f"[GW] Mistral fallito: {e}", flush=True)
         print(f"[GW] Mistral traceback: {traceback.format_exc()[-300:]}", flush=True)
+
+    # Fallback 3: Gemini (piano free) — ultima rete di sicurezza gratuita
+    try:
+        out, _ = _gemini_call(prompt)
+        if out:
+            print("[GW] fallback Gemini ok", flush=True)
+            return _sanitize(out)
+    except Exception as e:
+        print(f"[GW] Gemini fallito: {e}", flush=True)
     return None
 
 
@@ -428,6 +483,27 @@ def route_fast(prompt, max_tokens=600, temperature=0):
     except Exception as e:
         print(f"[GW] route_fast Mistral fallito: {e}", flush=True)
         return None
+
+
+def route_free(prompt, max_tokens=600):
+    """Route SOLO su provider gratuiti (Mistral free → Gemini free).
+    Per compiti economici/non critici (es. completamento abbinamenti) dove non
+    vale la pena consumare crediti a pagamento. Ritorna testo o None."""
+    # prova Mistral free
+    try:
+        out, _ = _mistral_call(prompt, max_tokens=max_tokens)
+        if out:
+            return _sanitize(out)
+    except Exception as e:
+        print(f"[GW] route_free Mistral fallito: {e}", flush=True)
+    # poi Gemini free
+    try:
+        out, _ = _gemini_call(prompt, max_tokens=max_tokens)
+        if out:
+            return _sanitize(out)
+    except Exception as e:
+        print(f"[GW] route_free Gemini fallito: {e}", flush=True)
+    return None
 
 
 def route_embeddings(texts):
