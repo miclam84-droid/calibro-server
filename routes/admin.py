@@ -2100,6 +2100,14 @@ def admin_diag_costi():
         "costo_oggi": "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE",
         "costo_7g": "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'",
         "per_modello": "SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days' GROUP BY model",
+        "utenti_attivi": "SELECT COUNT(*) FROM utenti WHERE attivo=TRUE",
+        "utenti_pro": "SELECT COUNT(*) FROM utenti WHERE piano='pro'",
+        "log_domande": "SELECT COUNT(*) FROM log_domande",
+        "feedback": "SELECT COUNT(*) FROM log_domande WHERE feedback=1",
+        "nodi": "SELECT COUNT(*) FROM nodes",
+        "archi": "SELECT COUNT(*) FROM edges",
+        "esperimenti": "SELECT COUNT(*) FROM esperimenti",
+        "top_fenomeni": "SELECT fenomeni_trovati, COUNT(*) as n FROM log_domande WHERE fenomeni_trovati IS NOT NULL AND ts > NOW() - INTERVAL '7 days' GROUP BY fenomeni_trovati ORDER BY n DESC LIMIT 5",
     }
     for nome, sql in test.items():
         try:
