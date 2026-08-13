@@ -1012,6 +1012,46 @@ if(p.get('s')){document.getElementById('sk').value=p.get('s');go();}
 document.getElementById('lnk-ass').href='/admin/assistenza?s='+(p.get('s')||'');
 </script></body></html>"""
 
+@bp.route("/v1/admin/stats-debug")
+def admin_stats_debug():
+    """Diagnostica: esegue la logica di stats mostrando il traceback vero.
+    Serve a trovare la causa del 500. Da rimuovere dopo la diagnosi."""
+    secret = request.headers.get("X-Admin-Secret","") or request.args.get("s","")
+    if (not os.environ.get("ADMIN_SECRET")) or not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET"))):
+        return jsonify({"errore":"non autorizzato"}), 403
+    import traceback as _tb
+    tappe = []
+    try:
+        tappe.append("inizio")
+        conn = _get_conn()
+        tappe.append("conn ok")
+        conn.autocommit = True
+        cur = conn.cursor()
+        tappe.append("cursor ok")
+        cur.execute("SELECT COUNT(*) FROM utenti WHERE attivo=TRUE")
+        tappe.append(f"utenti ok: {cur.fetchone()[0]}")
+        cur.execute("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
+        tappe.append(f"costo oggi ok: {cur.fetchone()[0]}")
+        cur.execute("SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days' GROUP BY model")
+        rows = cur.fetchall()
+        tappe.append(f"per modello ok: {len(rows)} righe")
+        # test serializzazione Decimal
+        from decimal import Decimal as _Dec
+        test = [{"model":r[0],"n":r[1],"costo":r[2]} for r in rows]
+        tappe.append(f"tipi costo: {[type(r[2]).__name__ for r in rows]}")
+        import json as _js
+        try:
+            _js.dumps(test)
+            tappe.append("jsonify OK senza clean")
+        except Exception as se:
+            tappe.append(f"jsonify FALLISCE: {se} → serve _clean")
+        cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "tappe": tappe})
+    except Exception as e:
+        return jsonify({"ok": False, "tappe": tappe, "errore": str(e),
+                        "traceback": _tb.format_exc()[-800:]}), 200
+
+
 @bp.route("/v1/admin/stats")
 def admin_stats():
     """GT10 — Admin panel: statistiche base del prodotto."""
