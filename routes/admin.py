@@ -1123,9 +1123,18 @@ def admin_stats():
             stats["allarme_costi"] = {"attivo": False, "messaggi": []}
 
         cur.close(); _release_conn(conn)
-        return jsonify(stats)
+        # sanitizza: i Decimal di Postgres non sono serializzabili da jsonify
+        from decimal import Decimal as _Dec
+        def _clean(o):
+            if isinstance(o, _Dec): return float(o)
+            if isinstance(o, dict): return {k: _clean(v) for k, v in o.items()}
+            if isinstance(o, list): return [_clean(x) for x in o]
+            return o
+        return jsonify(_clean(stats))
     except Exception as e:
-        return jsonify({"errore": str(e)}), 500
+        import traceback as _tb
+        print("[STATS ERROR]", _tb.format_exc(), flush=True)
+        return jsonify({"errore": str(e), "dettaglio": str(e)}), 500
 
 @bp.route("/admin/assistenza")
 def admin_assistenza():
