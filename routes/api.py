@@ -1350,11 +1350,41 @@ def abbina(ingrediente):
             if len(abbinamenti_dedup) >= 15:
                 break
         abbinamenti = abbinamenti_dedup
+        abbinamenti_puliti = _pulisci_abbinamenti(abbinamenti)
+        # FALLBACK AI: se dopo la pulizia restano troppo pochi abbinamenti,
+        # completa con abbinamenti plausibili generati da AI (marcati come tali).
+        fonte = "Dataset Ahn 2011 (CC BY)"
+        if len(abbinamenti_puliti) < 3:
+            try:
+                _prompt_ai = (
+                    f"Dammi 5 abbinamenti gastronomici o bar per '{ingrediente}'. "
+                    f"Solo ingredienti reali e comuni, nessuna marca. "
+                    f'Rispondi SOLO con JSON: {{"abbinamenti":["...","...","..."]}}'
+                )
+                _raw = _haiku_raw(_prompt_ai)
+                if _raw:
+                    import re as _re, json as _js
+                    _m = _re.search(r'\{.*\}', _raw, _re.DOTALL)
+                    if _m:
+                        _lista_ai = _js.loads(_m.group()).get("abbinamenti", [])
+                        _nuovi = [{"ingrediente": x, "composto": "abbinamento suggerito",
+                                   "overlap": 60, "perche": "abbinamento plausibile (AI)"}
+                                  for x in _lista_ai if isinstance(x, str)]
+                        # unisci evitando duplicati coi già presenti
+                        _esistenti = {a["ingrediente"].lower() for a in abbinamenti_puliti}
+                        for n in _nuovi:
+                            if n["ingrediente"].lower() not in _esistenti:
+                                abbinamenti_puliti.append(n)
+                        abbinamenti_puliti = _pulisci_abbinamenti(abbinamenti_puliti)
+                        if _lista_ai:
+                            fonte = "Dataset Ahn + completamento AI"
+            except Exception:
+                pass
         return jsonify({
             "ingrediente": ingrediente,
-            "abbinamenti": _pulisci_abbinamenti(abbinamenti),
+            "abbinamenti": abbinamenti_puliti,
             "nota": "Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale",
-            "fonte": "Dataset Ahn 2011 (CC BY)"
+            "fonte": fonte
         })
     except Exception as e:
         return jsonify({"ingrediente":ingrediente,"abbinamenti":[],
