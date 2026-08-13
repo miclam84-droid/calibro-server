@@ -2020,3 +2020,32 @@ def admin_arricchisci_ricette():
     report["dry_run"] = dry
     report["copertura_pct"] = round(100 * report["voci_matchate"] / max(report["voci_totali"], 1))
     return jsonify(report)
+
+
+@bp.route("/admin/init-usage-log", methods=["POST", "GET"])
+def admin_init_usage_log():
+    """Crea la tabella ai_usage_log se non esiste (così il pannello costi mostra 0
+    invece di campi assenti, anche prima della prima chiamata AI). Auth ADMIN_SECRET."""
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    db = carica_grafo()
+    try:
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS ai_usage_log (
+                id BIGSERIAL PRIMARY KEY,
+                ts TIMESTAMPTZ DEFAULT NOW(),
+                user_id TEXT,
+                provider TEXT,
+                model TEXT,
+                route TEXT,
+                tokens_in INTEGER DEFAULT 0,
+                tokens_out INTEGER DEFAULT 0,
+                cost_usd NUMERIC(12,8) DEFAULT 0,
+                latency_ms INTEGER DEFAULT 0,
+                error TEXT
+            )
+        """)
+        n = db.execute("SELECT COUNT(*) as n FROM ai_usage_log").fetchall()
+        return jsonify({"ok": True, "tabella": "ai_usage_log pronta", "righe_attuali": n[0]["n"]})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
