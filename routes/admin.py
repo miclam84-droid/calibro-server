@@ -1048,27 +1048,46 @@ def admin_stats_debug():
 
 @bp.route("/v1/admin/stats-debug2")
 def admin_stats_debug2():
-    """Esegue admin_stats VERO e prova a SERIALIZZARE la risposta (dove nasce il 500)."""
+    """Esegue admin_stats VERO con l'header giusto e SERIALIZZA la risposta."""
     secret = request.headers.get("X-Admin-Secret","") or request.args.get("s","")
     if (not os.environ.get("ADMIN_SECRET")) or not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET"))):
         return jsonify({"errore":"non autorizzato"}), 403
     import traceback as _tb
+    # riesegui la logica di stats DIRETTAMENTE qui (senza ri-chiamare la route,
+    # così l'auth non serve e vediamo il vero punto di rottura)
     try:
-        with __import__("contextlib").redirect_stdout(__import__("io").StringIO()):
-            resp = admin_stats()
-        # estrai la Response (può essere Response o tupla)
-        r = resp[0] if isinstance(resp, tuple) else resp
-        code = resp[1] if isinstance(resp, tuple) else 200
-        # PROVA A LEGGERE IL BODY: è qui che il Decimal esplode se il provider non copre
+        conn = _get_conn()
+        conn.autocommit = True
+        cur = conn.cursor()
+        stats = {}
+        def q(sql, default=0):
+            try:
+                cur.execute(sql); return cur.fetchone()[0]
+            except Exception:
+                try: conn.rollback()
+                except Exception: pass
+                return default
+        stats["utenti_attivi"] = q("SELECT COUNT(*) FROM utenti WHERE attivo=TRUE")
+        stats["domande_totali"] = q("SELECT COUNT(*) FROM log_domande")
+        stats["feedback_positivi"] = q("SELECT COUNT(*) FROM log_domande WHERE feedback=1")
+        stats["nodi_grafo"] = q("SELECT COUNT(*) FROM nodes")
+        stats["costo_oggi_usd"] = q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
+        # costo per modello (la lista con Decimal)
+        cur.execute("SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days' GROUP BY model")
+        stats["costo_per_modello_7g"] = [{"model":r[0],"chiamate":r[1],"costo_usd":r[2]} for r in cur.fetchall()]
+        cur.close(); _release_conn(conn)
+        # PROVA A SERIALIZZARE con jsonify (dove esplode il Decimal se il provider non copre)
         try:
-            body = r.get_data(as_text=True)
-            return jsonify({"stato": f"admin_stats code={code}", "body_len": len(body),
-                            "body_inizio": body[:300]})
+            resp = jsonify(stats)
+            body = resp.get_data(as_text=True)
+            return jsonify({"stato": "SERIALIZZA OK", "tipi": {k: type(v).__name__ for k,v in stats.items()},
+                            "body_len": len(body)})
         except Exception as se:
-            return jsonify({"stato": "SERIALIZZAZIONE FALLISCE", "errore_serial": str(se),
-                            "traceback": _tb.format_exc()[-1500:]}), 200
+            return jsonify({"stato": "jsonify ESPLODE", "errore": str(se),
+                            "tipi": {k: type(v).__name__ for k,v in stats.items()},
+                            "traceback": _tb.format_exc()[-1000:]}), 200
     except Exception as e:
-        return jsonify({"stato": "eccezione in admin_stats", "errore": str(e),
+        return jsonify({"stato": "eccezione", "errore": str(e),
                         "traceback": _tb.format_exc()[-1500:]}), 200
 
 
