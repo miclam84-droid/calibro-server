@@ -4,6 +4,66 @@
 from flask import Blueprint, request, jsonify
 from db import carica_grafo, _dati, _get_conn, _release_conn
 from ai import estrai_entita, cerca_contesto, _haiku_raw
+
+
+# ── Fase 1 flavor network: filtro di presentazione dei nomi sporchi ──────────
+# Il dataset Ahn ha nomi da laboratorio ("Petitgrain Lemon", "Aroma Di Limone
+# Naturale"). Questo NON è la bonifica completa (entity resolution) — è un filtro
+# leggero che, al momento di MOSTRARE un abbinamento, normalizza o scarta i nomi
+# palesemente tecnici, così l'utente non vede "roba da database".
+_NOMI_SPORCHI_MAP = {
+    "petitgrain lemon": "limone", "aroma di limone naturale": "limone",
+    "lemon peel": "limone", "lemon juice": "limone", "succo di limone": "limone",
+    "lime juice": "lime", "mozzarella di bufala": "mozzarella",
+    "mozzarella di giornata": "mozzarella", "basilico genovese": "basilico",
+    "muscat grape": "uva", "uva concord": "uva",
+}
+# marcatori che indicano un nome tecnico da scartare se non mappato
+_MARCATORI_SPORCHI = ("aroma di", "aroma naturale", "natural flavor", "extract",
+                      "estratto di", "oleoresin", "distillate", "concentrate")
+
+def _nome_pulito(nome):
+    """Restituisce (nome_pulito, tienilo). tienilo=False → scarta dall'output."""
+    if not nome:
+        return (nome, False)
+    n = nome.strip().lower()
+    # 1) mappa esplicita
+    if n in _NOMI_SPORCHI_MAP:
+        return (_NOMI_SPORCHI_MAP[n], True)
+    # 2) contiene marcatori tecnici → scarta (non sappiamo pulirlo bene)
+    for m in _MARCATORI_SPORCHI:
+        if m in n:
+            return (nome, False)
+    # 3) nome con troppe maiuscole interne (es. "Petitgrain Lemon") ma non mappato:
+    #    lo teniamo ma in minuscolo pulito
+    return (nome.strip(), True)
+
+def _pulisci_abbinamenti(lista, campo="ingrediente"):
+    """Filtra una lista di abbinamenti: normalizza nomi, scarta gli sporchi,
+    deduplica per nome pulito. Mantiene l'ordine."""
+    visti = set()
+    out = []
+    for a in lista:
+        if isinstance(a, dict):
+            nome = a.get(campo) or a.get("nome") or a.get("a") or ""
+        else:
+            nome = str(a)
+        pulito, tieni = _nome_pulito(nome)
+        if not tieni:
+            continue
+        chiave = pulito.lower()
+        if chiave in visti:
+            continue
+        visti.add(chiave)
+        if isinstance(a, dict):
+            a2 = dict(a)
+            if campo in a2: a2[campo] = pulito
+            elif "nome" in a2: a2["nome"] = pulito
+            elif "a" in a2: a2["a"] = pulito
+            out.append(a2)
+        else:
+            out.append(pulito)
+    return out
 from contenuto import _scheda_lang, _numero_bersaglio
 from utils import _profilo_default, _aggiorna_profilo, _check_rate_limit
 from auth import _utente_da_token
@@ -160,18 +220,30 @@ def genera_ricetta_endpoint():
 
 @bp.route("/v1/abbina-bevanda")
 def abbina_bevanda():
-    """Dato un abbinamento vino/birra (query testuale), restituisce i link e-commerce.
-    ?q=Barolo&cat=vino  oppure  ?q=IPA&cat=birra"""
+    """Dato un abbinamento vino/birra (query testuale), restituisce l'abbinamento.
+    ?q=Barolo&cat=vino  oppure  ?q=IPA&cat=birra
+    NB: i link e-commerce sono CONGELATI per il lancio (il rilevamento categoria
+    sbagliava, es. IPA->vino, e un link sbagliato distrugge la fiducia più di
+    quanto renda l'affiliazione). Si riattivano dopo aver stabilizzato il rilevamento.
+    Flag: ABBINA_BEVANDA_LINK_ATTIVI (env, default off)."""
     query = request.args.get("q", "").strip()
-    cat = request.args.get("cat", "vino")
+    cat = request.args.get("cat", "").strip() or "bevanda"
     if not query:
         return jsonify({"errore": "query mancante (?q=...)"}), 400
-    return jsonify({
+    import os as _os
+    link_attivi = _os.environ.get("ABBINA_BEVANDA_LINK_ATTIVI", "").lower() in ("1", "true", "yes")
+    risp = {
         "query": query,
         "categoria": cat,
-        "links": _link_vino_birra(query, cat),
-        "disclosure": "Link affiliati: acquistando tramite questi link supporti Matter Lab senza costi aggiuntivi."
-    })
+        "beta": True,
+        "nota": "Suggerimento di categoria. Gli abbinamenti commerciali sono in preparazione.",
+    }
+    if link_attivi:
+        risp["links"] = _link_vino_birra(query, cat)
+        risp["disclosure"] = "Link affiliati: acquistando tramite questi link supporti Matter Lab senza costi aggiuntivi."
+    else:
+        risp["links"] = []
+    return jsonify(risp)
 
 
 # ── ATTREZZATURA per tecnica ────────────────────────────────────────────
@@ -880,7 +952,7 @@ def abbina(ingrediente):
                 # Integra con AI se abbinamenti sono meno di 4
                 if _pre_abbs and len(_pre_abbs) >= 4:
                     cur.close(); _release_conn(conn)
-                    return jsonify({"ingrediente":ingrediente,"abbinamenti":_pre_abbs,
+                    return jsonify({"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(_pre_abbs),
                         "fonte":"dataset Matter Lab",
                         "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
                 # Nodo trovato ma con pochi abbinamenti — arricchisci con AI
@@ -1205,7 +1277,7 @@ def abbina(ingrediente):
         abbinamenti = abbinamenti_dedup
         return jsonify({
             "ingrediente": ingrediente,
-            "abbinamenti": abbinamenti,
+            "abbinamenti": _pulisci_abbinamenti(abbinamenti),
             "nota": "Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale",
             "fonte": "Dataset Ahn 2011 (CC BY)"
         })
@@ -1627,25 +1699,20 @@ def contrasto(ingrediente):
                     visti.add(rid)
                     import json as _j2
                     rd = rdata if isinstance(rdata, dict) else _j2.loads(rdata or "{}")
-                    # spiegazione personalizzata per coppia
+                    # spiegazione: template BREVE e completo (non si tronca).
+                    # Il meccanismo è chiaro, senza numeri grezzi ballerini in mezzo alla frase.
                     if meccanismo == "taglia_grasso":
-                        perche = (f"{node_name} (pH {ph:.1f}) taglia il grasso di {rname}: "
-                                  f"l'acidità emulsiona e pulisce la bocca dopo il grasso")
+                        perche = f"L'acidità di {node_name} taglia il grasso e pulisce la bocca."
                     elif meccanismo == "richiede_acido":
-                        perche = (f"Il grasso di {node_name} ammorbidisce e porta: "
-                                  f"{rname} (pH {float(rd.get('ph_min',3)):.1f}) bilancia con acidità")
+                        perche = f"Il grasso di {node_name} chiede acidità: {rname} bilancia."
                     elif meccanismo == "smorzato_da_dolce":
-                        perche = (f"L'amaro di {node_name} viene smorzato dai {rd.get('zuccheri_pct','?')}% "
-                                  f"di zuccheri in {rname} — il dolce riduce la percezione amara")
+                        perche = f"Il dolce di {rname} smorza l'amaro di {node_name}."
                     elif meccanismo == "smorzato_da_sale":
-                        perche = (f"Il sodio in {rname} ({rd.get('sodio_mg100g','?')}mg/100g) "
-                                  f"sopprime l'amaro di {node_name} — piccole quantità bastano")
+                        perche = f"Il sale di {rname} sopprime l'amaro di {node_name}."
                     elif meccanismo == "bilanciato_da_acido":
-                        perche = (f"Il dolce di {node_name} satura senza contrasto: "
-                                  f"{rname} (pH {float(rd.get('ph_min',3)):.1f}) taglia e rinfresca")
+                        perche = f"L'acidità di {rname} taglia il dolce di {node_name} e rinfresca."
                     elif meccanismo == "amplificato_da_acido":
-                        perche = (f"Il salato di {node_name} si esalta con l'acido di {rname}: "
-                                  f"insieme amplificano entrambi i sapori")
+                        perche = f"L'acido di {rname} esalta il salato di {node_name}."
                     else:
                         perche = spiegazione
                     contrasti.append({
