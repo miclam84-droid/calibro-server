@@ -1238,6 +1238,8 @@ def admin_stats():
     except Exception as e:
         import traceback as _tb
         print("[STATS ERROR]", _tb.format_exc(), flush=True)
+        # TEMPORANEO: espongo il traceback vero per diagnosi (bypassa handler globale)
+        return jsonify({"errore_diag": str(e), "traceback": _tb.format_exc()[-1500:]}), 200
         return jsonify({"errore": str(e), "dettaglio": str(e)}), 500
 
 @bp.route("/admin/assistenza")
