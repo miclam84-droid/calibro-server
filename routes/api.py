@@ -22,6 +22,23 @@ _NOMI_SPORCHI_MAP = {
 _MARCATORI_SPORCHI = ("aroma di", "aroma naturale", "natural flavor", "extract",
                       "estratto di", "oleoresin", "distillate", "concentrate")
 
+# ── Fase 2: famiglie per ridurre la ridondanza (non 4 agrumi di fila) ────────
+# Mappa ingrediente → famiglia. Limitiamo a max 2 elementi per famiglia e
+# scartiamo il nome-categoria generico ("agrumi") se ci sono già ingredienti
+# specifici di quella famiglia.
+_FAMIGLIA = {
+    "limone":"agrumi","lime":"agrumi","arancia":"agrumi","mandarino":"agrumi",
+    "pompelmo":"agrumi","bergamotto":"agrumi","cedro":"agrumi","clementina":"agrumi",
+    "tè nero":"tè","tè verde":"tè","tè bianco":"tè","matcha":"tè",
+    "lampone":"frutti_rossi","mora":"frutti_rossi","mirtillo":"frutti_rossi",
+    "fragola":"frutti_rossi","ribes":"frutti_rossi",
+    "basilico":"erbe","menta":"erbe","rosmarino":"erbe","timo":"erbe",
+    "prezzemolo":"erbe","salvia":"erbe","origano":"erbe",
+}
+# nomi-categoria generici da scartare quando c'è già un ingrediente specifico
+_CATEGORIE_GENERICHE = {"agrumi", "erbe", "frutti rossi", "frutti di bosco",
+                        "spezie", "tè", "frutta", "verdura", "latticini"}
+
 def _nome_pulito(nome):
     """Restituisce (nome_pulito, tienilo). tienilo=False → scarta dall'output."""
     if not nome:
@@ -38,11 +55,20 @@ def _nome_pulito(nome):
     #    lo teniamo ma in minuscolo pulito
     return (nome.strip(), True)
 
-def _pulisci_abbinamenti(lista, campo="ingrediente"):
+def _pulisci_abbinamenti(lista, campo="ingrediente", max_famiglia=3):
     """Filtra una lista di abbinamenti: normalizza nomi, scarta gli sporchi,
-    deduplica per nome pulito. Mantiene l'ordine."""
+    deduplica per nome pulito, e limita la ridondanza di famiglia (max 2 agrumi,
+    ecc.) scartando anche le categorie generiche. Mantiene l'ordine."""
     visti = set()
+    fam_count = {}
     out = []
+    # prima passata: quali famiglie hanno ingredienti specifici?
+    fam_presenti = set()
+    for a in lista:
+        nome = (a.get(campo) or a.get("nome") or a.get("a") or "") if isinstance(a, dict) else str(a)
+        fam = _FAMIGLIA.get(nome.strip().lower())
+        if fam:
+            fam_presenti.add(fam)
     for a in lista:
         if isinstance(a, dict):
             nome = a.get(campo) or a.get("nome") or a.get("a") or ""
@@ -54,6 +80,15 @@ def _pulisci_abbinamenti(lista, campo="ingrediente"):
         chiave = pulito.lower()
         if chiave in visti:
             continue
+        # scarta la categoria generica se c'è già un ingrediente specifico
+        if chiave in _CATEGORIE_GENERICHE:
+            continue
+        # limita la ridondanza di famiglia
+        fam = _FAMIGLIA.get(chiave)
+        if fam:
+            if fam_count.get(fam, 0) >= max_famiglia:
+                continue
+            fam_count[fam] = fam_count.get(fam, 0) + 1
         visti.add(chiave)
         if isinstance(a, dict):
             a2 = dict(a)
