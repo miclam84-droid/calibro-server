@@ -972,11 +972,11 @@ def abbina(ingrediente):
                             if _ap:
                                 cur.close(); _release_conn(conn)
                                 return jsonify({"ingrediente":ingrediente,
-                                    "abbinamenti":[{"ingrediente":a.get("ingrediente_it","?"),
+                                    "abbinamenti":_pulisci_abbinamenti([{"ingrediente":a.get("ingrediente_it","?"),
                                         "composto":"abbinamento aromatico",
                                         "overlap":float(a.get("overlap_score",50)),
                                         "perche":a.get("meccanismo","affinità aromatica")}
-                                        for a in _ap[:5]],
+                                        for a in _ap[:5]]),
                                     "fonte":"Matter Lab AI",
                                     "nota":"Abbinamenti generati da AI su profilo sensoriale"})
                 except Exception:
@@ -1091,7 +1091,7 @@ def abbina(ingrediente):
                         })
                     if result_props:
                         cur.close(); _release_conn(conn)
-                        return jsonify({"ingrediente":ingrediente,"abbinamenti":result_props,
+                        return jsonify({"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(result_props),
                             "fonte":"dataset Matter Lab",
                             "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
                     # Nodo trovato ma senza abbinamenti nel JSON — genera via AI
@@ -1121,7 +1121,7 @@ def abbina(ingrediente):
                                     if result_props:
                                         cur.close(); _release_conn(conn)
                                         return jsonify({"ingrediente":ingrediente,
-                                            "abbinamenti":result_props,
+                                            "abbinamenti":_pulisci_abbinamenti(result_props),
                                             "fonte":"Matter Lab AI",
                                             "nota":"Abbinamenti generati da AI su profilo sensoriale"})
                         except Exception as _ai_e:
@@ -1147,11 +1147,11 @@ def abbina(ingrediente):
                         if _abbs5:
                             cur.close(); _release_conn(conn)
                             return jsonify({"ingrediente":ingrediente,
-                                "abbinamenti":[{"ingrediente":a.get("ingrediente_it","?"),
+                                "abbinamenti":_pulisci_abbinamenti([{"ingrediente":a.get("ingrediente_it","?"),
                                     "composto":"abbinamento aromatico",
                                     "overlap":float(a.get("overlap_score",50)),
                                     "perche":a.get("meccanismo","affinità aromatica")}
-                                    for a in _abbs5[:5]],
+                                    for a in _abbs5[:5]]),
                                 "fonte":"Matter Lab AI",
                                 "nota":"Abbinamenti generati da AI — ingrediente non ancora nel dataset molecolare"})
             except Exception as _ai5_e:
