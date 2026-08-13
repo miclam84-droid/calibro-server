@@ -1912,20 +1912,19 @@ def admin_set_target():
 # ═══ PONTE FOOD COST — vocabolario ingredienti + arricchimento ricette (Blocco A/B) ═══
 
 # Mappa alias→ing-id costruita dal vocabolario bar (deve restare allineata al seed-ingredienti-bar.sql)
-_ING_ALIAS = {}
 def _build_alias_map():
-    global _ING_ALIAS
-    if _ING_ALIAS:
-        return _ING_ALIAS
+    # Ricostruita ad ogni chiamata: piccola (decine di ingredienti) e senza rischio
+    # di cache congelata prima del caricamento del seed.
+    amap = {}
     db = carica_grafo()
     rows = db.execute("SELECT id, name, data FROM nodes WHERE type='Ingrediente'").fetchall()
     for r in rows:
         iid = r["id"]; nome = r["name"]
         data = r["data"] if isinstance(r["data"], dict) else json.loads(r["data"] or "{}")
-        _ING_ALIAS[nome.lower()] = iid
+        amap[nome.lower()] = iid
         for a in (data.get("aliases") or []):
-            _ING_ALIAS[a.lower()] = iid
-    return _ING_ALIAS
+            amap[a.lower()] = iid
+    return amap
 
 def _match_ing_id(nome_ric):
     """Match nome ricetta → ing-id via alias (più lunghi prima, per precisione)."""
@@ -1993,3 +1992,23 @@ def admin_arricchisci_ricette():
     report["dry_run"] = dry
     report["copertura_pct"] = round(100 * report["voci_matchate"] / max(report["voci_totali"], 1))
     return jsonify(report)
+
+
+@bp.route("/admin/diag-alias")
+def admin_diag_alias():
+    if not hmac.compare_digest(str(request.args.get("s","")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore":"non autorizzato"}), 403
+    amap = _build_alias_map()
+    db = carica_grafo()
+    tot = db.execute("SELECT COUNT(*) as n FROM nodes WHERE type='Ingrediente'").fetchall()
+    # test su nomi reali
+    test = ["Gin 40-47%", "Zucchero", "Vermut rosso", "Campari 25%", "Tequila 100% agave"]
+    risultati = {t: _match_ing_id(t) for t in test}
+    return jsonify({
+        "nodi_ingrediente": tot[0]["n"],
+        "alias_totali": len(amap),
+        "gin_presente": "gin" in amap,
+        "zucchero_presente": "zucchero" in amap,
+        "match_test": risultati,
+        "primi_alias": sorted(list(amap.keys()))[:15]
+    })
