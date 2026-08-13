@@ -1072,6 +1072,31 @@ def admin_stats_debug2():
         stats["feedback_positivi"] = q("SELECT COUNT(*) FROM log_domande WHERE feedback=1")
         stats["nodi_grafo"] = q("SELECT COUNT(*) FROM nodes")
         stats["costo_oggi_usd"] = q("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
+        # tutte le altre query di admin_stats, con marcatore per trovare quella che rompe
+        marcatori = []
+        def qm(nome, sql):
+            marcatori.append(nome)
+            return q(sql)
+        stats["utenti_pro"] = qm("utenti_pro", "SELECT COUNT(*) FROM utenti WHERE piano='pro'")
+        stats["risposte_ok"] = qm("risposte_ok", "SELECT COUNT(*) FROM log_domande WHERE esito='ok'")
+        stats["fallback"] = qm("fallback", "SELECT COUNT(*) FROM log_domande WHERE esito='nessun_nodo'")
+        stats["domande_24h"] = qm("domande_24h", "SELECT COUNT(*) FROM log_domande WHERE ts > NOW() - INTERVAL '24 hours'")
+        stats["feedback_negativi"] = qm("feedback_negativi", "SELECT COUNT(*) FROM log_domande WHERE feedback=-1")
+        stats["archi_grafo"] = qm("archi_grafo", "SELECT COUNT(*) FROM edges")
+        stats["esperimenti"] = qm("esperimenti", "SELECT COUNT(*) FROM esperimenti")
+        stats["costo_7g_usd"] = qm("costo_7g", "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'")
+        stats["costo_30g_usd"] = qm("costo_30g", "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '30 days'")
+        stats["chiamate_ai_oggi"] = qm("chiamate_ai", "SELECT COUNT(*) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
+        stats["errori_ai_24h"] = qm("errori_ai", "SELECT COUNT(*) FROM ai_usage_log WHERE error IS NOT NULL AND ts > NOW() - INTERVAL '24 hours'")
+        # top fenomeni (query con fetchall)
+        try:
+            cur.execute("SELECT fenomeni_trovati, COUNT(*) FROM log_domande WHERE fenomeni_trovati IS NOT NULL AND ts > NOW() - INTERVAL '7 days' GROUP BY fenomeni_trovati ORDER BY COUNT(*) DESC LIMIT 5")
+            stats["top_fenomeni_7d"] = [{"fenomeni":r[0],"count":r[1]} for r in cur.fetchall()]
+            marcatori.append("top_fenomeni OK")
+        except Exception as te:
+            marcatori.append(f"top_fenomeni ROTTO: {te}")
+            try: conn.rollback()
+            except Exception: pass
         # costo per modello (la lista con Decimal)
         cur.execute("SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days' GROUP BY model")
         stats["costo_per_modello_7g"] = [{"model":r[0],"chiamate":r[1],"costo_usd":r[2]} for r in cur.fetchall()]
@@ -1081,7 +1106,7 @@ def admin_stats_debug2():
             resp = jsonify(stats)
             body = resp.get_data(as_text=True)
             return jsonify({"stato": "SERIALIZZA OK", "tipi": {k: type(v).__name__ for k,v in stats.items()},
-                            "body_len": len(body)})
+                            "body_len": len(body), "marcatori": marcatori})
         except Exception as se:
             return jsonify({"stato": "jsonify ESPLODE", "errore": str(se),
                             "tipi": {k: type(v).__name__ for k,v in stats.items()},
