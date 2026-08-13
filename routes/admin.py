@@ -1992,23 +1992,3 @@ def admin_arricchisci_ricette():
     report["dry_run"] = dry
     report["copertura_pct"] = round(100 * report["voci_matchate"] / max(report["voci_totali"], 1))
     return jsonify(report)
-
-
-@bp.route("/admin/diag-alias")
-def admin_diag_alias():
-    if not hmac.compare_digest(str(request.args.get("s","")), str(os.environ.get("ADMIN_SECRET") or "")):
-        return jsonify({"errore":"non autorizzato"}), 403
-    amap = _build_alias_map()
-    db = carica_grafo()
-    tot = db.execute("SELECT COUNT(*) as n FROM nodes WHERE type='Ingrediente'").fetchall()
-    # test su nomi reali
-    test = ["Gin 40-47%", "Zucchero", "Vermut rosso", "Campari 25%", "Tequila 100% agave"]
-    risultati = {t: _match_ing_id(t) for t in test}
-    return jsonify({
-        "nodi_ingrediente": tot[0]["n"],
-        "alias_totali": len(amap),
-        "gin_presente": "gin" in amap,
-        "zucchero_presente": "zucchero" in amap,
-        "match_test": risultati,
-        "primi_alias": sorted(list(amap.keys()))[:15]
-    })

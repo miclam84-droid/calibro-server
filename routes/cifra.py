@@ -329,19 +329,28 @@ def ricette_per_cifra():
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
 
-@bp.route("/v1/sicurezza", methods=["POST"])
+@bp.route("/v1/sicurezza", methods=["POST", "GET"])
+@bp.route("/v1/sicurezza/", methods=["POST", "GET"])
 def sicurezza_stateless():
     """SEC15 — Endpoint stateless per Cifra.
     Calcola il profilo di sicurezza da parametri in input,
     senza che la ricetta esista su Matter.
     Auth: Authorization: Bearer {MATTER_SERVICE_KEY} (no X-User-Email richiesta).
+    Tollerante: accetta slash finale e GET (parametri via query string) oltre a POST.
     """
     auth = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
     service_key = os.environ.get("MATTER_SERVICE_KEY", "")
     if not service_key or auth != service_key:
         return jsonify({"errore": "autenticazione richiesta"}), 401
 
-    body = request.json or {}
+    if request.method == "GET":
+        body = request.args.to_dict()
+        for k in ("ph", "brix", "aw", "idratazione", "temperatura_conservazione_c"):
+            if k in body:
+                try: body[k] = float(body[k])
+                except (ValueError, TypeError): body[k] = None
+    else:
+        body = request.json or {}
     nome       = body.get("nome")
     disciplina = body.get("disciplina")
     ph         = body.get("ph")
