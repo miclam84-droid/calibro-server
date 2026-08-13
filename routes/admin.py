@@ -2082,3 +2082,33 @@ def admin_init_usage_log():
         return jsonify({"ok": True, "tabella": "ai_usage_log pronta", "righe_attuali": n[0]["n"]})
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/diag-costi")
+def admin_diag_costi():
+    """Diagnostico: testa ogni query costi isolatamente e riporta quale rompe."""
+    if not hmac.compare_digest(str(request.args.get("s","")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore":"non autorizzato"}), 403
+    import traceback as _tb
+    risultati = {}
+    from db import _get_conn, _release_conn
+    conn = _get_conn()
+    cur = conn.cursor()
+    test = {
+        "tabella_esiste": "SELECT COUNT(*) FROM ai_usage_log",
+        "colonne": "SELECT column_name FROM information_schema.columns WHERE table_name='ai_usage_log'",
+        "costo_oggi": "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE",
+        "costo_7g": "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'",
+        "per_modello": "SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days' GROUP BY model",
+    }
+    for nome, sql in test.items():
+        try:
+            cur.execute(sql)
+            rows = cur.fetchall()
+            risultati[nome] = {"ok": True, "righe": len(rows), "primo": str(rows[0]) if rows else None}
+        except Exception as e:
+            risultati[nome] = {"ok": False, "errore": str(e)[:200]}
+            try: conn.rollback()
+            except Exception: pass
+    cur.close(); _release_conn(conn)
+    return jsonify(risultati)
