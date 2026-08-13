@@ -2120,3 +2120,17 @@ def admin_diag_costi():
             except Exception: pass
     cur.close(); _release_conn(conn)
     return jsonify(risultati)
+
+
+@bp.route("/admin/migra-feedback", methods=["POST","GET"])
+def admin_migra_feedback():
+    """Migrazione una-tantum: aggiunge le colonne feedback a log_domande se mancano."""
+    if not hmac.compare_digest(str(request.args.get("s","")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore":"non autorizzato"}), 403
+    db = carica_grafo()
+    try:
+        db.execute("ALTER TABLE log_domande ADD COLUMN IF NOT EXISTS feedback INTEGER")
+        db.execute("ALTER TABLE log_domande ADD COLUMN IF NOT EXISTS feedback_nota TEXT")
+        return jsonify({"ok": True, "messaggio": "colonne feedback aggiunte a log_domande"})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500

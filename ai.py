@@ -601,7 +601,8 @@ def log_evento(tipo, domanda, fenomeni=None, esito=None):
                 id SERIAL PRIMARY KEY,
                 ts TIMESTAMPTZ DEFAULT NOW(),
                 tipo TEXT, domanda TEXT,
-                fenomeni_trovati TEXT, esito TEXT
+                fenomeni_trovati TEXT, esito TEXT,
+                feedback INTEGER, feedback_nota TEXT
             )
         """)
         cur.execute(
