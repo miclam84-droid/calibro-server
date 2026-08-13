@@ -943,7 +943,13 @@ function renderRisp(domanda,j,fromNode){
       };
       // Cerca se la risposta ha la struttura con label
       const hasStructure = allLabels.some(l => r.includes(l + ':'));
-      if(!hasStructure) return '<div class="s-body">'+esc(r)+'</div>';
+      if(!hasStructure) {
+        // risposta libera (non strutturata): rendo in paragrafi puliti invece
+        // di un blocco unico grezzo che sembra "codice rotto"
+        const paragrafi = r.split(/\n{2,}/).map(p => p.trim()).filter(p => p);
+        if(paragrafi.length <= 1) return '<div class="s-body">'+esc(r)+'</div>';
+        return '<div class="s-body">' + paragrafi.map(p => '<p style="margin:0 0 10px 0">'+esc(p)+'</p>').join('') + '</div>';
+      }
       // Parsa i blocchi
       const lines = r.split('\n').filter(l => l.trim());
       let html = '<div class="s-blocks">';

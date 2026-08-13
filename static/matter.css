@@ -1409,7 +1409,7 @@ a:focus-visible,input:focus-visible{
 
 
 /* onboarding scelta modalità — gerarchia raddrizzata */
-.menu-crea-primaria{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);color:#fff;border:none;border-radius:14px;height:56px;font-family:var(--sans);font-weight:700;font-size:16px;cursor:pointer;transition:transform .1s,box-shadow .15s;box-shadow:0 6px 18px rgba(203,90,34,.22)}
+.menu-crea-primaria{width:calc(100% - 32px);margin:0 16px;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);color:#fff;border:none;border-radius:14px;height:56px;font-family:var(--sans);font-weight:700;font-size:16px;cursor:pointer;transition:transform .1s,box-shadow .15s;box-shadow:0 6px 18px rgba(203,90,34,.22);box-sizing:border-box}
 .menu-crea-primaria:active{transform:scale(.99)}
 .menu-crea-primaria svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2}
 .menu-crea-oppure{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--ink-muted)}

@@ -136,19 +136,17 @@ def chiedi():
     if not contesto or not contesto.get("fenomeni"):
         contesto = cerca_fuzzy(db, domanda)
 
-    # LIVELLO 3 — ancora niente: non lascio l'utente a un vicolo cieco,
-    # mostro i fenomeni del grafo come punto di partenza cliccabile
+    # LIVELLO 3 — nessun aggancio nel grafo: invece di lasciare l'utente a un
+    # vicolo cieco, faccio rispondere l'AI con la sua conoscenza scientifica
+    # (taglio Matter), e allego i fenomeni suggeriti come spunto di approfondimento.
+    fallback_suggeriti = None
     if not contesto or not contesto.get("fenomeni"):
         suggeriti = fenomeni_suggeriti(db)
-        log_evento("fallback", domanda, esito="nessun_nodo")
-        return jsonify({
-            "risposta": None,
-            "nota": "Non ho trovato un aggancio preciso nel grafo per questa domanda. "
-                    "Prova a partire da uno di questi fenomeni, o riformula con un "
-                    "ingrediente o un prodotto specifico.",
-            "connessi": [{"id": f["id"], "nome": f["nome"], "dominio": f["dominio"],
-                          "target": f["target"]} for f in suggeriti]
-        })
+        log_evento("fallback", domanda, esito="nessun_nodo_ai_generale")
+        # contesto vuoto ma valido: costruisci_prompt lo regge (for su lista vuota)
+        contesto = {"fenomeni": [], "errori": [], "prodotti_fisici": []}
+        fallback_suggeriti = [{"id": f["id"], "nome": f["nome"], "dominio": f["dominio"],
+                               "target": f["target"]} for f in suggeriti]
 
     # se la domanda arriva da una scheda lezione, inietto il contesto così
     # la chat risponde già informata su QUEL fenomeno
@@ -203,6 +201,11 @@ def chiedi():
         if t and t not in numeri_bersaglio:
             numeri_bersaglio.append(t)
     numero_bersaglio_agg = " · ".join(numeri_bersaglio[:2]) if numeri_bersaglio else ""
+
+    # se siamo nel fallback (nessun aggancio grafo), aggiungi i fenomeni suggeriti
+    # come spunto, MA la risposta AI c'è comunque (non è più un vicolo cieco)
+    if fallback_suggeriti:
+        connessi = fallback_suggeriti + connessi
 
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
