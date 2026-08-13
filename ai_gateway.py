@@ -82,6 +82,7 @@ def _log_db(provider, model, route, latency_ms, tokens_in, tokens_out, cost_usd,
                 CREATE TABLE IF NOT EXISTS ai_usage_log (
                     id BIGSERIAL PRIMARY KEY,
                     ts TIMESTAMPTZ DEFAULT NOW(),
+                    conto_id TEXT,
                     user_id TEXT,
                     provider TEXT,
                     model TEXT,
@@ -93,6 +94,8 @@ def _log_db(provider, model, route, latency_ms, tokens_in, tokens_out, cost_usd,
                     error TEXT
                 )
             """)
+            # se la tabella esisteva già senza conto_id, aggiungila (compatibilità standard 3-voci)
+            cur.execute("ALTER TABLE ai_usage_log ADD COLUMN IF NOT EXISTS conto_id TEXT")
             cur.execute("""
                 INSERT INTO ai_usage_log
                     (provider, model, route, tokens_in, tokens_out, cost_usd, latency_ms, error)

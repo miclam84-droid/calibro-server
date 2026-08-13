@@ -1090,6 +1090,27 @@ def admin_stats():
         except Exception:
             stats["costo_per_route_7g"] = []
 
+        # ═══ ALLARME SOGLIA COSTI (anti-erosione margine) ═══
+        # Soglie configurabili via env (default sensati per fase early). Non blocca: segnala.
+        try:
+            soglia_giorno = float(os.environ.get("ALERT_COSTO_GIORNO_USD", "5.0"))
+            soglia_mese   = float(os.environ.get("ALERT_COSTO_MESE_USD", "80.0"))
+            c_oggi = stats.get("costo_oggi_usd", 0) or 0
+            c_mese = stats.get("costo_30g_usd", 0) or 0
+            allarmi = []
+            if c_oggi > soglia_giorno:
+                allarmi.append(f"Costo oggi ${c_oggi:.2f} supera la soglia giornaliera ${soglia_giorno:.2f}")
+            if c_mese > soglia_mese:
+                allarmi.append(f"Costo 30g ${c_mese:.2f} supera la soglia mensile ${soglia_mese:.2f}")
+            stats["allarme_costi"] = {
+                "attivo": len(allarmi) > 0,
+                "messaggi": allarmi,
+                "soglia_giorno_usd": soglia_giorno,
+                "soglia_mese_usd": soglia_mese
+            }
+        except Exception:
+            stats["allarme_costi"] = {"attivo": False, "messaggi": []}
+
         cur.close(); _release_conn(conn)
         return jsonify(stats)
     except Exception as e:
@@ -2034,6 +2055,7 @@ def admin_init_usage_log():
             CREATE TABLE IF NOT EXISTS ai_usage_log (
                 id BIGSERIAL PRIMARY KEY,
                 ts TIMESTAMPTZ DEFAULT NOW(),
+                conto_id TEXT,
                 user_id TEXT,
                 provider TEXT,
                 model TEXT,
