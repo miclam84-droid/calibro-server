@@ -1028,28 +1028,44 @@ def admin_stats_debug():
         conn.autocommit = True
         cur = conn.cursor()
         tappe.append("cursor ok")
-        cur.execute("SELECT COUNT(*) FROM utenti WHERE attivo=TRUE")
-        tappe.append(f"utenti ok: {cur.fetchone()[0]}")
-        cur.execute("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
-        tappe.append(f"costo oggi ok: {cur.fetchone()[0]}")
         cur.execute("SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days' GROUP BY model")
         rows = cur.fetchall()
-        tappe.append(f"per modello ok: {len(rows)} righe")
-        # test serializzazione Decimal
+        test = {"costo_per_modello": [{"model":r[0],"n":r[1],"costo":float(r[2])} for r in rows]}
+        # TEST 1: il provider Flask jsonify gestisce i Decimal?
         from decimal import Decimal as _Dec
-        test = [{"model":r[0],"n":r[1],"costo":r[2]} for r in rows]
-        tappe.append(f"tipi costo: {[type(r[2]).__name__ for r in rows]}")
-        import json as _js
+        test["decimal_grezzo"] = _Dec("1.23")
         try:
-            _js.dumps(test)
-            tappe.append("jsonify OK senza clean")
-        except Exception as se:
-            tappe.append(f"jsonify FALLISCE: {se} → serve _clean")
+            _resp = jsonify(test)
+            tappe.append("jsonify FLASK con Decimal grezzo: OK (provider attivo)")
+        except Exception as je:
+            tappe.append(f"jsonify FLASK FALLISCE: {je} (provider NON attivo)")
         cur.close(); _release_conn(conn)
         return jsonify({"ok": True, "tappe": tappe})
     except Exception as e:
         return jsonify({"ok": False, "tappe": tappe, "errore": str(e),
-                        "traceback": _tb.format_exc()[-800:]}), 200
+                        "traceback": _tb.format_exc()[-1200:]}), 200
+
+
+@bp.route("/v1/admin/stats-debug2")
+def admin_stats_debug2():
+    """Esegue admin_stats VERO in un try che espone il traceback."""
+    secret = request.headers.get("X-Admin-Secret","") or request.args.get("s","")
+    if (not os.environ.get("ADMIN_SECRET")) or not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET"))):
+        return jsonify({"errore":"non autorizzato"}), 403
+    import traceback as _tb
+    try:
+        # chiama la logica reale di admin_stats catturando il vero errore
+        with __import__("contextlib").redirect_stdout(__import__("io").StringIO()):
+            resp = admin_stats()
+        # se admin_stats ritorna una tupla (jsonify, code) con code 500, estrai
+        if isinstance(resp, tuple) and len(resp) == 2 and resp[1] == 500:
+            import json as _js
+            body = resp[0].get_data(as_text=True)
+            return jsonify({"stato": "admin_stats ha restituito 500", "body": body[:500]})
+        return jsonify({"stato": "admin_stats OK", "tipo": str(type(resp))})
+    except Exception as e:
+        return jsonify({"stato": "eccezione catturata", "errore": str(e),
+                        "traceback": _tb.format_exc()[-1500:]}), 200
 
 
 @bp.route("/v1/admin/stats")
