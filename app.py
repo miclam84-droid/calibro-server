@@ -33,6 +33,30 @@ from auth import (_init_account_tables, _hash_pw, _e_hash_legacy, _verifica_pw,
 
 app = Flask(__name__)
 
+# ── JSON provider globale: converte i Decimal di Postgres in float ──────────
+# Risolve alla radice il problema "Object of type Decimal is not JSON
+# serializable" per OGNI endpoint (es. /v1/admin/stats), senza dover
+# sanitizzare a mano in ogni funzione.
+from decimal import Decimal as _Decimal
+try:
+    from flask.json.provider import DefaultJSONProvider
+    class _DecimalJSONProvider(DefaultJSONProvider):
+        @staticmethod
+        def default(o):
+            if isinstance(o, _Decimal):
+                return float(o)
+            return DefaultJSONProvider.default(o)
+    app.json = _DecimalJSONProvider(app)
+except Exception:
+    # fallback per versioni Flask più vecchie
+    import json as _stdjson
+    class _DecEncoder(_stdjson.JSONEncoder):
+        def default(self, o):
+            if isinstance(o, _Decimal):
+                return float(o)
+            return super().default(o)
+    app.json_encoder = _DecEncoder
+
 # ── Blueprint ───────────────────────────────────────────
 from routes.pwa import bp as pwa_bp; app.register_blueprint(pwa_bp)
 from routes.admin_panel import bp as admin_panel_bp; app.register_blueprint(admin_panel_bp)
