@@ -1125,7 +1125,8 @@ def admin_stats():
         cur.close(); _release_conn(conn)
         return jsonify(stats)
     except Exception as e:
-        return jsonify({"errore": str(e)}), 500
+        import traceback as _tb
+        return jsonify({"errore": str(e), "trace": _tb.format_exc()[-500:]}), 500
 
 @bp.route("/admin/assistenza")
 def admin_assistenza():
