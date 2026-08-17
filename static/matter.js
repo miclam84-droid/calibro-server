@@ -748,47 +748,83 @@ function lesStep(dir){
 /* ── MAPPA DINAMICA (FE6b) ────────────────────────────── */
 const _mappaCache = {};   // { disciplina: [fenomeni] } — niente flicker al rientro
 
-function renderMappa(disc, fens){
+function renderMappa(disc, fens, casi){
   const label = document.getElementById('mappa-label');
   const cont = document.getElementById('mappa-percorso');
   label.textContent = _t('mappa_percorso') + disc;
   if(!fens.length){
-    cont.innerHTML=`<div style="padding:14px;color:var(--ink-muted);font-size:13px">${_t('mappa_nessun_fen')}</div>`;
+    cont.innerHTML='<div style="padding:14px;color:var(--ink-muted);font-size:13px">'+_t('mappa_nessun_fen')+'</div>';
     return;
   }
-  // il connettore verticale tra i nodi lo disegna il CSS (.p-step::after):
-  // qui NON lo iniettiamo, per evitare la doppia linea.
-  cont.innerHTML = fens.map((f,i)=>{
-    const isFirst = i===0;
-    const stato = f.stato||'libero';
-    const nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
-    // il target diventa il NUMERO protagonista: estraggo solo l'eroe (primo pezzo)
-    const targetEroe = (f.target||'').split(/\s*[·;]\s*/)[0].trim();
-    const tagHtml = stato==='completato'
+  casi = casi || [];
+  var html = fens.map(function(f,i){
+    var isFirst = i===0;
+    var stato = f.stato||'libero';
+    var nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
+    var apps = f.applicazioni || [];
+    var tagHtml = stato==='completato'
       ? '<span class="p-tag done">completato</span>'
       : isFirst ? '<span class="p-tag active">inizia da qui</span>'
       : '<span class="p-tag prolock">Pro</span>';
-    const svgIcon = stato==='completato'
+    var svgIcon = stato==='completato'
       ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg>'
       : isFirst
       ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'
       : '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
-    const nodeStyle = stato==='lock'
-      ? 'border:1px solid rgba(196,98,45,0.3);background:var(--surface);'
+    var nodeStyle = stato==='lock' ? 'border:1px solid rgba(196,98,45,0.3);background:var(--surface);' : '';
+    // pill applicazioni: se la madre ne ha, mostra il contatore che espande
+    var appsPill = apps.length
+      ? '<button class="p-apps-toggle" onclick="event.stopPropagation();toggleApps(this)">'
+        + apps.length + ' applicazion' + (apps.length===1?'e':'i') + '<span class="p-apps-caret">\u203A</span></button>'
       : '';
-    return `<div class="p-step ${stato==='completato'?'done':''}" style="cursor:pointer" onclick="vaiAStep(${i})">
-      <div class="pnode ${nodeClass}" style="${nodeStyle}">${svgIcon}</div>
-      <div class="p-info">
-        <div class="p-name-row"><span class="p-name">${esc(f.nome)}</span>${tagHtml}</div>
-        ${targetEroe?`<div class="p-target">${esc(targetEroe)}</div>`:''}
-      </div>
-    </div>`;
+    var appsList = apps.length
+      ? '<div class="p-apps-list" style="display:none">'
+        + apps.map(function(a){
+            return '<div class="p-app" onclick="event.stopPropagation();avviaApplicazione(\''+esc(a.id)+'\')">'
+              + '<span class="p-app-dot"></span><span class="p-app-nome">'+esc(a.nome)+'</span></div>';
+          }).join('')
+        + '</div>'
+      : '';
+    return '<div class="p-step '+(stato==='completato'?'done':'')+'">'
+      + '<div class="p-step-main" style="cursor:pointer" onclick="vaiAStep('+i+')">'
+      + '<div class="pnode '+nodeClass+'" style="'+nodeStyle+'">'+svgIcon+'</div>'
+      + '<div class="p-info"><div class="p-name-row"><span class="p-name">'+esc(f.nome)+'</span>'+tagHtml+'</div>'
+      + appsPill + '</div></div>'
+      + appsList
+      + '</div>';
   }).join('');
+  // sezione CASI reali (proc-*): dimostrazioni del metodo all'opera
+  if(casi.length){
+    html += '<div class="casi-sec"><div class="casi-lab">Casi reali</div>'
+      + casi.map(function(c){
+          return '<div class="caso-card" onclick="avviaApplicazione(\''+esc(c.id)+'\')">'
+            + '<span class="caso-icon">\u25C9</span><span class="caso-nome">'+esc(c.nome)+'</span></div>';
+        }).join('')
+      + '</div>';
+  }
+  cont.innerHTML = html;
+}
+
+// espande/chiude le applicazioni sotto una madre
+function toggleApps(btn){
+  var step = btn.closest('.p-step');
+  var list = step ? step.querySelector('.p-apps-list') : null;
+  if(!list) return;
+  var open = list.style.display !== 'none';
+  list.style.display = open ? 'none' : 'block';
+  btn.classList.toggle('aperto', !open);
+}
+
+// apre una applicazione o un caso come lezione diretta (per id)
+function avviaApplicazione(fenId){
+  var disc = Matter.disciplina || 'bar';
+  switchTab('lezione');
+  setTimeout(function(){ _caricaLezionePerId(disc, fenId); }, 100);
 }
 
 async function caricaMappa(disc){
   // rientro: se già in cache, render immediato, zero placeholder = zero salto
-  if(_mappaCache[disc]){ renderMappa(disc, _mappaCache[disc]); return; }
+  if(_mappaCache[disc]){ var _c=_mappaCache[disc]; renderMappa(disc, _c.fens||_c, _c.casi||[]); return; }
   const cont = document.getElementById('mappa-percorso');
   document.getElementById('mappa-label').textContent = _t('mappa_percorso') + disc;
   // altezza minima durante il load: le sezioni sotto non si spostano
@@ -800,8 +836,8 @@ async function caricaMappa(disc){
     if(!r.ok) throw new Error('server');
     const j = await r.json();
     const fens = j.fenomeni||[];
-    _mappaCache[disc] = fens;
-    renderMappa(disc, fens);
+    _mappaCache[disc] = {fens:fens, casi:j.casi||[]};
+    renderMappa(disc, fens, j.casi||[]);
   } catch(e){
     cont.innerHTML=`<div style="padding:14px;color:var(--e700);font-size:13px">${_t('mappa_errore')}</div>`;
   }

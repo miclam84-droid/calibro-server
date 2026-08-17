@@ -393,11 +393,13 @@ def mappa(disciplina_nome):
     Senza account: tutti liberi. Con account (futuro): stato persistente."""
     resp = disciplina(disciplina_nome).get_json()
     fenomeni = resp.get("fenomeni", [])
+    casi = resp.get("casi", [])
     # per ora tutti liberi — la progressione arriva con l'account (task AC2)
     for f in fenomeni:
         f["stato"] = "libero"
     return jsonify({
         "disciplina": disciplina_nome,
         "fenomeni": fenomeni,
+        "casi": casi,
         "totale": len(fenomeni)
     })
