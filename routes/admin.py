@@ -191,6 +191,177 @@ def admin_init():
             return jsonify({"errore":str(e)}), 500
     return jsonify({"ok":True,"messaggio":"Tabelle create: utenti, sessioni, esperimenti"})
 
+@bp.route("/admin/update-applicazioni")
+def admin_update_applicazioni():
+    """Scrive le schede-APPLICAZIONE (figlie di un fenomeno-madre) col metodo.
+    Endpoint separato da update-schede-v2 (le madri): si arricchisce man mano che
+    scriviamo applicazioni. Stessa logica di scrittura (scheda multilingua + target)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+
+    SCHEDE_APP = {
+        "fen-infusione": {
+            "scheda": """Metti erbe, frutta o spezie dentro un distillato e aspetti: il liquido prende il loro sapore. È estrazione — la stessa fisica del caffè o del tè — ma qui il solvente è alcol, e questo cambia le regole del gioco.
+
+L'infusione è estrazione applicata a un distillato: trasferisci composti aromatici da una botanica al liquido. Vale tutto quello che sai sull'estrazione — è una questione di trasferimento, non di forza, e si può sotto- o sovra-estrarre. Ma la matrice-alcol aggiunge tre cose specifiche che devi governare.
+
+Cosa cambia perché il solvente è alcol
+
+Primo: l'alcol scioglie cose che l'acqua non scioglie. Alcuni composti aromatici sono solubili nell'alcol ma non nell'acqua — per questo un'infusione in un distillato tira fuori un profilo diverso da un'infusione in acqua della stessa botanica. La gradazione conta: più alta è, più aggredisce le botaniche dure e ne estrae i composti (anche quelli amari); più bassa, più gentile. Una regola pratica dal banco: alcol forte (40%+) per radici e spezie coriacee, più leggero (20-30%) per erbe ed elementi delicati.
+
+Secondo: la stessa trappola dell'estrazione madre, qui vestita da tempo. Un'infusione lasciata troppo a lungo o scaldata troppo diventa amara, vegetale, "stufata" — è la sovra-estrazione. E la regola per correggerla è precisa: se vuoi più intensità, aumenta la dose di botaniche, non allungare il tempo. Allungare il tempo estrae anche le cose sbagliate; più botanica estrae più delle cose giuste nello stesso tempo.
+
+Terzo: caldo o freddo cambiano cosa estrai. A freddo (macerazione a temperatura ambiente) hai aromi puliti e freschi, ideale per fiori e frutta delicati che il calore "cuocerebbe". A caldo apri di più le botaniche dure e vai più veloce, ma rischi le note amare e la perdita di alcol. I barman usano anche vie rapide — il sifone con protossido d'azoto forza il liquido nelle cellule della botanica ed estrae in pochi minuti quello che a freddo richiede giorni.
+
+Le leve, in pratica
+
+La botanica (dose e tipo: dura o delicata, fresca o secca — le secche sono più concentrate, vogliono meno tempo). La gradazione dell'alcol (forte per il coriaceo, gentile per il delicato). La temperatura (freddo per pulito e delicato, caldo per veloce e profondo, col rischio amaro). Il tempo (la leva da toccare per ultima: prima aggiusti dose e temperatura). E fermare al punto giusto — filtrare toglie la botanica e blocca l'estrazione, come togliere le foglie del tè.
+
+Come lo verifichi
+
+Assaggi lungo il percorso: l'infusione è pronta quando ha preso il carattere che volevi e prima che viri all'amaro/vegetale. Il colore aiuta (molte botaniche cedono colore mentre cedono aroma) ma il giudice è il palato. Se vira amara, la prossima volta meno tempo o meno calore, non meno botanica.
+
+Il bersaglio, letto bene
+
+Non c'è un tempo universale — dipende dalla botanica, dalla gradazione, dalla temperatura e dal metodo (una macerazione a freddo di fiori è giorni, un sifone è minuti). Quello che c'è è una finestra per il tuo metodo: il punto in cui hai preso il carattere che cerchi senza scivolare nell'amaro. Lo trovi assaggiando la tua infusione, non copiando un numero — e ricordi che la leva giusta per intensificare è la dose, non il tempo.""",
+            "target": "Non un tempo universale: la finestra per il tuo metodo, dove hai preso il carattere prima dell'amaro · intensifica con la dose, non col tempo",
+        },
+        "fen-fat-washing": {
+            "scheda": """Sciogli del burro — o grasso di bacon, o olio d'oliva — in un distillato, lasci riposare, poi metti in freezer. Il grasso si solidifica in un disco che togli, e il distillato resta: limpido, ma con dentro il sapore del grasso e una consistenza vellutata. Sapore di burro nel bourbon, senza una goccia d'unto. È fat-washing, e dentro ci sono tre fenomeni che già conosci.
+
+Il fat-washing è una delle tecniche più eleganti del bar moderno, e il motivo per cui funziona è che mette al lavoro insieme estrazione, emulsione e cristallizzazione. Capirla è vedere tre principi che convergono.
+
+Perché l'alcol prende il sapore del grasso (estrazione)
+
+Il cuore è la stessa cosa dell'infusione: l'alcol è un solvente. Ma qui estrae una classe di sapori speciale — quelli liposolubili, che vivono nei grassi e che l'acqua non tocca. Il sapore tostato del burro nocciola, l'affumicato del bacon, il fruttato-pepato dell'olio buono: sono composti che stanno nel grasso, e l'alcol li tira fuori. Per questo il fat-washing dà sapori che un'infusione in acqua non potrebbe mai dare: apri una dispensa aromatica che era chiusa.
+
+Perché serve mescolare bene (emulsione)
+
+C'è un passaggio in cui torna l'emulsione. Quando mescoli il grasso col distillato, crei interfacce temporanee tra le due fasi — grasso e liquido che normalmente non si amano. Quelle interfacce sono il ponte su cui i sapori passano dal grasso all'alcol. È il motivo per cui si agita: più contatto tra le fasi, più sapore trasferito. Il burro stesso, che è già un'emulsione di acqua e grasso, aiuta questo passaggio.
+
+Perché il freezer separa tutto (cristallizzazione)
+
+E qui l'idea geniale, che è pura cristallizzazione. Il grasso si scioglie nell'alcol a temperatura ambiente, ma congelandolo si solidifica — cristallizza — mentre l'alcol resta liquido. Così puoi separarli perfettamente: il grasso diventa un disco solido in superficie che sollevi con un cucchiaio, e il sapore che aveva ceduto resta disciolto nel distillato. Togli il grasso, tieni il sapore. Il freddo non è un dettaglio: è il meccanismo di separazione.
+
+Cosa ottieni, e le leve
+
+Il risultato non è solo sapore: è texture. Gli oli residui rivestono il palato e danno al distillato un corpo vellutato, e smorzano la durezza e l'astringenza dell'alcol — lo rendono più morbido. Le leve: il tipo di grasso (dà il carattere: burro nocciola, bacon, olio); la dose e il tempo di infusione (qualche ora a temperatura ambiente, assaggiando — troppo lo rende pesante); il congelamento completo (il grasso deve solidificare del tutto per separarsi pulito — freezer, diverse ore o tutta la notte); e la filtratura (una o più volte, panno o filtro, per togliere ogni residuo grasso e avere un distillato limpido).
+
+Come lo verifichi
+
+Guardi e assaggi: il distillato finito deve essere limpido (non torbido di grasso residuo — se lo è, rifiltri) e avere il sapore del grasso senza sembrare unto in bocca. La texture si sente: più rotonda, più piena. Se è troppo grasso o pesante, la prossima volta meno grasso o meno tempo di infusione.
+
+Il bersaglio, letto bene
+
+Non è un numero: è uno stato. Il fat-washing è riuscito quando il distillato ha preso carattere e corpo dal grasso, resta limpido, e non lascia una sensazione untuosa. Il bersaglio è quell'equilibrio — sapore e vellutato sì, unto no — e lo riconosci al palato e all'occhio, non su una tabella. Ricorda solo le tre fasi: l'alcol estrae (mescola bene), il freddo separa (congela del tutto), il filtro pulisce.""",
+            "target": "Uno stato, non un numero: distillato limpido, sapido e vellutato, senza sensazione untuosa · l'alcol estrae, il freddo separa, il filtro pulisce",
+        },
+        "fen-clarificazione-cocktail": {
+            "scheda": """Un succo di agrumi è torbido, opaco. Lo mescoli con del latte, il latte impazzisce in fiocchi, filtri — e quello che esce è un liquido cristallino, limpido come acqua, ma con tutto il sapore dentro. Oppure usi l'agar, o una centrifuga. La chiarificazione è togliere il torbido tenendo il gusto: e il metodo giusto dipende da COSA rende torbido il tuo liquido.
+
+Chiarificare un cocktail non è solo estetica (anche se un drink cristallino colpisce): raffina la texture, spesso toglie amarezza e durezza, e — cosa che conta per chi lavora — permette di pre-battare, perché un liquido clarificato dura più a lungo. Ma la cosa importante da capire è che ci sono metodi diversi, e non sono intercambiabili: ognuno cattura un tipo diverso di torbidità.
+
+Il punto chiave: cosa ti rende torbido il liquido?
+
+Qui sta la distinzione che ti fa scegliere bene. Un liquido può essere torbido per due ragioni diverse. Per polifenoli, tannini, composti di colore — la torbidità di uno spirito invecchiato in legno, del tè, dei bitter. Oppure per particelle vegetali in sospensione — pectina e cellulosa, la polpa di un succo di frutta. Sono cose diverse, e vogliono metodi diversi. Sbagliare metodo significa filtrare e restare col torbido.
+
+Il latte (milk washing): denaturazione al lavoro
+
+Il milk washing sfrutta un fenomeno che conosci: la denaturazione delle proteine. Aggiungi un acido (succo di agrumi) al latte, e le caseine del latte denaturano e coagulano in fiocchi — esattamente come il latte che "impazzisce". Quei fiocchi hanno una superficie enorme e una leggera carica elettrica, e mentre precipitano attraverso il liquido attraggono e intrappolano le particelle: colore, tannini, fenoli amari. Filtri via i fiocchi, e con loro se ne vanno le impurità. In più il latte ammorbidisce: toglie la durezza e dà una texture silky. Ma attenzione — il latte lega bene i polifenoli (legno, tè, bitter): è il metodo per punch e sour, dove serve anche l'acido per far cagliare. Non è il metodo per la polpa di un succo.
+
+L'agar (gel filtration): gelificazione al lavoro
+
+Quando il torbido è polpa (succhi di frutta, verdura), serve un altro principio: la gelificazione. Sciogli l'agar nel liquido, lo lasci gelificare in un gel morbido che intrappola le particelle solide nella sua rete, poi lo congeli e lo scongeli: mentre si scioglie, il liquido cola via cristallino e le impurità restano nel gel. È il metodo per i succhi non acidi (pomodoro, cetriolo, frutta), ed è vegano. La proporzione tipica è piccola (intorno allo 0,2% di agar).
+
+La centrifuga: fisica pura
+
+Il metodo più tecnico: la centrifuga fa girare il liquido ad altissima velocità e spinge le particelle sospese verso l'esterno per forza, separandole in minuti invece che ore. Non aggiunge niente (né proteine né acqua), è il più puro — ma costa, quindi si usa quando i volumi lo giustificano o quando gli altri metodi non bastano.
+
+Le leve, in pratica
+
+La scelta del metodo in base alla torbidità (latte per polifenoli/durezza, agar per polpa, centrifuga per volume/purezza). L'acido, se usi il latte (serve a far cagliare). La pazienza (i fiocchi o il gel devono formarsi e precipitare — spesso si lascia riposare, anche a lungo). E la filtratura finale (panno, filtro fine — a volte più passaggi per la limpidezza cristallina).
+
+Come lo verifichi
+
+L'occhio: il liquido finito deve essere limpido, trasparente, senza velo. E il palato: il sapore dev'essere intatto (o migliorato — meno amaro, più morbido), non annacquato. Se resta torbido, o hai scelto il metodo sbagliato per quel tipo di torbidità, o serve un altro passaggio di filtro.
+
+Il bersaglio, letto bene
+
+Non è un numero: è uno stato doppio — limpidezza raggiunta E sapore preservato. Il bersaglio è il liquido cristallino che sa ancora di quello che era (o meglio). E la vera abilità non è "clarificare" in astratto, ma scegliere il metodo giusto per la tua torbidità: il latte non pulisce la polpa, l'agar non serve dove basta il latte. Riconosci cosa rende torbido il tuo liquido, e scegli lo strumento che cattura proprio quello.""",
+            "target": "Doppio stato: limpidezza raggiunta E sapore intatto · scegli il metodo in base a cosa ti rende torbido (latte per polifenoli, agar per polpa)",
+        },
+        "fen-chiarificazione": {
+            "scheda": """Un succo di agrumi è torbido, opaco. Lo mescoli con del latte, il latte impazzisce in fiocchi, filtri — e quello che esce è un liquido cristallino, limpido come acqua, ma con tutto il sapore dentro. Oppure usi l'agar, o una centrifuga. La chiarificazione è togliere il torbido tenendo il gusto: e il metodo giusto dipende da COSA rende torbido il tuo liquido.
+
+Chiarificare un cocktail non è solo estetica (anche se un drink cristallino colpisce): raffina la texture, spesso toglie amarezza e durezza, e — cosa che conta per chi lavora — permette di pre-battare, perché un liquido clarificato dura più a lungo. Ma la cosa importante da capire è che ci sono metodi diversi, e non sono intercambiabili: ognuno cattura un tipo diverso di torbidità.
+
+Il punto chiave: cosa ti rende torbido il liquido?
+
+Qui sta la distinzione che ti fa scegliere bene. Un liquido può essere torbido per due ragioni diverse. Per polifenoli, tannini, composti di colore — la torbidità di uno spirito invecchiato in legno, del tè, dei bitter. Oppure per particelle vegetali in sospensione — pectina e cellulosa, la polpa di un succo di frutta. Sono cose diverse, e vogliono metodi diversi. Sbagliare metodo significa filtrare e restare col torbido.
+
+Il latte (milk washing): denaturazione al lavoro
+
+Il milk washing sfrutta un fenomeno che conosci: la denaturazione delle proteine. Aggiungi un acido (succo di agrumi) al latte, e le caseine del latte denaturano e coagulano in fiocchi — esattamente come il latte che "impazzisce". Quei fiocchi hanno una superficie enorme e una leggera carica elettrica, e mentre precipitano attraverso il liquido attraggono e intrappolano le particelle: colore, tannini, fenoli amari. Filtri via i fiocchi, e con loro se ne vanno le impurità. In più il latte ammorbidisce: toglie la durezza e dà una texture silky. Ma attenzione — il latte lega bene i polifenoli (legno, tè, bitter): è il metodo per punch e sour, dove serve anche l'acido per far cagliare. Non è il metodo per la polpa di un succo.
+
+L'agar (gel filtration): gelificazione al lavoro
+
+Quando il torbido è polpa (succhi di frutta, verdura), serve un altro principio: la gelificazione. Sciogli l'agar nel liquido, lo lasci gelificare in un gel morbido che intrappola le particelle solide nella sua rete, poi lo congeli e lo scongeli: mentre si scioglie, il liquido cola via cristallino e le impurità restano nel gel. È il metodo per i succhi non acidi (pomodoro, cetriolo, frutta), ed è vegano. La proporzione tipica è piccola (intorno allo 0,2% di agar).
+
+La centrifuga: fisica pura
+
+Il metodo più tecnico: la centrifuga fa girare il liquido ad altissima velocità e spinge le particelle sospese verso l'esterno per forza, separandole in minuti invece che ore. Non aggiunge niente (né proteine né acqua), è il più puro — ma costa, quindi si usa quando i volumi lo giustificano o quando gli altri metodi non bastano.
+
+Le leve, in pratica
+
+La scelta del metodo in base alla torbidità (latte per polifenoli/durezza, agar per polpa, centrifuga per volume/purezza). L'acido, se usi il latte (serve a far cagliare). La pazienza (i fiocchi o il gel devono formarsi e precipitare — spesso si lascia riposare, anche a lungo). E la filtratura finale (panno, filtro fine — a volte più passaggi per la limpidezza cristallina).
+
+Come lo verifichi
+
+L'occhio: il liquido finito deve essere limpido, trasparente, senza velo. E il palato: il sapore dev'essere intatto (o migliorato — meno amaro, più morbido), non annacquato. Se resta torbido, o hai scelto il metodo sbagliato per quel tipo di torbidità, o serve un altro passaggio di filtro.
+
+Il bersaglio, letto bene
+
+Non è un numero: è uno stato doppio — limpidezza raggiunta E sapore preservato. Il bersaglio è il liquido cristallino che sa ancora di quello che era (o meglio). E la vera abilità non è "clarificare" in astratto, ma scegliere il metodo giusto per la tua torbidità: il latte non pulisce la polpa, l'agar non serve dove basta il latte. Riconosci cosa rende torbido il tuo liquido, e scegli lo strumento che cattura proprio quello.""",
+            "target": "Doppio stato: limpidezza raggiunta E sapore intatto · scegli il metodo in base a cosa ti rende torbido (latte per polifenoli, agar per polpa)",
+        },
+    }
+    import json
+    try:
+        conn = _get_conn()
+        cur = conn.cursor()
+        updated = []
+        for node_id, data in SCHEDE_APP.items():
+            cur.execute("SELECT id, data FROM nodes WHERE id=%s", (node_id,))
+            row = cur.fetchone()
+            if not row:
+                updated.append(f"{node_id}: NON TROVATO")
+                continue
+            raw = row[1] if isinstance(row, (list, tuple)) else row["data"]
+            nd = raw if isinstance(raw, dict) else json.loads(raw)
+            sch = nd.get("scheda")
+            if isinstance(sch, dict):
+                sch["it"] = data["scheda"]; nd["scheda"] = sch
+            else:
+                nd["scheda"] = data["scheda"]
+            nd["target"] = data["target"]
+            nd["numero_bersaglio"] = data["target"]
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                        (json.dumps(nd, ensure_ascii=False), node_id))
+            updated.append(f"{node_id}: OK ({len(data['scheda'])} chars)")
+        conn.commit(); cur.close(); _release_conn(conn)
+        try:
+            from routes.lezione import _lezione_cache as _lc; _lc.clear()
+        except Exception: pass
+        try:
+            from routes.lezione import _cache_home as _ch; _ch.clear()
+        except Exception: pass
+        n_ok = sum(1 for u in updated if ": OK" in u)
+        return jsonify({"ok": True, "aggiornati_ok": n_ok, "totale": len(SCHEDE_APP), "dettaglio": updated})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
 @bp.route("/admin/update-schede-v2")
 def admin_update_schede_v2():
     """MIGRA le 24 schede-fenomeno alla versione METODO (VEDI/SEPARA/PERCHÉ/GOVERNA/
