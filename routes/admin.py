@@ -455,6 +455,38 @@ La lezione oltre il pane: davanti a un fallimento con più cause possibili, non 
             "nome": "Il pane che non lievita",
             "dominio": "panificazione",
         },
+        "proc-crosta-pallida": {
+            "scheda": """SINTOMO
+
+Il pane è cresciuto bene, è cotto dentro, ma esce dal forno pallido. Una crosta bianca, molliccia, senza quel colore dorato che dice "buono" ancora prima di assaggiare. Sembra crudo anche se non lo è. E un pane senza crosta ambrata non solo è meno bello: gli manca metà del sapore, perché è proprio nella crosta che si sviluppano gli aromi della cottura.
+
+IPOTESI
+
+La crosta pallida non è un difetto della lievitazione — quella è andata. È un problema di doratura: la reazione che colora la crosta non è avvenuta abbastanza. E quella reazione ha un nome e delle condizioni precise. Se manca il colore, manca una delle condizioni. L'ipotesi è che ci sia una tra poche cause ben identificabili, e come sempre si isolano una alla volta.
+
+I FENOMENI IN GIOCO
+
+Al centro c'è la reazione di Maillard — la stessa della scheda crosta. È la reazione tra zuccheri e amminoacidi (proteine) che, sotto il calore, produce il colore dorato e gli aromi tostati. Perché avvenga servono tre cose insieme: calore sufficiente, zuccheri, e amminoacidi. Togline una e la crosta resta pallida. Ecco le cause, ognuna legata a una condizione mancante:
+
+Il calore non basta (fenomeno: calore + Maillard). La Maillard parte solo oltre una certa temperatura — indicativamente sopra i 150°C, e il pane vuole forni belli caldi (spesso 190-230°C) per una buona crosta. Se il forno è troppo tiepido, o non era davvero preriscaldato, la reazione va troppo piano e la crosta non colora. E attenzione alla trappola: il forno può mentire. Il termostato dice 200° ma dentro ce ne sono 170. Un forno che non è mai davvero caldo è la causa numero uno di croste pallide.
+
+Manca lo zucchero (fenomeno: Maillard). Se non c'è abbastanza zucchero, la Maillard ha poco carburante. Ecco perché gli impasti magri — pane, baguette, solo farina/acqua/lievito/sale — vengono più chiari degli impasti ricchi come la brioche, pieni di zucchero e grassi che dorano splendidamente. Non è un difetto della baguette, è la sua natura; ma se vuoi più colore su un impasto magro, un velo di latte o uovo in superficie prima di infornare dà amminoacidi e zuccheri alla crosta.
+
+Troppo vapore (fenomeno: vapore + calore). Qui c'è il paradosso che confonde tutti. Il vapore all'inizio serve — tiene la crosta morbida qualche minuto così il pane cresce bene. Ma se il vapore resta per tutta la cottura, la crosta non si asciuga e non può dorare: la Maillard ha bisogno che la superficie si secchi. Vapore all'inizio sì, poi via — deve dissiparsi perché la crosta colori.
+
+LA VERIFICA
+
+Una causa alla volta, in ordine di probabilità. Prima il forno: metti un termometro da forno dentro e guarda se raggiunge davvero la temperatura che imposti — è la verifica che smaschera la bugia più comune. Poi la ricetta: è un impasto magro? Allora il pallore è in parte normale, e sai che per più colore serve una spennellata o più temperatura. Poi il vapore: ne stai mettendo troppo, o troppo a lungo? Prova a farlo uscire dopo i primi minuti. Ogni prova esclude una causa. E la regola d'oro vale anche qui: giudica dalla condizione, non dall'orologio — cuoci finché la crosta è dorata e soda, non finché "sono passati i minuti".
+
+LA CONCLUSIONE
+
+La crosta pallida è la Maillard che non è avvenuta abbastanza, e le cause sono poche e precise: forno non abbastanza caldo (spesso perché mente), poco zucchero nell'impasto, troppo vapore che non fa asciugare la crosta. Controlli in ordine e trovi quale delle condizioni della Maillard mancava.
+
+La lezione oltre il pane: quando una reazione non "parte", torna alle sue condizioni e controlla quale manca. La Maillard vuole calore, zuccheri, superficie asciutta — se il risultato non c'è, una di queste è assente. Sapere di quali condizioni ha bisogno un fenomeno ti dice esattamente cosa cercare quando non succede. È lo stesso ragionamento del bar, applicato al forno: non indovinare, controlla le condizioni.""",
+            "target": "La crosta pallida è Maillard mancata: controlla le sue 3 condizioni (calore, zuccheri, superficie asciutta) · il forno spesso mente, verifica col termometro · vapore all'inizio poi via",
+            "nome": "La crosta che resta pallida",
+            "dominio": "panificazione",
+        },
     }
     SCHEDE_MADRI_NUOVE = {
         "fen-tannini": {
