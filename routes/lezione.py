@@ -201,7 +201,15 @@ def disciplina(nome):
                     for a in apps if a in per_id
                 ]
             top.append(f)
-        casi = [{"id": c, "nome": per_id[c]["nome"]} for c in casi_ids if c in per_id]
+        casi = []
+        for c in casi_ids:
+            if c in per_id:
+                casi.append({"id": c, "nome": per_id[c]["nome"]})
+            else:
+                # caso nuovo (nodo Processo non collegato a prodotti): lo cerco nel DB
+                cr = db.execute("SELECT id, name FROM nodes WHERE id=?", (c,)).fetchone()
+                if cr:
+                    casi.append({"id": cr["id"], "nome": cr["name"]})
         return jsonify({"disciplina": nome, "fenomeni": top, "totale": len(top),
                         "casi": casi})
     return jsonify({"disciplina": nome, "fenomeni": fenomeni, "totale": len(fenomeni)})
