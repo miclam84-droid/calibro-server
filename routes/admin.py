@@ -419,6 +419,40 @@ Q10 è il filo rosso di Matter: un principio unico che collega conservazione, fe
 Ed è la lezione che riassume il metodo intero: i grandi principi sono veri e potenti come direzione, ma il numero esatto lo trovi sempre nella tua materia, non su una tabella. Sapere questo — fidarsi del principio e misurare il dettaglio — è la differenza tra sapere le cose a memoria e capirle.""",
             "target": "Un principio, non un numero: più freddo rallenta tutto (conservazione, fermentazione, ossidazione, estrazione) · il 'raddoppia ogni 10°C' è una bussola non un GPS · fidati del principio, misura il dettaglio nella tua materia",
         },
+        "proc-pane-non-lievita": {
+            "scheda": """SINTOMO
+
+Impasti come sempre, copri, aspetti. Torni dopo un'ora e mezza e l'impasto è lì, piatto, uguale a quando l'hai lasciato. Non è cresciuto. Oppure è cresciuto pochissimo, e in forno resta un mattone denso invece di aprirsi. Stessa farina, stessa ricetta di sempre — eppure oggi non va. È il problema più frustrante del forno, perché quando te ne accorgi spesso è troppo tardi.
+
+IPOTESI
+
+L'errore è cercare "la" causa unica. Un impasto che non lievita non ha una sola spiegazione: ha una famiglia di cause possibili, e il mestiere è saperle isolare. Ma la buona notizia è che non sono infinite — si raggruppano in quattro famiglie: la vitalità del lievito (è vivo?), la temperatura (è nell'intervallo giusto?), la struttura dell'impasto (il glutine trattiene il gas?), e l'equilibrio degli ingredienti (qualcosa sta bloccando il lievito?). Quattro porte da controllare, in ordine.
+
+I FENOMENI IN GIOCO
+
+Sotto le quattro famiglie ci sono fenomeni che conosci:
+
+Fermentazione — il lievito è vivo? La lievitazione è fermentazione: il lievito, un organismo vivo, mangia zuccheri e produce CO₂. Se il lievito è morto o scaduto, non produce gas, punto. È la causa numero uno. E il lievito si uccide facilmente: acqua troppo calda (sopra una certa soglia lo ammazza all'istante), o lievito vecchio che ha perso forza.
+
+Calore — la temperatura è giusta? Il lievito è vivo ma sensibile alla temperatura, ed è puro Q10: al freddo rallenta tantissimo, al caldo giusto lavora, troppo caldo muore. In una cucina fredda lo stesso impasto che di solito raddoppia in un'ora e mezza può metterci tre o quattro ore — non è morto, è solo lento. E l'acqua con cui impasti è la leva più insidiosa: tiepida attiva, bollente uccide.
+
+Osmosi — il sale ha bloccato il lievito? Qui torna l'osmosi. Il sale in alta concentrazione tira l'acqua fuori dalle cellule del lievito e le disidrata: se butti il sale direttamente sul lievito non disciolto, lo uccidi al contatto. È il motivo della regola classica — sale e lievito su lati opposti della ciotola, mai insieme secchi. Troppo sale in generale rallenta il lievito anche se ben distribuito.
+
+Maglia glutinica — il gas resta intrappolato? Anche se il lievito produce CO₂, quel gas deve essere trattenuto. È il glutine a farlo: la rete di proteine che si forma impastando funziona come un palloncino che intrappola le bolle. Se l'impasto è poco lavorato la rete è debole e il gas scappa: l'impasto non si gonfia anche se il lievito lavora. Troppa farina rende l'impasto rigido e soffoca la crescita.
+
+LA VERIFICA
+
+Come trovi quale delle quattro porte è quella giusta? Una alla volta, in ordine di probabilità. Prima il lievito: lo "provi" (proof) — sciogli un po' di lievito in acqua tiepida con un pizzico di zucchero e aspetti; se fa schiuma è vivo, se resta fermo è morto, e hai la risposta. Poi la temperatura: misura l'acqua col termometro (tiepida, non calda) e la stanza — se è fredda, non è un problema, è lentezza, aspetta di più. Poi il sale: ricordi come l'hai aggiunto? Direttamente sul lievito? Poi la lavorazione: l'impasto era liscio ed elastico, tornava indietro se premuto, o era rigido e strappato? Ogni verifica esclude una porta finché resti con quella giusta.
+
+E la regola d'oro che le attraversa tutte: giudica dalla condizione, non dall'orologio. "Un'ora e mezza" non è la lievitazione — il raddoppio dell'impasto è la lievitazione. Il tempo è un'indicazione, non un traguardo; guarda l'impasto, non il timer.
+
+LA CONCLUSIONE
+
+L'impasto che non cresce non è sfortuna: è una di quattro famiglie di cause, e il metodo è controllarle in ordine invece di indovinare. Se il lievito è morto, riparti (in forno non risorge). Se è freddo, aspetti. Se hai bruciato il lievito col sale o con l'acqua calda, sai cosa correggere la prossima volta. Se il glutine è debole, impasti di più.
+
+La lezione oltre il pane: davanti a un fallimento con più cause possibili, non cambiare tutto a caso. Isola le variabili una alla volta, in ordine di probabilità, e lascia che ogni prova elimini una possibilità. È lo stesso metodo del Negroni e del lime — solo applicato al banco del forno.""",
+            "target": "Non cercare la causa unica: 4 famiglie (lievito vivo? temperatura? glutine? sale?) da controllare in ordine · giudica dalla condizione (il raddoppio) non dall'orologio",
+        },
     }
     SCHEDE_MADRI_NUOVE = {
         "fen-tannini": {

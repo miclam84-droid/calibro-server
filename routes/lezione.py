@@ -120,10 +120,18 @@ def disciplina(nome):
             "fen-attivita-enzimatica": ["fen-amilolisi"],
             "fen-calore": ["fen-trasferimento-calore"],
         },
+        "panificazione": {
+            "fen-fermentazione": ["fen-fermentazione-lattica","fen-poolish-biga"],
+            "fen-maglia-glutinica": ["fen-laminazione","fen-autolisi"],
+            "fen-gelatinizzazione": ["fen-retrogradazione","fen-shelf-life-pane"],
+            "fen-osmosi": ["fen-sale-impasto"],
+            "fen-enzimi-farina": [],
+        },
     }
     # CASI-STUDIO (proc-*): livello separato, non fenomeni. Restano fuori dal primo livello.
     CASI = {
         "bar": ["proc-negroni-inconsistente","proc-q10-filo-rosso","proc-variabilita-lime"],
+        "panificazione": ["proc-pane-non-lievita","proc-crosta-pallida"],
     }
 
     # Alias: l'app usa a volte nomi diversi per la stessa disciplina.
