@@ -104,6 +104,28 @@ def disciplina(nome):
         "vino":         ["fen-acidita","fen-malolattica","fen-ossidazione","fen-fermentazione","fen-tannini","fen-chiarificazione","fen-solforosa","fen-maturazione-legno","fen-estrazione-polifenoli","fen-rifermentazione","fen-acidita-volatile","fen-brett"],
         "birra":        ["fen-fermentazione","fen-carbonatazione","fen-amilolisi","fen-acidita","fen-ossidazione","fen-attivita-enzimatica","fen-mash-enzimi","fen-isomerizzazione-luppolo","fen-dry-hopping","fen-lagering","fen-fermentazione-alta-bassa","fen-efficienza-birra"],
     }
+    # GERARCHIA madre→applicazioni (ontologia fenomeno/applicazione).
+    # Le applicazioni ereditano il fenomeno-madre e NON compaiono al primo livello:
+    # vengono annidate sotto la madre in un campo "applicazioni". Riduce il muro di voci.
+    GERARCHIA = {
+        "bar": {
+            "fen-estrazione": ["fen-infusione","fen-cold-brew","fen-estrazione-polifenoli","fen-fat-washing","fen-maturazione-legno","fen-dry-hopping"],
+            "fen-fermentazione": ["fen-fermentazione-acetica","fen-fermentazione-alta-bassa","fen-malolattica","fen-brett","fen-lagering","fen-rifermentazione"],
+            "fen-ossidazione": ["fen-solforosa","fen-acidita-volatile","fen-affinamento-vino"],
+            "fen-carbonatazione": ["fen-pressione"],
+            "fen-diluizione": ["fen-ghiaccio-cocktail","fen-batch-cocktail","fen-cristallizzazione-ghiaccio"],
+            "fen-emulsione": ["fen-texture-agents"],
+            "fen-estrazione-caffe": [],
+            "fen-concentrazione": ["fen-clarificazione-cocktail","fen-chiarificazione"],
+            "fen-attivita-enzimatica": ["fen-amilolisi"],
+            "fen-calore": ["fen-trasferimento-calore"],
+        },
+    }
+    # CASI-STUDIO (proc-*): livello separato, non fenomeni. Restano fuori dal primo livello.
+    CASI = {
+        "bar": ["proc-negroni-inconsistente","proc-q10-filo-rosso","proc-variabilita-lime"],
+    }
+
     # Alias: l'app usa a volte nomi diversi per la stessa disciplina.
     # Senza questi, 'caffe'/'bakery' cadono nel fallback che restituisce TUTTI i 101 fenomeni.
     ALIAS = {"caffe": "caffetteria", "coffee": "caffetteria",
@@ -147,6 +169,33 @@ def disciplina(nome):
             except ValueError:
                 return (1, f["nome"])
         fenomeni = sorted(fenomeni_raw, key=_sort_key)
+    # RAGGRUPPAMENTO ontologico: annida le applicazioni sotto le madri e stacca i casi.
+    gerarchia = GERARCHIA.get(nome_key, {})
+    casi_ids = set(CASI.get(nome_key, []))
+    if gerarchia or casi_ids:
+        # indice id → oggetto fenomeno (per pescare nome/target delle applicazioni)
+        per_id = {f["id"]: f for f in fenomeni}
+        # tutti gli id che sono applicazioni (annidati) o casi → non vanno al primo livello
+        figli = set()
+        for madre, apps in gerarchia.items():
+            figli.update(apps)
+        top = []
+        for f in fenomeni:
+            fid = f["id"]
+            if fid in figli or fid in casi_ids:
+                continue  # sarà annidato o è un caso
+            # se è una madre, allego le sue applicazioni presenti nella disciplina
+            apps = gerarchia.get(fid, [])
+            if apps:
+                f = dict(f)
+                f["applicazioni"] = [
+                    {"id": a, "nome": per_id[a]["nome"], "target": per_id[a].get("target","")}
+                    for a in apps if a in per_id
+                ]
+            top.append(f)
+        casi = [{"id": c, "nome": per_id[c]["nome"]} for c in casi_ids if c in per_id]
+        return jsonify({"disciplina": nome, "fenomeni": top, "totale": len(top),
+                        "casi": casi})
     return jsonify({"disciplina": nome, "fenomeni": fenomeni, "totale": len(fenomeni)})
 
 @bp.route("/lezione/<disciplina_nome>/<int:step>")
