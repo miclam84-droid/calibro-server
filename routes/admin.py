@@ -452,6 +452,8 @@ L'impasto che non cresce non è sfortuna: è una di quattro famiglie di cause, e
 
 La lezione oltre il pane: davanti a un fallimento con più cause possibili, non cambiare tutto a caso. Isola le variabili una alla volta, in ordine di probabilità, e lascia che ogni prova elimini una possibilità. È lo stesso metodo del Negroni e del lime — solo applicato al banco del forno.""",
             "target": "Non cercare la causa unica: 4 famiglie (lievito vivo? temperatura? glutine? sale?) da controllare in ordine · giudica dalla condizione (il raddoppio) non dall'orologio",
+            "nome": "Il pane che non lievita",
+            "dominio": "panificazione",
         },
     }
     SCHEDE_MADRI_NUOVE = {
@@ -562,7 +564,17 @@ Non è un numero: è il cuore riconosciuto. Il bersaglio della distillazione è 
             cur.execute("SELECT id, data FROM nodes WHERE id=%s", (node_id,))
             row = cur.fetchone()
             if not row:
-                updated.append(f"{node_id}: NON TROVATO")
+                # nodo non esistente: lo CREO (casi proc-* nuovi, fenomeni nuovi)
+                is_caso = node_id.startswith("proc-")
+                ntype = "Processo" if is_caso else "Fenomeno"
+                ndom = data.get("dominio", "trasversale")
+                nname = data.get("nome") or node_id.replace("proc-", "").replace("fen-", "").replace("-", " ").capitalize()
+                nd_new = {"scheda": data["scheda"], "target": data["target"],
+                          "numero_bersaglio": data["target"]}
+                cur.execute(
+                    "INSERT INTO nodes (id, type, name, domain, data) VALUES (%s,%s,%s,%s,%s)",
+                    (node_id, ntype, nname, ndom, json.dumps(nd_new, ensure_ascii=False)))
+                updated.append(f"{node_id}: CREATO ({len(data['scheda'])} chars)")
                 continue
             raw = row[1] if isinstance(row, (list, tuple)) else row["data"]
             nd = raw if isinstance(raw, dict) else json.loads(raw)
