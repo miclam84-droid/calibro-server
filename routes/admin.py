@@ -383,6 +383,42 @@ La soluzione da professionista non è rincorrere il lime aggiustando a occhio og
 La lezione oltre il lime: quando la materia prima varia, non inseguirla a naso. Misura la proprietà che conta (qui l'acidità, non il volume) e fissala. È la differenza tra un bar che spera e un bar che controlla.""",
             "target": "Non inseguire il lime a naso: misura l'acidità (non il volume) e fissala — assaggia ogni cassa o fai acid-adjusting",
         },
+        "proc-q10-filo-rosso": {
+            "scheda": """SINTOMO
+
+Ti accorgi di un filo che torna dappertutto. Il succo di lime dura un giorno a temperatura ambiente ma tre in frigo. La fermentazione va veloce d'estate e si impunta d'inverno. Un'infusione al caldo è pronta in ore, a freddo in giorni. Un vino aperto invecchia in fretta sul bancone e piano in cantina. Sembrano cose diverse, ma sotto c'è un'unica regola: la temperatura comanda la velocità di quasi tutto quello che succede nei tuoi ingredienti. E c'è perfino un numero che gira: "ogni 10 gradi, la velocità raddoppia". È vero? E quanto puoi fidartene?
+
+IPOTESI
+
+L'ipotesi è che dietro decine di fenomeni diversi ci sia un solo principio: le reazioni chimiche e biologiche vanno più veloci quando fa caldo e più piano quando fa freddo, in modo regolare. Questo principio ha un nome — il coefficiente Q10 — e dice che per molti sistemi la velocità di reazione raddoppia circa a ogni 10°C in più (e si dimezza a ogni 10°C in meno). Se è vero, non è un fatto isolato: è una lente che spiega conservazione, fermentazione, ossidazione, estrazione tutte insieme.
+
+I FENOMENI CHE ATTRAVERSA
+
+Guarda quanti banchi tocca lo stesso principio:
+
+Conservazione. Il lime dura poco perché appena spremuto iniziano reazioni che lo degradano. Il freddo le rallenta: ecco perché il frigo raddoppia (o più) la vita del succo. Stessa logica per sciroppi, purè, latte, garnish.
+
+Fermentazione. I lieviti e i batteri lavorano più in fretta al caldo. Una fermentazione a temperatura più alta è più rapida ma meno controllata; una più fresca è lenta e pulita. Governare la temperatura è governare la velocità del processo.
+
+Ossidazione. Un vino o un distillato aperto si ossida più in fretta al caldo. Tenerlo fresco rallenta il decadimento. Stesso principio del cibo che irrancidisce.
+
+Estrazione. L'hai già visto: infusione a caldo veloce, a freddo lenta. È Q10 applicato all'estrazione — la temperatura decide quanto in fretta i composti passano nel solvente.
+
+Un solo principio, quattro banchi diversi. Questo è il filo rosso.
+
+LA VERIFICA — e qui il metodo ti salva
+
+Ora la parte importante, quella che distingue Matter da un ricettario. Quel numero — "raddoppia ogni 10°C", Q10 = 2 — è vero come regola-guida, ma NON è una legge esatta da applicare a occhi chiusi. Il valore reale cambia da reazione a reazione: per alcuni deterioramenti è più vicino a 2, per altri a 3, per altri meno. Dipende dal tipo di reazione, dall'acidità, dall'umidità. È un modello, non una costante universale. Chi prende il "raddoppia ogni 10 gradi" come verità assoluta sbaglia, perché applica un numero-legge dove c'è solo una tendenza.
+
+Come lo usi bene, allora? Come bussola, non come GPS. Ti dice la direzione con certezza — più freddo = più lento, sempre — e l'ordine di grandezza — parliamo di raddoppi, non di piccole differenze. Ma la misura vera la fai sul tuo ingrediente: quanto dura davvero il tuo lime in frigo contro fuori, quanto rallenta la tua fermentazione di quei gradi. Il principio ti dice dove guardare e cosa aspettarti; il tuo banco ti dà il numero preciso.
+
+LA CONCLUSIONE
+
+Q10 è il filo rosso di Matter: un principio unico che collega conservazione, fermentazione, ossidazione, estrazione, e mezzo mestiere. Impararlo bene ti dà due cose insieme. Primo, un potere: capisci che controllare la temperatura è controllare la velocità di quasi tutto, e questo cambia come conservi, fermenti, estrai. Secondo, una difesa: riconosci che il numero preciso (il "raddoppia ogni 10°C") è una guida, non una legge — e non ti fai fregare da chi lo spaccia per verità assoluta.
+
+Ed è la lezione che riassume il metodo intero: i grandi principi sono veri e potenti come direzione, ma il numero esatto lo trovi sempre nella tua materia, non su una tabella. Sapere questo — fidarsi del principio e misurare il dettaglio — è la differenza tra sapere le cose a memoria e capirle.""",
+            "target": "Un principio, non un numero: più freddo rallenta tutto (conservazione, fermentazione, ossidazione, estrazione) · il 'raddoppia ogni 10°C' è una bussola non un GPS · fidati del principio, misura il dettaglio nella tua materia",
+        },
     }
     SCHEDE_MADRI_NUOVE = {
         "fen-tannini": {
@@ -450,7 +486,39 @@ Qui non c'è un numero solo: il calore è multi-parametro, sempre almeno tempera
             "target": "Multi-parametro: temperatura + tempo + mezzo insieme · 60°C/1h ≠ 200°C/10min · verifica al cuore non in superficie · se fuori corre e dentro resta indietro, rallenta non alzare",
         },
     }
-    SCHEDE_APP = {**SCHEDE_APP, **CASI, **SCHEDE_MADRI_NUOVE}
+    SCHEDE_MADRI_NUOVE2 = {
+        "fen-distillazione": {
+            "scheda": """Un distillato nasce da una separazione. Scaldi un liquido fermentato e i suoi componenti evaporano in ordine — prima i più volatili, poi l'alcol buono, infine i più pesanti — e il distillatore raccoglie solo la parte giusta, buttando la prima e l'ultima. Quella scelta, dove tagliare, decide tutto: il carattere, la pulizia, persino la sicurezza. Capirla ti fa capire cosa hai davvero nel bicchiere.
+
+La distillazione separa i componenti di una miscela sfruttando il fatto che bollono a temperature diverse. Nel mosto fermentato non c'è solo etanolo e acqua: c'è una folla di composti diversi, ognuno col suo punto di ebollizione. Scaldando, evaporano in sequenza — e il mestiere del distillatore è decidere quali tenere.
+
+Teste, cuore, code: la separazione per volatilità
+
+Man mano che scaldi, il vapore che sale cambia composizione. Prima escono le teste: i composti più volatili, col punto di ebollizione più basso — acetone, aldeidi, e soprattutto metanolo. Sanno di solvente, di smalto, e sono da scartare. Poi arriva il cuore: principalmente etanolo, l'alcol buono, pulito, con i composti aromatici desiderabili. È la parte che si tiene. Infine le code: i composti più pesanti, gli oli di flemma (fusel oil), che danno sapori grezzi, oleosi, "cartone bagnato". Anche queste si separano. Il distillatore devia il flusso per raccogliere solo il cuore: è questo il senso di "fare i tagli".
+
+Perché il taglio è arte, non aritmetica
+
+Verrebbe da pensare: se ogni composto ha il suo punto di ebollizione, basta un termometro. Ma non è così, ed è la cosa più interessante. I composti non escono in blocchi netti: si sovrappongono, sfumano l'uno nell'altro. Il metanolo e l'etanolo, per dire, sono come fratelli — le loro molecole si aggrappano tra loro, e nonostante i punti di ebollizione diversi sono notoriamente difficili da separare del tutto. Per questo il distillatore non si fida solo del termometro: usa naso e palato. Sente quando le teste da solvente lasciano il posto al carattere pulito e dolce del cuore, e quando il cuore comincia a sporcarsi verso le code. Il taglio è una decisione sensoriale, e lì sta l'arte.
+
+La sicurezza: perché le teste si buttano davvero
+
+C'è una ragione seria dietro lo scartare le teste, non solo il sapore. Le teste concentrano il metanolo, che è tossico: attacca il nervo ottico e il fegato, e in quantità anche piccole può causare cecità o peggio. Nei distillati fatti a regola d'arte il metanolo residuo è entro limiti di sicurezza precisi (le normative fissano soglie basse) — ed è proprio il taglio corretto delle teste a garantirlo. Questo è anche il motivo per cui distillare non è un gioco da fare in casa senza competenza: la separazione che rende un distillato sicuro è tecnica, non improvvisazione. Per te dietro il banco, il senso è capire perché un distillato di qualità è quello che è: qualcuno ha fatto i tagli giusti.
+
+Cosa cambia da distillato a distillato
+
+Non tutti i distillati vogliono lo stesso taglio. Una vodka neutra vuole un cuore strettissimo e purissimo, teste e code tagliate larghe, per non avere quasi carattere. Un whisky o un rum da invecchiare tengono un po' più di composti aromatici (anche parte delle code buone) perché daranno complessità con l'affinamento. Un gin costruisce il suo carattere sulle botaniche infuse e ridistillate. Lo stesso principio — separa per volatilità, scegli il cuore — dà prodotti diversissimi a seconda di dove metti i tagli e cosa c'era nel mosto.
+
+Come lo "verifichi" (al banco)
+
+Tu non distilli, ma leggi il risultato. Un buon distillato nel cuore è pulito: niente pungente di solvente (teste rimaste), niente oleoso-grezzo o "bagnato" (code rimaste). Se un distillato economico ti sembra aggressivo, pungente, che dà mal di testa facile, spesso è un taglio fatto male o largo. Il naso e il palato ti dicono se il cuore era davvero cuore.
+
+Il bersaglio, letto bene
+
+Non è un numero: è il cuore riconosciuto. Il bersaglio della distillazione è quel punto in cui hai solo etanolo e i composti aromatici che vuoi, senza il solvente delle teste né l'olio delle code — e cambia con l'obiettivo (purissimo per la vodka, aromatico per il whisky). Lo si riconosce al naso e al palato, non su una scala. E la cosa da portare a casa: dietro ogni distillato che ami c'è una decisione di taglio; la qualità di quello che versi nasce lì, nella scelta di cosa tenere e cosa buttare.""",
+            "target": "Il cuore riconosciuto al naso/palato: solo etanolo e aromatici voluti, senza il solvente delle teste né l'olio delle code · il taglio è arte sensoriale, non termometro · cambia col prodotto (vodka purissima, whisky aromatico)",
+        },
+    }
+    SCHEDE_APP = {**SCHEDE_APP, **CASI, **SCHEDE_MADRI_NUOVE, **SCHEDE_MADRI_NUOVE2}
     import json
     try:
         conn = _get_conn()
