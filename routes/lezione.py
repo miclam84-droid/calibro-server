@@ -16,6 +16,17 @@ bp = Blueprint("lezione", __name__)
 _cache_home = {}       # { lang: {"ts": float, "data": dict} }
 _lezione_cache = {}    # { disciplina_nome: [fenomeni] }
 
+# Fenomeni migrati al metodo editoriale (schede VEDI/SEPARA/.../BERSAGLIO).
+# La home ("fenomeno del giorno") pesca SOLO tra questi finche' gli altri nodi
+# del DB hanno ancora schede vecchie. Quando un nodo viene migrato, si aggiunge qui.
+_FEN_MIGRATI = {
+    "fen-acidita","fen-concentrazione","fen-fermentazione","fen-maillard","fen-emulsione",
+    "fen-carbonatazione","fen-ossidazione","fen-osmosi","fen-viscosita","fen-denaturazione",
+    "fen-cristallizzazione","fen-gelatinizzazione","fen-diluizione","fen-estrazione","fen-solubilita",
+    "fen-crioscopia","fen-overrun","fen-meringa","fen-souffle","fen-sineresi","fen-ganache",
+    "fen-lievitazione","fen-crosta",
+}
+
 
 @bp.route("/home")
 def home_api():
@@ -37,7 +48,10 @@ def home_api():
     ).fetchall()
     if not fenomeni:
         return jsonify({"errore": "grafo vuoto"})
-    f = random.choice(fenomeni)
+    # vetrina pulita: pesca solo tra i fenomeni migrati al metodo; se (per errore)
+    # nessuno matcha, ripiega su tutti per non rompere la home.
+    _mig = [x for x in fenomeni if x["id"] in _FEN_MIGRATI]
+    f = random.choice(_mig if _mig else fenomeni)
     fd = _dati(f["data"])
     result = {
         "fenomeno": {
