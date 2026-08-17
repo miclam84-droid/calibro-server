@@ -3990,18 +3990,30 @@ function resetMirino(boxId){
 // ── RENDER TARGET: eroe primario + parametri secondari (result first) ──
 function _renderTarget(box, target, mostraLabel){
   if(!box) return;
+  if(!target){ box.style.display='none'; return; }
+  box.style.display='';
+  // Architettura "bersaglio a contratto": il primo pezzo e' un NUMERO vero (finestra
+  // operativa misurabile) oppure una FRASE-bersaglio (stato da riconoscere). Il display
+  // si adatta: mai una frase resa come numero-eroe gigante.
   var parti = target.split(/\s*[·;]\s*/).map(function(s){return s.trim();}).filter(Boolean);
-  var eroe = parti[0] || target;
-  var params = parti.slice(1);
+  var primo = parti[0] || target;
+  var resto = parti.slice(1);
+  var haNumero = /\d/.test(primo) && primo.length <= 32;
   var html = '';
-  if(mostraLabel !== false) html += '<div class="target-lab">target</div>';
-  html += '<div class="target-eroe">' + _esc(eroe) + '</div>';
-  if(params.length){
-    html += '<div class="target-cond-lab">condizioni</div><div class="target-grid">';
-    params.forEach(function(p){
-      html += '<div class="target-cond">' + _esc(p) + '</div>';
-    });
-    html += '</div>';
+  if(haNumero){
+    if(mostraLabel !== false) html += '<div class="target-lab">finestra operativa</div>';
+    html += '<div class="target-eroe">' + _esc(primo) + '</div>';
+    if(resto.length){
+      html += '<div class="target-cond-lab">condizioni</div><div class="target-grid">';
+      resto.forEach(function(p){ html += '<div class="target-cond">' + _esc(p) + '</div>'; });
+      html += '</div>';
+    }
+  } else {
+    if(mostraLabel !== false) html += '<div class="target-lab">bersaglio</div>';
+    html += '<div class="target-frase">' + _esc(primo) + '</div>';
+    if(resto.length){
+      html += '<div class="target-nota">' + _esc(resto.join(' · ')) + '</div>';
+    }
   }
   box.innerHTML = html;
 }

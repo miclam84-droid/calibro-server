@@ -1112,6 +1112,11 @@ a:focus-visible,input:focus-visible{
 /* ═══ MAPPA DEI NUMERI — nome + numero eroe + azione ═══ */
 .p-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .p-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--ink)}
+.target-frase{font-family:var(--sans);font-weight:600;font-size:17px;line-height:1.4;color:#FAF6EE;letter-spacing:-.005em;margin-bottom:8px}
+.target-nota{font-family:var(--sans);font-size:13px;line-height:1.45;color:var(--s300);margin-bottom:4px}
+@keyframes targetAtterraFrase{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.target-frase{animation:targetAtterraFrase .3s ease-out both}
+@media (prefers-reduced-motion: reduce){.target-frase{animation:none}}
 .p-target{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent);margin-top:4px}
 .p-tag.prolock{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(203,90,34,.12);color:var(--accent);padding:2px 7px;border-radius:4px}
 .p-tag.active{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--accent);color:var(--paper-hi);padding:2px 8px;border-radius:4px}
