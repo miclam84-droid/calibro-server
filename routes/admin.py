@@ -326,6 +326,65 @@ Non è un numero: è uno stato doppio — limpidezza raggiunta E sapore preserva
             "target": "Doppio stato: limpidezza raggiunta E sapore intatto · scegli il metodo in base a cosa ti rende torbido (latte per polifenoli, agar per polpa)",
         },
     }
+    CASI = {
+        "proc-negroni-inconsistente": {
+            "scheda": """SINTOMO
+
+Fai il Negroni come sempre: parti uguali, gin, bitter, vermouth. Niente da spremere, niente da montare, la ricetta più semplice che esista. Eppure una sera è perfetto — strutturato, aperto, equilibrato — e un'altra sera è una bomba: caldo, aggressivo, troppo dolce, o al contrario acquoso e spento. Stessa bottiglia, stesse dosi, stessa mano. Il cliente abituale te lo dice: "stasera è diverso". E ha ragione.
+
+IPOTESI
+
+L'istinto dice: ho sbagliato la ricetta. Ma la ricetta non è cambiata — le dosi sono quelle. Quindi l'ipotesi giusta è un'altra: il problema non è nella ricetta, è nel processo. Due Negroni con proporzioni identiche possono risultare completamente diversi, e la ragione sta in variabili che non sono scritte sulla ricetta e che cambiano ogni volta senza che tu le controlli. Il Negroni è l'esempio perfetto perché, non avendo niente da spremere o montare, mette a nudo proprio quelle variabili nascoste.
+
+I FENOMENI IN GIOCO
+
+Quando cerchi la causa, tre fenomeni che conosci lavorano insieme:
+
+La diluizione. Un Negroni ha bisogno di una quantità precisa di acqua — quella che entra sciogliendo il ghiaccio mentre mescoli — per aprire il gin e ammorbidire l'amaro. Una mescolata frettolosa di dieci secondi lascia il drink poco diluito: caldo, aggressivo, e paradossalmente più dolce, perché senza acqua le note non si aprono. Una mescolata troppo lunga, o su ghiaccio piccolo e bagnato, lo annega. La diluizione non è un optional del Negroni: è un ingrediente, e se cambia di sera in sera il drink cambia.
+
+La temperatura. Diluizione e freddo viaggiano insieme — il ghiaccio raffredda proprio sciogliendosi (lo sai dalla scheda diluizione). Ma il ghiaccio non è sempre uguale: cubetti grandi e densi si sciolgono lenti e diluiscono poco, ghiaccio piccolo e umido si scioglie in fretta e diluisce tanto. E il bicchiere: uno spesso isola e tiene freddo, uno sottile lascia che la mano scaldi e il ghiaccio corra. Se una sera usi ghiaccio diverso o un bicchiere diverso, hai cambiato diluizione e temperatura senza accorgertene.
+
+La concentrazione. Il Negroni non è statico: al primo sorso è fermo e strutturato, poi si apre mentre il ghiaccio nel bicchiere continua a sciogliersi — la concentrazione cala nel tempo e i sapori si riequilibrano. Quindi conta anche quando lo assaggi e quanto lentamente lo bevi. Lo stesso drink è diverso al primo e all'ultimo sorso.
+
+LA VERIFICA
+
+Come capisci quale variabile ti sta tradendo? Una alla volta, come sempre. Non cambiare tutto insieme. Fai lo stesso Negroni e misura la sola diluizione: pesa o guarda il volume finale dopo la mescolata — se una sera è 90 ml e un'altra 108 ml, hai trovato la variabile. Oppure tieni la mescolata identica (conta le rotazioni, o cronometra 20-25 secondi) e cambia solo il ghiaccio: se il risultato cambia, è il ghiaccio. Il palato ti dice che è diverso; la misura ti dice cosa è diverso. È l'unico modo di trasformare "stasera è strano" in "stasera ho diluito il 20% invece del 25%".
+
+LA CONCLUSIONE
+
+Non hai un problema di ricetta. Hai un problema di processo. E i problemi di processo si risolvono standardizzando il processo, non ritoccando le dosi. Il modo più pulito: il batch. Pre-mescoli il Negroni con la sua acqua di diluizione già dentro (intorno al 20-25% del volume, l'acqua che avrebbe preso mescolando) e lo tieni in frigo o freezer. Da quel momento ogni Negroni viene dallo stesso mix: identico, sera dopo sera, indipendentemente da chi lo versa, da quanto è affollato il banco, da com'è il ghiaccio. Hai tolto le variabili nascoste rendendole fisse.
+
+E questa è la lezione oltre il Negroni: quando un piatto o un drink "cambia senza motivo", quasi mai è la ricetta. Sono le variabili di processo che non stai controllando. Matter ti insegna a vederle, misurarle una alla volta, e fissarle.""",
+            "target": "Non è la ricetta, è il processo: isola la variabile nascosta (diluizione, ghiaccio, temperatura), misurala, poi fissala col batch",
+        },
+        "proc-variabilita-lime": {
+            "scheda": """SINTOMO
+
+Il tuo sour è tarato alla perfezione: dose di lime fissa, sciroppo fisso, distillato fisso. Funziona da mesi. Poi arriva una cassa di lime nuova e all'improvviso lo stesso drink è troppo aspro, o troppo piatto. Non hai cambiato niente nella ricetta. Cambi fornitore, cambia stagione, e il sour balla. Ti ritrovi a "aggiustare a naso" ogni volta, e due bartender dello stesso locale fanno lo stesso drink leggermente diverso.
+
+IPOTESI
+
+Non è la tua mano e non è la ricetta: è la materia prima che non è mai la stessa. Il succo di lime varia in acidità secondo la dimensione del frutto, la freschezza, la stagione, la cultivar e quanto era maturo alla raccolta — e spesso gli agrumi vengono raccolti acerbi per il trasporto, con meno zucchero e più asprezza. Quindi la dose fissa di lime sulla ricetta non è una dose fissa di acidità: è un volume fisso di un liquido la cui forza cambia. Stai misurando i millilitri, ma quello che conta per il gusto è l'acido dentro quei millilitri.
+
+I FENOMENI IN GIOCO
+
+Qui torna in pieno la scheda acidità. Ricordi la distinzione fondamentale: una cosa è quanto liquido metti, un'altra è quanta acidità titolabile contiene. Il lime "standard" sta intorno al 6% di acidità titolabile, ma è una media — la TA reale oscilla parecchio (indicativamente 4-8% a seconda del frutto). Se un giorno il tuo lime è al 5% e un altro al 7%, la stessa dose di 22 ml porta nel bicchiere quantità di acido diverse, e il sour cambia. E non è solo intensità: il lime è fatto di acido citrico più malico (il limone è quasi solo citrico), e il malico fa durare l'asprezza più a lungo — per questo il lime "si sente" diverso, non solo più o meno forte.
+
+C'è anche la fragilità nel tempo: il lime è l'agrume più instabile, comincia a cambiare nel momento in cui lo spremi. Un succo spremuto ora e uno di due ore fa non hanno lo stesso profilo. Quindi anche quando l'hai spremuto è una variabile.
+
+LA VERIFICA
+
+Il palato ti dice che il sour è cambiato; non ti dice di quanto è cambiata l'acidità. Per saperlo, misuri. Il modo semplice al banco: assaggia il succo nuovo accanto a quello vecchio, affiancati, e senti se è più o meno aspro. Il modo preciso: misuri l'acidità titolabile del succo (una titolazione veloce), e scopri che la cassa nuova è al 7% invece del 6%. A quel punto sai esattamente cosa correggere e di quanto — non vai più a naso. È la stessa logica dell'acidità master: isola la variabile (l'acidità del succo), misurala, poi correggi.
+
+LA CONCLUSIONE
+
+La soluzione da professionista non è rincorrere il lime aggiustando a occhio ogni sera: è fissare l'acidità invece del volume. Due strade. La prima, semplice: assaggi ogni cassa nuova e ritari la dose di conseguenza (più lime se è debole, meno se è forte) per riportare il sour al suo punto. La seconda, da bar che vuole consistenza assoluta: l'acid-adjusting — porti ogni succo a un'acidità titolabile fissa (il riferimento è ~6%, l'equilibrio classico con uno sciroppo a 50 Brix in parti uguali), aggiungendo acido dove serve. Così la tua "unità di lime" ha sempre la stessa forza, la stagione non conta più, e ogni bartender fa lo stesso identico drink.
+
+La lezione oltre il lime: quando la materia prima varia, non inseguirla a naso. Misura la proprietà che conta (qui l'acidità, non il volume) e fissala. È la differenza tra un bar che spera e un bar che controlla.""",
+            "target": "Non inseguire il lime a naso: misura l'acidità (non il volume) e fissala — assaggia ogni cassa o fai acid-adjusting",
+        },
+    }
+    SCHEDE_APP = {**SCHEDE_APP, **CASI}
     import json
     try:
         conn = _get_conn()
