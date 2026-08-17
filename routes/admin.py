@@ -384,7 +384,73 @@ La lezione oltre il lime: quando la materia prima varia, non inseguirla a naso. 
             "target": "Non inseguire il lime a naso: misura l'acidità (non il volume) e fissala — assaggia ogni cassa o fai acid-adjusting",
         },
     }
-    SCHEDE_APP = {**SCHEDE_APP, **CASI}
+    SCHEDE_MADRI_NUOVE = {
+        "fen-tannini": {
+            "scheda": """Bevi un rosso giovane o un tè lasciato in infusione troppo a lungo, e la bocca ti si asciuga: le gengive tirano, la lingua diventa ruvida, senti come una carta vetrata. La chiami "amaro", ma non è amaro. È astringenza, ed è un'altra cosa — un altro senso, un altro meccanismo. Separarle è la prima cosa che ti fa capire cosa hai nel bicchiere.
+
+I tannini sono polifenoli, una famiglia di composti presenti in vino, tè, cacao, caffè, buccia e semi della frutta, e nel legno delle botti. Danno quella sensazione secca e allappante. Ma per governarli devi prima capire che l'astringenza che senti non è un gusto: è un fatto tattile, fisico, in bocca.
+
+Astringenza non è amaro: due cose diverse
+
+L'amaro è un gusto — lo senti sui recettori del gusto, arriva subito e passa. L'astringenza è una sensazione tattile — la senti come texture, secchezza, rasposità. E hanno un meccanismo completamente diverso. L'astringenza nasce così: i tannini si legano alle proteine della tua saliva, quelle che normalmente rendono la bocca scivolosa e lubrificata. Legandole, le fanno precipitare, e la bocca perde lubrificazione: ecco la secchezza, il "tirare". Non è un sapore che percepisci, è la tua saliva che smette di scorrere. Per distinguerle a mente, guarda la texture sulla lingua, non il sapore: se la bocca si raggrinza e stringe, è astringenza; se è un gusto amaro, è amaro.
+
+Perché si costruisce sorso dopo sorso
+
+C'è una conseguenza pratica di questo meccanismo. L'amaro arriva in un istante e finisce. L'astringenza, invece, si accumula: a ogni sorso i tannini consumano altre proteine salivari, e la bocca si asciuga sempre di più. Ecco perché un rosso molto tannico o un tè troppo forte diventano più allappanti verso la fine del bicchiere che all'inizio — non è che il vino cambia, è la tua saliva che si esaurisce. E c'è una differenza tra le persone: chi produce poca saliva sente l'astringenza più forte.
+
+Non tutti i tannini sono uguali: la dimensione conta
+
+I tannini non sono una cosa sola: sono molecole che si legano tra loro in catene di lunghezza diversa (è il grado di polimerizzazione). E qui c'è una relazione utile: più il tannino è grande e polimerizzato, più è astringente e meno amaro; più è piccolo, più tende all'amaro e meno all'astringente. È il motivo per cui tannini di origine diversa — uva, tè, legno, semi — danno sensazioni diverse: non è solo "quanti" ma "quanto grandi". Ed è anche il motivo per cui un vino, invecchiando, cambia: i tannini si riorganizzano e la sensazione si ammorbidisce.
+
+Le leve che hai davvero
+
+L'astringenza non è per forza un difetto: in un grande rosso può diventare struttura, pienezza, sensazione vellutata — è quando è sbilanciata o troppo aggressiva che disturba. Quindi il gioco è governarla, non azzerarla. Le leve: la quantità di tannino che estrai (nel vino, più macerazione su bucce e semi = più tannino; nel tè, più tempo e più caldo = più tannino; sono estrazioni, valgono le regole dell'estrazione). Il tempo e l'invecchiamento (i tannini si ammorbidiscono col tempo, in bottiglia o in caraffa con l'aria). La temperatura di servizio (un rosso molto tannico servito a temperatura ambiente sembra meno aggressivo che freddo). E l'abbinamento: grassi e proteine nel cibo legano i tannini e ammorbidiscono l'astringenza — per questo un rosso tannico "si apre" con una bistecca.
+
+Come lo verifichi
+
+Il giudice è la bocca, ma devi sapere cosa cercare: la secchezza e il "tirare" (astringenza) separati dal gusto amaro. Un modo pratico: fai passare qualche secondo dopo il sorso e senti se la bocca si asciuga progressivamente — quella è l'astringenza che si costruisce. E se vuoi capire cosa la governa nel tuo caso, cambia una cosa per volta: stesso tè con un minuto in meno di infusione, o stesso rosso lasciato ossigenare — e senti come cambia l'allappante.
+
+Il bersaglio, letto bene
+
+Non c'è un numero dell'astringenza, e non c'è un "giusto" universale: un rosso da bistecca vuole struttura tannica, un tè da pomeriggio la vuole leggera, un cocktail ne vuole appena un accenno. Il bersaglio è l'astringenza giusta per quello che stai facendo, in equilibrio con dolcezza, acidità e corpo — ricordando che un po' di tannino dà struttura, troppo asciuga e stanca. Lo riconosci in bocca, come texture, non su una tabella. E ricorda la cosa che conta di più: quando qualcosa "allappa", non è un sapore da coprire con lo zucchero — è una sensazione fisica da bilanciare o ammorbidire.""",
+            "target": "Nessun numero: l'astringenza giusta per l'uso (struttura in un rosso, accenno in un cocktail) · è tattile non gusto, si costruisce sorso dopo sorso · non coprire con lo zucchero",
+        },
+        "fen-calore": {
+            "scheda": """Metti una bistecca spessa in forno rovente e la tiri fuori bruciata fuori e cruda dentro. Alzi la fiamma pensando di andare più veloce, e peggiori le cose. Il problema è che stai confondendo tre cose che sembrano una: quanto è caldo (temperatura), quanta energia stai dando (calore), e quanto in fretta arriva al centro (velocità). Separarle è capire perché il calore fa quello che fa.
+
+Il calore governa mezzo mestiere: cuoce, scioglie, estrae, fa fermentare più in fretta o più piano, raffredda un cocktail. Ma per governarlo davvero devi smettere di pensarlo come "una manopola" e vedere le tre grandezze distinte che ci stanno dentro.
+
+Temperatura non è calore non è velocità
+
+La temperatura è quanto sono agitate le molecole in un punto — è il numero sul termometro. Il calore è l'energia che passa da un corpo caldo a uno freddo. La velocità è quanto in fretta quell'energia arriva dove ti serve. Sono legate ma diverse, e l'errore classico è credere che più temperatura significhi sempre più veloce. Non è così: la temperatura interna di una bistecca non sale in proporzione a quanto è caldo il forno, perché il collo di bottiglia non è quanto scalda la superficie — è quanto lentamente il calore attraversa il cibo. Alzare la fiamma brucia la superficie senza far arrivare il centro più in fretta.
+
+Perché il centro resta indietro: la conduzione nel cibo
+
+Il motivo sta in come il calore viaggia dentro le cose. Nel cibo, molecola dopo molecola: quelle calde vibrano, urtano le vicine, gli passano energia, e così il calore si fa strada verso l'interno. Ma il cibo è per lo più acqua, e l'acqua conduce il calore circa 25 volte peggio dell'acciaio. Il cibo è un pessimo conduttore. Ecco perché l'esterno può diventare rovente mentre il centro è ancora freddo: il calore deve farsi strada lentamente attraverso un materiale che gli resiste. Quel gradiente — caldo fuori, freddo dentro — non è un difetto, è la fisica di ogni cottura, e saperlo governare è la tecnica.
+
+I tre modi in cui il calore arriva
+
+Il calore raggiunge il cibo in tre modi, e cambiano il risultato. La conduzione è contatto diretto: la padella tocca la carne, l'energia passa per contatto. La convezione è il calore portato da un fluido in movimento: l'aria del forno ventilato, l'acqua che bolle, l'olio della frittura — il fluido caldo si muove e lambisce il cibo. L'irraggiamento è il calore che viaggia come onda, senza contatto: la brace, la salamandra, il grill dall'alto. Quasi sempre lavorano insieme, ma sapere quale domina ti dice cosa aspettarti: la conduzione fa la crosta dove tocca, la convezione cuoce uniforme, l'irraggiamento colora la superficie.
+
+Il trucco nascosto: il calore latente
+
+C'è un caso che sembra magia e invece è fisica: il vapore scotta molto più dell'acqua bollente, pur essendo entrambi a 100°C. Perché? Quando il vapore condensa sul cibo rilascia una quantità enorme di energia — il calore latente, quello che era servito a trasformare l'acqua in vapore e che torna fuori tutto insieme condensando. È lo stesso motivo per cui il ghiaccio raffredda un drink sciogliendosi (assorbe calore latente per fondere, l'hai visto nella diluizione), o per cui un getto di vapore nel forno accelera la crosta del pane. Il cambio di stato — solido/liquido/gas — sposta molta più energia del semplice scaldare.
+
+Le leve, in pratica
+
+La temperatura del mezzo (quanto caldo), ma sapendo che oltre un certo punto non accelera il centro, brucia solo fuori. Il tempo (il calore ha bisogno di tempo per attraversare — spesso la leva vera è aspettare, non alzare). Il mezzo e il meccanismo (acqua, olio, aria, vapore, contatto: cambiano velocità e risultato — l'olio va sopra i 100°C e fa la crosta, l'acqua no). La dimensione e la superficie (un pezzo spesso vuole più tempo perché il centro è lontano; tagliare più piccolo avvicina il centro). E dalla parte del freddo vale specularmente: raffreddare è togliere calore, e più freddo rallenta le reazioni (è il Q10 — ogni 10°C in meno le reazioni all'incirca dimezzano).
+
+Come lo verifichi
+
+La temperatura al centro, non la superficie né il tempo sull'orologio: un termometro a sonda ti dice la sola cosa che conta davvero in molte cotture, la temperatura del cuore. Se il fuori è pronto e il dentro no, non alzi la fiamma: abbassi e aspetti, o fai un pezzo più piccolo. Cambi una leva per volta e guardi come si muove il centro.
+
+Il bersaglio, letto bene
+
+Qui non c'è un numero solo: il calore è multi-parametro, sempre almeno temperatura + tempo + mezzo insieme. 60°C per un'ora nell'acqua non è come 200°C per dieci minuti in forno, anche se "cuociono" la stessa cosa. Il bersaglio è la combinazione giusta di quanto caldo, per quanto tempo, con quale mezzo, per portare il centro dove vuoi senza distruggere la superficie. E la cosa da ricordare sopra tutte: quando il fuori corre e il dentro resta indietro, il problema non è poco calore — è troppo in fretta. Rallenta.""",
+            "target": "Multi-parametro: temperatura + tempo + mezzo insieme · 60°C/1h ≠ 200°C/10min · verifica al cuore non in superficie · se fuori corre e dentro resta indietro, rallenta non alzare",
+        },
+    }
+    SCHEDE_APP = {**SCHEDE_APP, **CASI, **SCHEDE_MADRI_NUOVE}
     import json
     try:
         conn = _get_conn()
