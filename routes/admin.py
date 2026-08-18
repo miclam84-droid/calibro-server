@@ -191,6 +191,23 @@ def admin_init():
             return jsonify({"errore":str(e)}), 500
     return jsonify({"ok":True,"messaggio":"Tabelle create: utenti, sessioni, esperimenti"})
 
+@bp.route("/admin/test-like")
+def admin_test_like():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    db = carica_grafo()
+    termine = request.args.get("t", "grassi")
+    t = f"%{termine.lower()}%"
+    rows = db.execute("SELECT id, name, type FROM nodes WHERE lower(name) LIKE ? LIMIT 10", (t,)).fetchall()
+    out = [{"id": r["id"], "name": r["name"], "type": r["type"]} for r in rows]
+    # conto anche quanti nodi totali e quanti fen-*-impasto
+    tot = db.execute("SELECT COUNT(*) as c FROM nodes").fetchone()["c"]
+    imp = db.execute("SELECT id, name, type FROM nodes WHERE id LIKE 'fen-%impasto%' OR id='fen-idratazione' OR id='fen-farina-forza'").fetchall()
+    return jsonify({"termine": termine, "match": out, "totale_nodi": tot,
+                    "nodi_nuovi": [{"id":r["id"],"name":r["name"],"type":r["type"]} for r in imp]})
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
@@ -212,8 +229,18 @@ def admin_stato_madri():
             nd = raw if isinstance(raw,dict) else json.loads(raw)
             sch = nd.get("scheda","")
             if isinstance(sch, dict): sch = sch.get("it","")
-            out.append({"id": nid, "chars": len(sch or ""),
-                        "inizio": (sch or "")[:90].replace(chr(10)," ")})
+            full = request.args.get("full", "")
+            entry = {"id": nid, "chars": len(sch or ""),
+                     "inizio": (sch or "")[:90].replace(chr(10)," ")}
+            if full:
+                s = sch or ""
+                entry["artefatti"] = {
+                    "stelle": s.count("**"),
+                    "triple_quote": s.count(chr(34)*3),
+                    "backslash": s.count(chr(92)),
+                    "titolo_vuoto": "\n\n\n" in s,
+                }
+            out.append(entry)
         cur.close(); _release_conn(conn)
         return jsonify({"madri": out})
     except Exception as e:
