@@ -163,9 +163,15 @@ def cerca_contesto(db, termine, domanda=""):
                 aggiungi_fenomeno(e["from_id"])
         elif n["type"] == "Errore":
             for e in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='fallisce_come'", (n["id"],)):
-                prodotti_interesse.add(e["from_id"])
-                for f in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (e["from_id"],)):
-                    aggiungi_fenomeno(f["from_id"])
+                origine = db.execute("SELECT id, type FROM nodes WHERE id=?", (e["from_id"],)).fetchone()
+                if origine and origine["type"] == "Fenomeno":
+                    # cablaggio diretto Fenomeno -fallisce_come-> Errore
+                    aggiungi_fenomeno(e["from_id"])
+                else:
+                    # cablaggio originale Prodotto -fallisce_come-> Errore, risali via si_manifesta_in
+                    prodotti_interesse.add(e["from_id"])
+                    for f in db.execute("SELECT from_id FROM edges WHERE to_id=? AND relation='si_manifesta_in'", (e["from_id"],)):
+                        aggiungi_fenomeno(f["from_id"])
         else:
             for e in db.execute("SELECT from_id FROM edges WHERE to_id=?", (n["id"],)):
                 aggiungi_fenomeno(e["from_id"])
