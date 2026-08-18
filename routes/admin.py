@@ -318,6 +318,38 @@ def admin_test_retrieval():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:600]}), 500
 
+@bp.route("/admin/test-cast")
+def admin_test_cast():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    db = carica_grafo()
+    termine = request.args.get("q", "plasmolisi")
+    t = f"%{termine.lower()}%"
+    out = {}
+    # metodo 1: CAST(data AS TEXT)
+    try:
+        r = db.execute("SELECT id FROM nodes WHERE lower(CAST(data AS TEXT)) LIKE ? LIMIT 5", (t,)).fetchall()
+        out["cast_text"] = [x["id"] for x in r]
+    except Exception as e:
+        out["cast_text_errore"] = str(e)[:150]
+    # metodo 2: data::text (sintassi Postgres)
+    try:
+        r = db.execute("SELECT id FROM nodes WHERE lower(data::text) LIKE ? LIMIT 5", (t,)).fetchall()
+        out["data_colon_text"] = [x["id"] for x in r]
+    except Exception as e:
+        out["data_colon_text_errore"] = str(e)[:150]
+    # verifica: la scheda zuccheri contiene plasmolisi? leggo il campo diretto
+    try:
+        row = db.execute("SELECT data FROM nodes WHERE id='fen-zuccheri-impasto'").fetchone()
+        d = row["data"] if row else ""
+        out["zuccheri_contiene_plasmolisi"] = "plasmolisi" in str(d).lower()
+        out["zuccheri_data_len"] = len(str(d))
+    except Exception as e:
+        out["zuccheri_errore"] = str(e)[:150]
+    return jsonify(out)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
