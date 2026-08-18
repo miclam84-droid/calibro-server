@@ -682,6 +682,32 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-maglia-glutinica": {
+            "scheda": """Impasti due volte lo stesso pane. Una volta lavori poco: l'impasto è slegato, si strappa, non tiene. Un'altra lavori troppo: diventa duro, gommoso, si ritira e combatte, non si lascia stendere. In mezzo c'è il punto giusto — un impasto che si allunga docile ma tiene la forma. Quel punto è un equilibrio tra due forze opposte dentro il glutine, e riconoscerlo è metà del mestiere del pane.
+
+La maglia glutinica è la rete di proteine che dà struttura al pane: trattiene il gas della fermentazione e fa sì che l'impasto lieviti e tenga la forma. Ma per governarla devi sapere che non è "una cosa sola forte o debole" — è fatta di due proteine con caratteri opposti, e il pane vive nel loro equilibrio.
+
+Le due forze: elasticità ed estensibilità
+
+Il glutine nasce da due proteine della farina, la glutenina e la gliadina, e fanno cose diverse. La glutenina dà elasticità: l'impasto resiste, torna indietro quando lo stiri, come un elastico. La gliadina dà estensibilità: l'impasto si allunga, si stende sotto pressione senza spezzarsi. Sono opposte e complementari. Troppa elasticità e l'impasto è duro, nervoso, si ritira e non si lascia lavorare; troppa estensibilità e è molle, cede, non tiene la forma. Il pane vuole entrambe in equilibrio: abbastanza elasticità per tenere la struttura e trattenere il gas, abbastanza estensibilità per espandersi mentre il lievito lo gonfia. Quasi tutti i problemi di un impasto — troppo duro, troppo molle — sono uno sbilanciamento tra queste due.
+
+Perché il glutine si forma: acqua, poi lavoro (o tempo)
+
+Una cosa fondamentale: nella farina asciutta il glutine non esiste. Glutenina e gliadina stanno lì dormienti, separate. Serve l'acqua per svegliarle — si idratano, si distendono, cominciano a muoversi e a legarsi. Poi serve che si colleghino in catene lunghe, e questo succede in due modi: con l'azione meccanica (impastare, piegare) oppure — ed è il ponte con l'autolisi — semplicemente col tempo. Le proteine si organizzano anche da sole, se le lasci in acqua abbastanza a lungo. Impastare accelera; il riposo fa lo stesso lavoro più piano. Per questo esistono i pani senza impasto: sviluppano il glutine con idratazione e attesa invece che con la forza.
+
+Le leve che governano l'equilibrio
+
+La farina (più proteine = più glutine potenziale; ma conta il rapporto elastico/estensibile, non solo la quantità — farine fortissime danno impasti troppo tenaci, difficili da stendere). L'acqua (l'idratazione è il primo passo: più acqua tende a mollica più aperta e impasto più estensibile, meno acqua a mollica più fitta e impasto più tenace). Il lavoro (più impasti, più la rete si rafforza — ma oltre un punto l'impasto diventa troppo tenace o, spinto all'estremo, si degrada). Il riposo (rilassa la rete, la distribuisce, la rende più estensibile — è la stessa autolisi). E gli additivi che conosci: il sale stringe e rinforza il glutine; grassi e zuccheri lo ammorbidiscono; gli acidi lo indeboliscono.
+
+Come lo verifichi: il windowpane
+
+C'è una prova diretta, ed è il modo standard: il windowpane test. Prendi un pezzetto di impasto e allargalo delicatamente tra le dita. Se il glutine è sviluppato bene, si stende in un velo sottile, quasi trasparente, senza rompersi — vedi la luce attraverso, come un vetro. Se si strappa subito, la rete non è pronta: serve più lavoro o più riposo. È il test che ti dice, con le mani, se l'equilibrio c'è. Ma attenzione: non tutti i pani vogliono un windowpane perfetto — i rustici e gli impasti molto idratati danno ottimi risultati anche con uno sviluppo moderato. Il test è una guida, non un dogma.
+
+Il bersaglio, letto bene
+
+L'equilibrio giusto tra elastico ed estensibile per il pane che stai facendo — riconosciuto con le mani, non su una scala. Un pane in cassetta vuole più struttura, una ciabatta più estensibilità e mollica aperta, un grissino più tenacia. Il bersaglio è quel punto in cui l'impasto si stende docile ma tiene, e lo senti stendendolo (il windowpane) più che leggendo un numero. E la cosa da ricordare sopra tutte: quando un impasto ti combatte o ti cede, non è "poco glutine" in astratto — è troppo di una delle due forze. Chiediti quale, elastica o estensibile, e correggi quella.""",
+            "target": "L'equilibrio tra elastico (glutenina, torna indietro) ed estensibile (gliadina, si allunga) · quando l'impasto combatte o cede è troppo di una delle due — chiediti quale · lo verifichi col windowpane",
+        },
         "fen-tannini": {
             "scheda": """Bevi un rosso giovane o un tè lasciato in infusione troppo a lungo, e la bocca ti si asciuga: le gengive tirano, la lingua diventa ruvida, senti come una carta vetrata. La chiami "amaro", ma non è amaro. È astringenza, ed è un'altra cosa — un altro senso, un altro meccanismo. Separarle è la prima cosa che ti fa capire cosa hai nel bicchiere.
 
