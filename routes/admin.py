@@ -270,6 +270,8 @@ def admin_cabla_panificazione():
                                         "realizzato_da": ["tec-pieghe-forza"]},
             "fen-temperatura-impasto": {"fallisce_come": ["err-pane-non-cresce"],
                                         "realizzato_da": ["tec-controllo-lievitazione"]},
+            "fen-lievito-madre": {"fallisce_come": ["err-madre-sovra"],
+                                  "si_manifesta_in": ["fis_sourdough_starter"]},
         }
         PONTI = [
             ("fen-uova-impasto", "governato_da", "fen-grassi-impasto"),
@@ -376,6 +378,7 @@ def admin_popola_alias():
             "fen-sale-impasto": ["sale","salinita","dosaggio sale"],
             "fen-crosta": ["crosta","doratura","colore crosta","pallida"],
             "fen-idratazione": ["idratazione","acqua","percentuale acqua","quanta acqua","impasto molle","impasto bagnato","impasto appiccicoso","troppa acqua","appiccicoso","molle","troppo molle"],
+            "fen-lievito-madre": ["lievito madre","pasta madre","madre","sourdough","levain","starter","picco","rinfresco","licoli"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
@@ -1160,6 +1163,50 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-lievito-madre": {
+            "scheda": """Il lievito madre non è un ingrediente che compri: è un organismo vivo che allevi. Una colonia di lieviti selvaggi e batteri che mangia, cresce, respira, invecchia. E come ogni essere vivo ha un momento in cui è al massimo della forza — il picco. Saperlo cogliere è la differenza tra un pane che esplode in forno e uno che resta piatto. Non è una ricetta, è un rapporto: impari a leggere la tua madre come leggi l'umore di una persona.
+
+Il lievito madre (o pasta madre) è il più antico e vivo dei pre-fermenti. Governarlo bene è la competenza che separa il panettiere dal semplice esecutore, perché non segui istruzioni: interpreti segnali di un organismo che cambia ogni giorno.
+
+Cos'è davvero: due popolazioni che convivono
+
+Dentro la madre vivono due famiglie di microrganismi in equilibrio. I lieviti selvaggi (Saccharomyces cerevisiae, Candida humilis e altri) mangiano gli zuccheri della farina e producono anidride carbonica — la spinta, i buchi, la crescita. I batteri lattici (Lactobacillus) producono acidi: il lattico (sapore morbido, yogurt) e l'acetico (sapore acuto, aceto) — il gusto e la conservazione. Tutto quello che fai — quando rinfreschi, a che temperatura la tieni, quanto la lasci — sposta l'equilibrio tra queste due popolazioni. Governare la madre è governare questo equilibrio.
+
+Il picco: il concetto che comanda tutto
+
+Ecco il cuore. Dopo che la rinfreschi (le dai farina e acqua fresche), la popolazione di lievito cresce in modo esponenziale mangiando il nuovo cibo. La CO₂ aumenta, la madre gonfia e sale. A un certo punto raggiunge il picco: il momento in cui il lievito è alla massima densità e la produzione di gas è massima — di solito quando è raddoppiata o triplicata di volume, ed è sul punto di ricominciare a scendere. Quello è il momento di usarla. Prima del picco, il lievito non ha ancora la forza piena. Dopo il picco (quando ricade), la spinta cala e l'acidità sale. Cogliere il picco è la singola abilità più importante, e la più difficile: il picco non è un orario, è un momento, e cambia ogni giorno con la temperatura.
+
+Leggere i segnali: gli odori come un quadrante
+
+Qui la parte che nessun libro insegna davvero, ma che il naso impara. La madre ti dice a che punto è del suo ciclo con l'odore, e imparare a leggerlo è come leggere un orologio:
+
+Appena rinfrescata: odore dolciastro, farinoso, mite. Bassa attività. Verso il picco: sempre più simile allo yogurt, acidulo ma piacevole, con una nota di lievito e pane. Al picco: odore equilibrato, acidulo ma non pungente — "sa di voler diventare pane". Oltre il picco (in calo): vira all'aceto, più acuto e pungente (l'acetico sale mentre il lievito rallenta). Molto oltre, affamata: odore di acetone, solvente, smalto per unghie — è il segnale che ha esaurito tutto il cibo e va rinfrescata subito.
+
+Insieme all'odore, guardi la crescita: raddoppio o triplicazione affidabile, tante bolle, salita e discesa prevedibili. Questi segnali insieme battono qualsiasi trucco.
+
+Il float test: perché non fidartene troppo
+
+Un avvertimento da conoscere. C'è un test diffuso — metti un cucchiaino di madre nell'acqua, se galleggia è pronta. Galleggia perché è piena di gas, e un po' funziona. Ma è ingannevole: una madre molto idratata (liquida) può fallire il test anche se è attivissima, e una sovra-matura può passarlo anche se è già oltre il picco. Il gas non ti dice la forza né la maturità. Usalo come un indizio, non come giudice: rise e odore sono molto più affidabili.
+
+Il rinfresco: la leva con cui la governi
+
+Rinfrescare significa buttare gran parte della madre e darle farina e acqua fresche. È come si mantiene viva e si controlla l'equilibrio. Il rapporto conta: 1:1:1 (parti uguali di madre, farina, acqua) raddoppia in 4-8 ore a temperatura ambiente (21-26°C). Rapporti più alti (1:5:5, cioè poca madre e molto cibo) aumentano la popolazione di lievito e diluiscono l'acidità — li usi per rinforzare una madre debole o troppo acida. Rapporti bassi aumentano l'acidità più in fretta. Se la madre sa troppo di aceto (acidità in eccesso), rinfreschi più spesso o con più cibo per riportare l'equilibrio verso il lievito.
+
+Attività non è forza (la distinzione che confonde tutti)
+
+Un punto fine ma importante. Una madre che raddoppia in fretta è attiva — ma non è detto che sia forte. La forza è la capacità di reggere il picco a lungo, trattenere il gas, dare oven spring costante. Una madre debole può fare tante bolle e poi collassare subito; una forte sale con calma, tiene il picco, e spinge il pane in modo affidabile. La forza si costruisce col tempo: una madre nuova è usabile dopo due settimane, ma non è davvero matura prima di alcuni mesi. Le prime pagnotte più piatte non sono un fallimento, sono il percorso.
+
+Come lo verifichi
+
+Segna il livello dopo il rinfresco (un elastico intorno al barattolo). Guarda quando raddoppia/triplica e annusa: quando è al massimo del volume, con odore equilibrato e sul punto di fermarsi, è il picco — usala lì. Se è già ricaduta e sa d'aceto, o rinfreschi e aspetti il prossimo picco, o la usi accettando un pane più acido e meno spinto. Tieni un piccolo registro dei tempi di picco per una settimana: scoprirai il ritmo della tua madre.
+
+Il bersaglio, letto bene
+
+C'è un segno quantitativo — il raddoppio/triplicazione in 4-8 ore dopo un rinfresco 1:1:1 a 21-26°C — ma il vero bersaglio è qualitativo: cogliere il picco, quel momento in cui volume, bolle e odore dicono che il lievito è al massimo. Non un orologio, un momento da leggere. E la cosa da ricordare, che fa di te un panettiere e non un esecutore: la madre non si comanda, si ascolta. Impari il suo ritmo, e allora ti dà pani che esplodono.""",
+            "target": "Cogliere il PICCO: raddoppio/triplicazione in 4-8h dopo rinfresco 1:1:1 a 21-26°C, odore equilibrato e sul punto di ricadere · leggi gli odori come un quadrante · non fidarti del float test",
+            "nome": "Il lievito madre (gestione e picco)",
+            "dominio": "panificazione",
+        },
         "fen-temperatura-impasto": {
             "scheda": """Fai lo stesso pane a gennaio e a luglio, stessa ricetta, e ti comporta in modo diverso: d'estate lievita in metà tempo, d'inverno sembra addormentato. Non è colpa tua né della ricetta: è la temperatura dell'impasto. È la variabile che decide la velocità di tutto — e la cosa che i fornai professionisti sanno, e i dilettanti no, è che non si subisce: si calcola e si centra, ogni volta, in ogni stagione.
 
