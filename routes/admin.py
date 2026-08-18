@@ -433,6 +433,47 @@ def admin_edges_di():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/merge-idratazione")
+def admin_merge_idratazione():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        CANONICO = "fen-idratazione"
+        VECCHIO = "fen-idratazione-impasto"
+        azioni = []
+        # 1) ridireziona ogni edge del vecchio verso il canonico (evitando duplicati e self-loop)
+        esistenti = set((e["from_id"], e["relation"], e["to_id"])
+                        for e in db.execute("SELECT from_id, relation, to_id FROM edges").fetchall())
+        def crea(frm, rel, to):
+            if frm == to: return
+            if (frm, rel, to) in esistenti:
+                azioni.append(f"gia presente: {frm} -{rel}-> {to}"); return
+            db.execute("INSERT INTO edges (from_id, relation, to_id, data) VALUES (?,?,?,?)", (frm, rel, to, "{}"))
+            esistenti.add((frm, rel, to))
+            azioni.append(f"creato: {frm} -{rel}-> {to}")
+        # uscenti del vecchio → diventano uscenti del canonico
+        for e in db.execute("SELECT relation, to_id FROM edges WHERE from_id=?", (VECCHIO,)).fetchall():
+            crea(CANONICO, e["relation"], e["to_id"])
+        # entranti del vecchio → puntano al canonico
+        for e in db.execute("SELECT from_id, relation FROM edges WHERE to_id=?", (VECCHIO,)).fetchall():
+            crea(e["from_id"], e["relation"], CANONICO)
+        # 2) elimina tutti gli edges del vecchio
+        db.execute("DELETE FROM edges WHERE from_id=? OR to_id=?", (VECCHIO, VECCHIO))
+        azioni.append("edges del vecchio eliminati")
+        # 3) elimina il nodo vecchio
+        db.execute("DELETE FROM nodes WHERE id=?", (VECCHIO,))
+        azioni.append(f"nodo {VECCHIO} eliminato")
+        db.commit() if hasattr(db, "commit") else None
+        # verifica
+        ancora = db.execute("SELECT 1 FROM nodes WHERE id=?", (VECCHIO,)).fetchone()
+        return jsonify({"azioni": azioni, "vecchio_ancora_presente": bool(ancora)})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
