@@ -826,6 +826,10 @@ def admin_popola_alias():
             "fen-tangzhong-yudane": ["tangzhong","yudane","water roux","roux","pre-gelatinizzazione","milk bread","shokupan","pane soffice","pane giapponese"],
             "fen-levain-pate-fermentee": ["levain","pate fermentee","pâte fermentée","vecchio impasto","old dough","prefermento francese","lievitino"],
             "fen-frittura-lievitati": ["frittura","friggere","friggo","fritto","fritti","unto","unti","untuoso","olio caldo","immersione","frittura di lievitati","sigillo frittura","arancini","arancine","panzerotti","panzerotto","impanato","panato","bombolone","bomboloni","zeppola","zeppole","suppli","crocche"],
+            "fen-haccp": ["haccp","sicurezza alimentare","ccp","punto critico","autocontrollo","igiene","pericolo alimentare","allergeni"],
+            "fen-attivita-acqua": ["attivita acqua","aw","acqua libera","conservazione","essiccazione","stagionatura","perche i salumi durano","perche il miele non scade"],
+            "fen-catena-freddo": ["catena del freddo","zona di pericolo","zona pericolo","temperatura conservazione","frigo","congelatore","scongelare","raffreddamento","abbattitore"],
+            "fen-conserve-botulino": ["botulino","conserve","sottolio","sott olio","sottaceti","sterilizzazione","barattolo","conserva","clostridium","tossina"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
@@ -1708,6 +1712,58 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-haccp": {
+            "scheda": """HACCP non e burocrazia: e un modo di pensare la sicurezza. Nato negli anni '60 dalla Pillsbury per garantire cibo sicuro agli astronauti della NASA, oggi e obbligatorio ovunque si lavori il cibo. L'idea e semplice: invece di controllare il prodotto finito, controlli i PUNTI del processo dove puo nascere il pericolo.
+
+HACCP (Hazard Analysis and Critical Control Points) si regge su un'intuizione: i pericoli non vanno scoperti alla fine, vanno prevenuti dove nascono. Tre famiglie di pericolo: biologici (batteri come Salmonella, Listeria; parassiti come Anisakis; muffe), chimici (detergenti, allergeni non dichiarati, metalli pesanti), fisici (vetro, plastica, frammenti).
+
+I CCP (Punti Critici di Controllo)
+Il cuore del metodo. Un CCP e una fase dove PUOI prevenire o eliminare un pericolo, e dove nessuna fase successiva lo correggera. Esempi: la cottura (uccide i patogeni), il raffreddamento rapido (evita la proliferazione), il controllo del pH nei sottoli (blocca il botulino). Non tutte le fasi sono CCP: solo quelle dove il controllo e indispensabile.
+
+I limiti critici: MISURABILI
+Qui sta la disciplina mentale che vale per tutto Matter. "La carne deve essere ben cotta" NON e un limite valido. "Temperatura al cuore >= 75C" lo e. Un limite critico e un numero che separa il sicuro dal pericoloso: temperatura, tempo, pH, Aw. Misurabile, verificabile, basato sulla scienza.
+Il bersaglio: pensare la sicurezza come punti misurabili nel processo, non come impressione sul prodotto finito. Cosa monitoro, come, quando, chi.""",
+            "target": "Prevenire i pericoli dove nascono, non controllarli alla fine: i CCP sono le fasi dove elimini un pericolo, con limiti MISURABILI (T>=75C, pH<4.6) non impressioni",
+            "nome": "HACCP (il metodo della sicurezza)",
+            "dominio": "tecnologie",
+        },
+        "fen-attivita-acqua": {
+            "scheda": """I batteri non hanno bisogno di "acqua" in generale: hanno bisogno di acqua LIBERA, quella che possono usare. E per questo un prosciutto stagionato, il miele o la marmellata durano mesi fuori dal frigo mentre la carne fresca marcisce in giorni. Non e quanta acqua c'e: e quanta ne e disponibile. Si misura, e si chiama attivita dell'acqua, Aw.
+
+L'Aw va da 0 a 1 (acqua pura = 1). Misura l'acqua LIBERA, non legata a sale, zucchero o strutture. I microrganismi hanno bisogno di un'Aw minima per crescere: sotto certe soglie, semplicemente non possono. Batteri patogeni: sotto Aw 0.85 non proliferano (per questo la legge usa questa soglia). Muffe e lieviti resistono piu in basso (fino a ~0.6).
+
+Come si abbassa l'Aw (e si conserva)
+Tre modi antichi, stessa fisica: TOGLIERE acqua (essiccazione: carasau, bresaola, frutta secca), LEGARE l'acqua col sale (salumi, baccala, acciughe sotto sale), LEGARE l'acqua con lo zucchero (marmellata, miele, canditi). In tutti, l'acqua c'e ancora ma non e piu "libera": i batteri non la possono usare.
+Il bersaglio: capire che conservare spesso vuol dire abbassare l'Aw. Il sale e lo zucchero non "uccidono" i batteri, li mettono a secco. Aw sotto 0.85 = zona sicura per i patogeni.""",
+            "target": "I batteri hanno bisogno di acqua LIBERA non totale: sotto Aw 0.85 i patogeni non crescono - sale e zucchero non uccidono, mettono a secco (salumi, conserve, essiccati)",
+            "nome": "Attivita dell'acqua (Aw)",
+            "dominio": "tecnologie",
+        },
+        "fen-catena-freddo": {
+            "scheda": """Tra i 5 e i 60 gradi i batteri si moltiplicano in fretta: e la "zona di pericolo". Sotto i 5 rallentano quasi a fermarsi, sopra i 60 muoiono. Tutta la conservazione al freddo e una cosa sola: tenere il cibo FUORI da quella finestra il piu possibile.
+
+I batteri patogeni hanno un optimum di crescita intorno alla temperatura corporea (37C): per questo la zona 5-60C e pericolosa, e il picco e proprio a meta. La regola pratica: minimizzare il tempo che un alimento passa in quella fascia. Frigo a <=4C (rallenta), congelatore a -18C (ferma), cottura >=75C al cuore (uccide). Il freddo non sterilizza — SOSPENDE: i batteri ripartono quando scaldi. Per questo scongelare a temperatura ambiente e rischioso (la superficie entra in zona pericolo mentre il cuore e ancora gelato): si scongela in frigo.
+
+Il raffreddamento rapido
+Un CCP classico: un cibo cotto va raffreddato in fretta attraverso la zona pericolo (abbattitore, o porzioni piccole in frigo), non lasciato ore sul banco. Piu tempo in zona pericolo = piu batteri.
+Il bersaglio: tenere il cibo fuori dai 5-60C. Freddo sospende, caldo uccide, la zona di mezzo e dove nasce il problema. Scongelare in frigo, raffreddare in fretta.""",
+            "target": "Zona di pericolo 5-60C dove i batteri proliferano: freddo SOSPENDE (non sterilizza), caldo >=75C uccide - scongelare in frigo, raffreddare in fretta",
+            "nome": "Catena del freddo",
+            "dominio": "tecnologie",
+        },
+        "fen-conserve-botulino": {
+            "scheda": """Le conserve fatte in casa possono uccidere. Il botulino e un batterio che vive SENZA ossigeno (dentro un barattolo sigillato), non da odore ne sapore (non te ne accorgi), e produce una delle tossine piu potenti che esistano. Ma ha due nemici precisi: l'acido e il calore. Conoscerli e la differenza tra una conserva sicura e una pericolosa.
+
+Il Clostridium botulinum e anaerobio: prospera proprio nell'ambiente di una conserva sottovuoto o sott'olio, dove altri batteri non vanno. La sua tossina attacca il sistema nervoso. Il problema: non altera aspetto, odore o sapore — una conserva contaminata sembra normale.
+
+Le due difese, misurabili
+ACIDITA: sotto pH 4.6 il botulino NON puo crescere. Per questo i sottaceti (aceto), i pomodori acidi, la frutta sono relativamente sicuri: l'acido lo blocca. I sott'olio di verdure poco acide (funghi, peperoni) sono i piu rischiosi — l'olio non e una difesa, e solo assenza di ossigeno (che al botulino piace!). La difesa non e l'olio, e l'acidita o la sterilizzazione.
+CALORE: le spore resistono all'acqua bollente (100C). Per distruggerle davvero nei cibi poco acidi serve la sterilizzazione in autoclave (121C). La bollitura normale NON basta per i sott'olio non acidi.
+Il bersaglio: conserva sicura = pH sotto 4.6 (acida) OPPURE sterilizzazione vera. Il sott'olio non acido fatto male e il pericolo classico. L'olio non protegge — protegge l'acido o il calore giusto.""",
+            "target": "Il botulino vive senza ossigeno (barattoli, sott'olio), non da odore ne sapore: difese MISURABILI = pH sotto 4.6 OPPURE sterilizzazione - l'olio non protegge, protegge l'acido",
+            "nome": "Conserve e botulino",
+            "dominio": "tecnologie",
+        },
         "fen-frittura-lievitati": {
             "scheda": """Friggere un impasto lievitato non e come friggere una cotoletta. L'olio caldo colpisce una struttura piena di gas e glutine, e succede una cosa precisa: la superficie sigilla all'istante, e dentro il vapore continua a cuocere e gonfiare. Capire questo e la differenza tra un fritto leggero e asciutto e uno unto e pesante.
 
