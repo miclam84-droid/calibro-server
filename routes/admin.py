@@ -196,17 +196,20 @@ def admin_test_like():
     secret = request.args.get("s", "")
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
-    from db import carica_grafo
-    db = carica_grafo()
-    termine = request.args.get("t", "grassi")
-    t = f"%{termine.lower()}%"
-    rows = db.execute("SELECT id, name, type FROM nodes WHERE lower(name) LIKE ? LIMIT 10", (t,)).fetchall()
-    out = [{"id": r["id"], "name": r["name"], "type": r["type"]} for r in rows]
-    # conto anche quanti nodi totali e quanti fen-*-impasto
-    tot = db.execute("SELECT COUNT(*) as c FROM nodes").fetchone()["c"]
-    imp = db.execute("SELECT id, name, type FROM nodes WHERE id LIKE 'fen-%impasto%' OR id='fen-idratazione' OR id='fen-farina-forza'").fetchall()
-    return jsonify({"termine": termine, "match": out, "totale_nodi": tot,
-                    "nodi_nuovi": [{"id":r["id"],"name":r["name"],"type":r["type"]} for r in imp]})
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        termine = request.args.get("t", "grassi")
+        t = "%" + termine.lower() + "%"
+        rows = db.execute("SELECT id, name, type FROM nodes WHERE lower(name) LIKE ? LIMIT 10", (t,)).fetchall()
+        out = [{"id": r["id"], "name": r["name"], "type": r["type"]} for r in rows]
+        allrows = db.execute("SELECT id, name, type FROM nodes").fetchall()
+        tot = len(allrows)
+        nuovi = [{"id": r["id"], "name": r["name"], "type": r["type"]}
+                 for r in allrows if "impasto" in r["id"] or r["id"] in ("fen-idratazione","fen-farina-forza")]
+        return jsonify({"termine": termine, "match": out, "totale_nodi": tot, "nodi_nuovi": nuovi})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
 
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
