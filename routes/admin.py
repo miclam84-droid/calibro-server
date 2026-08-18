@@ -535,6 +535,40 @@ def admin_test_ranked():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
 
+@bp.route("/admin/test-chat-reale", methods=["POST"])
+def admin_test_chat_reale():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo
+        from retrieval import retrieval_ranked
+        from ai import cerca_contesto, estrai_entita
+        db = carica_grafo()
+        domanda = (request.get_json(silent=True) or {}).get("domanda", "")
+        # STESSA logica di chat.py
+        termini_mistral = estrai_entita(domanda)
+        ranked = retrieval_ranked(db, domanda, termini_extra=termini_mistral, topk=5)
+        fen_ids = [f["id"] for f in ranked.get("fenomeni", [])]
+        contesto = None
+        scelto = None
+        for fid in fen_ids:
+            nome = db.execute("SELECT name FROM nodes WHERE id=?", (fid,)).fetchone()
+            if nome:
+                contesto = cerca_contesto(db, nome["name"], domanda)
+                if contesto and contesto.get("fenomeni"):
+                    scelto = fid; break
+        fen_contesto = [f.get("id") for f in contesto["fenomeni"]] if contesto and contesto.get("fenomeni") else []
+        return jsonify({
+            "domanda": domanda,
+            "ranked_top": fen_ids,
+            "fenomeno_scelto_per_contesto": scelto,
+            "fenomeni_nel_contesto_finale": fen_contesto,
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
