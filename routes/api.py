@@ -882,18 +882,29 @@ def _abbinamenti_bar_curati(ingrediente, max_n=8):
     } for i, x in enumerate(lista[:max_n])]
 
 def _segreto_di(ingrediente):
-    """Trova il segreto del mestiere per un ingrediente, se presente nel suo nodo."""
+    """Trova il segreto del mestiere per un ingrediente, se presente nel suo nodo.
+    Preferisce: match esatto sul nome > nodo che HA un segreto > primo parziale."""
     try:
         from db import carica_grafo, _dati
         db = carica_grafo()
         ing_it = ingrediente.lower().replace("_", " ").strip()
-        # cerca per nome esatto o parziale tra gli Ingrediente
-        row = db.execute(
-            "SELECT data FROM nodes WHERE type='Ingrediente' AND (lower(name)=? OR lower(name) LIKE ?) LIMIT 1",
-            (ing_it, f"%{ing_it}%")).fetchone()
-        if row:
-            d = _dati(row["data"])
-            return d.get("segreto")
+        # prendo TUTTI i candidati (esatti e parziali), poi scelgo il migliore
+        righe = db.execute(
+            "SELECT name, data FROM nodes WHERE type='Ingrediente' AND (lower(name)=? OR lower(name) LIKE ?)",
+            (ing_it, f"%{ing_it}%")).fetchall()
+        if not righe:
+            return None
+        # 1) match esatto sul nome che ha un segreto
+        for r in righe:
+            if (r["name"] or "").lower() == ing_it:
+                seg = _dati(r["data"]).get("segreto")
+                if seg:
+                    return seg
+        # 2) qualsiasi candidato che abbia un segreto
+        for r in righe:
+            seg = _dati(r["data"]).get("segreto")
+            if seg:
+                return seg
     except Exception:
         pass
     return None
