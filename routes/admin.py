@@ -804,6 +804,26 @@ def admin_popola_segreti():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/test-contesto-segreto")
+def admin_test_contesto_segreto():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo
+        from ai import cerca_contesto
+        db = carica_grafo()
+        termine = request.args.get("t", "pomodoro")
+        contesto = cerca_contesto(db, termine, "")
+        fisici = contesto.get("prodotti_fisici", []) if contesto else []
+        con_segreto = [{"nome": f.get("nome"), "segreto": f.get("segreto","(nessuno)")[:80]} for f in fisici if f.get("segreto")]
+        return jsonify({"termine": termine,
+                        "prodotti_fisici_totali": len(fisici),
+                        "con_segreto": con_segreto})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire

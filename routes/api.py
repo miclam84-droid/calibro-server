@@ -881,16 +881,35 @@ def _abbinamenti_bar_curati(ingrediente, max_n=8):
         "perche": "abbinamento classico verificato nel bartending",
     } for i, x in enumerate(lista[:max_n])]
 
+def _segreto_di(ingrediente):
+    """Trova il segreto del mestiere per un ingrediente, se presente nel suo nodo."""
+    try:
+        from db import carica_grafo, _dati
+        db = carica_grafo()
+        ing_it = ingrediente.lower().replace("_", " ").strip()
+        # cerca per nome esatto o parziale tra gli Ingrediente
+        row = db.execute(
+            "SELECT data FROM nodes WHERE type='Ingrediente' AND (lower(name)=? OR lower(name) LIKE ?) LIMIT 1",
+            (ing_it, f"%{ing_it}%")).fetchone()
+        if row:
+            d = _dati(row["data"])
+            return d.get("segreto")
+    except Exception:
+        pass
+    return None
+
 @bp.route("/v1/abbina/<ingrediente>")
 def abbina(ingrediente):
     """FL3 — Abbinamenti aromatici dal grafo Ahn 2011 (edges abbinamento_aromatico).
     Cerca per nome italiano (con mappa di traduzione) o inglese direttamente.
     Sempre marcato come ipotesi eurisitca, mai come legge."""
+    _seg = _segreto_di(ingrediente)  # segreto del mestiere, se c'è
     # ARRICCHIMENTO BAR: se è uno spirito curato, usa gli abbinamenti da pratica bar.
     # (Il dataset Ahn ha pochi/zero composti per i distillati — vodka, campari, ecc.)
     _bar_curati = _abbinamenti_bar_curati(ingrediente)
     if _bar_curati:
         return jsonify({
+            "segreto": _seg,
             "ingrediente": ingrediente,
             "abbinamenti": _pulisci_abbinamenti(_bar_curati),
             "nota": "Abbinamenti classici del bartending, verificati nella pratica.",
@@ -993,7 +1012,8 @@ def abbina(ingrediente):
     search_terms.append(f"ahn_{ing_norm.replace('_',' ')}")
 
     if not DATABASE_URL:
-        return jsonify({"ingrediente":ingrediente,"abbinamenti":[],
+        return jsonify({
+            "segreto": _seg,"ingrediente":ingrediente,"abbinamenti":[],
                         "nota":"flavor network non disponibile"})
     try:
         import psycopg2, json as _j
@@ -1027,7 +1047,8 @@ def abbina(ingrediente):
                 # Integra con AI se abbinamenti sono meno di 4
                 if _pre_abbs and len(_pre_abbs) >= 4:
                     cur.close(); _release_conn(conn)
-                    return jsonify({"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(_pre_abbs),
+                    return jsonify({
+            "segreto": _seg,"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(_pre_abbs),
                         "fonte":"dataset Matter Lab",
                         "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
                 # Nodo trovato ma con pochi abbinamenti — arricchisci con AI
@@ -1046,7 +1067,8 @@ def abbina(ingrediente):
                             _ap = _dp.get("abbinamenti",[])
                             if _ap:
                                 cur.close(); _release_conn(conn)
-                                return jsonify({"ingrediente":ingrediente,
+                                return jsonify({
+            "segreto": _seg,"ingrediente":ingrediente,
                                     "abbinamenti":_pulisci_abbinamenti([{"ingrediente":a.get("ingrediente_it","?"),
                                         "composto":"abbinamento aromatico",
                                         "overlap":float(a.get("overlap_score",50)),
@@ -1166,7 +1188,8 @@ def abbina(ingrediente):
                         })
                     if result_props:
                         cur.close(); _release_conn(conn)
-                        return jsonify({"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(result_props),
+                        return jsonify({
+            "segreto": _seg,"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(result_props),
                             "fonte":"dataset Matter Lab",
                             "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
                     # Nodo trovato ma senza abbinamenti nel JSON — genera via AI
@@ -1195,7 +1218,8 @@ def abbina(ingrediente):
                                         for a in _ai_abbs[:5]]
                                     if result_props:
                                         cur.close(); _release_conn(conn)
-                                        return jsonify({"ingrediente":ingrediente,
+                                        return jsonify({
+            "segreto": _seg,"ingrediente":ingrediente,
                                             "abbinamenti":_pulisci_abbinamenti(result_props),
                                             "fonte":"Matter Lab AI",
                                             "nota":"Abbinamenti generati da AI su profilo sensoriale"})
@@ -1221,7 +1245,8 @@ def abbina(ingrediente):
                         _abbs5 = _ai_data5.get("abbinamenti",[])
                         if _abbs5:
                             cur.close(); _release_conn(conn)
-                            return jsonify({"ingrediente":ingrediente,
+                            return jsonify({
+            "segreto": _seg,"ingrediente":ingrediente,
                                 "abbinamenti":_pulisci_abbinamenti([{"ingrediente":a.get("ingrediente_it","?"),
                                     "composto":"abbinamento aromatico",
                                     "overlap":float(a.get("overlap_score",50)),
@@ -1381,13 +1406,15 @@ def abbina(ingrediente):
             except Exception:
                 pass
         return jsonify({
+            "segreto": _seg,
             "ingrediente": ingrediente,
             "abbinamenti": abbinamenti_puliti,
             "nota": "Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale",
             "fonte": fonte
         })
     except Exception as e:
-        return jsonify({"ingrediente":ingrediente,"abbinamenti":[],
+        return jsonify({
+            "segreto": _seg,"ingrediente":ingrediente,"abbinamenti":[],
                         "nota":f"Errore: {str(e)}"}), 500
 
 @bp.route("/v1/menu/proposte", methods=["POST"])
