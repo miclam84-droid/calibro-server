@@ -327,6 +327,45 @@ Lezione: lievitazione CHIMICA (acido+base→CO2 immediata) vs biologica (lievito
         "nome": "Soda bread irlandese",
         "aliases": ["soda bread", "pane irlandese", "pane al bicarbonato", "pane senza lievito", "pane veloce"],
     },
+    "prod-bagel": {
+        "scheda": """Il bagel non e solo un panino col buco: e l'unico pane che si BOLLE prima di infornarlo. Quel passaggio nell'acqua — spesso con malto o miele — e tutto il suo segreto: gli da la crosta lucida e la mollica densa e gommosa che nessun pane al forno ha.
+
+Il bagel si forma ad anello, poi si tuffa in acqua bollente per 30-60 secondi prima del forno. La bollitura gelatinizza l'amido in superficie (vedi la gelatinizzazione): si forma una pelle che poi in forno diventa lucida e soda, e blocca l'espansione — cosi la mollica resta densa e gommosa invece che soffice. Piu a lungo bolle, piu e gommoso. Spesso nell'acqua c'e malto o miele: zuccheri che aiutano doratura e sapore.
+Lezione: la BOLLITURA pre-forno. Gelatinizzare la superficie per crosta lucida e mollica densa.""",
+        "target": "Unico pane BOLLITO prima del forno: la bollitura gelatinizza la superficie (crosta lucida) e blocca l espansione (mollica densa gommosa)",
+        "nome": "Bagel",
+        "aliases": ["bagel", "baigel", "pane bollito", "ciambella di pane"],
+    },
+    "prod-pretzel": {
+        "scheda": """Il pretzel ha quel colore mogano scuro e quel sapore inconfondibile grazie a un trucco di chimica: prima del forno si immerge in un bagno ALCALINO — soda caustica o bicarbonato. Non e il forno a fare quel colore: e il pH.
+
+La reazione di Maillard (vedi il fenomeno) — la doratura — e accelerata in ambiente alcalino. La farina e naturalmente acida (pH 6), il che frena la doratura. Immergendo il pretzel in una soluzione basica (lye pH 12, o bicarbonato pH 8-10), si alza il pH della superficie e la Maillard esplode: crosta scura, lucida, mogano, con quel sapore alcalino tipico. I professionisti usano la soda caustica (lye), a casa il bicarbonato (piu debole, colore meno intenso). Trucco: cuocere il bicarbonato in forno lo trasforma in carbonato, piu forte.
+
+SICUREZZA (leggi prima di usare la soda caustica). L'idrossido di sodio (soda caustica, lye) e una sostanza CORROSIVA: e lo stesso composto dei prodotti per sturare i tubi. Cruda, ustiona la pelle e puo danneggiare gli occhi in modo permanente. Chi la usa deve indossare guanti di gomma, occhiali protettivi, maniche lunghe, e lavorare in spazio ventilato, tenendola lontana dai bambini. IMPORTANTE: il pretzel COTTO e sicuro — nel forno la soda si neutralizza (reagisce con la CO2 e con l'impasto, diventando carbonato di sodio, innocuo). Il pericolo e solo nel maneggiarla prima della cottura. A CASA, o se hai qualsiasi dubbio, usa il bicarbonato di sodio sciolto in acqua (meglio ancora "cotto" in forno a 120C per un ora per renderlo piu forte): stessa chimica, molto piu debole ma del tutto sicuro.
+
+Lezione: il pH governa la Maillard. Ambiente alcalino = doratura accelerata. Chimica di superficie. E: una tecnica potente porta con se la sua responsabilita di sicurezza.""",
+        "target": "Bagno ALCALINO pre-forno (lye o bicarbonato): il pH alto accelera la Maillard, crosta mogano scura lucida - ATTENZIONE soda caustica corrosiva, a casa usa bicarbonato",
+        "nome": "Pretzel (bretzel)",
+        "aliases": ["pretzel", "bretzel", "brezel", "pane alcalino", "laugengeback", "soda caustica", "lye"],
+    },
+    "prod-bao": {
+        "scheda": """Il bao cinese sfida un'idea che diamo per scontata: che il pane si cuocia in forno. Il bao si cuoce al VAPORE, e per questo e bianco come la neve, morbidissimo, senza crosta. Niente forno, niente doratura — un altro mondo.
+
+Cotto in cestelli di bambu sopra acqua bollente (~100°C, molto meno del forno). A quella temperatura NON avviene la Maillard (serve calore secco e alto): per questo il bao resta bianco, senza crosta, con una superficie liscia e soffice. Il vapore mantiene tutto umido: mollica tenerissima. Impasto spesso con un po' di zucchero e strutto, e a volte lievito chimico oltre a quello di birra per l'estrema sofficita.
+Lezione: cottura a VAPORE vs forno. Niente Maillard = niente crosta = pane bianco e soffice. La temperatura di cottura decide tutto.""",
+        "target": "Cottura a VAPORE non forno (~100C): niente Maillard = niente crosta = pane bianco soffice - la temperatura di cottura decide tutto",
+        "nome": "Bao (pane al vapore)",
+        "aliases": ["bao", "baozi", "pane al vapore", "panino cinese", "mantou", "pane cinese"],
+    },
+    "prod-soda-bread": {
+        "scheda": """Il soda bread irlandese non ha lievito e non aspetta: si impasta e si inforna subito. Al posto del lievito usa il bicarbonato, che con l'acido del latticello reagisce all'istante e libera gas. Un pane pronto in un'ora, nato per chi non aveva ne tempo ne lievito.
+
+Lievitazione CHIMICA, non biologica: il bicarbonato di sodio (base) reagisce con un acido (il latticello, buttermilk) in presenza di liquido, e produce CO2 subito (vedi la fermentazione per contrasto: qui NON e fermentazione, e una reazione acido-base istantanea). Niente attesa, niente maglia glutinica sviluppata: mollica piu compatta, briciolosa, quasi da scone. Il taglio a croce in superficie non e decorazione: aiuta il pane a espandersi e cuocere uniforme.
+Lezione: lievitazione CHIMICA (acido+base→CO2 immediata) vs biologica (lievito, ore). Due modi opposti di gonfiare il pane.""",
+        "target": "Lievitazione CHIMICA non biologica: bicarbonato + acido del latticello = CO2 istantanea, pronto in un ora, mollica compatta",
+        "nome": "Soda bread irlandese",
+        "aliases": ["soda bread", "pane irlandese", "pane al bicarbonato", "pane senza lievito", "pane veloce"],
+    },
     "prod-focaccia": {
         "scheda": """La focaccia genovese sembra il pane più semplice del mondo: farina, acqua, lievito, sale, olio. Eppure quasi nessuno, fuori dalla Liguria, la fa come si deve. Il segreto non è un ingrediente nascosto: è capire che ogni scelta — quanta acqua, quanto olio, le fossette, la salamoia — non è tradizione a caso, ma fisica del pane applicata. Ecco la focaccia spiegata non come ricetta da copiare, ma come i fenomeni che la governano.
 
