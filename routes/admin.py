@@ -456,6 +456,40 @@ Il bersaglio, letto bene
 C'è una finestra vera qui: intorno al 2% sulla farina, con un intervallo utile stretto (circa 1,8-2,2%). Ma non è un numero-legge da applicare a occhi chiusi: dipende dal pane (alcuni ne vogliono un po' meno o più), e sopra o sotto la finestra gli effetti sono noti e prevedibili — poco sale, lievito veloce e crosta pallida; troppo, impasto stretto e crescita frenata. Il bersaglio è tarare il sale dentro quella finestra per il tuo pane, sapendo che stai regolando quattro cose insieme — lievito, glutine, enzimi, colore — con un solo ingrediente.""",
             "target": "Una finestra vera: ~2% sulla farina (utile 1,8-2,2%) · poco sale = lievito veloce e crosta pallida, troppo = impasto stretto e crescita frenata · con un ingrediente regoli lievito, glutine, enzimi e colore",
         },
+        "fen-autolisi": {
+            "scheda": """Mescoli solo farina e acqua, appena il tempo di bagnarla, e la lasci lì. Niente impasto, niente sale, niente lievito — solo farina, acqua e mezz'ora. Quando torni, l'impasto è liscio, morbido, si allunga senza strapparsi: sembra lavorato, e tu non hai fatto niente. È autolisi, ed è la prova che nel pane il tempo può fare il lavoro delle mani.
+
+L'autolisi è un riposo di sola farina e acqua prima di aggiungere il resto. È maglia glutinica applicata — la stessa rete che conosci — ma sviluppata da sola, dal tempo, invece che dall'impastamento. Capire come e perché funziona ti fa capire una cosa profonda sul pane: la struttura non nasce solo dalla fatica, nasce dall'acqua e dal tempo.
+
+Il glutine si forma da solo (la madre, senza le mani)
+
+Sai dalla scheda maglia glutinica che glutenina e gliadina, bagnate, si legano in una rete. Di solito questo lavoro lo forziamo impastando. Ma quelle proteine si organizzano anche da sole: basta acqua e tempo. Durante l'autolisi le proteine si idratano, si distendono e cominciano a legarsi senza che tu faccia niente. Per questo dopo l'autolisi l'impasto è già liscio e richiede molto meno lavoro: una parte del glutine si è sviluppata da sé. È maglia glutinica, ma governata col riposo invece che con la forza.
+
+Gli enzimi al lavoro: la doppia azione
+
+Intanto succede un'altra cosa, e qui entra l'attività enzimatica. Nella farina bagnata si attivano due enzimi. Le amilasi trasformano l'amido in zuccheri semplici — cibo per il lievito che arriverà, e precursori del colore e del sapore. Le proteasi fanno qualcosa di apparentemente contraddittorio: spezzano un po' i legami delle proteine del glutine. Aspetta — non stavamo costruendo il glutine? Sì. Ed è il punto bello: durante l'autolisi il glutine si costruisce e si ammorbidisce nello stesso momento. Le due cose insieme danno l'estensibilità: la capacità dell'impasto di allungarsi senza spezzarsi né ritirarsi.
+
+Elasticità ed estensibilità: perché servono entrambe
+
+Un buon impasto ha bisogno di due qualità opposte. L'elasticità (torna indietro, tiene la forma) e l'estensibilità (si allunga senza strapparsi). Troppa elasticità e l'impasto è duro, si ritira, combatte; troppa estensibilità e è molle, non tiene. L'autolisi lavora sull'estensibilità — l'ammorbidimento delle proteasi rende l'impasto più stendibile, meno "nervoso". Ecco perché è amata per baguette e pani a lunga fermentazione: dà quella stendibilità che rende l'impasto docile e aiuta la spinta in forno (non deve combattere contro un glutine troppo tenace).
+
+Perché niente sale e niente lievito
+
+C'è una ragione se durante l'autolisi si mette solo farina e acqua. Il sale stringe il glutine e rallenta gli enzimi — messo ora, frenerebbe proprio l'ammorbidimento che cerchi (è l'altra faccia di quello che hai visto nella scheda del sale). Il lievito comincerebbe a fermentare prima che l'impasto sia pronto. Ritardarli lascia all'estensibilità il tempo di svilupparsi pulita. Sale e lievito entrano dopo.
+
+La trappola: troppo a lungo si rovescia
+
+Qui la cosa importante, ed è puro metodo. L'autolisi sviluppa il glutine, ma lo scompone anche — è la stessa proteasi a farlo. Per un tempo giusto, l'equilibrio pende dalla parte buona: più liscio, più estensibile. Ma se esageri, le proteasi continuano a degradare e l'equilibrio si rovescia: l'impasto perde struttura, diventa troppo estensibile, molle, appiccicoso, non si modella più, e cuoce in una pagnotta piatta. Più a lungo non è meglio: c'è una finestra, e oltre quella il beneficio si trasforma nel suo contrario.
+
+Come lo verifichi
+
+Con le mani. Dopo il riposo l'impasto dev'essere più liscio, morbido, e allungabile senza rotture nette — tira un lembo e deve stendersi, non spezzarsi subito. Quello è il punto giusto. Se è diventato una poltiglia molle che non tiene, hai aspettato troppo: la prossima volta accorcia. Un impasto forte, tenace, poco estensibile beneficia di più dell'autolisi; uno già molle ne ha bisogno di meno.
+
+Il bersaglio, letto bene
+
+Uno stato riconoscibile con le mani: impasto liscio ed estensibile, che si allunga docile senza strapparsi, e prima che diventi molle e slegato. Non un tempo fisso da cronometrare — dipende dalla farina (le forti, ricche di glutine, ne traggono più beneficio e reggono riposi più lunghi; le deboli meno) e dalla temperatura. Il bersaglio è quel punto di estensibilità, riconosciuto toccando, dentro la finestra prima che le proteasi rovescino il gioco. Il tempo lavora per te — ma solo fino a un certo punto.""",
+            "target": "Uno stato con le mani: impasto liscio ed estensibile, che si allunga docile senza strapparsi, prima che diventi molle · il tempo lavora al posto dell'impasto, ma solo fino a un certo punto",
+        },
     }
     CASI = {
         "proc-negroni-inconsistente": {
