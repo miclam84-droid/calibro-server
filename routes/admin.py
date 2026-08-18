@@ -682,6 +682,34 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-enzimi-farina": {
+            "scheda": """Il lievito mangia zuccheri, ma nella farina di zuccheri quasi non ce n'è: è quasi tutto amido. Allora da dove viene il cibo del lievito? Da enzimi già presenti nella farina, che spezzano l'amido in zuccheri mentre l'impasto riposa. Sono un motore invisibile: non li vedi, ma decidono quanto lievita il pane e quanto scurisce la crosta. E come tutti i motori, vanno né spenti né imballati.
+
+Gli enzimi della farina — soprattutto le amilasi — fanno una cosa sola ma decisiva: trasformano l'amido in zuccheri che il lievito può mangiare. È l'attività diastatica, e sta sotto tutto quello che fa il pane: la fermentazione ha carburante grazie a loro, e la crosta prende colore grazie agli zuccheri che lasciano.
+
+La sequenza: da amido a zucchero, in due tempi
+
+L'amido non diventa zucchero in un colpo. Due enzimi lavorano in sequenza. L'alfa-amilasi attacca le lunghe catene di amido e le taglia in pezzi medi, le destrine. Poi la beta-amilasi prende le destrine e le rifinisce in maltosio, lo zucchero semplice che il lievito metabolizza. È una catena di montaggio: uno sgrossa, l'altro rifinisce. Senza questa conversione, il lievito resterebbe senza cibo e il pane non lieviterebbe.
+
+Un dettaglio che sorprende: l'alfa-amilasi non tocca l'amido intatto — lavora solo su quello danneggiato o gelatinizzato. E l'amido si danneggia durante la macinatura: una piccola frazione dei granuli (indicativamente il 5-9%) si spacca sotto le macine, e proprio quei granuli rotti vengono attaccati mille volte più in fretta di quelli integri. Quindi anche come è stata macinata la farina conta.
+
+Il cuore: è un equilibrio, né troppo né troppo poco
+
+Qui sta la cosa da capire, ed è puro buon senso reso preciso. L'attività degli enzimi non è "più ce n'è meglio è": è una finestra. Se è troppo bassa, l'impasto fatica — poco zucchero, fermentazione lenta, e crosta pallida (mancano gli zuccheri per la doratura, esattamente il problema del pane che non colora). Se è troppo alta, il disastro opposto: gli enzimi producono troppe destrine, la beta-amilasi non sta dietro, l'impasto diventa appiccicoso, molliccio, ingestibile, e la mollica esce gommosa. Troppo poco e il pane è spento; troppo e collassa. Il bello è nel mezzo.
+
+Dove lo incontri, anche senza saperlo
+
+Non devi dosare enzimi a mano per farci i conti. Li governi ogni volta che scegli una farina: le farine variano nella loro attività enzimatica, e alcune sono "maltate" — cioè addizionate di malto diastatico (che è amilasi più un po' di proteasi) proprio per portare l'attività nella finestra giusta. Il malto diastatico è il trucco dei fornai per le farine povere di enzimi: un pizzico dà al lievito più cibo e alla crosta più colore. Ma è potente e variabile: troppo, e ricadi nell'impasto appiccicoso.
+
+Come lo verifichi
+
+Al banco, senza strumenti, lo leggi dai sintomi: impasto costantemente lento a lievitare, mollica densa, crosta pallida → farina probabilmente povera di enzimi. Impasto inspiegabilmente appiccicoso e molle, crosta che scurisce troppo in fretta → forse attività troppo alta. E c'è una misura vera, quella che usano i molini: il Falling Number, un test che misura proprio l'attività dell'alfa-amilasi.
+
+Il bersaglio, letto bene
+
+Qui c'è un numero difendibile, ma con una trappola: il Falling Number, misurato in secondi, ha una relazione INVERSA con l'attività. Numero basso = attività alta (gli enzimi fluidificano in fretta la pasta di prova); numero alto = attività bassa. Per le farine da pane il punto giusto sta indicativamente tra 220 e 260 secondi. Non è un valore che imposti tu — è una proprietà della farina che ricevi — ma sapere che esiste, e che più basso significa più attivo (non meno), ti fa leggere una scheda tecnica della farina e capire come si comporterà. Il bersaglio è una farina dentro quella finestra; fuori, sai già cosa aspettarti — pallida e lenta se il numero è alto, appiccicosa se è troppo basso.""",
+            "target": "Un equilibrio: troppo pochi enzimi = pane pallido e lento, troppi = impasto appiccicoso e gommoso · si misura col Falling Number (relazione INVERSA: basso = attività alta), sweet spot pane ~220-260s",
+        },
         "fen-maglia-glutinica": {
             "scheda": """Impasti due volte lo stesso pane. Una volta lavori poco: l'impasto è slegato, si strappa, non tiene. Un'altra lavori troppo: diventa duro, gommoso, si ritira e combatte, non si lascia stendere. In mezzo c'è il punto giusto — un impasto che si allunga docile ma tiene la forma. Quel punto è un equilibrio tra due forze opposte dentro il glutine, e riconoscerlo è metà del mestiere del pane.
 
