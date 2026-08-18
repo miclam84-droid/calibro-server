@@ -1121,6 +1121,38 @@ def admin_test_contesto_segreto():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/crea-haccp")
+def admin_crea_haccp():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json, traceback
+    SCHEDE = {
+        "fen-haccp": {"nome":"HACCP (il metodo della sicurezza)","target":"Prevenire i pericoli dove nascono, CCP con limiti misurabili (T>=75C, pH<4.6)"},
+        "fen-attivita-acqua": {"nome":"Attivita dell'acqua (Aw)","target":"Sotto Aw 0.85 i patogeni non crescono - sale e zucchero mettono a secco"},
+        "fen-catena-freddo": {"nome":"Catena del freddo","target":"Zona pericolo 5-60C: freddo sospende, caldo >=75C uccide - scongelare in frigo"},
+        "fen-conserve-botulino": {"nome":"Conserve e botulino","target":"Botulino anaerobio senza odore: difese pH sotto 4.6 O sterilizzazione - l'olio non protegge"},
+    }
+    risultati = []
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        for nid, meta in SCHEDE.items():
+            try:
+                cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+                if cur.fetchone():
+                    risultati.append(f"{nid}: gia esiste")
+                    continue
+                nd = {"scheda": meta["nome"] + " - scheda da riempire via update", "target": meta["target"], "numero_bersaglio": meta["target"]}
+                cur.execute("INSERT INTO nodes (id, type, name, domain, data) VALUES (%s,%s,%s,%s,%s)",
+                            (nid, "Fenomeno", meta["nome"], "tecnologie", json.dumps(nd, ensure_ascii=False)))
+                risultati.append(f"{nid}: CREATO")
+            except Exception as e1:
+                risultati.append(f"{nid}: ERRORE {str(e1)[:120]}")
+        conn.commit()
+        return jsonify({"risultati": risultati})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
