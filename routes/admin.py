@@ -211,6 +211,46 @@ def admin_test_like():
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
 
+@bp.route("/admin/sottografo")
+def admin_sottografo():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        dominio = request.args.get("dominio", "panificazione")
+        # tutti i nodi del dominio
+        nodi = db.execute("SELECT id, name, type FROM nodes WHERE lower(domain)=lower(?) ORDER BY type, id", (dominio,)).fetchall()
+        nodi_out = [{"id": n["id"], "name": n["name"], "type": n["type"]} for n in nodi]
+        ids = set(n["id"] for n in nodi)
+        # per tipo, conteggio
+        per_tipo = {}
+        for n in nodi_out:
+            per_tipo[n["type"]] = per_tipo.get(n["type"], 0) + 1
+        # tutti gli edges che toccano questi nodi (da o verso)
+        edges_out = []
+        rel_count = {}
+        for n in nodi:
+            for e in db.execute("SELECT from_id, to_id, relation FROM edges WHERE from_id=?", (n["id"],)).fetchall():
+                edges_out.append({"from": e["from_id"], "rel": e["relation"], "to": e["to_id"]})
+                rel_count[e["relation"]] = rel_count.get(e["relation"], 0) + 1
+        # nodi senza NESSUN edge uscente (le "isole")
+        con_edge = set(e["from"] for e in edges_out)
+        isole = [n["id"] for n in nodi_out if n["type"]=="Fenomeno" and n["id"] not in con_edge]
+        return jsonify({
+            "dominio": dominio,
+            "totale_nodi": len(nodi_out),
+            "per_tipo": per_tipo,
+            "nodi": nodi_out,
+            "totale_edges": len(edges_out),
+            "relazioni_usate": rel_count,
+            "fenomeni_senza_edge_uscente": isole,
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
