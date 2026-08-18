@@ -366,6 +366,7 @@ CABLA_FAMIGLIA = {
     "prod-pizza-teglia": "prod-pizza",
     "prod-pizza-pala": "prod-pizza",
     "prod-pain-chocolat": "prod-croissant",
+    "fen-frittura-lievitati": "fen-frittura",
 }
 
 SEGRETI_INGREDIENTI = {
@@ -745,7 +746,7 @@ def admin_popola_alias():
             "fen-lievito-madre": ["lievito madre","pasta madre","madre","sourdough","levain","starter","picco","rinfresco","licoli"],
             "fen-tangzhong-yudane": ["tangzhong","yudane","water roux","roux","pre-gelatinizzazione","milk bread","shokupan","pane soffice","pane giapponese"],
             "fen-levain-pate-fermentee": ["levain","pate fermentee","pâte fermentée","vecchio impasto","old dough","prefermento francese","lievitino"],
-            "fen-frittura-lievitati": ["frittura","friggere","fritto","olio caldo","immersione","frittura di lievitati","sigillo frittura"],
+            "fen-frittura-lievitati": ["frittura","friggere","friggo","fritto","fritti","unto","unti","untuoso","olio caldo","immersione","frittura di lievitati","sigillo frittura","arancini","arancine","panzerotti","impanato","panato","bombolone","zeppola"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
