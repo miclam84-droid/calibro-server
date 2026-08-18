@@ -772,6 +772,44 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-grassi-impasto": {
+            "scheda": """Fai due impasti uguali, in uno metti un filo d'olio. Quello con l'olio si stende docile fino ai bordi della teglia senza ritirarsi, cuoce più morbido, e il giorno dopo è ancora soffice. L'altro combatte quando lo tiri, viene più gommoso, indurisce prima. Un cucchiaio d'olio ha cambiato tutto — e dietro c'è un solo fenomeno, semplice, da cui discende ogni differenza.
+
+I grassi — olio d'oliva, strutto, burro — nell'impasto fanno una cosa sola a livello fisico, e da quella nascono tutti i loro effetti. Capire quel meccanismo unico ti fa prevedere cosa succede ogni volta che aggiungi grasso, dalla pizza in teglia alla focaccia ai panini all'olio.
+
+Il meccanismo: il grasso riveste il glutine
+
+Ecco il cuore. Quando lavori il grasso nell'impasto, le sue molecole rivestono i filamenti di glutine — quella rete di glutenina e gliadina che conosci. È come mettere una guaina scivolosa e impermeabile intorno a ogni filamento. Questo rivestimento fa due cose insieme: impedisce ai filamenti di legarsi troppo strettamente tra loro, e li fa scivolare uno sull'altro. Tutto quello che l'olio fa nell'impasto viene da qui — dal grasso che si interpone tra le proteine.
+
+I quattro effetti, tutti dallo stesso meccanismo
+
+Uno: mollica più tenera (lo "shortening"). Rivestiti dal grasso, i filamenti di glutine si legano di meno e restano più corti — in inglese "shortening", da cui il nome del grasso da forno. Un glutine più corto non si allunga tanto e non diventa gommoso: la mollica è più tenera, più fine, "scioglievole". È il motivo per cui un panino all'olio è morbido dove una baguette magra è masticabile.
+
+Due: impasto più docile da stendere. Il grasso lubrifica: le particelle scivolano, l'impasto diventa più estensibile e meno elastico — si allunga e non si ritira. È esattamente ciò che serve alla pizza in teglia: deve allargarsi fino agli angoli e restarci, senza tirare indietro. Senza olio un impasto a bassa idratazione combatte; con l'olio si distende docile. Stessa cosa per la focaccia.
+
+Tre: resta morbido più a lungo. Il grasso è idrofobo, respinge l'acqua. Rivestendo farina e mollica, rallenta l'evaporazione dell'acqua in cottura e la sua migrazione dopo — così il pane trattiene umidità e indurisce più lentamente. È il legame diretto con la vita del pane: i prodotti all'olio raffermiscono più tardi. Ecco perché i panini all'olio sono ancora soffici il giorno dopo.
+
+Quattro: crosta diversa. Il grasso ammorbidisce anche la crosta, la rende meno dura e vetrosa, più tenera — e aiuta doratura e colore. Una focaccia unta di olio ha quella crosta dorata e morbida, non il guscio croccante del pane magro.
+
+La trappola: troppo grasso rovescia il gioco
+
+Come sempre, è un equilibrio. Un po' di grasso ammorbidisce e rende docile; troppo, e il rivestimento diventa eccessivo: i filamenti di glutine non riescono più a legarsi affatto, la struttura si indebolisce, l'impasto diventa slegato, si strappa, non tiene il gas. Oltre una certa soglia non hai più un pane morbido, hai un impasto che non sta insieme. E c'è un secondo rischio: troppo grasso, aggiunto troppo presto, incapsula il lievito e lo soffoca — non riesce a nutrirsi, e la lievitazione rallenta.
+
+La leva del "quando": la regola del grasso ritardato
+
+Qui una tecnica che viene dritta dal meccanismo. Se aggiungi il grasso all'inizio, prima di sviluppare il glutine, la rete si forma già rivestita e resta corta: mollica molto tenera, quasi da torta (è come si fa la brioche soffice). Se invece lasci sviluppare il glutine prima e aggiungi il grasso alla fine, la rete è già formata e forte, e il grasso la ammorbidisce senza impedirle di reggere: ottieni una mollica più aperta e strutturata ma comunque tenera. Il quando metti il grasso decide il tipo di mollica. Per una pizza in teglia o una focaccia con alveolatura si tende a ritardarlo; per un pan brioche si mette prima.
+
+Come lo verifichi
+
+Con le mani e in bocca. L'impasto con la giusta dose di grasso si stende docile, non si ritira, è setoso al tatto. Cotto: mollica tenera e umida, crosta morbida, e resta soffice il giorno dopo. Se l'impasto è slegato e si strappa, o non lievita bene, probabilmente c'è troppo grasso o l'hai messo troppo presto: riduci o ritarda.
+
+Il bersaglio, letto bene
+
+C'è una finestra: per la maggior parte dei pani il grasso sta indicativamente tra il 2 e il 5% sulla farina; sale negli impasti arricchiti (focacce unte, brioche). Sotto, l'effetto è appena percettibile; sopra la finestra, sempre più tenero fino al punto in cui la struttura cede. Il bersaglio non è "quanto grasso" in astratto, ma la combinazione di dose e momento giusti per l'effetto che vuoi: poco e ritardato per una teglia alveolata e docile, di più e anticipato per una mollica soffice da brioche. Un solo meccanismo — il grasso che riveste il glutine — e tu lo governi scegliendo quanto e quando.""",
+            "target": "Un meccanismo (il grasso riveste il glutine) → quattro effetti: mollica tenera, impasto docile da stendere, resta morbido più a lungo, crosta tenera · finestra ~2-5% · conta anche QUANDO lo aggiungi",
+            "nome": "I grassi nell'impasto (shortening)",
+            "dominio": "panificazione",
+        },
         "fen-enzimi-farina": {
             "scheda": """Il lievito mangia zuccheri, ma nella farina di zuccheri quasi non ce n'è: è quasi tutto amido. Allora da dove viene il cibo del lievito? Da enzimi già presenti nella farina, che spezzano l'amido in zuccheri mentre l'impasto riposa. Sono un motore invisibile: non li vedi, ma decidono quanto lievita il pane e quanto scurisce la crosta. E come tutti i motori, vanno né spenti né imballati.
 
