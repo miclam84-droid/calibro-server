@@ -362,6 +362,34 @@ Il bersaglio, letto bene
 Non è un numero: è uno stato doppio — limpidezza raggiunta E sapore preservato. Il bersaglio è il liquido cristallino che sa ancora di quello che era (o meglio). E la vera abilità non è "clarificare" in astratto, ma scegliere il metodo giusto per la tua torbidità: il latte non pulisce la polpa, l'agar non serve dove basta il latte. Riconosci cosa rende torbido il tuo liquido, e scegli lo strumento che cattura proprio quello.""",
             "target": "Doppio stato: limpidezza raggiunta E sapore intatto · scegli il metodo in base a cosa ti rende torbido (latte per polifenoli, agar per polpa)",
         },
+        "fen-poolish-biga": {
+            "scheda": """Prendi una parte della farina, la stessa acqua, un pizzico di lievito, mescoli e lasci lì 12-16 ore. Il giorno dopo quella pastella gonfia e profumata entra nell'impasto vero. Non hai cambiato ricetta: hai fatto lavorare il tempo prima di cominciare. È fermentazione — la stessa della madre — ma spostata prima, in un pezzo separato. E il modo in cui la fai cambia il pane.
+
+Il poolish e la biga sono pre-fermenti: una frazione dell'impasto che fermenta da sola, in anticipo, prima di essere unita al resto. È fermentazione applicata, con tutte le sue regole. Ma sposta la fermentazione "prima" ti dà tre cose che l'impasto diretto non ha, e la scelta tra poolish e biga decide quali.
+
+Cosa cambia perché fermenti prima e a parte
+
+Durante quelle ore lunghe succedono tre cose insieme, e sono le stesse dei fenomeni che conosci. Gli enzimi della farina lavorano: scompongono gli amidi in zuccheri semplici (più cibo per il lievito, più sapore) e ammorbidiscono il glutine in pezzi più gestibili — è l'attività enzimatica, che qui ha tempo di agire. Il lievito si moltiplica e crea acidi e aromi: è la fermentazione, ma lenta, che produce quella complessità "di grano" che un impasto veloce non ha. E la struttura matura: l'impasto finale diventa più forte, con più spinta in forno, e ti serve meno lievito nell'impasto vero perché una parte del lavoro è già fatta.
+
+La distinzione che conta: liquido o sodo?
+
+Qui sta la scelta vera, ed è una sola leva: quanta acqua metti nel pre-fermento. Il poolish è liquido — pari peso di farina e acqua (100% idratazione), una pastella molle e gonfia. La biga è soda — molta meno acqua (intorno al 50-60%), una palla compatta, quasi un impasto. Non è un dettaglio estetico: l'idratazione cambia cosa fermenta e come.
+
+Un pre-fermento liquido come il poolish tende a dare un sapore più dolce, delicato, nocciolato, e più estensibilità all'impasto (si allunga di più). Una biga soda tende a dare un sapore più complesso e profondo, e più forza e "morso" al pane — struttura, masticabilità. Per questo il poolish è amato per baguette e pani croccanti, la biga per i rustici italiani, la ciabatta, la focaccia. Stessa fermentazione, due caratteri diversi, e la differenza la fai con l'acqua.
+
+Le leve, in pratica
+
+L'idratazione (poolish liquido per delicatezza ed estensibilità, biga soda per profondità e forza — la leva che definisce il carattere). La quota di farina pre-fermentata (di solito una parte, dal 20% a metà o più — più ne prefermenti, più marcato il carattere). Il tempo e la temperatura (lungo e fresco per sapore, seguendo il Q10: al fresco più lento e più aromatico). E il lievito nel pre-fermento (pochissimo — deve fermentare a lungo senza esaurirsi; se ne metti troppo, va troppo in fretta e "scade" prima).
+
+Come lo verifichi — e qui torna la regola del pane
+
+Il pre-fermento è pronto al suo picco, e il picco lo riconosci, non lo leggi sull'orologio. È gonfio, pieno di bolle, profumato, ed è raddoppiato — e soprattutto comincia appena a cedere al centro (la cupola che inizia ad afflosciarsi). Quello è il momento: massima attività, massimo sapore. Se aspetti troppo, collassa e diventa acido e stanco; se lo usi troppo presto, non ha ancora dato quello che poteva. La biga, essendo soda, è più tollerante — puoi dimenticartela un po' di più senza che "scada"; il poolish liquido è più preciso, va preso al momento.
+
+Il bersaglio, letto bene
+
+Il picco riconosciuto: gonfio, bolloso, raddoppiato, appena all'inizio del cedimento. È uno stato da vedere e annusare, e cambia con la temperatura e l'idratazione (un poolish caldo è pronto prima, una biga fresca ci mette di più). La scelta a monte — poolish o biga — non è "quale è meglio" ma quale carattere vuoi: delicato ed estensibile, o profondo e strutturato. E la regola che attraversa tutto il pane vale anche qui: guarda il pre-fermento, non l'orologio.""",
+            "target": "Il picco riconosciuto: gonfio, bolloso, raddoppiato, appena all'inizio del cedimento · la leva è l'acqua: poolish liquido (delicato, estensibile) o biga soda (profondo, strutturato)",
+        },
     }
     CASI = {
         "proc-negroni-inconsistente": {
