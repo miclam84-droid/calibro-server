@@ -772,6 +772,52 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-idratazione": {
+            "scheda": """Perché un bagel è compatto e gommoso, e una ciabatta è piena di buchi e leggera? Stessa farina, stesso lievito. La differenza è una sola: quanta acqua c'è nell'impasto. L'idratazione è la leva più basilare del pane — quella che decide com'è la mollica, quanto è maneggevole l'impasto, com'è la crosta. Ed è anche il linguaggio con cui i panettieri parlano tra loro: "settanta per cento".
+
+L'idratazione è il rapporto tra acqua e farina, ed è la prima decisione di ogni impasto. Non è un dettaglio: è la manopola che governa il carattere del pane prima di ogni altra. Capirla ti dà il controllo su texture, lavorabilità e crosta insieme.
+
+La percentuale del panettiere: il linguaggio del mestiere
+
+Prima lo strumento. I panettieri misurano l'acqua come percentuale sul peso della farina, non in valore assoluto. Mille grammi di farina e settecento d'acqua fanno un'idratazione del 70%. È una convenzione potente, perché rende ogni ricetta confrontabile e scalabile: "70%" dice subito che tipo di impasto è, indipendentemente dalla quantità. Quando un fornaio dice "lavoro all'80", sta dicendo una cosa precisa sul comportamento del suo impasto. Impararla è entrare nel linguaggio del mestiere.
+
+Cosa fa l'acqua: due lavori fondamentali
+
+L'acqua fa due cose che decidono tutto. Primo: attiva il glutine — le proteine non si legano in rete senza acqua, quindi l'acqua è la condizione perché la maglia glutinica esista. Secondo: diventa vapore in forno — e il vapore è ciò che gonfia la mollica. Più acqua c'è, più vapore si genera dentro il pane in cottura, più le bolle si espandono. Ecco il legame diretto: più acqua → più vapore → mollica più aperta. Meno acqua → meno vapore → mollica più fitta. Tutta la scala che segue viene da qui.
+
+La scala: da fitto a aperto
+
+Questo è il cuore pratico. Ogni pane sta a un punto della scala di idratazione, e il punto decide mollica e lavorabilità:
+
+Bassa (circa 50-60%). Impasto sodo, asciutto, facile da impastare e modellare. Mollica fitta, uniforme, gommosa; crosta più spessa. È il territorio di bagel e pretzel — dove la struttura compatta e il "morso" sono la caratteristica voluta. Raffermisce anche più in fretta (meno acqua trattenuta).
+
+Media (circa 65-70%). L'equilibrio. Impasto morbido ma maneggevole, tiene la forma, si lavora senza troppa fatica. Mollica di grana media, regolare. È il punto del pane in cassetta, delle pagnotte, di gran parte del pane quotidiano — e il punto giusto per imparare.
+
+Alta (circa 75-85%). Impasto molle, appiccicoso, difficile da maneggiare: non si impasta alla vecchia maniera, si governa con pieghe (stretch and fold) e mani bagnate. In cambio dà la mollica aperta e irregolare, i buchi grandi, la crosta croccante. È il territorio di ciabatta e focaccia, e l'estetica "da Instagram" del pane artigianale.
+
+Il tetto: oltre l'85% si rompe
+
+Qui la trappola, ed è metodo puro. Più acqua non è sempre meglio. Oltre l'85% circa, la rete glutinica non riesce più a trattenere il gas: le bolle scoppiano e si fondono, e la mollica diventa irregolare in modo brutto — grandi buchi vuoti e zone dense, non un'alveolatura bella. C'è un limite fisico a quanto vapore la struttura può reggere. Spingere l'idratazione oltre le capacità della tua farina e della tua tecnica non dà pane più aperto, dà pane sfatto.
+
+La dipendenza dalla farina (attenzione qui)
+
+Un punto che confonde molti: la stessa percentuale si comporta diversamente con farine diverse. Le farine forti (più proteine) assorbono più acqua e reggono idratazioni più alte. Le integrali e la segale sono assetate — la crusca e i pentosani bevono molta acqua senza fare glutine — quindi un impasto integrale al 70% sembra più asciutto di uno bianco al 70%, e spesso serve aggiungere il 5-15% d'acqua in più per compensare. "70%" non è un valore assoluto di morbidezza: dipende da cosa c'è nel sacco.
+
+Il legame con la cottura
+
+Un aggancio che chiude il cerchio con la crosta: gli impasti più bagnati vogliono un forno più caldo, perché serve fissare la struttura in fretta prima che la mollica, gonfia di vapore, collassi. Più acqua, più calore alla partenza. È lo stesso principio che hai visto nella crosta e nella laminazione.
+
+Come lo verifichi
+
+Con le mani e con l'occhio. Impasto sodo che si modella facile → bassa idratazione, aspettati mollica fitta. Impasto molle e appiccicoso che va gestito con le pieghe → alta, aspettati mollica aperta. E il windowpane resta il giudice dello sviluppo: se a una certa idratazione l'impasto si strappa subito, o è poco sviluppato o è troppo bagnato per la tua farina. Aumenta l'idratazione poco per volta (2-3% alla volta), non a salti, mentre prendi confidenza.
+
+Il bersaglio, letto bene
+
+C'è un numero vero qui — la percentuale — ma non un valore unico giusto: il bersaglio è l'idratazione adatta al pane che vuoi. Fitto e maneggevole per un bagel o un pane in cassetta (55-65%); aperto e croccante per una ciabatta (75-85%); l'equilibrio nel mezzo per il pane di tutti i giorni. Il vero bersaglio è la più alta idratazione che riesci a gestire in modo affidabile con la tua farina e la tua tecnica — perché è lì che ottieni mollica aperta senza che l'impasto ti sfugga di mano. E ricorda: il numero è una guida, la farina ha l'ultima parola.""",
+            "target": "La percentuale del panettiere (acqua/farina): ~55-60% mollica fitta e facile (bagel), ~65-70% equilibrio, ~75-85% aperta e appiccicosa (ciabatta) · tetto ~85% oltre si sfatta · la farina cambia tutto",
+            "nome": "L'idratazione dell'impasto",
+            "dominio": "panificazione",
+        },
         "fen-latte-impasto": {
             "scheda": """Sostituisci l'acqua col latte nell'impasto e il pane cambia: mollica più fine e morbida, crosta più dorata, sapore più pieno, e resta soffice più a lungo. Il latte è un arricchente come il grasso e lo zucchero — ne porta un po' di entrambi. Ma ha una storia particolare, quella dello "scottare il latte", che vale la pena raccontare bene: perché una volta era necessaria, e oggi quasi non serve più. Ed è il tipo di cosa che separa chi ripete la ricetta da chi capisce cosa fa.
 
