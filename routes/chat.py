@@ -122,15 +122,34 @@ def chiedi():
 
 
     db = carica_grafo()
-    # estrazione entità: prima provo i termini che estrae Mistral (capisce il dominio),
-    # poi, se non agganciano nulla, ripiego sulle parole della domanda (rete di sicurezza).
-    termini = estrai_entita(domanda) + sorted(
-        [p.strip(".,?!").lower() for p in domanda.split() if len(p) > 4],
-        key=len, reverse=True)
+    # RETRIEVAL RANKED (candidate generation + scoring + dominio): sceglie i fenomeni migliori.
+    # Poi cerca_contesto costruisce il contesto ricco (collegamenti, errori, target) sui fenomeni scelti.
     contesto = None
-    for t in termini:
-        contesto = cerca_contesto(db, t, domanda)
-        if contesto and contesto.get("fenomeni"): break
+    try:
+        from retrieval import retrieval_ranked
+        termini_mistral = estrai_entita(domanda)
+        ranked = retrieval_ranked(db, domanda, termini_extra=termini_mistral, topk=5)
+        fen_ids = [f["id"] for f in ranked.get("fenomeni", [])]
+        if fen_ids:
+            # costruisco il contesto ricco cercando per il PRIMO fenomeno (nome), poi il contesto
+            # include i suoi collegamenti; per robustezza uso cerca_contesto sul nome del top.
+            for fid in fen_ids:
+                nome = db.execute("SELECT name FROM nodes WHERE id=?", (fid,)).fetchone()
+                if nome:
+                    contesto = cerca_contesto(db, nome["name"], domanda)
+                    if contesto and contesto.get("fenomeni"): break
+    except Exception as _re:
+        print(f"[RANKED] errore, fallback vecchia logica: {_re}", flush=True)
+        contesto = None
+
+    # FALLBACK alla vecchia logica se il ranker non ha prodotto contesto
+    if not contesto or not contesto.get("fenomeni"):
+        termini = estrai_entita(domanda) + sorted(
+            [p.strip(".,?!").lower() for p in domanda.split() if len(p) > 4],
+            key=len, reverse=True)
+        for t in termini:
+            contesto = cerca_contesto(db, t, domanda)
+            if contesto and contesto.get("fenomeni"): break
 
     # LIVELLO 2 — niente match esatto: provo per somiglianza sull'intera domanda
     if not contesto or not contesto.get("fenomeni"):
