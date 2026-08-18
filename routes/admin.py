@@ -424,6 +424,38 @@ Il bersaglio, letto bene
 Strati distinti che sopravvivono fino al forno: il burro è rimasto uno strato, mai fuso nell'impasto. È uno stato che vedi — nel taglio a crudo (strati netti) e nel taglio cotto (nido d'ape, sfoglia). Non un numero di gradi o di pieghe da inseguire, ma la condizione: burro freddo e continuo, glutine rilassato, forno caldo. Se tieni il burro dov'è — uno strato, non un ingrediente sciolto — la sfoglia viene da sé.""",
             "target": "Strati distinti che sopravvivono al forno: il burro è rimasto uno strato, mai fuso nell'impasto · burro freddo e flessibile (14-18°C), glutine rilassato, forno caldo · lo vedi nel taglio (nido d'ape)",
         },
+        "fen-sale-impasto": {
+            "scheda": """Metti il 2% di sale nell'impasto — dieci grammi su mezzo chilo di farina — ed è la cosa più piccola che ci butti dentro. Ma toglilo, e il pane cambia del tutto: fermenta all'impazzata, si affloscia, esce pallido e insipido. Il sale è l'ingrediente che pesa meno e fa più lavori. E il primo di quei lavori è osmosi — quella che già conosci.
+
+Il sale nel pane non è solo sapore. Fa cinque cose insieme: controlla il lievito, rinforza il glutine, protegge la struttura dagli enzimi, tiene il colore della crosta, e sì, dà sapore. Capire come le fa — e una sorpresa su quale conta davvero — ti dà il controllo su tutto l'impasto.
+
+Il sale e il lievito: qui c'è l'osmosi (e una sorpresa)
+
+La spiegazione classica è osmosi pura, ed è vera: il sale è igroscopico, tira acqua. In presenza di sale, il lievito cede parte della sua acqua all'ambiente più salato — per osmosi, la stessa che governa il sale sulle cellule — e questo rallenta la sua attività. Senza sale il lievito fermenta troppo in fretta e in modo incontrollabile, produce gas più veloce di quanto il glutine possa trattenerlo, e l'impasto sovra-lievita e collassa.
+
+Ma qui la sorpresa, ed è puro metodo: la spiegazione "il sale rallenta il lievito per osmosi" è vera solo in parte. La ricerca mostra che l'osmosi sul lievito, alle concentrazioni normali di pane, ha un effetto minore sulla velocità di fermentazione. La causa principale del rallentamento è un'altra: l'effetto del sale sul glutine. Attento a non fermarti alla prima spiegazione plausibile.
+
+Il sale e il glutine: il vero motore del rallentamento
+
+Ecco cosa succede davvero. Le proteine del glutine, nell'impasto, hanno cariche elettriche che si respingono, tenendo la rete allentata. Il sale neutralizza quelle cariche: sparite le forze di repulsione, i filamenti si avvicinano, la rete si compatta e si lega più forte. Una rete glutinica più compatta e forte fa due cose: trattiene meglio il gas (più struttura, più spinta) e — proprio perché è più tenace — resiste di più all'espansione, quindi l'impasto cresce più lentamente. Quindi il sale rallenta la lievitazione soprattutto rinforzando il glutine, non affamando il lievito. È la stessa maglia glutinica che conosci, governata con un pizzico di sale.
+
+Il sale e gli enzimi, il sale e la crosta
+
+Altri due lavori. Il sale tiene a freno le proteasi, gli enzimi che spezzano il glutine: un po' fa bene (ammorbidisce), troppo a lungo senza controllo degraderebbe la struttura fino a farla collassare in una lunga fermentazione. E il sale protegge il colore: senza sale il lievito divora tutti gli zuccheri, e senza zuccheri residui la crosta non fa la Maillard e resta pallida — lo stesso meccanismo del caso crosta pallida. Il sale, moderando il lievito, lascia zuccheri per la doratura.
+
+Le leve, in pratica
+
+La quantità (lo standard è circa il 2% sulla farina; è la finestra dove tutto funziona). Sotto l'1,5% il lievito corre, l'impasto diventa appiccicoso e il pane esce chiaro e scipito. Sopra il 2,5-3% l'impasto si stringe troppo, il lievito rallenta molto, la crescita cala. Quando aggiungerlo (spesso dopo l'autolisi, non all'inizio — perché il sale compete con l'acqua e frena l'idratazione della farina). Come distribuirlo (sciolto nell'acqua o ben miscelato, per evitare "tasche" di sale e — attenzione — il contatto diretto sul lievito non disciolto, che per osmosi può ucciderlo, come nel caso del pane che non lievita).
+
+Come lo verifichi
+
+Il sapore prima di tutto: un pane senza sale si riconosce subito, sa di cartone. Ma anche la struttura: un impasto senza sale è slegato, molle, appiccicoso, difficile da lavorare; con la giusta dose è più coeso ed elastico. E la crosta: pallida e opaca segnala spesso poco sale (lievito che ha mangiato gli zuccheri). Se hai dubbi, cambia solo il sale tenendo tutto il resto uguale, e senti la differenza su sapore, struttura e colore.
+
+Il bersaglio, letto bene
+
+C'è una finestra vera qui: intorno al 2% sulla farina, con un intervallo utile stretto (circa 1,8-2,2%). Ma non è un numero-legge da applicare a occhi chiusi: dipende dal pane (alcuni ne vogliono un po' meno o più), e sopra o sotto la finestra gli effetti sono noti e prevedibili — poco sale, lievito veloce e crosta pallida; troppo, impasto stretto e crescita frenata. Il bersaglio è tarare il sale dentro quella finestra per il tuo pane, sapendo che stai regolando quattro cose insieme — lievito, glutine, enzimi, colore — con un solo ingrediente.""",
+            "target": "Una finestra vera: ~2% sulla farina (utile 1,8-2,2%) · poco sale = lievito veloce e crosta pallida, troppo = impasto stretto e crescita frenata · con un ingrediente regoli lievito, glutine, enzimi e colore",
+        },
     }
     CASI = {
         "proc-negroni-inconsistente": {
