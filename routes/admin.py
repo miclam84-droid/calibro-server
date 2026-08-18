@@ -96,6 +96,72 @@ I numeri sono da disciplinare: idratazione 60-65%, panetto 250±20 g, impasto a 
         "nome": "Pizza napoletana STG",
         "aliases": ["pizza napoletana","napoletana","verace","pizza napoli","STG","AVPN"],
     },
+    "prod-pizza-teglia": {
+        "scheda": """La pizza in teglia romana è il pane più bagnato che farai: fino all'85% di acqua. Un impasto quasi liquido, che sembra impossibile da gestire — e invece è proprio quell'acqua estrema a darti la mollica altissima, piena di buchi, leggera come una nuvola. Ma a quell'idratazione servono farina forte, autolisi e pazienza, o l'impasto ti resta in mano.
+
+La teglia romana (o pizza al taglio) vive all'estremo dell'asse idratazione: 75-85%, il massimo del mondo pizza. Quell'acqua è tutto il suo carattere — e tutta la sua difficoltà.
+
+Perché così tanta acqua
+Più acqua = mollica più aperta e leggera (vedi l'idratazione). All'85%, l'impasto è quasi una pastella: in cottura tutta quell'acqua diventa vapore e gonfia gli alveoli in modo estremo, dando quella mollica altissima e piena di buchi che è la firma della teglia. È l'opposto della napoletana media e compatta.
+
+Il prezzo dell'acqua: farina forte e autolisi
+A quell'idratazione l'impasto è ingestibile con farina normale. Servono due cose. Primo, farina forte (W320+, vedi la forza della farina): solo un glutine robusto regge tutta quell'acqua senza sfaldarsi. Secondo, l'autolisi (vedi il fenomeno): far riposare farina e acqua prima di impastare, così il glutine si sviluppa da solo e l'impasto diventa lavorabile. Senza questi due, l'85% ti resta appiccicato alle mani.
+
+Le pieghe, non l'impasto classico
+Un impasto così idratato non si impasta a mano nel modo classico: si gestisce con le pieghe (stretch and fold) a intervalli, che costruiscono la maglia glutinica senza lavorare una massa che è quasi liquida. Lunga maturazione in frigo (24-72h) per sapore e digeribilità.
+
+La cottura
+Forno elettrico (non a legna) a 250-300°C, spesso in due tempi: prima sul fondo per asciugare la base e far esplodere gli alveoli, poi con il condimento. Più lunga della napoletana perché la massa è alta e va cotta dentro.
+
+Il bersaglio
+Idratazione 75-85%, farina W320+, autolisi obbligatoria, maturazione lunga, cottura elettrica 250-300°C. Ma il vero bersaglio è capire che l'acqua estrema è insieme il pregio (mollica a nuvola) e la sfida (serve tecnica per domarla). Non è "più acqua a caso": è più acqua sostenuta da farina forte e autolisi. Togli quei supporti e l'acqua ti annega.""",
+        "target": "Idratazione 75-85% estremo, farina W320+, autolisi obbligatoria, maturazione lunga, cottura elettrica 250-300C - acqua estrema fa la mollica a nuvola ma serve farina forte e autolisi",
+        "nome": "Pizza in teglia romana",
+        "aliases": ["pizza in teglia","teglia romana","pizza al taglio","teglia","alta idratazione"],
+    },
+    "prod-pizza-rom": {
+        "scheda": """La pizza romana tonda è l'esatto opposto della napoletana: dove quella è morbida e alta, questa è sottile e scrocchia. "Scrocchiarella", la chiamano a Roma — deve fare rumore sotto i denti. E il segreto di quel rumore è meno acqua e un po' d'olio: l'inverso di tutto quello che fa la napoletana.
+
+La romana tonda vive all'estremo basso dell'idratazione: 50-55%, il minimo del mondo pizza. Poca acqua, olio nell'impasto, stesa sottilissima al mattarello: tutto punta a una cosa, la croccantezza secca.
+
+Perché poca acqua
+Meno acqua = mollica più chiusa e croccante (vedi l'idratazione). Al 50-55% l'impasto è sodo, docile, si stende sottilissimo e in cottura non fa alveoli grandi: si asciuga e diventa una lastra croccante. È il contrario della teglia (85%, tutta buchi) e della napoletana (65%, morbida).
+
+L'olio: friabilità
+La romana ha olio nell'impasto (2-4%, vedi i grassi): non per morbidezza come nella focaccia, ma per friabilità — l'olio rende la struttura più corta, che si spezza netta invece di piegarsi. È ciò che dà lo "scrocchio".
+
+Il mattarello (a differenza della napoletana)
+Qui il mattarello è ammesso, anzi necessario: schiaccia via tutto il gas e stende sottilissimo e uniforme. Nella napoletana era vietato (avrebbe ucciso il cornicione); qui è lo strumento giusto, perché la romana NON vuole cornicione né alveoli — vuole essere piatta e croccante ovunque.
+
+Cottura
+~350°C per qualche minuto, spesso forno elettrico: più bassa e più lunga della napoletana, per asciugare bene tutta la lastra e renderla croccante fino al centro.
+
+Il bersaglio
+Idratazione 50-55%, olio 2-4%, mattarello, cottura ~350°C. Il vero bersaglio: capire che ogni scelta è l'inverso della napoletana, e per la stessa ragione fisica letta al contrario — poca acqua e olio per asciugare e spezzare, invece di tanta spinta per gonfiare. Due pizze agli antipodi dello stesso asse.""",
+        "target": "Idratazione 50-55% minimo, olio 2-4%, mattarello, cottura ~350C - la scrocchiarella, ogni scelta e l inverso della napoletana",
+        "nome": "Pizza romana tonda (scrocchiarella)",
+        "aliases": ["pizza romana","romana","scrocchiarella","pizza scrocchiarella","tonda romana"],
+    },
+    "prod-pizza-pala": {
+        "scheda": """La pizza in pala sta a metà strada: più idratata della napoletana, meno estrema della teglia. Il suo nome viene dalla forma — lunga e stretta come la pala del fornaio — e il suo pregio è pratico: si fa in grande, si taglia, si serve in fretta. È la pizza del servizio ad alto volume.
+
+La pala vive nella parte alta dell'asse idratazione (~75%): mollica aperta e leggera, ma un po' più gestibile della teglia all'85%. Forma allungata, cottura elettrica.
+
+L'idratazione e i pre-fermenti
+Al 75% serve comunque farina forte e spesso un pre-fermento (poolish, biga o anche lievito madre, vedi i pre-fermenti): la lunga maturazione dà aroma e la struttura per reggere l'acqua. Mollica alveolata, leggera, digeribile.
+
+La forma funzionale
+La pala non è solo estetica: la forma lunga e stretta permette di infornarla e sfornarla con la pala del fornaio, tagliarla in tranci e servirla veloce. È nata per il servizio — pizzerie al taglio, alti volumi. Va ben cotta sotto, così il trancio regge il condimento senza afflosciarsi quando lo tieni in mano.
+
+Cottura
+Forno elettrico 300-350°C, resistenze ben distribuite: la base deve cuocere a fondo. Più lunga della napoletana, per asciugare e irrigidire il fondo.
+
+Il bersaglio
+Idratazione ~75%, forma a pala, pre-fermento consigliato, cottura elettrica 300-350°C ben cotta sotto. Il vero bersaglio: la pala è la via di mezzo pratica — l'ariosità dell'alta idratazione, ma domata per il servizio veloce. Un compromesso intelligente tra qualità e operatività.""",
+        "target": "Idratazione ~75%, forma a pala, pre-fermento consigliato, cottura elettrica 300-350C ben cotta sotto - la via di mezzo pratica per il servizio",
+        "nome": "Pizza in pala",
+        "aliases": ["pizza in pala","pala","pizza alla pala","pala romana"],
+    },
     "prod-focaccia": {
         "scheda": """La focaccia genovese sembra il pane più semplice del mondo: farina, acqua, lievito, sale, olio. Eppure quasi nessuno, fuori dalla Liguria, la fa come si deve. Il segreto non è un ingrediente nascosto: è capire che ogni scelta — quanta acqua, quanto olio, le fossette, la salamoia — non è tradizione a caso, ma fisica del pane applicata. Ecco la focaccia spiegata non come ricetta da copiare, ma come i fenomeni che la governano.
 
@@ -148,12 +214,17 @@ I numeri ci sono e sono da disciplinare: idratazione 55-65%, olio ≥10% sulla f
 CABLA_PANIFICATI = {
     "prod-focaccia": ["fen-grassi-impasto","fen-idratazione","fen-sale-impasto","fen-maillard","fen-crosta"],
     "prod-pizza-nap": ["fen-idratazione","fen-farina-forza","fen-maglia-glutinica","fen-lievitazione","fen-temperatura-impasto","fen-maillard"],
+    "prod-pizza-teglia": ["fen-idratazione","fen-farina-forza","fen-autolisi","fen-lievitazione","fen-crosta"],
+    "prod-pizza-rom": ["fen-idratazione","fen-grassi-impasto","fen-maglia-glutinica","fen-crosta"],
+    "prod-pizza-pala": ["fen-idratazione","fen-farina-forza","fen-lievitazione","fen-crosta"],
 }
 # gerarchia famiglia: figlio -governato_da-> madre (uso relation esistente, no nuove)
 CABLA_FAMIGLIA = {
     "prod-pizza-nap": "prod-pizza",
     "prod-pizza-nap-adv": "prod-pizza",
     "prod-pizza-rom": "prod-pizza",
+    "prod-pizza-teglia": "prod-pizza",
+    "prod-pizza-pala": "prod-pizza",
 }
 
 SEGRETI_INGREDIENTI = {
