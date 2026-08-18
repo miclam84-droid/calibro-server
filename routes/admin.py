@@ -273,6 +273,7 @@ def admin_cabla_panificazione():
             "fen-lievito-madre": {"fallisce_come": ["err-madre-sovra"],
                                   "si_manifesta_in": ["fis_sourdough_starter"]},
             "fen-tangzhong-yudane": {"governato_da": ["fen-gelatinizzazione"]},
+            "fen-levain-pate-fermentee": {"governato_da": ["fen-fermentazione"]},
         }
         PONTI = [
             ("fen-uova-impasto", "governato_da", "fen-grassi-impasto"),
@@ -381,6 +382,7 @@ def admin_popola_alias():
             "fen-idratazione": ["idratazione","acqua","percentuale acqua","quanta acqua","impasto molle","impasto bagnato","impasto appiccicoso","troppa acqua","appiccicoso","molle","troppo molle"],
             "fen-lievito-madre": ["lievito madre","pasta madre","madre","sourdough","levain","starter","picco","rinfresco","licoli"],
             "fen-tangzhong-yudane": ["tangzhong","yudane","water roux","roux","pre-gelatinizzazione","milk bread","shokupan","pane soffice","pane giapponese"],
+            "fen-levain-pate-fermentee": ["levain","pate fermentee","pâte fermentée","vecchio impasto","old dough","prefermento francese","lievitino"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
@@ -1165,6 +1167,48 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-levain-pate-fermentee": {
+            "scheda": """A questo punto hai visto poolish, biga, il lievito madre, il tangzhong. Ma restano due parole francesi che confondono tutti: levain e pâte fermentée. E capirle serve a una cosa più grande: mettere finalmente ordine in tutto il mondo dei pre-fermenti, che sembra un caos di termini stranieri e invece ha una logica semplice. Una volta chiara quella logica, sai sempre quale scegliere.
+
+Levain e pâte fermentée sono i due pre-fermenti della tradizione francese. Ma spiegarli bene significa dare la mappa completa: perché esistono così tanti pre-fermenti, e come si distinguono davvero.
+
+Levain: il "figlio" della madre (o la madre stessa)
+
+Prima una verità che sorprende. "Levain" in francese vuol dire semplicemente "lievito naturale" — e molti panettieri e autori lo usano come sinonimo di lievito madre. Nei testi classici (Hamelman) "pani a levain" vuol dire pani a lievito madre. Quindi al livello più semplice: levain = madre.
+
+Ma c'è una sfumatura tecnica utile. Spesso il levain è un offshoot della madre: prendi una parte della tua madre e la fai crescere apposta per una specifica infornata, magari cambiandole farina (più integrale, più segale) o idratazione, per adattarla a quel pane. La madre è la coltura che mantieni per sempre, il tuo ceppo permanente; il levain è il "figlio" che ne generi per il pane di oggi. Non consumi mai tutta la madre: ne stacchi un pezzo, lo fai levain, e la madre resta viva per la prossima volta. In pratica: madre = il ceppo che custodisci; levain = la porzione che prepari per infornare.
+
+Pâte fermentée: il "vecchio impasto"
+
+Questa è nettamente diversa, ed è l'idea francese più ingegnosa nella sua semplicità. Pâte fermentée significa "impasto fermentato", ma si chiama colloquialmente "vecchio impasto" (old dough). È un pezzo di impasto vero e proprio — completo, con farina, acqua, lievito e sale — preso da un'infornata precedente e conservato per fermentare, poi aggiunto all'impasto nuovo. Non è una pasta farina-acqua come il poolish: è pane crudo tenuto da parte.
+
+Due cose la rendono unica. Primo: è l'unico pre-fermento che contiene sale, perché è impasto finito — quindi quando lo usi, riduci il sale nella ricetta nuova. Secondo: si usa tipicamente al 20% del peso della farina (un quinto), ed è comodissima perché non devi preparare nulla in anticipo — basta tenere da parte un pezzo dell'impasto di ieri. Dà al pane profondità di sapore e note burrose, con zero sforzo extra.
+
+La mappa che mette ordine: la grande divisione
+
+Ecco la logica che cercavi, e che rende tutto chiaro. Tutti i pre-fermenti si dividono in due famiglie, secondo una domanda sola: lievito selvaggio o commerciale?
+
+Da una parte, i selvaggi ed eterni: il lievito madre e il levain. Sono colture di lieviti e batteri selvaggi, e possono essere perpetuati all'infinito — mesi, anni, decenni, persino secoli. Li rinfreschi e vivono per sempre. Danno acidità e complessità.
+
+Dall'altra, i commerciali e a tempo: poolish, biga, e pâte fermentée. Usano lievito commerciale (o ne ereditano da un impasto), e non si propagano all'infinito — sono preparazioni "usa e getta" per una o poche infornate. Danno aroma e forza senza l'acidità del selvaggio.
+
+E c'è una conseguenza elegante di questa divisione: se prendi un "vecchio impasto" (pâte fermentée) e lo riusi all'infinito, rinfrescandolo di continuo, prima o poi i lieviti selvaggi dell'ambiente prendono il sopravvento — e per definizione è diventato un lievito madre. La differenza tra le due famiglie non è netta come un muro: è un continuum, e il tempo trasforma il commerciale in selvaggio.
+
+Come si distinguono per consistenza (il ripasso completo)
+
+Chiudendo la mappa, per idratazione: il poolish è liquido (50% farina / 50% acqua, parti uguali). La biga è soda (farina con solo il 50-60% di acqua). La pâte fermentée è un impasto completo (idratazione del pane, con sale). Madre e levain variano secondo come li gestisci (liquidi o solidi). Sapere la consistenza ti dice anche come correggere l'acqua nella ricetta: con un poolish liquido chiudi l'impasto con meno acqua, con una biga soda con più.
+
+Come lo verifichi
+
+Dal sapore e dal comportamento. Un pane a levain/madre ha acidità e complessità (selvaggio); uno a poolish/biga/pâte fermentée ha aroma e forza ma non la stessa punta acida (commerciale). Se vuoi il "vecchio impasto" senza mantenere nulla, tieni da parte un pezzo dell'impasto di oggi per domani: è la pâte fermentée, ed è il modo più semplice per iniziare a usare i pre-fermenti.
+
+Il bersaglio, letto bene
+
+Non un numero unico, ma la scelta giusta e la mappa in testa: madre/levain per acidità e complessità (selvaggi, eterni); poolish/biga/pâte fermentée per aroma e forza (commerciali, a tempo); la pâte fermentée al 20% con sale, comoda perché è solo l'impasto di ieri tenuto da parte. E la cosa da ricordare, che scioglie il caos dei termini stranieri: dietro dieci parole diverse c'è una domanda sola — selvaggio o commerciale — e il tempo può trasformare l'uno nell'altro. Capito questo, non ti perdi più.""",
+            "target": "La mappa di tutti i pre-fermenti: selvaggi ed eterni (madre, levain) vs commerciali a tempo (poolish, biga, pâte fermentée) · la pâte fermentée è il 'vecchio impasto', l'unico con sale, al 20% · levain ≈ madre",
+            "nome": "Levain e pâte fermentée (i pre-fermenti francesi)",
+            "dominio": "panificazione",
+        },
         "fen-tangzhong-yudane": {
             "scheda": """Entra in una panetteria a Tokyo, Hong Kong o Seoul e vedrai vetrine piene di pane diverso dal nostro: soffice come una nuvola, lucido, che si strappa a filamenti, e che resta morbido per giorni. Il segreto non è più burro o più zucchero. È un trucco di fisica dell'amido: cuoci una piccola parte della farina prima di impastare. Si chiama tangzhong, o yudane. E una volta capito, cambia il pane soffice per sempre.
 
