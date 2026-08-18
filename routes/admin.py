@@ -199,6 +199,42 @@ Idratazione 65-70%, poolish, impasto magro, tagli obliqui, crosta sottile. Il ve
         "nome": "Baguette tradition",
         "aliases": ["baguette","baguette tradition","pane francese","filoncino francese"],
     },
+    "prod-michetta": {
+        "scheda": """La michetta (a Roma rosetta) e un pane che sfida la logica: dentro e vuota. Una cupola cava, con pochissima mollica, nata a Milano nell'Ottocento copiando il Kaisersemmel austriaco. E quel vuoto non e un difetto: e il suo scopo — un guscio croccante da riempire.
+
+La michetta insegna una cosa che nessun altro pane insegna: come ottenere un pane CAVO di proposito. Il segreto e nella forma — la piega a rosa (i cinque spicchi) e una stesura che intrappola l'aria in una grande bolla centrale invece che in tanti alveoli. In cottura il vapore gonfia quella bolla e la crosta si fissa prima che collassi: resta il vuoto. Poca mollica, tanto guscio. Serviva agli operai per riempirla di companatico senza che si inzuppasse.
+Lezione: la STRUTTURA CAVA governata dalla forma. Farina media, bassa idratazione, la piega fa tutto.""",
+        "target": "Pane CAVO di proposito: la piega a rosa intrappola l aria in una bolla centrale, il vapore la gonfia, la crosta si fissa prima di collassare - poca mollica tanto guscio, per riempirlo",
+        "nome": "Michetta (rosetta)",
+        "aliases": ["michetta", "rosetta", "pane cavo"],
+    },
+    "prod-pane-sciapo": {
+        "scheda": """Il pane toscano e umbro non ha sale. Non e una dimenticanza: e una scelta antica, e insegna piu di ogni altro pane cosa fa davvero il sale — facendone sentire l'assenza.
+
+Togli il sale e vedi i suoi quattro lavori mancare tutti insieme (vedi il fenomeno del sale): la fermentazione corre senza freno (il sale la rallenta), la maglia glutinica e piu debole e appiccicosa (il sale la rinforza), la crosta resta pallida (il sale aiuta il colore), e il sapore e piatto. Il pane sciapo e insipido da solo — ma e nato apposta: accompagna salumi e formaggi saporiti (prosciutto toscano, pecorino), dove un pane salato coprirebbe tutto. Il pane neutro fa da tela.
+Lezione: il SALE per ASSENZA. Capisci cosa fa vedendo cosa succede senza. E la gastronomia dell'abbinamento (pane neutro + companatico saporito).""",
+        "target": "Il SALE per assenza: senza sale la fermentazione corre, la maglia e debole, la crosta pallida, il sapore piatto - nato per accompagnare salumi e formaggi saporiti",
+        "nome": "Pane sciapo (toscano senza sale)",
+        "aliases": ["pane sciapo", "pane toscano", "pane senza sale", "pane sciocco", "pane umbro"],
+    },
+    "prod-altamura": {
+        "scheda": """Il pane di Altamura non usa farina di grano tenero come quasi tutti i pani italiani: usa semola rimacinata di grano DURO. E questo cambia tutto — colore, sapore, conservazione, crosta.
+
+Il grano duro (quello della pasta) ha un glutine diverso e piu tenace, e una semola piu grossa e gialla. Da una mollica gialla e compatta, un sapore piu intenso e "di grano", una crosta spessa e scura, e una conservazione lunghissima (giorni). E il primo pane in Europa ad avere la DOP. Cotto in forno a legna di quercia, con lievito madre. La lezione: la FARINA cambia il pane alla radice — non e solo forza (W), e proprio il tipo di grano.
+Lezione: GRANO DURO vs tenero. La farina come scelta identitaria, non solo tecnica.""",
+        "target": "GRANO DURO non tenero: semola rimacinata, mollica gialla compatta, sapore intenso, crosta spessa, conservazione lunga - primo pane DOP d Europa",
+        "nome": "Pane di Altamura DOP",
+        "aliases": ["altamura", "pane di altamura", "pane pugliese", "semola dura"],
+    },
+    "prod-carasau": {
+        "scheda": """Il carasau sardo — "carta da musica" — e sottile come un foglio e croccante come una cialda. Il suo segreto e la DOPPIA cottura: si cuoce, si separa in due sfoglie, e si rimette in forno. E quella seconda cottura che lo rende secco e conservabile per mesi.
+
+La prima cottura fa gonfiare il disco che si separa in due veli. Li si taglia, e la seconda cottura (la "carasatura") asciuga tutta l'acqua residua: senza acqua, niente puo deteriorarlo (vedi shelf-life e attivita dell'acqua). Nato per i pastori che stavano mesi fuori: pane che non ammuffisce. La lezione: togliere l'ACQUA e conservare — la fisica opposta al pane fresco.
+Lezione: DOPPIA COTTURA e conservazione per disidratazione. L'acqua (o la sua assenza) governa la shelf-life.""",
+        "target": "DOPPIA cottura e disidratazione: si separa in due veli e si ricuoce (carasatura), senza acqua niente lo deteriora - pane che dura mesi",
+        "nome": "Pane carasau (carta da musica)",
+        "aliases": ["carasau", "carta da musica", "pane sardo", "pane secco"],
+    },
     "prod-focaccia": {
         "scheda": """La focaccia genovese sembra il pane più semplice del mondo: farina, acqua, lievito, sale, olio. Eppure quasi nessuno, fuori dalla Liguria, la fa come si deve. Il segreto non è un ingrediente nascosto: è capire che ogni scelta — quanta acqua, quanto olio, le fossette, la salamoia — non è tradizione a caso, ma fisica del pane applicata. Ecco la focaccia spiegata non come ricetta da copiare, ma come i fenomeni che la governano.
 
@@ -256,6 +292,10 @@ CABLA_PANIFICATI = {
     "prod-pizza-pala": ["fen-idratazione","fen-farina-forza","fen-lievitazione","fen-crosta"],
     "prod-ciabatta": ["fen-idratazione","fen-poolish-biga","fen-grassi-impasto","fen-maglia-glutinica"],
     "prod-baguette": ["fen-idratazione","fen-poolish-biga","fen-crosta","fen-maglia-glutinica"],
+    "prod-michetta": ["fen-lievitazione","fen-crosta","fen-maglia-glutinica"],
+    "prod-pane-sciapo": ["fen-sale-impasto","fen-fermentazione","fen-crosta"],
+    "prod-altamura": ["fen-farina-forza","fen-lievito-madre","fen-crosta","fen-shelf-life-pane"],
+    "prod-carasau": ["fen-shelf-life-pane","fen-gelatinizzazione","fen-crosta"],
 }
 # gerarchia famiglia: figlio -governato_da-> madre (uso relation esistente, no nuove)
 CABLA_FAMIGLIA = {
