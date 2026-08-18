@@ -390,6 +390,40 @@ Il bersaglio, letto bene
 Il picco riconosciuto: gonfio, bolloso, raddoppiato, appena all'inizio del cedimento. È uno stato da vedere e annusare, e cambia con la temperatura e l'idratazione (un poolish caldo è pronto prima, una biga fresca ci mette di più). La scelta a monte — poolish o biga — non è "quale è meglio" ma quale carattere vuoi: delicato ed estensibile, o profondo e strutturato. E la regola che attraversa tutto il pane vale anche qui: guarda il pre-fermento, non l'orologio.""",
             "target": "Il picco riconosciuto: gonfio, bolloso, raddoppiato, appena all'inizio del cedimento · la leva è l'acqua: poolish liquido (delicato, estensibile) o biga soda (profondo, strutturato)",
         },
+        "fen-laminazione": {
+            "scheda": """Chiudi un panetto di burro dentro l'impasto, stendi, pieghi, metti in frigo. Ripeti. Ogni piega moltiplica gli strati: dopo tre o quattro giri hai decine di fogli sottilissimi di impasto alternati a burro. In forno l'acqua del burro diventa vapore, spinge gli strati uno contro l'altro e li separa: nasce il croissant, friabile e cavo. È maglia glutinica che tiene, e vapore che spinge — due cose che conosci, messe a lavorare insieme.
+
+La laminazione è la tecnica dietro croissant, sfoglia, pain au chocolat: creare strati alternati di impasto e grasso che in forno si separano. Non è una ricetta a sé, è un principio — e capirlo ti fa capire perché riesce o fallisce.
+
+Il cuore: il burro deve restare uno strato, non sciogliersi nell'impasto
+
+Questa è la cosa che decide tutto. L'obiettivo è tenere il burro come fogli distinti dentro l'impasto, sottili e continui. Se il burro resta separato, in forno la sua acqua evapora, il vapore spinge, e gli strati si aprono in quella struttura a nido d'ape. Se invece il burro si scioglie e si mescola all'impasto, gli strati spariscono: ottieni pane denso, unto, senza sfoglia. Tutta la tecnica serve a una cosa sola: impedire che il burro si fonda nell'impasto prima del forno.
+
+Perché la temperatura è la leva numero uno
+
+Ecco perché la laminazione è ossessionata dal freddo. Il burro deve essere solido ma flessibile — indicativamente intorno ai 14-18°C: abbastanza freddo da restare uno strato, abbastanza morbido da stendersi senza rompersi. Troppo caldo si scioglie e si incorpora (strati persi); troppo freddo si spezza in schegge che bucano l'impasto (strati rotti). Ed è lo stesso motivo per cui si riposa in frigo tra una piega e l'altra: raffredda il burro che il lavoro ha scaldato, e — qui entra la madre — rilassa il glutine.
+
+Dove entra il glutine (la madre)
+
+Il glutine è quello che tiene. La rete glutinica dà all'impasto la struttura ed elasticità per stendersi in fogli sottili senza strapparsi e per trattenere gli strati di burro. Ma il glutine lavorato si tende e "combatte": se non lo lasci rilassare, l'impasto si ritira e si strappa, e gli strati si rovinano. Per questo la laminazione alterna sempre lavoro e riposo: stendi (tendi il glutine), riposi in frigo (il glutine si rilassa, il burro si rassoda), ripeti. È maglia glutinica governata nel tempo.
+
+Il forno: il vapore che solleva (ponte con la crosta)
+
+In forno succede la magia, ed è vapore. L'acqua contenuta nel burro evapora, resta intrappolata tra gli strati di impasto e li spinge separandoli: gli strati si gonfiano e si fissano. Ma serve un forno davvero caldo: se è troppo tiepido, gli strati si afflosciano e il burro cola prima che il vapore faccia in tempo a sollevarli. Forno caldo, partenza decisa — come per la crosta.
+
+Le leve, in pratica
+
+La temperatura di burro e impasto (la leva critica: freddi ma flessibili, alla stessa consistenza). Il numero di giri (più pieghe = più strati, ma con un limite: troppe pieghe comprimono e schiacciano gli strati, e l'interno perde l'ariosità — non è "più è meglio"). Il riposo tra i giri (per rilassare il glutine e rassodare il burro — saltarlo rovina gli strati). E il forno caldo alla partenza (perché il vapore sollevi prima che il burro coli).
+
+Come lo verifichi
+
+Prima del forno: taglia un bordo e guarda gli strati — devono essere visibili, distinti, netti. Se sono un blocco confuso, il burro si è fuso: lavora più freddo. Dopo il forno: il taglio deve mostrare un nido d'ape aperto, e la pasta deve sfogliarsi in scaglie leggere. Se è densa o gommosa, o il burro si è fuso, o il forno era freddo, o mancava riposo.
+
+Il bersaglio, letto bene
+
+Strati distinti che sopravvivono fino al forno: il burro è rimasto uno strato, mai fuso nell'impasto. È uno stato che vedi — nel taglio a crudo (strati netti) e nel taglio cotto (nido d'ape, sfoglia). Non un numero di gradi o di pieghe da inseguire, ma la condizione: burro freddo e continuo, glutine rilassato, forno caldo. Se tieni il burro dov'è — uno strato, non un ingrediente sciolto — la sfoglia viene da sé.""",
+            "target": "Strati distinti che sopravvivono al forno: il burro è rimasto uno strato, mai fuso nell'impasto · burro freddo e flessibile (14-18°C), glutine rilassato, forno caldo · lo vedi nel taglio (nido d'ape)",
+        },
     }
     CASI = {
         "proc-negroni-inconsistente": {
