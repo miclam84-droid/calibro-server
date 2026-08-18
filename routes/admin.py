@@ -191,6 +191,34 @@ def admin_init():
             return jsonify({"errore":str(e)}), 500
     return jsonify({"ok":True,"messaggio":"Tabelle create: utenti, sessioni, esperimenti"})
 
+@bp.route("/admin/stato-madri")
+def admin_stato_madri():
+    """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
+    quali hanno il metodo (scheda lunga, apertura narrativa) e quali il contenuto vecchio."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json
+    ids = request.args.get("ids", "").split(",")
+    ids = [i.strip() for i in ids if i.strip()]
+    try:
+        conn = _get_conn(); cur = conn.cursor(); out = []
+        for nid in ids:
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (nid,))
+            row = cur.fetchone()
+            if not row:
+                out.append({"id": nid, "stato": "NON TROVATO"}); continue
+            raw = row[0] if isinstance(row,(list,tuple)) else row["data"]
+            nd = raw if isinstance(raw,dict) else json.loads(raw)
+            sch = nd.get("scheda","")
+            if isinstance(sch, dict): sch = sch.get("it","")
+            out.append({"id": nid, "chars": len(sch or ""),
+                        "inizio": (sch or "")[:90].replace(chr(10)," ")})
+        cur.close(); _release_conn(conn)
+        return jsonify({"madri": out})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
 @bp.route("/admin/fix-target")
 def admin_fix_target():
     """Ripulisce i campi target che aprivano con formula difensiva (Non/Nessun numero...).
