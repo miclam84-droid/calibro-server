@@ -772,6 +772,42 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-temperatura-impasto": {
+            "scheda": """Fai lo stesso pane a gennaio e a luglio, stessa ricetta, e ti comporta in modo diverso: d'estate lievita in metà tempo, d'inverno sembra addormentato. Non è colpa tua né della ricetta: è la temperatura dell'impasto. È la variabile che decide la velocità di tutto — e la cosa che i fornai professionisti sanno, e i dilettanti no, è che non si subisce: si calcola e si centra, ogni volta, in ogni stagione.
+
+La temperatura finale dell'impasto — quella che ha appena finito di impastare, prima di lievitare — è uno dei controlli più potenti e meno conosciuti del pane. Governa la fermentazione, e con essa i tempi, il sapore, la riuscita. Impararla a controllare è ciò che rende il pane ripetibile.
+
+Perché conta così tanto: la temperatura è velocità
+
+Il legame è diretto e lo conosci già dal principio del Q10: le reazioni vanno più veloci al caldo, più piano al freddo. Nell'impasto significa che più caldo è, più veloce fermenta (tempi corti); più freddo è, più lenta (tempi lunghi). E l'effetto è sorprendentemente forte: bastano 2°C in più per aumentare la velocità di fermentazione di circa il 25%. Ecco perché lo stesso impasto d'estate corre e d'inverno arranca: pochi gradi cambiano tutto. Non è una sfumatura, è la leva principale sui tempi.
+
+La finestra: dove sta un buon impasto
+
+Per il pane artigianale la temperatura finale ideale sta intorno ai 24-26°C. È il punto dove la fermentazione ha una velocità gestibile e il glutine si comporta bene. C'è un limite superiore da non superare: sopra i 28°C circa, oltre a correre troppo, l'impasto assorbe troppo ossigeno durante l'impastamento e questo "sbianca" la farina, impoverendo colore e sapore. Per questo i forni artigianali tengono l'impasto sotto i 28°C. Impasti "veloci" industriali usano temperature più alte (28-32°C) apposta per accorciare i tempi, sacrificando un po' di qualità.
+
+La leva vera: si controlla con l'acqua
+
+Qui il cuore pratico, ed è un'idea elegante. Alla temperatura finale dell'impasto contribuiscono più cose: la temperatura della farina, quella dell'aria (ambiente), l'eventuale prefermento, e il calore generato dall'impastare. Di queste, quasi tutte non le puoi cambiare facilmente: la farina e l'aria sono quelle che sono. Ma una la controlli benissimo: l'acqua. Scaldi o raffreddi l'acqua dell'impasto, e correggi la temperatura finale. È la manopola del fornaio.
+
+La formula DDT: come si calcola l'acqua
+
+Esiste una formula, semplice, che i fornai usano da un secolo. Per centrare una temperatura desiderata dell'impasto (DDT), calcoli la temperatura dell'acqua così: moltiplichi la DDT per il numero di fattori (3 senza prefermento, 4 con), poi sottrai le temperature che già conosci — farina, aria, eventuale prefermento — e un "fattore di attrito", cioè il calore che l'impastare aggiunge. Il risultato è la temperatura a cui portare l'acqua. In pratica: d'inverno userai acqua tiepida, d'estate acqua fredda o con ghiaccio, per arrivare sempre alla stessa temperatura finale. Stessa DDT tutto l'anno = stesso pane tutto l'anno.
+
+Il fattore di attrito: la parte onesta della formula
+
+Un avvertimento da professionista. Il "fattore di attrito" è il calore che l'impastamento genera — a mano poco (circa 3-4°C), con l'impastatrice di più, e cresce coi minuti e la velocità. È la parte meno precisa della formula: alcuni fornai lo chiamano scherzosamente "fudge factor" (fattore-aggiustamento) invece di friction factor, perché è più una taratura sull'esperienza che un numero esatto. La formula ti porta vicino; poi impari a correggere per la tua impastatrice e il tuo metodo, misurando la temperatura dell'impasto a fine lavorazione e aggiustando la volta dopo.
+
+Come lo verifichi
+
+Con un termometro, semplicemente. Misura la temperatura dell'impasto appena finito di impastare: è la tua FDT reale. Se è più alta della DDT che volevi, la prossima volta usa acqua più fredda (o riduci il tempo di impastamento); se più bassa, acqua più calda. Tieni un piccolo registro — il fornaio serio lo fa — e in poche prove trovi il tuo fattore di attrito e centri la temperatura ogni volta. È l'abitudine che trasforma "ogni volta viene diverso" in "ogni volta viene uguale".
+
+Il bersaglio, letto bene
+
+C'è un numero, la DDT (tipicamente 24-26°C per il pane), da centrare regolando l'acqua. Ma il bersaglio vero non è "una temperatura giusta in assoluto" — è la temperatura adatta a ciò che vuoi: più bassa (anche 18°C o meno) per lievitazioni lunghe e fredde, più alta per tempi corti, sapendo di non superare i 28°C per non rovinare la farina. E soprattutto è la riproducibilità: il vero potere della DDT è che, centrando la stessa temperatura ogni volta, il pane viene uguale a ogni infornata, in ogni stagione. Non subire la temperatura: sceglierla e centrarla. È il segreto meno appariscente e più potente del pane costante.""",
+            "target": "La temperatura finale governa la velocità di tutto (Q10: +2°C = +25% di fermentazione) · si centra regolando l'acqua, con la formula DDT · finestra 24-26°C, mai oltre 28°C · il potere vero è la riproducibilità",
+            "nome": "La temperatura dell'impasto (DDT)",
+            "dominio": "panificazione",
+        },
         "fen-farina-forza": {
             "scheda": """Provi a fare un panettone con la farina dei biscotti e ti si affloscia: non regge le ore di lievitazione, non tiene i grassi, collassa. Provi a fare una frolla con la farina del panettone e viene dura, nervosa, si ritira. Stessa quantità di farina, risultati opposti. La differenza è la forza — quanto quella farina regge il lavoro, il tempo, l'acqua. E c'è un modo per misurarla, prima ancora di impastare.
 
