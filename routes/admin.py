@@ -156,6 +156,15 @@ CABLA_FAMIGLIA = {
     "prod-pizza-rom": "prod-pizza",
 }
 
+SEGRETI_INGREDIENTI = {
+    "ing-pomodoro": "Per cuocere i pomodorini a padella, disponili uno a uno con la faccia tagliata a contatto col fondo e la buccia in alto, senza schiacciarli, e sala solo dopo. La faccia tagliata rosola (Maillard, il sapore bruno) invece di lessare; la buccia in alto fa da coperchio e intrappola il vapore, cosi dentro restano succosi mentre sotto dorano; il sale messo dopo tira fuori l'acqua (osmosi) quando la faccia ha gia preso colore, non prima. Se li giri o li schiacci, perdi la camera di vapore e finiscono a lessare.",
+    "ing-patata": "Per patate al forno croccanti fuori e morbide dentro, sbollentale qualche minuto in acqua con un goccio d'aceto prima di arrostirle. L'acido protegge la pectina che tiene insieme le cellule: gli spigoli restano integri e netti invece di sfaldarsi, e gli spigoli netti sono quelli che diventano croccanti. Intanto la breve bollitura porta in superficie l'amido e lo gelatinizza: in forno diventa la crosta vetrosa. Acido per la forma, amido per la crosta.",
+    "ing-limone": "Prima di spremerlo, rotolalo sul tagliere premendo col palmo, e usalo a temperatura ambiente non da frigo. Rompi le membrane interne che trattengono il succo, e a temperatura ambiente il succo e meno viscoso: ne esce molto di piu. Se ti serve la scorza, prendila prima di spremere: la parte gialla e piena di oli aromatici, la parte bianca sotto e amara: fermati al giallo.",
+    "ing-lime": "Il succo di lime e vivo e muore in fretta: appena spremuto e brillante e agrumato, ma dopo qualche ora ossida e vira su note amare e di sudore. Spremilo il piu vicino possibile al servizio, mai a inizio serata per tutta la sera. Se devi tenerlo, in frigo dura molto piu che a temperatura ambiente (la temperatura rallenta l'ossidazione), ma un lime spremuto fresco non ha rivali in un cocktail.",
+    "ing-basilico": "Non tagliarlo col coltello e non cuocerlo a lungo: strappalo con le mani e aggiungilo alla fine. Il coltello schiaccia le cellule e fa ossidare i bordi (anneriscono, sanno di fieno); le mani strappano piu pulito. E gli oli aromatici del basilico sono volatili, evaporano col calore: un minuto in padella e il profumo se n'e andato. Nel sugo va a fuoco spento, nell'ultimo istante.",
+    "ing-aglio": "Il sapore dell'aglio lo decidi tu con due leve: come lo tagli e a che temperatura lo cuoci. Piu lo rompi (schiacciato, tritato fine) piu e pungente, perche rompendo le cellule si libera l'allicina; a fette o in camicia e dolce e gentile. E attento al fuoco: l'aglio brucia a bassa temperatura e diventa amaro in un attimo, va sempre a fiamma dolce, mai in olio fumante. Bruciato, butta tutto e ricomincia: non si recupera."
+}
+
 @bp.route("/admin/fix-schede-testi")
 def _fix_schede_testi():
     """Applica le correzioni ortografiche alle schede fenomeni nel DB.
@@ -770,6 +779,30 @@ def admin_riempi_panificati():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
+
+@bp.route("/admin/popola-segreti")
+def admin_popola_segreti():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo, _dati
+        import json as _json
+        db = carica_grafo()
+        fatti = []
+        for nid, seg in SEGRETI_INGREDIENTI.items():
+            row = db.execute("SELECT data FROM nodes WHERE id=?", (nid,)).fetchone()
+            if not row:
+                fatti.append(f"{nid}: ASSENTE"); continue
+            d = _dati(row["data"])
+            d["segreto"] = seg
+            db.execute("UPDATE nodes SET data=? WHERE id=?", (_json.dumps(d, ensure_ascii=False), nid))
+            fatti.append(f"{nid}: segreto aggiunto ({len(seg)} char)")
+        db.commit() if hasattr(db, "commit") else None
+        return jsonify({"fatti": fatti})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():

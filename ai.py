@@ -180,7 +180,7 @@ def cerca_contesto(db, termine, domanda=""):
                       "t_servizio","t_conservazione",
                       "t_beta_amilasi","t_alfa_amilasi","t_caramellizzazione",
                       "grassi_pct","acidita_libera_pct_max",
-                      "cristallizzazione_t","proteine_pct","note","fonte"):
+                      "cristallizzazione_t","proteine_pct","note","fonte","segreto"):
                 if k in d:
                     fisici[k] = d[k]
             if fisici:
@@ -303,6 +303,8 @@ def costruisci_prompt(domanda, contesto, lang="it"):
                 r += f" · T sicurezza: {p['t_sicurezza']}"
             if "acidita_titolabile_pct" in p:
                 r += f" · acidità titolabile: {p['acidita_titolabile_pct']}%"
+            if p.get("segreto"):
+                r += f"\n    SEGRETO DEL MESTIERE: {p['segreto']}"
             if "acidita_titolabile_g_l" in p:
                 r += f" · acidità titolabile: {p['acidita_titolabile_g_l']} g/L"
             if "brix" in p:
