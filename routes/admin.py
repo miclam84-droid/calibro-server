@@ -162,6 +162,43 @@ Idratazione ~75%, forma a pala, pre-fermento consigliato, cottura elettrica 300-
         "nome": "Pizza in pala",
         "aliases": ["pizza in pala","pala","pizza alla pala","pala romana"],
     },
+    "prod-ciabatta": {
+        "scheda": """La ciabatta non è un pane antico: l'ha inventata un fornaio a Adria nel 1982 per dare all'Italia una risposta alla baguette francese. Ma è diventata un classico perche fa una cosa benissimo: mollica enorme e aperta, crosta sottile e croccante, tutto grazie a due leve — tantissima acqua e la biga.
+
+La ciabatta vive nell'alta idratazione (~80%): mollica piena di buchi grandi, quella che assorbe l'olio quando ci fai la scarpetta. Forma libera, rustica, "a ciabatta" (da cui il nome).
+
+L'acqua alta e la biga
+Come la teglia romana, l'80% di idratazione (vedi il fenomeno) da la mollica aperta e leggera. E come la maggior parte dei pani strutturati, usa un pre-fermento: la biga (vedi poolish e biga), il pre-fermento italiano sodo, che da forza, aroma e struttura per reggere l'acqua. Biga italiana vs poolish francese: stessa idea, la biga e piu asciutta.
+
+L'olio (a differenza della baguette)
+Molte ciabatte hanno olio d'oliva nell'impasto: modifica il glutine rendendolo piu estensibile, aiuta l'alta idratazione a stendersi, e da una mollica piu tenera. E la differenza mediterranea dalla baguette francese, che e magra (senza grassi).
+
+Il bersaglio
+Idratazione ~80%, biga, olio opzionale, mollica aperta e crosta sottile. Il vero bersaglio: capire che la ciabatta e la risposta italiana alla baguette, e la vince sull'apertura della mollica proprio grazie all'acqua alta e all'olio che la baguette non ha.""",
+        "target": "Idratazione ~80%, biga, olio opzionale, mollica aperta e crosta sottile - la risposta italiana alla baguette (1982), vince sull apertura grazie ad acqua alta e olio",
+        "nome": "Ciabatta",
+        "aliases": ["ciabatta","pane ciabatta"],
+    },
+    "prod-baguette": {
+        "scheda": """La baguette vera — la "tradition" — e un pane magro e severo: solo farina, acqua, lievito, sale, niente grassi. Il suo virtuosismo non e negli ingredienti ma nella tecnica: il poolish che le da il sapore, i tagli che le danno la forma, la crosta sottile e cantante che scrocchia appena la spezzi.
+
+La baguette vive nell'idratazione media-alta (65-70%): mollica aperta ma non estrema come la ciabatta, crosta sottilissima e croccante, forma lunga e precisa (a differenza della ciabatta rustica e libera).
+
+Il poolish: il sapore
+Il segreto della baguette non e nell'impasto del giorno, ma nella notte prima: il poolish (vedi poolish e biga), il pre-fermento liquido francese, che matura ore e da alla baguette quella complessita leggermente acidula che una baguette diretta non ha. Poolish francese vs biga italiana: il poolish e liquido (50/50 acqua e farina).
+
+Magra, come la napoletana
+La baguette e un impasto magro: niente olio, niente grassi (a differenza della ciabatta). Solo glutine e acqua sviluppano una maglia forte, per una crosta sottile e croccante e una mollica con alveoli irregolari. Il grasso la ammorbidirebbe, e la baguette vuole croccantezza.
+
+I tagli (grigne)
+Prima del forno, tagli obliqui sulla superficie con una lametta: le "grigne". Non sono decorazione — governano dove il pane si apre in cottura (l'oven spring esce dai tagli in modo controllato, invece di spaccarsi a caso). Tagli fatti bene = quella cresta caratteristica che si apre e dora.
+
+Il bersaglio
+Idratazione 65-70%, poolish, impasto magro, tagli obliqui, crosta sottile. Il vero bersaglio: la baguette e tecnica pura su ingredienti poverissimi — il poolish per il sapore, i tagli per la forma, la magrezza per la croccantezza. Niente si nasconde: o la tecnica e giusta, o si vede.""",
+        "target": "Idratazione 65-70%, poolish, impasto magro, tagli obliqui (grigne), crosta sottile - tecnica pura su ingredienti poverissimi: poolish per il sapore, tagli per la forma",
+        "nome": "Baguette tradition",
+        "aliases": ["baguette","baguette tradition","pane francese","filoncino francese"],
+    },
     "prod-focaccia": {
         "scheda": """La focaccia genovese sembra il pane più semplice del mondo: farina, acqua, lievito, sale, olio. Eppure quasi nessuno, fuori dalla Liguria, la fa come si deve. Il segreto non è un ingrediente nascosto: è capire che ogni scelta — quanta acqua, quanto olio, le fossette, la salamoia — non è tradizione a caso, ma fisica del pane applicata. Ecco la focaccia spiegata non come ricetta da copiare, ma come i fenomeni che la governano.
 
@@ -217,6 +254,8 @@ CABLA_PANIFICATI = {
     "prod-pizza-teglia": ["fen-idratazione","fen-farina-forza","fen-autolisi","fen-lievitazione","fen-crosta"],
     "prod-pizza-rom": ["fen-idratazione","fen-grassi-impasto","fen-maglia-glutinica","fen-crosta"],
     "prod-pizza-pala": ["fen-idratazione","fen-farina-forza","fen-lievitazione","fen-crosta"],
+    "prod-ciabatta": ["fen-idratazione","fen-poolish-biga","fen-grassi-impasto","fen-maglia-glutinica"],
+    "prod-baguette": ["fen-idratazione","fen-poolish-biga","fen-crosta","fen-maglia-glutinica"],
 }
 # gerarchia famiglia: figlio -governato_da-> madre (uso relation esistente, no nuove)
 CABLA_FAMIGLIA = {
