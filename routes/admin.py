@@ -474,6 +474,37 @@ def admin_merge_idratazione():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
 
+@bp.route("/admin/test-pipeline", methods=["POST"])
+def admin_test_pipeline():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo
+        from ai import cerca_contesto, estrai_entita
+        try:
+            from ai import cerca_fuzzy
+        except Exception:
+            cerca_fuzzy = None
+        db = carica_grafo()
+        domanda = (request.get_json(silent=True) or {}).get("domanda", "")
+        termini = estrai_entita(domanda) + sorted(
+            [p.strip(".,?!").lower() for p in domanda.split() if len(p) > 4],
+            key=len, reverse=True)
+        contesto = None
+        for t in termini:
+            contesto = cerca_contesto(db, t, domanda)
+            if contesto and contesto.get("fenomeni"): break
+        if (not contesto or not contesto.get("fenomeni")) and cerca_fuzzy:
+            contesto = cerca_fuzzy(db, domanda)
+        fen = []
+        if contesto and contesto.get("fenomeni"):
+            fen = [f.get("id") for f in contesto["fenomeni"]]
+        return jsonify({"domanda": domanda, "fenomeni": fen})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
