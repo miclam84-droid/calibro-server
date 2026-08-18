@@ -299,6 +299,21 @@ def admin_cabla_panificazione():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:600]}), 500
 
+@bp.route("/admin/test-retrieval")
+def admin_test_retrieval():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from ai import cerca_contesto
+        domanda = request.args.get("q", "impasto appiccicoso")
+        ctx = cerca_contesto(domanda)
+        fen = [{"id": f.get("id"), "name": f.get("name")} for f in ctx.get("fenomeni", [])]
+        return jsonify({"domanda": domanda, "n_fenomeni": len(fen), "fenomeni": fen})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:600]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
