@@ -48,11 +48,14 @@ def genera_candidati(db, domanda, termini_extra=None):
     frasi3 = _ngrams(parole, 3)
     frasi2 = _ngrams(parole, 2)
     tutte_le_forme = [(f, 3) for f in frasi3] + [(f, 2) for f in frasi2] + [(p, 1) for p in parole]
+    forme_domanda = set(f for f, _ in tutte_le_forme)  # parole REALI della domanda
     if termini_extra:
         for t in termini_extra:
             tn = normalizza(t)
             nw = len(tn.split())
-            tutte_le_forme.append((tn, min(nw, 3)))
+            # aggiungo solo se NON gia' presente come parola reale (evito che Mistral "rinforzi" concetti suoi)
+            if tn not in forme_domanda:
+                tutte_le_forme.append((tn, min(nw, 3)))
 
     candidati = {}
     def aggiungi(node, punti, motivo):
@@ -80,10 +83,11 @@ def genera_candidati(db, domanda, termini_extra=None):
     for forma, nwords in tutte_le_forme:
         if forma in alias_index:
             node, na = alias_index[forma]
+            da_domanda = forma in forme_domanda
             if na >= 2:
-                aggiungi(node, 200, f"alias-frase '{forma}'")
+                aggiungi(node, 200 if da_domanda else 90, f"alias-frase '{forma}'")
             else:
-                aggiungi(node, 150, f"alias '{forma}'")
+                aggiungi(node, 150 if da_domanda else 70, f"alias '{forma}'")
 
     # 2) NOME esatto / parziale (su tutti i nodi, non solo fenomeni)
     for forma, nwords in tutte_le_forme:
@@ -91,7 +95,7 @@ def genera_candidati(db, domanda, termini_extra=None):
         for n in db.execute("SELECT id, name, type, domain, data FROM nodes WHERE lower(name) LIKE ? LIMIT 6", (like,)).fetchall():
             nm = normalizza(n["name"])
             if nm == forma:
-                aggiungi(n, 120, f"nome-esatto '{forma}'")
+                aggiungi(n, 120 if forma in forme_domanda else 60, f"nome-esatto '{forma}'")
             elif nwords >= 2:
                 aggiungi(n, 60, f"nome-frase '{forma}'")
             else:

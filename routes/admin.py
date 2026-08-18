@@ -375,7 +375,7 @@ def admin_popola_alias():
             "fen-maglia-glutinica": ["maglia glutinica","glutine","si strappa","non si estende","strappa","incordatura","struttura impasto"],
             "fen-sale-impasto": ["sale","salinita","dosaggio sale"],
             "fen-crosta": ["crosta","doratura","colore crosta","pallida"],
-            "fen-idratazione": ["idratazione","acqua","percentuale acqua","quanta acqua","impasto molle","impasto bagnato","impasto appiccicoso","troppa acqua"],
+            "fen-idratazione": ["idratazione","acqua","percentuale acqua","quanta acqua","impasto molle","impasto bagnato","impasto appiccicoso","troppa acqua","appiccicoso","molle","troppo molle"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
