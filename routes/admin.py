@@ -772,6 +772,42 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-uova-impasto": {
+            "scheda": """La differenza tra una baguette e una brioche è tutta lì: la brioche ha le uova. Danno quella mollica gialla, soffice, ricca, che si affetta pulita e resta morbida per giorni. Ma l'uovo non è un ingrediente solo — è due, incollati insieme nel guscio. Il tuorlo e l'albume fanno cose opposte, e chi sa separarli comanda la tenerezza e la struttura del pane.
+
+L'uovo è l'arricchente più completo, perché contiene in sé due materie con ruoli diversi: il tuorlo, grasso ed emulsionante, che ammorbidisce; l'albume, proteico, che struttura. Capire questa doppia natura ti fa scegliere non solo "quante uova" ma "quale parte", per l'effetto che vuoi.
+
+Il tuorlo: grasso, emulsionante, morbidezza
+
+Il tuorlo porta grasso — e quel grasso fa esattamente quello che hai visto nella scheda dei grassi: riveste i filamenti di glutine e l'amido, li accorcia (lo "shortening"), e rende la mollica più tenera e meno gommosa. Ma il tuorlo ha un'arma in più: la lecitina, un emulsionante potente — lo stesso che tiene insieme olio e acqua nella maionese. Nel pane la lecitina è ciò che permette a tutto il burro di una brioche di fondersi nell'impasto senza separarsi, e all'impasto di crescere alto malgrado tutto quel grasso. Senza la lecitina del tuorlo, la brioche sarebbe impossibile. Il tuorlo dà anche il colore — i suoi pigmenti danno la mollica gialla e aiutano la doratura — e porta umidità che tiene il pane morbido. Aggiungere tuorli = più tenero, più giallo, più ricco.
+
+L'albume: proteine, struttura, tenuta
+
+L'albume è quasi l'opposto: quasi solo acqua e proteine, niente grasso. Le sue proteine, scaldandosi, si rassodano — come quando frigge un uovo — e formano una seconda impalcatura accanto al glutine. Questa struttura in più fa sì che il pane tenga la forma e si affetti pulito, senza sbriciolarsi: per questo i pani con uova reggono bene per i sandwich. L'albume rassoda e dà tenuta, ma non ammorbidisce come il tuorlo. Aggiungere albumi = più struttura, più "morso", impasto che tiene meglio.
+
+La scelta che conta: tuorlo, albume, o uovo intero
+
+Qui sta la leva vera, e la conosci ora. Solo tuorli → massima ricchezza e morbidezza, mollica quasi da torta (la brioche più decadente). Solo albumi → struttura senza grasso, pane più masticabile che tiene la forma. Uovo intero → la via di mezzo, un po' di tutto (struttura, grasso, umidità, colore). E una regola pratica da tenere a mente: se il pane esce troppo denso o duro, un tuorlo in più lo ammorbidisce; se l'impasto arricchito è troppo molle e non tiene in lievitazione, un albume in più lo rassoda. Hai due manopole, non una.
+
+Perché le uova aiutano il pane arricchito a reggere
+
+C'è un motivo profondo per cui l'uovo sta negli impasti ricchi. Grasso e zucchero, lo sai, ammorbidiscono il glutine e strozzano il lievito: da soli renderebbero l'impasto troppo cedevole per stare in piedi. Le proteine dell'albume danno la struttura che compensa quel rammollimento — sono l'impalcatura che regge nonostante il burro e lo zucchero. Ecco perché brioche e panettone, pieni di grasso e zucchero, hanno anche le uova: senza, collasserebbero.
+
+Un dettaglio nascosto: il tuorlo accelera un po' la fermentazione
+
+Una curiosità utile: il tuorlo è ricco di amilasi — lo stesso enzima della farina che spezza l'amido in zuccheri. Quindi le uova danno al lievito un po' di cibo in più e possono accelerare leggermente la fermentazione e la doratura. È un effetto minore rispetto al freno di grasso e zucchero, ma va nella direzione opposta e aiuta a bilanciare.
+
+Come lo verifichi
+
+Guarda mollica, colore, tenuta. Mollica gialla, ricca, morbida → tuorli al lavoro. Pane che si affetta pulito e tiene → albume che struttura. Se è troppo denso, più tuorlo; se è troppo molle in lievitazione, più albume. E ricorda che le uova portano anche acqua (l'uovo è per due terzi acqua): se aggiungi uova, spesso devi togliere un po' di liquido dall'impasto.
+
+Il bersaglio, letto bene
+
+Non un numero di uova, ma l'equilibrio tenerezza/struttura giusto per il tuo pane, scelto dosando le due parti. Il bersaglio è capire cosa ti serve — morbidezza (tuorlo) o tenuta (albume) — e regolare di conseguenza, sapendo che l'uovo intero è il compromesso. E la cosa da ricordare, che nessuno ti dice: l'uovo non è un ingrediente, sono due, e la maestria è saperli usare separati.""",
+            "target": "L'uovo è due ingredienti in uno: il tuorlo (grasso+lecitina) ammorbidisce ed emulsiona, l'albume (proteine) struttura e tiene · scegli la parte per l'effetto: denso→più tuorlo, molle→più albume",
+            "nome": "Le uova nell'impasto",
+            "dominio": "panificazione",
+        },
         "fen-zuccheri-impasto": {
             "scheda": """Un cucchiaino di zucchero nell'impasto del pane in cassetta lo fa lievitare meglio e dorare di più. Ma prova a fare una brioche, piena di zucchero, e scopri il paradosso: più zucchero metti, più lenta diventa la lievitazione, fino a fermarsi. Lo stesso ingrediente prima aiuta il lievito e poi lo strozza. Capire quando cambia segno è la chiave degli impasti dolci.
 
