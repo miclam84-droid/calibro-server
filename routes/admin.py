@@ -505,6 +505,26 @@ def admin_test_pipeline():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/test-ranked", methods=["POST"])
+def admin_test_ranked():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo
+        from retrieval import retrieval_ranked
+        from ai import estrai_entita
+        db = carica_grafo()
+        payload = request.get_json(silent=True) or {}
+        domanda = payload.get("domanda", "")
+        usa_mistral = payload.get("mistral", True)
+        termini = estrai_entita(domanda) if usa_mistral else None
+        res = retrieval_ranked(db, domanda, termini_extra=termini)
+        return jsonify(res)
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
