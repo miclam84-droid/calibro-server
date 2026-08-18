@@ -191,6 +191,43 @@ def admin_init():
             return jsonify({"errore":str(e)}), 500
     return jsonify({"ok":True,"messaggio":"Tabelle create: utenti, sessioni, esperimenti"})
 
+@bp.route("/admin/fix-target")
+def admin_fix_target():
+    """Ripulisce i campi target che aprivano con formula difensiva (Non/Nessun numero...).
+    Riscrive dritti: dicono cosa È, non cosa non è. Non tocca le schede."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json
+    TARGET = {
+        "fen-acidita": "Una finestra dentro la tua ricetta, trovata assaggiando · pH per la sicurezza, acidità titolabile per l'asprezza",
+        "fen-fat-washing": "Distillato limpido, sapido e vellutato, senza sensazione untuosa · l'alcol estrae, il freddo separa, il filtro pulisce",
+        "fen-fermentazione": "Uno stato da raggiungere, non un orologio: insegui il picco di attività · la sua velocità raddoppia ogni 10°C",
+        "fen-infusione": "La finestra dove hai preso il carattere prima che viri all'amaro · intensifica con la dose, non allungando il tempo",
+        "fen-ossidazione": "Rallenta aria, luce e calore: l'ossidazione si combatte prima, non si corregge dopo",
+        "fen-tannini": "L'astringenza giusta per l'uso: struttura in un rosso, un accenno in un cocktail · è tattile, si costruisce sorso dopo sorso · non coprirla con lo zucchero",
+        "fen-viscosita": "Il comportamento nelle condizioni reali d'uso: alla temperatura e sotto la forza con cui lo servi",
+    }
+    try:
+        conn = _get_conn(); cur = conn.cursor(); out = []
+        for nid, tv in TARGET.items():
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (nid,))
+            row = cur.fetchone()
+            if not row: out.append(f"{nid}: NON TROVATO"); continue
+            raw = row[0] if isinstance(row,(list,tuple)) else row["data"]
+            nd = raw if isinstance(raw,dict) else json.loads(raw)
+            nd["target"] = tv; nd["numero_bersaglio"] = tv
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nd,ensure_ascii=False), nid))
+            out.append(f"{nid}: OK")
+        conn.commit(); cur.close(); _release_conn(conn)
+        try:
+            from routes.lezione import _lezione_cache as _lc; _lc.clear()
+            from routes.lezione import _cache_home as _ch; _ch.clear()
+        except Exception: pass
+        return jsonify({"ok": True, "aggiornati": out})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
 @bp.route("/admin/update-applicazioni")
 def admin_update_applicazioni():
     """Scrive le schede-APPLICAZIONE (figlie di un fenomeno-madre) col metodo.

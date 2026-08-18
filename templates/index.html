@@ -78,10 +78,10 @@ if('serviceWorker' in navigator){
   <!-- MANIFESTO -->
   <div class="mtr-manifesto">
     <span class="mtr-manifesto-claim">Misura ciò che fai.<br>Migliora ciò che ottieni.</span>
-    <span class="mtr-manifesto-sub">Matter collega ogni tecnica del tuo mestiere al numero che devi controllare.</span>
+    <span class="mtr-manifesto-sub">Matter collega ogni tecnica del tuo mestiere al bersaglio che devi controllare.</span>
   </div>
 
-  <!-- GAUGE — numero bersaglio del giorno come EROE (popolato da /home) -->
+  <!-- GAUGE — bersaglio del giorno come EROE (popolato da /home) -->
   <div class="scheda-hero mtr-gauge" id="scopri-hero">
     <div class="mtr-gauge-top">
       <span class="mtr-gauge-label" id="scopri-ey">caricamento…</span>
@@ -89,7 +89,7 @@ if('serviceWorker' in navigator){
     <h2 class="mtr-gauge-titolo" id="scopri-titolo">—</h2>
     <!-- NUMERO-BERSAGLIO MONUMENTALE (la firma di Matter) -->
     <div class="target-hero" id="scopri-num" style="display:none">
-      <div class="target-hero-lab">il numero bersaglio</div>
+      <div class="target-hero-lab">il bersaglio</div>
       <div class="target-hero-val" id="scopri-num-val"></div>
     </div>
     <div class="mtr-gauge-body">
@@ -218,7 +218,7 @@ if('serviceWorker' in navigator){
       </div>
       <!-- TARGET subito dopo la domanda (result first) -->
       <div class="sl-dato" id="les-dato-box">
-        <div class="sl-dato-lab">il numero bersaglio</div>
+        <div class="sl-dato-lab">il bersaglio</div>
         <div class="sl-dato-val" id="les-target"></div>
       </div>
       <!-- MIRINO OPERATIVO: misura il tuo valore, confronta, correggi (la firma di Matter) -->
@@ -228,7 +228,7 @@ if('serviceWorker' in navigator){
       <div class="sl-top">
         <div class="sl-p" id="les-scheda"></div>
       </div>
-      <!-- STRUMENTO per misurare questo numero (Parte B) -->
+      <!-- STRUMENTO per il bersaglio (Parte B) -->
       <div class="les-strumento" id="les-strumento-box" style="display:none">
         <span class="les-strum-lab">Per misurarlo ti serve</span>
         <div id="les-strumento-content"></div>
@@ -934,10 +934,10 @@ if('serviceWorker' in navigator){
         <button class="onb-mestiere" onclick="onbScegliMestiere('birra','Birra')">🍺 Birra</button>
       </div>
     </div>
-    <!-- STEP 2: il primo numero (riempito da JS) -->
+    <!-- STEP 2: il primo bersaglio (riempito da JS) -->
     <div class="onb-fase" id="onb-fase-2" style="display:none">
       <div class="onb-eyebrow" id="onb-f2-ey">il tuo mestiere</div>
-      <div class="onb-title-ovl">Ecco il primo numero<br>che puoi misurare oggi.</div>
+      <div class="onb-title-ovl">Ecco il primo bersaglio<br>del tuo mestiere.</div>
       <div class="onb-primo-num" id="onb-primo-num">
         <div class="onb-pn-fen" id="onb-pn-fen">—</div>
         <div class="onb-pn-target" id="onb-pn-target">—</div>

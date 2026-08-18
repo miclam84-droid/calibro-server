@@ -956,7 +956,7 @@ function renderRisp(domanda,j,fromNode){
   // Estrai numero bersaglio dalla risposta se disponibile
   const numBersaglio = j.numero_bersaglio || j.target || '';
   const numBox = numBersaglio ? `<div class="s-num-box">
-    <div class="s-num-label">numero bersaglio</div>
+    <div class="s-num-label">bersaglio</div>
     <div class="s-num-val">${esc(numBersaglio)}</div>
   </div>` : '';
   
@@ -1354,7 +1354,7 @@ const _strings = {
     db_numbers:'52 fenomeni · 1.530 ingredienti · 33.696 connessioni · 6 calcolatori',
     scegli:'Scegli la tua disciplina', caricamento:'caricamento…',
     fenomeno_giorno:'fenomeno del giorno',
-    num_bersaglio:'numero bersaglio',
+    num_bersaglio:'bersaglio',
     indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai all\'Atlante →',
     principio_del_giorno:'Principio del giorno',
     vedi_mappa:'Vedi il principio nell\'Atlante →',
@@ -1423,9 +1423,9 @@ const _strings = {
     onb_s1_title:'Scegli la tua disciplina',
     onb_s1_sub:'Bar, Panificazione, Cucina, Caffetteria e altro — ogni disciplina ha le sue leggi fisiche.',
     onb_s2_title:'Studia il fenomeno',
-    onb_s2_sub:'Ogni fenomeno ha un numero che puoi misurare. Quello che devi sapere quando qualcosa non torna.',
+    onb_s2_sub:'Ogni fenomeno ha un bersaglio: a volte un numero da misurare, a volte uno stato da riconoscere. Quello che devi sapere quando qualcosa non torna.',
     onb_s3_title:'Chiedi a Matter Lab',
-    onb_s3_sub:'Descrivi un problema del tuo lavoro. Ricevi numeri da misurare e azioni concrete — non consigli generici.',
+    onb_s3_sub:'Descrivi un problema del tuo lavoro. Ricevi cosa misurare o riconoscere e azioni concrete — non consigli generici.',
     onb_ovl_cta:'Inizia',
     onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
     onb_complete_title:'Percorso completato.',
