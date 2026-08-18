@@ -772,6 +772,42 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-zuccheri-impasto": {
+            "scheda": """Un cucchiaino di zucchero nell'impasto del pane in cassetta lo fa lievitare meglio e dorare di più. Ma prova a fare una brioche, piena di zucchero, e scopri il paradosso: più zucchero metti, più lenta diventa la lievitazione, fino a fermarsi. Lo stesso ingrediente prima aiuta il lievito e poi lo strozza. Capire quando cambia segno è la chiave degli impasti dolci.
+
+Lo zucchero nell'impasto fa più cose insieme — come i grassi, ma con una particolarità: il suo effetto sul lievito si rovescia a seconda di quanto ne metti. È il fenomeno che governa tutti gli impasti dolci, dal pane in cassetta al panettone.
+
+La doppia faccia sul lievito: prima cibo, poi veleno
+
+Questo è il cuore, ed è controintuitivo. Lo zucchero è il cibo diretto del lievito: una piccola quantità (indicativamente fino al 5% sulla farina) gli dà nutrimento immediato e accelera la fermentazione — il pane lievita prima e meglio. Ma oltre una soglia (intorno al 10%) l'effetto si rovescia: lo zucchero, sciogliendosi, crea pressione osmotica e comincia a tirare l'acqua fuori dalle cellule del lievito. Il lievito si disidrata, si raggrinzisce, rallenta — e se lo zucchero è tantissimo, muore. È lo stesso meccanismo osmotico del sale, e lo stesso principio dei grassi che soffocano il lievito: troppo di una buona cosa la ribalta. Ecco perché una brioche o un panettone lievitano lentissimi, e il fornaio corre ai ripari: più lievito, o un lievito speciale "osmotollerante", allevato apposta per resistere agli ambienti zuccherini.
+
+L'effetto sul glutine: ammorbidisce (come i grassi, ma per un'altra via)
+
+Anche lo zucchero ammorbidisce l'impasto e lo rende più estensibile, come i grassi — ma il meccanismo è diverso. Lo zucchero è igroscopico, avido d'acqua, e compete con il glutine per l'acqua disponibile: lega le molecole d'acqua e le sottrae alle proteine, che così si idratano e si legano meno. Il risultato è un glutine più debole e una mollica più tenera. Poco zucchero dà una briciola fine e compatta (pane in cassetta, panini); tanto zucchero dà una struttura soffice e ariosa (brioche, dolci). Ma oltre il 10% la competizione per l'acqua diventa eccessiva: il glutine non si sviluppa più bene, la struttura cede. Per questo gli impasti molto dolci richiedono più lavoro, a volte glutine aggiunto, per reggere.
+
+Il colore: lo zucchero è carburante per la crosta
+
+Qui il legame diretto con la crosta. Lo zucchero promuove la doratura in due modi: alimenta la reazione di Maillard (con gli amminoacidi) e, in quantità, caramellizza. Ecco perché gli impasti dolci dorano splendidamente e i magri restano pallidi — è il rovescio del caso della crosta pallida. Se un pane non colora, poco zucchero (residuo o aggiunto) è una delle cause; un impasto ricco di zucchero, al contrario, rischia di scurire troppo in fretta.
+
+L'umidità: tiene il pane morbido più a lungo
+
+Come i grassi, lo zucchero è idrofilo e trattiene acqua: lega l'umidità nella mollica e ne rallenta la fuga. Un pane zuccherino resta morbido e fresco più giorni — è uno dei motivi per cui il pan brioche e il pane in cassetta durano più di una baguette. L'acidità e i grassi facevano lo stesso: lo zucchero è un altro alleato contro il raffermire.
+
+Un dettaglio che sorprende: il saccarosio "sparisce"
+
+Una curiosità che spiega molte cose: quando c'è il lievito, il saccarosio (lo zucchero da tavola) non resta dolce — il lievito ha un enzima, l'invertasi, che lo spezza subito in glucosio e fruttosio e comincia a mangiarlo. Quindi in un impasto lievitato lo zucchero che aggiungi viene in gran parte consumato: la dolcezza finale è meno di quella che immagini, perché il lievito se ne prende una fetta. Se vuoi dolcezza che resta, ne serve abbastanza da saziare il lievito e avanzare.
+
+Come lo verifichi
+
+Guarda lievitazione, mollica, colore. Impasto dolce che lievita lentissimo → pressione osmotica, ti serve più lievito o osmotollerante. Mollica che collassa, slegata → troppo zucchero per il glutine. Crosta che scurisce troppo in fretta → tanto zucchero, abbassa la temperatura o accorcia. Crosta pallida su un pane magro → aggiungi un filo di zucchero (o latte) per la doratura.
+
+Il bersaglio, letto bene
+
+C'è una soglia da conoscere più che un numero unico: sotto il ~5% lo zucchero aiuta il lievito e la doratura senza problemi; oltre il ~10% comincia a frenare lievito e glutine per via osmotica e competizione per l'acqua, e devi compensare (più lievito, osmotollerante, più lavoro). Il bersaglio è la dose giusta per l'effetto che vuoi — poco per un pane che lievita svelto e dora bene, tanto per una brioche soffice sapendo che paghi in tempo e tecnica. E la cosa da ricordare: lo zucchero è amico del lievito solo fino a un certo punto, poi diventa il suo nemico osmotico.""",
+            "target": "La doppia faccia sul lievito: sotto ~5% lo nutre e accelera, sopra ~10% lo strozza per osmosi · ammorbidisce il glutine (competizione acqua), colora la crosta, trattiene umidità · dolci → lievito osmotollerante",
+            "nome": "Gli zuccheri nell'impasto",
+            "dominio": "panificazione",
+        },
         "fen-grassi-impasto": {
             "scheda": """Fai due impasti uguali, in uno metti un filo d'olio. Quello con l'olio si stende docile fino ai bordi della teglia senza ritirarsi, cuoce più morbido, e il giorno dopo è ancora soffice. L'altro combatte quando lo tiri, viene più gommoso, indurisce prima. Un cucchiaio d'olio ha cambiato tutto — e dietro c'è un solo fenomeno, semplice, da cui discende ogni differenza.
 
