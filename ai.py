@@ -112,10 +112,24 @@ def _domanda_chiede_perche(domanda):
 
 def cerca_contesto(db, termine, domanda=""):
     t = f"%{termine.lower()}%"
-    hit = db.execute(
-        "SELECT * FROM nodes WHERE lower(name) LIKE ? ORDER BY "
-        "CASE type WHEN 'Fenomeno' THEN 0 WHEN 'Prodotto' THEN 1 "
-        "WHEN 'Errore' THEN 2 ELSE 3 END LIMIT 8", (t,)).fetchall()
+    # Ricerca a due livelli con ranking (due query separate per compatibilita SQLite-locale / Postgres-prod):
+    #  livello 0 = match nel NOME (piu forte)
+    #  livello 1 = match nel TESTO della scheda (campo data) — cosi "olio" trova fen-grassi-impasto
+    ord_tipo = ("ORDER BY CASE type WHEN 'Fenomeno' THEN 0 WHEN 'Prodotto' THEN 1 "
+                "WHEN 'Errore' THEN 2 ELSE 3 END LIMIT 8")
+    per_nome = db.execute("SELECT * FROM nodes WHERE lower(name) LIKE ? " + ord_tipo, (t,)).fetchall()
+    visti_id = set(n["id"] for n in per_nome)
+    hit = list(per_nome)
+    if len(hit) < 8:
+        try:
+            per_testo = db.execute(
+                "SELECT * FROM nodes WHERE lower(CAST(data AS TEXT)) LIKE ? " + ord_tipo, (t,)).fetchall()
+            for n in per_testo:
+                if n["id"] not in visti_id:
+                    hit.append(n); visti_id.add(n["id"])
+                    if len(hit) >= 8: break
+        except Exception:
+            pass  # se il CAST non e' supportato, resta la ricerca per nome
     if not hit:
         return None
 
