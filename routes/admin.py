@@ -251,6 +251,54 @@ def admin_sottografo():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
 
+@bp.route("/admin/cabla-panificazione")
+def admin_cabla_panificazione():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        CABLAGGIO = {
+            "fen-grassi-impasto":      {"fallisce_come": ["err-impasto-appiccicoso"]},
+            "fen-zuccheri-impasto":    {"fallisce_come": ["err-crosta-pallida-molle"]},
+            "fen-uova-impasto":        {"fallisce_come": []},
+            "fen-latte-impasto":       {"fallisce_come": ["err-crosta-pallida-molle"]},
+            "fen-idratazione":         {"fallisce_come": ["err-impasto-appiccicoso", "err-impasto-strappa", "err-alveolatura-chiusa"],
+                                        "realizzato_da": ["tec-autolisi-riposo", "tec-pieghe-forza"]},
+            "fen-farina-forza":        {"fallisce_come": ["err-impasto-strappa", "err-alveolatura-chiusa"],
+                                        "realizzato_da": ["tec-pieghe-forza"]},
+            "fen-temperatura-impasto": {"fallisce_come": ["err-pane-non-cresce"],
+                                        "realizzato_da": ["tec-controllo-lievitazione"]},
+        }
+        PONTI = [
+            ("fen-uova-impasto", "governato_da", "fen-grassi-impasto"),
+            ("fen-latte-impasto", "governato_da", "fen-zuccheri-impasto"),
+        ]
+        esistenti = set()
+        for e in db.execute("SELECT from_id, relation, to_id FROM edges").fetchall():
+            esistenti.add((e["from_id"], e["relation"], e["to_id"]))
+        tutti_id = set(r["id"] for r in db.execute("SELECT id FROM nodes").fetchall())
+        creati, saltati, mancanti = [], [], []
+        def crea(frm, rel, to):
+            if to not in tutti_id or frm not in tutti_id:
+                mancanti.append(f"{frm} -{rel}-> {to} (nodo assente)"); return
+            if (frm, rel, to) in esistenti:
+                saltati.append(f"{frm} -{rel}-> {to}"); return
+            db.execute("INSERT INTO edges (from_id, relation, to_id, data) VALUES (?,?,?,?)",
+                       (frm, rel, to, "{}"))
+            creati.append(f"{frm} -{rel}-> {to}")
+        for fen, rels in CABLAGGIO.items():
+            for rel, tos in rels.items():
+                for to in tos: crea(fen, rel, to)
+        for frm, rel, to in PONTI: crea(frm, rel, to)
+        db.commit() if hasattr(db, "commit") else None
+        return jsonify({"creati": creati, "n_creati": len(creati),
+                        "saltati_gia_esistenti": saltati, "mancanti": mancanti})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:600]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
