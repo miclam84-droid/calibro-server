@@ -383,6 +383,38 @@ def admin_popola_alias():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
 
+@bp.route("/admin/confronta-doppioni")
+def admin_confronta_doppioni():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo, _dati
+        db = carica_grafo()
+        ids = request.args.get("ids", "fen-idratazione,fen-idratazione-impasto").split(",")
+        out = []
+        for nid in ids:
+            row = db.execute("SELECT id, name, type, domain, data FROM nodes WHERE id=?", (nid.strip(),)).fetchone()
+            if not row:
+                out.append({"id": nid, "ESISTE": False}); continue
+            d = _dati(row["data"])
+            scheda = d.get("scheda", "")
+            if isinstance(scheda, dict): scheda = scheda.get("it", "")
+            n_out = len(db.execute("SELECT 1 FROM edges WHERE from_id=?", (nid.strip(),)).fetchall())
+            n_in = len(db.execute("SELECT 1 FROM edges WHERE to_id=?", (nid.strip(),)).fetchall())
+            out.append({
+                "id": row["id"], "ESISTE": True, "name": row["name"], "domain": row["domain"],
+                "scheda_chars": len(scheda or ""),
+                "ha_target": bool(d.get("target")),
+                "ha_aliases": bool(d.get("aliases")),
+                "edges_uscenti": n_out, "edges_entranti": n_in,
+                "scheda_inizio": (scheda or "")[:100],
+            })
+        return jsonify({"confronto": out})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
