@@ -16,6 +16,86 @@ bp = Blueprint("admin", __name__)
 
 
 RICETTE_PANIFICATI = {
+    "prod-pizza": {
+        "scheda": """"Pizza" non è un piatto: è una famiglia. Napoletana, romana, in teglia, in pala, pinsa — sembrano parenti lontani, e invece sono lo stesso impasto governato da due soli assi: quanta acqua, e quanto fuoco. Impara a leggere questi due assi e non ti perdi più tra le mille pizze: capisci perché la napoletana è morbida e la romana scrocchia, perché la teglia è alta e alveolata e la napoletana no. È tutta fisica, spostata lungo due linee.
+
+Tutte le pizze condividono gli stessi quattro ingredienti base (farina, acqua, lievito, sale) e gli stessi fenomeni. Quello che le rende diverse è dove le collochi lungo due assi.
+
+Il primo asse: l'acqua (idratazione)
+
+Il numero che comanda di più (vedi il fenomeno dell'idratazione). Dal più asciutto al più bagnato:
+- Romana tonda (scrocchiarella): 50-55% — bassa. Impasto sodo, steso al mattarello, sottile e croccante.
+- Napoletana STG: 60-65% — media. Morbida ed elastica, cornicione alveolato.
+- Napoletana contemporanea: 65-70% — più alta, cornicione più pronunciato.
+- Pizza in pala: ~75% — alta. Forma allungata, mollica aperta.
+- Pinsa romana: ~80% — molto alta, mix di farine.
+- Pizza in teglia: 75-85% — altissima. Alta, leggera, alveolatura grande e aperta.
+
+Più acqua = mollica più aperta e leggera, ma impasto più difficile da gestire (serve farina forte e tecniche come l'autolisi). Meno acqua = impasto docile e croccante, ma mollica più chiusa. Tutta la famiglia pizza vive su questa linea.
+
+Il secondo asse: il fuoco (temperatura e tempo di cottura)
+
+L'altro grande discriminante (vedi crosta e Maillard):
+- Napoletana: 430-485°C per 60-90 secondi — fuoco estremo, esplosione del cornicione, leopardatura.
+- Pala e teglia: 300-350°C per diversi minuti — forno elettrico, cottura più lunga e uniforme.
+- Romana tonda: ~350°C per qualche minuto — croccantezza secca.
+
+Più fuoco e meno tempo = esplosione, umidità interna trattenuta, macchie scure (napoletana). Meno fuoco e più tempo = asciugatura, croccantezza uniforme (romana, teglia). Il forno determina il carattere tanto quanto l'impasto.
+
+Come i due assi generano le pizze
+
+Metti insieme i due assi e capisci ogni pizza. Napoletana = media idratazione + fuoco estremo → morbida con cornicione esploso. Romana tonda = bassa idratazione + fuoco medio lungo → sottile e scrocchiarella. Teglia = altissima idratazione + fuoco medio lungo → alta, alveolata, leggera. Pala = alta idratazione + fuoco medio → via di mezzo allungata. Ogni "stile" è semplicemente una posizione sui due assi, con la farina e i tempi che si adeguano di conseguenza.
+
+E c'è un legame con i pre-fermenti: le pizze a lunga maturazione e alta idratazione (teglia, pala, contemporanea) usano spesso poolish, biga o addirittura lievito madre, mentre la napoletana classica è più spesso a impasto diretto. La scelta del pre-fermento è un terzo asse più fine, che aggiunge aroma e struttura.
+
+Il bersaglio, letto bene
+
+Non un numero unico, ma la mappa in testa: due assi — acqua (dal 50% della scrocchiarella all'85% della teglia) e fuoco (dai 350°C lunghi ai 485°C brevissimi) — e ogni pizza è un punto su quel piano. E la cosa da ricordare: quando qualcuno ti nomina una pizza che non conosci, non chiedere la ricetta — chiedi due cose, quanta acqua e quanto forno, e saprai già che pane sarà. Le mille pizze sono due assi.""",
+        "target": "La pizza è una famiglia su due assi: acqua (idratazione 50-85%) e fuoco (cottura 350-485°C) · ogni stile è un punto sul piano · napoletana media+estremo, romana bassa+medio, teglia alta+medio",
+        "nome": "La famiglia pizza (napoletana, romana, teglia, pala)",
+        "aliases": ["pizza","tipi di pizza","stili di pizza","famiglia pizza","che pizza"],
+    },
+    "prod-pizza-nap": {
+        "scheda": """La pizza napoletana è il pane più semplice e più difficile del mondo: quattro ingredienti — farina, acqua, sale, lievito — e nient'altro. Niente olio, niente zucchero, niente scorciatoie. Eppure ottenere quel cornicione gonfio e maculato, quel centro morbido e umido, è questione di parametri precisi e di un forno che pochi hanno. Ecco la napoletana spiegata non come dogma, ma come i fenomeni che la governano — e perché il disciplinare dice quello che dice.
+
+La vera pizza napoletana è una Specialità Tradizionale Garantita (STG), riconosciuta a livello europeo (Reg. UE 97/2010) e tutelata dal disciplinare dell'AVPN (Associazione Verace Pizza Napoletana, fondata a Napoli nel 1984). Ogni suo parametro è codificato — e ognuno ha una ragione fisica.
+
+La formula, in percentuale del panettiere
+
+I numeri del disciplinare, letti coi fenomeni:
+- Farina 00 o 0, W 220-280 (media forza): 100%. Non una farina fortissima: la napoletana lievita "poche" ore e vuole estensibilità, non tenacità estrema (vedi la forza della farina).
+- Acqua: 60-65% — idratazione media (vedi l'idratazione). Abbastanza per una mollica soffice e un cornicione alveolato, non così alta da rendere l'impasto ingestibile a mano.
+- Sale marino: 50-55 g per litro d'acqua (circa 2,5-3% sulla farina) (vedi il sale).
+- Lievito di birra fresco: pochissimo, 0,1-3 g/L — perché la lievitazione è lunga e lenta.
+- Nient'altro. Niente grassi, niente zuccheri. Questo è il punto: la napoletana è un impasto "magro" (lean dough).
+
+Perché niente olio (a differenza della focaccia)
+
+Una domanda che i fenomeni chiariscono. La focaccia vive attorno all'olio; la napoletana lo esclude. Perché? Perché l'obiettivo è opposto. La focaccia vuole una mollica tenera e scioglievole (l'olio ammorbidisce). La napoletana vuole un cornicione che si gonfi in modo esplosivo nel forno caldissimo e una struttura che regga quella spinta: un impasto magro, con solo glutine e acqua, sviluppa una maglia glutinica forte ed elastica che intrappola i gas e permette l'esplosione del cornicione. L'olio, ammorbidendo il glutine, lavorerebbe contro quella spinta verticale. Stesso ingrediente-chiave (il grasso) che nella focaccia è protagonista e nella napoletana è bandito, per due obiettivi diversi. Questo è capire i fenomeni invece di seguire ricette.
+
+La lievitazione: lunga, lenta, a temperatura ambiente
+
+Il disciplinare prevede un impasto a 23-25°C (vedi la temperatura dell'impasto), poi una puntata (prima lievitazione di massa) di circa 2 ore, lo staglio in panetti da 250±20 g, e un appretto (seconda lievitazione dei panetti) di 4-6 ore. In totale 8-24 ore. Perché così lunga con così poco lievito? Perché la fermentazione lenta sviluppa aroma e digeribilità (le catene di amido e proteine si degradano), e una maglia matura e estensibile. È il fenomeno della fermentazione usato per il sapore, non solo per la spinta.
+
+La stesura a schiaffo (mai il mattarello)
+
+Un dettaglio tecnico con una ragione fisica precisa. La napoletana si stende a mano, con la tecnica "a schiaffo": si spinge l'aria dal centro verso il bordo, lasciando il cornicione gonfio di gas e schiacciando solo il centro. Il mattarello è vietato dal disciplinare — perché schiaccerebbe via tutto il gas anche dal cornicione, uccidendo l'alveolatura. Stendere a schiaffo è preservare i gas della lievitazione dove servono: nel bordo. È fisica dell'alveolatura applicata con le mani.
+
+La cottura: il forno che fa la napoletana
+
+Qui il parametro che quasi nessuno può replicare a casa, ed è decisivo. La napoletana STG si cuoce in forno a legna a 430-485°C per 60-90 secondi. Non un minuto di più. Perché questa temperatura estrema? Perché in 60-90 secondi il calore fortissimo fa esplodere il cornicione (l'acqua diventa vapore all'istante, i gas si espandono di colpo, oven spring massimo) e crea le "leopardature" — le macchie scure di Maillard e leggera carbonizzazione — prima che il centro si secchi. Un forno domestico a 250°C non può farlo: cuoce troppo lentamente, il centro si asciuga prima che il cornicione esploda. È per questo che la napoletana fatta a casa non è mai come in pizzeria: non è la ricetta, è il forno. È termodinamica.
+
+Le trappole
+
+Farina troppo forte → impasto troppo tenace, difficile da stendere a schiaffo. Troppo lievito → lievitazione veloce senza sviluppo aromatico, e sapore piatto. Forno non abbastanza caldo → niente esplosione del cornicione, pizza pallida e biscottata. Mattarello → cornicione morto. Troppo condimento bagnato al centro → il centro non cuoce e resta crudo ("pizza allagata").
+
+Il bersaglio, letto bene
+
+I numeri sono da disciplinare: idratazione 60-65%, panetto 250±20 g, impasto a 23-25°C, cottura 430-485°C per 60-90 secondi, cornicione alto 1-2 cm. Ma il vero bersaglio è capire che la napoletana è un impasto magro pensato per una cosa sola: esplodere in un forno caldissimo. Ogni scelta — la farina media, niente olio, la stesura a schiaffo — serve a preparare e preservare quell'esplosione. E la cosa da ricordare: la napoletana non si fa con la ricetta, si fa col forno. Senza i 450°C, è un'altra cosa. Capito questo, sai perché e sai cosa puoi (e non puoi) replicare.""",
+        "target": "Idratazione 60-65%, panetto 250±20g, impasto 23-25°C, cottura forno legna 430-485°C per 60-90s, cornicione 1-2cm · impasto MAGRO senza olio (maglia forte per l'esplosione) · stesura a schiaffo · la fa il forno, non la ricetta",
+        "nome": "Pizza napoletana STG",
+        "aliases": ["pizza napoletana","napoletana","verace","pizza napoli","STG","AVPN"],
+    },
     "prod-focaccia": {
         "scheda": """La focaccia genovese sembra il pane più semplice del mondo: farina, acqua, lievito, sale, olio. Eppure quasi nessuno, fuori dalla Liguria, la fa come si deve. Il segreto non è un ingrediente nascosto: è capire che ogni scelta — quanta acqua, quanto olio, le fossette, la salamoia — non è tradizione a caso, ma fisica del pane applicata. Ecco la focaccia spiegata non come ricetta da copiare, ma come i fenomeni che la governano.
 
@@ -67,6 +147,13 @@ I numeri ci sono e sono da disciplinare: idratazione 55-65%, olio ≥10% sulla f
 }
 CABLA_PANIFICATI = {
     "prod-focaccia": ["fen-grassi-impasto","fen-idratazione","fen-sale-impasto","fen-maillard","fen-crosta"],
+    "prod-pizza-nap": ["fen-idratazione","fen-farina-forza","fen-maglia-glutinica","fen-lievitazione","fen-temperatura-impasto","fen-maillard"],
+}
+# gerarchia famiglia: figlio -governato_da-> madre (uso relation esistente, no nuove)
+CABLA_FAMIGLIA = {
+    "prod-pizza-nap": "prod-pizza",
+    "prod-pizza-nap-adv": "prod-pizza",
+    "prod-pizza-rom": "prod-pizza",
 }
 
 @bp.route("/admin/fix-schede-testi")
@@ -667,8 +754,19 @@ def admin_riempi_panificati():
                                (fen, "si_manifesta_in", prod, "{}"))
                     esistenti.add((fen, "si_manifesta_in", prod))
                     edges_creati.append(f"{fen} -> {prod}")
+        # gerarchia famiglia: figlio -governato_da-> madre
+        edges_fam = []
+        try:
+            for figlio, madre in CABLA_FAMIGLIA.items():
+                if figlio in tutti and madre in tutti and (figlio, "governato_da", madre) not in esistenti:
+                    db.execute("INSERT INTO edges (from_id, relation, to_id, data) VALUES (?,?,?,?)",
+                               (figlio, "governato_da", madre, "{}"))
+                    esistenti.add((figlio, "governato_da", madre))
+                    edges_fam.append(f"{figlio} -governato_da-> {madre}")
+        except Exception as _fe:
+            edges_fam.append(f"errore famiglia: {_fe}")
         db.commit() if hasattr(db, "commit") else None
-        return jsonify({"riempiti": fatti, "edges_creati": edges_creati})
+        return jsonify({"riempiti": fatti, "edges_creati": edges_creati, "edges_famiglia": edges_fam})
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
