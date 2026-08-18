@@ -15,6 +15,60 @@ import oss
 bp = Blueprint("admin", __name__)
 
 
+RICETTE_PANIFICATI = {
+    "prod-focaccia": {
+        "scheda": """La focaccia genovese sembra il pane più semplice del mondo: farina, acqua, lievito, sale, olio. Eppure quasi nessuno, fuori dalla Liguria, la fa come si deve. Il segreto non è un ingrediente nascosto: è capire che ogni scelta — quanta acqua, quanto olio, le fossette, la salamoia — non è tradizione a caso, ma fisica del pane applicata. Ecco la focaccia spiegata non come ricetta da copiare, ma come i fenomeni che la governano.
+
+La focaccia genovese autentica (Focaccia Genovese, tutelata IGP e persino Presidio Slow Food) è alta 1,5-2 centimetri, con mollica leggera e ariosa, superficie dorata e lucida punteggiata di fossette piene di una salamoia di olio. Non è la lastra alta 4-5 cm dei ristoranti fuori Italia: è più sottile, e ogni suo parametro ha una ragione scientifica.
+
+La formula, in percentuale del panettiere
+
+I numeri del disciplinare, letti col linguaggio dei fenomeni:
+- Farina (00 o 0): 100% (la base di riferimento)
+- Acqua: 55-65% — idratazione media (vedi il fenomeno dell'idratazione). Non altissima come una ciabatta: la focaccia vuole una mollica ariosa ma con struttura, che regga le fossette e l'olio.
+- Olio EVO nell'impasto: almeno il 10% sul peso della farina — più della gran parte dei pani (vedi i grassi nell'impasto). L'olio ammorbidisce la mollica e la rende tenera, e dà quella scioglievolezza.
+- Sale: circa 2% (vedi il sale nell'impasto).
+- Lievito: piccola quantità, per una lievitazione lenta.
+- Un tocco di miele o malto: nutre il lievito e aiuta la doratura.
+- Più olio abbondante in teglia e in superficie.
+
+Perché quell'idratazione, non di più
+
+Una domanda che il fenomeno dell'idratazione ti aiuta a rispondere. Perché la focaccia sta al 55-65% e non all'80% come una ciabatta? Perché la focaccia deve reggere due cose che la ciabatta non ha: le fossette (che devono restare, non richiudersi) e l'olio (che è un peso). Un'idratazione troppo alta darebbe un impasto troppo molle per tenere le fossette e per non annegare nell'olio. Il 55-65% è il punto dove la mollica è ariosa ma la struttura tiene. È la scienza dell'idratazione applicata a un obiettivo preciso.
+
+L'olio: dentro e fuori, due lavori diversi
+
+L'olio nella focaccia fa il lavoro che conosci dai grassi nell'impasto, ma in due posti. Dentro l'impasto (il 10%+), riveste il glutine e ammorbidisce la mollica, la rende tenera e scioglievole — è lo shortening. Fuori, in teglia e in superficie, fa un'altra cosa: frigge leggermente il fondo e i bordi (crosta croccante e dorata) e, in superficie, dà la lucentezza e il sapore. Lo stesso ingrediente, due funzioni, in due punti. Per questo la focaccia genovese usa "scandalosamente" tanto olio: non è eccesso, è tecnica.
+
+La salamoia: il gesto che definisce la focaccia
+
+Ecco il cuore, il passaggio che distingue la genovese da ogni altra flatbread. Prima di infornare, si preparano le fossette premendo con le dita (fino a circa 1 cm, non fino al fondo), e ci si versa la salamoia: un'emulsione temporanea di acqua, olio e sale sbattuti insieme. Perché funziona, spiegato per fenomeni: l'acqua della salamoia, in forno, diventa vapore (come nella lievitazione) e tiene l'interno umido e morbido mentre la superficie si asciuga; l'olio dà la doratura lucida e il sapore; il sale in superficie sala e aiuta la crosta. Le fossette non sono decorazione: sono conche che raccolgono la salamoia e la trattengono, creando quelle isole di sapore e umidità. È emulsione + vapore + Maillard, tutto in un gesto.
+
+Il procedimento, per fasi (e il fenomeno di ognuna)
+
+1. Impasto: sciogli il lievito in acqua tiepida (non calda, uccideresti il lievito — vedi temperatura dell'impasto) con un pizzico di miele. Aggiungi farina, poi il sale, infine l'olio, e impasta fino a liscio ed elastico (maglia glutinica).
+2. Prima lievitazione: 1-2 ore fino al raddoppio (fermentazione/lievitazione). Molti fanno una lievitazione lenta in frigo tutta la notte per più sapore (la temperatura bassa rallenta e aromatizza).
+3. Stesura: stendi in teglia ben oliata, senza strappare.
+4. Fossette + salamoia: premi le fossette, versa la salamoia.
+5. Seconda lievitazione: 40-60 minuti scoperta.
+6. Cottura: forno caldo 220-230°C per 15-20 minuti, fino a dorata e lucida. Non oltre: si secca.
+
+Le trappole (dove sbagliano quasi tutti)
+
+Cottura troppo veloce o idratazione insufficiente → manca la mollica ariosa, viene compatta. Troppo poco olio ("versione salutista") → perdi la crosta e il carattere: nella genovese l'olio non si taglia. Sovracottura → si secca, ed è il modo più comune di rovinarla. Fossette fatte fino al fondo → l'olio cola sotto e la focaccia si buca.
+
+Il bersaglio, letto bene
+
+I numeri ci sono e sono da disciplinare: idratazione 55-65%, olio ≥10% sulla farina, spessore finale 1,5-2 cm, cottura 220-230°C. Ma il vero bersaglio è capire che la focaccia è un sistema di fenomeni in equilibrio: l'idratazione che regge le fossette, l'olio che ammorbidisce dentro e frigge fuori, la salamoia che fa vapore e doratura. Cambia un parametro e sposti tutto. E la cosa da ricordare: la focaccia non è un pane con l'olio sopra — è un pane pensato attorno all'olio, dall'impasto alla salamoia. Capito questo, la fai bene ovunque.""",
+        "target": "Idratazione 55-65% (regge fossette e olio), olio EVO ≥10% sulla farina, spessore finale 1,5-2cm, cottura 220-230°C · la salamoia (acqua+olio+sale) fa vapore e doratura · il pane pensato attorno all'olio",
+        "nome": "Focaccia genovese",
+        "aliases": ["focaccia","focaccia genovese","focaccia ligure","fugassa"],
+    },
+}
+CABLA_PANIFICATI = {
+    "prod-focaccia": ["fen-grassi-impasto","fen-idratazione","fen-sale-impasto","fen-maillard","fen-crosta"],
+}
+
 @bp.route("/admin/fix-schede-testi")
 def _fix_schede_testi():
     """Applica le correzioni ortografiche alle schede fenomeni nel DB.
@@ -572,6 +626,49 @@ def admin_test_chat_reale():
             "fenomeno_scelto_per_contesto": scelto,
             "fenomeni_nel_contesto_finale": fen_contesto,
         })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
+
+@bp.route("/admin/riempi-panificati")
+def admin_riempi_panificati():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo, _dati
+        import json as _json
+        db = carica_grafo()
+        RICETTE = RICETTE_PANIFICATI
+        CABLA_RICETTE = CABLA_PANIFICATI
+        fatti = []
+        for nid, r in RICETTE.items():
+            row = db.execute("SELECT id, data FROM nodes WHERE id=?", (nid,)).fetchone()
+            if not row:
+                fatti.append(f"{nid}: ASSENTE (creo)")
+                db.execute("INSERT INTO nodes (id, type, name, domain, data) VALUES (?,?,?,?,?)",
+                           (nid, "Prodotto", r["nome"], "panificazione",
+                            _json.dumps({"scheda": r["scheda"], "target": r["target"], "aliases": r.get("aliases",[])}, ensure_ascii=False)))
+            else:
+                d = _dati(row["data"])
+                d["scheda"] = r["scheda"]; d["target"] = r["target"]; d["aliases"] = r.get("aliases",[])
+                db.execute("UPDATE nodes SET data=?, name=? WHERE id=?",
+                           (_json.dumps(d, ensure_ascii=False), r["nome"], nid))
+                fatti.append(f"{nid}: RIEMPITO ({len(r['scheda'])} chars)")
+        # cablaggio: fenomeno -si_manifesta_in-> prodotto (edges mancanti)
+        esistenti = set((e["from_id"], e["relation"], e["to_id"])
+                        for e in db.execute("SELECT from_id, relation, to_id FROM edges").fetchall())
+        tutti = set(r["id"] for r in db.execute("SELECT id FROM nodes").fetchall())
+        edges_creati = []
+        for prod, fenomeni in CABLA_RICETTE.items():
+            for fen in fenomeni:
+                if fen in tutti and prod in tutti and (fen, "si_manifesta_in", prod) not in esistenti:
+                    db.execute("INSERT INTO edges (from_id, relation, to_id, data) VALUES (?,?,?,?)",
+                               (fen, "si_manifesta_in", prod, "{}"))
+                    esistenti.add((fen, "si_manifesta_in", prod))
+                    edges_creati.append(f"{fen} -> {prod}")
+        db.commit() if hasattr(db, "commit") else None
+        return jsonify({"riempiti": fatti, "edges_creati": edges_creati})
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
