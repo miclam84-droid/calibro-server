@@ -273,6 +273,24 @@ Lezione: burro IN STRATI (croissant) vs burro IMPASTATO (brioche). Il come, non 
         "nome": "Brioche",
         "aliases": ["brioche", "pan brioche", "brioche francese"],
     },
+    "prod-impasto-rosticceria": {
+        "scheda": """A Palermo la rosticceria e un solo impasto che diventa mille cose: pizzette, rollo, ravazzate, panzerotti. Una pasta brioche soffice con lo strutto, dal sapore neutro, che regge sia il forno sia la frittura. Impari questo, e hai la base di tutta la rosticceria.
+
+E una pasta lievitata arricchita con strutto (non burro): lo strutto (vedi i grassi nell'impasto) da morbidezza e scioglievolezza, e regge bene la frittura. Sapore neutro apposta, per accogliere ripieni salati. Da questo unico impasto: al forno (ravazzate, spennellate d'uovo) o fritto (panzerotti). Un impasto, tante forme — come la famiglia pizza.
+Lezione: un impasto-madre versatile. Lo strutto come grasso della tradizione. Forno E frittura dalla stessa base.""",
+        "target": "Un solo impasto brioche con strutto (neutro, morbido) diventa pizzette, rollo, ravazzate, panzerotti - forno E frittura dalla stessa base",
+        "nome": "Impasto rosticceria siciliana",
+        "aliases": ["rosticceria", "impasto rosticceria", "pasta brioche siciliana", "rosticceria palermitana", "pezzi"],
+    },
+    "prod-arancina": {
+        "scheda": """L'arancina (o arancino) e una palla di riso ripiena, impanata e fritta. Ma la sua magia sta in un doppio guscio: la panatura che frigge croccante fuori, e il riso compatto che tiene tutto dentro. E un esercizio di ingegneria del fritto.
+
+Il riso cotto e raffreddato (l'amido retrogradato lo rende compatto e modellabile, vedi la retrogradazione) si forma attorno al ripieno (ragu, burro, ecc.). Poi impanatura (farina, uovo, pangrattato) e frittura a 170-180°C (vedi la frittura di lievitati — qui e riso, ma vale il principio del sigillo). La panatura sigilla e dora, il riso resta cremoso dentro. Contrasto croccante/cremoso.
+Lezione: la PANATURA come guscio sigillante. Il riso retrogradato come struttura. Doppio contrasto.""",
+        "target": "Riso retrogradato (compatto) attorno al ripieno, panatura che sigilla e dora in frittura - contrasto croccante fuori cremoso dentro",
+        "nome": "Arancina",
+        "aliases": ["arancina", "arancino", "arancini", "arancine", "palla di riso"],
+    },
     "prod-focaccia": {
         "scheda": """La focaccia genovese sembra il pane più semplice del mondo: farina, acqua, lievito, sale, olio. Eppure quasi nessuno, fuori dalla Liguria, la fa come si deve. Il segreto non è un ingrediente nascosto: è capire che ogni scelta — quanta acqua, quanto olio, le fossette, la salamoia — non è tradizione a caso, ma fisica del pane applicata. Ecco la focaccia spiegata non come ricetta da copiare, ma come i fenomeni che la governano.
 
@@ -337,6 +355,8 @@ CABLA_PANIFICATI = {
     "prod-croissant": ["fen-laminazione","fen-grassi-impasto","fen-lievitazione","fen-maillard"],
     "prod-pain-chocolat": ["fen-laminazione","fen-grassi-impasto","fen-lievitazione"],
     "prod-brioche-viennoiserie": ["fen-grassi-impasto","fen-uova-impasto","fen-lievitazione"],
+    "prod-impasto-rosticceria": ["fen-grassi-impasto","fen-lievitazione","fen-frittura-lievitati"],
+    "prod-arancina": ["fen-frittura-lievitati","fen-retrogradazione","fen-maillard"],
 }
 # gerarchia famiglia: figlio -governato_da-> madre (uso relation esistente, no nuove)
 CABLA_FAMIGLIA = {
@@ -725,6 +745,7 @@ def admin_popola_alias():
             "fen-lievito-madre": ["lievito madre","pasta madre","madre","sourdough","levain","starter","picco","rinfresco","licoli"],
             "fen-tangzhong-yudane": ["tangzhong","yudane","water roux","roux","pre-gelatinizzazione","milk bread","shokupan","pane soffice","pane giapponese"],
             "fen-levain-pate-fermentee": ["levain","pate fermentee","pâte fermentée","vecchio impasto","old dough","prefermento francese","lievitino"],
+            "fen-frittura-lievitati": ["frittura","friggere","fritto","olio caldo","immersione","frittura di lievitati","sigillo frittura"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
@@ -1607,6 +1628,23 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-frittura-lievitati": {
+            "scheda": """Friggere un impasto lievitato non e come friggere una cotoletta. L'olio caldo colpisce una struttura piena di gas e glutine, e succede una cosa precisa: la superficie sigilla all'istante, e dentro il vapore continua a cuocere e gonfiare. Capire questo e la differenza tra un fritto leggero e asciutto e uno unto e pesante.
+
+Quando l'impasto lievitato entra nell'olio a 170-180°C, l'acqua superficiale evapora di colpo e forma una crosta che SIGILLA: e questa barriera che impedisce all'olio di entrare. Dentro, il calore trasforma l'acqua in vapore che continua a cuocere e gonfiare l'impasto (come un forno in miniatura). Ecco perche un fritto fatto bene non e unto: la crosta sigilla prima che l'olio penetri.
+
+La temperatura e tutto
+170-180°C e la finestra. Troppo bassa (olio non abbastanza caldo): la crosta non si forma subito, l'olio entra, il fritto si impregna e diventa unto e pesante. Troppo alta: fuori brucia prima che dentro cuocia. La temperatura giusta sigilla in fretta e cuoce dentro in tempo.
+
+Perche i lievitati specialmente
+Un impasto lievitato ha gia gas dentro (dalla fermentazione): in frittura quel gas si espande col calore e da leggerezza. Piu la crosta sigillante, ottieni quel contrasto — guscio croccante, interno soffice e arioso. E il principio di arancine, panzerotti, bomboloni, zeppole.
+
+Il bersaglio
+Olio 170-180°C, immersione completa, la crosta sigilla e il vapore interno cuoce. Il vero bersaglio: la temperatura che sigilla prima che l'olio entri. Fritto leggero = crosta veloce; fritto unto = crosta lenta. Governa la temperatura e governi tutto.""",
+            "target": "Olio 170-180C, immersione completa: la crosta sigilla subito e impedisce all olio di entrare, il vapore interno cuoce e gonfia - fritto leggero=crosta veloce, unto=crosta lenta",
+            "nome": "La frittura di lievitati (il sigillo)",
+            "dominio": "panificazione",
+        },
         "fen-levain-pate-fermentee": {
             "scheda": """A questo punto hai visto poolish, biga, il lievito madre, il tangzhong. Ma restano due parole francesi che confondono tutti: levain e pâte fermentée. E capirle serve a una cosa più grande: mettere finalmente ordine in tutto il mondo dei pre-fermenti, che sembra un caos di termini stranieri e invece ha una logica semplice. Una volta chiara quella logica, sai sempre quale scegliere.
 
