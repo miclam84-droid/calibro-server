@@ -366,7 +366,17 @@ def admin_popola_alias():
             "fen-latte-impasto": ["latte","latticini","lattosio","panna","latte in polvere"],
             "fen-idratazione": ["idratazione","acqua","percentuale acqua","quanta acqua","impasto molle","impasto bagnato"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole"],
-            "fen-temperatura-impasto": ["temperatura impasto","temperatura","DDT","temperatura acqua","impasto caldo","impasto freddo"],
+            "fen-temperatura-impasto": ["temperatura impasto","DDT","temperatura acqua","impasto caldo","impasto freddo","estate","inverno","lievita in fretta","troppo caldo","temperatura finale"],
+            "fen-autolisi": ["autolisi","riposo farina acqua","riposo impasto"],
+            "fen-poolish-biga": ["biga","poolish","prefermento","preimpasto","lievitino"],
+            "fen-lievitazione": ["lievita","lievitazione","cresce in forno","oven spring","non cresce","non lievita","sviluppo in forno"],
+            "fen-fermentazione": ["fermenta","fermentazione","maturazione impasto"],
+            "fen-fermentazione-lattica": ["lievito madre","pasta madre","sourdough","acidificazione"],
+            "fen-maglia-glutinica": ["maglia glutinica","glutine","si strappa","non si estende","strappa","incordatura","struttura impasto"],
+            "fen-sale-impasto": ["sale","salinita","dosaggio sale"],
+            "fen-crosta": ["crosta","doratura","colore crosta","pallida"],
+            "fen-idratazione": ["idratazione","acqua","percentuale acqua","quanta acqua","impasto molle","impasto bagnato","impasto appiccicoso","troppa acqua"],
+            "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
         for nid, aliases in ALIAS.items():
