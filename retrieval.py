@@ -20,6 +20,8 @@ SPIE_DOMINIO = {
 def normalizza(s):
     s = (s or "").lower().strip()
     s = s.replace("'", "'").replace("`", "'")
+    # spezza gli articoli elisi: l'autolisi -> l autolisi, dell'acqua -> dell acqua
+    s = re.sub(r"\b(l|un|dell|all|nell|sull|dall|d|c|quell|bell)'", r"\1 ", s)
     s = re.sub(r"[^\w\sàèéìòùäöü'-]", " ", s)
     s = re.sub(r"\s+", " ", s)
     return s.strip()
