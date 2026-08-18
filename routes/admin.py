@@ -272,6 +272,7 @@ def admin_cabla_panificazione():
                                         "realizzato_da": ["tec-controllo-lievitazione"]},
             "fen-lievito-madre": {"fallisce_come": ["err-madre-sovra"],
                                   "si_manifesta_in": ["fis_sourdough_starter"]},
+            "fen-tangzhong-yudane": {"governato_da": ["fen-gelatinizzazione"]},
         }
         PONTI = [
             ("fen-uova-impasto", "governato_da", "fen-grassi-impasto"),
@@ -379,6 +380,7 @@ def admin_popola_alias():
             "fen-crosta": ["crosta","doratura","colore crosta","pallida"],
             "fen-idratazione": ["idratazione","acqua","percentuale acqua","quanta acqua","impasto molle","impasto bagnato","impasto appiccicoso","troppa acqua","appiccicoso","molle","troppo molle"],
             "fen-lievito-madre": ["lievito madre","pasta madre","madre","sourdough","levain","starter","picco","rinfresco","licoli"],
+            "fen-tangzhong-yudane": ["tangzhong","yudane","water roux","roux","pre-gelatinizzazione","milk bread","shokupan","pane soffice","pane giapponese"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
@@ -1163,6 +1165,48 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-tangzhong-yudane": {
+            "scheda": """Entra in una panetteria a Tokyo, Hong Kong o Seoul e vedrai vetrine piene di pane diverso dal nostro: soffice come una nuvola, lucido, che si strappa a filamenti, e che resta morbido per giorni. Il segreto non è più burro o più zucchero. È un trucco di fisica dell'amido: cuoci una piccola parte della farina prima di impastare. Si chiama tangzhong, o yudane. E una volta capito, cambia il pane soffice per sempre.
+
+Il tangzhong (cinese) e lo yudane (giapponese) sono la stessa idea con due esecuzioni: pre-cuocere una parte della farina con un liquido per gelatinizzare l'amido prima dell'impasto. È il cuore del pane soffice asiatico, e un'applicazione elegante di scienza che già conosci.
+
+Il principio: gelatinizzare l'amido, per legare più acqua
+
+Ecco il meccanismo, ed è pura fisica dell'amido. Quando scaldi la farina con un liquido intorno ai 65°C, i granuli di amido gelatinizzano: si gonfiano, assorbono acqua e la intrappolano, formando una pasta densa e vischiosa. Questo amido pre-gelatinizzato trattiene molta più acqua di quanta la farina cruda potrebbe. Aggiungi questa pasta all'impasto e succede una cosa importante: l'idratazione effettiva sale — l'impasto porta più acqua — ma senza diventare slegato e ingestibile, perché quell'acqua è legata nell'amido, non libera. Ottieni la morbidezza di un impasto molto idratato con la maneggevolezza di uno normale. È la gelatinizzazione che già conosci dalla cottura, ma usata di proposito, prima, a freddo nell'impasto.
+
+Cosa ottieni: soffice, alto, e che dura
+
+I risultati sono tre, e sono spettacolari. Primo: mollica soffice, fine, cotonosa, "a nuvola" — quella texture da milk bread che si strappa a filamenti. Secondo: più volume e oven spring, perché la struttura regge meglio. Terzo, il più importante: shelf-life allungata. Qui il legame diretto con il raffermimento. Il pane diventa raffermo soprattutto per la retrogradazione dell'amido — le molecole di amido, raffreddandosi, ricristallizzano ed espellono acqua. L'acqua abbondante e legata del tangzhong rallenta questa retrogradazione: il pane resta soffice per due-quattro giorni invece di seccare in una notte. Sacrifichi una piccola parte della farina a una cottura veloce, e in cambio guadagni umidità, spinta e durata che nessuna quantità di impastamento potrebbe darti.
+
+Tangzhong o yudane: la stessa idea, due mani diverse
+
+Qui la distinzione, ed è il cuore. Entrambi gelatinizzano l'amido, ma in due modi:
+
+Il tangzhong è un roux cotto: metti farina e liquido (acqua o latte) in un pentolino e li scaldi mescolando fino a ~65°C, finché diventano una pasta densa. Poi la raffreddi e la aggiungi all'impasto. Dà una mollica più fine, cremosa, custardy, delicatamente soffice. È di origine cinese/taiwanese.
+
+Lo yudane è una scottatura non cotta: versi acqua bollente sulla farina, mescoli, e lasci riposare (di solito tutta la notte). Il calore dell'acqua bollente gelatinizza l'amido senza cottura sul fuoco. Dà una mollica più masticabile, elastica, quasi mochi, con un aroma di grano più dolce. È di origine giapponese. Un vantaggio pratico dello yudane: versare acqua bollente è più facile che cuocere una pasta, per questo l'industria lo preferisce (si può fare in grande).
+
+Quale scegliere? Tangzhong per la sofficità più delicata e cremosa; yudane per una resilienza masticabile. Nel gusto la differenza è minima — è questione di texture.
+
+Le dosi: quanto, e il punto di equilibrio
+
+C'è un numero che conta. Si pre-gelatinizza in genere il 15-20% della farina totale della ricetta: è il punto di equilibrio tra sofficità, volume e maneggevolezza. Puoi spingere fino al 30% per la massima morbidezza, ma oltre un certo punto paghi: meno volume e lievitazione più lenta, perché l'amido gelatinizzato trattiene gas peggio del glutine. Più non è meglio: il 15-20% è il territorio giusto per quasi tutto.
+
+Le trappole da conoscere
+
+Due cose. Primo: il tangzhong lavora contro i pani croccanti. Se vuoi una baguette o un pane rustico con crosta dura e mollica aperta, il tangzhong è il nemico — rende tutto soffice e a grana fine, l'opposto. È fatto per gli impasti arricchiti e soffici (milk bread, bun, sandwich, cinnamon rolls), non per il pane a crosta. Secondo, un dettaglio che lega alla temperatura dell'impasto: se aggiungi il tangzhong ancora freddo di frigo, abbassi la temperatura dell'impasto e rallenti la fermentazione. Portalo a temperatura ambiente prima di usarlo.
+
+Come lo verifichi
+
+Guarda la pasta e il risultato. Il roux è pronto quando è una pasta densa che lascia una traccia visibile quando ci passi il cucchiaio (intorno ai 65°C). Nel pane finito: se la mollica è soffice, fine, e il giorno dopo è ancora morbida, il tangzhong ha funzionato. Se il pane è denso o poco cresciuto, forse hai messo troppa farina nel roux (oltre il 20-25%) e hai penalizzato il glutine.
+
+Il bersaglio, letto bene
+
+C'è un numero — il 15-20% della farina pre-gelatinizzata, il roux portato a ~65°C — ma il vero bersaglio è l'effetto: un pane soffice come una nuvola che resta fresco per giorni, ottenuto legando più acqua nell'amido invece che aggiungendo grassi. E la cosa da ricordare, che è pura eleganza tecnica: non serve più burro per un pane più morbido — a volte serve solo cuocere un po' di farina prima. È il tipo di trucco che sembra magia e invece è fisica dell'amido applicata bene.""",
+            "target": "Pre-cuoci il 15-20% della farina con liquido a ~65°C: l'amido gelatinizza e lega più acqua → pane soffice a nuvola che resta fresco giorni · tangzhong=roux cotto (fine), yudane=scottato (mochi) · non per i croccanti",
+            "nome": "Tangzhong e yudane (water roux)",
+            "dominio": "panificazione",
+        },
         "fen-lievito-madre": {
             "scheda": """Il lievito madre non è un ingrediente che compri: è un organismo vivo che allevi. Una colonia di lieviti selvaggi e batteri che mangia, cresce, respira, invecchia. E come ogni essere vivo ha un momento in cui è al massimo della forza — il picco. Saperlo cogliere è la differenza tra un pane che esplode in forno e uno che resta piatto. Non è una ricetta, è un rapporto: impari a leggere la tua madre come leggi l'umore di una persona.
 
