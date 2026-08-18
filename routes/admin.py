@@ -235,6 +235,44 @@ Lezione: DOPPIA COTTURA e conservazione per disidratazione. L'acqua (o la sua as
         "nome": "Pane carasau (carta da musica)",
         "aliases": ["carasau", "carta da musica", "pane sardo", "pane secco"],
     },
+    "prod-croissant": {
+        "scheda": """Il croissant e il capolavoro della laminazione: un impasto lievitato in cui pieghi decine di strati di burro, e in forno diventa quella meraviglia di fuori croccante e dentro a nido d'ape. Non e un pane e non e una sfoglia: sta in mezzo, e prende il meglio di entrambi.
+
+Il croissant e viennoiserie: impasto lievitato (come il pane) MA laminato col burro (come la sfoglia). Da qui la sua doppia natura — la spinta del lievito piu la separazione a strati del vapore.
+
+La laminazione (vedi il fenomeno)
+Si parte dalla detrempe (l'impasto base: farina, acqua, latte, lievito, zucchero, sale) e dal panetto di burro. Si chiude il burro nell'impasto e si piega piu volte (le "pieghe" o "turni"): ogni piega moltiplica gli strati, e dopo 3-4 turni hai decine di strati alterni burro-impasto sottilissimi. In forno l'acqua del burro diventa vapore e separa gli strati: ecco la sfogliatura.
+
+La temperatura del burro: il punto critico
+Il burro va tenuto a 16-18°C: freddo ma plastico. Troppo caldo si spalma e gli strati si fondono (croissant pesante, "brioche-oso"); troppo freddo si rompe e buca l'impasto. Si riposa in frigo tra una piega e l'altra per rilassare il glutine e rassodare il burro. Burro europeo ad alto grasso, piu plastico.
+
+Il bersaglio
+Laminazione con burro a 16-18°C, 3-4 pieghe, lievitato + laminato, forno caldo. Il vero bersaglio: il croissant e temperatura e mano leggera — il burro deve restare uno strato, mai fondersi. Se tieni il burro dov'e, la sfoglia viene da se.""",
+        "target": "Laminazione con burro a 16-18C, 3-4 pieghe, lievitato+laminato - temperatura e mano leggera, il burro deve restare uno strato mai fondersi",
+        "nome": "Croissant",
+        "aliases": ["croissant", "cornetto", "brioche sfogliata"],
+    },
+    "prod-pain-chocolat": {
+        "scheda": """Il pain au chocolat e un croissant che ha cambiato forma: stesso impasto laminato, ma steso rettangolare e arrotolato attorno a due barrette di cioccolato. La tecnica e identica al croissant — cambia solo la piega finale e il ripieno.
+
+Stessa pasta viennoiserie laminata del croissant (vedi laminazione). La differenza e nel modellare: invece del triangolo arrotolato a mezzaluna, un rettangolo con due stecche di cioccolato, arrotolato dritto. Il cioccolato deve reggere la cottura senza bruciare: barrette apposite ("batons"), non gocce.
+Lezione: la stessa tecnica, forma e ripieno diversi. Mostra che la laminazione e una BASE da cui derivano molti prodotti.""",
+        "target": "Stessa pasta laminata del croissant, forma rettangolare arrotolata su barrette di cioccolato - stessa tecnica forma e ripieno diversi",
+        "nome": "Pain au chocolat",
+        "aliases": ["pain au chocolat", "pain o chocolat", "cioccolatino", "croissant al cioccolato"],
+    },
+    "prod-brioche-viennoiserie": {
+        "scheda": """La brioche e l'opposto istruttivo del croissant: e ricchissima di burro e uova, ma NON e laminata. Il burro non e in strati — e impastato dentro. E questo cambia tutto: dove il croissant e a sfoglia, la brioche e a mollica fitta e vellutata.
+
+La brioche insegna per contrasto col croissant. Entrambi ricchi di burro, ma: nel croissant il burro sta in STRATI (laminazione → sfoglia); nella brioche il burro e IMPASTATO nella massa (→ mollica uniforme, tenera, ricca). Stesso ingrediente (burro), due modi di usarlo, due risultati opposti. La brioche e un impasto lievitato arricchito (burro, uova, latte, zucchero) — il confine tra pane e dolce.
+
+Il burro impastato
+Il burro si incorpora poco a poco nell'impasto gia sviluppato, morbido, fino a una massa lucida e elastica. E il grasso che riveste il glutine (vedi i grassi nell'impasto) a dare la tenerezza e la mollica gialla che si affetta pulita.
+Lezione: burro IN STRATI (croissant) vs burro IMPASTATO (brioche). Il come, non solo il quanto.""",
+        "target": "Burro e uova ricchissimi ma NON laminata: il burro impastato nella massa (non in strati) da mollica fitta e vellutata - il contrario del croissant",
+        "nome": "Brioche",
+        "aliases": ["brioche", "pan brioche", "brioche francese"],
+    },
     "prod-focaccia": {
         "scheda": """La focaccia genovese sembra il pane più semplice del mondo: farina, acqua, lievito, sale, olio. Eppure quasi nessuno, fuori dalla Liguria, la fa come si deve. Il segreto non è un ingrediente nascosto: è capire che ogni scelta — quanta acqua, quanto olio, le fossette, la salamoia — non è tradizione a caso, ma fisica del pane applicata. Ecco la focaccia spiegata non come ricetta da copiare, ma come i fenomeni che la governano.
 
@@ -296,6 +334,9 @@ CABLA_PANIFICATI = {
     "prod-pane-sciapo": ["fen-sale-impasto","fen-fermentazione","fen-crosta"],
     "prod-altamura": ["fen-farina-forza","fen-lievito-madre","fen-crosta","fen-shelf-life-pane"],
     "prod-carasau": ["fen-shelf-life-pane","fen-gelatinizzazione","fen-crosta"],
+    "prod-croissant": ["fen-laminazione","fen-grassi-impasto","fen-lievitazione","fen-maillard"],
+    "prod-pain-chocolat": ["fen-laminazione","fen-grassi-impasto","fen-lievitazione"],
+    "prod-brioche-viennoiserie": ["fen-grassi-impasto","fen-uova-impasto","fen-lievitazione"],
 }
 # gerarchia famiglia: figlio -governato_da-> madre (uso relation esistente, no nuove)
 CABLA_FAMIGLIA = {
@@ -304,6 +345,7 @@ CABLA_FAMIGLIA = {
     "prod-pizza-rom": "prod-pizza",
     "prod-pizza-teglia": "prod-pizza",
     "prod-pizza-pala": "prod-pizza",
+    "prod-pain-chocolat": "prod-croissant",
 }
 
 SEGRETI_INGREDIENTI = {
