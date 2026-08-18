@@ -772,6 +772,50 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-farina-forza": {
+            "scheda": """Provi a fare un panettone con la farina dei biscotti e ti si affloscia: non regge le ore di lievitazione, non tiene i grassi, collassa. Provi a fare una frolla con la farina del panettone e viene dura, nervosa, si ritira. Stessa quantità di farina, risultati opposti. La differenza è la forza — quanto quella farina regge il lavoro, il tempo, l'acqua. E c'è un modo per misurarla, prima ancora di impastare.
+
+La forza della farina è la sua capacità di formare un glutine che regge: che trattiene il gas per tutta la lievitazione, che sopporta acqua e grassi, che non cede. Non tutte le farine sono uguali, e scegliere quella giusta per il pane che fai è una decisione che viene prima di tutte le altre.
+
+Il punto che ribalta l'intuito: quantità non è qualità
+
+Ecco la cosa che quasi nessuno spiega bene. Verrebbe da pensare: più proteine nella farina, più glutine, più forza. È vero solo a metà. Le proteine ti dicono quanto glutine può formarsi — la quantità. Ma non ti dicono come quel glutine si comporterà sotto sforzo — la qualità. Due farine con le stesse proteine possono dare un glutine tenace e uno debole. Per questo la forza non si legge (solo) dalle proteine: serve misurare come il glutine reagisce quando lo tiri e lo gonfi. Quantità e qualità sono due cose diverse, e la forza è questione di qualità.
+
+Come si misura: l'alveografo e l'indice W
+
+Qui entra uno strumento da laboratorio, ed è il linguaggio del mestiere. L'alveografo di Chopin prende un disco di impasto e ci soffia dentro aria finché si gonfia come un palloncino e scoppia. Misura tre cose: P, la tenacità (quanta resistenza oppone); L, l'estensibilità (quanto si allunga prima di rompersi); e W, l'area sotto la curva — la forza totale, l'energia che serve per gonfiare e far scoppiare la bolla. Il W è il numero che i molini stampano sulle confezioni professionali, ed è il modo in cui i panettieri parlano di forza: "una farina da W300".
+
+La scala del W: dalla frolla al panettone
+
+Il W ti dice subito che tipo di lavoro regge la farina:
+
+Debole, fino a W170. Glutine che trattiene poco gas, poca acqua. Perfetta per ciò che NON deve lievitare a lungo: biscotti, frolle, cialde, dolci teneri. Se la usi per il pane, non regge.
+
+Media, W180-260. Il territorio del pane comune, della pizza, delle pagnotte, del pane francese. Regge una lievitazione normale. È la fascia più usata al banco.
+
+Forte, oltre W300-340. Le farine "da grande lievitato", spesso chiamate "Manitoba". Glutine tenacissimo che trattiene gas per lievitazioni lunghe, regge quantità importanti di grassi, zuccheri, liquidi. È la farina del panettone, del pandoro, dei prefermenti lunghi. Assorbe molta acqua (fino al 90% per le più forti).
+
+Il P/L: il carattere della forza
+
+Il W dice quanta forza; il P/L dice che tipo di forza. È il rapporto tra tenacità (P) ed estensibilità (L). Un P/L basso (sotto ~0,4) è una farina molto estensibile, che si allunga tanto ma resiste poco — impasti che si stendono facili ma stanno molli. Un P/L alto è tenace, elastica, resistente ma poco estensibile — impasti che si ritirano. Per la pizza si cerca un equilibrio; per il pane in cassetta più tenacità; per la sfoglia più estensibilità. Due farine con lo stesso W possono avere caratteri diversi a seconda del P/L.
+
+Attenzione: due trappole da tecnologo
+
+Prima trappola: il W non predice l'acqua che la farina assorbe. Contro l'intuito, una farina più forte non è automaticamente più "assetata": l'assorbimento dipende da proteine, amido danneggiato, ceneri — non dal W in sé. Un W alto suggerisce che regge lievitazioni lunghe, non che vuole più acqua.
+
+Seconda trappola: l'alveografo (e il W) è nato per i grani teneri europei — è uno standard di Francia e Italia. Per i grani duri e forti nordamericani (dove proteine e qualità vanno più di pari passo) si usa un altro strumento, il farinografo, e spesso basta guardare le proteine. Il W è prezioso nel mondo del grano tenero, meno altrove. Sapere quando uno strumento vale è parte del mestiere.
+
+Come lo verifichi
+
+Prima dall'etichetta: le farine professionali riportano il W (e a volte P/L); quelle da supermercato spesso solo le proteine — e lì, come regola grezza, più proteine = più forte, ma senza la precisione del W. Poi con le mani e col risultato: se un impasto a lunga lievitazione collassa prima di cuocere, la farina era troppo debole per quel tempo; se un dolce viene duro e nervoso, era troppo forte. La forza giusta è quella che regge esattamente il lavoro che le chiedi — né meno né più.
+
+Il bersaglio, letto bene
+
+C'è un numero vero, il W, con la sua scala (debole/media/forte), più il P/L per il carattere. Ma il bersaglio non è "la farina più forte" — è la forza giusta per il pane che fai: debole per ciò che non lievita, media per il pane quotidiano, forte per i grandi lievitati e le lunghe lievitazioni. Una farina troppo forte per un pane semplice lo rende nervoso e faticoso; una troppo debole per un panettone lo fa collassare. E la cosa da ricordare, che è il cuore: non conta quanto glutine c'è, conta come si comporta — la forza è qualità, non quantità.""",
+            "target": "Non conta quanto glutine, conta come si comporta: la forza è qualità non quantità · si misura con l'alveografo (indice W): <170 debole (frolle), 180-260 media (pane), >340 forte (panettone) · il P/L dà il carattere",
+            "nome": "La farina e la sua forza (W)",
+            "dominio": "panificazione",
+        },
         "fen-idratazione": {
             "scheda": """Perché un bagel è compatto e gommoso, e una ciabatta è piena di buchi e leggera? Stessa farina, stesso lievito. La differenza è una sola: quanta acqua c'è nell'impasto. L'idratazione è la leva più basilare del pane — quella che decide com'è la mollica, quanto è maneggevole l'impasto, com'è la crosta. Ed è anche il linguaggio con cui i panettieri parlano tra loro: "settanta per cento".
 
