@@ -415,6 +415,24 @@ def admin_confronta_doppioni():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
 
+@bp.route("/admin/edges-di")
+def admin_edges_di():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        nid = request.args.get("id", "fen-idratazione-impasto")
+        out_e = [{"rel": e["relation"], "to": e["to_id"]}
+                 for e in db.execute("SELECT relation, to_id FROM edges WHERE from_id=?", (nid,)).fetchall()]
+        in_e = [{"from": e["from_id"], "rel": e["relation"]}
+                for e in db.execute("SELECT from_id, relation FROM edges WHERE to_id=?", (nid,)).fetchall()]
+        return jsonify({"id": nid, "uscenti": out_e, "entranti": in_e})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
