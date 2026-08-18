@@ -112,6 +112,20 @@ def _domanda_chiede_perche(domanda):
 
 def cerca_contesto(db, termine, domanda=""):
     t = f"%{termine.lower()}%"
+    # LIVELLO 0 (priorita massima): ALIAS contestuali. Se il termine e' un alias di un fenomeno,
+    # quel fenomeno va in testa. Cosi "olio" trova fen-grassi-impasto anche se 10 nodi hanno "olio" nel nome.
+    alias_hit = []
+    try:
+        tl = termine.lower().strip()
+        cand = db.execute("SELECT * FROM nodes WHERE lower(CAST(data AS TEXT)) LIKE ? AND type='Fenomeno'",
+                          (f'%"{tl}"%',)).fetchall()
+        for n in cand:
+            d = _dati(n["data"])
+            al = d.get("aliases", [])
+            if isinstance(al, list) and tl in [str(a).lower() for a in al]:
+                alias_hit.append(n)
+    except Exception:
+        pass
     # Ricerca a due livelli con ranking (due query separate per compatibilita SQLite-locale / Postgres-prod):
     #  livello 0 = match nel NOME (piu forte)
     #  livello 1 = match nel TESTO della scheda (campo data) — cosi "olio" trova fen-grassi-impasto
@@ -130,6 +144,10 @@ def cerca_contesto(db, termine, domanda=""):
                     if len(hit) >= 8: break
         except Exception:
             pass  # se il CAST non e' supportato, resta la ricerca per nome
+    # anteponi gli alias_hit (priorita massima), evitando duplicati
+    if alias_hit:
+        ids_hit = set(n["id"] for n in hit)
+        hit = alias_hit + [n for n in hit if n["id"] not in set(a["id"] for a in alias_hit)]
     if not hit:
         return None
 

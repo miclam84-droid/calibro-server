@@ -350,6 +350,39 @@ def admin_test_cast():
         out["zuccheri_errore"] = str(e)[:150]
     return jsonify(out)
 
+@bp.route("/admin/popola-alias")
+def admin_popola_alias():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    try:
+        from db import carica_grafo, _dati
+        import json as _json
+        db = carica_grafo()
+        ALIAS = {
+            "fen-grassi-impasto": ["olio","burro","strutto","materia grassa","grasso","olio evo","shortening","sugna"],
+            "fen-zuccheri-impasto": ["zucchero","saccarosio","miele","zuccheri","dolcificante"],
+            "fen-uova-impasto": ["uovo","uova","tuorlo","albume","tuorli","albumi"],
+            "fen-latte-impasto": ["latte","latticini","lattosio","panna","latte in polvere"],
+            "fen-idratazione": ["idratazione","acqua","percentuale acqua","quanta acqua","impasto molle","impasto bagnato"],
+            "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole"],
+            "fen-temperatura-impasto": ["temperatura impasto","temperatura","DDT","temperatura acqua","impasto caldo","impasto freddo"],
+        }
+        fatti = []
+        for nid, aliases in ALIAS.items():
+            row = db.execute("SELECT data FROM nodes WHERE id=?", (nid,)).fetchone()
+            if not row:
+                fatti.append(f"{nid}: NODO ASSENTE"); continue
+            d = _dati(row["data"])
+            d["aliases"] = aliases
+            db.execute("UPDATE nodes SET data=? WHERE id=?", (_json.dumps(d, ensure_ascii=False), nid))
+            fatti.append(f"{nid}: {len(aliases)} alias")
+        db.commit() if hasattr(db, "commit") else None
+        return jsonify({"fatti": fatti})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:500]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
