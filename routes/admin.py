@@ -418,6 +418,36 @@ Il bersaglio, letto bene
 Il picco riconosciuto: gonfio, bolloso, raddoppiato, appena all'inizio del cedimento. È uno stato da vedere e annusare, e cambia con la temperatura e l'idratazione (un poolish caldo è pronto prima, una biga fresca ci mette di più). La scelta a monte — poolish o biga — non è "quale è meglio" ma quale carattere vuoi: delicato ed estensibile, o profondo e strutturato. E la regola che attraversa tutto il pane vale anche qui: guarda il pre-fermento, non l'orologio.""",
             "target": "Il picco riconosciuto: gonfio, bolloso, raddoppiato, appena all'inizio del cedimento · la leva è l'acqua: poolish liquido (delicato, estensibile) o biga soda (profondo, strutturato)",
         },
+        "fen-fermentazione-lattica": {
+            "scheda": """Due pani a lievito madre, stessa madre, stessa farina. Uno è morbido, tondo, con un'acidità delicata quasi da yogurt. L'altro è tagliente, pungente, sa quasi di aceto. Non hai cambiato ingredienti: hai cambiato come li hai fatti fermentare. Nel pane a lievito madre l'acidità non è un caso — è una leva che governi, se sai da dove viene.
+
+La fermentazione lattica è fermentazione applicata al lievito madre: accanto ai lieviti (che fanno il gas) lavorano i batteri lattici, che producono acidi. È fermentazione — con tutte le sue regole — ma con un prodotto in più, l'acidità, ed è quella a dare al pane il suo carattere. Governarla vuol dire scegliere il sapore.
+
+I due acidi: dolce e aspro sono due cose diverse
+
+Il cuore è capire che "acido" nel lievito madre non è una cosa sola. I batteri producono due acidi con caratteri opposti. L'acido lattico dà un'acidità morbida, cremosa, quasi da yogurt — il lato gentile. L'acido acetico è tagliente, pungente, è lo stesso dell'aceto — il lato aggressivo. Il sapore del tuo pane è il rapporto tra questi due: più lattico e è tondo e delicato, più acetico e è aspro e mordace. Un equilibrio spesso citato come buono è intorno a 80% lattico e 20% acetico — morbido ma con carattere. E c'è un indizio che usi già senza saperlo: l'acetico è volatile, evapora, ed è l'unico dei due che riesci ad annusare. Quando la madre "punge" di aceto al naso, è l'acetico che sta prendendo il sopravvento.
+
+Le leve che spostano il rapporto
+
+Due leve principali, e le conosci già dalla fermentazione. La temperatura: fermentare al caldo (indicativamente 27-30°C) favorisce i lattici → pane più dolce e morbido; fermentare al fresco (20-24°C) favorisce l'acetico → pane più aspro e tagliente. È l'opposto di quello che l'istinto suggerirebbe (freddo = aspro, non dolce). L'idratazione: una madre e un impasto molli, idratati, favoriscono i lattici (morbido); una madre soda, poco idratata, favorisce l'acetico (aspro). Più altre leve fini: il tempo (più lungo = più acido totale), e la quantità di madre che usi (più madre = parti già più acido).
+
+Il legame con l'acidità che già conosci
+
+Qui torna la scheda acidità master, con la sua distinzione tra pH e acidità titolabile. Nel lievito madre la sentì tutta: due impasti possono avere lo stesso pH ma un'acidità titolabile molto diversa — e a contare per il gusto è quella titolabile, non il pH. Un pane fermentato a lungo può avere lo stesso pH di uno breve ma molta più acidità reale, e sapere più aspro. Il pH ti dice il livello, la titolabile ti dice quanto lo senti. È la stessa cosa del lime al bar, applicata al pane.
+
+Il beneficio nascosto: non solo sapore
+
+L'acidità del lievito madre non fa solo gusto: conserva. Lattico e acetico insieme rallentano le muffe — per questo il pane a lievito madre dura di più e ammuffisce più tardi di un pane a lievito di birra. È lo stesso principio che vedrai nella vita del pane: l'acidità è anche una difesa, non solo un aroma.
+
+Come lo verifichi
+
+Il naso e il palato. Al naso: se punge di aceto, c'è tanto acetico (fermentazione fresca/soda); se è più lattico-cremoso, dominano i lattici (caldo/molle). Al palato: tondo e delicato o tagliente e mordace. Se il pane è troppo aspro per i tuoi gusti, sposta verso il lattico — più caldo, più idratato, fermentazione più breve. Se è troppo piatto, il contrario. Cambia una leva per volta e senti come si muove il profilo.
+
+Il bersaglio, letto bene
+
+Il profilo acido che vuoi, riconosciuto al naso e in bocca: morbido-lattico o tagliente-acetico, o l'equilibrio nel mezzo. Non un numero di pH da inseguire — anzi, il pH da solo inganna, perché non dice quanto sentirai l'acido (conta la titolabile). Il bersaglio è il carattere giusto per il tuo pane, e la libertà vera è sapere che lo scegli tu, con temperatura e idratazione, invece di subirlo. Caldo e molle per il gentile, fresco e sodo per il mordace.""",
+            "target": "Il profilo acido che scegli tu: caldo e molle → lattico morbido (yogurt), fresco e sodo → acetico tagliente (aceto) · il pH inganna, conta l'acidità titolabile · l'acetico è l'unico che annusi",
+        },
         "fen-laminazione": {
             "scheda": """Chiudi un panetto di burro dentro l'impasto, stendi, pieghi, metti in frigo. Ripeti. Ogni piega moltiplica gli strati: dopo tre o quattro giri hai decine di fogli sottilissimi di impasto alternati a burro. In forno l'acqua del burro diventa vapore, spinge gli strati uno contro l'altro e li separa: nasce il croissant, friabile e cavo. È maglia glutinica che tiene, e vapore che spinge — due cose che conosci, messe a lavorare insieme.
 
