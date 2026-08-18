@@ -306,10 +306,14 @@ def admin_test_retrieval():
         return "Forbidden", 403
     try:
         from ai import cerca_contesto
-        domanda = request.args.get("q", "impasto appiccicoso")
-        ctx = cerca_contesto(domanda)
+        from db import carica_grafo
+        db = carica_grafo()
+        termine = request.args.get("q", "appiccicoso")
+        ctx = cerca_contesto(db, termine, termine)
+        if not ctx:
+            return jsonify({"termine": termine, "n_fenomeni": 0, "fenomeni": [], "nota": "nessun match"})
         fen = [{"id": f.get("id"), "name": f.get("name")} for f in ctx.get("fenomeni", [])]
-        return jsonify({"domanda": domanda, "n_fenomeni": len(fen), "fenomeni": fen})
+        return jsonify({"termine": termine, "n_fenomeni": len(fen), "fenomeni": fen})
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:600]}), 500
