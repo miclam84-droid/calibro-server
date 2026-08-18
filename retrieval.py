@@ -81,9 +81,9 @@ def genera_candidati(db, domanda, termini_extra=None):
         if forma in alias_index:
             node, na = alias_index[forma]
             if na >= 2:
-                aggiungi(node, 95, f"alias-frase '{forma}'")
+                aggiungi(node, 200, f"alias-frase '{forma}'")
             else:
-                aggiungi(node, 80, f"alias '{forma}'")
+                aggiungi(node, 150, f"alias '{forma}'")
 
     # 2) NOME esatto / parziale (su tutti i nodi, non solo fenomeni)
     for forma, nwords in tutte_le_forme:
@@ -91,20 +91,26 @@ def genera_candidati(db, domanda, termini_extra=None):
         for n in db.execute("SELECT id, name, type, domain, data FROM nodes WHERE lower(name) LIKE ? LIMIT 6", (like,)).fetchall():
             nm = normalizza(n["name"])
             if nm == forma:
-                aggiungi(n, 90, f"nome-esatto '{forma}'")
+                aggiungi(n, 120, f"nome-esatto '{forma}'")
             elif nwords >= 2:
-                aggiungi(n, 65, f"nome-frase '{forma}'")
+                aggiungi(n, 60, f"nome-frase '{forma}'")
             else:
-                aggiungi(n, 55, f"nome-parziale '{forma}'")
+                # nome-parziale di parola generica ("impasto") pesa pochissimo: e' rumore
+                GENERICHE = {"impasto","l'impasto","pane","acqua","forno","cottura","lievito"}
+                punti_np = 8 if forma in GENERICHE else 45
+                aggiungi(n, punti_np, f"nome-parziale '{forma}'")
 
     # 3) TESTO scheda (solo fenomeni, peso basso)
     for forma, nwords in tutte_le_forme:
         if nwords < 2 and len(forma) < 5:
             continue  # evito parole cortissime nel testo (rumore)
         like = f"%{forma}%"
+        GENERICHE_T = {"impasto","l'impasto","pane","acqua","forno","cottura","lievito","struttura","calore"}
+        if forma in GENERICHE_T:
+            continue
         try:
             for n in db.execute("SELECT id, name, type, domain, data FROM nodes WHERE type='Fenomeno' AND lower(CAST(data AS TEXT)) LIKE ? LIMIT 6", (like,)).fetchall():
-                aggiungi(n, 30 if nwords>=2 else 20, f"testo '{forma}'")
+                aggiungi(n, 25 if nwords>=2 else 12, f"testo '{forma}'")
         except Exception:
             pass
 
@@ -113,8 +119,8 @@ def genera_candidati(db, domanda, termini_extra=None):
         for nid, c in candidati.items():
             nd = (c["node"]["domain"] or "").lower()
             if nd == dom_rilevato:
-                c["score"] += 40
-                c["segnali"].append(f"dominio={dom_rilevato} +40")
+                c["score"] += 20
+                c["segnali"].append(f"dominio={dom_rilevato} +20")
 
     # 5) BONUS TIPO (Fenomeno preferito come risposta)
     for nid, c in candidati.items():
