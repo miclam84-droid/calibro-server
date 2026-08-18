@@ -448,6 +448,66 @@ Il bersaglio, letto bene
 Il profilo acido che vuoi, riconosciuto al naso e in bocca: morbido-lattico o tagliente-acetico, o l'equilibrio nel mezzo. Non un numero di pH da inseguire — anzi, il pH da solo inganna, perché non dice quanto sentirai l'acido (conta la titolabile). Il bersaglio è il carattere giusto per il tuo pane, e la libertà vera è sapere che lo scegli tu, con temperatura e idratazione, invece di subirlo. Caldo e molle per il gentile, fresco e sodo per il mordace.""",
             "target": "Il profilo acido che scegli tu: caldo e molle → lattico morbido (yogurt), fresco e sodo → acetico tagliente (aceto) · il pH inganna, conta l'acidità titolabile · l'acetico è l'unico che annusi",
         },
+        "fen-retrogradazione": {
+            "scheda": """Il pane appena sfornato è morbido, la mollica cede sotto il dito. Il giorno dopo è più duro, asciutto, gommoso. Ti viene naturale pensare: ha perso acqua, si è seccato. È la spiegazione più ovvia, ed è sbagliata. Il pane raffermisce anche chiuso in un sacchetto, anche in ambiente umido — perché il raffermimento non è essiccazione. È l'amido che si riorganizza. E capirlo ti dice l'unica cosa che conta: dove tenere il pane.
+
+La retrogradazione è il rovescio della gelatinizzazione. Ricordi: gelatinizzando, l'amido cotto assorbe acqua e si gonfia in una rete morbida, tipo gel — è quella che dà la mollica fresca. La retrogradazione è quel gel che, raffreddandosi e invecchiando, si disfa: le molecole di amido si riallineano e ricristallizzano, tornando verso una struttura rigida. È gelatinizzazione al contrario, ed è il vero motore del raffermimento.
+
+Non è secchezza: è ricristallizzazione
+
+Questo è il punto che ribalta l'intuito, ed è stato dimostrato più di un secolo fa: il pane raffermisce anche se non perde acqua. Chiudilo ermeticamente e raffermisce lo stesso. Quello che succede non è che l'acqua evapora — è che l'amido, che dopo la cottura era in uno stato disordinato e morbido, si riorganizza in cristalli rigidi, e nel farlo espelle l'acqua dalla sua struttura verso gli spazi tra le molecole. L'acqua è ancora lì dentro, ma non più dove serve: la mollica diventa dura e asciutta al tatto anche se il contenuto d'acqua è quasi lo stesso. Raffermire è un fatto di struttura, non di quantità d'acqua.
+
+Due tempi: amilosio subito, amilopectina per giorni
+
+La retrogradazione ha due fasi, guidate dalle due parti dell'amido. L'amilosio ricristallizza in fretta — nelle prime ore — e dà l'indurimento iniziale, quello che senti già il primo giorno. L'amilopectina è più lenta: ricristallizza nei giorni successivi, ed è responsabile dell'indurimento che continua al secondo, terzo giorno. Per questo il pane non "muore" tutto insieme: c'è un peggioramento rapido subito e uno lento e prolungato dopo.
+
+Il fatto che spiazza tutti: il frigo è il posto peggiore
+
+Qui la conseguenza pratica più importante, e la più controintuitiva. Il freddo del frigorifero accelera il raffermimento, non lo rallenta. La velocità di retrogradazione segue una curva a U con la temperatura: è massima proprio tra 0 e 10°C — cioè la temperatura del frigo. A temperatura ambiente è più lenta. E il congelatore la quasi ferma del tutto, perché blocca il movimento delle molecole. Quindi la regola è: pane a temperatura ambiente per il breve termine, congelatore per il lungo — mai in frigo, che è la scelta peggiore anche se l'istinto "freddo = si conserva" dice il contrario.
+
+E si può tornare indietro (per un po')
+
+Buona notizia: la retrogradazione è in parte reversibile. Scaldare il pane raffermo — nel forno, nel tostapane — rigelatinizza parzialmente l'amido ricristallizzato e restituisce morbidezza: il pane vecchio tostato torna buono. Ma è temporaneo: appena si raffredda, ricomincia a retrogradare, e più in fretta di prima (le catene sono già parzialmente allineate). Un pane lo puoi "resuscitare" col calore una volta, non all'infinito.
+
+Come lo rallenti (le leve)
+
+La conservazione (ambiente per giorni, freezer per settimane, mai frigo). Grassi e zuccheri nell'impasto (interferiscono con la ricristallizzazione: per questo una brioche resta morbida più a lungo di una baguette magra). La lunga fermentazione e l'acidità (il pane a lievito madre, più acido, retrograda più lentamente). E il tenerlo ben chiuso (non contro l'essiccazione in sé, ma per non perdere anche acqua in aggiunta al raffermimento).
+
+Il bersaglio, letto bene
+
+Non è fermare il raffermimento — è impossibile, l'amido ricristallizza sempre. È rallentarlo il più possibile. Il bersaglio è la scelta giusta per il tuo orizzonte: temperatura ambiente e sacchetto per il pane che mangi in un giorno o due, freezer per quello che tieni, forno per resuscitare quello raffermo. E la cosa da ricordare, contro ogni istinto: il frigo è il nemico del pane, non il suo alleato.""",
+            "target": "Rallentare non fermare: l'amido ricristallizza sempre · NON è secchezza (raffermisce anche sigillato) · il frigo è il PEGGIO (curva a U, max 0-10°C) · ambiente per giorni, freezer per settimane, calore resuscita",
+        },
+        "fen-shelf-life-pane": {
+            "scheda": """"Quanto dura il pane?" è la domanda sbagliata, perché il pane muore in due modi diversi, e confonderli ti fa sbagliare la conservazione. Un pane può diventare duro e raffermo pur restando sano da mangiare; un altro può restare morbido ma ammuffire. Sono due nemici distinti — il raffermire e l'ammuffire — e vogliono difese opposte. Capire quale stai combattendo è metà del lavoro.
+
+La vita del pane non è una cosa sola. Ci sono due processi che la limitano, indipendenti, con cause e rimedi diversi. Trattarli come se fossero lo stesso problema è l'errore che porta a mettere il pane in frigo "per conservarlo" e ottenere il peggio di entrambi.
+
+Nemico 1: il raffermire (struttura)
+
+Il primo è il raffermimento, ed è la retrogradazione che conosci: l'amido ricristallizza, la mollica indurisce, il pane diventa asciutto e gommoso. Non è pericoloso — un pane raffermo si mangia benissimo (tostato, in zuppa, in un panzanella) — è un decadimento di texture. E lo governi con la temperatura giusta: ambiente per il breve, freezer per il lungo, mai frigo (che lo accelera). Il raffermire è una questione di struttura dell'amido.
+
+Nemico 2: l'ammuffire (biologia)
+
+Il secondo è tutt'altro: la muffa, un fungo che cresce sul pane. Questo sì è un problema di sicurezza — un pane ammuffito non si mangia. E dipende da una cosa diversa: l'acqua disponibile. Non l'acqua totale, ma l'acqua "libera", quella che i microrganismi possono usare — si chiama attività dell'acqua, Aw. Più è alta (pane umido, morbido, ben chiuso in un sacchetto caldo), più le muffe crescono in fretta. La muffa ama caldo e umido. Il raffreddamento la rallenta — ed ecco il paradosso del frigo: rallenta la muffa ma accelera il raffermire. Per questo il frigo è una pessima idea per il pane fresco (peggiora la texture) ma i due nemici tirano in direzioni opposte.
+
+Il conflitto: perché non c'è una conservazione unica
+
+Qui sta il punto. Le condizioni che frenano un nemico spesso favoriscono l'altro. Chiudere bene il pane trattiene umidità → mollica morbida più a lungo (bene contro il raffermire) ma più acqua libera → muffa più veloce (male). Il frigo → meno muffa ma più raffermire. Il freezer è l'unico che vince su entrambi: ferma quasi il raffermimento e blocca la muffa (al gelo il fungo non cresce e l'amido non ricristallizza). Ecco perché congelare è la vera risposta per il lungo termine.
+
+Le leve, e come l'acidità aiuta
+
+La temperatura (ambiente per giorni, freezer per settimane, frigo mai per il pane fresco). La chiusura (un equilibrio: abbastanza da non seccare e non raffermire troppo, non così ermetica da favorire la muffa in un pane umido). E un alleato che conosci: l'acidità del lievito madre. Il pane a lievito madre dura di più per due motivi insieme — retrograda più lentamente (basso pH) e resiste meglio alla muffa (lattico e acetico sono antifungini). L'acidità difende su entrambi i fronti: è per questo che un pane a pasta madre "invecchia bene" mentre un pane a lievito di birra raffermisce e ammuffisce prima.
+
+Come lo verifichi
+
+Guarda e tocca, e distingui. Duro ma pulito, senza macchie né odore strano → raffermo, non pericoloso: recuperalo col calore o usalo da raffermo. Macchie (verdi, bianche, nere), odore di muffa, filamenti → ammuffito: si butta, tutto, non solo la parte visibile. Riconoscere quale dei due hai davanti ti dice se stai perdendo qualità (raffermo) o sicurezza (muffa).
+
+Il bersaglio, letto bene
+
+Non "far durare il pane" in astratto, ma sapere contro quale nemico stai giocando e scegliere la difesa giusta. Il bersaglio è la conservazione adatta all'orizzonte e al tipo di pane: ambiente e sacchetto per il consumo veloce, freezer per il lungo, l'acidità della pasta madre come alleato naturale su entrambi i fronti. E la regola che riassume tutto: il raffermire è texture (recuperabile), la muffa è sicurezza (no) — non curarli con lo stesso gesto, e per il pane fresco tieni lontano il frigo.""",
+            "target": "Due nemici diversi: il raffermire (texture, recuperabile) e la muffa (sicurezza, si butta) · difese in conflitto, solo il freezer vince su entrambi · l'acidità della pasta madre aiuta su tutti e due",
+        },
         "fen-laminazione": {
             "scheda": """Chiudi un panetto di burro dentro l'impasto, stendi, pieghi, metti in frigo. Ripeti. Ogni piega moltiplica gli strati: dopo tre o quattro giri hai decine di fogli sottilissimi di impasto alternati a burro. In forno l'acqua del burro diventa vapore, spinge gli strati uno contro l'altro e li separa: nasce il croissant, friabile e cavo. È maglia glutinica che tiene, e vapore che spinge — due cose che conosci, messe a lavorare insieme.
 
