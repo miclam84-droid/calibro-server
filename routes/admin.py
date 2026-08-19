@@ -838,6 +838,9 @@ def admin_popola_alias():
             "fen-chiarificazione-latte": ["chiarificazione","milk punch","milk wash","clarified","chiarificato","latte cocktail","drink limpido","clarificare","milk washing"],
             "fen-infusioni": ["infusione","macerazione","infondere","aromatizzare distillato","gin fatto in casa","infuso","macerare","botaniche","aromatizzare alcol"],
             "fen-amaro-bitter": ["bitter","amaro","angostura","peychaud","dash","gocce di bitter","campari","fernet","digestivo","aromatico cocktail","orange bitter"],
+            "fen-collagene-brasato": ["brasato","collagene","gelatina carne","taglio duro","cottura lenta carne","stracotto","spezzatino","ossobuco","brisket","carne dura","perche la carne e dura","guancia","spalla"],
+            "fen-rosolatura": ["rosolatura","rosolare","searing","scottare la carne","crosta carne","sigillare carne","dorare la carne","bistecca crosta","sear"],
+            "fen-emulsione-salse": ["maionese","olandese","salsa impazzita","emulsione salsa","vinaigrette","salsa emulsionata","maionese impazzita","montare la salsa","bearnaise"],
             "fen-shakerare-mescolare": ["shakerare","mescolare","shakerato mescolato","shake stir","quando shakerare","shakerare o mescolare","stirred shaken","tecnica shaker","bar spoon"],
             "fen-emulsione-bar": ["albume cocktail","schiuma cocktail","dry shake","sour schiuma","whiskey sour schiuma","emulsione drink","aquafaba","clover club","pisco sour","foam cocktail"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
@@ -1152,6 +1155,9 @@ def admin_crea_haccp():
         "fen-chiarificazione-latte": {"nome":"La chiarificazione al latte","target":"Acido a pH 4.6 caglia la caseina, la cagliata cattura tannini e torbidita, filtri = limpido e morbido"},
         "fen-infusioni": {"nome":"Infusioni e macerazioni","target":"Alcol estrae aromi: tempo/temperatura/superficie governano, assaggia e ferma alla finestra giusta"},
         "fen-amaro-bitter": {"nome":"L'amaro e i bitter","target":"Bitter a gocce mette a fuoco (sale del bar): concentrati vs amari da bere, la 4a forza dell'equilibrio"},
+        "fen-collagene-brasato": {"nome":"Collagene e brasato (i due tipi di carne)","target":"Fibre poco e caldo, collagene tanto tempo a 70-90C = gelatina, scegli la cottura dal taglio"},
+        "fen-rosolatura": {"nome":"La rosolatura (searing)","target":"Maillard sulla superficie = sapore non sigillo, carne asciutta padella calda"},
+        "fen-emulsione-salse": {"nome":"Emulsione delle salse (maionese, olandese)","target":"Olio in gocce tenute dall'emulsionante, olio lento, si salva da nuovo emulsionante"},
     }
     risultati = []
     try:
@@ -1218,15 +1224,19 @@ def admin_fix_dominio_bar():
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     import traceback
-    BAR_FEN = ["fen-equilibrio-cocktail","fen-shakerare-mescolare","fen-emulsione-bar",
-               "fen-ghiaccio","fen-carbonatazione","fen-chiarificazione-latte",
-               "fen-infusioni","fen-amaro-bitter"]
+    DOMINI = {
+        "bar": ["fen-equilibrio-cocktail","fen-shakerare-mescolare","fen-emulsione-bar",
+                "fen-ghiaccio","fen-carbonatazione","fen-chiarificazione-latte",
+                "fen-infusioni","fen-amaro-bitter"],
+        "cucina": ["fen-collagene-brasato","fen-rosolatura","fen-emulsione-salse"],
+    }
     try:
         conn = _get_conn(); cur = conn.cursor()
         fatti = []
-        for nid in BAR_FEN:
-            cur.execute("UPDATE nodes SET domain=%s WHERE id=%s", ("bar", nid))
-            fatti.append(f"{nid}: dominio -> bar")
+        for dom, ids in DOMINI.items():
+            for nid in ids:
+                cur.execute("UPDATE nodes SET domain=%s WHERE id=%s", (dom, nid))
+                fatti.append(f"{nid}: dominio -> {dom}")
         conn.commit()
         return jsonify({"fatti": fatti})
     except Exception as e:
@@ -1823,6 +1833,53 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-collagene-brasato": {
+            "scheda": """C'e un motivo per cui la bistecca si cuoce in tre minuti e il brasato in tre ore - e non e la dimensione. Sono due tipi di carne opposti, governati da due proteine diverse: la bistecca dalle fibre muscolari, il brasato dal collagene. Capire questa differenza e la cosa piu importante della cottura della carne. Sbagliarla vuol dire una bistecca stopposa o un brasato duro.
+
+Nella carne ci sono due strutture che il calore tratta in modo OPPOSTO:
+- FIBRE MUSCOLARI (actina, miosina): nei tagli teneri e magri (bistecca, filetto, lombata). Cuociono in fretta ad alta temperatura. Piu le cuoci, piu si contraggono e diventano dure e secche. Vanno cotte POCO (al sangue/media), tolte al punto giusto.
+- COLLAGENE (tessuto connettivo): nei tagli duri e lavorati (spalla, guancia, muscolo, brisket, ossobuco). E una proteina a tripla elica, dura e gommosa da cruda. Ma con calore + umidita + TEMPO si scioglie in GELATINA, che rende la carne succosa e fondente.
+
+Le temperature e il paradosso
+Il collagene inizia a sciogliersi verso i 60C, ma la conversione vera avviene tra 70-90C sostenuti per 2-6 ore. Attenzione allo stadio di mezzo: intorno ai 60C le fibre si contraggono ed espellono acqua - la carne sembra piu SECCA e dura proprio a meta cottura. E lo scoglio del brasato: bisogna INSISTERE oltre, e il collagene che si scioglie ripaga.
+
+I due tipi di succosita
+Una bistecca e succosa perche trattiene i suoi succhi (cotta poco). Un brasato e succoso perche la gelatina disciolta (che trattiene 3 volte il suo peso in acqua) lo rende fondente, anche se le fibre hanno perso i loro liquidi. Due succosita diverse. Per questo NON puoi fare un brasato "al sangue" (il collagene non si e sciolto = duro) ne una bistecca "brasata" (poco collagene, la cuoci a morte per niente).
+Il bersaglio: taglio tenero (fibre) = poco e caldo. Taglio duro (collagene) = tanto tempo a 70-90C con umidita → gelatina. Sceglere la cottura DAL taglio. Il brasato passa da uno stadio secco intermedio: insisti.""",
+            "target": "Taglio tenero poco e caldo, taglio duro (collagene) tanto tempo a 70-90C con umidita = gelatina - scegli la cottura dal taglio, il brasato passa da uno stadio secco: insisti",
+            "nome": "Collagene e brasato (i due tipi di carne)",
+            "dominio": "cucina",
+        },
+        "fen-rosolatura": {
+            "scheda": """La crosta bruna e saporita di una bistecca scottata bene non e "bruciatura" ne caramellizzazione: e la reazione di Maillard, la stessa della crosta del pane. E non "sigilla i succhi" come si diceva una volta - quella e una leggenda. Serve a una cosa sola, ma fondamentale: creare sapore.
+
+La rosolatura e Maillard (vedi il fenomeno) applicata alla superficie della carne: ad alta temperatura (sopra i 140C, meglio 160-200C sulla padella), zuccheri e amminoacidi reagiscono e creano centinaia di composti aromatici bruni - il sapore "di arrosto". E l'applicazione in cucina della stessa reazione che dora pane, caffe, birra.
+
+Le condizioni che contano
+SUPERFICIE ASCIUTTA: l'acqua in superficie deve prima evaporare (a 100C) prima che parta la Maillard (140C+). Carne bagnata = si lessa invece di rosolare, niente crosta. Va asciugata bene prima. PADELLA CALDA e non affollata: troppa carne insieme abbassa la temperatura e fa uscire acqua = bollore, non rosolatura. GRASSO adatto: con punto di fumo alto (vedi il fenomeno), o brucia.
+
+La leggenda sfatata
+Rosolare NON "sigilla i succhi dentro": la crosta non e impermeabile, la carne scottata perde succhi come e piu di quella non scottata. Si rosola per il SAPORE (la crosta Maillard + il fond in padella per le salse), non per la succosita. Prima o dopo la cottura lenta, la rosolatura e sempre una questione di gusto, non di tenuta.
+Il bersaglio: rosolatura = Maillard sulla superficie (sopra 140C) = sapore, NON sigillo. Carne asciutta, padella calda, non affollata, grasso adatto. E la stessa reazione della crosta del pane.""",
+            "target": "Rosolatura = Maillard sulla superficie (sopra 140C) = SAPORE non sigillo: carne asciutta padella calda non affollata - stessa reazione della crosta del pane",
+            "nome": "La rosolatura (searing)",
+            "dominio": "cucina",
+        },
+        "fen-emulsione-salse": {
+            "scheda": """Maionese, olandese, vinaigrette: sono tutte la stessa magia fisica - due liquidi che si odiano, olio e acqua, costretti a stare insieme in una crema stabile. Il segreto e un terzo ingrediente, l'emulsionante, e un gesto: aggiungere l'olio LENTAMENTE. Capirlo vuol dire non "impazzire" mai piu una salsa.
+
+Olio e acqua non si mescolano: l'olio in gocce tende a riunirsi e separarsi. Un'emulsione e olio disperso in minuscole goccioline dentro l'acqua (o viceversa), tenute separate da un EMULSIONANTE - una molecola che ha una parte che ama l'acqua e una che ama il grasso, e fa da ponte. Nella maionese l'emulsionante e la LECITINA del tuorlo d'uovo; nell'olandese sempre il tuorlo; nella vinaigrette la senape.
+
+Perche l'olio va aggiunto piano
+All'inizio serve creare l'emulsione: poche gocce d'olio alla volta, sbattendo, cosi ogni goccia viene circondata dall'emulsionante prima che arrivi la successiva. Se versi troppo olio insieme, l'emulsionante non basta a rivestirlo tutto, le gocce si riuniscono e la salsa "impazzisce" (si separa in olio e grumi). Piu emulsionante = piu olio che puoi reggere.
+
+Come si salva una salsa impazzita
+Non buttarla: ricominci con un nuovo tuorlo (o un cucchiaio d'acqua calda per l'olandese) in una ciotola pulita, e ci versi DENTRO la salsa impazzita lentamente, come fosse l'olio. Il nuovo emulsionante ricostruisce l'emulsione.
+Il bersaglio: emulsione = olio in gocce nell'acqua, tenute dall'emulsionante (lecitina del tuorlo, senape). Olio LENTO all'inizio (l'emulsionante deve rivestire ogni goccia). Impazzita = troppo olio troppo in fretta, si salva ripartendo da nuovo emulsionante.""",
+            "target": "Emulsione = olio in gocce tenute dall'emulsionante (lecitina tuorlo, senape): olio LENTO all'inizio, impazzita = troppo olio troppo in fretta, si salva da nuovo emulsionante",
+            "nome": "Emulsione delle salse (maionese, olandese)",
+            "dominio": "cucina",
+        },
         "fen-chiarificazione-latte": {
             "scheda": """Prendi un cocktail torbido, lo "rovini" versandolo nel latte finche caglia, lo filtri — e ottieni un liquido limpido come acqua ma piu morbido e rotondo di prima. Sembra magia, e invece e la stessa fisica della ricotta: le proteine del latte che coagulano con l'acido, e cagliando si portano via amaro e torbidita.
 
