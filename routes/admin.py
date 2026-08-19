@@ -1250,7 +1250,7 @@ def admin_fix_dominio_bar():
                 "fen-infusioni","fen-amaro-bitter"],
         "cucina": ["fen-collagene-brasato","fen-rosolatura","fen-emulsione-salse","fen-pasta-acqua","fen-soffritto","fen-riposo-carne","fen-uova-coagulazione","fen-verdure-verdi"],
         "pasticceria": ["fen-meringa","fen-montatura-panna","fen-crema-pasticcera","fen-temperaggio-cioccolato","fen-gelificazione","fen-zucchero-cottura","fen-pasta-frolla","fen-lievitazione-chimica"],
-        "gelateria": ["fen-cristalli-ghiaccio","fen-zuccheri-pac","fen-grassi-stabilizzanti"],
+        "gelateria": ["fen-cristalli-ghiaccio","fen-zuccheri-pac","fen-grassi-stabilizzanti","fen-stabilizzanti-gelato","fen-cristallizzazione-ghiaccio","fen-overrun"],
         "vino": ["fen-fermentazione-alcolica","fen-tannini-vino"],
         "birra": ["fen-luppolo"],
         "caffetteria": ["fen-macinatura-caffe"],
