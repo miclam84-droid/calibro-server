@@ -174,3 +174,51 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         return {"errore": f"JSON non valido: {e}", "raw": raw[:300] if 'raw' in dir() else ""}
     except Exception as e:
         return {"errore": str(e)}
+
+
+def genera_twist(ricetta_madre, modifica, lang="it"):
+    """Genera una variante (twist) di una ricetta esistente applicando una modifica.
+    ricetta_madre: dict con la ricetta originale (nome, ingredienti, procedimento, fenomeni, numeri...)
+    modifica: es. "rendi vegano", "versione per il bar", "sostituisci il burro con olio"
+    Mantiene i fenomeni pertinenti, adatta ingredienti/procedimento, ricalcola i numeri dove serve.
+    """
+    import json as _jj, re as _re
+    from ai import chiedi_mistral
+    LINGUA = {"it":"italiano","en":"English","es":"español"}.get(lang,"italiano")
+    ingr = ricetta_madre.get("ingredienti",[])
+    ingr_str = ", ".join(f"{i.get('quantita','')}{i.get('unita','')} {i.get('nome','')}" for i in ingr if isinstance(i,dict))
+    num = ricetta_madre.get("numeri",{})
+    num_str = "; ".join(f"{k}: {v}" for k,v in num.items()) if isinstance(num,dict) else ""
+    fen = ricetta_madre.get("fenomeni",[])
+    prompt = (
+        f"Sei un consulente scientifico F&B. Parti da questa ricetta e applica UNA modifica creando una VARIANTE.\n\n"
+        f"RICETTA MADRE: {ricetta_madre.get('nome','')}\n"
+        f"INGREDIENTI: {ingr_str}\n"
+        f"NUMERI BERSAGLIO: {num_str}\n"
+        f"FENOMENI (mantieni quelli ancora pertinenti): {', '.join(fen) if isinstance(fen,list) else ''}\n"
+        f"PUNTO CRITICO: {ricetta_madre.get('punto_critico','')}\n\n"
+        f"MODIFICA RICHIESTA: {modifica}\n\n"
+        f"Genera la variante in {LINGUA}. Adatta ingredienti e procedimento alla modifica, "
+        f"ricalcola i numeri SOLO se la modifica li cambia, mantieni i fenomeni ancora validi. "
+        f"Rispondi SOLO con questo JSON (niente altro):\n"
+        f'{{"nome":"nome della variante (deve richiamare la modifica)","descrizione":"1-2 frasi",'
+        f'"ingredienti":[{{"nome":"...","quantita":"...","unita":"..."}}],'
+        f'"procedimento":[{{"n":1,"testo":"...","numero_chiave":"numero o null"}}],'
+        f'"fenomeni":["fen-..."],"numeri":{{"parametro":"valore"}},'
+        f'"punto_critico":"...","applicazioni":["dove si usa in un menu"],'
+        f'"tempo_prep":30,"tempo_cottura":0,"difficolta":"media","porzioni":"4"}}'
+    )
+    try:
+        raw = chiedi_mistral(prompt)
+        if not raw:
+            return {"errore":"generazione twist fallita"}
+        m = _re.search(r"\{.*\}", raw, _re.DOTALL)
+        if not m:
+            return {"errore":"output non-JSON","raw":raw[:200]}
+        testo = _re.sub(r",\s*([}\]])", r"\1", m.group(0))
+        variante = _jj.loads(testo)
+        variante["_twist"] = True
+        variante["disciplina"] = ricetta_madre.get("disciplina","")
+        return variante
+    except Exception as e:
+        return {"errore":str(e)}

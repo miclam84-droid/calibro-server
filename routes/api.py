@@ -767,6 +767,70 @@ def api_ricette_list():
         import traceback
         return jsonify({"errore":str(e),"type":type(e).__name__,"tb":traceback.format_exc()[-300:]}), 500
 
+@bp.route("/v1/ricetta/<rid>/twist", methods=["POST"])
+def ricetta_twist(rid):
+    """Twist: genera una variante di una ricetta esistente per creare voci-menu al volo.
+    Body JSON: {modifica: 'rendi vegano' | 'versione bar' | 'sostituisci X con Y', salva: false, lang: 'it'}
+    """
+    import json as _j, re as _re, unicodedata
+    from db import carica_grafo, _get_conn, _release_conn
+    from builder import genera_twist
+    body = request.json or {}
+    modifica = body.get("modifica","").strip()
+    lang = body.get("lang","it")
+    salva = bool(body.get("salva", False))
+    if not modifica:
+        return jsonify({"errore":"modifica mancante (es. 'rendi vegano', 'versione bar')"}), 400
+    db = carica_grafo()
+    # carico la ricetta madre
+    try:
+        rows = db.execute("SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico FROM ricette WHERE id=%s", (rid,))
+        row = rows[0] if rows else None
+    except Exception as e:
+        return jsonify({"errore":f"lettura ricetta: {e}"}), 500
+    if not row:
+        return jsonify({"errore":"ricetta madre non trovata"}), 404
+    def _p(v):
+        if v is None: return None
+        if isinstance(v,(list,dict)): return v
+        try: return _j.loads(v)
+        except: return v
+    madre = {"id":row["id"] if hasattr(row,"keys") else row[0],
+             "nome":row["nome"] if hasattr(row,"keys") else row[1],
+             "disciplina":row["disciplina"] if hasattr(row,"keys") else row[2],
+             "ingredienti":_p(row["ingredienti"] if hasattr(row,"keys") else row[4]) or [],
+             "fenomeni":_p(row["fenomeni"] if hasattr(row,"keys") else row[5]) or [],
+             "numeri":_p(row["numeri"] if hasattr(row,"keys") else row[7]) or {},
+             "punto_critico":(row["punto_critico"] if hasattr(row,"keys") else row[8]) or ""}
+    variante = genera_twist(madre, modifica, lang=lang)
+    if variante.get("errore"):
+        return jsonify(variante), 422
+    variante["twist_di"] = rid
+    # salvataggio opzionale
+    if salva and variante.get("nome"):
+        try:
+            slug = unicodedata.normalize("NFKD", variante["nome"].lower()).encode("ascii","ignore").decode()
+            slug = _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:40]
+            nid = f"ric-twist-{slug}"
+            conn = _get_conn(); cur = conn.cursor()
+            cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,numeri,punto_critico,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,twist_di)
+                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s)
+                ON CONFLICT (id) DO NOTHING""",
+                (nid, variante["nome"], madre["disciplina"], variante.get("descrizione",""),
+                 _j.dumps(variante.get("ingredienti",[]),ensure_ascii=False),
+                 _j.dumps(variante.get("fenomeni",[]),ensure_ascii=False),
+                 _j.dumps(variante.get("numeri",{}),ensure_ascii=False),
+                 variante.get("punto_critico",""),
+                 _j.dumps(variante.get("procedimento",[]),ensure_ascii=False),
+                 _j.dumps(variante.get("applicazioni",[]),ensure_ascii=False),
+                 variante.get("tempo_prep"), variante.get("tempo_cottura"),
+                 variante.get("difficolta",""), variante.get("porzioni",""), rid))
+            conn.commit(); cur.close(); _release_conn(conn)
+            variante["_salvata"] = True; variante["id"] = nid
+        except Exception as se:
+            variante["_salvata"] = False; variante["_errore_salvataggio"] = str(se)
+    return jsonify(variante)
+
 @bp.route("/v1/tecniche")
 def api_tecniche_list():
     """Lista tecniche (nodi type='Tecnica'). ?disc=cucina&lang=it&famiglia=calore_secco"""
