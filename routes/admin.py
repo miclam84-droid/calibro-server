@@ -1282,6 +1282,117 @@ def admin_reset_trial():
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:300]}), 500
 
+@bp.route("/admin/coeff-zuccheri")
+def admin_coeff_zuccheri():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # POD = potere dolcificante, PAC = potere anticongelante (saccarosio=100). Solidi = sostanza secca %.
+    ZUCCHERI = {
+        "ing-saccarosio": {"nome":"Saccarosio","pod":100,"pac":100,"solidi":100,
+            "nota":"Lo zucchero di riferimento (POD 100, PAC 100). Almeno il 70% degli zuccheri di una ricetta gelato. Da durezza e cristalli piu grandi."},
+        "ing-destrosio": {"nome":"Destrosio (glucosio)","pod":74,"pac":190,"solidi":92,
+            "nota":"Dolcifica meno (POD 74) ma abbassa molto il punto di congelamento (PAC 190): rende il gelato piu morbido e spatolabile. 15-20% degli zuccheri. Esalta gli aromi."},
+        "ing-fruttosio": {"nome":"Fruttosio","pod":170,"pac":190,"solidi":100,
+            "nota":"Molto dolce (POD 170) e molto anticongelante (PAC 190). Presente nella frutta. Da usare con parsimonia o il gelato resta troppo morbido e troppo dolce."},
+        "ing-zucchero-invertito": {"nome":"Zucchero invertito","pod":130,"pac":190,"solidi":75,
+            "nota":"Miscela di glucosio e fruttosio (POD 130, PAC 190). Anticristallizzante: da cremosita, controlla i cristalli, trattiene umidita. Effetto riducente (rallenta l'ossidazione)."},
+        "ing-sciroppo-glucosio": {"nome":"Sciroppo di glucosio (42 DE)","pod":50,"pac":90,"solidi":80,
+            "nota":"POD e PAC dipendono dal DE (destrosio equivalente): piu alto il DE, piu alti POD e PAC. Il 42DE ha POD 50, PAC 90. Anticristallizzante e legante, aumenta il secco senza dolcificare troppo."},
+        "ing-lattosio": {"nome":"Lattosio","pod":16,"pac":100,"solidi":100,
+            "nota":"Zucchero del latte (POD 16, PAC 100). Poco dolce, forte assorbimento d'acqua. Attenzione al dosaggio: in eccesso ricristallizza e da consistenza sabbiosa."},
+        "ing-maltodestrine": {"nome":"Maltodestrine","pod":10,"pac":20,"solidi":95,
+            "nota":"DE basso: POD e PAC molto bassi. Alzano il secco e danno corpo senza dolcificare ne abbassare troppo il congelamento."},
+    }
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        fatti = []
+        for nid, dati in ZUCCHERI.items():
+            cur.execute("SELECT id, data FROM nodes WHERE id=%s", (nid,))
+            row = cur.fetchone()
+            payload = {"pod": dati["pod"], "pac": dati["pac"], "solidi_pct": dati["solidi"],
+                       "scheda": dati["nota"], "categoria": "zucchero", "disciplina": "gelateria"}
+            if row:
+                raw = row[1] if isinstance(row,(list,tuple)) else row["data"]
+                nd = raw if isinstance(raw, dict) else _json.loads(raw)
+                nd.update(payload)
+                cur.execute("UPDATE nodes SET data=%s, domain=COALESCE(NULLIF(domain,''),'gelateria') WHERE id=%s",
+                            (_json.dumps(nd, ensure_ascii=False), nid))
+                fatti.append(f"{nid}: aggiornato POD={dati['pod']} PAC={dati['pac']}")
+            else:
+                nd = {"nome": dati["nome"], **payload}
+                cur.execute("INSERT INTO nodes (id, type, name, domain, data) VALUES (%s,%s,%s,%s,%s)",
+                            (nid, "Ingrediente", dati["nome"], "gelateria", _json.dumps(nd, ensure_ascii=False)))
+                fatti.append(f"{nid}: CREATO POD={dati['pod']} PAC={dati['pac']}")
+        conn.commit()
+        return jsonify({"ok": True, "zuccheri": fatti})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
+@bp.route("/admin/crea-errori-nuovi")
+def admin_crea_errori_nuovi():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # errori tipici (sintomo osservabile al banco -> causa -> fenomeno). Schema: nodo Errore + edge fallisce_come.
+    ERRORI = [
+        # (err_id, nome, dominio, causa, fenomeno, sintomo)
+        ("err-brasato-stopposo","Brasato asciutto e stopposo","cucina",
+         "cottura fermata nello stadio secco intermedio: le fibre hanno espulso acqua ma il collagene non si e ancora sciolto in gelatina. Serve insistere a 70-90C con umidita finche il collagene converte","fen-collagene-brasato","asciutto e duro a meta cottura"),
+        ("err-bistecca-grigia","Bistecca grigia senza crosta","cucina",
+         "carne umida o padella non abbastanza calda: l'acqua in superficie evapora a 100C e impedisce la Maillard (che parte a 140C+). La carne si lessa invece di rosolare. Asciugare bene, padella rovente, non affollare","fen-rosolatura","niente crosta, colore grigio"),
+        ("err-maionese-impazzita","Maionese impazzita (separata)","cucina",
+         "olio aggiunto troppo in fretta all'inizio: l'emulsionante (lecitina del tuorlo) non riesce a rivestire tutte le gocce e l'emulsione si rompe. Ripartire da un nuovo tuorlo versandoci dentro la salsa impazzita lentamente","fen-emulsione-salse","olio separato, grumi"),
+        ("err-pasta-collosa","Pasta collosa e scotta","cucina",
+         "amido troppo gelatinizzato: cottura eccessiva o poca acqua. L'amido esce tutto e la pasta si impasta. Scolare al dente (cuore ancora vetroso), acqua abbondante","fen-pasta-acqua","pasta appiccicata, molla"),
+        ("err-carne-secca-taglio","Carne asciutta appena tagliata","cucina",
+         "tagliata senza riposo: i succhi in pressione al centro (fibre contratte dal calore) escono tutti al taglio. Far riposare (bistecca 5 min, arrosto 15-20) perche le fibre si rilassino e i succhi si ridistribuiscano","fen-riposo-carne","tagliere allagato, carne secca"),
+        ("err-uova-gommose","Uova strapazzate gommose e asciutte","cucina",
+         "fuoco troppo alto o troppo a lungo: le proteine si stringono ed espellono l'acqua. A fuoco dolce restano cremose. Togliere dal fuoco un attimo prima (carry-over)","fen-uova-coagulazione","gommose, acquose sul fondo"),
+        ("err-verdure-smorte","Verdure verdi smorte, verde militare","cucina",
+         "cottura troppo lunga: la clorofilla perde il magnesio e diventa feofitina (verde-oliva). Sbollentare veloce in acqua abbondante salata, poi shock in acqua e ghiaccio per fermare la cottura","fen-verdure-verdi","verde spento, oliva"),
+        # bar
+        ("err-drink-piatto","Cocktail piatto e stucchevole","bar",
+         "manca l'acido o l'amaro: senza il taglio dell'acido (o del bitter) il dolce-forte non ha contrasto e risulta piatto. Cercare quale delle 4 forze (dolce/acido/forte/amaro) e fuori equilibrio","fen-equilibrio-cocktail","noioso, troppo dolce/pesante"),
+        ("err-schiuma-collassa","Schiuma del sour che collassa subito","bar",
+         "manca il dry shake: senza la prima shakerata a secco l'albume non si denatura abbastanza e la schiuma e grossolana e instabile. Dry shake 10-15s, poi con ghiaccio","fen-emulsione-bar","schiuma sparisce in pochi secondi"),
+        ("err-highball-flat","Highball che diventa subito flat","bar",
+         "CO2 persa: mixer non abbastanza freddo, ghiaccio tritato (troppa superficie di nucleazione) o bicchiere largo. Usare mixer freddissimo, ghiaccio grande e liscio, bicchiere alto e stretto","fen-carbonatazione","bollicine sparite, drink piatto"),
+        # gelateria (i nuovi)
+        ("err-gelato-granuloso-nuovo","Gelato granuloso (cristalli grossi)","gelateria",
+         "mantecazione lenta o sbalzi termici: i cristalli d'acqua crescono grossi. Congelare rapido, mantecare (movimento continuo), catena del freddo stabile","fen-cristalli-ghiaccio","sgranocchia di ghiaccio"),
+        # pasticceria
+        ("err-cioccolato-opaco","Cioccolato opaco e molle (mal temperato)","pasticceria",
+         "cristallizzazione nella forma sbagliata: senza temperaggio il burro di cacao solidifica in forme instabili (non la Forma V). Serve fondere a 45-50C, raffreddare a 27-28C, risalire a 31-32C (o seeding)","fen-temperaggio-cioccolato","niente snap, striature bianche"),
+        ("err-crema-grumi","Crema pasticcera con grumi","pasticceria",
+         "amido non disperso a freddo: aggiunto al caldo forma grumi. Stemperare l'amido a freddo prima, mescolare sempre, portare a bollore per gelatinizzare del tutto","fen-crema-pasticcera","grumi, sapore di farina"),
+    ]
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        fatti = []
+        for eid, nome, dom, causa, fen, sintomo in ERRORI:
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (eid,))
+            if not cur.fetchone():
+                cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                            (eid,"Errore",nome,dom,_json.dumps({"causa":causa},ensure_ascii=False)))
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (fen,))
+            if cur.fetchone():
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='fallisce_come' AND to_id=%s",(fen,eid))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                                (fen,eid,"fallisce_come",_json.dumps({"sintomo":sintomo},ensure_ascii=False)))
+                    fatti.append(f"{fen} -> {eid} ({sintomo})")
+                else:
+                    fatti.append(f"{eid}: edge gia esiste")
+            else:
+                fatti.append(f"{fen}: FENOMENO ASSENTE, errore creato ma non collegato")
+        conn.commit()
+        return jsonify({"ok": True, "errori": fatti})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
