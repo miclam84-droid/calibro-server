@@ -1460,12 +1460,23 @@ def admin_genera_procedimenti():
                 f"I passaggi devono essere SPECIFICI di questa ricetta e usare i numeri bersaglio dove pertinente. "
                 f"Ogni passo che tocca un parametro critico DEVE avere numero_chiave. Niente markdown."
             )
+            dati = None
+            for tentativo in range(2):
+                try:
+                    raw = GW.route_fast(prompt, max_tokens=900, temperature=0)
+                    m = _re.search(r"\{.*\}", raw or "", _re.DOTALL)
+                    if not m:
+                        continue
+                    testo = m.group(0)
+                    # pulizia: rimuovi virgole finali prima di } o ]
+                    testo = _re.sub(r",\s*([}\]])", r"\1", testo)
+                    dati = _json.loads(testo)
+                    break
+                except Exception:
+                    dati = None
+            if dati is None:
+                errori.append(f"{rid}: JSON non valido dopo 2 tentativi"); n+=1; continue
             try:
-                raw = GW.route_fast(prompt, max_tokens=900)
-                m = _re.search(r"\{.*\}", raw or "", _re.DOTALL)
-                if not m:
-                    errori.append(f"{rid}: output non-JSON"); n+=1; continue
-                dati = _json.loads(m.group(0))
                 cur.execute("UPDATE ricette SET procedimento=%s::jsonb, applicazioni=%s::jsonb, tempo_prep=%s, tempo_cottura=%s, difficolta=%s, porzioni=%s WHERE id=%s",
                     (_json.dumps(dati.get("procedimento",[]),ensure_ascii=False),
                      _json.dumps(dati.get("applicazioni",[]),ensure_ascii=False),
