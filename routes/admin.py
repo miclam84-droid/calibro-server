@@ -844,6 +844,8 @@ def admin_popola_alias():
             "fen-pasta-acqua": ["pasta","al dente","acqua di cottura","mantecatura","mantecare","cuocere la pasta","acqua della pasta","carbonara cremosa","cacio e pepe","aglio e olio","pasta scotta"],
             "fen-soffritto": ["soffritto","mirepoix","base aromatica","appassire","rosolare le verdure","sofrito","cipolla carota sedano","battuto","fondo aromatico"],
             "fen-riposo-carne": ["riposo carne","far riposare la carne","riposare la bistecca","riposo bistecca","succhi carne","carne asciutta","perche la carne e secca","tagliare la carne subito"],
+            "fen-uova-coagulazione": ["uovo","uova","coagulazione uovo","uova strapazzate","uovo sodo","uovo in camicia","frittata","omelette","uova cremose","uova gommose","uovo alla coque","tuorlo albume"],
+            "fen-verdure-verdi": ["verdure verdi","clorofilla","sbollentare","blanching","verde brillante","broccoli","fagiolini","verdura smorta","shock termico","sbianchire","verde militare"],
             "fen-shakerare-mescolare": ["shakerare","mescolare","shakerato mescolato","shake stir","quando shakerare","shakerare o mescolare","stirred shaken","tecnica shaker","bar spoon"],
             "fen-emulsione-bar": ["albume cocktail","schiuma cocktail","dry shake","sour schiuma","whiskey sour schiuma","emulsione drink","aquafaba","clover club","pisco sour","foam cocktail"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
@@ -1164,6 +1166,8 @@ def admin_crea_haccp():
         "fen-pasta-acqua": {"nome":"La pasta e l'acqua di cottura","target":"Amido gelatinizza da fuori, al dente cuore vetroso, l'acqua amidacea emulsiona la salsa"},
         "fen-soffritto": {"nome":"Il soffritto (base aromatica)","target":"Verdure appassite piano nel grasso, fuoco dolce, il grasso cattura gli aromi liposolubili"},
         "fen-riposo-carne": {"nome":"Il riposo della carne","target":"Fibre si rilassano e succhi si ridistribuiscono, piu grosso piu lungo, succosa vs asciutta"},
+        "fen-uova-coagulazione": {"nome":"Le uova (coagulazione)","target":"Albume 62-65C tuorlo 65-70C, fuoco dolce cremoso troppo caldo gommoso, latte ammorbidisce"},
+        "fen-verdure-verdi": {"nome":"Le verdure verdi (clorofilla)","target":"Clorofilla a feofitina col tempo/acido, sbollenta veloce poi shock in ghiaccio fissa il verde"},
     }
     risultati = []
     try:
@@ -1234,7 +1238,7 @@ def admin_fix_dominio_bar():
         "bar": ["fen-equilibrio-cocktail","fen-shakerare-mescolare","fen-emulsione-bar",
                 "fen-ghiaccio","fen-carbonatazione","fen-chiarificazione-latte",
                 "fen-infusioni","fen-amaro-bitter"],
-        "cucina": ["fen-collagene-brasato","fen-rosolatura","fen-emulsione-salse","fen-pasta-acqua","fen-soffritto","fen-riposo-carne"],
+        "cucina": ["fen-collagene-brasato","fen-rosolatura","fen-emulsione-salse","fen-pasta-acqua","fen-soffritto","fen-riposo-carne","fen-uova-coagulazione","fen-verdure-verdi"],
     }
     try:
         conn = _get_conn(); cur = conn.cursor()
@@ -1839,6 +1843,40 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-uova-coagulazione": {
+            "scheda": """L'uovo e forse l'ingrediente piu versatile della cucina, e tutto quello che fa - rapprendersi, montare, legare, emulsionare - dipende da una cosa: le sue proteine che si aprono col calore e si legano tra loro. Governare la temperatura dell'uovo e governare decine di preparazioni. E la differenza tra uova cremose e uova gommose e questione di pochi gradi.
+
+Quando scaldi un uovo, le proteine (arrotolate su se stesse) si DENATURANO - si srotolano - e poi si legano tra loro formando una rete solida: la COAGULAZIONE. Il punto chiave e che le diverse parti coagulano a temperature diverse:
+- ALBUME: coagula a 62-65C
+- TUORLO: coagula a 65-70C
+- La chalaza (il filamento): 80C
+
+Perche questo cambia tutto
+Questa differenza di pochi gradi e ciò che ti da controllo. L'uovo fritto o alla coque: l'albume (62-65C) e gia solido mentre il tuorlo (65-70C) e ancora cremoso. Se cuoci di piu, anche il tuorlo si rapprende (sodo). E se vai troppo oltre, le proteine si stringono cosi tanto da espellere l'acqua: uovo GOMMOSO e asciutto (e l'errore delle uova strapazzate troppo cotte, o l'anello verde-grigio del sodo troppo bollito).
+
+Le leve del cuoco
+CALORE DOLCE per uova cremose: strapazzate a fuoco basso restano morbide (la rete intrappola l'acqua); a fuoco alto diventano gommose. AGGIUNTE che alzano la coagulazione: il latte o la panna diluiscono le proteine (coagulano piu tardi, piu morbide); anche sale e acido influiscono. E la carry-over: l'uovo continua a cuocere dopo il fuoco, si toglie un attimo prima.
+Il bersaglio: albume 62-65C, tuorlo 65-70C (la differenza fa fritto/coque). Fuoco DOLCE = cremoso, troppo caldo = gommoso (le proteine espellono acqua). Latte/panna ammorbidiscono. Togli un attimo prima (carry-over).""",
+            "target": "Albume 62-65C, tuorlo 65-70C (la differenza fa fritto/coque): fuoco DOLCE = cremoso, troppo caldo = gommoso (proteine espellono acqua), latte ammorbidisce",
+            "nome": "Le uova (coagulazione delle proteine)",
+            "dominio": "cucina",
+        },
+        "fen-verdure-verdi": {
+            "scheda": """Perche i fagiolini o i broccoli, cotti male, diventano di quel verde militare smorto e tristo? E perche quelli del ristorante restano verde brillante? Non e fortuna: e chimica della clorofilla, e si governa con due gesti - sbollentare veloce e raffreddare in acqua e ghiaccio. Impari questo e le tue verdure verdi non saranno mai piu smorte.
+
+Il verde delle verdure e la CLOROFILLA. Col calore prolungato e in ambiente acido, la clorofilla perde il suo atomo di magnesio e si trasforma in FEOFITINA, di colore verde-oliva smorto, "militare". E la ragione del verde triste delle verdure stracotte. Il nemico e il tempo di cottura lungo e l'acido.
+
+La sbollentatura (blanching): il gesto che salva il colore
+Sbollentare = tuffare le verdure in acqua bollente ABBONDANTE e salata per POCHI minuti, poi raffreddarle subito in acqua e ghiaccio (l'"shock termico"). Perche funziona:
+- Acqua abbondante: le verdure non abbassano la temperatura, cuociono in fretta (meno tempo = meno feofitina).
+- Il calore rapido inattiva gli enzimi che degraderebbero il colore, e fissa il verde brillante (paradossalmente all'inizio la cottura RAVVIVA il verde espellendo l'aria dai tessuti).
+- Lo shock in acqua ghiacciata FERMA la cottura di colpo: le verdure restano croccanti e verdi, non passano nella zona feofitina.
+Non coprire la pentola: gli acidi volatili delle verdure resterebbero intrappolati e vira il colore.
+Il bersaglio: clorofilla → feofitina (verde smorto) col tempo e l'acido. Sbollenta veloce in acqua abbondante salata, poi SHOCK in acqua e ghiaccio (ferma la cottura, fissa il verde). Non coprire. Croccante e verde brillante.""",
+            "target": "Clorofilla → feofitina (verde smorto) col tempo e l'acido: sbollenta veloce in acqua abbondante salata poi SHOCK in ghiaccio (ferma la cottura, fissa il verde), non coprire",
+            "nome": "Le verdure verdi (clorofilla)",
+            "dominio": "cucina",
+        },
         "fen-pasta-acqua": {
             "scheda": """Cuocere la pasta sembra la cosa piu banale del mondo, e invece dentro c'e una fisica precisa: l'amido che gelatinizza dall'esterno verso l'interno, l'al dente che e un cuore ancora crudo, e quell'acqua torbida che butti via - e invece e l'ingrediente segreto della salsa. Chi capisce questo fa una pasta da ristorante.
 
