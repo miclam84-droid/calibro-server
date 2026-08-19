@@ -128,12 +128,20 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         + f"Rispondi in {LINGUA} SOLO con un oggetto JSON (nessun testo extra) in questo formato ESATTO:\n"
         f'{{"nome": "...", "descrizione": "1-2 frasi sul principio scientifico", '
         f'"ingredienti": [{{"nome": "...", "quantita": "...", "unita": "..."}}], '
+        f'"procedimento": [{{"n": 1, "testo": "passaggio operativo chiaro e specifico", "numero_chiave": "es. 80-85°C oppure null se il passo non ha un numero critico"}}], '
+        f'"applicazioni": ["dove si usa questa preparazione, es. lasagne, gratin", ...], '
+        f'"tempo_prep": minuti_interi, "tempo_cottura": minuti_interi, '
+        f'"difficolta": "facile|media|difficile", "porzioni": "es. 4 persone", '
         f'"fenomeni": ["nome fenomeno usato", ...], '
         f'"tecniche": ["nome tecnica usata", ...], '
         f'"numeri": {{"parametro": "valore con unità", ...}}, '
         f'"punto_critico": "il punto dove si sbaglia e perché, con un numero", '
         f'"abbinamenti": {{"analogia": "...", "contrasto": "..."}}}}\n\n'
         f"I numeri devono venire dai fenomeni/tecniche forniti sopra. "
+        f"Il PROCEDIMENTO deve essere una sequenza di passaggi REALI e specifici (non generici): "
+        f"ogni passo che tocca un parametro critico DEVE avere il numero_chiave preso dai fenomeni sopra "
+        f"(es. temperatura, tempo, pH). I passi senza numero critico hanno numero_chiave null. "
+        f"Le APPLICAZIONI dicono dove si usa la preparazione nel mestiere. "
         f"Il punto critico deve citare un numero specifico. Niente markdown, solo JSON."
     )
 
