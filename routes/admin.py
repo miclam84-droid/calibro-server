@@ -828,7 +828,7 @@ def admin_popola_alias():
             "fen-frittura-lievitati": ["frittura","friggere","friggo","fritto","fritti","unto","unti","untuoso","olio caldo","immersione","frittura di lievitati","sigillo frittura","arancini","arancine","panzerotti","panzerotto","impanato","panato","bombolone","bomboloni","zeppola","zeppole","suppli","crocche"],
             "fen-haccp": ["haccp","sicurezza alimentare","ccp","punto critico","autocontrollo","igiene","pericolo alimentare","allergeni"],
             "fen-attivita-acqua": ["attivita acqua","aw","acqua libera","conservazione","essiccazione","stagionatura","perche i salumi durano","perche il miele non scade"],
-            "fen-catena-freddo": ["catena del freddo","zona di pericolo","zona pericolo","temperatura conservazione","frigo","congelatore","scongelare","raffreddamento","abbattitore"],
+            "fen-catena-freddo": ["catena del freddo","zona di pericolo","zona pericolo","temperatura conservazione","frigo","frigorifero","congelatore","surgelato","scongelare","scongelo","scongelamento","conservare la carne","conservare carne","raffreddamento","abbattitore","abbattimento temperatura"],
             "fen-conserve-botulino": ["botulino","conserve","sottolio","sott olio","sottaceti","sterilizzazione","barattolo","conserva","clostridium","tossina"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
