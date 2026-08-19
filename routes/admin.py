@@ -1267,6 +1267,21 @@ def admin_fix_dominio_bar():
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/reset-trial")
+def admin_reset_trial():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("DELETE FROM trial_chat")
+        n = cur.rowcount
+        conn.commit()
+        return jsonify({"ok": True, "trial_azzerati": n})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:300]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
