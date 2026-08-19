@@ -1465,22 +1465,31 @@ def admin_genera_procedimenti():
                 f"I passaggi devono essere SPECIFICI di questa ricetta e usare i numeri bersaglio dove pertinente. "
                 f"Ogni passo che tocca un parametro critico DEVE avere numero_chiave. Niente markdown."
             )
+            prompt_semplice = (
+                f"Genera il procedimento per: {nome} ({rdisc}). Ingredienti: {ingr_str}. "
+                f"Numeri: {num_str}. Rispondi SOLO con JSON valido, niente altro, massimo 7 passi brevi:\n"
+                f'{{"procedimento":[{{"n":1,"testo":"...","numero_chiave":null}}],"applicazioni":["..."],'
+                f'"tempo_prep":30,"tempo_cottura":0,"difficolta":"media","porzioni":"4"}}'
+            )
             dati = None
-            for tentativo in range(2):
+            for tentativo in range(3):
                 try:
-                    raw = GW.route_fast(prompt, max_tokens=1400, temperature=0)
-                    m = _re.search(r"\{.*\}", raw or "", _re.DOTALL)
+                    pr = prompt if tentativo < 2 else prompt_semplice  # 3° tentativo: prompt semplificato
+                    raw = GW.route_fast(pr, max_tokens=1400, temperature=0)
+                    if not raw:
+                        continue
+                    m = _re.search(r"\{.*\}", raw, _re.DOTALL)
                     if not m:
                         continue
                     testo = m.group(0)
-                    # pulizia: rimuovi virgole finali prima di } o ]
-                    testo = _re.sub(r",\s*([}\]])", r"\1", testo)
+                    testo = _re.sub(r",\s*([}\]])", r"\1", testo)  # virgole finali
+                    testo = testo.replace("\n"," ").replace("\t"," ")  # newline dentro stringhe
                     dati = _json.loads(testo)
                     break
                 except Exception:
                     dati = None
             if dati is None:
-                errori.append(f"{rid}: JSON non valido dopo 2 tentativi"); n+=1; continue
+                errori.append(f"{rid}: JSON non valido dopo 3 tentativi"); n+=1; continue
             try:
                 cur.execute("UPDATE ricette SET procedimento=%s::jsonb, applicazioni=%s::jsonb, tempo_prep=%s, tempo_cottura=%s, difficolta=%s, porzioni=%s WHERE id=%s",
                     (_json.dumps(dati.get("procedimento",[]),ensure_ascii=False),
