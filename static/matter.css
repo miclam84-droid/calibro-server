@@ -11,7 +11,7 @@
   --cifra-graphite:#4A4E50; --cifra-p700:#15362F; --cifra-p300:#9CC9BC;
   --coffee:#141D22;
   --princ:#12545D; --princ-light:#D3E0E0; --princ-border:#5E9BA3;
-  --flavor:#E24E12; --flavor-light:#F1E0D5; --flavor-border:#E0A87E;
+  --flavor:#12545D; --flavor-light:#D8E4E4; --flavor-border:#7FA8AD;
   /* ═══ LIVELLO SEMANTICO (disciplina colore): teal=scienza, arancio=azione/bersaglio, ink=struttura ═══ */
   --science:#12545D; --science-dark:#0D3D44; --science-soft:#D3E0E0;
   --target:#E24E12; --target-dark:#C0410F; --target-soft:#F0DDD3;
@@ -660,7 +660,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
 .db-stats{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
 .db-stat{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;text-align:center;border-right:1px solid var(--border)}
 .db-stat:last-child{border-right:none}
-.db-stat-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--e500);line-height:1;letter-spacing:-.02em}
+.db-stat-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--target);line-height:1;letter-spacing:-.02em}
 .db-stat-lab{font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
 /* numero bersaglio sopra il titolo hero */
 .hero-num-top{background:var(--surface);border-left:4px solid var(--science);border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:14px}
@@ -834,13 +834,13 @@ a:focus-visible,input:focus-visible{
 .mtr-gauge::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--science)}
 .mtr-gauge-top{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 0}
 .mtr-gauge-label{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--science)}
-.mtr-gauge-num-top{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--accent)}
+.mtr-gauge-num-top{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--target)}
 .mtr-gauge-titolo{font-family:var(--serif);font-weight:700;font-size:22px;color:var(--ink);padding:8px 22px 0;margin:0;line-height:1.15}
 .mtr-gauge-body{padding:12px 22px 0}
 .mtr-gauge-body p{font-size:14px;color:var(--ink-muted);line-height:1.6;margin:0 0 10px}
 .mtr-gauge-num{margin:0 0 12px}
 .mtr-gauge-num .num-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--s300);margin-bottom:3px}
-.mtr-gauge-num .num-big{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
+.mtr-gauge-num .num-big{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--target);letter-spacing:-.02em;line-height:1.1}
 /* CTA disciplinata: outline sobrio, non blocco arancione pieno */
 .mtr-gauge-cta{margin:16px 22px 0;width:calc(100% - 44px);border-radius:var(--radius-btn);background:transparent;color:var(--ink);font-weight:700;border:1.5px solid var(--border);padding:13px;font-family:var(--sans);font-size:14px;cursor:pointer;transition:transform .12s ease,border-color .12s ease}
 .mtr-gauge-cta:active{transform:scale(.98)}
@@ -849,7 +849,7 @@ a:focus-visible,input:focus-visible{
 /* STATS a griglia strumento */
 .mtr-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-left:1px solid var(--border);margin:16px 0 0}
 .mtr-stats .db-stat{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 6px;text-align:center}
-.mtr-stats .db-stat-val{font-family:var(--mono);font-weight:700;font-size:20px;color:var(--accent);letter-spacing:-.02em}
+.mtr-stats .db-stat-val{font-family:var(--mono);font-weight:700;font-size:20px;color:var(--target);letter-spacing:-.02em}
 .mtr-stats .db-stat-lab{font-family:var(--mono);font-size:8px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);margin-top:3px}
 
 /* banda database */
@@ -955,7 +955,7 @@ a:focus-visible,input:focus-visible{
 .strum-card-nome{font-family:var(--sans);font-size:15px;font-weight:700;color:var(--ink);line-height:1.15}
 .strum-card-vedi{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--signal);white-space:nowrap;display:inline-flex;align-items:center;gap:3px;flex-shrink:0}
 .strum-card-meta{font-family:var(--mono);font-size:11px;color:var(--ink-muted);margin-top:5px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.strum-card-mis{color:var(--accent);font-weight:700}
+.strum-card-mis{color:var(--target);font-weight:700}
 .strum-card-sep{color:var(--border)}
 .strum-card-prezzo{color:var(--ink);font-weight:700}
 .strum-card-uso{font-family:var(--sans);font-size:12.5px;line-height:1.5;color:var(--ink-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
@@ -1017,11 +1017,11 @@ a:focus-visible,input:focus-visible{
 /* scheda strutturata — spezza il muro + evidenzia i valori */
 .sl-p .sch-p, p.sch-p{font-size:14.5px;color:var(--ink-muted);line-height:1.7;margin:0 0 12px}
 .sl-p .sch-p:last-child, p.sch-p:last-child{margin-bottom:0}
-.sch-num{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:13.5px;white-space:nowrap}
+.sch-num{font-family:var(--mono);font-weight:700;color:var(--target);font-size:13.5px;white-space:nowrap}
 
 /* numero-bersaglio come EROE nella home (più protagonista) */
 .mtr-gauge-num{margin:14px 0 4px}
-.mtr-gauge-num .num-lab{color:var(--accent);opacity:.8}
+.mtr-gauge-num .num-lab{color:var(--target);opacity:.8}
 .mtr-gauge-num .num-big{font-size:28px;line-height:1.15}
 .mtr-gauge-num .num-big.medio{font-size:21px}
 .mtr-gauge-num .num-big.lungo{font-size:15px;line-height:1.45}
@@ -1095,7 +1095,7 @@ a:focus-visible,input:focus-visible{
 /* ═══ RISULTATO CALCOLATORE MONUMENTALE (la schermata che converte) ═══ */
 .readout-big{flex-direction:column;align-items:flex-start;gap:2px;margin-bottom:16px;padding:16px;background:var(--ink);border-left:4px solid var(--accent)}
 .readout-num{font-size:52px !important;font-weight:700 !important;color:var(--paper-hi) !important;line-height:1}
-.readout-unit{font-size:24px !important;color:var(--accent) !important;font-weight:700}
+.readout-unit{font-size:24px !important;color:var(--target) !important;font-weight:700}
 .readout-lab{font-size:12px !important;color:var(--paper-lo,#9aa8a8) !important;margin-top:6px;font-family:var(--sans)}
 
 /* ═══ QUADERNO — anteprima sfocata come amo di retention ═══ */
@@ -1136,7 +1136,7 @@ a:focus-visible,input:focus-visible{
 .caso-card:hover{background:rgba(226,78,18,.11);border-color:rgba(226,78,18,.35)}
 .caso-icon{color:var(--target);font-size:15px;flex-shrink:0}
 .caso-nome{font-family:var(--sans);font-size:13.5px;font-weight:500;color:#FAF6EE;line-height:1.35}
-.p-target{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent);margin-top:4px}
+.p-target{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--target);margin-top:4px}
 .p-tag.prolock{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(203,90,34,.12);color:var(--accent);padding:2px 7px;border-radius:4px}
 .p-tag.active{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--accent);color:var(--paper-hi);padding:2px 8px;border-radius:4px}
 .p-tag.done{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:rgba(18,84,93,.12);color:var(--signal);padding:2px 8px;border-radius:4px}
@@ -1187,7 +1187,7 @@ a:focus-visible,input:focus-visible{
 .mirino-feedback{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
 .mirino-scarto{font-family:var(--mono);font-size:13px;font-weight:700;margin-bottom:8px}
 .mirino-scarto.dentro{color:var(--target-green)}
-.mirino-scarto.fuori{color:var(--accent)}
+.mirino-scarto.fuori{color:var(--target)}
 .mirino-azione-lab{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:4px}
 .mirino-azione{font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--ink);margin-bottom:14px}
 .mirino-rimisura{width:100%;background:var(--ink);color:#fff;border:none;padding:12px;border-radius:var(--radius-btn);font-family:var(--sans);font-weight:700;font-size:14px;cursor:pointer}
@@ -1211,7 +1211,7 @@ a:focus-visible,input:focus-visible{
 .onb-mestiere:hover{box-shadow:var(--shadow-card)}
 .onb-primo-num{background:var(--ink);border-left:4px solid var(--accent);border-radius:var(--radius-card-sm);padding:20px;margin:16px 0}
 .onb-pn-fen{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--paper-hi);margin-bottom:8px}
-.onb-pn-target{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);line-height:1.1}
+.onb-pn-target{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--target);line-height:1.1}
 .onb-skip{display:block;width:100%;background:none;border:none;color:var(--ink-muted);font-family:var(--sans);font-size:13px;padding:12px;margin-top:8px;cursor:pointer;text-decoration:underline}
 
 /* ═══ QUADERNO: toggle Misure/Menù + Crea Menù ═══ */
@@ -1250,7 +1250,7 @@ a:focus-visible,input:focus-visible{
 .mb-vcand.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .mb-vcand-info{flex:1}
 .mb-vcand-nome{display:block;font-family:var(--sans);font-size:15px;font-weight:600;color:var(--ink)}
-.mb-vcand-tgt{display:block;font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:2px}
+.mb-vcand-tgt{display:block;font-family:var(--mono);font-size:12px;color:var(--target);margin-top:2px}
 .mb-vcand-stato{font-family:var(--sans);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 7px;border-radius:4px}
 .mb-vcand-stato.verified{background:rgba(88,122,104,.15);color:var(--target-green)}
 .mb-vcand-check{width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper-hi);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
@@ -1377,7 +1377,7 @@ a:focus-visible,input:focus-visible{
 .mas-verif{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--target-green);background:rgba(88,122,104,.14);padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
 .mas-nonverif{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--ink-muted);background:rgba(20,29,34,.07);padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
 .mas-voce-ing{font-family:var(--sans);font-size:13px;color:var(--ink-muted);margin-top:4px}
-.mas-voce-target{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);margin-top:6px;letter-spacing:.02em}
+.mas-voce-target{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--target);margin-top:6px;letter-spacing:.02em}
 .mas-foot{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-top:20px;padding-top:14px;border-top:1px solid rgba(20,29,34,.1);text-align:center}
 /* STAMPA: solo la vista attiva, a pagina piena */
 @media print{
@@ -1394,7 +1394,7 @@ a:focus-visible,input:focus-visible{
 .mf-tec{display:inline-flex;flex-direction:column;align-items:flex-start;gap:2px;background:var(--paper-hi);border:var(--border-soft);border-radius:var(--radius-btn);padding:10px 14px;margin:0 8px 8px 0;cursor:pointer;text-align:left}
 .mf-tec.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .mf-tec-nome{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink)}
-.mf-tec-num{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.mf-tec-num{font-family:var(--mono);font-size:11px;color:var(--target)}
 
 /* griglia categorie menù */
 .menu-cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px}
