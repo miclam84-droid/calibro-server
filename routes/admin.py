@@ -832,6 +832,9 @@ def admin_popola_alias():
             "fen-conserve-botulino": ["botulino","conserve","sottolio","sott olio","sottaceti","sterilizzazione","barattolo","conserva","clostridium","tossina"],
             "fen-anisakis": ["anisakis","pesce crudo","abbattimento","abbattitore","sushi","sashimi","crudo di pesce","marinato","tartare di pesce","parassita pesce","congelare il pesce"],
             "fen-ustioni-olio": ["ustioni","ustione","olio bollente","olio caldo sicurezza","incendio olio","schizzi olio","frittura sicurezza","olio infiammato","scottatura olio"],
+            "fen-equilibrio-cocktail": ["equilibrio cocktail","bilanciare drink","dolce acido forte","sour ratio","struttura cocktail","proporzioni cocktail","bilanciamento drink","il drink non torna","troppo dolce cocktail","troppo aspro"],
+            "fen-shakerare-mescolare": ["shakerare","mescolare","shakerato mescolato","shake stir","quando shakerare","shakerare o mescolare","stirred shaken","tecnica shaker","bar spoon"],
+            "fen-emulsione-bar": ["albume cocktail","schiuma cocktail","dry shake","sour schiuma","whiskey sour schiuma","emulsione drink","aquafaba","clover club","pisco sour","foam cocktail"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
@@ -1136,6 +1139,9 @@ def admin_crea_haccp():
         "fen-conserve-botulino": {"nome":"Conserve e botulino","target":"Botulino anaerobio senza odore: difese pH sotto 4.6 O sterilizzazione - l'olio non protegge"},
         "fen-anisakis": {"nome":"Anisakis e abbattimento del pesce","target":"Pesce crudo abbattuto per legge: -20C al cuore 24h (o -18C 96h a casa), uccide i parassiti non i batteri"},
         "fen-ustioni-olio": {"nome":"Ustioni e sicurezza dell'olio","target":"Olio 170-180C: cibi asciutti mai acqua, incendio si soffoca mai annacqua, sotto il punto di fumo"},
+        "fen-equilibrio-cocktail": {"nome":"L'equilibrio del cocktail","target":"Dolce/acido/forte/amaro: sour 2:1:1 struttura madre, bilancia a freddo"},
+        "fen-shakerare-mescolare": {"nome":"Shakerare vs mescolare","target":"Opaco shakera 10-15s, limpido mescola 20-30s - cosa c'e nel bicchiere"},
+        "fen-emulsione-bar": {"nome":"Emulsione e texture (albume, schiuma)","target":"Albume = denaturazione + emulsione = schiuma, dry shake sempre"},
     }
     risultati = []
     try:
@@ -1787,6 +1793,53 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-equilibrio-cocktail": {
+            "scheda": """Ogni cocktail che funziona e un equilibrio tra quattro forze: dolce, acido, forte, amaro. Non e una questione di gusto personale: e una struttura. Quando un drink "non torna", quasi sempre e uno di questi quattro fuori posto. Capire l'equilibrio e la prima cosa che separa chi mescola ingredienti da chi costruisce un drink.
+
+Il cuore del bar e il triangolo dolce-acido-forte, con l'amaro come quarto giocatore. Ogni famiglia di cocktail e un modo di bilanciare queste forze:
+- SOUR (Daiquiri, Whiskey Sour, Margarita): 2 parti distillato, 1 acido (agrume), 1 dolce (sciroppo). L'acido taglia il dolce, il dolce ammorbidisce l'alcol, il distillato regge tutto. E la struttura piu usata al mondo.
+- SPIRIT-FORWARD (Old Fashioned, Negroni, Manhattan): dominati dal distillato, con poco dolce e l'amaro a dare profondita. Old Fashioned: 5 parti distillato, 1 dolce, bitter. Niente acido: qui l'equilibrio e tra forza e amaro.
+
+Le leve dell'equilibrio
+DOLCE (zucchero, sciroppi, liquori): ammorbidisce, arrotonda, nasconde l'alcol. ACIDO (limone, lime): da freschezza e taglia il dolce; senza, il drink e piatto e stucchevole; troppo, e aspro. FORTE (il distillato): la spina dorsale. AMARO (bitter, amari): profondita e complessita, il quarto che "sveglia" il drink.
+
+La temperatura cambia tutto
+Un drink bilanciato a temperatura ambiente puo essere sbagliato da freddo: il freddo ABBASSA la percezione del dolce. Per questo un cocktail va assaggiato e bilanciato ALLA temperatura di servizio (freddo), non prima. Un sour che sa giusto tiepido sara troppo aspro ghiacciato.
+Il bersaglio: dolce/acido/forte/amaro in equilibrio. Il sour (2:1:1) e la struttura madre. Bilancia SEMPRE a freddo. Se un drink non torna, cerca quale delle 4 forze e fuori.""",
+            "target": "Dolce/acido/forte/amaro in equilibrio: il sour 2:1:1 e la struttura madre, bilancia SEMPRE a freddo (il freddo abbassa il dolce) - se non torna cerca quale forza e fuori",
+            "nome": "L'equilibrio del cocktail",
+            "dominio": "bar",
+        },
+        "fen-shakerare-mescolare": {
+            "scheda": """Shakerare o mescolare non e una scelta di stile (ne una battuta di James Bond): e una decisione tecnica precisa, e dipende da una sola cosa — cosa c'e nel bicchiere. La regola copre il 90% dei drink: se e opaco si shakera, se e limpido si mescola. E capire il perche ti fa sbagliare molto meno.
+
+Shakerare e mescolare sono due modi diversi di trasferire energia, con effetti misurabili diversi su temperatura, diluizione, aerazione e testura.
+
+SHAKERARE (drink opachi: agrumi, albume, panna)
+Agitazione violenta con ghiaccio per 10-15 secondi. Fa tre cose insieme: raffredda in fretta, diluisce (aggiunge acqua), e incorpora aria (bollicine → testura piu leggera e schiumosa). Serve quando ci sono ingredienti che DEVONO amalgamarsi: gli agrumi sono opachi e densi, l'albume va denaturato. Senza shakerata, un sour oscilla tra troppo aspro e troppo dolce, con l'agrume mai integrato. Daiquiri, Margarita, Whiskey Sour: sempre shakerati.
+
+MESCOLARE (drink limpidi: solo distillati e liquori)
+Agitazione gentile col bar spoon per 20-30 secondi. Raffredda e diluisce lentamente, SENZA aerazione: mantiene il drink limpido e setoso. Serve per i drink spirit-forward, dove conta preservare la chiarezza e le note delicate del distillato. Lo shakerare li rovinerebbe (aerazione e diluizione eccessiva ossidano i terpeni delicati). Martini, Manhattan, Negrironi, Sazerac: sempre mescolati.
+Il bersaglio: opaco (agrumi/albume/panna) → shakera 10-15s. Limpido (solo distillati) → mescola 20-30s. La regola copre il 90% dei drink. Non e stile, e cosa c'e nel bicchiere.""",
+            "target": "Opaco (agrumi/albume/panna) shakera 10-15s, limpido (solo distillati) mescola 20-30s: la regola copre il 90% dei drink - non e stile, e cosa c'e nel bicchiere",
+            "nome": "Shakerare vs mescolare",
+            "dominio": "bar",
+        },
+        "fen-emulsione-bar": {
+            "scheda": """La schiuma vellutata sopra un Whiskey Sour non e decorazione: e fisica. L'albume, shakerato con forza, si denatura e forma una rete che intrappola l'aria — la stessa cosa che succede montando gli albumi, ma nel bicchiere. Capire come si forma (e come stabilizzarla) e la differenza tra una schiuma fitta e cremosa e una che collassa in dieci secondi.
+
+L'albume nei sour (Whiskey Sour, Clover Club, Pisco Sour) crea testura tramite due meccanismi: le proteine dell'albume, agitate, si DENATURANO (si srotolano) e formano un reticolo che intrappola bollicine d'aria — una schiuma stabile. E le stesse proteine funzionano da emulsionanti, legando componenti che altrimenti si separerebbero.
+
+Il dry shake: il trucco che raddoppia la schiuma
+La tecnica chiave: prima si shakera SENZA ghiaccio (dry shake) per 10-15 secondi, poi si aggiunge il ghiaccio e si shakera di nuovo. Perche? Senza il freddo del ghiaccio, le proteine si denaturano meglio e piu a fondo (il freddo le irrigidisce troppo presto): il dry shake pre-monta la schiuma, poi la seconda shakerata raffredda e diluisce. Salti il dry shake e ottieni una schiuma grossolana che collassa in pochi secondi.
+
+Cosa disturba la schiuma
+Agrumi troppo spremuti o con polpa introducono pectina e detriti che destabilizzano. Distillati molto invecchiati (tannini, esteri polimerizzati) sopprimono la schiuma. Distillati giovani (blanco, rum bianco) la favoriscono (piu congeneri che fanno da tensioattivi). Alternativa vegana all'albume: l'aquafaba (l'acqua dei ceci), stesse proteine-tensioattivo.
+Il bersaglio: albume = denaturazione + emulsione → schiuma. Dry shake SEMPRE (raddoppia la schiuma: senza ghiaccio prima, poi col ghiaccio). Agrumi puliti, distillati giovani = schiuma migliore. Aquafaba come alternativa vegana.""",
+            "target": "Albume shakerato = denaturazione + emulsione = schiuma: dry shake SEMPRE (raddoppia la schiuma, senza ghiaccio prima poi col ghiaccio) - aquafaba alternativa vegana",
+            "nome": "Emulsione e texture (albume, schiuma)",
+            "dominio": "bar",
+        },
         "fen-anisakis": {
             "scheda": """Il pesce crudo puo contenere l'Anisakis, un parassita che vive nelle viscere e nei tessuti di molti pesci. Servire pesce crudo senza abbatterlo non e una scelta di stile: e vietato dalla legge, e per una buona ragione. L'abbattimento e la sola difesa, e ha numeri precisi da rispettare.
 
