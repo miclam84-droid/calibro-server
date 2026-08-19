@@ -701,17 +701,15 @@ def api_ricette_list():
     from db import carica_grafo
     disc = request.args.get("disc","")
     lang = request.args.get("lang","it")
+    fenomeno = request.args.get("fenomeno","").strip()
     db = carica_grafo()
+    SEL = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es,procedimento,immagine,immagine_autore,immagine_url_fonte,tempo_prep,tempo_cottura,difficolta,porzioni,applicazioni,twist_di FROM ricette"
+    COLS = ["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es","procedimento","immagine","immagine_autore","immagine_url_fonte","tempo_prep","tempo_cottura","difficolta","porzioni","applicazioni","twist_di"]
     try:
         if disc:
-            rows = db.execute(
-                "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es FROM ricette WHERE disciplina=%s ORDER BY nome",
-                (disc,)
-            )
+            rows = db.execute(SEL + " WHERE disciplina=%s ORDER BY nome", (disc,))
         else:
-            rows = db.execute(
-                "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es FROM ricette ORDER BY disciplina,nome"
-            )
+            rows = db.execute(SEL + " ORDER BY disciplina,nome")
         result=[]
         def _parse(v):
             if v is None: return None
@@ -719,7 +717,7 @@ def api_ricette_list():
             try: return _j.loads(v)
             except: return v
         for row in rows:
-            r = dict(row) if hasattr(row,"keys") else dict(zip(["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es"], row))
+            r = dict(row) if hasattr(row,"keys") else dict(zip(COLS, row))
             desc = r.get("descrizione") or ""
             if lang=="en" and r.get("scheda_en"): desc=r["scheda_en"]
             elif lang=="es" and r.get("scheda_es"): desc=r["scheda_es"]
@@ -738,16 +736,31 @@ def api_ricette_list():
                         vb_arricchito["birra_links"] = _link_vino_birra(nome_b, "birra")
                         vb_arricchito["birra_query"] = nome_b
                 vb = vb_arricchito
+            fen_list = _parse(r.get("fenomeni")) or []
+            if fenomeno:
+                ids_norm = [str(f).strip() for f in fen_list] if isinstance(fen_list,list) else []
+                if fenomeno not in ids_norm and not any(fenomeno in str(f) for f in ids_norm):
+                    continue
             result.append({
                 "id":r.get("id",""),"nome":r.get("nome",""),"disciplina":r.get("disciplina",""),
                 "descrizione":desc,
                 "ingredienti":_parse(r.get("ingredienti")) or [],
-                "fenomeni":_parse(r.get("fenomeni")) or [],
+                "fenomeni":fen_list,
                 "tecniche":_parse(r.get("tecniche")) or [],
                 "numeri":_parse(r.get("numeri")) or {},
                 "punto_critico":r.get("punto_critico") or "",
                 "abbinamenti":_parse(r.get("abbinamenti")) or {},
-                "vino_birra":vb
+                "vino_birra":vb,
+                "procedimento":_parse(r.get("procedimento")) or [],
+                "immagine":r.get("immagine") or "",
+                "immagine_autore":r.get("immagine_autore") or "",
+                "immagine_url_fonte":r.get("immagine_url_fonte") or "",
+                "tempo_prep":r.get("tempo_prep"),
+                "tempo_cottura":r.get("tempo_cottura"),
+                "difficolta":r.get("difficolta") or "",
+                "porzioni":r.get("porzioni") or "",
+                "applicazioni":_parse(r.get("applicazioni")) or [],
+                "twist_di":r.get("twist_di") or None
             })
         return jsonify(result)
     except Exception as e:

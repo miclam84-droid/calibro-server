@@ -1393,6 +1393,95 @@ def admin_crea_errori_nuovi():
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/migra-schema-ricette")
+def admin_migra_schema_ricette():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback
+    COLONNE = ["procedimento JSONB","immagine TEXT","immagine_autore TEXT","immagine_url_fonte TEXT",
+        "tempo_prep INTEGER","tempo_cottura INTEGER","difficolta TEXT","porzioni TEXT",
+        "applicazioni JSONB","twist_di TEXT","tecniche JSONB","abbinamenti JSONB","vino_birra JSONB"]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor(); fatte, errori = [], []
+        for col in COLONNE:
+            cname = col.split()[0]
+            try:
+                cur.execute(f"ALTER TABLE ricette ADD COLUMN IF NOT EXISTS {col}"); fatte.append(cname)
+            except Exception as me:
+                errori.append(f"{cname}: {me}")
+        conn.commit(); cur.close()
+        return jsonify({"ok": True, "colonne_ok": fatte, "errori": errori})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+    finally:
+        _release_conn(conn)
+
+@bp.route("/admin/genera-procedimenti")
+def admin_genera_procedimenti():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json, re as _re
+    import ai_gateway as GW
+    disc = request.args.get("disc", "")
+    limite = int(request.args.get("limite", "3"))
+    solo_vuote = request.args.get("solo_vuote", "1") == "1"
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        q = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,numeri,punto_critico,procedimento FROM ricette"
+        if disc: q += " WHERE disciplina=%s"
+        q += " ORDER BY nome"
+        cur.execute(q, (disc,) if disc else ())
+        rows = cur.fetchall()
+        fatte, saltate, errori, n = [], 0, [], 0
+        for row in rows:
+            if n >= limite: break
+            rid, nome, rdisc, desc, ingr, fen, num, pc, proc = row
+            proc_parsed = proc if isinstance(proc,(list,dict)) else (_json.loads(proc) if proc else [])
+            if solo_vuote and proc_parsed:
+                saltate += 1; continue
+            ingr_p = ingr if isinstance(ingr,list) else (_json.loads(ingr) if ingr else [])
+            num_p = num if isinstance(num,dict) else (_json.loads(num) if num else {})
+            ingr_str = ", ".join(f"{i.get('quantita','')}{i.get('unita','')} {i.get('nome','')}" for i in ingr_p) if ingr_p else ""
+            num_str = "; ".join(f"{k}: {v}" for k,v in num_p.items()) if num_p else ""
+            prompt = (
+                f"Sei un consulente scientifico F&B. Per questa ricetta REALE genera SOLO il procedimento operativo, "
+                f"le applicazioni e i metadati. NON cambiare ingredienti o numeri.\n\n"
+                f"RICETTA: {nome} (disciplina: {rdisc})\nINGREDIENTI: {ingr_str}\n"
+                f"NUMERI BERSAGLIO: {num_str}\nPUNTO CRITICO: {pc or ''}\n\n"
+                f"Rispondi in italiano SOLO con questo JSON (nessun testo extra):\n"
+                f'{{"procedimento": [{{"n":1,"testo":"passaggio specifico e reale","numero_chiave":"il numero critico di questo passo (es. 80-85 gradi) o null"}}], '
+                f'"applicazioni":["dove si usa questa preparazione nel mestiere"], '
+                f'"tempo_prep":minuti_interi, "tempo_cottura":minuti_interi, '
+                f'"difficolta":"facile|media|difficile", "porzioni":"es. 4 persone"}}\n\n'
+                f"I passaggi devono essere SPECIFICI di questa ricetta e usare i numeri bersaglio dove pertinente. "
+                f"Ogni passo che tocca un parametro critico DEVE avere numero_chiave. Niente markdown."
+            )
+            try:
+                raw = GW.route_fast(prompt, max_tokens=900)
+                m = _re.search(r"\{.*\}", raw or "", _re.DOTALL)
+                if not m:
+                    errori.append(f"{rid}: output non-JSON"); n+=1; continue
+                dati = _json.loads(m.group(0))
+                cur.execute("UPDATE ricette SET procedimento=%s::jsonb, applicazioni=%s::jsonb, tempo_prep=%s, tempo_cottura=%s, difficolta=%s, porzioni=%s WHERE id=%s",
+                    (_json.dumps(dati.get("procedimento",[]),ensure_ascii=False),
+                     _json.dumps(dati.get("applicazioni",[]),ensure_ascii=False),
+                     dati.get("tempo_prep"), dati.get("tempo_cottura"),
+                     dati.get("difficolta",""), dati.get("porzioni",""), rid))
+                conn.commit()
+                fatte.append(f"{nome}: {len(dati.get('procedimento',[]))} passi")
+            except Exception as ge:
+                errori.append(f"{rid}: {str(ge)[:80]}")
+            n += 1
+        return jsonify({"ok":True, "generate":fatte, "saltate_gia_pronte":saltate, "errori":errori})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
