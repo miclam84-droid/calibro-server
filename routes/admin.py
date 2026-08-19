@@ -841,6 +841,9 @@ def admin_popola_alias():
             "fen-collagene-brasato": ["brasato","collagene","gelatina carne","taglio duro","cottura lenta carne","stracotto","spezzatino","ossobuco","brisket","carne dura","perche la carne e dura","guancia","spalla"],
             "fen-rosolatura": ["rosolatura","rosolare","searing","scottare","scotto","scottare la carne","scotto una bistecca","crosta carne","crosta sulla carne","crosta della carne","crosta bistecca","sigillare carne","dorare la carne","dorare la bistecca","bistecca crosta","bistecca in padella","sear","rosolare la carne"],
             "fen-emulsione-salse": ["maionese","olandese","salsa impazzita","emulsione salsa","vinaigrette","salsa emulsionata","maionese impazzita","montare la salsa","bearnaise"],
+            "fen-pasta-acqua": ["pasta","al dente","acqua di cottura","mantecatura","mantecare","cuocere la pasta","acqua della pasta","carbonara cremosa","cacio e pepe","aglio e olio","pasta scotta"],
+            "fen-soffritto": ["soffritto","mirepoix","base aromatica","appassire","rosolare le verdure","sofrito","cipolla carota sedano","battuto","fondo aromatico"],
+            "fen-riposo-carne": ["riposo carne","far riposare la carne","riposare la bistecca","riposo bistecca","succhi carne","carne asciutta","perche la carne e secca","tagliare la carne subito"],
             "fen-shakerare-mescolare": ["shakerare","mescolare","shakerato mescolato","shake stir","quando shakerare","shakerare o mescolare","stirred shaken","tecnica shaker","bar spoon"],
             "fen-emulsione-bar": ["albume cocktail","schiuma cocktail","dry shake","sour schiuma","whiskey sour schiuma","emulsione drink","aquafaba","clover club","pisco sour","foam cocktail"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
@@ -1158,6 +1161,9 @@ def admin_crea_haccp():
         "fen-collagene-brasato": {"nome":"Collagene e brasato (i due tipi di carne)","target":"Fibre poco e caldo, collagene tanto tempo a 70-90C = gelatina, scegli la cottura dal taglio"},
         "fen-rosolatura": {"nome":"La rosolatura (searing)","target":"Maillard sulla superficie = sapore non sigillo, carne asciutta padella calda"},
         "fen-emulsione-salse": {"nome":"Emulsione delle salse (maionese, olandese)","target":"Olio in gocce tenute dall'emulsionante, olio lento, si salva da nuovo emulsionante"},
+        "fen-pasta-acqua": {"nome":"La pasta e l'acqua di cottura","target":"Amido gelatinizza da fuori, al dente cuore vetroso, l'acqua amidacea emulsiona la salsa"},
+        "fen-soffritto": {"nome":"Il soffritto (base aromatica)","target":"Verdure appassite piano nel grasso, fuoco dolce, il grasso cattura gli aromi liposolubili"},
+        "fen-riposo-carne": {"nome":"Il riposo della carne","target":"Fibre si rilassano e succhi si ridistribuiscono, piu grosso piu lungo, succosa vs asciutta"},
     }
     risultati = []
     try:
@@ -1228,7 +1234,7 @@ def admin_fix_dominio_bar():
         "bar": ["fen-equilibrio-cocktail","fen-shakerare-mescolare","fen-emulsione-bar",
                 "fen-ghiaccio","fen-carbonatazione","fen-chiarificazione-latte",
                 "fen-infusioni","fen-amaro-bitter"],
-        "cucina": ["fen-collagene-brasato","fen-rosolatura","fen-emulsione-salse"],
+        "cucina": ["fen-collagene-brasato","fen-rosolatura","fen-emulsione-salse","fen-pasta-acqua","fen-soffritto","fen-riposo-carne"],
     }
     try:
         conn = _get_conn(); cur = conn.cursor()
@@ -1833,6 +1839,51 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-pasta-acqua": {
+            "scheda": """Cuocere la pasta sembra la cosa piu banale del mondo, e invece dentro c'e una fisica precisa: l'amido che gelatinizza dall'esterno verso l'interno, l'al dente che e un cuore ancora crudo, e quell'acqua torbida che butti via - e invece e l'ingrediente segreto della salsa. Chi capisce questo fa una pasta da ristorante.
+
+Quando la pasta entra nell'acqua bollente, l'acqua penetra e l'amido superficiale GELATINIZZA (vedi il fenomeno): i granuli assorbono acqua, si gonfiano e si ammorbidiscono, dall'esterno verso il centro. Le proteine (glutine) coagulano e danno struttura.
+
+L'al dente, spiegato
+Al dente = l'amido esterno e gelatinizzato (morbido) ma il CUORE e ancora vetroso, appena crudo, con "il dente". Non e solo gusto: la pasta al dente ha indice glicemico piu basso (l'amido meno gelatinizzato si digerisce piu lentamente) e regge meglio la mantecatura. Scotta = amido tutto gelatinizzato = molla e collosa. La pasta continua a cuocere dopo lo scolo (e nella salsa): scola un filo prima.
+
+L'acqua di cottura: l'emulsionante nascosto
+Durante la cottura, l'amido esce dalla pasta e si scioglie nell'acqua (per questo diventa torbida). Quell'acqua amidacea e un EMULSIONANTE: aggiunta alla salsa in padella, lega il grasso (olio, burro) con la parte acquosa e fa AGGRAPPARE la salsa alla pasta invece di scivolare sul piatto. E il segreto della mantecatura: aglio e olio, cacio e pepe, carbonara - tutte vivono di questo. Il sale nell'acqua (1-2%, "come il mare") insaporisce la pasta DENTRO, non solo in superficie.
+Il bersaglio: amido gelatinizza da fuori a dentro, al dente = cuore vetroso (regge la mantecatura, IG piu basso). L'acqua amidacea EMULSIONA la salsa (mantecatura): tienila. Sale 1-2%, scola un filo prima.""",
+            "target": "Amido gelatinizza da fuori a dentro, al dente = cuore vetroso (regge mantecatura, IG piu basso): l'acqua amidacea EMULSIONA la salsa (tienila!), sale 1-2%",
+            "nome": "La pasta e l'acqua di cottura",
+            "dominio": "cucina",
+        },
+        "fen-soffritto": {
+            "scheda": """Quasi ogni piatto salato della tradizione parte da la stessa cosa: verdure tritate fatte appassire piano nel grasso. Soffritto in Italia, mirepoix in Francia, sofrito in Spagna - lo stesso principio ovunque. Non e un passaggio da sbrigare: e la fondazione aromatica su cui si costruisce tutto il piatto. Farlo bene o male decide il sapore finale.
+
+Il soffritto (cipolla, carota, sedano tritati, in olio o burro a fuoco dolce) fa una cosa precisa: estrae e trasforma gli aromi delle verdure nel grasso, che li trattiene e li distribuisce. A fuoco DOLCE e lento le verdure APPASSISCONO (perdono acqua, concentrano i sapori, la cipolla diventa dolce) senza bruciare.
+
+La chimica del soffritto
+Due processi. Primo, la disidratazione dolce: l'acqua esce, i sapori si concentrano, gli zuccheri della cipolla emergono (diventa dolce e trasparente). Secondo, a temperature un po' piu alte, parte la Maillard (vedi il fenomeno) sulle verdure: le note brune, profonde, "tostate". Il grasso e fondamentale: e liposolubile, cattura gli aromi che l'acqua non prenderebbe, e li porta in tutto il piatto.
+
+Fuoco dolce, l'errore comune
+L'errore e il fuoco troppo alto: la cipolla brucia fuori restando cruda dentro, e il bruciato ammarisce tutto. Il soffritto vuole pazienza: fuoco dolce, tempo, finche le verdure sono morbide e dorate. E la base di soffritti, ragu, sughi, brasati, zuppe.
+Il bersaglio: verdure appassite piano nel grasso = base aromatica. Fuoco DOLCE (bruciato ammarisce), il grasso cattura e distribuisce gli aromi liposolubili. Appassire concentra + Maillard approfondisce. La fondazione del piatto.""",
+            "target": "Verdure appassite piano nel grasso = base aromatica: fuoco DOLCE (bruciato ammarisce), il grasso cattura e distribuisce gli aromi liposolubili - la fondazione del piatto",
+            "nome": "Il soffritto (base aromatica)",
+            "dominio": "cucina",
+        },
+        "fen-riposo-carne": {
+            "scheda": """Tagli una bistecca appena tolta dal fuoco e il tagliere si allaga di succhi: la carne dentro sara asciutta. Aspetti cinque minuti prima di tagliarla e resta succosa. Non e magia ne pazienza fine a se stessa: e fisica dei liquidi dentro il muscolo, e vale per ogni pezzo di carne che cuoci.
+
+Durante la cottura, il calore fa contrarre le fibre muscolari e spinge i succhi verso il centro (piu freddo) della carne. Le fibre sono strizzate, tese, e i liquidi sono in pressione al centro. Se tagli subito, quei succhi in pressione escono tutti (il tagliere si allaga) e la carne resta secca.
+
+Cosa succede nel riposo
+Lasciando riposare la carne fuori dal fuoco, due cose: la temperatura si uniforma (il centro cede calore verso l'esterno che si raffredda), le fibre si RILASSANO e i succhi si RIDISTRIBUISCONO uniformemente, riassorbiti nei tessuti. Ora, tagliando, i succhi restano nella carne invece di colare via.
+
+Quanto riposo
+Regola pratica: piu grosso il pezzo, piu lungo il riposo. Una bistecca 5 minuti, un arrosto 15-20, un grande pezzo anche di piu. Si copre lascamente con alluminio per non perdere troppo calore. Vale per la carne cotta a calore alto (bistecche, arrosti): dove le fibre si sono contratte c'e da rilassarle.
+Il bersaglio: riposo = fibre si rilassano e i succhi si ridistribuiscono (non colano via al taglio). Piu grosso il pezzo piu lungo (bistecca 5min, arrosto 15-20). Copri lasco. La differenza tra carne succosa e asciutta.""",
+            "target": "Riposo = fibre si rilassano e i succhi si ridistribuiscono (non colano al taglio): piu grosso piu lungo (bistecca 5min, arrosto 15-20) - succosa vs asciutta",
+            "nome": "Il riposo della carne",
+            "dominio": "cucina",
+        },
         "fen-collagene-brasato": {
             "scheda": """C'e un motivo per cui la bistecca si cuoce in tre minuti e il brasato in tre ore - e non e la dimensione. Sono due tipi di carne opposti, governati da due proteine diverse: la bistecca dalle fibre muscolari, il brasato dal collagene. Capire questa differenza e la cosa piu importante della cottura della carne. Sbagliarla vuol dire una bistecca stopposa o un brasato duro.
 
