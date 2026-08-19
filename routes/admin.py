@@ -1393,6 +1393,46 @@ def admin_crea_errori_nuovi():
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/migra-schema-ricette")
+def admin_migra_schema_ricette():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback
+    # FASE 1 dell'audit ricette: colonne mancanti per procedimento, immagine, metadati, applicazioni, twist
+    COLONNE = [
+        "procedimento JSONB",      # lista [{n:int, testo:str, numero_chiave:str|null}]
+        "immagine TEXT",           # url foto reale (Pexels)
+        "immagine_autore TEXT",    # credito "Nome / Pexels"
+        "immagine_url_fonte TEXT", # link alla pagina Pexels (richiesto dalle guidelines API)
+        "tempo_prep INTEGER",      # minuti
+        "tempo_cottura INTEGER",   # minuti
+        "difficolta TEXT",         # facile / media / difficile
+        "porzioni TEXT",           # "4 persone" / "6 drink"
+        "applicazioni JSONB",      # lista di str: dove si usa questa preparazione
+        "twist_di TEXT",           # id ricetta madre (NULL se originale)
+        "tecniche JSONB",          # (idempotente se gia c'e)
+        "abbinamenti JSONB",
+        "vino_birra JSONB",
+    ]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        fatte, errori = [], []
+        for col in COLONNE:
+            cname = col.split()[0]
+            try:
+                cur.execute(f"ALTER TABLE ricette ADD COLUMN IF NOT EXISTS {col}")
+                fatte.append(cname)
+            except Exception as me:
+                errori.append(f"{cname}: {me}")
+        conn.commit(); cur.close()
+        return jsonify({"ok": True, "colonne_ok": fatte, "errori": errori})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
