@@ -19,7 +19,8 @@ def _meteo_corrente(lat, lon):
     """Temp (°C) e umidità relativa (%) correnti dalla posizione. None se fallisce."""
     url = f"{OPENMETEO}?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,weather_code"
     try:
-        with urllib.request.urlopen(url, timeout=12) as r:
+        req = urllib.request.Request(url, headers={"User-Agent": "MatterLab/1.0 (matterlab.app)"})
+        with urllib.request.urlopen(req, timeout=12) as r:
             d = _j.loads(r.read())
             c = d.get("current", {})
             return {
