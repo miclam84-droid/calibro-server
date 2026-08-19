@@ -839,7 +839,7 @@ def admin_popola_alias():
             "fen-infusioni": ["infusione","macerazione","infondere","aromatizzare distillato","gin fatto in casa","infuso","macerare","botaniche","aromatizzare alcol"],
             "fen-amaro-bitter": ["bitter","amaro","angostura","peychaud","dash","gocce di bitter","campari","fernet","digestivo","aromatico cocktail","orange bitter"],
             "fen-collagene-brasato": ["brasato","collagene","gelatina carne","taglio duro","cottura lenta carne","stracotto","spezzatino","ossobuco","brisket","carne dura","perche la carne e dura","guancia","spalla"],
-            "fen-rosolatura": ["rosolatura","rosolare","searing","scottare la carne","crosta carne","sigillare carne","dorare la carne","bistecca crosta","sear"],
+            "fen-rosolatura": ["rosolatura","rosolare","searing","scottare","scotto","scottare la carne","scotto una bistecca","crosta carne","crosta sulla carne","crosta della carne","crosta bistecca","sigillare carne","dorare la carne","dorare la bistecca","bistecca crosta","bistecca in padella","sear","rosolare la carne"],
             "fen-emulsione-salse": ["maionese","olandese","salsa impazzita","emulsione salsa","vinaigrette","salsa emulsionata","maionese impazzita","montare la salsa","bearnaise"],
             "fen-shakerare-mescolare": ["shakerare","mescolare","shakerato mescolato","shake stir","quando shakerare","shakerare o mescolare","stirred shaken","tecnica shaker","bar spoon"],
             "fen-emulsione-bar": ["albume cocktail","schiuma cocktail","dry shake","sour schiuma","whiskey sour schiuma","emulsione drink","aquafaba","clover club","pisco sour","foam cocktail"],
