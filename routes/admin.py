@@ -1171,6 +1171,13 @@ def admin_crea_haccp():
         "fen-riposo-carne": {"nome":"Il riposo della carne","target":"Fibre si rilassano e succhi si ridistribuiscono, piu grosso piu lungo, succosa vs asciutta"},
         "fen-uova-coagulazione": {"nome":"Le uova (coagulazione)","target":"Albume 62-65C tuorlo 65-70C, fuoco dolce cremoso troppo caldo gommoso, latte ammorbidisce"},
         "fen-verdure-verdi": {"nome":"Le verdure verdi (clorofilla)","target":"Clorofilla a feofitina col tempo/acido, sbollenta veloce poi shock in ghiaccio fissa il verde"},
+        "fen-cristalli-ghiaccio": {"nome":"Cristalli di ghiaccio (cremosita)","target":"Cristalli piccoli = cremoso, congela rapido e manteca, nemico la ricristallizzazione"},
+        "fen-zuccheri-pac": {"nome":"Zuccheri e punto di congelamento (PAC)","target":"Lo zucchero abbassa il punto di congelamento, zuccheri piccoli abbassano di piu, nel sorbetto unica leva"},
+        "fen-grassi-stabilizzanti": {"nome":"Grassi e stabilizzanti (gelateria)","target":"Grasso maschera i cristalli, stabilizzanti legano l'acqua = piu cremoso regge sbalzi"},
+        "fen-fermentazione-alcolica": {"nome":"Fermentazione alcolica (vino e birra)","target":"Lievito mangia zucchero = alcol + CO2, vino dall'uva birra dal malto (ammostamento)"},
+        "fen-tannini-vino": {"nome":"Tannini e struttura del vino","target":"Tannini di bucce/semi = astringenza, rosso con le bucce bianco senza, si ammorbidiscono nel tempo"},
+        "fen-luppolo": {"nome":"Il luppolo e l'amaro della birra","target":"Luppolo = amaro + aroma, presto in bollitura amaro tardi aroma, si misura in IBU"},
+        "fen-macinatura-caffe": {"nome":"Macinatura e estrazione del caffe","target":"Macinatura governa la velocita di estrazione, fine per espresso grossa per filtro, acqua 90-96C"},
     }
     risultati = []
     try:
@@ -1243,6 +1250,10 @@ def admin_fix_dominio_bar():
                 "fen-infusioni","fen-amaro-bitter"],
         "cucina": ["fen-collagene-brasato","fen-rosolatura","fen-emulsione-salse","fen-pasta-acqua","fen-soffritto","fen-riposo-carne","fen-uova-coagulazione","fen-verdure-verdi"],
         "pasticceria": ["fen-meringa","fen-montatura-panna","fen-crema-pasticcera","fen-temperaggio-cioccolato","fen-gelificazione","fen-zucchero-cottura","fen-pasta-frolla","fen-lievitazione-chimica"],
+        "gelateria": ["fen-cristalli-ghiaccio","fen-zuccheri-pac","fen-grassi-stabilizzanti"],
+        "vino": ["fen-fermentazione-alcolica","fen-tannini-vino"],
+        "birra": ["fen-luppolo"],
+        "caffetteria": ["fen-macinatura-caffe"],
     }
     try:
         conn = _get_conn(); cur = conn.cursor()
@@ -1847,6 +1858,116 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-cristalli-ghiaccio": {
+            "scheda": """La differenza tra un gelato cremoso e uno che "sgranocchia" di ghiaccio sta tutta nella dimensione dei cristalli d'acqua. Piccoli = vellutato; grandi = granuloso. E la dimensione dei cristalli non e magia: si governa con la velocita di congelamento e col movimento. E il principio numero uno della gelateria.
+
+Il gelato e acqua congelata in cui sono dispersi zuccheri, grassi, aria e solidi. Quando l'acqua congela forma cristalli: se sono piccolissimi (sotto i 50 micron) la lingua non li distingue = cremoso; se crescono grandi = texture granulosa, "ghiacciata".
+
+Come si tengono piccoli i cristalli
+CONGELAMENTO RAPIDO: piu veloce congeli, meno tempo hanno i cristalli per crescere, piu restano piccoli e numerosi. Per questo il gelato industriale (o all'azoto liquido) e ultra-cremoso: congela in fretta. La mantecazione lenta a casa fa cristalli piu grandi.
+MOVIMENTO CONTINUO (mantecazione): mescolare durante il congelamento spezza i cristalli mentre si formano e li tiene piccoli, e insieme incorpora aria. Un composto fermo nel freezer fa un blocco di ghiaccio; mantecato, fa gelato.
+
+Il nemico: la ricristallizzazione
+Durante la conservazione, se il gelato si scalda e ri-congela (sbalzi di temperatura, freezer aperto), i cristalli piccoli si fondono e ri-crescono piu GRANDI: il gelato diventa granuloso col tempo. Per questo la catena del freddo stabile e la conservazione contano quanto la preparazione.
+Il bersaglio: cristalli piccoli (sotto 50 micron) = cremoso, grandi = granuloso. Congela RAPIDO e MANTECA (movimento continuo spezza i cristalli). Il nemico e la ricristallizzazione da sbalzi di temperatura: catena del freddo stabile.""",
+            "target": "Cristalli piccoli (sotto 50 micron) = cremoso, grandi = granuloso: congela RAPIDO e MANTECA (movimento spezza i cristalli), nemico la ricristallizzazione da sbalzi",
+            "nome": "Cristalli di ghiaccio (cremosita)",
+            "dominio": "gelateria",
+        },
+        "fen-zuccheri-pac": {
+            "scheda": """Perche un gelato resta morbido e cavabile a -15C mentre l'acqua pura a quella temperatura e un mattone di ghiaccio? Perche lo zucchero abbassa il punto di congelamento. E i gelatieri lo misurano con un numero, il PAC (potere anticongelante): e la leva per decidere quanto morbido sara il gelato. Sbagliare lo zucchero vuol dire un gelato o troppo duro o che non tiene.
+
+Lo zucchero disciolto nell'acqua ABBASSA il punto di congelamento (freezing point depression): l'acqua zuccherata congela sotto 0C, e piu zucchero c'e, piu bassa la temperatura serve per congelarla. Nel gelato questo significa: a temperatura di conservazione, una parte dell'acqua resta NON congelata (grazie allo zucchero), e quella frazione liquida rende il gelato morbido e cavabile invece che un blocco.
+
+Il PAC: la misura del gelatiere
+Il PAC (Potere Anti-Congelante) e un numero che quantifica quanto un ingrediente abbassa il punto di congelamento. Zuccheri diversi hanno PAC diversi: il fruttosio e il glucosio/destrosio abbassano di piu (a parita di peso) del saccarosio, perche hanno molecole piu piccole (piu molecole per grammo = piu effetto). Per questo i gelatieri MISCELANO zuccheri: saccarosio per dolcezza, destrosio/fruttosio per morbidezza extra senza troppa dolcezza. Bilanciare il PAC = decidere la consistenza a una data temperatura.
+
+Il sorbetto: solo zucchero, niente grasso
+Nel sorbetto (frutta, acqua, zucchero, niente latte) il PAC dello zucchero e l'UNICA leva contro la durezza: troppo poco e diventa un ghiacciolo, troppo e non tiene. Per questo il bilanciamento zuccheri e ancora piu critico.
+Il bersaglio: lo zucchero abbassa il punto di congelamento (PAC) = gelato morbido a -15C. Zuccheri piccoli (fruttosio, destrosio) abbassano di piu del saccarosio: si miscelano per dolcezza + morbidezza. Nel sorbetto lo zucchero e l'unica leva.""",
+            "target": "Lo zucchero abbassa il punto di congelamento (PAC) = gelato morbido a -15C: zuccheri piccoli (fruttosio/destrosio) abbassano piu del saccarosio, si miscelano, nel sorbetto unica leva",
+            "nome": "Zuccheri e punto di congelamento (PAC)",
+            "dominio": "gelateria",
+        },
+        "fen-grassi-stabilizzanti": {
+            "scheda": """Oltre ai cristalli piccoli e allo zucchero, due ingredienti costruiscono la cremosita del gelato lavorando sull'acqua: il grasso, che maschera i cristalli e da corpo, e gli stabilizzanti, che legano l'acqua e le impediscono di formare cristalli grandi. Capirli e la differenza tra un gelato che regge e uno che "suda" e diventa ghiacciato.
+
+Il grasso: corpo e mascheramento
+Il grasso (dal latte, panna, tuorlo) fa due cose. Interferisce fisicamente con le molecole d'acqua, ostacolando la formazione dei cristalli. E MASCHERA i cristalli residui: rivestendo la lingua, fa percepire come liscio anche cio che non lo e del tutto. Il gelato ha meno grasso dell'ice cream (4-8% contro 10-20%): meno grasso vuol dire sapori piu diretti e vividi (il grasso ottunde il gusto), ma serve piu attenzione agli altri fattori per la cremosita. Il tuorlo aggiunge anche lecitina, che emulsiona.
+
+Gli stabilizzanti: legare l'acqua
+Guar, farina di semi di carrube, xantano, carragenina: sono idrocolloidi che LEGANO l'acqua libera, aumentano la viscosita del composto e frenano la crescita dei cristalli (l'acqua legata non e libera di ri-cristallizzare). Fanno tre cose: gelato piu cremoso, piu resistente agli sbalzi di temperatura, e piu longevo in conservazione. Si usano in dosi piccolissime (frazioni di percento).
+
+L'aria (overrun) chiude il quadro
+L'aria incorporata mantecando (vedi overrun) alleggerisce e contribuisce alla cremosita: le bollicine piccole e ben stabilizzate rendono il gelato piu vellutato. Il gelato ha poco overrun (20-30%) contro l'ice cream (fino al 50%): piu denso e ricco.
+Il bersaglio: grasso maschera i cristalli e da corpo (ma ottunde il gusto: il gelato ne ha meno, 4-8%). Stabilizzanti legano l'acqua libera = piu cremoso, regge gli sbalzi, dura di piu (dosi piccolissime). L'aria alleggerisce.""",
+            "target": "Grasso maschera i cristalli e da corpo (ottunde il gusto: gelato 4-8%), stabilizzanti legano l'acqua libera = piu cremoso regge sbalzi dura di piu (dosi minime)",
+            "nome": "Grassi e stabilizzanti (gelateria)",
+            "dominio": "gelateria",
+        },
+        "fen-fermentazione-alcolica": {
+            "scheda": """Vino, birra, e ogni bevanda alcolica nascono dallo stesso gesto invisibile: un lievito che mangia zucchero e produce alcol e anidride carbonica. E lo stesso microrganismo del pane, ma qui l'alcol e il prodotto, non un effetto collaterale. Capire la fermentazione e capire la radice di intere categorie di bevande.
+
+Il lievito (Saccharomyces) consuma gli ZUCCHERI e li trasforma in ETANOLO (alcol) + ANIDRIDE CARBONICA (CO2) + calore + centinaia di composti aromatici (esteri, che danno note fruttate e floreali). E la stessa fermentazione del pane, ma nel pane si cattura la CO2 (che gonfia) e l'alcol evapora in cottura; qui si tiene l'alcol.
+
+Da dove viene lo zucchero: la differenza vino/birra
+VINO: lo zucchero c'e gia, e quello dell'uva. Si pigia l'uva, il lievito (selvatico sulle bucce o aggiunto) fermenta il mosto. Piu zucchero nell'uva = piu alcol potenziale (10-15% secondo il clima). Se il lievito non finisce tutto lo zucchero, restano zuccheri residui = vino dolce.
+BIRRA: lo zucchero NON c'e pronto, e imprigionato come amido nel malto d'orzo. Serve un passaggio in piu, l'ammostamento (mashing): il malto in acqua calda attiva enzimi che spezzano l'amido in zuccheri, creando il mosto dolce (wort). Solo dopo il lievito puo fermentare.
+
+La temperatura governa il carattere
+Fermentazioni fredde e lente (vini bianchi 7-20C, birre lager) preservano aromi delicati; fermentazioni calde (vini rossi, birre ale) estraggono e sviluppano piu carattere. La temperatura decide lo stile.
+Il bersaglio: lievito mangia zucchero → alcol + CO2 + aromi (esteri). Vino: zucchero dall'uva (pronto). Birra: zucchero dal malto via ammostamento (enzimi spezzano l'amido). Freddo = delicato, caldo = carattere.""",
+            "target": "Lievito mangia zucchero → alcol + CO2 + aromi: vino zucchero dall'uva (pronto), birra dal malto via ammostamento (enzimi spezzano l'amido), freddo delicato caldo carattere",
+            "nome": "Fermentazione alcolica (vino e birra)",
+            "dominio": "vino",
+        },
+        "fen-tannini-vino": {
+            "scheda": """Quella sensazione asciutta e allappante che ti "graffia" la bocca dopo un sorso di vino rosso sono i tannini. Non e un difetto: e la struttura del vino, la sua ossatura. E la differenza tra un rosso e un bianco sta proprio in una scelta - fermentare con le bucce o senza.
+
+I tannini sono polifenoli presenti nelle BUCCE, nei vinaccioli (semi) e nei raspi dell'uva (e anche nel legno delle botti). Sono amari e soprattutto ASTRINGENTI: si legano alle proteine della saliva e le fanno precipitare, da cui la sensazione di secchezza e "presa" in bocca. Sono la stessa famiglia di composti dei tannini del te e del caffe.
+
+La scelta rosso/bianco
+E qui sta la differenza fondamentale. Il ROSSO fermenta CON le bucce (e vinaccioli): durante la fermentazione l'alcol che sale estrae dai solidi il colore E i tannini. Piu contatto con le bucce = piu colore, piu struttura, piu tannino. Il BIANCO si fa pressando subito e separando il succo dalle bucce PRIMA della fermentazione: niente estrazione di colore e tannino, vino piu leggero e fresco. Non e questione di uva bianca o nera: e questione di contatto con le bucce.
+
+I tannini nel tempo
+I tannini danno al vino la capacita di invecchiare: col tempo si polimerizzano, diventano piu morbidi, e la sensazione astringente si ammorbidisce. Un rosso giovane molto tannico e "duro"; lo stesso vino dopo anni e piu rotondo. Sono anche antiossidanti naturali che proteggono il vino.
+Il bersaglio: tannini (polifenoli di bucce/semi) = astringenza + struttura (legano la saliva). Rosso = fermenta CON le bucce (estrae colore e tannino), bianco = SENZA. Col tempo i tannini si ammorbidiscono (invecchiamento). Stessa famiglia del te/caffe.""",
+            "target": "Tannini (polifenoli bucce/semi) = astringenza + struttura: rosso fermenta CON le bucce (estrae colore e tannino), bianco SENZA, col tempo si ammorbidiscono",
+            "nome": "Tannini e struttura del vino",
+            "dominio": "vino",
+        },
+        "fen-luppolo": {
+            "scheda": """Se la birra non fosse amara sarebbe stucchevole: il malto porta zuccheri e dolcezza, e qualcosa deve bilanciarli. Quel qualcosa e il luppolo, il fiore che da alla birra amaro, aroma e persino conservazione. E quando si aggiunge nella bollitura decide se avrai amaro o profumo.
+
+Il luppolo e il fiore di una pianta (Humulus lupulus) che si aggiunge al mosto durante la bollitura. Fa tre cose: da AMARO (bilancia la dolcezza del malto), da AROMA (note floreali, agrumate, resinose), e conserva (ha proprieta antibatteriche naturali che proteggevano la birra prima della refrigerazione).
+
+Il momento dell'aggiunta decide tutto
+Qui sta la fisica interessante. Gli acidi amari del luppolo (alfa-acidi) hanno bisogno di essere ISOMERIZZATI dalla bollitura prolungata per diventare solubili e amari - serve tempo di bollore. Ma gli oli aromatici del luppolo sono VOLATILI: se bolli a lungo, evaporano e perdi l'aroma. Da qui la regola:
+- Luppolo a INIZIO bollitura (60+ min): massimo amaro, aroma evaporato. E il luppolo "da amaro".
+- Luppolo a FINE bollitura (o dopo, "dry hopping"): poco amaro, massimo aroma (gli oli non evaporano). E il luppolo "da aroma".
+Il birraio dosa i due momenti per costruire il profilo. L'amaro si misura in IBU (International Bitterness Units).
+Il bersaglio: luppolo = amaro (bilancia il malto) + aroma + conservazione. Presto in bollitura = amaro (isomerizza gli alfa-acidi, l'aroma evapora), tardi/dry hopping = aroma (oli volatili preservati). L'amaro si misura in IBU.""",
+            "target": "Luppolo = amaro (bilancia il malto) + aroma + conservazione: presto in bollitura = amaro (isomerizza, aroma evapora), tardi/dry hopping = aroma, si misura in IBU",
+            "nome": "Il luppolo e l'amaro della birra",
+            "dominio": "birra",
+        },
+        "fen-macinatura-caffe": {
+            "scheda": """Lo stesso caffe, macinato fine o grosso, da due bevande diverse: una perfetta, una imbevibile. La macinatura e la leva piu potente e piu sottovalutata dell'espresso. Governa quanto velocemente l'acqua estrae, e l'estrazione decide tutto: troppo poca e acido e acquoso, troppa e amaro e bruciato.
+
+Fare il caffe e ESTRARRE composti solubili (aromi, acidi, caffeina, oli) dalla polvere con l'acqua. Il grado di estrazione decide il gusto: SOTTO-estratto (poca) = acido, aspro, acquoso, "vuoto"; SOVRA-estratto (troppa) = amaro, astringente, bruciato. Nel mezzo c'e la finestra giusta. Si misura con TDS (solidi disciolti) e EY (extraction yield).
+
+La macinatura governa la velocita
+Piu la polvere e fine, piu superficie espone all'acqua, piu veloce l'estrazione (e viceversa). Questo deve accordarsi col metodo:
+- ESPRESSO: acqua ad alta pressione che passa in ~25-30 secondi. Serve macinatura FINE (tanta superficie, estrazione veloce nel poco tempo). Troppo grossa = acqua che scorre via sotto-estratta e acquosa; troppo fine = acqua bloccata, sovra-estratta e amara.
+- FILTRO/moka/french press: acqua a bassa pressione, contatto piu lungo. Serve macinatura piu GROSSA (estrazione piu lenta, adeguata al tempo lungo).
+
+Le altre leve
+Oltre alla macinatura: la DOSE (quanto caffe), la TEMPERATURA (acqua ~90-96C, troppo calda estrae amaro, troppo fredda sotto-estrae), il TEMPO di contatto, la pressione. La crema dell'espresso e un'emulsione di oli e CO2 spinta dalla pressione.
+Il bersaglio: estrazione = composti solubili dall'acqua (sotto=acido/acquoso, sopra=amaro/bruciato, in mezzo la finestra). La macinatura governa la velocita: FINE per espresso (veloce), GROSSA per filtro/moka (lenta). Acqua 90-96C.""",
+            "target": "Estrazione = solubili dall'acqua (sotto acido/acquoso, sopra amaro/bruciato): macinatura governa la velocita, FINE per espresso GROSSA per filtro/moka, acqua 90-96C",
+            "nome": "Macinatura e estrazione del caffe",
+            "dominio": "caffetteria",
+        },
         "fen-temperaggio-cioccolato": {
             "scheda": """Perche il cioccolato di una tavoletta industriale fa "snap" quando lo spezzi, e lucido, e si scioglie in bocca - mentre quello fuso e ricolato in casa viene opaco, molle, striato di bianco? La differenza e il TEMPERAGGIO: un ballo di temperature che costringe il burro di cacao a cristallizzare nella forma giusta. E fisica dei cristalli, ed e la cosa che separa il cioccolatiere dal dilettante.
 
