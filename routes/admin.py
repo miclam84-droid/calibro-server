@@ -832,7 +832,9 @@ def admin_popola_alias():
             "fen-conserve-botulino": ["botulino","conserve","sottolio","sott olio","sottaceti","sterilizzazione","barattolo","conserva","clostridium","tossina"],
             "fen-anisakis": ["anisakis","pesce crudo","abbattimento","abbattitore","sushi","sashimi","crudo di pesce","marinato","tartare di pesce","parassita pesce","congelare il pesce"],
             "fen-ustioni-olio": ["ustioni","ustione","olio bollente","olio caldo sicurezza","incendio olio","schizzi olio","frittura sicurezza","olio infiammato","scottatura olio"],
-            "fen-equilibrio-cocktail": ["equilibrio cocktail","bilanciare drink","dolce acido forte","sour ratio","struttura cocktail","proporzioni cocktail","bilanciamento drink","il drink non torna","troppo dolce cocktail","troppo aspro"],
+            "fen-equilibrio-cocktail": ["equilibrio cocktail","bilanciare drink","bilanciare","bilancio","bilanciare sour","bilancio sour","come bilancio","dolce acido forte","sour ratio","fare un sour","struttura cocktail","proporzioni cocktail","bilanciamento drink","il drink non torna","troppo dolce cocktail","troppo aspro","sour cocktail"],
+            "fen-ghiaccio": ["ghiaccio","cubo di ghiaccio","ghiaccio tritato","ghiaccio grande","che ghiaccio","tipo di ghiaccio","ghiaccio cocktail","crushed ice","sfera di ghiaccio","ghiaccio limpido"],
+            "fen-carbonatazione": ["carbonatazione","bollicine","highball","soda","gassato","effervescenza","co2","frizzante","spritz bollicine","perche va flat","drink piatto bollicine"],
             "fen-shakerare-mescolare": ["shakerare","mescolare","shakerato mescolato","shake stir","quando shakerare","shakerare o mescolare","stirred shaken","tecnica shaker","bar spoon"],
             "fen-emulsione-bar": ["albume cocktail","schiuma cocktail","dry shake","sour schiuma","whiskey sour schiuma","emulsione drink","aquafaba","clover club","pisco sour","foam cocktail"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
@@ -1142,6 +1144,8 @@ def admin_crea_haccp():
         "fen-equilibrio-cocktail": {"nome":"L'equilibrio del cocktail","target":"Dolce/acido/forte/amaro: sour 2:1:1 struttura madre, bilancia a freddo"},
         "fen-shakerare-mescolare": {"nome":"Shakerare vs mescolare","target":"Opaco shakera 10-15s, limpido mescola 20-30s - cosa c'e nel bicchiere"},
         "fen-emulsione-bar": {"nome":"Emulsione e texture (albume, schiuma)","target":"Albume = denaturazione + emulsione = schiuma, dry shake sempre"},
+        "fen-ghiaccio": {"nome":"Il ghiaccio (raffreddamento e diluizione)","target":"Superficie/volume: grande lento poco diluito, tritato veloce diluito - dimensione governa la velocita"},
+        "fen-carbonatazione": {"nome":"La carbonatazione (bollicine)","target":"CO2 trattenuta con freddo, pressione, superfici lisce - tritato e bicchiere largo la fanno scappare"},
     }
     risultati = []
     try:
@@ -1793,6 +1797,42 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-ghiaccio": {
+            "scheda": """Il ghiaccio fa due lavori insieme, e sono in conflitto: raffredda il drink e lo diluisce. Il barman non "mette il ghiaccio" — sceglie QUALE ghiaccio per decidere quanto raffreddare e quanto diluire. E la stessa forza, il rapporto superficie/volume, governa entrambi.
+
+Piu superficie di ghiaccio a contatto col liquido = raffreddamento piu veloce MA anche diluizione piu veloce. Da qui la scelta:
+- CUBO GRANDE (o sfera): poca superficie. Raffredda lentamente, diluisce poco. Per drink spirit-forward serviti sul ghiaccio (Old Fashioned, Negroni) dove vuoi tenere la forza a lungo senza annacquare. Nota: la sfera e piu estetica che funzionale.
+- CUBO 1 POLLICE: il tuttofare. Diluizione misurata ed equilibrata. Per shakerare e per i sour on the rocks.
+- TRITATO/CRUSHED: massima superficie. Raffredda e diluisce in fretta. Per tiki, Mojito, Julep, drink dissetanti da bere subito, dove la diluizione veloce ammorbidisce l'alcol.
+
+Il dato controintuitivo
+Dopo circa 5 minuti, tutti i formati arrivano a temperatura e diluizione finali quasi identiche: la dimensione governa la VELOCITA, non il punto d'arrivo. Quindi il ghiaccio grande conta finche il drink e "giovane" - per i primi minuti. Ecco perche e giusto per i drink che sorseggi a lungo.
+
+Il ghiaccio limpido
+Il ghiaccio trasparente (senza aria intrappolata) e piu denso e si scioglie in modo uniforme e prevedibile; quello opaco ha difetti interni che lo fanno frammentare e sciogliere in modo erratico. Per questo il ghiaccio "buono" e limpido: diluizione controllata.
+Il bersaglio: superficie/volume governa raffreddamento E diluizione insieme. Grande=lento e poco diluito (spirit-forward), tritato=veloce e diluito (dissetanti). La dimensione governa la velocita non il punto finale. Ghiaccio limpido = diluizione prevedibile.""",
+            "target": "Superficie/volume governa raffreddamento E diluizione: grande=lento poco diluito (spirit-forward), tritato=veloce diluito (dissetanti) - la dimensione governa la velocita non il punto finale",
+            "nome": "Il ghiaccio (raffreddamento e diluizione)",
+            "dominio": "bar",
+        },
+        "fen-carbonatazione": {
+            "scheda": """Le bollicine di un highball non sono solo estetica: la CO2 disciolta porta acidita (l'acido carbonico), pizzica la lingua, e cambia la percezione del drink rendendolo piu secco e vivo. Ma la CO2 e volubile - vuole scappare. Trattenerla e una questione di fisica: freddo, pressione, e superfici lisce.
+
+La CO2 si scioglie nel liquido e crea l'effervescenza. Le regole per trattenerla, tutte fisiche:
+FREDDO: il liquido freddo assorbe e trattiene MOLTA piu CO2. Vicino a 0C e l'ideale. Un mixer caldo perde le bollicine subito. E la ragione per cui gli highball si fanno con mixer freddissimo.
+PRESSIONE: piu pressione = piu CO2 disciolta (e il principio della carbonatazione forzata: CO2 sotto pressione in liquido freddo). Nelle bottiglie di soda la pressione tiene dentro il gas fino all'apertura.
+
+Cosa fa scappare le bollicine: la nucleazione
+La CO2 esce dove trova "appigli" (siti di nucleazione): superfici ruvide, spigoli, impurita. Per questo:
+- Il ghiaccio LISCIO e con poca superficie (cubi grandi, non tritato) fa perdere meno bollicine. Il ghiaccio tritato, pieno di spigoli, sgasa il drink.
+- Il bicchiere ALTO E STRETTO (highball) espone poca superficie all'aria: la CO2 scappa piu lenta. Un bicchiere largo e basso fa smontare il drink in fretta.
+- Versare inclinando il bicchiere (come la birra alla spina) riduce la perdita di gas.
+Acidita e zucchero riducono LEGGERMENTE la CO2 assorbibile (effetto piccolo).
+Il bersaglio: CO2 = acidita + pizzicore + secchezza. Trattienila con FREDDO (vicino a 0C), pressione, e superfici lisce (ghiaccio grande, bicchiere alto e stretto). Il tritato e il bicchiere largo la fanno scappare.""",
+            "target": "CO2 = acidita + pizzicore + secchezza: trattienila con freddo (vicino 0C), pressione, superfici lisce (ghiaccio grande, bicchiere alto stretto) - tritato e bicchiere largo la fanno scappare",
+            "nome": "La carbonatazione (bollicine nel drink)",
+            "dominio": "bar",
+        },
         "fen-equilibrio-cocktail": {
             "scheda": """Ogni cocktail che funziona e un equilibrio tra quattro forze: dolce, acido, forte, amaro. Non e una questione di gusto personale: e una struttura. Quando un drink "non torna", quasi sempre e uno di questi quattro fuori posto. Capire l'equilibrio e la prima cosa che separa chi mescola ingredienti da chi costruisce un drink.
 
