@@ -1428,6 +1428,7 @@ def admin_genera_procedimenti():
     disc = request.args.get("disc", "")
     limite = int(request.args.get("limite", "3"))
     solo_vuote = request.args.get("solo_vuote", "1") == "1"
+    skip = int(request.args.get("skip", "0"))  # salta le prime N vuote (bypassa ricette che si bloccano)
     conn = _get_conn()
     try:
         cur = conn.cursor()
@@ -1436,13 +1437,17 @@ def admin_genera_procedimenti():
         q += " ORDER BY nome"
         cur.execute(q, (disc,) if disc else ())
         rows = cur.fetchall()
-        fatte, saltate, errori, n = [], 0, [], 0
+        fatte, saltate, errori, n, visti_vuote = [], 0, [], 0, 0
         for row in rows:
             if n >= limite: break
             rid, nome, rdisc, desc, ingr, fen, num, pc, proc = row
             proc_parsed = proc if isinstance(proc,(list,dict)) else (_json.loads(proc) if proc else [])
             if solo_vuote and proc_parsed:
                 saltate += 1; continue
+            # skip: salta le prime N ricette vuote (per superare quelle che si bloccano)
+            visti_vuote += 1
+            if visti_vuote <= skip:
+                continue
             ingr_p = ingr if isinstance(ingr,list) else (_json.loads(ingr) if ingr else [])
             num_p = num if isinstance(num,dict) else (_json.loads(num) if num else {})
             ingr_str = ", ".join(f"{i.get('quantita','')}{i.get('unita','')} {i.get('nome','')}" for i in ingr_p) if ingr_p else ""
@@ -1463,7 +1468,7 @@ def admin_genera_procedimenti():
             dati = None
             for tentativo in range(2):
                 try:
-                    raw = GW.route_fast(prompt, max_tokens=900, temperature=0)
+                    raw = GW.route_fast(prompt, max_tokens=1400, temperature=0)
                     m = _re.search(r"\{.*\}", raw or "", _re.DOTALL)
                     if not m:
                         continue
