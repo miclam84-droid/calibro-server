@@ -830,6 +830,8 @@ def admin_popola_alias():
             "fen-attivita-acqua": ["attivita acqua","aw","acqua libera","conservazione","essiccazione","stagionatura","perche i salumi durano","perche il miele non scade"],
             "fen-catena-freddo": ["catena del freddo","zona di pericolo","zona pericolo","temperatura conservazione","frigo","frigorifero","congelatore","surgelato","scongelare","scongelo","scongelamento","conservare la carne","conservare carne","raffreddamento","abbattitore","abbattimento temperatura"],
             "fen-conserve-botulino": ["botulino","conserve","sottolio","sott olio","sottaceti","sterilizzazione","barattolo","conserva","clostridium","tossina"],
+            "fen-anisakis": ["anisakis","pesce crudo","abbattimento","abbattitore","sushi","sashimi","crudo di pesce","marinato","tartare di pesce","parassita pesce","congelare il pesce"],
+            "fen-ustioni-olio": ["ustioni","ustione","olio bollente","olio caldo sicurezza","incendio olio","schizzi olio","frittura sicurezza","olio infiammato","scottatura olio"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
         }
         fatti = []
@@ -1132,6 +1134,8 @@ def admin_crea_haccp():
         "fen-attivita-acqua": {"nome":"Attivita dell'acqua (Aw)","target":"Sotto Aw 0.85 i patogeni non crescono - sale e zucchero mettono a secco"},
         "fen-catena-freddo": {"nome":"Catena del freddo","target":"Zona pericolo 5-60C: freddo sospende, caldo >=75C uccide - scongelare in frigo"},
         "fen-conserve-botulino": {"nome":"Conserve e botulino","target":"Botulino anaerobio senza odore: difese pH sotto 4.6 O sterilizzazione - l'olio non protegge"},
+        "fen-anisakis": {"nome":"Anisakis e abbattimento del pesce","target":"Pesce crudo abbattuto per legge: -20C al cuore 24h (o -18C 96h a casa), uccide i parassiti non i batteri"},
+        "fen-ustioni-olio": {"nome":"Ustioni e sicurezza dell'olio","target":"Olio 170-180C: cibi asciutti mai acqua, incendio si soffoca mai annacqua, sotto il punto di fumo"},
     }
     risultati = []
     try:
@@ -1744,6 +1748,37 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-anisakis": {
+            "scheda": """Il pesce crudo puo contenere l'Anisakis, un parassita che vive nelle viscere e nei tessuti di molti pesci. Servire pesce crudo senza abbatterlo non e una scelta di stile: e vietato dalla legge, e per una buona ragione. L'abbattimento e la sola difesa, e ha numeri precisi da rispettare.
+
+L'Anisakis e un parassita (un nematode) presente in molti pesci, soprattutto il pesce azzurro (sardine, alici, sgombri, aringhe) e altri. Se ingerito vivo puo causare dolori addominali gravi, reazioni allergiche, in certi casi serve un intervento. Non lo elimini a occhio: l'esame visivo NON basta.
+
+L'abbattimento: la legge e i numeri
+Dal 1992 in Italia, e dal 2004 in tutta Europa (Reg. CE 853/2004), chi serve pesce crudo o marinato DEVE abbatterlo. I numeri: -20C AL CUORE del prodotto per almeno 24 ore. Attenzione al dettaglio che molti sbagliano: le 24 ore partono da quando il CUORE del pesce raggiunge i -20C, non da quando lo metti dentro. Con un abbattitore che porta a -35C, bastano tempi piu brevi.
+A CASA (Ministero Salute, decreto 2013): congelatore a tre stelle o piu, -18C per almeno 96 ore.
+
+Cosa NON fa l'abbattimento
+Elimina i PARASSITI (Anisakis), NON i batteri. I batteri col freddo vengono solo "bloccati", ripartono allo scongelamento. E la marinatura (limone, aceto) NON uccide l'Anisakis: e una falsa credenza pericolosa. Solo il freddo giusto o la cottura (>=60C al cuore per un minuto) lo uccidono.
+Il bersaglio: pesce crudo = abbattuto per legge, -20C al cuore per 24h (o -18C 96h a casa). L'abbattimento uccide i parassiti non i batteri. La marinatura non basta. Numeri precisi, non impressioni.""",
+            "target": "Pesce crudo = abbattuto per LEGGE: -20C al cuore per 24h (o -18C 96h a casa) - uccide i parassiti non i batteri, la marinatura non basta",
+            "nome": "Anisakis e abbattimento del pesce",
+            "dominio": "tecnologie",
+        },
+        "fen-ustioni-olio": {
+            "scheda": """L'olio di frittura a 170-180C e il pericolo piu comune e piu sottovalutato di una cucina. Non e come l'acqua bollente: e piu caldo, si attacca alla pelle, e se prende fuoco l'acqua lo fa esplodere. Chi frigge deve conoscere queste tre cose prima ancora della ricetta.
+
+L'olio caldo ustiona piu gravemente dell'acqua: e a temperatura piu alta (180C contro 100C) e, essendo oleoso, aderisce alla pelle continuando a bruciare invece di scivolare via. Le tre regole di sicurezza:
+
+Uno: mai acqua nell'olio caldo. L'acqua a contatto con l'olio bollente evapora di colpo ed espelle olio rovente in tutte le direzioni (schizzi ustionanti). Gli alimenti bagnati vanno asciugati prima di immergerli. Un cibo gocciolante d'acqua in padella e schizzi garantiti.
+
+Due: l'incendio da olio NON si spegne con l'acqua. Se l'olio prende fuoco (supera il punto di fumo e poi di infiammabilita), gettarci acqua e la cosa peggiore: l'acqua vaporizza istantaneamente e proietta l'olio in fiamme ovunque, allargando l'incendio. Si soffoca: coperchio, o un panno bagnato strizzato steso sopra, o estintore. Mai acqua.
+
+Tre: la temperatura sotto controllo. Olio troppo caldo (oltre il punto di fumo, che varia per ogni olio) degrada, fuma, sviluppa composti sgradevoli e si avvicina all'infiammabilita. Serve un termometro o l'esperienza. La frittura sicura sta nella finestra 170-180C, ben sotto il punto di fumo di un olio adatto.
+Il bersaglio: olio 170-180C, cibi asciutti (mai acqua), incendio si soffoca mai si annacqua, temperatura sotto il punto di fumo. Il pericolo si governa con tre regole, prima della ricetta.""",
+            "target": "Olio 170-180C piu pericoloso dell'acqua: cibi asciutti (mai acqua), incendio si SOFFOCA mai annacqua, temperatura sotto il punto di fumo",
+            "nome": "Ustioni e sicurezza dell'olio",
+            "dominio": "tecnologie",
+        },
         "fen-haccp": {
             "scheda": """HACCP non e burocrazia: e un modo di pensare la sicurezza. Nato negli anni '60 dalla Pillsbury per garantire cibo sicuro agli astronauti della NASA, oggi e obbligatorio ovunque si lavori il cibo. L'idea e semplice: invece di controllare il prodotto finito, controlli i PUNTI del processo dove puo nascere il pericolo.
 
