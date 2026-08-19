@@ -258,6 +258,7 @@ def nodo():
                fenomeni=[f["name"] for f in contesto["fenomeni"]],
                esito="ok" if risposta else "errore_modello")
     connessi, visti = [], set()
+    errori, visti_err = [], set()
     for f in contesto["fenomeni"]:
         for c in f["collegamenti"]:
             if c["relazione"] == "si_manifesta_in" and c["id"] not in visti:
@@ -265,12 +266,28 @@ def nodo():
                 connessi.append({"id": c["id"], "nome": c["verso"],
                                  "dominio": c["dominio"],
                                  "target": c["data"].get("target","")})
+            # ERRORI: sintomo osservabile al banco -> causa (il valore "bibbia")
+            elif c["relazione"] == "fallisce_come" and c["id"] not in visti_err:
+                visti_err.add(c["id"])
+                sintomo = c["data"].get("sintomo","") if isinstance(c.get("data"),dict) else ""
+                # recupero la causa dal nodo errore
+                causa = ""
+                try:
+                    er = db.execute("SELECT data FROM nodes WHERE id=?", (c["id"],)).fetchone()
+                    if er:
+                        ed = er["data"] if isinstance(er["data"],dict) else __import__("json").loads(er["data"] or "{}")
+                        causa = ed.get("causa","")
+                except Exception:
+                    pass
+                errori.append({"id": c["id"], "nome": c["verso"],
+                               "sintomo": sintomo, "causa": causa})
     return jsonify({
         "titolo": n["name"],
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,
         "risposta": risposta,
-        "connessi": connessi
+        "connessi": connessi,
+        "errori": errori
     })
 
 @bp.route("/calcola", methods=["POST"])
