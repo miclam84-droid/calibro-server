@@ -1157,6 +1157,45 @@ def admin_crea_haccp():
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/cabla-sicurezza")
+def admin_cabla_sicurezza():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback
+    # agganci: (nodo, relazione, fenomeno-sicurezza)
+    AGGANCI = [
+        ("fen-frittura-lievitati", "si_manifesta_in", "fen-ustioni-olio"),
+        ("prod-arancina", "si_manifesta_in", "fen-ustioni-olio"),
+        ("prod-impasto-rosticceria", "si_manifesta_in", "fen-ustioni-olio"),
+        ("tec-frittura", "si_manifesta_in", "fen-ustioni-olio"),
+        ("prod-carne-stagionata", "si_manifesta_in", "fen-attivita-acqua"),
+        ("ing-bresaola", "si_manifesta_in", "fen-attivita-acqua"),
+        ("ing-prosciutto-crudo", "si_manifesta_in", "fen-attivita-acqua"),
+        ("prod-confettura-conserva", "si_manifesta_in", "fen-conserve-botulino"),
+        ("prod-carasau", "si_manifesta_in", "fen-attivita-acqua"),
+    ]
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        fatti = []
+        for src, rel, dst in AGGANCI:
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (src,))
+            if not cur.fetchone():
+                fatti.append(f"{src}: nodo assente, skip"); continue
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (dst,))
+            if not cur.fetchone():
+                fatti.append(f"{dst}: fenomeno assente, skip"); continue
+            cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation=%s AND to_id=%s", (src, rel, dst))
+            if cur.fetchone():
+                fatti.append(f"{src} -> {dst}: gia esiste"); continue
+            cur.execute("INSERT INTO edges (from_id, relation, to_id, data) VALUES (%s,%s,%s,%s)",
+                        (src, rel, dst, "{}"))
+            fatti.append(f"{src} -{rel}-> {dst}: CREATO")
+        conn.commit()
+        return jsonify({"agganci": fatti})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
