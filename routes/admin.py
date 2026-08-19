@@ -1212,6 +1212,26 @@ def admin_cabla_sicurezza():
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
 
+@bp.route("/admin/fix-dominio-bar")
+def admin_fix_dominio_bar():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback
+    BAR_FEN = ["fen-equilibrio-cocktail","fen-shakerare-mescolare","fen-emulsione-bar",
+               "fen-ghiaccio","fen-carbonatazione","fen-chiarificazione-latte",
+               "fen-infusioni","fen-amaro-bitter"]
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        fatti = []
+        for nid in BAR_FEN:
+            cur.execute("UPDATE nodes SET domain=%s WHERE id=%s", ("bar", nid))
+            fatti.append(f"{nid}: dominio -> bar")
+        conn.commit()
+        return jsonify({"fatti": fatti})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
