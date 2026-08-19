@@ -5211,3 +5211,4 @@ def admin_migra_feedback():
         return jsonify({"ok": True, "messaggio": "colonne feedback aggiunte a log_domande"})
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
+# redeploy trigger 1787141666
