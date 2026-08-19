@@ -3,9 +3,9 @@
   /* IDENTITÀ APPROVATA (home v1-final): carta fredda, ink petrolio, arancio-ossido */
   --bg:#D4DCDC; --surface:#E3E8E8; --ink:#141D22; --ink-muted:#52626A; --border:#9AA9AB;
   /* accento primario: arancio VIVO cinabro, non più terroso (era #CB5A22 fangoso) */
-  --e100:#FBE4D5; --e300:#F0A878; --e500:#E24E12; --e700:#C0410F; --e900:#93330C;
+  --e100:#D6DDDF; --e300:#8A9AA0; --e500:#2A3A42; --e700:#1B262B; --e900:#141D22;
   /* terracotta/secondario allineato all'accento */
-  --terra:#E24E12; --terra-light:#FBE4D5; --terra-dark:#C0410F;
+  --terra:#2A3A42; --terra-light:#D6DDDF; --terra-dark:#1B262B;
   /* teal segnale (era simile, ora petrolio più profondo) */
   --s100:#D3E0E0; --s300:#5E9BA3; --s500:#12545D; --s700:#0D3D44;
   --cifra-graphite:#4A4E50; --cifra-p700:#15362F; --cifra-p300:#9CC9BC;
@@ -20,9 +20,9 @@
   --sans:'Archivo',ui-sans-serif,system-ui,sans-serif;
   --serif:'Archivo Expanded','Archivo',sans-serif;
   --mono:'Space Mono',ui-monospace,monospace;
-  --paper:#D4DCDC; --paper-hi:#E3E8E8; --line-strong:#141D22; --signal:#12545D; --accent:#E24E12;
+  --paper:#D4DCDC; --paper-hi:#E3E8E8; --line-strong:#141D22; --signal:#12545D; --accent:#2A3A42;
   /* variabili orfane dopo il cambio palette — mappate ai valori nuovi */
-  --ivory:#E3E8E8; --teal:#12545D; --e400:#D3854F; --muted:#52626A;
+  --ivory:#E3E8E8; --teal:#12545D; --e400:#8A9AA0; --muted:#52626A;
   /* ═══ DESIGN SYSTEM v2 — "premium scientific instrument": morbido fuori, preciso dentro ═══ */
   --radius-card:18px;      /* card principali */
   --radius-card-sm:14px;   /* card secondarie */
@@ -913,8 +913,8 @@ a:focus-visible,input:focus-visible{
 .foto-audio-btn:disabled{opacity:.6;cursor:default}
 
 /* flavor network — stile strumento (override angoli netti) */
-.flavor-card{background:var(--paper-hi);border:var(--border-soft);border-left:3px solid var(--accent);border-radius:var(--radius-card);margin:12px 16px 0;box-shadow:var(--shadow-card)}
-.fl-icon{background:var(--accent);border-radius:0}
+.flavor-card{background:var(--paper-hi);border:var(--border-soft);border-left:3px solid var(--flavor);border-radius:var(--radius-card);margin:12px 16px 0;box-shadow:var(--shadow-card)}
+.fl-icon{background:var(--flavor);border-radius:0}
 .flavor-input{border:1.5px solid var(--line-strong);border-radius:var(--radius-btn);font-family:var(--mono);font-size:14px;background:var(--paper-hi)}
 .flavor-input:focus{border-color:var(--accent)}
 .flavor-search-btn{background:var(--accent);border-radius:var(--radius-btn);font-family:var(--mono);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
