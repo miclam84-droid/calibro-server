@@ -846,6 +846,9 @@ def admin_popola_alias():
             "fen-riposo-carne": ["riposo carne","far riposare la carne","riposare la bistecca","riposo bistecca","succhi carne","carne asciutta","perche la carne e secca","tagliare la carne subito"],
             "fen-uova-coagulazione": ["uovo","uova","coagulazione uovo","uova strapazzate","uovo sodo","uovo in camicia","frittata","omelette","uova cremose","uova gommose","uovo alla coque","tuorlo albume"],
             "fen-verdure-verdi": ["verdure verdi","clorofilla","sbollentare","blanching","verde brillante","broccoli","fagiolini","verdura smorta","shock termico","sbianchire","verde militare"],
+            "fen-temperaggio-cioccolato": ["temperaggio","temperare cioccolato","forma V","burro di cacao","bloom","cioccolato lucido","snap cioccolato","cristallizzazione cioccolato","cioccolato opaco","cioccolato non si stacca"],
+            "fen-crema-pasticcera": ["crema pasticcera","crema pasticciera","addensare crema","crema grumi","crema inglese","custard","crema per dolci","crema sa di farina","crema impazzita"],
+            "fen-montatura-panna": ["montare la panna","panna montata","chantilly","picco fermo","panna non monta","panna diventa burro","montare panna","panna smontata"],
             "fen-shakerare-mescolare": ["shakerare","mescolare","shakerato mescolato","shake stir","quando shakerare","shakerare o mescolare","stirred shaken","tecnica shaker","bar spoon"],
             "fen-emulsione-bar": ["albume cocktail","schiuma cocktail","dry shake","sour schiuma","whiskey sour schiuma","emulsione drink","aquafaba","clover club","pisco sour","foam cocktail"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
@@ -1239,6 +1242,7 @@ def admin_fix_dominio_bar():
                 "fen-ghiaccio","fen-carbonatazione","fen-chiarificazione-latte",
                 "fen-infusioni","fen-amaro-bitter"],
         "cucina": ["fen-collagene-brasato","fen-rosolatura","fen-emulsione-salse","fen-pasta-acqua","fen-soffritto","fen-riposo-carne","fen-uova-coagulazione","fen-verdure-verdi"],
+        "pasticceria": ["fen-meringa","fen-montatura-panna","fen-crema-pasticcera","fen-temperaggio-cioccolato","fen-gelificazione","fen-zucchero-cottura","fen-pasta-frolla","fen-lievitazione-chimica"],
     }
     try:
         conn = _get_conn(); cur = conn.cursor()
@@ -1843,6 +1847,55 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-temperaggio-cioccolato": {
+            "scheda": """Perche il cioccolato di una tavoletta industriale fa "snap" quando lo spezzi, e lucido, e si scioglie in bocca - mentre quello fuso e ricolato in casa viene opaco, molle, striato di bianco? La differenza e il TEMPERAGGIO: un ballo di temperature che costringe il burro di cacao a cristallizzare nella forma giusta. E fisica dei cristalli, ed e la cosa che separa il cioccolatiere dal dilettante.
+
+Il burro di cacao e un grasso POLIMORFICO: puo solidificare in sei forme cristalline diverse (I-VI), ognuna con proprieta diverse. Solo una, la FORMA V (beta), da il cioccolato perfetto: fonde a 34C (appena sotto la temperatura corporea, per questo si scioglie in bocca), fa lo snap netto, e lucido, resiste al bloom (le striature bianche). Le altre forme danno cioccolato molle, opaco, ceroso.
+
+Le curve di temperatura (il ballo)
+Temperare = guidare il cioccolato attraverso temperature precise perche si formino SOLO cristalli Forma V. Per il fondente:
+1. FONDERE a 45-50C: si sciolgono TUTTI i cristalli (si azzera).
+2. RAFFREDDARE a 27-28C mescolando: si formano molti cristalli, sia stabili (V) sia instabili (I-IV).
+3. RISALIRE a 31-32C (temperatura di lavoro): si FONDONO le forme instabili (che fondono piu basso), SOPRAVVIVE solo la Forma V.
+Restano cristalli-seme di Forma V nel cioccolato fuso: raffreddando, "seminano" tutto il resto in Forma V. Il latte vuole temperature leggermente piu basse. Anche 2 gradi di errore ti buttano nella forma sbagliata: serve il termometro.
+
+Il metodo seeding (piu semplice)
+Invece delle curve, si puo aggiungere cioccolato GIA temperato (25-30%) tritato fine al fuso a ~34C: i suoi cristalli Forma V fanno da seme e innescano la cristallizzazione giusta. Piu facile da controllare.
+Il bersaglio: Forma V del burro di cacao = snap, lucido, fonde a 34C, no bloom. Curve 45-50 → 27-28 → 31-32C (fondi tutto, cristallizzi, elimini le forme instabili). O seeding con cioccolato temperato. Il termometro e obbligatorio.""",
+            "target": "Forma V del burro di cacao = snap, lucido, fonde a 34C, no bloom: curve 45-50 → 27-28 → 31-32C o seeding con cioccolato temperato, termometro obbligatorio",
+            "nome": "Temperaggio del cioccolato",
+            "dominio": "pasticceria",
+        },
+        "fen-crema-pasticcera": {
+            "scheda": """La crema pasticcera e un esercizio di equilibrio tra due addensanti che lavorano a temperature diverse: l'amido e il tuorlo. Capire come si comportano e la differenza tra una crema liscia e lucida e una impazzita, granulosa o che sa di uovo crudo.
+
+La crema pasticcera si addensa grazie a DUE meccanismi: l'AMIDO (farina o amido di mais) che gelatinizza (vedi il fenomeno) assorbendo il liquido e gonfiandosi, e le proteine del TUORLO che coagulano (vedi le uova). Lavorano a temperature diverse: il tuorlo coagula intorno ai 70-80C, l'amido gelatinizza e addensa fino quasi all'ebollizione.
+
+Perche va portata a bollore (contro l'istinto)
+A differenza di una crema inglese (solo tuorlo, mai bollire o straccia), la crema pasticcera VA portata al bollore per un minuto. Due ragioni: l'amido ha bisogno di quella temperatura per gelatinizzare del tutto (altrimenti resta liquida e sa di farina cruda); e l'amido PROTEGGE il tuorlo dalla coagulazione eccessiva (le molecole di amido si frappongono), per questo puoi bollirla senza che straccia - cosa impossibile per la crema inglese. Mescolare sempre, energicamente, per non far attaccare e bruciare sul fondo.
+
+Gli errori
+Grumi = amido non disperso bene all'inizio (va stemperato a freddo). Sapore di farina = non portata a bollore abbastanza. Sa di uovo = tuorlo cotto male. Si smonta in frigo = troppo poco amido.
+Il bersaglio: amido gelatinizza (addensa, va portato a bollore) + tuorlo coagula (70-80C). L'amido protegge il tuorlo (per questo bolle senza stracciare, a differenza della crema inglese). Mescola sempre, stempera l'amido a freddo.""",
+            "target": "Amido gelatinizza (addensa, va a bollore) + tuorlo coagula (70-80C): l'amido protegge il tuorlo (bolle senza stracciare), stempera l'amido a freddo mescola sempre",
+            "nome": "Crema pasticcera",
+            "dominio": "pasticceria",
+        },
+        "fen-montatura-panna": {
+            "scheda": """Montare la panna e intrappolare aria in una rete di grasso. Sembra semplice, ma c'e una finestra precisa tra "montata perfetta" e "burro": pochi secondi di troppo e hai rovinato tutto. E il freddo e la condizione che rende tutto possibile.
+
+La panna monta perche i suoi globuli di GRASSO, sbattuti, si urtano e si aggregano formando una rete che intrappola le bollicine d'aria (come un'impalcatura). Serve panna con almeno il 30-35% di grasso: sotto, non c'e abbastanza grasso per costruire la rete e non monta.
+
+Il freddo e tutto
+Panna, ciotola e fruste devono essere FREDDI (4C, meglio ciotola in freezer prima). Il motivo e fisico: il grasso deve essere solido per formare la rete. Se la panna si scalda, il grasso si ammorbidisce, i globuli non si agganciano e la panna non monta (o smonta). Il calore e il nemico numero uno.
+
+La finestra: da panna a burro
+Montando, si passa per stadi: schiuma → picco morbido (le punte si piegano) → picco fermo (le punte stanno dritte, il punto ideale per dolci) → e se continui, la rete collassa, il grasso si separa dall'acqua e ottieni BURRO (e latticello). E lo stesso processo del burro, solo fermato prima. Per questo montare a mano o a bassa velocita da piu controllo vicino al punto giusto.
+Il bersaglio: grasso (min 30-35%) intrappola aria = panna montata. FREDDO obbligatorio (grasso solido, il calore la rovina). Fermati al picco fermo: un attimo oltre e diventa burro. Il burro e panna "troppo montata".""",
+            "target": "Grasso (min 30-35%) intrappola aria = panna montata: FREDDO obbligatorio (il calore la rovina), fermati al picco fermo un attimo oltre e diventa burro",
+            "nome": "Montatura della panna",
+            "dominio": "pasticceria",
+        },
         "fen-uova-coagulazione": {
             "scheda": """L'uovo e forse l'ingrediente piu versatile della cucina, e tutto quello che fa - rapprendersi, montare, legare, emulsionare - dipende da una cosa: le sue proteine che si aprono col calore e si legano tra loro. Governare la temperatura dell'uovo e governare decine di preparazioni. E la differenza tra uova cremose e uova gommose e questione di pochi gradi.
 
