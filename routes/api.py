@@ -784,7 +784,7 @@ def ricetta_twist(rid):
     db = carica_grafo()
     # carico la ricetta madre
     try:
-        rows = db.execute("SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico FROM ricette WHERE id=%s", (rid,))
+        rows = db.execute("SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico FROM ricette WHERE id=%s", (rid,)).fetchall()
         row = rows[0] if rows else None
     except Exception as e:
         return jsonify({"errore":f"lettura ricetta: {e}"}), 500
