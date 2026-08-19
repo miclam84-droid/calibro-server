@@ -21,7 +21,7 @@ _lezione_cache = {}    # { disciplina_nome: [fenomeni] }
 # del DB hanno ancora schede vecchie. Quando un nodo viene migrato, si aggiunge qui.
 _FEN_MIGRATI = {
     "fen-acidita","fen-concentrazione","fen-fermentazione","fen-maillard","fen-emulsione",
-    "fen-carbonatazione","fen-ossidazione","fen-osmosi","fen-viscosita","fen-denaturazione",
+    "fen-carbonatazione","fen-chiarificazione-latte","fen-infusioni","fen-amaro-bitter","fen-ossidazione","fen-osmosi","fen-viscosita","fen-denaturazione",
     "fen-cristallizzazione","fen-gelatinizzazione","fen-diluizione","fen-estrazione","fen-solubilita",
     "fen-crioscopia","fen-overrun","fen-meringa","fen-souffle","fen-sineresi","fen-ganache",
     "fen-lievitazione","fen-crosta",

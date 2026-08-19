@@ -835,6 +835,9 @@ def admin_popola_alias():
             "fen-equilibrio-cocktail": ["equilibrio cocktail","bilanciare drink","bilanciare","bilancio","bilanciare sour","bilancio sour","come bilancio","dolce acido forte","sour ratio","fare un sour","struttura cocktail","proporzioni cocktail","bilanciamento drink","il drink non torna","troppo dolce cocktail","troppo aspro","sour cocktail"],
             "fen-ghiaccio": ["ghiaccio","cubo di ghiaccio","ghiaccio tritato","ghiaccio grande","che ghiaccio","tipo di ghiaccio","ghiaccio cocktail","crushed ice","sfera di ghiaccio","ghiaccio limpido"],
             "fen-carbonatazione": ["carbonatazione","bollicine","highball","soda","gassato","effervescenza","co2","frizzante","spritz bollicine","perche va flat","drink piatto bollicine"],
+            "fen-chiarificazione-latte": ["chiarificazione","milk punch","milk wash","clarified","chiarificato","latte cocktail","drink limpido","clarificare","milk washing"],
+            "fen-infusioni": ["infusione","macerazione","infondere","aromatizzare distillato","gin fatto in casa","infuso","macerare","botaniche","aromatizzare alcol"],
+            "fen-amaro-bitter": ["bitter","amaro","angostura","peychaud","dash","gocce di bitter","campari","fernet","digestivo","aromatico cocktail","orange bitter"],
             "fen-shakerare-mescolare": ["shakerare","mescolare","shakerato mescolato","shake stir","quando shakerare","shakerare o mescolare","stirred shaken","tecnica shaker","bar spoon"],
             "fen-emulsione-bar": ["albume cocktail","schiuma cocktail","dry shake","sour schiuma","whiskey sour schiuma","emulsione drink","aquafaba","clover club","pisco sour","foam cocktail"],
             "fen-farina-forza": ["farina","forza","W","manitoba","proteine farina","glutine farina","farina forte","farina debole","alveografo","si strappa","lunga lievitazione"],
@@ -1146,6 +1149,9 @@ def admin_crea_haccp():
         "fen-emulsione-bar": {"nome":"Emulsione e texture (albume, schiuma)","target":"Albume = denaturazione + emulsione = schiuma, dry shake sempre"},
         "fen-ghiaccio": {"nome":"Il ghiaccio (raffreddamento e diluizione)","target":"Superficie/volume: grande lento poco diluito, tritato veloce diluito - dimensione governa la velocita"},
         "fen-carbonatazione": {"nome":"La carbonatazione (bollicine)","target":"CO2 trattenuta con freddo, pressione, superfici lisce - tritato e bicchiere largo la fanno scappare"},
+        "fen-chiarificazione-latte": {"nome":"La chiarificazione al latte","target":"Acido a pH 4.6 caglia la caseina, la cagliata cattura tannini e torbidita, filtri = limpido e morbido"},
+        "fen-infusioni": {"nome":"Infusioni e macerazioni","target":"Alcol estrae aromi: tempo/temperatura/superficie governano, assaggia e ferma alla finestra giusta"},
+        "fen-amaro-bitter": {"nome":"L'amaro e i bitter","target":"Bitter a gocce mette a fuoco (sale del bar): concentrati vs amari da bere, la 4a forza dell'equilibrio"},
     }
     risultati = []
     try:
@@ -1797,6 +1803,52 @@ La lezione oltre il pane: quando una reazione non "parte", torna alle sue condiz
         },
     }
     SCHEDE_MADRI_NUOVE = {
+        "fen-chiarificazione-latte": {
+            "scheda": """Prendi un cocktail torbido, lo "rovini" versandolo nel latte finche caglia, lo filtri — e ottieni un liquido limpido come acqua ma piu morbido e rotondo di prima. Sembra magia, e invece e la stessa fisica della ricotta: le proteine del latte che coagulano con l'acido, e cagliando si portano via amaro e torbidita.
+
+Il milk punch e un trucco del Seicento (Benjamin Franklin ne aveva una ricetta) tornato di moda per la texture e la limpidezza. La fisica: la caseina del latte, a pH normale (6.6), e carica e le sue micelle si respingono, restando disperse (il latte e opaco). Aggiungi un cocktail ACIDO e il pH scende: a 4.6 la caseina si neutralizza e COAGULA in cagliata (la stessa soglia del botulino, la stessa reazione della ricotta).
+
+Perche chiarifica E ammorbidisce
+La cagliata che si forma ha una superficie enorme e una leggera carica: cattura e intrappola le particelle sospese - pigmenti, torbidita, e soprattutto TANNINI e polifenoli (l'amaro e l'astringenza). Filtrando via la cagliata, porti via anche tutto quello che ha catturato. Per questo il drink chiarificato non e solo limpido: e piu morbido, meno astringente, setoso (restano gli zuccheri del latte e le proteine del siero). I tannini invece di legarsi alla tua saliva (astringenza) si sono legati alla caseina e sono spariti.
+
+Il metodo (i punti che contano)
+Si versa il COCKTAIL NEL LATTE (non il latte nel cocktail: l'ordine conta per una cagliata pulita), rapporto ~5:1. Latte intero a temperatura ambiente (piu grasso caglia meglio). Serve un ingrediente acido o astringente nel drink, o non caglia. Riposo, poi filtraggio lento (garza o filtro da caffe) senza premere la cagliata (premere intorbidisce). Si assaggia PRIMA di chiarificare: dopo non si aggiusta piu.
+Il bersaglio: acido abbassa il pH a 4.6, la caseina caglia, la cagliata intrappola tannini e torbidita, filtri = drink limpido e morbido. Cocktail nel latte 5:1, latte intero, non premere. Stessa fisica di ricotta e botulino.""",
+            "target": "Acido abbassa pH a 4.6, la caseina caglia, la cagliata intrappola tannini e torbidita, filtri = drink limpido e morbido - cocktail nel latte 5:1, non premere",
+            "nome": "La chiarificazione al latte",
+            "dominio": "bar",
+        },
+        "fen-infusioni": {
+            "scheda": """Mettere qualcosa a bagno in un distillato per prenderne aroma e sapore e la base di ogni gin, ogni amaro, ogni vermouth - e di infinite creazioni da bar. Ma il tempo, la temperatura e l'alcol cambiano tutto: la stessa spezia in infusione dieci minuti o dieci ore da due liquidi diversi. Governare l'estrazione e governare il sapore.
+
+L'infusione estrae composti aromatici da un ingrediente (spezie, erbe, frutta, te) in un liquido. Nel bar il solvente e l'alcol, che estrae bene i composti sia solubili in acqua sia in grasso/olio (piu versatile dell'acqua da sola). Tre leve governano l'estrazione:
+
+Tempo: piu a lungo, piu estrai - ma non linearmente. Gli aromi delicati e volatili escono presto; i tannini amari e le note astringenti escono TARDI. Per questo un te lasciato troppo in infusione diventa amaro, e certe botaniche vanno tolte presto. C'e una finestra dolce, poi peggiora.
+Temperatura: il caldo accelera l'estrazione (piu veloce) ma puo estrarre note sgradevoli e far evaporare gli aromi piu volatili. L'infusione a freddo e piu lenta ma piu pulita e delicata. Caldo per rapidita e corpo, freddo per finezza.
+Superficie: piu l'ingrediente e spezzettato, piu superficie, piu veloce l'estrazione (come per il caffe e la macinatura).
+
+Il fat-wash e un'infusione al contrario
+Nel fat-wash (gia nel grafo) si infonde un grasso (burro, olio, bacon) nell'alcol, poi si congela e filtra: l'alcol prende l'aroma del grasso ma non l'unto. E una macerazione che sfrutta il freddo per separare.
+Il bersaglio: alcol estrae aromi (acqua+grasso solubili). Tempo (aromi presto, amaro tardi: finestra dolce), temperatura (caldo veloce/freddo pulito), superficie (spezzettato=veloce). Assaggia e ferma al punto giusto.""",
+            "target": "Alcol estrae aromi: tempo (aromi presto amaro tardi, finestra dolce), temperatura (caldo veloce/freddo pulito), superficie (spezzettato veloce) - assaggia e ferma",
+            "nome": "Infusioni e macerazioni",
+            "dominio": "bar",
+        },
+        "fen-amaro-bitter": {
+            "scheda": """I bitter sono il "sale del bar": poche gocce non rendono un drink amaro, lo mettono a fuoco. Angostura in un Old Fashioned, Peychaud's in un Sazerac - sono dosi minuscole che legano gli aromi e aggiungono profondita. Capire il ruolo dell'amaro e capire perche un drink senza bitter spesso sa di "piatto".
+
+L'amaro e uno dei gusti fondamentali, e nel bar ha un ruolo speciale: la percezione. A basse dosi l'amaro non domina - ARMONIZZA. Come il sale in cucina non rende salato ma esalta, poche gocce di bitter legano gli altri sapori e danno complessita e "lunghezza" al drink.
+
+Bitter concentrati vs amari da bere
+Due famiglie diverse. I BITTER (Angostura, Peychaud's, orange): concentratissimi, si usano a gocce/dash, aromatizzano. Sono infusi di erbe, radici, cortecce amare in alcol ad alta gradazione. Gli AMARI (Campari, Fernet, Averna): si bevono, come base o modificatori, con la loro dose di zucchero e la loro gradazione. Stessa radice (erbe amare in infusione) ma uso opposto: goccia vs bicchiere.
+
+Perche l'amaro "sveglia" il drink
+L'amaro bilancia il dolce e il forte (torna l'equilibrio dolce/acido/forte/amaro): un drink solo dolce-forte e stucchevole e piatto; l'amaro taglia, aggiunge una dimensione, e prolunga il finale. E anche il motivo per cui gli amari funzionano come digestivi (stimolano la salivazione e i succhi gastrici).
+Il bersaglio: bitter a gocce = mette a fuoco non rende amaro (il "sale del bar"). Bitter concentrati (dash) vs amari da bere (bicchiere), stessa radice uso opposto. L'amaro e la 4a forza dell'equilibrio: taglia il dolce, da profondita e lunghezza.""",
+            "target": "Bitter a gocce mette a fuoco non rende amaro (il sale del bar): concentrati (dash) vs amari da bere (bicchiere) - l'amaro e la 4a forza dell'equilibrio",
+            "nome": "L'amaro e i bitter",
+            "dominio": "bar",
+        },
         "fen-ghiaccio": {
             "scheda": """Il ghiaccio fa due lavori insieme, e sono in conflitto: raffredda il drink e lo diluisce. Il barman non "mette il ghiaccio" — sceglie QUALE ghiaccio per decidere quanto raffreddare e quanto diluire. E la stessa forza, il rapporto superficie/volume, governa entrambi.
 
