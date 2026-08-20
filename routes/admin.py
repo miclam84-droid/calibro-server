@@ -1836,6 +1836,87 @@ def admin_trova_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/consolida-doppioni")
+def admin_consolida_doppioni():
+    """Consolida i doppioni VERI (lista curata a mano): sposta i collegamenti del nodo doppione
+    sul nodo BUONO, poi rimuove il doppione. Coppie (buono, doppione)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # (nodo_BUONO_da_tenere, nodo_DOPPIONE_da_rimuovere) - lista CURATA, non automatica
+    COPPIE = [
+        # Errori
+        ("err-brasato-stopposo","err-brasato-stopposo-per-temperatura-troppo-"),
+        ("err-brodo-torbido","err-brodo-torbido-per-bollore-eccessivo"),
+        ("err-catena-freddo-rotta","err-interruzione-catena"),
+        ("err-cioccolato-fiorito","err-cioccolato-grigio"),
+        ("err-crosta-pallida","err-crosta-pallida-molle"),
+        ("err-crosta-pallida","err-crosta-pallida-p"),
+        ("err-gelato-cristalli","err-gelato-granuloso-nuovo"),
+        ("err-panna-burrosa","err-panna-burro"),
+        ("err-alveoli-no","err-alveolatura-chiusa"),
+        ("err-carne-asciutta","err-carne-stopposa"),
+        ("err-carne-asciutta","err-carne-secca-taglio"),
+        ("err-cioccolato-opaco","err-cioccolato-non-lucido"),
+        ("err-drink-annacquato","err-ghiaccio-annacqua"),
+        ("err-gelato-molle","err-gelato-duro"),
+        # Fenomeni
+        ("fen-ghiaccio","fen-ghiaccio-cocktail"),
+        ("fen-overrun","fen-montaggio"),
+        ("fen-overrun","fen-overrun-controllo"),
+        ("fen-grassi-stabilizzanti","fen-stabilizzanti-gelato"),
+        ("fen-acidita-volatile","fen-acidita"),
+        ("fen-cristallizzazione","fen-cristallizzazione-ghiaccio"),
+        ("fen-emulsione-salse","fen-emulsione-bar"),
+        # Tecniche (le tre sous-vide -> una)
+        ("tec-sous-vide-tecnica","tec-sous-vide-cuore"),
+        ("tec-sous-vide-tecnica","tec-roner-sottovuoto"),
+        ("tec-autolisi","tec-autolisi-riposo"),
+        ("tec-pieghe","tec-pieghe-forza"),
+    ]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        fusi, saltati = [], []
+        for buono, doppione in COPPIE:
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(buono,))
+            if not cur.fetchone(): saltati.append(f"{buono}(BUONO assente)"); continue
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(doppione,))
+            if not cur.fetchone(): saltati.append(f"{doppione}(dop assente)"); continue
+            # sposto gli edge in USCITA dal doppione verso il buono (evitando duplicati e auto-loop)
+            cur.execute("SELECT to_id, relation, data FROM edges WHERE from_id=%s",(doppione,))
+            for e in cur.fetchall():
+                to_id = e[0] if not hasattr(e,"keys") else e["to_id"]
+                rel = e[1] if not hasattr(e,"keys") else e["relation"]
+                dat = e[2] if not hasattr(e,"keys") else e["data"]
+                if to_id==buono: continue
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation=%s",(buono,to_id,rel))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                        (buono,to_id,rel,dat if isinstance(dat,str) else _json.dumps(dat or {},ensure_ascii=False)))
+            # sposto gli edge in ENTRATA verso il doppione -> verso il buono
+            cur.execute("SELECT from_id, relation, data FROM edges WHERE to_id=%s",(doppione,))
+            for e in cur.fetchall():
+                from_id = e[0] if not hasattr(e,"keys") else e["from_id"]
+                rel = e[1] if not hasattr(e,"keys") else e["relation"]
+                dat = e[2] if not hasattr(e,"keys") else e["data"]
+                if from_id==buono: continue
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation=%s",(from_id,buono,rel))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                        (from_id,buono,rel,dat if isinstance(dat,str) else _json.dumps(dat or {},ensure_ascii=False)))
+            # rimuovo tutti gli edge del doppione e il nodo doppione
+            cur.execute("DELETE FROM edges WHERE from_id=%s OR to_id=%s",(doppione,doppione))
+            cur.execute("DELETE FROM nodes WHERE id=%s",(doppione,))
+            fusi.append(f"{doppione} -> {buono}")
+        conn.commit()
+        return jsonify({"ok":True,"fusi":fusi,"saltati":saltati})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
