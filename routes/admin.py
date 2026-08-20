@@ -1558,8 +1558,12 @@ def admin_coverage_fenomeni():
             mancano = [k for k,v in [("principio",has_princ),("numero",has_num),("errore",has_err),("tecnica",has_tec),("prodotto",has_prod)] if not v]
             report.append({"id":fid,"nome":fname,"dom":fdom,"score":score,"mancano":mancano})
         report.sort(key=lambda x:x["score"])
+        senza = {"principio":[],"numero":[],"errore":[],"tecnica":[],"prodotto":[]}
+        for r in report:
+            for asse in r["mancano"]:
+                senza[asse].append(r["id"])
         return jsonify({"totale_fenomeni":len(fen), "conteggi":conteggi,
-                        "peggiori_20":report[:20],
+                        "peggiori_20":report[:20], "senza":senza,
                         "nota":"score 5 = completo (Bibbia); score<=1 = orfano"})
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
