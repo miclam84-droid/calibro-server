@@ -2279,6 +2279,59 @@ def admin_tabella_temperature():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/audit-ricette")
+def admin_audit_ricette():
+    """Audit QUALITA delle ricette: misura se ogni ricetta rispetta i criteri professionali.
+    Una ricetta 'legge' (non accozzaglia) ha: procedimento vero, numeri ancorati ai passaggi,
+    fenomeni collegati, numeri-bersaglio, punto critico, applicazioni, metadati completi."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT id,nome,disciplina,ingredienti,fenomeni,numeri,punto_critico,
+            procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,twist_di FROM ricette ORDER BY disciplina,nome""")
+        rows = cur.fetchall()
+        def P(v):
+            if v is None: return None
+            if isinstance(v,(list,dict)): return v
+            try: return _json.loads(v)
+            except: return v
+        report=[]
+        conteggi={"procedimento":0,"numeri_ancorati":0,"fenomeni":0,"numeri":0,"punto_critico":0,"applicazioni":0,"metadati":0,"legge":0,"riempitivo":0}
+        for row in rows:
+            g=lambda i: (row[i] if not hasattr(row,"keys") else row[list(row.keys())[i]])
+            rid,nome,disc=g(0),g(1),g(2)
+            ingr,fen,num,pc=P(g(3)),P(g(4)),P(g(5)),g(6)
+            proc,appl=P(g(7)),P(g(8))
+            tprep,tcott,diff,porz,twist=g(9),g(10),g(11),g(12),g(13)
+            proc=proc or []; appl=appl or []; fen=fen or []; num=num or {}
+            # criteri
+            c_proc = isinstance(proc,list) and len(proc)>=4
+            c_anc = isinstance(proc,list) and sum(1 for p in proc if isinstance(p,dict) and p.get("numero_chiave") and str(p.get("numero_chiave")).lower() not in ("","null","none"))>=2
+            c_fen = isinstance(fen,list) and len(fen)>=1
+            c_num = isinstance(num,dict) and len(num)>=1
+            c_pc = bool(pc and len(str(pc))>10)
+            c_appl = isinstance(appl,list) and len(appl)>=1
+            c_meta = bool(tprep is not None and diff and porz)
+            for k,v in [("procedimento",c_proc),("numeri_ancorati",c_anc),("fenomeni",c_fen),("numeri",c_num),("punto_critico",c_pc),("applicazioni",c_appl),("metadati",c_meta)]:
+                if v: conteggi[k]+=1
+            score=sum([c_proc,c_anc,c_fen,c_num,c_pc,c_appl,c_meta])
+            if score>=6: conteggi["legge"]+=1
+            if score<=3: conteggi["riempitivo"]+=1
+            manca=[k for k,v in [("procedimento",c_proc),("numeri_ancorati",c_anc),("fenomeni",c_fen),("numeri",c_num),("punto_critico",c_pc),("applicazioni",c_appl),("metadati",c_meta)] if not v]
+            report.append({"id":rid,"nome":nome,"disc":disc,"score":score,"manca":manca,"twist":bool(twist)})
+        report.sort(key=lambda x:x["score"])
+        return jsonify({"totale_ricette":len(rows),"conteggi":conteggi,
+            "peggiori":[r for r in report if r["score"]<6][:25],
+            "nota":"score 7 = ricetta 'legge' (criteri pro completi); <=3 = riempitivo da curare"})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
