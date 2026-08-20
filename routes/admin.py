@@ -2159,6 +2159,60 @@ def admin_ripara_accenti():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/coeff-farine")
+def admin_coeff_farine():
+    """Arricchisce i nodi-farina con i coefficienti di panificazione: W (forza), P/L (tenacita/estensibilita),
+    proteine %, uso consigliato. Come i coefficienti POD/PAC per gli zuccheri."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # id_nodo -> (W, P/L, proteine%, uso). Dati verificati.
+    FARINE = {
+        "ing-farina-00-di-grano-tenero": ("90-180","0.4-0.5","9-11%","Farina debole. Frolle, biscotti, besciamella, prodotti che NON devono sviluppare glutine. Lievitazioni brevi."),
+        "ing-farina-0": ("180-260","0.5-0.6","11-12.5%","Media forza. Pane comune, pizza a lievitazione media (8-24h), focaccia. Il compromesso piu versatile."),
+        "ing-farina-1": ("200-280","0.55","12-13%","Semi-integrale di media-alta forza. Pane rustico, pizza, impasti con lunga maturazione. Piu fibra, piu sapore."),
+        "ing-farina-2": ("170-240","0.5","11.5-12.5%","Semi-integrale. Pane casareccio, impasti saporiti. Assorbe piu acqua dell'00."),
+        "fis_wheat_flour": ("180-260","0.5-0.6","11-12.5%","Farina 00 media. Uso generale panificazione, pizza napoletana (W 220-260, 8-24h)."),
+        "ing-farina-integrale-di-grano-tenero": ("150-220","0.6","12-14%","Integrale: tutto il chicco. Assorbe molta acqua, la crusca taglia il glutine (impasto meno estensibile). Pane integrale, spesso tagliata con farina forte."),
+        "ing-farina-di-semola-rimacinata": ("200-280","0.6-0.7","12-13.5%","Grano DURO rimacinato. Pane di Altamura, pane pugliese, alcune paste. Colore giallo, glutine tenace."),
+        "ing-farina-di-semola-integrale": ("180-240","0.65","13-15%","Semola integrale di grano duro. Pane rustico del sud, alta assorbenza."),
+    }
+    # tabella di riferimento W -> uso (per il calcolatore)
+    TABELLA_W = [
+        {"range":"90-170","forza":"debole","uso":"frolle, biscotti, grissini, torte","idratazione":"50-55%","lievitazione":"corta (2-4h)"},
+        {"range":"180-260","forza":"media","uso":"pane comune, pizza, focaccia","idratazione":"60-70%","lievitazione":"media (8-24h)"},
+        {"range":"280-350","forza":"forte","uso":"baguette, pane a lunga lievitazione, panettone base","idratazione":"70-80%","lievitazione":"lunga (24-48h)"},
+        {"range":"350-450","forza":"molto forte (manitoba)","uso":"grandi lievitati (panettone, pandoro, colomba), rinforzo di farine deboli","idratazione":"75-90%","lievitazione":"molto lunga (48-72h)"},
+    ]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor(); fatti=[]
+        for nid,(w,pl,prot,uso) in FARINE.items():
+            cur.execute("SELECT id, data FROM nodes WHERE id=%s",(nid,))
+            row = cur.fetchone()
+            if not row: fatti.append(f"{nid}: ASSENTE"); continue
+            raw = row[1] if not hasattr(row,"keys") else row["data"]
+            d = raw if isinstance(raw,dict) else (_json.loads(raw) if raw else {})
+            if not isinstance(d,dict): d={}
+            d["W"]=w; d["P_L"]=pl; d["proteine"]=prot; d["uso_panificazione"]=uso
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(_json.dumps(d,ensure_ascii=False),nid))
+            fatti.append(f"{nid}: W={w} P/L={pl} prot={prot}")
+        # salvo la tabella W come nodo di riferimento
+        cur.execute("SELECT id FROM nodes WHERE id=%s",("tab-forza-farine",))
+        tdata = {"scheda":"Tabella di riferimento: quale forza (W) per quale uso in panificazione.","tabella":TABELLA_W}
+        if not cur.fetchone():
+            cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                ("tab-forza-farine","Calcolo","Tabella forza farine (W)","panificazione",_json.dumps(tdata,ensure_ascii=False)))
+        else:
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(_json.dumps(tdata,ensure_ascii=False),"tab-forza-farine"))
+        conn.commit()
+        return jsonify({"ok":True,"farine_arricchite":fatti,"tabella_W_creata":True})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
