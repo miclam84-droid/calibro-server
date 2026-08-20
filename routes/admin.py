@@ -2060,6 +2060,30 @@ def admin_traduci_ricette():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/debug-traduzione")
+def admin_debug_traduzione():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json
+    from ai import _haiku_raw
+    rid = request.args.get("id","ric-bagel")
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT nome, nome_en, procedimento_en FROM ricette WHERE id=%s",(rid,))
+        row = cur.fetchone()
+        nome = row[0] if not hasattr(row,"keys") else row["nome"]
+        nome_en = row[1] if not hasattr(row,"keys") else row["nome_en"]
+        proc_en = row[2] if not hasattr(row,"keys") else row["procedimento_en"]
+        # provo una traduzione live per vedere cosa torna Haiku
+        test = _haiku_raw("Translate to English, return only the translation: pesare con precisione tutti gli ingredienti")
+        return jsonify({"nome_it":nome,"nome_en_salvato":nome_en,
+            "proc_en_salvato_primo": (proc_en[0] if isinstance(proc_en,list) and proc_en else str(proc_en)[:100]),
+            "test_haiku_live": (test or "")[:100]})
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
