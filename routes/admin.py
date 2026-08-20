@@ -2059,6 +2059,30 @@ def admin_traduci_ricette():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/azzera-traduzioni-sbagliate")
+def admin_azzera_traduzioni_sbagliate():
+    """Azzera le traduzioni dove nome_en/es e uguale all'italiano (salvate male dal metodo vecchio),
+    cosi traduci-ricette le ripesca e rifa."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # azzero dove nome_en == nome (non tradotto davvero) - euristica: procedimento_en col primo testo == it
+        for lang in ["en","es"]:
+            cur.execute(f"""UPDATE ricette SET nome_{lang}=NULL, procedimento_{lang}=NULL,
+                applicazioni_{lang}=NULL, punto_critico_{lang}=NULL
+                WHERE procedimento_{lang}::text = procedimento::text""")
+        conn.commit()
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE procedimento_en IS NULL")
+        return jsonify({"ok":True,"da_ritradurre_en":cur.fetchone()[0]})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:300]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
