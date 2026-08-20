@@ -1604,7 +1604,12 @@ def admin_principi_cardine():
         (["gelatinizz","amido","glutine","impasto","lievitazione","pane","pasta","crema-pasticcera","addensant","pectina","gelificazione","tangzhong","maglia"], "princ-gelatinizzazione"),
         (["carbonazione","carbonatazione","gas","henry","birra","luppolo","spuma","highball"], "princ-kt"),
         (["fermentazione","lievito","alcol","tannini","vino","mosto","luppolo"], "princ-ph"),
-        (["temperatura","calore","cottura","frittura","forno","q10","boltzmann"], "princ-kt"),
+        (["temperatura","calore","cottura","frittura","forno","q10","boltzmann","punto-fumo","ustioni","pressione","concentrazione"], "princ-calore"),
+        (["acidita","ossidazione","solforosa","solubilita","enzim","autolisi","proteolisi","amilolisi","lipolisi","mash-enzimi","attivita-enzimatica","maturazione-legno","atmosfera-modificata","contaminazione","shelf-life","zona-pericolo","levain","poolish","biga","pate-fermentee"], "princ-ph"),
+        (["diffusion","distillazione","dry-hopping","clarificazione","clarification","solubilita"], "princ-diffusione"),
+        (["equilibrio-cocktail","amaro-bitter","shakerare","diluizione","viscosita","sineresi","texture-agents","struttura","souffle","grassi-stabil"], "princ-emulsione"),
+        (["crioscopia","pac-gelateria"], "princ-cristallizzazione"),
+        (["farina-forza","enzimi-farina"], "princ-gelatinizzazione"),
     ]
     conn = _get_conn()
     try:
