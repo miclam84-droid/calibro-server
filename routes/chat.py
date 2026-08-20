@@ -259,6 +259,8 @@ def nodo():
                esito="ok" if risposta else "errore_modello")
     connessi, visti = [], set()
     errori, visti_err = [], set()
+    principi, visti_pr = [], set()
+    tecniche, visti_tec = [], set()
     for f in contesto["fenomeni"]:
         for c in f["collegamenti"]:
             if c["relazione"] == "si_manifesta_in" and c["id"] not in visti:
@@ -266,6 +268,14 @@ def nodo():
                 connessi.append({"id": c["id"], "nome": c["verso"],
                                  "dominio": c["dominio"],
                                  "target": c["data"].get("target","")})
+            # PRINCIPIO: il perche fisico profondo (il tetto della Bibbia)
+            elif c["relazione"] == "governato_da" and c["id"] not in visti_pr:
+                visti_pr.add(c["id"])
+                principi.append({"id": c["id"], "nome": c["verso"]})
+            # TECNICHE: come si governa il fenomeno
+            elif c["relazione"] in ("realizzato_da","controllato_con") and c["id"] not in visti_tec:
+                visti_tec.add(c["id"])
+                tecniche.append({"id": c["id"], "nome": c["verso"]})
             # ERRORI: sintomo osservabile al banco -> causa (il valore "bibbia")
             elif c["relazione"] == "fallisce_come" and c["id"] not in visti_err:
                 visti_err.add(c["id"])
@@ -287,7 +297,9 @@ def nodo():
         "prompt_costruito": prompt,
         "risposta": risposta,
         "connessi": connessi,
-        "errori": errori
+        "errori": errori,
+        "principi": principi,
+        "tecniche": tecniche
     })
 
 @bp.route("/calcola", methods=["POST"])
