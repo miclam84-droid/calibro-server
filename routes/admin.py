@@ -2213,6 +2213,72 @@ def admin_coeff_farine():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/tabella-temperature")
+def admin_tabella_temperature():
+    """Crea la tabella delle temperature-cuore: quale grado per quale risultato, per proteina.
+    Il cuore della cottura di precisione (roner/sous-vide). Dati verificati."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    TEMPERATURE = {
+        "manzo": [
+            {"punto":"al sangue (rare)","temp":"50-52°C","note":"rosso, succoso, morbido"},
+            {"punto":"medio (medium-rare)","temp":"54-56°C","note":"il punto classico della bistecca"},
+            {"punto":"a puntino (medium)","temp":"58-60°C","note":"rosa, ancora succoso"},
+            {"punto":"ben cotto","temp":"68-71°C","note":"grigio, piu asciutto"},
+            {"punto":"brasato (taglio duro)","temp":"70-75°C x 24-36h","note":"collagene -> gelatina, morbido"},
+        ],
+        "pollo": [
+            {"punto":"petto succoso","temp":"62-64°C","note":"sicuro e ancora umido (contro i 74°C tradizionali che asciugano)"},
+            {"punto":"coscia","temp":"70-74°C","note":"il tessuto connettivo si scioglie meglio piu in alto"},
+        ],
+        "maiale": [
+            {"punto":"lombo rosa","temp":"58-60°C","note":"succoso, leggermente rosa"},
+            {"punto":"a puntino","temp":"62-65°C","note":"il compromesso sicurezza/succosita"},
+        ],
+        "pesce": [
+            {"punto":"salmone morbido","temp":"45-50°C","note":"traslucido, setoso"},
+            {"punto":"pesce a scaglie","temp":"52-55°C","note":"si sfalda, ancora umido"},
+            {"punto":"tonno scottato","temp":"45-48°C","note":"cuore crudo"},
+        ],
+        "uovo": [
+            {"punto":"uovo 63 (onsen)","temp":"63°C x 45min","note":"albume cremoso, tuorlo vellutato"},
+            {"punto":"tuorlo denso","temp":"65°C","note":"tuorlo che cola denso"},
+            {"punto":"sodo cremoso","temp":"68-70°C","note":"entrambi sodi ma non gessosi"},
+        ],
+        "verdure": [
+            {"punto":"croccanti","temp":"83-85°C","note":"cottura sotto la gelatinizzazione totale, mantengono struttura"},
+            {"punto":"morbide","temp":"85-90°C","note":"amido gelatinizzato, tenere"},
+        ],
+    }
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        data = {"scheda":"Temperature-cuore per la cottura di precisione (roner/sous-vide): quale grado per quale risultato. La temperatura governa la denaturazione proteica - colpisci la soglia voluta senza superarla.","tabella":TEMPERATURE}
+        cur.execute("SELECT id FROM nodes WHERE id=%s",("tab-temperature-cuore",))
+        if not cur.fetchone():
+            cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                ("tab-temperature-cuore","Calcolo","Temperature-cuore (sous-vide)","cucina",_json.dumps(data,ensure_ascii=False)))
+            azione="creata"
+        else:
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(_json.dumps(data,ensure_ascii=False),"tab-temperature-cuore"))
+            azione="aggiornata"
+        # la collego al fenomeno denaturazione e allo strumento roner
+        for target,rel in [("princ-denaturazione","spiega"),("strum-roner","abilita")]:
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(target,))
+            if cur.fetchone():
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s",("tab-temperature-cuore",target))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                        ("tab-temperature-cuore",target,rel,_json.dumps({},ensure_ascii=False)))
+        conn.commit()
+        return jsonify({"ok":True,"tabella":azione,"proteine":list(TEMPERATURE.keys())})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
