@@ -1965,32 +1965,44 @@ def admin_collega_fenomeni_ricette():
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     import traceback, json as _json
+    # collega i fenomeni orfani ai PRODOTTI reali del grafo (nodi prod-*/fis_*) per keyword
+    MAPPA = {
+        "fen-collagene-brasato": ["fis_beef_raw"], "fen-riposo-carne": ["fis_beef_raw"],
+        "fen-rosolatura": ["fis_beef_raw","fis_chicken_breast"], "fen-soffritto": ["fis_beef_raw"],
+        "fen-uova-coagulazione": ["fis_egg_white","fis_egg_yolk"], "fen-emulsione-salse": ["fis_egg_yolk"],
+        "fen-emulsione-bar": ["fis_egg_white"], "fen-chiarificazione-latte": ["fis_milk_whole"],
+        "fen-verdure-verdi": ["fis_apple"], "fen-frittura": ["fis_lard"],
+        "fen-pasta-acqua": ["fis_wheat_flour"], "fen-gelatinizzazione-salse": ["fis_wheat_flour"],
+        "fen-zuccheri-impasto": ["fis_bread_baked","prod-brioche-viennoiserie"],
+        "fen-latte-impasto": ["prod-bao","prod-brioche-viennoiserie"],
+        "fen-tangzhong-yudane": ["prod-bao"], "fen-levain-pate-fermentee": ["fis_sourdough_starter","prod-altamura"],
+        "fen-cristalli-ghiaccio": ["fis_gelato_base","prod-gelato-cristalli"],
+        "fen-zuccheri-pac": ["fis_gelato_base","fis_sorbet_base"], "fen-grassi-stabilizzanti": ["fis_gelato_base"],
+        "fen-equilibrio-cocktail": ["prod-aperol-spritz"], "fen-shakerare-mescolare": ["prod-aperol-spritz"],
+        "fen-ghiaccio": ["prod-aperol-spritz"], "fen-amaro-bitter": ["prod-aperol-spritz"],
+        "fen-infusioni": ["fis_honey"], "fen-fermentazione-alcolica": ["prod_birra","prod-birra-ipa"],
+        "fen-luppolo": ["prod-birra-ipa"], "fen-tannini-vino": ["prod_birra"],
+        "fen-macinatura-caffe": ["fis_honey"],
+    }
     conn = _get_conn()
     try:
         cur = conn.cursor()
-        # tutte le ricette col loro campo fenomeni
-        cur.execute("SELECT id, nome, fenomeni FROM ricette")
-        ricette = cur.fetchall()
-        collegati, gia = [], 0
-        for row in ricette:
-            rid = row[0] if not hasattr(row,"keys") else row["id"]
-            rnome = row[1] if not hasattr(row,"keys") else row["nome"]
-            rfen = row[2] if not hasattr(row,"keys") else row["fenomeni"]
-            fen_list = rfen if isinstance(rfen,list) else (_json.loads(rfen) if rfen else [])
-            for fid in fen_list:
-                fid = str(fid).strip()
-                if not fid.startswith("fen-"): continue
-                # verifica che il fenomeno esista
-                cur.execute("SELECT id FROM nodes WHERE id=%s",(fid,))
-                if not cur.fetchone(): continue
-                # crea edge fenomeno -si_manifesta_in-> ricetta (la ricetta è dove il fenomeno si vede)
-                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='si_manifesta_in' AND to_id=%s",(fid,rid))
-                if cur.fetchone(): gia+=1; continue
+        collegati, saltati = [], []
+        for fid, prods in MAPPA.items():
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(fid,))
+            if not cur.fetchone(): saltati.append(f"{fid}(no fen)"); continue
+            for pid in prods:
+                cur.execute("SELECT id, name FROM nodes WHERE id=%s",(pid,))
+                pr = cur.fetchone()
+                if not pr: saltati.append(f"{pid}(no prod)"); continue
+                pnome = pr[1] if not hasattr(pr,"keys") else pr["name"]
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='si_manifesta_in' AND to_id=%s",(fid,pid))
+                if cur.fetchone(): continue
                 cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
-                    (fid,rid,"si_manifesta_in",_json.dumps({"tipo":"ricetta","nome":rnome},ensure_ascii=False)))
-                collegati.append(f"{fid}->{rid}")
+                    (fid,pid,"si_manifesta_in",_json.dumps({"nome":pnome or pid},ensure_ascii=False)))
+                collegati.append(f"{fid}->{pid}")
         conn.commit()
-        return jsonify({"ok":True,"collegamenti_creati":len(collegati),"gia_esistenti":gia})
+        return jsonify({"ok":True,"collegamenti_creati":len(collegati),"dettaglio":collegati,"saltati":saltati})
     except Exception as e:
         return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
     finally:
