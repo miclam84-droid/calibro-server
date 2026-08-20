@@ -1917,6 +1917,50 @@ def admin_consolida_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/fenomeni-senza-ricetta")
+def admin_fenomeni_senza_ricetta():
+    """Trova i fenomeni che NON hanno ancora una ricetta che li dimostra (i buchi veri da riempire).
+    Guida l'espansione mirata: ogni ricetta nuova deve coprire un fenomeno scoperto, non duplicare."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    disc = request.args.get("disc","")
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # tutti i fenomeni (per disciplina se richiesto)
+        if disc:
+            cur.execute("SELECT id,name,domain FROM nodes WHERE type='Fenomeno' AND domain=%s ORDER BY name",(disc,))
+        else:
+            cur.execute("SELECT id,name,domain FROM nodes WHERE type='Fenomeno' ORDER BY domain,name")
+        fen = cur.fetchall()
+        # i fenomeni citati nelle ricette (campo fenomeni della tabella ricette)
+        cur.execute("SELECT fenomeni FROM ricette")
+        coperti = set()
+        for row in cur.fetchall():
+            rf = row[0] if not hasattr(row,"keys") else row["fenomeni"]
+            fl = rf if isinstance(rf,list) else (_json.loads(rf) if rf else [])
+            for f in (fl or []):
+                coperti.add(str(f).strip())
+        senza, con = [], 0
+        for f in fen:
+            fid = f[0] if not hasattr(f,"keys") else f["id"]
+            fname = f[1] if not hasattr(f,"keys") else f["name"]
+            fdom = f[2] if not hasattr(f,"keys") else f["domain"]
+            if fid in coperti: con+=1
+            else: senza.append({"id":fid,"nome":fname,"disc":fdom})
+        # raggruppo per disciplina
+        per_disc = {}
+        for s in senza:
+            per_disc.setdefault(s["disc"],[]).append(s["nome"])
+        return jsonify({"totale_fenomeni":len(fen),"con_ricetta":con,"senza_ricetta":len(senza),
+                        "per_disciplina":{k:{"quanti":len(v),"fenomeni":v} for k,v in sorted(per_disc.items())}})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
