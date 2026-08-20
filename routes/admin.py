@@ -2081,6 +2081,84 @@ def admin_crea_strumenti():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/ripara-accenti")
+def admin_ripara_accenti():
+    """Ripara gli accenti nei testi del grafo (nodi scritti a mano con UTF-8 tolto).
+    Applica correzioni sicure basate su parole intere, non tocca i testi gia corretti."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json, re as _re
+    # correzioni parola-intera: (regex parola senza accento) -> con accento
+    FIX = [
+        (r"\bperche\b","perché"), (r"\bpiu\b","più"), (r"\bcosi\b","così"),
+        (r"\bgia\b","già"), (r"\bpuo\b","può"), (r"\bpero\b","però"),
+        (r"\bcitta\b","città"), (r"\bqualita\b","qualità"), (r"\bquantita\b","quantità"),
+        (r"\battivita\b","attività"), (r"\bumidita\b","umidità"), (r"\bacidita\b","acidità"),
+        (r"\bdensita\b","densità"), (r"\bviscosita\b","viscosità"), (r"\bstabilita\b","stabilità"),
+        (r"\bmeta\b","metà"), (r"\bpieta\b","pietà"), (r"\bfinche\b","finché"),
+        (r"\bpoiche\b","poiché"), (r"\baffinche\b","affinché"), (r"\bpercio\b","perciò"),
+        (r"\bcioe\b","cioè"), (r"\bcaffe\b","caffè"), (r"\bte\b","tè"),
+        (r"\bpapa\b","papà" ), (r"\bpurche\b","purché"), (r"\bne\b(?= )","né"),
+        (r"\bproprieta\b","proprietà"), (r"\bvarieta\b","varietà"), (r"\bnovita\b","novità"),
+        (r"\bsocieta\b","società"), (r"\bpossibilita\b","possibilità"), (r"\brealta\b","realtà"),
+        (r"\bcapacita\b","capacità"), (r"\bsalinita\b","salinità"), (r"\bfermenta\b","fermenta"),
+    ]
+    # NB: "e" isolato -> "è" e' pericoloso (congiunzione). Lo gestiamo solo in pattern sicuri:
+    # " si e " -> " si è ", " non e " -> " non è ", "che e " -> "che è ", "l'aspetto e "
+    FIX_E = [
+        (r"\bsi e\b","si è"), (r"\bnon e\b","non è"), (r"\bche e\b","che è"),
+        (r"\bcome e\b","come è"), (r"\bquando e\b","quando è"), (r"\bse e\b","se è"),
+        (r"\bqui e\b","qui è"), (r"\bgia e\b","già è"),
+    ]
+    def ripara(t):
+        if not isinstance(t,str) or not t: return t, False
+        orig = t
+        for pat,rep in FIX + FIX_E:
+            t = _re.sub(pat, rep, t)
+        return t, (t != orig)
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE data IS NOT NULL")
+        rows = cur.fetchall()
+        toccati = 0
+        for row in rows:
+            nid = row[0] if not hasattr(row,"keys") else row["id"]
+            raw = row[1] if not hasattr(row,"keys") else row["data"]
+            d = raw if isinstance(raw,dict) else (_json.loads(raw) if raw else {})
+            if not isinstance(d,dict): continue
+            cambiato = False
+            for campo in ["scheda","scheda_it","causa","parametri","errore_tipico","nota"]:
+                if campo in d and isinstance(d[campo],str):
+                    nuovo, ch = ripara(d[campo])
+                    if ch: d[campo]=nuovo; cambiato=True
+            if cambiato:
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(_json.dumps(d,ensure_ascii=False),nid))
+                toccati+=1
+        # anche i sintomi negli edge fallisce_come
+        cur.execute("SELECT from_id,to_id,data FROM edges WHERE relation='fallisce_come' AND data IS NOT NULL")
+        edges = cur.fetchall()
+        edge_toccati=0
+        for e in edges:
+            fr=e[0] if not hasattr(e,"keys") else e["from_id"]
+            to=e[1] if not hasattr(e,"keys") else e["to_id"]
+            raw=e[2] if not hasattr(e,"keys") else e["data"]
+            d = raw if isinstance(raw,dict) else (_json.loads(raw) if raw else {})
+            if isinstance(d,dict) and "sintomo" in d and isinstance(d["sintomo"],str):
+                nuovo,ch=ripara(d["sintomo"])
+                if ch:
+                    d["sintomo"]=nuovo
+                    cur.execute("UPDATE edges SET data=%s WHERE from_id=%s AND to_id=%s AND relation='fallisce_come'",
+                        (_json.dumps(d,ensure_ascii=False),fr,to))
+                    edge_toccati+=1
+        conn.commit()
+        return jsonify({"ok":True,"nodi_riparati":toccati,"edge_riparati":edge_toccati})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
