@@ -2014,28 +2014,41 @@ def admin_traduci_ricette():
             pc = row[4] if not hasattr(row,"keys") else row["punto_critico"]
             proc_p = proc if isinstance(proc,list) else (_json.loads(proc) if proc else [])
             appl_p = appl if isinstance(appl,list) else (_json.loads(appl) if appl else [])
-            payload = {"nome":nome,"procedimento":proc_p,"applicazioni":appl_p,"punto_critico":pc or ""}
+            def _t(testo, lname):
+                """Traduce UN testo semplice (non JSON). Robusto: niente parsing."""
+                if not testo or not str(testo).strip(): return ""
+                pr = (f"Translate this cooking text from Italian to {lname}. "
+                      f"Keep it professional and keep any numbers/units unchanged. "
+                      f"Return ONLY the translation, no quotes, no preamble:\n{testo}")
+                try:
+                    out = _haiku_raw(pr)
+                    return (out or "").strip().strip('"').strip()
+                except Exception:
+                    return ""
             ok_lang = {}
             for lang, lname in [("en","English"),("es","Spanish")]:
-                prompt = (
-                    f"Translate this recipe content from Italian to {lname}. Keep the JSON structure IDENTICAL, "
-                    f"translate ONLY the text values (nome, testo, applicazioni items, punto_critico). "
-                    f"Keep numero_chiave and n unchanged. Keep cooking terms professional. "
-                    f"Return ONLY valid JSON, no other text:\n{_json.dumps(payload,ensure_ascii=False)}"
-                )
                 try:
-                    raw = _haiku_raw(prompt)
-                    m = _re.search(r"\{.*\}", raw or "", _re.DOTALL)
-                    if not m: continue
-                    tr = _json.loads(_re.sub(r",\s*([}\]])",r"\1",m.group(0)))
+                    # nome
+                    nome_t = _t(nome, lname) or nome
+                    # procedimento: traduco SOLO il campo testo di ogni passo (numero_chiave e n invariati)
+                    proc_t = []
+                    for step in proc_p:
+                        if isinstance(step,dict):
+                            st = dict(step)
+                            st["testo"] = _t(step.get("testo",""), lname) or step.get("testo","")
+                            proc_t.append(st)
+                    # applicazioni: lista di stringhe
+                    appl_t = [(_t(a, lname) or a) for a in appl_p if isinstance(a,str)]
+                    # punto critico
+                    pc_t = _t(pc, lname) if pc else ""
                     cur.execute(f"""UPDATE ricette SET nome_{lang}=%s, procedimento_{lang}=%s::jsonb,
                         applicazioni_{lang}=%s::jsonb, punto_critico_{lang}=%s WHERE id=%s""",
-                        (tr.get("nome",nome), _json.dumps(tr.get("procedimento",[]),ensure_ascii=False),
-                         _json.dumps(tr.get("applicazioni",[]),ensure_ascii=False), tr.get("punto_critico",""), rid))
-                    conn.commit(); ok_lang[lang]=True
+                        (nome_t, _json.dumps(proc_t,ensure_ascii=False),
+                         _json.dumps(appl_t,ensure_ascii=False), pc_t, rid))
+                    conn.commit(); ok_lang[lang]=len(proc_t)
                 except Exception as le:
                     errori.append(f"{rid}/{lang}: {str(le)[:50]}")
-            fatti.append(f"{rid}: {list(ok_lang.keys())}")
+            fatti.append(f"{rid}: {ok_lang}")
             n+=1
         cur.execute("SELECT COUNT(*) FROM ricette WHERE nome_en IS NULL OR procedimento_en IS NULL")
         restano = cur.fetchone()[0]
