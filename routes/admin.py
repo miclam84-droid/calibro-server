@@ -1957,6 +1957,45 @@ def admin_tecniche_completa2():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/collega-fenomeni-ricette")
+def admin_collega_fenomeni_ricette():
+    """Completa PRODOTTO: collega ogni fenomeno alle RICETTE che lo usano (si_manifesta_in).
+    Usa il campo 'fenomeni' gia presente in ogni ricetta - relazione inversa."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # tutte le ricette col loro campo fenomeni
+        cur.execute("SELECT id, nome, fenomeni FROM ricette")
+        ricette = cur.fetchall()
+        collegati, gia = [], 0
+        for row in ricette:
+            rid = row[0] if not hasattr(row,"keys") else row["id"]
+            rnome = row[1] if not hasattr(row,"keys") else row["nome"]
+            rfen = row[2] if not hasattr(row,"keys") else row["fenomeni"]
+            fen_list = rfen if isinstance(rfen,list) else (_json.loads(rfen) if rfen else [])
+            for fid in fen_list:
+                fid = str(fid).strip()
+                if not fid.startswith("fen-"): continue
+                # verifica che il fenomeno esista
+                cur.execute("SELECT id FROM nodes WHERE id=%s",(fid,))
+                if not cur.fetchone(): continue
+                # crea edge fenomeno -si_manifesta_in-> ricetta (la ricetta è dove il fenomeno si vede)
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='si_manifesta_in' AND to_id=%s",(fid,rid))
+                if cur.fetchone(): gia+=1; continue
+                cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                    (fid,rid,"si_manifesta_in",_json.dumps({"tipo":"ricetta","nome":rnome},ensure_ascii=False)))
+                collegati.append(f"{fid}->{rid}")
+        conn.commit()
+        return jsonify({"ok":True,"collegamenti_creati":len(collegati),"gia_esistenti":gia})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
