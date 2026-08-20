@@ -1566,6 +1566,86 @@ def admin_coverage_fenomeni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/principi-cardine")
+def admin_principi_cardine():
+    """La Bibbia ha bisogno del suo tetto: i principi fisici fondamentali.
+    Crea i principi mancanti e collega OGNI fenomeno al principio che lo governa (governato_da)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # I PRINCIPI CARDINE (pochi, fondamentali). id -> (nome, scheda)
+    PRINCIPI = {
+        "princ-kt": ("kT - energia termica",
+            "L'energia termica kT e la moneta con cui la temperatura governa la velocita di ogni reazione e trasformazione. Piu sale la temperatura, piu le molecole si agitano: la 'coda di Boltzmann' spiega perche una reazione parte a una certa soglia e accelera col calore (regola Q10). E il principio sotto Maillard, caramellizzazione, denaturazione, fermentazione: sono tutte reazioni la cui velocita e governata da kT."),
+        "princ-calore": ("Trasporto di calore - conduzione, convezione, irraggiamento",
+            "Il calore si muove in tre modi: conduzione (contatto diretto, la padella alla carne), convezione (attraverso un fluido, l'aria del forno o l'acqua che bolle), irraggiamento (onde elettromagnetiche, la brace o il grill). Il MODO con cui il calore arriva al cibo decide il risultato: la crosta della bistecca (conduzione ad alta T), la cottura uniforme del forno ventilato (convezione), la doratura del grill (irraggiamento). Governa cottura, rosolatura, frittura, panificazione."),
+        "princ-denaturazione": ("Denaturazione e coagulazione proteica",
+            "Le proteine sono catene ripiegate: il calore (o l'acido, o il sale) rompe i legami deboli che tengono la forma, la proteina si 'srotola' (denatura) e poi si lega alle vicine (coagula). E' un processo a soglia di temperatura: albume 62-65C, tuorlo 65-70C, collagene che diventa gelatina a 68C+. Governa uova, carne, pesce, la schiuma dell'albume, la chiarificazione."),
+        "princ-ph": ("Equilibri acido-base (pH)",
+            "Il pH misura quanti ioni idrogeno liberi ci sono: sotto 7 acido, sopra 7 basico. Il pH decide se una proteina precipita (il latte che taglia a pH 4.6, la stessa fisica della ricotta e della chiarificazione al latte), il colore delle verdure verdi (la clorofilla vira a feofitina in ambiente acido), la sicurezza delle conserve (sotto pH 4.6 il botulino non cresce), l'equilibrio di un cocktail. Governa fermentazioni, conserve, colore, coagulazione acida."),
+        "princ-diffusione": ("Diffusione e osmosi - trasporto di massa",
+            "Le molecole si spostano spontaneamente da dove sono concentrate a dove lo sono meno (diffusione); attraverso una membrana, e l'acqua a muoversi verso la maggior concentrazione (osmosi). Governa la salamoia e la marinatura (il sale entra, l'acqua esce), l'estrazione del caffe e delle infusioni, la disidratazione, la stagionatura, il modo in cui uno sciroppo penetra la frutta."),
+        "princ-emulsione": ("Emulsioni e tensioattivi",
+            "Acqua e grasso non si mescolano: un'emulsione e grasso disperso in acqua (o viceversa) in goccioline stabilizzate da un tensioattivo (lecitina del tuorlo, caseina del latte, saponine dell'albume) che fa da ponte tra i due. La tensione superficiale e la forza che i tensioattivi abbassano per tenere unite le gocce. Governa maionese, salse, il sour col bianco d'uovo, la panna montata, la ganache, l'espresso."),
+        "princ-cristallizzazione": ("Cristallizzazione e transizioni di fase",
+            "Quando un liquido solidifica, le molecole si ordinano in cristalli: la DIMENSIONE dei cristalli decide la texture. Cristalli piccoli = liscio (gelato mantecato in fretta, cioccolato temperato in Forma V); cristalli grossi = ruvido (gelato ricristallizzato, zucchero che afra). Governa gelato, sorbetti, temperaggio del cioccolato, caramello, la gestione dell'acqua che congela."),
+        "princ-gelatinizzazione": ("Gelatinizzazione e reti (amidi e glutine)",
+            "Alcune molecole formano reti che intrappolano acqua e danno struttura: l'amido che assorbe acqua e gonfia col calore (gelatinizzazione, 60-70C: addensa creme e salse, cuoce la pasta e il pane), il glutine che forma la maglia elastica dell'impasto, la pectina e la gelatina che gelificano. Governa pane, pasta, creme, salse addensate, gel, la mollica."),
+    }
+    # MAPPA: quale principio governa un fenomeno (per keyword nel nome/id). Ordine = priorita.
+    REGOLE = [
+        (["maillard","rosolatura","caramell","soffritto","doratura","crosta"], "princ-calore"),
+        (["collagene","brasato","denaturazione","coagulazione","uova","uovo","carne","albume","riposo-carne","sous-vide"], "princ-denaturazione"),
+        (["ph","acido","botulino","conserve","chiarificazione","verdure-verdi","clorofilla","malolattica","catena-freddo","haccp","anisakis","attivita-acqua","aw"], "princ-ph"),
+        (["diffusion","osmosi","salamoia","marinat","estrazione","infusion","macinatura","caffe","fat-washing","stagionat","disidrat"], "princ-diffusione"),
+        (["emulsion","maionese","salse","montatura","panna","ganache","sour","dry-shake","tensione","schiuma","fat-wash"], "princ-emulsione"),
+        (["cristall","gelato","temperaggio","cioccolato","sorbetto","overrun","zuccheri-pac","congelamento","ghiaccio"], "princ-cristallizzazione"),
+        (["gelatinizz","amido","glutine","impasto","lievitazione","pane","pasta","crema-pasticcera","addensant","pectina","gelificazione","tangzhong","maglia"], "princ-gelatinizzazione"),
+        (["carbonazione","carbonatazione","gas","henry","birra","luppolo","spuma","highball"], "princ-kt"),
+        (["fermentazione","lievito","alcol","tannini","vino","mosto","luppolo"], "princ-ph"),
+        (["temperatura","calore","cottura","frittura","forno","q10","boltzmann"], "princ-kt"),
+    ]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        creati = []
+        for pid,(nome,scheda) in PRINCIPI.items():
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(pid,))
+            if not cur.fetchone():
+                cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                    (pid,"principio",nome,"trasversale",_json.dumps({"scheda":scheda},ensure_ascii=False)))
+                creati.append(pid)
+            else:
+                cur.execute("UPDATE nodes SET data=jsonb_set(COALESCE(data,'{}')::jsonb,'{scheda}',%s::jsonb) WHERE id=%s",
+                    (_json.dumps(scheda,ensure_ascii=False),pid))
+        # collego i fenomeni
+        cur.execute("SELECT id,name FROM nodes WHERE type='Fenomeno'")
+        fen = cur.fetchall()
+        collegati, gia, nonmappati = 0, 0, []
+        for f in fen:
+            fid = (f[0] if not hasattr(f,"keys") else f["id"])
+            fname = (f[1] if not hasattr(f,"keys") else f["name"]) or ""
+            testo = (fid+" "+fname).lower()
+            principio = None
+            for keys, pid in REGOLE:
+                if any(k in testo for k in keys):
+                    principio = pid; break
+            if not principio:
+                nonmappati.append(fid); continue
+            cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='governato_da' AND to_id=%s",(fid,principio))
+            if cur.fetchone(): gia+=1; continue
+            cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                (fid,principio,"governato_da",_json.dumps({},ensure_ascii=False)))
+            collegati+=1
+        conn.commit()
+        return jsonify({"ok":True,"principi_creati":creati,"fenomeni_collegati":collegati,
+                        "gia_collegati":gia,"non_mappati":nonmappati})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
