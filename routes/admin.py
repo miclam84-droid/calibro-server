@@ -1996,11 +1996,13 @@ def admin_traduci_ricette():
     from ai import _haiku_raw
     limite = int(request.args.get("limite","2"))
     skip = int(request.args.get("skip","0"))
+    lang = request.args.get("lang","en")  # UNA lingua per chiamata (evita timeout)
+    lname = {"en":"English","es":"Spanish"}.get(lang,"English")
     conn = _get_conn()
     try:
         cur = conn.cursor()
-        cur.execute("""SELECT id,nome,procedimento,applicazioni,punto_critico FROM ricette
-            WHERE nome_en IS NULL OR procedimento_en IS NULL ORDER BY id""")
+        cur.execute(f"""SELECT id,nome,procedimento,applicazioni,punto_critico FROM ricette
+            WHERE nome_{lang} IS NULL OR procedimento_{lang} IS NULL ORDER BY id""")
         rows = cur.fetchall()
         fatti, errori, n, visti = [], [], 0, 0
         for row in rows:
@@ -2014,43 +2016,43 @@ def admin_traduci_ricette():
             pc = row[4] if not hasattr(row,"keys") else row["punto_critico"]
             proc_p = proc if isinstance(proc,list) else (_json.loads(proc) if proc else [])
             appl_p = appl if isinstance(appl,list) else (_json.loads(appl) if appl else [])
-            def _t(testo, lname):
-                """Traduce UN testo semplice (non JSON). Robusto: niente parsing."""
-                if not testo or not str(testo).strip(): return ""
-                pr = (f"Translate this cooking text from Italian to {lname}. "
-                      f"Keep it professional and keep any numbers/units unchanged. "
-                      f"Return ONLY the translation, no quotes, no preamble:\n{testo}")
-                try:
-                    out = _haiku_raw(pr)
-                    return (out or "").strip().strip('"').strip()
-                except Exception:
-                    return ""
-            ok_lang = {}
-            for lang, lname in [("en","English"),("es","Spanish")]:
-                try:
-                    # nome
-                    nome_t = _t(nome, lname) or nome
-                    # procedimento: traduco SOLO il campo testo di ogni passo (numero_chiave e n invariati)
-                    proc_t = []
-                    for step in proc_p:
-                        if isinstance(step,dict):
-                            st = dict(step)
-                            st["testo"] = _t(step.get("testo",""), lname) or step.get("testo","")
-                            proc_t.append(st)
-                    # applicazioni: lista di stringhe
-                    appl_t = [(_t(a, lname) or a) for a in appl_p if isinstance(a,str)]
-                    # punto critico
-                    pc_t = _t(pc, lname) if pc else ""
-                    cur.execute(f"""UPDATE ricette SET nome_{lang}=%s, procedimento_{lang}=%s::jsonb,
-                        applicazioni_{lang}=%s::jsonb, punto_critico_{lang}=%s WHERE id=%s""",
-                        (nome_t, _json.dumps(proc_t,ensure_ascii=False),
-                         _json.dumps(appl_t,ensure_ascii=False), pc_t, rid))
-                    conn.commit(); ok_lang[lang]=len(proc_t)
-                except Exception as le:
-                    errori.append(f"{rid}/{lang}: {str(le)[:50]}")
-            fatti.append(f"{rid}: {ok_lang}")
+            try:
+                # UN unico blob di testo: nome + passi (con marcatori) + applicazioni + punto critico
+                SEP = "\n@@@\n"
+                passi_txt = SEP.join(step.get("testo","") for step in proc_p if isinstance(step,dict))
+                appl_txt = SEP.join(a for a in appl_p if isinstance(a,str))
+                blob = (f"NOME: {nome}\n===PROCEDIMENTO===\n{passi_txt}\n===APPLICAZIONI===\n{appl_txt}\n===CRITICO===\n{pc or ''}")
+                pr = (f"Translate to {lname}. Keep the EXACT structure with the same ===MARKERS=== and the same "
+                      f"{SEP.strip()} separators between items. Translate only the text, keep numbers/units. "
+                      f"Professional cooking language. Return ONLY the translated text:\n\n{blob}")
+                out = _haiku_raw(pr) or ""
+                # ri-parsing per marcatori (robusto, niente JSON)
+                def _sect(txt, a, b=None):
+                    try:
+                        s = txt.split(a,1)[1]
+                        return s.split(b,1)[0] if b else s
+                    except: return ""
+                nome_t = _sect(out,"NOME:","===PROCEDIMENTO===").strip() or nome
+                proc_raw = _sect(out,"===PROCEDIMENTO===","===APPLICAZIONI===").strip()
+                appl_raw = _sect(out,"===APPLICAZIONI===","===CRITICO===").strip()
+                pc_t = _sect(out,"===CRITICO===").strip()
+                passi_tr = [x.strip() for x in proc_raw.split(SEP.strip()) if x.strip()]
+                proc_t = []
+                for i,step in enumerate([s for s in proc_p if isinstance(s,dict)]):
+                    st = dict(step)
+                    if i < len(passi_tr): st["testo"]=passi_tr[i]
+                    proc_t.append(st)
+                appl_t = [x.strip() for x in appl_raw.split(SEP.strip()) if x.strip()] or appl_p
+                cur.execute(f"""UPDATE ricette SET nome_{lang}=%s, procedimento_{lang}=%s::jsonb,
+                    applicazioni_{lang}=%s::jsonb, punto_critico_{lang}=%s WHERE id=%s""",
+                    (nome_t, _json.dumps(proc_t,ensure_ascii=False),
+                     _json.dumps(appl_t,ensure_ascii=False), pc_t, rid))
+                conn.commit()
+                fatti.append(f"{rid}: {len(proc_t)} passi -> {lang}")
+            except Exception as le:
+                errori.append(f"{rid}: {str(le)[:60]}")
             n+=1
-        cur.execute("SELECT COUNT(*) FROM ricette WHERE nome_en IS NULL OR procedimento_en IS NULL")
+        cur.execute(f"SELECT COUNT(*) FROM ricette WHERE nome_{lang} IS NULL OR procedimento_{lang} IS NULL")
         restano = cur.fetchone()[0]
         return jsonify({"ok":True,"tradotti":fatti,"errori":errori,"restano":restano})
     except Exception as e:
