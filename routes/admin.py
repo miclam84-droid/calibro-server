@@ -2017,38 +2017,37 @@ def admin_traduci_ricette():
             proc_p = proc if isinstance(proc,list) else (_json.loads(proc) if proc else [])
             appl_p = appl if isinstance(appl,list) else (_json.loads(appl) if appl else [])
             try:
-                # UN unico blob di testo: nome + passi (con marcatori) + applicazioni + punto critico
-                SEP = "\n@@@\n"
-                passi_txt = SEP.join(step.get("testo","") for step in proc_p if isinstance(step,dict))
-                appl_txt = SEP.join(a for a in appl_p if isinstance(a,str))
-                blob = (f"NOME: {nome}\n===PROCEDIMENTO===\n{passi_txt}\n===APPLICAZIONI===\n{appl_txt}\n===CRITICO===\n{pc or ''}")
-                pr = (f"Translate to {lname}. Keep the EXACT structure with the same ===MARKERS=== and the same "
-                      f"{SEP.strip()} separators between items. Translate only the text, keep numbers/units. "
-                      f"Professional cooking language. Return ONLY the translated text:\n\n{blob}")
-                out = _haiku_raw(pr) or ""
-                # ri-parsing per marcatori (robusto, niente JSON)
-                def _sect(txt, a, b=None):
-                    try:
-                        s = txt.split(a,1)[1]
-                        return s.split(b,1)[0] if b else s
-                    except: return ""
-                nome_t = _sect(out,"NOME:","===PROCEDIMENTO===").strip() or nome
-                proc_raw = _sect(out,"===PROCEDIMENTO===","===APPLICAZIONI===").strip()
-                appl_raw = _sect(out,"===APPLICAZIONI===","===CRITICO===").strip()
-                pc_t = _sect(out,"===CRITICO===").strip()
-                passi_tr = [x.strip() for x in proc_raw.split(SEP.strip()) if x.strip()]
+                def _one(testo):
+                    """1 chiamata Haiku per 1 testo. Ritorna la traduzione pulita."""
+                    if not testo or not str(testo).strip(): return ""
+                    out = _haiku_raw(f"Translate this Italian cooking text to {lname}. Keep numbers and units. "
+                                     f"Return ONLY the translation on a single line, no quotes, no notes:\n{testo}")
+                    return (out or "").strip().strip('"').strip()
+                # i passi in UNA chiamata, separati da @@@ (un solo separatore semplice)
+                passi = [step.get("testo","") for step in proc_p if isinstance(step,dict)]
+                passi_join = "\n@@@\n".join(passi)
+                proc_out_txt = _haiku_raw(
+                    f"Translate to {lname} each cooking step. The steps are separated by a line with @@@. "
+                    f"Keep EXACTLY the same number of steps and the same @@@ separators. Keep numbers/units. "
+                    f"Return ONLY the translated steps with @@@ between them:\n\n{passi_join}") or ""
+                passi_tr = [x.strip() for x in proc_out_txt.split("@@@") if x.strip()]
+                # se il conteggio non torna, traduco passo per passo (fallback sicuro)
+                if len(passi_tr) != len(passi):
+                    passi_tr = [_one(pz) for pz in passi]
                 proc_t = []
                 for i,step in enumerate([s for s in proc_p if isinstance(s,dict)]):
                     st = dict(step)
-                    if i < len(passi_tr): st["testo"]=passi_tr[i]
+                    if i < len(passi_tr) and passi_tr[i]: st["testo"]=passi_tr[i]
                     proc_t.append(st)
-                appl_t = [x.strip() for x in appl_raw.split(SEP.strip()) if x.strip()] or appl_p
+                nome_t = _one(nome) or nome
+                pc_t = _one(pc) if pc else ""
+                appl_t = [_one(a) or a for a in appl_p if isinstance(a,str)]
                 cur.execute(f"""UPDATE ricette SET nome_{lang}=%s, procedimento_{lang}=%s::jsonb,
                     applicazioni_{lang}=%s::jsonb, punto_critico_{lang}=%s WHERE id=%s""",
                     (nome_t, _json.dumps(proc_t,ensure_ascii=False),
                      _json.dumps(appl_t,ensure_ascii=False), pc_t, rid))
                 conn.commit()
-                fatti.append(f"{rid}: {len(proc_t)} passi -> {lang}")
+                fatti.append(f"{rid}: {len(passi_tr)}/{len(passi)} passi -> {lang}")
             except Exception as le:
                 errori.append(f"{rid}: {str(le)[:60]}")
             n+=1
@@ -2057,30 +2056,6 @@ def admin_traduci_ricette():
         return jsonify({"ok":True,"tradotti":fatti,"errori":errori,"restano":restano})
     except Exception as e:
         return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
-    finally:
-        _release_conn(conn)
-
-@bp.route("/admin/debug-traduzione")
-def admin_debug_traduzione():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
-        return "Forbidden", 403
-    import json as _json
-    from ai import _haiku_raw
-    rid = request.args.get("id","ric-bagel")
-    conn = _get_conn()
-    try:
-        cur = conn.cursor()
-        cur.execute("SELECT nome, nome_en, procedimento_en FROM ricette WHERE id=%s",(rid,))
-        row = cur.fetchone()
-        nome = row[0] if not hasattr(row,"keys") else row["nome"]
-        nome_en = row[1] if not hasattr(row,"keys") else row["nome_en"]
-        proc_en = row[2] if not hasattr(row,"keys") else row["procedimento_en"]
-        # provo una traduzione live per vedere cosa torna Haiku
-        test = _haiku_raw("Translate to English, return only the translation: pesare con precisione tutti gli ingredienti")
-        return jsonify({"nome_it":nome,"nome_en_salvato":nome_en,
-            "proc_en_salvato_primo": (proc_en[0] if isinstance(proc_en,list) and proc_en else str(proc_en)[:100]),
-            "test_haiku_live": (test or "")[:100]})
     finally:
         _release_conn(conn)
 
