@@ -2008,6 +2008,79 @@ def admin_collega_fenomeni_ricette():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/crea-strumenti")
+def admin_crea_strumenti():
+    """Crea i nodi-Strumento (attrezzature di trasformazione) con scienza/parametri/errori,
+    collegati alle tecniche che abilitano (abilita) e usati come attrezzatura moderna del mestiere."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # id -> (nome, disciplina, scheda, parametri, errore_tipico, [tecniche che abilita])
+    STRUMENTI = {
+        "strum-roner": ("Roner / termocircolatore","cucina",
+            "Il roner (termocircolatore a immersione) mantiene un bagno d'acqua a temperatura esatta e costante per la cottura sottovuoto. La precisione al grado permette di colpire la soglia di denaturazione voluta senza superarla: il cuore raggiunge esattamente la stessa T della superficie. E' il controllo del principio di denaturazione portato al grado.",
+            "Uovo 63C - pesce 50-55C - manzo medio 56-58C - pollo 62-65C - maiale 60-62C - costine 70-75C per 24-36h - verdure 85C. Nei bar per infusioni: 55-71C per 1-3h.",
+            "Cottura non uniforme o sacchetto che galleggia: se il sacchetto non e ben sottovuoto l'aria fa da isolante e la parte emersa non cuoce. Sigillare bene, tenere immerso, acqua in circolo.",
+            ["tec-roner-sottovuoto"]),
+        "strum-sottovuoto": ("Macchina sottovuoto (camera)","cucina",
+            "La macchina sottovuoto toglie l'aria dal sacchetto (o dal contenitore) prima della cottura o della conservazione. Meno aria = miglior trasferimento di calore nel roner, niente ossidazione, marinature piu veloci (la depressione apre le fibre), conservazione piu lunga. La versione a campana fa il vuoto anche sui liquidi.",
+            "Vuoto tipico 99% (camera) - marinatura sottovuoto minuti invece di ore - conservazione 3-5x piu lunga.",
+            "Liquidi che bollono in camera: sotto vuoto spinto l'acqua evapora a temperatura ambiente. Fermare il vuoto al punto giusto o raffreddare prima di sigillare i liquidi.",
+            ["tec-roner-sottovuoto","tec-marinatura"]),
+        "strum-abbattitore": ("Abbattitore di temperatura","gelateria",
+            "L'abbattitore porta il cuore del prodotto da +70C a +3C (abbattimento positivo) o a -18C (surgelazione) in tempi rapidissimi. Attraversa in fretta la zona di pericolo microbico e - nel gelato e nei surgelati - forma cristalli di ghiaccio PICCOLI (congelamento rapido) invece che grossi: e la differenza tra un liscio e un ruvido.",
+            "Abbattimento positivo +70->+3C in <90 min - surgelazione -18C al cuore - abbattere prima di conservare.",
+            "Cristalli grossi da raffreddamento lento: se il prodotto raffredda piano (freezer domestico) i cristalli crescono e il gelato diventa sabbioso. L'abbattitore rapido li tiene piccoli.",
+            ["tec-abbattimento"]),
+        "strum-sifone": ("Sifone (whipping siphon)","cucina",
+            "Il sifone carica un liquido con cartucce di N2O (per spume/panna) o CO2 (per gassate): il gas si scioglie sotto pressione e in uscita espande la preparazione in schiuma leggera. Con addensanti o grassi si fanno espume, arie, mousse; con N2O si accelerano anche le infusioni (pressione-rilascio).",
+            "1-2 cariche N2O per 0.5L - riposo in frigo prima dell'uso - infusione rapida: carica, agita, sgasa.",
+            "Spuma liquida o che non tiene: manca il corpo (grasso o addensante) o troppo poche cariche. Serve una base con abbastanza materia per intrappolare il gas.",
+            ["tec-sifone-spuma"]),
+        "strum-rotovapor": ("Rotavapor (evaporatore rotante)","bar",
+            "Il rotavapor distilla sotto vuoto a bassa temperatura: il vuoto abbassa il punto di ebollizione (l'acqua bolle a 30-40C invece di 100C), cosi si estraggono e concentrano aromi delicati senza cuocerli. Per distillati aromatici, essenze, riduzioni cristalline che a caldo si degraderebbero.",
+            "Vuoto ~50-150 mbar - bagno 40-50C - rotazione costante del pallone - aromi volatili preservati.",
+            "Aromi cotti o persi: temperatura del bagno troppo alta o vuoto insufficiente cuociono l'aroma. Abbassare la T e spingere il vuoto per distillare a freddo.",
+            ["tec-rotovapor"]),
+        "strum-disidratatore": ("Essiccatore / disidratatore","cucina",
+            "L'essiccatore rimuove acqua a bassa temperatura con aria ventilata: concentra gli aromi e abbassa l'attivita dell'acqua (Aw) sotto le soglie di crescita microbica, rendendo il prodotto stabile. Per chips, polveri aromatiche, frutta secca, croccantezze, guarnizioni.",
+            "40-60C per ore - Aw target <0.6 (muffe) e <0.85 (batteri) per stabilita - aria in circolo.",
+            "Prodotto che ammuffisce: essiccazione incompleta, Aw ancora alta. Prolungare finche il prodotto e davvero secco e stabile.",
+            ["tec-disidratazione"]),
+        "strum-pacojet": ("Pacojet","gelateria",
+            "Il Pacojet micronizza un blocco surgelato in una crema finissima senza scongelarlo: lame ad alta velocita raschiano strati sottilissimi, creando texture ultra-lisce (gelati, sorbetti, mousse, farce) al momento, porzione per porzione. Lavora sul principio dei cristalli piccoli: micronizza invece di mantecare.",
+            "Blocco a -18/-20C - micronizzazione al momento - texture liscia porzione singola.",
+            "Texture granulosa: blocco non abbastanza freddo o non compatto. Congelare bene e pieno prima di pacossare.",
+            ["tec-abbattimento","tec-mantecatura"]),
+    }
+    conn = _get_conn()
+    try:
+        cur = conn.cursor(); creati=[]; collegati=[]
+        for sid,(nome,disc,scheda,parametri,errore,tecs) in STRUMENTI.items():
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(sid,))
+            data={"scheda":scheda,"parametri":parametri,"errore_tipico":errore,"tipo":"attrezzatura"}
+            if not cur.fetchone():
+                cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                    (sid,"Strumento",nome,disc,_json.dumps(data,ensure_ascii=False)))
+                creati.append(sid)
+            else:
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(_json.dumps(data,ensure_ascii=False),sid))
+            for tec in tecs:
+                cur.execute("SELECT id FROM nodes WHERE id=%s",(tec,))
+                if not cur.fetchone(): continue
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='abilita' AND to_id=%s",(sid,tec))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                        (sid,tec,"abilita",_json.dumps({},ensure_ascii=False)))
+                    collegati.append(f"{sid}->{tec}")
+        conn.commit()
+        return jsonify({"ok":True,"strumenti_creati":creati,"collegamenti":collegati})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
