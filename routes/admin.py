@@ -1725,6 +1725,75 @@ def admin_errori_completa():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/tecniche-completa")
+def admin_tecniche_completa():
+    """Completa l'asse TECNICHE: collega i fenomeni alle tecniche esistenti (realizzato_da)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # fenomeno -> [tecniche che lo realizzano/governano] (tecniche gia esistenti nel grafo)
+    MAPPA = {
+        "fen-frittura": ["tec-frittura"],
+        "fen-gelatinizzazione-salse": ["tec-emulsione","tec-deglassare"],
+        "fen-catena-freddo": ["tec-lettura-ph","tec-curing"],
+        "fen-attivita-acqua": ["tec-curing","tec-affumicatura"],
+        "fen-anisakis": ["tec-curing"],
+        "fen-haccp": ["tec-lettura-ph"],
+        "fen-conserve-botulino": ["tec-lettura-ph","tec-fermentazione-lattica"],
+        "fen-ustioni-olio": ["tec-frittura"],
+        "fen-shakerare-mescolare": ["tec-shake","tec-stir"],
+        "fen-attivita-enzimatica": ["tec-fermentazione-lattica","tec-curing"],
+        "fen-collagene-brasato": ["tec-brasatura-tecnica","tec-sobbollitura"],
+        "fen-infusioni": ["tec-fat-washing-tecnica","tec-muddle"],
+        "fen-zuccheri-impasto": ["tec-impasto"],
+        "fen-uova-impasto": ["tec-impasto"],
+        "fen-latte-impasto": ["tec-impasto"],
+        "fen-cottura-sous-vide": ["tec-sous-vide-tecnica"],
+        "fen-tangzhong-yudane": ["tec-impasto"],
+        "fen-levain-pate-fermentee": ["tec-poolish-preferment","tec-retard"],
+        "fen-rosolatura": ["tec-rosolatura","tec-saltatura"],
+        "fen-ghiaccio": ["tec-shake","tec-stir"],
+        "fen-amaro-bitter": ["tec-muddle"],
+        "fen-chiarificazione-latte": ["tec-milk-punch"],
+        "fen-diluizione": ["tec-shake","tec-stir"],
+        "fen-distillazione": ["tec-fat-washing-tecnica"],
+        "fen-macinatura-caffe": ["tec-estrazione-espresso","tec-pour-over"],
+        "fen-zuccheri-pac": ["tec-bilanciamento-mix"],
+        "fen-grassi-stabilizzanti": ["tec-bilanciamento-mix","tec-mantecatura"],
+        "fen-fermentazione-alcolica": ["tec-vinificazione-bianco","tec-macerazione"],
+        "fen-tannini-vino": ["tec-macerazione"],
+        "fen-luppolo": ["tec-mash","tec-dry-hopping-tecnica"],
+        "fen-soffritto": ["tec-saltatura"],
+        "fen-mash-enzimi": ["tec-mash"],
+        "fen-dry-hopping": ["tec-dry-hopping-tecnica"],
+        "fen-maturazione-legno": ["tec-macerazione"],
+        "fen-autolisi": ["tec-autolisi"],
+        "fen-poolish-biga": ["tec-poolish-preferment"],
+    }
+    conn = _get_conn()
+    try:
+        cur = conn.cursor(); fatti=[]; saltati=[]
+        for fen, tecs in MAPPA.items():
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(fen,))
+            if not cur.fetchone():
+                saltati.append(f"{fen}(no fen)"); continue
+            for tec in tecs:
+                cur.execute("SELECT id FROM nodes WHERE id=%s",(tec,))
+                if not cur.fetchone():
+                    saltati.append(f"{tec}(no tec)"); continue
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='realizzato_da' AND to_id=%s",(fen,tec))
+                if cur.fetchone(): continue
+                cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                    (fen,tec,"realizzato_da",_json.dumps({},ensure_ascii=False)))
+                fatti.append(f"{fen}->{tec}")
+        conn.commit()
+        return jsonify({"ok":True,"collegati":fatti,"saltati":saltati})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
