@@ -1866,6 +1866,97 @@ def admin_genera_errori_ai():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/tecniche-completa2")
+def admin_tecniche_completa2():
+    """Completa TECNICHE al 100%: collega a tecniche esistenti + crea tecniche NUOVE (incluse strumentali)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # tecniche NUOVE da creare (id -> nome, disciplina, scheda)
+    NUOVE = {
+        "tec-bilanciamento-drink": ("Bilanciamento del drink","bar","Regolare le quattro forze (dolce, acido, forte, amaro) verso l'equilibrio. Il sour classico e 2:1:1 (distillato:acido:dolce). Si assaggia e si corregge: piu acido se stucchevole, piu dolce se aggressivo."),
+        "tec-cottura-pasta": ("Cottura della pasta","cucina","Acqua abbondante (1L ogni 100g), sale 7-10g/L, bollore vivace. Scolare al dente (cuore ancora vetroso). L'acqua di cottura, ricca di amido, emulsiona la salsa: tenerne un mestolo."),
+        "tec-dry-shake": ("Dry shake (emulsione albume)","bar","Shakerata SENZA ghiaccio prima (10-15s) per denaturare l'albume e creare la schiuma, poi con ghiaccio per raffreddare e diluire. Senza il dry shake la schiuma e grossolana e instabile."),
+        "tec-shock-termico": ("Sbollentatura e shock termico","cucina","Tuffo veloce in acqua bollente salata, poi shock in acqua e ghiaccio per fermare la cottura. Fissa il verde della clorofilla (evita il viraggio a feofitina) e ferma la cottura al punto giusto."),
+        "tec-riposo-carne": ("Riposo della carne","cucina","Far riposare la carne dopo la cottura (bistecca 5 min, arrosto 15-20) coperta. Le fibre si rilassano e i succhi si ridistribuiscono invece di uscire al taglio. Salta il riposo = tagliere allagato."),
+        "tec-roner-sottovuoto": ("Cottura a bassa temperatura (roner/sottovuoto)","cucina","Cottura in sacchetto sottovuoto immerso in acqua a temperatura controllata dal roner (termocircolatore). Precisione al grado: uovo 63C, petto di pollo 62-64C, manzo 54-56C. Tempo lungo, risultato uniforme cuore-superficie. La macchina sottovuoto toglie l'aria (trasferimento di calore migliore, no ossidazione)."),
+        "tec-abbattimento": ("Abbattimento e crioscopia","gelateria","Raffreddamento rapido sotto zero (abbattitore): congela in fretta = cristalli piccoli = liscio. Nel gelato governa la crioscopia (abbassamento del punto di congelamento con gli zuccheri). Rallentare = cristalli grossi = ruvido."),
+        "tec-sifone-spuma": ("Sifone e spume","cucina","Caricare un liquido (con addensante o grasso) in un sifone con cartuccia di N2O: il gas si scioglie sotto pressione e in uscita espande in spuma/espuma. Governa aria, texture, aromi concentrati in leggerezza."),
+        "tec-disidratazione": ("Essiccazione e disidratazione","cucina","Rimuovere acqua a bassa temperatura (essiccatore/disidratatore, 40-60C) per concentrare aromi e abbassare l'attivita dell'acqua (Aw) sotto le soglie di crescita microbica. Governa conservazione, chips, polveri, croccantezze."),
+        "tec-rotovapor": ("Distillazione a freddo (rotavapor)","bar","Distillare sotto vuoto a bassa temperatura (rotavapor): il vuoto abbassa il punto di ebollizione, si estraggono aromi delicati senza cuocerli. Per distillati aromatici, essenze, riduzioni limpide che a caldo si degraderebbero."),
+        "tec-fermentazione-controllata": ("Fermentazione controllata","vino","Governare la fermentazione controllando temperatura (lieviti fragili sopra 30-35C), nutrienti, e densita. Vale per vino, birra, impasti: il lievito e vivo, va tenuto nella finestra giusta."),
+        "tec-affinamento": ("Affinamento e maturazione","vino","Far evolvere il prodotto nel tempo in condizioni controllate (bottiglia, botte, cella): i tannini si ammorbidiscono, gli aromi si integrano. Governa vino, distillati, formaggi, salumi."),
+        "tec-montatura": ("Montatura (aria in emulsione)","pasticceria","Incorporare aria sbattendo: la panna monta perche i globuli di grasso inglobano bolle (tra 4C e non oltre, o si smonta in burro); l'albume monta perche le proteine intrappolano aria. Governa panna, meringhe, mousse, souffle."),
+        "tec-controllo-acqua": ("Gestione dell'acqua (brewing)","caffetteria","Regolare durezza e minerali dell'acqua: troppo dura estrae male e incrosta, troppo pura e piatta. L'acqua e il 98% del caffe e oltre il 90% della birra: profilo minerale giusto = estrazione giusta."),
+    }
+    # fenomeno -> tecniche (esistenti O nuove appena create)
+    MAPPA = {
+        "fen-equilibrio-cocktail": ["tec-bilanciamento-drink"],
+        "fen-pasta-acqua": ["tec-cottura-pasta"],
+        "fen-emulsione-bar": ["tec-dry-shake","tec-shake"],
+        "fen-uova-coagulazione": ["tec-poche","tec-roner-sottovuoto"],
+        "fen-emulsione-salse": ["tec-emulsione"],
+        "fen-verdure-verdi": ["tec-shock-termico","tec-sbianchitura"],
+        "fen-riposo-carne": ["tec-riposo-carne","tec-arrostitura"],
+        "fen-cristalli-ghiaccio": ["tec-mantecatura","tec-abbattimento"],
+        "fen-enzimi-farina": ["tec-autolisi","tec-impasto"],
+        "fen-aw": ["tec-disidratazione","tec-curing"],
+        "fen-grassi-impasto": ["tec-impasto","tec-laminazione" if False else "tec-formatura"],
+        "fen-lievito-madre": ["tec-poolish-preferment","tec-retard"],
+        "fen-lievitazione-chimica": ["tec-impasto"],
+        "fen-coagulazione": ["tec-poche","tec-roner-sottovuoto"],
+        "fen-lipolisi": ["tec-curing","tec-affinamento"],
+        "fen-solforosa": ["tec-lettura-ph","tec-fermentazione-controllata"],
+        "fen-overrun": ["tec-mantecatura"],
+        "fen-vaporizzazione": ["tec-vaporizzazione-latte"],
+        "fen-crioscopia": ["tec-abbattimento","tec-bilanciamento-mix"],
+        "fen-viscosita": ["tec-emulsione"],
+        "fen-shelf-life-pane": ["tec-disidratazione"],
+        "fen-stabilizzanti-gelato": ["tec-bilanciamento-mix","tec-mantecatura"],
+        "fen-laminazione": ["tec-formatura"],
+        "fen-overrun-controllo": ["tec-mantecatura"],
+        "fen-brett": ["tec-fermentazione-controllata","tec-affinamento"],
+        "fen-brodo-fondo": ["tec-sobbollitura"],
+        "fen-brasatura": ["tec-brasatura-tecnica"],
+        "fen-salamoia": ["tec-marinatura","tec-curing"],
+        "fen-affinamento-vino": ["tec-affinamento","tec-macerazione"],
+        "fen-sorbetto": ["tec-mantecatura","tec-abbattimento"],
+        "fen-acqua-birra": ["tec-controllo-acqua","tec-mash"],
+        "fen-proteolisi": ["tec-curing","tec-affinamento"],
+        "fen-trasferimento-calore": ["tec-roner-sottovuoto","tec-arrostitura"],
+        "fen-acidita-volatile": ["tec-fermentazione-controllata"],
+        "fen-frittura-lievitati": ["tec-frittura"],
+    }
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        creati=[]
+        for tid,(nome,disc,scheda) in NUOVE.items():
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(tid,))
+            if not cur.fetchone():
+                cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                    (tid,"Tecnica",nome,disc,_json.dumps({"scheda":scheda},ensure_ascii=False)))
+                creati.append(tid)
+        collegati=[]; saltati=[]
+        for fen,tecs in MAPPA.items():
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(fen,))
+            if not cur.fetchone(): saltati.append(f"{fen}(no fen)"); continue
+            for tec in tecs:
+                cur.execute("SELECT id FROM nodes WHERE id=%s",(tec,))
+                if not cur.fetchone(): saltati.append(f"{tec}(no tec)"); continue
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='realizzato_da' AND to_id=%s",(fen,tec))
+                if cur.fetchone(): continue
+                cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                    (fen,tec,"realizzato_da",_json.dumps({},ensure_ascii=False)))
+                collegati.append(f"{fen}->{tec}")
+        conn.commit()
+        return jsonify({"ok":True,"tecniche_create":creati,"collegati":len(collegati),"dettaglio":collegati,"saltati":saltati})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
