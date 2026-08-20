@@ -1651,6 +1651,80 @@ def admin_principi_cardine():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/errori-completa")
+def admin_errori_completa():
+    """Completa l'asse ERRORI: errore tipico (sintomo al banco -> causa) per i fenomeni che ne hanno 0."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    # (err_id, nome, dom, causa, fenomeno, sintomo)
+    ERRORI = [
+        ("err-catena-freddo-rotta","Catena del freddo interrotta","tecnologie",
+         "il prodotto e rimasto sopra i 4C troppo a lungo: i batteri patogeni si moltiplicano nella zona di pericolo 4-60C. Mantenere sotto 4C in frigo, sopra 63C in mantenimento caldo, e ridurre al minimo il tempo intermedio","fen-catena-freddo","condensa, odore, prodotto tiepido"),
+        ("err-aw-alta","Prodotto secco che ammuffisce","tecnologie",
+         "attivita dell'acqua (Aw) troppo alta: sopra 0.6 le muffe crescono, sopra 0.85 i batteri. Un salume o un biscotto poco essiccato ha Aw alta e non e stabile a temperatura ambiente. Ridurre l'umidita libera con essiccazione, sale o zucchero","fen-attivita-acqua","muffa, irrancidimento, consistenza molle"),
+        ("err-anisakis-vivo","Pesce crudo non abbattuto","tecnologie",
+         "parassita Anisakis vivo: il pesce destinato al consumo crudo DEVE essere abbattuto a -20C per 24h (o -35C per 15h) per legge (Reg. CE 853/2004). Saltare l'abbattimento e un rischio sanitario grave","fen-anisakis","(rischio invisibile - per questo la regola e tassativa)"),
+        ("err-haccp-saltato","Punto critico non monitorato","tecnologie",
+         "un CCP (punto critico di controllo) senza limite misurato e senza registrazione: l'HACCP funziona solo se ogni punto critico ha un limite (es. temperatura), un monitoraggio e un'azione correttiva. Saltare la registrazione rende il sistema cieco","fen-haccp","non conformita, nessuna tracciabilita"),
+        ("err-conserva-botulino","Conserva a rischio botulino","tecnologie",
+         "conserva a bassa acidita (pH sopra 4.6) non sterilizzata correttamente: il Clostridium botulinum produce tossina in assenza di ossigeno. Le conserve non acide vanno sterilizzate in autoclave; sotto pH 4.6 (acidificando) il batterio non cresce","fen-conserve-botulino","coperchio gonfio, odore, bolle"),
+        ("err-olio-fiamma","Olio di frittura che prende fuoco","tecnologie",
+         "olio oltre il punto di fumo verso il punto di fiamma: olio surriscaldato (oltre 200-230C) fuma e puo incendiarsi. Mai acqua su un incendio d'olio (esplode): soffocare con un coperchio. Controllare la temperatura","fen-ustioni-olio","fumo acre, poi fiamma"),
+        ("err-shake-sbagliato","Drink torbido quando doveva essere limpido","bar",
+         "shakerato invece che mescolato (o viceversa): si shakera solo con agrumi/albume/latticini (serve emulsione e aria); si mescola quando tutti gli ingredienti sono limpidi (Negroni, Martini) per un drink cristallino e setoso","fen-shakerare-mescolare","torbido, o al contrario piatto e poco freddo"),
+        ("err-infusione-amara","Infusione troppo amara o astringente","bar",
+         "infusione troppo lunga o troppo calda: si estraggono i tannini e le note amare oltre gli aromi. Ridurre tempo e temperatura, assaggiare spesso: l'estrazione degli aromi e piu veloce di quella degli amari","fen-infusioni","amaro pungente, astringenza"),
+        ("err-ghiaccio-annacqua","Drink annacquato dal ghiaccio","bar",
+         "ghiaccio piccolo o bagnato: troppa superficie fonde in fretta e diluisce. Usare ghiaccio grande e asciutto (da congelatore, non da secchiello bagnato); il cubo grande raffredda con meno diluizione","fen-ghiaccio","acquoso, sapore diluito"),
+        ("err-bitter-squilibrato","Amaro che copre tutto","bar",
+         "troppo bitter o amaro non integrato: l'amaro deve incorniciare, non dominare. Dosare a gocce, bilanciare con la dolcezza; l'amaro percepito cambia con la temperatura e la diluizione","fen-amaro-bitter","drink sbilanciato sull'amaro"),
+        ("err-chiarifica-fallita","Chiarificazione al latte che resta torbida","bar",
+         "il latte non ha coagulato bene: serve acidita (il pH deve scendere sotto 4.6 col succo di agrumi) perche la caseina precipiti e intrappoli le particelle. Latte troppo poco, o acido insufficiente, lasciano il liquido torbido","fen-chiarificazione-latte","liquido opaco invece che cristallino"),
+        ("err-pac-sbagliato","Gelato troppo duro o troppo molle","gelateria",
+         "PAC (potere anticongelante) sbilanciato: troppo zucchero anticongelante (destrosio, fruttosio, invertito) e il gelato non indurisce; troppo poco ed e un mattone. Bilanciare gli zuccheri sul PAC target","fen-zuccheri-pac","non spatolabile, o si scioglie subito"),
+        ("err-stabilizzanti-sbagliati","Gelato che si sfalda o e gommoso","gelateria",
+         "grassi e stabilizzanti fuori dose: pochi e il gelato e ghiacciato e instabile; troppi ed e gommoso, pastoso. I grassi danno cremosita, gli stabilizzanti trattengono l'acqua: vanno dosati","fen-grassi-stabilizzanti","sfaldato, oppure gommoso"),
+        ("err-fermentazione-bloccata","Fermentazione che si ferma","vino",
+         "fermentazione bloccata: lievito morto per temperatura troppo alta (sopra 30-35C), carenza di nutrienti, o troppo alcol. Controllare la temperatura, nutrire il lievito, verificare la densita","fen-fermentazione-alcolica","densita ferma, sapore dolce residuo"),
+        ("err-tannini-aggressivi","Vino/tannino troppo astringente","vino",
+         "estrazione tannica eccessiva: troppa macerazione su bucce e semi, o tannini verdi da uve non mature. Ridurre il contatto con le bucce, l'affinamento ammorbidisce; servire piu caldo attenua l'astringenza","fen-tannini-vino","bocca secca, allappante"),
+        ("err-luppolo-squilibrato","Birra troppo amara o senza aroma","birra",
+         "luppolo mal gestito: luppolo da amaro aggiunto troppo (IBU alti squilibrati) o luppolo da aroma bollito troppo a lungo (l'aroma volatile evapora). Amaro a inizio bollitura, aroma a fine o in dry hopping","fen-luppolo","amaro aggressivo, o nessun profumo"),
+        ("err-macinatura-sbagliata","Caffe sotto o sovra-estratto","caffetteria",
+         "macinatura sbagliata per il metodo: troppo grossa = sotto-estratto (acido, acquoso); troppo fine = sovra-estratto (amaro, astringente). Regolare la macinatura sul metodo (fine espresso, media V60, grossa French press)","fen-macinatura-caffe","acido e debole, oppure amaro"),
+        ("err-soffritto-bruciato","Soffritto bruciato o crudo","cucina",
+         "temperatura sbagliata: troppo alta brucia l'aglio e le verdure (amaro); troppo bassa le lessa senza sviluppare aromi. Fuoco medio-basso, olio non fumante, pazienza: il soffritto e una base aromatica, non una doratura","fen-soffritto","bruciato e amaro, o crudo e slegato"),
+        ("err-tangzhong-liquido","Tangzhong troppo liquido o troppo denso","panificazione",
+         "rapporto acqua/farina o temperatura sbagliata: il tangzhong (roux di acqua e farina) va portato a 65C perche l'amido gelatinizzi e trattenga acqua. Troppo liquido non lega, troppo cotto e un grumo","fen-tangzhong-yudane","impasto che non trattiene umidita"),
+        ("err-levain-debole","Lievito madre/levain debole","panificazione",
+         "madre non abbastanza attiva o matura: rinfreschi irregolari, temperatura bassa, poca forza. Il levain deve raddoppiare e passare il test del galleggiamento prima dell'uso; una madre debole non solleva l'impasto","fen-levain-pate-fermentee","impasto che non lievita, acidita eccessiva"),
+    ]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor(); fatti=[]
+        for eid,nome,dom,causa,fen,sintomo in ERRORI:
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(eid,))
+            if not cur.fetchone():
+                cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                    (eid,"Errore",nome,dom,_json.dumps({"causa":causa},ensure_ascii=False)))
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(fen,))
+            if cur.fetchone():
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='fallisce_come' AND to_id=%s",(fen,eid))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                        (fen,eid,"fallisce_come",_json.dumps({"sintomo":sintomo},ensure_ascii=False)))
+                    fatti.append(f"{fen} -> {eid}")
+            else:
+                fatti.append(f"{fen}: FENOMENO ASSENTE")
+        conn.commit()
+        return jsonify({"ok":True,"errori":fatti})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
