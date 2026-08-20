@@ -251,9 +251,24 @@ def nodo():
     contesto = cerca_contesto(db, n["name"].split()[0])
     if not contesto or not contesto.get("fenomeni"):
         return jsonify({"risposta": None, "nota": "Nessun fenomeno collegato."})
+    lang = request.args.get('lang','it')
     domanda = f"Spiegami {n['name']} e i fenomeni che lo governano."
-    prompt = costruisci_prompt(domanda, contesto, lang=request.args.get('lang','it'))
-    risposta = chiedi_mistral(prompt)
+    prompt = costruisci_prompt(domanda, contesto, lang=lang)
+    # CACHE: la risposta AI di un nodo è deterministica (stesso nodo, stessa lingua).
+    # La calcolo una volta e la salvo, poi la servo istantanea (evita 5s di attesa AI a ogni apertura).
+    import json as _cjson
+    cache_key = f"risposta_cache_{lang}"
+    _ndata = n["data"] if isinstance(n["data"],dict) else (_cjson.loads(n["data"]) if n["data"] else {})
+    risposta = _ndata.get(cache_key) if isinstance(_ndata,dict) else None
+    if not risposta:
+        risposta = chiedi_mistral(prompt)
+        if risposta:
+            try:
+                if not isinstance(_ndata,dict): _ndata={}
+                _ndata[cache_key] = risposta
+                db.execute("UPDATE nodes SET data=? WHERE id=?", (_cjson.dumps(_ndata,ensure_ascii=False), nid))
+            except Exception:
+                pass
     log_evento("nodo", n["name"],
                fenomeni=[f["name"] for f in contesto["fenomeni"]],
                esito="ok" if risposta else "errore_modello")
