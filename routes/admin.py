@@ -2332,6 +2332,51 @@ def admin_audit_ricette():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/test-cache-nodo")
+def admin_test_cache_nodo():
+    """Diagnostico: prova a scrivere un campo cache nel data di un nodo e riporta l'errore vero."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    nid = request.args.get("id","fen-maillard")
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT data, pg_typeof(data) FROM nodes WHERE id=%s",(nid,))
+        row = cur.fetchone()
+        if not row: return jsonify({"errore":"nodo non trovato"})
+        raw = row[0] if not hasattr(row,"keys") else row["data"]
+        tipo = str(row[1] if not hasattr(row,"keys") else row["pg_typeof"])
+        d = raw if isinstance(raw,dict) else (_json.loads(raw) if raw else {})
+        # provo l'UPDATE come lo fa /nodo (senza cast)
+        d["_test_cache"]="prova"
+        errore_senza_cast=None
+        try:
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(_json.dumps(d,ensure_ascii=False),nid))
+            conn.commit()
+        except Exception as e1:
+            errore_senza_cast=str(e1)[:150]; conn.rollback()
+        # provo CON cast ::jsonb
+        errore_con_cast=None
+        try:
+            cur.execute("UPDATE nodes SET data=%s::jsonb WHERE id=%s",(_json.dumps(d,ensure_ascii=False),nid))
+            conn.commit()
+        except Exception as e2:
+            errore_con_cast=str(e2)[:150]; conn.rollback()
+        # rileggo per vedere se ha persistito
+        cur.execute("SELECT data FROM nodes WHERE id=%s",(nid,))
+        r2 = cur.fetchone()
+        raw2 = r2[0] if not hasattr(r2,"keys") else r2["data"]
+        d2 = raw2 if isinstance(raw2,dict) else (_json.loads(raw2) if raw2 else {})
+        return jsonify({"tipo_colonna":tipo,"data_era_dict":isinstance(raw,dict),
+            "errore_senza_cast":errore_senza_cast,"errore_con_cast":errore_con_cast,
+            "test_cache_persistito":d2.get("_test_cache")})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:300]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
