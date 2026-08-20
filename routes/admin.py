@@ -1793,6 +1793,49 @@ def admin_warmup_cache():
     except Exception as e:
         return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
 
+@bp.route("/admin/trova-doppioni")
+def admin_trova_doppioni():
+    """Diagnostica: trova nodi potenzialmente duplicati (stesso tipo, nomi simili) per il consolidamento."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json, re as _re
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, type, domain FROM nodes WHERE type IN ('Tecnica','Fenomeno','Strumento','principio','Errore') ORDER BY type, name")
+        nodi = cur.fetchall()
+        def norm(s):
+            s = (s or "").lower()
+            s = _re.sub(r'[^a-z0-9 ]','',s)
+            # tolgo parole comuni per confrontare il concetto
+            for w in ["tecnica","la","il","di","del","della","e","a","con","per","dei","le","i"]:
+                s = _re.sub(r'\b'+w+r'\b','',s)
+            return _re.sub(r'\s+',' ',s).strip()
+        # raggruppo per (tipo, nome normalizzato simile)
+        by_type = {}
+        for n in nodi:
+            nid = n[0] if not hasattr(n,"keys") else n["id"]
+            nome = n[1] if not hasattr(n,"keys") else n["name"]
+            tipo = n[2] if not hasattr(n,"keys") else n["type"]
+            by_type.setdefault(tipo,[]).append((nid,nome,norm(nome)))
+        sospetti = []
+        for tipo, items in by_type.items():
+            for i in range(len(items)):
+                for j in range(i+1,len(items)):
+                    id1,n1,k1 = items[i]; id2,n2,k2 = items[j]
+                    if not k1 or not k2: continue
+                    # doppione se: nome normalizzato uguale, o uno contiene l'altro, o keyword condivisa forte
+                    w1=set(k1.split()); w2=set(k2.split())
+                    common = w1 & w2
+                    if k1==k2 or (common and (len(common)>=min(len(w1),len(w2)) or (len(common)>=2))):
+                        sospetti.append({"tipo":tipo,"a":id1,"nome_a":n1,"b":id2,"nome_b":n2,"comune":list(common)})
+        return jsonify({"totale_sospetti":len(sospetti),"doppioni":sospetti})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
