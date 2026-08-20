@@ -261,6 +261,15 @@ def nodo():
     errori, visti_err = [], set()
     principi, visti_pr = [], set()
     tecniche, visti_tec = [], set()
+    strumenti, visti_str = [], set()
+    # se il nodo APERTO è uno Strumento, espongo i suoi campi (parametri, errore, scheda)
+    strumento_info = None
+    try:
+        nd = n["data"] if isinstance(n["data"],dict) else __import__("json").loads(n["data"] or "{}")
+        if n["type"] == "Strumento":
+            strumento_info = {"parametri": nd.get("parametri",""), "errore_tipico": nd.get("errore_tipico",""), "scheda": nd.get("scheda","")}
+    except Exception:
+        pass
     for f in contesto["fenomeni"]:
         for c in f["collegamenti"]:
             if c["relazione"] == "si_manifesta_in" and c["id"] not in visti:
@@ -276,6 +285,14 @@ def nodo():
             elif c["relazione"] in ("realizzato_da","controllato_con") and c["id"] not in visti_tec:
                 visti_tec.add(c["id"])
                 tecniche.append({"id": c["id"], "nome": c["verso"]})
+                # STRUMENTI che abilitano questa tecnica (relazione abilita inversa)
+                try:
+                    for s in db.execute("SELECT n.id, n.name FROM edges e JOIN nodes n ON n.id=e.from_id WHERE e.to_id=? AND e.relation='abilita'", (c["id"],)).fetchall():
+                        if s["id"] not in visti_str:
+                            visti_str.add(s["id"])
+                            strumenti.append({"id": s["id"], "nome": s["name"], "per_tecnica": c["verso"]})
+                except Exception:
+                    pass
             # ERRORI: sintomo osservabile al banco -> causa (il valore "bibbia")
             elif c["relazione"] == "fallisce_come" and c["id"] not in visti_err:
                 visti_err.add(c["id"])
@@ -299,7 +316,9 @@ def nodo():
         "connessi": connessi,
         "errori": errori,
         "principi": principi,
-        "tecniche": tecniche
+        "tecniche": tecniche,
+        "strumenti": strumenti,
+        "strumento_info": strumento_info
     })
 
 @bp.route("/calcola", methods=["POST"])
