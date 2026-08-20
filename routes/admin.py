@@ -1798,6 +1798,74 @@ def admin_tecniche_completa():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/genera-errori-ai")
+def admin_genera_errori_ai():
+    """Genera con AI un errore tipico (sintomo->causa) per i fenomeni senza errore, ancorato ai dati reali."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json, re as _re
+    import ai_gateway as GW
+    limite = int(request.args.get("limite","3"))
+    skip = int(request.args.get("skip","0"))
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # fenomeni senza errore
+        cur.execute("""SELECT n.id, n.name, n.domain, n.data FROM nodes n
+            WHERE n.type='Fenomeno' AND NOT EXISTS
+            (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='fallisce_come')
+            ORDER BY n.id""")
+        rows = cur.fetchall()
+        fatti, errori, n, visti = [], [], 0, 0
+        for row in rows:
+            if n>=limite: break
+            visti+=1
+            if visti<=skip: continue
+            fid = row[0] if not hasattr(row,"keys") else row["id"]
+            fname = row[1] if not hasattr(row,"keys") else row["name"]
+            fdom = row[2] if not hasattr(row,"keys") else row["domain"]
+            fdata = row[3] if not hasattr(row,"keys") else row["data"]
+            fd = fdata if isinstance(fdata,dict) else (_json.loads(fdata) if fdata else {})
+            scheda = (fd.get("scheda") or fd.get("scheda_it") or "")[:600]
+            numero = fd.get("numero_bersaglio") or fd.get("target") or ""
+            prompt = (
+                f"Sei un consulente scientifico F&B. Per questo fenomeno, scrivi UN errore tipico che un "
+                f"professionista fa al banco. Rispondi SOLO con JSON valido.\n\n"
+                f"FENOMENO: {fname}\nSCHEDA: {scheda}\nNUMERO BERSAGLIO: {numero}\n\n"
+                f'{{"nome_errore":"nome breve dell errore (es. Brasato stopposo)",'
+                f'"sintomo":"cosa vede/sente il professionista al banco, concreto",'
+                f'"causa":"la causa fisica + come si rimedia, 1-2 frasi con un numero se pertinente"}}'
+            )
+            try:
+                raw = GW.route_fast(prompt, max_tokens=500, temperature=0)
+                m = _re.search(r"\{.*\}", raw or "", _re.DOTALL)
+                if not m: errori.append(f"{fid}: no-json"); n+=1; continue
+                d = _json.loads(_re.sub(r",\s*([}\]])",r"\1",m.group(0)))
+                eid = "err-"+_re.sub(r"[^a-z0-9]+","-", (d.get("nome_errore","") or fid).lower()).strip("-")[:40]
+                cur.execute("SELECT id FROM nodes WHERE id=%s",(eid,))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                        (eid,"Errore",d.get("nome_errore","Errore"),fdom,_json.dumps({"causa":d.get("causa","")},ensure_ascii=False)))
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='fallisce_come' AND to_id=%s",(fid,eid))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                        (fid,eid,"fallisce_come",_json.dumps({"sintomo":d.get("sintomo","")},ensure_ascii=False)))
+                conn.commit()
+                fatti.append(f"{fid} -> {d.get('nome_errore','')[:30]}")
+            except Exception as ge:
+                errori.append(f"{fid}: {str(ge)[:60]}")
+            n+=1
+        # quanti restano
+        cur.execute("""SELECT COUNT(*) FROM nodes n WHERE n.type='Fenomeno' AND NOT EXISTS
+            (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='fallisce_come')""")
+        restano = cur.fetchone()[0]
+        return jsonify({"ok":True,"generati":fatti,"errori":errori,"restano_senza_errore":restano})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
