@@ -2341,8 +2341,7 @@ def admin_warmup_cache():
         return "Forbidden", 403
     import traceback, json as _json
     from db import carica_grafo
-    from motore import cerca_contesto, costruisci_prompt
-    from ai import chiedi_mistral
+    from ai import cerca_contesto, costruisci_prompt, chiedi_mistral
     limite = int(request.args.get("limite","10"))
     skip = int(request.args.get("skip","0"))
     tipo = request.args.get("tipo","Fenomeno")
