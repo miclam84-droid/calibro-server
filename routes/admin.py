@@ -1827,8 +1827,8 @@ def admin_genera_errori_ai():
             fdom = row[2] if not hasattr(row,"keys") else row["domain"]
             fdata = row[3] if not hasattr(row,"keys") else row["data"]
             fd = fdata if isinstance(fdata,dict) else (_json.loads(fdata) if fdata else {})
-            scheda = (fd.get("scheda") or fd.get("scheda_it") or "")[:600]
-            numero = fd.get("numero_bersaglio") or fd.get("target") or ""
+            scheda = str(fd.get("scheda") or fd.get("scheda_it") or "")[:600]
+            numero = str(fd.get("numero_bersaglio") or fd.get("target") or "")
             prompt = (
                 f"Sei un consulente scientifico F&B. Per questo fenomeno, scrivi UN errore tipico che un "
                 f"professionista fa al banco. Rispondi SOLO con JSON valido.\n\n"
