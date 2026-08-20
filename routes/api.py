@@ -703,8 +703,8 @@ def api_ricette_list():
     lang = request.args.get("lang","it")
     fenomeno = request.args.get("fenomeno","").strip()
     db = carica_grafo()
-    SEL = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es,procedimento,immagine,immagine_autore,immagine_url_fonte,tempo_prep,tempo_cottura,difficolta,porzioni,applicazioni,twist_di FROM ricette"
-    COLS = ["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es","procedimento","immagine","immagine_autore","immagine_url_fonte","tempo_prep","tempo_cottura","difficolta","porzioni","applicazioni","twist_di"]
+    SEL = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es,procedimento,immagine,immagine_autore,immagine_url_fonte,tempo_prep,tempo_cottura,difficolta,porzioni,applicazioni,twist_di,nome_en,nome_es,procedimento_en,procedimento_es,applicazioni_en,applicazioni_es,punto_critico_en,punto_critico_es FROM ricette"
+    COLS = ["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es","procedimento","immagine","immagine_autore","immagine_url_fonte","tempo_prep","tempo_cottura","difficolta","porzioni","applicazioni","twist_di","nome_en","nome_es","procedimento_en","procedimento_es","applicazioni_en","applicazioni_es","punto_critico_en","punto_critico_es"]
     try:
         if disc:
             rows = db.execute(SEL + " WHERE disciplina=%s ORDER BY nome", (disc,))
@@ -736,22 +736,36 @@ def api_ricette_list():
                         vb_arricchito["birra_links"] = _link_vino_birra(nome_b, "birra")
                         vb_arricchito["birra_query"] = nome_b
                 vb = vb_arricchito
+            nome_out = r.get("nome","")
+            proc_out = _parse(r.get("procedimento")) or []
+            appl_out = _parse(r.get("applicazioni")) or []
+            pc_out = r.get("punto_critico") or ""
+            if lang=="en":
+                if r.get("nome_en"): nome_out=r["nome_en"]
+                if r.get("procedimento_en"): proc_out=_parse(r.get("procedimento_en")) or proc_out
+                if r.get("applicazioni_en"): appl_out=_parse(r.get("applicazioni_en")) or appl_out
+                if r.get("punto_critico_en"): pc_out=r["punto_critico_en"]
+            elif lang=="es":
+                if r.get("nome_es"): nome_out=r["nome_es"]
+                if r.get("procedimento_es"): proc_out=_parse(r.get("procedimento_es")) or proc_out
+                if r.get("applicazioni_es"): appl_out=_parse(r.get("applicazioni_es")) or appl_out
+                if r.get("punto_critico_es"): pc_out=r["punto_critico_es"]
             fen_list = _parse(r.get("fenomeni")) or []
             if fenomeno:
                 ids_norm = [str(f).strip() for f in fen_list] if isinstance(fen_list,list) else []
                 if fenomeno not in ids_norm and not any(fenomeno in str(f) for f in ids_norm):
                     continue
             result.append({
-                "id":r.get("id",""),"nome":r.get("nome",""),"disciplina":r.get("disciplina",""),
+                "id":r.get("id",""),"nome":nome_out,"disciplina":r.get("disciplina",""),
                 "descrizione":desc,
                 "ingredienti":_parse(r.get("ingredienti")) or [],
                 "fenomeni":fen_list,
                 "tecniche":_parse(r.get("tecniche")) or [],
                 "numeri":_parse(r.get("numeri")) or {},
-                "punto_critico":r.get("punto_critico") or "",
+                "punto_critico":pc_out,
                 "abbinamenti":_parse(r.get("abbinamenti")) or {},
                 "vino_birra":vb,
-                "procedimento":_parse(r.get("procedimento")) or [],
+                "procedimento":proc_out,
                 "immagine":r.get("immagine") or "",
                 "immagine_autore":r.get("immagine_autore") or "",
                 "immagine_url_fonte":r.get("immagine_url_fonte") or "",
@@ -759,7 +773,7 @@ def api_ricette_list():
                 "tempo_cottura":r.get("tempo_cottura"),
                 "difficolta":r.get("difficolta") or "",
                 "porzioni":r.get("porzioni") or "",
-                "applicazioni":_parse(r.get("applicazioni")) or [],
+                "applicazioni":appl_out,
                 "twist_di":r.get("twist_di") or None
             })
         return jsonify(result)

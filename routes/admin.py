@@ -1961,6 +1961,90 @@ def admin_fenomeni_senza_ricetta():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/migra-schema-traduzioni")
+def admin_migra_schema_traduzioni():
+    """Aggiunge le colonne tradotte per i campi ricetta che erano solo in IT."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback
+    COLONNE = ["nome_en TEXT","nome_es TEXT","procedimento_en JSONB","procedimento_es JSONB",
+               "applicazioni_en JSONB","applicazioni_es JSONB","punto_critico_en TEXT","punto_critico_es TEXT"]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor(); fatte=[]
+        for col in COLONNE:
+            try:
+                cur.execute(f"ALTER TABLE ricette ADD COLUMN IF NOT EXISTS {col}"); fatte.append(col.split()[0])
+            except Exception as me:
+                pass
+        conn.commit()
+        return jsonify({"ok":True,"colonne":fatte})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:300]}),500
+    finally:
+        _release_conn(conn)
+
+@bp.route("/admin/traduci-ricette")
+def admin_traduci_ricette():
+    """Traduce nome/procedimento/applicazioni/punto_critico delle ricette in EN e ES via Haiku.
+    Ancorato: traduce il testo esistente, non rigenera. Batch con limite/skip."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json, re as _re
+    from ai import _haiku_raw
+    limite = int(request.args.get("limite","2"))
+    skip = int(request.args.get("skip","0"))
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT id,nome,procedimento,applicazioni,punto_critico FROM ricette
+            WHERE nome_en IS NULL OR procedimento_en IS NULL ORDER BY id""")
+        rows = cur.fetchall()
+        fatti, errori, n, visti = [], [], 0, 0
+        for row in rows:
+            if n>=limite: break
+            visti+=1
+            if visti<=skip: continue
+            rid = row[0] if not hasattr(row,"keys") else row["id"]
+            nome = row[1] if not hasattr(row,"keys") else row["nome"]
+            proc = row[2] if not hasattr(row,"keys") else row["procedimento"]
+            appl = row[3] if not hasattr(row,"keys") else row["applicazioni"]
+            pc = row[4] if not hasattr(row,"keys") else row["punto_critico"]
+            proc_p = proc if isinstance(proc,list) else (_json.loads(proc) if proc else [])
+            appl_p = appl if isinstance(appl,list) else (_json.loads(appl) if appl else [])
+            payload = {"nome":nome,"procedimento":proc_p,"applicazioni":appl_p,"punto_critico":pc or ""}
+            ok_lang = {}
+            for lang, lname in [("en","English"),("es","Spanish")]:
+                prompt = (
+                    f"Translate this recipe content from Italian to {lname}. Keep the JSON structure IDENTICAL, "
+                    f"translate ONLY the text values (nome, testo, applicazioni items, punto_critico). "
+                    f"Keep numero_chiave and n unchanged. Keep cooking terms professional. "
+                    f"Return ONLY valid JSON, no other text:\n{_json.dumps(payload,ensure_ascii=False)}"
+                )
+                try:
+                    raw = _haiku_raw(prompt)
+                    m = _re.search(r"\{.*\}", raw or "", _re.DOTALL)
+                    if not m: continue
+                    tr = _json.loads(_re.sub(r",\s*([}\]])",r"\1",m.group(0)))
+                    cur.execute(f"""UPDATE ricette SET nome_{lang}=%s, procedimento_{lang}=%s::jsonb,
+                        applicazioni_{lang}=%s::jsonb, punto_critico_{lang}=%s WHERE id=%s""",
+                        (tr.get("nome",nome), _json.dumps(tr.get("procedimento",[]),ensure_ascii=False),
+                         _json.dumps(tr.get("applicazioni",[]),ensure_ascii=False), tr.get("punto_critico",""), rid))
+                    conn.commit(); ok_lang[lang]=True
+                except Exception as le:
+                    errori.append(f"{rid}/{lang}: {str(le)[:50]}")
+            fatti.append(f"{rid}: {list(ok_lang.keys())}")
+            n+=1
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE nome_en IS NULL OR procedimento_en IS NULL")
+        restano = cur.fetchone()[0]
+        return jsonify({"ok":True,"tradotti":fatti,"errori":errori,"restano":restano})
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
