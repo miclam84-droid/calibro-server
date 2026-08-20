@@ -2332,50 +2332,55 @@ def admin_audit_ricette():
     finally:
         _release_conn(conn)
 
-@bp.route("/admin/test-cache-nodo")
-def admin_test_cache_nodo():
-    """Diagnostico: prova a scrivere un campo cache nel data di un nodo e riporta l'errore vero."""
+@bp.route("/admin/warmup-cache")
+def admin_warmup_cache():
+    """Scalda la cache AI di /nodo per un batch di nodi, così gli utenti non beccano mai
+    la prima apertura lenta (5s). Chiama internamente la logica di nodo. Param: limite, skip, tipo."""
     secret = request.args.get("s", "")
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     import traceback, json as _json
-    nid = request.args.get("id","fen-maillard")
-    conn = _get_conn()
+    from db import carica_grafo
+    from motore import cerca_contesto, costruisci_prompt
+    from ai import chiedi_mistral
+    limite = int(request.args.get("limite","10"))
+    skip = int(request.args.get("skip","0"))
+    tipo = request.args.get("tipo","Fenomeno")
+    lang = request.args.get("lang","it")
+    cache_key = f"risposta_cache_{lang}"
+    db = carica_grafo()
     try:
-        cur = conn.cursor()
-        cur.execute("SELECT data, pg_typeof(data) FROM nodes WHERE id=%s",(nid,))
-        row = cur.fetchone()
-        if not row: return jsonify({"errore":"nodo non trovato"})
-        raw = row[0] if not hasattr(row,"keys") else row["data"]
-        tipo = str(row[1] if not hasattr(row,"keys") else row["pg_typeof"])
-        d = raw if isinstance(raw,dict) else (_json.loads(raw) if raw else {})
-        # provo l'UPDATE come lo fa /nodo (senza cast)
-        d["_test_cache"]="prova"
-        errore_senza_cast=None
-        try:
-            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(_json.dumps(d,ensure_ascii=False),nid))
-            conn.commit()
-        except Exception as e1:
-            errore_senza_cast=str(e1)[:150]; conn.rollback()
-        # provo CON cast ::jsonb
-        errore_con_cast=None
-        try:
-            cur.execute("UPDATE nodes SET data=%s::jsonb WHERE id=%s",(_json.dumps(d,ensure_ascii=False),nid))
-            conn.commit()
-        except Exception as e2:
-            errore_con_cast=str(e2)[:150]; conn.rollback()
-        # rileggo per vedere se ha persistito
-        cur.execute("SELECT data FROM nodes WHERE id=%s",(nid,))
-        r2 = cur.fetchone()
-        raw2 = r2[0] if not hasattr(r2,"keys") else r2["data"]
-        d2 = raw2 if isinstance(raw2,dict) else (_json.loads(raw2) if raw2 else {})
-        return jsonify({"tipo_colonna":tipo,"data_era_dict":isinstance(raw,dict),
-            "errore_senza_cast":errore_senza_cast,"errore_con_cast":errore_con_cast,
-            "test_cache_persistito":d2.get("_test_cache")})
+        nodi = db.execute("SELECT id, name, data FROM nodes WHERE type=? ORDER BY id", (tipo,)).fetchall()
+        scaldati, gia, saltati, n, visti = [], 0, 0, 0, 0
+        for nd in nodi:
+            if n>=limite: break
+            visti+=1
+            if visti<=skip: continue
+            nid = nd["id"]; nome = nd["name"]
+            raw = nd["data"]
+            d = raw if isinstance(raw,dict) else (_json.loads(raw) if raw else {})
+            if isinstance(d,dict) and d.get(cache_key):
+                gia+=1; continue
+            contesto = cerca_contesto(db, (nome or "").split()[0])
+            if not contesto or not contesto.get("fenomeni"):
+                saltati+=1; n+=1; continue
+            prompt = costruisci_prompt(f"Spiegami {nome} e i fenomeni che lo governano.", contesto, lang=lang)
+            risposta = chiedi_mistral(prompt)
+            if risposta:
+                if not isinstance(d,dict): d={}
+                d[cache_key]=risposta
+                db.execute("UPDATE nodes SET data=? WHERE id=?", (_json.dumps(d,ensure_ascii=False), nid))
+                scaldati.append(nid)
+            n+=1
+        # quanti restano senza cache
+        tutti = db.execute("SELECT data FROM nodes WHERE type=?", (tipo,)).fetchall()
+        restano=0
+        for t in tutti:
+            dd = t["data"] if isinstance(t["data"],dict) else (_json.loads(t["data"]) if t["data"] else {})
+            if not (isinstance(dd,dict) and dd.get(cache_key)): restano+=1
+        return jsonify({"ok":True,"scaldati":scaldati,"gia_caldi":gia,"saltati":saltati,"restano_freddi":restano})
     except Exception as e:
-        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:300]}),500
-    finally:
-        _release_conn(conn)
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:400]}),500
 
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
