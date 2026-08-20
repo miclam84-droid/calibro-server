@@ -1507,6 +1507,65 @@ def admin_genera_procedimenti():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/coverage-fenomeni")
+def admin_coverage_fenomeni():
+    """Diagnostica 'Bibbia': per ogni fenomeno misura quanto è completo e collegato.
+    Assi: principio (governato_da), numero-bersaglio (data o si_manifesta_in.target),
+    errore (fallisce_come), tecnica (realizzato_da/controllato_con), prodotto (si_manifesta_in)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback, json as _json
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno'")
+        fen = cur.fetchall()
+        # tutti gli edge in uscita dai fenomeni
+        cur.execute("SELECT from_id, relation, to_id, data FROM edges")
+        edges = cur.fetchall()
+        out = {}
+        for e in edges:
+            fid = e[0] if not hasattr(e,"keys") else e["from_id"]
+            out.setdefault(fid, []).append((e[1] if not hasattr(e,"keys") else e["relation"],
+                                            e[2] if not hasattr(e,"keys") else e["to_id"],
+                                            e[3] if not hasattr(e,"keys") else e["data"]))
+        report = []
+        conteggi = {"principio":0,"numero":0,"errore":0,"tecnica":0,"prodotto":0,"completi":0,"orfani":0}
+        for f in fen:
+            fid = f[0] if not hasattr(f,"keys") else f["id"]
+            fname = f[1] if not hasattr(f,"keys") else f["name"]
+            fdom = f[2] if not hasattr(f,"keys") else f["domain"]
+            fdata = f[3] if not hasattr(f,"keys") else f["data"]
+            fd = fdata if isinstance(fdata,dict) else (_json.loads(fdata) if fdata else {})
+            rels = out.get(fid, [])
+            has_princ = any(r[0]=="governato_da" for r in rels)
+            has_err = any(r[0]=="fallisce_come" for r in rels)
+            has_tec = any(r[0] in ("realizzato_da","controllato_con") for r in rels)
+            prods = [r for r in rels if r[0]=="si_manifesta_in"]
+            has_prod = len(prods)>0
+            # numero: nel data del fenomeno o in un target di prodotto
+            has_num = bool(fd.get("numero_bersaglio") or fd.get("target") or fd.get("bersaglio"))
+            if not has_num:
+                for r in prods:
+                    rd = r[2] if isinstance(r[2],dict) else (_json.loads(r[2]) if r[2] else {})
+                    if rd.get("target"): has_num=True; break
+            for k,v in [("principio",has_princ),("numero",has_num),("errore",has_err),("tecnica",has_tec),("prodotto",has_prod)]:
+                if v: conteggi[k]+=1
+            score = sum([has_princ,has_num,has_err,has_tec,has_prod])
+            if score==5: conteggi["completi"]+=1
+            if score<=1: conteggi["orfani"]+=1
+            mancano = [k for k,v in [("principio",has_princ),("numero",has_num),("errore",has_err),("tecnica",has_tec),("prodotto",has_prod)] if not v]
+            report.append({"id":fid,"nome":fname,"dom":fdom,"score":score,"mancano":mancano})
+        report.sort(key=lambda x:x["score"])
+        return jsonify({"totale_fenomeni":len(fen), "conteggi":conteggi,
+                        "peggiori_20":report[:20],
+                        "nota":"score 5 = completo (Bibbia); score<=1 = orfano"})
+    except Exception as e:
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
