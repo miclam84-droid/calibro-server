@@ -2083,6 +2083,49 @@ def admin_azzera_traduzioni_sbagliate():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/pulisci-nomi-flavor")
+def admin_pulisci_nomi_flavor():
+    """Elenca e (se dry=0) traduce i nomi ahn sporchi EN->IT via AI, salvando sul nodo.
+    ?dry=1 (default) solo elenca; ?dry=0 traduce e salva. ?limite=N per fare a lotti."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    dry = request.args.get("dry", "1") != "0"
+    limite = int(request.args.get("limite", "80"))
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT id, name FROM nodes WHERE id LIKE 'ahn_%'
+                       AND (name ~ '[A-Z][a-z]+ [A-Z]' OR name ILIKE '%cheese%' OR name ILIKE '%wine%'
+                            OR name ILIKE '%beef%' OR name ILIKE '%roasted%' OR name ILIKE '%dried%'
+                            OR name ILIKE '%smoked%' OR name ILIKE '%fried%' OR name ILIKE '%raw%')
+                       ORDER BY name LIMIT %s""", (limite,))
+        rows = cur.fetchall()
+        items = [{"id": (r[0] if not hasattr(r,"keys") else r["id"]),
+                  "nome": (r[1] if not hasattr(r,"keys") else r["name"])} for r in rows]
+        if dry:
+            return jsonify({"dry_run": True, "totale": len(items), "nomi": items,
+                            "nota": "per tradurre e salvare: aggiungi &dry=0"})
+        # traduci e salva
+        from ai import _haiku_raw
+        aggiornati = []
+        for it in items:
+            en = it["nome"]
+            out = _haiku_raw(f"Traduci in italiano questo nome di ingrediente alimentare. "
+                             f"Rispondi SOLO col nome italiano, minuscolo, senza virgolette né spiegazioni. "
+                             f"Se è già un nome proprio internazionale (es. katsuobushi), lascialo. Nome: {en}")
+            it_nome = (out or "").strip().strip('"').strip().lower()
+            if it_nome and it_nome != en.lower() and len(it_nome) < 60:
+                cur.execute("UPDATE nodes SET name=%s WHERE id=%s", (it_nome, it["id"]))
+                aggiornati.append({"id": it["id"], "da": en, "a": it_nome})
+        conn.commit()
+        return jsonify({"dry_run": False, "aggiornati": len(aggiornati), "dettaglio": aggiornati})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"errore": str(e)}), 500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/audit-flavor")
 def admin_audit_flavor():
     """Audit del flavor network: quanti ingredienti Ahn, quanti composti, copertura abbinamenti,
