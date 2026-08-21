@@ -2083,6 +2083,52 @@ def admin_azzera_traduzioni_sbagliate():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/audit-flavor")
+def admin_audit_flavor():
+    """Audit del flavor network: quanti ingredienti Ahn, quanti composti, copertura abbinamenti,
+    e quanti nomi sono ancora 'sporchi' (inglesi/laboratorio non tradotti)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import traceback
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        out = {}
+        # nodi ahn (ingredienti del flavor network)
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE id LIKE 'ahn_%'")
+        out["nodi_ahn"] = cur.fetchone()[0]
+        # nodi composto
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Composto' OR id LIKE 'comp_%' OR id LIKE 'cmp_%'")
+        out["nodi_composto"] = cur.fetchone()[0]
+        # archi contiene_composto (ingrediente->composto)
+        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='contiene_composto'")
+        out["archi_contiene_composto"] = cur.fetchone()[0]
+        # archi abbinamento_aromatico
+        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='abbinamento_aromatico'")
+        out["archi_abbinamento"] = cur.fetchone()[0]
+        # ingredienti ahn con QUANTI composti (distribuzione)
+        cur.execute("""SELECT from_id, COUNT(*) c FROM edges WHERE relation='contiene_composto'
+                       GROUP BY from_id ORDER BY c""")
+        rows = cur.fetchall()
+        conteggi = [r[1] if not hasattr(r,"keys") else r["c"] for r in rows]
+        out["ingredienti_con_composti"] = len(conteggi)
+        if conteggi:
+            out["composti_min"] = min(conteggi)
+            out["composti_max"] = max(conteggi)
+            out["composti_mediana"] = sorted(conteggi)[len(conteggi)//2]
+            out["ingredienti_meno_5_composti"] = sum(1 for c in conteggi if c<5)
+        # nomi sporchi: nodi ahn il cui name ha maiuscole interne o parole inglesi tipiche
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE id LIKE 'ahn_%'
+                       AND (name ~ '[A-Z][a-z]+ [A-Z]' OR name ILIKE '%cheese%' OR name ILIKE '%wine%'
+                            OR name ILIKE '%beef%' OR name ILIKE '%roasted%')""")
+        out["nomi_sporchi_stimati"] = cur.fetchone()[0]
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[:300]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/stato-madri")
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
