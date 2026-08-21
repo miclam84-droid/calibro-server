@@ -2198,19 +2198,31 @@ def admin_pulisci_nomi_flavor():
                             "nota": "per tradurre e salvare: aggiungi &dry=0"})
         from ai import _haiku_raw
         aggiornati = []
+        saltati = []
         for it in items:
             en = it["nome"]
-            out = _haiku_raw(f"Traduci in italiano culinario questo ingrediente. REGOLE: "
-                             f"1) usa il nome che un cuoco italiano direbbe spontaneamente "
-                             f"(es. 'blue cheese'->'formaggio erborinato', 'butter oil'->'burro chiarificato'). "
-                             f"2) se è un nome proprio internazionale (katsuobushi, mirin), LASCIALO. "
-                             f"3) NON inventare: se non sei sicuro, restituisci il nome originale. "
-                             f"Rispondi SOLO col nome, minuscolo, senza virgolette. Nome: {en.replace('_',' ')}")
+            prompt_t = (f"Traduci in italiano culinario questo ingrediente. REGOLE: "
+                        f"1) usa il nome che un cuoco italiano direbbe spontaneamente "
+                        f"(es. 'blue cheese'->'formaggio erborinato', 'butter oil'->'burro chiarificato'). "
+                        f"2) se è un nome proprio internazionale (katsuobushi, mirin), LASCIALO. "
+                        f"3) NON inventare: se non sei sicuro, restituisci il nome originale. "
+                        f"Rispondi SOLO col nome, minuscolo, senza virgolette. Nome: {en.replace('_',' ')}")
+            out = _haiku_raw(prompt_t)
+            if not out:  # fallback su Mistral se Haiku non risponde (credito/rate intermittente)
+                try:
+                    from ai import chiedi_mistral
+                    out = chiedi_mistral(prompt_t)
+                except Exception:
+                    out = None
             it_nome = (out or "").strip().strip('"').strip().lower()
-            if it_nome and it_nome != en.lower() and len(it_nome) < 60:
+            # confronto col nome SENZA underscore (l'AI riceve gli spazi, deve differire da quello)
+            en_confronto = en.replace('_', ' ').lower()
+            if it_nome and it_nome != en_confronto and it_nome != en.lower() and len(it_nome) < 60:
                 db.execute("UPDATE nodes SET name=? WHERE id=?", (it_nome, it["id"]))
                 aggiornati.append({"id": it["id"], "da": en, "a": it_nome})
-        return jsonify({"dry_run": False, "aggiornati": len(aggiornati), "dettaglio": aggiornati})
+            else:
+                saltati.append({"nome": en, "ai": it_nome or "(vuoto)"})
+        return jsonify({"dry_run": False, "aggiornati": len(aggiornati), "dettaglio": aggiornati, "saltati": saltati[:10]})
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
