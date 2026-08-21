@@ -2133,15 +2133,15 @@ def admin_pulisci_nomi_flavor():
     db = carica_grafo()
     try:
         # pattern che funziona in admin.py: db.execute con ? e accesso per nome colonna
-        # filtro con soli LIKE (GLOB è SQLite-only; il wrapper traduce solo ?->%s, non GLOB)
-        rows = db.execute("""SELECT id, name FROM nodes WHERE id LIKE 'ahn_%'
-                       AND (lower(name) LIKE '%cheese%' OR lower(name) LIKE '%wine%'
-                            OR lower(name) LIKE '%beef%' OR lower(name) LIKE '%roasted%'
-                            OR lower(name) LIKE '%dried%' OR lower(name) LIKE '%smoked%'
-                            OR lower(name) LIKE '%fried%' OR lower(name) LIKE '%raw%'
-                            OR lower(name) LIKE '%sauce%' OR lower(name) LIKE '%green %'
-                            OR lower(name) LIKE '%black %' OR lower(name) LIKE '%white %'
-                            OR lower(name) LIKE '%red %' OR lower(name) LIKE '%oil%')
+        # NOTA: il wrapper passa params a psycopg → i % letterali dei LIKE vanno RADDOPPIATI (%%).
+        rows = db.execute(r"""SELECT id, name FROM nodes WHERE id LIKE 'ahn_%%'
+                       AND (lower(name) LIKE '%%cheese%%' OR lower(name) LIKE '%%wine%%'
+                            OR lower(name) LIKE '%%beef%%' OR lower(name) LIKE '%%roasted%%'
+                            OR lower(name) LIKE '%%dried%%' OR lower(name) LIKE '%%smoked%%'
+                            OR lower(name) LIKE '%%fried%%' OR lower(name) LIKE '%%raw%%'
+                            OR lower(name) LIKE '%%sauce%%' OR lower(name) LIKE '%%green %%'
+                            OR lower(name) LIKE '%%black %%' OR lower(name) LIKE '%%white %%'
+                            OR lower(name) LIKE '%%red %%' OR lower(name) LIKE '%%oil%%')
                        ORDER BY name LIMIT ?""", (limite,)).fetchall()
         items = [{"id": r["id"], "nome": r["name"]} for r in rows]
         if dry:
