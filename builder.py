@@ -222,3 +222,74 @@ def genera_twist(ricetta_madre, modifica, lang="it"):
         return variante
     except Exception as e:
         return {"errore":str(e)}
+
+
+def traduci_campi_ricetta(ricetta, lang):
+    """Traduce i campi testuali di una ricetta (dict) in 'en' o 'es' via Haiku.
+    Ritorna dict {nome, procedimento, applicazioni, punto_critico} tradotti.
+    Strategia robusta: passi in 1 chiamata con separatore @@@, fallback passo-per-passo.
+    Questo chiude il flusso TRILINGUE alla creazione: nessun debito traduzioni a valle."""
+    from ai import _haiku_raw
+    lname = {"en": "English", "es": "Spanish"}.get(lang, "English")
+    nome = ricetta.get("nome", "")
+    proc = ricetta.get("procedimento", []) or []
+    appl = ricetta.get("applicazioni", []) or []
+    pc = ricetta.get("punto_critico", "") or ""
+
+    def _one(testo):
+        if not testo or not str(testo).strip():
+            return ""
+        out = _haiku_raw(f"Translate this Italian cooking text to {lname}. Keep numbers and units. "
+                         f"Return ONLY the translation on a single line, no quotes:\n{testo}")
+        return (out or "").strip().strip('"').strip()
+
+    # passi in una chiamata sola con separatore @@@
+    passi = [p.get("testo", "") for p in proc if isinstance(p, dict)]
+    passi_tr = []
+    if passi:
+        joined = "\n@@@\n".join(passi)
+        out = _haiku_raw(
+            f"Translate to {lname} each cooking step. Steps are separated by a line with @@@. "
+            f"Keep EXACTLY the same number of steps and the same @@@ separators. Keep numbers/units. "
+            f"Return ONLY the translated steps with @@@ between them:\n\n{joined}") or ""
+        passi_tr = [x.strip() for x in out.split("@@@") if x.strip()]
+        if len(passi_tr) != len(passi):  # fallback affidabile
+            passi_tr = [_one(x) for x in passi]
+
+    proc_tr = []
+    idx = 0
+    for p in proc:
+        if isinstance(p, dict):
+            np = dict(p)
+            if idx < len(passi_tr) and passi_tr[idx]:
+                np["testo"] = passi_tr[idx]
+            proc_tr.append(np)
+            idx += 1
+
+    return {
+        "nome": _one(nome) or nome,
+        "procedimento": proc_tr,
+        "applicazioni": [_one(a) or a for a in appl if isinstance(a, str)],
+        "punto_critico": _one(pc) if pc else "",
+    }
+
+
+def genera_ricetta_trilingue(db, richiesta, disciplina="cucina"):
+    """Genera una ricetta IN ITALIANO e subito le traduzioni EN/ES dei campi testuali.
+    Ritorna la ricetta con i campi *_en e *_es pronti da salvare. Chiude il flusso trilingue
+    alla CREAZIONE (regola: la traduzione va nel flusso, non alla fine)."""
+    ric = genera_ricetta(db, richiesta, disciplina=disciplina, lang="it")
+    if ric.get("errore"):
+        return ric
+    for lang in ("en", "es"):
+        try:
+            tr = traduci_campi_ricetta(ric, lang)
+            ric[f"nome_{lang}"] = tr["nome"]
+            ric[f"procedimento_{lang}"] = tr["procedimento"]
+            ric[f"applicazioni_{lang}"] = tr["applicazioni"]
+            ric[f"punto_critico_{lang}"] = tr["punto_critico"]
+        except Exception:
+            pass  # se una lingua fallisce, la ricetta IT resta valida; traducibile dopo
+    ric["_trilingue"] = True
+    return ric
+

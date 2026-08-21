@@ -214,12 +214,13 @@ def genera_ricetta_endpoint():
     if not richiesta:
         return jsonify({"errore": "richiesta mancante (es. 'un dolce al cioccolato')"}), 400
     try:
-        from builder import genera_ricetta
+        from builder import genera_ricetta_trilingue
         db = carica_grafo()
-        risultato = genera_ricetta(db, richiesta, disciplina=disciplina, lang=lang)
+        # FLUSSO TRILINGUE: genera IT + traduzioni EN/ES alla creazione (niente debito a valle)
+        risultato = genera_ricetta_trilingue(db, richiesta, disciplina=disciplina)
         if risultato.get("errore"):
             return jsonify(risultato), 422
-        # salvataggio opzionale
+        # salvataggio opzionale — salva TUTTI i campi, incluse procedimento/applicazioni e le 3 lingue
         if salva and risultato.get("nome"):
             try:
                 import re as _re, json as _j2, unicodedata
@@ -230,8 +231,11 @@ def genera_ricetta_endpoint():
                 rid = f"ric-gen-{slug}"
                 conn = _get_conn(); cur = conn.cursor()
                 cur.execute("""
-                    INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es)
-                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s,%s)
+                    INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
+                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,
+                        nome_en,nome_es,procedimento_en,procedimento_es,applicazioni_en,applicazioni_es,punto_critico_en,punto_critico_es)
+                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,
+                        %s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s)
                     ON CONFLICT (id) DO NOTHING
                 """, (rid, nome, disciplina, risultato.get("descrizione",""),
                       _j2.dumps(risultato.get("ingredienti",[]),ensure_ascii=False),
@@ -240,8 +244,16 @@ def genera_ricetta_endpoint():
                       _j2.dumps(risultato.get("numeri",{}),ensure_ascii=False),
                       risultato.get("punto_critico",""),
                       _j2.dumps(risultato.get("abbinamenti",{}),ensure_ascii=False),
-                      _j2.dumps(risultato.get("vino_birra",{}),ensure_ascii=False),
-                      "", ""))
+                      _j2.dumps(risultato.get("procedimento",[]),ensure_ascii=False),
+                      _j2.dumps(risultato.get("applicazioni",[]),ensure_ascii=False),
+                      risultato.get("tempo_prep"), risultato.get("tempo_cottura"),
+                      risultato.get("difficolta",""), risultato.get("porzioni",""),
+                      risultato.get("nome_en",""), risultato.get("nome_es",""),
+                      _j2.dumps(risultato.get("procedimento_en",[]),ensure_ascii=False),
+                      _j2.dumps(risultato.get("procedimento_es",[]),ensure_ascii=False),
+                      _j2.dumps(risultato.get("applicazioni_en",[]),ensure_ascii=False),
+                      _j2.dumps(risultato.get("applicazioni_es",[]),ensure_ascii=False),
+                      risultato.get("punto_critico_en",""), risultato.get("punto_critico_es","")))
                 conn.commit(); cur.close(); _release_conn(conn)
                 risultato["_salvata"] = True
                 risultato["id"] = rid
