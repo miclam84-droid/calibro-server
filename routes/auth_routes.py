@@ -6,6 +6,7 @@ import os, json, secrets
 from flask import Blueprint, request, jsonify
 
 from db import _get_conn, _release_conn
+from routes.stato import merge_device_su_utente
 from auth import (_hash_pw, _verifica_pw, _genera_token, _utente_da_token,
                   _init_account_tables, _e_hash_legacy)
 from notifiche import _invia_email_resend
@@ -119,6 +120,10 @@ def verifica_email_route():
         user_id, piano = cur.fetchone()
         token_sess = _genera_token()
         cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token_sess, user_id))
+        _dev = request.headers.get("X-Device-Id","").strip()
+        if _dev:
+            try: merge_device_su_utente(_dev, user_id)
+            except Exception: pass
         conn.commit(); cur.close(); _release_conn(conn)
         # Invia email di benvenuto
         lang_w = request.args.get("lang","it")
@@ -197,6 +202,11 @@ def login():
                 pass
         token = _genera_token()
         cur.execute("INSERT INTO sessioni (token, user_id) VALUES (%s,%s)", (token, user_id))
+        # merge stato-fenomeno dal device anonimo all'account
+        _dev = request.headers.get("X-Device-Id","").strip()
+        if _dev:
+            try: merge_device_su_utente(_dev, user_id)
+            except Exception: pass
         conn.commit(); cur.close(); _release_conn(conn)
         return jsonify({"token":token,"piano":piano})
     except Exception as e:

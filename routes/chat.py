@@ -1,6 +1,7 @@
 # ============================================================
 # routes/chat.py — chat AI, nodo, calcolatori.
 # Dipende da: db, ai, contenuto, utils, motore.
+from routes.stato import segna_studiato
 from flask import Blueprint, request, jsonify
 from db import carica_grafo, _dati, _get_conn, _release_conn
 from ai import (cerca_contesto, costruisci_prompt, chiedi_mistral, estrai_entita,
@@ -254,6 +255,11 @@ def nodo():
     lang = request.args.get('lang','it')
     domanda = f"Spiegami {n['name']} e i fenomeni che lo governano."
     prompt = costruisci_prompt(domanda, contesto, lang=lang)
+    # traccia "studiato" se richiesto (?traccia=1) — feature stato-fenomeno
+    _stato_fen = None
+    if request.args.get("traccia") == "1":
+        try: _stato_fen = segna_studiato(nid)
+        except Exception: _stato_fen = None
     # CACHE: la risposta AI di un nodo è deterministica (stesso nodo, stessa lingua).
     # La calcolo una volta e la salvo, poi la servo istantanea (evita 5s di attesa AI a ogni apertura).
     import json as _cjson
@@ -333,7 +339,8 @@ def nodo():
         "principi": principi,
         "tecniche": tecniche,
         "strumenti": strumenti,
-        "strumento_info": strumento_info
+        "strumento_info": strumento_info,
+        "stato_fenomeno": _stato_fen
     })
 
 @bp.route("/calcola", methods=["POST"])

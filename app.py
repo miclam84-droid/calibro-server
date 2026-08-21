@@ -68,6 +68,7 @@ from routes.lezione import bp as lezione_bp; app.register_blueprint(lezione_bp)
 from routes.chat import bp as chat_bp; app.register_blueprint(chat_bp)
 from routes.cifra import bp as cifra_bp; app.register_blueprint(cifra_bp)
 from routes.misc import bp as misc_bp; app.register_blueprint(misc_bp)
+from routes.stato import bp as stato_bp; app.register_blueprint(stato_bp)
 
 # ── OSS hooks ───────────────────────────────────────────
 import time as _time, traceback as _traceback
