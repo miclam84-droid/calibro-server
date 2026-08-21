@@ -1201,6 +1201,7 @@ def abbina(ingrediente):
                 FROM edges e
                 JOIN nodes n ON n.id = e.to_id
                 WHERE e.relation = 'abbinamento_aromatico'
+                AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
                 AND (lower(e.from_id) = lower(%s)
                      OR lower(e.from_id) LIKE lower(%s))
                 ORDER BY overlap DESC NULLS LAST LIMIT 15
@@ -1215,6 +1216,7 @@ def abbina(ingrediente):
                 FROM edges e
                 JOIN nodes n ON n.id = e.to_id
                 WHERE e.relation = 'abbinamento_aromatico'
+                AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
                 AND lower(e.from_id) LIKE lower(%s)
                 ORDER BY overlap DESC NULLS LAST LIMIT 15
             """, (f"%{ing_norm.replace('_','%')}%",))
@@ -1229,6 +1231,7 @@ def abbina(ingrediente):
                     JOIN nodes n ON n.id = e.to_id
                     JOIN flavor_nomi_it fi ON fi.node_id = e.from_id
                     WHERE e.relation = 'abbinamento_aromatico'
+                AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
                     AND (lower(fi.nome_it) LIKE lower(%s)
                          OR lower(fi.nome_en) LIKE lower(%s))
                     ORDER BY overlap DESC NULLS LAST LIMIT 15
@@ -1256,6 +1259,7 @@ def abbina(ingrediente):
                     FROM edges e
                     JOIN nodes n ON n.id = e.to_id
                     WHERE e.relation = 'abbinamento_aromatico'
+                AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
                     AND e.from_id IN (
                         SELECT id FROM nodes WHERE type='Ingrediente'
                         AND (lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
@@ -1387,6 +1391,7 @@ def abbina(ingrediente):
                             FROM edges e
                             JOIN nodes n ON n.id = e.to_id
                             WHERE e.relation = 'abbinamento_aromatico'
+                AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
                             AND e.from_id = %s
                             ORDER BY overlap DESC NULLS LAST LIMIT 15
                         """, (_nid,))
