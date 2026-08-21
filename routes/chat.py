@@ -8,7 +8,7 @@ from ai import (cerca_contesto, costruisci_prompt, chiedi_mistral, estrai_entita
                _scheda_tradotta, _traduci_nome, _numero_bersaglio as _nb,
                cerca_fuzzy, fenomeni_suggeriti, log_evento)
 from contenuto import _scheda_lang, _numero_bersaglio
-from utils import _err, _check_rate_limit
+from utils import _err, _check_rate_limit, _check_rate_limit_ai, _chiave_rate, _ai_giu_response
 from auth import _utente_da_token
 from config import DATABASE_URL
 import os, json
@@ -23,6 +23,9 @@ def chiedi():
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     if not _check_rate_limit(ip):
         return jsonify({"errore":"Troppe richieste. Aspetta un minuto e riprova."}), 429
+    # rate limit AI severo: /chiedi chiama l'AI, protegge il credito da loop
+    if not _check_rate_limit_ai(_chiave_rate()):
+        return jsonify({"errore":"rate_limit","messaggio":"Troppe domande in poco tempo. Attendi un minuto."}), 429
     domanda = (request.json or {}).get("domanda","").strip()
     lang = (request.json or {}).get("lang", "it")
     history = (request.json or {}).get("history", [])

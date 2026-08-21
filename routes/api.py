@@ -100,7 +100,7 @@ def _pulisci_abbinamenti(lista, campo="ingrediente", max_famiglia=3):
             out.append(pulito)
     return out
 from contenuto import _scheda_lang, _numero_bersaglio
-from utils import _profilo_default, _aggiorna_profilo, _check_rate_limit
+from utils import _profilo_default, _aggiorna_profilo, _check_rate_limit, _check_rate_limit_ai, _chiave_rate, _ai_giu_response
 from auth import _utente_da_token
 from config import DATABASE_URL
 import os, json
@@ -206,6 +206,9 @@ def genera_ricetta_endpoint():
     Body JSON: {richiesta: 'un dolce al cioccolato', disciplina: 'pasticceria', lang: 'it', salva: false}
     Se salva=true, persiste la ricetta generata nel DB (con id ric-gen-<slug>)."""
     from db import carica_grafo
+    # rate limit stretto: genera-ricetta chiama l'AI, va protetto dal loop che brucia credito
+    if not _check_rate_limit_ai(_chiave_rate()):
+        return jsonify({"errore":"rate_limit","messaggio":"Troppe generazioni. Attendi un minuto."}), 429
     body = request.json or {}
     richiesta = body.get("richiesta", "").strip()
     disciplina = body.get("disciplina", "cucina")
@@ -256,6 +259,10 @@ def genera_ricetta_endpoint():
                 risultato["_errore_salvataggio"] = str(se)
         return jsonify(risultato)
     except Exception as e:
+        # se l'AI è giù / credito finito, risposta pulita 503 invece di 500 HTML
+        _m = str(e).lower()
+        if any(k in _m for k in ["api_key","anthropic","mistral","credit","billing","rate","timeout","gateway","503","429"]):
+            return _ai_giu_response()
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
 

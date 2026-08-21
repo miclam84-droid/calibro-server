@@ -202,3 +202,40 @@ def _e_pro(user_id):
         except Exception:
             pass
         return False  # in dubbio, NON dà accesso (fail-closed: protegge i costi)
+
+
+# ── Rate limit SEVERO per endpoint AI costosi (genera-ricetta, chat, nodo, abbina) ──
+# Protegge il credito Claude: un endpoint AI pubblico senza freno = credito bruciabile in loop.
+_rate_store_ai = {}      # {chiave: [timestamp, ...]}
+_RATE_LIMIT_AI = 10      # max 10 chiamate AI
+_RATE_WINDOW_AI = 60     # per minuto, per chiave (IP o device)
+
+def _check_rate_limit_ai(chiave):
+    """Rate limit stretto per endpoint che chiamano l'AI. chiave = IP o device_id.
+    True se la richiesta è consentita, False se ha superato il limite."""
+    import time as _t
+    now = _t.time()
+    if chiave not in _rate_store_ai:
+        _rate_store_ai[chiave] = []
+    _rate_store_ai[chiave] = [t for t in _rate_store_ai[chiave] if now - t < _RATE_WINDOW_AI]
+    if len(_rate_store_ai[chiave]) >= _RATE_LIMIT_AI:
+        return False
+    _rate_store_ai[chiave].append(now)
+    return True
+
+def _chiave_rate():
+    """Chiave per il rate limit: device_id se presente, altrimenti IP. Più equo dell'IP puro
+    (dietro NAT più utenti condividono l'IP; il device_id li distingue)."""
+    from flask import request as _rq
+    dev = _rq.headers.get("X-Device-Id","").strip()
+    if dev:
+        return f"dev:{dev}"
+    return "ip:" + _rq.headers.get("X-Forwarded-For", _rq.remote_addr or "?").split(",")[0].strip()
+
+def _ai_giu_response():
+    """Risposta pulita quando l'AI non è disponibile (credito finito / provider giù).
+    Meglio un 503 JSON leggibile che un 500 HTML brutto. Da usare nel except degli endpoint AI."""
+    from flask import jsonify as _js
+    return _js({"errore": "servizio_ai_non_disponibile",
+                "messaggio": "Il servizio è momentaneamente non disponibile. Riprova tra poco."}), 503
+
