@@ -2177,14 +2177,20 @@ def admin_pulisci_nomi_flavor():
     try:
         # pattern che funziona in admin.py: db.execute con ? e accesso per nome colonna
         # NOTA: il wrapper passa params a psycopg → i % letterali dei LIKE vanno RADDOPPIATI (%%).
+        # solo nodi VISIBILI (visibility != hidden): gli oli nascosti non servono tradotti.
+        # Escludo anche gli _oil per sicurezza. Traduco solo i CIBI veri con nome sporco.
         rows = db.execute(r"""SELECT id, name FROM nodes WHERE id LIKE 'ahn_%%'
+                       AND (data->>'visibility') IS DISTINCT FROM 'hidden'
+                       AND name NOT LIKE '%%_oil'
                        AND (lower(name) LIKE '%%cheese%%' OR lower(name) LIKE '%%wine%%'
                             OR lower(name) LIKE '%%beef%%' OR lower(name) LIKE '%%roasted%%'
                             OR lower(name) LIKE '%%dried%%' OR lower(name) LIKE '%%smoked%%'
                             OR lower(name) LIKE '%%fried%%' OR lower(name) LIKE '%%raw%%'
-                            OR lower(name) LIKE '%%sauce%%' OR lower(name) LIKE '%%green %%'
+                            OR lower(name) LIKE '%%sauce%%' OR lower(name) LIKE '%%boiled%%'
+                            OR lower(name) LIKE '%%seed%%' OR lower(name) LIKE '%%green %%'
                             OR lower(name) LIKE '%%black %%' OR lower(name) LIKE '%%white %%'
-                            OR lower(name) LIKE '%%red %%' OR lower(name) LIKE '%%oil%%')
+                            OR lower(name) LIKE '%%red %%' OR lower(name) LIKE '%%broth%%'
+                            OR lower(name) LIKE '%%liver%%' OR lower(name) LIKE '%%meat%%')
                        ORDER BY name LIMIT ?""", (limite,)).fetchall()
         items = [{"id": r["id"], "nome": r["name"]} for r in rows]
         if dry:
@@ -2194,9 +2200,12 @@ def admin_pulisci_nomi_flavor():
         aggiornati = []
         for it in items:
             en = it["nome"]
-            out = _haiku_raw(f"Traduci in italiano questo nome di ingrediente alimentare. "
-                             f"Rispondi SOLO col nome italiano, minuscolo, senza virgolette né spiegazioni. "
-                             f"Se è già un nome proprio internazionale (es. katsuobushi), lascialo. Nome: {en}")
+            out = _haiku_raw(f"Traduci in italiano culinario questo ingrediente. REGOLE: "
+                             f"1) usa il nome che un cuoco italiano direbbe spontaneamente "
+                             f"(es. 'blue cheese'->'formaggio erborinato', 'butter oil'->'burro chiarificato'). "
+                             f"2) se è un nome proprio internazionale (katsuobushi, mirin), LASCIALO. "
+                             f"3) NON inventare: se non sei sicuro, restituisci il nome originale. "
+                             f"Rispondi SOLO col nome, minuscolo, senza virgolette. Nome: {en.replace('_',' ')}")
             it_nome = (out or "").strip().strip('"').strip().lower()
             if it_nome and it_nome != en.lower() and len(it_nome) < 60:
                 db.execute("UPDATE nodes SET name=? WHERE id=?", (it_nome, it["id"]))
