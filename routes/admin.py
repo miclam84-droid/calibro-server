@@ -2090,23 +2090,26 @@ def admin_pulisci_nomi_flavor():
     secret = request.args.get("s", "")
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
+    from db import carica_grafo
     dry = request.args.get("dry", "1") != "0"
     limite = int(request.args.get("limite", "80"))
-    conn = _get_conn()
+    db = carica_grafo()
     try:
-        cur = conn.cursor()
-        cur.execute("""SELECT id, name FROM nodes WHERE id LIKE 'ahn_%'
-                       AND (name ~ '[A-Z][a-z]+ [A-Z]' OR name ILIKE '%cheese%' OR name ILIKE '%wine%'
-                            OR name ILIKE '%beef%' OR name ILIKE '%roasted%' OR name ILIKE '%dried%'
-                            OR name ILIKE '%smoked%' OR name ILIKE '%fried%' OR name ILIKE '%raw%')
-                       ORDER BY name LIMIT %s""", (limite,))
-        rows = cur.fetchall()
-        items = [{"id": (r[0] if not hasattr(r,"keys") else r["id"]),
-                  "nome": (r[1] if not hasattr(r,"keys") else r["name"])} for r in rows]
+        # pattern che funziona in admin.py: db.execute con ? e accesso per nome colonna
+        # filtro con soli LIKE (GLOB è SQLite-only; il wrapper traduce solo ?->%s, non GLOB)
+        rows = db.execute("""SELECT id, name FROM nodes WHERE id LIKE 'ahn_%'
+                       AND (lower(name) LIKE '%cheese%' OR lower(name) LIKE '%wine%'
+                            OR lower(name) LIKE '%beef%' OR lower(name) LIKE '%roasted%'
+                            OR lower(name) LIKE '%dried%' OR lower(name) LIKE '%smoked%'
+                            OR lower(name) LIKE '%fried%' OR lower(name) LIKE '%raw%'
+                            OR lower(name) LIKE '%sauce%' OR lower(name) LIKE '%green %'
+                            OR lower(name) LIKE '%black %' OR lower(name) LIKE '%white %'
+                            OR lower(name) LIKE '%red %' OR lower(name) LIKE '%oil%')
+                       ORDER BY name LIMIT ?""", (limite,)).fetchall()
+        items = [{"id": r["id"], "nome": r["name"]} for r in rows]
         if dry:
             return jsonify({"dry_run": True, "totale": len(items), "nomi": items,
                             "nota": "per tradurre e salvare: aggiungi &dry=0"})
-        # traduci e salva
         from ai import _haiku_raw
         aggiornati = []
         for it in items:
@@ -2116,15 +2119,12 @@ def admin_pulisci_nomi_flavor():
                              f"Se è già un nome proprio internazionale (es. katsuobushi), lascialo. Nome: {en}")
             it_nome = (out or "").strip().strip('"').strip().lower()
             if it_nome and it_nome != en.lower() and len(it_nome) < 60:
-                cur.execute("UPDATE nodes SET name=%s WHERE id=%s", (it_nome, it["id"]))
+                db.execute("UPDATE nodes SET name=? WHERE id=?", (it_nome, it["id"]))
                 aggiornati.append({"id": it["id"], "da": en, "a": it_nome})
-        conn.commit()
         return jsonify({"dry_run": False, "aggiornati": len(aggiornati), "dettaglio": aggiornati})
     except Exception as e:
-        conn.rollback()
-        return jsonify({"errore": str(e)}), 500
-    finally:
-        _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
 
 @bp.route("/admin/audit-flavor")
 def admin_audit_flavor():
