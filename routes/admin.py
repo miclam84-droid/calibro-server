@@ -2083,6 +2083,43 @@ def admin_azzera_traduzioni_sbagliate():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/costi-ai")
+def admin_costi_ai():
+    """Cruscotto costi AI: legge ai_usage_log e mostra spesa totale, per modello, per route,
+    media per chiamata, e le ultime chiamate. Rende VISIBILE dove vanno i soldi."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    giorni = int(request.args.get("giorni", "7"))
+    db = carica_grafo()
+    try:
+        tot = db.execute("""SELECT COUNT(*) n, COALESCE(SUM(cost_usd),0) c,
+                            COALESCE(SUM(tokens_in),0) ti, COALESCE(SUM(tokens_out),0) to_
+                            FROM ai_usage_log WHERE ts > NOW() - (? || ' days')::interval""",
+                         (str(giorni),)).fetchone()
+        per_modello = db.execute("""SELECT model, COUNT(*) n, COALESCE(SUM(cost_usd),0) c
+                            FROM ai_usage_log WHERE ts > NOW() - (? || ' days')::interval
+                            GROUP BY model ORDER BY c DESC""", (str(giorni),)).fetchall()
+        per_route = db.execute("""SELECT route, COUNT(*) n, COALESCE(SUM(cost_usd),0) c
+                            FROM ai_usage_log WHERE ts > NOW() - (? || ' days')::interval
+                            GROUP BY route ORDER BY c DESC""", (str(giorni),)).fetchall()
+        n = tot["n"] or 0; costo = float(tot["c"] or 0)
+        return jsonify({
+            "periodo_giorni": giorni,
+            "chiamate_totali": n,
+            "costo_totale_usd": round(costo, 4),
+            "costo_medio_per_chiamata_usd": round(costo / n, 6) if n else 0,
+            "token_in": tot["ti"], "token_out": tot["to_"],
+            "per_modello": [{"modello": r["model"], "chiamate": r["n"], "costo_usd": round(float(r["c"]), 4)} for r in per_modello],
+            "per_route": [{"route": r["route"], "chiamate": r["n"], "costo_usd": round(float(r["c"]), 4)} for r in per_route],
+            "nota": "Il costo di sviluppo (generazioni di prova, audit, batch) NON è il costo per utente. "
+                    "Un utente reale fa poche chiamate leggere: vedi costo_medio_per_chiamata."
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
+
 @bp.route("/admin/pulisci-nomi-flavor")
 def admin_pulisci_nomi_flavor():
     """Elenca e (se dry=0) traduce i nomi ahn sporchi EN->IT via AI, salvando sul nodo.
