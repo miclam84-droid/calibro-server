@@ -3970,9 +3970,9 @@ def admin_test_ai():
     except Exception as e:
         results["route_chat"] = {"ok": False, "errore": str(e)}
 
-    # test 2: anthropic senza tools
+    # test 2: anthropic senza tools — Haiku (health check, non serve Sonnet costoso)
     try:
-        data, _ = GW._anthropic_call("claude-sonnet-4-5",
+        data, _ = GW._anthropic_call("claude-haiku-4-5",
             [{"role":"user","content":"Di solo: OK"}],
             max_tokens=10, temperature=0, tools=None)
         testo = " ".join(b.get("text","") for b in data.get("content",[]) if b.get("type")=="text")
