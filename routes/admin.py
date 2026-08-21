@@ -2120,6 +2120,49 @@ def admin_costi_ai():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
 
+@bp.route("/admin/classifica-flavor")
+def admin_classifica_flavor():
+    """Classifica i nodi Ahn: kind (essential_oil/ingredient) + visibility (public/hidden).
+    Gli oli essenziali diventano hidden (restano nel grafo per il calcolo, ma spariscono dall'UI),
+    tranne i pochi usati davvero in cucina/bar. ?dry=1 per contare, ?dry=0 per applicare.
+    Scrive in data JSONB: nessuna migrazione schema."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    import json as _j
+    dry = request.args.get("dry", "1") != "0"
+    db = carica_grafo()
+    # oli essenziali che RESTANO visibili (ingredienti reali in cucina/bar)
+    OIL_VISIBILI = {"ahn_bergamot_oil","ahn_lemon_oil","ahn_orange_oil","ahn_bitter_orange_oil",
+                    "ahn_sweet_orange_oil","ahn_lime_oil","ahn_mandarin_oil","ahn_grapefruit_oil",
+                    "ahn_peppermint_oil","ahn_spearmint_oil","ahn_vanilla_oil"}
+    try:
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE id LIKE 'ahn_%%'", ()).fetchall()
+        n_oil_hidden = n_oil_public = n_ingredient = 0
+        for r in rows:
+            nid = r["id"]; nm = (r["name"] or "")
+            data = r["data"] if isinstance(r["data"], dict) else (_j.loads(r["data"]) if r["data"] else {})
+            is_oil = nm.endswith("_oil") or nid.endswith("_oil")
+            if is_oil and nid not in OIL_VISIBILI:
+                kind, vis = "essential_oil", "hidden"; n_oil_hidden += 1
+            elif is_oil:
+                kind, vis = "essential_oil", "public"; n_oil_public += 1
+            else:
+                kind, vis = "ingredient", "public"; n_ingredient += 1
+            if not dry:
+                data["kind"] = kind; data["visibility"] = vis
+                db.execute("UPDATE nodes SET data=? WHERE id=?", (_j.dumps(data, ensure_ascii=False), nid))
+        return jsonify({"dry_run": dry, "totale_ahn": len(rows),
+                        "essential_oil_hidden": n_oil_hidden,
+                        "essential_oil_public": n_oil_public,
+                        "ingredient_public": n_ingredient,
+                        "nota": "hidden = resta nel grafo per il calcolo abbinamenti, sparisce dall'UI utente" if dry
+                                else "applicato: data.kind + data.visibility scritti"})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
+
 @bp.route("/admin/pulisci-nomi-flavor")
 def admin_pulisci_nomi_flavor():
     """Elenca e (se dry=0) traduce i nomi ahn sporchi EN->IT via AI, salvando sul nodo.
