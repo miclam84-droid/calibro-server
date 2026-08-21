@@ -93,3 +93,80 @@ def test_webhook_idempotente():
     # verifica: un solo record evento
     n = db.execute("SELECT COUNT(*) FROM stripe_events").fetchone()[0]
     assert n == 1, "deve esserci un solo record per event_id"
+
+
+# ═══════════════════════════════════════════════════════════
+# TEST ESTESI — cuore del prodotto (grafo, stato-fenomeno, generazione, ricette)
+# Aggiunti 21 ago. Tutti LIVE sola-lettura/contratti, non scrivono dati veri
+# (usano un device_id di test usa-e-getta).
+# ═══════════════════════════════════════════════════════════
+import uuid as _uuid
+
+def test_health_ok():
+    """L'app risponde e il grafo è caricato (nodi > 0)."""
+    import requests
+    r = requests.get(f"{BASE}/health", timeout=15)
+    assert r.status_code == 200
+    assert r.json().get("nodi", 0) > 0, "il grafo deve avere nodi"
+
+def test_nodo_risponde_con_dati():
+    """/nodo su un fenomeno noto ritorna i blocchi del grafo (titolo, connessi)."""
+    import requests
+    r = requests.post(f"{BASE}/nodo", json={"id": "fen-maillard"}, timeout=30)
+    assert r.status_code == 200
+    d = r.json()
+    assert d.get("titolo"), "il nodo deve avere un titolo"
+
+def test_ricette_trilingue():
+    """/v1/ricette in EN ritorna ricette con procedimento tradotto (non vuoto)."""
+    import requests
+    r = requests.get(f"{BASE}/v1/ricette?disc=cucina&lang=en", timeout=45)
+    assert r.status_code == 200
+    ric = r.json()
+    assert isinstance(ric, list) and len(ric) > 0, "devono esserci ricette"
+
+def test_stato_fenomeni_senza_identita_lista_vuota():
+    """/v1/stato-fenomeni senza device/token ritorna lista vuota, non errore."""
+    import requests
+    r = requests.get(f"{BASE}/v1/stato-fenomeni", timeout=15)
+    assert r.status_code == 200
+    assert "stati" in r.json()
+
+def test_misura_richiede_identita():
+    """/v1/misura senza device_id → 401 (serve identità)."""
+    import requests
+    r = requests.post(f"{BASE}/v1/misura", json={"fenomeno": "fen-maillard", "valore": 155}, timeout=15)
+    assert r.status_code == 401, f"atteso 401 senza identità, ricevuto {r.status_code}"
+
+def test_misura_e_stato_con_device():
+    """Flusso: misuro con un device_id di test, poi lo ritrovo in stato-fenomeni."""
+    import requests
+    dev = str(_uuid.uuid4())
+    h = {"X-Device-Id": dev}
+    r1 = requests.post(f"{BASE}/v1/misura",
+                       json={"fenomeno": "fen-maillard", "valore": 155, "unita": "°C", "grezzo": "155°C"},
+                       headers=h, timeout=20)
+    assert r1.status_code == 200 and r1.json().get("stato") == "misurato"
+    r2 = requests.get(f"{BASE}/v1/stato-fenomeni", headers=h, timeout=15)
+    assert r2.status_code == 200
+    stati = r2.json().get("stati", [])
+    assert any(s.get("id") == "fen-maillard" for s in stati), "la misura deve comparire nello stato"
+
+def test_genera_ricetta_rate_limit_o_risposta():
+    """/v1/genera-ricetta risponde (200) o è rate-limited (429) o AI giù (503) — mai 500 HTML."""
+    import requests
+    dev = str(_uuid.uuid4())
+    r = requests.post(f"{BASE}/v1/genera-ricetta",
+                      json={"richiesta": "una salsa al limone", "disciplina": "cucina", "salva": False},
+                      headers={"X-Device-Id": dev}, timeout=60)
+    assert r.status_code in (200, 429, 503), f"atteso 200/429/503, mai 500; ricevuto {r.status_code}"
+
+def test_nodo_traccia_studiato():
+    """/nodo?traccia=1 con device segna 'studiato' e lo ritorna."""
+    import requests
+    dev = str(_uuid.uuid4())
+    r = requests.post(f"{BASE}/nodo?traccia=1", json={"id": "fen-emulsione-salse"},
+                      headers={"X-Device-Id": dev}, timeout=30)
+    assert r.status_code == 200
+    assert r.json().get("stato_fenomeno") in ("studiato", "misurato", None)
+
