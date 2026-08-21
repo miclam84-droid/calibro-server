@@ -214,10 +214,12 @@ def genera_ricetta_endpoint():
     if not richiesta:
         return jsonify({"errore": "richiesta mancante (es. 'un dolce al cioccolato')"}), 400
     try:
-        from builder import genera_ricetta_trilingue
+        from builder import genera_ricetta
         db = carica_grafo()
-        # FLUSSO TRILINGUE: genera IT + traduzioni EN/ES alla creazione (niente debito a valle)
-        risultato = genera_ricetta_trilingue(db, richiesta, disciplina=disciplina)
+        # Genero in IT (veloce, sotto il timeout worker). Le traduzioni EN/ES NON si fanno in-request
+        # (3 chiamate AI sforano i 30s): la ricetta salvata resta con nome_en=NULL, e il batch
+        # /admin/traduci-ricette la traduce dopo (flusso trilingue garantito, ma asincrono).
+        risultato = genera_ricetta(db, richiesta, disciplina=disciplina, lang="it")
         if risultato.get("errore"):
             return jsonify(risultato), 422
         # salvataggio opzionale — salva TUTTI i campi, incluse procedimento/applicazioni e le 3 lingue
@@ -232,10 +234,8 @@ def genera_ricetta_endpoint():
                 conn = _get_conn(); cur = conn.cursor()
                 cur.execute("""
                     INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
-                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,
-                        nome_en,nome_es,procedimento_en,procedimento_es,applicazioni_en,applicazioni_es,punto_critico_en,punto_critico_es)
-                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,
-                        %s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s)
+                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni)
+                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
                     ON CONFLICT (id) DO NOTHING
                 """, (rid, nome, disciplina, risultato.get("descrizione",""),
                       _j2.dumps(risultato.get("ingredienti",[]),ensure_ascii=False),
@@ -247,13 +247,7 @@ def genera_ricetta_endpoint():
                       _j2.dumps(risultato.get("procedimento",[]),ensure_ascii=False),
                       _j2.dumps(risultato.get("applicazioni",[]),ensure_ascii=False),
                       risultato.get("tempo_prep"), risultato.get("tempo_cottura"),
-                      risultato.get("difficolta",""), risultato.get("porzioni",""),
-                      risultato.get("nome_en",""), risultato.get("nome_es",""),
-                      _j2.dumps(risultato.get("procedimento_en",[]),ensure_ascii=False),
-                      _j2.dumps(risultato.get("procedimento_es",[]),ensure_ascii=False),
-                      _j2.dumps(risultato.get("applicazioni_en",[]),ensure_ascii=False),
-                      _j2.dumps(risultato.get("applicazioni_es",[]),ensure_ascii=False),
-                      risultato.get("punto_critico_en",""), risultato.get("punto_critico_es","")))
+                      risultato.get("difficolta",""), risultato.get("porzioni","")))
                 conn.commit(); cur.close(); _release_conn(conn)
                 risultato["_salvata"] = True
                 risultato["id"] = rid
