@@ -2284,6 +2284,28 @@ def admin_riempi_immagini():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
 
+@bp.route("/admin/cancella-nodo")
+def admin_cancella_nodo():
+    """Cancella un nodo per id (e i suoi archi). Per rimuovere contenuti sbagliati/inventati. ?id= obbligatorio."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    nid = request.args.get("id", "")
+    if not nid:
+        return jsonify({"errore": "serve ?id="}), 400
+    db = carica_grafo()
+    try:
+        n = db.execute("SELECT name FROM nodes WHERE id=?", (nid,)).fetchone()
+        if not n:
+            return jsonify({"errore": "nodo non trovato", "id": nid}), 404
+        nome = n["name"]
+        db.execute("DELETE FROM edges WHERE from_id=? OR to_id=?", (nid, nid))
+        db.execute("DELETE FROM nodes WHERE id=?", (nid,))
+        return jsonify({"cancellato": nid, "nome": nome})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
 @bp.route("/admin/espandi-ricette")
 def admin_espandi_ricette():
     """Espande il repertorio: genera ricette CLASSICHE del mestiere per una disciplina (verso la Bibbia),

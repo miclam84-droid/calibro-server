@@ -222,14 +222,16 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         if not ricetta.get("tecniche") or len(ricetta.get("tecniche", [])) < 2:
             testo_ricetta = (ricetta.get("nome", "") + " " +
                              " ".join(p.get("testo", "") for p in ricetta.get("procedimento", []) if isinstance(p, dict))).lower()
+            # parole generiche da ignorare nel match (troppo larghe)
+            STOP = {"cottura", "controllata", "temperatura", "della", "delle", "degli", "a", "di", "e", "con", "il", "la"}
             agganciate = list(ricetta.get("tecniche") or [])
             for t in tecniche:
                 nome_tec = t["nome"]
                 if nome_tec in agganciate:
                     continue
-                # parola-chiave della tecnica presente nel testo della ricetta?
-                parola = nome_tec.lower().split()[0]  # prima parola (es. "mantecatura", "rosolatura")
-                if len(parola) > 4 and parola in testo_ricetta:
+                # match: una parola SIGNIFICATIVA della tecnica (>4 lettere, non generica) è nel testo ricetta
+                parole = [w for w in re.sub(r"[^a-zàèéìòù ]", " ", nome_tec.lower()).split() if len(w) > 4 and w not in STOP]
+                if any(w in testo_ricetta for w in parole):
                     agganciate.append(nome_tec)
                 if len(agganciate) >= 5:
                     break
