@@ -1917,6 +1917,71 @@ def admin_consolida_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/genera-tecniche")
+def admin_genera_tecniche():
+    """Arricchisce le tecniche di una disciplina generando quelle FONDAMENTALI mancanti.
+    L'AI propone tecniche vere del mestiere (con nota concreta + numeri), salvate come nodi Tecnica
+    e collegate ai fenomeni pertinenti. ?disc=cucina obbligatorio. ?n=3 quante per chiamata.
+    Stesso formato dei nodi Tecnica esistenti (nota coi numeri operativi)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json, re as _re, unicodedata
+    from db import carica_grafo
+    from ai import chiedi_mistral
+    disc = request.args.get("disc", "")
+    n = int(request.args.get("n", "3"))
+    if not disc:
+        return jsonify({"errore": "serve ?disc=cucina|panificazione|caffetteria|vino|..."}), 400
+    db = carica_grafo()
+    try:
+        # tecniche già presenti (per non duplicare)
+        esist = db.execute("SELECT name FROM nodes WHERE type='Tecnica' AND domain=?", (disc,)).fetchall()
+        nomi_esist = [r["name"] for r in esist]
+        # fenomeni della disciplina (per collegare le tecniche)
+        fen = db.execute("SELECT id, name FROM nodes WHERE type='Fenomeno' AND domain=?", (disc,)).fetchall()
+        fen_lista = [{"id": r["id"], "nome": r["name"]} for r in fen]
+        fen_str = "; ".join(f"{f['id']}={f['nome']}" for f in fen_lista[:20])
+        lista_esist = ", ".join(nomi_esist) if nomi_esist else "nessuna"
+        righe_prompt = [
+            "Sei un consulente tecnico di " + disc + ". Elenca " + str(n) + " TECNICHE FONDAMENTALI del mestiere di " + disc,
+            "che NON sono in questa lista gia presente: " + lista_esist + ".",
+            "Devono essere tecniche VERE e operative del mestiere (non concetti astratti).",
+            "Per ognuna: nome breve, una nota concreta CON NUMERI operativi, e il fenomeno collegato.",
+            "Scegli un fenomeno id da questa lista se pertinente: " + fen_str,
+            'Rispondi SOLO con JSON valido: {"tecniche":[{"nome":"...","nota":"nota con numeri","fenomeno_id":"fen-... o null"}]}',
+        ]
+        prompt = "\n".join(righe_prompt)
+        out = chiedi_mistral(prompt)
+        if not out:
+            return jsonify({"errore": "AI non ha risposto"}), 503
+        testo = out.strip()
+        m = _re.search(r"\{.*\}", testo, _re.DOTALL)
+        if m: testo = m.group(0)
+        data = _json.loads(testo)
+        tecniche = data.get("tecniche", [])[:n]
+        create = []
+        for t in tecniche:
+            nome = (t.get("nome") or "").strip()
+            if not nome or nome in nomi_esist: continue
+            slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+            slug = "tec-" + _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:35]
+            nota = (t.get("nota") or "").strip()
+            db.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (?,?,?,?,?) ON CONFLICT (id) DO NOTHING",
+                       (slug, "Tecnica", nome, disc, _json.dumps({"nota": nota}, ensure_ascii=False)))
+            # collega al fenomeno se indicato e valido
+            fid = t.get("fenomeno_id")
+            if fid and any(f["id"] == fid for f in fen_lista):
+                db.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (?,?,?,?) ON CONFLICT DO NOTHING",
+                           (fid, slug, "realizzato_da", "{}"))
+            create.append({"nome": nome, "id": slug, "collegata_a": fid if fid else None})
+        return jsonify({"disciplina": disc, "create": len(create), "dettaglio": create,
+                        "gia_presenti": len(nomi_esist),
+                        "nota": "ripeti per aggiungerne altre; l'AI evita i duplicati"})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+
 @bp.route("/admin/conta-nodi")
 def admin_conta_nodi():
     """Conta i nodi per tipo (Fenomeno, Tecnica, Attrezzatura, ecc.) e per disciplina.
