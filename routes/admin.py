@@ -2284,6 +2284,84 @@ def admin_riempi_immagini():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
 
+@bp.route("/admin/espandi-ricette")
+def admin_espandi_ricette():
+    """Espande il repertorio: genera ricette CLASSICHE del mestiere per una disciplina (verso la Bibbia),
+    non legate ai buchi ma al repertorio che un pro DEVE conoscere. ?disc= obbligatorio, ?n=1 per timeout.
+    Evita i duplicati sui nomi gia presenti. Ogni ricetta nasce IT (traduzioni poi via batch)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json, re as _re, unicodedata
+    from db import carica_grafo, _get_conn
+    from builder import genera_ricetta
+    disc = request.args.get("disc", "")
+    n = int(request.args.get("n", "1"))
+    if not disc:
+        return jsonify({"errore": "serve ?disc=cucina|bar|panificazione|..."}), 400
+    # repertorio classico per disciplina (i piatti/drink che un pro DEVE padroneggiare)
+    REPERTORIO = {
+        "cucina": ["risotto alla milanese","carbonara","brasato al vino rosso","cotoletta alla milanese",
+                   "ragu bolognese","vitello tonnato","parmigiana di melanzane","ossobuco","tagliata di manzo",
+                   "polpette al sugo","frittata","besciamella","maionese","pesto alla genovese"],
+        "bar": ["negroni","margarita","old fashioned","daiquiri","manhattan","aperol spritz","mojito",
+                "whiskey sour","espresso martini","americano","boulevardier","penicillin","gin tonic","cosmopolitan"],
+        "panificazione": ["baguette","ciabatta","pane pugliese","focaccia genovese","pizza napoletana",
+                          "pane in cassetta","panini all olio","grissini","pane integrale","brioche"],
+        "pasticceria": ["crema pasticcera","pan di spagna","bigne","meringa italiana","frolla","ganache",
+                        "creme brulee","tiramisu","cannoli siciliani","macaron","panna cotta"],
+        "gelateria": ["gelato fiordilatte","sorbetto al limone","gelato al pistacchio","gelato al cioccolato",
+                      "stracciatella","granita siciliana","semifreddo","gelato alla vaniglia"],
+        "caffetteria": ["espresso","cappuccino","caffe filtro V60","moka","cold brew","flat white","latte macchiato"],
+        "vino": ["vinificazione in rosso","vinificazione in bianco","spumante metodo classico","macerazione"],
+    }
+    lista = REPERTORIO.get(disc, [])
+    if not lista:
+        return jsonify({"errore": f"nessun repertorio per {disc}", "disponibili": list(REPERTORIO.keys())}), 400
+    db = carica_grafo()
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT LOWER(nome) FROM ricette WHERE disciplina=%s", (disc,))
+        gia = set(r[0] for r in cur.fetchall())
+        # candidati non ancora presenti (match parziale sul nome)
+        candidati = [x for x in lista if not any(x in g or g in x for g in gia)]
+        if not candidati:
+            return jsonify({"disciplina": disc, "generate": 0, "nota": "repertorio classico gia coperto"})
+        generate = []
+        for piatto in candidati[:n]:
+            ric = genera_ricetta(db, f"la ricetta classica di {piatto}", disciplina=disc, lang="it")
+            if ric.get("errore") or not ric.get("nome"): continue
+            nome = ric["nome"]
+            slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+            slug = "ric-cls-" + _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:36]
+            cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
+                    punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni)
+                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
+                ON CONFLICT (id) DO NOTHING""",
+                (slug, nome, disc, ric.get("descrizione",""),
+                 _json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
+                 _json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                 _json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+                 _json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                 ric.get("punto_critico",""),
+                 _json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                 _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                 _json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
+                 ric.get("tempo_prep",""), ric.get("tempo_cottura",""),
+                 ric.get("difficolta",""), ric.get("porzioni","")))
+            generate.append({"ricetta": nome, "id": slug, "fenomeni": ric.get("fenomeni",[])[:3]})
+        conn.commit()
+        return jsonify({"disciplina": disc, "generate": len(generate), "dettaglio": generate,
+                        "repertorio_restante": len(candidati)-len(generate),
+                        "nota": "classici del mestiere. Traduci poi via /admin/traduci-ricette."})
+    except Exception as e:
+        conn.rollback()
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+    finally:
+        from db import _release_conn
+        _release_conn(conn)
+
 @bp.route("/admin/genera-ricette-mancanti")
 def admin_genera_ricette_mancanti():
     """Genera ricette sui fenomeni SENZA ricetta (i buchi veri). Una ricetta per fenomeno,
