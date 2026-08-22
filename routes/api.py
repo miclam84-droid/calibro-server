@@ -334,10 +334,78 @@ ATTREZZATURA_TECNICA = {
     "tec-macerazione": ["tino fermentazione", "follatore"],
 }
 
+# match per parole chiave: le tecniche NUOVE del grafo hanno id diversi dal dizionario storico.
+# Invece di id rigidi, cerchiamo termini nel nome/id della tecnica -> attrezzature giuste.
+ATTREZZATURA_KEYWORD = {
+    "shake": ["shaker boston professionale","strainer cocktail","jigger dosatore"],
+    "stir": ["mixing glass yarai","bar spoon","julep strainer"],
+    "muddle": ["muddler professionale","pestello cocktail"],
+    "espresso": ["macchina espresso","macinacaffe conico","tamper 58mm"],
+    "tamp": ["tamper 58mm calibrato","tamping station"],
+    "pour-over": ["v60 hario","kettle collo cigno","bilancia caffe"],
+    "latte": ["lancia vapore","bricco montalatte acciaio","termometro latte"],
+    "mantec": ["mantecatore gelato","spatola gelato"],
+    "temperagg": ["termometro cioccolato","marmo temperaggio","spatola offset"],
+    "lamina": ["matterello professionale","raschietto pasta"],
+    "impast": ["planetaria gancio","tarocco pasta"],
+    "piegh": ["ciotola impasto","tarocco"],
+    "formatura": ["banneton cestino lievitazione","tarocco"],
+    "autolisi": ["ciotola grande","bilancia cucina"],
+    "sous-vide": ["roner sous vide","sacchetti sottovuoto","macchina sottovuoto"],
+    "sottovuoto": ["roner sous vide","sacchetti sottovuoto","macchina sottovuoto"],
+    "friggit": ["termometro frittura","friggitrice","ragno frittura"],
+    "frittura": ["termometro frittura","friggitrice","ragno frittura"],
+    "brasat": ["cocotte ghisa","termometro sonda"],
+    "emulsion": ["frullatore immersione","frusta"],
+    "taglio": ["coltello chef professionale","tagliere","acciaino affilatura"],
+    "fermentazione": ["barattoli fermentazione","pesi fermentazione vetro"],
+    "affumicat": ["affumicatore","chips legno affumicatura"],
+    "frollatura": ["contenitore stagionatura","bilancia precisione"],
+    "curing": ["contenitore stagionatura","bilancia precisione"],
+    "mash": ["pentola cotta birra","termometro mash","mulino malto"],
+    "dry-hop": ["sacchetto luppolo","fermentatore"],
+    "luppol": ["sacchetto luppolo","fermentatore"],
+    "vinifica": ["densimetro mosto","damigiana","gorgogliatore"],
+    "macera": ["tino fermentazione","follatore"],
+    "carbonatazione": ["soda maker professionale","cilindro co2"],
+    "reverse": ["termometro sonda wireless","roner sous vide","griglia ghisa"],
+    "oliocottura": ["termometro sonda","pentola bassa","olio evo"],
+    "confit": ["termometro sonda","pentola bassa"],
+    "sferificaz": ["siringa sferificazione","alginato","cucchiaio dosatore"],
+    "gelificaz": ["agar agar","gellan","bilancia precisione 0.1g"],
+    "affinamento": ["contenitore stagionatura","termometro cantina"],
+    "essicca": ["essiccatore alimentare","termometro forno"],
+    "montatura": ["planetaria","frusta acciaio","ciotola inox"],
+    "cottura-zucchero": ["termometro zucchero","pentolino rame"],
+    "caramellizz": ["termometro zucchero","pentolino rame"],
+    "vapore": ["cestello vapore","termometro sonda"],
+    "brew": ["v60 hario","kettle collo cigno","bilancia caffe"],
+}
+
+def _attrezzatura_per_tecnica(tecnica_id, tecnica_nome=""):
+    """Trova le attrezzature per una tecnica: prima l'id esatto (dizionario storico),
+    poi match per parola chiave su id+nome (per le tecniche nuove del grafo)."""
+    if tecnica_id in ATTREZZATURA_TECNICA:
+        return ATTREZZATURA_TECNICA[tecnica_id]
+    testo = (str(tecnica_id) + " " + str(tecnica_nome)).lower()
+    for chiave, lista in ATTREZZATURA_KEYWORD.items():
+        if chiave in testo:
+            return lista
+    return []
+
 @bp.route("/v1/attrezzatura/<tecnica_id>")
 def attrezzatura_tecnica(tecnica_id):
-    """Utensili consigliati per una tecnica, con link affiliati Amazon (tag via env AMAZON_TAG)."""
-    utensili = ATTREZZATURA_TECNICA.get(tecnica_id, [])
+    """Utensili consigliati per una tecnica, con link affiliati Amazon (tag via env AMAZON_TAG).
+    Match per id esatto o per parola chiave (tecniche nuove del grafo)."""
+    # recupero il nome della tecnica dal grafo per il match a parole chiave
+    tecnica_nome = ""
+    try:
+        from db import carica_grafo
+        r = carica_grafo().execute("SELECT name FROM nodes WHERE id=?", (tecnica_id,)).fetchone()
+        if r: tecnica_nome = r["name"]
+    except Exception:
+        pass
+    utensili = _attrezzatura_per_tecnica(tecnica_id, tecnica_nome)
     if not utensili:
         return jsonify({"tecnica": tecnica_id, "attrezzatura": [],
                         "nota": "Nessuna attrezzatura specifica mappata per questa tecnica."})
