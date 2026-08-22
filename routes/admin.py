@@ -2284,6 +2284,27 @@ def admin_riempi_immagini():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
 
+@bp.route("/admin/colonne-ricette")
+def admin_colonne_ricette():
+    """Diagnostica: elenca le colonne reali della tabella ricette."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='ricette' ORDER BY column_name")
+        cols = [r[0] for r in cur.fetchall()]
+        # controllo diretto: prendo una ricetta -v2 e leggo esperimento raw
+        cur.execute("SELECT id, esperimento, limite FROM ricette WHERE id LIKE 'ric-cls-%%-v2' LIMIT 3")
+        campioni = [{"id": r[0], "esperimento": (r[1] or "NULL")[:50], "limite": (r[2] or "NULL")[:50]} for r in cur.fetchall()]
+        return jsonify({"colonne": cols, "ha_esperimento": "esperimento" in cols, "ha_limite": "limite" in cols,
+                        "campioni": campioni})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/migra-ricette-voce")
 def admin_migra_ricette_voce():
     """Aggiunge le colonne esperimento e limite alla tabella ricette (Protocollo Kenji-Matter).
