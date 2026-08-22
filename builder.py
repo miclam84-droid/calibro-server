@@ -190,7 +190,22 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         m = re.search(r"\{.*\}", raw, re.DOTALL)
         if not m:
             return {"errore": "output non-JSON", "raw": raw[:200]}
-        ricetta = _j.loads(m.group(0))
+        blob = m.group(0)
+        try:
+            ricetta = _j.loads(blob)
+        except _j.JSONDecodeError:
+            # riparazione tollerante: errori JSON comuni dell'AI (virgole mancanti/in eccesso)
+            fix = blob
+            # togli virgole prima di } o ]
+            fix = re.sub(r",\s*([}\]])", r"\1", fix)
+            # aggiungi virgola mancante tra "..." e la riga dopo che apre "chiave":
+            fix = re.sub(r'("\s*)\n(\s*")', r'\1,\n\2', fix)
+            # aggiungi virgola mancante tra } o ] e la riga dopo che apre "chiave" o {
+            fix = re.sub(r'([}\]])\s*\n(\s*["{\[])', r'\1,\n\2', fix)
+            try:
+                ricetta = _j.loads(fix)
+            except _j.JSONDecodeError:
+                return {"errore": "JSON non recuperabile", "raw": blob[:200]}
         # pulizia: normalizza i nomi tecniche (l'AI a volte copia la label con i numeri)
         if "tecniche" in ricetta and isinstance(ricetta["tecniche"], list):
             pulite = []
