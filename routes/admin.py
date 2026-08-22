@@ -2369,8 +2369,20 @@ def admin_espandi_ricette():
     try:
         cur.execute("SELECT LOWER(nome) FROM ricette WHERE disciplina=%s", (disc,))
         gia = set(r[0] for r in cur.fetchall())
-        # candidati non ancora presenti (match parziale sul nome)
-        candidati = [x for x in lista if not any(x in g or g in x for g in gia)]
+        # match STRETTO: un piatto del repertorio è "già presente" solo se il suo nome compare
+        # quasi per intero in una ricetta esistente (non basta una parola condivisa come "gelato")
+        def gia_presente(piatto):
+            pl = piatto.lower()
+            for g in gia:
+                # il nome repertorio è contenuto quasi tutto nel nome esistente
+                if pl in g:
+                    return True
+                # o il nome esistente inizia con le parole chiave del repertorio
+                parole_p = [w for w in pl.split() if len(w) > 3]
+                if parole_p and all(w in g for w in parole_p):
+                    return True
+            return False
+        candidati = [x for x in lista if not gia_presente(x)]
         if not candidati:
             return jsonify({"disciplina": disc, "generate": 0, "nota": "repertorio classico gia coperto"})
         generate = []
