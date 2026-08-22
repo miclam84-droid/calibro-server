@@ -1917,6 +1917,30 @@ def admin_consolida_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/conta-nodi")
+def admin_conta_nodi():
+    """Conta i nodi per tipo (Fenomeno, Tecnica, Attrezzatura, ecc.) e per disciplina.
+    Serve a capire dove il grafo è povero (es. poche tecniche/attrezzature)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    db = carica_grafo()
+    try:
+        per_tipo = db.execute("SELECT type, COUNT(*) n FROM nodes GROUP BY type ORDER BY n DESC").fetchall()
+        tipi = {r["type"]: r["n"] for r in per_tipo}
+        # tecniche e attrezzature per disciplina (dal campo domain)
+        tec = db.execute("SELECT domain, COUNT(*) n FROM nodes WHERE type='Tecnica' GROUP BY domain").fetchall()
+        att = db.execute("SELECT domain, COUNT(*) n FROM nodes WHERE type IN ('Attrezzatura','Attrezzo') GROUP BY domain").fetchall()
+        return jsonify({
+            "per_tipo": tipi,
+            "tecniche_per_disciplina": {r["domain"] or "?": r["n"] for r in tec},
+            "attrezzature_per_disciplina": {r["domain"] or "?": r["n"] for r in att},
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
+
 @bp.route("/admin/riempi-immagini-ricette")
 def admin_riempi_immagini():
     """Riempie le immagini mancanti delle ricette cercando su Pexels (API gratuita).
