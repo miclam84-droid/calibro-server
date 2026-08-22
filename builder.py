@@ -217,6 +217,24 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
                 match = next((v for v in nomi_tecniche_validi if v.lower() in nome_pulito.lower() or nome_pulito.lower() in v.lower()), nome_pulito)
                 pulite.append(match)
             ricetta["tecniche"] = pulite
+        # FALLBACK: se l'AI ha lasciato le tecniche vuote (o quasi), aggancia quelle pertinenti
+        # cercando le parole della ricetta (nome+procedimento) tra le tecniche disponibili della disciplina
+        if not ricetta.get("tecniche") or len(ricetta.get("tecniche", [])) < 2:
+            testo_ricetta = (ricetta.get("nome", "") + " " +
+                             " ".join(p.get("testo", "") for p in ricetta.get("procedimento", []) if isinstance(p, dict))).lower()
+            agganciate = list(ricetta.get("tecniche") or [])
+            for t in tecniche:
+                nome_tec = t["nome"]
+                if nome_tec in agganciate:
+                    continue
+                # parola-chiave della tecnica presente nel testo della ricetta?
+                parola = nome_tec.lower().split()[0]  # prima parola (es. "mantecatura", "rosolatura")
+                if len(parola) > 4 and parola in testo_ricetta:
+                    agganciate.append(nome_tec)
+                if len(agganciate) >= 5:
+                    break
+            if agganciate:
+                ricetta["tecniche"] = agganciate
         ricetta["_generata"] = True
         ricetta["disciplina"] = disciplina
         ricetta["_disclaimer"] = "Ricetta generata dall'AI sui dati scientifici del grafo. Verifica i numeri al banco."
