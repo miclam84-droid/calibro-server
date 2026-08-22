@@ -1917,6 +1917,57 @@ def admin_consolida_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/aggiungi-umami")
+def admin_aggiungi_umami():
+    """Aggiunge il fenomeno UMAMI / esaltazione dei sapori con dati REALI (non AI).
+    Numeri veri: sinergia glutammato+inosinato moltiplica l'intensità fino a ~8x.
+    Collegato alle discipline dove conta (cucina, bar, fermentati)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json
+    from db import carica_grafo
+    db = carica_grafo()
+    try:
+        # nodo fenomeno umami (dati reali, scritti a mano)
+        scheda = ("L'umami è il quinto gusto, dato dai glutammati liberi (MSG naturale in parmigiano, "
+                  "pomodoro, funghi, alghe kombu) e dai nucleotidi (inosinato nella carne/pesce, "
+                  "guanilato nei funghi secchi). La chiave e' la SINERGIA: glutammato + inosinato insieme "
+                  "danno un'intensita' umami fino a 7-8 volte superiore alla somma dei singoli. "
+                  "E' il motivo scientifico di abbinamenti classici: parmigiano+pomodoro, dashi (kombu+katsuobushi), "
+                  "prosciutto+melone. L'esaltazione dei sapori passa anche da sale (abbassa la soglia di percezione), "
+                  "acido (bilancia e pulisce), grasso (veicola gli aromi liposolubili) e temperatura di servizio.")
+        data = _json.dumps({
+            "scheda": scheda,
+            "numeri": "sinergia glutammato+inosinato fino a 8x · glutammato libero: parmigiano 1200mg/100g, "
+                      "pomodoro maturo 140-250mg, kombu 1400-3200mg · soglia umami MSG ~0,012%",
+            "target": "rapporto ottimale glutammato:inosinato circa 1:1 per massima sinergia",
+            "tipo": "sensoriale-chimico",
+            "discipline": ["cucina", "bar", "trasversale"]
+        }, ensure_ascii=False)
+        db.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (?,?,?,?,?) ON CONFLICT (id) DO UPDATE SET data=EXCLUDED.data",
+                   ("fen-umami", "Fenomeno", "Umami e esaltazione dei sapori (sinergia glutammato-inosinato)", "trasversale", data))
+        # archi verso prodotti/discipline dove l'umami si manifesta
+        archi = [
+            ("fen-umami", "prod-brodo", "si_manifesta_in", '{"target":"dashi: kombu 1% peso acqua a 60C + katsuobushi","causa":"sinergia glutammato(kombu)+inosinato(katsuobushi) = umami esplosivo"}'),
+            ("fen-umami", "prod-sour", "si_manifesta_in", '{"target":"umami in cocktail: dash di salsa di soia o brodo","causa":"il glutammato aggiunge rotondita e persistenza al drink"}'),
+        ]
+        creati = 0
+        for a in archi:
+            try:
+                # verifica che il nodo destinazione esista
+                dest = db.execute("SELECT id FROM nodes WHERE id=?", (a[1],)).fetchone()
+                if dest:
+                    db.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (?,?,?,?) ON CONFLICT DO NOTHING", a)
+                    creati += 1
+            except Exception:
+                pass
+        return jsonify({"fenomeno": "fen-umami creato/aggiornato", "archi_creati": creati,
+                        "nota": "dati reali scritti a mano (non AI). Numeri verificabili."})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
+
 @bp.route("/admin/genera-tecniche")
 def admin_genera_tecniche():
     """Arricchisce le tecniche di una disciplina generando quelle FONDAMENTALI mancanti.
