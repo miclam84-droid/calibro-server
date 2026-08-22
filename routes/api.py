@@ -784,8 +784,8 @@ def api_ricette_list():
     lang = request.args.get("lang","it")
     fenomeno = request.args.get("fenomeno","").strip()
     db = carica_grafo()
-    SEL = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es,procedimento,immagine,immagine_autore,immagine_url_fonte,tempo_prep,tempo_cottura,difficolta,porzioni,applicazioni,twist_di,nome_en,nome_es,procedimento_en,procedimento_es,applicazioni_en,applicazioni_es,punto_critico_en,punto_critico_es FROM ricette"
-    COLS = ["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es","procedimento","immagine","immagine_autore","immagine_url_fonte","tempo_prep","tempo_cottura","difficolta","porzioni","applicazioni","twist_di","nome_en","nome_es","procedimento_en","procedimento_es","applicazioni_en","applicazioni_es","punto_critico_en","punto_critico_es"]
+    SEL = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es,procedimento,immagine,immagine_autore,immagine_url_fonte,tempo_prep,tempo_cottura,difficolta,porzioni,applicazioni,twist_di,nome_en,nome_es,procedimento_en,procedimento_es,applicazioni_en,applicazioni_es,punto_critico_en,punto_critico_es,esperimento,limite,esperimento_en,esperimento_es,limite_en,limite_es FROM ricette"
+    COLS = ["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es","procedimento","immagine","immagine_autore","immagine_url_fonte","tempo_prep","tempo_cottura","difficolta","porzioni","applicazioni","twist_di","nome_en","nome_es","procedimento_en","procedimento_es","applicazioni_en","applicazioni_es","punto_critico_en","punto_critico_es","esperimento","limite","esperimento_en","esperimento_es","limite_en","limite_es"]
     try:
         if disc:
             rows = db.execute(SEL + " WHERE disciplina=%s ORDER BY nome", (disc,))
