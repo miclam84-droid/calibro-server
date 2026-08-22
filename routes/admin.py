@@ -1944,10 +1944,13 @@ def admin_genera_tecniche():
         fen_str = "; ".join(f"{f['id']}={f['nome']}" for f in fen_lista[:20])
         lista_esist = ", ".join(nomi_esist) if nomi_esist else "nessuna"
         righe_prompt = [
-            "Sei un consulente tecnico di " + disc + ". Elenca " + str(n) + " TECNICHE FONDAMENTALI del mestiere di " + disc,
-            "che NON sono in questa lista gia presente: " + lista_esist + ".",
-            "Devono essere tecniche VERE e operative del mestiere (non concetti astratti).",
-            "Per ognuna: nome breve, una nota concreta CON NUMERI operativi, e il fenomeno collegato.",
+            "Sei un consulente tecnico esperto di " + disc + " di ALTO LIVELLO. Elenca " + str(n) + " TECNICHE di " + disc + ",",
+            "includendo soprattutto quelle MODERNE, INNOVATIVE e D'AVANGUARDIA (non solo le basi).",
+            "Esempi del livello richiesto (per la cucina): reverse searing, Roner/sous-vide di precisione, oliocottura/confit,",
+            "sferificazione, gelificazione con agar/gellan, fermentazioni controllate (koji, garum, miso), affumicatura a freddo,",
+            "maturazioni e frollature spinte, cottura in crosta di sale, uso dell'azoto, essiccazione/liofilizzazione.",
+            "Per ogni disciplina cerca l'equivalente avanzato. NON ripetere queste gia presenti: " + lista_esist + ".",
+            "Per ognuna: nome breve e riconoscibile nel mestiere, nota concreta CON NUMERI operativi, fenomeno collegato.",
             "Scegli un fenomeno id da questa lista se pertinente: " + fen_str,
             'Rispondi SOLO con JSON valido: {"tecniche":[{"nome":"...","nota":"nota con numeri","fenomeno_id":"fen-... o null"}]}',
         ]
