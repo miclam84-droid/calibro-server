@@ -213,6 +213,20 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         return {"errore": str(e)}
 
 
+
+def termine_variante(disciplina, lang="it"):
+    """Il termine giusto per una variante secondo la disciplina.
+    Bar/drink = 'Twist' (termine del mestiere); cucina/pasticceria/pane = 'Rivisitazione'.
+    Mai hardcodare un solo termine ovunque (regola Michele)."""
+    d = (disciplina or "").lower()
+    bar = d in ("bar", "cocktail", "drink", "caffetteria", "birra", "vino")
+    if lang == "en":
+        return "Twist" if bar else "Variation"
+    if lang == "es":
+        return "Twist" if bar else "Reinterpretación"
+    return "Twist" if bar else "Rivisitazione"
+
+
 def genera_twist(ricetta_madre, modifica, lang="it"):
     """Genera una variante (twist) di una ricetta esistente applicando una modifica.
     ricetta_madre: dict con la ricetta originale (nome, ingredienti, procedimento, fenomeni, numeri...)
@@ -222,6 +236,7 @@ def genera_twist(ricetta_madre, modifica, lang="it"):
     import json as _jj, re as _re
     from ai import chiedi_mistral
     LINGUA = {"it":"italiano","en":"English","es":"español"}.get(lang,"italiano")
+    _termine = termine_variante(ricetta_madre.get("disciplina",""), lang)
     ingr = ricetta_madre.get("ingredienti",[])
     ingr_str = ", ".join(f"{i.get('quantita','')}{i.get('unita','')} {i.get('nome','')}" for i in ingr if isinstance(i,dict))
     num = ricetta_madre.get("numeri",{})
@@ -235,6 +250,7 @@ def genera_twist(ricetta_madre, modifica, lang="it"):
         f"FENOMENI (mantieni quelli ancora pertinenti): {', '.join(fen) if isinstance(fen,list) else ''}\n"
         f"PUNTO CRITICO: {ricetta_madre.get('punto_critico','')}\n\n"
         f"MODIFICA RICHIESTA: {modifica}\n\n"
+        f"Questa variante si chiama un '{_termine}' (usa questo termine nella disciplina). "
         f"Genera la variante in {LINGUA}. Adatta ingredienti e procedimento alla modifica, "
         f"ricalcola i numeri SOLO se la modifica li cambia, mantieni i fenomeni ancora validi. "
         f"Rispondi SOLO con questo JSON (niente altro):\n"
