@@ -2387,9 +2387,12 @@ def admin_espandi_ricette():
         if not candidati:
             return jsonify({"disciplina": disc, "generate": 0, "nota": "repertorio classico gia coperto"})
         generate = []
+        saltati = []
         for piatto in candidati[:n]:
             ric = genera_ricetta(db, f"la ricetta classica di {piatto}", disciplina=disc, lang="it")
-            if ric.get("errore") or not ric.get("nome"): continue
+            if ric.get("errore") or not ric.get("nome"):
+                saltati.append({"piatto": piatto, "motivo": ric.get("errore", "nessun nome")})
+                continue
             nome = ric["nome"]
             slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
             slug = "ric-cls-" + _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:36]
@@ -2412,6 +2415,7 @@ def admin_espandi_ricette():
                  ric.get("esperimento",""), ric.get("limite","")))
         conn.commit()
         return jsonify({"disciplina": disc, "generate": len(generate), "dettaglio": generate,
+                        "saltati": saltati,
                         "repertorio_restante": len(candidati)-len(generate),
                         "nota": "classici del mestiere. Traduci poi via /admin/traduci-ricette."})
     except Exception as e:
