@@ -2382,7 +2382,8 @@ def admin_espandi_ricette():
                 if parole_p and all(w in g for w in parole_p):
                     return True
             return False
-        candidati = [x for x in lista if not gia_presente(x)]
+        forza = request.args.get("forza", "0") != "0"
+        candidati = lista if forza else [x for x in lista if not gia_presente(x)]
         if not candidati:
             return jsonify({"disciplina": disc, "generate": 0, "nota": "repertorio classico gia coperto"})
         generate = []
@@ -2392,6 +2393,7 @@ def admin_espandi_ricette():
             nome = ric["nome"]
             slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
             slug = "ric-cls-" + _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:36]
+            if forza: slug = slug + "-v2"
             cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
                     punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite)
                 VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s)
