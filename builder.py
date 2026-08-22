@@ -75,6 +75,43 @@ def _abbinamenti_ingrediente(db, ingrediente, max_n=6):
     return out
 
 
+
+def _fenomeni_pertinenti(db, richiesta, disciplina, limite=10):
+    """Sceglie i fenomeni PERTINENTI alla richiesta (non i primi alfabetici).
+    Punteggio: match dei termini della richiesta col nome/scheda del fenomeno + affinità disciplina.
+    Risolve il problema 'maionese al limone -> Anisakis' (fenomeno a caso preso dai primi 12)."""
+    from contenuto import _numero_bersaglio
+    import re as _re
+    rows = db.execute("SELECT id, name, data, domain FROM nodes WHERE type='Fenomeno'").fetchall()
+    # parole chiave dalla richiesta (>2 lettere)
+    parole = [w.lower() for w in _re.findall(r"\w+", richiesta or "") if len(w) > 2]
+    scored = []
+    for row in rows:
+        r = dict(row) if hasattr(row, "keys") else {"id": row[0], "name": row[1], "data": row[2], "domain": row[3]}
+        data = r.get("data")
+        d = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+        nome = (r.get("name") or "")
+        dom = (r.get("domain") or "")
+        # testo del fenomeno su cui matchare (nome + scheda breve)
+        testo = (nome + " " + str(d.get("scheda", "") or d.get("descrizione", ""))).lower()
+        score = 0
+        for p in parole:
+            if p in testo:
+                score += 3 if p in nome.lower() else 1
+        # affinità disciplina: bonus se il fenomeno è della stessa disciplina
+        discipline_fen = d.get("discipline", []) or d.get("disciplina", "")
+        if disciplina and (disciplina in str(discipline_fen).lower() or disciplina in dom.lower()):
+            score += 2
+        target = _numero_bersaglio(d) if d else ""
+        scored.append((score, {"id": r.get("id"), "nome": nome, "target": target}))
+    # ordina per punteggio decrescente; se tutti a 0 (nessun match), fallback ai primi con target
+    scored.sort(key=lambda x: x[0], reverse=True)
+    pertinenti = [s[1] for s in scored if s[0] > 0][:limite]
+    if not pertinenti:  # nessun match: prendi fenomeni con target (meglio che alfabetici a caso)
+        pertinenti = [s[1] for s in scored if s[1]["target"]][:limite]
+    return pertinenti
+
+
 def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
     """Genera una ricetta strutturata a partire da una richiesta libera.
     richiesta: es. 'un dolce al cioccolato', 'cocktail al gin agrumato', 'pane con le noci'
@@ -87,7 +124,7 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
 
     # 1) raccogli contesto reale dal grafo
     tecniche = _nodi_tecniche(db, disciplina)
-    fenomeni = _fenomeni_disciplina(db, disciplina)
+    fenomeni = _fenomeni_pertinenti(db, richiesta, disciplina)  # pertinenti alla richiesta, non alfabetici
 
     # 2) estrai eventuali ingredienti dalla richiesta per gli abbinamenti
     termini = estrai_entita(richiesta) if richiesta else []
