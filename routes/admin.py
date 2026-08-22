@@ -2181,6 +2181,7 @@ def admin_pulisci_nomi_flavor():
         # Escludo anche gli _oil per sicurezza. Traduco solo i CIBI veri con nome sporco.
         rows = db.execute(r"""SELECT id, name FROM nodes WHERE id LIKE 'ahn_%%'
                        AND (data->>'visibility') IS DISTINCT FROM 'hidden'
+                       AND (data->>'nome_verificato') IS DISTINCT FROM 'true'
                        AND name NOT LIKE '%%_oil'
                        AND (lower(name) LIKE '%%cheese%%' OR lower(name) LIKE '%%wine%%'
                             OR lower(name) LIKE '%%beef%%' OR lower(name) LIKE '%%roasted%%'
@@ -2221,6 +2222,16 @@ def admin_pulisci_nomi_flavor():
                 db.execute("UPDATE nodes SET name=? WHERE id=?", (it_nome, it["id"]))
                 aggiornati.append({"id": it["id"], "da": en, "a": it_nome})
             else:
+                # l'AI lascia il nome invariato (botanico latino, nome proprio): marco come
+                # verificato così il ciclo NON lo ripesca e avanza ai nomi successivi.
+                try:
+                    import json as _jj
+                    rr = db.execute("SELECT data FROM nodes WHERE id=?", (it["id"],)).fetchone()
+                    dd = rr["data"] if (rr and isinstance(rr["data"], dict)) else (_jj.loads(rr["data"]) if (rr and rr["data"]) else {})
+                    dd["nome_verificato"] = "true"
+                    db.execute("UPDATE nodes SET data=? WHERE id=?", (_jj.dumps(dd, ensure_ascii=False), it["id"]))
+                except Exception:
+                    pass
                 saltati.append({"nome": en, "ai": it_nome or "(vuoto)"})
         return jsonify({"dry_run": False, "aggiornati": len(aggiornati), "dettaglio": aggiornati, "saltati": saltati[:10]})
     except Exception as e:
