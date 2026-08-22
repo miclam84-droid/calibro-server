@@ -1917,6 +1917,66 @@ def admin_consolida_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/genera-storia")
+def admin_genera_storia():
+    """Crea un nodo Storia per una disciplina: l'evoluzione del mestiere collegata alle tecniche/fenomeni
+    che ha prodotto (non Wikipedia: storia CHE SPIEGA il mestiere di oggi). ?disc= obbligatorio.
+    Marcata da_rivedere=true (le date/nomi storici vanno verificati da Michele)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json, re as _re
+    from db import carica_grafo
+    from ai import chiedi_mistral
+    disc = request.args.get("disc", "")
+    if not disc:
+        return jsonify({"errore": "serve ?disc=bar|cucina|panificazione|caffetteria|..."}), 400
+    db = carica_grafo()
+    try:
+        # tecniche della disciplina, per collegare la storia a cosa ha prodotto
+        tec = db.execute("SELECT id, name FROM nodes WHERE type='Tecnica' AND domain=?", (disc,)).fetchall()
+        tec_str = "; ".join(r["name"] for r in tec[:15])
+        righe = [
+            "Sei uno storico del mestiere di " + disc + ". Scrivi una STORIA sintetica (400-600 parole) del mestiere di " + disc + ".",
+            "REGOLA: SOLO fatti storici REALI (date, nomi, luoghi veri). Se non sei sicuro di una data, NON inventarla: parla in termini generali.",
+            "NON deve essere un elenco enciclopedico: deve spiegare COME si e' arrivati alle tecniche di oggi.",
+            "Collega la storia alle tecniche attuali del mestiere, per esempio: " + (tec_str if tec_str else "le tecniche fondamentali"),
+            "Racconta: origini, svolte chiave (invenzioni, personaggi, epoche), e come hanno prodotto il modo di lavorare di oggi.",
+            "Rispondi SOLO con JSON: {\"titolo\":\"Storia di ...\",\"testo\":\"...\",\"svolte\":[\"svolta 1\",\"svolta 2\",\"svolta 3\"]}"
+        ]
+        prompt = "\n".join(righe)
+        out = chiedi_mistral(prompt)
+        if not out:
+            return jsonify({"errore": "AI non ha risposto"}), 503
+        testo = out.strip()
+        m = _re.search(r"\{.*\}", testo, _re.DOTALL)
+        if m: testo = m.group(0)
+        data_ai = _json.loads(testo)
+        nodo_data = _json.dumps({
+            "scheda": data_ai.get("testo", ""),
+            "svolte": data_ai.get("svolte", []),
+            "da_rivedere": "true",
+            "tipo": "storia"
+        }, ensure_ascii=False)
+        sid = "storia-" + disc
+        titolo = data_ai.get("titolo") or ("Storia di " + disc)
+        db.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (?,?,?,?,?) ON CONFLICT (id) DO UPDATE SET data=EXCLUDED.data, name=EXCLUDED.name",
+                   (sid, "Storia", titolo, disc, nodo_data))
+        # collega la storia alle tecniche della disciplina
+        coll = 0
+        for r in tec[:15]:
+            try:
+                db.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (?,?,?,?) ON CONFLICT DO NOTHING",
+                           (sid, r["id"], "ha_prodotto", "{}"))
+                coll += 1
+            except Exception: pass
+        return jsonify({"storia": titolo, "id": sid, "tecniche_collegate": coll,
+                        "svolte": data_ai.get("svolte", []),
+                        "nota": "marcata da_rivedere: verifica date/nomi storici prima di pubblicare"})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+
 @bp.route("/admin/aggiungi-umami")
 def admin_aggiungi_umami():
     """Aggiunge il fenomeno UMAMI / esaltazione dei sapori con dati REALI (non AI).
