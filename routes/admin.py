@@ -1917,6 +1917,83 @@ def admin_consolida_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/genera-ricette-mancanti")
+def admin_genera_ricette_mancanti():
+    """Genera ricette sui fenomeni SENZA ricetta (i buchi veri). Una ricetta per fenomeno,
+    pertinente, salvata (IT; traduzioni EN/ES poi via batch traduci-ricette).
+    ?n=3 quante generarne per chiamata (piccolo per il timeout worker). ?disc= per disciplina.
+    Ogni ricetta copre un fenomeno scoperto -> espansione MIRATA, non a caso."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json, re as _re, unicodedata
+    from db import carica_grafo, _get_conn, _release_conn
+    from builder import genera_ricetta
+    n = int(request.args.get("n", "3"))
+    disc_filtro = request.args.get("disc", "")
+    db = carica_grafo()
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # fenomeni coperti dalle ricette esistenti
+        cur.execute("SELECT fenomeni FROM ricette")
+        coperti = set()
+        for row in cur.fetchall():
+            rf = row[0] if not hasattr(row,"keys") else row["fenomeni"]
+            fl = rf if isinstance(rf,list) else (_json.loads(rf) if rf else [])
+            for f in (fl or []): coperti.add(str(f).strip())
+        # fenomeni senza ricetta (con nome e disciplina)
+        if disc_filtro:
+            cur.execute("SELECT id,name,domain FROM nodes WHERE type='Fenomeno' AND domain=%s ORDER BY name",(disc_filtro,))
+        else:
+            cur.execute("SELECT id,name,domain FROM nodes WHERE type='Fenomeno' ORDER BY domain,name")
+        scoperti = []
+        for f in cur.fetchall():
+            fid = f[0] if not hasattr(f,"keys") else f["id"]
+            fname = f[1] if not hasattr(f,"keys") else f["name"]
+            fdom = f[2] if not hasattr(f,"keys") else f["domain"]
+            # scoperto se né l'id né il nome sono tra i coperti
+            if fid not in coperti and fname not in coperti:
+                scoperti.append({"id":fid,"nome":fname,"disc":fdom or "cucina"})
+        generate = []
+        for fen in scoperti[:n]:
+            try:
+                # richiesta guidata dal nome del fenomeno -> il builder aggancia i fenomeni pertinenti
+                ric = genera_ricetta(db, f"una preparazione che dimostra: {fen['nome']}", disciplina=fen["disc"], lang="it")
+                if ric.get("errore") or not ric.get("nome"): continue
+                nome = ric["nome"]
+                slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+                slug = _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:40]
+                rid = f"ric-gen-{slug}"
+                cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
+                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni)
+                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
+                    ON CONFLICT (id) DO NOTHING""",
+                    (rid, nome, fen["disc"], ric.get("descrizione",""),
+                     _json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
+                     _json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                     _json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+                     _json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                     ric.get("punto_critico",""),
+                     _json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                     _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                     _json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
+                     ric.get("tempo_prep"), ric.get("tempo_cottura"),
+                     ric.get("difficolta",""), ric.get("porzioni","")))
+                conn.commit()
+                generate.append({"fenomeno":fen["nome"],"ricetta":nome,"id":rid,"fenomeni_agganciati":ric.get("fenomeni",[])})
+            except Exception as ge:
+                conn.rollback()
+                generate.append({"fenomeno":fen["nome"],"errore":str(ge)[:100]})
+        return jsonify({"scoperti_totali":len(scoperti),"generate_ora":len([g for g in generate if g.get("id")]),
+                        "dettaglio":generate,
+                        "nota":"traduzioni EN/ES: poi via /admin/traduci-ricette. Ripeti per generare le altre."})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore":str(e),"trace":traceback.format_exc()[-300:]}),500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/fenomeni-senza-ricetta")
 def admin_fenomeni_senza_ricetta():
     """Trova i fenomeni che NON hanno ancora una ricetta che li dimostra (i buchi veri da riempire).
