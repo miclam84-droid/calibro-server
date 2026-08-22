@@ -1018,6 +1018,8 @@ def abbina(ingrediente):
     """FL3 — Abbinamenti aromatici dal grafo Ahn 2011 (edges abbinamento_aromatico).
     Cerca per nome italiano (con mappa di traduzione) o inglese direttamente.
     Sempre marcato come ipotesi eurisitca, mai come legge."""
+    if not _check_rate_limit(request.headers.get("X-Forwarded-For", request.remote_addr or "?").split(",")[0].strip()):
+        return jsonify({"errore":"Troppe richieste. Attendi un momento."}), 429
     _seg = _segreto_di(ingrediente)  # segreto del mestiere, se c'è
     # ARRICCHIMENTO BAR: se è uno spirito curato, usa gli abbinamenti da pratica bar.
     # (Il dataset Ahn ha pochi/zero composti per i distillati — vodka, campari, ecc.)
@@ -2029,6 +2031,8 @@ def foto_analisi():
     _ip = _rq.headers.get("X-Forwarded-For", _rq.remote_addr or "?").split(",")[0].strip()
     if not _check_rate_limit(_ip):
         return _js({"errore": "Troppe richieste. Attendi un momento."}), 429
+    if not _check_rate_limit_ai(_chiave_rate()):
+        return _js({"errore":"rate_limit","messaggio":"Troppe analisi foto. Attendi un minuto."}), 429
     from utils import _e_pro
     _tok = (request.form.get("token") or request.args.get("token") or request.headers.get("X-Token","") or "")
     _uid = _utente_da_token(_tok) if _tok else None
