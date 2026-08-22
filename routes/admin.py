@@ -2284,6 +2284,30 @@ def admin_riempi_immagini():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
 
+@bp.route("/admin/migra-ricette-voce")
+def admin_migra_ricette_voce():
+    """Aggiunge le colonne esperimento e limite alla tabella ricette (Protocollo Kenji-Matter).
+    Idempotente: ADD COLUMN IF NOT EXISTS. Sicuro da rilanciare."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS esperimento TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS limite TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS esperimento_en TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS esperimento_es TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS limite_en TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS limite_es TEXT")
+        conn.commit()
+        return jsonify({"ok": True, "aggiunte": ["esperimento","limite","esperimento_en/es","limite_en/es"]})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"errore": str(e)}), 500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/cancella-nodo")
 def admin_cancella_nodo():
     """Cancella un nodo per id (e i suoi archi). Per rimuovere contenuti sbagliati/inventati. ?id= obbligatorio."""
@@ -2357,8 +2381,8 @@ def admin_espandi_ricette():
             slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
             slug = "ric-cls-" + _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:36]
             cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
-                    punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni)
-                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
+                    punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite)
+                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s)
                 ON CONFLICT (id) DO NOTHING""",
                 (slug, nome, disc, ric.get("descrizione",""),
                  _json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
@@ -2370,8 +2394,8 @@ def admin_espandi_ricette():
                  _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
                  _json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
                  ric.get("tempo_prep",""), ric.get("tempo_cottura",""),
-                 ric.get("difficolta",""), ric.get("porzioni","")))
-            generate.append({"ricetta": nome, "id": slug, "fenomeni": ric.get("fenomeni",[])[:3]})
+                 ric.get("difficolta",""), ric.get("porzioni",""),
+                 ric.get("esperimento",""), ric.get("limite","")))
         conn.commit()
         return jsonify({"disciplina": disc, "generate": len(generate), "dettaglio": generate,
                         "repertorio_restante": len(candidati)-len(generate),
@@ -2433,8 +2457,8 @@ def admin_genera_ricette_mancanti():
                 slug = _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:40]
                 rid = f"ric-gen-{slug}"
                 cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
-                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni)
-                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
+                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite)
+                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s)
                     ON CONFLICT (id) DO NOTHING""",
                     (rid, nome, fen["disc"], ric.get("descrizione",""),
                      _json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
@@ -2446,7 +2470,8 @@ def admin_genera_ricette_mancanti():
                      _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
                      _json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
                      ric.get("tempo_prep"), ric.get("tempo_cottura"),
-                     ric.get("difficolta",""), ric.get("porzioni","")))
+                     ric.get("difficolta",""), ric.get("porzioni",""),
+                     ric.get("esperimento",""), ric.get("limite","")))
                 conn.commit()
                 generate.append({"fenomeno":fen["nome"],"ricetta":nome,"id":rid,"fenomeni_agganciati":ric.get("fenomeni",[])})
             except Exception as ge:

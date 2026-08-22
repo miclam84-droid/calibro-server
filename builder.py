@@ -156,14 +156,21 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
     LINGUA = {"it": "italiano", "en": "English", "es": "español"}.get(lang, "italiano")
 
     prompt = (
-        f"Sei un consulente scientifico F&B. Genera UNA ricetta per la disciplina '{disciplina}' "
-        f"a partire da questa richiesta: \"{richiesta}\".\n\n"
+        f"Sei un professionista del mestiere ('{disciplina}') che è ANCHE scienziato del cibo. "
+        f"Scrivi come se spiegassi una cosa a un collega durante il prep delle 17:30: curioso ma ASCIUTTO, "
+        f"frasi corte, mai da professore. Genera UNA ricetta a partire da: \"{richiesta}\".\n\n"
         f"USA SOLO questi dati REALI (non inventare numeri o fenomeni):\n"
         f"FENOMENI DISPONIBILI CON NUMERI BERSAGLIO: {fen_str}\n\n"
         f"TECNICHE DISPONIBILI: {tec_str}\n\n"
         + (f"ABBINAMENTI AROMATICI (per analogia): {abb_str}\n\n" if abb_str else "")
-        + f"Rispondi in {LINGUA} SOLO con un oggetto JSON (nessun testo extra) in questo formato ESATTO:\n"
-        f'{{"nome": "...", "descrizione": "1-2 frasi sul principio scientifico", '
+        + f"VOCE DEI TESTI (regole obbligatorie):\n"
+        f"- La 'descrizione' NON è una definizione da manuale. Apri con un PROBLEMA reale del banco "
+        f"(es. 'La carbonara ti diventa una frittata? Non è colpa tua, è la temperatura.').\n"
+        f"- Il 'punto_critico' nomina la VARIABILE che il professionista confonde, con il numero.\n"
+        f"- L''esperimento' è una prova semplice da fare domani al banco per capire (non teoria).\n"
+        f"- Il 'limite' dice quando il numero-bersaglio NON basta e decide il palato/l'occhio.\n\n"
+        f"Rispondi in {LINGUA} SOLO con un oggetto JSON (nessun testo extra) in questo formato ESATTO:\n"
+        f'{{"nome": "...", "descrizione": "apri con un problema del banco, 1-2 frasi asciutte", '
         f'"ingredienti": [{{"nome": "...", "quantita": "...", "unita": "..."}}], '
         f'"procedimento": [{{"n": 1, "testo": "passaggio operativo chiaro e specifico", "numero_chiave": "es. 80-85 gradi oppure null se il passo non ha un numero critico"}}], '
         f'"applicazioni": ["dove si usa questa preparazione", ...], '
@@ -172,13 +179,15 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f'"fenomeni": ["nome fenomeno usato", ...], '
         f'"tecniche": ["nome tecnica usata", ...], '
         f'"numeri": {{"parametro": "valore con unità", ...}}, '
-        f'"punto_critico": "il punto dove si sbaglia e perché, con un numero", '
+        f'"punto_critico": "la variabile che si confonde e perché si sbaglia, con un numero", '
+        f'"esperimento": "una prova semplice da fare al banco per capire il fenomeno (1 frase concreta)", '
+        f'"limite": "quando il numero-bersaglio non basta e decide il palato/occhio (1 frase)", '
         f'"abbinamenti": {{"analogia": "...", "contrasto": "..."}}}}\n\n'
         f"I numeri devono venire dai fenomeni/tecniche forniti sopra. "
         f"Il PROCEDIMENTO deve essere una sequenza di passaggi REALI e specifici: ogni passo che tocca "
         f"un parametro critico DEVE avere il numero_chiave preso dai fenomeni sopra. "
         f"Le APPLICAZIONI dicono dove si usa la preparazione. "
-        f"Il punto critico deve citare un numero specifico. Niente markdown, solo JSON."
+        f"Niente markdown, solo JSON."
     )
 
     try:
