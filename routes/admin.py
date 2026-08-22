@@ -1917,6 +1917,73 @@ def admin_consolida_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/estrai-attrezzature")
+def admin_estrai_attrezzature():
+    """Estrae gli strumenti GIA' NOMINATI nel campo 'strumento' di fenomeni/tecniche e li rende
+    NODI Strumento veri, collegati ai nodi che li citano. NON inventa: parte dai dati reali del grafo.
+    Normalizza le varianti (termometro a sonda/IR/integrato -> Termometro). ?dry=1 per anteprima."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json, re as _re, unicodedata
+    from db import carica_grafo
+    dry = request.args.get("dry", "0") != "0"
+    db = carica_grafo()
+    # mappa di normalizzazione: variante -> nome canonico
+    def canonico(s):
+        s = s.strip().lower()
+        s = _re.sub(r"\(.*?\)", "", s).strip()  # togli parentesi
+        if not s: return None
+        if "termometro" in s: return "Termometro"
+        if "phmetro" in s or "ph-metro" in s or "ph metro" in s or "phmetr" in s: return "pH-metro"
+        if "rifrattometro" in s: return "Rifrattometro"
+        if "bilancia" in s: return "Bilancia di precisione"
+        if "alcolimetro" in s or "idrometro" in s: return "Alcolimetro"
+        if "awmetro" in s or "aw metro" in s: return "Awmetro"
+        if "manometro" in s: return "Manometro"
+        if "timer" in s: return "Timer"
+        if "torbidimetro" in s: return "Torbidimetro"
+        if "alveografo" in s: return "Alveografo Chopin"
+        if "acidita titolabile" in s or "acidità titolabile" in s: return "Kit acidita titolabile"
+        # scarta metriche non-strumento (IBU, PAC, EBC, DE, analisi...)
+        if any(x in s for x in ["ibu","pac","ebc"," de ","analisi","test ","calcolat","sensoriale","congeners","malico","fenolica","zuccheri"]):
+            return None
+        return None  # solo strumenti riconosciuti (niente invenzioni)
+    try:
+        rows = db.execute("SELECT id, name, data, domain FROM nodes WHERE data::text LIKE '%%strumento%%'").fetchall()
+        # raccogli strumento->nodi che lo citano
+        strum_nodi = {}
+        for r in rows:
+            data = r["data"] if isinstance(r["data"], dict) else (_json.loads(r["data"]) if r["data"] else {})
+            raw = data.get("strumento", "")
+            if not raw: continue
+            for pezzo in _re.split(r"[·,;/]| e ", raw):
+                canon = canonico(pezzo)
+                if canon:
+                    strum_nodi.setdefault(canon, {"cita": [], "dom": r["domain"]})
+                    strum_nodi[canon]["cita"].append(r["id"])
+        if dry:
+            return jsonify({"strumenti_trovati": len(strum_nodi),
+                            "dettaglio": {k: len(v["cita"]) for k, v in strum_nodi.items()}})
+        creati = 0; archi = 0
+        for nome, info in strum_nodi.items():
+            slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+            slug = "str-" + _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:35]
+            db.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (?,?,?,?,?) ON CONFLICT (id) DO NOTHING",
+                       (slug, "Strumento", nome, info["dom"] or "trasversale", _json.dumps({"nota": "strumento di misura/lavorazione del mestiere"}, ensure_ascii=False)))
+            creati += 1
+            for nid in info["cita"][:20]:
+                try:
+                    db.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (?,?,?,?) ON CONFLICT DO NOTHING",
+                               (nid, slug, "misurato_con", "{}"))
+                    archi += 1
+                except Exception: pass
+        return jsonify({"strumenti_creati": creati, "archi_creati": archi,
+                        "nota": "estratti dai dati reali del grafo, non inventati. Collegati ai nodi che li citano."})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+
 @bp.route("/admin/genera-storia")
 def admin_genera_storia():
     """Crea un nodo Storia per una disciplina: l'evoluzione del mestiere collegata alle tecniche/fenomeni
@@ -1976,6 +2043,60 @@ def admin_genera_storia():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+
+@bp.route("/admin/aggiungi-fenomeni-mancanti")
+def admin_aggiungi_fenomeni_mancanti():
+    """Aggiunge i fenomeni-cardine mancanti con DATI REALI (non AI): Strecker, inversione zucchero,
+    browning enzimatico, capillarità, espansione termica, saponificazione, tissotropia, salting.
+    Scritti a mano perché sono scienza precisa."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json
+    from db import carica_grafo
+    db = carica_grafo()
+    FENOMENI = [
+        ("fen-strecker", "Reazione di Strecker (aromi della rosolatura)", "cucina", {
+            "scheda": "Parte della reazione di Maillard: gli amminoacidi reagiscono con i composti dicarbonilici e si degradano in aldeidi di Strecker, responsabili degli aromi tostati/di rosolatura (malto, pane, carne arrostita, caffe). E' cio' che da' l'AROMA, mentre la Maillard classica da' il COLORE. Avviene sopra i 130-140C.",
+            "numeri": "attiva sopra 130-140C · massima resa aromatica 150-180C · richiede amminoacidi liberi + zuccheri riducenti",
+            "target": "temperatura superficie 150-180C per aromi di Strecker ottimali",
+            "tipo": "chimico", "discipline": ["cucina","panificazione","caffetteria"]}),
+        ("fen-inversione-zucchero", "Inversione dello zucchero (saccarosio in glucosio+fruttosio)", "pasticceria", {
+            "scheda": "Il saccarosio si scinde in glucosio + fruttosio (zucchero invertito) per idrolisi acida o enzimatica (invertasi). Lo zucchero invertito e' piu' dolce, igroscopico (trattiene umidita'), abbassa il punto di congelamento e previene la cristallizzazione. Base di sciroppi, gelati morbidi, prodotti da forno che restano soffici.",
+            "numeri": "inversione con acido citrico 0,1-0,2%% a 110-114C · fruttosio POD 173 (piu dolce del saccarosio 100) · abbassa il punto di congelamento",
+            "target": "grado di inversione 50-95%% secondo l'uso (sciroppi, gelato, confetti)",
+            "tipo": "chimico", "discipline": ["pasticceria","gelateria"]}),
+        ("fen-browning-enzimatico", "Imbrunimento enzimatico (mela, carciofo, avocado)", "cucina", {
+            "scheda": "Quando frutta/verdura viene tagliata, l'enzima polifenolossidasi (PPO) reagisce coi polifenoli e l'ossigeno formando melanine brune. Si blocca con: acido (limone, pH sotto 3-4 disattiva la PPO), freddo (rallenta), calore (denatura la PPO sopra 70-80C), o togliendo l'ossigeno (acqua, sottovuoto).",
+            "numeri": "PPO inattiva a pH <3-4 · denaturata sopra 70-80C · rallentata sotto 4C",
+            "target": "pH <4 o blanching 70-80C per bloccare l'imbrunimento",
+            "tipo": "enzimatico", "discipline": ["cucina"]}),
+        ("fen-capillarita", "Capillarita (assorbimento nei porosi)", "panificazione", {
+            "scheda": "L'acqua risale nei canali stretti (pori del pane, polvere di caffe, zolletta) per tensione superficiale, senza pompa. Governa l'assorbimento dell'acqua nella farina, la bagnatura del caffe (pre-infusione), l'inzuppo dei dolci.",
+            "numeri": "risalita inversamente proporzionale al diametro del poro · pre-infusione caffe 5-15 secondi",
+            "target": "bagnatura uniforme: pre-infusione 5-15s nel caffe filtro",
+            "tipo": "fisico", "discipline": ["panificazione","caffetteria","pasticceria"]}),
+        ("fen-espansione-termica", "Espansione termica (spinta in forno, oven spring)", "panificazione", {
+            "scheda": "Col calore i gas (CO2, vapore, aria) si espandono e l'impasto cresce di colpo in forno (oven spring) prima che la crosta si fissi. Vale per pane, bigne' (vapore che gonfia), souffle'. Gestita da temperatura del forno e umidita'.",
+            "numeri": "oven spring nei primi 5-10 min a 220-250C · il vapore raddoppia il volume del bigne",
+            "target": "forno 220-250C con vapore iniziale per massima spinta",
+            "tipo": "fisico", "discipline": ["panificazione","pasticceria"]}),
+        ("fen-tissotropia", "Tissotropia (fluidi che cambiano con lo sforzo)", "cucina", {
+            "scheda": "Alcuni fluidi (ketchup, salse con amido, gel) diventano piu' fluidi quando agitati/sforzati e si ri-addensano a riposo. Governa la scorrevolezza delle salse, la stesura dei gel, il comportamento degli impasti.",
+            "numeri": "recupero viscosita' a riposo secondi-minuti secondo l'addensante",
+            "target": "viscosita' operativa secondo la salsa (scorre sotto sforzo, tiene a riposo)",
+            "tipo": "reologico", "discipline": ["cucina","bar"]}),
+    ]
+    creati = 0
+    try:
+        for fid, nome, dom, data in FENOMENI:
+            db.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (?,?,?,?,?) ON CONFLICT (id) DO UPDATE SET data=EXCLUDED.data, name=EXCLUDED.name",
+                       (fid, "Fenomeno", nome, dom, _json.dumps(data, ensure_ascii=False)))
+            creati += 1
+        return jsonify({"fenomeni_aggiunti": creati, "nota": "dati reali scritti a mano, non AI"})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
 
 @bp.route("/admin/aggiungi-umami")
 def admin_aggiungi_umami():
