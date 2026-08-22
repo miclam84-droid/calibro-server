@@ -2413,6 +2413,10 @@ def admin_espandi_ricette():
                  ric.get("tempo_prep",""), ric.get("tempo_cottura",""),
                  ric.get("difficolta",""), ric.get("porzioni",""),
                  ric.get("esperimento",""), ric.get("limite","")))
+            generate.append({"ricetta": nome, "id": slug,
+                             "esperimento": bool(ric.get("esperimento")),
+                             "limite": bool(ric.get("limite")),
+                             "fenomeni": ric.get("fenomeni",[])[:3]})
         conn.commit()
         return jsonify({"disciplina": disc, "generate": len(generate), "dettaglio": generate,
                         "saltati": saltati,
