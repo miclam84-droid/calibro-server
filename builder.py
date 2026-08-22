@@ -194,18 +194,17 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         try:
             ricetta = _j.loads(blob)
         except _j.JSONDecodeError:
-            # riparazione tollerante: errori JSON comuni dell'AI (virgole mancanti/in eccesso)
-            fix = blob
-            # togli virgole prima di } o ]
-            fix = re.sub(r",\s*([}\]])", r"\1", fix)
-            # aggiungi virgola mancante tra "..." e la riga dopo che apre "chiave":
-            fix = re.sub(r'("\s*)\n(\s*")', r'\1,\n\2', fix)
-            # aggiungi virgola mancante tra } o ] e la riga dopo che apre "chiave" o {
-            fix = re.sub(r'([}\]])\s*\n(\s*["{\[])', r'\1,\n\2', fix)
+            # 1° tentativo: strict=False tollera newline/caratteri di controllo dentro le stringhe (causa comune)
             try:
-                ricetta = _j.loads(fix)
+                ricetta = _j.loads(blob, strict=False)
             except _j.JSONDecodeError:
-                return {"errore": "JSON non recuperabile", "raw": blob[:200]}
+                # 2° tentativo: riparazione virgole (mancanti/in eccesso)
+                fix = re.sub(r",\s*([}\]])", r"\1", blob)
+                fix = re.sub(r'([}\]])\s*\n(\s*["{\[])', r'\1,\n\2', fix)
+                try:
+                    ricetta = _j.loads(fix, strict=False)
+                except _j.JSONDecodeError:
+                    return {"errore": "JSON non recuperabile", "raw": blob[:400]}
         # pulizia: normalizza i nomi tecniche (l'AI a volte copia la label con i numeri)
         if "tecniche" in ricetta and isinstance(ricetta["tecniche"], list):
             pulite = []
