@@ -1917,6 +1917,47 @@ def admin_consolida_doppioni():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/riempi-immagini-ricette")
+def admin_riempi_immagini():
+    """Riempie le immagini mancanti delle ricette cercando su Pexels (API gratuita).
+    Serve PEXELS_API_KEY nell'ambiente. Salva url+autore+fonte con credito.
+    ?n=8 quante per chiamata (timeout). ?dry=1 per contare quante ne mancano."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    from immagini import cerca_immagine, credito_immagine
+    dry = request.args.get("dry", "0") != "0"
+    n = int(request.args.get("n", "8"))
+    if not os.environ.get("PEXELS_API_KEY"):
+        return jsonify({"errore": "manca PEXELS_API_KEY nell'ambiente",
+                        "come": "registrati gratis su pexels.com/api e aggiungi la chiave nelle variabili Railway"}), 400
+    db = carica_grafo()
+    try:
+        rows = db.execute("""SELECT id, nome, disciplina FROM ricette
+                             WHERE (immagine IS NULL OR immagine='') ORDER BY id""").fetchall()
+        mancanti = [{"id": r["id"], "nome": r["nome"], "disc": r["disciplina"]} for r in rows]
+        if dry:
+            return jsonify({"ricette_senza_immagine": len(mancanti),
+                            "esempi": [m["nome"] for m in mancanti[:10]]})
+        fatte = []
+        for m in mancanti[:n]:
+            # query: nome ricetta (pulito) — Pexels trova cibo/drink pertinente
+            q = m["nome"]
+            img = cerca_immagine(q)
+            if not img and m["disc"]:  # fallback sulla disciplina generica
+                img = cerca_immagine({"bar":"cocktail","cucina":"food dish","pasticceria":"dessert",
+                                      "panificazione":"bread","gelateria":"ice cream"}.get(m["disc"], "food"))
+            if img and img.get("url"):
+                db.execute("UPDATE ricette SET immagine=?, immagine_autore=?, immagine_url_fonte=? WHERE id=?",
+                           (img["url"], credito_immagine(img["autore"]), img["fonte"], m["id"]))
+                fatte.append({"ricetta": m["nome"], "autore": img["autore"]})
+        return jsonify({"riempite_ora": len(fatte), "rimanenti": len(mancanti)-len(fatte),
+                        "dettaglio": fatte, "nota": "ripeti per riempire le altre"})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
+
 @bp.route("/admin/genera-ricette-mancanti")
 def admin_genera_ricette_mancanti():
     """Genera ricette sui fenomeni SENZA ricetta (i buchi veri). Una ricetta per fenomeno,
