@@ -1944,13 +1944,15 @@ def admin_genera_tecniche():
         fen_str = "; ".join(f"{f['id']}={f['nome']}" for f in fen_lista[:20])
         lista_esist = ", ".join(nomi_esist) if nomi_esist else "nessuna"
         righe_prompt = [
-            "Sei un consulente tecnico esperto di " + disc + " di ALTO LIVELLO. Elenca " + str(n) + " TECNICHE di " + disc + ",",
-            "includendo soprattutto quelle MODERNE, INNOVATIVE e D'AVANGUARDIA (non solo le basi).",
-            "Esempi del livello richiesto (per la cucina): reverse searing, Roner/sous-vide di precisione, oliocottura/confit,",
-            "sferificazione, gelificazione con agar/gellan, fermentazioni controllate (koji, garum, miso), affumicatura a freddo,",
-            "maturazioni e frollature spinte, cottura in crosta di sale, uso dell'azoto, essiccazione/liofilizzazione.",
-            "Per ogni disciplina cerca l'equivalente avanzato. NON ripetere queste gia presenti: " + lista_esist + ".",
-            "Per ognuna: nome breve e riconoscibile nel mestiere, nota concreta CON NUMERI operativi, fenomeno collegato.",
+            "Sei un consulente tecnico esperto di " + disc + " di ALTO LIVELLO. Elenca " + str(n) + " TECNICHE REALI di " + disc + ".",
+            "REGOLA FERREA: SOLO tecniche VERE, riconosciute e usate nel mestiere, col loro nome reale. MAI inventare nomi o tecniche.",
+            "Includi le MODERNE e D'AVANGUARDIA realmente esistenti, non solo le basi.",
+            "Esempi REALI del livello richiesto (cucina): reverse searing, cottura sous-vide col Roner, oliocottura, confit,",
+            "sferificazione, gelificazione con agar/gellan, fermentazione con koji, garum, affumicatura a freddo, frollatura dry-aged,",
+            "cottura in crosta di sale, marinatura, brasatura. Per altre discipline usa le tecniche reali equivalenti di quel mestiere.",
+            "Se non conosci abbastanza tecniche NUOVE e reali, restituiscine MENO ma vere: meglio poche vere che una inventata.",
+            "NON ripetere queste gia presenti: " + lista_esist + ".",
+            "Per ognuna: nome reale del mestiere, nota concreta CON NUMERI operativi, fenomeno collegato.",
             "Scegli un fenomeno id da questa lista se pertinente: " + fen_str,
             'Rispondi SOLO con JSON valido: {"tecniche":[{"nome":"...","nota":"nota con numeri","fenomeno_id":"fen-... o null"}]}',
         ]
