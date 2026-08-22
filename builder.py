@@ -217,26 +217,36 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
                 match = next((v for v in nomi_tecniche_validi if v.lower() in nome_pulito.lower() or nome_pulito.lower() in v.lower()), nome_pulito)
                 pulite.append(match)
             ricetta["tecniche"] = pulite
-        # FALLBACK: se l'AI ha lasciato le tecniche vuote (o quasi), aggancia quelle pertinenti
-        # cercando le parole della ricetta (nome+procedimento) tra le tecniche disponibili della disciplina
+        # FALLBACK: se l'AI ha lasciato le tecniche vuote (o quasi), aggancia quelle collegate
+        # ai FENOMENI della ricetta tramite il grafo (arco realizzato_da) - non match di testo fragile.
         if not ricetta.get("tecniche") or len(ricetta.get("tecniche", [])) < 2:
-            testo_ricetta = (ricetta.get("nome", "") + " " +
-                             " ".join(p.get("testo", "") for p in ricetta.get("procedimento", []) if isinstance(p, dict))).lower()
-            # parole generiche da ignorare nel match (troppo larghe)
-            STOP = {"cottura", "controllata", "temperatura", "della", "delle", "degli", "a", "di", "e", "con", "il", "la"}
             agganciate = list(ricetta.get("tecniche") or [])
-            for t in tecniche:
-                nome_tec = t["nome"]
-                if nome_tec in agganciate:
-                    continue
-                # match: una parola SIGNIFICATIVA della tecnica (>4 lettere, non generica) è nel testo ricetta
-                parole = [w for w in re.sub(r"[^a-zàèéìòù ]", " ", nome_tec.lower()).split() if len(w) > 4 and w not in STOP]
-                if any(w in testo_ricetta for w in parole):
-                    agganciate.append(nome_tec)
-                if len(agganciate) >= 5:
-                    break
+            fen_ricetta = ricetta.get("fenomeni", [])
+            if fen_ricetta:
+                try:
+                    # trovo gli id dei fenomeni della ricetta (per nome)
+                    ph = ",".join("?" for _ in fen_ricetta)
+                    fen_rows = db.execute(
+                        f"SELECT id FROM nodes WHERE type='Fenomeno' AND name IN ({ph})",
+                        tuple(fen_ricetta)
+                    ).fetchall()
+                    fen_ids = [r["id"] for r in fen_rows]
+                    if fen_ids:
+                        ph2 = ",".join("?" for _ in fen_ids)
+                        # tecniche collegate a quei fenomeni (arco realizzato_da: fenomeno -> tecnica)
+                        tec_rows = db.execute(
+                            f"""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON e.to_id = n.id
+                                WHERE e.from_id IN ({ph2}) AND e.relation='realizzato_da' AND n.type='Tecnica'
+                                AND n.domain=? LIMIT 6""",
+                            tuple(fen_ids) + (disciplina,)
+                        ).fetchall()
+                        for tr in tec_rows:
+                            if tr["name"] not in agganciate:
+                                agganciate.append(tr["name"])
+                except Exception:
+                    pass
             if agganciate:
-                ricetta["tecniche"] = agganciate
+                ricetta["tecniche"] = agganciate[:5]
         ricetta["_generata"] = True
         ricetta["disciplina"] = disciplina
         ricetta["_disclaimer"] = "Ricetta generata dall'AI sui dati scientifici del grafo. Verifica i numeri al banco."
