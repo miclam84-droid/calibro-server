@@ -2392,7 +2392,8 @@ def admin_fenomeni_senza_ricetta():
             fid = f[0] if not hasattr(f,"keys") else f["id"]
             fname = f[1] if not hasattr(f,"keys") else f["name"]
             fdom = f[2] if not hasattr(f,"keys") else f["domain"]
-            if fid in coperti: con+=1
+            # coperto se l'id O il nome è tra i fenomeni citati (le ricette salvano il NOME)
+            if fid in coperti or (fname and fname.strip() in coperti): con+=1
             else: senza.append({"id":fid,"nome":fname,"disc":fdom})
         # raggruppo per disciplina
         per_disc = {}
