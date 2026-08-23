@@ -2858,6 +2858,104 @@ def admin_migra_schema_traduzioni():
     finally:
         _release_conn(conn)
 
+# ── Traduzione ricette in BACKGROUND (EN+ES, tutti i campi inclusi i nuovi) ──
+_TRAD_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "corrente": "", "lingua": ""}
+
+def _trad_worker():
+    """Traduce in background nome/descrizione/procedimento/applicazioni/punto_critico/esperimento/limite/twist
+    in EN e ES per tutte le ricette che ne hanno bisogno. Nessun limite di tempo HTTP."""
+    import json as _json
+    from db import _get_conn, _release_conn
+    from ai import _haiku_raw
+    global _TRAD_STATO
+
+    def _one(testo, lname):
+        if not testo or not str(testo).strip(): return ""
+        out = _haiku_raw(f"Translate this Italian cooking text to {lname}. Keep numbers and units. "
+                         f"Return ONLY the translation on a single line, no quotes, no notes:\n{testo}")
+        return (out or "").strip().strip('"').strip()
+
+    try:
+        # conto totale lavoro (ricette x 2 lingue che mancano)
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("""SELECT COUNT(*) FROM ricette WHERE nome_en IS NULL OR esperimento_en IS NULL
+                       OR nome_es IS NULL OR esperimento_es IS NULL""")
+        _TRAD_STATO.update({"attivo": True, "fatte": 0, "totale": cur.fetchone()[0], "errori": 0})
+        _release_conn(conn)
+
+        for lang, lname in [("en","English"), ("es","Spanish")]:
+            _TRAD_STATO["lingua"] = lang
+            conn = _get_conn(); cur = conn.cursor()
+            cur.execute(f"""SELECT id,nome,descrizione,procedimento,applicazioni,punto_critico,esperimento,limite,twist
+                            FROM ricette WHERE nome_{lang} IS NULL OR esperimento_{lang} IS NULL ORDER BY id""")
+            rows = cur.fetchall()
+            _release_conn(conn)
+            for row in rows:
+                rid, nome, desc, proc, appl, pc, esp, lim, tw = row
+                _TRAD_STATO["corrente"] = f"{nome} [{lang}]"
+                try:
+                    proc_p = proc if isinstance(proc,list) else (_json.loads(proc) if proc else [])
+                    appl_p = appl if isinstance(appl,list) else (_json.loads(appl) if appl else [])
+                    passi = [step.get("testo","") for step in proc_p if isinstance(step,dict)]
+                    passi_join = "\n@@@\n".join(passi)
+                    proc_out = _haiku_raw(
+                        f"Translate to {lname} each cooking step. Steps separated by a line with @@@. "
+                        f"Keep EXACTLY the same number of steps and @@@ separators. Keep numbers/units. "
+                        f"Return ONLY the translated steps with @@@ between them:\n\n{passi_join}") or ""
+                    passi_tr = [x.strip() for x in proc_out.split("@@@") if x.strip()]
+                    if len(passi_tr) != len(passi):
+                        passi_tr = [_one(pz, lname) for pz in passi]
+                    proc_t = []
+                    for i,step in enumerate([s for s in proc_p if isinstance(s,dict)]):
+                        st = dict(step)
+                        if i < len(passi_tr) and passi_tr[i]: st["testo"]=passi_tr[i]
+                        proc_t.append(st)
+                    nome_t = _one(nome, lname) or nome
+                    desc_t = _one(desc, lname) if desc else ""
+                    pc_t = _one(pc, lname) if pc else ""
+                    esp_t = _one(esp, lname) if esp else ""
+                    lim_t = _one(lim, lname) if lim else ""
+                    tw_t = _one(tw, lname) if tw else ""
+                    appl_t = [_one(a, lname) or a for a in appl_p if isinstance(a,str)]
+                    c2 = _get_conn(); cur2 = c2.cursor()
+                    try:
+                        cur2.execute(f"""UPDATE ricette SET nome_{lang}=%s, scheda_{lang}=%s,
+                            procedimento_{lang}=%s::jsonb, applicazioni_{lang}=%s::jsonb, punto_critico_{lang}=%s,
+                            esperimento_{lang}=%s, limite_{lang}=%s, twist_{lang}=%s WHERE id=%s""",
+                            (nome_t, desc_t, _json.dumps(proc_t,ensure_ascii=False),
+                             _json.dumps(appl_t,ensure_ascii=False), pc_t, esp_t, lim_t, tw_t, rid))
+                        c2.commit(); _TRAD_STATO["fatte"] += 1
+                    except Exception:
+                        c2.rollback(); _TRAD_STATO["errori"] += 1
+                    finally:
+                        _release_conn(c2)
+                except Exception:
+                    _TRAD_STATO["errori"] += 1
+    finally:
+        _TRAD_STATO["attivo"] = False
+        _TRAD_STATO["corrente"] = ""
+
+@bp.route("/admin/traduci-bg")
+def admin_traduci_bg():
+    """Avvia la traduzione EN+ES in background (thread). Risponde subito. Stato: /admin/traduci-bg-stato."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    global _TRAD_STATO
+    if _TRAD_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _TRAD_STATO})
+    import threading
+    t = threading.Thread(target=_trad_worker, daemon=True)
+    t.start()
+    return jsonify({"avviato": True, "nota": "traduzione in background, controlla /admin/traduci-bg-stato"})
+
+@bp.route("/admin/traduci-bg-stato")
+def admin_traduci_bg_stato():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    return jsonify(_TRAD_STATO)
+
 @bp.route("/admin/traduci-ricette")
 def admin_traduci_ricette():
     """Traduce nome/procedimento/applicazioni/punto_critico delle ricette in EN e ES via Haiku.
