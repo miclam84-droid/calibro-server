@@ -821,16 +821,22 @@ def api_ricette_list():
             proc_out = _parse(r.get("procedimento")) or []
             appl_out = _parse(r.get("applicazioni")) or []
             pc_out = r.get("punto_critico") or ""
+            esp_out = r.get("esperimento") or ""
+            lim_out = r.get("limite") or ""
             if lang=="en":
                 if r.get("nome_en"): nome_out=r["nome_en"]
                 if r.get("procedimento_en"): proc_out=_parse(r.get("procedimento_en")) or proc_out
                 if r.get("applicazioni_en"): appl_out=_parse(r.get("applicazioni_en")) or appl_out
                 if r.get("punto_critico_en"): pc_out=r["punto_critico_en"]
+                if r.get("esperimento_en"): esp_out=r["esperimento_en"]
+                if r.get("limite_en"): lim_out=r["limite_en"]
             elif lang=="es":
                 if r.get("nome_es"): nome_out=r["nome_es"]
                 if r.get("procedimento_es"): proc_out=_parse(r.get("procedimento_es")) or proc_out
                 if r.get("applicazioni_es"): appl_out=_parse(r.get("applicazioni_es")) or appl_out
                 if r.get("punto_critico_es"): pc_out=r["punto_critico_es"]
+                if r.get("esperimento_es"): esp_out=r["esperimento_es"]
+                if r.get("limite_es"): lim_out=r["limite_es"]
             fen_list = _parse(r.get("fenomeni")) or []
             if fenomeno:
                 ids_norm = [str(f).strip() for f in fen_list] if isinstance(fen_list,list) else []
@@ -855,7 +861,9 @@ def api_ricette_list():
                 "difficolta":r.get("difficolta") or "",
                 "porzioni":r.get("porzioni") or "",
                 "applicazioni":appl_out,
-                "twist_di":r.get("twist_di") or None
+                "twist_di":r.get("twist_di") or None,
+                "esperimento":esp_out,
+                "limite":lim_out
             })
         return jsonify(result)
     except Exception as e:
