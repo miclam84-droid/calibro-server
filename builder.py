@@ -194,6 +194,10 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f'"twist": "un consiglio di {_termine_var} concreto col perché (1-2 frasi)", '
         f'"abbinamenti": {{"analogia": "...", "contrasto": "..."}}}}\n\n'
         f"I numeri devono venire dai fenomeni/tecniche forniti sopra. "
+        f"IMPORTANTE per il campo 'numeri': le descrizioni-bersaglio dei fenomeni contengono spesso cifre "
+        f"dentro le frasi (es. 'shakera 10-15s', 'sour 2:1:1', 'pH 4.6', 'vicino 0°C'). ESTRAI quelle cifre "
+        f"e mettile in 'numeri' come coppie parametro→valore (es. {{\"tempo shake\": \"10-15s\", \"struttura sour\": \"2:1:1\"}}). "
+        f"Se un fenomeno dà solo indicazioni qualitative senza cifre, NON inventare numeri per quel parametro. "
         f"Il PROCEDIMENTO deve essere una sequenza di passaggi REALI e specifici: ogni passo che tocca "
         f"un parametro critico DEVE avere il numero_chiave preso dai fenomeni sopra. "
         f"Le APPLICAZIONI dicono dove si usa la preparazione. "
