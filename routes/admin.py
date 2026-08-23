@@ -2226,15 +2226,16 @@ def admin_audit_fenomeni_numeri():
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     from db import carica_grafo
-    import json as _json
     db = carica_grafo()
-    rows = db.execute("SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY domain, name").fetchall()
+    rows = db.execute("SELECT id, name, domain, data FROM nodes").fetchall()
     con_numero, senza_numero = [], []
     for r in rows:
-        raw = r[3] if len(r) > 3 else None
-        data = raw if isinstance(raw, dict) else (_json.loads(raw) if raw else {})
+        rid = r["id"]
+        if not str(rid).startswith("fen-"):
+            continue
+        data = _dati(r["data"])
         nb = (data.get("numero_bersaglio") or data.get("target") or "").strip()
-        entry = {"id": r[0], "nome": r[1], "disciplina": r[2]}
+        entry = {"id": rid, "nome": r["name"], "disciplina": r["domain"]}
         (con_numero if nb else senza_numero).append(entry)
     return jsonify({"totale": len(con_numero)+len(senza_numero),
                     "con_numero": len(con_numero), "senza_numero": len(senza_numero),
