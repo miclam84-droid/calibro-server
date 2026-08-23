@@ -2225,22 +2225,20 @@ def admin_audit_fenomeni_numeri():
     secret = request.args.get("s", "")
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
-    from db import _get_conn, _release_conn
+    from db import carica_grafo
     import json as _json
-    conn = _get_conn(); cur = conn.cursor()
-    try:
-        cur.execute("SELECT id, nome, disciplina, data FROM nodes WHERE type='Fenomeno' ORDER BY disciplina, nome")
-        con_numero, senza_numero = [], []
-        for r in cur.fetchall():
-            data = r[3] if isinstance(r[3], dict) else (_json.loads(r[3]) if r[3] else {})
-            nb = (data.get("numero_bersaglio") or data.get("target") or "").strip()
-            entry = {"id": r[0], "nome": r[1], "disciplina": r[2]}
-            (con_numero if nb else senza_numero).append(entry)
-        return jsonify({"totale": len(con_numero)+len(senza_numero),
-                        "con_numero": len(con_numero), "senza_numero": len(senza_numero),
-                        "lista_senza": senza_numero})
-    finally:
-        _release_conn(conn)
+    db = carica_grafo()
+    rows = db.execute("SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY domain, name").fetchall()
+    con_numero, senza_numero = [], []
+    for r in rows:
+        raw = r[3] if len(r) > 3 else None
+        data = raw if isinstance(raw, dict) else (_json.loads(raw) if raw else {})
+        nb = (data.get("numero_bersaglio") or data.get("target") or "").strip()
+        entry = {"id": r[0], "nome": r[1], "disciplina": r[2]}
+        (con_numero if nb else senza_numero).append(entry)
+    return jsonify({"totale": len(con_numero)+len(senza_numero),
+                    "con_numero": len(con_numero), "senza_numero": len(senza_numero),
+                    "lista_senza": senza_numero})
 
 @bp.route("/admin/conta-nodi")
 def admin_conta_nodi():
