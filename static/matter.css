@@ -1587,3 +1587,48 @@ a:focus-visible,input:focus-visible{
 .s-actions{display:flex;gap:8px;padding:10px 14px 14px}
 .s-action-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-family:var(--mono);font-size:11px;color:var(--ink-muted);cursor:pointer;display:flex;align-items:center;gap:5px}
 .s-action-btn:active{border-color:var(--e500);color:var(--e700)}
+
+/* ═══════════════════════════════════════════════════════════
+   SCHEDA RICETTA — campi estesi (immagine, esperimento, procedimento,
+   tecniche, limite, twist, abbinamenti). Integrato 23 ago.
+   ═══════════════════════════════════════════════════════════ */
+.ric-foto{position:relative;margin:-1px -1px 12px;border-radius:12px 12px 0 0;overflow:hidden;height:160px;background:var(--surface)}
+.ric-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.ric-foto-credit{position:absolute;bottom:0;left:0;right:0;padding:12px 12px 6px;
+  background:linear-gradient(transparent,rgba(26,26,24,.5));
+  font-family:var(--mono);font-size:9px;color:#fff;text-align:right}
+.ric-foto-credit a{color:#fff;text-decoration:underline}
+
+.ric-exp{background:rgba(199,123,63,0.06);border-left:3px solid var(--e500);
+  padding:10px 12px;border-radius:0 8px 8px 0;margin-bottom:10px}
+.ric-exp-lab{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--e500);margin-bottom:5px;font-weight:700}
+.ric-exp-txt{font-family:var(--sans);font-size:13px;color:var(--ink);line-height:1.5}
+
+.ric-proc{margin-bottom:10px}
+.ric-proc-lab,.ric-tec-lab,.ric-limite-lab,.ric-twist-lab,.ric-abb-lab{
+  font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-muted);margin-bottom:6px}
+.ric-step{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
+.ric-step:last-child{border-bottom:none}
+.ric-step-n{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink-muted);flex:0 0 18px}
+.ric-step-b{flex:1}
+.ric-step-t{font-family:var(--sans);font-size:13px;color:var(--ink);line-height:1.5}
+.ric-step-key{display:inline-block;margin-top:5px;font-family:var(--mono);font-size:11px;font-weight:700;
+  color:var(--e500);background:rgba(199,123,63,0.1);padding:2px 8px;border-radius:4px}
+
+.ric-tec{margin-bottom:10px}
+.ric-tec-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ric-tec-chip{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--signal);
+  border:1px solid var(--border);background:var(--surface);padding:4px 9px;border-radius:5px}
+
+.ric-limite{background:var(--surface);padding:10px 12px;border-radius:8px;margin-bottom:10px}
+.ric-limite-txt{font-family:var(--sans);font-size:13px;color:var(--ink-muted);line-height:1.5;font-style:italic}
+
+.ric-twist{border:1px dashed var(--border);padding:10px 12px;border-radius:8px;margin-bottom:10px}
+.ric-twist-txt{font-family:var(--sans);font-size:13px;color:var(--ink);line-height:1.5}
+
+.ric-abb-cols{display:flex;gap:8px}
+.ric-abb-col{flex:1;background:var(--surface);border-radius:8px;padding:8px 10px}
+.ric-abb-k{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:3px}
+.ric-abb-v{font-family:var(--sans);font-size:12px;color:var(--ink);line-height:1.4}
