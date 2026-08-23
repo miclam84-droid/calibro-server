@@ -784,8 +784,8 @@ def api_ricette_list():
     lang = request.args.get("lang","it")
     fenomeno = request.args.get("fenomeno","").strip()
     db = carica_grafo()
-    SEL = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es,procedimento,immagine,immagine_autore,immagine_url_fonte,tempo_prep,tempo_cottura,difficolta,porzioni,applicazioni,twist_di,nome_en,nome_es,procedimento_en,procedimento_es,applicazioni_en,applicazioni_es,punto_critico_en,punto_critico_es,esperimento,limite,esperimento_en,esperimento_es,limite_en,limite_es FROM ricette"
-    COLS = ["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es","procedimento","immagine","immagine_autore","immagine_url_fonte","tempo_prep","tempo_cottura","difficolta","porzioni","applicazioni","twist_di","nome_en","nome_es","procedimento_en","procedimento_es","applicazioni_en","applicazioni_es","punto_critico_en","punto_critico_es","esperimento","limite","esperimento_en","esperimento_es","limite_en","limite_es"]
+    SEL = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es,procedimento,immagine,immagine_autore,immagine_url_fonte,tempo_prep,tempo_cottura,difficolta,porzioni,applicazioni,twist_di,nome_en,nome_es,procedimento_en,procedimento_es,applicazioni_en,applicazioni_es,punto_critico_en,punto_critico_es,esperimento,limite,esperimento_en,esperimento_es,limite_en,limite_es,twist,twist_en,twist_es FROM ricette"
+    COLS = ["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es","procedimento","immagine","immagine_autore","immagine_url_fonte","tempo_prep","tempo_cottura","difficolta","porzioni","applicazioni","twist_di","nome_en","nome_es","procedimento_en","procedimento_es","applicazioni_en","applicazioni_es","punto_critico_en","punto_critico_es","esperimento","limite","esperimento_en","esperimento_es","limite_en","limite_es","twist","twist_en","twist_es"]
     try:
         if disc:
             rows = db.execute(SEL + " WHERE disciplina=%s ORDER BY nome", (disc,))
@@ -823,6 +823,7 @@ def api_ricette_list():
             pc_out = r.get("punto_critico") or ""
             esp_out = r.get("esperimento") or ""
             lim_out = r.get("limite") or ""
+            tw_out = r.get("twist") or ""
             if lang=="en":
                 if r.get("nome_en"): nome_out=r["nome_en"]
                 if r.get("procedimento_en"): proc_out=_parse(r.get("procedimento_en")) or proc_out
@@ -830,6 +831,7 @@ def api_ricette_list():
                 if r.get("punto_critico_en"): pc_out=r["punto_critico_en"]
                 if r.get("esperimento_en"): esp_out=r["esperimento_en"]
                 if r.get("limite_en"): lim_out=r["limite_en"]
+                if r.get("twist_en"): tw_out=r["twist_en"]
             elif lang=="es":
                 if r.get("nome_es"): nome_out=r["nome_es"]
                 if r.get("procedimento_es"): proc_out=_parse(r.get("procedimento_es")) or proc_out
@@ -837,6 +839,7 @@ def api_ricette_list():
                 if r.get("punto_critico_es"): pc_out=r["punto_critico_es"]
                 if r.get("esperimento_es"): esp_out=r["esperimento_es"]
                 if r.get("limite_es"): lim_out=r["limite_es"]
+                if r.get("twist_es"): tw_out=r["twist_es"]
             fen_list = _parse(r.get("fenomeni")) or []
             if fenomeno:
                 ids_norm = [str(f).strip() for f in fen_list] if isinstance(fen_list,list) else []
@@ -863,7 +866,8 @@ def api_ricette_list():
                 "applicazioni":appl_out,
                 "twist_di":r.get("twist_di") or None,
                 "esperimento":esp_out,
-                "limite":lim_out
+                "limite":lim_out,
+                "twist":tw_out
             })
         return jsonify(result)
     except Exception as e:

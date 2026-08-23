@@ -154,6 +154,7 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         abb_str = " · ".join(parts)
 
     LINGUA = {"it": "italiano", "en": "English", "es": "español"}.get(lang, "italiano")
+    _termine_var = termine_variante(disciplina, lang)
 
     prompt = (
         f"Sei un professionista del mestiere ('{disciplina}') che è ANCHE scienziato del cibo. "
@@ -173,7 +174,10 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f"(es. 'La carbonara ti diventa una frittata? Non è colpa tua, è la temperatura.').\n"
         f"- Il 'punto_critico' nomina la VARIABILE che il professionista confonde, col numero SE è nei dati sopra.\n"
         f"- L''esperimento' è una prova semplice da fare domani al banco per capire (non teoria).\n"
-        f"- Il 'limite' dice quando il numero-bersaglio NON basta e decide il palato/l'occhio.\n\n"
+        f"- Il 'limite' dice quando il numero-bersaglio NON basta e decide il palato/l'occhio.\n"
+        f"- Il 'twist' è UN consiglio di variazione/rivisitazione della ricetta ({_termine_var}): "
+        f"una modifica concreta e sensata che un professionista proverebbe (nuovo ingrediente, tecnica, presentazione), "
+        f"spiegata in 1-2 frasi asciutte col PERCHÉ funziona.\n\n"
         f"Rispondi in {LINGUA} SOLO con un oggetto JSON (nessun testo extra) in questo formato ESATTO:\n"
         f'{{"nome": "...", "descrizione": "apri con un problema del banco, 1-2 frasi asciutte", '
         f'"ingredienti": [{{"nome": "...", "quantita": "...", "unita": "..."}}], '
@@ -187,6 +191,7 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f'"punto_critico": "la variabile che si confonde e perché si sbaglia, con un numero", '
         f'"esperimento": "una prova semplice da fare al banco per capire il fenomeno (1 frase concreta)", '
         f'"limite": "quando il numero-bersaglio non basta e decide il palato/occhio (1 frase)", '
+        f'"twist": "un consiglio di {_termine_var} concreto col perché (1-2 frasi)", '
         f'"abbinamenti": {{"analogia": "...", "contrasto": "..."}}}}\n\n'
         f"I numeri devono venire dai fenomeni/tecniche forniti sopra. "
         f"Il PROCEDIMENTO deve essere una sequenza di passaggi REALI e specifici: ogni passo che tocca "

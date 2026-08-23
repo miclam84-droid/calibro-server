@@ -2321,8 +2321,11 @@ def admin_migra_ricette_voce():
         cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS esperimento_es TEXT")
         cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS limite_en TEXT")
         cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS limite_es TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS twist TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS twist_en TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS twist_es TEXT")
         conn.commit()
-        return jsonify({"ok": True, "aggiunte": ["esperimento","limite","esperimento_en/es","limite_en/es"]})
+        return jsonify({"ok": True, "aggiunte": ["esperimento","limite","twist","+en/es"]})
     except Exception as e:
         conn.rollback()
         return jsonify({"errore": str(e)}), 500
@@ -2419,8 +2422,8 @@ def admin_espandi_ricette():
             slug = "ric-cls-" + _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:36]
             if forza: slug = slug + "-v2"
             cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
-                    punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite)
-                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s)
+                    punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
+                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
                 ON CONFLICT (id) DO NOTHING""",
                 (slug, nome, disc, ric.get("descrizione",""),
                  _json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
@@ -2433,7 +2436,7 @@ def admin_espandi_ricette():
                  _json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
                  ric.get("tempo_prep",""), ric.get("tempo_cottura",""),
                  ric.get("difficolta",""), ric.get("porzioni",""),
-                 ric.get("esperimento",""), ric.get("limite","")))
+                 ric.get("esperimento",""), ric.get("limite",""), ric.get("twist","")))
             generate.append({"ricetta": nome, "id": slug,
                              "esperimento": bool(ric.get("esperimento")),
                              "limite": bool(ric.get("limite")),
@@ -2500,8 +2503,8 @@ def admin_genera_ricette_mancanti():
                 slug = _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:40]
                 rid = f"ric-gen-{slug}"
                 cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
-                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite)
-                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s)
+                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
+                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
                     ON CONFLICT (id) DO NOTHING""",
                     (rid, nome, fen["disc"], ric.get("descrizione",""),
                      _json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
@@ -2514,7 +2517,7 @@ def admin_genera_ricette_mancanti():
                      _json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
                      ric.get("tempo_prep"), ric.get("tempo_cottura"),
                      ric.get("difficolta",""), ric.get("porzioni",""),
-                     ric.get("esperimento",""), ric.get("limite","")))
+                     ric.get("esperimento",""), ric.get("limite",""), ric.get("twist","")))
                 conn.commit()
                 generate.append({"fenomeno":fen["nome"],"ricetta":nome,"id":rid,"fenomeni_agganciati":ric.get("fenomeni",[])})
             except Exception as ge:
