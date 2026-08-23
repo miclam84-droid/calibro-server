@@ -2611,6 +2611,109 @@ def admin_rigenera_ricette_vecchie():
 
     return jsonify({"fatte": len([f for f in fatte if f.get("nome")]), "dettaglio": fatte})
 
+def _get_repertorio_ampio():
+    """Repertorio classico/regionale/moderno ampio per disciplina (verso le migliaia). Fonte condivisa."""
+    return {
+    "cucina": ["risotto alla milanese","risotto ai funghi porcini","risotto al nero di seppia","risotto cacio e pepe","carbonara","cacio e pepe","amatriciana","gricia","pasta alla norma","pasta alle vongole","spaghetti aglio olio e peperoncino","pasta al pomodoro","lasagne alla bolognese","tagliatelle al ragu","pappardelle al cinghiale","orecchiette cime di rapa","trofie al pesto","gnocchi di patate","tortellini in brodo","ravioli ricotta e spinaci","paccheri alla genovese","pasta alla puttanesca","brasato al vino rosso","ossobuco","cotoletta alla milanese","vitello tonnato","tagliata di manzo","bollito misto","arrosto di vitello","spezzatino di manzo","polpette al sugo","involtini di carne","scaloppine al limone","saltimbocca alla romana","pollo alla cacciatora","coniglio alla ligure","agnello al forno","porchetta","stracotto","bistecca alla fiorentina","branzino al forno","orata all acqua pazza","polpo alla griglia","calamari ripieni","baccala mantecato","seppie in umido","frittura di paranza","salmone in crosta","tonno scottato","cozze alla marinara","parmigiana di melanzane","caponata siciliana","peperonata","carciofi alla romana","patate al forno","verdure grigliate","insalata di finocchi","cavolfiore gratinato","zucchine trifolate","frittata di verdure","uova strapazzate","besciamella","maionese","pesto alla genovese","sugo di pomodoro","ragu napoletano","brodo di carne","fondo bruno","salsa verde","bagna cauda","minestrone","ribollita","pasta e fagioli","zuppa di lenticchie","vellutata di zucca"],
+    "bar": ["negroni","margarita","old fashioned","daiquiri","manhattan","aperol spritz","mojito","whiskey sour","espresso martini","americano","boulevardier","penicillin","gin tonic","cosmopolitan","martini dry","negroni sbagliato","paloma","mai tai","pina colada","caipirinha","moscow mule","dark n stormy","sidecar","french 75","bellini","rossini","tom collins","gimlet","aviation","last word","vieux carre","sazerac","mint julep","bramble","clover club","bee's knees","corpse reviver","white lady","between the sheets","hemingway daiquiri","jungle bird","zombie","singapore sling","long island iced tea","cuba libre","tequila sunrise","bloody mary","irish coffee","god father","rusty nail","white russian","grasshopper","amaretto sour","mimosa","kir royale","clarified milk punch","cordiale al lime","shrub ai frutti rossi","oleo saccharum","vermouth infuso"],
+    "panificazione": ["baguette","ciabatta","pane pugliese","focaccia genovese","pizza napoletana","pane in cassetta","panini all olio","grissini","pane integrale","brioche","pane di segale","pane ai cereali","focaccia barese","pizza romana","pizza in teglia","pane toscano","michetta","pane di altamura","carasau","piadina romagnola","tigelle","gnocco fritto","panettone","pandoro","colomba","croissant sfogliato","pain au chocolat","bagel","pretzel","naan","pita","pane hamburger","focaccia con cipolle","schiacciata toscana","pane cafone","biga","poolish","lievito madre","tangzhong"],
+    "pasticceria": ["crema pasticcera","pan di spagna","bigne","meringa italiana","frolla","ganache","creme brulee","tiramisu","cannoli siciliani","macaron","panna cotta","bavarese","mousse al cioccolato","sfogliatella riccia","baba","zeppole","cassata siciliana","sacher torte","millefoglie","profiteroles","eclair","saint honore","crostata di frutta","torta della nonna","zuppa inglese","crema chantilly","crema diplomatica","glassa a specchio","pasta choux","pasta sfoglia","frolla sablee","biscotto savoiardo","dacquoise","pralinato","gianduia","caramello salato","confettura","namelaka","cremoso al cioccolato","torta caprese","pastiera napoletana","panforte","cantucci","amaretti","baci di dama"],
+    "gelateria": ["gelato fiordilatte","sorbetto al limone","gelato al pistacchio","gelato al cioccolato","stracciatella","granita siciliana","semifreddo","gelato alla vaniglia","gelato alla nocciola","gelato al caffe","sorbetto alla fragola","sorbetto al mango","gelato allo yogurt","gelato al fior di panna","gelato alla crema","gelato al torroncino","gelato alla menta","gelato al cocco","sorbetto ai frutti di bosco","gelato al caramello salato","gelato al tiramisu","spumone","affogato al caffe","base bianca gelato","base gialla gelato","stecco gelato"],
+    "caffetteria": ["espresso","cappuccino","caffe filtro V60","moka","cold brew","flat white","latte macchiato","americano","macchiato","cortado","ristretto","lungo","chemex","aeropress","french press","caffe shakerato","marocchino","espresso doppio","caffe d orzo","affogato","irish coffee","caffe leccese","espresso tonic","nitro cold brew"],
+    "vino": ["vinificazione in rosso","vinificazione in bianco","spumante metodo classico","macerazione sulle bucce","vino rosato","affinamento in barrique","fermentazione malolattica","vino passito","metodo charmat","vendemmia tardiva","chiarifica","vino novello"],
+    "birra": ["american IPA","pilsner","weizen","stout","porter","pale ale","lager","saison","dubbel","tripel","session IPA","barley wine","gose","sour ale","blanche","bitter","brown ale","imperial stout","dry hopping","ammostamento"],
+}
+
+# ── Espansione ricette in BACKGROUND (genera tutto il repertorio mancante, no timeout) ──
+_ESP_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "corrente": "", "disc": ""}
+_REPERTORIO_BG = None  # popolato al primo avvio dall'endpoint
+
+def _esp_worker(repertorio):
+    import json as _json, re as _re, unicodedata
+    from db import carica_grafo, _get_conn, _release_conn
+    from builder import genera_ricetta
+    global _ESP_STATO
+    try:
+        db = carica_grafo()
+        # calcolo cosa manca: per ogni disciplina, i piatti non ancora presenti
+        conn = _get_conn(); cur = conn.cursor()
+        da_fare = []  # (disc, piatto)
+        for disc, lista in repertorio.items():
+            cur.execute("SELECT LOWER(nome) FROM ricette WHERE disciplina=%s", (disc,))
+            gia = set(r[0] for r in cur.fetchall())
+            def presente(piatto):
+                pl = piatto.lower()
+                for g in gia:
+                    if pl in g: return True
+                    parole = [w for w in pl.split() if len(w) > 3]
+                    if parole and all(w in g for w in parole): return True
+                return False
+            for piatto in lista:
+                if not presente(piatto):
+                    da_fare.append((disc, piatto))
+        _release_conn(conn)
+        _ESP_STATO.update({"attivo": True, "fatte": 0, "totale": len(da_fare), "errori": 0})
+        for disc, piatto in da_fare:
+            _ESP_STATO["disc"] = disc; _ESP_STATO["corrente"] = piatto
+            try:
+                ric = genera_ricetta(db, f"la ricetta classica di {piatto}", disciplina=disc, lang="it")
+                if ric.get("errore") or not ric.get("nome"):
+                    _ESP_STATO["errori"] += 1; continue
+                nome = ric["nome"]
+                slug = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+                slug = "ric-cls-" + _re.sub(r"[^a-z0-9]+","-",slug).strip("-")[:40]
+                c2 = _get_conn(); cur2 = c2.cursor()
+                try:
+                    cur2.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
+                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
+                        VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
+                        ON CONFLICT (id) DO NOTHING""",
+                        (slug, nome, disc, ric.get("descrizione",""),
+                         _json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
+                         _json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                         _json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+                         _json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                         ric.get("punto_critico",""),
+                         _json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                         _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                         _json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
+                         ric.get("tempo_prep",""), ric.get("tempo_cottura",""),
+                         ric.get("difficolta",""), ric.get("porzioni",""),
+                         ric.get("esperimento",""), ric.get("limite",""), ric.get("twist","")))
+                    c2.commit(); _ESP_STATO["fatte"] += 1
+                except Exception:
+                    c2.rollback(); _ESP_STATO["errori"] += 1
+                finally:
+                    _release_conn(c2)
+            except Exception:
+                _ESP_STATO["errori"] += 1
+    finally:
+        _ESP_STATO["attivo"] = False; _ESP_STATO["corrente"] = ""
+
+@bp.route("/admin/espandi-bg")
+def admin_espandi_bg():
+    """Genera TUTTO il repertorio mancante in background (verso le migliaia). Risponde subito."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    global _ESP_STATO
+    if _ESP_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _ESP_STATO})
+    # il repertorio e' quello cablato in admin_espandi_ricette: lo ricostruisco qui identico
+    import threading
+    # recupero REPERTORIO dalla funzione espandi (stessa fonte) via variabile modulo
+    from routes.admin import _get_repertorio_ampio
+    t = threading.Thread(target=_esp_worker, args=(_get_repertorio_ampio(),), daemon=True)
+    t.start()
+    return jsonify({"avviato": True, "nota": "espansione in background, controlla /admin/espandi-bg-stato"})
+
+@bp.route("/admin/espandi-bg-stato")
+def admin_espandi_bg_stato():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    return jsonify(_ESP_STATO)
+
 @bp.route("/admin/espandi-ricette")
 def admin_espandi_ricette():
     """Espande il repertorio: genera ricette CLASSICHE del mestiere per una disciplina (verso la Bibbia),
@@ -2627,21 +2730,7 @@ def admin_espandi_ricette():
     if not disc:
         return jsonify({"errore": "serve ?disc=cucina|bar|panificazione|..."}), 400
     # repertorio classico per disciplina (i piatti/drink che un pro DEVE padroneggiare)
-    REPERTORIO = {
-        "cucina": ["risotto alla milanese","carbonara","brasato al vino rosso","cotoletta alla milanese",
-                   "ragu bolognese","vitello tonnato","parmigiana di melanzane","ossobuco","tagliata di manzo",
-                   "polpette al sugo","frittata","besciamella","maionese","pesto alla genovese"],
-        "bar": ["negroni","margarita","old fashioned","daiquiri","manhattan","aperol spritz","mojito",
-                "whiskey sour","espresso martini","americano","boulevardier","penicillin","gin tonic","cosmopolitan"],
-        "panificazione": ["baguette","ciabatta","pane pugliese","focaccia genovese","pizza napoletana",
-                          "pane in cassetta","panini all olio","grissini","pane integrale","brioche"],
-        "pasticceria": ["crema pasticcera","pan di spagna","bigne","meringa italiana","frolla","ganache",
-                        "creme brulee","tiramisu","cannoli siciliani","macaron","panna cotta"],
-        "gelateria": ["gelato fiordilatte","sorbetto al limone","gelato al pistacchio","gelato al cioccolato",
-                      "stracciatella","granita siciliana","semifreddo","gelato alla vaniglia"],
-        "caffetteria": ["espresso","cappuccino","caffe filtro V60","moka","cold brew","flat white","latte macchiato"],
-        "vino": ["vinificazione in rosso","vinificazione in bianco","spumante metodo classico","macerazione"],
-    }
+    REPERTORIO = _get_repertorio_ampio()
     lista = REPERTORIO.get(disc, [])
     if not lista:
         return jsonify({"errore": f"nessun repertorio per {disc}", "disponibili": list(REPERTORIO.keys())}), 400
