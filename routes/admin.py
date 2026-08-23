@@ -2446,6 +2446,91 @@ def admin_lista_ricette_vecchie():
     finally:
         _release_conn(conn)
 
+# ── Rigenerazione ricette in BACKGROUND (aggira il timeout 30s del proxy Railway) ──
+_RIGEN_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "corrente": "", "ultimi": []}
+
+def _rigen_worker(disc_filtro, solo_n):
+    """Gira in un thread: genera e salva le ricette vecchie SENZA limiti di tempo HTTP."""
+    import json as _json
+    from db import carica_grafo, _get_conn, _release_conn
+    from builder import genera_ricetta
+    global _RIGEN_STATO
+    try:
+        db = carica_grafo()
+        conn = _get_conn(); cur = conn.cursor()
+        q = """SELECT id, nome, disciplina FROM ricette
+               WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='')"""
+        params = []
+        if disc_filtro:
+            q += " AND disciplina=%s"; params.append(disc_filtro)
+        q += " ORDER BY nome"
+        if solo_n:
+            q += " LIMIT %s"; params.append(solo_n)
+        cur.execute(q, tuple(params))
+        righe = cur.fetchall()
+        _release_conn(conn)
+        _RIGEN_STATO.update({"attivo": True, "fatte": 0, "totale": len(righe), "errori": 0, "ultimi": []})
+        for row in righe:
+            rid, nome, disc = row[0], row[1], row[2]
+            _RIGEN_STATO["corrente"] = nome
+            try:
+                ric = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc, lang="it")
+                if ric.get("errore") or not ric.get("nome"):
+                    _RIGEN_STATO["errori"] += 1; continue
+                c2 = _get_conn(); cur2 = c2.cursor()
+                try:
+                    cur2.execute("""UPDATE ricette SET
+                        descrizione=%s, numeri=%s::jsonb, punto_critico=%s, procedimento=%s::jsonb,
+                        tecniche=%s::jsonb, fenomeni=%s::jsonb, abbinamenti=%s::jsonb,
+                        esperimento=%s, limite=%s, twist=%s,
+                        scheda_en=NULL, scheda_es=NULL, nome_en=NULL, nome_es=NULL,
+                        procedimento_en=NULL, procedimento_es=NULL, punto_critico_en=NULL, punto_critico_es=NULL,
+                        esperimento_en=NULL, esperimento_es=NULL, limite_en=NULL, limite_es=NULL,
+                        twist_en=NULL, twist_es=NULL, applicazioni_en=NULL, applicazioni_es=NULL
+                        WHERE id=%s""",
+                        (ric.get("descrizione",""), _json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                         ric.get("punto_critico",""), _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                         _json.dumps(ric.get("tecniche",[]),ensure_ascii=False), _json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                         _json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                         ric.get("esperimento",""), ric.get("limite",""), ric.get("twist",""), rid))
+                    c2.commit()
+                    _RIGEN_STATO["fatte"] += 1
+                    _RIGEN_STATO["ultimi"] = ([nome] + _RIGEN_STATO["ultimi"])[:5]
+                except Exception:
+                    c2.rollback(); _RIGEN_STATO["errori"] += 1
+                finally:
+                    _release_conn(c2)
+            except Exception:
+                _RIGEN_STATO["errori"] += 1
+    finally:
+        _RIGEN_STATO["attivo"] = False
+        _RIGEN_STATO["corrente"] = ""
+
+@bp.route("/admin/rigenera-bg")
+def admin_rigenera_bg():
+    """Avvia la rigenerazione in BACKGROUND (thread) e risponde SUBITO. Aggira il timeout 30s.
+    ?disc= opzionale, ?n= opzionale (limita quante). Controlla lo stato con /admin/rigenera-bg-stato."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    global _RIGEN_STATO
+    if _RIGEN_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _RIGEN_STATO})
+    import threading
+    disc = request.args.get("disc", "")
+    solo_n = int(request.args.get("n", "0")) or None
+    t = threading.Thread(target=_rigen_worker, args=(disc, solo_n), daemon=True)
+    t.start()
+    return jsonify({"avviato": True, "nota": "rigenerazione in background, controlla /admin/rigenera-bg-stato"})
+
+@bp.route("/admin/rigenera-bg-stato")
+def admin_rigenera_bg_stato():
+    """Stato della rigenerazione in background."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    return jsonify(_RIGEN_STATO)
+
 @bp.route("/admin/rigenera-ricette-vecchie")
 def admin_rigenera_ricette_vecchie():
     """Rigenera le ricette VECCHIE (senza esperimento o twist) col motore nuovo (voce Kenji-Matter,
