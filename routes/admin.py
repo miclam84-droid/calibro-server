@@ -2379,6 +2379,73 @@ def admin_conta_ricette_vecchie():
     finally:
         _release_conn(conn)
 
+@bp.route("/admin/salva-ricetta-rigenerata", methods=["POST"])
+def admin_salva_ricetta_rigenerata():
+    """Salva in place una ricetta gia generata dal client (via /v1/genera-ricetta). NESSUNA AI qui:
+    e istantaneo, non rischia timeout. Riceve {id, ricetta:{...}}. CONSERVA l'immagine."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json
+    from db import _get_conn, _release_conn
+    body = request.get_json(force=True, silent=True) or {}
+    rid = body.get("id", "")
+    ric = body.get("ricetta", {})
+    if not rid or not ric.get("nome"):
+        return jsonify({"errore": "serve id e ricetta con nome"}), 400
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("""UPDATE ricette SET
+            descrizione=%s, numeri=%s::jsonb, punto_critico=%s, procedimento=%s::jsonb,
+            tecniche=%s::jsonb, fenomeni=%s::jsonb, abbinamenti=%s::jsonb,
+            esperimento=%s, limite=%s, twist=%s,
+            scheda_en=NULL, scheda_es=NULL, nome_en=NULL, nome_es=NULL,
+            procedimento_en=NULL, procedimento_es=NULL, punto_critico_en=NULL, punto_critico_es=NULL,
+            esperimento_en=NULL, esperimento_es=NULL, limite_en=NULL, limite_es=NULL,
+            twist_en=NULL, twist_es=NULL, applicazioni_en=NULL, applicazioni_es=NULL
+            WHERE id=%s""",
+            (ric.get("descrizione",""),
+             _json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+             ric.get("punto_critico",""),
+             _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+             _json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+             _json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+             _json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+             ric.get("esperimento",""), ric.get("limite",""), ric.get("twist",""),
+             rid))
+        conn.commit()
+        aggiornate = cur.rowcount
+        return jsonify({"ok": True, "id": rid, "aggiornate": aggiornate,
+                        "esperimento": bool(ric.get("esperimento")), "twist": bool(ric.get("twist"))})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"errore": str(e)[:150]}), 500
+    finally:
+        _release_conn(conn)
+
+@bp.route("/admin/lista-ricette-vecchie")
+def admin_lista_ricette_vecchie():
+    """Ritorna la lista (id, nome, disciplina) delle ricette da rigenerare. Veloce, nessuna AI."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    disc_filtro = request.args.get("disc", "")
+    limite = int(request.args.get("limite", "200"))
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        q = """SELECT id, nome, disciplina FROM ricette
+               WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='')"""
+        params = []
+        if disc_filtro:
+            q += " AND disciplina=%s"; params.append(disc_filtro)
+        q += " ORDER BY nome LIMIT %s"; params.append(limite)
+        cur.execute(q, tuple(params))
+        righe = [{"id": r[0], "nome": r[1], "disciplina": r[2]} for r in cur.fetchall()]
+        return jsonify({"totale": len(righe), "ricette": righe})
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/rigenera-ricette-vecchie")
 def admin_rigenera_ricette_vecchie():
     """Rigenera le ricette VECCHIE (senza esperimento o twist) col motore nuovo (voce Kenji-Matter,
