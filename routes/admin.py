@@ -2298,8 +2298,15 @@ def admin_colonne_ricette():
         # controllo diretto: prendo una ricetta -v2 e leggo esperimento raw
         cur.execute("SELECT id, esperimento, limite FROM ricette WHERE id LIKE 'ric-cls-%%-v2' LIMIT 3")
         campioni = [{"id": r[0], "esperimento": (r[1] or "NULL")[:50], "limite": (r[2] or "NULL")[:50]} for r in cur.fetchall()]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine IS NOT NULL AND immagine <> ''")
+        con_img = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette")
+        tot = cur.fetchone()[0]
+        cur.execute("SELECT id, nome, immagine, immagine_autore FROM ricette WHERE immagine IS NOT NULL AND immagine <> '' LIMIT 3")
+        img_campioni = [{"id": r[0], "nome": r[1], "immagine": (r[2] or "")[:50], "autore": r[3]} for r in cur.fetchall()]
         return jsonify({"colonne": cols, "ha_esperimento": "esperimento" in cols, "ha_limite": "limite" in cols,
-                        "campioni": campioni})
+                        "ha_twist": "twist" in cols, "campioni": campioni,
+                        "ricette_con_immagine": con_img, "ricette_totali": tot, "img_campioni": img_campioni})
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
     finally:
