@@ -2369,13 +2369,17 @@ def admin_rigenera_ricette_vecchie():
     secret = request.args.get("s", "")
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
-    import json as _json
-    from db import carica_grafo, _get_conn, _release_conn
-    from builder import genera_ricetta
-    n = int(request.args.get("n", "1"))
-    disc_filtro = request.args.get("disc", "")
-    db = carica_grafo()
-    conn = _get_conn(); cur = conn.cursor()
+    try:
+        import json as _json
+        from db import carica_grafo, _get_conn, _release_conn
+        from builder import genera_ricetta
+        n = int(request.args.get("n", "1"))
+        disc_filtro = request.args.get("disc", "")
+        db = carica_grafo()
+        conn = _get_conn(); cur = conn.cursor()
+    except Exception as _e:
+        import traceback
+        return jsonify({"errore_setup": str(_e), "trace": traceback.format_exc()[:500]}), 200
     try:
         # trovo le ricette vecchie: senza esperimento O senza twist
         q = """SELECT id, nome, disciplina FROM ricette
@@ -2423,11 +2427,7 @@ def admin_rigenera_ricette_vecchie():
             except Exception as e:
                 conn.rollback()
                 fatte.append({"id": rid, "errore": str(e)[:120]})
-        # quante restano
-        qc = """SELECT COUNT(*) FROM ricette WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='')"""
-        cur.execute(qc)
-        restano = cur.fetchone()[0]
-        return jsonify({"fatte": len([f for f in fatte if f.get("nome")]), "dettaglio": fatte, "restano_vecchie": restano})
+        return jsonify({"fatte": len([f for f in fatte if f.get("nome")]), "dettaglio": fatte})
     except Exception as e:
         conn.rollback()
         import traceback
