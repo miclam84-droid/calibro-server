@@ -2229,6 +2229,8 @@ def admin_audit_fenomeni_numeri():
     db = carica_grafo()
     rows = db.execute("SELECT id, name, domain, data FROM nodes").fetchall()
     con_numero, senza_numero = [], []
+    disc_filtro = request.args.get("disc", "")
+    dettaglio_disc = []
     for r in rows:
         rid = r["id"]
         if not str(rid).startswith("fen-"):
@@ -2237,9 +2239,13 @@ def admin_audit_fenomeni_numeri():
         nb = (data.get("numero_bersaglio") or data.get("target") or "").strip()
         entry = {"id": rid, "nome": r["name"], "disciplina": r["domain"]}
         (con_numero if nb else senza_numero).append(entry)
+        if disc_filtro and (r["domain"] or "").lower() == disc_filtro.lower():
+            dettaglio_disc.append({"id": rid, "nome": r["name"], "numero_bersaglio": nb,
+                                   "chiavi_data": list(data.keys())})
     return jsonify({"totale": len(con_numero)+len(senza_numero),
                     "con_numero": len(con_numero), "senza_numero": len(senza_numero),
-                    "lista_senza": senza_numero})
+                    "lista_senza": senza_numero,
+                    "dettaglio_disciplina": dettaglio_disc})
 
 @bp.route("/admin/conta-nodi")
 def admin_conta_nodi():
