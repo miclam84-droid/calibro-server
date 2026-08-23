@@ -518,15 +518,20 @@ def _haiku_raw(prompt, max_tokens=600):
     import ai_gateway as GW
     return GW.route_fast(prompt, max_tokens=max_tokens)
 
-def chiedi_mistral(prompt, history=None):
+def chiedi_mistral(prompt, history=None, usa_tools=True):
     """Nome storico mantenuto — ora usa AI Gateway route_chat con fallback automatico.
     I tools (calcola) vengono passati solo se il prompt contiene numeri — altrimenti
-    Sonnet tende a fare tool_use su domande semplici esaurendo i token."""
+    Sonnet tende a fare tool_use su domande semplici esaurendo i token.
+    usa_tools=False: forza NESSUN tool (per la generazione ricette, dove i numeri
+    vengono gia dal grafo: cosi Sonnet fa UN solo round-trip, molto piu veloce, no timeout)."""
     import ai_gateway as GW
     import re as _re2
-    # passa tools solo se ci sono numeri/unità nella domanda
-    _ha_numeri = bool(_re2.search(r'\d+[\s,.]?\d*\s*(ml|g|kg|°|%|bar|L|cl)', prompt[-500:]))
-    _tools_da_usare = _TOOLS if _ha_numeri else None
+    if not usa_tools:
+        _tools_da_usare = None
+    else:
+        # passa tools solo se ci sono numeri/unità nella domanda
+        _ha_numeri = bool(_re2.search(r'\d+[\s,.]?\d*\s*(ml|g|kg|°|%|bar|L|cl)', prompt[-500:]))
+        _tools_da_usare = _TOOLS if _ha_numeri else None
     try:
         out = GW.route_chat(prompt, tools=_tools_da_usare, history=history)
         if out:

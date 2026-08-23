@@ -201,7 +201,7 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
     )
 
     try:
-        raw = chiedi_mistral(prompt)
+        raw = chiedi_mistral(prompt, usa_tools=False)
         if not raw:
             return {"errore": "generazione fallita — nessuna risposta"}
         # estrai il JSON
@@ -325,7 +325,7 @@ def genera_twist(ricetta_madre, modifica, lang="it"):
         f'"tempo_prep":30,"tempo_cottura":0,"difficolta":"media","porzioni":"4"}}'
     )
     try:
-        raw = chiedi_mistral(prompt)
+        raw = chiedi_mistral(prompt, usa_tools=False)
         if not raw:
             return {"errore":"generazione twist fallita"}
         m = _re.search(r"\{.*\}", raw, _re.DOTALL)
