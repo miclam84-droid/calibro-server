@@ -1584,9 +1584,10 @@ def abbina(ingrediente):
         if len(abbinamenti_puliti) < 3:
             try:
                 _prompt_ai = (
-                    f"Dammi 5 abbinamenti gastronomici o bar per '{ingrediente}'. "
-                    f"Solo ingredienti reali e comuni, nessuna marca. "
-                    f'Rispondi SOLO con JSON: {{"abbinamenti":["...","...","..."]}}'
+                    f"Dammi 5 ingredienti che si abbinano a '{ingrediente}'. "
+                    f"SOLO nomi di ingredienti SINGOLI (1-2 parole: es. basilico, limone, mandorla). "
+                    f"NON piatti, NON frasi, NON descrizioni, nessuna marca. "
+                    f'Rispondi SOLO con JSON: {{"abbinamenti":["basilico","limone","..."]}}'
                 )
                 _raw = GW.route_free(_prompt_ai, max_tokens=300)
                 if _raw:
@@ -1594,9 +1595,17 @@ def abbina(ingrediente):
                     _m = _re.search(r'\{.*\}', _raw, _re.DOTALL)
                     if _m:
                         _lista_ai = _js.loads(_m.group()).get("abbinamenti", [])
-                        _nuovi = [{"ingrediente": x, "composto": "abbinamento suggerito",
+                        def _e_ingrediente_singolo(x):
+                            # scarta le frasi-piatto: niente virgole, niente " con ", max 3 parole, max 30 char
+                            if not isinstance(x, str): return False
+                            x = x.strip()
+                            if not x or len(x) > 30: return False
+                            if "," in x or " con " in x.lower() or " e " in x.lower(): return False
+                            if len(x.split()) > 3: return False
+                            return True
+                        _nuovi = [{"ingrediente": x.strip(), "composto": "abbinamento suggerito",
                                    "overlap": 60, "perche": "abbinamento plausibile (AI)"}
-                                  for x in _lista_ai if isinstance(x, str)]
+                                  for x in _lista_ai if _e_ingrediente_singolo(x)]
                         # unisci evitando duplicati coi già presenti
                         _esistenti = {a["ingrediente"].lower() for a in abbinamenti_puliti}
                         for n in _nuovi:

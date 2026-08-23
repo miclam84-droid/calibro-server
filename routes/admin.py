@@ -2219,6 +2219,29 @@ def admin_genera_tecniche():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
 
+@bp.route("/admin/audit-fenomeni-numeri")
+def admin_audit_fenomeni_numeri():
+    """Elenca i fenomeni SENZA numero_bersaglio (la radice delle ricette senza numeri)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    import json as _json
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT id, nome, disciplina, data FROM nodes WHERE type='Fenomeno' ORDER BY disciplina, nome")
+        con_numero, senza_numero = [], []
+        for r in cur.fetchall():
+            data = r[3] if isinstance(r[3], dict) else (_json.loads(r[3]) if r[3] else {})
+            nb = (data.get("numero_bersaglio") or data.get("target") or "").strip()
+            entry = {"id": r[0], "nome": r[1], "disciplina": r[2]}
+            (con_numero if nb else senza_numero).append(entry)
+        return jsonify({"totale": len(con_numero)+len(senza_numero),
+                        "con_numero": len(con_numero), "senza_numero": len(senza_numero),
+                        "lista_senza": senza_numero})
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/conta-nodi")
 def admin_conta_nodi():
     """Conta i nodi per tipo (Fenomeno, Tecnica, Attrezzatura, ecc.) e per disciplina.
