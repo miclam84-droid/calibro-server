@@ -2999,13 +2999,26 @@ def _trad_worker():
                         st = dict(step)
                         if i < len(passi_tr) and passi_tr[i]: st["testo"]=passi_tr[i]
                         proc_t.append(st)
-                    nome_t = _one(nome, lname) or nome
-                    desc_t = _one(desc, lname) if desc else ""
-                    pc_t = _one(pc, lname) if pc else ""
-                    esp_t = _one(esp, lname) if esp else ""
-                    lim_t = _one(lim, lname) if lim else ""
-                    tw_t = _one(tw, lname) if tw else ""
-                    appl_t = [_one(a, lname) or a for a in appl_p if isinstance(a,str)]
+                    # OTTIMIZZAZIONE: i 6 campi brevi in UNA sola chiamata (era 6) col separatore |||
+                    campi_brevi = [nome or "", desc or "", pc or "", esp or "", lim or "", tw or ""]
+                    blob = "\n|||\n".join(campi_brevi)
+                    tradotto = _haiku_raw(
+                        f"Translate to {lname} each text block. Blocks separated by a line with |||. "
+                        f"Keep EXACTLY 6 blocks and the ||| separators, same order. Keep numbers/units. "
+                        f"If a block is empty leave it empty. Return ONLY the translated blocks with ||| between:\n\n{blob}") or ""
+                    parti = [x.strip() for x in tradotto.split("|||")]
+                    if len(parti) == 6:
+                        nome_t = parti[0] or nome
+                        desc_t, pc_t, esp_t, lim_t, tw_t = parti[1], parti[2], parti[3], parti[4], parti[5]
+                    else:
+                        # fallback: se lo split non torna, traduco singolarmente (raro)
+                        nome_t = _one(nome, lname) or nome
+                        desc_t = _one(desc, lname) if desc else ""
+                        pc_t = _one(pc, lname) if pc else ""
+                        esp_t = _one(esp, lname) if esp else ""
+                        lim_t = _one(lim, lname) if lim else ""
+                        tw_t = _one(tw, lname) if tw else ""
+                    appl_t = [_one(a, lname) or a for a in appl_p if isinstance(a,str)][:4]
                     c2 = _get_conn(); cur2 = c2.cursor()
                     try:
                         cur2.execute(f"""UPDATE ricette SET nome_{lang}=%s, scheda_{lang}=%s,
