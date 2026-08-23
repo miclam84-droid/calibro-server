@@ -2361,6 +2361,24 @@ def admin_cancella_nodo():
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
 
+@bp.route("/admin/conta-ricette-vecchie")
+def admin_conta_ricette_vecchie():
+    """Diagnostica veloce: conta le ricette vecchie SENZA generare (per misurare la query)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    import time as _t
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        t0=_t.time()
+        cur.execute("SELECT id,nome FROM ricette WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='') ORDER BY nome LIMIT 3")
+        righe=cur.fetchall()
+        dt=_t.time()-t0
+        return jsonify({"query_secondi": round(dt,2), "prime_3": [{"id":r[0],"nome":r[1]} for r in righe]})
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/rigenera-ricette-vecchie")
 def admin_rigenera_ricette_vecchie():
     """Rigenera le ricette VECCHIE (senza esperimento o twist) col motore nuovo (voce Kenji-Matter,
@@ -2376,12 +2394,13 @@ def admin_rigenera_ricette_vecchie():
         n = int(request.args.get("n", "1"))
         disc_filtro = request.args.get("disc", "")
         db = carica_grafo()
-        conn = _get_conn(); cur = conn.cursor()
     except Exception as _e:
         import traceback
         return jsonify({"errore_setup": str(_e), "trace": traceback.format_exc()[:500]}), 200
+
+    # FASE 1: trovo le ricette da rigenerare (query breve, connessione aperta e subito rilasciata)
+    conn = _get_conn(); cur = conn.cursor()
     try:
-        # trovo le ricette vecchie: senza esperimento O senza twist
         q = """SELECT id, nome, disciplina FROM ricette
                WHERE (esperimento IS NULL OR esperimento = '' OR twist IS NULL OR twist = '')"""
         params = []
@@ -2390,50 +2409,55 @@ def admin_rigenera_ricette_vecchie():
         q += " ORDER BY nome LIMIT %s"; params.append(n)
         cur.execute(q, tuple(params))
         da_fare = cur.fetchall()
-        if not da_fare:
-            return jsonify({"fatte": 0, "nota": "nessuna ricetta vecchia da rigenerare" + (f" in {disc_filtro}" if disc_filtro else "")})
-        fatte = []
-        for row in da_fare:
-            rid, nome, disc = row[0], row[1], row[2]
-            try:
-                ric = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc, lang="it")
-                if ric.get("errore") or not ric.get("nome"):
-                    fatte.append({"id": rid, "saltata": ric.get("errore", "no nome")}); continue
-                # AGGIORNA in place i campi voce, CONSERVANDO immagine e traduzioni gia presenti
-                cur.execute("""UPDATE ricette SET
-                    descrizione=%s, numeri=%s::jsonb, punto_critico=%s, procedimento=%s::jsonb,
-                    tecniche=%s::jsonb, fenomeni=%s::jsonb, abbinamenti=%s::jsonb,
-                    esperimento=%s, limite=%s, twist=%s
-                    WHERE id=%s""",
-                    (ric.get("descrizione",""),
-                     _json.dumps(ric.get("numeri",{}),ensure_ascii=False),
-                     ric.get("punto_critico",""),
-                     _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
-                     _json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
-                     _json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
-                     _json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
-                     ric.get("esperimento",""), ric.get("limite",""), ric.get("twist",""),
-                     rid))
-                # le traduzioni EN/ES ora sono stantie (il testo IT e cambiato): le azzero cosi il
-                # traduttore batch le rifara. NON tocco immagine/immagine_autore/immagine_url_fonte.
-                cur.execute("""UPDATE ricette SET scheda_en=NULL, scheda_es=NULL, nome_en=NULL, nome_es=NULL,
-                    procedimento_en=NULL, procedimento_es=NULL, punto_critico_en=NULL, punto_critico_es=NULL,
-                    esperimento_en=NULL, esperimento_es=NULL, limite_en=NULL, limite_es=NULL,
-                    twist_en=NULL, twist_es=NULL, applicazioni_en=NULL, applicazioni_es=NULL
-                    WHERE id=%s""", (rid,))
-                conn.commit()
-                fatte.append({"id": rid, "nome": nome, "esperimento": bool(ric.get("esperimento")),
-                              "twist": bool(ric.get("twist"))})
-            except Exception as e:
-                conn.rollback()
-                fatte.append({"id": rid, "errore": str(e)[:120]})
-        return jsonify({"fatte": len([f for f in fatte if f.get("nome")]), "dettaglio": fatte})
-    except Exception as e:
-        conn.rollback()
-        import traceback
-        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
     finally:
-        _release_conn(conn)
+        _release_conn(conn)  # rilascio SUBITO: non tengo la connessione durante l'AI
+
+    if not da_fare:
+        return jsonify({"fatte": 0, "nota": "nessuna ricetta vecchia da rigenerare" + (f" in {disc_filtro}" if disc_filtro else "")})
+
+    fatte = []
+    for row in da_fare:
+        rid, nome, disc = row[0], row[1], row[2]
+        # FASE 2: genero con l'AI (LENTO ~20s) — nessuna connessione DB aperta qui
+        try:
+            ric = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc, lang="it")
+        except Exception as e:
+            fatte.append({"id": rid, "errore_gen": str(e)[:120]}); continue
+        if ric.get("errore") or not ric.get("nome"):
+            fatte.append({"id": rid, "saltata": ric.get("errore", "no nome")}); continue
+        # FASE 3: apro connessione SOLO per gli UPDATE veloci (millisecondi), poi la rilascio
+        c2 = _get_conn(); cur2 = c2.cursor()
+        try:
+            cur2.execute("""UPDATE ricette SET
+                descrizione=%s, numeri=%s::jsonb, punto_critico=%s, procedimento=%s::jsonb,
+                tecniche=%s::jsonb, fenomeni=%s::jsonb, abbinamenti=%s::jsonb,
+                esperimento=%s, limite=%s, twist=%s
+                WHERE id=%s""",
+                (ric.get("descrizione",""),
+                 _json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                 ric.get("punto_critico",""),
+                 _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                 _json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+                 _json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                 _json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                 ric.get("esperimento",""), ric.get("limite",""), ric.get("twist",""),
+                 rid))
+            # traduzioni EN/ES stantie -> azzero (il batch le rifara). NON tocco l'immagine.
+            cur2.execute("""UPDATE ricette SET scheda_en=NULL, scheda_es=NULL, nome_en=NULL, nome_es=NULL,
+                procedimento_en=NULL, procedimento_es=NULL, punto_critico_en=NULL, punto_critico_es=NULL,
+                esperimento_en=NULL, esperimento_es=NULL, limite_en=NULL, limite_es=NULL,
+                twist_en=NULL, twist_es=NULL, applicazioni_en=NULL, applicazioni_es=NULL
+                WHERE id=%s""", (rid,))
+            c2.commit()
+            fatte.append({"id": rid, "nome": nome, "esperimento": bool(ric.get("esperimento")),
+                          "twist": bool(ric.get("twist"))})
+        except Exception as e:
+            c2.rollback()
+            fatte.append({"id": rid, "errore_update": str(e)[:120]})
+        finally:
+            _release_conn(c2)
+
+    return jsonify({"fatte": len([f for f in fatte if f.get("nome")]), "dettaglio": fatte})
 
 @bp.route("/admin/espandi-ricette")
 def admin_espandi_ricette():
