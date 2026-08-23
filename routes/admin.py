@@ -2477,8 +2477,9 @@ def admin_lista_ricette_vecchie():
 # ── Rigenerazione ricette in BACKGROUND (aggira il timeout 30s del proxy Railway) ──
 _RIGEN_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "corrente": "", "ultimi": []}
 
-def _rigen_worker(disc_filtro, solo_n):
-    """Gira in un thread: genera e salva le ricette vecchie SENZA limiti di tempo HTTP."""
+def _rigen_worker(disc_filtro, solo_n, solo_senza_numeri=False):
+    """Gira in un thread: genera e salva le ricette vecchie SENZA limiti di tempo HTTP.
+    solo_senza_numeri=True: rigenera le ricette col campo numeri vuoto (per far ereditare i numeri estratti)."""
     import json as _json
     from db import carica_grafo, _get_conn, _release_conn
     from builder import genera_ricetta
@@ -2486,8 +2487,12 @@ def _rigen_worker(disc_filtro, solo_n):
     try:
         db = carica_grafo()
         conn = _get_conn(); cur = conn.cursor()
-        q = """SELECT id, nome, disciplina FROM ricette
-               WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='')"""
+        if solo_senza_numeri:
+            q = """SELECT id, nome, disciplina FROM ricette
+                   WHERE (numeri IS NULL OR numeri::text = '{}' OR numeri::text = 'null')"""
+        else:
+            q = """SELECT id, nome, disciplina FROM ricette
+                   WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='')"""
         params = []
         if disc_filtro:
             q += " AND disciplina=%s"; params.append(disc_filtro)
@@ -2547,9 +2552,11 @@ def admin_rigenera_bg():
     import threading
     disc = request.args.get("disc", "")
     solo_n = int(request.args.get("n", "0")) or None
-    t = threading.Thread(target=_rigen_worker, args=(disc, solo_n), daemon=True)
+    senza_numeri = request.args.get("senza_numeri", "0") != "0"
+    t = threading.Thread(target=_rigen_worker, args=(disc, solo_n, senza_numeri), daemon=True)
     t.start()
-    return jsonify({"avviato": True, "nota": "rigenerazione in background, controlla /admin/rigenera-bg-stato"})
+    return jsonify({"avviato": True, "modo": "senza_numeri" if senza_numeri else "senza_esperimento",
+                    "nota": "rigenerazione in background, controlla /admin/rigenera-bg-stato"})
 
 @bp.route("/admin/rigenera-bg-stato")
 def admin_rigenera_bg_stato():
