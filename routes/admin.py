@@ -2361,6 +2361,80 @@ def admin_cancella_nodo():
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
 
+@bp.route("/admin/rigenera-ricette-vecchie")
+def admin_rigenera_ricette_vecchie():
+    """Rigenera le ricette VECCHIE (senza esperimento o twist) col motore nuovo (voce Kenji-Matter,
+    numeri onesti, esperimento, limite, twist). AGGIORNA in place, CONSERVA l'immagine gia assegnata.
+    ?n=1 per il timeout worker. Lancia in ciclo lato client. ?disc= opzionale per filtrare una disciplina."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json
+    from db import carica_grafo, _get_conn, _release_conn
+    from builder import genera_ricetta
+    n = int(request.args.get("n", "1"))
+    disc_filtro = request.args.get("disc", "")
+    db = carica_grafo()
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        # trovo le ricette vecchie: senza esperimento O senza twist
+        q = """SELECT id, nome, disciplina FROM ricette
+               WHERE (esperimento IS NULL OR esperimento = '' OR twist IS NULL OR twist = '')"""
+        params = []
+        if disc_filtro:
+            q += " AND disciplina = %s"; params.append(disc_filtro)
+        q += " ORDER BY nome LIMIT %s"; params.append(n)
+        cur.execute(q, tuple(params))
+        da_fare = cur.fetchall()
+        if not da_fare:
+            return jsonify({"fatte": 0, "nota": "nessuna ricetta vecchia da rigenerare" + (f" in {disc_filtro}" if disc_filtro else "")})
+        fatte = []
+        for row in da_fare:
+            rid, nome, disc = row[0], row[1], row[2]
+            try:
+                ric = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc, lang="it")
+                if ric.get("errore") or not ric.get("nome"):
+                    fatte.append({"id": rid, "saltata": ric.get("errore", "no nome")}); continue
+                # AGGIORNA in place i campi voce, CONSERVANDO immagine e traduzioni gia presenti
+                cur.execute("""UPDATE ricette SET
+                    descrizione=%s, numeri=%s::jsonb, punto_critico=%s, procedimento=%s::jsonb,
+                    tecniche=%s::jsonb, fenomeni=%s::jsonb, abbinamenti=%s::jsonb,
+                    esperimento=%s, limite=%s, twist=%s
+                    WHERE id=%s""",
+                    (ric.get("descrizione",""),
+                     _json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                     ric.get("punto_critico",""),
+                     _json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                     _json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+                     _json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                     _json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                     ric.get("esperimento",""), ric.get("limite",""), ric.get("twist",""),
+                     rid))
+                # le traduzioni EN/ES ora sono stantie (il testo IT e cambiato): le azzero cosi il
+                # traduttore batch le rifara. NON tocco immagine/immagine_autore/immagine_url_fonte.
+                cur.execute("""UPDATE ricette SET scheda_en=NULL, scheda_es=NULL, nome_en=NULL, nome_es=NULL,
+                    procedimento_en=NULL, procedimento_es=NULL, punto_critico_en=NULL, punto_critico_es=NULL,
+                    esperimento_en=NULL, esperimento_es=NULL, limite_en=NULL, limite_es=NULL,
+                    twist_en=NULL, twist_es=NULL, applicazioni_en=NULL, applicazioni_es=NULL
+                    WHERE id=%s""", (rid,))
+                conn.commit()
+                fatte.append({"id": rid, "nome": nome, "esperimento": bool(ric.get("esperimento")),
+                              "twist": bool(ric.get("twist"))})
+            except Exception as e:
+                conn.rollback()
+                fatte.append({"id": rid, "errore": str(e)[:120]})
+        # quante restano
+        qc = """SELECT COUNT(*) FROM ricette WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='')"""
+        cur.execute(qc)
+        restano = cur.fetchone()[0]
+        return jsonify({"fatte": len([f for f in fatte if f.get("nome")]), "dettaglio": fatte, "restano_vecchie": restano})
+    except Exception as e:
+        conn.rollback()
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/espandi-ricette")
 def admin_espandi_ricette():
     """Espande il repertorio: genera ricette CLASSICHE del mestiere per una disciplina (verso la Bibbia),
