@@ -274,58 +274,92 @@ _TEMPLATE_MENU = {
 
 @bp_menu.route("/v1/menu/<mid>/render", methods=["GET"])
 def menu_render(mid):
-    """Genera il menu come HTML stampabile. ?template=elegante|minimal|scuro. Stampabile come PDF dal browser."""
+    """Genera il menu come HTML (stampabile PDF, o da mettere su un sito). FLESSIBILE:
+    ?template=elegante|minimal|scuro  ?foto=1 (mostra le foto dei piatti)  ?sezioni=1 (raggruppa per sezione)
+    Le voci possono avere: nome, prezzo, descrizione, immagine, sezione. La struttura la decide l'utente
+    (frontend): il backend rende quello che riceve. Niente template fisso imposto."""
     _ensure_menu_table()
     c = _conn(); cur = c.cursor()
     try:
-        cur.execute("SELECT titolo, locale, voci FROM menu WHERE id=%s", (mid,))
+        cur.execute("SELECT titolo, locale, voci, note FROM menu WHERE id=%s", (mid,))
         r = cur.fetchone()
         if not r:
             return "<h1>Menu non trovato</h1>", 404
-        titolo, locale, voci_raw = r[0], r[1], r[2]
+        titolo, locale, voci_raw, note = r[0], r[1], r[2], r[3]
         voci = voci_raw if isinstance(voci_raw, list) else (json.loads(voci_raw) if voci_raw else [])
     finally:
         _release(c)
 
     tpl = _TEMPLATE_MENU.get(request.args.get("template", "elegante"), _TEMPLATE_MENU["elegante"])
+    mostra_foto = request.args.get("foto", "0") != "0"
+    usa_sezioni = request.args.get("sezioni", "1") != "0"  # default: raggruppa per sezione se presente
 
     def esc(s):
         return (str(s or "")).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-    righe_html = []
-    for v in voci:
+    def render_voce(v):
         nome = esc(v.get("nome", ""))
         prezzo = esc(v.get("prezzo", ""))
         desc = esc(v.get("descrizione", ""))
-        righe_html.append(f'''
-        <div class="voce">
-          <div class="voce-riga">
-            <span class="voce-nome">{nome}</span>
-            <span class="voce-punti"></span>
-            <span class="voce-prezzo">{prezzo}</span>
+        img = v.get("immagine", "")
+        foto_html = ""
+        if mostra_foto and img:
+            foto_html = f'<div class="voce-foto"><img src="{esc(img)}" alt="{nome}" loading="lazy"></div>'
+        return f'''
+        <div class="voce{' voce-con-foto' if (mostra_foto and img) else ''}">
+          {foto_html}
+          <div class="voce-testo">
+            <div class="voce-riga">
+              <span class="voce-nome">{nome}</span>
+              <span class="voce-punti"></span>
+              <span class="voce-prezzo">{prezzo}</span>
+            </div>
+            {f'<div class="voce-desc">{desc}</div>' if desc else ''}
           </div>
-          {f'<div class="voce-desc">{desc}</div>' if desc else ''}
-        </div>''')
+        </div>'''
+
+    # raggruppo per sezione (l'utente le nomina liberamente: "Signature", "Vini", "Cibo"...)
+    corpo = ""
+    if usa_sezioni and any(v.get("sezione") for v in voci):
+        sezioni = {}
+        ordine = []
+        for v in voci:
+            sez = v.get("sezione", "") or "​"  # senza sezione -> gruppo vuoto
+            if sez not in sezioni:
+                sezioni[sez] = []; ordine.append(sez)
+            sezioni[sez].append(v)
+        for sez in ordine:
+            titolo_sez = f'<h2 class="menu-sezione">{esc(sez)}</h2>' if sez.strip() else ''
+            voci_html = ''.join(render_voce(v) for v in sezioni[sez])
+            corpo += f'<div class="sezione-blocco">{titolo_sez}{voci_html}</div>'
+    else:
+        corpo = ''.join(render_voce(v) for v in voci)
 
     html = f'''<!DOCTYPE html>
 <html lang="it"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(titolo)}</title>
 <style>
-  @page {{ size: A4; margin: 20mm; }}
+  @page {{ size: A4; margin: 18mm; }}
   * {{ box-sizing: border-box; }}
   body {{ font-family: {tpl["font"]}; background: {tpl["bg"]}; color: {tpl["ink"]};
-         margin: 0; padding: 40px; max-width: 800px; margin: 0 auto; }}
-  .menu-head {{ text-align: center; border-bottom: 2px solid {tpl["linea"]}; padding-bottom: 20px; margin-bottom: 30px; }}
+         margin: 0 auto; padding: 40px; max-width: 820px; }}
+  .menu-head {{ text-align: center; border-bottom: 2px solid {tpl["linea"]}; padding-bottom: 20px; margin-bottom: 28px; }}
   .menu-titolo {{ font-size: 34px; letter-spacing: 2px; margin: 0 0 6px; color: {tpl["accent"]}; }}
   .menu-locale {{ font-size: 14px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }}
+  .menu-sezione {{ font-size: 20px; color: {tpl["accent"]}; letter-spacing: 1px; text-transform: uppercase;
+                   border-bottom: 1px solid {tpl["linea"]}; padding-bottom: 6px; margin: 28px 0 16px; }}
   .voce {{ margin-bottom: 18px; }}
+  .voce-con-foto {{ display: flex; gap: 14px; align-items: flex-start; }}
+  .voce-foto img {{ width: 84px; height: 84px; object-fit: cover; border-radius: 8px; }}
+  .voce-testo {{ flex: 1; }}
   .voce-riga {{ display: flex; align-items: baseline; }}
   .voce-nome {{ font-size: 18px; font-weight: 600; }}
   .voce-punti {{ flex: 1; border-bottom: 1px dotted {tpl["linea"]}; margin: 0 8px; transform: translateY(-4px); }}
-  .voce-prezzo {{ font-size: 17px; color: {tpl["accent"]}; font-weight: 600; }}
-  .voce-desc {{ font-size: 13px; opacity: 0.75; margin-top: 3px; font-style: italic; }}
-  .menu-foot {{ text-align: center; margin-top: 40px; font-size: 11px; opacity: 0.5; }}
+  .voce-prezzo {{ font-size: 17px; color: {tpl["accent"]}; font-weight: 600; white-space: nowrap; }}
+  .voce-desc {{ font-size: 13px; opacity: 0.78; margin-top: 3px; font-style: italic; }}
+  .menu-note {{ margin-top: 30px; font-size: 12px; opacity: 0.6; text-align: center; }}
+  .menu-foot {{ text-align: center; margin-top: 36px; font-size: 11px; opacity: 0.45; }}
   @media print {{ body {{ padding: 0; }} .no-print {{ display: none; }} }}
 </style></head>
 <body>
@@ -333,7 +367,8 @@ def menu_render(mid):
     <h1 class="menu-titolo">{esc(titolo)}</h1>
     {f'<div class="menu-locale">{esc(locale)}</div>' if locale else ''}
   </div>
-  <div class="menu-voci">{''.join(righe_html)}</div>
+  <div class="menu-corpo">{corpo}</div>
+  {f'<div class="menu-note">{esc(note)}</div>' if note else ''}
   <div class="menu-foot">Creato con Matter</div>
 </body></html>'''
     from flask import Response
