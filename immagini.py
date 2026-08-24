@@ -48,10 +48,39 @@ def _cloudinary_lista():
     except Exception:
         return []
 
-def _cloudinary_foto(rank=0):
-    """Restituisce una foto dall'archivio Cloudinary (a rotazione via rank). None se archivio vuoto."""
+def _cloudinary_foto(rank=0, nome_ricetta="", disciplina=""):
+    """Restituisce una foto dall'archivio Cloudinary. Se nome_ricetta è dato, cerca la foto il cui NOME FILE
+    somiglia di più al piatto (challah->pane, cheeseburger->panino). Altrimenti a rotazione via rank."""
     urls = _cloudinary_lista()
     if not urls:
+        return None
+    if nome_ricetta:
+        # parole chiave della ricetta (nome + disciplina), tradotte all'inglese dove possibile
+        nome_l = nome_ricetta.lower()
+        parole_ric = set()
+        for it, en in _KW_IT_EN.items():
+            if it in nome_l:
+                parole_ric.update(en.split())
+        # aggiungo anche le parole del nome italiano (per match diretti tipo "challah","tiramisu")
+        import re as _re
+        parole_ric.update(w for w in _re.findall(r'[a-zàèéìòù]+', nome_l) if len(w) > 3)
+        # contesto disciplina in inglese
+        ctx = _CTX_DISCIPLINA.get((disciplina or "").lower(), "")
+        parole_disc = set(ctx.split())
+        # cerco la foto col nome file che condivide più parole
+        best, best_score = None, 0
+        for u in urls:
+            fname = u.split("/")[-1].lower()
+            fname_parole = set(_re.findall(r'[a-z]+', fname))
+            score = len(parole_ric & fname_parole) * 3 + len(parole_disc & fname_parole)
+            if score > best_score:
+                best, best_score = u, score
+        if best and best_score >= 3:  # match forte sul piatto
+            return {"url": best, "autore": "", "fonte": best, "fonte_nome": "archivio"}
+        # match debole: uso la disciplina per non mettere un dolce su un cocktail
+        if best and best_score >= 1:
+            return {"url": best, "autore": "", "fonte": best, "fonte_nome": "archivio"}
+        # nessun match: NON pesco a caso (evita hamburger sul sour) -> lascio decidere allo stock
         return None
     u = urls[rank % len(urls)]
     return {"url": u, "autore": "", "fonte": u, "fonte_nome": "archivio"}
@@ -193,18 +222,17 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0):
     rank_nome = sum(ord(c) for c in (nome or query)) if (nome or query) else 0
     if rank == 0 and nome:
         rank = rank_nome % 5
-    # 1) STOCK per disciplina (foto PERTINENTI: cocktail per i cocktail, pane per il pane).
-    #    E' la fonte primaria perche' copre tutte le ricette con foto sensate.
+    # 1) CLOUDINARY col MATCH PER NOME: se una foto di Michele corrisponde al piatto
+    #    (challah->pane, cheeseburger->panino), quella è la migliore. Se nessun match, torna None.
+    cloud = _cloudinary_foto(rank_nome, nome_ricetta=(nome or query or ""), disciplina=(disciplina or ""))
+    if cloud:
+        return cloud
+    # 2) STOCK per disciplina (foto PERTINENTI: cocktail per i cocktail, pane per il pane).
+    #    Fallback quando l'archivio di Michele non ha una foto che corrisponde.
     for fonte in (_pexels, _unsplash, _pixabay):
         res = fonte(q, rank)
         if res:
             return res
-    # 2) Cloudinary (archivio di Michele) SOLO come fallback: utile quando avra' molte foto
-    #    taggate per disciplina. Con poche foto generiche darebbe la stessa foto ovunque, quindi
-    #    resta in coda, non in testa.
-    cloud = _cloudinary_foto(rank_nome)
-    if cloud:
-        return cloud
     return None
 
 def credito_immagine(autore, fonte_nome="Pexels"):

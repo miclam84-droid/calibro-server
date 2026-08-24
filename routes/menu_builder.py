@@ -250,3 +250,100 @@ def menu_equilibrio(mid):
         "avvisi": avvisi,
         "dettaglio_voci": profili
     })
+
+
+# ============================================================
+# MENU BUILDER V3 — GRAFICA: render del menu come HTML stampabile (PDF via browser).
+# 3 template professionali. Palette Matter. Il frontend lo mostra e lo fa stampare/scaricare.
+# ============================================================
+
+_TEMPLATE_MENU = {
+    "elegante": {
+        "font": "Georgia, 'Times New Roman', serif",
+        "bg": "#faf6ee", "ink": "#1a1a1a", "accent": "#245979", "linea": "#c77b3f",
+    },
+    "minimal": {
+        "font": "'Helvetica Neue', Arial, sans-serif",
+        "bg": "#ffffff", "ink": "#222222", "accent": "#12545d", "linea": "#dddddd",
+    },
+    "scuro": {
+        "font": "'Helvetica Neue', Arial, sans-serif",
+        "bg": "#1a2530", "ink": "#f0f0f0", "accent": "#c77b3f", "linea": "#3a4a58",
+    },
+}
+
+@bp_menu.route("/v1/menu/<mid>/render", methods=["GET"])
+def menu_render(mid):
+    """Genera il menu come HTML stampabile. ?template=elegante|minimal|scuro. Stampabile come PDF dal browser."""
+    _ensure_menu_table()
+    c = _conn(); cur = c.cursor()
+    try:
+        cur.execute("SELECT titolo, locale, voci FROM menu WHERE id=%s", (mid,))
+        r = cur.fetchone()
+        if not r:
+            return "<h1>Menu non trovato</h1>", 404
+        titolo, locale, voci_raw = r[0], r[1], r[2]
+        voci = voci_raw if isinstance(voci_raw, list) else (json.loads(voci_raw) if voci_raw else [])
+    finally:
+        _release(c)
+
+    tpl = _TEMPLATE_MENU.get(request.args.get("template", "elegante"), _TEMPLATE_MENU["elegante"])
+
+    def esc(s):
+        return (str(s or "")).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    righe_html = []
+    for v in voci:
+        nome = esc(v.get("nome", ""))
+        prezzo = esc(v.get("prezzo", ""))
+        desc = esc(v.get("descrizione", ""))
+        righe_html.append(f'''
+        <div class="voce">
+          <div class="voce-riga">
+            <span class="voce-nome">{nome}</span>
+            <span class="voce-punti"></span>
+            <span class="voce-prezzo">{prezzo}</span>
+          </div>
+          {f'<div class="voce-desc">{desc}</div>' if desc else ''}
+        </div>''')
+
+    html = f'''<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{esc(titolo)}</title>
+<style>
+  @page {{ size: A4; margin: 20mm; }}
+  * {{ box-sizing: border-box; }}
+  body {{ font-family: {tpl["font"]}; background: {tpl["bg"]}; color: {tpl["ink"]};
+         margin: 0; padding: 40px; max-width: 800px; margin: 0 auto; }}
+  .menu-head {{ text-align: center; border-bottom: 2px solid {tpl["linea"]}; padding-bottom: 20px; margin-bottom: 30px; }}
+  .menu-titolo {{ font-size: 34px; letter-spacing: 2px; margin: 0 0 6px; color: {tpl["accent"]}; }}
+  .menu-locale {{ font-size: 14px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }}
+  .voce {{ margin-bottom: 18px; }}
+  .voce-riga {{ display: flex; align-items: baseline; }}
+  .voce-nome {{ font-size: 18px; font-weight: 600; }}
+  .voce-punti {{ flex: 1; border-bottom: 1px dotted {tpl["linea"]}; margin: 0 8px; transform: translateY(-4px); }}
+  .voce-prezzo {{ font-size: 17px; color: {tpl["accent"]}; font-weight: 600; }}
+  .voce-desc {{ font-size: 13px; opacity: 0.75; margin-top: 3px; font-style: italic; }}
+  .menu-foot {{ text-align: center; margin-top: 40px; font-size: 11px; opacity: 0.5; }}
+  @media print {{ body {{ padding: 0; }} .no-print {{ display: none; }} }}
+</style></head>
+<body>
+  <div class="menu-head">
+    <h1 class="menu-titolo">{esc(titolo)}</h1>
+    {f'<div class="menu-locale">{esc(locale)}</div>' if locale else ''}
+  </div>
+  <div class="menu-voci">{''.join(righe_html)}</div>
+  <div class="menu-foot">Creato con Matter</div>
+</body></html>'''
+    from flask import Response
+    return Response(html, mimetype="text/html")
+
+@bp_menu.route("/v1/menu/templates", methods=["GET"])
+def menu_templates():
+    """Elenca i template grafici disponibili per il menu."""
+    return jsonify({"templates": [
+        {"id": "elegante", "nome": "Elegante", "descrizione": "Serif classico, crema e blu di Prussia"},
+        {"id": "minimal", "nome": "Minimal", "descrizione": "Sans-serif pulito, bianco e teal"},
+        {"id": "scuro", "nome": "Scuro", "descrizione": "Fondo scuro, accenti terracotta"},
+    ]})
