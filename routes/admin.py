@@ -4825,3 +4825,59 @@ def admin_pulisci_foto_stock():
                         "esempi": [e["nome"] for e in elenco[:12]]})
     finally:
         _release_conn(conn)
+
+
+# ── PULISCI FOTO ARCHIVIO MAL-MATCHATE: toglie le Cloudinary il cui nome-file NON combacia con la ricetta ──
+@bp.route("/admin/pulisci-foto-malmatch")
+def admin_pulisci_foto_malmatch():
+    """Il match foto Cloudinary per nome è grezzo: assegna foto sbagliate (bibimbap->coppa gelato,
+    banh mi->bagel). Questa funzione TIENE una foto archivio solo se il nome-file contiene davvero
+    una parola forte del nome ricetta; altrimenti la TOGLIE. ?dry=1 per contare."""
+    import re as _re
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    dry = request.args.get("dry", "0") != "0"
+    # parole-chiave forti: se il file contiene questa parola, il match è valido per quel tipo di ricetta
+    # (nome_ricetta_contiene -> parola_che_deve_stare_nel_file)
+    match_validi = {
+        "pizza": "pizza", "pasta": "pasta", "spaghetti": "spaghetti", "bagel": "bagel",
+        "sushi": "sushi", "muffin": "muffin", "tacos": "taco", "tortilla": "taco",
+        "focaccia": None,  # 'perfect-wholegrain-bread' NON è focaccia -> togli
+    }
+    conn = _get_conn(); cur = conn.cursor()
+    tolte = []; tenute = []
+    try:
+        cur.execute("""SELECT id, nome, immagine FROM ricette
+                       WHERE immagine IS NOT NULL AND immagine <> ''
+                       AND LOWER(COALESCE(immagine_autore,'')) LIKE '%%archivio%%'""")
+        for r in cur.fetchall():
+            rid, nome, img = r[0], r[1], r[2]
+            nome_l = (nome or "").lower()
+            m = _re.search(r'/([^/]+)\.(jpg|jpeg|png|webp)', img or "")
+            fname = (m.group(1) if m else "").lower().replace('foodiesfeed.com_', '').replace('foodiesfeed_', '')
+            # il file contiene una parola FORTE (5+ lettere) presente anche nel nome ricetta?
+            valido = False
+            parole_ricetta = [w for w in _re.findall(r'[a-z]+', nome_l) if len(w) >= 5]
+            for w in parole_ricetta:
+                if w[:6] in fname:
+                    valido = True; break
+            # match espliciti noti (pizza, pasta...)
+            if not valido:
+                for chiave, parola_file in match_validi.items():
+                    if chiave in nome_l:
+                        valido = (parola_file is not None and parola_file in fname)
+                        break
+            if valido:
+                tenute.append(nome)
+            else:
+                tolte.append(nome)
+                if not dry:
+                    cur.execute("UPDATE ricette SET immagine=NULL, immagine_autore=NULL, immagine_url_fonte=NULL WHERE id=%s", (rid,))
+        if not dry:
+            conn.commit()
+        return jsonify({"tolte": len(tolte), "tenute": len(tenute),
+                        "esempi_tolte": tolte[:20], "esempi_tenute": tenute[:20]})
+    finally:
+        _release_conn(conn)
