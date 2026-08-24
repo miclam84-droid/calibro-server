@@ -193,15 +193,18 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0):
     rank_nome = sum(ord(c) for c in (nome or query)) if (nome or query) else 0
     if rank == 0 and nome:
         rank = rank_nome % 5
-    # 1) PRIMA l'archivio Cloudinary di Michele (foto sue, belle). Rotazione ampia sul totale.
-    cloud = _cloudinary_foto(rank_nome)
-    if cloud:
-        return cloud
-    # 2) poi lo stock automatico
+    # 1) STOCK per disciplina (foto PERTINENTI: cocktail per i cocktail, pane per il pane).
+    #    E' la fonte primaria perche' copre tutte le ricette con foto sensate.
     for fonte in (_pexels, _unsplash, _pixabay):
         res = fonte(q, rank)
         if res:
             return res
+    # 2) Cloudinary (archivio di Michele) SOLO come fallback: utile quando avra' molte foto
+    #    taggate per disciplina. Con poche foto generiche darebbe la stessa foto ovunque, quindi
+    #    resta in coda, non in testa.
+    cloud = _cloudinary_foto(rank_nome)
+    if cloud:
+        return cloud
     return None
 
 def credito_immagine(autore, fonte_nome="Pexels"):
