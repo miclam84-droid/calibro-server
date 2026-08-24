@@ -1815,95 +1815,19 @@ def menu_tecniche():
 
 @bp.route("/v1/profilo-sensoriale", methods=["GET"])
 def get_profilo_sensoriale():
-    """Restituisce il profilo sensoriale dell'utente (9 dimensioni, pesi 0-10)."""
-    token = request.headers.get("Authorization","").replace("Bearer ","")
-    user_id = _utente_da_token(token)
-    if not user_id:
-        return jsonify({"errore":"autenticazione richiesta"}), 401
-    if not DATABASE_URL:
-        return jsonify({"profilo": _profilo_default()})
-    try:
-        import psycopg2
-        conn = _get_conn()
-        cur = conn.cursor()
-        try:
-            cur.execute("SELECT profilo_sensoriale FROM utenti WHERE id=%s", (user_id,))
-            row = cur.fetchone()
-            profilo = row[0] if row and row[0] else _profilo_default()
-        except Exception:
-            # la colonna potrebbe non esistere ancora: rollback pulito e default
-            conn.rollback()
-            profilo = _profilo_default()
-        cur.close(); _release_conn(conn)
-        return jsonify({"profilo": profilo, "interazioni": profilo.get("_n", 0)})
-    except Exception as e:
-        # non far crashare la UI: restituisci un profilo di default
-        print(f"[PROFILO ERRORE] {e}", flush=True)
-        try:
-            conn.rollback(); _release_conn(conn)
-        except Exception:
-            pass
-        return jsonify({"profilo": _profilo_default(), "interazioni": 0})
+    """DEPRECATO. La feature Sommelier (like/dislike + profilo gusto) è stata rimossa perché parte da
+    un'opinione, non da una misura (rompe 'Numeri. Non opinioni.'). La sostituirà il Laboratorio Sensoriale.
+    Vedi LABORATORIO-SENSORIALE-DECISIONE.md."""
+    return jsonify({"rimossa": True, "sostituita_da": "Laboratorio Sensoriale",
+                    "nota": "Feature sommelier deprecata."}), 410
 
 @bp.route("/v1/feedback-abbinamento", methods=["POST"])
 def feedback_abbinamento():
-    """Registra il feedback (like/dislike) su un abbinamento e aggiorna il profilo sensoriale.
-    Body: {"ingrediente": "lime", "abbinamento": "zucchero", "voto": 1, "disciplina": "bar"}
-    voto: 1=like, -1=dislike
-    """
-    token = request.headers.get("Authorization","").replace("Bearer ","")
-    user_id = _utente_da_token(token)
-    if not user_id:
-        return jsonify({"errore":"autenticazione richiesta"}), 401
-    body = request.json or {}
-    ingrediente = body.get("ingrediente","")
-    abbinamento = body.get("abbinamento","")
-    voto = int(body.get("voto", 0))
-    disciplina = body.get("disciplina","")
-    if voto not in (1, -1) or not ingrediente:
-        return jsonify({"errore":"voto deve essere 1 o -1, ingrediente obbligatorio"}), 400
-    if not DATABASE_URL:
-        return jsonify({"ok": True})
-    try:
-        import psycopg2, psycopg2.extras
-        conn = _get_conn()
-        cur = conn.cursor()
-        # Leggi profilo attuale
-        cur.execute("SELECT profilo_sensoriale FROM utenti WHERE id=%s", (user_id,))
-        row = cur.fetchone()
-        profilo = row[0] if row and row[0] else _profilo_default()
-        # Aggiorna profilo in base al voto e al profilo sensoriale dell'ingrediente
-        profilo = _aggiorna_profilo(profilo, ingrediente, abbinamento, voto, disciplina)
-        # Salva profilo aggiornato
-        cur.execute(
-            "UPDATE utenti SET profilo_sensoriale=%s WHERE id=%s",
-            (psycopg2.extras.Json(profilo), user_id)
-        )
-        # Salva log feedback
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS feedback_abbinamenti (
-                id SERIAL PRIMARY KEY,
-                user_id TEXT,
-                ingrediente TEXT,
-                abbinamento TEXT,
-                voto INTEGER,
-                disciplina TEXT,
-                ts TIMESTAMPTZ DEFAULT NOW()
-            )
-        """)
-        cur.execute("""
-            INSERT INTO feedback_abbinamenti (user_id, ingrediente, abbinamento, voto, disciplina)
-            VALUES (%s,%s,%s,%s,%s)
-        """, (str(user_id), ingrediente, abbinamento, voto, disciplina))
-        conn.commit(); cur.close(); _release_conn(conn)
-        return jsonify({"ok": True, "profilo": profilo, "interazioni": profilo.get("_n", 0)})
-    except Exception as e:
-        try:
-            conn.rollback(); _release_conn(conn)
-        except Exception:
-            pass
-        print(f"[FEEDBACK ERRORE] {e}", flush=True)
-        return jsonify({"ok": False, "errore": "non salvato"}), 200
+    """DEPRECATO. Il like/dislike sugli abbinamenti è stato rimosso: è raccolta dati che parte da
+    un'opinione, non da una misura (rompe 'Numeri. Non opinioni.'). Lo sostituirà il Laboratorio
+    Sensoriale (osservazioni percettive, non voti). Vedi LABORATORIO-SENSORIALE-DECISIONE.md."""
+    return jsonify({"rimossa": True, "sostituita_da": "Laboratorio Sensoriale",
+                    "nota": "Il like/dislike sugli abbinamenti è stato rimosso."}), 410
 
 @bp.route("/v1/contrasto/<ingrediente>")
 def contrasto(ingrediente):
