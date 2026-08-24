@@ -2330,6 +2330,24 @@ def admin_immagini_bg_stato():
         return "Forbidden", 403
     return jsonify(_IMG_STATO)
 
+@bp.route("/admin/diag-cloudinary")
+def admin_diag_cloudinary():
+    """Diagnostica: le variabili Cloudinary ci sono? quante foto vede l'app nell'archivio?"""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import os as _os
+    from immagini import _cloudinary_lista
+    has = {
+        "CLOUDINARY_CLOUD_NAME": bool(_os.environ.get("CLOUDINARY_CLOUD_NAME")),
+        "CLOUDINARY_API_KEY": bool(_os.environ.get("CLOUDINARY_API_KEY")),
+        "CLOUDINARY_API_SECRET": bool(_os.environ.get("CLOUDINARY_API_SECRET")),
+        "cloud_name_valore": _os.environ.get("CLOUDINARY_CLOUD_NAME") or "(vuoto)",
+    }
+    urls = _cloudinary_lista()
+    return jsonify({"variabili": has, "foto_trovate_nell_archivio": len(urls),
+                    "primi_url": urls[:3]})
+
 @bp.route("/admin/riempi-immagini-ricette")
 def admin_riempi_immagini():
     """Riempie le immagini mancanti delle ricette cercando su Pexels (API gratuita).
