@@ -49,41 +49,53 @@ def _cloudinary_lista():
         return []
 
 def _cloudinary_foto(rank=0, nome_ricetta="", disciplina=""):
-    """Restituisce una foto dall'archivio Cloudinary. Se nome_ricetta è dato, cerca la foto il cui NOME FILE
-    somiglia di più al piatto (challah->pane, cheeseburger->panino). Altrimenti a rotazione via rank."""
+    """Restituisce una foto dall'archivio Cloudinary SOLO se c'è un match FORTE sul nome del piatto
+    (challah->pane, pizza->pizza). Niente match debole (una parola generica): meglio lo stock per disciplina
+    che una foto sbagliata (es. Negroni con marmellata di pomodoro). None se nessun match forte."""
     urls = _cloudinary_lista()
-    if not urls:
+    if not urls or not nome_ricetta:
         return None
-    if nome_ricetta:
-        # parole chiave della ricetta (nome + disciplina), tradotte all'inglese dove possibile
-        nome_l = nome_ricetta.lower()
-        parole_ric = set()
-        for it, en in _KW_IT_EN.items():
-            if it in nome_l:
-                parole_ric.update(en.split())
-        # aggiungo anche le parole del nome italiano (per match diretti tipo "challah","tiramisu")
-        import re as _re
-        parole_ric.update(w for w in _re.findall(r'[a-zàèéìòù]+', nome_l) if len(w) > 3)
-        # contesto disciplina in inglese
-        ctx = _CTX_DISCIPLINA.get((disciplina or "").lower(), "")
-        parole_disc = set(ctx.split())
-        # cerco la foto col nome file che condivide più parole
-        best, best_score = None, 0
-        for u in urls:
-            fname = u.split("/")[-1].lower()
-            fname_parole = set(_re.findall(r'[a-z]+', fname))
-            score = len(parole_ric & fname_parole) * 3 + len(parole_disc & fname_parole)
+    import re as _re
+    nome_l = nome_ricetta.lower()
+    # parole-piatto FORTI: dal nome (parole lunghe) + traduzione EN della parola-chiave
+    parole_ric = set()
+    for it, en in _KW_IT_EN.items():
+        if it in nome_l:
+            parole_ric.update(w for w in en.split() if len(w) > 3)  # solo parole significative
+    parole_ric.update(w for w in _re.findall(r'[a-zàèéìòù]+', nome_l) if len(w) > 4)  # nomi propri: challah, tiramisu, focaccia
+    # parole generiche che NON devono da sole far scattare un match (troppo comuni)
+    _GENERICHE = {"rice", "cream", "fresh", "classic", "classico", "with", "delicious", "homemade", "sauce"}
+    parole_ric -= _GENERICHE
+    if not parole_ric:
+        return None
+    # disciplina -> categorie di file ammesse (per non mettere cucina su bar, ecc.)
+    _DISC_OK = {
+        "bar": ("cocktail", "drink", "negroni", "spritz", "martini", "sour", "mojito", "margarita"),
+        "caffetteria": ("coffee", "espresso", "cappuccino", "latte", "barista"),
+        "cucina": ("food", "dish", "meat", "fish", "pasta", "risotto", "burger", "sandwich", "salad", "soup", "vegetable", "roast", "stew", "sauce", "tomato", "egg", "taco", "meatball", "chicken"),
+        "pasticceria": ("dessert", "cake", "pastry", "chocolate", "tiramisu", "cream", "tart", "sweet"),
+        "panificazione": ("bread", "bakery", "challah", "bagel", "baguette", "focaccia", "sourdough", "dough", "pizza", "croissant"),
+        "gelateria": ("ice", "gelato", "sorbet", "popsicle", "scoop"),
+        "vino": ("wine", "barrel", "cellar"),
+        "birra": ("beer", "craft"),
+    }
+    ok_words = _DISC_OK.get((disciplina or "").lower(), ())
+    best, best_score = None, 0
+    for u in urls:
+        fname = u.split("/")[-1].lower()
+        fname_parole = set(_re.findall(r'[a-z]+', fname))
+        # match sul nome del piatto
+        match_nome = len(parole_ric & fname_parole)
+        # la foto è della disciplina giusta?
+        disc_ok = any(w in fname for w in ok_words) if ok_words else True
+        if match_nome >= 1 and disc_ok:
+            score = match_nome * 2 + (1 if disc_ok else 0)
             if score > best_score:
                 best, best_score = u, score
-        if best and best_score >= 3:  # match forte sul piatto
-            return {"url": best, "autore": "", "fonte": best, "fonte_nome": "archivio"}
-        # match debole: uso la disciplina per non mettere un dolce su un cocktail
-        if best and best_score >= 1:
-            return {"url": best, "autore": "", "fonte": best, "fonte_nome": "archivio"}
-        # nessun match: NON pesco a caso (evita hamburger sul sour) -> lascio decidere allo stock
-        return None
-    u = urls[rank % len(urls)]
-    return {"url": u, "autore": "", "fonte": u, "fonte_nome": "archivio"}
+    # match valido SOLO se nome forte + disciplina compatibile
+    if best and best_score >= 3:
+        return {"url": best, "autore": "", "fonte": best, "fonte_nome": "archivio"}
+    return None
 
 
 _PEXELS_URL   = "https://api.pexels.com/v1/search"
