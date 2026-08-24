@@ -4719,3 +4719,70 @@ def admin_crea_fenomeno_mondo():
         return jsonify({"ok": True, "azione": azione, "id": nid, "nome": nome})
     finally:
         _release_conn(conn)
+
+
+# ── FORZA FENOMENO DEL MONDO: aggancia il fenomeno giusto alle ricette internazionali ──
+# Mappa: parola-chiave nel nome ricetta -> fenomeno del mondo che DEVE agganciare.
+_MAPPA_FENOMENO_MONDO = {
+    "nixtamalizz": "nixtamalizzazione", "tortilla": "nixtamalizzazione", "tamale": "nixtamalizzazione",
+    "pozole": "nixtamalizzazione", "masa": "nixtamalizzazione",
+    "wok": "Wok hei", "saltat": "Wok hei", "stir": "Wok hei", "mapo": "Wok hei", "kung pao": "Wok hei",
+    "nasi goreng": "Wok hei",
+    "miso": "fermentazione enzimatica", "koji": "fermentazione enzimatica", "salsa di soia": "fermentazione enzimatica",
+    "amazake": "fermentazione enzimatica", "doenjang": "fermentazione enzimatica",
+    "kimchi": "fermentazione lattica", "crauti": "fermentazione lattica", "sauerkraut": "fermentazione lattica",
+    "dosa": "fermentazione lattica", "idli": "fermentazione lattica", "verdure lacto": "fermentazione lattica",
+    "tonkotsu": "Emulsione forzata", "paitan": "Emulsione forzata",
+    "kansui": "Kansui", "noodles al kansui": "Kansui", "ramen fatti": "Kansui", "lamian": "Kansui",
+    "tadka": "Tadka", "dal": "Tadka", "curry": "Tadka", "tempering": "Tadka",
+    "mochi": "Gelatinizzazione del riso glutinoso", "riso glutinoso": "Gelatinizzazione del riso glutinoso",
+    "sushi": "Gelatinizzazione del riso glutinoso", "tteokbokki": "Gelatinizzazione del riso glutinoso",
+    "zongzi": "Gelatinizzazione del riso glutinoso", "sticky rice": "Gelatinizzazione del riso glutinoso",
+    "naan": "Cottura nel tandoor", "tandoor": "Cottura nel tandoor", "tikka": "Cottura nel tandoor",
+    "tandoori": "Cottura nel tandoor",
+    "brisket": "Barbecue low and slow", "pulled pork": "Barbecue low and slow", "barbecue": "Barbecue low and slow",
+    "affumicat": "Barbecue low and slow", "costine": "Barbecue low and slow", "bbq": "Barbecue low and slow",
+    "pastor": "nixtamalizzazione",
+}
+
+@bp.route("/admin/forza-fenomeni-mondo")
+def admin_forza_fenomeni_mondo():
+    """Scorre le ricette e, se il nome contiene una parola-chiave di piatto internazionale, aggancia il
+    fenomeno del mondo giusto (lo mette PRIMO nella lista fenomeni se non c'è). ?dryrun=1 per simulare."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    dryrun = request.args.get("dryrun", "0") != "0"
+    conn = _get_conn(); cur = conn.cursor()
+    modificate = []
+    try:
+        cur.execute("SELECT id, nome, fenomeni FROM ricette")
+        righe = cur.fetchall()
+        for r in righe:
+            rid, nome, fen_raw = r[0], r[1], r[2]
+            nome_l = (nome or "").lower()
+            fen = fen_raw if isinstance(fen_raw, list) else (json.loads(fen_raw) if fen_raw else [])
+            # trovo il fenomeno del mondo che questo piatto DOVREBBE avere
+            fen_mondo = None
+            for chiave, fenomeno in _MAPPA_FENOMENO_MONDO.items():
+                if chiave in nome_l:
+                    fen_mondo = fenomeno
+                    break
+            if not fen_mondo:
+                continue
+            # è già presente (anche parziale)?
+            gia = any(fen_mondo.lower() in str(f).lower() or str(f).lower() in fen_mondo.lower() for f in fen)
+            if gia:
+                continue
+            # lo aggiungo in testa
+            nuovi_fen = [fen_mondo] + [f for f in fen]
+            modificate.append({"id": rid, "nome": nome, "aggiunto": fen_mondo, "prima": fen})
+            if not dryrun:
+                cur.execute("UPDATE ricette SET fenomeni=%s WHERE id=%s",
+                            (json.dumps(nuovi_fen, ensure_ascii=False), rid))
+        if not dryrun:
+            conn.commit()
+        return jsonify({"dryrun": dryrun, "modificate": len(modificate), "dettaglio": modificate[:40]})
+    finally:
+        _release_conn(conn)
