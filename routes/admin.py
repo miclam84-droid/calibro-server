@@ -1984,6 +1984,52 @@ def admin_estrai_attrezzature():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
 
+@bp.route("/admin/lista-storia")
+def admin_lista_storia():
+    """Elenca i nodi Storia col testo (per verificare le date storiche)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    db = carica_grafo()
+    rows = db.execute("SELECT id, name, domain, data FROM nodes WHERE type='Storia' ORDER BY domain").fetchall()
+    out = []
+    for r in rows:
+        data = _dati(r["data"])
+        out.append({"id": r["id"], "nome": r["name"], "disciplina": r["domain"],
+                    "testo": data.get("testo", ""), "svolte": data.get("svolte", []),
+                    "da_rivedere": data.get("da_rivedere", "")})
+    return jsonify({"totale": len(out), "storie": out})
+
+@bp.route("/admin/aggiorna-storia", methods=["POST"])
+def admin_aggiorna_storia():
+    """Aggiorna il testo/svolte di un nodo Storia e toglie da_rivedere. Body: {id, testo, svolte:[]}."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    b = request.json or {}
+    nid = b.get("id", "")
+    if not nid:
+        return jsonify({"errore": "id mancante"}), 400
+    db = carica_grafo()
+    row = db.execute("SELECT data FROM nodes WHERE id=?", (nid,)).fetchone()
+    if not row:
+        return jsonify({"errore": "nodo non trovato"}), 404
+    data = _dati(row["data"])
+    if b.get("testo"):
+        data["testo"] = b["testo"]
+    if b.get("svolte"):
+        data["svolte"] = b["svolte"]
+    data["da_rivedere"] = "false"
+    data["date_verificate"] = "true"
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(data, ensure_ascii=False), nid))
+        conn.commit()
+        return jsonify({"ok": True, "id": nid})
+    finally:
+        _release_conn(conn)
+
 @bp.route("/admin/genera-storia")
 def admin_genera_storia():
     """Crea un nodo Storia per una disciplina: l'evoluzione del mestiere collegata alle tecniche/fenomeni
