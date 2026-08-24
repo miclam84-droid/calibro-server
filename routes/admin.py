@@ -4598,3 +4598,83 @@ def admin_revisiona_prosa_stato():
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     return jsonify(_REVISIONE_STATO)
+
+
+# ── ABBINAMENTI BEVANDE: genera vino/birra (col PERCHÉ) per le ricette di cibo che non li hanno ──
+_ABBINA_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "campioni": []}
+
+def _abbina_worker(solo_n, usa_openai=False):
+    from db import carica_grafo, _get_conn, _release_conn
+    import ai_gateway as GW
+    global _ABBINA_STATO
+    try:
+        db = carica_grafo()
+        conn = _get_conn(); cur = conn.cursor()
+        # solo CIBO (cucina/pasticceria/panificazione) senza vino_birra
+        q = """SELECT id, nome, disciplina, descrizione FROM ricette
+               WHERE disciplina IN ('cucina','pasticceria','panificazione')
+               AND (vino_birra IS NULL OR vino_birra::text = '' OR vino_birra::text = '{}' OR vino_birra::text = 'null')
+               ORDER BY nome"""
+        if solo_n:
+            q += f" LIMIT {int(solo_n)}"
+        cur.execute(q)
+        righe = cur.fetchall()
+        _release_conn(conn)
+        _ABBINA_STATO.update({"attivo": True, "fatte": 0, "totale": len(righe), "errori": 0, "campioni": []})
+        for r in righe:
+            rid, nome, disc, desc = r[0], r[1], r[2], (r[3] or "")
+            prompt = (
+                f"Sei un sommelier tecnico. Per il piatto '{nome}' ({disc}), proponi UN abbinamento vino e UN "
+                f"abbinamento birra, ciascuno col PERCHÉ FISICO/PERCETTIVO (affinità o contrasto: tannini che "
+                f"reggono il grasso, bollicine che puliscono, note tostate che richiamano la Maillard, ecc.). "
+                f"Sii concreto: indica un vitigno/tipo preciso, non 'un vino rosso'.\n"
+                f"Descrizione piatto: {desc[:200]}\n"
+                f'Rispondi SOLO con JSON: {{"vino":"Nome preciso — perché","birra":"Tipo preciso — perché"}}'
+            )
+            try:
+                out = GW._gpt_chat(prompt, max_tokens=200) if usa_openai else GW.route_free(prompt, max_tokens=200)
+                if not out:
+                    _ABBINA_STATO["errori"] += 1; _ABBINA_STATO["fatte"] += 1; continue
+                # estraggo il JSON
+                import re as _re, json as _json
+                m = _re.search(r'\{.*\}', out, _re.DOTALL)
+                if not m:
+                    _ABBINA_STATO["errori"] += 1; _ABBINA_STATO["fatte"] += 1; continue
+                vb = _json.loads(m.group(0))
+                if not vb.get("vino") or not vb.get("birra"):
+                    _ABBINA_STATO["errori"] += 1; _ABBINA_STATO["fatte"] += 1; continue
+                conn2 = _get_conn(); cur2 = conn2.cursor()
+                cur2.execute("UPDATE ricette SET vino_birra=%s WHERE id=%s",
+                             (_json.dumps(vb, ensure_ascii=False), rid))
+                conn2.commit(); _release_conn(conn2)
+                if len(_ABBINA_STATO["campioni"]) < 5:
+                    _ABBINA_STATO["campioni"].append({"ricetta": nome, "vino": vb["vino"][:60], "birra": vb["birra"][:60]})
+                _ABBINA_STATO["fatte"] += 1
+            except Exception:
+                _ABBINA_STATO["errori"] += 1; _ABBINA_STATO["fatte"] += 1
+    finally:
+        _ABBINA_STATO["attivo"] = False
+
+@bp.route("/admin/genera-abbinamenti-bevande")
+def admin_genera_abbinamenti():
+    """Genera vino/birra (col perché) per le ricette di CIBO senza abbinamento. ?n=3 per provare. ?openai=1."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    global _ABBINA_STATO
+    if _ABBINA_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _ABBINA_STATO})
+    import threading
+    solo_n = request.args.get("n", "0")
+    usa_openai = request.args.get("openai", "0") != "0"
+    t = threading.Thread(target=_abbina_worker,
+                         args=(int(solo_n) if solo_n.isdigit() and solo_n!="0" else None, usa_openai), daemon=True)
+    t.start()
+    return jsonify({"avviato": True, "provider": "openai" if usa_openai else "gratuiti"})
+
+@bp.route("/admin/genera-abbinamenti-bevande-stato")
+def admin_genera_abbinamenti_stato():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    return jsonify(_ABBINA_STATO)
