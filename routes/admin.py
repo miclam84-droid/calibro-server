@@ -4461,3 +4461,88 @@ def admin_diag_costi():
     cur.close(); _release_conn(conn)
     return jsonify(risultati)
 
+
+
+# ── REVISIONE PROSA (qualità testi) — rilegge e pulisce i campi testuali delle ricette ──
+# MANTIENE voce e numeri, sistema solo errori di prosa/punteggiatura/parole sciatte.
+# Usa provider gratuiti (Mistral/Gemini). Background (AI su 361 ricette = lungo).
+_REVISIONE_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "campioni": []}
+
+def _revisiona_testo(testo, tipo, nome_ricetta):
+    """Rilegge UN campo testuale e lo pulisce. Ritorna il testo corretto o l'originale se fallisce."""
+    import ai_gateway as GW
+    if not testo or len(testo.strip()) < 10:
+        return testo
+    prompt = (
+        "Sei un editor di testi gastronomici in italiano. Correggi SOLO gli errori di prosa, punteggiatura, "
+        "scelta delle parole e scorrevolezza in questo testo. REGOLE FERREE:\n"
+        "- NON cambiare i NUMERI (temperature, tempi, percentuali, rapporti): restano IDENTICI.\n"
+        "- NON riscrivere da zero: mantieni la voce diretta e concreta (tono 'collega al banco').\n"
+        "- NON aggiungere né togliere informazioni: solo pulire la forma.\n"
+        "- NON usare virgolette attorno alla risposta. Rispondi SOLO col testo corretto, nient'altro.\n"
+        f"\nTesto ({tipo}) della ricetta '{nome_ricetta}':\n{testo}"
+    )
+    try:
+        out = GW.route_free(prompt, max_tokens=500)
+        if out and len(out.strip()) >= len(testo.strip()) * 0.5:  # sanity: non deve dimezzare il testo
+            return out.strip().strip('"')
+    except Exception:
+        pass
+    return testo
+
+def _revisione_worker(solo_n):
+    from db import carica_grafo, _get_conn, _release_conn
+    global _REVISIONE_STATO
+    try:
+        db = carica_grafo()
+        conn = _get_conn(); cur = conn.cursor()
+        q = "SELECT id, nome, descrizione, punto_critico, esperimento, limite, twist FROM ricette ORDER BY nome"
+        if solo_n:
+            q += f" LIMIT {int(solo_n)}"
+        cur.execute(q)
+        righe = cur.fetchall()
+        _release_conn(conn)
+        _REVISIONE_STATO.update({"attivo": True, "fatte": 0, "totale": len(righe), "errori": 0, "campioni": []})
+        for r in righe:
+            rid, nome = r[0], r[1]
+            campi = {"descrizione": r[2], "punto_critico": r[3], "esperimento": r[4], "limite": r[5], "twist": r[6]}
+            nuovi = {}
+            for tipo, testo in campi.items():
+                corretto = _revisiona_testo(testo, tipo, nome)
+                if corretto and corretto != testo:
+                    nuovi[tipo] = corretto
+            if nuovi:
+                sets = ", ".join(f"{k}=%s" for k in nuovi)
+                vals = list(nuovi.values()) + [rid]
+                conn2 = _get_conn(); cur2 = conn2.cursor()
+                cur2.execute(f"UPDATE ricette SET {sets} WHERE id=%s", vals)
+                conn2.commit(); _release_conn(conn2)
+                if len(_REVISIONE_STATO["campioni"]) < 5:
+                    _REVISIONE_STATO["campioni"].append({"ricetta": nome, "campi_corretti": list(nuovi.keys())})
+            _REVISIONE_STATO["fatte"] += 1
+    except Exception as e:
+        _REVISIONE_STATO["errori"] += 1
+    finally:
+        _REVISIONE_STATO["attivo"] = False
+
+@bp.route("/admin/revisiona-prosa")
+def admin_revisiona_prosa():
+    """Rilegge e pulisce la prosa dei testi ricetta (voce e numeri invariati). ?n=3 per provare su poche."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    global _REVISIONE_STATO
+    if _REVISIONE_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _REVISIONE_STATO})
+    import threading
+    solo_n = request.args.get("n", "0")
+    t = threading.Thread(target=_revisione_worker, args=(int(solo_n) if solo_n.isdigit() and solo_n!="0" else None,), daemon=True)
+    t.start()
+    return jsonify({"avviato": True, "nota": "revisione prosa in background, controlla /admin/revisiona-prosa-stato"})
+
+@bp.route("/admin/revisiona-prosa-stato")
+def admin_revisiona_prosa_stato():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    return jsonify(_REVISIONE_STATO)
