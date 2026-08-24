@@ -31,9 +31,35 @@ _KW_IT_EN = {
     "sour": "whiskey sour cocktail", "mojito": "mojito cocktail", "margarita": "margarita cocktail",
 }
 
+
+# ── preparazioni BASE: per salse madri/fondi/creme la foto del piatto finito non serve.
+# Meglio la visuale di CHI PREPARA (mani, pentolino, emulsione) o l'ingrediente chiave. ──
+_PAROLE_BASE = ("salsa madre", "salsa", "fondo", "besciamella", "bagna", "brodo",
+                "maionese", "emulsione", "ganache", "crema pasticcera", "crema pasticcera classica",
+                "sciroppo", "riduzione", "fumetto", "roux", "court", "pastissier", "pâtissière")
+
+_CTX_PREPARAZIONE = {
+    "cucina":        "cooking sauce pan kitchen hands process",
+    "pasticceria":   "whisking cream bowl pastry kitchen hands",
+    "bar":           "bartender making cocktail syrup pouring",
+    "caffetteria":   "barista pouring espresso process",
+    "gelateria":     "making ice cream churning process",
+    "panificazione": "kneading dough hands bakery process",
+    "vino":          "wine making barrel cellar process",
+}
+
+def _e_preparazione_base(nome):
+    n = (nome or "").lower()
+    return any(k in n for k in _PAROLE_BASE)
+
 def _query_intelligente(nome, disciplina):
-    ctx = _CTX_DISCIPLINA.get((disciplina or "").lower(), "food")
+    disc = (disciplina or "").lower()
     nome_l = (nome or "").lower()
+    # preparazione base -> visuale di chi prepara (non il piatto finito)
+    if _e_preparazione_base(nome):
+        ctx = _CTX_PREPARAZIONE.get(disc, "cooking process hands kitchen")
+        return ctx
+    ctx = _CTX_DISCIPLINA.get(disc, "food")
     extra = ""
     for it, en in _KW_IT_EN.items():
         if it in nome_l:
