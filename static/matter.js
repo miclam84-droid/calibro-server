@@ -250,8 +250,8 @@ function _ricL(k){
     procedimento:{it:'Procedimento',en:'Method',es:'Procedimiento'},
     tecniche:{it:'Tecniche',en:'Techniques',es:'Técnicas'},
     abbinamenti:{it:'Abbinamenti',en:'Pairings',es:'Combinaciones'},
-    analogia:{it:'In analogia',en:'By analogy',es:'Por analogía'},
-    contrasto:{it:'In contrasto',en:'By contrast',es:'Por contraste'},
+    analogia:{it:'Per analogia',en:'By analogy',es:'Por analogía'},
+    contrasto:{it:'Per contrasto',en:'By contrast',es:'Por contraste'},
     foto:{it:'Foto',en:'Photo',es:'Foto'}
   };
   const l=(_lang||'it'); return (L[k]&&(L[k][l]||L[k].it))||'';
