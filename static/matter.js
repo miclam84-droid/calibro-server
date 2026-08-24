@@ -238,6 +238,32 @@ function playIntro(screenId){
   if(!s) return;
   s.classList.remove('intro'); void s.offsetWidth; s.classList.add('intro');
 }
+function _escR(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// label multilingua per le nuove sezioni (usa _lang già presente nell'app)
+function _ricL(k){
+  const L={
+    esperimento:{it:'Prova al banco',en:'Bench test',es:'Prueba en barra'},
+    limite:{it:'Quando non basta',en:'When it’s not enough',es:'Cuando no basta'},
+    twist:{it:'Twist',en:'Twist',es:'Twist'},
+    rivisit:{it:'Rivisitazione',en:'Variation',es:'Revisión'},
+    procedimento:{it:'Procedimento',en:'Method',es:'Procedimiento'},
+    tecniche:{it:'Tecniche',en:'Techniques',es:'Técnicas'},
+    abbinamenti:{it:'Abbinamenti',en:'Pairings',es:'Combinaciones'},
+    analogia:{it:'In analogia',en:'By analogy',es:'Por analogía'},
+    contrasto:{it:'In contrasto',en:'By contrast',es:'Por contraste'},
+    foto:{it:'Foto',en:'Photo',es:'Foto'}
+  };
+  const l=(_lang||'it'); return (L[k]&&(L[k][l]||L[k].it))||'';
+}
+
+// disciplina "drink" -> Twist, altrimenti Rivisitazione
+function _twistLabel(disc){
+  const d=(disc||'').toLowerCase();
+  const isBar = /bar|drink|cocktail|mixolog|caff|coffee|bevut/.test(d);
+  return isBar ? _ricL('twist') : _ricL('rivisit');
+}
+
 function _renderRicette(ricette){
   const el=document.getElementById('ricette-list');
   if(!el) return;
@@ -245,27 +271,95 @@ function _renderRicette(ricette){
     el.innerHTML='<div style="padding:20px 0;color:var(--ink-muted);font-family:var(--mono);font-size:11px;text-align:center">Nessuna ricetta disponibile per questa disciplina.</div>';
     return;
   }
-  el.innerHTML=ricette.map(r=>`
+  el.innerHTML=ricette.map(r=>{
+    const foto = r.immagine ? `
+      <div class="ric-foto">
+        <img src="${_escR(r.immagine)}" alt="${_escR(r.nome)}" loading="lazy" onerror="this.closest('.ric-foto').remove()">
+        ${r.immagine_autore ? `<div class="ric-foto-credit">${
+            r.immagine_url_fonte
+              ? `<a href="${_escR(r.immagine_url_fonte)}" target="_blank" rel="noopener">${_escR(r.immagine_autore)}</a>`
+              : _escR(r.immagine_autore)
+          }</div>` : ''}
+      </div>` : '';
+
+    const numeri = (r.numeri && Object.keys(r.numeri).length) ? `
+      <div class="ric-numeri">
+        <div class="ric-numeri-lab">Numeri bersaglio</div>
+        ${Object.entries(r.numeri).map(([k,v])=>`<div class="ric-num-row"><span class="ric-num-k">${_escR(k)}</span><span class="ric-num-v">${_escR(v)}</span></div>`).join('')}
+      </div>` : '';
+
+    const critico = r.punto_critico ? `
+      <div class="ric-critico">
+        <div class="ric-critico-lab">⚠ Punto critico</div>
+        <div class="ric-critico-txt">${_escR(r.punto_critico)}</div>
+      </div>` : '';
+
+    const esperimento = r.esperimento ? `
+      <div class="ric-exp">
+        <div class="ric-exp-lab">◇ ${_ricL('esperimento')}</div>
+        <div class="ric-exp-txt">${_escR(r.esperimento)}</div>
+      </div>` : '';
+
+    const proc = (r.procedimento && r.procedimento.length) ? `
+      <div class="ric-proc">
+        <div class="ric-proc-lab">${_ricL('procedimento')}</div>
+        ${r.procedimento.map(p=>`
+          <div class="ric-step">
+            <span class="ric-step-n">${_escR(p.n)}</span>
+            <div class="ric-step-b">
+              <span class="ric-step-t">${_escR(p.testo)}</span>
+              ${p.numero_chiave?`<span class="ric-step-key">${_escR(p.numero_chiave)}</span>`:''}
+            </div>
+          </div>`).join('')}
+      </div>` : '';
+
+    const tecniche = (r.tecniche && r.tecniche.length) ? `
+      <div class="ric-tec">
+        <div class="ric-tec-lab">${_ricL('tecniche')}</div>
+        <div class="ric-tec-chips">${r.tecniche.map(t=>`<span class="ric-tec-chip">${_escR(t)}</span>`).join('')}</div>
+      </div>` : '';
+
+    const limite = r.limite ? `
+      <div class="ric-limite">
+        <div class="ric-limite-lab">${_ricL('limite')}</div>
+        <div class="ric-limite-txt">${_escR(r.limite)}</div>
+      </div>` : '';
+
+    const twist = r.twist ? `
+      <div class="ric-twist">
+        <div class="ric-twist-lab">${_twistLabel(r.disciplina)}</div>
+        <div class="ric-twist-txt">${_escR(r.twist)}</div>
+      </div>` : '';
+
+    const ab = r.abbinamenti && (r.abbinamenti.analogia || r.abbinamenti.contrasto) ? `
+      <div class="ric-abb">
+        <div class="ric-abb-lab">${_ricL('abbinamenti')}</div>
+        <div class="ric-abb-cols">
+          ${r.abbinamenti.analogia?`<div class="ric-abb-col"><span class="ric-abb-k">${_ricL('analogia')}</span><span class="ric-abb-v">${_escR(r.abbinamenti.analogia)}</span></div>`:''}
+          ${r.abbinamenti.contrasto?`<div class="ric-abb-col"><span class="ric-abb-k">${_ricL('contrasto')}</span><span class="ric-abb-v">${_escR(r.abbinamenti.contrasto)}</span></div>`:''}
+        </div>
+      </div>` : '';
+
+    return `
     <div class="ric-card" id="ric-${r.id}" onclick="toggleRicetta('${r.id}')">
-      <div class="ric-disc">${r.disciplina}</div>
-      <div class="ric-nome">${r.nome}</div>
-      <div class="ric-desc">${r.descrizione||''}</div>
-      <div class="ric-fenomeni">${(r.fenomeni||[]).map(f=>`<span class="ric-fen-tag">${f.replace('fen-','').replace(/-/g,' ')}</span>`).join('')}</div>
+      ${foto}
+      <div class="ric-disc">${_escR(r.disciplina)}</div>
+      <div class="ric-nome">${_escR(r.nome)}</div>
+      <div class="ric-desc">${_escR(r.descrizione||'')}</div>
+      <div class="ric-fenomeni">${(r.fenomeni||[]).map(f=>`<span class="ric-fen-tag">${_escR(f.replace('fen-','').replace(/-/g,' '))}</span>`).join('')}</div>
       <div class="ric-body">
-        ${r.numeri && Object.keys(r.numeri).length ? `
-        <div class="ric-numeri">
-          <div class="ric-numeri-lab">Numeri bersaglio</div>
-          ${Object.entries(r.numeri).map(([k,v])=>`<div class="ric-num-row"><span class="ric-num-k">${k}</span><span class="ric-num-v">${v}</span></div>`).join('')}
-        </div>` : ''}
-        ${r.punto_critico ? `
-        <div class="ric-critico">
-          <div class="ric-critico-lab">⚠ Punto critico</div>
-          <div class="ric-critico-txt">${r.punto_critico}</div>
-        </div>` : ''}
+        ${numeri}
+        ${critico}
+        ${esperimento}
+        ${proc}
+        ${tecniche}
+        ${limite}
+        ${twist}
+        ${ab}
       </div>
       <div class="ric-toggle">Vedi dettagli ↓</div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function toggleRicetta(id){
