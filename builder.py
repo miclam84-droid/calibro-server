@@ -178,6 +178,16 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f"- Il 'twist' è UN consiglio di variazione/rivisitazione della ricetta ({_termine_var}): "
         f"una modifica concreta e sensata che un professionista proverebbe (nuovo ingrediente, tecnica, presentazione), "
         f"spiegata in 1-2 frasi asciutte col PERCHÉ funziona.\n\n"
+        f"REGOLA FONDAMENTALE SUL PROCEDIMENTO (la ricetta deve essere VERA, non un abbozzo):\n"
+        f"- Ogni passaggio deve essere DETTAGLIATO come in una vera ricetta professionale, non generico. "
+        f"MALE: 'soffriggi la cipolla finché trasparente'. BENE: 'Trita finemente la cipolla e falla appassire "
+        f"in 40 ml d'olio a fuoco medio-basso per 8-10 minuti, mescolando, finché diventa traslucida e dolce senza colorire'.\n"
+        f"- Richiama le QUANTITÀ degli ingredienti dentro i passaggi in cui si usano (es. 'aggiungi i 500 g di pesce'), "
+        f"non dire mai solo 'aggiungi il pesce' senza la quantità.\n"
+        f"- Dai il TEMPO e il SEGNALE SENSORIALE di ogni passo (quanti minuti, e come si capisce che è pronto: "
+        f"'finché il fondo non vela il cucchiaio', 'finché i bordi si arricciano', 'finché sfrigola e profuma').\n"
+        f"- Usa da 6 a 10 passaggi: una ricetta vera non si liquida in 4 righe. Ogni passo è un'azione concreta e completa.\n"
+        f"- Resta comunque ASCIUTTO e da professionista: dettagliato non vuol dire prolisso, vuol dire preciso.\n\n"
         f"Rispondi in {LINGUA} SOLO con un oggetto JSON (nessun testo extra) in questo formato ESATTO:\n"
         f'{{"nome": "...", "descrizione": "apri con un problema del banco, 1-2 frasi asciutte", '
         f'"ingredienti": [{{"nome": "...", "quantita": "...", "unita": "..."}}], '
