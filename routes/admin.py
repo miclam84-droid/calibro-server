@@ -4786,3 +4786,42 @@ def admin_forza_fenomeni_mondo():
         return jsonify({"dryrun": dryrun, "modificate": len(modificate), "dettaglio": modificate[:40]})
     finally:
         _release_conn(conn)
+
+
+# ── PULISCI FOTO STOCK SBAGLIATE: toglie le foto Pexels/Unsplash/Pixabay, tiene SOLO le foto vere (archivio) ──
+@bp.route("/admin/pulisci-foto-stock")
+def admin_pulisci_foto_stock():
+    """REGOLA DURA: in foto ci deve essere quello che c'è scritto. Le foto stock generiche (Pexels ecc.)
+    danno drink/piatti a caso (Aviation verde, Americano con dirty martini). Le TOGLIE tutte, tenendo solo
+    le foto vere dell'archivio (Cloudinary, che matchano per nome). ?dry=1 per contare. ?disc=bar per limitare."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    dry = request.args.get("dry", "0") != "0"
+    disc = request.args.get("disc", "")
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        # trovo le ricette con foto STOCK (autore contiene Pexels/Unsplash/Pixabay), NON archivio
+        q = """SELECT id, nome, disciplina, immagine_autore FROM ricette
+               WHERE immagine IS NOT NULL AND immagine <> ''
+               AND (LOWER(COALESCE(immagine_autore,'')) LIKE '%%pexels%%'
+                    OR LOWER(COALESCE(immagine_autore,'')) LIKE '%%unsplash%%'
+                    OR LOWER(COALESCE(immagine_autore,'')) LIKE '%%pixabay%%')"""
+        params = []
+        if disc:
+            q += " AND disciplina=%s"; params.append(disc)
+        cur.execute(q, tuple(params))
+        righe = cur.fetchall()
+        elenco = [{"id": r[0], "nome": r[1], "disc": r[2]} for r in righe]
+        if dry:
+            return jsonify({"da_togliere": len(elenco), "esempi": [e["nome"] for e in elenco[:12]]})
+        # cancello la foto (metto NULL su immagine, autore, fonte)
+        ids = [e["id"] for e in elenco]
+        for rid in ids:
+            cur.execute("UPDATE ricette SET immagine=NULL, immagine_autore=NULL, immagine_url_fonte=NULL WHERE id=%s", (rid,))
+        conn.commit()
+        return jsonify({"tolte": len(ids), "nota": "foto stock rimosse; restano solo le foto vere dell'archivio",
+                        "esempi": [e["nome"] for e in elenco[:12]]})
+    finally:
+        _release_conn(conn)
