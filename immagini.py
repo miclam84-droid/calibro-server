@@ -5,6 +5,45 @@ Chiavi (opzionali, in ambiente): PEXELS_API_KEY, UNSPLASH_ACCESS_KEY, PIXABAY_AP
 Se una fonte manca la chiave o non trova, si passa alla successiva.
 """
 import os, json, urllib.request, urllib.parse
+import base64
+
+# ── CLOUDINARY: l'archivio foto di Michele (fonte PRIORITARIA, prima dello stock) ──
+# Elenca le foto caricate e ne pesca una a rotazione. Serve CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET.
+_CLOUD_CACHE = {"urls": [], "ts": 0}
+
+def _cloudinary_lista():
+    """Elenca (con cache 10 min) gli URL delle foto nell'archivio Cloudinary di Michele."""
+    import time
+    cloud = os.environ.get("CLOUDINARY_CLOUD_NAME")
+    key = os.environ.get("CLOUDINARY_API_KEY")
+    secret = os.environ.get("CLOUDINARY_API_SECRET")
+    if not (cloud and key and secret):
+        return []
+    # cache: non richiamare l'API a ogni foto
+    if _CLOUD_CACHE["urls"] and (time.time() - _CLOUD_CACHE["ts"] < 600):
+        return _CLOUD_CACHE["urls"]
+    try:
+        # Admin API: lista risorse immagini (max 500)
+        url = f"https://api.cloudinary.com/v1_1/{cloud}/resources/image?max_results=500"
+        auth = base64.b64encode(f"{key}:{secret}".encode()).decode()
+        req = urllib.request.Request(url, headers={"Authorization": f"Basic {auth}"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        urls = [res["secure_url"] for res in data.get("resources", []) if res.get("secure_url")]
+        _CLOUD_CACHE["urls"] = urls
+        _CLOUD_CACHE["ts"] = time.time()
+        return urls
+    except Exception:
+        return []
+
+def _cloudinary_foto(rank=0):
+    """Restituisce una foto dall'archivio Cloudinary (a rotazione via rank). None se archivio vuoto."""
+    urls = _cloudinary_lista()
+    if not urls:
+        return None
+    u = urls[rank % len(urls)]
+    return {"url": u, "autore": "", "fonte": u, "fonte_nome": "archivio"}
+
 
 _PEXELS_URL   = "https://api.pexels.com/v1/search"
 _UNSPLASH_URL = "https://api.unsplash.com/search/photos"
@@ -138,9 +177,15 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0):
         q = _query_intelligente(nome or query, disciplina)
     else:
         q = query
-    # rank automatico dal nome (stabile): 0..4, così due nomi diversi pescano risultati diversi
+    # rank automatico dal nome (stabile): due nomi diversi pescano foto diverse
+    rank_nome = sum(ord(c) for c in (nome or query)) if (nome or query) else 0
     if rank == 0 and nome:
-        rank = sum(ord(c) for c in nome) % 5
+        rank = rank_nome % 5
+    # 1) PRIMA l'archivio Cloudinary di Michele (foto sue, belle). Rotazione ampia sul totale.
+    cloud = _cloudinary_foto(rank_nome)
+    if cloud:
+        return cloud
+    # 2) poi lo stock automatico
     for fonte in (_pexels, _unsplash, _pixabay):
         res = fonte(q, rank)
         if res:
