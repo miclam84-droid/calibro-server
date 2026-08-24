@@ -4725,13 +4725,13 @@ def admin_crea_fenomeno_mondo():
 # Mappa: parola-chiave nel nome ricetta -> fenomeno del mondo che DEVE agganciare.
 _MAPPA_FENOMENO_MONDO = {
     "nixtamalizz": "nixtamalizzazione", "tortilla": "nixtamalizzazione", "tamale": "nixtamalizzazione",
-    "pozole": "nixtamalizzazione", "masa": "nixtamalizzazione",
+    "pozole": "nixtamalizzazione", "di masa": "nixtamalizzazione", "masa harina": "nixtamalizzazione",
     "wok": "Wok hei", "saltat": "Wok hei", "stir": "Wok hei", "mapo": "Wok hei", "kung pao": "Wok hei",
     "nasi goreng": "Wok hei",
     "miso": "fermentazione enzimatica", "koji": "fermentazione enzimatica", "salsa di soia": "fermentazione enzimatica",
     "amazake": "fermentazione enzimatica", "doenjang": "fermentazione enzimatica",
     "kimchi": "fermentazione lattica", "crauti": "fermentazione lattica", "sauerkraut": "fermentazione lattica",
-    "dosa": "fermentazione lattica", "idli": "fermentazione lattica", "verdure lacto": "fermentazione lattica",
+    "dosa ": "fermentazione lattica", "dosa fermentata": "fermentazione lattica", "idli": "fermentazione lattica", "verdure lacto": "fermentazione lattica",
     "tonkotsu": "Emulsione forzata", "paitan": "Emulsione forzata",
     "kansui": "Kansui", "noodles al kansui": "Kansui", "ramen fatti": "Kansui", "lamian": "Kansui",
     "tadka": "Tadka", "dal": "Tadka", "curry": "Tadka", "tempering": "Tadka",
