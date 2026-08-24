@@ -131,11 +131,16 @@ def _pixabay(query, rank=0):
         return None
 
 def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0):
-    """ROUTING: Pexels -> Unsplash -> Pixabay. Se arriva nome+disciplina costruisce la query intelligente."""
+    """ROUTING: Pexels -> Unsplash -> Pixabay. Se arriva nome+disciplina costruisce la query intelligente.
+    Se rank non è forzato (0) e c'è un nome, deriva un rank dal NOME: cosi ricette diverse con la stessa
+    query (es. besciamella e bagna cauda, entrambe 'cooking sauce pan') prendono foto DIVERSE, non la stessa."""
     if nome is not None or disciplina is not None:
         q = _query_intelligente(nome or query, disciplina)
     else:
         q = query
+    # rank automatico dal nome (stabile): 0..4, così due nomi diversi pescano risultati diversi
+    if rank == 0 and nome:
+        rank = sum(ord(c) for c in nome) % 5
     for fonte in (_pexels, _unsplash, _pixabay):
         res = fonte(q, rank)
         if res:
