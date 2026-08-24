@@ -380,6 +380,17 @@ ATTREZZATURA_KEYWORD = {
     "caramellizz": ["termometro zucchero","pentolino rame"],
     "vapore": ["cestello vapore","termometro sonda"],
     "brew": ["v60 hario","kettle collo cigno","bilancia caffe"],
+    "wok": ["wok acciaio al carbonio","paletta wok","fornello wok alta potenza"],
+    "salt": ["wok acciaio al carbonio","paletta wok"],
+    "tandoor": ["forno tandoor","spiedini tandoor","pietra refrattaria"],
+    "tikka": ["spiedini acciaio","pietra refrattaria","griglia"],
+    "nixtamal": ["pentola acciaio","colino a maglia fine","calce alimentare E526"],
+    "tortilla": ["pressa per tortillas","comal piastra","carta forno"],
+    "koji": ["fermentatore temperatura controllata","termometro sonda","spore koji"],
+    "kansui": ["bilancia precisione 0.1g","carbonato di sodio","macchina per pasta"],
+    "tadka": ["padellino tadka","pestello spezie","colino a rete"],
+    "mochi": ["mortaio grande","pestello legno","stampi mochi"],
+    "vapore-bao": ["cestello bambu vapore","carta forno","pentola wok"],
 }
 
 def _attrezzatura_per_tecnica(tecnica_id, tecnica_nome=""):
