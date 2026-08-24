@@ -4678,3 +4678,44 @@ def admin_genera_abbinamenti_stato():
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     return jsonify(_ABBINA_STATO)
+
+
+# ── CREA FENOMENO DEL MONDO (nodi-fenomeno custom coi numeri veri, es. nixtamalizzazione) ──
+@bp.route("/admin/crea-fenomeno-mondo", methods=["POST"])
+def admin_crea_fenomeno_mondo():
+    """Crea un nodo Fenomeno 'del mondo' con scheda+target verificati. Body: {id,nome,dominio,scheda,target,aliases}.
+    Per i fenomeni non-europei (nixtamalizzazione, wok hei, koji...) coi numeri veri verificati via ricerca."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    b = request.json or {}
+    nid = b.get("id", "")
+    nome = b.get("nome", "")
+    if not nid or not nome:
+        return jsonify({"errore": "id e nome obbligatori"}), 400
+    data = {
+        "scheda": b.get("scheda", ""),
+        "target": b.get("target", ""),
+        "nome": nome,
+        "aliases": b.get("aliases", []),
+        "fenomeno_mondo": "true",
+        "numeri_verificati": "true",
+    }
+    dominio = b.get("dominio", "cucina")
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        # esiste gia?
+        cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+        if cur.fetchone():
+            cur.execute("UPDATE nodes SET name=%s, domain=%s, data=%s WHERE id=%s",
+                        (nome, dominio, json.dumps(data, ensure_ascii=False), nid))
+            azione = "aggiornato"
+        else:
+            cur.execute("INSERT INTO nodes (id,type,name,domain,data) VALUES (%s,%s,%s,%s,%s)",
+                        (nid, "Fenomeno", nome, dominio, json.dumps(data, ensure_ascii=False)))
+            azione = "creato"
+        conn.commit()
+        return jsonify({"ok": True, "azione": azione, "id": nid, "nome": nome})
+    finally:
+        _release_conn(conn)
