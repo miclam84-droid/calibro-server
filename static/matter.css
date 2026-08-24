@@ -1606,9 +1606,16 @@ a:focus-visible,input:focus-visible{
 .ric-exp-txt{font-family:var(--sans);font-size:13px;color:var(--ink);line-height:1.5}
 
 .ric-proc{margin-bottom:10px}
-.ric-proc-lab,.ric-tec-lab,.ric-limite-lab,.ric-twist-lab,.ric-abb-lab{
+.ric-proc-lab,.ric-tec-lab,.ric-limite-lab,.ric-twist-lab,.ric-abb-lab,.ric-ingr-lab{
   font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--ink-muted);margin-bottom:6px}
+.ric-ingr{margin-bottom:10px}
+.ric-ingr-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:5px 0;border-bottom:1px solid var(--border)}
+.ric-ingr-row:last-child{border-bottom:none}
+.ric-ingr-n{font-family:var(--sans);font-size:13px;color:var(--ink);line-height:1.4}
+.ric-ingr-q{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);
+  white-space:nowrap;flex:0 0 auto}
 .ric-step{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
 .ric-step:last-child{border-bottom:none}
 .ric-step-n{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink-muted);flex:0 0 18px}

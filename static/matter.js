@@ -247,6 +247,7 @@ function _ricL(k){
     limite:{it:'Quando non basta',en:'When it’s not enough',es:'Cuando no basta'},
     twist:{it:'Twist',en:'Twist',es:'Twist'},
     rivisit:{it:'Rivisitazione',en:'Variation',es:'Revisión'},
+    ingredienti:{it:'Ingredienti',en:'Ingredients',es:'Ingredientes'},
     procedimento:{it:'Procedimento',en:'Method',es:'Procedimiento'},
     tecniche:{it:'Tecniche',en:'Techniques',es:'Técnicas'},
     abbinamenti:{it:'Abbinamenti',en:'Pairings',es:'Combinaciones'},
@@ -300,6 +301,17 @@ function _renderRicette(ricette){
         <div class="ric-exp-txt">${_escR(r.esperimento)}</div>
       </div>` : '';
 
+    const ingredienti = (r.ingredienti && r.ingredienti.length) ? `
+      <div class="ric-ingr">
+        <div class="ric-ingr-lab">${_ricL('ingredienti')}</div>
+        ${r.ingredienti.map(ing=>{
+          const q = (ing.quantita && ing.quantita!=='null') ? _escR(ing.quantita) : '';
+          const u = (ing.unita && ing.unita!=='null') ? _escR(ing.unita) : '';
+          const qta = (q||u) ? `<span class="ric-ingr-q">${q}${q&&u?' ':''}${u}</span>` : '';
+          return `<div class="ric-ingr-row"><span class="ric-ingr-n">${_escR(ing.nome||'')}</span>${qta}</div>`;
+        }).join('')}
+      </div>` : '';
+
     const proc = (r.procedimento && r.procedimento.length) ? `
       <div class="ric-proc">
         <div class="ric-proc-lab">${_ricL('procedimento')}</div>
@@ -351,6 +363,7 @@ function _renderRicette(ricette){
         ${numeri}
         ${critico}
         ${esperimento}
+        ${ingredienti}
         ${proc}
         ${tecniche}
         ${limite}
