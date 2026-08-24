@@ -2271,6 +2271,65 @@ def admin_conta_nodi():
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-200:]}), 500
 
+# ── Rigenerazione IMMAGINI in background (tracciata, varia le foto) ──
+_IMG_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "corrente": ""}
+
+def _img_worker(solo_mancanti):
+    from db import carica_grafo
+    from immagini import cerca_immagine, credito_immagine
+    global _IMG_STATO
+    try:
+        db = carica_grafo()
+        if solo_mancanti:
+            rows = db.execute("SELECT id, nome, disciplina FROM ricette WHERE (immagine IS NULL OR immagine='') ORDER BY id").fetchall()
+        else:
+            rows = db.execute("SELECT id, nome, disciplina FROM ricette ORDER BY id").fetchall()
+        lista = [{"id": r["id"], "nome": r["nome"], "disc": r["disciplina"]} for r in rows]
+        _IMG_STATO.update({"attivo": True, "fatte": 0, "totale": len(lista), "errori": 0})
+        # per variare: tengo un contatore per disciplina, così pesco risultati diversi (rank 0..4)
+        rank_disc = {}
+        for m in lista:
+            _IMG_STATO["corrente"] = m["nome"]
+            disc = m["disc"] or "x"
+            rank = rank_disc.get(disc, 0)
+            try:
+                img = cerca_immagine(m["nome"], disciplina=m["disc"], nome=m["nome"], rank=rank)
+                if img and img.get("url"):
+                    cred = credito_immagine(img["autore"], img.get("fonte_nome", "Pexels"))
+                    db.execute("UPDATE ricette SET immagine=?, immagine_autore=?, immagine_url_fonte=? WHERE id=?",
+                               (img["url"], cred, img["fonte"], m["id"]))
+                    _IMG_STATO["fatte"] += 1
+                    rank_disc[disc] = (rank + 1) % 5  # ruota tra i primi 5 risultati
+                else:
+                    _IMG_STATO["errori"] += 1
+            except Exception:
+                _IMG_STATO["errori"] += 1
+    finally:
+        _IMG_STATO["attivo"] = False
+        _IMG_STATO["corrente"] = ""
+
+@bp.route("/admin/immagini-bg")
+def admin_immagini_bg():
+    """Rigenera le immagini in background (tracciato). ?mancanti=1 solo le mancanti, altrimenti TUTTE."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    global _IMG_STATO
+    if _IMG_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _IMG_STATO})
+    import threading
+    solo_mancanti = request.args.get("mancanti", "0") != "0"
+    t = threading.Thread(target=_img_worker, args=(solo_mancanti,), daemon=True)
+    t.start()
+    return jsonify({"avviato": True, "modo": "solo_mancanti" if solo_mancanti else "tutte"})
+
+@bp.route("/admin/immagini-bg-stato")
+def admin_immagini_bg_stato():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    return jsonify(_IMG_STATO)
+
 @bp.route("/admin/riempi-immagini-ricette")
 def admin_riempi_immagini():
     """Riempie le immagini mancanti delle ricette cercando su Pexels (API gratuita).

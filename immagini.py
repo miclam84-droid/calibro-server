@@ -46,7 +46,7 @@ def _norm(url, autore, fonte, fonte_nome):
         return None
     return {"url": url, "autore": autore or "", "fonte": fonte or "", "fonte_nome": fonte_nome}
 
-def _pexels(query):
+def _pexels(query, rank=0):
     key = os.environ.get("PEXELS_API_KEY")
     if not key:
         return None
@@ -59,13 +59,13 @@ def _pexels(query):
         fotos = data.get("photos", [])
         if not fotos:
             return None
-        f = fotos[0]
+        f = fotos[min(rank, len(fotos)-1)]
         return _norm(f.get("src", {}).get("large") or f.get("src", {}).get("medium"),
                      f.get("photographer", ""), f.get("url", ""), "Pexels")
     except Exception:
         return None
 
-def _unsplash(query):
+def _unsplash(query, rank=0):
     key = os.environ.get("UNSPLASH_ACCESS_KEY")
     if not key:
         return None
@@ -78,14 +78,14 @@ def _unsplash(query):
         res = data.get("results", [])
         if not res:
             return None
-        f = res[0]
+        f = res[min(rank, len(res)-1)]
         autore = (f.get("user", {}) or {}).get("name", "")
         return _norm((f.get("urls", {}) or {}).get("regular"),
                      autore, (f.get("links", {}) or {}).get("html", ""), "Unsplash")
     except Exception:
         return None
 
-def _pixabay(query):
+def _pixabay(query, rank=0):
     key = os.environ.get("PIXABAY_API_KEY")
     if not key:
         return None
@@ -98,20 +98,20 @@ def _pixabay(query):
         hits = data.get("hits", [])
         if not hits:
             return None
-        f = hits[0]
+        f = hits[min(rank, len(hits)-1)]
         return _norm(f.get("largeImageURL") or f.get("webformatURL"),
                      f.get("user", ""), f.get("pageURL", ""), "Pixabay")
     except Exception:
         return None
 
-def cerca_immagine(query, lang="it", disciplina=None, nome=None):
+def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0):
     """ROUTING: Pexels -> Unsplash -> Pixabay. Se arriva nome+disciplina costruisce la query intelligente."""
     if nome is not None or disciplina is not None:
         q = _query_intelligente(nome or query, disciplina)
     else:
         q = query
     for fonte in (_pexels, _unsplash, _pixabay):
-        res = fonte(q)
+        res = fonte(q, rank)
         if res:
             return res
     return None
