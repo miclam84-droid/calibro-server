@@ -4468,7 +4468,7 @@ def admin_diag_costi():
 # Usa provider gratuiti (Mistral/Gemini). Background (AI su 361 ricette = lungo).
 _REVISIONE_STATO = {"attivo": False, "fatte": 0, "totale": 0, "errori": 0, "campioni": []}
 
-def _revisiona_testo(testo, tipo, nome_ricetta):
+def _revisiona_testo(testo, tipo, nome_ricetta, usa_openai=False):
     """Rilegge UN campo testuale e lo pulisce. Ritorna il testo corretto o l'originale se fallisce."""
     import ai_gateway as GW
     if not testo or len(testo.strip()) < 10:
@@ -4483,14 +4483,17 @@ def _revisiona_testo(testo, tipo, nome_ricetta):
         f"\nTesto ({tipo}) della ricetta '{nome_ricetta}':\n{testo}"
     )
     try:
-        out = GW.route_free(prompt, max_tokens=500)
+        if usa_openai:
+            out = GW._gpt_chat(prompt, max_tokens=500)
+        else:
+            out = GW.route_free(prompt, max_tokens=500)
         if out and len(out.strip()) >= len(testo.strip()) * 0.5:  # sanity: non deve dimezzare il testo
             return out.strip().strip('"')
     except Exception:
         pass
     return testo
 
-def _revisione_worker(solo_n):
+def _revisione_worker(solo_n, usa_openai=False):
     from db import carica_grafo, _get_conn, _release_conn
     global _REVISIONE_STATO
     try:
@@ -4508,7 +4511,7 @@ def _revisione_worker(solo_n):
             campi = {"descrizione": r[2], "punto_critico": r[3], "esperimento": r[4], "limite": r[5], "twist": r[6]}
             nuovi = {}
             for tipo, testo in campi.items():
-                corretto = _revisiona_testo(testo, tipo, nome)
+                corretto = _revisiona_testo(testo, tipo, nome, usa_openai)
                 if corretto and corretto != testo:
                     nuovi[tipo] = corretto
             if nuovi:
@@ -4536,9 +4539,12 @@ def admin_revisiona_prosa():
         return jsonify({"gia_in_corso": True, "stato": _REVISIONE_STATO})
     import threading
     solo_n = request.args.get("n", "0")
-    t = threading.Thread(target=_revisione_worker, args=(int(solo_n) if solo_n.isdigit() and solo_n!="0" else None,), daemon=True)
+    usa_openai = request.args.get("openai", "0") != "0"
+    t = threading.Thread(target=_revisione_worker,
+                         args=(int(solo_n) if solo_n.isdigit() and solo_n!="0" else None, usa_openai), daemon=True)
     t.start()
-    return jsonify({"avviato": True, "nota": "revisione prosa in background, controlla /admin/revisiona-prosa-stato"})
+    return jsonify({"avviato": True, "provider": "openai" if usa_openai else "gratuiti",
+                    "nota": "revisione prosa in background, controlla /admin/revisiona-prosa-stato"})
 
 @bp.route("/admin/revisiona-prosa-stato")
 def admin_revisiona_prosa_stato():
