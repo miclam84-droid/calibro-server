@@ -2345,8 +2345,10 @@ def admin_diag_cloudinary():
         "cloud_name_valore": _os.environ.get("CLOUDINARY_CLOUD_NAME") or "(vuoto)",
     }
     urls = _cloudinary_lista()
-    return jsonify({"variabili": has, "foto_trovate_nell_archivio": len(urls),
-                    "primi_url": urls[:3]})
+    # elenco completo dei nomi file per capire cosa c'è nell'archivio
+    nomi = [u.split("/")[-1] for u in urls]
+    return jsonify({"variabili": has, "foto_usabili_dopo_filtro": len(urls),
+                    "nomi_file": nomi})
 
 @bp.route("/admin/riempi-immagini-ricette")
 def admin_riempi_immagini():

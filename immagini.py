@@ -29,7 +29,19 @@ def _cloudinary_lista():
         req = urllib.request.Request(url, headers={"Authorization": f"Basic {auth}"})
         with urllib.request.urlopen(req, timeout=15) as r:
             data = json.loads(r.read().decode("utf-8"))
-        urls = [res["secure_url"] for res in data.get("resources", []) if res.get("secure_url")]
+        # SAMPLE di Cloudinary da IGNORARE (immagini demo che l'account ha di default)
+        _SAMPLE = ("sample", "shoes", "ecommerce", "accessories-bag", "leather-bag-gray",
+                   "logo", "cld-sample", "couple", "balloons", "coffee_cup", "dog", "cat")
+        urls = []
+        for res in data.get("resources", []):
+            u = res.get("secure_url")
+            pid = (res.get("public_id") or "").lower()
+            if not u:
+                continue
+            # scarta i sample di sistema; tieni le foto vere (foodiesfeed e altre caricate da Michele)
+            if any(s in pid for s in _SAMPLE):
+                continue
+            urls.append(u)
         _CLOUD_CACHE["urls"] = urls
         _CLOUD_CACHE["ts"] = time.time()
         return urls
