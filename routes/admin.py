@@ -2283,31 +2283,33 @@ def admin_riempi_immagini():
     from immagini import cerca_immagine, credito_immagine
     dry = request.args.get("dry", "0") != "0"
     n = int(request.args.get("n", "8"))
-    if not os.environ.get("PEXELS_API_KEY"):
-        return jsonify({"errore": "manca PEXELS_API_KEY nell'ambiente",
-                        "come": "registrati gratis su pexels.com/api e aggiungi la chiave nelle variabili Railway"}), 400
+    if not (os.environ.get("PEXELS_API_KEY") or os.environ.get("UNSPLASH_ACCESS_KEY") or os.environ.get("PIXABAY_API_KEY")):
+        return jsonify({"errore": "manca almeno una chiave immagini (PEXELS_API_KEY, UNSPLASH_ACCESS_KEY o PIXABAY_API_KEY)",
+                        "come": "aggiungi almeno una chiave nelle variabili Railway"}), 400
     db = carica_grafo()
     try:
-        rows = db.execute("""SELECT id, nome, disciplina FROM ricette
-                             WHERE (immagine IS NULL OR immagine='') ORDER BY id""").fetchall()
+        rifai = request.args.get("rifai", "0") != "0"
+        if rifai:
+            # rifà TUTTE le immagini con la query intelligente (per sostituire quelle sbagliate)
+            rows = db.execute("""SELECT id, nome, disciplina FROM ricette ORDER BY id""").fetchall()
+        else:
+            rows = db.execute("""SELECT id, nome, disciplina FROM ricette
+                                 WHERE (immagine IS NULL OR immagine='') ORDER BY id""").fetchall()
         mancanti = [{"id": r["id"], "nome": r["nome"], "disc": r["disciplina"]} for r in rows]
         if dry:
-            return jsonify({"ricette_senza_immagine": len(mancanti),
+            return jsonify({"ricette_da_fare": len(mancanti),
                             "esempi": [m["nome"] for m in mancanti[:10]]})
         fatte = []
         for m in mancanti[:n]:
-            # query: nome ricetta (pulito) — Pexels trova cibo/drink pertinente
-            q = m["nome"]
-            img = cerca_immagine(q)
-            if not img and m["disc"]:  # fallback sulla disciplina generica
-                img = cerca_immagine({"bar":"cocktail","cucina":"food dish","pasticceria":"dessert",
-                                      "panificazione":"bread","gelateria":"ice cream"}.get(m["disc"], "food"))
+            # query INTELLIGENTE: contesto disciplina + parola-chiave, non il nome esatto (evita foto sbagliate)
+            img = cerca_immagine(m["nome"], disciplina=m["disc"], nome=m["nome"])
             if img and img.get("url"):
+                cred = credito_immagine(img["autore"], img.get("fonte_nome", "Pexels"))
                 db.execute("UPDATE ricette SET immagine=?, immagine_autore=?, immagine_url_fonte=? WHERE id=?",
-                           (img["url"], credito_immagine(img["autore"]), img["fonte"], m["id"]))
-                fatte.append({"ricetta": m["nome"], "autore": img["autore"]})
-        return jsonify({"riempite_ora": len(fatte), "rimanenti": len(mancanti)-len(fatte),
-                        "dettaglio": fatte, "nota": "ripeti per riempire le altre"})
+                           (img["url"], cred, img["fonte"], m["id"]))
+                fatte.append({"ricetta": m["nome"], "autore": img["autore"], "fonte": img.get("fonte_nome")})
+        return jsonify({"riempite_ora": len(fatte), "totale_da_fare": len(mancanti),
+                        "dettaglio": fatte, "nota": "ripeti per le altre"})
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[-300:]}), 500
