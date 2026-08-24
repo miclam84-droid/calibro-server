@@ -478,6 +478,13 @@ def costruisci_prompt(domanda, contesto, lang="it"):
             "8. Il calore latente di fusione del ghiaccio (334 J/g) non c'entra con la crosta in padella\n"
             "9. MAI inventare dati numerici non presenti nel contesto — usa range verificati\n"
             "10. MISURA deve essere breve: uno strumento, un metodo. Non fare liste\n"
+            "SICUREZZA ALIMENTARE (HACCP): se la domanda tocca conservazione, catena del freddo, "
+            "temperature di sicurezza al cuore, sottovuoto/cottura a bassa temperatura, fermentazioni, "
+            "conserve, crudo (pesce/carne/uova), o rischio microbiologico (listeria, salmonella, botulino, "
+            "clostridi), AGGIUNGI in fondo alla risposta, su una riga nuova, esattamente questa nota:\n"
+            "HACCP: questo è un principio generale — verifica sempre col tuo piano HACCP e con un consulente qualificato.\n"
+            "Non allarmare inutilmente: aggiungi la nota SOLO quando il tema è davvero di sicurezza alimentare, "
+            "non per ogni temperatura (un cappuccino a 65°C non è sicurezza alimentare).\n"
             "- Non menzionare mai di essere un AI o di usare un grafo."
         )
     return f"{regole}\n\nCONTESTO DAL GRAFO:\n{contesto_txt}\n\nDOMANDA: {domanda}\n\nRISPOSTA:"
