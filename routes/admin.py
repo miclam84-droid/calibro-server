@@ -4954,17 +4954,25 @@ def admin_applica_immagini_cascata():
     except Exception as e:
         return jsonify({"errore": f"import: {e}"}), 500
 
-    # elenco file su Cloudinary
-    import cloudinary, cloudinary.api
+    # elenco file su Cloudinary (HTTP diretto, come immagini.py — la libreria non è configurata)
+    import urllib.request as _ur, base64 as _b64, json as _json
     lista_file = []
     try:
-        cloudinary.config(
-            cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
-            api_key=os.environ.get("CLOUDINARY_API_KEY"),
-            api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
-        )
-        res = cloudinary.api.resources(max_results=500, type="upload")
-        lista_file = [r["public_id"] + "." + r.get("format", "jpg") for r in res.get("resources", [])]
+        cloud = os.environ.get("CLOUDINARY_CLOUD_NAME")
+        key = os.environ.get("CLOUDINARY_API_KEY")
+        secret = os.environ.get("CLOUDINARY_API_SECRET")
+        if not (cloud and key and secret):
+            return jsonify({"errore": "credenziali Cloudinary mancanti"}), 500
+        url = f"https://api.cloudinary.com/v1_1/{cloud}/resources/image?max_results=500"
+        auth = _b64.b64encode(f"{key}:{secret}".encode()).decode()
+        req = _ur.Request(url, headers={"Authorization": f"Basic {auth}"})
+        with _ur.urlopen(req, timeout=15) as resp:
+            data = _json.loads(resp.read().decode("utf-8"))
+        for res in data.get("resources", []):
+            pid = res.get("public_id") or ""
+            fmt = res.get("format", "jpg")
+            if pid:
+                lista_file.append(f"{pid}.{fmt}")
     except Exception as e:
         return jsonify({"errore": f"cloudinary: {e}"}), 500
 
