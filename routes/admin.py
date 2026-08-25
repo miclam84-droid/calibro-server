@@ -5036,3 +5036,45 @@ def admin_diag_ingredienti_dominio():
         })
     finally:
         _release_conn(conn)
+
+
+# ── ASSEGNA DISCIPLINA (domain) a tutti gli ingredienti ──
+@bp.route("/admin/assegna-domini-ingredienti")
+def admin_assegna_domini():
+    """Assegna il domain (disciplina) a ogni ingrediente in base al nome. Ogni ingrediente
+    può appartenere a più discipline (limone = bar + cucina). Salva domini[] nel data JSONB."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    dry = request.args.get("dry", "1") == "1"
+    from db import _get_conn, _release_conn
+    try:
+        from classificatore_domini import classifica
+    except Exception as e:
+        return jsonify({"errore": f"import: {e}"}), 500
+    conn = _get_conn(); cur = conn.cursor()
+    stat = {}
+    esempi = []
+    aggiornati = 0
+    try:
+        cur.execute("SELECT id, name, data FROM nodes WHERE type='Ingrediente'")
+        righe = cur.fetchall()
+        for rid, name, data in righe:
+            d = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            nome = name or d.get("display_it") or rid
+            domini = classifica(nome)
+            for dom in domini:
+                stat[dom] = stat.get(dom, 0) + 1
+            if len(esempi) < 15:
+                esempi.append({"nome": nome, "domini": domini})
+            if not dry:
+                d["domini"] = domini
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(d, ensure_ascii=False), rid))
+                aggiornati += 1
+        if not dry:
+            conn.commit()
+        return jsonify({"dry_run": dry, "totale": len(righe), "aggiornati": aggiornati,
+                        "conteggio_per_disciplina": dict(sorted(stat.items(), key=lambda x: -x[1])),
+                        "esempi": esempi})
+    finally:
+        _release_conn(conn)
