@@ -4935,3 +4935,61 @@ def admin_diag_fonti_legali():
         return jsonify(out)
     finally:
         _release_conn(conn)
+
+
+# ── APPLICA IL RISOLUTORE IMMAGINI A CASCATA (piatto -> ingrediente -> niente) ──
+@bp.route("/admin/applica-immagini-cascata")
+def admin_applica_immagini_cascata():
+    """Assegna a ogni ricetta l'immagine a cascata: foto-piatto se c'è su Cloudinary,
+    altrimenti foto dell'ingrediente principale (dalla mappa piatti canonici), altrimenti niente.
+    Regola: meglio la foto dell'ingrediente giusto che una foto-piatto sbagliata."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    dry = request.args.get("dry", "1") == "1"
+    from db import _get_conn, _release_conn
+    try:
+        from risolutore_immagini import risolvi_immagine
+        from mappa_piatti import cerca_piatto
+    except Exception as e:
+        return jsonify({"errore": f"import: {e}"}), 500
+
+    # elenco file su Cloudinary
+    import cloudinary, cloudinary.api
+    lista_file = []
+    try:
+        cloudinary.config(
+            cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+            api_key=os.environ.get("CLOUDINARY_API_KEY"),
+            api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+        )
+        res = cloudinary.api.resources(max_results=500, type="upload")
+        lista_file = [r["public_id"] + "." + r.get("format", "jpg") for r in res.get("resources", [])]
+    except Exception as e:
+        return jsonify({"errore": f"cloudinary: {e}"}), 500
+
+    conn = _get_conn(); cur = conn.cursor()
+    stat = {"piatto": 0, "ingrediente": 0, "niente": 0, "totale": 0}
+    esempi = []
+    try:
+        cur.execute("SELECT id, nome, immagine FROM ricette")
+        righe = cur.fetchall()
+        for rid, nome, img_esistente in righe:
+            stat["totale"] += 1
+            # ingrediente-chiave dal piatto canonico
+            piatto = cerca_piatto(nome)
+            chiave = piatto["chiave"] if piatto else None
+            # foto-piatto già nel DB (curata) ha priorità
+            foto_piatto_db = img_esistente if (img_esistente and "cloudinary" in str(img_esistente)) else None
+            r = risolvi_immagine(nome, chiave, foto_piatto_db, lista_file)
+            stat[r["tipo"] or "niente"] += 1
+            if len(esempi) < 12:
+                esempi.append({"nome": nome, "tipo": r["tipo"], "url": (r["url"] or "")[-45:]})
+            if not dry and r["url"]:
+                cur.execute("UPDATE ricette SET immagine=%s, immagine_autore=%s WHERE id=%s",
+                            (r["url"], r["autore"], rid))
+        if not dry:
+            conn.commit()
+        return jsonify({"dry_run": dry, "statistiche": stat, "esempi": esempi})
+    finally:
+        _release_conn(conn)
