@@ -1651,22 +1651,24 @@ def abbina(ingrediente):
                 # Se gli archi Ahn non danno sorprendenti cross-categoria (es. fragola non ha
                 # arco diretto col basilico), li calcoliamo dai composti condivisi reali
                 # (edges contiene_composto). Fondato sul dato molecolare, non inventato.
+                # NB: qui la connessione precedente è già chiusa, ne apriamo una nuova.
                 if len(_sorprendenti) < 2:
+                    _c3 = None
                     try:
+                        _c3 = _get_conn(); _cur3 = _c3.cursor()
                         # trova l'id ingrediente di partenza (ahn_ o ing-)
                         _from_id = None
                         if ahn_name:
                             _from_id = f"ahn_{ahn_name.replace(' ', '_')}"
                         else:
-                            cur.execute("""SELECT id FROM nodes WHERE type='Ingrediente'
+                            _cur3.execute("""SELECT id FROM nodes WHERE type='Ingrediente'
                                            AND (lower(name)=lower(%s) OR lower(id)=lower(%s)) LIMIT 1""",
                                         (ing_it, f"ing-{ing_norm.replace('_','-')}"))
-                            _rr = cur.fetchone()
+                            _rr = _cur3.fetchone()
                             if _rr:
                                 _from_id = _rr[0]
                         if _from_id:
-                            # ingredienti che condividono più composti, escludendo i già presenti
-                            cur.execute("""
+                            _cur3.execute("""
                                 SELECT e2.from_id, n.name, count(*) as ov
                                 FROM edges e1
                                 JOIN edges e2 ON e1.to_id = e2.to_id
@@ -1676,17 +1678,16 @@ def abbina(ingrediente):
                                 AND n.type='Ingrediente'
                                 GROUP BY e2.from_id, n.name
                                 HAVING count(*) >= 4
-                                ORDER BY ov DESC LIMIT 40
+                                ORDER BY ov DESC LIMIT 60
                             """, (_from_id, _from_id))
                             _gia2 = {a["ingrediente"].lower() for a in abbinamenti_dedup}
                             _sorp2 = []
-                            for _rid, _rname, _ov in cur.fetchall():
+                            for _rid, _rname, _ov in _cur3.fetchall():
                                 _nm = (_rname or "").strip()
                                 _nl = _nm.lower()
                                 if not _nm or _nl in _gia2 or _nl == _cercato:
                                     continue
                                 cat_r = _categoria(_nm)
-                                # sorprendente = categoria diversa dall'ingrediente cercato
                                 if cat_r and cat_r != _cat_cercato:
                                     _sorp2.append({
                                         "ingrediente": _nm,
@@ -1699,8 +1700,11 @@ def abbina(ingrediente):
                                 if len(_sorp2) >= 3:
                                     break
                             abbinamenti_dedup = abbinamenti_dedup + _sorp2
-                    except Exception:
-                        pass
+                    except Exception as _ce:
+                        print(f"[SORP COMPOSTI] {_ce}", flush=True)
+                    finally:
+                        if _c3:
+                            _release_conn(_c3)
         except Exception:
             pass
         abbinamenti = abbinamenti_dedup
