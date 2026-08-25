@@ -5078,3 +5078,47 @@ def admin_assegna_domini():
                         "esempi": esempi})
     finally:
         _release_conn(conn)
+
+
+# ── INSERISCI NUOVA MATERIA PRIMA (bar, gelateria, caffè, pasticceria) come nodi Ingrediente ──
+@bp.route("/admin/inserisci-materia-prima")
+def admin_inserisci_materia_prima():
+    """Aggiunge la materia prima mancante (distillati, bitter, vermouth, sodati, tecnici gelato/pasticceria)
+    come nodi Ingrediente con domini[] e scheda (aroma, profilo, applicazioni)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    dry = request.args.get("dry", "1") == "1"
+    from db import _get_conn, _release_conn
+    try:
+        from nuova_materia_prima import MATERIA_PRIMA
+    except Exception as e:
+        return jsonify({"errore": f"import: {e}"}), 500
+    conn = _get_conn(); cur = conn.cursor()
+    inseriti = 0; gia_presenti = 0; esempi = []
+    try:
+        for m in MATERIA_PRIMA:
+            cur.execute("SELECT 1 FROM nodes WHERE id=%s", (m["id"],))
+            if cur.fetchone():
+                gia_presenti += 1
+                continue
+            data = {
+                "domini": m["domini"], "domain": m["domini"][0],
+                "aroma": m.get("aroma", ""), "profilo": m.get("profilo", ""),
+                "applicazioni": m.get("applicazioni", ""),
+                "kind": "ingredient", "visibility": "public",
+                "scheda_materia_prima": True,
+            }
+            if not dry:
+                cur.execute(
+                    "INSERT INTO nodes (id, name, type, data) VALUES (%s,%s,'Ingrediente',%s) ON CONFLICT (id) DO NOTHING",
+                    (m["id"], m["nome"], json.dumps(data, ensure_ascii=False)))
+                inseriti += 1
+            if len(esempi) < 10:
+                esempi.append({"nome": m["nome"], "domini": m["domini"]})
+        if not dry:
+            conn.commit()
+        return jsonify({"dry_run": dry, "da_inserire": len(MATERIA_PRIMA), "inseriti": inseriti,
+                        "gia_presenti": gia_presenti, "esempi": esempi})
+    finally:
+        _release_conn(conn)
