@@ -5252,3 +5252,36 @@ def admin_attiva_ingredienti_ahn():
                         "totale_prima": prima, "senza_traduzione_it": senza_traduzione, "esempi": esempi})
     finally:
         _release_conn(conn)
+
+
+# ── DIAG: che type hanno gli ahn_* del flavour network? ──
+@bp.route("/admin/diag-ahn-type")
+def admin_diag_ahn_type():
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        # gli ahn_ che sono nel network: esistono come nodo? con che type?
+        cur.execute("""
+            SELECT n.type, count(*) FROM nodes n
+            WHERE n.id LIKE 'ahn_%'
+            GROUP BY n.type ORDER BY count(*) DESC
+        """)
+        per_type = {r[0]: r[1] for r in cur.fetchall()}
+        # campione di ahn_ nel network e loro stato
+        cur.execute("""
+            SELECT DISTINCT e.from_id FROM edges e
+            WHERE e.relation='abbinamento_aromatico' AND e.from_id LIKE 'ahn_%'
+            LIMIT 5
+        """)
+        campione = [r[0] for r in cur.fetchall()]
+        dettaglio = []
+        for cid in campione:
+            cur.execute("SELECT id, type, name FROM nodes WHERE id=%s", (cid,))
+            row = cur.fetchone()
+            dettaglio.append({"id": cid, "esiste": bool(row), "type": row[1] if row else None, "name": row[2] if row else None})
+        return jsonify({"ahn_per_type": per_type, "campione_dettaglio": dettaglio})
+    finally:
+        _release_conn(conn)
