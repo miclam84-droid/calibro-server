@@ -5157,3 +5157,32 @@ def admin_diag_flavour():
         return jsonify(out)
     finally:
         _release_conn(conn)
+
+
+# ── DIAG: ingredienti nel flavour network ma NON come nodo pieno (da attivare) ──
+@bp.route("/admin/diag-ingredienti-mancanti")
+def admin_diag_ingredienti_mancanti():
+    """Trova gli ingredienti che compaiono negli archi abbinamento_aromatico ma NON hanno
+    un nodo Ingrediente pieno. Sono ingredienti VERI (Ahn) da attivare come materia prima."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        # from_id degli archi che non sono nodi Ingrediente
+        cur.execute("""
+            SELECT DISTINCT e.from_id
+            FROM edges e
+            WHERE e.relation='abbinamento_aromatico'
+            AND e.from_id NOT IN (SELECT id FROM nodes WHERE type='Ingrediente')
+            LIMIT 300
+        """)
+        mancanti = [r[0] for r in cur.fetchall()]
+        # esempio: quanti sono, e un campione
+        return jsonify({
+            "totale_mancanti_campione": len(mancanti),
+            "esempi": mancanti[:40],
+        })
+    finally:
+        _release_conn(conn)
