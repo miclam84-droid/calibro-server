@@ -12,6 +12,7 @@ REGOLE_DOMINIO = {
         "liquore", "sciroppo", "soda", "tonica", "tonic", "ginger beer", "ginger ale", "cordial",
         "orgeat", "grenadine", "granatina", "prosecco", "champagne", "spumante", "bitters",
         "lillet", "drambuie", "benedictine", "bénédictine", "galliano", "kahlua", "cointreau",
+        "armagnac", "kirsch", "sidro", "idromele", "sakè", "sake", "brandy",
     ],
     "caffe": [
         "caffè", "caffe", "espresso", "arabica", "robusta", "cold brew", "moka", "chicco",
@@ -35,7 +36,8 @@ REGOLE_DOMINIO = {
     ],
     "vino": [
         "uva", "mosto", "vino", "tannino", "lieviti", "solforosa", "so2", "acido tartarico", "malico",
-        "barrique", "botte",
+        "barrique", "botte", "porto", "sherry", "marsala", "nebbiolo", "pinot", "chardonnay",
+        "sangiovese", "riesling", "moscato", "champagne", "prosecco", "spumante",
     ],
     "cucina": [
         # la cucina è il default per la materia prima food: verdure, carni, pesci, spezie
