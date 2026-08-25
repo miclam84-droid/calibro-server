@@ -5122,3 +5122,38 @@ def admin_inserisci_materia_prima():
                         "gia_presenti": gia_presenti, "esempi": esempi})
     finally:
         _release_conn(conn)
+
+
+# ── DIAG FLAVOUR NETWORK: quanti ingredienti hanno abbinamenti, e potenziale di espansione ──
+@bp.route("/admin/diag-flavour")
+def admin_diag_flavour():
+    """Fotografa il flavour network: quanti ingredienti hanno archi abbinamento_aromatico,
+    quanti composti ci sono, e quanti ingredienti Ahn potrebbero essere attivati."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        out = {}
+        cur.execute("SELECT count(*) FROM nodes WHERE type='Ingrediente'")
+        out["ingredienti_totali"] = cur.fetchone()[0]
+        cur.execute("SELECT count(*) FROM nodes WHERE type='Composto'")
+        out["composti_totali"] = cur.fetchone()[0]
+        cur.execute("SELECT count(*) FROM edges WHERE relation='abbinamento_aromatico'")
+        out["archi_abbinamento"] = cur.fetchone()[0]
+        cur.execute("SELECT count(*) FROM edges WHERE relation='contiene_composto'")
+        out["archi_contiene_composto"] = cur.fetchone()[0]
+        # quanti ingredienti DISTINTI hanno almeno un abbinamento
+        cur.execute("SELECT count(DISTINCT from_id) FROM edges WHERE relation='abbinamento_aromatico'")
+        out["ingredienti_con_abbinamenti"] = cur.fetchone()[0]
+        # quanti ingredienti hanno composti (potenziali abbinamenti calcolabili)
+        cur.execute("SELECT count(DISTINCT from_id) FROM edges WHERE relation='contiene_composto'")
+        out["ingredienti_con_composti"] = cur.fetchone()[0]
+        # prefissi id ingrediente (per capire le fonti: ahn_, ing-, ecc.)
+        cur.execute("""SELECT split_part(id,'_',1) as pfx, count(*) FROM nodes
+                       WHERE type='Ingrediente' GROUP BY pfx ORDER BY count(*) DESC LIMIT 10""")
+        out["prefissi_id"] = {r[0]: r[1] for r in cur.fetchall()}
+        return jsonify(out)
+    finally:
+        _release_conn(conn)
