@@ -5284,3 +5284,43 @@ def admin_diag_ahn_type():
         return jsonify({"ahn_per_type": per_type, "campione_dettaglio": dettaglio})
     finally:
         _release_conn(conn)
+
+
+# ── DIAG: overlap composti tra due ingredienti (verifica fragola-basilico) ──
+@bp.route("/admin/diag-overlap-composti")
+def admin_diag_overlap_composti():
+    """Verifica quanti composti condividono due ingredienti, calcolandolo da contiene_composto.
+    Prova ?a=ahn_strawberry&b=ahn_basil"""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    a = request.args.get("a", "ahn_strawberry")
+    b = request.args.get("b", "ahn_basil")
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        # composti di A
+        cur.execute("SELECT to_id FROM edges WHERE relation='contiene_composto' AND from_id=%s", (a,))
+        comp_a = set(r[0] for r in cur.fetchall())
+        cur.execute("SELECT to_id FROM edges WHERE relation='contiene_composto' AND from_id=%s", (b,))
+        comp_b = set(r[0] for r in cur.fetchall())
+        comuni = comp_a & comp_b
+        # top 5 ingredienti per overlap con A (calcolato dai composti)
+        cur.execute("""
+            SELECT e2.from_id, count(*) as overlap
+            FROM edges e1
+            JOIN edges e2 ON e1.to_id = e2.to_id
+            WHERE e1.relation='contiene_composto' AND e1.from_id=%s
+            AND e2.relation='contiene_composto' AND e2.from_id != %s
+            GROUP BY e2.from_id
+            ORDER BY overlap DESC LIMIT 20
+        """, (a, a))
+        top = [{"ingrediente": r[0], "composti_condivisi": r[1]} for r in cur.fetchall()]
+        return jsonify({
+            "a": a, "b": b,
+            "composti_a": len(comp_a), "composti_b": len(comp_b),
+            "composti_condivisi_a_b": len(comuni),
+            "top_overlap_calcolato_da_composti": top,
+        })
+    finally:
+        _release_conn(conn)
