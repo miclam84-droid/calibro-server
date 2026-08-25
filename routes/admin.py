@@ -5001,3 +5001,38 @@ def admin_applica_immagini_cascata():
         return jsonify({"dry_run": dry, "statistiche": stat, "esempi": esempi})
     finally:
         _release_conn(conn)
+
+
+# ── DIAG INGREDIENTI PER DOMINIO: conta la materia prima di ogni disciplina ──
+@bp.route("/admin/diag-ingredienti-dominio")
+def admin_diag_ingredienti_dominio():
+    """Conta i nodi Ingrediente per dominio/disciplina, per capire quali discipline hanno
+    poca materia prima. Legge il campo domain nel data JSONB."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT id, data FROM nodes WHERE type='Ingrediente'")
+        per_dominio = {}
+        senza_dominio = 0
+        totale = 0
+        esempi_bar = []
+        for rid, data in cur.fetchall():
+            totale += 1
+            d = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            dom = d.get("domain") or d.get("dominio") or "NON_ASSEGNATO"
+            per_dominio[dom] = per_dominio.get(dom, 0) + 1
+            if dom == "NON_ASSEGNATO":
+                senza_dominio += 1
+            if dom == "bar" and len(esempi_bar) < 15:
+                esempi_bar.append(rid)
+        return jsonify({
+            "totale_ingredienti": totale,
+            "per_dominio": dict(sorted(per_dominio.items(), key=lambda x: -x[1])),
+            "senza_dominio": senza_dominio,
+            "esempi_bar": esempi_bar,
+        })
+    finally:
+        _release_conn(conn)
