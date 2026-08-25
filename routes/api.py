@@ -1646,6 +1646,61 @@ def abbina(ingrediente):
                         break
                 # ADDITIVO: i classici restano TUTTI, i sorprendenti si aggiungono in fondo.
                 abbinamenti_dedup = abbinamenti_dedup + _sorprendenti
+
+                # ── SORPRENDENTI CALCOLATI DAI COMPOSTI CONDIVISI ──
+                # Se gli archi Ahn non danno sorprendenti cross-categoria (es. fragola non ha
+                # arco diretto col basilico), li calcoliamo dai composti condivisi reali
+                # (edges contiene_composto). Fondato sul dato molecolare, non inventato.
+                if len(_sorprendenti) < 2:
+                    try:
+                        # trova l'id ingrediente di partenza (ahn_ o ing-)
+                        _from_id = None
+                        if ahn_name:
+                            _from_id = f"ahn_{ahn_name.replace(' ', '_')}"
+                        else:
+                            cur.execute("""SELECT id FROM nodes WHERE type='Ingrediente'
+                                           AND (lower(name)=lower(%s) OR lower(id)=lower(%s)) LIMIT 1""",
+                                        (ing_it, f"ing-{ing_norm.replace('_','-')}"))
+                            _rr = cur.fetchone()
+                            if _rr:
+                                _from_id = _rr[0]
+                        if _from_id:
+                            # ingredienti che condividono più composti, escludendo i già presenti
+                            cur.execute("""
+                                SELECT e2.from_id, n.name, count(*) as ov
+                                FROM edges e1
+                                JOIN edges e2 ON e1.to_id = e2.to_id
+                                JOIN nodes n ON n.id = e2.from_id
+                                WHERE e1.relation='contiene_composto' AND e1.from_id=%s
+                                AND e2.relation='contiene_composto' AND e2.from_id != %s
+                                AND n.type='Ingrediente'
+                                GROUP BY e2.from_id, n.name
+                                HAVING count(*) >= 4
+                                ORDER BY ov DESC LIMIT 40
+                            """, (_from_id, _from_id))
+                            _gia2 = {a["ingrediente"].lower() for a in abbinamenti_dedup}
+                            _sorp2 = []
+                            for _rid, _rname, _ov in cur.fetchall():
+                                _nm = (_rname or "").strip()
+                                _nl = _nm.lower()
+                                if not _nm or _nl in _gia2 or _nl == _cercato:
+                                    continue
+                                cat_r = _categoria(_nm)
+                                # sorprendente = categoria diversa dall'ingrediente cercato
+                                if cat_r and cat_r != _cat_cercato:
+                                    _sorp2.append({
+                                        "ingrediente": _nm,
+                                        "composto": f"{_ov} composti in comune",
+                                        "overlap": float(_ov),
+                                        "perche": f"sorprendente: condividono {_ov} composti aromatici pur essendo di un'altra famiglia ({cat_r})",
+                                        "sorprendente": True,
+                                    })
+                                    _gia2.add(_nl)
+                                if len(_sorp2) >= 3:
+                                    break
+                            abbinamenti_dedup = abbinamenti_dedup + _sorp2
+                    except Exception:
+                        pass
         except Exception:
             pass
         abbinamenti = abbinamenti_dedup
