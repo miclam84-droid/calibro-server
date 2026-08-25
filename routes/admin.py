@@ -4881,3 +4881,57 @@ def admin_pulisci_foto_malmatch():
                         "esempi_tolte": tolte[:20], "esempi_tenute": tenute[:20]})
     finally:
         _release_conn(conn)
+
+
+# ── DIAG FONTI: legge la fonte reale di composti e archi (verifica legale, no Fenaroli) ──
+@bp.route("/admin/diag-fonti-legali")
+def admin_diag_fonti_legali():
+    """Verifica la PROVENIENZA reale di nodi Composto e archi contiene_composto, per la due diligence
+    legale. Conta le fonti dichiarate nel campo data e nel campo fonte di ogni composto/arco."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    out = {}
+    try:
+        # 1. nodi Composto: quante fonti diverse dichiarano nel data JSONB?
+        cur.execute("SELECT id, data FROM nodes WHERE type='Composto'")
+        comp_fonti = {}
+        comp_totale = 0
+        esempi_comp = []
+        for r in cur.fetchall():
+            comp_totale += 1
+            d = r[1] if isinstance(r[1], dict) else (json.loads(r[1]) if r[1] else {})
+            fonte = (d.get("fonte") or d.get("source") or "NON_DICHIARATA")
+            comp_fonti[fonte] = comp_fonti.get(fonte, 0) + 1
+            if len(esempi_comp) < 5:
+                esempi_comp.append({"id": r[0], "fonte": fonte, "campi_data": list(d.keys())})
+        out["composti_totale"] = comp_totale
+        out["composti_per_fonte"] = comp_fonti
+        out["composti_esempi"] = esempi_comp
+
+        # 2. archi contiene_composto: fonte nel data
+        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='contiene_composto'")
+        out["archi_contiene_composto_totale"] = cur.fetchone()[0]
+        cur.execute("SELECT data FROM edges WHERE relation='contiene_composto' LIMIT 500")
+        arc_fonti = {}
+        for r in cur.fetchall():
+            d = r[0] if isinstance(r[0], dict) else (json.loads(r[0]) if r[0] else {})
+            fonte = (d.get("fonte") or d.get("source") or "vuoto")
+            arc_fonti[fonte] = arc_fonti.get(fonte, 0) + 1
+        out["archi_per_fonte_campione500"] = arc_fonti
+
+        # 3. archi abbinamento_aromatico (il backbone Ahn)
+        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='abbinamento_aromatico'")
+        out["archi_abbinamento_aromatico_totale"] = cur.fetchone()[0]
+
+        # 4. cerca QUALSIASI menzione di 'fenaroli' nei dati (nodi e archi)
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE LOWER(data::text) LIKE '%fenaroli%'")
+        out["nodi_con_fenaroli_nei_dati"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM edges WHERE LOWER(data::text) LIKE '%fenaroli%'")
+        out["archi_con_fenaroli_nei_dati"] = cur.fetchone()[0]
+
+        return jsonify(out)
+    finally:
+        _release_conn(conn)
