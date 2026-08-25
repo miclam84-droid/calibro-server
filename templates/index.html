@@ -98,8 +98,22 @@ if('serviceWorker' in navigator){
     <button class="cta-main mtr-gauge-cta" id="scopri-cta" onclick="avviaLezione()">Misura questo →</button>
   </div>
 
-  <!-- LOOP GUIDATO -->
-  <div class="loop-guidato" id="loop-guidato" style="display:none">
+  <!-- ACCESSO VISTE INTEGRATE (Flavour · Ponti · Menu Builder) -->
+  <div class="vista-launch" style="padding:0 0 4px">
+    <button class="vista-launch-btn" onclick="apriFlavour()">
+      <svg class="vl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="10" cy="18" r="2.5"/><path d="M8 7l8 1M8.5 8l1.5 8"/></svg>
+      <span><span class="vl-t">Flavour Network</span><span class="vl-d">Cosa dialoga con cosa</span></span>
+    </button>
+    <button class="vista-launch-btn" onclick="apriPonti()">
+      <svg class="vl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 18c4-8 12-8 16 0M4 18h16"/></svg>
+      <span><span class="vl-t">Ponti tra discipline</span><span class="vl-d">Vino, birra, dolce per piatto</span></span>
+    </button>
+    <button class="vista-launch-btn" onclick="apriMenuBuilder()">
+      <svg class="vl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
+      <span><span class="vl-t">Menu Builder</span><span class="vl-d">Combina per composti</span></span>
+    </button>
+  </div>
+
     <div class="loop-label">Esplora il percorso</div>
     <div class="loop-steps">
       <div class="loop-step" onclick="avviaLezione()">
@@ -401,6 +415,22 @@ if('serviceWorker' in navigator){
       <div style="padding:20px 0;color:var(--ink-muted);font-family:var(--mono);font-size:11px;text-align:center">
         Caricamento ricette…
       </div>
+    </div>
+  </div>
+
+  <!-- ── PANNELLO SOMMELIER ── -->
+  <div class="mappa-panel" id="mpanel-sommelier">
+    <div class="somm-hero">
+      <div class="somm-hero-lab">Il tuo profilo sensoriale</div>
+      <div class="somm-hero-desc">Usa <i class="ph ph-thumbs-up"></i> e <i class="ph ph-thumbs-down"></i> sugli abbinamenti del Flavor Network. Matter impara i tuoi gusti e riordina i risultati su misura.</div>
+      <div id="sommelier-stats" class="somm-stats"></div>
+      <button class="somm-cta" onclick="caricaProfiloSensoriale()">Vedi il tuo profilo sensoriale <i class="ph ph-arrow-right"></i></button>
+      <div id="profilo-sensoriale" style="display:none;margin-top:14px"></div>
+    </div>
+    <div class="bridge-card bridge-ecosistema">
+      <div class="bridge-eyebrow">prossimo livello · ecosistema Galileo</div>
+      <div class="bridge-headline">Sai che numero colpire. Cifra ti dice quanto ti costa.</div>
+      <button class="bridge-cta" onclick="importaCifra()">Scopri Cifra <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </div>
 

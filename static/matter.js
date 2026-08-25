@@ -238,33 +238,6 @@ function playIntro(screenId){
   if(!s) return;
   s.classList.remove('intro'); void s.offsetWidth; s.classList.add('intro');
 }
-function _escR(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-// label multilingua per le nuove sezioni (usa _lang già presente nell'app)
-function _ricL(k){
-  const L={
-    esperimento:{it:'Prova al banco',en:'Bench test',es:'Prueba en barra'},
-    limite:{it:'Quando non basta',en:'When it’s not enough',es:'Cuando no basta'},
-    twist:{it:'Twist',en:'Twist',es:'Twist'},
-    rivisit:{it:'Rivisitazione',en:'Variation',es:'Revisión'},
-    ingredienti:{it:'Ingredienti',en:'Ingredients',es:'Ingredientes'},
-    procedimento:{it:'Procedimento',en:'Method',es:'Procedimiento'},
-    tecniche:{it:'Tecniche',en:'Techniques',es:'Técnicas'},
-    abbinamenti:{it:'Abbinamenti',en:'Pairings',es:'Combinaciones'},
-    analogia:{it:'Per analogia',en:'By analogy',es:'Por analogía'},
-    contrasto:{it:'Per contrasto',en:'By contrast',es:'Por contraste'},
-    foto:{it:'Foto',en:'Photo',es:'Foto'}
-  };
-  const l=(_lang||'it'); return (L[k]&&(L[k][l]||L[k].it))||'';
-}
-
-// disciplina "drink" -> Twist, altrimenti Rivisitazione
-function _twistLabel(disc){
-  const d=(disc||'').toLowerCase();
-  const isBar = /bar|drink|cocktail|mixolog|caff|coffee|bevut/.test(d);
-  return isBar ? _ricL('twist') : _ricL('rivisit');
-}
-
 function _renderRicette(ricette){
   const el=document.getElementById('ricette-list');
   if(!el) return;
@@ -272,107 +245,27 @@ function _renderRicette(ricette){
     el.innerHTML='<div style="padding:20px 0;color:var(--ink-muted);font-family:var(--mono);font-size:11px;text-align:center">Nessuna ricetta disponibile per questa disciplina.</div>';
     return;
   }
-  el.innerHTML=ricette.map(r=>{
-    const foto = r.immagine ? `
-      <div class="ric-foto">
-        <img src="${_escR(r.immagine)}" alt="${_escR(r.nome)}" loading="lazy" onerror="this.closest('.ric-foto').remove()">
-        ${r.immagine_autore ? `<div class="ric-foto-credit">${
-            r.immagine_url_fonte
-              ? `<a href="${_escR(r.immagine_url_fonte)}" target="_blank" rel="noopener">${_escR(r.immagine_autore)}</a>`
-              : _escR(r.immagine_autore)
-          }</div>` : ''}
-      </div>` : '';
-
-    const numeri = (r.numeri && Object.keys(r.numeri).length) ? `
-      <div class="ric-numeri">
-        <div class="ric-numeri-lab">Numeri bersaglio</div>
-        ${Object.entries(r.numeri).map(([k,v])=>`<div class="ric-num-row"><span class="ric-num-k">${_escR(k)}</span><span class="ric-num-v">${_escR(v)}</span></div>`).join('')}
-      </div>` : '';
-
-    const critico = r.punto_critico ? `
-      <div class="ric-critico">
-        <div class="ric-critico-lab">⚠ Punto critico</div>
-        <div class="ric-critico-txt">${_escR(r.punto_critico)}</div>
-      </div>` : '';
-
-    const esperimento = r.esperimento ? `
-      <div class="ric-exp">
-        <div class="ric-exp-lab">◇ ${_ricL('esperimento')}</div>
-        <div class="ric-exp-txt">${_escR(r.esperimento)}</div>
-      </div>` : '';
-
-    const ingredienti = (r.ingredienti && r.ingredienti.length) ? `
-      <div class="ric-ingr">
-        <div class="ric-ingr-lab">${_ricL('ingredienti')}</div>
-        ${r.ingredienti.map(ing=>{
-          const q = (ing.quantita && ing.quantita!=='null') ? _escR(ing.quantita) : '';
-          const u = (ing.unita && ing.unita!=='null') ? _escR(ing.unita) : '';
-          const qta = (q||u) ? `<span class="ric-ingr-q">${q}${q&&u?' ':''}${u}</span>` : '';
-          return `<div class="ric-ingr-row"><span class="ric-ingr-n">${_escR(ing.nome||'')}</span>${qta}</div>`;
-        }).join('')}
-      </div>` : '';
-
-    const proc = (r.procedimento && r.procedimento.length) ? `
-      <div class="ric-proc">
-        <div class="ric-proc-lab">${_ricL('procedimento')}</div>
-        ${r.procedimento.map(p=>`
-          <div class="ric-step">
-            <span class="ric-step-n">${_escR(p.n)}</span>
-            <div class="ric-step-b">
-              <span class="ric-step-t">${_escR(p.testo)}</span>
-              ${p.numero_chiave?`<span class="ric-step-key">${_escR(p.numero_chiave)}</span>`:''}
-            </div>
-          </div>`).join('')}
-      </div>` : '';
-
-    const tecniche = (r.tecniche && r.tecniche.length) ? `
-      <div class="ric-tec">
-        <div class="ric-tec-lab">${_ricL('tecniche')}</div>
-        <div class="ric-tec-chips">${r.tecniche.map(t=>`<span class="ric-tec-chip">${_escR(t)}</span>`).join('')}</div>
-      </div>` : '';
-
-    const limite = r.limite ? `
-      <div class="ric-limite">
-        <div class="ric-limite-lab">${_ricL('limite')}</div>
-        <div class="ric-limite-txt">${_escR(r.limite)}</div>
-      </div>` : '';
-
-    const twist = r.twist ? `
-      <div class="ric-twist">
-        <div class="ric-twist-lab">${_twistLabel(r.disciplina)}</div>
-        <div class="ric-twist-txt">${_escR(r.twist)}</div>
-      </div>` : '';
-
-    const ab = r.abbinamenti && (r.abbinamenti.analogia || r.abbinamenti.contrasto) ? `
-      <div class="ric-abb">
-        <div class="ric-abb-lab">${_ricL('abbinamenti')}</div>
-        <div class="ric-abb-cols">
-          ${r.abbinamenti.analogia?`<div class="ric-abb-col"><span class="ric-abb-k">${_ricL('analogia')}</span><span class="ric-abb-v">${_escR(r.abbinamenti.analogia)}</span></div>`:''}
-          ${r.abbinamenti.contrasto?`<div class="ric-abb-col"><span class="ric-abb-k">${_ricL('contrasto')}</span><span class="ric-abb-v">${_escR(r.abbinamenti.contrasto)}</span></div>`:''}
-        </div>
-      </div>` : '';
-
-    return `
+  el.innerHTML=ricette.map(r=>`
     <div class="ric-card" id="ric-${r.id}" onclick="toggleRicetta('${r.id}')">
-      ${foto}
-      <div class="ric-disc">${_escR(r.disciplina)}</div>
-      <div class="ric-nome">${_escR(r.nome)}</div>
-      <div class="ric-desc">${_escR(r.descrizione||'')}</div>
-      <div class="ric-fenomeni">${(r.fenomeni||[]).map(f=>`<span class="ric-fen-tag">${_escR(f.replace('fen-','').replace(/-/g,' '))}</span>`).join('')}</div>
+      <div class="ric-disc">${r.disciplina}</div>
+      <div class="ric-nome">${r.nome}</div>
+      <div class="ric-desc">${r.descrizione||''}</div>
+      <div class="ric-fenomeni">${(r.fenomeni||[]).map(f=>`<span class="ric-fen-tag">${f.replace('fen-','').replace(/-/g,' ')}</span>`).join('')}</div>
       <div class="ric-body">
-        ${numeri}
-        ${critico}
-        ${esperimento}
-        ${ingredienti}
-        ${proc}
-        ${tecniche}
-        ${limite}
-        ${twist}
-        ${ab}
+        ${r.numeri && Object.keys(r.numeri).length ? `
+        <div class="ric-numeri">
+          <div class="ric-numeri-lab">Numeri bersaglio</div>
+          ${Object.entries(r.numeri).map(([k,v])=>`<div class="ric-num-row"><span class="ric-num-k">${k}</span><span class="ric-num-v">${v}</span></div>`).join('')}
+        </div>` : ''}
+        ${r.punto_critico ? `
+        <div class="ric-critico">
+          <div class="ric-critico-lab">⚠ Punto critico</div>
+          <div class="ric-critico-txt">${r.punto_critico}</div>
+        </div>` : ''}
       </div>
       <div class="ric-toggle">Vedi dettagli ↓</div>
-    </div>`;
-  }).join('');
+    </div>
+  `).join('');
 }
 
 function toggleRicetta(id){
@@ -2418,9 +2311,42 @@ async function caricaStrumenti(disciplina) {
   }
 }
 
-/* ── SOMMELIER rimosso: sostituito dal Laboratorio Sensoriale (da costruire) ── */
+/* ── SOMMELIER DIGITALE ─────────────────────────────────── */
+async function caricaProfiloSensoriale() {
+  const div = document.getElementById('profilo-sensoriale');
+  if(!div) return;
+  div.style.display = 'block';
+  div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Caricamento...</div>';
+  try {
+    const token = localStorage.getItem('matter_token') || '';
+    if(!token) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Accedi per vedere il tuo profilo sensoriale.</div>'; return; }
+    const r = await fetch('/v1/profilo-sensoriale', {headers:{'Authorization':'Bearer '+token}});
+    if(!r.ok){ div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Fai qualche valutazione sugli abbinamenti per costruire il tuo profilo.</div>'; return; }
+    const j = await r.json();
+    if(j.errore) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Fai qualche valutazione sugli abbinamenti per costruire il tuo profilo.</div>'; return; }
+    // il profilo ha le dimensioni sensoriali (escludo le chiavi interne che iniziano con _)
+    const profilo = j.profilo || {};
+    const dim = {};
+    Object.entries(profilo).forEach(([k,v]) => { if(!k.startsWith('_') && typeof v === 'number') dim[k]=v; });
+    if(Object.keys(dim).length === 0){
+      div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Il tuo profilo si costruisce man mano che valuti gli abbinamenti con 👍 e 👎.</div>';
+      return;
+    }
+    const html = Object.entries(dim).map(([k,v]) => `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-muted);width:82px;text-transform:uppercase">${esc(k)}</div>
+        <div style="flex:1;background:var(--border);height:8px">
+          <div style="background:var(--accent);width:${Math.round((v/10)*100)}%;height:8px"></div>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);width:26px;text-align:right">${Number(v).toFixed(1)}</div>
+      </div>`).join('');
+    div.innerHTML = html;
+  } catch(e) {
+    div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Il profilo non è disponibile ora. Riprova tra poco.</div>';
+  }
+}
 
-/* ── FINE STRUMENTI ─────────────────────────── */
+/* ── FINE STRUMENTI E SOMMELIER ─────────────────────────── */
 
 /* ── AZIONI RISPOSTA (copia, PDF) ───────────────────────── */
 function copiaRisposta(btn) {
@@ -4483,4 +4409,220 @@ function toggleScavaPorta(i){
   if(!d) return;
   var aperto = d.style.display !== 'none';
   d.style.display = aperto ? 'none' : 'block';
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MATTER · VISTE INTEGRATE v1 — Flavour Network · Ponti · Menu Builder
+   Overlay a schermo pieno dentro l'app (pattern come onb-overlay).
+   Cablate agli endpoint reali (same-origin: nessun problema CORS).
+   Accesso: funzioni apriFlavour() / apriPonti() / apriMenuBuilder()
+   richiamabili da pulsanti in Scopri e Lab.
+   ═══════════════════════════════════════════════════════════════════ */
+
+// helper condivisi
+function _escV(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function _vistaLang(){ return (typeof _lang!=='undefined' && _lang) ? _lang : 'it'; }
+
+// crea (una volta) il contenitore overlay generico per le viste
+function _ensureVistaOverlay(){
+  let o = document.getElementById('vista-overlay');
+  if(!o){
+    o = document.createElement('div');
+    o.id = 'vista-overlay';
+    o.className = 'vista-overlay hidden';
+    o.innerHTML = '<div class="vista-topbar"><button class="vista-close" onclick="chiudiVista()" aria-label="Chiudi">‹ Indietro</button><span class="vista-title" id="vista-title"></span></div><div class="vista-body" id="vista-body"></div>';
+    document.body.appendChild(o);
+  }
+  return o;
+}
+function chiudiVista(){
+  const o = document.getElementById('vista-overlay');
+  if(o) o.classList.add('hidden');
+}
+function _apriVista(titolo, htmlIniziale){
+  const o = _ensureVistaOverlay();
+  document.getElementById('vista-title').textContent = titolo;
+  document.getElementById('vista-body').innerHTML = htmlIniziale;
+  o.classList.remove('hidden');
+  document.getElementById('vista-body').scrollTop = 0;
+}
+
+/* ─── mirini svg riusabili ─── */
+function _mirinoSorpresa(){return '<svg viewBox="0 0 38 38" fill="none"><circle class="vm-pulse" cx="19" cy="19" r="15" stroke="#131C21" stroke-width="1.5"/><circle cx="19" cy="19" r="8" stroke="#131C21" stroke-width="1.2"/><circle cx="19" cy="19" r="3" fill="#245979"/><path d="M19 2v6M19 30v6M2 19h6M30 19h6" stroke="#131C21" stroke-width="1.5"/></svg>';}
+function _mirinoClassico(){return '<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="12" stroke="#12545D" stroke-width="1"/><circle cx="19" cy="19" r="2.5" fill="#12545D"/></svg>';}
+function _mirinoPonte(){return '<svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="11" stroke="#12545D" stroke-width="1"/><circle cx="18" cy="18" r="2.4" fill="#245979"/><path d="M18 3v5M18 28v5M3 18h5M28 18h5" stroke="#12545D" stroke-width="1"/></svg>';}
+
+/* ═══════════════ 1. FLAVOUR NETWORK ═══════════════ */
+function apriFlavour(ingredienteIniziale){
+  _apriVista('Flavour Network',
+    '<div class="fnv-head"><div class="fnv-h">Cosa dialoga con cosa.</div>'+
+    '<div class="fnv-sub">Non opinioni: composti aromatici condivisi.</div>'+
+    '<div class="fnv-search"><input id="fnv-input" placeholder="fragola, lime, pomodoro…" '+
+    'onkeydown="if(event.key===\'Enter\')caricaFlavour()"><button onclick="caricaFlavour()">Cerca</button></div>'+
+    '<div class="fnv-chips">'+['fragola','pomodoro','lime','cioccolato','basilico'].map(c=>'<span class="fnv-chip" onclick="caricaFlavour(\''+c+'\')">'+c+'</span>').join('')+'</div>'+
+    '</div><div id="fnv-out"></div>');
+  caricaFlavour(ingredienteIniziale || 'fragola');
+}
+async function caricaFlavour(term){
+  const inp = document.getElementById('fnv-input');
+  const q = (term || (inp?inp.value:'') || '').trim();
+  if(!q) return;
+  if(inp) inp.value = q;
+  const out = document.getElementById('fnv-out');
+  out.innerHTML = '<div class="vista-loading">Leggo il grafo dei composti…</div>';
+  try{
+    const r = await fetch('/v1/abbina/'+encodeURIComponent(q)+'?lang='+_vistaLang());
+    const d = await r.json();
+    if(!d.abbinamenti || !d.abbinamenti.length){ out.innerHTML = '<div class="vista-empty">Nessun dato per questo ingrediente.</div>'; return; }
+    const sorpr = d.abbinamenti.filter(a=>a.sorprendente);
+    const classici = d.abbinamenti.filter(a=>!a.sorprendente);
+    let h = '<div class="fnv-center"><div class="fnv-center-lab">◉ Ingrediente</div><div class="fnv-center-name">'+_escV(d.ingrediente||q)+'</div>'+(d.nota?'<div class="fnv-center-nota">'+_escV(d.nota)+'</div>':'')+'</div>';
+    if(sorpr.length){
+      h += '<div class="fnv-sec-h"><span class="t">Sorprendenti</span><span class="rule"></span><span class="cnt">'+sorpr.length+'</span></div>';
+      h += sorpr.map((a,i)=>_flavourNode(a,'s'+i,true,d.ingrediente||q)).join('');
+    }
+    if(classici.length){
+      h += '<div class="fnv-sec-h"><span class="t">'+(sorpr.length?'Classici':'Abbinamenti')+'</span><span class="rule"></span><span class="cnt">'+classici.length+'</span></div>';
+      h += classici.map((a,i)=>_flavourNode(a,'c'+i,false,d.ingrediente||q)).join('');
+    }
+    out.innerHTML = h;
+  }catch(e){ out.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>'; }
+}
+function _flavourNode(a,key,surprise,centro){
+  const n = Math.round(a.overlap||0);
+  const det = surprise ? '<div class="fnv-detail" id="fnv-det-'+key+'"><div class="fnv-detail-why">'+_escV(centro)+' e '+_escV(a.ingrediente)+' condividono <b>'+n+' composti aromatici</b>. '+_escV(a.perche||'')+' Non è un\'opinione: è chimica.</div><button class="fnv-cta" onclick="_flavourCrea(\''+_escV(centro)+'\',\''+_escV(a.ingrediente)+'\')">Crea una ricetta con questo abbinamento →</button></div>' : '';
+  return '<div class="fnv-node'+(surprise?' surprise':'')+'"'+(surprise?' onclick="_flavourToggle(\''+key+'\')"':'')+'>'+
+    '<div class="fnv-mirino">'+(surprise?_mirinoSorpresa():_mirinoClassico())+'</div>'+
+    '<div class="fnv-node-body"><div class="fnv-node-name">'+_escV(a.ingrediente)+'</div>'+
+    '<div class="fnv-node-why">'+(surprise?'Sorprendente — tocca per il perché':_escV(a.perche||'composti condivisi'))+'</div></div>'+
+    '<div class="fnv-node-n">'+n+'<span class="u">composti</span></div></div>'+det;
+}
+function _flavourToggle(key){ const d=document.getElementById('fnv-det-'+key); if(d) d.classList.toggle('show'); }
+function _flavourCrea(a,b){
+  // apre la chat con una richiesta di ricetta coi due ingredienti
+  chiudiVista();
+  if(typeof switchTab==='function') switchTab('chiedi');
+  const ask = document.getElementById('ask-input');
+  if(ask){ ask.value = 'Crea una ricetta con '+a+' e '+b; if(typeof inviaDomanda==='function') inviaDomanda(); }
+}
+
+/* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */
+let _pontiTab = 'vino';
+function apriPonti(){
+  _apriVista('Ponti tra discipline',
+    '<div class="ptv-head"><div class="ptv-h">Il piatto non è mai solo.</div>'+
+    '<div class="ptv-sub">Cosa dialoga col tuo piatto — e perché.</div>'+
+    '<div class="ptv-field"><input id="ptv-input" placeholder="brasato, pizza, pesce…" onkeydown="if(event.key===\'Enter\')caricaPonti()"></div>'+
+    '<div class="ptv-tabs">'+
+      '<div class="ptv-tab on" data-t="vino" onclick="_pontiSetTab(\'vino\')">Vino</div>'+
+      '<div class="ptv-tab" data-t="birra" onclick="_pontiSetTab(\'birra\')">Birra</div>'+
+      '<div class="ptv-tab" data-t="dolce" onclick="_pontiSetTab(\'dolce\')">Dolce</div>'+
+    '</div><button class="ptv-go" onclick="caricaPonti()">Trova il dialogo</button></div><div id="ptv-out"></div>');
+  _pontiTab = 'vino';
+}
+function _pontiSetTab(t){
+  _pontiTab = t;
+  document.querySelectorAll('.ptv-tab').forEach(x=>x.classList.toggle('on', x.dataset.t===t));
+}
+async function caricaPonti(){
+  const inp = document.getElementById('ptv-input');
+  const q = (inp?inp.value:'').trim();
+  if(!q) return;
+  const out = document.getElementById('ptv-out');
+  out.innerHTML = '<div class="vista-loading">Cerco il dialogo…</div>';
+  const urls = {
+    vino: '/v1/vino-per-piatto?piatto='+encodeURIComponent(q)+'&lang='+_vistaLang(),
+    birra:'/v1/birra-per-piatto?piatto='+encodeURIComponent(q)+'&lang='+_vistaLang(),
+    dolce:'/v1/dolce-per-menu?menu='+encodeURIComponent(q)+'&lang='+_vistaLang()
+  };
+  try{
+    const r = await fetch(urls[_pontiTab]);
+    const d = await r.json();
+    if(_pontiTab==='vino') out.innerHTML = _pontiVino(d);
+    else if(_pontiTab==='birra') out.innerHTML = _pontiBirra(d);
+    else out.innerHTML = _pontiDolce(d);
+  }catch(e){ out.innerHTML = '<div class="vista-empty">Nessun dialogo trovato.</div>'; }
+}
+function _pontiNota(txt){ return txt ? '<div class="ptv-nota"><div class="ptv-nota-lab">◉ Il principio</div><div class="ptv-nota-txt">'+_escV(txt)+'</div></div>' : ''; }
+function _pontiVino(d){
+  if(!d.suggerimenti||!d.suggerimenti.length) return '<div class="vista-empty">Nessun vino in dialogo.</div>';
+  return _pontiNota(d.nota) + d.suggerimenti.map(cat=>
+    '<div class="ptv-cat"><div class="ptv-cat-name">'+_escV(cat.categoria)+'</div>'+
+    (cat.descrizione?'<div class="ptv-cat-desc">'+_escV(cat.descrizione)+'</div>':'')+
+    (cat.vini_consigliati||[]).map(v=>'<div class="ptv-item"><div class="ptv-item-mirino">'+_mirinoPonte()+'</div><div class="ptv-item-body"><div class="ptv-item-name">'+_escV(v.nome)+(v.territorio?' <span class="ptv-item-terr">'+_escV(v.territorio)+'</span>':'')+'</div>'+(v.perche?'<div class="ptv-item-why">'+_escV(v.perche)+'</div>':'')+'</div></div>').join('')+
+    '</div>').join('');
+}
+function _pontiBirra(d){
+  if(!d.birre_in_dialogo||!d.birre_in_dialogo.length) return '<div class="vista-empty">Nessuna birra in dialogo.</div>';
+  return _pontiNota(d.nota) + d.birre_in_dialogo.map(b=>
+    '<div class="ptv-item"><div class="ptv-item-mirino">'+_mirinoPonte()+'</div><div class="ptv-item-body"><div class="ptv-item-name">'+_escV(b.categoria)+'</div>'+
+    (b.perche?'<div class="ptv-item-why">'+_escV(b.perche)+'</div>':'')+
+    (b.profilo?'<div class="ptv-item-profilo">Profilo: '+_escV(b.profilo)+'</div>':'')+
+    (b.abbina?'<div class="ptv-item-profilo">Va con: '+_escV(b.abbina)+'</div>':'')+'</div></div>').join('');
+}
+function _pontiDolce(d){
+  const dc = d.dessert_consigliato;
+  if(!dc) return '<div class="vista-empty">Nessun dessert consigliato.</div>';
+  return '<div class="ptv-dessert"><div class="ptv-dessert-tipo">'+_escV(dc.tipo||'Dessert consigliato')+'</div>'+
+    (dc.perche?'<div class="ptv-dessert-why">'+_escV(dc.perche)+'</div>':'')+
+    (dc.esempi&&dc.esempi.length?'<div class="ptv-dessert-lab">Esempi</div>'+dc.esempi.map(e=>'<div class="ptv-dessert-item"><span class="b"></span>'+_escV(e)+'</div>').join(''):'')+'</div>';
+}
+
+/* ═══════════════ 3. MENU BUILDER ═══════════════ */
+let _menuIngredienti = [];
+function apriMenuBuilder(){
+  _menuIngredienti = [];
+  _apriVista('Menu Builder',
+    '<div class="mbv-head"><div class="mbv-h">Costruisci per composti.</div>'+
+    '<div class="mbv-sub">Aggiungi ingredienti: Matter trova le combinazioni che dialogano, dal grafo aromatico reale.</div>'+
+    '<div class="mbv-add"><input id="mbv-input" placeholder="aggiungi un ingrediente…" onkeydown="if(event.key===\'Enter\')mbAdd()"><button onclick="mbAdd()">+</button></div>'+
+    '<div class="mbv-chips" id="mbv-chips"></div>'+
+    '<button class="mbv-go" id="mbv-go" onclick="mbProposte()" disabled>Trova le combinazioni</button></div>'+
+    '<div id="mbv-out"></div>');
+  _mbRenderChips();
+}
+function mbAdd(ing){
+  const inp = document.getElementById('mbv-input');
+  const v = (ing || (inp?inp.value:'') || '').trim().toLowerCase();
+  if(!v) return;
+  if(!_menuIngredienti.includes(v)) _menuIngredienti.push(v);
+  if(inp) inp.value = '';
+  _mbRenderChips();
+}
+function mbRemove(i){ _menuIngredienti.splice(i,1); _mbRenderChips(); }
+function _mbRenderChips(){
+  const box = document.getElementById('mbv-chips');
+  if(!box) return;
+  box.innerHTML = _menuIngredienti.map((x,i)=>'<span class="mbv-chip">'+_escV(x)+'<button onclick="mbRemove('+i+')" aria-label="Rimuovi">×</button></span>').join('')
+    || '<span class="mbv-chip-hint">Aggiungi almeno 2 ingredienti.</span>';
+  const go = document.getElementById('mbv-go');
+  if(go) go.disabled = _menuIngredienti.length < 2;
+}
+async function mbProposte(){
+  const out = document.getElementById('mbv-out');
+  out.innerHTML = '<div class="vista-loading">Cerco le combinazioni nel grafo…</div>';
+  try{
+    const r = await fetch('/v1/menu/proposte', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ ingredienti:_menuIngredienti, tipo:'piatto', lang:_vistaLang() })
+    });
+    const d = await r.json();
+    if(!d.proposte || !d.proposte.length){ out.innerHTML = '<div class="vista-empty">Nessuna combinazione forte tra questi ingredienti. Prova ad aggiungerne altri.</div>'; return; }
+    let h = (d.fonte?'<div class="mbv-fonte">'+_escV(d.fonte)+'</div>':'');
+    h += d.proposte.map(p=>{
+      const ings = (p.ingredienti||[]).map(x=>'<span class="mbv-pill">'+_escV(x)+'</span>').join('');
+      const conn = p.connessioni || (p.proof&&p.proof.connessioni_aromatiche) || 0;
+      return '<div class="mbv-prop"><div class="mbv-prop-top"><span class="mbv-prop-tipo">'+_escV(p.tipo||'combinazione')+'</span>'+
+        '<span class="mbv-prop-conn">'+conn+'<span class="u">connessioni</span></span></div>'+
+        '<div class="mbv-prop-ings">'+ings+'</div>'+
+        '<button class="mbv-prop-cta" onclick="_mbCreaRicetta(\''+_escV((p.ingredienti||[]).join(', '))+'\')">Crea un piatto →</button></div>';
+    }).join('');
+    out.innerHTML = h;
+  }catch(e){ out.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>'; }
+}
+function _mbCreaRicetta(ings){
+  chiudiVista();
+  if(typeof switchTab==='function') switchTab('chiedi');
+  const ask = document.getElementById('ask-input');
+  if(ask){ ask.value = 'Crea un piatto con '+ings; if(typeof inviaDomanda==='function') inviaDomanda(); }
 }
