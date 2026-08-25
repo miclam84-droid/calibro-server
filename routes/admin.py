@@ -5186,3 +5186,62 @@ def admin_diag_ingredienti_mancanti():
         })
     finally:
         _release_conn(conn)
+
+
+# ── ATTIVA INGREDIENTI AHN come nodi pieni (espansione con dati veri) ──
+@bp.route("/admin/attiva-ingredienti-ahn")
+def admin_attiva_ingredienti_ahn():
+    """Attiva come nodi Ingrediente gli ahn_* che hanno abbinamenti nel flavour network
+    ma non sono ancora materia prima consultabile. Nome IT dalla mappa, domini dal classificatore.
+    Espansione con DATI VERI (composti e abbinamenti già nel grafo), niente inventato."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    dry = request.args.get("dry", "1") == "1"
+    from db import _get_conn, _release_conn
+    try:
+        from nomi_ahn_it import NOMI_IT
+    except Exception:
+        NOMI_IT = {}
+    try:
+        from classificatore_domini import classifica
+    except Exception:
+        classifica = lambda x: ["cucina"]
+    conn = _get_conn(); cur = conn.cursor()
+    creati = 0; esempi = []; senza_traduzione = 0
+    try:
+        cur.execute("""
+            SELECT DISTINCT e.from_id
+            FROM edges e
+            WHERE e.relation='abbinamento_aromatico'
+            AND e.from_id LIKE 'ahn_%'
+            AND e.from_id NOT IN (SELECT id FROM nodes WHERE type='Ingrediente')
+        """)
+        da_attivare = [r[0] for r in cur.fetchall()]
+        for ahn_id in da_attivare:
+            nome_en = ahn_id.replace("ahn_", "").replace("_", " ")
+            nome_it = NOMI_IT.get(nome_en)
+            if not nome_it:
+                # niente traduzione: uso il nome EN in Title Case (meglio che scartarlo)
+                nome_it = nome_en.title()
+                senza_traduzione += 1
+            domini = classifica(nome_it)
+            data = {
+                "domini": domini, "domain": domini[0],
+                "kind": "ingredient", "visibility": "public",
+                "fonte": "Ahn 2011 (CC BY)", "attivato_da_network": True,
+                "nome_en": nome_en,
+            }
+            if not dry:
+                cur.execute(
+                    "INSERT INTO nodes (id, name, type, data) VALUES (%s,%s,'Ingrediente',%s) ON CONFLICT (id) DO NOTHING",
+                    (ahn_id, nome_it, json.dumps(data, ensure_ascii=False)))
+                creati += 1
+            if len(esempi) < 20:
+                esempi.append({"id": ahn_id, "nome_it": nome_it, "domini": domini})
+        if not dry:
+            conn.commit()
+        return jsonify({"dry_run": dry, "da_attivare": len(da_attivare), "creati": creati,
+                        "senza_traduzione_it": senza_traduzione, "esempi": esempi})
+    finally:
+        _release_conn(conn)
