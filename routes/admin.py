@@ -5210,41 +5210,40 @@ def admin_attiva_ingredienti_ahn():
     conn = _get_conn(); cur = conn.cursor()
     creati = 0; esempi = []; senza_traduzione = 0
     try:
-        # conteggio PRIMA, per verificare quanti ne creiamo davvero
+        # conteggio PRIMA
         cur.execute("SELECT count(*) FROM nodes WHERE type='Ingrediente'")
         prima = cur.fetchone()[0]
+        # gli ahn_* del flavour network ESISTONO GIÀ come type='Prodotto'.
+        # Non vanno inseriti: vanno RI-ETICHETTATI a 'Ingrediente' (con domini), così
+        # diventano materia prima consultabile. Sono ingredienti veri con composti e abbinamenti.
         cur.execute("""
-            SELECT DISTINCT e.from_id
-            FROM edges e
+            SELECT DISTINCT n.id, n.name, n.data
+            FROM nodes n
+            JOIN edges e ON e.from_id = n.id
             WHERE e.relation='abbinamento_aromatico'
-            AND e.from_id LIKE 'ahn_%'
-            AND e.from_id NOT IN (SELECT id FROM nodes WHERE type='Ingrediente')
+            AND n.id LIKE 'ahn_%'
+            AND n.type = 'Prodotto'
         """)
-        da_attivare = [r[0] for r in cur.fetchall()]
-        for ahn_id in da_attivare:
-            nome_en = ahn_id.replace("ahn_", "").replace("_", " ")
-            nome_it = NOMI_IT.get(nome_en)
-            if not nome_it:
-                nome_it = nome_en.title()
+        da_attivare = cur.fetchall()
+        for nid, name, data in da_attivare:
+            nome_en = nid.replace("ahn_", "").replace("_", " ")
+            # se il name è già italiano curato lo tengo, altrimenti traduco
+            nome_it = name if (name and name != nome_en) else NOMI_IT.get(nome_en, (name or nome_en.title()))
+            if nome_it == nome_en.title():
                 senza_traduzione += 1
             domini = classifica(nome_it)
-            dominio_principale = domini[0]
-            data = {
-                "domini": domini, "domain": dominio_principale,
-                "kind": "ingredient", "visibility": "public",
-                "fonte": "Ahn 2011 (CC BY)", "attivato_da_network": True,
-                "nome_en": nome_en,
-            }
+            d = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            d["domini"] = domini
+            d.setdefault("kind", "ingredient")
+            d.setdefault("visibility", "public")
             if not dry:
-                # schema corretto a 5 colonne: id, type, name, domain, data (come gli altri insert)
                 cur.execute(
-                    "INSERT INTO nodes (id, type, name, domain, data) VALUES (%s,'Ingrediente',%s,%s,%s) ON CONFLICT (id) DO NOTHING",
-                    (ahn_id, nome_it, dominio_principale, json.dumps(data, ensure_ascii=False)))
+                    "UPDATE nodes SET type='Ingrediente', name=%s, domain=%s, data=%s WHERE id=%s",
+                    (nome_it, domini[0], json.dumps(d, ensure_ascii=False), nid))
             if len(esempi) < 20:
-                esempi.append({"id": ahn_id, "nome_it": nome_it, "domini": domini})
+                esempi.append({"id": nid, "nome_it": nome_it, "domini": domini})
         if not dry:
             conn.commit()
-            # conteggio DOPO: quanti ne sono davvero entrati
             cur.execute("SELECT count(*) FROM nodes WHERE type='Ingrediente'")
             dopo = cur.fetchone()[0]
             creati = dopo - prima
