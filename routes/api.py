@@ -3177,3 +3177,44 @@ def vino_per_piatto():
         "suggerimenti": suggerimenti,
         "nota": "Il vino dialoga col piatto: l'acidità pulisce il grasso, il tannino sgrassa, la bollicina rinfresca il fritto.",
     })
+
+
+# ── PONTI TRA DISCIPLINE (il dialogo della Bibbia) ──
+@bp.route("/v1/birra-per-piatto")
+def birra_per_piatto_endpoint():
+    """Dato un piatto, suggerisce le categorie di birra che dialogano, col perché."""
+    piatto = (request.args.get("piatto", "") or request.args.get("q", "")).strip()
+    if not piatto:
+        return jsonify({"errore": "specifica ?piatto=..."}), 400
+    try:
+        from dialogo_discipline import birra_per_piatto
+        return jsonify({"piatto": piatto, "birre_in_dialogo": birra_per_piatto(piatto),
+                        "nota": "La birra dialoga col piatto: l'amaro del luppolo taglia il grasso, il malto richiama la Maillard."})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/v1/dolce-per-menu")
+def dolce_per_menu_endpoint():
+    """Dato il carattere del menu, suggerisce il dessert che lo chiude (dialogo pasticceria↔cucina)."""
+    menu = (request.args.get("menu", "") or request.args.get("q", "")).strip()
+    if not menu:
+        return jsonify({"errore": "specifica ?menu=... (es. 'menu di pesce leggero')"}), 400
+    try:
+        from dialogo_discipline import dolce_per_menu
+        return jsonify({"menu": menu, "dessert_consigliato": dolce_per_menu(menu)})
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/v1/creativita-bar/<spirito>")
+def creativita_bar_endpoint(spirito):
+    """Dato un distillato, dà spunti per CREARE nuove ricette (il canovaccio del barman creativo)."""
+    try:
+        from dialogo_discipline import distillato_creativita
+        d = distillato_creativita(spirito)
+        if not d:
+            return jsonify({"errore": f"distillato '{spirito}' non in archivio", "disponibili": ["gin", "rum", "whisky", "tequila", "vodka", "cognac"]}), 404
+        return jsonify(d)
+    except Exception as e:
+        return jsonify({"errore": str(e)}), 500
