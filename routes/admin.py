@@ -5210,6 +5210,9 @@ def admin_attiva_ingredienti_ahn():
     conn = _get_conn(); cur = conn.cursor()
     creati = 0; esempi = []; senza_traduzione = 0
     try:
+        # conteggio PRIMA, per verificare quanti ne creiamo davvero
+        cur.execute("SELECT count(*) FROM nodes WHERE type='Ingrediente'")
+        prima = cur.fetchone()[0]
         cur.execute("""
             SELECT DISTINCT e.from_id
             FROM edges e
@@ -5222,26 +5225,30 @@ def admin_attiva_ingredienti_ahn():
             nome_en = ahn_id.replace("ahn_", "").replace("_", " ")
             nome_it = NOMI_IT.get(nome_en)
             if not nome_it:
-                # niente traduzione: uso il nome EN in Title Case (meglio che scartarlo)
                 nome_it = nome_en.title()
                 senza_traduzione += 1
             domini = classifica(nome_it)
+            dominio_principale = domini[0]
             data = {
-                "domini": domini, "domain": domini[0],
+                "domini": domini, "domain": dominio_principale,
                 "kind": "ingredient", "visibility": "public",
                 "fonte": "Ahn 2011 (CC BY)", "attivato_da_network": True,
                 "nome_en": nome_en,
             }
             if not dry:
+                # schema corretto a 5 colonne: id, type, name, domain, data (come gli altri insert)
                 cur.execute(
-                    "INSERT INTO nodes (id, name, type, data) VALUES (%s,%s,'Ingrediente',%s) ON CONFLICT (id) DO NOTHING",
-                    (ahn_id, nome_it, json.dumps(data, ensure_ascii=False)))
-                creati += 1
+                    "INSERT INTO nodes (id, type, name, domain, data) VALUES (%s,'Ingrediente',%s,%s,%s) ON CONFLICT (id) DO NOTHING",
+                    (ahn_id, nome_it, dominio_principale, json.dumps(data, ensure_ascii=False)))
             if len(esempi) < 20:
                 esempi.append({"id": ahn_id, "nome_it": nome_it, "domini": domini})
         if not dry:
             conn.commit()
-        return jsonify({"dry_run": dry, "da_attivare": len(da_attivare), "creati": creati,
-                        "senza_traduzione_it": senza_traduzione, "esempi": esempi})
+            # conteggio DOPO: quanti ne sono davvero entrati
+            cur.execute("SELECT count(*) FROM nodes WHERE type='Ingrediente'")
+            dopo = cur.fetchone()[0]
+            creati = dopo - prima
+        return jsonify({"dry_run": dry, "da_attivare": len(da_attivare), "creati_davvero": creati,
+                        "totale_prima": prima, "senza_traduzione_it": senza_traduzione, "esempi": esempi})
     finally:
         _release_conn(conn)
