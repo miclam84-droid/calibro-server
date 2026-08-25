@@ -1599,6 +1599,55 @@ def abbina(ingrediente):
             abbinamenti_dedup.append(a)
             if len(abbinamenti_dedup) >= 15:
                 break
+        # ── ABBINAMENTI SORPRENDENTI (puramente ADDITIVI) ──
+        # Il flavour network premia lo scontato (i primi per overlap sono i parenti stretti:
+        # fragola->mela). Facciamo emergere ANCHE il sorprendente-fondato: overlap medio-alto
+        # ma di categoria diversa (fragola->basilico). NON si toglie nulla degli scontati:
+        # i classici restano tutti, i sorprendenti si AGGIUNGONO in fondo. Marcati "sorprendente".
+        try:
+            _CATEGORIE = {
+                "frutta": {"mela","pera","fragola","lampone","mirtillo","arancia","limone","lime","banana",
+                           "ananas","mango","cocco","pesca","albicocca","prugna","ciliegia","uva","melone",
+                           "anguria","fico","kiwi","melograno","pompelmo","guava","mora","ribes"},
+                "erba": {"basilico","prezzemolo","rosmarino","timo","menta","salvia","origano","maggiorana",
+                         "aneto","dragoncello","coriandolo","alloro","erba cipollina","citronella"},
+                "spezia": {"pepe nero","peperoncino","cannella","zenzero","cardamomo","curcuma","zafferano",
+                           "chiodo di garofano","noce moscata","anice stellato","liquirizia","paprika"},
+                "carne": {"manzo","pollo","maiale","agnello","tacchino","prosciutto","pancetta","guanciale"},
+                "pesce": {"salmone","tonno","gambero","merluzzo","acciuga","cozza","ostrica","granchio","polpo"},
+                "latticino": {"burro","panna","latte","formaggio","parmigiano","mozzarella","yogurt","ricotta"},
+                "ortaggio": {"pomodoro","aglio","cipolla","carota","sedano","fungo","patata","melanzana",
+                             "peperone","zucca","zucchine","broccoli","cavolfiore","spinaci","carciofo"},
+            }
+            def _categoria(nome):
+                nl = nome.lower().strip()
+                for cat, membri in _CATEGORIE.items():
+                    if nl in membri:
+                        return cat
+                return None
+            _cat_cercato = _categoria(ingrediente) or _categoria(NOMI_IT.get(_cercato, ""))
+            if _cat_cercato:
+                # tra TUTTI gli abbinamenti (non solo i top-15 già tenuti), pesca quelli di
+                # categoria diversa con overlap decente (>= 30), non già presenti nella lista.
+                _gia = {a["ingrediente"].lower() for a in abbinamenti_dedup}
+                _sorprendenti = []
+                for a in sorted(abbinamenti, key=lambda x: -x["overlap"]):
+                    nl = a["ingrediente"].lower().strip()
+                    if nl in _gia or nl == _cercato:
+                        continue
+                    cat_a = _categoria(a["ingrediente"])
+                    if cat_a and cat_a != _cat_cercato and a["overlap"] >= 30:
+                        b = dict(a)
+                        b["sorprendente"] = True
+                        b["perche"] = f"sorprendente: {a['perche']} pur essendo di un'altra famiglia ({cat_a})"
+                        _sorprendenti.append(b)
+                        _gia.add(nl)
+                    if len(_sorprendenti) >= 3:
+                        break
+                # ADDITIVO: i classici restano TUTTI, i sorprendenti si aggiungono in fondo.
+                abbinamenti_dedup = abbinamenti_dedup + _sorprendenti
+        except Exception:
+            pass
         abbinamenti = abbinamenti_dedup
         abbinamenti_puliti = _pulisci_abbinamenti(abbinamenti)
         # FALLBACK AI: se dopo la pulizia restano troppo pochi abbinamenti,
