@@ -141,6 +141,17 @@ def _carica_tutto():
                 _aggiungi(p["nome"], p["chiave"], p["firma"], cucina, cucina, p.get("disc", "cucina"))
     except Exception:
         pass
+    # Bar IBA + pasticceria/panificazione extra
+    try:
+        from mappa_bar_iba import BAR_IBA as _BAR, PASTICCERIA_EXTRA as _PAST, PANIFICAZIONE_EXTRA as _PANI
+        for p in _BAR:
+            _aggiungi(p["nome"], p["chiave"], p["firma"], "Bar / Cocktail", "Bar / Cocktail", "bar")
+        for p in _PAST:
+            _aggiungi(p["nome"], p["chiave"], p["firma"], "Italia", "Pasticceria", "pasticceria")
+        for p in _PANI:
+            _aggiungi(p["nome"], p["chiave"], p["firma"], "Italia", "Panificazione", "panificazione")
+    except Exception:
+        pass
 
     return list(piatti.values())
 

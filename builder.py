@@ -116,21 +116,8 @@ def _cerca_piatto_canonico(richiesta):
     """Cerca se la richiesta corrisponde a un piatto canonico noto (mappa verificata).
     Ritorna il dict del piatto {nome, firma, chiave, regione} o None. L'AI non inventa gli ingredienti-firma."""
     try:
-        from mappa_italia_regioni import tutti_i_piatti_italia
-        req = (richiesta or "").lower()
-        piatti = tutti_i_piatti_italia()
-        # match: il nome del piatto (o una sua parola forte) compare nella richiesta
-        migliore = None
-        for p in piatti:
-            nome_l = p["nome"].lower()
-            # match diretto sul nome completo
-            if nome_l in req or req in nome_l:
-                return p
-            # match su parola forte del nome (>=5 lettere) presente nella richiesta
-            parole = [w for w in nome_l.replace("'", " ").split() if len(w) >= 5]
-            if parole and all(w in req for w in parole[:2]):
-                migliore = p
-        return migliore
+        from mappa_piatti import cerca_piatto
+        return cerca_piatto(richiesta)
     except Exception:
         return None
 
@@ -140,7 +127,12 @@ def _blocco_knowledge_tecnico(richiesta, disciplina="cucina", ingredienti=None):
     Isolato in try/except: se il modulo manca, la generazione continua senza grounding."""
     try:
         from knowledge_tecnico import blocco_grounding
-        return blocco_grounding(richiesta, disciplina, ingredienti)
+        blocco = blocco_grounding(richiesta, disciplina, ingredienti)
+        # per il bar, aggiungi le regole tecniche dei cocktail (mescolato vs shakerato)
+        if disciplina == "bar":
+            from knowledge_tecnico import blocco_grounding_bar
+            blocco += blocco_grounding_bar(richiesta)
+        return blocco
     except Exception:
         return ""
 
