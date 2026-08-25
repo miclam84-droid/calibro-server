@@ -225,6 +225,18 @@ def genera_ricetta_endpoint():
         risultato = genera_ricetta(db, richiesta, disciplina=disciplina, lang="it")
         if risultato.get("errore"):
             return jsonify(risultato), 422
+        # VERIFICA ANTI-ERESIE: controlla la ricetta contro le regole canoniche (no panna nella carbonara ecc.)
+        try:
+            from verificatore_ricette import verifica_ricetta
+            verifica = verifica_ricetta(risultato.get("nome",""), risultato.get("ingredienti",[]))
+            risultato["_verifica"] = verifica
+            # se ci sono ERESIE GRAVI, non salvo automaticamente: serve revisione (verifica SEMPRE)
+            if not verifica["ok"]:
+                salva = False
+                risultato["_bloccata"] = True
+                risultato["_motivo_blocco"] = verifica["errori_gravi"]
+        except Exception as _ve:
+            risultato["_verifica"] = {"ok": True, "nota": "verificatore non disponibile"}
         # salvataggio opzionale — salva TUTTI i campi, incluse procedimento/applicazioni e le 3 lingue
         if salva and risultato.get("nome"):
             try:
