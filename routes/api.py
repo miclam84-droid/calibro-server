@@ -3106,3 +3106,74 @@ def admin_collega_ponti():
         try: conn.rollback(); _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)}), 500
+
+
+# ── CARTA DEI VINI PER CATEGORIE (il canovaccio del sommelier) ──
+@bp.route("/v1/carta-vini")
+def carta_vini_endpoint():
+    """Ritorna la carta dei vini organizzata per categoria (rossi corposi, bianchi freschi,
+    bollicine, ecc.) con profilo e abbinamenti. Il canovaccio per costruire la carta."""
+    try:
+        from carta_vini import CARTA_VINI
+    except Exception as e:
+        return jsonify({"errore": f"carta non disponibile: {e}"}), 500
+    categoria = request.args.get("categoria", "").strip()
+    if categoria and categoria in CARTA_VINI:
+        return jsonify({"categoria": categoria, "dettaglio": CARTA_VINI[categoria]})
+    # tutta la carta, sintetica
+    return jsonify({
+        "categorie": list(CARTA_VINI.keys()),
+        "carta": CARTA_VINI,
+        "nota": "Carta dei vini per categorie — canovaccio del sommelier. Usa ?categoria=... per una sola.",
+    })
+
+
+# ── DIALOGO VINO ↔ MENU: dato un piatto/ingrediente, suggerisci la categoria di vino ──
+@bp.route("/v1/vino-per-piatto")
+def vino_per_piatto():
+    """Dato un piatto o ingrediente-chiave, suggerisce quali categorie di vino dialogano,
+    col perché scientifico. Il ponte tra la carta dei vini e il menu dello chef."""
+    piatto = (request.args.get("piatto", "") or request.args.get("q", "")).strip().lower()
+    if not piatto:
+        return jsonify({"errore": "specifica ?piatto=..."}), 400
+    try:
+        from carta_vini import CARTA_VINI
+    except Exception as e:
+        return jsonify({"errore": f"carta non disponibile: {e}"}), 500
+    # regole di dialogo: parole-chiave del piatto -> categorie di vino adatte
+    REGOLE = [
+        (["brasato", "selvaggina", "cinghiale", "arrosto", "stracotto", "cervo"], ["Rossi corposi"]),
+        (["ragù", "lasagne", "pasta al forno", "agnello", "arrosticini", "carne"], ["Rossi medi", "Rossi corposi"]),
+        (["pizza", "salumi", "prosciutto", "pancetta", "tortellini"], ["Rossi medi", "Bollicine"]),
+        (["pesce", "crudo", "ostrica", "vongole", "frutti di mare", "gambero", "branzino", "orata"], ["Bianchi freschi", "Bollicine"]),
+        (["fritto", "frittura", "tempura", "paranza"], ["Bollicine", "Bianchi freschi"]),
+        (["mozzarella", "burrata", "formaggio fresco", "latticini"], ["Bianchi freschi", "Bollicine"]),
+        (["risotto", "zuppa", "crema", "cremoso"], ["Bianchi strutturati", "Bianchi freschi"]),
+        (["formaggio stagionato", "pecorino", "parmigiano", "erborinato", "gorgonzola"], ["Rossi corposi", "Dolci e da meditazione"]),
+        (["dolce", "torta", "cioccolato", "pasticceria", "cantucci", "crostata"], ["Dolci e da meditazione", "Bollicine"]),
+        (["aperitivo", "stuzzichini", "antipasti"], ["Bollicine", "Bianchi freschi"]),
+    ]
+    categorie_suggerite = []
+    for chiavi, categorie in REGOLE:
+        if any(k in piatto for k in chiavi):
+            for c in categorie:
+                if c not in categorie_suggerite:
+                    categorie_suggerite.append(c)
+    if not categorie_suggerite:
+        categorie_suggerite = ["Rossi medi", "Bianchi freschi"]  # default versatile
+    # costruisci la risposta con i vini di quelle categorie
+    suggerimenti = []
+    for cat in categorie_suggerite[:3]:
+        dati = CARTA_VINI.get(cat, {})
+        vini = dati.get("vini", [])
+        suggerimenti.append({
+            "categoria": cat,
+            "descrizione": dati.get("descrizione", ""),
+            "vini_consigliati": [{"nome": v["nome"], "territorio": v["territorio"], "perche": v["perche"]} for v in vini[:3]],
+        })
+    return jsonify({
+        "piatto": piatto,
+        "categorie_in_dialogo": categorie_suggerite,
+        "suggerimenti": suggerimenti,
+        "nota": "Il vino dialoga col piatto: l'acidità pulisce il grasso, il tannino sgrassa, la bollicina rinfresca il fritto.",
+    })
