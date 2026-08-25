@@ -5091,9 +5091,14 @@ def admin_inserisci_materia_prima():
     dry = request.args.get("dry", "1") == "1"
     from db import _get_conn, _release_conn
     try:
-        from nuova_materia_prima import MATERIA_PRIMA
+        from nuova_materia_prima import MATERIA_PRIMA as _MP1
     except Exception as e:
         return jsonify({"errore": f"import: {e}"}), 500
+    try:
+        from materia_prima_discipline import MATERIA_PRIMA_DISC as _MP2
+    except Exception:
+        _MP2 = []
+    MATERIA_PRIMA = list(_MP1) + list(_MP2)
     conn = _get_conn(); cur = conn.cursor()
     inseriti = 0; gia_presenti = 0; esempi = []
     try:
