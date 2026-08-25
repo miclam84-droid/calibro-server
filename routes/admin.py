@@ -5215,12 +5215,14 @@ def admin_attiva_ingredienti_ahn():
         prima = cur.fetchone()[0]
         # gli ahn_* del flavour network ESISTONO GIÀ come type='Prodotto'.
         # Non vanno inseriti: vanno RI-ETICHETTATI a 'Ingrediente' (con domini), così
-        # diventano materia prima consultabile. Sono ingredienti veri con composti e abbinamenti.
+        # diventano materia prima consultabile. Sono ingredienti veri con composti.
+        # Prendiamo TUTTI gli ahn_ Prodotto che hanno almeno un composto (contiene_composto):
+        # anche senza archi Ahn diretti, il flavour network calcola gli abbinamenti dai composti.
         cur.execute("""
             SELECT DISTINCT n.id, n.name, n.data
             FROM nodes n
             JOIN edges e ON e.from_id = n.id
-            WHERE e.relation='abbinamento_aromatico'
+            WHERE e.relation='contiene_composto'
             AND n.id LIKE 'ahn_%'
             AND n.type = 'Prodotto'
         """)
