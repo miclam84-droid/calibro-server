@@ -112,6 +112,39 @@ def _fenomeni_pertinenti(db, richiesta, disciplina, limite=10):
     return pertinenti
 
 
+def _cerca_piatto_canonico(richiesta):
+    """Cerca se la richiesta corrisponde a un piatto canonico noto (mappa verificata).
+    Ritorna il dict del piatto {nome, firma, chiave, regione} o None. L'AI non inventa gli ingredienti-firma."""
+    try:
+        from mappa_italia_regioni import tutti_i_piatti_italia
+        req = (richiesta or "").lower()
+        piatti = tutti_i_piatti_italia()
+        # match: il nome del piatto (o una sua parola forte) compare nella richiesta
+        migliore = None
+        for p in piatti:
+            nome_l = p["nome"].lower()
+            # match diretto sul nome completo
+            if nome_l in req or req in nome_l:
+                return p
+            # match su parola forte del nome (>=5 lettere) presente nella richiesta
+            parole = [w for w in nome_l.replace("'", " ").split() if len(w) >= 5]
+            if parole and all(w in req for w in parole[:2]):
+                migliore = p
+        return migliore
+    except Exception:
+        return None
+
+
+def _blocco_knowledge_tecnico(richiesta, disciplina="cucina", ingredienti=None):
+    """Inietta le regole tecniche verificate (grounding) pertinenti alla richiesta.
+    Isolato in try/except: se il modulo manca, la generazione continua senza grounding."""
+    try:
+        from knowledge_tecnico import blocco_grounding
+        return blocco_grounding(richiesta, disciplina, ingredienti)
+    except Exception:
+        return ""
+
+
 def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
     """Genera una ricetta strutturata a partire da una richiesta libera.
     richiesta: es. 'un dolce al cioccolato', 'cocktail al gin agrumato', 'pane con le noci'
@@ -121,6 +154,9 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
     ma è vincolata a usare fenomeni/tecniche/numeri forniti nel contesto.
     """
     from ai import chiedi_mistral, estrai_entita
+
+    # 0) è un piatto CANONICO noto? Se sì, uso gli ingredienti-firma VERIFICATI (l'AI non li inventa)
+    piatto_canonico = _cerca_piatto_canonico(richiesta)
 
     # 1) raccogli contesto reale dal grafo
     tecniche = _nodi_tecniche(db, disciplina)
@@ -165,7 +201,16 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f"Se un passaggio richiede un numero che NON trovi qui sotto, scrivilo in modo QUALITATIVO "
         f"(es. 'a fuoco basso', 'finché non vela il cucchiaio') SENZA inventare una cifra precisa. "
         f"Un numero sbagliato è molto peggio di nessun numero.\n\n"
-        f"DATI REALI DISPONIBILI (l'unica fonte di numeri consentita):\n"
+        + (
+            f"PIATTO CANONICO (verificato): '{piatto_canonico['nome']}' ({piatto_canonico.get('regione','Italia')}). "
+            f"Gli ingredienti-firma OBBLIGATORI sono: {', '.join(piatto_canonico['firma'])}. "
+            f"USA QUESTI ingredienti (puoi aggiungere solo sale/acqua/olio di supporto). "
+            f"NON sostituire mai un ingrediente-firma con un'alternativa estera (es. MAI 'bacon' al posto del guanciale, "
+            f"MAI 'panna' se non è nella firma). Rispetta la tradizione della regione.\n\n"
+            if piatto_canonico else ""
+        )
+        + _blocco_knowledge_tecnico(richiesta, disciplina)
+        + f"DATI REALI DISPONIBILI (l'unica fonte di numeri consentita):\n"
         f"FENOMENI CON NUMERI BERSAGLIO: {fen_str}\n\n"
         f"TECNICHE DISPONIBILI: {tec_str}\n\n"
         + (f"ABBINAMENTI AROMATICI (per analogia): {abb_str}\n\n" if abb_str else "")
