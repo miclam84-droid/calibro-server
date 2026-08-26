@@ -2267,7 +2267,7 @@ function mostraOnb4(){
   o.innerHTML =
     '<div class="onb4-in">'
     + '<div class="onb4-prog"><div class="seg on" id="onb4-s0"></div><div class="seg" id="onb4-s1"></div><div class="seg" id="onb4-s2"></div></div>'
-    + '<button class="onb4-skip" onclick="chiudiOnb4()">Salta</button>'
+    + '<button class="onb4-skip" onclick="chiudiOnb4()">Salta →</button>'
     // schermata 0
     + '<div class="onb4-screen active" id="onb4-sc0">'
     +   '<div class="onb4-eye">Numeri. Non opinioni.</div>'
@@ -2281,9 +2281,9 @@ function mostraOnb4(){
     // schermata 2 — wow
     + '<div class="onb4-screen" id="onb4-sc2"><div class="onb4-eye">La risposta</div><div class="onb4-h" id="onb4-wowh" style="font-size:22px;margin-bottom:14px"></div><div class="onb4-chat" id="onb4-chat"></div><button class="onb4-btn" onclick="onb4Go(3)">Ora provalo tu →</button></div>'
     // schermata 3 — misura
-    + '<div class="onb4-screen" id="onb4-sc3"><div class="onb4-eye">La tua prima misura</div><div class="onb4-h" style="font-size:23px">Inserisci il tuo valore.</div><div class="onb4-sub">Come faresti al banco adesso. Vediamo quanto sei dentro la finestra.</div>'
+    + '<div class="onb4-screen" id="onb4-sc3"><div class="onb4-eye">La tua prima misura</div><div class="onb4-h" style="font-size:23px">Inserisci il tuo valore.</div><div class="onb4-sub">Come faresti al banco adesso. Se non ce l\'hai sottomano, puoi entrare e misurare dopo.</div>'
     +   '<div class="onb4-meas"><div class="onb4-meas-lab" id="onb4-mlab">La tua misura</div><div class="onb4-field"><input type="text" inputmode="decimal" id="onb4-input" oninput="onb4Check()"><span class="u" id="onb4-munit"></span></div><div class="onb4-hint" id="onb4-hint"></div><div class="onb4-res" id="onb4-res"><div class="onb4-res-s" id="onb4-scarto"></div><div class="onb4-res-t" id="onb4-rtxt"></div></div></div>'
-    +   '<button class="onb4-btn" id="onb4-enter" onclick="chiudiOnb4(true)" disabled>Entra in Matter</button>'
+    +   '<button class="onb4-btn" id="onb4-enter" onclick="chiudiOnb4()">Entra in Matter →</button>'
     + '</div>'
     + '</div>';
   o.classList.add('show');
@@ -2317,8 +2317,8 @@ function onb4Go(n){
 function onb4Check(){
   var s=_onb4Station; if(!s) return;
   var v=parseFloat((document.getElementById('onb4-input').value||'').replace(',','.'));
-  var res=document.getElementById('onb4-res'), enter=document.getElementById('onb4-enter');
-  if(isNaN(v)){ res.classList.remove('show'); enter.disabled=true; return; }
+  var res=document.getElementById('onb4-res');
+  if(isNaN(v)){ res.classList.remove('show'); return; }
   var nums=String(s.target).split(/[–-]/).map(function(x){return parseFloat(x);});
   var lo=nums[0], hi=nums[1]||nums[0], scarto, txt;
   if(v<lo){ scarto='−'+(lo-v).toFixed(1); txt='Sei sotto la finestra. Manca poco per centrare il bersaglio.'; }
@@ -2326,7 +2326,7 @@ function onb4Check(){
   else { scarto='In finestra'; txt='Sei nel bersaglio. Questo è il valore che rende il risultato ripetibile.'; }
   document.getElementById('onb4-scarto').textContent=scarto;
   document.getElementById('onb4-rtxt').textContent=txt;
-  res.classList.add('show'); enter.disabled=false;
+  res.classList.add('show');
 }
 function chiudiOnb4(){
   try{ localStorage.setItem('matter_onb_done','1'); if(_onb4Station) localStorage.setItem('matter_station', _onb4Station.disc); }catch(e){}

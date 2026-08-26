@@ -1787,7 +1787,7 @@ a:focus-visible,input:focus-visible{
 .onb4-prog .seg{flex:1;height:3px;border-radius:2px;background:var(--line,#B7C3C3)}
 .onb4-prog .seg.on{background:var(--target,#245979)}
 .onb4-prog .seg.done{background:var(--teal,#12545D)}
-.onb4-skip{position:absolute;top:13px;right:18px;font-size:13px;color:var(--muted-2,#7A898E);background:none;border:none;cursor:pointer;font-family:var(--sans);z-index:5}
+.onb4-skip{position:absolute;top:11px;right:14px;font-size:14px;font-weight:600;color:var(--ink,#131C21);background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:8px;padding:8px 14px;min-height:40px;cursor:pointer;font-family:var(--sans);z-index:10}
 .onb4-screen{flex:1;display:none;flex-direction:column;padding:24px 20px 20px;overflow-y:auto}
 .onb4-screen.active{display:flex}
 @keyframes onb4Up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
