@@ -3150,7 +3150,7 @@ def vino_per_piatto():
         (["mozzarella", "burrata", "formaggio fresco", "latticini"], ["Bianchi freschi", "Bollicine"]),
         (["risotto", "zuppa", "crema", "cremoso"], ["Bianchi strutturati", "Bianchi freschi"]),
         (["formaggio stagionato", "pecorino", "parmigiano", "erborinato", "gorgonzola"], ["Rossi corposi", "Dolci e da meditazione"]),
-        (["dolce", "torta", "cioccolato", "pasticceria", "cantucci", "crostata"], ["Dolci e da meditazione", "Bollicine"]),
+        (["dolce", "torta", "cioccolato", "pasticceria", "cantucci", "crostata", "tiramisu", "tiramisù", "panna cotta", "cheesecake", "gelato", "semifreddo", "profiterole", "babà", "baba", "cannolo", "sfogliatella", "millefoglie", "zabaione", "mousse", "budino", "dessert"], ["Dolci e da meditazione", "Bollicine"]),
         (["aperitivo", "stuzzichini", "antipasti"], ["Bollicine", "Bianchi freschi"]),
     ]
     categorie_suggerite = []
@@ -3348,7 +3348,8 @@ def _prezzo_kg(nome):
     return best
 
 def _parse_qta(q, unita=""):
-    """Converte quantità in kg (o litri). '400'+'g' -> 0.4. 'q.b.' -> None."""
+    """Converte quantità in kg (o litri). '400'+'g' -> 0.4. 'q.b.' -> None.
+    Gestisce anche i pezzi: '4 pz' di uova/tuorli -> peso stimato."""
     import re
     s = str(q or "").lower().strip()
     if not s or "q.b" in s or "qb" in s: return None
@@ -3356,11 +3357,18 @@ def _parse_qta(q, unita=""):
     if not m: return None
     val = float(m.group(1).replace(",", "."))
     u = (unita or "").lower() + " " + s
+    # pezzi: uovo ~55g, tuorlo ~18g (gestiti a monte col nome)
+    if "pz" in u or "pezz" in u or " n" in u:
+        return ("pz", int(val))  # segnalo che è in pezzi
     if "kg" in u or "litr" in u or " l" in u: return val
     if "mg" in u: return val / 1_000_000
     if "ml" in u or " g" in u or "gr" in u or "grammi" in u: return val / 1000
-    # nessuna unità: se è un numero grande assumo grammi, se piccolo pezzi
     return val / 1000 if val >= 10 else None
+
+# peso medio per pezzo di ingredienti contati a unità (kg)
+_PESO_PEZZO = {"uovo": 0.055, "uova": 0.055, "tuorlo": 0.018, "tuorli": 0.018,
+               "albume": 0.033, "limone": 0.10, "lime": 0.07, "arancia": 0.20,
+               "cipolla": 0.15, "patata": 0.15, "pomodoro": 0.12, "melanzana": 0.25}
 
 @bp.route("/v1/ricetta/<rid>/food-cost")
 def ricetta_food_cost(rid):
@@ -3390,6 +3398,15 @@ def ricetta_food_cost(rid):
         qta = i.get("quantita", "") or i.get("quantità", "")
         unita = i.get("unita", "") or i.get("unità", "")
         kg = _parse_qta(qta, unita)
+        # se è in pezzi, converto col peso medio dell'ingrediente
+        if isinstance(kg, tuple) and kg[0] == "pz":
+            n_pezzi = kg[1]
+            nome_low = nome_i.lower()
+            peso_u = None
+            for k, v in _PESO_PEZZO.items():
+                if k in nome_low or nome_low in k:
+                    peso_u = v; break
+            kg = n_pezzi * peso_u if peso_u else None
         prezzo_kg = _prezzo_kg(nome_i)
         if kg is not None and prezzo_kg is not None:
             costo = round(kg * prezzo_kg, 2)
