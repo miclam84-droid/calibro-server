@@ -773,17 +773,23 @@ function renderMappa(disc, fens, casi){
   var html = fens.map(function(f,i){
     var isFirst = i===0;
     var stato = f.stato||'libero';
+    var su = f.stato_utente||'mai_aperto';   // stato dinamico per-utente (backend)
+    var isLock = stato!=='completato' && !isFirst && stato!=='libero';
     var nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
+    // il Mirino riflette la progressione utente, TRANNE se il fenomeno è Pro/bloccato (lucchetto vince)
+    var muClass = isLock ? 'mu-pro' : ('mu-'+su);
     var apps = f.applicazioni || [];
     var tagHtml = stato==='completato'
       ? '<span class="p-tag done">completato</span>'
       : isFirst ? '<span class="p-tag active">inizia da qui</span>'
       : '<span class="p-tag prolock">Pro</span>';
-    var svgIcon = stato==='completato'
-      ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 6"/></svg>'
-      : isFirst
-      ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'
-      : '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
+    // Mirino a stati: lucchetto se Pro; altrimenti crosshair che riflette stato_utente
+    var svgIcon = isLock
+      ? '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>'
+      : '<svg class="mu-ring" viewBox="0 0 24 24" fill="none">'
+        + '<circle class="mu-r" cx="12" cy="12" r="9" stroke-width="1.4"/>'
+        + '<circle class="mu-d" cx="12" cy="12" r="2.6"/>'
+        + '<path class="mu-cross" d="M12 1v3M12 20v3M1 12h3M20 12h3" stroke-width="1.4"/></svg>';
     var nodeStyle = stato==='lock' ? 'border:1px solid rgba(147,163,163,0.5);background:var(--surface);' : '';
     // pill applicazioni: se la madre ne ha, mostra il contatore che espande
     var appsPill = apps.length
@@ -800,7 +806,7 @@ function renderMappa(disc, fens, casi){
       : '';
     return '<div class="p-step '+(stato==='completato'?'done':'')+'">'
       + '<div class="p-step-main" style="cursor:pointer" onclick="vaiAStep('+i+')">'
-      + '<div class="pnode '+nodeClass+'" style="'+nodeStyle+'">'+svgIcon+'</div>'
+      + '<div class="pnode '+nodeClass+' '+muClass+'" style="'+nodeStyle+'">'+svgIcon+'</div>'
       + '<div class="p-info"><div class="p-name-row"><span class="p-name">'+esc(f.nome)+'</span>'+tagHtml+'</div>'
       + appsPill + '</div></div>'
       + appsList
@@ -835,6 +841,31 @@ function avviaApplicazione(fenId){
   setTimeout(function(){ _caricaLezionePerId(disc, fenId); }, 100);
 }
 
+// device-id anonimo persistente (per stato_utente prima del login). Fallback in memoria.
+var _memDeviceId = null;
+function _deviceId(){
+  try{
+    var d = localStorage.getItem('matter_device_id');
+    if(!d){ d = _uuidv4(); localStorage.setItem('matter_device_id', d); }
+    return d;
+  }catch(e){
+    if(!_memDeviceId) _memDeviceId = _uuidv4();
+    return _memDeviceId;
+  }
+}
+function _uuidv4(){
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
+    var r = Math.random()*16|0, v = c==='x'?r:(r&0x3|0x8); return v.toString(16);
+  });
+}
+// header standard per lo stato per-utente (device sempre, token se loggato)
+function _statoHeaders(extra){
+  var h = extra || {};
+  h['X-Device-Id'] = _deviceId();
+  try{ var tk = localStorage.getItem('matter_token'); if(tk) h['X-Token'] = tk; }catch(e){}
+  return h;
+}
+
 async function caricaMappa(disc){
   // rientro: se già in cache, render immediato, zero placeholder = zero salto
   if(_mappaCache[disc]){ var _c=_mappaCache[disc]; renderMappa(disc, _c.fens||_c, _c.casi||[]); return; }
@@ -845,7 +876,7 @@ async function caricaMappa(disc){
     +['80%','65%','75%','55%'].map(w=>`<div class="skel" style="height:52px;border-radius:10px;width:${w}">&nbsp;</div>`).join('')
     +'</div>';
   try {
-    const r = await fetch('/mappa/'+disc);
+    const r = await fetch('/mappa/'+disc, { headers: _statoHeaders() });
     if(!r.ok) throw new Error('server');
     const j = await r.json();
     const fens = j.fenomeni||[];
@@ -2140,7 +2171,7 @@ async function onbScegliMestiere(disc, label){
   document.getElementById('onb-f2-ey').textContent = label;
   // carico il primo fenomeno della disciplina per mostrare il primo numero
   try{
-    const r = await fetch('/mappa/'+disc);
+    const r = await fetch('/mappa/'+disc, { headers: _statoHeaders() });
     const j = await r.json();
     const primo = (j.fenomeni||[])[0];
     if(primo){
