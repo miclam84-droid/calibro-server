@@ -245,27 +245,38 @@ function _renderRicette(ricette){
     el.innerHTML='<div style="padding:20px 0;color:var(--ink-muted);font-family:var(--mono);font-size:11px;text-align:center">Nessuna ricetta disponibile per questa disciplina.</div>';
     return;
   }
-  el.innerHTML=ricette.map(r=>`
+  const esc=s=>(s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const twLabel=disc=>{const d=(disc||'').toLowerCase();return /bar|drink|cocktail|mixolog|caff|coffee/.test(d)?'Twist':'Rivisitazione';};
+  el.innerHTML=ricette.map(r=>{
+    const foto = r.immagine ? `<div class="ric-foto"><img src="${esc(r.immagine)}" alt="${esc(r.nome)}" loading="lazy" onerror="this.closest('.ric-foto').remove()">${r.immagine_autore?`<div class="ric-foto-credit">${r.immagine_url_fonte?`<a href="${esc(r.immagine_url_fonte)}" target="_blank" rel="noopener">${esc(r.immagine_autore)}</a>`:esc(r.immagine_autore)}</div>`:''}</div>` : '';
+    const numeri = (r.numeri && Object.keys(r.numeri).length) ? `<div class="ric-numeri"><div class="ric-numeri-lab">Numeri bersaglio</div>${Object.entries(r.numeri).map(([k,v])=>`<div class="ric-num-row"><span class="ric-num-k">${esc(k)}</span><span class="ric-num-v">${esc(v)}</span></div>`).join('')}</div>` : '';
+    const critico = r.punto_critico ? `<div class="ric-critico"><div class="ric-critico-lab">⚠ Punto critico</div><div class="ric-critico-txt">${esc(r.punto_critico)}</div></div>` : '';
+    const esperimento = r.esperimento ? `<div class="ric-exp"><div class="ric-exp-lab">◇ Prova al banco</div><div class="ric-exp-txt">${esc(r.esperimento)}</div></div>` : '';
+    const proc = (r.procedimento && r.procedimento.length) ? `<div class="ric-proc"><div class="ric-proc-lab">Procedimento</div>${r.procedimento.map(p=>`<div class="ric-step"><span class="ric-step-n">${esc(p.n)}</span><div class="ric-step-b"><span class="ric-step-t">${esc(p.testo)}</span>${p.numero_chiave?`<span class="ric-step-key">${esc(p.numero_chiave)}</span>`:''}</div></div>`).join('')}</div>` : '';
+    const tecniche = (r.tecniche && r.tecniche.length) ? `<div class="ric-tec"><div class="ric-tec-lab">Tecniche</div><div class="ric-tec-chips">${r.tecniche.map(t=>`<span class="ric-tec-chip">${esc(t)}</span>`).join('')}</div></div>` : '';
+    const limite = r.limite ? `<div class="ric-limite"><div class="ric-limite-lab">Quando non basta</div><div class="ric-limite-txt">${esc(r.limite)}</div></div>` : '';
+    const twist = r.twist ? `<div class="ric-twist"><div class="ric-twist-lab">${twLabel(r.disciplina)}</div><div class="ric-twist-txt">${esc(r.twist)}</div></div>` : '';
+    const ab = (r.abbinamenti && (r.abbinamenti.analogia || r.abbinamenti.contrasto)) ? `<div class="ric-abb"><div class="ric-abb-lab">Abbinamenti</div><div class="ric-abb-cols">${r.abbinamenti.analogia?`<div class="ric-abb-col"><span class="ric-abb-k">In analogia</span><span class="ric-abb-v">${esc(r.abbinamenti.analogia)}</span></div>`:''}${r.abbinamenti.contrasto?`<div class="ric-abb-col"><span class="ric-abb-k">In contrasto</span><span class="ric-abb-v">${esc(r.abbinamenti.contrasto)}</span></div>`:''}</div></div>` : '';
+    return `
     <div class="ric-card" id="ric-${r.id}" onclick="toggleRicetta('${r.id}')">
-      <div class="ric-disc">${r.disciplina}</div>
-      <div class="ric-nome">${r.nome}</div>
-      <div class="ric-desc">${r.descrizione||''}</div>
-      <div class="ric-fenomeni">${(r.fenomeni||[]).map(f=>`<span class="ric-fen-tag">${f.replace('fen-','').replace(/-/g,' ')}</span>`).join('')}</div>
+      ${foto}
+      <div class="ric-disc">${esc(r.disciplina)}</div>
+      <div class="ric-nome">${esc(r.nome)}</div>
+      <div class="ric-desc">${esc(r.descrizione||'')}</div>
+      <div class="ric-fenomeni">${(r.fenomeni||[]).map(f=>`<span class="ric-fen-tag">${esc(f.replace('fen-','').replace(/-/g,' '))}</span>`).join('')}</div>
       <div class="ric-body">
-        ${r.numeri && Object.keys(r.numeri).length ? `
-        <div class="ric-numeri">
-          <div class="ric-numeri-lab">Numeri bersaglio</div>
-          ${Object.entries(r.numeri).map(([k,v])=>`<div class="ric-num-row"><span class="ric-num-k">${k}</span><span class="ric-num-v">${v}</span></div>`).join('')}
-        </div>` : ''}
-        ${r.punto_critico ? `
-        <div class="ric-critico">
-          <div class="ric-critico-lab">⚠ Punto critico</div>
-          <div class="ric-critico-txt">${r.punto_critico}</div>
-        </div>` : ''}
+        ${numeri}
+        ${critico}
+        ${esperimento}
+        ${proc}
+        ${tecniche}
+        ${limite}
+        ${twist}
+        ${ab}
       </div>
       <div class="ric-toggle">Vedi dettagli ↓</div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function toggleRicetta(id){
