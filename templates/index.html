@@ -313,6 +313,18 @@ if('serviceWorker' in navigator){
     <span class="mtr-manifesto-claim">La mappa del laboratorio.</span>
   </div>
 
+  <!-- ACCESSO VISTE LAB (Strumenti · Creatività Bar) -->
+  <div class="vista-launch" style="padding:0 16px 8px">
+    <button class="vista-launch-btn" onclick="apriStrumenti()">
+      <svg class="vl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 4l6 6-9 9-6 1 1-6zM12 6l6 6"/></svg>
+      <span><span class="vl-t">Strumenti di misura</span><span class="vl-d">Cosa serve al banco</span></span>
+    </button>
+    <button class="vista-launch-btn" onclick="apriCreativita()">
+      <svg class="vl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3h14l-7 9zM12 12v7M8 21h8"/></svg>
+      <span><span class="vl-t">Creatività Bar</span><span class="vl-d">Crea dal distillato</span></span>
+    </button>
+  </div>
+
   <!-- ── TAB ORIZZONTALI MAPPA ── -->
   <div class="mappa-tabs" id="mappa-tabs" role="tablist">
     <button class="mappa-tab active" id="mtab-fenomeni" onclick="switchMappaTab('fenomeni')" role="tab">Fenomeni</button>

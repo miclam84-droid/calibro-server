@@ -4626,3 +4626,64 @@ function _mbCreaRicetta(ings){
   const ask = document.getElementById('ask-input');
   if(ask){ ask.value = 'Crea un piatto con '+ings; if(typeof inviaDomanda==='function') inviaDomanda(); }
 }
+
+/* ═══════════════ 4. STRUMENTI DI MISURA ═══════════════ */
+function apriStrumenti(disc){
+  const d = disc || (typeof Matter!=='undefined' && Matter.disciplina) || 'bar';
+  _apriVista('Strumenti di misura',
+    '<div class="stv-head"><div class="stv-h">Gli strumenti del banco.</div>'+
+    '<div class="stv-sub">Ogni numero-bersaglio ha lo strumento che lo misura. Cosa serve, quanto costa, dove prenderlo.</div>'+
+    '<div class="stv-discs" id="stv-discs">'+
+      ['bar','cucina','panificazione','pasticceria','gelateria','vino'].map(x=>'<span class="stv-disc'+(x===d?' on':'')+'" onclick="caricaStrumentiVista(\''+x+'\')">'+x+'</span>').join('')+
+    '</div></div><div id="stv-out"></div>');
+  caricaStrumentiVista(d);
+}
+async function caricaStrumentiVista(disc){
+  document.querySelectorAll('.stv-disc').forEach(x=>x.classList.toggle('on', x.textContent===disc));
+  const out = document.getElementById('stv-out');
+  out.innerHTML = '<div class="vista-loading">Carico gli strumenti…</div>';
+  try{
+    const r = await fetch('/v1/strumenti/'+encodeURIComponent(disc)+'?lang='+_vistaLang());
+    const d = await r.json();
+    if(!d.strumenti || !d.strumenti.length){ out.innerHTML = '<div class="vista-empty">Nessuno strumento per questa disciplina.</div>'; return; }
+    out.innerHTML = d.strumenti.map(s=>
+      '<div class="stv-card"><div class="stv-card-top"><div class="stv-card-name">'+_escV(s.nome)+'</div>'+
+      (s.prezzo_approx?'<div class="stv-card-price">'+_escV(s.prezzo_approx)+'</div>':'')+'</div>'+
+      '<div class="stv-card-meta"><span class="stv-card-misura">'+_escV(s.misura||'')+'</span>'+
+      (s.target?'<span class="stv-card-target">'+_escV(s.target)+'</span>':'')+'</div>'+
+      (s.uso?'<div class="stv-card-uso">'+_escV(s.uso)+'</div>':'')+
+      (s.amazon?'<a class="stv-card-cta" href="'+_escV(s.amazon)+'" target="_blank" rel="noopener">Cerca su Amazon →</a>':'')+
+      '</div>').join('');
+  }catch(e){ out.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>'; }
+}
+
+/* ═══════════════ 5. CREATIVITÀ BAR ═══════════════ */
+function apriCreativita(){
+  _apriVista('Creatività Bar',
+    '<div class="cbv-head"><div class="cbv-h">Parti dal distillato.</div>'+
+    '<div class="cbv-sub">Scegli uno spirito: Matter ti dà il carattere aromatico, con cosa dialoga e gli spunti per creare.</div>'+
+    '<div class="cbv-chips">'+['gin','rum','whisky','tequila','vodka','mezcal','cognac'].map(s=>'<span class="cbv-chip" onclick="caricaCreativita(\''+s+'\')">'+s+'</span>').join('')+'</div>'+
+    '</div><div id="cbv-out"></div>');
+  caricaCreativita('gin');
+}
+async function caricaCreativita(spirito){
+  document.querySelectorAll('.cbv-chip').forEach(x=>x.classList.toggle('on', x.textContent===spirito));
+  const out = document.getElementById('cbv-out');
+  out.innerHTML = '<div class="vista-loading">Leggo il profilo del distillato…</div>';
+  try{
+    const r = await fetch('/v1/creativita-bar/'+encodeURIComponent(spirito)+'?lang='+_vistaLang());
+    const d = await r.json();
+    let h = '<div class="cbv-center"><div class="cbv-center-lab">◉ Distillato</div><div class="cbv-center-name">'+_escV(d.distillato||spirito)+'</div>'+
+      (d.carattere?'<div class="cbv-center-car">'+_escV(d.carattere)+'</div>':'')+'</div>';
+    if(d.abbina_bar) h += '<div class="cbv-block"><div class="cbv-block-lab">Dialoga con</div><div class="cbv-block-txt">'+_escV(d.abbina_bar)+'</div></div>';
+    if(d.spunti) h += '<div class="cbv-block cbv-spunti"><div class="cbv-block-lab">Spunti per creare</div><div class="cbv-block-txt">'+_escV(d.spunti)+'</div></div>';
+    h += '<button class="cbv-cta" onclick="_creativitaCrea(\''+_escV(d.distillato||spirito)+'\')">Crea un cocktail con '+_escV(d.distillato||spirito)+' →</button>';
+    out.innerHTML = h;
+  }catch(e){ out.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>'; }
+}
+function _creativitaCrea(spirito){
+  chiudiVista();
+  if(typeof switchTab==='function') switchTab('chiedi');
+  const ask = document.getElementById('ask-input');
+  if(ask){ ask.value = 'Crea un cocktail con '+spirito; if(typeof inviaDomanda==='function') inviaDomanda(); }
+}
