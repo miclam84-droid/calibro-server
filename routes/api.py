@@ -3443,3 +3443,74 @@ def ricetta_food_cost(rid):
         except Exception:
             pass
     return jsonify(out)
+
+
+# ── DRINK COST (per i cocktail: dosi in ml × prezzi distillati/ingredienti) ──
+_PREZZI_BAR = {  # €/litro per i liquidi da bar (in aggiunta a _PREZZI_FC)
+    "gin": 15.00, "vodka": 10.00, "rum": 11.00, "rum bianco": 10.00, "rum scuro": 12.00,
+    "whisky": 18.00, "whiskey": 18.00, "bourbon": 16.00, "tequila": 18.00, "mezcal": 25.00,
+    "cognac": 30.00, "brandy": 18.00, "grappa": 12.00,
+    "vermouth": 9.00, "vermouth rosso": 9.00, "vermouth dry": 9.00, "vermut": 9.00,
+    "bitter": 14.00, "campari": 14.00, "aperol": 12.00, "amaro": 15.00,
+    "triple sec": 12.00, "cointreau": 22.00, "curacao": 14.00, "maraschino": 20.00,
+    "prosecco": 4.50, "spumante": 5.00, "champagne": 25.00, "vino bianco": 3.00, "vino rosso": 3.50,
+    "succo di limone": 2.00, "succo di lime": 3.00, "succo d'arancia": 1.50, "succo di pompelmo": 2.50,
+    "sciroppo di zucchero": 3.00, "sciroppo": 4.00, "soda": 0.80, "tonica": 1.50, "acqua tonica": 1.50,
+    "ginger beer": 2.50, "cola": 1.20, "caffè": 6.00, "espresso": 6.00, "latte": 0.95,
+    "albume": 3.00, "bianco d'uovo": 3.00, "angostura": 40.00, "bitters": 40.00,
+}
+
+def _prezzo_litro_bar(nome):
+    n = (nome or "").lower().strip()
+    if n in _PREZZI_BAR: return _PREZZI_BAR[n]
+    best = None; best_len = 0
+    for k, v in _PREZZI_BAR.items():
+        if (k in n or n in k) and len(k) > best_len:
+            best = v; best_len = len(k)
+    if best is not None: return best
+    # fallback sui prezzi food (per ingredienti tipo frutta)
+    return _prezzo_kg(nome)
+
+@bp.route("/v1/drink-cost", methods=["POST"])
+def drink_cost():
+    """Calcola il DRINK COST di un cocktail: dosi in ml × prezzi (distillati, mixer, ecc.).
+    Body: {nome, ingredienti:[{nome, ml}], prezzo_vendita?}. Fonte prezzi: medi di distribuzione."""
+    body = request.json or {}
+    nome = body.get("nome", "Cocktail")
+    ingredienti = body.get("ingredienti", []) or []
+    if not ingredienti:
+        return jsonify({"errore": "servono gli ingredienti con le dosi in ml"}), 400
+    voci = []; costo_totale = 0.0; mancanti = 0
+    for i in ingredienti:
+        if not isinstance(i, dict): continue
+        nome_i = i.get("nome", "")
+        ml = i.get("ml") or i.get("quantita") or 0
+        try: ml = float(str(ml).replace(",", "."))
+        except Exception: ml = 0
+        prezzo_l = _prezzo_litro_bar(nome_i)
+        if ml > 0 and prezzo_l is not None:
+            costo = round((ml / 1000) * prezzo_l, 3)
+            costo_totale += costo
+            voci.append({"ingrediente": nome_i, "ml": ml, "prezzo_litro": prezzo_l, "costo": round(costo, 2)})
+        else:
+            voci.append({"ingrediente": nome_i, "ml": ml, "costo": None,
+                         "nota": "prezzo non disponibile" if prezzo_l is None else "dose mancante"})
+            if prezzo_l is None: mancanti += 1
+    costo_totale = round(costo_totale, 2)
+    out = {"drink": nome, "costo_ingredienti": costo_totale, "voci": voci,
+           "ingredienti_senza_prezzo": mancanti,
+           "fonte": "Prezzi medi di distribuzione (orientativi)",
+           "nota": "Stima orientativa. Aggiungi ghiaccio/guarnizione e usa i prezzi del tuo fornitore per il dato reale."}
+    pv = body.get("prezzo_vendita")
+    if pv:
+        try:
+            pv = float(pv)
+            pct = round(100 * costo_totale / pv, 1) if pv > 0 else None
+            out["prezzo_vendita"] = pv
+            out["drink_cost_percentuale"] = pct
+            out["giudizio"] = ("ottimo" if pct and pct <= 20 else "buono" if pct and pct <= 25 else
+                               "alto" if pct and pct <= 35 else "troppo alto")
+            out["margine_lordo"] = round(pv - costo_totale, 2)
+        except Exception:
+            pass
+    return jsonify(out)
