@@ -1865,3 +1865,22 @@ a:focus-visible,input:focus-visible{
 .porta-voce-t{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--ink,#131C21);flex-shrink:0}
 .porta-voce-d{font-size:12.5px;color:var(--muted,#5A6C70);flex:1}
 .porta-voce-arr{font-size:20px;color:var(--faint,#7A898E)}
+
+/* ── Ricetta generata (dal Flavour Network) ── */
+.ricg{padding:4px 2px 30px}
+.ricg-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:22px;color:var(--ink,#131C21);margin-bottom:6px;line-height:1.2}
+.ricg-desc{font-size:14px;color:var(--muted,#5A6C70);margin-bottom:12px;line-height:1.5}
+.ricg-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.ricg-meta span{font-size:12px;color:var(--muted,#5A6C70);font-family:'IBM Plex Mono',monospace}
+.ricg-sec-h{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--teal,#12545D);margin:20px 0 10px;border-bottom:1px solid var(--border,#CBD4D4);padding-bottom:5px}
+.ricg-ing{list-style:none;padding:0;margin:0}
+.ricg-ing li{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px dotted var(--border,#CBD4D4)}
+.ric-ing-n{font-size:15px;color:var(--ink,#131C21)}
+.ric-ing-q{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--blu,#245979);font-weight:600;white-space:nowrap}
+.ricg-proc{padding-left:20px;margin:0}
+.ricg-proc li{font-size:14px;color:var(--ink,#131C21);line-height:1.6;margin-bottom:10px;padding-left:4px}
+.ricg-critico{background:rgba(199,123,63,.1);border-left:3px solid var(--terra,#C77B3F);padding:10px 12px;margin:18px 0;font-size:13px;line-height:1.5;border-radius:4px}
+.ricg-fen{font-size:13px;color:var(--muted,#5A6C70);margin:14px 0;line-height:1.5}
+.ricg-salva{width:100%;background:var(--blu,#245979);color:#fff;border:none;padding:15px;font-size:15px;font-weight:600;border-radius:10px;margin-top:22px;cursor:pointer;font-family:var(--serif,'Space Grotesk')}
+.ricg-salva:active{opacity:.85}
+.ricg-nota{text-align:center;font-size:13px;color:var(--teal,#12545D);margin-top:10px;min-height:18px}

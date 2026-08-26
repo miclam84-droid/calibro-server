@@ -4818,14 +4818,73 @@ function _flavourNode(a,key,surprise,centro){
     '<div class="fnv-node-n">'+n+'<span class="u">composti</span></div></div>'+det;
 }
 function _flavourToggle(key){ const d=document.getElementById('fnv-det-'+key); if(d) d.classList.toggle('show'); }
-function _flavourCrea(a,b){
-  // apre la chat con una richiesta di ricetta coi due ingredienti
-  chiudiVista();
-  if(typeof switchTab==='function') switchTab('chiedi');
-  const ask = document.getElementById('q');
-  if(ask){ ask.value = 'Crea una ricetta con '+a+' e '+b; }
-  if(typeof chiediTesto==='function'){ chiediTesto('Crea una ricetta con '+a+' e '+b); }
-  else if(typeof invia==='function'){ invia(); }
+async function _flavourCrea(a,b){
+  // genera una RICETTA VERA (strutturata) coi due ingredienti, non una chat
+  _apriVista('Nuova ricetta', '<div class="vista-loading">Genero la ricetta con '+_escV(a)+' e '+_escV(b)+'…</div>');
+  try{
+    const r = await fetch('/v1/genera-ricetta', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({richiesta: a+' e '+b, disciplina: (Matter&&Matter.disciplina)||'cucina'})
+    });
+    const d = await r.json();
+    if(!r.ok || !d.nome){ 
+      document.getElementById('vista-body').innerHTML = '<div class="vista-empty">Non sono riuscito a generare la ricetta. Riprova.</div>';
+      return;
+    }
+    _mostraRicettaGenerata(d, a, b);
+  }catch(e){
+    const vb=document.getElementById('vista-body'); if(vb) vb.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>';
+  }
+}
+
+// mostra una ricetta generata in modo leggibile, con bottone salva
+window._ultimaRicettaGen = null;
+function _mostraRicettaGenerata(d, a, b){
+  window._ultimaRicettaGen = d;
+  const ing = (d.ingredienti||[]).map(function(i){
+    if(typeof i==='object'){ 
+      var q = i.quantita||i.quantità||''; var u = i.unita||i.unità||'';
+      return '<li><span class="ric-ing-n">'+_escV(i.nome||'')+'</span>'+(q?'<span class="ric-ing-q">'+_escV(q+' '+u)+'</span>':'')+'</li>';
+    }
+    return '<li>'+_escV(i)+'</li>';
+  }).join('');
+  const proc = (d.procedimento||[]).map(function(p,idx){
+    var testo = (typeof p==='object') ? (p.testo||p.text||'') : p;
+    return '<li>'+_escV(testo)+'</li>';
+  }).join('');
+  const fen = (d.fenomeni||[]).map(function(f){ return _escV(typeof f==='object'?(f.nome||f.name||''):f); }).filter(Boolean).join(' · ');
+  const h =
+    '<div class="ricg">'+
+    '<div class="ricg-nome">'+_escV(d.nome||'')+'</div>'+
+    (d.descrizione?'<div class="ricg-desc">'+_escV(d.descrizione)+'</div>':'')+
+    '<div class="ricg-meta">'+
+      (d.porzioni?'<span>◉ '+_escV(d.porzioni)+' porzioni</span>':'')+
+      (d.tempo_prep?'<span>◉ prep '+_escV(d.tempo_prep)+'</span>':'')+
+      (d.difficolta?'<span>◉ '+_escV(d.difficolta)+'</span>':'')+
+    '</div>'+
+    '<div class="ricg-sec-h">Ingredienti</div><ul class="ricg-ing">'+ing+'</ul>'+
+    '<div class="ricg-sec-h">Procedimento</div><ol class="ricg-proc">'+proc+'</ol>'+
+    (d.punto_critico?'<div class="ricg-critico"><b>Punto critico:</b> '+_escV(d.punto_critico)+'</div>':'')+
+    (fen?'<div class="ricg-fen"><b>La scienza:</b> '+fen+'</div>':'')+
+    '<button class="ricg-salva" onclick="_salvaRicettaGen()">Salva questa ricetta →</button>'+
+    '<div class="ricg-nota" id="ricg-salva-esito"></div>'+
+    '</div>';
+  const vb=document.getElementById('vista-body'); if(vb){ vb.innerHTML = h; vb.scrollTop=0; }
+}
+
+async function _salvaRicettaGen(){
+  const d = window._ultimaRicettaGen; if(!d) return;
+  const esito = document.getElementById('ricg-salva-esito');
+  if(esito) esito.textContent = 'Salvo…';
+  try{
+    const r = await fetch('/v1/genera-ricetta', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({richiesta: d.nome, disciplina: d.disciplina||'cucina', salva: true})
+    });
+    const j = await r.json();
+    if(r.ok){ if(esito) esito.textContent = '✓ Salvata. La trovi tra le ricette.'; }
+    else { if(esito) esito.textContent = 'Non salvata, riprova.'; }
+  }catch(e){ if(esito) esito.textContent = 'Errore nel salvataggio.'; }
 }
 
 /* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */
