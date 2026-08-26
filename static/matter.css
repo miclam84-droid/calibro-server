@@ -1853,3 +1853,15 @@ a:focus-visible,input:focus-visible{
 .ma-render[data-font=sans]{font-family:var(--sans,'Inter') !important}
 .ma-render[data-font=sans] *{font-family:var(--sans,'Inter') !important}
 .ma-brand-footer-live{margin-top:16px;padding-top:12px;border-top:1px solid var(--ma-accent,#245979);font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:var(--muted,#5A6C70);text-align:center}
+
+/* ═══ ATLANTE A 4 PORTE (rifinitura review) ═══ */
+.mappa-porte{display:flex;gap:6px;padding:0 0 4px}
+.mappa-porte .mappa-tab{flex:1;text-align:center;font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:14px;letter-spacing:-.01em;padding:11px 4px;border-radius:10px;border:1px solid var(--border,#B7C3C3);background:var(--l2,#E8EDED);color:var(--muted,#5A6C70)}
+.mappa-porte .mappa-tab.active{background:var(--ink,#131C21);color:#EAF1F3;border-color:var(--ink,#131C21)}
+.porta-voci{margin:14px 0 4px}
+.porta-sub{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal,#12545D);margin-bottom:10px}
+.porta-voce{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:12px 16px;margin-bottom:8px;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;cursor:pointer;text-align:left}
+.porta-voce.sel{border-color:var(--dato,#245979);border-width:1.5px;background:var(--l3,#F2F6F6)}
+.porta-voce-t{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--ink,#131C21);flex-shrink:0}
+.porta-voce-d{font-size:12.5px;color:var(--muted,#5A6C70);flex:1}
+.porta-voce-arr{font-size:20px;color:var(--faint,#7A898E)}

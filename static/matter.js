@@ -332,6 +332,43 @@ function switchMappaTab(tab){
   }
 }
 
+/* ═══ ATLANTE A 4 PORTE (rifinitura review: da voci sparse a 4 gruppi) ═══
+   CAPIRE · USARE · CREARE · MISURARE — ogni porta raggruppa le voci esistenti. */
+var _PORTE = {
+  capire:   { label:'Capire',   sub:'Perché succede', voci:[
+                {t:'Fenomeni', d:'Il percorso della disciplina', act:function(){switchMappaTab('fenomeni');}},
+                {t:'Principi', d:'Le leggi fisiche di fondo', act:function(){switchMappaTab('principi');}} ]},
+  usare:    { label:'Usare',    sub:'Come si fa al banco', voci:[
+                {t:'Ricette', d:'Con i numeri-bersaglio', act:function(){switchMappaTab('ricette');}},
+                {t:'Strumenti', d:'Cosa serve per misurare', act:function(){switchMappaTab('strumenti');}} ]},
+  creare:   { label:'Creare',   sub:'Combina e scopri', voci:[
+                {t:'Flavour Network', d:'Con cosa dialoga un ingrediente', act:function(){if(typeof apriFlavour==='function')apriFlavour();}},
+                {t:'Ponti tra discipline', d:'Vino, birra, dolce per piatto', act:function(){if(typeof apriPonti==='function')apriPonti();}},
+                {t:'Menu Builder', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}} ]},
+  misurare: { label:'Misurare', sub:'Centra il bersaglio', voci:[
+                {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
+                {t:'Flavour del giorno', d:'Parti da un ingrediente', act:function(){switchMappaTab('flavor');}} ]}
+};
+function apriPorta(porta){
+  var p = _PORTE[porta]; if(!p) return;
+  document.querySelectorAll('.mappa-tab').forEach(b=>b.classList.toggle('active', b.id==='mtab-'+porta));
+  var cont = document.getElementById('porta-voci');
+  if(cont){
+    cont.innerHTML = '<div class="porta-sub">'+p.sub+'</div>' + p.voci.map(function(v,i){
+      return '<button class="porta-voce" onclick="_portaVoce(\''+porta+'\','+i+')"><span class="porta-voce-t">'+v.t+'</span><span class="porta-voce-d">'+v.d+'</span><span class="porta-voce-arr">›</span></button>';
+    }).join('');
+  }
+  // apro automaticamente la prima voce della porta
+  _portaVoce(porta, 0);
+}
+function _portaVoce(porta, i){
+  var p = _PORTE[porta]; if(!p||!p.voci[i]) return;
+  // evidenzia la voce scelta
+  var cont=document.getElementById('porta-voci');
+  if(cont){ cont.querySelectorAll('.porta-voce').forEach(function(b,idx){ b.classList.toggle('sel', idx===i); }); }
+  p.voci[i].act();
+}
+
 function playIntroScopri(){ playIntro('screen-scopri'); }
 
 function _quandoCasi(nome, disc){
@@ -408,7 +445,7 @@ function switchTab(t){
   if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa'){
     const _disc = Matter.disciplina || 'bar';
-    if(typeof switchMappaTab==='function') switchMappaTab('fenomeni');
+    if(typeof apriPorta==='function') apriPorta('capire');
     caricaMappa(_disc);
     caricaStrumenti(_disc);
     if(!Matter.disciplina) document.getElementById('mappa-label').textContent = _t('mappa_scegli');

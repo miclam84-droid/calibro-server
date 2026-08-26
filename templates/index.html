@@ -328,13 +328,14 @@ if('serviceWorker' in navigator){
   </div>
 
   <!-- ── TAB ORIZZONTALI MAPPA ── -->
-  <div class="mappa-tabs" id="mappa-tabs" role="tablist">
-    <button class="mappa-tab active" id="mtab-fenomeni" onclick="switchMappaTab('fenomeni')" role="tab">Fenomeni</button>
-    <button class="mappa-tab" id="mtab-flavor" onclick="switchMappaTab('flavor')" role="tab">Flavor</button>
-    <button class="mappa-tab" id="mtab-principi" onclick="switchMappaTab('principi')" role="tab">Principi</button>
-    <button class="mappa-tab" id="mtab-strumenti" onclick="switchMappaTab('strumenti')" role="tab">Strumenti</button>
-    <button class="mappa-tab" id="mtab-ricette" onclick="switchMappaTab('ricette')" role="tab">Ricette</button>
+  <div class="mappa-tabs mappa-porte" id="mappa-tabs" role="tablist">
+    <button class="mappa-tab active" id="mtab-capire" onclick="apriPorta('capire')" role="tab">Capire</button>
+    <button class="mappa-tab" id="mtab-usare" onclick="apriPorta('usare')" role="tab">Usare</button>
+    <button class="mappa-tab" id="mtab-creare" onclick="apriPorta('creare')" role="tab">Creare</button>
+    <button class="mappa-tab" id="mtab-misurare" onclick="apriPorta('misurare')" role="tab">Misurare</button>
   </div>
+  <!-- sotto-voci della porta attiva -->
+  <div class="porta-voci" id="porta-voci"></div>
 
   <!-- ── PANNELLO FENOMENI ── -->
   <div class="mappa-panel active" id="mpanel-fenomeni">
