@@ -1112,7 +1112,7 @@ function renderRisp(domanda,j,fromNode){
   if(fromNode && fenId && targetNum){
     // fenomeno misurabile: bersaglio + campo "la tua misura" con confronto
     numBox = `<div class="s-num-box">
-      <div class="s-num-label">bersaglio</div>
+      <div class="s-num-head"><svg class="s-num-mirino" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.6" stroke="#5EA0C8" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="#5EA0C8"/><path d="M7 0v2.2M7 11.8V14M0 7h2.2M11.8 7H14" stroke="#5EA0C8" stroke-width="1.2"/></svg><div class="s-num-label">bersaglio</div></div>
       <div class="s-num-val">${esc(targetNum)}${targetUnita?' <span class="s-num-u">'+esc(targetUnita)+'</span>':''}</div>
       <div class="s-misura" data-fen="${esc(fenId)}" data-target="${esc(targetNum)}" data-unita="${esc(targetUnita)}">
         <div class="s-misura-lab">la tua misura</div>
@@ -1127,7 +1127,7 @@ function renderRisp(domanda,j,fromNode){
   } else if(numBersaglio){
     // fenomeno "si assaggia": mostro il bersaglio testuale, niente input finto
     numBox = `<div class="s-num-box">
-      <div class="s-num-label">bersaglio</div>
+      <div class="s-num-head"><svg class="s-num-mirino" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.6" stroke="#5EA0C8" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="#5EA0C8"/><path d="M7 0v2.2M7 11.8V14M0 7h2.2M11.8 7H14" stroke="#5EA0C8" stroke-width="1.2"/></svg><div class="s-num-label">bersaglio</div></div>
       <div class="s-num-val">${esc(numBersaglio)}</div>
     </div>`;
   }
@@ -4028,10 +4028,10 @@ let _ultimi_ingredienti=[];
 // ── PILL CHAT BILINGUE ──────────────────────────────────────
 var _PILLS = {
   it: [
-    {q: 'uso sempre lo stesso lime ma il sour cambia ogni sera — perché?', l: 'Il sour non è mai uguale →'},
-    {q: 'il mio impasto con lievito madre fermenta bene ma il pane non cresce in forno — cosa succede?', l: 'Il pane non cresce in forno →'},
-    {q: 'd\'estate la fermentazione va troppo veloce e l\'impasto va oltre — come lo controllo?', l: 'Fermentazione fuori controllo →'},
-    {q: 'come misuro il pH di un impasto o di un cocktail al banco?', l: 'Come misuro il pH →'},
+    {q: 'a che temperatura coagula il tuorlo?', l: 'A che temperatura coagula il tuorlo? →'},
+    {q: 'quanta acidità ci vuole in un sour?', l: 'Quanta acidità in un sour? →'},
+    {q: 'a che temperatura estraggo l\'espresso?', l: 'A che temperatura estraggo l\'espresso? →'},
+    {q: 'quanto lievito madre per un kg di farina?', l: 'Quanto lievito madre per 1 kg di farina? →'},
   ],
   en: [
     {q: 'my espresso tastes different every morning with the same recipe — why?', l: 'Espresso never the same →'},
@@ -4156,8 +4156,8 @@ function _fotoVaiFlavor(nome){
   setTimeout(function(){
     if(typeof switchMappaTab==='function') switchMappaTab('flavor');
     setTimeout(function(){
-      if(typeof apriFlavour==='function'){ apriFlavour(nome); }
-      else { var inp=document.getElementById('fnv-input'); if(inp){ inp.value=nome; if(typeof caricaFlavour==='function') caricaFlavour(nome); } }
+      var inp=document.getElementById('flavor-input');
+      if(inp){ inp.value=nome; if(typeof cercaFlavor==='function') cercaFlavor(); }
     }, 300);
   }, 200);
 }
@@ -4751,9 +4751,6 @@ function chiudiVista(){
   if(o) o.classList.add('hidden');
 }
 function _apriVista(titolo, htmlIniziale){
-  // sicurezza: se l'onboarding è ancora aperto, chiudilo — non deve mai restare sopra a bloccare i click
-  var _onb4 = document.getElementById('onb4'); if(_onb4) _onb4.classList.remove('show');
-  var _onb = document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
   const o = _ensureVistaOverlay();
   document.getElementById('vista-title').textContent = titolo;
   document.getElementById('vista-body').innerHTML = htmlIniziale;
@@ -4783,11 +4780,6 @@ async function caricaFlavour(term){
   if(!q) return;
   if(inp) inp.value = q;
   const out = document.getElementById('fnv-out');
-  if(!out){
-    // la vista non è ancora pronta nel DOM: riprovo tra un attimo invece di crashare
-    setTimeout(()=>caricaFlavour(q), 120);
-    return;
-  }
   out.innerHTML = '<div class="vista-loading">Leggo il grafo dei composti…</div>';
   try{
     const r = await fetch('/v1/abbina/'+encodeURIComponent(q)+'?lang='+_vistaLang());
@@ -4809,93 +4801,20 @@ async function caricaFlavour(term){
 }
 function _flavourNode(a,key,surprise,centro){
   const n = Math.round(a.overlap||0);
-  // il dettaglio+CTA "crea ricetta" ora c'è SIA per sorprendenti SIA per classici
-  const det = '<div class="fnv-detail" id="fnv-det-'+key+'"><div class="fnv-detail-why">'+_escV(centro)+' e '+_escV(a.ingrediente)+' condividono <b>'+n+' composti aromatici</b>. '+_escV(a.perche||'')+' Non è un\'opinione: è chimica.</div><button class="fnv-cta" onclick="event.stopPropagation();_flavourCrea(\''+_escV(centro)+'\',\''+_escV(a.ingrediente)+'\')">Crea una ricetta con questo abbinamento →</button></div>';
-  return '<div class="fnv-node'+(surprise?' surprise':'')+'" onclick="_flavourToggle(\''+key+'\')">'+
+  const det = surprise ? '<div class="fnv-detail" id="fnv-det-'+key+'"><div class="fnv-detail-why">'+_escV(centro)+' e '+_escV(a.ingrediente)+' condividono <b>'+n+' composti aromatici</b>. '+_escV(a.perche||'')+' Non è un\'opinione: è chimica.</div><button class="fnv-cta" onclick="_flavourCrea(\''+_escV(centro)+'\',\''+_escV(a.ingrediente)+'\')">Crea una ricetta con questo abbinamento →</button></div>' : '';
+  return '<div class="fnv-node'+(surprise?' surprise':'')+'"'+(surprise?' onclick="_flavourToggle(\''+key+'\')"':'')+'>'+
     '<div class="fnv-mirino">'+(surprise?_mirinoSorpresa():_mirinoClassico())+'</div>'+
     '<div class="fnv-node-body"><div class="fnv-node-name">'+_escV(a.ingrediente)+'</div>'+
-    '<div class="fnv-node-why">'+(surprise?'Sorprendente — tocca per il perché':'Tocca per creare una ricetta')+'</div></div>'+
+    '<div class="fnv-node-why">'+(surprise?'Sorprendente — tocca per il perché':_escV(a.perche||'composti condivisi'))+'</div></div>'+
     '<div class="fnv-node-n">'+n+'<span class="u">composti</span></div></div>'+det;
 }
-function feedbackAbb(ingrediente, centro, voto, btn){
-  // invia il feedback sull'abbinamento (pollice su/giu) e evidenzia il bottone
-  try{
-    fetch('/v1/feedback-abbinamento', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ingrediente:ingrediente, centro:centro, voto:voto})
-    }).catch(function(){});
-  }catch(e){}
-  if(btn){ btn.style.opacity='1'; var sib=btn.parentNode?btn.parentNode.querySelectorAll('.fb-btn'):[]; }
-}
-
 function _flavourToggle(key){ const d=document.getElementById('fnv-det-'+key); if(d) d.classList.toggle('show'); }
-async function _flavourCrea(a,b){
-  // genera una RICETTA VERA (strutturata) coi due ingredienti, non una chat
-  _apriVista('Nuova ricetta', '<div class="vista-loading">Genero la ricetta con '+_escV(a)+' e '+_escV(b)+'…</div>');
-  try{
-    const r = await fetch('/v1/genera-ricetta', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({richiesta: a+' e '+b, disciplina: (Matter&&Matter.disciplina)||'cucina'})
-    });
-    const d = await r.json();
-    if(!r.ok || !d.nome){ 
-      document.getElementById('vista-body').innerHTML = '<div class="vista-empty">Non sono riuscito a generare la ricetta. Riprova.</div>';
-      return;
-    }
-    _mostraRicettaGenerata(d, a, b);
-  }catch(e){
-    const vb=document.getElementById('vista-body'); if(vb) vb.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>';
-  }
-}
-
-// mostra una ricetta generata in modo leggibile, con bottone salva
-window._ultimaRicettaGen = null;
-function _mostraRicettaGenerata(d, a, b){
-  window._ultimaRicettaGen = d;
-  const ing = (d.ingredienti||[]).map(function(i){
-    if(typeof i==='object'){ 
-      var q = i.quantita||i.quantità||''; var u = i.unita||i.unità||'';
-      return '<li><span class="ric-ing-n">'+_escV(i.nome||'')+'</span>'+(q?'<span class="ric-ing-q">'+_escV(q+' '+u)+'</span>':'')+'</li>';
-    }
-    return '<li>'+_escV(i)+'</li>';
-  }).join('');
-  const proc = (d.procedimento||[]).map(function(p,idx){
-    var testo = (typeof p==='object') ? (p.testo||p.text||'') : p;
-    return '<li>'+_escV(testo)+'</li>';
-  }).join('');
-  const fen = (d.fenomeni||[]).map(function(f){ return _escV(typeof f==='object'?(f.nome||f.name||''):f); }).filter(Boolean).join(' · ');
-  const h =
-    '<div class="ricg">'+
-    '<div class="ricg-nome">'+_escV(d.nome||'')+'</div>'+
-    (d.descrizione?'<div class="ricg-desc">'+_escV(d.descrizione)+'</div>':'')+
-    '<div class="ricg-meta">'+
-      (d.porzioni?'<span>◉ '+_escV(d.porzioni)+' porzioni</span>':'')+
-      (d.tempo_prep?'<span>◉ prep '+_escV(d.tempo_prep)+'</span>':'')+
-      (d.difficolta?'<span>◉ '+_escV(d.difficolta)+'</span>':'')+
-    '</div>'+
-    '<div class="ricg-sec-h">Ingredienti</div><ul class="ricg-ing">'+ing+'</ul>'+
-    '<div class="ricg-sec-h">Procedimento</div><ol class="ricg-proc">'+proc+'</ol>'+
-    (d.punto_critico?'<div class="ricg-critico"><b>Punto critico:</b> '+_escV(d.punto_critico)+'</div>':'')+
-    (fen?'<div class="ricg-fen"><b>La scienza:</b> '+fen+'</div>':'')+
-    '<button class="ricg-salva" onclick="_salvaRicettaGen()">Salva questa ricetta →</button>'+
-    '<div class="ricg-nota" id="ricg-salva-esito"></div>'+
-    '</div>';
-  const vb=document.getElementById('vista-body'); if(vb){ vb.innerHTML = h; vb.scrollTop=0; }
-}
-
-async function _salvaRicettaGen(){
-  const d = window._ultimaRicettaGen; if(!d) return;
-  const esito = document.getElementById('ricg-salva-esito');
-  if(esito) esito.textContent = 'Salvo…';
-  try{
-    const r = await fetch('/v1/genera-ricetta', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({richiesta: d.nome, disciplina: d.disciplina||'cucina', salva: true})
-    });
-    const j = await r.json();
-    if(r.ok){ if(esito) esito.textContent = '✓ Salvata. La trovi tra le ricette.'; }
-    else { if(esito) esito.textContent = 'Non salvata, riprova.'; }
-  }catch(e){ if(esito) esito.textContent = 'Errore nel salvataggio.'; }
+function _flavourCrea(a,b){
+  // apre la chat con una richiesta di ricetta coi due ingredienti
+  chiudiVista();
+  if(typeof switchTab==='function') switchTab('chiedi');
+  const ask = document.getElementById('ask-input');
+  if(ask){ ask.value = 'Crea una ricetta con '+a+' e '+b; if(typeof inviaDomanda==='function') inviaDomanda(); }
 }
 
 /* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */
@@ -5015,10 +4934,8 @@ async function mbProposte(){
 function _mbCreaRicetta(ings){
   chiudiVista();
   if(typeof switchTab==='function') switchTab('chiedi');
-  const ask = document.getElementById('q');
-  if(ask){ ask.value = 'Crea un piatto con '+ings; }
-  if(typeof chiediTesto==='function'){ chiediTesto('Crea un piatto con '+ings); }
-  else if(typeof invia==='function'){ invia(); }
+  const ask = document.getElementById('ask-input');
+  if(ask){ ask.value = 'Crea un piatto con '+ings; if(typeof inviaDomanda==='function') inviaDomanda(); }
 }
 
 /* ═══════════════ 4. STRUMENTI DI MISURA ═══════════════ */
@@ -5078,10 +4995,8 @@ async function caricaCreativita(spirito){
 function _creativitaCrea(spirito){
   chiudiVista();
   if(typeof switchTab==='function') switchTab('chiedi');
-  const ask = document.getElementById('q');
-  if(ask){ ask.value = 'Crea un cocktail con '+spirito; }
-  if(typeof chiediTesto==='function'){ chiediTesto('Crea un cocktail con '+spirito); }
-  else if(typeof invia==='function'){ invia(); }
+  const ask = document.getElementById('ask-input');
+  if(ask){ ask.value = 'Crea un cocktail con '+spirito; if(typeof inviaDomanda==='function') inviaDomanda(); }
 }
 
 // quando una misura viene salvata, se l'Atlante è la vista attiva, ricaricalo (Mirino in tempo reale)
