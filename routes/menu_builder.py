@@ -401,3 +401,107 @@ def menu_templates():
         {"id": "minimal", "nome": "Minimal", "descrizione": "Sans-serif pulito, bianco e teal"},
         {"id": "scuro", "nome": "Scuro", "descrizione": "Fondo scuro, accenti terracotta"},
     ]})
+
+
+# ── UPLOAD LOGO su Cloudinary (per la personalizzazione del menu) ──
+@bp_menu.route("/v1/menu/upload-logo", methods=["POST"])
+def menu_upload_logo():
+    """Riceve un file immagine (logo del ristoratore), lo carica su Cloudinary, torna {url}.
+    Il frontend poi passa quell'url a /v1/menu/render come ?logo=<url>.
+    Accetta multipart/form-data con campo 'file'."""
+    f = request.files.get("file")
+    if not f:
+        return jsonify({"errore": "nessun file (campo 'file' mancante)"}), 400
+    img_bytes = f.read()
+    if not img_bytes:
+        return jsonify({"errore": "file vuoto"}), 400
+    if len(img_bytes) > 3 * 1024 * 1024:
+        return jsonify({"errore": "logo troppo grande (max 3MB)"}), 400
+    try:
+        from pixabay_riempi import _carica_cloudinary
+        import time as _t
+        public_id = f"logo-menu-{int(_t.time())}"
+        url = _carica_cloudinary(img_bytes, public_id)
+        if url:
+            return jsonify({"url": url, "public_id": public_id})
+        return jsonify({"errore": "upload fallito (Cloudinary non configurato o errore)"}), 500
+    except Exception as e:
+        return jsonify({"errore": f"upload: {e}"}), 500
+
+
+# ── RENDER MENU DA BODY (per menu in localStorage senza id server-side) ──
+@bp_menu.route("/v1/menu/render", methods=["POST"])
+def menu_render_body():
+    """Come /v1/menu/<id>/render ma riceve il menu NEL BODY (non serve id server-side).
+    Per i menu salvati solo in localStorage sul frontend.
+    Body: {titolo, locale, voci:[{nome,prezzo,descrizione,sezione,immagine}], note,
+           template?, logo?, accent?, footer?, font?}"""
+    body = request.json or {}
+    titolo = body.get("titolo", "Menu")
+    locale = body.get("locale", "")
+    note = body.get("note", "")
+    voci = body.get("voci", []) or []
+
+    tpl = dict(_TEMPLATE_MENU.get(body.get("template", "elegante"), _TEMPLATE_MENU["elegante"]))
+    mostra_foto = bool(body.get("foto", False))
+    usa_sezioni = body.get("sezioni", True)
+    logo_url = (body.get("logo") or "").strip()
+    accent_custom = (body.get("accent") or "").strip().lstrip("#")
+    if accent_custom and len(accent_custom) in (3, 6) and all(c in "0123456789abcdefABCDEF" for c in accent_custom):
+        tpl["accent"] = "#" + accent_custom
+        tpl["linea"] = "#" + accent_custom
+    footer_custom = (body.get("footer") or "").strip()
+    font_scelta = (body.get("font") or "").strip()
+    if font_scelta == "serif": tpl["font"] = "Georgia, 'Times New Roman', serif"
+    elif font_scelta == "sans": tpl["font"] = "'Helvetica Neue', Arial, sans-serif"
+
+    def esc(s):
+        return (str(s or "")).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    def render_voce(v):
+        nome = esc(v.get("nome", "")); prezzo = esc(v.get("prezzo", "")); desc = esc(v.get("descrizione", ""))
+        img = v.get("immagine", ""); foto_html = ""
+        if mostra_foto and img:
+            foto_html = f'<div class="voce-foto"><img src="{esc(img)}" alt="{nome}" loading="lazy"></div>'
+        return f'''<div class="voce{' voce-con-foto' if (mostra_foto and img) else ''}">{foto_html}
+          <div class="voce-testo"><div class="voce-riga"><span class="voce-nome">{nome}</span>
+          <span class="voce-punti"></span><span class="voce-prezzo">{prezzo}</span></div>
+          {f'<div class="voce-desc">{desc}</div>' if desc else ''}</div></div>'''
+
+    corpo = ""
+    if usa_sezioni and any(v.get("sezione") for v in voci):
+        sezioni = {}; ordine = []
+        for v in voci:
+            sez = v.get("sezione", "") or "\u200b"
+            if sez not in sezioni: sezioni[sez] = []; ordine.append(sez)
+            sezioni[sez].append(v)
+        for sez in ordine:
+            titolo_sez = f'<h2 class="menu-sezione">{esc(sez)}</h2>' if sez.strip() else ''
+            corpo += f'<div class="sezione-blocco">{titolo_sez}{"".join(render_voce(v) for v in sezioni[sez])}</div>'
+    else:
+        corpo = ''.join(render_voce(v) for v in voci)
+
+    html = f'''<!DOCTYPE html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>{esc(titolo)}</title>
+<style>@page {{ size:A4; margin:18mm; }} *{{box-sizing:border-box;}}
+body{{font-family:{tpl["font"]};background:{tpl["bg"]};color:{tpl["ink"]};margin:0 auto;padding:40px;max-width:820px;}}
+.menu-head{{text-align:center;border-bottom:2px solid {tpl["linea"]};padding-bottom:20px;margin-bottom:28px;}}
+.menu-logo{{max-width:140px;max-height:90px;margin:0 auto 12px;display:block;object-fit:contain;}}
+.menu-titolo{{font-size:34px;letter-spacing:2px;margin:0 0 6px;color:{tpl["accent"]};}}
+.menu-locale{{font-size:14px;opacity:.7;letter-spacing:1px;text-transform:uppercase;}}
+.menu-sezione{{font-size:20px;color:{tpl["accent"]};letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid {tpl["linea"]};padding-bottom:6px;margin:28px 0 16px;}}
+.voce{{margin-bottom:18px;}} .voce-con-foto{{display:flex;gap:14px;align-items:flex-start;}}
+.voce-foto img{{width:84px;height:84px;object-fit:cover;border-radius:8px;}} .voce-testo{{flex:1;}}
+.voce-riga{{display:flex;align-items:baseline;}} .voce-nome{{font-size:18px;font-weight:600;}}
+.voce-punti{{flex:1;border-bottom:1px dotted {tpl["linea"]};margin:0 8px;transform:translateY(-4px);}}
+.voce-prezzo{{font-size:17px;color:{tpl["accent"]};font-weight:600;white-space:nowrap;}}
+.voce-desc{{font-size:13px;opacity:.78;margin-top:3px;font-style:italic;}}
+.menu-note{{margin-top:30px;font-size:12px;opacity:.6;text-align:center;}}
+.menu-foot{{text-align:center;margin-top:36px;font-size:11px;opacity:.45;}}
+@media print{{body{{padding:0;}}}}</style></head><body>
+<div class="menu-head">{f'<img class="menu-logo" src="{esc(logo_url)}" alt="logo">' if logo_url else ''}
+<h1 class="menu-titolo">{esc(titolo)}</h1>{f'<div class="menu-locale">{esc(locale)}</div>' if locale else ''}</div>
+<div class="menu-corpo">{corpo}</div>{f'<div class="menu-note">{esc(note)}</div>' if note else ''}
+<div class="menu-foot">{esc(footer_custom) if footer_custom else 'Creato con Matter'}</div></body></html>'''
+    from flask import Response
+    return Response(html, mimetype="text/html")
