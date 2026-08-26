@@ -5401,3 +5401,94 @@ def admin_pixabay_riempi():
                         "caricate": caricate, "scartate_no_match": scartate, "esempi": esempi})
     finally:
         _release_conn(conn)
+
+
+# ── GENERAZIONE DI MASSA dai piatti canonici (a lotti, riprendibile) ──
+@bp.route("/admin/genera-canonici")
+def admin_genera_canonici():
+    """Genera ricette per i piatti canonici non ancora salvati. A lotti (?n=8 default) per stare
+    sotto il timeout. Riprendibile: ogni chiamata fa un lotto e dice quanti mancano.
+    ?disc=cucina limita a una disciplina. Verifica anti-eresie: salva solo le ricette pulite."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    n_lotto = int(request.args.get("n", "8"))
+    disc_filtro = request.args.get("disc", "").strip()
+    from db import carica_grafo, _get_conn, _release_conn
+    import re as _re, json as _j2, unicodedata
+    try:
+        import mappa_piatti
+        from builder import genera_ricetta
+    except Exception as e:
+        return jsonify({"errore": f"import: {e}"}), 500
+    try:
+        from verificatore_ricette import verifica_ricetta
+    except Exception:
+        verifica_ricetta = None
+
+    piatti = mappa_piatti.tutti_i_piatti()
+    if disc_filtro:
+        piatti = [p for p in piatti if (p.get("disc") or "cucina") == disc_filtro]
+
+    # quali sono già salvati? confronto per slug del nome
+    conn = _get_conn(); cur = conn.cursor()
+    def _slug(nome):
+        s = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+        return _re.sub(r"[^a-z0-9]+","-",s).strip("-")[:40]
+    try:
+        cur.execute("SELECT id FROM ricette")
+        ids_esistenti = set(r[0] for r in cur.fetchall())
+    finally:
+        pass
+
+    # piatti da generare = quelli il cui ric-gen-<slug> non esiste
+    da_fare = []
+    for p in piatti:
+        rid = f"ric-gen-{_slug(p['nome'])}"
+        if rid not in ids_esistenti:
+            da_fare.append(p)
+
+    totale_mancanti = len(da_fare)
+    lotto = da_fare[:n_lotto]
+    db = carica_grafo()
+    generate = 0; bloccate = 0; errori = 0; dettaglio = []
+    for p in lotto:
+        nome = p["nome"]; disc = p.get("disc") or "cucina"
+        try:
+            ris = genera_ricetta(db, nome, disciplina=disc, lang="it")
+            if ris.get("errore"):
+                errori += 1; dettaglio.append({"piatto": nome, "esito": "errore_gen"}); continue
+            # verifica anti-eresie
+            if verifica_ricetta:
+                v = verifica_ricetta(ris.get("nome",""), ris.get("ingredienti",[]))
+                if not v.get("ok"):
+                    bloccate += 1; dettaglio.append({"piatto": nome, "esito": "bloccata_eresia"}); continue
+            # salva
+            rid = f"ric-gen-{_slug(ris.get('nome', nome))}"
+            cur.execute("""
+                INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
+                    punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni)
+                VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
+                ON CONFLICT (id) DO NOTHING
+            """, (rid, ris.get("nome",nome), disc, ris.get("descrizione",""),
+                  _j2.dumps(ris.get("ingredienti",[]),ensure_ascii=False),
+                  _j2.dumps(ris.get("fenomeni",[]),ensure_ascii=False),
+                  _j2.dumps(ris.get("tecniche",[]),ensure_ascii=False),
+                  _j2.dumps(ris.get("numeri",{}),ensure_ascii=False),
+                  ris.get("punto_critico",""),
+                  _j2.dumps(ris.get("abbinamenti",{}),ensure_ascii=False),
+                  _j2.dumps(ris.get("procedimento",[]),ensure_ascii=False),
+                  _j2.dumps(ris.get("applicazioni",[]),ensure_ascii=False),
+                  ris.get("tempo_prep"), ris.get("tempo_cottura"),
+                  ris.get("difficolta",""), ris.get("porzioni","")))
+            conn.commit()
+            generate += 1; dettaglio.append({"piatto": nome, "esito": "salvata"})
+        except Exception as e:
+            conn.rollback(); errori += 1
+            dettaglio.append({"piatto": nome, "esito": f"err:{str(e)[:40]}"})
+    _release_conn(conn)
+    return jsonify({
+        "lotto": len(lotto), "generate": generate, "bloccate_eresia": bloccate, "errori": errori,
+        "mancavano_prima": totale_mancanti, "mancano_ancora": totale_mancanti - generate,
+        "disciplina_filtro": disc_filtro or "tutte", "dettaglio": dettaglio,
+    })
