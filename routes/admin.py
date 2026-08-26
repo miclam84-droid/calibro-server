@@ -5672,20 +5672,20 @@ def admin_test_retrieval():
     for domanda, atteso in casi:
         try:
             ranked = retrieval_ranked(db, domanda, topk=3)
-            top = ranked[0] if ranked else None
-            top_nome = ""
-            if top:
-                nodo = top.get("node") if isinstance(top, dict) else None
-                if nodo:
-                    top_nome = nodo["name"] if "name" in nodo.keys() else ""
-                elif isinstance(top, dict):
-                    top_nome = top.get("nome", "") or top.get("name", "")
-            hit = atteso.lower() in (top_nome or "").lower() or atteso.lower() in str(top).lower()
+            fenomeni = ranked.get("fenomeni", []) if isinstance(ranked, dict) else []
+            top_nome = fenomeni[0]["name"] if fenomeni else ""
+            top3 = [f["name"] for f in fenomeni[:3]]
+            hit = atteso.lower() in (top_nome or "").lower()
+            # hit@3: giusto se è nei primi 3 (più realistico)
+            hit3 = any(atteso.lower() in (n or "").lower() for n in top3)
             if hit: ok += 1
-            risultati.append({"domanda": domanda, "atteso": atteso, "top": top_nome, "hit": hit})
+            risultati.append({"domanda": domanda, "atteso": atteso, "top": top_nome,
+                              "top3": top3, "hit@1": hit, "hit@3": hit3})
         except Exception as e:
-            risultati.append({"domanda": domanda, "errore": str(e)[:60]})
+            risultati.append({"domanda": domanda, "errore": repr(e)[:80]})
+    ok3 = sum(1 for r in risultati if r.get("hit@3"))
     return jsonify({
         "retrieval_at_1": f"{ok}/{len(casi)} = {round(100*ok/len(casi))}%",
+        "retrieval_at_3": f"{ok3}/{len(casi)} = {round(100*ok3/len(casi))}%",
         "ok": ok, "totale": len(casi), "dettaglio": risultati
     })
