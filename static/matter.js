@@ -2580,9 +2580,17 @@ function copiaRisposta(btn) {
 }
 
 function scaricaPDF(btn) {
-  const card = btn.closest('.scheda');
-  const domanda = card.querySelector('.s-q b')?.textContent || 'Risposta';
-  const risposta = card.querySelector('.s-body')?.textContent || '';
+  const card = btn.closest('.scheda') || btn.closest('.vista-body') || btn.closest('[class*=risultato]') || document;
+  const domanda = card.querySelector('.s-q b')?.textContent || card.querySelector('h2,h3,.vista-titolo')?.textContent || 'Risposta';
+  // il risultato: prova .s-body, poi altri contenitori di contenuto, mai solo la domanda
+  let risposta = card.querySelector('.s-body')?.textContent
+    || card.querySelector('.risultato,.vista-risultato,.s-answer')?.textContent
+    || '';
+  if(!risposta.trim()){
+    // ultimo fallback: tutto il testo della card meno la domanda
+    const tutto = (card.textContent||'').replace(domanda,'').trim();
+    risposta = tutto;
+  }
   const fenchips = Array.from(card.querySelectorAll('.fenchip')).map(f => f.textContent).join(', ');
   const oggi = new Date().toLocaleDateString('it-IT');
   
@@ -2743,6 +2751,8 @@ function mbScegliCategoria(cat, label){
   document.getElementById('mm-title').textContent = label;
   document.getElementById('mm-cat-lab').textContent = label;
   var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
+  // carta vini/birre: non parte dagli ingredienti fotografati — vai dritto al builder
+  if(cat==='carta_vini' || cat==='carta_birre'){ creaMenu(); return; }
   document.getElementById('menu-modo').classList.remove('hidden');
 }
 function chiudiModo(){ document.getElementById('menu-modo').classList.add('hidden'); }
@@ -2762,6 +2772,8 @@ let _mfFiles = [];       // File scelti
 let _mfIngredienti = []; // ingredienti riconosciuti/confermati
 
 function creaMenuDaFoto(){
+  // la carta vini/birre non parte dalle foto ingredienti
+  if(_mbCategoria==='carta_vini' || _mbCategoria==='carta_birre'){ creaMenu(); return; }
   var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
   _mfFiles = []; _mfIngredienti = [];
   document.getElementById('mf-thumbs').innerHTML = '';
@@ -2952,18 +2964,18 @@ async function mfConferma(){
   const confermati = _mfIngredienti.filter(x=>x.sel).map(x=>x.nome);
   if(!confermati.length){ alert(_L({it:'Conferma almeno un ingrediente.',en:'Confirm at least one ingredient.',es:'Confirma al menos un ingrediente.'})); return; }
   _mfMostraFase('loading');
-  document.getElementById('mf-load-steps').innerHTML = '<div class="mf-load-step">✓ Cerco le connessioni aromatiche nel Flavor Network</div>';
+  document.getElementById('mf-load-steps').innerHTML = '<div class="mf-load-step">✓ Costruisco voci di menu realizzabili coi tuoi ingredienti</div>';
   try{
-    const r = await fetch('/v1/menu/proposte', {
+    const r = await fetch('/v1/menu/costruisci', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ingredienti: confermati, tipo:'drink_list'})
+      body: JSON.stringify({ingredienti: confermati, disciplina: (localStorage.getItem('matter_station')||'cucina')})
     });
     const j = await r.json();
-    _mfProposte = j.proposte || [];
+    _mfProposte = j.voci || [];
     _mfRenderProposte(j);
     _mfMostraFase('proposte');
   }catch(e){
-    alert('Non sono riuscito a trovare le combinazioni. Riprova.');
+    alert('Non sono riuscito a costruire le voci. Riprova.');
     _mfMostraFase('valida');
   }
 }
@@ -2972,38 +2984,29 @@ let _mfProposte = [];
 function _mfRenderProposte(j){
   const cont = document.getElementById('mf-proposte');
   if(!_mfProposte.length){
-    cont.innerHTML = '<div class="mb-vuoto">Non ho trovato connessioni aromatiche forti tra questi ingredienti nel Flavor Network. Puoi comunque creare voci manualmente dal builder.</div>';
+    cont.innerHTML = '<div class="mb-vuoto">Non ho trovato voci realizzabili con questi ingredienti. Puoi comunque creare voci manualmente dal builder.</div>';
     return;
   }
-  cont.innerHTML = _mfProposte.map((p,i)=>{
-    const ing = p.ingredienti.join(' · ');
-    const tipoLab = p.tipo==='triangolo' ? 'Combinazione a tre' : (p.esplorativa ? 'Da esplorare' : 'Coppia aromatica');
-    const forza = p.esplorativa ? 'Ipotesi da provare al banco'
-      : (p.connessioni>=6 ? 'Connessione molto forte' : p.connessioni>=3 ? 'Connessione forte' : 'Connessione presente');
-    const proofBadge = p.esplorativa
-      ? '<span class="mf-badge esplora">da esplorare</span>'
-      : `<span class="mf-badge molecole">${p.proof.connessioni_aromatiche} connessioni aromatiche</span>`;
-    return `<div class="mf-prop${p.esplorativa?' esplora':''}">
-      <div class="mf-prop-tipo">${tipoLab}</div>
-      ${_mfGrafoConnessioni(p.ingredienti, p.esplorativa)}
-      <div class="mf-prop-ing">${_esc(ing)}</div>
-      <div class="mf-prop-forza">${forza}</div>
-      <div class="mf-prop-badges">
-        <span class="mf-badge">${p.proof.ingredienti_disponibili} ingredienti tuoi</span>
-        ${proofBadge}
+  cont.innerHTML = _mfProposte.map((v,i)=>{
+    const ing = (v.ingredienti||[]).join(' · ');
+    const fen = (v.fenomeni||[]).map(f=>`<span class="mf-piatto-fen">${_esc(f)}</span>`).join('');
+    const prontaBadge = v.pronta
+      ? '<span class="mf-badge molecole">ricetta completa</span>'
+      : '<span class="mf-badge esplora">ricetta in arrivo</span>';
+    return `<div class="mf-piatto">
+      <div class="mf-piatto-head">
+        <div class="mf-piatto-nome">${_esc(v.piatto||'Piatto')}</div>
+        ${v.tecnica?`<div class="mf-piatto-tecnica">${_esc(v.tecnica)}</div>`:''}
       </div>
-      <button class="mf-prop-btn" onclick="mfVaiAlLaboratorio(${i})">Porta al laboratorio →</button>
+      <div class="mf-piatto-ing">${_esc(ing)}</div>
+      ${v.perche?`<div class="mf-piatto-perche"><span class="mf-piatto-perche-lab">Perché</span> ${_esc(v.perche)}</div>`:''}
+      ${fen?`<div class="mf-piatto-fenomeni">${fen}</div>`:''}
+      <div class="mf-piatto-foot">
+        ${prontaBadge}
+        <button class="mf-prop-btn" onclick="mfVaiAlLaboratorio(${i})">Porta al laboratorio →</button>
+      </div>
     </div>`;
   }).join('');
-  // animo le connessioni dopo il render (si disegnano una dopo l'altra)
-  requestAnimationFrame(function(){
-    cont.querySelectorAll('.mf-grafo-link').forEach(function(l,idx){
-      setTimeout(function(){ l.classList.add('drawn'); }, 120 + idx*90);
-    });
-    cont.querySelectorAll('.mf-grafo-nodo').forEach(function(n,idx){
-      setTimeout(function(){ n.classList.add('shown'); }, idx*70);
-    });
-  });
 }
 
 // Mini-grafo delle connessioni: gli ingredienti come nodi, le relazioni come linee che si disegnano.
@@ -3058,6 +3061,14 @@ let _mfPropCorrente = null;
 
 async function _mfSuggerisciNome(p){
   var campo = document.getElementById('mf-lab-nome');
+  // le voci dal nuovo endpoint /costruisci hanno già un nome piatto: usalo subito
+  if(p && p.piatto && !campo.value.trim()){
+    campo.value = p.piatto;
+    campo.placeholder = _L({it:'Dai un nome alla voce',en:'Name this item',es:'Dale un nombre al elemento'});
+    var h = document.getElementById('mf-nome-hint');
+    if(h) h.style.display = 'block';
+    return;
+  }
   var cfg = _MB_CAT_CFG[_mbCategoria] || _MB_CAT_CFG.drink_list;
   try{
     var r = await fetch('/v1/menu/naming', {method:'POST', headers:{'Content-Type':'application/json'},

@@ -1828,3 +1828,15 @@ a:focus-visible,input:focus-visible{
 .onb4-btn{width:100%;min-height:56px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--ink,#131C21);color:#EAF1F3;border:none;border-radius:12px;font-family:var(--sans);font-weight:600;font-size:16px;cursor:pointer;margin-top:auto}
 .onb4-btn:active{transform:scale(.98)}
 .onb4-btn:disabled{opacity:.4}
+
+/* Menu Builder — card-piatto (voci di menu vere, non triangoli astratti) */
+.mf-piatto{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+.mf-piatto-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.mf-piatto-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:17px;letter-spacing:-.02em;color:var(--ink,#131C21);line-height:1.15}
+.mf-piatto-tecnica{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--teal,#12545D);background:var(--l3,#F2F6F6);padding:4px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.mf-piatto-ing{font-size:13px;color:var(--muted,#5A6C70);line-height:1.5;margin-bottom:10px}
+.mf-piatto-perche{font-size:13.5px;color:var(--ink,#131C21);line-height:1.5;background:var(--l3,#F2F6F6);border-left:3px solid var(--terra,#C77B3F);border-radius:0 8px 8px 0;padding:8px 12px;margin-bottom:10px}
+.mf-piatto-perche-lab{font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--terra,#C77B3F);display:block;margin-bottom:2px}
+.mf-piatto-fenomeni{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.mf-piatto-fen{font-family:var(--mono,'IBM Plex Mono');font-size:10px;color:var(--teal,#12545D);background:var(--s100,#D3E0E0);padding:3px 8px;border-radius:5px}
+.mf-piatto-foot{display:flex;justify-content:space-between;align-items:center;gap:12px}
