@@ -3218,3 +3218,92 @@ def creativita_bar_endpoint(spirito):
         return jsonify(d)
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/v1/menu/costruisci", methods=["POST"])
+def menu_costruisci():
+    """MENU BUILDER VERO: da ingredienti → VOCI DI MENU reali (non il triangolo di connessioni).
+    Per ogni piatto realizzabile con gli ingredienti dati, restituisce nome, ingredienti, tecnica,
+    e il perché scientifico. Riusa la mappa piatti canonici + il motore di generazione ricette.
+    Body: {ingredienti:[nomi], disciplina?:'cucina', max?:5}"""
+    body = request.json or {}
+    ingredienti = [x.strip().lower() for x in (body.get("ingredienti") or []) if x and x.strip()]
+    disc_filtro = (body.get("disciplina") or "").strip()
+    max_voci = min(int(body.get("max", 5)), 8)
+    if len(ingredienti) < 1:
+        return jsonify({"errore": "servi almeno 1 ingrediente", "voci": []}), 400
+    try:
+        import mappa_piatti
+    except Exception as e:
+        return jsonify({"errore": f"mappa piatti non disponibile: {e}", "voci": []}), 500
+
+    # 1) trova i piatti realizzabili con questi ingredienti (match sulla firma)
+    piatti = mappa_piatti.tutti_i_piatti()
+    if disc_filtro:
+        piatti = [p for p in piatti if (p.get("disc") or "cucina") == disc_filtro]
+    scored = []
+    for p in piatti:
+        firma = [x.lower() for x in p.get("firma", [])]
+        if not firma:
+            continue
+        n_match = sum(1 for t in ingredienti if any(t in f or f in t for f in firma))
+        if n_match >= 1:
+            scored.append((n_match, p))
+    scored.sort(key=lambda x: -x[0])
+    candidati = [p for _, p in scored[:max_voci]]
+
+    if not candidati:
+        return jsonify({"ingredienti": ingredienti, "voci": [],
+                        "nota": "Nessun piatto noto con questi ingredienti. Prova ad aggiungerne altri."})
+
+    # 2) per ogni candidato, prova a recuperare la ricetta GIÀ generata (veloce), o dà la scheda base
+    voci = []
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        import re, unicodedata
+        def _slug(nome):
+            s = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+            return re.sub(r"[^a-z0-9]+","-",s).strip("-")[:40]
+        for p in candidati:
+            nome = p["nome"]; disc = p.get("disc") or "cucina"
+            rid = f"ric-gen-{_slug(nome)}"
+            cur.execute("""SELECT nome, ingredienti, tecniche, fenomeni, punto_critico, descrizione
+                           FROM ricette WHERE id=%s OR lower(nome)=lower(%s) LIMIT 1""", (rid, nome))
+            row = cur.fetchone()
+            if row:
+                import json as _j
+                def _load(x):
+                    if isinstance(x, (list, dict)): return x
+                    try: return _j.loads(x) if x else []
+                    except: return []
+                ingr = _load(row[1]); tec = _load(row[2]); fen = _load(row[3])
+                voci.append({
+                    "piatto": row[0],
+                    "disciplina": disc,
+                    "ingredienti": [i.get("nome") if isinstance(i, dict) else i for i in ingr][:8],
+                    "tecnica": (tec[0].get("nome") if tec and isinstance(tec[0], dict) else (tec[0] if tec else "")),
+                    "fenomeni": [f.get("nome") if isinstance(f, dict) else f for f in fen][:2],
+                    "perche": row[4] or (row[5] or "")[:140],
+                    "pronta": True
+                })
+            else:
+                # ricetta non ancora generata: dò la scheda-base dalla mappa (nome + firma + area)
+                voci.append({
+                    "piatto": nome,
+                    "disciplina": disc,
+                    "ingredienti": p.get("firma", [])[:8],
+                    "tecnica": "",
+                    "fenomeni": [],
+                    "perche": f"Piatto {('tipico ' + p.get('area','')) if p.get('area') else 'classico'}. Ricetta scientifica in generazione.",
+                    "pronta": False
+                })
+        _release_conn(conn)
+    except Exception as e:
+        return jsonify({"errore": f"db: {e}", "voci": []}), 500
+
+    return jsonify({
+        "ingredienti": ingredienti,
+        "voci": voci,
+        "totale": len(voci),
+        "nota": "Voci di menu realizzabili con i tuoi ingredienti, con la scienza dietro ogni piatto."
+    })
