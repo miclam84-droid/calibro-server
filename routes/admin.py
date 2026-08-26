@@ -5689,3 +5689,39 @@ def admin_test_retrieval():
         "retrieval_at_3": f"{ok3}/{len(casi)} = {round(100*ok3/len(casi))}%",
         "ok": ok, "totale": len(casi), "dettaglio": risultati
     })
+
+
+# ── AGGIUNGE ALIAS a un fenomeno (per migliorare il retrieval) ──
+@bp.route("/admin/aggiungi-alias")
+def admin_aggiungi_alias():
+    """Aggiunge parole-chiave (alias) a un fenomeno per migliorare il retrieval della chat.
+    Es: al fenomeno Emulsione aggiungo 'carbonara,impazzisce,stracciata' cosi la chat lo trova.
+    ?id=fen-emulsione&alias=carbonara,impazzisce,stracciata"""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    fen_id = request.args.get("id", "").strip()
+    nuovi = [a.strip().lower() for a in request.args.get("alias", "").split(",") if a.strip()]
+    if not fen_id or not nuovi:
+        return jsonify({"errore": "servono ?id= e ?alias=parola1,parola2"}), 400
+    from db import _get_conn, _release_conn
+    import json as _j
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT data FROM nodes WHERE id=%s AND type='Fenomeno'", (fen_id,))
+        row = cur.fetchone()
+        if not row:
+            return jsonify({"errore": f"fenomeno {fen_id} non trovato"}), 404
+        data = row[0] if isinstance(row[0], dict) else _j.loads(row[0] or "{}")
+        aliases = data.get("aliases", [])
+        prima = len(aliases)
+        for a in nuovi:
+            if a not in aliases:
+                aliases.append(a)
+        data["aliases"] = aliases
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_j.dumps(data, ensure_ascii=False), fen_id))
+        conn.commit()
+        return jsonify({"id": fen_id, "alias_prima": prima, "alias_dopo": len(aliases),
+                        "aliases": aliases})
+    finally:
+        _release_conn(conn)
