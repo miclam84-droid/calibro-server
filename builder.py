@@ -320,6 +320,12 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         ricetta["_generata"] = True
         ricetta["disciplina"] = disciplina
         ricetta["_disclaimer"] = "Ricetta generata dall'AI sui dati scientifici del grafo. Verifica i numeri al banco."
+        # ── FILTRO SENSATEZZA: verifica che gli ingredienti abbiano affinità nel grafo ──
+        try:
+            _sanita = _verifica_sensatezza(db, ricetta, piatto_canonico is not None)
+            ricetta["_sensatezza"] = _sanita
+        except Exception:
+            pass
         return ricetta
     except _j.JSONDecodeError as e:
         return {"errore": f"JSON non valido: {e}", "raw": raw[:300] if 'raw' in dir() else ""}
@@ -460,3 +466,41 @@ def genera_ricetta_trilingue(db, richiesta, disciplina="cucina"):
     ric["_trilingue"] = True
     return ric
 
+
+
+def _verifica_sensatezza(db, ricetta, is_canonico):
+    """Filtro sensatezza: verifica che gli ingredienti principali della ricetta abbiano
+    affinità aromatica nel grafo. Se una ricetta combina ingredienti senza alcuna affinità
+    (fusione bizzarra), lo segnala. I piatti canonici sono sempre sensati (verificati)."""
+    if is_canonico:
+        return {"ok": True, "punteggio": 100, "nota": "piatto canonico verificato"}
+    ingredienti = ricetta.get("ingredienti", [])
+    # estraggo i nomi degli ingredienti principali (salto sale/acqua/olio/pepe di supporto)
+    supporto = {"sale", "acqua", "olio", "pepe", "zucchero", "burro", "aceto", "brodo"}
+    nomi = []
+    for i in ingredienti:
+        n = (i.get("nome", "") if isinstance(i, dict) else str(i)).lower().strip()
+        if n and not any(s in n for s in supporto):
+            nomi.append(n)
+    if len(nomi) < 2:
+        return {"ok": True, "punteggio": 100, "nota": "pochi ingredienti da valutare"}
+    # per ogni coppia dei primi 4 ingredienti principali, guardo se hanno affinità nel grafo
+    principali = nomi[:4]
+    coppie_ok = 0; coppie_tot = 0; senza_affinita = []
+    for idx in range(len(principali)):
+        ing = principali[idx]
+        ab = _abbinamenti_ingrediente(db, ing, max_n=30)
+        partner = {a["ingrediente"].lower() for a in ab if a.get("ingrediente")}
+        # questo ingrediente ha affinità con almeno un altro ingrediente della ricetta?
+        altri = [p for j, p in enumerate(principali) if j != idx]
+        ha_affinita = any(any(alt in pn or pn in alt for pn in partner) for alt in altri)
+        coppie_tot += 1
+        if ha_affinita:
+            coppie_ok += 1
+        else:
+            senza_affinita.append(ing)
+    punteggio = round(100 * coppie_ok / coppie_tot) if coppie_tot else 100
+    ok = punteggio >= 50  # almeno metà degli ingredienti principali deve avere affinità
+    nota = "ingredienti coerenti" if ok else f"possibile fusione azzardata: {', '.join(senza_affinita[:3])}"
+    return {"ok": ok, "punteggio": punteggio, "nota": nota,
+            "ingredienti_senza_affinita": senza_affinita[:3]}

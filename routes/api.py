@@ -223,6 +223,18 @@ def genera_ricetta_endpoint():
         # (3 chiamate AI sforano i 30s): la ricetta salvata resta con nome_en=NULL, e il batch
         # /admin/traduci-ricette la traduce dopo (flusso trilingue garantito, ma asincrono).
         risultato = genera_ricetta(db, richiesta, disciplina=disciplina, lang="it")
+        # FILTRO SENSATEZZA: se è una fusione azzardata (ingredienti senza affinità), rigenero UNA volta
+        _sens = risultato.get("_sensatezza", {})
+        if _sens and not _sens.get("ok", True) and not risultato.get("errore"):
+            try:
+                # rigenero con un vincolo esplicito di coerenza
+                richiesta_stretta = richiesta + " — usa SOLO ingredienti che si abbinano bene tra loro, niente fusioni azzardate, ricetta classica e coerente"
+                risultato2 = genera_ricetta(db, richiesta_stretta, disciplina=disciplina, lang="it")
+                # tengo la seconda solo se è più sensata
+                if risultato2.get("_sensatezza", {}).get("punteggio", 0) > _sens.get("punteggio", 0):
+                    risultato = risultato2
+            except Exception:
+                pass
         if risultato.get("errore"):
             return jsonify(risultato), 422
         # VERIFICA ANTI-ERESIE: controlla la ricetta contro le regole canoniche (no panna nella carbonara ecc.)
