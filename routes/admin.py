@@ -5639,3 +5639,53 @@ def admin_pulisci_immagini_stock():
                         "esempi": esempi})
     finally:
         _release_conn(conn)
+
+
+# ── TEST RETRIEVAL (misura qualità chat senza paywall) ──
+@bp.route("/admin/test-retrieval")
+def admin_test_retrieval():
+    """Misura il retrieval@1 su una batteria di domande da banco, senza il limite trial.
+    Per ogni domanda mostra il fenomeno top trovato. Aiuta a monitorare la qualità della chat."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    try:
+        from retrieval import retrieval_ranked
+    except Exception as e:
+        return jsonify({"errore": f"retrieval non disponibile: {e}"}), 500
+
+    casi = [
+        ("a quanto deve stare l'idratazione della pizza", "idratazione"),
+        ("perche la carbonara impazzisce", "emulsione"),
+        ("quanto acido in un sour", "acidit"),
+        ("a che temperatura coagula l'uovo", "coagula"),
+        ("quanto deve diluire un negroni", "diluizione"),
+        ("perche il pane non lievita", "lievit"),
+        ("a che temperatura si fa il caramello", "caramell"),
+        ("quanto sale nell'impasto del pane", "sale"),
+        ("come faccio la meringa stabile", "albume"),
+        ("perche il gelato e troppo duro", "zucchero"),
+    ]
+    db = carica_grafo()
+    risultati = []; ok = 0
+    for domanda, atteso in casi:
+        try:
+            ranked = retrieval_ranked(db, domanda, topk=3)
+            top = ranked[0] if ranked else None
+            top_nome = ""
+            if top:
+                nodo = top.get("node") if isinstance(top, dict) else None
+                if nodo:
+                    top_nome = nodo["name"] if "name" in nodo.keys() else ""
+                elif isinstance(top, dict):
+                    top_nome = top.get("nome", "") or top.get("name", "")
+            hit = atteso.lower() in (top_nome or "").lower() or atteso.lower() in str(top).lower()
+            if hit: ok += 1
+            risultati.append({"domanda": domanda, "atteso": atteso, "top": top_nome, "hit": hit})
+        except Exception as e:
+            risultati.append({"domanda": domanda, "errore": str(e)[:60]})
+    return jsonify({
+        "retrieval_at_1": f"{ok}/{len(casi)} = {round(100*ok/len(casi))}%",
+        "ok": ok, "totale": len(casi), "dettaglio": risultati
+    })
