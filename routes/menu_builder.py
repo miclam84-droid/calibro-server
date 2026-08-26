@@ -290,9 +290,26 @@ def menu_render(mid):
     finally:
         _release(c)
 
-    tpl = _TEMPLATE_MENU.get(request.args.get("template", "elegante"), _TEMPLATE_MENU["elegante"])
+    tpl = dict(_TEMPLATE_MENU.get(request.args.get("template", "elegante"), _TEMPLATE_MENU["elegante"]))
     mostra_foto = request.args.get("foto", "0") != "0"
     usa_sezioni = request.args.get("sezioni", "1") != "0"  # default: raggruppa per sezione se presente
+
+    # ── PERSONALIZZAZIONE DEL RISTORATORE (logo, colore, footer) ──
+    # ?logo=<url> ?accent=<hex senza #> ?footer=<testo> ?font=<serif|sans>
+    logo_url = request.args.get("logo", "").strip()
+    accent_custom = request.args.get("accent", "").strip()
+    if accent_custom:
+        # accetto sia "245979" sia "%23245979"; metto io il #
+        accent_custom = accent_custom.lstrip("#")
+        if len(accent_custom) in (3, 6) and all(ch in "0123456789abcdefABCDEF" for ch in accent_custom):
+            tpl["accent"] = "#" + accent_custom
+            tpl["linea"] = "#" + accent_custom  # la linea segue l'accento scelto
+    footer_custom = request.args.get("footer", "").strip()
+    font_scelta = request.args.get("font", "").strip()
+    if font_scelta == "serif":
+        tpl["font"] = "Georgia, 'Times New Roman', serif"
+    elif font_scelta == "sans":
+        tpl["font"] = "'Helvetica Neue', Arial, sans-serif"
 
     def esc(s):
         return (str(s or "")).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -345,6 +362,7 @@ def menu_render(mid):
   body {{ font-family: {tpl["font"]}; background: {tpl["bg"]}; color: {tpl["ink"]};
          margin: 0 auto; padding: 40px; max-width: 820px; }}
   .menu-head {{ text-align: center; border-bottom: 2px solid {tpl["linea"]}; padding-bottom: 20px; margin-bottom: 28px; }}
+  .menu-logo {{ max-width: 140px; max-height: 90px; margin: 0 auto 12px; display: block; object-fit: contain; }}
   .menu-titolo {{ font-size: 34px; letter-spacing: 2px; margin: 0 0 6px; color: {tpl["accent"]}; }}
   .menu-locale {{ font-size: 14px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }}
   .menu-sezione {{ font-size: 20px; color: {tpl["accent"]}; letter-spacing: 1px; text-transform: uppercase;
@@ -364,12 +382,13 @@ def menu_render(mid):
 </style></head>
 <body>
   <div class="menu-head">
+    {f'<img class="menu-logo" src="{esc(logo_url)}" alt="logo">' if logo_url else ''}
     <h1 class="menu-titolo">{esc(titolo)}</h1>
     {f'<div class="menu-locale">{esc(locale)}</div>' if locale else ''}
   </div>
   <div class="menu-corpo">{corpo}</div>
   {f'<div class="menu-note">{esc(note)}</div>' if note else ''}
-  <div class="menu-foot">Creato con Matter</div>
+  <div class="menu-foot">{esc(footer_custom) if footer_custom else 'Creato con Matter'}</div>
 </body></html>'''
     from flask import Response
     return Response(html, mimetype="text/html")
