@@ -5605,3 +5605,37 @@ def admin_genera_canonici_bg_stato():
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
     return jsonify(_GENCAN_STATO)
+
+
+# ── PULIZIA IMMAGINI STOCK SBAGLIATE (foodiesfeed agganciate per matching furbo) ──
+@bp.route("/admin/pulisci-immagini-stock")
+def admin_pulisci_immagini_stock():
+    """Stacca le immagini foodiesfeed (stock) agganciate per matching sul nome-file, che genera
+    errori (Amaretto Sour->pane, Bloody Mary->roast beef). Regola: meglio placeholder che foto
+    sbagliata. Le foto vere di Michele (nome-file = id ricetta) e le Pixabay verificate restano."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    dry = request.args.get("dry", "1") == "1"
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    staccate = 0; esempi = []
+    try:
+        # trova le ricette con immagine foodiesfeed (stock, matching inaffidabile)
+        cur.execute("""SELECT id, nome, immagine FROM ricette
+                       WHERE immagine LIKE '%%foodiesfeed%%'""")
+        righe = cur.fetchall()
+        for rid, nome, img in righe:
+            if len(esempi) < 15:
+                fn = str(img).split('/')[-1][:40]
+                esempi.append({"ricetta": nome, "era": fn})
+            if not dry:
+                cur.execute("UPDATE ricette SET immagine=NULL, immagine_autore=NULL WHERE id=%s", (rid,))
+                staccate += 1
+        if not dry:
+            conn.commit()
+        return jsonify({"dry_run": dry, "trovate_foodiesfeed": len(righe), "staccate": staccate,
+                        "nota": "tornano al placeholder pulito; riprendono foto solo da fonti fidate",
+                        "esempi": esempi})
+    finally:
+        _release_conn(conn)
