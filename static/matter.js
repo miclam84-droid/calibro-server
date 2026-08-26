@@ -949,7 +949,7 @@ function chiediTesto(q){
 function apriNodo(id,nome){
   if(busy)return;
   aggiungiThinking();setBusy(true);
-  fetch('/nodo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})})
+  fetch('/nodo?traccia=1',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({id})})
     .then(r=>r.json()).then(j=>renderRisp(nome,j,true)).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
 function aggiungiThinking(){
