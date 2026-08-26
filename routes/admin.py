@@ -5725,3 +5725,39 @@ def admin_aggiungi_alias():
                         "aliases": aliases})
     finally:
         _release_conn(conn)
+
+
+# ── TEST CHAT COMPLETO (retrieval + risposta, senza paywall) ──
+@bp.route("/admin/test-chat")
+def admin_test_chat():
+    """Testa la chat completa (retrieval + risposta generata) su una domanda, senza limite trial.
+    ?domanda=... — per hardtest della qualità delle risposte."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    domanda = request.args.get("domanda", "").strip()
+    if not domanda:
+        return jsonify({"errore": "specifica ?domanda=..."}), 400
+    from db import carica_grafo
+    from retrieval import retrieval_ranked
+    from ai import cerca_contesto, costruisci_prompt, chiedi_mistral
+    db = carica_grafo()
+    try:
+        ranked = retrieval_ranked(db, domanda, topk=3)
+        fenomeni = ranked.get("fenomeni", []) if isinstance(ranked, dict) else []
+        top_id = fenomeni[0]["id"] if fenomeni else None
+        top_nome = fenomeni[0]["name"] if fenomeni else ""
+        # costruisco il contesto dal fenomeno top e genero la risposta
+        contesto = cerca_contesto(db, top_nome, domanda) if top_nome else ""
+        prompt = costruisci_prompt(domanda, contesto, lang="it")
+        risposta = chiedi_mistral(prompt)
+        return jsonify({
+            "domanda": domanda,
+            "fenomeno_trovato": top_nome,
+            "fenomeno_id": top_id,
+            "altri_candidati": [f["name"] for f in fenomeni[1:3]],
+            "risposta": risposta,
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
