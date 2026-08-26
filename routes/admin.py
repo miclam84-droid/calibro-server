@@ -5492,3 +5492,116 @@ def admin_genera_canonici():
         "mancavano_prima": totale_mancanti, "mancano_ancora": totale_mancanti - generate,
         "disciplina_filtro": disc_filtro or "tutte", "dettaglio": dettaglio,
     })
+
+
+# ── GENERAZIONE CANONICI IN BACKGROUND (thread, si autocompleta) ──
+_GENCAN_STATO = {"attivo": False, "generate": 0, "bloccate": 0, "errori": 0,
+                 "mancano": None, "corrente": "", "disc": ""}
+
+def _gencan_worker(disc_filtro, limite_totale):
+    global _GENCAN_STATO
+    import re as _re, json as _j2, unicodedata
+    from db import carica_grafo, _get_conn, _release_conn
+    try:
+        import mappa_piatti
+        from builder import genera_ricetta
+        try:
+            from verificatore_ricette import verifica_ricetta
+        except Exception:
+            verifica_ricetta = None
+
+        def _slug(nome):
+            s = unicodedata.normalize("NFKD", nome.lower()).encode("ascii","ignore").decode()
+            return _re.sub(r"[^a-z0-9]+","-",s).strip("-")[:40]
+
+        piatti = mappa_piatti.tutti_i_piatti()
+        if disc_filtro:
+            piatti = [p for p in piatti if (p.get("disc") or "cucina") == disc_filtro]
+
+        db = carica_grafo()
+        fatti = 0
+        while True:
+            # ricalcolo cosa manca (così è robusto a interruzioni)
+            conn = _get_conn(); cur = conn.cursor()
+            try:
+                cur.execute("SELECT id FROM ricette")
+                esistenti = set(r[0] for r in cur.fetchall())
+            finally:
+                _release_conn(conn)
+            da_fare = [p for p in piatti if f"ric-gen-{_slug(p['nome'])}" not in esistenti]
+            _GENCAN_STATO["mancano"] = len(da_fare)
+            if not da_fare:
+                break
+            if limite_totale and fatti >= limite_totale:
+                break
+            p = da_fare[0]
+            nome = p["nome"]; disc = p.get("disc") or "cucina"
+            _GENCAN_STATO["corrente"] = nome
+            try:
+                ris = genera_ricetta(db, nome, disciplina=disc, lang="it")
+                if ris.get("errore"):
+                    _GENCAN_STATO["errori"] += 1; fatti += 1; continue
+                if verifica_ricetta:
+                    v = verifica_ricetta(ris.get("nome",""), ris.get("ingredienti",[]))
+                    if not v.get("ok"):
+                        _GENCAN_STATO["bloccate"] += 1; fatti += 1; continue
+                rid = f"ric-gen-{_slug(ris.get('nome', nome))}"
+                c2 = _get_conn(); cur2 = c2.cursor()
+                try:
+                    cur2.execute("""
+                        INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
+                            punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni)
+                        VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)
+                        ON CONFLICT (id) DO NOTHING
+                    """, (rid, ris.get("nome",nome), disc, ris.get("descrizione",""),
+                          _j2.dumps(ris.get("ingredienti",[]),ensure_ascii=False),
+                          _j2.dumps(ris.get("fenomeni",[]),ensure_ascii=False),
+                          _j2.dumps(ris.get("tecniche",[]),ensure_ascii=False),
+                          _j2.dumps(ris.get("numeri",{}),ensure_ascii=False),
+                          ris.get("punto_critico",""),
+                          _j2.dumps(ris.get("abbinamenti",{}),ensure_ascii=False),
+                          _j2.dumps(ris.get("procedimento",[]),ensure_ascii=False),
+                          _j2.dumps(ris.get("applicazioni",[]),ensure_ascii=False),
+                          ris.get("tempo_prep"), ris.get("tempo_cottura"),
+                          ris.get("difficolta",""), ris.get("porzioni","")))
+                    c2.commit()
+                    _GENCAN_STATO["generate"] += 1
+                except Exception:
+                    c2.rollback(); _GENCAN_STATO["errori"] += 1
+                finally:
+                    _release_conn(c2)
+            except Exception:
+                _GENCAN_STATO["errori"] += 1
+            fatti += 1
+    finally:
+        _GENCAN_STATO["attivo"] = False
+        _GENCAN_STATO["corrente"] = ""
+
+@bp.route("/admin/genera-canonici-bg")
+def admin_genera_canonici_bg():
+    """Avvia la generazione dei piatti canonici in BACKGROUND (si autocompleta, aggira il timeout).
+    ?disc= limita a una disciplina, ?n= limita quante generarne in totale (0=tutte).
+    Controlla con /admin/genera-canonici-bg-stato."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    global _GENCAN_STATO
+    if _GENCAN_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _GENCAN_STATO})
+    import threading
+    disc = request.args.get("disc", "").strip()
+    limite = int(request.args.get("n", "0"))
+    _GENCAN_STATO = {"attivo": True, "generate": 0, "bloccate": 0, "errori": 0,
+                     "mancano": None, "corrente": "", "disc": disc or "tutte"}
+    t = threading.Thread(target=_gencan_worker, args=(disc, limite), daemon=True)
+    t.start()
+    return jsonify({"avviato": True, "disc": disc or "tutte",
+                    "nota": "generazione in background — controlla /admin/genera-canonici-bg-stato"})
+
+@bp.route("/admin/genera-canonici-bg-stato")
+def admin_genera_canonici_bg_stato():
+    """Stato della generazione canonici in background."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    return jsonify(_GENCAN_STATO)
