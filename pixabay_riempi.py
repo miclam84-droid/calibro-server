@@ -14,10 +14,23 @@ PIXABAY_KEY = os.environ.get("PIXABAY_KEY", "")
 _STOPWORDS = {"food", "meal", "dinner", "lunch", "dish", "plate", "cuisine", "eat", "cooking", "kitchen"}
 
 
+def _pulisci_query(q):
+    """Pulisce il nome per la ricerca: toglie parentesi, suffissi tipo 'rivisitato/classico',
+    e parole di rumore, per aumentare la pertinenza dei risultati Pixabay."""
+    import re
+    q = re.sub(r"\([^)]*\)", "", q or "").strip()
+    _RUMORE = {"rivisitato", "rivisitata", "classico", "classica", "classici", "classiche",
+               "tradizionale", "fatto", "in", "casa", "della", "del", "di", "al", "alla",
+               "con", "e", "la", "il", "lo", "le", "i", "gli"}
+    parole = [p for p in q.split() if p.lower() not in _RUMORE]
+    return " ".join(parole) if parole else q
+
+
 def _pixabay_cerca(query, food=True):
     """Cerca su Pixabay. Ritorna lista di hit (dict) o []."""
     if not PIXABAY_KEY:
         return []
+    query = _pulisci_query(query)
     params = {
         "key": PIXABAY_KEY, "q": query, "image_type": "photo",
         "order": "popular", "safesearch": "true", "per_page": 5, "lang": "it",
@@ -37,17 +50,33 @@ def _pixabay_cerca(query, food=True):
 
 
 def _tag_pertinente(hit, query):
-    """La foto è a tema? I suoi tag devono contenere la parola cercata (o una sua parte
-    significativa). Scarta i mismatch (query 'guanciale' -> foto con tag 'kale')."""
+    """La foto è a tema? Filtro SEVERO per evitare i mismatch (brasato->mele, baccalà->mirtilli).
+    Regole:
+    - i tag NON devono contenere parole palesemente off (sfondo, wallpaper, ecc.)
+    - la parola della query che combacia dev'essere SPECIFICA (>=5 lettere) e presente nei tag,
+      OPPURE combaciano almeno 2 parole della query di >=4 lettere."""
     tags = (hit.get("tags") or "").lower()
-    q = query.lower().strip()
-    # match diretto
-    if q in tags:
+    if not tags:
+        return False
+    # lista nera: se compaiono, la foto è quasi certamente fuori tema
+    _BLACKLIST = {"wallpaper", "carta da parati", "sfondo", "background", "texture",
+                  "in crescita", "crescita", "growing", "nature", "natura", "landscape",
+                  "paesaggio", "wall", "muro", "astratto", "abstract"}
+    for bad in _BLACKLIST:
+        if bad in tags:
+            return False
+    q = _pulisci_query(query).lower().strip()
+    parole = [p for p in q.split() if len(p) >= 4 and p not in _STOPWORDS]
+    if not parole:
+        return False
+    # match forte: una parola specifica (>=5 lettere) presente nei tag
+    forti = [p for p in parole if len(p) >= 5 and p in tags]
+    if forti:
         return True
-    # match per parola singola significativa (>=4 lettere, non stopword)
-    for parola in q.split():
-        if len(parola) >= 4 and parola not in _STOPWORDS and parola in tags:
-            return True
+    # match medio: almeno 2 parole (>=4 lettere) presenti nei tag
+    presenti = [p for p in parole if p in tags]
+    if len(presenti) >= 2:
+        return True
     return False
 
 
