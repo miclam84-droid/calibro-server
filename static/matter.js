@@ -784,7 +784,7 @@ function renderMappa(disc, fens, casi){
       : isFirst
       ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'
       : '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
-    var nodeStyle = stato==='lock' ? 'border:1px solid rgba(196,98,45,0.3);background:var(--surface);' : '';
+    var nodeStyle = stato==='lock' ? 'border:1px solid rgba(147,163,163,0.5);background:var(--surface);' : '';
     // pill applicazioni: se la madre ne ha, mostra il contatore che espande
     var appsPill = apps.length
       ? '<button class="p-apps-toggle" onclick="event.stopPropagation();toggleApps(this)">'
@@ -862,7 +862,7 @@ function vaiAStep(idx){
 }
 
 /* ── CHAT / GRAFO ─────────────────────────────────────── */
-const DOMCOL={bar:'#D3B566',cucina:'#E0AA76',bakery:'#2C6E63',caffetteria:'#9A5A28',fermentazione:'#8FBBB0',trasversale:'#6F6A60'};
+const DOMCOL={bar:'#245979',cucina:'#12545D',bakery:'#12545D',caffetteria:'#3E4E52',fermentazione:'#5E9BA3',trasversale:'#5A6C70'};
 let busy=false;
 function setBusy(b){busy=b;document.getElementById('ask-btn').disabled=b;}
 function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)return;document.getElementById('q').value='';chiediTesto(q);}
@@ -945,7 +945,7 @@ function renderRisp(domanda,j,fromNode){
     return `<span class="fenchip" style="cursor:pointer;text-decoration:underline dotted" onclick="${fid?`apriNodo('${fid}','${f.replace(/'/g,"\'")}')`:'switchTab(\"lezione\")'}" title="Esplora fenomeno">${esc(f)}</span>`;
   }).join('');
   const conns=(j.connessi||[]).map(c=>{
-    const col=DOMCOL[c.dominio]||'#6F6A60';
+    const col=DOMCOL[c.dominio]||'#5A6C70';
     const tg=c.target?`<span class="tg">${esc(c.target)}</span>`:'';
     return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||'').replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${esc(c.nome)}${tg}</span>`;
   }).join('');
@@ -1010,7 +1010,7 @@ function renderRisp(domanda,j,fromNode){
           const col = labelColors[label] || 'var(--ink-muted)';
           const isNum = label === 'NUMERO' || label === 'NUMBER' || label === 'NÚMERO';
           const isAct = label === 'AZIONE' || label === 'ACTION' || label === 'ACCIÓN' || label === 'NUMERO' || label === 'NUMBER' || label === 'NÚMERO';
-        const tagBg = isAct ? '#2C6E63' : '#8FBBB0';
+        const tagBg = isAct ? '#12545D' : '#5E9BA3';
         html += '<div class="s-block">' +
             '<div class="s-block-label" style="background:'+tagBg+'">' + esc(label) + '</div>' +
             '<div class="s-block-body"' + (isNum ? ' style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--e700)"' : '') + '>' + esc(val) + '</div>' +
@@ -1036,7 +1036,7 @@ function renderRisp(domanda,j,fromNode){
 function renderNota(domanda,nota,connessi){
   const card=document.createElement('div');card.className='scheda';
   const conns=(connessi||[]).map(c=>{
-    const col=DOMCOL[c.dominio]||'#6F6A60';
+    const col=DOMCOL[c.dominio]||'#5A6C70';
     return `<span class="conn" onclick="apriNodo('${c.id}','${(c.nome||'').replace(/'/g,"\\'")}')"><span class="dot" style="background:${col}"></span>${esc(c.nome)}</span>`;
   }).join('');
   card.innerHTML=`<div class="s-q"><b>${esc(domanda)}</b></div>
@@ -2389,10 +2389,10 @@ function scaricaPDF(btn) {
 <title>${domanda.substring(0,60)}</title>
 <style>
   body{font-family:Georgia,serif;max-width:600px;margin:40px auto;color:#2a2a2a;line-height:1.6}
-  .logo{font-family:'Arial',sans-serif;font-size:22px;font-weight:700;color:#D3B566;margin-bottom:4px}
+  .logo{font-family:'Arial',sans-serif;font-size:22px;font-weight:700;color:#245979;margin-bottom:4px}
   .payoff{font-family:'Courier New',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#9a9090;margin-bottom:32px}
   .domanda{font-size:18px;font-weight:700;color:#2a2a2a;margin-bottom:8px}
-  .fenomeni{font-family:'Courier New',monospace;font-size:10px;color:#D3B566;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+  .fenomeni{font-family:'Courier New',monospace;font-size:10px;color:#245979;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
   .risposta{font-size:14px;line-height:1.8;color:#333;margin-bottom:32px}
   .footer{font-family:'Courier New',monospace;font-size:9px;color:#9a9090;border-top:1px solid #eee;padding-top:12px}
 </style>
