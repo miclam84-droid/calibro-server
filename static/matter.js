@@ -4801,11 +4801,12 @@ async function caricaFlavour(term){
 }
 function _flavourNode(a,key,surprise,centro){
   const n = Math.round(a.overlap||0);
-  const det = surprise ? '<div class="fnv-detail" id="fnv-det-'+key+'"><div class="fnv-detail-why">'+_escV(centro)+' e '+_escV(a.ingrediente)+' condividono <b>'+n+' composti aromatici</b>. '+_escV(a.perche||'')+' Non è un\'opinione: è chimica.</div><button class="fnv-cta" onclick="_flavourCrea(\''+_escV(centro)+'\',\''+_escV(a.ingrediente)+'\')">Crea una ricetta con questo abbinamento →</button></div>' : '';
-  return '<div class="fnv-node'+(surprise?' surprise':'')+'"'+(surprise?' onclick="_flavourToggle(\''+key+'\')"':'')+'>'+
+  // il dettaglio+CTA "crea ricetta" ora c'è SIA per sorprendenti SIA per classici
+  const det = '<div class="fnv-detail" id="fnv-det-'+key+'"><div class="fnv-detail-why">'+_escV(centro)+' e '+_escV(a.ingrediente)+' condividono <b>'+n+' composti aromatici</b>. '+_escV(a.perche||'')+' Non è un\'opinione: è chimica.</div><button class="fnv-cta" onclick="event.stopPropagation();_flavourCrea(\''+_escV(centro)+'\',\''+_escV(a.ingrediente)+'\')">Crea una ricetta con questo abbinamento →</button></div>';
+  return '<div class="fnv-node'+(surprise?' surprise':'')+'" onclick="_flavourToggle(\''+key+'\')">'+
     '<div class="fnv-mirino">'+(surprise?_mirinoSorpresa():_mirinoClassico())+'</div>'+
     '<div class="fnv-node-body"><div class="fnv-node-name">'+_escV(a.ingrediente)+'</div>'+
-    '<div class="fnv-node-why">'+(surprise?'Sorprendente — tocca per il perché':_escV(a.perche||'composti condivisi'))+'</div></div>'+
+    '<div class="fnv-node-why">'+(surprise?'Sorprendente — tocca per il perché':'Tocca per creare una ricetta')+'</div></div>'+
     '<div class="fnv-node-n">'+n+'<span class="u">composti</span></div></div>'+det;
 }
 function _flavourToggle(key){ const d=document.getElementById('fnv-det-'+key); if(d) d.classList.toggle('show'); }
