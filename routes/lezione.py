@@ -405,14 +405,52 @@ def quiz_nodo(node_id):
 
 @bp.route("/mappa/<disciplina_nome>")
 def mappa(disciplina_nome):
-    """FE4 — Fenomeni della disciplina con stato libero/completato.
-    Senza account: tutti liberi. Con account (futuro): stato persistente."""
+    """FE4 — Fenomeni della disciplina con stato statico (libero/completato/Pro) E stato_utente
+    dinamico (mai_aperto/studiato/misurato) letto da X-Device-Id o X-Token. Opzione B: una chiamata sola."""
     resp = disciplina(disciplina_nome).get_json()
     fenomeni = resp.get("fenomeni", [])
     casi = resp.get("casi", [])
-    # per ora tutti liberi — la progressione arriva con l'account (task AC2)
+    # stato statico: per ora tutti liberi (la progressione Pro arriva con l'account)
     for f in fenomeni:
         f["stato"] = "libero"
+    # stato_utente dinamico: leggo cosa l'utente ha studiato/misurato e lo attacco per id
+    try:
+        from routes.stato import _chiave_utente
+        from db import _get_conn, _release_conn
+        tipo, chiave = _chiave_utente()
+        stati_utente = {}
+        if tipo:
+            conn = _get_conn()
+            try:
+                cur = conn.cursor()
+                cur.execute("""SELECT fenomeno, stato, valore, unita, in_finestra, quando
+                               FROM stato_fenomeni WHERE chiave_tipo=%s AND chiave=%s""", (tipo, chiave))
+                for row in cur.fetchall():
+                    g = lambda i: (row[i] if not hasattr(row,"keys") else row[list(row.keys())[i]])
+                    stati_utente[g(0)] = {
+                        "stato_utente": g(1), "ultima_misura": g(2), "unita": g(3),
+                        "in_finestra": g(4), "quando": g(5).isoformat() if g(5) else None,
+                    }
+                conn.commit()
+            except Exception:
+                conn.rollback()
+            finally:
+                _release_conn(conn)
+        # attacco: se l'utente ha uno stato per quel fenomeno lo uso, altrimenti mai_aperto
+        for f in fenomeni:
+            su = stati_utente.get(f.get("id"))
+            if su:
+                f["stato_utente"] = su["stato_utente"]
+                f["ultima_misura"] = su["ultima_misura"]
+                f["unita"] = su["unita"]
+                f["in_finestra"] = su["in_finestra"]
+                f["quando"] = su["quando"]
+            else:
+                f["stato_utente"] = "mai_aperto"
+    except Exception:
+        # se qualcosa va storto, degrado a mai_aperto (mai rompere la mappa)
+        for f in fenomeni:
+            f.setdefault("stato_utente", "mai_aperto")
     return jsonify({
         "disciplina": disciplina_nome,
         "fenomeni": fenomeni,
