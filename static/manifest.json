@@ -4,8 +4,8 @@
   "description": "La scienza del mestiere F&B — Science & Craft",
   "start_url": "/app",
   "display": "standalone",
-  "background_color": "#FAF6EE",
-  "theme_color": "#2C6E63",
+  "background_color": "#CBD4D4",
+  "theme_color": "#131C21",
   "orientation": "portrait-primary",
   "icons": [
     {
