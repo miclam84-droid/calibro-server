@@ -845,6 +845,25 @@ if('serviceWorker' in navigator){
     <button class="ma-tg" id="ma-tg-staff" onclick="_maSwitchVista('staff')">Scheda di linea</button>
   </div>
   <div class="ma-scroll">
+    <div class="ma-brand-panel" id="ma-brand-panel">
+      <div class="ma-brand-tit">Personalizza col tuo brand</div>
+      <div class="ma-brand-row">
+        <label class="ma-brand-lab">Colore accento</label>
+        <input type="color" id="ma-brand-accent" value="#245979" onchange="_maApplicaBrand()">
+      </div>
+      <div class="ma-brand-row">
+        <label class="ma-brand-lab">Font</label>
+        <select id="ma-brand-font" onchange="_maApplicaBrand()">
+          <option value="serif">Serif (elegante)</option>
+          <option value="sans">Sans (moderno)</option>
+        </select>
+      </div>
+      <div class="ma-brand-row col">
+        <label class="ma-brand-lab">Footer (indirizzo, contatti…)</label>
+        <input type="text" id="ma-brand-footer" placeholder="Via Roma 1 · Napoli · @illocale" oninput="_maApplicaBrand()">
+      </div>
+      <div class="ma-brand-logo-nota">Il caricamento del logo arriva a breve.</div>
+    </div>
     <div class="ma-render tpl-editorial" id="ma-render"></div>
     <div class="mas-render" id="mas-render" style="display:none"></div>
     <div class="ma-export-nota">La <b>Carta cliente</b> è per il tavolo. La <b>Scheda di linea</b>, coi numeri-bersaglio, è per lo staff in cucina. L'export PDF di entrambe è incluso in <b>Matter Pro</b>.</div>

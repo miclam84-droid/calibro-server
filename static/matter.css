@@ -1840,3 +1840,16 @@ a:focus-visible,input:focus-visible{
 .mf-piatto-fenomeni{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .mf-piatto-fen{font-family:var(--mono,'IBM Plex Mono');font-size:10px;color:var(--teal,#12545D);background:var(--s100,#D3E0E0);padding:3px 8px;border-radius:5px}
 .mf-piatto-foot{display:flex;justify-content:space-between;align-items:center;gap:12px}
+
+/* Pannello brand personalizzazione menu */
+.ma-brand-panel{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.ma-brand-tit{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:14px;color:var(--ink,#131C21);margin-bottom:10px}
+.ma-brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}
+.ma-brand-row.col{flex-direction:column;align-items:stretch;gap:5px}
+.ma-brand-lab{font-size:12.5px;color:var(--muted,#5A6C70);font-weight:500}
+.ma-brand-row input[type=color]{width:44px;height:32px;border:1px solid var(--border,#B7C3C3);border-radius:7px;padding:2px;cursor:pointer;background:none}
+.ma-brand-row select,.ma-brand-row.col input{min-height:40px;border:1px solid var(--border,#B7C3C3);border-radius:8px;padding:8px 10px;font-family:var(--sans,'Inter');font-size:13px;color:var(--ink,#131C21);background:var(--l3,#F2F6F6)}
+.ma-brand-logo-nota{font-family:var(--mono,'IBM Plex Mono');font-size:10px;color:var(--faint,#7A898E);margin-top:4px}
+.ma-render[data-font=sans]{font-family:var(--sans,'Inter') !important}
+.ma-render[data-font=sans] *{font-family:var(--sans,'Inter') !important}
+.ma-brand-footer-live{margin-top:16px;padding-top:12px;border-top:1px solid var(--ma-accent,#245979);font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:var(--muted,#5A6C70);text-align:center}

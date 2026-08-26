@@ -3444,6 +3444,27 @@ function _maSwitchVista(v){
 }
 function chiudiAnteprima(){ document.getElementById('menu-anteprima').classList.add('hidden'); caricaMenuSalvati(); }
 
+// Applica il brand del ristoratore all'anteprima (colore accento, font, footer)
+function _maApplicaBrand(){
+  var render = document.getElementById('ma-render');
+  if(!render) return;
+  var accent = (document.getElementById('ma-brand-accent')||{}).value || '#245979';
+  var font = (document.getElementById('ma-brand-font')||{}).value || 'serif';
+  var footer = (document.getElementById('ma-brand-footer')||{}).value || '';
+  render.style.setProperty('--ma-accent', accent);
+  render.setAttribute('data-font', font);
+  // salvo le scelte brand sul menu corrente, per l'export
+  if(_maMenuCorrente){
+    _maMenuCorrente.brand = {accent:accent, font:font, footer:footer};
+  }
+  // footer live
+  var fEl = render.querySelector('.ma-brand-footer-live');
+  if(footer){
+    if(!fEl){ fEl=document.createElement('div'); fEl.className='ma-brand-footer-live'; render.appendChild(fEl); }
+    fEl.textContent = footer;
+  } else if(fEl){ fEl.remove(); }
+}
+
 // ── MOTORE ALLERGENI (Reg. UE 1169/2011) ──────────────────────────────
 // Deriva i 14 allergeni obbligatori dagli ingredienti del menù. Deterministico, zero AI.
 // Mappa ingrediente(IT, lowercase, senza accenti) → allergene UE. Match su parola intera/inclusione.
