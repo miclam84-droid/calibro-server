@@ -4156,8 +4156,8 @@ function _fotoVaiFlavor(nome){
   setTimeout(function(){
     if(typeof switchMappaTab==='function') switchMappaTab('flavor');
     setTimeout(function(){
-      var inp=document.getElementById('flavor-input');
-      if(inp){ inp.value=nome; if(typeof cercaFlavor==='function') cercaFlavor(); }
+      if(typeof apriFlavour==='function'){ apriFlavour(nome); }
+      else { var inp=document.getElementById('fnv-input'); if(inp){ inp.value=nome; if(typeof caricaFlavour==='function') caricaFlavour(nome); } }
     }, 300);
   }, 200);
 }
@@ -4817,6 +4817,17 @@ function _flavourNode(a,key,surprise,centro){
     '<div class="fnv-node-why">'+(surprise?'Sorprendente — tocca per il perché':'Tocca per creare una ricetta')+'</div></div>'+
     '<div class="fnv-node-n">'+n+'<span class="u">composti</span></div></div>'+det;
 }
+function feedbackAbb(ingrediente, centro, voto, btn){
+  // invia il feedback sull'abbinamento (pollice su/giu) e evidenzia il bottone
+  try{
+    fetch('/v1/feedback-abbinamento', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ingrediente:ingrediente, centro:centro, voto:voto})
+    }).catch(function(){});
+  }catch(e){}
+  if(btn){ btn.style.opacity='1'; var sib=btn.parentNode?btn.parentNode.querySelectorAll('.fb-btn'):[]; }
+}
+
 function _flavourToggle(key){ const d=document.getElementById('fnv-det-'+key); if(d) d.classList.toggle('show'); }
 async function _flavourCrea(a,b){
   // genera una RICETTA VERA (strutturata) coi due ingredienti, non una chat
