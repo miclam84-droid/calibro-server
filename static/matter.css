@@ -1763,3 +1763,18 @@ a:focus-visible,input:focus-visible{
 @keyframes muElettrico{0%,100%{opacity:.5}50%{opacity:1}}
 @keyframes muGlow{0%,100%{opacity:.7}50%{opacity:1;filter:drop-shadow(0 0 3px var(--target,#245979))}}
 @media (prefers-reduced-motion:reduce){.pnode .mu-r,.pnode .mu-d{animation:none!important}}
+
+/* ── FORM "FISSA MISURA" nella scheda-fenomeno ── */
+.s-num-u{font-family:var(--mono);font-size:14px;color:var(--ink-muted,#5A6C70);font-weight:500}
+.s-misura{margin-top:14px;padding-top:14px;border-top:1px solid var(--border,#B7C3C3)}
+.s-misura-lab{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted,#5A6C70);margin-bottom:8px}
+.s-misura-row{display:flex;align-items:center;gap:8px}
+.s-misura-input{flex:1;min-height:52px;background:var(--l3,#F2F6F6);border:2px solid var(--border,#B7C3C3);border-radius:10px;padding:0 14px;font-family:var(--mono);font-size:20px;font-weight:700;color:var(--target,#245979);outline:none;width:100%;transition:border-color .15s}
+.s-misura-input:focus{border-color:var(--target,#245979)}
+.s-misura-u{font-family:var(--mono);font-size:14px;color:var(--ink-muted,#5A6C70)}
+.s-misura-btn{min-height:52px;padding:0 20px;background:var(--ink,#131C21);color:#EAF1F3;border:none;border-radius:10px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer;white-space:nowrap}
+.s-misura-esito{margin-top:10px}
+.s-misura-loading{font-family:var(--mono);font-size:11px;color:var(--ink-muted,#5A6C70)}
+.s-misura-out{font-family:var(--sans);font-size:13.5px;line-height:1.5;padding:11px 13px;border-radius:9px}
+.s-misura-out.dentro{background:rgba(36,89,121,.08);border-left:3px solid var(--target,#245979);color:#1B2F3C}
+.s-misura-out.fuori{background:var(--surface,#E8EDED);border-left:3px solid var(--signal,#12545D);color:#22303A}

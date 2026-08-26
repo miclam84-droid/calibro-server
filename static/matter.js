@@ -866,6 +866,48 @@ function _statoHeaders(extra){
   return h;
 }
 
+// l'utente fissa una misura su un fenomeno → POST /v1/misura → scarto + accende il Mirino
+async function fissaMisura(btn){
+  var box = btn.closest('.s-misura');
+  if(!box) return;
+  var input = box.querySelector('.s-misura-input');
+  var esito = box.querySelector('.s-misura-esito');
+  var grezzo = (input.value||'').trim();
+  if(!grezzo){ input.focus(); return; }
+  var valore = parseFloat(grezzo.replace(',','.'));
+  var fen = box.getAttribute('data-fen');
+  var unita = box.getAttribute('data-unita')||'';
+  var target = box.getAttribute('data-target')||'';
+  esito.innerHTML = '<span class="s-misura-loading">salvo…</span>';
+  try{
+    var r = await fetch('/v1/misura',{
+      method:'POST',
+      headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({ fenomeno:fen, valore:isNaN(valore)?null:valore, unita:unita||null, grezzo:grezzo, lang:_vistaLang() })
+    });
+    var j = await r.json();
+    // scarto dal target (calcolo locale per il feedback immediato; il backend conferma in_finestra)
+    var nums = String(target).split(/[–-]/).map(function(x){return parseFloat(x);});
+    var lo = nums[0], hi = nums[1]||nums[0];
+    var esitoTxt, esitoCls;
+    if(j.in_finestra===true || (!isNaN(valore) && valore>=lo && valore<=hi)){
+      esitoCls='dentro'; esitoTxt='Sei nel bersaglio. Questo è il valore che rende il risultato ripetibile.';
+    } else if(!isNaN(valore)){
+      var scarto = valore<lo ? (valore-lo) : (valore-hi);
+      esitoCls='fuori'; esitoTxt='Fuori finestra: '+(scarto>0?'+':'')+scarto.toFixed(1)+(unita?' '+unita:'')+'. Un\'osservazione, non un errore.';
+    } else {
+      esitoCls='fuori'; esitoTxt='Misura salvata.';
+    }
+    esito.innerHTML = '<div class="s-misura-out '+esitoCls+'">'+esitoTxt+'</div>';
+    // evento interno: l'Atlante, se montato, ricarica e riaccende il Mirino
+    try{ window.dispatchEvent(new CustomEvent('measurement_saved',{detail:{fenomeno:fen}})); }catch(e){}
+    // invalida la cache mappa così alla riapertura lo stato è fresco
+    if(typeof _mappaCache!=='undefined' && Matter && Matter.disciplina){ delete _mappaCache[Matter.disciplina]; }
+  }catch(e){
+    esito.innerHTML = '<div class="s-misura-out fuori">Errore nel salvataggio. Riprova.</div>';
+  }
+}
+
 async function caricaMappa(disc){
   // rientro: se già in cache, render immediato, zero placeholder = zero salto
   if(_mappaCache[disc]){ var _c=_mappaCache[disc]; renderMappa(disc, _c.fens||_c, _c.casi||[]); return; }
@@ -999,10 +1041,33 @@ function renderRisp(domanda,j,fromNode){
   const card=document.createElement('div');card.className='scheda';
   // Estrai numero bersaglio dalla risposta se disponibile
   const numBersaglio = j.numero_bersaglio || j.target || '';
-  const numBox = numBersaglio ? `<div class="s-num-box">
-    <div class="s-num-label">bersaglio</div>
-    <div class="s-num-val">${esc(numBersaglio)}</div>
-  </div>` : '';
+  // dati per il form di misura (dal backend /nodo)
+  const fenId = j.id || '';
+  const targetNum = j.target_numero || null;   // null = fenomeno "si assaggia", niente confronto
+  const targetUnita = j.unita || '';
+  let numBox = '';
+  if(fromNode && fenId && targetNum){
+    // fenomeno misurabile: bersaglio + campo "la tua misura" con confronto
+    numBox = `<div class="s-num-box">
+      <div class="s-num-label">bersaglio</div>
+      <div class="s-num-val">${esc(targetNum)}${targetUnita?' <span class="s-num-u">'+esc(targetUnita)+'</span>':''}</div>
+      <div class="s-misura" data-fen="${esc(fenId)}" data-target="${esc(targetNum)}" data-unita="${esc(targetUnita)}">
+        <div class="s-misura-lab">la tua misura</div>
+        <div class="s-misura-row">
+          <input type="text" inputmode="decimal" class="s-misura-input" placeholder="${esc(String(targetNum).split(/[–-]/)[0])}" onkeydown="if(event.key==='Enter')fissaMisura(this)">
+          ${targetUnita?'<span class="s-misura-u">'+esc(targetUnita)+'</span>':''}
+          <button class="s-misura-btn" onclick="fissaMisura(this)">Fissa</button>
+        </div>
+        <div class="s-misura-esito"></div>
+      </div>
+    </div>`;
+  } else if(numBersaglio){
+    // fenomeno "si assaggia": mostro il bersaglio testuale, niente input finto
+    numBox = `<div class="s-num-box">
+      <div class="s-num-label">bersaglio</div>
+      <div class="s-num-val">${esc(numBersaglio)}</div>
+    </div>`;
+  }
   
   card.innerHTML=`<div class="s-q">${fromNode?'<i class=\'ph ph-caret-right\'></i> ':''}<b>${esc(domanda)}</b></div>
     <div class="fenchips">${fens}</div>
@@ -4729,3 +4794,13 @@ function _creativitaCrea(spirito){
   const ask = document.getElementById('ask-input');
   if(ask){ ask.value = 'Crea un cocktail con '+spirito; if(typeof inviaDomanda==='function') inviaDomanda(); }
 }
+
+// quando una misura viene salvata, se l'Atlante è la vista attiva, ricaricalo (Mirino in tempo reale)
+window.addEventListener('measurement_saved', function(ev){
+  try{
+    var mappaAttiva = document.getElementById('screen-mappa') && document.getElementById('screen-mappa').classList.contains('active');
+    if(mappaAttiva && typeof Matter!=='undefined' && Matter.disciplina && typeof caricaMappa==='function'){
+      caricaMappa(Matter.disciplina);
+    }
+  }catch(e){}
+});
