@@ -4751,6 +4751,9 @@ function chiudiVista(){
   if(o) o.classList.add('hidden');
 }
 function _apriVista(titolo, htmlIniziale){
+  // sicurezza: se l'onboarding è ancora aperto, chiudilo — non deve mai restare sopra a bloccare i click
+  var _onb4 = document.getElementById('onb4'); if(_onb4) _onb4.classList.remove('show');
+  var _onb = document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
   const o = _ensureVistaOverlay();
   document.getElementById('vista-title').textContent = titolo;
   document.getElementById('vista-body').innerHTML = htmlIniziale;
@@ -4780,6 +4783,11 @@ async function caricaFlavour(term){
   if(!q) return;
   if(inp) inp.value = q;
   const out = document.getElementById('fnv-out');
+  if(!out){
+    // la vista non è ancora pronta nel DOM: riprovo tra un attimo invece di crashare
+    setTimeout(()=>caricaFlavour(q), 120);
+    return;
+  }
   out.innerHTML = '<div class="vista-loading">Leggo il grafo dei composti…</div>';
   try{
     const r = await fetch('/v1/abbina/'+encodeURIComponent(q)+'?lang='+_vistaLang());
