@@ -332,6 +332,39 @@ def nodo():
                     pass
                 errori.append({"id": c["id"], "nome": c["verso"],
                                "sintomo": sintomo, "causa": causa})
+    # ── DATI PER IL FORM DI MISURA (richiesta frontend) ──
+    # id del fenomeno principale aperto + target strutturato per il confronto misura.
+    _fen_id = None; _target = None; _target_num = None; _unita = None; _grandezza = None
+    try:
+        # il fenomeno principale è il primo del contesto; il suo id è quello del nodo se è un Fenomeno,
+        # altrimenti prendo il primo fenomeno collegato
+        if n["type"] == "Fenomeno":
+            _fen_id = nid
+            _fd = n["data"] if isinstance(n["data"],dict) else __import__("json").loads(n["data"] or "{}")
+        else:
+            _primo = contesto["fenomeni"][0] if contesto.get("fenomeni") else None
+            if _primo:
+                _fen_id = _primo.get("id")
+                _fd = _primo.get("data") if isinstance(_primo.get("data"),dict) else {}
+            else:
+                _fd = {}
+        _target = _fd.get("target") or _fd.get("numero_bersaglio")
+        _unita = _fd.get("unita") or _fd.get("unità")
+        _grandezza = _fd.get("grandezza") or _fd.get("grandezza_principale")
+        # provo a estrarre un numero dal target testuale (quando c'è un bersaglio secco)
+        if _target:
+            import re as _re
+            m = _re.search(r"(\d+[.,]?\d*)\s*[-–a]\s*(\d+[.,]?\d*)", str(_target))  # range
+            if m:
+                _target_num = f"{m.group(1)}-{m.group(2)}"
+            else:
+                m2 = _re.search(r"(\d+[.,]?\d*)\s*(%|°C|°|pH|g|ml|bar)?", str(_target))
+                if m2 and m2.group(1):
+                    _target_num = m2.group(1)
+                    if not _unita and m2.group(2):
+                        _unita = m2.group(2)
+    except Exception:
+        pass
     return jsonify({
         "titolo": n["name"],
         "trovato": [f["name"] for f in contesto["fenomeni"]],
@@ -343,7 +376,13 @@ def nodo():
         "tecniche": tecniche,
         "strumenti": strumenti,
         "strumento_info": strumento_info,
-        "stato_fenomeno": _stato_fen
+        "stato_fenomeno": _stato_fen,
+        # dati per il form di misura:
+        "id": _fen_id,
+        "target": _target,
+        "target_numero": _target_num,
+        "unita": _unita,
+        "grandezza": _grandezza
     })
 
 @bp.route("/calcola", methods=["POST"])
