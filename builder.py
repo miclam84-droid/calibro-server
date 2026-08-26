@@ -475,32 +475,46 @@ def _verifica_sensatezza(db, ricetta, is_canonico):
     if is_canonico:
         return {"ok": True, "punteggio": 100, "nota": "piatto canonico verificato"}
     ingredienti = ricetta.get("ingredienti", [])
-    # estraggo i nomi degli ingredienti principali (salto sale/acqua/olio/pepe di supporto)
-    supporto = {"sale", "acqua", "olio", "pepe", "zucchero", "burro", "aceto", "brodo"}
+    supporto = {"sale", "acqua", "olio", "pepe", "zucchero", "burro", "aceto", "brodo",
+                "panna", "latte", "farina", "lievito", "sale fino", "sale grosso"}
+    def _pulisci(nome):
+        # "cioccolato fondente 70%" -> "cioccolato"; "panna fresca" -> "panna"
+        import re
+        n = re.sub(r"\d+\s*%?", "", nome.lower())
+        n = re.sub(r"\b(fresc[oa]|fondente|grattugiat[oa]|tostat[ae]|in polvere|extravergine|"
+                   r"denocciolat[ae]|q\.?b\.?|romano|reggiano|di bufala|nere|nero|bianc[oa]|"
+                   r"rosso|rossa|verde|dolce|amaro|amara|secc[oa])\b", "", n)
+        return n.strip()
     nomi = []
     for i in ingredienti:
-        n = (i.get("nome", "") if isinstance(i, dict) else str(i)).lower().strip()
-        if n and not any(s in n for s in supporto):
-            nomi.append(n)
+        raw = (i.get("nome", "") if isinstance(i, dict) else str(i))
+        n = _pulisci(raw)
+        # prendo la prima parola significativa (il sostantivo base)
+        base = n.split()[0] if n.split() else n
+        if base and base not in supporto and len(base) > 2:
+            nomi.append(base)
+    # dedup mantenendo l'ordine
+    seen = set(); nomi = [x for x in nomi if not (x in seen or seen.add(x))]
     if len(nomi) < 2:
         return {"ok": True, "punteggio": 100, "nota": "pochi ingredienti da valutare"}
-    # per ogni coppia dei primi 4 ingredienti principali, guardo se hanno affinità nel grafo
     principali = nomi[:4]
     coppie_ok = 0; coppie_tot = 0; senza_affinita = []
     for idx in range(len(principali)):
         ing = principali[idx]
-        ab = _abbinamenti_ingrediente(db, ing, max_n=30)
-        partner = {a["ingrediente"].lower() for a in ab if a.get("ingrediente")}
-        # questo ingrediente ha affinità con almeno un altro ingrediente della ricetta?
+        ab = _abbinamenti_ingrediente(db, ing, max_n=50)
+        partner = {_pulisci(a["ingrediente"]).split()[0] for a in ab
+                   if a.get("ingrediente") and _pulisci(a["ingrediente"]).split()}
         altri = [p for j, p in enumerate(principali) if j != idx]
-        ha_affinita = any(any(alt in pn or pn in alt for pn in partner) for alt in altri)
+        # affinità se un altro ingrediente è tra i partner (match su radice)
+        ha_affinita = any(any(alt[:4] == pn[:4] or alt in pn or pn in alt for pn in partner) for alt in altri)
         coppie_tot += 1
         if ha_affinita:
             coppie_ok += 1
         else:
             senza_affinita.append(ing)
     punteggio = round(100 * coppie_ok / coppie_tot) if coppie_tot else 100
-    ok = punteggio >= 50  # almeno metà degli ingredienti principali deve avere affinità
+    # soglia più permissiva: boccio solo se NESSUN ingrediente ha affinità (fusione totale)
+    ok = punteggio > 0
     nota = "ingredienti coerenti" if ok else f"possibile fusione azzardata: {', '.join(senza_affinita[:3])}"
     return {"ok": ok, "punteggio": punteggio, "nota": nota,
             "ingredienti_senza_affinita": senza_affinita[:3]}
