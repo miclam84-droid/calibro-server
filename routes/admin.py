@@ -5331,3 +5331,73 @@ def admin_diag_overlap_composti():
         })
     finally:
         _release_conn(conn)
+
+
+# ── RIEMPI FOTO DA PIXABAY (cascata piatto->ingrediente, verifica tag, upload Cloudinary) ──
+@bp.route("/admin/pixabay-riempi")
+def admin_pixabay_riempi():
+    """Riempie le ricette senza foto pescando da Pixabay. Cascata: prima il piatto, poi
+    l'ingrediente principale. Verifica i tag (scarta i mismatch). Scarica e carica su Cloudinary.
+    ?dry=1 mostra solo cosa troverebbe; ?dry=0 applica. ?limite=N per lotti."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    dry = request.args.get("dry", "1") == "1"
+    limite = int(request.args.get("limite", "30"))
+    from db import _get_conn, _release_conn
+    try:
+        from pixabay_riempi import _pixabay_cerca, _tag_pertinente, _scarica, _carica_cloudinary
+    except Exception as e:
+        return jsonify({"errore": f"import: {e}"}), 500
+    conn = _get_conn(); cur = conn.cursor()
+    trovate = 0; caricate = 0; scartate = 0; esempi = []
+    try:
+        cur.execute("""SELECT id, nome, disciplina, ingredienti FROM ricette
+                       WHERE (immagine IS NULL OR immagine='') ORDER BY id LIMIT %s""", (limite,))
+        righe = cur.fetchall()
+        for r in righe:
+            rid = r[0]; nome = r[1]; disc = r[2]; ings = r[3]
+            # candidati di ricerca: prima il piatto, poi l'ingrediente principale
+            candidati = [nome]
+            try:
+                lista_ing = ings if isinstance(ings, list) else (json.loads(ings) if ings else [])
+                if lista_ing:
+                    primo = lista_ing[0]
+                    nome_ing = primo.get("nome") if isinstance(primo, dict) else str(primo)
+                    if nome_ing:
+                        candidati.append(nome_ing)
+            except Exception:
+                pass
+            # cerca in cascata: primo candidato con una foto pertinente vince
+            scelto = None; query_vinta = None
+            for q in candidati:
+                hits = _pixabay_cerca(q)
+                for h in hits:
+                    if _tag_pertinente(h, q):
+                        scelto = h; query_vinta = q
+                        break
+                if scelto:
+                    break
+            if not scelto:
+                scartate += 1
+                continue
+            trovate += 1
+            autore = scelto.get("user", "Pixabay")
+            img_url = scelto.get("largeImageURL") or scelto.get("webformatURL")
+            if len(esempi) < 25:
+                esempi.append({"ricetta": nome, "query_vinta": query_vinta,
+                               "tags": scelto.get("tags", "")[:50], "autore": autore})
+            if not dry:
+                img_bytes = _scarica(img_url)
+                public_id = f"ricetta_{rid}"
+                secure_url = _carica_cloudinary(img_bytes, public_id)
+                if secure_url:
+                    cur.execute("UPDATE ricette SET immagine=%s, immagine_autore=%s WHERE id=%s",
+                                (secure_url, f"{autore} / Pixabay", rid))
+                    caricate += 1
+        if not dry:
+            conn.commit()
+        return jsonify({"dry_run": dry, "esaminate": len(righe), "trovate": trovate,
+                        "caricate": caricate, "scartate_no_match": scartate, "esempi": esempi})
+    finally:
+        _release_conn(conn)
