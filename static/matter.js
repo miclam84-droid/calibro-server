@@ -1,3 +1,11 @@
+/* ===== Silenzia gli AbortError delle fetch annullate al cambio tab =====
+   Non sono veri errori: sono fetch della tab precedente interrotte di proposito. */
+window.addEventListener('unhandledrejection', function(e){
+  if(e && e.reason && (e.reason.name==='AbortError' || (''+e.reason).indexOf('abort')>=0)){
+    e.preventDefault();
+  }
+});
+
 /* ===== FUNNEL TRACKING — base per i KPI del pannello =====
    Cattura gli UTM all'arrivo (persistono in localStorage per l'attribuzione content→paid)
    e invia gli eventi chiave del funnel al backend. Silenzioso e non-bloccante. */
@@ -365,7 +373,25 @@ function _quandoCasi(nome, disc){
   for(const key in DISC){ if(d.includes(key)) return DISC[key]; }
   return [];
 }
+// AbortController globale: al cambio tab annulla le fetch pendenti della tab precedente
+// (elimina le race condition / errori JS navigando velocemente tra le tab)
+var _tabAbort = null;
+function _tabSignal(){
+  if(_tabAbort) try{ _tabAbort.abort(); }catch(e){}
+  _tabAbort = (typeof AbortController!=='undefined') ? new AbortController() : null;
+  return _tabAbort ? _tabAbort.signal : undefined;
+}
+// wrapper fetch che ignora silenziosamente l'errore di abort (non è un vero errore)
+function _afetch(url, opts){
+  opts = opts || {};
+  if(_tabAbort) opts.signal = _tabAbort.signal;
+  return fetch(url, opts).catch(function(e){
+    if(e && e.name==='AbortError'){ return {ok:false, _aborted:true, json:function(){return Promise.resolve(null);}}; }
+    throw e;
+  });
+}
 function switchTab(t){
+  _tabSignal(); // annulla le fetch della tab precedente
   ['scopri','lezione','mappa','chiedi','auth','quaderno'].forEach(s=>{
     document.getElementById('screen-'+s).classList.toggle('active',s===t);
   });
@@ -2802,7 +2828,7 @@ function _mfMostraFase(f){
     foto:_L({it:'Parti dagli ingredienti',en:'Start from ingredients',es:'Empieza por los ingredientes'}),
     loading:'Sto leggendo il banco…',
     valida:'Conferma cosa hai',
-    proposte:'Cosa puoi farci',
+    proposte:'Piatti realizzabili',
     lab:_L({it:'Dai i numeri a questa voce',en:'Give this item its numbers',es:'Dale los números a este elemento'})
   };
   var t = document.getElementById('mf-title');
