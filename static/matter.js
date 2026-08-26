@@ -2216,16 +2216,123 @@ function calcCatenaFreddo(){
 
 /* ── ONBOARDING OVERLAY ──────────────────────────────── */
 function mostraOnbOverlay(){
-  if(localStorage.getItem('matter_onb_done')) return;
-  const overlay = document.getElementById('onb-overlay');
-  if(overlay) overlay.classList.remove('hidden');
+  try{ if(localStorage.getItem('matter_onb_done')) return; }catch(e){}
+  // nasconde il vecchio overlay HTML se presente, mostra il nuovo a 4 schermate
+  var vecchio = document.getElementById('onb-overlay');
+  if(vecchio) vecchio.classList.add('hidden');
+  mostraOnb4();
 }
 function chiudiOnbOverlay(){
   const overlay = document.getElementById('onb-overlay');
   if(overlay) overlay.classList.add('hidden');
-  localStorage.setItem('matter_onb_done','1');
-  // assicura che la home carichi dopo aver chiuso l'overlay
+  try{ localStorage.setItem('matter_onb_done','1'); }catch(e){}
   if(typeof caricaHome === 'function') caricaHome();
+}
+
+/* ═══ ONBOARDING v2 — 4 schermate, la misura vera (spec congelata) ═══ */
+var _onb4Station = null;
+var ONB4_STATIONS = [
+  { id:'bar', disc:'bar', t:'Dietro un bancone bar', d:'Cocktail, caffè, aperitivo',
+    prob:'Il tuo Sour è mai cambiato senza cambiare ricetta?', probSub:'Lo stesso lime. La stessa dose. Perché oggi è diverso?',
+    wowH:'Perché il Sour cambia', target:'1.2–1.5', unit:'% acidità titolabile', measUnit:'% acidità', measLab:'Acidità del tuo Sour',
+    chat:[['Problema','Acidità fuori finestra.'],['Perché','Il pH e l\'acidità titolabile non sono la stessa misura. Il lime cambia di lotto in lotto.'],['__t__',''],['Azione','Misura una leva alla volta: prima l\'acido, poi lo zucchero.']] },
+  { id:'forno', disc:'panificazione', t:'In un forno o pizzeria', d:'Impasti, pane, pizza',
+    prob:'Perché due impasti identici lievitano in modo diverso?', probSub:'Stessa farina. Stessa acqua. Cambia una variabile nascosta.',
+    wowH:'Perché la lievitazione cambia', target:'24', unit:'°C temperatura finale impasto', measUnit:'°C', measLab:'Temperatura del tuo impasto',
+    chat:[['Problema','Temperatura finale impasto fuori target.'],['Perché','La fermentazione raddoppia ogni ~10°C. Bastano 2°C per cambiare i tempi.'],['__t__',''],['Azione','Calcola la temperatura dell\'acqua per centrare i 24°C.']] },
+  { id:'cucina', disc:'cucina', t:'In cucina', d:'Piatti, salse, cotture',
+    prob:'Perché una carbonara impazzisce?', probSub:'Non è la panna. È temperatura.',
+    wowH:'Perché la carbonara impazzisce', target:'65', unit:'°C coagulazione ovoproteina', measUnit:'°C', measLab:'Temperatura della tua crema',
+    chat:[['Problema','Il tuorlo coagula troppo presto.'],['Perché','L\'ovoproteina coagula a 65°C. Oltre, straccia: frittata, non crema.'],['__t__',''],['Azione','Manteca fuori fiamma, sotto i 65°C.']] },
+  { id:'gelato', disc:'gelateria', t:'Gelateria / pasticceria', d:'Gelato, creme, dessert',
+    prob:'Perché il gelato cristallizza?', probSub:'Non è il freezer. È acqua libera.',
+    wowH:'Perché il gelato cristallizza', target:'70', unit:'PAC potere anticongelante', measUnit:'PAC', measLab:'PAC della tua base',
+    chat:[['Problema','Cristalli di ghiaccio percepibili.'],['Perché','L\'acqua libera non legata cristallizza. Il PAC misura quanta ne resta mobile.'],['__t__',''],['Azione','Alza il PAC con destrosio: abbassi il punto di congelamento.']] },
+  { id:'vino', disc:'vino', t:'Cantina / vino', d:'Vini e abbinamenti',
+    prob:'Perché questo vino spegne il piatto?', probSub:'L\'acidità dialoga male col grasso.',
+    wowH:'Perché il vino spegne il piatto', target:'6.5', unit:'g/L acidità totale', measUnit:'g/L', measLab:'Acidità del tuo vino',
+    chat:[['Problema','Il vino non regge il grasso del piatto.'],['Perché','L\'acidità taglia il grasso. Sotto una soglia, il palato resta impastato.'],['__t__',''],['Azione','Cerca un\'acidità più alta, o alleggerisci il grasso.']] },
+  { id:'locale', disc:'bar', t:'Gestisco un locale', d:'Menu, drink list, carta vini',
+    prob:'La tua drink list e il tuo menu si parlano?', probSub:'Ingredienti specchio, ridondanze aromatiche.',
+    wowH:'Se menu e drink list dialogano', target:'52', unit:'% asse aromatico dominante', measUnit:'%', measLab:'Peso dell\'asse dominante',
+    chat:[['Problema','Ridondanza aromatica tra piatti e drink.'],['Perché','Se troppe voci battono sullo stesso asse, il palato satura.'],['__t__',''],['Azione','Bilancia gli assi: acido, dolce, amaro, grasso.']] }
+];
+function _onb4Ring(){return '<svg viewBox="0 0 14 14" fill="none" style="width:14px;height:14px"><circle cx="7" cy="7" r="5.6" stroke="#241109" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="#241109"/><path d="M7 0v2.2M7 11.8V14M0 7h2.2M11.8 7H14" stroke="#241109" stroke-width="1.2"/></svg>';}
+function mostraOnb4(){
+  var o = document.getElementById('onb4');
+  if(!o){
+    o = document.createElement('div'); o.id='onb4'; o.className='onb4';
+    document.body.appendChild(o);
+  }
+  o.innerHTML =
+    '<div class="onb4-in">'
+    + '<div class="onb4-prog"><div class="seg on" id="onb4-s0"></div><div class="seg" id="onb4-s1"></div><div class="seg" id="onb4-s2"></div></div>'
+    + '<button class="onb4-skip" onclick="chiudiOnb4()">Salta</button>'
+    // schermata 0
+    + '<div class="onb4-screen active" id="onb4-sc0">'
+    +   '<div class="onb4-eye">Numeri. Non opinioni.</div>'
+    +   '<div class="onb4-h">Dove lavori ogni giorno?</div>'
+    +   '<div class="onb4-sub">Personalizziamo Matter sul tuo banco. Puoi cambiarlo quando vuoi.</div>'
+    +   '<div class="onb4-opts">'+ONB4_STATIONS.map(function(s,i){return '<button class="onb4-opt" onclick="onb4Pick('+i+')"><span class="tx"><span class="t">'+s.t+'</span><span class="d">'+s.d+'</span></span></button>';}).join('')+'</div>'
+    +   '<div class="onb4-micro">Niente email adesso. Prima ti mostriamo perché serve.</div>'
+    + '</div>'
+    // schermata 1 — problema
+    + '<div class="onb4-screen" id="onb4-sc1"><div class="onb4-eye">Il problema</div><div class="onb4-probq" id="onb4-q"></div><div class="onb4-probsub" id="onb4-qsub"></div><button class="onb4-btn" onclick="onb4Go(2)">Scoprilo</button></div>'
+    // schermata 2 — wow
+    + '<div class="onb4-screen" id="onb4-sc2"><div class="onb4-eye">La risposta</div><div class="onb4-h" id="onb4-wowh" style="font-size:22px;margin-bottom:14px"></div><div class="onb4-chat" id="onb4-chat"></div><button class="onb4-btn" onclick="onb4Go(3)">Ora provalo tu →</button></div>'
+    // schermata 3 — misura
+    + '<div class="onb4-screen" id="onb4-sc3"><div class="onb4-eye">La tua prima misura</div><div class="onb4-h" style="font-size:23px">Inserisci il tuo valore.</div><div class="onb4-sub">Come faresti al banco adesso. Vediamo quanto sei dentro la finestra.</div>'
+    +   '<div class="onb4-meas"><div class="onb4-meas-lab" id="onb4-mlab">La tua misura</div><div class="onb4-field"><input type="text" inputmode="decimal" id="onb4-input" oninput="onb4Check()"><span class="u" id="onb4-munit"></span></div><div class="onb4-hint" id="onb4-hint"></div><div class="onb4-res" id="onb4-res"><div class="onb4-res-s" id="onb4-scarto"></div><div class="onb4-res-t" id="onb4-rtxt"></div></div></div>'
+    +   '<button class="onb4-btn" id="onb4-enter" onclick="chiudiOnb4(true)" disabled>Entra in Matter</button>'
+    + '</div>'
+    + '</div>';
+  o.classList.add('show');
+}
+function onb4Pick(i){
+  _onb4Station = ONB4_STATIONS[i];
+  var s = _onb4Station;
+  document.getElementById('onb4-q').textContent = s.prob;
+  document.getElementById('onb4-qsub').textContent = s.probSub;
+  document.getElementById('onb4-wowh').textContent = s.wowH;
+  document.getElementById('onb4-chat').innerHTML = s.chat.map(function(row){
+    if(row[0]==='__t__') return '<div class="onb4-target"><div class="onb4-target-lab">'+_onb4Ring()+' Bersaglio</div><div class="onb4-target-v">'+s.target+'</div><div class="onb4-target-u">'+s.unit+'</div></div>';
+    return '<div class="onb4-crow"><div class="onb4-ck">'+row[0]+'</div><div class="onb4-cv">'+row[1]+'</div></div>';
+  }).join('');
+  document.getElementById('onb4-munit').textContent = s.measUnit;
+  document.getElementById('onb4-mlab').textContent = s.measLab;
+  document.getElementById('onb4-hint').innerHTML = 'Bersaglio: <b>'+s.target+' '+s.measUnit.replace(/^[^ ]* /,'')+'</b>';
+  document.getElementById('onb4-input').placeholder = String(s.target).split(/[–-]/)[0];
+  setTimeout(function(){ onb4Go(1); }, 160);
+}
+function onb4Go(n){
+  var scr = document.querySelectorAll('.onb4-screen');
+  for(var i=0;i<scr.length;i++) scr[i].classList.remove('active');
+  document.getElementById('onb4-sc'+n).classList.add('active');
+  var map={0:0,1:0,2:1,3:2}, cur=map[n];
+  ['onb4-s0','onb4-s1','onb4-s2'].forEach(function(id,i){
+    var el=document.getElementById(id); if(!el) return;
+    el.classList.toggle('done', i<cur); el.classList.toggle('on', i===cur);
+  });
+}
+function onb4Check(){
+  var s=_onb4Station; if(!s) return;
+  var v=parseFloat((document.getElementById('onb4-input').value||'').replace(',','.'));
+  var res=document.getElementById('onb4-res'), enter=document.getElementById('onb4-enter');
+  if(isNaN(v)){ res.classList.remove('show'); enter.disabled=true; return; }
+  var nums=String(s.target).split(/[–-]/).map(function(x){return parseFloat(x);});
+  var lo=nums[0], hi=nums[1]||nums[0], scarto, txt;
+  if(v<lo){ scarto='−'+(lo-v).toFixed(1); txt='Sei sotto la finestra. Manca poco per centrare il bersaglio.'; }
+  else if(v>hi){ scarto='+'+(v-hi).toFixed(1); txt='Sei sopra la finestra. Basta poco per rientrare.'; }
+  else { scarto='In finestra'; txt='Sei nel bersaglio. Questo è il valore che rende il risultato ripetibile.'; }
+  document.getElementById('onb4-scarto').textContent=scarto;
+  document.getElementById('onb4-rtxt').textContent=txt;
+  res.classList.add('show'); enter.disabled=false;
+}
+function chiudiOnb4(){
+  try{ localStorage.setItem('matter_onb_done','1'); if(_onb4Station) localStorage.setItem('matter_station', _onb4Station.disc); }catch(e){}
+  var o=document.getElementById('onb4'); if(o) o.classList.remove('show');
+  if(_onb4Station && typeof selezionaDisciplina==='function'){ selezionaDisciplina(_onb4Station.disc); }
+  else if(typeof caricaHome==='function'){ caricaHome(); }
 }
 
 // ── ONBOARDING PROFILAZIONE: mestiere → primo numero → lezione ──
