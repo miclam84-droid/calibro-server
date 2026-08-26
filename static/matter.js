@@ -4814,8 +4814,10 @@ function _flavourCrea(a,b){
   // apre la chat con una richiesta di ricetta coi due ingredienti
   chiudiVista();
   if(typeof switchTab==='function') switchTab('chiedi');
-  const ask = document.getElementById('ask-input');
-  if(ask){ ask.value = 'Crea una ricetta con '+a+' e '+b; if(typeof inviaDomanda==='function') inviaDomanda(); }
+  const ask = document.getElementById('q');
+  if(ask){ ask.value = 'Crea una ricetta con '+a+' e '+b; }
+  if(typeof chiediTesto==='function'){ chiediTesto('Crea una ricetta con '+a+' e '+b); }
+  else if(typeof invia==='function'){ invia(); }
 }
 
 /* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */
@@ -4935,8 +4937,10 @@ async function mbProposte(){
 function _mbCreaRicetta(ings){
   chiudiVista();
   if(typeof switchTab==='function') switchTab('chiedi');
-  const ask = document.getElementById('ask-input');
-  if(ask){ ask.value = 'Crea un piatto con '+ings; if(typeof inviaDomanda==='function') inviaDomanda(); }
+  const ask = document.getElementById('q');
+  if(ask){ ask.value = 'Crea un piatto con '+ings; }
+  if(typeof chiediTesto==='function'){ chiediTesto('Crea un piatto con '+ings); }
+  else if(typeof invia==='function'){ invia(); }
 }
 
 /* ═══════════════ 4. STRUMENTI DI MISURA ═══════════════ */
@@ -4996,8 +5000,10 @@ async function caricaCreativita(spirito){
 function _creativitaCrea(spirito){
   chiudiVista();
   if(typeof switchTab==='function') switchTab('chiedi');
-  const ask = document.getElementById('ask-input');
-  if(ask){ ask.value = 'Crea un cocktail con '+spirito; if(typeof inviaDomanda==='function') inviaDomanda(); }
+  const ask = document.getElementById('q');
+  if(ask){ ask.value = 'Crea un cocktail con '+spirito; }
+  if(typeof chiediTesto==='function'){ chiediTesto('Crea un cocktail con '+spirito); }
+  else if(typeof invia==='function'){ invia(); }
 }
 
 // quando una misura viene salvata, se l'Atlante è la vista attiva, ricaricalo (Mirino in tempo reale)
