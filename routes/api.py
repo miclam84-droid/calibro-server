@@ -103,7 +103,7 @@ from contenuto import _scheda_lang, _numero_bersaglio
 from utils import _profilo_default, _aggiorna_profilo, _check_rate_limit, _check_rate_limit_ai, _chiave_rate, _ai_giu_response
 from auth import _utente_da_token
 from config import DATABASE_URL
-import os, json
+import os, json, re
 import ai_gateway as GW
 bp = Blueprint("api", __name__)
 
@@ -3307,3 +3307,122 @@ def menu_costruisci():
         "totale": len(voci),
         "nota": "Voci di menu realizzabili con i tuoi ingredienti, con la scienza dietro ogni piatto."
     })
+
+
+# ── FOOD COST DI UNA RICETTA (grammature reali × prezzi ISMEA) ──
+_PREZZI_FC = {
+    "manzo":8.50,"vitello":9.20,"maiale":4.80,"agnello":9.80,"pollo":2.90,"tacchino":3.20,"coniglio":5.50,
+    "prosciutto crudo":14.00,"prosciutto cotto":8.50,"salame":9.00,"pancetta":6.50,"mortadella":5.20,
+    "speck":13.00,"bresaola":18.00,"guanciale":8.00,"nduja":12.00,
+    "salmone":12.00,"tonno":15.00,"branzino":14.00,"orata":12.00,"baccala":9.00,"baccalà":9.00,
+    "gamberi":16.00,"gambero":16.00,"cozze":3.50,"vongole":6.00,"acciughe":5.00,"polpo":8.00,"calamaro":7.00,
+    "pomodoro":1.20,"pomodori":1.20,"pomodori pelati":1.40,"melanzana":1.50,"melanzane":1.50,"zucchina":1.30,
+    "zucchine":1.30,"peperone":2.00,"carota":0.80,"cipolla":0.90,"aglio":3.50,"patata":0.70,"patate":0.70,
+    "spinaci":2.50,"rucola":3.00,"finocchio":1.20,"carciofo":2.80,"asparagi":4.50,"funghi":3.50,
+    "champignon":3.50,"porcini":18.00,"basilico":12.00,"prezzemolo":8.00,
+    "limone":1.50,"arancia":1.20,"fragola":4.00,"pesca":2.50,"mela":1.20,"pera":1.50,"uva":2.00,"lime":3.00,
+    "latte":0.95,"panna":2.80,"panna fresca":2.80,"burro":5.50,"mozzarella":6.50,"mozzarella di bufala":8.50,
+    "parmigiano":12.00,"parmigiano reggiano":12.00,"pecorino":9.00,"pecorino romano":9.00,"ricotta":4.50,
+    "ricotta salata":7.00,"gorgonzola":10.00,"provola":7.00,"provolone":8.00,
+    "farina":0.85,"farina 00":0.85,"farina integrale":1.20,"semola":1.00,"semola rimacinata":1.00,
+    "riso":2.80,"riso carnaroli":3.20,"riso basmati":2.50,"farro":2.00,"pasta":1.20,"spaghetti":1.20,
+    "rigatoni":1.20,"bucatini":1.30,"impasto":1.00,"impasto pizza":1.00,"pane":2.50,
+    "olio":7.50,"olio extravergine":7.50,"olio di girasole":2.50,"olio evo":7.50,
+    "gin":15.00,"vodka":10.00,"rum":11.00,"whisky":18.00,"tequila":18.00,"cognac":30.00,
+    "vino rosso":3.50,"vino bianco":3.00,"prosecco":4.50,"vino":3.20,
+    "pepe":15.00,"pepe nero":15.00,"cannella":12.00,"zafferano":1500.00,"vaniglia":200.00,"sale":0.50,
+    "zucchero":1.20,"miele":8.00,"uova":3.00,"uovo":3.00,"tuorli":4.50,"tuorlo":4.50,"albume":2.50,
+    "cioccolato":8.00,"cioccolato fondente":8.00,"cacao":9.00,"caffe":18.00,"caffè":18.00,
+    "mascarpone":6.00,"savoiardi":4.00,"lievito":5.00,"peperoncino":10.00,"olive":6.00,"cozze":3.50,
+}
+
+def _prezzo_kg(nome):
+    """Trova il prezzo €/kg di un ingrediente (match sul nome, dai prezzi ISMEA)."""
+    n = (nome or "").lower().strip()
+    if n in _PREZZI_FC: return _PREZZI_FC[n]
+    # match parziale: cerca la chiave più lunga contenuta nel nome
+    best = None; best_len = 0
+    for k, v in _PREZZI_FC.items():
+        if (k in n or n in k) and len(k) > best_len:
+            best = v; best_len = len(k)
+    return best
+
+def _parse_qta(q, unita=""):
+    """Converte quantità in kg (o litri). '400'+'g' -> 0.4. 'q.b.' -> None."""
+    import re
+    s = str(q or "").lower().strip()
+    if not s or "q.b" in s or "qb" in s: return None
+    m = re.search(r"(\d+[.,]?\d*)", s)
+    if not m: return None
+    val = float(m.group(1).replace(",", "."))
+    u = (unita or "").lower() + " " + s
+    if "kg" in u or "litr" in u or " l" in u: return val
+    if "mg" in u: return val / 1_000_000
+    if "ml" in u or " g" in u or "gr" in u or "grammi" in u: return val / 1000
+    # nessuna unità: se è un numero grande assumo grammi, se piccolo pezzi
+    return val / 1000 if val >= 10 else None
+
+@bp.route("/v1/ricetta/<rid>/food-cost")
+def ricetta_food_cost(rid):
+    """Calcola il FOOD COST di una ricetta: grammature reali × prezzi ISMEA.
+    ?prezzo_vendita=12 per avere anche il food cost %. Fonte prezzi: ISMEA 2024-2025 (orientativi)."""
+    from db import carica_grafo
+    db = carica_grafo()
+    import json as _j
+    rows = db.execute("SELECT nome, ingredienti, porzioni FROM ricette WHERE id=%s", (rid,)).fetchall()
+    if not rows:
+        return jsonify({"errore": "ricetta non trovata"}), 404
+    row = rows[0]
+    nome = row["nome"] if hasattr(row, "keys") else row[0]
+    ingr_raw = row["ingredienti"] if hasattr(row, "keys") else row[1]
+    porzioni_raw = row["porzioni"] if hasattr(row, "keys") else row[2]
+    try:
+        porzioni = int(re.search(r"\d+", str(porzioni_raw)).group()) if porzioni_raw else 4
+    except Exception:
+        porzioni = 4
+    ingredienti = ingr_raw if isinstance(ingr_raw, list) else (_j.loads(ingr_raw) if ingr_raw else [])
+
+    voci = []; costo_totale = 0.0; mancanti = 0
+    for i in ingredienti:
+        if not isinstance(i, dict):
+            continue
+        nome_i = i.get("nome", "")
+        qta = i.get("quantita", "") or i.get("quantità", "")
+        unita = i.get("unita", "") or i.get("unità", "")
+        kg = _parse_qta(qta, unita)
+        prezzo_kg = _prezzo_kg(nome_i)
+        if kg is not None and prezzo_kg is not None:
+            costo = round(kg * prezzo_kg, 2)
+            costo_totale += costo
+            voci.append({"ingrediente": nome_i, "quantita": f"{qta} {unita}".strip(),
+                         "prezzo_kg": prezzo_kg, "costo": costo})
+        else:
+            motivo = "prezzo non in ISMEA" if prezzo_kg is None else "quantità q.b."
+            voci.append({"ingrediente": nome_i, "quantita": f"{qta} {unita}".strip(),
+                         "costo": None, "nota": motivo})
+            if prezzo_kg is None: mancanti += 1
+
+    costo_totale = round(costo_totale, 2)
+    costo_porzione = round(costo_totale / porzioni, 2) if porzioni else costo_totale
+    out = {
+        "ricetta": nome, "porzioni": porzioni,
+        "costo_totale_ingredienti": costo_totale,
+        "costo_per_porzione": costo_porzione,
+        "voci": voci, "ingredienti_senza_prezzo": mancanti,
+        "fonte": "ISMEA 2024-2025 (prezzi all'ingrosso orientativi)",
+        "nota": "Stima orientativa. Per il food cost reale usa i prezzi del tuo fornitore."
+    }
+    pv = request.args.get("prezzo_vendita")
+    if pv:
+        try:
+            pv = float(pv)
+            fc_pct = round(100 * costo_porzione / pv, 1) if pv > 0 else None
+            out["prezzo_vendita"] = pv
+            out["food_cost_percentuale"] = fc_pct
+            out["giudizio"] = ("ottimo" if fc_pct and fc_pct <= 30 else
+                               "buono" if fc_pct and fc_pct <= 35 else
+                               "alto" if fc_pct and fc_pct <= 45 else "troppo alto")
+            out["margine_lordo"] = round(pv - costo_porzione, 2)
+        except Exception:
+            pass
+    return jsonify(out)
