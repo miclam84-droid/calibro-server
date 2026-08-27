@@ -25,9 +25,15 @@ def _ensure_tabella():
         _release_conn(conn)
 
 def _device():
-    return (request.headers.get("X-Device-Id") or
-            (request.json or {}).get("device_id") if request.is_json else None) or \
-           request.args.get("device_id") or ""
+    # header per primo (usato da tutti), poi body json, poi query param
+    dev = request.headers.get("X-Device-Id")
+    if dev:
+        return dev
+    if request.is_json:
+        dev = (request.json or {}).get("device_id")
+        if dev:
+            return dev
+    return request.args.get("device_id") or ""
 
 @bp_mie.route("/v1/ricette/salva", methods=["POST"])
 def salva_ricetta_utente():
