@@ -67,8 +67,27 @@ def _scheda_lang(data_dict, lang="it"):
 def _numero_bersaglio(data_dict):
     """Legge il numero-bersaglio di un nodo Fenomeno in modo canonico.
     Il seed usa la chiave 'numero_bersaglio'; il fallback 'target' copre
-    eventuali nodi legacy. Fonte unica di verità per home, disciplina e lezione,
-    così la chiave non torna a divergere tra i lettori."""
+    eventuali nodi legacy. Fonte unica di verità per home, disciplina e lezione.
+    R1: restituisce SOLO un valore numerico/intervallo breve, oppure "" (mai una frase).
+    Il frontend mostra il box Mirino solo se qui c'è un numero vero."""
     if not data_dict:
         return ""
-    return data_dict.get("numero_bersaglio") or data_dict.get("target") or ""
+    grezzo = (data_dict.get("numero_bersaglio") or data_dict.get("target") or "").strip()
+    if not grezzo:
+        return ""
+    import re as _re
+    # se è già corto e contiene una cifra, va bene così (es. "32-34°C", "pH 4.2", "1.2-1.5%")
+    if len(grezzo) <= 18 and _re.search(r"\d", grezzo):
+        return grezzo
+    # se è una frase lunga, provo a estrarre il PRIMO valore numerico con unità
+    # (es. "coagula tra 62 e 65°C" -> "62-65°C"; "circa 24°C" -> "24°C")
+    m_range = _re.search(r"(\d+[.,]?\d*)\s*[-–a]\s*(\d+[.,]?\d*)\s*(°C|°|%|pH|g|ml|min|h|bar)?", grezzo)
+    if m_range:
+        u = m_range.group(3) or ""
+        return f"{m_range.group(1)}-{m_range.group(2)}{u}".replace(" ", "")
+    m_uno = _re.search(r"(pH\s*)?(\d+[.,]?\d*)\s*(°C|°|%|g|ml|min|h|bar)", grezzo)
+    if m_uno:
+        pre = m_uno.group(1) or ""
+        return f"{pre}{m_uno.group(2)}{m_uno.group(3)}".strip()
+    # nessun numero estraibile: è solo una frase -> niente box Mirino
+    return ""
