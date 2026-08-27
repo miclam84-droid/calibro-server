@@ -5986,3 +5986,41 @@ def admin_prova_immagine():
         "fonte": res.get("fonte_nome") if res else None,
         "match": res.get("match") if res else "nessuna",  # piatto / ingredienti / archivio / nessuna
     })
+
+
+@bp.route("/admin/debug-proposte")
+def admin_debug_proposte():
+    """Debug: mostra gli id ahn di pomodoro/basilico e se l'edge esiste nel grafo."""
+    import os, hmac
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    try:
+        from routes.api import _alias_ahn
+    except Exception:
+        _alias_ahn = lambda x: x
+    conn = _get_conn(); cur = conn.cursor()
+    out = {}
+    try:
+        for ing in ["pomodoro", "basilico"]:
+            try:
+                out[f"{ing}_alias_ahn"] = _alias_ahn(ing)
+            except Exception as e:
+                out[f"{ing}_alias_ahn"] = f"ERR: {e}"
+        # cerco l'edge tra pomodoro e basilico in QUALSIASI forma
+        cur.execute("""
+            SELECT e.from_id, e.to_id, (e.data->>'overlap')
+            FROM edges e
+            WHERE e.relation='abbinamento_aromatico'
+              AND ((lower(e.from_id) LIKE '%pomodoro%' AND lower(e.to_id) LIKE '%basilico%')
+                OR (lower(e.from_id) LIKE '%basilico%' AND lower(e.to_id) LIKE '%pomodoro%'))
+            LIMIT 3
+        """)
+        out["edge_reale"] = [{"from": r[0], "to": r[1], "overlap": r[2]} for r in cur.fetchall()]
+        # mostro anche gli id nodi che contengono pomodoro/basilico
+        cur.execute("SELECT id FROM nodes WHERE lower(id) LIKE '%pomodoro%' OR lower(id) LIKE '%basilico%' LIMIT 6")
+        out["nodi_id"] = [r[0] for r in cur.fetchall()]
+        return jsonify(out)
+    finally:
+        _release_conn(conn)
