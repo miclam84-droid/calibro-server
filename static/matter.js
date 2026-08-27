@@ -2893,11 +2893,6 @@ function chiediTestoRaw(q){
 }
 function mostraRicettaGen(dati, ricettaIdSalvata){
   _ricettaGenCorrente = dati;
-  _ensureVistaOverlay();
-  var ov=document.getElementById('vista-overlay');
-  var body=document.getElementById('vista-body');
-  var tit=document.getElementById('vista-titolo');
-  if(tit) tit.textContent = dati.nome || 'Ricetta';
   var e=_escV;
   var ing=(dati.ingredienti||[]).map(function(x){
     if(typeof x==='string') return '<li>'+e(x)+'</li>';
@@ -2914,20 +2909,20 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
     : '';
   var critico=dati.punto_critico?'<div class="rg-critico"><span class="rg-critico-lab">⚠ Punto critico</span> '+e(dati.punto_critico)+'</div>':'';
   var salvato = !!ricettaIdSalvata;
-  body.innerHTML=
+  if(salvato){ _ricettaGenCorrente._ricetta_id = ricettaIdSalvata; }
+  var html=
     '<div class="rg-scheda">'
     + (ing?'<div class="rg-sec"><div class="rg-sec-lab">Ingredienti</div><ul class="rg-ing">'+ing+'</ul></div>':'')
     + numeri
     + (proc?'<div class="rg-sec"><div class="rg-sec-lab">Procedimento</div>'+proc+'</div>':'')
     + critico
     + '<div class="rg-azioni">'
-    +   '<button class="rg-btn rg-btn-salva" id="rg-btn-salva" onclick="salvaRicettaGen(this)">'+(salvato?'✓ Salvata':'Salva nel Quaderno')+'</button>'
+    +   '<button class="rg-btn rg-btn-salva'+(salvato?' fatto':'')+'" id="rg-btn-salva" onclick="salvaRicettaGen(this)">'+(salvato?'✓ Salvata':'Salva nel Quaderno')+'</button>'
     +   '<button class="rg-btn rg-btn-chiedi" onclick="chiediSuRicetta()">Chiedi su questa ricetta</button>'
     +   '<button class="rg-btn rg-btn-cost" onclick="foodCostRicetta()">Food Cost</button>'
     + '</div>'
     + '</div>';
-  if(salvato){ _ricettaGenCorrente._ricetta_id = ricettaIdSalvata; }
-  _apriVista();
+  _apriVista(dati.nome || 'Ricetta', html);
 }
 async function salvaRicettaGen(btn){
   var d=_ricettaGenCorrente; if(!d) return;
