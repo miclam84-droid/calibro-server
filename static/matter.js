@@ -258,7 +258,7 @@ function _renderRicette(ricette){
   el.innerHTML=ricette.map(r=>{
     const foto = r.immagine ? `<div class="ric-foto"><img src="${esc(r.immagine)}" alt="${esc(r.nome)}" loading="lazy" onerror="this.closest('.ric-foto').remove()">${r.immagine_autore?`<div class="ric-foto-credit">${r.immagine_url_fonte?`<a href="${esc(r.immagine_url_fonte)}" target="_blank" rel="noopener">${esc(r.immagine_autore)}</a>`:esc(r.immagine_autore)}</div>`:''}</div>` : '';
     const numeri = (r.numeri && Object.keys(r.numeri).length) ? `<div class="ric-numeri"><div class="ric-numeri-lab">Numeri bersaglio</div>${Object.entries(r.numeri).map(([k,v])=>`<div class="ric-num-row"><span class="ric-num-k">${esc(k)}</span><span class="ric-num-v">${esc(v)}</span></div>`).join('')}</div>` : '';
-    const critico = r.punto_critico ? `<div class="ric-critico"><div class="ric-critico-lab">⚠ Punto critico</div><div class="ric-critico-txt">${esc(r.punto_critico)}</div></div>` : '';
+    const critico = r.punto_critico ? `<div class="ric-critico"><div class="ric-critico-lab">Qui sbagliano quasi tutti</div><div class="ric-critico-txt">${esc(r.punto_critico)}</div></div>` : '';
     const esperimento = r.esperimento ? `<div class="ric-exp"><div class="ric-exp-lab">◇ Prova al banco</div><div class="ric-exp-txt">${esc(r.esperimento)}</div></div>` : '';
     const proc = (r.procedimento && r.procedimento.length) ? `<div class="ric-proc"><div class="ric-proc-lab">Procedimento</div>${r.procedimento.map(p=>`<div class="ric-step"><span class="ric-step-n">${esc(p.n)}</span><div class="ric-step-b"><span class="ric-step-t">${esc(p.testo)}</span>${p.numero_chiave?`<span class="ric-step-key">${esc(p.numero_chiave)}</span>`:''}</div></div>`).join('')}</div>` : '';
     const tecniche = (r.tecniche && r.tecniche.length) ? `<div class="ric-tec"><div class="ric-tec-lab">Tecniche</div><div class="ric-tec-chips">${r.tecniche.map(t=>`<span class="ric-tec-chip">${esc(t)}</span>`).join('')}</div></div>` : '';
@@ -559,9 +559,38 @@ async function caricaHome(){
   }
 }
 
+// Cruscotto operativo: bersaglio del giorno · ultima misura salvata · esperimento
+function _popolaCruscotto(f){
+  var t=document.getElementById('crus-target');
+  var ts=document.getElementById('crus-target-sub');
+  if(t){
+    var tgt = f.target && (f.target.numero || f.target.valore || f.target.raw || f.target.testo);
+    if(tgt && String(tgt).length<=14){ t.textContent=String(tgt); }
+    else { t.textContent = f.nome ? '›' : '—'; }
+  }
+  if(ts){ ts.textContent = f.nome || ''; }
+  // ultima misura salvata dal Quaderno
+  var m=document.getElementById('crus-misura');
+  if(m){
+    var misure=[];
+    try{ misure=JSON.parse(localStorage.getItem('matter_quaderno')||'[]'); }catch(e){}
+    if(misure.length){
+      var u=misure[misure.length-1];
+      var val = u.valore!=null ? (u.valore+(u.unita?' '+u.unita:'')) : (u.nome||'salvata');
+      m.textContent = String(val).slice(0,12);
+    } else { m.textContent='—'; }
+  }
+  // esperimento in corso (stato locale)
+  var e=document.getElementById('crus-exp');
+  if(e){
+    var exp=localStorage.getItem('matter_exp_corso');
+    e.textContent = exp ? 'In corso' : '—';
+  }
+}
 function renderHome(j){
-  const f = j.fenomeno || {};
   { const _h=document.getElementById('scopri-hero'); if(_h) _h.classList.remove('loading'); }
+  // CRUSCOTTO OPERATIVO — bersaglio del giorno + ultima misura + esperimento
+  _popolaCruscotto(f);
   document.getElementById('scopri-ey').textContent =
     'oggi al banco · ' + (f.dominio||'');
   document.getElementById('scopri-titolo').textContent = f.nome || '—';
@@ -2918,7 +2947,9 @@ async function apriVetrina(){
 async function _vetrinaCarica(){
   if(_vetrinaBusy) return; _vetrinaBusy=true;
   var feed=document.getElementById('vetr-feed');
+  var more=document.getElementById('vetr-more');
   if(_vetrinaOffset===0 && feed){ feed.innerHTML='<div class="vetr-loading">Carico la vetrina…</div>'; }
+  if(more && _vetrinaOffset>0){ more.textContent='Caricamento…'; more.disabled=true; }
   try{
     var lang=(typeof _lang!=='undefined'?_lang:'it');
     var r=await fetch('/v1/community/feed?lingua='+lang+'&offset='+_vetrinaOffset);
@@ -2927,14 +2958,27 @@ async function _vetrinaCarica(){
     if(_vetrinaOffset===0){ feed.innerHTML=''; }
     if(!ricette.length && _vetrinaOffset===0){
       feed.innerHTML='<div class="vetr-empty"><b>La vetrina è ancora vuota</b><span>Pubblica tu la prima ricetta dal Quaderno.</span></div>';
+      if(more) more.style.display='none';
       _vetrinaBusy=false; return;
     }
     feed.insertAdjacentHTML('beforeend', ricette.map(_vetrinaCard).join(''));
     _vetrinaOffset += ricette.length;
-    var more=document.getElementById('vetr-more');
-    if(more) more.style.display = ricette.length>=10 ? '' : 'none';
+    // tre stati del bottone
+    if(more){
+      more.disabled=false;
+      if(ricette.length>=10){
+        more.textContent='Carica altre'; more.style.display='';
+      } else {
+        // feed finito
+        more.textContent='Hai visto tutte le ricette ('+_vetrinaOffset+')';
+        more.style.display='';
+        more.disabled=true;
+        more.classList.add('vetr-more-fine');
+      }
+    }
   }catch(e){
     if(feed && _vetrinaOffset===0) feed.innerHTML='<div class="vetr-empty"><b>Non riesco a caricare la vetrina</b><span>Riprova tra poco.</span></div>';
+    if(more){ more.textContent='Riprova'; more.disabled=false; }
   }
   _vetrinaBusy=false;
 }
@@ -3113,7 +3157,7 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
   var numeri=(dati.numeri && Object.keys(dati.numeri).length)
     ? '<div class="rg-numeri"><div class="rg-numeri-lab">Numeri bersaglio</div>'+Object.entries(dati.numeri).map(function(kv){return '<div class="rg-num-row"><span class="rg-num-k">'+e(kv[0])+'</span><span class="rg-num-v">'+e(kv[1])+'</span></div>';}).join('')+'</div>'
     : '';
-  var critico=dati.punto_critico?'<div class="rg-critico"><span class="rg-critico-lab">⚠ Punto critico</span> '+e(dati.punto_critico)+'</div>':'';
+  var critico=dati.punto_critico?'<div class="rg-critico"><span class="rg-critico-lab">Qui sbagliano quasi tutti</span> '+e(dati.punto_critico)+'</div>':'';
   var salvato = !!ricettaIdSalvata;
   if(salvato){ _ricettaGenCorrente._ricetta_id = ricettaIdSalvata; }
   var html=
