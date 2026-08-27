@@ -5966,3 +5966,22 @@ def admin_trova_nodo():
         return jsonify({"query": q, "nodi": rows})
     finally:
         _release_conn(conn)
+
+
+@bp.route("/admin/prova-immagine")
+def admin_prova_immagine():
+    """Mostra la query costruita e l'URL foto per un piatto (per verificare che non siano inquietanti)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    nome = request.args.get("nome", "")
+    disc = request.args.get("disciplina", "cucina")
+    from immagini import _query_intelligente, cerca_immagine
+    q = _query_intelligente(nome, disc)
+    res = cerca_immagine(nome, disciplina=disc, nome=nome)
+    return jsonify({
+        "nome": nome, "disciplina": disc, "query_costruita": q,
+        "foto_url": res.get("url") if res else None,
+        "autore": res.get("autore") if res else None,
+        "fonte": res.get("fonte_nome") if res else None,
+    })
