@@ -2024,3 +2024,14 @@ a:focus-visible,input:focus-visible{
 .crus-row{display:flex;gap:10px}
 .crus-box-mini{flex:1;padding:13px 15px}
 .crus-val-mini{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:19px;line-height:1;color:#EAF1F3}
+
+/* ═══ MIRINO DEMO — numero sfocato al free, nitido al Pro (leva di conversione) ═══ */
+.target-blur{position:relative;cursor:pointer;display:inline-block}
+.target-blur .target-blur-num{filter:blur(9px);opacity:.55;user-select:none;pointer-events:none}
+.target-blur .target-blur-lock{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;font-family:var(--sans,'Inter');font-weight:700;font-size:13px;color:var(--terra,#C77B3F);background:var(--surface,#F4F2EC);padding:5px 12px;border-radius:20px;border:1px solid var(--terra,#C77B3F);box-shadow:0 2px 8px rgba(19,28,33,.18)}
+/* cruscotto: se il target è sfocato al free */
+.crus-box-target.free-blur .crus-val{filter:blur(8px);opacity:.5}
+
+/* Founding Member nel paywall */
+.trial-popup-founding{margin-top:14px;padding:12px 14px;background:rgba(199,123,63,.1);border:1px solid var(--terra,#C77B3F);border-radius:10px;font-size:12.5px;color:var(--ink,#131C21);line-height:1.5;text-align:center}
+.trial-popup-founding b{color:var(--terra,#C77B3F);font-size:14px}

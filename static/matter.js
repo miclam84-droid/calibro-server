@@ -259,10 +259,10 @@ function _renderRicette(ricette){
     const foto = r.immagine ? `<div class="ric-foto"><img src="${esc(r.immagine)}" alt="${esc(r.nome)}" loading="lazy" onerror="this.closest('.ric-foto').remove()">${r.immagine_autore?`<div class="ric-foto-credit">${r.immagine_url_fonte?`<a href="${esc(r.immagine_url_fonte)}" target="_blank" rel="noopener">${esc(r.immagine_autore)}</a>`:esc(r.immagine_autore)}</div>`:''}</div>` : '';
     const numeri = (r.numeri && Object.keys(r.numeri).length) ? `<div class="ric-numeri"><div class="ric-numeri-lab">Numeri bersaglio</div>${Object.entries(r.numeri).map(([k,v])=>`<div class="ric-num-row"><span class="ric-num-k">${esc(k)}</span><span class="ric-num-v">${esc(v)}</span></div>`).join('')}</div>` : '';
     const critico = r.punto_critico ? `<div class="ric-critico"><div class="ric-critico-lab">Qui sbagliano quasi tutti</div><div class="ric-critico-txt">${esc(r.punto_critico)}</div></div>` : '';
-    const esperimento = r.esperimento ? `<div class="ric-exp"><div class="ric-exp-lab">◇ Prova al banco</div><div class="ric-exp-txt">${esc(r.esperimento)}</div></div>` : '';
+    const esperimento = r.esperimento ? `<div class="ric-exp"><div class="ric-exp-lab">Provalo così</div><div class="ric-exp-txt">${esc(r.esperimento)}</div></div>` : '';
     const proc = (r.procedimento && r.procedimento.length) ? `<div class="ric-proc"><div class="ric-proc-lab">Procedimento</div>${r.procedimento.map(p=>`<div class="ric-step"><span class="ric-step-n">${esc(p.n)}</span><div class="ric-step-b"><span class="ric-step-t">${esc(p.testo)}</span>${p.numero_chiave?`<span class="ric-step-key">${esc(p.numero_chiave)}</span>`:''}</div></div>`).join('')}</div>` : '';
     const tecniche = (r.tecniche && r.tecniche.length) ? `<div class="ric-tec"><div class="ric-tec-lab">Tecniche</div><div class="ric-tec-chips">${r.tecniche.map(t=>`<span class="ric-tec-chip">${esc(t)}</span>`).join('')}</div></div>` : '';
-    const limite = r.limite ? `<div class="ric-limite"><div class="ric-limite-lab">Quando non basta</div><div class="ric-limite-txt">${esc(r.limite)}</div></div>` : '';
+    const limite = r.limite ? `<div class="ric-limite"><div class="ric-limite-lab">Qui il numero non basta</div><div class="ric-limite-txt">${esc(r.limite)}</div></div>` : '';
     const twist = r.twist ? `<div class="ric-twist"><div class="ric-twist-lab">${twLabel(r.disciplina)}</div><div class="ric-twist-txt">${esc(r.twist)}</div></div>` : '';
     const ab = (r.abbinamenti && (r.abbinamenti.analogia || r.abbinamenti.contrasto)) ? `<div class="ric-abb"><div class="ric-abb-lab">Abbinamenti</div><div class="ric-abb-cols">${r.abbinamenti.analogia?`<div class="ric-abb-col"><span class="ric-abb-k">In analogia</span><span class="ric-abb-v">${esc(r.abbinamenti.analogia)}</span></div>`:''}${r.abbinamenti.contrasto?`<div class="ric-abb-col"><span class="ric-abb-k">In contrasto</span><span class="ric-abb-v">${esc(r.abbinamenti.contrasto)}</span></div>`:''}</div></div>` : '';
     return `
@@ -4454,6 +4454,7 @@ function mostraPopupPro(motivo){
       </div>
       <div class="trial-popup-price">${C.price}</div>
       <div class="trial-popup-price-note">${C.period}</div>
+      <div class="trial-popup-founding">Silent Launch — solo per i primi 100 professionisti:<br><b>Founding Member 99 € il primo anno</b></div>
       <button class="trial-popup-cta" onclick="document.querySelector('.trial-popup-overlay').remove();switchTab('auth')">${C.cta}</button>
       <button class="trial-popup-skip" onclick="${motivo === 'esaurito' ? "document.querySelector('.trial-popup-overlay').remove();switchTab('scopri')" : "document.querySelector('.trial-popup-overlay').remove()"}">${skipLabel}</button>
     </div>`;
@@ -4839,9 +4840,15 @@ function _renderTarget(box, target, mostraLabel){
   var resto = parti.slice(1);
   var haNumero = /\d/.test(primo) && primo.length <= 32;
   var html = '';
+  var free = (typeof _isPro==='function') && !_isPro();
   if(haNumero){
     if(mostraLabel !== false) html += '<div class="target-lab">finestra operativa</div>';
-    html += '<div class="target-eroe">' + _esc(primo) + '</div>';
+    if(free){
+      // Mirino demo: numero sfocato al free, nitido al Pro (leva di conversione)
+      html += '<div class="target-eroe target-blur" onclick="apriPaywall()"><span class="target-blur-num">' + _esc(primo) + '</span><span class="target-blur-lock">🔒 Sblocca con Pro</span></div>';
+    } else {
+      html += '<div class="target-eroe">' + _esc(primo) + '</div>';
+    }
     if(resto.length){
       html += '<div class="target-cond-lab">condizioni</div><div class="target-grid">';
       resto.forEach(function(p){ html += '<div class="target-cond">' + _esc(p) + '</div>'; });
