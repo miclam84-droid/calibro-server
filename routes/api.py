@@ -1331,7 +1331,7 @@ def abbina(ingrediente):
                 AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
                 AND (lower(e.from_id) = lower(%s)
                      OR lower(e.from_id) LIKE lower(%s))
-                ORDER BY overlap DESC NULLS LAST LIMIT 15
+                ORDER BY overlap DESC NULLS LAST LIMIT 40
             """, (term, f"%{term}%"))
             rows = cur.fetchall()
             if rows: break
