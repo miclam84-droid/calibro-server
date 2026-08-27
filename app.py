@@ -8,6 +8,24 @@ import os, json, sqlite3, pathlib, difflib, uuid
 from flask import Flask, request, jsonify, render_template
 import motore as Motore
 
+# ── Sentry (monitoraggio errori) — init PRIMA di tutto il resto ──
+# Il DSN sta in variabile d'ambiente SENTRY_DSN (impostata su Railway).
+# Se manca (es. in locale), Sentry non parte e l'app funziona comunque.
+try:
+    _sentry_dsn = os.environ.get("SENTRY_DSN", "").strip()
+    if _sentry_dsn:
+        import sentry_sdk
+        sentry_sdk.init(
+            dsn=_sentry_dsn,
+            # traces_sample_rate basso: campiona il 10% delle richieste per le performance,
+            # cattura il 100% degli ERRORI. Tiene basso il volume (e i costi) su Sentry.
+            traces_sample_rate=0.1,
+            send_default_pii=False,  # GDPR: niente dati personali negli errori
+            environment=os.environ.get("RAILWAY_ENVIRONMENT", "production"),
+        )
+except Exception:
+    pass  # Sentry non deve mai impedire l'avvio dell'app
+
 # ── Fondazione ──────────────────────────────────────────
 from config import HERE, GRAFO, DATABASE_URL
 from db import (_PgRow, _PgCompat, _PgCursorResult, _get_pool, _get_conn,
@@ -32,6 +50,15 @@ from auth import (_init_account_tables, _hash_pw, _e_hash_legacy, _verifica_pw,
                   _genera_token, _utente_da_token)
 
 app = Flask(__name__)
+
+# ── Rotta di test Sentry: genera un errore apposta per verificare che Sentry lo catturi.
+#    Protetta da admin secret (nessun utente la trova). Uso: /admin/test-sentry?s=SECRET
+@app.route("/admin/test-sentry")
+def _test_sentry():
+    if request.args.get("s", "") != os.environ.get("ADMIN_SECRET", ""):
+        return "Forbidden", 403
+    _ = 1 / 0  # errore volontario → deve comparire su Sentry
+    return "non arriva mai qui"
 
 # ── JSON provider globale: converte i Decimal di Postgres in float ──────────
 # Risolve alla radice il problema "Object of type Decimal is not JSON
