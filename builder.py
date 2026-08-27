@@ -239,7 +239,15 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f'"esperimento": "una prova semplice da fare al banco per capire il fenomeno (1 frase concreta)", '
         f'"limite": "quando il numero-bersaglio non basta e decide il palato/occhio (1 frase)", '
         f'"twist": "un consiglio di {_termine_var} concreto col perché (1-2 frasi)", '
+        f'"mise_en_place": "cosa preparare PRIMA del servizio per essere pronti (1-2 frasi operative da cucina professionale)", '
+        f'"produzione_quantita": "come scalare per un ristorante: cosa preparare in batch, cosa fare al momento, e perché (1-2 frasi)", '
+        f'"conservazione": "come e quanto si conserva (frigo/abbattitore/temperatura) per gestire la produzione anticipata (1 frase con numeri)", '
+        f'"strumenti": ["strumento specifico utile per eseguire bene questa preparazione", ...], '
         f'"abbinamenti": {{"analogia": "...", "contrasto": "..."}}}}\n\n'
+        f"Scrivi per un PROFESSIONISTA che lavora in cucina/bar, non per chi cucina a casa: "
+        f"le tecniche devono essere SPECIFICHE (non 'assemblaggio' ma 'confit a bassa temperatura', "
+        f"'emulsione a caldo', 'riduzione', 'sbianchitura', ecc.), e mise_en_place/produzione_quantita/"
+        f"conservazione devono essere concrete e utili in un servizio reale.\n\n"
         f"I numeri devono venire dai fenomeni/tecniche forniti sopra. "
         f"IMPORTANTE per il campo 'numeri': le descrizioni-bersaglio dei fenomeni contengono spesso cifre "
         f"dentro le frasi (es. 'shakera 10-15s', 'sour 2:1:1', 'pH 4.6', 'vicino 0°C'). ESTRAI quelle cifre "
