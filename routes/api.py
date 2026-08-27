@@ -3315,11 +3315,56 @@ def menu_costruisci():
     except Exception as e:
         return jsonify({"errore": f"db: {e}", "voci": []}), 500
 
+    # ── CREAZIONI INEDITE: dagli abbinamenti aromatici del grafo ──
+    # Oltre ai piatti classici, propongo 1-2 creazioni NUOVE basate sui composti condivisi
+    # tra gli ingredienti dati. Questo è il moat: nessun concorrente crea l'inedito coi numeri.
+    creazioni_inedite = []
+    try:
+        from builder import _abbinamenti_ingrediente
+        db_ab = carica_grafo()
+        # per ogni ingrediente, trovo il partner (tra gli altri dati) con più composti condivisi
+        migliori_coppie = []
+        for i, ing in enumerate(ingredienti):
+            ab = _abbinamenti_ingrediente(db_ab, ing, max_n=40)
+            for a in ab:
+                partner = (a.get("ingrediente") or "").lower()
+                overlap = a.get("overlap", 0)
+                # il partner è un altro ingrediente della lista?
+                for altro in ingredienti[i+1:]:
+                    if altro.lower() in partner or partner in altro.lower():
+                        migliori_coppie.append((overlap, ing, altro))
+        # ordino per composti condivisi (più alto = abbinamento più forte)
+        migliori_coppie.sort(key=lambda x: -x[0])
+        viste = set()
+        for overlap, a, b in migliori_coppie[:2]:
+            chiave = tuple(sorted([a.lower(), b.lower()]))
+            if chiave in viste or overlap < 20:
+                continue
+            viste.add(chiave)
+            creazioni_inedite.append({
+                "piatto": f"Creazione: {a.capitalize()} e {b}",
+                "nome": f"Creazione: {a.capitalize()} e {b}",
+                "disciplina": disc_filtro or "cucina",
+                "ingredienti": [a, b],
+                "tecnica": "",
+                "fenomeni": [],
+                "perche": f"Abbinamento inedito: {a} e {b} condividono {int(overlap)} composti aromatici. "
+                          f"Non è un piatto classico — è una creazione suggerita dalla chimica. "
+                          f"Tocca 'genera' per la ricetta completa.",
+                "pronta": False,
+                "inedita": True,
+                "composti_condivisi": int(overlap)
+            })
+    except Exception:
+        pass  # se la scoperta inedita fallisce, il menu coi classici resta valido
+
     return jsonify({
         "ingredienti": ingredienti,
         "voci": voci,
+        "creazioni_inedite": creazioni_inedite,
         "totale": len(voci),
         "nota": "Voci di menu realizzabili con i tuoi ingredienti, con la scienza dietro ogni piatto."
+                + (" In fondo, creazioni inedite suggerite dagli abbinamenti molecolari." if creazioni_inedite else "")
     })
 
 
