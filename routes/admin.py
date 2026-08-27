@@ -5891,3 +5891,52 @@ def admin_correggi_bersagli():
         return jsonify({"ok": True, "correzioni": fatti or ["nessun bersaglio corretto"]})
     finally:
         _release_conn(conn)
+
+
+@bp.route("/admin/diagnosi-grafo")
+def admin_diagnosi_grafo():
+    """Diagnostica la struttura del grafo abbinamenti: quanti archi, quanti composti,
+    e se coppie note (fragola-basilico) condividono composti anche senza arco diretto."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    out = {}
+    try:
+        # 1. quanti archi abbinamento_aromatico?
+        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='abbinamento_aromatico'")
+        out["archi_abbinamento"] = cur.fetchone()[0]
+        # 2. quanti archi contiene_composto?
+        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='contiene_composto'")
+        out["archi_contiene_composto"] = cur.fetchone()[0]
+        # 3. quanti ingredienti?
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Ingrediente'")
+        out["ingredienti"] = cur.fetchone()[0]
+        # 4. quanti composti?
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Composto'")
+        out["composti"] = cur.fetchone()[0]
+        # 5. fragola e basilico: quanti composti ciascuno, e quanti CONDIVISI?
+        def composti_di(nome):
+            cur.execute("""
+                SELECT COUNT(DISTINCT e.target) FROM edges e
+                JOIN nodes n ON n.id=e.source
+                WHERE e.relation='contiene_composto' AND lower(n.name)=lower(%s)
+            """, (nome,))
+            return cur.fetchone()[0]
+        out["fragola_composti"] = composti_di("fragola")
+        out["basilico_composti"] = composti_di("basilico")
+        # composti condivisi fragola-basilico via composti comuni
+        cur.execute("""
+            SELECT COUNT(*) FROM (
+                SELECT e1.target FROM edges e1 JOIN nodes n1 ON n1.id=e1.source
+                WHERE e1.relation='contiene_composto' AND lower(n1.name)='fragola'
+                INTERSECT
+                SELECT e2.target FROM edges e2 JOIN nodes n2 ON n2.id=e2.source
+                WHERE e2.relation='contiene_composto' AND lower(n2.name)='basilico'
+            ) x
+        """)
+        out["fragola_basilico_composti_condivisi"] = cur.fetchone()[0]
+        return jsonify(out)
+    finally:
+        _release_conn(conn)
