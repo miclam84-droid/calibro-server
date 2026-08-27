@@ -505,3 +505,122 @@ body{{font-family:{tpl["font"]};background:{tpl["bg"]};color:{tpl["ink"]};margin
 <div class="menu-foot">{esc(footer_custom) if footer_custom else 'Creato con Matter'}</div></body></html>'''
     from flask import Response
     return Response(html, mimetype="text/html")
+
+
+@bp_menu.route("/v1/menu/<mid>/pdf", methods=["GET"])
+def menu_pdf(mid):
+    """Genera il menu come PDF VERO scaricabile (non 'stampa dal browser').
+    Stessi parametri di /render: ?template= ?accent= ?footer= ?logo= (url immagine).
+    Usa reportlab. Il PDF è pronto per la stampa A4."""
+    _ensure_menu_table()
+    c = _conn(); cur = c.cursor()
+    try:
+        cur.execute("SELECT titolo, locale, voci, note FROM menu WHERE id=%s", (mid,))
+        r = cur.fetchone()
+        if not r:
+            return jsonify({"errore": "menu non trovato"}), 404
+        titolo, locale, voci_raw, note = r[0], r[1], r[2], r[3]
+        voci = voci_raw if isinstance(voci_raw, list) else (json.loads(voci_raw) if voci_raw else [])
+    finally:
+        _release(c)
+
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import mm
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.colors import HexColor
+        from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table,
+                                        TableStyle, Image as RLImage, HRFlowable)
+    except Exception:
+        return jsonify({"errore": "generatore PDF non disponibile"}), 500
+
+    # template/colori (come /render)
+    tpl = dict(_TEMPLATE_MENU.get(request.args.get("template", "elegante"), _TEMPLATE_MENU["elegante"]))
+    accent_custom = request.args.get("accent", "").strip().lstrip("#")
+    if accent_custom and len(accent_custom) in (3, 6) and all(ch in "0123456789abcdefABCDEF" for ch in accent_custom):
+        tpl["accent"] = "#" + accent_custom
+        tpl["linea"] = "#" + accent_custom
+    footer_custom = request.args.get("footer", "").strip()
+    logo_url = request.args.get("logo", "").strip()
+
+    ACCENT = HexColor(tpl["accent"]); INK = HexColor(tpl["ink"]); LINEA = HexColor(tpl["linea"])
+    is_serif = "serif" in tpl["font"].lower() or "georgia" in tpl["font"].lower()
+    font_titolo = "Times-Bold" if is_serif else "Helvetica-Bold"
+    font_body = "Times-Roman" if is_serif else "Helvetica"
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=A4, topMargin=20*mm, bottomMargin=18*mm,
+                            leftMargin=22*mm, rightMargin=22*mm, title=str(titolo or "Menu"))
+    styles = getSampleStyleSheet()
+    st_titolo = ParagraphStyle("Tit", parent=styles["Title"], fontName=font_titolo,
+                               textColor=ACCENT, fontSize=26, spaceAfter=2, alignment=1)
+    st_locale = ParagraphStyle("Loc", parent=styles["Normal"], fontName=font_body,
+                               textColor=INK, fontSize=11, alignment=1, spaceAfter=6)
+    st_sezione = ParagraphStyle("Sez", parent=styles["Heading2"], fontName=font_titolo,
+                                textColor=ACCENT, fontSize=14, spaceBefore=12, spaceAfter=4)
+    st_nome = ParagraphStyle("Nome", parent=styles["Normal"], fontName=font_body,
+                             textColor=INK, fontSize=11, leading=14)
+    st_prezzo = ParagraphStyle("Prz", parent=styles["Normal"], fontName=font_titolo,
+                               textColor=ACCENT, fontSize=11, alignment=2)
+    st_desc = ParagraphStyle("Desc", parent=styles["Normal"], fontName=font_body,
+                             textColor=HexColor("#666666"), fontSize=8.5, leading=11, spaceAfter=3)
+    st_footer = ParagraphStyle("Foot", parent=styles["Normal"], fontName=font_body,
+                               textColor=HexColor("#888888"), fontSize=8, alignment=1)
+
+    story = []
+    def esc(s): return (str(s or "")).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    # logo (se url fornito e scaricabile)
+    if logo_url:
+        try:
+            import urllib.request
+            req = urllib.request.Request(logo_url, headers={"User-Agent": "Mozilla/5.0"})
+            logo_data = io.BytesIO(urllib.request.urlopen(req, timeout=8).read())
+            im = RLImage(logo_data); im._restrictSize(45*mm, 25*mm); im.hAlign = "CENTER"
+            story.append(im); story.append(Spacer(1, 6))
+        except Exception:
+            pass
+
+    story.append(Paragraph(esc(titolo or "Menu"), st_titolo))
+    if locale:
+        story.append(Paragraph(esc(locale), st_locale))
+    story.append(HRFlowable(width="40%", thickness=1.2, color=LINEA, spaceBefore=4, spaceAfter=8, hAlign="CENTER"))
+
+    # raggruppo per sezione
+    def riga_voce(v):
+        nome = esc(v.get("nome", "")); prezzo = esc(v.get("prezzo", "")); desc = esc(v.get("descrizione", ""))
+        t = Table([[Paragraph(nome, st_nome), Paragraph(prezzo, st_prezzo)]],
+                  colWidths=[125*mm, 35*mm])
+        t.setStyle(TableStyle([("VALIGN",(0,0),(-1,-1),"TOP"),("LEFTPADDING",(0,0),(-1,-1),0),
+                               ("RIGHTPADDING",(0,0),(-1,-1),0),("TOPPADDING",(0,0),(-1,-1),2),
+                               ("BOTTOMPADDING",(0,0),(-1,-1),0)]))
+        story.append(t)
+        if desc:
+            story.append(Paragraph(desc, st_desc))
+
+    sezioni = {}
+    ordine_sez = []
+    for v in voci:
+        s = v.get("sezione") or ""
+        if s not in sezioni:
+            sezioni[s] = []; ordine_sez.append(s)
+        sezioni[s].append(v)
+
+    if len(ordine_sez) == 1 and ordine_sez[0] == "":
+        for v in voci: riga_voce(v)
+    else:
+        for s in ordine_sez:
+            if s:
+                story.append(Paragraph(esc(s), st_sezione))
+            for v in sezioni[s]: riga_voce(v)
+
+    if footer_custom or note:
+        story.append(Spacer(1, 14))
+        story.append(HRFlowable(width="30%", thickness=0.6, color=LINEA, spaceBefore=2, spaceAfter=6, hAlign="CENTER"))
+        story.append(Paragraph(esc(footer_custom or note), st_footer))
+
+    doc.build(story)
+    buf.seek(0)
+    from flask import send_file
+    return send_file(buf, mimetype="application/pdf", as_attachment=True,
+                     download_name=f"menu-{esc(titolo or mid)[:30].replace(' ','-')}.pdf")
