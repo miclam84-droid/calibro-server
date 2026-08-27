@@ -571,7 +571,17 @@ function _popolaCruscotto(f){
     else if(typeof T==='string'){ tgt = T; }
     tgt = String(tgt||'').trim();
     // mostro il numero solo se è corto e sensato; altrimenti una freccia verso il fenomeno
-    if(tgt && tgt.length<=14){ t.textContent=tgt; t.style.fontSize=''; }
+    if(tgt && tgt.length<=14){
+      var freeC = (typeof _isPro==='function') && !_isPro();
+      if(freeC){
+        // Mirino demo anche nel cruscotto: numero sfocato al free (coerenza con le schede)
+        t.innerHTML='<span class="crus-blur-num">'+tgt+'</span><span class="crus-blur-lock">🔒 Pro</span>';
+        t.style.fontSize=''; t.classList.add('crus-target-blurred');
+        var box=t.closest('.crus-box-target'); if(box){ box.setAttribute('onclick','apriPaywall()'); }
+      } else {
+        t.textContent=tgt; t.style.fontSize=''; t.classList.remove('crus-target-blurred');
+      }
+    }
     else { t.textContent='›'; t.style.fontSize='28px'; }
   }
   if(ts){ ts.textContent = f.nome || ''; }

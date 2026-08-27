@@ -2035,3 +2035,8 @@ a:focus-visible,input:focus-visible{
 /* Founding Member nel paywall */
 .trial-popup-founding{margin-top:14px;padding:12px 14px;background:rgba(199,123,63,.1);border:1px solid var(--terra,#C77B3F);border-radius:10px;font-size:12.5px;color:var(--ink,#131C21);line-height:1.5;text-align:center}
 .trial-popup-founding b{color:var(--terra,#C77B3F);font-size:14px}
+
+/* Mirino demo nel cruscotto — numero sfocato al free */
+.crus-target-blurred{position:relative;display:inline-flex;align-items:center;gap:0}
+.crus-blur-num{filter:blur(9px);opacity:.55;user-select:none}
+.crus-blur-lock{position:absolute;left:0;top:50%;transform:translateY(-50%);font-family:var(--sans,'Inter');font-weight:700;font-size:14px;color:var(--terra,#E8935A);white-space:nowrap}
