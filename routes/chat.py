@@ -41,6 +41,33 @@ def chiedi():
 
     # ── DOMANDE SULL'APP: risposta fissa operativa prima del grafo ──────
     _dl = domanda.lower()
+
+    # ── INTENTO "CREA RICETTA": la chat NON crea ricette (regola: la chat risponde, il Lab crea).
+    # Se l'utente chiede un piatto ("fammi una ricetta con X", "voglio un piatto con Y"),
+    # non rispondo con la scienza: restituisco un SEGNALE che il frontend usa per mostrare
+    # il pulsante [GENERA RICETTA] che porta al Lab. NON chiamo l'AI qui (veloce, no timeout).
+    import re as _re_ric
+    _vuole_creare = _re_ric.search(
+        r"\b(fa(?:mmi|cciamo|i)?|cre(?:a|ami|iamo)|prepar(?:a|ami|iamo)|gener(?:a|ami)|"
+        r"invent(?:a|ami)|propon(?:i|imi)|dammi|voglio|vorrei|mi\s+serve)\b"
+        r".{0,30}\b(ricett\w*|piatt\w*|dolce|dessert|cocktail|drink|impast\w*|pane|pizza|menu)\b", _dl)
+    # escludo le domande-guida ("come creo una ricetta") che vanno alla guida, non alla creazione
+    _e_guida = any(k in _dl for k in ["come ", "dove ", "come si"])
+    if _vuole_creare and not _e_guida:
+        # pulisco la richiesta per passarla al generatore (tolgo il verbo di comando)
+        _richiesta_pulita = _re_ric.sub(
+            r"^\s*(fa(?:mmi|cciamo|i)?|cre(?:a|ami|iamo)|prepar(?:a|ami|iamo)|gener(?:a|ami)|"
+            r"invent(?:a|ami)|propon(?:i|imi)|dammi|voglio|vorrei|mi\s+serve)\s+"
+            r"(una\s+|un\s+|il\s+|lo\s+)?(ricett\w*\s+(con|di|a\s+base\s+di)\s+)?",
+            "", _dl).strip()
+        return jsonify({
+            "risposta": "Posso crearti una scheda ricetta completa — con numeri, produzione e food cost.",
+            "_azione": "crea_ricetta",
+            "_richiesta": _richiesta_pulita or domanda,
+            "trovato": ["Crea ricetta"],
+            "connessi": [], "trial": {}
+        })
+
     # ── DOMANDE "COME SI FA X NELL'APP": guida operativa specifica ──────
     # Se l'utente chiede come usare una funzione dell'app, do istruzioni operative,
     # NON la scienza. Riconosco l'intento "come + verbo d'uso + oggetto dell'app".
