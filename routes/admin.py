@@ -6045,3 +6045,56 @@ def admin_debug_proposte():
         return jsonify(out)
     finally:
         _release_conn(conn)
+
+
+@bp.route("/admin/correggi-accenti")
+def admin_correggi_accenti():
+    """Corregge accenti sbagliati nei testi dei nodi (e->è dove serve, refusi comuni).
+    Usa pattern SICURI (con contesto) per non rovinare le 'e' congiunzione corrette."""
+    import os, hmac, re
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    # pattern SICURI: ' e ' che deve essere ' è ' solo in contesti chiari
+    # (dove 'e' è verbo essere, riconoscibile dal contesto grammaticale)
+    correzioni = [
+        (r'\be invece è\b', 'è invece'),          # "e invece è la" -> "è invece la"
+        (r'\binvece e la\b', 'invece è la'),
+        (r'\be la stessa\b', 'è la stessa'),
+        (r'\be la stesso\b', 'è lo stesso'),
+        (r'\be lo stesso\b', 'è lo stesso'),
+        (r'\bche e piu\b', 'che è più'),
+        (r'\bche e meno\b', 'che è meno'),
+        (r'\bquando e\b', 'quando è'),
+        (r'\bnon e piu\b', 'non è più'),
+        (r'\bpiu morbido\b', 'più morbido'),
+        (r'\bpiu rotondo\b', 'più rotondo'),
+        (r'\bpiu di prima\b', 'più di prima'),
+        (r'\bperche\b', 'perché'),
+        (r'\bpoiche\b', 'poiché'),
+        (r'\bcioe\b', 'cioè'),
+    ]
+    conn = _get_conn(); cur = conn.cursor()
+    fatti = []
+    try:
+        # scansiono i nodi Fenomeno che hanno testi nel campo data
+        cur.execute("SELECT id, data FROM nodes WHERE type='Fenomeno' AND data IS NOT NULL")
+        righe = cur.fetchall()
+        import json as _json
+        for nid, data in righe:
+            if not data:
+                continue
+            d = data if isinstance(data, dict) else _json.loads(data)
+            testo_orig = _json.dumps(d, ensure_ascii=False)
+            testo = testo_orig
+            for pat, repl in correzioni:
+                testo = re.sub(pat, repl, testo)
+            if testo != testo_orig:
+                d2 = _json.loads(testo)
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(d2, ensure_ascii=False), nid))
+                fatti.append(nid)
+        conn.commit()
+        return jsonify({"ok": True, "nodi_corretti": len(fatti), "ids": fatti[:20]})
+    finally:
+        _release_conn(conn)
