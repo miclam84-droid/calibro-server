@@ -1814,12 +1814,16 @@ def menu_proposte():
             for j in range(i+1, len(items)):
                 n1, a1 = items[i]; n2, a2 = items[j]
                 # Come /v1/abbina: parto da n1, prendo TUTTI i suoi archi di abbinamento,
-                # e cerco n2 tra i partner (per nome, normalizzando accenti). Così trovo
-                # l'edge qualunque sia l'ID esatto (ing-pomodoro, ing-pomodoro-secco, ...).
+                # e cerco n2 tra i partner. Il grafo ha DUE sistemi di id: 'ahn_*' (inglese,
+                # ahn_strawberry) e 'ing-*' (italiano). Cerco n1 in entrambi, e riconosco n2
+                # sia col nome italiano che con l'alias inglese (a2, es. tomato). Niente LIMIT.
                 def _norm_acc(s):
                     return (s.lower().replace("à","a").replace("è","e").replace("é","e")
                             .replace("ì","i").replace("ò","o").replace("ù","u").strip())
                 s1 = _norm_acc(n1); s2 = _norm_acc(n2)
+                # alias inglese di n1 e n2 (per il sistema ahn_*)
+                a1_en = _norm_acc(a1) if a1 and a1 != n1 else ""
+                a2_en = _norm_acc(a2) if a2 and a2 != n2 else ""
                 cur.execute("""
                     SELECT nt.name, translate(lower(e.to_id),'àèéìòù','aeeiou') AS toid,
                            (e.data->>'overlap')::numeric AS ov
@@ -1828,14 +1832,17 @@ def menu_proposte():
                     JOIN nodes nt ON nt.id = e.to_id
                     WHERE e.relation='abbinamento_aromatico'
                       AND (translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s
+                        OR translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s
                         OR translate(lower(nf.name),'àèéìòù','aeeiou') LIKE %s)
-                """, (f"%{s1.replace(' ','-')}%", f"%{s1}%"))
+                """, (f"%{s1.replace(' ','-')}%", f"%{a1_en}%" if a1_en else "%\x00%", f"%{s1}%"))
                 forza = 0
                 for rname, rtoid, rov in cur.fetchall():
                     partner = _norm_acc(rname or "")
-                    if s2 in partner or s2.replace(" ", "-") in (rtoid or ""):
-                        if rov and int(float(rov)) > forza:
-                            forza = int(float(rov))
+                    toid = rtoid or ""
+                    ok = (s2 in partner or s2.replace(" ", "-") in toid
+                          or (a2_en and (a2_en in partner or a2_en in toid)))
+                    if ok and rov and int(float(rov)) > forza:
+                        forza = int(float(rov))
                 if forza > 0:
                     coppie.append({"a": n1, "b": n2, "forza": forza})
         cur.close(); _release_conn(conn)
