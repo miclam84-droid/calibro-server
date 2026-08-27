@@ -1014,12 +1014,8 @@ const _HISTORY_MAX=3;
 
 function chiediTesto(q){
   if(busy)return;
-  // FLUSSO 3 — intento "crea ricetta": se l'utente chiede di creare/fare una ricetta,
-  // non va alla chat scientifica ma al generatore di ricette vero.
-  if(_isIntentoRicetta(q)){
-    generaRicettaDaTesto(q);
-    return;
-  }
+  // REGOLA 1: la chat NON crea ricette da sola. È il backend a segnalare _azione:crea_ricetta
+  // nella risposta; renderRisp mostra allora un pulsante [GENERA SCHEDA RICETTA].
   // paywall: controlla limite giornaliero (solo per utenti non Pro)
   if(!_isPro()){
     const usate=_getDomande();
@@ -1087,6 +1083,19 @@ function aggiungiThinking(){
 function renderRisp(domanda,j,fromNode){
   const t=document.getElementById('thinking');if(t)t.remove();
   if(!j.risposta){renderNota(domanda,j.nota,j.connessi);return;}
+  // REGOLA 1 — la chat è un ponte, non il laboratorio: se il backend segnala crea_ricetta,
+  // mostro la frase breve + un pulsante grande [GENERA SCHEDA RICETTA] invece di generare qui.
+  if(j._azione==='crea_ricetta'){
+    const rich = (j._richiesta||domanda||'').replace(/'/g,"\\'");
+    const card=document.createElement('div');card.className='scheda';
+    card.innerHTML=`<div class="s-q"><b>${esc(domanda)}</b></div>
+      <div class="s-body" style="padding-bottom:6px">${esc(j.risposta)}</div>
+      <button class="rg-btn rg-btn-salva" style="margin:4px 14px 14px;width:calc(100% - 28px)" onclick="_generaDaChat('${rich}')">Genera scheda ricetta →</button>`;
+    document.getElementById('schede').prepend(card);
+    card.scrollIntoView({behavior:'smooth',block:'start'});
+    _chatHistory.push({q:domanda,a:j.risposta});
+    return;
+  }
   const fens=(j.trovato||[]).map(f=>{
     const match=(j.connessi||[]).find(c=>c.nome===f);
     const fid=match?match.id:'';
@@ -2854,6 +2863,18 @@ var _ricettaGenCorrente = null;
 var _ctxChat = null;  // contesto ricetta/menu per la chat (FLUSSO 2)
 
 // FLUSSO 3 — riconosce se l'utente vuole CREARE una ricetta (non fare una domanda scientifica)
+// REGOLA 1 — dal pulsante nella chat: genera la scheda ricetta vera (il Lab crea)
+async function _generaDaChat(richiesta){
+  var disc = localStorage.getItem('matter_station') || 'cucina';
+  aggiungiThinking(); setBusy(true);
+  try{
+    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({richiesta:richiesta, disciplina:disc})});
+    var j=await r.json();
+    rimuoviThinking(); setBusy(false);
+    if(j && (j.nome||j.ingredienti)){ mostraRicettaGen(j); }
+  }catch(e){ rimuoviThinking(); setBusy(false); }
+}
 function _isIntentoRicetta(q){
   var s=(q||'').toLowerCase().trim();
   // "fammi/crea/prepara/facciamo/dammi/inventa una ricetta [con/di/per] ..."
@@ -5047,12 +5068,19 @@ function _flavourNode(a,key,surprise,centro){
     '<div class="fnv-node-n">'+n+'<span class="u">composti</span></div></div>'+det;
 }
 function _flavourToggle(key){ const d=document.getElementById('fnv-det-'+key); if(d) d.classList.toggle('show'); }
-function _flavourCrea(a,b){
-  // apre la chat con una richiesta di ricetta coi due ingredienti
+async function _flavourCrea(a,b){
+  // P0.1 — tocca abbinamento → ricetta DIRETTA (no chat, no anteprima)
   chiudiVista();
-  if(typeof switchTab==='function') switchTab('chiedi');
-  const ask = document.getElementById('ask-input');
-  if(ask){ ask.value = 'Crea una ricetta con '+a+' e '+b; if(typeof inviaDomanda==='function') inviaDomanda(); }
+  switchTab('chiedi'); switchSubtab('chat');
+  aggiungiThinking(); setBusy(true);
+  var disc = localStorage.getItem('matter_station') || 'cucina';
+  try{
+    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({richiesta: a+' e '+b, disciplina:disc})});
+    var j=await r.json();
+    rimuoviThinking(); setBusy(false);
+    if(j && (j.nome||j.ingredienti)){ mostraRicettaGen(j); }
+  }catch(e){ rimuoviThinking(); setBusy(false); }
 }
 
 /* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */

@@ -1,7 +1,7 @@
 /* Matter — stili principali (estratti da index.html) */
 :root{
   /* IDENTITÀ APPROVATA (home v1-final): carta fredda, ink petrolio, arancio-ossido */
-  --bg:#D4DCDC; --surface:#E3E8E8; --ink:#141D22; --ink-muted:#52626A; --border:#9AA9AB;
+  --bg:#D4DCDC; --surface:#E3E8E8; --ink:#141D22; --ink-muted:#3D4A50; --border:#9AA9AB;
   /* accento primario: blu di Prussia #245979 (il colore del dato-bersaglio) */
   --e100:#DCE6EC; --e300:#7FA8C0; --e500:#245979; --e700:#1E5478; --e900:#163D57;
   /* terracotta/secondario allineato all'accento */
@@ -1932,3 +1932,9 @@ a:focus-visible,input:focus-visible{
 .fc-pct-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:32px;line-height:1}
 .fc-pct-lab{font-size:12px;color:var(--muted,#5A6C70);margin-top:4px}
 .fc-nota{font-size:11.5px;color:var(--muted,#5A6C70);line-height:1.5;font-style:italic;margin-top:6px}
+
+/* ═══ MIRINO in 3 taglie semantiche (P0.7) ═══
+   HERO (grande, schermata principale fenomeno) · COMPATTO (card) · MINI (inline) */
+.mirino-hero{width:40px;height:40px;flex-shrink:0}
+.mirino-compatto{width:24px;height:24px;flex-shrink:0}
+.mirino-mini{width:15px;height:15px;flex-shrink:0;vertical-align:-2px}
