@@ -1813,18 +1813,33 @@ def menu_proposte():
         for i in range(len(items)):
             for j in range(i+1, len(items)):
                 n1, a1 = items[i]; n2, a2 = items[j]
-                # cerco l'edge di abbinamento tra i due nodi. Gli ID reali nel grafo sono
-                # in ITALIANO col prefisso 'ing-' (ing-pomodoro), NON 'ahn_tomato'. Cerco
-                # per nome ingrediente su tutti i formati id possibili (ing-, prod_, ahn_).
-                s1 = n1.strip().lower().replace(" ", "-")
-                s2 = n2.strip().lower().replace(" ", "-")
+                # cerco gli abbinamenti di n1 e vedo se n2 è tra i partner (col suo overlap).
+                # Riuso la logica di /v1/abbina (che funziona): match su from_id/to_id per nome,
+                # normalizzando accenti (caffè/caffe) e cercando su tutti gli id 'ing-*'.
+                def _norm_acc(s):
+                    return (s.lower().replace("à","a").replace("è","e").replace("é","e")
+                            .replace("ì","i").replace("ò","o").replace("ù","u").strip())
+                s1 = _norm_acc(n1).replace(" ", "-")
+                s2 = _norm_acc(n2).replace(" ", "-")
                 cur.execute("""
                     SELECT COALESCE(MAX((e.data->>'overlap')::numeric), 0)
                     FROM edges e
+                    JOIN nodes nf ON nf.id = e.from_id
+                    JOIN nodes nt ON nt.id = e.to_id
                     WHERE e.relation='abbinamento_aromatico'
-                      AND ((lower(e.from_id) LIKE %s AND lower(e.to_id) LIKE %s)
-                        OR (lower(e.from_id) LIKE %s AND lower(e.to_id) LIKE %s))
-                """, (f"%{s1}%", f"%{s2}%", f"%{s2}%", f"%{s1}%"))
+                      AND (
+                        (translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s
+                         AND translate(lower(e.to_id),'àèéìòù','aeeiou') LIKE %s)
+                        OR (translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s
+                         AND translate(lower(e.to_id),'àèéìòù','aeeiou') LIKE %s)
+                        OR (translate(lower(nf.name),'àèéìòù','aeeiou') LIKE %s
+                         AND translate(lower(nt.name),'àèéìòù','aeeiou') LIKE %s)
+                        OR (translate(lower(nf.name),'àèéìòù','aeeiou') LIKE %s
+                         AND translate(lower(nt.name),'àèéìòù','aeeiou') LIKE %s)
+                      )
+                """, (f"%{s1}%", f"%{s2}%", f"%{s2}%", f"%{s1}%",
+                      f"%{s1.replace('-',' ')}%", f"%{s2.replace('-',' ')}%",
+                      f"%{s2.replace('-',' ')}%", f"%{s1.replace('-',' ')}%"))
                 r = cur.fetchone()
                 forza = int(float(r[0])) if r and r[0] else 0
                 if forza > 0:
