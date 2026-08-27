@@ -189,3 +189,35 @@ def clona():
         return jsonify({"ok": True, "messaggio": "Ricetta clonata nel tuo Quaderno."})
     finally:
         _release_conn(conn)
+
+
+@bp_community.route("/admin/popola-feed")
+def admin_popola_feed():
+    """Popola il feed con ricette canoniche 'dal Team di Matter Lab' (per non averlo vuoto al lancio)."""
+    import os, hmac
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    _ensure_tabelle()
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        # pesco alcune ricette canoniche dalla tabella ricette
+        cur.execute("SELECT id, nome, disciplina, ingredienti, punto_critico FROM ricette LIMIT 12")
+        righe = cur.fetchall()
+        n = 0
+        for r in righe:
+            ing = r[3] if isinstance(r[3], (list, dict)) else (json.loads(r[3]) if r[3] else [])
+            dati = {"nome": r[1], "disciplina": r[2], "ingredienti": ing, "punto_critico": r[4]}
+            # evito doppioni: pubblico solo se non già presente dal team
+            cur.execute("SELECT 1 FROM ricette_pubbliche WHERE nome=%s AND dal_team=TRUE LIMIT 1", (r[1],))
+            if cur.fetchone():
+                continue
+            cur.execute("""
+                INSERT INTO ricette_pubbliche (device_id, autore_nome, autore_postazione, ricetta_id, nome, dati, lingua, dal_team)
+                VALUES ('team','Team Matter Lab',%s,%s,%s,%s,'it',TRUE)
+            """, (r[2] or "", r[0], r[1], json.dumps(dati, ensure_ascii=False)))
+            n += 1
+        conn.commit()
+        return jsonify({"ok": True, "pubblicate": n})
+    finally:
+        _release_conn(conn)
