@@ -6,6 +6,7 @@
 # L'AI compone, ma i numeri e i fenomeni vengono dal grafo — non inventati.
 # ============================================================
 import json as _j
+import random
 
 
 def _nodi_tecniche(db, disciplina):
@@ -184,11 +185,21 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
     LINGUA = {"it": "italiano", "en": "English", "es": "español"}.get(lang, "italiano")
     _termine_var = termine_variante(disciplina, lang)
 
+    # varietà: se la richiesta è una lista di ingredienti (non un piatto nominato),
+    # suggerisco un taglio di preparazione a rotazione così NON esce sempre lo stesso piatto
+    _stili = ["", "", "", "in umido o stufato", "al forno o gratinato", "saltato in padella",
+              "con una cottura che valorizzi la texture", "in versione moderna e leggera",
+              "come piatto della tradizione regionale", "con una tecnica di cottura precisa"]
+    _stile_var = random.choice(_stili) if not piatto_canonico else ""
+    _hint_var = (f" Taglio suggerito per questa ricetta: {_stile_var}. Non ripetere sempre lo stesso piatto "
+                 f"per gli stessi ingredienti: varia la preparazione.\n\n") if _stile_var else ""
+
     prompt = (
         f"Sei un professionista del mestiere ('{disciplina}') che è ANCHE scienziato del cibo. "
         f"Scrivi come se spiegassi una cosa a un collega durante il prep delle 17:30: curioso ma ASCIUTTO, "
         f"frasi corte, mai da professore. Genera UNA ricetta a partire da: \"{richiesta}\".\n\n"
-        f"REGOLA FERREA SUI NUMERI: usa ESCLUSIVAMENTE i numeri elencati qui sotto nei FENOMENI e TECNICHE. "
+        + _hint_var
+        + f"REGOLA FERREA SUI NUMERI: usa ESCLUSIVAMENTE i numeri elencati qui sotto nei FENOMENI e TECNICHE. "
         f"NON inventare temperature, tempi, percentuali o gradi che non sono in questa lista. "
         f"Se un passaggio richiede un numero che NON trovi qui sotto, scrivilo in modo QUALITATIVO "
         f"(es. 'a fuoco basso', 'finché non vela il cucchiaio') SENZA inventare una cifra precisa. "
