@@ -188,6 +188,13 @@ def _handle_uncaught(e):
     # lascio passare i 4xx voluti (404, 403, 400...) senza trasformarli
     if isinstance(e, HTTPException) and e.code and e.code < 500:
         return e
+    # registro l'eccezione su Sentry PRIMA di restituire la risposta pulita.
+    # (l'handler cattura tutto, quindi senza questo Sentry non vedrebbe l'errore)
+    try:
+        import sentry_sdk
+        sentry_sdk.capture_exception(e)
+    except Exception:
+        pass
     try:
         p = request.path or ""
     except Exception:
