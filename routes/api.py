@@ -3291,6 +3291,7 @@ def menu_costruisci():
                 ingr = _load(row[1]); tec = _load(row[2]); fen = _load(row[3])
                 voci.append({
                     "piatto": row[0],
+                    "nome": row[0],
                     "disciplina": disc,
                     "ingredienti": [i.get("nome") if isinstance(i, dict) else i for i in ingr][:8],
                     "tecnica": (tec[0].get("nome") if tec and isinstance(tec[0], dict) else (tec[0] if tec else "")),
@@ -3302,6 +3303,7 @@ def menu_costruisci():
                 # ricetta non ancora generata: dò la scheda-base dalla mappa (nome + firma + area)
                 voci.append({
                     "piatto": nome,
+                    "nome": nome,
                     "disciplina": disc,
                     "ingredienti": p.get("firma", [])[:8],
                     "tecnica": "",
