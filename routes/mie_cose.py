@@ -95,3 +95,98 @@ def rimuovi_ricetta_utente():
         return jsonify({"ok": True})
     finally:
         _release_conn(conn)
+
+
+@bp_mie.route("/v1/ricette/food-cost", methods=["POST"])
+def ricetta_food_cost():
+    """Food cost di una ricetta generata/salvata, dagli ingredienti nel body.
+    NON richiede autenticazione né exp_id — pensato per la scheda ricetta.
+    Body: {ingredienti:[{nome, quantita, unita}], porzioni?, prezzo_vendita?}
+    Restituisce sempre i prezzi_vendita_suggeriti, anche senza prezzo_vendita in input."""
+    from config import DATABASE_URL
+    if not DATABASE_URL:
+        return jsonify({"errore": "database non disponibile"}), 503
+    try:
+        from cifra_utils import _stima_costo_categoria
+    except Exception:
+        def _stima_costo_categoria(cat): return 5.0
+    body = request.json or {}
+    ingredienti_input = body.get("ingredienti", [])
+    porzioni = float(body.get("porzioni", 1) or 1)
+
+    def _to_grammi(q, u):
+        """Normalizza una quantità in grammi. u = unita (g, ml, kg, cl, l, pz, ...)."""
+        try:
+            q = float(str(q).replace(",", ".").strip())
+        except Exception:
+            return 0.0
+        u = (u or "").lower().strip()
+        if u in ("g", "gr", "grammi", "grammo"): return q
+        if u in ("kg", "kilo", "kg."): return q * 1000
+        if u in ("ml", "millilitri"): return q          # 1ml ≈ 1g liquidi
+        if u in ("cl",): return q * 10
+        if u in ("l", "lt", "litri", "litro"): return q * 1000
+        if u in ("oz",): return q * 28.35
+        if u in ("pz", "pezzo", "pezzi", "unità", "unita", ""): return q * 100  # stima pezzo
+        if u in ("q.b.", "qb", "qb."): return 2         # trascurabile
+        return q  # default: tratto come grammi
+
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        import json as _j
+        dettaglio = []
+        costo_totale = 0.0
+        for ing in ingredienti_input:
+            nome = (ing.get("nome", "") if isinstance(ing, dict) else str(ing)).lower().strip()
+            if not nome:
+                continue
+            qty_totale_g = _to_grammi(ing.get("quantita", ing.get("quantita_g", 0)),
+                                      ing.get("unita", ing.get("unità", "g")))
+            nome_id = f"ing-{nome.replace(' ','-')}"
+            cur.execute("""
+                SELECT name, data FROM nodes
+                WHERE type='Ingrediente'
+                AND (lower(id)=lower(%s) OR lower(data->>'aliases') LIKE lower(%s)
+                     OR lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s))
+                ORDER BY CASE WHEN lower(id)=lower(%s) THEN 1
+                              WHEN lower(data->>'aliases') LIKE lower(%s) THEN 2 ELSE 3 END
+                LIMIT 1
+            """, (nome_id, f'%"{nome}"%', f"%{nome}%", f"%{nome_id}%", nome_id, f'%"{nome}"%'))
+            ing_row = cur.fetchone()
+            costo_eur_kg = 5.0; fonte = "stima generica"; categoria = ""
+            if ing_row:
+                d = ing_row[1] if isinstance(ing_row[1], dict) else _j.loads(ing_row[1] or "{}")
+                categoria = d.get("categoria", "")
+                costo_eur_kg = d.get("costo_mercato_eur") or _stima_costo_categoria(categoria)
+                fonte = "Matter Lab / ISMEA orientativo"
+            costo_porzione = (qty_totale_g / 1000) * costo_eur_kg
+            costo_totale += costo_porzione
+            dettaglio.append({
+                "ingrediente": nome, "quantita_g": round(qty_totale_g, 1),
+                "costo_eur_kg": costo_eur_kg, "costo_porzione_eur": round(costo_porzione, 3),
+                "categoria": categoria, "fonte": fonte
+            })
+        # costo per porzione
+        costo_per_porzione = costo_totale / porzioni if porzioni > 0 else costo_totale
+        prezzo_vendita = float(body.get("prezzo_vendita", 0) or 0)
+        food_cost_pct = (costo_per_porzione / prezzo_vendita * 100) if prezzo_vendita > 0 else None
+        # prezzi suggeriti SEMPRE presenti (anche senza prezzo_vendita in input)
+        base = costo_per_porzione if costo_per_porzione > 0 else costo_totale
+        suggeriti = {
+            "fc_25pct": round(base / 0.25, 2),
+            "fc_30pct": round(base / 0.30, 2),
+            "fc_33pct": round(base / 0.33, 2),
+        }
+        return jsonify({
+            "costo_totale_eur": round(costo_totale, 3),
+            "costo_per_porzione_eur": round(costo_per_porzione, 3),
+            "porzioni": porzioni,
+            "dettaglio": dettaglio,
+            "food_cost_pct": round(food_cost_pct, 1) if food_cost_pct else None,
+            "prezzo_vendita": prezzo_vendita or None,
+            "prezzi_vendita_suggeriti": suggeriti,
+            "nota": "Prezzi orientativi ISMEA. Per prezzi fornitore reali usa Cifra.",
+            "fonte": "Matter Lab / ISMEA"
+        })
+    finally:
+        _release_conn(conn)
