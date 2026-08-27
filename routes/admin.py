@@ -5794,7 +5794,17 @@ def admin_debug_chiedi():
             if s.count(",") > 1: return ""
             return s
         agg2 = _valida(agg)
+        # provo i pezzi che /chiedi fa dopo: log_evento, funnel
+        _extra = {}
+        try:
+            from ai import log_evento
+            lid = log_evento("risposta", domanda, risposta[:100] if risposta else "", top or "")
+            _extra["log_evento_ok"] = True
+        except Exception as _le:
+            import traceback as _tb
+            _extra["log_evento_errore"] = str(_le)
+            _extra["log_evento_trace"] = _tb.format_exc()[:600]
         return jsonify({"ok": True, "fenomeno": top, "risposta_len": len(risposta or ""),
-                        "numero_grezzo": agg, "numero_validato": agg2})
+                        "numero_grezzo": agg, "numero_validato": agg2, "extra": _extra})
     except Exception as e:
         return jsonify({"ok": False, "errore": str(e), "traceback": traceback.format_exc()[:1500]}), 200
