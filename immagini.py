@@ -176,12 +176,34 @@ def _query_intelligente(nome, disciplina):
         ctx = _CTX_PREPARAZIONE.get(disc, "cooking process hands kitchen")
         return ctx
     ctx = _CTX_DISCIPLINA.get(disc, "food")
+    # NUOVO: cerco prima il NOME DEL PIATTO (pulito), non solo la categoria generica.
+    # Era il motivo delle "foto inquietanti": query tipo "food" o "cooking hands"
+    # tornano risultati a caso. "gricia" -> "gricia pasta" torna foto pertinenti.
+    nome_pulito = _nome_per_query(nome_l)
     extra = ""
     for it, en in _KW_IT_EN.items():
         if it in nome_l:
             extra = " " + en
             break
+    # priorità: nome del piatto + eventuale keyword + un aggancio di categoria breve
+    if nome_pulito:
+        # aggancio breve alla categoria (es. "italian food", "cocktail") per restare in tema
+        aggancio = ctx.split()[0] if ctx else "food"
+        return f"{nome_pulito}{extra} {aggancio}".strip()
     return (ctx + extra).strip()
+
+
+def _nome_per_query(nome_l):
+    """Pulisce il nome del piatto per la ricerca immagini: toglie parole di rumore
+    (rivisitato, base, scientifico, con, e, di...) e tiene le parole distintive."""
+    if not nome_l:
+        return ""
+    rumore = {"rivisitato", "rivisitata", "base", "scientifico", "scientifica", "con", "e", "di",
+              "al", "alla", "allo", "ai", "il", "la", "lo", "un", "una", "del", "della", "in",
+              "per", "da", "the", "of", "with", "and", "bilanciamento", "versione"}
+    parole = [w for w in nome_l.replace("(", " ").replace(")", " ").replace(",", " ").split()
+              if w not in rumore and len(w) >= 3]
+    return " ".join(parole[:3])  # max 3 parole distintive
 
 def _norm(url, autore, fonte, fonte_nome):
     if not url:
