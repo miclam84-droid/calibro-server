@@ -1125,11 +1125,17 @@ function renderRisp(domanda,j,fromNode){
       </div>
     </div>`;
   } else if(numBersaglio){
-    // fenomeno "si assaggia": mostro il bersaglio testuale, niente input finto
-    numBox = `<div class="s-num-box">
-      <div class="s-num-head"><svg class="s-num-mirino" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.6" stroke="#5EA0C8" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="#5EA0C8"/><path d="M7 0v2.2M7 11.8V14M0 7h2.2M11.8 7H14" stroke="#5EA0C8" stroke-width="1.2"/></svg><div class="s-num-label">bersaglio</div></div>
-      <div class="s-num-val">${esc(numBersaglio)}</div>
-    </div>`;
+    // Il box Mirino "bersaglio" deve contenere un NUMERO/valore corto, non una frase.
+    // Se il backend manda testo descrittivo (contiene freccia, punti elenco, o è lungo),
+    // NON mostro il box bersaglio: un Mirino con dentro un paragrafo è sbagliato.
+    const numStr = String(numBersaglio).trim();
+    const sembraFrase = numStr.length > 24 || /→|·|:|,/.test(numStr) || numStr.split(/\s+/).length > 4;
+    if(!sembraFrase){
+      numBox = `<div class="s-num-box">
+        <div class="s-num-head"><svg class="s-num-mirino" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.6" stroke="#5EA0C8" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="#5EA0C8"/><path d="M7 0v2.2M7 11.8V14M0 7h2.2M11.8 7H14" stroke="#5EA0C8" stroke-width="1.2"/></svg><div class="s-num-label">bersaglio</div></div>
+        <div class="s-num-val">${esc(numBersaglio)}</div>
+      </div>`;
+    }
   }
   
   card.innerHTML=`<div class="s-q">${fromNode?'<i class=\'ph ph-caret-right\'></i> ':''}<b>${esc(domanda)}</b></div>
