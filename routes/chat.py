@@ -21,6 +21,9 @@ bp = Blueprint("chat", __name__)
 def chiedi():
     # IN4: rate limiting per IP
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+    # device-id stabile dal frontend (localStorage UUID): più affidabile dell'IP per il trial.
+    # Due baristi sullo stesso wifi hanno IP uguale ma device-id diversi → non si bruciano le chat a vicenda.
+    device_id = (request.headers.get("X-Device-Id", "") or "").strip()[:80]
     if not _check_rate_limit(ip):
         return jsonify({"errore":"Troppe richieste. Aspetta un minuto e riprova."}), 429
     # rate limit AI severo: /chiedi chiama l'AI, protegge il credito da loop
@@ -148,6 +151,11 @@ def chiedi():
             cur_t.execute("""CREATE TABLE IF NOT EXISTS trial_chat (
                 id SERIAL PRIMARY KEY, ip TEXT, user_id INTEGER,
                 ts TIMESTAMPTZ DEFAULT NOW())""")
+            # aggiungo device_id se la tabella esisteva già senza (idempotente)
+            try:
+                cur_t.execute("ALTER TABLE trial_chat ADD COLUMN IF NOT EXISTS device_id TEXT")
+            except Exception:
+                pass
             user_id_t = _utente_da_token(token_sess) if token_sess else None
             piano_t = "free"
             if user_id_t:
@@ -156,8 +164,12 @@ def chiedi():
                 piano_t = rp[0] if rp else "free"
             if piano_t != "pro":
                 # 5 assaggi chat TOTALI (struttura OpenAI: non a tempo, 5 e basta)
+                # conteggio 5 assaggi: per utente loggato → user_id; altrimenti device_id
+                # (stabile, dal frontend); fallback IP solo se manca il device_id.
                 if user_id_t:
                     cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE user_id=%s", (user_id_t,))
+                elif device_id:
+                    cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE device_id=%s", (device_id,))
                 else:
                     cur_t.execute("SELECT COUNT(*) FROM trial_chat WHERE ip=%s", (ip,))
                 rt = cur_t.fetchone()
@@ -181,9 +193,9 @@ def chiedi():
                           "nota":"L'Atlante, il Mirino e i Calcolatori restano gratuiti."},
                         "trial_esaurito":True}), 402
                 if user_id_t:
-                    cur_t.execute("INSERT INTO trial_chat (user_id,ip) VALUES (%s,%s)", (user_id_t, ip))
+                    cur_t.execute("INSERT INTO trial_chat (user_id,ip,device_id) VALUES (%s,%s,%s)", (user_id_t, ip, device_id or None))
                 else:
-                    cur_t.execute("INSERT INTO trial_chat (ip) VALUES (%s)", (ip,))
+                    cur_t.execute("INSERT INTO trial_chat (ip,device_id) VALUES (%s,%s)", (ip, device_id or None))
                 conn_t.commit()
                 n_usate = n_chat + 1
                 trial_info = {"trial_attivo":True,"chat_usate":n_usate,

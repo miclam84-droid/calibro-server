@@ -236,3 +236,28 @@ def supporto():
     )
 
     return jsonify({"risposta": risposta})
+
+
+@bp.route("/v1/founding/posti", methods=["GET"])
+def founding_posti():
+    """Contatore posti Founding Member: {rimasti, totali}.
+    Totali da env FOUNDING_TOTALI (default 100). Rimasti = totali - founding già attivi.
+    Difensivo: se il DB non risponde, torna i totali pieni (non blocca la landing)."""
+    import os as _os
+    try:
+        totali = int(_os.environ.get("FOUNDING_TOTALI", "100"))
+    except Exception:
+        totali = 100
+    usati = 0
+    if DATABASE_URL:
+        try:
+            conn = _get_conn(); cur = conn.cursor()
+            # conto gli utenti con piano 'founding' (segnato al pagamento del piano founding)
+            cur.execute("SELECT COUNT(*) FROM utenti WHERE piano = 'founding'")
+            r = cur.fetchone()
+            usati = int(r[0]) if r and r[0] else 0
+            cur.close(); _release_conn(conn)
+        except Exception:
+            usati = 0
+    rimasti = max(totali - usati, 0)
+    return jsonify({"rimasti": rimasti, "totali": totali, "esauriti": rimasti == 0})
