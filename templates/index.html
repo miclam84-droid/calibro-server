@@ -745,7 +745,16 @@ if('serviceWorker' in navigator){
     <!-- TOGGLE: il Quaderno è dove ciò che validi diventa qualcosa -->
     <div class="quad-toggle">
       <button class="quad-tg-btn active" id="qtg-misure" onclick="switchQuaderno('misure')">Misure</button>
+      <button class="quad-tg-btn" id="qtg-ricette" onclick="switchQuaderno('ricette')">Ricette</button>
       <button class="quad-tg-btn" id="qtg-menu" onclick="switchQuaderno('menu')">Menù</button>
+    </div>
+    <!-- PANNELLO RICETTE -->
+    <div id="quad-pane-ricette" style="display:none">
+      <div class="quad-empty" id="quad-ricette-empty" style="display:none">
+        <b>Nessuna ricetta salvata</b>
+        <span>Crea una ricetta e salvala: la ritrovi qui.</span>
+      </div>
+      <div class="quad-list" id="quad-ricette-list"></div>
     </div>
     <!-- PANNELLO MISURE -->
     <div id="quad-pane-misure">

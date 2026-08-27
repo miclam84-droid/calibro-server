@@ -1009,6 +1009,12 @@ const _HISTORY_MAX=3;
 
 function chiediTesto(q){
   if(busy)return;
+  // FLUSSO 3 — intento "crea ricetta": se l'utente chiede di creare/fare una ricetta,
+  // non va alla chat scientifica ma al generatore di ricette vero.
+  if(_isIntentoRicetta(q)){
+    generaRicettaDaTesto(q);
+    return;
+  }
   // paywall: controlla limite giornaliero (solo per utenti non Pro)
   if(!_isPro()){
     const usate=_getDomande();
@@ -1020,8 +1026,8 @@ function chiediTesto(q){
   // passa gli ultimi scambi per dare continuità alla conversazione
   const history=_chatHistory.slice(-_HISTORY_MAX);
   const _tok=localStorage.getItem('matter_token')||'';
-  // se arrivo da una scheda lezione, passo il contesto così la chat risponde già informata
-  const _ctx = window._chatContesto || null;
+  // contesto: da scheda ricetta/menu (FLUSSO 2) o da lezione
+  const _ctx = _ctxChat || window._chatContesto || null;
   fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({domanda:q, history, token:_tok, contesto:_ctx})})
     .then(r=>{
@@ -1057,6 +1063,7 @@ function apriNodo(id,nome){
   fetch('/nodo?traccia=1',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({id})})
     .then(r=>r.json()).then(j=>renderRisp(nome,j,true)).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
+function rimuoviThinking(){ var t=document.getElementById("thinking"); if(t) t.remove(); }
 function aggiungiThinking(){
   const d=document.createElement('div');d.className='scheda';d.id='thinking';
   d.innerHTML=`<div class="thinking"><span class="t-dots"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></span><span class="t-step" id="t-step">${_t('chat_thinking')}</span></div>`;
@@ -2781,9 +2788,176 @@ function switchQuaderno(vista){
   if(vista==='menu'){ var _o=document.getElementById('onb-overlay'); if(_o) _o.classList.add('hidden'); }
   document.getElementById('quad-pane-misure').style.display = vista==='misure'?'':'none';
   document.getElementById('quad-pane-menu').style.display = vista==='menu'?'':'none';
+  var pr=document.getElementById('quad-pane-ricette'); if(pr) pr.style.display = vista==='ricette'?'':'none';
   document.getElementById('qtg-misure').classList.toggle('active', vista==='misure');
   document.getElementById('qtg-menu').classList.toggle('active', vista==='menu');
+  var tr=document.getElementById('qtg-ricette'); if(tr) tr.classList.toggle('active', vista==='ricette');
   if(vista==='menu') caricaMenuSalvati();
+  if(vista==='ricette') caricaLeMieRicette();
+}
+
+// Carica "Le mie ricette" salvate (FLUSSO 1)
+async function caricaLeMieRicette(){
+  var list=document.getElementById('quad-ricette-list');
+  var empty=document.getElementById('quad-ricette-empty');
+  if(!list) return;
+  list.innerHTML='<div class="quad-loading">Carico le tue ricette…</div>';
+  try{
+    var r=await fetch('/v1/ricette/le-mie', {headers: _statoHeaders()});
+    var j=await r.json();
+    var ricette=j.ricette||[];
+    if(!ricette.length){ list.innerHTML=''; if(empty) empty.style.display=''; return; }
+    if(empty) empty.style.display='none';
+    list.innerHTML=ricette.map(function(r){
+      var d=r.dati||{};
+      var nIng=(d.ingredienti||[]).length;
+      return '<div class="quad-ric-card" onclick=\'riapriRicettaSalvata('+JSON.stringify(JSON.stringify(r)).replace(/'/g,"&#39;")+')\'>'
+        +'<div class="quad-ric-nome">'+_esc(r.nome||d.nome||'Ricetta')+'</div>'
+        +'<div class="quad-ric-meta">'+(nIng?nIng+' ingredienti':'')+(d.disciplina?' · '+_esc(d.disciplina):'')+'</div>'
+        +'<button class="quad-ric-rimuovi" onclick=\'event.stopPropagation();rimuoviRicettaSalvata("'+_esc(r.ricetta_id)+'")\'>Rimuovi</button>'
+        +'</div>';
+    }).join('');
+  }catch(e){
+    list.innerHTML='<div class="quad-empty"><b>Non riesco a caricare le ricette</b><span>Riprova tra poco.</span></div>';
+  }
+}
+function riapriRicettaSalvata(rjson){
+  try{
+    var r=(typeof rjson==='string')?JSON.parse(rjson):rjson;
+    var dati=r.dati||r;
+    if(typeof mostraRicettaGen==='function'){ mostraRicettaGen(dati, r.ricetta_id); return; }
+    // fallback: mostro nella lista ricette di Scopri
+    switchTab('scopri');
+    if(typeof _renderRicette==='function'){
+      _renderRicette([dati]);
+      var el=document.getElementById('ricette-list');
+      if(el) el.scrollIntoView({behavior:'smooth'});
+    }
+  }catch(e){ console.warn('riapri ricetta', e); }
+}
+async function rimuoviRicettaSalvata(id){
+  if(!id) return;
+  try{
+    await fetch('/v1/ricette/rimuovi', {method:'POST', headers: _statoHeaders({'Content-Type':'application/json'}), body: JSON.stringify({ricetta_id:id})});
+    caricaLeMieRicette();
+  }catch(e){ console.warn('rimuovi ricetta', e); }
+}
+
+/* ═══ SCHEDA RICETTA GENERATA con azioni (Salva / Chiedi / Food Cost) ═══
+   Regola d'oro: nessun vicolo cieco. Ogni ricetta offre almeno queste 3 azioni. */
+var _ricettaGenCorrente = null;
+var _ctxChat = null;  // contesto ricetta/menu per la chat (FLUSSO 2)
+
+// FLUSSO 3 — riconosce se l'utente vuole CREARE una ricetta (non fare una domanda scientifica)
+function _isIntentoRicetta(q){
+  var s=(q||'').toLowerCase().trim();
+  // "fammi/crea/prepara/facciamo/dammi/inventa una ricetta [con/di/per] ..."
+  return /\b(fammi|crea|creami|prepara|preparami|facciamo|fai|dammi|inventa|proponimi|suggerisci|voglio|vorrei)\b[^.?!]*\bricett[ae]\b/.test(s)
+      || /\bricetta (con|di|per|a base di)\b/.test(s)
+      || /^(una |un )?(ricetta|piatto|cocktail)\b.*\b(con|di|a base di)\b/.test(s);
+}
+async function generaRicettaDaTesto(q){
+  if(!_isPro()){ const usate=_getDomande(); if(usate>=FREE_LIMIT){ apriPaywall(); return; } }
+  switchTab('chiedi'); switchSubtab('chat');
+  aggiungiThinking(); setBusy(true);
+  // disciplina: dalla postazione scelta, default cucina
+  var disc = localStorage.getItem('matter_station') || 'cucina';
+  try{
+    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({richiesta:q, disciplina:disc})});
+    var j=await r.json();
+    _incDomande();
+    rimuoviThinking(); setBusy(false);
+    if(j && (j.nome || j.ingredienti)){
+      mostraRicettaGen(j);
+    } else {
+      // fallback: se il generatore non produce, passo alla chat normale
+      window._chatContesto=null; chiediTestoRaw(q);
+    }
+  }catch(e){
+    rimuoviThinking(); setBusy(false);
+    chiediTestoRaw(q);
+  }
+}
+// versione della chat che bypassa il riconoscimento intento (per il fallback)
+function chiediTestoRaw(q){
+  aggiungiThinking(); setBusy(true);
+  const history=_chatHistory.slice(-_HISTORY_MAX);
+  const _tok=localStorage.getItem('matter_token')||'';
+  fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({domanda:q, history, token:_tok, contesto:_ctxChat||null})})
+    .then(r=>r.json()).then(j=>{
+      _incDomande(); rimuoviThinking(); setBusy(false);
+      if(typeof renderRisp==='function' && j) renderRisp(j, q);
+    }).catch(()=>{ rimuoviThinking(); setBusy(false); });
+}
+function mostraRicettaGen(dati, ricettaIdSalvata){
+  _ricettaGenCorrente = dati;
+  _ensureVistaOverlay();
+  var ov=document.getElementById('vista-overlay');
+  var body=document.getElementById('vista-body');
+  var tit=document.getElementById('vista-titolo');
+  if(tit) tit.textContent = dati.nome || 'Ricetta';
+  var e=_escV;
+  var ing=(dati.ingredienti||[]).map(function(x){
+    if(typeof x==='string') return '<li>'+e(x)+'</li>';
+    var q=(x.quantita!=null?x.quantita:'')+(x.unita?' '+x.unita:'');
+    return '<li><span class="rg-ing-n">'+e(x.nome||'')+'</span>'+(q?'<span class="rg-ing-q">'+e(q)+'</span>':'')+'</li>';
+  }).join('');
+  var proc=(dati.procedimento||[]).map(function(p,i){
+    var t=(typeof p==='string')?p:(p.testo||'');
+    var n=(typeof p==='object'&&p.n)?p.n:(i+1);
+    return '<div class="rg-step"><span class="rg-step-n">'+e(String(n))+'</span><span class="rg-step-t">'+e(t)+'</span></div>';
+  }).join('');
+  var numeri=(dati.numeri && Object.keys(dati.numeri).length)
+    ? '<div class="rg-numeri"><div class="rg-numeri-lab">Numeri bersaglio</div>'+Object.entries(dati.numeri).map(function(kv){return '<div class="rg-num-row"><span class="rg-num-k">'+e(kv[0])+'</span><span class="rg-num-v">'+e(kv[1])+'</span></div>';}).join('')+'</div>'
+    : '';
+  var critico=dati.punto_critico?'<div class="rg-critico"><span class="rg-critico-lab">⚠ Punto critico</span> '+e(dati.punto_critico)+'</div>':'';
+  var salvato = !!ricettaIdSalvata;
+  body.innerHTML=
+    '<div class="rg-scheda">'
+    + (ing?'<div class="rg-sec"><div class="rg-sec-lab">Ingredienti</div><ul class="rg-ing">'+ing+'</ul></div>':'')
+    + numeri
+    + (proc?'<div class="rg-sec"><div class="rg-sec-lab">Procedimento</div>'+proc+'</div>':'')
+    + critico
+    + '<div class="rg-azioni">'
+    +   '<button class="rg-btn rg-btn-salva" id="rg-btn-salva" onclick="salvaRicettaGen(this)">'+(salvato?'✓ Salvata':'Salva nel Quaderno')+'</button>'
+    +   '<button class="rg-btn rg-btn-chiedi" onclick="chiediSuRicetta()">Chiedi su questa ricetta</button>'
+    +   '<button class="rg-btn rg-btn-cost" onclick="foodCostRicetta()">Food Cost</button>'
+    + '</div>'
+    + '</div>';
+  if(salvato){ _ricettaGenCorrente._ricetta_id = ricettaIdSalvata; }
+  _apriVista();
+}
+async function salvaRicettaGen(btn){
+  var d=_ricettaGenCorrente; if(!d) return;
+  if(d._ricetta_id){ btn.textContent='✓ Già salvata'; return; }
+  btn.disabled=true; btn.textContent='Salvo…';
+  try{
+    var r=await fetch('/v1/ricette/salva', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}), body:JSON.stringify({nome:d.nome||'Ricetta', dati:d})});
+    var j=await r.json();
+    if(j && j.ok){ d._ricetta_id=j.ricetta_id; btn.textContent='✓ Salvata nel Quaderno'; btn.disabled=false; btn.classList.add('fatto'); }
+    else { btn.textContent='Riprova'; btn.disabled=false; }
+  }catch(e){ btn.textContent='Riprova'; btn.disabled=false; }
+}
+function chiediSuRicetta(){
+  var d=_ricettaGenCorrente; if(!d) return;
+  _ctxChat = {tipo:'ricetta', nome:d.nome, ingredienti:(d.ingredienti||[]).map(function(x){return typeof x==='string'?x:x.nome;}), fenomeni:d.fenomeni||[], punto_critico:d.punto_critico||''};
+  chiudiVista();
+  switchTab('chiedi');
+  var inp=document.getElementById('ask-input');
+  if(inp){ inp.placeholder='Chiedi su "'+(d.nome||'questa ricetta')+'"…'; inp.focus(); }
+  var banner=document.getElementById('chat-ctx-banner');
+  if(banner){ banner.textContent='Stai chiedendo su: '+(d.nome||'ricetta'); banner.style.display='block'; }
+}
+function foodCostRicetta(){
+  var d=_ricettaGenCorrente; if(!d) return;
+  if(!d._ricetta_id){
+    alert(_L({it:'Salva prima la ricetta, poi calcolo il food cost.',en:'Save the recipe first, then I calculate the food cost.',es:'Guarda primero la receta, luego calculo el food cost.'}));
+    return;
+  }
+  if(typeof apriFoodCost==='function'){ apriFoodCost(d._ricetta_id, d); }
+  else { window.location.hash='#foodcost-'+d._ricetta_id; }
 }
 
 function caricaMenuSalvati(){

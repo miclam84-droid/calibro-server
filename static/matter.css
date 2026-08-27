@@ -1869,3 +1869,40 @@ a:focus-visible,input:focus-visible{
 .porta-voce-t{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--ink,#131C21);flex-shrink:0}
 .porta-voce-d{font-size:12.5px;color:var(--muted,#5A6C70);flex:1}
 .porta-voce-arr{font-size:20px;color:var(--faint,#7A898E)}
+
+/* bersaglio testuale (descrizione lunga): dimensione leggibile, non gonfiata a 38px */
+.s-num-val.s-num-testo{font-family:var(--sans);font-size:15px;font-weight:600;line-height:1.45;color:#D5E0E4;letter-spacing:0}
+
+/* Quaderno — card ricette salvate (FLUSSO 1) */
+.quad-ric-card{position:relative;width:100%;text-align:left;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;padding:16px 18px;margin-bottom:10px;cursor:pointer;display:block}
+.quad-ric-card:active{transform:scale(.99)}
+.quad-ric-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:16px;color:var(--ink,#131C21);letter-spacing:-.02em;margin-bottom:4px;padding-right:70px}
+.quad-ric-meta{font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:var(--muted,#5A6C70)}
+.quad-ric-rimuovi{position:absolute;top:14px;right:14px;font-size:11px;font-family:var(--sans,'Inter');color:var(--muted,#5A6C70);background:var(--l3,#F2F6F6);border:1px solid var(--border,#B7C3C3);border-radius:7px;padding:5px 10px;cursor:pointer}
+.quad-loading{padding:20px;text-align:center;font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:var(--muted,#5A6C70)}
+
+/* Scheda ricetta generata con azioni (FLUSSO 3 + regola d'oro) */
+.rg-scheda{padding:4px 0}
+.rg-sec{margin-bottom:18px}
+.rg-sec-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal,#12545D);margin-bottom:10px}
+.rg-ing{list-style:none;padding:0;margin:0}
+.rg-ing li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--border,#B7C3C3);font-size:14.5px;color:var(--ink,#131C21)}
+.rg-ing-q{font-family:var(--mono,'IBM Plex Mono');font-size:13px;color:var(--dato,#245979);white-space:nowrap}
+.rg-step{display:flex;gap:12px;margin-bottom:12px}
+.rg-step-n{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:14px;color:var(--dato,#245979);flex-shrink:0;min-width:22px}
+.rg-step-t{font-size:14.5px;color:var(--ink,#131C21);line-height:1.5}
+.rg-numeri{background:var(--ink,#131C21);border-radius:12px;padding:14px 16px;margin-bottom:18px}
+.rg-numeri-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7FB0C4;margin-bottom:8px}
+.rg-num-row{display:flex;justify-content:space-between;gap:12px;padding:4px 0}
+.rg-num-k{font-size:13px;color:#B7C6CB}
+.rg-num-v{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:14px;color:#5EA0C8}
+.rg-critico{background:var(--l3,#F2F6F6);border-left:3px solid var(--terra,#C77B3F);border-radius:0 8px 8px 0;padding:10px 14px;font-size:13.5px;color:var(--ink,#131C21);line-height:1.5;margin-bottom:18px}
+.rg-critico-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--terra,#C77B3F);display:block;margin-bottom:3px}
+.rg-azioni{display:flex;flex-direction:column;gap:10px;margin-top:22px;position:sticky;bottom:0;background:var(--carta,#CBD4D4);padding-top:8px}
+.rg-btn{width:100%;min-height:52px;border-radius:12px;font-family:var(--sans,'Inter');font-weight:600;font-size:15px;cursor:pointer;border:1px solid var(--border,#B7C3C3)}
+.rg-btn-salva{background:var(--terra,#C77B3F);color:#241109;border-color:var(--terra,#C77B3F)}
+.rg-btn-salva.fatto{background:var(--teal,#12545D);color:#fff;border-color:var(--teal,#12545D)}
+.rg-btn-chiedi{background:var(--ink,#131C21);color:#EAF1F3;border-color:var(--ink,#131C21)}
+.rg-btn-cost{background:var(--l2,#E8EDED);color:var(--ink,#131C21)}
+.rg-btn:active{transform:scale(.98)}
+#chat-ctx-banner{display:none;background:var(--l3,#F2F6F6);border:1px solid var(--dato,#245979);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:12.5px;color:var(--dato,#245979);font-family:var(--mono,'IBM Plex Mono')}
