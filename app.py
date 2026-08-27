@@ -69,6 +69,7 @@ from routes.chat import bp as chat_bp; app.register_blueprint(chat_bp)
 from routes.cifra import bp as cifra_bp; app.register_blueprint(cifra_bp)
 from routes.misc import bp as misc_bp; app.register_blueprint(misc_bp)
 from routes.mie_cose import bp_mie as mie_cose_bp; app.register_blueprint(mie_cose_bp)
+from routes.community import bp_community; app.register_blueprint(bp_community)
 from routes.menu_builder import bp_menu as menu_builder_bp; app.register_blueprint(menu_builder_bp)
 from routes.stato import bp as stato_bp; app.register_blueprint(stato_bp)
 
