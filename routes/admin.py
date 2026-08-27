@@ -5919,24 +5919,32 @@ def admin_diagnosi_grafo():
         # 5. fragola e basilico: quanti composti ciascuno, e quanti CONDIVISI?
         def composti_di(nome):
             cur.execute("""
-                SELECT COUNT(DISTINCT e.target) FROM edges e
-                JOIN nodes n ON n.id=e.source
+                SELECT COUNT(DISTINCT e.to_id) FROM edges e
+                JOIN nodes n ON n.id=e.from_id
                 WHERE e.relation='contiene_composto' AND lower(n.name)=lower(%s)
             """, (nome,))
             return cur.fetchone()[0]
         out["fragola_composti"] = composti_di("fragola")
         out["basilico_composti"] = composti_di("basilico")
-        # composti condivisi fragola-basilico via composti comuni
+        # composti condivisi fragola-basilico
         cur.execute("""
             SELECT COUNT(*) FROM (
-                SELECT e1.target FROM edges e1 JOIN nodes n1 ON n1.id=e1.source
+                SELECT e1.to_id FROM edges e1 JOIN nodes n1 ON n1.id=e1.from_id
                 WHERE e1.relation='contiene_composto' AND lower(n1.name)='fragola'
                 INTERSECT
-                SELECT e2.target FROM edges e2 JOIN nodes n2 ON n2.id=e2.source
+                SELECT e2.to_id FROM edges e2 JOIN nodes n2 ON n2.id=e2.from_id
                 WHERE e2.relation='contiene_composto' AND lower(n2.name)='basilico'
             ) x
         """)
         out["fragola_basilico_composti_condivisi"] = cur.fetchone()[0]
+        # bonus: l'arco abbinamento fragola-basilico esiste? con che overlap?
+        cur.execute("""
+            SELECT (e.data->>'overlap') FROM edges e
+            WHERE e.relation='abbinamento_aromatico'
+            AND lower(e.from_id) LIKE '%fragola%' AND lower(e.to_id) LIKE '%basilico%' LIMIT 1
+        """)
+        arco = cur.fetchone()
+        out["arco_diretto_fragola_basilico"] = arco[0] if arco else "NESSUN ARCO"
         return jsonify(out)
     finally:
         _release_conn(conn)
