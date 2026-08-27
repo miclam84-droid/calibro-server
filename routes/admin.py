@@ -6027,6 +6027,21 @@ def admin_debug_proposte():
             if s2 in partner or s2.replace(" ", "-") in (rtoid or ""):
                 match.append({"partner": rname, "overlap": str(rov)})
         out["match_n2"] = match
+        # cerca DIRETTA dell'arco n1-n2 in QUALSIASI sistema id, senza limite
+        cur.execute("""
+            SELECT e.from_id, e.to_id, (e.data->>'overlap')
+            FROM edges e
+            WHERE e.relation='abbinamento_aromatico'
+              AND (
+                (translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s AND translate(lower(e.to_id),'àèéìòù','aeeiou') LIKE %s)
+                OR (translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s AND translate(lower(e.to_id),'àèéìòù','aeeiou') LIKE %s)
+                OR (lower(e.from_id) LIKE %s AND lower(e.to_id) LIKE %s)
+                OR (lower(e.from_id) LIKE %s AND lower(e.to_id) LIKE %s)
+              )
+            LIMIT 5
+        """, (f"%{s1}%", f"%{s2}%", f"%{s2}%", f"%{s1}%",
+              "%strawberry%", "%tomato%", "%tomato%", "%strawberry%"))
+        out["arco_diretto"] = [{"from": r[0], "to": r[1], "overlap": r[2]} for r in cur.fetchall()]
         return jsonify(out)
     finally:
         _release_conn(conn)
