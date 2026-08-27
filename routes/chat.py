@@ -193,17 +193,44 @@ def chiedi():
                                "target": f["target"]} for f in suggeriti]
 
     # se la domanda arriva da una scheda lezione, inietto il contesto così
-    # la chat risponde già informata su QUEL fenomeno
+    # la chat risponde già informata su QUEL fenomeno / QUELLA ricetta / QUEL menu
     domanda_arricchita = domanda
     if contesto_scheda and isinstance(contesto_scheda, dict):
-        fen = (contesto_scheda.get("fenomeno") or "").strip()
-        tgt = (contesto_scheda.get("target") or "").strip()
-        if fen:
-            _ctx_txt = f"[L'utente sta studiando la scheda del fenomeno '{fen}'"
-            if tgt:
-                _ctx_txt += f" (numero bersaglio: {tgt})"
-            _ctx_txt += ". Rispondi restando su questo fenomeno, applicandolo al suo caso specifico.] "
-            domanda_arricchita = _ctx_txt + domanda
+        _tipo_ctx = (contesto_scheda.get("tipo") or "").strip().lower()
+        # CONTESTO RICETTA: l'utente sta guardando una ricetta e chiede su quella
+        if _tipo_ctx == "ricetta" or contesto_scheda.get("ricetta") or contesto_scheda.get("ingredienti"):
+            nome_r = (contesto_scheda.get("nome") or contesto_scheda.get("ricetta") or "").strip()
+            ingr = contesto_scheda.get("ingredienti") or []
+            ingr_txt = ""
+            if ingr:
+                nomi = [(i.get("nome") if isinstance(i, dict) else str(i)) for i in ingr]
+                ingr_txt = ", ".join(n for n in nomi if n)[:200]
+            fen_r = contesto_scheda.get("fenomeni") or []
+            fen_txt = ", ".join((f.get("nome") if isinstance(f, dict) else str(f)) for f in fen_r)[:120]
+            pc = (contesto_scheda.get("punto_critico") or "").strip()[:150]
+            _ctx = f"[L'utente sta guardando la ricetta '{nome_r}'"
+            if ingr_txt: _ctx += f". Ingredienti: {ingr_txt}"
+            if fen_txt: _ctx += f". Fenomeni attivi: {fen_txt}"
+            if pc: _ctx += f". Punto critico: {pc}"
+            _ctx += ". Rispondi in modo specifico a QUESTA ricetta, considerando i suoi ingredienti e la sua tecnica.] "
+            domanda_arricchita = _ctx + domanda
+        # CONTESTO MENU: l'utente chiede sul menu che ha davanti
+        elif _tipo_ctx == "menu" or contesto_scheda.get("voci"):
+            voci = contesto_scheda.get("voci") or []
+            piatti = ", ".join((v.get("nome") if isinstance(v, dict) else str(v)) for v in voci)[:250]
+            _ctx = f"[L'utente sta valutando un menu con questi piatti: {piatti}. "
+            _ctx += "Rispondi analizzando l'equilibrio e la coerenza di QUESTO menu.] "
+            domanda_arricchita = _ctx + domanda
+        else:
+            # CONTESTO FENOMENO (comportamento originale)
+            fen = (contesto_scheda.get("fenomeno") or "").strip()
+            tgt = (contesto_scheda.get("target") or "").strip()
+            if fen:
+                _ctx_txt = f"[L'utente sta studiando la scheda del fenomeno '{fen}'"
+                if tgt:
+                    _ctx_txt += f" (numero bersaglio: {tgt})"
+                _ctx_txt += ". Rispondi restando su questo fenomeno, applicandolo al suo caso specifico.] "
+                domanda_arricchita = _ctx_txt + domanda
 
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
     # history strutturata: passa i turni precedenti come messages[], non come testo
