@@ -359,6 +359,7 @@ function apriPorta(porta){
     }).join('');
   }
   // apro automaticamente la prima voce della porta
+  if(porta==='creare'){ apriCrea(); return; }
   _portaVoce(porta, 0);
 }
 function _portaVoce(porta, i){
@@ -2863,6 +2864,40 @@ var _ricettaGenCorrente = null;
 var _ctxChat = null;  // contesto ricetta/menu per la chat (FLUSSO 2)
 
 // FLUSSO 3 — riconosce se l'utente vuole CREARE una ricetta (non fare una domanda scientifica)
+// ═══ P0.3 — Schermata CREA: i 3 modi di creare, come card grandi (non un tutorial) ═══
+function apriCrea(){
+  var html=
+    '<div class="crea-intro">Tre modi per creare. Scegli da dove parti.</div>'
+    + '<button class="crea-card" onclick="_creaDaIngredienti()">'
+    +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="crea-card-txt"><div class="crea-card-t">Da ingredienti</div><div class="crea-card-d">Scrivi cosa hai, ti do la ricetta coi numeri</div></div>'
+    +   '<span class="crea-card-arr">→</span></button>'
+    + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){apriFlavour();},120)">'
+    +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="17" r="3" stroke="currentColor" stroke-width="2"/><path d="M9.5 9.5l5 5" stroke="currentColor" stroke-width="2"/></svg></div>'
+    +   '<div class="crea-card-txt"><div class="crea-card-t">Da abbinamento</div><div class="crea-card-d">Parti da un ingrediente, scopri cosa gli sta bene</div></div>'
+    +   '<span class="crea-card-arr">→</span></button>'
+    + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){apriMenuBuilder();},120)">'
+    +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="crea-card-txt"><div class="crea-card-t">Da menu</div><div class="crea-card-d">Costruisci un menu completo dai tuoi ingredienti</div></div>'
+    +   '<span class="crea-card-arr">→</span></button>';
+  _apriVista('Crea', html);
+}
+function _creaDaIngredienti(){
+  var html=
+    '<div class="crea-intro">Scrivi gli ingredienti o il piatto che vuoi. Ti do la ricetta con dosi, procedimento e numeri-bersaglio.</div>'
+    + '<div class="crea-input-wrap">'
+    +   '<textarea class="crea-input" id="crea-ing-input" placeholder="es. branzino, finocchio e arancia — oppure: una carbonara"></textarea>'
+    +   '<button class="rg-btn rg-btn-salva" style="width:100%;margin-top:12px" onclick="_creaGenera()">Genera la ricetta →</button>'
+    + '</div>';
+  _apriVista('Da ingredienti', html);
+  setTimeout(function(){ var i=document.getElementById('crea-ing-input'); if(i) i.focus(); }, 200);
+}
+function _creaGenera(){
+  var v=(document.getElementById('crea-ing-input')||{}).value||'';
+  if(!v.trim()) return;
+  generaRicettaDaTesto(v.trim());
+}
+
 // REGOLA 1 — dal pulsante nella chat: genera la scheda ricetta vera (il Lab crea)
 async function _generaDaChat(richiesta){
   var disc = localStorage.getItem('matter_station') || 'cucina';

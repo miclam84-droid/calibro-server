@@ -1572,7 +1572,7 @@ a:focus-visible,input:focus-visible{
 
 /* ═══ SCHEDA RISPOSTA CHAT — stili mancanti (fix "sembra codice rotto") ═══ */
 /* Il numero bersaglio: box petrolio scuro, numero in mono, ben staccato */
-.s-num-box{margin:12px 14px 8px;background:var(--ink);border-radius:14px;padding:18px 18px;position:relative;overflow:hidden}
+.s-num-box{margin:12px 14px 8px;background:var(--ink);border-radius:14px;padding:18px 18px;position:sticky;top:8px;z-index:5;overflow:hidden;box-shadow:0 4px 14px rgba(19,28,33,.14)}
 .s-num-box::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 88% 8%,rgba(36,89,121,.28),transparent 55%);pointer-events:none}
 .s-num-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;position:relative}
 .s-num-mirino{width:18px;height:18px;flex-shrink:0}
@@ -1938,3 +1938,17 @@ a:focus-visible,input:focus-visible{
 .mirino-hero{width:40px;height:40px;flex-shrink:0}
 .mirino-compatto{width:24px;height:24px;flex-shrink:0}
 .mirino-mini{width:15px;height:15px;flex-shrink:0;vertical-align:-2px}
+
+/* ═══ P0.3 — Schermata CREA (3 modi come card grandi) ═══ */
+.crea-intro{font-size:14px;color:var(--ink-muted,#3D4A50);line-height:1.55;margin-bottom:18px}
+.crea-card{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:14px;padding:18px 16px;margin-bottom:12px;cursor:pointer;transition:.15s}
+.crea-card:active{transform:scale(.99)}
+.crea-card:hover{border-color:var(--teal,#12545D)}
+.crea-card-ico{width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--ink,#131C21);color:#5EA0C8;border-radius:11px}
+.crea-card-txt{flex:1}
+.crea-card-t{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:17px;color:var(--ink,#131C21);letter-spacing:-.02em;margin-bottom:3px}
+.crea-card-d{font-size:13px;color:var(--ink-muted,#3D4A50);line-height:1.4}
+.crea-card-arr{font-size:22px;color:var(--faint,#7A898E);flex-shrink:0}
+.crea-input-wrap{margin-top:4px}
+.crea-input{width:100%;min-height:90px;border:2px solid var(--border,#B7C3C3);border-radius:12px;padding:14px;font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#131C21);line-height:1.5;resize:vertical;background:var(--l3,#F2F6F6)}
+.crea-input:focus{outline:none;border-color:var(--dato,#245979)}
