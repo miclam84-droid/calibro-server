@@ -56,17 +56,21 @@ def chiedi():
                    "scheda con ingredienti, dosi e procedimento, che puoi salvare nel Quaderno."),
         "salv": ("Per salvare una ricetta: quando la generi, in fondo alla scheda c'è il bottone "
                  "**Salva**. La ricetta va nel **Quaderno**, sezione 'Le mie Ricette', dove la ritrovi sempre."),
+        "trov": ("Le tue ricette salvate sono nel **Quaderno**, sezione 'Le mie Ricette'. "
+                 "Lì trovi tutte le ricette che hai salvato, e puoi riaprirle quando vuoi."),
         "misur": ("Per misurare: apri un fenomeno e usa il suo numero-bersaglio come riferimento. "
                   "Puoi registrare le tue misure nel **Quaderno**, sezione Misure, per costruire lo storico."),
         "foto": ("Per usare le foto: nel Menu Builder o negli strumenti, tocca l'icona fotocamera. "
                  "Fotografa gli ingredienti o una bottiglia, e l'app riconosce cosa c'è e propone abbinamenti e fenomeni."),
-        "cost": ("Per il food cost: apri una ricetta e cerca il food cost — l'app calcola il costo per "
-                 "porzione (grammature × prezzi ISMEA) e l'incidenza sul prezzo di vendita."),
+        "food cost": ("Per il food cost: apri una ricetta e cerca il food cost — l'app calcola il costo per "
+                  "porzione (grammature × prezzi ISMEA) e l'incidenza sul prezzo di vendita."),
     }
     if _vuole_guida:
-        for _k, _testo in _guide.items():
-            if _k in _dl:
-                return jsonify({"risposta": _testo, "trovato": ["Come si usa Matter"],
+        # ordine importa: prima le azioni specifiche (salva, trova, cost), poi le generiche
+        _ordine = ["salv", "trov", "food cost", "misur", "foto", "menu", "ricett"]
+        for _k in _ordine:
+            if _k in _dl and _k in _guide:
+                return jsonify({"risposta": _guide[_k], "trovato": ["Come si usa Matter"],
                                 "connessi": [], "trial": {}, "_tipo": "guida"})
 
     _kw_app = ["cosa posso fare","cosa fai","cosa puoi fare","come funziona",
