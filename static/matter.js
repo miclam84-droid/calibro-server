@@ -344,7 +344,7 @@ var _PORTE = {
   creare:   { label:'Creare',   sub:'Combina e scopri', voci:[
                 {t:'Flavour Network', d:'Con cosa dialoga un ingrediente', act:function(){if(typeof apriFlavour==='function')apriFlavour();}},
                 {t:'Ponti tra discipline', d:'Vino, birra, dolce per piatto', act:function(){if(typeof apriPonti==='function')apriPonti();}},
-                {t:'Menu Builder', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}} ]},
+                {t:'Menu Lab', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}} ]},
   misurare: { label:'Misurare', sub:'Centra il bersaglio', voci:[
                 {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
                 {t:'Flavour del giorno', d:'Parti da un ingrediente', act:function(){switchMappaTab('flavor');}} ]}
@@ -958,16 +958,22 @@ async function fissaMisura(btn){
     // scarto dal target (calcolo locale per il feedback immediato; il backend conferma in_finestra)
     var nums = String(target).split(/[–-]/).map(function(x){return parseFloat(x);});
     var lo = nums[0], hi = nums[1]||nums[0];
-    var esitoTxt, esitoCls;
+    var esitoTxt, esitoCls, statoBadge;
     if(j.in_finestra===true || (!isNaN(valore) && valore>=lo && valore<=hi)){
       esitoCls='dentro'; esitoTxt='Sei nel bersaglio. Questo è il valore che rende il risultato ripetibile.';
+      statoBadge = 'DENTRO FINESTRA'+(isNaN(valore)?'':' · '+valore+(unita?' '+unita:''));
+      // accendo il numero-bersaglio di terracotta caldo (il cuore operativo si scalda)
+      var numBoxEl = btn.closest('.s-num-box') || (esito.closest && esito.closest('.s-num-box'));
+      if(numBoxEl){ numBoxEl.classList.add('in-window'); }
     } else if(!isNaN(valore)){
       var scarto = valore<lo ? (valore-lo) : (valore-hi);
       esitoCls='fuori'; esitoTxt='Fuori finestra: '+(scarto>0?'+':'')+scarto.toFixed(1)+(unita?' '+unita:'')+'. Un\'osservazione, non un errore.';
+      statoBadge = 'FUORI FINESTRA '+(scarto>0?'+':'')+scarto.toFixed(1)+(unita?' '+unita:'');
+      var nb2 = btn.closest('.s-num-box'); if(nb2){ nb2.classList.remove('in-window'); }
     } else {
-      esitoCls='fuori'; esitoTxt='Misura salvata.';
+      esitoCls='fuori'; esitoTxt='Misura salvata.'; statoBadge='';
     }
-    esito.innerHTML = '<div class="s-misura-out '+esitoCls+'">'+esitoTxt+'</div>';
+    esito.innerHTML = '<div class="s-misura-out '+esitoCls+'">'+esitoTxt+'</div>'+(statoBadge?'<div class="s-stato-badge '+esitoCls+'">'+statoBadge+'</div>':'');
     // evento interno: l'Atlante, se montato, ricarica e riaccende il Mirino
     try{ window.dispatchEvent(new CustomEvent('measurement_saved',{detail:{fenomeno:fen}})); }catch(e){}
     // invalida la cache mappa così alla riapertura lo stato è fresco
@@ -5184,7 +5190,7 @@ function _pontiDolce(d){
 let _menuIngredienti = [];
 function apriMenuBuilder(){
   _menuIngredienti = [];
-  _apriVista('Menu Builder',
+  _apriVista('Menu Lab',
     '<div class="mbv-head"><div class="mbv-h">Costruisci per composti.</div>'+
     '<div class="mbv-sub">Aggiungi ingredienti: Matter trova le combinazioni che dialogano, dal grafo aromatico reale.</div>'+
     '<div class="mbv-add"><input id="mbv-input" placeholder="aggiungi un ingrediente…" onkeydown="if(event.key===\'Enter\')mbAdd()"><button onclick="mbAdd()">+</button></div>'+

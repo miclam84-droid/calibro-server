@@ -1952,3 +1952,17 @@ a:focus-visible,input:focus-visible{
 .crea-input-wrap{margin-top:4px}
 .crea-input{width:100%;min-height:90px;border:2px solid var(--border,#B7C3C3);border-radius:12px;padding:14px;font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#131C21);line-height:1.5;resize:vertical;background:var(--l3,#F2F6F6)}
 .crea-input:focus{outline:none;border-color:var(--dato,#245979)}
+
+/* ═══ DESIGN CALDO — il cuore operativo si scalda (blocco 2) ═══ */
+/* accento caldo sul numero-bersaglio quando la misura è nella finestra */
+.s-num-box.in-window{background:linear-gradient(135deg,#1a1410,#231710)}
+.s-num-box.in-window .s-num-val{color:#E8935A}
+.s-num-box.in-window .s-num-mirino circle,.s-num-box.in-window .s-num-mirino path{stroke:#E8935A}
+.s-num-box.in-window .s-num-mirino circle[fill]{fill:#E8935A}
+.s-num-box.in-window::before{background:radial-gradient(120% 90% at 88% 8%,rgba(199,123,63,.35),transparent 55%)}
+/* stato esplicito sul Mirino: DENTRO FINESTRA / FUORI FINESTRA */
+.s-stato-badge{display:inline-block;margin-top:8px;font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;letter-spacing:.08em;padding:5px 11px;border-radius:7px}
+.s-stato-badge.dentro{background:#C77B3F;color:#241109}
+.s-stato-badge.fuori{background:var(--l2,#E8EDED);color:var(--ink,#131C21);border:1px solid var(--border,#B7C3C3)}
+/* ombre blueprint (hard shadow) sui pulsanti azione di livello 1 */
+.rg-btn-salva,.crea-card,.btn-install{box-shadow:3px 3px 0 rgba(19,28,33,.14)}
