@@ -41,6 +41,34 @@ def chiedi():
 
     # ── DOMANDE SULL'APP: risposta fissa operativa prima del grafo ──────
     _dl = domanda.lower()
+    # ── DOMANDE "COME SI FA X NELL'APP": guida operativa specifica ──────
+    # Se l'utente chiede come usare una funzione dell'app, do istruzioni operative,
+    # NON la scienza. Riconosco l'intento "come + verbo d'uso + oggetto dell'app".
+    _vuole_guida = any(k in _dl for k in ["come ", "dove ", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"])
+    _guide = {
+        "menu": ("Per costruire un menu qui: apri **Menu Builder** dalla home. "
+                 "Scegli la disciplina (cucina, bar, ecc.), inserisci gli ingredienti che hai "
+                 "(o fotografali), e l'app ti propone le voci di menu con i piatti fattibili, "
+                 "la tecnica e il perché scientifico. Puoi poi salvare il menu e generare il PDF con il tuo logo."),
+        "ricett": ("Per creare una ricetta qui: hai tre strade. 1) Da **Flavour Network**: scegli un "
+                   "ingrediente, tocca un abbinamento e premi 'Crea ricetta'. 2) Scrivendo in chat "
+                   "'fammi una ricetta con X e Y'. 3) Dal **Menu Builder**. In tutti i casi ottieni una "
+                   "scheda con ingredienti, dosi e procedimento, che puoi salvare nel Quaderno."),
+        "salv": ("Per salvare una ricetta: quando la generi, in fondo alla scheda c'è il bottone "
+                 "**Salva**. La ricetta va nel **Quaderno**, sezione 'Le mie Ricette', dove la ritrovi sempre."),
+        "misur": ("Per misurare: apri un fenomeno e usa il suo numero-bersaglio come riferimento. "
+                  "Puoi registrare le tue misure nel **Quaderno**, sezione Misure, per costruire lo storico."),
+        "foto": ("Per usare le foto: nel Menu Builder o negli strumenti, tocca l'icona fotocamera. "
+                 "Fotografa gli ingredienti o una bottiglia, e l'app riconosce cosa c'è e propone abbinamenti e fenomeni."),
+        "cost": ("Per il food cost: apri una ricetta e cerca il food cost — l'app calcola il costo per "
+                 "porzione (grammature × prezzi ISMEA) e l'incidenza sul prezzo di vendita."),
+    }
+    if _vuole_guida:
+        for _k, _testo in _guide.items():
+            if _k in _dl:
+                return jsonify({"risposta": _testo, "trovato": ["Come si usa Matter"],
+                                "connessi": [], "trial": {}, "_tipo": "guida"})
+
     _kw_app = ["cosa posso fare","cosa fai","cosa puoi fare","come funziona",
                "a cosa servi","a cosa serve","come si usa","come funzione",
                "cosa sei","cosa fa quest","cosa fa l'app","cosa fa questa app",
