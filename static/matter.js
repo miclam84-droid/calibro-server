@@ -1542,8 +1542,8 @@ async function doRegistra(){
 const _strings = {
   it:{
     payoff:'Science &amp; Craft',
-    scopri:'Scopri', lezione:'Lezione', mappa:'Mappa', db_fenomeni:'Fenomeni',
-    tab_atlante:'Atlante', tab_chiedi:'Chiedi', tab_quaderno:'Quaderno',
+    scopri:'Banco', lezione:'Lezione', mappa:'Mappa', db_fenomeni:'Fenomeni',
+    tab_atlante:'Atlante', tab_chiedi:'Assistente', tab_quaderno:'Quaderno',
     db_ingredienti:'Ingredienti',
     db_connessioni:'Connessioni aromatiche',
     db_calcolatori:'Calcolatori',
@@ -1706,8 +1706,8 @@ const _strings = {
   },
   en:{
     payoff:'The science behind the craft',
-    scopri:'Discover', lezione:'Lesson', mappa:'Map', db_fenomeni:'Phenomena',
-    tab_atlante:'Atlas', tab_chiedi:'Ask', tab_quaderno:'Notebook',
+    scopri:'Bench', lezione:'Lesson', mappa:'Map', db_fenomeni:'Phenomena',
+    tab_atlante:'Atlas', tab_chiedi:'Assistant', tab_quaderno:'Notebook',
     db_ingredienti:'Ingredients',
     db_connessioni:'Aromatic connections',
     db_calcolatori:'Calculators',
@@ -1872,8 +1872,8 @@ const _strings = {
   },
   es:{
     payoff:'Science & Craft',
-    scopri:'Descubrir', lezione:'Lección', mappa:'Mapa', db_fenomeni:'Fenómenos',
-    tab_atlante:'Atlas', tab_chiedi:'Pregunta', tab_quaderno:'Cuaderno',
+    scopri:'Banco', lezione:'Lección', mappa:'Mapa', db_fenomeni:'Fenómenos',
+    tab_atlante:'Atlas', tab_chiedi:'Asistente', tab_quaderno:'Cuaderno',
     foto_analisi_titolo:'Análisis foto', foto_analisi_loading:'Reconozco ingredientes y botellas…',
     db_ingredienti:'Ingredientes',
     db_connessioni:'Conexiones aromáticas',
@@ -5211,11 +5211,12 @@ function apriFlavour(ingredienteIniziale){
   caricaFlavour(ingredienteIniziale || 'fragola');
 }
 async function caricaFlavour(term){
-  const inp = document.getElementById('fnv-input');
+  const inp = document.getElementById('fnv-input') || document.getElementById('flavor-query');
   const q = (term || (inp?inp.value:'') || '').trim();
   if(!q) return;
   if(inp) inp.value = q;
   const out = document.getElementById('fnv-out');
+  if(!out) return;
   out.innerHTML = '<div class="vista-loading">Leggo il grafo dei composti…</div>';
   try{
     const r = await fetch('/v1/abbina/'+encodeURIComponent(q)+'?lang='+_vistaLang());
@@ -5354,7 +5355,13 @@ function _mbRenderChips(){
   box.innerHTML = _menuIngredienti.map((x,i)=>'<span class="mbv-chip">'+_escV(x)+'<button onclick="mbRemove('+i+')" aria-label="Rimuovi">×</button></span>').join('')
     || '<span class="mbv-chip-hint">Aggiungi almeno 2 ingredienti.</span>';
   const go = document.getElementById('mbv-go');
-  if(go) go.disabled = _menuIngredienti.length < 2;
+  if(go){
+    go.disabled = _menuIngredienti.length < 2;
+    // messaggio chiaro sul bottone: fa capire perché è disabilitato
+    if(_menuIngredienti.length===0){ go.textContent='Aggiungi 2 ingredienti'; }
+    else if(_menuIngredienti.length===1){ go.textContent='Aggiungine ancora 1'; }
+    else { go.textContent='Trova le combinazioni ('+_menuIngredienti.length+')'; }
+  }
 }
 async function mbProposte(){
   const out = document.getElementById('mbv-out');
