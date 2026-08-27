@@ -51,7 +51,12 @@ def home_api():
     # vetrina pulita: pesca solo tra i fenomeni migrati al metodo; se (per errore)
     # nessuno matcha, ripiega su tutti per non rompere la home.
     _mig = [x for x in fenomeni if x["id"] in _FEN_MIGRATI]
-    f = random.choice(_mig if _mig else fenomeni)
+    _pool = _mig if _mig else fenomeni
+    # R1: il cruscotto mostra il BERSAGLIO DEL GIORNO come numero grande. Quindi scelgo
+    # SOLO tra i fenomeni che hanno un numero-bersaglio vero (non vuoto). I fenomeni
+    # "concettuali" senza numero (es. Viscosità) non vanno bene per il box del giorno.
+    _con_numero = [x for x in _pool if _numero_bersaglio(_dati(x["data"]))]
+    f = random.choice(_con_numero if _con_numero else _pool)
     fd = _dati(f["data"])
     result = {
         "fenomeno": {

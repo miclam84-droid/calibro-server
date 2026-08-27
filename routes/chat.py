@@ -302,7 +302,16 @@ def chiedi():
         return s
     numero_bersaglio_agg = _valida_numero(numero_bersaglio_agg)
 
-    # se siamo nel fallback (nessun aggancio grafo), aggiungi i fenomeni suggeriti
+    # R3: se i fenomeni del grafo non danno un numero, provo a estrarlo dalla riga
+    # "NUMERO: ..." della risposta AI (es. "NUMERO: 65-70°C" -> "65-70°C"). Così la chat
+    # popola comunque il numero-bersaglio quando la risposta lo contiene.
+    if not numero_bersaglio_agg and risposta:
+        m = _re.search(r'NUMERO:\s*([^\n]+)', risposta)
+        if m:
+            cand = m.group(1).strip()
+            # prendo solo la parte numerica+unità (fino alla prima virgola o punto finale)
+            cand = _re.split(r'[,.]\s', cand)[0].strip().rstrip('.')
+            numero_bersaglio_agg = _valida_numero(cand)
     # come spunto, MA la risposta AI c'è comunque (non è più un vicolo cieco)
     if fallback_suggeriti:
         connessi = fallback_suggeriti + connessi
