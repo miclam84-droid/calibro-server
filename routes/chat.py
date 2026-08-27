@@ -34,27 +34,6 @@ def chiedi():
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
 
-    # ── RICONOSCIMENTO INTENTO RICETTA ──
-    # se l'utente chiede di CREARE una ricetta (non di spiegare un fenomeno),
-    # instrado al generatore di ricette strutturate invece della chat esplicativa.
-    import re as _re_intent
-    _dl = domanda.lower()
-    _pattern_ricetta = _re_intent.search(
-        r"\b(fa(?:cciamo|i|mmi)|cre(?:a|iamo|ami)|prepar(?:a|iamo|ami)|gener(?:a|ami)|"
-        r"invent(?:a|iamo|ami)|propon(?:i|imi)|dammi|voglio|vorrei)\b.{0,25}\bricetta\b", _dl)
-    _pattern_ricetta2 = _re_intent.search(r"\bricetta (con|di|per|a base)\b", _dl)
-    if _pattern_ricetta or _pattern_ricetta2:
-        try:
-            from builder import genera_ricetta
-            from db import carica_grafo
-            _db = carica_grafo()
-            _ric = genera_ricetta(_db, domanda, disciplina="cucina", lang=lang)
-            if _ric and _ric.get("nome") and not _ric.get("errore"):
-                _ric["_tipo"] = "ricetta"  # il frontend riconosce che è una ricetta, non una risposta chat
-                return jsonify(_ric)
-        except Exception:
-            pass  # se fallisce, prosegui con la chat normale
-
     # ── DOMANDE SULL'APP: risposta fissa operativa prima del grafo ──────
     _dl = domanda.lower()
     _kw_app = ["cosa posso fare","cosa fai","cosa puoi fare","come funziona",
@@ -163,8 +142,8 @@ def chiedi():
                 if nome:
                     contesto = cerca_contesto(db, nome["name"], domanda)
                     if contesto and contesto.get("fenomeni"): break
-    except Exception as _err_ranked:
-        print(f"[RANKED] errore, fallback vecchia logica: {_err_ranked}", flush=True)
+    except Exception as _re:
+        print(f"[RANKED] errore, fallback vecchia logica: {_re}", flush=True)
         contesto = None
 
     # FALLBACK alla vecchia logica se il ranker non ha prodotto contesto
@@ -193,44 +172,17 @@ def chiedi():
                                "target": f["target"]} for f in suggeriti]
 
     # se la domanda arriva da una scheda lezione, inietto il contesto così
-    # la chat risponde già informata su QUEL fenomeno / QUELLA ricetta / QUEL menu
+    # la chat risponde già informata su QUEL fenomeno
     domanda_arricchita = domanda
     if contesto_scheda and isinstance(contesto_scheda, dict):
-        _tipo_ctx = (contesto_scheda.get("tipo") or "").strip().lower()
-        # CONTESTO RICETTA: l'utente sta guardando una ricetta e chiede su quella
-        if _tipo_ctx == "ricetta" or contesto_scheda.get("ricetta") or contesto_scheda.get("ingredienti"):
-            nome_r = (contesto_scheda.get("nome") or contesto_scheda.get("ricetta") or "").strip()
-            ingr = contesto_scheda.get("ingredienti") or []
-            ingr_txt = ""
-            if ingr:
-                nomi = [(i.get("nome") if isinstance(i, dict) else str(i)) for i in ingr]
-                ingr_txt = ", ".join(n for n in nomi if n)[:200]
-            fen_r = contesto_scheda.get("fenomeni") or []
-            fen_txt = ", ".join((f.get("nome") if isinstance(f, dict) else str(f)) for f in fen_r)[:120]
-            pc = (contesto_scheda.get("punto_critico") or "").strip()[:150]
-            _ctx = f"[L'utente sta guardando la ricetta '{nome_r}'"
-            if ingr_txt: _ctx += f". Ingredienti: {ingr_txt}"
-            if fen_txt: _ctx += f". Fenomeni attivi: {fen_txt}"
-            if pc: _ctx += f". Punto critico: {pc}"
-            _ctx += ". Rispondi in modo specifico a QUESTA ricetta, considerando i suoi ingredienti e la sua tecnica.] "
-            domanda_arricchita = _ctx + domanda
-        # CONTESTO MENU: l'utente chiede sul menu che ha davanti
-        elif _tipo_ctx == "menu" or contesto_scheda.get("voci"):
-            voci = contesto_scheda.get("voci") or []
-            piatti = ", ".join((v.get("nome") if isinstance(v, dict) else str(v)) for v in voci)[:250]
-            _ctx = f"[L'utente sta valutando un menu con questi piatti: {piatti}. "
-            _ctx += "Rispondi analizzando l'equilibrio e la coerenza di QUESTO menu.] "
-            domanda_arricchita = _ctx + domanda
-        else:
-            # CONTESTO FENOMENO (comportamento originale)
-            fen = (contesto_scheda.get("fenomeno") or "").strip()
-            tgt = (contesto_scheda.get("target") or "").strip()
-            if fen:
-                _ctx_txt = f"[L'utente sta studiando la scheda del fenomeno '{fen}'"
-                if tgt:
-                    _ctx_txt += f" (numero bersaglio: {tgt})"
-                _ctx_txt += ". Rispondi restando su questo fenomeno, applicandolo al suo caso specifico.] "
-                domanda_arricchita = _ctx_txt + domanda
+        fen = (contesto_scheda.get("fenomeno") or "").strip()
+        tgt = (contesto_scheda.get("target") or "").strip()
+        if fen:
+            _ctx_txt = f"[L'utente sta studiando la scheda del fenomeno '{fen}'"
+            if tgt:
+                _ctx_txt += f" (numero bersaglio: {tgt})"
+            _ctx_txt += ". Rispondi restando su questo fenomeno, applicandolo al suo caso specifico.] "
+            domanda_arricchita = _ctx_txt + domanda
 
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
     # history strutturata: passa i turni precedenti come messages[], non come testo
@@ -272,19 +224,6 @@ def chiedi():
         if t and t not in numeri_bersaglio:
             numeri_bersaglio.append(t)
     numero_bersaglio_agg = " · ".join(numeri_bersaglio[:2]) if numeri_bersaglio else ""
-    # PULIZIA: il numero bersaglio deve essere un NUMERO/intervallo, non una frase.
-    # Se contiene simboli discorsivi (→, virgole multiple) o è troppo lungo, lo svuoto.
-    def _valida_numero(s):
-        if not s: return ""
-        s = str(s).strip()
-        # deve contenere almeno una cifra
-        if not _re.search(r"\d", s): return ""
-        # non deve essere una frase: niente frecce, punti elenco, o troppo lunga
-        if "→" in s or "·" in s or len(s) > 40: return ""
-        # troppe virgole = elenco/frase
-        if s.count(",") > 1: return ""
-        return s
-    numero_bersaglio_agg = _valida_numero(numero_bersaglio_agg)
 
     # se siamo nel fallback (nessun aggancio grafo), aggiungi i fenomeni suggeriti
     # come spunto, MA la risposta AI c'è comunque (non è più un vicolo cieco)
