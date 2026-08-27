@@ -5990,37 +5990,43 @@ def admin_prova_immagine():
 
 @bp.route("/admin/debug-proposte")
 def admin_debug_proposte():
-    """Debug: mostra gli id ahn di pomodoro/basilico e se l'edge esiste nel grafo."""
+    """Debug: testa il match di una coppia (default fragola+pomodoro) come fa proposte."""
     import os, hmac
     secret = request.args.get("s", "")
     if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
         return "Forbidden", 403
+    n1 = request.args.get("a", "fragola")
+    n2 = request.args.get("b", "pomodoro")
     from db import _get_conn, _release_conn
-    try:
-        from routes.api import _alias_ahn
-    except Exception:
-        _alias_ahn = lambda x: x
     conn = _get_conn(); cur = conn.cursor()
-    out = {}
+    out = {"coppia": [n1, n2]}
     try:
-        for ing in ["pomodoro", "basilico"]:
-            try:
-                out[f"{ing}_alias_ahn"] = _alias_ahn(ing)
-            except Exception as e:
-                out[f"{ing}_alias_ahn"] = f"ERR: {e}"
-        # cerco l'edge tra pomodoro e basilico in QUALSIASI forma
+        def _norm_acc(s):
+            return (s.lower().replace("à","a").replace("è","e").replace("é","e")
+                    .replace("ì","i").replace("ò","o").replace("ù","u").strip())
+        s1 = _norm_acc(n1); s2 = _norm_acc(n2)
+        # esattamente la query di proposte
         cur.execute("""
-            SELECT e.from_id, e.to_id, (e.data->>'overlap')
+            SELECT nt.name, translate(lower(e.to_id),'àèéìòù','aeeiou') AS toid,
+                   (e.data->>'overlap')::numeric AS ov,
+                   translate(lower(e.from_id),'àèéìòù','aeeiou') AS fromid
             FROM edges e
+            JOIN nodes nf ON nf.id = e.from_id
+            JOIN nodes nt ON nt.id = e.to_id
             WHERE e.relation='abbinamento_aromatico'
-              AND ((lower(e.from_id) LIKE '%pomodoro%' AND lower(e.to_id) LIKE '%basilico%')
-                OR (lower(e.from_id) LIKE '%basilico%' AND lower(e.to_id) LIKE '%pomodoro%'))
-            LIMIT 3
-        """)
-        out["edge_reale"] = [{"from": r[0], "to": r[1], "overlap": r[2]} for r in cur.fetchall()]
-        # mostro anche gli id nodi che contengono pomodoro/basilico
-        cur.execute("SELECT id FROM nodes WHERE lower(id) LIKE '%pomodoro%' OR lower(id) LIKE '%basilico%' LIMIT 6")
-        out["nodi_id"] = [r[0] for r in cur.fetchall()]
+              AND (translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s
+                OR translate(lower(nf.name),'àèéìòù','aeeiou') LIKE %s)
+            LIMIT 25
+        """, (f"%{s1.replace(' ','-')}%", f"%{s1}%"))
+        righe = cur.fetchall()
+        out["archi_di_n1"] = [{"partner_name": r[0], "toid": r[1], "overlap": str(r[2]), "fromid": r[3]} for r in righe]
+        # quali matchano n2?
+        match = []
+        for rname, rtoid, rov, rfrom in righe:
+            partner = _norm_acc(rname or "")
+            if s2 in partner or s2.replace(" ", "-") in (rtoid or ""):
+                match.append({"partner": rname, "overlap": str(rov)})
+        out["match_n2"] = match
         return jsonify(out)
     finally:
         _release_conn(conn)
