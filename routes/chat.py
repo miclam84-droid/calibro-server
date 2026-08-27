@@ -163,8 +163,8 @@ def chiedi():
                 if nome:
                     contesto = cerca_contesto(db, nome["name"], domanda)
                     if contesto and contesto.get("fenomeni"): break
-    except Exception as _re:
-        print(f"[RANKED] errore, fallback vecchia logica: {_re}", flush=True)
+    except Exception as _err_ranked:
+        print(f"[RANKED] errore, fallback vecchia logica: {_err_ranked}", flush=True)
         contesto = None
 
     # FALLBACK alla vecchia logica se il ranker non ha prodotto contesto
