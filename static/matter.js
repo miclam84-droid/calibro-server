@@ -2904,6 +2904,145 @@ function _creaGenera(){
   generaRicettaDaTesto(v.trim());
 }
 
+// ═══ COMMUNITY — "Vetrina del Banco" (feed sola lettura, contatto fuori app) ═══
+let _vetrinaOffset = 0;
+let _vetrinaBusy = false;
+async function apriVetrina(){
+  _vetrinaOffset = 0;
+  _apriVista('Vetrina del Banco',
+    '<div class="vetr-intro">Ricette vere da chi sta al banco. Clona quelle che ti servono, connettiti con chi le ha fatte.</div>'
+    + '<div class="vetr-feed" id="vetr-feed"></div>'
+    + '<button class="vetr-more" id="vetr-more" onclick="_vetrinaCarica()" style="display:none">Carica altre</button>');
+  _vetrinaCarica();
+}
+async function _vetrinaCarica(){
+  if(_vetrinaBusy) return; _vetrinaBusy=true;
+  var feed=document.getElementById('vetr-feed');
+  if(_vetrinaOffset===0 && feed){ feed.innerHTML='<div class="vetr-loading">Carico la vetrina…</div>'; }
+  try{
+    var lang=(typeof _lang!=='undefined'?_lang:'it');
+    var r=await fetch('/v1/community/feed?lingua='+lang+'&offset='+_vetrinaOffset);
+    var j=await r.json();
+    var ricette=j.ricette||[];
+    if(_vetrinaOffset===0){ feed.innerHTML=''; }
+    if(!ricette.length && _vetrinaOffset===0){
+      feed.innerHTML='<div class="vetr-empty"><b>La vetrina è ancora vuota</b><span>Pubblica tu la prima ricetta dal Quaderno.</span></div>';
+      _vetrinaBusy=false; return;
+    }
+    feed.insertAdjacentHTML('beforeend', ricette.map(_vetrinaCard).join(''));
+    _vetrinaOffset += ricette.length;
+    var more=document.getElementById('vetr-more');
+    if(more) more.style.display = ricette.length>=10 ? '' : 'none';
+  }catch(e){
+    if(feed && _vetrinaOffset===0) feed.innerHTML='<div class="vetr-empty"><b>Non riesco a caricare la vetrina</b><span>Riprova tra poco.</span></div>';
+  }
+  _vetrinaBusy=false;
+}
+function _vetrinaCard(r){
+  var e=_escV;
+  var d=r.dati||{};
+  var nIng=(d.ingredienti||[]).length;
+  var autore = r.dal_team ? 'Team Matter Lab' : (r.autore||'Anonimo');
+  var teamBadge = r.dal_team ? '<span class="vetr-team">Team Matter Lab</span>' : '';
+  var post = r.postazione ? '<span class="vetr-post">'+e(r.postazione)+'</span>' : '';
+  var rid = e(String(r.id));
+  var dev = e(String(r.autore_device||''));
+  return '<div class="vetr-card">'
+    + '<div class="vetr-card-head"><div class="vetr-card-nome">'+e(r.nome||'Ricetta')+'</div>'+teamBadge+'</div>'
+    + '<div class="vetr-card-meta">'+e(autore)+(post?' · ':'')+post+(nIng?' · '+nIng+' ingredienti':'')+'</div>'
+    + '<div class="vetr-card-actions">'
+    +   '<button class="vetr-btn vetr-btn-clona" onclick="_vetrinaClona(\''+rid+'\',this)">Clona nel Quaderno</button>'
+    + (r.dal_team ? '' : '<button class="vetr-btn vetr-btn-connetti" onclick="_vetrinaConnetti(\''+dev+'\')">Connetti</button>')
+    + '</div></div>';
+}
+async function _vetrinaClona(id, btn){
+  if(btn){ btn.disabled=true; btn.textContent='Clono…'; }
+  try{
+    var r=await fetch('/v1/community/clona', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}), body:JSON.stringify({id_pubblica:id})});
+    var j=await r.json();
+    if(btn){ btn.textContent = (j&&j.ok!==false) ? '✓ Nel tuo Quaderno' : 'Riprova'; btn.classList.add('fatto'); }
+  }catch(e){ if(btn){ btn.disabled=false; btn.textContent='Riprova'; } }
+}
+async function _vetrinaConnetti(dev){
+  if(!dev) return;
+  try{
+    var r=await fetch('/v1/community/profilo?device_id='+encodeURIComponent(dev));
+    var j=await r.json();
+    if(!j || j.trovato===false || !j.contatto_link){
+      _apriVista('Connetti', '<div class="vetr-empty"><b>Contatto non disponibile</b><span>Questo autore non ha ancora impostato un modo per essere contattato.</span></div>');
+      return;
+    }
+    var e=_escV;
+    var tipo = (j.contatto_link.indexOf('wa.me')>=0||j.contatto_link.indexOf('whatsapp')>=0)?'WhatsApp'
+             : (j.contatto_link.indexOf('t.me')>=0)?'Telegram'
+             : (j.contatto_link.indexOf('linkedin')>=0)?'LinkedIn'
+             : (j.contatto_link.indexOf('instagram')>=0)?'Instagram':'il contatto';
+    _apriVista('Connetti con '+(j.nome||'autore'),
+      '<div class="vetr-profilo">'
+      + '<div class="vetr-prof-nome">'+e(j.nome||'Autore')+'</div>'
+      + (j.postazione?'<div class="vetr-prof-post">'+e(j.postazione)+'</div>':'')
+      + '<a class="vetr-prof-cta" href="'+e(j.contatto_link)+'" target="_blank" rel="noopener">Scrivi su '+tipo+' →</a>'
+      + '<div class="vetr-prof-nota">Il contatto avviene fuori da Matter. Ti apriamo '+tipo+'.</div>'
+      + '</div>');
+  }catch(e){}
+}
+// Pubblica una ricetta nella Vetrina (dalla scheda ricetta o dal Quaderno)
+async function pubblicaInVetrina(dati, ricettaId){
+  var prof = _getProfiloLocale();
+  if(!prof.nome || !prof.postazione){ apriProfiloMio(dati, ricettaId); return; }
+  try{
+    var lang=(typeof _lang!=='undefined'?_lang:'it');
+    var r=await fetch('/v1/community/pubblica', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({nome:dati.nome, dati:dati, autore_nome:prof.nome, autore_postazione:prof.postazione, ricetta_id:ricettaId||'', lingua:lang})});
+    var j=await r.json();
+    _toast(j&&j.ok!==false ? '✓ Pubblicata nella Vetrina del Banco' : 'Non riuscita, riprova');
+  }catch(e){ _toast('Non riuscita, riprova'); }
+}
+function _getProfiloLocale(){
+  try{ return JSON.parse(localStorage.getItem('matter_profilo')||'{}'); }catch(e){ return {}; }
+}
+function apriProfiloMio(datiPost, ridPost){
+  var prof=_getProfiloLocale();
+  var e=_escV;
+  var html=
+    '<div class="vetr-intro">Come ti vedono gli altri professionisti nella Vetrina. Il contatto è un link esterno (WhatsApp, Telegram, LinkedIn, Instagram): le conversazioni avvengono fuori da Matter.</div>'
+    + '<div class="prof-field"><label>Nome</label><input type="text" id="prof-nome" value="'+e(prof.nome||'')+'" placeholder="Come ti chiami"></div>'
+    + '<div class="prof-field"><label>Postazione</label><input type="text" id="prof-post" value="'+e(prof.postazione||'')+'" placeholder="es. barman, pizzaiolo, pastry chef"></div>'
+    + '<div class="prof-field"><label>Tipo di contatto</label><select id="prof-ctipo">'
+    +   '<option value="whatsapp">WhatsApp</option><option value="telegram">Telegram</option><option value="linkedin">LinkedIn</option><option value="instagram">Instagram</option>'
+    + '</select></div>'
+    + '<div class="prof-field"><label>Contatto</label><input type="text" id="prof-cval" value="'+e(prof.contatto_valore||'')+'" placeholder="numero, @username o URL"></div>'
+    + '<button class="rg-btn rg-btn-salva" style="width:100%" onclick="_salvaProfilo('+(datiPost?'true':'false')+')">Salva profilo'+(datiPost?' e pubblica':'')+'</button>';
+  _apriVista('Il tuo profilo', html);
+  if(prof.contatto_tipo){ setTimeout(function(){ var s=document.getElementById('prof-ctipo'); if(s) s.value=prof.contatto_tipo; }, 100); }
+  _profiloPendingPost = datiPost ? {dati:datiPost, rid:ridPost} : null;
+}
+let _profiloPendingPost = null;
+async function _salvaProfilo(poi){
+  var nome=(document.getElementById('prof-nome')||{}).value||'';
+  var post=(document.getElementById('prof-post')||{}).value||'';
+  var ctipo=(document.getElementById('prof-ctipo')||{}).value||'whatsapp';
+  var cval=(document.getElementById('prof-cval')||{}).value||'';
+  if(!nome.trim()||!post.trim()){ _toast('Inserisci nome e postazione'); return; }
+  var prof={nome:nome.trim(), postazione:post.trim(), contatto_tipo:ctipo, contatto_valore:cval.trim()};
+  localStorage.setItem('matter_profilo', JSON.stringify(prof));
+  try{
+    await fetch('/v1/community/profilo', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify(prof)});
+  }catch(e){}
+  _toast('✓ Profilo salvato');
+  if(poi && _profiloPendingPost){
+    var pp=_profiloPendingPost; _profiloPendingPost=null;
+    pubblicaInVetrina(pp.dati, pp.rid);
+  } else { chiudiVista(); }
+}
+function _toast(msg){
+  var t=document.getElementById('mf-toast');
+  if(!t){ t=document.createElement('div'); t.id='mf-toast'; t.className='mf-toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+
 // REGOLA 1 — dal pulsante nella chat: genera la scheda ricetta vera (il Lab crea)
 async function _generaDaChat(richiesta){
   var disc = localStorage.getItem('matter_station') || 'cucina';
@@ -2987,6 +3126,7 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
     +   '<button class="rg-btn rg-btn-salva'+(salvato?' fatto':'')+'" id="rg-btn-salva" onclick="salvaRicettaGen(this)">'+(salvato?'✓ Salvata':'Salva nel Quaderno')+'</button>'
     +   '<button class="rg-btn rg-btn-chiedi" onclick="chiediSuRicetta()">Chiedi su questa ricetta</button>'
     +   '<button class="rg-btn rg-btn-cost" onclick="foodCostRicetta()">Food Cost</button>'
+    +   '<button class="rg-btn rg-btn-vetrina" onclick="pubblicaInVetrina(_ricettaGenCorrente, _ricettaGenCorrente&&_ricettaGenCorrente._ricetta_id)">Pubblica nella Vetrina del Banco</button>'
     + '</div>'
     + '</div>';
   _apriVista(dati.nome || 'Ricetta', html);

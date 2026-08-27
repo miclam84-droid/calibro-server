@@ -1966,3 +1966,32 @@ a:focus-visible,input:focus-visible{
 .s-stato-badge.fuori{background:var(--l2,#E8EDED);color:var(--ink,#131C21);border:1px solid var(--border,#B7C3C3)}
 /* ombre blueprint (hard shadow) sui pulsanti azione di livello 1 */
 .rg-btn-salva,.crea-card,.btn-install{box-shadow:3px 3px 0 rgba(19,28,33,.14)}
+
+/* ═══ COMMUNITY — Vetrina del Banco ═══ */
+.vetr-intro{font-size:13.5px;color:var(--ink-muted,#3D4A50);line-height:1.55;margin-bottom:16px}
+.vetr-loading{padding:24px;text-align:center;font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:var(--muted,#5A6C70)}
+.vetr-empty{padding:24px 16px;text-align:center;background:var(--l2,#E8EDED);border-radius:12px}
+.vetr-empty b{display:block;color:var(--ink,#131C21);font-size:15px;margin-bottom:6px}
+.vetr-empty span{font-size:13px;color:var(--muted,#5A6C70)}
+.vetr-card{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+.vetr-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.vetr-card-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:16px;color:var(--ink,#131C21);letter-spacing:-.02em;line-height:1.2}
+.vetr-team{font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--teal,#12545D);background:var(--s100,#D3E0E0);padding:3px 7px;border-radius:5px;white-space:nowrap;flex-shrink:0}
+.vetr-post{color:var(--teal,#12545D)}
+.vetr-card-meta{font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:var(--muted,#5A6C70);margin-bottom:12px}
+.vetr-card-actions{display:flex;gap:8px}
+.vetr-btn{flex:1;min-height:44px;border-radius:9px;font-family:var(--sans,'Inter');font-weight:600;font-size:13.5px;cursor:pointer;border:1px solid var(--border,#B7C3C3)}
+.vetr-btn-clona{background:var(--ink,#131C21);color:#EAF1F3;border-color:var(--ink,#131C21)}
+.vetr-btn-clona.fatto{background:var(--teal,#12545D);border-color:var(--teal,#12545D)}
+.vetr-btn-connetti{background:var(--l3,#F2F6F6);color:var(--ink,#131C21)}
+.vetr-more{width:100%;min-height:46px;margin-top:6px;border-radius:10px;border:1px solid var(--border,#B7C3C3);background:var(--l2,#E8EDED);color:var(--ink,#131C21);font-family:var(--sans,'Inter');font-weight:600;font-size:14px;cursor:pointer}
+.vetr-profilo{text-align:center;padding:20px 10px}
+.vetr-prof-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:22px;color:var(--ink,#131C21);margin-bottom:4px}
+.vetr-prof-post{font-family:var(--mono,'IBM Plex Mono');font-size:12px;color:var(--teal,#12545D);margin-bottom:20px}
+.vetr-prof-cta{display:block;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:16px;border-radius:12px;margin-bottom:10px}
+.vetr-prof-nota{font-size:11.5px;color:var(--muted,#5A6C70);font-style:italic}
+.vetr-btn-vetrina{background:var(--l3,#F2F6F6);color:var(--teal,#12545D);border:1px solid var(--teal,#12545D)}
+.prof-field{margin-bottom:14px}
+.prof-field label{display:block;font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal,#12545D);margin-bottom:6px}
+.prof-field input,.prof-field select{width:100%;min-height:46px;border:1px solid var(--border,#B7C3C3);border-radius:10px;padding:10px 14px;font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#131C21);background:var(--l3,#F2F6F6)}
+.prof-field input:focus,.prof-field select:focus{outline:none;border-color:var(--dato,#245979)}
