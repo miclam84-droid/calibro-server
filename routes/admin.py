@@ -5808,3 +5808,73 @@ def admin_debug_chiedi():
                         "numero_grezzo": agg, "numero_validato": agg2, "extra": _extra})
     except Exception as e:
         return jsonify({"ok": False, "errore": str(e), "traceback": traceback.format_exc()[:1500]}), 200
+
+
+@bp.route("/admin/correggi-nomi-ingredienti")
+def admin_correggi_nomi():
+    """Corregge nomi ingredienti sbagliati/inglesi nel grafo (Bread->Pane, Rapanelli->Ravanelli...)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    # mappa correzioni: nome_sbagliato -> nome_giusto
+    correzioni = {
+        "Bread": "Pane",
+        "Rapanelli": "Ravanelli",
+        "Rapanello": "Ravanello",
+    }
+    conn = _get_conn(); cur = conn.cursor()
+    fatti = []
+    try:
+        for sbagliato, giusto in correzioni.items():
+            # aggiorno il name dei nodi che matchano esattamente
+            cur.execute("UPDATE nodes SET name=%s WHERE name=%s AND type='Ingrediente'", (giusto, sbagliato))
+            n1 = cur.rowcount
+            # aggiorno anche eventuali match case-insensitive
+            cur.execute("UPDATE nodes SET name=%s WHERE lower(name)=lower(%s) AND type='Ingrediente' AND name!=%s",
+                        (giusto, sbagliato, giusto))
+            n2 = cur.rowcount
+            if n1 + n2 > 0:
+                fatti.append(f"{sbagliato} -> {giusto} ({n1+n2} nodi)")
+        conn.commit()
+        return jsonify({"ok": True, "correzioni": fatti or ["nessun nodo trovato con quei nomi"]})
+    finally:
+        _release_conn(conn)
+
+
+@bp.route("/admin/correggi-bersagli-testuali")
+def admin_correggi_bersagli():
+    """Trova i fenomeni il cui numero-bersaglio è una FRASE (non un numero) e lo sostituisce
+    con un valore numerico/intervallo. Il payoff è 'Numeri. Non opinioni.': il bersaglio deve
+    essere un numero. Correzioni mirate sui fenomeni noti; gli altri restano invariati."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import _get_conn, _release_conn
+    import json as _j, re as _re
+    # correzioni target per nome fenomeno (match parziale): numero/intervallo giusto
+    correzioni = {
+        "ganache": "32-34°C",          # punto di fusione cristalli stabili burro di cacao
+    }
+    conn = _get_conn(); cur = conn.cursor()
+    fatti = []
+    try:
+        cur.execute("SELECT id, name, data FROM nodes WHERE type='Fenomeno'")
+        righe = cur.fetchall()
+        for rid, nome, data in righe:
+            d = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+            target = str(d.get("numero_bersaglio") or d.get("target") or "")
+            # se il target NON contiene una cifra, è una frase: candidato a correzione
+            ha_cifra = bool(_re.search(r"\d", target))
+            nome_l = (nome or "").lower()
+            for chiave, valore in correzioni.items():
+                if chiave in nome_l and (not ha_cifra or "non è un numero" in target.lower() or "non un numero" in target.lower()):
+                    d["numero_bersaglio"] = valore
+                    if "target" in d: d["target"] = valore
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_j.dumps(d, ensure_ascii=False), rid))
+                    fatti.append(f"{nome}: -> {valore}")
+                    break
+        conn.commit()
+        return jsonify({"ok": True, "correzioni": fatti or ["nessun bersaglio corretto"]})
+    finally:
+        _release_conn(conn)
