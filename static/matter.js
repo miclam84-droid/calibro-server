@@ -561,12 +561,18 @@ async function caricaHome(){
 
 // Cruscotto operativo: bersaglio del giorno · ultima misura salvata · esperimento
 function _popolaCruscotto(f){
+  f = f || {};
   var t=document.getElementById('crus-target');
   var ts=document.getElementById('crus-target-sub');
   if(t){
-    var tgt = f.target && (f.target.numero || f.target.valore || f.target.raw || f.target.testo);
-    if(tgt && String(tgt).length<=14){ t.textContent=String(tgt); }
-    else { t.textContent = f.nome ? '›' : '—'; }
+    var tgt='';
+    var T=f.target;
+    if(T && typeof T==='object'){ tgt = T.numero || T.valore || T.raw || T.testo || ''; }
+    else if(typeof T==='string'){ tgt = T; }
+    tgt = String(tgt||'').trim();
+    // mostro il numero solo se è corto e sensato; altrimenti una freccia verso il fenomeno
+    if(tgt && tgt.length<=14){ t.textContent=tgt; t.style.fontSize=''; }
+    else { t.textContent='›'; t.style.fontSize='28px'; }
   }
   if(ts){ ts.textContent = f.nome || ''; }
   // ultima misura salvata dal Quaderno
@@ -575,19 +581,20 @@ function _popolaCruscotto(f){
     var misure=[];
     try{ misure=JSON.parse(localStorage.getItem('matter_quaderno')||'[]'); }catch(e){}
     if(misure.length){
-      var u=misure[misure.length-1];
-      var val = u.valore!=null ? (u.valore+(u.unita?' '+u.unita:'')) : (u.nome||'salvata');
+      var u=misure[misure.length-1]||{};
+      var val = (u.valore!=null) ? (u.valore+(u.unita?' '+u.unita:'')) : (u.nome||'salvata');
       m.textContent = String(val).slice(0,12);
     } else { m.textContent='—'; }
   }
   // esperimento in corso (stato locale)
   var e=document.getElementById('crus-exp');
   if(e){
-    var exp=localStorage.getItem('matter_exp_corso');
+    var exp=null; try{ exp=localStorage.getItem('matter_exp_corso'); }catch(x){}
     e.textContent = exp ? 'In corso' : '—';
   }
 }
 function renderHome(j){
+  const f = j.fenomeno || {};
   { const _h=document.getElementById('scopri-hero'); if(_h) _h.classList.remove('loading'); }
   // CRUSCOTTO OPERATIVO — bersaglio del giorno + ultima misura + esperimento
   _popolaCruscotto(f);
