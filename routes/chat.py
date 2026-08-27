@@ -34,25 +34,10 @@ def chiedi():
     if not domanda:
         return jsonify({"errore":"domanda vuota"}), 400
 
-    # ── RICONOSCIMENTO INTENTO RICETTA ──
-    # se l'utente chiede di CREARE una ricetta (non di spiegare un fenomeno),
-    # instrado al generatore di ricette strutturate invece della chat esplicativa.
-    import re as _re_intent
-    _dl = domanda.lower()
-    _pattern_ricetta = _re_intent.search(
-        r"\b(fa(?:cciamo|i|mmi)|cre(?:a|iamo|ami)|prepar(?:a|iamo|ami)|gener(?:a|ami)|"
-        r"invent(?:a|iamo|ami)|propon(?:i|imi)|dammi|voglio|vorrei)\b.{0,25}\bricetta\b", _dl)
-    _pattern_ricetta2 = _re_intent.search(r"\bricetta (con|di|per|a base)\b", _dl)
-    if _pattern_ricetta or _pattern_ricetta2:
-        try:
-            from builder import genera_ricetta
-            _db = carica_grafo()
-            _ric = genera_ricetta(_db, domanda, disciplina="cucina", lang=lang)
-            if _ric and _ric.get("nome") and not _ric.get("errore"):
-                _ric["_tipo"] = "ricetta"  # il frontend riconosce che è una ricetta, non una risposta chat
-                return jsonify(_ric)
-        except Exception:
-            pass  # se fallisce, prosegui con la chat normale
+    # NB: il riconoscimento "crea ricetta" NON si fa qui dentro /chiedi:
+    # genera_ricetta fa una chiamata AI lenta (8-12s) che sommata al resto di /chiedi
+    # rischia il timeout del worker (500/502). Il frontend riconosce l'intento "ricetta"
+    # e chiama direttamente POST /v1/genera-ricetta, che è fatto apposta ed è più veloce.
 
     # ── DOMANDE SULL'APP: risposta fissa operativa prima del grafo ──────
     _dl = domanda.lower()
