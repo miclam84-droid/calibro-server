@@ -2945,14 +2945,68 @@ function chiediSuRicetta(){
   var banner=document.getElementById('chat-ctx-banner');
   if(banner){ banner.textContent='Stai chiedendo su: '+(d.nome||'ricetta'); banner.style.display='block'; }
 }
-function foodCostRicetta(){
+async function foodCostRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
-  if(!d._ricetta_id){
-    alert(_L({it:'Salva prima la ricetta, poi calcolo il food cost.',en:'Save the recipe first, then I calculate the food cost.',es:'Guarda primero la receta, luego calculo el food cost.'}));
-    return;
+  // l'endpoint lavora dagli ingredienti: non serve salvare prima
+  var ingredienti=(d.ingredienti||[]).map(function(x){
+    if(typeof x==='string') return {nome:x, quantita:'', unita:''};
+    return {nome:(x.nome||''), quantita:String(x.quantita!=null?x.quantita:''), unita:(x.unita||'')};
+  }).filter(function(x){return x.nome;});
+  if(!ingredienti.length){ alert('Questa ricetta non ha ingredienti con dosi da calcolare.'); return; }
+  var porzioni = d.porzioni || 4;
+  _fcIngredienti = ingredienti; _fcPorzioni = porzioni;
+  _mostraFoodCostPanel(null, true); // loading
+  try{
+    var r=await fetch('/v1/ricette/food-cost',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ingredienti:ingredienti, porzioni:porzioni})});
+    var j=await r.json();
+    _mostraFoodCostPanel(j, false);
+  }catch(e){
+    _mostraFoodCostPanel({errore:true}, false);
   }
-  if(typeof apriFoodCost==='function'){ apriFoodCost(d._ricetta_id, d); }
-  else { window.location.hash='#foodcost-'+d._ricetta_id; }
+}
+var _fcIngredienti=[], _fcPorzioni=4;
+async function _fcConPrezzo(){
+  var prezzo=parseFloat((document.getElementById('fc-prezzo-input').value||'').replace(',','.'));
+  if(isNaN(prezzo)) return;
+  try{
+    var r=await fetch('/v1/ricette/food-cost',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ingredienti:_fcIngredienti, porzioni:_fcPorzioni, prezzo_vendita:prezzo})});
+    var j=await r.json();
+    var box=document.getElementById('fc-pct-esito');
+    if(box && j.food_cost_pct!=null){
+      var pct=j.food_cost_pct;
+      var col = pct<=30 ? 'var(--teal,#12545D)' : (pct<=38 ? 'var(--terra,#C77B3F)' : '#B23B3B');
+      box.innerHTML='<div class="fc-pct-val" style="color:'+col+'">'+pct+'%</div><div class="fc-pct-lab">food cost sul tuo prezzo di '+prezzo+'€</div>';
+      box.style.display='block';
+    }
+  }catch(e){}
+}
+function _mostraFoodCostPanel(j, loading){
+  var e=_escV;
+  var html;
+  if(loading){
+    html='<div class="fc-loading">Calcolo il food cost…</div>';
+  } else if(!j || j.errore){
+    html='<div class="fc-loading">Non riesco a calcolare il costo ora. Riprova.</div>';
+  } else {
+    var dett=(j.dettaglio||[]).map(function(x){
+      var q=(x.quantita_g!=null?x.quantita_g+'g':(x.quantita||''));
+      return '<div class="fc-row"><span class="fc-row-n">'+e(x.ingrediente||x.nome||'')+'</span><span class="fc-row-q">'+e(String(q))+'</span><span class="fc-row-c">'+e(String(x.costo_porzione_eur!=null?x.costo_porzione_eur+' €':''))+'</span></div>';
+    }).join('');
+    var sugg=j.prezzi_vendita_suggeriti||{};
+    var suggRows=Object.keys(sugg).map(function(k){
+      var lab=k.replace('fc_','food cost ').replace('pct','%');
+      return '<div class="fc-sugg-row"><span class="fc-sugg-lab">'+e(lab)+'</span><span class="fc-sugg-v">'+e(String(sugg[k]))+' €</span></div>';
+    }).join('');
+    html=
+      '<div class="fc-hero"><div class="fc-hero-lab">costo per porzione</div><div class="fc-hero-val">'+e(String(j.costo_per_porzione_eur!=null?j.costo_per_porzione_eur:'—'))+' €</div><div class="fc-hero-sub">costo totale '+e(String(j.costo_totale_eur))+' € · '+e(String(j.porzioni||_fcPorzioni))+' porzioni</div></div>'
+      + (dett?'<div class="fc-sec"><div class="fc-sec-lab">Dettaglio per porzione</div>'+dett+'</div>':'')
+      + (suggRows?'<div class="fc-sec"><div class="fc-sec-lab">Prezzi di vendita suggeriti</div>'+suggRows+'</div>':'')
+      + '<div class="fc-sec"><div class="fc-sec-lab">Il tuo prezzo di vendita</div><div class="fc-prezzo-row"><input type="text" inputmode="decimal" id="fc-prezzo-input" placeholder="es. 12" oninput="_fcConPrezzo()"><span class="fc-prezzo-u">€</span></div><div class="fc-pct-esito" id="fc-pct-esito" style="display:none"></div></div>'
+      + '<div class="fc-nota">'+e(j.nota||'Prezzi orientativi ISMEA — per il costo reale coi tuoi fornitori usa Cifra.')+'</div>';
+  }
+  _apriVista('Food Cost' + (_ricettaGenCorrente&&_ricettaGenCorrente.nome?' · '+_ricettaGenCorrente.nome:''), html);
 }
 
 function caricaMenuSalvati(){

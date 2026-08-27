@@ -1906,3 +1906,27 @@ a:focus-visible,input:focus-visible{
 .rg-btn-cost{background:var(--l2,#E8EDED);color:var(--ink,#131C21)}
 .rg-btn:active{transform:scale(.98)}
 #chat-ctx-banner{display:none;background:var(--l3,#F2F6F6);border:1px solid var(--dato,#245979);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:12.5px;color:var(--dato,#245979);font-family:var(--mono,'IBM Plex Mono')}
+
+/* Pannello Food Cost (scheda ricetta) */
+.fc-loading{padding:30px 20px;text-align:center;font-family:var(--mono,'IBM Plex Mono');font-size:12px;color:var(--muted,#5A6C70)}
+.fc-hero{background:var(--ink,#131C21);border-radius:14px;padding:20px;margin-bottom:18px;text-align:center}
+.fc-hero-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7FB0C4;margin-bottom:6px}
+.fc-hero-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:42px;line-height:1;color:#5EA0C8;letter-spacing:-.02em}
+.fc-hero-sub{font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:#9DAEB2;margin-top:8px}
+.fc-sec{margin-bottom:18px}
+.fc-sec-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal,#12545D);margin-bottom:10px}
+.fc-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border,#B7C3C3);font-size:14px}
+.fc-row-n{flex:1;color:var(--ink,#131C21)}
+.fc-row-q{font-family:var(--mono,'IBM Plex Mono');font-size:12px;color:var(--muted,#5A6C70)}
+.fc-row-c{font-family:var(--mono,'IBM Plex Mono');font-size:13px;color:var(--dato,#245979);font-weight:600;min-width:56px;text-align:right}
+.fc-sugg-row{display:flex;justify-content:space-between;padding:8px 12px;background:var(--l2,#E8EDED);border-radius:8px;margin-bottom:6px}
+.fc-sugg-lab{font-size:13px;color:var(--muted,#5A6C70)}
+.fc-sugg-v{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:14px;color:var(--ink,#131C21)}
+.fc-prezzo-row{display:flex;align-items:center;gap:10px;min-height:52px;background:var(--l3,#F2F6F6);border:2px solid var(--border,#B7C3C3);border-radius:10px;padding:0 14px}
+.fc-prezzo-row:focus-within{border-color:var(--dato,#245979)}
+.fc-prezzo-row input{flex:1;border:none;background:transparent;font-family:var(--mono,'IBM Plex Mono');font-size:20px;font-weight:700;color:var(--dato,#245979);outline:none}
+.fc-prezzo-u{font-family:var(--mono,'IBM Plex Mono');font-size:15px;color:var(--muted,#5A6C70)}
+.fc-pct-esito{margin-top:12px;padding:14px;background:var(--l1,#DAE1E1);border-radius:10px;text-align:center}
+.fc-pct-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:32px;line-height:1}
+.fc-pct-lab{font-size:12px;color:var(--muted,#5A6C70);margin-top:4px}
+.fc-nota{font-size:11.5px;color:var(--muted,#5A6C70);line-height:1.5;font-style:italic;margin-top:6px}
