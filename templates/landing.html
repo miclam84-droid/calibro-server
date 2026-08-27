@@ -2,302 +2,474 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#131C21">
-<title>Matter Lab — Numeri. Non opinioni.</title>
-<meta name="description" content="Ogni tecnica del tuo mestiere ha un bersaglio misurabile. Matter te lo dà al banco, mentre lavori.">
+<title>Matter Lab — Science & Craft</title>
+<meta name="description" content="La fisica e la chimica sotto ogni gesto al banco. Per chi sa già fare e vuole capire perché.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#CBD4D4; --l1:#DAE1E1; --l2:#E8EDED; --l3:#F2F6F6; --surface:#E8EDED;
-  --ink:#131C21; --muted:rgba(19,28,33,.60); --faint:rgba(19,28,33,.38); --border:#B7C3C3; --border-2:#98A8A8;
-  --teal:#12545D; --dato:#245979; --dato-lite:#5EA0C8; --terra:#C77B3F;
-  --serif:'Space Grotesk','Inter',sans-serif; --sans:'Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+  --bg:#CBD4D4;--surface:#E8EDED;
+  --ink:#131C21;--muted:rgba(19,28,33,.58);--faint:rgba(19,28,33,.36);--border:#B7C3C3;
+  --teal:#12545D;--terra:#C77B3F;--dato:#245979;--grano:#245979;
+  --serif:'Space Grotesk','Inter',sans-serif;--sans:'Inter',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-em{font-style:italic;color:var(--teal)}
-.nav{position:sticky;top:0;z-index:50;background:rgba(203,212,212,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
-.nav-in{max-width:1080px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.n-brand{display:flex;flex-direction:column;gap:1px}
-.n-name{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1;letter-spacing:-.02em}
-.n-pay{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra)}
-.n-right{display:flex;align-items:center;gap:10px}
-.n-langs{display:flex;gap:4px}
-.n-langs button{background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)}
-.n-langs button.on{background:var(--ink);color:#EAF1F3;border-color:var(--ink)}
-.n-cta{background:var(--teal);color:#fff;font-family:var(--sans);font-weight:600;font-size:13px;padding:10px 18px;border-radius:8px;text-decoration:none;white-space:nowrap}
-.hero{padding:64px 0 56px;text-align:center}
-.h-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:26px}
-.hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(40px,8vw,68px);line-height:1.0;letter-spacing:-.04em;margin-bottom:22px}
-.hero h1 .blu{color:var(--dato)}
-.h-sub{font-size:clamp(16px,2.2vw,19px);color:var(--muted);max-width:30ch;margin:0 auto 34px;line-height:1.5}
-.h-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn-p{background:var(--teal);color:#fff;font-family:var(--sans);font-weight:600;font-size:15px;padding:16px 28px;border-radius:11px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center;gap:8px}
-.btn-s{background:transparent;color:var(--ink);font-family:var(--sans);font-weight:600;font-size:15px;padding:16px 28px;border-radius:11px;text-decoration:none;border:1.5px solid var(--border-2);min-height:56px;display:inline-flex;align-items:center}
-.h-note{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:16px;letter-spacing:.02em}
-.h-mirino{margin:44px auto 0;max-width:340px;background:var(--ink);border-radius:18px;padding:28px 24px;position:relative;overflow:hidden}
-.h-mirino::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 85% 10%,rgba(36,89,121,.22),transparent 55%)}
-.h-mirino-lab{position:relative;font-family:var(--sans);font-weight:700;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#7FB0C4;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
-.h-mirino-val{position:relative;font-family:var(--mono);font-weight:700;font-size:52px;line-height:.9;letter-spacing:-.03em;color:var(--dato-lite);text-align:center}
-.h-mirino-sub{position:relative;font-family:var(--mono);font-size:12px;color:#9DAEB2;text-align:center;margin-top:8px}
-section{padding:56px 0}
-.s-lab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.s-lab::before{content:"";width:20px;height:1.5px;background:var(--teal)}
-.s-h{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4.5vw,38px);line-height:1.08;letter-spacing:-.03em;margin-bottom:16px}
-.s-sub{font-size:17px;color:var(--muted);max-width:52ch;line-height:1.55}
-.dolore{background:var(--l1)}
-.dolore-grid{display:flex;flex-direction:column;gap:14px;margin-top:28px}
-.dolore-row{display:flex;gap:14px;align-items:flex-start;background:var(--l3);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
-.dolore-fig{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);flex:0 0 88px;padding-top:2px}
-.dolore-q{font-size:15px;color:var(--ink);line-height:1.45}
-.dolore-close{font-family:var(--serif);font-weight:600;font-size:19px;color:var(--ink);margin-top:26px;letter-spacing:-.01em}
-.dolore-close b{color:var(--dato)}
-.passi{display:flex;flex-direction:column;gap:16px;margin-top:32px}
-.passo{display:flex;gap:18px;align-items:flex-start;padding:20px;background:var(--l2);border:1px solid var(--border);border-radius:14px}
-.passo-n{font-family:var(--mono);font-weight:700;font-size:22px;color:var(--dato);flex:0 0 40px}
-.passo-h{font-family:var(--serif);font-weight:700;font-size:18px;letter-spacing:-.02em;margin-bottom:4px}
-.passo-b{font-size:14.5px;color:var(--muted);line-height:1.5}
-.dialogo{background:var(--ink);color:#fff}
-.dialogo .s-lab{color:#7FB0C4}.dialogo .s-lab::before{background:#7FB0C4}
-.dialogo .s-h{color:#fff}
-.dialogo .s-sub{color:#B7C6CB}
-.ponte{margin-top:34px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:26px 22px}
-.ponte-row{display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap}
-.ponte-box{background:var(--l2);color:var(--ink);border-radius:12px;padding:14px 18px;text-align:center;min-width:130px}
-.ponte-box .t{font-family:var(--serif);font-weight:700;font-size:16px;letter-spacing:-.02em}
-.ponte-box .d{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
-.ponte-link{flex:0 0 auto;display:flex;align-items:center;color:var(--dato-lite)}
-.ponte-link svg{width:52px;height:16px}
-.ponte-why{margin-top:18px;font-size:14.5px;color:#D5E0E4;line-height:1.55;text-align:center;max-width:46ch;margin-left:auto;margin-right:auto}
-.ponte-why b{color:var(--dato-lite);font-family:var(--mono);font-weight:600}
-.strumenti-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:32px}
-@media(min-width:640px){.strumenti-grid{grid-template-columns:1fr 1fr}}
-.strum{background:var(--l2);border:1px solid var(--border);border-radius:12px;padding:18px}
-.strum-h{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--teal);letter-spacing:.02em;margin-bottom:6px}
-.strum-b{font-size:14px;color:var(--muted);line-height:1.5}
-.prova{background:var(--l1)}
-.prova-nums{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:30px 0 20px}
-.prova-num{text-align:center}
-.prova-num .n{font-family:var(--mono);font-weight:700;font-size:clamp(30px,6vw,46px);color:var(--dato);letter-spacing:-.02em;line-height:1}
-.prova-num .l{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.04em}
-.prova-fonti{text-align:center;font-size:14px;color:var(--muted);line-height:1.6;max-width:44ch;margin:0 auto}
-.prova-fonti b{color:var(--ink);font-weight:600}
-.finale{text-align:center}
-.finale .s-h{margin-bottom:24px}
-.finale-note{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:18px;letter-spacing:.02em}
-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center}
-.foot-name{font-family:var(--serif);font-weight:700;font-size:15px}
-.foot-links{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px}
-.foot-links a{color:var(--muted);text-decoration:none}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+.n-brand{display:flex;flex-direction:column;gap:1px;}
+.n-name{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1;letter-spacing:-.02em;color:var(--ink);}
+.n-pay{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);}
+.n-cta{background:var(--teal);color:#fff;font-family:var(--sans);font-weight:500;font-size:13px;padding:9px 18px;border-radius:8px;text-decoration:none;letter-spacing:.01em;}
+
+/* HERO */
+.hero{max-width:680px;margin:0 auto;padding:96px 28px 56px;text-align:center;}
+.h-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:24px;}
+.hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(38px,6vw,64px);line-height:1.05;letter-spacing:-.03em;margin-bottom:22px;}
+.hero h1 em{font-style:italic;color:var(--teal);}
+.h-sub{font-size:clamp(15px,2vw,17px);color:var(--muted);max-width:440px;margin:0 auto 38px;line-height:1.7;}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-p{background:var(--teal);color:#fff;font-family:var(--sans);font-weight:500;font-size:15px;padding:15px 30px;border-radius:10px;text-decoration:none;letter-spacing:.01em;}
+.install-row{display:flex;flex-direction:column;align-items:center;gap:10px;margin:-20px 0 40px;}
+.btn-install{display:none;background:var(--ink,#131C21);color:#EAF1F3;font-family:var(--sans);font-weight:600;font-size:15px;padding:14px 30px;border-radius:10px;border:none;cursor:pointer;letter-spacing:.01em;}
+.btn-install:active{transform:scale(.98);}
+.install-hint{display:none;font-size:13px;color:var(--muted);max-width:340px;text-align:center;line-height:1.5;}
+.btn-p:hover{background:#245a52;}
+.btn-s{background:transparent;color:var(--ink);font-family:var(--sans);font-weight:500;font-size:15px;padding:15px 30px;border-radius:10px;text-decoration:none;border:1.5px solid var(--border);}
+.h-note{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:14px;letter-spacing:.02em;}
+
+/* APP SHELL PREVIEW */
+.preview{max-width:560px;margin:0 auto 96px;padding:0 28px;}
+.shell{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 4px 6px rgba(26,26,24,.04),0 24px 64px -20px rgba(26,26,24,.14);}
+.sh-top{background:var(--ink);padding:14px 18px 11px;display:flex;justify-content:space-between;align-items:baseline;}
+.sh-name{font-family:var(--serif);font-weight:700;font-size:16px;color:#fff;letter-spacing:-.02em;}
+.sh-pay{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);}
+.sh-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg);}
+.sh-tab{flex:1;padding:11px 6px;text-align:center;font-size:12px;color:var(--muted);font-family:var(--sans);}
+.sh-tab.on{color:var(--teal);border-bottom:2px solid var(--teal);font-weight:600;}
+.sh-body{padding:18px 16px;}
+.fen-card{background:var(--ink);border-radius:12px;padding:18px;color:#fff;margin-bottom:14px;}
+.fen-ey{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--grano);opacity:.7;margin-bottom:8px;}
+.fen-h{font-family:var(--serif);font-weight:700;font-size:17px;line-height:1.3;margin-bottom:9px;letter-spacing:-.01em;}
+.fen-b{font-size:13px;color:rgba(255,255,255,.65);line-height:1.55;margin-bottom:14px;}
+.fen-num{background:rgba(44,110,99,.25);border:1px solid rgba(44,110,99,.4);border-radius:8px;padding:10px 14px;display:flex;align-items:baseline;gap:8px;}
+.fen-n{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--grano);}
+.fen-u{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.45);}
+.disc-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;}
+.disc-r{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--ink);}
+.disc-r:last-child{border-bottom:none;}
+.disc-l{display:flex;align-items:center;gap:10px;}
+.disc-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+.disc-m{font-family:var(--mono);font-size:11px;color:var(--terra);}
+
+/* DOMANDE */
+.domande{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:88px 28px;}
+.d-in{max-width:580px;margin:0 auto;}
+.sec-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:20px;}
+.domande h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.15;letter-spacing:-.02em;margin-bottom:32px;}
+.d-list{display:flex;flex-direction:column;gap:12px;}
+.d-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;gap:14px;align-items:flex-start;}
+.d-q{font-family:var(--mono);font-size:18px;color:var(--terra);opacity:.5;line-height:1;margin-top:2px;flex-shrink:0;}
+.d-t{font-size:15px;line-height:1.55;}
+.d-t strong{font-weight:600;}
+.d-t span{display:block;font-size:13px;color:var(--muted);margin-top:5px;line-height:1.6;}
+
+/* DENTRO */
+.dentro{padding:88px 28px;max-width:860px;margin:0 auto;}
+.dentro h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4vw,38px);line-height:1.15;letter-spacing:-.02em;margin-bottom:8px;}
+.dentro-sub{font-size:15px;color:var(--muted);margin-bottom:40px;max-width:480px;line-height:1.65;}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;}
+.feat-ico{width:32px;height:32px;border-radius:8px;background:#EEF6F4;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:12px;color:var(--teal);}
+.feat-h{font-family:var(--serif);font-weight:700;font-size:16px;margin-bottom:6px;letter-spacing:-.01em;}
+.feat-b{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* LEGGE */
+.legge{background:var(--ink);color:#fff;padding:88px 28px;}
+.l-in{max-width:600px;margin:0 auto;}
+.legge .sec-lbl{color:var(--grano);opacity:.7;}
+.legge h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px;}
+.l-sub{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:36px;line-height:1.7;max-width:460px;}
+.p-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;margin-bottom:10px;}
+.p-ey{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);opacity:.8;margin-bottom:7px;}
+.p-h{font-family:var(--serif);font-weight:700;font-size:17px;margin-bottom:7px;letter-spacing:-.01em;}
+.p-b{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:12px;}
+.p-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.p-tag{font-family:var(--mono);font-size:10px;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;color:rgba(255,255,255,.55);}
+
+/* PRICING */
+.pricing{padding:88px 28px;max-width:560px;margin:0 auto;text-align:center;}
+.pricing h2{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin-bottom:8px;}
+.pr-sub{font-size:15px;color:var(--muted);margin-bottom:36px;line-height:1.65;}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+@media(max-width:480px){.plans{grid-template-columns:1fr;}}
+.plan{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 20px;text-align:left;}
+.plan.pro{background:var(--teal);border-color:var(--teal);color:#fff;}
+.pl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.plan.pro .pl{color:rgba(255,255,255,.55);}
+.pp{font-family:var(--mono);font-size:30px;font-weight:500;margin-bottom:2px;letter-spacing:-.02em;}
+.ppe{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:18px;}
+.plan.pro .ppe{color:rgba(255,255,255,.45);}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.plan li{font-size:13px;display:flex;gap:8px;align-items:flex-start;line-height:1.45;}
+.plan li::before{content:'✓';font-size:11px;color:var(--teal);margin-top:1px;flex-shrink:0;}
+.plan.pro li::before{color:var(--grano);}
+.plan li.no::before{content:'○';color:var(--faint);}
+.plan.pro li.no::before{color:rgba(255,255,255,.25);}
+.pb{display:block;text-align:center;text-decoration:none;font-family:var(--sans);font-weight:500;font-size:14px;padding:12px;border-radius:8px;background:var(--bg);color:var(--ink);border:1px solid var(--border);}
+.plan.pro .pb{background:#fff;color:var(--teal);border:none;}
+.pr-note{font-family:var(--mono);font-size:11px;color:var(--faint);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.ft-b{font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:-.01em;}
+.ft-links{display:flex;gap:20px;}
+.ft-links a{font-size:12px;color:var(--muted);text-decoration:none;}
+.ft-note{font-family:var(--mono);font-size:10px;color:var(--faint);width:100%;line-height:1.65;margin-top:6px;}
+
+@media(max-width:600px){
+  .hero{padding:60px 20px 40px;}
+  .domande,.dentro,.legge,.pricing{padding:60px 20px;}
+  nav,footer{padding:14px 20px;}
+  .preview{padding:0 20px;}
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+
 </style>
 </head>
 <body>
 
-<nav class="nav"><div class="nav-in">
-  <div class="n-brand"><span class="n-name">Matter Lab</span><span class="n-pay">Science &amp; Craft</span></div>
-  <div class="n-right">
-    <div class="n-langs">
-      <button onclick="setLang('it')" id="l-it" class="on">IT</button>
-      <button onclick="setLang('en')" id="l-en">EN</button>
-      <button onclick="setLang('es')" id="l-es">ES</button>
+<nav>
+  <div class="n-brand">
+    <span class="n-name">Matter Lab</span>
+    <span class="n-pay">Science &amp; Craft</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:flex;gap:4px">
+      <button onclick="setLang('it')" id="l-it" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">IT</button>
+      <button onclick="setLang('en')" id="l-en" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">EN</button>
+      <button onclick="setLang('es')" id="l-es" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">ES</button>
     </div>
     <a href="/app" class="n-cta" id="nav-cta">Prova gratis</a>
   </div>
-</div></nav>
+</nav>
 
-<section class="hero"><div class="wrap">
-  <span class="h-kicker" id="l-kicker">Bar · Forno · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra</span>
-  <h1 id="l-h1">Numeri. <span class="blu">Non opinioni.</span></h1>
-  <p class="h-sub" id="l-sub">Ogni tecnica del tuo mestiere ha un bersaglio misurabile. Matter te lo dà al banco, mentre lavori, per rifarlo identico domani.</p>
-  <div class="h-cta">
-    <a href="/app" class="btn-p" id="l-cta1">Smonta un fenomeno gratis →</a>
-    <a href="#metodo" class="btn-s" id="l-cta2">Come funziona</a>
+<section class="hero reveal">
+  <span class="h-kicker" id="l-kicker">Bar · Bakery · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra</span>
+  <h1 id="l-h1">Sai <em>farlo.</em><br>Ora capisci perché.</h1>
+  <p class="h-sub" id="l-sub">La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa ogni giorno.</p>
+  <div class="cta-row">
+    <a href="/app" class="btn-p" id="l-cta1">Studia gratis — nessuna carta</a>
+    <a href="#domande" class="btn-s" id="l-cta2">Come funziona</a>
   </div>
   <p class="h-note" id="l-note">5 domande in chat gratis. Nessuna registrazione per iniziare.</p>
-  <div class="h-mirino">
-    <div class="h-mirino-lab"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.6" stroke="#7FB0C4" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="#5EA0C8"/><path d="M7 0v2.2M7 11.8V14M0 7h2.2M11.8 7H14" stroke="#7FB0C4" stroke-width="1.2"/></svg> Bersaglio</div>
-    <div class="h-mirino-val">65°C</div>
-    <div class="h-mirino-sub" id="l-mirino-sub">coagulazione ovoproteina · dentro finestra</div>
-  </div>
-</div></section>
+</section>
 
-<section class="dolore"><div class="wrap">
-  <div class="s-lab" id="l-dol-lab">Il problema</div>
-  <div class="s-h" id="l-dol-h">Oggi il servizio è diverso.<br>E non sai perché.</div>
-  <div class="dolore-grid">
-    <div class="dolore-row"><div class="dolore-fig">Barman</div><div class="dolore-q" id="l-dol-1">Il ghiaccio ha diluito troppo il batch?</div></div>
-    <div class="dolore-row"><div class="dolore-fig">Cuoco</div><div class="dolore-q" id="l-dol-2">La proteina ha spurgato acqua ed è diventata dura?</div></div>
-    <div class="dolore-row"><div class="dolore-fig">Fornaio</div><div class="dolore-q" id="l-dol-3">L'impasto ha strappato in cottura?</div></div>
-  </div>
-  <div class="dolore-close" id="l-dol-close">Andare a occhio ti espone all'errore. <b>Il numero no.</b></div>
-</div></section>
-
-<section id="metodo"><div class="wrap">
-  <div class="s-lab" id="l-met-lab">Come funziona</div>
-  <div class="s-h" id="l-met-h">Dal mestiere al bersaglio, in tre gesti.</div>
-  <div class="passi">
-    <div class="passo"><div class="passo-n">1</div><div><div class="passo-h" id="l-p1h">Scegli la postazione</div><div class="passo-b" id="l-p1b">I sei canovacci del mestiere: bar, forno, cucina, gelateria, vino, locale.</div></div></div>
-    <div class="passo"><div class="passo-n">2</div><div><div class="passo-h" id="l-p2h">Inquadra il bersaglio</div><div class="passo-b" id="l-p2b">Vedi il numero che conta: la temperatura, il pH, l'idratazione. Non a occhio.</div></div></div>
-    <div class="passo"><div class="passo-n">3</div><div><div class="passo-h" id="l-p3h">Esegui al banco</div><div class="passo-b" id="l-p3b">Misura, e il Mirino ti dice se sei dentro la finestra. Blocchi il risultato.</div></div></div>
-  </div>
-</div></section>
-
-<section class="dialogo"><div class="wrap">
-  <div class="s-lab" id="l-dia-lab">La cosa unica</div>
-  <div class="s-h" id="l-dia-h">Le scienze del tuo locale si parlano.</div>
-  <div class="s-sub" id="l-dia-sub">Ogni figura ha la sua scienza. Ma il vino dialoga col piatto, il dolce chiude il menu, il drink specchia la cucina. Matter è lo strumento dove le discipline si incontrano.</div>
-  <div class="ponte">
-    <div class="ponte-row">
-      <div class="ponte-box"><div class="t">Brasato</div><div class="d">Cucina</div></div>
-      <div class="ponte-link"><svg viewBox="0 0 52 16" fill="none"><path d="M0 8h44M40 3l6 5-6 5" stroke="#5EA0C8" stroke-width="1.5"/></svg></div>
-      <div class="ponte-box"><div class="t">Barolo</div><div class="d">Vino</div></div>
+<div class="preview">
+  <div class="shell">
+    <div class="sh-top">
+      <span class="sh-name">Matter Lab</span>
+      <span class="sh-pay">Science &amp; Craft</span>
     </div>
-    <div class="ponte-why" id="l-dia-why">Il <b>tannino</b> del vino taglia il grasso del brasato. Non è opinione: è il motivo molecolare per cui quell'abbinamento funziona.</div>
+    <div class="sh-tabs">
+      <div class="sh-tab on">Scopri</div>
+      <div class="sh-tab">Lezione</div>
+      <div class="sh-tab">Mappa</div>
+      <div class="sh-tab">Chiedi</div>
+    </div>
+    <div class="sh-body">
+      <div class="fen-card">
+        <div class="fen-ey">Fenomeno · Fermentazione lattica</div>
+        <div class="fen-h">La madre matura.<br>Non la madre attiva.</div>
+        <div class="fen-b">Sembrano uguali in superficie, ma il pH le separa: a 4,1 sei nel momento giusto. A 3,6 il glutine è già indebolito dalla proteolisi acida — il pane non svilupperà in forno.</div>
+        <div class="fen-num">
+          <span class="fen-n">4,0–4,1</span>
+          <span class="fen-u">pH · finestra di utilizzo madre</span>
+        </div>
+      </div>
+      <div class="disc-lbl">Scegli la tua disciplina</div>
+      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Bar</div><span class="disc-m">26 fenomeni ›</span></div>
+      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Panificazione</div><span class="disc-m">26 fenomeni ›</span></div>
+      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Cucina</div><span class="disc-m">30 fenomeni ›</span></div>
+      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Caffè · Pasticceria · e altri</div><span class="disc-m">52 fenomeni totali ›</span></div>
+    </div>
   </div>
-</div></section>
+</div>
 
-<section><div class="wrap">
-  <div class="s-lab" id="l-str-lab">Cosa c'è dentro</div>
-  <div class="s-h" id="l-str-h">Cinque strumenti. Un metodo.</div>
-  <div class="strumenti-grid">
-    <div class="strum"><div class="strum-h">Flavour Network</div><div class="strum-b" id="l-s1">Con cosa dialoga un ingrediente, per composti aromatici condivisi. E le sorprese che funzionano davvero.</div></div>
-    <div class="strum"><div class="strum-h">Ponti tra discipline</div><div class="strum-b" id="l-s2">Vino, birra e dolce per ogni piatto. Il perché del dialogo, non solo l'abbinamento.</div></div>
-    <div class="strum"><div class="strum-h">Menu Builder</div><div class="strum-b" id="l-s3">Combina ingredienti che si parlano, dal grafo aromatico reale. Costruisci per connessioni.</div></div>
-    <div class="strum"><div class="strum-h">Strumenti di misura</div><div class="strum-b" id="l-s4">Cosa ti serve al banco per ogni mestiere: strumento, bersaglio, prezzo.</div></div>
-    <div class="strum"><div class="strum-h">Creatività Bar</div><div class="strum-b" id="l-s5">Parti dal distillato: carattere aromatico, con cosa dialoga, spunti per creare.</div></div>
+<section class="domande reveal" id="domande">
+  <div class="d-in">
+    <span class="sec-lbl">Le domande che ti porti al banco da anni</span>
+    <h2>Non è la ricetta che cambia.<br>È la fisica sotto.</h2>
+    <div class="d-list">
+      <div class="d-item">
+        <span class="d-q">?</span>
+        <div class="d-t">
+          <strong>Il tuo whiskey sour ha un sapore diverso ogni sera.</strong>
+          <span>Stessa ricetta, stesso lime. Il pH del lime varia di quasi un punto tra lotti diversi. Un punto di pH è sei volte più acido. E la diluizione dello shake cambia con il ghiaccio.</span>
+        </div>
+      </div>
+      <div class="d-item">
+        <span class="d-q">?</span>
+        <div class="d-t">
+          <strong>L'impasto d'estate fermenta in metà tempo.</strong>
+          <span>Ogni 8°C in più, il lievito lavora il doppio. Si chiama Q10 — la stessa equazione governa il cold brew, la pastorizzazione e la cella di lievitazione.</span>
+        </div>
+      </div>
+      <div class="d-item">
+        <span class="d-q">?</span>
+        <div class="d-t">
+          <strong>La ganache si separa sempre quando la riscaldi.</strong>
+          <span>Sopra i 40°C la fase grassa si separa. Sopra i 55°C le proteine del siero si denaturano e l'emulsione non torna. Il numero governa tutto.</span>
+        </div>
+      </div>
+    </div>
   </div>
-</div></section>
+</section>
 
-<section class="prova"><div class="wrap">
-  <div class="s-lab" id="l-pro-lab" style="justify-content:center">Dati reali. Fonti incontestabili.</div>
-  <div class="prova-nums">
-    <div class="prova-num"><div class="n">148</div><div class="l" id="l-pn1">fenomeni scientifici</div></div>
-    <div class="prova-num"><div class="n">2.873</div><div class="l" id="l-pn2">ingredienti mappati</div></div>
-    <div class="prova-num"><div class="n">38.000</div><div class="l" id="l-pn3">connessioni molecolari</div></div>
+<section class="dentro reveal">
+  <span class="sec-lbl">Cosa c'è dentro</span>
+  <h2>3.005 nodi. 52 fenomeni.<br>Un grafo di conoscenza F&B.</h2>
+  <p class="dentro-sub">Funziona nel browser, si installa come app. Nessun App Store necessario.</p>
+  <div class="install-row" id="install-row">
+    <button class="btn-install" id="btn-install" onclick="installaApp()">Installa l'app</button>
+    <span class="install-hint" id="install-hint"></span>
   </div>
-  <div class="prova-fonti" id="l-pro-fonti">Ogni numero-bersaglio è estratto da database governativi e accademici verificati: <b>PubChem (NIH)</b>, <b>Ahn 2011 (Nature)</b>, <b>USDA</b>.</div>
-</div></section>
+  <div class="feat-grid">
+    <div class="feat reveal reveal-delay-1">
+      <div class="feat-ico">◎</div>
+      <div class="feat-h">Scopri</div>
+      <div class="feat-b">Il fenomeno del giorno dalla tua disciplina. Un principio fisico o chimico con il numero-bersaglio misurabile al banco.</div>
+    </div>
+    <div class="feat reveal reveal-delay-2">
+      <div class="feat-ico">✎</div>
+      <div class="feat-h">Lezione</div>
+      <div class="feat-b">Percorso strutturato per fenomeno. Scheda, numero bersaglio, principio fisico, quiz generato da AI. Si avanza passo per passo.</div>
+    </div>
+    <div class="feat reveal reveal-delay-3">
+      <div class="feat-ico">⊞</div>
+      <div class="feat-h">Flavor Network</div>
+      <div class="feat-b">Abbinamenti per composti aromatici condivisi (dataset Ahn 2011). E abbinamenti per contrasto fisico-percettivo: acido/grasso, dolce/amaro.</div>
+    </div>
+    <div class="feat reveal reveal-delay-4">
+      <div class="feat-ico">◻</div>
+      <div class="feat-h">Chiedi</div>
+      <div class="feat-b">Chat AI che naviga il grafo. Risposta ancorata alla fisica, non alle opinioni. Con calcolatori deterministici: sour, diluizione, Q10, TDS caffè.</div>
+    </div>
+  </div>
+</section>
 
-<section class="finale"><div class="wrap">
-  <div class="s-h" id="l-fin-h">Inizia a misurare gratis, oggi.</div>
-  <a href="/app" class="btn-p" id="l-fin-cta">Smonta un fenomeno gratis →</a>
-  <div class="finale-note" id="l-fin-note">Lancio ufficiale della versione Pro: Dicembre 2026.</div>
-</div></section>
+<section class="legge">
+  <div class="l-in">
+    <span class="sec-lbl">La legge sotto</span>
+    <h2>La stessa fisica<br>in stanze diverse.</h2>
+    <p class="l-sub">La fermentazione del pane, l'estrazione del caffè, la carbonatazione di un cocktail — non sono mestieri separati. Seguono le stesse leggi. Matter Lab le mostra tutte.</p>
+    <div class="p-card">
+      <div class="p-ey">Principio · kT</div>
+      <div class="p-h">Energia termica — Boltzmann</div>
+      <div class="p-b">La temperatura non è caldo o freddo: è la misura di quanto le molecole si agitano. Più si agitano, più si urtano, più ogni reazione corre — l'estrazione, la fermentazione, il gas che resta in un liquido, la regola del +10°C. Una sola causa, quattro mestieri.</div>
+      <div class="p-tags">
+        <span class="p-tag">Fermentazione</span>
+        <span class="p-tag">Estrazione caffè</span>
+        <span class="p-tag">Carbonatazione</span>
+        <span class="p-tag">Cristallizzazione</span>
+      </div>
+    </div>
+    <div class="p-card">
+      <div class="p-ey">Flavor Network · Ahn 2011</div>
+      <div class="p-h">Abbinamenti per composti aromatici condivisi</div>
+      <div class="p-b">Whiskey e Jamaican Rum condividono 79 composti. Cioccolato e caffè 73. Lime e coriandolo la stessa famiglia di terpeni. La scienza che permette di creare, non solo di replicare.</div>
+      <div class="p-tags">
+        <span class="p-tag">whiskey + rum (79 composti)</span>
+        <span class="p-tag">caffè + cardamomo</span>
+        <span class="p-tag">lime + coriandolo</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-<footer><div class="wrap">
-  <div class="foot-name">Matter Lab</div>
-  <div class="foot-links"><a href="/app">App</a> · <a href="#metodo">Come funziona</a> · Science &amp; Craft</div>
-</div></footer>
+<section class="pricing" id="pricing">
+  <span class="sec-lbl">Inizia gratis</span>
+  <h2>Nessuna carta.<br>Studia subito.</h2>
+  <p class="pr-sub">Entra, scegli la disciplina, usa le 5 chat di prova. Passi a Pro quando vuoi tutto illimitato.</p>
+  <div class="plans">
+    <div class="plan">
+      <div class="pl">Free — sempre</div>
+      <div class="pp">€0</div>
+      <div class="ppe">nessuna scadenza</div>
+      <ul>
+        <li>Fenomeno del giorno</li>
+        <li>Prima lezione per ogni disciplina</li>
+        <li>5 chat di prova al primo accesso</li>
+        <li class="no">Chat illimitata</li>
+        <li class="no">Flavor Network interattivo</li>
+        <li class="no">Quaderno misure fisiche</li>
+        <li class="no">Sicurezza alimentare</li>
+      </ul>
+      <a href="/app" class="pb">Inizia gratis</a>
+    </div>
+    <div class="plan pro">
+      <div class="pl">Pro</div>
+      <div class="pp">€11,99</div>
+      <div class="ppe">al mese · o €89,99/anno</div>
+      <ul>
+        <li>Tutte le lezioni complete</li>
+        <li>Chat illimitata con calcolatori</li>
+        <li>Flavor Network interattivo</li>
+        <li>Abbinamenti per contrasto</li>
+        <li>Quaderno misure fisiche</li>
+        <li>Sicurezza alimentare Pro</li>
+        <li>IT + EN</li>
+      </ul>
+      <a href="/app" class="pb">Prova 7 giorni gratis</a>
+    </div>
+  </div>
+  <p class="pr-note">Stripe · cancelli quando vuoi · primi 100 utenti a €7,99/mese</p>
+</section>
+
+<footer>
+  <span class="ft-b">Matter Lab</span>
+  <div class="ft-links">
+    <a href="/privacy">Privacy</a>
+    <a href="/termini">Termini</a>
+    <a href="/cookie-policy">Cookie Policy</a>
+    <a href="/trust">Trust Center</a>
+    <a href="/come-funziona-ai">AI</a>
+  </div>
+  <p class="ft-note">Matter Lab usa intelligenza artificiale per navigare il grafo di conoscenza F&B. Stai interagendo con un sistema AI — art. 50 EU AI Act. Le risposte sono generate da Anthropic/Mistral e possono contenere errori.</p>
+</footer>
+
 
 <script>
 var _TEXTS = {
   it: {
-    navcta:"Prova gratis", kicker:"Bar · Forno · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra",
-    h1:'Numeri. <span class="blu">Non opinioni.</span>',
-    sub:"Ogni tecnica del tuo mestiere ha un bersaglio misurabile. Matter te lo dà al banco, mentre lavori, per rifarlo identico domani.",
-    cta1:"Smonta un fenomeno gratis →", cta2:"Come funziona", note:"5 domande in chat gratis. Nessuna registrazione per iniziare.",
-    mirinoSub:"coagulazione ovoproteina · dentro finestra",
-    dolLab:"Il problema", dolH:"Oggi il servizio è diverso.<br>E non sai perché.",
-    dol1:"Il ghiaccio ha diluito troppo il batch?", dol2:"La proteina ha spurgato acqua ed è diventata dura?", dol3:"L'impasto ha strappato in cottura?",
-    dolClose:'Andare a occhio ti espone all\'errore. <b>Il numero no.</b>',
-    metLab:"Come funziona", metH:"Dal mestiere al bersaglio, in tre gesti.",
-    p1h:"Scegli la postazione", p1b:"I sei canovacci del mestiere: bar, forno, cucina, gelateria, vino, locale.",
-    p2h:"Inquadra il bersaglio", p2b:"Vedi il numero che conta: la temperatura, il pH, l'idratazione. Non a occhio.",
-    p3h:"Esegui al banco", p3b:"Misura, e il Mirino ti dice se sei dentro la finestra. Blocchi il risultato.",
-    diaLab:"La cosa unica", diaH:"Le scienze del tuo locale si parlano.",
-    diaSub:"Ogni figura ha la sua scienza. Ma il vino dialoga col piatto, il dolce chiude il menu, il drink specchia la cucina. Matter è lo strumento dove le discipline si incontrano.",
-    diaWhy:'Il <b>tannino</b> del vino taglia il grasso del brasato. Non è opinione: è il motivo molecolare per cui quell\'abbinamento funziona.',
-    strLab:"Cosa c'è dentro", strH:"Cinque strumenti. Un metodo.",
-    s1:"Con cosa dialoga un ingrediente, per composti aromatici condivisi. E le sorprese che funzionano davvero.",
-    s2:"Vino, birra e dolce per ogni piatto. Il perché del dialogo, non solo l'abbinamento.",
-    s3:"Combina ingredienti che si parlano, dal grafo aromatico reale. Costruisci per connessioni.",
-    s4:"Cosa ti serve al banco per ogni mestiere: strumento, bersaglio, prezzo.",
-    s5:"Parti dal distillato: carattere aromatico, con cosa dialoga, spunti per creare.",
-    proLab:"Dati reali. Fonti incontestabili.", pn1:"fenomeni scientifici", pn2:"ingredienti mappati", pn3:"connessioni molecolari",
-    proFonti:'Ogni numero-bersaglio è estratto da database governativi e accademici verificati: <b>PubChem (NIH)</b>, <b>Ahn 2011 (Nature)</b>, <b>USDA</b>.',
-    finH:"Inizia a misurare gratis, oggi.", finCta:"Smonta un fenomeno gratis →", finNote:"Lancio ufficiale della versione Pro: Dicembre 2026."
+    kicker: "Bar · Bakery · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra",
+    h1: "Sai <em>farlo.</em><br>Ora capisci perché.",
+    sub: "La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa ogni giorno.",
+    cta1: "Studia gratis — nessuna carta",
+    cta2: "Come funziona",
+    note: "5 domande in chat gratis. Nessuna registrazione per iniziare.",
+    navcta: "Prova gratis"
   },
   en: {
-    navcta:"Try free", kicker:"Bar · Bakery · Kitchen · Coffee · Pastry · Gelato · Wine · Beer",
-    h1:'Numbers. <span class="blu">Not opinions.</span>',
-    sub:"Every technique in your craft has a measurable target. Matter gives it to you at the counter, while you work, to nail it again tomorrow.",
-    cta1:"Break down a phenomenon free →", cta2:"How it works", note:"5 free chat questions. No registration to start.",
-    mirinoSub:"egg-protein coagulation · in window",
-    dolLab:"The problem", dolH:"Today's service is different.<br>And you don't know why.",
-    dol1:"Did the ice over-dilute the batch?", dol2:"Did the protein weep water and turn tough?", dol3:"Did the dough tear in the oven?",
-    dolClose:'Going by eye exposes you to error. <b>The number doesn\'t.</b>',
-    metLab:"How it works", metH:"From craft to target, in three moves.",
-    p1h:"Pick your station", p1b:"The six canvases of the craft: bar, bakery, kitchen, gelato, wine, venue.",
-    p2h:"Frame the target", p2b:"See the number that matters: temperature, pH, hydration. Not by eye.",
-    p3h:"Execute at the counter", p3b:"Measure, and the Sight tells you if you're in the window. Lock the result.",
-    diaLab:"The unique part", diaH:"The sciences of your venue talk to each other.",
-    diaSub:"Each figure has its own science. But wine dialogues with the dish, dessert closes the menu, the drink mirrors the kitchen. Matter is where the disciplines meet.",
-    diaWhy:'The wine\'s <b>tannin</b> cuts the braise\'s fat. Not opinion: the molecular reason that pairing works.',
-    strLab:"What's inside", strH:"Five tools. One method.",
-    s1:"What an ingredient dialogues with, by shared aroma compounds. And the surprises that actually work.",
-    s2:"Wine, beer and dessert for every dish. The why of the dialogue, not just the pairing.",
-    s3:"Combine ingredients that talk, from the real aroma graph. Build by connections.",
-    s4:"What you need at the counter for each craft: tool, target, price.",
-    s5:"Start from the spirit: aromatic character, what it dialogues with, prompts to create.",
-    proLab:"Real data. Unquestionable sources.", pn1:"scientific phenomena", pn2:"mapped ingredients", pn3:"molecular connections",
-    proFonti:'Every target number is extracted from verified government and academic databases: <b>PubChem (NIH)</b>, <b>Ahn 2011 (Nature)</b>, <b>USDA</b>.',
-    finH:"Start measuring free, today.", finCta:"Break down a phenomenon free →", finNote:"Official Pro launch: December 2026."
+    kicker: "Bar · Bakery · Kitchen · Coffee · Pastry · Gelato · Wine · Beer",
+    h1: "You know <em>how.</em><br>Now understand why.",
+    sub: "The physics and chemistry behind every professional gesture. For those who already have years of craft and want to understand the laws governing what they do every day.",
+    cta1: "Study free — no credit card",
+    cta2: "How it works",
+    note: "5 free chat questions. No registration to start.",
+    navcta: "Try free"
   },
   es: {
-    navcta:"Probar gratis", kicker:"Bar · Panadería · Cocina · Café · Pastelería · Heladería · Vino · Cerveza",
-    h1:'Números. <span class="blu">No opiniones.</span>',
-    sub:"Cada técnica de tu oficio tiene un objetivo medible. Matter te lo da en la barra, mientras trabajas, para repetirlo idéntico mañana.",
-    cta1:"Desmonta un fenómeno gratis →", cta2:"Cómo funciona", note:"5 preguntas de chat gratis. Sin registro para empezar.",
-    mirinoSub:"coagulación de la ovoproteína · dentro de la ventana",
-    dolLab:"El problema", dolH:"Hoy el servicio es distinto.<br>Y no sabes por qué.",
-    dol1:"¿El hielo diluyó demasiado el batch?", dol2:"¿La proteína soltó agua y quedó dura?", dol3:"¿La masa se rasgó en el horno?",
-    dolClose:'Ir a ojo te expone al error. <b>El número no.</b>',
-    metLab:"Cómo funciona", metH:"Del oficio al objetivo, en tres gestos.",
-    p1h:"Elige el puesto", p1b:"Los seis lienzos del oficio: bar, panadería, cocina, heladería, vino, local.",
-    p2h:"Enfoca el objetivo", p2b:"Mira el número que cuenta: temperatura, pH, hidratación. No a ojo.",
-    p3h:"Ejecuta en la barra", p3b:"Mide, y la Mira te dice si estás dentro de la ventana. Fijas el resultado.",
-    diaLab:"Lo único", diaH:"Las ciencias de tu local se hablan.",
-    diaSub:"Cada figura tiene su ciencia. Pero el vino dialoga con el plato, el postre cierra el menú, el trago refleja la cocina. Matter es donde las disciplinas se encuentran.",
-    diaWhy:'El <b>tanino</b> del vino corta la grasa del estofado. No es opinión: es el motivo molecular por el que ese maridaje funciona.',
-    strLab:"Qué hay dentro", strH:"Cinco herramientas. Un método.",
-    s1:"Con qué dialoga un ingrediente, por compuestos aromáticos compartidos. Y las sorpresas que funcionan de verdad.",
-    s2:"Vino, cerveza y postre para cada plato. El porqué del diálogo, no solo el maridaje.",
-    s3:"Combina ingredientes que se hablan, desde el grafo aromático real. Construye por conexiones.",
-    s4:"Lo que necesitas en la barra para cada oficio: herramienta, objetivo, precio.",
-    s5:"Parte del destilado: carácter aromático, con qué dialoga, ideas para crear.",
-    proLab:"Datos reales. Fuentes incuestionables.", pn1:"fenómenos científicos", pn2:"ingredientes mapeados", pn3:"conexiones moleculares",
-    proFonti:'Cada número objetivo se extrae de bases de datos gubernamentales y académicas verificadas: <b>PubChem (NIH)</b>, <b>Ahn 2011 (Nature)</b>, <b>USDA</b>.',
-    finH:"Empieza a medir gratis, hoy.", finCta:"Desmonta un fenómeno gratis →", finNote:"Lanzamiento oficial de la versión Pro: Diciembre 2026."
+    kicker: "Bar · Panadería · Cocina · Café · Pastelería · Heladería · Vino · Cerveza",
+    h1: "Sabes <em>hacerlo.</em><br>Ahora entiende por qué.",
+    sub: "La física y la química detrás de cada gesto profesional. Para quienes ya tienen años de oficio y quieren entender las leyes que gobiernan lo que hacen cada día.",
+    cta1: "Estudia gratis — sin tarjeta",
+    cta2: "Cómo funciona",
+    note: "5 preguntas de chat gratis. Sin registro para empezar.",
+    navcta: "Probar gratis"
   }
 };
-var _lang = 'it';
-try{ _lang = localStorage.getItem('ml_lang_landing') || 'it'; }catch(e){}
-if(!_TEXTS[_lang]) _lang='it';
-function _set(id,html){ var el=document.getElementById(id); if(el) el.innerHTML=html; }
-function setLang(l){
-  if(!_TEXTS[l]) return;
-  _lang=l;
-  try{ localStorage.setItem('ml_lang_landing', l); }catch(e){}
-  document.documentElement.lang=l;
-  ['it','en','es'].forEach(function(x){ var b=document.getElementById('l-'+x); if(b) b.classList.toggle('on', x===l); });
-  var t=_TEXTS[l];
-  _set('nav-cta',t.navcta); _set('l-kicker',t.kicker); _set('l-h1',t.h1); _set('l-sub',t.sub);
-  _set('l-cta1',t.cta1); _set('l-cta2',t.cta2); _set('l-note',t.note); _set('l-mirino-sub',t.mirinoSub);
-  _set('l-dol-lab',t.dolLab); _set('l-dol-h',t.dolH); _set('l-dol-1',t.dol1); _set('l-dol-2',t.dol2); _set('l-dol-3',t.dol3); _set('l-dol-close',t.dolClose);
-  _set('l-met-lab',t.metLab); _set('l-met-h',t.metH);
-  _set('l-p1h',t.p1h); _set('l-p1b',t.p1b); _set('l-p2h',t.p2h); _set('l-p2b',t.p2b); _set('l-p3h',t.p3h); _set('l-p3b',t.p3b);
-  _set('l-dia-lab',t.diaLab); _set('l-dia-h',t.diaH); _set('l-dia-sub',t.diaSub); _set('l-dia-why',t.diaWhy);
-  _set('l-str-lab',t.strLab); _set('l-str-h',t.strH);
-  _set('l-s1',t.s1); _set('l-s2',t.s2); _set('l-s3',t.s3); _set('l-s4',t.s4); _set('l-s5',t.s5);
-  _set('l-pro-lab',t.proLab); _set('l-pn1',t.pn1); _set('l-pn2',t.pn2); _set('l-pn3',t.pn3); _set('l-pro-fonti',t.proFonti);
-  _set('l-fin-h',t.finH); _set('l-fin-cta',t.finCta); _set('l-fin-note',t.finNote);
+var _lang = localStorage.getItem('ml_lang_landing') || 'it';
+if(!_TEXTS[_lang]) _lang = 'it';
+
+function setLang(l) {
+  _lang = l;
+  localStorage.setItem('ml_lang_landing', l);
+  var t = _TEXTS[l];
+  document.getElementById('l-kicker').textContent = t.kicker;
+  document.getElementById('l-h1').innerHTML = t.h1;
+  document.getElementById('l-sub').textContent = t.sub;
+  document.getElementById('l-cta1').textContent = t.cta1;
+  document.getElementById('l-cta2').textContent = t.cta2;
+  document.getElementById('l-note').textContent = t.note;
+  document.getElementById('nav-cta').textContent = t.navcta;
+  ['it','en','es'].forEach(function(x){
+    var btn = document.getElementById('l-'+x);
+    if(btn) btn.style.background = x===l ? 'var(--teal)' : 'transparent';
+    if(btn) btn.style.color = x===l ? '#fff' : 'var(--ink)';
+    if(btn) btn.style.borderColor = x===l ? 'var(--teal)' : 'var(--border)';
+  });
 }
 setLang(_lang);
+</script>
+
+<script>
+(function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');}});
+  },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
+
+// ─── Installa l'app (PWA) ───
+(function(){
+  var deferredPrompt = null;
+  var btn = document.getElementById('btn-install');
+  var hint = document.getElementById('install-hint');
+  var row = document.getElementById('install-row');
+  if(!btn) return;
+
+  // già installata (standalone)? nascondo tutto
+  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if(isStandalone){ if(row) row.style.display='none'; return; }
+
+  // iOS Safari non supporta beforeinstallprompt → istruzioni manuali
+  var ua = window.navigator.userAgent.toLowerCase();
+  var isIOS = /iphone|ipad|ipod/.test(ua);
+  var isSafari = isIOS && !/crios|fxios|edgios/.test(ua);
+
+  // Chrome/Edge/Android: cattura l'evento
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    btn.style.display = '';
+  });
+
+  // se dopo l'installazione
+  window.addEventListener('appinstalled', function(){
+    if(row) row.style.display='none';
+  });
+
+  if(isIOS){
+    // su iOS il pulsante mostra le istruzioni (niente prompt automatico)
+    btn.style.display = '';
+    window.installaApp = function(){
+      if(hint){
+        hint.textContent = isSafari
+          ? 'Tocca Condividi ⎋ in basso, poi "Aggiungi a schermata Home".'
+          : 'Apri questa pagina in Safari, poi Condividi → "Aggiungi a schermata Home".';
+        hint.style.display = 'block';
+      }
+    };
+  } else {
+    // Android/desktop: se l'evento non è ancora arrivato, il pulsante resta visibile
+    // e al click proviamo comunque; se non c'è prompt, diamo istruzioni generiche
+    btn.style.display = '';
+    window.installaApp = function(){
+      if(deferredPrompt){
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choice){
+          if(choice.outcome === 'accepted' && row){ row.style.display='none'; }
+          deferredPrompt = null;
+        });
+      } else if(hint){
+        hint.textContent = 'Nel menu del browser (⋮) scegli "Installa app" o "Aggiungi a schermata Home".';
+        hint.style.display = 'block';
+      }
+    };
+  }
+})();
 </script>
 </body>
 </html>
