@@ -779,11 +779,15 @@ if('serviceWorker' in navigator){
     </div>
     <!-- PANNELLO MISURE -->
     <div id="quad-pane-misure">
-      <div class="quad-empty" id="quad-empty" style="display:none">
-        <b id="ct-quad-empty-title">Nessun esperimento salvato</b>
-        <span id="ct-quad-empty-sub">Usa i calcolatori e salva le tue misure fisiche qui.</span>
+      <div class="misure-header" id="misure-header" style="display:none">
+        <span class="misure-tot-n" id="misure-tot-n">0</span>
+        <span class="misure-tot-lab">misure salvate al banco</span>
       </div>
-      <div class="quad-list" id="quad-list"></div>
+      <div class="quad-empty" id="quad-misure-empty" style="display:none">
+        <b>Nessuna misura salvata</b>
+        <span>Quando misuri al banco, salva il valore: qui vedi come cambia nel tempo.</span>
+      </div>
+      <div class="misure-list" id="misure-list"></div>
     </div>
     <!-- PANNELLO MENÙ -->
     <div id="quad-pane-menu" style="display:none">

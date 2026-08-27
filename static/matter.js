@@ -1019,7 +1019,8 @@ async function fissaMisura(btn){
     } else {
       esitoCls='fuori'; esitoTxt='Misura salvata.'; statoBadge='';
     }
-    esito.innerHTML = '<div class="s-misura-out '+esitoCls+'">'+esitoTxt+'</div>'+(statoBadge?'<div class="s-stato-badge '+esitoCls+'">'+statoBadge+'</div>':'');
+    esito.innerHTML = '<div class="s-misura-out '+esitoCls+'">'+esitoTxt+'</div>'+(statoBadge?'<div class="s-stato-badge '+esitoCls+'">'+statoBadge+'</div>':'')
+      + '<button class="s-salva-misura" onclick="apriSalvaMisura(\''+String(fen||'').replace(/'/g,"\\'")+'\',\''+String(target||'').replace(/'/g,"\\'")+'\',\''+String(unita||'').replace(/'/g,"\\'")+'\')">Salva questa misura nel Quaderno</button>';
     // evento interno: l'Atlante, se montato, ricarica e riaccende il Mirino
     try{ window.dispatchEvent(new CustomEvent('measurement_saved',{detail:{fenomeno:fen}})); }catch(e){}
     // invalida la cache mappa così alla riapertura lo stato è fresco
@@ -2862,6 +2863,84 @@ function switchQuaderno(vista){
   var tr=document.getElementById('qtg-ricette'); if(tr) tr.classList.toggle('active', vista==='ricette');
   if(vista==='menu') caricaMenuSalvati();
   if(vista==='ricette') caricaLeMieRicette();
+  if(vista==='misure') caricaStoricoMisure();
+}
+
+// ═══ STORICO MISURE — "Le mie misure" (cuore della retention) ═══
+async function caricaStoricoMisure(){
+  var list=document.getElementById('misure-list');
+  var empty=document.getElementById('quad-misure-empty');
+  var header=document.getElementById('misure-header');
+  if(!list) return;
+  list.innerHTML='<div class="quad-loading">Carico le tue misure…</div>';
+  try{
+    var r=await fetch('/v1/misure/storico', {headers:_statoHeaders()});
+    var j=await r.json();
+    var fen=j.fenomeni||[];
+    if(header){ document.getElementById('misure-tot-n').textContent = j.totale_misure||0; header.style.display = fen.length?'':'none'; }
+    if(!fen.length){ list.innerHTML=''; if(empty) empty.style.display=''; return; }
+    if(empty) empty.style.display='none';
+    list.innerHTML=fen.map(function(f){
+      var e=_escV;
+      return '<div class="misura-card" onclick="apriStoricoFenomeno(\''+e(String(f.fenomeno)).replace(/'/g,"\\'")+'\')">'
+        + '<div class="misura-card-main"><div class="misura-card-nome">'+e(f.fenomeno)+'</div>'
+        + '<div class="misura-card-meta">'+(f.n_misure||0)+' misure</div></div>'
+        + '<div class="misura-card-val">'+e(String(f.ultimo_valore||''))+(f.unita?'<span class="misura-card-u">'+e(f.unita)+'</span>':'')+'</div>'
+        + '</div>';
+    }).join('');
+  }catch(e){
+    list.innerHTML='<div class="quad-empty"><b>Non riesco a caricare le misure</b><span>Riprova tra poco.</span></div>';
+  }
+}
+async function apriStoricoFenomeno(fenomeno){
+  _apriVista(fenomeno, '<div class="quad-loading">Carico lo storico…</div>');
+  try{
+    var r=await fetch('/v1/misure/storico?fenomeno='+encodeURIComponent(fenomeno), {headers:_statoHeaders()});
+    var j=await r.json();
+    var e=_escV;
+    var serie=j.serie||[];
+    var ev=j.evoluzione;
+    var html='';
+    if(ev && ev.da!=null && ev.a!=null){
+      html+='<div class="ev-box"><div class="ev-lab">La tua evoluzione</div><div class="ev-val">'+e(String(ev.da))+(ev.unita?e(ev.unita):'')+' <span class="ev-arr">→</span> '+e(String(ev.a))+(ev.unita?e(ev.unita):'')+'</div><div class="ev-sub">'+(ev.n_misure||serie.length)+' misure nel tempo</div></div>';
+    }
+    html+='<div class="serie-lab">Tutte le misure</div>';
+    html+=serie.map(function(m){
+      var data='';
+      try{ var d=new Date(m.data); data=d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'}); }catch(x){}
+      return '<div class="serie-row"><div class="serie-val">'+e(String(m.valore))+(m.unita?e(m.unita):'')+'</div>'
+        + '<div class="serie-info">'+(m.bersaglio?'<span class="serie-bers">bersaglio '+e(m.bersaglio)+'</span>':'')+(m.nota?'<span class="serie-nota">'+e(m.nota)+'</span>':'')+'</div>'
+        + '<div class="serie-data">'+data+'</div></div>';
+    }).join('');
+    var body=document.getElementById('vista-body'); if(body) body.innerHTML=html;
+  }catch(e){
+    var body=document.getElementById('vista-body'); if(body) body.innerHTML='<div class="quad-empty"><b>Errore</b><span>Riprova.</span></div>';
+  }
+}
+// Salva una misura (dal Mirino/chat/scheda fenomeno)
+function apriSalvaMisura(fenomeno, bersaglio, unita){
+  _salvaMisuraCtx = {fenomeno:fenomeno||'', bersaglio:bersaglio||'', unita:unita||''};
+  var e=_escV;
+  _apriVista('Salva la tua misura',
+    '<div class="sm-intro">Hai misurato <b>'+e(fenomeno||'un valore')+'</b>'+(bersaglio?' (bersaglio '+e(bersaglio)+')':'')+'. Salva quello che hai letto: vedrai come cambia nel tempo.</div>'
+    + '<div class="sm-field"><label>Il valore che hai misurato</label><div class="sm-val-row"><input type="text" inputmode="decimal" id="sm-valore" placeholder="es. 24"><span class="sm-u">'+e(unita||'')+'</span></div></div>'
+    + '<div class="sm-field"><label>Nota (facoltativa)</label><input type="text" id="sm-nota" placeholder="es. impasto brioche"></div>'
+    + '<button class="rg-btn rg-btn-salva" style="width:100%" onclick="_salvaMisura()">Salva nel Quaderno</button>');
+  setTimeout(function(){ var i=document.getElementById('sm-valore'); if(i) i.focus(); }, 200);
+}
+var _salvaMisuraCtx = {};
+async function _salvaMisura(){
+  var valore=(document.getElementById('sm-valore')||{}).value||'';
+  var nota=(document.getElementById('sm-nota')||{}).value||'';
+  if(!valore.trim()){ _toast('Inserisci il valore misurato'); return; }
+  var ctx=_salvaMisuraCtx||{};
+  try{
+    var r=await fetch('/v1/misure/salva', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({fenomeno:ctx.fenomeno||'Misura', valore:valore.trim(), unita:ctx.unita||'', bersaglio:ctx.bersaglio||'', nota:nota.trim()})});
+    var j=await r.json();
+    if(j && j.ok){ _toast('✓ Misura salvata nel Quaderno'); chiudiVista(); }
+    else { _toast('Non riuscita, riprova'); }
+  }catch(e){ _toast('Non riuscita, riprova'); }
 }
 
 // Carica "Le mie ricette" salvate (FLUSSO 1)

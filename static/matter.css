@@ -2060,3 +2060,40 @@ a:focus-visible,input:focus-visible{
 .prezzo-btn:active{transform:scale(.98)}
 .prezzi-free-nota{margin-top:18px;font-size:12px;color:var(--muted,#5A6C70);text-align:center;line-height:1.5}
 .pw-founding-count{display:inline-block;margin-top:6px;font-family:var(--mono,'IBM Plex Mono');font-size:12px;font-weight:700;color:var(--terra,#C77B3F)}
+
+/* ═══ STORICO MISURE — "Le mie misure" (retention) ═══ */
+.misure-header{display:flex;align-items:baseline;gap:8px;padding:14px 16px;background:var(--ink,#131C21);border-radius:12px;margin-bottom:14px}
+.misure-tot-n{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:28px;color:#5EA0C8;line-height:1}
+.misure-tot-lab{font-size:13px;color:#9DAEB2}
+.misura-card{display:flex;align-items:center;gap:12px;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;padding:15px 16px;margin-bottom:10px;cursor:pointer}
+.misura-card:active{transform:scale(.99)}
+.misura-card-main{flex:1}
+.misura-card-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--ink,#131C21);margin-bottom:2px}
+.misura-card-meta{font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:var(--muted,#5A6C70)}
+.misura-card-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:20px;color:var(--dato,#245979)}
+.misura-card-u{font-size:13px;margin-left:2px}
+/* evoluzione (il momento di valore) */
+.ev-box{background:linear-gradient(135deg,#12545D,#0d3d44);border-radius:14px;padding:20px;text-align:center;margin-bottom:20px}
+.ev-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7FC5D0;margin-bottom:10px}
+.ev-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:30px;color:#fff;line-height:1}
+.ev-arr{color:#5EBCC8;margin:0 6px}
+.ev-sub{font-size:12px;color:#9DC5CC;margin-top:8px}
+.serie-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal,#12545D);margin-bottom:10px}
+.serie-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border,#B7C3C3)}
+.serie-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:17px;color:var(--dato,#245979);min-width:64px}
+.serie-info{flex:1;display:flex;flex-direction:column;gap:2px}
+.serie-bers{font-family:var(--mono,'IBM Plex Mono');font-size:10px;color:var(--muted,#5A6C70)}
+.serie-nota{font-size:12.5px;color:var(--ink,#131C21)}
+.serie-data{font-family:var(--mono,'IBM Plex Mono');font-size:11px;color:var(--muted,#5A6C70)}
+/* form salva misura */
+.sm-intro{font-size:14px;color:var(--ink-muted,#3D4A50);line-height:1.55;margin-bottom:18px}
+.sm-field{margin-bottom:14px}
+.sm-field label{display:block;font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal,#12545D);margin-bottom:6px}
+.sm-val-row{display:flex;align-items:center;gap:10px;min-height:52px;background:var(--l3,#F2F6F6);border:2px solid var(--border,#B7C3C3);border-radius:10px;padding:0 14px}
+.sm-val-row:focus-within{border-color:var(--dato,#245979)}
+.sm-val-row input{flex:1;border:none;background:transparent;font-family:var(--mono,'IBM Plex Mono');font-size:22px;font-weight:700;color:var(--dato,#245979);outline:none}
+.sm-u{font-family:var(--mono,'IBM Plex Mono');font-size:16px;color:var(--muted,#5A6C70)}
+.sm-field>input{width:100%;min-height:46px;border:1px solid var(--border,#B7C3C3);border-radius:10px;padding:10px 14px;font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#131C21);background:var(--l3,#F2F6F6)}
+.sm-field>input:focus{outline:none;border-color:var(--dato,#245979)}
+.s-salva-misura{width:100%;min-height:46px;margin-top:12px;border-radius:10px;border:1px solid var(--teal,#12545D);background:var(--l3,#F2F6F6);color:var(--teal,#12545D);font-family:var(--sans,'Inter');font-weight:600;font-size:14px;cursor:pointer}
+.s-salva-misura:active{transform:scale(.98)}
