@@ -5948,3 +5948,21 @@ def admin_diagnosi_grafo():
         return jsonify(out)
     finally:
         _release_conn(conn)
+
+
+@bp.route("/admin/trova-nodo")
+def admin_trova_nodo():
+    """Cerca un nodo per nome parziale e mostra id, name, type (per debug traduzioni)."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    q = request.args.get("q", "")
+    from db import _get_conn, _release_conn
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("SELECT id, name, type FROM nodes WHERE lower(name) LIKE lower(%s) OR lower(id) LIKE lower(%s) LIMIT 10",
+                    (f"%{q}%", f"%{q}%"))
+        rows = [{"id": r[0], "name": r[1], "type": r[2]} for r in cur.fetchall()]
+        return jsonify({"query": q, "nodi": rows})
+    finally:
+        _release_conn(conn)
