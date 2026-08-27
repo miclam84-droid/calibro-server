@@ -268,7 +268,7 @@ def _pixabay(query, rank=0):
     except Exception:
         return None
 
-def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0):
+def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredienti=None):
     """ROUTING: Pexels -> Unsplash -> Pixabay. Se arriva nome+disciplina costruisce la query intelligente.
     Se rank non è forzato (0) e c'è un nome, deriva un rank dal NOME: cosi ricette diverse con la stessa
     query (es. besciamella e bagna cauda, entrambe 'cooking sauce pan') prendono foto DIVERSE, non la stessa."""
@@ -280,17 +280,32 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0):
     rank_nome = sum(ord(c) for c in (nome or query)) if (nome or query) else 0
     if rank == 0 and nome:
         rank = rank_nome % 5
-    # 1) CLOUDINARY col MATCH PER NOME: se una foto di Michele corrisponde al piatto
+    # 1) CLOUDINARY col MATCH PER NOME: se una foto dell'archivio corrisponde al piatto
     #    (challah->pane, cheeseburger->panino), quella è la migliore. Se nessun match, torna None.
     cloud = _cloudinary_foto(rank_nome, nome_ricetta=(nome or query or ""), disciplina=(disciplina or ""))
     if cloud:
+        cloud["match"] = "archivio"
         return cloud
-    # 2) STOCK per disciplina (foto PERTINENTI: cocktail per i cocktail, pane per il pane).
-    #    Fallback quando l'archivio di Michele non ha una foto che corrisponde.
-    for fonte in (_pexels, _unsplash, _pixabay):
-        res = fonte(q, rank)
-        if res:
-            return res
+    # 2) NOME DEL PIATTO ESATTO: cerco il piatto specifico (gricia, non 'pasta qualsiasi').
+    nome_pulito = _nome_per_query((nome or query or "").lower())
+    if nome_pulito:
+        for fonte in (_pexels, _unsplash, _pixabay):
+            res = fonte(nome_pulito, rank)
+            if res:
+                res["match"] = "piatto"   # match forte: cercato il nome del piatto
+                return res
+    # 3) INGREDIENTI PRINCIPALI: se il piatto esatto non c'è, meglio gli INGREDIENTI
+    #    (guanciale pecorino) che una foto di un altro piatto. Passati da chi chiama.
+    if ingredienti:
+        ing_query = " ".join(str(i).lower() for i in ingredienti[:2] if i)
+        if ing_query.strip():
+            for fonte in (_pexels, _unsplash, _pixabay):
+                res = fonte(ing_query, rank)
+                if res:
+                    res["match"] = "ingredienti"  # match debole: foto degli ingredienti
+                    return res
+    # 4) NIENTE foto sbagliata: se non trovo il piatto né gli ingredienti, torno None
+    #    (il frontend mostra un placeholder pulito, meglio che una foto errata).
     return None
 
 def credito_immagine(autore, fonte_nome="Pexels"):

@@ -5984,4 +5984,5 @@ def admin_prova_immagine():
         "foto_url": res.get("url") if res else None,
         "autore": res.get("autore") if res else None,
         "fonte": res.get("fonte_nome") if res else None,
+        "match": res.get("match") if res else "nessuna",  # piatto / ingredienti / archivio / nessuna
     })
