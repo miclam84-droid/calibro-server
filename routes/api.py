@@ -291,6 +291,16 @@ def genera_ricetta_endpoint():
             except Exception as se:
                 risultato["_salvata"] = False
                 risultato["_errore_salvataggio"] = str(se)
+        # evento funnel: activation (l'utente ha generato la sua prima ricetta = ha visto il valore)
+        try:
+            import oss
+            _tok = request.headers.get("X-Token","") or body.get("token","")
+            _uid = _utente_da_token(_tok) if _tok else None
+            if _uid and not risultato.get("errore"):
+                oss.funnel_write("activation", user_id=_uid,
+                                 utm_campaign=body.get("utm_campaign"), utm_content=body.get("utm_content"))
+        except Exception:
+            pass
         return jsonify(risultato)
     except Exception as e:
         # se l'AI è giù / credito finito, risposta pulita 503 invece di 500 HTML

@@ -54,6 +54,44 @@ def _ensure(conn):
     _TABLE_PRONTA = True
 
 
+def funnel_write(evento, user_id=None, email=None, utm_campaign=None, utm_content=None):
+    """Scrive un evento nel funnel di conversione (tabella funnel_eventi).
+    Eventi validi (come li legge oss.metriche): 'signup', 'activation', 'paywall_hit', 'paid'.
+    Difensiva come log_write: non solleva mai eccezioni. Se manca sia user_id sia email,
+    l'evento non viene contato dal funnel (che conta utenti unici) — ma lo scriviamo comunque
+    per non perdere il segnale. GDPR: solo id/email + UTM, nessun testo libero o dato sensibile."""
+    conn = None
+    try:
+        conn = _get_conn()
+        if conn is None:
+            return
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS funnel_eventi (
+                id SERIAL PRIMARY KEY,
+                evento TEXT NOT NULL,
+                user_id INTEGER,
+                email TEXT,
+                utm_campaign TEXT,
+                utm_content TEXT,
+                ts TIMESTAMPTZ DEFAULT NOW()
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_funnel_evt ON funnel_eventi(evento, ts DESC)")
+        cur.execute(
+            "INSERT INTO funnel_eventi (evento, user_id, email, utm_campaign, utm_content) "
+            "VALUES (%s, %s, %s, %s, %s)",
+            (str(evento)[:40], user_id, (email or None), (utm_campaign or None), (utm_content or None)),
+        )
+        conn.commit()
+        cur.close()
+    except Exception:
+        pass
+    finally:
+        if conn is not None:
+            _release_conn(conn)
+
+
 def log_write(level, endpoint, user_id, message, stack, duration_ms):
     """Scrive una riga in app_logs. Non solleva mai eccezioni:
     se il DB non risponde, il log si perde ma la richiesta continua."""
@@ -103,6 +141,9 @@ def metriche():
         "endpoint_lenti": [],
         "piano_pro": 0,
         "piano_free": 0,
+        "prezzo_pro_eur": 19.99,
+        "mrr_eur": 0.0,
+        "arpu_eur": 0.0,
     }
     conn = None
     try:
@@ -117,6 +158,15 @@ def metriche():
         out["utenti_totali"] = tot
         out["piano_pro"] = pro
         out["piano_free"] = max(tot - pro, 0)
+        # ricavi per il Galileo Control Panel: MRR = paganti × prezzo Pro mensile.
+        # Prezzo da env (aggiornabile senza deploy); default 19,99€.
+        try:
+            _prezzo = float(os.environ.get("PREZZO_PRO_MESE", "19.99"))
+        except Exception:
+            _prezzo = 19.99
+        out["prezzo_pro_eur"] = round(_prezzo, 2)
+        out["mrr_eur"] = round(pro * _prezzo, 2)
+        out["arpu_eur"] = round((pro * _prezzo) / tot, 2) if tot else 0.0
         out["nuovi_7gg"] = _scalar(
             cur, "SELECT COUNT(*) FROM utenti WHERE ts > NOW() - INTERVAL '7 days'")
         out["utenti_attivi_7gg"] = _scalar(

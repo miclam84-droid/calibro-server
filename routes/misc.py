@@ -118,6 +118,15 @@ def stripe_webhook():
                 "INSERT INTO stripe_events (event_id, event_type, user_id) VALUES (%s,%s,%s) ON CONFLICT (event_id) DO NOTHING",
                 (event_id, event_type, str(user_id)))
         conn.commit(); cur.close(); _release_conn(conn)
+        # evento funnel: paid (pagamento confermato). Difensivo, fuori dalla transazione critica.
+        try:
+            import oss
+            _meta = obj.get("metadata", {}) or {}
+            oss.funnel_write("paid", user_id=int(user_id) if str(user_id).isdigit() else None,
+                             email=_meta.get("email"),
+                             utm_campaign=_meta.get("utm_campaign"), utm_content=_meta.get("utm_content"))
+        except Exception:
+            pass
     except Exception as e:
         # NON silenziare: 500 → Stripe riprova l'invio
         try:

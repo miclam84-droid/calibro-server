@@ -164,6 +164,12 @@ def chiedi():
                 n_chat = int(rt[0]) if rt and rt[0] else 0
                 if n_chat >= 5:
                     cur_t.close(); _release_conn(conn_t)
+                    # evento funnel: paywall_hit (l'utente ha visto il muro del pagamento)
+                    try:
+                        import oss
+                        oss.funnel_write("paywall_hit", user_id=user_id_t, email=None)
+                    except Exception:
+                        pass
                     return jsonify({"errore":"trial_esaurito","n_chat":n_chat,
                         "messaggio":"Hai visto cosa può fare Matter.",
                         "paywall":{

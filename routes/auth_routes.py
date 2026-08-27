@@ -48,6 +48,14 @@ def registra():
         tok = _sec.token_urlsafe(32)
         cur.execute("INSERT INTO verifica_email (token,email) VALUES (%s,%s)", (tok, email))
         conn.commit(); cur.close(); _release_conn(conn)
+        # evento funnel: signup (per il Galileo Control Panel). Difensivo, non blocca la registrazione.
+        try:
+            import oss
+            _b = request.json or {}
+            oss.funnel_write("signup", user_id=user_id, email=email,
+                             utm_campaign=_b.get("utm_campaign"), utm_content=_b.get("utm_content"))
+        except Exception:
+            pass
         base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
         link = f"{base}/app?verifica={tok}"
         lang_reg = request.json.get("lang","it") if request.json else "it"
