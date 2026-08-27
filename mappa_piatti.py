@@ -166,17 +166,25 @@ def tutti_i_piatti():
 
 
 def cerca_piatto(richiesta):
-    """Cerca il piatto canonico che corrisponde alla richiesta. Ritorna dict o None."""
+    """Cerca il piatto canonico che corrisponde alla richiesta. Ritorna dict o None.
+    Matcha SOLO se la richiesta NOMINA il piatto (es. 'fammi una carbonara'), non se
+    gli ingredienti del nome capitano in una lista (es. 'zucca e manzo' NON deve
+    forzare 'Chow Fun di Manzo con Zucca' — è una richiesta di ingredienti, non di piatto)."""
     req = (richiesta or "").lower()
-    migliore = None
     for p in tutti_i_piatti():
         nome_l = p["nome"].lower()
-        if nome_l in req or req in nome_l:
+        # match forte: il nome del piatto (o la sua parte distintiva) è nella richiesta
+        if nome_l in req:
             return p
-        parole = [w for w in nome_l.replace("'", " ").replace("(", " ").replace(")", " ").split() if len(w) >= 5]
-        if parole and all(w in req for w in parole[:2]):
-            migliore = p
-    return migliore
+        # match sulla parola distintiva del piatto (la prima parola lunga del nome,
+        # tipicamente il nome proprio: 'carbonara', 'amatriciana', 'financier')
+        parole = [w for w in nome_l.replace("'", " ").replace("(", " ").replace(")", " ").split()
+                  if len(w) >= 5 and w not in ("manzo", "zucca", "pollo", "pesce", "pasta", "salsa",
+                                                "crema", "brodo", "carne", "verdure", "patate")]
+        # scatta solo se la PRIMA parola distintiva del nome è esplicitamente nella richiesta
+        if parole and parole[0] in req:
+            return p
+    return None
 
 
 def conta():
