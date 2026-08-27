@@ -202,7 +202,7 @@ def admin_popola_feed():
     conn = _get_conn(); cur = conn.cursor()
     try:
         # pesco alcune ricette canoniche dalla tabella ricette
-        cur.execute("SELECT id, nome, disciplina, ingredienti, punto_critico FROM ricette LIMIT 12")
+        cur.execute("SELECT id, nome, disciplina, ingredienti, punto_critico FROM ricette LIMIT 40")
         righe = cur.fetchall()
         n = 0
         for r in righe:
