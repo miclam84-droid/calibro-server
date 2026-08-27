@@ -5761,3 +5761,40 @@ def admin_test_chat():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+
+
+@bp.route("/admin/debug-chiedi")
+def admin_debug_chiedi():
+    """Diagnostica: esegue il percorso di /chiedi e restituisce il traceback vero se crasha."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    domanda = request.args.get("domanda", "a che temperatura coagula il tuorlo")
+    import traceback
+    try:
+        from db import carica_grafo
+        from retrieval import retrieval_ranked
+        from ai import cerca_contesto, costruisci_prompt, chiedi_mistral
+        db = carica_grafo()
+        ranked = retrieval_ranked(db, domanda, topk=3)
+        fenomeni = ranked.get("fenomeni", []) if isinstance(ranked, dict) else []
+        top = fenomeni[0]["name"] if fenomeni else ""
+        contesto = cerca_contesto(db, top, domanda) if top else None
+        prompt = costruisci_prompt(domanda, contesto, lang="it")
+        risposta = chiedi_mistral(prompt)
+        # ora provo i pezzi aggiunti da me: validazione numero
+        import re as _re
+        numeri = [f.get("data", {}).get("target", "") or f.get("target", "") for f in (contesto.get("fenomeni", []) if contesto else [])]
+        agg = " · ".join([n for n in numeri if n][:2])
+        def _valida(s):
+            if not s: return ""
+            s = str(s).strip()
+            if not _re.search(r"\d", s): return ""
+            if "→" in s or "·" in s or len(s) > 40: return ""
+            if s.count(",") > 1: return ""
+            return s
+        agg2 = _valida(agg)
+        return jsonify({"ok": True, "fenomeno": top, "risposta_len": len(risposta or ""),
+                        "numero_grezzo": agg, "numero_validato": agg2})
+    except Exception as e:
+        return jsonify({"ok": False, "errore": str(e), "traceback": traceback.format_exc()[:1500]}), 200
