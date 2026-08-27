@@ -5824,7 +5824,7 @@ def admin_correggi_nomi():
         "Rapanello": "Ravanello",
         "Cured Pork": "Maiale stagionato",
         "Pork Sausage": "Salsiccia di maiale",
-        "Roast Beef": "Roast beef",
+        "Roast Beef": "Manzo arrosto",
         "Rye Bread": "Pane di segale",
         "Roast Pork": "Maiale arrosto",
         "Pork": "Maiale",
@@ -5843,15 +5843,12 @@ def admin_correggi_nomi():
     fatti = []
     try:
         for sbagliato, giusto in correzioni.items():
-            # aggiorno il name dei nodi che matchano esattamente
-            cur.execute("UPDATE nodes SET name=%s WHERE name=%s AND type='Ingrediente'", (giusto, sbagliato))
-            n1 = cur.rowcount
-            # aggiorno anche eventuali match case-insensitive
-            cur.execute("UPDATE nodes SET name=%s WHERE lower(name)=lower(%s) AND type='Ingrediente' AND name!=%s",
+            # match robusto: qualsiasi type, case-insensitive, ignorando spazi ai bordi
+            cur.execute("UPDATE nodes SET name=%s WHERE lower(trim(name))=lower(trim(%s)) AND name!=%s",
                         (giusto, sbagliato, giusto))
-            n2 = cur.rowcount
-            if n1 + n2 > 0:
-                fatti.append(f"{sbagliato} -> {giusto} ({n1+n2} nodi)")
+            n1 = cur.rowcount
+            if n1 > 0:
+                fatti.append(f"{sbagliato} -> {giusto} ({n1} nodi)")
         conn.commit()
         return jsonify({"ok": True, "correzioni": fatti or ["nessun nodo trovato con quei nomi"]})
     finally:
