@@ -1511,6 +1511,7 @@ function chiudiPaywall(){
 }
 function vaiAPro(){
   chiudiPaywall();
+  if(typeof apriPrezzi==='function'){ apriPrezzi(); return; }
   // se non loggato, prima registrazione
   if(!localStorage.getItem('matter_token')){
     switchTab('auth');
@@ -4464,13 +4465,81 @@ function mostraPopupPro(motivo){
       </div>
       <div class="trial-popup-price">${C.price}</div>
       <div class="trial-popup-price-note">${C.period}</div>
-      <div class="trial-popup-founding">Silent Launch — solo per i primi 100 professionisti:<br><b>Founding Member 99 € il primo anno</b></div>
-      <button class="trial-popup-cta" onclick="document.querySelector('.trial-popup-overlay').remove();switchTab('auth')">${C.cta}</button>
+      <div class="trial-popup-founding" id="pw-founding">Silent Launch — solo per i primi 100 professionisti:<br><b>Founding Member 99 € il primo anno</b></div>
+      <button class="trial-popup-cta" onclick="document.querySelector('.trial-popup-overlay').remove();apriPrezzi()">${C.cta}</button>
       <button class="trial-popup-skip" onclick="${motivo === 'esaurito' ? "document.querySelector('.trial-popup-overlay').remove();switchTab('scopri')" : "document.querySelector('.trial-popup-overlay').remove()"}">${skipLabel}</button>
     </div>`;
 
   document.body.appendChild(overlay);
   overlay.addEventListener('click', e => { if(e.target === overlay) overlay.remove(); });
+  _caricaPostiFounding();
+}
+// ═══ PAGINA PREZZI — 3 piani (R2). Bottoni pronti, si collegano a Stripe coi price ID ═══
+async function apriPrezzi(){
+  _apriVista('Matter Pro',
+    '<div class="prezzi-intro">Il numero-bersaglio esatto è il valore. Con Pro lo vedi nitido, sempre.</div>'
+    + '<div class="prezzi-grid" id="prezzi-grid">'
+    +   '<div class="prezzo-card">'
+    +     '<div class="prezzo-nome">Mensile</div>'
+    +     '<div class="prezzo-val">19,99 €<span class="prezzo-per">/mese</span></div>'
+    +     '<button class="prezzo-btn" onclick="_vaiCheckout(\'mensile\')">Scegli mensile</button>'
+    +   '</div>'
+    +   '<div class="prezzo-card">'
+    +     '<div class="prezzo-nome">Annuale</div>'
+    +     '<div class="prezzo-val">149 €<span class="prezzo-per">/anno</span></div>'
+    +     '<div class="prezzo-badge-save">~37% di sconto</div>'
+    +     '<button class="prezzo-btn" onclick="_vaiCheckout(\'annuale\')">Scegli annuale</button>'
+    +   '</div>'
+    +   '<div class="prezzo-card prezzo-card-founding">'
+    +     '<div class="prezzo-badge-founding">Silent Launch</div>'
+    +     '<div class="prezzo-nome">Founding Member</div>'
+    +     '<div class="prezzo-val">99 €<span class="prezzo-per">il primo anno</span></div>'
+    +     '<div class="prezzo-founding-nota" id="prezzi-founding-count">100 posti</div>'
+    +     '<button class="prezzo-btn prezzo-btn-founding" onclick="_vaiCheckout(\'founding\')">Diventa Founding</button>'
+    +   '</div>'
+    + '</div>'
+    + '<div class="prezzi-free-nota">Il piano gratuito resta: fenomeno del giorno, 5 chat, ricette in lettura.</div>');
+  // carico i posti reali per la card founding
+  try{
+    var r=await fetch('/v1/founding/posti'); var j=await r.json();
+    var el=document.getElementById('prezzi-founding-count');
+    if(el){
+      if(j.esauriti){ el.textContent='Posti esauriti'; var fb=document.querySelector('.prezzo-btn-founding'); if(fb){fb.disabled=true;fb.textContent='Esauriti';} }
+      else { el.textContent='Rimasti: '+(j.rimasti!=null?j.rimasti:100)+'/'+(j.totali!=null?j.totali:100); }
+    }
+  }catch(e){}
+}
+function _vaiCheckout(piano){
+  // Stripe non ancora attivo (post-P.IVA): i price ID arriveranno. Per ora avvia il flusso login/checkout.
+  if(!localStorage.getItem('matter_token')){
+    chiudiVista(); switchTab('auth'); if(typeof switchAuthTab==='function') switchAuthTab('reg');
+    _toast('Registrati per continuare — il pagamento sarà attivo a breve');
+    return;
+  }
+  var _tk=localStorage.getItem('matter_token')||'';
+  fetch('/v1/stripe/checkout',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_tk},
+    body:JSON.stringify({piano:piano, token:_tk})})
+    .then(r=>r.json()).then(j=>{
+      if(j.url) window.location.href=j.url;
+      else if(j.checkout_url) window.location.href=j.checkout_url;
+      else _toast('Il pagamento sarà attivo a breve');
+    }).catch(()=>_toast('Il pagamento sarà attivo a breve'));
+}
+// Contatore posti Founding reali (R1)
+async function _caricaPostiFounding(){
+  var el=document.getElementById('pw-founding');
+  if(!el) return;
+  try{
+    var r=await fetch('/v1/founding/posti');
+    var j=await r.json();
+    if(j.esauriti){
+      el.innerHTML='<b>Posti Founding esauriti</b><br>Pro a 19,99 €/mese o 149 €/anno.';
+      return;
+    }
+    var rimasti = (j.rimasti!=null)?j.rimasti:100;
+    var totali = (j.totali!=null)?j.totali:100;
+    el.innerHTML='Silent Launch — solo per i primi '+totali+' professionisti:<br><b>Founding Member 99 € il primo anno</b><br><span class="pw-founding-count">Rimasti: '+rimasti+'/'+totali+'</span>';
+  }catch(e){}
 }
 
 

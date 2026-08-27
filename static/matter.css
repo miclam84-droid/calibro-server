@@ -2040,3 +2040,23 @@ a:focus-visible,input:focus-visible{
 .crus-target-blurred{position:relative;display:inline-flex;align-items:center;gap:0}
 .crus-blur-num{filter:blur(9px);opacity:.55;user-select:none}
 .crus-blur-lock{position:absolute;left:0;top:50%;transform:translateY(-50%);font-family:var(--sans,'Inter');font-weight:700;font-size:14px;color:var(--terra,#E8935A);white-space:nowrap}
+
+/* ═══ PAGINA PREZZI (R2) ═══ */
+.prezzi-intro{font-size:14px;color:var(--ink-muted,#3D4A50);line-height:1.55;margin-bottom:20px}
+.prezzi-grid{display:flex;flex-direction:column;gap:12px}
+.prezzo-card{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:14px;padding:18px;position:relative}
+.prezzo-card-founding{background:var(--ink,#131C21);border-color:var(--terra,#C77B3F)}
+.prezzo-nome{font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal,#12545D);margin-bottom:8px}
+.prezzo-card-founding .prezzo-nome{color:#E8935A}
+.prezzo-val{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:32px;color:var(--ink,#131C21);letter-spacing:-.02em;line-height:1}
+.prezzo-card-founding .prezzo-val{color:#fff}
+.prezzo-per{font-family:var(--sans,'Inter');font-size:14px;font-weight:400;color:var(--muted,#5A6C70);margin-left:6px}
+.prezzo-card-founding .prezzo-per{color:#9DAEB2}
+.prezzo-badge-save{display:inline-block;margin-top:8px;font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;color:var(--teal,#12545D);background:var(--s100,#D3E0E0);padding:3px 8px;border-radius:5px}
+.prezzo-badge-founding{position:absolute;top:14px;right:14px;font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#241109;background:#E8935A;padding:4px 9px;border-radius:6px}
+.prezzo-founding-nota{font-family:var(--mono,'IBM Plex Mono');font-size:12px;color:#E8935A;margin-top:8px;font-weight:600}
+.prezzo-btn{width:100%;min-height:50px;margin-top:14px;border-radius:11px;border:none;font-family:var(--sans,'Inter');font-weight:600;font-size:15px;cursor:pointer;background:var(--teal,#12545D);color:#fff}
+.prezzo-btn-founding{background:#E8935A;color:#241109}
+.prezzo-btn:active{transform:scale(.98)}
+.prezzi-free-nota{margin-top:18px;font-size:12px;color:var(--muted,#5A6C70);text-align:center;line-height:1.5}
+.pw-founding-count{display:inline-block;margin-top:6px;font-family:var(--mono,'IBM Plex Mono');font-size:12px;font-weight:700;color:var(--terra,#C77B3F)}
