@@ -53,6 +53,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);
   font-family:var(--mono);font-size:10px;letter-spacing:.04em;
   padding:5px 10px;border-radius:7px;cursor:pointer;transition:.15s}
 #lang-btn:active{border-color:var(--e500);color:var(--e700)}
+#help-btn{background:none;border:1px solid var(--border);color:var(--ink-muted);font-family:var(--mono);font-size:13px;font-weight:700;width:28px;height:28px;padding:0;border-radius:7px;cursor:pointer;margin-right:6px;transition:.15s;line-height:1}
+#help-btn:active{border-color:var(--teal,#12545D);color:var(--teal,#12545D)}
 
 /* ── TAB BAR linea ────────────────────────────────────── */
 .tab-bar{display:flex;background:var(--bg);border-bottom:1px solid var(--border)}
@@ -1132,10 +1134,10 @@ a:focus-visible,input:focus-visible{
 /* ── sezione casi reali ── */
 .casi-sec{margin-top:22px;padding-top:16px;border-top:1px solid rgba(211,224,224,.14)}
 .casi-lab{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--target);margin-bottom:12px}
-.caso-card{display:flex;align-items:center;gap:11px;padding:13px 14px;margin-bottom:8px;border-radius:10px;background:rgba(226,78,18,.06);border:1px solid rgba(226,78,18,.18);cursor:pointer;transition:all .15s}
-.caso-card:hover{background:rgba(226,78,18,.11);border-color:rgba(226,78,18,.35)}
+.caso-card{display:flex;align-items:center;gap:11px;padding:13px 14px;margin-bottom:8px;border-radius:10px;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);cursor:pointer;transition:all .15s}
+.caso-card:hover{background:var(--l3,#F2F6F6);border-color:var(--teal,#12545D)}
 .caso-icon{color:var(--target);font-size:15px;flex-shrink:0}
-.caso-nome{font-family:var(--sans);font-size:13.5px;font-weight:500;color:#EAF1F3;line-height:1.35}
+.caso-nome{font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--ink,#131C21);line-height:1.35}
 .p-target{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent);margin-top:4px}
 .p-tag.prolock{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(36,89,121,.12);color:var(--accent);padding:2px 7px;border-radius:4px}
 .p-tag.active{font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--accent);color:var(--paper-hi);padding:2px 8px;border-radius:4px}
