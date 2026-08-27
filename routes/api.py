@@ -55,13 +55,20 @@ def _nome_pulito(nome):
     #    lo teniamo ma in minuscolo pulito
     return (nome.strip(), True)
 
-def _pulisci_abbinamenti(lista, campo="ingrediente", max_famiglia=3):
+def _pulisci_abbinamenti(lista, campo="ingrediente", max_famiglia=3, ingrediente_base=None):
     """Filtra una lista di abbinamenti: normalizza nomi, scarta gli sporchi,
     deduplica per nome pulito, e limita la ridondanza di famiglia (max 2 agrumi,
-    ecc.) scartando anche le categorie generiche. Mantiene l'ordine."""
+    ecc.) scartando anche le categorie generiche. Mantiene l'ordine.
+    Se ingrediente_base è passato, scarta i partner che sono varianti dello stesso
+    ingrediente (maiale -> Maiale Arrosto, Pancetta): abbinare X con X non è utile."""
     visti = set()
     fam_count = {}
     out = []
+    # radice dell'ingrediente base per scartare le auto-varianti (maiale->maiale arrosto)
+    base_radice = None
+    if ingrediente_base:
+        base_radice = ingrediente_base.strip().lower()[:5]
+        # famiglia del base: scarto anche i partner della stessa famiglia-carne se base è carne
     # prima passata: quali famiglie hanno ingredienti specifici?
     fam_presenti = set()
     for a in lista:
@@ -79,6 +86,9 @@ def _pulisci_abbinamenti(lista, campo="ingrediente", max_famiglia=3):
             continue
         chiave = pulito.lower()
         if chiave in visti:
+            continue
+        # scarta le auto-varianti: partner che condivide la radice col base
+        if base_radice and len(base_radice) >= 4 and base_radice in chiave:
             continue
         # scarta la categoria generica se c'è già un ingrediente specifico
         if chiave in _CATEGORIE_GENERICHE:
@@ -1280,7 +1290,7 @@ def abbina(ingrediente):
                 if _pre_abbs and len(_pre_abbs) >= 4:
                     cur.close(); _release_conn(conn)
                     return jsonify({
-            "segreto": _seg,"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(_pre_abbs),
+            "segreto": _seg,"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(_pre_abbs, ingrediente_base=ingrediente),
                         "fonte":"dataset Matter Lab",
                         "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
                 # Nodo trovato ma con pochi abbinamenti — arricchisci con AI
@@ -1425,7 +1435,7 @@ def abbina(ingrediente):
                     if result_props:
                         cur.close(); _release_conn(conn)
                         return jsonify({
-            "segreto": _seg,"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(result_props),
+            "segreto": _seg,"ingrediente":ingrediente,"abbinamenti":_pulisci_abbinamenti(result_props, ingrediente_base=ingrediente),
                             "fonte":"dataset Matter Lab",
                             "nota":"Abbinamenti da profilo sensoriale proprietario Matter Lab"})
                     # Nodo trovato ma senza abbinamenti nel JSON — genera via AI
@@ -1456,7 +1466,7 @@ def abbina(ingrediente):
                                         cur.close(); _release_conn(conn)
                                         return jsonify({
             "segreto": _seg,"ingrediente":ingrediente,
-                                            "abbinamenti":_pulisci_abbinamenti(result_props),
+                                            "abbinamenti":_pulisci_abbinamenti(result_props, ingrediente_base=ingrediente),
                                             "fonte":"Matter Lab AI",
                                             "nota":"Abbinamenti generati da AI su profilo sensoriale"})
                         except Exception as _ai_e:
@@ -3316,10 +3326,14 @@ def menu_costruisci():
         return jsonify({"errore": f"db: {e}", "voci": []}), 500
 
     # ── CREAZIONI INEDITE: dagli abbinamenti aromatici del grafo ──
-    # Oltre ai piatti classici, propongo 1-2 creazioni NUOVE basate sui composti condivisi
-    # tra gli ingredienti dati. Questo è il moat: nessun concorrente crea l'inedito coi numeri.
+    # DISATTIVATE al lancio (feature flag). Il grafo Ahn ranking-per-composti propone gli
+    # abbinamenti OVVI (nocciola-cioccolato), non gli inediti veri: fa brutta figura e abbassa
+    # la fiducia nella parte scientifica. Il codice resta per una v2 con novelty score
+    # (molecole × distanza culinaria / frequenza). Per riattivare: FLAG_INEDITE = True.
+    FLAG_INEDITE = False
     creazioni_inedite = []
-    try:
+    if FLAG_INEDITE:
+      try:
         from builder import _abbinamenti_ingrediente
         db_ab = carica_grafo()
         # per ogni ingrediente, trovo il partner (tra gli altri dati) con più composti condivisi
@@ -3355,7 +3369,7 @@ def menu_costruisci():
                 "inedita": True,
                 "composti_condivisi": int(overlap)
             })
-    except Exception:
+      except Exception:
         pass  # se la scoperta inedita fallisce, il menu coi classici resta valido
 
     return jsonify({

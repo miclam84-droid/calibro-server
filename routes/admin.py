@@ -5822,6 +5822,22 @@ def admin_correggi_nomi():
         "Bread": "Pane",
         "Rapanelli": "Ravanelli",
         "Rapanello": "Ravanello",
+        "Cured Pork": "Maiale stagionato",
+        "Pork Sausage": "Salsiccia di maiale",
+        "Roast Beef": "Roast beef",
+        "Rye Bread": "Pane di segale",
+        "Roast Pork": "Maiale arrosto",
+        "Pork": "Maiale",
+        "Beef": "Manzo",
+        "Chicken": "Pollo",
+        "Fish": "Pesce",
+        "Cheese": "Formaggio",
+        "Butter": "Burro",
+        "Milk": "Latte",
+        "Egg": "Uovo",
+        "Wheat Bread": "Pane di frumento",
+        "White Bread": "Pane bianco",
+        "Whole Wheat Bread": "Pane integrale",
     }
     conn = _get_conn(); cur = conn.cursor()
     fatti = []
