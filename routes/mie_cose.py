@@ -190,3 +190,129 @@ def ricetta_food_cost():
         })
     finally:
         _release_conn(conn)
+
+
+# ============================================================
+# STORICO MISURE — il cuore del Quaderno: l'utente salva i bersagli che misura
+# al banco, e ne rivede l'evoluzione nel tempo ("impasto: 26° a sett, 24° a ott").
+# Alimenta la North Star: bersagli misurati/salvati a settimana.
+# ============================================================
+
+def _ensure_misure():
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS misure_salvate (
+                id SERIAL PRIMARY KEY,
+                device_id TEXT NOT NULL,
+                fenomeno TEXT NOT NULL,
+                fenomeno_id TEXT,
+                valore TEXT NOT NULL,
+                unita TEXT,
+                bersaglio TEXT,
+                nota TEXT,
+                creato_il TIMESTAMP DEFAULT NOW()
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_misure_dev ON misure_salvate(device_id, fenomeno)")
+        conn.commit()
+    finally:
+        _release_conn(conn)
+
+
+@bp_mie.route("/v1/misure/salva", methods=["POST"])
+def salva_misura():
+    """Salva una misura fatta al banco. Body:
+    {fenomeno:'Temperatura impasto', fenomeno_id?, valore:'24', unita:'°C', bersaglio?:'22-24', nota?}.
+    device_id da header X-Device-Id. È il gesto centrale: 'ho misurato, salvo nel Quaderno'."""
+    _ensure_misure()
+    dev = _device()
+    if not dev:
+        return jsonify({"errore": "device_id mancante"}), 400
+    b = request.json or {}
+    fenomeno = (b.get("fenomeno") or "").strip()
+    valore = (b.get("valore") or "").strip()
+    if not fenomeno or not valore:
+        return jsonify({"errore": "fenomeno e valore obbligatori"}), 400
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("""
+            INSERT INTO misure_salvate (device_id, fenomeno, fenomeno_id, valore, unita, bersaglio, nota)
+            VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING id, creato_il
+        """, (dev, fenomeno[:120], (b.get("fenomeno_id") or None), valore[:40],
+              (b.get("unita") or "")[:20], (b.get("bersaglio") or "")[:40], (b.get("nota") or "")[:300]))
+        r = cur.fetchone()
+        conn.commit()
+        # segnale North Star: una misura salvata (per il pannello, via funnel opzionale)
+        try:
+            import oss
+            oss.funnel_write("misura_salvata", user_id=None, email=None)
+        except Exception:
+            pass
+        return jsonify({"ok": True, "id": r[0], "creato_il": r[1].isoformat() if r[1] else None})
+    finally:
+        _release_conn(conn)
+
+
+@bp_mie.route("/v1/misure/storico", methods=["GET"])
+def storico_misure():
+    """Storico di un fenomeno nel tempo (l'evoluzione: '26°→24°').
+    ?fenomeno=<nome> — restituisce le misure di quel fenomeno in ordine cronologico.
+    Senza ?fenomeno, restituisce l'elenco dei fenomeni misurati (per la lista del Quaderno)."""
+    _ensure_misure()
+    dev = _device()
+    if not dev:
+        return jsonify({"errore": "device_id mancante"}), 400
+    fenomeno = (request.args.get("fenomeno") or "").strip()
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        if fenomeno:
+            # serie temporale di UN fenomeno (per il grafico dell'evoluzione)
+            cur.execute("""
+                SELECT valore, unita, bersaglio, nota, creato_il
+                FROM misure_salvate WHERE device_id=%s AND fenomeno=%s
+                ORDER BY creato_il ASC
+            """, (dev, fenomeno))
+            serie = [{"valore": r[0], "unita": r[1], "bersaglio": r[2], "nota": r[3],
+                      "data": r[4].isoformat() if r[4] else None} for r in cur.fetchall()]
+            # calcolo l'evoluzione: primo vs ultimo (il "26°→24°")
+            evoluzione = None
+            if len(serie) >= 2:
+                evoluzione = {"da": serie[0]["valore"], "a": serie[-1]["valore"],
+                              "unita": serie[-1]["unita"], "n_misure": len(serie)}
+            return jsonify({"fenomeno": fenomeno, "serie": serie, "evoluzione": evoluzione})
+        else:
+            # elenco fenomeni misurati, con conteggio e ultima misura (per la lista)
+            cur.execute("""
+                SELECT fenomeno, COUNT(*) AS n,
+                       (ARRAY_AGG(valore ORDER BY creato_il DESC))[1] AS ultimo,
+                       (ARRAY_AGG(unita ORDER BY creato_il DESC))[1] AS unita,
+                       MAX(creato_il) AS ultima_data
+                FROM misure_salvate WHERE device_id=%s
+                GROUP BY fenomeno ORDER BY ultima_data DESC
+            """, (dev,))
+            lista = [{"fenomeno": r[0], "n_misure": r[1], "ultimo_valore": r[2],
+                      "unita": r[3], "ultima_data": r[4].isoformat() if r[4] else None}
+                     for r in cur.fetchall()]
+            return jsonify({"fenomeni": lista, "totale_misure": sum(x["n_misure"] for x in lista)})
+    finally:
+        _release_conn(conn)
+
+
+@bp_mie.route("/v1/misure/rimuovi", methods=["POST"])
+def rimuovi_misura():
+    """Rimuove una misura per id. Body: {id}."""
+    _ensure_misure()
+    dev = _device()
+    if not dev:
+        return jsonify({"errore": "device_id mancante"}), 400
+    mid = (request.json or {}).get("id")
+    if not mid:
+        return jsonify({"errore": "id mancante"}), 400
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM misure_salvate WHERE id=%s AND device_id=%s", (mid, dev))
+        conn.commit()
+        return jsonify({"ok": True})
+    finally:
+        _release_conn(conn)
