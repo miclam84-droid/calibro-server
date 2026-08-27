@@ -1794,11 +1794,12 @@ def menu_proposte():
     if len(ingredienti) < 2:
         return jsonify({"errore": "servono almeno 2 ingredienti", "proposte": []}), 400
 
-    # mappo ogni ingrediente al suo nodo Ahn (helper condiviso _alias_ahn)
-    ahn_map = {}  # nome_utente -> ahn_name
+    # mappo ogni ingrediente: uso l'alias se c'è, altrimenti il nome stesso.
+    # (la query cerca per nome italiano su id 'ing-*', non serve l'alias inglese)
+    ahn_map = {}  # nome_utente -> alias (o nome stesso)
     for ing in ingredienti:
         a = _alias_ahn(ing)
-        if a: ahn_map[ing] = a
+        ahn_map[ing] = a or ing
 
     if not DATABASE_URL or len(ahn_map) < 2:
         return jsonify({"ingredienti": ingredienti, "proposte": [],
@@ -1812,14 +1813,18 @@ def menu_proposte():
         for i in range(len(items)):
             for j in range(i+1, len(items)):
                 n1, a1 = items[i]; n2, a2 = items[j]
-                # cerco l'edge di abbinamento tra i due nodi; overlap = forza del legame
+                # cerco l'edge di abbinamento tra i due nodi. Gli ID reali nel grafo sono
+                # in ITALIANO col prefisso 'ing-' (ing-pomodoro), NON 'ahn_tomato'. Cerco
+                # per nome ingrediente su tutti i formati id possibili (ing-, prod_, ahn_).
+                s1 = n1.strip().lower().replace(" ", "-")
+                s2 = n2.strip().lower().replace(" ", "-")
                 cur.execute("""
                     SELECT COALESCE(MAX((e.data->>'overlap')::numeric), 0)
                     FROM edges e
                     WHERE e.relation='abbinamento_aromatico'
-                      AND ((lower(e.from_id)=lower(%s) AND lower(e.to_id)=lower(%s))
-                        OR (lower(e.from_id)=lower(%s) AND lower(e.to_id)=lower(%s)))
-                """, (f"ahn_{a1}", f"ahn_{a2}", f"ahn_{a2}", f"ahn_{a1}"))
+                      AND ((lower(e.from_id) LIKE %s AND lower(e.to_id) LIKE %s)
+                        OR (lower(e.from_id) LIKE %s AND lower(e.to_id) LIKE %s))
+                """, (f"%{s1}%", f"%{s2}%", f"%{s2}%", f"%{s1}%"))
                 r = cur.fetchone()
                 forza = int(float(r[0])) if r and r[0] else 0
                 if forza > 0:
