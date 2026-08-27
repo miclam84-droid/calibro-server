@@ -4291,6 +4291,9 @@ function mostraNotificaTrial(rimaste){
   document.body.appendChild(b);
   setTimeout(()=>{if(b.parentNode)b.remove();},5000);
 }
+// gestisce feature col formato "icona␣␣testo" (EN/ES) o solo "testo" (IT) — evita undefined
+function _pwFeatIcon(s){ s=String(s||''); var i=s.indexOf('  '); return i>0 ? s.slice(0,i).trim() : '·'; }
+function _pwFeatText(s){ s=String(s||''); var i=s.indexOf('  '); return i>0 ? s.slice(i+2).trim() : s.trim(); }
 function mostraPopupPro(motivo){
   _trackFunnel('paywall_hit', {motivo: motivo||'?'});
   const old=document.querySelector('.trial-popup-overlay');if(old)old.remove();
@@ -4393,10 +4396,10 @@ function mostraPopupPro(motivo){
       <h3>${titolo}</h3>
       <p class="trial-popup-sub">${sub}</p>
       <div class="trial-popup-features">
-        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${C.feat1.split(' ')[0]}</span><span class="trial-popup-feat-text">${C.feat1.split('  ')[1]}</span></div>
-        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${C.feat2.split(' ')[0]}</span><span class="trial-popup-feat-text">${C.feat2.split('  ')[1]}</span></div>
-        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${C.feat3.split(' ')[0]}</span><span class="trial-popup-feat-text">${C.feat3.split('  ')[1]}</span></div>
-        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${C.feat4.split(' ')[0]}</span><span class="trial-popup-feat-text">${C.feat4.split('  ')[1]}</span></div>
+        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${_pwFeatIcon(C.feat1)}</span><span class="trial-popup-feat-text">${_pwFeatText(C.feat1)}</span></div>
+        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${_pwFeatIcon(C.feat2)}</span><span class="trial-popup-feat-text">${_pwFeatText(C.feat2)}</span></div>
+        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${_pwFeatIcon(C.feat3)}</span><span class="trial-popup-feat-text">${_pwFeatText(C.feat3)}</span></div>
+        <div class="trial-popup-feat"><span class="trial-popup-feat-icon">${_pwFeatIcon(C.feat4)}</span><span class="trial-popup-feat-text">${_pwFeatText(C.feat4)}</span></div>
       </div>
       <div class="trial-popup-price">${C.price}</div>
       <div class="trial-popup-price-note">${C.period}</div>
