@@ -1945,6 +1945,16 @@ def menu_proposte():
         # ordino: triangoli prima, poi legami forti, poi esplorative
         proposte.sort(key=lambda p: (0 if p["tipo"]=="triangolo" else 1, 1 if p.get("esplorativa") else 0, -p["connessioni"]))
 
+        # SPRINT 2 — etichetta di robustezza leggibile per ogni proposta (punto revisori)
+        for pr in proposte:
+            c = pr.get("connessioni", 0)
+            if pr.get("esplorativa") or c == 0:
+                pr["robustezza"] = "da esplorare"
+            elif c >= 3:
+                pr["robustezza"] = "forte"
+            else:
+                pr["robustezza"] = "media"
+
         return jsonify({
             "ingredienti": ingredienti,
             "ingredienti_mappati": list(ahn_map.keys()),
@@ -1955,7 +1965,14 @@ def menu_proposte():
     except Exception as e:
         import traceback
         print(f"[PROPOSTE ERRORE] {e}\n{traceback.format_exc()[-500:]}", flush=True)
-        return jsonify({"errore": str(e), "proposte": []}), 500
+        # SPRINT 2 — mai 500 all'utente: fallback che permette di continuare a costruire il menu a mano
+        return jsonify({
+            "ingredienti": ingredienti,
+            "proposte": [],
+            "stato": "errore_recuperabile",
+            "messaggio": "Non sono riuscito a calcolare gli abbinamenti in questo momento. "
+                         "Puoi comporre le voci del menu a mano e continuare.",
+            "puoi_inserire_a_mano": True}), 200
 
 
 @bp.route("/v1/menu/naming", methods=["POST"])
