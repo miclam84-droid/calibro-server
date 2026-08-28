@@ -1026,6 +1026,13 @@ def admin_principi_cardine():
         (["equilibrio-cocktail","amaro-bitter","shakerare","diluizione","viscosita","sineresi","texture-agents","struttura","souffle","grassi-stabil"], "princ-emulsione"),
         (["crioscopia","pac-gelateria"], "princ-cristallizzazione"),
         (["farina-forza","enzimi-farina"], "princ-gelatinizzazione"),
+        # --- i 16 fenomeni etnici/specialistici prima non mappati (governato_da) ---
+        (["wok-hei","wok hei","tandoor","tadka","barbecue","low-and-slow","stall","strecker","espansione-termica","oven-spring","oven spring"], "princ-calore"),
+        (["kansui","nixtamal","inversione-zucchero","inversione dello zucchero","saccarosio"], "princ-ph"),
+        (["koji","imbrunimento-enzimatico","imbrunimento enzimatico","enzimatico"], "princ-denaturazione"),
+        (["gelatinizzazione-del-riso","riso-glutinoso","riso glutinoso","riso"], "princ-gelatinizzazione"),
+        (["emulsione-forzata","paitan","tonkotsu"], "princ-emulsione"),
+        (["umami","glutammato","inosinato","capillarita","capillarità","tissotropia","assorbimento-porosi"], "princ-diffusione"),
     ]
     conn = _get_conn()
     try:
