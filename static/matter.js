@@ -564,27 +564,23 @@ function _popolaCruscotto(f){
   f = f || {};
   var t=document.getElementById('crus-target');
   var ts=document.getElementById('crus-target-sub');
+  var tgt='';
+  var T=f.target;
+  if(T && typeof T==='object'){ tgt = T.numero || T.valore || T.raw || T.testo || ''; }
+  else if(typeof T==='string'){ tgt = T; }
+  tgt = String(tgt||'').trim();
+  // Il FENOMENO è il protagonista, non il numero (la svolta). Nome grande, numero come dettaglio.
   if(t){
-    var tgt='';
-    var T=f.target;
-    if(T && typeof T==='object'){ tgt = T.numero || T.valore || T.raw || T.testo || ''; }
-    else if(typeof T==='string'){ tgt = T; }
-    tgt = String(tgt||'').trim();
-    // mostro il numero solo se è corto e sensato; altrimenti una freccia verso il fenomeno
-    if(tgt && tgt.length<=14){
-      var freeC = (typeof _isPro==='function') && !_isPro();
-      if(freeC){
-        // Mirino demo anche nel cruscotto: numero sfocato al free (coerenza con le schede)
-        t.innerHTML='<span class="crus-blur-num">'+tgt+'</span><span class="crus-blur-lock">🔒 Pro</span>';
-        t.style.fontSize=''; t.classList.add('crus-target-blurred');
-        var box=t.closest('.crus-box-target'); if(box){ box.setAttribute('onclick','apriPaywall()'); }
-      } else {
-        t.textContent=tgt; t.style.fontSize=''; t.classList.remove('crus-target-blurred');
-      }
-    }
-    else { t.textContent='›'; t.style.fontSize='28px'; }
+    var nome = f.nome || '—';
+    // nome può essere lungo: riduco il font se serve
+    t.textContent = nome;
+    t.style.fontSize = nome.length>22 ? '20px' : (nome.length>14 ? '24px' : '');
+    t.classList.remove('crus-target-blurred');
   }
-  if(ts){ ts.textContent = f.nome || ''; }
+  if(ts){
+    // sotto: il numero se c'è (nitido), altrimenti niente
+    ts.textContent = (tgt && tgt.length<=16) ? (tgt + (f.unita? f.unita : '')) : '';
+  }
   // ultima misura salvata dal Quaderno
   var m=document.getElementById('crus-misura');
   if(m){
@@ -4595,11 +4591,11 @@ function mostraPopupPro(motivo){
       badge: 'Matter Pro',
       icon_chat: '',
       icon_lesson: '',
-      title_esaurito: 'Hai visto cosa può fare Matter.',
+      title_esaurito: 'Capire la scienza è gratis.',
       title_ultimo: 'Ultimo assaggio gratuito',
       title_lezione: 'Fenomeno riservato a Pro',
       title_lezione_locked: 'Fenomeno riservato a Pro',
-      sub_esaurito: 'Hai usato i tuoi 5 assaggi. Da qui Matter continua a lavorare con te.',
+      sub_esaurito: 'Il metodo operativo per non sbagliare il servizio è Pro: tutti gli errori da banco, tutte le tecniche, gli esperimenti guidati.',
       sub_ultimo: 'Ancora una risposta e poi dovrai scegliere.',
       sub_lezione: 'I fenomeni avanzati sono disponibili con il piano Pro.',
       feat1: 'Analisi operative dei tuoi problemi',
@@ -5146,12 +5142,8 @@ function _renderTarget(box, target, mostraLabel){
   var free = (typeof _isPro==='function') && !_isPro();
   if(haNumero){
     if(mostraLabel !== false) html += '<div class="target-lab">finestra operativa</div>';
-    if(free){
-      // Mirino demo: numero sfocato al free, nitido al Pro (leva di conversione)
-      html += '<div class="target-eroe target-blur" onclick="apriPaywall()"><span class="target-blur-num">' + _esc(primo) + '</span><span class="target-blur-lock">🔒 Sblocca con Pro</span></div>';
-    } else {
-      html += '<div class="target-eroe">' + _esc(primo) + '</div>';
-    }
+    // La scienza è gratis: il numero è sempre nitido (la leva Pro è sul metodo, non sul numero)
+    html += '<div class="target-eroe">' + _esc(primo) + '</div>';
     if(resto.length){
       html += '<div class="target-cond-lab">condizioni</div><div class="target-grid">';
       resto.forEach(function(p){ html += '<div class="target-cond">' + _esc(p) + '</div>'; });
