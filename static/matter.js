@@ -4186,17 +4186,41 @@ function allergeniMenu(voci){
 // Numero UE dell'allergene (1-14) per la convenzione "Allergeni: 1 · 3 · 7"
 function numeroAllergene(nome){ return _ALLERGENI_ORDINE.indexOf(nome)+1; }
 
-function esportaMenu(){
-  // export PDF = Pro (paywall)
-  const tok = localStorage.getItem('matter_token');
+async function esportaMenu(){
   const piano = localStorage.getItem('matter_piano');
   if(piano!=='pro'){
-    if(typeof mostraPopupPro==='function'){ mostraPopupPro('menu_export'); }
-    else alert(_L({it:'L\'esportazione del menù è una funzione Pro.',en:'Menu export is a Pro feature.',es:'La exportación del menú es una función Pro.'}));
-    return;
+    if(typeof mostraPopupPro==='function'){ mostraPopupPro('menu_export'); return; }
   }
-  // Pro: genero il PDF (v1: stampa del contenitore anteprima)
-  window.print();
+  var menu = _maMenuCorrente || {};
+  var voci = (menu.voci||[]).map(function(v){
+    return {nome:v.nome||'', prezzo:v.prezzo||'', descrizione:(v.ingredienti&&v.ingredienti.length)?v.ingredienti.join(' \u00b7 '):(v.descrizione||''), sezione:v.sezione||''};
+  });
+  _apriVista('Il tuo menu \u00e8 pronto', '<div class="quad-loading">Preparo PDF e QR\u2026</div>');
+  try{
+    var accent=(document.getElementById('ma-brand-accent')||{}).value||'#245979';
+    var r=await fetch('/v1/menu/crea', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({titolo:menu.nome||'Menu', locale:menu.locale||'', lingua:(typeof _lang!=='undefined'?_lang:'it'), voci:voci})});
+    var j=await r.json();
+    if(!j || !j.id){ var bd=document.getElementById('vista-body'); if(bd) bd.innerHTML='<div class="quad-empty"><b>Non riesco a creare il menu</b><span>Riprova tra poco.</span></div>'; return; }
+    _mostraMenuPronto(j.id, accent.replace('#',''));
+  }catch(e){
+    var bd2=document.getElementById('vista-body'); if(bd2) bd2.innerHTML='<div class="quad-empty"><b>Errore</b><span>Riprova.</span></div>';
+  }
+}
+function _mostraMenuPronto(id, accent){
+  var base='/v1/menu/'+encodeURIComponent(id);
+  var pdfUrl=base+'/pdf?accent='+encodeURIComponent(accent||'245979');
+  var qrUrl=base+'/qr';
+  var html=
+    '<div class="mp-intro">Il tuo menu \u00e8 salvato. Tre modi per usarlo al banco.</div>'
+    + '<a class="mp-btn mp-btn-pdf" href="'+pdfUrl+'" target="_blank" rel="noopener" download>Scarica il PDF</a>'
+    + '<a class="mp-btn mp-btn-qr" href="'+qrUrl+'" target="_blank" rel="noopener" download>Scarica il QR</a>'
+    + '<div class="mp-guide">'
+    +   '<div class="mp-guide-row"><span class="mp-guide-ico">\ud83d\udcc4</span><div><b>Stampa il PDF</b> e mettilo sui tavoli.</div></div>'
+    +   '<div class="mp-guide-row"><span class="mp-guide-ico">\u25a6</span><div><b>Stampa il QR</b>, mettilo sul tavolo: i clienti lo inquadrano e vedono il menu.</div></div>'
+    +   '<div class="mp-guide-row"><span class="mp-guide-ico">\ud83d\udd17</span><div><b>Il menu \u00e8 anche online</b>, condividi il link.</div></div>'
+    + '</div>';
+  var bd=document.getElementById('vista-body'); if(bd) bd.innerHTML=html;
 }
 
 async function caricaQuaderno(){

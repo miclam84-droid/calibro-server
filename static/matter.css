@@ -2097,3 +2097,14 @@ a:focus-visible,input:focus-visible{
 .sm-field>input:focus{outline:none;border-color:var(--dato,#245979)}
 .s-salva-misura{width:100%;min-height:46px;margin-top:12px;border-radius:10px;border:1px solid var(--teal,#12545D);background:var(--l3,#F2F6F6);color:var(--teal,#12545D);font-family:var(--sans,'Inter');font-weight:600;font-size:14px;cursor:pointer}
 .s-salva-misura:active{transform:scale(.98)}
+
+/* ═══ MENU PRONTO — Scarica PDF/QR + istruzioni (sezione #1) ═══ */
+.mp-intro{font-size:14px;color:var(--ink-muted,#3D4A50);line-height:1.55;margin-bottom:18px}
+.mp-btn{display:block;width:100%;min-height:52px;line-height:52px;text-align:center;text-decoration:none;border-radius:12px;font-family:var(--sans,'Inter');font-weight:600;font-size:15px;margin-bottom:10px;box-shadow:3px 3px 0 rgba(19,28,33,.14)}
+.mp-btn-pdf{background:var(--ink,#131C21);color:#EAF1F3}
+.mp-btn-qr{background:var(--teal,#12545D);color:#fff}
+.mp-btn:active{transform:scale(.99)}
+.mp-guide{margin-top:20px;background:var(--l2,#E8EDED);border-radius:12px;padding:16px}
+.mp-guide-row{display:flex;gap:12px;align-items:flex-start;padding:8px 0;font-size:13.5px;color:var(--ink,#131C21);line-height:1.5}
+.mp-guide-ico{font-size:18px;flex-shrink:0;width:24px;text-align:center}
+.mp-guide-row b{font-weight:700}
