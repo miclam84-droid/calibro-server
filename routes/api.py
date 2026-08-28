@@ -263,10 +263,41 @@ def genera_ricetta_endpoint():
                 risultato["_motivo_blocco"] = verifica["errori_gravi"]
         except Exception as _ve:
             risultato["_verifica"] = {"ok": True, "nota": "verificatore non disponibile"}
-        # CONTRATTO PIATTO: se il red team ha trovato tecniche vietate (es. tiramisù gratinato),
-        # non salvo e segnalo. Il frontend mostra la ricetta fedele + nota sull'aggiunta compatibile.
+        # CONTRATTO PIATTO: se il red team ha trovato un'incoerenza (tiramisù gratinato, gelato coi
+        # gamberi), NON restituisco la fusione assurda. Cerco il piatto BASE fedele tra le canoniche
+        # e restituisco quello, con una nota che spiega come aggiungere a parte l'elemento richiesto.
         if risultato.get("_incoerente"):
             salva = False
+            try:
+                from db import carica_grafo as _cg
+                _db2 = _cg()
+                # estraggo il nome-base: la prima parola-chiave del piatto (tiramisù, gelato...)
+                _fam = (risultato.get("_coerenza") or {}).get("famiglia", "")
+                _base = richiesta.lower().split(" con ")[0].split(" saltat")[0].split(" gratin")[0].strip()
+                _q = "%" + _base[:20] + "%"
+                _rows = _db2.execute(
+                    "SELECT nome, disciplina, descrizione, ingredienti, fenomeni, tecniche, numeri, "
+                    "punto_critico, procedimento, esperimento, difficolta, porzioni, tempo_prep, "
+                    "tempo_cottura FROM ricette WHERE lower(nome) LIKE %s ORDER BY length(nome) LIMIT 1",
+                    (_q,)).fetchall()
+                if _rows:
+                    _r = _rows[0]
+                    def _jj(v):
+                        if v is None: return None
+                        return v if isinstance(v,(list,dict)) else (json.loads(v) if isinstance(v,str) and v.strip()[:1] in '[{' else v)
+                    _fedele = {"nome": _r["nome"], "disciplina": _r["disciplina"], "descrizione": _r["descrizione"],
+                        "ingredienti": _jj(_r["ingredienti"]) or [], "fenomeni": _jj(_r["fenomeni"]) or [],
+                        "tecniche": _jj(_r["tecniche"]) or [], "numeri": _jj(_r["numeri"]) or {},
+                        "punto_critico": _r["punto_critico"], "procedimento": _jj(_r["procedimento"]) or [],
+                        "esperimento": _r["esperimento"], "difficolta": _r["difficolta"],
+                        "porzioni": _r["porzioni"], "tempo_prep": _r["tempo_prep"], "tempo_cottura": _r["tempo_cottura"],
+                        "_certificata": True,
+                        "_nota_contratto": "Ho tenuto il piatto fedele alla sua natura. La variante che "
+                            "hai chiesto non è compatibile con questo tipo di preparazione: se vuoi un "
+                            "elemento in più (es. una parte croccante), va aggiunto a parte senza snaturare il piatto."}
+                    return jsonify({"ricetta": _fedele, "certificata": True, "corretta_da_contratto": True})
+            except Exception:
+                pass
         # salvataggio opzionale — salva TUTTI i campi, incluse procedimento/applicazioni e le 3 lingue
         if salva and risultato.get("nome"):
             try:
