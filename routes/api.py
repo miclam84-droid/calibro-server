@@ -274,12 +274,13 @@ def genera_ricetta_endpoint():
                 # estraggo il nome-base: la prima parola-chiave del piatto (tiramisù, gelato...)
                 _fam = (risultato.get("_coerenza") or {}).get("famiglia", "")
                 _base = richiesta.lower().split(" con ")[0].split(" saltat")[0].split(" gratin")[0].strip()
-                _q = "%" + _base[:20] + "%"
+                # cerco prima un nome che INIZIA con la parola base (più fedele), poi che la contiene
                 _rows = _db2.execute(
                     "SELECT nome, disciplina, descrizione, ingredienti, fenomeni, tecniche, numeri, "
                     "punto_critico, procedimento, esperimento, difficolta, porzioni, tempo_prep, "
-                    "tempo_cottura FROM ricette WHERE lower(nome) LIKE %s ORDER BY length(nome) LIMIT 1",
-                    (_q,)).fetchall()
+                    "tempo_cottura FROM ricette WHERE lower(nome) LIKE %s "
+                    "ORDER BY (CASE WHEN lower(nome) LIKE %s THEN 0 ELSE 1 END), length(nome) LIMIT 1",
+                    ("%" + _base[:20] + "%", _base[:15] + "%")).fetchall()
                 if _rows:
                     _r = _rows[0]
                     def _jj(v):
