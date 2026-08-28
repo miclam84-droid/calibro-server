@@ -2155,3 +2155,27 @@ a:focus-visible,input:focus-visible{
 
 /* invito nei box vuoti del cruscotto (empty state = invito, non trattino morto) */
 .crus-invito{font-family:var(--sans,'Inter')!important;font-size:13px!important;font-weight:600!important;color:#7FB0C4!important;line-height:1.3}
+
+/* ═══ PAYWALL PER-PARTI — blur solo su numero e box errori (la scienza è gratis) ═══ */
+.fen-mirino-locked{position:relative;cursor:pointer;display:inline-block}
+.fen-mirino-blur{filter:blur(6px);opacity:.5;user-select:none;pointer-events:none}
+.fen-mirino-lock{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;font-family:var(--sans,'Inter');font-weight:700;font-size:13px;color:#E8935A;background:var(--ink,#131C21);padding:6px 13px;border-radius:20px;border:1px solid #E8935A}
+/* box errori da banco (nero, la barriera Pro) */
+.fen-errori-box{background:var(--ink,#131C21);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.fen-errori-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#E8935A;margin-bottom:12px}
+.fen-errori-box .fen-errore{background:rgba(255,255,255,.05);border-left:3px solid #E8935A;border-radius:0 8px 8px 0;padding:11px 14px;margin-bottom:8px}
+.fen-errori-box .fen-errore-nome{font-weight:700;font-size:14px;color:#EAF1F3;margin-bottom:3px}
+.fen-errori-box .fen-errore-sint{font-size:13px;color:#9DAEB2;font-style:italic;margin-bottom:4px}
+.fen-errori-box .fen-errore-causa{font-size:13.5px;color:#CBD6DA;line-height:1.5}
+.fen-errori-locked{cursor:pointer;position:relative}
+.fen-errori-blur{filter:blur(5px);opacity:.4;user-select:none;pointer-events:none}
+.fen-errori-blur .fen-errore-nome{font-weight:700;font-size:14px;color:#EAF1F3;margin-bottom:6px}
+.fen-errori-cta{margin-top:12px;text-align:center;font-family:var(--sans,'Inter');font-weight:700;font-size:13px;color:#E8935A;background:rgba(232,147,90,.12);padding:11px;border-radius:8px;border:1px dashed #E8935A}
+
+/* ═══ MODULO MISURA ADESSO — rituale quotidiano (geometrico, firma-mirino) ═══ */
+.misura-adesso{display:flex;align-items:center;gap:12px;width:calc(100% - 28px);margin:14px 14px 4px;min-height:60px;padding:0 20px;background:var(--ink,#131C21);border:2px solid var(--dato,#245979);border-radius:14px;cursor:pointer;box-shadow:4px 4px 0 rgba(36,89,121,.25)}
+.misura-adesso:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(36,89,121,.25)}
+.misura-adesso .ma-cross{font-size:26px;color:#5EA0C8;line-height:1}
+.misura-adesso .ma-txt{flex:1;font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:17px;color:#EAF1F3;letter-spacing:-.01em;text-align:left}
+.misura-adesso .ma-plus{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:24px;color:#E8935A}
+.sm-u-input{width:64px!important;flex:0 0 64px!important;border:none!important;background:transparent!important;font-family:var(--mono,'IBM Plex Mono')!important;font-size:16px!important;color:var(--muted,#5A6C70)!important;text-align:center;outline:none}

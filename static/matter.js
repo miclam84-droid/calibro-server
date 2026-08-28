@@ -1134,15 +1134,16 @@ function _renderSchedaFenomeno(j){
   var e=_escV;
   var tipo = j.tipo_fenomeno || 'misurabile';
   var isMis = tipo==='misurabile';
-  var free = (typeof _isPro==='function') && !_isPro();
+  // paywall per-parti: usa pro_locked del backend quando c'è, altrimenti lo stato Pro locale
+  var locked = (typeof j.pro_locked==='boolean') ? j.pro_locked : ((typeof _isPro==='function') && !_isPro());
 
-  // --- HEADER: titolo + disciplina + badge tipo ---
+  // --- HEADER: titolo (Space Grotesk) + disciplina + badge tipo ---
   var badge = isMis
     ? '<span class="fen-badge fen-badge-mis">🧪 Misurabile</span>'
     : '<span class="fen-badge fen-badge-oss">👁 Stato</span>';
   var disc = j.grandezza || j.disciplina || '';
 
-  // --- PRINCIPIO (il cuore, in cima) — uso principi_diretti (il principio DEL fenomeno) ---
+  // --- PRINCIPIO (il cuore) — principi_diretti[0] ---
   var perche = _estraiSezione(j.risposta, 'PERCHÉ') || _estraiSezione(j.risposta, 'PERCHE');
   var principi = (j.principi_diretti && j.principi_diretti.length ? j.principi_diretti : (j.principi||[])).slice(0,2);
   var principiChip = principi.map(function(p){
@@ -1155,19 +1156,23 @@ function _renderSchedaFenomeno(j){
     + (perche?'<div class="fen-principio-txt">'+e(perche)+'</div>':'')
     + '</div>';
 
-  // --- MIRINO ADATTIVO ---
+  // --- MIRINO ADATTIVO: il NUMERO si sfoca al free (paywall per-parti), lo STATO no ---
   var mirino;
   if(isMis && j.target_numero){
+    var valNum = '<div class="fen-mirino-val">'+e(String(j.target_numero))+(j.unita?'<span class="fen-mirino-u">'+e(j.unita)+'</span>':'')+'</div>';
+    if(locked){
+      valNum = '<div class="fen-mirino-locked" onclick="mostraPopupPro(\'numero\')">'
+        + '<div class="fen-mirino-val fen-mirino-blur">'+e(String(j.target_numero))+(j.unita?'<span class="fen-mirino-u">'+e(j.unita)+'</span>':'')+'</div>'
+        + '<span class="fen-mirino-lock">🔒 Sblocca con Pro</span></div>';
+    }
     mirino =
       '<div class="fen-mirino fen-mirino-num">'
       + '<div class="fen-mirino-lab">finestra operativa</div>'
-      + '<div class="fen-mirino-val">'+e(String(j.target_numero))+(j.unita?'<span class="fen-mirino-u">'+e(j.unita)+'</span>':'')+'</div>'
+      + valNum
       + (j.target && j.target.length>String(j.target_numero).length+2 ? '<div class="fen-mirino-sub">'+e(j.target)+'</div>' : '')
       + '</div>';
   } else {
-    // osservabile: mostra lo STATO da riconoscere (checklist visiva)
     var statoTxt = j.target || _estraiSezione(j.risposta,'NUMERO') || '';
-    // spezzo in punti se ci sono separatori
     var punti = statoTxt.split(/[·;]|\bpoi\b/).map(function(x){return x.trim();}).filter(function(x){return x.length>3;});
     var checklist = punti.length>1
       ? '<div class="fen-stato-list">'+punti.map(function(x){return '<div class="fen-stato-item">'+e(x)+'</div>';}).join('')+'</div>'
@@ -1179,56 +1184,62 @@ function _renderSchedaFenomeno(j){
       + '</div>';
   }
 
-  // --- SOTTO IL FOLD ---
+  // --- TECNICHE (SPOSTATE QUI, subito sotto il Mirino — sempre visibili, la scienza è gratis) ---
+  var tecniche = j.tecniche||[];
+  var tecnicheHtml = '';
+  if(tecniche.length){
+    tecnicheHtml = '<div class="fen-sez"><div class="fen-sez-lab">Tecniche collegate</div><div class="fen-chips">'
+      + tecniche.map(function(t){ return '<span class="fen-chip" onclick="apriNodo(\''+e(String(t.id))+'\',\''+e(String(t.nome)).replace(/'/g,"\\'")+'\')">'+e(t.nome)+'</span>'; }).join('')
+      + '</div></div>';
+  }
+
+  // --- SPIEGAZIONE (sempre visibile) ---
   var problema = _estraiSezione(j.risposta,'PROBLEMA');
   var azione = _estraiSezione(j.risposta,'AZIONE') || _estraiSezione(j.risposta,'MISURA');
   var spiegazione = '';
   if(problema) spiegazione += '<div class="fen-sez"><div class="fen-sez-lab">Il problema</div><div class="fen-sez-txt">'+e(problema)+'</div></div>';
   if(azione) spiegazione += '<div class="fen-sez"><div class="fen-sez-lab">Cosa fare</div><div class="fen-sez-txt">'+e(azione)+'</div></div>';
 
-  // ERRORI DA BANCO — free vede 1, Pro tutti (nuova leva)
+  // --- ERRORI DA BANCO (box nero, barriera Pro: sfocato al free) ---
   var errori = j.errori||[];
   var erroriHtml = '';
   if(errori.length){
-    var visibili = free ? errori.slice(0,1) : errori;
-    erroriHtml = '<div class="fen-sez"><div class="fen-sez-lab">⚠ Errori da banco</div>'
-      + visibili.map(function(er){
-          return '<div class="fen-errore"><div class="fen-errore-nome">'+e(er.nome||er.causa||'')+'</div>'
-            + (er.sintomo?'<div class="fen-errore-sint">'+e(er.sintomo)+'</div>':'')
-            + (er.causa && er.nome?'<div class="fen-errore-causa">'+e(er.causa)+'</div>':'')+'</div>';
-        }).join('')
-      + (free && errori.length>1 ? '<div class="fen-lock-errori" onclick="mostraPopupPro(\'errori\')">🔒 Altri '+(errori.length-1)+' errori da banco — sblocca il metodo con Pro</div>' : '')
-      + '</div>';
+    if(locked){
+      erroriHtml = '<div class="fen-errori-box fen-errori-locked" onclick="mostraPopupPro(\'errori\')">'
+        + '<div class="fen-errori-lab">⚠ Errori da banco</div>'
+        + '<div class="fen-errori-blur">'
+        + errori.slice(0,2).map(function(er){ return '<div class="fen-errore-nome">'+e(er.nome||er.causa||'')+'</div>'; }).join('')
+        + '</div>'
+        + '<div class="fen-errori-cta">🔒 '+errori.length+' errori da banco che ti salvano il servizio — Pro</div>'
+        + '</div>';
+    } else {
+      erroriHtml = '<div class="fen-errori-box"><div class="fen-errori-lab">⚠ Errori da banco</div>'
+        + errori.map(function(er){
+            return '<div class="fen-errore"><div class="fen-errore-nome">'+e(er.nome||er.causa||'')+'</div>'
+              + (er.sintomo?'<div class="fen-errore-sint">'+e(er.sintomo)+'</div>':'')
+              + (er.causa && er.nome?'<div class="fen-errore-causa">'+e(er.causa)+'</div>':'')+'</div>';
+          }).join('')
+        + '</div>';
+    }
   }
 
-  // TECNICHE — free 1, Pro tutte
-  var tecniche = j.tecniche||[];
-  var tecnicheHtml = '';
-  if(tecniche.length){
-    var tVis = free ? tecniche.slice(0,1) : tecniche;
-    tecnicheHtml = '<div class="fen-sez"><div class="fen-sez-lab">Tecniche collegate</div><div class="fen-chips">'
-      + tVis.map(function(t){ return '<span class="fen-chip" onclick="apriNodo(\''+e(String(t.id))+'\',\''+e(String(t.nome)).replace(/'/g,"\\'")+'\')">'+e(t.nome)+'</span>'; }).join('')
-      + '</div>'
-      + (free && tecniche.length>1 ? '<div class="fen-lock-min" onclick="mostraPopupPro(\'tecniche\')">+'+(tecniche.length-1)+' tecniche con Pro</div>' : '')
-      + '</div>';
-  }
-
-  // DOVE SI APPLICA
+  // --- DOVE SI APPLICA ---
   var connessi = j.connessi||[];
   var connessiHtml = connessi.length
     ? '<div class="fen-sez"><div class="fen-sez-lab">Dove si applica</div><div class="fen-chips">'
       + connessi.slice(0,8).map(function(c){ return '<span class="fen-chip fen-chip-app">'+e(c.nome||c)+'</span>'; }).join('')+'</div></div>'
     : '';
 
+  // ORDINE FISSO: Fenomeno → Principio → Mirino → Tecniche → Errori(Pro) → spiegazione → dove
   var html =
     '<div class="fen-scheda">'
     + '<div class="fen-header"><div class="fen-titolo">'+e(j.titolo||'Fenomeno')+'</div>'
     +   '<div class="fen-tags">'+(disc?'<span class="fen-disc">'+e(disc)+'</span>':'')+badge+'</div></div>'
     + boxPrincipio
     + mirino
-    + spiegazione
-    + erroriHtml
     + tecnicheHtml
+    + erroriHtml
+    + spiegazione
     + connessiHtml
     + '</div>';
 
@@ -3034,7 +3045,34 @@ async function apriStoricoFenomeno(fenomeno){
     var body=document.getElementById('vista-body'); if(body) body.innerHTML='<div class="quad-empty"><b>Errore</b><span>Riprova.</span></div>';
   }
 }
-// Salva una misura (dal Mirino/chat/scheda fenomeno)
+// Misura rapida dal modulo home (rituale quotidiano) — riusa il form salva-misura
+function apriMisuraRapida(){
+  _salvaMisuraCtx = {fenomeno:'', bersaglio:'', unita:''};
+  var e=_escV;
+  _apriVista('Misura adesso',
+    '<div class="sm-intro">Registra una misura che hai fatto al banco. La ritrovi nel Quaderno con la sua evoluzione nel tempo.</div>'
+    + '<div class="sm-field"><label>Cosa hai misurato</label><input type="text" id="sm-fenomeno" placeholder="es. Temperatura impasto"></div>'
+    + '<div class="sm-field"><label>Il valore</label><div class="sm-val-row"><input type="text" inputmode="decimal" id="sm-valore" placeholder="es. 24"><input type="text" id="sm-unita" class="sm-u-input" placeholder="°C" maxlength="6"></div></div>'
+    + '<div class="sm-field"><label>Nota (facoltativa)</label><input type="text" id="sm-nota" placeholder="es. impasto brioche"></div>'
+    + '<button class="rg-btn rg-btn-salva" style="width:100%" onclick="_salvaMisuraRapida()">Salva nel Quaderno</button>');
+  setTimeout(function(){ var i=document.getElementById('sm-fenomeno'); if(i) i.focus(); }, 200);
+}
+async function _salvaMisuraRapida(){
+  var fenomeno=(document.getElementById('sm-fenomeno')||{}).value||'';
+  var valore=(document.getElementById('sm-valore')||{}).value||'';
+  var unita=(document.getElementById('sm-unita')||{}).value||'';
+  var nota=(document.getElementById('sm-nota')||{}).value||'';
+  if(!fenomeno.trim()){ _toast('Scrivi cosa hai misurato'); return; }
+  if(!valore.trim()){ _toast('Inserisci il valore'); return; }
+  try{
+    var r=await fetch('/v1/misure/salva', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({fenomeno:fenomeno.trim(), valore:valore.trim(), unita:unita.trim(), nota:nota.trim()})});
+    var j=await r.json();
+    if(j && j.ok){ _toast('✓ Misura salvata nel Quaderno'); chiudiVista(); if(typeof caricaHome==='function') caricaHome(); }
+    else { _toast('Non riuscita, riprova'); }
+  }catch(e){ _toast('Non riuscita, riprova'); }
+}
+// Misura rapida dal Mirino (con fenomeno noto)
 function apriSalvaMisura(fenomeno, bersaglio, unita){
   _salvaMisuraCtx = {fenomeno:fenomeno||'', bersaglio:bersaglio||'', unita:unita||''};
   var e=_escV;

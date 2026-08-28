@@ -83,6 +83,13 @@ if('serviceWorker' in navigator){
   </div>
 
   <!-- CRUSCOTTO OPERATIVO (Livello 1 — cosa devo fare oggi) -->
+  <!-- MODULO GEOMETRICO — misura rapida (rituale quotidiano) -->
+  <button class="misura-adesso" id="misura-adesso" onclick="apriMisuraRapida()">
+    <span class="ma-cross">⌖</span>
+    <span class="ma-txt">Misura adesso</span>
+    <span class="ma-plus">+</span>
+  </button>
+
   <div class="cruscotto" id="cruscotto">
     <div class="crus-box crus-box-target" onclick="avviaLezione()">
       <span class="crus-lab">Fenomeno del giorno</span>
