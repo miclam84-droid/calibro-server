@@ -20,9 +20,12 @@ FAMIGLIE = {
         "cotture_vietate": ["gratinare", "friggere", "saltare in padella", "grigliare", "arrostire",
                             "brasare", "bollire a lungo", "cuocere al forno ad alta temperatura"],
         "tecniche_vietate": ["impanare", "soffriggere"],
+        "ingredienti_estranei": ["gambero", "gamberi", "manzo", "pollo", "pesce", "carne", "riso saltato",
+                                 "cipolla", "aglio", "guanciale", "pancetta", "acciughe", "vongole"],
         "nota": "È un dessert freddo/a temperatura controllata. NON si gratina, non si frigge, "
                 "non si salta in padella. Eventuali elementi croccanti vanno AGGIUNTI a parte "
-                "(es. una cialda), mai cuocendo il dolce stesso.",
+                "(es. una cialda), mai cuocendo il dolce stesso. NON contiene carne, pesce o "
+                "ingredienti salati (gamberi, manzo, cipolla): è un dolce.",
     },
     "cocktail": {
         "esempi": ["negroni", "spritz", "margarita", "mojito", "martini", "daiquiri", "americano",
@@ -123,4 +126,16 @@ def valida_coerenza(richiesta, ricetta):
         radice = _norm(vietata).split()[0][:6]
         if radice and radice in testo:
             problemi.append(f"tecnica vietata per {chiave}: '{vietata}' trovata nella ricetta")
+    # controllo ingredienti ESTRANEI alla famiglia (es. gamberi in un dolce)
+    estranei = regole.get("ingredienti_estranei", [])
+    if estranei:
+        # testo di nome + ingredienti
+        testo_ing = _norm(ricetta.get("nome", "") + " ")
+        for ing in ricetta.get("ingredienti", []):
+            nome_ing = ing.get("nome", "") if isinstance(ing, dict) else str(ing)
+            testo_ing += _norm(nome_ing) + " "
+        for estraneo in estranei:
+            e = _norm(estraneo)
+            if e and e in testo_ing:
+                problemi.append(f"ingrediente estraneo alla famiglia {chiave}: '{estraneo}'")
     return {"ok": len(problemi) == 0, "problemi": problemi, "famiglia": chiave}
