@@ -6196,7 +6196,15 @@ def admin_correggi_principi_primari():
             fatti.append({"fen": fid, "rimosso_sbagliato": rimosso, "giusto_ora_presente": True,
                           "aggiunto_giusto": aggiunto})
         conn.commit()
-        return jsonify({"ok": True, "correzioni": fatti})
+        # pulizia extra: "uova-impasto" aveva 6 principi alla rinfusa. Li rimuovo TUTTI e
+        # reinserisco solo i 2 pertinenti NELL'ORDINE giusto (denaturazione primo = in cima
+        # alla scheda, poi emulsione). Reinserire in ordine garantisce il "primo principio".
+        cur.execute("DELETE FROM edges WHERE from_id='fen-uova-impasto' AND relation='governato_da'")
+        for _pid in ("princ-denaturazione", "princ-emulsione"):
+            cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                        ("fen-uova-impasto", _pid, "governato_da", _json.dumps({}, ensure_ascii=False)))
+        conn.commit()
+        return jsonify({"ok": True, "correzioni": fatti, "uova_ripulite": True})
     except Exception as e:
         conn.rollback()
         return jsonify({"errore": str(e)}), 500
