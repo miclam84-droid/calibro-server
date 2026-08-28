@@ -86,6 +86,7 @@ except Exception:
 
 # ── Blueprint ───────────────────────────────────────────
 from routes.pwa import bp as pwa_bp; app.register_blueprint(pwa_bp)
+from routes.cron import bp_cron; app.register_blueprint(bp_cron)
 from routes.admin_panel import bp as admin_panel_bp; app.register_blueprint(admin_panel_bp)
 from routes.legal import bp as legal_bp; app.register_blueprint(legal_bp)
 from routes.admin import bp as admin_bp; app.register_blueprint(admin_bp)
