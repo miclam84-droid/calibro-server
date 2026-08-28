@@ -2108,3 +2108,47 @@ a:focus-visible,input:focus-visible{
 .mp-guide-row{display:flex;gap:12px;align-items:flex-start;padding:8px 0;font-size:13.5px;color:var(--ink,#131C21);line-height:1.5}
 .mp-guide-ico{font-size:18px;flex-shrink:0;width:24px;text-align:center}
 .mp-guide-row b{font-weight:700}
+
+/* ═══ NUOVA SCHEDA FENOMENO — il principio è il protagonista ═══ */
+.fen-scheda{padding:2px 0}
+.fen-header{margin-bottom:16px}
+.fen-titolo{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:24px;color:var(--ink,#131C21);letter-spacing:-.02em;line-height:1.15;margin-bottom:8px}
+.fen-tags{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fen-disc{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal,#12545D);background:var(--s100,#D3E0E0);padding:3px 8px;border-radius:5px}
+.fen-badge{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:5px}
+.fen-badge-mis{color:#245979;background:rgba(36,89,121,.12)}
+.fen-badge-oss{color:#8a5a2b;background:rgba(199,123,63,.14)}
+/* IL PRINCIPIO — box in evidenza, il cuore */
+.fen-principio{background:linear-gradient(135deg,#12545D,#0e434a);border-radius:16px;padding:20px;margin-bottom:14px}
+.fen-principio-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7FC5D0;margin-bottom:10px}
+.fen-princ-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.fen-princ-chip{font-family:var(--sans,'Inter');font-size:12.5px;font-weight:600;color:#fff;background:rgba(255,255,255,.14);padding:5px 11px;border-radius:16px;cursor:pointer}
+.fen-princ-chip:active{background:rgba(255,255,255,.24)}
+.fen-principio-txt{font-size:15px;color:#EAF4F5;line-height:1.55}
+/* MIRINO ADATTIVO */
+.fen-mirino{border-radius:14px;padding:18px;margin-bottom:16px}
+.fen-mirino-num{background:var(--ink,#131C21);text-align:center}
+.fen-mirino-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7FB0C4;margin-bottom:8px}
+.fen-mirino-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:40px;line-height:1;color:#5EA0C8}
+.fen-mirino-u{font-size:22px;margin-left:4px}
+.fen-mirino-sub{font-size:12.5px;color:#9DAEB2;margin-top:10px;line-height:1.5}
+.fen-mirino-stato{background:var(--l2,#E8EDED);border:1px solid var(--terra,#C77B3F)}
+.fen-mirino-stato .fen-mirino-lab{color:var(--terra,#C77B3F)}
+.fen-stato-list{display:flex;flex-direction:column;gap:8px}
+.fen-stato-item{display:flex;align-items:flex-start;gap:8px;font-size:14px;color:var(--ink,#131C21);line-height:1.4}
+.fen-stato-item:before{content:"◇";color:var(--terra,#C77B3F);flex-shrink:0}
+.fen-stato-txt{font-size:14.5px;color:var(--ink,#131C21);line-height:1.5}
+/* SEZIONI sotto il fold */
+.fen-sez{margin-bottom:16px}
+.fen-sez-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal,#12545D);margin-bottom:8px}
+.fen-sez-txt{font-size:14.5px;color:var(--ink,#131C21);line-height:1.6}
+.fen-errore{background:var(--l3,#F2F6F6);border-left:3px solid var(--terra,#C77B3F);border-radius:0 8px 8px 0;padding:11px 14px;margin-bottom:8px}
+.fen-errore-nome{font-weight:700;font-size:14px;color:var(--ink,#131C21);margin-bottom:3px}
+.fen-errore-sint{font-size:13px;color:var(--muted,#5A6C70);font-style:italic;margin-bottom:4px}
+.fen-errore-causa{font-size:13.5px;color:var(--ink,#131C21);line-height:1.5}
+.fen-lock-errori{margin-top:8px;padding:12px;background:rgba(199,123,63,.1);border:1px dashed var(--terra,#C77B3F);border-radius:8px;font-size:13px;font-weight:600;color:var(--terra,#C77B3F);text-align:center;cursor:pointer}
+.fen-lock-min{margin-top:8px;font-size:12.5px;color:var(--terra,#C77B3F);cursor:pointer;font-weight:600}
+.fen-chips{display:flex;flex-wrap:wrap;gap:7px}
+.fen-chip{font-family:var(--sans,'Inter');font-size:13px;color:var(--teal,#12545D);background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);padding:6px 12px;border-radius:16px;cursor:pointer}
+.fen-chip:active{background:var(--l3,#F2F6F6)}
+.fen-chip-app{color:var(--ink,#131C21);cursor:default}

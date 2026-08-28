@@ -1116,9 +1116,130 @@ function apriNodo(id,nome){
   if(busy)return;
   aggiungiThinking();setBusy(true);
   fetch('/nodo?traccia=1',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({id})})
-    .then(r=>r.json()).then(j=>renderRisp(nome,j,true)).catch(()=>renderErr()).finally(()=>setBusy(false));
+    .then(r=>r.json()).then(j=>{
+      // NUOVA SCHEDA FENOMENO: principio in cima, Mirino adattivo. Se il nodo è un fenomeno
+      // (ha tipo_fenomeno + principi), uso il renderer dedicato; altrimenti la risposta chat.
+      if(j && j.tipo_fenomeno && (j.principi||j.titolo)){ _renderSchedaFenomeno(j); }
+      else { renderRisp(nome,j,true); }
+    }).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
 function rimuoviThinking(){ var t=document.getElementById("thinking"); if(t) t.remove(); }
+
+// ═══ NUOVA SCHEDA FENOMENO — il principio è il protagonista, non il numero ═══
+// estrae una sezione (PERCHÉ, PROBLEMA…) dalla risposta strutturata
+function _estraiSezione(risposta, chiave){
+  if(!risposta) return '';
+  var re = new RegExp(chiave+'\\s*:([\\s\\S]*?)(?=\\n?[A-ZÀ-Ù]{4,}\\s*:|$)');
+  var m = risposta.match(re);
+  return m ? m[1].trim() : '';
+}
+function _renderSchedaFenomeno(j){
+  rimuoviThinking();
+  var e=_escV;
+  var tipo = j.tipo_fenomeno || 'misurabile';
+  var isMis = tipo==='misurabile';
+  var free = (typeof _isPro==='function') && !_isPro();
+
+  // --- HEADER: titolo + disciplina + badge tipo ---
+  var badge = isMis
+    ? '<span class="fen-badge fen-badge-mis">🧪 Misurabile</span>'
+    : '<span class="fen-badge fen-badge-oss">👁 Stato</span>';
+  var disc = j.grandezza || j.disciplina || '';
+
+  // --- PRINCIPIO (il cuore, in cima) ---
+  var perche = _estraiSezione(j.risposta, 'PERCHÉ') || _estraiSezione(j.risposta, 'PERCHE');
+  var principi = (j.principi||[]).slice(0,3);
+  var principiChip = principi.map(function(p){
+    return '<span class="fen-princ-chip" onclick="apriNodo(\''+e(String(p.id))+'\',\''+e(String(p.nome)).replace(/'/g,"\\'")+'\')">'+e(p.nome)+'</span>';
+  }).join('');
+  var boxPrincipio =
+    '<div class="fen-principio">'
+    + '<div class="fen-principio-lab">Il principio</div>'
+    + (principiChip?'<div class="fen-princ-chips">'+principiChip+'</div>':'')
+    + (perche?'<div class="fen-principio-txt">'+e(perche)+'</div>':'')
+    + '</div>';
+
+  // --- MIRINO ADATTIVO ---
+  var mirino;
+  if(isMis && j.target_numero){
+    mirino =
+      '<div class="fen-mirino fen-mirino-num">'
+      + '<div class="fen-mirino-lab">finestra operativa</div>'
+      + '<div class="fen-mirino-val">'+e(String(j.target_numero))+(j.unita?'<span class="fen-mirino-u">'+e(j.unita)+'</span>':'')+'</div>'
+      + (j.target && j.target.length>String(j.target_numero).length+2 ? '<div class="fen-mirino-sub">'+e(j.target)+'</div>' : '')
+      + '</div>';
+  } else {
+    // osservabile: mostra lo STATO da riconoscere (checklist visiva)
+    var statoTxt = j.target || _estraiSezione(j.risposta,'NUMERO') || '';
+    // spezzo in punti se ci sono separatori
+    var punti = statoTxt.split(/[·;]|\bpoi\b/).map(function(x){return x.trim();}).filter(function(x){return x.length>3;});
+    var checklist = punti.length>1
+      ? '<div class="fen-stato-list">'+punti.map(function(x){return '<div class="fen-stato-item">'+e(x)+'</div>';}).join('')+'</div>'
+      : '<div class="fen-stato-txt">'+e(statoTxt)+'</div>';
+    mirino =
+      '<div class="fen-mirino fen-mirino-stato">'
+      + '<div class="fen-mirino-lab">lo stato da riconoscere</div>'
+      + checklist
+      + '</div>';
+  }
+
+  // --- SOTTO IL FOLD ---
+  var problema = _estraiSezione(j.risposta,'PROBLEMA');
+  var azione = _estraiSezione(j.risposta,'AZIONE') || _estraiSezione(j.risposta,'MISURA');
+  var spiegazione = '';
+  if(problema) spiegazione += '<div class="fen-sez"><div class="fen-sez-lab">Il problema</div><div class="fen-sez-txt">'+e(problema)+'</div></div>';
+  if(azione) spiegazione += '<div class="fen-sez"><div class="fen-sez-lab">Cosa fare</div><div class="fen-sez-txt">'+e(azione)+'</div></div>';
+
+  // ERRORI DA BANCO — free vede 1, Pro tutti (nuova leva)
+  var errori = j.errori||[];
+  var erroriHtml = '';
+  if(errori.length){
+    var visibili = free ? errori.slice(0,1) : errori;
+    erroriHtml = '<div class="fen-sez"><div class="fen-sez-lab">⚠ Errori da banco</div>'
+      + visibili.map(function(er){
+          return '<div class="fen-errore"><div class="fen-errore-nome">'+e(er.nome||er.causa||'')+'</div>'
+            + (er.sintomo?'<div class="fen-errore-sint">'+e(er.sintomo)+'</div>':'')
+            + (er.causa && er.nome?'<div class="fen-errore-causa">'+e(er.causa)+'</div>':'')+'</div>';
+        }).join('')
+      + (free && errori.length>1 ? '<div class="fen-lock-errori" onclick="mostraPopupPro(\'errori\')">🔒 Altri '+(errori.length-1)+' errori da banco — sblocca il metodo con Pro</div>' : '')
+      + '</div>';
+  }
+
+  // TECNICHE — free 1, Pro tutte
+  var tecniche = j.tecniche||[];
+  var tecnicheHtml = '';
+  if(tecniche.length){
+    var tVis = free ? tecniche.slice(0,1) : tecniche;
+    tecnicheHtml = '<div class="fen-sez"><div class="fen-sez-lab">Tecniche collegate</div><div class="fen-chips">'
+      + tVis.map(function(t){ return '<span class="fen-chip" onclick="apriNodo(\''+e(String(t.id))+'\',\''+e(String(t.nome)).replace(/'/g,"\\'")+'\')">'+e(t.nome)+'</span>'; }).join('')
+      + '</div>'
+      + (free && tecniche.length>1 ? '<div class="fen-lock-min" onclick="mostraPopupPro(\'tecniche\')">+'+(tecniche.length-1)+' tecniche con Pro</div>' : '')
+      + '</div>';
+  }
+
+  // DOVE SI APPLICA
+  var connessi = j.connessi||[];
+  var connessiHtml = connessi.length
+    ? '<div class="fen-sez"><div class="fen-sez-lab">Dove si applica</div><div class="fen-chips">'
+      + connessi.slice(0,8).map(function(c){ return '<span class="fen-chip fen-chip-app">'+e(c.nome||c)+'</span>'; }).join('')+'</div></div>'
+    : '';
+
+  var html =
+    '<div class="fen-scheda">'
+    + '<div class="fen-header"><div class="fen-titolo">'+e(j.titolo||'Fenomeno')+'</div>'
+    +   '<div class="fen-tags">'+(disc?'<span class="fen-disc">'+e(disc)+'</span>':'')+badge+'</div></div>'
+    + boxPrincipio
+    + mirino
+    + spiegazione
+    + erroriHtml
+    + tecnicheHtml
+    + connessiHtml
+    + '</div>';
+
+  var card=document.createElement('div');card.className='scheda';card.innerHTML=html;
+  document.getElementById('schede').prepend(card);
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function aggiungiThinking(){
   const d=document.createElement('div');d.className='scheda';d.id='thinking';
   d.innerHTML=`<div class="thinking"><span class="t-dots"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></span><span class="t-step" id="t-step">${_t('chat_thinking')}</span></div>`;
