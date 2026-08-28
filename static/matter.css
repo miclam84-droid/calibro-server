@@ -2195,3 +2195,13 @@ a:focus-visible,input:focus-visible{
 .mbv-rob-forte{color:#1a6e3a;background:rgba(38,140,74,.12)} .mbv-rob-forte .mbv-rob-dot{background:#268c4a}
 .mbv-rob-media{color:#8a6d1a;background:rgba(199,159,63,.14)} .mbv-rob-media .mbv-rob-dot{background:#c79f3f}
 .mbv-rob-esplorare{color:#5A6C70;background:var(--l2,#E8EDED)} .mbv-rob-esplorare .mbv-rob-dot{background:#9AA8AC}
+
+/* A5 — foto→menu: chip da confermare + messaggio fallback */
+.mf-msg{background:rgba(199,123,63,.1);border:1px solid var(--terra,#C77B3F);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--ink,#131C21);line-height:1.5;margin-bottom:14px}
+.mf-sez-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal,#12545D);margin:14px 0 8px}
+.mf-sez-conferma{color:var(--terra,#C77B3F)}
+.mf-chips{display:flex;flex-wrap:wrap;gap:8px}
+.mf-chip{display:inline-flex;align-items:center;gap:6px;background:var(--l3,#F2F6F6);border:1px dashed var(--terra,#C77B3F);border-radius:18px;padding:8px 14px;font-size:13.5px;color:var(--ink,#131C21);cursor:pointer;font-weight:500}
+.mf-chip.sel{background:rgba(18,84,93,.1);border-style:solid;border-color:var(--teal,#12545D)}
+.mf-chip-ico{font-family:var(--mono,'IBM Plex Mono');font-weight:700;color:var(--terra,#C77B3F)}
+.mf-chip.sel .mf-chip-ico{color:var(--teal,#12545D)}

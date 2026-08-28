@@ -3742,7 +3742,6 @@ async function mfAnalizza(){
   if(!_mfFiles.length) return;
   _mfMostraFase('loading');
   _mfTeatro();
-  // converto le immagini in base64
   const b64s = await Promise.all(_mfFiles.map(f=>new Promise(res=>{
     const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(f);
   })));
@@ -3753,14 +3752,23 @@ async function mfAnalizza(){
       body: JSON.stringify({immagini_b64: b64s, token: tok})
     });
     const j = await r.json();
-    _mfIngredienti = (j.ingredienti||[]).map(x=>({nome:x.nome, categoria:x.categoria, sel:true}));
+    // A5: nuovo contratto — stato, sicuri, da_confermare, puoi_inserire_a_mano
+    _mfDaConfermare = (j.da_confermare||[]).map(x=>({nome:(typeof x==='string'?x:x.nome), sel:false}));
+    var sicuri = j.sicuri || j.ingredienti || [];  // fallback al vecchio campo
+    _mfIngredienti = sicuri.map(x=>({nome:(typeof x==='string'?x:x.nome), categoria:(typeof x==='object'?x.categoria:'')||'', sel:true}));
+    _mfMessaggio = j.messaggio || '';
     _mfRenderValida();
     _mfMostraFase('valida');
   }catch(e){
-    alert(_L({it:'Non sono riuscito a leggere le foto. Riprova con una foto più chiara.',en:'Could not read the photos. Try again with a clearer photo.',es:'No pude leer las fotos. Inténtalo con una foto más clara.'}));
-    _mfMostraFase('foto');
+    // mai vicolo cieco: mostro comunque la fase valida col campo a mano
+    _mfIngredienti = []; _mfDaConfermare = [];
+    _mfMessaggio = 'Non sono riuscito a leggere le foto. Aggiungi gli ingredienti a mano qui sotto.';
+    _mfRenderValida();
+    _mfMostraFase('valida');
   }
 }
+var _mfDaConfermare = [];
+var _mfMessaggio = '';
 
 function _mfTeatro(){
   const steps = _L({it:['Riconosco gli ingredienti','Controllo le corrispondenze','Cerco connessioni aromatiche','Cerco tecniche applicabili','Preparo le combinazioni'],en:['Recognizing ingredients','Checking matches','Finding aroma connections','Finding applicable techniques','Preparing combinations'],es:['Reconociendo ingredientes','Comprobando coincidencias','Buscando conexiones aromáticas','Buscando técnicas aplicables','Preparando combinaciones']});
@@ -3774,16 +3782,38 @@ function _mfTeatro(){
 
 function _mfRenderValida(){
   const cont = document.getElementById('mf-ingredienti');
-  if(!_mfIngredienti.length){
-    cont.innerHTML = '<div class="mb-vuoto">Non ho riconosciuto ingredienti nelle foto. Aggiungili a mano qui sotto.</div>';
-    return;
+  var html='';
+  // messaggio (fallback / nessun riconoscimento)
+  if(_mfMessaggio){ html += '<div class="mf-msg">'+_esc(_mfMessaggio)+'</div>'; }
+  // ingredienti sicuri (confermati)
+  if(_mfIngredienti.length){
+    html += '<div class="mf-sez-lab">Riconosciuti</div>';
+    html += _mfIngredienti.map((ing,i)=>
+      '<div class="mf-ing '+(ing.sel?'sel':'off')+'" onclick="mfToggleIng('+i+')">'
+      + '<span class="mf-ing-nome">'+_esc(ing.nome)+'</span>'
+      + (ing.categoria?'<span class="mf-ing-cat">'+_esc(ing.categoria)+'</span>':'')
+      + '<span class="mf-ing-x">'+(ing.sel?'✓':'+')+'</span></div>').join('');
   }
-  cont.innerHTML = _mfIngredienti.map((ing,i)=>
-    `<div class="mf-ing ${ing.sel?'sel':'off'}" onclick="mfToggleIng(${i})">
-      <span class="mf-ing-nome">${_esc(ing.nome)}</span>
-      <span class="mf-ing-cat">${_esc(ing.categoria||'')}</span>
-      <span class="mf-ing-x">${ing.sel?'✓':'+'}</span>
-    </div>`).join('');
+  // da confermare: chip "Vedo X, è corretto?" (tap = conferma, mai tastiera)
+  if(_mfDaConfermare.length){
+    html += '<div class="mf-sez-lab mf-sez-conferma">Vedo questi, sono corretti?</div>';
+    html += '<div class="mf-chips">'
+      + _mfDaConfermare.map((c,i)=>
+          '<span class="mf-chip '+(c.sel?'sel':'')+'" onclick="mfConfermaChip('+i+')">'
+          + _esc(c.nome)+' <span class="mf-chip-ico">'+(c.sel?'✓':'+')+'</span></span>').join('')
+      + '</div>';
+  }
+  if(!_mfIngredienti.length && !_mfDaConfermare.length && !_mfMessaggio){
+    html = '<div class="mb-vuoto">Non ho riconosciuto ingredienti. Aggiungili a mano qui sotto.</div>';
+  }
+  cont.innerHTML = html;
+}
+function mfConfermaChip(i){
+  // tap su un chip "da confermare" → lo promuove a ingrediente confermato
+  var c = _mfDaConfermare[i]; if(!c) return;
+  _mfIngredienti.push({nome:c.nome, categoria:'', sel:true});
+  _mfDaConfermare.splice(i,1);
+  _mfRenderValida();
 }
 function mfToggleIng(i){ _mfIngredienti[i].sel = !_mfIngredienti[i].sel; _mfRenderValida(); }
 function mfAggiungiIng(){
