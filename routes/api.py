@@ -2439,11 +2439,37 @@ def riconosci_ingredienti():
                 except Exception:
                     pass
         lista = sorted(tutti.values(), key=lambda x: -x["confidenza"])
-        return jsonify({"ingredienti": lista, "totale": len(lista), "foto_analizzate": len(imgs)})
+        # SPRINT 2 — robustezza: separo per confidenza e do sempre una guida, mai un vicolo cieco.
+        sicuri = [x for x in lista if x["confidenza"] >= 0.6]
+        da_confermare = [x for x in lista if x["confidenza"] < 0.6]
+        if not lista:
+            # nessun ingrediente: foto probabilmente brutta. NON è un errore: guido l'utente.
+            return jsonify({
+                "ingredienti": [], "totale": 0, "foto_analizzate": len(imgs),
+                "stato": "nessun_riconoscimento",
+                "messaggio": "Non sono riuscito a riconoscere ingredienti. La foto potrebbe essere "
+                             "poco nitida o buia. Puoi riprovare con più luce, oppure aggiungere gli "
+                             "ingredienti a mano qui sotto.",
+                "puoi_inserire_a_mano": True})
+        return jsonify({
+            "ingredienti": lista, "totale": len(lista), "foto_analizzate": len(imgs),
+            "stato": "ok",
+            "sicuri": sicuri,
+            "da_confermare": da_confermare,  # il frontend li mostra come chip "È corretto?"
+            "messaggio": (f"Ho riconosciuto {len(sicuri)} ingredienti." +
+                          (f" Altri {len(da_confermare)} sono incerti: confermali o correggili."
+                           if da_confermare else "")),
+            "puoi_inserire_a_mano": True})
     except Exception as e:
         import traceback
         print(f"[RICONOSCI ERRORE] {e}\n{traceback.format_exc()[-500:]}", flush=True)
-        return jsonify({"errore": str(e)}), 500
+        # SPRINT 2 — mai errore 500 all'utente: fallback pulito che permette di continuare a mano.
+        return jsonify({
+            "ingredienti": [], "totale": 0, "foto_analizzate": len(imgs),
+            "stato": "errore_recuperabile",
+            "messaggio": "Non sono riuscito ad analizzare la foto in questo momento. Puoi "
+                         "aggiungere gli ingredienti a mano qui sotto e continuare.",
+            "puoi_inserire_a_mano": True}), 200
 
 
 @bp.route("/v1/tts", methods=["POST"])
