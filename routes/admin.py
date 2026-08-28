@@ -6110,12 +6110,13 @@ def admin_audit_principi():
         return "Forbidden", 403
     from db import carica_grafo
     db = carica_grafo()
-    fenomeni = db.execute("SELECT id, name, domain FROM nodes WHERE id LIKE 'fen-%'").fetchall()
+    fenomeni = db.execute("SELECT id, name, domain FROM nodes WHERE id LIKE 'fen-%%'").fetchall()
     # UNA sola query per tutti gli edge principio (governato_da) + nomi dei principi
+    # NOTA: i %% letterali dei LIKE vanno RADDOPPIATI con questo wrapper Postgres.
     edge_rows = db.execute("""
         SELECT e.from_id AS fen, n.name AS princ
         FROM edges e JOIN nodes n ON n.id = e.to_id
-        WHERE e.relation = 'governato_da' AND e.from_id LIKE 'fen-%'
+        WHERE e.relation = 'governato_da' AND e.from_id LIKE 'fen-%%'
     """).fetchall()
     # mappa fenomeno -> lista principi
     mappa = {}
