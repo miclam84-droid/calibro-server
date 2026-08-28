@@ -1844,7 +1844,7 @@ def menu_proposte():
                       AND (translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s
                         OR translate(lower(e.from_id),'àèéìòù','aeeiou') LIKE %s
                         OR translate(lower(nf.name),'àèéìòù','aeeiou') LIKE %s)
-                """, (f"%{s1.replace(' ','-')}%", f"%{a1_en}%" if a1_en else "%\x00%", f"%{s1}%"))
+                """, (f"%{s1.replace(' ','-')}%", f"%{a1_en}%" if a1_en else "%__nomatch__%", f"%{s1}%"))
                 forza = 0
                 for rname, rtoid, rov in cur.fetchall():
                     partner = _norm_acc(rname or "")
