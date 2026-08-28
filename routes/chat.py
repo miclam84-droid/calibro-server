@@ -473,6 +473,18 @@ def nodo():
     # 'misurabile' = ha un numero vero (mostra range numerico); 'osservabile' = qualitativo
     # (il target è uno stato/descrizione, mostra checklist di stato invece del numero).
     # Il frontend usa questo per renderizzare il Mirino nel modo giusto senza indovinare.
+    # NUOVA NARRAZIONE: i principi_diretti sono SOLO i governato_da del fenomeno aperto
+    # (non del contesto largo). Servono alla nuova scheda per mostrare in cima il principio
+    # VERO del fenomeno, non l'aggregato del contesto. Il campo 'principi' resta per la chat.
+    principi_diretti = []
+    if _fen_id:
+        try:
+            for e in db.execute(
+                "SELECT n.id, n.name FROM edges ed JOIN nodes n ON n.id=ed.to_id "
+                "WHERE ed.from_id=? AND ed.relation='governato_da'", (_fen_id,)).fetchall():
+                principi_diretti.append({"id": e["id"], "nome": e["name"]})
+        except Exception:
+            principi_diretti = []
     _tipo_fenomeno = "misurabile" if _target_num else "osservabile"
     return jsonify({
         "titolo": n["name"],
@@ -493,7 +505,9 @@ def nodo():
         "unita": _unita,
         "grandezza": _grandezza,
         # nuova narrazione: tipo di fenomeno per il Mirino adattivo
-        "tipo_fenomeno": _tipo_fenomeno
+        "tipo_fenomeno": _tipo_fenomeno,
+        # principi SOLO del fenomeno aperto (per la nuova scheda: il principio in cima)
+        "principi_diretti": principi_diretti
     })
 
 @bp.route("/calcola", methods=["POST"])
