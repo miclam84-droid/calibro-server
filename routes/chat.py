@@ -469,6 +469,11 @@ def nodo():
                         _unita = m2.group(2)
     except Exception:
         pass
+    # NUOVA NARRAZIONE: classifico il fenomeno per il Mirino adattivo.
+    # 'misurabile' = ha un numero vero (mostra range numerico); 'osservabile' = qualitativo
+    # (il target è uno stato/descrizione, mostra checklist di stato invece del numero).
+    # Il frontend usa questo per renderizzare il Mirino nel modo giusto senza indovinare.
+    _tipo_fenomeno = "misurabile" if _target_num else "osservabile"
     return jsonify({
         "titolo": n["name"],
         "trovato": [f["name"] for f in contesto["fenomeni"]],
@@ -486,7 +491,9 @@ def nodo():
         "target": _target,
         "target_numero": _target_num,
         "unita": _unita,
-        "grandezza": _grandezza
+        "grandezza": _grandezza,
+        # nuova narrazione: tipo di fenomeno per il Mirino adattivo
+        "tipo_fenomeno": _tipo_fenomeno
     })
 
 @bp.route("/calcola", methods=["POST"])
