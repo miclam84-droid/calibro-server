@@ -1869,10 +1869,10 @@ a:focus-visible,input:focus-visible{
 .mappa-porte .mappa-tab.active{background:var(--ink,#131C21);color:#EAF1F3;border-color:var(--ink,#131C21)}
 .porta-voci{margin:14px 0 4px}
 .porta-sub{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal,#12545D);margin-bottom:10px}
-.porta-voce{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:12px 16px;margin-bottom:8px;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;cursor:pointer;text-align:left}
+.porta-voce{display:inline-flex;align-items:center;gap:6px;width:auto;min-height:38px;padding:8px 13px;margin:0 6px 6px 0;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:19px;cursor:pointer;text-align:left}
 .porta-voce.sel{border-color:var(--dato,#245979);border-width:1.5px;background:var(--l3,#F2F6F6)}
-.porta-voce-t{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--ink,#131C21);flex-shrink:0}
-.porta-voce-d{font-size:12.5px;color:var(--muted,#5A6C70);flex:1}
+.porta-voce-t{font-family:var(--sans,'Inter');font-weight:600;font-size:13px;color:var(--ink,#131C21);flex-shrink:0}
+.porta-voce-d{display:none}
 .porta-voce-arr{font-size:20px;color:var(--faint,#7A898E)}
 
 /* bersaglio testuale (descrizione lunga): dimensione leggibile, non gonfiata a 38px */

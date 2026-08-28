@@ -1713,7 +1713,7 @@ const _strings = {
     db_connessioni:'Connessioni aromatiche',
     db_calcolatori:'Calcolatori',
     chiedi:'Chiedi',
-    studia:'Misura questo →', nologin:'',
+    studia:'Studia il fenomeno →', nologin:'',
     disc_kw_bar:'Acidità · Diluizione · Carbonatazione · Emulsione',
     disc_kw_bakery:'Struttura · Fermentazione · Osmosi · Retrogradazione',
     disc_kw_cucina:'Maillard · Denaturazione · Calore · Emulsione',
