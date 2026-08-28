@@ -225,23 +225,23 @@ def lezione(disciplina_nome, step):
     step 0 = free · step 1+ = Pro only."""
     lang = request.args.get("lang", "it")
     token = request.args.get("token","") or request.headers.get("X-Token","")
-    if step > 0 and DATABASE_URL:
+    # NUOVA NARRAZIONE (paywall per-parti): il fenomeno è SEMPRE accessibile (la scienza è
+    # gratis). Per gli utenti free calcolo solo un flag pro_locked, che dice al frontend
+    # di sfocare il DATO numerico e gli ERRORI-DA-BANCO (non l'intera scheda).
+    pro_locked = False
+    if DATABASE_URL:
         try:
-            import psycopg2
-            _conn_l = _get_conn()
-            _cur_l = _conn_l.cursor()
             uid = _utente_da_token(token)
             piano = "free"
             if uid:
+                _conn_l = _get_conn(); _cur_l = _conn_l.cursor()
                 _cur_l.execute("SELECT piano FROM utenti WHERE id=%s", (uid,))
                 r = _cur_l.fetchone()
                 piano = r[0] if r else "free"
-            _cur_l.close(); _release_conn(_conn_l)
-            if piano != "pro":
-                return jsonify({"errore":"pro_required","paywall":True,
-                    "messaggio":_err("pro_required", lang)}), 402
+                _cur_l.close(); _release_conn(_conn_l)
+            pro_locked = (piano != "pro")
         except Exception:
-            pass
+            pro_locked = True  # in dubbio, sfoco (sicuro per i costi)
     db = carica_grafo()
     if disciplina_nome not in _lezione_cache:
         resp = disciplina(disciplina_nome).get_json()
@@ -350,7 +350,10 @@ def lezione(disciplina_nome, step):
         "quiz": quiz,
         "scava": scava,
         "ha_precedente": idx > 0,
-        "ha_successivo": idx < len(fenomeni) - 1
+        "ha_successivo": idx < len(fenomeni) - 1,
+        # paywall per-parti: se true, il frontend sfoca SOLO il dato numerico + gli errori-da-banco
+        # (la scienza — principio, spiegazione, tecniche — resta sempre visibile)
+        "pro_locked": pro_locked
     })
 
 @bp.route("/quiz/<node_id>")
