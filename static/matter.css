@@ -1689,11 +1689,11 @@ a:focus-visible,input:focus-visible{
 .mbv-prop-cta{width:100%;min-height:48px;background:#C77B3F;color:#241109;border:none;border-radius:10px;font-family:var(--sans);font-weight:700;font-size:14px;cursor:pointer}
 
 /* pulsanti d'accesso alle viste (in Scopri e Lab) */
-.vista-launch{display:flex;gap:10px;flex-wrap:wrap;padding:4px 0}
-.vista-launch-btn{flex:1;min-width:140px;min-height:56px;display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--l2,#E8EDED);border:1px solid var(--line,#B7C3C3);border-radius:12px;cursor:pointer;font-family:var(--sans);text-align:left}
-.vista-launch-btn .vl-ico{width:22px;height:22px;flex:0 0 22px;color:var(--teal,#12545D)}
-.vista-launch-btn .vl-t{font-weight:600;font-size:14.5px;color:var(--ink,#131C21);display:block}
-.vista-launch-btn .vl-d{font-size:12px;color:var(--muted,#5A6C70);display:block;margin-top:1px}
+.vista-launch{display:flex;gap:8px;flex-wrap:nowrap;padding:4px 0}
+.vista-launch-btn{flex:1;min-width:0;min-height:44px;display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--l2,#E8EDED);border:1px solid var(--line,#B7C3C3);border-radius:10px;cursor:pointer;font-family:var(--sans);text-align:left}
+.vista-launch-btn .vl-ico{width:18px;height:18px;flex:0 0 18px;color:var(--teal,#12545D)}
+.vista-launch-btn .vl-t{font-weight:600;font-size:13px;color:var(--ink,#131C21);display:block;line-height:1.2}
+.vista-launch-btn .vl-d{display:none}
 
 /* strumenti di misura */
 .stv-discs{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}

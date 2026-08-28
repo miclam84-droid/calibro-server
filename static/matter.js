@@ -604,22 +604,20 @@ function _popolaCruscotto(f){
 function renderHome(j){
   const f = j.fenomeno || {};
   { const _h=document.getElementById('scopri-hero'); if(_h) _h.classList.remove('loading'); }
-  // CRUSCOTTO OPERATIVO — bersaglio del giorno + ultima misura + esperimento
+  // CRUSCOTTO OPERATIVO — il colpo d'occhio (fenomeno + numero + misura + esperimento)
   _popolaCruscotto(f);
+  // CARD HERO SOTTO = l'approfondimento: capire il fenomeno (NO numero duplicato, quello è nel cruscotto)
   document.getElementById('scopri-ey').textContent =
-    'oggi al banco · ' + (f.dominio||'');
+    'capisci il fenomeno · ' + (f.dominio||'');
   document.getElementById('scopri-titolo').textContent = f.nome || '—';
     const _loop = document.getElementById('loop-guidato');
     const _loopFen = document.getElementById('loop-fen-nome');
     if(_loop) _loop.style.display='none';
     if(_loopFen) _loopFen.textContent = f.nome || 'Fenomeno';
-  // il numero-bersaglio: TARGET primario (eroe) + condizioni secondarie
+  // il numero NON si ripete qui (è già nel cruscotto): la card sotto racconta la scienza
   const numBox = document.getElementById('scopri-num');
-  if(f.target){
-    _renderTarget(numBox, f.target);
-    numBox.style.display='block';
-  } else { numBox.style.display='none'; }
-  // poi il PERCHÉ (descrizione), sotto il numero
+  if(numBox) numBox.style.display='none';
+  // il PERCHÉ (descrizione) è il cuore della card: la scienza del fenomeno
   document.getElementById('scopri-desc').textContent = f.scheda_intro || '';
   Matter.fenomenoId = f.id;
   // onboarding: mostra nudge se primo accesso
