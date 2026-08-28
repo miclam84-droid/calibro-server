@@ -51,8 +51,14 @@ def _nome_pulito(nome):
     for m in _MARCATORI_SPORCHI:
         if m in n:
             return (nome, False)
-    # 3) nome con troppe maiuscole interne (es. "Petitgrain Lemon") ma non mappato:
-    #    lo teniamo ma in minuscolo pulito
+    # 3) nome con troppe maiuscole interne (es. "Carne Cruda Di Manzo", "Manzo Arrosto"):
+    #    normalizzo in minuscolo pulito (title-case inglese → italiano leggibile)
+    parole = nome.strip().split()
+    if len(parole) >= 2 and sum(1 for p in parole if p[:1].isupper()) >= 2:
+        # metto tutto minuscolo, poi maiuscola solo sulla prima parola
+        pulito = " ".join(parole).lower()
+        pulito = pulito[:1].upper() + pulito[1:] if pulito else pulito
+        return (pulito, True)
     return (nome.strip(), True)
 
 def _pulisci_abbinamenti(lista, campo="ingrediente", max_famiglia=3, ingrediente_base=None):
@@ -1780,7 +1786,7 @@ def abbina(ingrediente):
         except Exception:
             pass
         abbinamenti = abbinamenti_dedup
-        abbinamenti_puliti = _pulisci_abbinamenti(abbinamenti)
+        abbinamenti_puliti = _pulisci_abbinamenti(abbinamenti, ingrediente_base=ingrediente)
         # FALLBACK AI: se dopo la pulizia restano troppo pochi abbinamenti,
         # completa con abbinamenti plausibili generati da AI (marcati come tali).
         fonte = "Dataset Ahn 2011 (CC BY)"
