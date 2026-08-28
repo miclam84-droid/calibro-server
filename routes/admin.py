@@ -6148,3 +6148,57 @@ def admin_audit_principi():
         "lista_senza_principio": senza_principio,
         "dettaglio": dettaglio
     })
+
+
+@bp.route("/admin/correggi-principi-primari")
+def admin_correggi_principi_primari():
+    """Corregge il PRIMO principio (quello in cima alla nuova scheda) di alcuni fenomeni
+    dove era sbagliato o secondario. Strategia: rimuovo l'edge verso il principio sbagliato,
+    così resta quello corretto come unico/primo. ?s=SECRET."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    import json as _json
+    # (fenomeno_id, principio_SBAGLIATO da rimuovere, principio_GIUSTO che deve restare)
+    # rimuovo il legame verso il principio sbagliato; se il giusto non c'è, lo aggiungo.
+    CORREZIONI = [
+        ("fen-uova-impasto", "fen-grassi-impasto", "princ-denaturazione"),
+        ("fen-emulsione-salse", "princ-denaturazione", "princ-emulsione"),
+        ("fen-latte-impasto", "fen-zuccheri-impasto", "princ-emulsione"),
+        ("fen-koji", "princ-ph", "princ-denaturazione"),
+    ]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        fatti = []
+        for fid, sbagliato, giusto in CORREZIONI:
+            # verifico che il fenomeno esista
+            cur.execute("SELECT 1 FROM nodes WHERE id=%s", (fid,))
+            if not cur.fetchone():
+                fatti.append({"fen": fid, "esito": "fenomeno inesistente"}); continue
+            # rimuovo l'edge verso il principio sbagliato (se c'è)
+            cur.execute("DELETE FROM edges WHERE from_id=%s AND relation='governato_da' AND to_id=%s",
+                        (fid, sbagliato))
+            rimosso = cur.rowcount
+            # garantisco che il principio giusto sia collegato
+            cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='governato_da' AND to_id=%s",
+                        (fid, giusto))
+            if not cur.fetchone():
+                cur.execute("SELECT 1 FROM nodes WHERE id=%s", (giusto,))
+                if cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,%s,%s)",
+                                (fid, giusto, "governato_da", _json.dumps({}, ensure_ascii=False)))
+                    aggiunto = True
+                else:
+                    aggiunto = False
+            else:
+                aggiunto = False
+            fatti.append({"fen": fid, "rimosso_sbagliato": rimosso, "giusto_ora_presente": True,
+                          "aggiunto_giusto": aggiunto})
+        conn.commit()
+        return jsonify({"ok": True, "correzioni": fatti})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"errore": str(e)}), 500
+    finally:
+        _release_conn(conn)
