@@ -1156,6 +1156,36 @@ function _estraiSezione(risposta, chiave){
   var m = risposta.match(re);
   return m ? m[1].trim() : '';
 }
+// ═══ DIAGRAMMI SVG MATTER — blueprint scientifici per fenomeno (B4) ═══
+var _DIAGRAMMI = ['caramello','coagulazione','denaturazione','diluizione','emulsione',
+  'equilibrio-sour','espresso','forza-farina','frittura','gelatinizzazione','maillard',
+  'ph-scala','temperaggio'];
+function _diagrammaPer(nome, principi){
+  var s = ((nome||'')+' '+(principi||'')).toLowerCase();
+  // mappa per parole chiave (nome fenomeno o principio → chiave diagramma)
+  var mappe = [
+    [/maillard|rosolatura|searing|crosta/, 'maillard'],
+    [/caramell|zucchero.*calore|imbrunimento zucchero/, 'caramello'],
+    [/coagul|uova|tuorlo|albume/, 'coagulazione'],
+    [/denatur|proteic|proteine/, 'denaturazione'],
+    [/emulsion|maionese|tensioattiv|ganache/, 'emulsione'],
+    [/diluizion|acqua.*ghiaccio|dilut/, 'diluizione'],
+    [/gelatinizz|amid|addensa/, 'gelatinizzazione'],
+    [/frittura|frying|olio.*temperatura/, 'frittura'],
+    [/espresso|estrazione.*caff|percolazion/, 'espresso'],
+    [/temperagg|cioccolato.*cristall|tempering/, 'temperaggio'],
+    [/ph|acidit|acido.*base|equilibri acido/, 'ph-scala'],
+    [/sour|equilibrio.*acid|bilanciamento drink/, 'equilibrio-sour'],
+    [/forza.*farina|glutine|w farina|impasto.*forza/, 'forza-farina']
+  ];
+  for(var k=0;k<mappe.length;k++){ if(mappe[k][0].test(s)) return mappe[k][1]; }
+  return null;
+}
+function _diagrammaHtml(nome, principi){
+  var d = _diagrammaPer(nome, principi);
+  if(!d) return '';
+  return '<div class="fen-diagramma"><img src="/static/diagrammi/'+d+'.svg" alt="Diagramma '+_escV(nome||'')+'" loading="lazy"></div>';
+}
 function _renderSchedaFenomeno(j){
   rimuoviThinking();
   var e=_escV;
@@ -1257,12 +1287,15 @@ function _renderSchedaFenomeno(j){
       + connessi.slice(0,8).map(function(c){ return '<span class="fen-chip fen-chip-app">'+e(c.nome||c)+'</span>'; }).join('')+'</div></div>'
     : '';
 
-  // ORDINE FISSO: Fenomeno → Principio → Mirino → Tecniche → Errori(Pro) → spiegazione → dove
+  // ORDINE FISSO: Fenomeno → Principio → [Diagramma] → Mirino → Tecniche → Errori(Pro) → spiegazione → dove
+  var nomePrincipio = principi.length ? principi[0].nome : '';
+  var diagramma = _diagrammaHtml(j.titolo, nomePrincipio);
   var html =
     '<div class="fen-scheda">'
     + '<div class="fen-header"><div class="fen-titolo">'+e(j.titolo||'Fenomeno')+'</div>'
     +   '<div class="fen-tags">'+(disc?'<span class="fen-disc">'+e(disc)+'</span>':'')+badge+'</div></div>'
     + boxPrincipio
+    + diagramma
     + mirino
     + tecnicheHtml
     + erroriHtml

@@ -2205,3 +2205,7 @@ a:focus-visible,input:focus-visible{
 .mf-chip.sel{background:rgba(18,84,93,.1);border-style:solid;border-color:var(--teal,#12545D)}
 .mf-chip-ico{font-family:var(--mono,'IBM Plex Mono');font-weight:700;color:var(--terra,#C77B3F)}
 .mf-chip.sel .mf-chip-ico{color:var(--teal,#12545D)}
+
+/* B4 — diagramma scientifico Matter (blueprint SVG) */
+.fen-diagramma{margin:0 0 16px;border:1px solid var(--border,#B7C3C3);border-radius:12px;overflow:hidden;background:#F7F5F0;box-shadow:2px 2px 0 rgba(19,28,33,.08)}
+.fen-diagramma img{display:block;width:100%;height:auto}
