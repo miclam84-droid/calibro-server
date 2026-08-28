@@ -6098,3 +6098,42 @@ def admin_correggi_accenti():
         return jsonify({"ok": True, "nodi_corretti": len(fatti), "ids": fatti[:20]})
     finally:
         _release_conn(conn)
+
+
+@bp.route("/admin/audit-principi")
+def admin_audit_principi():
+    """Audit della QUALITÀ dei principi: per ogni fenomeno, il primo principio (quello che
+    l'utente legge in cima nella nuova scheda). Serve a trovare i fenomeni col primo-principio
+    sbagliato o mancante. ?s=SECRET."""
+    secret = request.args.get("s", "")
+    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+        return "Forbidden", 403
+    from db import carica_grafo
+    db = carica_grafo()
+    fenomeni = db.execute("SELECT id, name, domain FROM nodes WHERE id LIKE 'fen-%'").fetchall()
+    senza_principio, con_principio = [], []
+    dettaglio = []
+    for f in fenomeni:
+        fid = f["id"]
+        # principi collegati via governato_da
+        prin = db.execute("""
+            SELECT n.id, n.name FROM edges e JOIN nodes n ON n.id = e.to_id
+            WHERE e.from_id = ? AND e.relation = 'governato_da'
+        """, (fid,)).fetchall()
+        lista_prin = [{"id": p["id"], "nome": p["name"]} for p in prin]
+        entry = {"id": fid, "nome": f["name"], "disciplina": f["domain"],
+                 "n_principi": len(lista_prin),
+                 "primo_principio": lista_prin[0]["nome"] if lista_prin else None,
+                 "tutti_principi": [p["nome"] for p in lista_prin]}
+        if lista_prin:
+            con_principio.append(fid)
+        else:
+            senza_principio.append({"id": fid, "nome": f["name"]})
+        dettaglio.append(entry)
+    return jsonify({
+        "totale_fenomeni": len(fenomeni),
+        "con_principio": len(con_principio),
+        "senza_principio": len(senza_principio),
+        "lista_senza_principio": senza_principio,
+        "dettaglio": dettaglio
+    })
