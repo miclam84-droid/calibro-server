@@ -590,13 +590,15 @@ function _popolaCruscotto(f){
       var u=misure[misure.length-1]||{};
       var val = (u.valore!=null) ? (u.valore+(u.unita?' '+u.unita:'')) : (u.nome||'salvata');
       m.textContent = String(val).slice(0,12);
-    } else { m.textContent='—'; }
+      m.classList.remove('crus-invito');
+    } else { m.innerHTML='Fai la prima misura →'; m.classList.add('crus-invito'); }
   }
   // esperimento in corso (stato locale)
   var e=document.getElementById('crus-exp');
   if(e){
     var exp=null; try{ exp=localStorage.getItem('matter_exp_corso'); }catch(x){}
-    e.textContent = exp ? 'In corso' : '—';
+    if(exp){ e.textContent='In corso'; e.classList.remove('crus-invito'); }
+    else { e.innerHTML='Prova un esperimento →'; e.classList.add('crus-invito'); }
   }
 }
 function renderHome(j){
@@ -1142,9 +1144,9 @@ function _renderSchedaFenomeno(j){
     : '<span class="fen-badge fen-badge-oss">👁 Stato</span>';
   var disc = j.grandezza || j.disciplina || '';
 
-  // --- PRINCIPIO (il cuore, in cima) ---
+  // --- PRINCIPIO (il cuore, in cima) — uso principi_diretti (il principio DEL fenomeno) ---
   var perche = _estraiSezione(j.risposta, 'PERCHÉ') || _estraiSezione(j.risposta, 'PERCHE');
-  var principi = (j.principi||[]).slice(0,3);
+  var principi = (j.principi_diretti && j.principi_diretti.length ? j.principi_diretti : (j.principi||[])).slice(0,2);
   var principiChip = principi.map(function(p){
     return '<span class="fen-princ-chip" onclick="apriNodo(\''+e(String(p.id))+'\',\''+e(String(p.nome)).replace(/'/g,"\\'")+'\')">'+e(p.nome)+'</span>';
   }).join('');

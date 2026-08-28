@@ -672,9 +672,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .hero-num-top-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--science);margin-bottom:6px}
 .hero-num-top-val{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--ink);line-height:1.6}
 /* tab mappa atlante */
-.mappa-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mappa-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;scrollbar-width:none}
 .mappa-tabs::-webkit-scrollbar{display:none}
-.mappa-tab{flex-shrink:0;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:10px 14px;cursor:pointer;transition:color .15s,border-color .15s}
+.mappa-tab{flex:1;min-width:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:10px 4px;cursor:pointer;transition:color .15s,border-color .15s;text-align:center}
 .mappa-tab.active{color:var(--e500);border-bottom-color:var(--e500)}
 .mappa-tab:hover{color:var(--ink)}
 .mappa-panel{display:none}
@@ -2019,8 +2019,8 @@ a:focus-visible,input:focus-visible{
 .crus-box{background:var(--ink,#131C21);border-radius:14px;padding:16px 18px;cursor:pointer;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .crus-box:active{transform:scale(.99)}
 .crus-lab{font-family:var(--mono,'IBM Plex Mono');font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#7FB0C4;margin-bottom:6px}
-.crus-box-target .crus-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:38px;line-height:1;color:#5EA0C8;letter-spacing:-.01em}
-.crus-box-target .crus-sub{font-family:var(--sans,'Inter');font-size:12.5px;color:#9DAEB2;margin-top:6px}
+.crus-box-target .crus-val{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:28px;line-height:1.05;color:#5EA0C8;letter-spacing:-.02em}
+.crus-box-target .crus-sub{font-family:var(--mono,'IBM Plex Mono');font-size:15px;font-weight:700;color:#E8935A;margin-top:8px;letter-spacing:.02em}
 .crus-row{display:flex;gap:10px}
 .crus-box-mini{flex:1;padding:13px 15px}
 .crus-val-mini{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:19px;line-height:1;color:#EAF1F3}
@@ -2152,3 +2152,6 @@ a:focus-visible,input:focus-visible{
 .fen-chip{font-family:var(--sans,'Inter');font-size:13px;color:var(--teal,#12545D);background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);padding:6px 12px;border-radius:16px;cursor:pointer}
 .fen-chip:active{background:var(--l3,#F2F6F6)}
 .fen-chip-app{color:var(--ink,#131C21);cursor:default}
+
+/* invito nei box vuoti del cruscotto (empty state = invito, non trattino morto) */
+.crus-invito{font-family:var(--sans,'Inter')!important;font-size:13px!important;font-weight:600!important;color:#7FB0C4!important;line-height:1.3}
