@@ -2179,3 +2179,19 @@ a:focus-visible,input:focus-visible{
 .misura-adesso .ma-txt{flex:1;font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:17px;color:#EAF1F3;letter-spacing:-.01em;text-align:left}
 .misura-adesso .ma-plus{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:24px;color:#E8935A}
 .sm-u-input{width:64px!important;flex:0 0 64px!important;border:none!important;background:transparent!important;font-family:var(--mono,'IBM Plex Mono')!important;font-size:16px!important;color:var(--muted,#5A6C70)!important;text-align:center;outline:none}
+
+/* paywall per-parti nella lezione */
+.les-mirino-blur .target-eroe, .les-mirino-blur .target-hero-val, .les-mirino-blur .mir-val, .les-mirino-blur{filter:blur(6px);opacity:.5;user-select:none;transition:none}
+.les-mirino-lockbox{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:7px;white-space:nowrap;font-family:var(--sans,'Inter');font-weight:700;font-size:13px;color:#E8935A;background:var(--ink,#131C21);padding:8px 15px;border-radius:22px;border:1px solid #E8935A;cursor:pointer;z-index:5;filter:none!important;opacity:1!important}
+.les-lock-ico{filter:none}
+
+/* A4 — box correzione contratto (piatto tenuto fedele) */
+.rg-contratto{display:flex;gap:12px;align-items:flex-start;background:rgba(18,84,93,.08);border:1px solid var(--teal,#12545D);border-radius:12px;padding:14px 16px;margin-bottom:16px}
+.rg-contratto-ico{width:24px;height:24px;flex:0 0 24px;background:var(--teal,#12545D);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.rg-contratto-txt{font-size:13.5px;color:var(--ink,#131C21);line-height:1.55}
+/* A6 — badge robustezza proposte */
+.mbv-rob{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin-left:8px}
+.mbv-rob-dot{width:7px;height:7px;border-radius:50%}
+.mbv-rob-forte{color:#1a6e3a;background:rgba(38,140,74,.12)} .mbv-rob-forte .mbv-rob-dot{background:#268c4a}
+.mbv-rob-media{color:#8a6d1a;background:rgba(199,159,63,.14)} .mbv-rob-media .mbv-rob-dot{background:#c79f3f}
+.mbv-rob-esplorare{color:#5A6C70;background:var(--l2,#E8EDED)} .mbv-rob-esplorare .mbv-rob-dot{background:#9AA8AC}

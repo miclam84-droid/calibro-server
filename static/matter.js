@@ -783,6 +783,8 @@ async function caricaLezioneStep(step){
     }
     // stepper a puntini: quanti fenomeni, dove sei, salto diretto
     renderLesDots(j.step, j.totale_passi);
+    // ═══ PAYWALL PER-PARTI (pro_locked): sfoca SOLO il numero del Mirino, la scienza è gratis ═══
+    _applicaPaywallLezione(j.pro_locked === true);
     // principio
     const pb = document.getElementById('les-principio-box');
     if(j.principio){
@@ -812,6 +814,31 @@ async function caricaLezioneStep(step){
   }
 }
 
+// Paywall per-parti nella lezione: sfoca il numero del Mirino al free (la scienza resta gratis)
+function _applicaPaywallLezione(locked){
+  var mirino = document.getElementById('les-mirino');
+  var datoBox = document.getElementById('les-dato-box');
+  var target = document.getElementById('les-target');
+  // rimuovo eventuale overlay precedente
+  var vecchio = document.getElementById('les-mirino-lock'); if(vecchio) vecchio.remove();
+  if(!locked){
+    if(mirino) mirino.classList.remove('les-mirino-blur');
+    if(target) target.classList.remove('les-mirino-blur');
+    return;
+  }
+  // sfoco il numero e aggiungo l'overlay "Sblocca con Pro"
+  var box = datoBox && datoBox.style.display!=='none' ? datoBox : mirino;
+  if(box && box.style.display!=='none'){
+    if(target) target.classList.add('les-mirino-blur');
+    if(mirino) mirino.classList.add('les-mirino-blur');
+    var lock=document.createElement('div');
+    lock.id='les-mirino-lock'; lock.className='les-mirino-lockbox';
+    lock.innerHTML='<span class="les-lock-ico">🔒</span><span>Il numero-bersaglio esatto è Pro</span>';
+    lock.onclick=function(){ mostraPopupPro('numero'); };
+    box.style.position='relative';
+    box.appendChild(lock);
+  }
+}
 function renderLesDots(step, totale){
   const box = document.getElementById('les-dots');
   if(!box) return;
@@ -3370,6 +3397,10 @@ async function generaRicettaDaTesto(q){
     var j=await r.json();
     _incDomande();
     rimuoviThinking(); setBusy(false);
+    if(j && j.errore==='non_trovata'){
+      _toast(j.messaggio || 'Piatto non trovato — prova un nome classico o cerca nella Vetrina');
+      return;
+    }
     if(j && (j.nome || j.ingredienti)){
       mostraRicettaGen(j);
     } else {
@@ -3412,8 +3443,14 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
   var critico=dati.punto_critico?'<div class="rg-critico"><span class="rg-critico-lab">Qui sbagliano quasi tutti</span> '+e(dati.punto_critico)+'</div>':'';
   var salvato = !!ricettaIdSalvata;
   if(salvato){ _ricettaGenCorrente._ricetta_id = ricettaIdSalvata; }
+  // A4: se il backend ha tenuto il piatto fedele (fusione assurda richiesta), mostro la nota
+  var notaContratto = dati._nota_contratto || (dati.ricetta && dati.ricetta._nota_contratto) || '';
+  var boxContratto = (dati.corretta_da_contratto && notaContratto)
+    ? '<div class="rg-contratto"><div class="rg-contratto-ico">✓</div><div class="rg-contratto-txt">'+e(notaContratto)+'</div></div>'
+    : '';
   var html=
     '<div class="rg-scheda">'
+    + boxContratto
     + (ing?'<div class="rg-sec"><div class="rg-sec-lab">Ingredienti</div><ul class="rg-ing">'+ing+'</ul></div>':'')
     + numeri
     + (proc?'<div class="rg-sec"><div class="rg-sec-lab">Procedimento</div>'+proc+'</div>':'')
@@ -5771,7 +5808,13 @@ async function mbProposte(){
     h += d.proposte.map(p=>{
       const ings = (p.ingredienti||[]).map(x=>'<span class="mbv-pill">'+_escV(x)+'</span>').join('');
       const conn = p.connessioni || (p.proof&&p.proof.connessioni_aromatiche) || 0;
-      return '<div class="mbv-prop"><div class="mbv-prop-top"><span class="mbv-prop-tipo">'+_escV(p.tipo||'combinazione')+'</span>'+
+      // A6: badge robustezza (forte/media/da esplorare)
+      var rob='';
+      if(p.robustezza){
+        var rc = /forte/i.test(p.robustezza)?'forte':(/media/i.test(p.robustezza)?'media':'esplorare');
+        rob = '<span class="mbv-rob mbv-rob-'+rc+'"><span class="mbv-rob-dot"></span>'+_escV(p.robustezza)+'</span>';
+      }
+      return '<div class="mbv-prop"><div class="mbv-prop-top"><span class="mbv-prop-tipo">'+_escV(p.tipo||'combinazione')+'</span>'+rob+
         '<span class="mbv-prop-conn">'+conn+'<span class="u">connessioni</span></span></div>'+
         '<div class="mbv-prop-ings">'+ings+'</div>'+
         '<button class="mbv-prop-cta" onclick="_mbCreaRicetta(\''+_escV((p.ingredienti||[]).join(', '))+'\')">Crea un piatto →</button></div>';
