@@ -114,7 +114,24 @@ def _pulisci_abbinamenti(lista, campo="ingrediente", max_famiglia=3, ingrediente
             out.append(a2)
         else:
             out.append(pulito)
+    # SCORE DI SPECIFICITÀ (Sprint 3): declasso gli ingredienti-hub (manzo, carne...) che per
+    # composti ubiquitari si abbinano a QUALSIASI cosa. Non li elimino (a volte sono validi), ma
+    # li spingo in fondo così emergono gli abbinamenti caratteristici. Salta se il base è un hub.
+    base_l = (ingrediente_base or "").strip().lower()
+    if base_l not in _INGREDIENTI_HUB:
+        def _e_hub(item):
+            nm = (item.get(campo) or item.get("nome") or item.get("a") or "") if isinstance(item, dict) else str(item)
+            return 1 if nm.strip().lower() in _INGREDIENTI_HUB else 0
+        out.sort(key=_e_hub)  # gli hub (1) vanno in fondo, stabile
     return out
+
+
+# ingredienti che dominano gli abbinamenti per composti generici (rumore di fondo):
+# vanno declassati per far emergere gli abbinamenti caratteristici (score di specificità)
+_INGREDIENTI_HUB = {
+    "manzo", "manzo arrosto", "carne cruda di manzo", "carne di manzo", "maiale arrosto",
+    "maiale stagionato", "carne", "brodo di carne", "carne cotta", "fegato",
+}
 from contenuto import _scheda_lang, _numero_bersaglio
 from utils import _profilo_default, _aggiorna_profilo, _check_rate_limit, _check_rate_limit_ai, _chiave_rate, _ai_giu_response
 from auth import _utente_da_token
