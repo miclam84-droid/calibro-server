@@ -201,21 +201,43 @@ def admin_popola_feed():
     _ensure_tabelle()
     conn = _get_conn(); cur = conn.cursor()
     try:
-        # pesco alcune ricette canoniche dalla tabella ricette
-        cur.execute("SELECT id, nome, disciplina, ingredienti, punto_critico FROM ricette LIMIT 40")
+        # se ?reset=1, cancello le vecchie ricette team (monche) prima di ripopolare con
+        # quelle complete. Necessario: il check anti-doppione salta i nomi già presenti.
+        if request.args.get("reset") == "1":
+            cur.execute("DELETE FROM ricette_pubbliche WHERE dal_team=TRUE")
+            conn.commit()
+        # pesco le ricette canoniche COMPLETE dalle colonne vere (procedimento, descrizione,
+        # esperimento, numeri, tecniche...). Prima il popola-feed copiava solo 4 campi
+        # buttando via il procedimento → ricette monche in Vetrina.
+        cur.execute("""SELECT id, nome, disciplina, ingredienti, punto_critico, procedimento,
+                              descrizione, numeri, esperimento, tecniche, fenomeni, difficolta,
+                              porzioni, tempo_prep, tempo_cottura
+                       FROM ricette LIMIT 40""")
         righe = cur.fetchall()
+        def _j(v):
+            if v is None: return None
+            return v if isinstance(v, (list, dict)) else (json.loads(v) if isinstance(v, str) and v.strip().startswith(('[','{')) else v)
         n = 0
         for r in righe:
-            ing = r[3] if isinstance(r[3], (list, dict)) else (json.loads(r[3]) if r[3] else [])
-            dati = {"nome": r[1], "disciplina": r[2], "ingredienti": ing, "punto_critico": r[4]}
-            # evito doppioni: pubblico solo se non già presente dal team
-            cur.execute("SELECT 1 FROM ricette_pubbliche WHERE nome=%s AND dal_team=TRUE LIMIT 1", (r[1],))
+            nome = r[1]
+            if not nome:
+                continue
+            dati = {
+                "nome": nome, "disciplina": r[2],
+                "ingredienti": _j(r[3]) or [], "punto_critico": r[4],
+                "procedimento": _j(r[5]) or [], "descrizione": r[6],
+                "numeri": _j(r[7]) or {}, "esperimento": r[8],
+                "tecniche": _j(r[9]) or [], "fenomeni": _j(r[10]) or [],
+                "difficolta": r[11], "porzioni": r[12],
+                "tempo_prep": r[13], "tempo_cottura": r[14],
+            }
+            cur.execute("SELECT 1 FROM ricette_pubbliche WHERE nome=%s AND dal_team=TRUE LIMIT 1", (nome,))
             if cur.fetchone():
                 continue
             cur.execute("""
                 INSERT INTO ricette_pubbliche (device_id, autore_nome, autore_postazione, ricetta_id, nome, dati, lingua, dal_team)
                 VALUES ('team','Team Matter Lab',%s,%s,%s,%s,'it',TRUE)
-            """, (r[2] or "", r[0], r[1], json.dumps(dati, ensure_ascii=False)))
+            """, (r[2] or "", r[0], nome, json.dumps(dati, ensure_ascii=False)))
             n += 1
         conn.commit()
         return jsonify({"ok": True, "pubblicate": n})
