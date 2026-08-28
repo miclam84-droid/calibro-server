@@ -138,6 +138,16 @@ def _blocco_knowledge_tecnico(richiesta, disciplina="cucina", ingredienti=None):
         return ""
 
 
+def _contratto_piatto(richiesta):
+    """Inietta il contratto di coerenza (famiglia + tecniche vietate) per impedire fusioni
+    assurde. Isolato: se il modulo manca, la generazione continua."""
+    try:
+        from contratto_piatto import contratto_per_prompt
+        return contratto_per_prompt(richiesta)
+    except Exception:
+        return ""
+
+
 def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
     """Genera una ricetta strutturata a partire da una richiesta libera.
     richiesta: es. 'un dolce al cioccolato', 'cocktail al gin agrumato', 'pane con le noci'
@@ -213,6 +223,7 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
             if piatto_canonico else ""
         )
         + _blocco_knowledge_tecnico(richiesta, disciplina)
+        + _contratto_piatto(richiesta)
         + f"DATI REALI DISPONIBILI (l'unica fonte di numeri consentita):\n"
         f"FENOMENI CON NUMERI BERSAGLIO: {fen_str}\n\n"
         f"TECNICHE DISPONIBILI: {tec_str}\n\n"
@@ -343,6 +354,17 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         try:
             _sanita = _verifica_sensatezza(db, ricetta, piatto_canonico is not None)
             ricetta["_sensatezza"] = _sanita
+        except Exception:
+            pass
+        # ── RED TEAM CONTRATTO: verifica che non ci siano tecniche vietate per la famiglia ──
+        # (es. 'gratinare' in un tiramisù). Se le trova, marca la ricetta come incoerente.
+        try:
+            from contratto_piatto import valida_coerenza
+            _coe = valida_coerenza(richiesta, ricetta)
+            ricetta["_coerenza"] = _coe
+            if not _coe.get("ok", True):
+                ricetta["_incoerente"] = True
+                ricetta["_motivo_incoerenza"] = _coe.get("problemi", [])
         except Exception:
             pass
         return ricetta

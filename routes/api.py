@@ -214,7 +214,11 @@ def _estrai_nome_bevanda(testo):
 def genera_ricetta_endpoint():
     """Recipe Builder AI: genera una ricetta strutturata dai dati reali del grafo.
     Body JSON: {richiesta: 'un dolce al cioccolato', disciplina: 'pasticceria', lang: 'it', salva: false}
-    Se salva=true, persiste la ricetta generata nel DB (con id ric-gen-<slug>)."""
+    Se salva=true, persiste la ricetta generata nel DB (con id ric-gen-<slug>).
+
+    Sprint 1: la generazione è vincolata dal CONTRATTO PIATTO (contratto_piatto.py) che impedisce
+    le allucinazioni (Tiramisù Gratinato) classificando la famiglia e vietando le tecniche
+    incompatibili, senza spegnere la funzione."""
     from db import carica_grafo
     # rate limit stretto: genera-ricetta chiama l'AI, va protetto dal loop che brucia credito
     if not _check_rate_limit_ai(_chiave_rate()):
@@ -259,6 +263,10 @@ def genera_ricetta_endpoint():
                 risultato["_motivo_blocco"] = verifica["errori_gravi"]
         except Exception as _ve:
             risultato["_verifica"] = {"ok": True, "nota": "verificatore non disponibile"}
+        # CONTRATTO PIATTO: se il red team ha trovato tecniche vietate (es. tiramisù gratinato),
+        # non salvo e segnalo. Il frontend mostra la ricetta fedele + nota sull'aggiunta compatibile.
+        if risultato.get("_incoerente"):
+            salva = False
         # salvataggio opzionale — salva TUTTI i campi, incluse procedimento/applicazioni e le 3 lingue
         if salva and risultato.get("nome"):
             try:
