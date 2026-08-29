@@ -89,6 +89,33 @@ def _contesto_ricette_abbinamenti(db, domanda):
     return "".join(parti)
 
 
+def _contesto_memoria_utente(device_id):
+    """SPRINT 1 — memoria: legge le misure recenti salvate dall'utente (dal Quaderno) e le
+    restituisce come contesto, così la chat può riferirsi allo storico ('la tua ultima ganache
+    era a 32°C'). Isolato: se fallisce o non ci sono misure, ritorna stringa vuota."""
+    if not device_id or not DATABASE_URL:
+        return ""
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute(
+            "SELECT fenomeno, valore, unita, bersaglio, ts FROM misure_salvate "
+            "WHERE device_id=%s ORDER BY ts DESC LIMIT 5", (device_id,))
+        righe = cur.fetchall()
+        cur.close(); _release_conn(conn)
+        if not righe:
+            return ""
+        parti = ["\n\n### Misure recenti di QUESTO utente (dal suo Quaderno) — usale se pertinenti:"]
+        for r in righe:
+            fen, val, uni, ber = r[0], r[1], r[2] or "", r[3] or ""
+            riga = f"  - {fen}: {val}{uni}"
+            if ber:
+                riga += f" (bersaglio: {ber})"
+            parti.append(riga)
+        return "\n".join(parti)
+    except Exception:
+        return ""
+
+
 @bp.route("/chiedi", methods=["POST"])
 def chiedi():
     # IN4: rate limiting per IP
@@ -347,6 +374,13 @@ def chiedi():
         _extra = _contesto_ricette_abbinamenti(db, domanda)
         if _extra:
             prompt = prompt + _extra
+    except Exception:
+        pass
+    # SPRINT 1 — memoria utente: aggiungo le misure recenti del suo Quaderno al contesto
+    try:
+        _mem = _contesto_memoria_utente(device_id)
+        if _mem:
+            prompt = prompt + _mem
     except Exception:
         pass
     # history strutturata: passa i turni precedenti come messages[], non come testo
