@@ -73,7 +73,7 @@ def _contesto_ricette_abbinamenti(db, domanda):
         pass
     # 2) ABBINAMENTI: se la domanda chiede di abbinare/accostare un ingrediente
     try:
-        if any(k in d for k in ("abbin", "accost", "si sposa", "sta bene con", "cosa ci metto")):
+        if any(k in d for k in ("abbin", "accost", "si sposa", "sta bene con", "cosa ci metto", "compost")):
             for w in re.findall(r"[a-zàèéìòù]{4,}", d)[:8]:
                 rows = db.execute(
                     "SELECT DISTINCT n2.name FROM edges e "
@@ -82,7 +82,21 @@ def _contesto_ricette_abbinamenti(db, domanda):
                     ("%"+w+"%",)).fetchall()
                 if rows:
                     nomi = ", ".join(x["name"] for x in rows)
-                    parti.append(f"\n\n### Abbinamenti aromatici per '{w}' (da composti condivisi): {nomi}")
+                    blocco = f"\n\n### Abbinamenti aromatici per '{w}' (da composti condivisi): {nomi}"
+                    # composti aromatici dell'ingrediente (il 'perché molecolare')
+                    try:
+                        comp = db.execute(
+                            "SELECT DISTINCT n2.name FROM edges e "
+                            "JOIN nodes n1 ON e.from_id=n1.id JOIN nodes n2 ON e.to_id=n2.id "
+                            "WHERE e.relation='contiene_composto' AND lower(n1.name) LIKE %s "
+                            "AND n2.id LIKE 'pub_%%' LIMIT 6",
+                            ("%"+w+"%",)).fetchall()
+                        if comp:
+                            nomi_c = ", ".join(x["name"] for x in comp)
+                            blocco += f"\nComposti aromatici principali di '{w}': {nomi_c} (spiega gli abbinamenti per analogia molecolare)."
+                    except Exception:
+                        pass
+                    parti.append(blocco)
                     break
     except Exception:
         pass
