@@ -94,6 +94,7 @@ from routes.auth_routes import bp as auth_routes_bp; app.register_blueprint(auth
 from routes.api import bp as api_bp; app.register_blueprint(api_bp)
 from routes.lezione import bp as lezione_bp; app.register_blueprint(lezione_bp)
 from routes.chat import bp as chat_bp; app.register_blueprint(chat_bp)
+from routes.quiz_engine import bp as quiz_engine_bp; app.register_blueprint(quiz_engine_bp)
 from routes.cifra import bp as cifra_bp; app.register_blueprint(cifra_bp)
 from routes.misc import bp as misc_bp; app.register_blueprint(misc_bp)
 from routes.mie_cose import bp_mie as mie_cose_bp; app.register_blueprint(mie_cose_bp)
