@@ -5958,6 +5958,8 @@ function apriCalcolatori(){
     +   '<button class="calc-menu-btn on" onclick="_calcTab(\'impasto\',this)">Scalatore impasto</button>'
     +   '<button class="calc-menu-btn" onclick="_calcTab(\'teglie\',this)">Conversione teglie</button>'
     +   '<button class="calc-menu-btn" onclick="_calcTab(\'foodcost\',this)">Food cost piatto</button>'
+    +   '<button class="calc-menu-btn" onclick="_calcTab(\'vino\',this)">Temperatura vino</button>'
+    +   '<button class="calc-menu-btn" onclick="_calcTab(\'brix\',this)">Brix → ABV</button>'
     + '</div>'
     + '<div id="calc-body"></div>');
   _calcRenderImpasto();
@@ -5967,6 +5969,8 @@ function _calcTab(which, btn){
   if(btn) btn.classList.add('on');
   if(which==='impasto') _calcRenderImpasto();
   else if(which==='teglie') _calcRenderTeglie();
+  else if(which==='vino') _calcRenderVino();
+  else if(which==='brix') _calcRenderBrix();
   else _calcRenderFoodCost();
 }
 function _calcBody(html){ var b=document.getElementById('calc-body'); if(b) b.innerHTML=html; }
@@ -6070,6 +6074,50 @@ async function _calcFoodCost(){
     var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'food_cost_piatto',parametri:{ingredienti:_fcpIng, prezzo_vendita:pv}})});
     var j=await r.json();
     var num='<div class="calc-fcp-num">€'+_escV(String(j.costo_totale||'?'))+(j.food_cost_perc!=null?'<span class="calc-fcp-pct">'+j.food_cost_perc+'%</span>':'')+'</div>';
+    if(out) out.innerHTML=_calcRisultato(num, j);
+  }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
+}
+// --- Temperatura servizio vino (P4) ---
+function _calcRenderVino(){
+  var tipi=[['rosso_strutturato','Rosso strutturato'],['rosso_giovane','Rosso giovane'],['bianco','Bianco'],['rosato','Rosato'],['bollicina','Bollicina'],['dolce','Dolce']];
+  _calcBody(
+    '<div class="calc-form">'
+    + '<div class="calc-field"><label>Tipo di vino</label><select id="cv-tipo" class="calc-select">'
+    +   tipi.map(function(t){return '<option value="'+t[0]+'">'+t[1]+'</option>';}).join('')+'</select></div>'
+    + '<div class="calc-field"><label>Temperatura attuale (°C)</label><input type="number" inputmode="numeric" id="cv-temp" placeholder="22"></div>'
+    + '<div class="calc-field"><label>Metodo</label><select id="cv-metodo" class="calc-select"><option value="frigo">Frigo</option><option value="secchiello">Secchiello ghiaccio</option><option value="abbattitore">Abbattitore</option></select></div>'
+    + '<button class="calc-go" onclick="_calcVino()">Quanto tempo serve</button>'
+    + '</div><div id="cv-out"></div>');
+}
+async function _calcVino(){
+  var tipo=(document.getElementById('cv-tipo')||{}).value||'rosso_strutturato';
+  var temp=parseFloat((document.getElementById('cv-temp')||{}).value||'0')||0;
+  var metodo=(document.getElementById('cv-metodo')||{}).value||'frigo';
+  if(temp<=0){ _toast('Inserisci la temperatura attuale'); return; }
+  var out=document.getElementById('cv-out'); if(out) out.innerHTML='<div class="calc-loading">Calcolo…</div>';
+  try{
+    var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'temperatura_servizio_vino',parametri:{tipo_vino:tipo,temp_attuale_c:temp,metodo:metodo}})});
+    var j=await r.json();
+    var num='<div class="calc-coef">'+_escV(String(j.minuti||'?'))+'<span class="calc-fcp-pct">min</span></div>';
+    if(out) out.innerHTML=_calcRisultato(num, j);
+  }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
+}
+// --- Brix → ABV (P4) ---
+function _calcRenderBrix(){
+  _calcBody(
+    '<div class="calc-form">'
+    + '<div class="calc-field"><label>Gradi Brix (°Bx)</label><input type="number" inputmode="decimal" id="cb-brix" placeholder="22"></div>'
+    + '<button class="calc-go" onclick="_calcBrix()">Grado alcolico potenziale</button>'
+    + '</div><div id="cb-out"></div>');
+}
+async function _calcBrix(){
+  var brix=parseFloat((document.getElementById('cb-brix')||{}).value||'0')||0;
+  if(brix<=0){ _toast('Inserisci i gradi Brix'); return; }
+  var out=document.getElementById('cb-out'); if(out) out.innerHTML='<div class="calc-loading">Calcolo…</div>';
+  try{
+    var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'brix_to_abv',parametri:{brix:brix}})});
+    var j=await r.json();
+    var num='<div class="calc-fcp-num">'+_escV(String(j.abv_potenziale_perc||'?'))+'<span class="calc-fcp-pct">% vol</span></div>';
     if(out) out.innerHTML=_calcRisultato(num, j);
   }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
 }

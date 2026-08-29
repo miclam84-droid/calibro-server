@@ -2268,3 +2268,7 @@ a:focus-visible,input:focus-visible{
 .avz-card-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--ink,#131C21);line-height:1.2}
 .avz-card-sum{font-size:12.5px;color:var(--muted,#5A6C70);margin-top:3px;line-height:1.4}
 .avz-card-arr{color:var(--teal,#12545D);font-size:18px;flex-shrink:0}
+
+/* select calcolatori vino */
+.calc-select{width:100%;min-height:48px;border:1px solid var(--border,#B7C3C3);border-radius:10px;padding:0 14px;font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#131C21);background:var(--l3,#F2F6F6);cursor:pointer}
+.calc-select:focus{outline:none;border-color:var(--dato,#245979)}
