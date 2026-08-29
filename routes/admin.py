@@ -6286,7 +6286,7 @@ def admin_genera_didattica():
             risposta_corretta TEXT NOT NULL, insight_didattico TEXT, lang TEXT DEFAULT 'it',
             creato_il TIMESTAMP DEFAULT NOW())""")
         # tabella esperimenti (per il Quaderno)
-        cur.execute("""CREATE TABLE IF NOT EXISTS esperimenti (
+        cur.execute("""CREATE TABLE IF NOT EXISTS esperimenti_pratici (
             id SERIAL PRIMARY KEY, fenomeno_id TEXT UNIQUE, disciplina TEXT,
             testo TEXT NOT NULL, quantitativo BOOLEAN DEFAULT FALSE, creato_il TIMESTAMP DEFAULT NOW())""")
         conn.commit()
@@ -6303,8 +6303,7 @@ def admin_genera_didattica():
             # cifre del target da verificare (anti-allucinazione)
             cifre_target = _re.findall(r"\d+", str(target))
             # --- ESPERIMENTO (max ~45 parole) ---
-            gia = cur.execute("SELECT 1 FROM esperimenti WHERE fenomeno_id=%s", (fid,)) if False else None
-            cur.execute("SELECT 1 FROM esperimenti WHERE fenomeno_id=%s", (fid,))
+            cur.execute("SELECT 1 FROM esperimenti_pratici WHERE fenomeno_id=%s", (fid,))
             if cur.fetchone():
                 risultati.append({"fenomeno": fid, "stato": "gia_presente"}); continue
             prompt_exp = (f"Sei un formatore F&B. Scrivi un esperimento pratico 'provalo stasera' per il "
@@ -6320,7 +6319,7 @@ def admin_genera_didattica():
                     # il testo non cita il numero vero → lo marco qualitativo (non fidato sui numeri)
                     quantitativo = False
             if testo_exp:
-                cur.execute("INSERT INTO esperimenti (fenomeno_id, disciplina, testo, quantitativo) "
+                cur.execute("INSERT INTO esperimenti_pratici (fenomeno_id, disciplina, testo, quantitativo) "
                             "VALUES (%s,%s,%s,%s) ON CONFLICT (fenomeno_id) DO NOTHING",
                             (fid, dominio, testo_exp, quantitativo))
             # --- 1 QUIZ (concetto) ---
