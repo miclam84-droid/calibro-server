@@ -2209,3 +2209,10 @@ a:focus-visible,input:focus-visible{
 /* B4 — diagramma scientifico Matter (blueprint SVG) */
 .fen-diagramma{margin:0 0 16px;border:1px solid var(--border,#B7C3C3);border-radius:12px;overflow:hidden;background:#F7F5F0;box-shadow:2px 2px 0 rgba(19,28,33,.08)}
 .fen-diagramma img{display:block;width:100%;height:auto}
+
+/* #3 drink cost giudizio */
+.dc-giudizio{border-top:1px solid var(--border,#B7C3C3);margin-top:4px;padding-top:8px;font-weight:600}
+.dc-verdetto{font-family:var(--mono,'IBM Plex Mono');font-weight:700;text-transform:uppercase;font-size:11px;padding:2px 8px;border-radius:5px}
+.dc-ottimo{color:#1a6e3a;background:rgba(38,140,74,.12)}
+.dc-buono{color:#8a6d1a;background:rgba(199,159,63,.14)}
+.dc-alto{color:#a5372a;background:rgba(199,80,60,.12)}

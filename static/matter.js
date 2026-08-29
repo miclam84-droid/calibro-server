@@ -912,23 +912,22 @@ function renderMappa(disc, fens, casi){
     var isFirst = i===0;
     var stato = f.stato||'libero';
     var su = f.stato_utente||'mai_aperto';   // stato dinamico per-utente (backend)
-    var isLock = stato!=='completato' && !isFirst && stato!=='libero';
-    var nodeClass = stato==='completato'?'done':isFirst?'active':'lock';
-    // il Mirino riflette la progressione utente, TRANNE se il fenomeno è Pro/bloccato (lucchetto vince)
-    var muClass = isLock ? 'mu-pro' : ('mu-'+su);
+    // PAYWALL PER-PARTI: il fenomeno NON si blocca mai — la scheda si apre sempre (scienza gratis).
+    // Il Pro è solo dentro (numero + errori). Niente più lucchetto sull'intero fenomeno.
+    var isLock = false;
+    var nodeClass = stato==='completato'?'done':isFirst?'active':'libero';
+    var muClass = 'mu-'+su;
     var apps = f.applicazioni || [];
     var tagHtml = stato==='completato'
       ? '<span class="p-tag done">completato</span>'
       : isFirst ? '<span class="p-tag active">inizia da qui</span>'
-      : '<span class="p-tag prolock">Pro</span>';
-    // Mirino a stati: lucchetto se Pro; altrimenti crosshair che riflette stato_utente
-    var svgIcon = isLock
-      ? '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>'
-      : '<svg class="mu-ring" viewBox="0 0 24 24" fill="none">'
+      : '';
+    // Mirino a stati: sempre crosshair (il fenomeno è sempre apribile)
+    var svgIcon = '<svg class="mu-ring" viewBox="0 0 24 24" fill="none">'
         + '<circle class="mu-r" cx="12" cy="12" r="9" stroke-width="1.4"/>'
         + '<circle class="mu-d" cx="12" cy="12" r="2.6"/>'
         + '<path class="mu-cross" d="M12 1v3M12 20v3M1 12h3M20 12h3" stroke-width="1.4"/></svg>';
-    var nodeStyle = stato==='lock' ? 'border:1px solid rgba(147,163,163,0.5);background:var(--surface);' : '';
+    var nodeStyle = '';
     // pill applicazioni: se la madre ne ha, mostra il contatore che espande
     var appsPill = apps.length
       ? '<button class="p-apps-toggle" onclick="event.stopPropagation();toggleApps(this)">'
@@ -2990,11 +2989,38 @@ async function _calcolaCosto(ingredienti, cardId, rowsId, totalId){
   if(totalNum) totalNum.textContent = totale > 0 ? `€${totale.toFixed(2)}` : '—';
 }
 
-function aggiornDrinkCost(ingredienti){
-  // bar — usa drinkcost-card
-  _calcolaCosto(ingredienti, 'drinkcost-card', 'drinkcost-rows', 'drinkcost-total-num');
+async function aggiornDrinkCost(ingredienti){
   const salvaBtnEl = document.getElementById('salva-btn');
   if(salvaBtnEl) salvaBtnEl.style.display = localStorage.getItem('matter_token') ? 'block' : 'none';
+  const card = document.getElementById('drinkcost-card');
+  const rows = document.getElementById('drinkcost-rows');
+  const totalNum = document.getElementById('drinkcost-total-num');
+  var validi = (ingredienti||[]).filter(function(x){ return x.n && x.n.trim() && x.vol; });
+  if(!validi.length){ if(card) card.style.display='none'; return; }
+  if(card) card.style.display='block';
+  if(rows) rows.innerHTML='<div class="foodcost-row"><span>Calcolo…</span></div>';
+  try{
+    var pv = parseFloat((document.getElementById('dc-prezzo')||{}).value||'0')||0;
+    var r = await fetch('/v1/drink-cost', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({nome:'Drink', ingredienti:validi.map(function(x){return {nome:x.n, ml:x.vol};}), prezzo_vendita:pv})});
+    var j = await r.json();
+    // righe per voce
+    if(rows){
+      var voci = j.voci || [];
+      rows.innerHTML = voci.map(function(v){
+        var costo = (v.costo!=null)? '€'+Number(v.costo).toFixed(2) : '—';
+        return '<div class="foodcost-row"><span>'+esc(v.nome||'')+'</span><span style="font-family:var(--mono);color:var(--e700)">'+costo+'</span></div>';
+      }).join('');
+      // riga giudizio + percentuale se c'è prezzo
+      if(j.drink_cost_percentuale!=null && pv>0){
+        rows.innerHTML += '<div class="foodcost-row dc-giudizio"><span>Drink cost '+j.drink_cost_percentuale+'%</span><span class="dc-verdetto dc-'+(j.giudizio||'').replace(/\s/g,'')+'">'+esc(j.giudizio||'')+'</span></div>';
+      }
+    }
+    if(totalNum) totalNum.textContent = (j.costo_ingredienti!=null) ? '€'+Number(j.costo_ingredienti).toFixed(2) : '—';
+  }catch(e){
+    if(rows) rows.innerHTML='<div class="foodcost-row"><span>Costo non disponibile</span><span>—</span></div>';
+    if(totalNum) totalNum.textContent='—';
+  }
 }
 
 function aggiornFoodCostBak(ingredienti){
