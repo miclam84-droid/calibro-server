@@ -203,13 +203,66 @@ CALCOLI = {
 }
 
 
+def _interpreta(nome, r):
+    """SPRINT 2 — Livello 3: aggiunge interpretazione + leva d'azione deterministica al risultato.
+    Regole if/elif sui valori (niente AI). Ogni calcolo dice: sei dentro/fuori bersaglio e cosa fare."""
+    if not isinstance(r, dict) or "errore" in r:
+        return r
+    try:
+        if nome == "diluizione":
+            v = r.get("diluizione_perc", 0)
+            abv = r.get("abv_finale_perc", 0)
+            if v < 18:
+                r["interpretazione"] = f"Sotto-diluito ({v}%): il drink risulta forte e caldo, gli aromi non si sono aperti."
+                r["leva_azione"] = "Aumenta la mescolata (o lo shake) di 5-8 secondi con ghiaccio asciutto."
+            elif v <= 25:
+                r["interpretazione"] = f"Diluizione corretta ({v}%): bilanciamento nella finestra ideale, grado finale {abv:.0f}%."
+                r["leva_azione"] = "Mantieni la tecnica. Servi subito ben freddo."
+            elif v <= 30:
+                r["interpretazione"] = f"Diluizione elevata ({v}%): adatta allo shakerato, attenzione a non spegnere il drink."
+                r["leva_azione"] = "Se lo vuoi più deciso, riduci il tempo di shake o la quantità di ghiaccio."
+            else:
+                r["interpretazione"] = f"Troppo diluito ({v}%): il drink risulta acquoso e piatto."
+                r["leva_azione"] = "Riduci nettamente tempo di agitazione e ghiaccio, o rifai il drink."
+            r["fenomeno_id"] = "fen-diluizione"
+        elif nome == "idratazione_pane":
+            idr = r.get("idratazione_perc", 0)
+            if idr < 55:
+                r["interpretazione"] = f"Impasto asciutto ({idr}%): maglia più tenace, mollica compatta."
+                r["leva_azione"] = "Per una mollica più alveolata aumenta l'acqua verso il 65-70%."
+            elif idr <= 75:
+                r["interpretazione"] = f"Idratazione media-alta ({idr}%): buon equilibrio maglia/alveolatura."
+                r["leva_azione"] = "Cura la temperatura finale impasto (24-26°C) e le pieghe."
+            else:
+                r["interpretazione"] = f"Idratazione alta ({idr}%): mollica aperta ma impasto difficile da gestire."
+                r["leva_azione"] = "Serve farina forte (W alto) e tecnica delle pieghe per reggere l'acqua."
+            r["fenomeno_id"] = "fen-idratazione"
+        elif nome == "estrazione_caffe":
+            ey = r.get("extraction_yield_perc") or r.get("ey_perc")
+            if ey is not None:
+                if ey < 18:
+                    r["interpretazione"] = f"Sotto-estratto ({ey}%): acido, aspro, corto in bocca."
+                    r["leva_azione"] = "Macina più fine, o allunga il tempo/aumenta la dose acqua."
+                elif ey <= 22:
+                    r["interpretazione"] = f"Estrazione nella finestra ideale ({ey}%): dolcezza ed equilibrio."
+                    r["leva_azione"] = "Mantieni i parametri. Ripeti identico."
+                else:
+                    r["interpretazione"] = f"Sovra-estratto ({ey}%): amaro, secco, astringente."
+                    r["leva_azione"] = "Macina più grosso, o riduci tempo/temperatura."
+                r["fenomeno_id"] = "fen-estrazione-caffe"
+    except Exception:
+        pass
+    return r
+
+
 def esegui(nome: str, parametri: dict) -> dict:
     """Punto unico di ingresso. Chiamato da app.py con nome calcolo e parametri."""
     fn = CALCOLI.get(nome)
     if not fn:
         return {"errore": f"calcolo '{nome}' non trovato. Disponibili: {list(CALCOLI)}"}
     try:
-        return fn(**parametri)
+        r = fn(**parametri)
+        return _interpreta(nome, r)
     except TypeError as e:
         return {"errore": f"parametri errati per '{nome}': {e}"}
     except Exception as e:
