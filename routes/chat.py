@@ -697,8 +697,31 @@ def nodo():
         except Exception:
             principi_diretti = []
     _tipo_fenomeno = "misurabile" if _target_num else "osservabile"
+    # punto 3 frontend: il target non deve MAI essere vuoto (il Mirino sembra rotto).
+    # misurabile → target_numero valorizzato; osservabile → almeno lo stato testuale.
+    if _tipo_fenomeno == "osservabile" and not _target:
+        # fallback: uso il target testuale del fenomeno o uno stato generico dal tipo
+        _target = (_fd.get("stato") or _fd.get("descrizione_stato")
+                   or "Controlla lo stato al banco (vista, tatto, olfatto)") if isinstance(_fd, dict) else \
+                  "Controlla lo stato al banco (vista, tatto, olfatto)"
+    # pro_locked: stesso criterio di /lezione — si basa sul piano dell'utente (dal token).
+    # Free → pro_locked=true (il frontend sfoca solo numero+errori, la scienza resta visibile).
+    _pro_locked = True
+    try:
+        _tok = (request.json or {}).get("token", "") or request.headers.get("X-Token", "")
+        if _tok:
+            _uid = _utente_da_token(_tok)
+            if _uid and DATABASE_URL:
+                _cn = _get_conn(); _cr = _cn.cursor()
+                _cr.execute("SELECT piano FROM utenti WHERE id=%s", (_uid,))
+                _rp = _cr.fetchone()
+                _cr.close(); _release_conn(_cn)
+                _pro_locked = (( _rp[0] if _rp else "free") != "pro")
+    except Exception:
+        _pro_locked = True  # in dubbio, sfoco (sicuro per i costi)
     return jsonify({
         "titolo": n["name"],
+        "pro_locked": _pro_locked,
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,
         "risposta": risposta,
