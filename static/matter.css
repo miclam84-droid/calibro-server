@@ -2257,3 +2257,14 @@ a:focus-visible,input:focus-visible{
 .fcp-noprice{color:var(--terra,#C77B3F);cursor:pointer;font-size:12px;text-decoration:underline}
 .fcp-x{border:none;background:none;color:var(--muted,#5A6C70);font-size:18px;cursor:pointer;padding:0 4px}
 .calc-loading,.calc-err{padding:16px;text-align:center;color:var(--muted,#5A6C70);font-size:13px}
+
+/* ═══ TECNICHE AVANZATE DI LABORATORIO (punto 7) ═══ */
+.avz-intro{font-size:14px;color:var(--ink-muted,#3D4A50);line-height:1.55;margin-bottom:16px}
+.avz-count{font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--terra,#C77B3F);margin-bottom:14px}
+.avz-dom-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal,#12545D);margin:18px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border,#B7C3C3)}
+.avz-card{display:flex;align-items:center;gap:12px;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer}
+.avz-card:active{transform:scale(.99)}
+.avz-card-main{flex:1}
+.avz-card-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--ink,#131C21);line-height:1.2}
+.avz-card-sum{font-size:12.5px;color:var(--muted,#5A6C70);margin-top:3px;line-height:1.4}
+.avz-card-arr{color:var(--teal,#12545D);font-size:18px;flex-shrink:0}

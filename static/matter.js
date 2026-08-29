@@ -337,7 +337,8 @@ function switchMappaTab(tab){
 var _PORTE = {
   capire:   { label:'Capire',   sub:'Perché succede', voci:[
                 {t:'Fenomeni', d:'Il percorso della disciplina', act:function(){switchMappaTab('fenomeni');}},
-                {t:'Principi', d:'Le leggi fisiche di fondo', act:function(){switchMappaTab('principi');}} ]},
+                {t:'Principi', d:'Le leggi fisiche di fondo', act:function(){switchMappaTab('principi');}},
+                {t:'Tecniche Avanzate', d:'Fat washing, koji, nixtamal…', act:function(){if(typeof apriAvanzate==='function')apriAvanzate();}} ]},
   usare:    { label:'Usare',    sub:'Come si fa al banco', voci:[
                 {t:'Ricette', d:'Con i numeri-bersaglio', act:function(){switchMappaTab('ricette');}},
                 {t:'Strumenti', d:'Cosa serve per misurare', act:function(){switchMappaTab('strumenti');}} ]},
@@ -5921,6 +5922,35 @@ function _mbCreaRicetta(ings){
 
 /* ═══════════════ 4. STRUMENTI DI MISURA ═══════════════ */
 // ═══ CALCOLATORI 2.0 — scalatore impasto · conversione teglie · food cost piatto ═══
+// ═══ TECNICHE AVANZATE DI LABORATORIO (punto 7) — leva Pro, contenuto premium ═══
+async function apriAvanzate(){
+  _apriVista('Tecniche Avanzate',
+    '<div class="avz-intro">I fenomeni che un professionista esperto non trova altrove. Fat washing, koji, nixtamalizzazione, wok hei, tandoor…</div>'
+    + '<div id="avz-out"><div class="calc-loading">Carico le tecniche…</div></div>');
+  try{
+    var r=await fetch('/fenomeni-avanzati?lang='+_vistaLang());
+    var j=await r.json();
+    var fen=j.fenomeni||[];
+    var out=document.getElementById('avz-out');
+    if(!fen.length){ out.innerHTML='<div class="vista-empty">Nessuna tecnica disponibile.</div>'; return; }
+    // raggruppo per dominio
+    var perDom={};
+    fen.forEach(function(f){ var d=f.dominio||'altro'; (perDom[d]=perDom[d]||[]).push(f); });
+    var html='<div class="avz-count">'+fen.length+' tecniche avanzate</div>';
+    Object.keys(perDom).forEach(function(dom){
+      html+='<div class="avz-dom-lab">'+_escV(dom)+'</div>';
+      html+=perDom[dom].map(function(f){
+        return '<div class="avz-card" onclick="chiudiVista();apriNodo(\''+_escV(f.id)+'\',\''+_escV(f.nome).replace(/'/g,"\\'")+'\')">'
+          + '<div class="avz-card-main"><div class="avz-card-nome">'+_escV(f.nome)+'</div>'
+          + (f.sommario?'<div class="avz-card-sum">'+_escV(f.sommario)+'</div>':'')+'</div>'
+          + '<span class="avz-card-arr">→</span></div>';
+      }).join('');
+    });
+    out.innerHTML=html;
+  }catch(e){
+    var o=document.getElementById('avz-out'); if(o) o.innerHTML='<div class="vista-empty">Errore di rete. Riprova.</div>';
+  }
+}
 function apriCalcolatori(){
   _apriVista('Calcolatori',
     '<div class="calc-intro">Strumenti del banco. Ogni risultato ti dice cosa significa e cosa fare.</div>'
