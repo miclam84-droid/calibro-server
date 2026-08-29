@@ -6230,16 +6230,29 @@ def admin_marca_avanzati():
     conn = _get_conn()
     try:
         cur = conn.cursor()
-        fatti = 0
+        fatti = 0; errori = []
         for fid in _FENOMENI_AVANZATI:
-            # setto data->>'avanzato' = true mantenendo il resto del JSON
-            cur.execute(
-                "UPDATE nodes SET data = jsonb_set(COALESCE(data,'{}')::jsonb, '{avanzato}', 'true'::jsonb) "
-                "WHERE id=%s AND type='Fenomeno'", (fid,))
-            if cur.rowcount > 0:
+            try:
+                cur.execute("SELECT data FROM nodes WHERE id=%s AND type='Fenomeno'", (fid,))
+                row = cur.fetchone()
+                if not row:
+                    errori.append(fid + " (non trovato)")
+                    continue
+                d = row[0]
+                if isinstance(d, str):
+                    try: d = json.loads(d)
+                    except Exception: d = {}
+                if not isinstance(d, dict):
+                    d = {}
+                d["avanzato"] = True
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                            (json.dumps(d, ensure_ascii=False), fid))
                 fatti += 1
+            except Exception as e:
+                errori.append(f"{fid}: {e}")
         conn.commit()
-        return jsonify({"ok": True, "marcati": fatti, "su_totale": len(_FENOMENI_AVANZATI)})
+        return jsonify({"ok": True, "marcati": fatti, "su_totale": len(_FENOMENI_AVANZATI),
+                        "errori": errori})
     except Exception as e:
         conn.rollback()
         return jsonify({"errore": str(e)}), 500
