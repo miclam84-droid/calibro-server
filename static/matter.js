@@ -346,6 +346,7 @@ var _PORTE = {
                 {t:'Ponti tra discipline', d:'Vino, birra, dolce per piatto', act:function(){if(typeof apriPonti==='function')apriPonti();}},
                 {t:'Menu Lab', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}} ]},
   misurare: { label:'Misurare', sub:'Centra il bersaglio', voci:[
+                {t:'Calcolatori', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
                 {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
                 {t:'Flavour del giorno', d:'Parti da un ingrediente', act:function(){switchMappaTab('flavor');}} ]}
 };
@@ -5919,6 +5920,129 @@ function _mbCreaRicetta(ings){
 }
 
 /* ═══════════════ 4. STRUMENTI DI MISURA ═══════════════ */
+// ═══ CALCOLATORI 2.0 — scalatore impasto · conversione teglie · food cost piatto ═══
+function apriCalcolatori(){
+  _apriVista('Calcolatori',
+    '<div class="calc-intro">Strumenti del banco. Ogni risultato ti dice cosa significa e cosa fare.</div>'
+    + '<div class="calc-menu">'
+    +   '<button class="calc-menu-btn on" onclick="_calcTab(\'impasto\',this)">Scalatore impasto</button>'
+    +   '<button class="calc-menu-btn" onclick="_calcTab(\'teglie\',this)">Conversione teglie</button>'
+    +   '<button class="calc-menu-btn" onclick="_calcTab(\'foodcost\',this)">Food cost piatto</button>'
+    + '</div>'
+    + '<div id="calc-body"></div>');
+  _calcRenderImpasto();
+}
+function _calcTab(which, btn){
+  document.querySelectorAll('.calc-menu-btn').forEach(function(b){ b.classList.remove('on'); });
+  if(btn) btn.classList.add('on');
+  if(which==='impasto') _calcRenderImpasto();
+  else if(which==='teglie') _calcRenderTeglie();
+  else _calcRenderFoodCost();
+}
+function _calcBody(html){ var b=document.getElementById('calc-body'); if(b) b.innerHTML=html; }
+// risultato comune: interpretazione (carta) + leva (teal) + link fenomeno
+function _calcRisultato(numeroHtml, j){
+  var h = '<div class="calc-mirino">'+numeroHtml+'</div>';
+  if(j.interpretazione){ h += '<div class="calc-interp">'+_escV(j.interpretazione)+'</div>'; }
+  if(j.leva_azione){ h += '<div class="calc-leva"><span class="calc-leva-lab">Cosa fare</span>'+_escV(j.leva_azione)+'</div>'; }
+  if(j.fenomeno_id){ h += '<button class="calc-fen-link" onclick="apriNodo(\''+_escV(j.fenomeno_id)+'\',\'\')">Studia il fenomeno →</button>'; }
+  return h;
+}
+// --- Scalatore impasto ---
+function _calcRenderImpasto(){
+  _calcBody(
+    '<div class="calc-form">'
+    + '<div class="calc-field"><label>Peso totale impasto (g)</label><input type="number" inputmode="numeric" id="ci-peso" placeholder="1000"></div>'
+    + '<div class="calc-perc-lab">Percentuali del panettiere (farina = 100)</div>'
+    + '<div class="calc-perc-grid">'
+    +   '<div class="calc-perc"><span>Farina</span><input type="number" id="ci-farina" value="100" readonly></div>'
+    +   '<div class="calc-perc"><span>Acqua</span><input type="number" inputmode="decimal" id="ci-acqua" placeholder="70"></div>'
+    +   '<div class="calc-perc"><span>Sale</span><input type="number" inputmode="decimal" id="ci-sale" placeholder="2"></div>'
+    +   '<div class="calc-perc"><span>Lievito</span><input type="number" inputmode="decimal" id="ci-lievito" placeholder="1"></div>'
+    + '</div>'
+    + '<button class="calc-go" onclick="_calcImpasto()">Calcola le grammature</button>'
+    + '</div><div id="ci-out"></div>');
+}
+async function _calcImpasto(){
+  var peso=parseFloat((document.getElementById('ci-peso')||{}).value||'0')||0;
+  if(peso<=0){ _toast('Inserisci il peso totale'); return; }
+  var perc={farina:100};
+  ['acqua','sale','lievito'].forEach(function(k){ var v=parseFloat((document.getElementById('ci-'+k)||{}).value||'0'); if(v>0) perc[k]=v; });
+  var out=document.getElementById('ci-out'); if(out) out.innerHTML='<div class="calc-loading">Calcolo…</div>';
+  try{
+    var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'scalatore_impasto',parametri:{peso_totale_g:peso,percentuali:perc}})});
+    var j=await r.json();
+    var g=j.grammature||{};
+    var righe=Object.keys(g).map(function(k){ return '<div class="calc-riga"><span>'+_escV(k)+'</span><b>'+_escV(String(g[k]))+' g</b></div>'; }).join('');
+    var num='<div class="calc-grammature">'+righe+'</div>';
+    if(out) out.innerHTML=_calcRisultato(num, j);
+  }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
+}
+// --- Conversione teglie ---
+function _calcRenderTeglie(){
+  _calcBody(
+    '<div class="calc-form">'
+    + '<div class="calc-teglie-row"><div class="calc-field"><label>Teglia di partenza (cm)</label><div class="calc-dim"><input type="number" inputmode="numeric" id="ct-b1" placeholder="20"><span>×</span><input type="number" inputmode="numeric" id="ct-a1" placeholder="20"></div></div></div>'
+    + '<div class="calc-teglie-row"><div class="calc-field"><label>Teglia di arrivo (cm)</label><div class="calc-dim"><input type="number" inputmode="numeric" id="ct-b2" placeholder="30"><span>×</span><input type="number" inputmode="numeric" id="ct-a2" placeholder="40"></div></div></div>'
+    + '<button class="calc-go" onclick="_calcTeglie()">Calcola il coefficiente</button>'
+    + '</div><div id="ct-out"></div>');
+}
+async function _calcTeglie(){
+  var b1=parseFloat((document.getElementById('ct-b1')||{}).value||'0'),a1=parseFloat((document.getElementById('ct-a1')||{}).value||'0');
+  var b2=parseFloat((document.getElementById('ct-b2')||{}).value||'0'),a2=parseFloat((document.getElementById('ct-a2')||{}).value||'0');
+  if(b1<=0||a1<=0||b2<=0||a2<=0){ _toast('Inserisci tutte le dimensioni'); return; }
+  var out=document.getElementById('ct-out'); if(out) out.innerHTML='<div class="calc-loading">Calcolo…</div>';
+  try{
+    var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'conversione_teglie',parametri:{base1_cm:b1,alt1_cm:a1,base2_cm:b2,alt2_cm:a2}})});
+    var j=await r.json();
+    var num='<div class="calc-coef">×'+_escV(String(j.coefficiente||'?'))+'</div>';
+    if(out) out.innerHTML=_calcRisultato(num, j);
+  }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
+}
+// --- Food cost piatto ---
+var _fcpIng=[];
+function _calcRenderFoodCost(){
+  _calcBody(
+    '<div class="calc-form">'
+    + '<div class="calc-fcp-add"><input type="text" id="fcp-nome" placeholder="ingrediente"><input type="number" inputmode="numeric" id="fcp-g" placeholder="g" class="fcp-mini"><input type="number" inputmode="decimal" id="fcp-pk" placeholder="€/kg" class="fcp-mini"><button onclick="_fcpAdd()">+</button></div>'
+    + '<div id="fcp-lista"></div>'
+    + '<div class="calc-field"><label>Prezzo di vendita (€)</label><input type="number" inputmode="decimal" id="fcp-pv" placeholder="15"></div>'
+    + '<button class="calc-go" onclick="_calcFoodCost()">Calcola il food cost</button>'
+    + '</div><div id="fcp-out"></div>');
+  _fcpRender();
+}
+function _fcpAdd(){
+  var nome=(document.getElementById('fcp-nome')||{}).value||'';
+  var g=parseFloat((document.getElementById('fcp-g')||{}).value||'0');
+  var pk=parseFloat((document.getElementById('fcp-pk')||{}).value||'0');
+  if(!nome.trim()||g<=0){ _toast('Nome e grammi obbligatori'); return; }
+  _fcpIng.push({nome:nome.trim(), grammi:g, prezzo_kg:pk>0?pk:null});
+  document.getElementById('fcp-nome').value=''; document.getElementById('fcp-g').value=''; document.getElementById('fcp-pk').value='';
+  _fcpRender();
+}
+function _fcpRemove(i){ _fcpIng.splice(i,1); _fcpRender(); }
+function _fcpRender(){
+  var l=document.getElementById('fcp-lista'); if(!l) return;
+  l.innerHTML=_fcpIng.map(function(x,i){
+    var prezzo = x.prezzo_kg!=null ? (x.prezzo_kg+' €/kg') : '<span class="fcp-noprice" onclick="_fcpChiediPrezzo('+i+')">manca prezzo →</span>';
+    return '<div class="calc-riga"><span>'+_escV(x.nome)+' · '+x.grammi+'g</span><span>'+prezzo+' <button class="fcp-x" onclick="_fcpRemove('+i+')">×</button></span></div>';
+  }).join('');
+}
+function _fcpChiediPrezzo(i){
+  var v=prompt('Prezzo al kg di '+_fcpIng[i].nome+' (€):');
+  var p=parseFloat(v||'0'); if(p>0){ _fcpIng[i].prezzo_kg=p; _fcpRender(); }
+}
+async function _calcFoodCost(){
+  if(!_fcpIng.length){ _toast('Aggiungi almeno un ingrediente'); return; }
+  var pv=parseFloat((document.getElementById('fcp-pv')||{}).value||'0')||0;
+  var out=document.getElementById('fcp-out'); if(out) out.innerHTML='<div class="calc-loading">Calcolo…</div>';
+  try{
+    var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'food_cost_piatto',parametri:{ingredienti:_fcpIng, prezzo_vendita:pv}})});
+    var j=await r.json();
+    var num='<div class="calc-fcp-num">€'+_escV(String(j.costo_totale||'?'))+(j.food_cost_perc!=null?'<span class="calc-fcp-pct">'+j.food_cost_perc+'%</span>':'')+'</div>';
+    if(out) out.innerHTML=_calcRisultato(num, j);
+  }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
+}
 function apriStrumenti(disc){
   const d = disc || (typeof Matter!=='undefined' && Matter.disciplina) || 'bar';
   _apriVista('Strumenti di misura',
