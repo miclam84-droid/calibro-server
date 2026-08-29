@@ -35,6 +35,10 @@ def _ensure_menu_table():
                 aggiornato_il TIMESTAMP DEFAULT NOW()
             )
         """)
+        # campi nuovi (retrocompatibili): tipo di documento e filo conduttore/filosofia
+        cur.execute("ALTER TABLE menu ADD COLUMN IF NOT EXISTS tipo_menu TEXT DEFAULT 'food'")
+        cur.execute("ALTER TABLE menu ADD COLUMN IF NOT EXISTS filosofia TEXT")
+        cur.execute("ALTER TABLE menu ADD COLUMN IF NOT EXISTS tema_grafico TEXT DEFAULT 'gastro-bistrot'")
         c.commit()
     finally:
         _release(c)
@@ -52,14 +56,19 @@ def menu_crea():
     locale = body.get("locale", "")
     lingua = body.get("lingua", "it")
     voci = body.get("voci", [])
+    tipo_menu = body.get("tipo_menu", "food")   # food | drink | wine | fuso
+    filosofia = body.get("filosofia", "")
+    tema = body.get("tema_grafico", "gastro-bistrot")  # gastro-bistrot | minimal-blueprint | enoteca-classica
     c = _conn(); cur = c.cursor()
     try:
         cur.execute(
-            "INSERT INTO menu (id, titolo, locale, lingua, voci) VALUES (%s,%s,%s,%s,%s::jsonb)",
-            (mid, titolo, locale, lingua, json.dumps(voci, ensure_ascii=False))
+            "INSERT INTO menu (id, titolo, locale, lingua, voci, tipo_menu, filosofia, tema_grafico) "
+            "VALUES (%s,%s,%s,%s,%s::jsonb,%s,%s,%s)",
+            (mid, titolo, locale, lingua, json.dumps(voci, ensure_ascii=False), tipo_menu, filosofia, tema)
         )
         c.commit()
-        return jsonify({"id": mid, "titolo": titolo, "voci": len(voci)})
+        return jsonify({"id": mid, "titolo": titolo, "voci": len(voci),
+                        "tipo_menu": tipo_menu, "tema_grafico": tema})
     except Exception as e:
         c.rollback()
         return jsonify({"errore": str(e)[:150]}), 500
@@ -73,13 +82,15 @@ def menu_get(mid):
     _ensure_menu_table()
     c = _conn(); cur = c.cursor()
     try:
-        cur.execute("SELECT id, titolo, locale, lingua, voci, note FROM menu WHERE id=%s", (mid,))
+        cur.execute("SELECT id, titolo, locale, lingua, voci, note, tipo_menu, filosofia, tema_grafico FROM menu WHERE id=%s", (mid,))
         r = cur.fetchone()
         if not r:
             return jsonify({"errore": "menu non trovato"}), 404
         voci = r[4] if isinstance(r[4], list) else (json.loads(r[4]) if r[4] else [])
         return jsonify({"id": r[0], "titolo": r[1], "locale": r[2], "lingua": r[3],
-                        "voci": voci, "note": r[5]})
+                        "voci": voci, "note": r[5],
+                        "tipo_menu": r[6] or "food", "filosofia": r[7] or "",
+                        "tema_grafico": r[8] or "gastro-bistrot"})
     finally:
         _release(c)
 
