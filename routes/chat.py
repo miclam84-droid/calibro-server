@@ -98,8 +98,8 @@ def _contesto_memoria_utente(device_id):
     try:
         conn = _get_conn(); cur = conn.cursor()
         cur.execute(
-            "SELECT fenomeno, valore, unita, bersaglio, ts FROM misure_salvate "
-            "WHERE device_id=%s ORDER BY ts DESC LIMIT 5", (device_id,))
+            "SELECT fenomeno, valore, unita, bersaglio, creato_il FROM misure_salvate "
+            "WHERE device_id=%s ORDER BY creato_il DESC LIMIT 5", (device_id,))
         righe = cur.fetchall()
         cur.close(); _release_conn(conn)
         if not righe:
