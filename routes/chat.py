@@ -157,8 +157,21 @@ _KNOWLEDGE_MODULES = {
 
 
 def _dominio_domanda(domanda, contesto):
-    """Indovina il dominio della domanda: prima dai fenomeni trovati, poi da parole chiave."""
-    # 1) dal dominio dei fenomeni nel contesto (più affidabile)
+    """Indovina il dominio della domanda. Le keyword esplicite (nomi di drink/ingredienti
+    inequivocabili) vincono sul dominio dei fenomeni, che a volte si aggancia per caso."""
+    d = (domanda or "").lower()
+    # 1) keyword esplicite forti nella domanda (segnale più affidabile)
+    if any(k in d for k in ("cocktail", "drink", "negroni", "sour", "gin", "vermouth", "shake", "distillato", "mixology", " bar", "spritz", "americano")):
+        return "bar"
+    if any(k in d for k in ("pane", "impasto", "lievit", "farina", "glutin", "pizza", "biga", "poolish", "lievito madre", "focaccia")):
+        return "panificazione"
+    if any(k in d for k in ("cioccolat", "ganache", "meringa", "temperagg", "pasticc", "crema pasticc", "pan di spagna")):
+        return "pasticceria"
+    if any(k in d for k in ("espresso", "macinatura", "cold brew", "barista", "caffè", "caffe")):
+        return "caffetteria"
+    if any(k in d for k in ("maionese", "maillard", "brasato", "sous vide", "frittura", "brodo", "cottura carne")):
+        return "cucina"
+    # 2) fallback: dal dominio dei fenomeni trovati nel contesto
     try:
         for f in contesto.get("fenomeni", []):
             dom = (f.get("domain") or "").lower()
@@ -166,18 +179,6 @@ def _dominio_domanda(domanda, contesto):
                 return dom
     except Exception:
         pass
-    # 2) da parole chiave nella domanda
-    d = (domanda or "").lower()
-    if any(k in d for k in ("cocktail", "drink", "gin", "sour", "negroni", "shake", "distillato", "amaro", "bar")):
-        return "bar"
-    if any(k in d for k in ("pane", "impasto", "lievit", "farina", "glutin", "pizza", "biga", "poolish", "madre")):
-        return "panificazione"
-    if any(k in d for k in ("cioccolat", "ganache", "meringa", "dolce", "torta", "crema", "zucchero", "temperagg")):
-        return "pasticceria"
-    if any(k in d for k in ("caffè", "caffe", "espresso", "estrazione", "macinatura", "cold brew", "barista")):
-        return "caffetteria"
-    if any(k in d for k in ("carne", "cottura", "maillard", "uovo", "maionese", "brodo", "frittura", "sous")):
-        return "cucina"
     return ""
 
 
