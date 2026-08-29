@@ -6225,7 +6225,7 @@ _FENOMENI_AVANZATI = [
 
 @bp.route("/admin/marca-avanzati")
 def admin_marca_avanzati():
-    if not _admin_autenticato(request):
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = _get_conn()
     try:
