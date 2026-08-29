@@ -6210,3 +6210,38 @@ def admin_correggi_principi_primari():
         return jsonify({"errore": str(e)}), 500
     finally:
         _release_conn(conn)
+
+
+# ── SPRINT 3 — marca i 31 fenomeni avanzati (orfani) come is_avanzato nel campo data ──
+_FENOMENI_AVANZATI = [
+    'fen-affinamento-vino','fen-atmosfera-modificata','fen-autolisi','fen-barbecue-low-slow',
+    'fen-batch-cocktail','fen-browning-enzimatico','fen-capillarita','fen-clarificazione-cocktail',
+    'fen-cold-brew','fen-contaminazione','fen-emulsione-violenta','fen-espansione-termica',
+    'fen-fat-washing','fen-infusione','fen-inversione-zucchero','fen-kansui','fen-koji',
+    'fen-laminazione','fen-nixtamalizzazione','fen-poolish-biga','fen-riso-glutinoso',
+    'fen-sale-impasto','fen-shelf-life','fen-shelf-life-pane','fen-strecker','fen-tadka',
+    'fen-tandoor','fen-texture-agents','fen-tissotropia','fen-wok-hei','fen-zona-pericolo',
+]
+
+@bp.route("/admin/marca-avanzati")
+def admin_marca_avanzati():
+    if not _admin_autenticato(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        fatti = 0
+        for fid in _FENOMENI_AVANZATI:
+            # setto data->>'avanzato' = true mantenendo il resto del JSON
+            cur.execute(
+                "UPDATE nodes SET data = jsonb_set(COALESCE(data,'{}')::jsonb, '{avanzato}', 'true'::jsonb) "
+                "WHERE id=%s AND type='Fenomeno'", (fid,))
+            if cur.rowcount > 0:
+                fatti += 1
+        conn.commit()
+        return jsonify({"ok": True, "marcati": fatti, "su_totale": len(_FENOMENI_AVANZATI)})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"errore": str(e)}), 500
+    finally:
+        _release_conn(conn)

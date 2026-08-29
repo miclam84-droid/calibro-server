@@ -465,3 +465,29 @@ def mappa(disciplina_nome):
         "casi": casi,
         "totale": len(fenomeni)
     })
+
+
+# ── SPRINT 3 — Fenomeni Avanzati: i 31 fenomeni "da laboratorio" (fat washing, koji...) ──
+@bp.route("/fenomeni-avanzati")
+def fenomeni_avanzati():
+    """Restituisce i fenomeni marcati avanzati (data->>'avanzato'='true'), per la sezione
+    'Tecniche Avanzate di Laboratorio' dell'Atlante. Ordinati per dominio e nome."""
+    db = carica_grafo()
+    try:
+        rows = db.execute(
+            "SELECT id, name, domain, data FROM nodes "
+            "WHERE type='Fenomeno' AND data->>'avanzato'='true' "
+            "ORDER BY domain, name").fetchall()
+    except Exception:
+        rows = []
+    out = []
+    for r in rows:
+        d = r["data"] if isinstance(r["data"], dict) else (json.loads(r["data"]) if r["data"] else {})
+        out.append({
+            "id": r["id"],
+            "nome": r["name"],
+            "dominio": r["domain"],
+            "sommario": (d.get("sommario") or d.get("descrizione") or "")[:160],
+        })
+    return jsonify({"fenomeni": out, "totale": len(out),
+                    "titolo": "Tecniche Avanzate di Laboratorio"})
