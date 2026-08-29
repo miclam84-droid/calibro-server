@@ -38,6 +38,57 @@ def _stats_grafo():
     return d
 
 
+def _contesto_ricette_abbinamenti(db, domanda):
+    """SPRINT 1 — retrieval allargato: cerca ricette e abbinamenti pertinenti alla domanda e li
+    restituisce come blocco di testo da aggiungere al prompt. Isolato e robusto: se qualcosa va
+    storto, ritorna stringa vuota (la chat continua coi soli fenomeni)."""
+    import re
+    d = (domanda or "").lower()
+    parti = []
+    # 1) RICETTE: se la domanda cita un piatto noto, aggiungo la ricetta certificata come riferimento
+    try:
+        # estraggo parole significative (>3 lettere), cerco un match sul nome ricetta
+        parole = [w for w in re.findall(r"[a-zàèéìòù]{4,}", d)
+                  if w not in ("come","perché","perche","quando","quale","quanto","fare","posso","voglio")]
+        for w in parole[:6]:
+            rows = db.execute(
+                "SELECT nome, punto_critico, numeri FROM ricette WHERE lower(nome) LIKE %s LIMIT 1",
+                ("%"+w+"%",)).fetchall()
+            if rows:
+                r = rows[0]
+                blocco = f"\n\n### Ricetta certificata di riferimento: {r['nome']}"
+                if r["punto_critico"]:
+                    blocco += f"\nPunto critico: {r['punto_critico']}"
+                nums = r["numeri"]
+                if nums:
+                    if isinstance(nums, str):
+                        try: nums = json.loads(nums)
+                        except Exception: nums = None
+                    if isinstance(nums, dict) and nums:
+                        coppie = "; ".join(f"{k}: {v}" for k, v in list(nums.items())[:5])
+                        blocco += f"\nNumeri chiave: {coppie}"
+                parti.append(blocco)
+                break  # una ricetta di riferimento basta
+    except Exception:
+        pass
+    # 2) ABBINAMENTI: se la domanda chiede di abbinare/accostare un ingrediente
+    try:
+        if any(k in d for k in ("abbin", "accost", "si sposa", "sta bene con", "cosa ci metto")):
+            for w in re.findall(r"[a-zàèéìòù]{4,}", d)[:8]:
+                rows = db.execute(
+                    "SELECT DISTINCT n2.name FROM edges e "
+                    "JOIN nodes n1 ON e.from_id=n1.id JOIN nodes n2 ON e.to_id=n2.id "
+                    "WHERE e.relation='abbinamento_aromatico' AND lower(n1.name) LIKE %s LIMIT 6",
+                    ("%"+w+"%",)).fetchall()
+                if rows:
+                    nomi = ", ".join(x["name"] for x in rows)
+                    parti.append(f"\n\n### Abbinamenti aromatici per '{w}' (da composti condivisi): {nomi}")
+                    break
+    except Exception:
+        pass
+    return "".join(parti)
+
+
 @bp.route("/chiedi", methods=["POST"])
 def chiedi():
     # IN4: rate limiting per IP
@@ -290,6 +341,14 @@ def chiedi():
             domanda_arricchita = _ctx_txt + domanda
 
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
+    # SPRINT 1 — retrieval allargato: aggiungo al prompt le ricette e gli abbinamenti pertinenti,
+    # così la chat non sa solo di fenomeni ma sa rispondere anche su piatti e abbinamenti (specialista).
+    try:
+        _extra = _contesto_ricette_abbinamenti(db, domanda)
+        if _extra:
+            prompt = prompt + _extra
+    except Exception:
+        pass
     # history strutturata: passa i turni precedenti come messages[], non come testo
     history_msgs = []
     if history:
