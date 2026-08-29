@@ -16,6 +16,27 @@ import motore as Motore
 import ai_gateway as GW
 bp = Blueprint("chat", __name__)
 
+# Statistiche del grafo lette dal DB (con cache): niente più numeri scritti a mano che invecchiano.
+_stats_cache = {"ts": 0, "dati": None}
+def _stats_grafo():
+    """Conta fenomeni/tecniche/ricette reali dal DB. Cache 10 minuti per non pesare."""
+    import time
+    if _stats_cache["dati"] and (time.time() - _stats_cache["ts"] < 600):
+        return _stats_cache["dati"]
+    d = {"fenomeni": 148, "tecniche": 47, "ricette": 454, "ingredienti": 1530}  # fallback sensati
+    try:
+        db = carica_grafo()
+        r = db.execute("SELECT COUNT(*) n FROM nodes WHERE type='Fenomeno'").fetchone()
+        if r: d["fenomeni"] = r["n"]
+        r = db.execute("SELECT COUNT(*) n FROM nodes WHERE type='Tecnica'").fetchone()
+        if r: d["tecniche"] = r["n"]
+        r = db.execute("SELECT COUNT(*) n FROM ricette").fetchone()
+        if r: d["ricette"] = r["n"]
+    except Exception:
+        pass
+    _stats_cache["dati"] = d; _stats_cache["ts"] = time.time()
+    return d
+
 
 @bp.route("/chiedi", methods=["POST"])
 def chiedi():
@@ -109,20 +130,22 @@ def chiedi():
                "come ti uso","come inizio","da dove inizio","chi sei","help",
                "aiutami a capire","spiegami l'app","cosa offri"]
     if any(k in _dl for k in _kw_app):
+        _st = _stats_grafo()
+        _nf, _nt, _nr = _st["fenomeni"], _st["tecniche"], _st["ricette"]
         _risp = {
             "it": ("PROBLEMA: Vuoi sapere cosa puoi fare qui.\n"
                    "PERCHÉ: Matter Lab è uno strumento scientifico per chi lavora nel food & beverage — non un ricettario, ma il perché fisico e chimico dietro ogni gesto del mestiere.\n"
-                   "NUMERO: 103 fenomeni · 47 tecniche · 53 ricette, tutti con numeri da controllare al banco.\n"
+                   f"NUMERO: {_nf} fenomeni · {_nt} tecniche · {_nr} ricette, tutti con numeri da controllare al banco.\n"
                    "MISURA: Fammi una domanda tecnica reale — 'perché il mio sour cambia ogni volta', 'il lievito madre non sale', 'la maionese impazzisce' — e ti do la spiegazione con i numeri.\n"
                    "AZIONE: Puoi anche fotografare ingredienti o bottiglie per scoprire abbinamenti e fenomeni, o esplorare la Mappa per disciplina."),
             "en": ("PROBLEM: You want to know what you can do here.\n"
                    "WHY: Matter Lab is a scientific tool for food & beverage professionals — not a recipe book, but the physics and chemistry behind every move of the craft.\n"
-                   "NUMBER: 103 phenomena · 47 techniques · 53 recipes, all with numbers to control at the bench.\n"
+                   f"NUMBER: {_nf} phenomena · {_nt} techniques · {_nr} recipes, all with numbers to control at the bench.\n"
                    "MEASURE: Ask me a real technical question — 'why does my sour change every time', 'my sourdough won't rise' — and I'll explain with the numbers.\n"
                    "ACTION: You can also photograph ingredients or bottles to discover pairings and phenomena, or explore the Map by discipline."),
             "es": ("PROBLEMA: Quieres saber qué puedes hacer aquí.\n"
                    "POR QUÉ: Matter Lab es una herramienta científica para profesionales del food & beverage — no un recetario, sino la física y química detrás de cada gesto del oficio.\n"
-                   "NÚMERO: 103 fenómenos · 47 técnicas · 53 recetas, todos con números para controlar en la barra.\n"
+                   f"NÚMERO: {_nf} fenómenos · {_nt} técnicas · {_nr} recetas, todos con números para controlar en la barra.\n"
                    "MEDIDA: Hazme una pregunta técnica real — 'por qué mi sour cambia cada vez', 'mi masa madre no sube' — y te lo explico con los números.\n"
                    "ACCIÓN: También puedes fotografiar ingredientes o botellas para descubrir maridajes y fenómenos, o explorar el Mapa por disciplina."),
         }.get(lang, None)
