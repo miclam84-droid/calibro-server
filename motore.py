@@ -193,6 +193,96 @@ def pareggia_acidita(vol_ml, acido_cur_perc, acido_tgt_perc) -> dict:
 
 
 # ── DISPATCHER ────────────────────────────────────────────────────────────────
+def scalatore_impasto(peso_totale_g, percentuali: dict) -> dict:
+    """SPRINT 2 — Scala un impasto col metodo del panettiere (farina=100%).
+    percentuali: {"farina":100, "acqua":70, "sale":2, "lievito":1, ...}
+    Restituisce le grammature esatte per il peso totale desiderato."""
+    somma_perc = sum(float(v) for v in percentuali.values())
+    if somma_perc <= 0 or peso_totale_g <= 0:
+        return {"errore": "percentuali o peso non validi"}
+    # farina = peso_totale / (somma_percentuali/100)
+    farina_g = peso_totale_g / (somma_perc / 100.0)
+    grammature = {}
+    for ing, perc in percentuali.items():
+        grammature[ing] = round(farina_g * float(perc) / 100.0, 1)
+    return {
+        "calcolo": "scalatore_impasto",
+        "peso_totale_g": round(peso_totale_g, 1),
+        "farina_g": round(farina_g, 1),
+        "grammature": grammature,
+        "interpretazione": f"Per {peso_totale_g:.0f}g di impasto totale ti servono {farina_g:.0f}g di farina.",
+        "leva_azione": "Pesa la farina esatta: tutto il resto è in percentuale su di essa.",
+        "spiegazione": (f"Col metodo del panettiere la farina è il 100%. Somma percentuali {somma_perc:.0f}%, "
+                        f"quindi farina = {peso_totale_g:.0f} / {somma_perc/100:.2f} = {farina_g:.0f}g.")
+    }
+
+
+def conversione_teglie(base1_cm, alt1_cm, base2_cm, alt2_cm) -> dict:
+    """SPRINT 2 — Riproporziona le dosi da una teglia a un'altra (per area/superficie)."""
+    area1 = base1_cm * alt1_cm
+    area2 = base2_cm * alt2_cm
+    if area1 <= 0:
+        return {"errore": "dimensioni teglia di partenza non valide"}
+    coef = area2 / area1
+    return {
+        "calcolo": "conversione_teglie",
+        "area_partenza_cm2": round(area1, 1),
+        "area_arrivo_cm2": round(area2, 1),
+        "coefficiente": round(coef, 3),
+        "interpretazione": (f"La teglia di arrivo ({base2_cm}×{alt2_cm}) è {coef:.2f}× quella di partenza "
+                            f"({base1_cm}×{alt1_cm})."),
+        "leva_azione": f"Moltiplica OGNI ingrediente della ricetta per {coef:.2f}.",
+        "spiegazione": (f"Si scala per superficie: area partenza {area1:.0f}cm², area arrivo {area2:.0f}cm², "
+                        f"coefficiente {coef:.2f}.")
+    }
+
+
+def food_cost_piatto(ingredienti: list, prezzo_vendita=None) -> dict:
+    """SPRINT 2 — Food cost di un piatto. ingredienti: [{"nome","grammi","prezzo_kg"}].
+    Se prezzo_kg manca per una voce, la marca come da inserire (mai trattino muto)."""
+    costo_totale = 0.0; voci = []; mancanti = 0
+    for i in ingredienti:
+        if not isinstance(i, dict): continue
+        nome = i.get("nome", "?")
+        try: grammi = float(str(i.get("grammi", 0)).replace(",", "."))
+        except Exception: grammi = 0
+        pk = i.get("prezzo_kg")
+        try: pk = float(str(pk).replace(",", ".")) if pk not in (None, "") else None
+        except Exception: pk = None
+        if pk is not None and grammi > 0:
+            costo = (grammi / 1000.0) * pk
+            costo_totale += costo
+            voci.append({"nome": nome, "grammi": grammi, "prezzo_kg": pk, "costo": round(costo, 3)})
+        else:
+            voci.append({"nome": nome, "grammi": grammi, "costo": None,
+                         "nota": "inserisci il prezzo al kg (orientativo)"})
+            mancanti += 1
+    costo_totale = round(costo_totale, 2)
+    out = {"calcolo": "food_cost_piatto", "costo_totale": costo_totale, "voci": voci,
+           "ingredienti_senza_prezzo": mancanti,
+           "spiegazione": f"Costo materie prime del piatto: €{costo_totale:.2f}."}
+    if prezzo_vendita:
+        try:
+            pv = float(prezzo_vendita)
+            if pv > 0:
+                pct = round(100 * costo_totale / pv, 1)
+                out["prezzo_vendita"] = pv
+                out["food_cost_perc"] = pct
+                out["margine_lordo"] = round(pv - costo_totale, 2)
+                out["interpretazione"] = (
+                    f"Food cost {pct}%: " + (
+                        "ottimo, sotto il 30%." if pct <= 30 else
+                        "buono, sotto il 35%." if pct <= 35 else
+                        "alto, sopra il 35% — rivedi porzioni o prezzo."))
+                out["leva_azione"] = (
+                    "Margine sano, mantieni." if pct <= 30 else
+                    "Accettabile; puoi ottimizzare le grammature." if pct <= 35 else
+                    "Alza il prezzo o riduci il costo degli ingredienti principali.")
+        except Exception:
+            pass
+    return out
+
+
 CALCOLI = {
     "diluizione": diluizione,
     "bilanciamento_sour": bilanciamento_sour,
@@ -200,6 +290,9 @@ CALCOLI = {
     "q10_fermentazione": q10_fermentazione,
     "estrazione_caffe": estrazione_caffe,
     "pareggia_acidita": pareggia_acidita,
+    "scalatore_impasto": scalatore_impasto,
+    "conversione_teglie": conversione_teglie,
+    "food_cost_piatto": food_cost_piatto,
 }
 
 
