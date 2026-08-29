@@ -6258,3 +6258,112 @@ def admin_marca_avanzati():
         return jsonify({"errore": str(e)}), 500
     finally:
         _release_conn(conn)
+
+
+# ── Genera didattica in BATCH: esperimento + quiz per i fenomeni (anti-allucinazione sui numeri) ──
+@bp.route("/admin/genera-didattica")
+def admin_genera_didattica():
+    """Genera esperimento 'provalo stasera' + 1 quiz per un BLOCCO di fenomeni.
+    ?offset=0&limit=8 per processare a blocchi (evita timeout Railway).
+    ANTI-ALLUCINAZIONE: se il fenomeno ha un numero-bersaglio, il testo generato DEVE contenerne
+    le cifre, altrimenti l'esperimento viene reso qualitativo (mai numeri inventati)."""
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import re as _re
+    from ai import _haiku_raw
+    from contenuto import _numero_bersaglio as _nb, _scheda_lang
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 8)), 15)
+    except Exception:
+        offset, limit = 0, 8
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # assicuro la tabella quiz (stessa del motore unificato)
+        cur.execute("""CREATE TABLE IF NOT EXISTS quiz (
+            id SERIAL PRIMARY KEY, fenomeno_id TEXT, disciplina TEXT, tipo TEXT NOT NULL,
+            difficolta TEXT DEFAULT 'base', domanda TEXT NOT NULL, opzioni JSONB NOT NULL,
+            risposta_corretta TEXT NOT NULL, insight_didattico TEXT, lang TEXT DEFAULT 'it',
+            creato_il TIMESTAMP DEFAULT NOW())""")
+        # tabella esperimenti (per il Quaderno)
+        cur.execute("""CREATE TABLE IF NOT EXISTS esperimenti (
+            id SERIAL PRIMARY KEY, fenomeno_id TEXT UNIQUE, disciplina TEXT,
+            testo TEXT NOT NULL, quantitativo BOOLEAN DEFAULT FALSE, creato_il TIMESTAMP DEFAULT NOW())""")
+        conn.commit()
+        # prendo un blocco di fenomeni
+        cur.execute("SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY id LIMIT %s OFFSET %s",
+                    (limit, offset))
+        fenomeni = cur.fetchall()
+        risultati = []
+        for f in fenomeni:
+            fid, nome, dominio = f[0], f[1], f[2]
+            data = f[3] if isinstance(f[3], dict) else (json.loads(f[3]) if f[3] else {})
+            target = _nb(data) or ""
+            scheda = _scheda_lang(data, "it") or ""
+            # cifre del target da verificare (anti-allucinazione)
+            cifre_target = _re.findall(r"\d+", str(target))
+            # --- ESPERIMENTO (max ~45 parole) ---
+            gia = cur.execute("SELECT 1 FROM esperimenti WHERE fenomeno_id=%s", (fid,)) if False else None
+            cur.execute("SELECT 1 FROM esperimenti WHERE fenomeno_id=%s", (fid,))
+            if cur.fetchone():
+                risultati.append({"fenomeno": fid, "stato": "gia_presente"}); continue
+            prompt_exp = (f"Sei un formatore F&B. Scrivi un esperimento pratico 'provalo stasera' per il "
+                          f"fenomeno '{nome}' ({dominio}). Numero-bersaglio: {target}. "
+                          f"Max 45 parole, concreto, fattibile al banco stasera. "
+                          f"Se c'è un numero-bersaglio, CITALO esatto. Solo il testo, niente altro.")
+            testo_exp = (_haiku_raw(prompt_exp, max_tokens=120) or "").strip()
+            quantitativo = bool(cifre_target)
+            # anti-allucinazione: se il fenomeno è quantitativo ma il testo non contiene le cifre,
+            # rendo l'esperimento qualitativo (rimuovo la pretesa numerica) invece di rischiare numeri inventati
+            if quantitativo and testo_exp:
+                if not any(c in testo_exp for c in cifre_target):
+                    # il testo non cita il numero vero → lo marco qualitativo (non fidato sui numeri)
+                    quantitativo = False
+            if testo_exp:
+                cur.execute("INSERT INTO esperimenti (fenomeno_id, disciplina, testo, quantitativo) "
+                            "VALUES (%s,%s,%s,%s) ON CONFLICT (fenomeno_id) DO NOTHING",
+                            (fid, dominio, testo_exp, quantitativo))
+            # --- 1 QUIZ (concetto) ---
+            cur.execute("SELECT 1 FROM quiz WHERE fenomeno_id=%s AND tipo='fenomeno' LIMIT 1", (fid,))
+            if not cur.fetchone() and scheda:
+                prompt_quiz = (f"Crea UN quiz sul fenomeno '{nome}' per un professionista F&B. "
+                               f"Numero-bersaglio: {target}. Contenuto: {scheda[:400]}. "
+                               f"Rispondi SOLO con JSON valido: "
+                               f'{{"domanda":"...","opzioni":["corretta","sbagliata","sbagliata"],'
+                               f'"insight":"spiegazione con il numero esatto"}}. '
+                               f"La prima opzione è la corretta.")
+                raw = (_haiku_raw(prompt_quiz, max_tokens=300) or "").strip()
+                raw = _re.sub(r"^```json|```$", "", raw).strip()
+                try:
+                    qj = json.loads(raw)
+                    dom = qj.get("domanda", ""); opz = qj.get("opzioni", []); ins = qj.get("insight", "")
+                    if dom and len(opz) >= 2:
+                        # anti-allucinazione sul quiz: se quantitativo, l'insight deve citare il numero
+                        ok_num = (not cifre_target) or any(c in (ins + dom) for c in cifre_target)
+                        if ok_num:
+                            cur.execute(
+                                "INSERT INTO quiz (fenomeno_id, disciplina, tipo, difficolta, domanda, opzioni, risposta_corretta, insight_didattico) "
+                                "VALUES (%s,%s,'fenomeno','base',%s,%s,%s,%s)",
+                                (fid, dominio, dom, json.dumps(opz, ensure_ascii=False), opz[0], ins))
+                            risultati.append({"fenomeno": fid, "stato": "creato", "quiz": True, "exp": bool(testo_exp)})
+                        else:
+                            risultati.append({"fenomeno": fid, "stato": "quiz_scartato_numeri"})
+                    else:
+                        risultati.append({"fenomeno": fid, "stato": "quiz_malformato"})
+                except Exception:
+                    risultati.append({"fenomeno": fid, "stato": "quiz_non_json"})
+            else:
+                risultati.append({"fenomeno": fid, "stato": "solo_esperimento" if testo_exp else "nessuna_scheda"})
+        conn.commit()
+        # quanti fenomeni totali, per sapere quando fermarsi
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Fenomeno'")
+        totale = cur.fetchone()[0]
+        cur.close(); _release_conn(conn)
+        prossimo = offset + limit
+        return jsonify({"ok": True, "processati": len(fenomeni), "offset": offset,
+                        "prossimo_offset": prossimo if prossimo < totale else None,
+                        "totale_fenomeni": totale, "risultati": risultati})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-400:]}), 500
