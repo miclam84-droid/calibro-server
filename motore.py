@@ -283,6 +283,71 @@ def food_cost_piatto(ingredienti: list, prezzo_vendita=None) -> dict:
     return out
 
 
+def temperatura_servizio_vino(tipo_vino, temp_attuale_c, metodo="secchiello"):
+    """VINO SALA — minuti per portare il vino alla temperatura di servizio ideale.
+    tipo_vino: rosso_strutturato/rosso_giovane/bianco/rosato/bollicina/dolce.
+    metodo: 'secchiello' (acqua+ghiaccio+sale, ~1°C/min) o 'frigo' (~0.33°C/min) o 'abbattitore' (~2°C/min)."""
+    target = {
+        "rosso_strutturato": 18, "rosso_giovane": 15, "bianco": 10,
+        "rosato": 9, "bollicina": 7, "dolce": 8, "champagne": 7,
+    }
+    t_target = target.get((tipo_vino or "").lower().strip(), 12)
+    try:
+        t_att = float(str(temp_attuale_c).replace(",", "."))
+    except Exception:
+        return {"errore": "temperatura attuale non valida"}
+    delta = t_att - t_target  # se positivo va raffreddato
+    rate = {"secchiello": 1.0, "frigo": 0.33, "abbattitore": 2.0}.get(metodo, 1.0)
+    minuti = round(abs(delta) / rate) if rate else 0
+    if abs(delta) < 0.6:
+        interp = f"Il vino è già in temperatura ({t_att:.0f}°C ≈ target {t_target}°C)."
+        leva = "Servi subito."
+    elif delta > 0:
+        interp = f"Da raffreddare: {t_att:.0f}°C → {t_target}°C (target). Servono ~{minuti} min in {metodo}."
+        leva = f"Metti la bottiglia in {metodo} per ~{minuti} minuti, poi verifica."
+    else:
+        interp = f"Troppo freddo: {t_att:.0f}°C → {t_target}°C. Lascia salire ~{minuti} min a temperatura ambiente."
+        leva = f"Tira fuori la bottiglia ~{minuti} min prima del servizio."
+    return {
+        "calcolo": "temperatura_servizio_vino",
+        "tipo_vino": tipo_vino, "temp_attuale_c": t_att,
+        "temp_target_c": t_target, "metodo": metodo, "minuti": minuti,
+        "interpretazione": interp, "leva_azione": leva,
+        "fenomeno_id": "fen-ossidazione",
+        "spiegazione": (f"Ogni vino ha una finestra di servizio: {t_target}°C per {tipo_vino}. "
+                        f"In {metodo} il vino cambia ~{rate}°C/min."),
+    }
+
+
+def brix_to_abv(brix, efficienza=0.59):
+    """VINO — grado alcolico potenziale da zuccheri. Brix → ABV potenziale.
+    efficienza: fattore di conversione (0.55-0.60 tipico; 0.59 default per vinificazione)."""
+    try:
+        b = float(str(brix).replace(",", "."))
+    except Exception:
+        return {"errore": "valore Brix non valido"}
+    if b < 0 or b > 40:
+        return {"errore": "Brix fuori scala (0-40)"}
+    abv = round(b * efficienza, 1)
+    if abv < 10:
+        interp = f"Grado potenziale basso ({abv}% vol): vino leggero o mosto poco maturo."
+        leva = "Se vuoi più struttura, attendi maturazione o valuta arricchimento (dove consentito)."
+    elif abv <= 14:
+        interp = f"Grado potenziale nella norma ({abv}% vol): equilibrio classico da tavola."
+        leva = "Parametri ideali per la maggior parte dei vini fermi."
+    else:
+        interp = f"Grado potenziale alto ({abv}% vol): vino importante/caldo, attenzione all'equilibrio."
+        leva = "Bilancia con acidità adeguata; occhio all'arresto di fermentazione."
+    return {
+        "calcolo": "brix_to_abv", "brix": b, "efficienza": efficienza,
+        "abv_potenziale_perc": abv,
+        "interpretazione": interp, "leva_azione": leva,
+        "fenomeno_id": "fen-fermentazione-alcolica",
+        "spiegazione": (f"Gli zuccheri ({b} Brix) si convertono in alcol: ~{efficienza} punti di ABV "
+                        f"per grado Brix → {abv}% vol potenziale a fermentazione completa."),
+    }
+
+
 CALCOLI = {
     "diluizione": diluizione,
     "bilanciamento_sour": bilanciamento_sour,
@@ -293,6 +358,8 @@ CALCOLI = {
     "scalatore_impasto": scalatore_impasto,
     "conversione_teglie": conversione_teglie,
     "food_cost_piatto": food_cost_piatto,
+    "temperatura_servizio_vino": temperatura_servizio_vino,
+    "brix_to_abv": brix_to_abv,
 }
 
 
