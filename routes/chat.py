@@ -116,6 +116,79 @@ def _contesto_memoria_utente(device_id):
         return ""
 
 
+# SPRINT 1 — Knowledge modules per dominio: linee guida scientifiche approfondite che si
+# aggiungono al contesto quando la domanda è di quella disciplina. Danno profondità dove la
+# chat era generica. Testo compatto, da collega esperto, con i numeri chiave del mestiere.
+_KNOWLEDGE_MODULES = {
+    "bar": (
+        "GUIDA BAR (usa se pertinente): diluizione mescolato ~22-25%, shakerato ~25-30%; "
+        "un sour equilibrato sta su 2:1:1 (distillato:acido:dolce) da tarare sul pH reale del "
+        "lime (varia lotto per lotto); la carbonatazione regge meglio a freddo (0-4°C) e sotto "
+        "pressione; il fat-washing lega gli aromi liposolubili e si separa in congelatore; "
+        "chiarificazione al latte o con agar per limpidezza e texture setosa."
+    ),
+    "panificazione": (
+        "GUIDA PANE (usa se pertinente): la maglia glutinica si sviluppa con idratazione+lavoro, "
+        "test del velo; la forza della farina (W) decide tempi e idratazione (W180-260 uso comune); "
+        "la temperatura finale impasto conta più dell'orologio (mira 24-26°C); il sale rallenta la "
+        "fermentazione e rafforza la maglia (~2% sul peso farina); lievito madre vs biga/poolish "
+        "cambia acidità e conservabilità; la crosta è Maillard+vapore in forno."
+    ),
+    "pasticceria": (
+        "GUIDA PASTICCERIA (usa se pertinente): il temperaggio del cioccolato mira ai cristalli "
+        "beta stabili (fondente lavorazione ~31-32°C); la ganache è un'emulsione (rapporto "
+        "cioccolato:panna decide la texture); la meringa monta con albume pulito e zucchero "
+        "graduale; la gelatinizzazione degli amidi addensa sopra i 60-70°C; cristallizzazione "
+        "controllata dello zucchero per lucentezza e struttura."
+    ),
+    "cucina": (
+        "GUIDA CUCINA (usa se pertinente): la Maillard parte sopra ~140°C su superficie asciutta "
+        "(serve aromi, non 'sigilla' i succhi); la coagulazione del tuorlo sta 65-70°C (oltre "
+        "straccia); l'emulsione (maionese, olandese) regge finché i tensioattivi non saturano; "
+        "la denaturazione delle proteine inizia 60-65°C; sale e osmosi per estrarre o trattenere acqua."
+    ),
+    "caffetteria": (
+        "GUIDA CAFFÈ (usa se pertinente): l'espresso mira 9-12 bar, ~25-30s, resa e temperatura "
+        "acqua (~92-95°C) decidono estrazione; sotto-estratto=acido/aspro, sovra-estratto=amaro; "
+        "la macinatura è la leva principale sulla velocità di flusso; il TDS misura la forza; "
+        "il cold brew estrae a freddo a lungo (12-24h), profilo dolce e poco acido."
+    ),
+}
+
+
+def _dominio_domanda(domanda, contesto):
+    """Indovina il dominio della domanda: prima dai fenomeni trovati, poi da parole chiave."""
+    # 1) dal dominio dei fenomeni nel contesto (più affidabile)
+    try:
+        for f in contesto.get("fenomeni", []):
+            dom = (f.get("domain") or "").lower()
+            if dom in _KNOWLEDGE_MODULES:
+                return dom
+    except Exception:
+        pass
+    # 2) da parole chiave nella domanda
+    d = (domanda or "").lower()
+    if any(k in d for k in ("cocktail", "drink", "gin", "sour", "negroni", "shake", "distillato", "amaro", "bar")):
+        return "bar"
+    if any(k in d for k in ("pane", "impasto", "lievit", "farina", "glutin", "pizza", "biga", "poolish", "madre")):
+        return "panificazione"
+    if any(k in d for k in ("cioccolat", "ganache", "meringa", "dolce", "torta", "crema", "zucchero", "temperagg")):
+        return "pasticceria"
+    if any(k in d for k in ("caffè", "caffe", "espresso", "estrazione", "macinatura", "cold brew", "barista")):
+        return "caffetteria"
+    if any(k in d for k in ("carne", "cottura", "maillard", "uovo", "maionese", "brodo", "frittura", "sous")):
+        return "cucina"
+    return ""
+
+
+def _contesto_knowledge_module(domanda, contesto):
+    """Restituisce il knowledge module del dominio pertinente, se c'è."""
+    dom = _dominio_domanda(domanda, contesto)
+    if dom and dom in _KNOWLEDGE_MODULES:
+        return "\n\n" + _KNOWLEDGE_MODULES[dom]
+    return ""
+
+
 @bp.route("/chiedi", methods=["POST"])
 def chiedi():
     # IN4: rate limiting per IP
@@ -381,6 +454,13 @@ def chiedi():
         _mem = _contesto_memoria_utente(device_id)
         if _mem:
             prompt = prompt + _mem
+    except Exception:
+        pass
+    # SPRINT 1 — knowledge module: aggiungo le linee guida approfondite del dominio pertinente
+    try:
+        _km = _contesto_knowledge_module(domanda, contesto)
+        if _km:
+            prompt = prompt + _km
     except Exception:
         pass
     # history strutturata: passa i turni precedenti come messages[], non come testo
