@@ -6481,3 +6481,45 @@ def admin_normalizza_fenomeni():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── PULIZIA NOMI RICETTE: via l'AI slop ("Rivisitato", "Classico" superfluo) ──
+@bp.route("/admin/pulisci-nomi-ricette")
+def admin_pulisci_nomi():
+    """Rimuove i suffissi artificiali dai nomi ricette (Rivisitato, Classico Rivisitato, a caso...).
+    Qualità percepita: 'Americano Rivisitato' -> 'Americano'. ?dry=1 per solo anteprima."""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import re as _re
+    dry = request.args.get("dry", "") == "1"
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, nome FROM ricette")
+        righe = cur.fetchall()
+        cambi = []
+        for rid, nome in righe:
+            if not nome:
+                continue
+            nuovo = nome
+            # rimuovo i suffissi slop (in ordine, case-insensitive), come parole finali
+            for pat in [r"\s+Classico\s+Rivisitato$", r"\s+Rivisitato$", r"\s+Rivisitata$",
+                        r"\s+\(rivisitato\)$", r"\s+a caso$", r"\s+twist$", r"\s+versione migliorata$"]:
+                nuovo = _re.sub(pat, "", nuovo, flags=_re.IGNORECASE)
+            # "Classico" da solo alla fine: lo tolgo solo se ridondante (es. "Negroni Classico" -> "Negroni")
+            nuovo = _re.sub(r"\s+Classico$", "", nuovo, flags=_re.IGNORECASE)
+            nuovo = _re.sub(r"\s+Classica$", "", nuovo, flags=_re.IGNORECASE)
+            nuovo = nuovo.strip()
+            if nuovo and nuovo != nome:
+                cambi.append({"id": rid, "da": nome, "a": nuovo})
+                if not dry:
+                    cur.execute("UPDATE ricette SET nome=%s WHERE id=%s", (nuovo, rid))
+        if not dry:
+            conn.commit()
+        cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "dry_run": dry, "cambi_totali": len(cambi),
+                        "esempi": cambi[:15]})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
