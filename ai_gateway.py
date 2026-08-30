@@ -27,6 +27,7 @@ import re
 
 # ── Costanti ────────────────────────────────────────────────────────────────
 _ANTHROPIC_URL  = "https://api.anthropic.com/v1/messages"
+_ANTHROPIC_BATCH_URL = "https://api.anthropic.com/v1/messages/batches"
 _MISTRAL_URL    = "https://api.mistral.ai/v1/chat/completions"
 _OPENAI_URL     = "https://api.openai.com/v1"
 _GEMINI_URL     = "https://generativelanguage.googleapis.com/v1beta/models"
@@ -121,8 +122,10 @@ def _sanitize(text):
 
 
 # ── Adapter Anthropic ────────────────────────────────────────────────────────
-def _anthropic_call(model, messages, max_tokens=800, temperature=0, tools=None):
-    """Chiamata grezza all'API Anthropic. Ritorna (data_dict, latency_ms)."""
+def _anthropic_call(model, messages, max_tokens=800, temperature=0, tools=None, system=None):
+    """Chiamata grezza all'API Anthropic. Ritorna (data_dict, latency_ms).
+    system: se fornito (stringa o lista di blocchi), va nel campo system. Se stringa lunga,
+    la marco con cache_control ephemeral per il prompt caching (riduce costi su contenuto ripetuto)."""
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
         raise ValueError("ANTHROPIC_API_KEY non configurata")
@@ -133,6 +136,13 @@ def _anthropic_call(model, messages, max_tokens=800, temperature=0, tools=None):
         "temperature": temperature,
         "messages": messages
     }
+    if system:
+        if isinstance(system, str):
+            # blocco system con caching (ephemeral) sul contenuto statico
+            payload["system"] = [{"type": "text", "text": system,
+                                   "cache_control": {"type": "ephemeral"}}]
+        else:
+            payload["system"] = system
     if tools:
         payload["tools"] = tools
 
@@ -227,6 +237,45 @@ def _anthropic_stream(model, messages, max_tokens=1500, temperature=0, tools=Non
             elif etype == "message_stop":
                 yield {"tipo": "stop", "stop_reason": "end_turn"}
 
+
+def _batch_headers():
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        raise ValueError("ANTHROPIC_API_KEY non configurata")
+    return {"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"}
+
+
+def batch_crea(requests_list):
+    """Crea un Message Batch. requests_list: lista di dict
+    {custom_id, params:{model, max_tokens, messages, ...}}. Ritorna il batch (con id)."""
+    payload = json.dumps({"requests": requests_list}).encode("utf-8")
+    req = urllib.request.Request(_ANTHROPIC_BATCH_URL, data=payload,
+                                 headers=_batch_headers(), method="POST")
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def batch_stato(batch_id):
+    """Recupera lo stato di un batch (processing_status: in_progress|ended)."""
+    req = urllib.request.Request(f"{_ANTHROPIC_BATCH_URL}/{batch_id}",
+                                 headers=_batch_headers(), method="GET")
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def batch_risultati(results_url):
+    """Scarica i risultati (.jsonl) di un batch concluso. Ritorna lista di dict per riga."""
+    req = urllib.request.Request(results_url, headers=_batch_headers(), method="GET")
+    out = []
+    with urllib.request.urlopen(req, timeout=120) as r:
+        for line in r:
+            line = line.decode("utf-8", "ignore").strip()
+            if line:
+                try:
+                    out.append(json.loads(line))
+                except Exception:
+                    pass
+    return out
 
 
 def _mistral_call(prompt, max_tokens=None):

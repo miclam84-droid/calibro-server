@@ -6391,3 +6391,107 @@ def admin_genera_didattica():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-400:]}), 500
+
+
+# ── BATCH API: genera quiz per i fenomeni ancora scoperti, a metà prezzo (asincrono) ──
+@bp.route("/admin/batch-quiz-crea")
+def admin_batch_quiz_crea():
+    """Crea un batch di richieste quiz per i fenomeni SENZA quiz. Ritorna il batch_id.
+    Poi usa /admin/batch-quiz-raccogli?batch_id=... quando è 'ended' per salvare i risultati."""
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import ai_gateway as GW
+    from contenuto import _numero_bersaglio as _nb, _scheda_lang
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS quiz (
+            id SERIAL PRIMARY KEY, fenomeno_id TEXT, disciplina TEXT, tipo TEXT NOT NULL,
+            difficolta TEXT DEFAULT 'base', domanda TEXT NOT NULL, opzioni JSONB NOT NULL,
+            risposta_corretta TEXT NOT NULL, insight_didattico TEXT, lang TEXT DEFAULT 'it',
+            creato_il TIMESTAMP DEFAULT NOW())""")
+        conn.commit()
+        # fenomeni senza quiz
+        cur.execute("""SELECT n.id, n.name, n.domain, n.data FROM nodes n
+                       WHERE n.type='Fenomeno' AND NOT EXISTS
+                       (SELECT 1 FROM quiz q WHERE q.fenomeno_id=n.id AND q.tipo='fenomeno')""")
+        scoperti = cur.fetchall()
+        cur.close(); _release_conn(conn)
+        if not scoperti:
+            return jsonify({"ok": True, "messaggio": "tutti i fenomeni hanno già un quiz", "scoperti": 0})
+        richieste = []
+        for f in scoperti[:100]:  # batch fino a 100
+            fid, nome, dominio = f[0], f[1], f[2]
+            data = f[3] if isinstance(f[3], dict) else (json.loads(f[3]) if f[3] else {})
+            target = _nb(data) or ""
+            prompt = (f"Crea UN quiz tecnico sul fenomeno '{nome}' ({dominio}) per un professionista F&B. "
+                      f"Numero-bersaglio: {target}. Rispondi SOLO con JSON valido: "
+                      f'{{"domanda":"...","opzioni":["corretta","sbagliata","sbagliata"],'
+                      f'"insight":"spiegazione tecnica"}}. La prima opzione è la corretta.')
+            richieste.append({
+                "custom_id": fid[:64],
+                "params": {"model": GW._MODEL_SONNET, "max_tokens": 400,
+                           "messages": [{"role": "user", "content": prompt}]}
+            })
+        batch = GW.batch_crea(richieste)
+        return jsonify({"ok": True, "batch_id": batch.get("id"),
+                        "richieste": len(richieste),
+                        "stato": batch.get("processing_status"),
+                        "nota": "usa /admin/batch-quiz-raccogli?batch_id=... quando ended"})
+    except Exception as e:
+        try: _release_conn(conn)
+        except Exception: pass
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+@bp.route("/admin/batch-quiz-raccogli")
+def admin_batch_quiz_raccogli():
+    """Controlla lo stato del batch; se 'ended', salva i quiz risultanti nel DB."""
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    batch_id = request.args.get("batch_id", "")
+    if not batch_id:
+        return jsonify({"errore": "batch_id mancante"}), 400
+    import ai_gateway as GW, re as _re
+    try:
+        stato = GW.batch_stato(batch_id)
+        if stato.get("processing_status") != "ended":
+            return jsonify({"ok": True, "stato": stato.get("processing_status"),
+                            "counts": stato.get("request_counts"), "nota": "non ancora pronto, riprova"})
+        results_url = stato.get("results_url")
+        if not results_url:
+            return jsonify({"errore": "results_url mancante"}), 500
+        risultati = GW.batch_risultati(results_url)
+        conn = _get_conn(); cur = conn.cursor()
+        salvati = 0
+        for r in risultati:
+            if r.get("result", {}).get("type") != "succeeded":
+                continue
+            fid = r.get("custom_id", "")
+            msg = r.get("result", {}).get("message", {})
+            testo = "".join(b.get("text", "") for b in msg.get("content", []) if b.get("type") == "text")
+            testo = _re.sub(r"```json|```", "", testo).strip()
+            m = _re.search(r"\{.*\}", testo, _re.DOTALL)
+            if not m: continue
+            try:
+                qj = json.loads(m.group(0))
+                dom = qj.get("domanda", ""); opz = qj.get("opzioni", []); ins = qj.get("insight", "")
+                if dom and len(opz) >= 2:
+                    # recupero disciplina del fenomeno
+                    cur.execute("SELECT domain FROM nodes WHERE id=%s", (fid,))
+                    _dr = cur.fetchone(); disc = _dr[0] if _dr else ""
+                    cur.execute("SELECT 1 FROM quiz WHERE fenomeno_id=%s AND tipo='fenomeno'", (fid,))
+                    if not cur.fetchone():
+                        cur.execute(
+                            "INSERT INTO quiz (fenomeno_id, disciplina, tipo, difficolta, domanda, opzioni, risposta_corretta, insight_didattico) "
+                            "VALUES (%s,%s,'fenomeno','base',%s,%s,%s,%s)",
+                            (fid, disc, dom, json.dumps(opz, ensure_ascii=False), opz[0], ins))
+                        salvati += 1
+            except Exception:
+                pass
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "salvati": salvati, "totale_risultati": len(risultati)})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
