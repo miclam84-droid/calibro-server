@@ -703,6 +703,36 @@ def menu_pdf(mid):
 
     sezioni = {}
     ordine_sez = []
+    # AUTO-SEZIONI per le carte vini: se tipo_menu=wine e le voci non hanno già una sezione,
+    # le classifico per tipologia dal nome (Bollicine/Bianchi/Rosati/Rossi/Dolci).
+    _tipo_menu = _tema_richiesto  # riuso: il tema può indicare wine, ma leggo anche dal DB
+    try:
+        _cc = _conn(); _ccur = _cc.cursor()
+        _ccur.execute("SELECT tipo_menu FROM menu WHERE id=%s", (mid,))
+        _tr = _ccur.fetchone(); _ccur.close(); _release(_cc)
+        _is_wine = (_tr and _tr[0] == "wine")
+    except Exception:
+        _is_wine = False
+    _voci_senza_sez = all(not (v.get("sezione") or "") for v in voci)
+    if _is_wine and _voci_senza_sez and voci:
+        def _classifica_vino(nome):
+            n = (nome or "").lower()
+            if any(k in n for k in ("spumante", "champagne", "franciacorta", "prosecco", "bollicin", "brut", "metodo classico", "cava")):
+                return "Bollicine"
+            if any(k in n for k in ("passito", "moscato", "sauternes", "vin santo", "dolce", "recioto", "dessert")):
+                return "Dolci e da Dessert"
+            if any(k in n for k in ("rosato", "rosé", "rose", "cerasuolo")):
+                return "Rosati"
+            if any(k in n for k in ("rosso", "barolo", "chianti", "nebbiolo", "sangiovese", "merlot", "cabernet", "primitivo", "aglianico", "montepulciano", "nero d'avola")):
+                return "Rossi"
+            if any(k in n for k in ("bianco", "vermentino", "chardonnay", "sauvignon", "riesling", "gewurz", "verdicchio", "fiano", "greco", "falanghina", "pinot grigio")):
+                return "Bianchi"
+            return "Altri Vini"
+        _ordine_wine = ["Bollicine", "Bianchi", "Rosati", "Rossi", "Dolci e da Dessert", "Altri Vini"]
+        for v in voci:
+            v["sezione"] = _classifica_vino(v.get("nome", ""))
+        # riordino le voci secondo l'ordine enologico
+        voci = sorted(voci, key=lambda v: _ordine_wine.index(v["sezione"]) if v["sezione"] in _ordine_wine else 99)
     for v in voci:
         s = v.get("sezione") or ""
         if s not in sezioni:
@@ -721,6 +751,13 @@ def menu_pdf(mid):
         story.append(Spacer(1, 14))
         story.append(HRFlowable(width="30%", thickness=0.6, color=LINEA, spaceBefore=2, spaceAfter=6, hAlign="CENTER"))
         story.append(Paragraph(esc(footer_custom or note), st_footer))
+
+    # firma d'identità discreta: linea + dicitura Matter Bench (fa capire che è una carta progettata
+    # con criteri scientifici, senza invadere il menu).
+    story.append(Spacer(1, 18))
+    st_firma = ParagraphStyle("Firma", parent=styles["Normal"], fontName="Courier",
+                              fontSize=6.5, textColor=HexColor("#9AA5A8"), alignment=1)
+    story.append(Paragraph("◎ MATTER BENCH · carta progettata su equilibri misurabili", st_firma))
 
     doc.build(story)
     buf.seek(0)
