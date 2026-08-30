@@ -6303,26 +6303,24 @@ def admin_genera_didattica():
             scheda = _scheda_lang(data, "it") or ""
             # cifre del target da verificare (anti-allucinazione)
             cifre_target = _re.findall(r"\d+", str(target))
-            # --- ESPERIMENTO (max ~45 parole) ---
+            testo_exp = None
+            # --- ESPERIMENTO (solo se manca) ---
             cur.execute("SELECT 1 FROM esperimenti_pratici WHERE fenomeno_id=%s", (fid,))
-            if cur.fetchone():
-                risultati.append({"fenomeno": fid, "stato": "gia_presente"}); continue
-            prompt_exp = (f"Sei un formatore F&B. Scrivi un esperimento pratico 'provalo stasera' per il "
-                          f"fenomeno '{nome}' ({dominio}). Numero-bersaglio: {target}. "
-                          f"Max 45 parole, concreto, fattibile al banco stasera. "
-                          f"Se c'è un numero-bersaglio, CITALO esatto. Solo il testo, niente altro.")
-            testo_exp = (_haiku_raw(prompt_exp, max_tokens=120) or "").strip()
-            quantitativo = bool(cifre_target)
-            # anti-allucinazione: se il fenomeno è quantitativo ma il testo non contiene le cifre,
-            # rendo l'esperimento qualitativo (rimuovo la pretesa numerica) invece di rischiare numeri inventati
-            if quantitativo and testo_exp:
-                if not any(c in testo_exp for c in cifre_target):
-                    # il testo non cita il numero vero → lo marco qualitativo (non fidato sui numeri)
-                    quantitativo = False
-            if testo_exp:
-                cur.execute("INSERT INTO esperimenti_pratici (fenomeno_id, disciplina, testo, quantitativo) "
-                            "VALUES (%s,%s,%s,%s) ON CONFLICT (fenomeno_id) DO NOTHING",
-                            (fid, dominio, testo_exp, quantitativo))
+            _exp_esiste = cur.fetchone()
+            if not _exp_esiste:
+                prompt_exp = (f"Sei un formatore F&B. Scrivi un esperimento pratico 'provalo stasera' per il "
+                              f"fenomeno '{nome}' ({dominio}). Numero-bersaglio: {target}. "
+                              f"Max 45 parole, concreto, fattibile al banco stasera. "
+                              f"Se c'è un numero-bersaglio, CITALO esatto. Solo il testo, niente altro.")
+                testo_exp = (_haiku_raw(prompt_exp, max_tokens=120) or "").strip()
+                quantitativo = bool(cifre_target)
+                if quantitativo and testo_exp:
+                    if not any(c in testo_exp for c in cifre_target):
+                        quantitativo = False
+                if testo_exp:
+                    cur.execute("INSERT INTO esperimenti_pratici (fenomeno_id, disciplina, testo, quantitativo) "
+                                "VALUES (%s,%s,%s,%s) ON CONFLICT (fenomeno_id) DO NOTHING",
+                                (fid, dominio, testo_exp, quantitativo))
             # --- 1 QUIZ (concetto) ---
             cur.execute("SELECT 1 FROM quiz WHERE fenomeno_id=%s AND tipo='fenomeno' LIMIT 1", (fid,))
             if not cur.fetchone() and scheda:
