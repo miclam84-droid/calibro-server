@@ -6336,14 +6336,21 @@ def admin_genera_didattica():
                                 "VALUES (%s,%s,%s,%s) ON CONFLICT (fenomeno_id) DO NOTHING",
                                 (fid, dominio, testo_exp, quantitativo))
             # --- 1 QUIZ (concetto) ---
+            # contenuto per il quiz: scheda se c'è, altrimenti il principio del fenomeno + nome
+            _principio = ""
+            if isinstance(data, dict):
+                _p = data.get("principio") or data.get("primo_principio") or ""
+                if isinstance(_p, dict): _p = _p.get("it") or _p.get("nome") or ""
+                _principio = str(_p) if _p else ""
+            _contenuto_quiz = scheda or _principio or nome
             cur.execute("SELECT 1 FROM quiz WHERE fenomeno_id=%s AND tipo='fenomeno' LIMIT 1", (fid,))
-            if not cur.fetchone() and scheda:
-                prompt_quiz = (f"Crea UN quiz sul fenomeno '{nome}' per un professionista F&B. "
-                               f"Numero-bersaglio: {target}. Contenuto: {scheda[:400]}. "
+            if not cur.fetchone() and _contenuto_quiz and (scheda or target or _principio):
+                prompt_quiz = (f"Crea UN quiz tecnico sul fenomeno '{nome}' ({dominio}) per un professionista F&B. "
+                               f"Numero-bersaglio: {target}. Principio: {_principio}. Contenuto: {_contenuto_quiz[:400]}. "
                                f"Rispondi SOLO con JSON valido: "
                                f'{{"domanda":"...","opzioni":["corretta","sbagliata","sbagliata"],'
-                               f'"insight":"spiegazione con il numero esatto"}}. '
-                               f"La prima opzione è la corretta.")
+                               f'"insight":"spiegazione tecnica, col numero esatto se pertinente"}}. '
+                               f"La prima opzione è la corretta. Domanda concreta da banco.")
                 raw = (_quiz_raw(prompt_quiz, max_tokens=400) or "").strip()
                 # estrazione JSON robusta: Haiku a volte avvolge in markdown o testo.
                 # prendo il primo blocco {...} bilanciato.
