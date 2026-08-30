@@ -6161,12 +6161,44 @@ function _calcTab(which, btn){
 }
 function _calcBody(html){ var b=document.getElementById('calc-body'); if(b) b.innerHTML=html; }
 // risultato comune: interpretazione (carta) + leva (teal) + link fenomeno
-function _calcRisultato(numeroHtml, j){
+function _calcRisultato(numeroHtml, j, bersaglio){
   var h = '<div class="calc-mirino">'+numeroHtml+'</div>';
+  // #4 MIRINO-SISTEMA: barra graduata con l'ago che si posiziona sul valore
+  if(bersaglio && bersaglio.valore!=null){
+    h += _barraMirino(bersaglio);
+  }
   if(j.interpretazione){ h += '<div class="calc-interp">'+_escV(j.interpretazione)+'</div>'; }
   if(j.leva_azione){ h += '<div class="calc-leva"><span class="calc-leva-lab">Cosa fare</span>'+_escV(j.leva_azione)+'</div>'; }
   if(j.fenomeno_id){ h += '<button class="calc-fen-link" onclick="apriNodo(\''+_escV(j.fenomeno_id)+'\',\'\')">Studia il fenomeno →</button>'; }
   return h;
+}
+// barra graduata orizzontale con l'ago-Mirino che scorre fino al valore
+function _barraMirino(b){
+  var min=b.min, max=b.max, val=b.valore;
+  var lo=b.bersaglio_min, hi=b.bersaglio_max;
+  // posizione % dell'ago sulla barra
+  var pos=Math.max(0, Math.min(100, ((val-min)/(max-min))*100));
+  var centrato = (lo!=null && hi!=null) ? (val>=lo && val<=hi) : false;
+  // zona bersaglio evidenziata
+  var zonaL = (lo!=null) ? Math.max(0,((lo-min)/(max-min))*100) : 0;
+  var zonaW = (lo!=null && hi!=null) ? Math.min(100-zonaL, ((hi-lo)/(max-min))*100) : 0;
+  var id='mir-'+Math.random().toString(36).slice(2,7);
+  var html='<div class="mirino-barra '+(centrato?'centrato':'fuori')+'">'
+    + '<div class="mirino-track">'
+    +   (zonaW>0?'<div class="mirino-zona" style="left:'+zonaL+'%;width:'+zonaW+'%"></div>':'')
+    +   '<div class="mirino-ago" id="'+id+'" style="left:0%">'
+    +     '<svg viewBox="0 0 24 24" width="28" height="28"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/>'
+    +     '<line x1="12" y1="1" x2="12" y2="4" stroke="currentColor" stroke-width="2"/><line x1="12" y1="20" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>'
+    +     '<line x1="1" y1="12" x2="4" y2="12" stroke="currentColor" stroke-width="2"/><line x1="20" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>'
+    +     '<circle cx="12" cy="12" r="3" fill="currentColor"/></svg>'
+    +   '</div>'
+    + '</div>'
+    + '<div class="mirino-scala"><span>'+_escV(String(min))+(b.unita||'')+'</span><span>'+_escV(String(max))+(b.unita||'')+'</span></div>'
+    + (centrato?'<div class="mirino-verdetto centrato">◎ Bersaglio centrato</div>':'<div class="mirino-verdetto fuori">Fuori dal bersaglio</div>')
+    + '</div>';
+  // animo l'ago dopo il render (transizione cubica 0.6s)
+  setTimeout(function(){ var a=document.getElementById(id); if(a) a.style.left=pos+'%'; }, 80);
+  return html;
 }
 // --- Scalatore impasto ---
 function _calcRenderImpasto(){
@@ -6260,7 +6292,9 @@ async function _calcFoodCost(){
     var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'food_cost_piatto',parametri:{ingredienti:_fcpIng, prezzo_vendita:pv}})});
     var j=await r.json();
     var num='<div class="calc-fcp-num">€'+_escV(String(j.costo_totale||'?'))+(j.food_cost_perc!=null?'<span class="calc-fcp-pct">'+j.food_cost_perc+'%</span>':'')+'</div>';
-    if(out) out.innerHTML=_calcRisultato(num, j);
+    // bersaglio food cost: zona ideale 25-33%, scala 0-60%
+    var bers = (j.food_cost_perc!=null) ? {valore:j.food_cost_perc, min:0, max:60, bersaglio_min:25, bersaglio_max:33, unita:'%'} : null;
+    if(out) out.innerHTML=_calcRisultato(num, j, bers);
   }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
 }
 // --- Temperatura servizio vino (P4) ---

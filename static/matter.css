@@ -2375,3 +2375,14 @@ a:focus-visible,input:focus-visible{
 .misura-adesso{box-shadow:4px 4px 0px rgba(36,89,121,.25)!important}
 .calc-mirino,.stream-calc,.pal-header,.fen-errori-box{box-shadow:3px 3px 0px rgba(20,29,34,.14)}
 .mp-btn{box-shadow:3px 3px 0px rgba(20,29,34,.14)!important}
+
+/* ═══ #4 MIRINO-SISTEMA — ago mobile sui calcolatori (la firma) ═══ */
+.mirino-barra{margin:16px 0 12px;padding:8px 4px}
+.mirino-track{position:relative;height:6px;background:var(--border,#B7C3C3);border-radius:3px;margin:22px 0 8px}
+.mirino-zona{position:absolute;top:0;height:100%;background:rgba(199,123,63,.28);border-radius:3px}
+.mirino-ago{position:absolute;top:50%;transform:translate(-50%,-50%);transition:left .6s cubic-bezier(.34,1.2,.4,1);color:var(--dato,#245979);z-index:2}
+.mirino-barra.centrato .mirino-ago{color:var(--terra,#C77B3F)}
+.mirino-scala{display:flex;justify-content:space-between;font-family:var(--mono,'IBM Plex Mono');font-size:10px;color:var(--muted,#5A6C70)}
+.mirino-verdetto{margin-top:8px;text-align:center;font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px;border-radius:6px}
+.mirino-verdetto.centrato{color:#8a5a2b;background:rgba(199,123,63,.14)}
+.mirino-verdetto.fuori{color:var(--muted,#5A6C70);background:var(--l2,#E8EDED)}
