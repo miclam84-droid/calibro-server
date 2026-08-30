@@ -15,6 +15,17 @@ import oss
 bp = Blueprint("admin", __name__)
 
 
+def _admin_ok(req):
+    """Auth admin unificata: accetta il secret dall'header X-Admin-Secret (preferito, non finisce
+    nei log del browser/proxy) O dal query param ?s= (retrocompatibile per i tool interni).
+    Sicurezza migliorata senza rompere gli endpoint esistenti."""
+    _secret = os.environ.get("ADMIN_SECRET") or ""
+    if not _secret:
+        return False
+    _dato = req.headers.get("X-Admin-Secret", "") or req.args.get("s", "")
+    return hmac.compare_digest(str(_dato), str(_secret))
+
+
 RICETTE_PANIFICATI = {
     "prod-pizza": {
         "scheda": """"Pizza" non è un piatto: è una famiglia. Napoletana, romana, in teglia, in pala, pinsa — sembrano parenti lontani, e invece sono lo stesso impasto governato da due soli assi: quanta acqua, e quanto fuoco. Impara a leggere questi due assi e non ti perdi più tra le mille pizze: capisci perché la napoletana è morbida e la romana scrocchia, perché la teglia è alta e alveolata e la napoletana no. È tutta fisica, spostata lungo due linee.
@@ -461,7 +472,7 @@ SEGRETI_INGREDIENTI = {
 def _schede_export():
     """Export sola-lettura di tutte le schede fenomeni (IT/EN/ES) per revisione
     testi. Nessuna AI, veloce. Auth ADMIN_SECRET."""
-    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     db = carica_grafo()
     rows = db.execute("SELECT id, name, data FROM nodes").fetchall()
@@ -4425,7 +4436,7 @@ def admin_arricchisci_ricette():
     ?dry=1 -> anteprima senza scrivere. ?disc=bar -> solo una disciplina.
     Convenzione scarto: scarto_pct (0 default). Neutra: Cifra può convertire in resa_pct.
     """
-    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     dry = request.args.get("dry") == "1"
     solo_disc = request.args.get("disc")  # opzionale: filtra per disciplina
@@ -6225,7 +6236,7 @@ _FENOMENI_AVANZATI = [
 
 @bp.route("/admin/marca-avanzati")
 def admin_marca_avanzati():
-    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = _get_conn()
     try:
@@ -6267,7 +6278,7 @@ def admin_genera_didattica():
     ?offset=0&limit=8 per processare a blocchi (evita timeout Railway).
     ANTI-ALLUCINAZIONE: se il fenomeno ha un numero-bersaglio, il testo generato DEVE contenerne
     le cifre, altrimenti l'esperimento viene reso qualitativo (mai numeri inventati)."""
-    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     import re as _re
     from ai import _haiku_raw
@@ -6398,7 +6409,7 @@ def admin_genera_didattica():
 def admin_batch_quiz_crea():
     """Crea un batch di richieste quiz per i fenomeni SENZA quiz. Ritorna il batch_id.
     Poi usa /admin/batch-quiz-raccogli?batch_id=... quando è 'ended' per salvare i risultati."""
-    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     import ai_gateway as GW
     from contenuto import _numero_bersaglio as _nb, _scheda_lang
@@ -6448,7 +6459,7 @@ def admin_batch_quiz_crea():
 @bp.route("/admin/batch-quiz-raccogli")
 def admin_batch_quiz_raccogli():
     """Controlla lo stato del batch; se 'ended', salva i quiz risultanti nel DB."""
-    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     batch_id = request.args.get("batch_id", "")
     if not batch_id:
@@ -6503,7 +6514,7 @@ def admin_normalizza_fenomeni():
     """Per ogni fenomeno costruisce data['contenuto_strutturato'] = {principio, spiegazione,
     errore_banco, dato_operativo} consolidando i campi esistenti (scheda/cache/principio/target).
     Così la lettura diventa uniforme e spariscono i fallback nel codice. ?offset=&limit= a blocchi."""
-    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     from contenuto import _numero_bersaglio as _nb, _scheda_lang
     try:
