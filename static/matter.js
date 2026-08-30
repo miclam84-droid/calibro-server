@@ -66,19 +66,19 @@ const STRINGS_ES = {
     les_quiz_err:'No exactamente.',
     chiedi_title:'Preguntar',
     chiedi_sub:'Un fenómeno físico para cada gesto profesional',
-    chiedi_al_grafo:'Preguntar a Matter Lab',
+    chiedi_al_grafo:'Preguntar a Matter Bench',
     calcola:'Calcular',
     onb_s1_title:'La física del oficio',
     onb_s1_sub:'Fenómenos físicos y químicos bajo cada gesto profesional.',
     onb_s2_title:'Números objetivo',
-    onb_s2_sub:'Cada fenómeno tiene un número medible. Matter Lab te lo da.',
-    onb_s3_title:'Preguntar a Matter Lab',
+    onb_s2_sub:'Cada fenómeno tiene un número medible. Matter Bench te lo da.',
+    onb_s3_title:'Preguntar a Matter Bench',
     onb_s3_sub:'Haz preguntas reales del trabajo diario.',
     auth_email:'Email',
     auth_pwd:'Contraseña',
     auth_login:'Iniciar sesión',
     auth_reg:'Crear cuenta',
-    auth_reg_ok:'Cuenta creada. ¡Bienvenido a Matter Lab!',
+    auth_reg_ok:'Cuenta creada. ¡Bienvenido a Matter Bench!',
     auth_errore_rete:'Error de red. Inténtalo de nuevo.',
     auth_inserisci:'Introduce email y contraseña',
     auth_logout:'Cerrar sesión',
@@ -92,7 +92,7 @@ const STRINGS_ES = {
     quaderno_vuoto:'Sin experimentos guardados.',
     quaderno_salva:'Guardar en el cuaderno',
     supporto:'Soporte',
-    ct_cookie_txt:'Matter Lab usa cookies técnicas y registra las preguntas para mejorar el servicio.',
+    ct_cookie_txt:'Matter Bench usa cookies técnicas y registra las preguntas para mejorar el servicio.',
     ct_disc_sicurezza:'Seguridad alimentaria',
     ct_disc_sicurezza_sub:'HACCP · Aw · vida útil · zonas de peligro',
     accedi:'Acceder',
@@ -104,13 +104,13 @@ const STRINGS_ES = {
     avanti:'Siguiente →',
     caricamento:'cargando…',
     chat_grado:'grado final (era ',
-    chat_thinking:'consultando Matter Lab',
+    chat_thinking:'consultando Matter Bench',
     chiedi_btn:'Preguntar',
     onb_nudge_title:'¿Listo en el banco?',
     ai_disclosure:'Respuestas generadas por un asistente de IA.',
     foto_analisi_titolo:'Análisis de foto',
     foto_analisi_loading:'Identificando ingredientes y botellas…',
-    chiedi_placeholder:'pregunta a Matter Lab…',
+    chiedi_placeholder:'pregunta a Matter Bench…',
     continua_free:'Continuar con el plan gratuito',
     continua_senza:'← Continuar sin registrarse',
     ct_acido:'ácido %',
@@ -210,13 +210,13 @@ const STRINGS_ES = {
     onb_complete_title:'Excelente trabajo.',
     onb_nudge_sub:'Selecciona tu disciplina abajo para comenzar tu recorrido.',
     onb_ovl_cta:'Empezar',
-    onb_ovl_title:'Cómo funciona Matter Lab',
+    onb_ovl_title:'Cómo funciona Matter Bench',
     onb_s1_sub:'Bar, Panadería, Cocina, Café — cada disciplina tiene sus fenómenos.',
     onb_s1_title:'Elige tu disciplina',
     onb_s2_sub:'Cada lección tiene un número objetivo — el parámetro físico que mides en el trabajo.',
     onb_s2_title:'Estudia el fenómeno',
     onb_s3_sub:'Haz una pregunta real — un problema de tu trabajo. Respondo con números, no con opiniones.',
-    onb_s3_title:'Pregunta a Matter Lab',
+    onb_s3_title:'Pregunta a Matter Bench',
     passa_pro:'Pasar a Pro',
     perche_insieme:'Por qué funcionan juntos',
     ponte_cifra:'El puente hacia Cifra',
@@ -1920,7 +1920,7 @@ const _strings = {
     ai_disclosure:'Risposte generate da un assistente AI.',
     foto_analisi_titolo:'Analisi foto',
     foto_analisi_loading:'Riconosco ingredienti e bottiglie…',
-    chiedi_title:'Chiedi a Matter Lab',
+    chiedi_title:'Chiedi a Matter Bench',
     chiedi_sub:'Un problema reale del tuo lavoro — rispondo con i numeri, non con le opinioni.',
     sup_titolo:'Hai bisogno di aiuto?',
     sup_sub:'Descrivi il problema. Ti risponderemo entro 24 ore via email.',
@@ -1929,7 +1929,7 @@ const _strings = {
     disc_bar:'Bar', disc_bakery:'Panificazione', disc_cucina:'Cucina',
     disc_caffetteria:'Caffè', disc_pasticceria:'Pasticceria',
     disc_gelateria:'Gelateria', disc_vino:'Vino', disc_birra:'Birra',
-    chiedi_al_grafo:'Chiedi a Matter Lab',
+    chiedi_al_grafo:'Chiedi a Matter Bench',
     calcola:'Calcola',
     prova:'Prova:',
     il_percorso:'Il tuo percorso',
@@ -1968,19 +1968,19 @@ const _strings = {
     ct_q10_out:'Tempo previsto',
     // cookie
     ct_cookie_ok:'Accetto', ct_cookie_no:'Solo essenziali',
-    ct_cookie_txt:'Matter Lab usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral).',
+    ct_cookie_txt:'Matter Bench usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral).',
     // batch output
     ct_acqua_pre:'Acqua pre-diluizione',
     ct_totale:'Totale',
     ct_include:'include',
     ct_extra_lbl:'extra',
     // onboarding
-    onb_ovl_title:'Come funziona Matter Lab',
+    onb_ovl_title:'Come funziona Matter Bench',
     onb_s1_title:'Scegli la tua disciplina',
     onb_s1_sub:'Bar, Panificazione, Cucina, Caffetteria e altro — ogni disciplina ha le sue leggi fisiche.',
     onb_s2_title:'Studia il fenomeno',
     onb_s2_sub:'Ogni fenomeno ha un bersaglio: a volte un numero da misurare, a volte uno stato da riconoscere. Quello che devi sapere quando qualcosa non torna.',
-    onb_s3_title:'Chiedi a Matter Lab',
+    onb_s3_title:'Chiedi a Matter Bench',
     onb_s3_sub:'Descrivi un problema del tuo lavoro. Ricevi cosa misurare o riconoscere e azioni concrete — non consigli generici.',
     onb_ovl_cta:'Inizia',
     onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
@@ -2020,7 +2020,7 @@ const _strings = {
     les_di:'di',
     scopri_errore_titolo:'Riprova tra poco.',
     scopri_errore_eyebrow:'errore caricamento',
-    chat_thinking:'consulto Matter Lab',
+    chat_thinking:'consulto Matter Bench',
     chat_grado:'grado finale (era ',
     aggiungi_ing:'Aggiungi un ingrediente.',
     aggiungi_acido:'Aggiungi',
@@ -2051,7 +2051,7 @@ const _strings = {
     ct_sic_cold_time:'Tempo (min)',
     ct_sic_cold_disc:'Limite sicurezza: max 2 ore cumulative in zona pericolo.',
     ct_sic_gate_title:'Modulo sicurezza alimentare',
-    ct_sic_gate_desc:'Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Lab Pro.',
+    ct_sic_gate_desc:'Shelf life orientativa, pastorizzazione e catena del freddo. Disponibile con Matter Bench Pro.',
     ct_sic_gate_btn:'Passa a Pro — €19,99/mese',
   },
   en:{
@@ -2078,13 +2078,13 @@ const _strings = {
     indietro:'← Back', avanti:'Next →', vai_mappa:'Go to Atlas →',
     principio_del_giorno:'Principle of the day',
     vedi_mappa:'See the principle in the Map →',
-    chiedi_placeholder:'ask Matter Lab…',
+    chiedi_placeholder:'ask Matter Bench…',
     chiedi_btn:'Ask',
     onb_nudge_title:'Ready at the bench?',
     ai_disclosure:'Responses generated by an AI assistant.',
     foto_analisi_titolo:'Photo analysis',
     foto_analisi_loading:'Identifying ingredients and bottles…',
-    chiedi_title:'Ask Matter Lab',
+    chiedi_title:'Ask Matter Bench',
     disc_bar:'Bar', disc_cucina:'Kitchen', disc_panificazione:'Baking',
     disc_pasticceria:'Pastry', disc_gelateria:'Gelato', disc_caffe:'Coffee',
     disc_vino:'Wine', disc_birra:'Beer', disc_sicurezza:'Food safety',
@@ -2096,7 +2096,7 @@ const _strings = {
     disc_bar:'Bar', disc_bakery:'Baking', disc_cucina:'Cooking',
     disc_caffetteria:'Coffee', disc_pasticceria:'Pastry',
     disc_gelateria:'Gelato', disc_vino:'Wine', disc_birra:'Beer',
-    chiedi_al_grafo:'Ask Matter Lab',
+    chiedi_al_grafo:'Ask Matter Bench',
     calcola:'Calculate',
     prova:'Try:',
     il_percorso:'Your path',
@@ -2135,19 +2135,19 @@ const _strings = {
     ct_q10_out:'Estimated time',
     // cookie
     ct_cookie_ok:'Accept', ct_cookie_no:'Essential only',
-    ct_cookie_txt:'Matter Lab uses technical cookies and logs questions to improve the service. No profiling cookies. Responses are AI-generated (Anthropic/Mistral).',
+    ct_cookie_txt:'Matter Bench uses technical cookies and logs questions to improve the service. No profiling cookies. Responses are AI-generated (Anthropic/Mistral).',
     // batch output
     ct_acqua_pre:'Pre-dilution water',
     ct_totale:'Total',
     ct_include:'includes',
     ct_extra_lbl:'extra',
     // onboarding
-    onb_ovl_title:'How Matter Lab works',
+    onb_ovl_title:'How Matter Bench works',
     onb_s1_title:'Choose your discipline',
     onb_s1_sub:'Bar, Bakery, Kitchen, Coffee — each discipline has its own path through physical phenomena.',
     onb_s2_title:'Study the phenomenon',
     onb_s2_sub:'Each lesson has a target number — the physical parameter that governs that gesture at the bench.',
-    onb_s3_title:'Ask Matter Lab',
+    onb_s3_title:'Ask Matter Bench',
     onb_s3_sub:'Ask a real question — a problem from your work. Matter answers with numbers, not opinions.',
     onb_ovl_cta:'Start',
     onb_nudge_sub:'Select your discipline below to begin your first lesson',
@@ -2187,7 +2187,7 @@ const _strings = {
     les_di:'of',
     scopri_errore_titolo:'Try again in a moment.',
     scopri_errore_eyebrow:'loading error',
-    chat_thinking:'asking Matter Lab',
+    chat_thinking:'asking Matter Bench',
     chat_grado:'final degree (was ',
     aggiungi_ing:'Add an ingredient.',
     aggiungi_acido:'Add',
@@ -2244,7 +2244,7 @@ const _strings = {
     les_step:'Paso', les_di:'de',
     les_quiz_titolo:'Quiz', les_quiz_btn:'Comprobar',
     les_quiz_corr:'¡Correcto!', les_quiz_err:'No exactamente.',
-    chiedi_title:'Preguntar a Matter Lab',
+    chiedi_title:'Preguntar a Matter Bench',
     disc_bar:'Bar', disc_cucina:'Cocina', disc_panificazione:'Panadería',
     disc_pasticceria:'Pastelería', disc_gelateria:'Heladería', disc_caffe:'Café',
     disc_vino:'Vino', disc_birra:'Cerveza', disc_sicurezza:'Seguridad alimentaria',
@@ -2252,7 +2252,7 @@ const _strings = {
     chiedi_al_grafo:'Preguntar', calcola:'Calcular',
     auth_email:'Email', auth_pwd:'Contraseña',
     auth_login:'Iniciar sesión', auth_reg:'Crear cuenta',
-    auth_reg_ok:'¡Cuenta creada. Bienvenido a Matter Lab!',
+    auth_reg_ok:'¡Cuenta creada. Bienvenido a Matter Bench!',
     auth_errore_rete:'Error de red.', auth_inserisci:'Introduce email y contraseña',
     auth_logout:'Cerrar sesión',
     mappa_title:'Mapa de conocimiento F&B',
@@ -2263,7 +2263,7 @@ const _strings = {
     quaderno_vuoto:'Sin experimentos guardados.',
     quaderno_salva:'Guardar en el cuaderno',
     supporto:'Soporte',
-    ct_cookie_txt:'Matter Lab usa cookies técnicas para funcionar.',
+    ct_cookie_txt:'Matter Bench usa cookies técnicas para funcionar.',
     ct_disc_sicurezza:'Seguridad alimentaria',
     ct_disc_sicurezza_sub:'HACCP · Aw · vida útil · zonas de peligro',
     ct_sic_gate_title:'Módulo de seguridad alimentaria',
@@ -2278,11 +2278,11 @@ const _strings = {
     avanti:'Siguiente →',
     caricamento:'cargando…',
     chat_grado:'grado final (era ',
-    chat_thinking:'consultando Matter Lab',
+    chat_thinking:'consultando Matter Bench',
     chiedi_btn:'Preguntar',
     onb_nudge_title:'¿Listo en el banco?',
     ai_disclosure:'Respuestas generadas por un asistente de IA.',
-    chiedi_placeholder:'pregunta a Matter Lab…',
+    chiedi_placeholder:'pregunta a Matter Bench…',
     continua_free:'Continuar con el plan gratuito',
     continua_senza:'← Continuar sin registrarse',
     ct_idr:"Hidratación (baker's %)",
@@ -2383,13 +2383,13 @@ const _strings = {
     onb_complete_title:'Excelente trabajo.',
     onb_nudge_sub:'Selecciona tu disciplina abajo para comenzar.',
     onb_ovl_cta:'Empezar',
-    onb_ovl_title:'Cómo funciona Matter Lab',
+    onb_ovl_title:'Cómo funciona Matter Bench',
     onb_s1_sub:'Bar, Panadería, Cocina, Café — cada disciplina tiene sus fenómenos.',
     onb_s1_title:'Elige tu disciplina',
     onb_s2_sub:'Cada lección tiene un número objetivo — el parámetro físico que mides en el trabajo.',
     onb_s2_title:'Estudia el fenómeno',
     onb_s3_sub:'Haz una pregunta real. Respondo con números, no con opiniones.',
-    onb_s3_title:'Pregunta a Matter Lab',
+    onb_s3_title:'Pregunta a Matter Bench',
     passa_pro:'Pasar a Pro',
     perche_insieme:'Por qué funcionan juntos',
     ponte_cifra:'El puente hacia Cifra',
@@ -3058,12 +3058,12 @@ function scaricaPDF(btn) {
 </style>
 </head>
 <body>
-<div class="logo">Matter Lab</div>
+<div class="logo">Matter Bench</div>
 <div class="payoff">Science & Craft</div>
 <div class="domanda">${domanda}</div>
 ${fenchips ? `<div class="fenomeni">Fenomeni: ${fenchips}</div>` : ''}
 <div class="risposta">${risposta.replace(/\n/g,'<br>')}</div>
-<div class="footer">Generato da Matter Lab · ${oggi} · matter-lab.com<br>Risposta generata da AI su base scientifica — verifica con fonti professionali.</div>
+<div class="footer">Generato da Matter Bench · ${oggi} · matter-lab.com<br>Risposta generata da AI su base scientifica — verifica con fonti professionali.</div>
 </body>
 </html>`;
 
@@ -3504,8 +3504,8 @@ function _vetrinaCard(r){
   var e=_escV;
   var d=r.dati||{};
   var nIng=(d.ingredienti||[]).length;
-  var autore = r.dal_team ? 'Team Matter Lab' : (r.autore||'Anonimo');
-  var teamBadge = r.dal_team ? '<span class="vetr-team">Team Matter Lab</span>' : '';
+  var autore = r.dal_team ? 'Team Matter Bench' : (r.autore||'Anonimo');
+  var teamBadge = r.dal_team ? '<span class="vetr-team">Team Matter Bench</span>' : '';
   var post = r.postazione ? '<span class="vetr-post">'+e(r.postazione)+'</span>' : '';
   var rid = e(String(r.id));
   var dev = e(String(r.autore_device||''));
@@ -4953,7 +4953,7 @@ function mostraPopupPro(motivo){
       skip_altro: 'Continua in free',
     },
     en: {
-      badge: 'Matter Lab Pro',
+      badge: 'Matter Bench Pro',
       icon_chat: '',
       icon_lesson: '',
       title_esaurito: 'You\'ve used all 5 free chats',
@@ -4974,7 +4974,7 @@ function mostraPopupPro(motivo){
       skip_altro: 'Continue free',
     },
     es: {
-      badge: 'Matter Lab Pro',
+      badge: 'Matter Bench Pro',
       icon_chat: '',
       icon_lesson: '',
       title_esaurito: 'Has usado los 5 chats gratuitos',
@@ -5148,7 +5148,7 @@ async function calcolaCosto(){
         `  Food cost 30%: €${suggeriti.fc_30pct||'—'}`,
         `  Food cost 33%: €${suggeriti.fc_33pct||'—'}`,
         ``,
-        `Fonte: ${j.fonte||'Matter Lab / ISMEA orientativo'}`
+        `Fonte: ${j.fonte||'Matter Bench / ISMEA orientativo'}`
       ].join('\n');
       alert(msg);
     }
@@ -5761,7 +5761,7 @@ async function inviaAudio(blob){
       // Pulisce il token dall'URL
       history.replaceState({},'','/app');
       // Mostra messaggio di benvenuto e ricarica
-      alert('Email confermata! Benvenuto in Matter Lab.');
+      alert('Email confermata! Benvenuto in Matter Bench.');
       location.reload();
     } else {
       alert(j.errore||'Link non valido o scaduto. Prova a registrarti di nuovo.');

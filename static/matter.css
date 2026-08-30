@@ -2362,3 +2362,9 @@ a:focus-visible,input:focus-visible{
 .crus-carosello .crus-box-mini{flex:0 0 auto;min-width:140px;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3)}
 .crus-carosello .crus-box-mini .crus-lab{color:var(--teal,#12545D)}
 .crus-carosello .crus-box-mini .crus-val-mini{color:var(--ink,#141D22)}
+
+/* ═══ WORDMARK MATTER BENCH — monocromatico Ink, Mirino a sinistra ═══ */
+.wordmark{display:flex!important;align-items:center!important;gap:12px!important}
+.wm-logo{flex-shrink:0}
+.wm-text{display:inline-block!important;flex-direction:row!important;font-family:var(--serif,'Space Grotesk')!important;font-weight:600!important;font-size:18px!important;text-transform:uppercase!important;letter-spacing:-.02em!important;word-spacing:.30em!important;color:#141D22!important;line-height:1!important}
+.wm-text small{display:none!important}
