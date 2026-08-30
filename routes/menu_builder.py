@@ -44,6 +44,52 @@ def _ensure_menu_table():
         _release(c)
 
 
+@bp_menu.route("/v1/menu/filosofia", methods=["POST"])
+def menu_filosofia():
+    """P7 — Genera il FILO CONDUTTORE (filosofia) di un menu dal brief del locale.
+    Body: {vibe, territorio, filo_conduttore, tipo_menu, stagione, fascia_prezzo}.
+    Restituisce JSON strutturato: filosofia_riassunto, regola_di_coerenza, macro_ingredienti_target.
+    Questo NON è testo libero: è una matrice logica che guiderà la generazione coerente del menu."""
+    body = request.get_json(force=True, silent=True) or {}
+    vibe = (body.get("vibe") or "").strip()
+    territorio = (body.get("territorio") or "").strip()
+    filo = (body.get("filo_conduttore") or "").strip()
+    tipo_menu = (body.get("tipo_menu") or "food").strip()
+    stagione = (body.get("stagione") or "").strip()
+    fascia = (body.get("fascia_prezzo") or "").strip()
+    if not (vibe or territorio or filo):
+        return jsonify({"errore": "servono almeno vibe, territorio o filo conduttore"}), 400
+    # per le carte vini, la logica di classificazione cambia (vitigno/acidità, non portate)
+    _extra = ("Questo è un menu di tipo VINO: organizza per vitigno o per assi di "
+              "acidità/struttura, non per portate.") if tipo_menu == "wine" else ""
+    prompt = (
+        f"Sei un consulente F&B. Definisci la FILOSOFIA (filo conduttore) di un menu.\n"
+        f"Brief del locale: vibe='{vibe}', territorio='{territorio}', filo conduttore='{filo}', "
+        f"stagione='{stagione}', fascia prezzo='{fascia}'. {_extra}\n"
+        f"Rispondi SOLO con JSON valido, senza testo attorno:\n"
+        f'{{"filosofia_riassunto":"una frase che cattura l\'identità del menu",'
+        f'"regola_di_coerenza":"la regola che ogni piatto deve rispettare per appartenere a questa carta",'
+        f'"macro_ingredienti_target":["ingrediente1","ingrediente2","ingrediente3","ingrediente4"]}}'
+    )
+    try:
+        from ai_gateway import route_quality
+        import re as _re
+        raw = (route_quality(prompt, max_tokens=500) or "").strip()
+        raw = _re.sub(r"```json|```", "", raw).strip()
+        m = _re.search(r"\{.*\}", raw, _re.DOTALL)
+        if m:
+            raw = m.group(0)
+        data = json.loads(raw)
+        return jsonify({
+            "ok": True,
+            "filosofia_riassunto": data.get("filosofia_riassunto", ""),
+            "regola_di_coerenza": data.get("regola_di_coerenza", ""),
+            "macro_ingredienti_target": data.get("macro_ingredienti_target", []),
+        })
+    except Exception as e:
+        return jsonify({"errore": "generazione filosofia fallita", "dettaglio": str(e)[:120]}), 200
+
+
 @bp_menu.route("/v1/menu/crea", methods=["POST"])
 def menu_crea():
     """Crea un nuovo menu vuoto o con voci iniziali.
