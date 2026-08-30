@@ -327,6 +327,19 @@ _TEMPLATE_MENU = {
         "font": "'Helvetica Neue', Arial, sans-serif",
         "bg": "#1a2530", "ink": "#f0f0f0", "accent": "#c77b3f", "linea": "#3a4a58",
     },
+    # ── 3 temi per le CARTE DEI VINI (identità Matter Bench) ──
+    "minimal-blueprint": {
+        "font": "'IBM Plex Mono', 'Courier New', monospace",
+        "bg": "#ECEBE5", "ink": "#141D22", "accent": "#12545D", "linea": "#12545D",
+    },
+    "gastro-bistrot": {
+        "font": "'Space Grotesk', 'Helvetica Neue', Arial, sans-serif",
+        "bg": "#FFFFFF", "ink": "#141D22", "accent": "#245979", "linea": "#245979",
+    },
+    "enoteca-classica": {
+        "font": "Georgia, 'Times New Roman', serif",
+        "bg": "#F7F3EA", "ink": "#2A2018", "accent": "#7A2E2E", "linea": "#C77B3F",
+    },
 }
 
 @bp_menu.route("/v1/menu/<mid>/render", methods=["GET"])
@@ -347,7 +360,16 @@ def menu_render(mid):
     finally:
         _release(c)
 
-    tpl = dict(_TEMPLATE_MENU.get(request.args.get("template", "elegante"), _TEMPLATE_MENU["elegante"]))
+    _tema_richiesto = request.args.get("template", "").strip()
+    if not _tema_richiesto:
+        try:
+            _c2 = _conn(); _cur2 = _c2.cursor()
+            _cur2.execute("SELECT tema_grafico FROM menu WHERE id=%s", (mid,))
+            _tr = _cur2.fetchone(); _cur2.close(); _release(_c2)
+            _tema_richiesto = (_tr[0] if _tr and _tr[0] else "elegante")
+        except Exception:
+            _tema_richiesto = "elegante"
+    tpl = dict(_TEMPLATE_MENU.get(_tema_richiesto, _TEMPLATE_MENU["elegante"]))
     mostra_foto = request.args.get("foto", "0") != "0"
     usa_sezioni = request.args.get("sezioni", "1") != "0"  # default: raggruppa per sezione se presente
 
@@ -592,7 +614,16 @@ def menu_pdf(mid):
         return jsonify({"errore": "generatore PDF non disponibile"}), 500
 
     # template/colori (come /render)
-    tpl = dict(_TEMPLATE_MENU.get(request.args.get("template", "elegante"), _TEMPLATE_MENU["elegante"]))
+    _tema_richiesto = request.args.get("template", "").strip()
+    if not _tema_richiesto:
+        try:
+            _c2 = _conn(); _cur2 = _c2.cursor()
+            _cur2.execute("SELECT tema_grafico FROM menu WHERE id=%s", (mid,))
+            _tr = _cur2.fetchone(); _cur2.close(); _release(_c2)
+            _tema_richiesto = (_tr[0] if _tr and _tr[0] else "elegante")
+        except Exception:
+            _tema_richiesto = "elegante"
+    tpl = dict(_TEMPLATE_MENU.get(_tema_richiesto, _TEMPLATE_MENU["elegante"]))
     accent_custom = request.args.get("accent", "").strip().lstrip("#")
     if accent_custom and len(accent_custom) in (3, 6) and all(ch in "0123456789abcdefABCDEF" for ch in accent_custom):
         tpl["accent"] = "#" + accent_custom
