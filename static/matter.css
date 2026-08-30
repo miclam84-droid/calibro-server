@@ -2366,7 +2366,7 @@ a:focus-visible,input:focus-visible{
 /* ═══ WORDMARK MATTER BENCH — monocromatico Ink, Mirino a sinistra ═══ */
 .wordmark{display:flex!important;align-items:center!important;gap:12px!important}
 .wm-logo{flex-shrink:0}
-.wm-text{display:inline-block!important;flex-direction:row!important;font-family:var(--serif,'Space Grotesk')!important;font-weight:600!important;font-size:18px!important;text-transform:uppercase!important;letter-spacing:-.02em!important;word-spacing:.30em!important;color:#141D22!important;line-height:1!important}
+.wm-text{display:inline-block!important;flex-direction:row!important;font-family:var(--serif,'Space Grotesk')!important;font-weight:600!important;font-size:18px!important;text-transform:uppercase!important;letter-spacing:-.02em!important;word-spacing:.15em!important;color:#141D22!important;line-height:1!important}
 .wm-text small{display:none!important}
 
 /* ═══ #5 OMBRE DURE — effetto tasto meccanico da strumento (Matter Bench) ═══ */
@@ -2380,7 +2380,7 @@ a:focus-visible,input:focus-visible{
 .mirino-barra{margin:16px 0 12px;padding:8px 4px}
 .mirino-track{position:relative;height:6px;background:var(--border,#B7C3C3);border-radius:3px;margin:22px 0 8px}
 .mirino-zona{position:absolute;top:0;height:100%;background:rgba(199,123,63,.28);border-radius:3px}
-.mirino-ago{position:absolute;top:50%;transform:translate(-50%,-50%);transition:left .6s cubic-bezier(.34,1.2,.4,1);color:var(--dato,#245979);z-index:2}
+.mirino-ago{position:absolute;top:50%;transform:translate(-50%,-50%);transition:left .7s cubic-bezier(.16,1,.3,1);color:var(--dato,#245979);z-index:2}
 .mirino-barra.centrato .mirino-ago{color:var(--terra,#C77B3F)}
 .mirino-scala{display:flex;justify-content:space-between;font-family:var(--mono,'IBM Plex Mono');font-size:10px;color:var(--muted,#5A6C70)}
 .mirino-verdetto{margin-top:8px;text-align:center;font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px;border-radius:6px}

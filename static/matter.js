@@ -6163,7 +6163,14 @@ function _calcBody(html){ var b=document.getElementById('calc-body'); if(b) b.in
 // risultato comune: interpretazione (carta) + leva (teal) + link fenomeno
 function _calcRisultato(numeroHtml, j, bersaglio){
   var h = '<div class="calc-mirino">'+numeroHtml+'</div>';
-  // #4 MIRINO-SISTEMA: barra graduata con l'ago che si posiziona sul valore
+  // #3 MIRINO-SISTEMA: il backend manda i campi bersaglio → ago su TUTTI i calcolatori col range
+  if(!bersaglio && j && j.valore_corrente!=null && j.scala_min!=null && j.scala_max!=null){
+    bersaglio = {
+      valore: j.valore_corrente, min: j.scala_min, max: j.scala_max,
+      bersaglio_min: j.bersaglio_min, bersaglio_max: j.bersaglio_max,
+      unita: j.unita_mirino||'', dentro: j.dentro_bersaglio
+    };
+  }
   if(bersaglio && bersaglio.valore!=null){
     h += _barraMirino(bersaglio);
   }
@@ -6176,9 +6183,9 @@ function _calcRisultato(numeroHtml, j, bersaglio){
 function _barraMirino(b){
   var min=b.min, max=b.max, val=b.valore;
   var lo=b.bersaglio_min, hi=b.bersaglio_max;
-  // posizione % dell'ago sulla barra
   var pos=Math.max(0, Math.min(100, ((val-min)/(max-min))*100));
-  var centrato = (lo!=null && hi!=null) ? (val>=lo && val<=hi) : false;
+  // uso dentro_bersaglio del backend se presente, altrimenti calcolo
+  var centrato = (typeof b.dentro==='boolean') ? b.dentro : ((lo!=null && hi!=null) ? (val>=lo && val<=hi) : false);
   // zona bersaglio evidenziata
   var zonaL = (lo!=null) ? Math.max(0,((lo-min)/(max-min))*100) : 0;
   var zonaW = (lo!=null && hi!=null) ? Math.min(100-zonaL, ((hi-lo)/(max-min))*100) : 0;
@@ -6292,9 +6299,7 @@ async function _calcFoodCost(){
     var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'food_cost_piatto',parametri:{ingredienti:_fcpIng, prezzo_vendita:pv}})});
     var j=await r.json();
     var num='<div class="calc-fcp-num">€'+_escV(String(j.costo_totale||'?'))+(j.food_cost_perc!=null?'<span class="calc-fcp-pct">'+j.food_cost_perc+'%</span>':'')+'</div>';
-    // bersaglio food cost: zona ideale 25-33%, scala 0-60%
-    var bers = (j.food_cost_perc!=null) ? {valore:j.food_cost_perc, min:0, max:60, bersaglio_min:25, bersaglio_max:33, unita:'%'} : null;
-    if(out) out.innerHTML=_calcRisultato(num, j, bers);
+    if(out) out.innerHTML=_calcRisultato(num, j);
   }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
 }
 // --- Temperatura servizio vino (P4) ---
