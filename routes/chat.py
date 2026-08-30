@@ -116,16 +116,33 @@ def _contesto_memoria_utente(device_id):
             "WHERE device_id=%s ORDER BY creato_il DESC LIMIT 5", (device_id,))
         righe = cur.fetchall()
         cur.close(); _release_conn(conn)
-        if not righe:
-            return ""
-        parti = ["\n\n### Misure recenti di QUESTO utente (dal suo Quaderno) — usale se pertinenti:"]
-        for r in righe:
-            fen, val, uni, ber = r[0], r[1], r[2] or "", r[3] or ""
-            riga = f"  - {fen}: {val}{uni}"
-            if ber:
-                riga += f" (bersaglio: {ber})"
-            parti.append(riga)
-        return "\n".join(parti)
+        parti = []
+        if righe:
+            parti.append("\n\n### Misure recenti di QUESTO utente (dal suo Quaderno) — usale se pertinenti:")
+            for r in righe:
+                fen, val, uni, ber = r[0], r[1], r[2] or "", r[3] or ""
+                riga = f"  - {fen}: {val}{uni}"
+                if ber:
+                    riga += f" (bersaglio: {ber})"
+                parti.append(riga)
+        # esperimenti completati dall'utente (consolidamento: la chat sa cosa ha provato)
+        try:
+            conn2 = _get_conn(); cur2 = conn2.cursor()
+            cur2.execute(
+                "SELECT fenomeno_id, esito FROM esperimenti_completati "
+                "WHERE device_id=%s ORDER BY completato_il DESC LIMIT 3", (device_id,))
+            exps = cur2.fetchall()
+            cur2.close(); _release_conn(conn2)
+            if exps:
+                parti.append("\nEsperimenti che QUESTO utente ha già provato (riferisciti se pertinente):")
+                for e in exps:
+                    riga_e = f"  - esperimento su {e[0]}"
+                    if e[1]:
+                        riga_e += f" (esito: {e[1]})"
+                    parti.append(riga_e)
+        except Exception:
+            pass
+        return "\n".join(parti) if parti else ""
     except Exception:
         return ""
 
