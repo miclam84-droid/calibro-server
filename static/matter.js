@@ -5915,6 +5915,8 @@ async function caricaFlavour(term){
   const q = (term || (inp?inp.value:'') || '').trim();
   if(!q) return;
   if(inp) inp.value = q;
+  // feedback netto: evidenzio la chip attiva
+  document.querySelectorAll('.fnv-chip').forEach(function(c){ c.classList.toggle('attiva', c.textContent.trim().toLowerCase()===q.toLowerCase()); });
   const out = document.getElementById('fnv-out');
   if(!out) return;
   out.innerHTML = '<div class="vista-loading">Leggo il grafo dei composti…</div>';

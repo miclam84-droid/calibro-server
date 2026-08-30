@@ -82,21 +82,21 @@ if('serviceWorker' in navigator){
     <span class="mtr-manifesto-sub">La scienza del mestiere. Il principio di ogni fenomeno, e il numero quando la scienza lo rende affidabile.</span>
   </div>
 
-  <!-- CRUSCOTTO OPERATIVO (Livello 1 — cosa devo fare oggi) -->
-  <!-- MODULO GEOMETRICO — misura rapida (rituale quotidiano) -->
-  <button class="misura-adesso" id="misura-adesso" onclick="apriMisuraRapida()">
-    <span class="ma-cross">⌖</span>
-    <span class="ma-txt">Misura adesso</span>
-    <span class="ma-plus">+</span>
-  </button>
-
+  <!-- BLOCCO 1 — Cruscotto del Giorno (box eroe sollevato) -->
   <div class="cruscotto" id="cruscotto">
     <div class="crus-box crus-box-target" onclick="avviaLezione()">
       <span class="crus-lab">Fenomeno del giorno</span>
       <span class="crus-val" id="crus-target">—</span>
       <span class="crus-sub" id="crus-target-sub"></span>
     </div>
-    <div class="crus-row">
+    <!-- BLOCCO 2 — Attività operativa -->
+    <button class="misura-adesso" id="misura-adesso" onclick="apriMisuraRapida()">
+      <span class="ma-cross">⌖</span>
+      <span class="ma-txt">Misura adesso</span>
+      <span class="ma-plus">+</span>
+    </button>
+    <!-- secondari in carosello orizzontale (non impilati) -->
+    <div class="crus-carosello">
       <div class="crus-box crus-box-mini" onclick="switchTab('quaderno')">
         <span class="crus-lab">Ultima misura</span>
         <span class="crus-val-mini" id="crus-misura">—</span>

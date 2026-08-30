@@ -2344,3 +2344,21 @@ a:focus-visible,input:focus-visible{
   transition:opacity .25s ease,transform .15s ease}
 .torna-su.visibile{display:flex}
 .torna-su:active{transform:scale(.92)}
+
+/* #6.2 chip Flavour: feedback netto quando attiva */
+.fnv-chip{transition:all .2s ease}
+.fnv-chip.attiva{background:var(--teal,#12545D)!important;color:#fff!important;border-color:var(--teal,#12545D)!important}
+/* #6.3 accordion Atlante: tap target generoso anti-fat-finger */
+.porta-voce{min-height:44px}
+.mappa-tab{min-height:44px}
+
+/* ═══ HOME BINARIO VERTICALE (#3) — box bianchi sollevati, gerarchia netta ═══ */
+.cruscotto{margin:16px;padding:20px;background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(20,29,34,.08);display:flex;flex-direction:column;gap:16px}
+.cruscotto .crus-box-target{background:var(--ink,#141D22);border-radius:14px;padding:20px}
+.cruscotto .misura-adesso{margin:0;width:100%}
+/* secondari in carosello orizzontale */
+.crus-carosello{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -4px;padding:0 4px}
+.crus-carosello::-webkit-scrollbar{display:none}
+.crus-carosello .crus-box-mini{flex:0 0 auto;min-width:140px;background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3)}
+.crus-carosello .crus-box-mini .crus-lab{color:var(--teal,#12545D)}
+.crus-carosello .crus-box-mini .crus-val-mini{color:var(--ink,#141D22)}
