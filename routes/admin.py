@@ -602,8 +602,7 @@ def admin_init():
 
 @bp.route("/admin/sottografo")
 def admin_sottografo():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     try:
         from db import carica_grafo
@@ -642,8 +641,7 @@ def admin_sottografo():
 
 @bp.route("/admin/confronta-doppioni")
 def admin_confronta_doppioni():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     try:
         from db import carica_grafo, _dati
@@ -674,8 +672,7 @@ def admin_confronta_doppioni():
 
 @bp.route("/admin/edges-di")
 def admin_edges_di():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     try:
         from db import carica_grafo
@@ -692,8 +689,7 @@ def admin_edges_di():
 
 @bp.route("/admin/reset-trial")
 def admin_reset_trial():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback
     try:
@@ -707,8 +703,7 @@ def admin_reset_trial():
 
 @bp.route("/admin/coeff-zuccheri")
 def admin_coeff_zuccheri():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # POD = potere dolcificante, PAC = potere anticongelante (saccarosio=100). Solidi = sostanza secca %.
@@ -755,8 +750,7 @@ def admin_coeff_zuccheri():
 
 @bp.route("/admin/crea-errori-nuovi")
 def admin_crea_errori_nuovi():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # errori tipici (sintomo osservabile al banco -> causa -> fenomeno). Schema: nodo Errore + edge fallisce_come.
@@ -818,8 +812,7 @@ def admin_crea_errori_nuovi():
 
 @bp.route("/admin/migra-schema-ricette")
 def admin_migra_schema_ricette():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback
     COLONNE = ["procedimento JSONB","immagine TEXT","immagine_autore TEXT","immagine_url_fonte TEXT",
@@ -843,8 +836,7 @@ def admin_migra_schema_ricette():
 
 @bp.route("/admin/genera-procedimenti")
 def admin_genera_procedimenti():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json, re as _re
     import ai_gateway as GW
@@ -935,8 +927,7 @@ def admin_coverage_fenomeni():
     """Diagnostica 'Bibbia': per ogni fenomeno misura quanto è completo e collegato.
     Assi: principio (governato_da), numero-bersaglio (data o si_manifesta_in.target),
     errore (fallisce_come), tecnica (realizzato_da/controllato_con), prodotto (si_manifesta_in)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     conn = _get_conn()
@@ -997,8 +988,7 @@ def admin_coverage_fenomeni():
 def admin_principi_cardine():
     """La Bibbia ha bisogno del suo tetto: i principi fisici fondamentali.
     Crea i principi mancanti e collega OGNI fenomeno al principio che lo governa (governato_da)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # I PRINCIPI CARDINE (pochi, fondamentali). id -> (nome, scheda)
@@ -1088,8 +1078,7 @@ def admin_principi_cardine():
 @bp.route("/admin/errori-completa")
 def admin_errori_completa():
     """Completa l'asse ERRORI: errore tipico (sintomo al banco -> causa) per i fenomeni che ne hanno 0."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # (err_id, nome, dom, causa, fenomeno, sintomo)
@@ -1162,8 +1151,7 @@ def admin_errori_completa():
 @bp.route("/admin/tecniche-completa")
 def admin_tecniche_completa():
     """Completa l'asse TECNICHE: collega i fenomeni alle tecniche esistenti (realizzato_da)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # fenomeno -> [tecniche che lo realizzano/governano] (tecniche gia esistenti nel grafo)
@@ -1231,8 +1219,7 @@ def admin_tecniche_completa():
 @bp.route("/admin/genera-errori-ai")
 def admin_genera_errori_ai():
     """Genera con AI un errore tipico (sintomo->causa) per i fenomeni senza errore, ancorato ai dati reali."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json, re as _re
     import ai_gateway as GW
@@ -1299,8 +1286,7 @@ def admin_genera_errori_ai():
 @bp.route("/admin/tecniche-completa2")
 def admin_tecniche_completa2():
     """Completa TECNICHE al 100%: collega a tecniche esistenti + crea tecniche NUOVE (incluse strumentali)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # tecniche NUOVE da creare (id -> nome, disciplina, scheda)
@@ -1391,8 +1377,7 @@ def admin_tecniche_completa2():
 def admin_collega_fenomeni_ricette():
     """Completa PRODOTTO: collega ogni fenomeno alle RICETTE che lo usano (si_manifesta_in).
     Usa il campo 'fenomeni' gia presente in ogni ricetta - relazione inversa."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # collega i fenomeni orfani ai PRODOTTI reali del grafo (nodi prod-*/fis_*) per keyword
@@ -1442,8 +1427,7 @@ def admin_collega_fenomeni_ricette():
 def admin_crea_strumenti():
     """Crea i nodi-Strumento (attrezzature di trasformazione) con scienza/parametri/errori,
     collegati alle tecniche che abilitano (abilita) e usati come attrezzatura moderna del mestiere."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # id -> (nome, disciplina, scheda, parametri, errore_tipico, [tecniche che abilita])
@@ -1515,8 +1499,7 @@ def admin_crea_strumenti():
 def admin_ripara_accenti():
     """Ripara gli accenti nei testi del grafo (nodi scritti a mano con UTF-8 tolto).
     Applica correzioni sicure basate su parole intere, non tocca i testi gia corretti."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json, re as _re
     # correzioni parola-intera: (regex parola senza accento) -> con accento
@@ -1593,8 +1576,7 @@ def admin_ripara_accenti():
 def admin_coeff_farine():
     """Arricchisce i nodi-farina con i coefficienti di panificazione: W (forza), P/L (tenacita/estensibilita),
     proteine %, uso consigliato. Come i coefficienti POD/PAC per gli zuccheri."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # id_nodo -> (W, P/L, proteine%, uso). Dati verificati.
@@ -1647,8 +1629,7 @@ def admin_coeff_farine():
 def admin_tabella_temperature():
     """Crea la tabella delle temperature-cuore: quale grado per quale risultato, per proteina.
     Il cuore della cottura di precisione (roner/sous-vide). Dati verificati."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     TEMPERATURE = {
@@ -1714,8 +1695,7 @@ def admin_audit_ricette():
     """Audit QUALITA delle ricette: misura se ogni ricetta rispetta i criteri professionali.
     Una ricetta 'legge' (non accozzaglia) ha: procedimento vero, numeri ancorati ai passaggi,
     fenomeni collegati, numeri-bersaglio, punto critico, applicazioni, metadati completi."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     conn = _get_conn()
@@ -1766,8 +1746,7 @@ def admin_audit_ricette():
 def admin_warmup_cache():
     """Scalda la cache AI di /nodo per un batch di nodi, così gli utenti non beccano mai
     la prima apertura lenta (5s). Chiama internamente la logica di nodo. Param: limite, skip, tipo."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     from db import carica_grafo
@@ -1814,8 +1793,7 @@ def admin_warmup_cache():
 @bp.route("/admin/trova-doppioni")
 def admin_trova_doppioni():
     """Diagnostica: trova nodi potenzialmente duplicati (stesso tipo, nomi simili) per il consolidamento."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json, re as _re
     conn = _get_conn()
@@ -1858,8 +1836,7 @@ def admin_trova_doppioni():
 def admin_consolida_doppioni():
     """Consolida i doppioni VERI (lista curata a mano): sposta i collegamenti del nodo doppione
     sul nodo BUONO, poi rimuove il doppione. Coppie (buono, doppione)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     # (nodo_BUONO_da_tenere, nodo_DOPPIONE_da_rimuovere) - lista CURATA, non automatica
@@ -1940,8 +1917,7 @@ def admin_estrai_attrezzature():
     """Estrae gli strumenti GIA' NOMINATI nel campo 'strumento' di fenomeni/tecniche e li rende
     NODI Strumento veri, collegati ai nodi che li citano. NON inventa: parte dai dati reali del grafo.
     Normalizza le varianti (termometro a sonda/IR/integrato -> Termometro). ?dry=1 per anteprima."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json, re as _re, unicodedata
     from db import carica_grafo
@@ -2005,8 +1981,7 @@ def admin_estrai_attrezzature():
 @bp.route("/admin/lista-storia")
 def admin_lista_storia():
     """Elenca i nodi Storia col testo (per verificare le date storiche)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     db = carica_grafo()
     rows = db.execute("SELECT id, name, domain, data FROM nodes WHERE type='Storia' ORDER BY domain").fetchall()
@@ -2021,8 +1996,7 @@ def admin_lista_storia():
 @bp.route("/admin/aggiorna-storia", methods=["POST"])
 def admin_aggiorna_storia():
     """Aggiorna il testo/svolte di un nodo Storia e toglie da_rivedere. Body: {id, testo, svolte:[]}."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     b = request.json or {}
@@ -2053,8 +2027,7 @@ def admin_genera_storia():
     """Crea un nodo Storia per una disciplina: l'evoluzione del mestiere collegata alle tecniche/fenomeni
     che ha prodotto (non Wikipedia: storia CHE SPIEGA il mestiere di oggi). ?disc= obbligatorio.
     Marcata da_rivedere=true (le date/nomi storici vanno verificati da Michele)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json, re as _re
     from db import carica_grafo
@@ -2113,8 +2086,7 @@ def admin_aggiungi_fenomeni_mancanti():
     """Aggiunge i fenomeni-cardine mancanti con DATI REALI (non AI): Strecker, inversione zucchero,
     browning enzimatico, capillarità, espansione termica, saponificazione, tissotropia, salting.
     Scritti a mano perché sono scienza precisa."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json
     from db import carica_grafo
@@ -2167,8 +2139,7 @@ def admin_aggiungi_umami():
     """Aggiunge il fenomeno UMAMI / esaltazione dei sapori con dati REALI (non AI).
     Numeri veri: sinergia glutammato+inosinato moltiplica l'intensità fino a ~8x.
     Collegato alle discipline dove conta (cucina, bar, fermentati)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json
     from db import carica_grafo
@@ -2219,8 +2190,7 @@ def admin_genera_tecniche():
     L'AI propone tecniche vere del mestiere (con nota concreta + numeri), salvate come nodi Tecnica
     e collegate ai fenomeni pertinenti. ?disc=cucina obbligatorio. ?n=3 quante per chiamata.
     Stesso formato dei nodi Tecnica esistenti (nota coi numeri operativi)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json, re as _re, unicodedata
     from db import carica_grafo
@@ -2286,8 +2256,7 @@ def admin_genera_tecniche():
 @bp.route("/admin/audit-fenomeni-numeri")
 def admin_audit_fenomeni_numeri():
     """Elenca i fenomeni SENZA numero_bersaglio (la radice delle ricette senza numeri)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     db = carica_grafo()
@@ -2315,8 +2284,7 @@ def admin_audit_fenomeni_numeri():
 def admin_conta_nodi():
     """Conta i nodi per tipo (Fenomeno, Tecnica, Attrezzatura, ecc.) e per disciplina.
     Serve a capire dove il grafo è povero (es. poche tecniche/attrezzature)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     db = carica_grafo()
@@ -2375,8 +2343,7 @@ def _img_worker(solo_mancanti):
 @bp.route("/admin/immagini-bg")
 def admin_immagini_bg():
     """Rigenera le immagini in background (tracciato). ?mancanti=1 solo le mancanti, altrimenti TUTTE."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     global _IMG_STATO
     if _IMG_STATO.get("attivo"):
@@ -2389,16 +2356,14 @@ def admin_immagini_bg():
 
 @bp.route("/admin/immagini-bg-stato")
 def admin_immagini_bg_stato():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     return jsonify(_IMG_STATO)
 
 @bp.route("/admin/diag-cloudinary")
 def admin_diag_cloudinary():
     """Diagnostica: le variabili Cloudinary ci sono? quante foto vede l'app nell'archivio?"""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import os as _os
     from immagini import _cloudinary_lista
@@ -2419,8 +2384,7 @@ def admin_riempi_immagini():
     """Riempie le immagini mancanti delle ricette cercando su Pexels (API gratuita).
     Serve PEXELS_API_KEY nell'ambiente. Salva url+autore+fonte con credito.
     ?n=8 quante per chiamata (timeout). ?dry=1 per contare quante ne mancano."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     from immagini import cerca_immagine, credito_immagine
@@ -2460,8 +2424,7 @@ def admin_riempi_immagini():
 @bp.route("/admin/colonne-ricette")
 def admin_colonne_ricette():
     """Diagnostica: elenca le colonne reali della tabella ricette."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     conn = _get_conn(); cur = conn.cursor()
@@ -2489,8 +2452,7 @@ def admin_colonne_ricette():
 def admin_migra_ricette_voce():
     """Aggiunge le colonne esperimento e limite alla tabella ricette (Protocollo Kenji-Matter).
     Idempotente: ADD COLUMN IF NOT EXISTS. Sicuro da rilanciare."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     conn = _get_conn(); cur = conn.cursor()
@@ -2515,8 +2477,7 @@ def admin_migra_ricette_voce():
 @bp.route("/admin/cancella-nodo")
 def admin_cancella_nodo():
     """Cancella un nodo per id (e i suoi archi). Per rimuovere contenuti sbagliati/inventati. ?id= obbligatorio."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     nid = request.args.get("id", "")
@@ -2537,8 +2498,7 @@ def admin_cancella_nodo():
 @bp.route("/admin/conta-ricette-vecchie")
 def admin_conta_ricette_vecchie():
     """Diagnostica veloce: conta le ricette vecchie SENZA generare (per misurare la query)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     import time as _t
@@ -2556,8 +2516,7 @@ def admin_conta_ricette_vecchie():
 def admin_salva_ricetta_rigenerata():
     """Salva in place una ricetta gia generata dal client (via /v1/genera-ricetta). NESSUNA AI qui:
     e istantaneo, non rischia timeout. Riceve {id, ricetta:{...}}. CONSERVA l'immagine."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json
     from db import _get_conn, _release_conn
@@ -2599,8 +2558,7 @@ def admin_salva_ricetta_rigenerata():
 @bp.route("/admin/lista-ricette-vecchie")
 def admin_lista_ricette_vecchie():
     """Ritorna la lista (id, nome, disciplina) delle ricette da rigenerare. Veloce, nessuna AI."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     disc_filtro = request.args.get("disc", "")
@@ -2688,8 +2646,7 @@ def _rigen_worker(disc_filtro, solo_n, solo_senza_numeri=False):
 def admin_rigenera_bg():
     """Avvia la rigenerazione in BACKGROUND (thread) e risponde SUBITO. Aggira il timeout 30s.
     ?disc= opzionale, ?n= opzionale (limita quante). Controlla lo stato con /admin/rigenera-bg-stato."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     global _RIGEN_STATO
     if _RIGEN_STATO.get("attivo"):
@@ -2706,8 +2663,7 @@ def admin_rigenera_bg():
 @bp.route("/admin/rigenera-bg-stato")
 def admin_rigenera_bg_stato():
     """Stato della rigenerazione in background."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     return jsonify(_RIGEN_STATO)
 
@@ -2716,8 +2672,7 @@ def admin_rigenera_ricette_vecchie():
     """Rigenera le ricette VECCHIE (senza esperimento o twist) col motore nuovo (voce Kenji-Matter,
     numeri onesti, esperimento, limite, twist). AGGIORNA in place, CONSERVA l'immagine gia assegnata.
     ?n=1 per il timeout worker. Lancia in ciclo lato client. ?disc= opzionale per filtrare una disciplina."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     try:
         import json as _json
@@ -2873,8 +2828,7 @@ def _esp_worker(repertorio):
 @bp.route("/admin/espandi-bg")
 def admin_espandi_bg():
     """Genera TUTTO il repertorio mancante in background (verso le migliaia). Risponde subito."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     global _ESP_STATO
     if _ESP_STATO.get("attivo"):
@@ -2889,8 +2843,7 @@ def admin_espandi_bg():
 
 @bp.route("/admin/espandi-bg-stato")
 def admin_espandi_bg_stato():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     return jsonify(_ESP_STATO)
 
@@ -2899,8 +2852,7 @@ def admin_espandi_ricette():
     """Espande il repertorio: genera ricette CLASSICHE del mestiere per una disciplina (verso la Bibbia),
     non legate ai buchi ma al repertorio che un pro DEVE conoscere. ?disc= obbligatorio, ?n=1 per timeout.
     Evita i duplicati sui nomi gia presenti. Ogni ricetta nasce IT (traduzioni poi via batch)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json, re as _re, unicodedata
     from db import carica_grafo, _get_conn
@@ -2986,8 +2938,7 @@ def admin_genera_ricette_mancanti():
     pertinente, salvata (IT; traduzioni EN/ES poi via batch traduci-ricette).
     ?n=3 quante generarne per chiamata (piccolo per il timeout worker). ?disc= per disciplina.
     Ogni ricetta copre un fenomeno scoperto -> espansione MIRATA, non a caso."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json, re as _re, unicodedata
     from db import carica_grafo, _get_conn, _release_conn
@@ -3062,8 +3013,7 @@ def admin_genera_ricette_mancanti():
 def admin_fenomeni_senza_ricetta():
     """Trova i fenomeni che NON hanno ancora una ricetta che li dimostra (i buchi veri da riempire).
     Guida l'espansione mirata: ogni ricetta nuova deve coprire un fenomeno scoperto, non duplicare."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json
     disc = request.args.get("disc","")
@@ -3106,8 +3056,7 @@ def admin_fenomeni_senza_ricetta():
 @bp.route("/admin/migra-schema-traduzioni")
 def admin_migra_schema_traduzioni():
     """Aggiunge le colonne tradotte per i campi ricetta che erano solo in IT."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback
     COLONNE = ["nome_en TEXT","nome_es TEXT","procedimento_en JSONB","procedimento_es JSONB",
@@ -3220,8 +3169,7 @@ def _trad_worker():
 @bp.route("/admin/traduci-bg")
 def admin_traduci_bg():
     """Avvia la traduzione EN+ES in background (thread). Risponde subito. Stato: /admin/traduci-bg-stato."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     global _TRAD_STATO
     if _TRAD_STATO.get("attivo"):
@@ -3233,8 +3181,7 @@ def admin_traduci_bg():
 
 @bp.route("/admin/traduci-bg-stato")
 def admin_traduci_bg_stato():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     return jsonify(_TRAD_STATO)
 
@@ -3242,8 +3189,7 @@ def admin_traduci_bg_stato():
 def admin_traduci_ricette():
     """Traduce nome/procedimento/applicazioni/punto_critico delle ricette in EN e ES via Haiku.
     Ancorato: traduce il testo esistente, non rigenera. Batch con limite/skip."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback, json as _json, re as _re
     from ai import _haiku_raw
@@ -3316,8 +3262,7 @@ def admin_traduci_ricette():
 def admin_azzera_traduzioni_sbagliate():
     """Azzera le traduzioni dove nome_en/es e uguale all'italiano (salvate male dal metodo vecchio),
     cosi traduci-ricette le ripesca e rifa."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback
     conn = _get_conn()
@@ -3340,8 +3285,7 @@ def admin_azzera_traduzioni_sbagliate():
 def admin_costi_ai():
     """Cruscotto costi AI: legge ai_usage_log e mostra spesa totale, per modello, per route,
     media per chiamata, e le ultime chiamate. Rende VISIBILE dove vanno i soldi."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     giorni = int(request.args.get("giorni", "7"))
@@ -3379,8 +3323,7 @@ def admin_classifica_flavor():
     Gli oli essenziali diventano hidden (restano nel grafo per il calcolo, ma spariscono dall'UI),
     tranne i pochi usati davvero in cucina/bar. ?dry=1 per contare, ?dry=0 per applicare.
     Scrive in data JSONB: nessuna migrazione schema."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     import json as _j
@@ -3420,8 +3363,7 @@ def admin_classifica_flavor():
 def admin_pulisci_nomi_flavor():
     """Elenca e (se dry=0) traduce i nomi ahn sporchi EN->IT via AI, salvando sul nodo.
     ?dry=1 (default) solo elenca; ?dry=0 traduce e salva. ?limite=N per fare a lotti."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     dry = request.args.get("dry", "1") != "0"
@@ -3495,8 +3437,7 @@ def admin_pulisci_nomi_flavor():
 def admin_audit_flavor():
     """Audit del flavor network: quanti ingredienti Ahn, quanti composti, copertura abbinamenti,
     e quanti nomi sono ancora 'sporchi' (inglesi/laboratorio non tradotti)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import traceback
     conn = _get_conn()
@@ -3541,8 +3482,7 @@ def admin_audit_flavor():
 def admin_stato_madri():
     """Diagnostica: per una lista di nodi, ritorna lunghezza scheda + inizio, per capire
     quali hanno il metodo (scheda lunga, apertura narrativa) e quali il contenuto vecchio."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json
     ids = request.args.get("ids", "").split(",")
@@ -4154,8 +4094,7 @@ def admin_genera_ganci():
     Generata con GPT-4o mini (economico), salvata nel campo data.gancio.
     Uso: /admin/genera-ganci?s=SECRET  (aggiungi &solo=fen-acidita per testarne uno)"""
     import ai_gateway as GW
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     solo = request.args.get("solo", "")
     rigenera = request.args.get("rigenera", "") == "1"
@@ -4595,8 +4534,7 @@ def _revisione_worker(solo_n, usa_openai=False):
 @bp.route("/admin/revisiona-prosa")
 def admin_revisiona_prosa():
     """Rilegge e pulisce la prosa dei testi ricetta (voce e numeri invariati). ?n=3 per provare su poche."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     global _REVISIONE_STATO
     if _REVISIONE_STATO.get("attivo"):
@@ -4612,8 +4550,7 @@ def admin_revisiona_prosa():
 
 @bp.route("/admin/revisiona-prosa-stato")
 def admin_revisiona_prosa_stato():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     return jsonify(_REVISIONE_STATO)
 
@@ -4676,8 +4613,7 @@ def _abbina_worker(solo_n, usa_openai=False):
 @bp.route("/admin/genera-abbinamenti-bevande")
 def admin_genera_abbinamenti():
     """Genera vino/birra (col perché) per le ricette di CIBO senza abbinamento. ?n=3 per provare. ?openai=1."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     global _ABBINA_STATO
     if _ABBINA_STATO.get("attivo"):
@@ -4692,8 +4628,7 @@ def admin_genera_abbinamenti():
 
 @bp.route("/admin/genera-abbinamenti-bevande-stato")
 def admin_genera_abbinamenti_stato():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     return jsonify(_ABBINA_STATO)
 
@@ -4703,8 +4638,7 @@ def admin_genera_abbinamenti_stato():
 def admin_crea_fenomeno_mondo():
     """Crea un nodo Fenomeno 'del mondo' con scheda+target verificati. Body: {id,nome,dominio,scheda,target,aliases}.
     Per i fenomeni non-europei (nixtamalizzazione, wok hei, koji...) coi numeri veri verificati via ricerca."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     b = request.json or {}
@@ -4767,8 +4701,7 @@ _MAPPA_FENOMENO_MONDO = {
 def admin_forza_fenomeni_mondo():
     """Scorre le ricette e, se il nome contiene una parola-chiave di piatto internazionale, aggancia il
     fenomeno del mondo giusto (lo mette PRIMO nella lista fenomeni se non c'è). ?dryrun=1 per simulare."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     dryrun = request.args.get("dryrun", "0") != "0"
@@ -4812,8 +4745,7 @@ def admin_pulisci_foto_stock():
     """REGOLA DURA: in foto ci deve essere quello che c'è scritto. Le foto stock generiche (Pexels ecc.)
     danno drink/piatti a caso (Aviation verde, Americano con dirty martini). Le TOGLIE tutte, tenendo solo
     le foto vere dell'archivio (Cloudinary, che matchano per nome). ?dry=1 per contare. ?disc=bar per limitare."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     dry = request.args.get("dry", "0") != "0"
@@ -4852,8 +4784,7 @@ def admin_pulisci_foto_malmatch():
     banh mi->bagel). Questa funzione TIENE una foto archivio solo se il nome-file contiene davvero
     una parola forte del nome ricetta; altrimenti la TOGLIE. ?dry=1 per contare."""
     import re as _re
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     dry = request.args.get("dry", "0") != "0"
@@ -4906,8 +4837,7 @@ def admin_pulisci_foto_malmatch():
 def admin_diag_fonti_legali():
     """Verifica la PROVENIENZA reale di nodi Composto e archi contiene_composto, per la due diligence
     legale. Conta le fonti dichiarate nel campo data e nel campo fonte di ogni composto/arco."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     conn = _get_conn(); cur = conn.cursor()
@@ -4961,8 +4891,7 @@ def admin_applica_immagini_cascata():
     """Assegna a ogni ricetta l'immagine a cascata: foto-piatto se c'è su Cloudinary,
     altrimenti foto dell'ingrediente principale (dalla mappa piatti canonici), altrimenti niente.
     Regola: meglio la foto dell'ingrediente giusto che una foto-piatto sbagliata."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     dry = request.args.get("dry", "1") == "1"
     from db import _get_conn, _release_conn
@@ -5026,8 +4955,7 @@ def admin_applica_immagini_cascata():
 def admin_diag_ingredienti_dominio():
     """Conta i nodi Ingrediente per dominio/disciplina, per capire quali discipline hanno
     poca materia prima. Legge il campo domain nel data JSONB."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     conn = _get_conn(); cur = conn.cursor()
@@ -5061,8 +4989,7 @@ def admin_diag_ingredienti_dominio():
 def admin_assegna_domini():
     """Assegna il domain (disciplina) a ogni ingrediente in base al nome. Ogni ingrediente
     può appartenere a più discipline (limone = bar + cucina). Salva domini[] nel data JSONB."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     dry = request.args.get("dry", "1") == "1"
     from db import _get_conn, _release_conn
@@ -5103,8 +5030,7 @@ def admin_assegna_domini():
 def admin_inserisci_materia_prima():
     """Aggiunge la materia prima mancante (distillati, bitter, vermouth, sodati, tecnici gelato/pasticceria)
     come nodi Ingrediente con domini[] e scheda (aroma, profilo, applicazioni)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     dry = request.args.get("dry", "1") == "1"
     from db import _get_conn, _release_conn
@@ -5152,8 +5078,7 @@ def admin_inserisci_materia_prima():
 def admin_diag_flavour():
     """Fotografa il flavour network: quanti ingredienti hanno archi abbinamento_aromatico,
     quanti composti ci sono, e quanti ingredienti Ahn potrebbero essere attivati."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     conn = _get_conn(); cur = conn.cursor()
@@ -5187,8 +5112,7 @@ def admin_diag_flavour():
 def admin_diag_ingredienti_mancanti():
     """Trova gli ingredienti che compaiono negli archi abbinamento_aromatico ma NON hanno
     un nodo Ingrediente pieno. Sono ingredienti VERI (Ahn) da attivare come materia prima."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     conn = _get_conn(); cur = conn.cursor()
@@ -5217,8 +5141,7 @@ def admin_attiva_ingredienti_ahn():
     """Attiva come nodi Ingrediente gli ahn_* che hanno abbinamenti nel flavour network
     ma non sono ancora materia prima consultabile. Nome IT dalla mappa, domini dal classificatore.
     Espansione con DATI VERI (composti e abbinamenti già nel grafo), niente inventato."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     dry = request.args.get("dry", "1") == "1"
     from db import _get_conn, _release_conn
@@ -5281,8 +5204,7 @@ def admin_attiva_ingredienti_ahn():
 # ── DIAG: che type hanno gli ahn_* del flavour network? ──
 @bp.route("/admin/diag-ahn-type")
 def admin_diag_ahn_type():
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     conn = _get_conn(); cur = conn.cursor()
@@ -5316,8 +5238,7 @@ def admin_diag_ahn_type():
 def admin_diag_overlap_composti():
     """Verifica quanti composti condividono due ingredienti, calcolandolo da contiene_composto.
     Prova ?a=ahn_strawberry&b=ahn_basil"""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     a = request.args.get("a", "ahn_strawberry")
     b = request.args.get("b", "ahn_basil")
@@ -5357,8 +5278,7 @@ def admin_pixabay_riempi():
     """Riempie le ricette senza foto pescando da Pixabay. Cascata: prima il piatto, poi
     l'ingrediente principale. Verifica i tag (scarta i mismatch). Scarica e carica su Cloudinary.
     ?dry=1 mostra solo cosa troverebbe; ?dry=0 applica. ?limite=N per lotti."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     dry = request.args.get("dry", "1") == "1"
     limite = int(request.args.get("limite", "30"))
@@ -5427,8 +5347,7 @@ def admin_genera_canonici():
     """Genera ricette per i piatti canonici non ancora salvati. A lotti (?n=8 default) per stare
     sotto il timeout. Riprendibile: ogni chiamata fa un lotto e dice quanti mancano.
     ?disc=cucina limita a una disciplina. Verifica anti-eresie: salva solo le ricette pulite."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     n_lotto = int(request.args.get("n", "8"))
     disc_filtro = request.args.get("disc", "").strip()
@@ -5600,8 +5519,7 @@ def admin_genera_canonici_bg():
     """Avvia la generazione dei piatti canonici in BACKGROUND (si autocompleta, aggira il timeout).
     ?disc= limita a una disciplina, ?n= limita quante generarne in totale (0=tutte).
     Controlla con /admin/genera-canonici-bg-stato."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     global _GENCAN_STATO
     if _GENCAN_STATO.get("attivo"):
@@ -5619,8 +5537,7 @@ def admin_genera_canonici_bg():
 @bp.route("/admin/genera-canonici-bg-stato")
 def admin_genera_canonici_bg_stato():
     """Stato della generazione canonici in background."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     return jsonify(_GENCAN_STATO)
 
@@ -5631,8 +5548,7 @@ def admin_pulisci_immagini_stock():
     """Stacca le immagini foodiesfeed (stock) agganciate per matching sul nome-file, che genera
     errori (Amaretto Sour->pane, Bloody Mary->roast beef). Regola: meglio placeholder che foto
     sbagliata. Le foto vere di Michele (nome-file = id ricetta) e le Pixabay verificate restano."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     dry = request.args.get("dry", "1") == "1"
     from db import _get_conn, _release_conn
@@ -5664,8 +5580,7 @@ def admin_pulisci_immagini_stock():
 def admin_test_retrieval():
     """Misura il retrieval@1 su una batteria di domande da banco, senza il limite trial.
     Per ogni domanda mostra il fenomeno top trovato. Aiuta a monitorare la qualità della chat."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     try:
@@ -5715,8 +5630,7 @@ def admin_aggiungi_alias():
     """Aggiunge parole-chiave (alias) a un fenomeno per migliorare il retrieval della chat.
     Es: al fenomeno Emulsione aggiungo 'carbonara,impazzisce,stracciata' cosi la chat lo trova.
     ?id=fen-emulsione&alias=carbonara,impazzisce,stracciata"""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     fen_id = request.args.get("id", "").strip()
     nuovi = [a.strip().lower() for a in request.args.get("alias", "").split(",") if a.strip()]
@@ -5750,8 +5664,7 @@ def admin_aggiungi_alias():
 def admin_test_chat():
     """Testa la chat completa (retrieval + risposta generata) su una domanda, senza limite trial.
     ?domanda=... — per hardtest della qualità delle risposte."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     domanda = request.args.get("domanda", "").strip()
     if not domanda:
@@ -5784,8 +5697,7 @@ def admin_test_chat():
 @bp.route("/admin/debug-chiedi")
 def admin_debug_chiedi():
     """Diagnostica: esegue il percorso di /chiedi e restituisce il traceback vero se crasha."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     domanda = request.args.get("domanda", "a che temperatura coagula il tuorlo")
     import traceback
@@ -5831,8 +5743,7 @@ def admin_debug_chiedi():
 @bp.route("/admin/correggi-nomi-ingredienti")
 def admin_correggi_nomi():
     """Corregge nomi ingredienti sbagliati/inglesi nel grafo (Bread->Pane, Rapanelli->Ravanelli...)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     # mappa correzioni: nome_sbagliato -> nome_giusto
@@ -5878,8 +5789,7 @@ def admin_correggi_bersagli():
     """Trova i fenomeni il cui numero-bersaglio è una FRASE (non un numero) e lo sostituisce
     con un valore numerico/intervallo. Il payoff è 'Numeri. Non opinioni.': il bersaglio deve
     essere un numero. Correzioni mirate sui fenomeni noti; gli altri restano invariati."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     import json as _j, re as _re
@@ -5915,8 +5825,7 @@ def admin_correggi_bersagli():
 def admin_diagnosi_grafo():
     """Diagnostica la struttura del grafo abbinamenti: quanti archi, quanti composti,
     e se coppie note (fragola-basilico) condividono composti anche senza arco diretto."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     conn = _get_conn(); cur = conn.cursor()
@@ -5971,8 +5880,7 @@ def admin_diagnosi_grafo():
 @bp.route("/admin/trova-nodo")
 def admin_trova_nodo():
     """Cerca un nodo per nome parziale e mostra id, name, type (per debug traduzioni)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     q = request.args.get("q", "")
     from db import _get_conn, _release_conn
@@ -5989,8 +5897,7 @@ def admin_trova_nodo():
 @bp.route("/admin/prova-immagine")
 def admin_prova_immagine():
     """Mostra la query costruita e l'URL foto per un piatto (per verificare che non siano inquietanti)."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     nome = request.args.get("nome", "")
     disc = request.args.get("disciplina", "cucina")
@@ -6010,8 +5917,7 @@ def admin_prova_immagine():
 def admin_debug_proposte():
     """Debug: testa il match di una coppia (default fragola+pomodoro) come fa proposte."""
     import os, hmac
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     n1 = request.args.get("a", "fragola")
     n2 = request.args.get("b", "pomodoro")
@@ -6070,8 +5976,7 @@ def admin_correggi_accenti():
     """Corregge accenti sbagliati nei testi dei nodi (e->è dove serve, refusi comuni).
     Usa pattern SICURI (con contesto) per non rovinare le 'e' congiunzione corrette."""
     import os, hmac, re
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import _get_conn, _release_conn
     # pattern SICURI: ' e ' che deve essere ' è ' solo in contesti chiari
@@ -6123,8 +6028,7 @@ def admin_audit_principi():
     """Audit della QUALITÀ dei principi: per ogni fenomeno, il primo principio (quello che
     l'utente legge in cima nella nuova scheda). Serve a trovare i fenomeni col primo-principio
     sbagliato o mancante. ?s=SECRET."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     from db import carica_grafo
     db = carica_grafo()
@@ -6166,8 +6070,7 @@ def admin_correggi_principi_primari():
     """Corregge il PRIMO principio (quello in cima alla nuova scheda) di alcuni fenomeni
     dove era sbagliato o secondario. Strategia: rimuovo l'edge verso il principio sbagliato,
     così resta quello corretto come unico/primo. ?s=SECRET."""
-    secret = request.args.get("s", "")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "Forbidden", 403
     import json as _json
     # (fenomeno_id, principio_SBAGLIATO da rimuovere, principio_GIUSTO che deve restare)
