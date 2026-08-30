@@ -204,6 +204,35 @@ def _contesto_knowledge_module(domanda, contesto):
     return ""
 
 
+# MANIFEST dell'app: la chat conosce sé stessa. Indice compatto delle funzioni reali,
+# iniettato quando l'utente chiede "che strumenti/calcolatori hai" o "cosa c'è per X".
+_APP_MANIFEST = (
+    "MAPPA DELLE FUNZIONI DI MATTERTABS (rispondi con QUESTE, non inventare):\n"
+    "• CALCOLATORI (danno numero + interpretazione + cosa fare): diluizione cocktail, bilanciamento sour, "
+    "idratazione pane, Q10 fermentazione, estrazione caffè, pareggia acidità, scalatore impasto, "
+    "conversione teglie, food cost piatto, temperatura di servizio vino, Brix→ABV. Drink cost per i cocktail.\n"
+    "• ATLANTE: 148 fenomeni scientifici + 31 tecniche avanzate di laboratorio (fat washing, koji, "
+    "nixtamalizzazione, cold brew...). Ogni fenomeno ha numero-bersaglio, errori da banco, tecniche.\n"
+    "• FLAVOUR NETWORK: abbinamenti tra 1.530 ingredienti per composti aromatici condivisi (il perché molecolare).\n"
+    "• RICETTE: 454 ricette certificate con punto critico e numeri. Generatore di ricette professionali.\n"
+    "• MENU BUILDER: crea menu e carte dei vini con food cost.\n"
+    "• QUADERNO: salva le tue misure e le ritrova; la chat le ricorda.\n"
+    "• DISCIPLINE: bar, panificazione, pasticceria, cucina, caffetteria, gelateria, vino, birra."
+)
+
+def _serve_manifest(domanda):
+    """True se la domanda chiede le funzioni/strumenti dell'app (non un contenuto specifico)."""
+    d = (domanda or "").lower()
+    return any(k in d for k in [
+        "che strumenti","quali strumenti","che calcolatori","quali calcolatori","che funzioni",
+        "quali funzioni","cosa c'è per","che cosa c'è per","cosa posso calcolare","che calcoli",
+        "cosa offre","che sezioni","quali discipline","che discipline","cosa contiene",
+        "che tool","quali tool","a cosa serve l'app","che cosa fa l'app"])
+
+def _contesto_manifest(domanda):
+    return "\n\n" + _APP_MANIFEST if _serve_manifest(domanda) else ""
+
+
 @bp.route("/chiedi", methods=["POST"])
 def chiedi():
     # IN4: rate limiting per IP
@@ -512,6 +541,13 @@ def chiedi():
         _km = _contesto_knowledge_module(domanda, contesto)
         if _km:
             prompt = prompt + _km
+    except Exception:
+        pass
+    # MANIFEST: se l'utente chiede le funzioni/strumenti dell'app, la chat sa cosa offre
+    try:
+        _man = _contesto_manifest(domanda)
+        if _man:
+            prompt = prompt + _man
     except Exception:
         pass
     # history strutturata: passa i turni precedenti come messages[], non come testo
