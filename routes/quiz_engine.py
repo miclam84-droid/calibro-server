@@ -51,6 +51,7 @@ def lista_quiz():
     tipo = request.args.get("tipo")
     fenomeno_id = request.args.get("fenomeno_id")
     difficolta = request.args.get("difficolta")
+    lang = (request.args.get("lang") or "it").strip().lower()
     try:
         limit = min(int(request.args.get("limit", 10)), 50)
     except Exception:
@@ -72,15 +73,32 @@ def lista_quiz():
         rows = cur.fetchall()
         cur.close(); _release_conn(conn)
         quiz = []
+        _traduci = None
+        if lang in ("en", "es"):
+            try:
+                from traduzioni import traduci as _traduci
+            except Exception:
+                _traduci = None
         for r in rows:
             opz = r[6]
             if isinstance(opz, str):
                 try: opz = json.loads(opz)
                 except Exception: opz = []
+            _dom, _opz, _ins, _corr = r[5], opz, r[8], r[7]
+            if _traduci:
+                try:
+                    _dom = _traduci(r[5], lang)
+                    _opz = [_traduci(o, lang) for o in opz]
+                    _ins = _traduci(r[8], lang) if r[8] else r[8]
+                    # la risposta corretta deve restare allineata all'opzione tradotta
+                    if r[7] in opz:
+                        _corr = _opz[opz.index(r[7])]
+                except Exception:
+                    pass
             quiz.append({
                 "id": r[0], "fenomeno_id": r[1], "disciplina": r[2], "tipo": r[3],
-                "difficolta": r[4], "domanda": r[5], "opzioni": opz,
-                "risposta_corretta": r[7], "insight": r[8],
+                "difficolta": r[4], "domanda": _dom, "opzioni": _opz,
+                "risposta_corretta": _corr, "insight": _ins,
             })
         return jsonify({"quiz": quiz, "totale": len(quiz)})
     except Exception as e:
@@ -97,6 +115,7 @@ def rispondi_quiz():
     body = request.json or {}
     quiz_id = body.get("quiz_id")
     risposta = (body.get("risposta") or "").strip()
+    indice = body.get("indice")  # opzionale: indice dell'opzione scelta (0,1,2) — lingua-indipendente
     device_id = (request.headers.get("X-Device-Id", "") or body.get("device_id", "") or "").strip()[:80]
     if not quiz_id:
         return jsonify({"errore": "quiz_id mancante"}), 400
@@ -104,12 +123,27 @@ def rispondi_quiz():
     try:
         cur = conn.cursor()
         _assicura_tabelle(cur)
-        cur.execute("SELECT risposta_corretta, insight_didattico FROM quiz WHERE id=%s", (quiz_id,))
+        cur.execute("SELECT risposta_corretta, insight_didattico, opzioni FROM quiz WHERE id=%s", (quiz_id,))
         row = cur.fetchone()
         if not row:
             cur.close(); _release_conn(conn)
             return jsonify({"errore": "quiz non trovato"}), 404
         corretta = (row[0] or "").strip()
+        # se il frontend manda l'indice, confronto per indice (lingua-indipendente, robusto)
+        if indice is not None:
+            try:
+                opz = row[2] if isinstance(row[2], list) else json.loads(row[2]) if row[2] else []
+                # la corretta è sempre l'opzione che == risposta_corretta nel DB (italiano)
+                idx_corretto = opz.index(corretta) if corretta in opz else 0
+                superato = (int(indice) == idx_corretto)
+                insight = row[1] or ""
+                if device_id:
+                    cur.execute("INSERT INTO utente_quiz (device_id, quiz_id, superato) VALUES (%s,%s,%s)",
+                                (device_id, quiz_id, superato))
+                conn.commit(); cur.close(); _release_conn(conn)
+                return jsonify({"superato": superato, "risposta_corretta": corretta, "insight": insight})
+            except Exception:
+                pass
         insight = row[1] or ""
         superato = (risposta.lower() == corretta.lower())
         if device_id:
