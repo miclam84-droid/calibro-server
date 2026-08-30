@@ -2398,3 +2398,27 @@ a:focus-visible,input:focus-visible{
 .cf-macro-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
 .cf-macro{font-family:var(--sans,'Inter');font-size:12px;color:#EAF1F3;background:rgba(255,255,255,.1);padding:5px 11px;border-radius:14px}
 .cf-filosofia .calc-go{background:#E8935A;color:#241109}
+
+/* #3 resa/calo peso — confronto crudo→finito */
+.calo-confronto{display:flex;align-items:center;justify-content:center;gap:14px}
+.calo-col{text-align:center}
+.calo-lab{font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7FB0C4;margin-bottom:6px}
+.calo-val{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:26px;color:#9DAEB2;line-height:1}
+.calo-finito .calo-val{color:#E8935A}
+.calo-u{font-size:12px;margin-left:2px}
+.calo-arr{font-size:22px;color:#5EA0C8}
+/* #1 fascia insight quaderno */
+.quad-insight{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.quad-ins{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:10px;font-size:13.5px;line-height:1.5}
+.quad-ins.ins-trend{background:rgba(199,123,63,.1);border:1px solid var(--terra,#C77B3F);color:var(--ink,#141D22)}
+.quad-ins.ins-stabile{background:rgba(38,140,74,.1);border:1px solid #268c4a;color:#1a4a2a}
+.quad-ins-ico{flex-shrink:0}
+/* #2 riuso scarti */
+.scarto-card{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;padding:15px 16px;margin-bottom:10px;box-shadow:3px 3px 0 rgba(20,29,34,.1)}
+.scarto-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:16px;color:var(--ink,#141D22)}
+.scarto-nasce{font-size:12px;color:var(--muted,#5A6C70);margin:2px 0 10px}
+.scarto-riusi{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.scarto-riuso{font-family:var(--sans,'Inter');font-size:12.5px;color:var(--teal,#12545D);background:var(--l3,#F2F6F6);border:1px solid var(--border,#B7C3C3);padding:5px 11px;border-radius:14px}
+.scarto-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border,#B7C3C3);padding-top:10px}
+.scarto-shelf{font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;color:var(--terra,#C77B3F)}
+.scarto-link{font-family:var(--sans,'Inter');font-size:12.5px;font-weight:600;color:var(--teal,#12545D);cursor:pointer}

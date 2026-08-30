@@ -345,7 +345,8 @@ var _PORTE = {
   creare:   { label:'Creare',   sub:'Combina e scopri', voci:[
                 {t:'Flavour Network', d:'Con cosa dialoga un ingrediente', act:function(){if(typeof apriFlavour==='function')apriFlavour();}},
                 {t:'Ponti tra discipline', d:'Vino, birra, dolce per piatto', act:function(){if(typeof apriPonti==='function')apriPonti();}},
-                {t:'Menu Lab', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}} ]},
+                {t:'Menu Lab', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}},
+                {t:'Recupera scarti', d:'Riusa gli scarti, cross-utilization', act:function(){if(typeof apriScarti==='function')apriScarti();}} ]},
   misurare: { label:'Misurare', sub:'Centra il bersaglio', voci:[
                 {t:'Calcolatori', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
                 {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
@@ -3266,8 +3267,31 @@ async function _rispondiQuiz(btn, quizId){
 }
 function _palProssima(){ _palIdx++; if(_palIdx>=_palQuiz.length){ caricaPalestra(); } else { _renderQuiz(); } }
 
+// #1 fascia insight-trend del Quaderno (organizer)
+async function _caricaInsightQuaderno(){
+  var header=document.getElementById('misure-header');
+  var old=document.getElementById('quad-insight'); if(old) old.remove();
+  try{
+    var r=await fetch('/v1/quaderno/insight', {headers:_statoHeaders()});
+    var j=await r.json();
+    var ins=(j.insight||[]).slice(0,5);
+    if(!ins.length) return;
+    // ordino: trend prima (più urgenti), stabilità dopo
+    ins.sort(function(a,b){ return (a.tipo==='trend'?0:1)-(b.tipo==='trend'?0:1); });
+    var e=_escV;
+    var box=document.createElement('div'); box.id='quad-insight'; box.className='quad-insight';
+    box.innerHTML=ins.map(function(x){
+      var cls = x.tipo==='trend' ? 'ins-trend' : 'ins-stabile';
+      var ico = x.tipo==='trend' ? '📈' : '✓';
+      return '<div class="quad-ins '+cls+'"><span class="quad-ins-ico">'+ico+'</span><span class="quad-ins-txt">'+e(x.testo||'')+'</span></div>';
+    }).join('');
+    var pane=document.getElementById('quad-pane-misure');
+    if(pane) pane.insertBefore(box, pane.firstChild);
+  }catch(e){}
+}
 // ═══ STORICO MISURE — "Le mie misure" (cuore della retention) ═══
 async function caricaStoricoMisure(){
+  _caricaInsightQuaderno();
   var list=document.getElementById('misure-list');
   var empty=document.getElementById('quad-misure-empty');
   var header=document.getElementById('misure-header');
@@ -6041,6 +6065,34 @@ function _pontiDolce(d){
 
 /* ═══════════════ 3. MENU BUILDER ═══════════════ */
 let _menuIngredienti = [];
+// ═══ RIUSO SCARTI / cross-utilization (#2) ═══
+async function apriScarti(){
+  _apriVista('Recupera gli scarti',
+    '<div class="cf-intro">Ogni scarto è un ingrediente che non hai ancora usato. Matter Bench ti dice come riusarlo e per quanti giorni.</div>'
+    + '<div id="scarti-out"><div class="calc-loading">Carico la libreria…</div></div>');
+  try{
+    var r=await fetch('/v1/scarti/libreria');
+    var j=await r.json();
+    // j può essere {scarti:[...]} o un dict
+    var lista = j.scarti || (Array.isArray(j)?j:Object.values(j));
+    if(!Array.isArray(lista)){ lista=Object.values(j); }
+    var e=_escV;
+    var out=document.getElementById('scarti-out');
+    if(!lista.length){ out.innerHTML='<div class="vista-empty">Libreria non disponibile.</div>'; return; }
+    out.innerHTML=lista.map(function(s){
+      var riusi=(s.riusi||[]).map(function(r){ return '<span class="scarto-riuso">'+e(r)+'</span>'; }).join('');
+      return '<div class="scarto-card">'
+        + '<div class="scarto-nome">'+e(s.scarto||'')+'</div>'
+        + (s.nasce_da?'<div class="scarto-nasce">da '+e(s.nasce_da)+'</div>':'')
+        + '<div class="scarto-riusi">'+riusi+'</div>'
+        + '<div class="scarto-foot">'
+        +   (s.shelf_giorni?'<span class="scarto-shelf">entro '+e(String(s.shelf_giorni))+' giorni</span>':'')
+        +   (s.fenomeno_id?'<span class="scarto-link" onclick="chiudiVista();apriNodo(\''+e(s.fenomeno_id)+'\',\'\')">la scienza →</span>':'')
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }catch(e){ var o=document.getElementById('scarti-out'); if(o) o.innerHTML='<div class="vista-empty">Errore di rete.</div>'; }
+}
 // ═══ CARTA VINI — flusso filosofia (brief → filo conduttore → crea) ═══
 var _cartaFilosofia = null;
 function apriCartaFilosofia(){
@@ -6195,6 +6247,7 @@ function apriCalcolatori(){
     +   '<button class="calc-menu-btn on" onclick="_calcTab(\'impasto\',this)">Scalatore impasto</button>'
     +   '<button class="calc-menu-btn" onclick="_calcTab(\'teglie\',this)">Conversione teglie</button>'
     +   '<button class="calc-menu-btn" onclick="_calcTab(\'foodcost\',this)">Food cost piatto</button>'
+    +   '<button class="calc-menu-btn" onclick="_calcTab(\'calo\',this)">Resa / calo peso</button>'
     +   '<button class="calc-menu-btn" onclick="_calcTab(\'vino\',this)">Temperatura vino</button>'
     +   '<button class="calc-menu-btn" onclick="_calcTab(\'brix\',this)">Brix → ABV</button>'
     + '</div>'
@@ -6207,6 +6260,7 @@ function _calcTab(which, btn){
   if(which==='impasto') _calcRenderImpasto();
   else if(which==='teglie') _calcRenderTeglie();
   else if(which==='vino') _calcRenderVino();
+  else if(which==='calo') _calcRenderCalo();
   else if(which==='brix') _calcRenderBrix();
   else _calcRenderFoodCost();
 }
@@ -6375,6 +6429,37 @@ async function _calcVino(){
     var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'temperatura_servizio_vino',parametri:{tipo_vino:tipo,temp_attuale_c:temp,metodo:metodo}})});
     var j=await r.json();
     var num='<div class="calc-coef">'+_escV(String(j.minuti||'?'))+'<span class="calc-fcp-pct">min</span></div>';
+    if(out) out.innerHTML=_calcRisultato(num, j);
+  }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
+}
+// --- Resa / calo peso (#3) — food cost dinamico crudo→finito ---
+function _calcRenderCalo(){
+  _calcBody(
+    '<div class="calc-form">'
+    + '<div class="calc-field"><label>Peso crudo (g)</label><input type="number" inputmode="numeric" id="rc-peso" placeholder="2000"></div>'
+    + '<div class="calc-field"><label>Costo al kg (€)</label><input type="number" inputmode="decimal" id="rc-costo" placeholder="18"></div>'
+    + '<div class="calc-field"><label>Calo in cottura (%)</label><input type="number" inputmode="decimal" id="rc-calo" placeholder="35"></div>'
+    + '<button class="calc-go" onclick="_calcCalo()">Calcola il costo reale</button>'
+    + '</div><div id="rc-out"></div>');
+}
+async function _calcCalo(){
+  var peso=parseFloat((document.getElementById('rc-peso')||{}).value||'0')||0;
+  var costo=parseFloat((document.getElementById('rc-costo')||{}).value||'0')||0;
+  var calo=parseFloat((document.getElementById('rc-calo')||{}).value||'0')||0;
+  if(peso<=0||costo<=0){ _toast('Inserisci peso e costo'); return; }
+  var out=document.getElementById('rc-out'); if(out) out.innerHTML='<div class="calc-loading">Calcolo…</div>';
+  try{
+    var r=await fetch('/calcola',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({calcolo:'resa_calo_peso',parametri:{peso_crudo_g:peso,costo_kg:costo,calo_perc:calo}})});
+    var j=await r.json();
+    var e=_escV;
+    // due numeri a confronto: crudo vs finito (il salto è il valore forte)
+    var crudoKg=(j.costo_g_crudo!=null)?(j.costo_g_crudo*1000).toFixed(2):costo.toFixed(2);
+    var finitoKg=(j.costo_g_finito!=null)?(j.costo_g_finito*1000).toFixed(2):'?';
+    var num='<div class="calo-confronto">'
+      + '<div class="calo-col"><div class="calo-lab">crudo</div><div class="calo-val">'+e(crudoKg)+'<span class="calo-u">€/kg</span></div></div>'
+      + '<div class="calo-arr">→</div>'
+      + '<div class="calo-col calo-finito"><div class="calo-lab">finito reale</div><div class="calo-val">'+e(finitoKg)+'<span class="calo-u">€/kg</span></div></div>'
+      + '</div>';
     if(out) out.innerHTML=_calcRisultato(num, j);
   }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
 }
