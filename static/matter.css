@@ -2314,3 +2314,33 @@ a:focus-visible,input:focus-visible{
 .stream-calc-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7FB0C4;margin-bottom:8px}
 .stream-calc-num{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:32px;color:#E8935A;line-height:1;margin-bottom:10px}
 .stream-calc .calc-interp{margin-bottom:8px}
+
+/* ═══ COOKIE BANNER — fascia sottile 48px (design premium) ═══ */
+#cookie-banner{position:fixed!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;height:48px!important;min-height:48px!important;max-height:48px!important;z-index:9999!important;
+  background:rgba(20,29,34,.96)!important;display:flex!important;align-items:center!important;gap:12px!important;padding:0 16px!important;box-sizing:border-box!important;backdrop-filter:blur(4px)}
+#cookie-banner p{font-family:var(--sans,'Inter')!important;font-size:11px!important;line-height:1.3!important;color:rgba(255,255,255,.8)!important;margin:0!important;flex:1!important}
+#cookie-banner .cookie-btns{display:flex!important;gap:0!important;flex-shrink:0!important}
+#cookie-banner .cookie-ok{min-height:32px!important;padding:0 16px!important;border:none!important;border-radius:8px!important;background:var(--teal,#12545D)!important;color:#fff!important;font-family:var(--sans,'Inter')!important;font-weight:600!important;font-size:12px!important;cursor:pointer;transition:transform .15s ease}
+#cookie-banner .cookie-ok:active{transform:scale(.96)}
+#cookie-banner .cookie-no{display:none!important}
+
+/* ═══ RIFINITURA PREMIUM (design system) ═══ */
+/* #5 prosa chat fluida: paragrafi spaziati, no muro di testo */
+.chat-par{margin:0 0 12px 0;font-family:var(--sans,'Inter');font-size:15px;line-height:1.62;color:#2A3A42}
+.chat-par:empty{display:none}
+.chat-par strong{color:#141D22;font-weight:600}
+.stream-txt .chat-par:last-child{margin-bottom:0}
+/* #4 streaming fade-in morbido: i token si materializzano */
+.stream-txt{animation:streamfade .3s ease}
+@keyframes streamfade{from{opacity:.4}to{opacity:1}}
+/* #7 micro-feedback: ogni cliccabile risponde al press */
+.tab-item:active,.crea-card:active,.avz-card:active,.misura-card:active,.pal-opz:active,
+.calc-menu-btn:active,.quad-tg-btn:active,.mbv-chip:active,.fnv-chip:active,.vetr-card:active,
+.stream-fen-nome:active{transition:transform .12s ease}
+/* #6.1 bottone torna-su (schede lunghe) */
+.torna-su{position:fixed;bottom:72px;right:16px;width:44px;height:44px;border-radius:50%;
+  background:var(--ink,#141D22);color:#fff;border:none;font-size:20px;cursor:pointer;z-index:80;
+  box-shadow:0 2px 8px rgba(20,29,34,.18);display:none;align-items:center;justify-content:center;
+  transition:opacity .25s ease,transform .15s ease}
+.torna-su.visibile{display:flex}
+.torna-su:active{transform:scale(.92)}

@@ -742,7 +742,7 @@ if('serviceWorker' in navigator){
     <!-- Riga input: campo testo + bottone invio -->
     <div class="ask-input-row">
       <span class="ask-prompt">&gt;</span>
-      <input class="ask-input" id="q" placeholder="chiedi a Matter Lab…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
+      <input class="ask-input" id="q" placeholder="Scrivi un problema al banco (es. ganache separata)…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
       <button class="ask-btn" id="ask-btn" onclick="invia()" aria-label="Invia">
         <i class="ph ph-arrow-up" aria-hidden="true"></i>
       </button>
@@ -1141,10 +1141,9 @@ if('serviceWorker' in navigator){
 
 <!-- ── COOKIE BANNER GDPR (LE1) ─────────────────────────── -->
 <div id="cookie-banner" style="display:none">
-  <p id="ct-cookie-txt">Cookie tecnici, nessuna profilazione. <a href="/privacy" target="_blank">Privacy</a></p>
+  <p id="ct-cookie-txt">Cookie tecnici, nessuna profilazione.</p>
   <div class="cookie-btns">
     <button class="cookie-ok" onclick="accettaCookie()" id="ct-cookie-ok">Accetto</button>
-    <button class="cookie-no" onclick="rifiutaCookie()" id="ct-cookie-no">Solo essenziali</button>
   </div>
 </div>
 
@@ -1250,5 +1249,6 @@ if(!_consent){setTimeout(()=>{document.getElementById('cookie-banner').style.dis
 </div>
 
 
+<button class="torna-su" id="torna-su" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Torna su">↑</button>
 </body>
 </html>

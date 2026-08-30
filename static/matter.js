@@ -1164,12 +1164,18 @@ async function _chiediStream(q){
   if(erroreVisto && !testoAccumulato){ card.remove(); throw new Error('stream error'); }
   if(testoAccumulato){ _chatHistory.push({q:q, r:testoAccumulato.slice(0,300)}); if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2); }
 }
-// formatta il testo PROBLEMA/PERCHÉ/... in blocchi leggibili
+// formatta il testo in prosa fluida: i marcatori PROBLEMA/PERCHÉ diventano paragrafi spaziati,
+// non etichette stampatello. Markdown leggero + grassetti mirati.
 function _formattaRispostaChat(t){
   var e=_escV(t);
-  e=e.replace(/(PROBLEMA|PERCHÉ|PERCHE|NUMERO|MISURA|AZIONE)\s*:/g,'<b class="chat-lab">$1:</b>');
-  e=e.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
-  return e;
+  // i vecchi marcatori diventano separatori di paragrafo morbidi (non stampatello urlato)
+  e=e.replace(/\s*(PROBLEMA|PERCHÉ|PERCHE|NUMERO|MISURA|AZIONE)\s*:\s*/g, function(m,p){
+    return '</p><p class="chat-par">';
+  });
+  // markdown grassetto **parola** → <strong>
+  e=e.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  e=e.replace(/\n\n/g,'</p><p class="chat-par">').replace(/\n/g,'<br>');
+  return '<p class="chat-par">'+e+'</p>';
 }
 async function _streamWidgetFenomeno(flusso, id){
   var ph=document.createElement('div'); ph.className='stream-widget'; ph.innerHTML='<div class="calc-loading">Carico la scheda…</div>';
@@ -1772,6 +1778,9 @@ const App=(()=>{
   document.addEventListener('DOMContentLoaded',()=>{
     renderIng();setServe('ice');calcBil();calcAA();
     calcBak();calcQ10();calcPH();calcEY();calcRatio();
+    // bottone torna-su: appare dopo 400px di scroll
+    var _ts=document.getElementById('torna-su');
+    if(_ts){ window.addEventListener('scroll',function(){ _ts.classList.toggle('visibile', window.scrollY>400); }, {passive:true}); }
     // schermata iniziale = Scopri. La Lezione si carica pigra quando apri la tab.
     switchTab('scopri');
     caricaHome();
@@ -1905,7 +1914,7 @@ const _strings = {
     indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai all\'Atlante →',
     principio_del_giorno:'Principio del giorno',
     vedi_mappa:'Vedi il principio nell\'Atlante →',
-    chiedi_placeholder:'chiedi a Matter Lab…',
+    chiedi_placeholder:'Scrivi un problema al banco (es. ganache separata)…',
     chiedi_btn:'Chiedi',
     onb_nudge_title:'Pronto al banco?',
     ai_disclosure:'Risposte generate da un assistente AI.',
