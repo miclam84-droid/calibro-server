@@ -3730,6 +3730,7 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
     +   '<button class="rg-btn rg-btn-cost" onclick="foodCostRicetta()">Food Cost</button>'
     +   '<button class="rg-btn rg-btn-vetrina" onclick="pubblicaInVetrina(_ricettaGenCorrente, _ricettaGenCorrente&&_ricettaGenCorrente._ricetta_id)">Pubblica nella Vetrina del Banco</button>'
     + '</div>'
+    + '<div class="rg-continua"><button class="rg-cont-btn" onclick="_ricettaFenomeni()">Vedi fenomeni attivi</button><button class="rg-cont-btn" onclick="_ricettaInMenu()">Apri in Menu Lab</button></div>'
     + '</div>';
   _apriVista(dati.nome || 'Ricetta', html);
   // #4 immagine ricetta (foto o blueprint della famiglia) above the fold
@@ -3760,6 +3761,16 @@ async function salvaRicettaGen(btn){
     if(j && j.ok){ d._ricetta_id=j.ricetta_id; btn.textContent='✓ Salvata nel Quaderno'; btn.disabled=false; btn.classList.add('fatto'); }
     else { btn.textContent='Riprova'; btn.disabled=false; }
   }catch(e){ btn.textContent='Riprova'; btn.disabled=false; }
+}
+function _ricettaFenomeni(){
+  var d=_ricettaGenCorrente; if(!d) return;
+  var fen=(d.fenomeni||[]);
+  if(fen.length){ var f=fen[0]; var id=(typeof f==='object'?f.id:f); chiudiVista(); apriNodo(id, (typeof f==='object'?f.nome:'')||''); }
+  else { _toast('Nessun fenomeno collegato a questa ricetta'); }
+}
+function _ricettaInMenu(){
+  chiudiVista();
+  if(typeof apriMenuBuilder==='function') apriMenuBuilder();
 }
 function chiediSuRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
@@ -6344,7 +6355,7 @@ function _calcTab(which, btn){
 function _calcBody(html){ var b=document.getElementById('calc-body'); if(b) b.innerHTML=html; }
 // risultato comune: interpretazione (carta) + leva (teal) + link fenomeno
 function _calcRisultato(numeroHtml, j, bersaglio){
-  var h = '<div class="calc-mirino">'+numeroHtml+'</div>';
+  var h = '<div class="calc-mirino calc-mirino-anim">'+numeroHtml+'</div>';
   // #3 MIRINO-SISTEMA: il backend manda i campi bersaglio → ago su TUTTI i calcolatori col range
   if(!bersaglio && j && j.valore_corrente!=null && j.scala_min!=null && j.scala_max!=null){
     bersaglio = {

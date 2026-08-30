@@ -2446,3 +2446,13 @@ a:focus-visible,input:focus-visible{
 .ricp-cert{position:absolute;top:6px;left:6px;font-family:var(--mono,'IBM Plex Mono');font-size:8px;font-weight:700;letter-spacing:.04em;color:#fff;background:var(--teal,#12545D);padding:2px 6px;border-radius:4px}
 .ricp-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:13.5px;color:var(--ink,#141D22);line-height:1.2;padding:10px 12px 3px}
 .ricp-fen{font-family:var(--mono,'IBM Plex Mono');font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--teal,#12545D);padding:0 12px 12px}
+
+/* #4 pulsanti anti-vicolo-cieco in fondo alla ricetta */
+.rg-continua{display:flex;gap:8px;margin-top:10px}
+.rg-cont-btn{flex:1;min-height:44px;border:1px solid var(--border,#B7C3C3);border-radius:10px;background:var(--l2,#E8EDED);font-family:var(--sans,'Inter');font-weight:600;font-size:13px;color:var(--ink-muted,#3D4A50);cursor:pointer;transition:transform .15s ease}
+.rg-cont-btn:active{transform:scale(.98)}
+/* #4 barra Mirino calcolatori sticky in cima allo scroll */
+.calc-mirino{position:sticky;top:0;z-index:50}
+/* micro-interazione: il Mirino risultato entra con un fade+scale morbido */
+.calc-mirino-anim{animation:mirinoEntra .35s cubic-bezier(.16,1,.3,1)}
+@keyframes mirinoEntra{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
