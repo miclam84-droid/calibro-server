@@ -3732,6 +3732,23 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
     + '</div>'
     + '</div>';
   _apriVista(dati.nome || 'Ricetta', html);
+  // #4 immagine ricetta (foto o blueprint della famiglia) above the fold
+  if(ricettaIdSalvata){ _caricaImmagineRicetta(ricettaIdSalvata); }
+}
+var _BLUEPRINT_FAMIGLIE=['acidita','affumicatura','coagulazione','conservazione','cristallizzazione','diluizione','distillazione','emulsione','estrazione','fermentazione','gas','gelificazione','impasto','osmosi','ossidazione','reazione-termica'];
+async function _caricaImmagineRicetta(id){
+  try{
+    var r=await fetch('/v1/ricetta/'+encodeURIComponent(id)+'/immagine', {headers:_statoHeaders()});
+    var j=await r.json();
+    var box=document.createElement('div'); box.className='rg-immagine';
+    if(j.tipo==='foto' && j.url){
+      box.innerHTML='<img src="'+_escV(j.url)+'" alt="" loading="lazy">'+(j.autore?'<span class="rg-img-credito">foto: '+_escV(j.autore)+'</span>':'');
+    } else if(j.tipo==='blueprint' && j.famiglia && _BLUEPRINT_FAMIGLIE.indexOf(j.famiglia)>=0){
+      box.innerHTML='<img src="/static/blueprints/'+_escV(j.famiglia)+'.svg" alt="Blueprint '+_escV(j.famiglia)+'" loading="lazy"><span class="rg-img-fam">'+_escV(j.famiglia)+'</span>';
+    } else { return; }
+    var sch=document.querySelector('#vista-body .rg-scheda') || document.querySelector('.rg-scheda');
+    if(sch) sch.insertBefore(box, sch.firstChild);
+  }catch(e){}
 }
 async function salvaRicettaGen(btn){
   var d=_ricettaGenCorrente; if(!d) return;

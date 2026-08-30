@@ -2422,3 +2422,8 @@ a:focus-visible,input:focus-visible{
 .scarto-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border,#B7C3C3);padding-top:10px}
 .scarto-shelf{font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;color:var(--terra,#C77B3F)}
 .scarto-link{font-family:var(--sans,'Inter');font-size:12.5px;font-weight:600;color:var(--teal,#12545D);cursor:pointer}
+
+/* #4 immagine ricetta — foto o blueprint del fenomeno */
+.rg-immagine{margin:0 0 16px;border:1px solid var(--border,#B7C3C3);border-radius:12px;overflow:hidden;position:relative;background:#F7F5F0;box-shadow:3px 3px 0 rgba(20,29,34,.1)}
+.rg-immagine img{display:block;width:100%;height:auto}
+.rg-img-credito,.rg-img-fam{position:absolute;bottom:6px;right:8px;font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#5A6C70);background:rgba(247,245,240,.85);padding:2px 7px;border-radius:5px}
