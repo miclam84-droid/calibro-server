@@ -1,0 +1,98 @@
+"""Ricettario canonico: le 454 ricette certificate Matter, navigabili e cercabili.
+SEPARATO dal Quaderno (che è il patrimonio dell'utente). Questo è il patrimonio Matter.
+Endpoint leggero: solo i campi per la griglia + foto/blueprint + fenomeno + numero-bersaglio."""
+from flask import Blueprint, request, jsonify
+from db import carica_grafo
+import json
+
+bp_ricettario = Blueprint("ricettario", __name__)
+
+
+@bp_ricettario.route("/v1/ricettario/canonico", methods=["GET"])
+def ricettario_canonico():
+    """Le 454 ricette certificate. Filtri: ?disciplina= ?fenomeno= ?q= (ricerca) ?limit= ?offset=
+    Restituisce card leggere: id, nome (pulito), disciplina, foto o blueprint, fenomeno, punto critico."""
+    disciplina = (request.args.get("disciplina") or "").strip().lower()
+    fenomeno = (request.args.get("fenomeno") or "").strip()
+    q = (request.args.get("q") or "").strip().lower()
+    try:
+        limit = min(int(request.args.get("limit", 60)), 200)
+        offset = int(request.args.get("offset", 0))
+    except Exception:
+        limit, offset = 60, 0
+    db = carica_grafo()
+    # famiglie blueprint (per il fallback immagine)
+    try:
+        from routes.immagini_ricette import _famiglia_da_testo, _FAMIGLIA_DEFAULT
+    except Exception:
+        _famiglia_da_testo = lambda x: None
+        _FAMIGLIA_DEFAULT = "reazione-termica"
+    try:
+        where = []; params = []
+        if disciplina:
+            where.append("lower(disciplina)=%s"); params.append(disciplina)
+        if q:
+            where.append("(lower(nome) LIKE %s OR lower(descrizione) LIKE %s)")
+            params.extend(["%"+q+"%", "%"+q+"%"])
+        sql = ("SELECT id, nome, disciplina, punto_critico, fenomeni, immagine, immagine_autore, numeri "
+               "FROM ricette")
+        if where:
+            sql += " WHERE " + " AND ".join(where)
+        sql += " ORDER BY disciplina, nome LIMIT %s OFFSET %s"
+        params.extend([limit, offset])
+        rows = db.execute(sql, tuple(params)).fetchall()
+        out = []
+        for row in rows:
+            r = dict(row) if hasattr(row, "keys") else row
+            fen_raw = r["fenomeni"] if "fenomeni" in r else None
+            try:
+                fen_list = fen_raw if isinstance(fen_raw, list) else (json.loads(fen_raw) if fen_raw else [])
+            except Exception:
+                fen_list = []
+            fen_primo = ""
+            if fen_list:
+                f0 = fen_list[0]
+                fen_primo = f0 if isinstance(f0, str) else (f0.get("nome") or f0.get("id") or "")
+            # filtro per fenomeno se richiesto
+            if fenomeno and fenomeno.lower() not in " ".join(str(x).lower() for x in fen_list):
+                continue
+            # immagine: foto vera o blueprint
+            img = r.get("immagine")
+            if img and isinstance(img, str) and img.strip():
+                immagine = {"tipo": "foto", "url": img.strip(), "autore": r.get("immagine_autore") or ""}
+            else:
+                fam = _famiglia_da_testo(fen_primo) or _famiglia_da_testo(r.get("disciplina") or "") or _FAMIGLIA_DEFAULT
+                immagine = {"tipo": "blueprint", "famiglia": fam}
+            # numero-bersaglio dai numeri
+            numeri = r.get("numeri")
+            num_str = ""
+            try:
+                nd = numeri if isinstance(numeri, dict) else (json.loads(numeri) if numeri else {})
+                if isinstance(nd, dict) and nd:
+                    k, v = list(nd.items())[0]
+                    num_str = f"{k}: {v}"
+            except Exception:
+                pass
+            out.append({
+                "id": r["id"], "nome": r["nome"], "disciplina": r["disciplina"],
+                "punto_critico": (r.get("punto_critico") or "")[:120],
+                "fenomeno": fen_primo, "numero_bersaglio": num_str,
+                "immagine": immagine, "certificata": True,
+            })
+        return jsonify({"ricette": out, "totale": len(out),
+                        "filtri": {"disciplina": disciplina, "fenomeno": fenomeno, "q": q}})
+    except Exception as e:
+        return jsonify({"ricette": [], "errore": str(e)[:100]}), 200
+
+
+@bp_ricettario.route("/v1/ricettario/discipline", methods=["GET"])
+def ricettario_discipline():
+    """Le discipline del ricettario coi conteggi (per le chip di navigazione)."""
+    db = carica_grafo()
+    try:
+        rows = db.execute("SELECT disciplina, COUNT(*) n FROM ricette GROUP BY disciplina ORDER BY n DESC").fetchall()
+        disc = [{"disciplina": (r["disciplina"] if hasattr(r, "keys") else r[0]),
+                 "n": (r["n"] if hasattr(r, "keys") else r[1])} for r in rows]
+        return jsonify({"discipline": disc, "totale_ricette": sum(d["n"] for d in disc)})
+    except Exception as e:
+        return jsonify({"discipline": [], "errore": str(e)[:100]}), 200
