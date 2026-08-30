@@ -2,7 +2,7 @@
 # routes/chat.py — chat AI, nodo, calcolatori.
 # Dipende da: db, ai, contenuto, utils, motore.
 from routes.stato import segna_studiato
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response, stream_with_context
 from db import carica_grafo, _dati, _get_conn, _release_conn
 from ai import (cerca_contesto, costruisci_prompt, chiedi_mistral, estrai_entita,
                _scheda_tradotta, _traduci_nome, _numero_bersaglio as _nb,
@@ -626,6 +626,62 @@ def chiedi():
         "trial": trial_info,
         "numero_bersaglio": numero_bersaglio_agg
     })
+
+@bp.route("/chiedi/stream", methods=["POST"])
+def chiedi_stream():
+    """P8 — Versione STREAMING della chat (Server-Sent Events).
+    Riusa la logica di /chiedi (chiamandola internamente), poi emette la risposta a BLOCCHI
+    progressivi come eventi SSE, così il frontend compone testo + schede man mano.
+    Eventi emessi (ognuno: 'data: {json}\\n\\n'):
+      {tipo:'diagnosi', testo:...}       → il corpo della risposta (scorre)
+      {tipo:'mirino', numero:...}        → il numero-bersaglio (se c'è)
+      {tipo:'widget', widget:'FENOMENO', id:...}  → marcatore scheda fenomeno
+      {tipo:'connessi', voci:[...]}      → approfondimenti
+      {tipo:'done'}                       → fine stream
+    Il frontend, sul widget, chiama /nodo o /calcola al volo (come deciso)."""
+    # ottengo la risposta completa riusando la logica esistente
+    payload = request.get_json(force=True, silent=True) or {}
+    domanda = (payload.get("domanda") or "").strip()
+    device_id = (request.headers.get("X-Device-Id", "") or "").strip()[:80]
+    lang = request.args.get("lang", "it")
+
+    def genera():
+        import json as _j
+        try:
+            # chiamo /chiedi internamente (test_client) per riusare TUTTA la logica esistente
+            # senza rischiare di rifattorizzare il cuore della chat.
+            from flask import current_app
+            with current_app.test_client() as _c:
+                _hdr = {"Content-Type": "application/json"}
+                if device_id:
+                    _hdr["X-Device-Id"] = device_id
+                _resp = _c.post(f"/chiedi?lang={lang}", data=_j.dumps({"domanda": domanda}), headers=_hdr)
+                risultato = _resp.get_json() or {}
+            risposta = risultato.get("risposta") or ""
+            trovato = risultato.get("trovato") or []
+            numero = risultato.get("numero_bersaglio") or ""
+            connessi = risultato.get("connessi") or []
+
+            # 1) DIAGNOSI: emetto il testo a pezzi di frase (effetto scorrimento)
+            if risposta:
+                for pezzo in _re.split(r'(?<=[.!?])\s+', risposta):
+                    if pezzo.strip():
+                        yield f"data: {_j.dumps({'tipo':'diagnosi','testo':pezzo.strip()+' '})}\n\n"
+            # 2) MIRINO: il numero-bersaglio
+            if numero:
+                yield f"data: {_j.dumps({'tipo':'mirino','numero':numero})}\n\n"
+            # 3) CONNESSI: approfondimenti (con i nomi dei fenomeni trovati come widget potenziali)
+            if connessi:
+                yield f"data: {_j.dumps({'tipo':'connessi','voci':connessi[:6]})}\n\n"
+            # 4) FINE
+            yield f"data: {_j.dumps({'tipo':'done','trovato':trovato})}\n\n"
+        except Exception as e:
+            yield f"data: {_j.dumps({'tipo':'errore','messaggio':str(e)[:100]})}\n\n"
+            yield f"data: {_j.dumps({'tipo':'done'})}\n\n"
+
+    return Response(stream_with_context(genera()), mimetype="text/event-stream",
+                    headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
 
 @bp.route("/nodo", methods=["POST"])
 def nodo():
