@@ -25,7 +25,15 @@ _TOOLS = [
                 },
                 "parametri": {
                     "type": "object",
-                    "description": "Parametri del calcolo"
+                    "description": ("Parametri del calcolo, secondo il tipo. Schemi: "
+                        "diluizione={ingredienti:[{nome,vol_ml,abv_perc}], dil_perc}; "
+                        "idratazione_pane={farina_g, acqua_g}; "
+                        "estrazione_caffe={dose_g, bevanda_g, tds_perc}; "
+                        "food_cost_piatto={ingredienti:[{nome,grammi,prezzo_kg}], prezzo_vendita}; "
+                        "scalatore_impasto={peso_totale_g, percentuali:{farina:100,acqua:70,...}}; "
+                        "conversione_teglie={base1_cm,alt1_cm,base2_cm,alt2_cm}; "
+                        "temperatura_servizio_vino={tipo_vino,temp_attuale_c,metodo}; "
+                        "brix_to_abv={brix}. Usa ESATTAMENTE questi nomi di parametri.")
                 }
             },
             "required": ["calcolo","parametri"]
