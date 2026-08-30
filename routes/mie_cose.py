@@ -254,6 +254,70 @@ def salva_misura():
         _release_conn(conn)
 
 
+@bp_mie.route("/v1/quaderno/insight", methods=["GET"])
+def quaderno_insight():
+    """Organizer: insight-trend automatici per la home del Quaderno. Rileva i fenomeni dove le
+    misure stanno cambiando in modo significativo e genera un avviso ('la tua ganache è più stabile',
+    'l'acidità del lime è aumentata'). Deterministico, niente AI. device_id da header."""
+    _ensure_misure()
+    dev = _device()
+    if not dev:
+        return jsonify({"insight": []})
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        # per ogni fenomeno con almeno 3 misure, guardo la tendenza (prime vs ultime)
+        cur.execute("""
+            SELECT fenomeno, ARRAY_AGG(valore ORDER BY creato_il ASC) AS valori,
+                   ARRAY_AGG(unita ORDER BY creato_il ASC) AS unita,
+                   MAX(bersaglio) AS bersaglio, COUNT(*) AS n
+            FROM misure_salvate WHERE device_id=%s
+            GROUP BY fenomeno HAVING COUNT(*) >= 3
+        """, (dev,))
+        insight = []
+        import re as _re
+        for row in cur.fetchall():
+            fen, valori, unita_arr, bersaglio, n = row
+            # estraggo i numeri dai valori (possono avere unità nel testo)
+            nums = []
+            for v in valori:
+                m = _re.search(r"-?\d+[.,]?\d*", str(v))
+                if m:
+                    try: nums.append(float(m.group(0).replace(",", ".")))
+                    except Exception: pass
+            if len(nums) < 3:
+                continue
+            uni = (unita_arr[-1] if unita_arr else "") or ""
+            # confronto media delle prime metà vs seconda metà
+            meta = len(nums) // 2
+            prima = sum(nums[:meta]) / meta if meta else nums[0]
+            dopo = sum(nums[meta:]) / (len(nums) - meta)
+            if prima == 0:
+                continue
+            delta_perc = round((dopo - prima) / abs(prima) * 100, 1)
+            if abs(delta_perc) < 5:
+                # stabile → insight positivo di stabilità
+                insight.append({
+                    "tipo": "stabilita", "fenomeno": fen,
+                    "testo": f"La tua misura di {fen} è stabile ({nums[-1]}{uni}): controllo costante, buon segno.",
+                })
+            else:
+                direzione = "aumentata" if delta_perc > 0 else "diminuita"
+                insight.append({
+                    "tipo": "trend", "fenomeno": fen,
+                    "delta_perc": delta_perc,
+                    "testo": f"La tua misura di {fen} è {direzione} del {abs(delta_perc)}% "
+                             f"nelle ultime rilevazioni (ora {nums[-1]}{uni}). Tienila d'occhio.",
+                })
+        cur.close(); _release_conn(conn)
+        # ordino: prima i trend (più urgenti), poi le stabilità
+        insight.sort(key=lambda x: 0 if x["tipo"] == "trend" else 1)
+        return jsonify({"insight": insight[:5]})
+    except Exception as e:
+        try: _release_conn(conn)
+        except Exception: pass
+        return jsonify({"insight": [], "errore": str(e)[:80]}), 200
+
+
 @bp_mie.route("/v1/misure/storico", methods=["GET"])
 def storico_misure():
     """Storico di un fenomeno nel tempo (l'evoluzione: '26°→24°').
