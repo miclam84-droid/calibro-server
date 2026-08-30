@@ -772,6 +772,7 @@ if('serviceWorker' in navigator){
     <!-- TOGGLE: il Quaderno è dove ciò che validi diventa qualcosa -->
     <div class="quad-toggle">
       <button class="quad-tg-btn active" id="qtg-misure" onclick="switchQuaderno('misure')">Misure</button>
+      <button class="quad-tg-btn" id="qtg-palestra" onclick="switchQuaderno('palestra')">Palestra</button>
       <button class="quad-tg-btn" id="qtg-ricette" onclick="switchQuaderno('ricette')">Ricette</button>
       <button class="quad-tg-btn" id="qtg-menu" onclick="switchQuaderno('menu')">Menù</button>
       <button class="quad-tg-btn" id="qtg-vetrina" onclick="apriVetrina()">Vetrina</button>
@@ -785,6 +786,14 @@ if('serviceWorker' in navigator){
       <div class="quad-list" id="quad-ricette-list"></div>
     </div>
     <!-- PANNELLO MISURE -->
+    <div id="quad-pane-palestra" style="display:none">
+      <div class="pal-header">
+        <div class="pal-lab">Livello di Competenza del Banco</div>
+        <div class="pal-barra"><div class="pal-barra-fill" id="pal-barra-fill"></div></div>
+        <div class="pal-count" id="pal-count">—</div>
+      </div>
+      <div id="pal-body"></div>
+    </div>
     <div id="quad-pane-misure">
       <div class="misure-header" id="misure-header" style="display:none">
         <span class="misure-tot-n" id="misure-tot-n">0</span>

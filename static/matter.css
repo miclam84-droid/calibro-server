@@ -2272,3 +2272,28 @@ a:focus-visible,input:focus-visible{
 /* select calcolatori vino */
 .calc-select{width:100%;min-height:48px;border:1px solid var(--border,#B7C3C3);border-radius:10px;padding:0 14px;font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#131C21);background:var(--l3,#F2F6F6);cursor:pointer}
 .calc-select:focus{outline:none;border-color:var(--dato,#245979)}
+
+/* ═══ PALESTRA — quiz Livello di Competenza (P6) ═══ */
+.pal-header{background:var(--ink,#131C21);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.pal-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7FC5D0;margin-bottom:10px}
+.pal-barra{height:10px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden;margin-bottom:8px}
+.pal-barra-fill{height:100%;background:linear-gradient(90deg,#12545D,#5EBCC8);border-radius:5px;transition:width .5s ease;width:0}
+.pal-count{font-family:var(--mono,'IBM Plex Mono');font-size:13px;font-weight:700;color:#EAF1F3}
+.pal-quiz{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:14px;padding:18px}
+.pal-meta{display:flex;gap:8px;margin-bottom:12px}
+.pal-tipo,.pal-diff{font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px}
+.pal-tipo{color:var(--teal,#12545D);background:var(--s100,#D3E0E0)}
+.pal-diff{color:var(--muted,#5A6C70);background:var(--l3,#F2F6F6)}
+.pal-domanda{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:17px;color:var(--ink,#131C21);line-height:1.3;margin-bottom:16px}
+.pal-opzioni{display:flex;flex-direction:column;gap:8px}
+.pal-opz{width:100%;min-height:52px;text-align:left;padding:12px 16px;border:1px solid var(--border,#B7C3C3);border-radius:11px;background:var(--l3,#F2F6F6);font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#131C21);cursor:pointer;transition:all .15s}
+.pal-opz:active{transform:scale(.99)}
+.pal-opz:disabled{cursor:default}
+.pal-opz.giusta{background:rgba(38,140,74,.14);border-color:#268c4a;color:#1a6e3a;font-weight:600}
+.pal-opz.sbagliata{background:rgba(199,80,60,.12);border-color:#c7503c;color:#a5372a}
+.pal-verdetto{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:16px;margin:16px 0 8px}
+.pal-verdetto.ok{color:#1a6e3a}
+.pal-verdetto.no{color:#a5372a}
+.pal-insight{background:rgba(18,84,93,.08);border-left:3px solid var(--teal,#12545D);border-radius:0 10px 10px 0;padding:12px 16px;font-size:14px;color:var(--ink,#131C21);line-height:1.55;margin-bottom:14px}
+.pal-fine{text-align:center;padding:30px 20px}
+.pal-fine b{display:block;font-family:var(--serif,'Space Grotesk');font-size:18px;color:var(--ink,#131C21);margin-bottom:16px}

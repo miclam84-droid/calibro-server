@@ -3074,13 +3074,78 @@ function switchQuaderno(vista){
   document.getElementById('quad-pane-misure').style.display = vista==='misure'?'':'none';
   document.getElementById('quad-pane-menu').style.display = vista==='menu'?'':'none';
   var pr=document.getElementById('quad-pane-ricette'); if(pr) pr.style.display = vista==='ricette'?'':'none';
+  var pp=document.getElementById('quad-pane-palestra'); if(pp) pp.style.display = vista==='palestra'?'':'none';
   document.getElementById('qtg-misure').classList.toggle('active', vista==='misure');
   document.getElementById('qtg-menu').classList.toggle('active', vista==='menu');
   var tr=document.getElementById('qtg-ricette'); if(tr) tr.classList.toggle('active', vista==='ricette');
+  var tp=document.getElementById('qtg-palestra'); if(tp) tp.classList.toggle('active', vista==='palestra');
   if(vista==='menu') caricaMenuSalvati();
   if(vista==='ricette') caricaLeMieRicette();
   if(vista==='misure') caricaStoricoMisure();
+  if(vista==='palestra') caricaPalestra();
 }
+
+// ═══ PALESTRA — quiz "Livello di Competenza del Banco" (P6) ═══
+var _palQuiz=[]; var _palIdx=0; var _palRisposto=false;
+async function caricaPalestra(){
+  try{
+    var rp=await fetch('/v1/quiz/progressi', {headers:_statoHeaders()});
+    var jp=await rp.json();
+    var tot=jp.totale_superati||0;
+    var su148=Math.min(100, Math.round((tot/148)*100));
+    var fill=document.getElementById('pal-barra-fill'); if(fill) fill.style.width=su148+'%';
+    var cnt=document.getElementById('pal-count'); if(cnt) cnt.textContent=tot+'/148 dominati';
+  }catch(e){}
+  var body=document.getElementById('pal-body');
+  if(body) body.innerHTML='<div class="calc-loading">Carico le domande…</div>';
+  try{
+    var r=await fetch('/v1/quiz?limit=10', {headers:_statoHeaders()});
+    var j=await r.json();
+    _palQuiz=j.quiz||[]; _palIdx=0; _palRisposto=false;
+    if(!_palQuiz.length){ if(body) body.innerHTML='<div class="quad-empty"><b>Ancora nessuna domanda</b><span>Le domande arrivano man mano. Torna tra poco.</span></div>'; return; }
+    _renderQuiz();
+  }catch(e){ if(body) body.innerHTML='<div class="quad-empty"><b>Errore</b><span>Riprova.</span></div>'; }
+}
+function _renderQuiz(){
+  var body=document.getElementById('pal-body'); if(!body) return;
+  if(_palIdx>=_palQuiz.length){
+    body.innerHTML='<div class="pal-fine"><b>Set completato!</b><button class="calc-go" onclick="caricaPalestra()">Altre domande</button></div>';
+    return;
+  }
+  var q=_palQuiz[_palIdx]; var e=_escV;
+  _palRisposto=false;
+  body.innerHTML=
+    '<div class="pal-quiz">'
+    + '<div class="pal-meta"><span class="pal-tipo">'+e(q.tipo||'')+'</span><span class="pal-diff">'+e(q.difficolta||'')+'</span></div>'
+    + '<div class="pal-domanda">'+e(q.domanda||'')+'</div>'
+    + '<div class="pal-opzioni" id="pal-opzioni">'
+    +   (q.opzioni||[]).map(function(op,i){ return '<button class="pal-opz" data-op="'+e(op)+'" onclick="_rispondiQuiz(this,\''+e(String(q.id))+'\')">'+e(op)+'</button>'; }).join('')
+    + '</div>'
+    + '<div id="pal-esito"></div>'
+    + '</div>';
+}
+async function _rispondiQuiz(btn, quizId){
+  if(_palRisposto) return; _palRisposto=true;
+  var risposta=btn.getAttribute('data-op');
+  document.querySelectorAll('.pal-opz').forEach(function(b){ b.disabled=true; });
+  try{
+    var r=await fetch('/v1/quiz/rispondi', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}), body:JSON.stringify({quiz_id:quizId, risposta:risposta})});
+    var j=await r.json();
+    var e=_escV;
+    document.querySelectorAll('.pal-opz').forEach(function(b){
+      var op=b.getAttribute('data-op');
+      if(op===j.risposta_corretta) b.classList.add('giusta');
+      else if(b===btn) b.classList.add('sbagliata');
+    });
+    var esito=document.getElementById('pal-esito');
+    if(esito){
+      esito.innerHTML='<div class="pal-verdetto '+(j.superato?'ok':'no')+'">'+(j.superato?'✓ Esatto':'✗ Non è corretta')+'</div>'
+        + (j.insight?'<div class="pal-insight">'+e(j.insight)+'</div>':'')
+        + '<button class="calc-go" onclick="_palProssima()">Prossima →</button>';
+    }
+  }catch(e){ _toast('Errore, riprova'); _palRisposto=false; document.querySelectorAll('.pal-opz').forEach(function(b){ b.disabled=false; }); }
+}
+function _palProssima(){ _palIdx++; if(_palIdx>=_palQuiz.length){ caricaPalestra(); } else { _renderQuiz(); } }
 
 // ═══ STORICO MISURE — "Le mie misure" (cuore della retention) ═══
 async function caricaStoricoMisure(){
