@@ -6303,6 +6303,12 @@ def admin_genera_didattica():
             scheda = _scheda_lang(data, "it") or ""
             # fallback: se scheda vuota, provo altri campi dove può stare il contenuto
             if not scheda and isinstance(data, dict):
+                # la risposta AI cachata del nodo è un ottimo contenuto di partenza
+                for _ck in ("risposta_cache_it", "risposta_cache"):
+                    _cv = data.get(_ck)
+                    if _cv and isinstance(_cv, str) and len(_cv) > 40:
+                        scheda = _cv; break
+            if not scheda and isinstance(data, dict):
                 for _campo in ("descrizione", "spiegazione", "sommario", "testo", "contenuto", "corpo"):
                     _v = data.get(_campo)
                     if isinstance(_v, dict):
