@@ -647,6 +647,7 @@ def chiedi_stream():
 
     def genera():
         import json as _j
+        import re as _re
         try:
             # chiamo /chiedi internamente (test_client) per riusare TUTTA la logica esistente
             # senza rischiare di rifattorizzare il cuore della chat.
