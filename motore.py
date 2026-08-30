@@ -348,6 +348,56 @@ def brix_to_abv(brix, efficienza=0.59):
     }
 
 
+def resa_calo_peso(peso_crudo_g, costo_kg, calo_perc, prezzo_vendita=None, porzioni=None):
+    """OTTIMIZZAZIONE — Costo reale del prodotto COTTO/FINITO tenendo conto del calo peso.
+    Un brasato che perde il 35% in cottura costa di più al grammo finito di quanto sembri.
+    peso_crudo_g: grammi materia prima cruda. costo_kg: €/kg d'acquisto. calo_perc: % di calo in
+    lavorazione (evaporazione/cottura/scarto). prezzo_vendita e porzioni opzionali per il food cost."""
+    try:
+        pc = float(str(peso_crudo_g).replace(",", "."))
+        ck = float(str(costo_kg).replace(",", "."))
+        calo = float(str(calo_perc).replace(",", "."))
+    except Exception:
+        return {"errore": "parametri non validi (peso_crudo_g, costo_kg, calo_perc)"}
+    if pc <= 0 or ck < 0 or not (0 <= calo < 100):
+        return {"errore": "valori fuori scala"}
+    peso_finito = pc * (1 - calo / 100.0)
+    costo_totale = (pc / 1000.0) * ck
+    costo_g_crudo = ck / 1000.0
+    costo_g_finito = costo_totale / peso_finito if peso_finito > 0 else 0
+    out = {
+        "calcolo": "resa_calo_peso",
+        "peso_crudo_g": round(pc, 1), "peso_finito_g": round(peso_finito, 1),
+        "calo_perc": calo, "costo_totale": round(costo_totale, 2),
+        "costo_g_crudo": round(costo_g_crudo, 4), "costo_g_finito": round(costo_g_finito, 4),
+        "interpretazione": (f"Da {pc:.0f}g crudi ottieni {peso_finito:.0f}g finiti (calo {calo:.0f}%). "
+                            f"Il costo reale sale da {costo_g_crudo*1000:.2f}€/kg crudo a "
+                            f"{costo_g_finito*1000:.2f}€/kg finito."),
+        "leva_azione": "Calcola il food cost SUL peso finito, non sul crudo, o perdi margine su ogni porzione.",
+        "fenomeno_id": "fen-evaporazione",
+        "spiegazione": (f"Il calo peso ({calo:.0f}%) concentra il costo: la stessa spesa si spalma su "
+                        f"meno grammi venduti."),
+    }
+    if porzioni:
+        try:
+            n = int(porzioni)
+            if n > 0:
+                out["costo_porzione"] = round(costo_totale / n, 2)
+                out["grammi_porzione"] = round(peso_finito / n, 0)
+        except Exception:
+            pass
+    if prezzo_vendita:
+        try:
+            pv = float(str(prezzo_vendita).replace(",", "."))
+            if pv > 0 and porzioni:
+                fc = round(100 * (costo_totale / int(porzioni)) / pv, 1)
+                out["food_cost_perc"] = fc
+                out["food_cost_giudizio"] = ("ottimo" if fc <= 30 else "buono" if fc <= 35 else "alto")
+        except Exception:
+            pass
+    return out
+
+
 CALCOLI = {
     "diluizione": diluizione,
     "bilanciamento_sour": bilanciamento_sour,
@@ -360,6 +410,7 @@ CALCOLI = {
     "food_cost_piatto": food_cost_piatto,
     "temperatura_servizio_vino": temperatura_servizio_vino,
     "brix_to_abv": brix_to_abv,
+    "resa_calo_peso": resa_calo_peso,
 }
 
 
