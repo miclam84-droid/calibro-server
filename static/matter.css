@@ -2297,3 +2297,20 @@ a:focus-visible,input:focus-visible{
 .pal-insight{background:rgba(18,84,93,.08);border-left:3px solid var(--teal,#12545D);border-radius:0 10px 10px 0;padding:12px 16px;font-size:14px;color:var(--ink,#131C21);line-height:1.55;margin-bottom:14px}
 .pal-fine{text-align:center;padding:30px 20px}
 .pal-fine b{display:block;font-family:var(--serif,'Space Grotesk');font-size:18px;color:var(--ink,#131C21);margin-bottom:16px}
+
+/* ═══ CHAT STREAMING (P8) ═══ */
+.scheda-stream{}
+.stream-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted,#5A6C70);margin-top:8px;font-style:italic}
+.stream-txt{font-size:15px;color:var(--ink,#131C21);line-height:1.6}
+.chat-lab{font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--teal,#12545D);display:inline-block;margin-top:6px}
+.stream-widget{margin:14px 0}
+/* mini-scheda fenomeno nel flusso chat */
+.stream-fen{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-left:3px solid var(--teal,#12545D);border-radius:0 12px 12px 0;padding:14px 16px}
+.stream-fen-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--teal,#12545D);cursor:pointer}
+.stream-fen-princ{font-size:13px;color:var(--ink,#131C21);margin-top:4px;line-height:1.4}
+.stream-fen-num{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:20px;color:var(--terra,#C77B3F);margin-top:8px}
+/* calcolatore nel flusso chat */
+.stream-calc{background:var(--ink,#131C21);border-radius:12px;padding:16px 18px}
+.stream-calc-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7FB0C4;margin-bottom:8px}
+.stream-calc-num{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:32px;color:#E8935A;line-height:1;margin-bottom:10px}
+.stream-calc .calc-interp{margin-bottom:8px}

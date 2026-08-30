@@ -1092,16 +1092,120 @@ const _HISTORY_MAX=3;
 
 function chiediTesto(q){
   if(busy)return;
-  // REGOLA 1: la chat NON crea ricette da sola. È il backend a segnalare _azione:crea_ricetta
-  // nella risposta; renderRisp mostra allora un pulsante [GENERA SCHEDA RICETTA].
-  // paywall: controlla limite giornaliero (solo per utenti non Pro)
   if(!_isPro()){
     const usate=_getDomande();
     if(usate>=FREE_LIMIT){ apriPaywall(); return; }
   }
   const e=document.getElementById('empty-state');if(e)e.remove();
   switchTab('chiedi');switchSubtab('chat');
-  aggiungiThinking();setBusy(true);
+  setBusy(true);
+  // provo lo streaming; se fallisce, fallback alla chat normale
+  _chiediStream(q).catch(function(){ _chiediNonStream(q); });
+}
+
+// ═══ CHAT STREAMING (P8) — SSE con token che scorrono + widget inline ═══
+async function _chiediStream(q){
+  const history=_chatHistory.slice(-_HISTORY_MAX);
+  const _tok=localStorage.getItem('matter_token')||'';
+  const _ctx = _ctxChat || window._chatContesto || null;
+  // creo la scheda risposta che si riempie man mano
+  var card=document.createElement('div'); card.className='scheda scheda-stream';
+  var flusso=document.createElement('div'); flusso.className='stream-flusso';
+  card.appendChild(flusso);
+  var statusEl=document.createElement('div'); statusEl.className='stream-status';
+  statusEl.innerHTML='<span class="t-dots"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></span> <span id="stream-status-txt"></span>';
+  card.appendChild(statusEl);
+  document.getElementById('schede').prepend(card);
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+
+  var resp = await fetch('/chiedi/stream?lang='+(typeof _lang!=='undefined'?_lang:'it'),
+    {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+     body:JSON.stringify({domanda:q, history:history, token:_tok, contesto:_ctx})});
+  if(resp.status===402){ card.remove(); var j=await resp.json(); mostraPopupPro('esaurito'); throw {handled:true}; }
+  if(!resp.ok || !resp.body){ card.remove(); throw new Error('no stream'); }
+
+  var reader=resp.body.getReader();
+  var dec=new TextDecoder();
+  var buf=''; var testoAccumulato=''; var txtEl=null; var erroreVisto=false;
+  var curTxt=function(){ if(!txtEl){ txtEl=document.createElement('div'); txtEl.className='stream-txt'; flusso.appendChild(txtEl); } return txtEl; };
+
+  while(true){
+    var chunk=await reader.read();
+    if(chunk.done) break;
+    buf += dec.decode(chunk.value, {stream:true});
+    var parti=buf.split('\n\n');
+    buf=parti.pop();
+    for(var i=0;i<parti.length;i++){
+      var linea=parti[i].trim();
+      if(!linea.indexOf('data:')===0 && linea.indexOf('data:')!==0) continue;
+      var jsonStr=linea.replace(/^data:\s*/,'');
+      if(!jsonStr) continue;
+      var ev; try{ ev=JSON.parse(jsonStr); }catch(e){ continue; }
+      if(ev.tipo==='status'){
+        var st=document.getElementById('stream-status-txt'); if(st) st.textContent=ev.testo||'';
+      } else if(ev.tipo==='token'){
+        testoAccumulato += (ev.delta||'');
+        curTxt().innerHTML = _formattaRispostaChat(testoAccumulato);
+        card.scrollIntoView({behavior:'smooth',block:'nearest'});
+      } else if(ev.tipo==='widget'){
+        txtEl=null; // i prossimi token vanno sotto il widget
+        if(ev.widget==='fenomeno' && ev.id){ _streamWidgetFenomeno(flusso, ev.id); }
+        else if(ev.widget==='calcolatore'){ _streamWidgetCalcolo(flusso, ev); }
+      } else if(ev.tipo==='error'){
+        erroreVisto=true;
+      } else if(ev.tipo==='done'){
+        // chiudo
+      }
+    }
+  }
+  statusEl.remove();
+  setBusy(false);
+  _incDomande();
+  if(erroreVisto && !testoAccumulato){ card.remove(); throw new Error('stream error'); }
+  if(testoAccumulato){ _chatHistory.push({q:q, r:testoAccumulato.slice(0,300)}); if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2); }
+}
+// formatta il testo PROBLEMA/PERCHÉ/... in blocchi leggibili
+function _formattaRispostaChat(t){
+  var e=_escV(t);
+  e=e.replace(/(PROBLEMA|PERCHÉ|PERCHE|NUMERO|MISURA|AZIONE)\s*:/g,'<b class="chat-lab">$1:</b>');
+  e=e.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+  return e;
+}
+async function _streamWidgetFenomeno(flusso, id){
+  var ph=document.createElement('div'); ph.className='stream-widget'; ph.innerHTML='<div class="calc-loading">Carico la scheda…</div>';
+  flusso.appendChild(ph);
+  try{
+    var r=await fetch('/nodo?traccia=1',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({id:id})});
+    var j=await r.json();
+    if(j && j.tipo_fenomeno){ ph.innerHTML=''; ph.appendChild(_costruisciMiniSchedaFenomeno(j, id)); }
+    else { ph.remove(); }
+  }catch(e){ ph.remove(); }
+}
+function _streamWidgetCalcolo(flusso, ev){
+  var d=ev.dati||{};
+  var wrap=document.createElement('div'); wrap.className='stream-widget';
+  var num = d.numero || d.risultato || '';
+  var h='<div class="stream-calc"><div class="stream-calc-lab">'+_escV(ev.calcolo||'calcolo')+'</div>';
+  if(num) h+='<div class="stream-calc-num">'+_escV(String(num))+'</div>';
+  if(d.interpretazione) h+='<div class="calc-interp">'+_escV(d.interpretazione)+'</div>';
+  if(d.leva_azione) h+='<div class="calc-leva"><span class="calc-leva-lab">Cosa fare</span>'+_escV(d.leva_azione)+'</div>';
+  if(d.fenomeno_id) h+='<button class="calc-fen-link" onclick="apriNodo(\''+_escV(d.fenomeno_id)+'\',\'\')">Studia il fenomeno →</button>';
+  h+='</div>';
+  wrap.innerHTML=h;
+  flusso.appendChild(wrap);
+}
+// mini-scheda fenomeno compatta per la chat (riusa la logica principale)
+function _costruisciMiniSchedaFenomeno(j, id){
+  var div=document.createElement('div'); div.className='stream-fen';
+  var e=_escV;
+  var principio = (j.principi_diretti&&j.principi_diretti[0]) ? j.principi_diretti[0].nome : '';
+  div.innerHTML='<div class="stream-fen-nome" onclick="apriNodo(\''+e(id)+'\',\'\')">'+e(j.titolo||'Fenomeno')+' →</div>'
+    + (principio?'<div class="stream-fen-princ">'+e(principio)+'</div>':'')
+    + (j.target_numero?'<div class="stream-fen-num">'+e(String(j.target_numero))+(j.unita?' '+e(j.unita):'')+'</div>':'');
+  return div;
+}
+function _chiediNonStream(q){
+  aggiungiThinking(); setBusy(true);
   // passa gli ultimi scambi per dare continuità alla conversazione
   const history=_chatHistory.slice(-_HISTORY_MAX);
   const _tok=localStorage.getItem('matter_token')||'';
