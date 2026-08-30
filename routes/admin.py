@@ -6495,3 +6495,75 @@ def admin_batch_quiz_raccogli():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── NORMALIZZAZIONE FENOMENI: consolida il contenuto in uno schema unico (via i fallback) ──
+@bp.route("/admin/normalizza-fenomeni")
+def admin_normalizza_fenomeni():
+    """Per ogni fenomeno costruisce data['contenuto_strutturato'] = {principio, spiegazione,
+    errore_banco, dato_operativo} consolidando i campi esistenti (scheda/cache/principio/target).
+    Così la lettura diventa uniforme e spariscono i fallback nel codice. ?offset=&limit= a blocchi."""
+    if not hmac.compare_digest(str(request.args.get("s", "")), str(os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    from contenuto import _numero_bersaglio as _nb, _scheda_lang
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 30)), 50)
+    except Exception:
+        offset, limit = 0, 30
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, domain, data FROM nodes WHERE type='Fenomeno' ORDER BY id LIMIT %s OFFSET %s",
+                    (limit, offset))
+        fenomeni = cur.fetchall()
+        fatti = 0
+        for f in fenomeni:
+            fid = f[0]; nome = f[1]; dominio = f[2]
+            data = f[3] if isinstance(f[3], dict) else (json.loads(f[3]) if f[3] else {})
+            if not isinstance(data, dict):
+                data = {}
+            # se già normalizzato, salto
+            if data.get("contenuto_strutturato"):
+                continue
+            # consolido il contenuto dalle varie fonti
+            scheda = _scheda_lang(data, "it") or ""
+            if not scheda:
+                for _ck in ("risposta_cache_it", "risposta_cache", "descrizione", "spiegazione"):
+                    _cv = data.get(_ck)
+                    if isinstance(_cv, str) and len(_cv) > 40:
+                        scheda = _cv; break
+            principio = ""
+            _p = data.get("principio") or data.get("primo_principio") or ""
+            if isinstance(_p, dict): _p = _p.get("it") or _p.get("nome") or ""
+            principio = str(_p) if _p else ""
+            target = _nb(data) or ""
+            errore = ""
+            _e = data.get("errori") or data.get("errore_banco") or ""
+            if isinstance(_e, list) and _e:
+                errore = _e[0] if isinstance(_e[0], str) else ""
+            elif isinstance(_e, str):
+                errore = _e
+            data["contenuto_strutturato"] = {
+                "principio": principio,
+                "spiegazione": scheda,
+                "errore_banco": errore,
+                "dato_operativo": target,
+                "nome": nome,
+                "dominio": dominio,
+                "version": 1,
+            }
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                        (json.dumps(data, ensure_ascii=False), fid))
+            fatti += 1
+        conn.commit()
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Fenomeno'")
+        totale = cur.fetchone()[0]
+        cur.close(); _release_conn(conn)
+        prossimo = offset + limit
+        return jsonify({"ok": True, "normalizzati": fatti, "offset": offset,
+                        "prossimo_offset": prossimo if prossimo < totale else None,
+                        "totale": totale})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
