@@ -54,16 +54,22 @@ def _trova_scarto(query):
 
 @bp_scarti.route("/v1/scarti/riusi", methods=["GET"])
 def riusi_scarto():
-    """Dato uno scarto, propone i riusi. ?scarto=albumi
+    """Dato uno scarto, propone i riusi. ?scarto=albumi&lang=it|en|es
     Restituisce i riusi, la shelf life, il fenomeno collegato."""
     query = (request.args.get("scarto") or "").strip()
+    lang = (request.args.get("lang") or "it").strip().lower()
     if not query:
         return jsonify({"errore": "manca ?scarto="}), 400
     chiave, dati = _trova_scarto(query)
     if not dati:
+        _msg = {"it": "Scarto non ancora in libreria. Scarti mappati: ",
+                "en": "Waste not yet in library. Mapped waste: ",
+                "es": "Descarte aún no en biblioteca. Descartes mapeados: "}.get(lang, "Scarti mappati: ")
         return jsonify({"trovato": False, "scarto": query,
-                        "nota": "Scarto non ancora in libreria. Scarti mappati: " +
-                                ", ".join(v["scarto"] for v in _LIBRERIA_SCARTI.values())})
+                        "nota": _msg + ", ".join(v["scarto"] for v in _LIBRERIA_SCARTI.values())})
+    _nota = {"it": f"Riutilizza entro {dati['shelf_giorni']} giorni per non sprecare.",
+             "en": f"Reuse within {dati['shelf_giorni']} days to avoid waste.",
+             "es": f"Reutiliza en {dati['shelf_giorni']} días para no desperdiciar."}.get(lang)
     return jsonify({
         "trovato": True,
         "scarto": dati["scarto"],
@@ -71,7 +77,7 @@ def riusi_scarto():
         "riusi": dati["riusi"],
         "shelf_giorni": dati["shelf_giorni"],
         "fenomeno_id": dati["fenomeno"],
-        "nota": f"Riutilizza entro {dati['shelf_giorni']} giorni per non sprecare.",
+        "nota": _nota,
     })
 
 

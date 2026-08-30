@@ -261,6 +261,7 @@ def quaderno_insight():
     'l'acidità del lime è aumentata'). Deterministico, niente AI. device_id da header."""
     _ensure_misure()
     dev = _device()
+    lang = (request.args.get("lang") or "it").strip().lower()
     if not dev:
         return jsonify({"insight": []})
     conn = _get_conn(); cur = conn.cursor()
@@ -311,7 +312,16 @@ def quaderno_insight():
         cur.close(); _release_conn(conn)
         # ordino: prima i trend (più urgenti), poi le stabilità
         insight.sort(key=lambda x: 0 if x["tipo"] == "trend" else 1)
-        return jsonify({"insight": insight[:5]})
+        insight = insight[:5]
+        if lang in ("en", "es"):
+            try:
+                from traduzioni import traduci
+                for it in insight:
+                    if it.get("testo"):
+                        it["testo"] = traduci(it["testo"], lang)
+            except Exception:
+                pass
+        return jsonify({"insight": insight})
     except Exception as e:
         try: _release_conn(conn)
         except Exception: pass

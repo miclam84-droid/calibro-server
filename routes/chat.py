@@ -934,8 +934,16 @@ def calcola():
     body = request.json or {}
     nome = body.get("calcolo", "").strip()
     parametri = body.get("parametri", {})
+    lang = (body.get("lang") or request.args.get("lang") or "it").strip().lower()
     if not nome:
         return jsonify({"errore": "campo 'calcolo' obbligatorio"}), 400
     risultato = Motore.esegui(nome, parametri)
+    # trilingue: traduco i campi utente-facing (i numeri restano invariati)
+    if lang in ("en", "es") and isinstance(risultato, dict) and "errore" not in risultato:
+        try:
+            from traduzioni import traduci_dict
+            risultato = traduci_dict(risultato, lang, campi=["interpretazione", "leva_azione", "spiegazione"])
+        except Exception:
+            pass
     log_evento("calcolo", nome, esito="ok" if "errore" not in risultato else "errore")
     return jsonify(risultato)
