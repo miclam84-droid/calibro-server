@@ -6301,6 +6301,14 @@ def admin_genera_didattica():
             data = f[3] if isinstance(f[3], dict) else (json.loads(f[3]) if f[3] else {})
             target = _nb(data) or ""
             scheda = _scheda_lang(data, "it") or ""
+            # fallback: se scheda vuota, provo altri campi dove può stare il contenuto
+            if not scheda and isinstance(data, dict):
+                for _campo in ("descrizione", "spiegazione", "sommario", "testo", "contenuto", "corpo"):
+                    _v = data.get(_campo)
+                    if isinstance(_v, dict):
+                        _v = _v.get("it") or _v.get("testo") or ""
+                    if _v and isinstance(_v, str) and len(_v) > 40:
+                        scheda = _v; break
             # cifre del target da verificare (anti-allucinazione)
             cifre_target = _re.findall(r"\d+", str(target))
             testo_exp = None
