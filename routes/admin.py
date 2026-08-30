@@ -6344,7 +6344,7 @@ def admin_genera_didattica():
                 _principio = str(_p) if _p else ""
             _contenuto_quiz = scheda or _principio or nome
             cur.execute("SELECT 1 FROM quiz WHERE fenomeno_id=%s AND tipo='fenomeno' LIMIT 1", (fid,))
-            if not cur.fetchone() and _contenuto_quiz and (scheda or target or _principio):
+            if not cur.fetchone() and _contenuto_quiz:
                 prompt_quiz = (f"Crea UN quiz tecnico sul fenomeno '{nome}' ({dominio}) per un professionista F&B. "
                                f"Numero-bersaglio: {target}. Principio: {_principio}. Contenuto: {_contenuto_quiz[:400]}. "
                                f"Rispondi SOLO con JSON valido: "
