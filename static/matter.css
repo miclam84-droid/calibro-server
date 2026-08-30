@@ -672,9 +672,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .hero-num-top-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--science);margin-bottom:6px}
 .hero-num-top-val{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--ink);line-height:1.6}
 /* tab mappa atlante */
-.mappa-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;scrollbar-width:none}
+.mappa-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;scrollbar-width:none;padding-right:16px}
 .mappa-tabs::-webkit-scrollbar{display:none}
-.mappa-tab{flex:1;min-width:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:10px 4px;cursor:pointer;transition:color .15s,border-color .15s;text-align:center}
+.mappa-tab{flex:0 0 auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;padding:10px 14px;cursor:pointer;transition:color .15s,border-color .15s;text-align:center;white-space:nowrap}
 .mappa-tab.active{color:var(--e500);border-bottom-color:var(--e500)}
 .mappa-tab:hover{color:var(--ink)}
 .mappa-panel{display:none}
@@ -2408,10 +2408,10 @@ a:focus-visible,input:focus-visible{
 .calo-u{font-size:12px;margin-left:2px}
 .calo-arr{font-size:22px;color:#5EA0C8}
 /* #1 fascia insight quaderno */
-.quad-insight{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.quad-ins{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:10px;font-size:13.5px;line-height:1.5}
-.quad-ins.ins-trend{background:rgba(199,123,63,.1);border:1px solid var(--terra,#C77B3F);color:var(--ink,#141D22)}
-.quad-ins.ins-stabile{background:rgba(38,140,74,.1);border:1px solid #268c4a;color:#1a4a2a}
+.quad-insight{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;background:var(--ink,#141D22);border-radius:12px;padding:14px}
+.quad-ins{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;font-family:var(--mono,'IBM Plex Mono');font-size:12px;line-height:1.5;color:#CBD6DA}
+.quad-ins.ins-trend{background:rgba(199,123,63,.15);color:#E8935A}
+.quad-ins.ins-stabile{background:rgba(94,160,200,.12);color:#7FB0C4}
 .quad-ins-ico{flex-shrink:0}
 /* #2 riuso scarti */
 .scarto-card{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;padding:15px 16px;margin-bottom:10px;box-shadow:3px 3px 0 rgba(20,29,34,.1)}

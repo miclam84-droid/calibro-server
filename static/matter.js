@@ -1917,7 +1917,7 @@ const _strings = {
     vedi_mappa:'Vedi il principio nell\'Atlante →',
     chiedi_placeholder:'Scrivi un problema al banco (es. ganache separata)…',
     chiedi_btn:'Chiedi',
-    onb_nudge_title:'Pronto al banco?',
+    onb_nudge_title:'Postazione Attiva',
     ai_disclosure:'Risposte generate da un assistente AI.',
     foto_analisi_titolo:'Analisi foto',
     foto_analisi_loading:'Riconosco ingredienti e bottiglie…',
@@ -3457,7 +3457,7 @@ function apriCrea(){
     +   '<span class="crea-card-arr">→</span></button>'
     + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){apriFlavour();},120)">'
     +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="17" r="3" stroke="currentColor" stroke-width="2"/><path d="M9.5 9.5l5 5" stroke="currentColor" stroke-width="2"/></svg></div>'
-    +   '<div class="crea-card-txt"><div class="crea-card-t">Da abbinamento</div><div class="crea-card-d">Parti da un ingrediente, scopri cosa gli sta bene</div></div>'
+    +   '<div class="crea-card-txt"><div class="crea-card-t">Da abbinamento</div><div class="crea-card-d">Composti aromatici condivisi e affinità molecolare</div></div>'
     +   '<span class="crea-card-arr">→</span></button>'
     + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){apriMenuBuilder();},120)">'
     +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
