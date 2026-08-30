@@ -6271,6 +6271,7 @@ def admin_genera_didattica():
         return jsonify({"errore": "non autorizzato"}), 403
     import re as _re
     from ai import _haiku_raw
+    from ai_gateway import route_quality as _quiz_raw
     from contenuto import _numero_bersaglio as _nb, _scheda_lang
     try:
         offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 8)), 15)
@@ -6331,8 +6332,13 @@ def admin_genera_didattica():
                                f'{{"domanda":"...","opzioni":["corretta","sbagliata","sbagliata"],'
                                f'"insight":"spiegazione con il numero esatto"}}. '
                                f"La prima opzione è la corretta.")
-                raw = (_haiku_raw(prompt_quiz, max_tokens=300) or "").strip()
-                raw = _re.sub(r"^```json|```$", "", raw).strip()
+                raw = (_quiz_raw(prompt_quiz, max_tokens=400) or "").strip()
+                # estrazione JSON robusta: Haiku a volte avvolge in markdown o testo.
+                # prendo il primo blocco {...} bilanciato.
+                raw = _re.sub(r"```json|```", "", raw).strip()
+                m_json = _re.search(r"\{.*\}", raw, _re.DOTALL)
+                if m_json:
+                    raw = m_json.group(0)
                 try:
                     qj = json.loads(raw)
                     dom = qj.get("domanda", ""); opz = qj.get("opzioni", []); ins = qj.get("insight", "")

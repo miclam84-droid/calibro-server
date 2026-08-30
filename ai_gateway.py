@@ -485,6 +485,31 @@ def route_fast(prompt, max_tokens=600, temperature=0):
         return None
 
 
+def route_quality(prompt, max_tokens=600, temperature=0):
+    """Route per generazioni che richiedono qualità/JSON affidabile (es. quiz didattici).
+    Provider: Sonnet (JSON pulito, molto più affidabile di Haiku) → fallback Haiku.
+    Usa quando la struttura dell'output conta più del costo (generazione una-tantum)."""
+    for attempt in range(2):
+        try:
+            messages = [{"role": "user", "content": prompt}]
+            data, _ = _anthropic_call(
+                _MODEL_SONNET, messages,
+                max_tokens=max_tokens, temperature=temperature
+            )
+            out = "".join(
+                b.get("text", "") for b in data.get("content", [])
+                if b.get("type") == "text"
+            )
+            if out:
+                return _sanitize(out)
+        except Exception as e:
+            print(f"[GW] Sonnet quality attempt {attempt+1} fallito: {e}", flush=True)
+            if attempt == 0:
+                time.sleep(2)
+    # fallback Haiku
+    return route_fast(prompt, max_tokens=max_tokens, temperature=temperature)
+
+
 def route_free(prompt, max_tokens=600):
     """Route SOLO su provider gratuiti (Mistral free → Gemini free).
     Per compiti economici/non critici (es. completamento abbinamenti) dove non
