@@ -3462,6 +3462,10 @@ function apriCrea(){
     + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){apriMenuBuilder();},120)">'
     +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
     +   '<div class="crea-card-txt"><div class="crea-card-t">Da menu</div><div class="crea-card-d">Costruisci un menu completo dai tuoi ingredienti</div></div>'
+    +   '<span class="crea-card-arr">→</span></button>'
+    + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){creaMenuDaFoto();},120)">'
+    +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><rect x="3" y="6" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/><path d="M8 6l1.5-2h5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
+    +   '<div class="crea-card-txt"><div class="crea-card-t">Da foto</div><div class="crea-card-d">Fotografa gli ingredienti, Matter li riconosce e trova gli abbinamenti</div></div>'
     +   '<span class="crea-card-arr">→</span></button>';
   _apriVista('Crea', html);
 }
