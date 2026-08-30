@@ -340,7 +340,7 @@ var _PORTE = {
                 {t:'Principi', d:'Le leggi fisiche di fondo', act:function(){switchMappaTab('principi');}},
                 {t:'Tecniche Avanzate', d:'Fat washing, koji, nixtamal…', act:function(){if(typeof apriAvanzate==='function')apriAvanzate();}} ]},
   usare:    { label:'Usare',    sub:'Come si fa al banco', voci:[
-                {t:'Ricette', d:'Con i numeri-bersaglio', act:function(){switchMappaTab('ricette');}},
+                {t:'Ricettario', d:'454 ricette certificate', act:function(){if(typeof apriRicettario==='function')apriRicettario();}},
                 {t:'Strumenti', d:'Cosa serve per misurare', act:function(){switchMappaTab('strumenti');}} ]},
   creare:   { label:'Creare',   sub:'Combina e scopri', voci:[
                 {t:'Flavour Network', d:'Con cosa dialoga un ingrediente', act:function(){if(typeof apriFlavour==='function')apriFlavour();}},
@@ -6082,6 +6082,66 @@ function _pontiDolce(d){
 
 /* ═══════════════ 3. MENU BUILDER ═══════════════ */
 let _menuIngredienti = [];
+// ═══ RICETTARIO DEI PROFESSIONISTI — le 454 ricette certificate (separato dal Quaderno) ═══
+var _ricettarioDisc = null;
+async function apriRicettario(){
+  _apriVista('Ricettario dei Professionisti',
+    '<div class="ric-search"><input type="text" id="ricp-q" placeholder="Cerca tra le 454 ricette certificate…" onkeydown="if(event.key===\'Enter\')_ricettarioCerca()"><button onclick="_ricettarioCerca()">Cerca</button></div>'
+    + '<div class="ric-disc-chips" id="ricp-chips"></div>'
+    + '<div id="ricp-out"><div class="calc-loading">Carico il ricettario…</div></div>');
+  try{
+    var r=await fetch('/v1/ricettario/discipline');
+    var j=await r.json();
+    _ricettarioDisc=j.discipline||[];
+    var e=_escV;
+    var chips=document.getElementById('ricp-chips');
+    if(chips){
+      chips.innerHTML=(j.discipline||[]).map(function(d){
+        return '<span class="ric-disc-chip" onclick="_ricettarioDisciplina(\''+e(d.disciplina)+'\',this)">'+e(d.disciplina)+' <span class="ric-disc-n">'+d.n+'</span></span>';
+      }).join('');
+    }
+    // carico la prima disciplina di default
+    if((j.discipline||[]).length){ _ricettarioDisciplina(j.discipline[0].disciplina, null); }
+  }catch(e){ var o=document.getElementById('ricp-out'); if(o) o.innerHTML='<div class="vista-empty">Errore di rete.</div>'; }
+}
+async function _ricettarioDisciplina(disc, chip){
+  document.querySelectorAll('.ric-disc-chip').forEach(function(c){ c.classList.remove('on'); });
+  if(chip) chip.classList.add('on');
+  else { var first=document.querySelector('.ric-disc-chip'); if(first) first.classList.add('on'); }
+  _ricettarioCarica('disciplina='+encodeURIComponent(disc));
+}
+function _ricettarioCerca(){
+  var q=(document.getElementById('ricp-q')||{}).value||'';
+  if(!q.trim()){ return; }
+  document.querySelectorAll('.ric-disc-chip').forEach(function(c){ c.classList.remove('on'); });
+  _ricettarioCarica('q='+encodeURIComponent(q.trim()));
+}
+async function _ricettarioCarica(query){
+  var out=document.getElementById('ricp-out'); if(out) out.innerHTML='<div class="calc-loading">Carico…</div>';
+  try{
+    var r=await fetch('/v1/ricettario/canonico?'+query+'&limit=30');
+    var j=await r.json();
+    var ric=j.ricette||[];
+    var e=_escV;
+    if(!ric.length){ out.innerHTML='<div class="vista-empty">Nessuna ricetta trovata.</div>'; return; }
+    out.innerHTML='<div class="ricp-griglia">'+ric.map(function(x){
+      var img='';
+      if(x.immagine){
+        if(x.immagine.tipo==='foto' && x.immagine.url){ img='<img src="'+e(x.immagine.url)+'" alt="" loading="lazy">'; }
+        else if(x.immagine.tipo==='blueprint' && x.immagine.famiglia){ img='<img src="/static/blueprints/'+e(x.immagine.famiglia)+'.svg" alt="" loading="lazy">'; }
+      }
+      return '<div class="ricp-card" onclick="_ricettarioApri(\''+e(x.id)+'\',\''+e(String(x.nome)).replace(/'/g,"\\'")+'\')">'
+        + '<div class="ricp-img">'+img+(x.certificata?'<span class="ricp-cert">✓ Lab</span>':'')+'</div>'
+        + '<div class="ricp-nome">'+e(x.nome||'')+'</div>'
+        + (x.fenomeno?'<div class="ricp-fen">'+e(x.fenomeno)+'</div>':'')
+        + '</div>';
+    }).join('')+'</div>';
+  }catch(e){ if(out) out.innerHTML='<div class="vista-empty">Errore.</div>'; }
+}
+function _ricettarioApri(id, nome){
+  // apre la scheda scientifica della ricetta canonica
+  if(typeof apriNodo==='function' && id){ chiudiVista(); apriNodo(id, nome||''); }
+}
 // ═══ RIUSO SCARTI / cross-utilization (#2) ═══
 async function apriScarti(){
   _apriVista('Recupera gli scarti',

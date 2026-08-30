@@ -1150,10 +1150,10 @@ if('serviceWorker' in navigator){
 // Cookie banner GDPR
 function _getCookie(n){return document.cookie.split(';').map(c=>c.trim()).find(c=>c.startsWith(n+'='))?.split('=')[1]}
 function _setCookie(n,v,days){const d=new Date();d.setTime(d.getTime()+days*864e5);document.cookie=n+'='+v+';expires='+d.toUTCString()+';path=/;SameSite=Lax'}
-function accettaCookie(){_setCookie('matter_consent','accepted',365);try{localStorage.setItem('matter_consent','accepted')}catch(e){}document.getElementById('cookie-banner').style.display='none'}
-function rifiutaCookie(){_setCookie('matter_consent','essential',365);try{localStorage.setItem('matter_consent','essential')}catch(e){}document.getElementById('cookie-banner').style.display='none'}
+function accettaCookie(){_setCookie('matter_consent','accepted',365);try{localStorage.setItem('matter_consent','accepted');localStorage.setItem('matter_cookie_accepted','true')}catch(e){}document.getElementById('cookie-banner').style.display='none'}
+function rifiutaCookie(){_setCookie('matter_consent','essential',365);try{localStorage.setItem('matter_consent','essential');localStorage.setItem('matter_cookie_accepted','true')}catch(e){}document.getElementById('cookie-banner').style.display='none'}
 // mostra banner se non c'è consenso (controlla cookie E localStorage)
-var _consent = _getCookie('matter_consent') || (function(){try{return localStorage.getItem('matter_consent')}catch(e){return null}})();
+var _consent = _getCookie('matter_consent') || (function(){try{return localStorage.getItem('matter_consent')||localStorage.getItem('matter_cookie_accepted')}catch(e){return null}})();
 if(!_consent){setTimeout(()=>{document.getElementById('cookie-banner').style.display='flex'},1000)}
 </script>
 

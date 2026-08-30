@@ -2427,3 +2427,22 @@ a:focus-visible,input:focus-visible{
 .rg-immagine{margin:0 0 16px;border:1px solid var(--border,#B7C3C3);border-radius:12px;overflow:hidden;position:relative;background:#F7F5F0;box-shadow:3px 3px 0 rgba(20,29,34,.1)}
 .rg-immagine img{display:block;width:100%;height:auto}
 .rg-img-credito,.rg-img-fam{position:absolute;bottom:6px;right:8px;font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#5A6C70);background:rgba(247,245,240,.85);padding:2px 7px;border-radius:5px}
+
+/* ═══ RICETTARIO DEI PROFESSIONISTI (#1) ═══ */
+.ric-search{display:flex;gap:8px;margin-bottom:14px}
+.ric-search input{flex:1;min-height:46px;border:1px solid var(--border,#B7C3C3);border-radius:10px;padding:0 14px;font-family:var(--sans,'Inter');font-size:14px;color:var(--ink,#141D22);background:var(--l3,#F2F6F6)}
+.ric-search input:focus{outline:none;border-color:var(--dato,#245979)}
+.ric-search button{min-height:46px;padding:0 16px;border:none;border-radius:10px;background:var(--teal,#12545D);color:#fff;font-family:var(--sans,'Inter');font-weight:600;font-size:14px;cursor:pointer}
+.ric-disc-chips{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:16px;padding-bottom:4px}
+.ric-disc-chips::-webkit-scrollbar{display:none}
+.ric-disc-chip{flex:0 0 auto;min-height:38px;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border,#B7C3C3);border-radius:19px;background:var(--l2,#E8EDED);font-family:var(--sans,'Inter');font-size:13px;color:var(--ink,#141D22);cursor:pointer;white-space:nowrap;text-transform:capitalize}
+.ric-disc-chip.on{background:var(--teal,#12545D);color:#fff;border-color:var(--teal,#12545D)}
+.ric-disc-n{font-family:var(--mono,'IBM Plex Mono');font-size:10px;opacity:.7}
+.ricp-griglia{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ricp-card{background:var(--l2,#E8EDED);border:1px solid var(--border,#B7C3C3);border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:3px 3px 0 rgba(20,29,34,.08);transition:transform .15s ease}
+.ricp-card:active{transform:scale(.98)}
+.ricp-img{position:relative;background:#F7F5F0;aspect-ratio:16/10;overflow:hidden}
+.ricp-img img{width:100%;height:100%;object-fit:cover;display:block}
+.ricp-cert{position:absolute;top:6px;left:6px;font-family:var(--mono,'IBM Plex Mono');font-size:8px;font-weight:700;letter-spacing:.04em;color:#fff;background:var(--teal,#12545D);padding:2px 6px;border-radius:4px}
+.ricp-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:13.5px;color:var(--ink,#141D22);line-height:1.2;padding:10px 12px 3px}
+.ricp-fen{font-family:var(--mono,'IBM Plex Mono');font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--teal,#12545D);padding:0 12px 12px}
