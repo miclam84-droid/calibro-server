@@ -6158,6 +6158,30 @@ function _ricettarioApri(id, nome){
   if(typeof apriNodo==='function' && id){ chiudiVista(); apriNodo(id, nome||''); }
 }
 // ═══ RIUSO SCARTI / cross-utilization (#2) ═══
+// ═══ DOVE LO COMPRO — rendering multi-store (Amazon + Special Ingredients) ═══
+async function _doveComprare(ingrediente, el){
+  if(!ingrediente) return;
+  var esistente = el && el.parentElement ? el.parentElement.querySelector('.store-box') : null;
+  if(esistente){ esistente.remove(); return; }
+  var box=document.createElement('div'); box.className='store-box'; box.innerHTML='<div class="store-loading">Cerco…</div>';
+  if(el && el.parentElement) el.parentElement.appendChild(box);
+  try{
+    var lang=(typeof _lang!=='undefined'?_lang:'it');
+    var r=await fetch('/v1/prodotto?q='+encodeURIComponent(ingrediente)+'&lang='+lang);
+    var j=await r.json();
+    var e=_escV;
+    var stores=j.stores||[];
+    if(!stores.length){ box.innerHTML='<div class="store-vuoto">Nessun negozio trovato.</div>'; return; }
+    var html=stores.map(function(s){
+      return '<a class="store-btn'+(/special/i.test(s.store||'')?' store-special':'')+'" href="'+e(s.url||'#')+'" target="_blank" rel="noopener sponsored">'
+        + '<span class="store-nome">Compra su '+e(s.store||'')+'</span>'
+        + (s.nota?'<span class="store-nota">'+e(s.nota)+'</span>':'')
+        + '</a>';
+    }).join('');
+    if(j.disclosure){ html+='<div class="store-disclosure">'+e(j.disclosure)+'</div>'; }
+    box.innerHTML=html;
+  }catch(e){ box.innerHTML='<div class="store-vuoto">Non riesco a cercare ora.</div>'; }
+}
 async function apriScarti(){
   _apriVista('Recupera gli scarti',
     '<div class="cf-intro">Ogni scarto è un ingrediente che non hai ancora usato. Matter Bench ti dice come riusarlo e per quanti giorni.</div>'
@@ -6179,6 +6203,7 @@ async function apriScarti(){
         + '<div class="scarto-riusi">'+riusi+'</div>'
         + '<div class="scarto-foot">'
         +   (s.shelf_giorni?'<span class="scarto-shelf">entro '+e(String(s.shelf_giorni))+' giorni</span>':'')
+        +   '<span class="scarto-compra" onclick="_doveComprare(\''+e(String(s.scarto||'')).replace(/'/g,"\\'")+'\',this)">Dove lo compro</span>'
         +   (s.fenomeno_id?'<span class="scarto-link" onclick="chiudiVista();apriNodo(\''+e(s.fenomeno_id)+'\',\'\')">la scienza →</span>':'')
         + '</div>'
         + '</div>';
