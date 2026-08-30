@@ -12,14 +12,16 @@ import ai_gateway as GW
 _TOOLS = [
     {
         "name": "calcola",
-        "description": "Esegui un calcolo deterministico esatto (diluizione, bilanciamento sour, idratazione pane, Q10, estrazione caffe, pareggiamento acidita). Usa questo tool quando la domanda contiene numeri propri dell'utente.",
+        "description": "Esegui un calcolo deterministico esatto. Usa questo tool quando la domanda contiene numeri propri dell'utente (ml, gradi, grammi, Brix, temperatura...). Restituisce numero + interpretazione + leva d'azione.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "calcolo": {
                     "type": "string",
-                    "enum": ["diluizione","bilanciamento_sour","idratazione_pane","q10_fermentazione","estrazione_caffe","pareggia_acidita"],
-                    "description": "Il tipo di calcolo da eseguire"
+                    "enum": ["diluizione","bilanciamento_sour","idratazione_pane","q10_fermentazione",
+                             "estrazione_caffe","pareggia_acidita","scalatore_impasto","conversione_teglie",
+                             "food_cost_piatto","temperatura_servizio_vino","brix_to_abv"],
+                    "description": "Il tipo di calcolo: diluizione cocktail, bilanciamento sour, idratazione pane, Q10 fermentazione, estrazione caffè, pareggia acidità, scalatore impasto, conversione teglie, food cost piatto, temperatura servizio vino, Brix→ABV"
                 },
                 "parametri": {
                     "type": "object",
