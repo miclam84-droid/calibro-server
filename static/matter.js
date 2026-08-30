@@ -3828,8 +3828,10 @@ function mbScegliCategoria(cat, label){
   document.getElementById('mm-title').textContent = label;
   document.getElementById('mm-cat-lab').textContent = label;
   var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
-  // carta vini/birre: non parte dagli ingredienti fotografati — vai dritto al builder
-  if(cat==='carta_vini' || cat==='carta_birre'){ creaMenu(); return; }
+  // carta vini: passa dalla FILOSOFIA (brief → filo conduttore → crea)
+  if(cat==='carta_vini'){ apriCartaFilosofia(); return; }
+  // carta birre: dritto al builder
+  if(cat==='carta_birre'){ creaMenu(); return; }
   document.getElementById('menu-modo').classList.remove('hidden');
 }
 function chiudiModo(){ document.getElementById('menu-modo').classList.add('hidden'); }
@@ -4666,7 +4668,8 @@ async function esportaMenu(){
   try{
     var accent=(document.getElementById('ma-brand-accent')||{}).value||'#245979';
     var r=await fetch('/v1/menu/crea', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
-      body:JSON.stringify({titolo:menu.nome||'Menu', locale:menu.locale||'', lingua:(typeof _lang!=='undefined'?_lang:'it'), voci:voci})});
+      body:JSON.stringify(Object.assign({titolo:menu.nome||'Menu', locale:menu.locale||'', lingua:(typeof _lang!=='undefined'?_lang:'it'), voci:voci},
+        window._filosofiaCorrente ? {tipo_menu:'wine', filosofia:window._filosofiaCorrente.filosofia_riassunto, tema_grafico:window._filosofiaCorrente.tema_grafico} : {}))});
     var j=await r.json();
     if(!j || !j.id){ var bd=document.getElementById('vista-body'); if(bd) bd.innerHTML='<div class="quad-empty"><b>Non riesco a creare il menu</b><span>Riprova tra poco.</span></div>'; return; }
     _mostraMenuPronto(j.id, accent.replace('#',''));
@@ -4677,6 +4680,7 @@ async function esportaMenu(){
 function _mostraMenuPronto(id, accent){
   var base='/v1/menu/'+encodeURIComponent(id);
   var pdfUrl=base+'/pdf?accent='+encodeURIComponent(accent||'245979');
+  if(window._filosofiaCorrente && window._filosofiaCorrente.tema_grafico){ pdfUrl += '&tema='+encodeURIComponent(window._filosofiaCorrente.tema_grafico); }
   var qrUrl=base+'/qr';
   var html=
     '<div class="mp-intro">Il tuo menu \u00e8 salvato. Tre modi per usarlo al banco.</div>'
@@ -6037,6 +6041,53 @@ function _pontiDolce(d){
 
 /* ═══════════════ 3. MENU BUILDER ═══════════════ */
 let _menuIngredienti = [];
+// ═══ CARTA VINI — flusso filosofia (brief → filo conduttore → crea) ═══
+var _cartaFilosofia = null;
+function apriCartaFilosofia(){
+  _apriVista('La tua carta dei vini',
+    '<div class="cf-intro">Prima dei vini, il <b>filo conduttore</b>. Raccontami il locale: Matter Bench costruisce la filosofia che tiene insieme la carta.</div>'
+    + '<div class="calc-form">'
+    + '<div class="calc-field"><label>Che locale è (vibe)</label><input type="text" id="cf-vibe" placeholder="es. bistrot di mare, osteria moderna…"></div>'
+    + '<div class="calc-field"><label>Territorio</label><input type="text" id="cf-terr" placeholder="es. Costiera Amalfitana, Langhe…"></div>'
+    + '<div class="calc-field"><label>Filo conduttore</label><input type="text" id="cf-filo" placeholder="es. agrumi e affumicato, montagna e selvaggina…"></div>'
+    + '<div class="calc-field"><label>Tema grafico del PDF</label><select id="cf-tema" class="calc-select">'
+    +   '<option value="enoteca-classica">Enoteca classica (elegante)</option>'
+    +   '<option value="minimal-blueprint">Minimal blueprint (tecnico)</option>'
+    +   '<option value="gastro-bistrot">Gastro bistrot (moderno)</option>'
+    + '</select></div>'
+    + '<button class="calc-go" onclick="_generaFilosofia()">Genera il filo conduttore</button>'
+    + '</div><div id="cf-out"></div>');
+}
+async function _generaFilosofia(){
+  var vibe=(document.getElementById('cf-vibe')||{}).value||'';
+  var terr=(document.getElementById('cf-terr')||{}).value||'';
+  var filo=(document.getElementById('cf-filo')||{}).value||'';
+  var tema=(document.getElementById('cf-tema')||{}).value||'enoteca-classica';
+  if(!vibe.trim() && !terr.trim()){ _toast('Dimmi almeno il vibe o il territorio'); return; }
+  var out=document.getElementById('cf-out'); if(out) out.innerHTML='<div class="calc-loading">Costruisco la filosofia…</div>';
+  try{
+    var r=await fetch('/v1/menu/filosofia', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({vibe:vibe.trim(), territorio:terr.trim(), filo_conduttore:filo.trim(), tipo_menu:'wine', stagione:'', fascia_prezzo:'media'})});
+    var j=await r.json();
+    var e=_escV;
+    _cartaFilosofia = {filosofia_riassunto:j.filosofia_riassunto||'', regola_di_coerenza:j.regola_di_coerenza||'', tema_grafico:tema, macro:j.macro_ingredienti_target||[]};
+    var macro=(j.macro_ingredienti_target||[]).map(function(m){ return '<span class="cf-macro">'+e(m)+'</span>'; }).join('');
+    if(out) out.innerHTML=
+      '<div class="cf-filosofia">'
+      + '<div class="cf-fil-lab">Il filo conduttore</div>'
+      + '<div class="cf-fil-testo">'+e(j.filosofia_riassunto||'')+'</div>'
+      + (j.regola_di_coerenza?'<div class="cf-regola"><span class="cf-regola-lab">Regola di coerenza</span>'+e(j.regola_di_coerenza)+'</div>':'')
+      + (macro?'<div class="cf-macro-wrap">'+macro+'</div>':'')
+      + '<button class="calc-go" onclick="_cartaProsegui()">Aggiungi i vini →</button>'
+      + '</div>';
+  }catch(e){ if(out) out.innerHTML='<div class="calc-err">Errore. Riprova.</div>'; }
+}
+function _cartaProsegui(){
+  // porta al builder normale, con la filosofia salvata (usata in creaMenu/esporta)
+  _mbCategoria='carta_vini';
+  window._filosofiaCorrente = _cartaFilosofia;
+  creaMenu();
+}
 function apriMenuBuilder(){
   _menuIngredienti = [];
   _apriVista('Menu Lab',

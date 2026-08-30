@@ -2386,3 +2386,15 @@ a:focus-visible,input:focus-visible{
 .mirino-verdetto{margin-top:8px;text-align:center;font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px;border-radius:6px}
 .mirino-verdetto.centrato{color:#8a5a2b;background:rgba(199,123,63,.14)}
 .mirino-verdetto.fuori{color:var(--muted,#5A6C70);background:var(--l2,#E8EDED)}
+
+/* ═══ CARTA VINI — filosofia (§4 Menu Builder) ═══ */
+.cf-intro{font-size:14px;color:var(--ink-muted,#3D4A50);line-height:1.55;margin-bottom:18px}
+.cf-filosofia{background:var(--ink,#141D22);border-radius:14px;padding:20px;box-shadow:3px 3px 0 rgba(20,29,34,.14)}
+.cf-fil-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8935A;margin-bottom:10px}
+.cf-fil-testo{font-family:var(--sans,'Inter');font-size:15px;color:#EAF1F3;line-height:1.6;margin-bottom:14px}
+.cf-regola{background:rgba(255,255,255,.06);border-left:3px solid var(--teal,#12545D);border-radius:0 8px 8px 0;padding:11px 14px;margin-bottom:12px}
+.cf-regola-lab{display:block;font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7FC5D0;margin-bottom:4px}
+.cf-regola{font-size:13.5px;color:#CBD6DA;line-height:1.5}
+.cf-macro-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.cf-macro{font-family:var(--sans,'Inter');font-size:12px;color:#EAF1F3;background:rgba(255,255,255,.1);padding:5px 11px;border-radius:14px}
+.cf-filosofia .calc-go{background:#E8935A;color:#241109}
