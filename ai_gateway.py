@@ -463,10 +463,19 @@ def route_chat(prompt, tools=None, history=None):
     """
     import motore as Motore
 
+    # CACHING: separo le regole statiche (grandi, ripetute) dal contesto dinamico.
+    # Le regole vanno in system con cache_control → -90% sul loro costo dopo la prima chiamata.
+    _system_cache = None
+    _prompt_msg = prompt
+    if "CONTESTO DAL GRAFO:" in prompt:
+        _parti = prompt.split("CONTESTO DAL GRAFO:", 1)
+        _system_cache = _parti[0].strip()          # le regole (statiche → cachate)
+        _prompt_msg = "CONTESTO DAL GRAFO:" + _parti[1]  # contesto + domanda (dinamico)
+
     messages = []
     if history:
         messages.extend(history[-6:])  # max 3 scambi precedenti
-    messages.append({"role": "user", "content": prompt})
+    messages.append({"role": "user", "content": _prompt_msg})
 
     # ── ROUTING PER DIFFICOLTÀ ──────────────────────────────────────────────
     # Domanda semplice/informativa (nessuna unità di misura, nessun calcolo):
@@ -484,7 +493,7 @@ def route_chat(prompt, tools=None, history=None):
         data, _ = _anthropic_call(
             _MODEL_SONNET, messages,
             max_tokens=1500, temperature=0,
-            tools=tools
+            tools=tools, system=_system_cache
         )
 
         # gestione tool_use
@@ -514,7 +523,7 @@ def route_chat(prompt, tools=None, history=None):
             ]
             data2, _ = _anthropic_call(
                 _MODEL_SONNET, messages2,
-                max_tokens=1500, temperature=0
+                max_tokens=1500, temperature=0, system=_system_cache
             )
             out = "".join(
                 b.get("text", "") for b in data2.get("content", [])
