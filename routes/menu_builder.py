@@ -628,13 +628,28 @@ def menu_pdf(mid):
     if accent_custom and len(accent_custom) in (3, 6) and all(ch in "0123456789abcdefABCDEF" for ch in accent_custom):
         tpl["accent"] = "#" + accent_custom
         tpl["linea"] = "#" + accent_custom
+    # personalizzazione LIBERA aggiuntiva: sfondo, testo, linea, font (indipendenti dal template)
+    for _par, _key in (("bg", "bg"), ("ink", "ink"), ("linea", "linea")):
+        _v = request.args.get(_par, "").strip().lstrip("#")
+        if _v and len(_v) in (3, 6) and all(ch in "0123456789abcdefABCDEF" for ch in _v):
+            tpl[_key] = "#" + _v
+    _font_req = request.args.get("font", "").strip().lower()  # serif | sans | mono
+    if _font_req in ("serif", "sans", "mono"):
+        tpl["font"] = {"serif": "Georgia, serif", "sans": "Helvetica, sans-serif",
+                       "mono": "'IBM Plex Mono', monospace"}[_font_req]
     footer_custom = request.args.get("footer", "").strip()
     logo_url = request.args.get("logo", "").strip()
 
     ACCENT = HexColor(tpl["accent"]); INK = HexColor(tpl["ink"]); LINEA = HexColor(tpl["linea"])
-    is_serif = "serif" in tpl["font"].lower() or "georgia" in tpl["font"].lower()
-    font_titolo = "Times-Bold" if is_serif else "Helvetica-Bold"
-    font_body = "Times-Roman" if is_serif else "Helvetica"
+    _fl = tpl["font"].lower()
+    is_serif = "serif" in _fl or "georgia" in _fl or "times" in _fl
+    is_mono = "mono" in _fl or "plex mono" in _fl or "courier" in _fl
+    if is_mono:
+        font_titolo = "Courier-Bold"; font_body = "Courier"
+    elif is_serif:
+        font_titolo = "Times-Bold"; font_body = "Times-Roman"
+    else:
+        font_titolo = "Helvetica-Bold"; font_body = "Helvetica"
 
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4, topMargin=20*mm, bottomMargin=18*mm,
