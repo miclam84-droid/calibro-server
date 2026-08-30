@@ -290,17 +290,18 @@ def chiedi():
                 return jsonify({"risposta": _guide[_k], "trovato": ["Come si usa Matter"],
                                 "connessi": [], "trial": {}, "_tipo": "guida"})
 
-    _kw_app = ["cosa posso fare","cosa fai","cosa puoi fare","cosa sai fare","come funziona",
-               "a cosa servi","a cosa serve","come si usa","come funzione","cosa sai",
-               "cosa sei","cosa fa quest","cosa fa l'app","cosa fa questa app","che strumenti",
-               "come ti uso","come inizio","da dove inizio","chi sei","help","che cosa sai",
-               "aiutami a capire","spiegami l'app","cosa offri","cosa contiene","che funzioni"]
-    # router robusto: coglie anche le varianti meta ("cosa sai fare", "che puoi fare"...)
-    _e_meta = any(k in _dl for k in _kw_app) or (
-        ("cosa" in _dl or "che" in _dl or "come" in _dl) and
-        any(v in _dl for v in ["sai fare","puoi fare","sai","fai tu","offri","strument","funzion","servi"])
-        and len(_dl) < 60
-    )
+    # router meta: scatta SOLO per domande generiche sull'app, NON se citano un argomento specifico.
+    # "come funziona?" → meta. "come funziona il fat washing?" → scienza (ha un target dopo).
+    _kw_meta_pure = ["cosa sai fare","cosa puoi fare","cosa fai","cosa sai","chi sei","cosa sei",
+                     "a cosa servi","a cosa serve","come ti uso","da dove inizio","da dove comincio",
+                     "help","aiutami a capire","spiegami l'app","cosa offri","che strumenti hai",
+                     "che funzioni","cosa contiene l'app","cosa fa l'app","cosa fa questa app",
+                     "cosa posso fare qui","come si usa l'app","come funziona l'app"]
+    _dl_strip = _dl.strip().rstrip("?!.").strip()
+    # match esatto o quasi-esatto (la domanda È una di queste, non le contiene solo)
+    _e_meta = _dl_strip in _kw_meta_pure or any(
+        _dl_strip == k or _dl_strip.startswith(k) and len(_dl_strip) < len(k) + 8
+        for k in _kw_meta_pure)
     if _e_meta:
         _st = _stats_grafo()
         _nf, _nt, _nr = _st["fenomeni"], _st["tecniche"], _st["ricette"]
