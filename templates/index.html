@@ -738,20 +738,19 @@ if('serviceWorker' in navigator){
            style="display:none" onchange="inviaFoto(this)">
     <!-- Badge contesto: mostra da quale scheda arriva la domanda -->
     <div id="chat-contesto-badge" style="display:none" onclick="window._chatContesto=null;this.style.display='none';"></div>
-    <!-- Riga input: campo testo + bottone invio -->
+    <!-- Riga input: fotocamera + campo testo + bottone invio -->
     <div class="ask-input-row">
+      <button class="ask-cam-inline" id="btn-camera" onclick="document.getElementById('foto-input').click()" title="Fotografa gli ingredienti" aria-label="Foto">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13.5" r="3.5" stroke="currentColor" stroke-width="2"/><path d="M8 7l1.2-2h5.6L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
       <span class="ask-prompt">&gt;</span>
       <input class="ask-input" id="q" placeholder="Scrivi un problema al banco (es. ganache separata)…" autocomplete="off" onkeydown="if(event.key==='Enter')invia()">
       <button class="ask-btn" id="ask-btn" onclick="invia()" aria-label="Invia">
         <i class="ph ph-arrow-up" aria-hidden="true"></i>
       </button>
     </div>
-    <!-- Riga media: fotocamera e microfono -->
+    <!-- Riga media: microfono -->
     <div class="ask-media-row">
-      <button class="ask-ico-btn" id="btn-camera" onclick="document.getElementById('foto-input').click()"
-              title="Fotografa scheda tecnica, etichetta o piatto">
-        <i class="ph ph-camera" aria-hidden="true"></i><span>Foto</span><span class="pro-badge">PRO</span>
-      </button>
       <button class="ask-ico-btn" id="btn-mic" onclick="toggleMic()"
               title="Parla al banco — chiedi con la voce">
         <i class="ph ph-microphone" aria-hidden="true"></i><span>Voce</span>
