@@ -3,7 +3,7 @@
 # Route spostate da app.py senza modifiche di comportamento
 # (@app.route -> @bp.route). Dipende solo da flask + db.
 # ============================================================
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 import time
 
 from db import carica_grafo
@@ -64,6 +64,51 @@ def health():
         return jsonify({"status": "ok", "nodi": nodi, "ts": time.time()})
     except Exception as e:
         return jsonify({"status": "error", "detail": str(e)}), 500
+
+@bp.route("/health/check")
+def health_check():
+    """Health ESTESO per osservabilità: DB, provider AI, conteggi chiave.
+    Protetto da chiave (?s=ADMIN_SECRET) perché espone dettagli interni.
+    Un solo colpo d'occhio sullo stato del sistema per un founder solo."""
+    import os as _os, hmac as _hmac
+    if not _hmac.compare_digest(str(request.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    stato = {"ts": time.time(), "componenti": {}}
+    problemi = []
+    # 1) DB + latenza
+    try:
+        _t0 = time.time()
+        db = carica_grafo()
+        r = db.execute("SELECT count(*) as n FROM nodes").fetchone()
+        lat = round((time.time() - _t0) * 1000, 1)
+        stato["componenti"]["db"] = {"ok": True, "latenza_ms": lat, "nodi": r["n"] if r else 0}
+        if lat > 2000:
+            problemi.append(f"DB lento ({lat}ms)")
+    except Exception as e:
+        stato["componenti"]["db"] = {"ok": False, "errore": str(e)[:100]}
+        problemi.append("DB non raggiungibile")
+    # 2) provider AI configurati (presenza chiavi, non chiamate — per non spendere)
+    for prov, env in [("anthropic", "ANTHROPIC_API_KEY"), ("openai", "OPENAI_API_KEY"),
+                      ("mistral", "MISTRAL_API_KEY"), ("gemini", "GEMINI_API_KEY")]:
+        ok = bool(_os.environ.get(env))
+        stato["componenti"][prov] = {"configurato": ok}
+        if not ok:
+            problemi.append(f"{prov} senza chiave")
+    # 3) conteggi chiave (per accorgersi se il DB si svuota)
+    try:
+        db = carica_grafo()
+        fen = db.execute("SELECT count(*) as n FROM nodes WHERE type='Fenomeno'").fetchone()
+        ric = db.execute("SELECT count(*) as n FROM ricette").fetchone()
+        stato["componenti"]["contenuti"] = {
+            "fenomeni": fen["n"] if fen else 0, "ricette": ric["n"] if ric else 0}
+        if (fen["n"] if fen else 0) < 100:
+            problemi.append("pochi fenomeni nel DB")
+    except Exception:
+        pass
+    stato["status"] = "ok" if not problemi else "degradato"
+    stato["problemi"] = problemi
+    return jsonify(stato), (200 if not problemi else 503)
+
 
 @bp.route("/static/sw.js")
 def sw():
