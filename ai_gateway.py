@@ -122,7 +122,7 @@ def _sanitize(text):
 
 
 # ── Adapter Anthropic ────────────────────────────────────────────────────────
-def _anthropic_call(model, messages, max_tokens=800, temperature=0, tools=None, system=None):
+def _anthropic_call(model, messages, max_tokens=800, temperature=0, tools=None, system=None, timeout=45):
     """Chiamata grezza all'API Anthropic. Ritorna (data_dict, latency_ms).
     system: se fornito (stringa o lista di blocchi), va nel campo system. Se stringa lunga,
     la marco con cache_control ephemeral per il prompt caching (riduce costi su contenuto ripetuto)."""
@@ -158,7 +158,7 @@ def _anthropic_call(model, messages, max_tokens=800, temperature=0, tools=None, 
         method="POST"
     )
     t0 = time.time()
-    with urllib.request.urlopen(req, timeout=45) as r:
+    with urllib.request.urlopen(req, timeout=timeout) as r:
         data = json.loads(r.read().decode("utf-8"))
     latency = (time.time() - t0) * 1000
 

@@ -657,6 +657,10 @@ def chiedi_stream():
     domanda = (payload.get("domanda") or "").strip()
     device_id = (request.headers.get("X-Device-Id", "") or "").strip()[:80]
     lang = request.args.get("lang", "it")
+    # rate-limit: lo streaming usa Sonnet (costoso). Stesso limite di /chiedi.
+    if not _check_rate_limit_ai(_chiave_rate()):
+        return jsonify({"errore": "troppe_richieste",
+                        "messaggio": "Troppe domande in poco tempo. Aspetta un momento."}), 429
 
     def sse(d):
         import json as _j
