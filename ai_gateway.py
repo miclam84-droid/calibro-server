@@ -162,7 +162,73 @@ def _anthropic_call(model, messages, max_tokens=800, temperature=0, tools=None):
     return data, latency
 
 
-# ── Adapter Mistral ──────────────────────────────────────────────────────────
+def _anthropic_stream(model, messages, max_tokens=1500, temperature=0, tools=None):
+    """Chiamata all'API Anthropic in modalità STREAMING. Generatore che fa yield di dict:
+      {"tipo":"testo", "delta": "..."}          → token di testo man mano
+      {"tipo":"tool_use", "id":.., "name":.., "input":{...}}  → il modello chiama un tool
+      {"tipo":"stop", "stop_reason": ...}       → fine del turno
+    Non tocca _anthropic_call (la chat sincrona resta identica)."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        raise ValueError("ANTHROPIC_API_KEY non configurata")
+    payload = {
+        "model": model, "max_tokens": max_tokens, "temperature": temperature,
+        "messages": messages, "stream": True,
+    }
+    if tools:
+        payload["tools"] = tools
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        _ANTHROPIC_URL, data=body,
+        headers={"x-api-key": key, "anthropic-version": "2023-06-01",
+                 "Content-Type": "application/json", "accept": "text/event-stream"},
+        method="POST")
+    # accumulatori per i blocchi tool_use (input arriva a pezzi JSON)
+    _tool_acc = {}
+    with urllib.request.urlopen(req, timeout=90) as r:
+        for raw in r:
+            line = raw.decode("utf-8", "ignore").strip()
+            if not line or not line.startswith("data:"):
+                continue
+            dato = line[5:].strip()
+            if dato == "[DONE]":
+                break
+            try:
+                ev = json.loads(dato)
+            except Exception:
+                continue
+            etype = ev.get("type", "")
+            if etype == "content_block_start":
+                blk = ev.get("content_block", {})
+                if blk.get("type") == "tool_use":
+                    idx = ev.get("index", 0)
+                    _tool_acc[idx] = {"id": blk.get("id", ""), "name": blk.get("name", ""), "json": ""}
+            elif etype == "content_block_delta":
+                d = ev.get("delta", {})
+                if d.get("type") == "text_delta":
+                    yield {"tipo": "testo", "delta": d.get("text", "")}
+                elif d.get("type") == "input_json_delta":
+                    idx = ev.get("index", 0)
+                    if idx in _tool_acc:
+                        _tool_acc[idx]["json"] += d.get("partial_json", "")
+            elif etype == "content_block_stop":
+                idx = ev.get("index", 0)
+                if idx in _tool_acc:
+                    t = _tool_acc[idx]
+                    try:
+                        t_input = json.loads(t["json"]) if t["json"] else {}
+                    except Exception:
+                        t_input = {}
+                    yield {"tipo": "tool_use", "id": t["id"], "name": t["name"], "input": t_input}
+            elif etype == "message_delta":
+                sr = ev.get("delta", {}).get("stop_reason")
+                if sr:
+                    yield {"tipo": "stop", "stop_reason": sr}
+            elif etype == "message_stop":
+                yield {"tipo": "stop", "stop_reason": "end_turn"}
+
+
+
 def _mistral_call(prompt, max_tokens=None):
     """Chiamata grezza all'API Mistral. Ritorna (testo, latency_ms)."""
     key = os.environ.get("MISTRAL_API_KEY")

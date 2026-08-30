@@ -629,56 +629,87 @@ def chiedi():
 
 @bp.route("/chiedi/stream", methods=["POST"])
 def chiedi_stream():
-    """P8 — Versione STREAMING della chat (Server-Sent Events).
-    Riusa la logica di /chiedi (chiamandola internamente), poi emette la risposta a BLOCCHI
-    progressivi come eventi SSE, così il frontend compone testo + schede man mano.
-    Eventi emessi (ognuno: 'data: {json}\\n\\n'):
-      {tipo:'diagnosi', testo:...}       → il corpo della risposta (scorre)
-      {tipo:'mirino', numero:...}        → il numero-bersaglio (se c'è)
-      {tipo:'widget', widget:'FENOMENO', id:...}  → marcatore scheda fenomeno
-      {tipo:'connessi', voci:[...]}      → approfondimenti
-      {tipo:'done'}                       → fine stream
-    Il frontend, sul widget, chiama /nodo o /calcola al volo (come deciso)."""
-    # ottengo la risposta completa riusando la logica esistente
+    """P8 - STREAMING vero della chat (SSE token-by-token + card + tool-calling).
+    Contratto eventi (data: {json}):
+      {tipo:'status', testo}      -> "Sto cercando..."
+      {tipo:'token', delta}       -> token di testo (scorre)
+      {tipo:'widget', widget:'fenomeno'|'calcolatore', id/dati}  -> card (ID dal SERVER)
+      {tipo:'done'} / {tipo:'error', messaggio}  -> fine / fallback su /chiedi
+    Le card le decide il SERVER (ID reali dal retrieval), MAI il modello -> zero allucinazioni."""
     payload = request.get_json(force=True, silent=True) or {}
     domanda = (payload.get("domanda") or "").strip()
     device_id = (request.headers.get("X-Device-Id", "") or "").strip()[:80]
     lang = request.args.get("lang", "it")
 
+    def sse(d):
+        import json as _j
+        return "data: " + _j.dumps(d, ensure_ascii=False) + "\n\n"
+
     def genera():
         import json as _j
-        import re as _re
         try:
-            # chiamo /chiedi internamente (test_client) per riusare TUTTA la logica esistente
-            # senza rischiare di rifattorizzare il cuore della chat.
-            from flask import current_app
-            with current_app.test_client() as _c:
-                _hdr = {"Content-Type": "application/json"}
-                if device_id:
-                    _hdr["X-Device-Id"] = device_id
-                _resp = _c.post(f"/chiedi?lang={lang}", data=_j.dumps({"domanda": domanda}), headers=_hdr)
-                risultato = _resp.get_json() or {}
-            risposta = risultato.get("risposta") or ""
-            trovato = risultato.get("trovato") or []
-            numero = risultato.get("numero_bersaglio") or ""
-            connessi = risultato.get("connessi") or []
-
-            # 1) DIAGNOSI: emetto il testo a pezzi di frase (effetto scorrimento)
-            if risposta:
-                for pezzo in _re.split(r'(?<=[.!?])\s+', risposta):
-                    if pezzo.strip():
-                        yield f"data: {_j.dumps({'tipo':'diagnosi','testo':pezzo.strip()+' '})}\n\n"
-            # 2) MIRINO: il numero-bersaglio
-            if numero:
-                yield f"data: {_j.dumps({'tipo':'mirino','numero':numero})}\n\n"
-            # 3) CONNESSI: approfondimenti (con i nomi dei fenomeni trovati come widget potenziali)
-            if connessi:
-                yield f"data: {_j.dumps({'tipo':'connessi','voci':connessi[:6]})}\n\n"
-            # 4) FINE
-            yield f"data: {_j.dumps({'tipo':'done','trovato':trovato})}\n\n"
+            import ai_gateway as GW
+            import motore as Motore
+            from ai import _TOOLS
+            yield sse({"tipo": "status", "testo": "Sto cercando nel grafo scientifico..."})
+            db = carica_grafo()
+            contesto = None; fen_ids = []
+            try:
+                from retrieval import retrieval_ranked
+                ranked = retrieval_ranked(db, domanda, termini_extra=estrai_entita(domanda), topk=5)
+                fen_ids = [f["id"] for f in ranked.get("fenomeni", [])]
+                if fen_ids:
+                    nome0 = db.execute("SELECT name FROM nodes WHERE id=?", (fen_ids[0],)).fetchone()
+                    if nome0:
+                        contesto = cerca_contesto(db, nome0["name"], domanda)
+            except Exception:
+                pass
+            if not contesto:
+                contesto = cerca_contesto(db, domanda)
+            prompt = costruisci_prompt(domanda, contesto, lang=lang)
+            for _fn in (lambda: _contesto_ricette_abbinamenti(db, domanda),
+                        lambda: _contesto_memoria_utente(device_id),
+                        lambda: _contesto_knowledge_module(domanda, contesto),
+                        lambda: _contesto_manifest(domanda)):
+                try:
+                    _ex = _fn()
+                    if _ex: prompt += _ex
+                except Exception:
+                    pass
+            messages = [{"role": "user", "content": prompt}]
+            _min = GW._MODEL_SONNET
+            tool_da_eseguire = None
+            yield sse({"tipo": "status", "testo": "Elaboro la risposta..."})
+            for ev in GW._anthropic_stream(_min, messages, max_tokens=1500, tools=_TOOLS):
+                if ev["tipo"] == "testo":
+                    yield sse({"tipo": "token", "delta": ev["delta"]})
+                elif ev["tipo"] == "tool_use":
+                    tool_da_eseguire = ev
+                elif ev["tipo"] == "stop":
+                    break
+            if tool_da_eseguire:
+                calc = tool_da_eseguire["input"].get("calcolo", "")
+                parm = tool_da_eseguire["input"].get("parametri", {})
+                risultato = Motore.esegui(calc, parm)
+                yield sse({"tipo": "widget", "widget": "calcolatore", "calcolo": calc, "dati": risultato})
+                messages2 = messages + [
+                    {"role": "assistant", "content": [{"type": "tool_use",
+                        "id": tool_da_eseguire["id"], "name": tool_da_eseguire["name"],
+                        "input": tool_da_eseguire["input"]}]},
+                    {"role": "user", "content": [{"type": "tool_result",
+                        "tool_use_id": tool_da_eseguire["id"],
+                        "content": _j.dumps(risultato, ensure_ascii=False)}]},
+                ]
+                for ev in GW._anthropic_stream(_min, messages2, max_tokens=1000):
+                    if ev["tipo"] == "testo":
+                        yield sse({"tipo": "token", "delta": ev["delta"]})
+                    elif ev["tipo"] == "stop":
+                        break
+            if fen_ids:
+                yield sse({"tipo": "widget", "widget": "fenomeno", "id": fen_ids[0]})
+            yield sse({"tipo": "done"})
         except Exception as e:
-            yield f"data: {_j.dumps({'tipo':'errore','messaggio':str(e)[:100]})}\n\n"
-            yield f"data: {_j.dumps({'tipo':'done'})}\n\n"
+            yield sse({"tipo": "error", "messaggio": str(e)[:120]})
 
     return Response(stream_with_context(genera()), mimetype="text/event-stream",
                     headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
