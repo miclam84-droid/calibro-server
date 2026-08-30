@@ -3,6 +3,13 @@
 # assistenza, statistiche, migrazione). Auth via ADMIN_SECRET.
 # Dipende da: db, auth, contenuto, notifiche, oss, ai_gateway.
 # ============================================================
+# ⚠️ DEBITO TECNICO NOTO (refactoring POST-LANCIO, non toccare prima):
+#   Questo file è grande (~6.500 righe). Congelato per il lancio: stabile e testato.
+#   PIANO post-lancio: spezzare in moduli per dominio →
+#     admin_fenomeni.py · admin_ricette.py · admin_generazione.py · admin_monitoraggio.py
+#   Auth unificata su _admin_ok() (header X-Admin-Secret o query ?s=). NON spezzare le route ora:
+#   rischio regressioni sui percorsi di import Flask. Prima il lancio, poi il refactoring.
+# ============================================================
 import os, json, traceback, time, hmac
 from flask import Blueprint, request, jsonify
 
