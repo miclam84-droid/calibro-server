@@ -412,6 +412,33 @@ def _interpreta(nome, r):
                 r["fenomeno_id"] = "fen-estrazione-caffe"
     except Exception:
         pass
+    # FRONTEND #1 — campi per l'ago-Mirino: bersaglio, scala, valore corrente, unità.
+    try:
+        _RANGE = {
+            "diluizione":       ("diluizione_perc", 18, 25, 0, 40, "%"),
+            "idratazione_pane": ("idratazione_perc", 55, 75, 40, 100, "%"),
+            "estrazione_caffe": ("ey_perc", 18, 22, 14, 26, "%"),
+            "food_cost_piatto": ("food_cost_perc", 25, 33, 0, 60, "%"),
+            "brix_to_abv":      ("abv_potenziale_perc", 10, 14, 5, 20, "% vol"),
+            "temperatura_servizio_vino": ("temp_target_c", 6, 18, 4, 22, "°C"),
+        }
+        if nome in _RANGE:
+            _campo, _bmin, _bmax, _smin, _smax, _uni = _RANGE[nome]
+            _val = r.get(_campo)
+            if _val is not None:
+                try:
+                    _valf = float(_val)
+                    r["bersaglio_min"] = _bmin
+                    r["bersaglio_max"] = _bmax
+                    r["scala_min"] = _smin
+                    r["scala_max"] = _smax
+                    r["valore_corrente"] = _valf
+                    r["unita_mirino"] = _uni
+                    r["dentro_bersaglio"] = (_bmin <= _valf <= _bmax)
+                except Exception:
+                    pass
+    except Exception:
+        pass
     return r
 
 

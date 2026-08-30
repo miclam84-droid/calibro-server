@@ -544,20 +544,36 @@ def attrezzatura_tecnica(tecnica_id):
 
 @bp.route("/v1/prodotto")
 def prodotto_affiliato():
-    """Link affiliato per un prodotto/ingrediente specializzato. ?q=destrosio+gelateria"""
+    """Link affiliato per un prodotto/ingrediente specializzato. ?q=destrosio+gelateria
+    Restituisce Amazon + Special Ingredients (per additivi/texture: agar, xantana, lecitina...)."""
     query = request.args.get("q", "").strip()
     if not query:
         return jsonify({"errore": "query mancante (?q=...)"}), 400
     from urllib.parse import quote_plus
-    tag = os.environ.get("AMAZON_TAG", "")
     q = quote_plus(query)
-    url = f"https://www.amazon.it/s?k={q}"
+    tag = os.environ.get("AMAZON_TAG", "")
+    tag_special = os.environ.get("SPECIAL_INGREDIENTS_TAG", "")
+    # Special Ingredients: negozio specializzato in additivi/texture per cucina tecnica.
+    # È lo store giusto per idrocolloidi, gelificanti, addensanti (agar, xantana, lecitina, ecc.).
+    _kw_special = ("agar", "xantana", "xanthan", "lecitina", "gellan", "gluco", "calcic",
+                   "alginat", "carragenina", "pectina", "maltodestrina", "destrosio", "isomalto",
+                   "sferificaz", "gelifica", "addensant", "idrocolloid", "citrato", "transglutaminasi")
+    stores = []
+    amazon_url = f"https://www.amazon.it/s?k={q}"
     if tag:
-        url += f"&tag={tag}"
+        amazon_url += f"&tag={tag}"
+    stores.append({"store": "Amazon", "url": amazon_url})
+    if any(k in query.lower() for k in _kw_special):
+        si_url = f"https://www.specialingredients.it/ricerca?controller=search&s={q}"
+        if tag_special:
+            si_url += f"&ref={tag_special}"
+        stores.append({"store": "Special Ingredients", "url": si_url,
+                       "nota": "specializzato in additivi e texture per cucina tecnica"})
     return jsonify({
         "query": query,
-        "url": url,
-        "disclosure": "Link affiliato: acquistando tramite questo link supporti Matter Lab senza costi aggiuntivi."
+        "url": stores[0]["url"],   # retrocompatibile: url singolo = il primo
+        "stores": stores,
+        "disclosure": "Link affiliati: acquistando tramite questi link supporti Matter senza costi aggiuntivi."
     })
 
 
