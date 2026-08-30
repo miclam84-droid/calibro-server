@@ -290,12 +290,18 @@ def chiedi():
                 return jsonify({"risposta": _guide[_k], "trovato": ["Come si usa Matter"],
                                 "connessi": [], "trial": {}, "_tipo": "guida"})
 
-    _kw_app = ["cosa posso fare","cosa fai","cosa puoi fare","come funziona",
-               "a cosa servi","a cosa serve","come si usa","come funzione",
-               "cosa sei","cosa fa quest","cosa fa l'app","cosa fa questa app",
-               "come ti uso","come inizio","da dove inizio","chi sei","help",
-               "aiutami a capire","spiegami l'app","cosa offri"]
-    if any(k in _dl for k in _kw_app):
+    _kw_app = ["cosa posso fare","cosa fai","cosa puoi fare","cosa sai fare","come funziona",
+               "a cosa servi","a cosa serve","come si usa","come funzione","cosa sai",
+               "cosa sei","cosa fa quest","cosa fa l'app","cosa fa questa app","che strumenti",
+               "come ti uso","come inizio","da dove inizio","chi sei","help","che cosa sai",
+               "aiutami a capire","spiegami l'app","cosa offri","cosa contiene","che funzioni"]
+    # router robusto: coglie anche le varianti meta ("cosa sai fare", "che puoi fare"...)
+    _e_meta = any(k in _dl for k in _kw_app) or (
+        ("cosa" in _dl or "che" in _dl or "come" in _dl) and
+        any(v in _dl for v in ["sai fare","puoi fare","sai","fai tu","offri","strument","funzion","servi"])
+        and len(_dl) < 60
+    )
+    if _e_meta:
         _st = _stats_grafo()
         _nf, _nt, _nr = _st["fenomeni"], _st["tecniche"], _st["ricette"]
         _risp = {
@@ -397,6 +403,32 @@ def chiedi():
 
 
     db = carica_grafo()
+    # AGGANCIO DIRETTO: se la domanda cita chiaramente il nome di un fenomeno (anche avanzato),
+    # lo aggancio subito. Risolve i fenomeni avanzati che il ranking scartava (es. fat washing).
+    _match_diretto = None
+    try:
+        _dl2 = " " + domanda.lower() + " "
+        # cerco fenomeni il cui nome (o parte significativa) compare nella domanda
+        _cand = db.execute(
+            "SELECT id, name FROM nodes WHERE type='Fenomeno'").fetchall()
+        _best = None; _best_len = 0
+        for _c in _cand:
+            _nm = (_c["name"] or "").lower()
+            # provo il nome intero e le parole chiave significative del nome
+            _chiavi = [_nm]
+            # parole del nome lunghe >4 (es. "washing", "nixtamalizzazione")
+            import re as _re2
+            for _w in _re2.findall(r"[a-zàèéìòù]{5,}", _nm):
+                _chiavi.append(_w)
+            for _k in _chiavi:
+                if _k and (" "+_k+" " in _dl2 or _dl2.strip().endswith(" "+_k) or _k in _dl2) and len(_k) > _best_len:
+                    # match: preferisco il più lungo (più specifico)
+                    if len(_k) >= 5:
+                        _best = _c; _best_len = len(_k)
+        if _best:
+            _match_diretto = _best["id"]
+    except Exception:
+        _match_diretto = None
     # RETRIEVAL RANKED (candidate generation + scoring + dominio): sceglie i fenomeni migliori.
     # Poi cerca_contesto costruisce il contesto ricco (collegamenti, errori, target) sui fenomeni scelti.
     contesto = None
@@ -405,6 +437,9 @@ def chiedi():
         termini_mistral = estrai_entita(domanda)
         ranked = retrieval_ranked(db, domanda, termini_extra=termini_mistral, topk=5)
         fen_ids = [f["id"] for f in ranked.get("fenomeni", [])]
+        # se ho un match diretto, lo metto in cima (vince sul ranking fuzzy)
+        if _match_diretto:
+            fen_ids = [_match_diretto] + [x for x in fen_ids if x != _match_diretto]
         if fen_ids:
             # costruisco il contesto ricco cercando per il PRIMO fenomeno (nome), poi il contesto
             # include i suoi collegamenti; per robustezza uso cerca_contesto sul nome del top.
