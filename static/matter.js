@@ -2778,10 +2778,16 @@ function onb4Check(){
 function chiudiOnb4(){
   try{ localStorage.setItem('matter_onb_done','1'); if(_onb4Station) localStorage.setItem('matter_station', _onb4Station.disc); }catch(e){}
   var o=document.getElementById('onb4'); if(o) o.classList.remove('show');
-  // imposta la disciplina scelta e porta alla home Scopri (schermata viva, non la Lezione vuota)
   if(_onb4Station){ Matter.disciplina = _onb4Station.disc; Matter.step = 0; }
   if(typeof switchTab==='function') switchTab('scopri');
   if(typeof caricaHome==='function') caricaHome();
+  // #7 associazione Bench=banco, una volta sola (solo IT)
+  try{
+    if((typeof _lang==='undefined'||_lang==='it') && !localStorage.getItem('matter_bench_spiegato')){
+      localStorage.setItem('matter_bench_spiegato','1');
+      setTimeout(function(){ if(typeof _toast==='function') _toast('Bench è il banco di lavoro del professionista. Matter Bench è il tuo banco di prova scientifico.'); }, 900);
+    }
+  }catch(e){}
 }
 
 // ── ONBOARDING PROFILAZIONE: mestiere → primo numero → lezione ──

@@ -2368,3 +2368,10 @@ a:focus-visible,input:focus-visible{
 .wm-logo{flex-shrink:0}
 .wm-text{display:inline-block!important;flex-direction:row!important;font-family:var(--serif,'Space Grotesk')!important;font-weight:600!important;font-size:18px!important;text-transform:uppercase!important;letter-spacing:-.02em!important;word-spacing:.30em!important;color:#141D22!important;line-height:1!important}
 .wm-text small{display:none!important}
+
+/* ═══ #5 OMBRE DURE — effetto tasto meccanico da strumento (Matter Bench) ═══ */
+/* box sollevati principali: ombra dura Ink, mai sfocata */
+.cruscotto{box-shadow:4px 4px 0px rgba(20,29,34,.12)!important}
+.misura-adesso{box-shadow:4px 4px 0px rgba(36,89,121,.25)!important}
+.calc-mirino,.stream-calc,.pal-header,.fen-errori-box{box-shadow:3px 3px 0px rgba(20,29,34,.14)}
+.mp-btn{box-shadow:3px 3px 0px rgba(20,29,34,.14)!important}
