@@ -1090,6 +1090,15 @@ function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)r
 // mini-history: ultimi 3 scambi in memoria (resettata al refresh, zero DB)
 const _chatHistory=[];
 const _HISTORY_MAX=3;
+// converte la history interna {q,r} nel formato backend [{role,content}...]
+function _historyPerBackend(){
+  var out=[];
+  _chatHistory.slice(-_HISTORY_MAX).forEach(function(h){
+    if(h.q) out.push({role:'user', content:String(h.q)});
+    var risp = h.r || h.a; if(risp) out.push({role:'assistant', content:String(risp)});
+  });
+  return out;
+}
 
 function chiediTesto(q){
   if(busy)return;
@@ -1106,7 +1115,7 @@ function chiediTesto(q){
 
 // ═══ CHAT STREAMING (P8) — SSE con token che scorrono + widget inline ═══
 async function _chiediStream(q){
-  const history=_chatHistory.slice(-_HISTORY_MAX);
+  const history=_historyPerBackend();
   const _tok=localStorage.getItem('matter_token')||'';
   const _ctx = _ctxChat || window._chatContesto || null;
   // creo la scheda risposta che si riempie man mano
@@ -1214,7 +1223,7 @@ function _costruisciMiniSchedaFenomeno(j, id){
 function _chiediNonStream(q){
   aggiungiThinking(); setBusy(true);
   // passa gli ultimi scambi per dare continuità alla conversazione
-  const history=_chatHistory.slice(-_HISTORY_MAX);
+  const history=_historyPerBackend();
   const _tok=localStorage.getItem('matter_token')||'';
   // contesto: da scheda ricetta/menu (FLUSSO 2) o da lezione
   const _ctx = _ctxChat || window._chatContesto || null;
@@ -3658,29 +3667,48 @@ function _isIntentoRicetta(q){
       || /\bricetta (con|di|per|a base di)\b/.test(s)
       || /^(una |un )?(ricetta|piatto|cocktail)\b.*\b(con|di|a base di)\b/.test(s);
 }
-async function generaRicettaDaTesto(q){
+// ═══ GENERATORE RICETTE ASINCRONO (polling) — il sync andava in timeout ═══
+async function _generaRicettaAsync(richiesta, titoloVista){
   if(!_isPro()){ const usate=_getDomande(); if(usate>=FREE_LIMIT){ apriPaywall(); return; } }
-  _apriVista('Creo la ricetta…', '<div class="calc-loading" style="padding:40px;text-align:center">Sto creando la ricetta…</div>');
+  _apriVista(titoloVista||'Creo la ricetta…', '<div class="gen-loading"><div class="gen-spinner"></div><div class="gen-txt">Sto creando la ricetta…<br><span class="gen-sub">Può richiedere fino a un minuto</span></div></div>');
   var disc = localStorage.getItem('matter_station') || 'cucina';
+  var jobId=null;
   try{
-    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),
-      body:JSON.stringify({richiesta:q, disciplina:disc})});
+    var r=await fetch('/v1/genera-ricetta-async',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({richiesta:richiesta, disciplina:disc})});
     var j=await r.json();
-    _incDomande();
-    if(j && j.errore==='non_trovata'){
-      var bd=document.getElementById('vista-body'); if(bd) bd.innerHTML='<div class="quad-empty"><b>Piatto non trovato</b><span>'+_escV(j.messaggio||'Prova un nome classico o cerca nel Ricettario.')+'</span></div>';
-      return;
-    }
-    if(j && (j.nome || j.ingredienti)){ mostraRicettaGen(j); }
-    else { var bd2=document.getElementById('vista-body'); if(bd2) bd2.innerHTML='<div class="quad-empty"><b>Non riesco a creare la ricetta</b><span>Riprova, o chiedila all\'Assistente.</span></div>'; }
-  }catch(e){
-    var bd3=document.getElementById('vista-body'); if(bd3) bd3.innerHTML='<div class="quad-empty"><b>Errore di rete</b><span>Riprova.</span></div>';
-  }
+    jobId=j.job_id;
+    if(!jobId){ _genRicErrore('Non riesco ad avviare la creazione.'); return; }
+  }catch(e){ _genRicErrore('Errore di rete.'); return; }
+  _incDomande();
+  // polling ogni 2.5s, max ~40 tentativi (100s)
+  var tentativi=0;
+  var poll=async function(){
+    tentativi++;
+    if(tentativi>45){ _genRicErrore('La creazione sta impiegando troppo. Riprova.'); return; }
+    try{
+      var pr=await fetch('/v1/genera-ricetta-stato/'+encodeURIComponent(jobId), {headers:_statoHeaders()});
+      if(pr.status===404){ _genRicErrore('Sessione scaduta, riprova.'); return; }
+      var pj=await pr.json();
+      if(pj.stato==='pronto' && pj.ricetta){ mostraRicettaGen(pj.ricetta); return; }
+      if(pj.stato==='errore'){ _genRicErrore(pj.errore||'Non riesco a creare questo piatto.'); return; }
+      // in_corso → continua
+      setTimeout(poll, 2500);
+    }catch(e){ setTimeout(poll, 3000); }
+  };
+  setTimeout(poll, 2500);
+}
+function _genRicErrore(msg){
+  var bd=document.getElementById('vista-body');
+  if(bd) bd.innerHTML='<div class="quad-empty"><b>Non riesco a creare la ricetta ora</b><span>'+_escV(msg||'Riprova tra poco.')+'</span></div>';
+}
+async function generaRicettaDaTesto(q){
+  _generaRicettaAsync(q, 'Creo la ricetta…');
 }
 // versione della chat che bypassa il riconoscimento intento (per il fallback)
 function chiediTestoRaw(q){
   aggiungiThinking(); setBusy(true);
-  const history=_chatHistory.slice(-_HISTORY_MAX);
+  const history=_historyPerBackend();
   const _tok=localStorage.getItem('matter_token')||'';
   fetch('/chiedi',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({domanda:q, history, token:_tok, contesto:_ctxChat||null})})
@@ -6011,20 +6039,7 @@ function _flavourNode(a,key,surprise,centro){
 }
 function _flavourToggle(key){ const d=document.getElementById('fnv-det-'+key); if(d) d.classList.toggle('show'); }
 async function _flavourCrea(a,b){
-  // tocca abbinamento → ricetta in vista dedicata (NON chat)
-  _apriVista('Creo la ricetta…', '<div class="calc-loading" style="padding:40px;text-align:center">Sto creando la ricetta con '+_escV(a)+' e '+_escV(b)+'…</div>');
-  var disc = localStorage.getItem('matter_station') || 'cucina';
-  try{
-    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),
-      body:JSON.stringify({richiesta: a+' e '+b, disciplina:disc})});
-    var j=await r.json();
-    if(j && j.errore==='non_trovata'){
-      var bd=document.getElementById('vista-body'); if(bd) bd.innerHTML='<div class="quad-empty"><b>Non riesco a creare questo piatto</b><span>'+_escV(j.messaggio||'Prova un altro abbinamento.')+'</span></div>';
-      return;
-    }
-    if(j && (j.nome||j.ingredienti)){ mostraRicettaGen(j); }
-    else { var bd2=document.getElementById('vista-body'); if(bd2) bd2.innerHTML='<div class="quad-empty"><b>Non riesco a creare la ricetta ora</b><span>Riprova tra poco.</span></div>'; }
-  }catch(e){ var bd3=document.getElementById('vista-body'); if(bd3) bd3.innerHTML='<div class="quad-empty"><b>Errore di rete</b><span>Riprova.</span></div>'; }
+  _generaRicettaAsync(a+' e '+b, 'Creo la ricetta…');
 }
 
 /* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */
