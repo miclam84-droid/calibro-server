@@ -3668,7 +3668,7 @@ function _isIntentoRicetta(q){
       || /^(una |un )?(ricetta|piatto|cocktail)\b.*\b(con|di|a base di)\b/.test(s);
 }
 // ═══ GENERATORE RICETTE ASINCRONO (polling) — il sync andava in timeout ═══
-async function _generaRicettaAsync(richiesta, titoloVista){
+async function _generaRicettaAsync(richiesta, titoloVista, _retry){
   if(!_isPro()){ const usate=_getDomande(); if(usate>=FREE_LIMIT){ apriPaywall(); return; } }
   _apriVista(titoloVista||'Creo la ricetta…', '<div class="gen-loading"><div class="gen-spinner"></div><div class="gen-txt">Sto creando la ricetta…<br><span class="gen-sub">Può richiedere fino a un minuto</span></div></div>');
   var disc = localStorage.getItem('matter_station') || 'cucina';
@@ -3680,23 +3680,26 @@ async function _generaRicettaAsync(richiesta, titoloVista){
     jobId=j.job_id;
     if(!jobId){ _genRicErrore('Non riesco ad avviare la creazione.'); return; }
   }catch(e){ _genRicErrore('Errore di rete.'); return; }
-  _incDomande();
-  // polling ogni 2.5s, max ~40 tentativi (100s)
+  if(!_retry) _incDomande();
   var tentativi=0;
   var poll=async function(){
     tentativi++;
-    if(tentativi>45){ _genRicErrore('La creazione sta impiegando troppo. Riprova.'); return; }
+    if(tentativi>50){ _genRicErrore('La creazione sta impiegando troppo. Riprova.'); return; }
     try{
       var pr=await fetch('/v1/genera-ricetta-stato/'+encodeURIComponent(jobId), {headers:_statoHeaders()});
-      if(pr.status===404){ _genRicErrore('Sessione scaduta, riprova.'); return; }
+      if(pr.status===404){
+        // job scaduto: rilancio UNA volta l'intero processo
+        if(!_retry){ _generaRicettaAsync(richiesta, titoloVista, true); return; }
+        _genRicErrore('Riprova tra poco.'); return;
+      }
       var pj=await pr.json();
       if(pj.stato==='pronto' && pj.ricetta){ mostraRicettaGen(pj.ricetta); return; }
       if(pj.stato==='errore'){ _genRicErrore(pj.errore||'Non riesco a creare questo piatto.'); return; }
-      // in_corso → continua
+      if(pj.stato==='non_trovato'){ if(!_retry){ _generaRicettaAsync(richiesta, titoloVista, true); return; } _genRicErrore('Riprova tra poco.'); return; }
       setTimeout(poll, 2500);
     }catch(e){ setTimeout(poll, 3000); }
   };
-  setTimeout(poll, 2500);
+  setTimeout(poll, 1500);
 }
 function _genRicErrore(msg){
   var bd=document.getElementById('vista-body');
