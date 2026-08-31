@@ -3660,29 +3660,21 @@ function _isIntentoRicetta(q){
 }
 async function generaRicettaDaTesto(q){
   if(!_isPro()){ const usate=_getDomande(); if(usate>=FREE_LIMIT){ apriPaywall(); return; } }
-  switchTab('chiedi'); switchSubtab('chat');
-  aggiungiThinking(); setBusy(true);
-  // disciplina: dalla postazione scelta, default cucina
+  _apriVista('Creo la ricetta…', '<div class="calc-loading" style="padding:40px;text-align:center">Sto creando la ricetta…</div>');
   var disc = localStorage.getItem('matter_station') || 'cucina';
   try{
-    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:{'Content-Type':'application/json'},
+    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),
       body:JSON.stringify({richiesta:q, disciplina:disc})});
     var j=await r.json();
     _incDomande();
-    rimuoviThinking(); setBusy(false);
     if(j && j.errore==='non_trovata'){
-      _toast(j.messaggio || 'Piatto non trovato — prova un nome classico o cerca nella Vetrina');
+      var bd=document.getElementById('vista-body'); if(bd) bd.innerHTML='<div class="quad-empty"><b>Piatto non trovato</b><span>'+_escV(j.messaggio||'Prova un nome classico o cerca nel Ricettario.')+'</span></div>';
       return;
     }
-    if(j && (j.nome || j.ingredienti)){
-      mostraRicettaGen(j);
-    } else {
-      // fallback: se il generatore non produce, passo alla chat normale
-      window._chatContesto=null; chiediTestoRaw(q);
-    }
+    if(j && (j.nome || j.ingredienti)){ mostraRicettaGen(j); }
+    else { var bd2=document.getElementById('vista-body'); if(bd2) bd2.innerHTML='<div class="quad-empty"><b>Non riesco a creare la ricetta</b><span>Riprova, o chiedila all\'Assistente.</span></div>'; }
   }catch(e){
-    rimuoviThinking(); setBusy(false);
-    chiediTestoRaw(q);
+    var bd3=document.getElementById('vista-body'); if(bd3) bd3.innerHTML='<div class="quad-empty"><b>Errore di rete</b><span>Riprova.</span></div>';
   }
 }
 // versione della chat che bypassa il riconoscimento intento (per il fallback)
@@ -6019,18 +6011,20 @@ function _flavourNode(a,key,surprise,centro){
 }
 function _flavourToggle(key){ const d=document.getElementById('fnv-det-'+key); if(d) d.classList.toggle('show'); }
 async function _flavourCrea(a,b){
-  // P0.1 — tocca abbinamento → ricetta DIRETTA (no chat, no anteprima)
-  chiudiVista();
-  switchTab('chiedi'); switchSubtab('chat');
-  aggiungiThinking(); setBusy(true);
+  // tocca abbinamento → ricetta in vista dedicata (NON chat)
+  _apriVista('Creo la ricetta…', '<div class="calc-loading" style="padding:40px;text-align:center">Sto creando la ricetta con '+_escV(a)+' e '+_escV(b)+'…</div>');
   var disc = localStorage.getItem('matter_station') || 'cucina';
   try{
-    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:{'Content-Type':'application/json'},
+    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),
       body:JSON.stringify({richiesta: a+' e '+b, disciplina:disc})});
     var j=await r.json();
-    rimuoviThinking(); setBusy(false);
+    if(j && j.errore==='non_trovata'){
+      var bd=document.getElementById('vista-body'); if(bd) bd.innerHTML='<div class="quad-empty"><b>Non riesco a creare questo piatto</b><span>'+_escV(j.messaggio||'Prova un altro abbinamento.')+'</span></div>';
+      return;
+    }
     if(j && (j.nome||j.ingredienti)){ mostraRicettaGen(j); }
-  }catch(e){ rimuoviThinking(); setBusy(false); }
+    else { var bd2=document.getElementById('vista-body'); if(bd2) bd2.innerHTML='<div class="quad-empty"><b>Non riesco a creare la ricetta ora</b><span>Riprova tra poco.</span></div>'; }
+  }catch(e){ var bd3=document.getElementById('vista-body'); if(bd3) bd3.innerHTML='<div class="quad-empty"><b>Errore di rete</b><span>Riprova.</span></div>'; }
 }
 
 /* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */

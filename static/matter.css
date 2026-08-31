@@ -2470,3 +2470,21 @@ a:focus-visible,input:focus-visible{
 .store-nome{font-family:var(--sans,'Inter');font-weight:700;font-size:14px;color:#EAF1F3}
 .store-nota{font-size:11.5px;color:#9DAEB2;line-height:1.4}
 .store-disclosure{font-size:10.5px;color:var(--muted,#5A6C70);line-height:1.45;font-style:italic;margin-top:2px}
+
+/* ═══════════════════════════════════════════════════════════
+   FIX FONT — il mono resta SOLO sui numeri. Label, eyebrow, subtab,
+   titoli sezione tornano a Inter/Space Grotesk (via l'aria da prototipo)
+   ═══════════════════════════════════════════════════════════ */
+/* subtab chat/calcola: Inter, non mono */
+.subtab-btn{font-family:var(--sans,'Inter')!important;font-size:14px!important;font-weight:600!important;letter-spacing:0!important;text-transform:none!important}
+/* eyebrow e label di sezione: Inter, non mono */
+.sec-label,.mtr-sec-label,.scopri-ey,.mtr-gauge-label,.fnv-sec-h .t,
+.calc-field label,.calc-perc-lab,.crus-lab,.pal-lab,.fen-sez-lab,
+.fen-principio-lab,.fen-mirino-lab,.serie-lab,.ev-lab,.misure-tot-lab{
+  font-family:var(--sans,'Inter')!important;letter-spacing:.04em!important
+}
+/* i valori numerici RESTANO mono (ribadisco dove conta) */
+.crus-val,.crus-sub,.calc-fcp-num,.calc-coef,.fen-mirino-val,
+.mirino-scala,.calo-val,.misura-card-val,.serie-val,.pal-count{
+  font-family:var(--mono,'IBM Plex Mono')!important
+}
