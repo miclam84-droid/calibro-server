@@ -6530,3 +6530,100 @@ def admin_pulisci_nomi():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── MODELLO MADRE/FIGLIA: schema + generazione varianti (briefing OpenAI) ──
+@bp.route("/admin/setup-madre-figlia")
+def admin_setup_madre_figlia():
+    """Aggiunge le colonne per il modello madre/figlia. Le 454 esistenti diventano madri.
+    Idempotente. Non rompe nulla (colonne nuove con default)."""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS recipe_type TEXT DEFAULT 'madre'")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS parent_recipe_id TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS variante_di TEXT")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_ricette_parent ON ricette(parent_recipe_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_ricette_type ON ricette(recipe_type)")
+        # le esistenti senza type diventano madri
+        cur.execute("UPDATE ricette SET recipe_type='madre' WHERE recipe_type IS NULL")
+        conn.commit()
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE recipe_type='madre'")
+        madri = cur.fetchone()[0]
+        cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "madri": madri, "messaggio": "schema madre/figlia pronto"})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        return jsonify({"errore": str(e)}), 500
+
+
+@bp.route("/admin/genera-figlie")
+def admin_genera_figlie():
+    """Per un BLOCCO di ricette madri, genera 2-4 varianti (figlie) via AI. Le figlie ereditano
+    fenomeno/disciplina dalla madre e cambiano nome/ingredienti/tecnica. ?offset=0&limit=3
+    Le figlie NON duplicano la scheda: hanno parent_recipe_id e solo i campi che cambiano."""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import re as _re
+    from ai import _haiku_raw
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 3)), 5)
+    except Exception:
+        offset, limit = 0, 3
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # prendo madri che non hanno ancora figlie
+        cur.execute("""SELECT r.id, r.nome, r.disciplina, r.fenomeni FROM ricette r
+                       WHERE r.recipe_type='madre'
+                       AND NOT EXISTS (SELECT 1 FROM ricette f WHERE f.parent_recipe_id=r.id)
+                       ORDER BY r.id LIMIT %s OFFSET %s""", (limit, offset))
+        madri = cur.fetchall()
+        create = 0; risultati = []
+        for m in madri:
+            mid, nome, disc, fenomeni = m[0], m[1], m[2], m[3]
+            prompt = (f"La ricetta '{nome}' ({disc}) è una preparazione base. Elenca 3 VARIANTI "
+                      f"professionali reali e distinte che derivano da questa base (stessa tecnica, "
+                      f"ingredienti diversi). Per ognuna dai nome e la differenza chiave. "
+                      f"Esempio per Maionese: Aioli (aglio), Salsa tonnata (tonno), Maionese al basilico. "
+                      f'Rispondi SOLO JSON: {{"varianti":[{{"nome":"...","differenza":"..."}}]}}')
+            try:
+                raw = (_haiku_raw(prompt, max_tokens=300) or "").strip()
+                raw = _re.sub(r"```json|```", "", raw)
+                mm = _re.search(r"\{.*\}", raw, _re.DOTALL)
+                if not mm:
+                    risultati.append({"madre": nome, "esito": "no_json"}); continue
+                varianti = json.loads(mm.group(0)).get("varianti", [])
+                for v in varianti[:3]:
+                    vnome = (v.get("nome") or "").strip()
+                    vdiff = (v.get("differenza") or "").strip()
+                    if not vnome or vnome.lower() == nome.lower():
+                        continue
+                    fid = "ric-fig-" + _re.sub(r"[^a-z0-9]+", "-", vnome.lower())[:40]
+                    cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
+                    if cur.fetchone():
+                        continue
+                    # la figlia eredita disciplina e fenomeni dalla madre, ha la differenza come descrizione
+                    cur.execute("""INSERT INTO ricette (id, nome, disciplina, fenomeni, descrizione,
+                                   recipe_type, parent_recipe_id, variante_di)
+                                   VALUES (%s,%s,%s,%s,%s,'figlia',%s,%s)
+                                   ON CONFLICT (id) DO NOTHING""",
+                                (fid, vnome, disc, fenomeni, vdiff, mid, nome))
+                    create += 1
+                risultati.append({"madre": nome, "figlie": len(varianti)})
+            except Exception as _e:
+                risultati.append({"madre": nome, "esito": str(_e)[:50]})
+        conn.commit()
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE recipe_type='madre'")
+        tot_madri = cur.fetchone()[0]
+        cur.close(); _release_conn(conn)
+        prossimo = offset + limit
+        return jsonify({"ok": True, "figlie_create": create, "offset": offset,
+                        "prossimo_offset": prossimo if prossimo < tot_madri else None,
+                        "risultati": risultati})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
