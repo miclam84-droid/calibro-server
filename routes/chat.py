@@ -481,10 +481,24 @@ def chiedi():
     contesto = None
     try:
         from retrieval import retrieval_ranked
-        termini_mistral = estrai_entita(domanda)
-        ranked = retrieval_ranked(db, domanda, termini_extra=termini_mistral, topk=5)
+        # CONTESTO CONVERSAZIONE: se questa è una domanda di follow-up (breve, o con pronomi/
+        # riferimenti tipo "e come", "e quindi", "la recupero"), il retrieval da sola sbaglierebbe
+        # (cerca da zero e trova un fenomeno a caso). Recupero il soggetto dalla domanda precedente.
+        _domanda_retrieval = domanda
+        _dl_r = domanda.lower()
+        _e_followup = (len(domanda) < 40 or _dl_r.startswith(("e ", "e come", "e quindi", "e se", "quindi", "come mai", "perché no", "e allora"))
+                       or any(p in _dl_r for p in [" lo ", " la ", " li ", " le ", " ne ", "questo", "quello", "recuper"]))
+        if _e_followup and history:
+            # prendo l'ultima domanda utente dalla history e la antepongo per dare soggetto al retrieval
+            _ultima_user = ""
+            for _h in reversed(history):
+                if _h.get("role") == "user" and _h.get("content"):
+                    _ultima_user = _h["content"]; break
+            if _ultima_user:
+                _domanda_retrieval = _ultima_user + " " + domanda
+        termini_mistral = estrai_entita(_domanda_retrieval)
+        ranked = retrieval_ranked(db, _domanda_retrieval, termini_extra=termini_mistral, topk=5)
         fen_ids = [f["id"] for f in ranked.get("fenomeni", [])]
-        # se ho un match diretto, lo metto in cima (vince sul ranking fuzzy)
         if _match_diretto:
             fen_ids = [_match_diretto] + [x for x in fen_ids if x != _match_diretto]
         if fen_ids:
