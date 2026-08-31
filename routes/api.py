@@ -3734,3 +3734,72 @@ def drink_cost():
         except Exception:
             pass
     return jsonify(out)
+
+
+# ── GENERATORE RICETTE ASINCRONO (evita il timeout 30s di Railway) ──
+import threading as _threading
+import uuid as _uuid
+_JOBS_RICETTE = {}   # job_id -> {stato, risultato, ts}
+
+def _pulisci_job_vecchi():
+    """Rimuove i job più vecchi di 10 minuti per non accumulare memoria."""
+    import time as _t
+    ora = _t.time()
+    for k in list(_JOBS_RICETTE.keys()):
+        if ora - _JOBS_RICETTE[k].get("ts", 0) > 600:
+            _JOBS_RICETTE.pop(k, None)
+
+def _genera_in_background(job_id, richiesta, disciplina, salva, token):
+    """Gira in un thread separato: genera la ricetta e mette il risultato nel job."""
+    try:
+        from builder import genera_ricetta
+        from db import carica_grafo
+        db = carica_grafo()
+        risultato = genera_ricetta(db, richiesta, disciplina=disciplina, lang="it")
+        # verifica anti-eresie (leggera)
+        try:
+            from verificatore_ricette import verifica_ricetta
+            verifica = verifica_ricetta(risultato.get("nome", ""), risultato.get("ingredienti", []))
+            risultato["_verifica"] = verifica
+            if not verifica.get("ok"):
+                risultato["_bloccata"] = True
+        except Exception:
+            pass
+        _JOBS_RICETTE[job_id] = {"stato": "pronto", "risultato": risultato, "ts": __import__("time").time()}
+    except Exception as e:
+        _JOBS_RICETTE[job_id] = {"stato": "errore", "risultato": {"errore": str(e)[:150]},
+                                 "ts": __import__("time").time()}
+
+@bp.route("/v1/genera-ricetta-async", methods=["POST"])
+def genera_ricetta_async():
+    """Avvia la generazione in background. Risponde SUBITO con job_id (202).
+    Il frontend poi fa polling su /v1/genera-ricetta-stato/<job_id>. Evita il timeout Railway."""
+    if not _check_rate_limit_ai(_chiave_rate()):
+        return jsonify({"errore": "rate_limit", "messaggio": "Troppe generazioni. Attendi un minuto."}), 429
+    body = request.json or {}
+    richiesta = (body.get("richiesta") or "").strip()
+    disciplina = body.get("disciplina", "cucina")
+    salva = bool(body.get("salva", False))
+    token = request.headers.get("X-Token", "") or body.get("token", "")
+    if not richiesta:
+        return jsonify({"errore": "richiesta mancante"}), 400
+    _pulisci_job_vecchi()
+    job_id = "job-" + _uuid.uuid4().hex[:12]
+    _JOBS_RICETTE[job_id] = {"stato": "in_corso", "risultato": None, "ts": __import__("time").time()}
+    t = _threading.Thread(target=_genera_in_background, args=(job_id, richiesta, disciplina, salva, token), daemon=True)
+    t.start()
+    return jsonify({"job_id": job_id, "stato": "in_corso",
+                    "messaggio": "Generazione avviata. Controlla lo stato tra qualche secondo."}), 202
+
+@bp.route("/v1/genera-ricetta-stato/<job_id>", methods=["GET"])
+def genera_ricetta_stato(job_id):
+    """Polling: restituisce lo stato del job. Quando 'pronto', include la ricetta."""
+    job = _JOBS_RICETTE.get(job_id)
+    if not job:
+        return jsonify({"stato": "non_trovato", "messaggio": "Job scaduto o inesistente, rilancia la generazione."}), 404
+    if job["stato"] == "in_corso":
+        return jsonify({"stato": "in_corso"})
+    if job["stato"] == "errore":
+        return jsonify({"stato": "errore", "errore": job["risultato"].get("errore", "errore")})
+    # pronto
+    return jsonify({"stato": "pronto", "ricetta": job["risultato"]})
