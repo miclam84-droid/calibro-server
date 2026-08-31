@@ -3767,15 +3767,47 @@ def drink_cost():
 # ── GENERATORE RICETTE ASINCRONO (evita il timeout 30s di Railway) ──
 import threading as _threading
 import uuid as _uuid
-_JOBS_RICETTE = {}   # job_id -> {stato, risultato, ts}
+_JOBS_RICETTE = {}   # fallback in-memory (se il DB non è disponibile)
+
+def _ensure_jobs_table():
+    """Tabella job condivisa tra i worker (il dizionario in memoria non è visibile ad altri worker)."""
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS jobs_ricette (
+            job_id TEXT PRIMARY KEY, stato TEXT, risultato JSONB, creato_il TIMESTAMP DEFAULT NOW())""")
+        conn.commit(); cur.close(); _release_conn(conn)
+    except Exception:
+        pass
+
+def _job_set(job_id, stato, risultato=None):
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("""INSERT INTO jobs_ricette (job_id, stato, risultato) VALUES (%s,%s,%s::jsonb)
+                       ON CONFLICT (job_id) DO UPDATE SET stato=EXCLUDED.stato, risultato=EXCLUDED.risultato""",
+                    (job_id, stato, json.dumps(risultato) if risultato is not None else None))
+        conn.commit(); cur.close(); _release_conn(conn)
+    except Exception:
+        _JOBS_RICETTE[job_id] = {"stato": stato, "risultato": risultato}
+
+def _job_get(job_id):
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("SELECT stato, risultato FROM jobs_ricette WHERE job_id=%s", (job_id,))
+        r = cur.fetchone(); cur.close(); _release_conn(conn)
+        if r:
+            return {"stato": r[0], "risultato": r[1]}
+    except Exception:
+        pass
+    return _JOBS_RICETTE.get(job_id)
 
 def _pulisci_job_vecchi():
-    """Rimuove i job più vecchi di 10 minuti per non accumulare memoria."""
-    import time as _t
-    ora = _t.time()
-    for k in list(_JOBS_RICETTE.keys()):
-        if ora - _JOBS_RICETTE[k].get("ts", 0) > 600:
-            _JOBS_RICETTE.pop(k, None)
+    """Rimuove i job più vecchi di 15 minuti."""
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("DELETE FROM jobs_ricette WHERE creato_il < NOW() - INTERVAL '15 minutes'")
+        conn.commit(); cur.close(); _release_conn(conn)
+    except Exception:
+        pass
 
 def _genera_in_background(job_id, richiesta, disciplina, salva, token):
     """Gira in un thread separato: genera la ricetta e mette il risultato nel job."""
@@ -3793,10 +3825,9 @@ def _genera_in_background(job_id, richiesta, disciplina, salva, token):
                 risultato["_bloccata"] = True
         except Exception:
             pass
-        _JOBS_RICETTE[job_id] = {"stato": "pronto", "risultato": risultato, "ts": __import__("time").time()}
+        _job_set(job_id, "pronto", risultato)
     except Exception as e:
-        _JOBS_RICETTE[job_id] = {"stato": "errore", "risultato": {"errore": str(e)[:150]},
-                                 "ts": __import__("time").time()}
+        _job_set(job_id, "errore", {"errore": str(e)[:150]})
 
 @bp.route("/v1/genera-ricetta-async", methods=["POST"])
 def genera_ricetta_async():
@@ -3811,9 +3842,10 @@ def genera_ricetta_async():
     token = request.headers.get("X-Token", "") or body.get("token", "")
     if not richiesta:
         return jsonify({"errore": "richiesta mancante"}), 400
+    _ensure_jobs_table()
     _pulisci_job_vecchi()
     job_id = "job-" + _uuid.uuid4().hex[:12]
-    _JOBS_RICETTE[job_id] = {"stato": "in_corso", "risultato": None, "ts": __import__("time").time()}
+    _job_set(job_id, "in_corso", None)
     t = _threading.Thread(target=_genera_in_background, args=(job_id, richiesta, disciplina, salva, token), daemon=True)
     t.start()
     return jsonify({"job_id": job_id, "stato": "in_corso",
@@ -3822,12 +3854,11 @@ def genera_ricetta_async():
 @bp.route("/v1/genera-ricetta-stato/<job_id>", methods=["GET"])
 def genera_ricetta_stato(job_id):
     """Polling: restituisce lo stato del job. Quando 'pronto', include la ricetta."""
-    job = _JOBS_RICETTE.get(job_id)
+    job = _job_get(job_id)
     if not job:
         return jsonify({"stato": "non_trovato", "messaggio": "Job scaduto o inesistente, rilancia la generazione."}), 404
     if job["stato"] == "in_corso":
         return jsonify({"stato": "in_corso"})
     if job["stato"] == "errore":
-        return jsonify({"stato": "errore", "errore": job["risultato"].get("errore", "errore")})
-    # pronto
-    return jsonify({"stato": "pronto", "ricetta": job["risultato"]})
+        return jsonify({"stato": "errore", "errore": (job.get("risultato") or {}).get("errore", "errore")})
+    return jsonify({"stato": "pronto", "ricetta": job.get("risultato")})
