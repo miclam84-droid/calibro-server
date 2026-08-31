@@ -32,12 +32,55 @@ _FAMIGLIE_BLUEPRINT = {
 }
 _FAMIGLIA_DEFAULT = "reazione-termica"
 
+# CONTRATTO VISIVO — classificazione per TIPO DI PIATTO (non solo fenomeno).
+# Risolve i mismatch: "Amatriciana" è pasta (non reazione-termica), "Acqua Pazza" è zuppa di pesce.
+# Il tipo di piatto determina l'inquadratura/soggetto del blueprint, più pertinente del fenomeno chimico.
+_TIPO_PIATTO = {
+    # pasta / primi
+    "pasta": "pasta", "spaghetti": "pasta", "risotto": "risotto", "carbonara": "pasta",
+    "amatriciana": "pasta", "cacio": "pasta", "gnocchi": "pasta", "lasagn": "pasta",
+    "tagliatelle": "pasta", "ragù": "pasta", "ragu": "pasta", "vongole": "pasta",
+    # zuppe / brodi
+    "zuppa": "zuppa", "brodo": "zuppa", "minestra": "zuppa", "vellutata": "zuppa",
+    "acqua pazza": "zuppa", "bisque": "zuppa", "consommé": "zuppa",
+    # carne
+    "abbacchio": "carne", "agnello": "carne", "arrosto": "carne", "vitello": "carne",
+    "brasato": "carne", "bollito": "carne", "scottadito": "carne", "bistecca": "carne",
+    "pollo": "carne", "anatra": "carne", "maiale": "carne", "manzo": "carne", "coniglio": "carne",
+    # pesce
+    "baccalà": "pesce", "baccala": "pesce", "pesce": "pesce", "branzino": "pesce",
+    "salmone": "pesce", "tonno": "pesce", "polpo": "pesce", "gamber": "pesce", "cozze": "pesce",
+    # salse / condimenti
+    "maionese": "salsa", "salsa": "salsa", "besciamella": "salsa", "aioli": "salsa",
+    "pesto": "salsa", "ragù bianco": "salsa", "bagna": "salsa",
+    # dolci
+    "tiramisù": "dolce", "tiramisu": "dolce", "torta": "dolce", "crema": "dolce",
+    "gelato": "dolce", "sorbetto": "dolce", "budino": "dolce", "mousse": "dolce",
+    "cannolo": "dolce", "crostata": "dolce", "semifreddo": "dolce", "panna cotta": "dolce",
+    # pane / lievitati
+    "pane": "pane", "focaccia": "pane", "pizza": "pane", "brioche": "pane",
+    "baguette": "pane", "ciabatta": "pane", "grissini": "pane", "cornetto": "pane",
+    # cocktail / bevande
+    "negroni": "cocktail", "spritz": "cocktail", "cocktail": "cocktail", "martini": "cocktail",
+    "sour": "cocktail", "margarita": "cocktail", "mojito": "cocktail", "americano": "cocktail",
+    "caffè": "caffe", "espresso": "caffe", "cappuccino": "caffe", "cold brew": "caffe",
+}
+
 
 def _famiglia_da_testo(testo):
     t = (testo or "").lower()
     for chiave, fam in _FAMIGLIE_BLUEPRINT.items():
         if chiave in t:
             return fam
+    return None
+
+
+def _tipo_piatto_da_nome(nome):
+    """Classifica il tipo di piatto dal nome. Più pertinente del fenomeno per l'immagine."""
+    n = (nome or "").lower()
+    for chiave, tipo in _TIPO_PIATTO.items():
+        if chiave in n:
+            return tipo
     return None
 
 
@@ -62,7 +105,9 @@ def immagine_ricetta(rid):
         if immagine and isinstance(immagine, str) and immagine.strip():
             return jsonify({"tipo": "foto", "url": immagine.strip(),
                             "autore": autore or "", "fonte": fonte or ""})
-        # 2) blueprint dal fenomeno dominante
+        # 2) TIPO DI PIATTO dal nome (più pertinente del fenomeno per l'immagine)
+        tipo_piatto = _tipo_piatto_da_nome(nome)
+        # 3) famiglia dal fenomeno dominante (il "cosa succede" chimico)
         fam = None
         try:
             fen_list = fenomeni if isinstance(fenomeni, list) else (json.loads(fenomeni) if fenomeni else [])
@@ -73,10 +118,12 @@ def immagine_ricetta(rid):
                     break
         except Exception:
             pass
-        # 3) fallback: dalla disciplina o dal nome ricetta
         if not fam:
             fam = _famiglia_da_testo(disciplina) or _famiglia_da_testo(nome) or _FAMIGLIA_DEFAULT
-        return jsonify({"tipo": "blueprint", "famiglia": fam})
+        # il blueprint da mostrare: il tipo di piatto se c'è (pertinente al piatto), altrimenti il fenomeno
+        blueprint_scelto = tipo_piatto or fam
+        return jsonify({"tipo": "blueprint", "famiglia": blueprint_scelto,
+                        "tipo_piatto": tipo_piatto, "fenomeno_famiglia": fam})
     except Exception as e:
         try: _release_conn(conn)
         except Exception: pass
