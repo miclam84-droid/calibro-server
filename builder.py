@@ -321,16 +321,8 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
             return {"errore": "generazione fallita — nessuna risposta"}
         ricetta = _parse_json_robusto(raw)
         if ricetta is None:
-            # RETRY: riprova UNA volta con Haiku (veloce, non sfora il timeout worker) forzando JSON.
-            # NON uso Sonnet qui: sarebbe una seconda chiamata lenta che rischia il timeout Railway.
-            try:
-                prompt_retry = (prompt + "\n\nRispondi ESCLUSIVAMENTE con JSON valido e completo, "
-                                "senza testo prima o dopo, senza markdown, tutte le parentesi chiuse.")
-                raw2 = chiedi_mistral(prompt_retry, usa_tools=False)
-                ricetta = _parse_json_robusto(raw2)
-            except Exception:
-                ricetta = None
-        if ricetta is None:
+            # niente retry AI qui (seconda chiamata = rischio timeout worker). Il parsing robusto
+            # sopra copre la maggior parte dei casi. Se proprio fallisce, errore pulito.
             return {"errore": "generazione temporaneamente non disponibile, riprova"}
         # pulizia: normalizza i nomi tecniche (l'AI a volte copia la label con i numeri)
         if "tecniche" in ricetta and isinstance(ricetta["tecniche"], list):
