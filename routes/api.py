@@ -1181,6 +1181,34 @@ _ABBINAMENTI_BAR = {
     "mezcal": ["lime", "peperoncino", "arancia", "ananas", "sale affumicato"],
     "prosecco": ["aperol", "campari", "pesca", "sambuco", "fragola"],
 }
+def _fascia_affinita(overlap):
+    """Converte il conteggio grezzo di composti condivisi in una fascia qualitativa SENSATA.
+    Il dato Ahn conta anche composti comuni: numeri alti (127) sono fuorvianti. La fascia è onesta."""
+    try:
+        n = float(overlap)
+    except Exception:
+        n = 0
+    if n >= 100:
+        return "affinità molto alta"
+    if n >= 50:
+        return "affinità alta"
+    if n >= 20:
+        return "affinità media"
+    if n >= 5:
+        return "affinità presente"
+    return "affinità debole"
+
+def _perche_affinita(overlap):
+    try:
+        n = float(overlap)
+    except Exception:
+        n = 0
+    if n >= 50:
+        return "condividono molti composti aromatici: abbinamento robusto"
+    if n >= 20:
+        return "condividono diversi composti aromatici: buona base di abbinamento"
+    return "condividono alcuni composti aromatici"
+
 def _abbinamenti_bar_curati(ingrediente, max_n=8):
     key = ingrediente.strip().lower()
     lista = _ABBINAMENTI_BAR.get(key)
@@ -1684,9 +1712,9 @@ def abbina(ingrediente):
             overlap = float(r[2]) if r[2] else 0
             abbinamenti.append({
                 "ingrediente": nome_pulito,
-                "composto": f"{overlap:.0f} composti in comune",
+                "composto": _fascia_affinita(overlap),
                 "overlap": overlap,
-                "perche": f"condividono {overlap:.0f} composti aromatici"
+                "perche": _perche_affinita(overlap)
             })
         # deduplica per nome (possono esserci nodi EN e IT con lo stesso nome)
         # ed esclude l'auto-abbinamento (l'ingrediente cercato con se stesso)
@@ -1796,9 +1824,9 @@ def abbina(ingrediente):
                                 if cat_r and cat_r != _cat_cercato:
                                     _sorp2.append({
                                         "ingrediente": _nm,
-                                        "composto": f"{_ov} composti in comune",
+                                        "composto": _fascia_affinita(_ov),
                                         "overlap": float(_ov),
-                                        "perche": f"sorprendente: condividono {_ov} composti aromatici pur essendo di un'altra famiglia ({cat_r})",
+                                        "perche": f"sorprendente: {_perche_affinita(_ov)}, pur essendo di un'altra famiglia ({cat_r})",
                                         "sorprendente": True,
                                     })
                                     _gia2.add(_nl)
