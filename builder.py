@@ -321,13 +321,12 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
             return {"errore": "generazione fallita — nessuna risposta"}
         ricetta = _parse_json_robusto(raw)
         if ricetta is None:
-            # RETRY: riprova una volta con un prompt che forza JSON pulito (via route_quality = Sonnet)
+            # RETRY: riprova UNA volta con Haiku (veloce, non sfora il timeout worker) forzando JSON.
+            # NON uso Sonnet qui: sarebbe una seconda chiamata lenta che rischia il timeout Railway.
             try:
-                import ai_gateway as _GW
-                prompt_retry = (prompt + "\n\nATTENZIONE: rispondi ESCLUSIVAMENTE con JSON valido e "
-                                "completo, senza testo prima o dopo, senza markdown, con tutte le "
-                                "virgolette e parentesi chiuse correttamente.")
-                raw2 = _GW.route_quality(prompt_retry, max_tokens=1500)
+                prompt_retry = (prompt + "\n\nRispondi ESCLUSIVAMENTE con JSON valido e completo, "
+                                "senza testo prima o dopo, senza markdown, tutte le parentesi chiuse.")
+                raw2 = chiedi_mistral(prompt_retry, usa_tools=False)
                 ricetta = _parse_json_robusto(raw2)
             except Exception:
                 ricetta = None
