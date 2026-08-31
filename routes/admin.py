@@ -6605,15 +6605,19 @@ def admin_genera_figlie():
                     cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
                     if cur.fetchone():
                         continue
+                    # fenomeni è JSONB: lo passo come stringa JSON valida
+                    _fen_json = fenomeni if isinstance(fenomeni, str) else json.dumps(fenomeni or [])
                     # la figlia eredita disciplina e fenomeni dalla madre, ha la differenza come descrizione
                     cur.execute("""INSERT INTO ricette (id, nome, disciplina, fenomeni, descrizione,
                                    recipe_type, parent_recipe_id, variante_di)
-                                   VALUES (%s,%s,%s,%s,%s,'figlia',%s,%s)
+                                   VALUES (%s,%s,%s,%s::jsonb,%s,'figlia',%s,%s)
                                    ON CONFLICT (id) DO NOTHING""",
-                                (fid, vnome, disc, fenomeni, vdiff, mid, nome))
+                                (fid, vnome, disc, _fen_json, vdiff, mid, nome))
                     create += 1
                 risultati.append({"madre": nome, "figlie": len(varianti)})
+                conn.commit()  # commit dopo ogni madre: un errore non blocca le successive
             except Exception as _e:
+                conn.rollback()
                 risultati.append({"madre": nome, "esito": str(_e)[:50]})
         conn.commit()
         cur.execute("SELECT COUNT(*) FROM ricette WHERE recipe_type='madre'")
