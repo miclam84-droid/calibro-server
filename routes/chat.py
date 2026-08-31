@@ -746,7 +746,19 @@ def nodo():
     db = carica_grafo()
     n = db.execute("SELECT * FROM nodes WHERE id=?", (nid,)).fetchone()
     if not n:
-        return jsonify({"risposta": None, "nota": "Nodo non trovato."})
+        # FALLBACK: il nodo non esiste (es. suggerimento senza nodo). Mai vicolo cieco:
+        # tratto il termine come una domanda e do una risposta utile via la pipeline chat.
+        lang = request.args.get('lang', 'it')
+        # ricostruisco un nome leggibile dall'id (fen-besciamella → besciamella)
+        termine = nid.replace("fen-", "").replace("-", " ").replace("_", " ").strip()
+        try:
+            contesto_fb = cerca_contesto(db, termine)
+            prompt_fb = costruisci_prompt(f"Spiegami {termine} dal punto di vista scientifico", contesto_fb, lang=lang)
+            risposta_fb = chiedi_mistral(prompt_fb)
+            return jsonify({"risposta": risposta_fb, "titolo": termine.capitalize(),
+                            "trovato": [], "fallback": True})
+        except Exception:
+            return jsonify({"risposta": None, "nota": "Contenuto non disponibile per questo elemento."})
     # uso il nome del nodo come termine: ricostruisce il contesto profondo attorno ad esso
     contesto = cerca_contesto(db, n["name"].split()[0])
     if not contesto or not contesto.get("fenomeni"):

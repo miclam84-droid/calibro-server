@@ -281,30 +281,58 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f"Niente markdown, solo JSON."
     )
 
+    def _parse_json_robusto(raw_txt):
+        """Estrae e ripara il JSON in modo tollerante. Ritorna dict o None."""
+        import re as _re
+        if not raw_txt:
+            return None
+        # togli eventuale markdown
+        t = _re.sub(r"```json|```", "", raw_txt).strip()
+        m = _re.search(r"\{.*\}", t, _re.DOTALL)
+        if not m:
+            return None
+        blob = m.group(0)
+        # sequenza di tentativi, dal più semplice al più aggressivo
+        tentativi = [blob]
+        # a) tollera newline/control chars
+        # b) togli virgole prima di } o ]
+        tentativi.append(_re.sub(r",\s*([}\]])", r"\1", blob))
+        # c) aggiungi virgole mancanti tra oggetti/valori
+        _fix = _re.sub(r",\s*([}\]])", r"\1", blob)
+        _fix = _re.sub(r'([}\]"])\s*\n(\s*["{\[])', r'\1,\n\2', _fix)
+        tentativi.append(_fix)
+        # d) chiudi parentesi/graffe mancanti (troncamento)
+        _open_g = blob.count("{") - blob.count("}")
+        _open_q = blob.count("[") - blob.count("]")
+        if _open_g > 0 or _open_q > 0:
+            _chiuso = _fix + ("]" * max(0, _open_q)) + ("}" * max(0, _open_g))
+            tentativi.append(_chiuso)
+        for cand in tentativi:
+            for strict in (True, False):
+                try:
+                    return _j.loads(cand, strict=strict)
+                except Exception:
+                    continue
+        return None
+
     try:
         raw = chiedi_mistral(prompt, usa_tools=False)
         if not raw:
             return {"errore": "generazione fallita — nessuna risposta"}
-        # estrai il JSON
-        import re
-        m = re.search(r"\{.*\}", raw, re.DOTALL)
-        if not m:
-            return {"errore": "output non-JSON", "raw": raw[:200]}
-        blob = m.group(0)
-        try:
-            ricetta = _j.loads(blob)
-        except _j.JSONDecodeError:
-            # 1° tentativo: strict=False tollera newline/caratteri di controllo dentro le stringhe (causa comune)
+        ricetta = _parse_json_robusto(raw)
+        if ricetta is None:
+            # RETRY: riprova una volta con un prompt che forza JSON pulito (via route_quality = Sonnet)
             try:
-                ricetta = _j.loads(blob, strict=False)
-            except _j.JSONDecodeError:
-                # 2° tentativo: riparazione virgole (mancanti/in eccesso)
-                fix = re.sub(r",\s*([}\]])", r"\1", blob)
-                fix = re.sub(r'([}\]])\s*\n(\s*["{\[])', r'\1,\n\2', fix)
-                try:
-                    ricetta = _j.loads(fix, strict=False)
-                except _j.JSONDecodeError:
-                    return {"errore": "JSON non recuperabile", "raw": blob[:400]}
+                import ai_gateway as _GW
+                prompt_retry = (prompt + "\n\nATTENZIONE: rispondi ESCLUSIVAMENTE con JSON valido e "
+                                "completo, senza testo prima o dopo, senza markdown, con tutte le "
+                                "virgolette e parentesi chiuse correttamente.")
+                raw2 = _GW.route_quality(prompt_retry, max_tokens=1500)
+                ricetta = _parse_json_robusto(raw2)
+            except Exception:
+                ricetta = None
+        if ricetta is None:
+            return {"errore": "generazione temporaneamente non disponibile, riprova"}
         # pulizia: normalizza i nomi tecniche (l'AI a volte copia la label con i numeri)
         if "tecniche" in ricetta and isinstance(ricetta["tecniche"], list):
             pulite = []
