@@ -140,6 +140,30 @@ import os, json, re
 import ai_gateway as GW
 bp = Blueprint("api", __name__)
 
+
+@bp.after_request
+def _inietta_evidence(response):
+    """Confidence Layer: aggiunge il badge evidence a TUTTE le risposte del Flavour (/v1/abbina),
+    qualunque percorso di return abbiano usato. Legge il livello rilevato in request.environ."""
+    try:
+        if request.path.startswith("/v1/abbina/") and response.content_type and "json" in response.content_type:
+            import json as _je
+            _ev = request.environ.get("_evidence_level")
+            data = _je.loads(response.get_data(as_text=True))
+            if isinstance(data, dict) and "abbinamenti" in data and "evidence" not in data:
+                # se il percorso è AI (fonte contiene 'AI') e non c'è dato, è livello C
+                _fonte = str(data.get("fonte", "")).lower()
+                if _ev is None:
+                    _ev = "C" if ("ai" in _fonte or "matter lab ai" in _fonte) else "A"
+                data["evidence"] = _ev
+                data["evidence_label"] = {"A": "Dato molecolare verificato",
+                    "B": "Profilo ereditato da ingrediente equivalente",
+                    "C": "Suggerimento AI (non verificato molecolarmente)"}.get(_ev, "")
+                response.set_data(_je.dumps(data, ensure_ascii=False))
+    except Exception:
+        pass
+    return response
+
 # mappa italiano → nome Ahn (inglese), condivisa tra /abbina e /menu/proposte
 _ALIAS_AHN = {
     "pomodoro":"tomato","limone":"lemon","aglio":"garlic","cipolla":"onion",
