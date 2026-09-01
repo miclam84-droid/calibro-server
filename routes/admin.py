@@ -6881,3 +6881,72 @@ def admin_setup_confidence():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── recipe_ingredients: il PONTE ricetta ↔ ingrediente grafo ↔ composti (la tabella più importante dopo nodes) ──
+@bp.route("/admin/collega-ricette-ingredienti")
+def admin_collega_ricette():
+    """Popola recipe_ingredients: collega ogni ingrediente delle ricette al nodo del grafo
+    (per fuzzy match sul nome). Così una ricetta 'sa' strutturalmente i suoi composti. ?offset=&limit="""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import re as _re
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 40)), 80)
+    except Exception:
+        offset, limit = 0, 40
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS recipe_ingredients (
+            id SERIAL PRIMARY KEY, ricetta_id TEXT, ingrediente_nome TEXT, ingrediente_node_id TEXT,
+            quantita TEXT, unita TEXT, match_tipo TEXT)""")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_ri_ricetta ON recipe_ingredients(ricetta_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_ri_node ON recipe_ingredients(ingrediente_node_id)")
+        cur.execute("SELECT id, ingredienti FROM ricette ORDER BY id LIMIT %s OFFSET %s", (limit, offset))
+        ricette = cur.fetchall()
+        if not ricette:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "fine": True})
+        collegati = 0; matchati = 0
+        for rid, ing_raw in ricette:
+            # evito duplicati: se la ricetta è già collegata, salto
+            cur.execute("SELECT 1 FROM recipe_ingredients WHERE ricetta_id=%s LIMIT 1", (rid,))
+            if cur.fetchone():
+                continue
+            try:
+                ings = ing_raw if isinstance(ing_raw, list) else (json.loads(ing_raw) if ing_raw else [])
+            except Exception:
+                ings = []
+            for ing in ings:
+                if isinstance(ing, dict):
+                    nome = (ing.get("nome") or "").strip()
+                    qta = str(ing.get("quantita") or "")
+                    uni = str(ing.get("unita") or "")
+                else:
+                    nome = str(ing).strip(); qta = ""; uni = ""
+                if not nome:
+                    continue
+                # fuzzy match: cerco il nodo ingrediente col nome più simile
+                _n_clean = _re.sub(r"\b(fresco|fresca|q\.?b\.?|di|del|della|in|per)\b", "", nome.lower()).strip()
+                cur.execute("""SELECT id FROM nodes WHERE type='Ingrediente'
+                               AND (lower(name)=lower(%s) OR lower(name) LIKE lower(%s))
+                               ORDER BY length(name) LIMIT 1""", (nome, "%"+_n_clean.split()[0]+"%" if _n_clean else "%"+nome+"%"))
+                node = cur.fetchone()
+                node_id = node[0] if node else None
+                match = "esatto" if node else "nessuno"
+                if node: matchati += 1
+                cur.execute("""INSERT INTO recipe_ingredients
+                               (ricetta_id, ingrediente_nome, ingrediente_node_id, quantita, unita, match_tipo)
+                               VALUES (%s,%s,%s,%s,%s,%s)""", (rid, nome, node_id, qta, uni, match))
+                collegati += 1
+        conn.commit()
+        cur.execute("SELECT COUNT(*) FROM recipe_ingredients")
+        tot = cur.fetchone()[0]
+        cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "righe_create": collegati, "match_grafo": matchati,
+                        "totale_righe": tot, "prossimo_offset": offset + limit})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
