@@ -1462,6 +1462,26 @@ def abbina(ingrediente):
     ing_it = ingrediente.lower().replace("_"," ")
     # cerca alias italiano
     ahn_name = ALIAS_IT.get(ing_it) or ALIAS_IT.get(ing_norm.replace("_"," "))
+    # FIX: se l'ingrediente è GIÀ un nome Ahn (inglese, esiste nel grafo con composti veri),
+    # usalo direttamente. Prima tomato/basil/garlic finivano in AI perché ALIAS_IT (it->en) non
+    # li trovava, bypassando il grafo Ahn (i dati VERI). Ora il grafo ha priorità.
+    if not ahn_name:
+        try:
+            _chk = conn2 = None
+            from db import _get_conn as _gc2, _release_conn as _rc2
+            conn2 = _gc2(); cur2 = conn2.cursor()
+            cur2.execute("""SELECT n.name FROM nodes n WHERE n.type='Ingrediente'
+                            AND (n.id=%s OR lower(n.name)=lower(%s))
+                            AND EXISTS(SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='abbinamento_aromatico')
+                            LIMIT 1""", ("ahn_"+ing_norm.replace(" ","_"), ing_it))
+            _r2 = cur2.fetchone()
+            cur2.close(); _rc2(conn2)
+            if _r2:
+                ahn_name = ing_norm.replace(" ", "_")
+        except Exception:
+            try:
+                if conn2: _rc2(conn2)
+            except Exception: pass
     # se non c'è alias, prova diretto
     search_terms = []
     if ahn_name:
