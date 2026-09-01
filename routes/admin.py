@@ -6702,10 +6702,12 @@ def admin_setup_italian_layer():
         cur.execute("ALTER TABLE nodes ADD COLUMN IF NOT EXISTS padre_ahn_id TEXT")
         created = 0; mappati = 0; nomap = []
         for iid, nome, padre_nome, cat, dicitura in _ITALIAN_LAYER:
-            # cerco il padre Ahn per nome (nel grafo)
+            # cerco il padre Ahn: prima per id (ahn_nome), poi per name
+            _padre_key = padre_nome.replace(" ", "_")
             cur.execute("""SELECT id FROM nodes WHERE type='Ingrediente'
-                           AND (lower(name)=lower(%s) OR lower(name) LIKE lower(%s)) LIMIT 1""",
-                        (padre_nome, "%"+padre_nome+"%"))
+                           AND (id = %s OR id = %s OR lower(name)=lower(%s) OR lower(name) LIKE lower(%s))
+                           ORDER BY (id=%s) DESC LIMIT 1""",
+                        ("ahn_"+_padre_key, "ahn_"+padre_nome, padre_nome, "%"+padre_nome+"%", "ahn_"+_padre_key))
             padre = cur.fetchone()
             padre_id = padre[0] if padre else None
             if not padre_id:
