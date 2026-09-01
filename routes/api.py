@@ -1472,8 +1472,11 @@ def abbina(ingrediente):
                 # Nodo trovato ma con pochi abbinamenti — arricchisci con AI
                 _cat_pre = _pre_data.get("categoria","")
                 _prof_pre = _pre_data.get("categorie_aromatiche",[])
+                _lang_fl = request.args.get("lang", "it")
+                _lingua_nome = {"it": "italiano", "en": "inglese", "es": "spagnolo"}.get(_lang_fl, "italiano")
                 _ai_pre = ("Dammi 5 abbinamenti per " + str(ingrediente) +
                            " (" + str(_cat_pre) + ") con meccanismo fisico-chimico. "
+                           "I nomi degli ingredienti e il meccanismo DEVONO essere in " + _lingua_nome + ". "
                            "JSON: {abbinamenti:[{ingrediente_it:str,meccanismo:str,overlap_score:int}]}")
                 try:
                     _raw_pre = _haiku_raw(_ai_pre)
@@ -1488,7 +1491,7 @@ def abbina(ingrediente):
                                 return jsonify({
             "segreto": _seg,"ingrediente":ingrediente,
                                     "abbinamenti":_pulisci_abbinamenti([{"ingrediente":a.get("ingrediente_it","?"),
-                                        "composto":"abbinamento aromatico",
+                                        "composto":{"it":"abbinamento aromatico","en":"aroma pairing","es":"maridaje aromático"}.get(request.args.get("lang","it"),"abbinamento aromatico"),
                                         "overlap":float(a.get("overlap_score",50)),
                                         "perche":a.get("meccanismo","affinità aromatica")}
                                         for a in _ap[:5]]),
@@ -1670,7 +1673,7 @@ def abbina(ingrediente):
                             return jsonify({
             "segreto": _seg,"ingrediente":ingrediente,
                                 "abbinamenti":_pulisci_abbinamenti([{"ingrediente":a.get("ingrediente_it","?"),
-                                    "composto":"abbinamento aromatico",
+                                    "composto":{"it":"abbinamento aromatico","en":"aroma pairing","es":"maridaje aromático"}.get(request.args.get("lang","it"),"abbinamento aromatico"),
                                     "overlap":float(a.get("overlap_score",50)),
                                     "perche":a.get("meccanismo","affinità aromatica")}
                                     for a in _abbs5[:5]]),
