@@ -6657,3 +6657,72 @@ def admin_pulisci_figlie_dup():
     except Exception as e:
         conn.rollback(); _release_conn(conn)
         return jsonify({"errore": str(e)}), 500
+
+
+# ── ITALIAN KNOWLEDGE LAYER: ingredienti italiani che ereditano il profilo molecolare da Ahn ──
+# Livello 2/3 sopra il grafo Ahn (Livello 4). NON tocca la chimica: mappa il nome italiano al padre.
+_ITALIAN_LAYER = [
+    # (id_italiano, nome_display, padre_ahn_nome, categoria, dicitura)
+    ("ing-it-fiori-di-zucca", "Fiori di zucca", "squash", "ortaggio", ""),
+    ("ing-it-peperone-crusco", "Peperone crusco", "bell_pepper", "ortaggio", "IGP Senise"),
+    ("ing-it-nduja", "'Nduja", "pork", "salume", "Calabria"),
+    ("ing-it-colatura-di-alici", "Colatura di alici", "anchovy", "condimento", "Cetara"),
+    ("ing-it-friarielli", "Friarielli", "broccoli", "ortaggio", "Campania"),
+    ("ing-it-guanciale", "Guanciale", "pork", "salume", ""),
+    ("ing-it-parmigiano-dop", "Parmigiano Reggiano DOP", "parmesan_cheese", "formaggio", "DOP"),
+    ("ing-it-pecorino-romano-dop", "Pecorino Romano DOP", "sheep_cheese", "formaggio", "DOP"),
+    ("ing-it-san-marzano-dop", "Pomodoro San Marzano DOP", "tomato", "ortaggio", "DOP"),
+    ("ing-it-mozzarella-bufala-dop", "Mozzarella di Bufala DOP", "mozzarella_cheese", "formaggio", "DOP Campana"),
+    ("ing-it-gorgonzola-dop", "Gorgonzola DOP", "blue_cheese", "formaggio", "DOP"),
+    ("ing-it-culatello", "Culatello di Zibello DOP", "ham", "salume", "DOP"),
+    ("ing-it-bottarga", "Bottarga di muggine", "fish_roe", "condimento", "Sardegna"),
+    ("ing-it-cime-di-rapa", "Cime di rapa", "turnip", "ortaggio", "Puglia"),
+    ("ing-it-radicchio-treviso", "Radicchio di Treviso IGP", "chicory", "ortaggio", "IGP"),
+    ("ing-it-carciofo-romanesco", "Carciofo Romanesco IGP", "artichoke", "ortaggio", "IGP"),
+    ("ing-it-cipolla-tropea", "Cipolla Rossa di Tropea IGP", "onion", "ortaggio", "IGP"),
+    ("ing-it-limone-sorrento", "Limone di Sorrento IGP", "lemon", "agrume", "IGP"),
+    ("ing-it-pistacchio-bronte", "Pistacchio di Bronte DOP", "pistachio", "frutta secca", "DOP"),
+    ("ing-it-nocciola-piemonte", "Nocciola Piemonte IGP", "hazelnut", "frutta secca", "IGP"),
+    ("ing-it-castelmagno-dop", "Castelmagno DOP", "cheese", "formaggio", "DOP"),
+    ("ing-it-speck-alto-adige", "Speck Alto Adige IGP", "ham", "salume", "IGP"),
+    ("ing-it-finocchiona", "Finocchiona IGP", "pork", "salume", "IGP Toscana"),
+    ("ing-it-lardo-colonnata", "Lardo di Colonnata IGP", "pork", "salume", "IGP"),
+    ("ing-it-provolone-valpadana", "Provolone Valpadana DOP", "cheese", "formaggio", "DOP"),
+]
+
+@bp.route("/admin/setup-italian-layer")
+def admin_setup_italian_layer():
+    """Crea l'Italian Knowledge Layer: ingredienti italiani che ereditano il profilo molecolare
+    dal padre Ahn. NON duplica composti: mappa nome_it -> padre_ahn_id."""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("ALTER TABLE nodes ADD COLUMN IF NOT EXISTS padre_ahn_id TEXT")
+        created = 0; mappati = 0; nomap = []
+        for iid, nome, padre_nome, cat, dicitura in _ITALIAN_LAYER:
+            # cerco il padre Ahn per nome (nel grafo)
+            cur.execute("""SELECT id FROM nodes WHERE type='Ingrediente'
+                           AND (lower(name)=lower(%s) OR lower(name) LIKE lower(%s)) LIMIT 1""",
+                        (padre_nome, "%"+padre_nome+"%"))
+            padre = cur.fetchone()
+            padre_id = padre[0] if padre else None
+            if not padre_id:
+                nomap.append((nome, padre_nome)); continue
+            mappati += 1
+            data = {"nome_it": nome, "categoria": cat, "dicitura": dicitura,
+                    "padre_ahn": padre_id, "italian_layer": True}
+            cur.execute("""INSERT INTO nodes (id, name, type, data, padre_ahn_id)
+                           VALUES (%s,%s,'Ingrediente',%s::jsonb,%s)
+                           ON CONFLICT (id) DO UPDATE SET padre_ahn_id=EXCLUDED.padre_ahn_id,
+                           data=EXCLUDED.data""",
+                        (iid, nome, json.dumps(data, ensure_ascii=False), padre_id))
+            created += 1
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "creati": created, "mappati": mappati,
+                        "senza_padre": nomap, "totale_layer": len(_ITALIAN_LAYER)})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
