@@ -6728,3 +6728,69 @@ def admin_setup_italian_layer():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── KNOWLEDGE LAYER MULTILINGUA (Opzione B): names {it,en,es} sui nodi ingrediente ──
+@bp.route("/admin/traduci-ingredienti")
+def admin_traduci_ingredienti():
+    """Aggiunge names {it,en,es} agli ingredienti Ahn (l'EN è il nome originale). Batch da N.
+    Opzione B: un nodo unico multilingua, display_name(locale) sceglie la lingua. ?offset=&limit="""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import re as _re
+    from ai import _haiku_raw
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 20)), 40)
+    except Exception:
+        offset, limit = 0, 20
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # ingredienti Ahn senza traduzione (names non ancora popolato)
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Ingrediente'
+                       AND id LIKE 'ahn%%' ORDER BY id LIMIT %s OFFSET %s""", (limit, offset))
+        righe = cur.fetchall()
+        if not righe:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "tradotti": 0, "fine": True})
+        # preparo il batch: chiedo all'AI le traduzioni IT/ES in un colpo
+        nomi_en = []
+        for r in righe:
+            data = r[2] if isinstance(r[2], dict) else (json.loads(r[2]) if r[2] else {})
+            if data.get("names"):  # già tradotto
+                continue
+            nomi_en.append((r[0], r[1]))
+        if not nomi_en:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "tradotti": 0, "gia_fatti": len(righe), "prossimo_offset": offset+limit})
+        _lista = "\n".join(f"{i+1}. {n[1]}" for i, n in enumerate(nomi_en))
+        prompt = (f"Traduci questi ingredienti alimentari dall'inglese in italiano e spagnolo culinario. "
+                  f"Solo il nome dell'ingrediente, niente spiegazioni. Rispondi SOLO JSON:\n"
+                  f'{{"t":[{{"n":numero,"it":"...","es":"..."}}]}}\n\n{_lista}')
+        raw = (_haiku_raw(prompt, max_tokens=1500) or "").strip()
+        raw = _re.sub(r"```json|```", "", raw)
+        mm = _re.search(r"\{.*\}", raw, _re.DOTALL)
+        if not mm:
+            cur.close(); _release_conn(conn)
+            return jsonify({"errore": "no_json", "prossimo_offset": offset+limit})
+        trad = json.loads(mm.group(0)).get("t", [])
+        trad_map = {t.get("n"): t for t in trad if isinstance(t, dict)}
+        fatti = 0
+        for i, (iid, nome_en) in enumerate(nomi_en):
+            t = trad_map.get(i+1, {})
+            nome_it = (t.get("it") or nome_en).strip()
+            nome_es = (t.get("es") or nome_en).strip()
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (iid,))
+            d = cur.fetchone()[0]
+            d = d if isinstance(d, dict) else (json.loads(d) if d else {})
+            d["names"] = {"it": nome_it, "en": nome_en, "es": nome_es}
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(d, ensure_ascii=False), iid))
+            fatti += 1
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "tradotti": fatti, "offset": offset,
+                        "prossimo_offset": offset + limit,
+                        "esempi": [(nomi_en[i][1], trad_map.get(i+1, {}).get("it")) for i in range(min(3, len(nomi_en)))]})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
