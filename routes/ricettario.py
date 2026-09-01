@@ -96,3 +96,37 @@ def ricettario_discipline():
         return jsonify({"discipline": disc, "totale_ricette": sum(d["n"] for d in disc)})
     except Exception as e:
         return jsonify({"discipline": [], "errore": str(e)[:100]}), 200
+
+
+@bp_ricettario.route("/v1/ricetta/<rid>/completa", methods=["GET"])
+def ricetta_completa(rid):
+    """Ricetta completa con EREDITARIETÀ madre/figlia. Se è una figlia, eredita dalla madre i
+    campi mancanti (punto critico, numeri, procedimento, esperimento) e sovrascrive coi propri.
+    Così le figlie non sono più gusci vuoti."""
+    db = carica_grafo()
+    campi = ("id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,"
+             "abbinamenti,procedimento,esperimento,limite,twist,tempo_prep,tempo_cottura,difficolta,"
+             "porzioni,recipe_type,parent_recipe_id,variante_di,immagine")
+    try:
+        row = db.execute(f"SELECT {campi} FROM ricette WHERE id=?", (rid,)).fetchone()
+        if not row:
+            return jsonify({"errore": "ricetta non trovata"}), 404
+        r = dict(row) if hasattr(row, "keys") else dict(zip(campi.split(","), row))
+        # se è figlia, carico la madre per ereditare i campi mancanti
+        if r.get("recipe_type") == "figlia" and r.get("parent_recipe_id"):
+            madre_row = db.execute(f"SELECT {campi} FROM ricette WHERE id=?", (r["parent_recipe_id"],)).fetchone()
+            if madre_row:
+                madre = dict(madre_row) if hasattr(madre_row, "keys") else dict(zip(campi.split(","), madre_row))
+                # eredito i campi che la figlia non ha (la figlia sovrascrive solo ciò che ha di suo)
+                for campo in ("punto_critico", "numeri", "procedimento", "esperimento", "limite",
+                              "tecniche", "tempo_prep", "tempo_cottura", "difficolta", "abbinamenti"):
+                    val = r.get(campo)
+                    vuoto = (val is None or (isinstance(val, str) and not val.strip())
+                             or (isinstance(val, (list, dict)) and not val))
+                    if vuoto and madre.get(campo):
+                        r[campo] = madre[campo]
+                r["_ereditata_da"] = madre.get("nome")
+                r["_nota_variante"] = r.get("descrizione") or ""
+        return jsonify({"ricetta": r})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 200
