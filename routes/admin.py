@@ -6599,7 +6599,10 @@ def admin_genera_figlie():
                 for v in varianti[:3]:
                     vnome = (v.get("nome") or "").strip()
                     vdiff = (v.get("differenza") or "").strip()
-                    if not vnome or vnome.lower() == nome.lower():
+                    # scarto se vuoto, uguale alla madre, o troppo simile (nome madre contenuto)
+                    _nome_madre_base = _re.sub(r"\s*\(.*?\)", "", nome).strip().lower()
+                    _vnome_base = _re.sub(r"\s*\(.*?\)", "", vnome).strip().lower()
+                    if not vnome or _vnome_base == _nome_madre_base or _vnome_base == nome.lower():
                         continue
                     fid = "ric-fig-" + _re.sub(r"[^a-z0-9]+", "-", vnome.lower())[:40]
                     cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
@@ -6631,3 +6634,26 @@ def admin_genera_figlie():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+@bp.route("/admin/pulisci-figlie-duplicate")
+def admin_pulisci_figlie_dup():
+    """Rimuove le figlie che duplicano il nome di un'altra ricetta (madre o figlia già esistente)."""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # trova figlie il cui nome (normalizzato) coincide con una ricetta più vecchia
+        cur.execute("""
+            DELETE FROM ricette f WHERE f.recipe_type='figlia' AND EXISTS (
+                SELECT 1 FROM ricette r WHERE r.id <> f.id
+                AND lower(regexp_replace(r.nome,'\\s*\\(.*?\\)','')) = lower(regexp_replace(f.nome,'\\s*\\(.*?\\)',''))
+                AND r.id < f.id
+            )""")
+        n = cur.rowcount
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "duplicate_rimosse": n})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        return jsonify({"errore": str(e)}), 500
