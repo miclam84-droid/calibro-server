@@ -609,9 +609,10 @@ function renderHome(j){
   { const _h=document.getElementById('scopri-hero'); if(_h) _h.classList.remove('loading'); }
   // CRUSCOTTO OPERATIVO — il colpo d'occhio (fenomeno + numero + misura + esperimento)
   _popolaCruscotto(f);
-  // CARD HERO SOTTO = l'approfondimento: capire il fenomeno (NO numero duplicato, quello è nel cruscotto)
+  // CARD HERO SOTTO = la SCIENZA del fenomeno (il cruscotto sopra ha già nome+numero).
+  // Cambio l'angolo per non essere un doppione: qui è "la spiegazione", non il ri-annuncio.
   document.getElementById('scopri-ey').textContent =
-    'capisci il fenomeno · ' + (f.dominio||'');
+    'la scienza dietro · ' + (f.dominio||'');
   document.getElementById('scopri-titolo').textContent = f.nome || '—';
     const _loop = document.getElementById('loop-guidato');
     const _loopFen = document.getElementById('loop-fen-nome');
@@ -1978,7 +1979,7 @@ const _strings = {
     ct_q10_out:'Tempo previsto',
     // cookie
     ct_cookie_ok:'Accetto', ct_cookie_no:'Solo essenziali',
-    ct_cookie_txt:'Matter Bench usa cookie tecnici per funzionare e registra le domande per migliorare il servizio. Nessun cookie di profilazione. Le risposte sono generate da AI (Anthropic/Mistral).',
+    ct_cookie_txt:'Cookie tecnici, nessuna profilazione.',
     // batch output
     ct_acqua_pre:'Acqua pre-diluizione',
     ct_totale:'Totale',
