@@ -6950,3 +6950,62 @@ def admin_collega_ricette():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── CONTRATTO VISIVO: hero_prompt per le immagini ricette (briefing OpenAI) ──
+@bp.route("/admin/genera-hero-prompt")
+def admin_genera_hero_prompt():
+    """Genera il contratto visivo (hero_subject, hero_style, hero_prompt) per le ricette.
+    Il hero_prompt è un prompt fotografico preciso e stabile per cercare/generare la foto giusta.
+    ?offset=&limit=  Le figlie ereditano il soggetto della madre + la variante."""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import re as _re
+    from ai import _haiku_raw
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 15)), 30)
+    except Exception:
+        offset, limit = 0, 15
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS hero_subject TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS hero_style TEXT")
+        cur.execute("ALTER TABLE ricette ADD COLUMN IF NOT EXISTS hero_prompt TEXT")
+        cur.execute("""SELECT id, nome, disciplina, descrizione FROM ricette
+                       WHERE hero_prompt IS NULL ORDER BY id LIMIT %s OFFSET %s""", (limit, offset))
+        ricette = cur.fetchall()
+        if not ricette:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "fine": True})
+        # tassonomia stile per disciplina
+        _STILE = {"bar": "beverage", "cucina": "plated", "pasticceria": "dessert",
+                  "panificazione": "bakery", "gelateria": "dessert", "caffetteria": "beverage",
+                  "birra": "beverage", "vino": "beverage"}
+        fatti = 0
+        for rid, nome, disc, descr in ricette:
+            style = _STILE.get((disc or "").lower(), "plated")
+            # genero il hero_prompt con l'AI: prompt fotografico food professionale
+            prompt_ai = (f"Crea un prompt fotografico professionale in INGLESE per fotografare il piatto "
+                         f"'{nome}' ({disc}). Deve descrivere il piatto reale, impiattamento, ingredienti "
+                         f"visibili, luce naturale, stile food fotografia italiana di qualità. Max 30 parole. "
+                         f"Rispondi SOLO col prompt, niente altro.")
+            try:
+                hero = (_haiku_raw(prompt_ai, max_tokens=100) or "").strip().strip('"')
+                hero = _re.sub(r"^(prompt:|photo:)\s*", "", hero, flags=_re.I)[:300]
+            except Exception:
+                hero = ""
+            if not hero:
+                hero = f"{nome}, Italian professional food photography, natural light, plated, top-down"
+            # hero_subject = il nome pulito del piatto
+            subject = _re.sub(r"\s*\(.*?\)", "", nome).strip()
+            cur.execute("UPDATE ricette SET hero_subject=%s, hero_style=%s, hero_prompt=%s WHERE id=%s",
+                        (subject, style, hero, rid))
+            fatti += 1
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "generati": fatti, "prossimo_offset": offset + limit,
+                        "esempio": {"nome": ricette[0][1], "hero_prompt": hero if fatti else ""}})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
