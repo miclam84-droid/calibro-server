@@ -1720,6 +1720,7 @@ def abbina(ingrediente):
         # ed esclude l'auto-abbinamento (l'ingrediente cercato con se stesso)
         _cercato = ingrediente.lower().strip()
         seen_nomi = set()
+        _fam_count = {}  # limita la ridondanza: non 5 formaggi identici, ma max 2 per categoria
         abbinamenti_dedup = []
         for a in sorted(abbinamenti, key=lambda x: -x["overlap"]):
             n_lower = a["ingrediente"].lower().strip()
@@ -1728,6 +1729,20 @@ def abbina(ingrediente):
             # salta se è l'ingrediente stesso (self-match)
             if n_lower == _cercato or n_lower == NOMI_IT.get(_cercato, "").lower():
                 continue
+            # limite di categoria: max 2 abbinamenti della stessa famiglia (evita 5 formaggi uguali)
+            _fam = None
+            for _c, _membri in {"latticino": {"parmigiano","pecorino","mozzarella","gruyère","provolone",
+                "grana","formaggio","caciocavallo","fontina","gorgonzola","ricotta","stracchino","asiago",
+                "emmental","cheddar","brie","taleggio","scamorza"}, "agrume": {"limone","lime","arancia",
+                "pompelmo","mandarino","bergamotto","cedro"}}.items():
+                if _fam is None:
+                    for _m in _membri:
+                        if _m in n_lower:
+                            _fam = _c; break
+            if _fam:
+                if _fam_count.get(_fam, 0) >= 2:
+                    continue
+                _fam_count[_fam] = _fam_count.get(_fam, 0) + 1
             seen_nomi.add(n_lower)
             abbinamenti_dedup.append(a)
             if len(abbinamenti_dedup) >= 15:
