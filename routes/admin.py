@@ -6794,3 +6794,90 @@ def admin_traduci_ingredienti():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── CONFIDENCE LAYER: livello di evidenza per ogni ingrediente (A verificato/B ereditato/C stima) ──
+# Regola congelata: Matter non inventa mai un profilo molecolare. Ogni dato dichiara la sua origine.
+_ARCHETIPI_FAMIGLIA = [
+    # (parole chiave nel nome, padre archetipo Ahn) - per l'ereditarietà degli orfani
+    (("cheese","formagg","caciocavallo","provolone","scamorza","caciotta","pecorino"), "cheese"),
+    (("fish","pesce","branzino","orata","spigola","merluzzo","nasello"), "fish"),
+    (("shrimp","gamber","scampi","crostace","aragosta"), "shrimp"),
+    (("pepper","peperone","peperoncino"), "bell_pepper"),
+    (("tomato","pomodor","datterino","ciliegino"), "tomato"),
+    (("citrus","agrume","arancia","limone","mandarino","cedro","bergamotto"), "orange"),
+    (("apple","mela"), "apple"),
+    (("berry","bacca","mirtillo","lampone","mora","ribes"), "berry"),
+    (("herb","erba","basilico","prezzemolo","timo","origano","salvia","menta"), "basil"),
+    (("pork","maiale","salume","salsiccia","salame","pancetta","guanciale","lardo"), "pork"),
+    (("beef","manzo","vitello","bovino"), "beef"),
+    (("mushroom","fungo","porcino","champignon"), "mushroom"),
+    (("wine","vino"), "wine"),
+    (("bread","pane","pizza","focaccia"), "bread"),
+    (("nut","noce","nocciola","mandorla","pistacchio","pinolo"), "nut"),
+    (("onion","cipolla","scalogno","porro"), "onion"),
+]
+
+@bp.route("/admin/setup-confidence-layer")
+def admin_setup_confidence():
+    """Assegna evidence_level a ogni ingrediente: A (ha composti Ahn), B (eredita da archetipo),
+    C (nessun dato). Mappa gli orfani ai padri archetipo per famiglia. ?offset=&limit="""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 200)), 500)
+    except Exception:
+        offset, limit = 0, 200
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Ingrediente'
+                       ORDER BY id LIMIT %s OFFSET %s""", (limit, offset))
+        righe = cur.fetchall()
+        if not righe:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "fine": True})
+        conta = {"A": 0, "B": 0, "C": 0}
+        for r in righe:
+            iid, nome, data = r[0], r[1], (r[2] if isinstance(r[2], dict) else (json.loads(r[2]) if r[2] else {}))
+            # ha già composti reali? (arco contiene_composto)
+            cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND relation='contiene_composto' LIMIT 1", (iid,))
+            ha_composti = cur.fetchone() is not None
+            # ha già un padre (Italian Layer)?
+            padre_esistente = data.get("padre_ahn") or data.get("names", {}).get("padre")
+            if ha_composti:
+                livello = "A"; padre = None
+            elif padre_esistente:
+                livello = "B"; padre = padre_esistente
+            else:
+                # cerco un archetipo di famiglia dal nome
+                nl = (nome or "").lower()
+                padre_nome = None
+                for chiavi, arch in _ARCHETIPI_FAMIGLIA:
+                    if any(k in nl for k in chiavi):
+                        padre_nome = arch; break
+                if padre_nome:
+                    # trovo l'id del padre archetipo (che ha composti)
+                    cur.execute("""SELECT n.id FROM nodes n WHERE n.type='Ingrediente'
+                                   AND (n.id=%s OR n.id=%s OR lower(n.name)=%s)
+                                   AND EXISTS(SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')
+                                   LIMIT 1""", ("ahn_"+padre_nome, padre_nome, padre_nome))
+                    pr = cur.fetchone()
+                    if pr:
+                        livello = "B"; padre = pr[0]
+                    else:
+                        livello = "C"; padre = None
+                else:
+                    livello = "C"; padre = None
+            data["evidence_level"] = livello
+            if padre:
+                data["padre_archetipo"] = padre
+            conta[livello] += 1
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(data, ensure_ascii=False), iid))
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "processati": len(righe), "livelli": conta,
+                        "prossimo_offset": offset + limit})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
