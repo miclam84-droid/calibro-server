@@ -1462,22 +1462,9 @@ def abbina(ingrediente):
     ing_it = ingrediente.lower().replace("_"," ")
     # cerca alias italiano
     ahn_name = ALIAS_IT.get(ing_it) or ALIAS_IT.get(ing_norm.replace("_"," "))
-    # FIX: se l'ingrediente è GIÀ un nome Ahn (inglese, esiste nel grafo con composti veri),
-    # usalo direttamente. Prima tomato/basil/garlic finivano in AI perché ALIAS_IT (it->en) non
-    # li trovava, bypassando il grafo Ahn (i dati VERI). Ora il grafo ha priorità.
-    if not ahn_name:
-        try:
-            from db import carica_grafo as _cg2
-            _db2 = _cg2()
-            _r2 = _db2.execute(
-                "SELECT n.name FROM nodes n WHERE n.type='Ingrediente' "
-                "AND (n.id=? OR lower(n.name)=lower(?)) "
-                "AND EXISTS(SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='abbinamento_aromatico') "
-                "LIMIT 1", ("ahn_"+ing_norm.replace(" ","_"), ing_it)).fetchone()
-            if _r2:
-                ahn_name = ing_norm.replace(" ", "_")
-        except Exception:
-            pass
+    # NOTA: il grafo Ahn andrebbe usato prima dell'AI per gli ingredienti con dati veri.
+    # Rinviato: l'intervento destabilizza i percorsi del Flavour. Da rifare con cautela in una
+    # sessione dedicata, testando ogni percorso. Per ora il Flavour resta stabile (com'era).
     # se non c'è alias, prova diretto
     search_terms = []
     if ahn_name:
