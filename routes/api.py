@@ -1467,21 +1467,17 @@ def abbina(ingrediente):
     # li trovava, bypassando il grafo Ahn (i dati VERI). Ora il grafo ha priorità.
     if not ahn_name:
         try:
-            _chk = conn2 = None
-            from db import _get_conn as _gc2, _release_conn as _rc2
-            conn2 = _gc2(); cur2 = conn2.cursor()
-            cur2.execute("""SELECT n.name FROM nodes n WHERE n.type='Ingrediente'
-                            AND (n.id=%s OR lower(n.name)=lower(%s))
-                            AND EXISTS(SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='abbinamento_aromatico')
-                            LIMIT 1""", ("ahn_"+ing_norm.replace(" ","_"), ing_it))
-            _r2 = cur2.fetchone()
-            cur2.close(); _rc2(conn2)
+            from db import carica_grafo as _cg2
+            _db2 = _cg2()
+            _r2 = _db2.execute(
+                "SELECT n.name FROM nodes n WHERE n.type='Ingrediente' "
+                "AND (n.id=? OR lower(n.name)=lower(?)) "
+                "AND EXISTS(SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='abbinamento_aromatico') "
+                "LIMIT 1", ("ahn_"+ing_norm.replace(" ","_"), ing_it)).fetchone()
             if _r2:
                 ahn_name = ing_norm.replace(" ", "_")
         except Exception:
-            try:
-                if conn2: _rc2(conn2)
-            except Exception: pass
+            pass
     # se non c'è alias, prova diretto
     search_terms = []
     if ahn_name:
