@@ -1295,6 +1295,23 @@ def abbina(ingrediente):
     if not _check_rate_limit(request.headers.get("X-Forwarded-For", request.remote_addr or "?").split(",")[0].strip()):
         return jsonify({"errore":"Troppe richieste. Attendi un momento."}), 429
     _seg = _segreto_di(ingrediente)  # segreto del mestiere, se c'è
+    # CONFIDENCE LAYER: rilevo il livello di evidenza dell'ingrediente cercato (A/B/C)
+    _evidence = "C"  # default: stima (finché non trovo dati)
+    try:
+        from db import carica_grafo as _cg0
+        _db0 = _cg0()
+        _n0 = _db0.execute(
+            "SELECT data FROM nodes WHERE type='Ingrediente' "
+            "AND (lower(name)=lower(?) OR id=?) LIMIT 1", (ingrediente.strip(), ingrediente.strip())).fetchone()
+        if _n0:
+            _d0 = _n0["data"] if hasattr(_n0, "keys") and isinstance(_n0["data"], dict) else None
+            if _d0 is None:
+                _raw0 = _n0["data"] if hasattr(_n0, "keys") else _n0[0]
+                _d0 = _raw0 if isinstance(_raw0, dict) else (json.loads(_raw0) if _raw0 else {})
+            _evidence = _d0.get("evidence_level", "C")
+    except Exception:
+        pass
+    request.environ["_evidence_level"] = _evidence
     # ITALIAN KNOWLEDGE LAYER: se è un ingrediente italiano del layer, eredita gli abbinamenti
     # dal padre Ahn (il nome italiano si mostra, la chimica viene dal padre scientifico).
     try:
@@ -1979,7 +1996,10 @@ def abbina(ingrediente):
             "ingrediente": ingrediente,
             "abbinamenti": abbinamenti_puliti,
             "nota": "Ipotesi di abbinamento per composti volatili condivisi — non è una garanzia nutrizionale",
-            "fonte": fonte
+            "fonte": fonte,
+            "evidence": _evidence,
+            "evidence_label": {"A": "Dato molecolare verificato", "B": "Profilo ereditato da ingrediente equivalente",
+                               "C": "Suggerimento AI (non verificato molecolarmente)"}.get(_evidence, "")
         })
     except Exception as e:
         return jsonify({
