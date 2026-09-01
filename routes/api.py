@@ -1257,6 +1257,33 @@ def abbina(ingrediente):
     if not _check_rate_limit(request.headers.get("X-Forwarded-For", request.remote_addr or "?").split(",")[0].strip()):
         return jsonify({"errore":"Troppe richieste. Attendi un momento."}), 429
     _seg = _segreto_di(ingrediente)  # segreto del mestiere, se c'è
+    # ITALIAN KNOWLEDGE LAYER: se è un ingrediente italiano del layer, eredita gli abbinamenti
+    # dal padre Ahn (il nome italiano si mostra, la chimica viene dal padre scientifico).
+    try:
+        from db import carica_grafo as _cg
+        _dbi = _cg()
+        _il = _dbi.execute(
+            "SELECT id, name, padre_ahn_id, data FROM nodes WHERE type='Ingrediente' "
+            "AND padre_ahn_id IS NOT NULL AND (lower(name)=lower(?) OR id=?) LIMIT 1",
+            (ingrediente.strip(), ingrediente.strip())).fetchone()
+        if _il and _il["padre_ahn_id"]:
+            _padre = _dbi.execute("SELECT name FROM nodes WHERE id=?", (_il["padre_ahn_id"],)).fetchone()
+            if _padre:
+                # ricalcolo gli abbinamenti usando il NOME DEL PADRE, ma mantengo il nome italiano nel titolo
+                _nome_it = _il["name"]
+                _dic = ""
+                try:
+                    _dd = _il["data"] if isinstance(_il["data"], dict) else json.loads(_il["data"] or "{}")
+                    _dic = _dd.get("dicitura", "")
+                except Exception:
+                    pass
+                ingrediente_padre = _padre["name"]
+                # sostituisco l'ingrediente cercato col padre per il resto della funzione
+                ingrediente = ingrediente_padre
+                # marco che è un ingrediente italiano ereditato (il frontend mostra nome_it + dicitura)
+                request.environ["_italian_layer"] = {"nome_it": _nome_it, "dicitura": _dic, "padre": ingrediente_padre}
+    except Exception:
+        pass
     # ARRICCHIMENTO BAR: se è uno spirito curato, usa gli abbinamenti da pratica bar.
     # (Il dataset Ahn ha pochi/zero composti per i distillati — vodka, campari, ecc.)
     _bar_curati = _abbinamenti_bar_curati(ingrediente)
