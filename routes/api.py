@@ -1731,14 +1731,17 @@ def abbina(ingrediente):
                 continue
             # limite di categoria: max 2 abbinamenti della stessa famiglia (evita 5 formaggi uguali)
             _fam = None
-            for _c, _membri in {"latticino": {"parmigiano","pecorino","mozzarella","gruyère","provolone",
-                "grana","formaggio","caciocavallo","fontina","gorgonzola","ricotta","stracchino","asiago",
-                "emmental","cheddar","brie","taleggio","scamorza"}, "agrume": {"limone","lime","arancia",
-                "pompelmo","mandarino","bergamotto","cedro"}}.items():
-                if _fam is None:
-                    for _m in _membri:
-                        if _m in n_lower:
-                            _fam = _c; break
+            _dairy_kw = ("parmigiano","pecorino","mozzarella","gruyère","gruyere","provolone","grana",
+                "caciocavallo","fontina","gorgonzola","ricotta","stracchino","asiago","emmental","cheddar",
+                "brie","taleggio","scamorza","camembert","feta","formaggio","caprino","burrata","mascarpone",
+                "robiola","edam","gouda","manchego","roquefort","stilton","comté","comte","raclette","latte",
+                "panna","burro","yogurt","kefir")
+            _agrume_kw = ("limone","lime","arancia","pompelmo","mandarino","bergamotto","cedro","clementina")
+            _erba_kw = ("basilico","prezzemolo","rosmarino","timo","salvia","origano","maggiorana","aneto",
+                "dragoncello","coriandolo","menta","erba cipollina")
+            if any(k in n_lower for k in _dairy_kw): _fam = "latticino"
+            elif any(k in n_lower for k in _agrume_kw): _fam = "agrume"
+            elif any(k in n_lower for k in _erba_kw): _fam = "erba"
             if _fam:
                 if _fam_count.get(_fam, 0) >= 2:
                     continue
