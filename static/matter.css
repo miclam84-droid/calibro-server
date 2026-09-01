@@ -2495,3 +2495,31 @@ a:focus-visible,input:focus-visible{
 @keyframes genspin{to{transform:rotate(360deg)}}
 .gen-txt{font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#141D22);line-height:1.6}
 .gen-sub{font-size:12.5px;color:var(--muted,#5A6C70)}
+
+/* ═══════════════════════════════════════════════════════════
+   FIX SCHERMATA CALCOLATORI — tab che scorrono (non tagliati),
+   label morbide, campi con gerarchia pulita
+   ═══════════════════════════════════════════════════════════ */
+/* tab: scroll orizzontale invece di wrap che taglia */
+.calc-menu{display:flex!important;flex-wrap:nowrap!important;gap:8px!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:20px!important;padding-bottom:4px;padding-right:8px}
+.calc-menu::-webkit-scrollbar{display:none}
+.calc-menu-btn{flex:0 0 auto!important;min-width:auto!important;white-space:nowrap!important;padding:10px 16px!important;font-size:13px!important;border-radius:10px!important}
+/* label campi: Inter, non mono urlato */
+.calc-field label{font-family:var(--sans,'Inter')!important;font-size:12px!important;font-weight:600!important;text-transform:none!important;letter-spacing:0!important;color:var(--ink-muted,#3D4A50)!important;margin-bottom:8px!important}
+.calc-perc-lab{font-family:var(--sans,'Inter')!important;font-size:12px!important;font-weight:600!important;text-transform:none!important;letter-spacing:0!important;color:var(--ink-muted,#3D4A50)!important;margin:8px 0 10px!important}
+/* campi percentuali: numero prominente (non grigio slavato) */
+.calc-perc{background:var(--l2,#E8EDED)!important;border:1px solid var(--border,#B7C3C3)!important;border-radius:12px!important;padding:14px 16px!important;gap:0!important;justify-content:space-between}
+.calc-perc span{font-family:var(--sans,'Inter')!important;font-size:14px!important;color:var(--ink,#141D22)!important;font-weight:500}
+.calc-perc input{font-family:var(--mono,'IBM Plex Mono')!important;font-size:20px!important;font-weight:700!important;color:var(--dato,#245979)!important;text-align:right;min-width:60px;max-width:90px}
+/* campo peso principale */
+.calc-field input{font-size:22px!important;font-weight:700!important;color:var(--dato,#245979)!important}
+
+/* ═══ RINFORZO FINALE — mono via da titoli/nomi, resta solo sui numeri ═══ */
+/* nome fenomeno nel cruscotto: display, MAI mono */
+.crus-box-target .crus-val{font-family:var(--serif,'Space Grotesk')!important;letter-spacing:-.02em!important}
+/* eyebrow di sezione (Quaderno, Atlante, Assistente da banco...): Inter leggibile */
+.sec-eyebrow,.tab-screen-label,.quad-eyebrow,.scr-eyebrow,.vista-eyebrow,
+.mtr-eyebrow,.ass-eyebrow{font-family:var(--sans,'Inter')!important;letter-spacing:.06em!important;text-transform:uppercase!important}
+/* tab calcolatori: forzo lo scroll e la larghezza naturale (rinforzo) */
+#calc-body,.calc-menu{scroll-behavior:smooth}
+.calc-menu-btn{flex:0 0 auto!important;white-space:nowrap!important;min-width:max-content!important;text-align:center;line-height:1.2}
