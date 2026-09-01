@@ -6455,6 +6455,7 @@ function _calcRenderImpasto(){
     +   '<div class="calc-perc"><span>Lievito</span><input type="number" inputmode="decimal" id="ci-lievito" placeholder="1"></div>'
     + '</div>'
     + '<button class="calc-go" onclick="_calcImpasto()">Calcola le grammature</button>'
+    + '<div class="calc-nota-info"><b>Il metodo del panettiere</b> esprime ogni ingrediente come percentuale sulla farina (100%). Cambi il peso totale e le grammature si ricalcolano mantenendo le proporzioni. Così scali qualsiasi ricetta senza rifare i conti.</div>'
     + '</div><div id="ci-out"></div>');
 }
 async function _calcImpasto(){
