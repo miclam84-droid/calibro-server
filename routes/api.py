@@ -1181,33 +1181,47 @@ _ABBINAMENTI_BAR = {
     "mezcal": ["lime", "peperoncino", "arancia", "ananas", "sale affumicato"],
     "prosecco": ["aperol", "campari", "pesca", "sambuco", "fragola"],
 }
-def _fascia_affinita(overlap):
-    """Converte il conteggio grezzo di composti condivisi in una fascia qualitativa SENSATA.
-    Il dato Ahn conta anche composti comuni: numeri alti (127) sono fuorvianti. La fascia è onesta."""
+def _fascia_affinita(overlap, lang="it"):
+    """Fascia di affinità qualitativa, trilingue."""
     try:
         n = float(overlap)
     except Exception:
         n = 0
-    if n >= 100:
-        return "affinità molto alta"
-    if n >= 50:
-        return "affinità alta"
-    if n >= 20:
-        return "affinità media"
-    if n >= 5:
-        return "affinità presente"
-    return "affinità debole"
+    _T = {
+        "molto_alta": {"it": "affinità molto alta", "en": "very high affinity", "es": "afinidad muy alta"},
+        "alta": {"it": "affinità alta", "en": "high affinity", "es": "afinidad alta"},
+        "media": {"it": "affinità media", "en": "medium affinity", "es": "afinidad media"},
+        "presente": {"it": "affinità presente", "en": "some affinity", "es": "afinidad presente"},
+        "debole": {"it": "affinità debole", "en": "weak affinity", "es": "afinidad débil"},
+    }
+    if lang not in ("it", "en", "es"): lang = "it"
+    if n >= 100: k = "molto_alta"
+    elif n >= 50: k = "alta"
+    elif n >= 20: k = "media"
+    elif n >= 5: k = "presente"
+    else: k = "debole"
+    return _T[k][lang]
 
-def _perche_affinita(overlap):
+def _perche_affinita(overlap, lang="it"):
     try:
         n = float(overlap)
     except Exception:
         n = 0
-    if n >= 50:
-        return "condividono molti composti aromatici: abbinamento robusto"
-    if n >= 20:
-        return "condividono diversi composti aromatici: buona base di abbinamento"
-    return "condividono alcuni composti aromatici"
+    _T = {
+        "alta": {"it": "condividono molti composti aromatici: abbinamento robusto",
+                 "en": "they share many aroma compounds: robust pairing",
+                 "es": "comparten muchos compuestos aromáticos: maridaje robusto"},
+        "media": {"it": "condividono diversi composti aromatici: buona base di abbinamento",
+                  "en": "they share several aroma compounds: good pairing base",
+                  "es": "comparten varios compuestos aromáticos: buena base de maridaje"},
+        "bassa": {"it": "condividono alcuni composti aromatici",
+                  "en": "they share some aroma compounds",
+                  "es": "comparten algunos compuestos aromáticos"},
+    }
+    if lang not in ("it", "en", "es"): lang = "it"
+    if n >= 50: return _T["alta"][lang]
+    if n >= 20: return _T["media"][lang]
+    return _T["bassa"][lang]
 
 def _abbinamenti_bar_curati(ingrediente, max_n=8):
     key = ingrediente.strip().lower()
@@ -1248,6 +1262,30 @@ def _segreto_di(ingrediente):
     except Exception:
         pass
     return None
+
+def _display_name_locale(db, nome_en_raw, node_id, lang, fallback):
+    """Knowledge Layer Opzione B: restituisce il nome dell'ingrediente nella lingua richiesta.
+    Legge names {it,en,es} dal nodo. Fallback: NOMI_IT (per it) o il nome inglese Title Case."""
+    if lang not in ("it", "en", "es"):
+        lang = "it"
+    try:
+        if node_id:
+            row = db.execute("SELECT data FROM nodes WHERE id=?", (node_id,)).fetchone()
+            if row:
+                d = row["data"] if hasattr(row, "keys") and isinstance(row["data"], dict) else None
+                if d is None:
+                    import json as _j2
+                    _raw = row["data"] if hasattr(row, "keys") else row[0]
+                    d = _raw if isinstance(_raw, dict) else (_j2.loads(_raw) if _raw else {})
+                names = d.get("names") or {}
+                if names.get(lang):
+                    return names[lang]
+                if lang == "en" and names.get("en"):
+                    return names["en"]
+    except Exception:
+        pass
+    return fallback
+
 
 @bp.route("/v1/abbina/<ingrediente>")
 def abbina(ingrediente):
@@ -1728,20 +1766,28 @@ def abbina(ingrediente):
             "raisin":"uvetta","prune":"prugna secca","currant":"ribes",
         }
         abbinamenti = []
+        _lang_out = request.args.get("lang", "it")
         for r in rows:
             nome_en = r[1].replace("_"," ").lower() if r[1] else ""
             # fallback: se manca la traduzione IT usa il nome Ahn in Title Case
             nome_fallback = r[1].replace("_"," ").title() if r[1] else "sconosciuto"
-            nome_pulito = NOMI_IT.get(nome_en, nome_fallback)
+            nome_it = NOMI_IT.get(nome_en, nome_fallback)
+            # display_name locale-aware: usa names {it,en,es} dal nodo; per EN usa il nome Ahn
+            if _lang_out == "en":
+                nome_pulito = _display_name_locale(db, nome_en, r[0], "en", nome_fallback)
+            elif _lang_out == "es":
+                nome_pulito = _display_name_locale(db, nome_en, r[0], "es", nome_it)
+            else:
+                nome_pulito = _display_name_locale(db, nome_en, r[0], "it", nome_it)
             # salta i nodi senza nome
             if not nome_pulito or nome_pulito == "sconosciuto":
                 continue
             overlap = float(r[2]) if r[2] else 0
             abbinamenti.append({
                 "ingrediente": nome_pulito,
-                "composto": _fascia_affinita(overlap),
+                "composto": _fascia_affinita(overlap, _lang_out),
                 "overlap": overlap,
-                "perche": _perche_affinita(overlap)
+                "perche": _perche_affinita(overlap, _lang_out)
             })
         # deduplica per nome (possono esserci nodi EN e IT con lo stesso nome)
         # ed esclude l'auto-abbinamento (l'ingrediente cercato con se stesso)
