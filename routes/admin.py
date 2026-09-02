@@ -7009,3 +7009,61 @@ def admin_genera_hero_prompt():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── FOTO RICETTE: cerca foto vere da Wikimedia Commons (libere) per le ricette senza immagine ──
+@bp.route("/admin/cerca-foto-ricette")
+def admin_cerca_foto_ricette():
+    """Cerca una foto reale (Wikimedia Commons, licenza libera) per le ricette senza immagine,
+    usando il nome del piatto. Se trova, salva l'URL. Altrimenti resta il blueprint. ?offset=&limit="""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    import urllib.request as _ur, urllib.parse as _up, re as _re
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 15)), 30)
+    except Exception:
+        offset, limit = 0, 15
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # solo ricette MADRI senza immagine (le figlie ereditano dalla madre)
+        cur.execute("""SELECT id, nome FROM ricette
+                       WHERE (immagine IS NULL OR immagine='') AND recipe_type='madre'
+                       ORDER BY id LIMIT %s OFFSET %s""", (limit, offset))
+        ricette = cur.fetchall()
+        if not ricette:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "fine": True})
+        trovate = 0; esempi = []
+        for rid, nome in ricette:
+            # nome pulito per la ricerca (tolgo parentesi)
+            q = _re.sub(r"\s*\(.*?\)", "", nome).strip()
+            try:
+                # API Wikimedia Commons: cerco immagini per il nome del piatto
+                url = ("https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search"
+                       "&gsrsearch=" + _up.quote(q + " food dish") + "&gsrlimit=1&gsrnamespace=6"
+                       "&prop=imageinfo&iiprop=url&iiurlwidth=800")
+                req = _ur.Request(url, headers={"User-Agent": "MatterBench/1.0 (food app)"})
+                with _ur.urlopen(req, timeout=8) as r:
+                    data = _j.loads(r.read().decode("utf-8"))
+                pages = data.get("query", {}).get("pages", {})
+                foto_url = None
+                for _pid, page in pages.items():
+                    ii = page.get("imageinfo", [{}])
+                    if ii and ii[0].get("thumburl"):
+                        foto_url = ii[0]["thumburl"]; break
+                if foto_url:
+                    cur.execute("UPDATE ricette SET immagine=%s, immagine_autore=%s WHERE id=%s",
+                                (foto_url, "Wikimedia Commons", rid))
+                    trovate += 1
+                    if len(esempi) < 3:
+                        esempi.append({"nome": nome, "url": foto_url[:60]})
+            except Exception:
+                pass
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "foto_trovate": trovate, "su": len(ricette),
+                        "esempi": esempi, "prossimo_offset": offset + limit})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
