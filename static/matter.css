@@ -2536,3 +2536,13 @@ a:focus-visible,input:focus-visible{
 /* nota informativa calcolatori — riempie il vuoto sotto il bottone con contesto utile */
 .calc-nota-info{margin-top:20px;padding:16px 18px;background:var(--l2,#E8EDED);border-left:3px solid var(--teal,#12545D);border-radius:0 12px 12px 0;font-family:var(--sans,'Inter');font-size:13.5px;color:var(--ink-muted,#3D4A50);line-height:1.6}
 .calc-nota-info b{color:var(--ink,#141D22);font-weight:600}
+
+/* ═══ ALLERGENI (obbligo di legge) ═══ */
+.allerg-box{background:rgba(199,123,63,.08);border:1px solid var(--terra,#C77B3F);border-radius:12px;padding:14px 16px;margin:0 0 16px}
+.allerg-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--terra,#C77B3F);margin-bottom:10px}
+.allerg-chips{display:flex;flex-wrap:wrap;gap:8px}
+.allerg-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border,#B7C3C3);border-radius:16px;padding:5px 12px 5px 8px}
+.allerg-chip img{width:18px;height:18px;flex-shrink:0}
+.allerg-chip span{font-family:var(--sans,'Inter');font-size:13px;color:var(--ink,#141D22);font-weight:500}
+.allerg-warning{margin-top:10px;font-size:12.5px;color:var(--terra,#C77B3F);font-weight:600}
+.allerg-disc{margin-top:6px;font-size:10.5px;color:var(--muted,#5A6C70);font-style:italic;line-height:1.4}

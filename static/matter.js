@@ -3763,6 +3763,36 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
   _apriVista(dati.nome || 'Ricetta', html);
   // #4 immagine ricetta (foto o blueprint della famiglia) above the fold
   if(ricettaIdSalvata){ _caricaImmagineRicetta(ricettaIdSalvata); }
+  // ALLERGENI (obbligo di legge): deduco dagli ingredienti e mostro icone + nomi
+  _caricaAllergeniRicetta(dati);
+}
+// ═══ ALLERGENI — deduzione dagli ingredienti (vantaggio: dal grafo, non da foto) ═══
+var _ALLERGENI_ICONE=['glutine','crostacei','uova','pesce','arachidi','soia','latte','frutta-guscio','sedano','senape','sesamo','solfiti','lupini','molluschi'];
+async function _caricaAllergeniRicetta(dati){
+  var ingr=(dati.ingredienti||[]).map(function(x){return typeof x==='string'?x:(x.nome||'');}).filter(Boolean);
+  if(!ingr.length) return;
+  try{
+    var lang=(typeof _lang!=='undefined'?_lang:'it');
+    var r=await fetch('/v1/allergeni/deduci', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}), body:JSON.stringify({ingredienti:ingr, lang:lang})});
+    var j=await r.json();
+    var dett=j.dettaglio||[];
+    if(!dett.length && !(j.allergeni||[]).length) return;
+    var e=_escV;
+    var chips=dett.map(function(a){
+      var ico=a.icona||_ALLERGENI_ICONE[(a.id||1)-1]||'glutine';
+      return '<span class="allerg-chip"><img src="/static/allergeni/'+e(ico)+'.svg" alt=""><span>'+e(a.nome||'')+'</span></span>';
+    }).join('');
+    var box='<div class="allerg-box"><div class="allerg-lab">⚠ Allergeni</div><div class="allerg-chips">'+chips+'</div>'
+      + (j.warning?'<div class="allerg-warning">'+e(j.warning)+'</div>':'')
+      + (j.disclaimer?'<div class="allerg-disc">'+e(j.disclaimer)+'</div>':'')
+      + '</div>';
+    var sch=document.querySelector('#vista-body .rg-scheda');
+    if(sch){
+      var sec=sch.querySelector('.rg-sec');
+      if(sec){ sec.insertAdjacentHTML('afterend', box); }
+      else { sch.insertAdjacentHTML('afterbegin', box); }
+    }
+  }catch(e){}
 }
 var _BLUEPRINT_FAMIGLIE=['acidita','affumicatura','coagulazione','conservazione','cristallizzazione','diluizione','distillazione','emulsione','estrazione','fermentazione','gas','gelificazione','impasto','osmosi','ossidazione','reazione-termica'];
 async function _caricaImmagineRicetta(id){
