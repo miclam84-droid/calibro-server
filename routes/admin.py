@@ -7034,17 +7034,17 @@ def admin_cerca_foto_ricette():
         if not ricette:
             cur.close(); _release_conn(conn)
             return jsonify({"ok": True, "fine": True})
-        trovate = 0; esempi = []
+        trovate = 0; esempi = []; errori_rete = 0
         for rid, nome in ricette:
             # nome pulito per la ricerca (tolgo parentesi)
             q = _re.sub(r"\s*\(.*?\)", "", nome).strip()
             try:
                 # API Wikimedia Commons: cerco immagini per il nome del piatto
                 url = ("https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search"
-                       "&gsrsearch=" + _up.quote(q + " food dish") + "&gsrlimit=1&gsrnamespace=6"
+                       "&gsrsearch=" + _up.quote(q + " food") + "&gsrlimit=1&gsrnamespace=6"
                        "&prop=imageinfo&iiprop=url&iiurlwidth=800")
-                req = _ur.Request(url, headers={"User-Agent": "MatterBench/1.0 (food app)"})
-                with _ur.urlopen(req, timeout=8) as r:
+                req = _ur.Request(url, headers={"User-Agent": "MatterBench/1.0 (food app; contact@matterbench.app)"})
+                with _ur.urlopen(req, timeout=12) as r:
                     data = _j.loads(r.read().decode("utf-8"))
                 pages = data.get("query", {}).get("pages", {})
                 foto_url = None
@@ -7058,10 +7058,10 @@ def admin_cerca_foto_ricette():
                     trovate += 1
                     if len(esempi) < 3:
                         esempi.append({"nome": nome, "url": foto_url[:60]})
-            except Exception:
-                pass
+            except Exception as _er:
+                errori_rete += 1
         conn.commit(); cur.close(); _release_conn(conn)
-        return jsonify({"ok": True, "foto_trovate": trovate, "su": len(ricette),
+        return jsonify({"ok": True, "foto_trovate": trovate, "errori_rete": errori_rete, "su": len(ricette),
                         "esempi": esempi, "prossimo_offset": offset + limit})
     except Exception as e:
         conn.rollback(); _release_conn(conn)
