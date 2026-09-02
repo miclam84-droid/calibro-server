@@ -57,8 +57,11 @@ _MAPPA = {
     10: ("senape", "mostarda"),
     # 11 sesamo
     11: ("sesamo", "tahin", "gomasio"),
-    # 12 solfiti (VINO quasi sempre, frutta secca, aceto)
-    12: ("vino", "aceto balsamico", "solfiti", "frutta essiccata", "albicocche secche", "uvetta"),
+    # 12 solfiti (VINO/spumanti/aperitivi quasi sempre, frutta secca, aceto)
+    12: ("vino", "prosecco", "spumante", "champagne", "franciacorta", "lambrusco", "moscato",
+         "aperol", "campari", "bitter", "vermouth", "vermut", "martini", "sherry", "porto", "marsala",
+         "aceto balsamico", "aceto di vino", "solfiti", "frutta essiccata", "albicocche secche",
+         "uvetta", "prugne secche", "fichi secchi"),
     # 13 lupini
     13: ("lupini", "farina di lupino"),
     # 14 molluschi
@@ -79,8 +82,8 @@ def deduci_allergeni(ingredienti):
         if any(k in testo for k in chiavi):
             trovati.add(aid)
     warning = None
-    if 12 in trovati and "vino" in testo:
-        warning = "Contiene solfiti (allergene #12), tipico del vino."
+    if 12 in trovati and any(k in testo for k in ("vino", "prosecco", "spumante", "champagne", "aperol", "campari", "vermouth", "martini", "bitter")):
+        warning = "Contiene solfiti (allergene #12), tipico di vino, spumanti e aperitivi."
     return sorted(trovati), warning
 
 
