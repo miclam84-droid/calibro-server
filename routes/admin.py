@@ -2320,10 +2320,10 @@ def _img_worker(solo_mancanti):
     try:
         db = carica_grafo()
         if solo_mancanti:
-            rows = db.execute("SELECT id, nome, disciplina FROM ricette WHERE (immagine IS NULL OR immagine='') ORDER BY id").fetchall()
+            rows = db.execute("SELECT id, nome, disciplina, ingredienti FROM ricette WHERE (immagine IS NULL OR immagine='') ORDER BY id").fetchall()
         else:
-            rows = db.execute("SELECT id, nome, disciplina FROM ricette ORDER BY id").fetchall()
-        lista = [{"id": r["id"], "nome": r["nome"], "disc": r["disciplina"]} for r in rows]
+            rows = db.execute("SELECT id, nome, disciplina, ingredienti FROM ricette ORDER BY id").fetchall()
+        lista = [{"id": r["id"], "nome": r["nome"], "disc": r["disciplina"], "ing": r["ingredienti"]} for r in rows]
         _IMG_STATO.update({"attivo": True, "fatte": 0, "totale": len(lista), "errori": 0})
         # per variare: tengo un contatore per disciplina, così pesco risultati diversi (rank 0..4)
         rank_disc = {}
@@ -2332,7 +2332,18 @@ def _img_worker(solo_mancanti):
             disc = m["disc"] or "x"
             rank = rank_disc.get(disc, 0)
             try:
-                img = cerca_immagine(m["nome"], disciplina=m["disc"], nome=m["nome"], rank=rank)
+                # ingrediente principale per il fallback (caponata->melanzana, mai foto sbagliata)
+                _ings = []
+                try:
+                    import json as _ji
+                    _raw = m.get("ing")
+                    _lst = _raw if isinstance(_raw, list) else (_ji.loads(_raw) if _raw else [])
+                    for _x in _lst[:3]:
+                        _n = _x.get("nome") if isinstance(_x, dict) else str(_x)
+                        if _n: _ings.append(_n)
+                except Exception:
+                    pass
+                img = cerca_immagine(m["nome"], disciplina=m["disc"], nome=m["nome"], rank=rank, ingredienti=_ings)
                 if img and img.get("url"):
                     cred = credito_immagine(img["autore"], img.get("fonte_nome", "Pexels"))
                     db.execute("UPDATE ricette SET immagine=?, immagine_autore=?, immagine_url_fonte=? WHERE id=?",
