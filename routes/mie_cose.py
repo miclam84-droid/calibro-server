@@ -390,3 +390,52 @@ def rimuovi_misura():
         return jsonify({"ok": True})
     finally:
         _release_conn(conn)
+
+
+@bp_mie.route("/v1/miei-dati/export", methods=["GET"])
+def export_dati_utente():
+    """GDPR + utilità: esporta TUTTI i dati dell'utente (device_id) in un JSON scaricabile.
+    Ricette salvate, misure, esperimenti, menu. Diritto alla portabilità dei dati (art. 20 GDPR)."""
+    dev = _device()
+    if not dev:
+        return jsonify({"errore": "device non identificato"}), 400
+    conn = _get_conn()
+    export = {"device_id": dev, "esportato_il": __import__("datetime").datetime.now().isoformat(),
+              "ricette_salvate": [], "misure": [], "esperimenti": [], "menu": []}
+    try:
+        cur = conn.cursor()
+        # ricette salvate
+        try:
+            cur.execute("SELECT nome, dati, creato_il FROM ricette_salvate WHERE device_id=%s", (dev,))
+            for r in cur.fetchall():
+                export["ricette_salvate"].append({"nome": r[0], "dati": r[1],
+                    "creato_il": r[2].isoformat() if r[2] else None})
+        except Exception:
+            pass
+        # misure
+        try:
+            cur.execute("SELECT fenomeno, valore, unita, bersaglio, creato_il FROM misure_salvate WHERE device_id=%s", (dev,))
+            for r in cur.fetchall():
+                export["misure"].append({"fenomeno": r[0], "valore": r[1], "unita": r[2],
+                    "bersaglio": r[3], "data": r[4].isoformat() if r[4] else None})
+        except Exception:
+            pass
+        # esperimenti completati
+        try:
+            cur.execute("SELECT fenomeno_id, esito, nota, completato_il FROM esperimenti_completati WHERE device_id=%s", (dev,))
+            for r in cur.fetchall():
+                export["esperimenti"].append({"fenomeno": r[0], "esito": r[1], "nota": r[2],
+                    "data": r[3].isoformat() if r[3] else None})
+        except Exception:
+            pass
+        cur.close(); _release_conn(conn)
+        export["totali"] = {k: len(v) for k, v in export.items() if isinstance(v, list)}
+        from flask import Response
+        import json as _j
+        resp = Response(_j.dumps(export, ensure_ascii=False, indent=2), mimetype="application/json")
+        resp.headers["Content-Disposition"] = "attachment; filename=matter-bench-miei-dati.json"
+        return resp
+    except Exception as e:
+        try: _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)[:120]}), 200
