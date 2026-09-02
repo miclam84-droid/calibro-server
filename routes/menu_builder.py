@@ -708,8 +708,14 @@ def menu_pdf(mid):
     story.append(HRFlowable(width="40%", thickness=1.2, color=LINEA, spaceBefore=4, spaceAfter=8, hAlign="CENTER"))
 
     # raggruppo per sezione
+    _allergeni_usati = set()  # raccolgo gli allergeni presenti per la legenda finale
     def riga_voce(v):
         nome = esc(v.get("nome", "")); prezzo = esc(v.get("prezzo", "")); desc = esc(v.get("descrizione", ""))
+        # numeri allergeni accanto al nome (obbligo di legge UE 1169/2011)
+        _all = v.get("allergeni") or []
+        if _all:
+            _allergeni_usati.update(_all)
+            nome = nome + ' <font size="7" color="#888888">(' + ", ".join(str(a) for a in sorted(_all)) + ')</font>'
         t = Table([[Paragraph(nome, st_nome), Paragraph(prezzo, st_prezzo)]],
                   colWidths=[125*mm, 35*mm])
         t.setStyle(TableStyle([("VALIGN",(0,0),(-1,-1),"TOP"),("LEFTPADDING",(0,0),(-1,-1),0),
@@ -769,6 +775,36 @@ def menu_pdf(mid):
         story.append(Spacer(1, 14))
         story.append(HRFlowable(width="30%", thickness=0.6, color=LINEA, spaceBefore=2, spaceAfter=6, hAlign="CENTER"))
         story.append(Paragraph(esc(footer_custom or note), st_footer))
+
+    # LEGENDA ALLERGENI (obbligo di legge UE 1169/2011): la lista dei 14 in fondo al menu.
+    if _allergeni_usati:
+        try:
+            from routes.allergeni import ALLERGENI_UE
+            _lingua_menu = "it"
+            try:
+                _cl = _conn(); _clc = _cl.cursor()
+                _clc.execute("SELECT lingua FROM menu WHERE id=%s", (mid,))
+                _lr = _clc.fetchone(); _clc.close(); _release(_cl)
+                _lingua_menu = (_lr[0] if _lr and _lr[0] in ("it","en","es") else "it")
+            except Exception:
+                pass
+            _map_leg = {a["id"]: a for a in ALLERGENI_UE}
+            _voci_leg = ["<b>%d</b> %s" % (i, _map_leg[i][_lingua_menu]) for i in sorted(_allergeni_usati) if i in _map_leg]
+            story.append(Spacer(1, 16))
+            story.append(HRFlowable(width="100%", thickness=0.5, color=LINEA, spaceBefore=2, spaceAfter=6))
+            _tit_all = {"it": "ALLERGENI", "en": "ALLERGENS", "es": "ALÉRGENOS"}.get(_lingua_menu, "ALLERGENI")
+            st_all_tit = ParagraphStyle("AllTit", parent=styles["Normal"], fontName=font_titolo, fontSize=8,
+                                        textColor=ACCENT, spaceAfter=3)
+            st_all = ParagraphStyle("All", parent=styles["Normal"], fontName=font_body, fontSize=7,
+                                    textColor=HexColor("#555555"), leading=10)
+            story.append(Paragraph(_tit_all, st_all_tit))
+            story.append(Paragraph(" · ".join(_voci_leg), st_all))
+            _nota_all = {"it": "I numeri accanto a ogni piatto indicano gli allergeni presenti (Reg. UE 1169/2011).",
+                         "en": "Numbers next to each dish indicate allergens present (EU Reg. 1169/2011).",
+                         "es": "Los números junto a cada plato indican los alérgenos presentes (Reg. UE 1169/2011)."}.get(_lingua_menu)
+            story.append(Paragraph(_nota_all, st_all))
+        except Exception:
+            pass
 
     # firma d'identità discreta: linea + dicitura Matter Bench (fa capire che è una carta progettata
     # con criteri scientifici, senza invadere il menu).
