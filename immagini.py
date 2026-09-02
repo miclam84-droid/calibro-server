@@ -114,6 +114,35 @@ _CTX_DISCIPLINA = {
 }
 
 _KW_IT_EN = {
+    # ── CUCINA ITALIANA (il target di Matter) — query inglese efficace piatto+ingredienti ──
+    "ossobuco": "braised veal shank ossobuco plated", "bagna cauda": "garlic anchovy dip raw vegetables",
+    "vitello tonnato": "veal with tuna sauce sliced plated", "baccala": "creamed salt cod dish plated",
+    "baccalà": "creamed salt cod dish plated", "caponata": "sicilian eggplant caponata bowl",
+    "panzanella": "panzanella bread tomato salad", "parmigiana": "eggplant parmigiana baked plated",
+    "melanzane": "eggplant dish plated", "amatriciana": "spaghetti amatriciana tomato bacon",
+    "carbonara": "spaghetti carbonara egg guanciale", "cacio e pepe": "cacio e pepe pasta cheese pepper",
+    "gricia": "pasta gricia guanciale pecorino", "arrabbiata": "penne arrabbiata tomato",
+    "puttanesca": "spaghetti puttanesca olives capers", "ragu": "pasta ragu bolognese meat sauce",
+    "bolognese": "tagliatelle bolognese meat sauce", "lasagne": "lasagna baked layers plated",
+    "gnocchi": "potato gnocchi plated", "tortellini": "tortellini pasta broth", "ravioli": "ravioli pasta plated",
+    "risotto milanese": "saffron risotto milanese yellow", "risotto": "creamy risotto plated",
+    "minestrone": "minestrone vegetable soup bowl", "ribollita": "tuscan ribollita bread soup",
+    "acqua pazza": "fish in tomato broth plated", "cacciucco": "cacciucco seafood tomato stew",
+    "brasato": "braised beef wine plated", "bollito": "boiled meat mixed plated", "arrosto": "roast meat sliced plated",
+    "saltimbocca": "saltimbocca veal ham sage", "scaloppine": "veal scaloppine plated",
+    "polpette": "meatballs tomato sauce plated", "involtini": "meat rolls involtini plated",
+    "caprese": "caprese tomato mozzarella basil", "bruschetta": "bruschetta tomato bread",
+    "burrata": "burrata cheese plated", "prosciutto": "prosciutto ham plate", "salumi": "cured meats board",
+    "frittata": "frittata italian omelette", "carciofi": "artichoke dish plated", "friarielli": "broccoli rabe sauteed",
+    "pesto": "pesto pasta green basil", "genovese": "pasta genovese onion sauce",
+    "orata": "sea bream fish plated", "branzino": "sea bass fish plated", "polpo": "octopus dish plated",
+    "cozze": "mussels bowl plated", "vongole": "spaghetti clams vongole", "fritto misto": "mixed fried seafood",
+    "cannoli": "sicilian cannoli dessert", "cannolo": "sicilian cannolo dessert", "cassata": "sicilian cassata cake",
+    "panna cotta": "panna cotta dessert plated", "zabaione": "zabaglione cream dessert",
+    "sfogliatella": "sfogliatella pastry", "babà": "baba rum dessert", "baba": "baba rum dessert",
+    "pastiera": "neapolitan pastiera tart", "cantucci": "cantucci almond biscotti", "amaretti": "amaretti cookies",
+    "polenta": "polenta plated", "arancini": "sicilian arancini rice balls", "supplì": "suppli rice croquette",
+    "porchetta": "porchetta roast pork sliced", "nduja": "nduja spicy spread", "mortadella": "mortadella slices",
     "risotto": "risotto rice", "pasta": "pasta", "pizza": "pizza", "pane": "bread",
     "focaccia": "focaccia bread", "gelato": "ice cream", "sorbetto": "sorbet",
     "espresso": "espresso coffee", "cappuccino": "cappuccino", "cornetto": "croissant",
@@ -212,25 +241,30 @@ def _norm(url, autore, fonte, fonte_nome):
 
 
 _BLACKLIST_FOTO = {"wallpaper", "sfondo", "background", "texture", "growing", "raw meat",
-                   "uncooked", "landscape", "paesaggio", "abstract", "astratto", "carne cruda",
-                   "field", "campo", "plant", "pianta", "farm", "fattoria"}
+                   "raw beef", "uncooked", "landscape", "paesaggio", "abstract", "astratto",
+                   "carne cruda", "field", "campo", "farm", "fattoria", "bottle", "bottiglia",
+                   "still life", "market", "mercato", "grocery", "supermarket"}
 
 def _foto_pertinente(testo_foto, query):
-    """La foto e' a tema col piatto? testo_foto = alt/tags della foto. Scarta i mismatch
-    (ossobuco crudo, bagna cauda generica). Regola: una parola specifica (>=5 lettere) della
-    query dev'essere nel testo della foto, e nessuna parola blacklist."""
+    """La foto e' GIUSTA per il piatto? La query ora e' precisa (piatto+ingredienti in inglese).
+    Regole: (1) mai mismatch palese (carne cruda, sfondi); (2) almeno una parola SPECIFICA della
+    query (>=4 lettere, non generica) dev'essere nella descrizione della foto. Se la foto non ha
+    descrizione, la accetto con cautela (le banche foto di cibo di solito sono a tema)."""
     t = (testo_foto or "").lower()
-    if not t:
-        return None  # senza descrizione non posso verificare: incerto (lo accetto con cautela)
     for bad in _BLACKLIST_FOTO:
         if bad in t:
             return False
-    parole = [p for p in query.lower().split() if len(p) >= 4]
-    forti = [p for p in parole if len(p) >= 5 and p in t]
-    if forti:
+    if not t:
+        return None  # niente descrizione: accetto (banca foto di cibo)
+    _GEN = {"food", "dish", "plated", "meal", "italian", "fresh", "homemade", "delicious",
+            "cuisine", "plate", "bowl", "cooking", "kitchen", "table", "restaurant"}
+    parole = [p for p in query.lower().split() if len(p) >= 4 and p not in _GEN]
+    if not parole:
+        return None
+    # almeno una parola specifica della query nella descrizione della foto
+    if any(p in t for p in parole):
         return True
-    presenti = [p for p in parole if p in t]
-    return len(presenti) >= 2
+    return False  # la foto non contiene nessun ingrediente/nome del piatto -> scarto
 
 def _pexels(query, rank=0):
     key = os.environ.get("PEXELS_API_KEY")
