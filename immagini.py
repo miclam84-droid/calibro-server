@@ -210,6 +210,28 @@ def _norm(url, autore, fonte, fonte_nome):
         return None
     return {"url": url, "autore": autore or "", "fonte": fonte or "", "fonte_nome": fonte_nome}
 
+
+_BLACKLIST_FOTO = {"wallpaper", "sfondo", "background", "texture", "growing", "raw meat",
+                   "uncooked", "landscape", "paesaggio", "abstract", "astratto", "carne cruda",
+                   "field", "campo", "plant", "pianta", "farm", "fattoria"}
+
+def _foto_pertinente(testo_foto, query):
+    """La foto e' a tema col piatto? testo_foto = alt/tags della foto. Scarta i mismatch
+    (ossobuco crudo, bagna cauda generica). Regola: una parola specifica (>=5 lettere) della
+    query dev'essere nel testo della foto, e nessuna parola blacklist."""
+    t = (testo_foto or "").lower()
+    if not t:
+        return None  # senza descrizione non posso verificare: incerto (lo accetto con cautela)
+    for bad in _BLACKLIST_FOTO:
+        if bad in t:
+            return False
+    parole = [p for p in query.lower().split() if len(p) >= 4]
+    forti = [p for p in parole if len(p) >= 5 and p in t]
+    if forti:
+        return True
+    presenti = [p for p in parole if p in t]
+    return len(presenti) >= 2
+
 def _pexels(query, rank=0):
     key = os.environ.get("PEXELS_API_KEY")
     if not key:
@@ -223,9 +245,16 @@ def _pexels(query, rank=0):
         fotos = data.get("photos", [])
         if not fotos:
             return None
-        f = fotos[min(rank, len(fotos)-1)]
-        return _norm(f.get("src", {}).get("large") or f.get("src", {}).get("medium"),
-                     f.get("photographer", ""), f.get("url", ""), "Pexels")
+        # scorro dal rank in poi, prendo la prima PERTINENTE (alt = descrizione foto)
+        ordine = fotos[rank:] + fotos[:rank]
+        for f in ordine:
+            alt = f.get("alt", "")
+            pert = _foto_pertinente(alt, query)
+            if pert is False:
+                continue  # mismatch certo, scarto
+            return _norm(f.get("src", {}).get("large") or f.get("src", {}).get("medium"),
+                         f.get("photographer", ""), f.get("url", ""), "Pexels")
+        return None
     except Exception:
         return None
 
@@ -242,10 +271,16 @@ def _unsplash(query, rank=0):
         res = data.get("results", [])
         if not res:
             return None
-        f = res[min(rank, len(res)-1)]
-        autore = (f.get("user", {}) or {}).get("name", "")
-        return _norm((f.get("urls", {}) or {}).get("regular"),
-                     autore, (f.get("links", {}) or {}).get("html", ""), "Unsplash")
+        ordine = res[rank:] + res[:rank]
+        for f in ordine:
+            alt = (f.get("alt_description") or "") + " " + " ".join(
+                (t.get("title","") if isinstance(t,dict) else str(t)) for t in (f.get("tags") or []))
+            if _foto_pertinente(alt, query) is False:
+                continue
+            autore = (f.get("user", {}) or {}).get("name", "")
+            return _norm((f.get("urls", {}) or {}).get("regular"),
+                         autore, (f.get("links", {}) or {}).get("html", ""), "Unsplash")
+        return None
     except Exception:
         return None
 
@@ -262,9 +297,13 @@ def _pixabay(query, rank=0):
         hits = data.get("hits", [])
         if not hits:
             return None
-        f = hits[min(rank, len(hits)-1)]
-        return _norm(f.get("largeImageURL") or f.get("webformatURL"),
-                     f.get("user", ""), f.get("pageURL", ""), "Pixabay")
+        ordine = hits[rank:] + hits[:rank]
+        for f in ordine:
+            if _foto_pertinente(f.get("tags", ""), query) is False:
+                continue
+            return _norm(f.get("largeImageURL") or f.get("webformatURL"),
+                         f.get("user", ""), f.get("pageURL", ""), "Pixabay")
+        return None
     except Exception:
         return None
 
