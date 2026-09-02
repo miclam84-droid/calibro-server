@@ -422,16 +422,30 @@ def menu_render(mid):
         foto_html = ""
         if mostra_foto and img:
             foto_html = f'<div class="voce-foto"><img src="{esc(img)}" alt="{nome}" loading="lazy"></div>'
+        # allergeni (numeri UE) accanto al nome - obbligo di legge anche sul menu digitale
+        _all = v.get("allergeni") or []
+        all_html = ""
+        if _all:
+            all_html = ' <span class="voce-allergeni">(' + ", ".join(str(a) for a in sorted(_all)) + ')</span>'
+        # badge dietetici (vegano/senza glutine) - filtri come One2One
+        _dieta = v.get("dieta") or {}
+        badge = []
+        if _dieta.get("vegano"): badge.append('<span class="badge-dieta veg">🌱 Vegano</span>')
+        elif _dieta.get("vegetariano"): badge.append('<span class="badge-dieta veg">Vegetariano</span>')
+        if _dieta.get("senza_glutine"): badge.append('<span class="badge-dieta gf">Senza glutine</span>')
+        if _dieta.get("senza_lattosio"): badge.append('<span class="badge-dieta gf">Senza lattosio</span>')
+        badge_html = ('<div class="voce-badge">' + " ".join(badge) + '</div>') if badge else ''
         return f'''
         <div class="voce{' voce-con-foto' if (mostra_foto and img) else ''}">
           {foto_html}
           <div class="voce-testo">
             <div class="voce-riga">
-              <span class="voce-nome">{nome}</span>
+              <span class="voce-nome">{nome}{all_html}</span>
               <span class="voce-punti"></span>
               <span class="voce-prezzo">{prezzo}</span>
             </div>
             {f'<div class="voce-desc">{desc}</div>' if desc else ''}
+            {badge_html}
           </div>
         </div>'''
 
@@ -452,6 +466,19 @@ def menu_render(mid):
     else:
         corpo = ''.join(render_voce(v) for v in voci)
 
+    # legenda allergeni per il menu digitale (obbligo di legge anche online)
+    _all_usati = set()
+    for _vv in voci:
+        for _aa in (_vv.get('allergeni') or []): _all_usati.add(_aa)
+    _legenda_all_html = ''
+    if _all_usati:
+        try:
+            from routes.allergeni import ALLERGENI_UE as _AU
+            _ml = {a['id']: a for a in _AU}
+            _vl = ['<b>%d</b> %s' % (x, _ml[x]['it']) for x in sorted(_all_usati) if x in _ml]
+            _legenda_all_html = '<div class="menu-allergeni-legenda"><b>ALLERGENI</b><br>' + ' &middot; '.join(_vl) + '<br><span style="opacity:0.7">I numeri accanto a ogni piatto indicano gli allergeni (Reg. UE 1169/2011).</span></div>'
+        except Exception:
+            _legenda_all_html = ''
     html = f'''<!DOCTYPE html>
 <html lang="it"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -476,6 +503,12 @@ def menu_render(mid):
   .voce-punti {{ flex: 1; border-bottom: 1px dotted {tpl["linea"]}; margin: 0 8px; transform: translateY(-4px); }}
   .voce-prezzo {{ font-size: 17px; color: {tpl["accent"]}; font-weight: 600; white-space: nowrap; }}
   .voce-desc {{ font-size: 13px; opacity: 0.78; margin-top: 3px; font-style: italic; }}
+  .voce-allergeni {{ font-size: 11px; opacity: 0.6; font-weight: 400; }}
+  .voce-badge {{ margin-top: 5px; display: flex; gap: 6px; flex-wrap: wrap; }}
+  .badge-dieta {{ font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; letter-spacing: 0.3px; }}
+  .badge-dieta.veg {{ background: #E3F0E5; color: #2E7D4F; }}
+  .badge-dieta.gf {{ background: #EAF1F5; color: #245979; }}
+  .menu-allergeni-legenda {{ margin-top: 26px; padding-top: 12px; border-top: 1px solid {tpl["linea"]}; font-size: 11px; opacity: 0.65; }}
   .menu-note {{ margin-top: 30px; font-size: 12px; opacity: 0.6; text-align: center; }}
   .menu-foot {{ text-align: center; margin-top: 36px; font-size: 11px; opacity: 0.45; }}
   @media print {{ body {{ padding: 0; }} .no-print {{ display: none; }} }}
@@ -487,6 +520,7 @@ def menu_render(mid):
     {f'<div class="menu-locale">{esc(locale)}</div>' if locale else ''}
   </div>
   <div class="menu-corpo">{corpo}</div>
+  {_legenda_all_html}
   {f'<div class="menu-note">{esc(note)}</div>' if note else ''}
   <div class="menu-foot">{esc(footer_custom) if footer_custom else 'Creato con Matter'}</div>
 </body></html>'''
