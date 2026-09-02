@@ -1464,9 +1464,11 @@ def abbina(ingrediente):
     ing_it = ingrediente.lower().replace("_"," ")
     # cerca alias italiano
     ahn_name = ALIAS_IT.get(ing_it) or ALIAS_IT.get(ing_norm.replace("_"," "))
-    # NOTA: il grafo Ahn andrebbe usato prima dell'AI per gli ingredienti con dati veri.
-    # Rinviato: l'intervento destabilizza i percorsi del Flavour. Da rifare con cautela in una
-    # sessione dedicata, testando ogni percorso. Per ora il Flavour resta stabile (com'era).
+    # GRAFO-FIRST: se non c'è alias italiano ma l'input assomiglia a un nome Ahn (inglese, o già
+    # normalizzato), provalo come ahn_name così i search_terms includono ahn_<nome> e il grafo
+    # (dati veri) ha priorità sull'AI. Solo assegnazione, nessuna query rischiosa.
+    if not ahn_name and ing_norm and all(c.isalpha() or c == "_" for c in ing_norm):
+        ahn_name = ing_norm
     # se non c'è alias, prova diretto
     search_terms = []
     if ahn_name:
