@@ -140,3 +140,45 @@ def allergeni_ricetta(rid):
         return jsonify({"ricetta_id": rid, "allergeni": ids, "dettaglio": dettaglio, "warning": warning})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 200
+
+
+# ── FILTRI DIETETICI (come One2One: vegano/vegetariano/senza glutine/senza lattosio) ──
+# Dedotti dagli ingredienti. Ingredienti "esclusori" per ogni regime.
+_NON_VEGANO = ("carne", "manzo", "vitello", "maiale", "pollo", "tacchino", "agnello", "coniglio",
+    "pesce", "acciug", "alici", "salmone", "tonno", "gamber", "cozze", "vongole", "calamar", "polpo",
+    "seppie", "uovo", "uova", "tuorlo", "albume", "latte", "burro", "panna", "formagg", "parmigian",
+    "pecorino", "mozzarella", "ricotta", "mascarpone", "gorgonzola", "yogurt", "miele", "guanciale",
+    "pancetta", "prosciutto", "salame", "salsiccia", "nduja", "lardo", "speck", "bottarga", "colatura",
+    "gelatina", "strutto", "provolone", "caciocavallo", "scamorza", "fontina", "grana", "burrata")
+_NON_VEGETARIANO = ("carne", "manzo", "vitello", "maiale", "pollo", "tacchino", "agnello", "coniglio",
+    "pesce", "acciug", "alici", "salmone", "tonno", "gamber", "cozze", "vongole", "calamar", "polpo",
+    "seppie", "guanciale", "pancetta", "prosciutto", "salame", "salsiccia", "nduja", "lardo", "speck",
+    "bottarga", "colatura", "gelatina", "strutto", "brodo di carne", "brodo di pesce")
+
+
+def deduci_dieta(ingredienti):
+    """Deduce i regimi compatibili: vegano, vegetariano, senza glutine, senza lattosio."""
+    testo = ""
+    for ing in (ingredienti or []):
+        nome = ing.get("nome", "") if isinstance(ing, dict) else str(ing)
+        testo += " " + nome.lower()
+    ids_all, _ = deduci_allergeni(ingredienti)
+    vegano = not any(k in testo for k in _NON_VEGANO)
+    vegetariano = not any(k in testo for k in _NON_VEGETARIANO)
+    senza_glutine = 1 not in ids_all
+    senza_lattosio = 7 not in ids_all
+    return {"vegano": vegano, "vegetariano": vegetariano or vegano,
+            "senza_glutine": senza_glutine, "senza_lattosio": senza_lattosio}
+
+
+@bp_allergeni.route("/v1/dieta/deduci", methods=["POST"])
+def dieta_deduci():
+    """Deduce i regimi dietetici da una lista di ingredienti. Body: {ingredienti:[...]}
+    Come One2One ma dagli ingredienti reali. Per i filtri 'Senza glutine/lattosio', 'Vegano'."""
+    body = request.json or {}
+    ingredienti = body.get("ingredienti", [])
+    if not ingredienti:
+        return jsonify({"errore": "ingredienti mancanti"}), 400
+    dieta = deduci_dieta(ingredienti)
+    return jsonify({"dieta": dieta,
+                    "disclaimer": "Deduzione automatica. Il ristoratore verifica e conferma."})

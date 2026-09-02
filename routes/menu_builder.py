@@ -107,20 +107,23 @@ def menu_crea():
     tema = body.get("tema_grafico", "gastro-bistrot")  # gastro-bistrot | minimal-blueprint | enoteca-classica
     # ALLERGENI (obbligo di legge UE 1169/2011): deduco gli allergeni per ogni voce dagli ingredienti.
     try:
-        from routes.allergeni import deduci_allergeni, ALLERGENI_UE
+        from routes.allergeni import deduci_allergeni, deduci_dieta, ALLERGENI_UE
         _map_all = {a["id"]: a for a in ALLERGENI_UE}
         for v in voci:
-            if not isinstance(v, dict) or v.get("allergeni"):
+            if not isinstance(v, dict):
                 continue
-            # deduco da: ingredienti espliciti > descrizione > nome
             _fonte = v.get("ingredienti") or v.get("descrizione") or v.get("nome") or ""
             if isinstance(_fonte, str):
                 _fonte = [_fonte]
-            _ids, _warn = deduci_allergeni(_fonte)
-            v["allergeni"] = _ids
-            v["allergeni_nomi"] = [_map_all[i]["it"] for i in _ids if i in _map_all]
-            if _warn:
-                v["allergeni_warning"] = _warn
+            if not v.get("allergeni"):
+                _ids, _warn = deduci_allergeni(_fonte)
+                v["allergeni"] = _ids
+                v["allergeni_nomi"] = [_map_all[i]["it"] for i in _ids if i in _map_all]
+                if _warn:
+                    v["allergeni_warning"] = _warn
+            # regimi dietetici (vegano/vegetariano/senza glutine/lattosio) - come One2One
+            if not v.get("dieta"):
+                v["dieta"] = deduci_dieta(_fonte)
     except Exception:
         pass
     c = _conn(); cur = c.cursor()
