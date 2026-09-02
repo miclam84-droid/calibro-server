@@ -1353,7 +1353,9 @@ def abbina(ingrediente):
         _db0 = _cg0()
         _n0 = _db0.execute(
             "SELECT data FROM nodes WHERE type='Ingrediente' "
-            "AND (lower(name)=lower(?) OR id=?) LIMIT 1", (ingrediente.strip(), ingrediente.strip())).fetchone()
+            "AND (lower(name)=lower(?) OR id=? OR id=?) LIMIT 1",
+            (ingrediente.strip(), ingrediente.strip(),
+             "ahn_" + ingrediente.strip().lower().replace(" ", "_"))).fetchone()
         if _n0:
             _d0 = _n0["data"] if hasattr(_n0, "keys") and isinstance(_n0["data"], dict) else None
             if _d0 is None:
