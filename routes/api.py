@@ -212,6 +212,28 @@ AFFILIATE_TAGS = {
     "callmewine": os.environ.get("CALLMEWINE_TAG", ""),
 }
 
+def _classifica_bevanda(query):
+    """Classifica una bevanda come 'vino' o 'birra' in modo affidabile (era il bug: IPA->vino).
+    Usa liste di stili/nomi noti. Default prudente: se incerto, 'vino' (piu' comune negli abbinamenti)."""
+    q = (query or "").lower()
+    _BIRRA = ("ipa", "lager", "pilsner", "pils", "stout", "porter", "ale", "weiss", "weizen",
+              "blanche", "saison", "tripel", "dubbel", "bock", "helles", "gose", "sour ale",
+              "barleywine", "barley wine", "apa", "neipa", "birra", "beer", "hazy", "witbier",
+              "kolsch", "kellerbier", "marzen", "dunkel", "schwarzbier", "trappist", "lambic")
+    _VINO = ("barolo", "amarone", "chianti", "brunello", "nebbiolo", "sangiovese", "merlot",
+             "cabernet", "primitivo", "aglianico", "montepulciano", "nero d'avola", "vermentino",
+             "chardonnay", "sauvignon", "riesling", "verdicchio", "fiano", "greco", "falanghina",
+             "prosecco", "franciacorta", "champagne", "spumante", "moscato", "passito", "gewurz",
+             "pinot", "traminer", "lambrusco", "cerasuolo", "rose", "rosato", "vino", "wine",
+             "bianco", "rosso", "barbera", "dolcetto", "valpolicella", "soave", "gavi")
+    for k in _BIRRA:
+        if k in q:
+            return "birra"
+    for k in _VINO:
+        if k in q:
+            return "vino"
+    return "vino"  # default prudente
+
 def _link_vino_birra(query, categoria="vino"):
     """Genera link di ricerca verso e-commerce per un vino/birra.
     Il tag affiliato viene aggiunto se configurato (via env var)."""
@@ -400,9 +422,12 @@ def abbina_bevanda():
     quanto renda l'affiliazione). Si riattivano dopo aver stabilizzato il rilevamento.
     Flag: ABBINA_BEVANDA_LINK_ATTIVI (env, default off)."""
     query = request.args.get("q", "").strip()
-    cat = request.args.get("cat", "").strip() or "bevanda"
+    cat = request.args.get("cat", "").strip()
     if not query:
         return jsonify({"errore": "query mancante (?q=...)"}), 400
+    # rilevamento categoria robusto: se non esplicito, classifico (IPA=birra, Barolo=vino)
+    if cat not in ("vino", "birra", "wine"):
+        cat = _classifica_bevanda(query)
     import os as _os
     link_attivi = _os.environ.get("ABBINA_BEVANDA_LINK_ATTIVI", "").lower() in ("1", "true", "yes")
     risp = {
