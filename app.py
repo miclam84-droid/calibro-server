@@ -98,6 +98,7 @@ from routes.quiz_engine import bp as quiz_engine_bp; app.register_blueprint(quiz
 from routes.esperimenti import bp_exp as esperimenti_bp; app.register_blueprint(esperimenti_bp)
 from routes.immagini_ricette import bp_img as immagini_ricette_bp; app.register_blueprint(immagini_ricette_bp)
 from routes.scarti import bp_scarti as scarti_bp; app.register_blueprint(scarti_bp)
+from routes.allergeni import bp_allergeni as allergeni_bp; app.register_blueprint(allergeni_bp)
 from routes.ricettario import bp_ricettario as ricettario_bp; app.register_blueprint(ricettario_bp)
 from routes.cifra import bp as cifra_bp; app.register_blueprint(cifra_bp)
 from routes.misc import bp as misc_bp; app.register_blueprint(misc_bp)
