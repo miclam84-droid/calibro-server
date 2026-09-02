@@ -1287,14 +1287,16 @@ def _segreto_di(ingrediente):
         pass
     return None
 
-def _display_name_locale(db, nome_en_raw, node_id, lang, fallback):
+def _display_name_locale(nome_en_raw, node_id, lang, fallback):
     """Knowledge Layer Opzione B: restituisce il nome dell'ingrediente nella lingua richiesta.
-    Legge names {it,en,es} dal nodo. Fallback: NOMI_IT (per it) o il nome inglese Title Case."""
+    Legge names {it,en,es} dal nodo. Carica il grafo internamente (robusto)."""
     if lang not in ("it", "en", "es"):
         lang = "it"
     try:
         if node_id:
-            row = db.execute("SELECT data FROM nodes WHERE id=?", (node_id,)).fetchone()
+            from db import carica_grafo as _cgl
+            _dbl = _cgl()
+            row = _dbl.execute("SELECT data FROM nodes WHERE id=?", (node_id,)).fetchone()
             if row:
                 d = row["data"] if hasattr(row, "keys") and isinstance(row["data"], dict) else None
                 if d is None:
@@ -1821,11 +1823,11 @@ def abbina(ingrediente):
             nome_it = NOMI_IT.get(nome_en, nome_fallback)
             # display_name locale-aware: usa names {it,en,es} dal nodo; per EN usa il nome Ahn
             if _lang_out == "en":
-                nome_pulito = _display_name_locale(db, nome_en, r[0], "en", nome_fallback)
+                nome_pulito = _display_name_locale(nome_en, r[0], "en", nome_fallback)
             elif _lang_out == "es":
-                nome_pulito = _display_name_locale(db, nome_en, r[0], "es", nome_it)
+                nome_pulito = _display_name_locale(nome_en, r[0], "es", nome_it)
             else:
-                nome_pulito = _display_name_locale(db, nome_en, r[0], "it", nome_it)
+                nome_pulito = _display_name_locale(nome_en, r[0], "it", nome_it)
             # salta i nodi senza nome
             if not nome_pulito or nome_pulito == "sconosciuto":
                 continue
