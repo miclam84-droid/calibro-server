@@ -105,6 +105,24 @@ def menu_crea():
     tipo_menu = body.get("tipo_menu", "food")   # food | drink | wine | fuso
     filosofia = body.get("filosofia", "")
     tema = body.get("tema_grafico", "gastro-bistrot")  # gastro-bistrot | minimal-blueprint | enoteca-classica
+    # ALLERGENI (obbligo di legge UE 1169/2011): deduco gli allergeni per ogni voce dagli ingredienti.
+    try:
+        from routes.allergeni import deduci_allergeni, ALLERGENI_UE
+        _map_all = {a["id"]: a for a in ALLERGENI_UE}
+        for v in voci:
+            if not isinstance(v, dict) or v.get("allergeni"):
+                continue
+            # deduco da: ingredienti espliciti > descrizione > nome
+            _fonte = v.get("ingredienti") or v.get("descrizione") or v.get("nome") or ""
+            if isinstance(_fonte, str):
+                _fonte = [_fonte]
+            _ids, _warn = deduci_allergeni(_fonte)
+            v["allergeni"] = _ids
+            v["allergeni_nomi"] = [_map_all[i]["it"] for i in _ids if i in _map_all]
+            if _warn:
+                v["allergeni_warning"] = _warn
+    except Exception:
+        pass
     c = _conn(); cur = c.cursor()
     try:
         cur.execute(
