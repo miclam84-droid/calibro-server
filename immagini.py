@@ -266,7 +266,7 @@ def _foto_pertinente(testo_foto, query):
         return True
     return False  # la foto non contiene nessun ingrediente/nome del piatto -> scarto
 
-def _pexels(query, rank=0):
+def _pexels(query, rank=0, no_filtro=False):
     key = os.environ.get("PEXELS_API_KEY")
     if not key:
         return None
@@ -284,7 +284,7 @@ def _pexels(query, rank=0):
         for f in ordine:
             alt = f.get("alt", "")
             pert = _foto_pertinente(alt, query)
-            if pert is False:
+            if not no_filtro and pert is False:
                 continue  # mismatch certo, scarto
             return _norm(f.get("src", {}).get("large") or f.get("src", {}).get("medium"),
                          f.get("photographer", ""), f.get("url", ""), "Pexels")
@@ -292,7 +292,7 @@ def _pexels(query, rank=0):
     except Exception:
         return None
 
-def _unsplash(query, rank=0):
+def _unsplash(query, rank=0, no_filtro=False):
     key = os.environ.get("UNSPLASH_ACCESS_KEY")
     if not key:
         return None
@@ -309,7 +309,7 @@ def _unsplash(query, rank=0):
         for f in ordine:
             alt = (f.get("alt_description") or "") + " " + " ".join(
                 (t.get("title","") if isinstance(t,dict) else str(t)) for t in (f.get("tags") or []))
-            if _foto_pertinente(alt, query) is False:
+            if not no_filtro and _foto_pertinente(alt, query) is False:
                 continue
             autore = (f.get("user", {}) or {}).get("name", "")
             return _norm((f.get("urls", {}) or {}).get("regular"),
@@ -318,7 +318,7 @@ def _unsplash(query, rank=0):
     except Exception:
         return None
 
-def _pixabay(query, rank=0):
+def _pixabay(query, rank=0, no_filtro=False):
     key = os.environ.get("PIXABAY_API_KEY")
     if not key:
         return None
@@ -333,7 +333,7 @@ def _pixabay(query, rank=0):
             return None
         ordine = hits[rank:] + hits[:rank]
         for f in ordine:
-            if _foto_pertinente(f.get("tags", ""), query) is False:
+            if not no_filtro and _foto_pertinente(f.get("tags", ""), query) is False:
                 continue
             return _norm(f.get("largeImageURL") or f.get("webformatURL"),
                          f.get("user", ""), f.get("pageURL", ""), "Pixabay")
@@ -377,8 +377,31 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredi
                 if res:
                     res["match"] = "ingredienti"  # match debole: foto degli ingredienti
                     return res
-    # 4) NIENTE foto sbagliata: se non trovo il piatto né gli ingredienti, torno None
-    #    (il frontend mostra un placeholder pulito, meglio che una foto errata).
+    # 4) FALLBACK INGREDIENTE SINGOLO (regola: MAI blueprint, sempre piatto o ingrediente).
+    #    Se piatto e ingredienti-combinati falliscono, cerco il PRIMO ingrediente da solo
+    #    (manzo, pomodoro, gin...) traducendolo in inglese, e prendo la prima foto SENZA filtro:
+    #    una foto di "beef" per una ricetta di manzo è sempre giusta, non serve filtrarla.
+    if ingredienti:
+        for _ing in ingredienti[:4]:
+            _ing_en = _KW_IT_EN.get(str(_ing).lower().strip(), str(_ing).lower().strip())
+            # prendo solo la prima parola-chiave utile (es. "beef" da "beef dish plated")
+            _ing_kw = _ing_en.split()[0] if _ing_en else ""
+            if len(_ing_kw) < 3:
+                continue
+            for fonte in (_pexels, _unsplash, _pixabay):
+                res = fonte(_ing_kw + " food", rank, no_filtro=True)
+                if res:
+                    res["match"] = "ingrediente"
+                    return res
+    # 5) ULTIMA RISORSA: foto generica della disciplina (mai blueprint vuoto).
+    _disc_q = {"bar": "cocktail drink", "cucina": "plated dish food", "pasticceria": "dessert",
+               "panificazione": "bread bakery", "gelateria": "gelato ice cream",
+               "caffetteria": "coffee espresso"}.get((disciplina or "").lower(), "food dish")
+    for fonte in (_pexels, _unsplash, _pixabay):
+        res = fonte(_disc_q, rank, no_filtro=True)
+        if res:
+            res["match"] = "disciplina"
+            return res
     return None
 
 def credito_immagine(autore, fonte_nome="Pexels"):
