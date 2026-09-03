@@ -149,9 +149,25 @@ def _inietta_evidence(response):
         if request.path.startswith("/v1/abbina/") and response.content_type and "json" in response.content_type:
             import json as _je
             _ev = request.environ.get("_evidence_level")
+            _lang_req = request.args.get("lang", "it")
             data = _je.loads(response.get_data(as_text=True))
+            # FIX TRADUZIONE: ritraduco la dicitura 'composto' se è rimasta in italiano ma lang è en/es
+            # (succede per gli ingredienti del Knowledge Layer italiano).
+            if isinstance(data, dict) and _lang_req in ("en", "es") and data.get("abbinamenti"):
+                _MAP_DIC = {
+                    "affinità molto alta": {"en": "very high affinity", "es": "afinidad muy alta"},
+                    "affinità alta": {"en": "high affinity", "es": "afinidad alta"},
+                    "affinità media": {"en": "medium affinity", "es": "afinidad media"},
+                    "affinità presente": {"en": "some affinity", "es": "afinidad presente"},
+                    "affinità debole": {"en": "weak affinity", "es": "afinidad débil"},
+                }
+                for _ab in data["abbinamenti"]:
+                    _c = _ab.get("composto", "")
+                    if _c in _MAP_DIC:
+                        _ab["composto"] = _MAP_DIC[_c][_lang_req]
+                        _tradotto = True
             if isinstance(data, dict) and "abbinamenti" in data:
-                _cambiato = False
+                _cambiato = locals().get("_tradotto", False)
                 # evidence: aggiungo se manca
                 if "evidence" not in data:
                     _fonte = str(data.get("fonte", "")).lower()
