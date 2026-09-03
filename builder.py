@@ -229,6 +229,8 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         f"TECNICHE DISPONIBILI: {tec_str}\n\n"
         + (f"ABBINAMENTI AROMATICI (per analogia): {abb_str}\n\n" if abb_str else "")
         + f"VOCE DEI TESTI (regole obbligatorie):\n"
+        f"- OBBLIGATORIO: il JSON DEVE includere SEMPRE i campi 'punto_critico', 'esperimento', "
+        f"'limite', 'twist'. Non ometterli MAI, anche se il piatto è semplice. Sono il cuore del metodo.\n"
         f"- La 'descrizione' NON è una definizione da manuale. Apri con un PROBLEMA reale del banco "
         f"(es. 'La carbonara ti diventa una frittata? Non è colpa tua, è la temperatura.').\n"
         f"- Il 'punto_critico' nomina la VARIABILE che il professionista confonde, col numero SE è nei dati sopra.\n"
@@ -386,6 +388,22 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
                 ricetta["_motivo_incoerenza"] = _coe.get("problemi", [])
         except Exception:
             pass
+        # FALLBACK: se l'AI ha omesso il punto_critico, lo derivo dal fenomeno principale
+        # (non lasciarlo mai vuoto: è il cuore del metodo Matter).
+        if not (ricetta.get("punto_critico") or "").strip():
+            _fen = ricetta.get("fenomeni") or []
+            _fen_nome = ""
+            if _fen:
+                _fen_nome = _fen[0] if isinstance(_fen[0], str) else (_fen[0].get("nome", "") if isinstance(_fen[0], dict) else "")
+            _num = ricetta.get("numeri") or {}
+            _num_txt = ""
+            if isinstance(_num, dict) and _num:
+                _k = list(_num.keys())[0]
+                _num_txt = f" (controlla {_k}: {_num[_k]})"
+            if _fen_nome:
+                ricetta["punto_critico"] = f"Il controllo di {_fen_nome.lower()} è ciò che separa la riuscita dall'errore{_num_txt}."
+            else:
+                ricetta["punto_critico"] = "La temperatura e i tempi sono i parametri da tenere sotto controllo per la riuscita."
         return ricetta
     except _j.JSONDecodeError as e:
         return {"errore": f"JSON non valido: {e}", "raw": raw[:300] if 'raw' in dir() else ""}
