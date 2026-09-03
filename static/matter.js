@@ -3676,15 +3676,7 @@ function _toast(msg){
 
 // REGOLA 1 — dal pulsante nella chat: genera la scheda ricetta vera (il Lab crea)
 async function _generaDaChat(richiesta){
-  var disc = localStorage.getItem('matter_station') || 'cucina';
-  aggiungiThinking(); setBusy(true);
-  try{
-    var r=await fetch('/v1/genera-ricetta',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({richiesta:richiesta, disciplina:disc})});
-    var j=await r.json();
-    rimuoviThinking(); setBusy(false);
-    if(j && (j.nome||j.ingredienti)){ mostraRicettaGen(j); }
-  }catch(e){ rimuoviThinking(); setBusy(false); }
+  _generaRicettaAsync(richiesta, 'Creo la ricetta…');
 }
 function _isIntentoRicetta(q){
   var s=(q||'').toLowerCase().trim();
