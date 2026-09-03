@@ -7226,3 +7226,50 @@ def admin_assegna_famiglie():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── NODE KIND: Ingrediente / Prodotto / Trasformato (correzione OpenAI #2) ──
+# Pomodoro=ingrediente, San Marzano DOP=prodotto, Passata=trasformato. Utile a Planner/Menu Builder.
+@bp.route("/admin/assegna-node-kind")
+def admin_assegna_node_kind():
+    """Assegna node_kind agli ingredienti: 'ingrediente' (base Ahn), 'prodotto' (DOP/IGP/territoriale),
+    'trasformato' (passata, conserva, farina...). Campo in data. ?offset=&limit="""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 400)), 800)
+    except Exception:
+        offset, limit = 0, 400
+    _TRASFORMATI = ("passata", "conserva", "concentrato", "farina", "sciroppo", "estratto", "polvere",
+                    "essiccat", "affumicat", "fermentat", "confettura", "marmellata", "purea", "salsa",
+                    "aceto", "olio di", "burro di", "pasta di", "granella", "scaglie")
+    _PRODOTTI = ("dop", "igp", "stg", "presidio", "riserva", "millesimat")
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Ingrediente'
+                       ORDER BY id LIMIT %s OFFSET %s""", (limit, offset))
+        righe = cur.fetchall()
+        if not righe:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "fine": True})
+        conta = {"ingrediente": 0, "prodotto": 0, "trasformato": 0}
+        for iid, nome, data in righe:
+            d = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            n = (nome or "").lower()
+            _dic = (d.get("dicitura") or d.get("names", {}).get("dicitura") or "").lower() if isinstance(d.get("names"), dict) else (d.get("dicitura") or "").lower()
+            if any(k in n or k in _dic for k in _PRODOTTI) or d.get("italian_layer"):
+                kind = "prodotto"
+            elif any(k in n for k in _TRASFORMATI):
+                kind = "trasformato"
+            else:
+                kind = "ingrediente"
+            d["node_kind"] = kind
+            conta[kind] += 1
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(d, ensure_ascii=False), iid))
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "conta": conta, "su": len(righe), "prossimo_offset": offset + limit})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
