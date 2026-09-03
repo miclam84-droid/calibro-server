@@ -367,16 +367,35 @@ def _wikimedia(query, rank=0, no_filtro=False):
             # scarto SVG/loghi/mappe (non sono foto di cibo)
             if not url or any(bad in url.lower() for bad in (".svg", ".pdf", "logo", "icon", "map", "diagram")):
                 continue
+            # FILTRO LICENZA (uso commerciale sicuro): SOLO Pubblico Dominio, CC0, CC BY.
+            # Escludo CC BY-SA (share-alike problematico) e NC (non-commerciale, vietato).
+            _ext = ii.get("extmetadata", {})
+            _lic = (_ext.get("License", {}).get("value", "") or "").lower()
+            _lic_short = (_ext.get("LicenseShortName", {}).get("value", "") or "").lower()
+            _lic_all = _lic + " " + _lic_short
+            _sicura = (
+                ("cc0" in _lic_all) or ("public domain" in _lic_all) or ("pd" == _lic.strip())
+                or ("cc-by-4" in _lic) or ("cc-by-3" in _lic) or ("cc-by-2" in _lic)
+                or ("cc-by-1" in _lic) or (_lic in ("cc-by", "cc-by-sa") and False)
+            )
+            # esclusione esplicita: mai NC né SA
+            if "-sa" in _lic or "-nc" in _lic or "nc" in _lic_short or "share" in _lic_all:
+                continue
+            if not _sicura:
+                continue
             if not no_filtro and _foto_pertinente(titolo, query) is False:
                 continue
             _autore = ""
             try:
-                _autore = ii.get("extmetadata", {}).get("Artist", {}).get("value", "")[:40]
                 import re as _re
-                _autore = _re.sub(r"<[^>]+>", "", _autore).strip()
+                _raw_aut = _ext.get("Artist", {}).get("value", "")
+                # tolgo tutti i tag HTML e prendo solo il testo dell'autore
+                _autore = _re.sub(r"<[^>]+>", "", _raw_aut).strip()
+                _autore = _re.sub(r"\s+", " ", _autore)[:40].strip()
             except Exception:
                 pass
-            return _norm(url, _autore or "Wikimedia Commons",
+            _lic_nome = _ext.get("LicenseShortName", {}).get("value", "CC BY")
+            return _norm(url, (_autore or "Wikimedia Commons") + f" ({_lic_nome})",
                          "https://commons.wikimedia.org", "Wikimedia Commons")
         return None
     except Exception:
