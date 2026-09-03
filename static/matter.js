@@ -625,6 +625,7 @@ function renderHome(j){
   // onboarding: mostra nudge se primo accesso
   mostraNudgeSeNecessario();
   caricaGrigliaDiscipline();
+  caricaDNAHome();
   // "Principio del giorno" rimosso (Gemini #1): duplicava il Fenomeno del Giorno in alto
   const pc = document.getElementById('scopri-principio');
   if(pc) pc.style.display='none';
@@ -643,6 +644,26 @@ async function caricaContDisciplina(nome){
   } catch(e){}
 }
 
+// ═══ DNA HOME — "Il tuo banco parla" (l'insight più significativo del profilo) ═══
+async function caricaDNAHome(){
+  var cont=document.getElementById('dna-home');
+  if(!cont) return;
+  try{
+    var r=await fetch('/v1/dna-professionale', {headers:_statoHeaders()});
+    var j=await r.json();
+    if(!j.pronto || !(j.pattern||[]).length){ cont.innerHTML=''; return; }
+    var e=_escV;
+    var pat=(j.pattern||[]).find(function(p){return p.tendenza;}) || j.pattern[0];
+    var aff=pat.affidabilita||'indicativo';
+    var extra = pat.tendenza ? '<div class="dnah-tend">📈 '+e(pat.tendenza)+'</div>' : (pat.zona?'<div class="dnah-zona">'+e(pat.zona)+'</div>':'');
+    cont.innerHTML='<div class="dnah-card" onclick="switchTab(\'quaderno\');switchQuaderno(\'dna\')">'
+      + '<div class="dnah-top"><span class="dnah-lab">Il tuo banco parla</span><span class="dna-ctx-badge dna-aff-'+e(aff)+'">'+e(aff)+'</span></div>'
+      + '<div class="dnah-fen">'+e(pat.fenomeno||'')+' · <span class="dnah-media">'+e(String(pat.media))+e(pat.unita||'')+'</span></div>'
+      + extra
+      + '<div class="dnah-cta">Vedi il tuo profilo →</div>'
+      + '</div>';
+  }catch(e){ cont.innerHTML=''; }
+}
 // ═══ GRIGLIA DISCIPLINE — Bar dominante + griglia asimmetrica (Gemini #3) ═══
 var _DISC_ICONE={bar:'🍸',cucina:'🍳',panificazione:'🍞',pasticceria:'🧁',caffetteria:'☕',gelateria:'🍨',vino:'🍷',birra:'🍺',sicurezza:'🛡'};
 async function caricaGrigliaDiscipline(){
@@ -1178,9 +1199,10 @@ async function caricaChatSalvate(){
     list.innerHTML=conv.map(function(c){
       var data='';
       try{ var d=new Date(c.data); data=d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'}); }catch(x){}
+      var tag = c.tag ? '<span class="chat-tag chat-tag-'+e(c.tag)+'">'+e(c.tag)+'</span>' : '';
       return '<div class="chat-salvata-card" onclick="riapriChatSalvata('+c.id+')">'
         + '<div class="chat-salvata-titolo">'+e(c.titolo||'Conversazione')+'</div>'
-        + '<div class="chat-salvata-data">'+data+'</div></div>';
+        + '<div class="chat-salvata-meta">'+tag+'<span class="chat-salvata-data">'+data+'</span></div></div>';
     }).join('');
   }catch(e){ list.innerHTML='<div class="quad-empty"><b>Errore</b><span>Riprova.</span></div>'; }
 }

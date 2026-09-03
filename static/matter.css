@@ -2702,3 +2702,23 @@ input:not(.calc-step-input),textarea,.ask-input,.ric-search input,.sm-field>inpu
 .dna-aff-ipotesi{background:rgba(157,174,178,.25);color:#B7C3C3}
 .dna-aff-indicativo{background:rgba(36,89,121,.4);color:#9DC5E0}
 .dna-aff-consolidato{background:rgba(18,84,93,.5);color:#7FC5D0}
+
+/* ═══ DNA HOME — "Il tuo banco parla" ═══ */
+.dnah-card{background:#fff;border:1.5px solid #141D22;border-radius:4px;box-shadow:4px 4px 0 rgba(20,29,34,.15);padding:16px;margin:0 16px 16px;cursor:pointer}
+.dnah-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(20,29,34,.15)}
+.dnah-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.dnah-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#12545D}
+.dnah-fen{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#141D22;margin-bottom:8px}
+.dnah-media{font-family:'IBM Plex Mono',monospace;color:#C77B3F}
+.dnah-tend{background:rgba(199,123,63,.12);border-left:3px solid #C77B3F;border-radius:0 4px 4px 0;padding:8px 12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#141D22;margin-bottom:8px}
+.dnah-zona{font-family:'Inter',sans-serif;font-size:13px;color:#2A3A42;line-height:1.5;margin-bottom:8px}
+.dnah-cta{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#245979}
+
+/* chip tag chat salvate */
+.chat-salvata-meta{display:flex;align-items:center;gap:8px;margin-top:4px}
+.chat-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:#E8EDED;color:#12545D}
+.chat-tag-bar{background:rgba(36,89,121,.18);color:#245979}
+.chat-tag-cucina{background:rgba(199,123,63,.18);color:#A5572A}
+.chat-tag-forno,.chat-tag-panificazione{background:rgba(139,94,60,.18);color:#8B5E3C}
+.chat-tag-pasticceria{background:rgba(199,123,63,.14);color:#C77B3F}
+.chat-tag-vino{background:rgba(120,40,60,.16);color:#78283C}
