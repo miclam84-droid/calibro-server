@@ -670,6 +670,12 @@ def chiedi():
     if fallback_suggeriti:
         connessi = fallback_suggeriti + connessi
 
+    # FRASE-GUIDA (revisori): se la domanda era ambigua e non c'è una risposta vera ma solo
+    # suggerimenti connessi, aggiungo una frase che guida l'utente invece di dare card "a caso".
+    if (not risposta or len(risposta.strip()) < 20) and connessi:
+        risposta = ("Puoi essere più preciso su cosa vuoi capire? Intanto, ecco alcuni fenomeni del "
+                    "banco su cui posso darti numeri e diagnosi — scegli quello che ti serve:")
+
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
         "prompt_costruito": prompt,

@@ -459,19 +459,37 @@ def salva_conversazione():
             if m.get("ruolo") == "user" or m.get("q"):
                 titolo = (m.get("testo") or m.get("q") or "")[:60]; break
         titolo = titolo or "Conversazione"
+    # TAG AUTOMATICO (revisori): deduco l'ambito dal contenuto per ritrovare le chat per argomento.
+    _testo_tot = " ".join((m.get("testo") or m.get("q") or m.get("r") or "") for m in messaggi).lower()
+    _TAG_KW = {
+        "bar": ("cocktail", "drink", "gin", "sour", "negroni", "shake", "diluizione", "bitter", "vermouth", "amaro"),
+        "forno": ("impasto", "lievito", "farina", "pane", "pizza", "focaccia", "idratazione", "glutine", "maglia"),
+        "cucina": ("carne", "pesce", "cottura", "brasato", "risotto", "salsa", "maillard", "sonda", "brodo"),
+        "pasticceria": ("crema", "cioccolato", "ganache", "meringa", "zucchero", "tuorlo", "spuma", "gelatina"),
+        "caffè": ("caffè", "espresso", "estrazione", "tostatura", "brew"),
+        "gelateria": ("gelato", "sorbetto", "mantecazione", "cristalli", "overrun"),
+        "vino": ("vino", "barolo", "servizio", "tannini", "affinamento", "solfiti"),
+    }
+    tag = ""
+    _best = 0
+    for _t, _kw in _TAG_KW.items():
+        _score = sum(1 for k in _kw if k in _testo_tot)
+        if _score > _best:
+            _best = _score; tag = _t
     conn = _get_conn()
     try:
         cur = conn.cursor()
         cur.execute("""CREATE TABLE IF NOT EXISTS chat_salvate (
-            id SERIAL PRIMARY KEY, device_id TEXT, titolo TEXT, messaggi JSONB,
+            id SERIAL PRIMARY KEY, device_id TEXT, titolo TEXT, messaggi JSONB, tag TEXT,
             creato_il TIMESTAMP DEFAULT NOW())""")
+        cur.execute("ALTER TABLE chat_salvate ADD COLUMN IF NOT EXISTS tag TEXT")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_chat_dev ON chat_salvate(device_id)")
         import json as _j
-        cur.execute("INSERT INTO chat_salvate (device_id, titolo, messaggi) VALUES (%s,%s,%s::jsonb) RETURNING id",
-                    (dev, titolo, _j.dumps(messaggi, ensure_ascii=False)))
+        cur.execute("INSERT INTO chat_salvate (device_id, titolo, messaggi, tag) VALUES (%s,%s,%s::jsonb,%s) RETURNING id",
+                    (dev, titolo, _j.dumps(messaggi, ensure_ascii=False), tag))
         cid = cur.fetchone()[0]
         conn.commit(); cur.close(); _release_conn(conn)
-        return jsonify({"ok": True, "id": cid, "titolo": titolo})
+        return jsonify({"ok": True, "id": cid, "titolo": titolo, "tag": tag})
     except Exception as e:
         conn.rollback(); _release_conn(conn)
         return jsonify({"errore": str(e)[:120]}), 200
@@ -486,8 +504,8 @@ def mie_conversazioni():
     conn = _get_conn()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT id, titolo, creato_il FROM chat_salvate WHERE device_id=%s ORDER BY creato_il DESC LIMIT 50", (dev,))
-        out = [{"id": r[0], "titolo": r[1], "data": r[2].isoformat() if r[2] else None} for r in cur.fetchall()]
+        cur.execute("SELECT id, titolo, creato_il, tag FROM chat_salvate WHERE device_id=%s ORDER BY creato_il DESC LIMIT 50", (dev,))
+        out = [{"id": r[0], "titolo": r[1], "data": r[2].isoformat() if r[2] else None, "tag": r[3] or ""} for r in cur.fetchall()]
         cur.close(); _release_conn(conn)
         return jsonify({"conversazioni": out, "totale": len(out)})
     except Exception:
