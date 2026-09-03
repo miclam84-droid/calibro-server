@@ -491,3 +491,31 @@ def fenomeni_avanzati():
         })
     return jsonify({"fenomeni": out, "totale": len(out),
                     "titolo": "Tecniche Avanzate di Laboratorio"})
+
+
+@bp.route("/discipline-conteggi")
+@bp.route("/v1/discipline-conteggi")
+def discipline_conteggi():
+    """Conteggio fenomeni per disciplina, in un solo colpo (per la griglia Home col Bar dominante).
+    Ritorna [{disciplina, n_fenomeni}]. Ordine: Bar primo (dominante), poi gli altri."""
+    db = carica_grafo()
+    rows = db.execute(
+        "SELECT domain, COUNT(*) as n FROM nodes WHERE type='Fenomeno' AND domain IS NOT NULL "
+        "GROUP BY domain ORDER BY n DESC"
+    ).fetchall()
+    _ordine = ["bar", "panificazione", "cucina", "caffetteria", "pasticceria", "gelateria", "vino", "birra"]
+    conteggi = {}
+    for r in rows:
+        dom = (r["domain"] if hasattr(r, "keys") else r[0]) or ""
+        n = r["n"] if hasattr(r, "keys") else r[1]
+        if dom:
+            conteggi[dom.lower()] = n
+    out = []
+    for d in _ordine:
+        if d in conteggi:
+            out.append({"disciplina": d, "n_fenomeni": conteggi[d]})
+    # eventuali discipline non in _ordine
+    for d, n in conteggi.items():
+        if d not in _ordine:
+            out.append({"disciplina": d, "n_fenomeni": n})
+    return jsonify({"discipline": out, "bar_dominante": True})
