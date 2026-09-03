@@ -2546,3 +2546,12 @@ a:focus-visible,input:focus-visible{
 .allerg-chip span{font-family:var(--sans,'Inter');font-size:13px;color:var(--ink,#141D22);font-weight:500}
 .allerg-warning{margin-top:10px;font-size:12.5px;color:var(--terra,#C77B3F);font-weight:600}
 .allerg-disc{margin-top:6px;font-size:10.5px;color:var(--muted,#5A6C70);font-style:italic;line-height:1.4}
+
+/* chip contesto chat "Stai parlando di: [ricetta]" */
+.chat-ctx-chip{display:flex;align-items:center;gap:8px;background:var(--ink,#141D22);border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.cc-lab{font-family:var(--mono,'IBM Plex Mono');font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7FB0C4;flex-shrink:0}
+.cc-nome{font-family:var(--sans,'Inter');font-size:13px;font-weight:600;color:#EAF1F3;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-x{background:none;border:none;color:#9DAEB2;font-size:20px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0}
+/* breadcrumb "torna al fenomeno precedente" */
+.fen-back{background:none;border:none;color:var(--teal,#12545D);font-family:var(--sans,'Inter');font-size:13px;font-weight:600;cursor:pointer;padding:0 0 12px;display:inline-flex;align-items:center}
+.fen-back:active{opacity:.7}

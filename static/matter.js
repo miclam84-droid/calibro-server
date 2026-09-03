@@ -1257,16 +1257,23 @@ function _chiediNonStream(q){
       }
     }).finally(()=>setBusy(false));
 }
-function apriNodo(id,nome){
+var _nodoStack=[];  // stack di navigazione fenomeni (per il back)
+function apriNodo(id,nome,_daBack){
   if(busy)return;
+  // impilo il nodo corrente prima di aprire il nuovo (a meno che sia un "torna indietro")
+  if(!_daBack && _nodoCorrente && _nodoCorrente.id!==id){ _nodoStack.push(_nodoCorrente); }
+  _nodoCorrente = {id:id, nome:nome};
   aggiungiThinking();setBusy(true);
   fetch('/nodo?traccia=1',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({id})})
     .then(r=>r.json()).then(j=>{
-      // NUOVA SCHEDA FENOMENO: principio in cima, Mirino adattivo. Se il nodo è un fenomeno
-      // (ha tipo_fenomeno + principi), uso il renderer dedicato; altrimenti la risposta chat.
       if(j && j.tipo_fenomeno && (j.principi||j.titolo)){ _renderSchedaFenomeno(j); }
       else { renderRisp(nome,j,true); }
     }).catch(()=>renderErr()).finally(()=>setBusy(false));
+}
+var _nodoCorrente=null;
+function _tornaNodoPrecedente(){
+  var prec=_nodoStack.pop();
+  if(prec){ _nodoCorrente=null; apriNodo(prec.id, prec.nome, true); }
 }
 function rimuoviThinking(){ var t=document.getElementById("thinking"); if(t) t.remove(); }
 
@@ -1412,8 +1419,11 @@ function _renderSchedaFenomeno(j){
   // ORDINE FISSO: Fenomeno → Principio → [Diagramma] → Mirino → Tecniche → Errori(Pro) → spiegazione → dove
   var nomePrincipio = principi.length ? principi[0].nome : '';
   var diagramma = _diagrammaHtml(j.titolo, nomePrincipio);
+  // breadcrumb: se sono arrivato qui da un altro fenomeno, mostro "torna a"
+  var backNodo = _nodoStack.length ? '<button class="fen-back" onclick="_tornaNodoPrecedente()">← Torna a '+e(_nodoStack[_nodoStack.length-1].nome||'prima')+'</button>' : '';
   var html =
     '<div class="fen-scheda">'
+    + backNodo
     + '<div class="fen-header"><div class="fen-titolo">'+e(j.titolo||'Fenomeno')+'</div>'
     +   '<div class="fen-tags">'+(disc?'<span class="fen-disc">'+e(disc)+'</span>':'')+badge+'</div></div>'
     + boxPrincipio
@@ -3832,13 +3842,32 @@ function _ricettaInMenu(){
 }
 function chiediSuRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
-  _ctxChat = {tipo:'ricetta', nome:d.nome, ingredienti:(d.ingredienti||[]).map(function(x){return typeof x==='string'?x:x.nome;}), fenomeni:d.fenomeni||[], punto_critico:d.punto_critico||''};
+  // formato che il backend si aspetta: contesto.ricetta {nome, ingredienti:[{nome}], punto_critico}
+  _ctxChat = { ricetta: {
+    nome: d.nome||'',
+    ingredienti: (d.ingredienti||[]).map(function(x){ return {nome: (typeof x==='string'?x:(x.nome||''))}; }),
+    punto_critico: d.punto_critico||'',
+    numeri: d.numeri||''
+  }};
   chiudiVista();
-  switchTab('chiedi');
-  var inp=document.getElementById('ask-input');
+  switchTab('chiedi'); switchSubtab('chat');
+  var inp=document.getElementById('q')||document.getElementById('ask-input');
   if(inp){ inp.placeholder='Chiedi su "'+(d.nome||'questa ricetta')+'"…'; inp.focus(); }
-  var banner=document.getElementById('chat-ctx-banner');
-  if(banner){ banner.textContent='Stai chiedendo su: '+(d.nome||'ricetta'); banner.style.display='block'; }
+  _mostraContestoChip(d.nome||'ricetta');
+}
+// chip contesto in cima alla chat "Stai parlando di: [nome]"
+function _mostraContestoChip(nome){
+  var esist=document.getElementById('chat-ctx-chip'); if(esist) esist.remove();
+  var schede=document.getElementById('schede'); if(!schede) return;
+  var chip=document.createElement('div'); chip.id='chat-ctx-chip'; chip.className='chat-ctx-chip';
+  chip.innerHTML='<span class="cc-lab">Stai parlando di</span><span class="cc-nome">'+_escV(nome)+'</span><button class="cc-x" onclick="_chiudiContesto()" aria-label="Rimuovi contesto">×</button>';
+  schede.insertBefore(chip, schede.firstChild);
+}
+function _chiudiContesto(){
+  _ctxChat=null;
+  var chip=document.getElementById('chat-ctx-chip'); if(chip) chip.remove();
+  var inp=document.getElementById('q')||document.getElementById('ask-input');
+  if(inp) inp.placeholder='Scrivi un problema al banco (es. ganache separata)…';
 }
 async function foodCostRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
