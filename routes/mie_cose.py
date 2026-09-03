@@ -556,19 +556,34 @@ def dna_professionale():
             media = round(sum(valori) / len(valori), 1)
             uni = misure[0]["uni"]
             ber = misure[0]["ber"]
-            p = {"fenomeno": fen, "n_misure": len(misure), "media": media, "unita": uni}
-            # tendenza (se ci sono almeno 3 misure)
-            if len(valori) >= 3:
+            n = len(misure)
+            # GRADO DI AFFIDABILITÀ (Gemini + coerente col Confidence Layer):
+            # <5 misure = ipotesi, 5-10 = indicativo, >10 = consolidato.
+            if n < 5:
+                affidabilita = "ipotesi"
+            elif n <= 10:
+                affidabilita = "indicativo"
+            else:
+                affidabilita = "consolidato"
+            p = {"fenomeno": fen, "n_misure": n, "media": media, "unita": uni,
+                 "affidabilita": affidabilita}
+            # tendenza (almeno 3 misure)
+            if n >= 3:
                 delta = valori[-1] - valori[0]
                 if abs(delta) >= max(0.5, abs(media) * 0.03):
                     verso = "aumentato" if delta > 0 else "abbassato"
                     p["tendenza"] = f"Hai {verso} {fen.lower()} di {abs(round(delta,1))}{uni} nel tempo."
             # zona di lavoro
-            if len(valori) >= 2:
+            if n >= 2:
                 p["zona"] = f"Lavori {fen.lower()} tra {round(min(valori),1)} e {round(max(valori),1)}{uni} (media {media}{uni})."
-            # confronto col bersaglio
             if ber:
                 p["nota_bersaglio"] = f"Bersaglio consigliato: {ber}{uni}."
+            # INSIGHT AZIONABILE (OpenAI: non descrittivo ma actionable) — solo se abbastanza dati
+            if n >= 5:
+                _vmin, _vmax = round(min(valori), 1), round(max(valori), 1)
+                if _vmax > _vmin:
+                    p["azione"] = (f"La tua zona migliore per {fen.lower()} sembra intorno a {media}{uni}: "
+                                   f"prova a restare vicino a questo valore per costanza, e annota il risultato.")
             pattern.append(p)
         # frase-firma del DNA
         cur.execute("SELECT COUNT(DISTINCT fenomeno), COUNT(*) FROM misure_salvate WHERE device_id=%s", (dev,))
@@ -592,3 +607,45 @@ def dna_professionale():
         except Exception: pass
         import traceback
         return jsonify({"errore": str(e)[:120], "tb": traceback.format_exc()[-200:]}), 200
+
+
+@bp_mie.route("/v1/dna-contesto", methods=["GET"])
+def dna_contesto():
+    """Contesto DNA per un fenomeno specifico — da iniettare nei calcolatori e nella chat.
+    Es. aprendo il calcolatore idratazione: 'Di solito lavori al 71% (18 misure)'.
+    ?fenomeno=Idratazione impasto  → {ha_dati, media, zona, frase} (o ha_dati:false)."""
+    dev = _device()
+    fen = (request.args.get("fenomeno") or "").strip()
+    if not dev or not fen:
+        return jsonify({"ha_dati": False})
+    conn = _get_conn()
+    try:
+        import re as _re
+        cur = conn.cursor()
+        cur.execute("""SELECT valore, unita FROM misure_salvate
+                       WHERE device_id=%s AND lower(fenomeno)=lower(%s) ORDER BY creato_il""", (dev, fen))
+        righe = cur.fetchall()
+        cur.close(); _release_conn(conn)
+        valori = []
+        uni = ""
+        for r in righe:
+            m = _re.search(r"-?\d+[.,]?\d*", str(r[0]))
+            if m:
+                try:
+                    valori.append(float(m.group(0).replace(",", "."))); uni = r[1] or uni
+                except Exception:
+                    pass
+        # soglia: sotto 3 misure non do contesto (troppo rumore)
+        if len(valori) < 3:
+            return jsonify({"ha_dati": False, "n_misure": len(valori)})
+        media = round(sum(valori) / len(valori), 1)
+        n = len(valori)
+        affid = "ipotesi" if n < 5 else ("indicativo" if n <= 10 else "consolidato")
+        frase = f"Di solito lavori {fen.lower()} intorno a {media}{uni} ({n} misure)."
+        return jsonify({"ha_dati": True, "media": media, "unita": uni, "n_misure": n,
+                        "affidabilita": affid, "frase": frase,
+                        "min": round(min(valori), 1), "max": round(max(valori), 1)})
+    except Exception:
+        try: _release_conn(conn)
+        except Exception: pass
+        return jsonify({"ha_dati": False})
