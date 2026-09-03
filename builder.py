@@ -231,6 +231,14 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         + f"VOCE DEI TESTI (regole obbligatorie):\n"
         f"- OBBLIGATORIO: il JSON DEVE includere SEMPRE i campi 'punto_critico', 'esperimento', "
         f"'limite', 'twist'. Non ometterli MAI, anche se il piatto è semplice. Sono il cuore del metodo.\n"
+        f"- OBBLIGATORIO 'numeri': ogni piatto HA parametri misurabili (temperatura di cottura/servizio, "
+        f"percentuali, tempi, pesi, °Brix, pH, idratazione). Popola SEMPRE 'numeri' con ALMENO 2-3 valori "
+        f"reali e specifici del piatto. Se un numero non è nei dati del grafo, USA LA TUA CONOSCENZA "
+        f"professionale per darlo (es. spuma: temperatura 4°C e 0.5g lecitina/100ml; risotto: mantecatura "
+        f"a 55-60°C). MAI lasciare 'numeri' vuoto o null.\n"
+        f"- Il 'punto_critico' deve essere SPECIFICO DI QUESTO PIATTO (non generico tipo 'temperatura e "
+        f"tempi'): nomina LA variabile precisa che si sbaglia in QUESTA preparazione, col numero. "
+        f"Es. per una spuma: 'la quantità di lecitina — sotto 0.4%% non monta, sopra 0.8%% sa di sapone'.\n"
         f"- La 'descrizione' NON è una definizione da manuale. Apri con un PROBLEMA reale del banco "
         f"(es. 'La carbonara ti diventa una frittata? Non è colpa tua, è la temperatura.').\n"
         f"- Il 'punto_critico' nomina la VARIABILE che il professionista confonde, col numero SE è nei dati sopra.\n"
@@ -399,11 +407,13 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
             _num_txt = ""
             if isinstance(_num, dict) and _num:
                 _k = list(_num.keys())[0]
-                _num_txt = f" (controlla {_k}: {_num[_k]})"
+                _num_txt = f" (tieni d'occhio {_k}: {_num[_k]})"
             if _fen_nome:
-                ricetta["punto_critico"] = f"Il controllo di {_fen_nome.lower()} è ciò che separa la riuscita dall'errore{_num_txt}."
+                ricetta["punto_critico"] = f"Il controllo di {_fen_nome.lower()} è ciò che separa la riuscita dall'errore in questo piatto{_num_txt}."
+            elif _num_txt:
+                ricetta["punto_critico"] = f"Il parametro da non sbagliare{_num_txt}."
             else:
-                ricetta["punto_critico"] = "La temperatura e i tempi sono i parametri da tenere sotto controllo per la riuscita."
+                ricetta["punto_critico"] = "La temperatura di cottura e i tempi decidono la riuscita: verificali con la sonda, non a occhio."
         return ricetta
     except _j.JSONDecodeError as e:
         return {"errore": f"JSON non valido: {e}", "raw": raw[:300] if 'raw' in dir() else ""}
