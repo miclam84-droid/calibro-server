@@ -550,6 +550,28 @@ def chiedi():
                 _ctx_txt += f" (numero bersaglio: {tgt})"
             _ctx_txt += ". Rispondi restando su questo fenomeno, applicandolo al suo caso specifico.] "
             domanda_arricchita = _ctx_txt + domanda
+        # CONTESTO RICETTA: se l'utente ha aperto/creato una ricetta e clicca "chiedi",
+        # la chat deve GIÀ sapere di quella ricetta (non partire vuota).
+        ric = contesto_scheda.get("ricetta")
+        if ric and isinstance(ric, dict):
+            _nome_r = (ric.get("nome") or "").strip()
+            if _nome_r:
+                _ings = ric.get("ingredienti") or []
+                _ing_txt = ""
+                if isinstance(_ings, list) and _ings:
+                    _nomi = []
+                    for _i in _ings[:12]:
+                        _n = _i.get("nome") if isinstance(_i, dict) else str(_i)
+                        if _n: _nomi.append(_n)
+                    if _nomi:
+                        _ing_txt = " Ingredienti: " + ", ".join(_nomi) + "."
+                _pc = (ric.get("punto_critico") or "").strip()
+                _num = (ric.get("numeri") or ric.get("target") or "")
+                _ctx_r = (f"[L'utente ha appena aperto la ricetta '{_nome_r}'.{_ing_txt}"
+                          + (f" Punto critico: {_pc}." if _pc else "")
+                          + (f" Numero bersaglio: {_num}." if _num else "")
+                          + " Rispondi restando su QUESTA ricetta, senza chiedere di ripeterla: la conosci già.] ")
+                domanda_arricchita = _ctx_r + domanda
 
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
     # SPRINT 1 — retrieval allargato: aggiungo al prompt le ricette e gli abbinamenti pertinenti,
