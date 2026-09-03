@@ -7078,3 +7078,55 @@ def admin_cerca_foto_ricette():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── PONTI UNIFICA tra fenomeni (la navigazione "approfondisci" cross-disciplina) ──
+@bp.route("/admin/crea-ponti-fenomeni")
+def admin_crea_ponti_fenomeni():
+    """Crea archi 'unifica' tra fenomeni che condividono una legge fisica. Così quando l'utente
+    approfondisce un fenomeno, trova fenomeni DAVVERO collegati (non salti scollegati)."""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # gruppi di fenomeni che condividono una legge fisica -> si collegano tra loro
+    _PONTI = [
+        ("Trasporto di soluto in solvente", ["fen-infusione", "fen-cold-brew", "fen-fat-washing",
+            "fen-capillarita", "fen-inversione-zucchero"]),
+        ("Reazioni di brunitura e aromi termici", ["fen-strecker", "fen-tadka", "fen-wok-hei",
+            "fen-browning-enzimatico"]),
+        ("Fermentazione ed enzimi", ["fen-koji", "fen-autolisi", "fen-poolish-biga"]),
+        ("Struttura di gel e fluidi", ["fen-clarificazione-cocktail", "fen-texture-agents",
+            "fen-tissotropia", "fen-emulsione-violenta"]),
+        ("Conservazione e deterioramento", ["fen-shelf-life", "fen-shelf-life-pane",
+            "fen-atmosfera-modificata", "fen-zona-pericolo", "fen-contaminazione"]),
+        ("Trasformazione dell'amido", ["fen-riso-glutinoso", "fen-nixtamalizzazione", "fen-kansui"]),
+        ("Calore e cottura", ["fen-barbecue-low-slow", "fen-tandoor", "fen-espansione-termica"]),
+    ]
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        creati = 0
+        for legge, fenomeni in _PONTI:
+            # collego ogni fenomeno con ogni altro del gruppo (bidirezionale)
+            for i, a in enumerate(fenomeni):
+                cur.execute("SELECT 1 FROM nodes WHERE id=%s", (a,))
+                if not cur.fetchone():
+                    continue
+                for bb in fenomeni[i+1:]:
+                    cur.execute("SELECT 1 FROM nodes WHERE id=%s", (bb,))
+                    if not cur.fetchone():
+                        continue
+                    import json as _j
+                    data = _j.dumps({"legge_condivisa": legge}, ensure_ascii=False)
+                    # arco a->b e b->a
+                    for _f, _t in [(a, bb), (bb, a)]:
+                        cur.execute("""INSERT INTO edges (from_id, to_id, relation, data)
+                                       SELECT %s,%s,'unifica',%s::jsonb
+                                       WHERE NOT EXISTS (SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='unifica')""",
+                                    (_f, _t, data, _f, _t))
+                        creati += cur.rowcount
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "ponti_creati": creati, "gruppi": len(_PONTI)})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
