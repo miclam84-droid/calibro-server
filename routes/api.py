@@ -3976,7 +3976,7 @@ def _pulisci_job_vecchi():
     """Rimuove i job più vecchi di 15 minuti."""
     try:
         conn = _get_conn(); cur = conn.cursor()
-        cur.execute("DELETE FROM jobs_ricette WHERE creato_il < NOW() - INTERVAL '15 minutes'")
+        cur.execute("DELETE FROM jobs_ricette WHERE creato_il < NOW() - INTERVAL '30 minutes'")
         conn.commit(); cur.close(); _release_conn(conn)
     except Exception:
         pass
@@ -4028,7 +4028,12 @@ def genera_ricetta_stato(job_id):
     """Polling: restituisce lo stato del job. Quando 'pronto', include la ricetta."""
     job = _job_get(job_id)
     if not job:
-        return jsonify({"stato": "non_trovato", "messaggio": "Job scaduto o inesistente, rilancia la generazione."}), 404
+        # il job potrebbe non essere ancora visibile su questo worker (i job stanno nel DB ma
+        # può esserci un attimo di latenza). Se il job_id ha il formato giusto, rispondo "in_corso"
+        # così il frontend continua il polling invece di rompere con un 404 spurio.
+        if job_id and job_id.startswith("job-"):
+            return jsonify({"stato": "in_corso"})
+        return jsonify({"stato": "non_trovato", "messaggio": "Job inesistente, rilancia la generazione."}), 404
     if job["stato"] == "in_corso":
         return jsonify({"stato": "in_corso"})
     if job["stato"] == "errore":
