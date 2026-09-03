@@ -341,6 +341,47 @@ def _pixabay(query, rank=0, no_filtro=False):
     except Exception:
         return None
 
+
+def _wikimedia(query, rank=0, no_filtro=False):
+    """Wikimedia Commons: enorme, ha i piatti tradizionali/italiani che Pexels/Pixabay non hanno
+    (Bourride, cocktail classici, piatti regionali). Aperto, serve solo uno User-Agent identificativo."""
+    try:
+        params = urllib.parse.urlencode({
+            "action": "query", "format": "json", "generator": "search",
+            "gsrsearch": query, "gsrnamespace": 6, "gsrlimit": 8,
+            "prop": "imageinfo", "iiprop": "url|extmetadata", "iiurlwidth": 900})
+        req = urllib.request.Request(
+            f"https://commons.wikimedia.org/w/api.php?{params}",
+            headers={"User-Agent": "MatterBench/1.0 (https://matterbench.app; info@matterbench.app)"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        pages = data.get("query", {}).get("pages", {})
+        if not pages:
+            return None
+        items = sorted(pages.values(), key=lambda x: x.get("index", 99))
+        ordine = items[rank:] + items[:rank]
+        for pg in ordine:
+            ii = (pg.get("imageinfo") or [{}])[0]
+            url = ii.get("thumburl") or ii.get("url")
+            titolo = pg.get("title", "").replace("File:", "")
+            # scarto SVG/loghi/mappe (non sono foto di cibo)
+            if not url or any(bad in url.lower() for bad in (".svg", ".pdf", "logo", "icon", "map", "diagram")):
+                continue
+            if not no_filtro and _foto_pertinente(titolo, query) is False:
+                continue
+            _autore = ""
+            try:
+                _autore = ii.get("extmetadata", {}).get("Artist", {}).get("value", "")[:40]
+                import re as _re
+                _autore = _re.sub(r"<[^>]+>", "", _autore).strip()
+            except Exception:
+                pass
+            return _norm(url, _autore or "Wikimedia Commons",
+                         "https://commons.wikimedia.org", "Wikimedia Commons")
+        return None
+    except Exception:
+        return None
+
 def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredienti=None, evita_urls=None):
     """ROUTING: Pexels -> Unsplash -> Pixabay. Se arriva nome+disciplina costruisce la query intelligente.
     Se rank non è forzato (0) e c'è un nome, deriva un rank dal NOME: cosi ricette diverse con la stessa
@@ -366,7 +407,7 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredi
     nome_pulito = _nome_per_query((nome or query or "").lower())
     if nome_pulito:
         for _rk in range(rank, rank + 5):
-            for fonte in (_pexels, _unsplash, _pixabay):
+            for fonte in (_wikimedia, _pexels, _unsplash, _pixabay):
                 res = fonte(nome_pulito, _rk % 5)
                 if _ok_url(res):
                     res["match"] = "piatto"
@@ -377,7 +418,7 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredi
         ing_query = " ".join(str(i).lower() for i in ingredienti[:2] if i)
         if ing_query.strip():
             for _rk in range(rank, rank + 5):
-                for fonte in (_pexels, _unsplash, _pixabay):
+                for fonte in (_pexels, _unsplash, _pixabay, _wikimedia):
                     res = fonte(ing_query, _rk % 5)
                     if _ok_url(res):
                         res["match"] = "ingredienti"
@@ -394,7 +435,7 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredi
             if len(_ing_kw) < 3:
                 continue
             for _rk in range(rank, rank + 6):
-                for fonte in (_pexels, _unsplash, _pixabay):
+                for fonte in (_pexels, _unsplash, _pixabay, _wikimedia):
                     res = fonte(_ing_kw + " food", _rk % 6, no_filtro=True)
                     if _ok_url(res):
                         res["match"] = "ingrediente"
