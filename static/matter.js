@@ -3676,9 +3676,19 @@ function _isIntentoRicetta(q){
       || /^(una |un )?(ricetta|piatto|cocktail)\b.*\b(con|di|a base di)\b/.test(s);
 }
 // ═══ GENERATORE RICETTE ASINCRONO (polling) — il sync andava in timeout ═══
+// ═══ MIRINO LOADER — il Mirino che ruota durante le attese (Gemini #4) ═══
+function _mirinoLoaderHtml(){
+  return '<svg class="mirino-loader" viewBox="0 0 48 48" width="48" height="48">'
+    + '<circle cx="24" cy="24" r="16" fill="none" stroke="#245979" stroke-width="2.5" stroke-dasharray="20 80" stroke-linecap="round"/>'
+    + '<line x1="24" y1="2" x2="24" y2="9" stroke="#141D22" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<line x1="46" y1="24" x2="39" y2="24" stroke="#141D22" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<line x1="24" y1="46" x2="24" y2="39" stroke="#141D22" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<line x1="2" y1="24" x2="9" y2="24" stroke="#141D22" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<circle cx="24" cy="24" r="4" fill="#C77B3F"/></svg>';
+}
 async function _generaRicettaAsync(richiesta, titoloVista, _retry){
   if(!_isPro()){ const usate=_getDomande(); if(usate>=FREE_LIMIT){ apriPaywall(); return; } }
-  _apriVista(titoloVista||'Creo la ricetta…', '<div class="gen-loading"><div class="gen-spinner"></div><div class="gen-txt">Sto creando la ricetta…<br><span class="gen-sub">Può richiedere fino a un minuto</span></div></div>');
+  _apriVista(titoloVista||'Creo la ricetta…', '<div class="gen-loading">'+_mirinoLoaderHtml()+'<div class="gen-txt">Sto creando la ricetta…<br><span class="gen-sub">Circa 15 secondi</span></div></div>');
   var disc = localStorage.getItem('matter_station') || 'cucina';
   var jobId=null;
   try{
