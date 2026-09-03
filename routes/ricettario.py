@@ -157,14 +157,21 @@ def ricetta_completa(rid):
             if isinstance(_fen, list) and _fen:
                 _fen0 = _fen[0] if isinstance(_fen[0], str) else (_fen[0].get("nome") if isinstance(_fen[0], dict) else None)
             collegate = []
+            _visti_nomi = set()
             if _fen0:
                 _rows = db.execute(
                     "SELECT id, nome FROM ricette WHERE id<>? AND disciplina=? "
-                    "AND fenomeni::text LIKE ? LIMIT 4", (rid, _disc, f"%{_fen0}%")).fetchall()
+                    "AND fenomeni::text LIKE ? LIMIT 10", (rid, _disc, f"%{_fen0}%")).fetchall()
                 for _rr in _rows:
+                    _nm = _rr["nome"] if hasattr(_rr, "keys") else _rr[1]
+                    _nm_key = (_nm or "").strip().lower()
+                    if _nm_key in _visti_nomi:
+                        continue  # dedup: niente ricette collegate duplicate
+                    _visti_nomi.add(_nm_key)
                     collegate.append({"id": _rr["id"] if hasattr(_rr, "keys") else _rr[0],
-                                      "nome": _rr["nome"] if hasattr(_rr, "keys") else _rr[1],
-                                      "legame": "stesso fenomeno"})
+                                      "nome": _nm, "legame": "stesso fenomeno"})
+                    if len(collegate) >= 3:
+                        break
             r["ricette_collegate"] = collegate
         except Exception:
             r["ricette_collegate"] = []
