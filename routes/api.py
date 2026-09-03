@@ -4079,12 +4079,41 @@ def _genera_in_background(job_id, richiesta, disciplina, salva, token):
     except Exception as e:
         _job_set(job_id, "errore", {"errore": str(e)[:150]})
 
+def _cap_generazioni_ok(device_id, limite=30):
+    """Anti-abuso: max <limite> generazioni AI al giorno per device. Conta su tabella leggera.
+    Ritorna True se sotto il limite (può generare), False se l'ha superato."""
+    if not device_id:
+        return True
+    try:
+        conn = _get_conn()
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS gen_cap (
+            device_id TEXT, giorno DATE DEFAULT CURRENT_DATE, n INTEGER DEFAULT 0,
+            PRIMARY KEY (device_id, giorno))""")
+        cur.execute("""INSERT INTO gen_cap (device_id, giorno, n) VALUES (%s, CURRENT_DATE, 1)
+                       ON CONFLICT (device_id, giorno) DO UPDATE SET n = gen_cap.n + 1
+                       RETURNING n""", (device_id,))
+        n = cur.fetchone()[0]
+        conn.commit(); cur.close(); _release_conn(conn)
+        return n <= limite
+    except Exception:
+        try: _release_conn(conn)
+        except Exception: pass
+        return True  # in caso di errore non blocco l'utente (fail-open)
+
+
 @bp.route("/v1/genera-ricetta-async", methods=["POST"])
 def genera_ricetta_async():
     """Avvia la generazione in background. Risponde SUBITO con job_id (202).
     Il frontend poi fa polling su /v1/genera-ricetta-stato/<job_id>. Evita il timeout Railway."""
     if not _check_rate_limit_ai(_chiave_rate()):
         return jsonify({"errore": "rate_limit", "messaggio": "Troppe generazioni. Attendi un minuto."}), 429
+    # CAP GIORNALIERO ANTI-ABUSO: max 30 generazioni al giorno per device (protegge i costi API
+    # da script/abuso). Un professionista vero non ne genera 30 al giorno — blocca solo gli abusi.
+    _dev_cap = request.headers.get("X-Device-Id", "") or request.remote_addr or "?"
+    if not _cap_generazioni_ok(_dev_cap):
+        return jsonify({"errore": "cap_giornaliero",
+                        "messaggio": "Laboratorio saturo: hai raggiunto il limite di generazioni per oggi. Riprova domani."}), 429
     body = request.json or {}
     richiesta = (body.get("richiesta") or "").strip()
     disciplina = body.get("disciplina", "cucina")
