@@ -127,6 +127,47 @@ def ricetta_completa(rid):
                         r[campo] = madre[campo]
                 r["_ereditata_da"] = madre.get("nome")
                 r["_nota_variante"] = r.get("descrizione") or ""
+                # alias per il badge "Variante di" del frontend (nomi campo richiesti)
+                r["ricetta_madre_nome"] = madre.get("nome")
+                r["ricetta_madre_id"] = r.get("parent_recipe_id")
+        # "PERCHÉ FUNZIONA" (audit OpenAI): fenomeni + ingredienti protagonisti + spiegazione.
+        try:
+            _fen = r.get("fenomeni") or []
+            _fen_list = _fen if isinstance(_fen, list) else []
+            _ing = r.get("ingredienti") or []
+            _ing_nomi = []
+            for _i in (_ing if isinstance(_ing, list) else [])[:3]:
+                _n = _i.get("nome") if isinstance(_i, dict) else str(_i)
+                if _n: _ing_nomi.append(_n)
+            _pc = (r.get("punto_critico") or "").strip()
+            if _fen_list or _pc:
+                _fen_txt = ", ".join(str(f) for f in _fen_list[:3]) if _fen_list else ""
+                r["perche_funziona"] = {
+                    "fenomeni": _fen_list[:3],
+                    "ingredienti_protagonisti": _ing_nomi,
+                    "spiegazione": (f"Questo piatto sfrutta {_fen_txt}. " if _fen_txt else "") + _pc
+                }
+        except Exception:
+            pass
+        # RICETTE COLLEGATE DAL GRAFO (audit OpenAI): stesso fenomeno / stessa disciplina.
+        try:
+            _disc = r.get("disciplina")
+            _fen0 = None
+            _fen = r.get("fenomeni") or []
+            if isinstance(_fen, list) and _fen:
+                _fen0 = _fen[0] if isinstance(_fen[0], str) else (_fen[0].get("nome") if isinstance(_fen[0], dict) else None)
+            collegate = []
+            if _fen0:
+                _rows = db.execute(
+                    "SELECT id, nome FROM ricette WHERE id<>? AND disciplina=? "
+                    "AND fenomeni::text LIKE ? LIMIT 4", (rid, _disc, f"%{_fen0}%")).fetchall()
+                for _rr in _rows:
+                    collegate.append({"id": _rr["id"] if hasattr(_rr, "keys") else _rr[0],
+                                      "nome": _rr["nome"] if hasattr(_rr, "keys") else _rr[1],
+                                      "legame": "stesso fenomeno"})
+            r["ricette_collegate"] = collegate
+        except Exception:
+            r["ricette_collegate"] = []
         return jsonify({"ricetta": r})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 200
