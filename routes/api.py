@@ -1362,6 +1362,22 @@ def abbina(ingrediente):
     Sempre marcato come ipotesi eurisitca, mai come legge."""
     if not _check_rate_limit(request.headers.get("X-Forwarded-For", request.remote_addr or "?").split(",")[0].strip()):
         return jsonify({"errore":"Troppe richieste. Attendi un momento."}), 429
+    # VALIDAZIONE PLAUSIBILITÀ: un ingrediente vero ha vocali e non è una stringa casuale.
+    # Evita di inventare abbinamenti per input senza senso (xyzabc, qwerty) — questione di credibilità.
+    _ing_check = (ingrediente or "").lower().strip()
+    _vocali = sum(1 for c in _ing_check if c in "aeiouàèéìòù")
+    _consec_cons = 0; _max_cons = 0
+    for c in _ing_check:
+        if c.isalpha() and c not in "aeiouàèéìòù":
+            _consec_cons += 1; _max_cons = max(_max_cons, _consec_cons)
+        else:
+            _consec_cons = 0
+    _implausibile = (len(_ing_check) >= 4 and (_vocali == 0 or _max_cons >= 5
+                     or _ing_check in ("qwerty", "qwertyuiop", "asdf", "asdfgh", "test", "aaaa", "xxxx")))
+    if _implausibile:
+        return jsonify({"ingrediente": ingrediente, "abbinamenti": [],
+                        "nota": "Ingrediente non riconosciuto. Controlla l'ortografia o prova un ingrediente diverso.",
+                        "non_riconosciuto": True})
     _seg = _segreto_di(ingrediente)  # segreto del mestiere, se c'è
     # CONFIDENCE LAYER: rilevo il livello di evidenza dell'ingrediente cercato (A/B/C)
     _evidence = "C"  # default: stima (finché non trovo dati)
