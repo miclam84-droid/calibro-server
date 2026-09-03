@@ -2833,3 +2833,18 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 
 /* fix definitivo: la linea azzurra sotto l'header era .app-header border azzurro (--e300) → Ink */
 .app-header{border-bottom:1px solid #141D22!important}
+
+/* ═══ IDENTITÀ VISIVA — Mirino potenziato + reticolo laboratorio ═══ */
+/* mini-Mirino del tab Banco: eredita currentColor (attivo=terracotta via .active) */
+.tab-mirino{display:block;margin:0 auto}
+.tab-btn.active .tab-mirino{color:#C77B3F}
+.tab-btn:not(.active) .tab-mirino{color:#3D4A50}
+/* #5 pattern reticolo da laboratorio — solo su sfondi ampi, opacità bassissima */
+.mtr-manifesto,#screen-scopri>.hero-body,.dna-empty,.quad-empty{
+  background-image:
+    linear-gradient(rgba(20,29,34,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,29,34,.04) 1px, transparent 1px);
+  background-size:24px 24px;
+}
+/* #3 punto terracotta come bullet nelle liste step/errori */
+.fen-errori li::marker,.s-body li::marker{color:#C77B3F}

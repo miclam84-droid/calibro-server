@@ -34,13 +34,13 @@ if('serviceWorker' in navigator){
 <header class="app-header" style="position:relative">
   <div class="app-bar">
     <div class="wordmark">
-      <svg class="wm-logo" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
-        <circle cx="24" cy="24" r="13" fill="none" stroke="#141D22" stroke-width="2.8"/>
-        <line x1="24" y1="6" x2="24" y2="12" stroke="#141D22" stroke-width="2.3" stroke-linecap="round"/>
-        <line x1="42" y1="24" x2="36" y2="24" stroke="#141D22" stroke-width="2.3" stroke-linecap="round"/>
-        <line x1="24" y1="42" x2="24" y2="36" stroke="#141D22" stroke-width="2.3" stroke-linecap="round"/>
-        <line x1="6" y1="24" x2="12" y2="24" stroke="#141D22" stroke-width="2.3" stroke-linecap="round"/>
-        <circle cx="24" cy="24" r="4" fill="#C77B3F"/>
+      <svg class="wm-logo" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+        <circle cx="16" cy="16" r="9" stroke="#141D22" stroke-width="2.2" fill="none"/>
+        <line x1="16" y1="2" x2="16" y2="7.5" stroke="#141D22" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="16" y1="24.5" x2="16" y2="30" stroke="#141D22" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="2" y1="16" x2="7.5" y2="16" stroke="#141D22" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="24.5" y1="16" x2="30" y2="16" stroke="#141D22" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="16" cy="16" r="4" fill="#C77B3F"/>
       </svg>
       <span class="wm-text">MATTER BENCH</span>
     </div>
@@ -57,7 +57,13 @@ if('serviceWorker' in navigator){
   </div>
   <nav class="tab-bar" role="tablist">
     <button class="tab-btn active" id="tab-scopri" onclick="switchTab('scopri')" role="tab">
-      <i class="ph ph-compass" aria-hidden="true"></i>
+      <svg class="tab-mirino" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="6.5" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="12" y1="1.5" x2="12" y2="5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="12" y1="19" x2="12" y2="22.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="1.5" y1="12" x2="5" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="19" y1="12" x2="22.5" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
       <span class="tab-label">Banco</span>
     </button>
     <button class="tab-btn" id="tab-mappa" onclick="switchTab('mappa')" role="tab">
