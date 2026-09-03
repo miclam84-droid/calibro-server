@@ -495,27 +495,42 @@ def fenomeni_avanzati():
 
 @bp.route("/discipline-conteggi")
 @bp.route("/v1/discipline-conteggi")
+@bp.route("/discipline")
+@bp.route("/v1/discipline")
 def discipline_conteggi():
-    """Conteggio fenomeni per disciplina, in un solo colpo (per la griglia Home col Bar dominante).
-    Ritorna [{disciplina, n_fenomeni}]. Ordine: Bar primo (dominante), poi gli altri."""
+    """Le 8 discipline con conteggio fenomeni (per la griglia Home col Bar dominante di Gemini).
+    Formato: {discipline:[{id, nome, n_lezioni, stato?}]}. Bar sempre primo. ?lang=it|en|es"""
+    lang = (request.args.get("lang") or "it").strip().lower()
     db = carica_grafo()
     rows = db.execute(
         "SELECT domain, COUNT(*) as n FROM nodes WHERE type='Fenomeno' AND domain IS NOT NULL "
-        "GROUP BY domain ORDER BY n DESC"
+        "GROUP BY domain"
     ).fetchall()
-    _ordine = ["bar", "panificazione", "cucina", "caffetteria", "pasticceria", "gelateria", "vino", "birra"]
     conteggi = {}
     for r in rows:
         dom = (r["domain"] if hasattr(r, "keys") else r[0]) or ""
         n = r["n"] if hasattr(r, "keys") else r[1]
         if dom:
             conteggi[dom.lower()] = n
+    # le 8 discipline canoniche in ordine (Bar primo = dominante). nome per lingua.
+    _NOMI = {
+        "bar": {"it": "Bar", "en": "Bar", "es": "Bar"},
+        "panificazione": {"it": "Panificazione", "en": "Baking", "es": "Panadería"},
+        "cucina": {"it": "Cucina", "en": "Kitchen", "es": "Cocina"},
+        "pasticceria": {"it": "Pasticceria", "en": "Pastry", "es": "Pastelería"},
+        "caffetteria": {"it": "Caffetteria", "en": "Coffee", "es": "Cafetería"},
+        "gelateria": {"it": "Gelateria", "en": "Gelato", "es": "Heladería"},
+        "vino": {"it": "Vino", "en": "Wine", "es": "Vino"},
+        "birra": {"it": "Birra", "en": "Beer", "es": "Cerveza"},
+    }
+    _ordine = ["bar", "panificazione", "cucina", "pasticceria", "caffetteria", "gelateria", "vino", "birra"]
+    if lang not in ("it", "en", "es"):
+        lang = "it"
     out = []
     for d in _ordine:
-        if d in conteggi:
-            out.append({"disciplina": d, "n_fenomeni": conteggi[d]})
-    # eventuali discipline non in _ordine
-    for d, n in conteggi.items():
-        if d not in _ordine:
-            out.append({"disciplina": d, "n_fenomeni": n})
+        out.append({"id": d, "nome": _NOMI[d][lang], "n_lezioni": conteggi.get(d, 0)})
+    # Sicurezza alimentare: voce "prossimamente"
+    _sic = {"it": "Sicurezza alimentare", "en": "Food safety", "es": "Seguridad alimentaria"}
+    out.append({"id": "sicurezza", "nome": _sic[lang], "n_lezioni": conteggi.get("sicurezza", 0),
+                "stato": "prossimamente"})
     return jsonify({"discipline": out, "bar_dominante": True})
