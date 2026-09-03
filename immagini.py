@@ -393,12 +393,14 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredi
                 if res:
                     res["match"] = "ingrediente"
                     return res
-    # 5) ULTIMA RISORSA: foto generica della disciplina (mai blueprint vuoto).
-    _disc_q = {"bar": "cocktail drink", "cucina": "plated dish food", "pasticceria": "dessert",
-               "panificazione": "bread bakery", "gelateria": "gelato ice cream",
-               "caffetteria": "coffee espresso"}.get((disciplina or "").lower(), "food dish")
+    # 5) ULTIMA RISORSA: foto generica della disciplina (mai blueprint vuoto). Vario col rank_nome
+    #    così piatti diversi della stessa disciplina prendono foto DIVERSE, non tutte uguali.
+    _disc_q = {"bar": "cocktail glass drink", "cucina": "gourmet plated dish", "pasticceria": "dessert plate",
+               "panificazione": "artisan bread bakery", "gelateria": "gelato ice cream cup",
+               "caffetteria": "coffee espresso cup"}.get((disciplina or "").lower(), "plated food dish")
+    _rank_disc = (rank_nome % 8)
     for fonte in (_pexels, _unsplash, _pixabay):
-        res = fonte(_disc_q, rank, no_filtro=True)
+        res = fonte(_disc_q, _rank_disc, no_filtro=True)
         if res:
             res["match"] = "disciplina"
             return res

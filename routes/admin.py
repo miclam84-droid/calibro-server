@@ -5921,13 +5921,30 @@ def admin_prova_immagine():
     disc = request.args.get("disciplina", "cucina")
     from immagini import _query_intelligente, cerca_immagine
     q = _query_intelligente(nome, disc)
-    res = cerca_immagine(nome, disciplina=disc, nome=nome)
+    # recupero gli ingredienti e la disciplina VERI della ricetta (per testare la cascata completa)
+    _ings = None
+    try:
+        from db import carica_grafo as _cg
+        _dbp = _cg()
+        _row = _dbp.execute("SELECT disciplina, ingredienti FROM ricette WHERE lower(nome)=lower(?) LIMIT 1", (nome,)).fetchone()
+        if _row:
+            disc = (_row["disciplina"] if hasattr(_row, "keys") else _row[0]) or disc
+            import json as _ji
+            _raw = _row["ingredienti"] if hasattr(_row, "keys") else _row[1]
+            _lst = _raw if isinstance(_raw, list) else (_ji.loads(_raw) if _raw else [])
+            _ings = []
+            for _x in _lst[:4]:
+                _n = _x.get("nome") if isinstance(_x, dict) else str(_x)
+                if _n: _ings.append(_n)
+    except Exception:
+        pass
+    res = cerca_immagine(nome, disciplina=disc, nome=nome, ingredienti=_ings)
     return jsonify({
-        "nome": nome, "disciplina": disc, "query_costruita": q,
+        "nome": nome, "disciplina": disc, "query_costruita": q, "ingredienti_usati": _ings,
         "foto_url": res.get("url") if res else None,
         "autore": res.get("autore") if res else None,
         "fonte": res.get("fonte_nome") if res else None,
-        "match": res.get("match") if res else "nessuna",  # piatto / ingredienti / archivio / nessuna
+        "match": res.get("match") if res else "nessuna",
     })
 
 
