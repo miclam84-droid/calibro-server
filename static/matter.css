@@ -2555,3 +2555,4 @@ a:focus-visible,input:focus-visible{
 /* breadcrumb "torna al fenomeno precedente" */
 .fen-back{background:none;border:none;color:var(--teal,#12545D);font-family:var(--sans,'Inter');font-size:13px;font-weight:600;cursor:pointer;padding:0 0 12px;display:inline-flex;align-items:center}
 .fen-back:active{opacity:.7}
+.fen-back-float{display:block;margin:0 0 8px;padding:6px 0}

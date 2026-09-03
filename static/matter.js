@@ -1268,7 +1268,22 @@ function apriNodo(id,nome,_daBack){
     .then(r=>r.json()).then(j=>{
       if(j && j.tipo_fenomeno && (j.principi||j.titolo)){ _renderSchedaFenomeno(j); }
       else { renderRisp(nome,j,true); }
+      _aggiungiBackNodo();
     }).catch(()=>renderErr()).finally(()=>setBusy(false));
+}
+// aggiunge il "← Torna a [precedente]" in cima all'ultima scheda aperta, se lo stack non è vuoto
+function _aggiungiBackNodo(){
+  if(!_nodoStack.length) return;
+  var schede=document.getElementById('schede');
+  var primaScheda = schede ? schede.querySelector('.scheda') : null;
+  if(!primaScheda) return;
+  if(primaScheda.querySelector('.fen-back')) return; // già presente (fenomeno)
+  var prec=_nodoStack[_nodoStack.length-1];
+  var back=document.createElement('button');
+  back.className='fen-back fen-back-float';
+  back.textContent='← Torna a '+(prec.nome||'prima');
+  back.onclick=_tornaNodoPrecedente;
+  primaScheda.insertBefore(back, primaScheda.firstChild);
 }
 var _nodoCorrente=null;
 function _tornaNodoPrecedente(){
