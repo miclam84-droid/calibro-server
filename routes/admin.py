@@ -7100,6 +7100,17 @@ def admin_crea_ponti_fenomeni():
             "fen-atmosfera-modificata", "fen-zona-pericolo", "fen-contaminazione"]),
         ("Trasformazione dell'amido", ["fen-riso-glutinoso", "fen-nixtamalizzazione", "fen-kansui"]),
         ("Calore e cottura", ["fen-barbecue-low-slow", "fen-tandoor", "fen-espansione-termica"]),
+        # ── PONTI FENOMENI BASE (audit OpenAI): l'Atlante diventa una rete, non lineare ──
+        ("Trasporto e passaggio in soluzione", ["fen-diluizione", "fen-concentrazione",
+            "fen-estrazione", "fen-osmosi", "fen-solubilita"]),
+        ("Gas e struttura effervescente", ["fen-carbonatazione", "fen-fermentazione", "fen-gas"]),
+        ("Emulsioni e sistemi dispersi", ["fen-emulsione", "fen-schiuma", "fen-viscosita"]),
+        ("Calore e trasformazione termica", ["fen-maillard", "fen-caramellizzazione",
+            "fen-denaturazione", "fen-coagulazione", "fen-gelatinizzazione"]),
+        ("Cristalli e cambi di stato", ["fen-cristallizzazione", "fen-abbattimento",
+            "fen-abbassamento-crioscopico", "fen-overrun"]),
+        ("Acidità ed equilibrio del gusto", ["fen-acidita", "fen-tannini", "fen-amaro-bitter",
+            "fen-malolattica"]),
     ]
     conn = _get_conn()
     try:
