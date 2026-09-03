@@ -2671,3 +2671,25 @@ input:not(.calc-step-input),textarea,.ask-input,.ric-search input,.sm-field>inpu
 .mappa-tab{border:1.5px solid #141D22!important;border-radius:4px!important;box-shadow:3px 3px 0 #141D22!important;background:#fff!important;margin-right:8px!important;font-family:'Space Grotesk',sans-serif!important;font-weight:700!important;text-transform:uppercase!important;color:#141D22!important;transition:transform .18s ease,box-shadow .18s ease}
 .mappa-tab.active{background:#12545D!important;color:#fff!important;box-shadow:0 0 0!important;transform:translate(3px,3px)!important;border-color:#12545D!important}
 .vista-launch-btn{border:1.5px solid #141D22!important;border-radius:4px!important;box-shadow:3px 3px 0 rgba(20,29,34,.15)!important;background:#fff!important}
+
+/* ═══ DNA PROFESSIONALE — la feature del rinnovo ═══ */
+.dna-header{background:#141D22;border-radius:4px;box-shadow:4px 4px 0 #245979;padding:20px;margin-bottom:16px}
+.dna-header-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7FB0C4;margin-bottom:6px}
+.dna-header-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;color:#fff;line-height:1;margin-bottom:14px;text-transform:uppercase}
+.dna-riepilogo{display:flex;gap:20px}
+.dna-riepilogo span{font-family:'Inter',sans-serif;font-size:13px;color:#CBD6DA}
+.dna-riepilogo b{font-family:'IBM Plex Mono',monospace;font-size:20px;color:#E8935A;font-weight:700;margin-right:4px}
+.dna-card{background:#fff;border:1.5px solid #141D22;border-radius:4px;box-shadow:4px 4px 0 rgba(20,29,34,.15);padding:18px;margin-bottom:14px}
+.dna-card-fen{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#141D22;margin-bottom:8px}
+.dna-card-media{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:40px;color:#C77B3F;line-height:1}
+.dna-card-u{font-size:20px;margin-left:4px}
+.dna-card-n{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5A6C70;margin:4px 0 12px}
+.dna-card-zona{font-family:'Inter',sans-serif;font-size:14px;color:#2A3A42;line-height:1.5}
+.dna-bersaglio{font-family:'Inter',sans-serif;font-size:13px;color:#12545D;font-weight:600;margin-top:8px}
+.dna-tendenza{margin-top:12px;padding:10px 14px;background:rgba(199,123,63,.12);border-left:3px solid #C77B3F;border-radius:0 4px 4px 0;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:#141D22}
+.dna-sugg{background:var(--l2,#E8EDED);border-radius:4px;padding:16px;font-family:'Inter',sans-serif;font-size:14px;color:#141D22;line-height:1.55;margin-bottom:12px}
+.dna-firma{font-family:'Inter',sans-serif;font-size:12.5px;color:#5A6C70;font-style:italic;line-height:1.5;text-align:center;padding:0 8px}
+.dna-empty{text-align:center;padding:40px 20px}
+.dna-empty-ico{font-size:40px;color:#245979;margin-bottom:16px}
+.dna-empty b{display:block;font-family:'Space Grotesk',sans-serif;font-size:18px;color:#141D22;margin-bottom:10px}
+.dna-empty span{font-family:'Inter',sans-serif;font-size:14px;color:#5A6C70;line-height:1.55;display:block}

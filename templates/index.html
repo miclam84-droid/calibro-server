@@ -737,7 +737,8 @@ if('serviceWorker' in navigator){
   <div id="quad-content">
     <!-- TOGGLE: il Quaderno è dove ciò che validi diventa qualcosa -->
     <div class="quad-toggle">
-      <button class="quad-tg-btn active" id="qtg-misure" onclick="switchQuaderno('misure')">Misure</button>
+      <button class="quad-tg-btn active" id="qtg-dna" onclick="switchQuaderno('dna')">DNA</button>
+      <button class="quad-tg-btn" id="qtg-misure" onclick="switchQuaderno('misure')">Misure</button>
       <button class="quad-tg-btn" id="qtg-chat" onclick="switchQuaderno('chat')">Chat</button>
       <button class="quad-tg-btn" id="qtg-palestra" onclick="switchQuaderno('palestra')">Palestra</button>
       <button class="quad-tg-btn" id="qtg-ricette" onclick="switchQuaderno('ricette')">Ricette</button>
@@ -753,6 +754,9 @@ if('serviceWorker' in navigator){
       <div class="quad-list" id="quad-ricette-list"></div>
     </div>
     <!-- PANNELLO MISURE -->
+    <div id="quad-pane-dna">
+      <div id="dna-content"></div>
+    </div>
     <div id="quad-pane-chat" style="display:none">
       <div id="chat-salvate-list"></div>
     </div>
@@ -764,7 +768,7 @@ if('serviceWorker' in navigator){
       </div>
       <div id="pal-body"></div>
     </div>
-    <div id="quad-pane-misure">
+    <div id="quad-pane-misure" style="display:none">
       <div class="misure-header" id="misure-header" style="display:none">
         <span class="misure-tot-n" id="misure-tot-n">0</span>
         <span class="misure-tot-lab">misure salvate al banco</span>

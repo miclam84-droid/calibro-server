@@ -1121,6 +1121,46 @@ function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)r
 const _chatHistory=[];
 // conversazione completa (non troncata) per il salvataggio (retention)
 var _chatCompleta=[];
+// ═══ DNA PROFESSIONALE — il profilo che conosce l'utente (la feature del rinnovo) ═══
+async function caricaDNA(){
+  var cont=document.getElementById('dna-content');
+  if(!cont) return;
+  cont.innerHTML='<div class="quad-loading">Analizzo il tuo lavoro al banco…</div>';
+  try{
+    var r=await fetch('/v1/dna-professionale', {headers:_statoHeaders()});
+    var j=await r.json();
+    var e=_escV;
+    if(!j.pronto){
+      cont.innerHTML='<div class="dna-empty"><div class="dna-empty-ico">◎</div>'
+        + '<b>Il tuo DNA Professionale cresce a ogni misura</b>'
+        + '<span>'+e(j.messaggio||'Registra qualche misura al banco: Matter Bench imparerà come lavori e ti mostrerà i tuoi pattern reali.')+'</span>'
+        + '<button class="calc-go" onclick="switchQuaderno(\'misure\')" style="margin-top:16px">Vai alle misure</button></div>';
+      return;
+    }
+    var riep=j.riepilogo||{};
+    var nome=(localStorage.getItem('matter_profilo_nome')||'Professionista');
+    var html='<div class="dna-header">'
+      + '<div class="dna-header-lab">Profilo Professionale</div>'
+      + '<div class="dna-header-nome">'+e(nome)+'</div>'
+      + '<div class="dna-riepilogo"><span><b>'+(riep.fenomeni_seguiti||0)+'</b> fenomeni seguiti</span><span><b>'+(riep.misure_totali||0)+'</b> misure totali</span></div>'
+      + '</div>';
+    // pattern
+    html += (j.pattern||[]).map(function(p){
+      var tend = p.tendenza ? '<div class="dna-tendenza">📈 '+e(p.tendenza)+'</div>' : '';
+      var bers = p.nota_bersaglio ? '<div class="dna-bersaglio">'+e(p.nota_bersaglio)+'</div>' : '';
+      return '<div class="dna-card">'
+        + '<div class="dna-card-fen">'+e(p.fenomeno||'')+'</div>'
+        + '<div class="dna-card-media">'+e(String(p.media))+'<span class="dna-card-u">'+e(p.unita||'')+'</span></div>'
+        + '<div class="dna-card-n">'+(p.n_misure||0)+' misure</div>'
+        + '<div class="dna-card-zona">'+e(p.zona||'')+'</div>'
+        + bers + tend
+        + '</div>';
+    }).join('');
+    if(j.suggerimento){ html += '<div class="dna-sugg">'+e(j.suggerimento)+'</div>'; }
+    if(j.firma){ html += '<div class="dna-firma">'+e(j.firma)+'</div>'; }
+    cont.innerHTML=html;
+  }catch(e){ cont.innerHTML='<div class="dna-empty"><b>Errore</b><span>Riprova.</span></div>'; }
+}
 // carica l'elenco delle conversazioni salvate nel Quaderno
 async function caricaChatSalvate(){
   var list=document.getElementById('chat-salvate-list');
@@ -3315,16 +3355,19 @@ function switchQuaderno(vista){
   var pr=document.getElementById('quad-pane-ricette'); if(pr) pr.style.display = vista==='ricette'?'':'none';
   var pp=document.getElementById('quad-pane-palestra'); if(pp) pp.style.display = vista==='palestra'?'':'none';
   var pc=document.getElementById('quad-pane-chat'); if(pc) pc.style.display = vista==='chat'?'':'none';
+  var pdna=document.getElementById('quad-pane-dna'); if(pdna) pdna.style.display = vista==='dna'?'':'none';
   document.getElementById('qtg-misure').classList.toggle('active', vista==='misure');
   document.getElementById('qtg-menu').classList.toggle('active', vista==='menu');
   var tr=document.getElementById('qtg-ricette'); if(tr) tr.classList.toggle('active', vista==='ricette');
   var tp=document.getElementById('qtg-palestra'); if(tp) tp.classList.toggle('active', vista==='palestra');
   var tc=document.getElementById('qtg-chat'); if(tc) tc.classList.toggle('active', vista==='chat');
+  var tdna=document.getElementById('qtg-dna'); if(tdna) tdna.classList.toggle('active', vista==='dna');
   if(vista==='menu') caricaMenuSalvati();
   if(vista==='ricette') caricaLeMieRicette();
   if(vista==='misure') caricaStoricoMisure();
   if(vista==='palestra') caricaPalestra();
   if(vista==='chat') caricaChatSalvate();
+  if(vista==='dna') caricaDNA();
 }
 
 // ═══ PALESTRA — quiz "Livello di Competenza del Banco" (P6) ═══
