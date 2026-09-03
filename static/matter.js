@@ -1325,7 +1325,13 @@ async function _chiediStream(q){
   _incDomande();
   if(erroreVisto && !testoAccumulato){ card.remove(); throw new Error('stream error'); }
   if(testoAccumulato){ _chatHistory.push({q:q, r:testoAccumulato.slice(0,300)}); if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2);
-    _chatCompleta.push({ruolo:'user',testo:q}); _chatCompleta.push({ruolo:'assistant',testo:testoAccumulato}); }
+    _chatCompleta.push({ruolo:'user',testo:q}); _chatCompleta.push({ruolo:'assistant',testo:testoAccumulato});
+    // pulsante "Salva nei metodi" in calce alla risposta
+    var salvaBtn=document.createElement('button'); salvaBtn.className='chat-salva-inline';
+    salvaBtn.textContent='⌖ Salva nei metodi';
+    salvaBtn.onclick=function(){ salvaConversazione(); salvaBtn.textContent='✓ Salvata nel Quaderno'; salvaBtn.classList.add('salvato'); salvaBtn.disabled=true; };
+    flusso.appendChild(salvaBtn);
+  }
 }
 // formatta il testo in prosa fluida: i marcatori PROBLEMA/PERCHÉ diventano paragrafi spaziati,
 // non etichette stampatello. Markdown leggero + grassetti mirati.
@@ -6639,11 +6645,20 @@ async function _dnaContestoBanner(calcKey){
     if(cont.querySelector('.dna-ctx')) return;
     var banner=document.createElement('div');
     banner.className='dna-ctx';
+    // input principale del calcolatore da autocompilare
+    var mappaInput={ impasto:'ci-peso', foodcost:'fcp-pv', vino:'cv-temp', brix:'cb-brix', calo:'rc-peso', teglie:'ct-attuale' };
+    var inputId=mappaInput[calcKey];
+    var usaBtn = (inputId && j.media!=null) ? '<button class="dna-ctx-usa" onclick="_dnaUsaValore(\''+e(inputId)+'\','+j.media+')">Usa valore</button>' : '';
     banner.innerHTML='<span class="dna-ctx-ico">◎</span>'
       + '<span class="dna-ctx-txt">'+e(j.frase)+'</span>'
-      + '<span class="dna-ctx-badge dna-aff-'+e(aff)+'">'+e(aff)+'</span>';
+      + '<span class="dna-ctx-badge dna-aff-'+e(aff)+'">'+e(aff)+'</span>'
+      + usaBtn;
     cont.insertBefore(banner, cont.firstChild);
   }catch(e){}
+}
+function _dnaUsaValore(inputId, valore){
+  var el=document.getElementById(inputId);
+  if(el){ el.value=valore; el.dispatchEvent(new Event('input')); _toast('Valore inserito: '+valore); }
 }
 // risultato comune: interpretazione (carta) + leva (teal) + link fenomeno
 // stepper +/- per i campi numerici (Gemini #5 — evita la tastiera che copre)

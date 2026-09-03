@@ -2722,3 +2722,41 @@ input:not(.calc-step-input),textarea,.ask-input,.ric-search input,.sm-field>inpu
 .chat-tag-forno,.chat-tag-panificazione{background:rgba(139,94,60,.18);color:#8B5E3C}
 .chat-tag-pasticceria{background:rgba(199,123,63,.14);color:#C77B3F}
 .chat-tag-vino{background:rgba(120,40,60,.16);color:#78283C}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MASTER CSS DI PRODUZIONE (chiusura Matter Bench) — design system unico
+   Consolida tutto sotto l'estetica blueprint. Vince su tutto.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* CARD UNICA — angoli vivi netti (0px), ombra dura, usata ovunque */
+.card-bench,.cruscotto,.ricp-card,.avz-card,.misura-card,.crea-card,
+.prezzo-card,.scarto-card,.pal-quiz,.dna-card,.dnah-card,.chat-salvata-card,
+.dna-header{
+  border-radius:0!important;border:1.5px solid #141D22;
+  box-shadow:4px 4px 0px rgba(20,29,34,.18);
+  width:100%;min-height:72px;height:auto;
+  word-wrap:break-word;overflow-wrap:break-word;box-sizing:border-box;
+}
+/* pulsanti porte + azione: angoli vivi, tasto meccanico */
+.mappa-tab,.calc-menu-btn,.calc-go,.rg-btn,.subtab-btn,.disc-mini,.disc-dom-card{
+  border-radius:0!important;
+}
+.calc-go,.rg-btn,.prezzo-btn{box-shadow:3px 3px 0px #141D22!important}
+.calc-go:active,.rg-btn:active,.prezzo-btn:active{box-shadow:0 0 0!important;transform:translate(3px,3px)!important}
+
+/* MIRINO STICKY — box Ink Livello 2 in cima allo scroll */
+.calc-mirino,.fen-mirino-num{position:sticky;top:0;z-index:100}
+
+/* input: unico stile, radius leggero */
+input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border:1.5px solid #141D22!important}
+
+/* box eroe Ink (Livello 2): angoli vivi */
+.crus-box-target,.dna-ctx,.dna-header,.stream-calc,.disc-dom-card{border-radius:0!important}
+
+/* DNA-contesto: pulsante "Usa valore" */
+.dna-ctx-usa{flex-shrink:0;background:#C77B3F;color:#241109;border:none;border-radius:0;padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;margin-left:6px}
+.dna-ctx-usa:active{transform:translate(1px,1px)}
+/* chat: pulsante Salva inline */
+.chat-salva-inline{margin-top:14px;background:#fff;border:1.5px solid #141D22;border-radius:0;box-shadow:2px 2px 0 #141D22;padding:8px 14px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#141D22;cursor:pointer;transition:transform .12s}
+.chat-salva-inline:active{transform:translate(2px,2px);box-shadow:0 0 0}
+.chat-salva-inline.salvato{background:#E8EDED;color:#5A6C70;border-color:#B7C3C3;box-shadow:none}
