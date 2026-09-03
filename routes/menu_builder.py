@@ -63,13 +63,15 @@ def menu_filosofia():
     _extra = ("Questo è un menu di tipo VINO: organizza per vitigno o per assi di "
               "acidità/struttura, non per portate.") if tipo_menu == "wine" else ""
     prompt = (
-        f"Sei un consulente F&B. Definisci la FILOSOFIA (filo conduttore) di un menu.\n"
-        f"Brief del locale: vibe='{vibe}', territorio='{territorio}', filo conduttore='{filo}', "
+        f"Sei un consulente F&B TECNICO. Definisci la filosofia di un menu in modo ASCIUTTO.\n"
+        f"Brief: vibe='{vibe}', territorio='{territorio}', filo conduttore='{filo}', "
         f"stagione='{stagione}', fascia prezzo='{fascia}'. {_extra}\n"
+        f"VIETATO usare aggettivi lirici/poetici ('armonioso','racconta','viaggio','sinfonia','abbraccio'). "
+        f"Solo linguaggio tecnico da scheda operativa, in 3 punti concreti.\n"
         f"Rispondi SOLO con JSON valido, senza testo attorno:\n"
-        f'{{"filosofia_riassunto":"una frase che cattura l\'identità del menu",'
-        f'"regola_di_coerenza":"la regola che ogni piatto deve rispettare per appartenere a questa carta",'
-        f'"macro_ingredienti_target":["ingrediente1","ingrediente2","ingrediente3","ingrediente4"]}}'
+        f'{{"filosofia_riassunto":"profilo organolettico target, asciutto e tecnico (max 20 parole)",'
+        f'"regola_di_coerenza":"il vincolo di food cost e organolettico che ogni piatto deve rispettare",'
+        f'"macro_ingredienti_target":["i 3-4 ingredienti-ponte molecolari obbligatori"]}}'
     )
     try:
         from ai_gateway import route_quality

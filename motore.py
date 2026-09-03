@@ -242,7 +242,9 @@ def food_cost_piatto(ingredienti: list, prezzo_vendita=None) -> dict:
     Se prezzo_kg manca per una voce, la marca come da inserire (mai trattino muto)."""
     if not ingredienti:
         return {"calcolo": "food_cost_piatto", "costo_totale": 0.0, "voci": [],
-                "interpretazione": "Aggiungi almeno un ingrediente con grammi e prezzo al kg per calcolare il food cost.",
+                "risultato": "0.00€",
+                "interpretazione": "Elenco ingredienti vuoto.",
+                "leva_azione": "Inserisci le materie prime e le grammature per calcolare l'incidenza reale sul piatto.",
                 "spiegazione": "Aggiungi gli ingredienti del piatto per vedere il costo delle materie prime."}
     costo_totale = 0.0; voci = []; mancanti = 0
     for i in ingredienti:
