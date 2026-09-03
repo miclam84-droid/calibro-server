@@ -222,7 +222,7 @@ const STRINGS_ES = {
     ponte_cifra:'El puente hacia Cifra',
     principi_trasv:'Principios transversales',
     principio_del_giorno:'Principio del día',
-    pro_desc:'Con Matter Pro continúas sin límites — lecciones, preguntas y calidad profesional.',
+    pro_desc:'Con Matter Bench Pro continúas sin límites — lecciones, preguntas y calidad profesional.',
     prova:'Prueba:',
     registrati:'Registrarse',
     salvato:'✓ Guardado',
@@ -497,7 +497,7 @@ let _lang = (function(){
     const s = localStorage.getItem('matter_lang');
     if (s && ok.includes(s)) return s;
   } catch(e){}
-  // 3. default: Matter è italiano-first. NON usiamo navigator.language
+  // 3. default: Matter Bench è italiano-first. NON usiamo navigator.language
   //    (un italiano col telefono in inglese deve vedere l'app in italiano).
   return 'it';
 })();
@@ -1976,7 +1976,7 @@ const _strings = {
     accedi:'Accedi', registrati:'Registrati',
     continua_senza:'← Continua senza registrarti',
     domande_esaurite:'Hai usato le chat gratuite del tuo trial.',
-    pro_desc:'Con Matter Pro: chat illimitata · 91 fenomeni completi · Flavor Network · Ricette scientifiche.',
+    pro_desc:'Con Matter Bench Pro: chat illimitata · 91 fenomeni completi · Flavor Network · Ricette scientifiche.',
     passa_pro:'Passa a Pro',
     continua_free:'Continua con il piano gratuito',
     // calcolatori
@@ -2143,7 +2143,7 @@ const _strings = {
     accedi:'Sign in', registrati:'Sign up',
     continua_senza:'← Continue without signing in',
     domande_esaurite:"You've used your 5 free questions today.",
-    pro_desc:'With Matter Pro, continue without limits — unlimited chat, Flavor Network, measurements notebook.',
+    pro_desc:'With Matter Bench Pro, continue without limits — unlimited chat, Flavor Network, measurements notebook.',
     passa_pro:'Upgrade to Pro',
     continua_free:'Continue with free plan',
     // calculators
@@ -2253,7 +2253,7 @@ const _strings = {
     ct_sic_cold_time:'Time (min)',
     ct_sic_cold_disc:'Safety limit: max 2 cumulative hours in danger zone.',
     ct_sic_gate_title:'Food safety module',
-    ct_sic_gate_desc:'Indicative shelf life, pasteurisation and cold chain. Available with Matter Pro.',
+    ct_sic_gate_desc:'Indicative shelf life, pasteurisation and cold chain. Available with Matter Bench Pro.',
     ct_sic_gate_btn:'Upgrade to Pro — €19.99/month',
   },
   es:{
@@ -2431,7 +2431,7 @@ const _strings = {
     ponte_cifra:'El puente hacia Cifra',
     principi_trasv:'Principios transversales',
     principio_del_giorno:'Principio del día',
-    pro_desc:'Con Matter Pro continúas sin límites — lecciones, preguntas y calidad profesional.',
+    pro_desc:'Con Matter Bench Pro continúas sin límites — lecciones, preguntas y calidad profesional.',
     prova:'Prueba:',
     registrati:'Registrarse',
     salvato:'✓ Guardado',
@@ -3500,7 +3500,7 @@ function apriCrea(){
     +   '<span class="crea-card-arr">→</span></button>'
     + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){creaMenuDaFoto();},120)">'
     +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><rect x="3" y="6" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/><path d="M8 6l1.5-2h5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
-    +   '<div class="crea-card-txt"><div class="crea-card-t">Da foto</div><div class="crea-card-d">Fotografa gli ingredienti, Matter li riconosce e trova gli abbinamenti</div></div>'
+    +   '<div class="crea-card-txt"><div class="crea-card-t">Da foto</div><div class="crea-card-d">Fotografa gli ingredienti, Matter Bench li riconosce e trova gli abbinamenti</div></div>'
     +   '<span class="crea-card-arr">→</span></button>';
   _apriVista('Crea', html);
 }
@@ -5096,7 +5096,7 @@ function mostraPopupPro(motivo){
   // Contenuti per lingua e motivo
   const _COPY = {
     it: {
-      badge: 'Matter Pro',
+      badge: 'Matter Bench Pro',
       icon_chat: '',
       icon_lesson: '',
       title_esaurito: 'Capire la scienza è gratis.',
@@ -5112,7 +5112,7 @@ function mostraPopupPro(motivo){
       feat4: 'Ragionamento sui tuoi valori reali',
       price: '€19,99',
       period: '/mese · Disdici quando vuoi',
-      cta: 'Continua con Matter →',
+      cta: 'Continua con Matter Bench →',
       skip_esaurito: 'L\'Atlante, il Mirino e i Calcolatori restano gratuiti.',
       skip_altro: 'Continua in free',
     },
@@ -5204,7 +5204,7 @@ function mostraPopupPro(motivo){
 }
 // ═══ PAGINA PREZZI — 3 piani (R2). Bottoni pronti, si collegano a Stripe coi price ID ═══
 async function apriPrezzi(){
-  _apriVista('Matter Pro',
+  _apriVista('Matter Bench Pro',
     '<div class="prezzi-intro">Il numero-bersaglio esatto è il valore. Con Pro lo vedi nitido, sempre.</div>'
     + '<div class="prezzi-grid" id="prezzi-grid">'
     +   '<div class="prezzo-card">'
@@ -6348,7 +6348,7 @@ function apriMenuBuilder(){
   _menuIngredienti = [];
   _apriVista('Menu Lab',
     '<div class="mbv-head"><div class="mbv-h">Costruisci per composti.</div>'+
-    '<div class="mbv-sub">Aggiungi ingredienti: Matter trova le combinazioni che dialogano, dal grafo aromatico reale.</div>'+
+    '<div class="mbv-sub">Aggiungi ingredienti: Matter Bench trova le combinazioni che dialogano, dal grafo aromatico reale.</div>'+
     '<div class="mbv-add"><input id="mbv-input" placeholder="aggiungi un ingrediente…" onkeydown="if(event.key===\'Enter\')mbAdd()"><button onclick="mbAdd()">+</button></div>'+
     '<div class="mbv-chips" id="mbv-chips"></div>'+
     '<button class="mbv-go" id="mbv-go" onclick="mbProposte()" disabled>Trova le combinazioni</button></div>'+
