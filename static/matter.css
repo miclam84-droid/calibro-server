@@ -2771,3 +2771,8 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 .rg-collegate-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5A6C70;margin-bottom:10px}
 .rg-collegata{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #141D22;border-radius:0;box-shadow:3px 3px 0 rgba(20,29,34,.15);padding:12px 14px;margin-bottom:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141D22;cursor:pointer}
 .rg-collegata:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(20,29,34,.15)}
+
+/* attribuzione foto (obbligo licenze CC BY) — riga leggibile sotto l'immagine */
+.rg-img-attr{font-family:'Inter',sans-serif;font-size:10.5px;color:#6B7280;padding:6px 10px;text-align:right;background:#F7F5F0;line-height:1.3}
+/* card ricettario: piccola attribuzione */
+.ricp-attr{font-family:'Inter',sans-serif;font-size:9px;color:#6B7280;padding:2px 8px;text-align:right}

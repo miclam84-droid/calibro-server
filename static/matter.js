@@ -3986,7 +3986,9 @@ async function _caricaImmagineRicetta(id){
     var j=await r.json();
     var box=document.createElement('div'); box.className='rg-immagine';
     if(j.tipo==='foto' && j.url){
-      box.innerHTML='<img src="'+_escV(j.url)+'" alt="" loading="lazy">'+(j.autore?'<span class="rg-img-credito">foto: '+_escV(j.autore)+'</span>':'');
+      var attr = j.autore ? (j.autore + (j.fonte ? ' · '+j.fonte : '')) : (j.fonte||'');
+      box.innerHTML='<img src="'+_escV(j.url)+'" alt="" loading="lazy">'
+        + (attr ? '<div class="rg-img-attr">Foto: '+_escV(attr)+'</div>' : '');
     } else if(j.tipo==='blueprint' && j.famiglia && _BLUEPRINT_FAMIGLIE.indexOf(j.famiglia)>=0){
       box.innerHTML='<img src="/static/blueprints/'+_escV(j.famiglia)+'.svg" alt="Blueprint '+_escV(j.famiglia)+'" loading="lazy"><span class="rg-img-fam">'+_escV(j.famiglia)+'</span>';
     } else { return; }
