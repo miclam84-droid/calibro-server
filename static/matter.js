@@ -1119,6 +1119,66 @@ function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)r
 
 // mini-history: ultimi 3 scambi in memoria (resettata al refresh, zero DB)
 const _chatHistory=[];
+// conversazione completa (non troncata) per il salvataggio (retention)
+var _chatCompleta=[];
+// carica l'elenco delle conversazioni salvate nel Quaderno
+async function caricaChatSalvate(){
+  var list=document.getElementById('chat-salvate-list');
+  if(!list) return;
+  list.innerHTML='<div class="quad-loading">Carico le conversazioni…</div>';
+  try{
+    var r=await fetch('/v1/chat/mie', {headers:_statoHeaders()});
+    var j=await r.json();
+    var conv=j.conversazioni||[];
+    if(!conv.length){
+      list.innerHTML='<div class="quad-empty"><b>Nessuna conversazione salvata</b><span>Quando l\'Assistente ti dà una risposta preziosa, salvala: la ritrovi qui il giorno dopo.</span></div>';
+      return;
+    }
+    var e=_escV;
+    list.innerHTML=conv.map(function(c){
+      var data='';
+      try{ var d=new Date(c.data); data=d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'}); }catch(x){}
+      return '<div class="chat-salvata-card" onclick="riapriChatSalvata('+c.id+')">'
+        + '<div class="chat-salvata-titolo">'+e(c.titolo||'Conversazione')+'</div>'
+        + '<div class="chat-salvata-data">'+data+'</div></div>';
+    }).join('');
+  }catch(e){ list.innerHTML='<div class="quad-empty"><b>Errore</b><span>Riprova.</span></div>'; }
+}
+async function riapriChatSalvata(id){
+  try{
+    var r=await fetch('/v1/chat/'+encodeURIComponent(id), {headers:_statoHeaders()});
+    var j=await r.json();
+    var msg=j.messaggi||[];
+    if(!msg.length){ _toast('Conversazione vuota'); return; }
+    // ripopolo la chat con i messaggi salvati
+    switchTab('chiedi'); switchSubtab('chat');
+    var schede=document.getElementById('schede');
+    if(schede){
+      schede.innerHTML='';
+      // mostro i messaggi come schede (dal più vecchio al più recente, prepend inverte)
+      msg.slice().reverse().forEach(function(m){
+        var card=document.createElement('div'); card.className='scheda';
+        if(m.ruolo==='user'){ card.innerHTML='<div class="chat-msg-user">'+_escV(m.testo)+'</div>'; }
+        else { card.innerHTML='<div class="stream-txt">'+_formattaRispostaChat(m.testo)+'</div>'; }
+        schede.prepend(card);
+      });
+    }
+    _toast('Conversazione riaperta');
+  }catch(e){ _toast('Errore nel caricamento'); }
+}
+async function salvaConversazione(){
+  if(!_chatCompleta.length){ _toast('Nessuna conversazione da salvare'); return; }
+  var btn=document.getElementById('btn-salva-chat');
+  if(btn){ btn.disabled=true; }
+  try{
+    var r=await fetch('/v1/chat/salva', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({messaggi:_chatCompleta})});
+    var j=await r.json();
+    if(j && j.ok){ _toast('✓ Conversazione salvata nel Quaderno'); }
+    else { _toast('Non riuscita, riprova'); }
+  }catch(e){ _toast('Errore, riprova'); }
+  if(btn){ btn.disabled=false; }
+}
 const _HISTORY_MAX=3;
 // converte la history interna {q,r} nel formato backend [{role,content}...]
 function _historyPerBackend(){
@@ -1202,7 +1262,8 @@ async function _chiediStream(q){
   setBusy(false);
   _incDomande();
   if(erroreVisto && !testoAccumulato){ card.remove(); throw new Error('stream error'); }
-  if(testoAccumulato){ _chatHistory.push({q:q, r:testoAccumulato.slice(0,300)}); if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2); }
+  if(testoAccumulato){ _chatHistory.push({q:q, r:testoAccumulato.slice(0,300)}); if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2);
+    _chatCompleta.push({ruolo:'user',testo:q}); _chatCompleta.push({ruolo:'assistant',testo:testoAccumulato}); }
 }
 // formatta il testo in prosa fluida: i marcatori PROBLEMA/PERCHÉ diventano paragrafi spaziati,
 // non etichette stampatello. Markdown leggero + grassetti mirati.
@@ -3253,14 +3314,17 @@ function switchQuaderno(vista){
   document.getElementById('quad-pane-menu').style.display = vista==='menu'?'':'none';
   var pr=document.getElementById('quad-pane-ricette'); if(pr) pr.style.display = vista==='ricette'?'':'none';
   var pp=document.getElementById('quad-pane-palestra'); if(pp) pp.style.display = vista==='palestra'?'':'none';
+  var pc=document.getElementById('quad-pane-chat'); if(pc) pc.style.display = vista==='chat'?'':'none';
   document.getElementById('qtg-misure').classList.toggle('active', vista==='misure');
   document.getElementById('qtg-menu').classList.toggle('active', vista==='menu');
   var tr=document.getElementById('qtg-ricette'); if(tr) tr.classList.toggle('active', vista==='ricette');
   var tp=document.getElementById('qtg-palestra'); if(tp) tp.classList.toggle('active', vista==='palestra');
+  var tc=document.getElementById('qtg-chat'); if(tc) tc.classList.toggle('active', vista==='chat');
   if(vista==='menu') caricaMenuSalvati();
   if(vista==='ricette') caricaLeMieRicette();
   if(vista==='misure') caricaStoricoMisure();
   if(vista==='palestra') caricaPalestra();
+  if(vista==='chat') caricaChatSalvate();
 }
 
 // ═══ PALESTRA — quiz "Livello di Competenza del Banco" (P6) ═══
