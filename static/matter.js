@@ -6601,6 +6601,28 @@ function _calcTab(which, btn){
   else _calcRenderFoodCost();
 }
 function _calcBody(html){ var b=document.getElementById('calc-body'); if(b) b.innerHTML=html; }
+// ═══ DNA-CONTESTO — "Matter Bench mi conosce" in cima ai calcolatori ═══
+var _CALC_FENOMENO={ impasto:'Idratazione impasto', foodcost:'Food cost', vino:'Temperatura servizio', brix:'Brix', calo:'Calo peso', teglie:'Conversione teglie' };
+async function _dnaContestoBanner(calcKey){
+  var fen=_CALC_FENOMENO[calcKey];
+  if(!fen) return;
+  try{
+    var r=await fetch('/v1/dna-contesto?fenomeno='+encodeURIComponent(fen), {headers:_statoHeaders()});
+    var j=await r.json();
+    if(!j.ha_dati || !j.frase) return;
+    var e=_escV;
+    var aff=j.affidabilita||'indicativo';
+    var cont=document.getElementById('calc-body');
+    if(!cont) return;
+    if(cont.querySelector('.dna-ctx')) return;
+    var banner=document.createElement('div');
+    banner.className='dna-ctx';
+    banner.innerHTML='<span class="dna-ctx-ico">◎</span>'
+      + '<span class="dna-ctx-txt">'+e(j.frase)+'</span>'
+      + '<span class="dna-ctx-badge dna-aff-'+e(aff)+'">'+e(aff)+'</span>';
+    cont.insertBefore(banner, cont.firstChild);
+  }catch(e){}
+}
 // risultato comune: interpretazione (carta) + leva (teal) + link fenomeno
 // stepper +/- per i campi numerici (Gemini #5 — evita la tastiera che copre)
 function _step(id, delta, min){
@@ -6690,6 +6712,7 @@ function _calcRenderImpasto(){
     + '<button class="calc-go" onclick="_calcImpasto()">Calcola le grammature</button>'
     + '<div class="calc-nota-info"><b>Il metodo del panettiere</b> esprime ogni ingrediente come percentuale sulla farina (100%). Cambi il peso totale e le grammature si ricalcolano mantenendo le proporzioni. Così scali qualsiasi ricetta senza rifare i conti.</div>'
     + '</div><div id="ci-out"></div>');
+  _dnaContestoBanner('impasto');
 }
 async function _calcImpasto(){
   var peso=parseFloat((document.getElementById('ci-peso')||{}).value||'0')||0;
