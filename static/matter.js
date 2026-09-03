@@ -524,10 +524,8 @@ function _segnaOnboardingFatto(){
 }
 
 function mostraNudgeSeNecessario(){
-  // mostra il nudge solo al primo accesso e se non ha ancora scelto una disciplina
-  if(_isFirstVisit() && !Matter.disciplina){
-    document.getElementById('onb-nudge').style.display='flex';
-  }
+  // nudge rimosso: la griglia discipline è già l'invito chiaro a scegliere
+  var n=document.getElementById('onb-nudge'); if(n) n.style.display='none';
 }
 function chiudiNudge(){
   document.getElementById('onb-nudge').style.display='none';
@@ -6497,6 +6495,30 @@ function _calcTab(which, btn){
 }
 function _calcBody(html){ var b=document.getElementById('calc-body'); if(b) b.innerHTML=html; }
 // risultato comune: interpretazione (carta) + leva (teal) + link fenomeno
+// stepper +/- per i campi numerici (Gemini #5 — evita la tastiera che copre)
+function _step(id, delta, min){
+  var el=document.getElementById(id); if(!el) return;
+  var v=parseFloat(el.value||el.placeholder||'0')||0;
+  v=Math.max(min||0, v+delta);
+  el.value=v;
+}
+// odo-counter: anima un numero da 0 al valore in ~400ms (Gemini #6)
+function _odoCounter(el, valoreFinale){
+  if(!el) return;
+  var num=parseFloat(String(valoreFinale).replace(',','.'));
+  if(isNaN(num)){ el.textContent=valoreFinale; return; }
+  var suffisso=String(valoreFinale).replace(/[0-9.,\-]/g,'');
+  var start=performance.now(), dur=420;
+  function tick(t){
+    var p=Math.min(1,(t-start)/dur);
+    var eased=1-Math.pow(1-p,3);
+    var cur=num*eased;
+    el.textContent=(num%1===0?Math.round(cur):cur.toFixed(1))+suffisso;
+    if(p<1) requestAnimationFrame(tick);
+    else el.textContent=valoreFinale;
+  }
+  requestAnimationFrame(tick);
+}
 function _calcRisultato(numeroHtml, j, bersaglio){
   var h = '<div class="calc-mirino calc-mirino-anim">'+numeroHtml+'</div>';
   // #3 MIRINO-SISTEMA: il backend manda i campi bersaglio → ago su TUTTI i calcolatori col range
@@ -6547,7 +6569,10 @@ function _barraMirino(b){
 function _calcRenderImpasto(){
   _calcBody(
     '<div class="calc-form">'
-    + '<div class="calc-field"><label>Peso totale impasto (g)</label><input type="number" inputmode="numeric" id="ci-peso" placeholder="1000"></div>'
+    + '<div class="calc-field"><label>Peso totale impasto (g)</label>'
+    +   '<div class="calc-stepper"><button class="calc-step-btn" onclick="_step(\'ci-peso\',-50,100)">−</button>'
+    +   '<input type="number" inputmode="numeric" id="ci-peso" placeholder="1000" class="calc-step-input">'
+    +   '<button class="calc-step-btn" onclick="_step(\'ci-peso\',50,100)">+</button></div></div>'
     + '<div class="calc-perc-lab">Percentuali del panettiere (farina = 100)</div>'
     + '<div class="calc-perc-grid">'
     +   '<div class="calc-perc"><span>Farina</span><input type="number" id="ci-farina" value="100" readonly></div>'
