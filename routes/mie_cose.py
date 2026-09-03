@@ -513,3 +513,82 @@ def leggi_conversazione(cid):
         try: _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)[:100]}), 200
+
+
+@bp_mie.route("/v1/dna-professionale", methods=["GET"])
+def dna_professionale():
+    """DNA Professionale: analizza le misure/esperimenti dell'utente e genera il suo profilo con
+    pattern reali (medie, tendenze, zone di lavoro). 'Matter ti conosce come professionista.'
+    È il motore del rinnovo: più usi l'app, più ti conosce. Richiede almeno qualche misura."""
+    dev = _device()
+    if not dev:
+        return jsonify({"errore": "device non identificato"}), 400
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        # tutte le misure dell'utente, per fenomeno
+        cur.execute("""SELECT fenomeno, valore, unita, bersaglio, creato_il
+                       FROM misure_salvate WHERE device_id=%s ORDER BY fenomeno, creato_il""", (dev,))
+        righe = cur.fetchall()
+        if not righe:
+            cur.close(); _release_conn(conn)
+            return jsonify({"pronto": False, "messaggio": "Registra qualche misura al banco e Matter "
+                            "inizierà a conoscerti: dopo alcune misure vedrai qui il tuo profilo professionale."})
+        # raggruppo per fenomeno e calcolo i pattern
+        import re as _re
+        from collections import defaultdict
+        per_fen = defaultdict(list)
+        for r in righe:
+            fen = r[0]; val_raw = r[1]; uni = r[2] or ""; ber = r[3] or ""
+            # estraggo il numero dal valore
+            m = _re.search(r"-?\d+[.,]?\d*", str(val_raw))
+            if m:
+                try:
+                    v = float(m.group(0).replace(",", "."))
+                    per_fen[fen].append({"v": v, "uni": uni, "ber": ber, "data": r[4]})
+                except Exception:
+                    pass
+        pattern = []
+        for fen, misure in per_fen.items():
+            if len(misure) < 1:
+                continue
+            valori = [m["v"] for m in misure]
+            media = round(sum(valori) / len(valori), 1)
+            uni = misure[0]["uni"]
+            ber = misure[0]["ber"]
+            p = {"fenomeno": fen, "n_misure": len(misure), "media": media, "unita": uni}
+            # tendenza (se ci sono almeno 3 misure)
+            if len(valori) >= 3:
+                delta = valori[-1] - valori[0]
+                if abs(delta) >= max(0.5, abs(media) * 0.03):
+                    verso = "aumentato" if delta > 0 else "abbassato"
+                    p["tendenza"] = f"Hai {verso} {fen.lower()} di {abs(round(delta,1))}{uni} nel tempo."
+            # zona di lavoro
+            if len(valori) >= 2:
+                p["zona"] = f"Lavori {fen.lower()} tra {round(min(valori),1)} e {round(max(valori),1)}{uni} (media {media}{uni})."
+            # confronto col bersaglio
+            if ber:
+                p["nota_bersaglio"] = f"Bersaglio consigliato: {ber}{uni}."
+            pattern.append(p)
+        # frase-firma del DNA
+        cur.execute("SELECT COUNT(DISTINCT fenomeno), COUNT(*) FROM misure_salvate WHERE device_id=%s", (dev,))
+        _c = cur.fetchone()
+        n_fen = _c[0] if _c else 0; n_tot = _c[1] if _c else 0
+        cur.close(); _release_conn(conn)
+        # suggerimento: il fenomeno più misurato
+        top = max(pattern, key=lambda x: x["n_misure"]) if pattern else None
+        suggerimento = None
+        if top:
+            suggerimento = f"Il parametro che segui di più è {top['fenomeno'].lower()}: sei un professionista che tiene sotto controllo questo aspetto. Continua a misurarlo per affinare la tua costanza."
+        return jsonify({
+            "pronto": True,
+            "riepilogo": {"fenomeni_seguiti": n_fen, "misure_totali": n_tot},
+            "pattern": pattern,
+            "suggerimento": suggerimento,
+            "firma": "Matter ti conosce dal tuo lavoro al banco: questo profilo cresce a ogni misura che salvi."
+        })
+    except Exception as e:
+        try: _release_conn(conn)
+        except Exception: pass
+        import traceback
+        return jsonify({"errore": str(e)[:120], "tb": traceback.format_exc()[-200:]}), 200
