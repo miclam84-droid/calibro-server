@@ -7130,3 +7130,99 @@ def admin_crea_ponti_fenomeni():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+# ── INGREDIENT FAMILY (correzione OpenAI #3): famiglia per ogni ingrediente ──
+# Usata per retrieval, flavor ranking, sostituzioni, stagionalità, planner. Campo piccolo, ovunque.
+_FAMIGLIE_ING = {
+    "citrus": ("lemon", "lime", "orange", "grapefruit", "mandarin", "bergamot", "limone", "arancia",
+               "pompelmo", "mandarino", "cedro", "clementina"),
+    "aged_cheese": ("parmesan", "pecorino", "grana", "gruyere", "cheddar", "gouda", "manchego",
+                    "provolone", "parmigiano", "caciocavallo", "asiago", "comte"),
+    "fresh_cheese": ("mozzarella", "ricotta", "burrata", "stracchino", "mascarpone", "robiola",
+                     "crescenza", "feta", "cottage"),
+    "blue_cheese": ("gorgonzola", "roquefort", "stilton", "blue cheese", "erborinato"),
+    "leafy_green": ("spinach", "lettuce", "arugula", "chard", "kale", "rocket", "spinaci", "lattuga",
+                    "rucola", "bietola", "cavolo", "radicchio", "cime di rapa", "friarielli"),
+    "stone_fruit": ("peach", "apricot", "plum", "cherry", "nectarine", "pesca", "albicocca", "prugna",
+                    "ciliegia", "susina"),
+    "berry": ("strawberry", "raspberry", "blueberry", "blackberry", "currant", "fragola", "lampone",
+              "mirtillo", "mora", "ribes"),
+    "pome_fruit": ("apple", "pear", "quince", "mela", "pera", "cotogna"),
+    "allium": ("onion", "garlic", "shallot", "leek", "chive", "cipolla", "aglio", "scalogno", "porro",
+               "erba cipollina"),
+    "nightshade": ("tomato", "pepper", "eggplant", "potato", "chili", "pomodoro", "peperone",
+                   "melanzana", "patata", "peperoncino"),
+    "brassica": ("broccoli", "cauliflower", "cabbage", "brussels", "turnip", "cavolfiore", "broccolo",
+                 "verza", "rapa"),
+    "root_veg": ("carrot", "beet", "radish", "parsnip", "carota", "barbabietola", "ravanello", "sedano rapa"),
+    "mushroom": ("mushroom", "porcini", "champignon", "shiitake", "fungo", "chiodini", "finferli"),
+    "red_meat": ("beef", "veal", "lamb", "pork", "manzo", "vitello", "agnello", "maiale", "bovino"),
+    "poultry": ("chicken", "turkey", "duck", "pollo", "tacchino", "anatra", "faraona"),
+    "cured_meat": ("prosciutto", "salami", "guanciale", "pancetta", "speck", "nduja", "bresaola",
+                   "salame", "mortadella", "lardo", "culatello", "coppa"),
+    "fish": ("salmon", "tuna", "cod", "bass", "bream", "anchovy", "sardine", "salmone", "tonno",
+             "merluzzo", "branzino", "orata", "acciuga", "baccala", "sgombro"),
+    "shellfish": ("shrimp", "prawn", "lobster", "crab", "clam", "mussel", "oyster", "gambero",
+                  "scampo", "aragosta", "granchio", "vongola", "cozza", "ostrica", "calamaro", "polpo"),
+    "herb": ("basil", "parsley", "thyme", "rosemary", "sage", "oregano", "mint", "basilico",
+             "prezzemolo", "timo", "rosmarino", "salvia", "origano", "menta", "maggiorana"),
+    "spice": ("pepper", "cinnamon", "nutmeg", "clove", "cumin", "saffron", "pepe", "cannella",
+              "noce moscata", "chiodo di garofano", "cumino", "zafferano", "paprika", "curry"),
+    "nut": ("almond", "hazelnut", "walnut", "pistachio", "pine nut", "mandorla", "nocciola", "noce",
+            "pistacchio", "pinolo", "anacardo"),
+    "grain": ("wheat", "rice", "corn", "barley", "oat", "rye", "grano", "riso", "mais", "orzo",
+              "avena", "segale", "farro", "farina"),
+    "wine_spirit": ("wine", "vino", "gin", "vodka", "rum", "whisky", "tequila", "brandy", "vermouth",
+                    "campari", "aperol", "liqueur", "grappa"),
+    "beer": ("beer", "birra", "ipa", "lager", "stout", "ale", "pilsner"),
+    "dairy": ("milk", "cream", "butter", "yogurt", "latte", "panna", "burro"),
+    "egg": ("egg", "uovo", "uova", "tuorlo", "albume"),
+    "sweetener": ("sugar", "honey", "syrup", "zucchero", "miele", "sciroppo", "glucosio", "malto"),
+    "oil_fat": ("oil", "olio", "lard", "strutto", "ghee", "margarine"),
+    "coffee": ("coffee", "espresso", "caffe", "cold brew"),
+    "chocolate": ("chocolate", "cocoa", "cioccolato", "cacao"),
+}
+
+def _famiglia_ingrediente(nome):
+    n = (nome or "").lower()
+    for fam, chiavi in _FAMIGLIE_ING.items():
+        if any(k in n for k in chiavi):
+            return fam
+    return None
+
+@bp.route("/admin/assegna-famiglie")
+def admin_assegna_famiglie():
+    """Assegna la ingredient_family a ogni ingrediente (campo in data). ?offset=&limit="""
+    if not _admin_ok(request):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        offset = int(request.args.get("offset", 0)); limit = min(int(request.args.get("limit", 300)), 600)
+    except Exception:
+        offset, limit = 0, 300
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Ingrediente'
+                       ORDER BY id LIMIT %s OFFSET %s""", (limit, offset))
+        righe = cur.fetchall()
+        if not righe:
+            cur.close(); _release_conn(conn)
+            return jsonify({"ok": True, "fine": True})
+        assegnate = 0; per_fam = {}
+        for iid, nome, data in righe:
+            d = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            fam = _famiglia_ingrediente(nome)
+            if fam:
+                d["ingredient_family"] = fam
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(d, ensure_ascii=False), iid))
+                assegnate += 1
+                per_fam[fam] = per_fam.get(fam, 0) + 1
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "assegnate": assegnate, "su": len(righe),
+                        "top_famiglie": dict(sorted(per_fam.items(), key=lambda x: -x[1])[:8]),
+                        "prossimo_offset": offset + limit})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        import traceback
+        return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
