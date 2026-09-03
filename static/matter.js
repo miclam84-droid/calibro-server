@@ -626,13 +626,9 @@ function renderHome(j){
   Matter.fenomenoId = f.id;
   // onboarding: mostra nudge se primo accesso
   mostraNudgeSeNecessario();
-  // principio
+  // "Principio del giorno" rimosso (Gemini #1): duplicava il Fenomeno del Giorno in alto
   const pc = document.getElementById('scopri-principio');
-  if(j.principio){
-    document.getElementById('princ-nome').textContent = j.principio.nome;
-    document.getElementById('princ-desc').textContent = j.principio.scheda_intro || '';
-    pc.style.display='block';
-  } else { pc.style.display='none'; }
+  if(pc) pc.style.display='none';
 }
 
 async function caricaContDisciplina(nome){
@@ -2817,13 +2813,7 @@ function chiudiOnb4(){
   if(_onb4Station){ Matter.disciplina = _onb4Station.disc; Matter.step = 0; }
   if(typeof switchTab==='function') switchTab('scopri');
   if(typeof caricaHome==='function') caricaHome();
-  // #7 associazione Bench=banco, una volta sola (solo IT)
-  try{
-    if((typeof _lang==='undefined'||_lang==='it') && !localStorage.getItem('matter_bench_spiegato')){
-      localStorage.setItem('matter_bench_spiegato','1');
-      setTimeout(function(){ if(typeof _toast==='function') _toast('Bench è il banco di lavoro del professionista. Matter Bench è il tuo banco di prova scientifico.'); }, 900);
-    }
-  }catch(e){}
+  // tooltip Bench rimosso (Gemini #1): non deve fluttuare sulla home
 }
 
 // ── ONBOARDING PROFILAZIONE: mestiere → primo numero → lezione ──

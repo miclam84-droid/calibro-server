@@ -2556,3 +2556,28 @@ a:focus-visible,input:focus-visible{
 .fen-back{background:none;border:none;color:var(--teal,#12545D);font-family:var(--sans,'Inter');font-size:13px;font-weight:600;cursor:pointer;padding:0 0 12px;display:inline-flex;align-items:center}
 .fen-back:active{opacity:.7}
 .fen-back-float{display:block;margin:0 0 8px;padding:6px 0}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DIREZIONE DESIGN (Gemini) — gerarchia superfici a 3 livelli
+   Livello 0: carta #ECEBE5 · Livello 1: bianco puro + ombra dura ·
+   Livello 2: Ink #141D22 (avvisi/eroe)
+   ═══════════════════════════════════════════════════════════════════ */
+:root{ --ombra-dura: 4px 4px 0px #141D22; --ombra-dura-soft: 4px 4px 0px rgba(20,29,34,.15); }
+
+/* Livello 1 — card/moduli: bianco puro, angoli vivi, ombra dura netta */
+.cruscotto,.calc-form,.scarto-card,.ricp-card,.avz-card,.misura-card,
+.mbv-head,.rg-scheda,.pal-quiz,.prezzo-card,.crea-card,.fen-principio,
+.vetr-card,.store-btn,.allerg-box{
+  border-radius:4px!important;
+}
+/* card bianche pure che si staccano dallo sfondo carta con ombra dura */
+.cruscotto,.ricp-card,.avz-card,.misura-card,.crea-card,.prezzo-card,
+.scarto-card,.pal-quiz{
+  background:#FFFFFF!important;
+  box-shadow:var(--ombra-dura-soft)!important;
+  border:1px solid #141D22!important;
+}
+/* Livello 2 — box eroe/avvisi: Ink pieno, numeri terracotta */
+.crus-box-target,.calc-mirino,.stream-calc,.fen-mirino-num,.pal-header{
+  background:#141D22!important;border-radius:4px!important;
+}
