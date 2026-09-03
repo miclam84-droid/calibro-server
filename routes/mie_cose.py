@@ -439,3 +439,77 @@ def export_dati_utente():
         try: _release_conn(conn)
         except Exception: pass
         return jsonify({"errore": str(e)[:120]}), 200
+
+
+@bp_mie.route("/v1/chat/salva", methods=["POST"])
+def salva_conversazione():
+    """Salva una conversazione chat (per ritrovarla dopo). Body: {titolo, messaggi:[{ruolo,testo}]}.
+    Le chat NON si perdono più al reload — l'utente costruisce il suo archivio di domande/risposte."""
+    dev = _device()
+    if not dev:
+        return jsonify({"errore": "device non identificato"}), 400
+    body = request.json or {}
+    messaggi = body.get("messaggi", [])
+    if not messaggi:
+        return jsonify({"errore": "conversazione vuota"}), 400
+    # titolo: prima domanda dell'utente (troncata) se non fornito
+    titolo = (body.get("titolo") or "").strip()
+    if not titolo:
+        for m in messaggi:
+            if m.get("ruolo") == "user" or m.get("q"):
+                titolo = (m.get("testo") or m.get("q") or "")[:60]; break
+        titolo = titolo or "Conversazione"
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS chat_salvate (
+            id SERIAL PRIMARY KEY, device_id TEXT, titolo TEXT, messaggi JSONB,
+            creato_il TIMESTAMP DEFAULT NOW())""")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_chat_dev ON chat_salvate(device_id)")
+        import json as _j
+        cur.execute("INSERT INTO chat_salvate (device_id, titolo, messaggi) VALUES (%s,%s,%s::jsonb) RETURNING id",
+                    (dev, titolo, _j.dumps(messaggi, ensure_ascii=False)))
+        cid = cur.fetchone()[0]
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "id": cid, "titolo": titolo})
+    except Exception as e:
+        conn.rollback(); _release_conn(conn)
+        return jsonify({"errore": str(e)[:120]}), 200
+
+
+@bp_mie.route("/v1/chat/mie", methods=["GET"])
+def mie_conversazioni():
+    """Elenco delle conversazioni salvate dell'utente (titolo + data). Per ritrovare le chat."""
+    dev = _device()
+    if not dev:
+        return jsonify({"conversazioni": []})
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, titolo, creato_il FROM chat_salvate WHERE device_id=%s ORDER BY creato_il DESC LIMIT 50", (dev,))
+        out = [{"id": r[0], "titolo": r[1], "data": r[2].isoformat() if r[2] else None} for r in cur.fetchall()]
+        cur.close(); _release_conn(conn)
+        return jsonify({"conversazioni": out, "totale": len(out)})
+    except Exception:
+        try: _release_conn(conn)
+        except Exception: pass
+        return jsonify({"conversazioni": []})
+
+
+@bp_mie.route("/v1/chat/<int:cid>", methods=["GET"])
+def leggi_conversazione(cid):
+    """Riapre una conversazione salvata coi suoi messaggi."""
+    dev = _device()
+    conn = _get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT titolo, messaggi FROM chat_salvate WHERE id=%s AND device_id=%s", (cid, dev))
+        r = cur.fetchone()
+        cur.close(); _release_conn(conn)
+        if not r:
+            return jsonify({"errore": "conversazione non trovata"}), 404
+        return jsonify({"titolo": r[0], "messaggi": r[1]})
+    except Exception as e:
+        try: _release_conn(conn)
+        except Exception: pass
+        return jsonify({"errore": str(e)[:100]}), 200
