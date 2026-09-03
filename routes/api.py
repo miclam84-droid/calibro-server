@@ -2195,6 +2195,7 @@ def menu_proposte():
                         conns = sum(1 for c2 in coppie if set([c2["a"],c2["b"]]) <= set([a,b,c]))
                         proposte.append({
                             "tipo": "triangolo", "ingredienti": [a,b,c],
+                            "nome": f"{a.capitalize()}, {b} e {c}",
                             "connessioni": conns,
                             "proof": {"ingredienti_disponibili": 3, "connessioni_aromatiche": conns}
                         })
@@ -2205,6 +2206,7 @@ def menu_proposte():
                 esplorativa = c.get("esplorativa") or c["forza"]==0
                 proposte.append({
                     "tipo": "coppia", "ingredienti": [c["a"], c["b"]],
+                    "nome": f'{c["a"].capitalize()} e {c["b"]}',
                     "connessioni": c["forza"],
                     "esplorativa": esplorativa,
                     "proof": {"ingredienti_disponibili": 2,
