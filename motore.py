@@ -240,6 +240,10 @@ def conversione_teglie(base1_cm, alt1_cm, base2_cm, alt2_cm) -> dict:
 def food_cost_piatto(ingredienti: list, prezzo_vendita=None) -> dict:
     """SPRINT 2 — Food cost di un piatto. ingredienti: [{"nome","grammi","prezzo_kg"}].
     Se prezzo_kg manca per una voce, la marca come da inserire (mai trattino muto)."""
+    if not ingredienti:
+        return {"calcolo": "food_cost_piatto", "costo_totale": 0.0, "voci": [],
+                "interpretazione": "Aggiungi almeno un ingrediente con grammi e prezzo al kg per calcolare il food cost.",
+                "spiegazione": "Aggiungi gli ingredienti del piatto per vedere il costo delle materie prime."}
     costo_totale = 0.0; voci = []; mancanti = 0
     for i in ingredienti:
         if not isinstance(i, dict): continue

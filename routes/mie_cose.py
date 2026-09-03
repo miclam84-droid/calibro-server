@@ -662,7 +662,9 @@ def dna_contesto():
         frase = f"Di solito lavori {fen.lower()} intorno a {media}{uni} ({n} misure)."
         return jsonify({"ha_dati": True, "media": media, "unita": uni, "n_misure": n,
                         "affidabilita": affid, "frase": frase,
-                        "min": round(min(valori), 1), "max": round(max(valori), 1)})
+                        "min": round(min(valori), 1), "max": round(max(valori), 1),
+                        # alias per compatibilità col frontend (nomi campo alternativi)
+                        "valore_medio": media, "unita_misura": uni, "misure_totali": n})
     except Exception:
         try: _release_conn(conn)
         except Exception: pass
