@@ -46,7 +46,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opa
 
 /* ── HEADER leggero ───────────────────────────────────── */
 .app-header{position:sticky;top:0;z-index:40;background:var(--bg);
-  border-bottom:2px solid var(--e300);padding-top:env(safe-area-inset-top)}
+  border-bottom:1px solid #141D22;padding-top:env(safe-area-inset-top)}
 .app-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 18px 11px}
 .wordmark{font-family:var(--serif);font-weight:700;font-size:20px;
   color:var(--ink);letter-spacing:-.02em;line-height:1}
@@ -2830,3 +2830,6 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 .tab-bar{border-bottom:1px solid #141D22!important}
 .tab-btn{border-bottom:2px solid transparent!important}
 .tab-btn.active{border-bottom:2px solid #C77B3F!important;border-bottom-color:#C77B3F!important}
+
+/* fix definitivo: la linea azzurra sotto l'header era .app-header border azzurro (--e300) → Ink */
+.app-header{border-bottom:1px solid #141D22!important}
