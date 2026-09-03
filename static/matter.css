@@ -2808,3 +2808,6 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 /* #4 numeri tabulari ovunque (allineamento colonne) */
 .crus-sub,.calc-fcp-num,.calc-coef,.dna-card-media,.dnah-media,.disc-dom-n,
 .calc-step-input,.mirino-scala,.calo-val{font-variant-numeric:tabular-nums}
+
+/* fix: numero gigante calcolatore SEMPRE terracotta (specificità maggiore) */
+.calc-stepper input.calc-step-input,#ci-peso.calc-step-input{color:#C77B3F!important}
