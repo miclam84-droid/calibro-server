@@ -2614,3 +2614,48 @@ a:focus-visible,input:focus-visible{
 /* box leva Teal solido in fondo (Gemini: solo l'azione) */
 .calc-leva{background:var(--teal,#12545D)!important;border:none!important;border-radius:4px!important;box-shadow:4px 4px 0 #141D22!important;padding:16px 18px!important;color:#fff!important}
 .calc-leva .calc-leva-lab{color:#9DD0D8!important}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM DEFINITIVO (Gemini + OpenAI) — regole globali, vincono su tutto
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* #4 — PURGA FONT GLOBALE */
+body, button, input, select, textarea, p, span, div, a, li{
+  font-family:'Inter',-apple-system,sans-serif;
+}
+h1,h2,h3,h4,.wordmark,.wm-text,.btn-porta,.card-title,.mappa-tab,
+.fen-titolo,.ricp-nome,.disc-dom-nome,.disc-mini-nome,.scarto-nome,
+.crus-val,.pal-domanda,.mtr-manifesto-claim,.calc-menu-btn{
+  font-family:'Space Grotesk',sans-serif!important;
+}
+/* Numeri SOLO in mono */
+.numero-bersaglio,.cifra-calc,.metric-value,.ricetta-grammatura,
+.crus-sub,.calc-fcp-num,.calc-coef,.calc-step-input,.fen-mirino-val,
+.disc-dom-n,.disc-mini-n,.mirino-scala,.calo-val,.serie-val,.pal-count,
+.s-num-val,.target-eroe,.rg-num,.dc-verdetto,.mbv-prop-conn{
+  font-family:'IBM Plex Mono',monospace!important;
+}
+
+/* #5 — OVERFLOW GLOBALE: mai testo che straborda */
+.cruscotto,.card-bench,.ricp-card,.avz-card,.misura-card,.crea-card,
+.prezzo-card,.scarto-card,.pal-quiz,.disc-dom-card,.disc-mini,.fen-scheda,
+.rg-scheda,.allerg-box,.store-btn,.calc-perc,.mbv-prop,.vetr-card{
+  overflow-wrap:anywhere;word-break:break-word;box-sizing:border-box;
+}
+.disc-mini,.crea-card,.scarto-card{min-width:0}
+/* flex item: min-width 0 per non strabordare */
+.crus-carosello>*,.disc-griglia>*,.calc-perc-grid>*,.fen-chips>*{min-width:0}
+/* card: mai height fissa, si espandono col testo */
+.ricp-card,.avz-card,.misura-card,.disc-mini{height:auto!important}
+
+/* #1 — RADIUS CONGELATI (angoli vivi coerenti) */
+.cruscotto,.ricp-card,.avz-card,.misura-card,.crea-card,.prezzo-card,
+.scarto-card,.pal-quiz,.disc-dom-card,.disc-mini,.calc-mirino,.fen-principio,
+.allerg-box,.calc-go,.calc-leva,.pal-header,.crus-box-target,.stream-calc,
+.fen-mirino-num,.fen-errori-box,.mp-btn{border-radius:4px!important}
+input:not(.calc-step-input),textarea,.ask-input,.ric-search input,.sm-field>input{border-radius:8px!important}
+
+/* #2 — PULSANTI: effetto tasto meccanico premuto */
+.calc-go,.rg-btn,.prezzo-btn,.mbv-go,.disc-dom-card,.crea-card,
+.calc-menu-btn,.mappa-tab{transition:transform .18s ease,box-shadow .18s ease}
+.calc-go:active,.rg-btn:active,.prezzo-btn:active,.mbv-go:active{transform:translate(3px,3px)!important}
