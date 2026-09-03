@@ -2821,3 +2821,12 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 .tab-btn:not(.active){border-bottom:none!important;box-shadow:none!important}
 /* #4 card ingredienti (.calc-perc): ombra dura card-bench */
 .calc-perc{background:#fff!important;border:1.5px solid #141D22!important;border-radius:4px!important;box-shadow:4px 4px 0px rgba(20,29,34,.15)!important}
+
+/* ═══ POLISH ULTIME 2 — sui nomi reali ═══ */
+/* #1 il "1000" grigio è il PLACEHOLDER: lo rendo terracotta tenue (il valore digitato è già terracotta) */
+.calc-step-input::placeholder{color:#C77B3F!important;opacity:.55}
+.calc-step-input{color:#C77B3F!important;-webkit-text-fill-color:#C77B3F!important}
+/* #2 barra tab: bordo Ink esplicito, elimino ogni residuo azzurro sotto le tab inattive */
+.tab-bar{border-bottom:1px solid #141D22!important}
+.tab-btn{border-bottom:2px solid transparent!important}
+.tab-btn.active{border-bottom:2px solid #C77B3F!important;border-bottom-color:#C77B3F!important}
