@@ -2327,6 +2327,14 @@ def _img_worker(solo_mancanti):
         _IMG_STATO.update({"attivo": True, "fatte": 0, "totale": len(lista), "errori": 0})
         # per variare: tengo un contatore per disciplina, così pesco risultati diversi (rank 0..4)
         rank_disc = {}
+        # set delle foto GIÀ usate: nessuna ricetta deve ripetere una foto (no sciatteria).
+        _url_usate = set()
+        try:
+            for _r in db.execute("SELECT immagine FROM ricette WHERE immagine IS NOT NULL AND immagine<>''").fetchall():
+                _u = _r["immagine"] if hasattr(_r, "keys") else _r[0]
+                if _u: _url_usate.add(_u)
+        except Exception:
+            pass
         for m in lista:
             _IMG_STATO["corrente"] = m["nome"]
             disc = m["disc"] or "x"
@@ -2343,8 +2351,9 @@ def _img_worker(solo_mancanti):
                         if _n: _ings.append(_n)
                 except Exception:
                     pass
-                img = cerca_immagine(m["nome"], disciplina=m["disc"], nome=m["nome"], rank=rank, ingredienti=_ings)
+                img = cerca_immagine(m["nome"], disciplina=m["disc"], nome=m["nome"], rank=rank, ingredienti=_ings, evita_urls=_url_usate)
                 if img and img.get("url"):
+                    _url_usate.add(img["url"])  # marco la foto come usata: nessuna ripetizione
                     cred = credito_immagine(img["autore"], img.get("fonte_nome", "Pexels"))
                     db.execute("UPDATE ricette SET immagine=?, immagine_autore=?, immagine_url_fonte=? WHERE id=?",
                                (img["url"], cred, img["fonte"], m["id"]))

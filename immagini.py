@@ -341,10 +341,13 @@ def _pixabay(query, rank=0, no_filtro=False):
     except Exception:
         return None
 
-def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredienti=None):
+def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredienti=None, evita_urls=None):
     """ROUTING: Pexels -> Unsplash -> Pixabay. Se arriva nome+disciplina costruisce la query intelligente.
     Se rank non è forzato (0) e c'è un nome, deriva un rank dal NOME: cosi ricette diverse con la stessa
     query (es. besciamella e bagna cauda, entrambe 'cooking sauce pan') prendono foto DIVERSE, non la stessa."""
+    _evita = set(evita_urls or [])
+    def _ok_url(_r):
+        return _r and _r.get("url") and _r["url"] not in _evita
     if nome is not None or disciplina is not None:
         q = _query_intelligente(nome or query, disciplina)
     else:
@@ -362,21 +365,23 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredi
     # 2) NOME DEL PIATTO ESATTO: cerco il piatto specifico (gricia, non 'pasta qualsiasi').
     nome_pulito = _nome_per_query((nome or query or "").lower())
     if nome_pulito:
-        for fonte in (_pexels, _unsplash, _pixabay):
-            res = fonte(nome_pulito, rank)
-            if res:
-                res["match"] = "piatto"   # match forte: cercato il nome del piatto
-                return res
+        for _rk in range(rank, rank + 5):
+            for fonte in (_pexels, _unsplash, _pixabay):
+                res = fonte(nome_pulito, _rk % 5)
+                if _ok_url(res):
+                    res["match"] = "piatto"
+                    return res
     # 3) INGREDIENTI PRINCIPALI: se il piatto esatto non c'è, meglio gli INGREDIENTI
     #    (guanciale pecorino) che una foto di un altro piatto. Passati da chi chiama.
     if ingredienti:
         ing_query = " ".join(str(i).lower() for i in ingredienti[:2] if i)
         if ing_query.strip():
-            for fonte in (_pexels, _unsplash, _pixabay):
-                res = fonte(ing_query, rank)
-                if res:
-                    res["match"] = "ingredienti"  # match debole: foto degli ingredienti
-                    return res
+            for _rk in range(rank, rank + 5):
+                for fonte in (_pexels, _unsplash, _pixabay):
+                    res = fonte(ing_query, _rk % 5)
+                    if _ok_url(res):
+                        res["match"] = "ingredienti"
+                        return res
     # 4) FALLBACK INGREDIENTE SINGOLO (regola: MAI blueprint, sempre piatto o ingrediente).
     #    Se piatto e ingredienti-combinati falliscono, cerco il PRIMO ingrediente da solo
     #    (manzo, pomodoro, gin...) traducendolo in inglese, e prendo la prima foto SENZA filtro:
@@ -388,22 +393,23 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredi
             _ing_kw = _ing_en.split()[0] if _ing_en else ""
             if len(_ing_kw) < 3:
                 continue
-            for fonte in (_pexels, _unsplash, _pixabay):
-                res = fonte(_ing_kw + " food", rank, no_filtro=True)
-                if res:
-                    res["match"] = "ingrediente"
-                    return res
+            for _rk in range(rank, rank + 6):
+                for fonte in (_pexels, _unsplash, _pixabay):
+                    res = fonte(_ing_kw + " food", _rk % 6, no_filtro=True)
+                    if _ok_url(res):
+                        res["match"] = "ingrediente"
+                        return res
     # 5) ULTIMA RISORSA: foto generica della disciplina (mai blueprint vuoto). Vario col rank_nome
     #    così piatti diversi della stessa disciplina prendono foto DIVERSE, non tutte uguali.
     _disc_q = {"bar": "cocktail glass drink", "cucina": "gourmet plated dish", "pasticceria": "dessert plate",
                "panificazione": "artisan bread bakery", "gelateria": "gelato ice cream cup",
                "caffetteria": "coffee espresso cup"}.get((disciplina or "").lower(), "plated food dish")
-    _rank_disc = (rank_nome % 8)
-    for fonte in (_pexels, _unsplash, _pixabay):
-        res = fonte(_disc_q, _rank_disc, no_filtro=True)
-        if res:
-            res["match"] = "disciplina"
-            return res
+    for _rk in range(rank_nome % 8, (rank_nome % 8) + 8):
+        for fonte in (_pexels, _unsplash, _pixabay):
+            res = fonte(_disc_q, _rk % 8, no_filtro=True)
+            if _ok_url(res):
+                res["match"] = "disciplina"
+                return res
     return None
 
 def credito_immagine(autore, fonte_nome="Pexels"):
