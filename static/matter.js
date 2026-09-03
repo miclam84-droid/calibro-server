@@ -626,6 +626,7 @@ function renderHome(j){
   Matter.fenomenoId = f.id;
   // onboarding: mostra nudge se primo accesso
   mostraNudgeSeNecessario();
+  caricaGrigliaDiscipline();
   // "Principio del giorno" rimosso (Gemini #1): duplicava il Fenomeno del Giorno in alto
   const pc = document.getElementById('scopri-principio');
   if(pc) pc.style.display='none';
@@ -644,6 +645,40 @@ async function caricaContDisciplina(nome){
   } catch(e){}
 }
 
+// ═══ GRIGLIA DISCIPLINE — Bar dominante + griglia asimmetrica (Gemini #3) ═══
+var _DISC_ICONE={bar:'🍸',cucina:'🍳',panificazione:'🍞',pasticceria:'🧁',caffetteria:'☕',gelateria:'🍨',vino:'🍷',birra:'🍺',sicurezza:'🛡'};
+async function caricaGrigliaDiscipline(){
+  var dom=document.getElementById('disc-dominante');
+  var grid=document.getElementById('disc-griglia');
+  if(!dom||!grid) return;
+  try{
+    var lang=(typeof _lang!=='undefined'?_lang:'it');
+    var r=await fetch('/v1/discipline?lang='+lang);
+    var j=await r.json();
+    var disc=j.discipline||[];
+    if(!disc.length) return;
+    var e=_escV;
+    // la disciplina scelta all'onboarding è la dominante; se nessuna, Bar di default
+    var scelta=localStorage.getItem('matter_station')||'bar';
+    var dominante=disc.find(function(d){return d.id===scelta;}) || disc[0];
+    var altre=disc.filter(function(d){return d.id!==dominante.id;});
+    // CARD DOMINANTE — a tutta larghezza, Prussia, contatore lezioni monumentale
+    dom.innerHTML='<button class="disc-dom-card" onclick="selezionaDisciplina(\''+e(dominante.id)+'\')">'
+      + '<div class="disc-dom-top"><span class="disc-dom-ico">'+(_DISC_ICONE[dominante.id]||'◆')+'</span><span class="disc-dom-lab">La tua postazione</span></div>'
+      + '<div class="disc-dom-nome">'+e(dominante.nome)+'</div>'
+      + '<div class="disc-dom-conta"><span class="disc-dom-n">'+(dominante.n_lezioni||0)+'</span><span class="disc-dom-u">lezioni</span></div>'
+      + '</button>';
+    // GRIGLIA ALTRE — 2 colonne
+    grid.innerHTML=altre.map(function(d){
+      var prossima = d.stato==='prossimamente';
+      return '<button class="disc-mini'+(prossima?' disc-mini-soon':'')+'" onclick="'+(prossima?'':'selezionaDisciplina(\''+e(d.id)+'\')')+'">'
+        + '<span class="disc-mini-ico">'+(_DISC_ICONE[d.id]||'◆')+'</span>'
+        + '<span class="disc-mini-nome">'+e(d.nome)+'</span>'
+        + '<span class="disc-mini-n">'+(prossima?'presto':(d.n_lezioni||0)+' lez.')+'</span>'
+        + '</button>';
+    }).join('');
+  }catch(e){}
+}
 function selezionaDisciplina(nome){
   Matter.disciplina = nome;
   Matter.step = 0;

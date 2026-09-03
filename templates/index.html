@@ -183,46 +183,10 @@ if('serviceWorker' in navigator){
     <span id="db-numbers-text">91 fenomeni · 1.530 ingredienti · 33.696 connessioni · 6 calcolatori</span>
   </div>
 
-  <!-- DISCIPLINE -->
+  <!-- DISCIPLINE — griglia asimmetrica, Bar dominante (Gemini #3), popolata da /v1/discipline -->
   <div class="sec-label mtr-sec-label" id="ct-scegli-disc">Scegli la tua disciplina</div>
-  <div class="disc-list">
-    <div class="disc-item" onclick="selezionaDisciplina('bar')">
-      <div class="disc-txt"><div class="disc-n" id="disc-bar-nome">Bar</div><div class="disc-m" id="disc-bar-m">caricamento…</div><div class="disc-kw" id="disc-kw-bar"></div></div>
-      <div class="disc-chip" id="disc-bar-chip">—</div><div class="disc-arr">›</div>
-    </div>
-    <div class="disc-item" onclick="selezionaDisciplina('bakery')">
-      <div class="disc-txt"><div class="disc-n" id="disc-bakery-nome">Panificazione</div><div class="disc-m" id="disc-bakery-m">caricamento…</div><div class="disc-kw" id="disc-kw-bakery"></div></div>
-      <div class="disc-chip" id="disc-bakery-chip">—</div><div class="disc-arr">›</div>
-    </div>
-    <div class="disc-item" onclick="selezionaDisciplina('cucina')">
-      <div class="disc-txt"><div class="disc-n" id="disc-cucina-nome">Cucina</div><div class="disc-m" id="disc-cucina-m">caricamento…</div><div class="disc-kw" id="disc-kw-cucina"></div></div>
-      <div class="disc-chip" id="disc-cucina-chip">—</div><div class="disc-arr">›</div>
-    </div>
-    <div class="disc-item" onclick="selezionaDisciplina('caffetteria')">
-      <div class="disc-txt"><div class="disc-n" id="disc-caffe-nome">Caffè</div><div class="disc-m" id="disc-caffe-m">caricamento…</div><div class="disc-kw" id="disc-kw-caffe"></div></div>
-      <div class="disc-chip" id="disc-caffe-chip">—</div><div class="disc-arr">›</div>
-    </div>
-    <div class="disc-item" onclick="selezionaDisciplina('pasticceria')">
-      <div class="disc-txt"><div class="disc-n" id="disc-pasticceria-nome">Pasticceria</div><div class="disc-m" id="disc-pasticceria-m">caricamento…</div><div class="disc-kw" id="disc-kw-pasticceria"></div></div>
-      <div class="disc-chip" id="disc-pasticceria-chip">—</div><div class="disc-arr">›</div>
-    </div>
-    <div class="disc-item" onclick="selezionaDisciplina('gelateria')">
-      <div class="disc-txt"><div class="disc-n" id="disc-gelateria-nome">Gelateria</div><div class="disc-m" id="disc-gelateria-m">caricamento…</div><div class="disc-kw" id="disc-kw-gelateria"></div></div>
-      <div class="disc-chip" id="disc-gelateria-chip">—</div><div class="disc-arr">›</div>
-    </div>
-    <div class="disc-item" onclick="selezionaDisciplina('vino')">
-      <div class="disc-txt"><div class="disc-n" id="disc-vino-nome">Vino</div><div class="disc-m" id="disc-vino-m">caricamento…</div><div class="disc-kw" id="disc-kw-vino"></div></div>
-      <div class="disc-chip" id="disc-vino-chip">—</div><div class="disc-arr">›</div>
-    </div>
-    <div class="disc-item" onclick="selezionaDisciplina('birra')">
-      <div class="disc-txt"><div class="disc-n" id="disc-birra-nome">Birra</div><div class="disc-m" id="disc-birra-m">caricamento…</div><div class="disc-kw" id="disc-kw-birra"></div></div>
-      <div class="disc-chip" id="disc-birra-chip">—</div><div class="disc-arr">›</div>
-    </div>
-    <div class="disc-item pro-only" onclick="selezionaDisciplina('sicurezza')">
-      <div class="disc-txt"><div class="disc-n" id="ct-disc-sicurezza">Sicurezza alimentare</div><div class="disc-m" id="ct-disc-sicurezza-sub">HACCP · Aw · shelf life · zone pericolo</div></div>
-      <div class="disc-chip" style="color:var(--terra);border-color:var(--terra)">Pro</div><div class="disc-arr">›</div>
-    </div>
-  </div>
+  <div class="disc-dominante" id="disc-dominante"></div>
+  <div class="disc-griglia" id="disc-griglia"></div>
 
   <div class="principio-card" id="scopri-principio" style="display:none">
     <div class="princ-ey">principio del giorno</div>

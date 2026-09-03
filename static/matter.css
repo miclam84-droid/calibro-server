@@ -2585,3 +2585,23 @@ a:focus-visible,input:focus-visible{
 .crus-box-target,.calc-mirino,.stream-calc,.fen-mirino-num,.pal-header{
   background:#141D22!important;border-radius:4px!important;
 }
+
+/* ═══ GRIGLIA DISCIPLINE ASIMMETRICA — Bar dominante (Gemini #3) ═══ */
+.disc-dominante{margin:0 16px 12px}
+.disc-dom-card{width:100%;background:#245979;border:none;border-radius:4px;box-shadow:4px 4px 0 #141D22;padding:20px;text-align:left;cursor:pointer;display:block}
+.disc-dom-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #141D22}
+.disc-dom-top{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.disc-dom-ico{font-size:20px}
+.disc-dom-lab{font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9DC5E0}
+.disc-dom-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:30px;color:#fff;line-height:1;margin-bottom:14px}
+.disc-dom-conta{display:flex;align-items:baseline;gap:8px}
+.disc-dom-n{font-family:var(--mono,'IBM Plex Mono');font-weight:700;font-size:36px;color:#E8935A;line-height:1}
+.disc-dom-u{font-family:var(--sans,'Inter');font-size:14px;color:#EAF1F3}
+.disc-griglia{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 16px}
+.disc-mini{background:#fff;border:1px solid #141D22;border-radius:4px;box-shadow:3px 3px 0 rgba(20,29,34,.15);padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-height:88px;justify-content:space-between}
+.disc-mini:active{transform:translate(1px,1px);box-shadow:2px 2px 0 rgba(20,29,34,.15)}
+.disc-mini-ico{font-size:20px}
+.disc-mini-nome{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:15px;color:var(--ink,#141D22);line-height:1.1}
+.disc-mini-n{font-family:var(--mono,'IBM Plex Mono');font-size:11px;font-weight:600;color:var(--teal,#12545D)}
+.disc-mini-soon{opacity:.55;cursor:default}
+.disc-mini-soon .disc-mini-n{color:var(--terra,#C77B3F)}
