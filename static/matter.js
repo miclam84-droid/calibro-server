@@ -1267,8 +1267,8 @@ function apriNodo(id,nome,_daBack){
   fetch('/nodo?traccia=1',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),body:JSON.stringify({id})})
     .then(r=>r.json()).then(j=>{
       if(j && j.tipo_fenomeno && (j.principi||j.titolo)){ _renderSchedaFenomeno(j); }
-      else { renderRisp(nome,j,true); }
-      _aggiungiBackNodo();
+      else { renderRisp(nome,j,true); _aggiungiBackNodo(); }
+      setTimeout(_aggiungiBackNodo, 100);
     }).catch(()=>renderErr()).finally(()=>setBusy(false));
 }
 // aggiunge il "← Torna a [precedente]" in cima all'ultima scheda aperta, se lo stack non è vuoto
