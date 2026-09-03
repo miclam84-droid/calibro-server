@@ -1365,14 +1365,17 @@ def abbina(ingrediente):
     # VALIDAZIONE PLAUSIBILITÀ: un ingrediente vero ha vocali e non è una stringa casuale.
     # Evita di inventare abbinamenti per input senza senso (xyzabc, qwerty) — questione di credibilità.
     _ing_check = (ingrediente or "").lower().strip()
-    _vocali = sum(1 for c in _ing_check if c in "aeiouàèéìòù")
+    _lettere = [c for c in _ing_check if c.isalpha()]
+    _vocali = sum(1 for c in _lettere if c in "aeiouàèéìòù")
     _consec_cons = 0; _max_cons = 0
     for c in _ing_check:
         if c.isalpha() and c not in "aeiouàèéìòù":
             _consec_cons += 1; _max_cons = max(_max_cons, _consec_cons)
         else:
             _consec_cons = 0
-    _implausibile = (len(_ing_check) >= 4 and (_vocali == 0 or _max_cons >= 5
+    # rapporto vocali: un ingrediente vero ha almeno ~25% di vocali. "xyzabc" ne ha 1 su 6 = 17%.
+    _rapp_voc = (_vocali / len(_lettere)) if _lettere else 0
+    _implausibile = (len(_lettere) >= 4 and (_vocali == 0 or _max_cons >= 5 or _rapp_voc < 0.22
                      or _ing_check in ("qwerty", "qwertyuiop", "asdf", "asdfgh", "test", "aaaa", "xxxx")))
     if _implausibile:
         return jsonify({"ingrediente": ingrediente, "abbinamenti": [],
