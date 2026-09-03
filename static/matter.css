@@ -2811,3 +2811,13 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 
 /* fix: numero gigante calcolatore SEMPRE terracotta (specificità maggiore) */
 .calc-stepper input.calc-step-input,#ci-peso.calc-step-input{color:#C77B3F!important}
+
+/* ═══ POLISH FIX — sui nomi classe REALI del DOM ═══ */
+/* #1 Accedi (id reale #login-topbar-btn): Space Grotesk, non mono */
+#login-topbar-btn{font-family:'Space Grotesk',sans-serif!important;font-weight:600!important;font-size:11px!important;text-transform:uppercase!important;letter-spacing:0!important}
+/* #2 tab attiva (.tab-btn): un solo tratto terracotta, via il doppio bordo */
+.tab-bar,.tabs,.tab-btn-container,[class*=tab-bar]{border-bottom:1.5px solid #141D22!important}
+.tab-btn.active{border-bottom:2px solid #C77B3F!important;margin-bottom:-1.5px!important;box-shadow:none!important;position:relative;z-index:2}
+.tab-btn:not(.active){border-bottom:none!important;box-shadow:none!important}
+/* #4 card ingredienti (.calc-perc): ombra dura card-bench */
+.calc-perc{background:#fff!important;border:1.5px solid #141D22!important;border-radius:4px!important;box-shadow:4px 4px 0px rgba(20,29,34,.15)!important}
