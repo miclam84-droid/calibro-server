@@ -6400,9 +6400,46 @@ async function _ricettarioCarica(query){
     }).join('')+'</div>';
   }catch(e){ if(out) out.innerHTML='<div class="vista-empty">Errore.</div>'; }
 }
-function _ricettarioApri(id, nome){
-  // apre la scheda scientifica della ricetta canonica
-  if(typeof apriNodo==='function' && id){ chiudiVista(); apriNodo(id, nome||''); }
+async function _ricettarioApri(id, nome){
+  if(!id) return;
+  _apriVista(nome||'Ricetta', '<div class="gen-loading">'+_mirinoLoaderHtml()+'<div class="gen-txt">Apro la ricetta…</div></div>');
+  try{
+    var r=await fetch('/v1/ricetta/'+encodeURIComponent(id)+'/completa', {headers:_statoHeaders()});
+    var j=await r.json();
+    var ric=j.ricetta||j;
+    if(!ric || !ric.nome){ chiudiVista(); apriNodo(id, nome||''); return; }
+    mostraRicettaGen(ric, id);
+    // arricchimenti Parte D: badge variante, perché funziona, collegate
+    setTimeout(function(){ _arricchisciSchedaRicetta(ric); }, 100);
+  }catch(e){ chiudiVista(); apriNodo(id, nome||''); }
+}
+function _arricchisciSchedaRicetta(ric){
+  var sch=document.querySelector('#vista-body .rg-scheda'); if(!sch) return;
+  var e=_escV;
+  // badge "variante scientifica di"
+  if(ric.ricetta_madre_nome || ric.variante_di){
+    var madre=ric.ricetta_madre_nome||ric.variante_di;
+    var madreId=ric.parent_recipe_id||'';
+    var badge=document.createElement('div'); badge.className='rg-variante';
+    badge.innerHTML='🧬 Variante scientifica di: '+(madreId?'<span class="rg-variante-link" onclick="_ricettarioApri(\''+e(madreId)+'\',\''+e(String(madre))+'\')">'+e(madre)+'</span>':e(madre));
+    sch.insertBefore(badge, sch.firstChild);
+  }
+  // "Perché funziona"
+  if(ric.perche_funziona){
+    var pf=(typeof ric.perche_funziona==='object')?(ric.perche_funziona.spiegazione||JSON.stringify(ric.perche_funziona)):ric.perche_funziona;
+    var box=document.createElement('div'); box.className='rg-perche';
+    box.innerHTML='<div class="rg-perche-lab">Perché funziona</div><div class="rg-perche-txt">'+e(String(pf))+'</div>';
+    sch.appendChild(box);
+  }
+  // ricette collegate
+  if((ric.ricette_collegate||[]).length){
+    var coll=document.createElement('div'); coll.className='rg-collegate';
+    coll.innerHTML='<div class="rg-collegate-lab">Ricette collegate</div>'
+      + (ric.ricette_collegate||[]).slice(0,3).map(function(c){
+          return '<button class="rg-collegata" onclick="_ricettarioApri(\''+e(c.id||'')+'\',\''+e(String(c.nome||''))+'\')">'+e(c.nome||'')+' →</button>';
+        }).join('');
+    sch.appendChild(coll);
+  }
 }
 // ═══ RIUSO SCARTI / cross-utilization (#2) ═══
 // ═══ DOVE LO COMPRO — rendering multi-store (Amazon + Special Ingredients) ═══

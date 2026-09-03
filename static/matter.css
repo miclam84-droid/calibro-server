@@ -2760,3 +2760,14 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 .chat-salva-inline{margin-top:14px;background:#fff;border:1.5px solid #141D22;border-radius:0;box-shadow:2px 2px 0 #141D22;padding:8px 14px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;color:#141D22;cursor:pointer;transition:transform .12s}
 .chat-salva-inline:active{transform:translate(2px,2px);box-shadow:0 0 0}
 .chat-salva-inline.salvato{background:#E8EDED;color:#5A6C70;border-color:#B7C3C3;box-shadow:none}
+
+/* ═══ PARTE D — RICETTARIO (variante, perché funziona, collegate) ═══ */
+.rg-variante{background:#F0F0EE;border-bottom:1px solid #141D22;padding:8px 14px;margin:-16px -16px 14px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#245979;text-transform:uppercase;letter-spacing:.04em}
+.rg-variante-link{text-decoration:underline;cursor:pointer}
+.rg-perche{background:var(--l2,#E8EDED);border-left:3px solid #12545D;border-radius:0 4px 4px 0;padding:14px 16px;margin-top:18px}
+.rg-perche-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#12545D;margin-bottom:8px}
+.rg-perche-txt{font-family:'Inter',sans-serif;font-size:14px;color:#2A3A42;line-height:1.55}
+.rg-collegate{margin-top:18px}
+.rg-collegate-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5A6C70;margin-bottom:10px}
+.rg-collegata{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #141D22;border-radius:0;box-shadow:3px 3px 0 rgba(20,29,34,.15);padding:12px 14px;margin-bottom:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141D22;cursor:pointer}
+.rg-collegata:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(20,29,34,.15)}
