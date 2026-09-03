@@ -159,6 +159,17 @@ def _inietta_evidence(response):
                 data["evidence_label"] = {"A": "Dato molecolare verificato",
                     "B": "Profilo ereditato da ingrediente equivalente",
                     "C": "Suggerimento AI (non verificato molecolarmente)"}.get(_ev, "")
+                # CONFIDENCE SCORE 0-100 (correzione OpenAI): quanto Matter è sicuro dell'abbinamento.
+                # Distinto dall'evidence (da dove viene il dato). Combina overlap + livello evidenza.
+                _peso_ev = {"A": 1.0, "B": 0.75, "C": 0.5}.get(_ev, 0.5)
+                for _ab in data.get("abbinamenti", []):
+                    try:
+                        _ov = float(_ab.get("overlap", 0))
+                    except Exception:
+                        _ov = 0
+                    # overlap normalizzato (0-60+ composti → 0-100) × peso evidenza
+                    _base = min(100, (_ov / 60.0) * 100) if _ov > 0 else 55
+                    _ab["confidence"] = int(round(_base * _peso_ev))
                 response.set_data(_je.dumps(data, ensure_ascii=False))
     except Exception:
         pass
