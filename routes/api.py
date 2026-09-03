@@ -175,6 +175,19 @@ def _inietta_evidence(response):
                     _base = min(100, (_ov / 60.0) * 100) if _ov > 0 else 55
                     _ab["confidence"] = int(round(_base * _peso_ev))
                     _cambiato = True
+                # FILTRO CONFIDENCE (revisori): sotto 15 taglio via, 15-30 marco "debole".
+                _abb_filtrati = []
+                for _ab in data.get("abbinamenti", []):
+                    _cf = _ab.get("confidence", 50)
+                    if _cf < 15:
+                        continue  # troppo debole, non mostrare
+                    if _cf < 30:
+                        _ab["soglia_critica"] = True
+                        _ab["nota_soglia"] = "Affinità molecolare debole"
+                    _abb_filtrati.append(_ab)
+                if len(_abb_filtrati) != len(data.get("abbinamenti", [])):
+                    data["abbinamenti"] = _abb_filtrati
+                    _cambiato = True
                 if _cambiato:
                     response.set_data(_je.dumps(data, ensure_ascii=False))
     except Exception:
@@ -1897,6 +1910,17 @@ def abbina(ingrediente):
             if not nome_pulito or nome_pulito == "sconosciuto":
                 continue
             overlap = float(r[2]) if r[2] else 0
+            # ANTI-HUB (revisori): gli ingredienti-hub (tè nero, ecc.) con moltissimi collegamenti
+            # schiacciano gli abbinamenti rari. Penalizzo l'overlap in modo log-inverso alla diffusione.
+            import math as _math
+            try:
+                _to_id = r[0]
+                _n_link = db.execute("SELECT COUNT(*) FROM edges WHERE from_id=? AND relation='abbinamento_aromatico'", (_to_id,)).fetchone()
+                _cnt = (_n_link[0] if _n_link else 0) or 0
+                if _cnt > 250:
+                    overlap = overlap * (1.0 / _math.log10(_cnt))
+            except Exception:
+                pass
             abbinamenti.append({
                 "ingrediente": nome_pulito,
                 "composto": _fascia_affinita(overlap, _lang_out),
