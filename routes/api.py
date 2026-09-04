@@ -188,7 +188,14 @@ def _inietta_evidence(response):
                         _ov = float(_ab.get("overlap", 0))
                     except Exception:
                         _ov = 0
-                    _base = min(100, (_ov / 60.0) * 100) if _ov > 0 else 55
+                    # scala calibrata su overlap REALI (tipici 8-25, non 60): overlap 22+ = affinità
+                    # piena. Curva radice per non schiacciare i valori bassi. overlap 11 -> ~50 (media),
+                    # non più "debole" a torto.
+                    import math as _mh
+                    if _ov > 0:
+                        _base = min(100, (_mh.sqrt(_ov / 22.0)) * 100)
+                    else:
+                        _base = 55
                     _ab["confidence"] = int(round(_base * _peso_ev))
                     _cambiato = True
                 # FILTRO CONFIDENCE (revisori): sotto 15 taglio via, 15-30 marco "debole".
