@@ -261,3 +261,39 @@ def founding_posti():
             usati = 0
     rimasti = max(totali - usati, 0)
     return jsonify({"rimasti": rimasti, "totali": totali, "esauriti": rimasti == 0})
+
+
+# ── HOOK MATTER → GALILEO (predisposto, DISATTIVATO fino a quando Galileo ha Stripe) ──
+# Quando un utente Matter vuole "aprire il suo locale", questo avvia una Strategic Run su Galileo.
+# NON ATTIVO al lancio: Galileo deve prima avere il billing (Fase 1 roadmap Galileo). Attivare
+# mettendo GALILEO_HOOK_ATTIVO=1 su Railway quando Galileo è pronto a incassare.
+@bp.route("/v1/matter/galileo-run", methods=["POST"])
+def matter_avvia_galileo_run():
+    """Predisposto per il futuro: avvia una Strategic Run su Galileo dal contesto Matter.
+    DISATTIVATO finché Galileo non ha billing. Ritorna 503 con messaggio finché non è attivo."""
+    import os
+    if os.environ.get("GALILEO_HOOK_ATTIVO", "0") != "1":
+        return jsonify({
+            "attivo": False,
+            "messaggio": "La Strategic Run di Galileo sarà presto disponibile. Stiamo completando l'integrazione.",
+            "coming_soon": True
+        }), 503
+    # --- quando attivo (post-lancio, Galileo con Stripe): ---
+    body = request.json or {}
+    _galileo_url = os.environ.get("GALILEO_URL", "")
+    _galileo_secret = os.environ.get("GALILEO_SECRET", "")
+    if not _galileo_url or not _galileo_secret:
+        return jsonify({"errore": "Galileo non configurato"}), 503
+    try:
+        import urllib.request as _ur, json as _j
+        payload = _j.dumps({
+            "contesto": "matter",
+            "profilo": body.get("profilo", {}),
+            "tipo_run": body.get("tipo_run", "standard"),
+        }).encode()
+        req = _ur.Request(f"{_galileo_url}/v1/matter/avvia-run", data=payload,
+                          headers={"Content-Type": "application/json", "X-Galileo-Secret": _galileo_secret})
+        with _ur.urlopen(req, timeout=30) as r:
+            return jsonify(_j.loads(r.read().decode()))
+    except Exception as e:
+        return jsonify({"errore": "Galileo non raggiungibile", "dettaglio": str(e)[:100]}), 502
