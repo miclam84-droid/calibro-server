@@ -499,11 +499,46 @@ def _interpreta(nome, r):
     return r
 
 
+def _normalizza_parametri(nome, parametri):
+    """Mappa i nomi-alias che il frontend può mandare ai nomi VERI attesi dalle funzioni.
+    Rende /calcola tollerante: frontend e backend non devono avere nomi identici."""
+    if not isinstance(parametri, dict):
+        return parametri
+    p = dict(parametri)
+    # alias comuni -> nome vero, per calcolatore
+    _ALIAS = {
+        "idratazione_pane": {"farina": "farina_g", "acqua": "acqua_g", "peso_farina": "farina_g",
+                             "peso_acqua": "acqua_g", "flour": "farina_g", "water": "acqua_g"},
+        "scalatore_impasto": {"peso_totale": "peso_totale_g", "peso": "peso_totale_g",
+                              "totale": "peso_totale_g", "peso_impasto": "peso_totale_g",
+                              "perc": "percentuali", "percentuale": "percentuali"},
+        "conversione_teglie": {"base1": "base1_cm", "alt1": "alt1_cm", "base2": "base2_cm", "alt2": "alt2_cm",
+                              "larghezza1": "base1_cm", "altezza1": "alt1_cm",
+                              "larghezza2": "base2_cm", "altezza2": "alt2_cm"},
+        "food_cost_piatto": {"ingredienti_lista": "ingredienti", "voci": "ingredienti",
+                            "prezzo": "prezzo_vendita", "prezzo_menu": "prezzo_vendita"},
+        "diluizione": {"dil": "dil_perc", "diluizione": "dil_perc", "diluizione_perc": "dil_perc",
+                      "ingr": "ingredienti"},
+        "temperatura_servizio_vino": {"tipo": "tipo_vino", "vino": "tipo_vino", "temp": "temp_attuale_c",
+                                     "temperatura": "temp_attuale_c", "temp_attuale": "temp_attuale_c"},
+        "brix_to_abv": {"gradi_brix": "brix", "zucchero": "brix"},
+        "resa_calo_peso": {"peso_crudo": "peso_crudo_g", "crudo": "peso_crudo_g",
+                          "costo": "costo_kg", "costo_al_kg": "costo_kg", "calo": "calo_perc",
+                          "calo_percentuale": "calo_perc"},
+    }
+    mappa = _ALIAS.get(nome, {})
+    for alias, vero in mappa.items():
+        if alias in p and vero not in p:
+            p[vero] = p.pop(alias)
+    return p
+
+
 def esegui(nome: str, parametri: dict) -> dict:
     """Punto unico di ingresso. Chiamato da app.py con nome calcolo e parametri."""
     fn = CALCOLI.get(nome)
     if not fn:
         return {"errore": f"calcolo '{nome}' non trovato. Disponibili: {list(CALCOLI)}"}
+    parametri = _normalizza_parametri(nome, parametri)
     try:
         r = fn(**parametri)
         return _interpreta(nome, r)
