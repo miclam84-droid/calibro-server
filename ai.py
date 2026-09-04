@@ -662,6 +662,28 @@ def log_funnel(evento, user_id=None, email=None, meta=None, utm=None):
     except Exception:
         return None
 
+def log_errore_strutturato(endpoint, errore, contesto=None):
+    """Logging strutturato JSON su stderr (catturato da Railway) per gli endpoint critici.
+    In produzione, se un endpoint fallisce, la riga JSON isola errore+contesto+timestamp senza
+    dover decodificare il monolite. Non tocca la logica: solo osservabilità."""
+    try:
+        import json as _j, sys as _sys, datetime as _dt, traceback as _tb
+        riga = {
+            "livello": "ERRORE",
+            "ts": _dt.datetime.utcnow().isoformat() + "Z",
+            "endpoint": endpoint,
+            "errore": str(errore)[:300],
+            "tipo_errore": type(errore).__name__ if isinstance(errore, Exception) else "manuale",
+        }
+        if contesto:
+            riga["contesto"] = {k: str(v)[:120] for k, v in dict(contesto).items()}
+        if isinstance(errore, Exception):
+            riga["traceback"] = _tb.format_exc()[-400:]
+        print("MATTER_LOG " + _j.dumps(riga, ensure_ascii=False), file=_sys.stderr, flush=True)
+    except Exception:
+        pass  # il logging non deve mai rompere l'app
+
+
 def log_evento(tipo, domanda, fenomeni=None, esito=None):
     """Log minimo per osservabilità. Ritorna id del log per feedback (AC5)."""
     if not DATABASE_URL:

@@ -992,6 +992,14 @@ def calcola():
     if not nome:
         return jsonify({"errore": "campo 'calcolo' obbligatorio"}), 400
     risultato = Motore.esegui(nome, parametri)
+    # logging strutturato se il calcolo fallisce (osservabilità produzione)
+    if isinstance(risultato, dict) and "errore" in risultato:
+        try:
+            from ai import log_errore_strutturato
+            log_errore_strutturato("/calcola", risultato.get("errore"),
+                                    {"calcolo": nome, "parametri": list(parametri.keys()) if isinstance(parametri, dict) else parametri})
+        except Exception:
+            pass
     # trilingue: traduco i campi utente-facing (i numeri restano invariati)
     if lang in ("en", "es") and isinstance(risultato, dict) and "errore" not in risultato:
         try:
