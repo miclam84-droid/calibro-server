@@ -2352,14 +2352,16 @@ def _img_worker(solo_mancanti):
                 except Exception:
                     pass
                 img = cerca_immagine(m["nome"], disciplina=m["disc"], nome=m["nome"], rank=rank, ingredienti=_ings, evita_urls=_url_usate)
-                if img and img.get("url"):
-                    _url_usate.add(img["url"])  # marco la foto come usata: nessuna ripetizione
+                if img and img.get("url") and img["url"] not in _url_usate:
+                    # foto NUOVA (non già usata): la salvo. Se fosse un duplicato, lascio il blueprint.
+                    _url_usate.add(img["url"])
                     cred = credito_immagine(img["autore"], img.get("fonte_nome", "Pexels"))
                     db.execute("UPDATE ricette SET immagine=?, immagine_autore=?, immagine_url_fonte=? WHERE id=?",
                                (img["url"], cred, img["fonte"], m["id"]))
                     _IMG_STATO["fatte"] += 1
                     rank_disc[disc] = (rank + 1) % 5  # ruota tra i primi 5 risultati
                 else:
+                    # nessuna foto NUOVA disponibile -> lascio il blueprint (meglio che ripetere)
                     _IMG_STATO["errori"] += 1
             except Exception:
                 _IMG_STATO["errori"] += 1
