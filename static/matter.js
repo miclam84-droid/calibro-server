@@ -3861,10 +3861,10 @@ function _mirinoLoaderHtml(){
     + '<line x1="2" y1="24" x2="9" y2="24" stroke="#141D22" stroke-width="2.5" stroke-linecap="round"/>'
     + '<circle cx="24" cy="24" r="4" fill="#C77B3F"/></svg>';
 }
-async function _generaRicettaAsync(richiesta, titoloVista, _retry){
+async function _generaRicettaAsync(richiesta, titoloVista, _retry, _disciplina){
   if(!_isPro()){ const usate=_getDomande(); if(usate>=FREE_LIMIT){ apriPaywall(); return; } }
   _apriVista(titoloVista||'Creo la ricetta…', '<div class="gen-loading">'+_mirinoLoaderHtml()+'<div class="gen-txt">Sto creando la ricetta…<br><span class="gen-sub">Circa 15 secondi</span></div></div>');
-  var disc = localStorage.getItem('matter_station') || 'cucina';
+  var disc = _disciplina || localStorage.getItem('matter_station') || 'cucina';
   var jobId=null;
   try{
     var r=await fetch('/v1/genera-ricetta-async',{method:'POST',headers:_statoHeaders({'Content-Type':'application/json'}),
@@ -3882,13 +3882,13 @@ async function _generaRicettaAsync(richiesta, titoloVista, _retry){
       var pr=await fetch('/v1/genera-ricetta-stato/'+encodeURIComponent(jobId), {headers:_statoHeaders()});
       if(pr.status===404){
         // job scaduto: rilancio UNA volta l'intero processo
-        if(!_retry){ _generaRicettaAsync(richiesta, titoloVista, true); return; }
+        if(!_retry){ _generaRicettaAsync(richiesta, titoloVista, true, _disciplina); return; }
         _genRicErrore('Riprova tra poco.'); return;
       }
       var pj=await pr.json();
       if(pj.stato==='pronto' && pj.ricetta){ mostraRicettaGen(pj.ricetta); return; }
       if(pj.stato==='errore'){ _genRicErrore(pj.errore||'Non riesco a creare questo piatto.'); return; }
-      if(pj.stato==='non_trovato'){ if(!_retry){ _generaRicettaAsync(richiesta, titoloVista, true); return; } _genRicErrore('Riprova tra poco.'); return; }
+      if(pj.stato==='non_trovato'){ if(!_retry){ _generaRicettaAsync(richiesta, titoloVista, true, _disciplina); return; } _genRicErrore('Riprova tra poco.'); return; }
       setTimeout(poll, 2500);
     }catch(e){ setTimeout(poll, 3000); }
   };
@@ -4139,11 +4139,12 @@ let _mbTemplate = 'editorial';
 let _mbCategoria = 'drink_list';
 let _mbCategoriaLabel = 'Drink list';
 const _MB_CAT_CFG = {
-  drink_list:  {label:'Drink list',        disc:'bar',    min:8,  max:12, targetGuida:'diluizione 20-28%', unita:'drink'},
-  pizzeria:    {label:'Menù pizzeria',      disc:'bakery', min:6,  max:14, targetGuida:'idratazione 60-65%', unita:'pizze'},
-  ristorante:  {label:'Menù ristorante',    disc:'cucina', min:8,  max:20, targetGuida:'cuore 52-58°C',      unita:'piatti'},
-  carta_vini:  {label:'Carta dei vini',     disc:'cucina', min:10, max:40, targetGuida:'servizio 8-18°C',    unita:'etichette'},
-  carta_birre: {label:'Carta delle birre',  disc:'bar',    min:6,  max:20, targetGuida:'servizio 4-8°C',     unita:'birre'},
+  drink_list:  {label:'Drink list',        disc:'bar',         min:8,  max:12, targetGuida:'diluizione 20-28%', unita:'drink'},
+  pizzeria:    {label:'Menù pizzeria',      disc:'pizzeria',    min:6,  max:14, targetGuida:'idratazione 60-65%', unita:'pizze'},
+  pasticceria: {label:'Menù pasticceria',   disc:'pasticceria', min:6,  max:20, targetGuida:'zuccheri e strutture', unita:'dolci'},
+  ristorante:  {label:'Menù ristorante',    disc:'cucina',      min:8,  max:20, targetGuida:'cuore 52-58°C',      unita:'piatti'},
+  carta_vini:  {label:'Carta dei vini',     disc:'vino',        min:10, max:40, targetGuida:'servizio 8-18°C',    unita:'etichette'},
+  carta_birre: {label:'Carta delle birre',  disc:'birra',       min:6,  max:20, targetGuida:'servizio 4-8°C',     unita:'birre'},
 };
 function mbScegliCategoria(cat, label){
   _mbCategoria = cat;
