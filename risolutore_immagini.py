@@ -51,16 +51,10 @@ def risolvi_immagine(nome_piatto, ingrediente_chiave, foto_cloudinary_piatto=Non
     if foto_cloudinary_piatto:
         return {"url": foto_cloudinary_piatto, "tipo": "piatto", "autore": "Michele Lamagna"}
 
-    # 2) match del nome piatto tra i file foodiesfeed su Cloudinary
-    if lista_file_cloudinary:
-        slug_piatto = _slug(nome_piatto)
-        parole = [w for w in slug_piatto.split("-") if len(w) >= 4]
-        for f in lista_file_cloudinary:
-            fl = f.lower()
-            # match forte: una parola distintiva del piatto è nel nome file
-            for w in parole:
-                if w in fl:
-                    return {"url": _url(f), "tipo": "piatto", "autore": "foodiesfeed"}
+    # 2) [DISABILITATO] il match foodiesfeed sul nome-file era inaffidabile: assegnava foto sbagliate
+    #    (es. carbonara->seafood-spaghetti perché entrambe hanno "spaghetti"). Rimosso: le foto
+    #    vengono dalla cascata buona (Wikimedia/Pexels) o dall'ingrediente, mai dal matching furbo.
+    #    (blocco rimosso di proposito — non riattivare senza verifica pertinenza)
 
     # 3) FALLBACK: foto dell'ingrediente principale (mai sbagliata)
     chiave = (ingrediente_chiave or "").lower().strip()

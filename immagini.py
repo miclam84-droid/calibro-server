@@ -80,20 +80,25 @@ def _cloudinary_foto(rank=0, nome_ricetta="", disciplina=""):
         "birra": ("beer", "craft"),
     }
     ok_words = _DISC_OK.get((disciplina or "").lower(), ())
+    # parole GENERICHE che non bastano a identificare un piatto (causavano i mismatch:
+    # carbonara e amatriciana entrambe "spaghetti/pasta" -> stessa foto sbagliata).
+    _GENERICHE = {"pasta", "spaghetti", "penne", "risotto", "pizza", "pane", "bread", "cake",
+                  "soup", "salad", "sauce", "cream", "chicken", "beef", "fish", "rice", "dish",
+                  "food", "plate", "bowl", "fresh", "homemade", "italian"}
     best, best_score = None, 0
     for u in urls:
         fname = u.split("/")[-1].lower()
         fname_parole = set(_re.findall(r'[a-z]+', fname))
-        # match sul nome del piatto
-        match_nome = len(parole_ric & fname_parole)
-        # la foto è della disciplina giusta?
+        # match solo su parole DISTINTIVE (non generiche): evita carbonara->seafood-spaghetti
+        parole_distintive = (parole_ric & fname_parole) - _GENERICHE
+        match_nome = len(parole_distintive)
         disc_ok = any(w in fname for w in ok_words) if ok_words else True
-        if match_nome >= 1 and disc_ok:
+        if match_nome >= 2 and disc_ok:  # SEVERO: almeno 2 parole distintive in comune
             score = match_nome * 2 + (1 if disc_ok else 0)
             if score > best_score:
                 best, best_score = u, score
-    # match valido SOLO se nome forte + disciplina compatibile
-    if best and best_score >= 3:
+    # match valido SOLO se nome MOLTO forte (2+ parole distintive)
+    if best and best_score >= 5:
         return {"url": best, "autore": "", "fonte": best, "fonte_nome": "archivio"}
     return None
 
