@@ -1337,12 +1337,19 @@ async function _chiediStream(q){
 // non etichette stampatello. Markdown leggero + grassetti mirati.
 function _formattaRispostaChat(t){
   var e=_escV(t);
-  // i vecchi marcatori diventano separatori di paragrafo morbidi (non stampatello urlato)
-  e=e.replace(/\s*(PROBLEMA|PERCHÉ|PERCHE|NUMERO|MISURA|AZIONE)\s*:\s*/g, function(m,p){
-    return '</p><p class="chat-par">';
-  });
-  // markdown grassetto **parola** → <strong>
+  // heading markdown ### / ## / # → titoli di sezione (Space Grotesk)
+  e=e.replace(/^#{1,6}\s*(.+)$/gm, function(m,txt){ return '</p><h4 class="chat-h">'+txt.replace(/:$/,'')+'</h4><p class="chat-par">'; });
+  // i vecchi marcatori PROBLEMA/PERCHÉ → separatori di paragrafo
+  e=e.replace(/\s*(PROBLEMA|PERCHÉ|PERCHE|NUMERO|MISURA|AZIONE)\s*:\s*/g, function(m,p){ return '</p><p class="chat-par">'; });
+  // grassetto **testo** → <strong>
   e=e.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  // corsivo *testo* (singolo, non già consumato) → <em>
+  e=e.replace(/(^|[^*])\*([^*\n]+)\*($|[^*])/g,'$1<em>$2</em>$3');
+  // liste numerate "1. " a inizio riga → item
+  e=e.replace(/^\s*(\d+)\.\s+(.+)$/gm, '<span class="chat-li"><b>$1.</b> $2</span>');
+  // bullet "- " o "• " → item col punto terracotta
+  e=e.replace(/^\s*[-•]\s+(.+)$/gm, '<span class="chat-li chat-li-bullet">$1</span>');
+  // paragrafi
   e=e.replace(/\n\n/g,'</p><p class="chat-par">').replace(/\n/g,'<br>');
   return '<p class="chat-par">'+e+'</p>';
 }
@@ -1636,7 +1643,7 @@ function renderRisp(domanda,j,fromNode){
     const rich = (j._richiesta||domanda||'').replace(/'/g,"\\'");
     const card=document.createElement('div');card.className='scheda';
     card.innerHTML=`<div class="s-q"><b>${esc(domanda)}</b></div>
-      <div class="s-body" style="padding-bottom:6px">${esc(j.risposta)}</div>
+      <div class="s-body" style="padding-bottom:6px">${_formattaRispostaChat(j.risposta)}</div>
       <button class="rg-btn rg-btn-salva" style="margin:4px 14px 14px;width:calc(100% - 28px)" onclick="_generaDaChat('${rich}')">Genera scheda ricetta →</button>`;
     document.getElementById('schede').prepend(card);
     card.scrollIntoView({behavior:'smooth',block:'start'});
