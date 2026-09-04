@@ -198,18 +198,16 @@ def _inietta_evidence(response):
                         _base = 55
                     _ab["confidence"] = int(round(_base * _peso_ev))
                     _cambiato = True
-                # FILTRO CONFIDENCE (revisori): sotto 15 taglio via, 15-30 marco "debole".
-                _abb_filtrati = []
+                # RANKING A 3 LIVELLI (revisori): mai "allarme debole", ma livelli positivi.
+                # A=forte, B=interessante, C=esplorazione creativa (dichiarata, non un difetto).
                 for _ab in data.get("abbinamenti", []):
                     _cf = _ab.get("confidence", 50)
-                    if _cf < 15:
-                        continue  # troppo debole, non mostrare
-                    if _cf < 30:
-                        _ab["soglia_critica"] = True
-                        _ab["nota_soglia"] = "Affinità molecolare debole"
-                    _abb_filtrati.append(_ab)
-                if len(_abb_filtrati) != len(data.get("abbinamenti", [])):
-                    data["abbinamenti"] = _abb_filtrati
+                    if _cf >= 55:
+                        _ab["livello"] = "A"; _ab["livello_nome"] = "Compatibilità forte"
+                    elif _cf >= 30:
+                        _ab["livello"] = "B"; _ab["livello_nome"] = "Compatibilità interessante"
+                    else:
+                        _ab["livello"] = "C"; _ab["livello_nome"] = "Esplorazione creativa"
                     _cambiato = True
                 if _cambiato:
                     response.set_data(_je.dumps(data, ensure_ascii=False))
