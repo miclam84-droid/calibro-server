@@ -76,8 +76,23 @@ def bilanciamento_sour(spirit_vol, spirit_abv, agrume_vol, agrume_acid_perc,
     }
 
 
-def idratazione_pane(farina_g, acqua_g) -> dict:
-    """Baker's % — idratazione impasto."""
+def idratazione_pane(farina_g=None, acqua_g=None, peso_totale=None, idratazione=None) -> dict:
+    """Baker's % — idratazione impasto. Due modi:
+    (a) dati farina_g + acqua_g -> calcola la % di idratazione;
+    (b) dati peso_totale + idratazione (%) -> calcola farina e acqua (calcolo inverso).
+    Così funziona con entrambi i formati che il frontend può mandare."""
+    # modo (b): peso totale + % idratazione -> ricavo farina e acqua
+    if (farina_g is None or acqua_g is None) and peso_totale is not None and idratazione is not None:
+        try:
+            _pt = float(peso_totale); _idr = float(idratazione)
+            # peso_totale = farina + acqua = farina * (1 + idr/100)  -> farina = pt / (1 + idr/100)
+            farina_g = _pt / (1 + _idr / 100.0)
+            acqua_g = _pt - farina_g
+            farina_g = round(farina_g, 1); acqua_g = round(acqua_g, 1)
+        except Exception:
+            return {"errore": "peso_totale/idratazione non validi"}
+    if farina_g is None or acqua_g is None:
+        return {"errore": "servono farina_g+acqua_g oppure peso_totale+idratazione"}
     if farina_g <= 0:
         return {"errore": "farina zero"}
     idr = acqua_g / farina_g * 100
