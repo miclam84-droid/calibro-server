@@ -43,7 +43,17 @@ TEMP_SERVIZIO_DRINK = {
     "highball": {"min": 4, "max": 8, "nota": "Long drink: 4-8°C, servito con ghiaccio abbondante."},
 }
 
-# ── BAR: cocktail IBA canonici con proporzioni VERE (estratto — i più comuni) ──
+# ── BAR: parametri tecnici avanzati (fonte: Dave Arnold, pratica professionale) ──
+PARAMETRI_BAR = {
+    "sciroppo semplice":   {"brix": "1:1 = ~50 Brix, 2:1 = ~65 Brix", "nota": "1:1 (zucchero:acqua) più versatile; 2:1 (rich) più stabile e denso, meno diluizione nel drink."},
+    "carbonazione":        {"target": "2.5-4 volumi CO2 (30-55 psi a 4°C)", "nota": "Per drink alla spina/frizzanti. Più freddo = più CO2 disciolta. 3-4 volumi per un frizzante deciso."},
+    "acidita drink":       {"target": "0.7-0.9% acidità titolabile nel drink finito", "nota": "Bilanciamento sour: il lime è ~6% acido, il limone ~5%. Un sour equilibrato chiude intorno a 0.8%."},
+    "cordiale":            {"target": "acido citrico/malico 5-6% per simulare l'agrume, zucchero 50-66%", "nota": "Cordiale = agrume stabile e shelf-stable. Bilanciare acido e zucchero come il succo fresco."},
+    "shrub":               {"target": "aceto 1:1 con frutta+zucchero, macerazione 2-7 giorni", "nota": "Conserva acida di frutta. L'aceto sostituisce parte dell'agrume."},
+    "shake time":          {"target": "10-15 secondi di shake energico", "nota": "Tempo di shake per raffreddamento e diluizione ottimali. Oltre 15s non migliora, diluisce solo."},
+}
+
+
 # Fonte: IBA Official Cocktails. Le PROPORZIONI non sono copyright (sono dati/formule).
 COCKTAIL_IBA = {
     "negroni":          {"ricetta": "30ml gin, 30ml vermouth rosso, 30ml bitter Campari", "tecnica": "stirred", "note": "Parti uguali 1:1:1. Guarnizione arancia."},
@@ -56,6 +66,21 @@ COCKTAIL_IBA = {
     "margarita":        {"ricetta": "50ml tequila, 20ml Cointreau, 15ml succo lime", "tecnica": "shaken", "note": "Bordo sale opzionale."},
     "spritz":           {"ricetta": "60ml Aperol, 90ml prosecco, spruzzo soda", "tecnica": "build", "note": "3-2-1: prosecco-Aperol-soda. Fetta d'arancia."},
     "aperol spritz":    {"ricetta": "60ml Aperol, 90ml prosecco, spruzzo soda", "tecnica": "build", "note": "Servire con ghiaccio abbondante e arancia."},
+    "boulevardier":     {"ricetta": "45ml bourbon, 30ml vermouth rosso, 30ml Campari", "tecnica": "stirred", "note": "Il Negroni col whisky. Scorza d'arancia o ciliegia."},
+    "mojito":           {"ricetta": "45ml rum bianco, 30ml lime, 6 foglie menta, 2 cucchiaini zucchero, soda", "tecnica": "build", "note": "Pestare menta e zucchero delicatamente, mai stracciare le foglie."},
+    "whisky sour":      {"ricetta": "45ml bourbon, 30ml succo limone, 15ml sciroppo zucchero, albume (opz.)", "tecnica": "shaken", "note": "Dry shake se con albume. Diluizione shaken 35-42%."},
+    "cosmopolitan":     {"ricetta": "40ml vodka citron, 15ml Cointreau, 15ml lime, 30ml succo mirtillo rosso", "tecnica": "shaken", "note": "Scorza di limone flambé opzionale."},
+    "espresso martini": {"ricetta": "50ml vodka, 30ml caffè espresso, 10ml sciroppo zucchero, 10ml liquore al caffè", "tecnica": "shaken", "note": "Espresso caldo fresco, shakerare forte per la schiuma."},
+    "gin tonic":        {"ricetta": "50ml gin, 100-150ml tonica", "tecnica": "build", "note": "Ghiaccio abbondante, la tonica fredda. Guarnizione secondo le botaniche del gin."},
+    "aviation":         {"ricetta": "45ml gin, 15ml maraschino, 15ml succo limone, 1 cucchiaino Crème de Violette", "tecnica": "shaken", "note": "Colore azzurro dalla violetta. Ciliegia."},
+    "mai tai":          {"ricetta": "30ml rum ambrato, 30ml rum scuro, 15ml orange curaçao, 15ml orgeat, 30ml lime", "tecnica": "shaken", "note": "Menta e lime a guarnire. Bilanciamento agrume-mandorla."},
+    "penicillin":       {"ricetta": "60ml scotch, 22ml lime, 22ml sciroppo miele-zenzero, float di scotch torbato", "tecnica": "shaken", "note": "Zenzero fresco nello sciroppo. Il torbato in superficie."},
+    "paloma":           {"ricetta": "50ml tequila, 100ml soda al pompelmo, 15ml lime, pizzico sale", "tecnica": "build", "note": "Più bevuto della Margarita in Messico."},
+    "french 75":        {"ricetta": "30ml gin, 15ml succo limone, 15ml sciroppo zucchero, 60ml champagne", "tecnica": "shaken+top", "note": "Shakerare gin/limone/zucchero, poi champagne. Flûte."},
+    "bellini":          {"ricetta": "50ml purea di pesca bianca, 100ml prosecco", "tecnica": "build", "note": "Inventato all'Harry's Bar di Venezia. Pesca bianca fresca."},
+    "moscow mule":      {"ricetta": "45ml vodka, 15ml lime, 120ml ginger beer", "tecnica": "build", "note": "Servito in tazza di rame. Ghiaccio abbondante."},
+    "sidecar":          {"ricetta": "50ml cognac, 20ml Cointreau, 20ml succo limone", "tecnica": "shaken", "note": "Bordo zucchero opzionale."},
+    "mint julep":       {"ricetta": "60ml bourbon, 4-5 foglie menta, 1 cucchiaino sciroppo zucchero, ghiaccio tritato", "tecnica": "build", "note": "Tazza di metallo ghiacciata, ghiaccio tritato a montagnetta."},
 }
 
 
@@ -81,4 +106,8 @@ def grounding_per_richiesta(richiesta, disciplina):
         for tecnica, par in DILUIZIONE_TECNICA.items():
             if tecnica in r:
                 note.append(f"DILUIZIONE {tecnica.upper()}: {par['min']}-{par['max']}%. {par['nota']}")
+        for par_nome, par in PARAMETRI_BAR.items():
+            if any(w in r for w in par_nome.split()):
+                _v = par.get("brix") or par.get("target") or ""
+                note.append(f"{par_nome.upper()}: {_v}. {par['nota']}")
     return note
