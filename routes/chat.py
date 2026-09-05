@@ -574,6 +574,18 @@ def chiedi():
                 domanda_arricchita = _ctx_r + domanda
 
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
+    # GROUNDING BAR/BAKERY nella CHAT: se la domanda riguarda un cocktail/pane/piatto coperto,
+    # inietto i parametri VERI (IBA, Hamelman, Dave Arnold) così la chat diagnostica NON sbaglia
+    # (es. Negroni sbagliato = spumante, segale = 75-90%). Il fossato n.1 deve avere i dati giusti.
+    try:
+        from grounding_bar_bakery import grounding_per_richiesta
+        _gnd = grounding_per_richiesta(domanda, "")
+        if _gnd:
+            prompt = prompt + ("\n\nPARAMETRI VERIFICATI DA FONTI PROFESSIONALI (usa ESATTAMENTE questi "
+                               "se pertinenti, sono corretti e NON negoziabili):\n"
+                               + "\n".join(f"- {g}" for g in _gnd[:6]) + "\n")
+    except Exception:
+        pass
     # SPRINT 1 — retrieval allargato: aggiungo al prompt le ricette e gli abbinamenti pertinenti,
     # così la chat non sa solo di fenomeni ma sa rispondere anche su piatti e abbinamenti (specialista).
     try:
@@ -730,6 +742,13 @@ def chiedi_stream():
             if not contesto:
                 contesto = cerca_contesto(db, domanda)
             prompt = costruisci_prompt(domanda, contesto, lang=lang)
+            try:
+                from grounding_bar_bakery import grounding_per_richiesta
+                _gnd = grounding_per_richiesta(domanda, "")
+                if _gnd:
+                    prompt = prompt + ("\n\nPARAMETRI VERIFICATI DA FONTI PROFESSIONALI (usa ESATTAMENTE questi se pertinenti):\n" + "\n".join(f"- {g}" for g in _gnd[:6]) + "\n")
+            except Exception:
+                pass
             for _fn in (lambda: _contesto_ricette_abbinamenti(db, domanda),
                         lambda: _contesto_memoria_utente(device_id),
                         lambda: _contesto_knowledge_module(domanda, contesto),
