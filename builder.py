@@ -420,6 +420,39 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
                 ricetta["punto_critico"] = f"Il parametro da non sbagliare{_num_txt}."
             else:
                 ricetta["punto_critico"] = "La temperatura di cottura e i tempi decidono la riuscita: verificali con la sonda, non a occhio."
+        # FALLBACK NUMERI: mai lasciare 'numeri' vuoto o povero (< 2 valori). È il problema di
+        # fiducia n.1 (un risotto senza numeri fa capire che l'app non sa il mestiere).
+        _num = ricetta.get("numeri")
+        if not isinstance(_num, dict):
+            _num = {}
+        if len(_num) < 2:
+            _nome_l = (ricetta.get("nome") or richiesta or "").lower()
+            _disc = disciplina or ""
+            # numeri sensati per famiglia di piatto (conoscenza professionale, non inventati a caso)
+            _defaults = {}
+            if any(w in _nome_l for w in ("pizza", "focaccia")):
+                _defaults = {"idratazione": "60-65%", "lievitazione": "8-24h a 18-22°C", "cottura": "430-485°C per 60-90s"}
+            elif any(w in _nome_l for w in ("pane", "pagnotta", "baguette", "ciabatta")):
+                _defaults = {"idratazione": "65-75%", "lievitazione": "3-24h", "cottura in forno": "230-250°C"}
+            elif any(w in _nome_l for w in ("risotto",)):
+                _defaults = {"tostatura riso": "2-3 min a fuoco vivo", "cottura": "16-18 min", "mantecatura": "55-60°C fuori dal fuoco"}
+            elif any(w in _nome_l for w in ("brasato", "guancia", "stufato", "spezzatino")):
+                _defaults = {"temperatura brasatura": "70-90°C", "tempo": "2-3h", "riposo": "15-20 min"}
+            elif any(w in _nome_l for w in ("crema", "crème", "creme", "zabaione", "custard")):
+                _defaults = {"coagulazione tuorlo": "82-84°C", "cottura a bagnomaria": "70-80°C"}
+            elif any(w in _nome_l for w in ("meringa", "spuma", "mousse")):
+                _defaults = {"montaggio albumi": "temperatura ambiente", "zucchero": "50-60g per albume"}
+            elif any(w in _nome_l for w in ("gelato", "sorbetto")):
+                _defaults = {"mantecatura": "-8 a -10°C", "zuccheri": "16-22%", "servizio": "-12 a -14°C"}
+            elif _disc == "bar" or any(w in _nome_l for w in ("cocktail", "drink", "sour", "negroni")):
+                _defaults = {"diluizione": "20-25%", "temperatura servizio": "4-6°C"}
+            else:
+                _defaults = {"temperatura cottura": "verifica con sonda", "tempo di riposo": "5-10 min"}
+            # unisco i default mancanti a quelli già presenti (non sovrascrivo l'AI)
+            for _k, _v in _defaults.items():
+                if _k not in _num and len(_num) < 4:
+                    _num[_k] = _v
+            ricetta["numeri"] = _num
         return ricetta
     except _j.JSONDecodeError as e:
         return {"errore": f"JSON non valido: {e}", "raw": raw[:300] if 'raw' in dir() else ""}
