@@ -40,6 +40,13 @@ FORMULE_PANE = {
     "brioche":       {"formula": "farina 100%, uova 50%, burro 50-60%, zucchero 12-15%, latte 20%, lievito", "nota": "Grande lievitato arricchito. Burro freddo incorporato a impasto sviluppato."},
     "croissant":     {"formula": "farina 100%, acqua 50%, burro tourage 50%, zucchero 10%, lievito", "nota": "Sfogliatura: 3 pieghe da 3. Burro plastico a 14-16°C. Lievitazione finale 26-28°C."},
     "panettone":     {"formula": "farina forte W380 100%, madre 30%, burro 25%, tuorli 25%, zucchero 25%, sospensione uvetta/canditi", "nota": "Doppio impasto, lievito madre, 2 giorni. Il grande lievitato più difficile."},
+    "pane in cassetta": {"formula": "farina 100%, acqua 60-65%, latte 10%, burro 5%, zucchero 5%, lievito 2%", "nota": "Mollica fitta e soffice. Stampo chiuso per la forma regolare."},
+    "grissini":      {"formula": "farina 100%, acqua 45-50%, olio 8-10%, sale 2%, lievito 1%", "nota": "Idratazione bassa, stirati sottili. Cottura secca e croccante."},
+    "pane carasau":  {"formula": "semola 100%, acqua 45-50%, sale, lievito", "nota": "Sfoglia sottilissima sarda, doppia cottura, si separa in due dischi."},
+    "bagel":         {"formula": "farina forte 100%, acqua 55-60%, sale 2%, malto 3%, lievito", "nota": "Bollitura in acqua+malto prima della cottura: crosta lucida e mollica gommosa."},
+    "pretzel":       {"formula": "farina 100%, acqua 55-60%, burro 5%, sale, lievito", "nota": "Bagno in soluzione alcalina (soda) prima della cottura: crosta scura e sapore tipico."},
+    "pizza napoletana": {"formula": "farina 00 W260-320 100%, acqua 58-62%, sale 2.5-3%, lievito 0.1-0.3%", "nota": "Idratazione media, lievitazione 8-24h. Forno 430-485°C, 60-90s. Disciplinare STG."},
+    "pizza romana":  {"formula": "farina 100%, acqua 70-80%, olio 2-3%, sale 2%, lievito", "nota": "Alta idratazione, tonda sottile e croccante o in teglia. Lievitazione lunga."},
 }
 
 
@@ -107,6 +114,18 @@ COCKTAIL_IBA = {
     "pisco sour":       {"ricetta": "60ml pisco, 22ml lime, 22ml sciroppo, albume, dash Angostura", "tecnica": "shaken", "note": "Dry shake. Angostura in gocce sulla schiuma."},
     "bramble":          {"ricetta": "50ml gin, 22ml limone, 12ml sciroppo, 15ml crème de mûre", "tecnica": "build", "note": "La mora (mûre) colata sopra il ghiaccio tritato, effetto sanguinello."},
     "dark n stormy":    {"ricetta": "60ml rum scuro, 100ml ginger beer, 10ml lime", "tecnica": "build", "note": "Il rum scuro galleggia sul ginger beer (la 'tempesta')."},
+    "tom collins":      {"ricetta": "45ml gin, 30ml limone, 15ml sciroppo zucchero, soda", "tecnica": "build", "note": "Long drink dissetante. Ghiaccio e soda a completare."},
+    "gimlet":           {"ricetta": "60ml gin, 15ml lime cordial", "tecnica": "shaken", "note": "Storicamente col lime cordial (Rose's). Secco e agrumato."},
+    "bloody mary":      {"ricetta": "45ml vodka, 90ml succo pomodoro, 15ml limone, Worcestershire, Tabasco, sale, pepe", "tecnica": "build/roll", "note": "Speziato. Sedano a guarnire. Roll invece di shake per non schiumare."},
+    "irish coffee":     {"ricetta": "40ml whiskey irlandese, caffè caldo, 1 cucchiaino zucchero, panna leggera", "tecnica": "build", "note": "Panna semi-montata galleggiante. Bere il caffè caldo attraverso la panna fredda."},
+    "singapore sling":  {"ricetta": "30ml gin, 15ml cherry brandy, 7ml Cointreau, 7ml Benedictine, succo ananas, lime, granatina, Angostura", "tecnica": "shaken", "note": "Cocktail tiki complesso del Raffles Hotel."},
+    "pina colada":      {"ricetta": "50ml rum bianco, 30ml crema di cocco, 90ml succo ananas", "tecnica": "blend", "note": "Frullato col ghiaccio. Cremoso e tropicale."},
+    "zombie":           {"ricetta": "rum in blend (bianco/ambrato/scuro 151), lime, falernum, angostura, assenzio, granatina", "tecnica": "shaken", "note": "Tiki fortissimo. Max 2 per persona (regola storica)."},
+    "grasshopper":      {"ricetta": "30ml crème de menthe, 30ml crème de cacao, 30ml panna", "tecnica": "shaken", "note": "Dessert cocktail cremoso alla menta."},
+    "white lady":       {"ricetta": "40ml gin, 30ml Cointreau, 20ml limone", "tecnica": "shaken", "note": "Elegante e agrumato. Albume opzionale per la texture."},
+    "rusty nail":       {"ricetta": "45ml scotch, 25ml Drambuie", "tecnica": "build", "note": "Semplice e forte. Sul ghiaccio, scorza di limone."},
+    "b52":              {"ricetta": "20ml Kahlua, 20ml Baileys, 20ml Grand Marnier", "tecnica": "layer", "note": "Stratificato per densità: Kahlua sotto, poi Baileys, poi Grand Marnier."},
+    "americano":        {"ricetta": "30ml Campari, 30ml vermouth rosso, spruzzo di soda", "tecnica": "build", "note": "L'Americano ha la SODA; il Negroni sbagliato ha lo spumante. Non confonderli."},
 }
 
 
