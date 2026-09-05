@@ -175,6 +175,26 @@ PARAMETRI_GELATO = {
 }
 
 
+# ── ABBINAMENTI ingredienti bar/bakery (colma i buchi del grafo Ahn: whisky=0, vermouth=3...) ──
+# Fonte: pratica di mixology e panificazione professionale.
+ABBINAMENTI_INGREDIENTI = {
+    "whisky": "agrumi (limone, arancia), miele, zenzero, mela, ciliegia, vermouth, caffè, cioccolato fondente, torba/affumicato, chiodi di garofano, cannella.",
+    "whiskey": "agrumi, miele, zenzero, mela, ciliegia, vermouth, caffè, spezie dolci.",
+    "vermouth": "gin, whisky, Campari/bitter, agrumi, oliva, erbe aromatiche, soda, prosecco.",
+    "gin": "tonica, agrumi, ginepro, cetriolo, basilico, vermouth, sambuco, cardamomo, lime.",
+    "rum": "lime, menta, cocco, ananas, zucchero di canna, zenzero, caffè, cannella, vaniglia.",
+    "tequila": "lime, pompelmo, agave, peperoncino, sale, arancia, pomodoro.",
+    "vodka": "agrumi, mirtillo rosso, pomodoro, caffè, pepe, zenzero (neutra: si sposa con tutto).",
+    "campari": "vermouth, arancia, gin, prosecco, pompelmo, soda.",
+    "lievito madre": "farine (grano, segale, farro), acqua, sale, tempo. Aroma: acidità lattica/acetica, note di nocciola e crosta.",
+    "segale": "kummel/carvi, coriandolo, finocchio, miele, frutta secca, formaggi stagionati, salumi.",
+    "lime": "rum, tequila, gin, menta, cocco, coriandolo, peperoncino, zenzero, soda.",
+    "vermouth rosso": "gin, whisky, Campari, arancia, ciliegia, chinotto.",
+    "amaro": "caffè, cioccolato, arancia, panna, soda, agrumi canditi.",
+    "caffè": "cioccolato, vaniglia, caramello, nocciola, cardamomo, cannella, latte, rum, whisky.",
+}
+
+
 def grounding_per_richiesta(richiesta, disciplina):
     """Restituisce i parametri VERI pertinenti alla richiesta, da iniettare nel prompt del generatore
     come ancora di verità. Impedisce gli errori catastrofici (segale 60%, Negroni senza spumante)."""
@@ -238,4 +258,8 @@ def grounding_per_richiesta(richiesta, disciplina):
             if nome in r or (nome == "gelato base" and "gelato" in r):
                 _dett = " · ".join(f"{k}: {v}" for k, v in par.items() if k != "nota")
                 note.append(f"GELATO {nome.upper()}: {_dett}. {par['nota']}")
+    # ABBINAMENTI ingredienti bar/bakery (colma i buchi del grafo Ahn su whisky, vermouth, ecc.)
+    for ing, abb in ABBINAMENTI_INGREDIENTI.items():
+        if ing in r:
+            note.append(f"ABBINAMENTI {ing.upper()}: {abb}")
     return note
