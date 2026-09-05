@@ -1166,7 +1166,7 @@ a:focus-visible,input:focus-visible{
 .bridge-ecosistema .bridge-cta{background:var(--cifra-p300);color:var(--cifra-p700)}
 
 /* ═══════════ MIRINO OPERATIVO — il loop VEDI→MISURA→CONFRONTA→DECIDI→RIMISURA ═══════════ */
-:root{ --target-green:#587A68; --target-green-bg:rgba(88,122,104,.18); --err-soft:rgba(20,29,34,.06); }
+:root{ --target-green:#2C6E5A; --target-green-bg:rgba(88,122,104,.18); --err-soft:rgba(20,29,34,.06); }
 .mirino{background:var(--paper-hi);border:var(--border-soft);border-radius:var(--radius-card);padding:20px;box-shadow:var(--shadow-card);margin:14px 0}
 .mirino-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
 .mirino-lab{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--science);flex-shrink:0}
@@ -1286,7 +1286,7 @@ a:focus-visible,input:focus-visible{
 .ma-nome{font-size:26px;font-weight:700;color:#1a1a1a}
 .ma-voce{margin-bottom:18px}
 .ma-voce-nome{font-size:17px;font-weight:600;color:#1a1a1a;display:flex;align-items:center;gap:6px}
-.ma-verif{color:#587A68;font-size:13px}
+.ma-verif{color:#2C6E5A;font-size:13px}
 .ma-voce-tgt{font-family:var(--mono);font-size:11px;color:#b0651f;margin-top:2px}
 .ma-foot{text-align:center;margin-top:28px;padding-top:16px;border-top:1px solid rgba(20,29,34,.12);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#8a7a6a}
 /* i 3 template: cambiano font e spirito */
@@ -2197,7 +2197,7 @@ a:focus-visible,input:focus-visible{
 /* A6 — badge robustezza proposte */
 .mbv-rob{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono,'IBM Plex Mono');font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin-left:8px}
 .mbv-rob-dot{width:7px;height:7px;border-radius:50%}
-.mbv-rob-forte{color:#1a6e3a;background:rgba(38,140,74,.12)} .mbv-rob-forte .mbv-rob-dot{background:#268c4a}
+.mbv-rob-forte{color:#2C6E5A;background:rgba(38,140,74,.12)} .mbv-rob-forte .mbv-rob-dot{background:#2C6E5A}
 .mbv-rob-media{color:#8a6d1a;background:rgba(199,159,63,.14)} .mbv-rob-media .mbv-rob-dot{background:#c79f3f}
 .mbv-rob-esplorare{color:#5A6C70;background:var(--l2,#E8EDED)} .mbv-rob-esplorare .mbv-rob-dot{background:#9AA8AC}
 
@@ -2218,9 +2218,9 @@ a:focus-visible,input:focus-visible{
 /* #3 drink cost giudizio */
 .dc-giudizio{border-top:1px solid var(--border,#B7C3C3);margin-top:4px;padding-top:8px;font-weight:600}
 .dc-verdetto{font-family:var(--mono,'IBM Plex Mono');font-weight:700;text-transform:uppercase;font-size:11px;padding:2px 8px;border-radius:5px}
-.dc-ottimo{color:#1a6e3a;background:rgba(38,140,74,.12)}
+.dc-ottimo{color:#2C6E5A;background:rgba(38,140,74,.12)}
 .dc-buono{color:#8a6d1a;background:rgba(199,159,63,.14)}
-.dc-alto{color:#a5372a;background:rgba(199,80,60,.12)}
+.dc-alto{color:#A5432A;background:rgba(199,80,60,.12)}
 
 /* ═══ CALCOLATORI 2.0 ═══ */
 .calc-intro{font-size:14px;color:var(--ink-muted,#3D4A50);line-height:1.5;margin-bottom:16px}
@@ -2294,11 +2294,11 @@ a:focus-visible,input:focus-visible{
 .pal-opz{width:100%;min-height:52px;text-align:left;padding:12px 16px;border:1px solid var(--border,#B7C3C3);border-radius:11px;background:var(--l3,#F2F6F6);font-family:var(--sans,'Inter');font-size:15px;color:var(--ink,#131C21);cursor:pointer;transition:all .15s}
 .pal-opz:active{transform:scale(.99)}
 .pal-opz:disabled{cursor:default}
-.pal-opz.giusta{background:rgba(38,140,74,.14);border-color:#268c4a;color:#1a6e3a;font-weight:600}
-.pal-opz.sbagliata{background:rgba(199,80,60,.12);border-color:#c7503c;color:#a5372a}
+.pal-opz.giusta{background:rgba(38,140,74,.14);border-color:#2C6E5A;color:#2C6E5A;font-weight:600}
+.pal-opz.sbagliata{background:rgba(199,80,60,.12);border-color:#C77B3F;color:#A5432A}
 .pal-verdetto{font-family:var(--serif,'Space Grotesk');font-weight:700;font-size:16px;margin:16px 0 8px}
-.pal-verdetto.ok{color:#1a6e3a}
-.pal-verdetto.no{color:#a5372a}
+.pal-verdetto.ok{color:#2C6E5A}
+.pal-verdetto.no{color:#A5432A}
 .pal-insight{background:rgba(18,84,93,.08);border-left:3px solid var(--teal,#12545D);border-radius:0 10px 10px 0;padding:12px 16px;font-size:14px;color:var(--ink,#131C21);line-height:1.55;margin-bottom:14px}
 .pal-fine{text-align:center;padding:30px 20px}
 .pal-fine b{display:block;font-family:var(--serif,'Space Grotesk');font-size:18px;color:var(--ink,#131C21);margin-bottom:16px}
