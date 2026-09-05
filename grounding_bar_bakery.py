@@ -110,6 +110,24 @@ COCKTAIL_IBA = {
 }
 
 
+# ── CAFFETTERIA: parametri estrazione (fonte: SCA Specialty Coffee Association) ──
+PARAMETRI_CAFFE = {
+    "espresso":     {"dose": "18-20g in, 36-40g out (ratio 1:2)", "tempo": "25-30s", "temp": "90-96°C", "pressione": "9 bar", "nota": "Ratio 1:2 classico. Under-extraction se veloce/acido, over se lento/amaro."},
+    "filtro":       {"ratio": "1:15-1:17 (60g caffè per litro)", "temp": "92-96°C", "estrazione": "18-22% TDS", "nota": "V60/Chemex. Macinatura media, fioritura 30-45s."},
+    "cappuccino":   {"latte": "montatura microschiuma, 60-65°C max", "nota": "Mai scaldare il latte oltre 65°C (sa di bruciato, proteine denaturate). Microschiuma lucida."},
+    "cold brew":    {"ratio": "1:8-1:10", "tempo": "12-18h a freddo", "nota": "Estrazione a freddo, meno acido e amaro. Macinatura grossa."},
+    "moka":         {"temp": "acqua già calda, fuoco basso", "nota": "Non far bollire, togliere ai primi gorgoglii. Macinatura media-fine."},
+}
+
+# ── GELATERIA: bilanciamento mix (fonte: pratica gelateria professionale) ──
+PARAMETRI_GELATO = {
+    "gelato base":  {"zuccheri": "16-22%", "grassi": "6-10%", "solidi totali": "36-42%", "nota": "Bilanciamento: zuccheri abbassano il punto di congelamento, grassi danno cremosità."},
+    "sorbetto":     {"zuccheri": "26-32%", "frutta": "40-60%", "nota": "Niente latte. Più zucchero del gelato per compensare l'assenza di grassi (struttura)."},
+    "mantecatura":  {"temp": "-8 a -10°C in uscita", "nota": "Overrun 20-40% (aria incorporata). Servizio a -12/-14°C."},
+    "pac":          {"target": "potere anticongelante bilanciato", "nota": "Il PAC (Potere Anti-Congelante) degli zuccheri determina la morbidezza. Saccarosio=100, destrosio=190, fruttosio=190."},
+}
+
+
 def grounding_per_richiesta(richiesta, disciplina):
     """Restituisce i parametri VERI pertinenti alla richiesta, da iniettare nel prompt del generatore
     come ancora di verità. Impedisce gli errori catastrofici (segale 60%, Negroni senza spumante)."""
@@ -139,4 +157,16 @@ def grounding_per_richiesta(richiesta, disciplina):
             if any(w in r for w in par_nome.split()):
                 _v = par.get("brix") or par.get("target") or ""
                 note.append(f"{par_nome.upper()}: {_v}. {par['nota']}")
+    # CAFFETTERIA
+    if d in ("caffetteria", "bar") or any(w in r for w in ("caffè", "caffe", "espresso", "cappuccino", "cold brew", "moka")):
+        for nome, par in PARAMETRI_CAFFE.items():
+            if nome in r:
+                _dett = " · ".join(f"{k}: {v}" for k, v in par.items() if k != "nota")
+                note.append(f"CAFFÈ {nome.upper()}: {_dett}. {par['nota']}")
+    # GELATERIA
+    if d == "gelateria" or any(w in r for w in ("gelato", "sorbetto", "mantecatura")):
+        for nome, par in PARAMETRI_GELATO.items():
+            if nome in r or (nome == "gelato base" and "gelato" in r):
+                _dett = " · ".join(f"{k}: {v}" for k, v in par.items() if k != "nota")
+                note.append(f"GELATO {nome.upper()}: {_dett}. {par['nota']}")
     return note
