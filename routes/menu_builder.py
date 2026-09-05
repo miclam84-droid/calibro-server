@@ -118,7 +118,7 @@ def menu_crea():
             if isinstance(_fonte, str):
                 _fonte = [_fonte]
             if not v.get("allergeni"):
-                _ids, _warn = deduci_allergeni(_fonte)
+                _ids, _warn = deduci_allergeni(_fonte, nome_piatto=v.get("nome", ""))
                 v["allergeni"] = _ids
                 v["allergeni_nomi"] = [_map_all[i]["it"] for i in _ids if i in _map_all]
                 if _warn:

@@ -70,17 +70,37 @@ _MAPPA = {
 }
 
 
-def deduci_allergeni(ingredienti):
-    """Dato un elenco di ingredienti (stringhe o dict con 'nome'), deduce gli allergeni UE.
-    Ritorna (allergeni_ids, warning). Deterministica e conservativa (meglio segnalare in più)."""
+def deduci_allergeni(ingredienti, nome_piatto=""):
+    """Dato un elenco di ingredienti (stringhe o dict con 'nome') + opzionale il nome del piatto,
+    deduce gli allergeni UE. Ritorna (allergeni_ids, warning). Deterministica e conservativa.
+    IMPORTANTE: deduce anche dal NOME DEL PIATTO (una pizza HA glutine anche se 'farina' non è
+    scritta negli ingredienti). Sicurezza legale: meglio segnalare in più che in meno."""
     trovati = set()
-    testo = ""
+    testo = " " + (nome_piatto or "").lower()
     for ing in (ingredienti or []):
         nome = ing.get("nome", "") if isinstance(ing, dict) else str(ing)
         testo += " " + nome.lower()
     for aid, chiavi in _MAPPA.items():
         if any(k in testo for k in chiavi):
             trovati.add(aid)
+    # ALLERGENI IMPLICITI dal nome del piatto (un professionista li dà per scontati, il menu deve dirli)
+    _PIATTI_GLUTINE = ("pizza", "margherita", "marinara", "focaccia", "pane", "pasta", "carbonara",
+                       "amatriciana", "gricia", "cacio e pepe", "lasagn", "gnocchi", "tortellin",
+                       "ravioli", "spaghetti", "bucatini", "penne", "risott", "arancin", "brioche",
+                       "cornetto", "crostata", "torta", "biscott", "babà", "sfogliatell", "cannol")
+    if any(p in testo for p in _PIATTI_GLUTINE):
+        # controllo: risotto e arancini hanno riso ma spesso anche impanatura/brodo con glutine;
+        # per sicurezza legale il glutine va segnalato (il ristoratore conferma).
+        if not any(gf in testo for gf in ("senza glutine", "gluten free", "riso soffiato")):
+            trovati.add(1)  # glutine
+    _PIATTI_UOVA = ("carbonara", "tiramisù", "tiramisu", "zabaion", "maionese", "meringa", "pasta all'uovo",
+                    "tagliatell", "fettuccin", "crema pasticc", "pan di spagna")
+    if any(p in testo for p in _PIATTI_UOVA):
+        trovati.add(3)  # uova
+    _PIATTI_LATTE = ("carbonara", "margherita", "parmigiana", "besciamell", "tiramisù", "gelato",
+                     "panna", "burro", "formagg", "mozzarell", "ricotta")
+    if any(p in testo for p in _PIATTI_LATTE):
+        trovati.add(7)  # latte
     warning = None
     if 12 in trovati and any(k in testo for k in ("vino", "prosecco", "spumante", "champagne", "aperol", "campari", "vermouth", "martini", "bitter")):
         warning = "Contiene solfiti (allergene #12), tipico di vino, spumanti e aperitivi."
