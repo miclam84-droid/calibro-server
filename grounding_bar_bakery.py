@@ -110,7 +110,21 @@ COCKTAIL_IBA = {
 }
 
 
-# ── PASTICCERIA: parametri critici (fonte: pratica pasticceria professionale) ──
+# ── CUCINA: parametri critici (fonte: McGee "On Food and Cooking", Modernist Cuisine) ──
+PARAMETRI_CUCINA = {
+    "maillard":        {"temp": "140-165°C sulla superficie (asciutta)", "nota": "La reazione di doratura serve superficie ASCIUTTA + calore. Carne bagnata = grigia (l'acqua raffredda sotto 100°C)."},
+    "brasatura":       {"temp": "liquido 70-90°C (mai bollire forte)", "tempo": "2-4h", "nota": "Il collagene si scioglie in gelatina da ~70°C. Bollore forte asciuga e stringe la carne."},
+    "sottovuoto carne": {"temp": "manzo 54-56°C (medio), pollo 62-65°C, maiale 60-63°C", "nota": "Cottura di precisione. La texture dipende dal grado esatto: 54°C rosato, 60°C più cotto."},
+    "emulsione":       {"temp": "sotto 60-65°C (le emulsioni calde si spaccano sopra)", "nota": "Maionese/olandese: aggiungere l'olio lentamente. Troppo veloce o troppo caldo = impazzisce."},
+    "frittura":        {"temp": "170-180°C olio", "nota": "Sotto 160°C: unto e molle. Sopra 190°C: brucia fuori, crudo dentro. Termometro obbligatorio."},
+    "risotto":         {"temp": "tostatura 2-3 min, mantecatura 55-60°C fuori dal fuoco", "tempo": "cottura 16-18 min", "nota": "Tostatura sigilla l'amido, mantecatura a fuoco spento per la cremosità (l'onda)."},
+    "caramellizzazione cipolle": {"temp": "fuoco medio-basso, 30-45 min", "nota": "Lenta, non è Maillard: è degradazione degli zuccheri. Fretta = bruciate fuori, crude dentro."},
+    "cottura pasta":   {"temp": "10g sale per litro, acqua abbondante", "nota": "1L acqua ogni 100g pasta. Sale ~1% dell'acqua. Al dente: cuore ancora leggermente sodo."},
+    "gelatinizzazione amido": {"temp": "60-70°C l'amido assorbe acqua e gonfia", "nota": "Salse addensate con amido: sotto 60°C non addensa, la retrogradazione (raffreddamento) le rassoda."},
+}
+
+
+
 PARAMETRI_PASTICCERIA = {
     "crema pasticcera": {"coagulazione": "82-85°C (mai bollire, i tuorli stracciano)", "nota": "Tuorli+zucchero+amido+latte. La temperatura va controllata: sopra 85°C coagula male."},
     "crème anglaise":   {"coagulazione": "82-84°C (nappe)", "nota": "Senza amido, più delicata. Il test della nappe: vela il cucchiaio. Sopra 85°C impazzisce."},
@@ -165,6 +179,22 @@ def grounding_per_richiesta(richiesta, disciplina):
             if any(w in r for w in nome.split()) or nome in r:
                 _dett = " · ".join(f"{k}: {v}" for k, v in par.items() if k != "nota")
                 note.append(f"{nome.upper()}: {_dett}. {par['nota']}")
+    # CUCINA
+    if d == "cucina" or any(w in r for w in ("brasato", "risotto", "maionese", "sottovuoto", "frittura", "carne", "arrosto", "salsa")):
+        _cucina_alias = {"brasato": "brasatura", "friggere": "frittura", "fritto": "frittura",
+                         "maionese": "emulsione", "olandese": "emulsione", "cipolle": "caramellizzazione cipolle",
+                         "pasta": "cottura pasta", "amido": "gelatinizzazione amido"}
+        for _al, _target in _cucina_alias.items():
+            if _al in r and _target in PARAMETRI_CUCINA:
+                par = PARAMETRI_CUCINA[_target]
+                _dett = " · ".join(f"{k}: {v}" for k, v in par.items() if k != "nota")
+                note.append(f"{_target.upper()}: {_dett}. {par['nota']}")
+        for nome, par in PARAMETRI_CUCINA.items():
+            if nome in r or nome.split()[0] in r:
+                _dett = " · ".join(f"{k}: {v}" for k, v in par.items() if k != "nota")
+                _n = f"{nome.upper()}: {_dett}. {par['nota']}"
+                if _n not in note:
+                    note.append(_n)
     # BAR: rilevo il cocktail o la tecnica
     if d == "bar" or any(w in r for w in ("cocktail", "drink", "negroni", "spritz", "martini", "daiquiri")):
         for nome, par in COCKTAIL_IBA.items():
