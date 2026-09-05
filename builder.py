@@ -448,10 +448,15 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
                 _defaults = {"diluizione": "20-25%", "temperatura servizio": "4-6°C"}
             else:
                 _defaults = {"temperatura cottura": "verifica con sonda", "tempo di riposo": "5-10 min"}
-            # unisco i default mancanti a quelli già presenti (non sovrascrivo l'AI)
+            # unisco i default mancanti a quelli già presenti (non sovrascrivo l'AI).
+            # normalizzo le chiavi per evitare doppioni simili (diluizione/diluzione, ecc.)
+            def _norm_k(k):
+                return "".join(c for c in k.lower() if c.isalpha())
+            _chiavi_norm = {_norm_k(k) for k in _num.keys()}
             for _k, _v in _defaults.items():
-                if _k not in _num and len(_num) < 4:
+                if _norm_k(_k) not in _chiavi_norm and len(_num) < 4:
                     _num[_k] = _v
+                    _chiavi_norm.add(_norm_k(_k))
             ricetta["numeri"] = _num
         return ricetta
     except _j.JSONDecodeError as e:
