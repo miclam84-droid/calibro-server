@@ -3,6 +3,30 @@
 @font-face{font-family:'Space Grotesk';src:url('/static/fonts/SpaceGrotesk-Bold.ttf') format('truetype');font-weight:600 700;font-display:swap}
 @font-face{font-family:'Inter';src:url('/static/fonts/Inter-Regular.ttf') format('truetype');font-weight:400 500;font-display:swap}
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   MATTER LAB SYSTEM — Foundation (fonte unica del design system)
+   ═══════════════════════════════════════════════════════════════════ */
+:root{
+  /* COLORI CANONICI */
+  --mb-ink:#141D22; --mb-prussia:#245979; --mb-teal:#12545D;
+  --mb-terracotta:#C77B3F; --mb-terracotta-hi:#E8935A;
+  --mb-carta:#ECEBE5; --mb-surface:#F4F2EC; --mb-white:#FFFFFF;
+  --mb-border:#141D22; --mb-border-soft:#C4C0B4;
+  --mb-muted:#5A6C70; --mb-muted-soft:#9DAEB2;
+  /* SPAZIATURA 8pt */
+  --mb-1:4px; --mb-2:8px; --mb-3:12px; --mb-4:16px; --mb-6:24px; --mb-8:32px; --mb-12:48px;
+  /* OMBRE DURE */
+  --mb-shadow:4px 4px 0 rgba(20,29,34,.15);
+  --mb-shadow-strong:4px 4px 0 #141D22;
+  /* RADIUS */
+  --mb-radius:4px;
+  /* FONT */
+  --mb-title:'Space Grotesk',sans-serif;
+  --mb-body:'Inter',ui-sans-serif,sans-serif;
+  --mb-mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+
 /* Matter — stili principali (estratti da index.html) */
 :root{
   /* IDENTITÀ APPROVATA (home v1-final): carta fredda, ink petrolio, arancio-ossido */
@@ -10,7 +34,7 @@
   /* accento primario: blu di Prussia #245979 (il colore del dato-bersaglio) */
   --e100:#DCE6EC; --e300:#7FA8C0; --e500:#245979; --e700:#1E5478; --e900:#163D57;
   /* terracotta/secondario allineato all'accento */
-  --terra:#54666A; --terra-light:#DCE3E3; --terra-dark:#3E4E52;
+  --terra:#C77B3F; --terra-light:#F0DECE; --terra-dark:#A5572A;
   /* teal segnale (era simile, ora petrolio più profondo) */
   --s100:#D3E0E0; --s300:#5E9BA3; --s500:#12545D; --s700:#0D3D44;
   --cifra-graphite:#4A4E50; --cifra-p700:#15362F; --cifra-p300:#9CC9BC;
