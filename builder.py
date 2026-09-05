@@ -204,10 +204,21 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
     _hint_var = (f" Taglio suggerito per questa ricetta: {_stile_var}. Non ripetere sempre lo stesso piatto "
                  f"per gli stessi ingredienti: varia la preparazione.\n\n") if _stile_var else ""
 
+    _grounding_note = ""
+    try:
+        from grounding_bar_bakery import grounding_per_richiesta
+        _gn = grounding_per_richiesta(richiesta, disciplina)
+        if _gn:
+            _grounding_note = ("PARAMETRI VERIFICATI DA FONTI PROFESSIONALI (usa ESATTAMENTE questi, "
+                               "sono corretti e NON negoziabili - un errore qui distrugge la credibilita):\n"
+                               + "\n".join(f"  - {n}" for n in _gn) + "\n\n")
+    except Exception:
+        pass
     prompt = (
         f"Sei un professionista del mestiere ('{disciplina}') che è ANCHE scienziato del cibo. "
         f"Scrivi come se spiegassi una cosa a un collega durante il prep delle 17:30: curioso ma ASCIUTTO, "
         f"frasi corte, mai da professore. Genera UNA ricetta a partire da: \"{richiesta}\".\n\n"
+        + _grounding_note
         + _hint_var
         + f"REGOLA FERREA SUI NUMERI: usa ESCLUSIVAMENTE i numeri elencati qui sotto nei FENOMENI e TECNICHE. "
         f"NON inventare temperature, tempi, percentuali o gradi che non sono in questa lista. "
