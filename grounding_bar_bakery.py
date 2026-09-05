@@ -110,7 +110,21 @@ COCKTAIL_IBA = {
 }
 
 
-# ── CAFFETTERIA: parametri estrazione (fonte: SCA Specialty Coffee Association) ──
+# ── PASTICCERIA: parametri critici (fonte: pratica pasticceria professionale) ──
+PARAMETRI_PASTICCERIA = {
+    "crema pasticcera": {"coagulazione": "82-85°C (mai bollire, i tuorli stracciano)", "nota": "Tuorli+zucchero+amido+latte. La temperatura va controllata: sopra 85°C coagula male."},
+    "crème anglaise":   {"coagulazione": "82-84°C (nappe)", "nota": "Senza amido, più delicata. Il test della nappe: vela il cucchiaio. Sopra 85°C impazzisce."},
+    "caramello":        {"temp": "160-180°C (ambrato), 180-190°C (scuro)", "nota": "Zucchero secco o con acqua. Sopra 190°C amaro e bruciato. Attenzione alle ustioni."},
+    "meringa italiana": {"sciroppo": "118-121°C sugli albumi in montata", "nota": "Sciroppo a palla morbida versato a filo. Stabile, per mousse e decori."},
+    "meringa francese": {"zucchero": "50-60g per albume", "nota": "A crudo, albumi+zucchero. Cottura lenta 90-100°C per meringhe secche."},
+    "pâte à choux":     {"temperatura": "cottura 180-200°C, mai aprire il forno", "nota": "Bignè: seccare l'impasto sul fuoco, poi uova. Il vapore gonfia, l'apertura del forno li sgonfia."},
+    "temperaggio cioccolato": {"fondente": "fusione 45-50°C, raffredda 27-28°C, lavoro 31-32°C", "nota": "Curva di temperaggio fondente. Latte: 29-30°C. Bianco: 28-29°C. Per lucentezza e snap."},
+    "pan di spagna":    {"montaggio": "uova+zucchero a 40°C montate a nastro", "nota": "Scaldare uova+zucchero a bagnomaria a 40°C, poi montare. Farina setacciata a mano."},
+    "ganache":          {"ratio": "1:1 (cioccolato:panna) per glassa, 2:1 per tartufi", "nota": "Panna calda sul cioccolato, emulsione dal centro. Non superare 40°C."},
+}
+
+
+
 PARAMETRI_CAFFE = {
     "espresso":     {"dose": "18-20g in, 36-40g out (ratio 1:2)", "tempo": "25-30s", "temp": "90-96°C", "pressione": "9 bar", "nota": "Ratio 1:2 classico. Under-extraction se veloce/acido, over se lento/amaro."},
     "filtro":       {"ratio": "1:15-1:17 (60g caffè per litro)", "temp": "92-96°C", "estrazione": "18-22% TDS", "nota": "V60/Chemex. Macinatura media, fioritura 30-45s."},
@@ -145,6 +159,12 @@ def grounding_per_richiesta(richiesta, disciplina):
         for pane, par in FORMULE_PANE.items():
             if pane in r:
                 note.append(f"FORMULA {pane.upper()}: {par['formula']}. {par['nota']}")
+    # PASTICCERIA
+    if d == "pasticceria" or any(w in r for w in ("crema", "crème", "caramello", "meringa", "cioccolato", "ganache", "choux", "bignè", "pan di spagna", "temperaggio")):
+        for nome, par in PARAMETRI_PASTICCERIA.items():
+            if any(w in r for w in nome.split()) or nome in r:
+                _dett = " · ".join(f"{k}: {v}" for k, v in par.items() if k != "nota")
+                note.append(f"{nome.upper()}: {_dett}. {par['nota']}")
     # BAR: rilevo il cocktail o la tecnica
     if d == "bar" or any(w in r for w in ("cocktail", "drink", "negroni", "spritz", "martini", "daiquiri")):
         for nome, par in COCKTAIL_IBA.items():
