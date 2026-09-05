@@ -1,3 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&display=swap");
+/* ═══ FONT BRAND (Renaissance #1) — caricati da /static/fonts ═══ */
+@font-face{font-family:'Space Grotesk';src:url('/static/fonts/SpaceGrotesk-Bold.ttf') format('truetype');font-weight:600 700;font-display:swap}
+@font-face{font-family:'Inter';src:url('/static/fonts/Inter-Regular.ttf') format('truetype');font-weight:400 500;font-display:swap}
+
 /* Matter — stili principali (estratti da index.html) */
 :root{
   /* IDENTITÀ APPROVATA (home v1-final): carta fredda, ink petrolio, arancio-ossido */
@@ -17,9 +22,9 @@
   --target:#245979; --target-dark:#1E5478; --target-soft:#DCE6EC;
   --dark-card:#141D22; /* fondo card-strumento per numeri-bersaglio (firma visiva Matter) */
   /* tipografia approvata: via serif Fraunces, dentro Archivo Expanded + Space Mono */
-  --sans:'Archivo',ui-sans-serif,system-ui,sans-serif;
-  --serif:'Archivo Expanded','Archivo',sans-serif;
-  --mono:'Space Mono',ui-monospace,monospace;
+  --sans:'Inter',ui-sans-serif,system-ui,sans-serif;
+  --serif:'Space Grotesk','Inter',sans-serif;
+  --mono:'IBM Plex Mono','Space Mono',ui-monospace,monospace;
   --paper:#D4DCDC; --paper-hi:#E3E8E8; --line-strong:#141D22; --signal:#12545D; --accent:#245979;
   /* variabili orfane dopo il cambio palette — mappate ai valori nuovi */
   --ivory:#E3E8E8; --teal:#12545D; --e400:#5EA0C8; --muted:#52626A;
