@@ -3650,24 +3650,45 @@ var _ctxChat = null;  // contesto ricetta/menu per la chat (FLUSSO 2)
 // ═══ P0.3 — Schermata CREA: i 3 modi di creare, come card grandi (non un tutorial) ═══
 function apriCrea(){
   var html=
-    '<div class="crea-intro">Tre modi per creare. Scegli da dove parti.</div>'
+    '<div class="crea-intro">Quattro modi per creare. Scegli da dove parti.</div>'
     + '<button class="crea-card" onclick="_creaDaIngredienti()">'
     +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
     +   '<div class="crea-card-txt"><div class="crea-card-t">Da ingredienti</div><div class="crea-card-d">Scrivi cosa hai, ti do la ricetta coi numeri</div></div>'
     +   '<span class="crea-card-arr">→</span></button>'
     + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){apriFlavour();},120)">'
     +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="17" r="3" stroke="currentColor" stroke-width="2"/><path d="M9.5 9.5l5 5" stroke="currentColor" stroke-width="2"/></svg></div>'
-    +   '<div class="crea-card-txt"><div class="crea-card-t">Da abbinamento</div><div class="crea-card-d">Composti aromatici condivisi e affinità molecolare</div></div>'
+    +   '<div class="crea-card-txt"><div class="crea-card-t">Da abbinamento</div><div class="crea-card-d">Cosa sta bene insieme? Scopri gli abbinamenti scientifici</div></div>'
     +   '<span class="crea-card-arr">→</span></button>'
-    + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){apriMenuBuilder();},120)">'
+    + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){apriSceltaMenu();},120)">'
     +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
-    +   '<div class="crea-card-txt"><div class="crea-card-t">Da menu</div><div class="crea-card-d">Costruisci un menu completo dai tuoi ingredienti</div></div>'
+    +   '<div class="crea-card-txt"><div class="crea-card-t">Da menu</div><div class="crea-card-d">Crea il menu del tuo locale (pizzeria, ristorante, bar...)</div></div>'
     +   '<span class="crea-card-arr">→</span></button>'
     + '<button class="crea-card" onclick="chiudiVista();setTimeout(function(){creaMenuDaFoto();},120)">'
     +   '<div class="crea-card-ico"><svg viewBox="0 0 24 24" fill="none" width="26" height="26"><rect x="3" y="6" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/><path d="M8 6l1.5-2h5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>'
     +   '<div class="crea-card-txt"><div class="crea-card-t">Da foto</div><div class="crea-card-d">Fotografa gli ingredienti, Matter Bench li riconosce e trova gli abbinamenti</div></div>'
     +   '<span class="crea-card-arr">→</span></button>';
   _apriVista('Crea', html);
+}
+// ═══ SCELTA TIPO MENU — il vero menu builder (DIFETTO 1) ═══
+function apriSceltaMenu(){
+  var tipi=[
+    {cat:'pizzeria',    ico:'🍕', nome:'Pizzeria',    sub:'Pizze e impasti'},
+    {cat:'ristorante',  ico:'🍽', nome:'Ristorante',  sub:'Piatti di cucina'},
+    {cat:'pasticceria', ico:'🧁', nome:'Pasticceria', sub:'Dolci e lievitati'},
+    {cat:'drink_list',  ico:'🍸', nome:'Drink list',  sub:'Cocktail e miscelati'},
+    {cat:'carta_vini',  ico:'🍷', nome:'Carta dei vini', sub:'Selezione con filo conduttore'},
+    {cat:'carta_birre', ico:'🍺', nome:'Carta delle birre', sub:'Selezione birre'}
+  ];
+  var e=_escV;
+  var cards=tipi.map(function(t){
+    return '<button class="crea-card" onclick="mbScegliCategoria(\''+e(t.cat)+'\',\''+e(t.nome)+'\')">'
+      + '<div class="crea-card-ico" style="font-size:22px;display:flex;align-items:center;justify-content:center">'+t.ico+'</div>'
+      + '<div class="crea-card-txt"><div class="crea-card-t">'+e(t.nome)+'</div><div class="crea-card-d">'+e(t.sub)+'</div></div>'
+      + '<span class="crea-card-arr">→</span></button>';
+  }).join('');
+  _apriVista('Crea un menu',
+    '<div class="crea-intro">Che menu vuoi creare? Ogni tipo porta con sé i numeri-bersaglio della sua disciplina.</div>'
+    + cards);
 }
 function _creaDaIngredienti(){
   var html=
@@ -6789,9 +6810,9 @@ function _calcRenderImpasto(){
     + '<div class="calc-perc-lab">Percentuali del panettiere (farina = 100)</div>'
     + '<div class="calc-perc-grid">'
     +   '<div class="calc-perc"><span>Farina</span><input type="number" id="ci-farina" value="100" readonly></div>'
-    +   '<div class="calc-perc"><span>Acqua</span><input type="number" inputmode="decimal" id="ci-acqua" placeholder="70"></div>'
-    +   '<div class="calc-perc"><span>Sale</span><input type="number" inputmode="decimal" id="ci-sale" placeholder="2"></div>'
-    +   '<div class="calc-perc"><span>Lievito</span><input type="number" inputmode="decimal" id="ci-lievito" placeholder="1"></div>'
+    +   '<div class="calc-perc"><span>Acqua</span><input type="number" inputmode="decimal" id="ci-acqua" value="65"></div>'
+    +   '<div class="calc-perc"><span>Sale</span><input type="number" inputmode="decimal" id="ci-sale" value="2"></div>'
+    +   '<div class="calc-perc"><span>Lievito</span><input type="number" inputmode="decimal" id="ci-lievito" value="1"></div>'
     + '</div>'
     + '<button class="calc-go" onclick="_calcImpasto()">Calcola le grammature</button>'
     + '<div class="calc-nota-info"><b>Il metodo del panettiere</b> esprime ogni ingrediente come percentuale sulla farina (100%). Cambi il peso totale e le grammature si ricalcolano mantenendo le proporzioni. Così scali qualsiasi ricetta senza rifare i conti.</div>'
