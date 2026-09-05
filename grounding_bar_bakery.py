@@ -27,7 +27,22 @@ METODI_LIEVITAZIONE = {
     "freddo":      {"tempo": "24-72h in frigo a 4°C", "lievito": "0.3-0.8% lievito", "nota": "Maturazione lunga a freddo: massimo aroma e digeribilità (pizza contemporanea)."},
 }
 
-# ── BAR: diluizione per tecnica (fonte: Dave Arnold "Liquid Intelligence") ──
+# ── BAKERY: formule madre (baker's percentage, fonte: Hamelman, Modernist Bread) ──
+FORMULE_PANE = {
+    "baguette":      {"formula": "farina 100%, acqua 65-68%, sale 2%, lievito 0.8-1% (o poolish)", "nota": "Poolish per aroma. Lame decise, forno 240°C con vapore."},
+    "ciabatta":      {"formula": "farina 100%, acqua 75-85%, sale 2.2%, biga 30-40%", "nota": "Alta idratazione, impasto molle, pieghe non impastamento. Alveolatura aperta."},
+    "pane comune":   {"formula": "farina 100%, acqua 62-68%, sale 2%, lievito 1.5-2%", "nota": "Pane quotidiano diretto. Cottura 220-230°C."},
+    "focaccia":      {"formula": "farina 100%, acqua 70-80%, sale 2%, olio 5-8%, lievito 1%", "nota": "Alta idratazione, olio in impasto e superficie. Fossette e salamoia."},
+    "sourdough":     {"formula": "farina 100%, acqua 75-85%, sale 2%, lievito madre 20%", "nota": "Stile San Francisco. Lievito madre liquido, lunga maturazione, crosta spessa."},
+    "pane di segale": {"formula": "farina segale 100%, acqua 75-90%, sale 2%, madre acida", "nota": "Impasto denso e appiccicoso. L'acidità blocca l'alfa-amilasi. Cottura lunga a calore decrescente."},
+    "coppia ferrarese": {"formula": "farina forte 100%, acqua 45-50%, sale 2%, strutto 5%, lievito", "nota": "Pasta dura, idratazione RIGIDA bassa. Forma a nastro attorcigliato."},
+    "pane pugliese": {"formula": "semola rimacinata 100%, acqua 70-75%, sale 2%, madre", "nota": "Semola di grano duro, autolisi lunga, mollica gialla."},
+    "brioche":       {"formula": "farina 100%, uova 50%, burro 50-60%, zucchero 12-15%, latte 20%, lievito", "nota": "Grande lievitato arricchito. Burro freddo incorporato a impasto sviluppato."},
+    "croissant":     {"formula": "farina 100%, acqua 50%, burro tourage 50%, zucchero 10%, lievito", "nota": "Sfogliatura: 3 pieghe da 3. Burro plastico a 14-16°C. Lievitazione finale 26-28°C."},
+    "panettone":     {"formula": "farina forte W380 100%, madre 30%, burro 25%, tuorli 25%, zucchero 25%, sospensione uvetta/canditi", "nota": "Doppio impasto, lievito madre, 2 giorni. Il grande lievitato più difficile."},
+}
+
+
 # Errore trovato: Negroni sbagliato con "acqua frizzante" invece di spumante.
 DILUIZIONE_TECNICA = {
     "stirred":  {"min": 20, "max": 25, "nota": "Drink mescolati (Martini, Manhattan, Negroni): ~20-25% acqua aggiunta sul volume. Formula Arnold."},
@@ -81,6 +96,17 @@ COCKTAIL_IBA = {
     "moscow mule":      {"ricetta": "45ml vodka, 15ml lime, 120ml ginger beer", "tecnica": "build", "note": "Servito in tazza di rame. Ghiaccio abbondante."},
     "sidecar":          {"ricetta": "50ml cognac, 20ml Cointreau, 20ml succo limone", "tecnica": "shaken", "note": "Bordo zucchero opzionale."},
     "mint julep":       {"ricetta": "60ml bourbon, 4-5 foglie menta, 1 cucchiaino sciroppo zucchero, ghiaccio tritato", "tecnica": "build", "note": "Tazza di metallo ghiacciata, ghiaccio tritato a montagnetta."},
+    "sazerac":          {"ricetta": "50ml rye, 1 zolletta zucchero, 2 dash Peychaud's, risciacquo di assenzio", "tecnica": "stirred", "note": "Bicchiere risciacquato con assenzio. Scorza di limone (non nel drink)."},
+    "vieux carre":      {"ricetta": "30ml rye, 30ml cognac, 30ml vermouth rosso, 1 cucchiaino Benedictine, dash Peychaud+Angostura", "tecnica": "stirred", "note": "Cocktail di New Orleans, stratificato e complesso."},
+    "tommy's margarita": {"ricetta": "45ml tequila, 22ml lime, 22ml agave", "tecnica": "shaken", "note": "Margarita senza triple sec, agave al posto. Più agrumata e pulita."},
+    "clover club":      {"ricetta": "45ml gin, 15ml lampone, 15ml limone, albume", "tecnica": "shaken", "note": "Dry shake per la schiuma. Sciroppo di lampone fresco."},
+    "last word":        {"ricetta": "22ml gin, 22ml Chartreuse verde, 22ml maraschino, 22ml lime", "tecnica": "shaken", "note": "Parti uguali, equilibrio erbaceo-agrumato."},
+    "corpse reviver":   {"ricetta": "22ml gin, 22ml Cointreau, 22ml Lillet Blanc, 22ml limone, dash assenzio", "tecnica": "shaken", "note": "Corpse Reviver #2. Assenzio nel risciacquo."},
+    "hemingway daiquiri": {"ricetta": "60ml rum, 15ml maraschino, 22ml lime, 15ml pompelmo", "tecnica": "shaken", "note": "Daiquiri senza zucchero, con pompelmo e maraschino."},
+    "caipirinha":       {"ricetta": "60ml cachaça, mezzo lime a spicchi, 2 cucchiaini zucchero", "tecnica": "build", "note": "Pestare lime e zucchero. Ghiaccio tritato. Cocktail brasiliano."},
+    "pisco sour":       {"ricetta": "60ml pisco, 22ml lime, 22ml sciroppo, albume, dash Angostura", "tecnica": "shaken", "note": "Dry shake. Angostura in gocce sulla schiuma."},
+    "bramble":          {"ricetta": "50ml gin, 22ml limone, 12ml sciroppo, 15ml crème de mûre", "tecnica": "build", "note": "La mora (mûre) colata sopra il ghiaccio tritato, effetto sanguinello."},
+    "dark n stormy":    {"ricetta": "60ml rum scuro, 100ml ginger beer, 10ml lime", "tecnica": "build", "note": "Il rum scuro galleggia sul ginger beer (la 'tempesta')."},
 }
 
 
@@ -98,6 +124,9 @@ def grounding_per_richiesta(richiesta, disciplina):
         for metodo, par in METODI_LIEVITAZIONE.items():
             if metodo in r:
                 note.append(f"LIEVITAZIONE {metodo.upper()}: {par['tempo']}, {par['lievito']}. {par['nota']}")
+        for pane, par in FORMULE_PANE.items():
+            if pane in r:
+                note.append(f"FORMULA {pane.upper()}: {par['formula']}. {par['nota']}")
     # BAR: rilevo il cocktail o la tecnica
     if d == "bar" or any(w in r for w in ("cocktail", "drink", "negroni", "spritz", "martini", "daiquiri")):
         for nome, par in COCKTAIL_IBA.items():
