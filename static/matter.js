@@ -1137,6 +1137,11 @@ const DOMCOL={bar:'#245979',cucina:'#12545D',bakery:'#12545D',caffetteria:'#3E4E
 let busy=false;
 function setBusy(b){busy=b;document.getElementById('ask-btn').disabled=b;}
 function invia(){const q=document.getElementById('q').value.trim();if(!q||busy)return;document.getElementById('q').value='';chiediTesto(q);}
+// Renaissance #7: dalle domande-problema della home → apre la chat e chiede
+function _diagnosiChat(domanda){
+  switchTab('chiedi'); switchSubtab('chat');
+  setTimeout(function(){ if(typeof chiediTesto==='function') chiediTesto(domanda); }, 150);
+}
 
 // mini-history: ultimi 3 scambi in memoria (resettata al refresh, zero DB)
 const _chatHistory=[];

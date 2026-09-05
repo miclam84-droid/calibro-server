@@ -2862,3 +2862,10 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 .ts-link{flex-shrink:0;background:none;border:none;color:#7FB0C4;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer}
 /* FIX 1 rinforzo — l'overlay vista copre SEMPRE tutta la home, opaco */
 .vista-overlay{position:fixed!important;inset:0!important;z-index:900!important;background:#ECEBE5!important;overflow-y:auto!important}
+
+/* ═══ HOME DIAGNOSI (Renaissance #7) — la chat che risolve problemi ═══ */
+.home-diagnosi{margin:0 16px 24px}
+.hd-titolo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;line-height:1.2;color:#141D22;margin-bottom:16px}
+.hd-problema{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #141D22;border-radius:4px;box-shadow:4px 4px 0 rgba(20,29,34,.15);padding:16px;margin-bottom:12px;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;color:#141D22;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.hd-problema:active{transform:translate(4px,4px);box-shadow:0 0 0}
+.hd-problema::before{content:'◎ ';color:#C77B3F;font-weight:700}
