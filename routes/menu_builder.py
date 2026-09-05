@@ -699,7 +699,10 @@ def menu_pdf(mid):
 
     ACCENT = HexColor(tpl["accent"]); INK = HexColor(tpl["ink"]); LINEA = HexColor(tpl["linea"])
     _fl = tpl["font"].lower()
-    is_serif = "serif" in _fl or "georgia" in _fl or "times" in _fl
+    # ATTENZIONE: "sans-serif" contiene "serif" — vanno esclusi i sans. Un font è serif SOLO se
+    # ha georgia/times/serif MA NON sans/space grotesk/helvetica/inter/arial.
+    _is_sans = any(s in _fl for s in ("sans", "space grotesk", "helvetica", "inter", "arial"))
+    is_serif = (not _is_sans) and ("serif" in _fl or "georgia" in _fl or "times" in _fl)
     is_mono = "mono" in _fl or "plex mono" in _fl or "courier" in _fl
     # provo a registrare i font VERI del brand (Space Grotesk / Inter). Se i .ttf non ci sono,
     # fallback su Helvetica (sans, pulito) — MAI Times serif di default (stonava col design system).
