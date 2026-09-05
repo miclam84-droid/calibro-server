@@ -389,10 +389,10 @@ def menu_render(mid):
             _c2 = _conn(); _cur2 = _c2.cursor()
             _cur2.execute("SELECT tema_grafico FROM menu WHERE id=%s", (mid,))
             _tr = _cur2.fetchone(); _cur2.close(); _release(_c2)
-            _tema_richiesto = (_tr[0] if _tr and _tr[0] else "elegante")
+            _tema_richiesto = (_tr[0] if _tr and _tr[0] else "gastro-bistrot")
         except Exception:
             _tema_richiesto = "elegante"
-    tpl = dict(_TEMPLATE_MENU.get(_tema_richiesto, _TEMPLATE_MENU["elegante"]))
+    tpl = dict(_TEMPLATE_MENU.get(_tema_richiesto, _TEMPLATE_MENU["gastro-bistrot"]))
     mostra_foto = request.args.get("foto", "0") != "0"
     usa_sezioni = request.args.get("sezioni", "1") != "0"  # default: raggruppa per sezione se presente
 
@@ -677,10 +677,10 @@ def menu_pdf(mid):
             _c2 = _conn(); _cur2 = _c2.cursor()
             _cur2.execute("SELECT tema_grafico FROM menu WHERE id=%s", (mid,))
             _tr = _cur2.fetchone(); _cur2.close(); _release(_c2)
-            _tema_richiesto = (_tr[0] if _tr and _tr[0] else "elegante")
+            _tema_richiesto = (_tr[0] if _tr and _tr[0] else "gastro-bistrot")
         except Exception:
             _tema_richiesto = "elegante"
-    tpl = dict(_TEMPLATE_MENU.get(_tema_richiesto, _TEMPLATE_MENU["elegante"]))
+    tpl = dict(_TEMPLATE_MENU.get(_tema_richiesto, _TEMPLATE_MENU["gastro-bistrot"]))
     accent_custom = request.args.get("accent", "").strip().lstrip("#")
     if accent_custom and len(accent_custom) in (3, 6) and all(ch in "0123456789abcdefABCDEF" for ch in accent_custom):
         tpl["accent"] = "#" + accent_custom
@@ -701,12 +701,28 @@ def menu_pdf(mid):
     _fl = tpl["font"].lower()
     is_serif = "serif" in _fl or "georgia" in _fl or "times" in _fl
     is_mono = "mono" in _fl or "plex mono" in _fl or "courier" in _fl
+    # provo a registrare i font VERI del brand (Space Grotesk / Inter). Se i .ttf non ci sono,
+    # fallback su Helvetica (sans, pulito) — MAI Times serif di default (stonava col design system).
+    font_titolo = "Helvetica-Bold"; font_body = "Helvetica"
+    try:
+        import os as _os
+        from reportlab.pdfbase import pdfmetrics as _pm
+        from reportlab.pdfbase.ttfonts import TTFont as _TTF
+        _font_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), "static", "fonts")
+        _sg = _os.path.join(_font_dir, "SpaceGrotesk-Bold.ttf")
+        _in = _os.path.join(_font_dir, "Inter-Regular.ttf")
+        if _os.path.exists(_sg) and _os.path.exists(_in):
+            _pm.registerFont(_TTF("SpaceGrotesk", _sg))
+            _pm.registerFont(_TTF("Inter", _in))
+            font_titolo = "SpaceGrotesk"; font_body = "Inter"
+    except Exception:
+        pass
+    # solo se l'utente chiede ESPLICITAMENTE serif/mono, uso quelli; altrimenti resta sans/brand
     if is_mono:
         font_titolo = "Courier-Bold"; font_body = "Courier"
-    elif is_serif:
+    elif is_serif and font_body == "Helvetica":
+        # l'utente ha chiesto serif E non ho i font brand -> uso Times solo su richiesta esplicita
         font_titolo = "Times-Bold"; font_body = "Times-Roman"
-    else:
-        font_titolo = "Helvetica-Bold"; font_body = "Helvetica"
 
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4, topMargin=20*mm, bottomMargin=18*mm,
