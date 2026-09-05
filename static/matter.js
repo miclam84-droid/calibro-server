@@ -4031,9 +4031,18 @@ async function salvaRicettaGen(btn){
   try{
     var r=await fetch('/v1/ricette/salva', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}), body:JSON.stringify({nome:d.nome||'Ricetta', dati:d})});
     var j=await r.json();
-    if(j && j.ok){ d._ricetta_id=j.ricetta_id; btn.textContent='✓ Salvata nel Quaderno'; btn.disabled=false; btn.classList.add('fatto'); }
+    if(j && j.ok){ d._ricetta_id=j.ricetta_id; btn.textContent='✓ Salvata nel Quaderno'; btn.disabled=false; btn.classList.add('fatto');
+      _toastSalvato('Ricetta salvata nel tuo Quaderno'); }
     else { btn.textContent='Riprova'; btn.disabled=false; }
   }catch(e){ btn.textContent='Riprova'; btn.disabled=false; }
+}
+// toast di conferma salvataggio con scorciatoia al Quaderno (FIX 3)
+function _toastSalvato(msg){
+  var old=document.getElementById('toast-salvato'); if(old) old.remove();
+  var t=document.createElement('div'); t.id='toast-salvato'; t.className='toast-salvato';
+  t.innerHTML='<span class="ts-ico">✓</span><span class="ts-txt">'+_escV(msg)+'</span><button class="ts-link" onclick="document.getElementById(\'toast-salvato\').remove();chiudiVista&&chiudiVista();switchTab(\'quaderno\')">Vedi →</button>';
+  document.body.appendChild(t);
+  setTimeout(function(){ if(t&&t.parentNode){ t.style.opacity='0'; setTimeout(function(){t.remove();},300); } }, 4000);
 }
 function _ricettaFenomeni(){
   var d=_ricettaGenCorrente; if(!d) return;
@@ -4043,7 +4052,7 @@ function _ricettaFenomeni(){
 }
 function _ricettaInMenu(){
   chiudiVista();
-  if(typeof apriMenuBuilder==='function') apriMenuBuilder();
+  if(typeof apriSceltaMenu==='function') apriSceltaMenu();
 }
 function chiediSuRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
