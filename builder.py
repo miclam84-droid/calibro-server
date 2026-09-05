@@ -457,6 +457,10 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
                 _defaults = {"mantecatura": "-8 a -10°C", "zuccheri": "16-22%", "servizio": "-12 a -14°C"}
             elif _disc == "bar" or any(w in _nome_l for w in ("cocktail", "drink", "sour", "negroni")):
                 _defaults = {"diluizione": "20-25%", "temperatura servizio": "4-6°C"}
+            elif _disc == "caffetteria" or any(w in _nome_l for w in ("espresso", "caffè", "caffe", "cappuccino")):
+                _defaults = {"dose": "18-20g", "estrazione": "25-30s", "temperatura acqua": "90-96°C"}
+            elif _disc == "gelateria" or any(w in _nome_l for w in ("gelato", "sorbetto")):
+                _defaults = {"zuccheri": "16-22%", "mantecatura": "-8/-10°C", "servizio": "-12/-14°C"}
             else:
                 _defaults = {"temperatura cottura": "verifica con sonda", "tempo di riposo": "5-10 min"}
             # unisco i default mancanti a quelli già presenti (non sovrascrivo l'AI).
