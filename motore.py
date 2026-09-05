@@ -208,13 +208,35 @@ def pareggia_acidita(vol_ml, acido_cur_perc, acido_tgt_perc) -> dict:
 
 
 # ── DISPATCHER ────────────────────────────────────────────────────────────────
-def scalatore_impasto(peso_totale_g, percentuali: dict) -> dict:
-    """SPRINT 2 — Scala un impasto col metodo del panettiere (farina=100%).
-    percentuali: {"farina":100, "acqua":70, "sale":2, "lievito":1, ...}
-    Restituisce le grammature esatte per il peso totale desiderato."""
+def scalatore_impasto(peso_totale_g=None, percentuali: dict = None, idratazione=None,
+                      peso_totale=None) -> dict:
+    """Scala un impasto col metodo del panettiere (farina=100%). Se non dai le percentuali,
+    usa i DEFAULT da panettiere (idratazione 65%, sale 2%, lievito 1%) così dà SEMPRE un calcolo
+    utile. Puoi anche dare solo l'idratazione e regola l'acqua."""
+    # accetto peso_totale o peso_totale_g
+    if peso_totale_g is None and peso_totale is not None:
+        peso_totale_g = peso_totale
+    if peso_totale_g is None or float(peso_totale_g) <= 0:
+        return {"errore": "inserisci il peso totale dell'impasto"}
+    peso_totale_g = float(peso_totale_g)
+    # DEFAULT DA PANETTIERE: se non arrivano percentuali sensate, le metto io.
+    if not percentuali or not isinstance(percentuali, dict):
+        percentuali = {}
+    percentuali = {k: float(v) for k, v in percentuali.items() if v is not None}
+    # la farina è sempre 100
+    percentuali["farina"] = 100.0
+    # se c'è solo la farina (calcolo inutile), aggiungo acqua/sale/lievito standard
+    _altri = {k: v for k, v in percentuali.items() if k != "farina"}
+    if not _altri:
+        _idr = float(idratazione) if idratazione is not None else 65.0
+        percentuali["acqua"] = _idr       # idratazione 65% default (o quella data)
+        percentuali["sale"] = 2.0          # 2% sale
+        percentuali["lievito"] = 1.0       # 1% lievito
+    elif idratazione is not None:
+        percentuali["acqua"] = float(idratazione)
     somma_perc = sum(float(v) for v in percentuali.values())
-    if somma_perc <= 0 or peso_totale_g <= 0:
-        return {"errore": "percentuali o peso non validi"}
+    if somma_perc <= 0:
+        return {"errore": "percentuali non valide"}
     # farina = peso_totale / (somma_percentuali/100)
     farina_g = peso_totale_g / (somma_perc / 100.0)
     grammature = {}
