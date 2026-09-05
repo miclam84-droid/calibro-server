@@ -123,12 +123,13 @@ def deduci():
     Il vantaggio competitivo: deduzione dagli INGREDIENTI reali, non da una foto del menu."""
     body = request.json or {}
     ingredienti = body.get("ingredienti", [])
+    nome_piatto = body.get("nome_piatto", "") or body.get("nome", "")
     lang = (body.get("lang") or "it").strip().lower()
     if lang not in ("it", "en", "es"):
         lang = "it"
-    if not ingredienti:
+    if not ingredienti and not nome_piatto:
         return jsonify({"errore": "ingredienti mancanti"}), 400
-    ids, warning = deduci_allergeni(ingredienti)
+    ids, warning = deduci_allergeni(ingredienti, nome_piatto=nome_piatto)
     _map = {a["id"]: a for a in ALLERGENI_UE}
     dettaglio = [{"id": i, "nome": _map[i][lang], "icona": _map[i]["icona"]} for i in ids if i in _map]
     return jsonify({
