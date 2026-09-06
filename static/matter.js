@@ -2130,7 +2130,7 @@ const _strings = {
     indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai all\'Atlante →',
     principio_del_giorno:'Principio del giorno',
     vedi_mappa:'Vedi il principio nell\'Atlante →',
-    chiedi_placeholder:'Scrivi un problema al banco (es. maionese impazzita, collasso biga)',
+    chiedi_placeholder:'Rileva un problema al banco (es. maionese, biga)',
     chiedi_btn:'Chiedi',
     onb_nudge_title:'Postazione Attiva',
     ai_disclosure:'Risposte generate da un assistente AI.',
@@ -3976,10 +3976,10 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
   var html=
     '<div class="rg-scheda">'
     + boxContratto
-    + (ing?'<div class="rg-sec"><div class="rg-sec-lab">Ingredienti</div><ul class="rg-ing">'+ing+'</ul></div>':'')
     + numeri
-    + (proc?'<div class="rg-sec"><div class="rg-sec-lab">Procedimento</div>'+proc+'</div>':'')
     + critico
+    + (ing?'<div class="rg-sec"><div class="rg-sec-lab">Ingredienti</div><ul class="rg-ing">'+ing+'</ul></div>':'')
+    + (proc?'<div class="rg-sec"><div class="rg-sec-lab">Procedimento</div>'+proc+'</div>':'')
     + '<div class="rg-azioni">'
     +   '<button class="rg-btn rg-btn-salva'+(salvato?' fatto':'')+'" id="rg-btn-salva" onclick="salvaRicettaGen(this)">'+(salvato?'✓ Salvata':'Salva nel Quaderno')+'</button>'
     +   '<button class="rg-btn rg-btn-chiedi" onclick="chiediSuRicetta()">Chiedi su questa ricetta</button>'
@@ -4097,7 +4097,7 @@ function _chiudiContesto(){
   _ctxChat=null;
   var chip=document.getElementById('chat-ctx-chip'); if(chip) chip.remove();
   var inp=document.getElementById('q')||document.getElementById('ask-input');
-  if(inp) inp.placeholder='Scrivi un problema al banco (es. maionese impazzita, collasso biga)';
+  if(inp) inp.placeholder='Rileva un problema al banco (es. maionese, biga)';
 }
 async function foodCostRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
