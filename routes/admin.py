@@ -7361,3 +7361,56 @@ def admin_genera_serbatoio():
                         "nota": "salvati nel DB (persistente). Rilancia con aree diverse per accrescere."})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 200
+
+
+@bp.route("/admin/genera-da-serbatoio")
+def admin_genera_da_serbatoio():
+    """Genera ricette NUOVE dai piatti del serbatoio_ai (che non sono ancora ricette).
+    Questo RIEMPIE davvero il database (l'altra genera-canonici rigenera le esistenti)."""
+    from flask import request, jsonify
+    import os, json, re, threading
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "10")), 30)
+
+    def _worker(n):
+        import psycopg2
+        from db import carica_grafo
+        from builder import genera_ricetta
+        conn = psycopg2.connect(os.environ["DATABASE_URL"])
+        cur = conn.cursor()
+        # prendo n piatti dal serbatoio che NON esistono già come ricetta
+        cur.execute("""SELECT s.nome, s.disciplina FROM serbatoio_ai s
+                       WHERE NOT EXISTS (SELECT 1 FROM ricette r WHERE lower(r.nome)=lower(s.nome))
+                       LIMIT %s""", (n,))
+        piatti = cur.fetchall()
+        db = carica_grafo()
+        creati = 0
+        for nome, disc in piatti:
+            try:
+                ric = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc or "cucina", lang="it")
+                if not ric or ric.get("errore") or not ric.get("nome"):
+                    continue
+                fid = re.sub(r"[^a-z0-9]+", "-", ric["nome"].lower())[:50]
+                cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
+                if cur.fetchone():
+                    continue
+                def _j(x): return json.dumps(x if x is not None else ([] if x==[] else {}))
+                cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
+                               punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
+                               VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
+                               ON CONFLICT (id) DO NOTHING""",
+                            (fid, ric["nome"], disc or "cucina", ric.get("descrizione",""),
+                             _j(ric.get("ingredienti",[])), _j(ric.get("fenomeni",[])), _j(ric.get("tecniche",[])),
+                             _j(ric.get("numeri",{})), ric.get("punto_critico",""), _j(ric.get("abbinamenti",[])),
+                             _j(ric.get("procedimento",[])), _j(ric.get("applicazioni",[])), ric.get("tempo_prep",""),
+                             ric.get("tempo_cottura",""), ric.get("difficolta",""), ric.get("porzioni",""),
+                             ric.get("esperimento",""), ric.get("limite",""), _j(ric.get("twist",{}))))
+                conn.commit()
+                creati += 1
+            except Exception:
+                conn.rollback()
+        cur.close(); conn.close()
+
+    threading.Thread(target=_worker, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "n": n, "nota": "genera ricette NUOVE dal serbatoio in background. Ricontrolla il totale ricette tra ~1-2 min."})
