@@ -318,41 +318,32 @@ def knowledge_trail(ingrediente):
 
 @bp.route("/v1/cerca", methods=["GET"])
 def cerca_universale():
-    """RICERCA UNIVERSALE: cerca in ricette + ingredienti + fenomeni insieme.
-    Risolve il buco 'catalogo vuoto': l'utente cerca 'margarita' o 'basilico' e trova tutto."""
+    """RICERCA UNIVERSALE: ricette + ingredienti + fenomeni + tecniche insieme."""
     from flask import request, jsonify
-    q = (request.args.get("q") or "").strip().lower()
+    q = (request.args.get("q") or "").strip()
     if len(q) < 2:
         return jsonify({"query": q, "risultati": [], "nota": "cerca almeno 2 caratteri"})
+    pat = "%" + q + "%"
     risultati = []
     try:
         from db import carica_grafo
         db = carica_grafo()
-        _pat = f"%{q}%"
-        # 1. RICETTE (la tabella che sappiamo funziona)
-        try:
-            for r in db.execute("SELECT id, nome, disciplina FROM ricette WHERE nome ILIKE ? LIMIT 8", (_pat,)).fetchall():
-                risultati.append({"tipo": "ricetta", "id": r[0], "nome": r[1], "disciplina": r[2]})
-        except Exception as _e1:
-            risultati.append({"_debug_ricette": str(_e1)[:80]})
-        # 2. FENOMENI
-        try:
-            for r in db.execute("SELECT id, name FROM nodes WHERE type='Fenomeno' AND name ILIKE ? LIMIT 5", (_pat,)).fetchall():
-                risultati.append({"tipo": "fenomeno", "id": r[0], "nome": r[1]})
-        except Exception:
-            pass
-        # 3. INGREDIENTI
-        try:
-            for r in db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND name ILIKE ? LIMIT 5", (_pat,)).fetchall():
-                risultati.append({"tipo": "ingrediente", "id": r[0], "nome": r[1]})
-        except Exception:
-            pass
-        # 4. TECNICHE
-        try:
-            for r in db.execute("SELECT id, name FROM nodes WHERE type='Tecnica' AND name ILIKE ? LIMIT 3", (_pat,)).fetchall():
-                risultati.append({"tipo": "tecnica", "id": r[0], "nome": r[1]})
-        except Exception:
-            pass
+        # RICETTE (stesso pattern del ricettario che funziona)
+        rows = db.execute("SELECT id, nome, disciplina FROM ricette WHERE nome ILIKE ? LIMIT 8", (pat,)).fetchall()
+        for r in rows:
+            risultati.append({"tipo": "ricetta", "id": r[0], "nome": r[1], "disciplina": r[2]})
+        # FENOMENI
+        rows = db.execute("SELECT id, name FROM nodes WHERE type='Fenomeno' AND name ILIKE ? LIMIT 5", (pat,)).fetchall()
+        for r in rows:
+            risultati.append({"tipo": "fenomeno", "id": r[0], "nome": r[1]})
+        # INGREDIENTI
+        rows = db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND name ILIKE ? LIMIT 5", (pat,)).fetchall()
+        for r in rows:
+            risultati.append({"tipo": "ingrediente", "id": r[0], "nome": r[1]})
+        # TECNICHE
+        rows = db.execute("SELECT id, name FROM nodes WHERE type='Tecnica' AND name ILIKE ? LIMIT 3", (pat,)).fetchall()
+        for r in rows:
+            risultati.append({"tipo": "tecnica", "id": r[0], "nome": r[1]})
     except Exception as e:
-        return jsonify({"query": q, "risultati": [], "errore": str(e)[:100]})
+        return jsonify({"query": q, "risultati": risultati, "errore": str(e)[:120]})
     return jsonify({"query": q, "risultati": risultati, "totale": len(risultati)})
