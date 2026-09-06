@@ -3074,16 +3074,15 @@ async function cercaFlavorMappa(){
     const _ingFlavor = ing; // ingrediente cercato
 
     let html = visibili.map(a=>{
-      var ov=parseInt(a.overlap)||0;
-      // 3 livelli con peso visivo: forte (overlap alto) / medio / creativo
-      var liv = ov>=15 ? 'forte' : (ov>=6 ? 'medio' : 'creativo');
+      // uso il livello A/B/C del backend (già calcolato con confidence)
+      var liv = a.livello==='A' ? 'forte' : (a.livello==='B' ? 'medio' : (a.livello==='C' ? 'creativo' : 'medio'));
       var barW = liv==='forte' ? 100 : (liv==='medio' ? 60 : 30);
       return `
       <div class="flavor-result-item flavor-liv-${liv}" style="align-items:center">
         <div class="flavor-peso" title="${liv}"><div class="flavor-peso-bar" style="width:${barW}%"></div></div>
         <span class="flavor-result-name">${esc(a.ingrediente.replace(/_/g,' '))}</span>
         <div style="display:flex;align-items:center;gap:6px">
-          <span class="flavor-result-why">${esc(a.composto||'')} · ${a.overlap||''}</span>
+          <span class="flavor-result-why">${esc(a.livello_nome||a.composto||'')}</span>
           <button onclick="feedbackAbb('${esc(a.ingrediente)}','${esc(_ingFlavor)}',1,this)" title="Mi piace" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px;opacity:.5" class="fb-btn"><i class="ph ph-thumbs-up"></i></button>
           <button onclick="feedbackAbb('${esc(a.ingrediente)}','${esc(_ingFlavor)}',-1,this)" title="Non mi piace" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px;opacity:.5" class="fb-btn"><i class="ph ph-thumbs-down"></i></button>
         </div>
