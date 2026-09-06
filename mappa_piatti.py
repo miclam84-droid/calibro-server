@@ -153,6 +153,13 @@ def _carica_tutto():
     except Exception:
         pass
 
+    try:
+        from mappa_cocktail_estesa import COCKTAIL_ESTESI as _CE
+        for p in _CE:
+            _aggiungi(p["nome"], p["chiave"], p["firma"], "Bar / Cocktail", "Bar / Cocktail", "bar")
+    except Exception:
+        pass
+
     return list(piatti.values())
 
 
