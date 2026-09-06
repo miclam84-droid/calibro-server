@@ -160,6 +160,13 @@ def _carica_tutto():
     except Exception:
         pass
 
+    try:
+        from mappa_bakery_estesa import BAKERY_ESTESA as _BE
+        for p in _BE:
+            _aggiungi(p["nome"], p["chiave"], p["firma"], p["area"], p.get("disciplina","panificazione").capitalize(), p.get("disciplina","panificazione"))
+    except Exception:
+        pass
+
     return list(piatti.values())
 
 
