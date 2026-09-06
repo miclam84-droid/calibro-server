@@ -2130,7 +2130,7 @@ const _strings = {
     indietro:'← Indietro', avanti:'Avanti →', vai_mappa:'Vai all\'Atlante →',
     principio_del_giorno:'Principio del giorno',
     vedi_mappa:'Vedi il principio nell\'Atlante →',
-    chiedi_placeholder:'Scrivi un problema al banco (es. ganache separata)…',
+    chiedi_placeholder:'Scrivi un problema al banco (es. maionese impazzita, collasso biga)',
     chiedi_btn:'Chiedi',
     onb_nudge_title:'Postazione Attiva',
     ai_disclosure:'Risposte generate da un assistente AI.',
@@ -4097,7 +4097,7 @@ function _chiudiContesto(){
   _ctxChat=null;
   var chip=document.getElementById('chat-ctx-chip'); if(chip) chip.remove();
   var inp=document.getElementById('q')||document.getElementById('ask-input');
-  if(inp) inp.placeholder='Scrivi un problema al banco (es. ganache separata)…';
+  if(inp) inp.placeholder='Scrivi un problema al banco (es. maionese impazzita, collasso biga)';
 }
 async function foodCostRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
