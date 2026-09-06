@@ -19,11 +19,22 @@ def genera_lista_piatti(disciplina, area, quanti=50):
     )
     try:
         raw = _haiku_raw(prompt, max_tokens=3000)
-        # estraggo il JSON
-        m = re.search(r'\[.*\]', raw, re.DOTALL)
-        if not m:
+        if not raw:
             return []
-        lista = json.loads(m.group(0))
+        # estrazione robusta: rimuovo markdown, isolo l'array JSON
+        _txt = raw.replace("```json", "").replace("```", "").strip()
+        _start = _txt.find("[")
+        _end = _txt.rfind("]")
+        if _start < 0:
+            return []
+        if _end > _start:
+            _json_str = _txt[_start:_end+1]
+        else:
+            # array troncato: chiudo all'ultimo oggetto completo
+            _frag = _txt[_start:]
+            _last = _frag.rfind("}")
+            _json_str = (_frag[:_last+1] + "]") if _last > 0 else "[]"
+        lista = json.loads(_json_str)
         # valido: ogni voce deve avere nome, chiave, firma
         out = []
         _visti = set()
