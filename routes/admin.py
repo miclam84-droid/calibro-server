@@ -7334,27 +7334,30 @@ def admin_genera_serbatoio():
             return jsonify({"debug_motivo": nuovi[0], "ai_raw": nuovi[1]})
         if not nuovi:
             return jsonify({"generati": 0, "nota": "l'AI non ha restituito una lista valida. Aggiungi &debug=1 per vedere cosa risponde l'AI"})
-        # accumulo in un file che si auto-estende
-        import json
-        path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "mappa_ai_accumulata.json")
-        esistenti = []
-        if os.path.exists(path):
-            try:
-                with open(path) as f:
-                    esistenti = json.load(f)
-            except Exception:
-                esistenti = []
-        nomi_esistenti = {p["nome"].lower() for p in esistenti}
+        # SALVO NEL DATABASE (Postgres persiste; il file su Railway è effimero e si perde al riavvio)
+        import psycopg2, json
+        conn = psycopg2.connect(os.environ["DATABASE_URL"])
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS serbatoio_ai (
+            nome TEXT PRIMARY KEY, chiave TEXT, firma JSONB, area TEXT, disciplina TEXT,
+            tipo TEXT DEFAULT 'da_validare', creato TIMESTAMP DEFAULT NOW())""")
         aggiunti = 0
         for p in nuovi:
-            if p["nome"].lower() not in nomi_esistenti:
-                esistenti.append(p)
-                nomi_esistenti.add(p["nome"].lower())
-                aggiunti += 1
-        with open(path, "w") as f:
-            json.dump(esistenti, f, ensure_ascii=False, indent=1)
+            try:
+                cur.execute("""INSERT INTO serbatoio_ai (nome, chiave, firma, area, disciplina, tipo)
+                               VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (nome) DO NOTHING""",
+                            (p["nome"], p.get("chiave",""), json.dumps(p.get("firma",[])),
+                             p.get("area",""), p.get("disciplina",""), p.get("tipo","da_validare")))
+                if cur.rowcount > 0:
+                    aggiunti += 1
+            except Exception:
+                pass
+        conn.commit()
+        cur.execute("SELECT COUNT(*) FROM serbatoio_ai")
+        totale = cur.fetchone()[0]
+        cur.close(); conn.close()
         return jsonify({"generati": len(nuovi), "aggiunti_nuovi": aggiunti,
-                        "totale_accumulato": len(esistenti),
-                        "nota": "aggiunti al serbatoio AI. Rilancia con aree/discipline diverse per accrescere."})
+                        "totale_accumulato": totale,
+                        "nota": "salvati nel DB (persistente). Rilancia con aree diverse per accrescere."})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 200

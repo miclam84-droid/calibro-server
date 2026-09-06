@@ -167,18 +167,21 @@ def _carica_tutto():
     except Exception:
         pass
 
-    # serbatoio generato via AI (si auto-accresce con /admin/genera-serbatoio)
+    # serbatoio generato via AI (salvato in Postgres, persistente)
     try:
         import os, json
-        _path = os.path.join(os.path.dirname(__file__), "mappa_ai_accumulata.json")
-        if os.path.exists(_path):
-            with open(_path) as _f:
-                for p in json.load(_f):
-                    if p.get("nome") and p.get("firma"):
-                        _aggiungi(p["nome"], p.get("chiave",""), p["firma"],
-                                  p.get("area","internazionale"),
-                                  p.get("disciplina","cucina").capitalize(),
-                                  p.get("disciplina","cucina"))
+        _dburl = os.environ.get("DATABASE_URL")
+        if _dburl:
+            import psycopg2
+            _c = psycopg2.connect(_dburl)
+            _cur = _c.cursor()
+            _cur.execute("SELECT nome, chiave, firma, area, disciplina FROM serbatoio_ai")
+            for _r in _cur.fetchall():
+                _firma = _r[2] if isinstance(_r[2], list) else (json.loads(_r[2]) if _r[2] else [])
+                if _r[0] and _firma:
+                    _aggiungi(_r[0], _r[1] or "", _firma, _r[3] or "internazionale",
+                              (_r[4] or "cucina").capitalize(), _r[4] or "cucina")
+            _cur.close(); _c.close()
     except Exception:
         pass
 
