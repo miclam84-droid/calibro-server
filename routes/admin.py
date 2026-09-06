@@ -7395,17 +7395,23 @@ def admin_genera_da_serbatoio():
                 cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
                 if cur.fetchone():
                     continue
-                def _j(x): return json.dumps(x if x is not None else ([] if x==[] else {}))
+                # pattern IDENTICO all'INSERT collaudato (riga 2931)
                 cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
-                               punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
-                               VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
-                               ON CONFLICT (id) DO NOTHING""",
-                            (fid, ric["nome"], disc or "cucina", ric.get("descrizione",""),
-                             _j(ric.get("ingredienti",[])), _j(ric.get("fenomeni",[])), _j(ric.get("tecniche",[])),
-                             _j(ric.get("numeri",{})), ric.get("punto_critico",""), _j(ric.get("abbinamenti",[])),
-                             _j(ric.get("procedimento",[])), _j(ric.get("applicazioni",[])), ric.get("tempo_prep",""),
-                             ric.get("tempo_cottura",""), ric.get("difficolta",""), ric.get("porzioni",""),
-                             ric.get("esperimento",""), ric.get("limite",""), _j(ric.get("twist",{}))))
+                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
+                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
+                    ON CONFLICT (id) DO NOTHING""",
+                    (fid, ric["nome"], disc or "cucina", ric.get("descrizione",""),
+                     json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
+                     json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                     json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+                     json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                     ric.get("punto_critico",""),
+                     json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                     json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                     json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
+                     ric.get("tempo_prep",""), ric.get("tempo_cottura",""),
+                     ric.get("difficolta",""), ric.get("porzioni",""),
+                     ric.get("esperimento",""), ric.get("limite",""), ric.get("twist","")))
                 conn.commit()
                 creati += 1
             except Exception:
