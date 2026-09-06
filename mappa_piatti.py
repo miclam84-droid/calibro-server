@@ -167,6 +167,21 @@ def _carica_tutto():
     except Exception:
         pass
 
+    # serbatoio generato via AI (si auto-accresce con /admin/genera-serbatoio)
+    try:
+        import os, json
+        _path = os.path.join(os.path.dirname(__file__), "mappa_ai_accumulata.json")
+        if os.path.exists(_path):
+            with open(_path) as _f:
+                for p in json.load(_f):
+                    if p.get("nome") and p.get("firma"):
+                        _aggiungi(p["nome"], p.get("chiave",""), p["firma"],
+                                  p.get("area","internazionale"),
+                                  p.get("disciplina","cucina").capitalize(),
+                                  p.get("disciplina","cucina"))
+    except Exception:
+        pass
+
     return list(piatti.values())
 
 

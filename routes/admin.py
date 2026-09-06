@@ -7312,3 +7312,46 @@ def admin_assegna_node_kind():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+
+
+@bp.route("/admin/genera-serbatoio")
+def admin_genera_serbatoio():
+    """Genera liste di piatti canonici VERI via AI e le accumula in mappa_ai_generata.py.
+    Riempie il serbatoio in VOLUME (centinaia per giro) invece di aggiungere a mano.
+    Uso: /admin/genera-serbatoio?s=SECRET&disciplina=bar&area=internazionale&quanti=60"""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    disciplina = request.args.get("disciplina", "cocktail")
+    area = request.args.get("area", "internazionale")
+    quanti = min(int(request.args.get("quanti", 50)), 80)
+    try:
+        from genera_serbatoio import genera_lista_piatti
+        nuovi = genera_lista_piatti(disciplina, area, quanti)
+        if not nuovi:
+            return jsonify({"generati": 0, "nota": "l'AI non ha restituito una lista valida, riprova"})
+        # accumulo in un file che si auto-estende
+        import json
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "mappa_ai_accumulata.json")
+        esistenti = []
+        if os.path.exists(path):
+            try:
+                with open(path) as f:
+                    esistenti = json.load(f)
+            except Exception:
+                esistenti = []
+        nomi_esistenti = {p["nome"].lower() for p in esistenti}
+        aggiunti = 0
+        for p in nuovi:
+            if p["nome"].lower() not in nomi_esistenti:
+                esistenti.append(p)
+                nomi_esistenti.add(p["nome"].lower())
+                aggiunti += 1
+        with open(path, "w") as f:
+            json.dump(esistenti, f, ensure_ascii=False, indent=1)
+        return jsonify({"generati": len(nuovi), "aggiunti_nuovi": aggiunti,
+                        "totale_accumulato": len(esistenti),
+                        "nota": "aggiunti al serbatoio AI. Rilancia con aree/discipline diverse per accrescere."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]}), 200
