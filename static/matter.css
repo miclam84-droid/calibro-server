@@ -2976,3 +2976,13 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 /* riquadro netto Matter attorno alle icone discipline (proprietarie) */
 .disc-mini-ico{border:1px solid #141D22;border-radius:0;padding:6px;display:inline-flex;background:#fff}
 .empty-icon svg{display:block;margin:0 auto}
+
+/* ═══ BARRA INPUT CHAT (prompt blindato #3) — mono, squadrata, invio terracotta ═══ */
+.ask-input{font-family:'IBM Plex Mono',monospace!important;font-size:14px!important;border-radius:0!important;border:1.5px solid #141D22!important;background:#fff!important;color:#141D22!important}
+.ask-input::placeholder{color:#9DAEB2!important;font-size:12.5px}
+.ask-btn{background:#C77B3F!important;color:#141D22!important;border-radius:0!important;border:1.5px solid #141D22!important;width:48px!important;height:48px!important;display:flex!important;align-items:center;justify-content:center}
+.ask-btn:active{background:#A5572A!important}
+.ask-cam-inline{border-radius:0!important;border:1.5px solid #141D22!important;width:48px!important;height:48px!important;color:#245979!important;background:#fff!important}
+.ask-input-row{gap:8px!important;align-items:stretch!important}
+/* cookie visibile → sposta la barra chat su di 64px (no sovrapposizione) */
+body.cookie-attivo .ask-bar,body.cookie-attivo #ask-bar{transform:translateY(-56px);transition:transform .2s}
