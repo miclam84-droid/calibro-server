@@ -297,3 +297,20 @@ def matter_avvia_galileo_run():
             return jsonify(_j.loads(r.read().decode()))
     except Exception as e:
         return jsonify({"errore": "Galileo non raggiungibile", "dettaglio": str(e)[:100]}), 502
+
+
+@bp.route("/v1/trail/<ingrediente>", methods=["GET"])
+def knowledge_trail(ingrediente):
+    """KNOWLEDGE TRAIL: percorso di scoperta da un ingrediente (longevità/retention).
+    ingrediente -> composto -> affine -> fenomeno -> ricetta. Tappe reali dal grafo."""
+    try:
+        from db import carica_grafo
+        from knowledge_trails import costruisci_trail
+        db = carica_grafo()
+        tappe = costruisci_trail(db, ingrediente)
+        if not tappe:
+            return jsonify({"ingrediente": ingrediente, "trail": [],
+                            "nota": "Percorso non disponibile per questo ingrediente."})
+        return jsonify({"ingrediente": ingrediente, "trail": tappe, "n_tappe": len(tappe)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120], "trail": []}), 200
