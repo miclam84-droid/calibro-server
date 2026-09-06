@@ -3015,3 +3015,13 @@ body.cookie-attivo .ask-bar,body.cookie-attivo #ask-bar{transform:translateY(-56
 .rg-critico-lab{display:block;font-family:'IBM Plex Mono',monospace!important;font-size:10px!important;font-weight:700!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:#A5572A!important;margin-bottom:6px}
 /* sezioni etichettate (referto, non blog) */
 .rg-sec-lab{font-family:'Space Grotesk',sans-serif!important;font-size:11px!important;font-weight:700!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:#12545D!important;margin-bottom:10px}
+
+/* ═══ CHAT = REFERTO (Parte C) — blocchi etichettati, non bolla ═══ */
+.referto-blocco{border-left:3px solid #141D22;padding:10px 0 10px 14px;margin:14px 0}
+.referto-lab{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#12545D;margin-bottom:6px}
+.referto-txt{font-family:'Inter',sans-serif;font-size:15px;color:#2A3A42;line-height:1.55}
+.referto-txt strong{color:#141D22;font-weight:600}
+/* NUMERO bersaglio: box eroe terracotta */
+.referto-num{background:#141D22;border-radius:0;box-shadow:4px 4px 0 rgba(20,29,34,.2);padding:16px;margin:16px 0}
+.referto-num .referto-lab{color:#7FB0C4}
+.referto-num .referto-txt{font-family:'IBM Plex Mono',monospace!important;font-size:32px!important;font-weight:700!important;color:#E8935A!important;line-height:1.1}

@@ -1352,21 +1352,33 @@ async function _chiediStream(q){
 // non etichette stampatello. Markdown leggero + grassetti mirati.
 function _formattaRispostaChat(t){
   var e=_escV(t);
-  // heading markdown ### / ## / # → titoli di sezione (Space Grotesk)
-  e=e.replace(/^#{1,6}\s*(.+)$/gm, function(m,txt){ return '</p><h4 class="chat-h">'+txt.replace(/:$/,'')+'</h4><p class="chat-par">'; });
-  // i vecchi marcatori PROBLEMA/PERCHÉ → separatori di paragrafo
-  e=e.replace(/\s*(PROBLEMA|PERCHÉ|PERCHE|NUMERO|MISURA|AZIONE)\s*:\s*/g, function(m,p){ return '</p><p class="chat-par">'; });
-  // grassetto **testo** → <strong>
+  // grassetto/corsivo prima (per applicarli dentro i blocchi)
   e=e.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-  // corsivo *testo* (singolo, non già consumato) → <em>
   e=e.replace(/(^|[^*])\*([^*\n]+)\*($|[^*])/g,'$1<em>$2</em>$3');
-  // liste numerate "1. " a inizio riga → item
+  // heading markdown ### → titolo referto
+  e=e.replace(/^#{1,6}\s*(.+)$/gm, function(m,txt){ return '\n@@H@@'+txt.replace(/:$/,'')+'\n'; });
+  // PARTE C: i marcatori diventano BLOCCHI ETICHETTATI (referto, non prosa)
+  // inserisco un separatore prima di ogni marcatore
+  e=e.replace(/\s*(PROBLEMA|DIAGNOSI|PERCHÉ|PERCHE|NUMERO|MISURA|AZIONE)\s*:\s*/g, function(m,lab){
+    var L=lab.toUpperCase().replace('PERCHE','PERCHÉ');
+    var cls = (L==='NUMERO'||L==='MISURA') ? 'referto-num' : 'referto-blocco';
+    return '@@B@@'+cls+'@@'+L+'@@';
+  });
+  // liste
   e=e.replace(/^\s*(\d+)\.\s+(.+)$/gm, '<span class="chat-li"><b>$1.</b> $2</span>');
-  // bullet "- " o "• " → item col punto terracotta
   e=e.replace(/^\s*[-•]\s+(.+)$/gm, '<span class="chat-li chat-li-bullet">$1</span>');
-  // paragrafi
-  e=e.replace(/\n\n/g,'</p><p class="chat-par">').replace(/\n/g,'<br>');
-  return '<p class="chat-par">'+e+'</p>';
+  // ora costruisco i blocchi
+  var parti=e.split('@@B@@');
+  var html='';
+  // testo prima del primo marcatore (introduzione)
+  if(parti[0].trim()){ html+='<div class="chat-par">'+parti[0].replace(/@@H@@(.+)/g,'<div class="chat-h">$1</div>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')+'</div>'; }
+  for(var i=1;i<parti.length;i++){
+    var seg=parti[i].split('@@');
+    var cls=seg[0], lab=seg[1], testo=seg.slice(2).join('@@');
+    testo=testo.replace(/@@H@@(.+)/g,'<div class="chat-h">$1</div>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>').trim();
+    html+='<div class="'+cls+'"><div class="referto-lab">'+lab+'</div><div class="referto-txt">'+testo+'</div></div>';
+  }
+  return html || '<div class="chat-par">'+e.replace(/@@H@@(.+)/g,'<div class="chat-h">$1</div>')+'</div>';
 }
 async function _streamWidgetFenomeno(flusso, id){
   var ph=document.createElement('div'); ph.className='stream-widget'; ph.innerHTML='<div class="calc-loading">Carico la scheda…</div>';
