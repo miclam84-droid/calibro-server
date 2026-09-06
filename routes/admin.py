@@ -7328,9 +7328,12 @@ def admin_genera_serbatoio():
     quanti = min(int(request.args.get("quanti", 50)), 80)
     try:
         from genera_serbatoio import genera_lista_piatti
-        nuovi = genera_lista_piatti(disciplina, area, quanti)
+        _dbg = request.args.get("debug") == "1"
+        nuovi = genera_lista_piatti(disciplina, area, quanti, _debug=_dbg)
+        if _dbg and isinstance(nuovi, tuple):
+            return jsonify({"debug_motivo": nuovi[0], "ai_raw": nuovi[1]})
         if not nuovi:
-            return jsonify({"generati": 0, "nota": "l'AI non ha restituito una lista valida, riprova"})
+            return jsonify({"generati": 0, "nota": "l'AI non ha restituito una lista valida. Aggiungi &debug=1 per vedere cosa risponde l'AI"})
         # accumulo in un file che si auto-estende
         import json
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "mappa_ai_accumulata.json")

@@ -2,9 +2,10 @@
 # Invece di scrivere 30 piatti a mano, l'AI ne genera centinaia (piatti reali, non inventati) per
 # disciplina. Si validano e si aggiungono al serbatoio. Poi il generatore li trasforma in ricette.
 
-def genera_lista_piatti(disciplina, area, quanti=50):
+def genera_lista_piatti(disciplina, area, quanti=50, _debug=False):
     """Chiede all'AI una lista di piatti/preparazioni CANONICI VERI per disciplina+area.
-    Restituisce lista di dict {nome, chiave, firma}. Solo piatti REALI, non inventati."""
+    Restituisce lista di dict {nome, chiave, firma}. Solo piatti REALI, non inventati.
+    Se _debug=True, in caso di 0 risultati restituisce ('DEBUG', raw_ai) per capire il problema."""
     from ai import _haiku_raw
     import json, re
     prompt = (
@@ -17,20 +18,22 @@ def genera_lista_piatti(disciplina, area, quanti=50):
         f'[{{"nome":"Nome Piatto","chiave":"ingrediente principale","firma":["ing1","ing2","ing3"]}}]\n'
         f"NON aggiungere testo prima o dopo il JSON. NON ripetere piatti. Meglio pochi VERI che tanti inventati."
     )
+    import sys as _sys
+    _raw_ai = ""
     try:
         raw = _haiku_raw(prompt, max_tokens=3000)
+        _raw_ai = raw or ""
         if not raw:
-            return []
+            return ("DEBUG:vuoto", "") if _debug else []
         # estrazione robusta: rimuovo markdown, isolo l'array JSON
         _txt = raw.replace("```json", "").replace("```", "").strip()
         _start = _txt.find("[")
         _end = _txt.rfind("]")
         if _start < 0:
-            return []
+            return ("DEBUG:no_array", raw[:300]) if _debug else []
         if _end > _start:
             _json_str = _txt[_start:_end+1]
         else:
-            # array troncato: chiudo all'ultimo oggetto completo
             _frag = _txt[_start:]
             _last = _frag.rfind("}")
             _json_str = (_frag[:_last+1] + "]") if _last > 0 else "[]"
