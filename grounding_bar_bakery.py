@@ -47,6 +47,13 @@ FORMULE_PANE = {
     "pretzel":       {"formula": "farina 100%, acqua 55-60%, burro 5%, sale, lievito", "nota": "Bagno in soluzione alcalina (soda) prima della cottura: crosta scura e sapore tipico."},
     "pizza napoletana": {"formula": "farina 00 W260-320 100%, acqua 58-62%, sale 2.5-3%, lievito 0.1-0.3%", "nota": "Idratazione media, lievitazione 8-24h. Forno 430-485°C, 60-90s. Disciplinare STG."},
     "pizza romana":  {"formula": "farina 100%, acqua 70-80%, olio 2-3%, sale 2%, lievito", "nota": "Alta idratazione, tonda sottile e croccante o in teglia. Lievitazione lunga."},
+    "pizza in teglia": {"formula": "farina W300+ 100%, acqua 75-85%, olio 3%, sale 2.5%, lievito 0.3%", "nota": "Alta idratazione, lievitazione 24-48h freddo. Alveolatura aperta, croccante sotto."},
+    "michetta":      {"formula": "farina forte 100%, acqua 48-52%, sale 2%, malto, lievito", "nota": "Rosetta lombarda: impasto duro, cava dentro. Lavorazione a stampo/soffiata."},
+    "pane cafone":   {"formula": "farina 0/00 100%, acqua 65-70%, sale 2.5%, madre napoletana", "nota": "Pane napoletano a lievitazione naturale, crosta spessa, mollica alveolata."},
+    "friselle":      {"formula": "semola/orzo 100%, acqua 50%, sale, lievito", "nota": "Pugliesi: biscottate (doppia cottura), si bagnano prima di condire."},
+    "taralli":       {"formula": "farina 100%, vino bianco 25%, olio 25%, sale, semi finocchio", "nota": "Pugliesi: sbollentati poi cotti. Croccanti, da aperitivo."},
+    "colomba":       {"formula": "come panettone ma forma a colomba, glassa mandorle+zucchero", "nota": "Grande lievitato pasquale. Doppio impasto, madre, canditi arancia."},
+    "pandoro":       {"formula": "farina forte 100%, burro 45%, uova 40%, zucchero 30%, madre", "nota": "Sfogliato veronese a stella. Senza canditi, burro in sfoglia, vaniglia."},
 }
 
 
@@ -126,6 +133,12 @@ COCKTAIL_IBA = {
     "rusty nail":       {"ricetta": "45ml scotch, 25ml Drambuie", "tecnica": "build", "note": "Semplice e forte. Sul ghiaccio, scorza di limone."},
     "b52":              {"ricetta": "20ml Kahlua, 20ml Baileys, 20ml Grand Marnier", "tecnica": "layer", "note": "Stratificato per densità: Kahlua sotto, poi Baileys, poi Grand Marnier."},
     "americano":        {"ricetta": "30ml Campari, 30ml vermouth rosso, spruzzo di soda", "tecnica": "build", "note": "L'Americano ha la SODA; il Negroni sbagliato ha lo spumante. Non confonderli."},
+    "gin fizz":         {"ricetta": "45ml gin, 30ml limone, 10ml sciroppo zucchero, soda", "tecnica": "shaken+top", "note": "Shakerare senza soda, poi allungare. Effervescente e agrumato."},
+    "ramos gin fizz":   {"ricetta": "45ml gin, panna, albume, limone, lime, zucchero, acqua di fiori d'arancio, soda", "tecnica": "shaken lungo", "note": "Shake lunghissimo (10-12 min tradizionale) per la texture soffice."},
+    "vesper":           {"ricetta": "60ml gin, 15ml vodka, 7ml Lillet Blanc", "tecnica": "shaken", "note": "Il Martini di James Bond. Shakerato, scorza di limone."},
+    "hanky panky":      {"ricetta": "45ml gin, 45ml vermouth rosso, 2 dash Fernet Branca", "tecnica": "stirred", "note": "Creato da Ada Coleman al Savoy. Il Fernet dà la nota amara."},
+    "bijou":            {"ricetta": "30ml gin, 30ml Chartreuse verde, 30ml vermouth rosso, dash orange bitter", "tecnica": "stirred", "note": "Tre gioielli: gin/Chartreuse/vermouth. Complesso ed erbaceo."},
+    "martinez":         {"ricetta": "45ml gin Old Tom, 30ml vermouth rosso, 1 cucchiaino maraschino, dash bitter", "tecnica": "stirred", "note": "L'antenato del Martini, più dolce."},
 }
 
 
