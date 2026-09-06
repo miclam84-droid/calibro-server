@@ -20,36 +20,49 @@ def costruisci_trail(db, ingrediente_start):
               "parmigiano": "parmesan", "funghi": "mushroom", "whisky": "whisky", "gin": "gin",
               "rum": "rum", "nocciola": "hazelnut", "mandorla": "almond", "pistacchio": "pistachio"}
     ing_en = _IT_EN.get(ing, ing)
+    cat = categoria_di(ing)
+    fam = famiglia_aromatica_di(ing)
+    trail.append({"tappa": "ingrediente", "nome": ingrediente_start,
+                  "dettaglio": f"Categoria: {cat or 'da classificare'}" + (f" · Famiglia aromatica: {fam}" if fam else "")})
+    # trovo il nodo ingrediente (try isolato)
+    nid = None
     try:
-        cat = categoria_di(ing)
-        fam = famiglia_aromatica_di(ing)
-        trail.append({"tappa": "ingrediente", "nome": ingrediente_start,
-                      "dettaglio": f"Categoria: {cat or 'da classificare'}" + (f" · Famiglia aromatica: {fam}" if fam else "")})
-        # trovo il nodo ingrediente nel grafo (per nome EN)
-        _n = db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND lower(name)=? LIMIT 1", (ing_en,)).fetchone()
+        _n = db.execute("SELECT id FROM nodes WHERE type='Prodotto' AND lower(name)=? LIMIT 1", (ing_en,)).fetchone()
         if not _n:
-            _n = db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND lower(name) LIKE ? LIMIT 1", (f"{ing_en}%",)).fetchone()
-        if _n:
-            nid = _n[0]
-            # tappa 2: composto chiave (contiene_composto)
+            _n = db.execute("SELECT id FROM nodes WHERE type='Prodotto' AND lower(name) LIKE ? LIMIT 1", (f"{ing_en}%",)).fetchone()
+        nid = _n[0] if _n else None
+    except Exception:
+        pass
+    # tappa 2: composto (try isolato)
+    if nid:
+        try:
             _comp = db.execute("SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id WHERE e.from_id=? AND e.relation='contiene_composto' LIMIT 1", (nid,)).fetchone()
             if _comp:
                 _cn = _comp[0].replace("comp_", "").replace("_", " ")
                 trail.append({"tappa": "composto", "nome": _cn,
                               "dettaglio": f"{ingrediente_start} contiene {_cn}: una delle molecole che ne guida gli abbinamenti."})
-            # tappa 3: ingrediente affine (abbinamento_aromatico diretto)
+        except Exception:
+            pass
+        # tappa 3: affine (try isolato)
+        try:
             _aff = db.execute("SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 1", (nid,)).fetchone()
             if _aff:
                 _an = _aff[0].replace("_", " ")
                 trail.append({"tappa": "abbinamento", "nome": _an,
                               "dettaglio": f"{_an} è un abbinamento aromatico di {ingrediente_start}: condividono composti chiave."})
-        # tappa 4: fenomeno (dalla categoria)
+        except Exception:
+            pass
+    # tappa 4: fenomeno (try isolato)
+    try:
         _fen = db.execute("SELECT name FROM nodes WHERE type='Fenomeno' ORDER BY RANDOM() LIMIT 1").fetchone()
         if _fen:
             trail.append({"tappa": "fenomeno", "nome": _fen[0],
                           "dettaglio": f"Esplora il fenomeno {_fen[0]}: la scienza che governa questo ingrediente al banco."})
-        # tappa 5: ricetta che lo usa
-        _ric = db.execute("SELECT nome FROM ricette WHERE lower(ingredienti::text) LIKE ? OR lower(nome) LIKE ? LIMIT 1", (f"%{ing}%", f"%{ing}%")).fetchone()
+    except Exception:
+        pass
+    # tappa 5: ricetta (try isolato)
+    try:
+        _ric = db.execute("SELECT nome FROM ricette WHERE lower(nome) LIKE ? LIMIT 1", (f"%{ing}%",)).fetchone()
         if _ric:
             trail.append({"tappa": "ricetta", "nome": _ric[0],
                           "dettaglio": f"Mettilo in pratica: {_ric[0]}."})
