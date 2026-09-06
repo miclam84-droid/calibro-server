@@ -2986,3 +2986,18 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 .ask-input-row{gap:8px!important;align-items:stretch!important}
 /* cookie visibile → sposta la barra chat su di 64px (no sovrapposizione) */
 body.cookie-attivo .ask-bar,body.cookie-attivo #ask-bar{transform:translateY(-56px);transition:transform .2s}
+
+/* ═══ SCHERMATE INTERNE — estetica Matter Lab (scheda fenomeno, quiz, ricetta) ═══ */
+/* badge tipo fenomeno: squadrato, coerente */
+.fen-badge{border-radius:0!important;border:1px solid #141D22!important;display:inline-flex;align-items:center;gap:4px}
+.fen-badge-mis{background:rgba(199,123,63,.12)!important;color:#A5572A!important;border-color:#C77B3F!important}
+.fen-badge-oss{background:rgba(36,89,121,.1)!important;color:#245979!important;border-color:#245979!important}
+/* box principio: definito, bordo sinistro teal */
+.fen-principio,.fen-principio-box{border-radius:0!important;border-left:3px solid #12545D!important;background:#E8EDED!important}
+/* quiz: card angoli vivi, opzioni squadrate */
+.pal-quiz{border-radius:0!important;border:1.5px solid #141D22!important;box-shadow:4px 4px 0 rgba(20,29,34,.15)!important}
+.pal-opz{border-radius:0!important;border:1.5px solid #141D22!important}
+.pal-opz.giusta{border-color:#2C6E5A!important}
+.pal-opz.sbagliata{border-color:#A5432A!important}
+/* pulsanti azione scheda: squadrati con SVG */
+.s-action-btn{border-radius:0!important;border:1.5px solid #141D22!important;display:inline-flex;align-items:center;gap:5px}

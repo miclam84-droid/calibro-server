@@ -1520,8 +1520,8 @@ function _renderSchedaFenomeno(j){
 
   // --- HEADER: titolo (Space Grotesk) + disciplina + badge tipo ---
   var badge = isMis
-    ? '<span class="fen-badge fen-badge-mis">🧪 Misurabile</span>'
-    : '<span class="fen-badge fen-badge-oss">👁 Stato</span>';
+    ? '<span class="fen-badge fen-badge-mis"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-1px"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><line x1="8" y1="14" x2="16" y2="14"/></svg> Misurabile</span>'
+    : '<span class="fen-badge fen-badge-oss"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-1px"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Stato</span>';
   var disc = j.grandezza || j.disciplina || '';
 
   // --- PRINCIPIO (il cuore) — principi_diretti[0] ---
@@ -1783,7 +1783,7 @@ function renderRisp(domanda,j,fromNode){
     ${feedbackHtml}
     <div class="s-actions">
       <button class="s-action-btn" onclick="copiaRisposta(this)" title="Copia testo"><i class="ph ph-copy"></i> Copia</button>
-      <button class="s-action-btn" onclick="scaricaPDF(this)" title="Salva PDF">⬇ PDF</button>
+      <button class="s-action-btn" onclick="scaricaPDF(this)" title="Salva PDF"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px"><path d="M12 3v12M7 11l5 4 5-4"/><path d="M5 21h14"/></svg> PDF</button>
     </div>
     `;
   document.getElementById('schede').prepend(card);
