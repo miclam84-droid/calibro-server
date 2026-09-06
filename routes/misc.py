@@ -328,27 +328,28 @@ def cerca_universale():
     try:
         from db import carica_grafo
         db = carica_grafo()
-        # 1. FENOMENI (dal grafo)
+        _pat = f"%{q}%"
+        # 1. RICETTE (la tabella che sappiamo funziona)
         try:
-            for r in db.execute("SELECT id, name FROM nodes WHERE type='Fenomeno' AND lower(name) LIKE ? LIMIT 5", (f"%{q}%",)).fetchall():
+            for r in db.execute("SELECT id, nome, disciplina FROM ricette WHERE nome ILIKE ? LIMIT 8", (_pat,)).fetchall():
+                risultati.append({"tipo": "ricetta", "id": r[0], "nome": r[1], "disciplina": r[2]})
+        except Exception as _e1:
+            risultati.append({"_debug_ricette": str(_e1)[:80]})
+        # 2. FENOMENI
+        try:
+            for r in db.execute("SELECT id, name FROM nodes WHERE type='Fenomeno' AND name ILIKE ? LIMIT 5", (_pat,)).fetchall():
                 risultati.append({"tipo": "fenomeno", "id": r[0], "nome": r[1]})
         except Exception:
             pass
-        # 2. INGREDIENTI (Prodotto nel grafo)
+        # 3. INGREDIENTI
         try:
-            for r in db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND lower(name) LIKE ? LIMIT 5", (f"%{q}%",)).fetchall():
+            for r in db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND name ILIKE ? LIMIT 5", (_pat,)).fetchall():
                 risultati.append({"tipo": "ingrediente", "id": r[0], "nome": r[1]})
-        except Exception:
-            pass
-        # 3. RICETTE
-        try:
-            for r in db.execute("SELECT id, nome, disciplina FROM ricette WHERE lower(nome) LIKE ? LIMIT 8", (f"%{q}%",)).fetchall():
-                risultati.append({"tipo": "ricetta", "id": r[0], "nome": r[1], "disciplina": r[2]})
         except Exception:
             pass
         # 4. TECNICHE
         try:
-            for r in db.execute("SELECT id, name FROM nodes WHERE type='Tecnica' AND lower(name) LIKE ? LIMIT 3", (f"%{q}%",)).fetchall():
+            for r in db.execute("SELECT id, name FROM nodes WHERE type='Tecnica' AND name ILIKE ? LIMIT 3", (_pat,)).fetchall():
                 risultati.append({"tipo": "tecnica", "id": r[0], "nome": r[1]})
         except Exception:
             pass
