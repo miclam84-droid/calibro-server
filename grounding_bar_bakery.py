@@ -139,6 +139,15 @@ COCKTAIL_IBA = {
     "hanky panky":      {"ricetta": "45ml gin, 45ml vermouth rosso, 2 dash Fernet Branca", "tecnica": "stirred", "note": "Creato da Ada Coleman al Savoy. Il Fernet dà la nota amara."},
     "bijou":            {"ricetta": "30ml gin, 30ml Chartreuse verde, 30ml vermouth rosso, dash orange bitter", "tecnica": "stirred", "note": "Tre gioielli: gin/Chartreuse/vermouth. Complesso ed erbaceo."},
     "martinez":         {"ricetta": "45ml gin Old Tom, 30ml vermouth rosso, 1 cucchiaino maraschino, dash bitter", "tecnica": "stirred", "note": "L'antenato del Martini, più dolce."},
+    "jungle bird":      {"ricetta": "45ml rum scuro, 15ml Campari, 45ml ananas, 15ml lime, 15ml sciroppo", "tecnica": "shaken", "note": "Tiki con l'amaro del Campari. Bilanciamento agrume-amaro-tropicale."},
+    "paper plane":      {"ricetta": "22ml bourbon, 22ml Aperol, 22ml Amaro Nonino, 22ml limone", "tecnica": "shaken", "note": "Parti uguali moderno. Equilibrio amaro-agrumato."},
+    "naked and famous": {"ricetta": "22ml mezcal, 22ml Chartreuse gialla, 22ml Aperol, 22ml lime", "tecnica": "shaken", "note": "Il mezcal affumicato bilanciato da erbe e agrume."},
+    "gold rush":        {"ricetta": "60ml bourbon, 22ml limone, 22ml sciroppo di miele", "tecnica": "shaken", "note": "Whisky sour col miele. Rotondo e agrumato."},
+    "bee's knees":      {"ricetta": "60ml gin, 22ml limone, 22ml sciroppo di miele", "tecnica": "shaken", "note": "Proibizionismo: il miele mascherava il gin di bassa qualità."},
+    "southside":        {"ricetta": "60ml gin, 22ml limone, 22ml sciroppo, menta", "tecnica": "shaken", "note": "Come un Mojito col gin. Fresco ed erbaceo."},
+    "brandy alexander": {"ricetta": "30ml cognac, 30ml crème de cacao, 30ml panna", "tecnica": "shaken", "note": "Dessert cremoso. Noce moscata grattugiata."},
+    "sazerac":          {"ricetta": "50ml rye, 1 zolletta zucchero, 2 dash Peychaud's, risciacquo di assenzio", "tecnica": "stirred", "note": "Bicchiere risciacquato con assenzio. Scorza di limone (non nel drink)."},
+    "sherry cobbler":   {"ricetta": "90ml sherry, 15ml sciroppo, frutta di stagione, ghiaccio tritato", "tecnica": "swizzle", "note": "Classico ottocentesco. Bassa gradazione, dissetante."},
 }
 
 
