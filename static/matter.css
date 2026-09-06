@@ -3077,3 +3077,17 @@ body.cookie-attivo .ask-bar,body.cookie-attivo #ask-bar{transform:translateY(-56
 /* pulsante esporta */
 .st-esporta{width:100%;background:#fff;border:1.5px solid #141D22;border-radius:0;box-shadow:3px 3px 0 rgba(20,29,34,.15);padding:12px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#141D22;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:6px}
 .st-esporta:active{transform:translate(3px,3px);box-shadow:0 0 0}
+
+/* ═══ RICERCA GLOBALE ═══ */
+.ric-glob-search{margin-bottom:20px}
+.ric-glob-search input{width:100%;min-height:52px;border:1.5px solid #141D22;border-radius:0;background:#fff;padding:0 16px;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#141D22;-webkit-text-fill-color:#141D22;box-shadow:3px 3px 0 rgba(20,29,34,.15)}
+.ric-glob-search input::placeholder{color:#9DAEB2;font-size:12.5px}
+.ric-glob-search input:focus{outline:none;border-color:#C77B3F}
+.ric-glob-hint{font-family:'Inter',sans-serif;font-size:13px;color:#5A6C70;text-align:center;padding:30px 20px;line-height:1.5}
+.ric-glob-grp{margin-bottom:20px}
+.ric-glob-grp-lab{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#12545D;margin-bottom:10px}
+.ric-glob-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1.5px solid #141D22;border-radius:0;box-shadow:3px 3px 0 rgba(20,29,34,.12);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.ric-glob-item:active{transform:translate(3px,3px);box-shadow:0 0 0}
+.ric-glob-ico{flex-shrink:0;color:#245979;display:flex}
+.ric-glob-nome{flex:1;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141D22}
+.ric-glob-disc{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#5A6C70}

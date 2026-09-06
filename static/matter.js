@@ -5164,6 +5164,60 @@ async function caricaQuaderno(){
 }
 
 /* ── LOGIN TOPBAR ─────────────────────────────────────── */
+// ═══ RICERCA GLOBALE — ricette + ingredienti + fenomeni + tecniche ═══
+var _ricercaTimer=null;
+var _RIC_ICONE={
+  ricetta:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18"/><path d="M15 3c-1 2-1 5 0 7v11"/></svg>',
+  ingrediente:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="13" r="7"/><path d="M12 6c0-2 1-3 3-3"/></svg>',
+  fenomeno:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="7"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg>',
+  tecnica:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/></svg>'
+};
+var _RIC_TIPO_LAB={ricetta:'Ricette',ingrediente:'Ingredienti',fenomeno:'Fenomeni',tecnica:'Tecniche'};
+function apriRicerca(){
+  _apriVista('Cerca',
+    '<div class="ric-glob-search"><input id="ric-glob-input" placeholder="Cerca un piatto, un ingrediente, un fenomeno..." oninput="_ricercaLive(this.value)" autocomplete="off"></div>'
+    + '<div id="ric-glob-out"><div class="ric-glob-hint">Digita per cercare tra ricette, ingredienti, fenomeni e tecniche.</div></div>');
+  setTimeout(function(){ var i=document.getElementById('ric-glob-input'); if(i) i.focus(); }, 200);
+}
+function _ricercaLive(q){
+  clearTimeout(_ricercaTimer);
+  q=(q||'').trim();
+  var out=document.getElementById('ric-glob-out');
+  if(q.length<2){ if(out) out.innerHTML='<div class="ric-glob-hint">Digita almeno 2 lettere.</div>'; return; }
+  _ricercaTimer=setTimeout(async function(){
+    if(out) out.innerHTML='<div class="calc-loading">Cerco…</div>';
+    try{
+      var r=await fetch('/v1/cerca?q='+encodeURIComponent(q));
+      var j=await r.json();
+      var ris=j.risultati||[];
+      var e=_escV;
+      if(!ris.length){ if(out) out.innerHTML='<div class="ric-glob-hint">Nessun risultato per "'+e(q)+'".</div>'; return; }
+      // raggruppo per tipo
+      var gruppi={};
+      ris.forEach(function(x){ (gruppi[x.tipo]=gruppi[x.tipo]||[]).push(x); });
+      var html='';
+      ['ricetta','ingrediente','fenomeno','tecnica'].forEach(function(tipo){
+        if(!gruppi[tipo]) return;
+        html+='<div class="ric-glob-grp"><div class="ric-glob-grp-lab">'+(_RIC_TIPO_LAB[tipo]||tipo)+' · '+gruppi[tipo].length+'</div>';
+        html+=gruppi[tipo].map(function(x){
+          return '<button class="ric-glob-item" onclick="_ricercaApri(\''+e(x.tipo)+'\',\''+e(x.id)+'\',\''+e(String(x.nome)).replace(/'/g,"\\'")+'\')">'
+            + '<span class="ric-glob-ico">'+(_RIC_ICONE[tipo]||'')+'</span>'
+            + '<span class="ric-glob-nome">'+e(x.nome||'')+'</span>'
+            + (x.disciplina?'<span class="ric-glob-disc">'+e(x.disciplina)+'</span>':'')
+            + '</button>';
+        }).join('');
+        html+='</div>';
+      });
+      if(out) out.innerHTML=html;
+    }catch(err){ if(out) out.innerHTML='<div class="ric-glob-hint">Errore di rete.</div>'; }
+  }, 300);
+}
+function _ricercaApri(tipo, id, nome){
+  chiudiVista();
+  if(tipo==='fenomeno' || tipo==='tecnica'){ apriNodo(id, nome||''); }
+  else if(tipo==='ricetta'){ if(typeof _ricettarioApri==='function') _ricettarioApri(id, nome||''); else apriNodo(id, nome||''); }
+  else if(tipo==='ingrediente'){ if(typeof apriFlavour==='function'){ apriFlavour(); setTimeout(function(){ if(typeof caricaFlavour==='function') caricaFlavour(nome); }, 300); } }
+}
 function apriAccount(){
   const token = localStorage.getItem('matter_token');
   if(token){

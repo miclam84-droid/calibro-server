@@ -45,6 +45,9 @@ if('serviceWorker' in navigator){
       <span class="wm-text">MATTER BENCH</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px">
+      <button onclick="apriRicerca()" id="btn-ricerca" aria-label="Cerca" style="background:none;border:1.5px solid #141D22;border-radius:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#141D22">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21" stroke-linecap="round"/></svg>
+      </button>
       <button onclick="apriAccount()" id="login-topbar-btn">Accedi</button>
       <div id="account-menu" style="display:none;position:absolute;top:48px;right:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 0;z-index:300;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.08)">
         <div style="padding:8px 14px;font-family:var(--mono);font-size:10px;color:var(--ink-muted);letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border);margin-bottom:4px" id="account-menu-email"></div>
