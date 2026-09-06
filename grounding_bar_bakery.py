@@ -176,6 +176,12 @@ PARAMETRI_PASTICCERIA = {
     "temperaggio cioccolato": {"fondente": "fusione 45-50°C, raffredda 27-28°C, lavoro 31-32°C", "nota": "Curva di temperaggio fondente. Latte: 29-30°C. Bianco: 28-29°C. Per lucentezza e snap."},
     "pan di spagna":    {"montaggio": "uova+zucchero a 40°C montate a nastro", "nota": "Scaldare uova+zucchero a bagnomaria a 40°C, poi montare. Farina setacciata a mano."},
     "ganache":          {"ratio": "1:1 (cioccolato:panna) per glassa, 2:1 per tartufi", "nota": "Panna calda sul cioccolato, emulsione dal centro. Non superare 40°C."},
+    "tiramisù":         {"temp": "mascarpone 18-20°C, uova pastorizzate a 65°C", "nota": "Savoiardi inzuppati nel caffè, crema mascarpone+tuorli montati. Pastorizzare le uova per sicurezza."},
+    "cannoli":          {"temp": "frittura scorza 180°C", "nota": "Ricotta di pecora scolata 12-24h, zucchero a velo. Riempire al momento per la croccantezza."},
+    "sfogliatella":     {"temp": "cottura 200-220°C", "nota": "Sfoglia sottilissima tirata a mano, ripieno di semola/ricotta. Riccia o frolla."},
+    "babà":             {"formula": "farina forte 100%, uova 60%, burro 30%, lievito, bagna al rum", "nota": "Grande lievitato napoletano. Impasto molto idratato e ricco, imbevuto di bagna al rum tiepida."},
+    "pastiera":         {"temp": "cottura 160-180°C, 60-90 min", "nota": "Grano cotto, ricotta, canditi, fiori d'arancio. Pasqua napoletana. Riposo 2-3 giorni per amalgamare."},
+    "gelato al pistacchio": {"target": "pasta pistacchio 8-12%, zuccheri 18-20%", "nota": "Pistacchio di Bronte puro, senza coloranti. Il verde vero è spento, non fluo."},
 }
 
 
