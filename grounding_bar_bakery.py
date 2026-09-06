@@ -192,6 +192,17 @@ ABBINAMENTI_INGREDIENTI = {
     "vermouth rosso": "gin, whisky, Campari, arancia, ciliegia, chinotto.",
     "amaro": "caffè, cioccolato, arancia, panna, soda, agrumi canditi.",
     "caffè": "cioccolato, vaniglia, caramello, nocciola, cardamomo, cannella, latte, rum, whisky.",
+    "bourbon": "vaniglia, caramello, mais, ciliegia, arancia, menta, miele, cioccolato, pesca, noce pecan, zenzero.",
+    "cognac": "arancia, uva, prugna, vaniglia, cioccolato, caffè, noce, fico.",
+    "aperol": "prosecco, arancia, pompelmo, soda, erbe amare.",
+    "prosecco": "pesca (Bellini), Aperol, fragola, agrumi, sambuco.",
+    "pistacchio": "cioccolato bianco, lampone, rosa, cardamomo, miele, limone, panna, mandorla, arancia.",
+    "mandorla": "ciliegia, albicocca, cioccolato, arancia, vaniglia, miele, pesca, fico.",
+    "nocciola": "cioccolato, caffè, banana, vaniglia, caramello, pera.",
+    "vaniglia": "cioccolato, caramello, frutti rossi, caffè, rum, pera, banana, mela.",
+    "miele": "limone, zenzero, timo, noci, formaggi stagionati, whisky, castagna, lavanda.",
+    "farro": "funghi, castagne, zucca, verdure a foglia, formaggi, brodo.",
+    "malto": "birra, caramello, cioccolato, caffè, nocciola (nota tostata dei lievitati e distillati).",
 }
 
 
