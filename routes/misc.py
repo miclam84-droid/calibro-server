@@ -329,21 +329,20 @@ def cerca_universale():
         from db import carica_grafo
         db = carica_grafo()
         # RICETTE (stesso pattern del ricettario che funziona)
+        def _c(r, key, idx):
+            return r[key] if hasattr(r, "keys") else r[idx]
         rows = db.execute("SELECT id, nome, disciplina FROM ricette WHERE nome ILIKE ? LIMIT 8", (pat,)).fetchall()
         for r in rows:
-            risultati.append({"tipo": "ricetta", "id": r[0], "nome": r[1], "disciplina": r[2]})
-        # FENOMENI
+            risultati.append({"tipo": "ricetta", "id": _c(r,"id",0), "nome": _c(r,"nome",1), "disciplina": _c(r,"disciplina",2)})
         rows = db.execute("SELECT id, name FROM nodes WHERE type='Fenomeno' AND name ILIKE ? LIMIT 5", (pat,)).fetchall()
         for r in rows:
-            risultati.append({"tipo": "fenomeno", "id": r[0], "nome": r[1]})
-        # INGREDIENTI
+            risultati.append({"tipo": "fenomeno", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
         rows = db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND name ILIKE ? LIMIT 5", (pat,)).fetchall()
         for r in rows:
-            risultati.append({"tipo": "ingrediente", "id": r[0], "nome": r[1]})
-        # TECNICHE
+            risultati.append({"tipo": "ingrediente", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
         rows = db.execute("SELECT id, name FROM nodes WHERE type='Tecnica' AND name ILIKE ? LIMIT 3", (pat,)).fetchall()
         for r in rows:
-            risultati.append({"tipo": "tecnica", "id": r[0], "nome": r[1]})
+            risultati.append({"tipo": "tecnica", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
     except Exception as e:
         return jsonify({"query": q, "risultati": risultati, "errore": str(e)[:120]})
     return jsonify({"query": q, "risultati": risultati, "totale": len(risultati)})
