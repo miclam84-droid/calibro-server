@@ -3035,3 +3035,24 @@ body.cookie-attivo .ask-bar,body.cookie-attivo #ask-bar{transform:translateY(-56
 .flavor-liv-creativo .flavor-peso-bar{background:#9DAEB2}
 .flavor-liv-creativo .flavor-peso{height:2px}
 .flavor-liv-forte .flavor-result-name{font-weight:700}
+
+/* ═══ FIX #1 — CALCOLATORI: input SEMPRE visibili (testo Ink su chiaro) ═══ */
+.calc-field input,.calc-fcp-add input,.calc-dim input,.calc-perc input,
+.calc-step-input,#ci-peso,#ci-acqua,#ci-sale,#ci-lievito,
+.cf-form input,input[id^="rc-"],input[id^="cb-"],input[id^="cv-"],input[id^="ct-"],input[id^="fcp-"]{
+  color:#141D22!important;
+  -webkit-text-fill-color:#141D22!important;
+  background:#FFFFFF!important;
+  caret-color:#C77B3F!important;
+}
+/* il numero-bersaglio nello stepper resta terracotta (è il risultato, non input generico) */
+.calc-step-input{color:#C77B3F!important;-webkit-text-fill-color:#C77B3F!important}
+/* placeholder leggibile grigio */
+.calc-field input::placeholder,.calc-perc input::placeholder,.calc-step-input::placeholder{
+  color:#9DAEB2!important;-webkit-text-fill-color:#9DAEB2!important
+}
+
+/* ═══ FIX #2 — ATLANTE: numero-bersaglio in evidenza (rinforzo) ═══ */
+.fen-mirino-num{background:#141D22!important;padding:20px!important;box-shadow:4px 4px 0 rgba(20,29,34,.2)!important;margin:16px 0!important}
+.fen-mirino-val{font-size:56px!important;color:#E8935A!important;font-family:'IBM Plex Mono',monospace!important;font-weight:700!important;line-height:1!important}
+.fen-mirino-u{font-size:22px!important;color:#CBD6DA!important;margin-left:4px}
