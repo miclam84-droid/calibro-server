@@ -655,7 +655,7 @@ async function caricaDNAHome(){
     var e=_escV;
     var pat=(j.pattern||[]).find(function(p){return p.tendenza;}) || j.pattern[0];
     var aff=pat.affidabilita||'indicativo';
-    var extra = pat.tendenza ? '<div class="dnah-tend">📈 '+e(pat.tendenza)+'</div>' : (pat.zona?'<div class="dnah-zona">'+e(pat.zona)+'</div>':'');
+    var extra = pat.tendenza ? '<div class="dnah-tend"> '+e(pat.tendenza)+'</div>' : (pat.zona?'<div class="dnah-zona">'+e(pat.zona)+'</div>':'');
     cont.innerHTML='<div class="dnah-card" onclick="switchTab(\'quaderno\');switchQuaderno(\'dna\')">'
       + '<div class="dnah-top"><span class="dnah-lab">Il tuo banco parla</span><span class="dna-ctx-badge dna-aff-'+e(aff)+'">'+e(aff)+'</span></div>'
       + '<div class="dnah-fen">'+e(pat.fenomeno||'')+' · <span class="dnah-media">'+e(String(pat.media))+e(pat.unita||'')+'</span></div>'
@@ -665,7 +665,17 @@ async function caricaDNAHome(){
   }catch(e){ cont.innerHTML=''; }
 }
 // ═══ GRIGLIA DISCIPLINE — Bar dominante + griglia asimmetrica (Gemini #3) ═══
-var _DISC_ICONE={bar:'🍸',cucina:'🍳',panificazione:'🍞',pasticceria:'🧁',caffetteria:'☕',gelateria:'🍨',vino:'🍷',birra:'🍺',sicurezza:'🛡'};
+var _DISC_ICONE={
+  bar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 4h14l-7 8v6"/><path d="M8 20h8"/></svg>',
+  cucina:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 10h16v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M4 10l-1.5-2M20 10l1.5-2"/></svg>',
+  panificazione:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="3" x2="12" y2="21"/><path d="M12 7c-2-1.5-5 0-5 0s0 2.5 2 3.5 3-1.5 3-3.5zM12 7c2-1.5 5 0 5 0s0 2.5-2 3.5-3-1.5-3-3.5z"/><path d="M12 13c-2-1.5-5 0-5 0s0 2.5 2 3.5 3-1.5 3-3.5zM12 13c2-1.5 5 0 5 0s0 2.5-2 3.5-3-1.5-3-3.5z"/></svg>',
+  pasticceria:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11h12l-1 8H7z"/><path d="M6 11a3 3 0 0 1 3-3 3 3 0 0 1 3-1 3 3 0 0 1 3 1 3 3 0 0 1 3 3"/><line x1="12" y1="4" x2="12" y2="7"/></svg>',
+  caffetteria:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M12 3v2"/></svg>',
+  gelateria:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10a4 4 0 0 1 8 0"/><path d="M8 10h8l-4 10z"/></svg>',
+  vino:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3h8l-1 6a3 3 0 0 1-6 0z"/><line x1="12" y1="12" x2="12" y2="19"/><line x1="9" y1="21" x2="15" y2="21"/></svg>',
+  birra:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 6h11v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/><path d="M16 9h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M8 3l1 3M12 3l0 3"/></svg>',
+  sicurezza:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V6z"/><path d="M9 12l2 2 4-4"/></svg>'
+};
 async function caricaGrigliaDiscipline(){
   var dom=document.getElementById('disc-dominante');
   var grid=document.getElementById('disc-griglia');
@@ -1172,7 +1182,7 @@ async function caricaDNA(){
       + '</div>';
     // pattern
     html += (j.pattern||[]).map(function(p){
-      var tend = p.tendenza ? '<div class="dna-tendenza">📈 '+e(p.tendenza)+'</div>' : '';
+      var tend = p.tendenza ? '<div class="dna-tendenza"> '+e(p.tendenza)+'</div>' : '';
       var bers = p.nota_bersaglio ? '<div class="dna-bersaglio">'+e(p.nota_bersaglio)+'</div>' : '';
       return '<div class="dna-card">'
         + '<div class="dna-card-fen">'+e(p.fenomeno||'')+'</div>'
@@ -3487,7 +3497,7 @@ async function _caricaInsightQuaderno(){
     var box=document.createElement('div'); box.id='quad-insight'; box.className='quad-insight';
     box.innerHTML=ins.map(function(x){
       var cls = x.tipo==='trend' ? 'ins-trend' : 'ins-stabile';
-      var ico = x.tipo==='trend' ? '📈' : '✓';
+      var ico = x.tipo==='trend' ? '' : '✓';
       return '<div class="quad-ins '+cls+'"><span class="quad-ins-ico">'+ico+'</span><span class="quad-ins-txt">'+e(x.testo||'')+'</span></div>';
     }).join('');
     var pane=document.getElementById('quad-pane-misure');
@@ -3677,12 +3687,12 @@ function apriCrea(){
 // ═══ SCELTA TIPO MENU — il vero menu builder (DIFETTO 1) ═══
 function apriSceltaMenu(){
   var tipi=[
-    {cat:'pizzeria',    ico:'🍕', nome:'Pizzeria',    sub:'Pizze e impasti'},
-    {cat:'ristorante',  ico:'🍽', nome:'Ristorante',  sub:'Piatti di cucina'},
-    {cat:'pasticceria', ico:'🧁', nome:'Pasticceria', sub:'Dolci e lievitati'},
-    {cat:'drink_list',  ico:'🍸', nome:'Drink list',  sub:'Cocktail e miscelati'},
-    {cat:'carta_vini',  ico:'🍷', nome:'Carta dei vini', sub:'Selezione con filo conduttore'},
-    {cat:'carta_birre', ico:'🍺', nome:'Carta delle birre', sub:'Selezione birre'}
+    {cat:'pizzeria',    ico:_DISC_ICONE.panificazione, nome:'Pizzeria',    sub:'Pizze e impasti'},
+    {cat:'ristorante',  ico:_DISC_ICONE.cucina,        nome:'Ristorante',  sub:'Piatti di cucina'},
+    {cat:'pasticceria', ico:_DISC_ICONE.pasticceria,   nome:'Pasticceria', sub:'Dolci e lievitati'},
+    {cat:'drink_list',  ico:_DISC_ICONE.bar,           nome:'Drink list',  sub:'Cocktail e miscelati'},
+    {cat:'carta_vini',  ico:_DISC_ICONE.vino,          nome:'Carta dei vini', sub:'Selezione con filo conduttore'},
+    {cat:'carta_birre', ico:_DISC_ICONE.birra,         nome:'Carta delle birre', sub:'Selezione birre'}
   ];
   var e=_escV;
   var cards=tipi.map(function(t){
@@ -6467,7 +6477,7 @@ function _arricchisciSchedaRicetta(ric){
     var madre=ric.ricetta_madre_nome||ric.variante_di;
     var madreId=ric.parent_recipe_id||'';
     var badge=document.createElement('div'); badge.className='rg-variante';
-    badge.innerHTML='🧬 Variante scientifica di: '+(madreId?'<span class="rg-variante-link" onclick="_ricettarioApri(\''+e(madreId)+'\',\''+e(String(madre))+'\')">'+e(madre)+'</span>':e(madre));
+    badge.innerHTML='Variante scientifica di: '+(madreId?'<span class="rg-variante-link" onclick="_ricettarioApri(\''+e(madreId)+'\',\''+e(String(madre))+'\')">'+e(madre)+'</span>':e(madre));
     sch.insertBefore(badge, sch.firstChild);
   }
   // "Perché funziona"

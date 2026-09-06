@@ -2966,3 +2966,13 @@ input:not(.calc-step-input),textarea,.ask-input{border-radius:0!important;border
 .s-num-box.in-window .s-num-val{color:#E8935A!important}
 /* scheda fenomeno: stesso trattamento eroe */
 .fen-mirino-num .fen-mirino-cifra,.fen-mirino-num .mirino-numero{font-size:64px!important;color:#E8935A!important;font-family:'IBM Plex Mono',monospace!important;font-weight:700!important;line-height:.9!important}
+
+/* ═══ ICONE DISCIPLINE Phosphor (REGOLA ZERO: no emoji) ═══ */
+.disc-dom-ico svg,.disc-mini-ico svg,.crea-card-ico svg{width:24px;height:24px;display:block}
+.disc-dom-ico svg{width:28px;height:28px;color:#fff}
+.disc-mini-ico svg{color:#141D22}
+.crea-card-ico{font-size:0!important}
+.crea-card-ico svg{width:26px;height:26px;color:#245979}
+/* riquadro netto Matter attorno alle icone discipline (proprietarie) */
+.disc-mini-ico{border:1px solid #141D22;border-radius:0;padding:6px;display:inline-flex;background:#fff}
+.empty-icon svg{display:block;margin:0 auto}
