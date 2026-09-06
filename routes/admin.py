@@ -7395,10 +7395,19 @@ def admin_genera_da_serbatoio():
                         _log.append(f"{nome}: genera vuoto/errore {ric.get('errore') if ric else 'None'}")
                         continue
                     _log.append(f"{nome}: generata, ingredienti={len(ric.get('ingredienti',[]))}, numeri={len(ric.get('numeri',{}))}")
-                    fid = re.sub(r"[^a-z0-9]+", "-", ric["nome"].lower())[:50]
+                    import unicodedata
+                    _base = unicodedata.normalize('NFKD', nome).encode('ascii','ignore').decode('ascii')
+                    fid = re.sub(r"[^a-z0-9]+", "-", _base.lower()).strip("-")[:50] or "ricetta"
+                    _fid0 = fid; _k = 1
+                    while _k <= 6:
+                        cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
+                        if not cur.fetchone():
+                            break
+                        fid = f"{_fid0}-{(disc or 'x')[:3]}{_k}"
+                        _k += 1
                     cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
                     if cur.fetchone():
-                        _log.append(f"{nome}: id {fid} già esiste")
+                        _log.append(f"{nome}: id {fid} collide ancora, salto")
                         continue
                     cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
                             punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
