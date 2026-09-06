@@ -314,3 +314,44 @@ def knowledge_trail(ingrediente):
         return jsonify({"ingrediente": ingrediente, "trail": tappe, "n_tappe": len(tappe)})
     except Exception as e:
         return jsonify({"errore": str(e)[:120], "trail": []}), 200
+
+
+@bp.route("/v1/cerca", methods=["GET"])
+def cerca_universale():
+    """RICERCA UNIVERSALE: cerca in ricette + ingredienti + fenomeni insieme.
+    Risolve il buco 'catalogo vuoto': l'utente cerca 'margarita' o 'basilico' e trova tutto."""
+    from flask import request, jsonify
+    q = (request.args.get("q") or "").strip().lower()
+    if len(q) < 2:
+        return jsonify({"query": q, "risultati": [], "nota": "cerca almeno 2 caratteri"})
+    risultati = []
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        # 1. FENOMENI (dal grafo)
+        try:
+            for r in db.execute("SELECT id, name FROM nodes WHERE type='Fenomeno' AND lower(name) LIKE ? LIMIT 5", (f"%{q}%",)).fetchall():
+                risultati.append({"tipo": "fenomeno", "id": r[0], "nome": r[1]})
+        except Exception:
+            pass
+        # 2. INGREDIENTI (Prodotto nel grafo)
+        try:
+            for r in db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND lower(name) LIKE ? LIMIT 5", (f"%{q}%",)).fetchall():
+                risultati.append({"tipo": "ingrediente", "id": r[0], "nome": r[1]})
+        except Exception:
+            pass
+        # 3. RICETTE
+        try:
+            for r in db.execute("SELECT id, nome, disciplina FROM ricette WHERE lower(nome) LIKE ? LIMIT 8", (f"%{q}%",)).fetchall():
+                risultati.append({"tipo": "ricetta", "id": r[0], "nome": r[1], "disciplina": r[2]})
+        except Exception:
+            pass
+        # 4. TECNICHE
+        try:
+            for r in db.execute("SELECT id, name FROM nodes WHERE type='Tecnica' AND lower(name) LIKE ? LIMIT 3", (f"%{q}%",)).fetchall():
+                risultati.append({"tipo": "tecnica", "id": r[0], "nome": r[1]})
+        except Exception:
+            pass
+    except Exception as e:
+        return jsonify({"query": q, "risultati": [], "errore": str(e)[:100]})
+    return jsonify({"query": q, "risultati": risultati, "totale": len(risultati)})
