@@ -1522,8 +1522,22 @@ function _diagrammaHtml(nome, principi){
   if(!d) return '';
   return '<div class="fen-diagramma"><img src="/static/diagrammi/'+d+'.svg" alt="Diagramma '+_escV(nome||'')+'" loading="lazy"></div>';
 }
-function _renderSchedaFenomeno(j){
-  rimuoviThinking();
+// ═══ ESPORTA SCHEDA come immagine (condivisione organica, client-side) ═══
+async function esportaScheda(el){
+  if(!el || typeof htmlToImage==='undefined'){ _toast('Esportazione non disponibile'); return; }
+  try{
+    var dataUrl = await htmlToImage.toPng(el, { pixelRatio:2, backgroundColor:'#141D22' });
+    var blob = await (await fetch(dataUrl)).blob();
+    var file = new File([blob], 'matter-scheda.png', { type:'image/png' });
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      await navigator.share({ files:[file], title:'Matter Bench', text:'Numeri. Non opinioni.' });
+    } else {
+      var a=document.createElement('a'); a.href=dataUrl; a.download='matter-scheda.png'; a.click();
+      _toast('Scheda scaricata');
+    }
+  }catch(e){ _toast('Esportazione non riuscita'); }
+}
+function _renderSchedaFenomeno(j){  rimuoviThinking();
   var e=_escV;
   var tipo = j.tipo_fenomeno || 'misurabile';
   var isMis = tipo==='misurabile';
@@ -1559,11 +1573,18 @@ function _renderSchedaFenomeno(j){
         + '<span class="fen-mirino-lock">🔒 Sblocca con Pro</span></div>';
     }
     mirino =
-      '<div class="fen-mirino fen-mirino-num">'
-      + '<div class="fen-mirino-lab">finestra operativa</div>'
-      + valNum
-      + (j.target && j.target.length>String(j.target_numero).length+2 ? '<div class="fen-mirino-sub">'+e(j.target)+'</div>' : '')
-      + '</div>';
+      '<div class="scheda-tecnica" id="st-fenomeno">'
+      + '<div class="st-ang st-ang-tl"></div><div class="st-ang st-ang-tr"></div><div class="st-ang st-ang-bl"></div><div class="st-ang st-ang-br"></div>'
+      + '<div class="st-header"><span class="st-ref">MT-REF: '+e((j.id||'FEN').toUpperCase())+'</span><span class="st-brand">MATTER BENCH</span></div>'
+      + '<div class="st-body">'
+      +   '<div class="st-titolo">'+e(j.titolo||'Fenomeno')+'</div>'
+      +   '<div class="st-lab">finestra operativa</div>'
+      +   valNum
+      +   (j.target && j.target.length>String(j.target_numero).length+2 ? '<div class="fen-mirino-sub">'+e(j.target)+'</div>' : '')
+      + '</div>'
+      + '<div class="st-footer"><span class="st-payoff">Numeri. Non opinioni.</span><span class="st-url">matterbench.app</span></div>'
+      + '</div>'
+      + '<button class="st-esporta" onclick="esportaScheda(document.getElementById(\'st-fenomeno\'))"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" style="vertical-align:-2px"><path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M12 3v13M8 8l4-4 4 4"/></svg> Condividi il sapere</button>';
   } else {
     var statoTxt = j.target || _estraiSezione(j.risposta,'NUMERO') || '';
     var punti = statoTxt.split(/[·;]|\bpoi\b/).map(function(x){return x.trim();}).filter(function(x){return x.length>3;});
