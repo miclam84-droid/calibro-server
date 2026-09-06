@@ -6,7 +6,7 @@ def genera_lista_piatti(disciplina, area, quanti=50, _debug=False):
     """Chiede all'AI una lista di piatti/preparazioni CANONICI VERI per disciplina+area.
     Restituisce lista di dict {nome, chiave, firma}. Solo piatti REALI, non inventati.
     Se _debug=True, in caso di 0 risultati restituisce ('DEBUG', raw_ai) per capire il problema."""
-    from ai import _haiku_raw
+    from ai import chiedi_mistral
     import json, re
     prompt = (
         f"Elenca {quanti} {disciplina} CANONICI riconosciuti da almeno una fonte professionale "
@@ -21,7 +21,7 @@ def genera_lista_piatti(disciplina, area, quanti=50, _debug=False):
     import sys as _sys
     _raw_ai = ""
     try:
-        raw = _haiku_raw(prompt, max_tokens=3000)
+        raw = chiedi_mistral(prompt, usa_tools=False)
         _raw_ai = raw or ""
         if not raw:
             return ("DEBUG:vuoto", "") if _debug else []
