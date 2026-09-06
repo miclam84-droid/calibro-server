@@ -234,6 +234,25 @@ ABBINAMENTI_INGREDIENTI = {
 }
 
 
+# ── SOMMELIER: servizio e uso del vino (NON produzione - per chi lo SERVE e abbina) ──
+SOMMELIER_VINO = {
+    "temperatura servizio": "Spumante/Champagne 6-8°C · Bianco leggero 8-10°C · Bianco strutturato 10-12°C · Rosato 10-12°C · Rosso giovane 14-16°C · Rosso strutturato (Barolo, Amarone) 16-18°C · Passiti/dolci 8-10°C. Servire più freddo del punto ideale: si scalda nel bicchiere.",
+    "decantazione": "Rossi giovani tannici: decantare 1-2h per ossigenare e ammorbidire. Rossi molto vecchi: decantare solo per separare il sedimento, poco prima di servire (l'ossigeno li spegne).",
+    "abbinamento": "Per CONCORDANZA (piatto delicato-vino delicato) o CONTRASTO (grasso-acidità, dolce-sapido). Tannino taglia il grasso (rosso+carne). Bollicine sgrassano (fritto+spumante). Dolce con dolce (dessert+passito). MAI vino tannico su pesce (sa di metallo).",
+    "ordine di servizio": "Bianchi prima dei rossi, giovani prima dei vecchi, secchi prima dei dolci, leggeri prima degli strutturati. Il vino successivo non deve far rimpiangere il precedente.",
+    "calice": "Il calice giusto concentra gli aromi: ballon ampio per rossi strutturati, tulipano per bianchi, flûte per bollicine (mantiene il perlage).",
+}
+
+# ── MIXOLOGY: come i distillati si comportano nel drink (per chi MISCELA, non distilla) ──
+DISTILLATI_USO = {
+    "gin": "Base botanica: nel drink porta ginepro + le sue botaniche. Sta col vermouth (Martini/Negroni), tonica, agrumi. ABV 40-47%: regge la diluizione.",
+    "whisky": "Nel drink porta note di cereale, legno, a volte torba. Bourbon=vaniglia/dolce (Old Fashioned, sour); rye=speziato (Manhattan, Sazerac); scotch torbato=affumicato (Penicillin, Rob Roy).",
+    "rum": "Bianco per drink freschi (Daiquiri, Mojito); ambrato/scuro per drink strutturati (Mai Tai, Dark'n'Stormy). Zuccheri residui variabili: assaggiare prima di bilanciare.",
+    "tequila": "Blanco per drink freschi (Margarita, Paloma); reposado/añejo per sipping o Old Fashioned di agave. Note vegetali/agave.",
+    "vermouth": "NON è solo un modificatore: è un ingrediente. Rosso (dolce) per Negroni/Manhattan; dry per Martini. Va conservato in frigo dopo l'apertura (è vino, ossida).",
+}
+
+
 def grounding_per_richiesta(richiesta, disciplina):
     """Restituisce i parametri VERI pertinenti alla richiesta, da iniettare nel prompt del generatore
     come ancora di verità. Impedisce gli errori catastrofici (segale 60%, Negroni senza spumante)."""
@@ -301,4 +320,14 @@ def grounding_per_richiesta(richiesta, disciplina):
     for ing, abb in ABBINAMENTI_INGREDIENTI.items():
         if ing in r:
             note.append(f"ABBINAMENTI {ing.upper()}: {abb}")
+    # SOMMELIER: servizio e uso del vino (per chi serve/abbina, non produce)
+    if d == "vino" or any(w in r for w in ("servo", "servire", "abbino", "abbinamento", "decant", "calice", "temperatura vino", "che vino")):
+        for k, v in SOMMELIER_VINO.items():
+            if any(w in r for w in k.split()) or k in r:
+                note.append(f"VINO {k.upper()}: {v}")
+    # MIXOLOGY: come i distillati si comportano nel drink (per chi miscela)
+    if d == "bar" or any(w in r for w in ("cocktail", "drink", "distillato", "miscela")):
+        for dist, uso in DISTILLATI_USO.items():
+            if dist in r:
+                note.append(f"USO {dist.upper()} NEL DRINK: {uso}")
     return note
