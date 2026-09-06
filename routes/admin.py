@@ -7377,46 +7377,81 @@ def admin_genera_da_serbatoio():
         import psycopg2
         from db import carica_grafo
         from builder import genera_ricetta
-        conn = psycopg2.connect(os.environ["DATABASE_URL"])
-        cur = conn.cursor()
-        # prendo n piatti dal serbatoio che NON esistono già come ricetta
-        cur.execute("""SELECT s.nome, s.disciplina FROM serbatoio_ai s
-                       WHERE NOT EXISTS (SELECT 1 FROM ricette r WHERE lower(r.nome)=lower(s.nome))
-                       LIMIT %s""", (n,))
-        piatti = cur.fetchall()
-        db = carica_grafo()
-        creati = 0
-        for nome, disc in piatti:
+        _log = []
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"])
+            cur = conn.cursor()
+            cur.execute("""SELECT s.nome, s.disciplina FROM serbatoio_ai s
+                           WHERE NOT EXISTS (SELECT 1 FROM ricette r WHERE lower(r.nome)=lower(s.nome))
+                           LIMIT %s""", (n,))
+            piatti = cur.fetchall()
+            _log.append(f"piatti dal serbatoio: {len(piatti)}")
+            db = carica_grafo()
+            creati = 0
+            for nome, disc in piatti:
+                try:
+                    ric = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc or "cucina", lang="it")
+                    if not ric or ric.get("errore") or not ric.get("nome"):
+                        _log.append(f"{nome}: genera vuoto/errore {ric.get('errore') if ric else 'None'}")
+                        continue
+                    _log.append(f"{nome}: generata, ingredienti={len(ric.get('ingredienti',[]))}, numeri={len(ric.get('numeri',{}))}")
+                    fid = re.sub(r"[^a-z0-9]+", "-", ric["nome"].lower())[:50]
+                    cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
+                    if cur.fetchone():
+                        _log.append(f"{nome}: id {fid} già esiste")
+                        continue
+                    cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
+                            punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
+                        VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
+                        ON CONFLICT (id) DO NOTHING""",
+                        (fid, ric["nome"], disc or "cucina", ric.get("descrizione",""),
+                         json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
+                         json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                         json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+                         json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                         ric.get("punto_critico",""),
+                         json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                         json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                         json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
+                         ric.get("tempo_prep",""), ric.get("tempo_cottura",""),
+                         ric.get("difficolta",""), ric.get("porzioni",""),
+                         ric.get("esperimento",""), ric.get("limite",""), ric.get("twist","")))
+                    conn.commit()
+                    creati += 1
+                except Exception as _e2:
+                    _log.append(f"{nome}: EXC {str(_e2)[:80]}")
+                    conn.rollback()
+            # salvo il log in una tabella per poterlo leggere
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"creati={creati} | " + " || ".join(_log[:15]),))
+            conn.commit()
+            cur.close(); conn.close()
+        except Exception as _e:
             try:
-                ric = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc or "cucina", lang="it")
-                if not ric or ric.get("errore") or not ric.get("nome"):
-                    continue
-                fid = re.sub(r"[^a-z0-9]+", "-", ric["nome"].lower())[:50]
-                cur.execute("SELECT 1 FROM ricette WHERE id=%s", (fid,))
-                if cur.fetchone():
-                    continue
-                # pattern IDENTICO all'INSERT collaudato (riga 2931)
-                cur.execute("""INSERT INTO ricette (id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,
-                        punto_critico,abbinamenti,procedimento,applicazioni,tempo_prep,tempo_cottura,difficolta,porzioni,esperimento,limite,twist)
-                    VALUES (%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s,%s,%s,%s)
-                    ON CONFLICT (id) DO NOTHING""",
-                    (fid, ric["nome"], disc or "cucina", ric.get("descrizione",""),
-                     json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
-                     json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
-                     json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
-                     json.dumps(ric.get("numeri",{}),ensure_ascii=False),
-                     ric.get("punto_critico",""),
-                     json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
-                     json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
-                     json.dumps(ric.get("applicazioni",[]),ensure_ascii=False),
-                     ric.get("tempo_prep",""), ric.get("tempo_cottura",""),
-                     ric.get("difficolta",""), ric.get("porzioni",""),
-                     ric.get("esperimento",""), ric.get("limite",""), ric.get("twist","")))
-                conn.commit()
-                creati += 1
+                c2 = psycopg2.connect(os.environ["DATABASE_URL"]); cu2 = c2.cursor()
+                cu2.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+                cu2.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"WORKER CRASH: {str(_e)[:200]}",))
+                c2.commit(); cu2.close(); c2.close()
             except Exception:
-                conn.rollback()
-        cur.close(); conn.close()
+                pass
 
     threading.Thread(target=_worker, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "n": n, "nota": "genera ricette NUOVE dal serbatoio in background. Ricontrolla il totale ricette tra ~1-2 min."})
+
+
+@bp.route("/admin/worker-log")
+def admin_worker_log():
+    """Legge il log del worker genera-da-serbatoio per capire cosa fallisce."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"])
+        cur = conn.cursor()
+        cur.execute("SELECT ts, testo FROM worker_log ORDER BY id DESC LIMIT 5")
+        logs = [{"ts": str(r[0]), "testo": r[1]} for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"log": logs})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
