@@ -516,3 +516,32 @@ def admin_diag_aggancio(ingrediente):
     except Exception as e:
         out["errore"] = str(e)[:120]
     return jsonify(out)
+
+
+@bp.route("/admin/diag-ahn/<ingrediente>", methods=["GET"])
+def admin_diag_ahn(ingrediente):
+    """Mostra a quali comp_id è collegato un ingrediente AHN (per vedere il formato reale)."""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    out = {"ingrediente": ingrediente}
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        _it_en = {"arancia":"orange","limone":"lemon","pompelmo":"grapefruit","basilico":"basil"}
+        nome_en = _it_en.get(ingrediente.lower(), ingrediente.lower())
+        # trovo il nodo ahn
+        rows = db.execute("SELECT id FROM nodes WHERE type='Prodotto' AND lower(name)=? LIMIT 1", (nome_en,)).fetchall()
+        if not rows:
+            out["nota"] = f"ingrediente Ahn '{nome_en}' non trovato"
+            return jsonify(out)
+        ahn_id = rows[0]["id"] if hasattr(rows[0],"keys") else rows[0][0]
+        out["ahn_id"] = ahn_id
+        # a quali composti (id + name) è collegato?
+        rows2 = db.execute("""SELECT n.id, n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                              WHERE e.from_id=? AND e.relation='contiene_composto' LIMIT 12""", (ahn_id,)).fetchall()
+        out["composti_ahn"] = [{"id": (r["id"] if hasattr(r,"keys") else r[0]), "name": (r["name"] if hasattr(r,"keys") else r[1])} for r in rows2]
+    except Exception as e:
+        out["errore"] = str(e)[:120]
+    return jsonify(out)
