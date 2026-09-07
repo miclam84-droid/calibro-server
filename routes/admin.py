@@ -7464,3 +7464,55 @@ def admin_worker_log():
         return jsonify({"log": logs})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/rigenera-incomplete")
+def admin_rigenera_incomplete():
+    """Trova le ricette INCOMPLETE (ingredienti vuoti) e le rigenera complete."""
+    from flask import request, jsonify
+    import os, json, re, threading
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "10")), 30)
+
+    def _worker(n):
+        import psycopg2
+        from db import carica_grafo
+        from builder import genera_ricetta
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            # trovo ricette con ingredienti vuoti o nulli
+            cur.execute("""SELECT id, nome, disciplina FROM ricette
+                           WHERE ingredienti IS NULL OR ingredienti::text IN ('[]','null','{}')
+                           LIMIT %s""", (n,))
+            incomplete = cur.fetchall()
+            db = carica_grafo()
+            fixate = 0
+            for rid, nome, disc in incomplete:
+                try:
+                    ric = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc or "cucina", lang="it")
+                    if not ric or not ric.get("ingredienti"):
+                        continue
+                    cur.execute("""UPDATE ricette SET ingredienti=%s::jsonb, numeri=%s::jsonb,
+                                   procedimento=%s::jsonb, punto_critico=%s, descrizione=%s,
+                                   fenomeni=%s::jsonb, tecniche=%s::jsonb, abbinamenti=%s::jsonb
+                                   WHERE id=%s""",
+                                (json.dumps(ric.get("ingredienti",[]),ensure_ascii=False),
+                                 json.dumps(ric.get("numeri",{}),ensure_ascii=False),
+                                 json.dumps(ric.get("procedimento",[]),ensure_ascii=False),
+                                 ric.get("punto_critico",""), ric.get("descrizione",""),
+                                 json.dumps(ric.get("fenomeni",[]),ensure_ascii=False),
+                                 json.dumps(ric.get("tecniche",[]),ensure_ascii=False),
+                                 json.dumps(ric.get("abbinamenti",{}),ensure_ascii=False),
+                                 rid))
+                    conn.commit(); fixate += 1
+                except Exception:
+                    conn.rollback()
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"rigenera-incomplete: {fixate}/{len(incomplete)} fixate",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_worker, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "nota": f"rigenerazione {n} ricette incomplete in background"})
