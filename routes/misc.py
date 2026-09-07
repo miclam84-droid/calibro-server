@@ -455,3 +455,29 @@ def admin_diag_composti():
         return jsonify({"totale_composti": totale, "esempi_limonene_linalolo": composti})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/diag-composti2", methods=["GET"])
+def admin_diag_composti2():
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    out = {}
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        # primi 15 composti a caso col loro id e name
+        rows = db.execute("SELECT id, name FROM nodes WHERE type='Composto' LIMIT 15").fetchall()
+        out["esempi"] = [{"id": (r["id"] if hasattr(r,"keys") else r[0]), "name": (r["name"] if hasattr(r,"keys") else r[1])} for r in rows]
+    except Exception as e:
+        out["errore_esempi"] = str(e)[:100]
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        # cerco qualsiasi composto che contenga 'limon' in id o name
+        rows = db.execute("SELECT id, name FROM nodes WHERE type='Composto' AND (id ILIKE '%limon%' OR name ILIKE '%limon%') LIMIT 5").fetchall()
+        out["limonene_match"] = [{"id": (r["id"] if hasattr(r,"keys") else r[0]), "name": (r["name"] if hasattr(r,"keys") else r[1])} for r in rows]
+    except Exception as e:
+        out["errore_limon"] = str(e)[:100]
+    return jsonify(out)
