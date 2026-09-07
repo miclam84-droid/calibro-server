@@ -545,3 +545,28 @@ def admin_diag_ahn(ingrediente):
     except Exception as e:
         out["errore"] = str(e)[:120]
     return jsonify(out)
+
+
+@bp.route("/admin/diag-grafo-conta", methods=["GET"])
+def admin_diag_grafo_conta():
+    """Conta i nodi che vede carica_grafo() - per capire se è il grafo completo o parziale."""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    out = {}
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        for tipo in ["Prodotto", "Composto", "Ingrediente", "Fenomeno"]:
+            r = db.execute("SELECT COUNT(*) FROM nodes WHERE type=?", (tipo,)).fetchall()
+            out[tipo] = (r[0]["count"] if hasattr(r[0],"keys") else r[0][0]) if r else 0
+        # esempi di nomi Prodotto
+        rows = db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' LIMIT 8").fetchall()
+        out["esempi_prodotto"] = [{"id":(r["id"] if hasattr(r,"keys") else r[0]),"name":(r["name"] if hasattr(r,"keys") else r[1])} for r in rows]
+        # cerco basil in QUALSIASI modo
+        rows2 = db.execute("SELECT id, name, type FROM nodes WHERE id ILIKE ? OR name ILIKE ? LIMIT 5", ("%basil%","%basil%")).fetchall()
+        out["ricerca_basil"] = [{"id":(r["id"] if hasattr(r,"keys") else r[0]),"name":(r["name"] if hasattr(r,"keys") else r[1]),"type":(r["type"] if hasattr(r,"keys") else r[2])} for r in rows2]
+    except Exception as e:
+        out["errore"] = str(e)[:120]
+    return jsonify(out)
