@@ -36,24 +36,31 @@ def genera_composti_ingrediente(ingrediente):
 
 
 def aggiungi_al_grafo(db, ingrediente, composti):
-    """Aggiunge l'ingrediente + i composti + gli archi al grafo.
-    Poi gli abbinamenti EMERGONO da soli dai composti condivisi (non serve altro)."""
+    """Aggiunge l'ingrediente + collega ai composti ESISTENTI nel grafo (per nome parziale),
+    così gli abbinamenti emergono. Se un composto non esiste, lo crea."""
     import re
     ing_id = "ai_" + re.sub(r"[^a-z0-9]+", "_", ingrediente.lower()).strip("_")
-    aggiunti = 0
+    collegati = 0
     try:
-        # nodo ingrediente (Prodotto)
         db.execute("INSERT INTO nodes (id, name, type, data) VALUES (?, ?, 'Prodotto', ?) ON CONFLICT (id) DO NOTHING",
                    (ing_id, ingrediente.lower(), '{"provenienza":"C_ai"}'))
         for comp in composti:
-            comp_id = "comp_" + re.sub(r"[^a-z0-9]+", "_", comp).strip("_")
-            # il nodo composto esiste già? (se sì, l'arco creerà l'abbinamento con gli ingredienti Ahn!)
-            db.execute("INSERT INTO nodes (id, name, type, data) VALUES (?, ?, 'Composto', '{}') ON CONFLICT (id) DO NOTHING",
-                       (comp_id, comp))
-            # arco ingrediente -> composto
+            comp_clean = comp.lower().strip()
+            # cerco il composto ESISTENTE nel grafo per nome parziale (limonene matcha comp_limonene, d-limonene...)
+            _pat = "%" + re.sub(r"[^a-z0-9]", "%", comp_clean) + "%"
+            rows = db.execute("SELECT id FROM nodes WHERE type='Composto' AND (name ILIKE ? OR id ILIKE ?) LIMIT 1",
+                              (_pat, _pat)).fetchall()
+            if rows:
+                comp_id = rows[0]["id"] if hasattr(rows[0], "keys") else rows[0][0]
+            else:
+                # non esiste: lo creo
+                comp_id = "comp_" + re.sub(r"[^a-z0-9]+", "_", comp_clean).strip("_")
+                db.execute("INSERT INTO nodes (id, name, type, data) VALUES (?, ?, 'Composto', '{}') ON CONFLICT (id) DO NOTHING",
+                           (comp_id, comp_clean))
+            # arco ingrediente -> composto (collega al composto ESISTENTE se trovato)
             db.execute("INSERT INTO edges (from_id, to_id, relation, data) VALUES (?, ?, 'contiene_composto', '{}') ON CONFLICT DO NOTHING",
                        (ing_id, comp_id))
-            aggiunti += 1
+            collegati += 1
     except Exception:
         pass
-    return {"ingrediente": ingrediente, "id": ing_id, "composti_aggiunti": aggiunti}
+    return {"ingrediente": ingrediente, "id": ing_id, "composti_aggiunti": collegati}
