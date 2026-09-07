@@ -396,3 +396,41 @@ def abbina_esteso(ingrediente):
         risultato["_nota_esplorativi"] = str(e)[:80]
     risultato["_avviso"] = "Verificati: scienza (Ahn). Esplorativi: stima AI, da provare al banco."
     return jsonify(risultato)
+
+
+@bp.route("/admin/aggiungi-ingrediente/<ingrediente>", methods=["GET"])
+def admin_aggiungi_ingrediente(ingrediente):
+    """Aggiunge un ingrediente NUOVO al grafo generando i suoi COMPOSTI aromatici (via AI, fatti
+    chimici). Poi il grafo trova gli abbinamenti DA SOLO dai composti condivisi. Il modo GIUSTO."""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        from db import carica_grafo
+        from aggiungi_ingrediente import genera_composti_ingrediente, aggiungi_al_grafo
+        composti = genera_composti_ingrediente(ingrediente)
+        if not composti:
+            return jsonify({"errore": "AI non ha generato composti, riprova", "ingrediente": ingrediente})
+        db = carica_grafo()
+        res = aggiungi_al_grafo(db, ingrediente, composti)
+        # ora conto quanti abbinamenti EMERGONO dal grafo (ingredienti che condividono i composti)
+        import re
+        ing_id = res["id"]
+        abb = db.execute("""SELECT DISTINCT n3.name FROM edges e1
+                            JOIN edges e2 ON e1.to_id = e2.to_id
+                            JOIN nodes n3 ON n3.id = e2.from_id
+                            WHERE e1.from_id = ? AND e1.relation='contiene_composto'
+                            AND e2.relation='contiene_composto' AND n3.type='Prodotto'
+                            AND e2.from_id <> ? LIMIT 30""", (ing_id, ing_id)).fetchall()
+        abbinamenti = [(r["name"] if hasattr(r,"keys") else r[0]).replace("_"," ") for r in abb]
+        return jsonify({
+            "ingrediente": ingrediente,
+            "composti_generati": composti,
+            "composti_aggiunti": res["composti_aggiunti"],
+            "abbinamenti_emersi_dal_grafo": abbinamenti[:20],
+            "totale_abbinamenti": len(abbinamenti),
+            "nota": "I composti sono fatti chimici (AI). Gli abbinamenti EMERGONO dal grafo (composti condivisi), non sono stime."
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
