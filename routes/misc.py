@@ -483,3 +483,36 @@ def admin_diag_composti2():
     except Exception as e:
         out["errore_limon"] = str(e)[:100]
     return jsonify(out)
+
+
+@bp.route("/admin/diag-aggancio/<ingrediente>", methods=["GET"])
+def admin_diag_aggancio(ingrediente):
+    """Diagnostica DEEP: mostra a quali comp_id si collega un ingrediente e se quei comp_id
+    sono condivisi con gli ingredienti Ahn (per capire perché gli abbinamenti non emergono)."""
+    from flask import request, jsonify
+    import os, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    out = {"ingrediente": ingrediente}
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        ing_id = "ai_" + re.sub(r"[^a-z0-9]+", "_", ingrediente.lower()).strip("_")
+        # a quali composti è collegato questo ingrediente?
+        rows = db.execute("SELECT to_id FROM edges WHERE from_id=? AND relation='contiene_composto'", (ing_id,)).fetchall()
+        comp_ids = [(r["to_id"] if hasattr(r,"keys") else r[0]) for r in rows]
+        out["comp_ids_ingrediente"] = comp_ids[:15]
+        # per il primo composto, quanti ALTRI ingredienti (Prodotto) lo contengono?
+        if comp_ids:
+            c0 = comp_ids[0]
+            rows2 = db.execute("SELECT COUNT(*) FROM edges WHERE to_id=? AND relation='contiene_composto'", (c0,)).fetchall()
+            n = (rows2[0]["count"] if hasattr(rows2[0],"keys") else rows2[0][0]) if rows2 else 0
+            out["composto_test"] = c0
+            out["quanti_ingredienti_lo_contengono"] = n
+            # quali ingredienti Prodotto?
+            rows3 = db.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.from_id
+                                  WHERE e.to_id=? AND e.relation='contiene_composto' AND n.type='Prodotto' LIMIT 8""", (c0,)).fetchall()
+            out["ingredienti_col_composto"] = [(r["name"] if hasattr(r,"keys") else r[0]) for r in rows3]
+    except Exception as e:
+        out["errore"] = str(e)[:120]
+    return jsonify(out)
