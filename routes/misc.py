@@ -434,3 +434,24 @@ def admin_aggiungi_ingrediente(ingrediente):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/diag-composti", methods=["GET"])
+def admin_diag_composti():
+    """Diagnostica: come sono nominati i composti nel grafo (per allineare l'aggiunta ingredienti)."""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        # esempi di composti che contengono 'limon' (limonene)
+        rows = db.execute("SELECT id, name FROM nodes WHERE type='Composto' AND (name ILIKE '%limon%' OR name ILIKE '%linal%') LIMIT 10").fetchall()
+        composti = [{"id": (r["id"] if hasattr(r,"keys") else r[0]), "name": (r["name"] if hasattr(r,"keys") else r[1])} for r in rows]
+        # totale composti
+        tot = db.execute("SELECT COUNT(*) FROM nodes WHERE type='Composto'").fetchone()
+        totale = tot["count"] if hasattr(tot,"keys") else tot[0]
+        return jsonify({"totale_composti": totale, "esempi_limonene_linalolo": composti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
