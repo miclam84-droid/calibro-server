@@ -532,7 +532,7 @@ def admin_diag_ahn(ingrediente):
         _it_en = {"arancia":"orange","limone":"lemon","pompelmo":"grapefruit","basilico":"basil"}
         nome_en = _it_en.get(ingrediente.lower(), ingrediente.lower())
         # trovo il nodo ahn
-        rows = db.execute("SELECT id FROM nodes WHERE type='Prodotto' AND lower(name)=? LIMIT 1", (nome_en,)).fetchall()
+        rows = db.execute("SELECT id FROM nodes WHERE type='Prodotto' AND name ILIKE ? LIMIT 1", (nome_en + "%",)).fetchall()
         if not rows:
             out["nota"] = f"ingrediente Ahn '{nome_en}' non trovato"
             return jsonify(out)
