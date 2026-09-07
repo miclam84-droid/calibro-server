@@ -408,6 +408,8 @@ def admin_aggiungi_ingrediente(ingrediente):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         from db import carica_grafo
+        import importlib, aggiungi_ingrediente
+        importlib.reload(aggiungi_ingrediente)
         from aggiungi_ingrediente import genera_composti_ingrediente, aggiungi_al_grafo
         composti = genera_composti_ingrediente(ingrediente)
         if not composti:
