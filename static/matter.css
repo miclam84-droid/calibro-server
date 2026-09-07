@@ -3091,3 +3091,12 @@ body.cookie-attivo .ask-bar,body.cookie-attivo #ask-bar{transform:translateY(-56
 .ric-glob-ico{flex-shrink:0;color:#245979;display:flex}
 .ric-glob-nome{flex:1;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141D22}
 .ric-glob-disc{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#5A6C70}
+
+/* ═══ PERFORMANCE — skeleton shimmer (percezione di velocità) ═══ */
+.skeleton{background:linear-gradient(90deg,#E8EDED 25%,#F2F6F6 50%,#E8EDED 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:0}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{height:88px;border:1.5px solid #C4C0B4;margin-bottom:12px}
+.skel-riga{height:16px;margin-bottom:10px}
+.skel-riga.corta{width:60%}
+.skel-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (prefers-reduced-motion: reduce){ .skeleton{animation:none} }

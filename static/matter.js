@@ -6498,7 +6498,7 @@ async function apriRicettario(){
   _apriVista('Ricettario dei Professionisti',
     '<div class="ric-search"><input type="text" id="ricp-q" placeholder="Cerca tra le 454 ricette certificate…" onkeydown="if(event.key===\'Enter\')_ricettarioCerca()"><button onclick="_ricettarioCerca()">Cerca</button></div>'
     + '<div class="ric-disc-chips" id="ricp-chips"></div>'
-    + '<div id="ricp-out"><div class="calc-loading">Carico il ricettario…</div></div>');
+    + '<div id="ricp-out"><div class="skel-grid">'+('<div class="skeleton skel-card"></div>').repeat(6)+'</div></div>');
   try{
     var r=await fetch('/v1/ricettario/discipline');
     var j=await r.json();
@@ -6527,10 +6527,19 @@ function _ricettarioCerca(){
   _ricettarioCarica('q='+encodeURIComponent(q.trim()));
 }
 async function _ricettarioCarica(query){
-  var out=document.getElementById('ricp-out'); if(out) out.innerHTML='<div class="calc-loading">Carico…</div>';
+  var out=document.getElementById('ricp-out'); if(out) out.innerHTML='<div class="skel-grid">'+('<div class="skeleton skel-card"></div>').repeat(6)+'</div>';
+  // cache client: se ho già caricato questa query in sessione, uso quella (istantaneo)
+  var cacheKey='ric-'+query;
+  try{ var cached=sessionStorage.getItem(cacheKey); if(cached){ _ricettarioRender(JSON.parse(cached)); return; } }catch(e){}
   try{
     var r=await fetch('/v1/ricettario/canonico?'+query+'&limit=30');
     var j=await r.json();
+    try{ sessionStorage.setItem(cacheKey, JSON.stringify(j)); }catch(e){}
+    _ricettarioRender(j);
+  }catch(e){ if(out) out.innerHTML='<div class="vista-empty">Errore.</div>'; }
+}
+function _ricettarioRender(j){
+    var out=document.getElementById('ricp-out');
     var ric=j.ricette||[];
     var e=_escV;
     if(!ric.length){ out.innerHTML='<div class="vista-empty">Nessuna ricetta trovata.</div>'; return; }
@@ -6546,7 +6555,6 @@ async function _ricettarioCarica(query){
         + (x.fenomeno?'<div class="ricp-fen">'+e(x.fenomeno)+'</div>':'')
         + '</div>';
     }).join('')+'</div>';
-  }catch(e){ if(out) out.innerHTML='<div class="vista-empty">Errore.</div>'; }
 }
 async function _ricettarioApri(id, nome){
   if(!id) return;
