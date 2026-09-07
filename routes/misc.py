@@ -346,3 +346,53 @@ def cerca_universale():
     except Exception as e:
         return jsonify({"query": q, "risultati": risultati, "errore": str(e)[:120]})
     return jsonify({"query": q, "risultati": risultati, "totale": len(risultati)})
+
+
+@bp.route("/v1/abbina-esteso/<ingrediente>", methods=["GET"])
+def abbina_esteso(ingrediente):
+    """Abbinamenti VERIFICATI (Ahn) + ESPLORATIVI (AI, marcati). Il Flavour esteso.
+    I due livelli restano DISTINTI: verificati = scienza, esplorativi = da provare."""
+    from flask import jsonify
+    import os
+    risultato = {"ingrediente": ingrediente, "verificati": [], "esplorativi": []}
+    # 1. VERIFICATI dal grafo Ahn (la fonte scientifica)
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        ing_l = ingrediente.lower()
+        _it_en = {"basilico":"basil","pomodoro":"tomato","limone":"lemon","aglio":"garlic",
+                  "cioccolato":"chocolate","caffè":"coffee","fragola":"strawberry"}
+        ing_en = _it_en.get(ing_l, ing_l)
+        rows = db.execute("""SELECT n2.name FROM nodes n1 JOIN edges e ON e.from_id=n1.id
+                             JOIN nodes n2 ON n2.id=e.to_id
+                             WHERE lower(n1.name)=? AND e.relation='abbinamento_aromatico' LIMIT 20""", (ing_en,)).fetchall()
+        for r in rows:
+            nome = r["name"] if hasattr(r,"keys") else r[0]
+            risultato["verificati"].append(nome.replace("_"," "))
+    except Exception:
+        pass
+    # 2. ESPLORATIVI: prima cerco in tabella cache abbinamenti_ai, poi genero se manca
+    try:
+        import psycopg2
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("CREATE TABLE IF NOT EXISTS abbinamenti_ai (ingrediente TEXT, abbinato TEXT, forza TEXT, PRIMARY KEY(ingrediente,abbinato))")
+        cur.execute("SELECT abbinato, forza FROM abbinamenti_ai WHERE ingrediente=%s", (ingrediente.lower(),))
+        cached = cur.fetchall()
+        if cached:
+            risultato["esplorativi"] = [{"ingrediente": r[0], "forza": r[1]} for r in cached]
+        else:
+            from arricchisci_abbinamenti import genera_abbinamenti_ai
+            gen = genera_abbinamenti_ai(ingrediente)
+            for g in gen:
+                try:
+                    cur.execute("INSERT INTO abbinamenti_ai (ingrediente,abbinato,forza) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING",
+                                (ingrediente.lower(), g["ingrediente"], g["forza"]))
+                except Exception:
+                    pass
+            conn.commit()
+            risultato["esplorativi"] = [{"ingrediente": g["ingrediente"], "forza": g["forza"]} for g in gen]
+        cur.close(); conn.close()
+    except Exception as e:
+        risultato["_nota_esplorativi"] = str(e)[:80]
+    risultato["_avviso"] = "Verificati: scienza (Ahn). Esplorativi: stima AI, da provare al banco."
+    return jsonify(risultato)
