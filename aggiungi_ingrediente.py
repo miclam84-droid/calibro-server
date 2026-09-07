@@ -53,16 +53,17 @@ def aggiungi_al_grafo(db, ingrediente, composti):
     ing_id = "ai_" + re.sub(r"[^a-z0-9]+", "_", ingrediente.lower()).strip("_")
     collegati = 0; agganciati_esistenti = 0
     try:
-        db.execute("INSERT INTO nodes (id, name, type, data) VALUES (?, ?, 'Prodotto', ?) ON CONFLICT (id) DO NOTHING",
+        # gli ingredienti Ahn (con abbinamenti) sono di tipo 'Ingrediente', NON 'Prodotto'!
+        db.execute("INSERT INTO nodes (id, name, type, data) VALUES (?, ?, 'Ingrediente', ?) ON CONFLICT (id) DO NOTHING",
                    (ing_id, ingrediente.lower(), '{"provenienza":"C_ai"}'))
-        # carico TUTTI i composti del grafo una volta, con nome normalizzato -> id
+        # carico i composti del grafo (nome normalizzato -> id)
         tutti = db.execute("SELECT id, name FROM nodes WHERE type='Composto'").fetchall()
         mappa = {}
         for r in tutti:
             _id = r["id"] if hasattr(r, "keys") else r[0]
             _nm = r["name"] if hasattr(r, "keys") else r[1]
             mappa[_norm_composto(_nm)] = _id
-            mappa[_norm_composto(_id)] = _id  # anche per id
+            mappa[_norm_composto(_id)] = _id
         for comp in composti:
             key = _norm_composto(comp)
             if not key:

@@ -423,7 +423,7 @@ def admin_aggiungi_ingrediente(ingrediente):
                             JOIN edges e2 ON e1.to_id = e2.to_id
                             JOIN nodes n3 ON n3.id = e2.from_id
                             WHERE e1.from_id = ? AND e1.relation='contiene_composto'
-                            AND e2.relation='contiene_composto' AND n3.type='Prodotto'
+                            AND e2.relation='contiene_composto' AND n3.type='Ingrediente'
                             AND e2.from_id <> ? LIMIT 30""", (ing_id, ing_id)).fetchall()
         abbinamenti = [(r["name"] if hasattr(r,"keys") else r[0]).replace("_"," ") for r in abb]
         return jsonify({
