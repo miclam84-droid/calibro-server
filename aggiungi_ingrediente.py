@@ -11,9 +11,9 @@ def genera_composti_ingrediente(ingrediente):
     import json
     prompt = (
         f"Da chimico degli alimenti: elenca i 6-12 principali COMPOSTI AROMATICI VOLATILI presenti "
-        f"in '{ingrediente}'. Usa i NOMI CHIMICI IN INGLESE (es. per il limone: limonene, citral, "
-        f"beta-pinene; per il basilico: linalool, eugenol, estragole). Solo composti reali documentati.\n"
-        f"Rispondi SOLO con array JSON di stringhe in inglese: [\"limonene\",\"citral\",...]\n"
+        f"in '{ingrediente}'. Usa i nomi in ITALIANO (es. per il limone: limonene, citrale, "
+        f"beta-pinene; per il basilico: linalolo, eugenolo, estragolo). Solo composti reali documentati.\n"
+        f"Rispondi SOLO con array JSON di stringhe: [\"limonene\",\"citrale\",...]\n"
         f"Nessun testo prima o dopo."
     )
     try:
@@ -36,17 +36,12 @@ def genera_composti_ingrediente(ingrediente):
 
 
 def _norm_composto(s):
-    """Normalizza un nome di composto per il matching."""
+    """Normalizza un nome di composto per il matching: minuscolo, toglie prefissi stereochimici,
+    solo lettere/numeri. Il grafo è in italiano, quindi niente traduzione."""
     import re
-    s = (s or "").lower()
-    # traduzioni composti IT->EN comuni (il grafo Ahn è in inglese)
-    _it_en = {"linalolo":"linalool","citrale":"citral","geraniolo":"geraniol",
-              "nerolo":"nerol","terpineolo":"terpineol","citronellolo":"citronellol",
-              "citronellale":"citronellal","mircene":"myrcene","canfora":"camphor",
-              "eugenolo":"eugenol","vanillina":"vanillin","mentolo":"menthol"}
-    s = _it_en.get(s.strip(), s)
+    s = (s or "").lower().strip()
     s = re.sub(r"^comp[_-]", "", s)
-    s = re.sub(r"^(d|l|dl|r|s|e|z|n|o|m|p|alpha|beta|gamma|delta|cis|trans|iso)[\s_-]+", "", s)
+    s = re.sub(r"^(alpha|beta|gamma|delta|cis|trans|iso|d|l|dl|r|s|e|z|n|o|m|p)[\s_-]+", "", s)
     s = re.sub(r"[^a-z0-9]", "", s)
     return s
 
