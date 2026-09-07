@@ -118,6 +118,12 @@ def _oss_start():
 
 @app.after_request
 def _oss_after(resp):
+    # cache lunga per i file statici (css/js/font/immagini) - migliora le prestazioni Lighthouse
+    try:
+        if request.path.startswith('/static/') or request.path.endswith((".css",".js",".woff2",".woff",".ttf",".png",".jpg",".svg",".webp")):
+            resp.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+    except Exception:
+        pass
     try:
         dur=int((_time.time()-getattr(request,'_t0',_time.time()))*1000)
         if resp.status_code>=500: oss.log_write('ERROR',request.path,None,f'HTTP {resp.status_code}',None,dur)
