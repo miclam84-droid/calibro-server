@@ -21,13 +21,12 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<!-- Phosphor icons: caricato ASINCRONO (non blocca il rendering) -->
+<!-- matter.css: SINCRONO (locale, cache attiva, dà subito il layout giusto = niente CLS/salti) -->
+<link rel="stylesheet" href="/static/matter.css">
+<!-- Phosphor icons: ASINCRONO (era il killer da unpkg, CDN esterno lento) -->
 <link rel="preload" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css"></noscript>
-<!-- matter.css: preload asincrono -->
-<link rel="preload" href="/static/matter.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="/static/matter.css"></noscript>
-<!-- matter.js: defer (carica in parallelo, non blocca il parsing) -->
+<!-- matter.js: defer (non blocca il parsing) -->
 <script src="/static/matter.js" defer></script>
 
 <script>
