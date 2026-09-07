@@ -3100,3 +3100,13 @@ body.cookie-attivo .ask-bar,body.cookie-attivo #ask-bar{transform:translateY(-56
 .skel-riga.corta{width:60%}
 .skel-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (prefers-reduced-motion: reduce){ .skeleton{animation:none} }
+
+/* ═══ LIGHTHOUSE — accessibilità mobile ═══ */
+/* input font-size 16px: previene lo zoom automatico iOS al focus (UX) */
+@media (max-width: 640px){
+  input,select,textarea,.ask-input,.ric-glob-search input,.calc-field input,.calc-perc input{font-size:16px!important}
+}
+/* focus visibile per navigazione da tastiera (accessibilità) */
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #C77B3F;outline-offset:2px}
+/* contrasto minimo: testo muted più scuro dove serve leggibilità */
+.mtr-manifesto-sub,.crea-card-d{color:#3D4A50}
