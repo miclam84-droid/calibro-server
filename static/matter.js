@@ -2775,12 +2775,13 @@ function switchQuaderno(vista){
   var tp=document.getElementById('qtg-palestra'); if(tp) tp.classList.toggle('active', vista==='palestra');
   var tc=document.getElementById('qtg-chat'); if(tc) tc.classList.toggle('active', vista==='chat');
   var tdna=document.getElementById('qtg-dna'); if(tdna) tdna.classList.toggle('active', vista==='dna');
-  if(vista==='menu') caricaMenuSalvati();
-  if(vista==='ricette') caricaLeMieRicette();
+  var _qcall=function(fn, mod){ if(typeof window[fn]==='function'){ window[fn](); } else if(typeof _caricaModulo==='function'){ _caricaModulo(mod).then(function(){ if(typeof window[fn]==='function') window[fn](); }); } };
+  if(vista==='menu') _qcall('caricaMenuSalvati','menu');
+  if(vista==='ricette') _qcall('caricaLeMieRicette','ricette');
   if(vista==='misure') caricaStoricoMisure();
-  if(vista==='palestra') caricaPalestra();
+  if(vista==='palestra') _qcall('caricaPalestra','lezioni');
   if(vista==='chat') caricaChatSalvate();
-  if(vista==='dna') caricaDNA();
+  if(vista==='dna') _qcall('caricaDNA','dna');
 }
 
 // ═══ PALESTRA — quiz "Livello di Competenza del Banco" (P6) ═══
