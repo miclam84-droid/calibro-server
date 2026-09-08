@@ -432,7 +432,7 @@ function _afetch(url, opts){
   });
 }
 // ═══ LOADER MODULI LAZY (metodo Strangler) ═══
-window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false };
+window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false };
 function _caricaModulo(nome){
   return new Promise(function(resolve){
     if(window._moduli[nome]){ resolve(); return; }
@@ -449,6 +449,8 @@ function switchTab(t){
   // carica il modulo lezioni per Atlante (mappa) e Quaderno (palestra)
   if((t==='mappa'||t==='quaderno') && !window._moduli.lezioni){ _caricaModulo('lezioni'); }
   if(t==='mappa' && !window._moduli.flavour){ _caricaModulo('flavour'); }
+  if(t==='quaderno' && !window._moduli.dna){ _caricaModulo('dna'); }
+  if(t==='quaderno' && !window._moduli.menu){ _caricaModulo('menu'); }
   _tabSignal(); // annulla le fetch della tab precedente
   // P0.2 — chiudo ogni overlay/vista aperto prima di cambiare schermata
   if(typeof chiudiVista==='function') chiudiVista();
@@ -966,45 +968,8 @@ const _chatHistory=[];
 // conversazione completa (non troncata) per il salvataggio (retention)
 var _chatCompleta=[];
 // ═══ DNA PROFESSIONALE — il profilo che conosce l'utente (la feature del rinnovo) ═══
-async function caricaDNA(){
-  var cont=document.getElementById('dna-content');
-  if(!cont) return;
-  cont.innerHTML='<div class="quad-loading">Analizzo il tuo lavoro al banco…</div>';
-  try{
-    var r=await fetch('/v1/dna-professionale', {headers:_statoHeaders()});
-    var j=await r.json();
-    var e=_escV;
-    if(!j.pronto){
-      cont.innerHTML='<div class="dna-empty"><div class="dna-empty-ico">◎</div>'
-        + '<b>Il tuo DNA Professionale cresce a ogni misura</b>'
-        + '<span>'+e(j.messaggio||'Registra qualche misura al banco: Matter Bench imparerà come lavori e ti mostrerà i tuoi pattern reali.')+'</span>'
-        + '<button class="calc-go" onclick="switchQuaderno(\'misure\')" style="margin-top:16px">Vai alle misure</button></div>';
-      return;
-    }
-    var riep=j.riepilogo||{};
-    var nome=(localStorage.getItem('matter_profilo_nome')||'Professionista');
-    var html='<div class="dna-header">'
-      + '<div class="dna-header-lab">Profilo Professionale</div>'
-      + '<div class="dna-header-nome">'+e(nome)+'</div>'
-      + '<div class="dna-riepilogo"><span><b>'+(riep.fenomeni_seguiti||0)+'</b> fenomeni seguiti</span><span><b>'+(riep.misure_totali||0)+'</b> misure totali</span></div>'
-      + '</div>';
-    // pattern
-    html += (j.pattern||[]).map(function(p){
-      var tend = p.tendenza ? '<div class="dna-tendenza"> '+e(p.tendenza)+'</div>' : '';
-      var bers = p.nota_bersaglio ? '<div class="dna-bersaglio">'+e(p.nota_bersaglio)+'</div>' : '';
-      return '<div class="dna-card">'
-        + '<div class="dna-card-fen">'+e(p.fenomeno||'')+'</div>'
-        + '<div class="dna-card-media">'+e(String(p.media))+'<span class="dna-card-u">'+e(p.unita||'')+'</span></div>'
-        + '<div class="dna-card-n">'+(p.n_misure||0)+' misure</div>'
-        + '<div class="dna-card-zona">'+e(p.zona||'')+'</div>'
-        + bers + tend
-        + '</div>';
-    }).join('');
-    if(j.suggerimento){ html += '<div class="dna-sugg">'+e(j.suggerimento)+'</div>'; }
-    if(j.firma){ html += '<div class="dna-firma">'+e(j.firma)+'</div>'; }
-    cont.innerHTML=html;
-  }catch(e){ cont.innerHTML='<div class="dna-empty"><b>Errore</b><span>Riprova.</span></div>'; }
-}
+
+// [spostata in modulo]
 // carica l'elenco delle conversazioni salvate nel Quaderno
 
 // [spostata in matter-chat.js]
@@ -3006,6 +2971,7 @@ var _ctxChat = null;  // contesto ricetta/menu per la chat (FLUSSO 2)
 // FLUSSO 3 — riconosce se l'utente vuole CREARE una ricetta (non fare una domanda scientifica)
 // ═══ P0.3 — Schermata CREA: i 3 modi di creare, come card grandi (non un tutorial) ═══
 function apriCrea(){
+  if(typeof _caricaModulo==='function' && !window._moduli.menu){ _caricaModulo('menu'); }
   var html=
     '<div class="crea-intro">Quattro modi per creare. Scegli da dove parti.</div>'
     + '<button class="crea-card" onclick="_creaDaIngredienti()">'
@@ -3027,26 +2993,8 @@ function apriCrea(){
   _apriVista('Crea', html);
 }
 // ═══ SCELTA TIPO MENU — il vero menu builder (DIFETTO 1) ═══
-function apriSceltaMenu(){
-  var tipi=[
-    {cat:'pizzeria',    ico:_DISC_ICONE.panificazione, nome:'Pizzeria',    sub:'Pizze e impasti'},
-    {cat:'ristorante',  ico:_DISC_ICONE.cucina,        nome:'Ristorante',  sub:'Piatti di cucina'},
-    {cat:'pasticceria', ico:_DISC_ICONE.pasticceria,   nome:'Pasticceria', sub:'Dolci e lievitati'},
-    {cat:'drink_list',  ico:_DISC_ICONE.bar,           nome:'Drink list',  sub:'Cocktail e miscelati'},
-    {cat:'carta_vini',  ico:_DISC_ICONE.vino,          nome:'Carta dei vini', sub:'Selezione con filo conduttore'},
-    {cat:'carta_birre', ico:_DISC_ICONE.birra,         nome:'Carta delle birre', sub:'Selezione birre'}
-  ];
-  var e=_escV;
-  var cards=tipi.map(function(t){
-    return '<button class="crea-card" onclick="mbScegliCategoria(\''+e(t.cat)+'\',\''+e(t.nome)+'\')">'
-      + '<div class="crea-card-ico" style="font-size:22px;display:flex;align-items:center;justify-content:center">'+t.ico+'</div>'
-      + '<div class="crea-card-txt"><div class="crea-card-t">'+e(t.nome)+'</div><div class="crea-card-d">'+e(t.sub)+'</div></div>'
-      + '<span class="crea-card-arr">→</span></button>';
-  }).join('');
-  _apriVista('Crea un menu',
-    '<div class="crea-intro">Che menu vuoi creare? Ogni tipo porta con sé i numeri-bersaglio della sua disciplina.</div>'
-    + cards);
-}
+
+// [spostata in modulo]
 function _creaDaIngredienti(){
   var html=
     '<div class="crea-intro">Scrivi gli ingredienti o il piatto che vuoi. Ti do la ricetta con dosi, procedimento e numeri-bersaglio.</div>'
@@ -3505,18 +3453,8 @@ function _mostraFoodCostPanel(j, loading){
   _apriVista('Food Cost' + (_ricettaGenCorrente&&_ricettaGenCorrente.nome?' · '+_ricettaGenCorrente.nome:''), html);
 }
 
-function caricaMenuSalvati(){
-  // v1: i menù stanno in localStorage (poi sync backend/Cifra in v2)
-  const list = document.getElementById('menu-list');
-  let menus = [];
-  try { menus = JSON.parse(localStorage.getItem('matter_menus')||'[]'); } catch(e){}
-  if(!menus.length){ list.innerHTML=''; return; }
-  list.innerHTML = '<div class="menu-list-lab">I tuoi menù</div>' + menus.map((m,i)=>
-    `<div class="menu-card" onclick="apriMenu(${i})">
-      <div class="menu-card-nome">${_esc(m.nome||'Drink list')}</div>
-      <div class="menu-card-meta">${(m.voci||[]).length} voci · ${m.tipo||'drink list'}</div>
-    </div>`).join('');
-}
+
+// [spostata in modulo]
 
 // ══════════ BUILDER CREA MENÙ (Drink List v1) ══════════
 let _mbStep = 1;
@@ -3534,18 +3472,8 @@ const _MB_CAT_CFG = {
   carta_vini:  {label:'Carta dei vini',     disc:'vino',        min:10, max:40, targetGuida:'servizio 8-18°C',    unita:'etichette'},
   carta_birre: {label:'Carta delle birre',  disc:'birra',       min:6,  max:20, targetGuida:'servizio 4-8°C',     unita:'birre'},
 };
-function mbScegliCategoria(cat, label){
-  _mbCategoria = cat;
-  _mbCategoriaLabel = label;
-  document.getElementById('mm-title').textContent = label;
-  document.getElementById('mm-cat-lab').textContent = label;
-  var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
-  // carta vini: passa dalla FILOSOFIA (brief → filo conduttore → crea)
-  if(cat==='carta_vini'){ apriCartaFilosofia(); return; }
-  // carta birre: dritto al builder
-  if(cat==='carta_birre'){ creaMenu(); return; }
-  document.getElementById('menu-modo').classList.remove('hidden');
-}
+
+// [spostata in modulo]
 function chiudiModo(){ document.getElementById('menu-modo').classList.add('hidden'); }
 
 function creaMenu(){
@@ -4116,16 +4044,8 @@ function _mbMostraStep(n){
   if(n===2) _mbCaricaValidati();
 }
 
-function mbAvanti(){
-  if(_mbStep===1){
-    const nome = document.getElementById('mb-nome').value.trim();
-    if(!nome){ document.getElementById('mb-nome').focus(); return; }
-    _mbMostraStep(2);
-  } else if(_mbStep===2){
-    if(!_mbVoci.length){ alert(_L({it:'Aggiungi almeno una voce alla carta.',en:'Add at least one item to the menu.',es:'Añade al menos un elemento a la carta.'})); return; }
-    _mbMostraStep(3);
-  }
-}
+
+// [spostata in modulo]
 
 // carica gli esperimenti validati dal Quaderno (le misure salvate)
 function _mbCaricaValidati(){
@@ -4151,19 +4071,11 @@ function _mbCaricaValidati(){
   _mbAggiornaEquilibrio();
 }
 
-function mbToggleVoce(src, nome, target, verificato){
-  const idx = _mbVoci.findIndex(v=>v._src===src);
-  if(idx>=0) _mbVoci.splice(idx,1);
-  else _mbVoci.push({_src:src, nome, target, stato: verificato?'verified':'unverified'});
-  _mbCaricaValidati();
-}
 
-function mbAggiungiManuale(){
-  const nome = prompt('Nome della voce (es. Negroni Sbagliato):');
-  if(!nome||!nome.trim()) return;
-  _mbVoci.push({_src:'man'+Date.now(), nome:nome.trim(), target:'', stato:'unverified'});
-  _mbCaricaValidati();
-}
+// [spostata in modulo]
+
+
+// [spostata in modulo]
 
 // EQUILIBRIO DELLA CARTA (il valore di Matter, non un generatore qualunque)
 function _mbAggiornaEquilibrio(){
@@ -4181,23 +4093,11 @@ function _mbAggiornaEquilibrio(){
     (nonVerif>0 ? `<div class="mb-eq-warn">⚠ ${nonVerif} ${nonVerif===1?'voce non verificata':'voci non verificate'} al banco. Puoi pubblicarle, ma senza il sigillo “verificato da Matter”.</div>` : `<div class="mb-eq-ok">✓ Tutte le voci sono verificate al banco.</div>`);
 }
 
-function mbScegliTemplate(t){
-  _mbTemplate = t;
-  document.querySelectorAll('.mb-tpl').forEach(b=> b.classList.toggle('active', b.dataset.tpl===t));
-}
 
-function mbGenera(){
-  const nome = document.getElementById('mb-nome').value.trim();
-  const locale = document.getElementById('mb-locale').value.trim();
-  const menu = {nome, locale, tipo:_mbCategoriaLabel, categoria:_mbCategoria, template:_mbTemplate, voci:_mbVoci, creato: Date.now()};
-  // salvo in localStorage (v1)
-  let menus = [];
-  try { menus = JSON.parse(localStorage.getItem('matter_menus')||'[]'); } catch(e){}
-  menus.unshift(menu);
-  localStorage.setItem('matter_menus', JSON.stringify(menus));
-  chiudiBuilder();
-  apriAnteprima(menu);
-}
+// [spostata in modulo]
+
+
+// [spostata in modulo]
 
 function apriMenu(i){
   let menus=[]; try{ menus=JSON.parse(localStorage.getItem('matter_menus')||'[]'); }catch(e){}
@@ -4870,7 +4770,7 @@ async function _caricaPostiFounding(){
         .then(r=>console.log('[SW] registrato:', r.scope))
         .catch(e=>console.log('[SW] errore:', e));
       // precarico il modulo chat in background (non blocca il primo render)
-      setTimeout(function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('chat'); _caricaModulo('lezioni'); _caricaModulo('flavour'); } }, 1200);
+      setTimeout(function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('chat'); _caricaModulo('lezioni'); _caricaModulo('flavour'); _caricaModulo('dna'); _caricaModulo('menu'); } }, 1200);
     });
   }
 
@@ -5872,21 +5772,8 @@ async function apriScarti(){
 }
 // ═══ CARTA VINI — flusso filosofia (brief → filo conduttore → crea) ═══
 var _cartaFilosofia = null;
-function apriCartaFilosofia(){
-  _apriVista('La tua carta dei vini',
-    '<div class="cf-intro">Prima dei vini, il <b>filo conduttore</b>. Raccontami il locale: Matter Bench costruisce la filosofia che tiene insieme la carta.</div>'
-    + '<div class="calc-form">'
-    + '<div class="calc-field"><label>Che locale è (vibe)</label><input type="text" id="cf-vibe" placeholder="es. bistrot di mare, osteria moderna…"></div>'
-    + '<div class="calc-field"><label>Territorio</label><input type="text" id="cf-terr" placeholder="es. Costiera Amalfitana, Langhe…"></div>'
-    + '<div class="calc-field"><label>Filo conduttore</label><input type="text" id="cf-filo" placeholder="es. agrumi e affumicato, montagna e selvaggina…"></div>'
-    + '<div class="calc-field"><label>Tema grafico del PDF</label><select id="cf-tema" class="calc-select">'
-    +   '<option value="enoteca-classica">Enoteca classica (elegante)</option>'
-    +   '<option value="minimal-blueprint">Minimal blueprint (tecnico)</option>'
-    +   '<option value="gastro-bistrot">Gastro bistrot (moderno)</option>'
-    + '</select></div>'
-    + '<button class="calc-go" onclick="_generaFilosofia()">Genera il filo conduttore</button>'
-    + '</div><div id="cf-out"></div>');
-}
+
+// [spostata in modulo]
 async function _generaFilosofia(){
   var vibe=(document.getElementById('cf-vibe')||{}).value||'';
   var terr=(document.getElementById('cf-terr')||{}).value||'';
@@ -5917,17 +5804,8 @@ function _cartaProsegui(){
   window._filosofiaCorrente = _cartaFilosofia;
   creaMenu();
 }
-function apriMenuBuilder(){
-  _menuIngredienti = [];
-  _apriVista('Menu Lab',
-    '<div class="mbv-head"><div class="mbv-h">Costruisci per composti.</div>'+
-    '<div class="mbv-sub">Aggiungi ingredienti: Matter Bench trova le combinazioni che dialogano, dal grafo aromatico reale.</div>'+
-    '<div class="mbv-add"><input id="mbv-input" placeholder="aggiungi un ingrediente…" onkeydown="if(event.key===\'Enter\')mbAdd()"><button onclick="mbAdd()">+</button></div>'+
-    '<div class="mbv-chips" id="mbv-chips"></div>'+
-    '<button class="mbv-go" id="mbv-go" onclick="mbProposte()" disabled>Trova le combinazioni</button></div>'+
-    '<div id="mbv-out"></div>');
-  _mbRenderChips();
-}
+
+// [spostata in modulo]
 function mbAdd(ing){
   const inp = document.getElementById('mbv-input');
   const v = (ing || (inp?inp.value:'') || '').trim().toLowerCase();
@@ -6044,35 +5922,10 @@ function _calcTab(which, btn){
 function _calcBody(html){ var b=document.getElementById('calc-body'); if(b) b.innerHTML=html; }
 // ═══ DNA-CONTESTO — "Matter Bench mi conosce" in cima ai calcolatori ═══
 var _CALC_FENOMENO={ impasto:'Idratazione impasto', foodcost:'Food cost', vino:'Temperatura servizio', brix:'Brix', calo:'Calo peso', teglie:'Conversione teglie' };
-async function _dnaContestoBanner(calcKey){
-  var fen=_CALC_FENOMENO[calcKey];
-  if(!fen) return;
-  try{
-    var r=await fetch('/v1/dna-contesto?fenomeno='+encodeURIComponent(fen), {headers:_statoHeaders()});
-    var j=await r.json();
-    if(!j.ha_dati || !j.frase) return;
-    var e=_escV;
-    var aff=j.affidabilita||'indicativo';
-    var cont=document.getElementById('calc-body');
-    if(!cont) return;
-    if(cont.querySelector('.dna-ctx')) return;
-    var banner=document.createElement('div');
-    banner.className='dna-ctx';
-    // input principale del calcolatore da autocompilare
-    var mappaInput={ impasto:'ci-peso', foodcost:'fcp-pv', vino:'cv-temp', brix:'cb-brix', calo:'rc-peso', teglie:'ct-attuale' };
-    var inputId=mappaInput[calcKey];
-    var usaBtn = (inputId && j.media!=null) ? '<button class="dna-ctx-usa" onclick="_dnaUsaValore(\''+e(inputId)+'\','+j.media+')">Usa valore</button>' : '';
-    banner.innerHTML='<span class="dna-ctx-ico">◎</span>'
-      + '<span class="dna-ctx-txt">'+e(j.frase)+'</span>'
-      + '<span class="dna-ctx-badge dna-aff-'+e(aff)+'">'+e(aff)+'</span>'
-      + usaBtn;
-    cont.insertBefore(banner, cont.firstChild);
-  }catch(e){}
-}
-function _dnaUsaValore(inputId, valore){
-  var el=document.getElementById(inputId);
-  if(el){ el.value=valore; el.dispatchEvent(new Event('input')); _toast('Valore inserito: '+valore); }
-}
+
+// [spostata in modulo]
+
+// [spostata in modulo]
 // risultato comune: interpretazione (carta) + leva (teal) + link fenomeno
 // stepper +/- per i campi numerici (Gemini #5 — evita la tastiera che copre)
 function _step(id, delta, min){
