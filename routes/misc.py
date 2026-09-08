@@ -609,6 +609,7 @@ def motore_panificazione_endpoint():
             temp_ambiente=float(d.get("temp_ambiente", 22)),
             temp_farina=float(d.get("temp_farina", 20)),
             ore_lievitazione=float(d.get("ore_lievitazione", 8)),
+            ora_sfornata=d.get("ora_sfornata", "20:00"),
         )
         return jsonify(r)
     except Exception as e:

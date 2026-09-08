@@ -35,8 +35,46 @@ METODI = {
     "madre":   {"nome": "Lievito madre", "pre_pct": 25, "pre_idr": 50, "pre_lievito": 0, "pre_tempo": "8-24h secondo maturazione"},
 }
 
+def _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp):
+    """Genera la timeline oraria INVERTITA: dall'ora di sfornata a ritroso.
+    'Il capolavoro' - vale l'abbonamento. Restituisce lista di tappe con orario."""
+    from datetime import datetime, timedelta
+    try:
+        # ora_sfornata formato "20:00" -> oggi a quell'ora
+        h, m = map(int, ora_sfornata.split(":"))
+        base = datetime.now().replace(hour=h, minute=m, second=0, microsecond=0)
+    except Exception:
+        base = datetime.now().replace(hour=20, minute=0, second=0, microsecond=0)
+    tappe = []
+    t = base
+    # dalla sfornata a ritroso
+    tappe.append((t, "SFORNA", "Il prodotto è pronto"))
+    # cottura (pochi minuti pizza, ~45min pane)
+    cottura_min = 2 if "pizza" in str(tp) else 45
+    t = t - timedelta(minutes=cottura_min)
+    tappe.append((t, "INFORNA", tp.get("cottura", "")))
+    # appretto (lievitazione finale dei panetti): ~4-6h
+    appretto_h = 5
+    t = t - timedelta(hours=appretto_h)
+    tappe.append((t, "STAGLIO", f"Forma i panetti, poi appretto {appretto_h}h"))
+    # puntata (prima lievitazione di massa): resto delle ore
+    puntata_h = max(2, ore_lievitazione - appretto_h - (18 if metodo=="biga" else 0))
+    t = t - timedelta(hours=puntata_h)
+    tappe.append((t, "IMPASTO FINALE", f"Impasta, poi puntata {puntata_h}h"))
+    # se biga/poolish: il prefermento parte prima
+    if metodo == "biga":
+        t = t - timedelta(hours=17)  # biga 16-18h
+        tappe.append((t, "START BIGA", "Impasta la biga (16-18h a 18°C)"))
+    elif metodo == "poolish":
+        t = t - timedelta(hours=14)
+        tappe.append((t, "START POOLISH", "Prepara il poolish (12-16h a 20°C)"))
+    # ordino dal primo all'ultimo
+    tappe.reverse()
+    return [{"ora": tp2[0].strftime("%d/%m %H:%M"), "fase": tp2[1], "nota": tp2[2]} for tp2 in tappe]
+
+
 def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
-             temp_ambiente=22, temp_farina=20, ore_lievitazione=8):
+             temp_ambiente=22, temp_farina=20, ore_lievitazione=8, ora_sfornata="20:00"):
     """IL MOTORE: dato l'obiettivo, progetta il processo completo.
     Ritorna dosi + lievito + temp acqua + timeline + parametri."""
     tp = TIPI.get(tipo, TIPI["pizza_napoletana"])
@@ -80,6 +118,7 @@ def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
         "temp_finale_impasto": tp["temp_finale"],
         "prefermento": prefermento,
         "cottura": tp["cottura"],
+        "timeline": _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp),
         "note": f"Lievito calcolato per {temp_ambiente}°C ambiente / {ore_lievitazione}h (Hamelman: x3 ogni 9°C). "
                 f"A temperatura più alta serve meno lievito. Temperatura acqua per centrare {tp['temp_finale']}°C finali.",
         "diagnosi_disponibile": True,  # collegamento alla chat: "chiedi a Matter su questo impasto"
