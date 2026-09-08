@@ -4,6 +4,9 @@
 # (@app.route -> @bp.route). Dipende solo da flask + db.
 # ============================================================
 from flask import Blueprint, render_template, jsonify, request
+import os as _os, time as _time
+# versione build per cache-busting dei moduli lazy (Railway espone il commit, fallback a timestamp d'avvio)
+_BUILD_VER = (_os.environ.get("RAILWAY_GIT_COMMIT_SHA") or _os.environ.get("RAILWAY_DEPLOYMENT_ID") or str(int(_time.time())))[:12]
 import time
 
 from db import carica_grafo
@@ -24,7 +27,7 @@ def help_page():
 @bp.route("/app")
 def home():
     """PWA principale — serve index.html."""
-    return render_template("index.html")
+    return render_template("index.html", mb_ver=_BUILD_VER)
 
 @bp.route("/manifest.json")
 def manifest():
