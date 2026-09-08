@@ -10,3 +10,13 @@
 .libro-aff-perche{font-family:'Inter',sans-serif;font-size:13px;color:#CBD6DA;line-height:1.5;margin-top:8px}
 .libro-aff-link{display:inline-block;margin-top:12px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#E8935A;text-decoration:none}
 .libro-aff-link:active{opacity:.7}
+
+/* ═══ ACCESSIBILITÀ — contrasto etichette (Lighthouse 89→100) ═══ */
+/* eyebrow azzurre su Ink scuro: più chiare per contrasto ≥4.5:1 */
+.crus-lab,.disc-dom-lab,.dna-header-lab,.st-lab,.referto-num .referto-lab,
+.libro-aff-lab,.dnah-lab,.chat-ctx .cc-lab,.fen-mirino-lab{color:#B8D4E0!important}
+.crus-box-mini .crus-lab,.crus-box-mini a{color:#8FB8CC!important}
+/* link tenui su carta ("Fai la prima misura") più scuri */
+.crus-val-mini,.crus-box-mini .crus-val-mini{color:#3D5560!important}
+/* grigio-verde tenue su carta → più scuro */
+.s-num-sub,.calc-nota-sub,.ric-glob-disc,.chat-salvata-data{color:#6B7A7A!important}
