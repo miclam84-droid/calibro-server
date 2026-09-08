@@ -20,3 +20,12 @@
 .crus-val-mini,.crus-box-mini .crus-val-mini{color:#3D5560!important}
 /* grigio-verde tenue su carta → più scuro */
 .s-num-sub,.calc-nota-sub,.ric-glob-disc,.chat-salvata-data{color:#6B7A7A!important}
+
+/* ═══ FIX overflow menu builder (testo che sborda) ═══ */
+.menu-builder,.menu-anteprima,.mb-step,.mb-h,.mb-sub,.mbv-head,.mbv-h,.mbv-sub,.mf-fase{
+  max-width:100%!important;overflow-wrap:anywhere!important;word-break:break-word!important;box-sizing:border-box!important
+}
+.mb-step{padding-left:16px!important;padding-right:16px!important}
+.menu-crea-primaria,.menu-crea-secondaria,.mb-input{max-width:100%!important;box-sizing:border-box!important}
+/* pulsanti menu-modo: non sbordano */
+.menu-modo-btns,.mb-modo-opts{max-width:100%;overflow:hidden}
