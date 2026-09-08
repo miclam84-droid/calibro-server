@@ -74,8 +74,7 @@ def _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp):
 
 
 def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
-             temp_ambiente=22, temp_farina=20, ore_lievitazione=8, ora_sfornata="20:00",
-             temp_finale_voluta=None):
+             temp_ambiente=22, temp_farina=20, ore_lievitazione=8, ora_sfornata="20:00"):
     """IL MOTORE: dato l'obiettivo, progetta il processo completo.
     Ritorna dosi + lievito + temp acqua + timeline + parametri."""
     tp = TIPI.get(tipo, TIPI["pizza_napoletana"])
@@ -96,8 +95,7 @@ def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
     lievito_g = round(farina_tot * lievito_pct/100, 2)
 
     # 3. TEMPERATURA ACQUA
-    _temp_fin = temp_finale_voluta if temp_finale_voluta else tp["temp_finale"]
-    temp_acqua = _temp_acqua(_temp_fin, temp_farina, temp_ambiente)
+    temp_acqua = _temp_acqua(tp["temp_finale"], temp_farina, temp_ambiente)
 
     # 4. PREFERMENTO (se biga/poolish/madre)
     prefermento = None
@@ -117,11 +115,38 @@ def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
         "dosi": {"farina": farina_tot, "acqua": acqua_tot, "sale": sale, "olio": olio or None,
                  "lievito_fresco": lievito_g, "lievito_pct": lievito_pct},
         "temperatura_acqua": temp_acqua,
-        "temp_finale_impasto": _temp_fin,
+        "temp_finale_impasto": tp["temp_finale"],
         "prefermento": prefermento,
         "cottura": tp["cottura"],
         "timeline": _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp),
-        "note": f"Lievito stimato per {temp_ambiente}°C / {ore_lievitazione}h con modello empirico ispirato a Hamelman (fermentazione ~x3 ogni 9°C - regola empirica, non legge fisica). "
+        "note": f"Lievito calcolato per {temp_ambiente}°C ambiente / {ore_lievitazione}h (Hamelman: x3 ogni 9°C). "
                 f"A temperatura più alta serve meno lievito. Temperatura acqua per centrare {tp['temp_finale']}°C finali.",
         "diagnosi_disponibile": True,  # collegamento alla chat: "chiedi a Matter su questo impasto"
+    }
+
+
+def ricalcola_sbalzo(temp_originale, temp_nuova, ore_rimanenti):
+    """La KILLER FEATURE: dato uno sbalzo di temperatura, ricalcola l'aggiustamento della timeline.
+    La chat usa questa quando l'utente segnala un cambio di temperatura al banco."""
+    delta = temp_nuova - temp_originale
+    # Hamelman: fermentazione x3 ogni 9°C. Fattore di variazione della velocità:
+    fattore_velocita = 3.0 ** (delta / 9.0)  # >1 se più caldo (fermenta più veloce)
+    variazione_pct = round((fattore_velocita - 1) * 100)
+    # aggiustamento tempo: se fermenta più veloce, i tempi si accorciano
+    nuove_ore = round(ore_rimanenti / fattore_velocita, 1)
+    diff_minuti = round((ore_rimanenti - nuove_ore) * 60)
+    if delta < 0:  # più freddo, rallenta
+        azione = f"posticipa le fasi di ~{abs(diff_minuti)} minuti"
+        spiega = f"Calo di {abs(delta):.0f}°C: la fermentazione ha rallentato del {abs(variazione_pct)}%."
+    elif delta > 0:  # più caldo, accelera
+        azione = f"anticipa le fasi di ~{abs(diff_minuti)} minuti"
+        spiega = f"Rialzo di {delta:.0f}°C: la fermentazione ha accelerato del {variazione_pct}%."
+    else:
+        azione = "nessun aggiustamento necessario"
+        spiega = "Temperatura invariata."
+    return {
+        "temp_originale": temp_originale, "temp_nuova": temp_nuova,
+        "variazione_velocita_pct": variazione_pct,
+        "azione": azione, "spiegazione": spiega,
+        "ore_rimanenti_ricalcolate": nuove_ore,
     }

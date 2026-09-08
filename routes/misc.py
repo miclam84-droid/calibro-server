@@ -615,3 +615,20 @@ def motore_panificazione_endpoint():
         return jsonify(r)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 200
+
+
+@bp.route("/v1/motore/panificazione/sbalzo", methods=["POST"])
+def motore_sbalzo_endpoint():
+    """KILLER FEATURE: ricalcola la timeline per uno sbalzo di temperatura al banco.
+    L'utente ha un impasto in corso, la temperatura cambia, Matter ricalibra i tempi."""
+    from flask import request, jsonify
+    try:
+        d = request.get_json(force=True) or {}
+        from motore_panificazione import ricalcola_sbalzo
+        return jsonify(ricalcola_sbalzo(
+            float(d.get("temp_originale", 22)),
+            float(d.get("temp_nuova", 22)),
+            float(d.get("ore_rimanenti", 8))
+        ))
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]}), 200
