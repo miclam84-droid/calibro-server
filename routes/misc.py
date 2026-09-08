@@ -570,3 +570,23 @@ def admin_diag_grafo_conta():
     except Exception as e:
         out["errore"] = str(e)[:120]
     return jsonify(out)
+
+
+@bp.route("/v1/libro-affiliato", methods=["GET"])
+def libro_affiliato():
+    """Ritorna il libro di riferimento (link affiliato Amazon) per una disciplina o fenomeno.
+    Il frontend lo mostra nelle schede fenomeno/ricetta come 'Approfondisci'."""
+    from flask import request, jsonify
+    disciplina = request.args.get("disciplina", "")
+    fenomeno = request.args.get("fenomeno", "")
+    try:
+        from affiliati_libri import libro_per_fenomeno, libro_per_disciplina
+        if fenomeno:
+            libro = libro_per_fenomeno(fenomeno, disciplina or None)
+        else:
+            libro = libro_per_disciplina(disciplina)
+        if not libro:
+            return jsonify({"libro": None})
+        return jsonify({"libro": libro})
+    except Exception as e:
+        return jsonify({"libro": None, "_err": str(e)[:80]})
