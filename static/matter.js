@@ -1218,6 +1218,9 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
 
   var card=document.createElement('div');card.className='scheda';card.innerHTML=html;
   document.getElementById('schede').prepend(card);
+  // libro affiliato (Approfondisci) — per disciplina o fenomeno
+  var _paramLibro = j.disciplina ? ('disciplina='+encodeURIComponent(j.disciplina)) : (j.titolo ? ('fenomeno='+encodeURIComponent(j.titolo)) : '');
+  if(_paramLibro){ _caricaLibroAffiliato(_paramLibro, '.fen-scheda'); }
   card.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -5710,6 +5713,27 @@ async function _ricettarioApri(id, nome){
     setTimeout(function(){ _arricchisciSchedaRicetta(ric); }, 100);
   }catch(e){ chiudiVista(); apriNodo(id, nome||''); }
 }
+// ═══ LIBRO AFFILIATO — "Approfondisci" (monetizzazione discreta) ═══
+async function _caricaLibroAffiliato(params, containerSelector){
+  try{
+    var r=await fetch('/v1/libro-affiliato?'+params);
+    var j=await r.json();
+    var l=j.libro;
+    if(!l || !l.titolo) return;
+    var e=_escV;
+    var cont=document.querySelector(containerSelector);
+    if(!cont) return;
+    if(cont.querySelector('.libro-aff')) return;
+    var box=document.createElement('div');
+    box.className='libro-aff';
+    box.innerHTML='<div class="libro-aff-lab">Approfondisci la scienza</div>'
+      + '<div class="libro-aff-tit">'+e(l.titolo)+'</div>'
+      + (l.autore?'<div class="libro-aff-aut">'+e(l.autore)+'</div>':'')
+      + (l.perche?'<div class="libro-aff-perche">'+e(l.perche)+'</div>':'')
+      + (l.link?'<a class="libro-aff-link" href="'+e(l.link)+'" target="_blank" rel="noopener">Vedi su Amazon →</a>':'');
+    cont.appendChild(box);
+  }catch(e){}
+}
 function _arricchisciSchedaRicetta(ric){
   var sch=document.querySelector('#vista-body .rg-scheda'); if(!sch) return;
   var e=_escV;
@@ -5737,6 +5761,8 @@ function _arricchisciSchedaRicetta(ric){
         }).join('');
     sch.appendChild(coll);
   }
+  // libro affiliato (Approfondisci) in fondo alla scheda
+  if(ric.disciplina){ _caricaLibroAffiliato('disciplina='+encodeURIComponent(ric.disciplina), '#vista-body .rg-scheda'); }
 }
 // ═══ RIUSO SCARTI / cross-utilization (#2) ═══
 // ═══ DOVE LO COMPRO — rendering multi-store (Amazon + Special Ingredients) ═══
