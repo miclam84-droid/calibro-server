@@ -590,3 +590,26 @@ def libro_affiliato():
         return jsonify({"libro": libro})
     except Exception as e:
         return jsonify({"libro": None, "_err": str(e)[:80]})
+
+
+@bp.route("/v1/motore/panificazione", methods=["POST"])
+def motore_panificazione_endpoint():
+    """MOTORE OPERATIVO Panificazione Pro: dato l'obiettivo, progetta il processo completo.
+    Il differenziatore vs MasterBiga - parte dall'obiettivo, non dagli ingredienti."""
+    from flask import request, jsonify
+    try:
+        d = request.get_json(force=True) or {}
+        from motore_panificazione import progetta
+        r = progetta(
+            tipo=d.get("tipo", "pizza_napoletana"),
+            n_panetti=int(d.get("n_panetti", 6)),
+            peso_panetto=int(d.get("peso_panetto", 280)),
+            metodo=d.get("metodo", "diretto"),
+            idratazione=d.get("idratazione"),
+            temp_ambiente=float(d.get("temp_ambiente", 22)),
+            temp_farina=float(d.get("temp_farina", 20)),
+            ore_lievitazione=float(d.get("ore_lievitazione", 8)),
+        )
+        return jsonify(r)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]}), 200
