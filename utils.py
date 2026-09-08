@@ -55,7 +55,7 @@ def _err(codice, lang="it"):
 
 import time as _time
 _rate_store = {}  # {ip: [timestamp, ...]}
-_RATE_LIMIT = 30   # max 30 richieste
+_RATE_LIMIT = 120  # max 120 richieste (uso reale: un pro apre più schede di fila, un locale ha più device su stesso IP)
 _RATE_WINDOW = 60  # per minuto
 
 def _check_rate_limit(ip):
