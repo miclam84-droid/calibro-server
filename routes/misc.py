@@ -324,25 +324,42 @@ def cerca_universale():
     if len(q) < 2:
         return jsonify({"query": q, "risultati": [], "nota": "cerca almeno 2 caratteri"})
     pat = "%" + q + "%"
+    # tokenizzo: spezzo in parole e costruisco un OR (così "olio cottura" trova "olio" o "cottura")
+    parole = [p for p in q.split() if len(p) >= 2]
+    if not parole:
+        parole = [q]
+    def _cond(campo):
+        # costruisce "campo ILIKE ? OR campo ILIKE ? ..." per ogni parola + la frase intera
+        conds = [f"{campo} ILIKE ?" for _ in parole] + [f"{campo} ILIKE ?"]
+        return "(" + " OR ".join(conds) + ")"
+    def _params():
+        return tuple(f"%{p}%" for p in parole) + (pat,)
     risultati = []
     try:
         from db import carica_grafo
         db = carica_grafo()
-        # RICETTE (stesso pattern del ricettario che funziona)
         def _c(r, key, idx):
             return r[key] if hasattr(r, "keys") else r[idx]
-        rows = db.execute("SELECT id, nome, disciplina FROM ricette WHERE nome ILIKE ? LIMIT 8", (pat,)).fetchall()
+        # RICETTE - cerca su nome con OR sulle parole
+        rows = db.execute(f"SELECT id, nome, disciplina FROM ricette WHERE {_cond('nome')} LIMIT 10", _params()).fetchall()
         for r in rows:
             risultati.append({"tipo": "ricetta", "id": _c(r,"id",0), "nome": _c(r,"nome",1), "disciplina": _c(r,"disciplina",2)})
-        rows = db.execute("SELECT id, name FROM nodes WHERE type='Fenomeno' AND name ILIKE ? LIMIT 5", (pat,)).fetchall()
+        rows = db.execute(f"SELECT id, name FROM nodes WHERE type='Fenomeno' AND {_cond('name')} LIMIT 6", _params()).fetchall()
         for r in rows:
             risultati.append({"tipo": "fenomeno", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
-        rows = db.execute("SELECT id, name FROM nodes WHERE type='Prodotto' AND name ILIKE ? LIMIT 5", (pat,)).fetchall()
+        rows = db.execute(f"SELECT id, name FROM nodes WHERE type='Prodotto' AND {_cond('name')} LIMIT 6", _params()).fetchall()
         for r in rows:
             risultati.append({"tipo": "ingrediente", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
-        rows = db.execute("SELECT id, name FROM nodes WHERE type='Tecnica' AND name ILIKE ? LIMIT 3", (pat,)).fetchall()
+        rows = db.execute(f"SELECT id, name FROM nodes WHERE type='Tecnica' AND {_cond('name')} LIMIT 4", _params()).fetchall()
         for r in rows:
             risultati.append({"tipo": "tecnica", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
+        # dedup per id
+        _visti = set(); _dedup = []
+        for x in risultati:
+            k = (x["tipo"], x["id"])
+            if k not in _visti:
+                _visti.add(k); _dedup.append(x)
+        risultati = _dedup
     except Exception as e:
         return jsonify({"query": q, "risultati": risultati, "errore": str(e)[:120]})
     return jsonify({"query": q, "risultati": risultati, "totale": len(risultati)})

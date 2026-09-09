@@ -74,7 +74,8 @@ def _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp):
 
 
 def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
-             temp_ambiente=22, temp_farina=20, ore_lievitazione=8, ora_sfornata="20:00"):
+             temp_ambiente=22, temp_farina=20, ore_lievitazione=8, ora_sfornata="20:00",
+             temp_finale_voluta=None):
     """IL MOTORE: dato l'obiettivo, progetta il processo completo.
     Ritorna dosi + lievito + temp acqua + timeline + parametri."""
     tp = TIPI.get(tipo, TIPI["pizza_napoletana"])
@@ -95,7 +96,8 @@ def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
     lievito_g = round(farina_tot * lievito_pct/100, 2)
 
     # 3. TEMPERATURA ACQUA
-    temp_acqua = _temp_acqua(tp["temp_finale"], temp_farina, temp_ambiente)
+    _temp_fin = temp_finale_voluta if temp_finale_voluta else tp["temp_finale"]
+    temp_acqua = _temp_acqua(_temp_fin, temp_farina, temp_ambiente)
 
     # 4. PREFERMENTO (se biga/poolish/madre)
     prefermento = None
@@ -115,7 +117,7 @@ def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
         "dosi": {"farina": farina_tot, "acqua": acqua_tot, "sale": sale, "olio": olio or None,
                  "lievito_fresco": lievito_g, "lievito_pct": lievito_pct},
         "temperatura_acqua": temp_acqua,
-        "temp_finale_impasto": tp["temp_finale"],
+        "temp_finale_impasto": _temp_fin,
         "prefermento": prefermento,
         "cottura": tp["cottura"],
         "timeline": _timeline_inversa(ora_sfornata, metodo, ore_lievitazione, tp),
