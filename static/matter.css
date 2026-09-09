@@ -77,3 +77,16 @@
 .mp-genera-btn{display:block;width:calc(100% - 36px);margin:8px 18px 10px;min-height:52px;background:#141d22;color:#fff;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
 .mp-chiedi-btn{display:block;width:calc(100% - 36px);margin:0 18px 10px;min-height:52px;background:#c77b3f;color:#241109;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
 .mp-back-btn{display:block;width:calc(100% - 36px);margin:0 18px 24px;min-height:44px;background:0;border:1.5px solid #c4c0b4;color:#5a6c70;font-family:'Inter',sans-serif;font-weight:600;font-size:14px;cursor:pointer}
+
+/* ═══ PERFORMANCE RENDERING (lentezza mobile) ═══ */
+/* la texture noise SVG a schermo intero è costosissima da comporre su mobile: la disattivo */
+body::before{display:none!important}
+.empty-state::before,.fnv-empty::before{display:none!important}
+/* transizioni solo su transform/opacity (GPU), mai su 'all' o proprietà di layout */
+*{transition-property:transform,opacity,box-shadow,background-color,border-color,color!important}
+/* le schede non animano più 'all' all'apertura (pesante) */
+.scheda,.screen,.screen.active{animation-duration:.15s!important}
+/* riduco le ombre-dure multiple contemporanee (repaint costoso su liste lunghe) */
+.disc-mini,.ricp-card{will-change:auto}
+/* content-visibility: il browser salta il render di ciò che è fuori schermo (liste lunghe) */
+.p-step,.ricp-card,.disc-mini,.avz-card,.fen-errore,.scheda,.quad-item,.misura-card{content-visibility:auto;contain-intrinsic-size:auto 80px}
