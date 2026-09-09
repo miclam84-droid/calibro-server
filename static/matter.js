@@ -348,6 +348,7 @@ var _PORTE = {
                 {t:'Menu Lab', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}},
                 {t:'Recupera scarti', d:'Riusa gli scarti, cross-utilization', act:function(){if(typeof apriScarti==='function')apriScarti();}} ]},
   misurare: { label:'Misurare', sub:'Centra il bersaglio', voci:[
+                {t:'Motore Panificazione', d:'Progetta impasto: dosi + timeline a ritroso', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('motori').then(function(){ if(typeof apriMotorePanificazione==='function')apriMotorePanificazione(); }); } }},
                 {t:'Calcolatori', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
                 {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
                 {t:'Flavour del giorno', d:'Parti da un ingrediente', act:function(){switchMappaTab('flavor');}} ]}
@@ -432,7 +433,7 @@ function _afetch(url, opts){
   });
 }
 // ═══ LOADER MODULI LAZY (metodo Strangler) ═══
-window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false };
+window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false };
 function _caricaModulo(nome){
   return new Promise(function(resolve){
     if(window._moduli[nome]){ resolve(); return; }
