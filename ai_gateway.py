@@ -195,7 +195,16 @@ def _anthropic_stream(model, messages, max_tokens=1500, temperature=0, tools=Non
         method="POST")
     # accumulatori per i blocchi tool_use (input arriva a pezzi JSON)
     _tool_acc = {}
-    with urllib.request.urlopen(req, timeout=90) as r:
+    try:
+        _stream_ctx = urllib.request.urlopen(req, timeout=90)
+    except urllib.error.HTTPError as _he:
+        # cattura il dettaglio dell'errore (400 = payload malformato: dice COSA è sbagliato)
+        try:
+            _errbody = _he.read().decode("utf-8", "ignore")[:300]
+        except Exception:
+            _errbody = str(_he)
+        raise ValueError(f"Anthropic API {_he.code}: {_errbody}")
+    with _stream_ctx as r:
         for raw in r:
             line = raw.decode("utf-8", "ignore").strip()
             if not line or not line.startswith("data:"):
