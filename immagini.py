@@ -260,12 +260,12 @@ def _foto_pertinente(testo_foto, query):
         if bad in t:
             return False
     if not t:
-        return None  # niente descrizione: accetto (banca foto di cibo)
+        return False  # NIENTE DESCRIZIONE = SCARTO (era il buco: foto senza alt prese a caso)
     _GEN = {"food", "dish", "plated", "meal", "italian", "fresh", "homemade", "delicious",
             "cuisine", "plate", "bowl", "cooking", "kitchen", "table", "restaurant"}
     parole = [p for p in query.lower().split() if len(p) >= 4 and p not in _GEN]
     if not parole:
-        return None
+        return False  # non posso verificare = SCARTO
     # almeno una parola specifica della query nella descrizione della foto
     if any(p in t for p in parole):
         return True

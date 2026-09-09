@@ -7520,33 +7520,33 @@ def admin_rigenera_incomplete():
 
 @bp.route("/admin/trova-foto-sospette")
 def admin_trova_foto_sospette():
-    """Trova ricette con foto sospette (URL con parole NON alimentari: medico, chirurgia, ecc.).
-    E le stacca (mette blueprint) se ?fix=1."""
+    """TUTTO PERFETTO: stacca TUTTE le foto esterne (Pexels/stock non verificabili) e mette
+    blueprint ovunque. Zero rischio di foto sbagliate/chirurgiche. Con ?fix=1 applica."""
     from flask import request, jsonify
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     fix = request.args.get("fix") == "1"
-    # parole che NON devono MAI stare in una foto di cibo
-    BLACKLIST = ['surg', 'chirur', 'medic', 'hospital', 'ospedal', 'tweezer', 'pinzet', 'forceps',
-                 'clinic', 'dental', 'syringe', 'siringa', 'wound', 'blood', 'anatom', 'laborator',
-                 'microscop', 'pill', 'drug', 'pharma', 'vaccin', 'needle', 'ago', 'scalpel', 'bisturi',
-                 'car', 'auto', 'building', 'person', 'people', 'man', 'woman', 'portrait', 'face']
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT id, nome, immagine FROM ricette WHERE immagine IS NOT NULL AND immagine::text != 'null'")
-        sospette = []
-        for rid, nome, img in cur.fetchall():
-            img_str = str(img).lower()
-            for parola in BLACKLIST:
-                if parola in img_str:
-                    sospette.append({"id": rid, "nome": nome, "parola": parola, "img": img_str[:60]})
-                    if fix:
-                        cur.execute("UPDATE ricette SET immagine = NULL WHERE id = %s", (rid,))
-                    break
+        # conto quante ricette hanno una foto esterna (pexels/wikimedia/foodiesfeed/unsplash)
+        cur.execute("""SELECT COUNT(*) FROM ricette WHERE immagine IS NOT NULL
+                       AND immagine::text != 'null'
+                       AND (immagine::text ILIKE '%pexels%' OR immagine::text ILIKE '%wikimedia%'
+                            OR immagine::text ILIKE '%foodiesfeed%' OR immagine::text ILIKE '%unsplash%'
+                            OR immagine::text ILIKE '%http%')""")
+        con_foto_esterna = cur.fetchone()[0]
         if fix:
+            # stacco TUTTE le foto esterne -> il frontend mostrerà il blueprint
+            cur.execute("""UPDATE ricette SET immagine = NULL WHERE immagine IS NOT NULL
+                           AND immagine::text != 'null'
+                           AND (immagine::text ILIKE '%pexels%' OR immagine::text ILIKE '%wikimedia%'
+                                OR immagine::text ILIKE '%foodiesfeed%' OR immagine::text ILIKE '%unsplash%'
+                                OR immagine::text ILIKE '%http%')""")
             conn.commit()
         cur.close(); conn.close()
-        return jsonify({"sospette": len(sospette), "esempi": sospette[:15], "staccate": fix})
+        return jsonify({"foto_esterne_trovate": con_foto_esterna, "staccate": fix,
+                        "nota": "Tutte le foto esterne staccate → blueprint ovunque. Zero rischio foto sbagliate." if fix
+                                else "Aggiungi &fix=1 per staccarle tutte e mettere blueprint."})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
