@@ -7516,3 +7516,37 @@ def admin_rigenera_incomplete():
 
     threading.Thread(target=_worker, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": f"rigenerazione {n} ricette incomplete in background"})
+
+
+@bp.route("/admin/trova-foto-sospette")
+def admin_trova_foto_sospette():
+    """Trova ricette con foto sospette (URL con parole NON alimentari: medico, chirurgia, ecc.).
+    E le stacca (mette blueprint) se ?fix=1."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    fix = request.args.get("fix") == "1"
+    # parole che NON devono MAI stare in una foto di cibo
+    BLACKLIST = ['surg', 'chirur', 'medic', 'hospital', 'ospedal', 'tweezer', 'pinzet', 'forceps',
+                 'clinic', 'dental', 'syringe', 'siringa', 'wound', 'blood', 'anatom', 'laborator',
+                 'microscop', 'pill', 'drug', 'pharma', 'vaccin', 'needle', 'ago', 'scalpel', 'bisturi',
+                 'car', 'auto', 'building', 'person', 'people', 'man', 'woman', 'portrait', 'face']
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, nome, immagine FROM ricette WHERE immagine IS NOT NULL AND immagine::text != 'null'")
+        sospette = []
+        for rid, nome, img in cur.fetchall():
+            img_str = str(img).lower()
+            for parola in BLACKLIST:
+                if parola in img_str:
+                    sospette.append({"id": rid, "nome": nome, "parola": parola, "img": img_str[:60]})
+                    if fix:
+                        cur.execute("UPDATE ricette SET immagine = NULL WHERE id = %s", (rid,))
+                    break
+        if fix:
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"sospette": len(sospette), "esempi": sospette[:15], "staccate": fix})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
