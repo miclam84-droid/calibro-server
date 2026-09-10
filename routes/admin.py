@@ -7728,7 +7728,7 @@ def admin_verifica_foto_worker():
 def admin_test_dalle():
     """Test: genera UNA foto con DALL-E per verificare che la chiave funzioni per la generazione."""
     from flask import request, jsonify
-    import os, json, urllib.request as ur
+    import os, json, urllib.request as ur, urllib.error
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
@@ -7745,5 +7745,9 @@ def admin_test_dalle():
         d = json.loads(r.read().decode())
         img_url = d["data"][0]["url"]
         return jsonify({"ok": True, "piatto": piatto, "url": img_url[:120] + "...", "url_completo": img_url})
+    except urllib.error.HTTPError as he:
+        try: body = he.read().decode()[:300]
+        except: body = str(he)
+        return jsonify({"ok": False, "errore_http": he.code, "dettaglio": body})
     except Exception as e:
         return jsonify({"ok": False, "errore": str(e)[:200]})
