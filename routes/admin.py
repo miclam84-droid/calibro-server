@@ -7596,6 +7596,10 @@ def admin_verifica_foto_vision():
     if not key:
         return jsonify({"errore": "manca OPENAI_API_KEY"})
     def _url_foto(img):
+        # il campo immagine è direttamente l'URL (stringa)
+        s = str(img).strip()
+        if s.startswith("http"):
+            return s
         try:
             d = img if isinstance(img, dict) else json.loads(img)
             return d.get("url", "")
