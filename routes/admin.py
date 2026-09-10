@@ -7645,4 +7645,5 @@ def admin_verifica_foto_vision():
         return jsonify({"controllate": len(risultati), "tenute": tenute, "scartate": scartate,
                         "applicato": fix, "dettaglio": risultati})
     except Exception as e:
-        return jsonify({"errore": str(e)[:120]})
+        import traceback
+        return jsonify({"errore": str(e)[:120], "traceback": traceback.format_exc()[-400:]})
