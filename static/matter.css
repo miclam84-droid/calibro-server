@@ -100,3 +100,25 @@ body::before{display:none!important}
 .fen-header{padding-top:16px}
 /* niente elementi che sbordano */
 .fen-scheda *{max-width:100%;overflow-wrap:anywhere}
+
+/* ═══════════════════════════════════════════════════════════════════
+   GUARDIA LEGGIBILITÀ FINALE — vince su tutto (ultima nel file)
+   Garantisce: testo scuro su sfondi chiari, testo chiaro su Ink.
+   ═══════════════════════════════════════════════════════════════════ */
+/* box scuri (Ink/teal): testo sempre chiaro e leggibile */
+.fen-principio,.fen-principio *,.crus-box-target,.crus-box-target *,
+.dna-header,.dna-header *,.dna-ctx,.dna-ctx *,.rg-numeri,.rg-numeri *,
+.referto-num,.referto-num *,.stream-calc,.stream-calc *,.calc-mirino,.calc-mirino *,
+.misure-header,.misure-header *,.ev-box,.ev-box *,.cf-filosofia,.cf-filosofia *,
+.pal-header,.pal-header *,.fen-errori-box .fen-errore *,.fen-mirino-num,.fen-mirino-num *,
+.scheda-tecnica,.scheda-tecnica *,.mp-head,.mp-head *,.toast-salvato,.toast-salvato *{
+  text-shadow:none;
+}
+.fen-principio-txt{color:#eaf4f5!important;-webkit-text-fill-color:#eaf4f5!important}
+.fen-principio-lab{color:#7fc5d0!important;-webkit-text-fill-color:#7fc5d0!important}
+.fen-principio .fen-princ-chip{color:#fff!important;-webkit-text-fill-color:#fff!important}
+/* box chiari: testo sempre scuro e leggibile */
+.calc-perc,.calc-perc *,.ric-glob-item,.ric-glob-nome,.disc-mini,.disc-mini *,
+.crea-card,.crea-card-t,.crea-card-d{
+  -webkit-text-fill-color:currentColor;
+}
