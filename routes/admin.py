@@ -7670,3 +7670,55 @@ def admin_diag_formato_foto():
         return jsonify({"esempi": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/verifica-foto-worker")
+def admin_verifica_foto_worker():
+    """Worker in BACKGROUND: verifica TUTTE le foto con vision, scarta le sbagliate. Gira da solo."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, threading
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key:
+        return jsonify({"errore": "manca OPENAI_API_KEY"})
+
+    def _worker():
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            cur.execute("""SELECT id, nome, immagine FROM ricette
+                           WHERE immagine IS NOT NULL AND immagine::text != 'null'
+                           AND immagine::text ILIKE '%%http%%'""")
+            righe = cur.fetchall()
+            tenute = scartate = 0
+            for rid, nome, img in righe:
+                url = str(img).strip()
+                if not url.startswith("http"):
+                    continue
+                payload = {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": [
+                    {"type": "text", "text": f"Questa immagine mostra il piatto/bevanda '{nome}' o un cibo appropriato? Rispondi SOLO 'SI' o 'NO'. Se mostra cose NON alimentari (persone, oggetti, medico) rispondi 'NO'."},
+                    {"type": "image_url", "image_url": {"url": url}}]}], "max_tokens": 5}
+                try:
+                    req = ur.Request("https://api.openai.com/v1/chat/completions",
+                                     data=json.dumps(payload).encode(),
+                                     headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+                    r = ur.urlopen(req, timeout=25)
+                    resp = json.loads(r.read().decode())
+                    if "choices" not in resp or not resp["choices"]:
+                        continue
+                    risposta = resp["choices"][0]["message"]["content"].strip().upper()
+                    if "SI" in risposta or "SÌ" in risposta or "YES" in risposta:
+                        tenute += 1
+                    else:
+                        cur.execute("UPDATE ricette SET immagine = NULL WHERE id = %s", (rid,))
+                        conn.commit(); scartate += 1
+                except Exception:
+                    continue
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"verifica-foto: {tenute} tenute, {scartate} scartate su {len(righe)}",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_worker, daemon=True).start()
+    return jsonify({"avviato": True, "nota": "verifica foto in background - controlla worker-log per il risultato"})
