@@ -62,8 +62,9 @@ window._chiediStream = async function(q){
         var st=document.getElementById('stream-status-txt'); if(st) st.textContent=ev.testo||'';
       } else if(ev.tipo==='token'){
         testoAccumulato += (ev.delta||'');
-        curTxt().innerHTML = _formattaRispostaChat(testoAccumulato);
-        card.scrollIntoView({behavior:'smooth',block:'nearest'});
+        // STREAMING FLUIDO: durante lo scorrimento mostro testo grezzo (textContent = leggero,
+        // niente re-parse markdown ad ogni token). La formattazione avviene alla fine.
+        curTxt().textContent = testoAccumulato;
       } else if(ev.tipo==='widget'){
         txtEl=null; // i prossimi token vanno sotto il widget
         if(ev.widget==='fenomeno' && ev.id){ _streamWidgetFenomeno(flusso, ev.id); }
@@ -78,6 +79,8 @@ window._chiediStream = async function(q){
   statusEl.remove();
   setBusy(false);
   _incDomande();
+  // FINE STREAMING: ora applico la formattazione markdown UNA volta (heading, grassetto, blocchi)
+  if(testoAccumulato && typeof curTxt==='function'){ try{ curTxt().innerHTML = _formattaRispostaChat(testoAccumulato); }catch(e){} }
   if(erroreVisto && !testoAccumulato){ card.remove(); throw new Error('stream error'); }
   if(testoAccumulato){ _chatHistory.push({q:q, r:testoAccumulato.slice(0,300)}); if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2);
     _chatCompleta.push({ruolo:'user',testo:q}); _chatCompleta.push({ruolo:'assistant',testo:testoAccumulato});
