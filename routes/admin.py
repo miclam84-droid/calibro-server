@@ -7647,3 +7647,22 @@ def admin_verifica_foto_vision():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e)[:120], "traceback": traceback.format_exc()[-400:]})
+
+
+@bp.route("/admin/diag-formato-foto")
+def admin_diag_formato_foto():
+    """Vede COME è salvato il campo immagine (per aggiustare la query di verifica)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, nome, immagine FROM ricette WHERE immagine IS NOT NULL AND immagine::text != 'null' LIMIT 5")
+        esempi = []
+        for rid, nome, img in cur.fetchall():
+            esempi.append({"nome": nome, "tipo_py": str(type(img).__name__), "valore": str(img)[:120]})
+        cur.close(); conn.close()
+        return jsonify({"esempi": esempi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
