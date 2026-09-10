@@ -7722,3 +7722,28 @@ def admin_verifica_foto_worker():
 
     threading.Thread(target=_worker, daemon=True).start()
     return jsonify({"avviato": True, "nota": "verifica foto in background - controlla worker-log per il risultato"})
+
+
+@bp.route("/admin/test-dalle")
+def admin_test_dalle():
+    """Test: genera UNA foto con DALL-E per verificare che la chiave funzioni per la generazione."""
+    from flask import request, jsonify
+    import os, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key:
+        return jsonify({"errore": "manca OPENAI_API_KEY"})
+    piatto = request.args.get("piatto", "spaghetti carbonara")
+    prompt = f"Professional food photography of {piatto}, top view, natural light, restaurant quality, appetizing, no text"
+    payload = {"model": "dall-e-3", "prompt": prompt, "n": 1, "size": "1024x1024", "quality": "standard"}
+    try:
+        req = ur.Request("https://api.openai.com/v1/images/generations",
+                         data=json.dumps(payload).encode(),
+                         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+        r = ur.urlopen(req, timeout=60)
+        d = json.loads(r.read().decode())
+        img_url = d["data"][0]["url"]
+        return jsonify({"ok": True, "piatto": piatto, "url": img_url[:120] + "...", "url_completo": img_url})
+    except Exception as e:
+        return jsonify({"ok": False, "errore": str(e)[:200]})
