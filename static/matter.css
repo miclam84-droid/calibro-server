@@ -122,3 +122,14 @@ body::before{display:none!important}
 .crea-card,.crea-card-t,.crea-card-d{
   -webkit-text-fill-color:currentColor;
 }
+
+/* ═══ FIX MIRATI (report script) ═══ */
+/* #2 les-dot (pallini percorso): la fila resta nel viewport, scroll contenuto */
+.les-dots{max-width:100%!important;overflow-x:auto!important;box-sizing:border-box!important}
+.les-dots .les-dot{flex:0 0 32px}
+/* #3 cookie non copre "Misura adesso": lascio spazio in fondo quando è visibile.
+   Il banner è fixed a 48px; aggiungo padding-bottom al contenuto così l'ultimo elemento non è coperto */
+#cookie-banner:not(.hidden) ~ * .misura-adesso,
+body:has(#cookie-banner:not(.hidden)) main{padding-bottom:64px}
+/* fallback semplice: il main ha sempre un po' di spazio in fondo per il cookie */
+#contenuto{padding-bottom:56px}
