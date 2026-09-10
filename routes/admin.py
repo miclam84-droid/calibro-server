@@ -7550,3 +7550,33 @@ def admin_trova_foto_sospette():
                                 else "Aggiungi &fix=1 per staccarle tutte e mettere blueprint."})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/diag-openai")
+def admin_diag_openai():
+    """Verifica se la chiave OpenAI è configurata e funziona (per la verifica foto con vision)."""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    key = os.environ.get("OPENAI_API_KEY", "")
+    out = {"chiave_presente": bool(key), "prefisso": key[:7] + "..." if key else "NESSUNA"}
+    if not key:
+        out["nota"] = "Manca OPENAI_API_KEY su Railway. Aggiungila per usare vision (verifica foto) e generazione immagini."
+        return jsonify(out)
+    # test: la chiave funziona? (chiamata leggera)
+    try:
+        import urllib.request as ur, json as _j
+        req = ur.Request("https://api.openai.com/v1/models",
+                         headers={"Authorization": f"Bearer {key}"})
+        r = ur.urlopen(req, timeout=15)
+        d = _j.loads(r.read().decode())
+        modelli = [m["id"] for m in d.get("data", [])]
+        out["chiave_valida"] = True
+        out["ha_vision"] = any("gpt-4o" in m or "vision" in m for m in modelli)
+        out["ha_dalle"] = any("dall-e" in m for m in modelli)
+        out["nota"] = "Chiave OK. Posso usarla per verificare le foto (vision) e generare immagini (dall-e)."
+    except Exception as e:
+        out["chiave_valida"] = False
+        out["errore"] = str(e)[:100]
+    return jsonify(out)
