@@ -43,6 +43,21 @@ _TOOLS = [
 
 from db import carica_grafo, _dati, _get_conn, _release_conn
 from contenuto import _scheda_lang, _numero_bersaglio, _pulisci_traduzione
+
+def _pulisci_markdown(testo):
+    """Toglie asterischi, cancelletti e markdown residuo dalle risposte (l'utente non deve vederli)."""
+    if not testo:
+        return testo
+    import re as _re
+    t = testo
+    t = _re.sub(r'\*\*([^*]+)\*\*', r'', t)   # **grassetto** -> grassetto
+    t = _re.sub(r'\*([^*]+)\*', r'', t)         # *corsivo* -> corsivo
+    t = _re.sub(r'^#{1,6}\s*', '', t, flags=_re.MULTILINE)  # ### titoli
+    t = _re.sub(r'^[-*+]\s+', '', t, flags=_re.MULTILINE)   # - elenchi
+    t = t.replace(chr(96), '')  # backtick
+    return t
+
+
 from config import DATABASE_URL
 
 
@@ -486,8 +501,8 @@ def costruisci_prompt(domanda, contesto, lang="it"):
             "della spiegazione, non un'etichetta a parte.\n"
             "3) La direttiva operativa: chiudi col comando concreto da eseguire al banco stasera per salvare "
             "la linea e non sprecare merce.\n"
-            "Usa markdown nativo. Grassetti CHIRURGICI solo su molecole/composti, temperature o numeri "
-            "critici, e il gesto d'azione. Paragrafi separati da riga vuota, mai un muro di testo. Poche "
+            "NON usare markdown, NON usare asterischi, NON usare grassetto o titoli con cancelletti. "
+            "Scrivi in testo semplice e pulito. Paragrafi separati da riga vuota, mai un muro di testo. Poche "
             "righe dense, ognuna che pesa. Niente elenchi puntati prevedibili, niente frasi di cortesia.\n"
             "REGOLE SCIENTIFICHE INVIOLABILI:\n"
             "1. Il glutine NON contiene collagene — sono proteine diverse\n"
@@ -564,7 +579,7 @@ def chiedi_mistral(prompt, history=None, usa_tools=True):
     try:
         out = GW.route_chat(prompt, tools=_tools_da_usare, history=history)
         if out:
-            return out
+            return _pulisci_markdown(out) if isinstance(out, str) else out
     except Exception as e:
         print(f"[GW] route_chat fallito in chiedi_mistral: {e}", flush=True)
     return None
