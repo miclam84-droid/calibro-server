@@ -7626,6 +7626,9 @@ def admin_verifica_foto_vision():
                                  headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
                 r = ur.urlopen(req, timeout=25)
                 resp = json.loads(r.read().decode())
+                if "choices" not in resp or not resp["choices"]:
+                    risultati.append({"nome": nome, "errore": "no choices: " + str(resp.get("error",resp))[:60]})
+                    continue
                 risposta = resp["choices"][0]["message"]["content"].strip().upper()
                 giusta = "SI" in risposta or "SÌ" in risposta or "YES" in risposta
                 if giusta:
