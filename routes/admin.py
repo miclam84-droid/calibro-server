@@ -7605,7 +7605,7 @@ def admin_verifica_foto_vision():
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("""SELECT id, nome, immagine FROM ricette
                        WHERE immagine IS NOT NULL AND immagine::text != 'null'
-                       AND immagine::text ILIKE '%http%' LIMIT %s""", (n,))
+                       AND immagine::text ILIKE '%%http%%' LIMIT %s""", (n,))
         risultati = []; scartate = 0; tenute = 0
         for rid, nome, img in cur.fetchall():
             url = _url_foto(img)
