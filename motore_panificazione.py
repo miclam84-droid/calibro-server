@@ -78,8 +78,15 @@ def progetta(tipo, n_panetti, peso_panetto, metodo="diretto", idratazione=None,
              temp_finale_voluta=None):
     """IL MOTORE: dato l'obiettivo, progetta il processo completo.
     Ritorna dosi + lievito + temp acqua + timeline + parametri."""
+    # validazione: valori sensati (evita farina negativa/assurda)
+    n_panetti = max(1, min(int(n_panetti), 200))
+    peso_panetto = max(20, min(int(peso_panetto), 2000))
+    temp_ambiente = max(5, min(float(temp_ambiente), 40))
+    temp_farina = max(0, min(float(temp_farina), 40))
+    ore_lievitazione = max(1, min(float(ore_lievitazione), 120))
     tp = TIPI.get(tipo, TIPI["pizza_napoletana"])
     idr = idratazione or tp["idratazione"]
+    idr = max(40, min(float(idr), 100))
     met = METODI.get(metodo, METODI["diretto"])
 
     # 1. FARINA TOTALE (a ritroso dal peso finale)
