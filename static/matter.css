@@ -90,3 +90,13 @@ body::before{display:none!important}
 .disc-mini,.ricp-card{will-change:auto}
 /* content-visibility: il browser salta il render di ciò che è fuori schermo (liste lunghe) */
 .p-step,.ricp-card,.disc-mini,.avz-card,.fen-errore,.scheda,.quad-item,.misura-card{content-visibility:auto;contain-intrinsic-size:auto 80px}
+
+/* ═══ CARD FENOMENO — allineamento coerente (#3 storta/strana) ═══ */
+.fen-scheda{padding:0 0 16px!important}
+.fen-scheda>*{margin-left:16px!important;margin-right:16px!important;box-sizing:border-box}
+.fen-scheda .fen-header,.fen-scheda .fen-principio,.fen-scheda .fen-mirino-num{margin-left:16px!important;margin-right:16px!important}
+/* le sezioni respirano uniformi */
+.fen-principio,.fen-mirino-num,.fen-errori-box,.fen-chips{margin-top:16px!important;margin-bottom:0!important}
+.fen-header{padding-top:16px}
+/* niente elementi che sbordano */
+.fen-scheda *{max-width:100%;overflow-wrap:anywhere}
