@@ -133,3 +133,15 @@ body::before{display:none!important}
 body:has(#cookie-banner:not(.hidden)) main{padding-bottom:64px}
 /* fallback semplice: il main ha sempre un po' di spazio in fondo per il cookie */
 #contenuto{padding-bottom:56px}
+
+/* ═══ FIX FINALI (report) ═══ */
+/* #1 "il bersaglio" (target-hero-lab): era Ink su Ink = invisibile → testo chiaro */
+.target-hero-lab{color:#B8D4E0!important;-webkit-text-fill-color:#B8D4E0!important}
+.target-hero,.target-hero *{}
+/* garanzia generale: label su box scuri sempre chiare */
+.target-hero-num{color:#e8935a!important}
+.target-hero-sub{color:#cbd6da!important}
+/* #2 les-dot: la fila resta nel viewport con scroll interno */
+.les-dots{max-width:100%!important;overflow-x:auto!important;box-sizing:border-box!important;flex-wrap:nowrap!important}
+/* #3 cookie banner: sticky top invece che fixed sopra i bottoni */
+#cookie-banner:not(.hidden){position:sticky!important;top:0!important;bottom:auto!important}
