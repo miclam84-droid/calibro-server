@@ -7580,3 +7580,66 @@ def admin_diag_openai():
         out["chiave_valida"] = False
         out["errore"] = str(e)[:100]
     return jsonify(out)
+
+
+@bp.route("/admin/verifica-foto-vision")
+def admin_verifica_foto_vision():
+    """FASE 1: GPT-4o vision GUARDA ogni foto e dice se corrisponde al piatto.
+    Tiene le giuste, scarta le sbagliate (la chirurgica sparisce). ?n=quante ?fix=1 per applicare."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "10")), 40)
+    fix = request.args.get("fix") == "1"
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key:
+        return jsonify({"errore": "manca OPENAI_API_KEY"})
+    def _url_foto(img):
+        try:
+            d = img if isinstance(img, dict) else json.loads(img)
+            return d.get("url", "")
+        except Exception:
+            return ""
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, nome, immagine FROM ricette
+                       WHERE immagine IS NOT NULL AND immagine::text != 'null'
+                       AND immagine::text ILIKE '%http%' LIMIT %s""", (n,))
+        risultati = []; scartate = 0; tenute = 0
+        for rid, nome, img in cur.fetchall():
+            url = _url_foto(img)
+            if not url.startswith("http"):
+                continue
+            # chiedo a GPT-4o vision se la foto mostra il piatto
+            payload = {
+                "model": "gpt-4o-mini",
+                "messages": [{"role": "user", "content": [
+                    {"type": "text", "text": f"Questa immagine mostra il piatto/bevanda '{nome}' (o un cibo simile e appropriato)? Rispondi SOLO 'SI' o 'NO'. Se mostra qualcosa di NON alimentare (persone, oggetti, medico, chirurgia) rispondi 'NO'."},
+                    {"type": "image_url", "image_url": {"url": url}}
+                ]}],
+                "max_tokens": 5
+            }
+            try:
+                req = ur.Request("https://api.openai.com/v1/chat/completions",
+                                 data=json.dumps(payload).encode(),
+                                 headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+                r = ur.urlopen(req, timeout=25)
+                resp = json.loads(r.read().decode())
+                risposta = resp["choices"][0]["message"]["content"].strip().upper()
+                giusta = "SI" in risposta or "SÌ" in risposta or "YES" in risposta
+                if giusta:
+                    tenute += 1
+                else:
+                    scartate += 1
+                    if fix:
+                        cur.execute("UPDATE ricette SET immagine = NULL WHERE id = %s", (rid,))
+                        conn.commit()
+                risultati.append({"nome": nome, "verdetto": "TIENI" if giusta else "SCARTA"})
+            except Exception as _e:
+                risultati.append({"nome": nome, "errore": str(_e)[:50]})
+        cur.close(); conn.close()
+        return jsonify({"controllate": len(risultati), "tenute": tenute, "scartate": scartate,
+                        "applicato": fix, "dettaglio": risultati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
