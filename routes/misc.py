@@ -649,3 +649,37 @@ def motore_sbalzo_endpoint():
         ))
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 200
+
+
+@bp.route("/v1/motore/gelato", methods=["POST"])
+def motore_gelato_endpoint():
+    from flask import request, jsonify
+    try:
+        d = request.get_json(force=True) or {}
+        from motore_gelato import progetta_gelato
+        return jsonify(progetta_gelato(d.get("tipo","crema"), int(d.get("quantita_g",1000)), int(d.get("temp_vetrina",-12))))
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]}), 200
+
+
+@bp.route("/v1/motore/cocktail", methods=["POST"])
+def motore_cocktail_endpoint():
+    from flask import request, jsonify
+    try:
+        d = request.get_json(force=True) or {}
+        from motore_cocktail import progetta_cocktail
+        return jsonify(progetta_cocktail(int(d.get("volume_finale_ml",90)), float(d.get("gradazione_voluta",22)),
+                                         d.get("tecnica","stirred"), float(d.get("gradazione_ingredienti",40))))
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]}), 200
+
+
+@bp.route("/v1/motore/caffe", methods=["POST"])
+def motore_caffe_endpoint():
+    from flask import request, jsonify
+    try:
+        d = request.get_json(force=True) or {}
+        from motore_caffe import progetta_caffe
+        return jsonify(progetta_caffe(d.get("metodo","espresso"), int(d.get("dose_g",18))))
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]}), 200
