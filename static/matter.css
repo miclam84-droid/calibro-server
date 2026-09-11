@@ -145,3 +145,11 @@ body:has(#cookie-banner:not(.hidden)) main{padding-bottom:64px}
 .les-dots{max-width:100%!important;overflow-x:auto!important;box-sizing:border-box!important;flex-wrap:nowrap!important}
 /* #3 cookie banner: sticky top invece che fixed sopra i bottoni */
 #cookie-banner:not(.hidden){position:sticky!important;top:0!important;bottom:auto!important}
+
+/* ═══ FIX CONTRASTO + WRAP (report script) ═══ */
+/* "Non basta?" (les-appr-lab): prussia su Ink = diff 50 troppo basso → azzurro chiaro */
+.les-appr-lab{color:#B8D4E0!important;-webkit-text-fill-color:#B8D4E0!important}
+/* "Tutte" (ric-disc-btn active): Ink su prussia = diff 50 → testo bianco sul bottone attivo */
+.ric-disc-btn.active{color:#fff!important;-webkit-text-fill-color:#fff!important;background:var(--e500,#245979)!important}
+/* les-dot: vanno a capo (wrap) invece di scrollare fuori dal viewport */
+.les-dots{flex-wrap:wrap!important;overflow-x:visible!important;max-width:100%!important}
