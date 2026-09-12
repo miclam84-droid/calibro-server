@@ -1584,7 +1584,7 @@ const _strings = {
     ai_disclosure:'Risposte generate da un assistente AI.',
     foto_analisi_titolo:'Analisi foto',
     foto_analisi_loading:'Riconosco ingredienti e bottiglie…',
-    chiedi_title:'Chiedi a Matter Bench',
+    chiedi_title:'Chiedi a Matter',
     chiedi_sub:'Un problema reale del tuo lavoro — rispondo con i numeri, non con le opinioni.',
     sup_titolo:'Hai bisogno di aiuto?',
     sup_sub:'Descrivi il problema. Ti risponderemo entro 24 ore via email.',
@@ -1593,7 +1593,7 @@ const _strings = {
     disc_bar:'Bar', disc_bakery:'Panificazione', disc_cucina:'Cucina',
     disc_caffetteria:'Caffè', disc_pasticceria:'Pasticceria',
     disc_gelateria:'Gelateria', disc_vino:'Vino', disc_birra:'Birra',
-    chiedi_al_grafo:'Chiedi a Matter Bench',
+    chiedi_al_grafo:'Chiedi a Matter',
     calcola:'Calcola',
     prova:'Prova:',
     il_percorso:'Il tuo percorso',
@@ -1644,7 +1644,7 @@ const _strings = {
     onb_s1_sub:'Bar, Panificazione, Cucina, Caffetteria e altro — ogni disciplina ha le sue leggi fisiche.',
     onb_s2_title:'Studia il fenomeno',
     onb_s2_sub:'Ogni fenomeno ha un bersaglio: a volte un numero da misurare, a volte uno stato da riconoscere. Quello che devi sapere quando qualcosa non torna.',
-    onb_s3_title:'Chiedi a Matter Bench',
+    onb_s3_title:'Chiedi a Matter',
     onb_s3_sub:'Descrivi un problema del tuo lavoro. Ricevi cosa misurare o riconoscere e azioni concrete — non consigli generici.',
     onb_ovl_cta:'Inizia',
     onb_nudge_sub:'Seleziona la tua disciplina qui sotto per la prima lezione',
@@ -2412,7 +2412,7 @@ function onb4Pick(i){
   document.getElementById('onb4-munit').textContent = s.measUnit;
   document.getElementById('onb4-mlab').textContent = s.measLab;
   document.getElementById('onb4-hint').innerHTML = 'Bersaglio: <b>'+s.target+' '+s.measUnit.replace(/^[^ ]* /,'')+'</b>';
-  document.getElementById('onb4-input').placeholder = String(s.target).split(/[–-]/)[0];
+  document.getElementById('onb4-input').placeholder = 'es. ' + String(s.target).split(/[–-]/)[0];
   setTimeout(function(){ onb4Go(1); }, 160);
 }
 function onb4Go(n){

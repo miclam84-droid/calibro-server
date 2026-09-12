@@ -195,7 +195,7 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 
 /* ═══ SEMPLIFICAZIONE: home pulita, discipline in secondaria ═══ */
 /* i 4 ingressi sostituiscono le discipline sparse nella home → le nascondo dalla home */
-#disc-dominante,#disc-griglia{display:none!important}
+#disc-dominante,#disc-griglia,#ct-scegli-disc{display:none!important}
 
 /* ═══ COOKIE banner — leggibile e bottone sempre visibile ═══ */
 #cookie-banner{min-height:52px!important;padding:8px 12px!important;gap:10px!important;align-items:center!important}
