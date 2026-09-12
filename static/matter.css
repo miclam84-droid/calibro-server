@@ -153,3 +153,13 @@ body:has(#cookie-banner:not(.hidden)) main{padding-bottom:64px}
 .ric-disc-btn.active{color:#fff!important;-webkit-text-fill-color:#fff!important;background:var(--e500,#245979)!important}
 /* les-dot: vanno a capo (wrap) invece di scrollare fuori dal viewport */
 .les-dots{flex-wrap:wrap!important;overflow-x:visible!important;max-width:100%!important}
+
+/* ═══ FIX SOVRAPPOSIZIONI + CENTRATURA (report) — sicuro ═══ */
+/* #1 le viste overlay coprono nettamente: sfondo opaco garantito, z-index alto */
+.vista-overlay{background:var(--bg,#ecebe5)!important;opacity:1!important}
+.vista-overlay:not(.hidden){z-index:900!important}
+.vista-launch{background:var(--bg,#ecebe5)!important;opacity:1!important}
+/* le screen nascoste (display:none via JS) restano nascoste; garantisco opacity piena su quella attiva */
+.screen.active{opacity:1!important;background:var(--bg,#ecebe5)}
+/* #3 centratura contenuto uniforme */
+.fen-scheda,.rg-scheda{max-width:640px;margin-left:auto;margin-right:auto}
