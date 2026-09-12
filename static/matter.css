@@ -202,3 +202,6 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 #ct-cookie-txt{color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:11px!important;flex:1;min-width:0}
 #cookie-banner .cookie-btns,#cookie-banner button{flex-shrink:0!important}
 #ct-cookie-ok{background:#c77b3f!important;color:#141d22!important;-webkit-text-fill-color:#141d22!important;font-weight:700!important;white-space:nowrap!important;padding:8px 14px!important}
+
+/* ═══ P1 #6 — header pulito: via il ? e il toggle lingua (lingua nelle impostazioni) ═══ */
+#help-btn,#lang-btn{display:none!important}

@@ -518,8 +518,11 @@ let _lang = (function(){
     const s = localStorage.getItem('matter_lang');
     if (s && ok.includes(s)) return s;
   } catch(e){}
-  // 3. default: Matter Bench è italiano-first. NON usiamo navigator.language
-  //    (un italiano col telefono in inglese deve vedere l'app in italiano).
+  // 3. prima apertura: lingua del dispositivo se supportata, altrimenti italiano
+  try{
+    var nav = (navigator.language||'it').slice(0,2).toLowerCase();
+    if(ok.includes(nav)) return nav;
+  }catch(e){}
   return 'it';
 })();
 
@@ -2366,7 +2369,7 @@ function chiudiOnbOverlay(){
 /* ═══ ONBOARDING v2 — 4 schermate, la misura vera (spec congelata) ═══ */
 var _onb4Station = null;
 var ONB4_STATIONS = [
-  { id:'bar', disc:'bar', t:'Dietro un bancone bar', d:'Cocktail, caffè, aperitivo',
+  { id:'bar', disc:'bar', t:'Al bancone del bar', d:'Cocktail, caffè, aperitivo',
     prob:'Il tuo Sour è mai cambiato senza cambiare ricetta?', probSub:'Lo stesso lime. La stessa dose. Perché oggi è diverso?',
     wowH:'Perché il Sour cambia', target:'1.2–1.5', unit:'% acidità titolabile', measUnit:'% acidità', measLab:'Acidità del tuo Sour',
     chat:[['Problema','Acidità fuori finestra.'],['Perché','Il pH e l\'acidità titolabile non sono la stessa misura. Il lime cambia di lotto in lotto.'],['__t__',''],['Azione','Misura una leva alla volta: prima l\'acido, poi lo zucchero.']] },
