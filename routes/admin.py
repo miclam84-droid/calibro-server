@@ -7921,3 +7921,42 @@ def admin_test_foto_una():
             _log("ERRORE: "+str(e)[:100]+" | "+traceback.format_exc()[-150:])
     threading.Thread(target=_run, daemon=True).start()
     return jsonify({"avviato": True, "nota": "controlla worker-log per gli step"})
+
+
+@bp.route("/admin/completa-punto-critico")
+def admin_completa_punto_critico():
+    """Worker: rigenera il punto_critico per le ricette che ce l'hanno vuoto (42% del DB)."""
+    from flask import request, jsonify
+    import os, psycopg2, threading
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "10")), 30)
+
+    def _w(n):
+        try:
+            from ai import chiedi_mistral
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            cur.execute("""SELECT id, nome, disciplina FROM ricette
+                           WHERE punto_critico IS NULL OR punto_critico = '' LIMIT %s""", (n,))
+            righe = cur.fetchall()
+            fatti = 0
+            for rid, nome, disc in righe:
+                try:
+                    prompt = (f"Da tecnico {disc or 'F&B'}: qual è IL punto critico di '{nome}'? "
+                              f"Una frase concreta: la cosa che se sbagli rovina il risultato, col numero/parametro chiave. "
+                              f"Max 25 parole. Solo la frase, niente premesse.")
+                    pc = chiedi_mistral(prompt, usa_tools=False)
+                    if pc and len(pc.strip()) > 10:
+                        pc = pc.strip()[:300]
+                        cur.execute("UPDATE ricette SET punto_critico = %s WHERE id = %s", (pc, rid))
+                        conn.commit(); fatti += 1
+                except Exception:
+                    conn.rollback()
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"completa-punto-critico: {fatti}/{len(righe)}",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_w, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "nota": "rigenera punto_critico in background"})
