@@ -9,7 +9,7 @@ window.caricaLeMieRicette = async function(){
     var r=await fetch('/v1/ricette/le-mie', {headers: _statoHeaders()});
     var j=await r.json();
     var ricette=j.ricette||[];
-    if(!ricette.length){ list.innerHTML=''; if(empty) empty.style.display=''; return; }
+    if(!ricette.length){ if(empty){ empty.style.display=''; list.innerHTML=''; } else { list.innerHTML='<div class="quad-empty"><b>Non hai ancora salvato ricette</b><span>Quando trovi una ricetta utile, salvala qui dal pulsante Salva nel Quaderno.</span></div>'; } return; }
     if(empty) empty.style.display='none';
     list.innerHTML=ricette.map(function(r){
       var d=r.dati||{};

@@ -205,3 +205,32 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 
 /* ═══ P1 #6 — header pulito: via il ? e il toggle lingua (lingua nelle impostazioni) ═══ */
 #help-btn,#lang-btn{display:none!important}
+
+/* ═══ FIX SEZIONI (iterazione) ═══ */
+/* #1 dashboard Ponti/Flavour: card grandi come la home, testi non tagliati */
+.vista-body .crea-card{align-items:flex-start;min-height:96px;padding:18px 16px;flex-direction:column;gap:6px}
+.vista-body .crea-card .crea-card-txt{width:100%}
+.vista-body .crea-card .crea-card-t{white-space:normal;overflow-wrap:anywhere;line-height:1.2}
+.vista-body .crea-card .crea-card-d{white-space:normal;overflow-wrap:anywhere;line-height:1.4}
+.vista-body .crea-card .crea-card-arr{position:absolute;top:16px;right:16px}
+.vista-body .crea-card{position:relative}
+/* #2 QUADERNO — le pill vanno a capo (wrap), MAI scroll fuori schermo */
+.quad-toggle{flex-wrap:wrap!important;border-radius:4px!important;gap:6px!important}
+.quad-tg-btn{flex:1 1 auto!important;min-width:72px;font-size:13px!important;padding:9px 6px!important;border-radius:4px!important;white-space:nowrap}
+/* #5 Atlante — le 4 card CAPIRE/USARE/CREARE/MISURARE respirano */
+.mappa-porte{gap:10px!important;margin-bottom:8px}
+.mappa-porte .mappa-tab{padding:14px 6px!important}
+/* #6 Chat — input meno rigido */
+.ask-input{border-radius:2px!important}
+.ask-btn,.ask-cam-inline{border-radius:2px!important}
+
+/* ═══ #4 PAYWALL brutalist professionale ═══ */
+.paywall-sheet{background:#ecebe5!important;border-radius:0!important;border-top:3px solid #c77b3f!important;box-shadow:0 -8px 40px rgba(20,29,34,.25)!important}
+.paywall-sheet h3{font-family:'Space Grotesk',sans-serif!important;font-weight:700!important;color:#141d22!important;font-size:22px!important;letter-spacing:-.02em!important}
+.pw-badge{background:#141d22!important;color:#e8935a!important;border-radius:0!important;font-family:'IBM Plex Mono',monospace!important;font-weight:700!important;letter-spacing:.1em!important}
+.pw-price{background:#141d22;padding:16px 18px;margin:0 0 16px!important}
+.pw-price .pw-n{font-family:'IBM Plex Mono',monospace!important;color:#e8935a!important;font-size:34px!important;font-weight:700!important}
+.pw-price .pw-u{color:#cbd6da!important}
+.pw-cta{background:#c77b3f!important;color:#141d22!important;border-radius:0!important;font-family:'Space Grotesk',sans-serif!important;font-weight:700!important;box-shadow:4px 4px 0 #141d22!important;transition:transform .12s}
+.pw-cta:active{transform:translate(4px,4px)!important;box-shadow:0 0 0!important}
+.pw-founding-count{font-family:'IBM Plex Mono',monospace!important;color:#c77b3f!important;font-weight:700!important}
