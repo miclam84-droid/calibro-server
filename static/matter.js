@@ -347,7 +347,7 @@ var _PORTE = {
                 {t:'Ponti tra discipline', d:'Vino, birra, dolce per piatto', act:function(){if(typeof apriPonti==='function')apriPonti();}},
                 {t:'Menu Lab', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}},
                 {t:'Recupera scarti', d:'Riusa gli scarti, cross-utilization', act:function(){if(typeof apriScarti==='function')apriScarti();}} ]},
-  misurare: { label:'Misurare', sub:'Centra il bersaglio', voci:[
+  misurare: { label:'Misurare', sub:'Centra il numero giusto', voci:[
                 {t:'Motore Panificazione', d:'Progetta impasto: dosi + timeline a ritroso', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('motori').then(function(){ if(typeof apriMotorePanificazione==='function')apriMotorePanificazione(); }); } }},
                 {t:'Calcolatori', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
                 {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
@@ -2428,7 +2428,7 @@ function onb4Check(){
   if(isNaN(v)){ res.classList.remove('show'); return; }
   var nums=String(s.target).split(/[–-]/).map(function(x){return parseFloat(x);});
   var lo=nums[0], hi=nums[1]||nums[0], scarto, txt;
-  if(v<lo){ scarto='−'+(lo-v).toFixed(1); txt='Sei sotto la finestra. Manca poco per centrare il bersaglio.'; }
+  if(v<lo){ scarto='−'+(lo-v).toFixed(1); txt='Sei sotto la finestra. Manca poco per centrare il valore.'; }
   else if(v>hi){ scarto='+'+(v-hi).toFixed(1); txt='Sei sopra la finestra. Basta poco per rientrare.'; }
   else { scarto='In finestra'; txt='Sei nel bersaglio. Questo è il valore che rende il risultato ripetibile.'; }
   document.getElementById('onb4-scarto').textContent=scarto;
@@ -4650,7 +4650,7 @@ function mostraPopupPro(motivo){
 // ═══ PAGINA PREZZI — 3 piani (R2). Bottoni pronti, si collegano a Stripe coi price ID ═══
 async function apriPrezzi(){
   _apriVista('Matter Bench Pro',
-    '<div class="prezzi-intro">Il numero-bersaglio esatto è il valore. Con Pro lo vedi nitido, sempre.</div>'
+    '<div class="prezzi-intro">Il numero preciso da centrare. Con Pro lo vedi nitido, sempre.</div>'
     + '<div class="prezzi-grid" id="prezzi-grid">'
     +   '<div class="prezzo-card">'
     +     '<div class="prezzo-nome">Mensile</div>'
@@ -4894,7 +4894,7 @@ async function _fotoStudiaFenomeno(fenId){
   } catch(e){}
   // fallback: porta alla chat con domanda pronta sul fenomeno
   switchTab('chiedi');
-  setTimeout(function(){ var q=document.getElementById('q'); if(q){ q.value='Spiegami il fenomeno e il suo numero bersaglio'; q.focus(); } }, 300);
+  setTimeout(function(){ var q=document.getElementById('q'); if(q){ q.value='Spiegami il fenomeno e il numero da centrare'; q.focus(); } }, 300);
 }
 function _fotoVaiFlavor(nome){
   switchTab('mappa');
@@ -6079,7 +6079,7 @@ function apriStrumenti(disc){
   const d = disc || (typeof Matter!=='undefined' && Matter.disciplina) || 'bar';
   _apriVista('Strumenti di misura',
     '<div class="stv-head"><div class="stv-h">Gli strumenti del banco.</div>'+
-    '<div class="stv-sub">Ogni numero-bersaglio ha lo strumento che lo misura. Cosa serve, quanto costa, dove prenderlo.</div>'+
+    '<div class="stv-sub">Ogni numero da centrare ha lo strumento che lo misura. Cosa serve, quanto costa, dove prenderlo.</div>'+
     '<div class="stv-discs" id="stv-discs">'+
       ['bar','cucina','panificazione','pasticceria','gelateria','vino'].map(x=>'<span class="stv-disc'+(x===d?' on':'')+'" onclick="caricaStrumentiVista(\''+x+'\')">'+x+'</span>').join('')+
     '</div></div><div id="stv-out"></div>');
