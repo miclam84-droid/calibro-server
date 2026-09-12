@@ -101,6 +101,24 @@ window.cercaAbbinamenti = async function(ingrediente){
 }
 
 window.apriFlavour = function(ingredienteIniziale){
+  // se arrivo con un ingrediente (da un link), vado dritto al workflow
+  if(ingredienteIniziale){ _flavourWorkflow(ingredienteIniziale); return; }
+  // altrimenti mostro la dashboard (Cos'è / da dove parti)
+  var e=_escV;
+  var punti=[
+    ['ingrediente','Parti da un ingrediente','Vedi con cosa dialoga e perché'],
+    ['piatto','Parti da un piatto','Scopri gli accostamenti nascosti'],
+    ['molecola','Parti da una molecola','Segui un composto aromatico tra gli ingredienti'],
+    ['famiglia','Parti da una famiglia','Esplora agrumi, erbe, spezie e i loro ponti']
+  ];
+  var cards=punti.map(function(p){
+    return '<button class="crea-card" onclick="_flavourWorkflow()"><div class="crea-card-txt"><div class="crea-card-t">'+e(p[1])+'</div><div class="crea-card-d">'+e(p[2])+'</div></div><span class="crea-card-arr">→</span></button>';
+  }).join('');
+  _apriVista('Flavour Network',
+    '<div class="crea-intro">Esplora il dialogo aromatico degli ingredienti — la rete dei composti condivisi.</div>'
+    + cards);
+};
+window._flavourWorkflow = function(ingredienteIniziale){
   _apriVista('Flavour Network',
     '<div class="fnv-head"><div class="fnv-h">Cosa dialoga con cosa.</div>'+
     '<div class="fnv-sub">Non opinioni: composti aromatici condivisi.</div>'+
@@ -108,8 +126,8 @@ window.apriFlavour = function(ingredienteIniziale){
     'onkeydown="if(event.key===\'Enter\')caricaFlavour()"><button onclick="caricaFlavour()">Cerca</button></div>'+
     '<div class="fnv-chips">'+['fragola','pomodoro','lime','cioccolato','basilico'].map(c=>'<span class="fnv-chip" onclick="caricaFlavour(\''+c+'\')">'+c+'</span>').join('')+'</div>'+
     '</div><div id="fnv-out"></div>');
-  caricaFlavour(ingredienteIniziale || 'fragola');
-}
+  if(ingredienteIniziale) caricaFlavour(ingredienteIniziale);
+};
 
 window.caricaFlavour = async function(term){
   const inp = document.getElementById('fnv-input') || document.getElementById('flavor-query');
