@@ -8006,3 +8006,25 @@ def admin_test_mistral():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e)[:100], "tb": traceback.format_exc()[-200:]})
+
+
+@bp.route("/admin/test-builder-pc")
+def admin_test_builder_pc():
+    """Testa se il builder (genera_ricetta) produce il punto_critico - così so se usarlo per completare le vecchie."""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        from db import carica_grafo
+        from builder import genera_ricetta
+        db = carica_grafo()
+        r = genera_ricetta(db, "la ricetta classica di Bagel ai semi", disciplina="panificazione", lang="it")
+        return jsonify({
+            "ha_punto_critico": bool(r.get("punto_critico")),
+            "punto_critico": str(r.get("punto_critico",""))[:150],
+            "ha_ingredienti": len(r.get("ingredienti",[])),
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e)[:100], "tb": traceback.format_exc()[-200:]})
