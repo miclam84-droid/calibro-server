@@ -7751,3 +7751,28 @@ def admin_test_dalle():
         return jsonify({"ok": False, "errore_http": he.code, "dettaglio": body})
     except Exception as e:
         return jsonify({"ok": False, "errore": str(e)[:200]})
+
+
+@bp.route("/admin/conta-ricette-incomplete")
+def admin_conta_ricette_incomplete():
+    """Conta ricette senza numero_bersaglio o punto_critico (buchi di qualità)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM ricette")
+        tot = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE numero_bersaglio IS NULL OR numero_bersaglio=''")
+        no_bersaglio = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE punto_critico IS NULL OR punto_critico=''")
+        no_critico = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE ingredienti IS NULL OR ingredienti::text IN ('[]','null')")
+        no_ingredienti = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"totale": tot, "senza_numero_bersaglio": no_bersaglio,
+                        "senza_punto_critico": no_critico, "senza_ingredienti": no_ingredienti,
+                        "pct_senza_bersaglio": round(no_bersaglio/tot*100,1) if tot else 0})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
