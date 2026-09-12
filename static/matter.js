@@ -752,12 +752,17 @@ function renderLesDots(step, totale){
   const box = document.getElementById('les-dots');
   if(!box) return;
   if(!totale || totale < 2){ box.innerHTML=''; return; }
-  let html='';
-  for(let i=0;i<totale;i++){
-    const cls = i===step ? 'current' : (i<step ? 'done' : '');
-    html += `<div class="les-dot ${cls}" onclick="caricaLezioneStep(${i})">${i+1}</div>`;
-  }
-  box.innerHTML = html;
+  // SEMPLIFICATO: invece di N pallini (disordine), mostro contatore + barra progresso + frecce
+  const pct = Math.round(((step+1)/totale)*100);
+  const prev = step>0 ? step-1 : -1;
+  const next = step<totale-1 ? step+1 : -1;
+  box.innerHTML =
+    '<div class="les-nav">'
+    + '<button class="les-nav-arr" '+(prev<0?'disabled':'onclick="caricaLezioneStep('+prev+')"')+' aria-label="Precedente">‹</button>'
+    + '<div class="les-nav-mid"><div class="les-nav-conta">Fenomeno '+(step+1)+' di '+totale+'</div>'
+    + '<div class="les-nav-bar"><div class="les-nav-fill" style="width:'+pct+'%"></div></div></div>'
+    + '<button class="les-nav-arr" '+(next<0?'disabled':'onclick="caricaLezioneStep('+next+')"')+' aria-label="Successivo">›</button>'
+    + '</div>';
 }
 
 

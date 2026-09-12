@@ -173,3 +173,14 @@ body:has(#cookie-banner:not(.hidden)) main{padding-bottom:64px}
    e aggiungo padding-bottom al contenuto pari all'altezza del banner (48px) */
 #cookie-banner:not(.hidden){position:fixed!important;bottom:0!important;top:auto!important}
 body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
+
+/* ═══ NAV FENOMENI semplificata (P0: via i 27 pallini) ═══ */
+.les-dots{display:block!important;padding:14px 20px 8px!important;flex-wrap:initial!important;overflow:visible!important}
+.les-nav{display:flex;align-items:center;gap:12px}
+.les-nav-arr{flex:0 0 40px;height:40px;border:1.5px solid #141d22;background:#fff;border-radius:0;font-size:22px;line-height:1;color:#141d22;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.les-nav-arr:disabled{opacity:.3;cursor:default}
+.les-nav-arr:active:not(:disabled){transform:translate(2px,2px)}
+.les-nav-mid{flex:1;min-width:0}
+.les-nav-conta{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#5a6c70;margin-bottom:6px}
+.les-nav-bar{height:4px;background:#dce3e3;border-radius:0;overflow:hidden}
+.les-nav-fill{height:100%;background:#c77b3f;transition:width .25s}
