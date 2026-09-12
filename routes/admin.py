@@ -7798,3 +7798,67 @@ def admin_test_img_bg():
     threading.Thread(target=_w, daemon=True).start()
     return jsonify({"avviato": True, "nota": "generazione in background, controlla worker-log tra 60s"})
 
+
+
+@bp.route("/admin/genera-foto-ai")
+def admin_genera_foto_ai():
+    """WORKER: genera foto con gpt-image-1 per le ricette senza foto. Salva su Cloudinary o come dato.
+    Gira in background. ?n=quante per giro."""
+    from flask import request, jsonify
+    import os, json, urllib.request as ur, urllib.error, threading, psycopg2, base64
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key:
+        return jsonify({"errore": "manca OPENAI_API_KEY"})
+    n = min(int(request.args.get("n", "5")), 15)
+    cloud_url = os.environ.get("CLOUDINARY_URL", "")
+
+    def _w(n):
+        generate = 0
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            # ricette SENZA foto (blueprint o null)
+            cur.execute("""SELECT id, nome FROM ricette
+                           WHERE (immagine IS NULL OR immagine::text = 'null'
+                                  OR immagine::text NOT ILIKE '%%http%%') LIMIT %s""", (n,))
+            righe = cur.fetchall()
+            for rid, nome in righe:
+                try:
+                    prompt = f"Professional food photography of {nome}, top view, natural light, restaurant quality, appetizing, no text, no people"
+                    payload = {"model": "gpt-image-1", "prompt": prompt, "n": 1, "size": "1024x1024"}
+                    req = ur.Request("https://api.openai.com/v1/images/generations",
+                                     data=json.dumps(payload).encode(),
+                                     headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+                    r = ur.urlopen(req, timeout=120)
+                    d = json.loads(r.read().decode())
+                    item = d["data"][0]
+                    b64 = item.get("b64_json")
+                    if not b64:
+                        continue
+                    # salvo su Cloudinary se configurato, altrimenti come data URI
+                    img_bytes = base64.b64decode(b64)
+                    url_finale = None
+                    if cloud_url:
+                        # upload a Cloudinary
+                        try:
+                            import cloudinary, cloudinary.uploader
+                            cloudinary.config(cloudinary_url=cloud_url)
+                            up = cloudinary.uploader.upload(img_bytes, folder="ricette_ai", public_id=rid)
+                            url_finale = up.get("secure_url")
+                        except Exception:
+                            url_finale = None
+                    if url_finale:
+                        cur.execute("UPDATE ricette SET immagine = %s WHERE id = %s", (url_finale, rid))
+                        conn.commit(); generate += 1
+                except Exception:
+                    continue
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"genera-foto-ai: {generate}/{len(righe)} generate (cloudinary={'si' if cloud_url else 'NO'})",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_w, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "cloudinary_configurato": bool(cloud_url),
+                    "nota": "genera foto in background. SENZA Cloudinary le foto non si salvano (servono ~2MB l'una). Controlla worker-log."})
