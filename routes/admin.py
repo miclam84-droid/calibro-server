@@ -7960,3 +7960,27 @@ def admin_completa_punto_critico():
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": "rigenera punto_critico in background"})
+
+
+@bp.route("/admin/conta-punto-critico")
+def admin_conta_punto_critico():
+    """Conta ESATTAMENTE quante ricette hanno il punto_critico vuoto su tutto il DB."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM ricette")
+        tot = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE punto_critico IS NULL OR TRIM(punto_critico) = ''")
+        vuoti = cur.fetchone()[0]
+        # per disciplina
+        cur.execute("""SELECT disciplina, COUNT(*) FILTER (WHERE punto_critico IS NULL OR TRIM(punto_critico)='') as vuoti,
+                       COUNT(*) as tot FROM ricette GROUP BY disciplina ORDER BY vuoti DESC""")
+        per_disc = [{"disciplina": r[0], "vuoti": r[1], "tot": r[2]} for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"totale_ricette": tot, "senza_punto_critico": vuoti,
+                        "percentuale": round(vuoti/tot*100,1) if tot else 0, "per_disciplina": per_disc})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
