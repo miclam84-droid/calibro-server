@@ -7871,3 +7871,46 @@ def admin_genera_foto_ai():
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "cloudinary_configurato": bool(cloud_url),
                     "nota": "genera foto in background. SENZA Cloudinary le foto non si salvano (servono ~2MB l'una). Controlla worker-log."})
+
+
+@bp.route("/admin/test-foto-una")
+def admin_test_foto_una():
+    """Genera UNA foto per la carbonara e la salva su Cloudinary, SINCRONO, mostra ogni step."""
+    from flask import request, jsonify
+    import os, json, urllib.request as ur, urllib.error, psycopg2, base64
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    key = os.environ.get("OPENAI_API_KEY", "")
+    steps = {}
+    try:
+        # 1. genero
+        prompt = "Professional food photography of spaghetti carbonara, top view, natural light, appetizing"
+        payload = {"model": "gpt-image-1", "prompt": prompt, "n": 1, "size": "1024x1024"}
+        req = ur.Request("https://api.openai.com/v1/images/generations",
+                         data=json.dumps(payload).encode(),
+                         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+        r = ur.urlopen(req, timeout=120)
+        d = json.loads(r.read().decode())
+        item = d["data"][0]
+        b64 = item.get("b64_json")
+        steps["generazione"] = "OK" if b64 else f"no b64: {list(item.keys())}"
+        if not b64:
+            return jsonify(steps)
+        img_bytes = base64.b64decode(b64)
+        steps["decode"] = f"OK {len(img_bytes)} bytes"
+        # 2. upload cloudinary
+        cn = os.environ.get("CLOUDINARY_CLOUD_NAME", "")
+        ck = os.environ.get("CLOUDINARY_API_KEY", "")
+        cs = os.environ.get("CLOUDINARY_API_SECRET", "")
+        steps["cloudinary_vars"] = f"name={'si' if cn else 'NO'} key={'si' if ck else 'NO'} secret={'si' if cs else 'NO'}"
+        import cloudinary, cloudinary.uploader
+        cloudinary.config(cloud_name=cn, api_key=ck, api_secret=cs)
+        up = cloudinary.uploader.upload(img_bytes, folder="ricette_ai", public_id="test-carbonara", overwrite=True)
+        url = up.get("secure_url")
+        steps["upload"] = f"OK: {url}"
+        return jsonify(steps)
+    except Exception as e:
+        steps["errore"] = str(e)[:200]
+        import traceback
+        steps["tb"] = traceback.format_exc()[-300:]
+        return jsonify(steps)
