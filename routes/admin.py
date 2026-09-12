@@ -7819,6 +7819,7 @@ def admin_genera_foto_ai():
 
     def _w(n):
         generate = 0
+        _errori = []
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             # ricette SENZA foto (blueprint o null)
@@ -7854,10 +7855,12 @@ def admin_genera_foto_ai():
                     if url_finale:
                         cur.execute("UPDATE ricette SET immagine = %s WHERE id = %s", (url_finale, rid))
                         conn.commit(); generate += 1
-                except Exception:
+                except Exception as _e:
+                    _errori.append(str(_e)[:80])
                     continue
             cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
-            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"genera-foto-ai: {generate}/{len(righe)} generate (cloudinary={'si' if cloud_url else 'NO'})",))
+            _err_txt = (' | ERR: ' + _errori[0]) if _errori else ''
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"genera-foto-ai: {generate}/{len(righe)} generate{_err_txt}",))
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
