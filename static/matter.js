@@ -1013,6 +1013,29 @@ const _HISTORY_MAX=3;
 
 // [spostata in matter-chat.js]
 var _nodoStack=[];  // stack di navigazione fenomeni (per il back)
+// libro affiliato — nel CORE così è sempre disponibile (chiamata da schede fenomeno/ricetta)
+if(typeof window._caricaLibroAffiliato!=='function'){
+  window._caricaLibroAffiliato = async function(params, containerSelector){
+    try{
+      var r=await fetch('/v1/libro-affiliato?'+params);
+      var j=await r.json();
+      var l=j.libro;
+      if(!l || !l.titolo) return;
+      var e=_escV;
+      var cont=document.querySelector(containerSelector);
+      if(!cont) return;
+      if(cont.querySelector('.libro-aff')) return;
+      var box=document.createElement('div');
+      box.className='libro-aff';
+      box.innerHTML='<div class="libro-aff-lab">Approfondisci la scienza</div>'
+        + '<div class="libro-aff-tit">'+e(l.titolo)+'</div>'
+        + (l.autore?'<div class="libro-aff-aut">'+e(l.autore)+'</div>':'')
+        + (l.perche?'<div class="libro-aff-perche">'+e(l.perche)+'</div>':'')
+        + (l.link?'<a class="libro-aff-link" href="'+e(l.link)+'" target="_blank" rel="noopener">Vedi su Amazon →</a>':'');
+      cont.appendChild(box);
+    }catch(e){}
+  };
+}
 function apriNodo(id,nome,_daBack){
   if(busy)return;
   // fallback loader nel core: se il modulo chat non è caricato, mostro subito uno skeleton
