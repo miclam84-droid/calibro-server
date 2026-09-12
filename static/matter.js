@@ -5555,7 +5555,26 @@ function _mirinoPonte(){return '<svg viewBox="0 0 36 36" fill="none"><circle cx=
 /* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */
 let _pontiTab = 'vino';
 function apriPonti(){
-  _apriVista('Ponti tra discipline',
+  var e=_escV;
+  var punti=[
+    ['vino','Vino','Quale vino dialoga col tuo piatto e perché'],
+    ['panificazione','Panificazione','Come l\'ingrediente lavora negli impasti'],
+    ['caffe','Caffè','I ponti aromatici con l\'estrazione'],
+    ['gelato','Gelato','L\'ingrediente nel bilanciamento dolce'],
+    ['cocktail','Cocktail','I ponti con la miscelazione'],
+    ['formaggi','Formaggi','Gli abbinamenti caseari']
+  ];
+  var cards=punti.map(function(p){
+    return '<button class="crea-card" onclick="_pontiWorkflow(\''+e(p[0])+'\')">'
+      + '<div class="crea-card-txt"><div class="crea-card-t">'+e(p[1])+'</div><div class="crea-card-d">'+e(p[2])+'</div></div>'
+      + '<span class="crea-card-arr">→</span></button>';
+  }).join('');
+  _apriVista('Ponti',
+    '<div class="crea-intro">Un ingrediente dialoga con più discipline. Scegli da dove partire.</div>'
+    + cards);
+}
+function _pontiWorkflow(tabIniziale){
+  _apriVista('Ponti',
     '<div class="ptv-head"><div class="ptv-h">Il piatto non è mai solo.</div>'+
     '<div class="ptv-sub">Cosa dialoga col tuo piatto — e perché.</div>'+
     '<div class="ptv-field"><input id="ptv-input" placeholder="brasato, pizza, pesce…" onkeydown="if(event.key===\'Enter\')caricaPonti()"></div>'+
@@ -5564,7 +5583,8 @@ function apriPonti(){
       '<div class="ptv-tab" data-t="birra" onclick="_pontiSetTab(\'birra\')">Birra</div>'+
       '<div class="ptv-tab" data-t="dolce" onclick="_pontiSetTab(\'dolce\')">Dolce</div>'+
     '</div><button class="ptv-go" onclick="caricaPonti()">Trova il dialogo</button></div><div id="ptv-out"></div>');
-  _pontiTab = 'vino';
+  _pontiTab = (tabIniziale==='vino'||tabIniziale==='birra'||tabIniziale==='dolce') ? tabIniziale : 'vino';
+  setTimeout(function(){ document.querySelectorAll('.ptv-tab').forEach(function(x){ x.classList.toggle('on', x.dataset.t===_pontiTab); }); }, 50);
 }
 function _pontiSetTab(t){
   _pontiTab = t;
