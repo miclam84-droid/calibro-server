@@ -556,19 +556,23 @@ function chiudiNudge(){
 // [spostata in matter-lezioni.js]
 
 /* ── SCOPRI DINAMICA (FE5) ────────────────────────────── */
-let _homeCached = null;
+let _homeCached = null; let _homeInCorso = false;
 async function caricaHome(){
   if(_homeCached){ renderHome(_homeCached); return; }
+  if(_homeInCorso){ return; } // evita la doppia fetch simultanea all'avvio
+  _homeInCorso = true;
   { const _h=document.getElementById('scopri-hero'); if(_h) _h.classList.add('loading'); }
   try {
     const r = await fetch('/home?lang='+_lang);
     if(!r.ok) throw new Error('server error');
     const j = await r.json();
     _homeCached = j;
+    _homeInCorso = false;
     renderHome(j);
     // (rimosso il loop 8x /disciplina/<nome> all'avvio: riempiva elementi disc-*-m
     //  che non esistono più nell'HTML — 8 fetch inutili che rallentavano il boot)
   } catch(e){
+    _homeInCorso = false;
     document.getElementById('scopri-ey').textContent = _t('scopri_errore_eyebrow');
     document.getElementById('scopri-titolo').textContent = _t('scopri_errore_titolo');
   }
