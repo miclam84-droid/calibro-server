@@ -7726,7 +7726,7 @@ def admin_verifica_foto_worker():
 
 @bp.route("/admin/test-dalle")
 def admin_test_dalle():
-    """Test: genera UNA foto con DALL-E per verificare che la chiave funzioni per la generazione."""
+    """Test generazione immagine con gpt-image-1 (verifica che funzioni)."""
     from flask import request, jsonify
     import os, json, urllib.request as ur, urllib.error
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
@@ -7735,19 +7735,29 @@ def admin_test_dalle():
     if not key:
         return jsonify({"errore": "manca OPENAI_API_KEY"})
     piatto = request.args.get("piatto", "spaghetti carbonara")
+    modello = request.args.get("modello", "gpt-image-1")
     prompt = f"Professional food photography of {piatto}, top view, natural light, restaurant quality, appetizing, no text"
-    payload = {"model": "dall-e-3", "prompt": prompt, "n": 1, "size": "1024x1024", "quality": "standard"}
+    payload = {"model": modello, "prompt": prompt, "n": 1, "size": "1024x1024"}
     try:
         req = ur.Request("https://api.openai.com/v1/images/generations",
                          data=json.dumps(payload).encode(),
                          headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
-        r = ur.urlopen(req, timeout=60)
+        r = ur.urlopen(req, timeout=90)
         d = json.loads(r.read().decode())
-        img_url = d["data"][0]["url"]
-        return jsonify({"ok": True, "piatto": piatto, "url": img_url[:120] + "...", "url_completo": img_url})
+        item = d["data"][0]
+        # gpt-image-1 ritorna b64_json, dall-e ritorna url
+        if item.get("url"):
+            return jsonify({"ok": True, "modello": modello, "tipo": "url", "url": item["url"]})
+        elif item.get("b64_json"):
+            return jsonify({"ok": True, "modello": modello, "tipo": "base64", "lunghezza_b64": len(item["b64_json"])})
+        else:
+            return jsonify({"ok": True, "modello": modello, "chiavi": list(item.keys())})
     except urllib.error.HTTPError as he:
         try: body = he.read().decode()[:300]
         except: body = str(he)
         return jsonify({"ok": False, "errore_http": he.code, "dettaglio": body})
     except Exception as e:
         return jsonify({"ok": False, "errore": str(e)[:200]})
+
+
+
