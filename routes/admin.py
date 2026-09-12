@@ -7760,4 +7760,41 @@ def admin_test_dalle():
         return jsonify({"ok": False, "errore": str(e)[:200]})
 
 
+@bp.route("/admin/test-img-bg")
+def admin_test_img_bg():
+    """Genera immagine in BACKGROUND (evita timeout Railway). Salva esito in worker_log."""
+    from flask import request, jsonify
+    import os, json, urllib.request as ur, urllib.error, threading, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    key = os.environ.get("OPENAI_API_KEY", "")
+    piatto = request.args.get("piatto", "carbonara")
+    modello = request.args.get("modello", "gpt-image-1")
+    def _w():
+        esito = ""
+        try:
+            prompt = f"Professional food photography of {piatto}, top view, natural light, appetizing"
+            payload = {"model": modello, "prompt": prompt, "n": 1, "size": "1024x1024"}
+            req = ur.Request("https://api.openai.com/v1/images/generations",
+                             data=json.dumps(payload).encode(),
+                             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+            r = ur.urlopen(req, timeout=120)
+            d = json.loads(r.read().decode())
+            item = d["data"][0]
+            if item.get("b64_json"): esito = f"OK b64 len={len(item['b64_json'])}"
+            elif item.get("url"): esito = f"OK url={item['url'][:80]}"
+            else: esito = f"OK chiavi={list(item.keys())}"
+        except urllib.error.HTTPError as he:
+            try: esito = f"HTTP {he.code}: {he.read().decode()[:150]}"
+            except: esito = f"HTTP {he.code}"
+        except Exception as e:
+            esito = f"ERR: {str(e)[:120]}"
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"test-img [{modello}] {piatto}: {esito}",))
+            conn.commit(); cur.close(); conn.close()
+        except: pass
+    threading.Thread(target=_w, daemon=True).start()
+    return jsonify({"avviato": True, "nota": "generazione in background, controlla worker-log tra 60s"})
 
