@@ -7827,6 +7827,8 @@ def admin_genera_foto_ai():
                            WHERE (immagine IS NULL OR immagine::text = 'null'
                                   OR immagine::text NOT ILIKE '%%http%%') LIMIT %s""", (n,))
             righe = cur.fetchall()
+            if not righe:
+                _errori.append('nessuna ricetta trovata dalla query')
             for rid, nome in righe:
                 try:
                     prompt = f"Professional food photography of {nome}, top view, natural light, restaurant quality, appetizing, no text, no people"
@@ -7839,6 +7841,7 @@ def admin_genera_foto_ai():
                     item = d["data"][0]
                     b64 = item.get("b64_json")
                     if not b64:
+                        _errori.append('no b64 da openai: '+str(list(item.keys())))
                         continue
                     # salvo su Cloudinary se configurato, altrimenti come data URI
                     img_bytes = base64.b64decode(b64)
