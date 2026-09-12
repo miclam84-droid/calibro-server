@@ -2391,7 +2391,7 @@ var ONB4_STATIONS = [
     chat:[['Problema','Il vino non regge il grasso del piatto.'],['Perché','L\'acidità taglia il grasso. Sotto una soglia, il palato resta impastato.'],['__t__',''],['Azione','Cerca un\'acidità più alta, o alleggerisci il grasso.']] },
   { id:'locale', disc:'bar', t:'Gestisco un locale', d:'Menu, drink list, carta vini',
     prob:'La tua drink list e il tuo menu si parlano?', probSub:'Ingredienti specchio, ridondanze aromatiche.',
-    wowH:'Se menu e drink list dialogano', target:'52', unit:'% asse aromatico dominante', measUnit:'%', measLab:'Peso dell\'asse dominante',
+    wowH:'Se menu e drink list dialogano', target:'52', unit:'/100 · Ridondanza media', measUnit:'/100', measLab:'Indice di ridondanza aromatica',
     chat:[['Problema','Ridondanza aromatica tra piatti e drink.'],['Perché','Se troppe voci battono sullo stesso asse, il palato satura.'],['__t__',''],['Azione','Bilancia gli assi: acido, dolce, amaro, grasso.']] }
 ];
 function _onb4Ring(){return '<svg viewBox="0 0 14 14" fill="none" style="width:14px;height:14px"><circle cx="7" cy="7" r="5.6" stroke="#241109" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="#241109"/><path d="M7 0v2.2M7 11.8V14M0 7h2.2M11.8 7H14" stroke="#241109" stroke-width="1.2"/></svg>';}
