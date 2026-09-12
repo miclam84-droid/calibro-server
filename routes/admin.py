@@ -7986,3 +7986,23 @@ def admin_conta_punto_critico():
                         "percentuale": round(vuoti/tot*100,1) if tot else 0, "per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/test-mistral")
+def admin_test_mistral():
+    """Testa se chiedi_mistral funziona da solo (per capire perché il worker punto critico genera 0)."""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        from ai import chiedi_mistral
+        r1 = chiedi_mistral("Qual è il punto critico della carbonara? Una frase.", usa_tools=False)
+        r2 = chiedi_mistral("Qual è il punto critico della carbonara? Una frase.", usa_tools=True)
+        return jsonify({
+            "con_usa_tools_False": (r1[:150] if r1 else "VUOTO"),
+            "con_usa_tools_True": (r2[:150] if r2 else "VUOTO"),
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e)[:100], "tb": traceback.format_exc()[-200:]})
