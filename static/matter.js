@@ -1006,6 +1006,12 @@ const _HISTORY_MAX=3;
 var _nodoStack=[];  // stack di navigazione fenomeni (per il back)
 function apriNodo(id,nome,_daBack){
   if(busy)return;
+  // fallback loader nel core: se il modulo chat non è caricato, mostro subito uno skeleton
+  // (così l'apertura fenomeno non dipende dal modulo chat lazy ed è immediata)
+  if(typeof aggiungiThinking!=='function'){
+    window.aggiungiThinking=function(){ var d=document.createElement('div');d.className='scheda';d.id='thinking';d.innerHTML='<div class="skel-card skeleton" style="height:120px"></div>';var s=document.getElementById('schede');if(s)s.prepend(d); };
+    window.rimuoviThinking=function(){ var t=document.getElementById('thinking');if(t)t.remove(); };
+  }
   // impilo il nodo corrente prima di aprire il nuovo (a meno che sia un "torna indietro")
   if(!_daBack && _nodoCorrente && _nodoCorrente.id!==id){ _nodoStack.push(_nodoCorrente); }
   _nodoCorrente = {id:id, nome:nome};
