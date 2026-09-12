@@ -723,7 +723,7 @@ def strumenti(disciplina=None):
         ],
         "panificazione": [
             {"nome":"pH-metro","misura":"pH","target":"pH madre: 3.7-3.9","uso":"Legge l'acidità della madre. Una madre in forza sta a pH 3,7-3,9: sotto è troppo acida, sopra è debole.","amazon":"https://www.amazon.it/s?k=phmetro+lievito+madre","prezzo_approx":"€25-80"},
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"96-98°C interno pane","uso":"Controlla la temperatura dell'acqua. L'estrazione ideale sta tra 90 e 96°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+forno+pane","prezzo_approx":"€10-40"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"96-98°C interno pane","uso":"Controlla la temperatura dell'impasto e la cottura interna. Il pane è cotto a 96-98°C al cuore.","amazon":"https://www.amazon.it/s?k=termometro+sonda+forno+pane","prezzo_approx":"€10-40"},
             {"nome":"Bilancia professionale 1g","misura":"grammi","target":"baker%","uso":"Pesa gli ingredienti in baker's percentage. La precisione fa la differenza sull'idratazione.","amazon":"https://www.amazon.it/s?k=bilancia+professionale+panificazione","prezzo_approx":"€20-80"},
             {"nome":"Igrometro forno","misura":"umidità%","target":"80-90% primi minuti cottura","uso":"Controlla l'umidità in camera. I primi minuti a 80-90% danno crosta e sviluppo giusti.","amazon":"https://www.amazon.it/s?k=igrometro+forno+cottura+pane","prezzo_approx":"€15-50"},
             {"nome":"Acidimetro titolabile","misura":"acido lattico%","target":"0.5-2%","uso":"Misura l'acidità totale, non solo il pH. Dice quanto acido c'è davvero da tamponare.","amazon":"https://www.amazon.it/s?k=kit+acidita+titolabile+vino","prezzo_approx":"€20-60"},
@@ -735,9 +735,9 @@ def strumenti(disciplina=None):
             {"nome":"Termometro IR (infrarossi)","misura":"°C","target":"temperaggio cioccolato 28-32°C","uso":"Legge la superficie senza contatto. Fondamentale per il temperaggio (28-32°C).","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina+professionale","prezzo_approx":"€20-60"},
         ],
         "gelateria": [
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"-10/-12°C servizio · -18°C conservazione","uso":"Controlla la temperatura dell'acqua. L'estrazione ideale sta tra 90 e 96°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+gelateria+professionale","prezzo_approx":"€10-40"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"-10/-12°C servizio · -18°C conservazione","uso":"Controlla la temperatura di servizio e conservazione. Il gelato in vetrina sta a -10/-12°C, in conservazione a -18°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+gelateria+professionale","prezzo_approx":"€10-40"},
             {"nome":"Rifrattometro Brix","misura":"°Brix","target":"POD/PAC mix gelato","uso":"Misura lo zucchero di sciroppi e confetture. Gelificazione sopra i 65° Brix.","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+gelateria","prezzo_approx":"€15-60"},
-            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"overrun: peso × volume","uso":"Pesa gli ingredienti in baker's percentage. La precisione fa la differenza sull'idratazione.","amazon":"https://www.amazon.it/s?k=bilancia+professionale+gelateria","prezzo_approx":"€20-80"},
+            {"nome":"Bilancia professionale 1g","misura":"grammi","target":"overrun: peso × volume","uso":"Pesa gli ingredienti per il bilanciamento del mix. Base per calcolare PAC, POD e overrun.","amazon":"https://www.amazon.it/s?k=bilancia+professionale+gelateria","prezzo_approx":"€20-80"},
             {"nome":"Misuratore Aw (attività acqua)","misura":"Aw","target":"<0.85 per sicurezza","uso":"Misura l'acqua libera. Sotto 0,85 il prodotto è sicuro dalla proliferazione.","amazon":"https://www.amazon.it/s?k=misuratore+attivita+acqua+aw","prezzo_approx":"€200-800"},
         ],
         "vino": [
@@ -755,8 +755,8 @@ def strumenti(disciplina=None):
             {"nome":"Manometro CO2 keg","misura":"bar","target":"carbonatazione 1.5-3 bar","uso":"Regola la carbonatazione in fusto, tra 1,5 e 3 bar secondo lo stile.","amazon":"https://www.amazon.it/s?k=manometro+co2+fusto+birra","prezzo_approx":"€15-50"},
         ],
         "cucina": [
-            {"nome":"Termometro sonda digitale","misura":"°C","target":"manzo MR 55-57°C · pollo 74°C","uso":"Controlla la temperatura dell'acqua. L'estrazione ideale sta tra 90 e 96°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+cucina+professionale","prezzo_approx":"€10-40"},
-            {"nome":"pH-metro","misura":"pH","target":"fermentati pH<4.6","uso":"Legge l'acidità della madre. Una madre in forza sta a pH 3,7-3,9: sotto è troppo acida, sopra è debole.","amazon":"https://www.amazon.it/s?k=phmetro+cucina+fermentati","prezzo_approx":"€25-80"},
+            {"nome":"Termometro sonda digitale","misura":"°C","target":"manzo MR 55-57°C · pollo 74°C","uso":"Controlla la cottura al cuore. Manzo medium-rare 55-57°C, pollo sicuro a 74°C.","amazon":"https://www.amazon.it/s?k=termometro+sonda+cucina+professionale","prezzo_approx":"€10-40"},
+            {"nome":"pH-metro","misura":"pH","target":"fermentati pH<4.6","uso":"Legge l'acidità dei fermentati. Sotto pH 4,6 il prodotto è sicuro dalla proliferazione batterica.","amazon":"https://www.amazon.it/s?k=phmetro+cucina+fermentati","prezzo_approx":"€25-80"},
             {"nome":"Termometro IR infrarossi","misura":"°C","target":"olio frittura 170-180°C","uso":"Legge la superficie: olio di frittura ideale a 170-180°C.","amazon":"https://www.amazon.it/s?k=termometro+infrarossi+cucina","prezzo_approx":"€20-60"},
             {"nome":"Bilancia precisione 1g","misura":"grammi","target":"dosaggi sale/acido","uso":"Dosaggi esatti di sale e acidi, dove l'occhio sbaglia.","amazon":"https://www.amazon.it/s?k=bilancia+precisione+cucina+professionale","prezzo_approx":"€20-50"},
             {"nome":"Rifrattometro Brix","misura":"°Brix","target":"confetture ≥65°","uso":"Misura lo zucchero di sciroppi e confetture. Gelificazione sopra i 65° Brix.","amazon":"https://www.amazon.it/s?k=rifrattometro+brix+marmellata","prezzo_approx":"€15-60"},
