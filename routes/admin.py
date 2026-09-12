@@ -7940,6 +7940,7 @@ def admin_completa_punto_critico():
                            WHERE punto_critico IS NULL OR punto_critico = '' LIMIT %s""", (n,))
             righe = cur.fetchall()
             fatti = 0
+            _errori = []
             for rid, nome, disc in righe:
                 try:
                     prompt = (f"Da tecnico {disc or 'F&B'}: qual è IL punto critico di '{nome}'? "
@@ -7950,10 +7951,11 @@ def admin_completa_punto_critico():
                         pc = pc.strip()[:300]
                         cur.execute("UPDATE ricette SET punto_critico = %s WHERE id = %s", (pc, rid))
                         conn.commit(); fatti += 1
-                except Exception:
-                    conn.rollback()
+                except Exception as _e:
+                    _errori.append(str(_e)[:60]); conn.rollback()
             cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
-            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"completa-punto-critico: {fatti}/{len(righe)}",))
+            _et = (' ERR: '+_errori[0]) if _errori else (' (chiedi_mistral ha reso vuoto/corto)' if fatti==0 else '')
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"completa-punto-critico: {fatti}/{len(righe)}{_et}",))
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
