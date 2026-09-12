@@ -3593,16 +3593,19 @@ def vino_per_piatto():
         return jsonify({"errore": f"carta non disponibile: {e}"}), 500
     # regole di dialogo: parole-chiave del piatto -> categorie di vino adatte
     REGOLE = [
-        (["brasato", "selvaggina", "cinghiale", "arrosto", "stracotto", "cervo"], ["Rossi corposi"]),
-        (["ragù", "lasagne", "pasta al forno", "agnello", "arrosticini", "carne"], ["Rossi medi", "Rossi corposi"]),
-        (["pizza", "salumi", "prosciutto", "pancetta", "tortellini"], ["Rossi medi", "Bollicine"]),
-        (["pesce", "crudo", "ostrica", "vongole", "frutti di mare", "gambero", "branzino", "orata"], ["Bianchi freschi", "Bollicine"]),
-        (["fritto", "frittura", "tempura", "paranza"], ["Bollicine", "Bianchi freschi"]),
-        (["mozzarella", "burrata", "formaggio fresco", "latticini"], ["Bianchi freschi", "Bollicine"]),
-        (["risotto", "zuppa", "crema", "cremoso"], ["Bianchi strutturati", "Bianchi freschi"]),
-        (["formaggio stagionato", "pecorino", "parmigiano", "erborinato", "gorgonzola"], ["Rossi corposi", "Dolci e da meditazione"]),
+        (["brasato", "selvaggina", "cinghiale", "arrosto", "stracotto", "cervo", "cacciagione", "manzo", "bistecca", "fiorentina", "costata"], ["Rossi corposi"]),
+        (["ragù", "lasagne", "pasta al forno", "agnello", "arrosticini", "carne", "polpette", "spezzatino", "ossobuco", "maiale", "salsiccia"], ["Rossi medi", "Rossi corposi"]),
+        (["pizza", "salumi", "prosciutto", "pancetta", "tortellini", "carbonara", "amatriciana", "gricia", "cacio e pepe"], ["Rossi medi", "Bollicine"]),
+        (["pesce", "crudo", "ostrica", "vongole", "frutti di mare", "gambero", "branzino", "orata", "sushi", "sashimi", "tartare", "salmone", "tonno", "spigola", "cozze", "polpo", "calamaro", "acciughe", "sarde"], ["Bianchi freschi", "Bollicine"]),
+        (["fritto", "frittura", "tempura", "paranza", "fish and chips", "supplì", "arancini"], ["Bollicine", "Bianchi freschi"]),
+        (["mozzarella", "burrata", "formaggio fresco", "latticini", "caprese", "stracciatella"], ["Bianchi freschi", "Bollicine"]),
+        (["risotto", "zuppa", "crema", "cremoso", "vellutata", "carbonara", "pasta"], ["Bianchi strutturati", "Bianchi freschi"]),
+        (["formaggio stagionato", "pecorino", "parmigiano", "erborinato", "gorgonzola", "taleggio"], ["Rossi corposi", "Dolci e da meditazione"]),
         (["dolce", "torta", "cioccolato", "pasticceria", "cantucci", "crostata", "tiramisu", "tiramisù", "panna cotta", "cheesecake", "gelato", "semifreddo", "profiterole", "babà", "baba", "cannolo", "sfogliatella", "millefoglie", "zabaione", "mousse", "budino", "dessert"], ["Dolci e da meditazione", "Bollicine"]),
-        (["aperitivo", "stuzzichini", "antipasti"], ["Bollicine", "Bianchi freschi"]),
+        (["aperitivo", "stuzzichini", "antipasti", "tapas"], ["Bollicine", "Bianchi freschi"]),
+        (["insalata", "verdure", "verdura", "vegetariano", "vegano", "contorno", "ortaggi"], ["Bianchi freschi", "Bollicine"]),
+        (["piccante", "speziato", "curry", "pad thai", "thai", "messicano", "tacos", "chili", "indiano", "harissa", "wasabi"], ["Bianchi freschi", "Bollicine"]),
+        (["pollo", "tacchino", "coniglio", "carne bianca", "vitello", "cotoletta"], ["Rossi medi", "Bianchi strutturati"]),
     ]
     categorie_suggerite = []
     for chiavi, categorie in REGOLE:
@@ -3611,7 +3614,8 @@ def vino_per_piatto():
                 if c not in categorie_suggerite:
                     categorie_suggerite.append(c)
     if not categorie_suggerite:
-        categorie_suggerite = ["Rossi medi", "Bianchi freschi"]  # default versatile
+        # default onesto: NON rossi a caso. Suggerisco versatili e dichiaro l'incertezza.
+        categorie_suggerite = ["Bianchi freschi", "Rossi medi", "Bollicine"]  # versatili, coprono più stili
     # costruisci la risposta con i vini di quelle categorie
     suggerimenti = []
     for cat in categorie_suggerite[:3]:
