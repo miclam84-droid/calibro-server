@@ -7812,7 +7812,10 @@ def admin_genera_foto_ai():
     if not key:
         return jsonify({"errore": "manca OPENAI_API_KEY"})
     n = min(int(request.args.get("n", "5")), 15)
-    cloud_url = os.environ.get("CLOUDINARY_URL", "")
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "")
+    cloud_key = os.environ.get("CLOUDINARY_API_KEY", "")
+    cloud_secret = os.environ.get("CLOUDINARY_API_SECRET", "")
+    cloud_url = cloud_name  # per il check
 
     def _w(n):
         generate = 0
@@ -7843,10 +7846,10 @@ def admin_genera_foto_ai():
                         # upload a Cloudinary
                         try:
                             import cloudinary, cloudinary.uploader
-                            cloudinary.config(cloudinary_url=cloud_url)
-                            up = cloudinary.uploader.upload(img_bytes, folder="ricette_ai", public_id=rid)
+                            cloudinary.config(cloud_name=cloud_name, api_key=cloud_key, api_secret=cloud_secret)
+                            up = cloudinary.uploader.upload(img_bytes, folder="ricette_ai", public_id=rid, overwrite=True)
                             url_finale = up.get("secure_url")
-                        except Exception:
+                        except Exception as _ce:
                             url_finale = None
                     if url_finale:
                         cur.execute("UPDATE ricette SET immagine = %s WHERE id = %s", (url_finale, rid))
