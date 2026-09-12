@@ -184,3 +184,11 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .les-nav-conta{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#5a6c70;margin-bottom:6px}
 .les-nav-bar{height:4px;background:#dce3e3;border-radius:0;overflow:hidden}
 .les-nav-fill{height:100%;background:#c77b3f;transition:width .25s}
+
+/* ═══ HOME 4 INGRESSI (semplificazione: griglia netta 2x2) ═══ */
+.home4{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 16px 24px}
+.home4-card{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:#fff;border:1.5px solid #141d22;border-radius:0;box-shadow:4px 4px 0 rgba(20,29,34,.15);padding:16px;cursor:pointer;text-align:left;min-height:110px;transition:transform .12s,box-shadow .12s}
+.home4-card:active{transform:translate(4px,4px);box-shadow:0 0 0}
+.home4-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#c77b3f;letter-spacing:.1em}
+.home4-tit{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#141d22;line-height:1.15;margin-top:6px}
+.home4-sub{font-family:'Inter',sans-serif;font-size:12px;color:#5a6c70;line-height:1.3}

@@ -109,6 +109,30 @@ if('serviceWorker' in navigator){
     <button class="hd-problema" onclick="_diagnosiChat('Perché il ragù è acido?')">Perché il ragù è acido?</button>
   </div>
 
+  <!-- HOME 4 INGRESSI (semplificazione: griglia netta 2x2) -->
+  <div class="home4">
+    <button class="home4-card" onclick="switchTab('chiedi')">
+      <span class="home4-num">01</span>
+      <span class="home4-tit">Chat diagnostica</span>
+      <span class="home4-sub">Risolvi anomalie al banco</span>
+    </button>
+    <button class="home4-card" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('motori').then(function(){apriMotorePanificazione&&apriMotorePanificazione()})}">
+      <span class="home4-num">02</span>
+      <span class="home4-tit">Panificazione Pro</span>
+      <span class="home4-sub">Dosi, tempi e timeline</span>
+    </button>
+    <button class="home4-card" onclick="switchTab('mappa')">
+      <span class="home4-num">03</span>
+      <span class="home4-tit">Atlante fenomeni</span>
+      <span class="home4-sub">La mappa del laboratorio</span>
+    </button>
+    <button class="home4-card" onclick="switchTab('quaderno')">
+      <span class="home4-num">04</span>
+      <span class="home4-tit">Quaderno tecnico</span>
+      <span class="home4-sub">Ricette e misure salvate</span>
+    </button>
+  </div>
+
   <!-- BLOCCO 1 — Cruscotto del Giorno (box eroe sollevato) -->
   <div class="cruscotto" id="cruscotto">
     <div class="crus-box crus-box-target" onclick="avviaLezione()">
