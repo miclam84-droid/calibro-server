@@ -163,3 +163,13 @@ body:has(#cookie-banner:not(.hidden)) main{padding-bottom:64px}
 .screen.active{opacity:1!important;background:var(--bg,#ecebe5)}
 /* #3 centratura contenuto uniforme */
 .fen-scheda,.rg-scheda{max-width:640px;margin-left:auto;margin-right:auto}
+
+/* ═══ FIX CONTRASTO nomi fenomeni + cookie (report) ═══ */
+/* .p-app-nome: era grigio chiarissimo (var --s100) su Carta = diff 15 invisibile → Ink leggibile */
+.p-app-nome{color:#141d22!important;-webkit-text-fill-color:#141d22!important}
+/* varianti simili che usano --s100 su sfondo chiaro */
+.p-app-desc{color:#5a6c70!important}
+/* cookie: il banner NON copre i bottoni. Lo rendo una barra in fondo che occupa spazio reale,
+   e aggiungo padding-bottom al contenuto pari all'altezza del banner (48px) */
+#cookie-banner:not(.hidden){position:fixed!important;bottom:0!important;top:auto!important}
+body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
