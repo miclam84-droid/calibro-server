@@ -566,8 +566,8 @@ async function caricaHome(){
     const j = await r.json();
     _homeCached = j;
     renderHome(j);
-    // carica conteggio discipline in parallelo
-    ['bar','bakery','cucina','caffetteria','pasticceria','gelateria','vino','birra'].forEach(caricaContDisciplina);
+    // (rimosso il loop 8x /disciplina/<nome> all'avvio: riempiva elementi disc-*-m
+    //  che non esistono più nell'HTML — 8 fetch inutili che rallentavano il boot)
   } catch(e){
     document.getElementById('scopri-ey').textContent = _t('scopri_errore_eyebrow');
     document.getElementById('scopri-titolo').textContent = _t('scopri_errore_titolo');
