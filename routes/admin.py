@@ -7829,7 +7829,10 @@ def admin_genera_foto_ai():
             righe = cur.fetchall()
             if not righe:
                 _errori.append('nessuna ricetta trovata dalla query')
-            for rid, nome in righe:
+            import time as _t
+            for _idx, (rid, nome) in enumerate(righe):
+                if _idx > 0:
+                    _t.sleep(15)  # pausa per rispettare il rate-limit OpenAI immagini
                 try:
                     prompt = f"Professional food photography of {nome}, top view, natural light, restaurant quality, appetizing, no text, no people"
                     payload = {"model": "gpt-image-1", "prompt": prompt, "n": 1, "size": "1024x1024"}
