@@ -1306,21 +1306,35 @@ def _perche_affinita(overlap, lang="it"):
         n = float(overlap)
     except Exception:
         n = 0
-    _T = {
-        "alta": {"it": "condividono molti composti aromatici: abbinamento robusto",
-                 "en": "they share many aroma compounds: robust pairing",
-                 "es": "comparten muchos compuestos aromáticos: maridaje robusto"},
-        "media": {"it": "condividono diversi composti aromatici: buona base di abbinamento",
-                  "en": "they share several aroma compounds: good pairing base",
-                  "es": "comparten varios compuestos aromáticos: buena base de maridaje"},
-        "bassa": {"it": "condividono alcuni composti aromatici",
-                  "en": "they share some aroma compounds",
-                  "es": "comparten algunos compuestos aromáticos"},
+    import random as _rnd
+    # frasi VARIE per non ripetere sempre la stessa (era "scritto coi piedi")
+    _ALTA = {
+        "it": ["ponte aromatico forte: molti composti in comune creano continuità di gusto",
+                "affinità alta: condividono la spina dorsale aromatica, si fondono senza stridere",
+                "abbinamento robusto: le molecole volatili si sovrappongono e si rinforzano",
+                "legame netto: gli aromi condivisi fanno da collante tra i due ingredienti"],
+        "en": ["strong aroma bridge: many shared compounds create taste continuity"],
+        "es": ["puente aromático fuerte: muchos compuestos en común"],
+    }
+    _MEDIA = {
+        "it": ["buona base: alcuni composti in comune aprono il dialogo, il resto è contrasto",
+                "affinità media: si parlano su qualche nota, lasciando spazio a differenze interessanti",
+                "abbinamento equilibrato: condividono abbastanza per legare, non tanto da appiattirsi"],
+        "en": ["good base: some shared compounds open the dialogue"],
+        "es": ["buena base: algunos compuestos en común"],
+    }
+    _BASSA = {
+        "it": ["dialogo per contrasto: pochi composti in comune, l'interesse sta nella differenza",
+                "abbinamento esplorativo: si sfiorano su poche note, da provare al banco",
+                "affinità leggera: un filo aromatico li collega, il resto è avventura"],
+        "en": ["contrast pairing: few shared compounds, the interest is in the difference"],
+        "es": ["maridaje por contraste: pocos compuestos en común"],
     }
     if lang not in ("it", "en", "es"): lang = "it"
-    if n >= 50: return _T["alta"][lang]
-    if n >= 20: return _T["media"][lang]
-    return _T["bassa"][lang]
+    if n >= 50: pool = _ALTA.get(lang, _ALTA["it"])
+    elif n >= 20: pool = _MEDIA.get(lang, _MEDIA["it"])
+    else: pool = _BASSA.get(lang, _BASSA["it"])
+    return _rnd.choice(pool)
 
 def _abbinamenti_bar_curati(ingrediente, max_n=8):
     key = ingrediente.strip().lower()
