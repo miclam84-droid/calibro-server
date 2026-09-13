@@ -4397,3 +4397,34 @@ def ponti_ingrediente(ingrediente):
         return jsonify({"ingrediente": ingrediente, "ponti": ponti, "n_discipline": len(ponti)})
     except Exception as e:
         return jsonify({"ingrediente": ingrediente, "ponti": [], "errore": str(e)[:100]})
+
+
+@bp.route("/v1/principi")
+def lista_principi():
+    """Lista dei principi trasversali (le leggi fisiche di Matter) — per la sezione Principi."""
+    from flask import jsonify
+    import psycopg2 as _pg
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        _cur.execute("""SELECT id, name, data FROM nodes
+                        WHERE type IN ('Principio','Principle') OR id LIKE 'prin%%' OR id LIKE 'princ%%'
+                        ORDER BY name""")
+        righe = _cur.fetchall()
+        principi = []
+        _debug_keys = []
+        for rid, nome, data in righe:
+            dd = data if isinstance(data, dict) else {}
+            if not _debug_keys and dd: _debug_keys = list(dd.keys())
+            desc = (dd.get("descrizione") or dd.get("legge") or dd.get("enunciato") or
+                    dd.get("spiegazione") or dd.get("testo") or dd.get("sintesi") or
+                    dd.get("definizione") or dd.get("abstract") or "")
+            principi.append({
+                "id": rid,
+                "nome": nome,
+                "descrizione": str(desc)[:220],
+                "formula": dd.get("formula", "") or dd.get("equazione", ""),
+            })
+        _cur.close(); _release_conn(_c)
+        return jsonify({"principi": principi, "totale": len(principi), "_campi_disponibili": _debug_keys})
+    except Exception as e:
+        return jsonify({"principi": [], "totale": 0, "errore": str(e)[:100]})
