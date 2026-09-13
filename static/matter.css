@@ -220,3 +220,10 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .ml-tmpl{display:flex;flex-wrap:wrap;gap:8px;margin:0 16px 24px}
 .ml-tmpl-btn{background:#fff;border:1.5px solid #141d22;border-radius:0;padding:10px 14px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:#141d22;cursor:pointer;box-shadow:2px 2px 0 rgba(20,29,34,.12)}
 .ml-tmpl-btn:active{transform:translate(2px,2px);box-shadow:0 0 0}
+
+/* ═══ QUADERNO hero "Il tuo laboratorio" (second brain) ═══ */
+.quad-hero{margin:0 16px 16px;padding:18px;background:#141d22;border-radius:0;box-shadow:4px 4px 0 rgba(20,29,34,.2)}
+.quad-hero-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7fb0c4;margin-bottom:12px}
+.quad-hero-stats{display:flex;gap:18px;flex-wrap:wrap}
+.qh-stat{font-family:'Inter',sans-serif;font-size:13px;color:#cbd6da}
+.qh-n{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:22px;color:#e8935a;margin-right:4px}

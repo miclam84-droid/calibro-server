@@ -4331,6 +4331,13 @@ function _mostraMenuPronto(id, accent){
 }
 
 async function caricaQuaderno(){
+  // popolo l'hero "Il tuo laboratorio" coi conteggi reali
+  try{
+    var rr=await fetch('/v1/quaderno/riepilogo', {headers:_statoHeaders()});
+    var rj=await rr.json();
+    var setN=function(id,v){ var el=document.getElementById(id); if(el) el.textContent=(v!=null?v:0); };
+    setN('qh-ricette', rj.n_ricette); setN('qh-misure', rj.n_misure); setN('qh-diagnosi', rj.n_diagnosi);
+  }catch(e){}
   const token = localStorage.getItem('matter_token');
   const empty = document.getElementById('quad-empty');
   const list = document.getElementById('quad-list');
