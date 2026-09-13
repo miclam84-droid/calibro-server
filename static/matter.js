@@ -330,6 +330,26 @@ function switchMappaTab(tab){
   if(tab==='strumenti'){
     caricaStrumenti(Matter.disciplina || '');
   }
+  if(tab==='principi'){ _caricaPrincipi(); }
+}
+async function _caricaPrincipi(){
+  var cont=document.getElementById('principi-lista');
+  if(!cont || cont._caricato) return;
+  try{
+    var r=await fetch('/v1/principi');
+    var j=await r.json();
+    var pr=j.principi||[];
+    if(!pr.length){ cont.innerHTML='<div class="vista-empty">Principi non disponibili.</div>'; return; }
+    var e=_escV;
+    cont.innerHTML = pr.map(function(p){
+      return '<button class="princ-card" onclick="apriNodo(\''+e(p.id)+'\',\''+e(String(p.nome)).replace(/'/g,"\\'")+'\')">'
+        + '<div class="princ-card-nome">'+e(p.nome)+'</div>'
+        + (p.descrizione?'<div class="princ-card-desc">'+e(p.descrizione)+'</div>':'')
+        + (p.formula?'<div class="princ-card-formula">'+e(p.formula)+'</div>':'')
+        + '</button>';
+    }).join('');
+    cont._caricato=true;
+  }catch(e){ cont.innerHTML='<div class="vista-empty">Errore di rete.</div>'; }
 }
 
 /* ═══ ATLANTE A 4 PORTE (rifinitura review: da voci sparse a 4 gruppi) ═══

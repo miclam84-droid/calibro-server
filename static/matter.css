@@ -293,3 +293,13 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .ponti-disc-items{display:flex;flex-wrap:wrap;gap:8px}
 .ponti-disc-item{display:inline-flex;align-items:center;gap:6px;background:#f4f2ec;border:1px solid #c4c0b4;padding:6px 10px;font-family:'Inter',sans-serif;font-size:13px;color:#141d22;text-transform:capitalize}
 .ponti-forza{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#c77b3f}
+
+/* ═══ PRINCIPI — lista dei 10 (non più uno solo) ═══ */
+.principi-lista-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c77b3f;margin:24px 16px 12px}
+#principi-lista{display:flex;flex-direction:column;gap:10px;margin:0 16px 20px}
+.princ-card{display:flex;flex-direction:column;gap:5px;background:#fff;border:1.5px solid #141d22;border-radius:0;box-shadow:3px 3px 0 rgba(20,29,34,.12);padding:14px;cursor:pointer;text-align:left;transition:transform .12s,box-shadow .12s,border-color .12s}
+.princ-card:active{transform:translate(3px,3px);box-shadow:0 0 0}
+.princ-card:hover{border-color:#c77b3f}
+.princ-card-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#141d22;line-height:1.2}
+.princ-card-desc{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;line-height:1.4}
+.princ-card-formula{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#245979;background:#f4f2ec;padding:4px 8px;align-self:flex-start}
