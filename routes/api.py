@@ -4325,3 +4325,27 @@ def casi_del_giorno():
         visti.append(j)
     casi = [_CASI_POOL[i] for i in visti]
     return jsonify({"data": oggi, "casi": casi})
+
+
+@bp.route("/admin/diag-grafo-disciplina")
+def admin_diag_grafo_disciplina():
+    """Verifica cosa il grafo sa sugli ingredienti (disciplina/categoria) per costruire i Ponti veri."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # che campi ha un nodo ingrediente?
+        cur.execute("""SELECT id, name, type, data FROM nodes
+                       WHERE type IN ('Ingrediente','Prodotto') LIMIT 3""")
+        esempi = []
+        for r in cur.fetchall():
+            esempi.append({"id": r[0][:30], "name": r[1], "type": r[2], "data_keys": list(r[3].keys()) if isinstance(r[3], dict) else str(r[3])[:60]})
+        # esistono relazioni tipo 'usato_in' o discipline?
+        cur.execute("SELECT DISTINCT relation FROM edges LIMIT 20")
+        relazioni = [r[0] for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"esempi_ingredienti": esempi, "relazioni_grafo": relazioni})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
