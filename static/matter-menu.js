@@ -125,7 +125,21 @@ window.apriMenuBuilder = function(){
     '<div class="ml-hero"><div class="ml-hero-lab">MENU LAB</div>'
     + '<div class="ml-hero-h">Progetta un menu degustazione in 8 minuti.</div>'
     + '<div class="ml-hero-sub">Ogni piatto e un equilibrio tra aromi, consistenze, temperatura, acidita, grassi e tecniche.</div></div>'
-    + '<div class="ml-grid">'+cards+'</div>');
+    + '<div class="ml-grid">'+cards+'</div>'
+    + '<div class="ml-tmpl-lab">Parti da un template</div>'
+    + '<div class="ml-tmpl">'
+    +   '<button class="ml-tmpl-btn" onclick="_mbDaTemplate(\'degustazione\')">Menu degustazione</button>'
+    +   '<button class="ml-tmpl-btn" onclick="_mbDaTemplate(\'pizza\')">Menu pizzeria</button>'
+    +   '<button class="ml-tmpl-btn" onclick="_mbDaTemplate(\'drink\')">Drink list</button>'
+    +   '<button class="ml-tmpl-btn" onclick="_mbDaTemplate(\'brunch\')">Brunch</button>'
+    + '</div>');
+};
+window._mbDaTemplate = function(tipo){
+  var semi={ degustazione:['capasanta','topinambur','nocciola'], pizza:['pomodoro','mozzarella','basilico'], drink:['gin','lime','cetriolo'], brunch:['uova','avocado','pane'] };
+  _mbWorkspace();
+  setTimeout(function(){
+    (semi[tipo]||[]).forEach(function(ing){ if(typeof mbAdd==='function') mbAdd(ing); });
+  }, 200);
 };
 window._mbWorkspace = function(){
   _menuIngredienti = [];
