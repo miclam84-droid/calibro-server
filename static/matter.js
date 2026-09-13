@@ -5626,12 +5626,9 @@ let _pontiTab = 'vino';
 function apriPonti(){
   var e=_escV;
   var punti=[
-    ['vino','Vino','Quale vino dialoga col tuo piatto e perché'],
-    ['panificazione','Panificazione','Come l\'ingrediente lavora negli impasti'],
-    ['caffe','Caffè','I ponti aromatici con l\'estrazione'],
-    ['gelato','Gelato','L\'ingrediente nel bilanciamento dolce'],
-    ['cocktail','Cocktail','I ponti con la miscelazione'],
-    ['formaggi','Formaggi','Gli abbinamenti caseari']
+    ['vino','Ponte col vino','Quale vino dialoga col tuo piatto e perché'],
+    ['birra','Ponte con la birra','Quale birra esalta il piatto'],
+    ['dolce','Ponte col dolce','Come chiudere il menu in equilibrio']
   ];
   var cards=punti.map(function(p){
     return '<button class="crea-card" onclick="_pontiWorkflow(\''+e(p[0])+'\')">'
@@ -5639,10 +5636,9 @@ function apriPonti(){
       + '<span class="crea-card-arr">→</span></button>';
   }).join('');
   _apriVista('Ponti',
-    '<div class="crea-intro">Scopri tutto ciò che un ingrediente sa fare — tra cucina, vino, caffè, pane e cocktail.</div>'
+    '<div class="crea-intro">Il piatto non è mai solo. Scopri cosa gli dialoga accanto — e perché.</div>'
     + cards
     + '<div class="ponti-esempi-lab">Esempi dal grafo</div><div id="ponti-esempi"><div class="skel-riga skeleton" style="height:44px;margin:0 16px 8px"></div><div class="skel-riga skeleton" style="height:44px;margin:0 16px 8px"></div></div>');
-  // esempi concreti live dal backend (P0 #3)
   ['pomodoro','fragola','burro'].forEach(function(ing){
     fetch('/v1/abbina/'+encodeURIComponent(ing)).then(function(r){return r.json();}).then(function(j){
       var a=(j.abbinamenti||[]).slice(0,3).map(function(x){return x.ingrediente;});
