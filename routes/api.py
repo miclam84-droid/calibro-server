@@ -4397,3 +4397,40 @@ def ponti_ingrediente(ingrediente):
         return jsonify({"ingrediente": ingrediente, "ponti": ponti, "n_discipline": len(ponti)})
     except Exception as e:
         return jsonify({"ingrediente": ingrediente, "ponti": [], "errore": str(e)[:100]})
+
+
+@bp.route("/v1/principi")
+def lista_principi():
+    """Lista dei principi trasversali (le leggi fisiche di Matter) — per la sezione Principi."""
+    from flask import jsonify
+    import psycopg2 as _pg
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        _cur.execute("""SELECT id, name, data FROM nodes
+                        WHERE type IN ('Principio','Principle') OR id LIKE 'prin%%' OR id LIKE 'princ%%'
+                        ORDER BY name""")
+        righe = _cur.fetchall()
+        principi = []
+        for rid, nome, data in righe:
+            dd = data if isinstance(data, dict) else {}
+            scheda = dd.get("scheda", "")
+            desc = ""; formula = ""
+            if isinstance(scheda, dict):
+                desc = (scheda.get("descrizione") or scheda.get("spiegazione") or scheda.get("testo") or
+                        scheda.get("sintesi") or scheda.get("intro") or scheda.get("cosa") or
+                        scheda.get("enunciato") or "")
+                formula = scheda.get("formula", "") or scheda.get("equazione", "")
+                if not desc:
+                    for v in scheda.values():
+                        if isinstance(v, str) and len(v) > 30:
+                            desc = v; break
+            elif isinstance(scheda, str):
+                desc = scheda
+            principi.append({
+                "id": rid, "nome": nome,
+                "descrizione": str(desc)[:250], "formula": str(formula)[:60],
+            })
+        _cur.close(); _release_conn(_c)
+        return jsonify({"principi": principi, "totale": len(principi)})
+    except Exception as e:
+        return jsonify({"principi": [], "totale": 0, "errore": str(e)[:100]})
