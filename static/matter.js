@@ -1263,6 +1263,24 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
 
   var card=document.createElement('div');card.className='scheda';card.innerHTML=html;
   document.getElementById('schede').prepend(card);
+  // SPEC 06: rendo accordion le sezioni secondarie (principio resta sempre aperto)
+  try{
+    card.querySelectorAll('.fen-sez, .fen-errori-box').forEach(function(sez, i){
+      var lab = sez.querySelector('.fen-sez-lab, .fen-errori-lab');
+      if(!lab) return;
+      // il primo blocco resta aperto, gli altri collassati
+      var aperto = i===0;
+      sez.classList.add('fen-acc');
+      if(!aperto) sez.classList.add('fen-acc-chiuso');
+      lab.classList.add('fen-acc-lab');
+      lab.insertAdjacentHTML('beforeend','<span class="fen-acc-ico">'+(aperto?'−':'+')+'</span>');
+      lab.style.cursor='pointer';
+      lab.addEventListener('click', function(){
+        var chiuso = sez.classList.toggle('fen-acc-chiuso');
+        var ico=lab.querySelector('.fen-acc-ico'); if(ico) ico.textContent = chiuso?'+':'−';
+      });
+    });
+  }catch(e){}
   // libro affiliato (Approfondisci) — per disciplina o fenomeno
   var _paramLibro = j.disciplina ? ('disciplina='+encodeURIComponent(j.disciplina)) : (j.titolo ? ('fenomeno='+encodeURIComponent(j.titolo)) : '');
   if(_paramLibro){ _caricaLibroAffiliato(_paramLibro, '.fen-scheda'); }
