@@ -238,3 +238,14 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 /* ═══ COOKIE — banner opaco pieno + testo bianco (fine falsi positivi contrasto) ═══ */
 #cookie-banner{background:#141d22!important;backdrop-filter:none!important;opacity:1!important}
 #cookie-banner p,#ct-cookie-txt{color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;opacity:1!important}
+
+/* ═══ FIX 3 CONTRASTI VERI (report backend) ═══ */
+/* box "Quando ti serve" e simili con sfondo verde/teal: label ed elementi leggibili */
+.sl-quando{background:#e8eded!important}
+.sl-quando-lab{color:#12545d!important}
+.sl-quando-item{color:#2a3a42!important}
+/* composti aromatici / PubChem nel Flavour: testo scuro leggibile su fondo chiaro */
+.fnv-node,.fnv-comp,.fnv-comp-nome,.fnv-comp-aroma,.fnv-comp-src,.fnv-node-det{color:#2a3a42!important}
+.fnv-comp-src,.fnv-pubchem{color:#5a6c70!important}
+/* box con sfondo verde intenso (44,110,99 pieno): se c'è, testo chiaro */
+[style*="background:rgba(44,110,99"],[style*="background: rgba(44,110,99"]{color:#fff!important}
