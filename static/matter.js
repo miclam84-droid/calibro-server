@@ -5931,12 +5931,12 @@ async function apriAvanzate(){
     var html='<div class="avz-count">'+fen.length+' tecniche avanzate</div>';
     Object.keys(perDom).forEach(function(dom){
       html+='<div class="avz-dom-lab">'+_escV(dom)+'</div>';
-      html+=perDom[dom].map(function(f){
-        return '<div class="avz-card" onclick="chiudiVista();apriNodo(\''+_escV(f.id)+'\',\''+_escV(f.nome).replace(/'/g,"\\'")+'\')">'
-          + '<div class="avz-card-main"><div class="avz-card-nome">'+_escV(f.nome)+'</div>'
-          + (f.sommario?'<div class="avz-card-sum">'+_escV(f.sommario)+'</div>':'')+'</div>'
-          + '<span class="avz-card-arr">→</span></div>';
-      }).join('');
+      html+='<div class="avz-grid">'+perDom[dom].map(function(f){
+        return '<button class="avz-card2" onclick="chiudiVista();apriNodo(\''+_escV(f.id)+'\',\''+_escV(f.nome).replace(/'/g,"\\'")+'\')">'
+          + '<div class="avz-card2-nome">'+_escV(f.nome)+'</div>'
+          + (f.sommario?'<div class="avz-card2-sum">'+_escV(f.sommario)+'</div>':'')
+          + '</button>';
+      }).join('')+'</div>';
     });
     out.innerHTML=html;
   }catch(e){
