@@ -4325,3 +4325,75 @@ def casi_del_giorno():
         visti.append(j)
     casi = [_CASI_POOL[i] for i in visti]
     return jsonify({"data": oggi, "casi": casi})
+
+
+@bp.route("/v1/ponti/<ingrediente>")
+def ponti_ingrediente(ingrediente):
+    """Ponti cross-disciplina di un ingrediente: come dialoga con vino, pane, caffè, gelato, cocktail,
+    formaggi, cucina, pasticceria. Usa gli abbinamenti del grafo + classificazione per disciplina."""
+    from flask import request, jsonify
+    import psycopg2 as _pg
+    DISCIPLINE = {
+        "vino": ["vino", "wine", "enolog"],
+        "panificazione": ["pane", "pani", "impasto", "lievit", "bakery", "bread"],
+        "caffè": ["caff", "coffee", "espresso"],
+        "gelateria": ["gelat", "sorbet", "ice cream"],
+        "cocktail": ["cocktail", "bar", "distillat", "mixolog", "drink"],
+        "formaggi": ["formagg", "cheese", "latticin", "casear"],
+        "cucina": ["cucina", "piatto", "carne", "pesce", "verdur", "salsa"],
+        "pasticceria": ["pasticc", "dolce", "dessert", "pastry"],
+    }
+    REGOLE_NOME = {
+        "vino": ["vino", "wine", "champagne", "prosecco", "spumante"],
+        "cocktail": ["gin", "rum", "vodka", "whisky", "tequila", "bitter", "vermouth", "liquore", "amaro", "cognac", "brandy", "aperol", "campari"],
+        "caffè": ["caff", "coffee", "espresso", "moka"],
+        "gelateria": ["gelato", "sorbetto", "panna", "latte"],
+        "formaggi": ["formagg", "cheese", "mozzarella", "parmigiano", "pecorino", "gorgonzola", "ricotta", "burrata", "cheddar", "brie"],
+        "panificazione": ["farina", "lievito", "pane", "pasta", "grano", "segale", "cereale"],
+        "pasticceria": ["cioccolat", "zucchero", "vaniglia", "cacao", "miele", "caramello", "marzapane"],
+    }
+    CUCINA_HINT = ["pomodoro", "basilico", "aglio", "cipolla", "carne", "pesce", "manzo", "pollo", "verdur", "peperone", "zucchin", "melanzana", "fungo", "carota", "sedano", "prezzemolo", "origano", "rosmarino", "salvia", "timo"]
+    FRUTTA = ["mela", "pera", "fragola", "lampone", "limone", "arancia", "agrum", "pesca", "albicocca", "uva", "frutto", "mango", "ananas", "banana", "ciliegia", "lime", "mandarino", "pompelmo", "frutti"]
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        _cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND (LOWER(name)=LOWER(%s) OR LOWER(name) LIKE LOWER(%s))
+                        ORDER BY LENGTH(name) LIMIT 1""", (ingrediente, f"%{ingrediente}%"))
+        row = _cur.fetchone()
+        if not row:
+            _cur.close(); _release_conn(_c)
+            return jsonify({"ingrediente": ingrediente, "ponti": []})
+        nid = row[0]
+        _cur.execute("""SELECT n.name, n.data, (e.data->>'overlap')::numeric ov
+                        FROM edges e JOIN nodes n ON n.id = e.to_id
+                        WHERE e.from_id = %s AND e.relation = 'abbinamento_aromatico'
+                        AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+                        ORDER BY ov DESC NULLS LAST LIMIT 60""", (nid,))
+        righe = _cur.fetchall()
+        _cur.close(); _release_conn(_c)
+        per_disc = {k: [] for k in DISCIPLINE}
+        def _aggiungi(disc, nome, ov):
+            if len(per_disc[disc]) < 5 and nome not in [x["ingrediente"] for x in per_disc[disc]]:
+                per_disc[disc].append({"ingrediente": nome, "forza": round(float(ov)) if ov else 0})
+        for nome, data, ov in righe:
+            dd = data if isinstance(data, dict) else {}
+            testo = (str(dd.get("domini", "")) + " " + str(dd.get("categoria", "")) + " " +
+                     str(dd.get("settore", "")) + " " + str(dd.get("applicazioni", ""))).lower()
+            nl = nome.lower()
+            trovato = False
+            for disc, chiavi in DISCIPLINE.items():
+                if any(k in testo for k in chiavi):
+                    _aggiungi(disc, nome, ov); trovato = True
+            for disc, chiavi in REGOLE_NOME.items():
+                if any(k in nl for k in chiavi):
+                    _aggiungi(disc, nome, ov); trovato = True
+            if any(k in nl for k in FRUTTA):
+                _aggiungi("cucina", nome, ov); _aggiungi("pasticceria", nome, ov); _aggiungi("cocktail", nome, ov); trovato = True
+            if any(k in nl for k in CUCINA_HINT):
+                _aggiungi("cucina", nome, ov); trovato = True
+            if not trovato:
+                _aggiungi("cucina", nome, ov)
+        ponti = [{"disciplina": d, "abbinati": v} for d, v in per_disc.items() if v]
+        return jsonify({"ingrediente": ingrediente, "ponti": ponti, "n_discipline": len(ponti)})
+    except Exception as e:
+        return jsonify({"ingrediente": ingrediente, "ponti": [], "errore": str(e)[:100]})
