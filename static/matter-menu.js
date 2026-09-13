@@ -123,7 +123,7 @@ window.apriMenuBuilder = function(){
   }).join('');
   _apriVista('Menu Lab',
     '<div class="ml-hero"><div class="ml-hero-lab">MENU LAB</div>'
-    + '<div class="ml-hero-h">Progetta un menu come un laboratorio.</div>'
+    + '<div class="ml-hero-h">Progetta un menu degustazione in 8 minuti.</div>'
     + '<div class="ml-hero-sub">Ogni piatto e un equilibrio tra aromi, consistenze, temperatura, acidita, grassi e tecniche.</div></div>'
     + '<div class="ml-grid">'+cards+'</div>');
 };

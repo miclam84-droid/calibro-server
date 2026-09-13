@@ -115,7 +115,7 @@ window.apriFlavour = function(ingredienteIniziale){
     return '<button class="crea-card" onclick="_flavourWorkflow()"><div class="crea-card-txt"><div class="crea-card-t">'+e(p[1])+'</div><div class="crea-card-d">'+e(p[2])+'</div></div><span class="crea-card-arr">→</span></button>';
   }).join('');
   _apriVista('Flavour Network',
-    '<div class="crea-intro">Esplora il dialogo aromatico degli ingredienti — la rete dei composti condivisi.</div>'
+    '<div class="crea-intro">Trova ingredienti che condividono le stesse molecole aromatiche.</div>'
     + cards);
 };
 window._flavourWorkflow = function(ingredienteIniziale){

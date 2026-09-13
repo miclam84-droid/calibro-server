@@ -193,3 +193,7 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .hd-quickstart button{flex:0 0 52px;height:52px;background:#c77b3f;color:#141d22;border:1.5px solid #141d22;border-radius:0;font-size:20px;cursor:pointer;box-shadow:4px 4px 0 rgba(20,29,34,.15)}
 .hd-quickstart button:active{transform:translate(4px,4px);box-shadow:0 0 0}
 .hd-esempi-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#5a6c70;margin:0 0 10px}
+
+/* ═══ HERO che vende (P0 #1) — conseguenza + CTA ═══ */
+.crus-conseguenza{display:block;font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#cbd6da;margin-top:12px}
+.crus-cta{display:inline-block;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#e8935a;margin-top:14px}

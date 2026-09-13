@@ -615,6 +615,9 @@ function _popolaCruscotto(f){
     // sotto: il numero se c'è (nitido), altrimenti niente
     ts.textContent = (tgt && tgt.length<=16) ? (tgt + (f.unita? f.unita : '')) : '';
   }
+  // Hero che vende: la conseguenza dei numeri (scheda_intro dal backend)
+  var cons=document.getElementById('crus-conseguenza');
+  if(cons){ cons.textContent = f.scheda_intro || f.insight || f.conseguenza || ''; }
   // ultima misura salvata dal Quaderno
   var m=document.getElementById('crus-misura');
   if(m){
@@ -5607,7 +5610,7 @@ function apriPonti(){
       + '<span class="crea-card-arr">→</span></button>';
   }).join('');
   _apriVista('Ponti',
-    '<div class="crea-intro">Un ingrediente dialoga con più discipline. Scegli da dove partire.</div>'
+    '<div class="crea-intro">Scopri tutto ciò che un ingrediente sa fare — tra cucina, vino, caffè, pane e cocktail.</div>'
     + cards);
 }
 function _pontiWorkflow(tabIniziale){
