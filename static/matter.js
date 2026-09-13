@@ -444,6 +444,18 @@ function _caricaModulo(nome){
     document.head.appendChild(s);
   });
 }
+// Quick Start Home: prende il testo dal campo e apre la chat (carica il modulo chat se serve)
+function _diagnosiQuick(){
+  var inp=document.getElementById('hd-qs-input');
+  var q=inp?inp.value.trim():'';
+  if(!q) return;
+  _diagnosiVai(q);
+}
+// fallback core: se il modulo chat non è caricato, lo carico poi apro la diagnosi
+function _diagnosiVai(q){
+  var vai=function(){ if(typeof window._diagnosiChat==='function') window._diagnosiChat(q); else { switchTab('chiedi'); setTimeout(function(){ if(typeof chiediTesto==='function') chiediTesto(q); },300); } };
+  if(typeof _caricaModulo==='function' && !(window._moduli&&window._moduli.chat)){ _caricaModulo('chat').then(vai); } else { vai(); }
+}
 function switchTab(t){
   // carica il modulo chat quando si apre l'Assistente (lazy)
   if(t==='chiedi' && !window._moduli.chat){ _caricaModulo('chat'); }

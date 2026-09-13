@@ -184,3 +184,12 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .fen-acc-ico{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:#c77b3f;margin-left:8px;flex-shrink:0}
 .fen-acc-chiuso > *:not(.fen-acc-lab){display:none!important}
 .fen-acc-chiuso{padding-bottom:8px!important}
+
+/* ═══ QUICK START Home (P0 #5) — barra chiedi a Matter ═══ */
+.hd-quickstart{display:flex;gap:8px;margin:0 0 14px}
+.hd-quickstart input{flex:1;min-height:52px;border:1.5px solid #141d22;border-radius:0;background:#fff;padding:0 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#141d22;-webkit-text-fill-color:#141d22;box-shadow:4px 4px 0 rgba(20,29,34,.12)}
+.hd-quickstart input::placeholder{color:#9daeb2;font-size:12.5px}
+.hd-quickstart input:focus{outline:none;border-color:#c77b3f}
+.hd-quickstart button{flex:0 0 52px;height:52px;background:#c77b3f;color:#141d22;border:1.5px solid #141d22;border-radius:0;font-size:20px;cursor:pointer;box-shadow:4px 4px 0 rgba(20,29,34,.15)}
+.hd-quickstart button:active{transform:translate(4px,4px);box-shadow:0 0 0}
+.hd-esempi-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#5a6c70;margin:0 0 10px}

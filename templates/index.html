@@ -107,9 +107,14 @@ if('serviceWorker' in navigator){
   <!-- BLOCCO DIAGNOSI — la chat che risolve problemi (Renaissance #7) -->
   <div class="home-diagnosi">
     <div class="hd-titolo">Dimmi cosa non sta funzionando.</div>
-    <button class="hd-problema" onclick="_diagnosiChat('La mia biga è collassata dopo 14 ore. Recuperabile?')">Biga collassata dopo 14h — che faccio?</button>
-    <button class="hd-problema" onclick="_diagnosiChat('Il cliente rimanda indietro il sour: troppo aspro. Come ribilancio?')">Sour troppo aspro — come ribilancio?</button>
-    <button class="hd-problema" onclick="_diagnosiChat('Il gelato esce duro dalla vetrina. Sbaglio il bilanciamento?')">Gelato duro in vetrina — che sbaglio?</button>
+    <div class="hd-quickstart">
+      <input id="hd-qs-input" placeholder="La mia biga è collassata dopo 14 ore…" onkeydown="if(event.key==='Enter')_diagnosiQuick()">
+      <button onclick="_diagnosiQuick()" aria-label="Chiedi">◎</button>
+    </div>
+    <div class="hd-esempi-lab">oppure parti da un caso comune</div>
+    <button class="hd-problema" onclick="_diagnosiVai('La mia biga è collassata dopo 14 ore. Recuperabile?')">Biga collassata dopo 14h — che faccio?</button>
+    <button class="hd-problema" onclick="_diagnosiVai('Il cliente rimanda indietro il sour: troppo aspro. Come ribilancio?')">Sour troppo aspro — come ribilancio?</button>
+    <button class="hd-problema" onclick="_diagnosiVai('Il gelato esce duro dalla vetrina. Sbaglio il bilanciamento?')">Gelato duro in vetrina — che sbaglio?</button>
   </div>
 
   <!-- HOME 4 INGRESSI (semplificazione: griglia netta 2x2) -->
