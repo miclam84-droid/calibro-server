@@ -107,10 +107,32 @@ window.apriCartaFilosofia = function(){
 }
 
 window.apriMenuBuilder = function(){
+  var e=_escV;
+  var strumenti=[
+    ['Flavour Pairing','Trova cosa si abbina, dai composti aromatici'],
+    ['Costruisci un piatto','Parti da un ingrediente, costruisci l\'accostamento'],
+    ['Analizza un menu','Controlla equilibrio e ridondanze'],
+    ['Sostituzioni intelligenti','Sostituisci mantenendo il profilo aromatico']
+  ];
+  var cards=strumenti.map(function(s,i){
+    return '<button class="ml-card" onclick="_mbWorkspace()">'
+      + '<span class="ml-card-num">0'+(i+1)+'</span>'
+      + '<span class="ml-card-t">'+e(s[0])+'</span>'
+      + '<span class="ml-card-d">'+e(s[1])+'</span>'
+      + '<span class="ml-card-arr">\u2192</span></button>';
+  }).join('');
+  _apriVista('Menu Lab',
+    '<div class="ml-hero"><div class="ml-hero-lab">MENU LAB</div>'
+    + '<div class="ml-hero-h">Progetta un menu come un laboratorio.</div>'
+    + '<div class="ml-hero-sub">Ogni piatto e un equilibrio tra aromi, consistenze, temperatura, acidita, grassi e tecniche.</div></div>'
+    + '<div class="ml-grid">'+cards+'</div>');
+};
+window._mbWorkspace = function(){
   _menuIngredienti = [];
+
   _apriVista('Menu Lab',
     '<div class="mbv-head"><div class="mbv-h">Costruisci per composti.</div>'+
-    '<div class="mbv-sub">Aggiungi ingredienti: Matter Bench trova le combinazioni che dialogano, dal grafo aromatico reale.</div>'+
+    '<div class="mbv-sub">Aggiungi ingredienti: Matter trova le combinazioni che dialogano, dal grafo aromatico reale.</div>'+
     '<div class="mbv-add"><input id="mbv-input" placeholder="aggiungi un ingrediente…" onkeydown="if(event.key===\'Enter\')mbAdd()"><button onclick="mbAdd()">+</button></div>'+
     '<div class="mbv-chips" id="mbv-chips"></div>'+
     '<button class="mbv-go" id="mbv-go" onclick="mbProposte()" disabled>Trova le combinazioni</button></div>'+
