@@ -8096,3 +8096,37 @@ def admin_conta_foto():
                         "blueprint": blueprint, "blueprint_per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/diag-fonti-foto")
+def admin_diag_fonti_foto():
+    """Verifica quali fonti foto (Pexels/Pixabay/Unsplash) sono configurate e rispondono."""
+    from flask import request, jsonify
+    import os, urllib.request as ur, json as _j
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    out = {}
+    # Pexels
+    pk = os.environ.get("PEXELS_API_KEY", "")
+    out["pexels_key"] = bool(pk)
+    if pk:
+        try:
+            req = ur.Request("https://api.pexels.com/v1/search?query=pizza&per_page=1", headers={"Authorization": pk})
+            r = ur.urlopen(req, timeout=15); d = _j.loads(r.read().decode())
+            out["pexels_test"] = "OK: " + str(len(d.get("photos", []))) + " foto"
+        except Exception as e:
+            out["pexels_test"] = "ERR: " + str(e)[:60]
+    # Pixabay
+    px = os.environ.get("PIXABAY_API_KEY", "")
+    out["pixabay_key"] = bool(px)
+    if px:
+        try:
+            r = ur.urlopen(f"https://pixabay.com/api/?key={px}&q=pizza&per_page=3", timeout=15)
+            d = _j.loads(r.read().decode())
+            out["pixabay_test"] = "OK: " + str(d.get("totalHits", 0)) + " hits"
+        except Exception as e:
+            out["pixabay_test"] = "ERR: " + str(e)[:60]
+    # Unsplash
+    uk = os.environ.get("UNSPLASH_ACCESS_KEY", "")
+    out["unsplash_key"] = bool(uk)
+    return jsonify(out)
