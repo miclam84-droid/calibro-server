@@ -67,29 +67,49 @@ function _mpStep2(){
 function _mpStep3(){
   var e=_escV;
   var t=_MP_TIPI[_mp.tipo], m=_MP_METODI[_mp.metodo];
-  // ── CALCOLO DOSI (metodo del panettiere) ──
-  var pesoTot = _mp.n_panetti * _mp.peso_panetto;
-  // farina = pesoTot / (1 + idr/100 + sale% + lievito%)
-  var salePct = 2.5, lievPct = m.lievito_pct;
-  var farina = pesoTot / (1 + _mp.idratazione/100 + salePct/100 + lievPct/100);
-  var acqua = farina * _mp.idratazione/100;
-  var sale = farina * salePct/100;
-  var lievito = farina * lievPct/100;
-  // temperatura acqua (DDT ~24°C): T_acqua = 3*DDT - T_amb - T_farina - T_frizione
-  var DDT = 24, frizione = 2;
-  var tAcqua = 3*DDT - _mp.temp_ambiente - _mp.temp_farina - frizione;
-  tAcqua = Math.max(4, Math.min(40, tAcqua));
+  var dosi, tAcqua;
+  var bk=_mp._backend;
+  if(bk && bk.dosi){
+    // DATI VERI dal motore backend
+    var d=bk.dosi;
+    tAcqua = bk.temperatura_acqua!=null ? Math.round(bk.temperatura_acqua) : 24;
+    var lievVal = d.lievito_fresco!=null ? d.lievito_fresco : (d.lievito||0);
+    var lievP = d.lievito_pct!=null ? d.lievito_pct : '';
+    dosi = [
+      ['Farina', Math.round(d.farina)+' g', false],
+      ['Acqua', Math.round(d.acqua)+' g', false],
+      ['Sale', (Math.round(d.sale*10)/10)+' g', false],
+      ['Lievito fresco', (Math.round(lievVal*10)/10)+' g'+(lievP!==''?' · '+lievP+'%':''), false]
+    ];
+    if(d.olio!=null && d.olio>0) dosi.push(['Olio', Math.round(d.olio)+' g', false]);
+    dosi.push(['Temp. acqua', tAcqua+'°C', true]);
+  } else {
+    // fallback: calcolo frontend (metodo del panettiere)
+    var pesoTot = _mp.n_panetti * _mp.peso_panetto;
+    var salePct = 2.5, lievPct = m.lievito_pct;
+    var farina = pesoTot / (1 + _mp.idratazione/100 + salePct/100 + lievPct/100);
+    var acqua = farina * _mp.idratazione/100;
+    var sale = farina * salePct/100;
+    var lievito = farina * lievPct/100;
+    var DDT = 24, frizione = 2;
+    tAcqua = 3*DDT - _mp.temp_ambiente - _mp.temp_farina - frizione;
+    tAcqua = Math.max(4, Math.min(40, tAcqua));
+    dosi = [
+      ['Farina', Math.round(farina)+' g', false],
+      ['Acqua', Math.round(acqua)+' g', false],
+      ['Sale', (Math.round(sale*10)/10)+' g', false],
+      ['Lievito fresco', (Math.round(lievito*10)/10)+' g · '+(Math.round(lievPct*100)/100)+'%', false],
+      ['Temp. acqua', Math.round(tAcqua)+'°C', true]
+    ];
+  }
 
-  var dosi = [
-    ['Farina', Math.round(farina)+' g', false],
-    ['Acqua', Math.round(acqua)+' g', false],
-    ['Sale', (Math.round(sale*10)/10)+' g', false],
-    ['Lievito fresco', (Math.round(lievito*10)/10)+' g · '+(Math.round(lievPct*100)/100)+'%', false],
-    ['Temp. acqua', Math.round(tAcqua)+'°C', true]
-  ];
-
-  // ── TIMELINE A RITROSO ──
-  var timeline = _mpTimeline(t, m);
+  // ── TIMELINE: usa quella del backend se c'è, altrimenti calcolo frontend ──
+  var timeline;
+  if(bk && bk.timeline && bk.timeline.length){
+    timeline = bk.timeline.map(function(f){ return { ora:f.ora||f.orario||'', fase:f.fase||f.nome||'', nota:f.nota||f.dettaglio||'', check:/sforn/i.test(f.fase||'') }; });
+  } else {
+    timeline = _mpTimeline(t, m);
+  }
 
   var dosiHtml = dosi.map(function(d){
     return '<div class="mp-dosi-row"><span class="mp-dosi-k">'+e(d[0])+'</span><span class="mp-dosi-v'+(d[2]?' evid':'')+'">'+e(d[1])+'</span></div>';
@@ -149,7 +169,17 @@ window._mpVai3 = function(){
   _mp.temp_ambiente = +document.getElementById('mp-tamb').value||22;
   _mp.temp_farina = +document.getElementById('mp-tfar').value||20;
   _mp.idratazione = +document.getElementById('mp-idr').value||62;
-  _mp.step=3; _mpReRender();
+  _mp.step=3;
+  // mostro skeleton mentre chiamo il motore backend
+  var b=document.getElementById('vista-body');
+  if(b){ b.innerHTML='<div class="mp-head mp-head3"><span class="mp-eyebrow">◎ IL PROGETTO</span></div><div class="skel-card skeleton" style="height:200px;margin:16px"></div>'; }
+  var _MP_TIPI2={pizza_napoletana:'pizza_napoletana',pizza_teglia:'pizza_teglia',pane:'pane',focaccia:'focaccia'};
+  fetch('/v1/motore/panificazione',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tipo:_mp.tipo,n_panetti:_mp.n_panetti,peso_panetto:_mp.peso_panetto,metodo:_mp.metodo,
+      temp_ambiente:_mp.temp_ambiente,temp_farina:_mp.temp_farina,ore_lievitazione:24,ora_sfornata:_mp.ora_sfornata,temp_finale_voluta:24})})
+    .then(function(r){return r.json();})
+    .then(function(j){ if(j && j.dosi){ _mp._backend=j; } _mpReRender(); })
+    .catch(function(){ _mpReRender(); }); // fallback: render col calcolo frontend
 };
 function _mpReRender(){ var b=document.getElementById('vista-body'); if(b){ b.innerHTML=_mpRender(); b.scrollTop=0; } }
 window._mpReRender = _mpReRender;
