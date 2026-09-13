@@ -5669,70 +5669,40 @@ function _mirinoPonte(){return '<svg viewBox="0 0 36 36" fill="none"><circle cx=
 let _pontiTab = 'vino';
 function apriPonti(){
   var e=_escV;
-  var punti=[
-    ['vino','Ponte col vino','Quale vino dialoga col tuo piatto e perché'],
-    ['birra','Ponte con la birra','Quale birra esalta il piatto'],
-    ['dolce','Ponte col dolce','Come chiudere il menu in equilibrio']
-  ];
-  var cards=punti.map(function(p){
-    return '<button class="crea-card" onclick="_pontiWorkflow(\''+e(p[0])+'\')">'
-      + '<div class="crea-card-txt"><div class="crea-card-t">'+e(p[1])+'</div><div class="crea-card-d">'+e(p[2])+'</div></div>'
-      + '<span class="crea-card-arr">→</span></button>';
-  }).join('');
   _apriVista('Ponti',
-    '<div class="crea-intro">Il piatto non è mai solo. Scopri cosa gli dialoga accanto — e perché.</div>'
-    + cards
-    + '<div class="ponti-esempi-lab">Esempi dal grafo</div><div id="ponti-esempi"><div class="skel-riga skeleton" style="height:44px;margin:0 16px 8px"></div><div class="skel-riga skeleton" style="height:44px;margin:0 16px 8px"></div></div>');
-  ['pomodoro','fragola','burro'].forEach(function(ing){
-    fetch('/v1/abbina/'+encodeURIComponent(ing)).then(function(r){return r.json();}).then(function(j){
-      var a=(j.abbinamenti||[]).slice(0,3).map(function(x){return x.ingrediente;});
-      if(!a.length) return;
-      var cont=document.getElementById('ponti-esempi');
-      if(!cont) return;
-      if(cont.querySelector('.skeleton')) cont.innerHTML='';
-      var row=document.createElement('button');
-      row.className='ponti-esempio';
-      row.onclick=function(){ _pontiWorkflow('vino'); setTimeout(function(){ var i=document.getElementById('ptv-input'); if(i){ i.value=ing; if(typeof caricaPonti==='function') caricaPonti(); } },150); };
-      row.innerHTML='<span class="ponti-es-ing">'+_escV(ing)+'</span><span class="ponti-es-arr">↔</span><span class="ponti-es-abb">'+_escV(a.join(', '))+'</span>';
-      cont.appendChild(row);
-    }).catch(function(){});
-  });
+    '<div class="crea-intro">Un ingrediente non vive in una disciplina sola. Scopri con cosa dialoga — in cucina, al bar, in pasticceria, col vino.</div>'
+    + '<div class="ptv-field"><input id="ptv-input" placeholder="pomodoro, fragola, caffè…" onkeydown="if(event.key===\'Enter\')caricaPonti()"><button class="ptv-go-inline" onclick="caricaPonti()">→</button></div>'
+    + '<div class="ponti-esempi-lab">Prova con</div>'
+    + '<div class="ponti-chips">'+['pomodoro','fragola','caffè','cioccolato','basilico'].map(function(c){ return '<button class="ponti-chip" onclick="_pontiCerca(\''+e(c)+'\')">'+e(c)+'</button>'; }).join('')+'</div>'
+    + '<div id="ptv-out"></div>');
 }
-function _pontiWorkflow(tabIniziale){
-  _apriVista('Ponti',
-    '<div class="ptv-head"><div class="ptv-h">Il piatto non è mai solo.</div>'+
-    '<div class="ptv-sub">Cosa dialoga col tuo piatto — e perché.</div>'+
-    '<div class="ptv-field"><input id="ptv-input" placeholder="brasato, pizza, pesce…" onkeydown="if(event.key===\'Enter\')caricaPonti()"></div>'+
-    '<div class="ptv-tabs">'+
-      '<div class="ptv-tab on" data-t="vino" onclick="_pontiSetTab(\'vino\')">Vino</div>'+
-      '<div class="ptv-tab" data-t="birra" onclick="_pontiSetTab(\'birra\')">Birra</div>'+
-      '<div class="ptv-tab" data-t="dolce" onclick="_pontiSetTab(\'dolce\')">Dolce</div>'+
-    '</div><button class="ptv-go" onclick="caricaPonti()">Trova il dialogo</button></div><div id="ptv-out"></div>');
-  _pontiTab = (tabIniziale==='vino'||tabIniziale==='birra'||tabIniziale==='dolce') ? tabIniziale : 'vino';
-  setTimeout(function(){ document.querySelectorAll('.ptv-tab').forEach(function(x){ x.classList.toggle('on', x.dataset.t===_pontiTab); }); }, 50);
-}
-function _pontiSetTab(t){
-  _pontiTab = t;
-  document.querySelectorAll('.ptv-tab').forEach(x=>x.classList.toggle('on', x.dataset.t===t));
-}
+window._pontiCerca=function(ing){ var i=document.getElementById('ptv-input'); if(i){ i.value=ing; } caricaPonti(); };
+function _pontiWorkflow(x){ apriPonti(); }
+function _pontiSetTab(t){}
 async function caricaPonti(){
   const inp = document.getElementById('ptv-input');
   const q = (inp?inp.value:'').trim();
   if(!q) return;
   const out = document.getElementById('ptv-out');
-  out.innerHTML = '<div class="vista-loading">Cerco il dialogo…</div>';
-  const urls = {
-    vino: '/v1/vino-per-piatto?piatto='+encodeURIComponent(q)+'&lang='+_vistaLang(),
-    birra:'/v1/birra-per-piatto?piatto='+encodeURIComponent(q)+'&lang='+_vistaLang(),
-    dolce:'/v1/dolce-per-menu?menu='+encodeURIComponent(q)+'&lang='+_vistaLang()
-  };
+  out.innerHTML = '<div class="vista-loading">Cerco i ponti tra le discipline…</div>';
   try{
-    const r = await fetch(urls[_pontiTab]);
+    const r = await fetch('/v1/ponti/'+encodeURIComponent(q));
     const d = await r.json();
-    if(_pontiTab==='vino') out.innerHTML = _pontiVino(d);
-    else if(_pontiTab==='birra') out.innerHTML = _pontiBirra(d);
-    else out.innerHTML = _pontiDolce(d);
-  }catch(e){ out.innerHTML = '<div class="vista-empty">Nessun dialogo trovato.</div>'; }
+    var ponti = d.ponti||[];
+    if(!ponti.length){ out.innerHTML = '<div class="vista-empty">Nessun ponte trovato per "'+_escV(q)+'".</div>'; return; }
+    var e=_escV;
+    var discLabel={ cucina:'In cucina', vino:'Col vino', birra:'Con la birra', caffe:'Col caffè', gelato:'Nel gelato', pasticceria:'In pasticceria', bar:'Al bar', panificazione:'Nel pane', formaggi:'Coi formaggi' };
+    var html='<div class="ponti-res-head"><span class="ponti-res-ing">'+e(d.ingrediente||q)+'</span><span class="ponti-res-sub">dialoga con '+ponti.length+(ponti.length===1?' disciplina':' discipline')+'</span></div>';
+    html += ponti.map(function(p){
+      var ab=(p.abbinati||[]).slice(0,5);
+      return '<div class="ponti-disc">'
+        + '<div class="ponti-disc-lab">'+e(discLabel[p.disciplina]||p.disciplina)+'</div>'
+        + '<div class="ponti-disc-items">'+ab.map(function(a){
+            return '<span class="ponti-disc-item">'+e(String(a.ingrediente).replace(/_/g,' '))+(a.forza?'<span class="ponti-forza">'+Math.round(a.forza)+'</span>':'')+'</span>';
+          }).join('')+'</div></div>';
+    }).join('');
+    out.innerHTML = html;
+  }catch(e){ out.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>'; }
 }
 function _pontiNota(txt){ return txt ? '<div class="ptv-nota"><div class="ptv-nota-lab">◉ Il principio</div><div class="ptv-nota-txt">'+_escV(txt)+'</div></div>' : ''; }
 function _pontiVino(d){

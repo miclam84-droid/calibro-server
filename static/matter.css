@@ -276,3 +276,20 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .avz-card2:hover{border-color:#c77b3f}
 .avz-card2-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141d22;line-height:1.15}
 .avz-card2-sum{font-family:'Inter',sans-serif;font-size:11.5px;color:#5a6c70;line-height:1.35}
+
+/* ═══ PONTI universali — ingrediente × discipline ═══ */
+.ptv-field{display:flex;gap:8px;margin:0 16px 16px}
+.ptv-field input{flex:1;min-height:50px;border:1.5px solid #141d22;border-radius:0;background:#fff;padding:0 14px;font-family:'IBM Plex Mono',monospace;font-size:15px;color:#141d22;-webkit-text-fill-color:#141d22;box-shadow:3px 3px 0 rgba(20,29,34,.12)}
+.ptv-field input:focus{outline:none;border-color:#c77b3f}
+.ptv-go-inline{flex:0 0 50px;height:50px;background:#c77b3f;color:#141d22;border:1.5px solid #141d22;border-radius:0;font-size:20px;cursor:pointer}
+.ponti-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 16px 16px}
+.ponti-chip{background:#fff;border:1.5px solid #c4c0b4;border-radius:0;padding:8px 12px;font-family:'Inter',sans-serif;font-size:13px;color:#141d22;cursor:pointer;text-transform:capitalize}
+.ponti-chip:active{background:#f0dece}
+.ponti-res-head{margin:0 16px 16px;padding-bottom:12px;border-bottom:1px solid #c4c0b4}
+.ponti-res-ing{display:block;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;color:#141d22;text-transform:capitalize}
+.ponti-res-sub{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70}
+.ponti-disc{margin:0 16px 16px;background:#fff;border:1.5px solid #141d22;box-shadow:3px 3px 0 rgba(20,29,34,.12);padding:14px}
+.ponti-disc-lab{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#12545d;text-transform:uppercase;letter-spacing:.03em;margin-bottom:10px}
+.ponti-disc-items{display:flex;flex-wrap:wrap;gap:8px}
+.ponti-disc-item{display:inline-flex;align-items:center;gap:6px;background:#f4f2ec;border:1px solid #c4c0b4;padding:6px 10px;font-family:'Inter',sans-serif;font-size:13px;color:#141d22;text-transform:capitalize}
+.ponti-forza{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#c77b3f}
