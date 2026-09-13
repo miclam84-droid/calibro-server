@@ -197,3 +197,11 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 /* ═══ HERO che vende (P0 #1) — conseguenza + CTA ═══ */
 .crus-conseguenza{display:block;font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#cbd6da;margin-top:12px}
 .crus-cta{display:inline-block;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#e8935a;margin-top:14px}
+
+/* ═══ PONTI esempi concreti (P0 #3) ═══ */
+.ponti-esempi-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#5a6c70;margin:20px 16px 10px}
+.ponti-esempio{display:flex;align-items:center;gap:10px;width:calc(100% - 32px);margin:0 16px 8px;padding:12px 14px;background:#fff;border:1.5px solid #141d22;border-radius:0;box-shadow:3px 3px 0 rgba(20,29,34,.12);cursor:pointer;text-align:left}
+.ponti-esempio:active{transform:translate(3px,3px);box-shadow:0 0 0}
+.ponti-es-ing{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141d22;text-transform:capitalize;flex-shrink:0}
+.ponti-es-arr{color:#c77b3f;font-weight:700;flex-shrink:0}
+.ponti-es-abb{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;text-transform:capitalize;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

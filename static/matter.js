@@ -5611,7 +5611,23 @@ function apriPonti(){
   }).join('');
   _apriVista('Ponti',
     '<div class="crea-intro">Scopri tutto ciò che un ingrediente sa fare — tra cucina, vino, caffè, pane e cocktail.</div>'
-    + cards);
+    + cards
+    + '<div class="ponti-esempi-lab">Esempi dal grafo</div><div id="ponti-esempi"><div class="skel-riga skeleton" style="height:44px;margin:0 16px 8px"></div><div class="skel-riga skeleton" style="height:44px;margin:0 16px 8px"></div></div>');
+  // esempi concreti live dal backend (P0 #3)
+  ['pomodoro','fragola','burro'].forEach(function(ing){
+    fetch('/v1/abbina/'+encodeURIComponent(ing)).then(function(r){return r.json();}).then(function(j){
+      var a=(j.abbinamenti||[]).slice(0,3).map(function(x){return x.ingrediente;});
+      if(!a.length) return;
+      var cont=document.getElementById('ponti-esempi');
+      if(!cont) return;
+      if(cont.querySelector('.skeleton')) cont.innerHTML='';
+      var row=document.createElement('button');
+      row.className='ponti-esempio';
+      row.onclick=function(){ _pontiWorkflow('vino'); setTimeout(function(){ var i=document.getElementById('ptv-input'); if(i){ i.value=ing; if(typeof caricaPonti==='function') caricaPonti(); } },150); };
+      row.innerHTML='<span class="ponti-es-ing">'+_escV(ing)+'</span><span class="ponti-es-arr">↔</span><span class="ponti-es-abb">'+_escV(a.join(', '))+'</span>';
+      cont.appendChild(row);
+    }).catch(function(){});
+  });
 }
 function _pontiWorkflow(tabIniziale){
   _apriVista('Ponti',
