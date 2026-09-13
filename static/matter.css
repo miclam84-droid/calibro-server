@@ -205,3 +205,12 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .ponti-es-ing{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141d22;text-transform:capitalize;flex-shrink:0}
 .ponti-es-arr{color:#c77b3f;font-weight:700;flex-shrink:0}
 .ponti-es-abb{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;text-transform:capitalize;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ═══ COME RAGIONA MATTER (P1 proof of intelligence) ═══ */
+.crm{margin:0 16px 24px;padding:20px;background:#141d22;border-radius:0;box-shadow:4px 4px 0 rgba(20,29,34,.2)}
+.crm-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7fb0c4;margin-bottom:16px}
+.crm-cards{display:flex;flex-direction:column;gap:14px}
+.crm-card{border-left:2px solid #c77b3f;padding-left:14px}
+.crm-t{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#fff;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
+.crm-d{font-family:'Inter',sans-serif;font-size:13px;color:#cbd6da;line-height:1.5}
+.crm-n{font-family:'IBM Plex Mono',monospace;font-weight:700;color:#e8935a}
