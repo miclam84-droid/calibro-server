@@ -227,3 +227,19 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .quad-hero-stats{display:flex;gap:18px;flex-wrap:wrap}
 .qh-stat{font-family:'Inter',sans-serif;font-size:13px;color:#cbd6da}
 .qh-n{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:22px;color:#e8935a;margin-right:4px}
+
+/* ═══ ATLANTE — gerarchia testa + quadrettato contenuto + card ═══ */
+/* manifesto Atlante: gerarchia più pulita, tag piccolo sopra, claim grande */
+#screen-mappa .mtr-manifesto{padding:20px 16px 14px}
+#screen-mappa .mtr-manifesto-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#c77b3f}
+#screen-mappa .mtr-manifesto-claim{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;line-height:1.1;color:#141d22;letter-spacing:-.02em}
+/* quadrettato reticolo: contenuto nei bordi, non sborda */
+.mtr-manifesto,.quad-empty,.dna-empty{background-clip:padding-box!important;overflow:hidden}
+/* le 2 viste-launch: card più nette con accento */
+.vista-launch-btn{border:1.5px solid #141d22!important;border-radius:0!important;box-shadow:3px 3px 0 rgba(20,29,34,.12)!important;background:#fff!important}
+.vista-launch-btn:active{transform:translate(3px,3px);box-shadow:0 0 0!important}
+.vl-ico{color:#c77b3f}
+.vl-t{font-family:'Space Grotesk',sans-serif;font-weight:700;color:#141d22}
+.vl-d{color:#5a6c70}
+/* tab CAPIRE/USARE/CREARE/MISURARE: più respiro */
+.mappa-porte .mappa-tab{padding:12px 8px!important}
