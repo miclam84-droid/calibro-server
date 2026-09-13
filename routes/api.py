@@ -4187,17 +4187,19 @@ _FAMIGLIE_AROMA = {
     "Animale/Pungente": ["pesce", "pungente", "animale", "formaggio", "sulfureo", "zolfo"],
 }
 
+# famiglie generiche (comuni a molti ingredienti) pesano meno di quelle caratterizzanti
+_FAM_PESO = {"Grasso/Ceroso": 0.4, "Chimico/Solvente": 0.4, "Dolce": 0.7}
 def _famiglie_da_composti(composti):
-    """Dato l'elenco composti (con 'aroma'), restituisce le famiglie aromatiche ordinate per frequenza."""
-    conteggio = {}
+    """Dato l'elenco composti (con 'aroma'), restituisce le famiglie aromatiche ordinate per rilevanza.
+    Le famiglie caratterizzanti (Agrumato, Floreale...) pesano più di quelle generiche (Grasso/Ceroso)."""
+    punteggio = {}
     for c in composti:
         aroma = (c.get("aroma", "") or "").lower()
         for fam, chiavi in _FAMIGLIE_AROMA.items():
             if any(k in aroma for k in chiavi):
-                conteggio[fam] = conteggio.get(fam, 0) + 1
-    # ordina per frequenza decrescente
-    ordinate = sorted(conteggio.items(), key=lambda x: -x[1])
-    return [{"famiglia": f, "n_composti": n} for f, n in ordinate]
+                punteggio[fam] = punteggio.get(fam, 0) + _FAM_PESO.get(fam, 1.0)
+    ordinate = sorted(punteggio.items(), key=lambda x: -x[1])
+    return [{"famiglia": f, "rilevanza": round(n,1)} for f, n in ordinate]
 
 
 @bp.route("/v1/famiglie-aromatiche/<ingrediente>")
