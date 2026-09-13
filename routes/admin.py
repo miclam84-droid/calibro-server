@@ -8038,14 +8038,21 @@ def admin_test_provider():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     out = {}
-    # Anthropic
+    # Anthropic - con dettaglio 400
     try:
-        import ai_gateway as GW
-        data, _ = GW._anthropic_call(GW._MODEL_SONNET, [{"role":"user","content":"Di' solo: ciao"}], max_tokens=20)
-        txt = "".join(b.get("text","") for b in data.get("content",[]))
-        out["anthropic"] = "OK: "+txt[:40] if txt else "VUOTO"
+        import os, json as _j, urllib.request as _ur, urllib.error as _ue
+        _key = os.environ.get("ANTHROPIC_API_KEY","")
+        _payload = {"model":"claude-sonnet-4-5","max_tokens":20,"messages":[{"role":"user","content":"Di solo ciao"}]}
+        _req = _ur.Request("https://api.anthropic.com/v1/messages", data=_j.dumps(_payload).encode(),
+                           headers={"x-api-key":_key,"anthropic-version":"2023-06-01","content-type":"application/json"})
+        try:
+            _r = _ur.urlopen(_req, timeout=30)
+            _d = _j.loads(_r.read().decode())
+            out["anthropic"] = "OK: "+_d.get("content",[{}])[0].get("text","?")[:40]
+        except _ue.HTTPError as _he:
+            out["anthropic"] = f"HTTP {_he.code}: "+_he.read().decode()[:200]
     except Exception as e:
-        out["anthropic"] = "ERR: "+str(e)[:80]
+        out["anthropic"] = "ERR: "+str(e)[:100]
     # OpenAI (gpt chat)
     try:
         import ai_gateway as GW
