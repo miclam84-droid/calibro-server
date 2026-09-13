@@ -4247,3 +4247,43 @@ def connessioni_conta(ingrediente):
         return jsonify({"ingrediente": ingrediente, "connessioni": (n[0] if n else 0)})
     except Exception as e:
         return jsonify({"ingrediente": ingrediente, "connessioni": 0, "errore": str(e)[:80]})
+
+
+@bp.route("/v1/quaderno/riepilogo")
+def quaderno_riepilogo():
+    """Second brain: riepilogo dell'attività dell'utente per 'Continua dove eri' e Quaderno hero.
+    Aggrega ultime misure, ricette salvate, diagnosi. Robusto: salta le tabelle che non esistono."""
+    from flask import request, jsonify
+    import os, psycopg2
+    device = request.headers.get("X-Device-Id") or request.args.get("device", "")
+    out = {"misure": [], "n_misure": 0, "n_ricette": 0, "n_diagnosi": 0, "ultima_attivita": None}
+    if not device:
+        return jsonify(out)
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ultime misure (tabella esistente)
+        try:
+            cur.execute("""SELECT fenomeno, valore, unita, creato_il FROM misure_salvate
+                           WHERE device_id = %s ORDER BY creato_il DESC LIMIT 5""", (device,))
+            for r in cur.fetchall():
+                out["misure"].append({"fenomeno": r[0], "valore": r[1], "unita": r[2]})
+            cur.execute("SELECT COUNT(*) FROM misure_salvate WHERE device_id = %s", (device,))
+            out["n_misure"] = cur.fetchone()[0]
+        except Exception:
+            conn.rollback()
+        # ricette salvate (se la tabella esiste)
+        try:
+            cur.execute("SELECT COUNT(*) FROM ricette_salvate WHERE device_id = %s", (device,))
+            out["n_ricette"] = cur.fetchone()[0]
+        except Exception:
+            conn.rollback()
+        # diagnosi/conversazioni salvate (se la tabella esiste)
+        try:
+            cur.execute("SELECT COUNT(*) FROM conversazioni_salvate WHERE device_id = %s", (device,))
+            out["n_diagnosi"] = cur.fetchone()[0]
+        except Exception:
+            conn.rollback()
+        cur.close(); conn.close()
+    except Exception as e:
+        out["errore"] = str(e)[:80]
+    return jsonify(out)
