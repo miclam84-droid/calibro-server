@@ -257,3 +257,12 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .scheda-stream .referto-num{background:#141d22;padding:14px;margin:12px 0}
 /* pulsante salva in fondo alla card, ben distinto */
 .chat-salva-inline{margin:14px 16px 8px!important;background:#c77b3f!important;color:#141d22!important;border:1.5px solid #141d22!important;border-radius:0!important;font-weight:700!important;box-shadow:3px 3px 0 rgba(20,29,34,.15)!important}
+
+/* ═══ FLAVOUR NETWORK — grafo visivo animato ═══ */
+.fnv-graph-wrap{margin:0 16px 20px;background:#f4f2ec;border:1.5px solid #141d22;box-shadow:4px 4px 0 rgba(20,29,34,.12)}
+.fnv-graph{width:100%;display:block}
+.fnv-g-line{opacity:0;animation:fnvLine .4s ease forwards}
+@keyframes fnvLine{from{opacity:0}to{opacity:1}}
+.fnv-g-node{opacity:0;animation:fnvNode .4s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes fnvNode{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){ .fnv-g-line,.fnv-g-node{animation:none;opacity:1} }

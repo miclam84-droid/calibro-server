@@ -145,7 +145,8 @@ window.caricaFlavour = async function(term){
     if(!d.abbinamenti || !d.abbinamenti.length){ out.innerHTML = '<div class="vista-empty">Nessun dato per questo ingrediente.</div>'; return; }
     const sorpr = d.abbinamenti.filter(a=>a.sorprendente);
     const classici = d.abbinamenti.filter(a=>!a.sorprendente);
-    let h = '<div class="fnv-center"><div class="fnv-center-lab">◉ Ingrediente</div><div class="fnv-center-name">'+_escV(d.ingrediente||q)+'</div>'+(d.nota?'<div class="fnv-center-nota">'+_escV(d.nota)+'</div>':'')+'</div>';
+    let h = _flavourGrafo(d.ingrediente||q, d.abbinamenti.slice(0,6));
+    h += '<div class="fnv-center"><div class="fnv-center-lab">◉ Ingrediente</div><div class="fnv-center-name">'+_escV(d.ingrediente||q)+'</div>'+(d.nota?'<div class="fnv-center-nota">'+_escV(d.nota)+'</div>':'')+'</div>';
     if(sorpr.length){
       h += '<div class="fnv-sec-h"><span class="t">Sorprendenti</span><span class="rule"></span><span class="cnt">'+sorpr.length+'</span></div>';
       h += sorpr.map((a,i)=>_flavourNode(a,'s'+i,true,d.ingrediente||q)).join('');
@@ -158,6 +159,34 @@ window.caricaFlavour = async function(term){
   }catch(e){ out.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>'; }
 }
 
+window._flavourGrafo = function(centro, nodi){
+  var e=_escV;
+  var W=358, H=280, cx=W/2, cy=H/2, R=95;
+  var svg='<svg class="fnv-graph" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  // linee dal centro ai nodi
+  nodi.forEach(function(a,i){
+    var ang=(-90 + i*(360/nodi.length))*Math.PI/180;
+    var x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
+    svg+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="#c4c0b4" stroke-width="1" class="fnv-g-line" style="animation-delay:'+(i*0.08)+'s"/>';
+  });
+  // nodi esterni
+  nodi.forEach(function(a,i){
+    var ang=(-90 + i*(360/nodi.length))*Math.PI/180;
+    var x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
+    var sorp=a.sorprendente;
+    svg+='<g class="fnv-g-node" style="animation-delay:'+(i*0.08+0.1)+'s">';
+    svg+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+(sorp?'#c77b3f':'#245979')+'"/>';
+    var tx=x, anchor='middle', dy=(y<cy?-10:16);
+    svg+='<text x="'+tx+'" y="'+(y+dy)+'" text-anchor="'+anchor+'" font-family="Inter,sans-serif" font-size="10" fill="#141d22">'+e(String(a.ingrediente).slice(0,14))+'</text>';
+    svg+='</g>';
+  });
+  // centro
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="9" fill="#141d22" stroke="#c77b3f" stroke-width="2"/>';
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="3" fill="#c77b3f"/>';
+  svg+='<text x="'+cx+'" y="'+(cy+26)+'" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="13" fill="#141d22">'+e(centro)+'</text>';
+  svg+='</svg>';
+  return '<div class="fnv-graph-wrap">'+svg+'</div>';
+};
 window._flavourNode = function(a,key,surprise,centro){
   const n = Math.round(a.overlap||0);
   // TUTTI i nodi (classici e sorprendenti) hanno il dettaglio espandibile con il bottone "Crea ricetta"
