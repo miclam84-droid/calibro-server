@@ -108,31 +108,23 @@ window.apriCartaFilosofia = function(){
 
 window.apriMenuBuilder = function(){
   var e=_escV;
-  var strumenti=[
-    ['Flavour Pairing','Trova cosa si abbina, dai composti aromatici'],
-    ['Costruisci un piatto','Parti da un ingrediente, costruisci l\'accostamento'],
-    ['Analizza un menu','Controlla equilibrio e ridondanze'],
-    ['Sostituzioni intelligenti','Sostituisci mantenendo il profilo aromatico']
-  ];
-  var cards=strumenti.map(function(s,i){
-    return '<button class="ml-card" onclick="_mbWorkspace()">'
-      + '<span class="ml-card-num">0'+(i+1)+'</span>'
-      + '<span class="ml-card-t">'+e(s[0])+'</span>'
-      + '<span class="ml-card-d">'+e(s[1])+'</span>'
-      + '<span class="ml-card-arr">\u2192</span></button>';
-  }).join('');
+  _menuIngredienti = [];
   _apriVista('Menu Lab',
     '<div class="ml-hero"><div class="ml-hero-lab">MENU LAB</div>'
-    + '<div class="ml-hero-h">Progetta un menu degustazione in 8 minuti.</div>'
-    + '<div class="ml-hero-sub">Ogni piatto e un equilibrio tra aromi, consistenze, temperatura, acidita, grassi e tecniche.</div></div>'
-    + '<div class="ml-grid">'+cards+'</div>'
-    + '<div class="ml-tmpl-lab">Parti da un template</div>'
+    + '<div class="ml-hero-h">Costruisci per composti.</div>'
+    + '<div class="ml-hero-sub">Aggiungi gli ingredienti che hai: Matter trova le combinazioni che dialogano davvero, dal grafo aromatico reale.</div></div>'
+    + '<div class="mbv-add"><input id="mbv-input" placeholder="aggiungi un ingrediente\u2026" onkeydown="if(event.key===\'Enter\')mbAdd()"><button onclick="mbAdd()">+</button></div>'
+    + '<div class="mbv-chips" id="mbv-chips"></div>'
+    + '<button class="mbv-go" id="mbv-go" onclick="mbProposte()" disabled>Trova le combinazioni</button>'
+    + '<div id="mbv-out"></div>'
+    + '<div class="ml-tmpl-lab">Oppure parti da un template</div>'
     + '<div class="ml-tmpl">'
     +   '<button class="ml-tmpl-btn" onclick="_mbDaTemplate(\'degustazione\')">Menu degustazione</button>'
     +   '<button class="ml-tmpl-btn" onclick="_mbDaTemplate(\'pizza\')">Menu pizzeria</button>'
     +   '<button class="ml-tmpl-btn" onclick="_mbDaTemplate(\'drink\')">Drink list</button>'
     +   '<button class="ml-tmpl-btn" onclick="_mbDaTemplate(\'brunch\')">Brunch</button>'
     + '</div>');
+  _mbRenderChips();
 };
 window._mbDaTemplate = function(tipo){
   var semi={ degustazione:['capasanta','topinambur','nocciola'], pizza:['pomodoro','mozzarella','basilico'], drink:['gin','lime','cetriolo'], brunch:['uova','avocado','pane'] };
