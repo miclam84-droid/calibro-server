@@ -644,7 +644,37 @@ function _popolaCruscotto(f){
     else { e.innerHTML='Prova un esperimento →'; e.classList.add('crus-invito'); }
   }
 }
+// Casi diagnostici rotanti: pool ampio, 3 diversi ogni giorno (stimolo quotidiano)
+var _CASI_POOL = [
+  ['Biga collassata dopo 14h — che faccio?','La mia biga è collassata dopo 14 ore. È recuperabile?'],
+  ['Sour troppo aspro — come ribilancio?','Il cliente rimanda indietro il sour: troppo aspro. Come ribilancio?'],
+  ['Gelato duro in vetrina — che sbaglio?','Il gelato esce duro dalla vetrina. Sbaglio il bilanciamento?'],
+  ['Maionese impazzita — la salvo?','La maionese si è separata. Come la recupero senza rifarla?'],
+  ['Espresso troppo acido — dove intervengo?','L\'espresso esce acido e sottoestratto. Quali parametri cambio?'],
+  ['Pizza gommosa al centro — perché?','La pizza resta gommosa al centro anche se cotta. Cosa sbaglio?'],
+  ['Ganache separata — come emulsiono?','La ganache si è separata e fa i grumi. Come la recupero?'],
+  ['Carne stopposa dopo la cottura — perché?','Il brasato esce stopposo invece che morbido. Dove ho sbagliato?'],
+  ['Pane senza alveolatura — che regolo?','Il pane esce compatto, niente alveoli. Idratazione o lievitazione?'],
+  ['Risotto slegato — come lo manteco?','Il risotto non si lega, resta acquoso. Come sistemo la mantecatura?'],
+  ['Cocktail sbilanciato sull\'alcol — che faccio?','Il cocktail sa troppo di alcol. Come ammorbidisco senza annacquare?'],
+  ['Crema pasticcera con grumi — perché?','La crema pasticcera fa i grumi mentre cuoce. Cosa correggo?']
+];
+function _renderCasiRotanti(){
+  var cont=document.getElementById('hd-casi');
+  if(!cont) return;
+  // seed sul giorno dell'anno → 3 casi che ruotano ogni giorno
+  var oggi=new Date();
+  var giorno=Math.floor((oggi - new Date(oggi.getFullYear(),0,0))/86400000);
+  var n=_CASI_POOL.length;
+  var idx=[(giorno*3)%n, (giorno*3+1)%n, (giorno*3+2)%n];
+  var e=_escV;
+  cont.innerHTML = idx.map(function(i){
+    var c=_CASI_POOL[i];
+    return '<button class="hd-problema" onclick="_diagnosiVai(\''+e(c[1]).replace(/'/g,"\\'")+'\')">'+e(c[0])+'</button>';
+  }).join('');
+}
 function renderHome(j){
+  _renderCasiRotanti();
   const f = j.fenomeno || {};
   { const _h=document.getElementById('scopri-hero'); if(_h) _h.classList.remove('loading'); }
   // CRUSCOTTO OPERATIVO — il colpo d'occhio (fenomeno + numero + misura + esperimento)
