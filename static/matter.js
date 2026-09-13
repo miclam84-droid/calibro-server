@@ -4400,17 +4400,46 @@ var _RIC_ICONE={
   tecnica:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/></svg>'
 };
 var _RIC_TIPO_LAB={ricetta:'Ricette',ingrediente:'Ingredienti',fenomeno:'Fenomeni',tecnica:'Tecniche'};
+// Command Palette: scorciatoia ⌘K / Ctrl+K (desktop)
+if(!window._cmdkBound){
+  window._cmdkBound=true;
+  document.addEventListener('keydown', function(ev){
+    if((ev.metaKey||ev.ctrlKey) && (ev.key==='k'||ev.key==='K')){
+      ev.preventDefault();
+      if(typeof apriRicerca==='function') apriRicerca();
+    }
+  });
+}
 function apriRicerca(){
   _apriVista('Cerca',
-    '<div class="ric-glob-search"><input id="ric-glob-input" placeholder="Cerca un piatto, un ingrediente, un fenomeno..." oninput="_ricercaLive(this.value)" autocomplete="off"></div>'
-    + '<div id="ric-glob-out"><div class="ric-glob-hint">Digita per cercare tra ricette, ingredienti, fenomeni e tecniche.</div></div>');
+    '<div class="ric-glob-search"><input id="ric-glob-input" placeholder="Cerca o esegui un\'azione…" oninput="_ricercaLive(this.value)" autocomplete="off"></div>'
+    + '<div id="ric-glob-out">'+_ricercaAzioni()+'</div>');
   setTimeout(function(){ var i=document.getElementById('ric-glob-input'); if(i) i.focus(); }, 200);
+}
+// Command Palette: azioni rapide quando il campo è vuoto
+function _ricercaAzioni(){
+  var azioni=[
+    ['Chiedi a Matter','chiudiVista();switchTab(\'chiedi\')','◎'],
+    ['Motore Panificazione','chiudiVista();_caricaModulo(\'motori\').then(function(){apriMotorePanificazione&&apriMotorePanificazione()})','🍞'],
+    ['Menu Lab','chiudiVista();_caricaModulo(\'menu\').then(function(){apriMenuBuilder&&apriMenuBuilder()})','▦'],
+    ['Ponti','chiudiVista();apriPonti&&apriPonti()','⇄'],
+    ['Flavour Network','chiudiVista();_caricaModulo(\'flavour\').then(function(){apriFlavour&&apriFlavour()})','✦'],
+    ['Calcolatori','chiudiVista();apriCalcolatori&&apriCalcolatori()','∑'],
+    ['Il Quaderno','chiudiVista();switchTab(\'quaderno\')','▤'],
+    ['Atlante fenomeni','chiudiVista();switchTab(\'mappa\')','◉']
+  ];
+  var e=_escV;
+  return '<div class="ric-glob-grp"><div class="ric-glob-grp-lab">Azioni rapide</div>'
+    + azioni.map(function(a){
+        return '<button class="ric-glob-item" onclick="'+a[1]+'"><span class="ric-glob-ico" style="font-size:14px">'+a[2]+'</span><span class="ric-glob-nome">'+e(a[0])+'</span></button>';
+      }).join('')
+    + '</div>';
 }
 function _ricercaLive(q){
   clearTimeout(_ricercaTimer);
   q=(q||'').trim();
   var out=document.getElementById('ric-glob-out');
-  if(q.length<2){ if(out) out.innerHTML='<div class="ric-glob-hint">Digita almeno 2 lettere.</div>'; return; }
+  if(q.length<2){ if(out) out.innerHTML=_ricercaAzioni(); return; }
   _ricercaTimer=setTimeout(async function(){
     if(out) out.innerHTML='<div class="calc-loading">Cerco…</div>';
     try{
