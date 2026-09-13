@@ -4221,3 +4221,30 @@ def famiglie_aromatiche(ingrediente):
                         "famiglie_principali": [f["famiglia"] for f in fam[:3]]})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/v1/connessioni-conta/<ingrediente>")
+def connessioni_conta(ingrediente):
+    """Conta le connessioni totali di un ingrediente nel grafo (per la card Ponti: 'N connessioni')."""
+    from flask import jsonify
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        import unicodedata
+        def _norm(s):
+            s = s.lower().strip()
+            s = unicodedata.normalize("NFD", s)
+            return "".join(c for c in s if unicodedata.category(c) != "Mn").replace(" ","_").replace("-","_")
+        ing_n = _norm(ingrediente)
+        # trovo il nodo ingrediente
+        row = db.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                            AND (LOWER(id) LIKE ? OR LOWER(id) LIKE ?) LIMIT 1""",
+                         (f"%{ing_n}%", f"%{ingrediente.lower()}%")).fetchone()
+        if not row:
+            return jsonify({"ingrediente": ingrediente, "connessioni": 0})
+        nid = row[0]
+        n = db.execute("""SELECT COUNT(*) FROM edges WHERE (from_id=? OR to_id=?)
+                          AND relation='abbinamento_aromatico'""", (nid, nid)).fetchone()
+        return jsonify({"ingrediente": ingrediente, "connessioni": (n[0] if n else 0)})
+    except Exception as e:
+        return jsonify({"ingrediente": ingrediente, "connessioni": 0, "errore": str(e)[:80]})
