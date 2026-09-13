@@ -3381,7 +3381,8 @@ function _ricettaFenomeni(){
 }
 function _ricettaInMenu(){
   chiudiVista();
-  if(typeof apriSceltaMenu==='function') apriSceltaMenu();
+  if(typeof _caricaModulo==='function'){ _caricaModulo('menu').then(function(){ if(typeof apriMenuBuilder==='function') apriMenuBuilder(); }); }
+  else if(typeof apriMenuBuilder==='function'){ apriMenuBuilder(); }
 }
 function chiediSuRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
