@@ -8028,3 +8028,36 @@ def admin_test_builder_pc():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e)[:100], "tb": traceback.format_exc()[-200:]})
+
+
+@bp.route("/admin/test-provider")
+def admin_test_provider():
+    """Testa ogni provider AI separatamente per trovare quale è morto (credito/errore)."""
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    out = {}
+    # Anthropic
+    try:
+        import ai_gateway as GW
+        data, _ = GW._anthropic_call(GW._MODEL_SONNET, [{"role":"user","content":"Di' solo: ciao"}], max_tokens=20)
+        txt = "".join(b.get("text","") for b in data.get("content",[]))
+        out["anthropic"] = "OK: "+txt[:40] if txt else "VUOTO"
+    except Exception as e:
+        out["anthropic"] = "ERR: "+str(e)[:80]
+    # OpenAI (gpt chat)
+    try:
+        import ai_gateway as GW
+        r = GW._gpt_chat("Di' solo: ciao", max_tokens=20)
+        out["openai_gpt"] = "OK: "+r[:40] if r else "VUOTO"
+    except Exception as e:
+        out["openai_gpt"] = "ERR: "+str(e)[:80]
+    # Mistral
+    try:
+        import ai_gateway as GW
+        r = GW._mistral_call("Di' solo: ciao")
+        out["mistral"] = "OK: "+r[:40] if r else "VUOTO"
+    except Exception as e:
+        out["mistral"] = "ERR: "+str(e)[:80]
+    return jsonify(out)
