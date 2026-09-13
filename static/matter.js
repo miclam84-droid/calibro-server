@@ -662,6 +662,34 @@ var _CASI_POOL = [
 function _renderCasiRotanti(){
   var cont=document.getElementById('hd-casi');
   if(!cont) return;
+  var e=_escV;
+  // prova l'endpoint backend (casi curati, rotanti server-side)
+  fetch('/v1/casi-del-giorno').then(function(r){return r.json();}).then(function(j){
+    var casi=(j.casi||[]).slice(0,3);
+    if(!casi.length) throw new Error('vuoto');
+    cont.innerHTML = casi.map(function(c){
+      var label=c.caso||c.titolo||c.prompt;
+      var prompt=c.prompt||c.caso;
+      return '<button class="hd-problema" onclick="_diagnosiVai(\''+e(prompt).replace(/'/g,"\\'")+'\')">'+e(label)+'</button>';
+    }).join('');
+  }).catch(function(){ _renderCasiPool(); });
+}
+function _renderCasiPool(){
+  var cont=document.getElementById('hd-casi');
+  if(!cont) return;
+  var oggi=new Date();
+  var giorno=Math.floor((oggi - new Date(oggi.getFullYear(),0,0))/86400000);
+  var n=_CASI_POOL.length;
+  var idx=[(giorno*3)%n, (giorno*3+1)%n, (giorno*3+2)%n];
+  var e=_escV;
+  cont.innerHTML = idx.map(function(i){
+    var c=_CASI_POOL[i];
+    return '<button class="hd-problema" onclick="_diagnosiVai(\''+e(c[1]).replace(/'/g,"\\'")+'\')">'+e(c[0])+'</button>';
+  }).join('');
+}
+function _renderCasiRotanti_OLD(){
+  var cont=document.getElementById('hd-casi');
+  if(!cont) return;
   // seed sul giorno dell'anno → 3 casi che ruotano ogni giorno
   var oggi=new Date();
   var giorno=Math.floor((oggi - new Date(oggi.getFullYear(),0,0))/86400000);
