@@ -4227,24 +4227,23 @@ def famiglie_aromatiche(ingrediente):
 def connessioni_conta(ingrediente):
     """Conta le connessioni totali di un ingrediente nel grafo (per la card Ponti: 'N connessioni')."""
     from flask import jsonify
+    import psycopg2 as _pg
     try:
-        from db import carica_grafo
-        db = carica_grafo()
-        import unicodedata
-        def _norm(s):
-            s = s.lower().strip()
-            s = unicodedata.normalize("NFD", s)
-            return "".join(c for c in s if unicodedata.category(c) != "Mn").replace(" ","_").replace("-","_")
-        ing_n = _norm(ingrediente)
-        # trovo il nodo ingrediente
-        row = db.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                            AND (LOWER(id) LIKE ? OR LOWER(id) LIKE ?) LIMIT 1""",
-                         (f"%{ing_n}%", f"%{ingrediente.lower()}%")).fetchone()
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        # trovo il nodo ingrediente (per nome, case-insensitive)
+        _cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND (LOWER(name) = LOWER(%s) OR LOWER(name) LIKE LOWER(%s) OR LOWER(id) LIKE LOWER(%s))
+                        ORDER BY LENGTH(name) LIMIT 1""",
+                     (ingrediente, f"%{ingrediente}%", f"%{ingrediente}%"))
+        row = _cur.fetchone()
         if not row:
+            _cur.close(); _release_conn(_c)
             return jsonify({"ingrediente": ingrediente, "connessioni": 0})
         nid = row[0]
-        n = db.execute("""SELECT COUNT(*) FROM edges WHERE (from_id=? OR to_id=?)
-                          AND relation='abbinamento_aromatico'""", (nid, nid)).fetchone()
+        _cur.execute("""SELECT COUNT(*) FROM edges WHERE (from_id=%s OR to_id=%s)
+                        AND relation='abbinamento_aromatico'""", (nid, nid))
+        n = _cur.fetchone()
+        _cur.close(); _release_conn(_c)
         return jsonify({"ingrediente": ingrediente, "connessioni": (n[0] if n else 0)})
     except Exception as e:
         return jsonify({"ingrediente": ingrediente, "connessioni": 0, "errore": str(e)[:80]})
