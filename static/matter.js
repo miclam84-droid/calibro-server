@@ -1257,6 +1257,8 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
     + erroriHtml
     + spiegazione
     + connessiHtml
+    + '<div class="fen-chat-ctx"><div class="fen-chat-ctx-t">Hai un problema con questo fenomeno?</div>'
+    +   '<button class="fen-chat-ctx-btn" onclick="_chatDaFenomeno('+JSON.stringify(JSON.stringify(j.titolo||'')).replace(/'/g,"&#39;")+')">◎ Chiedi a Matter</button></div>'
     + '</div>';
 
   var card=document.createElement('div');card.className='scheda';card.innerHTML=html;
@@ -1266,6 +1268,11 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
   if(_paramLibro){ _caricaLibroAffiliato(_paramLibro, '.fen-scheda'); }
   card.scrollIntoView({behavior:'smooth',block:'start'});
 }
+window._chatDaFenomeno = function(titolo){
+  try{ _ctxChat = { fenomeno: titolo }; }catch(e){}
+  switchTab('chiedi'); if(typeof switchSubtab==='function') switchSubtab('chat');
+  setTimeout(function(){ if(typeof chiediTesto==='function') chiediTesto('Ho un problema con '+(titolo||'questo fenomeno')+'. Aiutami a diagnosticarlo.'); }, 200);
+};
 
 // [spostata in matter-chat.js]
 
