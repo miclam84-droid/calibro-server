@@ -605,11 +605,17 @@ function _popolaCruscotto(f){
   tgt = String(tgt||'').trim();
   // Il FENOMENO è il protagonista, non il numero (la svolta). Nome grande, numero come dettaglio.
   if(t){
-    var nome = f.nome || '—';
-    // nome può essere lungo: riduco il font se serve
+    var nomeRaw = f.nome || '—';
+    // pulisco: "Le uova (coagulazione)" → titolo "Le uova" + grandezza "coagulazione"
+    var mParen = nomeRaw.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+    var nome = mParen ? mParen[1].trim() : nomeRaw;
+    var grand = mParen ? mParen[2].trim() : (f.grandezza||'');
     t.textContent = nome;
     t.style.fontSize = nome.length>22 ? '20px' : (nome.length>14 ? '24px' : '');
     t.classList.remove('crus-target-blurred');
+    // mostro la grandezza come etichetta separata (mono, piccola)
+    var gEl=document.getElementById('crus-grandezza');
+    if(gEl){ gEl.textContent = grand ? grand.toLowerCase() : ''; gEl.style.display = grand?'block':'none'; }
   }
   if(ts){
     // sotto: il numero se c'è (nitido), altrimenti niente

@@ -243,3 +243,6 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .vl-d{color:#5a6c70}
 /* tab CAPIRE/USARE/CREARE/MISURARE: più respiro */
 .mappa-porte .mappa-tab{padding:12px 8px!important}
+
+/* ═══ card fenomeno del giorno — grandezza separata (no più "(coagulazione)") ═══ */
+.crus-grandezza{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#7fb0c4;margin:2px 0 6px}
