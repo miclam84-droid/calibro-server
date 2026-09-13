@@ -8068,3 +8068,31 @@ def admin_test_provider():
     except Exception as e:
         out["mistral"] = "ERR: "+str(e)[:80]
     return jsonify(out)
+
+
+@bp.route("/admin/conta-foto")
+def admin_conta_foto():
+    """Conta quante ricette hanno foto AI (cloudinary) vs blueprint vs niente."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM ricette")
+        tot = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%cloudinary%%'")
+        cloud = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%http%%' AND immagine::text NOT ILIKE '%%cloudinary%%'")
+        stock = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%blueprint%%'")
+        blueprint = cur.fetchone()[0]
+        # per disciplina, quante blueprint
+        cur.execute("""SELECT disciplina, COUNT(*) FILTER (WHERE immagine::text ILIKE '%%blueprint%%') bp,
+                       COUNT(*) tot FROM ricette GROUP BY disciplina ORDER BY bp DESC""")
+        per_disc = [{"disc": r[0], "blueprint": r[1], "tot": r[2]} for r in cur.fetchall() if r[1] > 0]
+        cur.close(); conn.close()
+        return jsonify({"totale": tot, "foto_ai_cloudinary": cloud, "foto_stock": stock,
+                        "blueprint": blueprint, "blueprint_per_disciplina": per_disc})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
