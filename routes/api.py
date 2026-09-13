@@ -4287,3 +4287,41 @@ def quaderno_riepilogo():
     except Exception as e:
         out["errore"] = str(e)[:80]
     return jsonify(out)
+
+
+# ── CASI DEL GIORNO (frasi home rotanti) ────────────────────────────────────
+_CASI_POOL = [
+    {"disciplina": "panificazione", "caso": "Biga collassata dopo 14h a 24°C — che faccio?", "prompt": "La mia biga è collassata dopo 14 ore a 24°C. Come recupero?"},
+    {"disciplina": "bar", "caso": "Sour troppo aspro — come ribilancio?", "prompt": "Il mio sour è troppo aspro, come ribilancio zucchero e acido?"},
+    {"disciplina": "gelateria", "caso": "Gelato duro in vetrina — che sbaglio?", "prompt": "Il mio gelato esce troppo duro dalla vetrina, dove sbaglio nel bilanciamento?"},
+    {"disciplina": "cucina", "caso": "Maionese impazzita — recuperarla o rifarla?", "prompt": "La mia maionese è impazzita, posso recuperarla o devo rifarla?"},
+    {"disciplina": "panificazione", "caso": "Impasto che non incorda — perché?", "prompt": "Il mio impasto non incorda dopo tanto lavoro, perché e come risolvo?"},
+    {"disciplina": "cucina", "caso": "Ragù troppo acido — correggo senza zucchero?", "prompt": "Il mio ragù è troppo acido, come correggo senza usare zucchero?"},
+    {"disciplina": "pasticceria", "caso": "Ganache separata — come la salvo?", "prompt": "La mia ganache si è separata, come la recupero?"},
+    {"disciplina": "bar", "caso": "Cocktail troppo diluito — dove sbaglio?", "prompt": "Il mio cocktail esce troppo diluito e piatto, dove sbaglio nella tecnica?"},
+    {"disciplina": "caffetteria", "caso": "Espresso troppo amaro — sovraestrazione?", "prompt": "Il mio espresso è troppo amaro, è sovraestrazione? Come regolo?"},
+    {"disciplina": "gelateria", "caso": "Sorbetto cristallizzato — troppo poco zucchero?", "prompt": "Il mio sorbetto è pieno di cristalli di ghiaccio, è questione di zuccheri?"},
+    {"disciplina": "panificazione", "caso": "Pizza gommosa al centro — cottura o idratazione?", "prompt": "La mia pizza resta gommosa al centro, è la cottura o l'idratazione?"},
+    {"disciplina": "cucina", "caso": "Bistecca grigia invece che rosa — temperatura?", "prompt": "La mia bistecca esce grigia dentro invece che rosa, sbaglio la temperatura?"},
+]
+
+@bp.route("/v1/casi-del-giorno")
+def casi_del_giorno():
+    """3 casi professionali a rotazione giornaliera (per la home - stimolo quotidiano)."""
+    from flask import jsonify
+    import datetime, hashlib
+    # rotazione deterministica per giorno: stessi 3 casi per tutto il giorno, diversi ogni giorno
+    oggi = datetime.date.today().isoformat()
+    seed = int(hashlib.md5(oggi.encode()).hexdigest(), 16)
+    n = len(_CASI_POOL)
+    # scelgo 3 indici diversi partendo dal seed del giorno
+    idx = [(seed + i * 7) % n for i in range(3)]
+    # dedup se collisioni
+    visti = []
+    for i in idx:
+        j = i
+        while j in visti:
+            j = (j + 1) % n
+        visti.append(j)
+    casi = [_CASI_POOL[i] for i in visti]
+    return jsonify({"data": oggi, "casi": casi})
