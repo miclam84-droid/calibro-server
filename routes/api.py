@@ -4168,3 +4168,54 @@ def genera_ricetta_stato(job_id):
     if job["stato"] == "errore":
         return jsonify({"stato": "errore", "errore": (job.get("risultato") or {}).get("errore", "errore")})
     return jsonify({"stato": "pronto", "ricetta": job.get("risultato")})
+
+
+# ── FAMIGLIE AROMATICHE ─────────────────────────────────────────────────────
+# Raggruppa i composti di un ingrediente in famiglie aromatiche (per Ponti e Flavour Network).
+_FAMIGLIE_AROMA = {
+    "Agrumato": ["agrume", "agrumat", "arancio", "limone", "bergamotto", "citr", "lime"],
+    "Floreale": ["floreale", "fiore", "rosa", "gelsomino", "ylang", "lavanda", "violetta"],
+    "Erbaceo": ["erbaceo", "erba", "verde", "foglia", "prato"],
+    "Fruttato": ["fruttato", "frutta", "mela", "pera", "pesca", "tropicale", "banana", "frutto"],
+    "Legnoso": ["legno", "legnoso", "cedro", "sandalo", "resina", "picea", "pino", "balsamico"],
+    "Speziato": ["speziato", "spezia", "pepe", "chiodo", "cannella", "zenzero", "hop"],
+    "Terroso": ["terroso", "terra", "fungo", "muschio", "sottobosco"],
+    "Dolce": ["dolce", "vaniglia", "miele", "caramello", "zucchero"],
+    "Grasso/Ceroso": ["grasso", "ceroso", "cera", "oleoso", "burro"],
+    "Fresco/Mentolato": ["fresco", "menta", "eucalipto", "canfora", "mentol", "balsam"],
+    "Chimico/Solvente": ["solvente", "etere", "alcolico", "fusel", "medicinale", "metallico"],
+    "Animale/Pungente": ["pesce", "pungente", "animale", "formaggio", "sulfureo", "zolfo"],
+}
+
+def _famiglie_da_composti(composti):
+    """Dato l'elenco composti (con 'aroma'), restituisce le famiglie aromatiche ordinate per frequenza."""
+    conteggio = {}
+    for c in composti:
+        aroma = (c.get("aroma", "") or "").lower()
+        for fam, chiavi in _FAMIGLIE_AROMA.items():
+            if any(k in aroma for k in chiavi):
+                conteggio[fam] = conteggio.get(fam, 0) + 1
+    # ordina per frequenza decrescente
+    ordinate = sorted(conteggio.items(), key=lambda x: -x[1])
+    return [{"famiglia": f, "n_composti": n} for f, n in ordinate]
+
+
+@bp.route("/v1/famiglie-aromatiche/<ingrediente>")
+def famiglie_aromatiche(ingrediente):
+    """Le famiglie aromatiche di un ingrediente (per Ponti e Flavour Network)."""
+    from flask import jsonify
+    import json as _j
+    try:
+        # chiamo la route composti_ingrediente che ritorna un Response Flask
+        resp = composti_ingrediente(ingrediente)
+        # estraggo il json (resp può essere Response o tuple)
+        raw = resp[0] if isinstance(resp, tuple) else resp
+        data = _j.loads(raw.get_data(as_text=True)) if hasattr(raw, "get_data") else raw
+        composti = data.get("composti", []) if isinstance(data, dict) else []
+        if not composti:
+            return jsonify({"ingrediente": ingrediente, "famiglie": [], "famiglie_principali": []})
+        fam = _famiglie_da_composti(composti)
+        return jsonify({"ingrediente": ingrediente, "n_composti": len(composti), "famiglie": fam,
+                        "famiglie_principali": [f["famiglia"] for f in fam[:3]]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
