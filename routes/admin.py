@@ -8130,3 +8130,30 @@ def admin_diag_fonti_foto():
     uk = os.environ.get("UNSPLASH_ACCESS_KEY", "")
     out["unsplash_key"] = bool(uk)
     return jsonify(out)
+
+
+@bp.route("/admin/conta-ricette-complete")
+def admin_conta_ricette_complete():
+    """Conta ricette con ingredienti/procedimento vuoti (buchi di qualità come i punti critici)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # vedo le colonne
+        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='ricette'")
+        colonne = [r[0] for r in cur.fetchall()]
+        cur.execute("SELECT COUNT(*) FROM ricette")
+        tot = cur.fetchone()[0]
+        out = {"totale": tot, "colonne": colonne}
+        if "ingredienti" in colonne:
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE ingredienti IS NULL OR ingredienti::text IN ('[]','null','')")
+            out["senza_ingredienti"] = cur.fetchone()[0]
+        if "procedimento" in colonne:
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE procedimento IS NULL OR TRIM(procedimento)=''")
+            out["senza_procedimento"] = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
