@@ -303,3 +303,7 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .princ-card-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#141d22;line-height:1.2}
 .princ-card-desc{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;line-height:1.4}
 .princ-card-formula{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#245979;background:#f4f2ec;padding:4px 8px;align-self:flex-start}
+
+/* ═══ FIX wordmark sotto status bar (safe-area) ═══ */
+.app-header{padding-top:max(env(safe-area-inset-top),8px)!important}
+.wm-text{padding-top:2px}
