@@ -523,6 +523,7 @@ if('serviceWorker' in navigator){
   <div class="chiedi-subtabs">
     <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi a Matter</button>
     <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Calcolatori</button>
+    <button class="subtab-btn" id="subtab-vetrina" onclick="_caricaModulo&&_caricaModulo('ricette').then(function(){apriVetrina&&apriVetrina()})">Vetrina</button>
   </div>
   <div class="chiedi-panel active" id="panel-chat">
     <div class="schede" id="schede">
@@ -816,7 +817,7 @@ if('serviceWorker' in navigator){
       <div class="quad-hero-claim">Tutto ciò che hai deciso di rendere tuo.</div>
       <div class="quad-hero-stats" id="quad-hero-stats">
         <span class="qh-stat"><span class="qh-n" id="qh-ricette">—</span> ricette</span>
-        <span class="qh-stat"><span class="qh-n" id="qh-diagnosi">—</span> diagnosi</span>
+        <span class="qh-stat"><span class="qh-n" id="qh-diagnosi">—</span> soluzioni</span>
         <span class="qh-stat"><span class="qh-n" id="qh-misure">—</span> misure</span>
       </div>
     </div>
@@ -833,7 +834,7 @@ if('serviceWorker' in navigator){
       <div class="quad-blocco-lab">Crescita</div>
       <div class="quad-blocco-grid">
         <button class="quad-cell" id="qtg-dna" onclick="switchQuaderno('dna')"><i class="ph ph-dna" aria-hidden="true"></i><span>DNA</span></button>
-        <button class="quad-cell" id="qtg-chat" onclick="switchQuaderno('chat')"><i class="ph ph-stethoscope" aria-hidden="true"></i><span>Diagnosi</span></button>
+        <button class="quad-cell" id="qtg-chat" onclick="switchQuaderno('chat')"><i class="ph ph-bookmark-simple" aria-hidden="true"></i><span>Soluzioni</span></button>
         <button class="quad-cell" id="qtg-palestra" onclick="switchQuaderno('palestra')"><i class="ph ph-barbell" aria-hidden="true"></i><span>Palestra</span></button>
       </div>
     </div>
