@@ -5739,8 +5739,13 @@ async function caricaPonti(){
     var ponti = d.ponti||[];
     if(!ponti.length){ out.innerHTML = '<div class="vista-empty">Nessun ponte trovato per "'+_escV(q)+'".</div>'; return; }
     var e=_escV;
-    var discLabel={ cucina:'In cucina', vino:'Col vino', birra:'Con la birra', caffe:'Col caffè', gelato:'Nel gelato', pasticceria:'In pasticceria', bar:'Al bar', panificazione:'Nel pane', formaggi:'Coi formaggi' };
-    var html='<div class="ponti-res-head"><span class="ponti-res-ing">'+e(d.ingrediente||q)+'</span><span class="ponti-res-sub">dialoga con '+ponti.length+(ponti.length===1?' disciplina':' discipline')+'</span></div>';
+    // conteggio connessioni reale (autorevolezza)
+    var nConn=null;
+    try{ var rc=await fetch('/v1/connessioni-conta/'+encodeURIComponent(q)); var jc=await rc.json(); nConn=jc.connessioni; }catch(x){}
+    var discLabel={ cucina:'In cucina', vino:'Col vino', birra:'Con la birra', caffe:'Col caffè', gelato:'Nel gelato', gelateria:'Nel gelato', pasticceria:'In pasticceria', bar:'Al bar', cocktail:'Nei cocktail', panificazione:'Nel pane', formaggi:'Coi formaggi' };
+    var sub = 'dialoga con '+ponti.length+(ponti.length===1?' disciplina':' discipline');
+    if(nConn!=null) sub = nConn+' ingredienti in '+ponti.length+(ponti.length===1?' disciplina':' discipline');
+    var html='<div class="ponti-res-head"><span class="ponti-res-ing">'+e(d.ingrediente||q)+'</span><span class="ponti-res-sub">'+sub+'</span></div>';
     html += ponti.map(function(p){
       var ab=(p.abbinati||[]).slice(0,5);
       return '<div class="ponti-disc">'
