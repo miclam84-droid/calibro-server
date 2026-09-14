@@ -8151,9 +8151,52 @@ def admin_conta_ricette_complete():
             cur.execute("SELECT COUNT(*) FROM ricette WHERE ingredienti IS NULL OR ingredienti::text IN ('[]','null','')")
             out["senza_ingredienti"] = cur.fetchone()[0]
         if "procedimento" in colonne:
-            cur.execute("SELECT COUNT(*) FROM ricette WHERE procedimento IS NULL OR procedimento::text IN ('[]','null','""','')")
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE procedimento IS NULL OR TRIM(procedimento)=''")
             out["senza_procedimento"] = cur.fetchone()[0]
         cur.close(); conn.close()
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/completa-ricette-vuote")
+def admin_completa_ricette_vuote():
+    """Worker: rigenera ingredienti + procedimento per le 428 ricette vuote (gusci) usando il builder."""
+    from flask import request, jsonify
+    import os, psycopg2, threading, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "8")), 20)
+
+    def _w(n):
+        fatti = 0; errori = []
+        try:
+            from db import carica_grafo
+            from builder import genera_ricetta
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            cur.execute("""SELECT id, nome, disciplina FROM ricette
+                           WHERE ingredienti IS NULL OR ingredienti::text IN ('[]','null','') LIMIT %s""", (n,))
+            righe = cur.fetchall()
+            db = carica_grafo()
+            for rid, nome, disc in righe:
+                try:
+                    r = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc or "cucina", lang="it")
+                    ing = r.get("ingredienti", [])
+                    proc = r.get("procedimento", "")
+                    if ing and len(ing) > 0:
+                        cur.execute("UPDATE ricette SET ingredienti = %s, procedimento = %s WHERE id = %s",
+                                    (json.dumps(ing), json.dumps(proc) if not isinstance(proc, str) else proc, rid))
+                        conn.commit(); fatti += 1
+                    else:
+                        errori.append(f"{nome}: builder vuoto")
+                except Exception as _e:
+                    conn.rollback(); errori.append(str(_e)[:50])
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            _et = (' | ERR: ' + errori[0]) if errori else ''
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"completa-ricette: {fatti}/{len(righe)}{_et}",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_w, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "nota": "rigenera ingredienti+procedimento in background"})
