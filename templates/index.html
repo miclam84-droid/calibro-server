@@ -83,8 +83,8 @@ if('serviceWorker' in navigator){
       <span class="tab-label">Banco</span>
     </button>
     <button class="tab-btn" id="tab-mappa" onclick="switchTab('mappa')" role="tab">
-      <i class="ph ph-flask" aria-hidden="true"></i>
-      <span class="tab-label">Lab</span>
+      <i class="ph ph-share-network" aria-hidden="true"></i>
+      <span class="tab-label">Atlante</span>
     </button>
     <button class="tab-btn" id="tab-chiedi" onclick="switchTab('chiedi')" role="tab">
       <i class="ph ph-chat-circle" aria-hidden="true"></i>
@@ -812,22 +812,30 @@ if('serviceWorker' in navigator){
   <div id="quad-content">
     <!-- HERO: il tuo laboratorio (second brain) -->
     <div class="quad-hero" id="quad-hero">
-      <div class="quad-hero-lab">Il tuo laboratorio</div>
+      <div class="quad-hero-lab">Il tuo Quaderno</div>
+      <div class="quad-hero-claim">Tutto ciò che hai deciso di rendere tuo.</div>
       <div class="quad-hero-stats" id="quad-hero-stats">
         <span class="qh-stat"><span class="qh-n" id="qh-ricette">—</span> ricette</span>
-        <span class="qh-stat"><span class="qh-n" id="qh-misure">—</span> misure</span>
         <span class="qh-stat"><span class="qh-n" id="qh-diagnosi">—</span> diagnosi</span>
+        <span class="qh-stat"><span class="qh-n" id="qh-misure">—</span> misure</span>
       </div>
     </div>
-    <!-- TOGGLE: il Quaderno è dove ciò che validi diventa qualcosa -->
-    <div class="quad-toggle">
-      <button class="quad-tg-btn active" id="qtg-dna" onclick="switchQuaderno('dna')">DNA</button>
-      <button class="quad-tg-btn" id="qtg-misure" onclick="switchQuaderno('misure')">Misure</button>
-      <button class="quad-tg-btn" id="qtg-chat" onclick="switchQuaderno('chat')">Chat</button>
-      <button class="quad-tg-btn" id="qtg-palestra" onclick="switchQuaderno('palestra')">Palestra</button>
-      <button class="quad-tg-btn" id="qtg-ricette" onclick="switchQuaderno('ricette')">Ricette</button>
-      <button class="quad-tg-btn" id="qtg-menu" onclick="switchQuaderno('menu')">Menù</button>
-      <button class="quad-tg-btn" id="qtg-vetrina" onclick="_caricaModulo&&_caricaModulo('ricette').then(function(){apriVetrina&&apriVetrina()})">Vetrina</button>
+    <!-- 2 BLOCCHI: Il mio lavoro (operativo) + Crescita (ciò che ti migliora) -->
+    <div class="quad-blocco">
+      <div class="quad-blocco-lab">Il mio lavoro</div>
+      <div class="quad-blocco-grid">
+        <button class="quad-cell active" id="qtg-ricette" onclick="switchQuaderno('ricette')"><i class="ph ph-notebook" aria-hidden="true"></i><span>Ricette</span></button>
+        <button class="quad-cell" id="qtg-menu" onclick="switchQuaderno('menu')"><i class="ph ph-fork-knife" aria-hidden="true"></i><span>Menù</span></button>
+        <button class="quad-cell" id="qtg-misure" onclick="switchQuaderno('misure')"><i class="ph ph-ruler" aria-hidden="true"></i><span>Misure</span></button>
+      </div>
+    </div>
+    <div class="quad-blocco">
+      <div class="quad-blocco-lab">Crescita</div>
+      <div class="quad-blocco-grid">
+        <button class="quad-cell" id="qtg-dna" onclick="switchQuaderno('dna')"><i class="ph ph-dna" aria-hidden="true"></i><span>DNA</span></button>
+        <button class="quad-cell" id="qtg-chat" onclick="switchQuaderno('chat')"><i class="ph ph-stethoscope" aria-hidden="true"></i><span>Diagnosi</span></button>
+        <button class="quad-cell" id="qtg-palestra" onclick="switchQuaderno('palestra')"><i class="ph ph-barbell" aria-hidden="true"></i><span>Palestra</span></button>
+      </div>
     </div>
     <!-- PANNELLO RICETTE -->
     <div id="quad-pane-ricette" style="display:none">

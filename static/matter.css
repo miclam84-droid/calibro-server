@@ -307,3 +307,16 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 /* ═══ FIX wordmark sotto status bar (safe-area) ═══ */
 .app-header{padding-top:max(env(safe-area-inset-top),8px)!important}
 .wm-text{padding-top:2px}
+
+/* ═══ QUADERNO — 2 blocchi (Il mio lavoro / Crescita) — Founder Rule #113 ═══ */
+.quad-hero-claim{font-family:'Inter',sans-serif;font-size:13px;color:#cbd6da;margin:6px 0 12px;line-height:1.4}
+.quad-blocco{margin:0 16px 16px}
+.quad-blocco-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#c77b3f;margin-bottom:10px}
+.quad-blocco-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.quad-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#fff;border:1.5px solid #141d22;border-radius:4px;box-shadow:3px 3px 0 rgba(20,29,34,.12);padding:16px 8px;cursor:pointer;min-height:78px;transition:transform .12s,box-shadow .12s}
+.quad-cell:active{transform:translate(3px,3px);box-shadow:0 0 0}
+.quad-cell.active{background:#141d22}
+.quad-cell i.ph{font-size:24px;color:#245979}
+.quad-cell.active i.ph{color:#e8935a}
+.quad-cell span{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#141d22}
+.quad-cell.active span{color:#fff}
