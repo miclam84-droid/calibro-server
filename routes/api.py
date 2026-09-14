@@ -4231,17 +4231,10 @@ def connessioni_conta(ingrediente):
     try:
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
         # trovo il nodo ingrediente (per nome, case-insensitive)
-        _cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                        AND (LOWER(name) = LOWER(%s) OR LOWER(name) LIKE LOWER(%s) OR LOWER(id) LIKE LOWER(%s))
-                        ORDER BY LENGTH(name) LIMIT 1""",
-                     (ingrediente, f"%{ingrediente}%", f"%{ingrediente}%"))
-        row = _cur.fetchone()
-        if not row:
-            _cur.close(); _release_conn(_c)
-            return jsonify({"ingrediente": ingrediente, "connessioni": 0})
-        nid = row[0]
-        _cur.execute("""SELECT COUNT(*) FROM edges WHERE (from_id=%s OR to_id=%s)
-                        AND relation='abbinamento_aromatico'""", (nid, nid))
+        # conto gli archi abbinamento dove l'ingrediente compare (match su ID con LIKE, come nel grafo Ahn)
+        _cur.execute("""SELECT COUNT(*) FROM edges WHERE relation='abbinamento_aromatico'
+                        AND (LOWER(from_id) LIKE LOWER(%s) OR LOWER(to_id) LIKE LOWER(%s))""",
+                     (f"%{ingrediente}%", f"%{ingrediente}%"))
         n = _cur.fetchone()
         _cur.close(); _release_conn(_c)
         return jsonify({"ingrediente": ingrediente, "connessioni": (n[0] if n else 0)})
