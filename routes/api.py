@@ -4349,15 +4349,19 @@ def ponti_ingrediente(ingrediente):
     FRUTTA = ["mela", "pera", "fragola", "lampone", "limone", "arancia", "agrum", "pesca", "albicocca", "uva", "frutto", "mango", "ananas", "banana", "ciliegia", "lime", "mandarino", "pompelmo", "frutti"]
     try:
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
-        # prendo gli abbinati via match su ID (gli archi Ahn usano ID tipo ahn_fragola)
+        _cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND (LOWER(name)=LOWER(%s) OR LOWER(name) LIKE LOWER(%s))
+                        ORDER BY LENGTH(name) LIMIT 1""", (ingrediente, f"%{ingrediente}%"))
+        row = _cur.fetchone()
+        if not row:
+            _cur.close(); _release_conn(_c)
+            return jsonify({"ingrediente": ingrediente, "ponti": []})
+        nid = row[0]
         _cur.execute("""SELECT n.name, n.data, (e.data->>'overlap')::numeric ov
-                        FROM edges e JOIN nodes n ON (n.id = e.to_id OR n.id = e.from_id)
-                        WHERE e.relation = 'abbinamento_aromatico'
-                        AND (LOWER(e.from_id) LIKE LOWER(%s) OR LOWER(e.to_id) LIKE LOWER(%s))
-                        AND LOWER(n.id) NOT LIKE LOWER(%s)
-                        AND n.type IN ('Ingrediente','Prodotto')
-                        ORDER BY ov DESC NULLS LAST LIMIT 80""",
-                     (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%"))
+                        FROM edges e JOIN nodes n ON n.id = e.to_id
+                        WHERE e.from_id = %s AND e.relation = 'abbinamento_aromatico'
+                        AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+                        ORDER BY ov DESC NULLS LAST LIMIT 60""", (nid,))
         righe = _cur.fetchall()
         _cur.close(); _release_conn(_c)
         per_disc = {k: [] for k in DISCIPLINE}
@@ -4423,3 +4427,35 @@ def lista_principi():
         return jsonify({"principi": principi, "totale": len(principi)})
     except Exception as e:
         return jsonify({"principi": [], "totale": 0, "errore": str(e)[:100]})
+
+
+@bp.route("/v1/flavour-network/<ingrediente>")
+def flavour_network(ingrediente):
+    """Rete aromatica ricca di un ingrediente per il grafo Flavour Network animato:
+    tutti gli abbinati con forza + composti condivisi. Usa il grafo Ahn (match su ID)."""
+    from flask import request, jsonify
+    import psycopg2 as _pg
+    n_max = min(int(request.args.get("n", "25")), 40)
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        _cur.execute("""SELECT n.name, (e.data->>'overlap')::numeric ov
+                        FROM edges e JOIN nodes n ON (n.id = e.to_id OR n.id = e.from_id)
+                        WHERE e.relation = 'abbinamento_aromatico'
+                        AND (LOWER(e.from_id) LIKE LOWER(%s) OR LOWER(e.to_id) LIKE LOWER(%s))
+                        AND LOWER(n.id) NOT LIKE LOWER(%s)
+                        AND n.type IN ('Ingrediente','Prodotto')
+                        ORDER BY ov DESC NULLS LAST LIMIT %s""",
+                     (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%", n_max))
+        righe = _cur.fetchall()
+        _cur.close(); _release_conn(_c)
+        # nodi per il grafo: centro + abbinati, con forza (per la dimensione/distanza)
+        nodi = []
+        visti = set()
+        for nome, ov in righe:
+            if nome.lower() in visti:
+                continue
+            visti.add(nome.lower())
+            nodi.append({"nome": nome, "forza": round(float(ov)) if ov else 50})
+        return jsonify({"centro": ingrediente, "nodi": nodi, "totale": len(nodi)})
+    except Exception as e:
+        return jsonify({"centro": ingrediente, "nodi": [], "errore": str(e)[:100]})
