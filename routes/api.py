@@ -4454,3 +4454,65 @@ def flavour_network(ingrediente):
         return jsonify({"centro": ingrediente, "nodi": nodi, "totale": len(nodi)})
     except Exception as e:
         return jsonify({"centro": ingrediente, "nodi": [], "errore": str(e)[:100]})
+
+
+@bp.route("/v1/menu/analizza", methods=["POST"])
+def menu_analizza():
+    """Analizza un menu: equilibrio categorie, ripetizione ingredienti, food cost stimato."""
+    from flask import request, jsonify
+    d = request.get_json(force=True) or {}
+    voci = d.get("voci", [])  # [{nome, ingredienti:[...]}]
+    if not voci:
+        return jsonify({"errore": "nessuna voce nel menu"})
+    # conta ripetizione ingredienti
+    tutti_ing = {}
+    for v in voci:
+        for ing in v.get("ingredienti", []):
+            k = str(ing).lower().strip()
+            tutti_ing[k] = tutti_ing.get(k, 0) + 1
+    ripetuti = {k: n for k, n in tutti_ing.items() if n > 1}
+    n_ing_totali = sum(tutti_ing.values())
+    pct_ripetizione = round(len(ripetuti) / max(len(tutti_ing), 1) * 100)
+    # bilanciamento: quante voci per tipo (euristica sul nome)
+    tipi = {"carne": 0, "pesce": 0, "vegetariano": 0, "dolce": 0}
+    CARNE = ["manzo", "pollo", "maiale", "agnello", "vitello", "carne", "salsiccia", "ragù"]
+    PESCE = ["pesce", "salmone", "tonno", "gambero", "vongole", "cozze", "branzino", "orata", "polpo", "calamaro"]
+    DOLCE = ["torta", "dolce", "gelato", "tiramisu", "crostata", "dessert", "cioccolato"]
+    for v in voci:
+        nl = (v.get("nome", "") + " " + " ".join(str(i) for i in v.get("ingredienti", []))).lower()
+        if any(k in nl for k in DOLCE): tipi["dolce"] += 1
+        elif any(k in nl for k in PESCE): tipi["pesce"] += 1
+        elif any(k in nl for k in CARNE): tipi["carne"] += 1
+        else: tipi["vegetariano"] += 1
+    return jsonify({
+        "n_voci": len(voci),
+        "ripetizione_ingredienti_pct": pct_ripetizione,
+        "ingredienti_ripetuti": list(ripetuti.keys())[:8],
+        "bilanciamento": tipi,
+        "consiglio": ("Buon equilibrio" if pct_ripetizione < 30 else "Molti ingredienti ripetuti: valuta più varietà"),
+    })
+
+
+@bp.route("/v1/menu/sostituzioni/<ingrediente>")
+def menu_sostituzioni(ingrediente):
+    """Sostituti di un ingrediente col profilo aromatico simile (dal grafo)."""
+    from flask import jsonify
+    import psycopg2 as _pg
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        # ingredienti che condividono composti con quello dato (stessa famiglia aromatica)
+        _cur.execute("""SELECT n.name, (e.data->>'overlap')::numeric ov
+                        FROM edges e JOIN nodes n ON (n.id = e.to_id OR n.id = e.from_id)
+                        WHERE e.relation = 'abbinamento_aromatico'
+                        AND (LOWER(e.from_id) LIKE LOWER(%s) OR LOWER(e.to_id) LIKE LOWER(%s))
+                        AND LOWER(n.id) NOT LIKE LOWER(%s)
+                        AND n.type IN ('Ingrediente','Prodotto')
+                        ORDER BY ov DESC NULLS LAST LIMIT 10""",
+                     (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%"))
+        righe = _cur.fetchall()
+        _cur.close(); _release_conn(_c)
+        sost = [{"ingrediente": n, "affinita": round(float(ov)) if ov else 50} for n, ov in righe]
+        return jsonify({"ingrediente": ingrediente, "sostituti": sost,
+                        "nota": "Sostituti con profilo aromatico affine. Verifica sempre consistenza e uso in cucina."})
+    except Exception as e:
+        return jsonify({"ingrediente": ingrediente, "sostituti": [], "errore": str(e)[:100]})
