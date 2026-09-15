@@ -8109,13 +8109,19 @@ def admin_diag_fonti_foto():
     # Pexels
     pk = os.environ.get("PEXELS_API_KEY", "")
     out["pexels_key"] = bool(pk)
+    out["pexels_prefisso"] = (pk[:8] + "..." + pk[-4:]) if pk else "VUOTA"
+    out["pexels_lunghezza"] = len(pk)
     if pk:
         try:
-            req = ur.Request("https://api.pexels.com/v1/search?query=pizza&per_page=1", headers={"Authorization": pk})
+            req = ur.Request("https://api.pexels.com/v1/search?query=pizza&per_page=1",
+                             headers={"Authorization": pk.strip(), "User-Agent": "MatterLab/1.0"})
             r = ur.urlopen(req, timeout=15); d = _j.loads(r.read().decode())
             out["pexels_test"] = "OK: " + str(len(d.get("photos", []))) + " foto"
         except Exception as e:
-            out["pexels_test"] = "ERR: " + str(e)[:60]
+            _det = ""
+            try: _det = e.read().decode()[:100]
+            except: _det = str(e)[:60]
+            out["pexels_test"] = "ERR: " + _det
     # Pixabay
     px = os.environ.get("PIXABAY_API_KEY", "")
     out["pixabay_key"] = bool(px)
