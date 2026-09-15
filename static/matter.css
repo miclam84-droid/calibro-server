@@ -400,3 +400,7 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 #screen-mappa .mappa-tab{padding:11px 6px!important;font-family:'Space Grotesk',sans-serif;font-weight:700}
 /* i fenomeni nella lista: alternati per leggibilità (non tutti uguali) */
 .tl-item:nth-child(even){background:rgba(20,29,34,.02)}
+
+/* ═══ FIX AUDIT #3b: i 4 tab Capire/Usare/Creare/Misurare stanno nel viewport ═══ */
+#screen-mappa .mappa-porte{margin:8px 16px 12px!important;gap:5px!important;max-width:calc(100% - 32px)!important;box-sizing:border-box;overflow:hidden}
+#screen-mappa .mappa-porte .mappa-tab{flex:1 1 0!important;min-width:0!important;padding:10px 2px!important;font-size:12px!important;letter-spacing:0!important;text-align:center;box-shadow:2px 2px 0 rgba(20,29,34,.12)!important}
