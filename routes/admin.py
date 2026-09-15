@@ -8244,3 +8244,50 @@ def admin_worker_continuo():
 
     threading.Thread(target=_ciclo, daemon=True).start()
     return jsonify({"avviato": True, "nota": "worker continuo: processa fino a 250 ricette per avvio. Rilancia se serve."})
+
+
+@bp.route("/admin/traduci-continuo")
+def admin_traduci_continuo():
+    """Worker continuo traduzioni: traduce ricette in EN/ES in cicli finché non finisce."""
+    from flask import request, jsonify
+    import os, psycopg2, threading, json, time
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    lang = request.args.get("lang", "en")
+
+    def _ciclo(lang):
+        try:
+            from ai import chiedi_mistral
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            # verifico se esiste la colonna traduzioni
+            cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='ricette'")
+            colonne = [r[0] for r in cur.fetchall()]
+            col_trad = "traduzioni" if "traduzioni" in colonne else None
+            if not col_trad:
+                cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", ("traduci-continuo: nessuna colonna traduzioni",))
+                conn.commit(); cur.close(); conn.close(); return
+            fatti = 0
+            for _batch in range(40):
+                cur.execute(f"""SELECT id, nome FROM ricette
+                                WHERE (traduzioni IS NULL OR NOT (traduzioni ? %s)) LIMIT 5""", (lang,))
+                righe = cur.fetchall()
+                if not righe:
+                    break
+                for rid, nome in righe:
+                    try:
+                        t = chiedi_mistral(f"Translate to {lang} only the dish name, nothing else: {nome}", usa_tools=False)
+                        if t and len(t.strip()) > 1:
+                            cur.execute(f"""UPDATE ricette SET traduzioni =
+                                COALESCE(traduzioni,'{{}}'::jsonb) || jsonb_build_object(%s, %s) WHERE id=%s""",
+                                (lang, t.strip()[:100], rid))
+                            conn.commit(); fatti += 1
+                    except Exception:
+                        conn.rollback()
+                    time.sleep(1)
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"traduci-continuo [{lang}]: {fatti} tradotte",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_ciclo, args=(lang,), daemon=True).start()
+    return jsonify({"avviato": True, "lingua": lang})
