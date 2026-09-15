@@ -8200,3 +8200,47 @@ def admin_completa_ricette_vuote():
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": "rigenera ingredienti+procedimento in background"})
+
+
+@bp.route("/admin/worker-continuo")
+def admin_worker_continuo():
+    """Worker che processa ricette vuote + traduzioni in CICLO finché non finisce, auto-rilanciandosi.
+    Un solo avvio, gira fino a completamento (rispettando i limiti)."""
+    from flask import request, jsonify
+    import os, psycopg2, threading, json, time
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+
+    def _ciclo():
+        try:
+            from db import carica_grafo
+            from builder import genera_ricetta
+            db = carica_grafo()
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            totale_fatti = 0
+            for _batch in range(50):  # max 50 batch per avvio (poi Railway può killare, si rilancia)
+                cur.execute("""SELECT id, nome, disciplina FROM ricette
+                               WHERE ingredienti IS NULL OR ingredienti::text IN ('[]','null','') LIMIT 5""")
+                righe = cur.fetchall()
+                if not righe:
+                    break  # finito le ricette vuote
+                for rid, nome, disc in righe:
+                    try:
+                        r = genera_ricetta(db, f"la ricetta classica di {nome}", disciplina=disc or "cucina", lang="it")
+                        ing = r.get("ingredienti", [])
+                        proc = r.get("procedimento", "")
+                        if ing:
+                            cur.execute("UPDATE ricette SET ingredienti=%s, procedimento=%s WHERE id=%s",
+                                        (json.dumps(ing), json.dumps(proc) if not isinstance(proc, str) else proc, rid))
+                            conn.commit(); totale_fatti += 1
+                    except Exception:
+                        conn.rollback()
+                    time.sleep(1)
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"worker-continuo: {totale_fatti} ricette completate in questo avvio",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_ciclo, daemon=True).start()
+    return jsonify({"avviato": True, "nota": "worker continuo: processa fino a 250 ricette per avvio. Rilancia se serve."})
