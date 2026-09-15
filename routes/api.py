@@ -4511,7 +4511,12 @@ def menu_sostituzioni(ingrediente):
                      (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%"))
         righe = _cur.fetchall()
         _cur.close(); _release_conn(_c)
-        sost = [{"ingrediente": n, "affinita": round(float(ov)) if ov else 50} for n, ov in righe]
+        sost = []
+        visti_s = set()
+        for n, ov in righe:
+            if n.lower() in visti_s: continue
+            visti_s.add(n.lower())
+            sost.append({"ingrediente": n, "affinita": round(float(ov)) if ov else 50})
         return jsonify({"ingrediente": ingrediente, "sostituti": sost,
                         "nota": "Sostituti con profilo aromatico affine. Verifica sempre consistenza e uso in cucina."})
     except Exception as e:
