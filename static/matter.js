@@ -5736,13 +5736,14 @@ let _pontiTab = 'vino';
 function apriPonti(){
   var e=_escV;
   _apriVista('Ponti',
-    '<div class="crea-intro">Un ingrediente non vive in una disciplina sola. Scopri con cosa dialoga — in cucina, al bar, in pasticceria, col vino.</div>'
-    + '<div class="ptv-field"><input id="ptv-input" placeholder="pomodoro, fragola, caffè…" onkeydown="if(event.key===\'Enter\')caricaPonti()"><button class="ptv-go-inline" onclick="caricaPonti()">→</button></div>'
+    '<div class="crea-intro">Un ingrediente non vive in una disciplina sola. Scopri con cosa dialoga.</div>'
+    + '<div class="ptv-field"><input id="ptv-input" placeholder="scrivi un ingrediente…" onkeydown="if(event.key===\'Enter\')caricaPonti()"><button class="ptv-go-inline" onclick="caricaPonti()">→</button></div>'
     + '<div class="ponti-esempi-lab">Prova con</div>'
     + '<div class="ponti-chips">'+['pomodoro','fragola','caffè','cioccolato','basilico'].map(function(c){ return '<button class="ponti-chip" onclick="_pontiCerca(\''+e(c)+'\')">'+e(c)+'</button>'; }).join('')+'</div>'
     + '<div id="ptv-out"></div>');
-  // carico un esempio così la dashboard non è vuota
-  setTimeout(function(){ var i=document.getElementById('ptv-input'); if(i){ i.value='limone'; if(typeof caricaPonti==='function') caricaPonti(); } }, 300);
+  // carico un esempio così la dashboard non è vuota (riferimento diretto)
+  var inp=document.getElementById('ptv-input');
+  if(inp){ inp.value='limone'; if(typeof caricaPonti==='function') caricaPonti(); }
 }
 window._pontiCerca=function(ing){ var i=document.getElementById('ptv-input'); if(i){ i.value=ing; } caricaPonti(); };
 function _pontiWorkflow(x){ apriPonti(); }

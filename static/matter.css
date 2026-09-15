@@ -379,3 +379,10 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .vl-btn,.vista-launch>button,.vista-launch>a{border:1.5px solid #141d22!important;border-radius:4px!important;box-shadow:3px 3px 0 rgba(20,29,34,.1)!important;background:#fff!important;padding:12px 10px!important;flex:1;min-width:0}
 .vl-t{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#141d22;white-space:normal;line-height:1.15}
 .vl-d{font-family:'Inter',sans-serif;font-size:11px;color:#5a6c70;line-height:1.3}
+
+/* ═══ FIX AUDIT #2: padding laterale sul contenitore vista (tutte le viste respirano) ═══ */
+#vista-body{padding-left:16px!important;padding-right:16px!important;box-sizing:border-box}
+/* le intro e i campi dentro le viste non hanno più bisogno di margine proprio (lo dà il body) */
+#vista-body .crea-intro,#vista-body .ptv-head,#vista-body .fnv-head,#vista-body .mbv-head{margin-left:0!important;margin-right:0!important}
+/* ma i blocchi full-width (card risultati) devono estendersi ai bordi del body */
+#vista-body .ponti-disc,#vista-body .fnv-node,#vista-body .flavor-result-item{margin-left:0!important;margin-right:0!important}
