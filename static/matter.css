@@ -386,3 +386,17 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 #vista-body .crea-intro,#vista-body .ptv-head,#vista-body .fnv-head,#vista-body .mbv-head{margin-left:0!important;margin-right:0!important}
 /* ma i blocchi full-width (card risultati) devono estendersi ai bordi del body */
 #vista-body .ponti-disc,#vista-body .fnv-node,#vista-body .flavor-result-item{margin-left:0!important;margin-right:0!important}
+
+/* ═══ FIX AUDIT #3: Atlante testa più compatta e gerarchica ═══ */
+/* manifesto Atlante compatto */
+#screen-mappa .mtr-manifesto{padding:16px 16px 10px!important}
+#screen-mappa .mtr-manifesto-claim{font-size:24px!important}
+/* le 2 card Strumenti/Creatività: secondarie, più piccole e discrete */
+#screen-mappa .vista-launch-btn{padding:10px 12px!important;min-height:auto!important}
+#screen-mappa .vista-launch-btn .vl-t{font-size:13px!important}
+#screen-mappa .vista-launch-btn .vl-d{font-size:10px!important}
+/* i 4 tab Capire/Usare/Creare/Misurare: il livello principale, ben visibile */
+#screen-mappa .mappa-porte{margin:8px 16px 12px!important;gap:6px!important}
+#screen-mappa .mappa-tab{padding:11px 6px!important;font-family:'Space Grotesk',sans-serif;font-weight:700}
+/* i fenomeni nella lista: alternati per leggibilità (non tutti uguali) */
+.tl-item:nth-child(even){background:rgba(20,29,34,.02)}
