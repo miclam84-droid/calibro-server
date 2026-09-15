@@ -320,3 +320,44 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .quad-cell.active i.ph{color:#e8935a}
 .quad-cell span{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#141d22}
 .quad-cell.active span{color:#fff}
+
+/* ═══ HOME — hero fenomeno copertina (Founder Rule #114) ═══ */
+.hero-fen{margin:16px 16px 20px;padding:22px 20px;background:#141d22;border-radius:4px;box-shadow:5px 5px 0 rgba(20,29,34,.2);cursor:pointer}
+.hero-fen-lab{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7fb0c4;margin-bottom:14px}
+.hero-fen-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:34px;line-height:1.0;color:#e8935a;letter-spacing:-.02em;margin-bottom:14px}
+.hero-fen-num{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+.hero-fen-num-val{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:28px;color:#fff}
+.hero-fen-num-lab{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#9daeb2}
+.hero-fen-cons{font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;color:#cbd6da;margin-bottom:14px}
+.hero-fen-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#141d22;background:#e8935a;padding:5px 10px;margin-bottom:16px}
+.hero-fen-cta{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#e8935a}
+/* quick start compatto */
+.home-diagnosi{margin:0 16px 20px}
+.hd-quickstart{display:flex;gap:8px}
+/* 4 porte differenziate */
+.porte{margin:0 16px 24px;display:flex;flex-direction:column;gap:10px}
+.porta{display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid #141d22;border-radius:4px;box-shadow:3px 3px 0 rgba(20,29,34,.12);padding:16px;cursor:pointer;text-align:left;width:100%;transition:transform .12s,box-shadow .12s}
+.porta:active{transform:translate(3px,3px);box-shadow:0 0 0}
+.porta i.ph{font-size:26px;flex-shrink:0}
+.porta-t{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#141d22;line-height:1.15}
+.porta-d{font-family:'Inter',sans-serif;font-size:12px;color:#5a6c70;line-height:1.3}
+.porta-txt{flex:1}
+.porta-arr{font-size:18px!important;color:#9daeb2!important;flex-shrink:0}
+/* chat = scura, in evidenza */
+.porta-chat{background:#141d22;border-color:#141d22}
+.porta-chat i.ph{color:#e8935a}
+.porta-chat .porta-t{color:#fff}
+.porta-chat .porta-d{color:#9daeb2}
+.porta-chat .porta-arr{color:#7fb0c4!important}
+/* le 2 medie: accenti colore diversi */
+.porte-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.porte-grid .porta{flex-direction:column;align-items:flex-start;gap:8px;min-height:96px}
+.porta-pane{border-left:5px solid #c77b3f}
+.porta-pane i.ph{color:#c77b3f}
+.porta-atlante{border-left:5px solid #245979}
+.porta-atlante i.ph{color:#245979}
+.porta-quaderno{border-left:5px solid #12545d}
+.porta-quaderno i.ph{color:#12545d}
+/* casi reali */
+.home-casi{margin:0 16px 20px}
+.home-casi-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5a6c70;margin-bottom:10px}

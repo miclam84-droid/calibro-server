@@ -98,59 +98,61 @@ if('serviceWorker' in navigator){
 </header>
 <main id="contenuto">
 <div class="screen active" id="screen-scopri">
-  <!-- MANIFESTO -->
-  <div class="mtr-manifesto">
-    <span class="mtr-manifesto-claim">Capisci il fenomeno.<br>Governa il risultato.</span>
-    <span class="mtr-manifesto-sub">La scienza del mestiere, tradotta in numeri.</span>
+  <!-- HERO FENOMENO DEL GIORNO — la copertina (Founder Rule #114) -->
+  <div class="hero-fen" id="hero-fen" onclick="avviaLezione()">
+    <div class="hero-fen-lab">Fenomeno del giorno</div>
+    <div class="hero-fen-nome" id="hero-fen-nome">—</div>
+    <div class="hero-fen-num" id="hero-fen-num" style="display:none">
+      <span class="hero-fen-num-val" id="hero-fen-num-val"></span>
+      <span class="hero-fen-num-lab">numero bersaglio</span>
+    </div>
+    <div class="hero-fen-cons" id="hero-fen-cons"></div>
+    <div class="hero-fen-badge" id="hero-fen-badge"></div>
+    <div class="hero-fen-cta">Apri il fenomeno →</div>
   </div>
 
-  <!-- BLOCCO DIAGNOSI — la chat che risolve problemi (Renaissance #7) -->
+  <!-- QUICK START -->
   <div class="home-diagnosi">
-    <div class="hd-titolo">Dimmi cosa non sta funzionando.</div>
     <div class="hd-quickstart">
-      <input id="hd-qs-input" placeholder="La mia biga è collassata dopo 14 ore…" onkeydown="if(event.key==='Enter')_diagnosiQuick()">
+      <input id="hd-qs-input" placeholder="Dimmi cosa non sta funzionando al banco…" onkeydown="if(event.key==='Enter')_diagnosiQuick()">
       <button onclick="_diagnosiQuick()" aria-label="Chiedi">◎</button>
     </div>
-    <div class="hd-esempi-lab">oppure parti da un caso comune</div>
+  </div>
+
+  <!-- 4 PORTE DIFFERENZIATE (non 4 rettangoli uguali) -->
+  <div class="porte">
+    <button class="porta porta-chat" onclick="switchTab('chiedi')">
+      <i class="ph ph-chat-circle-dots" aria-hidden="true"></i>
+      <div class="porta-txt"><div class="porta-t">Chat diagnostica</div><div class="porta-d">Trova la causa del problema</div></div>
+      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
+    </button>
+    <div class="porte-grid">
+      <button class="porta porta-pane" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('motori').then(function(){apriMotorePanificazione&&apriMotorePanificazione()})}">
+        <i class="ph ph-bread" aria-hidden="true"></i>
+        <div class="porta-t">Panificazione Pro</div>
+        <div class="porta-d">Progetta impasti</div>
+      </button>
+      <button class="porta porta-atlante" onclick="switchTab('mappa')">
+        <i class="ph ph-share-network" aria-hidden="true"></i>
+        <div class="porta-t">Atlante</div>
+        <div class="porta-d">148 fenomeni</div>
+      </button>
+    </div>
+    <button class="porta porta-quaderno" onclick="switchTab('quaderno')">
+      <i class="ph ph-notebook" aria-hidden="true"></i>
+      <div class="porta-txt"><div class="porta-t">Il tuo Quaderno</div><div class="porta-d">Ricette, misure, crescita</div></div>
+      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- CASI REALI (scroll) -->
+  <div class="home-casi">
+    <div class="home-casi-lab">Casi reali dal banco</div>
     <div id="hd-casi"></div>
   </div>
 
-  <!-- HOME 4 INGRESSI (semplificazione: griglia netta 2x2) -->
-  <div class="home4">
-    <button class="home4-card" onclick="switchTab('chiedi')">
-      <span class="home4-num">01</span>
-      <span class="home4-tit">Chat diagnostica</span>
-      <span class="home4-sub">Risolvi anomalie al banco</span>
-    </button>
-    <button class="home4-card" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('motori').then(function(){apriMotorePanificazione&&apriMotorePanificazione()})}">
-      <span class="home4-num">02</span>
-      <span class="home4-tit">Panificazione Pro</span>
-      <span class="home4-sub">Dosi, tempi e timeline</span>
-    </button>
-    <button class="home4-card" onclick="switchTab('mappa')">
-      <span class="home4-num">03</span>
-      <span class="home4-tit">Atlante fenomeni</span>
-      <span class="home4-sub">La mappa del laboratorio</span>
-    </button>
-    <button class="home4-card" onclick="switchTab('quaderno')">
-      <span class="home4-num">04</span>
-      <span class="home4-tit">Quaderno tecnico</span>
-      <span class="home4-sub">Ricette e misure salvate</span>
-    </button>
-  </div>
-
-  <!-- COME RAGIONA MATTER (P1: proof of intelligence) -->
-  <div class="crm">
-    <div class="crm-lab">Come ragiona Matter</div>
-    <div class="crm-cards">
-      <div class="crm-card"><div class="crm-t">Analizza</div><div class="crm-d">Temperatura, idratazione, pH, Brix, grassi</div></div>
-      <div class="crm-card"><div class="crm-t">Collega</div><div class="crm-d"><span class="crm-n">148</span> fenomeni · <span class="crm-n">1203</span> ricette · <span class="crm-n">2983</span> ingredienti · <span class="crm-n">832</span> composti aromatici</div></div>
-      <div class="crm-card"><div class="crm-t">Diagnostica</div><div class="crm-d">Non propone una ricetta. Trova la causa del problema.</div></div>
-    </div>
-  </div>
-
   <!-- BLOCCO 1 — Cruscotto del Giorno (box eroe sollevato) -->
-  <div class="cruscotto" id="cruscotto">
+  <div class="cruscotto" id="cruscotto" style="display:none">
     <div class="crus-box crus-box-target" onclick="avviaLezione()">
       <span class="crus-lab">Fenomeno del giorno</span>
       <span class="crus-grandezza" id="crus-grandezza" style="display:none"></span>

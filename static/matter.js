@@ -723,6 +723,24 @@ function _renderCasiRotanti_OLD(){
 }
 function renderHome(j){
   _renderCasiRotanti();
+  var _fh = (j && j.fenomeno) ? j.fenomeno : {};
+  // HERO FENOMENO — la copertina
+  try{
+    var e=_escV;
+    var nomeRaw=_fh.nome||'—';
+    var mP=nomeRaw.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+    var nome=mP?mP[1].trim():nomeRaw;
+    var hn=document.getElementById('hero-fen-nome'); if(hn) hn.textContent=nome;
+    var tgt=_fh.target||'';
+    var hnum=document.getElementById('hero-fen-num');
+    var hnv=document.getElementById('hero-fen-num-val');
+    if(hnum&&hnv){ if(tgt&&String(tgt).length<=16){ hnv.textContent=tgt; hnum.style.display=''; } else { hnum.style.display='none'; } }
+    var hc=document.getElementById('hero-fen-cons'); if(hc) hc.textContent=_fh.scheda_intro||_fh.conseguenza||'';
+    // badge: tempo lettura + disciplina
+    var domL={cucina:'Cucina',bar:'Bar',panificazione:'Panificazione',pasticceria:'Pasticceria',gelateria:'Gelateria',caffetteria:'Caffetteria',vino:'Vino'};
+    var hb=document.getElementById('hero-fen-badge');
+    if(hb){ var dom=domL[_fh.dominio]||_fh.dominio||''; hb.textContent = (dom? '3 min · '+dom : '3 min di lettura'); }
+  }catch(err){}
   const f = j.fenomeno || {};
   { const _h=document.getElementById('scopri-hero'); if(_h) _h.classList.remove('loading'); }
   // CRUSCOTTO OPERATIVO — il colpo d'occhio (fenomeno + numero + misura + esperimento)
