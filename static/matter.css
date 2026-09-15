@@ -361,3 +361,21 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 /* casi reali */
 .home-casi{margin:0 16px 20px}
 .home-casi-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5a6c70;margin-bottom:10px}
+
+/* ═══ FIX AUDIT: margini viste + testi non tagliati ═══ */
+/* intro e testi delle viste non toccano i bordi */
+.crea-intro,.ptv-head,.fnv-head,.mbv-head,.mp-h,.mp-hero-sub{margin-left:16px!important;margin-right:16px!important;box-sizing:border-box}
+.crea-intro{max-width:calc(100% - 32px)}
+/* il campo ptv-input (Ponti) placeholder mono lungo → font più piccolo così non taglia */
+#ptv-input,#hd-qs-input{font-size:13px!important}
+#ptv-input::placeholder,#hd-qs-input::placeholder{font-size:12px}
+/* le liste di tab che sforano (calcolatori, quaderno vecchi) scrollano contenute */
+.calc-menu,.calc-tabs{max-width:100%!important;overflow-x:auto!important;box-sizing:border-box}
+/* la barra chat: il campo non taglia */
+.ask-input,#q{font-size:14px!important}
+
+/* ═══ FIX AUDIT: card Flavour/Ponti/Menu home non toccano i bordi ═══ */
+.screen .vista-launch{padding:0 16px 16px!important;gap:10px!important}
+.vl-btn,.vista-launch>button,.vista-launch>a{border:1.5px solid #141d22!important;border-radius:4px!important;box-shadow:3px 3px 0 rgba(20,29,34,.1)!important;background:#fff!important;padding:12px 10px!important;flex:1;min-width:0}
+.vl-t{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#141d22;white-space:normal;line-height:1.15}
+.vl-d{font-family:'Inter',sans-serif;font-size:11px;color:#5a6c70;line-height:1.3}

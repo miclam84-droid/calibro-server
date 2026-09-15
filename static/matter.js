@@ -5741,6 +5741,8 @@ function apriPonti(){
     + '<div class="ponti-esempi-lab">Prova con</div>'
     + '<div class="ponti-chips">'+['pomodoro','fragola','caffè','cioccolato','basilico'].map(function(c){ return '<button class="ponti-chip" onclick="_pontiCerca(\''+e(c)+'\')">'+e(c)+'</button>'; }).join('')+'</div>'
     + '<div id="ptv-out"></div>');
+  // carico un esempio così la dashboard non è vuota
+  setTimeout(function(){ var i=document.getElementById('ptv-input'); if(i){ i.value='limone'; if(typeof caricaPonti==='function') caricaPonti(); } }, 300);
 }
 window._pontiCerca=function(ing){ var i=document.getElementById('ptv-input'); if(i){ i.value=ing; } caricaPonti(); };
 function _pontiWorkflow(x){ apriPonti(); }
