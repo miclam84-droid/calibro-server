@@ -4359,8 +4359,18 @@ def ponti_ingrediente(ingrediente):
                      (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%"))
         righe = _cur.fetchall()
         _cur.close(); _release_conn(_c)
+        # escludo i COMPOSTI chimici (non ingredienti): nomi con parentesi chimica o terminazioni tipiche
+        def _e_composto(nome):
+            nl = nome.lower()
+            if "(" in nome and any(x in nl for x in ["metil","etil","pirazin","aldeide","acetato","butil","propil","-ol","-one","-ale","estere"]):
+                return True
+            # nomi puramente chimici
+            if any(nl.startswith(x) for x in ["pirazine","esteri","aldeidi","chetoni","terpeni","tioli","lattoni","fenoli"]):
+                return True
+            return False
         per_disc = {k: [] for k in DISCIPLINE}
         def _aggiungi(disc, nome, ov):
+            if _e_composto(nome): return
             if len(per_disc[disc]) < 5 and nome not in [x["ingrediente"] for x in per_disc[disc]]:
                 per_disc[disc].append({"ingrediente": nome, "forza": round(float(ov)) if ov else 0})
         for nome, data, ov in righe:
