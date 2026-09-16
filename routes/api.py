@@ -4538,3 +4538,30 @@ def menu_sostituzioni(ingrediente):
                         "nota": "Sostituti con profilo aromatico affine. Verifica sempre consistenza e uso in cucina."})
     except Exception as e:
         return jsonify({"ingrediente": ingrediente, "sostituti": [], "errore": str(e)[:100]})
+
+
+@bp.route("/v1/ingredienti-piu-connessi")
+def ingredienti_piu_connessi():
+    """Indice degli ingredienti più connessi nel grafo (Cioccolato 281, Limone 214...). Pagina esplorabile."""
+    from flask import request, jsonify
+    import psycopg2 as _pg
+    n = min(int(request.args.get("n", "30")), 60)
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        # conto le connessioni abbinamento_aromatico per ogni nodo ingrediente
+        _cur.execute("""
+            SELECT n.name, COUNT(*) c
+            FROM edges e
+            JOIN nodes n ON (n.id = e.from_id)
+            WHERE e.relation = 'abbinamento_aromatico'
+            AND n.type IN ('Ingrediente','Prodotto')
+            AND n.name NOT LIKE '%%(%%'
+            GROUP BY n.name
+            ORDER BY c DESC
+            LIMIT %s""", (n,))
+        righe = _cur.fetchall()
+        _cur.close(); _release_conn(_c)
+        classifica = [{"ingrediente": nome, "connessioni": c} for nome, c in righe]
+        return jsonify({"classifica": classifica, "totale": len(classifica)})
+    except Exception as e:
+        return jsonify({"classifica": [], "errore": str(e)[:100]})
