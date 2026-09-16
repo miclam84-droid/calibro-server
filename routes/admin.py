@@ -8519,3 +8519,87 @@ def admin_stato_foto():
                         "percentuale_con_foto": round(con_foto/tot*100, 1) if tot else 0})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/verifica-foto-esistenti")
+def admin_verifica_foto_esistenti():
+    """Verifica con VISION le foto GIÀ assegnate (dal filtro vecchio): quelle sbagliate (insegne, piatti
+    diversi) le rifà con Pexels+vision o AI. Ogni foto controllata visivamente."""
+    from flask import request, jsonify
+    import os, psycopg2, threading, json, urllib.request as ur, urllib.parse, base64
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "6")), 12)
+    key_ai = os.environ.get("OPENAI_API_KEY", "")
+    pexels_key = os.environ.get("PEXELS_API_KEY", "")
+    cn = os.environ.get("CLOUDINARY_CLOUD_NAME",""); ck=os.environ.get("CLOUDINARY_API_KEY",""); cs=os.environ.get("CLOUDINARY_API_SECRET","")
+
+    def _vision_ok(img_url, nome):
+        try:
+            payload={"model":"gpt-4o-mini","messages":[{"role":"user","content":[
+                {"type":"text","text":f"Questa immagine mostra il PIATTO/CIBO '{nome}' pronto? Rispondi SOLO SI o NO. NO se e' un'insegna, logo, ristorante, persone, menu scritto, o cibo diverso."},
+                {"type":"image_url","image_url":{"url":img_url}}]}],"max_tokens":5}
+            req=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(payload).encode(),
+                headers={"Authorization":f"Bearer {key_ai}","Content-Type":"application/json"})
+            r=ur.urlopen(req,timeout=25); d=json.loads(r.read().decode())
+            return "SI" in d["choices"][0]["message"]["content"].strip().upper()
+        except Exception: return None
+
+    def _cerca_pexels(nome):
+        try:
+            q=urllib.parse.quote(nome+" dish food plated")
+            req=ur.Request(f"https://api.pexels.com/v1/search?query={q}&per_page=5&orientation=landscape",
+                headers={"Authorization":pexels_key,"User-Agent":"MatterLab/1.0"})
+            r=ur.urlopen(req,timeout=15); d=json.loads(r.read().decode())
+            return [ph["src"]["large"] for ph in d.get("photos",[])]
+        except Exception: return []
+
+    def _genera_ai(nome):
+        try:
+            payload={"model":"gpt-image-1","prompt":f"Professional food photography of {nome}, plated dish, top view, natural light, appetizing, no text, no people, no signage","n":1,"size":"1024x1024"}
+            req=ur.Request("https://api.openai.com/v1/images/generations",data=json.dumps(payload).encode(),
+                headers={"Authorization":f"Bearer {key_ai}","Content-Type":"application/json"})
+            r=ur.urlopen(req,timeout=120); d=json.loads(r.read().decode())
+            return d["data"][0].get("b64_json")
+        except Exception: return None
+
+    def _upload(img_bytes, rid):
+        try:
+            import cloudinary, cloudinary.uploader
+            cloudinary.config(cloud_name=cn,api_key=ck,api_secret=cs)
+            return cloudinary.uploader.upload(img_bytes,folder="ricette_ok",public_id=str(rid),overwrite=True).get("secure_url")
+        except Exception: return None
+
+    def _w(n):
+        ok=0; sostituite=0
+        try:
+            conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+            # foto esistenti NON ancora verificate (non su ricette_ok, che è la cartella verificata)
+            cur.execute("""SELECT id, nome, immagine FROM ricette
+                           WHERE immagine::text ILIKE '%%http%%'
+                           AND immagine::text NOT ILIKE '%%ricette_ok%%' LIMIT %s""",(n,))
+            for rid,nome,img in cur.fetchall():
+                url=img if isinstance(img,str) else (json.loads(img).get("url","") if isinstance(img,str) else "")
+                if not str(url).startswith("http"): continue
+                verdetto=_vision_ok(str(url),nome)
+                if verdetto is True:
+                    # foto giusta: la marco come verificata (sposto logica: aggiungo tag ok non serve, la lascio)
+                    ok+=1
+                elif verdetto is False:
+                    # foto SBAGLIATA: la rifaccio
+                    nuova=None
+                    for furl in _cerca_pexels(nome):
+                        if _vision_ok(furl,nome):
+                            cur.execute("UPDATE ricette SET immagine=%s WHERE id=%s",(furl,rid)); conn.commit(); nuova=furl; break
+                    if not nuova and key_ai:
+                        b64=_genera_ai(nome)
+                        if b64:
+                            cu=_upload(base64.b64decode(b64),rid)
+                            if cu: cur.execute("UPDATE ricette SET immagine=%s WHERE id=%s",(cu,rid)); conn.commit()
+                    sostituite+=1
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)",(f"verifica-foto-esistenti: {ok} ok, {sostituite} sbagliate rifatte",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception: pass
+    threading.Thread(target=_w,args=(n,),daemon=True).start()
+    return jsonify({"avviato":True,"nota":"verifica VISIVA delle foto esistenti, rifà le sbagliate"})
