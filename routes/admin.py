@@ -8579,10 +8579,15 @@ def admin_verifica_foto_esistenti():
                            WHERE immagine::text ILIKE '%%http%%'
                            AND immagine::text NOT ILIKE '%%ricette_ok%%'
                            ORDER BY random() LIMIT %s""",(n,))
-            for rid,nome,img in cur.fetchall():
-                url=img if isinstance(img,str) else (json.loads(img).get("url","") if isinstance(img,str) else "")
-                if not str(url).startswith("http"): continue
+            _righe=cur.fetchall()
+            _nrighe=len(_righe)
+            _errv=[]
+            for rid,nome,img in _righe:
+                url=img if isinstance(img,str) else ""
+                if not str(url).startswith("http"):
+                    _errv.append("url non http: "+str(url)[:30]); continue
                 verdetto=_vision_ok(str(url),nome)
+                if verdetto is None: _errv.append("vision None")
                 if verdetto is True:
                     # foto giusta: la marco come verificata (sposto logica: aggiungo tag ok non serve, la lascio)
                     ok+=1
@@ -8599,7 +8604,8 @@ def admin_verifica_foto_esistenti():
                             if cu: cur.execute("UPDATE ricette SET immagine=%s WHERE id=%s",(cu,rid)); conn.commit()
                     sostituite+=1
             cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
-            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)",(f"verifica-foto-esistenti: {ok} ok, {sostituite} sbagliate rifatte",))
+            _et=(" | "+_errv[0]) if _errv else ""
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)",(f"verifica-foto-esistenti: {ok} ok, {sostituite} rifatte su {_nrighe} righe{_et}",))
             conn.commit(); cur.close(); conn.close()
         except Exception: pass
     threading.Thread(target=_w,args=(n,),daemon=True).start()
