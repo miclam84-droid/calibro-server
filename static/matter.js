@@ -360,7 +360,7 @@ var _PORTE = {
                 {t:'Principi', d:'Le leggi fisiche di fondo', act:function(){switchMappaTab('principi');}},
                 {t:'Tecniche Avanzate', d:'Fat washing, koji, nixtamal…', act:function(){if(typeof apriAvanzate==='function')apriAvanzate();}} ]},
   usare:    { label:'Usare',    sub:'Come si fa al banco', voci:[
-                {t:'Ricettario', d:'454 ricette certificate', act:function(){ _caricaModulo('ricette').then(function(){ if(typeof apriRicettario==='function')apriRicettario(); }); }},
+                {t:'Ricettario', d:'ricette validate del ricettario', act:function(){ _caricaModulo('ricette').then(function(){ if(typeof apriRicettario==='function')apriRicettario(); }); }},
                 {t:'Strumenti', d:'Cosa serve per misurare', act:function(){switchMappaTab('strumenti');}} ]},
   creare:   { label:'Creare',   sub:'Combina e scopri', voci:[
                 {t:'Flavour Network', d:'Con cosa dialoga un ingrediente', act:function(){if(typeof apriFlavour==='function')apriFlavour();}},
@@ -5846,7 +5846,7 @@ function _pontiDolce(d){
 
 /* ═══════════════ 3. MENU BUILDER ═══════════════ */
 let _menuIngredienti = [];
-// ═══ RICETTARIO DEI PROFESSIONISTI — le 454 ricette certificate (separato dal Quaderno) ═══
+// ═══ RICETTARIO DEI PROFESSIONISTI — le ricette validate del ricettario (separato dal Quaderno) ═══
 var _ricettarioDisc = null;
 
 // [spostata in matter-ricette.js]

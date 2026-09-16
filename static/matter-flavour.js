@@ -140,12 +140,21 @@ window.caricaFlavour = async function(term){
   if(!out) return;
   out.innerHTML = '<div class="vista-loading">Leggo il grafo dei composti…</div>';
   try{
+    // grafo molecolare dal nuovo endpoint dedicato (nodi + forza)
+    var nodiGrafo=[];
+    try{
+      var rg=await fetch('/v1/flavour-network/'+encodeURIComponent(q));
+      var jg=await rg.json();
+      nodiGrafo=(jg.nodi||[]).map(function(n){ return {ingrediente:n.nome, overlap:n.forza}; });
+    }catch(x){}
     const r = await fetch('/v1/abbina/'+encodeURIComponent(q)+'?lang='+_vistaLang());
     const d = await r.json();
     if(!d.abbinamenti || !d.abbinamenti.length){ out.innerHTML = '<div class="vista-empty">Nessun dato per questo ingrediente.</div>'; return; }
     const sorpr = d.abbinamenti.filter(a=>a.sorprendente);
     const classici = d.abbinamenti.filter(a=>!a.sorprendente);
-    let h = _flavourGrafo(d.ingrediente||q, d.abbinamenti.slice(0,6));
+    // uso i nodi del grafo molecolare se disponibili, altrimenti gli abbinamenti
+    var perGrafo = nodiGrafo.length ? nodiGrafo.slice(0,6) : d.abbinamenti.slice(0,6);
+    let h = _flavourGrafo(d.ingrediente||q, perGrafo);
     h += '<div class="fnv-center"><div class="fnv-center-lab">◉ Ingrediente</div><div class="fnv-center-name">'+_escV(d.ingrediente||q)+'</div>'+(d.nota?'<div class="fnv-center-nota">'+_escV(d.nota)+'</div>':'')+'</div>';
     if(sorpr.length){
       h += '<div class="fnv-sec-h"><span class="t">Sorprendenti</span><span class="rule"></span><span class="cnt">'+sorpr.length+'</span></div>';

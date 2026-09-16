@@ -77,7 +77,7 @@ window._vetrinaCarica = async function(){
 
 window.apriRicettario = async function(){
   _apriVista('Ricettario dei Professionisti',
-    '<div class="ric-search"><input type="text" id="ricp-q" placeholder="Cerca tra le 454 ricette certificate…" onkeydown="if(event.key===\'Enter\')_ricettarioCerca()"><button onclick="_ricettarioCerca()">Cerca</button></div>'
+    '<div class="ric-search"><input type="text" id="ricp-q" placeholder="Cerca tra le ricette validate del ricettario…" onkeydown="if(event.key===\'Enter\')_ricettarioCerca()"><button onclick="_ricettarioCerca()">Cerca</button></div>'
     + '<div class="ric-disc-chips" id="ricp-chips"></div>'
     + '<div id="ricp-out"><div class="skel-grid">'+('<div class="skeleton skel-card"></div>').repeat(6)+'</div></div>');
   try{
