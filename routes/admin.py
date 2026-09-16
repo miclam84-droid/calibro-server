@@ -8731,3 +8731,32 @@ def admin_foto_pexels_diretta():
     return jsonify({"avviato": True, "nota": "foto da Pexels/Pixabay SENZA vision (no rate-limit). Query precisa."})
 
 
+
+
+@bp.route("/admin/aggiungi-leidenfrost")
+def admin_aggiungi_leidenfrost():
+    """Aggiunge il fenomeno Leidenfrost (la goccia che balla) - separato per evitare doppioni."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id FROM nodes WHERE id = 'fen-leidenfrost'")
+        if cur.fetchone():
+            cur.close(); conn.close()
+            return jsonify({"gia_esiste": True})
+        data = {"nome": "Effetto Leidenfrost", "disciplina": "cucina", "target": "~193°C",
+                "grandezza": "temperatura padella", "unita": "°C", "tipo_fenomeno": "trucco",
+                "scheda": {
+                    "cosa": "La goccia d'acqua che 'balla' e resta unita sulla padella invece di evaporare subito: il test del cuoco per sapere se la padella e' pronta.",
+                    "capire": "Sopra i ~193°C la parte sotto della goccia evapora all'istante e forma un cuscinetto di vapore che solleva il resto: la goccia galleggia sul suo stesso vapore, isolata dal metallo, e scivola invece di sfrigolare.",
+                    "usare": "Goccia che sfrigola e sparisce = padella fredda (sotto 150°C). Goccia che balla e resta unita = padella pronta (200°C+) per scottare e per la reazione di Maillard senza attaccare.",
+                    "creare": "Fai il test prima di scottare carne o saltare verdure: se la goccia balla, il cibo dora senza attaccarsi.",
+                    "misurare": "~193°C e' il punto di Leidenfrost dell'acqua. Sopra, la goccia galleggia; sotto, evapora sfrigolando."}}
+        cur.execute("INSERT INTO nodes (id, name, type, data) VALUES ('fen-leidenfrost', 'Effetto Leidenfrost', 'Fenomeno', %s)",
+                    (json.dumps(data),))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"aggiunto": "Effetto Leidenfrost"})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
