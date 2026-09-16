@@ -5744,14 +5744,13 @@ let _pontiTab = 'vino';
 function apriPonti(){
   var e=_escV;
   _apriVista('Ponti',
-    '<div class="crea-intro">Un ingrediente non vive in una disciplina sola. Scopri con cosa dialoga.</div>'
-    + '<div class="ptv-field"><input id="ptv-input" placeholder="scrivi un ingrediente…" onkeydown="if(event.key===\'Enter\')caricaPonti()"><button class="ptv-go-inline" onclick="caricaPonti()">→</button></div>'
+    '<div class="ponti-hero"><div class="ponti-hero-lab">PONTI</div><div class="ponti-hero-claim">Scopri dove vive un ingrediente.</div><div class="ponti-hero-sub">Un ingrediente non appartiene a una disciplina sola: dialoga con vino, pane, cocktail, caffè, dolci. Scopri come.</div></div>'
+    + '<div class="ptv-field"><input id="ptv-input" placeholder="Pomodoro" onkeydown="if(event.key===\'Enter\')caricaPonti()"><button class="ptv-go-inline" onclick="caricaPonti()">→</button></div>'
     + '<div class="ponti-esempi-lab">Prova con</div>'
     + '<div class="ponti-chips">'+['pomodoro','fragola','caffè','cioccolato','basilico'].map(function(c){ return '<button class="ponti-chip" onclick="_pontiCerca(\''+e(c)+'\')">'+e(c)+'</button>'; }).join('')+'</div>'
     + '<div id="ptv-out"></div>');
-  // carico un esempio così la dashboard non è vuota (riferimento diretto)
   var inp=document.getElementById('ptv-input');
-  if(inp){ inp.value='limone'; if(typeof caricaPonti==='function') caricaPonti(); }
+  if(inp){ inp.value='pomodoro'; if(typeof caricaPonti==='function') caricaPonti(); }
 }
 window._pontiCerca=function(ing){ var i=document.getElementById('ptv-input'); if(i){ i.value=ing; } caricaPonti(); };
 function _pontiWorkflow(x){ apriPonti(); }
@@ -5761,31 +5760,65 @@ async function caricaPonti(){
   const q = (inp?inp.value:'').trim();
   if(!q) return;
   const out = document.getElementById('ptv-out');
-  out.innerHTML = '<div class="vista-loading">Cerco i ponti tra le discipline…</div>';
+  out.innerHTML = '<div class="vista-loading">Cerco i ponti…</div>';
   try{
     const r = await fetch('/v1/ponti/'+encodeURIComponent(q));
     const d = await r.json();
     var ponti = d.ponti||[];
     if(!ponti.length){ out.innerHTML = '<div class="vista-empty">Nessun ponte trovato per "'+_escV(q)+'".</div>'; return; }
     var e=_escV;
-    // conteggio connessioni reale (autorevolezza)
+    window._pontiDati = { ingrediente:(d.ingrediente||q), ponti:ponti };
     var nConn=null;
     try{ var rc=await fetch('/v1/connessioni-conta/'+encodeURIComponent(q)); var jc=await rc.json(); nConn=jc.connessioni; }catch(x){}
-    var discLabel={ cucina:'In cucina', vino:'Col vino', birra:'Con la birra', caffe:'Col caffè', gelato:'Nel gelato', gelateria:'Nel gelato', pasticceria:'In pasticceria', bar:'Al bar', cocktail:'Nei cocktail', panificazione:'Nel pane', formaggi:'Coi formaggi' };
-    var sub = 'dialoga con '+ponti.length+(ponti.length===1?' disciplina':' discipline');
-    if(nConn!=null) sub = nConn+' ingredienti in '+ponti.length+(ponti.length===1?' disciplina':' discipline');
+    var discLabel={ cucina:'Cucina', vino:'Vino', birra:'Birra', caffe:'Caffè', gelato:'Gelato', gelateria:'Gelato', pasticceria:'Pasticceria', bar:'Bar', cocktail:'Cocktail', panificazione:'Pane', formaggi:'Formaggi', fermentazione:'Fermentazione' };
+    // LIVELLO 2 — mappa a nodo: ingrediente al centro, discipline satelliti
+    var W=358, H=300, cx=W/2, cy=H/2, R=110;
+    var svg='<svg class="ponti-map" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+    ponti.forEach(function(p,i){
+      var ang=(-90 + i*(360/ponti.length))*Math.PI/180;
+      var x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
+      svg+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="#c4c0b4" stroke-width="1.5" class="ponti-map-line" style="animation-delay:'+(i*0.06)+'s"/>';
+    });
+    ponti.forEach(function(p,i){
+      var ang=(-90 + i*(360/ponti.length))*Math.PI/180;
+      var x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
+      var lab=discLabel[p.disciplina]||p.disciplina;
+      svg+='<g class="ponti-map-node" style="animation-delay:'+(i*0.06+0.1)+'s" onclick="_pontiApriDisc('+i+')">';
+      svg+='<circle cx="'+x+'" cy="'+y+'" r="22" fill="#fff" stroke="#245979" stroke-width="1.5"/>';
+      svg+='<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="10" fill="#141d22">'+e(lab)+'</text>';
+      svg+='</g>';
+    });
+    svg+='<circle cx="'+cx+'" cy="'+cy+'" r="30" fill="#141d22" stroke="#c77b3f" stroke-width="2.5"/>';
+    svg+='<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="12" fill="#e8935a">'+e((d.ingrediente||q).slice(0,12))+'</text>';
+    svg+='</svg>';
+    var sub = nConn!=null ? (nConn+' ingredienti in '+ponti.length+' discipline') : (ponti.length+' discipline');
     var html='<div class="ponti-res-head"><span class="ponti-res-ing">'+e(d.ingrediente||q)+'</span><span class="ponti-res-sub">'+sub+'</span></div>';
-    html += ponti.map(function(p){
-      var ab=(p.abbinati||[]).slice(0,5);
-      return '<div class="ponti-disc">'
-        + '<div class="ponti-disc-lab">'+e(discLabel[p.disciplina]||p.disciplina)+'</div>'
-        + '<div class="ponti-disc-items">'+ab.map(function(a){
-            return '<span class="ponti-disc-item">'+e(String(a.ingrediente).replace(/_/g,' '))+(a.forza?'<span class="ponti-forza">'+Math.round(a.forza)+'</span>':'')+'</span>';
-          }).join('')+'</div></div>';
-    }).join('');
+    html += '<div class="ponti-map-wrap">'+svg+'</div>';
+    html += '<div class="ponti-map-hint">Tocca una disciplina per aprire il ponte</div>';
     out.innerHTML = html;
   }catch(e){ out.innerHTML = '<div class="vista-empty">Errore di rete. Riprova.</div>'; }
 }
+// LIVELLO 3 — mini-scheda editoriale del ponte
+window._pontiApriDisc = function(idx){
+  var dati=window._pontiDati; if(!dati) return;
+  var p=(dati.ponti||[])[idx]; if(!p) return;
+  var e=_escV;
+  var discLabel={ cucina:'Cucina', vino:'Vino', birra:'Birra', caffe:'Caffè', gelato:'Gelato', gelateria:'Gelato', pasticceria:'Pasticceria', bar:'Bar', cocktail:'Cocktail', panificazione:'Pane', formaggi:'Formaggi', fermentazione:'Fermentazione' };
+  var ab=(p.abbinati||[]);
+  var primo=ab[0]||{};
+  var aff=primo.affinita||85;
+  var comp=(p.composti_approfondisci||[]);
+  var lista=ab.slice(0,6).map(function(a){
+    return '<div class="pmini-row"><span class="pmini-ing">'+e(String(a.ingrediente).replace(/_/g,' '))+'</span><span class="pmini-aff">'+(a.affinita||'')+'</span></div>';
+  }).join('');
+  var compHtml = comp.length ? '<button class="pmini-approf" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'block\'?\'none\':\'block\'">▼ Approfondisci — i composti condivisi</button><div class="pmini-comp" style="display:none">'+comp.slice(0,10).map(function(c){return '<span class="pmini-comp-item">'+e(String(c).replace(/_/g,' '))+'</span>';}).join('')+'</div>' : '';
+  _apriVista('Ponte',
+    '<div class="pmini-head"><span class="pmini-lab">PONTE</span><div class="pmini-titolo">'+e(dati.ingrediente)+' <span class="pmini-arr">↔</span> '+e(discLabel[p.disciplina]||p.disciplina)+'</div></div>'
+    + '<div class="pmini-aff-box"><span class="pmini-aff-n">'+aff+'</span><span class="pmini-aff-lab">/100 · affinità aromatica '+(primo.affinita_label||'alta')+'</span></div>'
+    + '<div class="pmini-sec-lab">Con cosa dialoga</div>'
+    + '<div class="pmini-lista">'+lista+'</div>'
+    + compHtml);
+};
 function _pontiNota(txt){ return txt ? '<div class="ptv-nota"><div class="ptv-nota-lab">◉ Il principio</div><div class="ptv-nota-txt">'+_escV(txt)+'</div></div>' : ''; }
 function _pontiVino(d){
   if(!d.suggerimenti||!d.suggerimenti.length) return '<div class="vista-empty">Nessun vino in dialogo.</div>';
