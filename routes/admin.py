@@ -8534,6 +8534,7 @@ def admin_verifica_foto_esistenti():
     pexels_key = os.environ.get("PEXELS_API_KEY", "")
     cn = os.environ.get("CLOUDINARY_CLOUD_NAME",""); ck=os.environ.get("CLOUDINARY_API_KEY",""); cs=os.environ.get("CLOUDINARY_API_SECRET","")
 
+    _vision_err=[]
     def _vision_ok(img_url, nome):
         try:
             payload={"model":"gpt-4o-mini","messages":[{"role":"user","content":[
@@ -8543,7 +8544,9 @@ def admin_verifica_foto_esistenti():
                 headers={"Authorization":f"Bearer {key_ai}","Content-Type":"application/json"})
             r=ur.urlopen(req,timeout=25); d=json.loads(r.read().decode())
             return "SI" in d["choices"][0]["message"]["content"].strip().upper()
-        except Exception: return None
+        except Exception as _e:
+            if len(_vision_err)<2: _vision_err.append(str(_e)[:70])
+            return None
 
     def _cerca_pexels(nome):
         try:
@@ -8604,7 +8607,7 @@ def admin_verifica_foto_esistenti():
                             if cu: cur.execute("UPDATE ricette SET immagine=%s WHERE id=%s",(cu,rid)); conn.commit()
                     sostituite+=1
             cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
-            _et=(" | "+_errv[0]) if _errv else ""
+            _et=(" | vision_err: "+_vision_err[0]) if _vision_err else ((" | "+_errv[0]) if _errv else "")
             cur.execute("INSERT INTO worker_log (testo) VALUES (%s)",(f"verifica-foto-esistenti: {ok} ok, {sostituite} rifatte su {_nrighe} righe{_et}",))
             conn.commit(); cur.close(); conn.close()
         except Exception: pass
