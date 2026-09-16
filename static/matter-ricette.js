@@ -11,10 +11,12 @@ window.caricaLeMieRicette = async function(){
     var ricette=j.ricette||[];
     if(!ricette.length){ if(empty){ empty.style.display=''; list.innerHTML=''; } else { list.innerHTML='<div class="quad-empty"><b>Non hai ancora salvato ricette</b><span>Quando trovi una ricetta utile, salvala qui dal pulsante Salva nel Quaderno.</span></div>'; } return; }
     if(empty) empty.style.display='none';
-    list.innerHTML=ricette.map(function(r){
+    window._ricetteSalvate = ricette;
+    window._riapriRicettaIdx = function(idx){ var r=(window._ricetteSalvate||[])[idx]; if(r && typeof riapriRicettaSalvata==='function') riapriRicettaSalvata(r); };
+    list.innerHTML=ricette.map(function(r,idx){
       var d=r.dati||{};
       var nIng=(d.ingredienti||[]).length;
-      return '<div class="quad-ric-card" onclick=\'riapriRicettaSalvata('+JSON.stringify(JSON.stringify(r)).replace(/'/g,"&#39;")+')\'>'
+      return '<div class="quad-ric-card" onclick="_riapriRicettaIdx('+idx+')">'
         +'<div class="quad-ric-nome">'+_esc(r.nome||d.nome||'Ricetta')+'</div>'
         +'<div class="quad-ric-meta">'+(nIng?nIng+' ingredienti':'')+(d.disciplina?' · '+_esc(d.disciplina):'')+'</div>'
         +'<button class="quad-ric-rimuovi" onclick=\'event.stopPropagation();rimuoviRicettaSalvata("'+_esc(r.ricetta_id)+'")\'>Rimuovi</button>'

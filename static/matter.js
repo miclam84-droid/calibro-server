@@ -1375,8 +1375,9 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
     + spiegazione
     + connessiHtml
     + '<div class="fen-chat-ctx"><div class="fen-chat-ctx-t">Hai un problema con questo fenomeno?</div>'
-    +   '<button class="fen-chat-ctx-btn" onclick="_chatDaFenomeno('+JSON.stringify(JSON.stringify(j.titolo||'')).replace(/'/g,"&#39;")+')">◎ Chiedi a Matter</button></div>'
+    +   '<button class="fen-chat-ctx-btn" onclick="_chatDaFenomenoCorrente()">◎ Chiedi a Matter</button></div>'
     + '</div>';
+  window._fenomenoCorrente = j.titolo || '';
 
   var card=document.createElement('div');card.className='scheda';card.innerHTML=html;
   document.getElementById('schede').prepend(card);
@@ -1405,9 +1406,15 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
 }
 window._chatDaFenomeno = function(titolo){
   try{ _ctxChat = { fenomeno: titolo }; }catch(e){}
+  chiudiVista&&chiudiVista();
   switchTab('chiedi'); if(typeof switchSubtab==='function') switchSubtab('chat');
-  setTimeout(function(){ if(typeof chiediTesto==='function') chiediTesto('Ho un problema con '+(titolo||'questo fenomeno')+'. Aiutami a diagnosticarlo.'); }, 200);
+  var t=titolo||'questo fenomeno';
+  setTimeout(function(){
+    if(typeof chiediTesto==='function') chiediTesto('Ho un problema con '+t+'. Aiutami a diagnosticarlo.');
+    else if(typeof _diagnosiVai==='function') _diagnosiVai('Ho un problema con '+t+'. Aiutami a diagnosticarlo.');
+  }, 300);
 };
+window._chatDaFenomenoCorrente = function(){ window._chatDaFenomeno(window._fenomenoCorrente||''); };
 
 // [spostata in matter-chat.js]
 
