@@ -4359,20 +4359,26 @@ def ponti_ingrediente(ingrediente):
                      (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%"))
         righe = _cur.fetchall()
         _cur.close(); _release_conn(_c)
-        # escludo i COMPOSTI chimici (non ingredienti): nomi con parentesi chimica o terminazioni tipiche
+        # distinguo INGREDIENTI (in vista) da COMPOSTI chimici (in 'approfondisci', non eliminati)
         def _e_composto(nome):
             nl = nome.lower()
             if "(" in nome and any(x in nl for x in ["metil","etil","pirazin","aldeide","acetato","butil","propil","-ol","-one","-ale","estere"]):
                 return True
-            # nomi puramente chimici
             if any(nl.startswith(x) for x in ["pirazine","esteri","aldeidi","chetoni","terpeni","tioli","lattoni","fenoli"]):
                 return True
             return False
         per_disc = {k: [] for k in DISCIPLINE}
+        composti_disc = {k: [] for k in DISCIPLINE}  # composti stratificati per 'approfondisci'
         def _aggiungi(disc, nome, ov):
-            if _e_composto(nome): return
+            aff = round(float(ov)) if ov else 0
+            if _e_composto(nome):
+                if len(composti_disc[disc]) < 5 and nome not in composti_disc[disc]:
+                    composti_disc[disc].append(nome)
+                return
             if len(per_disc[disc]) < 5 and nome not in [x["ingrediente"] for x in per_disc[disc]]:
-                per_disc[disc].append({"ingrediente": nome, "forza": round(float(ov)) if ov else 0})
+                # affinità aromatica leggibile
+                per_disc[disc].append({"ingrediente": nome, "affinita": aff,
+                                       "affinita_label": "alta" if aff>=75 else ("media" if aff>=50 else "esplorativa")})
         for nome, data, ov in righe:
             dd = data if isinstance(data, dict) else {}
             testo = (str(dd.get("domini", "")) + " " + str(dd.get("categoria", "")) + " " +
@@ -4391,7 +4397,8 @@ def ponti_ingrediente(ingrediente):
                 _aggiungi("cucina", nome, ov); trovato = True
             if not trovato:
                 _aggiungi("cucina", nome, ov)
-        ponti = [{"disciplina": d, "abbinati": v} for d, v in per_disc.items() if v]
+        ponti = [{"disciplina": d, "abbinati": v, "composti_approfondisci": composti_disc.get(d, [])}
+                 for d, v in per_disc.items() if v]
         return jsonify({"ingrediente": ingrediente, "ponti": ponti, "n_discipline": len(ponti)})
     except Exception as e:
         return jsonify({"ingrediente": ingrediente, "ponti": [], "errore": str(e)[:100]})
