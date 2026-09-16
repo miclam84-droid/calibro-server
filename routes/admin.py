@@ -8314,13 +8314,113 @@ def admin_trova_quiz_anisakis():
         risultati = {"tabelle_quiz": tabelle}
         for t in tabelle:
             try:
-                cur.execute(f"SELECT * FROM {t} WHERE domanda ILIKE '%%anisakis%%' OR domanda ILIKE '%%abbatti%%' OR insight ILIKE '%%anisakis%%' OR insight ILIKE '%%-35%%' OR insight ILIKE '%%abbatti%%'")
+                # vedo le colonne della tabella
+                cur.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name='{t}'")
+                colT = [r[0] for r in cur.fetchall()]
+                # costruisco la WHERE solo sulle colonne testuali che esistono
+                cond = []
+                for col in colT:
+                    if col in ('domanda','insight','spiegazione','risposta','opzioni','testo','corretta'):
+                        cond.append(f"{col}::text ILIKE '%%anisakis%%' OR {col}::text ILIKE '%%abbatti%%' OR {col}::text ILIKE '%%-35%%' OR {col}::text ILIKE '%%853%%'")
+                if not cond:
+                    continue
+                cur.execute(f"SELECT * FROM {t} WHERE {' OR '.join(cond)} LIMIT 5")
                 cols = [d[0] for d in cur.description]
                 righe = [dict(zip(cols, r)) for r in cur.fetchall()]
-                if righe: risultati[t] = [{k: str(v)[:200] for k, v in r.items()} for r in righe[:5]]
+                if righe: risultati[t] = [{k: str(v)[:250] for k, v in r.items()} for r in righe]
             except Exception as _e:
-                risultati[t + "_err"] = str(_e)[:60]
+                conn.rollback()
+                risultati[t + "_err"] = str(_e)[:50]
         cur.close(); conn.close()
         return jsonify(risultati)
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/foto-definitiva")
+def admin_foto_definitiva():
+    """Worker foto DEFINITIVO: per ogni ricetta senza foto vera, cerca su Pexels con query precisa,
+    VERIFICA con vision (no insegne/persone/sbagliate), se fallisce genera con gpt-image-1. Salva su Cloudinary."""
+    from flask import request, jsonify
+    import os, psycopg2, threading, json, urllib.request as ur, urllib.parse, base64
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "6")), 12)
+    key_ai = os.environ.get("OPENAI_API_KEY", "")
+    pexels_key = os.environ.get("PEXELS_API_KEY", "")
+    cn = os.environ.get("CLOUDINARY_CLOUD_NAME", ""); ck = os.environ.get("CLOUDINARY_API_KEY", ""); cs = os.environ.get("CLOUDINARY_API_SECRET", "")
+
+    def _vision_ok(img_url, nome):
+        """gpt-4o-mini verifica: è una foto del piatto (no insegne/persone/loghi)?"""
+        try:
+            payload = {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": [
+                {"type": "text", "text": f"Questa immagine mostra il PIATTO/CIBO '{nome}' pronto da mangiare? Rispondi SOLO SI o NO. Rispondi NO se e' un'insegna, un logo, un ristorante, persone, un menu scritto, o cibo diverso."},
+                {"type": "image_url", "image_url": {"url": img_url}}]}], "max_tokens": 5}
+            req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
+                             headers={"Authorization": f"Bearer {key_ai}", "Content-Type": "application/json"})
+            r = ur.urlopen(req, timeout=25); d = json.loads(r.read().decode())
+            risp = d["choices"][0]["message"]["content"].strip().upper()
+            return "SI" in risp
+        except Exception:
+            return False
+
+    def _cerca_pexels(nome):
+        try:
+            q = urllib.parse.quote(nome + " dish food plated")
+            req = ur.Request(f"https://api.pexels.com/v1/search?query={q}&per_page=5&orientation=landscape",
+                             headers={"Authorization": pexels_key, "User-Agent": "MatterLab/1.0"})
+            r = ur.urlopen(req, timeout=15); d = json.loads(r.read().decode())
+            return [ph["src"]["large"] for ph in d.get("photos", [])]
+        except Exception:
+            return []
+
+    def _genera_ai(nome):
+        try:
+            prompt = f"Professional food photography of {nome}, plated dish, top view, natural light, appetizing, no text, no people, no signage"
+            payload = {"model": "gpt-image-1", "prompt": prompt, "n": 1, "size": "1024x1024"}
+            req = ur.Request("https://api.openai.com/v1/images/generations", data=json.dumps(payload).encode(),
+                             headers={"Authorization": f"Bearer {key_ai}", "Content-Type": "application/json"})
+            r = ur.urlopen(req, timeout=120); d = json.loads(r.read().decode())
+            return d["data"][0].get("b64_json")
+        except Exception:
+            return None
+
+    def _upload_cloud(img_bytes, rid):
+        try:
+            import cloudinary, cloudinary.uploader
+            cloudinary.config(cloud_name=cn, api_key=ck, api_secret=cs)
+            up = cloudinary.uploader.upload(img_bytes, folder="ricette_ok", public_id=str(rid), overwrite=True)
+            return up.get("secure_url")
+        except Exception:
+            return None
+
+    def _w(n):
+        fatte_pexels = fatte_ai = 0
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            cur.execute("""SELECT id, nome FROM ricette
+                           WHERE immagine IS NULL OR immagine::text = 'null'
+                           OR immagine::text ILIKE '%%blueprint%%' LIMIT %s""", (n,))
+            for rid, nome in cur.fetchall():
+                url_finale = None
+                # 1. prova Pexels + vision
+                for foto_url in _cerca_pexels(nome):
+                    if _vision_ok(foto_url, nome):
+                        cur.execute("UPDATE ricette SET immagine=%s WHERE id=%s", (foto_url, rid))
+                        conn.commit(); url_finale = foto_url; fatte_pexels += 1; break
+                # 2. se Pexels fallisce, genera con AI
+                if not url_finale and key_ai:
+                    b64 = _genera_ai(nome)
+                    if b64:
+                        cloud_url = _upload_cloud(base64.b64decode(b64), rid)
+                        if cloud_url:
+                            cur.execute("UPDATE ricette SET immagine=%s WHERE id=%s", (cloud_url, rid))
+                            conn.commit(); fatte_ai += 1
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"foto-definitiva: {fatte_pexels} pexels + {fatte_ai} AI",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_w, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "nota": "foto definitiva: Pexels+vision, fallback AI. Controlla worker-log."})
