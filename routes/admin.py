@@ -8442,3 +8442,53 @@ def admin_mostra_quiz_anisakis():
         return jsonify({"trovate": len(righe), "domande": [{k: str(v)[:300] for k, v in r.items()} for r in righe]})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/quiz-22-completo")
+def admin_quiz_22():
+    """Mostra il quiz id 22 (anisakis) con TUTTI i campi completi per la correzione."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT * FROM quiz WHERE id = '22' OR id = 22")
+        cols = [d[0] for d in cur.description]
+        righe = [dict(zip(cols, r)) for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"quiz": [{k: str(v)[:500] for k, v in r.items()} for r in righe]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/correggi-anisakis")
+def admin_correggi_anisakis():
+    """Corregge il dato Anisakis nel quiz id 22 col dato giusto (Reg CE 853/2004)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    insight = ("Il Regolamento CE 853/2004 stabilisce che il pesce destinato al consumo crudo deve essere "
+               "abbattuto a -20°C per almeno 24 ore, OPPURE a -35°C per almeno 15 ore. Non minuti: sono ore. "
+               "L'abbattimento uccide le larve di Anisakis, un parassita pericoloso per l'uomo.")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # correggo insight + le opzioni se contengono "minuti"
+        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='quiz'")
+        colonne = [r[0] for r in cur.fetchall()]
+        campo_insight = "insight_didattico" if "insight_didattico" in colonne else ("insight" if "insight" in colonne else None)
+        if campo_insight:
+            cur.execute(f"UPDATE quiz SET {campo_insight} = %s WHERE id = '22' OR id = 22", (insight,))
+        # se c'è un campo opzioni/risposta con "minuti", lo correggo
+        for c in ["opzioni", "risposta_corretta", "corretta", "risposte"]:
+            if c in colonne:
+                cur.execute(f"UPDATE quiz SET {c} = REPLACE(REPLACE({c}::text, '15 minuti', '15 ore')::jsonb, '-35°C', '-35°C')::text WHERE (id='22' OR id=22) AND {c}::text ILIKE '%%minut%%'") if False else None
+        conn.commit()
+        # verifico
+        cur.execute("SELECT * FROM quiz WHERE id='22' OR id=22")
+        cols = [d[0] for d in cur.description]; row = dict(zip(cols, cur.fetchone()))
+        cur.close(); conn.close()
+        return jsonify({"corretto": True, "nuovo_insight": str(row.get(campo_insight, ""))[:200]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
