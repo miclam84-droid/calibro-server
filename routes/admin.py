@@ -8297,3 +8297,30 @@ def admin_traduci_continuo():
 
     threading.Thread(target=_ciclo, args=(lang,), daemon=True).start()
     return jsonify({"avviato": True, "lingua": lang})
+
+
+@bp.route("/admin/trova-quiz-anisakis")
+def admin_trova_quiz_anisakis():
+    """Trova le domande quiz che parlano di anisakis/abbattimento pesce (dato sicurezza da verificare)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # cerco nelle tabelle quiz
+        cur.execute("SELECT table_name FROM information_schema.tables WHERE table_name LIKE '%%quiz%%' OR table_name LIKE '%%domand%%'")
+        tabelle = [r[0] for r in cur.fetchall()]
+        risultati = {"tabelle_quiz": tabelle}
+        for t in tabelle:
+            try:
+                cur.execute(f"SELECT * FROM {t} WHERE domanda ILIKE '%%anisakis%%' OR domanda ILIKE '%%abbatti%%' OR insight ILIKE '%%anisakis%%' OR insight ILIKE '%%-35%%' OR insight ILIKE '%%abbatti%%'")
+                cols = [d[0] for d in cur.description]
+                righe = [dict(zip(cols, r)) for r in cur.fetchall()]
+                if righe: risultati[t] = [{k: str(v)[:200] for k, v in r.items()} for r in righe[:5]]
+            except Exception as _e:
+                risultati[t + "_err"] = str(_e)[:60]
+        cur.close(); conn.close()
+        return jsonify(risultati)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
