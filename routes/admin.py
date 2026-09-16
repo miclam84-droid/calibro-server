@@ -8700,14 +8700,19 @@ def admin_foto_pexels_diretta():
         fatte = 0; pex = pix = 0
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-            if solo_mancanti:
-                cur.execute("""SELECT id, nome FROM ricette WHERE immagine IS NULL OR immagine::text='null'
-                               OR immagine::text ILIKE '%%blueprint%%' ORDER BY random() LIMIT %s""", (n,))
-            else:
-                # rifà tutte le foto NON già su ricette_ok (le verificate) - così sostituisce le sbagliate vecchie
-                cur.execute("""SELECT id, nome FROM ricette WHERE immagine::text NOT ILIKE '%%ricette_ok%%'
-                               OR immagine IS NULL ORDER BY random() LIMIT %s""", (n,))
-            for rid, nome in cur.fetchall():
+            # PRIMA le ricette senza foto (sistematico, non random - così copre tutto)
+            cur.execute("""SELECT id, nome FROM ricette
+                           WHERE immagine IS NULL OR immagine::text='null' OR immagine::text ILIKE '%%blueprint%%'
+                           ORDER BY id LIMIT %s""", (n,))
+            _r = cur.fetchall()
+            if not _r and not solo_mancanti:
+                # finite le mancanti: rifà le foto vecchie non verificate (le potenzialmente sbagliate)
+                cur.execute("""SELECT id, nome FROM ricette
+                               WHERE immagine::text ILIKE '%%http%%' AND immagine::text NOT ILIKE '%%ricette_ok%%'
+                               ORDER BY id LIMIT %s""", (n,))
+                _r = cur.fetchall()
+            # (uso _r invece di ri-fetchare)
+            for rid, nome in _r:
                 url = _pexels(nome)
                 if url: pex += 1
                 elif pixabay_key:
