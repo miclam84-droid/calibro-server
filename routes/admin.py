@@ -8646,3 +8646,81 @@ def admin_correggi_anisakis_opzioni():
         return jsonify({"corretto": True, "opzioni": opz_new, "risposta": risp_new})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/foto-pexels-diretta")
+def admin_foto_pexels_diretta():
+    """Worker SEMPLICE senza vision: cerca su Pexels col nome preciso del piatto, prende la foto migliore.
+    Nessuna chiamata AI = nessun rate-limit. Query precisa = foto giuste. Rifà TUTTE le foto."""
+    from flask import request, jsonify
+    import os, psycopg2, threading, json, urllib.request as ur, urllib.parse
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "20")), 40)
+    solo_mancanti = request.args.get("solo_mancanti") == "1"
+    pexels_key = os.environ.get("PEXELS_API_KEY", "")
+    pixabay_key = os.environ.get("PIXABAY_API_KEY", "")
+
+    # parole che indicano una foto SBAGLIATA nella descrizione/alt (insegne, persone, ecc.)
+    BLOCCA = ["sign", "restaurant exterior", "logo", "storefront", "people", "portrait", "man ", "woman ", "chef ", "kitchen staff", "waiter", "menu board", "building", "facade"]
+
+    def _pexels(nome):
+        """cerca su Pexels col nome del piatto, ritorna la migliore foto food."""
+        try:
+            # query precisa: nome piatto + food/dish
+            q = urllib.parse.quote(f"{nome} food dish")
+            req = ur.Request(f"https://api.pexels.com/v1/search?query={q}&per_page=8&orientation=landscape",
+                             headers={"Authorization": pexels_key, "User-Agent": "MatterLab/1.0"})
+            r = ur.urlopen(req, timeout=15); d = json.loads(r.read().decode())
+            for ph in d.get("photos", []):
+                alt = (ph.get("alt", "") or "").lower()
+                # scarto se l'alt indica insegna/persone/edificio
+                if any(bad in alt for bad in BLOCCA):
+                    continue
+                return ph["src"]["large"]
+            # se tutte scartate, prendo la prima comunque (meglio una foto food generica che un'insegna)
+            if d.get("photos"):
+                return d["photos"][0]["src"]["large"]
+        except Exception:
+            pass
+        return None
+
+    def _pixabay(nome):
+        try:
+            q = urllib.parse.quote(f"{nome} food")
+            r = ur.urlopen(f"https://pixabay.com/api/?key={pixabay_key}&q={q}&image_type=photo&category=food&per_page=5&orientation=horizontal", timeout=15)
+            d = json.loads(r.read().decode())
+            if d.get("hits"):
+                return d["hits"][0].get("largeImageURL") or d["hits"][0].get("webformatURL")
+        except Exception:
+            pass
+        return None
+
+    def _w(n):
+        fatte = 0; pex = pix = 0
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            if solo_mancanti:
+                cur.execute("""SELECT id, nome FROM ricette WHERE immagine IS NULL OR immagine::text='null'
+                               OR immagine::text ILIKE '%%blueprint%%' ORDER BY random() LIMIT %s""", (n,))
+            else:
+                # rifà tutte le foto NON già su ricette_ok (le verificate) - così sostituisce le sbagliate vecchie
+                cur.execute("""SELECT id, nome FROM ricette WHERE immagine::text NOT ILIKE '%%ricette_ok%%'
+                               OR immagine IS NULL ORDER BY random() LIMIT %s""", (n,))
+            for rid, nome in cur.fetchall():
+                url = _pexels(nome)
+                if url: pex += 1
+                elif pixabay_key:
+                    url = _pixabay(nome)
+                    if url: pix += 1
+                if url:
+                    cur.execute("UPDATE ricette SET immagine=%s WHERE id=%s", (url, rid))
+                    conn.commit(); fatte += 1
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"foto-pexels-diretta: {fatte} foto ({pex} pexels, {pix} pixabay)",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_w, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "nota": "foto da Pexels/Pixabay SENZA vision (no rate-limit). Query precisa."})
