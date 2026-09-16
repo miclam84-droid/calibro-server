@@ -8424,3 +8424,21 @@ def admin_foto_definitiva():
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": "foto definitiva: Pexels+vision, fallback AI. Controlla worker-log."})
+
+
+@bp.route("/admin/mostra-quiz-anisakis")
+def admin_mostra_quiz_anisakis():
+    """Mostra la domanda anisakis COMPLETA (tutti i campi) per correggere il dato sbagliato."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT * FROM quiz WHERE domanda ILIKE '%%abbattut%%' OR domanda ILIKE '%%anisak%%' OR domanda ILIKE '%%pesce%%'")
+        cols = [d[0] for d in cur.description]
+        righe = [dict(zip(cols, r)) for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"trovate": len(righe), "domande": [{k: str(v)[:300] for k, v in r.items()} for r in righe]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
