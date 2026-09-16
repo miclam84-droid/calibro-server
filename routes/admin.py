@@ -8577,7 +8577,8 @@ def admin_verifica_foto_esistenti():
             # foto esistenti NON ancora verificate (non su ricette_ok, che è la cartella verificata)
             cur.execute("""SELECT id, nome, immagine FROM ricette
                            WHERE immagine::text ILIKE '%%http%%'
-                           AND immagine::text NOT ILIKE '%%ricette_ok%%' LIMIT %s""",(n,))
+                           AND immagine::text NOT ILIKE '%%ricette_ok%%'
+                           ORDER BY random() LIMIT %s""",(n,))
             for rid,nome,img in cur.fetchall():
                 url=img if isinstance(img,str) else (json.loads(img).get("url","") if isinstance(img,str) else "")
                 if not str(url).startswith("http"): continue
@@ -8603,3 +8604,26 @@ def admin_verifica_foto_esistenti():
         except Exception: pass
     threading.Thread(target=_w,args=(n,),daemon=True).start()
     return jsonify({"avviato":True,"nota":"verifica VISIVA delle foto esistenti, rifà le sbagliate"})
+
+
+@bp.route("/admin/correggi-anisakis-opzioni")
+def admin_correggi_anisakis_opzioni():
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT opzioni, risposta_corretta FROM quiz WHERE id=%s OR id=%s", ("22", 22))
+        row = cur.fetchone()
+        if not row:
+            cur.close(); conn.close(); return jsonify({"errore": "quiz 22 non trovato"})
+        opzioni, risposta = row
+        opz = opzioni if isinstance(opzioni, list) else (json.loads(opzioni) if isinstance(opzioni, str) else [])
+        opz_new = [str(o).replace("15 minuti a -35", "15 ore a -35").replace("15 minuti", "15 ore") for o in opz]
+        risp_new = str(risposta).replace("15 minuti a -35", "15 ore a -35").replace("15 minuti", "15 ore")
+        cur.execute("UPDATE quiz SET opzioni=%s, risposta_corretta=%s WHERE id=%s OR id=%s", (json.dumps(opz_new), risp_new, "22", 22))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"corretto": True, "opzioni": opz_new, "risposta": risp_new})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
