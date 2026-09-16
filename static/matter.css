@@ -404,3 +404,9 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 /* ═══ FIX AUDIT #3b: i 4 tab Capire/Usare/Creare/Misurare stanno nel viewport ═══ */
 #screen-mappa .mappa-porte{margin:8px 16px 12px!important;gap:5px!important;max-width:calc(100% - 32px)!important;box-sizing:border-box;overflow:hidden}
 #screen-mappa .mappa-porte .mappa-tab{flex:1 1 0!important;min-width:0!important;padding:10px 2px!important;font-size:12px!important;letter-spacing:0!important;text-align:center;box-shadow:2px 2px 0 rgba(20,29,34,.12)!important}
+
+/* ═══ FIX pillola numero bloccato (era sovrapposta/rotta) ═══ */
+.fen-mirino-locked-v2{display:flex;align-items:center;gap:10px;background:rgba(232,147,90,.1);border:1.5px solid #e8935a;border-radius:4px;padding:12px 14px;cursor:pointer;margin-top:6px}
+.fen-mirino-lock-ico{font-size:16px;flex-shrink:0}
+.fen-mirino-lock-txt{flex:1;font-family:'Inter',sans-serif;font-size:13px;color:#141d22;line-height:1.3}
+.fen-mirino-lock-cta{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:#c77b3f;flex-shrink:0}

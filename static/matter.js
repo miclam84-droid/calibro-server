@@ -1281,9 +1281,10 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
   if(isMis && j.target_numero){
     var valNum = '<div class="fen-mirino-val">'+e(String(j.target_numero))+(j.unita?'<span class="fen-mirino-u">'+e(j.unita)+'</span>':'')+'</div>';
     if(locked){
-      valNum = '<div class="fen-mirino-locked" onclick="mostraPopupPro(\'numero\')">'
-        + '<div class="fen-mirino-val fen-mirino-blur">'+e(String(j.target_numero))+(j.unita?'<span class="fen-mirino-u">'+e(j.unita)+'</span>':'')+'</div>'
-        + '<span class="fen-mirino-lock">🔒 Sblocca con Pro</span></div>';
+      valNum = '<div class="fen-mirino-locked-v2" onclick="mostraPopupPro(\'numero\')">'
+        + '<span class="fen-mirino-lock-ico">🔒</span>'
+        + '<span class="fen-mirino-lock-txt">Il numero-bersaglio è riservato a Pro</span>'
+        + '<span class="fen-mirino-lock-cta">Sblocca →</span></div>';
     }
     mirino =
       '<div class="scheda-tecnica" id="st-fenomeno">'
