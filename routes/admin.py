@@ -8545,6 +8545,14 @@ def admin_verifica_foto_esistenti():
             r=ur.urlopen(req,timeout=25); d=json.loads(r.read().decode())
             return "SI" in d["choices"][0]["message"]["content"].strip().upper()
         except Exception as _e:
+            if "429" in str(_e):
+                try:
+                    import time as _t2; _t2.sleep(20)
+                    r=ur.urlopen(req,timeout=25); d=json.loads(r.read().decode())
+                    return "SI" in d["choices"][0]["message"]["content"].strip().upper()
+                except Exception as _e2:
+                    if len(_vision_err)<2: _vision_err.append("retry: "+str(_e2)[:50])
+                    return None
             if len(_vision_err)<2: _vision_err.append(str(_e)[:70])
             return None
 
@@ -8585,7 +8593,9 @@ def admin_verifica_foto_esistenti():
             _righe=cur.fetchall()
             _nrighe=len(_righe)
             _errv=[]
-            for rid,nome,img in _righe:
+            import time as _tm
+            for _i,(rid,nome,img) in enumerate(_righe):
+                if _i>0: _tm.sleep(8)  # pausa anti rate-limit tra le verifiche vision
                 url=img if isinstance(img,str) else ""
                 if not str(url).startswith("http"):
                     _errv.append("url non http: "+str(url)[:30]); continue
