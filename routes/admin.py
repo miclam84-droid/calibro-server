@@ -8492,3 +8492,30 @@ def admin_correggi_anisakis():
         return jsonify({"corretto": True, "nuovo_insight": str(row.get(campo_insight, ""))[:200]})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/stato-foto")
+def admin_stato_foto():
+    """Stato foto in tempo reale: quante hanno foto vera (verificata) vs blueprint. Per controllo onesto."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM ricette")
+        tot = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%http%%'")
+        con_foto = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%cloudinary%%' OR immagine::text ILIKE '%%ricette_ok%%'")
+        foto_ai = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%pexels%%'")
+        foto_pexels = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine IS NULL OR immagine::text = 'null' OR immagine::text ILIKE '%%blueprint%%'")
+        senza = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"totale": tot, "con_foto_vera": con_foto, "di_cui_AI": foto_ai,
+                        "di_cui_pexels": foto_pexels, "senza_foto_o_blueprint": senza,
+                        "percentuale_con_foto": round(con_foto/tot*100, 1) if tot else 0})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
