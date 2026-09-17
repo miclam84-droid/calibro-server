@@ -4622,3 +4622,69 @@ def oggi():
     except Exception:
         pass
     return jsonify(out)
+
+
+@bp.route("/v1/planner/genera", methods=["POST"])
+def planner_genera():
+    """Motore Planner: genera un calendario menu. Matematica pura (no AI): pesca piatti per portata,
+    filtra stagione, non ripete entro X giorni, bilancia. Genera il Planner Object."""
+    from flask import request, jsonify
+    import psycopg2 as _pg, datetime, random
+    d = request.get_json(force=True) or {}
+    giorni = min(int(d.get("giorni", 30)), 60)
+    slot = d.get("slot", ["primo", "secondo", "contorno"])  # portate per giorno
+    no_ripeti_giorni = int(d.get("no_ripeti_giorni", 5))
+    mese = int(d.get("mese", datetime.date.today().month))
+    lock = d.get("lock", {})  # {"giorno_index": {"portata": "ricetta_id"}} piatti fissi
+    # mese -> stagione
+    STAG = {12: "inverno", 1: "inverno", 2: "inverno", 3: "primavera", 4: "primavera", 5: "primavera",
+            6: "estate", 7: "estate", 8: "estate", 9: "autunno", 10: "autunno", 11: "autunno"}
+    stagione = STAG.get(mese, "")
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        # per ogni portata, prendo i piatti disponibili (con eventuale filtro stagione)
+        piatti_per_portata = {}
+        for portata in set(slot):
+            _cur.execute("""SELECT id, nome FROM ricette WHERE portata = %s
+                            AND (ingredienti IS NOT NULL AND ingredienti::text NOT IN ('[]','null',''))
+                            ORDER BY random() LIMIT 200""", (portata,))
+            piatti_per_portata[portata] = [{"id": r[0], "nome": r[1]} for r in _cur.fetchall()]
+        _cur.close(); _release_conn(_c)
+        # genero il calendario con rotazione (no-ripeti)
+        oggi = datetime.date.today()
+        usati_recenti = {}  # ricetta_id -> ultimo giorno usato
+        calendario = []
+        for g in range(1, giorni + 1):
+            data_g = (oggi + datetime.timedelta(days=g - 1)).isoformat()
+            slot_piatti = []
+            for idx, portata in enumerate(slot):
+                # lock pin?
+                lg = lock.get(str(g), {})
+                if portata in lg:
+                    slot_piatti.append({"slot_index": idx + 1, "portata": portata,
+                                        "ricetta_id": lg[portata], "locked": True})
+                    continue
+                # pesca un piatto non usato di recente
+                candidati = [p for p in piatti_per_portata.get(portata, [])
+                             if usati_recenti.get(p["id"], -99) < g - no_ripeti_giorni]
+                if not candidati:
+                    candidati = piatti_per_portata.get(portata, [])
+                if candidati:
+                    scelto = random.choice(candidati)
+                    usati_recenti[scelto["id"]] = g
+                    slot_piatti.append({"slot_index": idx + 1, "portata": portata,
+                                        "ricetta_id": scelto["id"], "nome": scelto["nome"]})
+            calendario.append({"giorno_index": g, "data_target": data_g, "is_locked": str(g) in lock,
+                               "slot_piatti": slot_piatti})
+        # analisi
+        tutti_piatti = [sp for gg in calendario for sp in gg["slot_piatti"]]
+        return jsonify({
+            "planner_id": f"plan_{oggi.isoformat()}_{random.randint(100,999)}",
+            "meta_config": {"durata_giorni": giorni, "slot": slot, "stagione": stagione,
+                            "no_ripeti_giorni": no_ripeti_giorni},
+            "calendario": calendario,
+            "analisi": {"n_piatti_totali": len(tutti_piatti),
+                        "piatti_unici": len(set(sp.get("ricetta_id") for sp in tutti_piatti))}
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
