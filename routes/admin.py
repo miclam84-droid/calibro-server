@@ -8940,3 +8940,45 @@ def admin_conta_portate():
         return jsonify({"per_portata": out})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/aggiungi-stagionalita")
+def admin_aggiungi_stagionalita():
+    """Aggiunge il tag stagione agli ingredienti stagionali (regole, no AI). I piatti la ereditano."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+
+    # mappa ingrediente -> mesi disponibili (stagionalità italiana)
+    STAGIONI = {
+        "primavera": ["asparag", "carciof", "fava", "pisell", "fragol", "agretti", "cipollotto", "ravanell",
+                      "puntarelle", "taccole", "bietola", "rucola", "misticanza", "cicoria"],
+        "estate": ["pomodor", "melanzan", "zucchin", "peperon", "basilico", "cetriol", "angur", "melon",
+                   "pesca", "albicocc", "fico", "prugn", "ciliegi", "lampone", "mirtill", "fagiolini",
+                   "mais", "peperoncin", "susina"],
+        "autunno": ["zucca", "funghi", "porcin", "castagn", "melagran", "uva", "cachi", "mela", "pera",
+                    "cavolo", "broccol", "radicchio", "verza", "rapa", "topinambur", "tartufo"],
+        "inverno": ["cavolfiore", "cavolo nero", "verza", "finocchio", "arancia", "mandarin", "clementin",
+                    "limone", "carciof", "broccol", "cardo", "porro", "scarola", "indivia", "bietola",
+                    "spinaci", "radicchio", "cavolin"],
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        aggiornati = 0
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')""")
+        for nid, nome, data in cur.fetchall():
+            nl = (nome or "").lower()
+            stagioni_ing = []
+            for stag, chiavi in STAGIONI.items():
+                if any(k in nl for k in chiavi):
+                    stagioni_ing.append(stag)
+            if stagioni_ing:
+                dd = data if isinstance(data, dict) else {}
+                dd["stagioni"] = stagioni_ing
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd), nid))
+                aggiornati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ingredienti_con_stagione": aggiornati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
