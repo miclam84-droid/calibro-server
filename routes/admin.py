@@ -8157,7 +8157,7 @@ def admin_conta_ricette_complete():
             cur.execute("SELECT COUNT(*) FROM ricette WHERE ingredienti IS NULL OR ingredienti::text IN ('[]','null','')")
             out["senza_ingredienti"] = cur.fetchone()[0]
         if "procedimento" in colonne:
-            cur.execute("SELECT COUNT(*) FROM ricette WHERE procedimento IS NULL OR TRIM(procedimento)=''")
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE procedimento IS NULL OR procedimento::text IN ('[]','null','""','')")
             out["senza_procedimento"] = cur.fetchone()[0]
         cur.close(); conn.close()
         return jsonify(out)
