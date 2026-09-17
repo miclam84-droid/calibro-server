@@ -8874,3 +8874,20 @@ def admin_esempi_da_rivedere():
         return jsonify({"esempi": esempi, "da_rivedere_per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/conta-portate")
+def admin_conta_portate():
+    """Conta le ricette per portata."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COALESCE(portata,'(vuoto)'), COUNT(*) FROM ricette GROUP BY portata ORDER BY COUNT(*) DESC")
+        out = {r[0]: r[1] for r in cur.fetchall()}
+        cur.close(); conn.close()
+        return jsonify({"per_portata": out})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
