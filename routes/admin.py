@@ -8802,7 +8802,7 @@ def admin_categorizza_portate():
     n = min(int(request.args.get("n", "300")), 1300)
 
     REGOLE = {
-        "primo": ["risotto", "pasta", "spaghetti", "penne", "lasagn", "gnocch", "zuppa", "minestr", "vellutata",
+        "primo": ["risotto", "pasta", "spaghetti", "penne", "lasagn", "gnocch", "zuppa", "minestr", "vellutata", "pappardelle", "pici", "cavatelli", "strozzapreti", "maltagliati", "pasta e", "crema di", "passato", "brodo", "ramen", "pho", "laksa", "congee", "jok", "porridge", "ragù", "genovese", "gricia", "norma", "puttanesca", "aglio e olio", "cacio e pepe",
                   "tagliatelle", "ravioli", "tortell", "cannellon", "carbonara", "amatriciana", "cacio", "gramigna",
                   "orecchiette", "trofie", "linguine", "bucatini", "paccheri", "fusilli", "maccheron", "polenta", "riso "],
         "secondo": ["filetto", "bistecca", "arrosto", "spezzatino", "scaloppin", "cotoletta", "brasato", "stufato",
