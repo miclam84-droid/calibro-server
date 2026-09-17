@@ -8789,3 +8789,62 @@ def admin_conta_traduzioni():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/categorizza-portate")
+def admin_categorizza_portate():
+    """Categorizza le ricette per PORTATA (primo/secondo/contorno/dolce/antipasto/drink) con regole
+    sul nome. Prima passata veloce senza AI (no rate-limit). I casi ambigui restano 'da_rivedere'."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "300")), 1300)
+
+    REGOLE = {
+        "primo": ["risotto", "pasta", "spaghetti", "penne", "lasagn", "gnocch", "zuppa", "minestr", "vellutata",
+                  "tagliatelle", "ravioli", "tortell", "cannellon", "carbonara", "amatriciana", "cacio", "gramigna",
+                  "orecchiette", "trofie", "linguine", "bucatini", "paccheri", "fusilli", "maccheron", "polenta", "riso "],
+        "secondo": ["filetto", "bistecca", "arrosto", "spezzatino", "scaloppin", "cotoletta", "brasato", "stufato",
+                    "polpett", "involtini", "roast", "tagliata", "salmone", "branzino", "orata", "baccal", "merluzzo",
+                    "tonno", "gamber", "cozze", "vongole", "polpo", "calamar", "seppie", "frittura", "pollo", "tacchino",
+                    "coniglio", "agnello", "abbacchio", "maiale", "vitello", "manzo", "ossobuco", "cacciatora", "scottadito"],
+        "contorno": ["insalata", "verdure", "patate", "spinaci", "friggitelli", "melanzane grigliate", "zucchine grigliate",
+                     "cicoria", "broccoli", "cavolfiore", "fagiolini", "carciofi", "caponata", "parmigiana", "ratatouille"],
+        "dolce": ["torta", "crostata", "tiramis", "crema", "budino", "panna cotta", "gelato", "sorbetto", "semifreddo",
+                  "cheesecake", "muffin", "biscott", "cannol", "sfogliatell", "babà", "profiterol", "bignè", "millefoglie",
+                  "cioccolat", "mousse", "dolce", "dessert", "zabaion", "zeppol", "struffoli", "pastiera", "delizia"],
+        "antipasto": ["bruschett", "crostini", "tartare", "carpaccio", "antipasto", "tagliere", "fritt", "supplì",
+                      "arancin", "crocchett", "frittatina", "montanara", "crostone", "vol-au-vent"],
+        "drink": ["cocktail", "spritz", "negroni", "martini", "margarita", "mojito", "daiquiri", "sour", "punch",
+                  "americano", "manhattan", "old fashioned", "gin tonic", "aperol", "bellini", "caffè", "espresso",
+                  "cappuccino", "tè ", "tisana", "frappè", "smoothie", "centrifuga"],
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # aggiungo la colonna portata se non esiste
+        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='ricette' AND column_name='portata'")
+        if not cur.fetchone():
+            cur.execute("ALTER TABLE ricette ADD COLUMN portata TEXT")
+            conn.commit()
+        cur.execute("SELECT id, nome, disciplina FROM ricette WHERE portata IS NULL OR portata='' LIMIT %s", (n,))
+        righe = cur.fetchall()
+        conteggi = {}
+        for rid, nome, disc in righe:
+            nl = (nome or "").lower()
+            portata = None
+            # bar/caffetteria -> drink
+            if disc in ("bar", "caffetteria", "cocktail", "caffè"):
+                portata = "drink"
+            else:
+                for p, chiavi in REGOLE.items():
+                    if any(k in nl for k in chiavi):
+                        portata = p; break
+            if not portata:
+                portata = "da_rivedere"
+            cur.execute("UPDATE ricette SET portata=%s WHERE id=%s", (portata, rid))
+            conteggi[portata] = conteggi.get(portata, 0) + 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"categorizzate": len(righe), "per_portata": conteggi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
