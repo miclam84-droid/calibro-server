@@ -4688,3 +4688,74 @@ def planner_genera():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/ricetta/<ricetta_id>/sicurezza")
+def ricetta_sicurezza(ricetta_id):
+    """Profilo di sicurezza alimentare di una ricetta (per Cifra). Calcolo fisico dagli ingredienti,
+    no AI. Stima pH, aw, shelf life, zona pericolo dal tipo di preparazione e ingredienti."""
+    from flask import jsonify
+    import psycopg2 as _pg, json as _j
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        _cur.execute("SELECT nome, disciplina, ingredienti, portata FROM ricette WHERE id=%s", (ricetta_id,))
+        row = _cur.fetchone()
+        _cur.close(); _release_conn(_c)
+        if not row:
+            return jsonify({"errore": "ricetta non trovata"}), 404
+        nome, disciplina, ingredienti, portata = row
+        nl = (nome or "").lower()
+        ing_txt = str(ingredienti).lower() if ingredienti else ""
+
+        # stima parametri fisici dal tipo di preparazione (regole food safety)
+        # default: piatto cotto conservato in frigo
+        ph = 6.0; aw = 0.97; temp_max = 4; shelf = 3
+        metodo = "Frigorifero 0-4°C, contenitore chiuso"
+        rischio = "medio"
+
+        # ACIDI (pH basso -> più sicuro): agrumi, aceto, pomodoro, fermentati, cocktail
+        if any(k in nl or k in ing_txt for k in ["aceto", "limone", "agrume", "marinat", "ceviche", "tiradito", "sott'aceto", "pickle", "kimchi", "fermentat", "sour", "citrico"]):
+            ph = 3.6; aw = 0.94; shelf = 5; rischio = "basso"
+        # COCKTAIL/DRINK: alcolici, acidi
+        if portata == "drink" or disciplina in ("bar", "cocktail"):
+            ph = 3.4; aw = 0.92; shelf = 3; rischio = "basso"
+            metodo = "Consumo immediato o frigo breve"
+        # DOLCI con creme/uova (rischio salmonella)
+        if portata == "dolce" and any(k in nl or k in ing_txt for k in ["crema", "uov", "mascarpone", "zabaion", "tiramis", "panna"]):
+            ph = 6.5; aw = 0.95; shelf = 2; temp_max = 4; rischio = "alto"
+            metodo = "Frigorifero 0-4°C, consumo rapido (creme a base uova)"
+        # SECCHI/da forno (aw bassa -> stabili): pane, biscotti
+        if portata in ("pane",) or any(k in nl for k in ["biscott", "grissini", "crackers", "taralli"]):
+            ph = 6.0; aw = 0.6; shelf = 15; temp_max = 20; rischio = "basso"
+            metodo = "Temperatura ambiente, contenitore ermetico"
+        # CARNE/PESCE CRUDO (alto rischio)
+        if any(k in nl for k in ["tartare", "carpaccio", "crudo", "sashimi", "battuta"]):
+            ph = 6.0; aw = 0.98; shelf = 1; temp_max = 2; rischio = "alto"
+            metodo = "Frigorifero 0-2°C, consumo entro 24h (crudo)"
+        # CONSERVE/SOTT'OLIO (rischio botulino se mal fatte)
+        if any(k in nl for k in ["sott'olio", "conserva", "confettura", "marmellata"]):
+            ph = 4.0; aw = 0.85; shelf = 180; temp_max = 20; rischio = "medio"
+            metodo = "Conserva: sterilizzazione corretta essenziale (rischio botulino)"
+
+        # zona pericolo termica: true se va tenuto sotto i 4°C ed è deperibile
+        zona_pericolo = (temp_max <= 4 and rischio in ("medio", "alto"))
+
+        note = {
+            "basso": "Preparazione a rischio microbiologico contenuto.",
+            "medio": "Rispettare la catena del freddo. Deperibile.",
+            "alto": "Alto rischio microbiologico: massima igiene e consumo rapido.",
+        }.get(rischio, "")
+        note += f" Consumare entro {shelf} giorni." if shelf < 30 else ""
+
+        return jsonify({
+            "ph_stimato": ph,
+            "aw_stimata": aw,
+            "temperatura_conservazione_max_c": temp_max,
+            "shelf_life_giorni": shelf,
+            "metodo_conservazione": metodo,
+            "zona_pericolo": zona_pericolo,
+            "flag_rischio": rischio,
+            "note_sicurezza": note.strip(),
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
