@@ -4676,15 +4676,25 @@ def planner_genera():
                                         "ricetta_id": scelto["id"], "nome": scelto["nome"]})
             calendario.append({"giorno_index": g, "data_target": data_g, "is_locked": str(g) in lock,
                                "slot_piatti": slot_piatti})
+        # food cost stimato per portata (medie orientative €/porzione, no chiamate lente)
+        FC_PORTATA = {"antipasto": 2.0, "primo": 1.8, "secondo": 4.5, "contorno": 1.2,
+                      "dolce": 1.5, "pane": 0.5, "drink": 2.5, "base": 1.0}
+        for gg in calendario:
+            for sp in gg["slot_piatti"]:
+                sp["food_cost_teorico"] = FC_PORTATA.get(sp.get("portata"), 2.5)
         # analisi
         tutti_piatti = [sp for gg in calendario for sp in gg["slot_piatti"]]
+        fc_totale = sum(sp.get("food_cost_teorico", 0) for sp in tutti_piatti)
+        fc_medio_giorno = round(fc_totale / max(giorni, 1), 2)
         return jsonify({
             "planner_id": f"plan_{oggi.isoformat()}_{random.randint(100,999)}",
             "meta_config": {"durata_giorni": giorni, "slot": slot, "stagione": stagione,
                             "no_ripeti_giorni": no_ripeti_giorni},
             "calendario": calendario,
             "analisi": {"n_piatti_totali": len(tutti_piatti),
-                        "piatti_unici": len(set(sp.get("ricetta_id") for sp in tutti_piatti))}
+                        "piatti_unici": len(set(sp.get("ricetta_id") for sp in tutti_piatti)),
+                        "food_cost_medio_giorno_eur": fc_medio_giorno,
+                        "food_cost_totale_periodo_eur": round(fc_totale, 2)}
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
