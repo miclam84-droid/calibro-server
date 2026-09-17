@@ -8827,19 +8827,25 @@ def admin_categorizza_portate():
         if not cur.fetchone():
             cur.execute("ALTER TABLE ricette ADD COLUMN portata TEXT")
             conn.commit()
-        cur.execute("SELECT id, nome, disciplina FROM ricette WHERE portata IS NULL OR portata='' LIMIT %s", (n,))
+        cur.execute("SELECT id, nome, disciplina FROM ricette WHERE portata IS NULL OR portata='' OR portata='da_rivedere' LIMIT %s", (n,))
         righe = cur.fetchall()
         conteggi = {}
         for rid, nome, disc in righe:
             nl = (nome or "").lower()
             portata = None
-            # bar/caffetteria -> drink
-            if disc in ("bar", "caffetteria", "cocktail", "caffè"):
+            # bar/caffetteria/birra/vino -> drink
+            if disc in ("bar", "caffetteria", "cocktail", "caffè", "birra", "vino"):
                 portata = "drink"
             else:
                 for p, chiavi in REGOLE.items():
                     if any(k in nl for k in chiavi):
                         portata = p; break
+            # recupero per disciplina se il nome non ha dato risultato
+            if not portata:
+                if disc in ("pasticceria", "dolce", "gelateria"):
+                    portata = "dolce"
+                elif disc in ("pane", "panificazione", "lievitato"):
+                    portata = "pane"
             if not portata:
                 portata = "da_rivedere"
             cur.execute("UPDATE ricette SET portata=%s WHERE id=%s", (portata, rid))
