@@ -370,7 +370,7 @@ var _PORTE = {
   misurare: { label:'Misurare', sub:'Centra il numero giusto', voci:[
                 {t:'Motore Panificazione', d:'Progetta impasto: dosi + timeline a ritroso', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('motori').then(function(){ if(typeof apriMotorePanificazione==='function')apriMotorePanificazione(); }); } }},
                 {t:'Sostituti intelligenti', d:'Cosa usare al posto di un ingrediente', act:function(){if(typeof apriSostituti==='function')apriSostituti();}},
-                {t:'Calcolatori', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
+                {t:'Motori operativi', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
                 {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
                 {t:'Flavour del giorno', d:'Parti da un ingrediente', act:function(){switchMappaTab('flavor');}} ]}
 };
@@ -1376,6 +1376,9 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
     + erroriHtml
     + spiegazione
     + connessiHtml
+    + '<div class="fen-esperimento"><div class="fen-esp-lab">◎ Provalo adesso</div>'
+    +   '<div class="fen-esp-t">Trasforma questo fenomeno in un test al banco.</div>'
+    +   '<button class="fen-esp-btn" onclick="_chatDaFenomenoCorrente()">Come faccio l\'esperimento? →</button></div>'
     + '<div class="fen-chat-ctx"><div class="fen-chat-ctx-t">Hai un problema con questo fenomeno?</div>'
     +   '<button class="fen-chat-ctx-btn" onclick="_chatDaFenomenoCorrente()">◎ Chiedi a Matter</button></div>'
     + '</div>';
@@ -1737,7 +1740,7 @@ const _strings = {
     tab_atlante:'Atlante', tab_chiedi:'Assistente', tab_quaderno:'Quaderno',
     db_ingredienti:'Ingredienti',
     db_connessioni:'Connessioni aromatiche',
-    db_calcolatori:'Calcolatori',
+    db_calcolatori:'Motori',
     chiedi:'Chiedi',
     studia:'Studia il fenomeno →', nologin:'',
     disc_kw_bar:'Acidità · Diluizione · Carbonatazione · Emulsione',
@@ -4543,7 +4546,7 @@ function _ricercaAzioni(){
     ['Menu Lab','chiudiVista();_caricaModulo(\'menu\').then(function(){apriMenuBuilder&&apriMenuBuilder()})','▦'],
     ['Ponti','chiudiVista();apriPonti&&apriPonti()','⇄'],
     ['Flavour Network','chiudiVista();_caricaModulo(\'flavour\').then(function(){apriFlavour&&apriFlavour()})','✦'],
-    ['Calcolatori','chiudiVista();apriCalcolatori&&apriCalcolatori()','∑'],
+    ['Motori operativi','chiudiVista();apriCalcolatori&&apriCalcolatori()','∑'],
     ['Il Quaderno','chiudiVista();switchTab(\'quaderno\')','▤'],
     ['Atlante fenomeni','chiudiVista();switchTab(\'mappa\')','◉']
   ];
@@ -4776,7 +4779,7 @@ function mostraPopupPro(motivo){
       price: '€19,99',
       period: '/mese · Disdici quando vuoi',
       cta: 'Continua con Matter Bench →',
-      skip_esaurito: 'L\'Atlante, il Mirino e i Calcolatori restano gratuiti.',
+      skip_esaurito: 'L\'Atlante, il Mirino e i Motori restano gratuiti.',
       skip_altro: 'Continua in free',
     },
     en: {
@@ -6098,7 +6101,7 @@ async function apriAvanzate(){
   }
 }
 function apriCalcolatori(){
-  _apriVista('Calcolatori',
+  _apriVista('Motori',
     '<div class="calc-intro">Strumenti del banco. Ogni risultato ti dice cosa significa e cosa fare.</div>'
     + '<div class="calc-menu">'
     +   '<button class="calc-menu-btn on" onclick="_calcTab(\'impasto\',this)">Scalatore impasto</button>'
