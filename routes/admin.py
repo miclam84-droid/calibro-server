@@ -8816,6 +8816,7 @@ def admin_categorizza_portate():
                   "cioccolat", "mousse", "dolce", "dessert", "zabaion", "zeppol", "struffoli", "pastiera", "delizia"],
         "antipasto": ["bruschett", "crostini", "tartare", "carpaccio", "antipasto", "tagliere", "fritt", "supplì",
                       "arancin", "crocchett", "frittatina", "montanara", "crostone", "vol-au-vent"],
+        "base": ["besciamella", "fondo di", "fondo bruno", "salsa madre", "salsa verde", "sugo di", "ragù di", "brodo di", "fumetto", "court bouillon", "roux", "maionese", "olandese", "demi-glace", "salsa di pomodoro", "passata", "pesto", "hummus", "salamoia", "marinatura", "impasto base", "pasta madre", "lievito madre", "biga", "poolish", "mash per"],
         "drink": ["cocktail", "spritz", "negroni", "martini", "margarita", "mojito", "daiquiri", "sour", "punch",
                   "americano", "manhattan", "old fashioned", "gin tonic", "aperol", "bellini", "caffè", "espresso",
                   "cappuccino", "tè ", "tisana", "frappè", "smoothie", "centrifuga"],
