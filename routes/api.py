@@ -4713,8 +4713,16 @@ def ricetta_sicurezza(ricetta_id):
         metodo = "Frigorifero 0-4°C, contenitore chiuso"
         rischio = "medio"
 
-        # ACIDI (pH basso -> più sicuro): agrumi, aceto, pomodoro, fermentati, cocktail
-        if any(k in nl or k in ing_txt for k in ["aceto", "limone", "agrume", "marinat", "ceviche", "tiradito", "sott'aceto", "pickle", "kimchi", "fermentat", "sour", "citrico"]):
+        # PANE/FORNO SECCHI per primo (aw bassa, stabili) - ha priorità, evita falsi acidi
+        _e_forno = portata in ("pane",) or disciplina in ("pane","panificazione","lievitato") or any(k in nl for k in ["pane","biscott","grissini","crackers","taralli","focacc","pizza","pandoro","panettone","baguette"])
+        if _e_forno:
+            ph = 5.8; aw = 0.6; shelf = 10; temp_max = 20; rischio = "basso"
+            metodo = "Temperatura ambiente, contenitore ermetico"
+            return jsonify({"ph_stimato": ph, "aw_stimata": aw, "temperatura_conservazione_max_c": temp_max,
+                            "shelf_life_giorni": shelf, "metodo_conservazione": metodo, "zona_pericolo": False,
+                            "flag_rischio": rischio, "note_sicurezza": "Prodotto da forno stabile a temperatura ambiente. Consumare preferibilmente entro %d giorni." % shelf})
+        # ACIDI (pH basso -> più sicuro): agrumi, aceto, pomodoro, fermentati, cocktail (sour solo se drink)
+        if any(k in nl or k in ing_txt for k in ["aceto", "limone", "agrume", "marinat", "ceviche", "tiradito", "sott'aceto", "pickle", "kimchi", "fermentat", "citrico"]):
             ph = 3.6; aw = 0.94; shelf = 5; rischio = "basso"
         # COCKTAIL/DRINK: alcolici, acidi
         if portata == "drink" or disciplina in ("bar", "cocktail"):
@@ -4724,10 +4732,7 @@ def ricetta_sicurezza(ricetta_id):
         if portata == "dolce" and any(k in nl or k in ing_txt for k in ["crema", "uov", "mascarpone", "zabaion", "tiramis", "panna"]):
             ph = 6.5; aw = 0.95; shelf = 2; temp_max = 4; rischio = "alto"
             metodo = "Frigorifero 0-4°C, consumo rapido (creme a base uova)"
-        # SECCHI/da forno (aw bassa -> stabili): pane, biscotti
-        if portata in ("pane",) or any(k in nl for k in ["biscott", "grissini", "crackers", "taralli"]):
-            ph = 6.0; aw = 0.6; shelf = 15; temp_max = 20; rischio = "basso"
-            metodo = "Temperatura ambiente, contenitore ermetico"
+
         # CARNE/PESCE CRUDO (alto rischio)
         if any(k in nl for k in ["tartare", "carpaccio", "crudo", "sashimi", "battuta"]):
             ph = 6.0; aw = 0.98; shelf = 1; temp_max = 2; rischio = "alto"
