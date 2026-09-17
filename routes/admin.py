@@ -8850,18 +8850,21 @@ def admin_categorizza_portate():
         return jsonify({"errore": str(e)[:150]})
 
 
-@bp.route("/admin/conta-portate")
-def admin_conta_portate():
-    """Conta le ricette per portata (per vedere quante da_rivedere restano)."""
+@bp.route("/admin/esempi-da-rivedere")
+def admin_esempi_da_rivedere():
+    """Mostra esempi di ricette da_rivedere con la loro disciplina, per capire come categorizzarle."""
     from flask import request, jsonify
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT COALESCE(portata,'(vuoto)'), COUNT(*) FROM ricette GROUP BY portata ORDER BY COUNT(*) DESC")
-        out = {r[0]: r[1] for r in cur.fetchall()}
+        cur.execute("SELECT nome, disciplina FROM ricette WHERE portata='da_rivedere' LIMIT 30")
+        esempi = [{"nome": r[0], "disciplina": r[1]} for r in cur.fetchall()]
+        # conteggio da_rivedere per disciplina
+        cur.execute("SELECT disciplina, COUNT(*) FROM ricette WHERE portata='da_rivedere' GROUP BY disciplina ORDER BY COUNT(*) DESC")
+        per_disc = {r[0]: r[1] for r in cur.fetchall()}
         cur.close(); conn.close()
-        return jsonify({"per_portata": out})
+        return jsonify({"esempi": esempi, "da_rivedere_per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
