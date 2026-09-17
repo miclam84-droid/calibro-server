@@ -464,3 +464,7 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .sost-card-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#141d22;text-transform:capitalize}
 .sost-card-aff{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:#c77b3f}
 .sost-card-note{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;margin-top:6px;line-height:1.4}
+
+/* ═══ Ponti chip "più connessi" col numero ═══ */
+.ponti-chip-n{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#c77b3f;margin-left:6px}
+.ponti-chip-skel{color:#9daeb2;padding:8px 12px}

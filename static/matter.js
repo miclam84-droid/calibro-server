@@ -5778,9 +5778,16 @@ function apriPonti(){
   _apriVista('Ponti',
     '<div class="ponti-hero"><div class="ponti-hero-lab">PONTI</div><div class="ponti-hero-claim">Scopri dove vive un ingrediente.</div><div class="ponti-hero-sub">Un ingrediente non appartiene a una disciplina sola: dialoga con vino, pane, cocktail, caffè, dolci. Scopri come.</div></div>'
     + '<div class="ptv-field"><input id="ptv-input" placeholder="Pomodoro" onkeydown="if(event.key===\'Enter\')caricaPonti()"><button class="ptv-go-inline" onclick="caricaPonti()">→</button></div>'
-    + '<div class="ponti-esempi-lab">Prova con</div>'
-    + '<div class="ponti-chips">'+['pomodoro','fragola','caffè','cioccolato','basilico'].map(function(c){ return '<button class="ponti-chip" onclick="_pontiCerca(\''+e(c)+'\')">'+e(c)+'</button>'; }).join('')+'</div>'
+    + '<div class="ponti-esempi-lab">I più connessi del grafo</div>'
+    + '<div class="ponti-chips" id="ponti-chips-top"><span class="ponti-chip-skel">…</span></div>'
     + '<div id="ptv-out"></div>');
+  // carico i veri ingredienti più connessi (indice esplorabile)
+  fetch('/v1/ingredienti-connessi').then(function(r){return r.json();}).then(function(j){
+    var ing=(j.ingredienti||[]).slice(0,6);
+    var cont=document.getElementById('ponti-chips-top');
+    if(cont && ing.length){ cont.innerHTML=ing.map(function(x){ return '<button class="ponti-chip" onclick="_pontiCerca(\''+_escV(x.nome)+'\')">'+_escV(x.nome)+'<span class="ponti-chip-n">'+(x.n_connessioni||'')+'</span></button>'; }).join(''); }
+    else if(cont){ cont.innerHTML=['pomodoro','fragola','caffè','cioccolato','basilico'].map(function(c){return '<button class="ponti-chip" onclick="_pontiCerca(\''+_escV(c)+'\')">'+_escV(c)+'</button>';}).join(''); }
+  }).catch(function(){ var cont=document.getElementById('ponti-chips-top'); if(cont) cont.innerHTML=['pomodoro','fragola','caffè'].map(function(c){return '<button class="ponti-chip" onclick="_pontiCerca(\''+_escV(c)+'\')">'+_escV(c)+'</button>';}).join(''); });
   var inp=document.getElementById('ptv-input');
   if(inp){ inp.value='pomodoro'; if(typeof caricaPonti==='function') caricaPonti(); }
 }
