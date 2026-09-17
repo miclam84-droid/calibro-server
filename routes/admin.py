@@ -8157,7 +8157,7 @@ def admin_conta_ricette_complete():
             cur.execute("SELECT COUNT(*) FROM ricette WHERE ingredienti IS NULL OR ingredienti::text IN ('[]','null','')")
             out["senza_ingredienti"] = cur.fetchone()[0]
         if "procedimento" in colonne:
-            cur.execute("SELECT COUNT(*) FROM ricette WHERE procedimento IS NULL OR procedimento::text IN ('[]','null','""','')")
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE procedimento IS NULL OR TRIM(procedimento)=''")
             out["senza_procedimento"] = cur.fetchone()[0]
         cur.close(); conn.close()
         return jsonify(out)
@@ -8760,3 +8760,32 @@ def admin_aggiungi_leidenfrost():
         return jsonify({"aggiunto": "Effetto Leidenfrost"})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/conta-traduzioni")
+def admin_conta_traduzioni():
+    """Conta quante ricette hanno le traduzioni EN/ES (per sapere se il worker traduzioni ha finito)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='ricette'")
+        colonne = [r[0] for r in cur.fetchall()]
+        cur.execute("SELECT COUNT(*) FROM ricette")
+        tot = cur.fetchone()[0]
+        out = {"totale": tot}
+        if "nome_en" in colonne:
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE nome_en IS NOT NULL AND nome_en != ''")
+            out["con_nome_en"] = cur.fetchone()[0]
+        if "scheda_en" in colonne:
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE scheda_en IS NOT NULL AND scheda_en::text NOT IN ('null','')")
+            out["con_scheda_en"] = cur.fetchone()[0]
+        if "nome_es" in colonne:
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE nome_es IS NOT NULL AND nome_es != ''")
+            out["con_nome_es"] = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
