@@ -4510,34 +4510,31 @@ def menu_analizza():
     })
 
 
+# sostituti VERI per funzione culinaria (non abbinamenti aromatici)
+_SOSTITUTI = {
+    "burro": [("margarina","stesso grasso solido"),("olio di cocco","solido, per dolci"),("strutto","grasso animale"),("olio EVO","liquido, meno per dolci")],
+    "uova": [("aquafaba (acqua di ceci)","lega e monta come l'albume"),("semi di lino + acqua","lega negli impasti"),("banana schiacciata","lega nei dolci"),("yogurt","umidità e legame")],
+    "latte": [("bevanda di soia","simile in proteine"),("bevanda di avena","cremosa, neutra"),("bevanda di mandorla","più leggera"),("latte di cocco","più grasso")],
+    "panna": [("latte di cocco","monta se freddo"),("besciamella","per salato"),("anacardi frullati","vegetale cremoso")],
+    "zucchero": [("miele","più dolce, liquido"),("sciroppo d'acero","liquido"),("eritritolo","senza calorie"),("zucchero di cocco","indice glicemico più basso")],
+    "farina 00": [("farina di riso","senza glutine"),("farina di mandorle","senza glutine, grassa"),("farina integrale","più fibre"),("maizena","per addensare")],
+    "lievito di birra": [("lievito madre","più lento, più aroma"),("bicarbonato + acido","lievitazione chimica rapida"),("cremor tartaro + bicarbonato","lievito istantaneo")],
+    "vino bianco": [("aceto + brodo","acidità simile"),("succo di limone diluito","acidità"),("brodo","senza alcol")],
+    "aceto balsamico": [("aceto di vino + zucchero","agrodolce"),("aceto di mele + miele","agrodolce fruttato")],
+}
 @bp.route("/v1/menu/sostituzioni/<ingrediente>")
 def menu_sostituzioni(ingrediente):
-    """Sostituti di un ingrediente col profilo aromatico simile (dal grafo)."""
+    """Sostituti VERI di un ingrediente (per funzione culinaria), non abbinamenti aromatici."""
     from flask import jsonify
-    import psycopg2 as _pg
-    try:
-        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
-        # ingredienti che condividono composti con quello dato (stessa famiglia aromatica)
-        _cur.execute("""SELECT n.name, (e.data->>'overlap')::numeric ov
-                        FROM edges e JOIN nodes n ON (n.id = e.to_id OR n.id = e.from_id)
-                        WHERE e.relation = 'abbinamento_aromatico'
-                        AND (LOWER(e.from_id) LIKE LOWER(%s) OR LOWER(e.to_id) LIKE LOWER(%s))
-                        AND LOWER(n.id) NOT LIKE LOWER(%s)
-                        AND n.type IN ('Ingrediente','Prodotto')
-                        ORDER BY ov DESC NULLS LAST LIMIT 10""",
-                     (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%"))
-        righe = _cur.fetchall()
-        _cur.close(); _release_conn(_c)
-        sost = []
-        visti_s = set()
-        for n, ov in righe:
-            if n.lower() in visti_s: continue
-            visti_s.add(n.lower())
-            sost.append({"ingrediente": n, "affinita": round(float(ov)) if ov else 50})
-        return jsonify({"ingrediente": ingrediente, "sostituti": sost,
-                        "nota": "Sostituti con profilo aromatico affine. Verifica sempre consistenza e uso in cucina."})
-    except Exception as e:
-        return jsonify({"ingrediente": ingrediente, "sostituti": [], "errore": str(e)[:100]})
+    nl = ingrediente.lower().strip()
+    # match diretto o parziale
+    for chiave, sostituti in _SOSTITUTI.items():
+        if chiave in nl or nl in chiave:
+            return jsonify({"ingrediente": ingrediente,
+                            "sostituti": [{"ingrediente": s, "perche": p} for s, p in sostituti],
+                            "nota": "Sostituti per funzione in cucina. Verifica dosi e resa."})
+    return jsonify({"ingrediente": ingrediente, "sostituti": [],
+                    "nota": "Nessun sostituto diretto in archivio per questo ingrediente."})
 
 
 @bp.route("/v1/ingredienti-piu-connessi")
