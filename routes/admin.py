@@ -8876,18 +8876,49 @@ def admin_esempi_da_rivedere():
         return jsonify({"errore": str(e)[:120]})
 
 
-@bp.route("/admin/conta-portate")
-def admin_conta_portate():
-    """Conta le ricette per portata."""
+@bp.route("/admin/categorizza-ai")
+def admin_categorizza_ai():
+    """Categorizza i da_rivedere (cucina ambigui) con AI, batch piccolo + pause anti rate-limit."""
     from flask import request, jsonify
-    import os, psycopg2
+    import os, psycopg2, threading, json, urllib.request as ur, time
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
-    try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT COALESCE(portata,'(vuoto)'), COUNT(*) FROM ricette GROUP BY portata ORDER BY COUNT(*) DESC")
-        out = {r[0]: r[1] for r in cur.fetchall()}
-        cur.close(); conn.close()
-        return jsonify({"per_portata": out})
-    except Exception as e:
-        return jsonify({"errore": str(e)[:120]})
+    n = min(int(request.args.get("n", "10")), 15)
+    key = os.environ.get("ANTHROPIC_API_KEY", "")
+
+    def _classifica(nome):
+        try:
+            prompt = (f"Classifica il piatto '{nome}' in UNA portata tra: antipasto, primo, secondo, "
+                      f"contorno, dolce, pane, drink. Rispondi SOLO con la parola, minuscolo, niente altro.")
+            payload = {"model": "claude-3-5-haiku-20241022", "max_tokens": 10,
+                       "messages": [{"role": "user", "content": prompt}]}
+            req = ur.Request("https://api.anthropic.com/v1/messages", data=json.dumps(payload).encode(),
+                             headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
+            r = ur.urlopen(req, timeout=25); d = json.loads(r.read().decode())
+            risp = d["content"][0]["text"].strip().lower()
+            valide = ["antipasto", "primo", "secondo", "contorno", "dolce", "pane", "drink"]
+            for v in valide:
+                if v in risp:
+                    return v
+        except Exception:
+            pass
+        return None
+
+    def _w(n):
+        fatti = 0
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            cur.execute("SELECT id, nome FROM ricette WHERE portata='da_rivedere' LIMIT %s", (n,))
+            for rid, nome in cur.fetchall():
+                p = _classifica(nome)
+                if p:
+                    cur.execute("UPDATE ricette SET portata=%s WHERE id=%s", (p, rid))
+                    conn.commit(); fatti += 1
+                time.sleep(5)  # pausa anti rate-limit
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"categorizza-ai: {fatti}",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_w, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "nota": "categorizza da_rivedere con AI, pause 5s"})
