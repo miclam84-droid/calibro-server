@@ -476,3 +476,11 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .fen-esp-t{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#141d22;line-height:1.2;margin-bottom:12px}
 .fen-esp-btn{width:100%;background:#12545d;color:#fff;border:none;border-radius:0;padding:12px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:3px 3px 0 rgba(20,29,34,.2)}
 .fen-esp-btn:active{transform:translate(3px,3px);box-shadow:0 0 0}
+
+/* ═══ DNA in copertina Quaderno (board review) ═══ */
+.quad-dna{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.15)}
+.quad-dna-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.quad-dna-lab{font-family:'Inter',sans-serif;font-size:12px;color:#cbd6da}
+.quad-dna-pct{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:#e8935a}
+.quad-dna-bar{height:6px;background:rgba(255,255,255,.12);border-radius:0;overflow:hidden}
+.quad-dna-fill{height:100%;background:#e8935a;transition:width .4s}

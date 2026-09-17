@@ -4452,6 +4452,18 @@ async function caricaQuaderno(){
     var setN=function(id,v){ var el=document.getElementById(id); if(el) el.textContent=(v!=null?v:0); };
     setN('qh-ricette', rj.n_ricette); setN('qh-misure', rj.n_misure); setN('qh-diagnosi', rj.n_diagnosi);
   }catch(e){}
+  // barra DNA nell'hero (solo se c'è progresso)
+  try{
+    var rd=await fetch('/v1/dna-professionale', {headers:_statoHeaders()});
+    var jd=await rd.json();
+    var pct = jd.percentuale || (jd.dna && jd.dna.percentuale) || 0;
+    var box=document.getElementById('quad-dna');
+    if(box && jd.pronto && pct>0){
+      box.style.display='block';
+      var p=document.getElementById('quad-dna-pct'); if(p) p.textContent=pct+'%';
+      var f=document.getElementById('quad-dna-fill'); if(f) f.style.width=pct+'%';
+    } else if(box){ box.style.display='none'; }
+  }catch(e){}
   const token = localStorage.getItem('matter_token');
   const empty = document.getElementById('quad-empty');
   const list = document.getElementById('quad-list');
