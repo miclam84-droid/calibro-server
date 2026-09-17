@@ -484,3 +484,6 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .quad-dna-pct{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:#e8935a}
 .quad-dna-bar{height:6px;background:rgba(255,255,255,.12);border-radius:0;overflow:hidden}
 .quad-dna-fill{height:100%;background:#e8935a;transition:width .4s}
+
+/* ═══ Founder Rule #119: etichette di gruppo (coerenza, non card orfane) ═══ */
+.home-esplora-lab,.atl-strumenti-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5a6c70;margin:8px 16px 8px}
