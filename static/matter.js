@@ -369,6 +369,7 @@ var _PORTE = {
                 {t:'Recupera scarti', d:'Riusa gli scarti, cross-utilization', act:function(){if(typeof apriScarti==='function')apriScarti();}} ]},
   misurare: { label:'Misurare', sub:'Centra il numero giusto', voci:[
                 {t:'Motore Panificazione', d:'Progetta impasto: dosi + timeline a ritroso', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('motori').then(function(){ if(typeof apriMotorePanificazione==='function')apriMotorePanificazione(); }); } }},
+                {t:'Sostituti intelligenti', d:'Cosa usare al posto di un ingrediente', act:function(){if(typeof apriSostituti==='function')apriSostituti();}},
                 {t:'Calcolatori', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
                 {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
                 {t:'Flavour del giorno', d:'Parti da un ingrediente', act:function(){switchMappaTab('flavor');}} ]}
@@ -5741,6 +5742,37 @@ function _mirinoPonte(){return '<svg viewBox="0 0 36 36" fill="none"><circle cx=
 
 /* ═══════════════ 2. PONTI TRA DISCIPLINE ═══════════════ */
 let _pontiTab = 'vino';
+window.apriSostituti = function(ingredienteIniziale){
+  _apriVista('Sostituti',
+    '<div class="sost-hero"><div class="sost-hero-lab">SOSTITUTI INTELLIGENTI</div><div class="sost-hero-claim">Cosa usare al posto di\u2026</div><div class="sost-hero-sub">Non un elenco a caso: sostituti per funzione culinaria, con affinit\u00e0 e perch\u00e9.</div></div>'
+    + '<div class="ptv-field"><input id="sost-input" placeholder="burro, uova, panna\u2026" onkeydown="if(event.key===\'Enter\')caricaSostituti()"><button class="ptv-go-inline" onclick="caricaSostituti()">\u2192</button></div>'
+    + '<div class="ponti-chips">'+['burro','uova','panna','zucchero','latte'].map(function(c){return '<button class="ponti-chip" onclick="_sostCerca(\''+c+'\')">'+c+'</button>';}).join('')+'</div>'
+    + '<div id="sost-out"></div>');
+  var inp=document.getElementById('sost-input');
+  var start=ingredienteIniziale||'burro';
+  if(inp) inp.value=start;
+  caricaSostituti();
+};
+window._sostCerca=function(ing){ var i=document.getElementById('sost-input'); if(i)i.value=ing; caricaSostituti(); };
+window.caricaSostituti = async function(){
+  var inp=document.getElementById('sost-input');
+  var q=(inp?inp.value:'').trim();
+  if(!q) return;
+  var out=document.getElementById('sost-out');
+  out.innerHTML='<div class="vista-loading">Cerco i sostituti\u2026</div>';
+  try{
+    var r=await fetch('/v1/sostituti/'+encodeURIComponent(q));
+    var d=await r.json();
+    var sost=d.sostituti||[];
+    if(!sost.length){ out.innerHTML='<div class="vista-empty">Nessun sostituto per "'+_escV(q)+'".</div>'; return; }
+    var e=_escV;
+    out.innerHTML='<div class="sost-res-head"><span class="sost-res-ing">'+e(d.ingrediente||q)+'</span><span class="sost-res-sub">'+sost.length+' sostituti per funzione</span></div>'
+      + sost.map(function(x){
+        return '<div class="sost-card"><div class="sost-card-top"><span class="sost-card-nome">'+e(x.nome)+'</span><span class="sost-card-aff">'+(x.affinita||'')+'</span></div>'
+          + (x.note?'<div class="sost-card-note">'+e(x.note)+'</div>':'')+'</div>';
+      }).join('');
+  }catch(e){ out.innerHTML='<div class="vista-empty">Errore di rete.</div>'; }
+};
 function apriPonti(){
   var e=_escV;
   _apriVista('Ponti',

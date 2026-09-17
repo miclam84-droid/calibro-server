@@ -450,3 +450,17 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .fnv-search input:focus{outline:none;border-color:#c77b3f}
 .fnv-search button{flex:0 0 auto;min-height:50px;padding:0 16px;background:#12545d;color:#fff;border:1.5px solid #141d22;border-radius:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
 .fnv-search button:active{transform:translate(2px,2px)}
+
+/* ═══ SOSTITUTI intelligenti ═══ */
+.sost-hero{margin:0 0 18px;padding:18px;background:#141d22;border-radius:4px;box-shadow:4px 4px 0 rgba(20,29,34,.2)}
+.sost-hero-lab{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:#7fb0c4;margin-bottom:8px}
+.sost-hero-claim{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;line-height:1.05;color:#e8935a;margin-bottom:8px}
+.sost-hero-sub{font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#cbd6da}
+.sost-res-head{margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid #c4c0b4}
+.sost-res-ing{display:block;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;color:#141d22;text-transform:capitalize}
+.sost-res-sub{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70}
+.sost-card{background:#fff;border:1.5px solid #141d22;box-shadow:3px 3px 0 rgba(20,29,34,.12);padding:14px;margin-bottom:10px}
+.sost-card-top{display:flex;justify-content:space-between;align-items:center}
+.sost-card-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#141d22;text-transform:capitalize}
+.sost-card-aff{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:#c77b3f}
+.sost-card-note{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;margin-top:6px;line-height:1.4}
