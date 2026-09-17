@@ -4562,3 +4562,63 @@ def ingredienti_piu_connessi():
         return jsonify({"classifica": classifica, "totale": len(classifica)})
     except Exception as e:
         return jsonify({"classifica": [], "errore": str(e)[:100]})
+
+
+# ── ALIAS ENDPOINT per il frontend (nomi che il frontend si aspetta) ──────────
+
+@bp.route("/v1/sostituti/<ingrediente>")
+def sostituti_alias(ingrediente):
+    """Alias di /v1/menu/sostituzioni con il contratto che il frontend si aspetta."""
+    from flask import jsonify
+    nl = ingrediente.lower().strip()
+    for chiave, sostituti in _SOSTITUTI.items():
+        if chiave in nl or nl in chiave:
+            return jsonify({"ingrediente": ingrediente,
+                            "sostituti": [{"nome": s, "affinita": 90, "note": p} for s, p in sostituti]})
+    return jsonify({"ingrediente": ingrediente, "sostituti": []})
+
+
+@bp.route("/v1/ingredienti-connessi")
+def ingredienti_connessi_alias():
+    """Alias di ingredienti-piu-connessi col contratto del frontend."""
+    from flask import request, jsonify
+    import psycopg2 as _pg
+    n = min(int(request.args.get("n", "30")), 60)
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        _cur.execute("""SELECT n.name, COUNT(*) c FROM edges e JOIN nodes n ON (n.id = e.from_id)
+                        WHERE e.relation = 'abbinamento_aromatico' AND n.type IN ('Ingrediente','Prodotto')
+                        AND n.name NOT LIKE '%%(%%' GROUP BY n.name ORDER BY c DESC LIMIT %s""", (n,))
+        righe = _cur.fetchall()
+        _cur.close(); _release_conn(_c)
+        return jsonify({"ingredienti": [{"nome": nome, "n_connessioni": c} for nome, c in righe]})
+    except Exception as e:
+        return jsonify({"ingredienti": [], "errore": str(e)[:100]})
+
+
+@bp.route("/v1/oggi")
+def oggi():
+    """Il 'percorso del giorno': un fenomeno + un caso diagnostico + un quiz, a rotazione giornaliera."""
+    from flask import jsonify
+    import psycopg2 as _pg, datetime, hashlib
+    oggi_str = datetime.date.today().isoformat()
+    seed = int(hashlib.md5(oggi_str.encode()).hexdigest(), 16)
+    out = {"data": oggi_str}
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        # un fenomeno del giorno
+        _cur.execute("SELECT id, name, data FROM nodes WHERE type='Fenomeno' ORDER BY id")
+        fen = _cur.fetchall()
+        if fen:
+            f = fen[seed % len(fen)]
+            dd = f[2] if isinstance(f[2], dict) else {}
+            out["fenomeno"] = {"id": f[0], "nome": f[1], "target": dd.get("target", "")}
+        _cur.close(); _release_conn(_c)
+    except Exception:
+        pass
+    # un caso diagnostico (dal pool casi)
+    try:
+        out["caso"] = _CASI_POOL[seed % len(_CASI_POOL)]
+    except Exception:
+        pass
+    return jsonify(out)
