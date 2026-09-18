@@ -9004,3 +9004,59 @@ def admin_conta_fonti_foto():
         return jsonify({"pexels_sicure": pexels, "wikimedia_arischio": wiki, "cloudinary_ai": cloud})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/rifai-wikimedia")
+def admin_rifai_wikimedia():
+    """Worker DEDICATO: rifà le foto Wikimedia con Pexels. Log dettagliato."""
+    from flask import request, jsonify
+    import os, psycopg2, threading, json, urllib.request as ur, urllib.parse
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "20")), 50)
+    pexels_key = os.environ.get("PEXELS_API_KEY", "")
+
+    def _pexels(nome):
+        try:
+            q = urllib.parse.quote(f"{nome} food dish")
+            req = ur.Request(f"https://api.pexels.com/v1/search?query={q}&per_page=5&orientation=landscape",
+                             headers={"Authorization": pexels_key, "User-Agent": "MatterLab/1.0"})
+            r = ur.urlopen(req, timeout=15); d = json.loads(r.read().decode())
+            BLOCCA = ["sign", "restaurant exterior", "logo", "storefront", "people", "portrait", "building", "facade"]
+            for ph in d.get("photos", []):
+                alt = (ph.get("alt", "") or "").lower()
+                if any(bad in alt for bad in BLOCCA):
+                    continue
+                return ph["src"]["large"]
+            if d.get("photos"):
+                return d["photos"][0]["src"]["large"]
+        except Exception:
+            pass
+        return None
+
+    def _w(n):
+        fatte = 0; nessuna = 0; err = ""
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            cur.execute("SELECT id, nome FROM ricette WHERE immagine::text ILIKE '%%wik%%' ORDER BY id LIMIT %s", (n,))
+            righe = cur.fetchall()
+            for rid, nome in righe:
+                url = _pexels(nome)
+                if url:
+                    cur.execute("UPDATE ricette SET immagine=%s WHERE id=%s", (url, rid))
+                    conn.commit(); fatte += 1
+                else:
+                    nessuna += 1
+            cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"rifai-wikimedia: {fatte} rifatte, {nessuna} senza foto pexels, su {len(righe)}",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception as e:
+            try:
+                conn2 = psycopg2.connect(os.environ["DATABASE_URL"]); c2 = conn2.cursor()
+                c2.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"rifai-wikimedia ERRORE: {str(e)[:80]}",))
+                conn2.commit(); c2.close(); conn2.close()
+            except Exception:
+                pass
+
+    threading.Thread(target=_w, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True})
