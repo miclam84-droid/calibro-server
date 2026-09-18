@@ -33,7 +33,7 @@ _OPENAI_URL     = "https://api.openai.com/v1"
 _GEMINI_URL     = "https://generativelanguage.googleapis.com/v1beta/models"
 
 _MODEL_SONNET   = "claude-sonnet-4-5"
-_MODEL_HAIKU    = "claude-haiku-4-5"
+_MODEL_HAIKU    = "claude-sonnet-4-5"
 _MODEL_MISTRAL  = "mistral-small-latest"
 _MODEL_GEMINI   = "gemini-2.5-flash"
 _MODEL_EMBED    = "text-embedding-3-small"
