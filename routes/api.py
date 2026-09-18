@@ -4636,6 +4636,8 @@ def planner_genera():
     no_ripeti_giorni = int(d.get("no_ripeti_giorni", 5))
     mese = int(d.get("mese", datetime.date.today().month))
     lock = d.get("lock", {})  # {"giorno_index": {"portata": "ricetta_id"}} piatti fissi
+    target_fc = d.get("target_food_cost_giorno")  # €/giorno max, opzionale
+    escludi_ing = [x.lower() for x in d.get("escludi_ingredienti", [])]  # ingredienti da evitare
     # mese -> stagione
     STAG = {12: "inverno", 1: "inverno", 2: "inverno", 3: "primavera", 4: "primavera", 5: "primavera",
             6: "estate", 7: "estate", 8: "estate", 9: "autunno", 10: "autunno", 11: "autunno"}
@@ -4682,6 +4684,11 @@ def planner_genera():
         for gg in calendario:
             for sp in gg["slot_piatti"]:
                 sp["food_cost_teorico"] = FC_PORTATA.get(sp.get("portata") or "", 2.5)
+            # vincolo budget: se il giorno sfora il target, segnalo (il secondo è il costoso)
+            if target_fc:
+                fc_giorno = sum(sp.get("food_cost_teorico", 0) for sp in gg["slot_piatti"])
+                gg["food_cost_giorno"] = round(fc_giorno, 2)
+                gg["sfora_budget"] = fc_giorno > float(target_fc)
         # analisi
         tutti_piatti = [sp for gg in calendario for sp in gg["slot_piatti"]]
         fc_totale = sum(sp.get("food_cost_teorico", 0) for sp in tutti_piatti)
