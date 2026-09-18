@@ -4,6 +4,8 @@ var _pl = { giorni:30, slot:['primo','secondo','contorno'], no_ripeti:5, mese:(n
 var _PORTATE = ['antipasto','primo','secondo','contorno','dolce','pane','drink'];
 var _MESI = ['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
+window._plSetGiorni=function(n){ _pl.giorni=n; _plReRender(); };
+window._plStep=function(n){ _pl.step=n; _plReRender(); };
 window.apriPlanner = function(){ _pl.step=1; _pl.risposta=null; _apriVista('Planner Menu', _plRender()); };
 
 function _plRender(){
@@ -26,8 +28,8 @@ function _plStep1(){
     + '<div class="pl-h">Cosa vuoi<br>progettare?</div>'
     + '<div class="pl-lab">PERIODO</div>'
     + '<div class="pl-btn-row">'
-    +   '<button class="pl-btn'+(_pl.giorni===30?' sel':'')+'" onclick="_pl.giorni=30;_plReRender()">30 giorni</button>'
-    +   '<button class="pl-btn'+(_pl.giorni===60?' sel':'')+'" onclick="_pl.giorni=60;_plReRender()">60 giorni</button>'
+    +   '<button class="pl-btn'+(_pl.giorni===30?' sel':'')+'" onclick="_plSetGiorni(30)">30 giorni</button>'
+    +   '<button class="pl-btn'+(_pl.giorni===60?' sel':'')+'" onclick="_plSetGiorni(60)">60 giorni</button>'
     + '</div>'
     + '<div class="pl-lab">PORTATE PER GIORNO <span class="pl-lab-sub">('+_pl.slot.length+' selezionate)</span></div>'
     + '<div class="pl-portate-grid">'+slotChips+'</div>'
@@ -69,21 +71,23 @@ window._plGenera=function(){
 // ── SCHERMATA 3: CALENDARIO ──
 function _plStep3(){
   var e=_escV, d=_pl.risposta;
-  if(!d || d.errore) return '<div class="pl-head pl-head3"><span class="pl-eyebrow">◎ IL CALENDARIO</span></div><div class="vista-empty">Errore nella generazione. <button class="pl-btn" onclick="_pl.step=2;_plReRender()">Torna alle regole</button></div>';
+  if(!d || d.errore) return '<div class="pl-head pl-head3"><span class="pl-eyebrow">◎ IL CALENDARIO</span></div><div class="vista-empty">Errore nella generazione. <button class="pl-btn" onclick="_plStep(2)">Torna alle regole</button></div>';
   var cal=d.calendario||[];
   var giorni=cal.map(function(g){
+    var fcGiorno=g.food_cost_giorno;
+    if(fcGiorno==null){ fcGiorno=(g.slot_piatti||[]).reduce(function(s,sp){ return s+(sp.food_cost_teorico||0); },0); fcGiorno=Math.round(fcGiorno*10)/10; }
     var piatti=(g.slot_piatti||[]).map(function(sp){
       return '<div class="pl-piatto"><span class="pl-piatto-portata">'+e(sp.portata)+'</span><span class="pl-piatto-nome">'+e(sp.nome)+'</span><span class="pl-piatto-fc">'+(sp.food_cost_teorico!=null?'€'+sp.food_cost_teorico:'')+'</span></div>';
     }).join('');
     return '<div class="pl-giorno'+(g.sfora_budget?' sfora':'')+'">'
-      + '<div class="pl-giorno-top"><span class="pl-giorno-n">Giorno '+g.giorno_index+'</span><span class="pl-giorno-fc'+(g.sfora_budget?' sfora':'')+'">€'+g.food_cost_giorno+'</span></div>'
+      + '<div class="pl-giorno-top"><span class="pl-giorno-n">Giorno '+g.giorno_index+'</span><span class="pl-giorno-fc'+(g.sfora_budget?' sfora':'')+'">€'+fcGiorno+'</span></div>'
       + piatti + '</div>';
   }).join('');
   return '<div class="pl-head pl-head3"><span class="pl-eyebrow">◎ IL CALENDARIO</span><span class="pl-ricetta-lab">'+_pl.giorni+' GIORNI</span></div>'
     + '<div class="pl-cal-sommario">'+_pl.slot.length+' portate/giorno · '+(_pl.budget!=null?'target €'+_pl.budget:'nessun budget')+'</div>'
     + '<div class="pl-cal">'+giorni+'</div>'
     + '<button class="pl-genera-btn" onclick="_plGenera()">↻ Rigenera</button>'
-    + '<button class="pl-analisi-btn" onclick="_pl.step=4;_plReRender()">Vedi l\'analisi →</button>';
+    + '<button class="pl-analisi-btn" onclick="_plStep(4)">Vedi l\'analisi →</button>';
 }
 
 // ── SCHERMATA 4: ANALISI ──
@@ -100,6 +104,6 @@ function _plStep4(){
     + '<div class="pl-h">Il tuo menu<br>in numeri.</div>'
     + (varieta!=null?'<div class="pl-varieta"><div class="pl-varieta-n">'+varieta+'%</div><div class="pl-varieta-lab">varietà del menu — quanti piatti diversi sul totale</div></div>':'')
     + '<div class="pl-analisi-box">'+righe.map(function(r){ return '<div class="pl-an-row"><span class="pl-an-k">'+e(r[0])+'</span><span class="pl-an-v'+(r[2]?' evid':'')+'">'+e(String(r[1]))+'</span></div>'; }).join('')+'</div>'
-    + '<button class="pl-genera-btn" onclick="_pl.step=3;_plReRender()">← Torna al calendario</button>';
+    + '<button class="pl-genera-btn" onclick="_plStep(3)">← Torna al calendario</button>';
 }
 })();
