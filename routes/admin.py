@@ -8701,11 +8701,15 @@ def admin_foto_pexels_diretta():
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             # PRIMA le ricette senza foto (sistematico, non random - così copre tutto)
-            cur.execute("""SELECT id, nome FROM ricette
+            _solo_wiki = request.args.get("solo_wikimedia") == "1"
+            if _solo_wiki:
+                cur.execute("""SELECT id, nome FROM ricette WHERE immagine::text ILIKE '%%wik%%' ORDER BY id LIMIT %s""", (n,))
+            else:
+                cur.execute("""SELECT id, nome FROM ricette
                            WHERE immagine IS NULL OR immagine::text='null' OR immagine::text ILIKE '%%blueprint%%'
                            ORDER BY id LIMIT %s""", (n,))
             _r = cur.fetchall()
-            if not _r and not solo_mancanti:
+            if not _r and not solo_mancanti and not _solo_wiki:
                 # finite le mancanti: rifà le foto vecchie non verificate (le potenzialmente sbagliate)
                 cur.execute("""SELECT id, nome FROM ricette
                                WHERE immagine::text ILIKE '%%http%%' AND immagine::text NOT ILIKE '%%ricette_ok%%'
@@ -8981,5 +8985,22 @@ def admin_aggiungi_stagionalita():
                 aggiornati += 1
         conn.commit(); cur.close(); conn.close()
         return jsonify({"ingredienti_con_stagione": aggiornati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/conta-fonti-foto")
+def admin_conta_fonti_foto():
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%pexels%%'"); pexels = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%wik%%'"); wiki = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%cloudinary%%' OR immagine::text ILIKE '%%ricette_ok%%'"); cloud = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"pexels_sicure": pexels, "wikimedia_arischio": wiki, "cloudinary_ai": cloud})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
