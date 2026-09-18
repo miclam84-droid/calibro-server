@@ -8887,11 +8887,12 @@ def admin_categorizza_ai():
     n = min(int(request.args.get("n", "10")), 15)
     key = os.environ.get("ANTHROPIC_API_KEY", "")
 
+    _err = []
     def _classifica(nome):
         try:
             prompt = (f"Classifica il piatto '{nome}' in UNA portata tra: antipasto, primo, secondo, "
                       f"contorno, dolce, pane, drink. Rispondi SOLO con la parola, minuscolo, niente altro.")
-            payload = {"model": "claude-3-5-haiku-20241022", "max_tokens": 10,
+            payload = {"model": "claude-sonnet-4-5", "max_tokens": 10,
                        "messages": [{"role": "user", "content": prompt}]}
             req = ur.Request("https://api.anthropic.com/v1/messages", data=json.dumps(payload).encode(),
                              headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
@@ -8901,8 +8902,8 @@ def admin_categorizza_ai():
             for v in valide:
                 if v in risp:
                     return v
-        except Exception:
-            pass
+        except Exception as e:
+            if len(_err) < 2: _err.append(str(e)[:60])
         return None
 
     def _w(n):
@@ -8916,7 +8917,7 @@ def admin_categorizza_ai():
                     cur.execute("UPDATE ricette SET portata=%s WHERE id=%s", (p, rid))
                     conn.commit(); fatti += 1
                 time.sleep(5)  # pausa anti rate-limit
-            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"categorizza-ai: {fatti}",))
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"categorizza-ai: {fatti}"+(" | "+_err[0] if _err else ""),))
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
