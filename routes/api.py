@@ -4681,7 +4681,7 @@ def planner_genera():
                       "dolce": 1.5, "pane": 0.5, "drink": 2.5, "base": 1.0}
         for gg in calendario:
             for sp in gg["slot_piatti"]:
-                sp["food_cost_teorico"] = FC_PORTATA.get(sp.get("portata"), 2.5)
+                sp["food_cost_teorico"] = FC_PORTATA.get(sp.get("portata") or "", 2.5)
         # analisi
         tutti_piatti = [sp for gg in calendario for sp in gg["slot_piatti"]]
         fc_totale = sum(sp.get("food_cost_teorico", 0) for sp in tutti_piatti)
