@@ -8983,3 +8983,26 @@ def admin_aggiungi_stagionalita():
         return jsonify({"ingredienti_con_stagione": aggiornati})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/conta-fonti-foto")
+def admin_conta_fonti_foto():
+    """Conta le foto per fonte: pexels (sicure) vs wikimedia/altro (a rischio insegna)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%pexels%%'")
+        pexels = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%wik%%'")
+        wiki = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%cloudinary%%' OR immagine::text ILIKE '%%ricette_ok%%'")
+        cloud = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%http%%' AND immagine::text NOT ILIKE '%%pexels%%' AND immagine::text NOT ILIKE '%%wik%%' AND immagine::text NOT ILIKE '%%cloudinary%%'")
+        altro = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"pexels_sicure": pexels, "wikimedia_arischio": wiki, "cloudinary_ai": cloud, "altro": altro})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
