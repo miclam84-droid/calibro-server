@@ -9060,3 +9060,30 @@ def admin_rifai_wikimedia():
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True})
+
+
+@bp.route("/admin/diag-duplicati-ingredienti")
+def admin_diag_duplicati_ingredienti():
+    """Conta i duplicati ingredienti (stesso nome, id diversi) per capire la pulizia necessaria."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ingredienti totali
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+        tot = cur.fetchone()[0]
+        # nomi duplicati (stesso name lowercase, più id)
+        cur.execute("""SELECT LOWER(name) nome, COUNT(*) c FROM nodes
+                       WHERE type IN ('Ingrediente','Prodotto')
+                       GROUP BY LOWER(name) HAVING COUNT(*) > 1 ORDER BY c DESC LIMIT 20""")
+        dup = [{"nome": r[0], "copie": r[1]} for r in cur.fetchall()]
+        cur.execute("""SELECT COUNT(*) FROM (SELECT LOWER(name) FROM nodes
+                       WHERE type IN ('Ingrediente','Prodotto')
+                       GROUP BY LOWER(name) HAVING COUNT(*) > 1) t""")
+        n_nomi_dup = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"totale_nodi": tot, "nomi_con_duplicati": n_nomi_dup, "top_duplicati": dup})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
