@@ -9701,3 +9701,28 @@ def admin_ripara_poveri():
         return jsonify({"riparati": riparati, "archi_ereditati": archi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/ingredienti-poveri-composti")
+def admin_ingredienti_poveri_composti():
+    """Trova gli ingredienti IMPORTANTI (usati nelle ricette) che hanno pochi o zero composti,
+    per sapere dove aggiungere composti PubChem mirati."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ingredienti italiani (ing-) con 0 composti - i più rilevanti per il Creatore
+        cur.execute("""SELECT n.name FROM nodes n
+                       WHERE n.type IN ('Ingrediente','Prodotto') AND n.id LIKE 'ing-%%'
+                       AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')
+                       ORDER BY n.name LIMIT 60""")
+        senza = [r[0] for r in cur.fetchall()]
+        # quanti composti PubChem ci sono
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Composto' AND id LIKE 'pub_%%'")
+        n_pub = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"composti_pubchem": n_pub, "ingredienti_senza_composti": senza})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
