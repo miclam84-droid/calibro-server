@@ -9392,3 +9392,37 @@ def admin_amplia_contrasto():
         return jsonify({"archi_contrasto_creati": creati, "vettori": [v[2] for v in VETTORI]})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/diag-copertura-composti")
+def admin_diag_copertura_composti():
+    """Verifica la copertura composti: quanti ingredienti hanno composti vs quanti sono 'vuoti'
+    (senza composti = inutili per l'abbinamento aromatico e per il Creatore)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ingredienti totali
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+        tot = cur.fetchone()[0]
+        # ingredienti CON almeno un composto
+        cur.execute("""SELECT COUNT(DISTINCT from_id) FROM edges WHERE relation='contiene_composto'""")
+        con_comp = cur.fetchone()[0]
+        # ingredienti italiani (ing-) senza composti (i più a rischio - il Creatore li userebbe)
+        cur.execute("""SELECT COUNT(*) FROM nodes n WHERE n.type IN ('Ingrediente','Prodotto')
+                       AND n.id LIKE 'ing-%%'
+                       AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id = n.id AND e.relation='contiene_composto')""")
+        ita_senza = cur.fetchone()[0]
+        # esempi di italiani senza composti
+        cur.execute("""SELECT n.name FROM nodes n WHERE n.type IN ('Ingrediente','Prodotto')
+                       AND n.id LIKE 'ing-%%'
+                       AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id = n.id AND e.relation='contiene_composto')
+                       LIMIT 15""")
+        esempi = [r[0] for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"totale_ingredienti": tot, "con_composti": con_comp,
+                        "italiani_senza_composti": ita_senza, "esempi_vuoti": esempi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
