@@ -9490,3 +9490,39 @@ def admin_collega_italiani_ahn():
         return jsonify({"ingredienti_collegati": collegati, "archi_ereditati": archi, "modalita": "conta" if solo_conta else "eseguito"})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/duplicati-anteprima")
+def admin_duplicati_anteprima():
+    """Anteprima unione duplicati: per ogni nome doppio, mostra chi si terrebbe (quello con più archi)
+    e chi si unirebbe. NON tocca nulla. Serve a decidere prima di unire."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # nomi con duplicati (type ingrediente/prodotto)
+        cur.execute("""SELECT LOWER(name) nome, COUNT(*) c FROM nodes
+                       WHERE type IN ('Ingrediente','Prodotto')
+                       GROUP BY LOWER(name) HAVING COUNT(*) > 1 ORDER BY c DESC LIMIT 12""")
+        nomi = cur.fetchall()
+        anteprima = []
+        for nome, c in nomi:
+            # i nodi con questo nome + quanti archi ha ciascuno
+            cur.execute("""SELECT n.id,
+                           (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id OR e.to_id=n.id) archi
+                           FROM nodes n WHERE LOWER(n.name)=%s AND n.type IN ('Ingrediente','Prodotto')
+                           ORDER BY archi DESC""", (nome,))
+            nodi = [{"id": r[0], "archi": r[1]} for r in cur.fetchall()]
+            anteprima.append({"nome": nome, "copie": c, "tiene": nodi[0] if nodi else None,
+                              "unisce": nodi[1:]})
+        # totale duplicati
+        cur.execute("""SELECT COUNT(*) FROM (SELECT LOWER(name) FROM nodes
+                       WHERE type IN ('Ingrediente','Prodotto')
+                       GROUP BY LOWER(name) HAVING COUNT(*) > 1) t""")
+        tot_nomi_dup = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"nomi_con_duplicati": tot_nomi_dup, "anteprima_primi_12": anteprima})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
