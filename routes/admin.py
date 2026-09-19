@@ -9254,3 +9254,66 @@ def admin_trova_refusi():
         return jsonify({"refusi_trovati": conteggi, "esempio_fenomeno": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/correggi-refusi")
+def admin_correggi_refusi():
+    """Corregge i refusi di accento nei fenomeni (piu->più, c'e->c'è, ecc.) con sostituzione sicura
+    a livello di parola intera. Founder Rule #121."""
+    from flask import request, jsonify
+    import os, psycopg2, json, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # (regex parola-intera, sostituzione) - solo accenti, sicuri
+    FIX = [
+        (r"\bc'e\b", "c'è"),
+        (r"\bpiu\b", "più"),
+        (r"\bperche\b", "perché"),
+        (r"\bpero\b", "però"),
+        (r"\bgia\b", "già"),
+        (r"\bcosi\b", "così"),
+        (r"\bpoiche\b", "poiché"),
+        (r"\bqualita\b", "qualità"),
+        (r"\bquantita\b", "quantità"),
+        (r"\bproprieta\b", "proprietà"),
+        (r"\bpuo\b", "può"),
+        (r"l'al dente", "il punto «al dente»"),
+    ]
+    def _fix_str(s):
+        if not isinstance(s, str): return s, 0
+        n = 0
+        for pat, rep in FIX:
+            s, k = re.subn(pat, rep, s)
+            n += k
+            # anche maiuscola iniziale
+            s, k2 = re.subn(pat.capitalize() if pat[0].isalpha() else pat, rep.capitalize(), s)
+            n += k2
+        return s, n
+    def _fix_deep(obj):
+        tot = 0
+        if isinstance(obj, dict):
+            for k in obj:
+                obj[k], n = _fix_deep(obj[k]); tot += n
+            return obj, tot
+        if isinstance(obj, list):
+            for i in range(len(obj)):
+                obj[i], n = _fix_deep(obj[i]); tot += n
+            return obj, tot
+        if isinstance(obj, str):
+            return _fix_str(obj)
+        return obj, 0
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE type='Fenomeno'")
+        righe = cur.fetchall()
+        corretti = 0; fen_toccati = 0
+        for nid, data in righe:
+            if not data: continue
+            nuovo, n = _fix_deep(data if isinstance(data, dict) else json.loads(data))
+            if n > 0:
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nuovo, ensure_ascii=False), nid))
+                corretti += n; fen_toccati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"refusi_corretti": corretti, "fenomeni_toccati": fen_toccati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
