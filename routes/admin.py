@@ -9265,29 +9265,23 @@ def admin_correggi_refusi():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     # (regex parola-intera, sostituzione) - solo accenti, sicuri
-    FIX = [
-        (r"\bc'e\b", "c'è"),
-        (r"\bpiu\b", "più"),
-        (r"\bperche\b", "perché"),
-        (r"\bpero\b", "però"),
-        (r"\bgia\b", "già"),
-        (r"\bcosi\b", "così"),
-        (r"\bpoiche\b", "poiché"),
-        (r"\bqualita\b", "qualità"),
-        (r"\bquantita\b", "quantità"),
-        (r"\bproprieta\b", "proprietà"),
-        (r"\bpuo\b", "può"),
-        (r"l'al dente", "il punto «al dente»"),
-    ]
+    # coppie (sbagliato, giusto) - versione minuscola E capitalizzata, word boundary
+    _BASE = [("c'e","c'è"),("piu","più"),("perche","perché"),("pero","però"),("gia","già"),
+             ("cosi","così"),("poiche","poiché"),("qualita","qualità"),("quantita","quantità"),
+             ("proprieta","proprietà"),("puo","può"),("e'","è"),("cioe","cioè"),("finche","finché"),
+             ("affinche","affinché"),("benche","benché"),("ne'","né"),("si'","sì")]
+    FIX = []
+    for bad, good in _BASE:
+        FIX.append((r"\b" + re.escape(bad) + r"\b", good))                    # minuscolo
+        FIX.append((r"\b" + re.escape(bad.capitalize()) + r"\b", good.capitalize()))  # Maiuscolo
+    FIX.append((r"l'al dente", "il punto «al dente»"))
+    FIX.append((r"L'al dente", "Il punto «al dente»"))
     def _fix_str(s):
         if not isinstance(s, str): return s, 0
         n = 0
         for pat, rep in FIX:
             s, k = re.subn(pat, rep, s)
             n += k
-            # anche maiuscola iniziale
-            s, k2 = re.subn(pat.capitalize() if pat[0].isalpha() else pat, rep.capitalize(), s)
-            n += k2
         return s, n
     def _fix_deep(obj):
         tot = 0
@@ -9329,41 +9323,5 @@ def admin_correggi_refusi():
                 corretti += n_tot; fen_toccati += 1
         conn.commit(); cur.close(); conn.close()
         return jsonify({"refusi_corretti": corretti, "fenomeni_toccati": fen_toccati})
-    except Exception as e:
-        return jsonify({"errore": str(e)[:150]})
-
-
-@bp.route("/admin/dump-fenomeno-refuso")
-def admin_dump_fenomeno_refuso():
-    """Mostra il JSON grezzo di un fenomeno che ha un refuso, per capire dove sta."""
-    from flask import request, jsonify
-    import os, psycopg2, json, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
-        return jsonify({"errore": "non autorizzato"}), 403
-    try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # trovo un fenomeno con 'piu' nel data
-        cur.execute("SELECT id, name, data FROM nodes WHERE type='Fenomeno' AND data::text ~ '\\mpiu\\M' LIMIT 1")
-        row = cur.fetchone()
-        if not row:
-            cur.close(); conn.close()
-            return jsonify({"nessun_piu": True})
-        nid, name, data = row
-        # trovo QUALI chiavi contengono 'piu'
-        chiavi_con_refuso = []
-        def _scan(obj, path=""):
-            if isinstance(obj, dict):
-                for k, v in obj.items():
-                    _scan(v, f"{path}.{k}")
-            elif isinstance(obj, list):
-                for i, v in enumerate(obj):
-                    _scan(v, f"{path}[{i}]")
-            elif isinstance(obj, str):
-                if re.search(r"\bpiu\b", obj):
-                    chiavi_con_refuso.append({"path": path, "estratto": obj[:80]})
-        _scan(data if isinstance(data, dict) else json.loads(data))
-        cur.close(); conn.close()
-        return jsonify({"id": nid, "name": name, "chiavi_col_refuso": chiavi_con_refuso,
-                        "tipo_data": type(data).__name__})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
