@@ -9726,3 +9726,57 @@ def admin_ingredienti_poveri_composti():
         return jsonify({"composti_pubchem": n_pub, "ingredienti_senza_composti": senza})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/collega-varianti-genitore")
+def admin_collega_varianti_genitore():
+    """Collega le varianti specifiche (aceto di X, acciughe Y) al loro ingrediente-madre, ereditandone
+    i composti. Non aggiunge composti nuovi: collega le varianti al genitore che li ha già."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "40")), 80)
+    # varianti -> parola-madre da cui ereditare i composti
+    MADRI = ["aceto", "acciughe", "pomodoro", "cipolla", "peperone", "olio", "vino", "formaggio",
+             "pepe", "sale", "zucchero", "farina", "latte", "burro", "miele", "limone", "arancia",
+             "mela", "pera", "funghi", "basilico", "prezzemolo", "menta", "cioccolato", "caffè",
+             "riso", "pane", "pasta", "birra", "aglio", "zenzero", "cannella", "vaniglia", "senape"]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        collegate = 0; archi = 0
+        cur.execute("""SELECT n.id, LOWER(n.name) FROM nodes n
+                       WHERE n.type IN ('Ingrediente','Prodotto') AND n.id LIKE 'ing-%%'
+                       AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')
+                       LIMIT %s""", (n,))
+        senza = cur.fetchall()
+        for idv, nomev in senza:
+            # trovo la madre (la parola-madre contenuta nel nome)
+            madre_nome = None
+            for m in MADRI:
+                if m in nomev:
+                    madre_nome = m; break
+            if not madre_nome: continue
+            # nodo madre CON composti (il più ricco)
+            cur.execute("""SELECT n.id FROM nodes n
+                           WHERE n.type IN ('Ingrediente','Prodotto') AND LOWER(n.name) LIKE %s
+                           AND EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')
+                           ORDER BY (SELECT COUNT(*) FROM edges e2 WHERE e2.from_id=n.id AND e2.relation='contiene_composto') DESC LIMIT 1""",
+                        (f"%{madre_nome}%",))
+            rmadre = cur.fetchone()
+            if not rmadre: continue
+            id_madre = rmadre[0]
+            # eredita i composti della madre
+            cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_madre,))
+            for to_id, data in cur.fetchall():
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='contiene_composto' LIMIT 1", (idv, to_id))
+                if cur.fetchone(): continue
+                dstr = json.dumps(data, ensure_ascii=False) if isinstance(data,(dict,list)) else (data or '{}')
+                cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (idv,to_id,dstr))
+                archi += 1
+            collegate += 1
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"varianti_collegate": collegate, "composti_ereditati": archi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
