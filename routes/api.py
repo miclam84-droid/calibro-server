@@ -1014,10 +1014,14 @@ def api_ricette_list():
     SEL = "SELECT id,nome,disciplina,descrizione,ingredienti,fenomeni,tecniche,numeri,punto_critico,abbinamenti,vino_birra,scheda_en,scheda_es,procedimento,immagine,immagine_autore,immagine_url_fonte,tempo_prep,tempo_cottura,difficolta,porzioni,applicazioni,twist_di,nome_en,nome_es,procedimento_en,procedimento_es,applicazioni_en,applicazioni_es,punto_critico_en,punto_critico_es,esperimento,limite,esperimento_en,esperimento_es,limite_en,limite_es,twist,twist_en,twist_es FROM ricette"
     COLS = ["id","nome","disciplina","descrizione","ingredienti","fenomeni","tecniche","numeri","punto_critico","abbinamenti","vino_birra","scheda_en","scheda_es","procedimento","immagine","immagine_autore","immagine_url_fonte","tempo_prep","tempo_cottura","difficolta","porzioni","applicazioni","twist_di","nome_en","nome_es","procedimento_en","procedimento_es","applicazioni_en","applicazioni_es","punto_critico_en","punto_critico_es","esperimento","limite","esperimento_en","esperimento_es","limite_en","limite_es","twist","twist_en","twist_es"]
     try:
+        from flask import request as _rq
+        solo_pubb = _rq.args.get("solo_pubbliche") == "1"
+        _wp = " AND pubblica=TRUE" if solo_pubb else ""
+        _wp_solo = " WHERE pubblica=TRUE" if solo_pubb else ""
         if disc:
-            rows = db.execute(SEL + " WHERE disciplina=%s ORDER BY nome", (disc,))
+            rows = db.execute(SEL + " WHERE disciplina=%s" + _wp + " ORDER BY nome", (disc,))
         else:
-            rows = db.execute(SEL + " ORDER BY disciplina,nome")
+            rows = db.execute(SEL + _wp_solo + " ORDER BY disciplina,nome")
         result=[]
         def _parse(v):
             if v is None: return None
