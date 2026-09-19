@@ -9213,3 +9213,44 @@ def admin_surface_zero_pubblica():
                         "nota": "Tutte nascoste di default. Le specchietto validate si marcano pubblica=true una a una."})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/trova-refusi")
+def admin_trova_refusi():
+    """Trova i refusi comuni nei testi dei fenomeni: c'e/pero/piu senza accento, l'al dente, ecc."""
+    from flask import request, jsonify
+    import os, psycopg2, json, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # pattern di refuso: parola sbagliata -> quante volte appare
+    PATTERN = [
+        (r"\bc'e\b", "c'e (manca accento: c'è)"),
+        (r"\bpero\b", "pero (manca accento: però)"),
+        (r"\bpiu\b", "piu (manca accento: più)"),
+        (r"\bperche\b", "perche (manca accento: perché)"),
+        (r"\bgia\b", "gia (manca accento: già)"),
+        (r"\bcosi\b", "cosi (manca accento: così)"),
+        (r"\bpoiche\b", "poiche (manca accento: poiché)"),
+        (r"l'al dente", "l'al dente (apostrofo errato)"),
+        (r"\bqualita\b", "qualita (manca accento: qualità)"),
+        (r"\bquantita\b", "quantita (manca accento: quantità)"),
+        (r"\bproprieta\b", "proprieta (manca accento: proprietà)"),
+        (r"\bpuo\b", "puo (manca accento: può)"),
+        (r"\be'\b", "e' (dovrebbe essere è)"),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type='Fenomeno'")
+        conteggi = {}
+        esempi = {}
+        for nid, nome, data in cur.fetchall():
+            testo = json.dumps(data, ensure_ascii=False).lower() if data else ""
+            for pat, desc in PATTERN:
+                m = re.findall(pat, testo)
+                if m:
+                    conteggi[desc] = conteggi.get(desc, 0) + len(m)
+                    if desc not in esempi: esempi[desc] = nome
+        cur.close(); conn.close()
+        return jsonify({"refusi_trovati": conteggi, "esempio_fenomeno": esempi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
