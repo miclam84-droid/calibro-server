@@ -9931,3 +9931,28 @@ def admin_mappa_proprieta_ai():
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": f"mappa {n} ingredienti con AI, pause 4s"})
+
+
+@bp.route("/admin/vedi-proprieta")
+def admin_vedi_proprieta():
+    """Mostra le proprieta di alcuni ingredienti mappati (per verifica)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (data ? 'proprieta') ORDER BY random() LIMIT 8""")
+        out = []
+        for nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else json.loads(data)
+            prop = dd.get("proprieta", {})
+            alte = {k: v for k, v in prop.items() if abs(v) >= 5}
+            out.append({"nome": nome, "proprieta_alte": alte})
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'proprieta')")
+        tot = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"totale_con_proprieta": tot, "esempi": out})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
