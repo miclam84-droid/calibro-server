@@ -9836,3 +9836,31 @@ def admin_assegna_proprieta():
         return jsonify({"assegnati": assegnati, "nota": "seme applicato agli ingredienti-tipo chiave"})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/top-ingredienti-chiave")
+def admin_top_ingredienti_chiave():
+    """Trova i ~300 ingredienti PIU importanti: piu connessi nel grafo (li usera il Composer).
+    Sono quelli da mappare per primi con le proprieta (Anello 1)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "300")), 400)
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ingredienti ordinati per numero di connessioni (i piu centrali nel grafo)
+        cur.execute("""SELECT n.name,
+                       (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id OR e.to_id=n.id) archi,
+                       (n.data ? 'proprieta') ha_prop
+                       FROM nodes n WHERE n.type IN ('Ingrediente','Prodotto')
+                       AND n.name NOT LIKE '%%(%%'
+                       ORDER BY archi DESC LIMIT %s""", (n,))
+        righe = cur.fetchall()
+        con_prop = sum(1 for r in righe if r[2])
+        senza_prop = [r[0] for r in righe if not r[2]][:50]
+        cur.close(); conn.close()
+        return jsonify({"top_ingredienti": len(righe), "gia_con_proprieta": con_prop,
+                        "da_mappare_esempi": senza_prop})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
