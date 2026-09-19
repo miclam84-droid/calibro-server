@@ -9325,3 +9325,70 @@ def admin_correggi_refusi():
         return jsonify({"refusi_corretti": corretti, "fenomeni_toccati": fen_toccati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/amplia-contrasto")
+def admin_amplia_contrasto():
+    """Aggiunge i 4 vettori di contrasto nuovi (grasso/acido, piccante/dolce, umami, amaro/grasso)
+    creando archi abbinamento_contrasto tra ingredienti che rispettano le clausole sensoriali."""
+    from flask import request, jsonify
+    import os, psycopg2, json, itertools
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+
+    # gruppi di ingredienti per marcatore sensoriale (per nome, sul grafo italiano)
+    GRUPPI = {
+        "grasso": ["panna", "mascarpone", "burro", "midollo", "lardo", "guanciale", "stracchino",
+                   "gorgonzola", "mozzarella di bufala", "avocado", "tahini", "maionese"],
+        "acido": ["limone", "lime", "aceto", "aceto balsamico", "aceto di mele", "yogurt", "kefir",
+                  "pomodoro", "tamarindo", "melagrana", "verjus", "passiflora"],
+        "piccante": ["peperoncino", "pepe lungo", "pepe di sichuan", "harissa", "gochujang",
+                     "wasabi", "senape", "zenzero", "nduja"],
+        "dolce": ["miele", "sciroppo d'acero", "riduzione di fichi", "melassa di melograno",
+                  "zucchero di canna", "datteri", "uvetta", "mela cotta"],
+        "umami": ["parmigiano", "grana", "colatura di alici", "garum", "fungo secco", "shiitake secco",
+                  "pomodoro secco", "miso", "salsa di soia", "katsuobushi", "bottarga"],
+        "amaro": ["carciofo", "cicoria", "radicchio", "cavolo nero", "rucola", "cardo", "tarassaco",
+                  "birra amara", "caffè", "cacao amaro", "china"],
+    }
+    # i 4 vettori: (gruppo_A, gruppo_B, tipo, spiegazione)
+    VETTORI = [
+        ("grasso", "acido", "grasso_taglia_acido",
+         "L'acidità taglia la patina dei grassi saturi e resetta il palato."),
+        ("piccante", "dolce", "piccante_bilancia_dolce",
+         "Gli zuccheri saturano i recettori TRPV1 e riducono la percezione del piccante senza spegnere l'aroma."),
+        ("umami", "acido", "umami_esalta_sapidita",
+         "L'acido glutammico agisce in sinergia col sodio, amplificando la sapidità percepita."),
+        ("amaro", "grasso", "amaro_pulisce_grasso",
+         "I composti amari stimolano la secrezione biliare e puliscono la persistenza dei grassi densi."),
+    ]
+
+    def _trova_id(cur, nome):
+        cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE %s LIMIT 1",
+                    (f"%{nome.lower()}%",))
+        r = cur.fetchone()
+        return r[0] if r else None
+
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        creati = 0
+        for gA, gB, tipo, spieg in VETTORI:
+            for nomeA in GRUPPI[gA]:
+                idA = _trova_id(cur, nomeA)
+                if not idA: continue
+                for nomeB in GRUPPI[gB]:
+                    idB = _trova_id(cur, nomeB)
+                    if not idB or idA == idB: continue
+                    # evito duplicati
+                    cur.execute("""SELECT 1 FROM edges WHERE relation='abbinamento_contrasto'
+                                   AND from_id=%s AND to_id=%s LIMIT 1""", (idA, idB))
+                    if cur.fetchone(): continue
+                    data = {"tipo": tipo, "fonte": "dataset Matter Lab (vettori estesi)", "perche": spieg}
+                    cur.execute("""INSERT INTO edges (from_id, to_id, relation, data)
+                                   VALUES (%s, %s, 'abbinamento_contrasto', %s)""",
+                                (idA, idB, json.dumps(data, ensure_ascii=False)))
+                    creati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"archi_contrasto_creati": creati, "vettori": [v[2] for v in VETTORI]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
