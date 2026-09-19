@@ -9647,3 +9647,57 @@ def admin_ripara_abbinamenti():
         return jsonify({"ingredienti_riparati": riparati, "archi_ricostruiti": archi_creati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/ripara-poveri")
+def admin_ripara_poveri():
+    """Ripara ingredienti chiave poveri: trova il gemello Ahn ricco e fa ereditare gli abbinamenti.
+    Mappa mirata per i pochi rimasti (parmigiano, aglio, vino bianco...)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # (nome italiano nel grafo, nome ahn del gemello ricco)
+    COPPIE = [
+        ("parmigiano", "parmesan"), ("parmigiano", "cheese"), ("aglio", "garlic"),
+        ("vino bianco", "white_wine"), ("grana", "parmesan"), ("pecorino", "cheese"),
+        ("prezzemolo", "parsley"), ("rosmarino", "rosemary"), ("salvia", "sage"),
+        ("origano", "oregano"), ("maggiorana", "marjoram"), ("erba cipollina", "chive"),
+        ("scalogno", "shallot"), ("porro", "leek"), ("sedano", "celery"),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        riparati = 0; archi = 0
+        for ita, ahn in COPPIE:
+            # nodo italiano (quello che risponde ai ponti - prendo quello con nome esatto)
+            cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                           AND LOWER(name)=%s ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (ita.lower(),))
+            rita = cur.fetchone()
+            if not rita:
+                cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                               AND LOWER(name) LIKE %s LIMIT 1""", (f"%{ita.lower()}%",))
+                rita = cur.fetchone()
+            if not rita: continue
+            id_ita = rita[0]
+            # gemello ahn ricco
+            cur.execute("""SELECT n.id, (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id OR e.to_id=n.id) ar
+                           FROM nodes n WHERE n.id LIKE 'ahn_%%' AND LOWER(n.name) LIKE %s ORDER BY ar DESC LIMIT 1""",
+                        (f"%{ahn}%",))
+            rahn = cur.fetchone()
+            if not rahn or rahn[1] < 5: continue
+            id_ahn = rahn[0]
+            # eredita gli abbinamenti del gemello
+            cur.execute("""SELECT to_id, data FROM edges WHERE from_id=%s AND relation='abbinamento_aromatico' LIMIT 80""", (id_ahn,))
+            for to_id, data in cur.fetchall():
+                if to_id == id_ita: continue
+                cur.execute("""SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='abbinamento_aromatico' LIMIT 1""", (id_ita, to_id))
+                if cur.fetchone(): continue
+                dstr = json.dumps(data, ensure_ascii=False) if isinstance(data,(dict,list)) else (data or '{}')
+                cur.execute("""INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'abbinamento_aromatico',%s)""", (id_ita,to_id,dstr))
+                archi += 1
+            riparati += 1
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"riparati": riparati, "archi_ereditati": archi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
