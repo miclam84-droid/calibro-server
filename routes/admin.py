@@ -9331,3 +9331,39 @@ def admin_correggi_refusi():
         return jsonify({"refusi_corretti": corretti, "fenomeni_toccati": fen_toccati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/dump-fenomeno-refuso")
+def admin_dump_fenomeno_refuso():
+    """Mostra il JSON grezzo di un fenomeno che ha un refuso, per capire dove sta."""
+    from flask import request, jsonify
+    import os, psycopg2, json, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # trovo un fenomeno con 'piu' nel data
+        cur.execute("SELECT id, name, data FROM nodes WHERE type='Fenomeno' AND data::text ~ '\\mpiu\\M' LIMIT 1")
+        row = cur.fetchone()
+        if not row:
+            cur.close(); conn.close()
+            return jsonify({"nessun_piu": True})
+        nid, name, data = row
+        # trovo QUALI chiavi contengono 'piu'
+        chiavi_con_refuso = []
+        def _scan(obj, path=""):
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    _scan(v, f"{path}.{k}")
+            elif isinstance(obj, list):
+                for i, v in enumerate(obj):
+                    _scan(v, f"{path}[{i}]")
+            elif isinstance(obj, str):
+                if re.search(r"\bpiu\b", obj):
+                    chiavi_con_refuso.append({"path": path, "estratto": obj[:80]})
+        _scan(data if isinstance(data, dict) else json.loads(data))
+        cur.close(); conn.close()
+        return jsonify({"id": nid, "name": name, "chiavi_col_refuso": chiavi_con_refuso,
+                        "tipo_data": type(data).__name__})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
