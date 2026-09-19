@@ -9603,3 +9603,47 @@ def admin_danno_unione():
                         "erano_circa": 4078, "esempi_poveri": poveri})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/ripara-abbinamenti")
+def admin_ripara_abbinamenti():
+    """Ripara gli ingredienti che hanno perso archi: ricalcola gli abbinamenti aromatici dall'overlap
+    dei composti condivisi (logica Ahn). Solo per gli ingredienti con composti ma senza abbinamenti."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "20")), 40)
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ingredienti CON composti ma con POCHI abbinamenti (i danneggiati)
+        cur.execute("""SELECT n.id FROM nodes n
+                       WHERE n.type IN ('Ingrediente','Prodotto')
+                       AND EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')
+                       AND (SELECT COUNT(*) FROM edges e2 WHERE (e2.from_id=n.id OR e2.to_id=n.id) AND e2.relation='abbinamento_aromatico') < 3
+                       LIMIT %s""", (n,))
+        danneggiati = [r[0] for r in cur.fetchall()]
+        riparati = 0; archi_creati = 0
+        for idg in danneggiati:
+            # composti di questo ingrediente
+            cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (idg,))
+            miei_comp = set(r[0] for r in cur.fetchall())
+            if not miei_comp: continue
+            # altri ingredienti che condividono composti (overlap)
+            cur.execute("""SELECT e.from_id, COUNT(*) ov FROM edges e
+                           WHERE e.relation='contiene_composto' AND e.to_id = ANY(%s) AND e.from_id != %s
+                           GROUP BY e.from_id HAVING COUNT(*) >= 3 ORDER BY ov DESC LIMIT 40""",
+                        (list(miei_comp), idg))
+            for altro_id, ov in cur.fetchall():
+                # evito duplicati
+                cur.execute("""SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='abbinamento_aromatico' LIMIT 1""", (idg, altro_id))
+                if cur.fetchone(): continue
+                cur.execute("""INSERT INTO edges (from_id, to_id, relation, data) VALUES (%s,%s,'abbinamento_aromatico',%s)""",
+                            (idg, altro_id, json.dumps({"fonte": "ricostruito da overlap composti", "overlap": ov})))
+                archi_creati += 1
+            riparati += 1
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"ingredienti_riparati": riparati, "archi_ricostruiti": archi_creati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
