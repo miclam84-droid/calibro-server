@@ -9304,15 +9304,29 @@ def admin_correggi_refusi():
         return obj, 0
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT id, data FROM nodes WHERE type='Fenomeno'")
+        tipo = request.args.get("tipo", "Fenomeno")
+        if tipo == "tutti":
+            cur.execute("SELECT id, name, data FROM nodes")
+        else:
+            cur.execute("SELECT id, name, data FROM nodes WHERE type=%s", (tipo,))
         righe = cur.fetchall()
         corretti = 0; fen_toccati = 0
-        for nid, data in righe:
-            if not data: continue
-            nuovo, n = _fix_deep(data if isinstance(data, dict) else json.loads(data))
-            if n > 0:
-                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nuovo, ensure_ascii=False), nid))
-                corretti += n; fen_toccati += 1
+        for nid, name, data in righe:
+            n_tot = 0
+            # correggo il name
+            new_name, n1 = _fix_str(name) if name else (name, 0)
+            n_tot += n1
+            # correggo il data
+            new_data = data
+            if data:
+                new_data, n2 = _fix_deep(data if isinstance(data, dict) else json.loads(data))
+                n_tot += n2
+            if n_tot > 0:
+                if data:
+                    cur.execute("UPDATE nodes SET name=%s, data=%s WHERE id=%s", (new_name, json.dumps(new_data, ensure_ascii=False), nid))
+                else:
+                    cur.execute("UPDATE nodes SET name=%s WHERE id=%s", (new_name, nid))
+                corretti += n_tot; fen_toccati += 1
         conn.commit(); cur.close(); conn.close()
         return jsonify({"refusi_corretti": corretti, "fenomeni_toccati": fen_toccati})
     except Exception as e:
