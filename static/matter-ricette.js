@@ -103,7 +103,7 @@ window._ricettarioCarica = async function(query){
   var cacheKey='ric-'+query;
   try{ var cached=sessionStorage.getItem(cacheKey); if(cached){ _ricettarioRender(JSON.parse(cached)); return; } }catch(e){}
   try{
-    var r=await fetch('/v1/ricettario/canonico?'+query+'&limit=30');
+    var r=await fetch('/v1/ricettario/canonico?'+query+'&limit=30&solo_pubbliche=1');
     var j=await r.json();
     try{ sessionStorage.setItem(cacheKey, JSON.stringify(j)); }catch(e){}
     _ricettarioRender(j);
@@ -114,13 +114,15 @@ window._ricettarioRender = function(j){
     var out=document.getElementById('ricp-out');
     var ric=j.ricette||[];
     var e=_escV;
-    if(!ric.length){ out.innerHTML='<div class="vista-empty">Nessuna ricetta trovata.</div>'; return; }
+    if(!ric.length){ out.innerHTML='<div class="ric-arrivo"><div class="ric-arrivo-ico">◎</div><div class="ric-arrivo-t">Le schede-manifesto stanno arrivando.</div><div class="ric-arrivo-d">Ognuna è un caso di studio verificato a mano: numeri-bersaglio, fenomeni in gioco, errori da evitare. Nessuna riempita a caso.</div></div>'; return; }
     out.innerHTML='<div class="ricp-griglia">'+ric.map(function(x){
       var img='';
       if(x.immagine){
         if(x.immagine.tipo==='foto' && x.immagine.url){ img='<img src="'+e(x.immagine.url)+'" alt="" loading="lazy">'; }
         else if(x.immagine.tipo==='blueprint' && x.immagine.famiglia){ img='<img src="/static/blueprints/'+e(x.immagine.famiglia)+'.svg" alt="" loading="lazy">'; }
       }
+      // Founder Rule #122: nessuna foto -> placeholder brutalist pulito (mai box rotto)
+      if(!img){ img='<div class="ricp-noimg"><span class="ricp-noimg-ico">◎</span>'+(x.fenomeno?'<span class="ricp-noimg-fen">'+e(x.fenomeno)+'</span>':'')+'</div>'; }
       return '<div class="ricp-card" onclick="_ricettarioApri(\''+e(x.id)+'\',\''+e(String(x.nome)).replace(/'/g,"\\'")+'\')">'
         + '<div class="ricp-img">'+img+(x.certificata?'<span class="ricp-cert">✓ Lab</span>':'')+'</div>'
         + '<div class="ricp-nome">'+e(x.nome||'')+'</div>'
