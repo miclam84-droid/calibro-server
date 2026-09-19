@@ -9426,3 +9426,64 @@ def admin_diag_copertura_composti():
                         "italiani_senza_composti": ita_senza, "esempi_vuoti": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/collega-italiani-ahn")
+def admin_collega_italiani_ahn():
+    """Collega gli ingredienti italiani (ing-, senza composti) ai loro gemelli Ahn (che hanno i composti)
+    via una mappa nome IT->EN. L'italiano eredita gli abbinamenti del gemello Ahn. Serve al Creatore."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    solo_conta = request.args.get("conta") == "1"
+
+    # mappa italiano -> nome ahn (i più comuni; il match è per LIKE)
+    MAP = {
+        "oliva": "olive", "olive": "olive", "pomodoro": "tomato", "basilico": "basil",
+        "aglio": "garlic", "cipolla": "onion", "limone": "lemon", "arancia": "orange",
+        "fragola": "strawberry", "lampone": "raspberry", "mela": "apple", "pera": "pear",
+        "pesca": "peach", "uva": "grape", "carota": "carrot", "sedano": "celery",
+        "prezzemolo": "parsley", "rosmarino": "rosemary", "timo": "thyme", "salvia": "sage",
+        "menta": "mint", "zenzero": "ginger", "cannella": "cinnamon", "vaniglia": "vanilla",
+        "cioccolato": "cocoa", "caffe": "coffee", "miele": "honey", "burro": "butter",
+        "parmigiano": "parmesan", "manzo": "beef", "maiale": "pork", "pollo": "chicken",
+        "agnello": "lamb", "salmone": "salmon", "tonno": "tuna", "gambero": "shrimp",
+        "funghi": "mushroom", "tartufo": "truffle", "patata": "potato", "zucca": "pumpkin",
+        "melanzana": "eggplant", "peperone": "bell_pepper", "zucchina": "zucchini",
+        "spinaci": "spinach", "vino": "wine", "aceto": "vinegar", "pane": "bread",
+        "mandorla": "almond", "nocciola": "hazelnut", "noce": "walnut", "pistacchio": "pistachio",
+        "seppia": "squid", "orata": "fish", "ostriche": "oyster", "cozze": "mussel",
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        collegati = 0; archi = 0
+        for ita, ahn in MAP.items():
+            # id italiano senza composti
+            cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                           AND LOWER(name) LIKE %s AND id LIKE 'ing-%%' LIMIT 1""", (f"%{ita}%",))
+            rita = cur.fetchone()
+            if not rita: continue
+            id_ita = rita[0]
+            # id ahn col nome inglese
+            cur.execute("""SELECT id FROM nodes WHERE id LIKE 'ahn_%%' AND LOWER(name) LIKE %s LIMIT 1""", (f"%{ahn}%",))
+            rahn = cur.fetchone()
+            if not rahn: continue
+            id_ahn = rahn[0]
+            if solo_conta:
+                collegati += 1; continue
+            # collego: l'italiano prende gli abbinamenti aromatici del gemello ahn
+            cur.execute("""SELECT to_id, data FROM edges WHERE from_id=%s AND relation='abbinamento_aromatico' LIMIT 60""", (id_ahn,))
+            for to_id, data in cur.fetchall():
+                cur.execute("""SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='abbinamento_aromatico' LIMIT 1""", (id_ita, to_id))
+                if cur.fetchone(): continue
+                cur.execute("""INSERT INTO edges (from_id, to_id, relation, data) VALUES (%s, %s, 'abbinamento_aromatico', %s)""",
+                            (id_ita, to_id, data))
+                archi += 1
+            # e un arco 'stesso_ingrediente' per tracciare il legame
+            cur.execute("""INSERT INTO edges (from_id, to_id, relation, data) VALUES (%s, %s, 'stesso_ingrediente', '{}')""", (id_ita, id_ahn))
+            collegati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ingredienti_collegati": collegati, "archi_ereditati": archi, "modalita": "conta" if solo_conta else "eseguito"})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
