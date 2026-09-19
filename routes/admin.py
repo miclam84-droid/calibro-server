@@ -9130,3 +9130,32 @@ def admin_mappa_grafo():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/diag-clausole")
+def admin_diag_clausole():
+    """Mostra come sono fatte le clausole di abbinamento: analogia vs contrasto, esempi con criteri."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        out = {}
+        # esempi di ANALOGIA (abbinamento_aromatico)
+        cur.execute("""SELECT e.from_id, e.to_id, e.data FROM edges e
+                       WHERE e.relation='abbinamento_aromatico' AND e.data->>'overlap' IS NOT NULL
+                       ORDER BY (e.data->>'overlap')::numeric DESC LIMIT 5""")
+        out["analogia_top_overlap"] = [{"from": r[0], "to": r[1], "data": str(r[2])[:100]} for r in cur.fetchall()]
+        # esempi di CONTRASTO
+        cur.execute("""SELECT e.from_id, e.to_id, e.data FROM edges e
+                       WHERE e.relation='abbinamento_contrasto' LIMIT 5""")
+        out["contrasto_esempi"] = [{"from": r[0], "to": r[1], "data": str(r[2])[:150]} for r in cur.fetchall()]
+        # che campi hanno gli archi contrasto?
+        cur.execute("""SELECT data FROM edges WHERE relation='abbinamento_contrasto' AND data IS NOT NULL LIMIT 1""")
+        ex = cur.fetchone()
+        out["struttura_contrasto"] = str(ex[0]) if ex else "nessun dato"
+        cur.close(); conn.close()
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
