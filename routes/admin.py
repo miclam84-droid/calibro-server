@@ -9780,3 +9780,59 @@ def admin_collega_varianti_genitore():
         return jsonify({"varianti_collegate": collegate, "composti_ereditati": archi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/assegna-proprieta")
+def admin_assegna_proprieta():
+    """Assegna lo strato PROPRIETA sensoriali (15 dimensioni, 0-10) agli ingredienti-tipo chiave,
+    per abbinamento analogia/contrasto. Base scientifica: gusto+mouthfeel+termico+aroma+effervescenza+fermentato."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    solo_test = request.args.get("test") == "1"
+
+    # le 15 proprietà (0-10): dolce, salato, acido, amaro, umami | grasso, corposita, croccante,
+    # astringente, piccante | termico(-10 fresco / +10 caldo) | aroma_fresco, aroma_caldo | effervescenza, fermentato
+    # mappa-seme: ingredienti-tipo chiave con valori da conoscenza sensoriale
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    SEME = {
+        "guanciale": [0,7,0,0,6,9,6,2,0,0,3,0,5,0,3],
+        "pomodoro": [3,1,6,1,7,0,3,0,0,0,-2,5,1,0,0],
+        "limone": [1,0,9,3,0,0,1,0,1,0,-4,8,0,0,0],
+        "cioccolato fondente": [4,0,0,7,2,6,7,3,3,0,4,0,7,0,2],
+        "peperoncino": [0,0,0,1,0,1,2,0,0,9,8,2,3,0,0],
+        "parmigiano": [1,7,2,1,9,6,6,3,1,0,3,0,4,0,7],
+        "basilico": [1,0,0,2,0,0,1,0,0,0,-2,8,1,0,0],
+        "miele": [9,0,1,0,0,1,7,0,0,0,3,3,3,0,0],
+        "aceto balsamico": [4,0,8,1,3,0,4,0,2,0,2,2,3,0,6],
+        "burro": [1,1,0,0,2,9,6,0,0,0,3,0,2,0,0],
+        "menta": [1,0,0,1,0,0,1,0,0,0,-8,9,0,0,0],
+        "caffe": [0,0,2,7,3,2,6,2,4,0,5,0,8,0,3],
+        "manzo": [0,3,0,0,8,6,8,2,0,0,4,0,5,0,0],
+        "salmone": [1,2,0,0,6,7,6,0,0,0,2,1,2,0,0],
+        "champagne": [2,0,6,2,0,0,2,0,2,0,-3,4,1,9,7],
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        assegnati = 0; anteprima = []
+        for nome, valori in SEME.items():
+            cur.execute("""SELECT id, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                           AND LOWER(name) LIKE %s ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (f"%{nome}%",))
+            r = cur.fetchone()
+            if not r: continue
+            nid, data = r
+            prop = dict(zip(P, valori))
+            if solo_test:
+                anteprima.append({"ingrediente": nome, "proprieta": prop}); continue
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            dd["proprieta"] = prop
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            assegnati += 1
+        if not solo_test: conn.commit()
+        cur.close(); conn.close()
+        if solo_test:
+            return jsonify({"test": True, "esempi": anteprima})
+        return jsonify({"assegnati": assegnati, "nota": "seme applicato agli ingredienti-tipo chiave"})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
