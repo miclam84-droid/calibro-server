@@ -9526,3 +9526,51 @@ def admin_duplicati_anteprima():
         return jsonify({"nomi_con_duplicati": tot_nomi_dup, "anteprima_primi_12": anteprima})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/unisci-duplicati")
+def admin_unisci_duplicati():
+    """Unisce i duplicati: per ogni nome doppio tiene il nodo con più archi (di solito Ahn),
+    sposta gli archi delle copie su di lui, cancella le copie. Batch per non sovraccaricare."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "40")), 80)
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT LOWER(name) nome FROM nodes
+                       WHERE type IN ('Ingrediente','Prodotto')
+                       GROUP BY LOWER(name) HAVING COUNT(*) > 1 LIMIT %s""", (n,))
+        nomi = [r[0] for r in cur.fetchall()]
+        uniti = 0; copie_rimosse = 0; archi_spostati = 0
+        for nome in nomi:
+            # nodi con questo nome, ordinati per archi (tiene il primo)
+            cur.execute("""SELECT n.id,
+                           (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id OR e.to_id=n.id) archi
+                           FROM nodes n WHERE LOWER(n.name)=%s AND n.type IN ('Ingrediente','Prodotto')
+                           ORDER BY archi DESC""", (nome,))
+            nodi = [r[0] for r in cur.fetchall()]
+            if len(nodi) < 2: continue
+            tiene = nodi[0]
+            for copia in nodi[1:]:
+                # sposta gli archi in uscita (evitando duplicati e self-loop)
+                cur.execute("""UPDATE edges SET from_id=%s WHERE from_id=%s
+                               AND NOT EXISTS (SELECT 1 FROM edges e2 WHERE e2.from_id=%s AND e2.to_id=edges.to_id AND e2.relation=edges.relation)
+                               AND to_id != %s""", (tiene, copia, tiene, tiene))
+                archi_spostati += cur.rowcount
+                # sposta gli archi in entrata
+                cur.execute("""UPDATE edges SET to_id=%s WHERE to_id=%s
+                               AND NOT EXISTS (SELECT 1 FROM edges e2 WHERE e2.to_id=%s AND e2.from_id=edges.from_id AND e2.relation=edges.relation)
+                               AND from_id != %s""", (tiene, copia, tiene, tiene))
+                archi_spostati += cur.rowcount
+                # cancella gli archi residui della copia (duplicati o self-loop) e la copia
+                cur.execute("DELETE FROM edges WHERE from_id=%s OR to_id=%s", (copia, copia))
+                cur.execute("DELETE FROM nodes WHERE id=%s", (copia,))
+                copie_rimosse += 1
+            uniti += 1
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"nomi_uniti": uniti, "copie_rimosse": copie_rimosse, "archi_spostati": archi_spostati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
