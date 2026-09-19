@@ -9574,3 +9574,32 @@ def admin_unisci_duplicati():
         return jsonify({"nomi_uniti": uniti, "copie_rimosse": copie_rimosse, "archi_spostati": archi_spostati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/danno-unione")
+def admin_danno_unione():
+    """Verifica quanti nodi 'tenuti' dall'unione hanno pochi archi (danneggiati) vs sani."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ingredienti ahn con POCHI archi (sospetti danneggiati: un ahn dovrebbe averne decine)
+        cur.execute("""SELECT n.name,
+                       (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id OR e.to_id=n.id) archi
+                       FROM nodes n WHERE n.id LIKE 'ahn_%%' AND n.type IN ('Ingrediente','Prodotto')
+                       ORDER BY archi ASC LIMIT 30""")
+        poveri = [{"nome": r[0], "archi": r[1]} for r in cur.fetchall()]
+        # quanti ahn hanno meno di 5 archi (probabile danno)
+        cur.execute("""SELECT COUNT(*) FROM nodes n WHERE n.id LIKE 'ahn_%%' AND n.type IN ('Ingrediente','Prodotto')
+                       AND (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id OR e.to_id=n.id) < 5""")
+        n_poveri = cur.fetchone()[0]
+        # totale archi abbinamento nel grafo (per confronto - erano ~4078)
+        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='abbinamento_aromatico'")
+        tot_archi = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"ahn_con_meno_di_5_archi": n_poveri, "archi_aromatici_totali_ora": tot_archi,
+                        "erano_circa": 4078, "esempi_poveri": poveri})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
