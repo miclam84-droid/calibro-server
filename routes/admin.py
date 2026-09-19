@@ -9087,3 +9087,46 @@ def admin_diag_duplicati_ingredienti():
         return jsonify({"totale_nodi": tot, "nomi_con_duplicati": n_nomi_dup, "top_duplicati": dup})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/mappa-grafo")
+def admin_mappa_grafo():
+    """Mappa completa del grafo: unici veri, fonti (ahn vs italiano), struttura abbinamenti."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        out = {}
+        # ingredienti per prefisso id (fonte)
+        cur.execute("""SELECT
+            COUNT(*) FILTER (WHERE id LIKE 'ahn_%%') ahn,
+            COUNT(*) FILTER (WHERE id LIKE 'ing-%%') ita,
+            COUNT(*) FILTER (WHERE id LIKE 'ai_%%') ai,
+            COUNT(*) FILTER (WHERE id LIKE 'fis_%%') fis,
+            COUNT(*) FILTER (WHERE id LIKE 'prod-%%') prod,
+            COUNT(*) tot
+            FROM nodes WHERE type IN ('Ingrediente','Prodotto')""")
+        r = cur.fetchone()
+        out["ingredienti_per_fonte"] = {"ahn": r[0], "italiani": r[1], "ai": r[2], "fisici": r[3], "prodotti": r[4], "totale": r[5]}
+        # unici per nome (dopo dedup teorico)
+        cur.execute("""SELECT COUNT(DISTINCT LOWER(name)) FROM nodes WHERE type IN ('Ingrediente','Prodotto')""")
+        out["nomi_unici"] = cur.fetchone()[0]
+        # composti
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type='Composto'")
+        out["composti"] = cur.fetchone()[0]
+        # archi per relazione
+        cur.execute("SELECT relation, COUNT(*) FROM edges GROUP BY relation ORDER BY COUNT(*) DESC")
+        out["archi_per_relazione"] = {r[0]: r[1] for r in cur.fetchall()}
+        # quanti ingredienti HANNO composti collegati vs quanti no
+        cur.execute("""SELECT COUNT(DISTINCT from_id) FROM edges WHERE relation='contiene_composto'""")
+        out["ingredienti_con_composti"] = cur.fetchone()[0]
+        # esempio struttura abbinamento (un arco)
+        cur.execute("SELECT from_id, to_id, data FROM edges WHERE relation='abbinamento_aromatico' LIMIT 1")
+        ex = cur.fetchone()
+        out["esempio_abbinamento"] = {"from": ex[0], "to": ex[1], "data": str(ex[2])[:150]} if ex else None
+        cur.close(); conn.close()
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
