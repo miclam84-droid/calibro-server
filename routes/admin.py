@@ -9864,3 +9864,70 @@ def admin_top_ingredienti_chiave():
                         "da_mappare_esempi": senza_prop})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/mappa-proprieta-ai")
+def admin_mappa_proprieta_ai():
+    """Assegna le 15 proprieta ai top ingredienti (Anello 1) con AI, batch + pause. Valutazione
+    sensoriale nota (caffe amaro, lime acido...), non dati inventati. Sonnet, JSON rigido."""
+    from flask import request, jsonify
+    import os, psycopg2, threading, json, urllib.request as ur, time
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "8")), 12)
+    key = os.environ.get("ANTHROPIC_API_KEY", "")
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+
+    def _valuta(nome):
+        try:
+            prompt = (f"Sei un esperto di analisi sensoriale. Valuta l'ingrediente '{nome}' su 15 proprieta, "
+                      f"scala 0-10 (termico da -10 freddo/mentolato a +10 caldo/piccante). "
+                      f"Proprieta: dolce, salato, acido, amaro, umami, grasso, corposita, croccante, astringente, "
+                      f"piccante, termico, aroma_fresco, aroma_caldo, effervescenza, fermentato. "
+                      f"Rispondi SOLO con un oggetto JSON {{\"dolce\":N,...}} con tutte le 15 chiavi, niente altro.")
+            payload = {"model": "claude-sonnet-4-5", "max_tokens": 300,
+                       "messages": [{"role": "user", "content": prompt}]}
+            req = ur.Request("https://api.anthropic.com/v1/messages", data=json.dumps(payload).encode(),
+                             headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
+            r = ur.urlopen(req, timeout=30); d = json.loads(r.read().decode())
+            txt = d["content"][0]["text"].strip()
+            # estraggo il JSON
+            i0 = txt.find("{"); i1 = txt.rfind("}")
+            if i0 >= 0 and i1 > i0:
+                prop = json.loads(txt[i0:i1+1])
+                # tengo solo le 15 chiavi valide, numeri
+                out = {}
+                for k in P:
+                    v = prop.get(k, 0)
+                    try: out[k] = max(-10, min(10, int(round(float(v)))))
+                    except: out[k] = 0
+                return out
+        except Exception:
+            pass
+        return None
+
+    def _w(n):
+        fatti = 0; err = ""
+        try:
+            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+            # top per connessioni, senza proprieta
+            cur.execute("""SELECT n.id, n.name, n.data,
+                           (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id OR e.to_id=n.id) ar
+                           FROM nodes n WHERE n.type IN ('Ingrediente','Prodotto')
+                           AND n.name NOT LIKE '%%(%%' AND NOT (n.data ? 'proprieta')
+                           ORDER BY ar DESC LIMIT %s""", (n,))
+            for nid, nome, data, ar in cur.fetchall():
+                prop = _valuta(nome)
+                if prop:
+                    dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                    dd["proprieta"] = prop
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+                    conn.commit(); fatti += 1
+                time.sleep(4)
+            cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"mappa-proprieta-ai: {fatti}",))
+            conn.commit(); cur.close(); conn.close()
+        except Exception:
+            pass
+
+    threading.Thread(target=_w, args=(n,), daemon=True).start()
+    return jsonify({"avviato": True, "nota": f"mappa {n} ingredienti con AI, pause 4s"})
