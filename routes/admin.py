@@ -9473,12 +9473,15 @@ def admin_collega_italiani_ahn():
             if solo_conta:
                 collegati += 1; continue
             # collego: l'italiano prende gli abbinamenti aromatici del gemello ahn
+            import json as _j
             cur.execute("""SELECT to_id, data FROM edges WHERE from_id=%s AND relation='abbinamento_aromatico' LIMIT 60""", (id_ahn,))
-            for to_id, data in cur.fetchall():
+            _righe_ahn = cur.fetchall()
+            for to_id, data in _righe_ahn:
                 cur.execute("""SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='abbinamento_aromatico' LIMIT 1""", (id_ita, to_id))
                 if cur.fetchone(): continue
+                _dstr = _j.dumps(data, ensure_ascii=False) if isinstance(data, (dict, list)) else (data or '{}')
                 cur.execute("""INSERT INTO edges (from_id, to_id, relation, data) VALUES (%s, %s, 'abbinamento_aromatico', %s)""",
-                            (id_ita, to_id, data))
+                            (id_ita, to_id, _dstr))
                 archi += 1
             # e un arco 'stesso_ingrediente' per tracciare il legame
             cur.execute("""INSERT INTO edges (from_id, to_id, relation, data) VALUES (%s, %s, 'stesso_ingrediente', '{}')""", (id_ita, id_ahn))
