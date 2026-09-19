@@ -9159,3 +9159,57 @@ def admin_diag_clausole():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/surface-zero-foto")
+def admin_surface_zero_foto():
+    """SURFACE ZERO: toglie TUTTE le foto stock dal ricettario (meglio nessuna foto che una sbagliata).
+    Founder Rule #122. Le foto Pexels/Wikimedia vanno via; restano solo eventuali AI verificate."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    conferma = request.args.get("conferma") == "SI"
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # conta prima
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%pexels%%' OR immagine::text ILIKE '%%wik%%'")
+        da_togliere = cur.fetchone()[0]
+        if not conferma:
+            cur.close(); conn.close()
+            return jsonify({"anteprima": True, "foto_da_togliere": da_togliere,
+                            "nota": "Aggiungi &conferma=SI per eseguire. Toglie le foto stock (Pexels/Wikimedia)."})
+        # esegue: mette immagine NULL dove è pexels o wikimedia (foto stock inaffidabili)
+        cur.execute("UPDATE ricette SET immagine=NULL WHERE immagine::text ILIKE '%%pexels%%' OR immagine::text ILIKE '%%wik%%'")
+        tolte = cur.rowcount
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"foto_stock_tolte": tolte, "nota": "Ricette ora senza foto sbagliate. Meglio vuoto che errato."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/surface-zero-pubblica")
+def admin_surface_zero_pubblica():
+    """SURFACE ZERO: aggiunge il campo 'pubblica' e lo imposta. Solo le ricette validate a mano
+    (pubblica=true) si vedono nel ricettario pubblico. Le altre restano come dati (Creatore/Planner)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='ricette' AND column_name='pubblica'")
+        if not cur.fetchone():
+            cur.execute("ALTER TABLE ricette ADD COLUMN pubblica BOOLEAN DEFAULT FALSE")
+            conn.commit()
+        # di default TUTTE nascoste (pubblica=false) finché non validate a mano
+        cur.execute("UPDATE ricette SET pubblica=FALSE WHERE pubblica IS NULL")
+        cur.execute("SELECT COUNT(*) FROM ricette WHERE pubblica=TRUE")
+        pubb = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM ricette")
+        tot = cur.fetchone()[0]
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"campo_pubblica": "pronto", "pubbliche": pubb, "totali": tot,
+                        "nota": "Tutte nascoste di default. Le specchietto validate si marcano pubblica=true una a una."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
