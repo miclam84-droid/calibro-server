@@ -355,24 +355,18 @@ async function _caricaPrincipi(){
 /* ═══ ATLANTE A 4 PORTE (rifinitura review: da voci sparse a 4 gruppi) ═══
    CAPIRE · USARE · CREARE · MISURARE — ogni porta raggruppa le voci esistenti. */
 var _PORTE = {
-  capire:   { label:'Capire',   sub:'Perché succede', voci:[
-                {t:'Fenomeni', d:'Il percorso della disciplina', act:function(){switchMappaTab('fenomeni');}},
+  osserva:  { label:'Osserva', sub:'La scienza dietro il risultato', voci:[
+                {t:'Fenomeni', d:'I 148 fenomeni del mestiere', act:function(){switchMappaTab('fenomeni');}},
                 {t:'Principi', d:'Le leggi fisiche di fondo', act:function(){switchMappaTab('principi');}},
-                {t:'Tecniche Avanzate', d:'Fat washing, koji, nixtamal…', act:function(){if(typeof apriAvanzate==='function')apriAvanzate();}} ]},
-  usare:    { label:'Usare',    sub:'Come si fa al banco', voci:[
-                {t:'Ricettario', d:'ricette validate del ricettario', act:function(){ _caricaModulo('ricette').then(function(){ if(typeof apriRicettario==='function')apriRicettario(); }); }},
-                {t:'Strumenti', d:'Cosa serve per misurare', act:function(){switchMappaTab('strumenti');}} ]},
-  creare:   { label:'Creare',   sub:'Combina e scopri', voci:[
-                {t:'Flavour Network', d:'Con cosa dialoga un ingrediente', act:function(){if(typeof apriFlavour==='function')apriFlavour();}},
-                {t:'Ponti tra discipline', d:'Vino, birra, dolce per piatto', act:function(){if(typeof apriPonti==='function')apriPonti();}},
-                {t:'Menu Lab', d:'Costruisci il tuo menu', act:function(){if(typeof apriMenuBuilder==='function')apriMenuBuilder();}},
-                {t:'Recupera scarti', d:'Riusa gli scarti, cross-utilization', act:function(){if(typeof apriScarti==='function')apriScarti();}} ]},
-  misurare: { label:'Misurare', sub:'Centra il numero giusto', voci:[
-                {t:'Motore Panificazione', d:'Progetta impasto: dosi + timeline a ritroso', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('motori').then(function(){ if(typeof apriMotorePanificazione==='function')apriMotorePanificazione(); }); } }},
+                {t:'Tecniche Avanzate', d:'Fat washing, koji, nixtamal…', act:function(){if(typeof apriAvanzate==='function')apriAvanzate();}},
+                {t:'Flavour Network', d:'La rete delle molecole aromatiche', act:function(){if(typeof apriFlavour==='function')apriFlavour();}},
+                {t:'Ponti', d:'Dove vive un ingrediente tra le discipline', act:function(){if(typeof apriPonti==='function')apriPonti();}} ]},
+  applica:  { label:'Applica', sub:'Il controllo al banco', voci:[
+                {t:'Motore Panificazione', d:'Progetta impasto: dosi + timeline', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('motori').then(function(){ if(typeof apriMotorePanificazione==='function')apriMotorePanificazione(); }); } }},
                 {t:'Sostituti intelligenti', d:'Cosa usare al posto di un ingrediente', act:function(){if(typeof apriSostituti==='function')apriSostituti();}},
                 {t:'Motori operativi', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
-                {t:'Il Quaderno', d:'Le tue misure salvate', act:function(){switchTab('quaderno');}},
-                {t:'Flavour del giorno', d:'Parti da un ingrediente', act:function(){switchMappaTab('flavor');}} ]}
+                {t:'Schede Tecniche', d:'Le ricette-manifesto verificate', act:function(){ _caricaModulo('ricette').then(function(){ if(typeof apriRicettario==='function')apriRicettario(); }); }},
+                {t:'Recupera scarti', d:'Riusa gli scarti, cross-utilization', act:function(){if(typeof apriScarti==='function')apriScarti();}} ]}
 };
 function apriPorta(porta){
   var p = _PORTE[porta]; if(!p) return;
@@ -383,8 +377,6 @@ function apriPorta(porta){
       return '<button class="porta-voce" onclick="_portaVoce(\''+porta+'\','+i+')"><span class="porta-voce-t">'+v.t+'</span><span class="porta-voce-d">'+v.d+'</span><span class="porta-voce-arr">›</span></button>';
     }).join('');
   }
-  // apro automaticamente la prima voce della porta
-  if(porta==='creare'){ apriCrea(); return; }
   _portaVoce(porta, 0);
 }
 function _portaVoce(porta, i){
@@ -508,7 +500,7 @@ function switchTab(t){
   if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa'){
     const _disc = Matter.disciplina || 'bar';
-    if(typeof apriPorta==='function') apriPorta('capire');
+    if(typeof apriPorta==='function') apriPorta('osserva');
     caricaMappa(_disc);
     caricaStrumenti(_disc);
     if(!Matter.disciplina) document.getElementById('mappa-label').textContent = _t('mappa_scegli');
