@@ -347,9 +347,17 @@ def cerca_universale():
         rows = db.execute(f"SELECT id, name FROM nodes WHERE type='Fenomeno' AND {_cond('name')} LIMIT 6", _params()).fetchall()
         for r in rows:
             risultati.append({"tipo": "fenomeno", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
-        rows = db.execute(f"SELECT id, name FROM nodes WHERE type='Prodotto' AND {_cond('name')} LIMIT 6", _params()).fetchall()
+        # INGREDIENTI (type Ingrediente E Prodotto) - qui stanno le cultivar/tagli/varieta
+        rows = db.execute(f"SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND {_cond('name')} AND name NOT LIKE '%%(%%' LIMIT 12", _params()).fetchall()
         for r in rows:
-            risultati.append({"tipo": "ingrediente", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
+            _data = _c(r,"data",2) if (hasattr(r,'keys') or len(r)>2) else None
+            _carat = ''
+            try:
+                import json as _j
+                _dd = _data if isinstance(_data, dict) else (_j.loads(_data) if _data else {})
+                _carat = _dd.get('caratteristica','') or ''
+            except: pass
+            risultati.append({"tipo": "ingrediente", "id": _c(r,"id",0), "nome": _c(r,"name",1), "caratteristica": _carat[:70]})
         rows = db.execute(f"SELECT id, name FROM nodes WHERE type='Tecnica' AND {_cond('name')} LIMIT 4", _params()).fetchall()
         for r in rows:
             risultati.append({"tipo": "tecnica", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
@@ -683,3 +691,43 @@ def motore_caffe_endpoint():
         return jsonify(progetta_caffe(d.get("metodo","espresso"), int(d.get("dose_g",18))))
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 200
+
+
+@bp.route("/v1/ingrediente/<ingrediente_id>", methods=["GET"])
+def scheda_ingrediente(ingrediente_id):
+    """Scheda ingrediente: proprieta' sensoriali, caratteristica, uso, varieta' (figli), con cosa dialoga.
+    Per il tap su un ingrediente dai risultati di ricerca."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
+        # trovo per id o per nome
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE (id=? OR LOWER(name)=LOWER(?)) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (ingrediente_id, ingrediente_id)).fetchall()
+        if not rows:
+            return jsonify({"errore": "ingrediente non trovato"}), 404
+        r = rows[0]
+        nid = _c(r,"id",0); nome = _c(r,"name",1); data = _c(r,"data",2)
+        dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+        prop = dd.get("proprieta", {})
+        # varieta' figlie (stesso genitore o categoria)
+        cat = dd.get("categoria")
+        varieta = []
+        if cat:
+            vr = db.execute("SELECT name FROM nodes WHERE type='Ingrediente' AND json_extract(data,'$.categoria')=? AND id!=? LIMIT 12", (cat, nid)).fetchall() if False else []
+        # con cosa dialoga (abbinamenti aromatici)
+        abb = db.execute("SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8", (nid,)).fetchall()
+        dialoga = [_c(x,"name",0) for x in abb]
+        prop_alte = {k: v for k, v in prop.items() if abs(v) >= 5} if prop else {}
+        return jsonify({
+            "id": nid, "nome": nome,
+            "caratteristica": dd.get("caratteristica",""),
+            "uso_tipico": dd.get("uso_tipico",""),
+            "categoria": cat,
+            "origine": dd.get("origine",""),
+            "proprieta_principali": prop_alte,
+            "dialoga_con": dialoga,
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
