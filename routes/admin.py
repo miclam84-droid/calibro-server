@@ -10232,3 +10232,30 @@ def admin_aggiungi_formaggi_pesce():
         return jsonify({"aggiunti": aggiunti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/rivedi-varieta")
+def admin_rivedi_varieta():
+    """Elenca tutte le varieta' profonde aggiunte (carne, pomodoro, farina, formaggio, pesce) con
+    caratteristica e proprieta', per la revisione manuale di Michele (correggere errori, aggiungere)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    cat = request.args.get("categoria", "")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        if cat:
+            cur.execute("""SELECT name, data FROM nodes WHERE type='Ingrediente' AND data->>'categoria'=%s ORDER BY name""", (cat,))
+        else:
+            cur.execute("""SELECT name, data FROM nodes WHERE type='Ingrediente'
+                           AND data->>'categoria' IN ('carne_bovina','pomodoro_varieta','farina','formaggio','pesce') ORDER BY data->>'categoria', name""")
+        out = []
+        for nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else json.loads(data)
+            out.append({"nome": nome, "categoria": dd.get("categoria"),
+                        "caratteristica": dd.get("caratteristica","")[:80]})
+        cur.close(); conn.close()
+        return jsonify({"totale": len(out), "varieta": out})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
