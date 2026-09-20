@@ -138,6 +138,11 @@ if('serviceWorker' in navigator){
         <div class="porta-d">148 fenomeni</div>
       </button>
     </div>
+    <button class="porta porta-composer" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('composer').then(function(){apriComposer&&apriComposer()})}">
+      <i class="ph ph-flask" aria-hidden="true"></i>
+      <div class="porta-txt"><div class="porta-t">Composer</div><div class="porta-d">Crea una ricetta e vedi l'equilibrio in tempo reale</div></div>
+      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
+    </button>
     <button class="porta porta-planner" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('planner').then(function(){apriPlanner&&apriPlanner()})}">
       <i class="ph ph-calendar-blank" aria-hidden="true"></i>
       <div class="porta-txt"><div class="porta-t">Planner Menu</div><div class="porta-d">Progetta 30-60 giorni di menu</div></div>

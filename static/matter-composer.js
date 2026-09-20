@@ -18,8 +18,10 @@ function _coRender(){
   var out = _co.dati ? _coProfilo(_co.dati) : '';
   return '<div class="co-hero"><div class="co-hero-lab">IL COMPOSER</div><div class="co-hero-claim">Costruisci una ricetta,<br>ingrediente per ingrediente.</div><div class="co-hero-sub">Aggiungi, togli, guarda l\'equilibrio cambiare in tempo reale. Non è una chat: è un laboratorio.</div></div>'
     + '<div class="co-add"><input id="co-input" placeholder="cerca un ingrediente (es. guanciale)" onkeydown="if(event.key===\'Enter\')_coAggiungiInput()"><button onclick="_coAggiungiInput()">+</button></div>'
-    + '<div class="co-esempi-lab">Parti da</div>'
+    + '<div class="co-esempi-lab">Parti da un ingrediente</div>'
     + '<div class="co-esempi">'+['guanciale','pomodoro','cioccolato','gambero','fragola'].map(function(x){ return '<button class="co-esempio" onclick="_coAggiungi(\''+e(x)+'\')">'+e(x)+'</button>'; }).join('')+'</div>'
+    + '<div class="co-esempi-lab">…oppure da un obiettivo</div>'
+    + '<div class="co-esempi">'+['umami','freschezza','avvolgente','croccante','acidità'].map(function(x){ return '<button class="co-obiettivo" onclick="_coDaObiettivo(\''+e(x)+'\')">'+e(x)+'</button>'; }).join('')+'</div>'
     + '<div class="co-lab-ing">La tua ricetta</div>'
     + '<div class="co-chips" id="co-chips">'+chips+'</div>'
     + '<div id="co-out">'+out+'</div>';
@@ -74,9 +76,40 @@ function _coProfilo(d){
     + '</div>' : '';
   return '<div class="co-profilo"><div class="co-profilo-lab">◎ Profilo sensoriale</div>'+barre+'</div>'
     + alerts + anaHtml + conHtml
-    + (_co.ingredienti.length>=2 ? '<button class="co-salva" onclick="_coSalva()">Salva questa ricetta nel Quaderno →</button>' : '');
+    + (_co.ingredienti.length>=2 ? '<button class="co-salva" onclick="_coDiagnosi()">Vedi la diagnosi della ricetta →</button>' : '');
 }
 
+window._coDaObiettivo=function(ob){
+  var out=document.getElementById('co-out');
+  if(out) out.innerHTML='<div class="vista-loading">Cerco l\'ingrediente-fulcro per "'+_escV(ob)+'"…</div>';
+  fetch('/v1/composer/obiettivo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({obiettivo:ob})})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      var ful=(j.ingredienti_fulcro||[])[0];
+      if(ful && ful.nome){ _coAggiungi(ful.nome); }
+      else if(out){ out.innerHTML='<div class="vista-empty">Nessun ingrediente per questo obiettivo.</div>'; }
+    }).catch(function(){ if(out) out.innerHTML='<div class="vista-empty">Errore di rete.</div>'; });
+};
+window._coDiagnosi=function(){
+  var out=document.getElementById('co-out');
+  fetch('/v1/composer/diagnosi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingredienti:_co.ingredienti})})
+    .then(function(r){return r.json();})
+    .then(function(j){ _coMostraDiagnosi(j); })
+    .catch(function(){});
+};
+function _coMostraDiagnosi(d){
+  var e=_escV;
+  var eq=(d.diagnosi_equilibrio||[]).map(function(x){ return '<li>'+e(x)+'</li>'; }).join('');
+  var fen=(d.fenomeni_coinvolti||[]).map(function(x){ return '<span class="co-diag-fen">'+e(x)+'</span>'; }).join('');
+  var note=(d.note_dominanti||[]).join(' · ');
+  var html='<div class="co-diag"><div class="co-diag-lab">◎ DIAGNOSI DELLA RICETTA</div>'
+    + (note?'<div class="co-diag-note">'+e(note)+'</div>':'')
+    + (eq?'<ul class="co-diag-eq">'+eq+'</ul>':'')
+    + (fen?'<div class="co-diag-fen-lab">Fenomeni coinvolti</div><div class="co-diag-fen-list">'+fen+'</div>':'')
+    + '<button class="co-salva" onclick="_coSalva()">Salva nel Quaderno →</button></div>';
+  var m=document.createElement('div'); m.className='co-diag-overlay'; m.innerHTML='<div class="co-diag-sheet">'+html+'<button class="co-diag-chiudi" onclick="this.closest(\'.co-diag-overlay\').remove()">Continua a costruire</button></div>';
+  document.getElementById('vista-body').appendChild(m);
+}
 window._coSalva=function(){
   var nome = _co.ingredienti.join(' + ');
   _toast && _toast('✓ Ricetta "'+nome.slice(0,30)+'" salvata');
