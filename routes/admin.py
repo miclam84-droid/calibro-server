@@ -10356,3 +10356,69 @@ def admin_attributi_operativi():
         return jsonify({"ingredienti_con_attributi_operativi": aggiornati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/collega-composti-esteso")
+def admin_collega_composti_esteso():
+    """Collega gli ingredienti italiani senza composti ai gemelli Ahn (che li hanno), ereditando i
+    composti. Mappa IT->EN estesa. Sblocca il PERCHE del grafo e migliora il Composer. Batch."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "60")), 120)
+    # mappa estesa IT (parola nel nome) -> EN (nome ahn)
+    MAP = {
+        "orata":"fish","branzino":"fish","spigola":"fish","seppia":"squid","calamaro":"squid",
+        "ostrich":"oyster","ostrica":"oyster","cozza":"mussel","vongola":"clam","polpo":"octopus",
+        "gambero":"shrimp","scampo":"shrimp","aragosta":"lobster","granchio":"crab","sarda":"sardine",
+        "sardina":"sardine","sgombro":"mackerel","merluzzo":"cod","baccala":"cod","acciuga":"anchovy",
+        "alice":"anchovy","triglia":"fish","rombo":"fish","sogliola":"fish","cernia":"fish",
+        "oliva":"olive","olive":"olive","cappero":"caper","carciofo":"artichoke","cardo":"artichoke",
+        "finocchio":"fennel","radicchio":"chicory","cicoria":"chicory","scarola":"endive","catalogna":"chicory",
+        "shiitake":"shiitake","porcino":"mushroom","champignon":"mushroom","fungo":"mushroom","tartufo":"truffle",
+        "orzo":"barley","farro":"spelt","avena":"oat","segale":"rye","miglio":"millet","grano saraceno":"buckwheat",
+        "ceci":"chickpea","lenticchi":"lentil","fagiol":"bean","fava":"broad_bean","pisell":"pea","cicerchia":"legume",
+        "zucchin":"zucchini","melanzan":"eggplant","peperon":"bell_pepper","cavolo":"cabbage","verza":"cabbage",
+        "broccolo":"broccoli","cavolfiore":"cauliflower","rapa":"turnip","barbabietola":"beet","topinambur":"artichoke",
+        "porro":"leek","scalogno":"shallot","erba cipollina":"chive","aneto":"dill","dragoncello":"tarragon",
+        "cerfoglio":"chervil","maggiorana":"marjoram","santoreggia":"savory","nocciol":"hazelnut","mandorl":"almond",
+        "pistacchio":"pistachio","pinolo":"pine_nut","castagn":"chestnut","noce":"walnut","anacardo":"cashew",
+        "fico":"fig","cachi":"persimmon","melagrana":"pomegranate","melograno":"pomegranate","cotogn":"quince",
+        "nespola":"loquat","sorba":"fruit","mirtillo":"blueberry","lampone":"raspberry","mora":"blackberry",
+        "ribes":"currant","uva spina":"gooseberry","prugna":"plum","susina":"plum","albicocca":"apricot",
+        "pangrattato":"bread","semola":"wheat","grissini":"bread","piadina":"bread","focaccia":"bread",
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # italiani senza composti
+        cur.execute("""SELECT id, LOWER(name) FROM nodes n WHERE n.type IN ('Ingrediente','Prodotto')
+                       AND n.id LIKE 'ing-%%'
+                       AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')
+                       LIMIT %s""", (n,))
+        senza = cur.fetchall()
+        collegati = 0; archi = 0
+        for idv, nomev in senza:
+            ahn = None
+            for ita, en in MAP.items():
+                if ita in nomev:
+                    ahn = en; break
+            if not ahn: continue
+            cur.execute("""SELECT id FROM nodes WHERE id LIKE 'ahn_%%' AND LOWER(name) LIKE %s
+                           ORDER BY (SELECT COUNT(*) FROM edges e WHERE e.from_id=nodes.id AND e.relation='contiene_composto') DESC LIMIT 1""", (f"%{ahn}%",))
+            r = cur.fetchone()
+            if not r: continue
+            id_ahn = r[0]
+            cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_ahn,))
+            comp = cur.fetchall()
+            if not comp: continue
+            for to_id, cdata in comp:
+                cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (idv,to_id,cstr))
+                archi += 1
+            collegati += 1
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"ingredienti_collegati": collegati, "composti_ereditati": archi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
