@@ -9998,3 +9998,63 @@ def admin_proprieta_eredita_varianti():
         return jsonify({"varianti_ereditate": ereditati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-tagli-carne")
+def admin_aggiungi_tagli_carne():
+    """Aggiunge i tagli di manzo come nodi-figli: ereditano composti dal 'manzo' genitore + hanno
+    proprieta' e caratteristiche proprie. Profondita' gastronomica reale (non piu' 'manzo' generico)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # tagli: nome, caratteristica, proprieta' specifiche (override sul base manzo), uso
+    # proprieta 0-10: grasso, corposita, umami, astringente(qui=fibrosita), + note
+    TAGLI = [
+        ("Filetto di manzo", "Il taglio piu' tenero e magro, poca infiltrazione di grasso", {"grasso":2,"corposita":5,"umami":6}, "scottatura veloce, tartare, Wellington"),
+        ("Controfiletto di manzo", "Magro ma saporito, dalla lombata", {"grasso":4,"corposita":6,"umami":7}, "bistecca, roast beef"),
+        ("Costata di manzo", "Ricca di grasso intramuscolare, molto saporita", {"grasso":7,"corposita":8,"umami":8}, "griglia, fiorentina"),
+        ("Fiorentina", "Bistecca con osso a T da lombata, la regina toscana", {"grasso":6,"corposita":8,"umami":8}, "griglia al sangue"),
+        ("Scamone di manzo", "Magro, versatile, dalla coscia posteriore", {"grasso":3,"corposita":6,"umami":6}, "arrosto, straccetti, tagliata"),
+        ("Guancia di manzo", "Muscolo ricco di collagene, diventa gelatinoso in cottura lunga", {"grasso":5,"corposita":9,"umami":8}, "brasato, stracotto"),
+        ("Cappello del prete", "Spalla con nervatura centrale, tenero da lungo", {"grasso":5,"corposita":8,"umami":7}, "brasato, bollito"),
+        ("Ossobuco", "Fetta di stinco con osso e midollo", {"grasso":5,"corposita":8,"umami":8}, "ossobuco alla milanese"),
+        ("Brisket (petto)", "Petto fibroso, ricco di collagene", {"grasso":6,"corposita":8,"umami":7}, "affumicatura lunga, bollito"),
+        ("Picanha (codone)", "Taglio brasiliano con cappello di grasso", {"grasso":7,"corposita":7,"umami":7}, "griglia, spiedo"),
+        ("Tomahawk", "Costata con osso lungo intero", {"grasso":7,"corposita":8,"umami":8}, "griglia, effetto scenografico"),
+        ("Reale di manzo", "Spalla anteriore, saporito e magro-medio", {"grasso":4,"corposita":7,"umami":7}, "brasato, ragu'"),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # trovo il manzo genitore (con composti)
+        cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE '%%manzo%%'
+                       AND EXISTS (SELECT 1 FROM edges e WHERE e.from_id=id AND e.relation='contiene_composto')
+                       ORDER BY (SELECT COUNT(*) FROM edges e2 WHERE e2.from_id=id AND e2.relation='contiene_composto') DESC LIMIT 1""")
+        rm = cur.fetchone()
+        id_manzo = rm[0] if rm else None
+        aggiunti = 0
+        for nome, carat, prop_spec, uso in TAGLI:
+            nid = "ing-" + nome.lower().replace(" ","-").replace("(","").replace(")","").replace("'","")
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+            if cur.fetchone(): continue
+            # proprieta complete: base carne + override specifici
+            prop = {"salato":1,"acido":0,"dolce":0,"amaro":0,"umami":prop_spec.get("umami",6),
+                    "grasso":prop_spec.get("grasso",5),"corposita":prop_spec.get("corposita",7),
+                    "croccante":0,"astringente":0,"piccante":0,"termico":4,"aroma_fresco":0,
+                    "aroma_caldo":5,"effervescenza":0,"fermentato":0}
+            data = {"nome": nome, "disciplina": "cucina", "categoria": "carne_bovina",
+                    "caratteristica": carat, "uso_tipico": uso, "genitore": "manzo", "proprieta": prop}
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                        (nid, nome, json.dumps(data, ensure_ascii=False)))
+            # eredita i composti del manzo
+            if id_manzo:
+                cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_manzo,))
+                for to_id, cdata in cur.fetchall():
+                    cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (nid,to_id,cstr))
+            aggiunti += 1
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"tagli_aggiunti": aggiunti, "genitore_manzo": id_manzo})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
