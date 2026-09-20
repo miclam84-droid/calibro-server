@@ -4463,15 +4463,33 @@ def flavour_network(ingrediente):
                         ORDER BY ov DESC NULLS LAST LIMIT %s""",
                      (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%", n_max))
         righe = _cur.fetchall()
-        _cur.close(); _release_conn(_c)
-        # nodi per il grafo: centro + abbinati, con forza (per la dimensione/distanza)
+        # id del centro (per estrarre i composti condivisi = il PERCHE del legame)
+        _cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND LOWER(name) LIKE LOWER(%s) ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (f"%{ingrediente}%",))
+        _rc = _cur.fetchone(); id_centro = _rc[0] if _rc else None
+        composti_centro = set()
+        if id_centro:
+            _cur.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                            WHERE e.from_id=%s AND e.relation='contiene_composto'""", (id_centro,))
+            composti_centro = set(r[0] for r in _cur.fetchall())
+        # nodi per il grafo: centro + abbinati, con forza E il perche (composti condivisi)
         nodi = []
         visti = set()
         for nome, ov in righe:
-            if nome.lower() in visti:
-                continue
+            if nome.lower() in visti: continue
             visti.add(nome.lower())
-            nodi.append({"nome": nome, "forza": round(float(ov)) if ov else 50})
+            nodo = {"nome": nome, "forza": round(float(ov)) if ov else 50}
+            # il PERCHE: composti condivisi tra questo nodo e il centro
+            if composti_centro:
+                _cur.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                                JOIN nodes src ON src.id=e.from_id
+                                WHERE LOWER(src.name)=LOWER(%s) AND e.relation='contiene_composto' LIMIT 40""", (nome,))
+                comp_nodo = set(r[0] for r in _cur.fetchall())
+                condivisi = list(composti_centro & comp_nodo)[:5]
+                if condivisi:
+                    nodo["perche"] = {"composti_condivisi": condivisi, "n_condivisi": len(composti_centro & comp_nodo)}
+            nodi.append(nodo)
+        _cur.close(); _release_conn(_c)
         return jsonify({"centro": ingrediente, "nodi": nodi, "totale": len(nodi)})
     except Exception as e:
         return jsonify({"centro": ingrediente, "nodi": [], "errore": str(e)[:100]})
