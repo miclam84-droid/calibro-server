@@ -4785,3 +4785,88 @@ def ricetta_sicurezza(ricetta_id):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/composer/prossimi", methods=["POST"])
+def composer_prossimi():
+    """CUORE DEL COMPOSER: dato un insieme di ingredienti gia scelti, calcola il profilo sensoriale
+    cumulato e restituisce i prossimi ingredienti compatibili per ANALOGIA (composti condivisi) e
+    CONTRASTO (proprieta che bilanciano). Motore a catena: ogni scelta ricalcola le proposte."""
+    from flask import request, jsonify
+    import psycopg2 as _pg, json as _j
+    d = request.get_json(force=True) or {}
+    scelti = d.get("ingredienti", [])  # lista di nomi o id gia in ricetta
+    if not scelti:
+        return jsonify({"errore": "servono ingredienti di partenza"}), 400
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        # 1. risolvo gli ingredienti scelti (id + proprieta + composti)
+        ids_scelti = []
+        profilo = {k: 0.0 for k in P}
+        n_con_prop = 0
+        composti_ricetta = set()
+        for s in scelti:
+            _cur.execute("""SELECT id, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                            AND (LOWER(name)=LOWER(%s) OR id=%s) ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (s, s))
+            r = _cur.fetchone()
+            if not r: continue
+            nid, data = r
+            ids_scelti.append(nid)
+            dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+            prop = dd.get("proprieta")
+            if prop:
+                n_con_prop += 1
+                for k in P:
+                    profilo[k] += float(prop.get(k, 0))
+            # composti dell'ingrediente
+            _cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
+            for cc in _cur.fetchall(): composti_ricetta.add(cc[0])
+        # media del profilo
+        if n_con_prop:
+            for k in P: profilo[k] = round(profilo[k] / n_con_prop, 1)
+
+        # 2. determino i CONTRASTI necessari (clausole sensoriali)
+        contrasti_richiesti = []
+        if profilo["grasso"] >= 6 and profilo["acido"] < 4:
+            contrasti_richiesti.append(("acido", "Il piatto e' grasso: serve acidita' che taglia (grasso_taglia_acido)"))
+        if profilo["piccante"] >= 6 and profilo["dolce"] < 3:
+            contrasti_richiesti.append(("dolce", "Il piatto e' piccante: un tocco dolce bilancia (piccante_bilancia_dolce)"))
+        if profilo["dolce"] >= 7 and profilo["amaro"] < 2 and profilo["acido"] < 3:
+            contrasti_richiesti.append(("amaro", "Il piatto e' molto dolce: amaro o acido danno equilibrio"))
+        if profilo["umami"] >= 7 and profilo["acido"] < 3:
+            contrasti_richiesti.append(("acido", "Umami intenso: acidita' lo rende piu' vivo"))
+
+        # 3. candidati: ingredienti NON gia scelti, con proprieta o composti
+        _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 313""")
+        analogia = []; contrasto = []
+        for nid, nome, data in _cur.fetchall():
+            if nid in ids_scelti: continue
+            dd = data if isinstance(data, dict) else _j.loads(data)
+            prop = dd.get("proprieta", {})
+            # ANALOGIA: composti condivisi
+            _cur.execute("""SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto' AND to_id = ANY(%s)""",
+                         (nid, list(composti_ricetta) or ['']))
+            overlap = _cur.fetchone()[0] if composti_ricetta else 0
+            # CONTRASTO: soddisfa una clausola richiesta?
+            motivo_contrasto = None
+            for prop_needed, spieg in contrasti_richiesti:
+                if prop.get(prop_needed, 0) >= 6:
+                    motivo_contrasto = spieg; break
+            if motivo_contrasto:
+                contrasto.append({"id": nid, "nome": nome, "motivo": motivo_contrasto,
+                                  "valore": prop.get(prop_needed, 0)})
+            elif overlap >= 3:
+                analogia.append({"id": nid, "nome": nome, "composti_condivisi": overlap})
+        analogia.sort(key=lambda x: -x["composti_condivisi"])
+        _cur.close(); _release_conn(_c)
+        return jsonify({
+            "ingredienti_in_ricetta": scelti,
+            "profilo_sensoriale": {k: v for k, v in profilo.items() if v != 0},
+            "contrasti_da_bilanciare": [{"proprieta": p, "spiegazione": s} for p, s in contrasti_richiesti],
+            "suggeriti_analogia": analogia[:6],
+            "suggeriti_contrasto": contrasto[:6],
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
