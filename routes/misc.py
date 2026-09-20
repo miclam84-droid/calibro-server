@@ -731,3 +731,49 @@ def scheda_ingrediente(ingrediente_id):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/nodo-completo/<nodo_id>", methods=["GET"])
+def nodo_completo(nodo_id):
+    """NODO-PORTALE: tutto di un ingrediente per il pannello del grafo (tap su un nodo).
+    Proprieta', operativo, fenomeni collegati, con cosa dialoga, ricette che lo usano, link Composer."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE (id=? OR LOWER(name)=LOWER(?)) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (nodo_id, nodo_id)).fetchall()
+        if not rows:
+            return jsonify({"errore": "nodo non trovato"}), 404
+        r = rows[0]
+        nid = _c(r,"id",0); nome = _c(r,"name",1); data = _c(r,"data",2)
+        dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+        prop = dd.get("proprieta", {})
+        prop_alte = {k: v for k, v in prop.items() if abs(v) >= 5} if prop else {}
+        # fenomeni collegati
+        fen = db.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                            WHERE e.from_id=? AND n2.type='Fenomeno' LIMIT 5""", (nid,)).fetchall()
+        fenomeni = [_c(x,"name",0) for x in fen]
+        # dialoga con (abbinamenti)
+        abb = db.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                            WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8""", (nid,)).fetchall()
+        dialoga = [_c(x,"name",0) for x in abb]
+        # ricette che lo usano
+        ric = db.execute("""SELECT DISTINCT r.nome FROM ricette r WHERE LOWER(r.ingredienti) LIKE LOWER(?) LIMIT 5""", (f"%{nome}%",)).fetchall()
+        ricette = [_c(x,"nome",0) for x in ric]
+        return jsonify({
+            "id": nid, "nome": nome,
+            "caratteristica": dd.get("caratteristica",""),
+            "uso_tipico": dd.get("uso_tipico",""),
+            "categoria": dd.get("categoria",""),
+            "origine": dd.get("origine",""),
+            "proprieta_principali": prop_alte,
+            "operativo": dd.get("operativo", {}),
+            "fenomeni": fenomeni,
+            "dialoga_con": dialoga,
+            "ricette": ricette,
+            "azioni": {"componi": f"/v1/composer/prossimi", "chiedi": "/chiedi"},
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
