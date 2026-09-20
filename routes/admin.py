@@ -10259,3 +10259,47 @@ def admin_rivedi_varieta():
         return jsonify({"totale": len(out), "varieta": out})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/pulisci-varieta")
+def admin_pulisci_varieta():
+    """Pulisce i duplicati creati dall'aggiunta varieta': dove esiste sia una versione dettagliata
+    (con caratteristica) sia una vuota con nome simile, tiene la dettagliata. Corregge etichette."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # coppie (nome_vuoto_da_rimuovere, motivo). Elimino i nodi vuoti che duplicano quelli dettagliati.
+    DA_RIMUOVERE = [
+        "Gorgonzola DOP",  # ne resta uno solo (il primo con caratteristica)
+        "Mozzarella di Bufala DOP",  # tengo "Campana DOP" dettagliata
+        "Parmigiano Reggiano DOP",  # tengo le 24/36 mesi
+        "Pecorino Romano DOP",  # tengo quello dettagliato
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        rimossi = 0
+        for nome in DA_RIMUOVERE:
+            # trovo i nodi con questo nome esatto SENZA caratteristica (i vuoti duplicati)
+            cur.execute("""SELECT id FROM nodes WHERE type='Ingrediente' AND name=%s
+                           AND (data->>'caratteristica' IS NULL OR data->>'caratteristica'='')""", (nome,))
+            for r in cur.fetchall():
+                cur.execute("DELETE FROM edges WHERE from_id=%s OR to_id=%s", (r[0], r[0]))
+                cur.execute("DELETE FROM nodes WHERE id=%s", (r[0],))
+                rimossi += 1
+        # se restano 2 Gorgonzola dettagliati identici, tengo 1
+        cur.execute("""SELECT id FROM nodes WHERE type='Ingrediente' AND name='Gorgonzola DOP' ORDER BY id""")
+        gorg = [r[0] for r in cur.fetchall()]
+        if len(gorg) > 1:
+            for extra in gorg[1:]:
+                cur.execute("DELETE FROM edges WHERE from_id=%s OR to_id=%s", (extra, extra))
+                cur.execute("DELETE FROM nodes WHERE id=%s", (extra,))
+                rimossi += 1
+        # correggo l'etichetta origine su Cantabrico e Niboshi (non italiani, ma restano)
+        for nome, origine in [("Acciughe del Cantabrico","Spagna (Mar Cantabrico)"), ("Niboshi","Giappone")]:
+            cur.execute("""UPDATE nodes SET data = jsonb_set(data, '{origine}', %s::jsonb)
+                           WHERE name=%s AND type='Ingrediente'""", (json.dumps(origine), nome))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"duplicati_rimossi": rimossi, "etichette_corrette": ["Cantabrico->Spagna","Niboshi->Giappone"]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
