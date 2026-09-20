@@ -1408,8 +1408,8 @@ window._chatDaFenomeno = function(titolo){
   switchTab('chiedi'); if(typeof switchSubtab==='function') switchSubtab('chat');
   var t=titolo||'questo fenomeno';
   setTimeout(function(){
-    if(typeof chiediTesto==='function') chiediTesto('Ho un problema con '+t+'. Aiutami a diagnosticarlo.');
-    else if(typeof _diagnosiVai==='function') _diagnosiVai('Ho un problema con '+t+'. Aiutami a diagnosticarlo.');
+    if(typeof chiediTesto==='function') chiediTesto('Ho un problema con '+t+'. Aiutami a risolverlo.');
+    else if(typeof _diagnosiVai==='function') _diagnosiVai('Ho un problema con '+t+'. Aiutami a risolverlo.');
   }, 300);
 };
 window._chatDaFenomenoCorrente = function(){ window._chatDaFenomeno(window._fenomenoCorrente||''); };
