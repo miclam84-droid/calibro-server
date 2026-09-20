@@ -4870,3 +4870,60 @@ def composer_prossimi():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/composer/obiettivo", methods=["POST"])
+def composer_obiettivo():
+    """Il Composer parte da un OBIETTIVO sensoriale (es. umami avvolgente, freschezza agrumata)
+    e pesca l'ingrediente-fulcro coerente + i primi compatibili. Poi si continua con /prossimi."""
+    from flask import request, jsonify
+    import psycopg2 as _pg, json as _j
+    d = request.get_json(force=True) or {}
+    obiettivo = (d.get("obiettivo") or "").lower().strip()
+    # mappa obiettivo -> proprieta target dominante
+    OBIETTIVI = {
+        "umami": ("umami", "Sapore pieno e avvolgente, quinto gusto"),
+        "umami avvolgente": ("umami", "Sapore pieno e avvolgente"),
+        "freschezza": ("aroma_fresco", "Note fresche, agrumate, erbacee"),
+        "freschezza agrumata": ("acido", "Acidita' e freschezza agrumata"),
+        "dolcezza": ("dolce", "Dolce equilibrato"),
+        "comfort": ("grasso", "Avvolgente, rotondo, confortante"),
+        "comfort avvolgente": ("grasso", "Avvolgente e rotondo"),
+        "sapidita": ("salato", "Sapido, deciso"),
+        "amaro": ("amaro", "Amaro elegante, tostato"),
+        "piccante": ("piccante", "Calore, spinta piccante"),
+        "affumicato": ("aroma_caldo", "Note affumicate, tostate"),
+        "acidita": ("acido", "Acidita' viva"),
+        "croccantezza": ("croccante", "Struttura croccante"),
+    }
+    prop_target, descr = OBIETTIVI.get(obiettivo, (None, None))
+    if not prop_target:
+        # match parziale
+        for k, v in OBIETTIVI.items():
+            if k in obiettivo or obiettivo in k:
+                prop_target, descr = v; break
+    if not prop_target:
+        return jsonify({"errore": "obiettivo non riconosciuto",
+                        "obiettivi_validi": list(set(v[0] for v in OBIETTIVI.values()))}), 400
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        # ingredienti-fulcro: quelli col valore piu alto nella proprieta target
+        _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND (data ? 'proprieta') AND name NOT LIKE '%%(%%'""")
+        candidati = []
+        for nid, nome, data in _cur.fetchall():
+            dd = data if isinstance(data, dict) else _j.loads(data)
+            v = dd.get("proprieta", {}).get(prop_target, 0)
+            if v >= 6:
+                candidati.append({"id": nid, "nome": nome, "intensita": v})
+        candidati.sort(key=lambda x: -x["intensita"])
+        _cur.close(); _release_conn(_c)
+        return jsonify({
+            "obiettivo": obiettivo,
+            "proprieta_target": prop_target,
+            "descrizione": descr,
+            "ingredienti_fulcro": candidati[:8],
+            "nota": "Scegli un ingrediente-fulcro, poi usa /v1/composer/prossimi per costruire a catena."
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
