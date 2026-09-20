@@ -4579,7 +4579,7 @@ function _ricercaLive(q){
       var gruppi={};
       ris.forEach(function(x){ (gruppi[x.tipo]=gruppi[x.tipo]||[]).push(x); });
       var html='';
-      ['ricetta','ingrediente','fenomeno','tecnica'].forEach(function(tipo){
+      ['ingrediente','fenomeno','tecnica','ricetta'].forEach(function(tipo){
         if(!gruppi[tipo]) return;
         html+='<div class="ric-glob-grp"><div class="ric-glob-grp-lab">'+(_RIC_TIPO_LAB[tipo]||tipo)+' · '+gruppi[tipo].length+'</div>';
         html+=gruppi[tipo].map(function(x){
