@@ -10170,3 +10170,65 @@ def admin_aggiungi_varieta_farina():
         return jsonify({"farine_aggiunte": aggiunti, "genitore": id_far})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-formaggi-pesce")
+def admin_aggiungi_formaggi_pesce():
+    """Profondita' formaggi e pesce: varieta' italiane/comuni come nodi con caratteristica e proprieta'."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # (nome, genitore_cerca, disciplina, categoria, caratteristica, uso, prop_override)
+    ITEMS = [
+        # FORMAGGI
+        ("Parmigiano Reggiano 24 mesi", "parmesan", "cucina", "formaggio", "Stagionato, granuloso, umami intenso, cristalli di tirosina", "grattugiato, scaglie", {"umami":9,"salato":7,"grasso":6,"corposita":7,"fermentato":7}),
+        ("Parmigiano Reggiano 36 mesi", "parmesan", "cucina", "formaggio", "Lungo affinamento, piu' friabile e complesso", "degustazione, scaglie", {"umami":10,"salato":7,"grasso":6,"corposita":8,"fermentato":8}),
+        ("Grana Padano", "parmesan", "cucina", "formaggio", "Simile al parmigiano, piu' dolce e meno intenso", "grattugiato, cucina", {"umami":8,"salato":6,"grasso":6,"fermentato":6}),
+        ("Pecorino Romano", "cheese", "cucina", "formaggio", "Di pecora, molto sapido e piccante, tipico laziale", "cacio e pepe, amatriciana", {"umami":8,"salato":9,"grasso":6,"piccante":2,"fermentato":6}),
+        ("Mozzarella di Bufala Campana DOP", "cheese", "cucina", "formaggio", "Fresca, lattica, succosa, di latte di bufala", "caprese, pizza, cruda", {"umami":4,"salato":3,"grasso":6,"corposita":4,"fermentato":3}),
+        ("Fior di latte", "cheese", "cucina", "formaggio", "Mozzarella di latte vaccino, piu' delicata", "pizza, cucina", {"umami":3,"salato":3,"grasso":5,"fermentato":3}),
+        ("Gorgonzola DOP", "cheese", "cucina", "formaggio", "Erborinato, cremoso, piccante o dolce", "risotti, salse, crudo", {"umami":6,"salato":6,"grasso":7,"piccante":3,"fermentato":8}),
+        ("Ricotta", "cheese", "cucina", "formaggio", "Da siero, dolce, leggera, morbida", "dolci, ripieni, cucina", {"umami":2,"salato":1,"grasso":4,"dolce":2,"corposita":3}),
+        ("Stracciatella", "cheese", "cucina", "formaggio", "Cuore cremoso della burrata, ricca e lattica", "crudo, pizza, antipasti", {"umami":3,"salato":2,"grasso":7,"corposita":5}),
+        ("Caciocavallo", "cheese", "cucina", "formaggio", "A pasta filata stagionato, saporito, del sud", "grigliato, cucina", {"umami":6,"salato":5,"grasso":6,"fermentato":6}),
+        # PESCE
+        ("Branzino (spigola)", "fish", "cucina", "pesce", "Bianco, magro, delicato, carne soda", "al forno, all'acqua pazza, crudo", {"umami":5,"grasso":3,"corposita":4}),
+        ("Orata", "fish", "cucina", "pesce", "Bianco, leggermente grasso, saporito", "al forno, alla griglia", {"umami":5,"grasso":4,"corposita":4}),
+        ("Salmone", "salmon", "cucina", "pesce", "Grasso, rosa, ricco di omega-3, versatile", "crudo, affumicato, cotto", {"umami":6,"grasso":7,"corposita":6}),
+        ("Tonno rosso", "tuna", "cucina", "pesce", "Carne rossa compatta, umami intenso", "crudo, scottato, tataki", {"umami":8,"grasso":5,"corposita":7}),
+        ("Baccala (merluzzo salato)", "fish", "cucina", "pesce", "Merluzzo conservato sotto sale, da dissalare", "mantecato, fritto, in umido", {"umami":7,"salato":6,"grasso":2,"corposita":5,"fermentato":2}),
+        ("Acciughe del Cantabrico", "anchovy", "cucina", "pesce", "Sotto sale/olio, umami potentissimo, sapide", "insaporire, crudo, bagna cauda", {"umami":9,"salato":8,"grasso":4,"fermentato":4}),
+        ("Gambero rosso di Mazara", "shrimp", "cucina", "pesce", "Dolce, delicato, pregiato, siciliano", "crudo, scottato", {"umami":6,"dolce":4,"grasso":2,"corposita":3}),
+        ("Cozze", "mussel", "cucina", "pesce", "Molluschi, sapore di mare, iodati", "impepata, pasta, sauté", {"umami":6,"salato":4,"corposita":3}),
+        ("Vongole", "clam", "cucina", "pesce", "Molluschi piccoli, sapidi, dolci", "spaghetti, sauté", {"umami":6,"salato":4,"dolce":2}),
+        ("Polpo", "octopus", "cucina", "pesce", "Mollusco, carne soda, da cuocere bene", "bollito, grigliato, insalata", {"umami":6,"corposita":6,"grasso":2}),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        aggiunti = 0
+        for nome, gen, disc, cat, carat, uso, prop_ov in ITEMS:
+            nid = "ing-" + nome.lower().replace(" ","-").replace("(","").replace(")","").replace("'","")
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+            if cur.fetchone(): continue
+            prop = {"salato":prop_ov.get("salato",1),"acido":0,"dolce":prop_ov.get("dolce",0),"amaro":0,
+                    "umami":prop_ov.get("umami",5),"grasso":prop_ov.get("grasso",4),"corposita":prop_ov.get("corposita",4),
+                    "croccante":0,"astringente":0,"piccante":prop_ov.get("piccante",0),"termico":2,
+                    "aroma_fresco":1,"aroma_caldo":2,"effervescenza":0,"fermentato":prop_ov.get("fermentato",0)}
+            data = {"nome": nome, "disciplina": disc, "categoria": cat, "caratteristica": carat,
+                    "uso_tipico": uso, "proprieta": prop}
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                        (nid, nome, json.dumps(data, ensure_ascii=False)))
+            # eredita composti dal genitore ahn
+            cur.execute("""SELECT id FROM nodes WHERE id LIKE 'ahn_%%' AND LOWER(name) LIKE %s LIMIT 1""", (f"%{gen}%",))
+            rg = cur.fetchone()
+            if rg:
+                cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (rg[0],))
+                for to_id, cdata in cur.fetchall():
+                    cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (nid,to_id,cstr))
+            aggiunti += 1; conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"aggiunti": aggiunti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
