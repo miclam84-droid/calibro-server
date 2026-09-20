@@ -4927,3 +4927,57 @@ def composer_obiettivo():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/composer/diagnosi", methods=["POST"])
+def composer_diagnosi():
+    """DIAGNOSI finale della ricetta creata col Composer: profilo sensoriale, equilibrio, fenomeni
+    coinvolti, squilibri residui. La scheda che chiude la creazione."""
+    from flask import request, jsonify
+    import psycopg2 as _pg, json as _j
+    d = request.get_json(force=True) or {}
+    scelti = d.get("ingredienti", [])
+    if not scelti:
+        return jsonify({"errore": "servono ingredienti"}), 400
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        profilo = {k: 0.0 for k in P}; n = 0; fenomeni = set()
+        for s in scelti:
+            _cur.execute("""SELECT id, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                            AND (LOWER(name)=LOWER(%s) OR id=%s) LIMIT 1""", (s, s))
+            r = _cur.fetchone()
+            if not r: continue
+            nid, data = r
+            dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+            prop = dd.get("proprieta")
+            if prop:
+                n += 1
+                for k in P: profilo[k] += float(prop.get(k, 0))
+            # fenomeni collegati all'ingrediente
+            _cur.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                            WHERE e.from_id=%s AND n2.type='Fenomeno' LIMIT 3""", (nid,))
+            for f in _cur.fetchall(): fenomeni.add(f[0])
+        if n:
+            for k in P: profilo[k] = round(profilo[k]/n, 1)
+        _cur.close(); _release_conn(_c)
+        # valuto l'equilibrio
+        note = []
+        dominanti = sorted([(k,v) for k,v in profilo.items() if v >= 6], key=lambda x:-x[1])
+        if profilo["grasso"] >= 7 and profilo["acido"] < 3:
+            note.append("Molto grasso e poco acido: valuta un tocco acido per alleggerire.")
+        if profilo["salato"] >= 8:
+            note.append("Sapidita' alta: attenzione al sale totale.")
+        if profilo["dolce"] >= 7 and profilo["acido"] < 2 and profilo["amaro"] < 2:
+            note.append("Molto dolce senza contrappesi: rischio stucchevole.")
+        if not note:
+            note.append("Profilo bilanciato: nessuno squilibrio evidente.")
+        return jsonify({
+            "ingredienti": scelti,
+            "profilo_sensoriale": {k: v for k, v in profilo.items() if v != 0},
+            "note_dominanti": [f"{k} {v}" for k, v in dominanti[:4]],
+            "fenomeni_coinvolti": list(fenomeni)[:5],
+            "diagnosi_equilibrio": note,
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
