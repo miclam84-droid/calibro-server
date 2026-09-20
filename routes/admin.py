@@ -10303,3 +10303,56 @@ def admin_pulisci_varieta():
         return jsonify({"duplicati_rimossi": rimossi, "etichette_corrette": ["Cantabrico->Spagna","Niboshi->Giappone"]})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/attributi-operativi")
+def admin_attributi_operativi():
+    """Aggiunge attributi OPERATIVI (yield/resa, scarto, shelf life, conservazione, allergeni) agli
+    ingredienti dei 5 domini profondi. Grounding su valori standard (CREA/settore). Carburante per Cifra."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # attributi per CATEGORIA (valori standard di settore, orientativi - Michele affina in dogfooding)
+    # yield = resa % dopo pulizia; shelf_life_giorni a frigo; allergeni lista UE
+    PER_CATEGORIA = {
+        "carne_bovina": {"yield": 85, "scarto_perc": 15, "shelf_life_giorni": 4, "conservazione": "0-4°C", "allergeni": []},
+        "pomodoro_varieta": {"yield": 92, "scarto_perc": 8, "shelf_life_giorni": 7, "conservazione": "ambiente/frigo", "allergeni": []},
+        "farina": {"yield": 100, "scarto_perc": 0, "shelf_life_giorni": 365, "conservazione": "luogo secco", "allergeni": ["glutine"]},
+        "formaggio": {"yield": 98, "scarto_perc": 2, "shelf_life_giorni": 20, "conservazione": "0-4°C", "allergeni": ["latte"]},
+        "pesce": {"yield": 65, "scarto_perc": 35, "shelf_life_giorni": 2, "conservazione": "0-2°C", "allergeni": ["pesce"]},
+    }
+    # override specifici per alcuni ingredienti (dove il valore di categoria non basta)
+    OVERRIDE = {
+        "Filetto di manzo": {"yield": 92, "scarto_perc": 8},
+        "Guancia di manzo": {"yield": 80, "scarto_perc": 20},
+        "Ossobuco": {"yield": 60, "scarto_perc": 40, "note": "osso incluso"},
+        "Baccala (merluzzo salato)": {"shelf_life_giorni": 120, "note": "sotto sale, da dissalare"},
+        "Farina Manitoba (W350+)": {"shelf_life_giorni": 300},
+        "Semola di grano duro": {"allergeni": ["glutine"]},
+        "Cozze": {"yield": 30, "scarto_perc": 70, "allergeni": ["molluschi"], "note": "guscio"},
+        "Vongole": {"yield": 25, "scarto_perc": 75, "allergeni": ["molluschi"], "note": "guscio"},
+        "Polpo": {"yield": 75, "scarto_perc": 25, "allergeni": ["molluschi"]},
+        "Gambero rosso di Mazara": {"yield": 55, "scarto_perc": 45, "allergeni": ["crostacei"]},
+        "Acciughe del Cantabrico": {"allergeni": ["pesce"], "shelf_life_giorni": 90},
+        "Mozzarella di Bufala Campana DOP": {"shelf_life_giorni": 5},
+        "Ricotta": {"shelf_life_giorni": 4},
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Ingrediente'
+                       AND data->>'categoria' IN ('carne_bovina','pomodoro_varieta','farina','formaggio','pesce')""")
+        aggiornati = 0
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else json.loads(data)
+            cat = dd.get("categoria")
+            attr = dict(PER_CATEGORIA.get(cat, {}))
+            if nome in OVERRIDE:
+                attr.update(OVERRIDE[nome])
+            dd["operativo"] = attr
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            aggiornati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ingredienti_con_attributi_operativi": aggiornati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
