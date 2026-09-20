@@ -10112,3 +10112,61 @@ def admin_aggiungi_varieta_pomodoro():
         return jsonify({"varieta_aggiunte": aggiunti, "genitore": id_pom})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-varieta-farina")
+def admin_aggiungi_varieta_farina():
+    """Profondita' farine: tipi ufficiali italiani (Tipo 0/1/2, integrale, semola, W forza) come nodi
+    con caratteristica tecnica (W, proteine, uso). Grounding su classificazione reale."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # farine: nome, caratteristica tecnica reale, uso
+    FARINE = [
+        ("Farina 00", "Raffinata, W medio-basso (150-250), poca crusca, elastica", "dolci, pasta fresca, besciamella"),
+        ("Farina 0", "Poco meno raffinata della 00, piu' proteine, W 220-280", "pane comune, pizza classica"),
+        ("Farina Tipo 1", "Semi-integrale, piu' fibre e sapore, W variabile", "pane rustico, pizza a lunga lievitazione"),
+        ("Farina Tipo 2", "Semi-integrale piu' grezza, ricca di crusca e germe", "pane integrale, impasti saporiti"),
+        ("Farina integrale", "Macinazione completa del chicco, massima fibra, W basso", "pane integrale, biscotti rustici"),
+        ("Farina Manitoba (W350+)", "Forza alta, tanto glutine, grande assorbimento acqua", "panettone, lievitati lunghi, rinforzo impasti"),
+        ("Semola di grano duro", "Da grano duro, granulosa, colore ambrato, alto glutine", "pasta secca, pane di Altamura"),
+        ("Semola rimacinata", "Semola macinata piu' fine, per impasti lisci", "pane pugliese, focaccia, orecchiette"),
+        ("Farina di grano arso", "Grano tostato, colore scuro, aroma affumicato, tipica pugliese", "pasta, pane aromatico"),
+        ("Farina di farro", "Da farro, meno glutine del grano, sapore rustico", "pane, dolci, pasta rustica"),
+        ("Farina di segale", "Scura, poco glutine, sapore intenso, alta idratazione", "pane nero, pane di segale"),
+        ("Farina di riso", "Senza glutine, neutra, granulosa", "senza glutine, tempura, addensare"),
+        ("Farina di mais (fumetto)", "Da mais, senza glutine, gialla", "polenta, pane di mais, dolci"),
+        ("Farina di grano tenero W180 (debole)", "Forza bassa, poco glutine, per prodotti friabili", "frolla, biscotti, grissini"),
+        ("Farina W260-280 (media)", "Forza media, equilibrata, versatile", "pizza, pane, lievitazione media"),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (LOWER(name) LIKE '%%farina%%' OR LOWER(name) LIKE '%%wheat_flour%%')
+                       AND EXISTS (SELECT 1 FROM edges e WHERE e.from_id=id AND e.relation='contiene_composto')
+                       ORDER BY (SELECT COUNT(*) FROM edges e2 WHERE e2.from_id=id AND e2.relation='contiene_composto') DESC LIMIT 1""")
+        rm = cur.fetchone(); id_far = rm[0] if rm else None
+        aggiunti = 0
+        for nome, carat, uso in FARINE:
+            nid = "ing-" + nome.lower().replace(" ","-").replace("(","").replace(")","").replace("+","").replace("'","")
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+            if cur.fetchone(): continue
+            # farine: profilo neutro, corposita/struttura da glutine
+            prop = {"salato":0,"acido":0,"dolce":1,"amaro":0,"umami":1,"grasso":1,"corposita":4,
+                    "croccante":0,"astringente":0,"piccante":0,"termico":2,"aroma_fresco":0,
+                    "aroma_caldo":2,"effervescenza":0,"fermentato":0}
+            data = {"nome": nome, "disciplina": "panificazione", "categoria": "farina",
+                    "caratteristica": carat, "uso_tipico": uso, "genitore": "farina", "proprieta": prop}
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                        (nid, nome, json.dumps(data, ensure_ascii=False)))
+            if id_far:
+                cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_far,))
+                for to_id, cdata in cur.fetchall():
+                    cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (nid,to_id,cstr))
+            aggiunti += 1; conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"farine_aggiunte": aggiunti, "genitore": id_far})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
