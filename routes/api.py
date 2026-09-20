@@ -4981,3 +4981,72 @@ def composer_diagnosi():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/assistente/galileo", methods=["POST"])
+def assistente_galileo():
+    """ASSISTENTE GALILEO: chat generalista inclusa nell'abbonamento. Modello economico (gpt-4o-mini),
+    cap ENERGIA per account (token/giorno), degrado gentile. Separata dalle chat di dominio.
+    Solo testo, no artefatti. Escalation: segnala se la domanda e' di dominio (scienza alimentare)."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, datetime
+    d = request.get_json(force=True) or {}
+    domanda = (d.get("domanda") or "").strip()
+    account = (d.get("account_id") or request.headers.get("X-Device-Id") or "anon").strip()
+    if not domanda:
+        return jsonify({"errore": "domanda vuota"}), 400
+
+    # CAP ENERGIA: budget token/giorno per account
+    BUDGET_TOKEN_GIORNO = 16000
+    oggi = datetime.date.today().isoformat()
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS assistente_uso (
+                       account TEXT, giorno TEXT, token_usati INT DEFAULT 0, PRIMARY KEY(account,giorno))""")
+        cur.execute("SELECT token_usati FROM assistente_uso WHERE account=%s AND giorno=%s", (account, oggi))
+        r = cur.fetchone()
+        usati = r[0] if r else 0
+        # stima costo della domanda (input) + margine risposta
+        stima = int(len(domanda) * 0.3) + 400  # input + stima output
+        if usati + stima > BUDGET_TOKEN_GIORNO:
+            cur.close(); conn.close()
+            return jsonify({"autorizzato": False, "energia": "esaurita",
+                            "messaggio": "Hai esaurito l'energia dell'Assistente per oggi. Si ricarica a mezzanotte. I motori scientifici (Diagnosi, Composer, Atlante) restano attivi al 100%."})
+        # livello energia da mostrare (Alta/Normale/Bassa)
+        resto = BUDGET_TOKEN_GIORNO - usati
+        energia = "alta" if resto > BUDGET_TOKEN_GIORNO*0.6 else ("normale" if resto > BUDGET_TOKEN_GIORNO*0.25 else "bassa")
+
+        # escalation: la domanda e' di dominio (scienza alimentare)?
+        dom_l = domanda.lower()
+        di_dominio = any(k in dom_l for k in ["impasto","lievit","fermentaz","maillard","emulsion","coagula",
+                         "temperatura di","ph ","brix","abbatt","haccp","conservazione","cottura sottovuoto",
+                         "ganache","carbonara","besciamella","perche la","perche il","come mai la"])
+
+        # chiamata al modello economico (gpt-4o-mini)
+        key = os.environ.get("OPENAI_API_KEY", "")
+        sys_prompt = ("Sei l'Assistente Galileo, un assistente generalista utile, conciso e onesto, "
+                      "incluso nell'abbonamento di un'app professionale per la ristorazione. "
+                      "Rispondi su qualsiasi argomento (curiosita', scrittura, consigli pratici, informazioni). "
+                      "Solo testo: non generi immagini, file o codice lungo. Se ti chiedono un'immagine, spieghi "
+                      "gentilmente che fai solo testo. Sii diretto, niente preamboli inutili.")
+        payload = {"model": "gpt-4o-mini", "max_tokens": 600,
+                   "messages": [{"role": "system", "content": sys_prompt},
+                                {"role": "user", "content": domanda}]}
+        req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
+                         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+        rr = ur.urlopen(req, timeout=40); dd = json.loads(rr.read().decode())
+        risposta = dd["choices"][0]["message"]["content"]
+        token_reali = dd.get("usage", {}).get("total_tokens", stima)
+
+        # aggiorno il contatore energia
+        cur.execute("""INSERT INTO assistente_uso (account,giorno,token_usati) VALUES (%s,%s,%s)
+                       ON CONFLICT (account,giorno) DO UPDATE SET token_usati=assistente_uso.token_usati+%s""",
+                    (account, oggi, token_reali, token_reali))
+        conn.commit(); cur.close(); conn.close()
+
+        out = {"risposta": risposta, "energia": energia, "autorizzato": True}
+        if di_dominio:
+            out["escalation"] = "Questa domanda tocca la scienza alimentare: vuoi la risposta col Grafo Vivo? Apri la Chat Diagnostica."
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]}), 500
