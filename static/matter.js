@@ -362,6 +362,7 @@ var _PORTE = {
                 {t:'Flavour Network', d:'La rete delle molecole aromatiche', act:function(){if(typeof apriFlavour==='function')apriFlavour();}},
                 {t:'Ponti', d:'Dove vive un ingrediente tra le discipline', act:function(){if(typeof apriPonti==='function')apriPonti();}} ]},
   applica:  { label:'Applica', sub:'Il controllo al banco', voci:[
+                {t:'Composer', d:'Costruisci una ricetta ingrediente per ingrediente', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('composer').then(function(){ if(typeof apriComposer==='function')apriComposer(); }); } }},
                 {t:'Motore Panificazione', d:'Progetta impasto: dosi + timeline', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('motori').then(function(){ if(typeof apriMotorePanificazione==='function')apriMotorePanificazione(); }); } }},
                 {t:'Sostituti intelligenti', d:'Cosa usare al posto di un ingrediente', act:function(){if(typeof apriSostituti==='function')apriSostituti();}},
                 {t:'Motori operativi', d:'Impasto, teglie, food cost', act:function(){if(typeof apriCalcolatori==='function')apriCalcolatori();}},
@@ -446,7 +447,7 @@ function _afetch(url, opts){
   });
 }
 // ═══ LOADER MODULI LAZY (metodo Strangler) ═══
-window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false, planner:false };
+window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false, planner:false, composer:false };
 function _caricaModulo(nome){
   return new Promise(function(resolve){
     if(window._moduli[nome]){ resolve(); return; }

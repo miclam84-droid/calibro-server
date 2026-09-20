@@ -551,3 +551,51 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .ricp-noimg{width:100%;height:100%;min-height:110px;background:#141d22;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
 .ricp-noimg-ico{font-size:26px;color:#e8935a}
 .ricp-noimg-fen{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#7fb0c4;text-align:center;padding:0 8px}
+
+/* ═══ COMPOSER — laboratorio ricette manipolabile (killer feature) ═══ */
+.co-hero{margin:0 0 18px;padding:18px;background:#141d22;border-radius:4px;box-shadow:4px 4px 0 rgba(20,29,34,.2)}
+.co-hero-lab{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;color:#7fb0c4;margin-bottom:8px}
+.co-hero-claim{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:23px;line-height:1.1;color:#e8935a;margin-bottom:8px}
+.co-hero-sub{font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#cbd6da}
+.co-add{display:flex;gap:8px;margin:0 0 14px}
+.co-add input{flex:1;min-width:0;min-height:50px;border:1.5px solid #141d22;border-radius:0;background:#fff;padding:0 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#141d22;-webkit-text-fill-color:#141d22;box-shadow:3px 3px 0 rgba(20,29,34,.12);box-sizing:border-box}
+.co-add input:focus{outline:none;border-color:#c77b3f}
+.co-add button{flex:0 0 50px;height:50px;background:#c77b3f;color:#141d22;border:1.5px solid #141d22;border-radius:0;font-size:24px;cursor:pointer}
+.co-esempi-lab,.co-lab-ing{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5a6c70;margin:0 0 8px}
+.co-lab-ing{margin-top:18px}
+.co-esempi{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.co-esempio{background:#fff;border:1.5px solid #c4c0b4;padding:8px 12px;font-family:'Inter',sans-serif;font-size:13px;color:#141d22;cursor:pointer;text-transform:capitalize}
+.co-esempio:active{background:#f0dece}
+/* chip ingredienti-nodi (terracotta con X) */
+.co-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px;min-height:20px}
+.co-chip{display:inline-flex;align-items:center;gap:8px;background:#c77b3f;color:#241109;border:1.5px solid #141d22;border-radius:0;padding:9px 12px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;text-transform:capitalize;box-shadow:2px 2px 0 rgba(20,29,34,.2)}
+.co-chip-x{font-size:16px;font-weight:400;opacity:.7}
+.co-chip:active{transform:translate(2px,2px);box-shadow:0 0 0}
+.co-vuoto{font-family:'Inter',sans-serif;font-size:13px;color:#9daeb2;font-style:italic}
+/* profilo sensoriale — il wow reattivo */
+.co-profilo{margin:18px 0;padding:16px;background:#f4f2ec;border:1.5px solid #141d22;box-shadow:4px 4px 0 rgba(20,29,34,.12)}
+.co-profilo-lab{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c77b3f;margin-bottom:14px}
+.co-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.co-bar-lab{flex:0 0 78px;font-family:'Inter',sans-serif;font-size:12px;color:#141d22}
+.co-bar-track{flex:1;height:10px;background:#dce3e3;overflow:hidden}
+.co-bar-fill{height:100%;background:#245979;transition:width .4s cubic-bezier(.16,1,.3,1)}
+.co-bar-fill.forte{background:#c77b3f}
+.co-bar-v{flex:0 0 28px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:#141d22}
+/* alert contrasti */
+.co-alerts{margin:0 0 16px}
+.co-alert{display:flex;gap:10px;background:rgba(232,147,90,.12);border-left:3px solid #c77b3f;padding:12px 14px;margin-bottom:8px}
+.co-alert-ico{color:#c77b3f;font-size:15px;flex-shrink:0}
+.co-alert-txt{font-family:'Inter',sans-serif;font-size:13px;color:#141d22;line-height:1.4}
+/* suggeriti */
+.co-sug-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#12545d;margin:16px 0 10px}
+.co-sug-sub{color:#9daeb2;font-weight:400;text-transform:none}
+.co-sug-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.co-sug-ana{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #245979;padding:9px 12px;cursor:pointer}
+.co-sug-nome{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:#141d22;text-transform:capitalize}
+.co-sug-n{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:11px;color:#245979}
+.co-sug-list{display:flex;flex-direction:column;gap:8px}
+.co-sug-c{display:flex;flex-direction:column;align-items:flex-start;gap:3px;background:#fff;border:1.5px solid #c77b3f;padding:11px 13px;cursor:pointer;text-align:left;width:100%}
+.co-sug-c-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141d22;text-transform:capitalize}
+.co-sug-c-motivo{font-family:'Inter',sans-serif;font-size:12px;color:#5a6c70}
+.co-salva{display:block;width:100%;margin:20px 0 24px;min-height:54px;background:#141d22;color:#fff;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+.co-salva:active{transform:translate(2px,2px)}
