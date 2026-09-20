@@ -10058,3 +10058,57 @@ def admin_aggiungi_tagli_carne():
         return jsonify({"tagli_aggiunti": aggiunti, "genitore_manzo": id_manzo})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-varieta-pomodoro")
+def admin_aggiungi_varieta_pomodoro():
+    """Profondita' pomodoro: le cultivar italiane vere come nodi-figli, ereditano composti dal pomodoro
+    genitore + hanno caratteristiche/proprieta' proprie. Grounding su varieta' reali."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # cultivar reali italiane: nome, caratteristica, proprieta specifiche, uso
+    VARIETA = [
+        ("Pomodoro San Marzano DOP", "Allungato, polpa densa, pochi semi, acidita' equilibrata - il re della salsa", {"acido":5,"dolce":4,"umami":7}, "salsa, pelati, pizza"),
+        ("Pomodoro del Piennolo del Vesuvio DOP", "Piccolo, buccia spessa, sapore intenso e sapido, si conserva a grappolo", {"acido":6,"dolce":5,"umami":8,"salato":2}, "spaghetti, conserva, pizza napoletana"),
+        ("Pomodoro Corbarino", "Piccolo e dolce, cresce sui monti Lattari, ottimo a grappolo", {"acido":5,"dolce":6,"umami":7}, "salsa dolce, conserva"),
+        ("Pomodoro Datterino", "Piccolo, molto dolce, forma allungata, poca acidita'", {"acido":3,"dolce":8,"umami":6}, "insalata, salse veloci, confit"),
+        ("Pomodoro Ciliegino", "Tondo piccolo, succoso, dolce-acidulo, versatile", {"acido":5,"dolce":6,"umami":5}, "insalata, pasta, conserve"),
+        ("Pomodoro Cuore di Bue", "Grande, costoluto, poca acqua, polpa carnosa e dolce", {"acido":3,"dolce":6,"umami":6,"corposita":5}, "insalata, caprese, crudo"),
+        ("Pomodoro Costoluto Fiorentino", "Costoluto, saporito, polpa consistente", {"acido":5,"dolce":5,"umami":6}, "insalata, ripieno"),
+        ("Pomodoro Pizzutello", "Piccolo con punta, dolce e croccante, tipico laziale", {"acido":4,"dolce":7,"umami":5,"croccante":3}, "insalata, aperitivo"),
+        ("Pomodoro Marinda (Camone)", "Verde-rossastro, croccante, molto sapido, tipico sardo/siciliano", {"acido":6,"dolce":4,"umami":6,"salato":3,"croccante":4}, "insalata, crudo"),
+        ("Pomodoro Pelato (conserva)", "Pomodoro pelato in conserva, pronto per la salsa", {"acido":5,"dolce":4,"umami":6}, "salsa, sugo, tutto l'anno"),
+        ("Passata di pomodoro", "Pomodoro passato e conservato, base per sughi", {"acido":5,"dolce":4,"umami":6}, "sugo veloce"),
+        ("Concentrato di pomodoro", "Pomodoro ridotto e concentrato, umami intenso", {"acido":4,"dolce":5,"umami":9,"corposita":4}, "insaporire, colore, fondo"),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE '%%pomodoro%%'
+                       AND EXISTS (SELECT 1 FROM edges e WHERE e.from_id=id AND e.relation='contiene_composto')
+                       ORDER BY (SELECT COUNT(*) FROM edges e2 WHERE e2.from_id=id AND e2.relation='contiene_composto') DESC LIMIT 1""")
+        rm = cur.fetchone(); id_pom = rm[0] if rm else None
+        aggiunti = 0
+        for nome, carat, prop_spec, uso in VARIETA:
+            nid = "ing-" + nome.lower().replace(" ","-").replace("(","").replace(")","").replace("'","")
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+            if cur.fetchone(): continue
+            prop = {"salato":prop_spec.get("salato",1),"acido":prop_spec.get("acido",5),"dolce":prop_spec.get("dolce",4),
+                    "amaro":1,"umami":prop_spec.get("umami",6),"grasso":0,"corposita":prop_spec.get("corposita",3),
+                    "croccante":prop_spec.get("croccante",0),"astringente":0,"piccante":0,"termico":-1,
+                    "aroma_fresco":5,"aroma_caldo":1,"effervescenza":0,"fermentato":0}
+            data = {"nome": nome, "disciplina": "cucina", "categoria": "pomodoro_varieta",
+                    "caratteristica": carat, "uso_tipico": uso, "genitore": "pomodoro", "proprieta": prop}
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                        (nid, nome, json.dumps(data, ensure_ascii=False)))
+            if id_pom:
+                cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_pom,))
+                for to_id, cdata in cur.fetchall():
+                    cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (nid,to_id,cstr))
+            aggiunti += 1; conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"varieta_aggiunte": aggiunti, "genitore": id_pom})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
