@@ -4641,8 +4641,28 @@ function _ricercaApri(tipo, id, nome){
   chiudiVista();
   if(tipo==='fenomeno' || tipo==='tecnica'){ apriNodo(id, nome||''); }
   else if(tipo==='ricetta'){ if(typeof _ricettarioApri==='function') _ricettarioApri(id, nome||''); else apriNodo(id, nome||''); }
-  else if(tipo==='ingrediente'){ if(typeof apriFlavour==='function'){ apriFlavour(); setTimeout(function(){ if(typeof caricaFlavour==='function') caricaFlavour(nome); }, 300); } }
+  else if(tipo==='ingrediente'){ apriSchedaIngrediente(id, nome||''); }
 }
+window.apriSchedaIngrediente = function(id, nome){
+  _apriVista('Ingrediente', '<div class="vista-loading">Carico la scheda…</div>');
+  fetch('/v1/ingrediente/'+encodeURIComponent(id)).then(function(r){return r.json();}).then(function(d){
+    var e=_escV;
+    var props=d.proprieta_principali||{};
+    var PLAB={grasso:'Grasso',umami:'Umami',acido:'Acido',salato:'Salato',dolce:'Dolce',amaro:'Amaro',corposita:'Corposità',aroma_fresco:'Aroma fresco',aroma_caldo:'Aroma caldo',croccante:'Croccante',fermentato:'Fermentato',termico:'Termico',astringente:'Astringente'};
+    var barre=Object.keys(props).map(function(k){
+      var v=props[k]||0, pct=Math.min(100,v*10), forte=v>=5;
+      return '<div class="ing-bar-row"><span class="ing-bar-lab">'+e(PLAB[k]||k)+'</span><div class="ing-bar-track"><div class="ing-bar-fill'+(forte?' forte':'')+'" style="width:'+pct+'%"></div></div><span class="ing-bar-v">'+v+'</span></div>';
+    }).join('');
+    var dialoga=(d.dialoga_con||[]).map(function(x){ return '<button class="ing-dialoga" onclick="apriPonti&&apriPonti();setTimeout(function(){var i=document.getElementById(\'ptv-input\');if(i){i.value=\''+e(String(x)).replace(/'/g,"\\'")+'\';caricaPonti&&caricaPonti();}},300)">'+e(String(x).replace(/_/g,' '))+'</button>'; }).join('');
+    var html='<div class="ing-hero"><div class="ing-hero-lab">INGREDIENTE'+(d.categoria?' · '+e(d.categoria):'')+'</div><div class="ing-hero-nome">'+e(d.nome||nome)+'</div>'
+      + (d.caratteristica?'<div class="ing-hero-car">'+e(d.caratteristica)+'</div>':'')+'</div>';
+    if(d.uso_tipico) html+='<div class="ing-uso"><span class="ing-uso-lab">Uso tipico</span>'+e(d.uso_tipico)+'</div>';
+    if(barre) html+='<div class="ing-sec-lab">Profilo sensoriale</div><div class="ing-profilo">'+barre+'</div>';
+    if(dialoga) html+='<div class="ing-sec-lab">Dialoga con</div><div class="ing-dialoga-grid">'+dialoga+'</div>';
+    html+='<button class="ing-composer-cta" onclick="chiudiVista();_caricaModulo(\'composer\').then(function(){apriComposer&&apriComposer();setTimeout(function(){_coAggiungi&&_coAggiungi(\''+e(String(d.nome||nome)).replace(/'/g,"\\'")+'\')},400)})">Costruisci una ricetta da qui →</button>';
+    var b=document.getElementById('vista-body'); if(b) b.innerHTML=html;
+  }).catch(function(){ var b=document.getElementById('vista-body'); if(b) b.innerHTML='<div class="vista-empty">Scheda non disponibile.</div>'; });
+};
 function apriAccount(){
   const token = localStorage.getItem('matter_token');
   if(token){
