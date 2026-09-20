@@ -9956,3 +9956,45 @@ def admin_vedi_proprieta():
         return jsonify({"totale_con_proprieta": tot, "esempi": out})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/proprieta-eredita-varianti")
+def admin_proprieta_eredita_varianti():
+    """Anello 2: le varianti senza proprieta ereditano dal genitore che le ha (limone di X -> limone).
+    Match per parola-madre contenuta nel nome. No AI, gratis."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "80")), 150)
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ingredienti CON proprieta (i genitori candidati), nome -> proprieta
+        cur.execute("""SELECT LOWER(name), data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (data ? 'proprieta')""")
+        genitori = []
+        for nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else json.loads(data)
+            genitori.append((nome, dd.get("proprieta")))
+        # ordino i genitori per nome piu corto (piu generico = madre migliore)
+        genitori.sort(key=lambda x: len(x[0]))
+        # ingredienti SENZA proprieta
+        cur.execute("""SELECT id, LOWER(name), data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND NOT (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT %s""", (n,))
+        ereditati = 0
+        for nid, nomev, data in cur.fetchall():
+            # trovo il genitore piu generico il cui nome e' contenuto nella variante
+            madre_prop = None
+            for gnome, gprop in genitori:
+                if len(gnome) >= 3 and gnome in nomev:
+                    madre_prop = gprop; break
+            if not madre_prop: continue
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            dd["proprieta"] = madre_prop
+            dd["proprieta_ereditata"] = True
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            ereditati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"varianti_ereditate": ereditati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
