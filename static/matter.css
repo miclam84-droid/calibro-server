@@ -615,3 +615,27 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .co-diag-fen-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
 .co-diag-fen{font-family:'Inter',sans-serif;font-size:12px;color:#141d22;background:#dce6ec;padding:6px 10px}
 .co-diag-chiudi{width:100%;background:none;border:1.5px solid #c4c0b4;padding:12px;font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;cursor:pointer;margin-top:8px}
+
+/* ═══ ASSISTENTE GALILEO (chat generalista separata) ═══ */
+#panel-galileo{display:none;flex-direction:column;height:100%}
+#panel-galileo.active{display:flex}
+.gal-head{padding:14px 16px;background:#141d22;margin:0 0 12px}
+.gal-head-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.gal-lab{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#fff}
+.gal-autonomia{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.04em;color:#7fb0c4;background:rgba(127,176,196,.15);padding:4px 8px}
+.gal-aut-bassa{color:#e8935a;background:rgba(232,147,90,.15)}
+.gal-aut-esaurita{color:#c77b3f;background:rgba(199,123,63,.2)}
+.gal-sub{font-family:'Inter',sans-serif;font-size:12px;line-height:1.4;color:#cbd6da}
+.gal-flusso{flex:1;overflow-y:auto;padding:0 16px 12px;display:flex;flex-direction:column;gap:12px}
+.gal-empty{font-family:'Inter',sans-serif;font-size:14px;color:#9daeb2;text-align:center;padding:32px 16px}
+.gal-msg{max-width:88%;padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;line-height:1.5}
+.gal-msg-u{align-self:flex-end;background:#141d22;color:#fff;border-radius:0}
+.gal-msg-a{align-self:flex-start;background:#fff;color:#141d22;border:1.5px solid #c4c0b4}
+.gal-typing{color:#9daeb2}
+.gal-esaurita{color:#c77b3f;font-weight:600}
+.gal-escalation{margin-top:10px;padding-top:10px;border-top:1px solid #ecebe5;font-family:'Inter',sans-serif;font-size:12px;color:#5a6c70}
+.gal-escalation button{background:none;border:0;color:#c77b3f;font-weight:700;cursor:pointer;padding:0}
+.gal-bar{display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#ecebe5;border-top:1px solid #c4c0b4}
+.gal-bar input{flex:1;min-height:46px;border:1.5px solid #141d22;background:#fff;padding:0 14px;font-family:'Inter',sans-serif;font-size:14px;color:#141d22;-webkit-text-fill-color:#141d22}
+.gal-bar input:disabled{background:#e8eded;color:#9daeb2;-webkit-text-fill-color:#9daeb2}
+.gal-bar button{flex:0 0 46px;height:46px;background:#c77b3f;color:#141d22;border:1.5px solid #141d22;font-size:18px;cursor:pointer}

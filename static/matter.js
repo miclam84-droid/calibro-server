@@ -516,14 +516,56 @@ function switchTab(t){
 /* ── SUBTAB dentro Chiedi (chat ↔ calcolatori) ────────── */
 function switchSubtab(name){
   _subtab = name;
-  ['chat','calc'].forEach(s=>{
+  ['chat','galileo','calc'].forEach(s=>{
     const panel=document.getElementById('panel-'+s);
     if(panel) panel.classList.toggle('active',s===name);
     const btn=document.getElementById('subtab-'+s);
     if(btn) btn.classList.toggle('active',s===name);
   });
-  // la barra domanda ha senso solo nella chat
+  // la barra domanda scientifica ha senso solo nella chat di dominio
   document.getElementById('ask-bar').style.display=(name==='chat')?'block':'none';
+  if(name==='galileo' && typeof _galInit==='function') _galInit();
+}
+// ── ASSISTENTE GALILEO (chat generalista separata) ──
+var _galBusy=false;
+function _galInit(){
+  var f=document.getElementById('gal-flusso');
+  if(f && !f._init){ f._init=true; f.innerHTML='<div class="gal-empty">◎ Ciao, sono l\'assistente Galileo. Chiedimi quello che vuoi.</div>'; }
+}
+window._galInvia=function(){
+  if(_galBusy) return;
+  var inp=document.getElementById('gal-input'); var q=inp?inp.value.trim():'';
+  if(!q) return;
+  inp.value='';
+  var f=document.getElementById('gal-flusso');
+  var em=f.querySelector('.gal-empty'); if(em) em.remove();
+  var e=_escV;
+  f.insertAdjacentHTML('beforeend','<div class="gal-msg gal-msg-u">'+e(q)+'</div>');
+  var risp=document.createElement('div'); risp.className='gal-msg gal-msg-a'; risp.innerHTML='<span class="gal-typing">…</span>';
+  f.appendChild(risp); risp.scrollIntoView({behavior:'smooth',block:'end'});
+  _galBusy=true;
+  var acc=(localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon');
+  fetch('/v1/assistente/galileo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domanda:q, account_id:acc})})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      _galBusy=false;
+      if(j.autorizzato===false || j.energia==='esaurita'){
+        risp.innerHTML='<div class="gal-esaurita">'+e(j.messaggio||'Autonomia esaurita per oggi. Torna domani.')+'</div>';
+        _galAutonomia('esaurita');
+        var b=document.querySelector('.gal-bar input'); if(b){ b.disabled=true; b.placeholder='Autonomia esaurita per oggi'; }
+        return;
+      }
+      risp.innerHTML = _formattaRispostaChat ? _formattaRispostaChat(j.risposta||'') : e(j.risposta||'');
+      if(j.escalation){ risp.insertAdjacentHTML('beforeend','<div class="gal-escalation">Per la scienza al banco: <button onclick="switchSubtab(\'chat\')">apri Chiedi a Matter →</button></div>'); }
+      _galAutonomia(j.energia||'alta');
+      risp.scrollIntoView({behavior:'smooth',block:'end'});
+    })
+    .catch(function(){ _galBusy=false; risp.innerHTML='<div class="gal-esaurita">Errore di rete. Riprova.</div>'; });
+};
+function _galAutonomia(en){
+  var map={ alta:'Autonomia: Alta', normale:'Autonomia: Media', bassa:'Autonomia: In esaurimento', esaurita:'Autonomia: Esaurita per oggi' };
+  var el=document.getElementById('gal-autonomia');
+  if(el){ el.textContent=map[en]||'Autonomia: —'; el.className='gal-autonomia gal-aut-'+(en||'alta'); }
 }
 
 /* ── STATO GLOBALE ────────────────────────────────────── */

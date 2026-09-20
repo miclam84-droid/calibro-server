@@ -534,6 +534,7 @@ if('serviceWorker' in navigator){
   <div class="lab-area-header"><span class="lab-area-label">ASSISTENTE DA BANCO</span></div>
   <div class="chiedi-subtabs">
     <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi a Matter</button>
+    <button class="subtab-btn" id="subtab-galileo" onclick="switchSubtab('galileo')">Assistente</button>
     <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Motori</button>
   </div>
   <div class="chiedi-panel active" id="panel-chat">
@@ -549,6 +550,17 @@ if('serviceWorker' in navigator){
           <button class="sugg-pill" id="pill4" onclick="chiediPill(3)"></button>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="chiedi-panel" id="panel-galileo">
+    <div class="gal-head">
+      <div class="gal-head-top"><span class="gal-lab">Assistente Galileo</span><span class="gal-autonomia" id="gal-autonomia">Autonomia: —</span></div>
+      <div class="gal-sub">L'assistente generalista dell'ecosistema. Chiedigli di tutto: curiosità, ricerche, testi. Per la scienza al banco usa "Chiedi a Matter".</div>
+    </div>
+    <div class="gal-flusso" id="gal-flusso"></div>
+    <div class="gal-bar">
+      <input id="gal-input" placeholder="Chiedi qualsiasi cosa…" onkeydown="if(event.key==='Enter')_galInvia()">
+      <button onclick="_galInvia()" aria-label="Invia">↑</button>
     </div>
   </div>
   <div class="chiedi-panel" id="panel-calc">
