@@ -10692,3 +10692,52 @@ def admin_arricchisci_esistenti():
         return jsonify({"arricchiti": arricchiti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/operativo-per-categoria-ahn")
+def admin_operativo_per_categoria_ahn():
+    """Assegna attributi operativi di default agli ingredienti-tipo che ancora non ne hanno, in base
+    alla famiglia (ingredient_family/domini). Copertura larga per Cifra, valori standard orientativi."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "200")), 400)
+    # default per famiglia (yield, shelf_life, allergeni, conservazione)
+    DEF = {
+        "meat": {"yield":80,"shelf_life_giorni":4,"conservazione":"0-4°C","allergeni":[]},
+        "fish": {"yield":65,"shelf_life_giorni":2,"conservazione":"0-2°C","allergeni":["pesce"]},
+        "seafood": {"yield":50,"shelf_life_giorni":2,"conservazione":"0-2°C","allergeni":["molluschi"]},
+        "vegetable": {"yield":85,"shelf_life_giorni":6,"conservazione":"frigo","allergeni":[]},
+        "fruit": {"yield":88,"shelf_life_giorni":7,"conservazione":"fresco","allergeni":[]},
+        "dairy": {"yield":98,"shelf_life_giorni":15,"conservazione":"0-4°C","allergeni":["latte"]},
+        "cheese": {"yield":98,"shelf_life_giorni":20,"conservazione":"0-4°C","allergeni":["latte"]},
+        "grain": {"yield":100,"shelf_life_giorni":365,"conservazione":"secco","allergeni":["glutine"]},
+        "cereal": {"yield":100,"shelf_life_giorni":365,"conservazione":"secco","allergeni":["glutine"]},
+        "spice": {"yield":100,"shelf_life_giorni":365,"conservazione":"secco","allergeni":[]},
+        "herb": {"yield":90,"shelf_life_giorni":5,"conservazione":"fresco","allergeni":[]},
+        "nut": {"yield":95,"shelf_life_giorni":180,"conservazione":"secco","allergeni":["frutta a guscio"]},
+        "legume": {"yield":100,"shelf_life_giorni":365,"conservazione":"secco","allergeni":[]},
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND NOT (data ? 'operativo') LIMIT %s""", (n,))
+        aggiornati = 0
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            fam = (dd.get("ingredient_family") or "").lower()
+            dominio = str(dd.get("domini","")).lower()
+            scelto = None
+            for k in DEF:
+                if k in fam or k in dominio or k in str(dd.get("categoria","")).lower():
+                    scelto = k; break
+            if not scelto: continue
+            op = dict(DEF[scelto]); op["scarto_perc"] = 100 - op["yield"]
+            dd["operativo"] = op
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            aggiornati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"operativo_assegnato": aggiornati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
