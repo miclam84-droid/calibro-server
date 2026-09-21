@@ -10668,14 +10668,6 @@ def admin_arricchisci_esistenti():
                        "proprieta":{"aroma_caldo":5,"amaro":3,"astringente":2},"operativo":{"yield":95,"allergeni":[]}},
         "Colatura di alici di Cetara": {"caratteristica":"Liquido ambrato da alici, umami potentissimo","uso_tipico":"spaghetti, insaporire","categoria":"condimento",
                        "proprieta":{"umami":10,"salato":9,"fermentato":6},"operativo":{"yield":100,"allergeni":["pesce"]}},
-        "Puntarelle": {"caratteristica":"Germogli di catalogna, croccanti, amari, romani","uso_tipico":"crude con acciuga e aglio","categoria":"verdura",
-                       "proprieta":{"amaro":6,"croccante":5,"aroma_fresco":3},"operativo":{"yield":60,"stagione":"inverno","allergeni":[]}},
-        "Polpo": {"caratteristica":"Mollusco, carne soda, da cuocere bene","uso_tipico":"bollito, grigliato, insalata","categoria":"pesce",
-                       "proprieta":{"umami":6,"corposita":6,"grasso":2},"operativo":{"yield":75,"allergeni":["molluschi"]}},
-        "Speck Alto Adige IGP": {"caratteristica":"Crudo affumicato, aromatico, tirolese","uso_tipico":"crudo, canederli, panini","categoria":"salume",
-                       "proprieta":{"salato":6,"umami":6,"aroma_caldo":6,"fermentato":5},"operativo":{"yield":92,"allergeni":[]}},
-        "Lardo di Colonnata IGP": {"caratteristica":"Lardo stagionato nel marmo con erbe, fondente","uso_tipico":"crostini caldi, avvolgere","categoria":"salume",
-                       "proprieta":{"grasso":10,"salato":6,"aroma_caldo":4},"operativo":{"yield":98,"allergeni":[]}},
     }
     P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
     try:
@@ -10749,3 +10741,29 @@ def admin_operativo_per_categoria_ahn():
         return jsonify({"operativo_assegnato": aggiornati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/anteprima-doppioni-ai")
+def admin_anteprima_doppioni_ai():
+    """Anteprima: trova i nodi ai_ vecchi (vuoti) che duplicano un mio nodo ing- dettagliato (stesso nome).
+    NON tocca nulla. Per decidere l'unione."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # nomi che hanno SIA un nodo ai_ SIA un nodo ing- con caratteristica
+        cur.execute("""SELECT LOWER(a.name), a.id, i.id
+                       FROM nodes a JOIN nodes i ON LOWER(a.name)=LOWER(i.name)
+                       WHERE a.id LIKE 'ai_%%' AND i.id LIKE 'ing-%%'
+                       AND (i.data ? 'caratteristica') AND (i.data->>'caratteristica') != ''
+                       LIMIT 40""")
+        coppie = [{"nome": r[0], "ai_vuoto": r[1], "ing_dettagliato": r[2]} for r in cur.fetchall()]
+        cur.execute("""SELECT COUNT(*) FROM nodes a JOIN nodes i ON LOWER(a.name)=LOWER(i.name)
+                       WHERE a.id LIKE 'ai_%%' AND i.id LIKE 'ing-%%' AND (i.data ? 'caratteristica')""")
+        tot = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"totale_doppioni_ai": tot, "esempi": coppie})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
