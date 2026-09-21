@@ -10646,3 +10646,49 @@ def admin_aggiungi_legumi_dispensa():
         return jsonify({"aggiunti": aggiunti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/arricchisci-esistenti")
+def admin_arricchisci_esistenti():
+    """Arricchisce i nodi che esistevano gia' (Ahn grezzi) col nome delle varieta' che ho aggiunto:
+    gli inietta proprieta', caratteristica, uso, operativo (invece di lasciarli vuoti perche' 'gia esistono')."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # nome esatto -> dati da iniettare (i casi trovati vuoti)
+    ARRICCHISCI = {
+        "Bergamotto": {"caratteristica":"Agrume calabrese, amaro e profumatissimo","uso_tipico":"Earl Grey, profumi, dolci","categoria":"frutta",
+                       "proprieta":{"acido":7,"amaro":5,"aroma_fresco":9,"dolce":2},"operativo":{"yield":40,"stagione":"inverno","allergeni":[]}},
+        "Limone di Sorrento IGP": {"caratteristica":"Buccia spessa e profumata, succoso, poco acido","uso_tipico":"delizia, limoncello, pesce","categoria":"frutta",
+                       "proprieta":{"acido":8,"aroma_fresco":9,"amaro":2},"operativo":{"yield":45,"stagione":"tutto l'anno","allergeni":[]}},
+        "Pepe di Sichuan": {"caratteristica":"Agrumato, anestetizzante, non piccante ma pungente","uso_tipico":"cucina asiatica, carni","categoria":"spezia",
+                       "proprieta":{"aroma_fresco":5,"piccante":3,"termico":2,"amaro":2},"operativo":{"yield":100,"allergeni":[]}},
+        "Salvia": {"caratteristica":"Vellutata, balsamica, intensa","uso_tipico":"burro e salvia, carni","categoria":"erba",
+                       "proprieta":{"aroma_caldo":5,"amaro":3,"astringente":2},"operativo":{"yield":95,"allergeni":[]}},
+        "Colatura di alici di Cetara": {"caratteristica":"Liquido ambrato da alici, umami potentissimo","uso_tipico":"spaghetti, insaporire","categoria":"condimento",
+                       "proprieta":{"umami":10,"salato":9,"fermentato":6},"operativo":{"yield":100,"allergeni":["pesce"]}},
+    }
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        arricchiti = 0
+        for nome, info in ARRICCHISCI.items():
+            cur.execute("SELECT id, data FROM nodes WHERE LOWER(name)=LOWER(%s) AND type IN ('Ingrediente','Prodotto') ORDER BY (data ? 'proprieta') ASC LIMIT 1", (nome,))
+            r = cur.fetchone()
+            if not r: continue
+            nid, data = r
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            # proprieta complete (riempio le 15)
+            pr = {k: info["proprieta"].get(k, 0) for k in P}
+            dd["proprieta"] = pr
+            dd["caratteristica"] = info["caratteristica"]
+            dd["uso_tipico"] = info["uso_tipico"]
+            dd["categoria"] = info["categoria"]
+            dd["operativo"] = info["operativo"]
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            arricchiti += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"arricchiti": arricchiti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
