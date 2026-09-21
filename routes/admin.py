@@ -10514,3 +10514,69 @@ def admin_aggiungi_verdure_erbe():
         return jsonify({"aggiunti": aggiunti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-frutta-salumi")
+def admin_aggiungi_frutta_salumi():
+    """Profondita' frutta + salumi: varieta' reali come nodi con caratteristica, uso, proprieta', operativo."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    ITEMS = [
+        # FRUTTA
+        ("Limone di Sorrento IGP", "lemon", "frutta", "Buccia spessa e profumata, succoso, poco acido", "delizia, limoncello, pesce", {"acido":8,"aroma_fresco":9,"amaro":2}, 45, "tutto l'anno", ["nessuno"]),
+        ("Limone di Amalfi (sfusato)", "lemon", "frutta", "Allungato, buccia ricca di oli essenziali", "granita, dolci, crudo", {"acido":8,"aroma_fresco":9}, 45, "tutto l'anno", []),
+        ("Arancia rossa di Sicilia IGP", "orange", "frutta", "Polpa rossa (antociani), succosa, dolce-acidula", "spremuta, insalata, dolci", {"acido":5,"dolce":6,"aroma_fresco":6}, 55, "inverno", []),
+        ("Bergamotto", "bergamot", "frutta", "Agrume calabrese, amaro e profumatissimo", "Earl Grey, profumi, dolci", {"acido":7,"amaro":5,"aroma_fresco":9}, 40, "inverno", []),
+        ("Fico bianco del Cilento DOP", "fig", "frutta", "Dolce, polpa chiara, delicato", "crudo, confetture, con salumi", {"dolce":8,"corposita":3}, 90, "estate", []),
+        ("Pesca di Verona IGP (percoca)", "peach", "frutta", "Polpa gialla soda, dolce, da sciroppo", "sciroppo, dolci, crudo", {"dolce":7,"acido":3,"aroma_fresco":5}, 88, "estate", []),
+        ("Fragola di Nemi", "strawberry", "frutta", "Piccola, profumata, dolce-acidula, laziale", "crudo, dolci", {"dolce":7,"acido":5,"aroma_fresco":7}, 92, "primavera", []),
+        ("Mela Annurca IGP", "apple", "frutta", "Campana, soda, croccante, acidula", "crudo, forno, dolci", {"dolce":5,"acido":4,"croccante":5}, 88, "autunno", []),
+        ("Uva fragola", "grape", "frutta", "Aromatica, dolce, sentore di fragola", "crudo, succo, dolci", {"dolce":7,"aroma_fresco":5}, 85, "autunno", []),
+        # SALUMI
+        ("Guanciale amatriciano", "pork", "salume", "Guancia di maiale stagionata, grasso pregiato, pepata", "amatriciana, gricia, carbonara", {"grasso":9,"salato":7,"umami":6,"aroma_caldo":4}, 95, "tutto l'anno", []),
+        ("Pancetta tesa", "pork", "salume", "Pancia stagionata, grasso e magro alternati", "sughi, involtini", {"grasso":8,"salato":6,"umami":5}, 95, "tutto l'anno", []),
+        ("Prosciutto di Parma DOP", "ham", "salume", "Crudo dolce, stagionato, magro", "crudo, con melone, panini", {"salato":5,"umami":7,"grasso":4,"fermentato":6}, 90, "tutto l'anno", []),
+        ("Prosciutto di San Daniele DOP", "ham", "salume", "Crudo friulano, dolce, stagionatura lunga", "crudo, affettato", {"salato":5,"umami":7,"fermentato":6}, 90, "tutto l'anno", []),
+        ("Mortadella di Bologna IGP", "pork", "salume", "Cotto, morbido, con lardelli e pistacchio", "panini, crudo, spuma", {"salato":5,"grasso":7,"umami":6}, 98, "tutto l'anno", ["frutta a guscio"]),
+        ("Nduja di Spilinga", "pork", "salume", "Salume spalmabile piccantissimo calabrese", "pizza, pasta, crostini", {"grasso":7,"salato":6,"piccante":9,"umami":5,"aroma_caldo":5}, 98, "tutto l'anno", []),
+        ("Speck Alto Adige IGP", "ham", "salume", "Crudo affumicato, aromatico, tirolese", "crudo, canederli, panini", {"salato":6,"umami":6,"aroma_caldo":6,"fermentato":5}, 92, "tutto l'anno", []),
+        ("Bresaola della Valtellina IGP", "beef", "salume", "Manzo stagionato, magrissimo, delicato", "crudo con rucola e grana", {"salato":5,"umami":7,"grasso":1,"fermentato":5}, 92, "tutto l'anno", []),
+        ("Salame Milano", "pork", "salume", "Grana fine, stagionato, equilibrato", "panini, taglieri", {"salato":6,"grasso":7,"umami":6,"fermentato":6}, 95, "tutto l'anno", []),
+        ("Lardo di Colonnata IGP", "pork", "salume", "Lardo stagionato nel marmo con erbe, fondente", "crostini caldi, avvolgere", {"grasso":10,"salato":6,"aroma_caldo":4}, 98, "tutto l'anno", []),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        aggiunti = 0
+        for nome, gen, cat, carat, uso, prop_ov, yld, stag, allerg in ITEMS:
+            nid = "ing-" + nome.lower().replace(" ","-").replace("(","").replace(")","").replace("'","")
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+            if cur.fetchone(): continue
+            prop = {"salato":prop_ov.get("salato",0),"acido":prop_ov.get("acido",0),"dolce":prop_ov.get("dolce",0),
+                    "amaro":prop_ov.get("amaro",0),"umami":prop_ov.get("umami",0),"grasso":prop_ov.get("grasso",0),
+                    "corposita":prop_ov.get("corposita",3),"croccante":prop_ov.get("croccante",0),"astringente":0,
+                    "piccante":prop_ov.get("piccante",0),"termico":prop_ov.get("termico",1),
+                    "aroma_fresco":prop_ov.get("aroma_fresco",0),"aroma_caldo":prop_ov.get("aroma_caldo",1),
+                    "effervescenza":0,"fermentato":prop_ov.get("fermentato",0)}
+            sl = 90 if cat=="salume" else 6
+            cons = "frigo, sottovuoto" if cat=="salume" else "fresco/frigo"
+            operativo = {"yield": yld, "scarto_perc": 100-yld, "stagione": stag,
+                         "conservazione": cons, "shelf_life_giorni": sl,
+                         "allergeni": [] if allerg==["nessuno"] else allerg}
+            data = {"nome": nome, "disciplina": "cucina", "categoria": cat, "caratteristica": carat,
+                    "uso_tipico": uso, "proprieta": prop, "operativo": operativo}
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                        (nid, nome, json.dumps(data, ensure_ascii=False)))
+            cur.execute("""SELECT id FROM nodes WHERE id LIKE 'ahn_%%' AND LOWER(name) LIKE %s LIMIT 1""", (f"%{gen}%",))
+            rg = cur.fetchone()
+            if rg:
+                cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (rg[0],))
+                for to_id, cdata in cur.fetchall():
+                    cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (nid,to_id,cstr))
+            aggiunti += 1; conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"aggiunti": aggiunti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
