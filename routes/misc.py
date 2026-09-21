@@ -784,3 +784,64 @@ def nodo_completo(nodo_id):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/ingrediente-fenomeni/<nodo_id>", methods=["GET"])
+def ingrediente_fenomeni(nodo_id):
+    """Vista FENOMENI del grafo: i fenomeni scientifici collegati a un ingrediente (Maillard, pectina...)."""
+    from flask import jsonify
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
+        rows = db.execute("SELECT id, name FROM nodes WHERE (id=? OR LOWER(name)=LOWER(?)) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (nodo_id, nodo_id)).fetchall()
+        if not rows:
+            return jsonify({"errore": "non trovato"}), 404
+        nid = _c(rows[0],"id",0); nome = _c(rows[0],"name",1)
+        fen = []
+        try:
+            r = db.execute("""SELECT DISTINCT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                              WHERE e.from_id=? AND n2.type='Fenomeno' LIMIT 12""", (nid,)).fetchall()
+            fen = [_c(x,"name",0) for x in r]
+        except Exception: pass
+        return jsonify({"centro": nome, "fenomeni": fen, "totale": len(fen)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/ingrediente-tecniche/<nodo_id>", methods=["GET"])
+def ingrediente_tecniche(nodo_id):
+    """Vista TECNICHE del grafo: le tecniche applicabili a un ingrediente (dal campo uso_tipico + euristica)."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE (id=? OR LOWER(name)=LOWER(?)) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (nodo_id, nodo_id)).fetchall()
+        if not rows:
+            return jsonify({"errore": "non trovato"}), 404
+        nid = _c(rows[0],"id",0); nome = _c(rows[0],"name",1); data = _c(rows[0],"data",2)
+        dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+        # tecniche dal campo uso_tipico + categoria
+        tecniche = set()
+        uso = (dd.get("uso_tipico","") or "").lower()
+        cat = dd.get("categoria","")
+        MAPPA_TECNICHE = {
+            "griglia":"Grigliatura","forno":"Cottura al forno","frigg":"Frittura","fritto":"Frittura",
+            "brasa":"Brasatura","bollit":"Bollitura","lessat":"Lessatura","confit":"Confit",
+            "riduzione":"Riduzione","essicca":"Essiccazione","affumica":"Affumicatura","ferment":"Fermentazione",
+            "crudo":"Crudo/Marinatura","marina":"Marinatura","risott":"Mantecatura","vellutat":"Vellutata",
+            "spuma":"Spuma","gel":"Gelificazione","sciropp":"Sciroppo","salsa":"Salsa"}
+        for k, v in MAPPA_TECNICHE.items():
+            if k in uso: tecniche.add(v)
+        # tecniche tipiche per categoria (se poche)
+        if cat == "carne_bovina" and len(tecniche) < 3:
+            tecniche.update(["Grigliatura","Brasatura","Scottatura"])
+        elif cat == "pesce" and len(tecniche) < 3:
+            tecniche.update(["Crudo/Marinatura","Cottura al forno","Scottatura"])
+        elif cat in ("verdura","legume") and len(tecniche) < 2:
+            tecniche.update(["Bollitura","Saltare in padella"])
+        return jsonify({"centro": nome, "tecniche": sorted(tecniche), "totale": len(tecniche)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
