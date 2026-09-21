@@ -10422,3 +10422,27 @@ def admin_collega_composti_esteso():
         return jsonify({"ingredienti_collegati": collegati, "composti_ereditati": archi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/vedi-data-raw")
+def admin_vedi_data_raw():
+    """Mostra il data RAW di un ingrediente per debug (quali chiavi ha davvero)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    nome = request.args.get("nome", "Filetto di manzo")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE LOWER(name)=LOWER(%s) LIMIT 1", (nome,))
+        r = cur.fetchone()
+        if not r:
+            return jsonify({"errore": "non trovato"})
+        nid, nm, data = r
+        dd = data if isinstance(data, dict) else json.loads(data)
+        cur.close(); conn.close()
+        return jsonify({"id": nid, "nome": nm, "chiavi_data": list(dd.keys()),
+                        "ha_operativo": "operativo" in dd, "ha_proprieta": "proprieta" in dd,
+                        "operativo_valore": dd.get("operativo")})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
