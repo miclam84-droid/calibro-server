@@ -727,6 +727,7 @@ def scheda_ingrediente(ingrediente_id):
             "categoria": cat,
             "origine": dd.get("origine",""),
             "proprieta_principali": prop_alte,
+            "operativo": dd.get("operativo", {}),
             "dialoga_con": dialoga,
         })
     except Exception as e:
