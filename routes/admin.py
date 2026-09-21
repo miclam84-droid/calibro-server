@@ -10580,3 +10580,69 @@ def admin_aggiungi_frutta_salumi():
         return jsonify({"aggiunti": aggiunti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-legumi-dispensa")
+def admin_aggiungi_legumi_dispensa():
+    """Profondita' legumi/cereali + dispensa/condimenti: tipi reali come nodi con caratteristica, uso,
+    proprieta', operativo."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    ITEMS = [
+        # LEGUMI/CEREALI
+        ("Fagiolo cannellino", "bean", "legume", "Bianco, piccolo, cremoso, buccia sottile", "zuppe, contorni, pasta e fagioli", {"corposita":4,"umami":3,"dolce":2}, 100, "secco/anno", []),
+        ("Fagiolo borlotto", "bean", "legume", "Screziato, saporito, cremoso da cotto", "pasta e fagioli, zuppe", {"corposita":5,"umami":4,"dolce":2}, 100, "secco/anno", []),
+        ("Cece di Cicerale", "chickpea", "legume", "Piccolo, saporito, buccia fine, cilentano", "hummus, zuppe, farinata", {"corposita":5,"umami":4,"dolce":2,"aroma_caldo":2}, 100, "secco/anno", []),
+        ("Lenticchia di Castelluccio IGP", "lentil", "legume", "Piccola, non si sfalda, saporita, umbra", "zuppe, cotechino, contorni", {"corposita":4,"umami":4,"aroma_caldo":2}, 100, "secco/anno", []),
+        ("Fava fresca", "broad_bean", "legume", "Verde, dolce, tenera da cruda", "crudo con pecorino, vignarola", {"dolce":4,"aroma_fresco":4,"corposita":3}, 40, "primavera", []),
+        ("Pisello fresco", "pea", "legume", "Dolce, tenero, primaverile", "risi e bisi, contorni", {"dolce":5,"aroma_fresco":4}, 40, "primavera", []),
+        ("Riso Carnaroli", "rice", "cereale", "Chicco grande, tiene la cottura, molto amido", "risotti", {"corposita":4,"dolce":2}, 100, "secco/anno", []),
+        ("Riso Arborio", "rice", "cereale", "Amidaceo, cremoso, per risotti classici", "risotti, supplì", {"corposita":4,"dolce":2}, 100, "secco/anno", []),
+        ("Riso Vialone Nano", "rice", "cereale", "Piccolo, veneto, assorbe bene i condimenti", "risotti all'onda", {"corposita":4}, 100, "secco/anno", []),
+        # DISPENSA/CONDIMENTI
+        ("Olio EVO taggiasca", "olive_oil", "condimento", "Ligure, delicato, dolce, mandorlato", "pesce, crudo, dolci", {"grasso":8,"amaro":2,"aroma_fresco":3}, 100, "anno", []),
+        ("Olio EVO coratina", "olive_oil", "condimento", "Pugliese, intenso, amaro e piccante, ricco di polifenoli", "zuppe, carne, bruschetta", {"grasso":8,"amaro":5,"piccante":3,"aroma_fresco":4}, 100, "anno", []),
+        ("Aceto Balsamico Tradizionale di Modena DOP", "vinegar", "condimento", "Invecchiato, denso, dolce-acido, sciropposo", "gocce su parmigiano, carne, fragole", {"acido":6,"dolce":6,"corposita":4,"fermentato":7}, 100, "anno", []),
+        ("Colatura di alici di Cetara", "anchovy", "condimento", "Liquido ambrato da alici, umami potentissimo", "spaghetti, insaporire", {"umami":10,"salato":9,"fermentato":6}, 100, "anno", ["pesce"]),
+        ("Miele di castagno", "honey", "condimento", "Scuro, amarognolo, aromatico", "formaggi, dolci", {"dolce":8,"amaro":3,"aroma_caldo":4}, 100, "anno", []),
+        ("Miele di acacia", "honey", "condimento", "Chiaro, delicato, liquido, molto dolce", "dolci, bevande, formaggi freschi", {"dolce":9,"aroma_fresco":2}, 100, "anno", []),
+        ("Sale di Cervia", "salt", "condimento", "Marino integrale, dolce, ricco di minerali", "tutto", {"salato":9}, 100, "anno", []),
+        ("Pepe di Sichuan", "pepper", "spezia", "Agrumato, anestetizzante, non piccante ma pungente", "cucina asiatica, carni", {"aroma_fresco":5,"piccante":3,"termico":2}, 100, "anno", []),
+        ("Zafferano di Navelli DOP", "saffron", "spezia", "Abruzzese, aroma intenso, colore oro", "risotto alla milanese, dolci", {"amaro":3,"aroma_caldo":6,"aroma_fresco":2}, 100, "anno", []),
+        ("Peperoncino di Diamante", "chili", "spezia", "Calabrese, piccante e fruttato", "nduja, sughi, olio piccante", {"piccante":8,"aroma_caldo":3,"dolce":2}, 100, "anno", []),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        aggiunti = 0
+        for nome, gen, cat, carat, uso, prop_ov, yld, stag, allerg in ITEMS:
+            nid = "ing-" + nome.lower().replace(" ","-").replace("(","").replace(")","").replace("'","")
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+            if cur.fetchone(): continue
+            prop = {"salato":prop_ov.get("salato",0),"acido":prop_ov.get("acido",0),"dolce":prop_ov.get("dolce",0),
+                    "amaro":prop_ov.get("amaro",0),"umami":prop_ov.get("umami",0),"grasso":prop_ov.get("grasso",0),
+                    "corposita":prop_ov.get("corposita",2),"croccante":0,"astringente":0,
+                    "piccante":prop_ov.get("piccante",0),"termico":prop_ov.get("termico",1),
+                    "aroma_fresco":prop_ov.get("aroma_fresco",0),"aroma_caldo":prop_ov.get("aroma_caldo",1),
+                    "effervescenza":0,"fermentato":prop_ov.get("fermentato",0)}
+            sl = 365 if cat in ("legume","cereale","condimento","spezia") else 5
+            operativo = {"yield": yld, "scarto_perc": 100-yld, "stagione": stag,
+                         "conservazione": "luogo secco" if cat in ("legume","cereale","spezia") else "dispensa",
+                         "shelf_life_giorni": sl, "allergeni": allerg}
+            data = {"nome": nome, "disciplina": "cucina", "categoria": cat, "caratteristica": carat,
+                    "uso_tipico": uso, "proprieta": prop, "operativo": operativo}
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                        (nid, nome, json.dumps(data, ensure_ascii=False)))
+            cur.execute("""SELECT id FROM nodes WHERE id LIKE 'ahn_%%' AND LOWER(name) LIKE %s LIMIT 1""", (f"%{gen}%",))
+            rg = cur.fetchone()
+            if rg:
+                cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (rg[0],))
+                for to_id, cdata in cur.fetchall():
+                    cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (nid,to_id,cstr))
+            aggiunti += 1; conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"aggiunti": aggiunti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
