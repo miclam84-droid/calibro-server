@@ -10668,6 +10668,14 @@ def admin_arricchisci_esistenti():
                        "proprieta":{"aroma_caldo":5,"amaro":3,"astringente":2},"operativo":{"yield":95,"allergeni":[]}},
         "Colatura di alici di Cetara": {"caratteristica":"Liquido ambrato da alici, umami potentissimo","uso_tipico":"spaghetti, insaporire","categoria":"condimento",
                        "proprieta":{"umami":10,"salato":9,"fermentato":6},"operativo":{"yield":100,"allergeni":["pesce"]}},
+        "Puntarelle": {"caratteristica":"Germogli di catalogna, croccanti, amari, romani","uso_tipico":"crude con acciuga e aglio","categoria":"verdura",
+                       "proprieta":{"amaro":6,"croccante":5,"aroma_fresco":3},"operativo":{"yield":60,"stagione":"inverno","allergeni":[]}},
+        "Polpo": {"caratteristica":"Mollusco, carne soda, da cuocere bene","uso_tipico":"bollito, grigliato, insalata","categoria":"pesce",
+                       "proprieta":{"umami":6,"corposita":6,"grasso":2},"operativo":{"yield":75,"allergeni":["molluschi"]}},
+        "Speck Alto Adige IGP": {"caratteristica":"Crudo affumicato, aromatico, tirolese","uso_tipico":"crudo, canederli, panini","categoria":"salume",
+                       "proprieta":{"salato":6,"umami":6,"aroma_caldo":6,"fermentato":5},"operativo":{"yield":92,"allergeni":[]}},
+        "Lardo di Colonnata IGP": {"caratteristica":"Lardo stagionato nel marmo con erbe, fondente","uso_tipico":"crostini caldi, avvolgere","categoria":"salume",
+                       "proprieta":{"grasso":10,"salato":6,"aroma_caldo":4},"operativo":{"yield":98,"allergeni":[]}},
     }
     P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
     try:
