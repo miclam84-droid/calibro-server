@@ -719,7 +719,7 @@ def scheda_ingrediente(ingrediente_id):
         # con cosa dialoga (abbinamenti aromatici)
         abb = db.execute("SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8", (nid,)).fetchall()
         dialoga = [_c(x,"name",0) for x in abb]
-        prop_alte = {k: v for k, v in prop.items() if abs(v) >= 5} if prop else {}
+        prop_alte = {k: v for k, v in prop.items() if abs(v) >= 4} if prop else {}
         return jsonify({
             "id": nid, "nome": nome,
             "caratteristica": dd.get("caratteristica",""),
@@ -750,7 +750,7 @@ def nodo_completo(nodo_id):
         nid = _c(r,"id",0); nome = _c(r,"name",1); data = _c(r,"data",2)
         dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
         prop = dd.get("proprieta", {})
-        prop_alte = {k: v for k, v in prop.items() if abs(v) >= 5} if prop else {}
+        prop_alte = {k: v for k, v in prop.items() if abs(v) >= 4} if prop else {}
         # fenomeni collegati (ogni query a prova di errore: una rotta non azzera tutto)
         fenomeni = []
         try:
