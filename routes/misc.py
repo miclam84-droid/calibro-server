@@ -727,7 +727,6 @@ def scheda_ingrediente(ingrediente_id):
             "categoria": cat,
             "origine": dd.get("origine",""),
             "proprieta_principali": prop_alte,
-            "operativo": dd.get("operativo", {}),
             "dialoga_con": dialoga,
         })
     except Exception as e:
@@ -752,17 +751,24 @@ def nodo_completo(nodo_id):
         dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
         prop = dd.get("proprieta", {})
         prop_alte = {k: v for k, v in prop.items() if abs(v) >= 5} if prop else {}
-        # fenomeni collegati
-        fen = db.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
-                            WHERE e.from_id=? AND n2.type='Fenomeno' LIMIT 5""", (nid,)).fetchall()
-        fenomeni = [_c(x,"name",0) for x in fen]
-        # dialoga con (abbinamenti)
-        abb = db.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
-                            WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8""", (nid,)).fetchall()
-        dialoga = [_c(x,"name",0) for x in abb]
-        # ricette che lo usano
-        ric = db.execute("""SELECT DISTINCT r.nome FROM ricette r WHERE LOWER(r.ingredienti) LIKE LOWER(?) LIMIT 5""", (f"%{nome}%",)).fetchall()
-        ricette = [_c(x,"nome",0) for x in ric]
+        # fenomeni collegati (ogni query a prova di errore: una rotta non azzera tutto)
+        fenomeni = []
+        try:
+            fen = db.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                                WHERE e.from_id=? AND n2.type='Fenomeno' LIMIT 5""", (nid,)).fetchall()
+            fenomeni = [_c(x,"name",0) for x in fen]
+        except Exception: pass
+        dialoga = []
+        try:
+            abb = db.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                                WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8""", (nid,)).fetchall()
+            dialoga = [_c(x,"name",0) for x in abb]
+        except Exception: pass
+        ricette = []
+        try:
+            ric = db.execute("""SELECT DISTINCT nome FROM ricette WHERE LOWER(ingredienti) LIKE LOWER(?) LIMIT 5""", (f"%{nome}%",)).fetchall()
+            ricette = [_c(x,"nome",0) for x in ric]
+        except Exception: pass
         return jsonify({
             "id": nid, "nome": nome,
             "caratteristica": dd.get("caratteristica",""),
