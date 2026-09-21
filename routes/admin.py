@@ -10767,3 +10767,39 @@ def admin_anteprima_doppioni_ai():
         return jsonify({"totale_doppioni_ai": tot, "esempi": coppie})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/unisci-doppioni-ai")
+def admin_unisci_doppioni_ai():
+    """Unisce i doppioni ai_: sposta gli archi del nodo ai_ vuoto sul mio ing- dettagliato, poi cancella
+    l'ai_. Solo i casi dell'anteprima (pochi, sicuri)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT a.id, i.id FROM nodes a JOIN nodes i ON LOWER(a.name)=LOWER(i.name)
+                       WHERE a.id LIKE 'ai_%%' AND i.id LIKE 'ing-%%'
+                       AND (i.data ? 'caratteristica') AND (i.data->>'caratteristica') != ''""")
+        coppie = cur.fetchall()
+        uniti = 0; archi = 0
+        for ai_id, ing_id in coppie:
+            # sposto gli archi dell'ai_ sul mio ing- (evitando duplicati e self-loop)
+            cur.execute("""UPDATE edges SET from_id=%s WHERE from_id=%s AND to_id!=%s
+                           AND NOT EXISTS (SELECT 1 FROM edges e2 WHERE e2.from_id=%s AND e2.to_id=edges.to_id AND e2.relation=edges.relation)""",
+                        (ing_id, ai_id, ing_id, ing_id))
+            archi += cur.rowcount
+            cur.execute("""UPDATE edges SET to_id=%s WHERE to_id=%s AND from_id!=%s
+                           AND NOT EXISTS (SELECT 1 FROM edges e2 WHERE e2.to_id=%s AND e2.from_id=edges.from_id AND e2.relation=edges.relation)""",
+                        (ing_id, ai_id, ing_id, ing_id))
+            archi += cur.rowcount
+            # cancello archi residui dell'ai_ e il nodo
+            cur.execute("DELETE FROM edges WHERE from_id=%s OR to_id=%s", (ai_id, ai_id))
+            cur.execute("DELETE FROM nodes WHERE id=%s", (ai_id,))
+            uniti += 1
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"doppioni_uniti": uniti, "archi_spostati": archi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
