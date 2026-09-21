@@ -10446,3 +10446,71 @@ def admin_vedi_data_raw():
                         "operativo_valore": dd.get("operativo")})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-verdure-erbe")
+def admin_aggiungi_verdure_erbe():
+    """Profondita' verdure/ortaggi + erbe aromatiche: varieta' e tipi reali come nodi con caratteristica,
+    uso, proprieta', operativo (yield/stagione/allergeni). Grounding su prodotti reali del banco."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # (nome, gemello_ahn, categoria, caratteristica, uso, prop_override, yield%, stagione)
+    ITEMS = [
+        # VERDURE/ORTAGGI
+        ("Zucchina romanesca", "zucchini", "verdura", "Costoluta, soda, saporita, tipica laziale", "fiori ripieni, pasta, griglia", {"dolce":3,"umami":3,"corposita":3}, 90, "estate"),
+        ("Melanzana violetta di Firenze", "eggplant", "verdura", "Grande, tonda, polpa dolce e poco amara", "parmigiana, ripieni", {"amaro":2,"corposita":4,"umami":3}, 85, "estate"),
+        ("Melanzana lunga napoletana", "eggplant", "verdura", "Allungata, buccia sottile, poca acqua", "friggere, grigliare", {"amaro":2,"corposita":3}, 88, "estate"),
+        ("Peperone di Carmagnola", "bell_pepper", "verdura", "Dolce, carnoso, piemontese IGP", "peperonata, ripieni, crudo", {"dolce":5,"croccante":4,"aroma_fresco":3}, 90, "estate"),
+        ("Friggitello", "bell_pepper", "verdura", "Piccolo, verde, dolce, si frigge intero", "padella, contorno", {"dolce":3,"amaro":2,"aroma_fresco":3}, 92, "estate"),
+        ("Carciofo romanesco (mammola)", "artichoke", "verdura", "Tondo, senza spine, tenero, laziale IGP", "alla romana, alla giudia", {"amaro":5,"astringente":3,"umami":4}, 45, "primavera"),
+        ("Carciofo violetto di Sant'Erasmo", "artichoke", "verdura", "Piccolo, violetto, tenero, veneziano", "crudo, fritto", {"amaro":4,"astringente":3}, 45, "primavera"),
+        ("Radicchio di Treviso IGP", "chicory", "verdura", "Allungato, amaro, croccante, veneto", "risotto, griglia, crudo", {"amaro":6,"astringente":3,"croccante":3}, 88, "inverno"),
+        ("Radicchio di Chioggia", "chicory", "verdura", "Tondo, rosso, amaro medio", "insalata, griglia", {"amaro":5,"croccante":3}, 88, "inverno"),
+        ("Puntarelle", "chicory", "verdura", "Germogli di catalogna, croccanti, amari, romani", "crude con acciuga e aglio", {"amaro":6,"croccante":5,"aroma_fresco":3}, 60, "inverno"),
+        ("Cavolo nero toscano", "cabbage", "verdura", "Foglie scure, saporite, resistenti", "ribollita, zuppe, chips", {"amaro":4,"umami":3,"corposita":3}, 75, "inverno"),
+        ("Zucca mantovana", "pumpkin", "verdura", "Polpa dolce e asciutta, buccia verde bitorzoluta", "tortelli, risotti, vellutate", {"dolce":6,"corposita":4,"umami":3}, 80, "autunno"),
+        ("Patata di Bologna DOP", "potato", "verdura", "Pasta gialla, soda, versatile", "gnocchi, purè, forno", {"dolce":2,"corposita":4}, 85, "tutto l'anno"),
+        ("Patata viola (vitelotte)", "potato", "verdura", "Polpa viola, nocciolata, scenografica", "purè colorato, chips", {"dolce":2,"corposita":4,"aroma_caldo":2}, 82, "autunno"),
+        ("Asparago verde", "asparagus", "verdura", "Turione verde, erbaceo, tenero in punta", "risotti, uova, griglia", {"amaro":3,"umami":4,"aroma_fresco":4}, 70, "primavera"),
+        ("Asparago bianco di Bassano DOP", "asparagus", "verdura", "Coltivato senza luce, delicato, dolce", "lessato, con uova", {"amaro":2,"dolce":3,"umami":4}, 60, "primavera"),
+        # ERBE AROMATICHE
+        ("Basilico genovese DOP", "basil", "erba", "Foglia piccola, profumo intenso, poco mentolato", "pesto, crudo", {"aroma_fresco":9,"amaro":2}, 95, "estate"),
+        ("Menta romana (mentuccia)", "mint", "erba", "Piccola, intensa, tipica romana", "carciofi, trippa", {"aroma_fresco":9,"termico":-7}, 95, "primavera"),
+        ("Prezzemolo riccio", "parsley", "erba", "Decorativo, sapore piu' delicato", "guarnizione, salse", {"aroma_fresco":6,"amaro":2}, 95, "tutto l'anno"),
+        ("Salvia", "sage", "erba", "Vellutata, balsamica, intensa", "burro e salvia, carni", {"aroma_caldo":5,"amaro":3,"astringente":2}, 95, "tutto l'anno"),
+        ("Rosmarino", "rosemary", "erba", "Aghiforme, resinoso, persistente", "arrosti, patate, focaccia", {"aroma_caldo":6,"amaro":2}, 95, "tutto l'anno"),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        aggiunti = 0
+        for nome, gen, cat, carat, uso, prop_ov, yld, stag in ITEMS:
+            nid = "ing-" + nome.lower().replace(" ","-").replace("(","").replace(")","").replace("'","")
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+            if cur.fetchone(): continue
+            prop = {"salato":0,"acido":prop_ov.get("acido",0),"dolce":prop_ov.get("dolce",2),
+                    "amaro":prop_ov.get("amaro",0),"umami":prop_ov.get("umami",2),"grasso":0,
+                    "corposita":prop_ov.get("corposita",2),"croccante":prop_ov.get("croccante",0),
+                    "astringente":prop_ov.get("astringente",0),"piccante":0,"termico":prop_ov.get("termico",-1),
+                    "aroma_fresco":prop_ov.get("aroma_fresco",3),"aroma_caldo":prop_ov.get("aroma_caldo",1),
+                    "effervescenza":0,"fermentato":0}
+            operativo = {"yield": yld, "scarto_perc": 100-yld, "stagione": stag,
+                         "conservazione": "frigo cassetto verdura" if cat=="verdura" else "frigo/fresco",
+                         "shelf_life_giorni": 5 if cat=="verdura" else 4, "allergeni": []}
+            data = {"nome": nome, "disciplina": "cucina", "categoria": cat, "caratteristica": carat,
+                    "uso_tipico": uso, "proprieta": prop, "operativo": operativo}
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                        (nid, nome, json.dumps(data, ensure_ascii=False)))
+            cur.execute("""SELECT id FROM nodes WHERE id LIKE 'ahn_%%' AND LOWER(name) LIKE %s LIMIT 1""", (f"%{gen}%",))
+            rg = cur.fetchone()
+            if rg:
+                cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (rg[0],))
+                for to_id, cdata in cur.fetchall():
+                    cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (nid,to_id,cstr))
+            aggiunti += 1; conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"aggiunti": aggiunti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
