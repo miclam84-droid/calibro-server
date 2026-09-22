@@ -845,3 +845,42 @@ def ingrediente_tecniche(nodo_id):
         return jsonify({"centro": nome, "tecniche": sorted(tecniche), "totale": len(tecniche)})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/cifra/ingrediente/<nodo_id>", methods=["GET"])
+def cifra_ingrediente(nodo_id):
+    """Per CIFRA: dati operativi di un ingrediente per food cost + HACCP in un colpo."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE (id=? OR LOWER(name)=LOWER(?)) AND type IN ('Ingrediente','Prodotto') LIMIT 10", (nodo_id, nodo_id)).fetchall()
+        if not rows:
+            return jsonify({"errore": "ingrediente non trovato"}), 404
+        def _ha_op(row):
+            dt = _c(row,"data",2)
+            try:
+                d2 = dt if isinstance(dt, dict) else (_j.loads(dt) if dt else {})
+                return 'operativo' in d2
+            except: return False
+        rows = sorted(rows, key=_ha_op, reverse=True)
+        r = rows[0]
+        nome = _c(r,"name",1); data = _c(r,"data",2)
+        dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+        op = dd.get("operativo", {})
+        yld = op.get("yield", 100)
+        molt = round(100 / yld, 3) if yld else 1.0
+        sl = op.get("shelf_life_giorni", 999)
+        if sl <= 2: semaforo = "rosso"
+        elif sl <= 7: semaforo = "giallo"
+        else: semaforo = "verde"
+        return jsonify({
+            "nome": nome, "yield_perc": yld, "scarto_perc": op.get("scarto_perc", 100-yld),
+            "moltiplicatore_costo_reale": molt, "allergeni": op.get("allergeni", []),
+            "shelf_life_giorni": sl, "conservazione": op.get("conservazione", ""),
+            "semaforo_haccp": semaforo, "stagione": op.get("stagione", ""),
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
