@@ -5095,3 +5095,82 @@ def assistente_galileo():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 500
+
+
+@bp.route("/v1/planner/lista-ordini", methods=["POST"])
+def planner_lista_ordini():
+    """OUTPUT KILLER del Planner (Rule #159): dato un insieme di ricette + coperti, aggrega gli
+    ingredienti in LISTA ORDINI (kg/L per ingrediente), applicando il yield (resa) di Matter.
+    Somma le quantita', converte, depura con lo scarto. Il painkiller che sostituisce l'Excel."""
+    from flask import request, jsonify
+    import psycopg2 as _pg, json as _j, re as _re
+    d = request.get_json(force=True) or {}
+    ricette_ids = d.get("ricette", [])   # lista di id o nomi ricetta
+    coperti = int(d.get("coperti", 1))    # moltiplicatore volume
+    if not ricette_ids:
+        return jsonify({"errore": "servono ricette"}), 400
+    def _num(q):
+        try:
+            m = _re.search(r"[\d.,]+", str(q));  return float(m.group(0).replace(",", ".")) if m else 0
+        except: return 0
+    # normalizzo unita' a grammi/ml (base)
+    def _to_base(qty, unita):
+        u = (unita or "").lower().strip()
+        if u in ("kg","l"): return qty*1000, ("g" if u=="kg" else "ml")
+        if u in ("g","ml","gr"): return qty, ("g" if u in ("g","gr") else "ml")
+        return qty, u  # pezzi, q.b., ecc.
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        aggregato = {}  # nome_ing -> {qty_base, unita, ricette:set}
+        ricette_trovate = []
+        for rid in ricette_ids:
+            _cur.execute("SELECT nome, ingredienti, porzioni FROM ricette WHERE id=%s OR LOWER(nome)=LOWER(%s) LIMIT 1", (str(rid), str(rid)))
+            r = _cur.fetchone()
+            if not r: continue
+            nome_ric, ingr, porz = r
+            ricette_trovate.append(nome_ric)
+            ingr_list = ingr if isinstance(ingr, list) else (_j.loads(ingr) if ingr else [])
+            # porzioni base della ricetta (default 1)
+            pbase = _num(porz) or 1
+            fattore = coperti / pbase if pbase else coperti
+            for ing in ingr_list:
+                nome_i = (ing.get("nome") or "").strip()
+                if not nome_i: continue
+                q = _num(ing.get("quantita")) * fattore
+                if q <= 0: continue
+                qb, ub = _to_base(q, ing.get("unita"))
+                key = nome_i.lower()
+                if key not in aggregato:
+                    aggregato[key] = {"nome": nome_i, "qty": 0, "unita": ub, "ricette": set()}
+                if aggregato[key]["unita"] == ub:
+                    aggregato[key]["qty"] += qb
+                aggregato[key]["ricette"].add(nome_ric)
+        # applico il yield di Matter (compro di piu' per lo scarto) e converto a kg/L
+        lista = []
+        for key, v in aggregato.items():
+            # cerco yield dell'ingrediente
+            _cur.execute("""SELECT data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                            AND LOWER(name) LIKE %s AND (data->>'operativo') IS NOT NULL LIMIT 1""", (f"%{key}%",))
+            ry = _cur.fetchone()
+            yld = 100
+            if ry:
+                dd = ry[0] if isinstance(ry[0], dict) else _j.loads(ry[0])
+                yld = dd.get("operativo", {}).get("yield", 100)
+            qty_da_comprare = v["qty"] / (yld/100) if yld else v["qty"]
+            # converto a kg/L se grande
+            unita = v["unita"]; q = qty_da_comprare
+            if unita == "g" and q >= 1000: q, unita = q/1000, "kg"
+            elif unita == "ml" and q >= 1000: q, unita = q/1000, "L"
+            lista.append({"ingrediente": v["nome"], "quantita": round(q, 2), "unita": unita,
+                          "yield_applicato": yld, "in_ricette": list(v["ricette"])[:5]})
+        lista.sort(key=lambda x: -x["quantita"])
+        _cur.close(); _release_conn(_c)
+        return jsonify({
+            "coperti": coperti,
+            "ricette_incluse": ricette_trovate,
+            "lista_ordini": lista,
+            "n_ingredienti": len(lista),
+            "nota": "Quantita' gia' maggiorate dello scarto (yield Matter). Pronte per l'ordine.",
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]}), 500
