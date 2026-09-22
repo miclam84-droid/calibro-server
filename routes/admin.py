@@ -10805,48 +10805,34 @@ def admin_unisci_doppioni_ai():
         return jsonify({"errore": str(e)[:150]})
 
 
-@bp.route("/admin/hq/stato-ecosistema")
-def admin_hq_stato_ecosistema():
-    """PANNELLO GALILEO-HQ: stato di salute dell'ecosistema in un colpo - grafo, contenuti, worker,
-    consumo assistente. Per il monitoraggio del solo-founder (evitare crash/blocchi a sorpresa)."""
+@bp.route("/admin/hq/crediti-ai")
+def admin_hq_crediti_ai():
+    """MONITOR CREDITI AI: consumo stimato dell'assistente + traccia il consumo cumulato per allertare
+    prima dell'esaurimento. Nota: OpenAI/Anthropic non espongono il saldo via API in modo affidabile,
+    quindi si traccia il CONSUMO nostro (token -> euro stimati) come proxy per l'alert."""
     from flask import request, jsonify
     import os, psycopg2, datetime
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
-    out = {"timestamp": datetime.datetime.now().isoformat()[:19]}
+    # prezzi indicativi per 1M token (input+output medio)
+    PREZZI = {"gpt-4o-mini": 0.30, "sonnet": 3.0, "gemini-flash": 0.10}
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # GRAFO: nodi, composti, proprieta, operativo
-        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
-        out["ingredienti"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'proprieta')")
-        out["con_proprieta"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'operativo')")
-        out["con_operativo"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'caratteristica') AND (data->>'caratteristica')!=''")
-        out["varieta_profonde"] = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='abbinamento_aromatico'")
-        out["archi_abbinamento"] = cur.fetchone()[0]
-        # CONTENUTI: ricette pubbliche/nascoste, portate da rivedere
-        try:
-            cur.execute("SELECT COUNT(*) FROM ricette WHERE pubblica=true")
-            out["ricette_pubbliche"] = cur.fetchone()[0]
-            cur.execute("SELECT COUNT(*) FROM ricette")
-            out["ricette_totali"] = cur.fetchone()[0]
-        except Exception: out["ricette"] = "n/d"
-        # ASSISTENTE: consumo di oggi (token per account)
-        oggi = datetime.date.today().isoformat()
-        try:
-            cur.execute("SELECT COUNT(DISTINCT account), COALESCE(SUM(token_usati),0) FROM assistente_uso WHERE giorno=%s", (oggi,))
-            r = cur.fetchone()
-            out["assistente_oggi"] = {"account_attivi": r[0], "token_totali": r[1]}
-        except Exception: out["assistente_oggi"] = "n/d"
-        # anomalie: ingredienti senza allergeni tra quelli con operativo
-        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                       AND (data ? 'operativo') AND NOT (data->'operativo' ? 'allergeni')""")
-        out["operativo_senza_allergeni"] = cur.fetchone()[0]
+        # consumo assistente per giorno (ultimi 7 giorni)
+        cur.execute("""SELECT giorno, COALESCE(SUM(token_usati),0) FROM assistente_uso
+                       GROUP BY giorno ORDER BY giorno DESC LIMIT 7""")
+        per_giorno = [{"giorno": r[0], "token": r[1], "costo_stimato_eur": round(r[1]/1_000_000*PREZZI["gpt-4o-mini"],4)} for r in cur.fetchall()]
+        # totale storico assistente
+        cur.execute("SELECT COALESCE(SUM(token_usati),0) FROM assistente_uso")
+        tot_token = cur.fetchone()[0]
         cur.close(); conn.close()
-        out["stato"] = "ok"
-        return jsonify(out)
+        costo_tot = round(tot_token/1_000_000*PREZZI["gpt-4o-mini"], 4)
+        return jsonify({
+            "assistente_token_totali": tot_token,
+            "assistente_costo_totale_eur": costo_tot,
+            "consumo_ultimi_7_giorni": per_giorno,
+            "nota": "Il saldo credito dei provider va controllato sui loro dashboard (non esposto via API). Qui si traccia il consumo dell'assistente come proxy.",
+            "modello_assistente": "gpt-4o-mini",
+        })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
