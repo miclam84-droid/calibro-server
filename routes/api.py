@@ -4489,6 +4489,32 @@ def flavour_network(ingrediente):
                 if condivisi:
                     nodo["perche"] = {"composti_condivisi": condivisi, "n_condivisi": len(composti_centro & comp_nodo)}
             nodi.append(nodo)
+        # Se pochi nodi hanno il perche (abbinamenti verso preparati senza composti),
+        # AGGIUNGO abbinamenti derivati dai composti condivisi (vera logica Ahn: il perche c'e sempre)
+        con_perche = sum(1 for x in nodi if x.get("perche"))
+        if id_centro and composti_centro and con_perche < 8:
+            _cur.execute("""SELECT n.name, COUNT(*) ov
+                            FROM edges e JOIN nodes n ON n.id=e.from_id
+                            WHERE e.relation='contiene_composto' AND e.to_id IN (
+                                SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto')
+                            AND e.from_id != %s AND n.type IN ('Ingrediente','Prodotto')
+                            AND n.name NOT LIKE '%%(%%'
+                            GROUP BY n.name HAVING COUNT(*) >= 2
+                            ORDER BY ov DESC LIMIT %s""", (id_centro, id_centro, n_max))
+            for nome, ov in _cur.fetchall():
+                if nome.lower() in visti: continue
+                visti.add(nome.lower())
+                # composti condivisi (il perche)
+                _cur.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                                JOIN nodes src ON src.id=e.from_id
+                                WHERE LOWER(src.name)=LOWER(%s) AND e.relation='contiene_composto' LIMIT 40""", (nome,))
+                comp_nodo = set(r[0] for r in _cur.fetchall())
+                condivisi = list(composti_centro & comp_nodo)[:5]
+                forza = min(99, 40 + int(ov) * 5)
+                nodo = {"nome": nome, "forza": forza}
+                if condivisi:
+                    nodo["perche"] = {"composti_condivisi": condivisi, "n_condivisi": len(composti_centro & comp_nodo)}
+                nodi.append(nodo)
         _cur.close(); _release_conn(_c)
         return jsonify({"centro": ingrediente, "nodi": nodi, "totale": len(nodi)})
     except Exception as e:
