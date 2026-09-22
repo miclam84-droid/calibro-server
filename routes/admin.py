@@ -10836,3 +10836,45 @@ def admin_hq_crediti_ai():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/hq/stato-ecosistema")
+def admin_hq_stato_ecosistema():
+    """PANNELLO GALILEO-HQ: stato di salute dell'ecosistema in un colpo."""
+    from flask import request, jsonify
+    import os, psycopg2, datetime
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    out = {"timestamp": datetime.datetime.now().isoformat()[:19]}
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+        out["ingredienti"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'proprieta')")
+        out["con_proprieta"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'operativo')")
+        out["con_operativo"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'caratteristica') AND (data->>'caratteristica')!=''")
+        out["varieta_profonde"] = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM edges WHERE relation='abbinamento_aromatico'")
+        out["archi_abbinamento"] = cur.fetchone()[0]
+        try:
+            cur.execute("SELECT COUNT(*) FROM ricette WHERE pubblica=true")
+            out["ricette_pubbliche"] = cur.fetchone()[0]
+            cur.execute("SELECT COUNT(*) FROM ricette")
+            out["ricette_totali"] = cur.fetchone()[0]
+        except Exception: out["ricette"] = "n/d"
+        oggi = datetime.date.today().isoformat()
+        try:
+            cur.execute("SELECT COUNT(DISTINCT account), COALESCE(SUM(token_usati),0) FROM assistente_uso WHERE giorno=%s", (oggi,))
+            r = cur.fetchone()
+            out["assistente_oggi"] = {"account_attivi": r[0], "token_totali": r[1]}
+        except Exception: out["assistente_oggi"] = "n/d"
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (data ? 'operativo') AND NOT (data->'operativo' ? 'allergeni')""")
+        out["operativo_senza_allergeni"] = cur.fetchone()[0]
+        cur.close(); conn.close()
+        out["stato"] = "ok"
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
