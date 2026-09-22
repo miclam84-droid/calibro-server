@@ -10878,3 +10878,73 @@ def admin_hq_stato_ecosistema():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-pasticceria-bar")
+def admin_aggiungi_pasticceria_bar():
+    """Profondita' pasticceria/dolci + bar/cocktail: ingredienti tecnici veri (i domini di Michele)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    ITEMS = [
+        ("Cioccolato fondente 70%", "cocoa", "pasticceria", "Fondente equilibrato, amaro medio, versatile", "ganache, mousse, temperaggio", {"amaro":6,"dolce":4,"grasso":6,"corposita":6,"aroma_caldo":6}, ["latte","soia"]),
+        ("Cioccolato fondente 85%", "cocoa", "pasticceria", "Molto amaro, poco zucchero, intenso", "degustazione, ganache intense", {"amaro":8,"dolce":2,"grasso":7,"astringente":4,"aroma_caldo":7}, ["latte","soia"]),
+        ("Cioccolato al latte", "cocoa", "pasticceria", "Dolce, cremoso, cacao basso", "praline, coperture, mousse", {"dolce":7,"grasso":6,"amaro":2,"corposita":5}, ["latte","soia"]),
+        ("Cioccolato bianco", "cocoa", "pasticceria", "Burro di cacao + latte + zucchero, no cacao", "ganache montate, decori", {"dolce":8,"grasso":7,"corposita":5}, ["latte","soia"]),
+        ("Cacao amaro in polvere", "cocoa", "pasticceria", "Cacao sgrassato, amaro intenso, colore scuro", "torte, spolvero, impasti", {"amaro":8,"aroma_caldo":7,"astringente":4}, []),
+        ("Pasta di nocciola", "hazelnut", "pasticceria", "Nocciole tostate in pasta, oleosa, aromatica", "gianduia, creme, gelato", {"grasso":8,"dolce":3,"aroma_caldo":6,"corposita":6}, ["frutta a guscio"]),
+        ("Pasta di pistacchio", "pistachio", "pasticceria", "Pistacchio puro in pasta, verde, aromatico", "creme, gelato, farcitura", {"grasso":7,"dolce":2,"aroma_fresco":3,"corposita":6}, ["frutta a guscio"]),
+        ("Zucchero semolato", "sugar", "pasticceria", "Saccarosio fine, dolcezza pulita", "impasti, meringhe, sciroppi", {"dolce":10}, []),
+        ("Zucchero a velo", "sugar", "pasticceria", "Macinato finissimo, si scioglie subito", "glasse, spolvero, frolle", {"dolce":10}, []),
+        ("Zucchero di canna grezzo", "sugar", "pasticceria", "Integrale, note di melassa, umido", "impasti rustici, crumble", {"dolce":8,"aroma_caldo":4,"corposita":2}, []),
+        ("Glucosio (sciroppo)", "sugar", "pasticceria", "Sciroppo anti-cristallizzazione, poco dolce", "gelati, caramelle, ganache", {"dolce":5,"corposita":3}, []),
+        ("Panna fresca 35%", "cream", "pasticceria", "Panna da montare, ricca di grasso", "chantilly, ganache, mousse", {"grasso":8,"corposita":6,"dolce":2}, ["latte"]),
+        ("Burro di cacao", "cocoa", "pasticceria", "Grasso puro del cacao, fonde a 34C", "temperaggio, fluidificare", {"grasso":10,"corposita":5,"aroma_caldo":3}, []),
+        ("Gelatina alimentare", "gelatin", "pasticceria", "Addensante proteico, gelifica a freddo", "bavaresi, mousse, gelatine", {"corposita":3}, []),
+        ("Vaniglia Bourbon (bacca)", "vanilla", "pasticceria", "Bacca aromatica, dolce e balsamica", "creme, gelati, impasti", {"dolce":4,"aroma_caldo":6,"aroma_fresco":2}, []),
+        ("Gin London Dry", "gin", "bar", "Distillato al ginepro, secco, botanico", "gin tonic, martini, negroni", {"aroma_fresco":7,"amaro":3,"termico":-2}, []),
+        ("Vermouth rosso", "vermouth", "bar", "Vino aromatizzato, dolce-amaro, speziato", "negroni, manhattan, americano", {"dolce":5,"amaro":5,"aroma_caldo":4,"fermentato":5}, ["solfiti"]),
+        ("Campari (bitter)", "bitter", "bar", "Bitter rosso, amaro intenso, agrumato", "negroni, spritz, americano", {"amaro":8,"dolce":4,"aroma_fresco":3}, []),
+        ("Rum agricolo", "rum", "bar", "Da succo di canna, erbaceo, complesso", "ti punch, daiquiri, mai tai", {"dolce":4,"aroma_caldo":6,"fermentato":4}, []),
+        ("Rum scuro invecchiato", "rum", "bar", "Invecchiato, note di caramello e spezie", "old fashioned, dark & stormy", {"dolce":5,"aroma_caldo":8,"corposita":4}, []),
+        ("Tequila 100% agave", "tequila", "bar", "Da agave blu, vegetale, minerale", "margarita, paloma", {"aroma_fresco":5,"amaro":3,"termico":2}, []),
+        ("Whisky torbato", "whisky", "bar", "Affumicato, torba, iodato", "sour, penicillin, liscio", {"aroma_caldo":8,"amaro":4,"fermentato":4}, []),
+        ("Angostura bitter", "bitter", "bar", "Concentrato aromatico, speziato, amarissimo", "old fashioned, manhattan (gocce)", {"amaro":9,"aroma_caldo":6,"astringente":3}, []),
+        ("Sciroppo di zucchero (gomma)", "sugar", "bar", "Zucchero liquido, dolcezza per drink", "sour, tiki, equilibrare", {"dolce":9,"corposita":3}, []),
+        ("Curacao / Triple sec", "liqueur", "bar", "Liquore d'arancia, dolce-agrumato", "margarita, cosmopolitan, sidecar", {"dolce":7,"aroma_fresco":6,"amaro":2}, []),
+        ("Prosecco", "wine", "bar", "Spumante veneto, fresco, floreale", "spritz, bellini, mimosa", {"acido":5,"effervescenza":9,"dolce":3,"fermentato":5}, ["solfiti"]),
+        ("Acqua tonica", "water", "bar", "Effervescente con chinino amaro", "gin tonic, allungare", {"effervescenza":9,"amaro":3}, []),
+        ("Lime fresco (succo)", "lime", "bar", "Succo acido e aromatico, base dei sour", "daiquiri, margarita, mojito", {"acido":9,"aroma_fresco":8}, []),
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        aggiunti = 0
+        for nome, gen, cat, carat, uso, prop_ov, allerg in ITEMS:
+            nid = "ing-" + nome.lower().replace(" ","-").replace("(","").replace(")","").replace("'","").replace("/","-").replace("%","")
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (nid,))
+            if cur.fetchone(): continue
+            prop = {"salato":0,"acido":prop_ov.get("acido",0),"dolce":prop_ov.get("dolce",0),"amaro":prop_ov.get("amaro",0),
+                    "umami":0,"grasso":prop_ov.get("grasso",0),"corposita":prop_ov.get("corposita",2),"croccante":0,
+                    "astringente":prop_ov.get("astringente",0),"piccante":0,"termico":prop_ov.get("termico",1),
+                    "aroma_fresco":prop_ov.get("aroma_fresco",0),"aroma_caldo":prop_ov.get("aroma_caldo",1),
+                    "effervescenza":prop_ov.get("effervescenza",0),"fermentato":prop_ov.get("fermentato",0)}
+            sl = 365 if cat=="bar" else (20 if ("panna" in nome.lower() or "gelatina" in nome.lower()) else 180)
+            operativo = {"yield":100,"scarto_perc":0,"conservazione":"dispensa/bar" if cat=="bar" else "dispensa",
+                         "shelf_life_giorni":sl,"allergeni":allerg}
+            data = {"nome":nome,"disciplina":cat,"categoria":cat,"caratteristica":carat,
+                    "uso_tipico":uso,"proprieta":prop,"operativo":operativo}
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                        (nid, nome, json.dumps(data, ensure_ascii=False)))
+            cur.execute("""SELECT id FROM nodes WHERE id LIKE 'ahn_%%' AND LOWER(name) LIKE %s LIMIT 1""", (f"%{gen}%",))
+            rg = cur.fetchone()
+            if rg:
+                cur.execute("SELECT to_id, data FROM edges WHERE from_id=%s AND relation='contiene_composto'", (rg[0],))
+                for to_id, cdata in cur.fetchall():
+                    cstr = json.dumps(cdata, ensure_ascii=False) if isinstance(cdata,(dict,list)) else (cdata or '{}')
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'contiene_composto',%s)", (nid,to_id,cstr))
+            aggiunti += 1; conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"aggiunti": aggiunti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
