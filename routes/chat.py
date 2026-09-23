@@ -572,6 +572,24 @@ def chiedi():
                           + (f" Numero bersaglio: {_num}." if _num else "")
                           + " Rispondi restando su QUESTA ricetta, senza chiedere di ripeterla: la conosci già.] ")
                 domanda_arricchita = _ctx_r + domanda
+        # CONTESTO INGREDIENTE (dal Laboratorio/Grafo): se l'utente esplora un ingrediente e clicca
+        # "chiedi su questo", la chat sa gia' proprieta', uso, fenomeni, con cosa dialoga.
+        ing_ctx = contesto_scheda.get("ingrediente")
+        if ing_ctx and isinstance(ing_ctx, dict):
+            _nome_i = (ing_ctx.get("nome") or "").strip()
+            if _nome_i:
+                _car = (ing_ctx.get("caratteristica") or "").strip()
+                _uso = (ing_ctx.get("uso_tipico") or "").strip()
+                _dial = ing_ctx.get("dialoga_con") or []
+                _fen_i = ing_ctx.get("fenomeni") or []
+                _dtxt = (" Dialoga con: " + ", ".join(_dial[:6]) + ".") if isinstance(_dial,list) and _dial else ""
+                _ftxt = (" Fenomeni collegati: " + ", ".join(_fen_i[:4]) + ".") if isinstance(_fen_i,list) and _fen_i else ""
+                _ctx_i = (f"[L'utente sta esplorando l'ingrediente '{_nome_i}' nel Laboratorio."
+                          + (f" {_car}." if _car else "")
+                          + (f" Uso tipico: {_uso}." if _uso else "")
+                          + _dtxt + _ftxt
+                          + " Rispondi su QUESTO ingrediente, applicando la scienza al caso.] ")
+                domanda_arricchita = _ctx_i + domanda
 
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
     # GROUNDING BAR/BAKERY nella CHAT: se la domanda riguarda un cocktail/pane/piatto coperto,
