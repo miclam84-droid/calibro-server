@@ -4447,76 +4447,75 @@ def lista_principi():
 
 @bp.route("/v1/flavour-network/<ingrediente>")
 def flavour_network(ingrediente):
-    """Rete aromatica ricca di un ingrediente per il grafo Flavour Network animato:
-    tutti gli abbinati con forza + composti condivisi. Usa il grafo Ahn (match su ID)."""
+    """Rete aromatica di un ingrediente. LOGICA PULITA: calcola gli abbinamenti dai composti condivisi
+    VERI (soglia minima), con fallback sulle proprieta sensoriali. Scarta gli archi vecchi sballati."""
     from flask import request, jsonify
-    import psycopg2 as _pg
+    import psycopg2 as _pg, json as _j
     n_max = min(int(request.args.get("n", "25")), 40)
+    SOGLIA_COMPOSTI = 4  # minimo composti condivisi per un abbinamento sensato
     try:
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
-        _cur.execute("""SELECT n.name, (e.data->>'overlap')::numeric ov
-                        FROM edges e JOIN nodes n ON (n.id = e.to_id OR n.id = e.from_id)
-                        WHERE e.relation = 'abbinamento_aromatico'
-                        AND (LOWER(e.from_id) LIKE LOWER(%s) OR LOWER(e.to_id) LIKE LOWER(%s))
-                        AND LOWER(n.id) NOT LIKE LOWER(%s)
-                        AND n.type IN ('Ingrediente','Prodotto')
-                        ORDER BY ov DESC NULLS LAST LIMIT %s""",
-                     (f"%{ingrediente}%", f"%{ingrediente}%", f"%{ingrediente}%", n_max))
-        righe = _cur.fetchall()
-        # id del centro (per estrarre i composti condivisi = il PERCHE del legame)
-        _cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+        # id del centro + i suoi composti
+        _cur.execute("""SELECT id, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                         AND LOWER(name) LIKE LOWER(%s) ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (f"%{ingrediente}%",))
-        _rc = _cur.fetchone(); id_centro = _rc[0] if _rc else None
-        composti_centro = set()
-        if id_centro:
-            _cur.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
-                            WHERE e.from_id=%s AND e.relation='contiene_composto'""", (id_centro,))
-            composti_centro = set(r[0] for r in _cur.fetchall())
-        # nodi per il grafo: centro + abbinati, con forza E il perche (composti condivisi)
-        nodi = []
-        visti = set()
-        for nome, ov in righe:
-            if nome.lower() in visti: continue
-            visti.add(nome.lower())
-            nodo = {"nome": nome, "forza": round(float(ov)) if ov else 50}
-            # il PERCHE: composti condivisi tra questo nodo e il centro
-            if composti_centro:
-                _cur.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
-                                JOIN nodes src ON src.id=e.from_id
-                                WHERE LOWER(src.name)=LOWER(%s) AND e.relation='contiene_composto' LIMIT 40""", (nome,))
-                comp_nodo = set(r[0] for r in _cur.fetchall())
-                condivisi = list(composti_centro & comp_nodo)[:5]
-                if condivisi:
-                    nodo["perche"] = {"composti_condivisi": condivisi, "n_condivisi": len(composti_centro & comp_nodo)}
-            nodi.append(nodo)
-        # Se pochi nodi hanno il perche (abbinamenti verso preparati senza composti),
-        # AGGIUNGO abbinamenti derivati dai composti condivisi (vera logica Ahn: il perche c'e sempre)
-        con_perche = sum(1 for x in nodi if x.get("perche"))
-        if id_centro and composti_centro and con_perche < 8:
-            _cur.execute("""SELECT n.name, COUNT(*) ov
-                            FROM edges e JOIN nodes n ON n.id=e.from_id
-                            WHERE e.relation='contiene_composto' AND e.to_id IN (
-                                SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto')
-                            AND e.from_id != %s AND n.type IN ('Ingrediente','Prodotto')
-                            AND n.name NOT LIKE '%%(%%'
-                            GROUP BY n.name HAVING COUNT(*) >= 2
-                            ORDER BY ov DESC LIMIT %s""", (id_centro, id_centro, n_max))
+        rc = _cur.fetchone()
+        if not rc:
+            _cur.close(); _release_conn(_c)
+            return jsonify({"centro": ingrediente, "nodi": [], "totale": 0})
+        id_centro = rc[0]
+        dd_centro = rc[1] if isinstance(rc[1], dict) else (_j.loads(rc[1]) if rc[1] else {})
+        prop_centro = dd_centro.get("proprieta", {})
+        _cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_centro,))
+        composti_centro = set(r[0] for r in _cur.fetchall())
+        nodi = []; visti = set([ingrediente.lower()])
+
+        # STRADA 1: se il centro ha composti -> abbinamenti per overlap CALCOLATO (soglia)
+        if len(composti_centro) >= SOGLIA_COMPOSTI:
+            _cur.execute("""SELECT n.name, COUNT(*) ov FROM edges e JOIN nodes n ON n.id=e.from_id
+                            WHERE e.relation='contiene_composto' AND e.to_id = ANY(%s) AND e.from_id != %s
+                            AND n.type IN ('Ingrediente','Prodotto') AND n.name NOT LIKE '%%(%%'
+                            GROUP BY n.name HAVING COUNT(*) >= %s
+                            ORDER BY ov DESC LIMIT %s""",
+                         (list(composti_centro), id_centro, SOGLIA_COMPOSTI, n_max))
             for nome, ov in _cur.fetchall():
                 if nome.lower() in visti: continue
                 visti.add(nome.lower())
-                # composti condivisi (il perche)
-                _cur.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
-                                JOIN nodes src ON src.id=e.from_id
-                                WHERE LOWER(src.name)=LOWER(%s) AND e.relation='contiene_composto' LIMIT 40""", (nome,))
+                # composti condivisi effettivi (il perche)
+                _cur.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id JOIN nodes src ON src.id=e.from_id
+                                WHERE LOWER(src.name)=LOWER(%s) AND e.relation='contiene_composto' LIMIT 60""", (nome,))
                 comp_nodo = set(r[0] for r in _cur.fetchall())
-                condivisi = list(composti_centro & comp_nodo)[:5]
-                forza = min(99, 40 + int(ov) * 5)
-                nodo = {"nome": nome, "forza": forza}
-                if condivisi:
-                    nodo["perche"] = {"composti_condivisi": condivisi, "n_condivisi": len(composti_centro & comp_nodo)}
-                nodi.append(nodo)
+                cond = composti_centro & comp_nodo
+                if len(cond) < SOGLIA_COMPOSTI: continue
+                # forza = % di composti condivisi sul totale del centro (la logica giusta)
+                forza = min(99, int(len(cond) / max(len(composti_centro),1) * 100))
+                nomi_comp = [x.replace('ahn_comp_','').replace('_',' ') for x in list(cond)[:5]]
+                nodi.append({"nome": nome, "forza": max(forza,30),
+                             "perche": {"composti_condivisi": nomi_comp, "n_condivisi": len(cond)}})
+
+        # STRADA 2 (fallback): centro senza composti -> abbinamenti per PROPRIETA sensoriali (contrasto)
+        if len(nodi) < 5 and prop_centro:
+            # cerco ingredienti con proprieta complementari (contrasto) o simili (analogia)
+            grasso = prop_centro.get('grasso',0); acido = prop_centro.get('acido',0)
+            dolce = prop_centro.get('dolce',0); umami = prop_centro.get('umami',0)
+            target = None
+            if grasso >= 6: target = ('acido', 6)      # grasso -> cerca acido
+            elif acido >= 6: target = ('grasso', 6)     # acido -> cerca grasso
+            elif dolce >= 7: target = ('amaro', 5)      # dolce -> amaro
+            elif umami >= 6: target = ('acido', 5)      # umami -> acido
+            if target:
+                _cur.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                                AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 300""")
+                for nome, data in _cur.fetchall():
+                    if nome.lower() in visti or len(nodi) >= n_max: continue
+                    ddn = data if isinstance(data, dict) else _j.loads(data)
+                    pv = ddn.get('proprieta',{}).get(target[0],0)
+                    if pv >= target[1]:
+                        visti.add(nome.lower())
+                        nodi.append({"nome": nome, "forza": 50 + pv*3,
+                                     "perche_sensoriale": f"bilancia per {target[0]}"})
+        nodi.sort(key=lambda x: -x['forza'])
         _cur.close(); _release_conn(_c)
-        return jsonify({"centro": ingrediente, "nodi": nodi, "totale": len(nodi)})
+        return jsonify({"centro": ingrediente, "nodi": nodi[:n_max], "totale": len(nodi)})
     except Exception as e:
         return jsonify({"centro": ingrediente, "nodi": [], "errore": str(e)[:100]})
 
