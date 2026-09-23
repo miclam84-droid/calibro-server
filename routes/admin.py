@@ -10994,3 +10994,59 @@ def admin_debug_analogia():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:200]})
+
+
+@bp.route("/admin/grafo-gerarchia")
+def admin_grafo_gerarchia():
+    """LIVELLO 1 teoria dei grafi: la GERARCHIA dei nodi. Assegna a ogni ingrediente un 'tipo_base'
+    (il nodo-tipo di cui e' variante) cosi' il grafo puo' escludere i parenti dagli abbinamenti.
+    Es. San Marzano, Piennolo, Datterino -> tipo_base 'pomodoro'. Non e' un algoritmo: e' il modello."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "300")), 500)
+    # mappa parola-chiave -> tipo_base (la gerarchia gastronomica)
+    TIPI = {
+        "pomodoro":"pomodoro","limone":"limone","arancia":"arancia","mandarino":"agrume","bergamotto":"agrume",
+        "lime":"agrume","farina":"farina","semola":"farina","cioccolato":"cioccolato","cacao":"cioccolato",
+        "manzo":"manzo","vitello":"manzo","controfiletto":"manzo","filetto":"manzo","costata":"manzo",
+        "fiorentina":"manzo","scamone":"manzo","guancia":"manzo","ossobuco":"manzo","brisket":"manzo",
+        "picanha":"manzo","tomahawk":"manzo","reale":"manzo","bresaola":"manzo","parmigiano":"formaggio",
+        "grana":"formaggio","pecorino":"formaggio","mozzarella":"formaggio","gorgonzola":"formaggio",
+        "ricotta":"formaggio","caciocavallo":"formaggio","stracciatella":"formaggio","fior di latte":"formaggio",
+        "branzino":"pesce","orata":"pesce","salmone":"pesce","tonno":"pesce","baccala":"pesce","acciughe":"pesce",
+        "gambero":"crostaceo","cozze":"mollusco","vongole":"mollusco","polpo":"mollusco","seppia":"mollusco",
+        "zucchina":"zucchina","melanzana":"melanzana","peperone":"peperone","friggitello":"peperone",
+        "carciofo":"carciofo","radicchio":"radicchio","puntarelle":"cicoria","cavolo":"cavolo","zucca":"zucca",
+        "patata":"patata","asparago":"asparago","basilico":"basilico","menta":"menta","prezzemolo":"prezzemolo",
+        "salvia":"salvia","rosmarino":"rosmarino","fico":"fico","pesca":"pesca","fragola":"fragola","mela":"mela",
+        "uva":"uva","fagiol":"legume","cece":"legume","lenticchia":"legume","fava":"legume","pisello":"legume",
+        "riso":"riso","olio":"olio","aceto":"aceto","miele":"miele","sale":"sale","pepe":"spezia",
+        "zafferano":"spezia","peperoncino":"spezia","guanciale":"salume","pancetta":"salume","prosciutto":"salume",
+        "mortadella":"salume","nduja":"salume","speck":"salume","salame":"salume","lardo":"salume",
+        "gin":"distillato","rum":"distillato","tequila":"distillato","whisky":"distillato","vermouth":"vino",
+        "prosecco":"vino","vino":"vino","campari":"bitter","angostura":"bitter","zucchero":"zucchero",
+        "panna":"latticino","burro":"grasso","gelatina":"addensante","vaniglia":"spezia","pasta di nocciola":"frutta secca",
+        "pasta di pistacchio":"frutta secca",
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND NOT (data ? 'tipo_base') LIMIT %s""", (n,))
+        assegnati = 0
+        for nid, nome, data in cur.fetchall():
+            nl = nome.lower()
+            tipo = None
+            # match piu specifico prima (parola piu lunga)
+            for k in sorted(TIPI.keys(), key=len, reverse=True):
+                if k in nl: tipo = TIPI[k]; break
+            if not tipo: continue
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            dd["tipo_base"] = tipo
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            assegnati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"tipo_base_assegnati": assegnati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
