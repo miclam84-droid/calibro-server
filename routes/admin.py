@@ -10948,3 +10948,14 @@ def admin_aggiungi_pasticceria_bar():
         return jsonify({"aggiunti": aggiunti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/hq")
+def hq_panel():
+    """Serve la pagina del pannello Galileo-HQ (monitoraggio ecosistema).
+    La pagina si auto-protegge col secret (gate lato client contro gli endpoint /admin/hq/*)."""
+    from flask import render_template
+    try:
+        return render_template("hq.html")
+    except Exception as e:
+        return f"Pannello HQ non disponibile: {str(e)[:100]}", 500
