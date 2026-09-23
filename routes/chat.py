@@ -590,6 +590,22 @@ def chiedi():
                           + _dtxt + _ftxt
                           + " Rispondi su QUESTO ingrediente, applicando la scienza al caso.] ")
                 domanda_arricchita = _ctx_i + domanda
+        # CONTESTO PLANNER (dal Planner): l'utente ha un menu pianificato e chiede di ottimizzarlo.
+        # La chat sa gia' i piatti della settimana/mese e il food cost, senza farli ripetere.
+        plan_ctx = contesto_scheda.get("planner")
+        if plan_ctx and isinstance(plan_ctx, dict):
+            _ric_p = plan_ctx.get("ricette") or []
+            if isinstance(_ric_p, list) and _ric_p:
+                _n_piatti = len(_ric_p)
+                _elenco = ", ".join([str(x) for x in _ric_p[:15]])
+                if _n_piatti > 15: _elenco += f" (e altri {_n_piatti-15})"
+                _fc = plan_ctx.get("food_cost_giorno")
+                _fc_txt = f" Food cost medio: {_fc} euro/giorno." if _fc else ""
+                _ctx_p = (f"[L'utente ha pianificato un menu di {_n_piatti} piatti nel Planner: {_elenco}."
+                          + _fc_txt
+                          + " Rispondi su QUESTO menu concreto (food cost, varieta', bilanciamento,"
+                          + " preparazioni condivise), senza chiedere di elencare di nuovo i piatti: li conosci.] ")
+                domanda_arricchita = _ctx_p + domanda
 
     prompt = costruisci_prompt(domanda_arricchita, contesto, lang=lang)
     # GROUNDING BAR/BAKERY nella CHAT: se la domanda riguarda un cocktail/pane/piatto coperto,
