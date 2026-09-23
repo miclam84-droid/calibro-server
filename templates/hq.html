@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Galileo HQ — Pannello di controllo</title>
+<style>
+:root{--ink:#141d22;--terra:#c77b3f;--carta:#ecebe5;--prussia:#245979;--mono:'IBM Plex Mono',ui-monospace,monospace;--sans:'Space Grotesk',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e4e2da;color:var(--ink);font-family:var(--sans);padding:16px;padding-top:max(env(safe-area-inset-top),16px);max-width:720px;margin:0 auto;font-size:15px;line-height:1.4}
+.hq-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.hq-title{font-weight:700;font-size:22px;letter-spacing:-.01em}
+.hq-title span{color:var(--terra)}
+.hq-refresh{background:var(--ink);color:#fff;border:0;border-radius:0;padding:10px 16px;font-family:var(--sans);font-weight:700;font-size:13px;cursor:pointer}
+.hq-refresh:active{transform:translate(1px,1px)}
+.hq-sec{background:#fff;border:1.5px solid var(--ink);box-shadow:4px 4px 0 rgba(20,29,34,.12);padding:16px;margin-bottom:16px}
+.hq-sec-lab{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);margin-bottom:14px}
+.hq-stato{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.hq-dot{width:11px;height:11px;border-radius:50%;background:#3a9d5d}
+.hq-dot.warn{background:var(--terra)}
+.hq-stato-txt{font-family:var(--mono);font-size:13px}
+.hq-ts{font-family:var(--mono);font-size:11px;color:#5a6c70;margin-left:auto}
+.hq-grid4{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hq-num{border-left:3px solid var(--prussia);padding-left:12px}
+.hq-num-v{font-family:var(--mono);font-weight:700;font-size:28px;color:var(--ink);line-height:1}
+.hq-num-l{font-family:var(--sans);font-size:12px;color:#5a6c70;margin-top:4px}
+.hq-riga{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid #e0ded6}
+.hq-riga:last-child{border-bottom:0}
+.hq-riga-k{font-size:13px}
+.hq-riga-v{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--ink)}
+.hq-nota{font-size:12px;color:#5a6c70;line-height:1.5;margin-top:12px;padding:10px;background:#f4f2ec;border-left:3px solid var(--prussia)}
+.hq-costo{font-family:var(--mono);font-weight:700;font-size:32px;color:var(--terra);margin-bottom:4px}
+.hq-costo-l{font-size:12px;color:#5a6c70;margin-bottom:14px}
+.hq-giorno{display:flex;align-items:center;gap:10px;padding:7px 0}
+.hq-giorno-d{font-family:var(--mono);font-size:11px;color:#5a6c70;flex:0 0 78px}
+.hq-giorno-bar{flex:1;height:14px;background:#eceae2;overflow:hidden}
+.hq-giorno-fill{height:100%;background:var(--prussia)}
+.hq-giorno-v{font-family:var(--mono);font-size:11px;flex:0 0 66px;text-align:right}
+.hq-warn{display:flex;gap:10px;padding:12px 14px;background:rgba(199,123,63,.12);border-left:3px solid var(--terra);margin-bottom:10px}
+.hq-warn-ico{color:var(--terra);font-weight:700}
+.hq-warn-txt{font-size:13px;line-height:1.4}
+.hq-ok{font-size:13px;color:#3a9d5d}
+.hq-cop{margin-top:12px}
+.hq-cop-bar{height:8px;background:#eceae2;overflow:hidden;margin-top:6px}
+.hq-cop-fill{height:100%;background:var(--prussia)}
+.hq-gate{max-width:360px;margin:80px auto;background:#fff;border:1.5px solid var(--ink);box-shadow:5px 5px 0 rgba(20,29,34,.15);padding:24px}
+.hq-gate h1{font-size:20px;margin-bottom:6px}
+.hq-gate p{font-size:13px;color:#5a6c70;margin-bottom:16px}
+.hq-gate input{width:100%;min-height:48px;border:1.5px solid var(--ink);padding:0 12px;font-family:var(--mono);font-size:14px;margin-bottom:12px}
+.hq-gate button{width:100%;min-height:48px;background:var(--terra);color:var(--ink);border:0;font-family:var(--sans);font-weight:700;font-size:15px;cursor:pointer}
+.hq-err{color:var(--terra);font-size:13px;margin-top:8px;font-family:var(--mono)}
+.hq-load{text-align:center;padding:40px;font-family:var(--mono);color:#5a6c70}
+</style>
+</head>
+<body>
+<div id="gate" class="hq-gate">
+  <h1>Galileo <span style="color:#c77b3f">HQ</span></h1>
+  <p>Pannello di controllo. Inserisci il secret admin.</p>
+  <input id="secret" type="password" placeholder="ADMIN_SECRET" onkeydown="if(event.key==='Enter')entra()">
+  <button onclick="entra()">Entra →</button>
+  <div id="gate-err" class="hq-err" style="display:none"></div>
+</div>
+
+<div id="pannello" style="display:none">
+  <div class="hq-top">
+    <div class="hq-title">Galileo <span>HQ</span></div>
+    <button class="hq-refresh" onclick="carica()">↻ Aggiorna</button>
+  </div>
+  <div id="contenuto"><div class="hq-load">Carico i dati…</div></div>
+</div>
+
+<script>
+var _s='';
+function entra(){
+  _s=document.getElementById('secret').value.trim();
+  if(!_s) return;
+  var err=document.getElementById('gate-err');
+  fetch('/admin/hq/stato-ecosistema?s='+encodeURIComponent(_s)).then(function(r){
+    if(r.status===403){ err.style.display='block'; err.textContent='Secret errato.'; return null; }
+    return r.json();
+  }).then(function(j){
+    if(!j) return;
+    document.getElementById('gate').style.display='none';
+    document.getElementById('pannello').style.display='block';
+    try{ sessionStorage.setItem('hq_s', _s); }catch(e){}
+    render(j); caricaCrediti();
+  }).catch(function(){ err.style.display='block'; err.textContent='Errore di rete.'; });
+}
+function carica(){
+  fetch('/admin/hq/stato-ecosistema?s='+encodeURIComponent(_s)).then(function(r){return r.json();}).then(render);
+  caricaCrediti();
+}
+function n(v){ return (v==null?'—':Number(v).toLocaleString('it-IT')); }
+function render(d){
+  var warn = (d.operativo_senza_allergeni||0)>0;
+  var cop = d.ingredienti ? Math.round((d.con_operativo||0)/d.ingredienti*100) : 0;
+  var h='';
+  // SALUTE
+  h+='<div class="hq-sec"><div class="hq-sec-lab">Salute ecosistema</div>';
+  h+='<div class="hq-stato"><span class="hq-dot'+(warn?' warn':'')+'"></span><span class="hq-stato-txt">'+(d.stato||(warn?'attenzione':'ok'))+'</span><span class="hq-ts">'+(d.timestamp||'')+'</span></div>';
+  h+='<div class="hq-grid4">';
+  h+='<div class="hq-num"><div class="hq-num-v">'+n(d.ingredienti)+'</div><div class="hq-num-l">Ingredienti</div></div>';
+  h+='<div class="hq-num"><div class="hq-num-v">'+n(d.varieta_profonde)+'</div><div class="hq-num-l">Varietà profonde</div></div>';
+  h+='<div class="hq-num"><div class="hq-num-v">'+n(d.con_proprieta)+'</div><div class="hq-num-l">Con proprietà</div></div>';
+  h+='<div class="hq-num"><div class="hq-num-v">'+n(d.archi_abbinamento)+'</div><div class="hq-num-l">Archi abbinamento</div></div>';
+  h+='</div></div>';
+  // CONTENUTI
+  h+='<div class="hq-sec"><div class="hq-sec-lab">Contenuti</div>';
+  h+='<div class="hq-riga"><span class="hq-riga-k">Ricette pubbliche / totali</span><span class="hq-riga-v">'+n(d.ricette_pubbliche)+' / '+n(d.ricette_totali)+'</span></div>';
+  if((d.ricette_pubbliche||0)===0) h+='<div class="hq-nota">Nessuna ricetta-specchietto validata. Le pubbliche appaiono man mano che le validi a mano.</div>';
+  if(d.assistente_oggi){
+    h+='<div class="hq-riga"><span class="hq-riga-k">Account attivi oggi</span><span class="hq-riga-v">'+n(d.assistente_oggi.account_attivi)+'</span></div>';
+    h+='<div class="hq-riga"><span class="hq-riga-k">Token assistente oggi</span><span class="hq-riga-v">'+n(d.assistente_oggi.token_totali)+'</span></div>';
+  }
+  h+='</div>';
+  // ANOMALIE
+  h+='<div class="hq-sec"><div class="hq-sec-lab">Anomalie</div>';
+  if(warn) h+='<div class="hq-warn"><span class="hq-warn-ico">⚠</span><span class="hq-warn-txt">'+n(d.operativo_senza_allergeni)+' ingredienti con attributi operativi ma senza allergeni dedotti.</span></div>';
+  else h+='<div class="hq-ok">✓ Nessuna anomalia critica.</div>';
+  h+='<div class="hq-cop"><div class="hq-riga-k">Copertura attributi operativi: <b>'+n(d.con_operativo)+' / '+n(d.ingredienti)+'</b> ('+cop+'%)</div><div class="hq-cop-bar"><div class="hq-cop-fill" style="width:'+cop+'%"></div></div></div>';
+  h+='</div>';
+  // CONSUMO AI (placeholder, riempito da caricaCrediti)
+  h+='<div id="hq-crediti"><div class="hq-sec"><div class="hq-sec-lab">Consumo AI</div><div class="hq-load">Carico i crediti…</div></div></div>';
+  document.getElementById('contenuto').innerHTML=h;
+}
+function caricaCrediti(){
+  fetch('/admin/hq/crediti-ai?s='+encodeURIComponent(_s)).then(function(r){return r.json();}).then(function(d){
+    var giorni=(d.consumo_ultimi_7_giorni||[]);
+    var max=1; giorni.forEach(function(g){ if((g.token||0)>max) max=g.token; });
+    var h='<div class="hq-sec"><div class="hq-sec-lab">Consumo AI · anti-blocco</div>';
+    h+='<div class="hq-costo">€ '+(d.assistente_costo_totale_eur!=null?Number(d.assistente_costo_totale_eur).toFixed(2):'—')+'</div><div class="hq-costo-l">costo totale assistente stimato · '+n(d.assistente_token_totali)+' token · '+(d.modello_assistente||'—')+'</div>';
+    giorni.forEach(function(g){
+      var pct=Math.round((g.token||0)/max*100);
+      h+='<div class="hq-giorno"><span class="hq-giorno-d">'+(g.giorno||'')+'</span><div class="hq-giorno-bar"><div class="hq-giorno-fill" style="width:'+pct+'%"></div></div><span class="hq-giorno-v">€'+(g.costo_stimato_eur!=null?Number(g.costo_stimato_eur).toFixed(3):'0')+'</span></div>';
+    });
+    h+='<div class="hq-nota">Il saldo credito dei provider (OpenAI/Anthropic) va controllato sui loro dashboard — non è leggibile via API. Qui vedi il TUO consumo come stima.</div>';
+    h+='</div>';
+    var c=document.getElementById('hq-crediti'); if(c) c.innerHTML=h;
+  }).catch(function(){});
+}
+// auto-login se secret in sessione
+try{ var ss=sessionStorage.getItem('hq_s'); if(ss){ _s=ss; document.getElementById('gate').style.display='none'; document.getElementById('pannello').style.display='block'; carica(); } }catch(e){}
+</script>
+</body>
+</html>
