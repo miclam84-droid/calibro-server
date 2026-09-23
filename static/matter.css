@@ -701,3 +701,16 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .gr-tag-fen{background:#dce6ec;border-color:#245979}
 .gr-sheet-composer{width:100%;margin:18px 0 8px;min-height:50px;background:#c77b3f;color:#241109;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
 .gr-sheet-chiudi{width:100%;background:none;border:1.5px solid #c4c0b4;padding:11px;font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;cursor:pointer}
+
+/* ═══ CONTEXT ENGINE — apertura chat con contesto ═══ */
+.chat-apertura{margin:16px;padding:16px;background:#141d22;border-radius:4px;box-shadow:4px 4px 0 rgba(20,29,34,.2)}
+.chat-ap-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7fb0c4;margin-bottom:8px}
+.chat-ap-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;color:#e8935a;text-transform:capitalize;margin-bottom:6px}
+.chat-ap-sub{font-family:'Inter',sans-serif;font-size:13px;color:#cbd6da;line-height:1.4;margin-bottom:14px}
+.chat-ap-chip{display:flex;flex-direction:column;gap:8px}
+.chat-ap-btn{background:#fff;border:1.5px solid #c77b3f;border-radius:0;padding:12px 14px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:#141d22;cursor:pointer;text-align:left}
+.chat-ap-btn:active{transform:translate(2px,2px)}
+/* bottoni Chiedi a Matter su scheda ingrediente e portale grafo */
+.ing-chiedi-cta,.gr-sheet-chiedi{display:block;width:100%;margin:10px 0 24px;min-height:50px;background:#141d22;color:#fff;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+.gr-sheet-chiedi{margin:10px 0 8px}
+.ing-chiedi-cta:active,.gr-sheet-chiedi:active{transform:translate(2px,2px)}

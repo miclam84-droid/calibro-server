@@ -1456,6 +1456,33 @@ window._chatDaFenomeno = function(titolo){
 };
 window._chatDaFenomenoCorrente = function(){ window._chatDaFenomeno(window._fenomenoCorrente||''); };
 
+// ═══ CONTEXT ENGINE — apre la chat GIÀ sapendo di cosa si parla ═══
+window._chatConContesto = function(tipo, oggetto){
+  // setto il contesto che la chat passerà al backend
+  var ctx={}; ctx[tipo]=oggetto;
+  try{ _ctxChat = ctx; window._chatContesto = ctx; }catch(e){ window._chatContesto = ctx; }
+  chiudiVista&&chiudiVista();
+  switchTab('chiedi'); if(typeof switchSubtab==='function') switchSubtab('chat');
+  // chip di apertura pertinenti per tipo (l'utente arriva e ha già qualcosa)
+  var chip=[];
+  var nome = (oggetto && (oggetto.nome||oggetto.fenomeno)) || 'questo';
+  if(tipo==='ricetta'){ chip=[['Come la costruisco','Come costruisco '+nome+'? Spiegami i passaggi.'],['Declinazioni','Che declinazioni posso fare con questi ingredienti?'],['Punto critico','Qual è il punto critico di questa ricetta e come lo controllo?']]; }
+  else if(tipo==='ingrediente'){ chip=[['Con cosa lo abbino','Con cosa abbino '+nome+' e perché?'],['Che tecniche uso','Quali tecniche valorizzano '+nome+'?'],['Che fenomeni coinvolge','Quali fenomeni scientifici entrano in gioco con '+nome+'?']]; }
+  else if(tipo==='fenomeno'){ chip=[['Come lo controllo','Come controllo '+nome+' al banco?'],['Il numero bersaglio','Qual è il numero-bersaglio di '+nome+'?'],['Errori comuni','Quali sono gli errori comuni con '+nome+'?']]; }
+  setTimeout(function(){ _chatMostraApertura(nome, chip); }, 200);
+};
+function _chatMostraApertura(nome, chip){
+  var cont=document.getElementById('schede');
+  var em=document.getElementById('empty-state');
+  var e=_escV;
+  var html='<div class="chat-apertura"><div class="chat-ap-lab">◎ Contesto attivo</div>'
+    + '<div class="chat-ap-nome">'+e(nome)+'</div>'
+    + '<div class="chat-ap-sub">Matter sa già di cosa parli. Scegli da dove partire, o scrivi la tua domanda.</div>'
+    + '<div class="chat-ap-chip">'+chip.map(function(c){ return '<button class="chat-ap-btn" onclick="chiediTesto(\''+e(c[1]).replace(/'/g,"\\'")+'\')">'+e(c[0])+'</button>'; }).join('')+'</div></div>';
+  if(em){ em.insertAdjacentHTML('afterend', html); em.style.display='none'; }
+  else if(cont){ cont.insertAdjacentHTML('afterbegin', html); }
+}
+
 // [spostata in matter-chat.js]
 
 // [spostata in matter-chat.js]
@@ -4660,6 +4687,7 @@ window.apriSchedaIngrediente = function(id, nome){
     if(barre) html+='<div class="ing-sec-lab">Profilo sensoriale</div><div class="ing-profilo">'+barre+'</div>';
     if(dialoga) html+='<div class="ing-sec-lab">Dialoga con</div><div class="ing-dialoga-grid">'+dialoga+'</div>';
     html+='<button class="ing-composer-cta" onclick="chiudiVista();_caricaModulo(\'composer\').then(function(){apriComposer&&apriComposer();setTimeout(function(){_coAggiungi&&_coAggiungi(\''+e(String(d.nome||nome)).replace(/'/g,"\\'")+'\')},400)})">Costruisci una ricetta da qui →</button>';
+    html+='<button class="ing-chiedi-cta" onclick=\'_chatConContesto("ingrediente",'+JSON.stringify({nome:d.nome||nome, caratteristica:d.caratteristica||'', uso_tipico:d.uso_tipico||'', dialoga_con:d.dialoga_con||[], fenomeni:d.fenomeni||[]}).replace(/'/g,"&#39;")+')\'>Chiedi a Matter su '+e(String(d.nome||nome))+' →</button>';
     var b=document.getElementById('vista-body'); if(b) b.innerHTML=html;
   }).catch(function(){ var b=document.getElementById('vista-body'); if(b) b.innerHTML='<div class="vista-empty">Scheda non disponibile.</div>'; });
 };

@@ -118,6 +118,7 @@ function _grafoRenderSheet(d){
   if(dial) h+='<div class="gr-sheet-lab">Dialoga con</div><div class="gr-tags">'+dial+'</div>';
   if(fen) h+='<div class="gr-sheet-lab">Fenomeni</div><div class="gr-tags">'+fen+'</div>';
   h+='<button class="gr-sheet-composer" onclick="chiudiVista();_caricaModulo(\'composer\').then(function(){apriComposer&&apriComposer();setTimeout(function(){_coAggiungi&&_coAggiungi(\''+e(String(d.nome)).replace(/'/g,"\\'")+'\')},400)})">Invia al Composer →</button>';
+  h+='<button class="gr-sheet-chiedi" onclick=\'_chatConContesto("ingrediente",'+JSON.stringify({nome:d.nome, caratteristica:d.caratteristica||'', uso_tipico:d.uso_tipico||'', dialoga_con:d.dialoga_con||[], fenomeni:d.fenomeni||[]}).replace(/'/g,"&#39;")+')\'>Chiedi a Matter →</button>';
   sheet.innerHTML='<div class="gr-sheet-overlay" onclick="if(event.target===this)this.remove()"><div class="gr-sheet">'+h+'<button class="gr-sheet-chiudi" onclick="this.closest(\'.gr-sheet-overlay\').remove()">Chiudi</button></div></div>';
 }
 })();
