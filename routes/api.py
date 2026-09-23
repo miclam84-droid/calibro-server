@@ -4452,7 +4452,7 @@ def flavour_network(ingrediente):
     from flask import request, jsonify
     import psycopg2 as _pg, json as _j
     n_max = min(int(request.args.get("n", "25")), 40)
-    SOGLIA = 3
+    SOGLIA = 4
     def _radice(nome):
         # radice per escludere i parenti: 'pomodoro san marzano' -> 'pomodoro'
         n = nome.lower().strip()
@@ -4463,17 +4463,12 @@ def flavour_network(ingrediente):
         return n.split()[0] if n.split() else n
     try:
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
-        # preferisci il match ESATTO, poi il nome piu corto (pomodoro, non 'concentrato di pomodoro'),
-        # poi quello con piu composti
-        _cur.execute("""SELECT id, name, data,
-                        (SELECT COUNT(*) FROM edges e WHERE e.from_id=nodes.id AND e.relation='contiene_composto') nc
-                        FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE LOWER(%s)
-                        ORDER BY (LOWER(name)=LOWER(%s)) DESC, nc DESC, LENGTH(name) ASC LIMIT 1""",
-                     (f"%{ingrediente}%", ingrediente))
+        _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND LOWER(name) LIKE LOWER(%s) ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (f"%{ingrediente}%",))
         rc = _cur.fetchone()
         if not rc:
             _cur.close(); _release_conn(_c); return jsonify({"centro": ingrediente, "nodi": [], "totale": 0})
-        id_centro, nome_centro, data_centro = rc
+        id_centro, nome_centro, data_centro = rc[0], rc[1], rc[2]
         radice_centro = _radice(nome_centro)
         dd = data_centro if isinstance(data_centro, dict) else (_j.loads(data_centro) if data_centro else {})
         prop_centro = dd.get("proprieta", {})
