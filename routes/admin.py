@@ -10959,3 +10959,38 @@ def hq_panel():
         return render_template("hq.html")
     except Exception as e:
         return f"Pannello HQ non disponibile: {str(e)[:100]}", 500
+
+
+@bp.route("/admin/debug-analogia")
+def admin_debug_analogia():
+    """Debug: perche l'analogia (composti condivisi) non esce nel grafo. Passo per passo su pomodoro."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        out = {}
+        # 1. che id ha pomodoro
+        cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND LOWER(name) LIKE '%%pomodoro%%' ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""")
+        r = cur.fetchone(); out["pomodoro_scelto"] = {"id": r[0], "name": r[1]} if r else None
+        id_c = r[0] if r else None
+        # 2. quanti composti ha
+        cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_c,))
+        out["composti_del_pomodoro"] = cur.fetchone()[0]
+        # 3. esempi di to_id (i composti)
+        cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto' LIMIT 5", (id_c,))
+        comp = [x[0] for x in cur.fetchall()]
+        out["esempi_composti"] = comp
+        # 4. altri ingredienti che condividono QUEI composti (il cuore dell'analogia)
+        if comp:
+            cur.execute("""SELECT n.name, COUNT(*) ov FROM edges e JOIN nodes n ON n.id=e.from_id
+                           WHERE e.relation='contiene_composto' AND e.to_id = ANY(%s) AND e.from_id != %s
+                           AND n.type IN ('Ingrediente','Prodotto')
+                           GROUP BY n.name ORDER BY ov DESC LIMIT 8""", (comp, id_c))
+            out["condividono_composti"] = [{"nome": x[0], "n": x[1]} for x in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
