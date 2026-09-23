@@ -11032,22 +11032,28 @@ def admin_grafo_gerarchia():
     }
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # processo TUTTI i nodi senza tipo_base (non solo i primi n): scorro a scaglioni con OFFSET
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND NOT (data ? 'tipo_base')""")
+        da_fare = cur.fetchone()[0]
         cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                       AND NOT (data ? 'tipo_base') LIMIT %s""", (n,))
-        assegnati = 0
-        for nid, nome, data in cur.fetchall():
+                       AND NOT (data ? 'tipo_base')""")
+        righe = cur.fetchall()
+        assegnati = 0; senza_match = 0
+        keys_sorted = sorted(TIPI.keys(), key=len, reverse=True)
+        for nid, nome, data in righe:
             nl = nome.lower()
             tipo = None
-            # match piu specifico prima (parola piu lunga)
-            for k in sorted(TIPI.keys(), key=len, reverse=True):
+            for k in keys_sorted:
                 if k in nl: tipo = TIPI[k]; break
-            if not tipo: continue
+            if not tipo:
+                senza_match += 1; continue
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
             dd["tipo_base"] = tipo
             cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
             assegnati += 1
+            if assegnati % 200 == 0: conn.commit()
         conn.commit(); cur.close(); conn.close()
-        return jsonify({"tipo_base_assegnati": assegnati})
+        return jsonify({"tipo_base_assegnati": assegnati, "senza_match": senza_match, "totale_processati": len(righe)})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
 
