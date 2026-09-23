@@ -714,3 +714,7 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .ing-chiedi-cta,.gr-sheet-chiedi{display:block;width:100%;margin:10px 0 24px;min-height:50px;background:#141d22;color:#fff;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
 .gr-sheet-chiedi{margin:10px 0 8px}
 .ing-chiedi-cta:active,.gr-sheet-chiedi:active{transform:translate(2px,2px)}
+
+/* ═══ Planner: Ottimizza con Matter (context planner) ═══ */
+.pl-ottimizza-btn{display:block;width:calc(100% - 36px);margin:0 18px 24px;min-height:52px;background:#12545d;color:#fff;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+.pl-ottimizza-btn:active{transform:translate(2px,2px)}

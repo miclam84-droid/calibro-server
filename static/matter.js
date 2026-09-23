@@ -1462,6 +1462,7 @@ window._chatConContesto = function(tipo, oggetto){
   if(tipo==='ricetta'){ chip=[['Come la costruisco','Come costruisco '+nome+'? Spiegami i passaggi.'],['Declinazioni','Che declinazioni posso fare con questi ingredienti?'],['Punto critico','Qual è il punto critico di questa ricetta e come lo controllo?']]; }
   else if(tipo==='ingrediente'){ chip=[['Con cosa lo abbino','Con cosa abbino '+nome+' e perché?'],['Che tecniche uso','Quali tecniche valorizzano '+nome+'?'],['Che fenomeni coinvolge','Quali fenomeni scientifici entrano in gioco con '+nome+'?']]; }
   else if(tipo==='fenomeno'){ chip=[['Come lo controllo','Come controllo '+nome+' al banco?'],['Il numero bersaglio','Qual è il numero-bersaglio di '+nome+'?'],['Errori comuni','Quali sono gli errori comuni con '+nome+'?']]; }
+  else if(tipo==='planner'){ chip=[['Riduci il food cost','Come riduco il food cost di questo menu senza perdere qualità?'],['Più varietà','Come aumento la varietà del menu evitando ripetizioni?'],['Bilancia le proteine','Il menu è bilanciato tra carne, pesce e vegetariano? Come miglioro?']]; }
   setTimeout(function(){ _chatMostraApertura(nome, chip); }, 200);
 };
 function _chatMostraApertura(nome, chip){

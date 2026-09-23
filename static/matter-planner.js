@@ -6,6 +6,16 @@ var _MESI = ['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio'
 
 window._plSetGiorni=function(n){ _pl.giorni=n; _plReRender(); };
 window._plStep=function(n){ _pl.step=n; _plReRender(); };
+window._plOttimizza=function(){
+  var d=_pl.risposta; if(!d) return;
+  // estraggo i piatti della settimana (nomi) dal calendario
+  var ricette=[];
+  (d.calendario||[]).forEach(function(g){ (g.slot_piatti||[]).forEach(function(sp){ if(sp.nome && ricette.indexOf(sp.nome)<0) ricette.push(sp.nome); }); });
+  var ctx={ planner_id:d.planner_id||'', ricette:ricette.slice(0,40) };
+  var a=d.analisi||{};
+  if(a.food_cost_medio_giorno_eur!=null) ctx.food_cost_giorno=a.food_cost_medio_giorno_eur;
+  if(typeof window._chatConContesto==='function'){ window._chatConContesto('planner', { nome:'il tuo menu di '+(_pl.giorni||30)+' giorni', planner_id:ctx.planner_id, ricette:ctx.ricette, food_cost_giorno:ctx.food_cost_giorno }); }
+};
 window.apriPlanner = function(){ _pl.step=1; _pl.risposta=null; _apriVista('Planner Menu', _plRender()); };
 
 function _plRender(){
@@ -87,7 +97,8 @@ function _plStep3(){
     + '<div class="pl-cal-sommario">'+_pl.slot.length+' portate/giorno · '+(_pl.budget!=null?'target €'+_pl.budget:'nessun budget')+'</div>'
     + '<div class="pl-cal">'+giorni+'</div>'
     + '<button class="pl-genera-btn" onclick="_plGenera()">↻ Rigenera</button>'
-    + '<button class="pl-analisi-btn" onclick="_plStep(4)">Vedi l\'analisi →</button>';
+    + '<button class="pl-analisi-btn" onclick="_plStep(4)">Vedi l\'analisi →</button>'
+    + '<button class="pl-ottimizza-btn" onclick="_plOttimizza()">◎ Ottimizza con Matter</button>';
 }
 
 // ── SCHERMATA 4: ANALISI ──
