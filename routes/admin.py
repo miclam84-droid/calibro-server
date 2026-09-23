@@ -11050,3 +11050,30 @@ def admin_grafo_gerarchia():
         return jsonify({"tipo_base_assegnati": assegnati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/conta-gerarchia")
+def admin_conta_gerarchia():
+    """Quanti nodi hanno il tipo_base (gerarchia) e verifica su esempi."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+        tot = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'tipo_base')")
+        con = cur.fetchone()[0]
+        # esempi: San Marzano, filetto, datterino -> che tipo_base hanno
+        esempi = {}
+        for nome in ['Pomodoro San Marzano DOP','Filetto di manzo','Pomodoro Datterino','Guancia di manzo']:
+            cur.execute("SELECT data FROM nodes WHERE LOWER(name)=LOWER(%s) LIMIT 1", (nome,))
+            r = cur.fetchone()
+            if r:
+                dd = r[0] if isinstance(r[0], dict) else json.loads(r[0])
+                esempi[nome] = dd.get('tipo_base','(nessuno)')
+        cur.close(); conn.close()
+        return jsonify({"totale": tot, "con_tipo_base": con, "percentuale": round(con/tot*100,1) if tot else 0, "esempi": esempi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
