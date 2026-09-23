@@ -1,6 +1,6 @@
 // ═══ MATTER-GRAFO.js — Il Grafo Visuale navigabile (killer feature) ═══
 (function(){
-var _g = { centro:null, vista:'sapori', breadcrumb:[], dati:null };
+var _g = { centro:null, vista:'discipline', breadcrumb:[], dati:null };
 var _VISTE = {
   sapori:     { lab:'Sapori',     ep:function(c){ return '/v1/flavour-network/'+encodeURIComponent(c); }, key:'nodi' },
   discipline: { lab:'Discipline', ep:function(c){ return '/v1/ponti/'+encodeURIComponent(c); }, key:'ponti' }
@@ -8,7 +8,7 @@ var _VISTE = {
 
 window.apriGrafo = function(ingredienteIniziale){
   _g.centro = ingredienteIniziale||'pomodoro';
-  _g.vista='sapori'; _g.breadcrumb=[_g.centro];
+  _g.vista='discipline'; _g.breadcrumb=[_g.centro];
   _apriVista('Il Grafo', _grafoShell());
   _grafoCarica();
 };
@@ -39,7 +39,17 @@ function _grafoDisegna(d, V){
   var e=_escV, cv=document.getElementById('gr-canvas');
   if(!cv) return;
   var nodi=[];
-  if(_g.vista==='sapori'){ nodi=(d.nodi||[]).slice(0,14).map(function(n){ return {nome:n.nome, forza:n.forza||50, perche:n.perche}; }); }
+  if(_g.vista==='sapori'){
+    var grezzi=(d.nodi||[]).map(function(n){ return {nome:n.nome, forza:n.forza||50, perche:n.perche}; });
+    // deduplica per famiglia: max 2 per prefisso (evita 8 varianti d'aceto ripetitive)
+    var perFam={}, filtrati=[];
+    grezzi.forEach(function(n){
+      var fam=String(n.nome).toLowerCase().split(/[ \-]/)[0];
+      perFam[fam]=(perFam[fam]||0)+1;
+      if(perFam[fam]<=2) filtrati.push(n);
+    });
+    nodi=filtrati.slice(0,14);
+  }
   else { // discipline: appiattisco i ponti in nodi
     (d.ponti||[]).forEach(function(p){ (p.abbinati||[]).slice(0,3).forEach(function(a){ nodi.push({nome:a.ingrediente, forza:a.affinita||a.forza||60, disc:p.disciplina}); }); });
     nodi=nodi.slice(0,14);
