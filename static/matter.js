@@ -1445,14 +1445,7 @@ function _renderSchedaFenomeno(j){  rimuoviThinking();
   card.scrollIntoView({behavior:'smooth',block:'start'});
 }
 window._chatDaFenomeno = function(titolo){
-  try{ _ctxChat = { fenomeno: titolo }; }catch(e){}
-  chiudiVista&&chiudiVista();
-  switchTab('chiedi'); if(typeof switchSubtab==='function') switchSubtab('chat');
-  var t=titolo||'questo fenomeno';
-  setTimeout(function(){
-    if(typeof chiediTesto==='function') chiediTesto('Ho un problema con '+t+'. Aiutami a risolverlo.');
-    else if(typeof _diagnosiVai==='function') _diagnosiVai('Ho un problema con '+t+'. Aiutami a risolverlo.');
-  }, 300);
+  window._chatConContesto('fenomeno', { nome: titolo||'questo fenomeno', fenomeno: titolo||'' });
 };
 window._chatDaFenomenoCorrente = function(){ window._chatDaFenomeno(window._fenomenoCorrente||''); };
 
@@ -3562,18 +3555,12 @@ function _ricettaInMenu(){
 }
 function chiediSuRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
-  // formato che il backend si aspetta: contesto.ricetta {nome, ingredienti:[{nome}], punto_critico}
-  _ctxChat = { ricetta: {
-    nome: d.nome||'',
-    ingredienti: (d.ingredienti||[]).map(function(x){ return {nome: (typeof x==='string'?x:(x.nome||''))}; }),
+  window._chatConContesto('ricetta', {
+    nome: d.nome||'questa ricetta',
+    ingredienti: (d.ingredienti||[]).map(function(x){ return {nome: (typeof x==='string'?x:(x.nome||'')), quantita:(x.quantita||''), unita:(x.unita||'')}; }),
     punto_critico: d.punto_critico||'',
     numeri: d.numeri||''
-  }};
-  chiudiVista();
-  switchTab('chiedi'); switchSubtab('chat');
-  var inp=document.getElementById('q')||document.getElementById('ask-input');
-  if(inp){ inp.placeholder='Chiedi su "'+(d.nome||'questa ricetta')+'"…'; inp.focus(); }
-  _mostraContestoChip(d.nome||'ricetta');
+  });
 }
 // chip contesto in cima alla chat "Stai parlando di: [nome]"
 function _mostraContestoChip(nome){
