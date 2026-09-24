@@ -11210,3 +11210,78 @@ def admin_vedi_fenomeno_completo():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/aggiungi-territorio")
+def admin_aggiungi_territorio():
+    """Biodiversita #201: aggiunge territorio + tutela (DOP/IGP/presidio Slow Food) alle varieta.
+    Il territorio e' proprieta del nodo, non un badge. Grounding su disciplinari reali."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # nome esatto -> (territorio, regione, tutela)
+    TERR = {
+        "Pomodoro San Marzano DOP": ("Agro Sarnese-Nocerino", "Campania", "DOP"),
+        "Pomodoro del Piennolo del Vesuvio DOP": ("Vesuvio", "Campania", "DOP"),
+        "Pomodoro Corbarino": ("Monti Lattari, Corbara", "Campania", "presidio"),
+        "Pomodoro Datterino": ("Sicilia/Campania", "varie", ""),
+        "Pomodoro Ciliegino": ("Pachino", "Sicilia", "IGP"),
+        "Pomodoro Cuore di Bue": ("Liguria/Piemonte", "varie", ""),
+        "Pomodoro Costoluto Fiorentino": ("Toscana", "Toscana", ""),
+        "Pomodoro Marinda (Camone)": ("Sicilia", "Sicilia", ""),
+        "Limone di Sorrento IGP": ("Penisola Sorrentina", "Campania", "IGP"),
+        "Limone di Amalfi (sfusato)": ("Costiera Amalfitana", "Campania", "IGP"),
+        "Arancia rossa di Sicilia IGP": ("Sicilia orientale", "Sicilia", "IGP"),
+        "Bergamotto": ("Reggio Calabria", "Calabria", "DOP"),
+        "Fico bianco del Cilento DOP": ("Cilento", "Campania", "DOP"),
+        "Nocciola": ("Piemonte/Campania", "varie", ""),
+        "Parmigiano Reggiano": ("Emilia (Parma, Reggio, Modena)", "Emilia-Romagna", "DOP"),
+        "Grana Padano": ("Pianura Padana", "varie", "DOP"),
+        "Pecorino Romano": ("Lazio/Sardegna", "varie", "DOP"),
+        "Mozzarella di Bufala Campana DOP": ("Piana del Sele", "Campania", "DOP"),
+        "Gorgonzola": ("Piemonte/Lombardia", "varie", "DOP"),
+        "Guanciale amatriciano": ("Amatrice", "Lazio", "tradizionale"),
+        "Nduja di Spilinga": ("Spilinga", "Calabria", "presidio"),
+        "Lardo di Colonnata IGP": ("Colonnata", "Toscana", "IGP"),
+        "Speck Alto Adige IGP": ("Alto Adige", "Trentino-A.A.", "IGP"),
+        "Prosciutto di Parma DOP": ("Parma", "Emilia-Romagna", "DOP"),
+        "Prosciutto di San Daniele DOP": ("San Daniele del Friuli", "Friuli", "DOP"),
+        "Mortadella di Bologna IGP": ("Bologna", "Emilia-Romagna", "IGP"),
+        "Bresaola della Valtellina IGP": ("Valtellina", "Lombardia", "IGP"),
+        "Olio EVO taggiasca": ("Riviera Ligure", "Liguria", "DOP"),
+        "Olio EVO coratina": ("Puglia", "Puglia", "DOP"),
+        "Aceto Balsamico Tradizionale di Modena DOP": ("Modena", "Emilia-Romagna", "DOP"),
+        "Colatura di alici di Cetara": ("Cetara", "Campania", "presidio"),
+        "Lenticchia di Castelluccio IGP": ("Castelluccio di Norcia", "Umbria", "IGP"),
+        "Cece di Cicerale": ("Cicerale, Cilento", "Campania", "presidio"),
+        "Fagiolo cannellino": ("varie", "varie", ""),
+        "Riso Carnaroli": ("Pianura Padana", "varie", ""),
+        "Radicchio di Treviso IGP": ("Treviso", "Veneto", "IGP"),
+        "Carciofo romanesco (mammola)": ("Lazio", "Lazio", "IGP"),
+        "Asparago bianco di Bassano DOP": ("Bassano del Grappa", "Veneto", "DOP"),
+        "Zafferano di Navelli DOP": ("Navelli", "Abruzzo", "DOP"),
+        "Peperoncino di Diamante": ("Diamante", "Calabria", "tradizionale"),
+        "Zucca mantovana": ("Mantova", "Lombardia", ""),
+        "Patata di Bologna DOP": ("Bologna", "Emilia-Romagna", "DOP"),
+        "Mela Annurca IGP": ("Campania", "Campania", "IGP"),
+        "Fragola di Nemi": ("Nemi", "Lazio", "presidio"),
+        "Basilico genovese DOP": ("Genova", "Liguria", "DOP"),
+        "Farina di grano arso": ("Puglia", "Puglia", "tradizionale"),
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        agg = 0
+        for nome, (terr, reg, tutela) in TERR.items():
+            cur.execute("SELECT id, data FROM nodes WHERE LOWER(name)=LOWER(%s) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (nome,))
+            r = cur.fetchone()
+            if not r: continue
+            dd = r[1] if isinstance(r[1], dict) else json.loads(r[1])
+            dd["territorio"] = terr; dd["regione"] = reg
+            if tutela: dd["tutela"] = tutela
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), r[0]))
+            agg += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"territorio_assegnato": agg})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
