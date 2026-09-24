@@ -741,8 +741,12 @@ def scheda_ingrediente(ingrediente_id):
                                         "caratteristica": (_dv.get("caratteristica") or "")[:80]})
                     if len(varieta) >= 20: break
         except Exception: pass
+        _dd_out = data if isinstance(data, dict) else (_j2.loads(data) if data else {})
         return jsonify({
             "id": nid, "nome": nome,
+            "territorio": _dd_out.get("territorio") or "",
+            "regione": _dd_out.get("regione") or "",
+            "tutela": _dd_out.get("tutela") or "",
             "varieta": varieta,
             "caratteristica": dd.get("caratteristica",""),
             "uso_tipico": dd.get("uso_tipico",""),
@@ -811,8 +815,12 @@ def nodo_completo(nodo_id):
                                         "caratteristica": (_dv.get("caratteristica") or "")[:80]})
                     if len(varieta) >= 20: break
         except Exception: pass
+        _dd_out = data if isinstance(data, dict) else (_j2.loads(data) if data else {})
         return jsonify({
             "id": nid, "nome": nome,
+            "territorio": _dd_out.get("territorio") or "",
+            "regione": _dd_out.get("regione") or "",
+            "tutela": _dd_out.get("tutela") or "",
             "varieta": varieta,
             "caratteristica": dd.get("caratteristica",""),
             "uso_tipico": dd.get("uso_tipico",""),
