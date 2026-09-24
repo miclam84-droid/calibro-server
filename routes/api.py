@@ -4495,7 +4495,13 @@ def flavour_network(ingrediente):
                 inter = len(comp_centro & comp_i); union = len(comp_centro | comp_i)
                 jac = inter/union if union else 0
                 if inter < 3: continue
-                forza = min(95, max(40, int(jac*100*3)))  # Jaccard normalizzato, differenziato
+                # METRICA ADATTIVA (#182): penalizza gli ingredienti 'ricchi' (hub generici come te/cognac).
+                # Un ingrediente con centinaia di composti condivide con tutto: il suo legame e' meno specifico.
+                n_comp_i = len(comp_i)
+                if n_comp_i > 150: jac *= 0.55      # molto ricco (te nero, cognac, caffe): forte penalita
+                elif n_comp_i > 90: jac *= 0.75     # ricco
+                # il Jaccard puro (inter/union) gia' premia la specificita': forza scalata su di esso
+                forza = min(95, max(35, int(jac*100*4.5)))
                 visti_tipi.add(tipo_i)
                 nomi_c = [x.replace('ahn_comp_','').replace('pub_','').replace('_',' ') for x in list(comp_centro & comp_i)[:4]]
                 nodi.append({"nome": nome_i, "forza": forza, "tipo":"analogia",
