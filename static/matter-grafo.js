@@ -6,6 +6,23 @@ var _VISTE = {
   discipline: { lab:'Discipline', ep:function(c){ return '/v1/ponti/'+encodeURIComponent(c); }, key:'ponti' }
 };
 
+function _grNome(raw){
+  var s=String(raw||'').replace(/_/g,' ').trim();
+  if(!s) return '';
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+function _grDedup(nodi){
+  var visti={}, out=[];
+  nodi.forEach(function(n){
+    var k=_grNome(n.nome).toLowerCase();
+    if(!visti[k]){ visti[k]=1; out.push(n); }
+  });
+  return out;
+}
+function _grLabel(nome){
+  var s=_grNome(nome);
+  return s.length>12 ? s.slice(0,11)+'\u2026' : s;
+}
 window.apriGrafo = function(ingredienteIniziale){
   _g.centro = ingredienteIniziale||'pomodoro';
   _g.vista='discipline'; _g.breadcrumb=[_g.centro];
@@ -48,11 +65,11 @@ function _grafoDisegna(d, V){
       perFam[fam]=(perFam[fam]||0)+1;
       if(perFam[fam]<=2) filtrati.push(n);
     });
-    nodi=filtrati.slice(0,14);
+    nodi=_grDedup(filtrati).slice(0,14);
   }
   else { // discipline: appiattisco i ponti in nodi
     (d.ponti||[]).forEach(function(p){ (p.abbinati||[]).slice(0,3).forEach(function(a){ nodi.push({nome:a.ingrediente, forza:a.affinita||a.forza||60, disc:p.disciplina}); }); });
-    nodi=nodi.slice(0,14);
+    nodi=_grDedup(nodi).slice(0,14);
   }
   if(!nodi.length){ cv.innerHTML='<div class="vista-empty">Nessuna connessione per "'+e(_g.centro)+'".</div>'; return; }
   var W=358, H=360, cx=W/2, cy=H/2, R=125;
@@ -71,14 +88,14 @@ function _grafoDisegna(d, V){
     var forte=n.forza>=75;
     svg+='<g class="gr-node" style="animation-delay:'+(i*0.04+0.1)+'s" onclick="_grafoNaviga(\''+e(String(n.nome)).replace(/'/g,"\\'")+'\')">';
     svg+='<circle cx="'+x+'" cy="'+y+'" r="20" fill="#fff" stroke="'+(forte?'#c77b3f':'#245979')+'" stroke-width="'+(forte?2:1.5)+'"/>';
-    svg+='<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#141d22">'+e(String(n.nome).slice(0,11))+'</text>';
+    svg+='<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#141d22">'+e(_grLabel(n.nome))+'</text>';
     svg+='<text x="'+x+'" y="'+(y+13)+'" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" font-weight="700" fill="'+(forte?'#c77b3f':'#245979')+'">'+Math.round(n.forza)+'</text>';
     svg+='</g>';
   });
   // centro (tap = scheda portale)
   svg+='<g class="gr-centro" onclick="_grafoPortale(\''+e(String(_g.centro)).replace(/'/g,"\\'")+'\')">';
   svg+='<circle cx="'+cx+'" cy="'+cy+'" r="30" fill="#141d22" stroke="#c77b3f" stroke-width="2.5"/>';
-  svg+='<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="11" fill="#e8935a">'+e(String(_g.centro).slice(0,10))+'</text>';
+  svg+='<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="11" fill="#e8935a">'+e(_grLabel(_g.centro))+'</text>';
   svg+='</g></svg>';
   cv.innerHTML=svg;
 }
