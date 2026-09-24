@@ -11045,6 +11045,15 @@ def admin_grafo_gerarchia():
             tipo = None
             for k in keys_sorted:
                 if k in nl: tipo = TIPI[k]; break
+            # se il nome non matcha ma il nodo ha gia un 'genitore', usa quello
+            if not tipo:
+                dd0 = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                gen = dd0.get('genitore')
+                if gen:
+                    gl = str(gen).lower()
+                    for k in keys_sorted:
+                        if k in gl: tipo = TIPI[k]; break
+                    if not tipo: tipo = gl  # il genitore stesso come tipo
             if not tipo:
                 senza_match += 1; continue
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
