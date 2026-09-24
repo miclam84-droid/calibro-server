@@ -721,8 +721,26 @@ def scheda_ingrediente(ingrediente_id):
         abb = db.execute("SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8", (nid,)).fetchall()
         dialoga = [_c(x,"name",0) for x in abb]
         prop_alte = {k: v for k, v in prop.items() if abs(v) >= 4} if prop else {}
+        # VARIETA: altri nodi con lo stesso tipo_base (San Marzano, Piennolo... per il pomodoro)
+        varieta = []
+        try:
+            import json as _j2
+            dd_self = data if isinstance(data, dict) else (_j2.loads(data) if data else {})
+            _mytipo = dd_self.get("tipo_base")
+            if _mytipo:
+                vv = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                                   AND id != ? LIMIT 400""", (nid,)).fetchall()
+                for _r in vv:
+                    _dv = _c(_r,"data",2)
+                    _dv = _dv if isinstance(_dv, dict) else (_j2.loads(_dv) if _dv else {})
+                    if _dv.get("tipo_base") == _mytipo and _c(_r,"name",1).lower() != nome.lower():
+                        varieta.append({"id": _c(_r,"id",0), "nome": _c(_r,"name",1),
+                                        "caratteristica": (_dv.get("caratteristica") or "")[:80]})
+                    if len(varieta) >= 12: break
+        except Exception: pass
         return jsonify({
             "id": nid, "nome": nome,
+            "varieta": varieta,
             "caratteristica": dd.get("caratteristica",""),
             "uso_tipico": dd.get("uso_tipico",""),
             "categoria": cat,
@@ -770,8 +788,26 @@ def nodo_completo(nodo_id):
             ric = db.execute("""SELECT DISTINCT nome FROM ricette WHERE LOWER(ingredienti) LIKE LOWER(?) LIMIT 5""", (f"%{nome}%",)).fetchall()
             ricette = [_c(x,"nome",0) for x in ric]
         except Exception: pass
+        # VARIETA: altri nodi con lo stesso tipo_base (San Marzano, Piennolo... per il pomodoro)
+        varieta = []
+        try:
+            import json as _j2
+            dd_self = data if isinstance(data, dict) else (_j2.loads(data) if data else {})
+            _mytipo = dd_self.get("tipo_base")
+            if _mytipo:
+                vv = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                                   AND id != ? LIMIT 400""", (nid,)).fetchall()
+                for _r in vv:
+                    _dv = _c(_r,"data",2)
+                    _dv = _dv if isinstance(_dv, dict) else (_j2.loads(_dv) if _dv else {})
+                    if _dv.get("tipo_base") == _mytipo and _c(_r,"name",1).lower() != nome.lower():
+                        varieta.append({"id": _c(_r,"id",0), "nome": _c(_r,"name",1),
+                                        "caratteristica": (_dv.get("caratteristica") or "")[:80]})
+                    if len(varieta) >= 12: break
+        except Exception: pass
         return jsonify({
             "id": nid, "nome": nome,
+            "varieta": varieta,
             "caratteristica": dd.get("caratteristica",""),
             "uso_tipico": dd.get("uso_tipico",""),
             "categoria": dd.get("categoria",""),
