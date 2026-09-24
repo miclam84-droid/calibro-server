@@ -994,3 +994,57 @@ def schede_scienza_lista():
         return jsonify({"schede": schede, "totale": len(schede)})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/biodiversita/regioni", methods=["GET"])
+def biodiversita_regioni():
+    """ATLANTE BIODIVERSITA (#200): le varieta raggruppate per regione, coi conteggi DOP/IGP/presidio.
+    Alimenta la mappa dell'Italia - il National Geographic di Matter."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        rows = db.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                             AND data->>'regione' IS NOT NULL AND data->>'regione' != ''""").fetchall()
+        regioni = {}
+        for r in rows:
+            dd = _c(r,"data",1); dd = dd if isinstance(dd,dict) else (_j.loads(dd) if dd else {})
+            reg = dd.get("regione","").strip()
+            if not reg or reg == "varie": continue
+            if reg not in regioni:
+                regioni[reg] = {"regione": reg, "varieta": 0, "dop": 0, "igp": 0, "presidi": 0, "esempi": []}
+            regioni[reg]["varieta"] += 1
+            tut = (dd.get("tutela") or "").lower()
+            if tut == "dop": regioni[reg]["dop"] += 1
+            elif tut == "igp": regioni[reg]["igp"] += 1
+            elif tut == "presidio": regioni[reg]["presidi"] += 1
+            if len(regioni[reg]["esempi"]) < 6:
+                regioni[reg]["esempi"].append(_c(r,"name",0))
+        lista = sorted(regioni.values(), key=lambda x: -x["varieta"])
+        return jsonify({"regioni": lista, "totale_regioni": len(lista)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/biodiversita/regione/<regione>", methods=["GET"])
+def biodiversita_regione(regione):
+    """Le varieta di una regione (per il dettaglio dell'Atlante quando apri Campania, Sicilia...)."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        rows = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                             AND LOWER(data->>'regione') = LOWER(?)""", (regione,)).fetchall()
+        varieta = []
+        for r in rows:
+            dd = _c(r,"data",2); dd = dd if isinstance(dd,dict) else (_j.loads(dd) if dd else {})
+            varieta.append({"id": _c(r,"id",0), "nome": _c(r,"name",1),
+                            "territorio": dd.get("territorio",""), "tutela": dd.get("tutela",""),
+                            "categoria": dd.get("categoria","")})
+        return jsonify({"regione": regione, "varieta": varieta, "totale": len(varieta)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
