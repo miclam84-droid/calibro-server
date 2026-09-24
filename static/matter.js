@@ -357,6 +357,7 @@ async function _caricaPrincipi(){
 var _PORTE = {
   osserva:  { label:'Osserva', sub:'La scienza dietro il risultato', voci:[
                 {t:'Schede Scienza', d:'I numeri e i fenomeni dietro ogni preparazione madre', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('scienza').then(function(){ if(typeof apriSchedeScienza==='function')apriSchedeScienza(); }); } }},
+                {t:'Biodiversità', d:'Il patrimonio gastronomico italiano, varietà per varietà', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('biodiversita').then(function(){ if(typeof apriBiodiversita==='function')apriBiodiversita(); }); } }},
                 {t:'Fenomeni', d:'I 148 fenomeni del mestiere', act:function(){switchMappaTab('fenomeni');}},
                 {t:'Principi', d:'Le leggi fisiche di fondo', act:function(){switchMappaTab('principi');}},
                 {t:'Tecniche Avanzate', d:'Fat washing, koji, nixtamal…', act:function(){if(typeof apriAvanzate==='function')apriAvanzate();}},
@@ -448,7 +449,7 @@ function _afetch(url, opts){
   });
 }
 // ═══ LOADER MODULI LAZY (metodo Strangler) ═══
-window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false, planner:false, composer:false, grafo:false, scienza:false };
+window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false, planner:false, composer:false, grafo:false, scienza:false, biodiversita:false };
 function _caricaModulo(nome){
   return new Promise(function(resolve){
     if(window._moduli[nome]){ resolve(); return; }
@@ -4687,6 +4688,25 @@ window.apriSchedaIngrediente = function(id, nome){
       + (d.caratteristica?'<div class="ing-hero-car">'+e(d.caratteristica)+'</div>':'')+'</div>';
     if(d.uso_tipico) html+='<div class="ing-uso"><span class="ing-uso-lab">Uso tipico</span>'+e(d.uso_tipico)+'</div>';
     if(barre) html+='<div class="ing-sec-lab">Profilo sensoriale</div><div class="ing-profilo">'+barre+'</div>';
+    // BLOCCO TERRITORIO (se è una varietà con territorio/tutela)
+    if(d.territorio || d.regione || d.tutela){
+      var tut=d.tutela?'<span class="bio-badge bio-'+(({'DOP':'dop','IGP':'igp','presidio':'presidio','Presidio Slow Food':'presidio','STG':'stg'})[d.tutela]||'')+'">'+e(d.tutela)+'</span>':'';
+      html+='<div class="ing-territorio"><div class="ing-terr-lab">◉ Territorio</div>'
+        + '<div class="ing-terr-val">'+[d.territorio, d.regione].filter(Boolean).map(e).join(' · ')+'</div>'
+        + (tut?'<div class="ing-terr-tut">'+tut+'</div>':'')+'</div>';
+    }
+    // BLOCCO VARIETÀ (se l'ingrediente-tipo ha varietà)
+    var varieta=d.varieta||[];
+    if(varieta.length){
+      html+='<div class="ing-sec-lab">Le varietà del territorio</div><div class="ing-var-lista">'
+        + varieta.map(function(v){
+            var vcls=({'DOP':'dop','IGP':'igp','presidio':'presidio','Presidio Slow Food':'presidio','STG':'stg'})[v.tutela]||'';
+            return '<button class="bio-var" onclick="apriSchedaIngrediente(\''+e(v.id||'')+'\',\''+e(String(v.nome)).replace(/'/g,"\\'")+'\')">'
+              + '<div class="bio-var-top"><span class="bio-var-nome">'+e(v.nome)+'</span>'+(v.tutela?'<span class="bio-badge bio-'+vcls+'">'+e(v.tutela)+'</span>':'')+'</div>'
+              + (v.territorio?'<div class="bio-var-terr">◉ '+e(v.territorio)+'</div>':'')
+              + (v.caratteristica?'<div class="bio-var-car">'+e(v.caratteristica)+'</div>':'')+'</button>';
+          }).join('')+'</div>';
+    }
     if(dialoga) html+='<div class="ing-sec-lab">Dialoga con</div><div class="ing-dialoga-grid">'+dialoga+'</div>';
     html+='<button class="ing-composer-cta" onclick="chiudiVista();_caricaModulo(\'composer\').then(function(){apriComposer&&apriComposer();setTimeout(function(){_coAggiungi&&_coAggiungi(\''+e(String(d.nome||nome)).replace(/'/g,"\\'")+'\')},400)})">Costruisci una ricetta da qui →</button>';
     html+='<button class="ing-chiedi-cta" onclick=\'_chatConContesto("ingrediente",'+JSON.stringify({nome:d.nome||nome, caratteristica:d.caratteristica||'', uso_tipico:d.uso_tipico||'', dialoga_con:d.dialoga_con||[], fenomeni:d.fenomeni||[]}).replace(/'/g,"&#39;")+')\'>Chiedi a Matter su '+e(String(d.nome||nome))+' →</button>';

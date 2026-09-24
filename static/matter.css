@@ -749,3 +749,39 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .ric-scheda-sci{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;background:#141d22;border:0;padding:14px 16px;cursor:pointer;text-align:left}
 .ric-sci-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#fff;text-transform:capitalize}
 .ric-sci-bers{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:#e8935a;text-align:right}
+
+/* ═══ BIODIVERSITÀ (quarto pilastro, lente del Laboratorio) ═══ */
+.bio-hero{margin:0 0 18px;padding:18px;background:#141d22;border-radius:4px;box-shadow:4px 4px 0 rgba(20,29,34,.2)}
+.bio-hero-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;color:#7fb0c4;margin-bottom:8px}
+.bio-hero-claim{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;line-height:1.1;color:#e8935a;margin-bottom:8px}
+.bio-hero-sub{font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#cbd6da}
+.bio-regione{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #141d22;border-radius:4px;box-shadow:3px 3px 0 rgba(20,29,34,.12);padding:14px 16px;margin-bottom:10px;cursor:pointer}
+.bio-regione:active{transform:translate(3px,3px);box-shadow:0 0 0}
+.bio-reg-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.bio-reg-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;color:#141d22}
+.bio-reg-n{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#c77b3f}
+.bio-reg-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.bio-reg-esempi{font-family:'Inter',sans-serif;font-size:12px;color:#5a6c70;line-height:1.4;text-transform:capitalize}
+/* badge tutela */
+.bio-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 7px;text-transform:uppercase}
+.bio-dop{background:#8a1f1f;color:#fff}
+.bio-igp{background:#1f5a8a;color:#fff}
+.bio-presidio{background:#3a6d2c;color:#fff}
+.bio-stg{background:#5a3a8a;color:#fff}
+/* dettaglio regione */
+.bio-reg-head{margin:0 0 16px}
+.bio-reg-head-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#c77b3f;margin-bottom:6px}
+.bio-reg-head-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:28px;color:#141d22;line-height:1.05}
+.bio-reg-head-n{font-family:'Inter',sans-serif;font-size:13px;color:#5a6c70;margin-top:4px}
+.bio-var-lista,.ing-var-lista{display:flex;flex-direction:column;gap:8px}
+.bio-var{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #141d22;border-radius:4px;box-shadow:2px 2px 0 rgba(20,29,34,.1);padding:12px 14px;cursor:pointer}
+.bio-var:active{transform:translate(2px,2px);box-shadow:0 0 0}
+.bio-var-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bio-var-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141d22;text-transform:capitalize}
+.bio-var-terr{font-family:'Inter',sans-serif;font-size:12px;color:#5a6c70;margin-top:5px}
+.bio-var-car{font-family:'Inter',sans-serif;font-size:12px;color:#5a6c70;margin-top:4px;font-style:italic}
+/* blocco territorio nella scheda ingrediente */
+.ing-territorio{background:rgba(199,123,63,.08);border-left:3px solid #c77b3f;padding:12px 14px;margin:0 0 16px}
+.ing-terr-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c77b3f;margin-bottom:5px}
+.ing-terr-val{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;color:#141d22}
+.ing-terr-tut{margin-top:8px}
