@@ -4929,29 +4929,25 @@ def composer_prossimi():
         if profilo["umami"] >= 7 and profilo["acido"] < 3:
             contrasti_richiesti.append(("acido", "Umami intenso: acidita' lo rende piu' vivo"))
 
-        # tipi_base degli ingredienti gia scelti (per escludere le varianti dello stesso: gerarchia)
-        tipi_scelti = set()
-        _def_tipo = lambda ddx, nomex: (ddx.get('tipo_base') if isinstance(ddx,dict) else None) or nomex.lower().split()[0]
-        for _nid in ids_scelti:
-            _cur.execute("SELECT name, data FROM nodes WHERE id=%s", (_nid,))
-            _rr = _cur.fetchone()
-            if _rr:
-                _ddx = _rr[1] if isinstance(_rr[1], dict) else (_j.loads(_rr[1]) if _rr[1] else {})
-                tipi_scelti.add(_def_tipo(_ddx, _rr[0]))
         # 3. candidati: ingredienti NON gia scelti, con proprieta o composti
         _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                         AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 313""")
-        analogia = []; contrasto = []; visti_tipi_c = set(tipi_scelti)
+        analogia = []; contrasto = []
         for nid, nome, data in _cur.fetchall():
             if nid in ids_scelti: continue
             dd = data if isinstance(data, dict) else _j.loads(data)
-            _tipo_cand = _def_tipo(dd, nome)
-            if _tipo_cand in visti_tipi_c: continue  # NO parenti/varianti dello stesso tipo
             prop = dd.get("proprieta", {})
-            # ANALOGIA: composti condivisi
+            # scarto id grezzi (fermented_tea, bantu_beer) e nomi tecnici
+            if '_' in nome or any(x in nome.lower() for x in ['_tea','_beer','_oil','beer','oleoresin']):
+                continue
+            # ANALOGIA: composti condivisi, con metrica adattiva (penalizza i ricchi/hub)
             _cur.execute("""SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto' AND to_id = ANY(%s)""",
                          (nid, list(composti_ricetta) or ['']))
             overlap = _cur.fetchone()[0] if composti_ricetta else 0
+            # quanti composti TOTALI ha il candidato (per la metrica adattiva)
+            _cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
+            _ncomp = _cur.fetchone()[0]
+            if _ncomp > 150 and overlap < 15: continue   # ricco ma legame debole: scarto (hub generico)
             # CONTRASTO: soddisfa una clausola richiesta?
             motivo_contrasto = None
             for prop_needed, spieg in contrasti_richiesti:
@@ -4962,7 +4958,6 @@ def composer_prossimi():
                                   "valore": prop.get(prop_needed, 0)})
             elif overlap >= 3:
                 analogia.append({"id": nid, "nome": nome, "composti_condivisi": overlap})
-                visti_tipi_c.add(_tipo_cand)
         analogia.sort(key=lambda x: -x["composti_condivisi"])
         _cur.close(); _release_conn(_c)
         return jsonify({
