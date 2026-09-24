@@ -335,13 +335,7 @@ def cerca_universale():
     def _params():
         return tuple(f"%{p}%" for p in parole) + (pat,)
     risultati = []
-    # SCHEDE SCIENZA in cima (le piu' preziose): match su slug/nome/categoria. Il frontend legge lo slug.
-    _ql = q.lower()
-    for _slug, _sc in SCHEDE_SCIENZA.items():
-        if _ql in _slug or _ql in _sc.get("nome","").lower() or any(pp in _slug or pp in _sc.get("nome","").lower() for pp in parole):
-            risultati.append({"tipo": "scheda_scienza", "slug": _slug, "id": _slug,
-                              "nome": _sc.get("nome"), "numero_bersaglio": _sc.get("numero_bersaglio"),
-                              "categoria": _sc.get("categoria")})
+    # schede scienza = fenomeni/tecniche, gia inclusi nei risultati come tipo fenomeno/tecnica
     try:
         from db import carica_grafo
         db = carica_grafo()
@@ -893,129 +887,60 @@ def cifra_ingrediente(nodo_id):
         return jsonify({"errore": str(e)[:120]}), 500
 
 
-# ═══ SCHEDE SCIENZA (Documento Madre A3, Rule #189/#190) — infrastruttura cognitiva ═══
-# Struttura fissa a 8 blocchi. Ogni Preparazione Madre ha la sua scheda PRIMA della ricetta.
-SCHEDE_SCIENZA = {
-    "panettone": {
-        "nome": "Panettone (grande lievitato)",
-        "categoria": "grande lievitato",
-        "fenomeno": "Gelatinizzazione dell'amido + coagulazione delle proteine dell'uovo, in una maglia glutinica sviluppata da lunga lievitazione con lievito madre.",
-        "principio": "L'impasto acido (pH 4.5-5.0 da lievito madre) rinforza il glutine e rallenta la retrogradazione dell'amido: per questo il panettone resta morbido settimane. La struttura alveolata viene dall'incordatura e dai grassi (burro, tuorli) che lubrificano la maglia.",
-        "numero_bersaglio": "94-96°C al cuore a fine cottura",
-        "punto_critico": "Sotto 94°C l'amido non ha gelatinizzato del tutto: la struttura collassa allo sforno (avvallamento). Sopra 98°C si secca la mollica e si perde l'umidità che dà la lunga conservazione.",
-        "segnale_reale": "Sonda a spillo al cuore del panettone (non al bordo). Raffreddamento CAPOVOLTO sugli spilloni per 8-12h: la struttura è troppo debole a caldo e collasserebbe sotto il proprio peso.",
-        "tecnica": "Due impasti (primo la sera con madre+farina+acqua+zucchero+parte burro/tuorli; secondo la mattina con aromi, canditi). Lievitazione 12-14h totali a 26-28°C. Cottura 170°C, ~50min per pezzatura da 1kg.",
-        "errori_comuni": "Madre debole → poca spinta, alveolo fitto. Impasto surriscaldato in planetaria (>26°C) → il burro fonde, la maglia si rompe. Non capovolgere → avvallamento. Cottura troppo alta → crosta scura e cuore crudo.",
-    },
-    "pane": {
-        "nome": "Pane (pasta di pane a lievitazione naturale)",
-        "categoria": "lievitato",
-        "fenomeno": "Fermentazione (lieviti e batteri lattici producono CO2 e acidi) + gelatinizzazione dell'amido e reazione di Maillard in crosta.",
-        "principio": "Il glutine idratato forma una maglia elastica che trattiene la CO2. L'acidita' del lievito madre rallenta la retrogradazione e da' aroma. La crosta si forma per Maillard e caramellizzazione dove la superficie supera i 140°C.",
-        "numero_bersaglio": "96-98°C al cuore; forno di partenza 240-250°C",
-        "punto_critico": "Sotto 94°C al cuore la mollica resta gommosa (gelatinizzazione incompleta). Poca idratazione → mollica fitta. Sovralievitazione → la maglia cede e il pane si affloscia.",
-        "segnale_reale": "Suono cavo battendo il fondo. Sonda al cuore 96-98°C. Colore crosta ambrato scuro (Maillard completo). Vapore nei primi 10min per la spinta e la crosta lucida.",
-        "tecnica": "Autolisi, impasto, pieghe, lievitazione (bulk 3-4h + appretto). Cottura con vapore iniziale a 240°C poi calando a 210°C.",
-        "errori_comuni": "Impasto poco incordato → non tiene i gas. Niente vapore → crosta spessa e poca spinta. Forno troppo basso → pane pallido e pesante. Taglio (grigne) assente → spacca a caso.",
-    },
-    "ragu": {
-        "nome": "Ragu' (preparazione madre)",
-        "categoria": "base/sugo",
-        "fenomeno": "Reazione di Maillard sulla carne (rosolatura) + collagene che si scioglie in gelatina nella cottura lunga a bassa temperatura.",
-        "principio": "La rosolatura iniziale (>140°C, carne asciutta) crea i composti bruni del sapore. Poi la cottura lenta (80-90°C) converte il collagene duro in gelatina morbida: la carne diventa tenera e il sugo corposo.",
-        "numero_bersaglio": "Sobbollire a 85-90°C per 3+ ore (mai bollore violento)",
-        "punto_critico": "Bollore forte (>95°C) indurisce le fibre muscolari prima che il collagene si sciolga → carne stopposa. Rosolatura in pentola affollata → la carne bolle invece di rosolare (niente Maillard).",
-        "segnale_reale": "Superficie che 'sbuffa' piano, non ribolle. La carne si sfalda alla forchetta. Il grasso affiora e il sugo si vela.",
-        "tecnica": "Rosolare la carne a lotti (non affollare), sfumare, soffritto, pomodoro, cottura lenta scoperta 3-4h. Sale a fine per non estrarre acqua troppo presto.",
-        "errori_comuni": "Pentola affollata → niente rosolatura. Fuoco alto → carne dura. Poco tempo → collagene non sciolto. Troppo pomodoro → acidita' che copre.",
-    },
-    "besciamella": {
-        "nome": "Besciamella (salsa madre)",
-        "categoria": "base/salsa",
-        "fenomeno": "Gelatinizzazione dell'amido della farina che addensa il latte, veicolata da un roux (grasso+farina).",
-        "principio": "L'amido della farina, disperso nel grasso (roux), gonfia e gelatinizza tra 60-85°C legando il liquido. Il grasso evita i grumi separando i granuli d'amido prima che incontrino il latte.",
-        "numero_bersaglio": "Addensa a 82-85°C (poco sotto il bollore)",
-        "punto_critico": "Latte freddo su roux caldo (o viceversa senza frusta) → grumi. Cottura insufficiente del roux → sapore di farina cruda. Bollore prolungato → si stacca/impazzisce.",
-        "segnale_reale": "Vela il dorso del cucchiaio. Nessun sapore di farina cruda (roux cotto 2-3min). Superficie lucida, non granulosa.",
-        "tecnica": "Roux (burro+farina pari peso, cotto 2-3min), latte caldo a filo con frusta, cottura finche' vela. Proporzione classica 100g roux : 1L latte per densita' media.",
-        "errori_comuni": "Frusta assente → grumi. Roux crudo → sapore di farina. Latte freddo di colpo → grumi. Sale/noce moscata dimenticati → piatta.",
-    },
-    "frolla": {
-        "nome": "Pasta frolla (impasto base)",
-        "categoria": "base/pasticceria",
-        "fenomeno": "Impermeabilizzazione della farina col grasso (sablage) che LIMITA lo sviluppo del glutine → friabilita'.",
-        "principio": "Il grasso che avvolge la farina impedisce all'acqua di idratare le proteine: poco glutine = struttura friabile, non elastica. Al contrario del pane, qui il glutine e' il nemico.",
-        "numero_bersaglio": "Cottura 160-170°C; burro a 14-16°C in lavorazione",
-        "punto_critico": "Impasto lavorato troppo o burro troppo caldo → glutine sviluppato → frolla dura e che si ritira. Troppo freddo → non si amalgama.",
-        "segnale_reale": "Impasto che si sbriciola leggermente ma sta insieme. Non elastico. Riposo in frigo 30min prima di stendere (rilassa e solidifica il burro).",
-        "tecnica": "Sablage (sabbiare burro freddo+farina) poi zucchero, uova, veloce. Riposo freddo. Cottura 160-170°C. Metodo classico 1:2:3 (zucchero:grasso:farina).",
-        "errori_comuni": "Impastare troppo → dura. Burro caldo → si spatascia. Niente riposo → si ritira in cottura. Forno alto → brucia i bordi, cuore crudo.",
-    },
-    "maionese": {
-        "nome": "Maionese (emulsione madre)",
-        "categoria": "base/salsa",
-        "fenomeno": "Emulsione stabile olio-in-acqua: la lecitina del tuorlo tiene sospese microgocce di olio nell'acqua.",
-        "principio": "La lecitina (tensioattivo del tuorlo) ha una parte che ama il grasso e una che ama l'acqua: avvolge le gocce d'olio e impedisce che si riuniscano. L'olio va aggiunto lentamente per creare tante microgocce.",
-        "numero_bersaglio": "Rapporto ~1 tuorlo : 200ml olio; tutto a temperatura ambiente",
-        "punto_critico": "Olio troppo veloce all'inizio → l'emulsione non si forma (impazzisce). Ingredienti freddi → emulsione instabile. Troppo olio per tuorlo → si rompe.",
-        "segnale_reale": "Diventa densa e chiara man mano che monta. Se impazzisce: ricominci con un tuorlo nuovo e aggiungi la salsa rotta a filo.",
-        "tecnica": "Tuorlo + senape + poco aceto, olio a filo montando costante. Temperatura ambiente. Frusta o minipimer.",
-        "errori_comuni": "Olio di colpo → impazzisce. Ingredienti freddi → instabile. Niente acido → piatta e instabile. Frusta discontinua → non monta.",
-    },
-    "pasta-fresca": {
-        "nome": "Pasta fresca all'uovo (impasto base)",
-        "categoria": "base",
-        "fenomeno": "Sviluppo del glutine (elasticita') idratato dalle uova, senza lievitazione.",
-        "principio": "Le proteine della farina (di grano tenero o semola) idratate dall'uovo e lavorate formano una maglia glutinica elastica ed estensibile, che regge la trafilatura/sfoglia e la cottura.",
-        "numero_bersaglio": "~1 uovo (55g) per 100g farina; riposo 30min",
-        "punto_critico": "Poca idratazione → sfoglia che si spacca. Impasto poco lavorato → glutine non sviluppato, pasta molle. Niente riposo → si ritira e strappa alla sfoglia.",
-        "segnale_reale": "Impasto liscio, sodo, elastico che riprende forma se premuto. Sfoglia che non si strappa e resta velata.",
-        "tecnica": "Fontana, uova, impasto 10min, riposo coperto 30min, sfoglia sottile. Semola per pasta piu' tenace, 00 per sfoglia delicata.",
-        "errori_comuni": "Impasto poco lavorato → molle. Niente riposo → si ritira. Sfoglia spessa → gommosa. Farina sbagliata → non tiene.",
-    },
-    "caramello": {
-        "nome": "Caramello (cottura dello zucchero)",
-        "categoria": "base/pasticceria",
-        "fenomeno": "Caramellizzazione: lo zucchero fuso oltre i 160°C si decompone in centinaia di composti aromatici e bruni.",
-        "principio": "Il saccarosio fonde a 160°C e sopra i 170°C inizia a caramellizzare (imbrunire e sviluppare aroma). E' una reazione diversa dal Maillard (qui non servono proteine): solo zucchero e calore.",
-        "numero_bersaglio": "Caramello chiaro 160-170°C, ambrato 170-180°C, scuro 180-190°C",
-        "punto_critico": "Sopra 190°C brucia (amaro). Cristallizzazione se si mescola o ci sono impurita' (aggiungere glucosio o poca acqua/limone la previene).",
-        "segnale_reale": "Il colore E' il termometro: paglierino→ambra→nocciola→bruno. Fermare la cottura (togliere dal fuoco) prima del punto voluto, continua da solo.",
-        "tecnica": "A secco (solo zucchero) o a umido (con acqua). Non mescolare, ruotare la pentola. Bloccare con panna calda o burro.",
-        "errori_comuni": "Mescolare → cristallizza. Fuoco troppo alto → brucia ai bordi. Panna fredda → schizza e rapprende. Aspettare troppo → amaro.",
-    },
-    "sciroppo": {
-        "nome": "Sciroppo di zucchero (base bar)",
-        "categoria": "base/bar",
-        "fenomeno": "Dissoluzione dello zucchero in acqua fino a soluzione satura stabile.",
-        "principio": "L'acqua scioglie il saccarosio; a caldo si scioglie di piu' (soluzione piu' concentrata). Il rapporto zucchero:acqua determina densita' e dolcezza, e influenza equilibrio e texture del cocktail.",
-        "numero_bersaglio": "Simple 1:1 (peso); rich syrup 2:1 (piu' denso, meno diluizione nel drink)",
-        "punto_critico": "Troppo caldo/lungo → inizia a caramellare (cambia sapore). Rapporto sbagliato → drink squilibrato. Senza conservazione → fermenta in pochi giorni.",
-        "segnale_reale": "Limpido, senza cristalli residui. Il rich (2:1) e' visibilmente piu' denso e vela il cucchiaio.",
-        "tecnica": "Scaldare acqua (non bollire), sciogliere lo zucchero, raffreddare. Un goccio di vodka o acido citrico allunga la conservazione. Conservare in frigo.",
-        "errori_comuni": "Bollire → caramella. Rapporto a caso → dolcezza incoerente tra drink. Non filtrare → torbido. Niente conservante → ammuffisce.",
-    },
-    "brodo": {"nome":"Brodo / Fondo (base madre)","categoria":"base","fenomeno":"Estrazione di gelatina (dal collagene delle ossa), proteine e aromi in acqua a bassa temperatura prolungata.","principio":"Il collagene si scioglie lentamente in gelatina che da' corpo. La cottura DOLCE (mai bollore) evita che grassi e proteine intorbidino. La tostatura delle ossa (fondo bruno) aggiunge Maillard.","numero_bersaglio":"Sobbollire 85-90°C per 4-8h (ossa) o 1h (verdure)","punto_critico":"Bollore → brodo torbido e grasso. Salare presto → troppo salato riducendo.","segnale_reale":"Superficie che tremola appena. Limpido. Da freddo GELIFICA (collagene estratto). Schiumare.","tecnica":"Partire da acqua fredda, portare piano, schiumare, sobbollire scoperto. Fondo bruno: tostare prima. Filtrare.","errori_comuni":"Bollore → torbido. Acqua calda in partenza → meno estrazione. Non schiumare → sporco. Sale presto → salato."},
-    "risotto": {"nome":"Risotto (mantecatura)","categoria":"base","fenomeno":"Rilascio graduale dell'amido del riso che, legato a grasso freddo a fine cottura, crea la cremosita'.","principio":"I chicchi (Carnaroli/Arborio) rilasciano amido con brodo caldo aggiunto poco a poco. A fine, burro/formaggio FREDDI fuori dal fuoco emulsionano l'amido creando l'onda senza separare i grassi.","numero_bersaglio":"Cottura ~16-18min; mantecatura fuori dal fuoco","punto_critico":"Brodo freddo → slega. Mantecare sul fuoco → unto. Riso scotto → colla.","segnale_reale":"All'onda: si muove come un'onda. Chicco al dente. Lucido dopo mantecatura.","tecnica":"Tostatura, sfuma, brodo caldo poco a poco, a fine fuori dal fuoco burro+parmigiano freddi, riposo 1min.","errori_comuni":"Brodo freddo → slega. Mantecare sul fuoco → unto. Riso sbagliato → non tiene."},
-    "crema-pasticcera": {"nome":"Crema pasticcera","categoria":"base/pasticceria","fenomeno":"Addensamento doppio: coagulazione dei tuorli + gelatinizzazione dell'amido nel latte caldo.","principio":"I tuorli coagulano a 65-70°C ma l'amido alza la soglia e stabilizza, permettendo il bollore senza stracciare le uova. L'amido gelatinizza e da' corpo.","numero_bersaglio":"Portare a 82-85°C (con amido si sfiora il bollore)","punto_critico":"Senza amido, sopra 70°C le uova stracciano. Poca cottura → amido crudo. Raffreddamento lento → rischio batterico.","segnale_reale":"Vela il cucchiaio poi al bollore si addensa di colpo. Lucida, senza grumi. Pellicola a contatto.","tecnica":"Tuorli+zucchero+amido, latte caldo a filo, sul fuoco fino a addensare. Pellicola a contatto, abbattere.","errori_comuni":"Latte caldo di colpo → straccia. Poca cottura → amido crudo. Niente pellicola → crosta."},
-    "meringa": {"nome":"Meringa","categoria":"base/pasticceria","fenomeno":"Denaturazione delle proteine dell'albume che montate intrappolano aria, stabilizzate dallo zucchero.","principio":"Montando, le proteine si aprono e formano pareti attorno alle bolle. Lo zucchero stabilizza legando acqua. Il grasso (traccia di tuorlo) impedisce il montaggio.","numero_bersaglio":"~2:1 zucchero:albume (francese); italiana con sciroppo a 121°C","punto_critico":"Tracce di grasso → non monta. Zucchero presto → non incorpora aria. Sovramontata → granulosa e collassa.","segnale_reale":"Becco d'uccello: punta ferma e lucida. Non scivola capovolgendo la ciotola. Liscia.","tecnica":"Francese: zucchero a pioggia dopo la schiuma. Italiana: sciroppo 121°C a filo. Ciotola sgrassata.","errori_comuni":"Grasso → non monta. Zucchero subito → piatta. Sovramontata → collassa. Umidita' → smonta."},
-    "sfoglia": {"nome":"Pasta sfoglia (laminato)","categoria":"base/pasticceria","fenomeno":"Laminazione: strati alternati di impasto e burro che in cottura sviluppano vapore, gonfiando in centinaia di foglie.","principio":"Le pieghe creano strati sottili di burro tra impasto. In forno l'acqua evapora e il vapore intrappolato spinge gli strati in alto. Il burro deve restare solido e separato.","numero_bersaglio":"Burro e impasto stessa consistenza; cottura 190-200°C; 3-6 pieghe","punto_critico":"Burro caldo → si assorbe (niente strati). Troppo freddo → si rompe. Forno basso → il burro cola.","segnale_reale":"Strati visibili sul taglio. Gonfia dritta. Il burro non trasuda.","tecnica":"Pastello + panetto di burro, pieghe con riposi freddi. Cottura alta e stabile.","errori_comuni":"Burro caldo → niente strati. Poco riposo → si ritira. Forno basso → cola."},
-    "ganache": {"nome":"Ganache","categoria":"base/pasticceria","fenomeno":"Emulsione di grassi (burro di cacao + panna) che unisce cioccolato e liquido in una crema lucida.","principio":"Cioccolato fuso e panna calda formano un'emulsione: cacao e grassi si legano all'acqua della panna. Il rapporto cioccolato:panna decide la durezza (1:1 morbida, 2:1 soda).","numero_bersaglio":"Panna a ~85°C sul cioccolato; emulsionare dal centro","punto_critico":"Panna troppo calda → il grasso separa. Mescolare male → si rompe. Cioccolato scarso → non emulsiona.","segnale_reale":"Lucida, liscia, elastica. Se rotta: poco latte caldo e frullare per riemulsionare.","tecnica":"Panna calda sul cioccolato tritato, attendere, emulsionare dal centro. Aromi/burro a fine.","errori_comuni":"Panna bollente → separa. Mescolare a caso → rompe. Cioccolato scarso → opaca."},
-    "cottura-carne": {"nome":"Cottura della carne (bistecca/arrosto)","categoria":"tecnica","fenomeno":"Maillard in crosta (>140°C) + denaturazione progressiva delle proteine muscolari col salire della temperatura al cuore.","principio":"La crosta viene dal Maillard sulla superficie asciutta e calda. Al cuore le proteine si contraggono col calore: piu' sale la temperatura, piu' perde succhi. Il grado di cottura E' la temperatura al cuore.","numero_bersaglio":"Al cuore: 50-52°C sangue, 55-57°C media, 63-68°C ben cotta","punto_critico":"Superficie umida → niente Maillard. Cuore oltre 70°C → asciutta. Non far riposare → succhi persi al taglio.","segnale_reale":"Sonda al cuore per il grado. Crosta bruna asciutta. Riposo 5-10min prima di tagliare.","tecnica":"Carne a temp. ambiente, superficie asciutta, padella rovente per la crosta, poi calore dolce per il cuore. Riposo.","errori_comuni":"Carne fredda → cuore crudo. Superficie bagnata → grigia. Girare sempre → niente crosta. Niente riposo → asciutta."},
-    "fermentazione": {"nome":"Fermentazione (lattica, sott'aceti, basi bar)","categoria":"tecnica","fenomeno":"Batteri lattici convertono zuccheri in acido lattico, abbassando il pH e conservando mentre sviluppano aromi.","principio":"In ambiente anaerobico e salato (~2-3%), i lattobacilli prevalgono su muffe e patogeni: l'acido porta il pH sotto 4.6, soglia che blocca i batteri dannosi. Sale e temperatura governano la velocita'.","numero_bersaglio":"Salamoia 2-3% sul peso; pH finale sotto 4.6; 18-22°C","punto_critico":"Poco sale o ossigeno → muffe. Troppo caldo → incontrollata. pH sopra 4.6 → non sicuro. Verdure a galla → ammuffiscono.","segnale_reale":"Bollicine, torbidita', profumo acidulo (non putrido). pH sotto 4.6. Tutto sotto la salamoia.","tecnica":"Salamoia pesata, tutto sommerso e anaerobico, temperatura controllata, assaggio nel tempo. Poi frigo.","errori_comuni":"Sale a occhio → fallisce. Verdure a galla → muffa. Troppo caldo → sgradevole. Fretta → pH non sicuro."},
-}
+# ═══ SCHEDE SCIENZA — leggono i FENOMENI/TECNICHE reali del grafo (nessun dizionario) ═══
+def _fenomeno_a_scheda(dd, nome, nid):
+    cs = dd.get("contenuto_strutturato") or {}
+    if isinstance(cs, str):
+        import json as _j
+        try: cs = _j.loads(cs)
+        except: cs = {}
+    return {
+        "slug": nid, "nome": nome,
+        "categoria": dd.get("disciplina") or dd.get("dominio") or cs.get("dominio") or "",
+        "numero_bersaglio": dd.get("numero_bersaglio") or dd.get("target") or cs.get("numero_bersaglio") or "",
+        "scheda": dd.get("scheda") or cs.get("spiegazione") or cs.get("principio") or "",
+        "principio": cs.get("principio") or "",
+        "punto_critico": cs.get("punto_critico") or dd.get("punto_critico") or "",
+        "errori_comuni": dd.get("errori_comuni") or cs.get("errori_comuni") or "",
+        "esecuzione": dd.get("esecuzione") or cs.get("esecuzione") or "",
+        "strumento": dd.get("strumento") or "",
+        "gancio": dd.get("gancio") or "",
+    }
 
 @bp.route("/v1/scheda-scienza/<slug>", methods=["GET"])
 def scheda_scienza(slug):
-    """Restituisce la Scheda Scienza di una preparazione (8 blocchi fissi). Infrastruttura, Rule #189."""
+    """Scheda scienza = il fenomeno/tecnica reale del grafo (legge i FENOMENI, non un dizionario)."""
     from flask import jsonify
-    s = SCHEDE_SCIENZA.get(slug.lower().strip())
-    if not s:
-        return jsonify({"errore": "scheda non trovata", "disponibili": list(SCHEDE_SCIENZA.keys())}), 404
-    return jsonify(s)
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE (id=? OR LOWER(name) LIKE LOWER(?)) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (slug, f"%{slug}%")).fetchall()
+        if not rows:
+            return jsonify({"errore": "scheda non trovata"}), 404
+        r = rows[0]
+        dd = _c(r,"data",2)
+        dd = dd if isinstance(dd, dict) else (_j.loads(dd) if dd else {})
+        return jsonify(_fenomeno_a_scheda(dd, _c(r,"name",1), _c(r,"id",0)))
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
 
 @bp.route("/v1/schede-scienza", methods=["GET"])
 def schede_scienza_lista():
-    """Lista delle Schede Scienza disponibili."""
+    """Lista schede scienza = i fenomeni/tecniche reali del grafo."""
     from flask import jsonify
-    return jsonify({"schede": [{"slug": k, "nome": v["nome"], "categoria": v["categoria"]} for k,v in SCHEDE_SCIENZA.items()]})
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica') ORDER BY name LIMIT 200").fetchall()
+        schede = []
+        for r in rows:
+            dd = _c(r,"data",2); dd = dd if isinstance(dd, dict) else (_j.loads(dd) if dd else {})
+            schede.append({"slug": _c(r,"id",0), "nome": _c(r,"name",1),
+                           "categoria": dd.get("disciplina") or dd.get("dominio") or ""})
+        return jsonify({"schede": schede, "totale": len(schede)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
