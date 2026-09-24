@@ -884,3 +884,35 @@ def cifra_ingrediente(nodo_id):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+# ═══ SCHEDE SCIENZA (Documento Madre A3, Rule #189/#190) — infrastruttura cognitiva ═══
+# Struttura fissa a 8 blocchi. Ogni Preparazione Madre ha la sua scheda PRIMA della ricetta.
+SCHEDE_SCIENZA = {
+    "panettone": {
+        "nome": "Panettone (grande lievitato)",
+        "categoria": "grande lievitato",
+        "fenomeno": "Gelatinizzazione dell'amido + coagulazione delle proteine dell'uovo, in una maglia glutinica sviluppata da lunga lievitazione con lievito madre.",
+        "principio": "L'impasto acido (pH 4.5-5.0 da lievito madre) rinforza il glutine e rallenta la retrogradazione dell'amido: per questo il panettone resta morbido settimane. La struttura alveolata viene dall'incordatura e dai grassi (burro, tuorli) che lubrificano la maglia.",
+        "numero_bersaglio": "94-96°C al cuore a fine cottura",
+        "punto_critico": "Sotto 94°C l'amido non ha gelatinizzato del tutto: la struttura collassa allo sforno (avvallamento). Sopra 98°C si secca la mollica e si perde l'umidità che dà la lunga conservazione.",
+        "segnale_reale": "Sonda a spillo al cuore del panettone (non al bordo). Raffreddamento CAPOVOLTO sugli spilloni per 8-12h: la struttura è troppo debole a caldo e collasserebbe sotto il proprio peso.",
+        "tecnica": "Due impasti (primo la sera con madre+farina+acqua+zucchero+parte burro/tuorli; secondo la mattina con aromi, canditi). Lievitazione 12-14h totali a 26-28°C. Cottura 170°C, ~50min per pezzatura da 1kg.",
+        "errori_comuni": "Madre debole → poca spinta, alveolo fitto. Impasto surriscaldato in planetaria (>26°C) → il burro fonde, la maglia si rompe. Non capovolgere → avvallamento. Cottura troppo alta → crosta scura e cuore crudo.",
+    },
+}
+
+@bp.route("/v1/scheda-scienza/<slug>", methods=["GET"])
+def scheda_scienza(slug):
+    """Restituisce la Scheda Scienza di una preparazione (8 blocchi fissi). Infrastruttura, Rule #189."""
+    from flask import jsonify
+    s = SCHEDE_SCIENZA.get(slug.lower().strip())
+    if not s:
+        return jsonify({"errore": "scheda non trovata", "disponibili": list(SCHEDE_SCIENZA.keys())}), 404
+    return jsonify(s)
+
+@bp.route("/v1/schede-scienza", methods=["GET"])
+def schede_scienza_lista():
+    """Lista delle Schede Scienza disponibili."""
+    from flask import jsonify
+    return jsonify({"schede": [{"slug": k, "nome": v["nome"], "categoria": v["categoria"]} for k,v in SCHEDE_SCIENZA.items()]})
