@@ -335,6 +335,13 @@ def cerca_universale():
     def _params():
         return tuple(f"%{p}%" for p in parole) + (pat,)
     risultati = []
+    # SCHEDE SCIENZA in cima (le piu' preziose): match su slug/nome/categoria. Il frontend legge lo slug.
+    _ql = q.lower()
+    for _slug, _sc in SCHEDE_SCIENZA.items():
+        if _ql in _slug or _ql in _sc.get("nome","").lower() or any(pp in _slug or pp in _sc.get("nome","").lower() for pp in parole):
+            risultati.append({"tipo": "scheda_scienza", "slug": _slug, "id": _slug,
+                              "nome": _sc.get("nome"), "numero_bersaglio": _sc.get("numero_bersaglio"),
+                              "categoria": _sc.get("categoria")})
     try:
         from db import carica_grafo
         db = carica_grafo()
