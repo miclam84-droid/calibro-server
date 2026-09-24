@@ -11119,3 +11119,69 @@ def admin_conta_prezzi():
                         "percentuale": round(con_prezzo/tot*100,1) if tot else 0, "esempi_senza": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/aggiungi-prezzi")
+def admin_aggiungi_prezzi():
+    """Aggiunge prezzo_kg orientativo (ingrosso EUR/kg o /L) agli ingredienti, per il food cost.
+    Prezzi realistici 2025; Cifra li sostituira' con quelli reali delle fatture. Match per parola chiave."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # parola chiave -> prezzo EUR/kg (o /L per liquidi) all'ingrosso, orientativo
+    PREZZI = {
+        # carni
+        "filetto":38,"controfiletto":22,"costata":18,"fiorentina":20,"tomahawk":19,"picanha":16,
+        "scamone":14,"guancia":12,"ossobuco":13,"brisket":13,"reale":12,"cappello del prete":13,"manzo":15,
+        "bresaola":32,
+        # pesce
+        "branzino":16,"orata":14,"salmone":18,"tonno":22,"baccala":15,"gambero":24,"cozze":4,"vongole":12,
+        "polpo":14,"acciughe":9,"ostriche":18,"seppia":13,"calamaro":12,
+        # formaggi
+        "parmigiano":14,"grana":12,"pecorino":16,"mozzarella":8,"bufala":12,"gorgonzola":11,"ricotta":5,
+        "stracciatella":13,"caciocavallo":12,"fior di latte":8,"gruyère":18,
+        # salumi
+        "guanciale":14,"pancetta":11,"prosciutto":26,"mortadella":10,"nduja":16,"speck":22,"salame":15,"lardo":9,
+        # verdure/ortaggi
+        "pomodoro":2.5,"melanzana":2,"zucchina":2,"peperone":2.5,"carciofo":3.5,"radicchio":3,"puntarelle":4,
+        "cavolo":2,"zucca":1.5,"patata":1.2,"asparago":6,"friggitello":3,
+        # frutta
+        "limone":2.5,"arancia":2,"bergamotto":5,"fico":4,"pesca":2.5,"fragola":6,"mela":2,"uva":3,
+        # erbe/spezie
+        "basilico":12,"menta":12,"prezzemolo":8,"salvia":14,"rosmarino":10,"zafferano":3000,"pepe":25,
+        "peperoncino":15,"vaniglia":600,
+        # legumi/cereali
+        "fagiol":4,"cece":4,"lenticchia":5,"fava":3,"pisello":3,"riso":3,"carnaroli":4,"arborio":3.5,
+        # dispensa
+        "olio":9,"aceto":6,"balsamico":15,"colatura":40,"miele":10,"sale":1,"farina":1.2,"semola":1.3,
+        # pasticceria
+        "cioccolato":12,"cacao":10,"pasta di nocciola":22,"pasta di pistacchio":45,"zucchero":1.2,
+        "glucosio":3,"panna":4,"burro":8,"gelatina":25,
+        # bar
+        "gin":18,"vermouth":9,"campari":14,"rum":16,"tequila":25,"whisky":22,"angostura":40,"prosecco":8,
+        "curacao":14,"lime":3,"vino":6,
+    }
+    n = min(int(request.args.get("n", "500")), 800)
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND NOT (data ? 'prezzo_kg')""")
+        righe = cur.fetchall()
+        keys_sorted = sorted(PREZZI.keys(), key=len, reverse=True)
+        assegnati = 0
+        for nid, nome, data in righe:
+            nl = nome.lower()
+            prezzo = None
+            for k in keys_sorted:
+                if k in nl: prezzo = PREZZI[k]; break
+            if prezzo is None: continue
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            dd["prezzo_kg"] = prezzo
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            assegnati += 1
+            if assegnati % 200 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"prezzi_assegnati": assegnati, "processati": len(righe)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
