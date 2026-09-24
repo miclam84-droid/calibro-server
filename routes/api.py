@@ -4526,9 +4526,11 @@ def flavour_network(ingrediente):
                 # componente CULINARIA: il nodo e' tra gli abbinati tradizionali del centro?
                 nl_i = nome_i.lower()
                 culinaria = 1.0 if (nl_i in abbinati_culinari or any(nl_i in ab or ab in nl_i for ab in abbinati_culinari)) else 0.0
-                # peso finale composto (#181)
-                peso = 0.55*molecolare + 0.25*sensoriale + 0.20*culinaria
-                forza = min(95, max(35, int(peso*100)))
+                # peso finale composto (#181): se e' un abbinamento TRADIZIONALE, ha un pavimento alto
+                # (la tradizione culinaria e' evidenza forte quanto la molecola - #181 'piu evidenze')
+                peso = 0.45*molecolare + 0.25*sensoriale + 0.30*culinaria
+                forza = min(96, max(35, int(peso*100)))
+                if culinaria >= 1.0: forza = max(forza, 70)  # gli abbinamenti classici non spariscono mai
                 visti_tipi.add(tipo_i)
                 nomi_c = [x.replace('ahn_comp_','').replace('pub_','').replace('_',' ') for x in list(comp_centro & comp_i)[:4]]
                 nodi.append({"nome": nome_i, "forza": forza, "tipo":"analogia",
