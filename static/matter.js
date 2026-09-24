@@ -356,6 +356,7 @@ async function _caricaPrincipi(){
    CAPIRE · USARE · CREARE · MISURARE — ogni porta raggruppa le voci esistenti. */
 var _PORTE = {
   osserva:  { label:'Osserva', sub:'La scienza dietro il risultato', voci:[
+                {t:'Schede Scienza', d:'I numeri e i fenomeni dietro ogni preparazione madre', act:function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('scienza').then(function(){ if(typeof apriSchedeScienza==='function')apriSchedeScienza(); }); } }},
                 {t:'Fenomeni', d:'I 148 fenomeni del mestiere', act:function(){switchMappaTab('fenomeni');}},
                 {t:'Principi', d:'Le leggi fisiche di fondo', act:function(){switchMappaTab('principi');}},
                 {t:'Tecniche Avanzate', d:'Fat washing, koji, nixtamal…', act:function(){if(typeof apriAvanzate==='function')apriAvanzate();}},
@@ -447,7 +448,7 @@ function _afetch(url, opts){
   });
 }
 // ═══ LOADER MODULI LAZY (metodo Strangler) ═══
-window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false, planner:false, composer:false, grafo:false };
+window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false, planner:false, composer:false, grafo:false, scienza:false };
 function _caricaModulo(nome){
   return new Promise(function(resolve){
     if(window._moduli[nome]){ resolve(); return; }
@@ -4627,15 +4628,28 @@ function _ricercaLive(q){
   _ricercaTimer=setTimeout(async function(){
     if(out) out.innerHTML='<div class="calc-loading">Cerco…</div>';
     try{
+      // scheda scienza in cima (la cosa più preziosa) — provo lo slug diretto
+      var schedaHtml='';
+      try{
+        var slugTry=q.toLowerCase().replace(/\s+/g,'-');
+        var rs=await fetch('/v1/scheda-scienza/'+encodeURIComponent(slugTry));
+        if(rs.ok){ var sd=await rs.json(); if(sd && sd.nome && !sd.errore){
+          schedaHtml='<div class="ric-glob-grp"><div class="ric-glob-grp-lab">◎ Scheda Scienza</div>'
+            + '<button class="ric-scheda-sci" onclick="chiudiVista();_caricaModulo(\'scienza\').then(function(){apriSchedaScienza(\''+_escV(slugTry)+'\')})">'
+            + '<span class="ric-sci-nome">'+_escV(sd.nome)+'</span>'
+            + (sd.numero_bersaglio?'<span class="ric-sci-bers">'+_escV(sd.numero_bersaglio)+'</span>':'')
+            + '</button></div>';
+        }}
+      }catch(x){}
       var r=await fetch('/v1/cerca?q='+encodeURIComponent(q));
       var j=await r.json();
       var ris=j.risultati||[];
       var e=_escV;
-      if(!ris.length){ if(out) out.innerHTML='<div class="ric-glob-hint">Nessun risultato per "'+e(q)+'".</div>'; return; }
+      if(!ris.length && !schedaHtml){ if(out) out.innerHTML='<div class="ric-glob-hint">Nessun risultato per "'+e(q)+'".</div>'; return; }
       // raggruppo per tipo
       var gruppi={};
       ris.forEach(function(x){ (gruppi[x.tipo]=gruppi[x.tipo]||[]).push(x); });
-      var html='';
+      var html=schedaHtml;
       ['ingrediente','fenomeno','tecnica','ricetta'].forEach(function(tipo){
         if(!gruppi[tipo]) return;
         html+='<div class="ric-glob-grp"><div class="ric-glob-grp-lab">'+(_RIC_TIPO_LAB[tipo]||tipo)+' · '+gruppi[tipo].length+'</div>';
