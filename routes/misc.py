@@ -728,15 +728,18 @@ def scheda_ingrediente(ingrediente_id):
             dd_self = data if isinstance(data, dict) else (_j2.loads(data) if data else {})
             _mytipo = dd_self.get("tipo_base")
             if _mytipo:
+                # filtro DIRETTO per tipo_base (non scorro nodi a caso): prende TUTTE le varieta
                 vv = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                                   AND id != ? LIMIT 400""", (nid,)).fetchall()
+                                   AND data->>'tipo_base' = ? AND id != ? LIMIT 30""", (_mytipo, nid)).fetchall()
                 for _r in vv:
                     _dv = _c(_r,"data",2)
                     _dv = _dv if isinstance(_dv, dict) else (_j2.loads(_dv) if _dv else {})
-                    if _dv.get("tipo_base") == _mytipo and _c(_r,"name",1).lower() != nome.lower():
+                    if _c(_r,"name",1).lower() != nome.lower():
                         varieta.append({"id": _c(_r,"id",0), "nome": _c(_r,"name",1),
+                                        "territorio": _dv.get("territorio") or _dv.get("origine") or "",
+                                        "presidio": _dv.get("presidio") or _dv.get("dop_igp") or "",
                                         "caratteristica": (_dv.get("caratteristica") or "")[:80]})
-                    if len(varieta) >= 12: break
+                    if len(varieta) >= 20: break
         except Exception: pass
         return jsonify({
             "id": nid, "nome": nome,
@@ -795,15 +798,18 @@ def nodo_completo(nodo_id):
             dd_self = data if isinstance(data, dict) else (_j2.loads(data) if data else {})
             _mytipo = dd_self.get("tipo_base")
             if _mytipo:
+                # filtro DIRETTO per tipo_base (non scorro nodi a caso): prende TUTTE le varieta
                 vv = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                                   AND id != ? LIMIT 400""", (nid,)).fetchall()
+                                   AND data->>'tipo_base' = ? AND id != ? LIMIT 30""", (_mytipo, nid)).fetchall()
                 for _r in vv:
                     _dv = _c(_r,"data",2)
                     _dv = _dv if isinstance(_dv, dict) else (_j2.loads(_dv) if _dv else {})
-                    if _dv.get("tipo_base") == _mytipo and _c(_r,"name",1).lower() != nome.lower():
+                    if _c(_r,"name",1).lower() != nome.lower():
                         varieta.append({"id": _c(_r,"id",0), "nome": _c(_r,"name",1),
+                                        "territorio": _dv.get("territorio") or _dv.get("origine") or "",
+                                        "presidio": _dv.get("presidio") or _dv.get("dop_igp") or "",
                                         "caratteristica": (_dv.get("caratteristica") or "")[:80]})
-                    if len(varieta) >= 12: break
+                    if len(varieta) >= 20: break
         except Exception: pass
         return jsonify({
             "id": nid, "nome": nome,
