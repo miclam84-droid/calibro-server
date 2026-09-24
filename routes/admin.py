@@ -11185,3 +11185,28 @@ def admin_aggiungi_prezzi():
         return jsonify({"prezzi_assegnati": assegnati, "processati": len(righe)})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/vedi-fenomeno-completo")
+def admin_vedi_fenomeno_completo():
+    """Mostra il CONTENUTO completo di un fenomeno esistente (per capire cosa c'e' gia' e non duplicare)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    nome = request.args.get("nome", "Emulsione")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE LOWER(name) LIKE LOWER(%s) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (f"%{nome}%",))
+        r = cur.fetchone()
+        if not r:
+            return jsonify({"errore": "non trovato"})
+        dd = r[2] if isinstance(r[2], dict) else json.loads(r[2])
+        # restituisco i valori veri (troncati) per capire il formato
+        out = {"id": r[0], "nome": r[1], "campi": {}}
+        for k, v in dd.items():
+            out["campi"][k] = (str(v)[:200] if v else None)
+        cur.close(); conn.close()
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
