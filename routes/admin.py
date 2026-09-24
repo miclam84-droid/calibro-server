@@ -11285,3 +11285,35 @@ def admin_aggiungi_territorio():
         return jsonify({"territorio_assegnato": agg})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/marca-preparazioni")
+def admin_marca_preparazioni():
+    """Separa le PREPARAZIONI/derivati (concentrato, passata, pelato, secco) dalle VARIETA/cultivar vere.
+    Marca i derivati con e_preparazione=true cosi la lista varieta mostra solo le cultivar (ontologia #192)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # parole che indicano una preparazione/derivato, non una cultivar
+    PREP = ["concentrato", "passata", "pelato", "pelati", "secco", "secchi", "essiccato",
+            "conserva", "salsa", "sugo", "in scatola", "sott'olio", "sottolio", "polpa",
+            "confettura", "marmellata", "sciroppo", "succo", "purea", "estratto",
+            "farina di", "pasta di", "granella", "in polvere", "candito", "disidratato"]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (data ? 'tipo_base')""")
+        marcati = 0
+        for nid, nome, data in cur.fetchall():
+            nl = nome.lower()
+            if any(p in nl for p in PREP):
+                dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                if not dd.get("e_preparazione"):
+                    dd["e_preparazione"] = True
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+                    marcati += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"preparazioni_marcate": marcati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
