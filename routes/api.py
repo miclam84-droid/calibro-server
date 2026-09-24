@@ -4447,11 +4447,12 @@ def lista_principi():
 
 @bp.route("/v1/flavour-network/<ingrediente>")
 def flavour_network(ingrediente):
-    """Grafo Sapori - LIVELLO 2: gerarchia (no parenti via tipo_base) + similarita' molecolare
-    NORMALIZZATA (Jaccard, forze differenziate) + contrasto sensoriale FILTRATO. No id grezzi, no assurdi."""
+    """Motore di COSTRUZIONE PIATTO (fusione con Composer): dato un ingrediente, cosa aggiungere per
+    fare una ricetta. Criterio PRIMARIO = bilanciamento sensoriale (cosa completa/taglia), NON la
+    famiglia (niente formaggio->formaggio). L'analogia molecolare resta come 'scoperta' secondaria."""
     from flask import request, jsonify
     import psycopg2 as _pg, json as _j
-    n_max = min(int(request.args.get("n", "20")), 30)
+    n_max = min(int(request.args.get("n", "18")), 30)
     try:
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
         _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
@@ -4465,106 +4466,54 @@ def flavour_network(ingrediente):
         id_centro, nome_centro, data_centro = rc[0], rc[1], rc[2]
         dd = data_centro if isinstance(data_centro, dict) else (_j.loads(data_centro) if data_centro else {})
         tipo_centro = dd.get("tipo_base") or nome_centro.lower().split()[0]
-        prop_centro = dd.get("proprieta", {})
-        _cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_centro,))
-        comp_centro = set(r[0] for r in _cur.fetchall())
+        cat_centro = (dd.get("categoria") or "").lower()
+        p = dd.get("proprieta", {})
         nodi = []; visti_tipi = set([tipo_centro])
-        # abbinati culinari del centro (co-occorrenza tradizionale): caricati UNA volta per il peso composto
-        abbinati_culinari = set()
-        try:
-            _cc = _c.cursor()
-            _cc.execute("""SELECT LOWER(n2.name) FROM edges e JOIN nodes n2 ON n2.id=e.to_id
-                           WHERE e.from_id=%s AND e.relation='abbinamento_aromatico'""", (id_centro,))
-            abbinati_culinari = set(r[0] for r in _cc.fetchall())
-            _cc.close()
-        except Exception: pass
 
-        def _tipo_di(nome_i, data_i):
-            ddi = data_i if isinstance(data_i, dict) else (_j.loads(data_i) if data_i else {})
-            return ddi.get("tipo_base") or nome_i.lower().split()[0], ddi
-        def _grezzo(nome_i):
-            # scarta id grezzi (hop_oil, roasted_beef) e nomi con _ o troppo tecnici
-            return ('_' in nome_i) or nome_i.replace(' ','').isascii() and any(x in nome_i.lower() for x in ['_oil','_extract','_powder','estratto di','oleoresin'])
+        # REGOLE DI COSTRUZIONE PIATTO: cosa serve per bilanciare/completare questo ingrediente
+        # (criterio PRIMARIO - questo e' cio' che serve a cucinare, non l'analogia molecolare)
+        bisogni = []  # (proprieta_cercata, soglia, motivo)
+        gr=p.get('grasso',0); sa=p.get('salato',0); um=p.get('umami',0); ac=p.get('acido',0)
+        do=p.get('dolce',0); am=p.get('amaro',0); pi=p.get('piccante',0); af=p.get('aroma_fresco',0)
+        if gr>=6 and ac<5: bisogni.append(('acido',5,'l acidita taglia il grasso e alleggerisce'))
+        if sa>=7 and ac<5: bisogni.append(('acido',5,'l acidita bilancia la sapidita'))
+        if sa>=7 and do<4: bisogni.append(('dolce',5,'una nota dolce contrasta il salato'))
+        if um>=7 and ac<5: bisogni.append(('acido',5,'l acidita ravviva l umami'))
+        if um>=7 and af<4: bisogni.append(('aroma_fresco',5,'una nota fresca alleggerisce l umami'))
+        if pi>=6 and do<4: bisogni.append(('dolce',5,'il dolce calma il piccante'))
+        if do>=7 and (ac<3 and am<3): bisogni.append(('acido',4,'l acido bilancia il dolce'))
+        if am>=6 and gr<4: bisogni.append(('grasso',5,'il grasso addolcisce l amaro'))
+        if af>=7 and gr<4: bisogni.append(('grasso',4,'un elemento grasso da corpo al fresco'))
+        # se non ha bisogni forti (profilo gia equilibrato), cerca complementi generici
+        if not bisogni:
+            if gr<4: bisogni.append(('grasso',5,'un elemento grasso da rotondita'))
+            if ac<4: bisogni.append(('acido',5,'una nota acida da freschezza'))
 
-        # ANALOGIA MOLECOLARE con Jaccard (forza = % reale di overlap, differenziata)
-        if len(comp_centro) >= 3:
-            _cur.execute("""SELECT n.id, n.name, n.data, COUNT(*) ov FROM edges e JOIN nodes n ON n.id=e.from_id
-                            WHERE e.relation='contiene_composto' AND e.to_id = ANY(%s) AND e.from_id != %s
-                            AND n.type IN ('Ingrediente','Prodotto') AND n.name NOT LIKE '%%(%%'
-                            GROUP BY n.id, n.name, n.data HAVING COUNT(*) >= 3 ORDER BY ov DESC LIMIT 80""",
-                         (list(comp_centro), id_centro))
-            for nid_i, nome_i, data_i, ov in _cur.fetchall():
-                if _grezzo(nome_i): continue
-                tipo_i, ddi = _tipo_di(nome_i, data_i)
-                if tipo_i in visti_tipi: continue  # NO PARENTI (gerarchia)
-                # composti del nodo per Jaccard
-                _cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid_i,))
-                comp_i = set(r[0] for r in _cur.fetchall())
-                if not comp_i: continue
-                inter = len(comp_centro & comp_i); union = len(comp_centro | comp_i)
-                jac = inter/union if union else 0
-                if inter < 3: continue
-                # METRICA ADATTIVA (#182): penalizza gli ingredienti 'ricchi' (hub generici come te/cognac).
-                n_comp_i = len(comp_i)
-                if n_comp_i > 150: jac *= 0.55
-                elif n_comp_i > 90: jac *= 0.75
-                # PESO COMPOSTO (#181): molecolare + sensoriale + culinaria. Non un criterio solo.
-                molecolare = min(1.0, jac*4.5)   # componente molecolare (0-1)
-                # componente SENSORIALE: affinita tra i profili di proprieta (se il nodo ha proprieta)
-                sensoriale = 0.0
-                try:
-                    ddi_prop = ddi.get('proprieta',{}) if isinstance(ddi, dict) else {}
-                    if prop_centro and ddi_prop:
-                        assi = ['dolce','acido','amaro','umami','grasso','aroma_fresco','aroma_caldo']
-                        vic = 0; n = 0
-                        for a in assi:
-                            v1 = prop_centro.get(a,0); v2 = ddi_prop.get(a,0)
-                            if v1 or v2:
-                                vic += 1 - abs(v1-v2)/10.0; n += 1
-                        sensoriale = (vic/n) if n else 0.0
-                except Exception: pass
-                # componente CULINARIA: il nodo e' tra gli abbinati tradizionali del centro?
-                nl_i = nome_i.lower()
-                culinaria = 1.0 if (nl_i in abbinati_culinari or any(nl_i in ab or ab in nl_i for ab in abbinati_culinari)) else 0.0
-                # peso finale composto (#181): se e' un abbinamento TRADIZIONALE, ha un pavimento alto
-                # (la tradizione culinaria e' evidenza forte quanto la molecola - #181 'piu evidenze')
-                peso = 0.45*molecolare + 0.25*sensoriale + 0.30*culinaria
-                forza = min(96, max(35, int(peso*100)))
-                if culinaria >= 1.0: forza = max(forza, 70)  # gli abbinamenti classici non spariscono mai
+        # cerco ingredienti che soddisfano i bisogni, ESCLUDENDO la stessa famiglia/categoria
+        _cur.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 500""")
+        candidati = _cur.fetchall()
+        for prop_t, soglia_t, motivo in bisogni:
+            trovati=[]
+            for nome_i, data_i in candidati:
+                if '_' in nome_i: continue
+                ddi = data_i if isinstance(data_i, dict) else _j.loads(data_i)
+                tipo_i = ddi.get('tipo_base') or nome_i.lower().split()[0]
+                cat_i = (ddi.get('categoria') or '').lower()
+                if tipo_i in visti_tipi: continue
+                if cat_i and cat_i == cat_centro: continue   # NIENTE stessa categoria (no formaggio->formaggio)
+                pv = ddi.get('proprieta',{}).get(prop_t,0)
+                if pv >= soglia_t:
+                    trovati.append((nome_i, tipo_i, pv, motivo))
+            trovati.sort(key=lambda x:-x[2])
+            for nome_i, tipo_i, pv, mot in trovati[:4]:
+                if tipo_i in visti_tipi or len(nodi)>=n_max: continue
                 visti_tipi.add(tipo_i)
-                nomi_c = [x.replace('ahn_comp_','').replace('pub_','').replace('_',' ') for x in list(comp_centro & comp_i)[:4]]
-                nodi.append({"nome": nome_i, "forza": forza, "tipo":"analogia",
-                             "perche": {"composti_condivisi": nomi_c, "n_condivisi": inter}})
-                if len(nodi) >= n_max: break
-
-        # CONTRASTO sensoriale - solo se il centro ha un profilo forte, filtrato, differenziato
-        if prop_centro and len(nodi) < n_max:
-            g=prop_centro.get('grasso',0); a=prop_centro.get('acido',0); d2=prop_centro.get('dolce',0)
-            u=prop_centro.get('umami',0); am=prop_centro.get('amaro',0); pi=prop_centro.get('piccante',0)
-            regole=[]
-            if g>=7: regole.append(('acido',7,'l acidita taglia il grasso'))
-            if pi>=7: regole.append(('dolce',7,'il dolce calma il piccante'))
-            if d2>=8: regole.append(('acido',6,'l acido bilancia il dolce'))
-            # NIENTE contrasto per ingredienti a profilo debole (evita pomodoro->cioccolato)
-            for prop_t, soglia_t, motivo in regole[:1]:
-                _cur.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                                AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 400""")
-                cand=[]
-                for nome_i, data_i in _cur.fetchall():
-                    if _grezzo(nome_i): continue
-                    tipo_i, ddi = _tipo_di(nome_i, data_i)
-                    if tipo_i in visti_tipi: continue
-                    pv = ddi.get('proprieta',{}).get(prop_t,0)
-                    if pv >= soglia_t: cand.append((nome_i, tipo_i, pv))
-                cand.sort(key=lambda x:-x[2])
-                for nome_i, tipo_i, pv in cand[:5]:
-                    if tipo_i in visti_tipi or len(nodi)>=n_max: continue
-                    visti_tipi.add(tipo_i)
-                    nodi.append({"nome": nome_i, "forza": 45+pv*4, "tipo":"contrasto", "perche_sensoriale": motivo})
-        nodi.sort(key=lambda x:-x['forza'])
+                nodi.append({"nome": nome_i, "forza": min(95, 55+pv*4), "tipo":"costruzione",
+                             "perche": mot})
         _cur.close(); _release_conn(_c)
         return jsonify({"centro": ingrediente, "nodi": nodi[:n_max], "totale": len(nodi),
-                        "copertura": "molecolare" if comp_centro else "sensoriale"})
+                        "logica": "costruzione_piatto"})
     except Exception as e:
         return jsonify({"centro": ingrediente, "nodi": [], "errore": str(e)[:100]})
 
