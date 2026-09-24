@@ -730,15 +730,20 @@ def scheda_ingrediente(ingrediente_id):
             if _mytipo:
                 # filtro DIRETTO per tipo_base (non scorro nodi a caso): prende TUTTE le varieta
                 vv = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                                   AND data->>'tipo_base' = ? AND id != ? LIMIT 30""", (_mytipo, nid)).fetchall()
+                                   AND data->>'tipo_base' = ? AND id != ? LIMIT 60""", (_mytipo, nid)).fetchall()
+                _visti_nomi = set([nome.lower()])
                 for _r in vv:
                     _dv = _c(_r,"data",2)
                     _dv = _dv if isinstance(_dv, dict) else (_j2.loads(_dv) if _dv else {})
-                    if _c(_r,"name",1).lower() != nome.lower():
-                        varieta.append({"id": _c(_r,"id",0), "nome": _c(_r,"name",1),
-                                        "territorio": _dv.get("territorio") or _dv.get("origine") or "",
-                                        "presidio": _dv.get("presidio") or _dv.get("dop_igp") or "",
-                                        "caratteristica": (_dv.get("caratteristica") or "")[:80]})
+                    if _dv.get("e_preparazione"): continue   # solo cultivar vere, no derivati
+                    _nm = _c(_r,"name",1); _nml = _nm.lower()
+                    if _nml in _visti_nomi: continue          # dedup per nome
+                    _visti_nomi.add(_nml)
+                    varieta.append({"id": _c(_r,"id",0), "nome": _nm,
+                                    "territorio": _dv.get("territorio") or _dv.get("origine") or "",
+                                    "regione": _dv.get("regione") or "",
+                                    "tutela": _dv.get("tutela") or _dv.get("presidio") or "",
+                                    "caratteristica": (_dv.get("caratteristica") or "")[:80]})
                     if len(varieta) >= 20: break
         except Exception: pass
         _dd_out = data if isinstance(data, dict) else (_j2.loads(data) if data else {})
@@ -804,15 +809,20 @@ def nodo_completo(nodo_id):
             if _mytipo:
                 # filtro DIRETTO per tipo_base (non scorro nodi a caso): prende TUTTE le varieta
                 vv = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                                   AND data->>'tipo_base' = ? AND id != ? LIMIT 30""", (_mytipo, nid)).fetchall()
+                                   AND data->>'tipo_base' = ? AND id != ? LIMIT 60""", (_mytipo, nid)).fetchall()
+                _visti_nomi = set([nome.lower()])
                 for _r in vv:
                     _dv = _c(_r,"data",2)
                     _dv = _dv if isinstance(_dv, dict) else (_j2.loads(_dv) if _dv else {})
-                    if _c(_r,"name",1).lower() != nome.lower():
-                        varieta.append({"id": _c(_r,"id",0), "nome": _c(_r,"name",1),
-                                        "territorio": _dv.get("territorio") or _dv.get("origine") or "",
-                                        "presidio": _dv.get("presidio") or _dv.get("dop_igp") or "",
-                                        "caratteristica": (_dv.get("caratteristica") or "")[:80]})
+                    if _dv.get("e_preparazione"): continue   # solo cultivar vere, no derivati
+                    _nm = _c(_r,"name",1); _nml = _nm.lower()
+                    if _nml in _visti_nomi: continue          # dedup per nome
+                    _visti_nomi.add(_nml)
+                    varieta.append({"id": _c(_r,"id",0), "nome": _nm,
+                                    "territorio": _dv.get("territorio") or _dv.get("origine") or "",
+                                    "regione": _dv.get("regione") or "",
+                                    "tutela": _dv.get("tutela") or _dv.get("presidio") or "",
+                                    "caratteristica": (_dv.get("caratteristica") or "")[:80]})
                     if len(varieta) >= 20: break
         except Exception: pass
         _dd_out = data if isinstance(data, dict) else (_j2.loads(data) if data else {})
