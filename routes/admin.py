@@ -11092,3 +11092,30 @@ def admin_conta_gerarchia():
         return jsonify({"totale": tot, "con_tipo_base": con, "percentuale": round(con/tot*100,1) if tot else 0, "esempi": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+
+
+@bp.route("/admin/conta-prezzi")
+def admin_conta_prezzi():
+    """Quanti ingredienti hanno un prezzo (per il food cost). Il buco che fa uscire food cost a zero."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+        tot = cur.fetchone()[0]
+        # cerco chi ha un prezzo nel data (prezzo, prezzo_kg, costo...)
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (data ? 'prezzo' OR data ? 'prezzo_kg' OR data ? 'costo_kg' OR data->'operativo' ? 'prezzo_kg')""")
+        con_prezzo = cur.fetchone()[0]
+        # esempi senza prezzo tra i piu usati
+        cur.execute("""SELECT name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND NOT (data ? 'prezzo' OR data ? 'prezzo_kg' OR data ? 'costo_kg')
+                       AND id LIKE 'ing-%%' LIMIT 12""")
+        esempi = [r[0] for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"totale": tot, "con_prezzo": con_prezzo,
+                        "percentuale": round(con_prezzo/tot*100,1) if tot else 0, "esempi_senza": esempi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]})
