@@ -4469,6 +4469,15 @@ def flavour_network(ingrediente):
         _cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (id_centro,))
         comp_centro = set(r[0] for r in _cur.fetchall())
         nodi = []; visti_tipi = set([tipo_centro])
+        # abbinati culinari del centro (co-occorrenza tradizionale): caricati UNA volta per il peso composto
+        abbinati_culinari = set()
+        try:
+            _cc = _c.cursor()
+            _cc.execute("""SELECT LOWER(n2.name) FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                           WHERE e.from_id=%s AND e.relation='abbinamento_aromatico'""", (id_centro,))
+            abbinati_culinari = set(r[0] for r in _cc.fetchall())
+            _cc.close()
+        except Exception: pass
 
         def _tipo_di(nome_i, data_i):
             ddi = data_i if isinstance(data_i, dict) else (_j.loads(data_i) if data_i else {})
@@ -4514,16 +4523,9 @@ def flavour_network(ingrediente):
                                 vic += 1 - abs(v1-v2)/10.0; n += 1
                         sensoriale = (vic/n) if n else 0.0
                 except Exception: pass
-                # componente CULINARIA: c'e un arco di abbinamento tradizionale col centro?
-                culinaria = 0.0
-                try:
-                    _cur2 = _c.cursor()
-                    _cur2.execute("""SELECT 1 FROM edges e JOIN nodes n2 ON n2.id=e.to_id
-                                     WHERE e.from_id=%s AND e.relation='abbinamento_aromatico'
-                                     AND LOWER(n2.name) LIKE %s LIMIT 1""", (id_centro, f"%{nome_i.lower()[:12]}%"))
-                    if _cur2.fetchone(): culinaria = 1.0
-                    _cur2.close()
-                except Exception: pass
+                # componente CULINARIA: il nodo e' tra gli abbinati tradizionali del centro?
+                nl_i = nome_i.lower()
+                culinaria = 1.0 if (nl_i in abbinati_culinari or any(nl_i in ab or ab in nl_i for ab in abbinati_culinari)) else 0.0
                 # peso finale composto (#181)
                 peso = 0.55*molecolare + 0.25*sensoriale + 0.20*culinaria
                 forza = min(95, max(35, int(peso*100)))
