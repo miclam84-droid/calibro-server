@@ -4496,12 +4496,37 @@ def flavour_network(ingrediente):
                 jac = inter/union if union else 0
                 if inter < 3: continue
                 # METRICA ADATTIVA (#182): penalizza gli ingredienti 'ricchi' (hub generici come te/cognac).
-                # Un ingrediente con centinaia di composti condivide con tutto: il suo legame e' meno specifico.
                 n_comp_i = len(comp_i)
-                if n_comp_i > 150: jac *= 0.55      # molto ricco (te nero, cognac, caffe): forte penalita
-                elif n_comp_i > 90: jac *= 0.75     # ricco
-                # il Jaccard puro (inter/union) gia' premia la specificita': forza scalata su di esso
-                forza = min(95, max(35, int(jac*100*4.5)))
+                if n_comp_i > 150: jac *= 0.55
+                elif n_comp_i > 90: jac *= 0.75
+                # PESO COMPOSTO (#181): molecolare + sensoriale + culinaria. Non un criterio solo.
+                molecolare = min(1.0, jac*4.5)   # componente molecolare (0-1)
+                # componente SENSORIALE: affinita tra i profili di proprieta (se il nodo ha proprieta)
+                sensoriale = 0.0
+                try:
+                    ddi_prop = ddi.get('proprieta',{}) if isinstance(ddi, dict) else {}
+                    if prop_centro and ddi_prop:
+                        assi = ['dolce','acido','amaro','umami','grasso','aroma_fresco','aroma_caldo']
+                        vic = 0; n = 0
+                        for a in assi:
+                            v1 = prop_centro.get(a,0); v2 = ddi_prop.get(a,0)
+                            if v1 or v2:
+                                vic += 1 - abs(v1-v2)/10.0; n += 1
+                        sensoriale = (vic/n) if n else 0.0
+                except Exception: pass
+                # componente CULINARIA: c'e un arco di abbinamento tradizionale col centro?
+                culinaria = 0.0
+                try:
+                    _cur2 = _c.cursor()
+                    _cur2.execute("""SELECT 1 FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                                     WHERE e.from_id=%s AND e.relation='abbinamento_aromatico'
+                                     AND LOWER(n2.name) LIKE %s LIMIT 1""", (id_centro, f"%{nome_i.lower()[:12]}%"))
+                    if _cur2.fetchone(): culinaria = 1.0
+                    _cur2.close()
+                except Exception: pass
+                # peso finale composto (#181)
+                peso = 0.55*molecolare + 0.25*sensoriale + 0.20*culinaria
+                forza = min(95, max(35, int(peso*100)))
                 visti_tipi.add(tipo_i)
                 nomi_c = [x.replace('ahn_comp_','').replace('pub_','').replace('_',' ') for x in list(comp_centro & comp_i)[:4]]
                 nodi.append({"nome": nome_i, "forza": forza, "tipo":"analogia",
