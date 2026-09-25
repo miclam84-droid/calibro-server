@@ -126,38 +126,23 @@ if('serviceWorker' in navigator){
       <div class="porta-txt"><div class="porta-t">Chiedi a Matter</div><div class="porta-d">Risolvi un problema al banco</div></div>
       <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
     </button>
+    <button class="porta porta-laboratorio" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('laboratorio').then(function(){apriLaboratorio&&apriLaboratorio()})}">
+      <i class="ph ph-flask" aria-hidden="true"></i>
+      <div class="porta-txt"><div class="porta-t">Entra nel Laboratorio</div><div class="porta-d">Esplora, crea, impara — la scienza del mestiere</div></div>
+      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
+    </button>
     <div class="porte-grid">
-      <button class="porta porta-pane" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('motori').then(function(){apriMotorePanificazione&&apriMotorePanificazione()})}">
-        <i class="ph ph-bread" aria-hidden="true"></i>
-        <div class="porta-t">Panificazione Pro</div>
-        <div class="porta-d">Progetta impasti</div>
+      <button class="porta porta-planner" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('planner').then(function(){apriPlanner&&apriPlanner()})}">
+        <i class="ph ph-calendar-blank" aria-hidden="true"></i>
+        <div class="porta-t">Planner Menu</div>
+        <div class="porta-d">Progetta il menu</div>
       </button>
-      <button class="porta porta-atlante" onclick="switchTab('mappa')">
-        <i class="ph ph-share-network" aria-hidden="true"></i>
-        <div class="porta-t">Atlante</div>
-        <div class="porta-d">148 fenomeni</div>
+      <button class="porta porta-quaderno" onclick="switchTab('quaderno')">
+        <i class="ph ph-notebook" aria-hidden="true"></i>
+        <div class="porta-t">Quaderno</div>
+        <div class="porta-d">Il tuo lavoro</div>
       </button>
     </div>
-    <button class="porta porta-grafo" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('grafo').then(function(){apriGrafo&&apriGrafo()})}">
-      <i class="ph ph-graph" aria-hidden="true"></i>
-      <div class="porta-txt"><div class="porta-t">Il Grafo</div><div class="porta-d">Esplora la rete degli ingredienti, naviga le connessioni</div></div>
-      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
-    </button>
-    <button class="porta porta-composer" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('composer').then(function(){apriComposer&&apriComposer()})}">
-      <i class="ph ph-flask" aria-hidden="true"></i>
-      <div class="porta-txt"><div class="porta-t">Composer</div><div class="porta-d">Crea una ricetta e vedi l'equilibrio in tempo reale</div></div>
-      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
-    </button>
-    <button class="porta porta-planner" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('planner').then(function(){apriPlanner&&apriPlanner()})}">
-      <i class="ph ph-calendar-blank" aria-hidden="true"></i>
-      <div class="porta-txt"><div class="porta-t">Planner Menu</div><div class="porta-d">Progetta 30-60 giorni di menu</div></div>
-      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
-    </button>
-    <button class="porta porta-quaderno" onclick="switchTab('quaderno')">
-      <i class="ph ph-notebook" aria-hidden="true"></i>
-      <div class="porta-txt"><div class="porta-t">Il tuo Quaderno</div><div class="porta-d">Ricette, misure, crescita</div></div>
-      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
-    </button>
   </div>
 
   <!-- CASI REALI (scroll) -->
@@ -212,9 +197,9 @@ if('serviceWorker' in navigator){
     <button class="cta-main mtr-gauge-cta" id="scopri-cta" onclick="avviaLezione()">Studia il fenomeno →</button>
   </div>
 
-  <!-- ACCESSO VISTE INTEGRATE (Flavour · Ponti · Menu Builder) -->
-  <div class="home-esplora-lab">Esplora il grafo vivo</div>
-  <div class="vista-launch" style="padding:0 0 4px">
+  <!-- ACCESSO VISTE INTEGRATE (Flavour · Ponti · Menu Builder) - ora dentro il Laboratorio -->
+  <div class="home-esplora-lab" style="display:none">Esplora il grafo vivo</div>
+  <div class="vista-launch" style="padding:0 0 4px;display:none">
     <button class="vista-launch-btn" onclick="apriFlavour()">
       <svg class="vl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="10" cy="18" r="2.5"/><path d="M8 7l8 1M8.5 8l1.5 8"/></svg>
       <span><span class="vl-t">Flavour Network</span><span class="vl-d">La rete delle molecole</span></span>
