@@ -67,6 +67,8 @@ function _scRender(d){
     + sez('⚠ Errori comuni', d.errori_comuni, 'errori')
     // 4. PERCHÉ SUCCEDE (teoria, sempre in fondo)
     + sez('Perché succede', d.principio)
+    // fallback: se i blocchi separati sono vuoti, mostro il corpo completo (campo 'scheda')
+    + ((!d.fenomeno && !d.punto_critico && !d.principio && d.scheda) ? '<div class="sc-sez"><div class="sc-sez-lab">La scheda</div><div class="sc-sez-txt sc-corpo">'+e(d.scheda)+'</div></div>' : '')
     + '<button class="sc-chiedi" onclick=\'_chatConContesto("fenomeno",{nome:'+JSON.stringify(d.nome).replace(/'/g,"&#39;")+',fenomeno:'+JSON.stringify(d.nome).replace(/'/g,"&#39;")+',target:'+JSON.stringify(headerVal||"").replace(/'/g,"&#39;")+'})\'>Chiedi a Matter su questo →</button>'
     + '</div>';
   var b=document.getElementById('vista-body'); if(b) b.innerHTML=html;
