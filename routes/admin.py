@@ -11387,8 +11387,11 @@ def admin_target_type_fenomeni():
                 lab = p.split(n)[0].strip(" :=-")[:22] if n in p else p[:22]
                 chips.append({"valore": n, "label": lab})
         if not chips:
-            # nessun numero pulito -> e' un concetto (testo discorsivo)
-            head = parti[0][:40] if parti else nb[:40]
+            # nessun numero pulito -> concetto. Header = prima frase intera (max ~80 char, taglio a fine parola)
+            testo = parti[0] if parti else nb
+            head = testo.strip()
+            if len(head) > 80:
+                head = head[:80].rsplit(' ',1)[0] + '…'
             return {"tipo_bersaglio": "concetto", "header_bersaglio": head, "target_chips": []}
         # DOMINANTE (#218): preferisci temperatura (°C), poi pH, poi il primo
         dominante = None
