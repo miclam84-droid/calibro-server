@@ -5092,26 +5092,55 @@ def assistente_galileo():
         di_dominio = any(k in dom_l for k in ["impasto","lievit","fermentaz","maillard","emulsion","coagula",
                          "temperatura di","ph ","brix","abbatt","haccp","conservazione","cottura sottovuoto",
                          "ganache","carbonara","besciamella","perche la","perche il","come mai la"])
+        # serve la WEB SEARCH? (info aggiornate: prezzi, oggi, notizie, meteo, eventi...)
+        serve_web = any(k in dom_l for k in ["prezzo","prezzi","quanto costa","costo","oggi","adesso","ora ",
+                         "news","notizi","meteo","tempo a","aggiornat","ultim","2025","2026","quotazion",
+                         "cerca","trova online","sul web","in questo momento","attuale","stasera","domani","orari"])
         key = os.environ.get("OPENAI_API_KEY", "")
         sys_prompt = ("Sei l'Assistente Galileo, un assistente generalista utile, conciso e onesto, "
                       "incluso nell'abbonamento di un'app professionale per la ristorazione. "
                       "Rispondi su qualsiasi argomento. Solo testo: non generi immagini, file o codice lungo. "
                       "Se ti chiedono un'immagine, spieghi gentilmente che fai solo testo. Sii diretto.")
-        payload = {"model": "gpt-4o-mini", "max_tokens": 600,
-                   "messages": [{"role": "system", "content": sys_prompt},
-                                {"role": "user", "content": domanda}]}
-        req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
-                         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
-        rr = ur.urlopen(req, timeout=40); dd = json.loads(rr.read().decode())
-        risposta = dd["choices"][0]["message"]["content"]
-        token_reali = dd.get("usage", {}).get("total_tokens", stima)
+        usato_web = False
+        if serve_web:
+            # WEB SEARCH via OpenAI Responses API (tool web_search) - Galileo conosce il presente (#231)
+            try:
+                _inp = sys_prompt + chr(10)+chr(10) + "Domanda dell'utente (rispondi in italiano, conciso, coi dati trovati sul web): " + domanda
+                rpayload = {"model": "gpt-4o-mini", "tools": [{"type": "web_search_preview"}], "input": _inp}
+                rreq = ur.Request("https://api.openai.com/v1/responses", data=json.dumps(rpayload).encode(),
+                                  headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+                rrr = ur.urlopen(rreq, timeout=45); ddd = json.loads(rrr.read().decode())
+                # estraggo il testo dalla risposta Responses
+                risposta = ""
+                for item in ddd.get("output", []):
+                    if item.get("type") == "message":
+                        for ct in item.get("content", []):
+                            if ct.get("type") == "output_text": risposta += ct.get("text", "")
+                if not risposta: risposta = ddd.get("output_text", "")
+                token_reali = ddd.get("usage", {}).get("total_tokens", stima+300)
+                usato_web = bool(risposta)
+            except Exception:
+                usato_web = False
+        if not usato_web:
+            payload = {"model": "gpt-4o-mini", "max_tokens": 600,
+                       "messages": [{"role": "system", "content": sys_prompt},
+                                    {"role": "user", "content": domanda}]}
+            req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
+                             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+            rr = ur.urlopen(req, timeout=40); dd = json.loads(rr.read().decode())
+            risposta = dd["choices"][0]["message"]["content"]
+            token_reali = dd.get("usage", {}).get("total_tokens", stima)
         cur.execute("""INSERT INTO assistente_uso (account,giorno,token_usati) VALUES (%s,%s,%s)
                        ON CONFLICT (account,giorno) DO UPDATE SET token_usati=assistente_uso.token_usati+%s""",
                     (account, oggi, token_reali, token_reali))
         conn.commit(); cur.close(); conn.close()
-        out = {"risposta": risposta, "energia": energia, "autorizzato": True}
+        out = {"risposta": risposta, "energia": energia, "autorizzato": True, "web": usato_web}
         if di_dominio:
-            out["escalation"] = "Questa domanda tocca la scienza alimentare: vuoi la risposta col Grafo Vivo? Apri la Chat Diagnostica."
+            # Galileo NON rifiuta il dominio: risponde e trasferisce con contesto (#232)
+            out["trasferimento_dominio"] = {
+                "testo": "Per una diagnosi completa con fenomeni, temperature e Scheda Scienza, apri Chiedi a Matter.",
+                "contesto": {"domanda": domanda}
+            }
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 500
