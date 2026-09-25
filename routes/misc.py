@@ -273,11 +273,13 @@ def matter_avvia_galileo_run():
     DISATTIVATO finché Galileo non ha billing. Ritorna 503 con messaggio finché non è attivo."""
     import os
     if os.environ.get("GALILEO_HOOK_ATTIVO", "0") != "1":
+        # Ponte dormiente (#242: il ponte esiste prima del pedaggio). Linguaggio utente: Decisione Strategica.
         return jsonify({
             "attivo": False,
-            "messaggio": "La Strategic Run di Galileo sarà presto disponibile. Stiamo completando l'integrazione.",
-            "coming_soon": True
-        }), 503
+            "coming_soon": True,
+            "titolo": "Decisioni Strategiche — in arrivo",
+            "messaggio": "Presto Galileo potrà preparare business plan, bandi e analisi di investimento usando il contesto delle tue conversazioni, del tuo Planner e dei tuoi dati. Una Decisione Strategica completa, non una semplice risposta."
+        }), 200
     # --- quando attivo (post-lancio, Galileo con Stripe): ---
     body = request.json or {}
     _galileo_url = os.environ.get("GALILEO_URL", "")
@@ -1063,3 +1065,39 @@ def biodiversita_regione(regione):
         return jsonify({"regione": regione, "varieta": varieta, "totale": len(varieta)})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/galileo/riconosci-decisione", methods=["POST"])
+def galileo_riconosci_decisione():
+    """#236: riconosce se una conversazione merita una DECISIONE STRATEGICA (Galileo DI) e la famiglia.
+    Galileo riconosce; l'utente decide se avviarla. Ritorna la proposta, non avvia niente."""
+    from flask import request, jsonify
+    d = request.get_json(force=True) or {}
+    testo = (d.get("testo") or d.get("domanda") or "").lower()
+    if not testo:
+        return jsonify({"merita_decisione": False})
+    # le 4 famiglie ufficiali (#240) con i loro segnali
+    FAMIGLIE = {
+        "Crescita": {"segnali": ["aprire un locale","aprire una","secondo punto","nuovo locale","food truck",
+                     "espandere","export","nuova sede","ampliare","franchising"],
+                     "cosa": "business plan, analisi di mercato, investimento e tempi"},
+        "Finanza": {"segnali": ["mutuo","leasing","finanziamento","prestito","cash flow","liquidita",
+                    "banca","investimento","budget annuale","rientrare dei costi"],
+                    "cosa": "piano finanziario, cash flow, sostenibilita' e rischi"},
+        "Opportunità": {"segnali": ["bando","bandi","invitalia","pnrr","contributo","fondo perduto",
+                        "finanziamento europeo","finanziamento regionale","incentivo"],
+                        "cosa": "analisi del bando, requisiti, documentazione e fattibilita'"},
+        "Decisioni Aziendali": {"segnali": ["cambiare menu","chiudere","assumere","licenziare","cambiare fornitore",
+                                "alzare i prezzi","rinnovare","ristrutturare il locale","cambiare gestione"],
+                                "cosa": "analisi d'impatto, scenari, rischi e raccomandazione"},
+    }
+    for fam, info in FAMIGLIE.items():
+        if any(s in testo for s in info["segnali"]):
+            return jsonify({
+                "merita_decisione": True,
+                "famiglia": fam,
+                "proposta": f"Questo sembra il tipo di analisi che Galileo può preparare come Decisione Strategica: {info['cosa']}.",
+                "cta_continua": "Avvia una Decisione Strategica",
+                "cta_resta": "Resta qui, continua a chiedere a Galileo"
+            })
+    return jsonify({"merita_decisione": False})
