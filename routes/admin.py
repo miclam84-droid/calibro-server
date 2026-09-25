@@ -11376,7 +11376,8 @@ def admin_target_type_fenomeni():
         parti = [p.strip() for p in re.split(r"[·|]", nb) if p.strip()]
         # una parte "buona" per un chip: ha un numero+unita ed e corta
         def _num_pulito(t):
-            m = re.search(r"[-–]?\d+[.,]?\d*\s*[-–]?\s*\d*\s*(°?C|%|pH|mg/L|g/L|h|min|mesi|Aw|µm|bar|°)", t)
+            # tollerante: ~, virgole decimali, range con - o –, unita varie
+            m = re.search(r"(pH\s*)?[~≈]?\s*\d+[.,]?\d*\s*[-–]?\s*\d*[.,]?\d*\s*(°\s?C|°C|%|pH|mg/L|g/L|kg|ml|h|ore|min|mesi|giorni|Aw|µm|bar|mbar|°|DE)", t, re.IGNORECASE)
             return m.group(0).strip() if m else None
         chips = []
         for p in parti:
@@ -11407,7 +11408,13 @@ def admin_target_type_fenomeni():
         n_num=0; n_multi=0; n_concetto=0; tot=0
         for nid, nome, data in cur.fetchall():
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
-            nb = dd.get("numero_bersaglio") or dd.get("target") or ""
+            cs0 = dd.get("contenuto_strutturato") or {}
+            if isinstance(cs0,str):
+                try: cs0=json.loads(cs0)
+                except: cs0={}
+            nb = (dd.get("numero_bersaglio") or dd.get("target") or dd.get("numeri")
+                  or cs0.get("numero_bersaglio") or cs0.get("numeri") or "")
+            if isinstance(nb,(list,dict)): nb=str(nb)
             res = _analizza(nb)
             dd["tipo_bersaglio"] = res["tipo_bersaglio"]
             dd["header_bersaglio"] = res["header_bersaglio"]
