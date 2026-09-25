@@ -11317,3 +11317,44 @@ def admin_marca_preparazioni():
         return jsonify({"preparazioni_marcate": marcati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/prezzi-bar")
+def admin_prezzi_bar():
+    """Completa i prezzi dei distillati/liquori/bar mancanti (il food cost dei cocktail usciva a zero
+    perche' l'ingrediente principale - il distillato - non aveva prezzo). EUR/L all'ingrosso."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    PREZZI = {
+        "amaretto":14,"aperol":13,"campari":16,"martini":9,"vermouth bianco":9,"vermouth dry":9,
+        "prosecco":7,"spumante":8,"gin":18,"vodka":16,"rum bianco":15,"rum scuro":18,"rum":16,
+        "tequila":24,"whisky":22,"whiskey":22,"bourbon":24,"cognac":35,"brandy":18,"grappa":16,
+        "triple sec":13,"cointreau":22,"curacao":14,"curaçao":14,"maraschino":20,"amaro":15,
+        "limoncello":12,"sambuca":13,"bitter":16,"angostura":45,"fernet":16,"chartreuse":40,
+        "st germain":28,"aperitivo":13,"liquore":16,"sciroppo di zucchero":2,"sciroppo":4,
+        "succo di limone":3,"succo di lime":4,"succo d'arancia":2,"soda":1,"acqua tonica":2,
+        "ginger beer":3,"ginger ale":2,"albume":4,"albume d'uovo":4,"prosecco doc":8,
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        keys_sorted = sorted(PREZZI.keys(), key=len, reverse=True)
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND NOT (data ? 'prezzo_kg')""")
+        agg = 0
+        for nid, nome, data in cur.fetchall():
+            nl = nome.lower()
+            pr = None
+            for k in keys_sorted:
+                if k in nl: pr = PREZZI[k]; break
+            if pr is None: continue
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            dd["prezzo_kg"] = pr  # per i liquidi prezzo_kg vale come EUR/L
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            agg += 1
+            if agg % 100 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"prezzi_bar_assegnati": agg})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
