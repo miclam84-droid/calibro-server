@@ -1078,17 +1078,22 @@ def galileo_riconosci_decisione():
         return jsonify({"merita_decisione": False})
     # le 4 famiglie ufficiali (#240) con i loro segnali
     FAMIGLIE = {
-        "Crescita": {"segnali": ["aprire un locale","aprire una","secondo punto","nuovo locale","food truck",
-                     "espandere","export","nuova sede","ampliare","franchising"],
+        "Crescita": {"segnali": ["aprire","apro un","apro una","secondo locale","secondo punto","nuovo locale",
+                     "nuovo punto","altro locale","food truck","espandere","espansione","export","esportare",
+                     "nuova sede","ampliare","ingrandire","franchising","nuova attivita","avviare un","avviare una",
+                     "aprire un","aprire una","mettere su","nuovo ristorante","nuova pizzeria","catena"],
                      "cosa": "business plan, analisi di mercato, investimento e tempi"},
         "Finanza": {"segnali": ["mutuo","leasing","finanziamento","prestito","cash flow","liquidita",
-                    "banca","investimento","budget annuale","rientrare dei costi"],
+                    "banca","investimento","investire","budget","rientrare dei costi","quanto mi costa aprire",
+                    "quanto serve per","soldi per","capitale","rata","ammortamento","break even","punto di pareggio"],
                     "cosa": "piano finanziario, cash flow, sostenibilita' e rischi"},
         "Opportunità": {"segnali": ["bando","bandi","invitalia","pnrr","contributo","fondo perduto",
                         "finanziamento europeo","finanziamento regionale","incentivo"],
                         "cosa": "analisi del bando, requisiti, documentazione e fattibilita'"},
         "Decisioni Aziendali": {"segnali": ["cambiare menu","chiudere","assumere","licenziare","cambiare fornitore",
-                                "alzare i prezzi","rinnovare","ristrutturare il locale","cambiare gestione"],
+                                "alzare i prezzi","aumentare i prezzi","rinnovare","ristrutturare il locale",
+                                "cambiare gestione","conviene","dovrei","vale la pena","e meglio","cambiare orari",
+                                "nuovo socio","cedere","vendere l attivita","riposizionare"],
                                 "cosa": "analisi d'impatto, scenari, rischi e raccomandazione"},
     }
     for fam, info in FAMIGLIE.items():
