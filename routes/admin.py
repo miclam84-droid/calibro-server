@@ -11358,3 +11358,68 @@ def admin_prezzi_bar():
         return jsonify({"prezzi_bar_assegnati": agg})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/target-type-fenomeni")
+def admin_target_type_fenomeni():
+    """Board #46: assegna a ogni fenomeno tipo_bersaglio (numero/multiplo/concetto), header_bersaglio
+    (il parametro DOMINANTE) e target_chips (secondari). Il backend espone il significato (#218A)."""
+    from flask import request, jsonify
+    import os, psycopg2, json, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    def _analizza(nb):
+        nb = (nb or "").strip()
+        if not nb:
+            return {"tipo_bersaglio": "concetto", "header_bersaglio": "", "target_chips": []}
+        # spezzo sui separatori
+        parti = [p.strip() for p in re.split(r"[·|]", nb) if p.strip()]
+        # una parte "buona" per un chip: ha un numero+unita ed e corta
+        def _num_pulito(t):
+            m = re.search(r"[-–]?\d+[.,]?\d*\s*[-–]?\s*\d*\s*(°?C|%|pH|mg/L|g/L|h|min|mesi|Aw|µm|bar|°)", t)
+            return m.group(0).strip() if m else None
+        chips = []
+        for p in parti:
+            n = _num_pulito(p)
+            if n:
+                # etichetta = il testo prima del numero (max 20 char)
+                lab = p.split(n)[0].strip(" :=-")[:22] if n in p else p[:22]
+                chips.append({"valore": n, "label": lab})
+        if not chips:
+            # nessun numero pulito -> e' un concetto (testo discorsivo)
+            head = parti[0][:40] if parti else nb[:40]
+            return {"tipo_bersaglio": "concetto", "header_bersaglio": head, "target_chips": []}
+        # DOMINANTE (#218): preferisci temperatura (°C), poi pH, poi il primo
+        dominante = None
+        for c in chips:
+            if "C" in c["valore"] or "°" in c["valore"]: dominante = c; break
+        if not dominante:
+            for c in chips:
+                if "pH" in c["valore"]: dominante = c; break
+        if not dominante: dominante = chips[0]
+        tipo = "numero" if len(chips) == 1 else "multiplo"
+        secondari = [c for c in chips if c is not dominante]
+        return {"tipo_bersaglio": tipo, "header_bersaglio": dominante["valore"],
+                "header_label": dominante.get("label",""), "target_chips": secondari}
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
+        n_num=0; n_multi=0; n_concetto=0; tot=0
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            nb = dd.get("numero_bersaglio") or dd.get("target") or ""
+            res = _analizza(nb)
+            dd["tipo_bersaglio"] = res["tipo_bersaglio"]
+            dd["header_bersaglio"] = res["header_bersaglio"]
+            if res.get("header_label"): dd["header_label"] = res["header_label"]
+            dd["target_chips"] = res["target_chips"]
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            tot += 1
+            if res["tipo_bersaglio"]=="numero": n_num+=1
+            elif res["tipo_bersaglio"]=="multiplo": n_multi+=1
+            else: n_concetto+=1
+            if tot % 50 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"totale": tot, "numero": n_num, "multiplo": n_multi, "concetto": n_concetto})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
