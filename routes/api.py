@@ -3861,10 +3861,26 @@ _PREZZI_FC = {
 }
 
 def _prezzo_kg(nome):
-    """Trova il prezzo €/kg di un ingrediente (match sul nome, dai prezzi ISMEA)."""
+    """Prezzo €/kg: prima dai NODI del grafo (prezzo_kg, 659 ingredienti), poi ISMEA come fallback."""
     n = (nome or "").lower().strip()
+    if not n: return None
+    # 1. cerca il prezzo sul NODO del grafo (fonte primaria: i prezzi assegnati agli ingredienti)
+    try:
+        from db import carica_grafo
+        _db = carica_grafo()
+        import json as _jp
+        _rr = _db.execute("""SELECT data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                             AND LOWER(name) LIKE LOWER(?) AND (data->>'prezzo_kg') IS NOT NULL
+                             ORDER BY LENGTH(name) ASC LIMIT 1""", (f"%{n}%",)).fetchall()
+        if _rr:
+            _dd = _rr[0]["data"] if hasattr(_rr[0],"keys") else _rr[0][0]
+            _dd = _dd if isinstance(_dd, dict) else (_jp.loads(_dd) if _dd else {})
+            _pk = _dd.get("prezzo_kg")
+            if _pk: return float(_pk)
+    except Exception:
+        pass
+    # 2. fallback: tabella ISMEA statica
     if n in _PREZZI_FC: return _PREZZI_FC[n]
-    # match parziale: cerca la chiave più lunga contenuta nel nome
     best = None; best_len = 0
     for k, v in _PREZZI_FC.items():
         if (k in n or n in k) and len(k) > best_len:
