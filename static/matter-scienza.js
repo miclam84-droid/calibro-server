@@ -37,20 +37,37 @@ window.apriSchedaScienza = function(slug){
 function _scRender(d){
   var e=_escV;
   var sez=function(lab,val,cls){ if(!val) return ''; return '<div class="sc-sez'+(cls?' '+cls:'')+'"><div class="sc-sez-lab">'+e(lab)+'</div><div class="sc-sez-txt">'+e(val)+'</div></div>'; };
+  // tipo_bersaglio decide il layout (#218A: leggo il tipo, non deduco dal testo)
+  var tipo=d.tipo_bersaglio||'numero';
+  var headerVal=d.header_bersaglio||d.numero_bersaglio||'';
+  var headerLab=d.header_label||'';
+  var chips=d.target_chips||[];
+  var etichetta=(tipo==='concetto')?'PRINCIPIO BERSAGLIO':'NUMERO BERSAGLIO';
+  // HEADER grande (archetipo)
+  var headerHtml='';
+  if(headerVal){
+    headerHtml='<div class="sc-bersaglio sc-bers-'+tipo+'"><div class="sc-bers-lab">◎ '+etichetta+(headerLab?' · '+e(headerLab):'')+'</div>'
+      + '<div class="sc-bers-val'+(tipo==='concetto'?' sc-bers-concetto':'')+'">'+e(headerVal)+'</div>';
+    // target chips (tipo multiplo)
+    if(tipo==='multiplo' && chips.length){
+      headerHtml+='<div class="sc-bers-chips">'+chips.map(function(c){ return '<span class="sc-chip"><span class="sc-chip-v">'+e(c.valore||'')+'</span>'+(c.label?'<span class="sc-chip-l">'+e(c.label)+'</span>':'')+'</span>'; }).join('')+'</div>';
+    }
+    headerHtml+='</div>';
+  }
   var html='<div class="sc-scheda">'
-    // header
     + '<div class="sc-sch-head"><div class="sc-sch-cat">'+e(_CATLAB[d.categoria]||d.categoria||'')+'</div><div class="sc-sch-nome">'+e(d.nome)+'</div></div>'
-    // NUMERO BERSAGLIO in alto, grande, arancione (il dato che cercano per primo)
-    + (d.numero_bersaglio?'<div class="sc-bersaglio"><div class="sc-bers-lab">◎ NUMERO BERSAGLIO</div><div class="sc-bers-val">'+e(d.numero_bersaglio)+'</div></div>':'')
-    // blocchi
-    + sez('Il fenomeno', d.fenomeno)
-    + sez('Il principio', d.principio)
-    + sez('Punto critico', d.punto_critico, 'critico')
+    // 1. HEADER grande
+    + headerHtml
+    // 2. COSA DEVI SAPERE (il fenomeno in una frase)
+    + sez('Cosa devi sapere', d.fenomeno)
+    // 3. COSA SUCCEDE SE SBAGLI (punto critico)
+    + sez('Cosa succede se sbagli', d.punto_critico, 'critico')
     + sez('Segnale reale al banco', d.segnale_reale)
-    + sez('La tecnica', d.tecnica)
+    + sez('L\'esecuzione', d.esecuzione||d.tecnica)
     + sez('⚠ Errori comuni', d.errori_comuni, 'errori')
-    // CTA context engine
-    + '<button class="sc-chiedi" onclick=\'_chatConContesto("fenomeno",{nome:'+JSON.stringify(d.nome).replace(/'/g,"&#39;")+',fenomeno:'+JSON.stringify(d.nome).replace(/'/g,"&#39;")+',target:'+JSON.stringify(d.numero_bersaglio||"").replace(/'/g,"&#39;")+'})\'>Chiedi a Matter su questo →</button>'
+    // 4. PERCHÉ SUCCEDE (teoria, sempre in fondo)
+    + sez('Perché succede', d.principio)
+    + '<button class="sc-chiedi" onclick=\'_chatConContesto("fenomeno",{nome:'+JSON.stringify(d.nome).replace(/'/g,"&#39;")+',fenomeno:'+JSON.stringify(d.nome).replace(/'/g,"&#39;")+',target:'+JSON.stringify(headerVal||"").replace(/'/g,"&#39;")+'})\'>Chiedi a Matter su questo →</button>'
     + '</div>';
   var b=document.getElementById('vista-body'); if(b) b.innerHTML=html;
 }

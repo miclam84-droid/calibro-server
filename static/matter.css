@@ -811,3 +811,10 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .lab-imparalink{margin-bottom:24px}
 .lab-bio-link{width:100%;background:none;border:1.5px solid #c4c0b4;border-radius:4px;padding:14px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:#141d22;cursor:pointer}
 .lab-bio-link:active{background:#f0dece}
+
+/* ═══ SCHEDE SCIENZA — 3 archetipi (Board #46) ═══ */
+.sc-bers-val.sc-bers-concetto{font-size:19px;line-height:1.35}
+.sc-bers-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.sc-chip{display:inline-flex;flex-direction:column;background:rgba(127,176,196,.15);padding:6px 12px;border-left:2px solid #7fb0c4}
+.sc-chip-v{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:#e8935a}
+.sc-chip-l{font-family:'Inter',sans-serif;font-size:10px;color:#cbd6da;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
