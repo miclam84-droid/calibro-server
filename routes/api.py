@@ -4470,6 +4470,118 @@ def lista_principi():
         return jsonify({"principi": [], "totale": 0, "errore": str(e)[:100]})
 
 
+
+# ═══ GRAFO DELLE POSSIBILITA' V2 (Board #50): ruoli -> prospettive -> blueprint ═══
+
+# Firma di ruoli (#254): dalle proprieta sensoriali derivo i RUOLI culinari
+_RUOLI_DA_PROP = {
+    "acido": ("acidita", "porta freschezza e taglia il grasso"),
+    "grasso": ("grassezza", "da' rotondita e corpo"),
+    "umami": ("umami", "profondita e sapidita"),
+    "dolce": ("dolcezza", "ammorbidisce e bilancia"),
+    "salato": ("sapidita", "esalta gli altri sapori"),
+    "amaro": ("amaro", "contrasta e pulisce"),
+    "aroma_fresco": ("freschezza aromatica", "note verdi e vive"),
+    "aroma_caldo": ("aroma caldo", "note speziate e avvolgenti"),
+    "corposita": ("struttura", "da' consistenza al piatto"),
+    "croccante": ("croccantezza", "contrasto di texture"),
+    "piccante": ("piccantezza", "calore e vivacita"),
+    "termico": ("effetto termico", "sensazione rinfrescante"),
+}
+
+def _firma_ruoli(prop):
+    """#254: la firma di ruoli di un ingrediente (i suoi ruoli forti, non una sola proprieta)."""
+    ruoli = []
+    for p, val in sorted(prop.items(), key=lambda x: -x[1]):
+        if val >= 5 and p in _RUOLI_DA_PROP:
+            nome_ruolo, desc = _RUOLI_DA_PROP[p]
+            ruoli.append({"ruolo": nome_ruolo, "forza": val, "desc": desc, "_prop": p})
+    return ruoli[:4]  # le 4 firme principali
+
+def _ruoli_mancanti(firma_prop):
+    """#253: quali RUOLI mancano al piatto (non 'cosa manca' ma 'quali ruoli')."""
+    presenti = set(firma_prop)
+    # un piatto equilibrato vuole: un grasso, un acido, una freschezza, una struttura/croccante
+    ideali = [
+        ("grasso", ["grasso"]),
+        ("acido", ["acido"]),
+        ("freschezza", ["aroma_fresco"]),
+        ("sapidita/umami", ["umami", "salato"]),
+        ("croccantezza", ["croccante"]),
+    ]
+    mancanti = []
+    for nome, props in ideali:
+        if not any(pp in presenti for pp in props):
+            mancanti.append((nome, props[0]))
+    return mancanti
+
+
+@bp.route("/v1/possibilita/<ingrediente>", methods=["GET"])
+def grafo_possibilita(ingrediente):
+    """GRAFO DELLE POSSIBILITA' V2 (#263): ruoli -> prospettive -> blueprint. Contestuale (#258)."""
+    from flask import request, jsonify
+    import psycopg2 as _pg, json as _j
+    contesto = request.args.get("contesto", "piatto")  # piatto/pizza/cocktail/dessert (#258)
+    try:
+        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
+        _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND LOWER(name) LIKE LOWER(%s) ORDER BY (LOWER(name)=LOWER(%s)) DESC,
+                        LENGTH(name) ASC LIMIT 1""", (f"%{ingrediente}%", ingrediente))
+        rc = _cur.fetchone()
+        if not rc:
+            _cur.close(); _release_conn(_c); return jsonify({"centro": ingrediente, "prospettive": []})
+        nome_c = rc[1]
+        dd = rc[2] if isinstance(rc[2], dict) else (_j.loads(rc[2]) if rc[2] else {})
+        prop = dd.get("proprieta", {})
+        cat_c = str(dd.get("categoria","")).lower(); tipo_c = str(dd.get("tipo_base","")).lower()
+        firma = _firma_ruoli(prop)
+        firma_prop = [r["_prop"] for r in firma]
+        mancanti = _ruoli_mancanti(firma_prop)
+
+        # candidati (con proprieta), esclusi i parenti
+        _cur.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                        AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 400""")
+        cands = []
+        for nome_i, data_i in _cur.fetchall():
+            if '_' in nome_i or nome_i.lower()==nome_c.lower(): continue
+            ddi = data_i if isinstance(data_i, dict) else _j.loads(data_i)
+            cati = str(ddi.get("categoria","")).lower(); tipi = str(ddi.get("tipo_base","")).lower()
+            if (cati and cati==cat_c) or (tipi and tipi==tipo_c): continue
+            cands.append((nome_i, ddi.get("proprieta", {})))
+
+        # EQUILIBRIO (#255): per ogni ruolo mancante, il miglior ingrediente che lo copre
+        equilibrio = []
+        usati = set()
+        for nome_ruolo, prop_ruolo in mancanti:
+            best = None; bestv = 0
+            for nome_i, pi in cands:
+                if nome_i in usati: continue
+                v = pi.get(prop_ruolo, 0)
+                if v > bestv: best = nome_i; bestv = v
+            if best and bestv >= 5:
+                equilibrio.append({"ingrediente": best, "ruolo": nome_ruolo, "forza": bestv})
+                usati.add(best)
+
+        # BLUEPRINT (#257): il piatto embrionale = centro + i ruoli dell'equilibrio
+        blueprint = {"base": nome_c}
+        for e in equilibrio:
+            blueprint[e["ruolo"]] = e["ingrediente"]
+
+        _cur.close(); _release_conn(_c)
+        return jsonify({
+            "centro": nome_c,
+            "contesto": contesto,
+            "firma_ruoli": [{"ruolo": r["ruolo"], "forza": r["forza"], "desc": r["desc"]} for r in firma],
+            "prospettive": {
+                "equilibrio": equilibrio,   # #255: cosa serve per bilanciare
+            },
+            "blueprint": blueprint,          # #257: il piatto embrionale
+            "nota": "Grafo delle Possibilita': ruoli, non ingredienti (#263)"
+        })
+    except Exception as e:
+        return jsonify({"centro": ingrediente, "errore": str(e)[:120]}), 500
+
+
 @bp.route("/v1/flavour-network/<ingrediente>")
 def flavour_network(ingrediente):
     """Motore di COSTRUZIONE PIATTO (fusione con Composer): dato un ingrediente, cosa aggiungere per
