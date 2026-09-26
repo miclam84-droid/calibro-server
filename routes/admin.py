@@ -11387,11 +11387,18 @@ def admin_target_type_fenomeni():
                 lab = p.split(n)[0].strip(" :=-")[:22] if n in p else p[:22]
                 chips.append({"valore": n, "label": lab})
         if not chips:
-            # nessun numero pulito -> concetto. Header = prima frase intera (max ~80 char, taglio a fine parola)
-            testo = parti[0] if parti else nb
-            head = testo.strip()
-            if len(head) > 80:
-                head = head[:80].rsplit(' ',1)[0] + '…'
+            # nessun numero pulito -> concetto. Header = prima frase/clausola intera, mai tagliata a meta parola
+            testo = (parti[0] if parti else nb).strip()
+            # taglio alla prima virgola/punto se la frase e lunga, altrimenti a fine parola
+            head = testo
+            if len(head) > 70:
+                # provo a chiudere a una virgola o punto entro i primi 90 char
+                import re as _re2
+                m = _re2.search(r'^(.{30,90}?[,.;:])', head)
+                if m:
+                    head = m.group(1).rstrip(',;: ')
+                else:
+                    head = head[:70].rsplit(' ',1)[0] + '…'
             return {"tipo_bersaglio": "concetto", "header_bersaglio": head, "target_chips": []}
         # DOMINANTE (#218): preferisci temperatura (°C), poi pH, poi il primo
         dominante = None
