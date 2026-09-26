@@ -11602,15 +11602,8 @@ def admin_atlas_genera():
         sys = (f"Sei un esperto di scienza degli alimenti per Matter (app per professionisti F&B). "
                f"Fenomeno: {nome}. Scrivi {istr} "
                f"REGOLE: 1) sintetizza il CONSENSO delle fonti, non un valore arbitrario. 2) se le fonti "
-               f"divergono, dichiaralo. 3) NON inventare dati: se non trovi un dato, dillo. "
-               f"FONTI OBBLIGATORIE: basati su fonti AUTOREVOLI e citale per NOME AUTORE + OPERA, non come link/blog. "
-               f"Preferisci in quest'ordine: (Tier 0 tradizione italiana) disciplinari DOP/IGP, Slow Food, "
-               f"Accademia Italiana della Cucina, AIBI; (Tier 1) McGee 'On Food and Cooking', Modernist Cuisine/Bread "
-               f"di Myhrvold, Harold This; (Tier 2) Hamelman 'Bread', Suas 'Advanced Bread and Pastry', "
-               f"Difford's Guide, Arnold 'Liquid Intelligence', 'The Professional Chef' (CIA). "
-               f"NON citare blog personali o siti SEO come fonte principale. "
-               f"Alla fine due righe: FONTI: Autore, Opera (anno); Autore, Opera (anno) [almeno 2 fonti autorevoli] "
-               f"e CONFIDENZA: alta/media/bassa.")
+               f"divergono, dichiaralo. 3) cita sempre le fonti. 4) NON inventare dati: se non trovi un dato, dillo. "
+               f"Alla fine aggiungi due righe: FONTI: ... e CONFIDENZA: alta/media/bassa (quanto le fonti convergono).")
         if usa_web:
             _inp = sys + chr(10)+chr(10) + "Cerca sul web fonti tecniche/professionali affidabili e sintetizza. 150-250 parole."
             rpayload = {"model": "gpt-4o", "tools": [{"type": "web_search_preview"}], "input": _inp}
@@ -11735,6 +11728,41 @@ _FONTI_TIER = {
     3: ["king arthur", "serious eats", "kenji", "la cucina italiana", "gambero rosso"],
 }
 
+
+# REGISTRO OPERE NOTE (#310A: fonti = entita verificate, non stringhe). Coppie autore/opera REALI.
+_OPERE_NOTE = {
+    "mcgee": ["on food and cooking", "il cibo e la cucina", "keys to good cooking"],
+    "myhrvold": ["modernist cuisine", "modernist bread", "modernist pizza"],
+    "hamelman": ["bread"],
+    "suas": ["advanced bread and pastry"],
+    "this": ["gastronomia molecolare", "molecular gastronomy", "casseroles and clay pots"],
+    "arnold": ["liquid intelligence"],
+    "difford": ["difford's guide"],
+    "mcgee harold": ["on food and cooking"],
+    "reinhart": ["the bread baker's apprentice", "crust and crumb"],
+    "calvel": ["the taste of bread", "le gout du pain"],
+    "bertinet": ["dough", "crust"],
+    "cia": ["the professional chef"],
+    "culinary institute": ["the professional chef"],
+}
+
+def _fonte_verificata(testo_fonte):
+    """#310A: verifica che la fonte sia una coppia autore/opera NOTA (anti-allucinazione)."""
+    t = (testo_fonte or "").lower()
+    # se cita un autore noto, l'opera deve essere tra le sue opere reali
+    for autore, opere in _OPERE_NOTE.items():
+        if autore in t:
+            # l'autore c'e': l'opera citata e' tra le sue?
+            if any(op in t for op in opere):
+                return True  # coppia verificata
+            # autore noto ma opera non riconosciuta -> sospetta (possibile allucinazione)
+            return "sospetta"
+    # disciplinari/istituzioni italiane (Tier 0) - riconosciute per keyword
+    if any(k in t for k in ["disciplinare", "slow food", "dop", "igp", "accademia italiana", "aibi"]):
+        return True
+    return "non_verificata"  # fonte non nel registro (non per forza falsa, ma non verificabile)
+
+
 def _classifica_fonte(testo_fonte):
     """Classifica una fonte nel suo Tier (#310A: fonti = entita verificate)."""
     t = (testo_fonte or "").lower()
@@ -11778,6 +11806,11 @@ def admin_compiler_valida():
         has_autorevole = any(t <= 2 for t in tiers)  # #309A: almeno una Tier 0-2
         if not fonti: gate_b["passato"]=False; gate_b["problemi"].append("nessuna fonte citata")
         elif not has_autorevole: gate_b["passato"]=False; gate_b["problemi"].append("nessuna fonte Tier 0-2 (solo blog)")
+        # GATE ANTI-ALLUCINAZIONE (#310A): le fonti autorevoli citate sono coppie autore/opera REALI?
+        sospette = [f for f in fonti if _fonte_verificata(f) == "sospetta"]
+        if sospette:
+            gate_b["passato"]=False
+            gate_b["problemi"].append(f"possibile fonte allucinata (autore noto, opera non riconosciuta): {sospette[0][:40]}")
         # coerenza numerica: temperature assurde
         temps = re.findall(r"(\d{2,3})\s*°?\s*[cC]", testo_tot)
         for tp in temps:
