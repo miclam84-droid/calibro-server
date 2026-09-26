@@ -1142,3 +1142,32 @@ def atlante_copertura():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/ingrediente-completo/<nome>", methods=["GET"])
+def ingrediente_completo_bus(nome):
+    """Knowledge Bus (#325): assembla tutti i Knowledge Layer di un ingrediente in un oggetto unico.
+    L'endpoint non conosce USDA/ISMEA/Wikidata: conosce solo il Bus."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        rows = db.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                             AND LOWER(name) LIKE LOWER(?) ORDER BY LENGTH(name) LIMIT 1""", (f"%{nome}%",)).fetchall()
+        dd = {}
+        nome_reale = nome
+        if rows:
+            nome_reale = _c(rows[0],"name",0)
+            dd = _c(rows[0],"data",1); dd = dd if isinstance(dd,dict) else (_j.loads(dd) if dd else {})
+        try:
+            import sys
+            if "/app" not in sys.path: sys.path.insert(0, "/app")
+            from knowledge_bus import knowledge_bus
+            return jsonify(knowledge_bus(nome_reale, dd))
+        except Exception as _e:
+            # fallback: se il modulo bus non c'e', ritorno i dati grafo
+            return jsonify({"ingrediente": nome_reale, "knowledge_layers": {"graph": {"proprieta": dd.get("proprieta",{})}}, "_nota": f"bus non caricato: {str(_e)[:60]}"})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
