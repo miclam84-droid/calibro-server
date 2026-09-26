@@ -12,9 +12,16 @@ window.apriSchedeScienza = function(){
   fetch('/v1/atlante/copertura').then(function(r){return r.json();}).then(function(c){
     var box=document.getElementById('sc-copertura'); if(!box) return;
     var pct=c.indice_copertura_pct||0;
-    box.innerHTML='<div class="sc-cop-box"><div class="sc-cop-top"><span class="sc-cop-lab">ATLANTE MATTER</span><span class="sc-cop-pct">'+pct+'%</span></div>'
+    var perDisc=(c.per_disciplina||[]).filter(function(x){ return (x.totale||0)>=3; }).sort(function(a,b){ return (b.pct||0)-(a.pct||0); });
+    var _DLAB={panificazione:'Panificazione',bar:'Bar',cocktail:'Cocktail',cucina:'Cucina',pasticceria:'Pasticceria',gelateria:'Gelateria',caffe:'Caffè',trasversale:'Trasversale',fermentazione:'Fermentazione','Altro':'Altro'};
+    var discHtml = perDisc.length ? '<div class="sc-cop-disc">'+perDisc.map(function(x){
+      var p=x.pct||0;
+      return '<div class="sc-cop-drow"><span class="sc-cop-dlab">'+_escV(_DLAB[x.disciplina]||x.disciplina)+'</span><div class="sc-cop-dbar"><div class="sc-cop-dfill" style="width:'+p+'%"></div></div><span class="sc-cop-dpct">'+p+'%</span></div>';
+    }).join('')+'</div>' : '';
+    box.innerHTML='<div class="sc-cop-box"><div class="sc-cop-top"><span class="sc-cop-lab">ATLANTE DELLA CONOSCENZA</span><span class="sc-cop-pct">'+pct+'%</span></div>'
       + '<div class="sc-cop-nums">'+(c.totale_fenomeni||0)+' fenomeni · '+(c.complete||0)+' complete · '+(c.in_crescita||0)+' in crescita</div>'
       + '<div class="sc-cop-bar"><div class="sc-cop-fill" style="width:'+pct+'%"></div></div>'
+      + discHtml
       + '<div class="sc-cop-claim">Un\'enciclopedia vivente della scienza del mestiere, in costruzione.</div></div>';
   }).catch(function(){});
   fetch('/v1/schede-scienza').then(function(r){return r.json();}).then(function(d){
@@ -74,6 +81,23 @@ function _scMaturita(d){
   if(stato==='fondamenta'||stato==='in_espansione'){ msg='<div class="sc-mat-msg">Questa scheda contiene le fondamenta scientifiche del fenomeno. Matter sta completando casi reali, errori comuni e applicazioni operative.</div>'; }
   return '<div class="sc-maturita">'+edBadge+badge+barra+msg+'</div>';
 }
+// blocco "Fonti fondamentali" (#335A): solo libri autorevoli, niente URL/CTA compra
+function _scFonti(d){
+  var e=_escV;
+  var raw=(d.fonti||d.provenienza&&d.provenienza.fonti||[]);
+  if(!raw.length) return '';
+  // pulisco: via URL/utm/markdown, tengo solo testo leggibile da libri
+  var pulite=raw.map(function(f){
+    var s=String(f);
+    if(/https?:\/\/|utm_source|\.com|\.it\b|openai|\[/.test(s)) return null; // scarto i link web
+    s=s.replace(/[\[\]()"]/g,'').replace(/\s+/g,' ').trim();
+    return s.length>2?s:null;
+  }).filter(Boolean);
+  if(!pulite.length) return '';
+  // accorpo autore+titolo adiacenti (es. "Jeffrey Hamelman" + "Bread 2004")
+  var testo=pulite.slice(0,6).join(' · ');
+  return '<div class="sc-fonti"><div class="sc-fonti-lab">◆ Fonti fondamentali</div><div class="sc-fonti-txt">'+e(testo)+'</div></div>';
+}
 function _scRender(d){
   var e=_escV;
   var sez=function(lab,val,cls){ if(!val) return ''; return '<div class="sc-sez'+(cls?' '+cls:'')+'"><div class="sc-sez-lab">'+e(lab)+'</div><div class="sc-sez-txt">'+e(val)+'</div></div>'; };
@@ -110,6 +134,7 @@ function _scRender(d){
     + sez('Perché succede', d.principio)
     // fallback: se i blocchi separati sono vuoti, mostro il corpo completo (campo 'scheda')
     + ((!d.fenomeno && !d.punto_critico && !d.principio && d.scheda) ? '<div class="sc-sez"><div class="sc-sez-lab">La scheda</div><div class="sc-sez-txt sc-corpo">'+e(d.scheda)+'</div></div>' : '')
+    + _scFonti(d)
     + '<button class="sc-chiedi" onclick=\'_chatConContesto("fenomeno",{nome:'+JSON.stringify(d.nome).replace(/'/g,"&#39;")+',fenomeno:'+JSON.stringify(d.nome).replace(/'/g,"&#39;")+',target:'+JSON.stringify(headerVal||"").replace(/'/g,"&#39;")+'})\'>Chiedi a Matter su questo →</button>'
     + '</div>';
   var b=document.getElementById('vista-body'); if(b) b.innerHTML=html;

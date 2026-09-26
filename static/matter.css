@@ -1047,3 +1047,16 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 /* ═══ Home rifinitura (#334): FAB Galileo non si sovrappone alla card ═══ */
 /* nel Banco c'è già la card Galileo: nascondo il FAB ridondante, lo mostro solo negli altri luoghi */
 /* visibilità FAB gestita via JS (_aggiornaGalileoFab) */
+
+/* ═══ Coverage Dashboard per disciplina (#335) ═══ */
+.sc-cop-disc{margin:14px 0 4px;display:flex;flex-direction:column;gap:7px}
+.sc-cop-drow{display:flex;align-items:center;gap:10px}
+.sc-cop-dlab{flex:0 0 92px;font-family:'Inter',sans-serif;font-size:11px;color:#cbd6da}
+.sc-cop-dbar{flex:1;height:5px;background:rgba(255,255,255,.1);overflow:hidden}
+.sc-cop-dfill{height:100%;background:#7fb0c4}
+.sc-cop-dpct{flex:0 0 34px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#e8935a}
+
+/* ═══ Fonti fondamentali nella scheda (#335A) — no CTA compra ═══ */
+.sc-fonti{margin:18px 0;padding:14px;background:rgba(36,89,121,.05);border-left:3px solid #245979}
+.sc-fonti-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#245979;margin-bottom:6px}
+.sc-fonti-txt{font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#141d22}
