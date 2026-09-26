@@ -4565,13 +4565,15 @@ def grafo_possibilita(ingrediente):
             wl = _SENSATI.get(prop_ruolo, [])
             best = None; bestv = 0
             # prima cerco tra i sensati (whitelist), poi tra tutti
-            # 1) prima cerco SOLO tra i sensati (whitelist), soglia piu bassa (4)
-            for nome_i, pi in cands:
-                if nome_i in usati: continue
-                nl = nome_i.lower()
-                if not any(w in nl for w in wl): continue
-                v = pi.get(prop_ruolo, 0)
-                if v > bestv: best = nome_i; bestv = v
+            # 1) scorro la whitelist IN ORDINE di preferenza; prendo il primo che ha forza >=5
+            #    (cosi burro batte olio di colza a parita, perche viene prima nella lista)
+            for w in wl:
+                for nome_i, pi in cands:
+                    if nome_i in usati: continue
+                    if w not in nome_i.lower(): continue
+                    v = pi.get(prop_ruolo, 0)
+                    if v >= 5 and v > bestv: best = nome_i; bestv = v
+                if best and bestv >= 5: break  # trovato il primo sensato buono, mi fermo
             # 2) solo se NESSUN sensato raggiunge 4, allargo a tutti (soglia 6)
             if not (best and bestv >= 4):
                 best = None; bestv = 0
