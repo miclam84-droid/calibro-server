@@ -26,8 +26,14 @@ def help_page():
 
 @bp.route("/app")
 def home():
-    """PWA principale — serve index.html."""
-    return render_template("index.html", mb_ver=_BUILD_VER)
+    """PWA principale — serve index.html. Anti-cache sull'HTML: il browser rivalida sempre
+    l'app-shell, cosi' gli utenti prendono la nav aggiornata (Sprint Routing #51)."""
+    from flask import make_response
+    resp = make_response(render_template("index.html", mb_ver=_BUILD_VER))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
 
 @bp.route("/manifest.json")
 def manifest():
