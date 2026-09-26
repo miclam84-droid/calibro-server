@@ -4615,7 +4615,7 @@ def grafo_possibilita(ingrediente):
                 # scoperta = sorprendente: NON un classico, NON stessa categoria
                 scoperta.append(nome_s)
                 if len(scoperta)>=5: break
-        except Exception as _es: _dbg_sco = str(_es)[:100]
+        except Exception: pass
 
         _cur.close(); _release_conn(_c)
         return jsonify({
@@ -4628,8 +4628,7 @@ def grafo_possibilita(ingrediente):
                 "scoperta": scoperta,       # #256: le sorprese molecolari
             },
             "blueprint": blueprint,          # #257: il piatto embrionale
-            "nota": "Grafo delle Possibilita': ruoli, non ingredienti (#263)",
-            "_dbg": {"trad": locals().get("_dbg_trad"), "sco": locals().get("_dbg_sco")}
+            "nota": "Grafo delle Possibilita': ruoli, non ingredienti (#263)"
         })
     except Exception as e:
         return jsonify({"centro": ingrediente, "errore": str(e)[:120]}), 500
