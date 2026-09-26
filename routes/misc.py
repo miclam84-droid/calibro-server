@@ -960,6 +960,8 @@ def _fenomeno_a_scheda(dd, nome, nid):
         "slug": nid, "nome": nome,
         "categoria": dd.get("disciplina") or dd.get("dominio") or cs.get("dominio") or "",
         "numero_bersaglio": dd.get("numero_bersaglio") or dd.get("target") or cs.get("numero_bersaglio") or "",
+        "stato_maturita": dd.get("stato_maturita") or "",
+        "strati": dd.get("strati") or {},
         "tipo_bersaglio": dd.get("tipo_bersaglio") or "",
         "header_bersaglio": dd.get("header_bersaglio") or "",
         "header_label": dd.get("header_label") or "",
@@ -1106,3 +1108,34 @@ def galileo_riconosci_decisione():
                 "cta_resta": "Resta qui, continua a chiedere a Galileo"
             })
     return jsonify({"merita_decisione": False})
+
+
+@bp.route("/v1/atlante/copertura", methods=["GET"])
+def atlante_copertura():
+    """INDICE DI COPERTURA (#284): quanto e' completo l'Atlante. Trasforma un difetto in roadmap.
+    L'Atlante e' un organismo vivo, non un libro statico."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        rows = db.execute("SELECT data FROM nodes WHERE type IN ('Fenomeno','Tecnica')").fetchall()
+        conteggi = {"completa": 0, "in_completamento": 0, "fondamenta": 0, "in_espansione": 0}
+        tot = 0
+        for r in rows:
+            dd = _c(r,"data",0); dd = dd if isinstance(dd,dict) else (_j.loads(dd) if dd else {})
+            stato = dd.get("stato_maturita","in_espansione")
+            conteggi[stato] = conteggi.get(stato,0)+1
+            tot += 1
+        complete = conteggi.get("completa",0)
+        return jsonify({
+            "totale_fenomeni": tot,
+            "complete": complete,
+            "in_crescita": tot - complete,
+            "indice_copertura_pct": round(complete/tot*100) if tot else 0,
+            "dettaglio": conteggi,
+            "messaggio": f"L'Atlante di Matter contiene {tot} fenomeni. {complete} sono schede complete, {tot-complete} sono in crescita. Matter costruisce un'enciclopedia vivente della scienza del mestiere."
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
