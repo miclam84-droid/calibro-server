@@ -449,7 +449,7 @@ function _afetch(url, opts){
   });
 }
 // ═══ LOADER MODULI LAZY (metodo Strangler) ═══
-window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false, planner:false, composer:false, grafo:false, scienza:false, biodiversita:false, laboratorio:false, galileo:false };
+window._moduli = window._moduli || { chat:false, lezioni:false, flavour:false, dna:false, menu:false, ricette:false, motori:false, planner:false, composer:false, grafo:false, scienza:false, biodiversita:false, laboratorio:false, galileo:false, menubuilder:false };
 function _caricaModulo(nome){
   return new Promise(function(resolve){
     if(window._moduli[nome]){ resolve(); return; }

@@ -140,17 +140,22 @@ if('serviceWorker' in navigator){
       <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
     </button>
     <div class="porte-grid">
+      <button class="porta porta-menubuilder" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('menubuilder').then(function(){apriMenuBuilderPro&&apriMenuBuilderPro()})}">
+        <i class="ph ph-cards" aria-hidden="true"></i>
+        <div class="porta-t">Menu Builder</div>
+        <div class="porta-d">Costruisci l'offerta</div>
+      </button>
       <button class="porta porta-planner" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('planner').then(function(){apriPlanner&&apriPlanner()})}">
         <i class="ph ph-calendar-blank" aria-hidden="true"></i>
-        <div class="porta-t">Planner Menu</div>
-        <div class="porta-d">Progetta il menu</div>
-      </button>
-      <button class="porta porta-quaderno" onclick="switchTab('quaderno')">
-        <i class="ph ph-notebook" aria-hidden="true"></i>
-        <div class="porta-t">Quaderno</div>
-        <div class="porta-d">Il tuo lavoro</div>
+        <div class="porta-t">Planner</div>
+        <div class="porta-d">Organizza il lavoro</div>
       </button>
     </div>
+    <button class="porta porta-quaderno" onclick="switchTab('quaderno')">
+      <i class="ph ph-notebook" aria-hidden="true"></i>
+      <div class="porta-txt"><div class="porta-t">Quaderno</div><div class="porta-d">Il tuo lavoro salvato</div></div>
+      <i class="ph ph-arrow-right porta-arr" aria-hidden="true"></i>
+    </button>
   </div>
 
   <!-- CASI REALI (scroll) -->
