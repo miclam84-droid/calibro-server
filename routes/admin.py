@@ -11479,3 +11479,87 @@ def admin_calcola_maturita_schede():
                         "indice_copertura_pct": round(completa/tot*100) if tot else 0})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/coverage-score")
+def admin_coverage_score():
+    """Board #54: Knowledge Coverage Score 0-100 (#293A) + struttura provenienza strato 0 (#294A).
+    Lo score pesa i 3 strati; la provenienza traccia fonti/autore/revisione (metadati invisibili)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
+        dist = {"0-25": 0, "26-50": 0, "51-75": 0, "76-100": 0}
+        somma = 0; tot = 0
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            cs = dd.get("contenuto_strutturato") or {}
+            if isinstance(cs, str):
+                try: cs = json.loads(cs)
+                except: cs = {}
+            # Coverage Score pesato: Fondamenta 40, Operativita 35, Esperienza 25
+            score = 0
+            # Fondamenta (40): definizione/principio
+            f = dd.get("scheda") or cs.get("spiegazione") or cs.get("principio") or dd.get("risposta_cache_it") or ""
+            if len(str(f)) > 200: score += 40
+            elif len(str(f)) > 50: score += 25
+            elif f: score += 10
+            # Operativita (35): punto critico + errori + numero bersaglio
+            op = 0
+            if cs.get("punto_critico") or dd.get("punto_critico"): op += 12
+            if dd.get("errori_comuni") or cs.get("errori_comuni"): op += 12
+            if dd.get("numero_bersaglio") or dd.get("target"): op += 11
+            score += op
+            # Esperienza Matter (25): esecuzione/casi/collegamenti
+            if dd.get("esecuzione") or cs.get("esecuzione"): score += 13
+            if cs.get("casi_reali"): score += 12
+            score = min(100, score)
+            dd["coverage_score"] = score
+            # STRATO 0 provenienza (#294A): se non c'e', inizializzo la struttura
+            if "provenienza" not in dd:
+                dd["provenienza"] = {"fonti": [], "autore_strato1": "", "validato_da": "", "ultima_revisione": "", "stato_pipeline": "da_fare"}
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            somma += score; tot += 1
+            if score <= 25: dist["0-25"] += 1
+            elif score <= 50: dist["26-50"] += 1
+            elif score <= 75: dist["51-75"] += 1
+            else: dist["76-100"] += 1
+            if tot % 50 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"totale": tot, "score_medio": round(somma/tot) if tot else 0,
+                        "distribuzione": dist,
+                        "knowledge_coverage_score": round(somma/tot) if tot else 0})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/atlas-studio/coda")
+def admin_atlas_coda():
+    """Atlas Studio (#300): la CODA di lavorazione - le schede ordinate per costo marginale (#293).
+    Prima le 'quasi pronte' (score alto ma non 100): massimo impatto, minimo sforzo."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
+        schede = []
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            score = dd.get("coverage_score", 0)
+            if score >= 100: continue  # gia complete
+            strati = dd.get("strati", {})
+            mancanti = [k for k in ["fondamenta","operativita","esperienza"] if not strati.get(k)]
+            schede.append({"id": nid, "nome": nome, "score": score, "strati_mancanti": mancanti,
+                           "provenienza": dd.get("provenienza",{}).get("stato_pipeline","da_fare")})
+        # ordino per score DESC (le quasi-pronte prima - minimo sforzo per completarle)
+        schede.sort(key=lambda x: -x["score"])
+        return jsonify({"totale_da_lavorare": len(schede),
+                        "quasi_pronte": [s for s in schede if s["score"] >= 65][:30],
+                        "coda_completa": schede[:100]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
