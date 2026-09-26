@@ -11776,6 +11776,49 @@ def _fonte_verificata(testo_fonte):
     return "non_verificata"  # fonte non nel registro (non per forza falsa, ma non verificabile)
 
 
+
+# BIBLIOTECA MATTER (#317A): i libri core con ASIN Amazon per il link affiliato (#319A: ricavo accessorio)
+_BIBLIOTECA = {
+    "on food and cooking": {"autore": "Harold McGee", "titolo": "On Food and Cooking", "anno": 2004,
+        "asin_it": "8865207108", "asin_en": "0684800012", "tier": 1,
+        "perche": "Il riferimento assoluto sulla chimica e la scienza degli alimenti."},
+    "il cibo e la cucina": {"autore": "Harold McGee", "titolo": "Il cibo e la cucina", "anno": 2019,
+        "asin_it": "8865207108", "asin_en": "0684800012", "tier": 1,
+        "perche": "L'edizione italiana del riferimento sulla scienza del cibo."},
+    "modernist bread": {"autore": "Nathan Myhrvold", "titolo": "Modernist Bread", "anno": 2017,
+        "asin_it": "0982761015", "asin_en": "0982761015", "tier": 1,
+        "perche": "Trattato enciclopedico sulla panificazione scientifica."},
+    "modernist cuisine": {"autore": "Nathan Myhrvold", "titolo": "Modernist Cuisine", "anno": 2011,
+        "asin_it": "0982761007", "asin_en": "0982761007", "tier": 1,
+        "perche": "La cucina come scienza, in sei volumi."},
+    "bread": {"autore": "Jeffrey Hamelman", "titolo": "Bread", "anno": 2004,
+        "asin_it": "1118132718", "asin_en": "1118132718", "tier": 2,
+        "perche": "Il manuale di riferimento della panificazione professionale."},
+    "advanced bread and pastry": {"autore": "Michel Suas", "titolo": "Advanced Bread and Pastry", "anno": 2008,
+        "asin_it": "1418011694", "asin_en": "1418011694", "tier": 2,
+        "perche": "Testo avanzato di panificazione e pasticceria."},
+    "liquid intelligence": {"autore": "Dave Arnold", "titolo": "Liquid Intelligence", "anno": 2014,
+        "asin_it": "0393089037", "asin_en": "0393089037", "tier": 2,
+        "perche": "La scienza e l'arte del cocktail perfetto."},
+    "the professional chef": {"autore": "CIA", "titolo": "The Professional Chef", "anno": 2011,
+        "asin_it": "0470421355", "asin_en": "0470421355", "tier": 2,
+        "perche": "Il manuale del Culinary Institute of America."},
+}
+
+def _libro_affiliato(fonte_testo, lang="it"):
+    """Dato il testo di una fonte, se e' un libro noto restituisce l'oggetto Biblioteca + link Amazon affiliato."""
+    import os as _os
+    t = (fonte_testo or "").lower()
+    for chiave, info in _BIBLIOTECA.items():
+        if chiave in t:
+            tag = _os.environ.get("AMAZON_TAG", "")
+            asin = info.get("asin_it") if lang == "it" else info.get("asin_en")
+            link = f"https://www.amazon.it/dp/{asin}?tag={tag}" if asin else ""
+            return {"autore": info["autore"], "titolo": info["titolo"], "anno": info["anno"],
+                    "tier": info["tier"], "perche": info["perche"], "amazon": link}
+    return None
+
+
 def _classifica_fonte(testo_fonte):
     """Classifica una fonte nel suo Tier (#310A: fonti = entita verificate)."""
     t = (testo_fonte or "").lower()
@@ -11920,3 +11963,30 @@ def admin_knowledge_density():
                         "distribuzione": dist, "esempi_poveri_da_arricchire": poveri[:20]})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/scheda/<slug>/biblioteca", methods=["GET"])
+def scheda_biblioteca(slug):
+    """Biblioteca Matter (#317A): i libri citati dalla scheda, con link Amazon affiliato (#319A).
+    'Questa scheda si basa su McGee, On Food and Cooking -> approfondisci'."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    lang = request.args.get("lang", "it")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT data FROM nodes WHERE (id=%s OR LOWER(name) LIKE LOWER(%s)) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (slug, f"%{slug}%"))
+        r = cur.fetchone()
+        if not r: return jsonify({"libri": []})
+        dd = r[0] if isinstance(r[0], dict) else (json.loads(r[0]) if r[0] else {})
+        fonti = dd.get("provenienza", {}).get("fonti", [])
+        libri = []
+        visti = set()
+        for f in fonti:
+            lib = _libro_affiliato(f, lang)
+            if lib and lib["titolo"] not in visti:
+                libri.append(lib); visti.add(lib["titolo"])
+        cur.close(); conn.close()
+        return jsonify({"slug": slug, "libri": libri,
+                        "nota": "Fonti di questa scheda. Approfondisci nella Biblioteca Matter."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
