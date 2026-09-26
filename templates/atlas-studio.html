@@ -101,13 +101,13 @@ function carica(){
   fetch('/admin/coverage-score?s='+encodeURIComponent(_s)).then(function(r){return r.json();}).then(renderDash).catch(function(){});
   fetch('/admin/atlas-studio/coda?s='+encodeURIComponent(_s)).then(function(r){return r.json();}).then(function(d){
     var schede=(d.coda_completa||d.quasi_pronte||[]);
-    window._asSchede=schede;
+    window._asSchede=schede; window._asReg=[];
     var perCol={}; _COLONNE.forEach(function(c){ perCol[c]=[]; });
     schede.forEach(function(s){ var st=(s.provenienza&&s.provenienza.stato_pipeline)||'da_fare'; if(!perCol[st])perCol[st]=[]; perCol[st].push(s); });
     var html='<div class="as-pipeline">'+_COLONNE.map(function(c){
       var cards=(perCol[c]||[]).slice(0,25).map(function(s,i){
         var sc=s.score||s.coverage_score||0; var cls=sc>=76?'alto':(sc>=51?'medio':'basso');
-        return '<div class="as-card" onclick="apriGate('+JSON.stringify(JSON.stringify(s)).replace(/'/g,"&#39;")+')"><div class="as-card-nome">'+esc(s.nome||s.id)+'</div><div class="as-card-score '+cls+'">'+sc+'/100</div>'+(s.strati_mancanti&&s.strati_mancanti.length?'<div class="as-card-mancanti">manca: '+esc(s.strati_mancanti.join(', '))+'</div>':'')+'</div>';
+        return '<div class="as-card" onclick="apriGateIdx('+_asIdxGlobale(s)+')"><div class="as-card-nome">'+esc(s.nome||s.id)+'</div><div class="as-card-score '+cls+'">'+sc+'/100</div>'+(s.strati_mancanti&&s.strati_mancanti.length?'<div class="as-card-mancanti">manca: '+esc(s.strati_mancanti.join(', '))+'</div>':'')+'</div>';
       }).join('');
       return '<div class="as-col"><div class="as-col-h"><span>'+_COL_LAB[c]+'</span><span class="as-col-n">'+(perCol[c]||[]).length+'</span></div><div class="as-col-body">'+(cards||'<div style="color:#9daeb2;font-size:11px;padding:8px">—</div>')+'</div></div>';
     }).join('')+'</div>';
@@ -115,6 +115,9 @@ function carica(){
   }).catch(function(){ document.getElementById('pipeline').innerHTML='<div class="as-load">Errore nel caricamento coda.</div>'; });
 }
 function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+window._asReg=[];
+function _asIdxGlobale(o){ window._asReg.push(o); return window._asReg.length-1; }
+window.apriGateIdx=function(i){ var o=(window._asReg||[])[i]; if(o) apriGate(JSON.stringify(o)); };
 function apriGate(sJson){
   var s={}; try{ s=JSON.parse(sJson); }catch(e){}
   var strati=s.strati||{};
@@ -138,7 +141,7 @@ function apriGate(sJson){
 }
 function _asAzione(tipo,id){
   // gli endpoint di supporto (genera/salva/cambia-stato) sono in costruzione lato backend
-  alert('Azione "'+tipo+'" su '+id+'\\n\\nL\\'endpoint di supporto è in costruzione lato backend (Quality Gate Stage 1). La UI è pronta a chiamarlo appena disponibile.');
+  alert('Azione "'+tipo+'" su '+id+' — endpoint di supporto in costruzione lato backend (Quality Gate). La UI e pronta a chiamarlo appena disponibile.');
 }
 try{ var ss=sessionStorage.getItem('as_s'); if(ss){ _s=ss; document.getElementById('gate').style.display='none'; document.getElementById('studio').style.display='block'; carica(); } }catch(e){}
 </script>
