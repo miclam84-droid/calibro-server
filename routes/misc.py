@@ -1222,3 +1222,54 @@ def context_package():
         "n_escluse": len(pkg["fonti_escluse"]),
     }
     return jsonify(pkg)
+
+
+# Biblioteca Matter: registro libri con Amazon (#317A, #335A)
+_BIBLIO_LIBRI = {
+    "on food and cooking": {"autore":"Harold McGee","titolo":"On Food and Cooking","anno":2004,"tier":1,"asin":"0684800012"},
+    "il cibo e la cucina": {"autore":"Harold McGee","titolo":"Il cibo e la cucina","anno":2019,"tier":1,"asin":"8865207108"},
+    "modernist bread": {"autore":"Nathan Myhrvold","titolo":"Modernist Bread","anno":2017,"tier":1,"asin":"0982761015"},
+    "modernist cuisine": {"autore":"Nathan Myhrvold","titolo":"Modernist Cuisine","anno":2011,"tier":1,"asin":"0982761007"},
+    "bread": {"autore":"Jeffrey Hamelman","titolo":"Bread","anno":2004,"tier":2,"asin":"1118132718"},
+    "advanced bread and pastry": {"autore":"Michel Suas","titolo":"Advanced Bread and Pastry","anno":2008,"tier":2,"asin":"1418011694"},
+    "liquid intelligence": {"autore":"Dave Arnold","titolo":"Liquid Intelligence","anno":2014,"tier":2,"asin":"0393089037"},
+    "the professional chef": {"autore":"CIA","titolo":"The Professional Chef","anno":2011,"tier":2,"asin":"0470421355"},
+}
+
+def _pulisci_fonti(fonti_raw):
+    """Tiene solo i libri autorevoli, scarta blog/URL/utm. Ritorna oggetti puliti."""
+    import os as _os, re as _re
+    tag = _os.environ.get("AMAZON_TAG", "")
+    puliti = []; visti = set()
+    for f in (fonti_raw or []):
+        ft = str(f).lower()
+        # scarto URL/blog
+        if "http" in ft or "utm_" in ft or ".com" in ft or ".it/" in ft: continue
+        for chiave, info in _BIBLIO_LIBRI.items():
+            if chiave in ft and info["titolo"] not in visti:
+                visti.add(info["titolo"])
+                link = f"https://www.amazon.it/dp/{info['asin']}?tag={tag}" if info.get("asin") else ""
+                puliti.append({"autore":info["autore"],"titolo":info["titolo"],"anno":info["anno"],
+                               "tier":info["tier"],"amazon":link})
+    return puliti
+
+
+@bp.route("/v1/scheda/<slug>/biblioteca", methods=["GET"])
+def scheda_biblioteca_pub(slug):
+    """Biblioteca Matter (#335A): i libri citati dalla scheda, puliti (solo libri, no blog) + Amazon."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        rows = db.execute("""SELECT data FROM nodes WHERE (id=? OR LOWER(name) LIKE LOWER(?))
+                             AND type IN ('Fenomeno','Tecnica') LIMIT 1""", (slug, f"%{slug}%")).fetchall()
+        if not rows: return jsonify({"libri": []})
+        dd = _c(rows[0],"data",0); dd = dd if isinstance(dd,dict) else (_j.loads(dd) if dd else {})
+        fonti = dd.get("provenienza",{}).get("fonti",[])
+        libri = _pulisci_fonti(fonti)
+        return jsonify({"slug": slug, "libri": libri,
+                        "nota": "Fonti di questa scheda. Approfondisci nella Biblioteca Matter."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120], "libri": []}), 500
