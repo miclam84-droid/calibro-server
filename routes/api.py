@@ -4549,15 +4549,30 @@ def grafo_possibilita(ingrediente):
             if (cati and cati==cat_c) or (tipi and tipi==tipo_c): continue
             cands.append((nome_i, ddi.get("proprieta", {})))
 
-        # EQUILIBRIO (#255): per ogni ruolo mancante, il miglior ingrediente che lo copre
+        # candidati SENSATI per ruolo (evita 'pollo fritto' come croccante di una caprese)
+        _SENSATI = {
+            "grasso": ["olio extravergine","olio evo","burro","panna","mascarpone","stracciatella","olio"],
+            "acido": ["limone","aceto","lime","agrumi","pomodoro","yogurt","vino bianco","verjus"],
+            "aroma_fresco": ["basilico","menta","prezzemolo","erba cipollina","rucola","scorza di limone"],
+            "umami": ["parmigiano","pomodoro","acciuga","funghi","prosciutto","miso","colatura"],
+            "salato": ["parmigiano","pecorino","acciuga","olive","capperi","prosciutto"],
+            "croccante": ["mandorla","pangrattato","pinoli","nocciola","crostini","noci","granella"],
+        }
+        # EQUILIBRIO (#255): per ogni ruolo mancante, il miglior ingrediente SENSATO che lo copre
         equilibrio = []
         usati = set()
         for nome_ruolo, prop_ruolo in mancanti:
+            wl = _SENSATI.get(prop_ruolo, [])
             best = None; bestv = 0
-            for nome_i, pi in cands:
-                if nome_i in usati: continue
-                v = pi.get(prop_ruolo, 0)
-                if v > bestv: best = nome_i; bestv = v
+            # prima cerco tra i sensati (whitelist), poi tra tutti
+            for solo_sensati in (True, False):
+                for nome_i, pi in cands:
+                    if nome_i in usati: continue
+                    nl = nome_i.lower()
+                    if solo_sensati and not any(w in nl for w in wl): continue
+                    v = pi.get(prop_ruolo, 0)
+                    if v > bestv: best = nome_i; bestv = v
+                if best and bestv >= 5: break  # trovato tra i sensati, non allargo
             if best and bestv >= 5:
                 equilibrio.append({"ingrediente": best, "ruolo": nome_ruolo, "forza": bestv})
                 usati.add(best)
