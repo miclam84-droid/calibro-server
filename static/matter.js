@@ -473,9 +473,9 @@ function _diagnosiVai(q){
   if(typeof _caricaModulo==='function' && !(window._moduli&&window._moduli.chat)){ _caricaModulo('chat').then(vai); } else { vai(); }
 }
 function switchTab(t){
-  // ROUTER (#277): cambiando tab-screen, chiudo una vista-luogo aperta e rimonto gli screen
+  // ROUTER (#277): cambiando tab-screen, nascondo l'overlay-vista (senza chiamare chiudiVista: no loop)
   var _ov=document.getElementById('vista-overlay');
-  if(_ov && !_ov.classList.contains('hidden')){ _ov.classList.add('hidden'); }
+  if(_ov){ _ov.classList.add('hidden'); }
   document.querySelectorAll('.screen').forEach(function(s){ s.style.removeProperty('display'); });
   window._luogoAttivo = t;
   // carica il modulo chat quando si apre l'Assistente (lazy)
@@ -5852,10 +5852,9 @@ window.apriLuogo = function(nome){
 function chiudiVista(){
   const o = document.getElementById('vista-overlay');
   if(o) o.classList.add('hidden');
-  // ROUTER (#278): al ritorno, rimonto lo screen del luogo attivo (di norma il Banco)
-  window._luogoAttivo = 'banco';
+  // ROUTER (#278): al ritorno rimonto gli screen; lo screen attivo torna visibile da solo
   document.querySelectorAll('.screen').forEach(function(s){ s.style.removeProperty('display'); });
-  if(typeof switchTab==='function') switchTab('scopri');
+  window._luogoAttivo = 'banco';
 }
 function _apriVista(titolo, htmlIniziale){
   const o = _ensureVistaOverlay();
