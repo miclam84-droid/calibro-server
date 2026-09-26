@@ -11868,39 +11868,40 @@ def admin_knowledge_density():
     limite = int(request.args.get("limite", "0"))  # 0 = tutti, altrimenti processa N
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')" + (f" LIMIT {limite}" if limite else ""))
+        lim = limite if limite else 200  # batch di default 200 (evita timeout)
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') LIMIT %s", (lim,))
         rows = cur.fetchall()
+        ids = [r[0] for r in rows]
+        # UNA query aggregata per TUTTI gli archi degli ingredienti del batch (invece di 3 per ognuno)
+        archi = {}
+        if ids:
+            cur.execute("""SELECT from_id, relation, COUNT(*) FROM edges WHERE from_id = ANY(%s)
+                           GROUP BY from_id, relation""", (ids,))
+            for fid, rel, cnt in cur.fetchall():
+                archi.setdefault(fid, {})[rel] = cnt
         dist = {"0-25": 0, "26-50": 0, "51-75": 0, "76-100": 0}
-        poveri = []  # gli ingredienti con density bassa (da arricchire)
-        tot = 0; somma = 0
+        poveri = []; tot = 0; somma = 0
         for nid, nome, data in rows:
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            a = archi.get(nid, {})
             score = 0
-            # proprieta sensoriali (max 20)
             if dd.get("proprieta"): score += min(20, len(dd.get("proprieta",{}))*3)
-            # operativo/nutrizione (max 15)
             if dd.get("operativo"): score += 15
-            # territorio/tutela (max 15)
             if dd.get("territorio") or dd.get("regione"): score += 10
             if dd.get("tutela"): score += 5
-            # archi: fenomeni collegati (max 20)
-            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation IN ('governato_da','sfrutta_fenomeno','coinvolge')", (nid,))
-            nf = cur.fetchone()[0]; score += min(20, nf*7)
-            # archi: abbinamenti (max 15)
-            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='abbinamento_aromatico'", (nid,))
-            na = cur.fetchone()[0]; score += min(15, na*3)
-            # composti (max 15)
-            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
-            nc = cur.fetchone()[0]; score += min(15, nc)
+            nf = a.get("governato_da",0)+a.get("sfrutta_fenomeno",0)+a.get("coinvolge",0); score += min(20, nf*7)
+            score += min(15, a.get("abbinamento_aromatico",0)*3)
+            score += min(15, a.get("contiene_composto",0))
             score = min(100, score)
             dd["knowledge_density"] = score
             cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
             tot += 1; somma += score
-            if score <= 25: dist["0-25"] += 1; (poveri.append(nome) if len(poveri)<30 else None)
+            if score <= 25:
+                dist["0-25"] += 1
+                if len(poveri) < 30: poveri.append(nome)
             elif score <= 50: dist["26-50"] += 1
             elif score <= 75: dist["51-75"] += 1
             else: dist["76-100"] += 1
-            if tot % 100 == 0: conn.commit()
         conn.commit(); cur.close(); conn.close()
         return jsonify({"totale": tot, "density_media": round(somma/tot) if tot else 0,
                         "distribuzione": dist, "esempi_poveri_da_arricchire": poveri[:20]})
