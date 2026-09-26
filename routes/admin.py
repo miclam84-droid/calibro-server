@@ -11433,3 +11433,35 @@ def admin_target_type_fenomeni():
         return jsonify({"totale": tot, "numero": n_num, "multiplo": n_multi, "concetto": n_concetto})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/debug-archi")
+def admin_debug_archi():
+    """Debug: mostra la struttura reale degli archi di un ingrediente (per scrivere le query giuste)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    nome = request.args.get("nome", "pomodoro")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # 1. l'id del nodo
+        cur.execute("SELECT id, name FROM nodes WHERE LOWER(name) LIKE LOWER(%s) AND type IN ('Ingrediente','Prodotto') ORDER BY LENGTH(name) LIMIT 1", (f"%{nome}%",))
+        r = cur.fetchone()
+        if not r: return jsonify({"errore": "nodo non trovato"})
+        nid, nnome = r[0], r[1]
+        out = {"nodo": {"id": nid, "nome": nnome}}
+        # 2. quante relation di ogni tipo partono da questo id?
+        cur.execute("SELECT relation, COUNT(*) FROM edges WHERE from_id=%s GROUP BY relation ORDER BY COUNT(*) DESC", (nid,))
+        out["relations_da_questo_id"] = {row[0]: row[1] for row in cur.fetchall()}
+        # 3. esempi di archi abbinamento_aromatico da questo id
+        cur.execute("""SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                       WHERE e.from_id=%s AND e.relation='abbinamento_aromatico' LIMIT 8""", (nid,))
+        out["abbinamento_aromatico_esempi"] = [row[0] for row in cur.fetchall()]
+        # 4. quanti composti (contiene_composto) da questo id?
+        cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
+        out["n_composti"] = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify(out)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
