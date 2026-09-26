@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atlas Studio — Laboratorio editoriale Matter</title>
+<style>
+:root{--ink:#141d22;--terra:#c77b3f;--carta:#ecebe5;--prussia:#245979;--verde:#3a9d5d;--mono:'IBM Plex Mono',ui-monospace,monospace;--sans:'Space Grotesk',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e4e2da;color:var(--ink);font-family:var(--sans);padding:16px;padding-top:max(env(safe-area-inset-top),16px);max-width:1100px;margin:0 auto;font-size:14px;line-height:1.4}
+.as-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.as-title{font-weight:700;font-size:22px}
+.as-title span{color:var(--terra)}
+.as-refresh{background:var(--ink);color:#fff;border:0;padding:9px 14px;font-family:var(--sans);font-weight:700;font-size:13px;cursor:pointer}
+/* dashboard coverage */
+.as-dash{background:var(--ink);padding:18px;margin-bottom:18px;box-shadow:4px 4px 0 rgba(20,29,34,.2)}
+.as-dash-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.as-dash-lab{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:#7fb0c4}
+.as-dash-score{font-family:var(--mono);font-weight:700;font-size:30px;color:var(--terra)}
+.as-dash-score small{font-size:14px;color:#9daeb2}
+.as-distrib{display:flex;gap:6px;margin-top:10px}
+.as-dist-seg{flex:1;text-align:center;padding:8px 4px;background:rgba(255,255,255,.06)}
+.as-dist-n{font-family:var(--mono);font-weight:700;font-size:16px;color:#e8935a}
+.as-dist-l{font-family:var(--sans);font-size:10px;color:#9daeb2;margin-top:2px}
+/* pipeline */
+.as-pipeline{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:18px}
+.as-col{flex:0 0 200px;background:#f4f2ec;border:1.5px solid var(--ink);min-height:200px}
+.as-col-h{background:var(--ink);color:#fff;padding:10px 12px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;display:flex;justify-content:space-between}
+.as-col-n{color:#e8935a}
+.as-col-body{padding:8px}
+.as-card{background:#fff;border:1.5px solid var(--ink);box-shadow:2px 2px 0 rgba(20,29,34,.1);padding:10px;margin-bottom:8px;cursor:pointer}
+.as-card-nome{font-family:var(--sans);font-weight:700;font-size:13px;color:var(--ink);line-height:1.2}
+.as-card-score{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:5px}
+.as-card-score.alto{color:var(--verde)} .as-card-score.medio{color:var(--terra)} .as-card-score.basso{color:#8a1f1f}
+.as-card-mancanti{font-family:var(--sans);font-size:10px;color:#5a6c70;margin-top:3px}
+/* scheda in lavorazione (quality gate) */
+.as-gate-ov{position:fixed;inset:0;z-index:1000;background:rgba(20,29,34,.65);display:flex;align-items:center;justify-content:center;padding:16px}
+.as-gate{background:var(--carta);max-width:560px;width:100%;max-height:88vh;overflow-y:auto;border-top:4px solid var(--terra);padding:22px}
+.as-gate-nome{font-family:var(--sans);font-weight:700;font-size:24px;margin-bottom:6px}
+.as-gate-score{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--terra);margin-bottom:16px}
+.as-gate-strati{display:flex;gap:8px;margin-bottom:16px}
+.as-strato{flex:1;text-align:center;padding:12px 4px;border:1.5px solid #d8d5cc;background:#fff}
+.as-strato.on{border-color:var(--verde);background:rgba(58,157,93,.08)}
+.as-strato-i{font-size:18px}
+.as-strato-l{font-family:var(--sans);font-size:10px;color:#5a6c70;margin-top:4px}
+.as-fonti{background:#fff;border:1px solid #d8d5cc;padding:12px;margin-bottom:16px;font-family:var(--sans);font-size:13px}
+.as-fonti-lab{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;color:var(--prussia);margin-bottom:6px}
+.as-gate-btns{display:flex;flex-direction:column;gap:8px}
+.as-gate-btn{padding:13px;border:0;font-family:var(--sans);font-weight:700;font-size:14px;cursor:pointer;text-align:left}
+.as-gate-btn.primary{background:var(--terra);color:#241109}
+.as-gate-btn.sec{background:#fff;border:1.5px solid var(--ink);color:var(--ink)}
+.as-gate-btn.pub{background:var(--verde);color:#fff}
+.as-gate-chiudi{width:100%;background:none;border:1.5px solid #c4c0b4;padding:11px;font-family:var(--sans);font-size:13px;color:#5a6c70;cursor:pointer;margin-top:12px}
+.as-gate-nota{font-family:var(--sans);font-size:11px;color:#9daeb2;font-style:italic;margin-top:10px;text-align:center}
+.as-gate,.as-load{font-family:var(--sans)}
+.as-load{text-align:center;padding:40px;color:#5a6c70;font-family:var(--mono)}
+/* gate secret */
+.as-gate-secret{max-width:360px;margin:80px auto;background:#fff;border:1.5px solid var(--ink);box-shadow:5px 5px 0 rgba(20,29,34,.15);padding:24px}
+.as-gate-secret h1{font-size:20px;margin-bottom:6px}
+.as-gate-secret p{font-size:13px;color:#5a6c70;margin-bottom:16px}
+.as-gate-secret input{width:100%;min-height:48px;border:1.5px solid var(--ink);padding:0 12px;font-family:var(--mono);font-size:14px;margin-bottom:12px}
+.as-gate-secret button{width:100%;min-height:48px;background:var(--terra);color:#241109;border:0;font-family:var(--sans);font-weight:700;font-size:15px;cursor:pointer}
+.as-err{color:var(--terra);font-size:13px;margin-top:8px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div id="gate" class="as-gate-secret">
+  <h1>Atlas <span style="color:#c77b3f">Studio</span></h1>
+  <p>Il laboratorio editoriale di Matter. Inserisci il secret curatore.</p>
+  <input id="secret" type="password" placeholder="ADMIN_SECRET" onkeydown="if(event.key==='Enter')entra()">
+  <button onclick="entra()">Entra →</button>
+  <div id="gate-err" class="as-err" style="display:none"></div>
+</div>
+
+<div id="studio" style="display:none">
+  <div class="as-top">
+    <div class="as-title">Atlas <span>Studio</span></div>
+    <button class="as-refresh" onclick="carica()">↻ Aggiorna</button>
+  </div>
+  <div id="dash"></div>
+  <div id="pipeline"><div class="as-load">Carico la coda…</div></div>
+</div>
+
+<script>
+var _s='', _COLONNE=['da_fare','ai_pronta','in_revisione','validata','pubblicata'];
+var _COL_LAB={da_fare:'Da fare',ai_pronta:'AI pronta',in_revisione:'In revisione',validata:'Validata',pubblicata:'Pubblicata'};
+function entra(){
+  _s=document.getElementById('secret').value.trim(); if(!_s) return;
+  var err=document.getElementById('gate-err');
+  fetch('/admin/coverage-score?s='+encodeURIComponent(_s)).then(function(r){
+    if(r.status===403){ err.style.display='block'; err.textContent='Secret errato.'; return null; }
+    return r.json();
+  }).then(function(j){ if(!j) return; document.getElementById('gate').style.display='none'; document.getElementById('studio').style.display='block'; try{sessionStorage.setItem('as_s',_s);}catch(e){} renderDash(j); carica(); }).catch(function(){ err.style.display='block'; err.textContent='Errore di rete.'; });
+}
+function renderDash(d){
+  var dist=d.distribuzione||{};
+  document.getElementById('dash').innerHTML='<div class="as-dash"><div class="as-dash-top"><span class="as-dash-lab">KNOWLEDGE COVERAGE SCORE</span><span class="as-dash-score">'+(d.score_medio||0)+'<small>/100</small></span></div>'
+    + '<div class="as-distrib">'+['0-25','26-50','51-75','76-100'].map(function(k){ return '<div class="as-dist-seg"><div class="as-dist-n">'+(dist[k]||0)+'</div><div class="as-dist-l">'+k+'</div></div>'; }).join('')+'</div></div>';
+}
+function carica(){
+  fetch('/admin/coverage-score?s='+encodeURIComponent(_s)).then(function(r){return r.json();}).then(renderDash).catch(function(){});
+  fetch('/admin/atlas-studio/coda?s='+encodeURIComponent(_s)).then(function(r){return r.json();}).then(function(d){
+    var schede=(d.coda_completa||d.quasi_pronte||[]);
+    window._asSchede=schede;
+    var perCol={}; _COLONNE.forEach(function(c){ perCol[c]=[]; });
+    schede.forEach(function(s){ var st=(s.provenienza&&s.provenienza.stato_pipeline)||'da_fare'; if(!perCol[st])perCol[st]=[]; perCol[st].push(s); });
+    var html='<div class="as-pipeline">'+_COLONNE.map(function(c){
+      var cards=(perCol[c]||[]).slice(0,25).map(function(s,i){
+        var sc=s.score||s.coverage_score||0; var cls=sc>=76?'alto':(sc>=51?'medio':'basso');
+        return '<div class="as-card" onclick="apriGate('+JSON.stringify(JSON.stringify(s)).replace(/'/g,"&#39;")+')"><div class="as-card-nome">'+esc(s.nome||s.id)+'</div><div class="as-card-score '+cls+'">'+sc+'/100</div>'+(s.strati_mancanti&&s.strati_mancanti.length?'<div class="as-card-mancanti">manca: '+esc(s.strati_mancanti.join(', '))+'</div>':'')+'</div>';
+      }).join('');
+      return '<div class="as-col"><div class="as-col-h"><span>'+_COL_LAB[c]+'</span><span class="as-col-n">'+(perCol[c]||[]).length+'</span></div><div class="as-col-body">'+(cards||'<div style="color:#9daeb2;font-size:11px;padding:8px">—</div>')+'</div></div>';
+    }).join('')+'</div>';
+    document.getElementById('pipeline').innerHTML=html;
+  }).catch(function(){ document.getElementById('pipeline').innerHTML='<div class="as-load">Errore nel caricamento coda.</div>'; });
+}
+function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function apriGate(sJson){
+  var s={}; try{ s=JSON.parse(sJson); }catch(e){}
+  var strati=s.strati||{};
+  var seg=function(on,lab){ return '<div class="as-strato'+(on?' on':'')+'"><div class="as-strato-i">'+(on?'✅':'⬜')+'</div><div class="as-strato-l">'+lab+'</div></div>'; };
+  var fonti=(s.provenienza&&s.provenienza.fonti)||[];
+  var ov=document.createElement('div'); ov.className='as-gate-ov';
+  ov.innerHTML='<div class="as-gate"><div class="as-gate-nome">'+esc(s.nome||s.id)+'</div>'
+    + '<div class="as-gate-score">Coverage Score '+(s.score||s.coverage_score||0)+'/100</div>'
+    + '<div class="as-gate-strati">'+seg(strati.fondamenta,'Fondamenta')+seg(strati.operativita,'Operatività')+seg(strati.esperienza,'Esperienza Matter')+'</div>'
+    + (fonti.length?'<div class="as-fonti"><div class="as-fonti-lab">Fonti</div>'+esc(fonti.join(' · '))+'</div>':'')
+    + '<div class="as-gate-btns">'
+    +   '<button class="as-gate-btn primary" onclick="_asAzione(\'genera\',\''+esc(s.id||'')+'\')">⚙ Genera strato mancante con AI</button>'
+    +   '<button class="as-gate-btn sec" onclick="_asAzione(\'modifica\',\''+esc(s.id||'')+'\')">✎ Modifica testo</button>'
+    +   '<button class="as-gate-btn sec" onclick="_asAzione(\'esperienza\',\''+esc(s.id||'')+'\')">+ Aggiungi Esperienza Matter</button>'
+    +   '<button class="as-gate-btn sec" onclick="_asAzione(\'revisione\',\''+esc(s.id||'')+'\')">→ Richiedi revisione dominio</button>'
+    +   '<button class="as-gate-btn pub" onclick="_asAzione(\'pubblica\',\''+esc(s.id||'')+'\')">✓ Pubblica</button>'
+    + '</div>'
+    + '<div class="as-gate-nota">Sei il curatore scientifico: decidi cosa pubblicare, non correggi tutto.</div>'
+    + '<button class="as-gate-chiudi" onclick="this.closest(\'.as-gate-ov\').remove()">Chiudi</button></div>';
+  document.body.appendChild(ov);
+}
+function _asAzione(tipo,id){
+  // gli endpoint di supporto (genera/salva/cambia-stato) sono in costruzione lato backend
+  alert('Azione "'+tipo+'" su '+id+'\\n\\nL\\'endpoint di supporto è in costruzione lato backend (Quality Gate Stage 1). La UI è pronta a chiamarlo appena disponibile.');
+}
+try{ var ss=sessionStorage.getItem('as_s'); if(ss){ _s=ss; document.getElementById('gate').style.display='none'; document.getElementById('studio').style.display='block'; carica(); } }catch(e){}
+</script>
+</body>
+</html>
