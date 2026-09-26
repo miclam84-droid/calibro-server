@@ -2327,10 +2327,10 @@ function applicaStringheUI(){
   const _dbn = s('db-numbers-text');
   if(_dbn) _dbn.textContent = _t('db_numbers')||'';
   document.getElementById('lang-btn').textContent=_lang.toUpperCase();
-  // tab labels — Scopri · Atlante · Chiedi · Quaderno (allineate ai contenuti)
+  // tab labels — Banco · Laboratorio · Planner · Quaderno (Sprint Routing #51)
   document.querySelectorAll('.tab-label').forEach((el,i)=>{
-    const keys=['scopri','tab_atlante','tab_chiedi','tab_quaderno'];
-    if(keys[i]) el.textContent=_t(keys[i]);
+    const labels=['Banco','Laboratorio','Planner','Quaderno'];
+    if(labels[i]) el.textContent=labels[i];
   });
   // scopri
   st('scopri-cta',_t('studia'));
