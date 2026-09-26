@@ -11629,11 +11629,18 @@ def admin_atlas_genera():
         tl = testo.lower()
         if "confidenza: alta" in tl: conf = "alta"
         elif "confidenza: bassa" in tl: conf = "bassa"
+        # estraggo le FONTI dal testo (dopo 'FONTI:')
+        import re as _refonti
+        fonti_estratte = []
+        _mf = _refonti.search("FONTI?:(.+?)(?:CONFIDENZA|$)", testo, _refonti.IGNORECASE | _refonti.DOTALL)
+        if _mf:
+            _raw = _mf.group(1)
+            fonti_estratte = [x.strip(" .-") for x in _refonti.split("[;,\n]", _raw) if x.strip() and len(x.strip()) > 3][:5]
         cur.close(); conn.close()
         return jsonify({"slug": r[0], "nome": nome, "strato": strato, "testo_generato": testo,
-                        "confidenza": conf, "web_usato": bool(usa_web),
+                        "confidenza": conf, "web_usato": bool(usa_web), "fonti": fonti_estratte,
                         "stato_proposto": "ai_verified" if conf in ("alta","media") else "ai_generated",
-                        "nota": "Bozza AI con consenso fonti + confidenza. Stato: AI Verified se confidenza ok. Il curatore puo' elevare a Curated/Canon."})
+                        "nota": "Bozza AI con fonti estratte. Il curatore eleva."})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
 
@@ -11647,6 +11654,7 @@ def admin_atlas_salva():
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", ""); strato = d.get("strato", ""); testo = d.get("testo", "")
+    fonti_in = d.get("fonti", [])
     if not slug or not strato:
         return jsonify({"errore": "manca slug o strato"}), 400
     try:
@@ -11662,8 +11670,13 @@ def admin_atlas_salva():
         # provenienza
         prov = dd.get("provenienza", {})
         prov["ultima_revisione"] = "curatore"
+        if fonti_in:
+            _ff = prov.get("fonti", [])
+            for _f in fonti_in:
+                if _f not in _ff: _ff.append(_f)
+            prov["fonti"] = _ff[:8]
         dd["provenienza"] = prov
-        if not dd.get("stato_editoriale"): dd["stato_editoriale"] = "ai_verified"
+        if not dd.get("stato_editoriale"): dd["stato_editoriale"] = "ai_generated"
         cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), r[0]))
         conn.commit(); cur.close(); conn.close()
         return jsonify({"slug": r[0], "strato": strato, "salvato": True})
