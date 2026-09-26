@@ -11855,3 +11855,54 @@ def admin_compiler_versiona():
         return jsonify({"slug": r[0], "versione_salvata": len(versioni), "versioni_totali": len(dd["_versioni"])})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/knowledge-density")
+def admin_knowledge_density():
+    """Board #57 (#322A): Knowledge Density Index per ingrediente = quante RELAZIONI genera nel grafo.
+    Prima i collegamenti, poi i composti (#322): un ingrediente vale per le sue relazioni, non i dati isolati."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    limite = int(request.args.get("limite", "0"))  # 0 = tutti, altrimenti processa N
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')" + (f" LIMIT {limite}" if limite else ""))
+        rows = cur.fetchall()
+        dist = {"0-25": 0, "26-50": 0, "51-75": 0, "76-100": 0}
+        poveri = []  # gli ingredienti con density bassa (da arricchire)
+        tot = 0; somma = 0
+        for nid, nome, data in rows:
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            score = 0
+            # proprieta sensoriali (max 20)
+            if dd.get("proprieta"): score += min(20, len(dd.get("proprieta",{}))*3)
+            # operativo/nutrizione (max 15)
+            if dd.get("operativo"): score += 15
+            # territorio/tutela (max 15)
+            if dd.get("territorio") or dd.get("regione"): score += 10
+            if dd.get("tutela"): score += 5
+            # archi: fenomeni collegati (max 20)
+            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation IN ('governato_da','sfrutta_fenomeno','coinvolge')", (nid,))
+            nf = cur.fetchone()[0]; score += min(20, nf*7)
+            # archi: abbinamenti (max 15)
+            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='abbinamento_aromatico'", (nid,))
+            na = cur.fetchone()[0]; score += min(15, na*3)
+            # composti (max 15)
+            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
+            nc = cur.fetchone()[0]; score += min(15, nc)
+            score = min(100, score)
+            dd["knowledge_density"] = score
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            tot += 1; somma += score
+            if score <= 25: dist["0-25"] += 1; (poveri.append(nome) if len(poveri)<30 else None)
+            elif score <= 50: dist["26-50"] += 1
+            elif score <= 75: dist["51-75"] += 1
+            else: dist["76-100"] += 1
+            if tot % 100 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"totale": tot, "density_media": round(somma/tot) if tot else 0,
+                        "distribuzione": dist, "esempi_poveri_da_arricchire": poveri[:20]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
