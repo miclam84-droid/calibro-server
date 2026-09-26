@@ -47,6 +47,18 @@ window.apriSchedaScienza = function(slug){
 // stato di maturità: badge + 3 strati + messaggio (Board #53, #282/#285)
 function _scMaturita(d){
   var e=_escV;
+  // BADGE EDITORIALE SCIENTIFICO (#334A): sigillo + frase di trasparenza
+  var ed=d.stato_editoriale||'';
+  var edBadge='';
+  var _ED={
+    canon:      ['MATTER CANON','Conoscenza fondativa di Matter','sc-ed-canon'],
+    curated:    ['CURATED','Revisionata da un curatore del dominio','sc-ed-curated'],
+    ai_verified:['AI VERIFIED','Verificata da fonti autorevoli e Quality Compiler','sc-ed-verified'],
+    ai_generated:['AI GENERATED','Sintesi automatica da fonti, in attesa di verifica','sc-ed-generated']
+  };
+  if(_ED[ed]){
+    edBadge='<div class="sc-ed-sigillo '+_ED[ed][2]+'"><div class="sc-ed-nome">◆ '+_ED[ed][0]+'</div><div class="sc-ed-frase">'+_ED[ed][1]+'</div></div>';
+  }
   var stato=d.stato_maturita||'completa';
   var strati=d.strati||{};
   // badge
@@ -60,7 +72,7 @@ function _scMaturita(d){
   // messaggio per schede in espansione
   var msg='';
   if(stato==='fondamenta'||stato==='in_espansione'){ msg='<div class="sc-mat-msg">Questa scheda contiene le fondamenta scientifiche del fenomeno. Matter sta completando casi reali, errori comuni e applicazioni operative.</div>'; }
-  return '<div class="sc-maturita">'+badge+barra+msg+'</div>';
+  return '<div class="sc-maturita">'+edBadge+badge+barra+msg+'</div>';
 }
 function _scRender(d){
   var e=_escV;
