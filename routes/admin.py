@@ -11663,6 +11663,7 @@ def admin_atlas_salva():
         prov = dd.get("provenienza", {})
         prov["ultima_revisione"] = "curatore"
         dd["provenienza"] = prov
+        if not dd.get("stato_editoriale"): dd["stato_editoriale"] = "ai_verified"
         cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), r[0]))
         conn.commit(); cur.close(); conn.close()
         return jsonify({"slug": r[0], "strato": strato, "salvato": True})
@@ -11679,7 +11680,7 @@ def admin_atlas_stato():
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", ""); nuovo = d.get("nuovo_stato", "")
-    validi = ["da_fare", "ai_pronta", "in_revisione", "validata", "pubblicata"]
+    validi = ["da_fare", "ai_pronta", "in_revisione", "validata", "pubblicata", "ai_generated", "ai_verified", "curated", "canon"]
     if nuovo not in validi:
         return jsonify({"errore": f"stato non valido, usa: {validi}"}), 400
     try:
@@ -11691,6 +11692,9 @@ def admin_atlas_stato():
         prov = dd.get("provenienza", {})
         prov["stato_pipeline"] = nuovo
         dd["provenienza"] = prov
+        # stato editoriale visibile all'utente (#304)
+        if nuovo in ("ai_generated","ai_verified","curated","canon"):
+            dd["stato_editoriale"] = nuovo
         cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), r[0]))
         conn.commit(); cur.close(); conn.close()
         return jsonify({"slug": r[0], "nuovo_stato": nuovo, "spostata": True})
