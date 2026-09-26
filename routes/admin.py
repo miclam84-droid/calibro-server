@@ -12016,3 +12016,52 @@ def admin_marca_nodi_grezzi():
         return jsonify({"nodi_grezzi_nascosti": marcati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/popola-wikidata-off", methods=["GET"])
+def admin_popola_wikidata_off():
+    """Popola i nodi con Wikidata (territorio/descrizione) + OpenFoodFacts (allergeni), a batch.
+    Finisce il cablaggio: dal 'tubo costruito' al 'dati nei nodi'. Gratis (CC0/ODbL)."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, urllib.parse as up
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = min(int(request.args.get("n", "15")), 20)  # batch piccolo (le API sono lente)
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # ingredienti veri (no grezzi, no gia' arricchiti), i piu' importanti (con proprieta)
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND name NOT LIKE '%%\\_%%' AND (data ? 'proprieta')
+                       AND NOT (data ? '_wikidata_fatto') LIMIT %s""", (n,))
+        rows = cur.fetchall()
+        arricchiti = 0
+        for nid, nome, data in rows:
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            # WIKIDATA: descrizione/territorio
+            try:
+                q = up.quote(nome)
+                url = f"https://www.wikidata.org/w/api.php?action=wbsearchentities&search={q}&language=it&format=json&limit=1"
+                r = ur.urlopen(ur.Request(url, headers={"User-Agent":"Matter/1.0"}), timeout=10)
+                hits = json.loads(r.read().decode()).get("search", [])
+                if hits:
+                    dd["wikidata_desc"] = hits[0].get("description","")
+                    dd["wikidata_id"] = hits[0].get("id","")
+            except Exception: pass
+            # OPENFOODFACTS: allergeni (solo se non gia' presenti)
+            try:
+                op = dd.get("operativo", {}) or {}
+                if not op.get("allergeni"):
+                    url2 = f"https://world.openfoodfacts.org/cgi/search.pl?search_terms={up.quote(nome)}&search_simple=1&json=1&page_size=1&fields=allergens_tags"
+                    r2 = ur.urlopen(ur.Request(url2, headers={"User-Agent":"Matter/1.0"}), timeout=10)
+                    prods = json.loads(r2.read().decode()).get("products", [])
+                    if prods and prods[0].get("allergens_tags"):
+                        op["allergeni"] = [a.replace("en:","") for a in prods[0]["allergens_tags"]][:5]
+                        dd["operativo"] = op
+            except Exception: pass
+            dd["_wikidata_fatto"] = True  # marco come processato (per il batch successivo)
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            arricchiti += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"arricchiti": arricchiti, "nota": "batch ok, rilancia per i prossimi" if arricchiti else "tutti processati"})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
