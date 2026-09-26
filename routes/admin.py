@@ -11368,10 +11368,10 @@ def admin_target_type_fenomeni():
     import os, psycopg2, json, re
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
-    def _analizza(nb):
+    def _analizza(nb, nome_fen=""):
         nb = (nb or "").strip()
         if not nb:
-            return {"tipo_bersaglio": "concetto", "header_bersaglio": "", "target_chips": []}
+            return {"tipo_bersaglio": "concetto", "header_bersaglio": nome_fen, "target_chips": []}
         # spezzo sui separatori
         parti = [p.strip() for p in re.split(r"[·|]", nb) if p.strip()]
         # una parte "buona" per un chip: ha un numero+unita ed e corta
@@ -11387,18 +11387,12 @@ def admin_target_type_fenomeni():
                 lab = p.split(n)[0].strip(" :=-")[:22] if n in p else p[:22]
                 chips.append({"valore": n, "label": lab})
         if not chips:
-            # nessun numero pulito -> concetto. Header = prima frase/clausola intera, mai tagliata a meta parola
+            # concetto: header = una frase CORTA intera; se il testo e lungo/complesso, uso il NOME del fenomeno
             testo = (parti[0] if parti else nb).strip()
-            # taglio alla prima virgola/punto se la frase e lunga, altrimenti a fine parola
-            head = testo
-            if len(head) > 70:
-                # provo a chiudere a una virgola o punto entro i primi 90 char
-                import re as _re2
-                m = _re2.search(r'^(.{30,90}?[,.;:])', head)
-                if m:
-                    head = m.group(1).rstrip(',;: ')
-                else:
-                    head = head[:70].rsplit(' ',1)[0] + '…'
+            if len(testo) <= 55 and '(' not in testo:
+                head = testo  # gia corto e pulito
+            else:
+                head = nome_fen or testo[:50].rsplit(' ',1)[0]  # il nome del fenomeno e' l'header
             return {"tipo_bersaglio": "concetto", "header_bersaglio": head, "target_chips": []}
         # DOMINANTE (#218): preferisci temperatura (°C), poi pH, poi il primo
         dominante = None
@@ -11425,7 +11419,7 @@ def admin_target_type_fenomeni():
             nb = (dd.get("numero_bersaglio") or dd.get("target") or dd.get("numeri")
                   or cs0.get("numero_bersaglio") or cs0.get("numeri") or "")
             if isinstance(nb,(list,dict)): nb=str(nb)
-            res = _analizza(nb)
+            res = _analizza(nb, nome)
             dd["tipo_bersaglio"] = res["tipo_bersaglio"]
             dd["header_bersaglio"] = res["header_bersaglio"]
             if res.get("header_label"): dd["header_label"] = res["header_label"]
