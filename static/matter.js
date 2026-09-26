@@ -473,6 +473,11 @@ function _diagnosiVai(q){
   if(typeof _caricaModulo==='function' && !(window._moduli&&window._moduli.chat)){ _caricaModulo('chat').then(vai); } else { vai(); }
 }
 function switchTab(t){
+  // ROUTER (#277): cambiando tab-screen, chiudo una vista-luogo aperta e rimonto gli screen
+  var _ov=document.getElementById('vista-overlay');
+  if(_ov && !_ov.classList.contains('hidden')){ _ov.classList.add('hidden'); }
+  document.querySelectorAll('.screen').forEach(function(s){ s.style.removeProperty('display'); });
+  window._luogoAttivo = t;
   // carica il modulo chat quando si apre l'Assistente (lazy)
   if(t==='chiedi' && !window._moduli.chat){ _caricaModulo('chat'); }
   // carica il modulo lezioni per Atlante (mappa) e Quaderno (palestra)
@@ -5832,16 +5837,38 @@ function _ensureVistaOverlay(){
   }
   return o;
 }
+// ═══ ROUTER UNICO (#277): un solo percorso per aprire un luogo, da qualsiasi ingresso ═══
+window.apriLuogo = function(nome){
+  var mappa={
+    banco:function(){ switchTab('scopri'); },
+    laboratorio:function(){ _caricaModulo('laboratorio').then(function(){ if(window.apriLaboratorio) apriLaboratorio(); }); },
+    planner:function(){ _caricaModulo('planner').then(function(){ if(window.apriPlanner) apriPlanner(); }); },
+    quaderno:function(){ switchTab('quaderno'); },
+    menubuilder:function(){ _caricaModulo('menubuilder').then(function(){ if(window.apriMenuBuilderPro) apriMenuBuilderPro(); }); },
+    chiedi:function(){ switchTab('chiedi'); }
+  };
+  var f=mappa[nome]; if(f) f();
+};
 function chiudiVista(){
   const o = document.getElementById('vista-overlay');
   if(o) o.classList.add('hidden');
+  // ROUTER (#278): al ritorno, rimonto lo screen del luogo attivo (di norma il Banco)
+  window._luogoAttivo = 'banco';
+  document.querySelectorAll('.screen').forEach(function(s){ s.style.removeProperty('display'); });
+  if(typeof switchTab==='function') switchTab('scopri');
 }
 function _apriVista(titolo, htmlIniziale){
   const o = _ensureVistaOverlay();
+  // ROUTER UNICO (#277/#278): smonto gli screen sotto (la Home NON resta viva dietro)
+  document.querySelectorAll('.screen').forEach(function(s){ s.style.display='none'; });
   document.getElementById('vista-title').textContent = titolo;
   document.getElementById('vista-body').innerHTML = htmlIniziale;
   o.classList.remove('hidden');
   document.getElementById('vista-body').scrollTop = 0;
+  // unica fonte di verità (#279): il luogo attivo è questa vista
+  window._luogoAttivo = titolo;
+  // nav coerente: nessuna tab-screen evidenziata quando sono in una vista-luogo
+  document.querySelectorAll('.tab-btn').forEach(function(t){ t.classList.remove('active'); });
 }
 
 /* ─── mirini svg riusabili ─── */
