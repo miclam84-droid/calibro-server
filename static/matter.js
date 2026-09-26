@@ -3465,6 +3465,7 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
     + critico
     + (ing?'<div class="rg-sec"><div class="rg-sec-lab">Ingredienti</div><ul class="rg-ing">'+ing+'</ul></div>':'')
     + (proc?'<div class="rg-sec"><div class="rg-sec-lab">Procedimento</div>'+proc+'</div>':'')
+    + (dati.scheda_scientifica?'<div class="rg-sec rg-scheda-sci"><div class="rg-sec-lab">◎ La scheda scientifica</div><div class="rg-scheda-sci-txt">'+(typeof _formattaRispostaChat==='function'?_formattaRispostaChat(dati.scheda_scientifica):e(dati.scheda_scientifica))+'</div></div>':'')
     + '<div class="rg-azioni">'
     +   '<button class="rg-btn rg-btn-salva'+(salvato?' fatto':'')+'" id="rg-btn-salva" onclick="salvaRicettaGen(this)">'+(salvato?'✓ Salvata':'Salva nel Quaderno')+'</button>'
     +   '<button class="rg-btn rg-btn-chiedi" onclick="chiediSuRicetta()">Chiedi su questa ricetta</button>'

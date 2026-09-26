@@ -106,10 +106,19 @@ function _coMostraDiagnosi(d){
     + (note?'<div class="co-diag-note">'+e(note)+'</div>':'')
     + (eq?'<ul class="co-diag-eq">'+eq+'</ul>':'')
     + (fen?'<div class="co-diag-fen-lab">Fenomeni coinvolti</div><div class="co-diag-fen-list">'+fen+'</div>':'')
+    + '<button class="co-chiedi" onclick="_coChiediMatter()">◎ Chiedi a Matter su questa ricetta →</button>'
     + '<button class="co-salva" onclick="_coSalva()">Salva nel Quaderno →</button></div>';
   var m=document.createElement('div'); m.className='co-diag-overlay'; m.innerHTML='<div class="co-diag-sheet">'+html+'<button class="co-diag-chiudi" onclick="this.closest(\'.co-diag-overlay\').remove()">Continua a costruire</button></div>';
   document.getElementById('vista-body').appendChild(m);
 }
+// #2: Chiedi a Matter passa il contesto ricetta AUTOMATICO (no riscrittura)
+window._coChiediMatter=function(){
+  var nome=_co.ingredienti.join(' + ');
+  var ov=document.querySelector('.co-diag-overlay'); if(ov) ov.remove();
+  if(typeof _chatConContesto==='function'){
+    _chatConContesto('ricetta', { nome:nome, ingredienti:_co.ingredienti.map(function(x){ return {nome:x}; }), origine:'composer', profilo:(_co.dati?_co.dati.profilo_sensoriale:null) });
+  }
+};
 window._coSalva=function(){
   var nome = _co.ingredienti.join(' + ');
   _toast && _toast('✓ Ricetta "'+nome.slice(0,30)+'" salvata');

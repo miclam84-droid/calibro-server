@@ -84,12 +84,33 @@ window._chiediStream = async function(q){
   if(erroreVisto && !testoAccumulato){ card.remove(); throw new Error('stream error'); }
   if(testoAccumulato){ _chatHistory.push({q:q, r:testoAccumulato.slice(0,300)}); if(_chatHistory.length>_HISTORY_MAX*2) _chatHistory.splice(0,2);
     _chatCompleta.push({ruolo:'user',testo:q}); _chatCompleta.push({ruolo:'assistant',testo:testoAccumulato});
-    // pulsante "Salva nei metodi" in calce alla risposta
+    // #3: memorizzo l'ultima scheda-risposta (per salvarla con la ricetta)
+    window._ultimaSchedaChat = testoAccumulato;
+    // se c'è un contesto ricetta, il salvataggio unisce ricetta + scheda
+    var ctxRic = (window._chatContesto && window._chatContesto.ricetta) || null;
     var salvaBtn=document.createElement('button'); salvaBtn.className='chat-salva-inline';
-    salvaBtn.textContent='⌖ Salva nei metodi';
-    salvaBtn.onclick=function(){ salvaConversazione(); salvaBtn.textContent='✓ Salvata nel Quaderno'; salvaBtn.classList.add('salvato'); salvaBtn.disabled=true; };
+    salvaBtn.textContent = ctxRic ? '⌖ Salva ricetta + scheda nel Quaderno' : '⌖ Salva nei metodi';
+    salvaBtn.onclick=function(){
+      if(ctxRic && typeof _salvaRicettaConScheda==='function'){ _salvaRicettaConScheda(ctxRic, testoAccumulato); }
+      else { salvaConversazione(); }
+      salvaBtn.textContent='✓ Salvata nel Quaderno'; salvaBtn.classList.add('salvato'); salvaBtn.disabled=true;
+    };
     flusso.appendChild(salvaBtn);
   }
+}
+// #3: salva la ricetta COMPLETA (ingredienti + scheda scientifica della chat)
+window._salvaRicettaConScheda = function(ricetta, scheda){
+  var nome = ricetta.nome || 'Ricetta dal Laboratorio';
+  try{
+    fetch('/v1/ricette/salva',{method:'POST',headers:(typeof _statoHeaders==='function'?_statoHeaders({'Content-Type':'application/json'}):{'Content-Type':'application/json'}),
+      body:JSON.stringify({nome:nome, dati:{
+        ingredienti: ricetta.ingredienti||[],
+        scheda_scientifica: scheda,
+        profilo: ricetta.profilo||null,
+        origine: ricetta.origine||'laboratorio'
+      }})});
+    if(typeof _toast==='function') _toast('✓ Ricetta e scheda salvate nel Quaderno');
+  }catch(e){ if(typeof _toast==='function') _toast('Errore nel salvataggio'); }
 }
 
 window._formattaRispostaChat = function(t){
