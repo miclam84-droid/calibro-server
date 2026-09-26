@@ -11988,3 +11988,31 @@ def admin_atlas_batch():
                         "nota": "STOP: troppi errori" if interrotto else "Ondata ok, puoi lanciare la successiva"})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/marca-nodi-grezzi")
+def admin_marca_nodi_grezzi():
+    """Pulizia: marca i nodi con nomi grezzi (ahn: 'barosma_pulchella_oil') come nascosti dall'utente.
+    Restano nel grafo per i composti, ma non appaiono in ricerca/abbinamenti (qualita' percepita)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+        marcati = 0
+        for nid, nome, data in cur.fetchall():
+            n = nome or ""
+            # nome grezzo: ha underscore E e' tutto minuscolo (stile ahn) e non gia' marcato
+            if "_" in n and n == n.lower():
+                dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                if not dd.get("nascosto_utente"):
+                    dd["nascosto_utente"] = True
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+                    marcati += 1
+            if marcati % 100 == 0 and marcati: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"nodi_grezzi_nascosti": marcati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
