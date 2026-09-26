@@ -1171,3 +1171,40 @@ def ingrediente_completo_bus(nome):
             return jsonify({"ingrediente": nome_reale, "knowledge_layers": {"graph": {"proprieta": dd.get("proprieta",{})}}, "_nota": f"bus non caricato: {str(_e)[:60]}"})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/context-package", methods=["POST"])
+def context_package():
+    """Context Package (#329A): il CONTRATTO congelato di cosa Matter invia a Galileo DI.
+    Definito ORA anche se Galileo DI e' dormiente - cosi' Matter produce gia' il formato giusto,
+    e quando Galileo si sveglia non serve refactor. Formato stabile (#329A)."""
+    from flask import request, jsonify
+    d = request.get_json(force=True) or {}
+    # il contratto: cosa Matter puo' mettere nel pacchetto per una Decisione Strategica
+    pkg = {
+        "versione_contratto": "1.0",
+        "tipo": "context_package",
+        # la conversazione corrente (da Galileo Quotidiano / chat)
+        "conversazione": d.get("conversazione", []),
+        # fonti dal grafo Matter (ricette, schede, ingredienti pertinenti)
+        "fonti_matter": d.get("fonti_matter", []),      # [{tipo, id, nome}]
+        # fonti da Cifra (costi, magazzino, incassi) - solo se autorizzate
+        "fonti_cifra": d.get("fonti_cifra", []),         # [{tipo, valore}]
+        # documenti caricati dall'utente (PDF, Excel, bandi, bilanci)
+        "documenti": d.get("documenti", []),             # [{nome, tipo, contenuto/url}]
+        # fonti che l'utente ha ESCLUSO (checkbox tolti) - trasparenza #238
+        "fonti_escluse": d.get("fonti_escluse", []),
+        # la famiglia di decisione (Crescita/Finanza/Opportunita/Aziendali)
+        "famiglia_decisione": d.get("famiglia_decisione", ""),
+        # metadati
+        "profilo_locale": d.get("profilo_locale", {}),   # {nome, tipo, citta, coperti...}
+    }
+    # conteggio per la UI "questa Decisione usera' X conversazioni, Y file..."
+    pkg["riepilogo"] = {
+        "n_conversazione": len(pkg["conversazione"]),
+        "n_fonti_matter": len(pkg["fonti_matter"]),
+        "n_fonti_cifra": len(pkg["fonti_cifra"]),
+        "n_documenti": len(pkg["documenti"]),
+        "n_escluse": len(pkg["fonti_escluse"]),
+    }
+    return jsonify(pkg)
