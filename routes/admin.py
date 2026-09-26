@@ -11931,7 +11931,7 @@ def admin_atlas_batch():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
-    n_ondata = min(int(d.get("n", 10)), 15)  # max 15 per ondata (evita timeout)
+    n_ondata = min(int(d.get("n", 6)), 8)  # max 8 per ondata (evita timeout Railway ~55s)
     soglia_errori = int(d.get("soglia", 3))  # stop se piu' di N falliscono
     solo_dominio = d.get("dominio", "")  # es. "pane" per filtrare
     key = os.environ.get("OPENAI_API_KEY", "")
