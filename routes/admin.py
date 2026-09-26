@@ -11640,7 +11640,9 @@ def admin_atlas_genera():
         _mf = _refonti.search("FONTI?:(.+?)(?:CONFIDENZA|$)", testo, _refonti.IGNORECASE | _refonti.DOTALL)
         if _mf:
             _raw = _mf.group(1)
-            fonti_estratte = [x.strip(" .-") for x in _refonti.split("[;,\n]", _raw) if x.strip() and len(x.strip()) > 3][:5]
+            # divido le fonti sul ';' o newline (NON la virgola: "Autore, Titolo" e' UNA fonte)
+            _pezzi = _refonti.split(r"[;\n]", _raw)
+            fonti_estratte = [x.strip(" .-") for x in _pezzi if x.strip() and len(x.strip()) > 5][:5]
         cur.close(); conn.close()
         return jsonify({"slug": r[0], "nome": nome, "strato": strato, "testo_generato": testo,
                         "confidenza": conf, "web_usato": bool(usa_web), "fonti": fonti_estratte,
@@ -11806,7 +11808,7 @@ def admin_compiler_valida():
         if not fonti:
             # estraggo le fonti dal testo (dopo "FONTI:")
             m = re.search(r"FONTI?:(.+?)(?:CONFIDENZA|$)", testo_tot, re.IGNORECASE|re.DOTALL)
-            if m: fonti = [x.strip() for x in re.split(r"[;,]", m.group(1)) if x.strip()][:5]
+            if m: fonti = [x.strip() for x in re.split(r"[;\n]", m.group(1)) if x.strip() and len(x.strip())>5][:5]
         tiers = [_classifica_fonte(f) for f in fonti]
         has_autorevole = any(t <= 2 for t in tiers)  # #309A: almeno una Tier 0-2
         if not fonti: gate_b["passato"]=False; gate_b["problemi"].append("nessuna fonte citata")
