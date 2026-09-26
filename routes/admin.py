@@ -11759,11 +11759,17 @@ def _fonte_verificata(testo_fonte):
     # se cita un autore noto, l'opera deve essere tra le sue opere reali
     for autore, opere in _OPERE_NOTE.items():
         if autore in t:
-            # l'autore c'e': l'opera citata e' tra le sue?
-            if any(op in t for op in opere):
-                return True  # coppia verificata
-            # autore noto ma opera non riconosciuta -> sospetta (possibile allucinazione)
-            return "sospetta"
+            # l'autore c'e': l'opera citata e' tra le sue? (match tollerante su parole chiave)
+            for op in opere:
+                # match se l'opera intera c'e', o almeno le sue parole significative (>3 char)
+                parole_op = [w for w in op.split() if len(w) > 3]
+                if op in t or (parole_op and all(w in t for w in parole_op[:2])):
+                    return True  # coppia verificata
+            # autore noto ma opera non riconosciuta -> sospetta SOLO se non e' solo il cognome
+            # (se e' solo "McGee" senza opera, non e' una fonte formattata male: e' una menzione)
+            if len(t.strip()) > len(autore) + 8:  # c'e' altro testo oltre il cognome
+                return "sospetta"
+            return "non_verificata"  # solo il cognome, non giudico
     # disciplinari/istituzioni italiane (Tier 0) - riconosciute per keyword
     if any(k in t for k in ["disciplinare", "slow food", "dop", "igp", "accademia italiana", "aibi"]):
         return True
