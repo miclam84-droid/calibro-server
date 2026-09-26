@@ -991,3 +991,6 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .ps-eq-ruolo{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#9daeb2}
 .ps-composer{display:block;width:100%;margin:22px 0 24px;min-height:54px;background:#c77b3f;color:#241109;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
 .ps-composer:active{transform:translate(2px,2px)}
+
+/* ═══ Sprint Routing (#266): Galileo persistente sopra le viste ═══ */
+.galileo-fab{z-index:1050!important}

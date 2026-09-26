@@ -83,13 +83,13 @@ if('serviceWorker' in navigator){
       </svg>
       <span class="tab-label">Banco</span>
     </button>
-    <button class="tab-btn" id="tab-mappa" onclick="switchTab('mappa')" role="tab">
-      <i class="ph ph-share-network" aria-hidden="true"></i>
-      <span class="tab-label">Atlante</span>
+    <button class="tab-btn" id="tab-laboratorio" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('laboratorio').then(function(){apriLaboratorio&&apriLaboratorio()})}" role="tab">
+      <i class="ph ph-flask" aria-hidden="true"></i>
+      <span class="tab-label">Laboratorio</span>
     </button>
-    <button class="tab-btn" id="tab-chiedi" onclick="switchTab('chiedi')" role="tab">
-      <i class="ph ph-chat-circle" aria-hidden="true"></i>
-      <span class="tab-label">Assistente</span>
+    <button class="tab-btn" id="tab-planner" onclick="if(typeof _caricaModulo==='function'){_caricaModulo('planner').then(function(){apriPlanner&&apriPlanner()})}" role="tab">
+      <i class="ph ph-calendar-blank" aria-hidden="true"></i>
+      <span class="tab-label">Planner</span>
     </button>
     <button class="tab-btn" id="tab-quaderno" onclick="switchTab('quaderno')" role="tab">
       <i class="ph ph-notebook" aria-hidden="true"></i>
@@ -535,7 +535,7 @@ if('serviceWorker' in navigator){
 <!-- ── CHIEDI ──────────────────────────────────────────── -->
 <div class="screen" id="screen-chiedi">
   <div class="lab-area-header"><span class="lab-area-label">ASSISTENTE DA BANCO</span></div>
-  <div class="chiedi-subtabs">
+  <div class="chiedi-subtabs" style="display:none">
     <button class="subtab-btn active" id="subtab-chat" onclick="switchSubtab('chat')">Chiedi a Matter</button>
     <button class="subtab-btn" id="subtab-calc" onclick="switchSubtab('calc')">Motori</button>
   </div>

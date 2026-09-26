@@ -490,8 +490,8 @@ function switchTab(t){
   ['scopri','lezione','mappa','chiedi','auth','quaderno'].forEach(s=>{
     document.getElementById('screen-'+s).classList.toggle('active',s===t);
   });
-  // le tab visibili sono 4: scopri, mappa(=Lab), chiedi, quaderno. Lezione non ha tab propria.
-  ['scopri','mappa','chiedi','quaderno'].forEach(s=>{
+  // le tab visibili sono 4: scopri(=Banco), laboratorio, planner, quaderno.
+  ['scopri','laboratorio','planner','quaderno'].forEach(s=>{
     const tb=document.getElementById('tab-'+s);
     if(tb) tb.classList.toggle('active', s===t || (t==='lezione' && s==='scopri'));
   });
