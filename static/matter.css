@@ -1031,3 +1031,15 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .sc-ed-verified .sc-ed-nome{color:#245979}
 .sc-ed-generated{border-color:#9daeb2}
 .sc-ed-generated .sc-ed-nome{color:#5a6c70}
+
+/* ═══ SKELETON LOADING (#333A) — l'utente non vede mai il vuoto ═══ */
+/* trasformo ogni .vista-loading in uno skeleton (forma dei contenuti, no spinner) */
+.vista-loading{padding:16px!important;text-align:left!important;font-size:0!important;color:transparent!important}
+.vista-loading::before{content:'';display:block;height:120px;background:linear-gradient(90deg,#e4e2da 25%,#eeece6 50%,#e4e2da 75%);background-size:200% 100%;animation:skel 1.2s ease-in-out infinite;margin-bottom:16px;border-radius:4px}
+.vista-loading::after{content:'';display:block;height:16px;width:70%;background:linear-gradient(90deg,#e4e2da 25%,#eeece6 50%,#e4e2da 75%);background-size:200% 100%;animation:skel 1.2s ease-in-out infinite;animation-delay:.15s;border-radius:4px;box-shadow:0 32px 0 -8px #e4e2da, 0 34px 0 -8px transparent, 0 64px 0 -8px #e4e2da}
+@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){ .vista-loading::before,.vista-loading::after{animation:none} }
+/* skeleton dedicati con più struttura (per chi vuole la forma precisa) */
+.skel-line{height:14px;background:linear-gradient(90deg,#e4e2da 25%,#eeece6 50%,#e4e2da 75%);background-size:200% 100%;animation:skel 1.2s infinite;border-radius:4px;margin-bottom:10px}
+.skel-line.w40{width:40%} .skel-line.w60{width:60%} .skel-line.w80{width:80%}
+.skel-box{height:110px;background:linear-gradient(90deg,#e4e2da 25%,#eeece6 50%,#e4e2da 75%);background-size:200% 100%;animation:skel 1.2s infinite;border-radius:4px;margin-bottom:14px}
