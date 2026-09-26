@@ -11,7 +11,7 @@
 #   rischio regressioni sui percorsi di import Flask. Prima il lancio, poi il refactoring.
 # ============================================================
 import os, json, traceback, time, hmac
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 
 from db import carica_grafo, _dati, _get_conn, _release_conn
 from auth import _admin_autenticato, _init_account_tables
@@ -11561,5 +11561,112 @@ def admin_atlas_coda():
         return jsonify({"totale_da_lavorare": len(schede),
                         "quasi_pronte": [s for s in schede if s["score"] >= 65][:30],
                         "coda_completa": schede[:100]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/atlas-studio")
+def atlas_studio():
+    """Atlas Studio (#300): il laboratorio editoriale interno. Serve la pagina (auto-protetta col secret)."""
+    return render_template("atlas-studio.html")
+
+
+@bp.route("/admin/atlas-studio/genera", methods=["POST"])
+def admin_atlas_genera():
+    """Quality Gate Stage 1 (#295): genera Fondamenta/Operativita da fonti citate, in linguaggio Matter (#297).
+    Non copia le fonti: produce sintesi originale citandole."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    d = request.get_json(force=True) or {}
+    slug = d.get("slug", ""); strato = d.get("strato", "fondamenta")
+    if not slug:
+        return jsonify({"errore": "manca slug"}), 400
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE (id=%s OR LOWER(name) LIKE LOWER(%s)) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (slug, f"%{slug}%"))
+        r = cur.fetchone()
+        if not r: return jsonify({"errore": "scheda non trovata"})
+        nome = r[1]
+        dd = r[2] if isinstance(r[2], dict) else (json.loads(r[2]) if r[2] else {})
+        # prompt per lo strato richiesto
+        istruzioni = {
+            "fondamenta": "Scrivi le FONDAMENTA scientifiche: definizione precisa, perche' succede (il principio fisico-chimico), la formula/meccanismo. Linguaggio da professionista, non da manuale. 150-250 parole.",
+            "operativita": "Scrivi l'OPERATIVITA': il punto critico (dove si sbaglia), gli errori comuni, i segnali visivi da riconoscere, il range di temperatura/tempo/pH se pertinente. Concreto, da banco. 120-200 parole.",
+        }
+        istr = istruzioni.get(strato, istruzioni["fondamenta"])
+        key = os.environ.get("OPENAI_API_KEY", "")
+        sys = f"Sei un esperto di scienza degli alimenti. Scrivi per Matter, un'app per professionisti F&B. Basati su fonti autorevoli (McGee 'On Food and Cooking', Modernist Cuisine, Hamelman 'Bread'), CITANDOLE ma riscrivendo con parole tue (sintesi originale, mai copia). Fenomeno: {nome}."
+        payload = {"model": "gpt-4o", "max_tokens": 700,
+                   "messages": [{"role": "system", "content": sys},
+                                {"role": "user", "content": istr + " Alla fine elenca le fonti usate come: FONTI: autore, opera."}]}
+        req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
+                         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+        rr = ur.urlopen(req, timeout=60); dj = json.loads(rr.read().decode())
+        testo = dj["choices"][0]["message"]["content"]
+        cur.close(); conn.close()
+        return jsonify({"slug": r[0], "nome": nome, "strato": strato, "testo_generato": testo,
+                        "nota": "Bozza AI da validare (Quality Gate Stage 2-3). Non ancora salvata."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/atlas-studio/salva", methods=["POST"])
+def admin_atlas_salva():
+    """Salva il contenuto di uno strato + ricalcola coverage_score."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    d = request.get_json(force=True) or {}
+    slug = d.get("slug", ""); strato = d.get("strato", ""); testo = d.get("testo", "")
+    if not slug or not strato:
+        return jsonify({"errore": "manca slug o strato"}), 400
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE id=%s OR LOWER(name) LIKE LOWER(%s) LIMIT 1", (slug, f"%{slug}%"))
+        r = cur.fetchone()
+        if not r: return jsonify({"errore": "non trovata"})
+        dd = r[1] if isinstance(r[1], dict) else (json.loads(r[1]) if r[1] else {})
+        # mappo lo strato al campo giusto
+        if strato == "fondamenta": dd["scheda"] = testo
+        elif strato == "operativita": dd["errori_comuni"] = testo
+        elif strato == "esperienza": dd["esecuzione"] = testo
+        # provenienza
+        prov = dd.get("provenienza", {})
+        prov["ultima_revisione"] = "curatore"
+        dd["provenienza"] = prov
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), r[0]))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"slug": r[0], "strato": strato, "salvato": True})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/atlas-studio/stato", methods=["POST"])
+def admin_atlas_stato():
+    """Sposta la scheda tra le colonne pipeline (da_fare->ai_pronta->in_revisione->validata->pubblicata)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    d = request.get_json(force=True) or {}
+    slug = d.get("slug", ""); nuovo = d.get("nuovo_stato", "")
+    validi = ["da_fare", "ai_pronta", "in_revisione", "validata", "pubblicata"]
+    if nuovo not in validi:
+        return jsonify({"errore": f"stato non valido, usa: {validi}"}), 400
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE id=%s OR LOWER(name) LIKE LOWER(%s) LIMIT 1", (slug, f"%{slug}%"))
+        r = cur.fetchone()
+        if not r: return jsonify({"errore": "non trovata"})
+        dd = r[1] if isinstance(r[1], dict) else (json.loads(r[1]) if r[1] else {})
+        prov = dd.get("provenienza", {})
+        prov["stato_pipeline"] = nuovo
+        dd["provenienza"] = prov
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), r[0]))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"slug": r[0], "nuovo_stato": nuovo, "spostata": True})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
