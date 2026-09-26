@@ -11436,3 +11436,46 @@ def admin_target_type_fenomeni():
         return jsonify({"errore": str(e)[:150]})
 
 
+
+
+@bp.route("/admin/calcola-maturita-schede")
+def admin_calcola_maturita_schede():
+    """Board #53: assegna a ogni fenomeno uno STATO DI MATURITA' (#283) basato su quanti campi sono pieni.
+    3 strati (#285): Fondamenta (definizione/principio), Operativita' (punto critico/errori), Esperienza (casi/collegamenti).
+    Nessuna scheda 'vuota': ognuna dichiara il suo stato. #282: dichiarata incompleta > finta completa."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
+        completa=0; espansione=0; fondamenta=0; tot=0
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            cs = dd.get("contenuto_strutturato") or {}
+            if isinstance(cs, str):
+                try: cs = json.loads(cs)
+                except: cs = {}
+            # STRATO 1 - Fondamenta: definizione/principio/scheda
+            has_fondamenta = bool(dd.get("scheda") or cs.get("spiegazione") or cs.get("principio") or dd.get("risposta_cache_it"))
+            # STRATO 2 - Operativita': punto critico, errori, numero bersaglio
+            has_operativo = bool(cs.get("punto_critico") or dd.get("errori_comuni") or cs.get("errori_comuni") or dd.get("numero_bersaglio") or dd.get("target"))
+            # STRATO 3 - Esperienza Matter: esecuzione, tecniche, collegamenti
+            has_esperienza = bool(dd.get("esecuzione") or cs.get("esecuzione") or cs.get("casi_reali"))
+            n_strati = sum([has_fondamenta, has_operativo, has_esperienza])
+            if n_strati >= 3: stato = "completa"; completa+=1
+            elif n_strati == 2: stato = "in_completamento"; espansione+=1
+            elif n_strati == 1: stato = "fondamenta"; fondamenta+=1
+            else: stato = "in_espansione"; espansione+=1
+            dd["stato_maturita"] = stato
+            dd["strati"] = {"fondamenta": has_fondamenta, "operativita": has_operativo, "esperienza": has_esperienza}
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            tot += 1
+            if tot % 50 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"totale": tot, "completa": completa, "in_completamento": espansione,
+                        "solo_fondamenta": fondamenta,
+                        "indice_copertura_pct": round(completa/tot*100) if tot else 0})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
