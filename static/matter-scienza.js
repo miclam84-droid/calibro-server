@@ -6,7 +6,17 @@ window.apriSchedeScienza = function(){
   _apriVista('Schede Scienza',
     '<div class="sc-hero"><div class="sc-hero-lab">IMPARA · LA SCIENZA DEL MESTIERE</div>'
     + '<div class="sc-hero-claim">Non ricette. I numeri e i fenomeni dietro ogni preparazione madre.</div></div>'
+    + '<div id="sc-copertura"></div>'
     + '<div id="sc-lista"><div class="vista-loading">Carico le schede…</div></div>');
+  // indice di copertura (l'organismo vivo, #284)
+  fetch('/v1/atlante/copertura').then(function(r){return r.json();}).then(function(c){
+    var box=document.getElementById('sc-copertura'); if(!box) return;
+    var pct=c.indice_copertura_pct||0;
+    box.innerHTML='<div class="sc-cop-box"><div class="sc-cop-top"><span class="sc-cop-lab">ATLANTE MATTER</span><span class="sc-cop-pct">'+pct+'%</span></div>'
+      + '<div class="sc-cop-nums">'+(c.totale_fenomeni||0)+' fenomeni · '+(c.complete||0)+' complete · '+(c.in_crescita||0)+' in crescita</div>'
+      + '<div class="sc-cop-bar"><div class="sc-cop-fill" style="width:'+pct+'%"></div></div>'
+      + '<div class="sc-cop-claim">Un\'enciclopedia vivente della scienza del mestiere, in costruzione.</div></div>';
+  }).catch(function(){});
   fetch('/v1/schede-scienza').then(function(r){return r.json();}).then(function(d){
     var schede=d.schede||[];
     var cont=document.getElementById('sc-lista'); if(!cont) return;
@@ -34,6 +44,24 @@ window.apriSchedaScienza = function(slug){
   }).catch(function(){ var b=document.getElementById('vista-body'); if(b) b.innerHTML='<div class="vista-empty">Errore di rete.</div>'; });
 };
 
+// stato di maturità: badge + 3 strati + messaggio (Board #53, #282/#285)
+function _scMaturita(d){
+  var e=_escV;
+  var stato=d.stato_maturita||'completa';
+  var strati=d.strati||{};
+  // badge
+  var badge='';
+  if(stato==='completa'){ badge='<span class="sc-mat-badge sc-mat-completa">✓ Scheda completa</span>'; }
+  else if(stato==='in_completamento'){ badge='<span class="sc-mat-badge sc-mat-corso">In completamento</span>'; }
+  else { badge='<span class="sc-mat-badge sc-mat-espansione">In espansione</span>'; }
+  // barra 3 strati
+  var seg=function(on,lab){ return '<div class="sc-strato'+(on?' on':'')+'"><span class="sc-strato-i">'+(on?'✓':'○')+'</span><span class="sc-strato-l">'+lab+'</span></div>'; };
+  var barra='<div class="sc-strati">'+seg(strati.fondamenta,'Fondamenta')+seg(strati.operativita,'Operatività')+seg(strati.esperienza,'Esperienza Matter')+'</div>';
+  // messaggio per schede in espansione
+  var msg='';
+  if(stato==='fondamenta'||stato==='in_espansione'){ msg='<div class="sc-mat-msg">Questa scheda contiene le fondamenta scientifiche del fenomeno. Matter sta completando casi reali, errori comuni e applicazioni operative.</div>'; }
+  return '<div class="sc-maturita">'+badge+barra+msg+'</div>';
+}
 function _scRender(d){
   var e=_escV;
   var sez=function(lab,val,cls){ if(!val) return ''; return '<div class="sc-sez'+(cls?' '+cls:'')+'"><div class="sc-sez-lab">'+e(lab)+'</div><div class="sc-sez-txt">'+e(val)+'</div></div>'; };
@@ -56,6 +84,7 @@ function _scRender(d){
   }
   var html='<div class="sc-scheda">'
     + '<div class="sc-sch-head"><div class="sc-sch-cat">'+e(_CATLAB[d.categoria]||d.categoria||'')+'</div><div class="sc-sch-nome">'+e(d.nome)+'</div></div>'
+    + _scMaturita(d)
     // 1. HEADER grande
     + headerHtml
     // 2. COSA DEVI SAPERE (il fenomeno in una frase)
