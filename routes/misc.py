@@ -1132,12 +1132,26 @@ def atlante_copertura():
             conteggi[stato] = conteggi.get(stato,0)+1
             tot += 1
         complete = conteggi.get("completa",0)
+        # COVERAGE PER DISCIPLINA (#335): la dashboard mostra "Panificazione 88%, Cocktail 52%"
+        disc = {}
+        for r in rows:
+            dd = _c(r,"data",0); dd = dd if isinstance(dd,dict) else (_j.loads(dd) if dd else {})
+            d = (dd.get("disciplina") or dd.get("dominio") or "Altro").strip() or "Altro"
+            if d not in disc: disc[d] = {"totale": 0, "complete": 0}
+            disc[d]["totale"] += 1
+            score = dd.get("coverage_score", 0)
+            if dd.get("stato_editoriale") in ("ai_verified","curated","canon") or score >= 70:
+                disc[d]["complete"] += 1
+        per_disciplina = [{"disciplina": k, "pct": round(v["complete"]/v["totale"]*100) if v["totale"] else 0,
+                           "totale": v["totale"]} for k,v in disc.items() if v["totale"] >= 3]
+        per_disciplina.sort(key=lambda x: -x["pct"])
         return jsonify({
             "totale_fenomeni": tot,
             "complete": complete,
             "in_crescita": tot - complete,
             "indice_copertura_pct": round(complete/tot*100) if tot else 0,
             "dettaglio": conteggi,
+            "per_disciplina": per_disciplina,
             "messaggio": f"L'Atlante di Matter contiene {tot} fenomeni. {complete} sono schede complete, {tot-complete} sono in crescita. Matter costruisce un'enciclopedia vivente della scienza del mestiere."
         })
     except Exception as e:
