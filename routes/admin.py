@@ -11573,14 +11573,16 @@ def atlas_studio():
 
 @bp.route("/admin/atlas-studio/genera", methods=["POST"])
 def admin_atlas_genera():
-    """Quality Gate Stage 1 (#295): genera Fondamenta/Operativita da fonti citate, in linguaggio Matter (#297).
-    Non copia le fonti: produce sintesi originale citandole."""
+    """Knowledge Builder V2 (Board #55): genera uno strato con GERARCHIA DI FONTI + sintesi del CONSENSO
+    (#307) + Quality Gate (#304A) + livello di CONFIDENZA. Non sceglie valori arbitrari: dichiara la
+    convergenza/divergenza delle fonti. Web search per la pratica reale (#303)."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", ""); strato = d.get("strato", "fondamenta")
+    usa_web = d.get("web", strato in ("operativita","esperienza_pro"))  # web per la pratica
     if not slug:
         return jsonify({"errore": "manca slug"}), 400
     try:
@@ -11589,25 +11591,49 @@ def admin_atlas_genera():
         r = cur.fetchone()
         if not r: return jsonify({"errore": "scheda non trovata"})
         nome = r[1]
-        dd = r[2] if isinstance(r[2], dict) else (json.loads(r[2]) if r[2] else {})
-        # prompt per lo strato richiesto
+        key = os.environ.get("OPENAI_API_KEY", "")
+        # GERARCHIA FONTI (#303): pubblicazioni scientifiche > libri autorevoli > riviste tecniche > blog pro
         istruzioni = {
-            "fondamenta": "Scrivi le FONDAMENTA scientifiche: definizione precisa, perche' succede (il principio fisico-chimico), la formula/meccanismo. Linguaggio da professionista, non da manuale. 150-250 parole.",
-            "operativita": "Scrivi l'OPERATIVITA': il punto critico (dove si sbaglia), gli errori comuni, i segnali visivi da riconoscere, il range di temperatura/tempo/pH se pertinente. Concreto, da banco. 120-200 parole.",
+            "fondamenta": "le FONDAMENTA scientifiche: definizione, perche' succede (principio fisico-chimico), meccanismo. Da fonti autorevoli (McGee, Modernist, Hamelman).",
+            "operativita": "l'OPERATIVITA': punto critico, errori comuni, segnali visivi, range di temperatura/tempo/pH. IMPORTANTE: se le fonti divergono, DICHIARA il consenso (es. 'le fonti convergono tra 22-24C, dipende dalla farina') invece di scegliere un valore arbitrario (#307).",
+            "esperienza_pro": "l'ESPERIENZA PROFESSIONALE: i segnali pratici che i professionisti riconoscono (al tatto, alla vista). ESTRATTI da fonti pratiche reali, CITATE. Se il sapere non e' univoco, dichiara la variabilita'. Mai inventare.",
         }
         istr = istruzioni.get(strato, istruzioni["fondamenta"])
-        key = os.environ.get("OPENAI_API_KEY", "")
-        sys = f"Sei un esperto di scienza degli alimenti. Scrivi per Matter, un'app per professionisti F&B. Basati su fonti autorevoli (McGee 'On Food and Cooking', Modernist Cuisine, Hamelman 'Bread'), CITANDOLE ma riscrivendo con parole tue (sintesi originale, mai copia). Fenomeno: {nome}."
-        payload = {"model": "gpt-4o", "max_tokens": 700,
-                   "messages": [{"role": "system", "content": sys},
-                                {"role": "user", "content": istr + " Alla fine elenca le fonti usate come: FONTI: autore, opera."}]}
-        req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
-                         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
-        rr = ur.urlopen(req, timeout=60); dj = json.loads(rr.read().decode())
-        testo = dj["choices"][0]["message"]["content"]
+        sys = (f"Sei un esperto di scienza degli alimenti per Matter (app per professionisti F&B). "
+               f"Fenomeno: {nome}. Scrivi {istr} "
+               f"REGOLE: 1) sintetizza il CONSENSO delle fonti, non un valore arbitrario. 2) se le fonti "
+               f"divergono, dichiaralo. 3) cita sempre le fonti. 4) NON inventare dati: se non trovi un dato, dillo. "
+               f"Alla fine aggiungi due righe: FONTI: ... e CONFIDENZA: alta/media/bassa (quanto le fonti convergono).")
+        if usa_web:
+            _inp = sys + chr(10)+chr(10) + "Cerca sul web fonti tecniche/professionali affidabili e sintetizza. 150-250 parole."
+            rpayload = {"model": "gpt-4o", "tools": [{"type": "web_search_preview"}], "input": _inp}
+            rreq = ur.Request("https://api.openai.com/v1/responses", data=json.dumps(rpayload).encode(),
+                              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+            rrr = ur.urlopen(rreq, timeout=75); ddd = json.loads(rrr.read().decode())
+            testo = ""
+            for item in ddd.get("output", []):
+                if item.get("type") == "message":
+                    for ct in item.get("content", []):
+                        if ct.get("type") == "output_text": testo += ct.get("text", "")
+            if not testo: testo = ddd.get("output_text", "")
+        else:
+            payload = {"model": "gpt-4o", "max_tokens": 700,
+                       "messages": [{"role": "system", "content": sys},
+                                    {"role": "user", "content": "Scrivi lo strato, 150-250 parole."}]}
+            req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
+                             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+            rr = ur.urlopen(req, timeout=60); dj = json.loads(rr.read().decode())
+            testo = dj["choices"][0]["message"]["content"]
+        # QUALITY GATE (#304A): estraggo confidenza dal testo
+        conf = "media"
+        tl = testo.lower()
+        if "confidenza: alta" in tl: conf = "alta"
+        elif "confidenza: bassa" in tl: conf = "bassa"
         cur.close(); conn.close()
         return jsonify({"slug": r[0], "nome": nome, "strato": strato, "testo_generato": testo,
-                        "nota": "Bozza AI da validare (Quality Gate Stage 2-3). Non ancora salvata."})
+                        "confidenza": conf, "web_usato": bool(usa_web),
+                        "stato_proposto": "ai_verified" if conf in ("alta","media") else "ai_generated",
+                        "nota": "Bozza AI con consenso fonti + confidenza. Stato: AI Verified se confidenza ok. Il curatore puo' elevare a Curated/Canon."})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
 
