@@ -954,3 +954,40 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .rg-scheda-sci-txt{font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;color:#141d22}
 .rg-scheda-sci-txt h3,.rg-scheda-sci-txt h4{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;margin:12px 0 6px;color:#141d22}
 .rg-scheda-sci-txt strong{color:#141d22}
+
+/* ═══ GRAFO DELLE POSSIBILITÀ (Board #50) — ruoli + blueprint ═══ */
+.ps-hero{margin:0 0 18px;padding:18px;background:#141d22;border-radius:4px;box-shadow:4px 4px 0 rgba(20,29,34,.2)}
+.ps-hero-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;color:#7fb0c4;margin-bottom:8px}
+.ps-hero-claim{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;line-height:1.1;color:#e8935a;margin-bottom:8px}
+.ps-hero-sub{font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#cbd6da}
+.ps-field{display:flex;gap:8px;margin:0 0 12px}
+.ps-field input{flex:1;min-width:0;min-height:50px;border:1.5px solid #141d22;background:#fff;padding:0 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#141d22;-webkit-text-fill-color:#141d22;box-shadow:3px 3px 0 rgba(20,29,34,.12);box-sizing:border-box}
+.ps-go{flex:0 0 50px;height:50px;background:#c77b3f;color:#141d22;border:1.5px solid #141d22;font-size:22px;cursor:pointer}
+.ps-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.ps-chip{background:#fff;border:1.5px solid #c4c0b4;padding:8px 12px;font-family:'Inter',sans-serif;font-size:13px;color:#141d22;cursor:pointer;text-transform:capitalize}
+.ps-res-head{margin:0 0 6px}
+.ps-res-nome{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;color:#141d22;text-transform:capitalize}
+.ps-sec-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c77b3f;margin:18px 0 10px}
+/* firma ruoli */
+.ps-firma{display:flex;flex-direction:column;gap:8px}
+.ps-ruolo{background:#fff;border:1.5px solid #245979;padding:10px 12px}
+.ps-ruolo-top{display:flex;justify-content:space-between;align-items:baseline}
+.ps-ruolo-n{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#141d22;text-transform:capitalize}
+.ps-ruolo-f{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:#245979}
+.ps-ruolo-d{font-family:'Inter',sans-serif;font-size:12px;color:#5a6c70;margin-top:4px}
+/* IL BLUEPRINT (protagonista) */
+.ps-blueprint{border:2px solid #141d22;box-shadow:5px 5px 0 rgba(20,29,34,.15)}
+.ps-bp-riga{display:flex;align-items:center;border-bottom:1px solid #d8d5cc;padding:14px}
+.ps-bp-riga:last-child{border-bottom:0}
+.ps-bp-base{background:#141d22}
+.ps-bp-base .ps-bp-ruolo{color:#7fb0c4}
+.ps-bp-base .ps-bp-ing{color:#e8935a}
+.ps-bp-ruolo{flex:0 0 110px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#c77b3f}
+.ps-bp-ing{flex:1;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#141d22;text-transform:capitalize}
+/* equilibrio */
+.ps-equilibrio,.ps-lista-sec{display:flex;flex-wrap:wrap;gap:8px}
+.ps-eq{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:#fff;border:1.5px solid #c77b3f;padding:9px 12px;cursor:pointer}
+.ps-eq-ing{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:#141d22;text-transform:capitalize}
+.ps-eq-ruolo{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#9daeb2}
+.ps-composer{display:block;width:100%;margin:22px 0 24px;min-height:54px;background:#c77b3f;color:#241109;border:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+.ps-composer:active{transform:translate(2px,2px)}

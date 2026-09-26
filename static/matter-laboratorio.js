@@ -1,7 +1,7 @@
 // ═══ MATTER-LABORATORIO.js — L'ambiente unico (Board #210): 3 intenzioni ═══
 (function(){
 window.apriLaboratorio = function(intenzione){
-  if(intenzione==='esplora'){ _caricaModulo('grafo').then(function(){ if(window.apriGrafo) apriGrafo('pomodoro'); }); return; }
+  if(intenzione==='esplora'){ _caricaModulo('possibilita').then(function(){ if(window.apriPossibilita) apriPossibilita('pomodoro'); }); return; }
   if(intenzione==='crea'){ _caricaModulo('composer').then(function(){ if(window.apriComposer) apriComposer(); }); return; }
   if(intenzione==='impara'){ _caricaModulo('scienza').then(function(){ if(window.apriSchedeScienza) apriSchedeScienza(); }); return; }
   // schermata scelta intenzione
@@ -14,7 +14,7 @@ window.apriLaboratorio = function(intenzione){
     +   '<button class="lab-int lab-int-esplora" onclick="apriLaboratorio(\'esplora\')">'
     +     '<i class="ph ph-graph" aria-hidden="true"></i>'
     +     '<div class="lab-int-t">Esplora</div>'
-    +     '<div class="lab-int-d">La rete degli ingredienti e dei fenomeni. Scopri cosa dialoga con cosa, cosa aggiungere a un piatto.</div>'
+    +     '<div class="lab-int-d">Parti da un ingrediente: scopri i suoi ruoli e il piatto embrionale che può diventare.</div>'
     +   '</button>'
     +   '<button class="lab-int lab-int-crea" onclick="apriLaboratorio(\'crea\')">'
     +     '<i class="ph ph-flask" aria-hidden="true"></i>'
