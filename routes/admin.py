@@ -11582,7 +11582,8 @@ def admin_atlas_genera():
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", ""); strato = d.get("strato", "fondamenta")
-    usa_web = d.get("web", strato in ("operativita","esperienza_pro"))  # web per la pratica
+    # web OFF di default: i libri (McGee, Hamelman) non sono online full-text, la web pesca blog Tier 4.
+    usa_web = d.get("web", False)
     if not slug:
         return jsonify({"errore": "manca slug"}), 400
     try:
@@ -11602,8 +11603,12 @@ def admin_atlas_genera():
         sys = (f"Sei un esperto di scienza degli alimenti per Matter (app per professionisti F&B). "
                f"Fenomeno: {nome}. Scrivi {istr} "
                f"REGOLE: 1) sintetizza il CONSENSO delle fonti, non un valore arbitrario. 2) se le fonti "
-               f"divergono, dichiaralo. 3) cita sempre le fonti. 4) NON inventare dati: se non trovi un dato, dillo. "
-               f"Alla fine aggiungi due righe: FONTI: ... e CONFIDENZA: alta/media/bassa (quanto le fonti convergono).")
+               f"divergono, dichiaralo. 3) NON inventare dati: se non trovi un dato, dillo. "
+               f"4) VIETATO citare blog, siti web, link o URL. Cita SOLO libri autorevoli (McGee 'On Food and "
+               f"Cooking', Hamelman 'Bread', Suas 'Advanced Bread and Pastry', Modernist Cuisine/Bread, "
+               f"Arnold 'Liquid Intelligence', ecc.) dalla tua conoscenza di questi testi. "
+               f"Alla fine due righe: FONTI: Cognome, Titolo (anno); Cognome, Titolo (anno) [almeno 2 libri, MAI link] "
+               f"e CONFIDENZA: alta/media/bassa.")
         if usa_web:
             _inp = sys + chr(10)+chr(10) + "Cerca sul web fonti tecniche/professionali affidabili e sintetizza. 150-250 parole."
             rpayload = {"model": "gpt-4o", "tools": [{"type": "web_search_preview"}], "input": _inp}
