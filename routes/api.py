@@ -4565,15 +4565,22 @@ def grafo_possibilita(ingrediente):
             wl = _SENSATI.get(prop_ruolo, [])
             best = None; bestv = 0
             # prima cerco tra i sensati (whitelist), poi tra tutti
-            for solo_sensati in (True, False):
+            # 1) prima cerco SOLO tra i sensati (whitelist), soglia piu bassa (4)
+            for nome_i, pi in cands:
+                if nome_i in usati: continue
+                nl = nome_i.lower()
+                if not any(w in nl for w in wl): continue
+                v = pi.get(prop_ruolo, 0)
+                if v > bestv: best = nome_i; bestv = v
+            # 2) solo se NESSUN sensato raggiunge 4, allargo a tutti (soglia 6)
+            if not (best and bestv >= 4):
+                best = None; bestv = 0
                 for nome_i, pi in cands:
                     if nome_i in usati: continue
-                    nl = nome_i.lower()
-                    if solo_sensati and not any(w in nl for w in wl): continue
                     v = pi.get(prop_ruolo, 0)
                     if v > bestv: best = nome_i; bestv = v
-                if best and bestv >= 5: break  # trovato tra i sensati, non allargo
-            if best and bestv >= 5:
+                if bestv < 6: best = None
+            if best and bestv >= 4:
                 equilibrio.append({"ingrediente": best, "ruolo": nome_ruolo, "forza": bestv})
                 usati.add(best)
 
