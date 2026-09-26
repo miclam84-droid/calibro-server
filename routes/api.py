@@ -4551,7 +4551,7 @@ def grafo_possibilita(ingrediente):
 
         # candidati SENSATI per ruolo (evita 'pollo fritto' come croccante di una caprese)
         _SENSATI = {
-            "grasso": ["burro","panna","mascarpone","stracciatella","olio extravergine","olio taggiasca","olio coratina","lardo","pancetta"],
+            "grasso": ["olio extravergine","olio evo","burro","panna","mascarpone","stracciatella","olio"],
             "acido": ["limone","aceto","lime","agrumi","pomodoro","yogurt","vino bianco","verjus"],
             "aroma_fresco": ["basilico","menta","prezzemolo","erba cipollina","rucola","scorza di limone"],
             "umami": ["parmigiano","pomodoro","acciuga","funghi","prosciutto","miso","colatura"],
@@ -4589,13 +4589,43 @@ def grafo_possibilita(ingrediente):
         for e in equilibrio:
             blueprint[e["ruolo"]] = e["ingrediente"]
 
+        # MOTORE TRADIZIONE (#256): abbinamenti documentati (archi abbinamento_aromatico)
+        tradizione = []
+        try:
+            _cur.execute("""SELECT DISTINCT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                           WHERE e.from_id=%s AND e.relation='abbinamento_aromatico'
+                           AND n2.name NOT LIKE '%%_%%' LIMIT 6""", (rc[0],))
+            tradizione = [r[0] for r in _cur.fetchall() if r[0].lower()!=nome_c.lower()][:5]
+        except Exception: pass
+
+        # MOTORE SCOPERTA (#256): composti molecolari condivisi (le sorprese, esclusi parenti e classici)
+        scoperta = []
+        try:
+            _cur.execute("""SELECT n2.name, COUNT(*) as ov FROM edges e1
+                           JOIN edges e2 ON e1.to_id=e2.to_id
+                           JOIN nodes n2 ON n2.id=e2.from_id
+                           WHERE e1.from_id=%s AND e1.relation='contiene_composto'
+                           AND e2.relation='contiene_composto' AND e2.from_id!=%s
+                           AND n2.type IN ('Ingrediente','Prodotto') AND n2.name NOT LIKE '%%_%%'
+                           GROUP BY n2.name HAVING COUNT(*)>=4 ORDER BY ov DESC LIMIT 15""", (rc[0], rc[0]))
+            _trad_set = set(t.lower() for t in tradizione)
+            for nome_s, ov in _cur.fetchall():
+                nl = nome_s.lower()
+                if nl==nome_c.lower() or nl in _trad_set: continue
+                # scoperta = sorprendente: NON un classico, NON stessa categoria
+                scoperta.append(nome_s)
+                if len(scoperta)>=5: break
+        except Exception: pass
+
         _cur.close(); _release_conn(_c)
         return jsonify({
             "centro": nome_c,
             "contesto": contesto,
             "firma_ruoli": [{"ruolo": r["ruolo"], "forza": r["forza"], "desc": r["desc"]} for r in firma],
             "prospettive": {
+                "tradizione": tradizione,   # #256: i classici documentati
                 "equilibrio": equilibrio,   # #255: cosa serve per bilanciare
+                "scoperta": scoperta,       # #256: le sorprese molecolari
             },
             "blueprint": blueprint,          # #257: il piatto embrionale
             "nota": "Grafo delle Possibilita': ruoli, non ingredienti (#263)"
