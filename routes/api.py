@@ -3667,12 +3667,21 @@ def birra_per_piatto_endpoint():
         return jsonify({"errore": str(e)}), 500
 
 
-@bp.route("/v1/dolce-per-menu")
+@bp.route("/v1/dolce-per-menu", methods=["GET", "POST"])
 def dolce_per_menu_endpoint():
-    """Dato il carattere del menu, suggerisce il dessert che lo chiude (dialogo pasticceria↔cucina)."""
-    menu = (request.args.get("menu", "") or request.args.get("q", "")).strip()
+    """Chiusura del menu (#250): dato il carattere del menu, suggerisce come chiuderlo."""
+    menu = ""
+    if request.method == "POST":
+        d = request.get_json(force=True) or {}
+        voci = d.get("voci", [])
+        # da lista voci (stringhe o oggetti) ricavo il carattere del menu
+        nomi = [v if isinstance(v,str) else v.get("nome","") for v in voci]
+        menu = d.get("menu") or ", ".join(nomi)
+    else:
+        menu = (request.args.get("menu", "") or request.args.get("q", "")).strip()
+    menu = (menu or "").strip()
     if not menu:
-        return jsonify({"errore": "specifica ?menu=... (es. 'menu di pesce leggero')"}), 400
+        return jsonify({"errore": "specifica il menu (voci o ?menu=...)"}), 400
     try:
         from dialogo_discipline import dolce_per_menu
         return jsonify({"menu": menu, "dessert_consigliato": dolce_per_menu(menu)})
@@ -4539,9 +4548,14 @@ def menu_analizza():
     """Analizza un menu: equilibrio categorie, ripetizione ingredienti, food cost stimato."""
     from flask import request, jsonify
     d = request.get_json(force=True) or {}
-    voci = d.get("voci", [])  # [{nome, ingredienti:[...]}]
-    if not voci:
+    voci_raw = d.get("voci", [])  # puo' essere [stringa] o [{nome, ingredienti}]
+    if not voci_raw:
         return jsonify({"errore": "nessuna voce nel menu"})
+    # normalizzo: ogni voce diventa {nome, ingredienti:[...]}
+    voci = []
+    for v in voci_raw:
+        if isinstance(v, str): voci.append({"nome": v, "ingredienti": []})
+        elif isinstance(v, dict): voci.append({"nome": v.get("nome",""), "ingredienti": v.get("ingredienti",[]) or []})
     # conta ripetizione ingredienti
     tutti_ing = {}
     for v in voci:
@@ -4562,11 +4576,24 @@ def menu_analizza():
         elif any(k in nl for k in PESCE): tipi["pesce"] += 1
         elif any(k in nl for k in CARNE): tipi["carne"] += 1
         else: tipi["vegetariano"] += 1
+    # MODIFICHE CONSIGLIATE (#249: l'analisi produce consigli, non solo punteggi)
+    consigli = []
+    if pct_ripetizione >= 40:
+        consigli.append("Molti ingredienti si ripetono tra le voci: valuta piu' varieta' per non stancare il palato.")
+    if tipi["dolce"] == 0 and len(voci) >= 3:
+        consigli.append("Nessuna chiusura dolce: aggiungi un dessert o una chiusura che richiami il menu.")
+    if tipi["pesce"] == 0 and tipi["carne"] >= 3:
+        consigli.append("Menu sbilanciato sulla carne: una voce di pesce o vegetale allargherebbe l'offerta.")
+    if tipi["vegetariano"] == 0 and len(voci) >= 4:
+        consigli.append("Nessuna voce vegetariana: oggi e' spesso richiesta, valuta di aggiungerne una.")
+    if not consigli:
+        consigli.append("Menu ben bilanciato: buona varieta' di ingredienti e categorie.")
     return jsonify({
         "n_voci": len(voci),
         "ripetizione_ingredienti_pct": pct_ripetizione,
         "ingredienti_ripetuti": list(ripetuti.keys())[:8],
         "bilanciamento": tipi,
+        "modifiche_consigliate": consigli,
         "consiglio": ("Buon equilibrio" if pct_ripetizione < 30 else "Molti ingredienti ripetuti: valuta più varietà"),
     })
 
