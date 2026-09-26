@@ -4611,7 +4611,7 @@ def grafo_possibilita(ingrediente):
             _trad_set = set(t.lower() for t in tradizione)
             for nome_s, ov in _cur.fetchall():
                 nl = nome_s.lower()
-                if nl==nome_c.lower() or nl in _trad_set: continue
+                if nl==nome_c.lower() or nl in _trad_set or '_' in nome_s: continue
                 # scoperta = sorprendente: NON un classico, NON stessa categoria
                 scoperta.append(nome_s)
                 if len(scoperta)>=5: break
