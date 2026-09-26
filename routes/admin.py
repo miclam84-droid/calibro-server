@@ -11602,8 +11602,15 @@ def admin_atlas_genera():
         sys = (f"Sei un esperto di scienza degli alimenti per Matter (app per professionisti F&B). "
                f"Fenomeno: {nome}. Scrivi {istr} "
                f"REGOLE: 1) sintetizza il CONSENSO delle fonti, non un valore arbitrario. 2) se le fonti "
-               f"divergono, dichiaralo. 3) cita sempre le fonti. 4) NON inventare dati: se non trovi un dato, dillo. "
-               f"Alla fine aggiungi due righe: FONTI: ... e CONFIDENZA: alta/media/bassa (quanto le fonti convergono).")
+               f"divergono, dichiaralo. 3) NON inventare dati: se non trovi un dato, dillo. "
+               f"FONTI OBBLIGATORIE: basati su fonti AUTOREVOLI e citale per NOME AUTORE + OPERA, non come link/blog. "
+               f"Preferisci in quest'ordine: (Tier 0 tradizione italiana) disciplinari DOP/IGP, Slow Food, "
+               f"Accademia Italiana della Cucina, AIBI; (Tier 1) McGee 'On Food and Cooking', Modernist Cuisine/Bread "
+               f"di Myhrvold, Harold This; (Tier 2) Hamelman 'Bread', Suas 'Advanced Bread and Pastry', "
+               f"Difford's Guide, Arnold 'Liquid Intelligence', 'The Professional Chef' (CIA). "
+               f"NON citare blog personali o siti SEO come fonte principale. "
+               f"Alla fine due righe: FONTI: Autore, Opera (anno); Autore, Opera (anno) [almeno 2 fonti autorevoli] "
+               f"e CONFIDENZA: alta/media/bassa.")
         if usa_web:
             _inp = sys + chr(10)+chr(10) + "Cerca sul web fonti tecniche/professionali affidabili e sintetizza. 150-250 parole."
             rpayload = {"model": "gpt-4o", "tools": [{"type": "web_search_preview"}], "input": _inp}
