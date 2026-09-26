@@ -1060,3 +1060,11 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .sc-fonti{margin:18px 0;padding:14px;background:rgba(36,89,121,.05);border-left:3px solid #245979}
 .sc-fonti-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#245979;margin-bottom:6px}
 .sc-fonti-txt{font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#141d22}
+
+/* ═══ Fonti fondamentali strutturate (#335A v2) ═══ */
+.sc-fonti-libro{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px solid rgba(36,89,121,.1)}
+.sc-fonti-libro:last-of-type{border-bottom:0}
+.sc-fonti-tit{font-family:'Inter',sans-serif;font-size:13px;color:#141d22;line-height:1.4}
+.sc-fonti-tit i{color:#245979}
+.sc-fonti-tier{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;color:#9daeb2}
+.sc-fonti-nota{font-family:'Inter',sans-serif;font-size:11px;color:#9daeb2;font-style:italic;margin-top:8px}

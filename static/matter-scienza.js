@@ -81,23 +81,25 @@ function _scMaturita(d){
   if(stato==='fondamenta'||stato==='in_espansione'){ msg='<div class="sc-mat-msg">Questa scheda contiene le fondamenta scientifiche del fenomeno. Matter sta completando casi reali, errori comuni e applicazioni operative.</div>'; }
   return '<div class="sc-maturita">'+edBadge+badge+barra+msg+'</div>';
 }
-// blocco "Fonti fondamentali" (#335A): solo libri autorevoli, niente URL/CTA compra
+// blocco "Fonti fondamentali" (#335A): dati strutturati da /biblioteca, no CTA compra
 function _scFonti(d){
-  var e=_escV;
-  var raw=(d.fonti||d.provenienza&&d.provenienza.fonti||[]);
-  if(!raw.length) return '';
-  // pulisco: via URL/utm/markdown, tengo solo testo leggibile da libri
-  var pulite=raw.map(function(f){
-    var s=String(f);
-    if(/https?:\/\/|utm_source|\.com|\.it\b|openai|\[/.test(s)) return null; // scarto i link web
-    s=s.replace(/[\[\]()"]/g,'').replace(/\s+/g,' ').trim();
-    return s.length>2?s:null;
-  }).filter(Boolean);
-  if(!pulite.length) return '';
-  // accorpo autore+titolo adiacenti (es. "Jeffrey Hamelman" + "Bread 2004")
-  var testo=pulite.slice(0,6).join(' · ');
-  return '<div class="sc-fonti"><div class="sc-fonti-lab">◆ Fonti fondamentali</div><div class="sc-fonti-txt">'+e(testo)+'</div></div>';
+  // placeholder che si popola async dalla biblioteca (dati puliti alla sorgente)
+  var slug=d.slug||''; if(!slug) return '';
+  setTimeout(function(){ _scCaricaFonti(slug); }, 100);
+  return '<div id="sc-fonti-box"></div>';
 }
+window._scCaricaFonti=function(slug){
+  fetch('/v1/scheda/'+encodeURIComponent(slug)+'/biblioteca?lang='+(_vistaLang?_vistaLang():'it')).then(function(r){return r.json();}).then(function(j){
+    var libri=(j.libri||[]); var box=document.getElementById('sc-fonti-box');
+    if(!box || !libri.length) return;
+    var e=_escV;
+    box.innerHTML='<div class="sc-fonti"><div class="sc-fonti-lab">◆ Fonti fondamentali</div>'
+      + libri.slice(0,5).map(function(l){
+          return '<div class="sc-fonti-libro"><span class="sc-fonti-tit">'+e(l.autore||'')+', <i>'+e(l.titolo||'')+'</i>'+(l.anno?' ('+e(String(l.anno))+')':'')+'</span>'+(l.tier?'<span class="sc-fonti-tier">Tier '+e(String(l.tier))+'</span>':'')+'</div>';
+        }).join('')
+      + '<div class="sc-fonti-nota">Le fonti tecniche dietro questa scheda.</div></div>';
+  }).catch(function(){});
+};
 function _scRender(d){
   var e=_escV;
   var sez=function(lab,val,cls){ if(!val) return ''; return '<div class="sc-sez'+(cls?' '+cls:'')+'"><div class="sc-sez-lab">'+e(lab)+'</div><div class="sc-sez-txt">'+e(val)+'</div></div>'; };
