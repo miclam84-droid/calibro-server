@@ -11776,49 +11776,6 @@ def _fonte_verificata(testo_fonte):
     return "non_verificata"  # fonte non nel registro (non per forza falsa, ma non verificabile)
 
 
-
-# BIBLIOTECA MATTER (#317A): i libri core con ASIN Amazon per il link affiliato (#319A: ricavo accessorio)
-_BIBLIOTECA = {
-    "on food and cooking": {"autore": "Harold McGee", "titolo": "On Food and Cooking", "anno": 2004,
-        "asin_it": "8865207108", "asin_en": "0684800012", "tier": 1,
-        "perche": "Il riferimento assoluto sulla chimica e la scienza degli alimenti."},
-    "il cibo e la cucina": {"autore": "Harold McGee", "titolo": "Il cibo e la cucina", "anno": 2019,
-        "asin_it": "8865207108", "asin_en": "0684800012", "tier": 1,
-        "perche": "L'edizione italiana del riferimento sulla scienza del cibo."},
-    "modernist bread": {"autore": "Nathan Myhrvold", "titolo": "Modernist Bread", "anno": 2017,
-        "asin_it": "0982761015", "asin_en": "0982761015", "tier": 1,
-        "perche": "Trattato enciclopedico sulla panificazione scientifica."},
-    "modernist cuisine": {"autore": "Nathan Myhrvold", "titolo": "Modernist Cuisine", "anno": 2011,
-        "asin_it": "0982761007", "asin_en": "0982761007", "tier": 1,
-        "perche": "La cucina come scienza, in sei volumi."},
-    "bread": {"autore": "Jeffrey Hamelman", "titolo": "Bread", "anno": 2004,
-        "asin_it": "1118132718", "asin_en": "1118132718", "tier": 2,
-        "perche": "Il manuale di riferimento della panificazione professionale."},
-    "advanced bread and pastry": {"autore": "Michel Suas", "titolo": "Advanced Bread and Pastry", "anno": 2008,
-        "asin_it": "1418011694", "asin_en": "1418011694", "tier": 2,
-        "perche": "Testo avanzato di panificazione e pasticceria."},
-    "liquid intelligence": {"autore": "Dave Arnold", "titolo": "Liquid Intelligence", "anno": 2014,
-        "asin_it": "0393089037", "asin_en": "0393089037", "tier": 2,
-        "perche": "La scienza e l'arte del cocktail perfetto."},
-    "the professional chef": {"autore": "CIA", "titolo": "The Professional Chef", "anno": 2011,
-        "asin_it": "0470421355", "asin_en": "0470421355", "tier": 2,
-        "perche": "Il manuale del Culinary Institute of America."},
-}
-
-def _libro_affiliato(fonte_testo, lang="it"):
-    """Dato il testo di una fonte, se e' un libro noto restituisce l'oggetto Biblioteca + link Amazon affiliato."""
-    import os as _os
-    t = (fonte_testo or "").lower()
-    for chiave, info in _BIBLIOTECA.items():
-        if chiave in t:
-            tag = _os.environ.get("AMAZON_TAG", "")
-            asin = info.get("asin_it") if lang == "it" else info.get("asin_en")
-            link = f"https://www.amazon.it/dp/{asin}?tag={tag}" if asin else ""
-            return {"autore": info["autore"], "titolo": info["titolo"], "anno": info["anno"],
-                    "tier": info["tier"], "perche": info["perche"], "amazon": link}
-    return None
-
-
 def _classifica_fonte(testo_fonte):
     """Classifica una fonte nel suo Tier (#310A: fonti = entita verificate)."""
     t = (testo_fonte or "").lower()
@@ -11965,28 +11922,69 @@ def admin_knowledge_density():
         return jsonify({"errore": str(e)[:150]})
 
 
-@bp.route("/v1/scheda/<slug>/biblioteca", methods=["GET"])
-def scheda_biblioteca(slug):
-    """Biblioteca Matter (#317A): i libri citati dalla scheda, con link Amazon affiliato (#319A).
-    'Questa scheda si basa su McGee, On Food and Cooking -> approfondisci'."""
+@bp.route("/admin/atlas-studio/batch", methods=["POST"])
+def admin_atlas_batch():
+    """Batch generation con CIRCUIT BREAKER (#311A): genera N schede a ondata, si ferma se troppe falliscono.
+    Impedisce il 'disastro x300' (#308). Ondate piccole, controllo, stop automatico se errori sopra soglia."""
     from flask import request, jsonify
-    import os, psycopg2, json
-    lang = request.args.get("lang", "it")
+    import os, psycopg2, json, urllib.request as ur, time
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    d = request.get_json(force=True) or {}
+    n_ondata = min(int(d.get("n", 10)), 15)  # max 15 per ondata (evita timeout)
+    soglia_errori = int(d.get("soglia", 3))  # stop se piu' di N falliscono
+    solo_dominio = d.get("dominio", "")  # es. "pane" per filtrare
+    key = os.environ.get("OPENAI_API_KEY", "")
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT data FROM nodes WHERE (id=%s OR LOWER(name) LIKE LOWER(%s)) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (slug, f"%{slug}%"))
-        r = cur.fetchone()
-        if not r: return jsonify({"libri": []})
-        dd = r[0] if isinstance(r[0], dict) else (json.loads(r[0]) if r[0] else {})
-        fonti = dd.get("provenienza", {}).get("fonti", [])
-        libri = []
-        visti = set()
-        for f in fonti:
-            lib = _libro_affiliato(f, lang)
-            if lib and lib["titolo"] not in visti:
-                libri.append(lib); visti.add(lib["titolo"])
+        # prendo le schede meno complete (coverage basso), non ancora ai_verified
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                       ORDER BY (data->>'coverage_score')::int ASC NULLS FIRST LIMIT 60""")
+        candidate = cur.fetchall()
+        processate = []; falliti = 0; compilate = 0; interrotto = False
+        for nid, nome, data in candidate:
+            if len(processate) >= n_ondata: break
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            if dd.get("stato_editoriale") in ("ai_verified","curated","canon"): continue  # gia' fatta
+            # genero le FONDAMENTA (no web, libri dal training)
+            try:
+                istr = "le FONDAMENTA scientifiche: definizione, perche' succede, meccanismo."
+                sys = (f"Esperto scienza alimenti per Matter. Fenomeno: {nome}. Scrivi {istr} "
+                       f"VIETATO blog/link. Cita SOLO libri autorevoli (McGee 'On Food and Cooking', "
+                       f"Hamelman 'Bread', Modernist Cuisine/Bread, Suas, Arnold) dal tuo training. "
+                       f"Fine: FONTI: Cognome, Titolo (anno); Cognome, Titolo (anno) e CONFIDENZA: alta/media/bassa.")
+                payload = {"model": "gpt-4o", "max_tokens": 600,
+                           "messages": [{"role":"system","content":sys},{"role":"user","content":"Scrivi, 150-220 parole."}]}
+                req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
+                                 headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+                rr = ur.urlopen(req, timeout=50); testo = json.loads(rr.read().decode())["choices"][0]["message"]["content"]
+                # salvo + estraggo fonti
+                import re as _re
+                dd["scheda"] = testo
+                _m = _re.search(r"FONTI?:(.+?)(?:CONFIDENZA|$)", testo, _re.IGNORECASE|_re.DOTALL)
+                fonti = [x.strip(" .-") for x in _re.split(r"[;\n]", _m.group(1))] if _m else []
+                fonti = [f for f in fonti if len(f) > 5][:4]
+                prov = dd.get("provenienza", {}); prov["fonti"] = fonti; dd["provenienza"] = prov
+                # valido (gate B: almeno una fonte Tier 0-2)
+                tiers = [_classifica_fonte(f) for f in fonti]
+                ok = any(t <= 2 for t in tiers) and not any(_fonte_verificata(f)=="sospetta" for f in fonti)
+                dd["stato_editoriale"] = "ai_verified" if ok else "ai_generated"
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+                conn.commit()
+                if ok: compilate += 1
+                else: falliti += 1
+                processate.append({"nome": nome, "compilata": ok, "fonti": len(fonti)})
+                # CIRCUIT BREAKER
+                if falliti > soglia_errori:
+                    interrotto = True
+                    break
+            except Exception as _e:
+                falliti += 1; processate.append({"nome": nome, "errore": str(_e)[:40]})
+                if falliti > soglia_errori: interrotto = True; break
         cur.close(); conn.close()
-        return jsonify({"slug": slug, "libri": libri,
-                        "nota": "Fonti di questa scheda. Approfondisci nella Biblioteca Matter."})
+        return jsonify({"ondata": len(processate), "compilate": compilate, "falliti": falliti,
+                        "circuit_breaker_scattato": interrotto,
+                        "dettaglio": processate,
+                        "nota": "STOP: troppi errori" if interrotto else "Ondata ok, puoi lanciare la successiva"})
     except Exception as e:
-        return jsonify({"errore": str(e)[:120]}), 500
+        return jsonify({"errore": str(e)[:150]})
