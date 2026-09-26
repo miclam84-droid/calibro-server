@@ -11700,3 +11700,105 @@ def admin_atlas_stato():
         return jsonify({"slug": r[0], "nuovo_stato": nuovo, "spostata": True})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+# ═══ KNOWLEDGE COMPILER (Board #56): versionamento + gate + circuit breaker ═══
+
+# GERARCHIA FONTI (#309/#309A) - Tier 0 italiano + internazionali
+_FONTI_TIER = {
+    0: ["disciplinare dop", "disciplinare igp", "slow food", "presidi slow food", "aibi", "ministero",
+        "gazzetta ufficiale", "consorzio", "accademia italiana della cucina", "ismea"],
+    1: ["mcgee", "on food and cooking", "modernist cuisine", "modernist bread", "myhrvold", "this",
+        "harold mcgee", "peer-reviewed", "journal of food"],
+    2: ["hamelman", "suas", "advanced bread", "difford", "liquid intelligence", "arnold",
+        "professional chef", "culinary institute", "the food lab"],
+    3: ["king arthur", "serious eats", "kenji", "la cucina italiana", "gambero rosso"],
+}
+
+def _classifica_fonte(testo_fonte):
+    """Classifica una fonte nel suo Tier (#310A: fonti = entita verificate)."""
+    t = (testo_fonte or "").lower()
+    for tier in [0, 1, 2, 3]:
+        if any(k in t for k in _FONTI_TIER[tier]):
+            return tier
+    return 4  # fonte non riconosciuta / bassa affidabilita
+
+
+@bp.route("/admin/compiler/valida", methods=["POST"])
+def admin_compiler_valida():
+    """Knowledge Compiler (#308A): valida una scheda coi due Gate. Se fallisce, NON passa a ai_verified.
+    Gate A (sintattico #310): forma. Gate B (semantico #310): fonti Tier 0-2, coerenza numerica."""
+    from flask import request, jsonify
+    import os, psycopg2, json, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    d = request.get_json(force=True) or {}
+    slug = d.get("slug", "")
+    if not slug: return jsonify({"errore": "manca slug"}), 400
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE (id=%s OR LOWER(name) LIKE LOWER(%s)) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (slug, f"%{slug}%"))
+        r = cur.fetchone()
+        if not r: return jsonify({"errore": "non trovata"})
+        dd = r[2] if isinstance(r[2], dict) else (json.loads(r[2]) if r[2] else {})
+        testo_tot = str(dd.get("scheda","")) + str(dd.get("errori_comuni","")) + str(dd.get("esecuzione",""))
+        gate_a = {"passato": True, "problemi": []}
+        gate_b = {"passato": True, "problemi": []}
+        # GATE A - SINTATTICO (#310): forma
+        if len(testo_tot) < 150: gate_a["passato"]=False; gate_a["problemi"].append("contenuto troppo breve")
+        if "non trovo" in testo_tot.lower() or "non disponibile" in testo_tot.lower():
+            gate_a["passato"]=False; gate_a["problemi"].append("contiene 'non trovo dati'")
+        # GATE B - SEMANTICO (#310, #309A): fonti + coerenza numerica
+        fonti = dd.get("provenienza",{}).get("fonti",[])
+        if not fonti:
+            # estraggo le fonti dal testo (dopo "FONTI:")
+            m = re.search(r"FONTI?:(.+?)(?:CONFIDENZA|$)", testo_tot, re.IGNORECASE|re.DOTALL)
+            if m: fonti = [x.strip() for x in re.split(r"[;,]", m.group(1)) if x.strip()][:5]
+        tiers = [_classifica_fonte(f) for f in fonti]
+        has_autorevole = any(t <= 2 for t in tiers)  # #309A: almeno una Tier 0-2
+        if not fonti: gate_b["passato"]=False; gate_b["problemi"].append("nessuna fonte citata")
+        elif not has_autorevole: gate_b["passato"]=False; gate_b["problemi"].append("nessuna fonte Tier 0-2 (solo blog)")
+        # coerenza numerica: temperature assurde
+        temps = re.findall(r"(\d{2,3})\s*°?\s*[cC]", testo_tot)
+        for tp in temps:
+            if int(tp) > 300: gate_b["problemi"].append(f"temperatura sospetta: {tp}C"); gate_b["passato"]=False
+        # ESITO
+        compilata = gate_a["passato"] and gate_b["passato"]
+        nuovo_stato = "ai_verified" if compilata else "ai_generated"
+        dd["stato_editoriale"] = nuovo_stato
+        dd["fonti_tier"] = min(tiers) if tiers else 4
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), r[0]))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"slug": r[0], "compilata": compilata, "stato": nuovo_stato,
+                        "gate_a": gate_a, "gate_b": gate_b,
+                        "fonti_trovate": len(fonti), "tier_migliore": min(tiers) if tiers else 4})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/compiler/versiona", methods=["POST"])
+def admin_compiler_versiona():
+    """Versionamento (#312A): salva uno snapshot della scheda prima di modificarla. Reversibile."""
+    from flask import request, jsonify
+    import os, psycopg2, json, time
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    d = request.get_json(force=True) or {}
+    slug = d.get("slug", "")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE id=%s OR LOWER(name) LIKE LOWER(%s) LIMIT 1", (slug, f"%{slug}%"))
+        r = cur.fetchone()
+        if not r: return jsonify({"errore": "non trovata"})
+        dd = r[1] if isinstance(r[1], dict) else (json.loads(r[1]) if r[1] else {})
+        versioni = dd.get("_versioni", [])
+        # snapshot dei campi contenuto (non tutto il nodo, solo cio' che cambia)
+        snap = {"ts": int(time.time()), "scheda": dd.get("scheda",""), "errori_comuni": dd.get("errori_comuni",""),
+                "esecuzione": dd.get("esecuzione",""), "stato_editoriale": dd.get("stato_editoriale","")}
+        versioni.append(snap)
+        dd["_versioni"] = versioni[-10:]  # tengo le ultime 10
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), r[0]))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"slug": r[0], "versione_salvata": len(versioni), "versioni_totali": len(dd["_versioni"])})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
