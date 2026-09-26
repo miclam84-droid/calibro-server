@@ -1043,3 +1043,7 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .skel-line{height:14px;background:linear-gradient(90deg,#e4e2da 25%,#eeece6 50%,#e4e2da 75%);background-size:200% 100%;animation:skel 1.2s infinite;border-radius:4px;margin-bottom:10px}
 .skel-line.w40{width:40%} .skel-line.w60{width:60%} .skel-line.w80{width:80%}
 .skel-box{height:110px;background:linear-gradient(90deg,#e4e2da 25%,#eeece6 50%,#e4e2da 75%);background-size:200% 100%;animation:skel 1.2s infinite;border-radius:4px;margin-bottom:14px}
+
+/* ═══ Home rifinitura (#334): FAB Galileo non si sovrappone alla card ═══ */
+/* nel Banco c'è già la card Galileo: nascondo il FAB ridondante, lo mostro solo negli altri luoghi */
+/* visibilità FAB gestita via JS (_aggiornaGalileoFab) */

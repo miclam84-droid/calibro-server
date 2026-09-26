@@ -478,6 +478,7 @@ function switchTab(t){
   if(_ov){ _ov.classList.add('hidden'); }
   document.querySelectorAll('.screen').forEach(function(s){ s.style.removeProperty('display'); });
   window._luogoAttivo = t;
+  setTimeout(function(){ window._aggiornaGalileoFab&&window._aggiornaGalileoFab(); },50);
   // carica il modulo chat quando si apre l'Assistente (lazy)
   if(t==='chiedi' && !window._moduli.chat){ _caricaModulo('chat'); }
   // carica il modulo lezioni per Atlante (mappa) e Quaderno (palestra)
@@ -5837,6 +5838,15 @@ function _ensureVistaOverlay(){
   }
   return o;
 }
+window._aggiornaGalileoFab = function(){
+  var fab=document.getElementById('galileo-fab'); if(!fab) return;
+  var ov=document.getElementById('vista-overlay');
+  var inVista = ov && !ov.classList.contains('hidden');
+  var scScopri=document.getElementById('screen-scopri');
+  var inBanco = scScopri && scScopri.classList.contains('active') && !inVista;
+  // nel Banco c'è già la card Galileo -> nascondo il FAB (no doppio, no sovrapposizione)
+  fab.style.display = inBanco ? 'none' : 'flex';
+};
 // ═══ ROUTER UNICO (#277): un solo percorso per aprire un luogo, da qualsiasi ingresso ═══
 window.apriLuogo = function(nome){
   var mappa={
@@ -5866,6 +5876,7 @@ function _apriVista(titolo, htmlIniziale){
   document.getElementById('vista-body').scrollTop = 0;
   // unica fonte di verità (#279): il luogo attivo è questa vista
   window._luogoAttivo = titolo;
+  window._aggiornaGalileoFab&&window._aggiornaGalileoFab();
   // nav coerente: nessuna tab-screen evidenziata quando sono in una vista-luogo
   document.querySelectorAll('.tab-btn').forEach(function(t){ t.classList.remove('active'); });
 }

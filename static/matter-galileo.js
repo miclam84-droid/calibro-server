@@ -11,6 +11,7 @@ window._galileoInit = function(){
   fab.innerHTML='<i class="ph ph-sparkle" aria-hidden="true"></i>';
   fab.onclick=window.apriGalileo;
   document.body.appendChild(fab);
+  setTimeout(function(){ window._aggiornaGalileoFab&&window._aggiornaGalileoFab(); }, 100);
 };
 
 window.apriGalileo = function(){
