@@ -139,10 +139,74 @@ function apriGate(sJson){
     + '<button class="as-gate-chiudi" onclick="this.closest(\'.as-gate-ov\').remove()">Chiudi</button></div>';
   document.body.appendChild(ov);
 }
-function _asAzione(tipo,id){
-  // gli endpoint di supporto (genera/salva/cambia-stato) sono in costruzione lato backend
-  alert('Azione "'+tipo+'" su '+id+' — endpoint di supporto in costruzione lato backend (Quality Gate). La UI e pronta a chiamarlo appena disponibile.');
+// il primo strato mancante (per il Genera)
+function _asPrimoMancante(strati){
+  strati=strati||{};
+  if(!strati.fondamenta) return 'fondamenta';
+  if(!strati.operativita) return 'operativita';
+  return 'operativita';
 }
+function _asEsito(html){
+  var ov=document.querySelector('.as-gate-ov'); if(!ov) return;
+  var box=document.getElementById('as-esito');
+  if(!box){ box=document.createElement('div'); box.id='as-esito'; box.style.cssText='margin-top:14px'; ov.querySelector('.as-gate').insertBefore(box, ov.querySelector('.as-gate-chiudi')); }
+  box.innerHTML=html;
+}
+function _asAzione(tipo,id){
+  var s=(window._asReg||[]).find(function(x){ return (x.id===id||x.slug===id); }) || {};
+  var strati=s.strati||{};
+  if(tipo==='genera'){
+    var strato=_asPrimoMancante(strati);
+    _asEsito('<div style="padding:12px;background:#fff;border:1.5px solid #245979;font-size:13px"><b>Generazione strato "'+esc(strato)+'"…</b><br><span style="color:#5a6c70">L\'AI sta scrivendo dalle fonti citate. Ci mette 20-40 secondi.</span></div>');
+    fetch('/admin/atlas-studio/genera?s='+encodeURIComponent(_s),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:(s.slug||id), strato:strato})})
+      .then(function(r){return r.json();}).then(function(j){
+        var testo=j.testo_generato||'';
+        // bozza NON salvata: textarea editabile (Quality Gate #295)
+        _asEsito('<div style="padding:12px;background:#fff;border:1.5px solid var(--ink)"><div style="font-family:var(--mono);font-size:10px;font-weight:700;color:#c77b3f;margin-bottom:6px">BOZZA AI — STRATO '+esc((j.strato||strato).toUpperCase())+' (da validare)</div>'
+          + '<textarea id="as-bozza" style="width:100%;min-height:160px;border:1.5px solid #c4c0b4;padding:10px;font-family:var(--sans);font-size:13px;line-height:1.5;resize:vertical">'+esc(testo)+'</textarea>'
+          + (j.nota?'<div style="font-size:11px;color:#5a6c70;margin-top:6px;font-style:italic">'+esc(j.nota)+'</div>':'')
+          + '<button style="width:100%;margin-top:10px;padding:12px;background:var(--verde);color:#fff;border:0;font-family:var(--sans);font-weight:700;cursor:pointer" onclick="_asSalvaBozza(\''+esc(s.slug||id)+'\',\''+esc(j.strato||strato)+'\')">✓ Valida e salva questo strato</button>'
+          + '<div style="font-size:11px;color:#9daeb2;margin-top:8px;text-align:center">Leggi e correggi prima di salvare. La bozza non è ancora salvata.</div></div>');
+      }).catch(function(){ _asEsito('<div style="color:#c77b3f;padding:12px">Errore nella generazione. Riprova.</div>'); });
+  }
+  else if(tipo==='modifica'){
+    _asEsito('<div style="padding:12px;background:#fff;border:1.5px solid var(--ink)"><div style="font-family:var(--mono);font-size:10px;font-weight:700;color:#245979;margin-bottom:6px">MODIFICA TESTO</div>'
+      + '<textarea id="as-bozza" style="width:100%;min-height:140px;border:1.5px solid #c4c0b4;padding:10px;font-family:var(--sans);font-size:13px"></textarea>'
+      + '<button style="width:100%;margin-top:10px;padding:12px;background:var(--verde);color:#fff;border:0;font-weight:700;cursor:pointer" onclick="_asSalvaBozza(\''+esc(s.slug||id)+'\',\'operativita\')">✓ Salva</button></div>');
+  }
+  else if(tipo==='esperienza'){
+    _asEsito('<div style="padding:12px;background:#fff;border:1.5px solid var(--ink)"><div style="font-family:var(--mono);font-size:10px;font-weight:700;color:#c77b3f;margin-bottom:6px">ESPERIENZA MATTER (casi reali, la tua mano)</div>'
+      + '<textarea id="as-bozza" style="width:100%;min-height:140px;border:1.5px solid #c4c0b4;padding:10px;font-family:var(--sans);font-size:13px" placeholder="Casi reali dal banco, errori visti, dettagli operativi che solo l\'esperienza conosce…"></textarea>'
+      + '<button style="width:100%;margin-top:10px;padding:12px;background:var(--verde);color:#fff;border:0;font-weight:700;cursor:pointer" onclick="_asSalvaBozza(\''+esc(s.slug||id)+'\',\'esperienza\')">✓ Salva Esperienza</button></div>');
+  }
+  else if(tipo==='revisione'){
+    _asCambiaStato(s.slug||id, 'in_revisione');
+  }
+  else if(tipo==='pubblica'){
+    // se c'è una bozza non salvata, salvo prima; poi pubblico
+    var bz=document.getElementById('as-bozza');
+    if(bz && bz.value.trim()){ _asEsito('<div style="padding:12px;color:#5a6c70">Salvo la bozza aperta, poi pubblico…</div>'); }
+    _asCambiaStato(s.slug||id, 'pubblicata');
+  }
+}
+window._asSalvaBozza=function(slug, strato){
+  var ta=document.getElementById('as-bozza'); var testo=ta?ta.value:'';
+  if(!testo.trim()){ _asEsito('<div style="color:#c77b3f;padding:12px">Niente da salvare.</div>'); return; }
+  _asEsito('<div style="padding:12px;color:#5a6c70">Salvo…</div>');
+  fetch('/admin/atlas-studio/salva?s='+encodeURIComponent(_s),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:slug, strato:strato, testo:testo})})
+    .then(function(r){return r.json();}).then(function(j){
+      _asEsito('<div style="padding:12px;background:rgba(58,157,93,.1);border:1.5px solid var(--verde);color:#2d7d48"><b>✓ Strato "'+esc(strato)+'" salvato.</b><br><span style="color:#5a6c70;font-size:12px">Lo score si ricalcola. Ricarica la pipeline per vederlo.</span></div>');
+      setTimeout(carica, 1000);
+    }).catch(function(){ _asEsito('<div style="color:#c77b3f;padding:12px">Errore nel salvataggio.</div>'); });
+};
+window._asCambiaStato=function(slug, nuovo){
+  _asEsito('<div style="padding:12px;color:#5a6c70">Sposto in "'+esc(nuovo)+'"…</div>');
+  fetch('/admin/atlas-studio/stato?s='+encodeURIComponent(_s),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:slug, nuovo_stato:nuovo})})
+    .then(function(r){return r.json();}).then(function(j){
+      _asEsito('<div style="padding:12px;background:rgba(58,157,93,.1);border:1.5px solid var(--verde);color:#2d7d48"><b>✓ Spostata in "'+esc(nuovo)+'".</b></div>');
+      setTimeout(function(){ var ov=document.querySelector('.as-gate-ov'); if(ov) ov.remove(); carica(); }, 1000);
+    }).catch(function(){ _asEsito('<div style="color:#c77b3f;padding:12px">Errore nel cambio stato.</div>'); });
+};
 try{ var ss=sessionStorage.getItem('as_s'); if(ss){ _s=ss; document.getElementById('gate').style.display='none'; document.getElementById('studio').style.display='block'; carica(); } }catch(e){}
 </script>
 </body>
