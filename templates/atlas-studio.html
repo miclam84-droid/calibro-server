@@ -67,6 +67,27 @@ body{background:#e4e2da;color:var(--ink);font-family:var(--sans);padding:16px;pa
 .as-ed-ai_verified{background:rgba(36,89,121,.15);color:#245979}
 .as-ed-curated{background:rgba(58,157,93,.15);color:#2d7d48}
 .as-ed-canon{background:rgba(184,134,11,.18);color:#8a6508}
+.as-batch{background:#fff;border:1.5px solid var(--ink);box-shadow:4px 4px 0 rgba(20,29,34,.12);padding:16px;margin-bottom:18px}
+.as-batch-top{margin-bottom:12px}
+.as-batch-lab{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--terra)}
+.as-batch-info{display:block;font-family:var(--sans);font-size:12px;color:#5a6c70;margin-top:3px}
+.as-batch-ctrl{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.as-batch-ctrl label{font-family:var(--sans);font-size:11px;color:#5a6c70;display:flex;flex-direction:column;gap:4px}
+.as-batch-ctrl select,.as-batch-ctrl input{min-height:38px;border:1.5px solid var(--ink);padding:0 10px;font-family:var(--mono);font-size:13px}
+.as-batch-go{min-height:42px;padding:0 18px;background:var(--terra);color:#241109;border:0;font-family:var(--sans);font-weight:700;font-size:14px;cursor:pointer}
+.as-batch-go:disabled{background:#c4c0b4;cursor:wait}
+.as-batch-run{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;background:rgba(36,89,121,.06);border-left:3px solid var(--prussia)}
+.as-batch-spin{width:24px;height:24px;border:3px solid #d8d5cc;border-top-color:var(--terra);border-radius:50%;animation:asspin .8s linear infinite;flex-shrink:0}
+@keyframes asspin{to{transform:rotate(360deg)}}
+.as-batch-esito{margin-top:14px;padding:14px;background:rgba(58,157,93,.08);border:1.5px solid var(--verde)}
+.as-batch-esito.brk{background:rgba(199,123,63,.1);border-color:var(--terra)}
+.as-batch-esito-h{font-family:var(--sans);font-weight:700;font-size:15px;margin-bottom:8px}
+.as-batch-nums{font-family:var(--sans);font-size:14px;margin-bottom:6px}
+.as-batch-nota{font-family:var(--sans);font-size:12px;color:#5a6c70;font-style:italic;margin-bottom:10px}
+.as-batch-dett{display:flex;flex-direction:column;gap:3px}
+.as-batch-riga{font-family:var(--sans);font-size:12px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.as-batch-riga.ok{color:#2d7d48} .as-batch-riga.ko{color:#8a1f1f}
+.as-batch-err{margin-top:14px;padding:12px;background:rgba(138,31,79,.08);border-left:3px solid #8a1f1f;font-family:var(--sans);font-size:13px;color:#8a1f1f}
 </style>
 </head>
 <body>
@@ -84,6 +105,15 @@ body{background:#e4e2da;color:var(--ink);font-family:var(--sans);padding:16px;pa
     <button class="as-refresh" onclick="carica()">↻ Aggiorna</button>
   </div>
   <div id="dash"></div>
+  <div id="batch-panel" class="as-batch">
+    <div class="as-batch-top"><span class="as-batch-lab">⚡ GENERAZIONE A ONDATE</span><span class="as-batch-info">l'AI compila le schede meno complete, a ondate controllate</span></div>
+    <div class="as-batch-ctrl">
+      <label>Schede per ondata <select id="batch-n"><option>4</option><option selected>6</option><option>8</option></select></label>
+      <label>Dominio (opz.) <input id="batch-dom" placeholder="es. pane" style="width:90px"></label>
+      <button id="batch-go" class="as-batch-go" onclick="_lanciaOndata()">Lancia ondata →</button>
+    </div>
+    <div id="batch-esito"></div>
+  </div>
   <div id="pipeline"><div class="as-load">Carico la coda…</div></div>
 </div>
 
@@ -237,6 +267,31 @@ window._asCambiaStato=function(slug, nuovo){
       setTimeout(function(){ var ov=document.querySelector('.as-gate-ov'); if(ov)ov.remove(); carica(); }, 1200);
     }).catch(function(){ _asEsito('<div style="color:#c77b3f;padding:12px">Errore.</div>'); });
 };
+// GENERAZIONE A ONDATE (Board #56): sincrono ~50s, circuit breaker
+window._lanciaOndata=function(){
+  var n=document.getElementById('batch-n').value;
+  var dom=document.getElementById('batch-dom').value.trim();
+  var go=document.getElementById('batch-go'); if(go){ go.disabled=true; go.textContent='Genero…'; }
+  var box=document.getElementById('batch-esito');
+  box.innerHTML='<div class="as-batch-run"><div class="as-batch-spin"></div><div><b>Ondata in corso…</b><br><span style="color:#5a6c70;font-size:12px">L\'AI sta scrivendo '+esc(n)+' schede dalle fonti. Fino a ~50 secondi. Non chiudere.</span></div></div>';
+  var body={n:parseInt(n,10), soglia:3}; if(dom) body.dominio=dom;
+  fetch('/admin/atlas-studio/batch?s='+encodeURIComponent(_s),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json();}).then(function(j){
+      if(go){ go.disabled=false; go.textContent='Lancia ondata →'; }
+      if(j.errore){ box.innerHTML='<div class="as-batch-err">Errore: '+esc(j.errore)+'</div>'; return; }
+      var brk=j.circuit_breaker_scattato;
+      var dett=(j.dettaglio||[]).map(function(x){ return '<div class="as-batch-riga'+(x.compilata?' ok':(x.errore?' ko':''))+'"><span>'+(x.compilata?'✓':(x.errore?'✕':'○'))+'</span> '+esc(x.nome)+(x.fonti?' <span style="color:#9daeb2">('+x.fonti+' fonti)</span>':'')+(x.errore?' <span style="color:#c77b3f">'+esc(x.errore)+'</span>':'')+'</div>'; }).join('');
+      box.innerHTML='<div class="as-batch-esito'+(brk?' brk':'')+'">'
+        + '<div class="as-batch-esito-h">'+(brk?'⚠ Circuit breaker: STOP':'✓ Ondata completata')+'</div>'
+        + '<div class="as-batch-nums"><b>'+(j.compilate||0)+'</b> compilate (AI Verified) · <b>'+(j.falliti||0)+'</b> fallite · '+(j.ondata||0)+' processate</div>'
+        + '<div class="as-batch-nota">'+esc(j.nota||'')+'</div>'
+        + '<div class="as-batch-dett">'+dett+'</div>'
+        + (brk?'':'<button class="as-batch-go" style="margin-top:10px" onclick="_lanciaOndata()">Lancia la prossima ondata →</button>')
+        + '</div>';
+      carica(); // aggiorna dashboard + pipeline (le nuove AI Verified compaiono)
+    }).catch(function(){ if(go){ go.disabled=false; go.textContent='Lancia ondata →'; } box.innerHTML='<div class="as-batch-err">Errore di rete o timeout. L\'ondata potrebbe essere andata comunque: ricarica.</div>'; });
+};
+
 try{ var ss=sessionStorage.getItem('as_s'); if(ss){ _s=ss; document.getElementById('gate').style.display='none'; document.getElementById('studio').style.display='block'; carica(); } }catch(e){}
 </script>
 </body>
