@@ -4551,7 +4551,7 @@ def grafo_possibilita(ingrediente):
 
         # candidati SENSATI per ruolo (evita 'pollo fritto' come croccante di una caprese)
         _SENSATI = {
-            "grasso": ["olio extravergine","olio evo","burro","panna","mascarpone","stracciatella","olio"],
+            "grasso": ["burro","panna","mascarpone","stracciatella","olio extravergine","olio taggiasca","olio coratina","lardo","pancetta"],
             "acido": ["limone","aceto","lime","agrumi","pomodoro","yogurt","vino bianco","verjus"],
             "aroma_fresco": ["basilico","menta","prezzemolo","erba cipollina","rucola","scorza di limone"],
             "umami": ["parmigiano","pomodoro","acciuga","funghi","prosciutto","miso","colatura"],
