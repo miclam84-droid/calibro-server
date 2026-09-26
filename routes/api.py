@@ -4921,6 +4921,15 @@ def composer_prossimi():
         if profilo["umami"] >= 7 and profilo["acido"] < 3:
             contrasti_richiesti.append(("acido", "Umami intenso: acidita' lo rende piu' vivo"))
 
+        # categorie/tipi degli ingredienti gia scelti (per escludere i parenti: no manzo->tagli di manzo)
+        cat_scelte = set(); tipi_scelti = set()
+        for _ids in ids_scelti:
+            _cur.execute("SELECT data FROM nodes WHERE id=%s", (_ids,))
+            _rs = _cur.fetchone()
+            if _rs:
+                _dds = _rs[0] if isinstance(_rs[0], dict) else _j.loads(_rs[0])
+                if _dds.get('categoria'): cat_scelte.add(str(_dds['categoria']).lower())
+                if _dds.get('tipo_base'): tipi_scelti.add(str(_dds['tipo_base']).lower())
         # 3. candidati: ingredienti NON gia scelti, con proprieta o composti
         _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                         AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 313""")
@@ -4928,6 +4937,9 @@ def composer_prossimi():
         for nid, nome, data in _cur.fetchall():
             if nid in ids_scelti: continue
             dd = data if isinstance(data, dict) else _j.loads(data)
+            # NO PARENTI: se stessa categoria o stesso tipo_base di un ingrediente gia scelto, salto
+            _catc = str(dd.get('categoria','')).lower(); _tipc = str(dd.get('tipo_base','')).lower()
+            if (_catc and _catc in cat_scelte) or (_tipc and _tipc in tipi_scelti): continue
             prop = dd.get("proprieta", {})
             # scarto id grezzi (fermented_tea, bantu_beer) e nomi tecnici
             if '_' in nome or any(x in nome.lower() for x in ['_tea','_beer','_oil','beer','oleoresin']):
@@ -4949,7 +4961,10 @@ def composer_prossimi():
                 contrasto.append({"id": nid, "nome": nome, "motivo": motivo_contrasto,
                                   "valore": prop.get(prop_needed, 0)})
             elif overlap >= 3:
-                analogia.append({"id": nid, "nome": nome, "composti_condivisi": overlap})
+                # indice normalizzato 0-100 (non il conteggio grezzo che confonde)
+                _tot = max(len(composti_ricetta), 1)
+                _indice = min(99, int(overlap / _tot * 100))
+                analogia.append({"id": nid, "nome": nome, "composti_condivisi": overlap, "indice": _indice})
         analogia.sort(key=lambda x: -x["composti_condivisi"])
         _cur.close(); _release_conn(_c)
         return jsonify({
