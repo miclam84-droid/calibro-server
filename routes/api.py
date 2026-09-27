@@ -4586,10 +4586,12 @@ def grafo_possibilita(ingrediente):
                 equilibrio.append({"ingrediente": best, "ruolo": nome_ruolo, "forza": bestv})
                 usati.add(best)
 
-        # BLUEPRINT (#257): il piatto embrionale = centro + i ruoli dell'equilibrio
-        blueprint = {"base": nome_c}
-        for e in equilibrio:
-            blueprint[e["ruolo"]] = e["ingrediente"]
+        # BLUEPRINT — Sprint 0 #64: la vecchia logica riempiva ogni ruolo con una whitelist FISSA
+        # (burro, nocciola, parmigiano...) uguale per ogni ingrediente -> cioccolato+parmigiano, osceno.
+        # #372: meglio onesto che osceno. Mostro solo la base + nota "in costruzione".
+        # Il blueprint vero (che dipende dall'ingrediente) arriva con la rifondazione del motore (Sprint 1-2).
+        blueprint = {"base": nome_c, "_in_costruzione": True,
+                     "_nota": "Il piatto embrionale e' in aggiornamento."}
 
         # MOTORE TRADIZIONE (#256): abbinamenti documentati (archi abbinamento_aromatico)
         tradizione = []
