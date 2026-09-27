@@ -31,6 +31,13 @@ window.caricaPossibilita = function(){
 function _psRender(d){
   var e=_escV, out=document.getElementById('ps-out');
   if(!out) return;
+  // #2: flag "in aggiornamento" -> box elegante, mai blueprint rotto
+  if(d._in_costruzione || d.in_aggiornamento){
+    out.innerHTML='<div class="ps-aggiorna"><div class="ps-aggiorna-ico">◎</div>'
+      + '<div class="ps-aggiorna-t">Questa combinazione è in aggiornamento</div>'
+      + '<div class="ps-aggiorna-d">'+e(d._nota||d.messaggio||'Matter sta affinando le possibilità per questo ingrediente. Torna presto — o prova con un altro.')+'</div></div>';
+    return;
+  }
   var centro=d.centro||'';
   // 1. FIRMA DI RUOLI
   var firma=(d.firma_ruoli||[]);

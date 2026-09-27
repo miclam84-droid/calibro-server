@@ -1068,3 +1068,14 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 .sc-fonti-tit i{color:#245979}
 .sc-fonti-tier{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;color:#9daeb2}
 .sc-fonti-nota{font-family:'Inter',sans-serif;font-size:11px;color:#9daeb2;font-style:italic;margin-top:8px}
+
+/* ═══ #2 Box "in aggiornamento" (dignità, non blueprint rotto) ═══ */
+.ps-aggiorna{text-align:center;padding:48px 24px;margin:16px 0;background:#f4f2ec;border:1.5px solid #c4c0b4;background-image:linear-gradient(rgba(20,29,34,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(20,29,34,.04) 1px,transparent 1px);background-size:22px 22px}
+.ps-aggiorna-ico{font-size:34px;color:#c77b3f;margin-bottom:14px}
+.ps-aggiorna-t{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;color:#141d22;margin-bottom:8px}
+.ps-aggiorna-d{font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;color:#5a6c70;max-width:300px;margin:0 auto}
+
+/* ═══ #1 GRIGLIA OVUNQUE — identità del brand (strumento di misura) ═══ */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;background-image:linear-gradient(rgba(20,29,34,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(20,29,34,.028) 1px,transparent 1px);background-size:24px 24px}
+.vista-overlay{background-image:linear-gradient(rgba(20,29,34,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(20,29,34,.028) 1px,transparent 1px)!important;background-size:24px 24px!important;background-color:#ecebe5!important}
+.screen,.vista-body{position:relative;z-index:1}

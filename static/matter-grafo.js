@@ -21,7 +21,7 @@ function _grDedup(nodi){
 }
 function _grLabel(nome){
   var s=_grNome(nome);
-  return s.length>12 ? s.slice(0,11)+'\u2026' : s;
+  return window._troncaNome?window._troncaNome(s,13):(s.length>12?s.slice(0,11)+String.fromCharCode(8230):s);
 }
 window.apriGrafo = function(ingredienteIniziale){
   _g.centro = ingredienteIniziale||'pomodoro';

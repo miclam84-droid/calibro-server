@@ -140,6 +140,11 @@ window.caricaFlavour = async function(term){
     try{
       var rg=await fetch('/v1/flavour-network/'+encodeURIComponent(q));
       var jg=await rg.json();
+      // #2: flag "in aggiornamento" -> box elegante, mai grafo osceno
+      if(jg.in_aggiornamento || jg._in_costruzione){
+        out.innerHTML='<div class="ps-aggiorna"><div class="ps-aggiorna-ico">◎</div><div class="ps-aggiorna-t">Questa rete è in aggiornamento</div><div class="ps-aggiorna-d">'+_escV(jg.messaggio||'Matter sta affinando le connessioni aromatiche per questo ingrediente. Torna presto.')+'</div></div>';
+        return;
+      }
       nodiGrafo=(jg.nodi||[]).map(function(n){ return {ingrediente:n.nome, overlap:n.forza}; });
     }catch(x){}
     const r = await fetch('/v1/abbina/'+encodeURIComponent(q)+'?lang='+_vistaLang());
@@ -181,7 +186,7 @@ window._flavourGrafo = function(centro, nodi){
     svg+='<g class="fnv-g-node" style="animation-delay:'+(i*0.08+0.1)+'s">';
     svg+='<circle cx="'+x+'" cy="'+y+'" r="5" fill="'+(sorp?'#c77b3f':'#245979')+'"/>';
     var tx=x, anchor='middle', dy=(y<cy?-10:16);
-    svg+='<text x="'+tx+'" y="'+(y+dy)+'" text-anchor="'+anchor+'" font-family="Inter,sans-serif" font-size="10" fill="#141d22">'+e(String(a.ingrediente).slice(0,14))+'</text>';
+    svg+='<text x="'+tx+'" y="'+(y+dy)+'" text-anchor="'+anchor+'" font-family="Inter,sans-serif" font-size="10" fill="#141d22">'+e(_troncaNome(a.ingrediente,14))+'</text>';
     svg+='</g>';
   });
   // centro

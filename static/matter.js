@@ -5823,6 +5823,15 @@ function toggleScavaPorta(i){
    ═══════════════════════════════════════════════════════════════════ */
 
 // helper condivisi
+window._troncaNome = function(nome, max){
+  max=max||14; var s=String(nome||'').replace(/_/g,' ').trim();
+  if(s.length<=max) return s;
+  // tronco a parola intera, mai a metà
+  var taglio=s.slice(0,max);
+  var lastSpace=taglio.lastIndexOf(' ');
+  if(lastSpace>4) taglio=taglio.slice(0,lastSpace);
+  return taglio+'\u2026';
+};
 function _escV(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function _vistaLang(){ return (typeof _lang!=='undefined' && _lang) ? _lang : 'it'; }
 
@@ -5986,7 +5995,7 @@ async function caricaPonti(){
       svg+='</g>';
     });
     svg+='<circle cx="'+cx+'" cy="'+cy+'" r="30" fill="#141d22" stroke="#c77b3f" stroke-width="2.5"/>';
-    svg+='<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="12" fill="#e8935a">'+e((d.ingrediente||q).slice(0,12))+'</text>';
+    svg+='<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="12" fill="#e8935a">'+e(_troncaNome(d.ingrediente||q,12))+'</text>';
     svg+='</svg>';
     var sub = nConn!=null ? (nConn+' ingredienti in '+ponti.length+' discipline') : (ponti.length+' discipline');
     var html='<div class="ponti-res-head"><span class="ponti-res-ing">'+e(d.ingrediente||q)+'</span><span class="ponti-res-sub">'+sub+'</span></div>';
