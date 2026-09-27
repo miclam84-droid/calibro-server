@@ -6,7 +6,8 @@ window.apriBiodiversita = function(){
   _apriVista('Biodiversità',
     '<div class="bio-hero"><div class="bio-hero-lab">IMPARA · IL PATRIMONIO GASTRONOMICO</div>'
     + '<div class="bio-hero-claim">La biodiversità italiana,<br>varietà per varietà.</div>'
-    + '<div class="bio-hero-sub">Ogni territorio custodisce le sue varietà. DOP, IGP, presidi Slow Food: non badge, ma il valore vero di un ingrediente.</div></div>'
+    + '<div class="bio-hero-sub">Ogni territorio custodisce le sue varietà. DOP, IGP, presidi Slow Food: non badge, ma il valore vero di un ingrediente.</div>'
+    + '<div class="bio-arricchimento">◆ In arricchimento — Matter sta ampliando le varietà, regione per regione.</div></div>'
     + '<div id="bio-regioni"><div class="vista-loading">Carico le regioni…</div></div>');
   fetch('/v1/biodiversita/regioni').then(function(r){return r.json();}).then(function(d){
     var reg=d.regioni||[];

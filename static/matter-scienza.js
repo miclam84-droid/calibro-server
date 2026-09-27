@@ -30,13 +30,12 @@ window.apriSchedeScienza = function(){
     if(!schede.length){ cont.innerHTML='<div class="vista-empty">Nessuna scheda disponibile.</div>'; return; }
     // raggruppo per categoria
     var gruppi={};
-    // categoria: usa quella del backend, altrimenti deduco dal prefisso slug (mai un unico blob "Altro")
+    // categoria vera dal backend (sistemato: nessuna vuota, fallback trasversale)
     schede.forEach(function(s){
-      var c=s.categoria;
-      if(!c){ var sl=String(s.slug||''); c = sl.indexOf('tec-')===0?'tecnica' : (sl.indexOf('fen-')===0?'fenomeno' : 'trasversale'); }
+      var c=s.categoria||'trasversale';
       (gruppi[c]=gruppi[c]||[]).push(s);
     });
-    // ordine: le categorie di mestiere prima, trasversali/fenomeni dopo
+    // ordine: le categorie di mestiere prima, trasversali dopo
     var _ORD=['panificazione','pasticceria','gelateria','cucina','bar','caffetteria','birra','vino','tecnica','fenomeno','trasversale'];
     var chiavi=Object.keys(gruppi).sort(function(a,b){ var ia=_ORD.indexOf(a), ib=_ORD.indexOf(b); return (ia<0?99:ia)-(ib<0?99:ib); });
     var e=_escV, html='';
