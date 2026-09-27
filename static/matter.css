@@ -1084,3 +1084,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .chat-ap-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .chat-ap-x{background:none;border:0;color:#7fb0c4;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;padding:2px 4px}
 .chat-ap-x:active{opacity:.6}
+
+/* ═══ #7 Schede Atlante — categorie ariose, non ammassate ═══ */
+.sc-cat-lab{display:flex;align-items:center;gap:8px;margin-top:26px}
+.sc-cat-n{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#9daeb2}
+.sc-grid{gap:12px;margin-bottom:8px}

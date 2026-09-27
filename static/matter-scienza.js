@@ -30,10 +30,19 @@ window.apriSchedeScienza = function(){
     if(!schede.length){ cont.innerHTML='<div class="vista-empty">Nessuna scheda disponibile.</div>'; return; }
     // raggruppo per categoria
     var gruppi={};
-    schede.forEach(function(s){ var c=s.categoria||'altro'; (gruppi[c]=gruppi[c]||[]).push(s); });
+    // categoria: usa quella del backend, altrimenti deduco dal prefisso slug (mai un unico blob "Altro")
+    schede.forEach(function(s){
+      var c=s.categoria;
+      if(!c){ var sl=String(s.slug||''); c = sl.indexOf('tec-')===0?'tecnica' : (sl.indexOf('fen-')===0?'fenomeno' : 'trasversale'); }
+      (gruppi[c]=gruppi[c]||[]).push(s);
+    });
+    // ordine: le categorie di mestiere prima, trasversali/fenomeni dopo
+    var _ORD=['panificazione','pasticceria','gelateria','cucina','bar','caffetteria','birra','vino','tecnica','fenomeno','trasversale'];
+    var chiavi=Object.keys(gruppi).sort(function(a,b){ var ia=_ORD.indexOf(a), ib=_ORD.indexOf(b); return (ia<0?99:ia)-(ib<0?99:ib); });
     var e=_escV, html='';
-    Object.keys(gruppi).forEach(function(cat){
-      html+='<div class="sc-cat-lab">'+e(_CATLAB[cat]||cat)+'</div><div class="sc-grid">';
+    var _LAB2={panificazione:'Panificazione',pasticceria:'Pasticceria',gelateria:'Gelateria',cucina:'Cucina',bar:'Bar',caffetteria:'Caffetteria',birra:'Birra',vino:'Vino',tecnica:'Tecniche',fenomeno:'Fenomeni',trasversale:'Trasversali'};
+    chiavi.forEach(function(cat){
+      html+='<div class="sc-cat-lab">'+e(_LAB2[cat]||_CATLAB[cat]||cat)+' <span class="sc-cat-n">'+gruppi[cat].length+'</span></div><div class="sc-grid">';
       html+=gruppi[cat].map(function(s){
         return '<button class="sc-card" onclick="apriSchedaScienza(\''+e(s.slug)+'\')"><span class="sc-card-nome">'+e(s.nome||s.slug)+'</span><span class="sc-card-arr">→</span></button>';
       }).join('');
