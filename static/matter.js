@@ -3676,12 +3676,9 @@ const _MB_CAT_CFG = {
 function chiudiModo(){ document.getElementById('menu-modo').classList.add('hidden'); }
 
 function creaMenu(){
+  // #5 Cesso test: reindirizza al workflow unificato (una sola porta)
   var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
-  _mbStep = 1; _mbVoci = []; _mbTemplate = 'editorial';
-  document.getElementById('mb-nome').value = '';
-  document.getElementById('mb-locale').value = '';
-  _mbMostraStep(1);
-  document.getElementById('menu-builder').classList.remove('hidden');
+  if(typeof _caricaModulo==='function'){ _caricaModulo('menubuilder').then(function(){ if(window.apriMenuBuilderPro) apriMenuBuilderPro(); }); }
 }
 function chiudiBuilder(){ document.getElementById('menu-builder').classList.add('hidden'); }
 
@@ -3690,9 +3687,11 @@ let _mfFiles = [];       // File scelti
 let _mfIngredienti = []; // ingredienti riconosciuti/confermati
 
 function creaMenuDaFoto(){
-  // la carta vini/birre non parte dalle foto ingredienti
-  if(_mbCategoria==='carta_vini' || _mbCategoria==='carta_birre'){ creaMenu(); return; }
+  // #5 Cesso test: la foto è uno step DENTRO il workflow unificato, non una porta a sé
   var _onb=document.getElementById('onb-overlay'); if(_onb) _onb.classList.add('hidden');
+  if(typeof _caricaModulo==='function'){ _caricaModulo('menubuilder').then(function(){ if(window.apriMenuBuilderPro) apriMenuBuilderPro(); }); }
+  return;
+  // (codice vecchio disattivato)
   _mfFiles = []; _mfIngredienti = [];
   document.getElementById('mf-thumbs').innerHTML = '';
   document.getElementById('mf-analizza').style.display = 'none';
@@ -5865,9 +5864,7 @@ window._aggiornaGalileoFab = function(){
 // #5 Cesso test: UNA sola porta per creare menu (tutti i vecchi ingressi -> workflow unificato)
 window._apriMenuUnico = function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('menubuilder').then(function(){ if(window.apriMenuBuilderPro) apriMenuBuilderPro(); }); } };
 window.apriMenuBuilder = window._apriMenuUnico;
-window.creaMenu = window._apriMenuUnico;
 window.apriSceltaMenu = window._apriMenuUnico;
-window.creaMenuDaFoto = window._apriMenuUnico;
 window.apriLuogo = function(nome){
   var mappa={
     banco:function(){ switchTab('scopri'); },
