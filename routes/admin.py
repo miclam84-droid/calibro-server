@@ -11983,26 +11983,31 @@ def admin_atlas_batch():
                     m = _re.search(r"\[" + nome_b + r"\](.+?)(?:\[[A-Z]|FONTI|CONFIDENZA|$)", testo, _re.IGNORECASE|_re.DOTALL)
                     return m.group(1).strip() if m else ""
                 fond = _blocco("FONDAMENTA", testo); oper = _blocco("OPERATIVITA", testo); esp = _blocco("ESPERIENZA", testo)
-                if fond: dd["scheda"] = fond
-                if oper: dd["errori_comuni"] = oper
-                if esp: dd["esecuzione"] = esp
+                # uno strato "conta" solo se ha contenuto REALE (>60 char). Se i marcatori mancano, l'AI ha
+                # scritto tutto insieme: NON spezzo male, salvo tutto in fondamenta e gli altri restano vuoti.
+                fond_ok = len(fond) > 60; oper_ok = len(oper) > 60; esp_ok = len(esp) > 60
+                if not (oper_ok or esp_ok) and len(testo) > 200:
+                    # l'AI non ha usato i marcatori: metto tutto il testo (meno le fonti) in fondamenta
+                    _txt = _re.split(r"FONTI?:", testo, flags=_re.IGNORECASE)[0].strip()
+                    fond = _txt; fond_ok = True; oper_ok = esp_ok = False
+                if fond_ok: dd["scheda"] = fond
+                if oper_ok: dd["errori_comuni"] = oper
+                if esp_ok: dd["esecuzione"] = esp
                 # fonti
                 _m = _re.search(r"FONTI?:(.+?)(?:CONFIDENZA|$)", testo, _re.IGNORECASE|_re.DOTALL)
                 fonti = [x.strip(" .-") for x in _re.split(r"[;\n]", _m.group(1))] if _m else []
                 fonti = [f for f in fonti if len(f) > 5][:4]
                 prov = dd.get("provenienza", {}); prov["fonti"] = fonti; dd["provenienza"] = prov
-                # strati presenti
-                dd["strati"] = {"fondamenta": bool(fond), "operativita": bool(oper), "esperienza": bool(esp)}
-                # coverage score (3 strati pieni = alto)
-                sc = (40 if fond else 0) + (35 if oper else 0) + (25 if esp else 0)
+                # strati presenti (solo se contenuto reale)
+                dd["strati"] = {"fondamenta": fond_ok, "operativita": oper_ok, "esperienza": esp_ok}
+                n_strati = sum([fond_ok, oper_ok, esp_ok])
+                sc = (40 if fond_ok else 0) + (35 if oper_ok else 0) + (25 if esp_ok else 0)
                 dd["coverage_score"] = sc
-                # stato editoriale: verified se fonti ok E almeno 2 strati
                 tiers = [_classifica_fonte(f) for f in fonti]
                 fonti_ok = any(t <= 2 for t in tiers) and not any(_fonte_verificata(f)=="sospetta" for f in fonti)
-                strati_ok = sum([bool(fond),bool(oper),bool(esp)]) >= 2
-                ok = fonti_ok and strati_ok
-                if sum([bool(fond),bool(oper),bool(esp)]) == 3 and fonti_ok:
-                    dd["stato_maturita"] = "completa"
+                # verified richiede almeno 2 strati REALI + fonti buone
+                ok = fonti_ok and n_strati >= 2
+                dd["stato_maturita"] = "completa" if (n_strati == 3 and fonti_ok) else ("in_completamento" if n_strati==2 else "in_espansione")
                 dd["stato_editoriale"] = "ai_verified" if ok else "ai_generated"
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
                 conn.commit()
