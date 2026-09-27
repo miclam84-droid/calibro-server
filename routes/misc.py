@@ -1012,7 +1012,8 @@ def schede_scienza_lista():
         for r in rows:
             dd = _c(r,"data",2); dd = dd if isinstance(dd, dict) else (_j.loads(dd) if dd else {})
             schede.append({"slug": _c(r,"id",0), "nome": _c(r,"name",1),
-                           "categoria": dd.get("disciplina") or dd.get("dominio") or ""})
+                           "categoria": dd.get("categoria") or dd.get("disciplina") or dd.get("dominio") or "trasversale",
+                           "stato_editoriale": dd.get("stato_editoriale") or ""})
         return jsonify({"schede": schede, "totale": len(schede)})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
