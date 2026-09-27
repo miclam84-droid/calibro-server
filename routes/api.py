@@ -4638,9 +4638,18 @@ def grafo_possibilita(ingrediente):
 
 @bp.route("/v1/flavour-network/<ingrediente>")
 def flavour_network(ingrediente):
-    """Motore di COSTRUZIONE PIATTO (fusione con Composer): dato un ingrediente, cosa aggiungere per
-    fare una ricetta. Criterio PRIMARIO = bilanciamento sensoriale (cosa completa/taglia), NON la
-    famiglia (niente formaggio->formaggio). L'analogia molecolare resta come 'scoperta' secondaria."""
+    """SPENTO (Board #64): il vecchio motore dava risultati identici e osceni (olio di colza, lardo a
+    tutti gli ingredienti). #372: nessun risultato e' meglio di un risultato che rompe la fiducia.
+    Il motore vero e' /v1/possibilita (in rifondazione)."""
+    from flask import jsonify
+    return jsonify({
+        "centro": ingrediente,
+        "in_aggiornamento": True,
+        "messaggio": "Questa funzione e' in aggiornamento.",
+        "nodi": []
+    })
+
+def _flavour_network_OLD(ingrediente):
     from flask import request, jsonify
     import psycopg2 as _pg, json as _j
     n_max = min(int(request.args.get("n", "18")), 30)
