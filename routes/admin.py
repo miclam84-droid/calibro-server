@@ -11751,6 +11751,22 @@ _OPERE_NOTE = {
     "bertinet": ["dough", "crust"],
     "cia": ["the professional chef"],
     "culinary institute": ["the professional chef"],
+    "this": ["gastronomia molecolare", "molecular gastronomy", "casseroles and clay pots", "the science of the oven"],
+    "herve this": ["gastronomia molecolare", "molecular gastronomy"],
+    "corriher": ["cookwise", "bakewise"],
+    "ruhlman": ["ratio", "the elements of cooking"],
+    "lopez-alt": ["the food lab"],
+    "kenji": ["the food lab"],
+    "migoya": ["the elements of dessert", "frozen desserts"],
+    "francisco migoya": ["the elements of dessert", "modernist bread", "modernist pizza"],
+    "blumenthal": ["the fat duck cookbook", "heston blumenthal at home"],
+    "adria": ["el bulli", "the family meal"],
+    "ferran adria": ["el bulli"],
+    "mcgee harold": ["on food and cooking", "keys to good cooking", "nose dive"],
+    "harold mcgee": ["on food and cooking", "keys to good cooking"],
+    "davide cassi": ["il gelato estremo", "la scienza in cucina"],
+    "bressanini": ["la scienza della pasticceria", "la scienza della carne", "pane e bugie", "la scienza delle pulizie"],
+    "dario bressanini": ["la scienza della pasticceria", "la scienza della carne", "la scienza delle verdure"],
 }
 
 def _fonte_verificata(testo_fonte):
@@ -11946,35 +11962,53 @@ def admin_atlas_batch():
             if len(processate) >= n_ondata: break
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
             if dd.get("stato_editoriale") in ("ai_verified","curated","canon"): continue  # gia' fatta
-            # genero le FONDAMENTA (no web, libri dal training)
+            # genero TUTTI E 3 GLI STRATI (Fondamenta + Operativita + Esperienza) in una chiamata
             try:
-                istr = "le FONDAMENTA scientifiche: definizione, perche' succede, meccanismo."
-                sys = (f"Esperto scienza alimenti per Matter. Fenomeno: {nome}. Scrivi {istr} "
-                       f"VIETATO blog/link. Cita SOLO libri autorevoli (McGee 'On Food and Cooking', "
-                       f"Hamelman 'Bread', Modernist Cuisine/Bread, Suas, Arnold) dal tuo training. "
-                       f"Fine: FONTI: Cognome, Titolo (anno); Cognome, Titolo (anno) e CONFIDENZA: alta/media/bassa.")
-                payload = {"model": "gpt-4o", "max_tokens": 600,
-                           "messages": [{"role":"system","content":sys},{"role":"user","content":"Scrivi, 150-220 parole."}]}
+                import re as _re
+                sys = (f"Esperto scienza alimenti per Matter. Fenomeno: {nome}. Scrivi una scheda in 3 blocchi: "
+                       f"[FONDAMENTA] definizione, perche' succede, meccanismo (80-120 parole). "
+                       f"[OPERATIVITA] punto critico, errori comuni, segnali, range temperatura/tempo se pertinente (80-120 parole). "
+                       f"[ESPERIENZA] il segnale pratico che un professionista riconosce al banco, l'errore piu' comune (60-90 parole). "
+                       f"VIETATO blog/link. Cita SOLO libri autorevoli (McGee 'On Food and Cooking', Hamelman 'Bread', "
+                       f"Modernist Cuisine/Bread di Myhrvold, Suas 'Advanced Bread and Pastry', Arnold 'Liquid Intelligence', "
+                       f"Reinhart, Calvel, This) dal tuo training. Usa ESATTAMENTE i marcatori [FONDAMENTA] [OPERATIVITA] "
+                       f"[ESPERIENZA]. Fine: FONTI: Cognome, Titolo (anno); Cognome, Titolo (anno) e CONFIDENZA: alta/media/bassa.")
+                payload = {"model": "gpt-4o", "max_tokens": 1100,
+                           "messages": [{"role":"system","content":sys},{"role":"user","content":"Scrivi la scheda completa nei 3 blocchi."}]}
                 req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
                                  headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
-                rr = ur.urlopen(req, timeout=50); testo = json.loads(rr.read().decode())["choices"][0]["message"]["content"]
-                # salvo + estraggo fonti
-                import re as _re
-                dd["scheda"] = testo
+                rr = ur.urlopen(req, timeout=70); testo = json.loads(rr.read().decode())["choices"][0]["message"]["content"]
+                # estraggo i 3 blocchi
+                def _blocco(nome_b, testo):
+                    m = _re.search(r"\[" + nome_b + r"\](.+?)(?:\[[A-Z]|FONTI|CONFIDENZA|$)", testo, _re.IGNORECASE|_re.DOTALL)
+                    return m.group(1).strip() if m else ""
+                fond = _blocco("FONDAMENTA", testo); oper = _blocco("OPERATIVITA", testo); esp = _blocco("ESPERIENZA", testo)
+                if fond: dd["scheda"] = fond
+                if oper: dd["errori_comuni"] = oper
+                if esp: dd["esecuzione"] = esp
+                # fonti
                 _m = _re.search(r"FONTI?:(.+?)(?:CONFIDENZA|$)", testo, _re.IGNORECASE|_re.DOTALL)
                 fonti = [x.strip(" .-") for x in _re.split(r"[;\n]", _m.group(1))] if _m else []
                 fonti = [f for f in fonti if len(f) > 5][:4]
                 prov = dd.get("provenienza", {}); prov["fonti"] = fonti; dd["provenienza"] = prov
-                # valido (gate B: almeno una fonte Tier 0-2)
+                # strati presenti
+                dd["strati"] = {"fondamenta": bool(fond), "operativita": bool(oper), "esperienza": bool(esp)}
+                # coverage score (3 strati pieni = alto)
+                sc = (40 if fond else 0) + (35 if oper else 0) + (25 if esp else 0)
+                dd["coverage_score"] = sc
+                # stato editoriale: verified se fonti ok E almeno 2 strati
                 tiers = [_classifica_fonte(f) for f in fonti]
-                ok = any(t <= 2 for t in tiers) and not any(_fonte_verificata(f)=="sospetta" for f in fonti)
+                fonti_ok = any(t <= 2 for t in tiers) and not any(_fonte_verificata(f)=="sospetta" for f in fonti)
+                strati_ok = sum([bool(fond),bool(oper),bool(esp)]) >= 2
+                ok = fonti_ok and strati_ok
+                if sum([bool(fond),bool(oper),bool(esp)]) == 3 and fonti_ok:
+                    dd["stato_maturita"] = "completa"
                 dd["stato_editoriale"] = "ai_verified" if ok else "ai_generated"
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
                 conn.commit()
                 if ok: compilate += 1
                 else: falliti += 1
-                processate.append({"nome": nome, "compilata": ok, "fonti": len(fonti)})
-                # CIRCUIT BREAKER
+                processate.append({"nome": nome, "compilata": ok, "strati": sum([bool(fond),bool(oper),bool(esp)]), "fonti": len(fonti)})
                 if falliti > soglia_errori:
                     interrotto = True
                     break
