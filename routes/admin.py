@@ -12106,3 +12106,44 @@ def admin_popola_wikidata_off():
         return jsonify({"arricchiti": arricchiti, "nota": "batch ok, rilancia per i prossimi" if arricchiti else "tutti processati"})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/categorizza-schede")
+def admin_categorizza_schede():
+    """Board #64 #376: nessuna scheda vive in 'Altro'. Assegna una categoria a tutte le schede senza."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # parole chiave -> categoria (tassonomia fissa)
+    MAP = {
+        "bar": ["cocktail","drink","shake","sour","distillat","liquore","bitter","sciroppo","carbonaz","gin","rum","vermouth","amaro","fat wash","milk punch","clarific","infus","macera","stir","muddle","batch","diluizion"],
+        "caffe": ["caffe","espresso","estrazione","tamping","grooming","wdt","macinac","brew","pour over","moka","crema caffe","grind","dose caffe","purging"],
+        "panificazione": ["impasto","lievit","farina","idratazione","autolisi","biga","poolish","pieghe","forno","pane","pizza","glutine","maglia","formatura","pirlatura","cottura pane","crosta","alveol","bassinage","ddt","preferimenti"],
+        "pasticceria": ["crema","pasticc","meringa","zucchero","caramell","cioccolat","temperaggio","ganache","frolla","choux","biscott","dolce","glass","pan di spagna","bagna","gelatina"],
+        "gelateria": ["gelato","sorbetto","mantecaz","pac","overrun","stabilizz","sfere","mix gelato","catena del freddo","antifreez"],
+        "cucina": ["cottura","brasa","arrost","frittura","saltat","confit","sous vide","roner","maillard","riduzione","fondo","emulsion","salsa","sbianch","imbiondire","glassatura verdure","deglassare","frollatura","salagione","curing","affumicat","carne","bassa temperatura"],
+        "birra": ["birra","ammostamento","mashing","luppolo","dry hop","fermentazione birra","mosto"],
+        "vino": ["vino","svinatura","macerazione uve","tannin","solfiti","fermentazione vino"],
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
+        assegnate = 0; gia = 0; senza = 0
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            if dd.get("categoria") and dd.get("categoria") not in ("", "?", "Altro", "SENZA"):
+                gia += 1; continue
+            testo = (nome + " " + str(dd.get("scheda",""))[:200]).lower()
+            cat = None
+            for c, kws in MAP.items():
+                if any(k in testo for k in kws): cat = c; break
+            if not cat: cat = "trasversale"  # mai "Altro": trasversale come fallback dignitoso
+            dd["categoria"] = cat
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+            assegnate += 1
+            if assegnate % 50 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"assegnate": assegnate, "gia_categorizzate": gia, "nessuna_in_altro": True})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
