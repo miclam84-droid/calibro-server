@@ -5862,6 +5862,12 @@ window._aggiornaGalileoFab = function(){
   fab.style.display = (inBanco || inChat) ? 'none' : 'flex';
 };
 // ═══ ROUTER UNICO (#277): un solo percorso per aprire un luogo, da qualsiasi ingresso ═══
+// #5 Cesso test: UNA sola porta per creare menu (tutti i vecchi ingressi -> workflow unificato)
+window._apriMenuUnico = function(){ if(typeof _caricaModulo==='function'){ _caricaModulo('menubuilder').then(function(){ if(window.apriMenuBuilderPro) apriMenuBuilderPro(); }); } };
+window.apriMenuBuilder = window._apriMenuUnico;
+window.creaMenu = window._apriMenuUnico;
+window.apriSceltaMenu = window._apriMenuUnico;
+window.creaMenuDaFoto = window._apriMenuUnico;
 window.apriLuogo = function(nome){
   var mappa={
     banco:function(){ switchTab('scopri'); },
