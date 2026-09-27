@@ -1079,3 +1079,8 @@ body:has(#cookie-banner:not(.hidden)) #contenuto{padding-bottom:72px!important}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;background-image:linear-gradient(rgba(20,29,34,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(20,29,34,.028) 1px,transparent 1px);background-size:24px 24px}
 .vista-overlay{background-image:linear-gradient(rgba(20,29,34,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(20,29,34,.028) 1px,transparent 1px)!important;background-size:24px 24px!important;background-color:#ecebe5!important}
 .screen,.vista-body{position:relative;z-index:1}
+
+/* ═══ #9 chip apertura contesto rimovibile ═══ */
+.chat-ap-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.chat-ap-x{background:none;border:0;color:#7fb0c4;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;padding:2px 4px}
+.chat-ap-x:active{opacity:.6}

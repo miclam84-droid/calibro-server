@@ -1477,7 +1477,7 @@ function _chatMostraApertura(nome, chip){
   var cont=document.getElementById('schede');
   var em=document.getElementById('empty-state');
   var e=_escV;
-  var html='<div class="chat-apertura"><div class="chat-ap-lab">◎ Contesto attivo</div>'
+  var html='<div class="chat-apertura"><div class="chat-ap-top"><div class="chat-ap-lab">◎ Contesto attivo</div><button class="chat-ap-x" onclick="_chiudiContesto()" aria-label="Rimuovi contesto">× togli</button></div>'
     + '<div class="chat-ap-nome">'+e(nome)+'</div>'
     + '<div class="chat-ap-sub">Matter sa già di cosa parli. Scegli da dove partire, o scrivi la tua domanda.</div>'
     + '<div class="chat-ap-chip">'+chip.map(function(c){ return '<button class="chat-ap-btn" onclick="chiediTesto(\''+e(c[1]).replace(/'/g,"\\'")+'\')">'+e(c[0])+'</button>'; }).join('')+'</div></div>';
@@ -3581,11 +3581,13 @@ function _mostraContestoChip(nome){
   schede.insertBefore(chip, schede.firstChild);
 }
 function _chiudiContesto(){
-  _ctxChat=null;
+  _ctxChat=null; window._chatContesto=null;
   var chip=document.getElementById('chat-ctx-chip'); if(chip) chip.remove();
+  var ap=document.querySelector('.chat-apertura'); if(ap) ap.remove();
   var inp=document.getElementById('q')||document.getElementById('ask-input');
   if(inp) inp.placeholder='Rileva un problema al banco (es. maionese, biga)';
 }
+window._chiudiContesto=_chiudiContesto;
 async function foodCostRicetta(){
   var d=_ricettaGenCorrente; if(!d) return;
   // l'endpoint lavora dagli ingredienti: non serve salvare prima
@@ -5853,8 +5855,11 @@ window._aggiornaGalileoFab = function(){
   var inVista = ov && !ov.classList.contains('hidden');
   var scScopri=document.getElementById('screen-scopri');
   var inBanco = scScopri && scScopri.classList.contains('active') && !inVista;
-  // nel Banco c'è già la card Galileo -> nascondo il FAB (no doppio, no sovrapposizione)
-  fab.style.display = inBanco ? 'none' : 'flex';
+  // nella chat la ask-bar in basso creerebbe sovrapposizione: nascondo lì
+  var scChiedi=document.getElementById('screen-chiedi');
+  var inChat = scChiedi && scChiedi.classList.contains('active') && !inVista;
+  // #6: nel Banco c'è già la card Galileo, in chat c'è la ask-bar -> nascondo (no sovrapposizione)
+  fab.style.display = (inBanco || inChat) ? 'none' : 'flex';
 };
 // ═══ ROUTER UNICO (#277): un solo percorso per aprire un luogo, da qualsiasi ingresso ═══
 window.apriLuogo = function(nome){
