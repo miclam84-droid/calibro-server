@@ -11953,10 +11953,12 @@ def admin_atlas_batch():
     key = os.environ.get("OPENAI_API_KEY", "")
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # prendo le schede meno complete (coverage basso), non ancora ai_verified
+        # prendo le schede NON ancora complete/verified, direttamente in SQL (coverage < 100 o stato non verified)
         cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')
-                       ORDER BY (data->>'coverage_score')::int ASC NULLS FIRST LIMIT 60""")
+                       AND COALESCE(data->>'stato_editoriale','') NOT IN ('ai_verified','curated','canon')
+                       ORDER BY (data->>'coverage_score')::int DESC NULLS LAST LIMIT 60""")
         candidate = cur.fetchall()
+        # DESC: prendo prima le "quasi pronte" (score alto ma non verified) - massimo impatto minimo sforzo
         processate = []; falliti = 0; compilate = 0; interrotto = False
         for nid, nome, data in candidate:
             if len(processate) >= n_ondata: break
