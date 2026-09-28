@@ -5048,6 +5048,44 @@ def ricetta_sicurezza(ricetta_id):
         return jsonify({"errore": str(e)[:120]}), 500
 
 
+# ═══ SCORE DI SENSO CULINARIO (Board 65F #452: i composti sono una prova, non un permesso) ═══
+# Combina 4 segnali invece del solo overlap molecolare. Sotto soglia, un abbinamento NON appare.
+_CAT_COMPATIBILI = {
+    # categorie che hanno senso insieme (culinariamente). Fuori da qui = penalita.
+    "carne": {"erbe","spezie","agrumi","verdura","funghi","alcolico","grasso","aromatico","frutta"},
+    "pesce": {"agrumi","erbe","verdura","spezie","aromatico","grasso","alcolico"},
+    "frutta": {"latticino","dolcificante","spezie","erbe","alcolico","frutta secca","agrumi","cioccolato"},
+    "verdura": {"carne","pesce","erbe","spezie","grasso","formaggio","agrumi","legumi","funghi"},
+    "latticino": {"frutta","dolcificante","cioccolato","frutta secca","spezie","agrumi","caffe"},
+    "cioccolato": {"frutta secca","frutta","latticino","spezie","agrumi","caffe","alcolico"},
+    "erbe": {"carne","pesce","verdura","formaggio","agrumi","grasso"},
+    "spezie": {"carne","pesce","frutta","dolce","cioccolato","frutta secca","verdura"},
+    "agrumi": {"pesce","carne","frutta","cioccolato","erbe","dolce","alcolico"},
+}
+def _score_senso(cand_prop, cand_cat, overlap, tot_composti, contrasti_richiesti, cat_scelte):
+    """Ritorna (score 0-100, motivo). Score alto = abbinamento sensato."""
+    score = 0.0; motivi = []
+    # 1. RUOLO (peso alto): il candidato riempie una tensione richiesta?
+    for prop_needed, _sp in contrasti_richiesti:
+        if cand_prop.get(prop_needed, 0) >= 6:
+            score += 45; motivi.append("completa "+prop_needed); break
+    # 2. CATEGORIE COMPATIBILI (peso alto): la categoria del candidato ha senso con quelle scelte?
+    _cc = (cand_cat or "").lower()
+    if _cc and cat_scelte:
+        compatibile = False
+        for _cs in cat_scelte:
+            comp = _CAT_COMPATIBILI.get(_cs, set())
+            if _cc in comp or _cc == _cs: compatibile = True; break
+        if compatibile: score += 30
+        else: score -= 25  # categoria lontana: penalita forte (evita pomodoro+te)
+    # 3. COMPOSTI (peso basso - una prova, non un permesso #452)
+    if overlap >= 3:
+        _ratio = overlap / max(tot_composti, 1)
+        score += min(20, overlap * 2) * (0.5 if tot_composti > 100 else 1.0)  # hub penalizzati
+    # 4. bonus se ha proprieta sensoriali ricche (ingrediente "utile")
+    if sum(1 for v in cand_prop.values() if v and v >= 5) >= 2: score += 5
+    return max(0, min(100, int(score))), (motivi[0] if motivi else "senso culinario")
+
 @bp.route("/v1/composer/prossimi", methods=["POST"])
 def composer_prossimi():
     """CUORE DEL COMPOSER: dato un insieme di ingredienti gia scelti, calcola il profilo sensoriale
@@ -5137,12 +5175,13 @@ def composer_prossimi():
             if motivo_contrasto:
                 contrasto.append({"id": nid, "nome": nome, "motivo": motivo_contrasto,
                                   "valore": prop.get(prop_needed, 0)})
-            elif overlap >= 3:
-                # indice normalizzato 0-100 (non il conteggio grezzo che confonde)
-                _tot = max(len(composti_ricetta), 1)
-                _indice = min(99, int(overlap / _tot * 100))
-                analogia.append({"id": nid, "nome": nome, "composti_condivisi": overlap, "indice": _indice})
-        analogia.sort(key=lambda x: -x["composti_condivisi"])
+            else:
+                # SCORE DI SENSO (65F): non piu' solo composti, ma senso culinario complessivo
+                _sc, _motivo = _score_senso(prop, dd.get('categoria',''), overlap, _ncomp, contrasti_richiesti, cat_scelte)
+                if _sc >= 40:  # SOGLIA: sotto, non appare (meglio pochi sensati che tanti strani)
+                    analogia.append({"id": nid, "nome": nome, "indice": _sc, "motivo": _motivo,
+                                     "composti_condivisi": overlap})
+        analogia.sort(key=lambda x: -x["indice"])
         _cur.close(); _release_conn(_c)
         return jsonify({
             "ingredienti_in_ricetta": scelti,
