@@ -5503,3 +5503,74 @@ def planner_lista_ordini():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 500
+
+
+# ═══ SCOPERTA MOLECOLARE SPIEGATA (Costituzione #453: mostra il PERCHE, non solo il risultato) ═══
+# Dizionario dei composti aromatici principali: cosa sono, note, cosa fanno in cottura.
+_COMPOSTI_SPIEGATI = {
+    "furaneol": {"nome_it": "furaneolo", "note": "caramello, fragola, frutta cotta", "cottura": "si sviluppa con il calore (reazione di Maillard e caramellizzazione), intensifica le note dolci-fruttate"},
+    "hexanal": {"nome_it": "esanale", "note": "erba tagliata, verde, mela verde", "cottura": "diminuisce col calore; e' tipico dei vegetali crudi e freschi"},
+    "linalool": {"nome_it": "linalolo", "note": "floreale, agrumato, lavanda", "cottura": "volatile, si perde con cotture lunghe; meglio aggiunto a fine cottura"},
+    "vanillin": {"nome_it": "vanillina", "note": "vaniglia, dolce, balsamico", "cottura": "stabile al calore, si sviluppa nella tostatura e nella cottura del pane"},
+    "eugenol": {"nome_it": "eugenolo", "note": "chiodi di garofano, speziato, legnoso", "cottura": "resistente al calore, tipico delle spezie"},
+    "diacetyl": {"nome_it": "diacetile", "note": "burro, cremoso", "cottura": "prodotto dalla fermentazione; nota lattica"},
+    "benzaldehyde": {"nome_it": "benzaldeide", "note": "mandorla amara, ciliegia", "cottura": "si sviluppa in frutta a nocciolo e mandorle"},
+    "isoamyl_acetate": {"nome_it": "acetato di isoamile", "note": "banana, fruttato", "cottura": "estere volatile, tipico della frutta matura"},
+    "limonene": {"nome_it": "limonene", "note": "agrume, fresco", "cottura": "volatile, nelle scorze di agrumi; si perde col calore"},
+    "methional": {"nome_it": "metionale", "note": "patata cotta, brodo", "cottura": "si sviluppa con Maillard, nota di cotto/umami"},
+    "guaiacol": {"nome_it": "guaiacolo", "note": "affumicato, tostato, fumo", "cottura": "prodotto da tostatura e affumicatura"},
+    "2-acetylpyrazine": {"nome_it": "acetilpirazina", "note": "tostato, nocciola, popcorn", "cottura": "si forma nella tostatura (Maillard)"},
+}
+
+@bp.route("/v1/scoperta/<ingrediente>")
+def scoperta_molecolare(ingrediente):
+    """La scoperta molecolare SPIEGATA: per un ingrediente, gli abbinamenti di scoperta con il PERCHE
+    scientifico (composti condivisi + cosa fanno in cottura). Non una lista muta: conoscenza."""
+    from flask import request, jsonify
+    import os, psycopg2, json as _j
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # trovo il nodo ingrediente
+        cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND LOWER(name)=LOWER(%s) LIMIT 1""", (ingrediente,))
+        r = cur.fetchone()
+        if not r: return jsonify({"errore": "ingrediente non trovato"}), 404
+        ing_id, ing_nome = r
+        # i composti dell'ingrediente
+        cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (ing_id,))
+        composti_ing = set(x[0] for x in cur.fetchall())
+        if not composti_ing:
+            return jsonify({"ingrediente": ing_nome, "scoperte": [], "nota": "composti non mappati per questo ingrediente"})
+        # gli abbinamenti aromatici (scoperta) con i composti condivisi
+        cur.execute("""SELECT DISTINCT n.id, n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                       WHERE e.from_id=%s AND e.relation='abbinamento_aromatico'
+                       AND COALESCE((n.data->>'nascosto_utente'),'false') <> 'true' LIMIT 15""", (ing_id,))
+        scoperte = []
+        for cand_id, cand_nome in cur.fetchall():
+            # composti condivisi
+            cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (cand_id,))
+            composti_cand = set(x[0] for x in cur.fetchall())
+            condivisi = composti_ing & composti_cand
+            if len(condivisi) < 2: continue
+            # spiego i composti condivisi (quelli che conosco)
+            spiegazioni = []
+            for comp_id in list(condivisi)[:6]:
+                cur.execute("SELECT name FROM nodes WHERE id=%s", (comp_id,))
+                cn = cur.fetchone()
+                if cn:
+                    key = cn[0].lower().replace(" ","_").replace("-","_")
+                    for k, v in _COMPOSTI_SPIEGATI.items():
+                        if k in key or key in k:
+                            spiegazioni.append(v); break
+            scoperte.append({
+                "ingrediente": cand_nome,
+                "composti_condivisi": len(condivisi),
+                "perche": spiegazioni[:3],
+                "fiducia": "scoperta"
+            })
+        scoperte.sort(key=lambda x: -x["composti_condivisi"])
+        cur.close(); conn.close()
+        return jsonify({"ingrediente": ing_nome, "scoperte": scoperte[:8],
+                        "nota": "Abbinamenti di scoperta: la scienza suggerisce, la tradizione non li conosce ancora."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
