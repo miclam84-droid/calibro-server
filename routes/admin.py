@@ -12514,3 +12514,26 @@ def admin_composti_top():
         return jsonify({"composti_piu_comuni": composti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/leggi-nodo/<nid>")
+def admin_leggi_nodo(nid):
+    """Legge un nodo per ID esatto (per progettare il Protocollo dalle ricette esistenti)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, type, data FROM nodes WHERE id=%s", (nid,))
+        r = cur.fetchone()
+        if not r: cur.close(); conn.close(); return jsonify({"errore":"nodo non trovato"}), 404
+        dd = r[3] if isinstance(r[3], dict) else (json.loads(r[3]) if r[3] else {})
+        # archi in uscita (ingredienti, tecniche...)
+        cur.execute("""SELECT e.relation, n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                       WHERE e.from_id=%s LIMIT 30""", (nid,))
+        archi = [{"relation": x[0], "verso": x[1]} for x in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"id": r[0], "nome": r[1], "type": r[2], "data": dd, "archi_uscita": archi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
