@@ -12390,10 +12390,11 @@ def admin_tradizione_genera():
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # ingredienti-base importanti senza abbinamenti tradizionali, non nascosti
         cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                       AND (data ? 'proprieta') AND NOT COALESCE((data->>'nascosto_utente')::bool, false)
+                       AND (data ? 'proprieta')
+                       AND COALESCE((data->>'nascosto_utente'),'false') <> 'true'
                        AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=nodes.id AND e.relation='abbinamento_tradizionale')
-                       AND name NOT LIKE '%%(%%' AND name NOT LIKE '%%_%%'
-                       ORDER BY (data->>'evidence_level') DESC NULLS LAST LIMIT %s""", (n,))
+                       AND name NOT LIKE '%%(%%' AND POSITION('_' IN name) = 0 AND LENGTH(name) > 3
+                       ORDER BY (data ? 'operativo') DESC, LENGTH(name) DESC LIMIT %s""", (n,))
         righe = cur.fetchall()
         fatti = []; archi_creati = 0
         for nid, nome in righe:
