@@ -12384,17 +12384,23 @@ def admin_tradizione_genera():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     n = int(request.args.get("n", 5))
+    solo = request.args.get("solo", "")  # nomi specifici separati da virgola (es. pomodoro,basilico)
     key = os.environ.get("OPENAI_API_KEY", "")
     if not key: return jsonify({"errore": "manca OPENAI_API_KEY"}), 500
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # ingredienti-base importanti senza abbinamenti tradizionali, non nascosti
-        cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                       AND (data ? 'proprieta')
-                       AND COALESCE((data->>'nascosto_utente'),'false') <> 'true'
-                       AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=nodes.id AND e.relation='abbinamento_tradizionale')
-                       AND name NOT LIKE '%%(%%' AND POSITION('_' IN name) = 0 AND LENGTH(name) > 3
-                       ORDER BY (data ? 'operativo') DESC, LENGTH(name) ASC LIMIT %s""", (n,))
+        if solo:
+            nomi = [x.strip() for x in solo.split(",") if x.strip()]
+            cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                           AND LOWER(name) = ANY(%s)
+                           AND COALESCE((data->>'nascosto_utente'),'false') <> 'true'""", ([x.lower() for x in nomi],))
+        else:
+            cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                           AND (data ? 'proprieta')
+                           AND COALESCE((data->>'nascosto_utente'),'false') <> 'true'
+                           AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=nodes.id AND e.relation='abbinamento_tradizionale')
+                           AND name NOT LIKE '%%(%%' AND POSITION('_' IN name) = 0 AND LENGTH(name) > 3
+                           ORDER BY (data ? 'operativo') DESC, LENGTH(name) ASC LIMIT %s""", (n,))
         righe = cur.fetchall()
         fatti = []; archi_creati = 0
         for nid, nome in righe:
