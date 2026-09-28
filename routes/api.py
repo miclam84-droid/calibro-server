@@ -5160,9 +5160,11 @@ def composer_prossimi():
             _catc = str(dd.get('categoria','')).lower(); _tipc = str(dd.get('tipo_base','')).lower()
             if (_catc and _catc in cat_scelte) or (_tipc and _tipc in tipi_scelti): continue
             prop = dd.get("proprieta", {})
-            # scarto id grezzi (fermented_tea, bantu_beer) e nomi tecnici
+            # scarto id grezzi e nodi nascosti all'utente (FASE A pulizia)
+            if dd.get('nascosto_utente'): continue
             if '_' in nome or any(x in nome.lower() for x in ['_tea','_beer','_oil','beer','oleoresin']):
                 continue
+            if nome.count(',') >= 2: continue  # nomi USDA lunghi
             # ANALOGIA: composti condivisi, con metrica adattiva (penalizza i ricchi/hub)
             _cur.execute("""SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto' AND to_id = ANY(%s)""",
                          (nid, list(composti_ricetta) or ['']))
@@ -5220,7 +5222,11 @@ def composer_obiettivo():
         "piccante": ("piccante", "Calore, spinta piccante"),
         "affumicato": ("aroma_caldo", "Note affumicate, tostate"),
         "acidita": ("acido", "Acidita' viva"),
+        "acido": ("acido", "Acidita' viva, agrumata"),
         "croccantezza": ("croccante", "Struttura croccante"),
+        "croccante": ("croccante", "Struttura croccante"),
+        "salato": ("salato", "Sapido, deciso"),
+        "grasso": ("grasso", "Avvolgente, rotondo"),
     }
     prop_target, descr = OBIETTIVI.get(obiettivo, (None, None))
     if not prop_target:
@@ -5239,6 +5245,8 @@ def composer_obiettivo():
         candidati = []
         for nid, nome, data in _cur.fetchall():
             dd = data if isinstance(data, dict) else _j.loads(data)
+            if dd.get('nascosto_utente'): continue
+            if '_' in nome or nome.count(',') >= 2: continue  # nomi grezzi/USDA
             v = dd.get("proprieta", {}).get(prop_target, 0)
             if v >= 6:
                 candidati.append({"id": nid, "nome": nome, "intensita": v})
