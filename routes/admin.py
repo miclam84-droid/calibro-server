@@ -12147,3 +12147,52 @@ def admin_categorizza_schede():
         return jsonify({"assegnate": assegnate, "gia_categorizzate": gia, "nessuna_in_altro": True})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/pulisci-nomi-grezzi")
+def admin_pulisci_nomi_grezzi():
+    """FASE A pulizia: nomi grezzi (ahn_, _, inglesi USDA) -> tradotti se noti, altrimenti nascosti
+    all'utente (nascosto_utente=true) cosi' non compaiono nei suggerimenti. L'app diventa pulita."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # traduzioni dei nomi grezzi piu' comuni (quelli utili, tradotti; il resto nascosto)
+    TRAD = {
+        "katsuobushi": "katsuobushi (tonno essiccato)", "potato_chip": None, "american_potato_chip": None,
+        "fermented_shrimp": "gambero fermentato", "mantis_shrimp": "canocchia", "bantu_beer": None,
+        "fermented_tea": "tè fermentato", "green_tea": "tè verde", "black_tea": "tè nero",
+        "roasted_beef": "manzo arrostito", "grilled_beef": "manzo grigliato", "boiled_egg": "uovo sodo",
+        "fried_chicken": "pollo fritto", "roasted_pork": "maiale arrostito",
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')""")
+        tradotti = 0; nascosti = 0
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            nome_l = (nome or "").lower()
+            azione = None
+            # 1. nome tradotto esplicitamente
+            if nome_l in TRAD:
+                if TRAD[nome_l]:
+                    cur.execute("UPDATE nodes SET name=%s WHERE id=%s", (TRAD[nome_l], nid)); azione='trad'
+                else:
+                    dd["nascosto_utente"] = True
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), nid)); azione='nasc'
+            # 2. nome grezzo generico (underscore, o id ahn_ con nome tecnico) -> nascondo
+            elif ('_' in nome) or (nid.startswith('ahn_') and any(x in nome_l for x in ['raw','flesh','skin',', '])):
+                dd["nascosto_utente"] = True
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), nid)); azione='nasc'
+            # 3. nomi USDA lunghi con virgole ("Potatoes, flesh and skin, raw") -> nascondo
+            elif nome.count(',') >= 2 and any(x in nome_l for x in ['raw','cooked','flesh','skin','without']):
+                dd["nascosto_utente"] = True
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), nid)); azione='nasc'
+            if azione=='trad': tradotti += 1
+            elif azione=='nasc': nascosti += 1
+            if (tradotti+nascosti) % 100 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"tradotti": tradotti, "nascosti": nascosti,
+                        "nota": "I nomi grezzi non compaiono piu' nei suggerimenti (nascosto_utente=true)."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
