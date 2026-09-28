@@ -5072,12 +5072,16 @@ def _score_senso(cand_prop, cand_cat, overlap, tot_composti, contrasti_richiesti
     # 2. CATEGORIE COMPATIBILI (peso alto): la categoria del candidato ha senso con quelle scelte?
     _cc = (cand_cat or "").lower()
     if _cc and cat_scelte:
-        compatibile = False
+        compatibile = False; nota_cat = False
         for _cs in cat_scelte:
             comp = _CAT_COMPATIBILI.get(_cs, set())
             if _cc in comp or _cc == _cs: compatibile = True; break
+            if _cs in _CAT_COMPATIBILI: nota_cat = True
         if compatibile: score += 30
-        else: score -= 25  # categoria lontana: penalita forte (evita pomodoro+te)
+        elif nota_cat: score -= 20  # categoria nota ma lontana: penalita (evita pomodoro+te)
+        # categoria sconosciuta: nessuna penalita (non abbiamo dati per giudicare)
+    else:
+        score += 15  # senza categorie non possiamo giudicare: score neutro, non zero
     # 3. COMPOSTI (peso basso - una prova, non un permesso #452)
     if overlap >= 3:
         _ratio = overlap / max(tot_composti, 1)
@@ -5178,7 +5182,7 @@ def composer_prossimi():
             else:
                 # SCORE DI SENSO (65F): non piu' solo composti, ma senso culinario complessivo
                 _sc, _motivo = _score_senso(prop, dd.get('categoria',''), overlap, _ncomp, contrasti_richiesti, cat_scelte)
-                if _sc >= 40:  # SOGLIA: sotto, non appare (meglio pochi sensati che tanti strani)
+                if _sc >= 22:  # SOGLIA tarata: sotto, non appare
                     analogia.append({"id": nid, "nome": nome, "indice": _sc, "motivo": _motivo,
                                      "composti_condivisi": overlap})
         analogia.sort(key=lambda x: -x["indice"])
