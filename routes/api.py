@@ -5188,11 +5188,21 @@ def composer_prossimi():
                     analogia.append({"id": nid, "nome": nome, "indice": _sc, "motivo": _motivo,
                                      "composti_condivisi": overlap})
         analogia.sort(key=lambda x: -x["indice"])
+        # TRADIZIONE (fiducia alta): abbinamenti documentati degli ingredienti scelti
+        tradizione = []
+        if ids_scelti:
+            _cur.execute("""SELECT DISTINCT n.name, e.data FROM edges e JOIN nodes n ON n.id=e.to_id
+                            WHERE e.from_id = ANY(%s) AND e.relation='abbinamento_tradizionale'
+                            AND COALESCE((n.data->>'nascosto_utente'),'false') <> 'true' LIMIT 8""", (ids_scelti,))
+            for _nm, _ed in _cur.fetchall():
+                _ad = _ed if isinstance(_ed, dict) else (_j.loads(_ed) if _ed else {})
+                tradizione.append({"nome": _nm, "piatto": _ad.get("piatto",""), "fiducia": "alta"})
         _cur.close(); _release_conn(_c)
         return jsonify({
             "ingredienti_in_ricetta": scelti,
             "profilo_sensoriale": {k: v for k, v in profilo.items() if v != 0},
             "contrasti_da_bilanciare": [{"proprieta": p, "spiegazione": s} for p, s in contrasti_richiesti],
+            "suggeriti_tradizione": tradizione,
             "suggeriti_analogia": analogia[:6],
             "suggeriti_contrasto": contrasto[:6],
         })
