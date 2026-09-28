@@ -12495,3 +12495,22 @@ def admin_grafo_governance():
     except Exception as e:
         return jsonify({"errore": str(e)[:200]})
 
+
+
+@bp.route("/admin/composti-top")
+def admin_composti_top():
+    """Diagnostico: i composti aromatici piu' comuni nel grafo (per ampliare il dizionario spiegazioni)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # i nodi piu' referenziati come composto (to_id di contiene_composto)
+        cur.execute("""SELECT n.name, COUNT(*) c FROM edges e JOIN nodes n ON n.id=e.to_id
+                       WHERE e.relation='contiene_composto' GROUP BY n.name ORDER BY c DESC LIMIT 40""")
+        composti = [{"nome": r[0], "in_n_ingredienti": r[1]} for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"composti_piu_comuni": composti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
