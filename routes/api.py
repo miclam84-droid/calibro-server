@@ -5552,6 +5552,11 @@ def scoperta_molecolare(ingrediente):
             composti_cand = set(x[0] for x in cur.fetchall())
             condivisi = composti_ing & composti_cand
             if len(condivisi) < 2: continue
+            # ESCLUDO GLI HUB: se il candidato ha troppi composti totali, si abbina a tutto (te', hub) -> poco informativo
+            if len(composti_cand) > 150: continue
+            # SPECIFICITA (Shannon): un abbinamento e' interessante se i composti condivisi sono una
+            # frazione ALTA dei composti del candidato (non se sono tanti in assoluto)
+            _specificita = len(condivisi) / max(len(composti_cand), 1)
             # spiego i composti condivisi (quelli che conosco)
             spiegazioni = []
             for comp_id in list(condivisi)[:6]:
@@ -5565,10 +5570,12 @@ def scoperta_molecolare(ingrediente):
             scoperte.append({
                 "ingrediente": cand_nome,
                 "composti_condivisi": len(condivisi),
+                "specificita": round(_specificita, 3),
                 "perche": spiegazioni[:3],
                 "fiducia": "scoperta"
             })
-        scoperte.sort(key=lambda x: -x["composti_condivisi"])
+        # ordino per SPECIFICITA (composti condivisi rispetto al totale), non per quantita grezza
+        scoperte.sort(key=lambda x: -x["specificita"])
         cur.close(); conn.close()
         return jsonify({"ingrediente": ing_nome, "scoperte": scoperte[:8],
                         "nota": "Abbinamenti di scoperta: la scienza suggerisce, la tradizione non li conosce ancora."})
