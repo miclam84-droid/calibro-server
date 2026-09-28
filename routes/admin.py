@@ -12292,3 +12292,77 @@ def get_evidence(ev_id):
         return jsonify(ev)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/causalita/genera")
+def admin_causalita_genera():
+    """FASE B - GRAFO CAUSALE (65D): genera il 4o strato dei fenomeni = causalita STRUTTURATA
+    {acceleranti, rallentanti, conseguenze}. Il motore Diagnosi e il Composer la interrogano.
+    Genera a ondate (n fenomeni per volta). Solo fenomeni senza causalita, dai piu' importanti."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = int(request.args.get("n", 4))
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key: return jsonify({"errore": "manca OPENAI_API_KEY"}), 500
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # fenomeni senza causalita, ordinati per coverage (i piu' completi prima: sono i piu' importanti)
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                       AND NOT (data ? 'causalita')
+                       ORDER BY (data->>'coverage_score')::int DESC NULLS LAST LIMIT %s""", (n,))
+        righe = cur.fetchall()
+        fatti = []; falliti = 0
+        for nid, nome, data in righe:
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            try:
+                sys = (f"Esperto scienza alimenti. Fenomeno: {nome}. Genera la CAUSALITA STRUTTURATA in JSON: "
+                       f'{{"acceleranti":[{{"fattore":"...","direzione":"su/giu/alcalino/acido","peso":"alto/medio/basso"}}],'
+                       f'"rallentanti":[{{"fattore":"...","direzione":"...","peso":"..."}}],'
+                       f'"conseguenze":[{{"effetto":"...","descrizione":"..."}}]}}. '
+                       f"Fattori concreti e misurabili (temperatura, pH, acqua, tempo, zuccheri, sale...). "
+                       f"Basati su McGee/Modernist/Hamelman. SOLO il JSON, niente altro.")
+                payload = {"model":"gpt-4o","max_tokens":600,"temperature":0.3,
+                           "messages":[{"role":"system","content":sys},{"role":"user","content":"Genera la causalita JSON."}]}
+                req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
+                                 headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                rr = ur.urlopen(req, timeout=50); testo = json.loads(rr.read().decode())["choices"][0]["message"]["content"]
+                # estraggo il JSON
+                import re as _re
+                m = _re.search(r'\{.*\}', testo, _re.DOTALL)
+                if not m: falliti += 1; continue
+                caus = json.loads(m.group(0))
+                # validazione: deve avere almeno acceleranti o rallentanti con contenuto
+                if not (caus.get("acceleranti") or caus.get("rallentanti")):
+                    falliti += 1; continue
+                dd["causalita"] = caus
+                # aggiorno lo strato: ora il fenomeno ha il 4o strato
+                strati = dd.get("strati", {}); strati["causalita"] = True; dd["strati"] = strati
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), nid))
+                conn.commit()
+                fatti.append({"nome": nome, "acceleranti": len(caus.get("acceleranti",[])),
+                              "rallentanti": len(caus.get("rallentanti",[])), "conseguenze": len(caus.get("conseguenze",[]))})
+            except Exception as _e:
+                falliti += 1
+        cur.close(); conn.close()
+        return jsonify({"generati": len(fatti), "falliti": falliti, "dettaglio": fatti})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
+
+@bp.route("/v1/fenomeno/<slug>/causalita")
+def get_causalita(slug):
+    """La causalita di un fenomeno: cosa lo accelera/rallenta + conseguenze."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT data FROM nodes WHERE (id=%s OR data->>'slug'=%s) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (slug, slug))
+        r = cur.fetchone(); cur.close(); conn.close()
+        if not r: return jsonify({"errore":"fenomeno non trovato"}), 404
+        dd = r[0] if isinstance(r[0], dict) else json.loads(r[0])
+        caus = dd.get("causalita")
+        if not caus: return jsonify({"slug":slug, "causalita": None, "nota":"causalita non ancora generata"})
+        return jsonify({"slug": slug, "nome": dd.get("nome"), "causalita": caus})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
