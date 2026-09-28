@@ -1873,6 +1873,11 @@ def admin_consolida_doppioni():
         ("fen-emulsione-salse","fen-emulsione-bar"),
         # Tecniche (le tre sous-vide -> una)
         ("tec-sous-vide-tecnica","tec-sous-vide-cuore"),
+        # Doppioni trovati (FASE B pulizia): tengo il fen- (fenomeno canonico), rimuovo il tec-
+        ("fen-autolisi","tec-autolisi"),
+        ("fen-carbonatazione","tec-carbonatazione-tecnica"),
+        ("fen-chiarificazione","tec-chiarificazione"),
+        ("fen-emulsione","tec-emulsione"),
         ("tec-sous-vide-tecnica","tec-roner-sottovuoto"),
         ("tec-autolisi","tec-autolisi-riposo"),
         ("tec-pieghe","tec-pieghe-forza"),
@@ -12366,3 +12371,4 @@ def get_causalita(slug):
         return jsonify({"slug": slug, "nome": dd.get("nome"), "causalita": caus})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
