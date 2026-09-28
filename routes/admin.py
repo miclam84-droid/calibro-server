@@ -12439,3 +12439,48 @@ def admin_tradizione_genera():
         return jsonify({"ingredienti_processati": len(righe), "archi_tradizione_creati": archi_creati, "dettaglio": fatti})
     except Exception as e:
         return jsonify({"errore": str(e)[:200]})
+
+# ═══ GOVERNANCE DEGLI ARCHI (Board 65F #463 #472): ogni arco ha pedigree + confidenza ═══
+# La confidenza per tipo di arco: quanto ci si puo' fidare di quell'abbinamento/relazione.
+_ARCO_CONFIDENZA = {
+    "abbinamento_tradizionale": {"livello": "alta", "layer": "tradizione", "fonte": "documentato"},
+    "tradizione": {"livello": "alta", "layer": "tradizione", "fonte": "documentato"},
+    "abbinamento_aromatico": {"livello": "bassa", "layer": "scoperta", "fonte": "ahn_molecolare"},
+    "contiene_composto": {"livello": "tecnico", "layer": "dato", "fonte": "ahn"},
+    "ha_evidence": {"livello": "alta", "layer": "evidence", "fonte": "biblioteca"},
+    "sfrutta_fenomeno": {"livello": "media", "layer": "scientifico", "fonte": "grafo"},
+    "governato_da": {"livello": "media", "layer": "scientifico", "fonte": "grafo"},
+}
+
+@bp.route("/admin/grafo/governance")
+def admin_grafo_governance():
+    """Board 65F: censisce gli archi per tipo e assegna PEDIGREE + CONFIDENZA. Gli archi molecolari
+    (Ahn) restano nel layer SCOPERTA (bassa fiducia), mai spacciati per tradizione. Diagnosi del grafo."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # censimento: quanti archi per tipo
+        cur.execute("SELECT relation, COUNT(*) FROM edges GROUP BY relation ORDER BY COUNT(*) DESC")
+        censimento = []
+        for relation, n in cur.fetchall():
+            gov = _ARCO_CONFIDENZA.get(relation, {"livello": "sconosciuta", "layer": "non_classificato", "fonte": "?"})
+            censimento.append({"relation": relation, "n": n, **gov})
+        cur.close(); conn.close()
+        # diagnosi: quanti archi alta fiducia (tradizione) vs bassa (scoperta molecolare)
+        alta = sum(c["n"] for c in censimento if c.get("livello")=="alta")
+        bassa = sum(c["n"] for c in censimento if c.get("livello")=="bassa")
+        return jsonify({
+            "censimento": censimento,
+            "diagnosi": {
+                "archi_alta_fiducia": alta, "archi_bassa_fiducia_molecolare": bassa,
+                "nota": ("Se bassa >> alta, il grafo e' dominato da abbinamenti molecolari (scoperta), "
+                         "non da tradizione documentata. La tradizione va arricchita.") if bassa > alta*2 else "equilibrio ok"
+            },
+            "regola": "Gli archi 'abbinamento_aromatico' (Ahn) restano layer SCOPERTA (bassa). Mai in Tradizione. Lo Score di Senso li filtra."
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
+
