@@ -12390,11 +12390,10 @@ def admin_tradizione_genera():
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # ingredienti-base importanti senza abbinamenti tradizionali, non nascosti
         cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                       AND (data ? 'proprieta')
-                       AND COALESCE((data->>'nascosto_utente'), 'false') <> 'true'
-                       AND name NOT LIKE '%%(%%' AND POSITION('_' IN name) = 0
+                       AND (data ? 'proprieta') AND NOT COALESCE((data->>'nascosto_utente')::bool, false)
                        AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=nodes.id AND e.relation='abbinamento_tradizionale')
-                       ORDER BY LENGTH(name) ASC LIMIT %s""", (n,))
+                       AND name NOT LIKE '%%(%%' AND name NOT LIKE '%%_%%'
+                       ORDER BY (data->>'evidence_level') DESC NULLS LAST LIMIT %s""", (n,))
         righe = cur.fetchall()
         fatti = []; archi_creati = 0
         for nid, nome in righe:
@@ -12419,9 +12418,13 @@ def admin_tradizione_genera():
                     ing_nome = (a.get("ingrediente") or "").strip()
                     piatto = (a.get("piatto") or "").strip()
                     if not ing_nome or not piatto: continue  # governance: niente piatto, niente arco
-                    # trovo il nodo dell'ingrediente abbinato
+                    # escludo auto-abbinamento e varianti (te'->te' verde, rum->rum)
+                    _in_l = ing_nome.lower(); _nome_l = nome.lower()
+                    if _in_l == _nome_l or _in_l in _nome_l or _nome_l in _in_l: continue
+                    # trovo il nodo dell'ingrediente abbinato (deve esistere, non nascosto)
                     cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                                   AND LOWER(name)=LOWER(%s) LIMIT 1""", (ing_nome,))
+                                   AND LOWER(name)=LOWER(%s)
+                                   AND COALESCE((data->>'nascosto_utente'),'false') <> 'true' LIMIT 1""", (ing_nome,))
                     r2 = cur.fetchone()
                     if not r2: continue  # se non e' nel grafo, salto (non invento nodi)
                     to_id = r2[0]
