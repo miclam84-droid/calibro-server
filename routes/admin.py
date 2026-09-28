@@ -12196,3 +12196,99 @@ def admin_pulisci_nomi_grezzi():
                         "nota": "I nomi grezzi non compaiono piu' nei suggerimenti (nascosto_utente=true)."})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+# ═══ EVIDENCE LAYER (Costituzione Art.3 #424): le fonti come nodi condivisi, non testo sparso ═══
+_EVIDENCE_CANON = {
+    # chiave di riconoscimento -> nodo Evidence pulito {nome, autore, anno, tier, asin, tipo}
+    "mcgee": {"id":"ev-mcgee","nome":"On Food and Cooking","autore":"Harold McGee","anno":2004,"tier":1,"asin":"0684800012","tipo":"libro"},
+    "hamelman": {"id":"ev-hamelman","nome":"Bread","autore":"Jeffrey Hamelman","anno":2004,"tier":1,"asin":"0471168572","tipo":"libro"},
+    "modernist": {"id":"ev-modernist","nome":"Modernist Cuisine","autore":"Nathan Myhrvold","anno":2011,"tier":1,"asin":"0982761007","tipo":"libro"},
+    "arnold": {"id":"ev-arnold","nome":"Liquid Intelligence","autore":"Dave Arnold","anno":2014,"tier":1,"asin":"0393089037","tipo":"libro"},
+    "suas": {"id":"ev-suas","nome":"Advanced Bread and Pastry","autore":"Michel Suas","anno":2008,"tier":2,"asin":"1418011694","tipo":"libro"},
+    "calvel": {"id":"ev-calvel","nome":"The Taste of Bread","autore":"Raymond Calvel","anno":2001,"tier":2,"asin":"0834216469","tipo":"libro"},
+    "this": {"id":"ev-this","nome":"Gastronomia molecolare","autore":"Hervé This","anno":2001,"tier":1,"tipo":"libro"},
+    "bressanini": {"id":"ev-bressanini","nome":"La scienza della pasticceria","autore":"Dario Bressanini","anno":2014,"tier":1,"tipo":"libro"},
+    "reinhart": {"id":"ev-reinhart","nome":"The Bread Baker's Apprentice","autore":"Peter Reinhart","anno":2001,"tier":2,"tipo":"libro"},
+    "corriher": {"id":"ev-corriher","nome":"CookWise","autore":"Shirley Corriher","anno":1997,"tier":2,"tipo":"libro"},
+    "usda": {"id":"ev-usda","nome":"USDA FoodData Central","autore":"USDA","anno":2024,"tier":0,"tipo":"database"},
+}
+def _riconosci_evidence(testo_fonte):
+    """Da una fonte scritta caoticamente -> la chiave canonica, o None se blog/grezzo."""
+    t = (testo_fonte or "").lower()
+    if any(b in t for b in ['http','www.','.it/','.com/','blog','.net']): return None  # blog/url: scartati
+    for chiave in _EVIDENCE_CANON:
+        if chiave in t: return chiave
+    return None
+
+@bp.route("/admin/evidence/costruisci")
+def admin_evidence_costruisci():
+    """Costituzione Art.3: costruisce l'EVIDENCE LAYER. Crea i nodi Evidence canonici e collega ogni scheda
+    (che cita quella fonte in modo caotico) al nodo pulito. McGee scritto in 6 modi -> 1 nodo condiviso."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # 1. creo i nodi Evidence (se non esistono)
+        creati = 0
+        for chiave, ev in _EVIDENCE_CANON.items():
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (ev["id"],))
+            if not cur.fetchone():
+                data = dict(ev); data["kind"]="evidence"; data["livello"]="curated"
+                cur.execute("INSERT INTO nodes (id, name, type, data) VALUES (%s,%s,'Evidence',%s)",
+                            (ev["id"], ev["nome"], json.dumps(data, ensure_ascii=False)))
+                creati += 1
+        conn.commit()
+        # 2. per ogni scheda con fonti, normalizzo e collego al nodo Evidence
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
+        schede_collegate = 0; link_creati = 0; blog_scartati = 0
+        for nid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            fonti_raw = dd.get("fonti") or (dd.get("provenienza",{}) or {}).get("fonti") or []
+            if not fonti_raw: continue
+            evidence_ids = []
+            for f in fonti_raw:
+                chiave = _riconosci_evidence(str(f))
+                if chiave:
+                    ev_id = _EVIDENCE_CANON[chiave]["id"]
+                    if ev_id not in evidence_ids: evidence_ids.append(ev_id)
+                    # arco scheda -> evidence
+                    cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='ha_evidence'", (nid, ev_id))
+                    if not cur.fetchone():
+                        cur.execute("INSERT INTO edges (from_id, to_id, relation) VALUES (%s,%s,'ha_evidence')", (nid, ev_id))
+                        link_creati += 1
+                elif any(b in str(f).lower() for b in ['http','www','blog','.it/','.com/']):
+                    blog_scartati += 1
+            if evidence_ids:
+                # salvo gli evidence_ids puliti nella scheda (sostituiscono le fonti caotiche)
+                dd["evidence"] = evidence_ids
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
+                schede_collegate += 1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"nodi_evidence_creati": creati, "schede_collegate": schede_collegate,
+                        "link_creati": link_creati, "blog_scartati": blog_scartati,
+                        "nota": "Evidence Layer costruito: le fonti sono nodi condivisi, i blog scartati."})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
+
+@bp.route("/v1/evidence/<ev_id>")
+def get_evidence(ev_id):
+    """La scheda di una fonte: cosa e', chi la cita, il link Biblioteca."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT data FROM nodes WHERE id=%s AND type='Evidence'", (ev_id,))
+        r = cur.fetchone()
+        if not r: return jsonify({"errore":"evidence non trovata"}), 404
+        ev = r[0] if isinstance(r[0], dict) else json.loads(r[0])
+        # chi la cita
+        cur.execute("SELECT n.name FROM edges e JOIN nodes n ON n.id=e.from_id WHERE e.to_id=%s AND e.relation='ha_evidence' LIMIT 20", (ev_id,))
+        citata_da = [x[0] for x in cur.fetchall()]
+        cur.close(); conn.close()
+        ev["citata_da"] = citata_da; ev["n_citazioni"] = len(citata_da)
+        return jsonify(ev)
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
