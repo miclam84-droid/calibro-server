@@ -12394,7 +12394,7 @@ def admin_tradizione_genera():
                        AND COALESCE((data->>'nascosto_utente'),'false') <> 'true'
                        AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=nodes.id AND e.relation='abbinamento_tradizionale')
                        AND name NOT LIKE '%%(%%' AND POSITION('_' IN name) = 0 AND LENGTH(name) > 3
-                       ORDER BY (data ? 'operativo') DESC, LENGTH(name) DESC LIMIT %s""", (n,))
+                       ORDER BY (data ? 'operativo') DESC, LENGTH(name) ASC LIMIT %s""", (n,))
         righe = cur.fetchall()
         fatti = []; archi_creati = 0
         for nid, nome in righe:
