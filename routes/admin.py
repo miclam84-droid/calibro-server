@@ -12537,3 +12537,131 @@ def admin_leggi_nodo(nid):
         return jsonify({"id": r[0], "nome": r[1], "type": r[2], "data": dd, "archi_uscita": archi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/protocollo/genera")
+def admin_protocollo_genera():
+    """FASE C - IL PROTOCOLLO (65C): trasforma una ricetta ricca in un PROTOCOLLO CANONICO (nodo del grafo).
+    Mappa ingredienti->reagenti, fenomeni->fenomeni, punto_critico->bersaglio+diagnosi. Genera ipotesi+sensori.
+    Parametro: rid (id ricetta) oppure nome. dry=1 per simulare."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    rid = request.args.get("rid", "")
+    nome_q = request.args.get("nome", "")
+    dry = request.args.get("dry") == "1"
+    key = os.environ.get("OPENAI_API_KEY", "")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # leggo la ricetta ricca dalla tabella ricette
+        if rid:
+            cur.execute("""SELECT id,nome,disciplina,ingredienti,fenomeni,tecniche,numeri,punto_critico,descrizione
+                           FROM ricette WHERE id=%s LIMIT 1""", (rid,))
+        else:
+            cur.execute("""SELECT id,nome,disciplina,ingredienti,fenomeni,tecniche,numeri,punto_critico,descrizione
+                           FROM ricette WHERE lower(nome) LIKE %s LIMIT 1""", ("%"+nome_q.lower()+"%",))
+        r = cur.fetchone()
+        if not r: cur.close(); conn.close(); return jsonify({"errore":"ricetta non trovata"}), 404
+        r_id, r_nome, disc, ingredienti, fenomeni, tecniche, numeri, punto_critico, descr = r
+        # parse dei campi (possono essere json string o gia' dict/list)
+        def _p(x):
+            if isinstance(x, (list, dict)): return x
+            try: return json.loads(x) if x else []
+            except: return []
+        ingredienti = _p(ingredienti); fenomeni = _p(fenomeni); tecniche = _p(tecniche); numeri = _p(numeri)
+
+        # 1. REAGENTI (dagli ingredienti, collegati ai nodi reagente se esistono)
+        reagenti = []
+        for ing in ingredienti:
+            inome = ing.get("nome","") if isinstance(ing,dict) else str(ing)
+            if not inome: continue
+            cur.execute("""SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1""",(inome,))
+            nr = cur.fetchone()
+            reagenti.append({"nome": inome, "quantita": ing.get("quantita","") if isinstance(ing,dict) else "",
+                             "unita": ing.get("unita","") if isinstance(ing,dict) else "",
+                             "reagente_id": nr[0] if nr else None})
+        # 2. FENOMENI (collegati al grafo, con causalita se c'e')
+        fenomeni_nodi = []
+        for fen in fenomeni:
+            fnome = fen if isinstance(fen,str) else fen.get("nome","")
+            cur.execute("""SELECT id, data FROM nodes WHERE type IN ('Fenomeno','Tecnica') AND LOWER(name)=LOWER(%s) LIMIT 1""",(fnome,))
+            nf = cur.fetchone()
+            if nf:
+                fd = nf[1] if isinstance(nf[1],dict) else json.loads(nf[1])
+                fenomeni_nodi.append({"nome": fnome, "fenomeno_id": nf[0], "ha_causalita": bool(fd.get("causalita"))})
+            else:
+                fenomeni_nodi.append({"nome": fnome, "fenomeno_id": None, "ha_causalita": False})
+        # 3. VARIABILE CRITICA + BERSAGLIO + DIAGNOSI (dal punto_critico, con AI se disponibile)
+        bersaglio = {}; ipotesi = ""; sensori = {}; est = {}; variabile_critica = ""; diagnosi = []
+        if key and not dry:
+            try:
+                sys = (f"Preparazione: {r_nome}. Punto critico: {punto_critico}. "
+                       f'Estrai in JSON: {{"ipotesi":"cosa voglio ottenere (1 frase)",'
+                       f'"variabile_critica":"la variabile che governa","bersaglio":{{"valore":"...","unita":"..."}},'
+                       f'"diagnosi":[{{"sintomo":"...","causa":"...","correzione":"..."}}],'
+                       f'"sensori":{{"vista":"...","tatto":"...","olfatto":"..."}}}}. '
+                       f"Basati sulla scienza. SOLO il JSON.")
+                payload = {"model":"gpt-4o","max_tokens":500,"temperature":0.2,
+                           "messages":[{"role":"system","content":sys},{"role":"user","content":"Estrai."}]}
+                req = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode(),
+                                 headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                rr = ur.urlopen(req, timeout=45); testo = json.loads(rr.read().decode())["choices"][0]["message"]["content"]
+                import re as _re
+                m = _re.search(r'\{.*\}', testo, _re.DOTALL)
+                if m:
+                    est = json.loads(m.group(0))
+                    ipotesi = est.get("ipotesi",""); bersaglio = est.get("bersaglio",{})
+                    sensori = est.get("sensori",{}); diagnosi = est.get("diagnosi",[])
+                    variabile_critica = est.get("variabile_critica","")
+            except Exception as _e:
+                pass
+        # 4. costruisco il PROTOCOLLO (nodo del grafo)
+        prot_id = "prot-" + r_id.replace("ric-gen-","").replace("ric-cls-","").replace("ric-fig-","").replace("ric-","")
+        protocollo = {
+            "kind": "protocollo", "tipo": "canonico", "nome": r_nome, "disciplina": disc,
+            "ipotesi": ipotesi, "variabile_critica": variabile_critica,
+            "reagenti": reagenti, "fenomeni": fenomeni_nodi, "bersaglio": bersaglio,
+            "sensori": sensori, "diagnosi": diagnosi,
+            "punto_critico_originale": punto_critico, "deriva_da_ricetta": r_id,
+        }
+        if not dry:
+            cur.execute("SELECT id FROM nodes WHERE id=%s", (prot_id,))
+            if cur.fetchone():
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(protocollo,ensure_ascii=False), prot_id))
+            else:
+                cur.execute("INSERT INTO nodes (id, name, type, data) VALUES (%s,%s,'Protocollo',%s)",
+                            (prot_id, r_nome, json.dumps(protocollo,ensure_ascii=False)))
+            # archi verso reagenti e fenomeni
+            for rg in reagenti:
+                if rg["reagente_id"]:
+                    cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='usa_reagente'",(prot_id,rg["reagente_id"]))
+                    if not cur.fetchone():
+                        cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'usa_reagente')",(prot_id,rg["reagente_id"]))
+            for fn in fenomeni_nodi:
+                if fn["fenomeno_id"]:
+                    cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='attraversa_fenomeno'",(prot_id,fn["fenomeno_id"]))
+                    if not cur.fetchone():
+                        cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'attraversa_fenomeno')",(prot_id,fn["fenomeno_id"]))
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"protocollo_id": prot_id, "protocollo": protocollo, "dry_run": dry,
+                        "reagenti_collegati": sum(1 for r in reagenti if r["reagente_id"]),
+                        "fenomeni_collegati": sum(1 for f in fenomeni_nodi if f["fenomeno_id"])})
+    except Exception as e:
+        import traceback
+        return jsonify({"errore": str(e)[:200]})
+
+@bp.route("/v1/protocollo/<pid>")
+def get_protocollo(pid):
+    """Legge un protocollo (l'esperimento)."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT data FROM nodes WHERE id=%s AND type='Protocollo'", (pid,))
+        r = cur.fetchone(); cur.close(); conn.close()
+        if not r: return jsonify({"errore":"protocollo non trovato"}), 404
+        return jsonify(r[0] if isinstance(r[0],dict) else json.loads(r[0]))
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
