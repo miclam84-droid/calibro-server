@@ -12749,6 +12749,73 @@ def _riempitore_worker(max_ondate):
                         conn.commit(); _log(f"tradizione: {nome}")
                 except: pass
             cur.close(); conn.close()
+        # FASE 3: PROTOCOLLI dalle ricette (trasforma ricette in esperimenti)
+        _RIEMPITORE_STATO["fase"] = "protocolli"
+        for giro in range(max_ondate):
+            if not _RIEMPITORE_STATO["attivo"]: return
+            conn = psycopg2.connect(DB); cur = conn.cursor()
+            # ricette senza protocollo (il protocollo ha id prot-<slug>, deriva_da_ricetta=ric-id)
+            cur.execute("""SELECT id,nome,disciplina,ingredienti,fenomeni,tecniche,numeri,punto_critico
+                           FROM ricette WHERE id NOT IN (
+                             SELECT data->>'deriva_da_ricetta' FROM nodes WHERE type='Protocollo' AND data ? 'deriva_da_ricetta'
+                           ) LIMIT 4""")
+            righe = cur.fetchall()
+            if not righe: cur.close(); conn.close(); break
+            for r_id, r_nome, disc, ingr, fen, tec, num, pc in righe:
+                try:
+                    def _pp(x):
+                        if isinstance(x,(list,dict)): return x
+                        try: return json.loads(x) if x else []
+                        except: return []
+                    ingr=_pp(ingr); fen=_pp(fen)
+                    reagenti=[]
+                    for ing in ingr:
+                        inome = ing.get("nome","") if isinstance(ing,dict) else str(ing)
+                        if not inome: continue
+                        cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(inome,))
+                        nr=cur.fetchone()
+                        reagenti.append({"nome":inome,"quantita":ing.get("quantita","") if isinstance(ing,dict) else "","unita":ing.get("unita","") if isinstance(ing,dict) else "","reagente_id":nr[0] if nr else None})
+                    fenomeni_nodi=[]
+                    for f in fen:
+                        fnome = f if isinstance(f,str) else f.get("nome","")
+                        cur.execute("SELECT id FROM nodes WHERE type IN ('Fenomeno','Tecnica') AND LOWER(name)=LOWER(%s) LIMIT 1",(fnome,))
+                        nf=cur.fetchone()
+                        fenomeni_nodi.append({"nome":fnome,"fenomeno_id":nf[0] if nf else None})
+                    ipotesi="";bersaglio={};sensori={};diagnosi=[];variabile_critica=""
+                    try:
+                        sysp=(f"Preparazione: {r_nome}. Punto critico: {pc}. Estrai JSON: "
+                              f'{{"ipotesi":"1 frase","variabile_critica":"...","bersaglio":{{"valore":"...","unita":"..."}},'
+                              f'"diagnosi":[{{"sintomo":"...","causa":"...","correzione":"..."}}],"sensori":{{"vista":"...","tatto":"...","olfatto":"..."}}}}. SOLO JSON.')
+                        plp={"model":"gpt-4o","max_tokens":500,"temperature":0.2,"messages":[{"role":"system","content":sysp},{"role":"user","content":"Estrai."}]}
+                        rqp=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(plp).encode(),headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                        txp=json.loads(ur.urlopen(rqp,timeout=45).read().decode())["choices"][0]["message"]["content"]
+                        import re as _re
+                        mp=_re.search(r'\{.*\}',txp,_re.DOTALL)
+                        if mp:
+                            ep=json.loads(mp.group(0))
+                            ipotesi=ep.get("ipotesi","");bersaglio=ep.get("bersaglio",{});sensori=ep.get("sensori",{})
+                            diagnosi=ep.get("diagnosi",[]);variabile_critica=ep.get("variabile_critica","")
+                    except: pass
+                    prot_id="prot-"+r_id.replace("ric-gen-","").replace("ric-cls-","").replace("ric-fig-","").replace("ric-","")
+                    prot={"kind":"protocollo","tipo":"canonico","nome":r_nome,"disciplina":disc,"ipotesi":ipotesi,
+                          "variabile_critica":variabile_critica,"reagenti":reagenti,"fenomeni":fenomeni_nodi,"bersaglio":bersaglio,
+                          "sensori":sensori,"diagnosi":diagnosi,"punto_critico_originale":pc,"deriva_da_ricetta":r_id}
+                    cur.execute("SELECT id FROM nodes WHERE id=%s",(prot_id,))
+                    if cur.fetchone():
+                        cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(prot,ensure_ascii=False),prot_id))
+                    else:
+                        cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Protocollo',%s)",(prot_id,r_nome,json.dumps(prot,ensure_ascii=False)))
+                    for rg in reagenti:
+                        if rg["reagente_id"]:
+                            cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='usa_reagente'",(prot_id,rg["reagente_id"]))
+                            if not cur.fetchone(): cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'usa_reagente')",(prot_id,rg["reagente_id"]))
+                    for fn in fenomeni_nodi:
+                        if fn["fenomeno_id"]:
+                            cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='attraversa_fenomeno'",(prot_id,fn["fenomeno_id"]))
+                            if not cur.fetchone(): cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'attraversa_fenomeno')",(prot_id,fn["fenomeno_id"]))
+                    conn.commit(); _RIEMPITORE_STATO["fatti"]["protocolli"]+=1; _log(f"protocollo: {r_nome}")
+                except: pass
+            cur.close(); conn.close()
         _RIEMPITORE_STATO["fase"] = "completato"; _RIEMPITORE_STATO["attivo"] = False
     except Exception as e:
         _RIEMPITORE_STATO["fase"] = "errore: " + str(e)[:100]; _RIEMPITORE_STATO["attivo"] = False
