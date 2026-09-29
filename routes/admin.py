@@ -12665,3 +12665,120 @@ def get_protocollo(pid):
         return jsonify(r[0] if isinstance(r[0],dict) else json.loads(r[0]))
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+# ═══ RIEMPITORE AUTOMATICO: macina TUTTE le ondate da solo (causalita, tradizione, protocolli, schede) ═══
+_RIEMPITORE_STATO = {"attivo": False, "fase": "", "fatti": {}, "iniziato": "", "ultimo": ""}
+
+def _riempitore_worker(max_ondate):
+    import os, psycopg2, json, urllib.request as ur, time, datetime
+    global _RIEMPITORE_STATO
+    _RIEMPITORE_STATO = {"attivo": True, "fase": "avvio", "fatti": {"causalita":0,"tradizione":0,"protocolli":0},
+                         "iniziato": datetime.datetime.now().isoformat()[:19], "ultimo": ""}
+    key = os.environ.get("OPENAI_API_KEY", "")
+    DB = os.environ["DATABASE_URL"]
+    def _log(msg):
+        _RIEMPITORE_STATO["ultimo"] = msg
+    try:
+        # FASE 1: CAUSALITA sui fenomeni che non ce l'hanno
+        _RIEMPITORE_STATO["fase"] = "causalita"
+        for giro in range(max_ondate):
+            conn = psycopg2.connect(DB); cur = conn.cursor()
+            cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                           AND NOT (data ? 'causalita') ORDER BY (data->>'coverage_score')::int DESC NULLS LAST LIMIT 4""")
+            righe = cur.fetchall()
+            if not righe: cur.close(); conn.close(); break
+            for nid, nome, data in righe:
+                dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                try:
+                    sys = (f"Esperto scienza alimenti. Fenomeno: {nome}. Genera CAUSALITA JSON: "
+                           f'{{"acceleranti":[{{"fattore":"...","direzione":"su/giu","peso":"alto/medio/basso"}}],'
+                           f'"rallentanti":[...],"conseguenze":[{{"effetto":"...","descrizione":"..."}}]}}. SOLO JSON.')
+                    pl = {"model":"gpt-4o","max_tokens":600,"temperature":0.3,"messages":[{"role":"system","content":sys},{"role":"user","content":"Genera."}]}
+                    rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                                    headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                    tx = json.loads(ur.urlopen(rq, timeout=50).read().decode())["choices"][0]["message"]["content"]
+                    import re as _re
+                    m = _re.search(r'\{.*\}', tx, _re.DOTALL)
+                    if m:
+                        cs = json.loads(m.group(0))
+                        if cs.get("acceleranti") or cs.get("rallentanti"):
+                            dd["causalita"] = cs
+                            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), nid))
+                            conn.commit(); _RIEMPITORE_STATO["fatti"]["causalita"] += 1
+                            _log(f"causalita: {nome}")
+                except: pass
+            cur.close(); conn.close()
+            if not _RIEMPITORE_STATO["attivo"]: return
+        # FASE 2: TRADIZIONE sugli ingredienti senza abbinamenti
+        _RIEMPITORE_STATO["fase"] = "tradizione"
+        for giro in range(max_ondate):
+            if not _RIEMPITORE_STATO["attivo"]: return
+            conn = psycopg2.connect(DB); cur = conn.cursor()
+            cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                           AND (data ? 'proprieta') AND COALESCE((data->>'nascosto_utente'),'false')<>'true'
+                           AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=nodes.id AND e.relation='abbinamento_tradizionale')
+                           AND name NOT LIKE '%%(%%' AND POSITION('_' IN name)=0 AND LENGTH(name)>3
+                           ORDER BY (data ? 'operativo') DESC, LENGTH(name) ASC LIMIT 5""")
+            righe = cur.fetchall()
+            if not righe: cur.close(); conn.close(); break
+            for nid, nome in righe:
+                try:
+                    sys = (f"Gastronomia. Ingrediente: {nome}. 4-6 abbinamenti TRADIZIONALI con il PIATTO reale. "
+                           f'JSON: {{"abbinamenti":[{{"ingrediente":"...","piatto":"...","tradizione":"..."}}]}}. Niente piatto=escludi. SOLO JSON.')
+                    pl = {"model":"gpt-4o","max_tokens":500,"temperature":0.2,"messages":[{"role":"system","content":sys},{"role":"user","content":"Gli abbinamenti."}]}
+                    rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                                    headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                    tx = json.loads(ur.urlopen(rq, timeout=50).read().decode())["choices"][0]["message"]["content"]
+                    import re as _re
+                    m = _re.search(r'\{.*\}', tx, _re.DOTALL)
+                    if m:
+                        for a in json.loads(m.group(0)).get("abbinamenti", []):
+                            inm = (a.get("ingrediente") or "").strip(); pt = (a.get("piatto") or "").strip()
+                            if not inm or not pt: continue
+                            _il = inm.lower(); _nl = nome.lower()
+                            if _il == _nl or _il in _nl or _nl in _il: continue
+                            cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) AND COALESCE((data->>'nascosto_utente'),'false')<>'true' LIMIT 1",(inm,))
+                            rr2 = cur.fetchone()
+                            if not rr2: continue
+                            cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='abbinamento_tradizionale'",(nid,rr2[0]))
+                            if cur.fetchone(): continue
+                            cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'abbinamento_tradizionale',%s)",
+                                        (nid,rr2[0],json.dumps({"piatto":pt,"tradizione":a.get("tradizione",""),"confidenza":"alta"},ensure_ascii=False)))
+                            _RIEMPITORE_STATO["fatti"]["tradizione"] += 1
+                        conn.commit(); _log(f"tradizione: {nome}")
+                except: pass
+            cur.close(); conn.close()
+        _RIEMPITORE_STATO["fase"] = "completato"; _RIEMPITORE_STATO["attivo"] = False
+    except Exception as e:
+        _RIEMPITORE_STATO["fase"] = "errore: " + str(e)[:100]; _RIEMPITORE_STATO["attivo"] = False
+
+@bp.route("/admin/riempitore/avvia")
+def admin_riempitore_avvia():
+    from flask import request, jsonify
+    import os, threading
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    if _RIEMPITORE_STATO.get("attivo"):
+        return jsonify({"gia_in_corso": True, "stato": _RIEMPITORE_STATO})
+    max_ondate = int(request.args.get("ondate", "50"))
+    t = threading.Thread(target=_riempitore_worker, args=(max_ondate,), daemon=True)
+    t.start()
+    return jsonify({"avviato": True, "nota": "Riempie causalita + tradizione in background. Stato: /admin/riempitore/stato"})
+
+@bp.route("/admin/riempitore/stato")
+def admin_riempitore_stato():
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    return jsonify(_RIEMPITORE_STATO)
+
+@bp.route("/admin/riempitore/stop")
+def admin_riempitore_stop():
+    from flask import request, jsonify
+    import os
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    _RIEMPITORE_STATO["attivo"] = False
+    return jsonify({"fermato": True})
