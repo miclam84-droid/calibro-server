@@ -12690,7 +12690,7 @@ def _valida_ai(tipo, soggetto, contenuto):
                    f"Verifica: il bersaglio e' plausibile? l'ipotesi e la diagnosi sono corrette? "
                    f"Rispondi JSON {{\"ok\":true/false,\"motivo\":\"...\"}}.")
         pl = {"model":"gpt-4o-mini","max_tokens":150,"temperature":0,
-              "messages":[{"role":"system","content":"Sei un revisore scientifico severo di food science. Blocca cio' che e' sbagliato o inventato."},
+              "messages":[{"role":"system","content":"Sei un revisore di food science equilibrato. Approva se il contenuto e ragionevole e plausibile. Blocca SOLO errori gravi ed evidenti (abbinamenti palesemente inventati, bersagli assurdi, contraddizioni chiare). Nel dubbio APPROVA."},
                           {"role":"user","content":dom}]}
         rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
                         headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
