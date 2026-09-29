@@ -12670,6 +12670,40 @@ def get_protocollo(pid):
 # ═══ RIEMPITORE AUTOMATICO: macina TUTTE le ondate da solo (causalita, tradizione, protocolli, schede) ═══
 _RIEMPITORE_STATO = {"attivo": False, "fase": "", "fatti": {}, "iniziato": "", "ultimo": ""}
 
+def _valida_ai(tipo, soggetto, contenuto):
+    """GATE: una seconda AI valida il lavoro della prima. Ritorna (ok: bool, motivo: str).
+    tipo = 'causalita' | 'tradizione' | 'protocollo'. Controlla la correttezza scientifica/culinaria."""
+    import os, json, urllib.request as ur
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key: return (True, "no-key")  # senza key, non blocco (fail-open)
+    try:
+        if tipo == "causalita":
+            dom = (f"Fenomeno: {soggetto}. Causalita proposta: {json.dumps(contenuto,ensure_ascii=False)[:600]}. "
+                   f"Verifica: gli acceleranti/rallentanti sono scientificamente CORRETTI per questo fenomeno? "
+                   f"Un fattore non puo' accelerare E rallentare. Rispondi JSON {{\"ok\":true/false,\"motivo\":\"...\"}}.")
+        elif tipo == "tradizione":
+            dom = (f"Ingrediente: {soggetto}. Abbinamento proposto: {json.dumps(contenuto,ensure_ascii=False)[:400]}. "
+                   f"Verifica: il PIATTO citato esiste DAVVERO e usa quell'abbinamento? Non inventato? "
+                   f"Rispondi JSON {{\"ok\":true/false,\"motivo\":\"...\"}}.")
+        else:  # protocollo
+            dom = (f"Preparazione: {soggetto}. Dati: {json.dumps(contenuto,ensure_ascii=False)[:600]}. "
+                   f"Verifica: il bersaglio e' plausibile? l'ipotesi e la diagnosi sono corrette? "
+                   f"Rispondi JSON {{\"ok\":true/false,\"motivo\":\"...\"}}.")
+        pl = {"model":"gpt-4o-mini","max_tokens":150,"temperature":0,
+              "messages":[{"role":"system","content":"Sei un revisore scientifico severo di food science. Blocca cio' che e' sbagliato o inventato."},
+                          {"role":"user","content":dom}]}
+        rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                        headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+        tx = json.loads(ur.urlopen(rq, timeout=30).read().decode())["choices"][0]["message"]["content"]
+        import re as _re
+        m = _re.search(r'\{.*\}', tx, _re.DOTALL)
+        if m:
+            v = json.loads(m.group(0))
+            return (bool(v.get("ok", True)), str(v.get("motivo",""))[:80])
+        return (True, "parse-fail")  # se non parsa, non blocco
+    except Exception:
+        return (True, "err")  # fail-open: in caso di errore non blocco (meglio salvare che perdere)
+
 def _riempitore_worker(max_ondate):
     import os, psycopg2, json, urllib.request as ur, time, datetime
     global _RIEMPITORE_STATO
@@ -12703,10 +12737,15 @@ def _riempitore_worker(max_ondate):
                     if m:
                         cs = json.loads(m.group(0))
                         if cs.get("acceleranti") or cs.get("rallentanti"):
-                            dd["causalita"] = cs
-                            cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), nid))
-                            conn.commit(); _RIEMPITORE_STATO["fatti"]["causalita"] += 1
-                            _log(f"causalita: {nome}")
+                            ok, motivo = _valida_ai("causalita", nome, cs)
+                            if ok:
+                                dd["causalita"] = cs; dd["causalita_verificata"] = True
+                                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), nid))
+                                conn.commit(); _RIEMPITORE_STATO["fatti"]["causalita"] += 1
+                                _log(f"causalita OK: {nome}")
+                            else:
+                                _RIEMPITORE_STATO.setdefault("scartati",{}); _RIEMPITORE_STATO["scartati"]["causalita"]=_RIEMPITORE_STATO["scartati"].get("causalita",0)+1
+                                _log(f"causalita SCARTATA ({motivo}): {nome}")
                 except: pass
             cur.close(); conn.close()
             if not _RIEMPITORE_STATO["attivo"]: return
@@ -12743,8 +12782,12 @@ def _riempitore_worker(max_ondate):
                             if not rr2: continue
                             cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='abbinamento_tradizionale'",(nid,rr2[0]))
                             if cur.fetchone(): continue
+                            okt, mt = _valida_ai("tradizione", nome, {"ingrediente":inm,"piatto":pt})
+                            if not okt:
+                                _RIEMPITORE_STATO.setdefault("scartati",{}); _RIEMPITORE_STATO["scartati"]["tradizione"]=_RIEMPITORE_STATO["scartati"].get("tradizione",0)+1
+                                continue
                             cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'abbinamento_tradizionale',%s)",
-                                        (nid,rr2[0],json.dumps({"piatto":pt,"tradizione":a.get("tradizione",""),"confidenza":"alta"},ensure_ascii=False)))
+                                        (nid,rr2[0],json.dumps({"piatto":pt,"tradizione":a.get("tradizione",""),"confidenza":"alta","verificato":True},ensure_ascii=False)))
                             _RIEMPITORE_STATO["fatti"]["tradizione"] += 1
                         conn.commit(); _log(f"tradizione: {nome}")
                 except: pass
@@ -12797,9 +12840,13 @@ def _riempitore_worker(max_ondate):
                             diagnosi=ep.get("diagnosi",[]);variabile_critica=ep.get("variabile_critica","")
                     except: pass
                     prot_id="prot-"+r_id.replace("ric-gen-","").replace("ric-cls-","").replace("ric-fig-","").replace("ric-","")
+                    okp, mp2 = _valida_ai("protocollo", r_nome, {"ipotesi":ipotesi,"bersaglio":bersaglio,"diagnosi":diagnosi})
                     prot={"kind":"protocollo","tipo":"canonico","nome":r_nome,"disciplina":disc,"ipotesi":ipotesi,
                           "variabile_critica":variabile_critica,"reagenti":reagenti,"fenomeni":fenomeni_nodi,"bersaglio":bersaglio,
-                          "sensori":sensori,"diagnosi":diagnosi,"punto_critico_originale":pc,"deriva_da_ricetta":r_id}
+                          "sensori":sensori,"diagnosi":diagnosi,"punto_critico_originale":pc,"deriva_da_ricetta":r_id,
+                          "verificato": okp}
+                    if not okp:
+                        _RIEMPITORE_STATO.setdefault("scartati",{}); _RIEMPITORE_STATO["scartati"]["protocolli"]=_RIEMPITORE_STATO["scartati"].get("protocolli",0)+1
                     cur.execute("SELECT id FROM nodes WHERE id=%s",(prot_id,))
                     if cur.fetchone():
                         cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(prot,ensure_ascii=False),prot_id))
