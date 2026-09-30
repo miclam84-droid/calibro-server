@@ -13162,8 +13162,8 @@ def admin_pulisci_bersagli():
             val = str(b.get("valore","")).strip()
             uni = str(b.get("unita","")).strip()
             cambiato = False
-            # valori vaghi non-numerici -> svuoto (meglio niente che sbagliato)
-            if val.lower() in ["ottimale","corretta","corretto","variabile","giusta","adeguata","nessuna",""] and not re.search(r'\d', val):
+            # valori vaghi o DESCRITTIVI (senza numero) -> svuoto (il bersaglio deve essere numerico)
+            if not re.search(r'\d', val):
                 if b: dd["bersaglio"] = {}; svuotati += 1; cambiato = True
             else:
                 # separo numero da unita se attaccati ("altagradi"->rimuovo, "18-20minuti"->18-20 + minuti)
