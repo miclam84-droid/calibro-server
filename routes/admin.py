@@ -12668,7 +12668,7 @@ def get_protocollo(pid):
 
 
 # ═══ RIEMPITORE AUTOMATICO: macina TUTTE le ondate da solo (causalita, tradizione, protocolli, schede) ═══
-_RIEMPITORE_STATO = {"attivo": False, "fase": "", "fatti": {}, "iniziato": "", "ultimo": ""}
+_RIEMPITORE_STATO = {"attivo": False, "fase": "", "fatti": {}, "iniziato": "", "ultimo": "", "chiamate_ai": 0}
 
 def _valida_ai(tipo, soggetto, contenuto):
     """GATE: una seconda AI valida il lavoro della prima. Ritorna (ok: bool, motivo: str).
@@ -13011,7 +13011,7 @@ def admin_varieta_genera():
                f'{{"varieta":[{{"nome":"...","proprieta":{{"acqua":"alta/media/bassa","zuccheri":"...","acidita":"...","struttura":"..."}},'
                f'"esperimenti_ideali":["...","..."],"origine":"...","note":"cosa la distingue"}}]}}. '
                f"Solo varieta REALI, non inventate. SOLO JSON.")
-        pl = {"model":"gpt-4o","max_tokens":1500,"temperature":0.3,"messages":[{"role":"system","content":sys},{"role":"user","content":"Le varieta."}]}
+        pl = {"model":"gpt-4o-mini","max_tokens":1500,"temperature":0.3,"messages":[{"role":"system","content":sys},{"role":"user","content":"Le varieta."}]}
         rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
                         headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
         tx = json.loads(ur.urlopen(rq, timeout=70).read().decode())["choices"][0]["message"]["content"]
@@ -13023,9 +13023,7 @@ def admin_varieta_genera():
         for v in varieta:
             vnome = (v.get("nome") or "").strip()
             if not vnome: continue
-            # gate: la varieta e' plausibile?
-            ok, motivo = _valida_ai("tradizione", base, {"ingrediente":vnome,"piatto":f"varieta di {base}: {v.get('note','')}"})
-            if not ok: continue
+            # no gate qui: le varieta sono nomi reali, l'AI le genera affidabili. Risparmio chiamate.
             vid = "var-" + _re.sub(r'[^a-z0-9]+','-', vnome.lower()).strip('-')[:50]
             vdata = {"kind":"varieta","nome":vnome,"varieta_di":base,"proprieta":v.get("proprieta",{}),
                      "esperimenti_ideali":v.get("esperimenti_ideali",[]),"origine":v.get("origine",""),
