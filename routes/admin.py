@@ -13309,3 +13309,54 @@ def admin_rimuovi_doppioni_protocolli():
         return jsonify({"gruppi_doppioni": len(gruppi), "protocolli_rimossi": rimossi, "dry_run": dry, "dettaglio": dettaglio[:15]})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/crea-ingredienti-base")
+def admin_crea_ingredienti_base():
+    """Crea i nodi ingrediente BASE comuni che mancano (cioccolato, farina, olio, pasta...) e li collega
+    agli esperimenti che li usano (via la mappa normalizzazione). Cosi' il Protocol Hub non ha buchi."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # base comuni + le parole che nelle ricette li indicano
+    BASE_COMUNI = {
+        "cioccolato": ["cioccolato","cacao","cioccolato fondente","cioccolato al latte","cioccolato bianco","gocce di cioccolato"],
+        "farina": ["farina","farina 00","farina 0","farina manitoba","farina integrale","farina di grano"],
+        "olio": ["olio","olio di semi","olio di girasole","olio di arachidi"],
+        "pasta": ["pasta","spaghetti","penne","rigatoni","fusilli","linguine","tagliatelle","maccheroni"],
+        "pomodoro": ["pomodoro","pomodori","pomodorini","pelati","passata","concentrato di pomodoro"],
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        creati = 0; collegati = 0
+        for base, sinonimi in BASE_COMUNI.items():
+            bid = "ing-base-" + base
+            # creo il nodo base se non esiste
+            cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(base,))
+            ex = cur.fetchone()
+            if ex:
+                bid = ex[0]
+            else:
+                cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Ingrediente',%s)",
+                            (bid, base, json.dumps({"kind":"ingrediente_base","nome":base,"proprieta":{}},ensure_ascii=False)))
+                creati += 1
+            # collego i protocolli che usano un sinonimo
+            cur.execute("SELECT id, data FROM nodes WHERE type='Protocollo'")
+            for pid, data in cur.fetchall():
+                dd = data if isinstance(data,dict) else (json.loads(data) if data else {})
+                usa = False
+                for rg in dd.get("reagenti",[]):
+                    rn = (rg.get("nome","") or "").lower()
+                    if any(s in rn or rn in s for s in sinonimi):
+                        usa = True; break
+                if usa:
+                    cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='usa_reagente'",(pid,bid))
+                    if not cur.fetchone():
+                        cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'usa_reagente')",(pid,bid))
+                        collegati += 1
+            conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"nodi_base_creati":creati,"collegamenti_creati":collegati})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
