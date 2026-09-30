@@ -5761,3 +5761,63 @@ def esperimento_del_giorno():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/diagnosi", methods=["POST"])
+def diagnosi_interattiva():
+    """DIAGNOSI (board 6, la schermata che vende): sintomo -> fenomeno -> cause (dalla causalita) -> patch.
+    Motore: usa la causalita dei fenomeni + le diagnosi dei protocolli. Due tempi lato frontend."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    body = request.get_json(silent=True) or {}
+    sintomo = (body.get("sintomo") or "").strip()
+    disciplina = body.get("disciplina","")
+    if not sintomo: return jsonify({"errore":"manca il sintomo"}), 400
+    key = os.environ.get("OPENAI_API_KEY","")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # 1. cerco nelle DIAGNOSI dei protocolli un sintomo simile (patrimonio esistente)
+        cur.execute("""SELECT name, data FROM nodes WHERE type='Protocollo' AND data->'diagnosi' IS NOT NULL LIMIT 500""")
+        cause_trovate = []
+        sint_l = sintomo.lower()
+        parole = set(w for w in sint_l.split() if len(w)>3)
+        for nome, data in cur.fetchall():
+            dd = data if isinstance(data,dict) else json.loads(data)
+            for dg in dd.get("diagnosi",[]):
+                s = str(dg.get("sintomo","")).lower()
+                # match per parole condivise
+                if parole & set(s.split()) or any(p in s for p in parole):
+                    cause_trovate.append({"causa":dg.get("causa",""),"correzione":dg.get("correzione",""),"da_protocollo":nome})
+        # 2. AI interpreta il sintomo + arricchisce con le cause trovate (o genera se poche)
+        cause_ctx = json.dumps(cause_trovate[:5],ensure_ascii=False) if cause_trovate else "nessuna nel patrimonio"
+        risultato = {"sintomo_interpretato":sintomo,"fenomeno":"","cause":[],"sensori_da_controllare":[]}
+        if key:
+            import urllib.request as ur
+            sys=(f"Esperto diagnosi cucina. Sintomo del cuoco: '{sintomo}' (disciplina: {disciplina}). "
+                 f"Cause note dal patrimonio: {cause_ctx}. Genera JSON diagnosi: "
+                 f'{{"fenomeno":"il fenomeno coinvolto","cause":[{{"causa":"...","probabilita":"alta/media/bassa",'
+                 f'"sensore_conferma":"come capire al tatto/vista se e questa","patch":"correzione concreta e immediata"}}],'
+                 f'"sensori_da_controllare":[{{"sensore":"vista/tatto/olfatto","domanda":"cosa osservare"}}]}}. '
+                 f"2-4 cause ordinate per probabilita. Patch concrete come al banco. SOLO JSON.")
+            try:
+                pl={"model":"gpt-4o-mini","max_tokens":700,"temperature":0.3,"messages":[{"role":"system","content":sys},{"role":"user","content":"Diagnosi."}]}
+                rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                tx=json.loads(ur.urlopen(rq,timeout=40).read().decode())["choices"][0]["message"]["content"]
+                import re as _re
+                m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+                if m: risultato.update(json.loads(m.group(0)))
+            except: pass
+        # 3. se c'e' un fenomeno, allego la sua causalita (il "perche" per il tempo Comprensione)
+        fen = risultato.get("fenomeno","")
+        if fen:
+            cur.execute("""SELECT data FROM nodes WHERE type IN ('Fenomeno','Tecnica') AND LOWER(name) LIKE %s
+                           AND data ? 'causalita' LIMIT 1""",("%"+fen.lower()+"%",))
+            fr=cur.fetchone()
+            if fr:
+                fdd=fr[0] if isinstance(fr[0],dict) else json.loads(fr[0])
+                risultato["causalita_fenomeno"]=fdd.get("causalita")
+        cur.close(); conn.close()
+        risultato["fonti_patrimonio"]=len(cause_trovate)
+        return jsonify(risultato)
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
