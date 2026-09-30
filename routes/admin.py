@@ -13267,3 +13267,45 @@ def admin_normalizza_discipline():
         return jsonify({"cambiati": cambiati, "discipline_ora": nuove})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/protocolli/rimuovi-doppioni")
+def admin_rimuovi_doppioni_protocolli():
+    """Audit fix: rimuove i protocolli DOPPIONI ESATTI (stesso nome identico). Tiene il piu' completo.
+    NON tocca le varianti vere (nomi diversi). dry=1 per simulare."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    dry = request.args.get("dry") == "1"
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # gruppi con stesso nome ESATTO
+        cur.execute("""SELECT LOWER(name) nl, array_agg(id) ids, COUNT(*) c FROM nodes
+                       WHERE type='Protocollo' GROUP BY LOWER(name) HAVING COUNT(*)>1""")
+        gruppi = cur.fetchall()
+        rimossi = 0; dettaglio = []
+        for nl, ids, c in gruppi:
+            # carico i nodi, scelgo il piu' completo (piu' campi pieni)
+            nodi = []
+            for i in ids:
+                cur.execute("SELECT id, data FROM nodes WHERE id=%s", (i,))
+                r = cur.fetchone()
+                if r:
+                    dd = r[1] if isinstance(r[1],dict) else json.loads(r[1])
+                    score = sum(1 for k in ['ipotesi','variabile_critica','sensori','diagnosi'] if dd.get(k)) + (1 if dd.get('bersaglio',{}).get('valore') else 0)
+                    nodi.append((i, score))
+            if len(nodi)<2: continue
+            nodi.sort(key=lambda x:-x[1])
+            tieni = nodi[0][0]; butta = [n[0] for n in nodi[1:]]
+            dettaglio.append({"nome":nl,"tenuto":tieni,"rimossi":len(butta)})
+            if not dry:
+                for bid in butta:
+                    cur.execute("DELETE FROM edges WHERE from_id=%s OR to_id=%s", (bid,bid))
+                    cur.execute("DELETE FROM nodes WHERE id=%s", (bid,))
+                    rimossi += 1
+                conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"gruppi_doppioni": len(gruppi), "protocolli_rimossi": rimossi, "dry_run": dry, "dettaglio": dettaglio[:15]})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
