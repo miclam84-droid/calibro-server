@@ -1,0 +1,35 @@
+/* ═══ SCHEDA PROTOCOLLO (board 3) — l'esperimento aperto ═══ */
+#prot-host{padding-bottom:90px}
+.prot-hero{background:var(--ds-ink);padding:24px;margin-bottom:24px;box-shadow:5px 5px 0 rgba(20,29,34,.15)}
+.prot-hero .ds-eyebrow{color:var(--ds-terracotta)}
+.prot-hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.prot-hero-nome{color:#fff!important;margin-bottom:14px}
+.prot-hero-ip{font-family:var(--ds-body);font-size:14px;line-height:1.5;color:#CBD6DA;margin-bottom:18px}
+.prot-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ds-terracotta);margin-right:6px}
+.prot-hero-scala{background:var(--ds-carta);padding:14px;margin-bottom:14px}
+.prot-hero-sens{margin-top:4px}
+.prot-sez-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-rame);margin:26px 0 12px}
+/* variabile critica */
+.prot-var{background:rgba(181,101,29,.07);border-left:4px solid var(--ds-rame);padding:16px;margin-bottom:8px}
+.prot-var-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ds-rame);margin-bottom:8px}
+.prot-var-nome{font-family:var(--ds-display);font-weight:700;font-size:19px;color:var(--ds-ink);text-transform:capitalize;margin-bottom:6px}
+.prot-var-d{font-family:var(--ds-body);font-size:13px;color:var(--ds-muted);line-height:1.45}
+/* sensori */
+.prot-sensori{display:flex;flex-wrap:wrap;gap:8px}
+/* reagenti */
+.prot-reag-lista{display:flex;flex-direction:column;gap:8px}
+.prot-reag{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;background:var(--ds-carta);border:1.5px solid var(--ds-linea);padding:12px 14px;cursor:pointer}
+.prot-reag:active{background:#F0DECE}
+.prot-reag-nome{font-family:var(--ds-display);font-weight:600;font-size:14px;color:var(--ds-ink);text-transform:capitalize;flex:1}
+.prot-reag-q{flex-shrink:0;color:var(--ds-rame)!important;font-size:13px}
+.prot-reag-ruolo{font-family:var(--ds-mono);font-size:10px;color:var(--ds-grafite);text-transform:uppercase}
+/* fenomeni */
+.prot-fen-lista{display:flex;flex-wrap:wrap;gap:8px}
+.prot-fen{background:var(--ds-ink);color:#fff;border:0;padding:10px 14px;font-family:var(--ds-body);font-size:13px;cursor:pointer;text-transform:capitalize}
+.prot-fen-arr{color:var(--ds-terracotta)}
+.prot-fen:active{transform:translate(2px,2px)}
+/* diagnosi contestuale */
+.prot-diagnosi{margin-top:28px;padding:18px;border:1.5px dashed var(--ds-ossido);text-align:center}
+.prot-diag-q{font-family:var(--ds-body);font-size:14px;color:var(--ds-ink);margin-bottom:12px}
+.prot-diag-cta{background:var(--ds-ossido);color:#fff;border:0;padding:12px 20px;font-family:var(--ds-display);font-weight:700;font-size:14px;cursor:pointer}
+.prot-diag-cta:active{transform:translate(2px,2px)}
