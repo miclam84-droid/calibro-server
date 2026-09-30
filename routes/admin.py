@@ -12722,6 +12722,38 @@ def _riempitore_worker(max_ondate):
     def _log(msg):
         _RIEMPITORE_STATO["ultimo"] = msg
     try:
+        # FASE 0: FIX IPOTESI placeholder (priorita: serve al frontend)
+        _RIEMPITORE_STATO["fase"] = "fix_ipotesi"
+        for giro in range(max_ondate):
+            if not _RIEMPITORE_STATO["attivo"]: return
+            conn = psycopg2.connect(DB); cur = conn.cursor()
+            cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
+                           AND (data->>'ipotesi'='1 frase' OR data->>'ipotesi'='' OR LENGTH(data->>'ipotesi')<10) LIMIT 15""")
+            righe = cur.fetchall()
+            if not righe: cur.close(); conn.close(); break
+            for pid, nome, data in righe:
+                dd = data if isinstance(data,dict) else (json.loads(data) if data else {})
+                pc = dd.get("punto_critico_originale","")
+                try:
+                    sysi = (f"Preparazione: {nome}. Punto critico: {pc}. JSON: "
+                            f'{{"ipotesi":"cosa vuoi ottenere, frase concreta come la direbbe un cuoco","sensori":{{"vista":"...","tatto":"...","olfatto":"..."}}}}. SOLO JSON.')
+                    pli = {"model":"gpt-4o-mini","max_tokens":300,"temperature":0.3,"messages":[{"role":"system","content":sysi},{"role":"user","content":"Genera."}]}
+                    rqi = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pli).encode(), headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                    _RIEMPITORE_STATO["chiamate_ai"]=_RIEMPITORE_STATO.get("chiamate_ai",0)+1
+                    txi = json.loads(ur.urlopen(rqi,timeout=40).read().decode())["choices"][0]["message"]["content"]
+                    import re as _re
+                    mi = _re.search(r'\{.*\}', txi, _re.DOTALL)
+                    if mi:
+                        est = json.loads(mi.group(0))
+                        ip = est.get("ipotesi","").strip()
+                        if ip and ip!="1 frase" and len(ip)>10:
+                            dd["ipotesi"]=ip
+                            if est.get("sensori") and not dd.get("sensori"): dd["sensori"]=est["sensori"]
+                            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid))
+                            conn.commit(); _RIEMPITORE_STATO["fatti"]["ipotesi_fix"]=_RIEMPITORE_STATO["fatti"].get("ipotesi_fix",0)+1
+                            _log(f"ipotesi: {nome}")
+                except: pass
+            cur.close(); conn.close()
         # FASE 1: CAUSALITA sui fenomeni che non ce l'hanno
         _RIEMPITORE_STATO["fase"] = "causalita"
         for giro in range(max_ondate):
