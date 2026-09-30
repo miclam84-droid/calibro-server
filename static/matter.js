@@ -505,7 +505,7 @@ function switchTab(t){
   const askBar=document.getElementById('ask-bar');
   askBar.style.display=(t==='chiedi' && _subtab==='chat')?'block':'none';
   // caricamento pigro per schermata (niente fetch inutili all'avvio)
-  if(t==='scopri'){ caricaHome(); }
+  if(t==='scopri'){ if(typeof renderHome2==='function'){ renderHome2(); } else { caricaHome(); } }
   if(t==='lezione') caricaLezioneStep(Matter.step);
   if(t==='mappa'){
     const _disc = Matter.disciplina || 'bar';
@@ -637,6 +637,8 @@ function chiudiNudge(){
 /* ── SCOPRI DINAMICA (FE5) ────────────────────────────── */
 let _homeCached = null; let _homeInCorso = false;
 async function caricaHome(){
+  // HOME RIFONDATA (Design v1): se il modulo nuovo c'è, usa quello
+  if(typeof renderHome2==='function'){ renderHome2(); return; }
   if(_homeCached){ renderHome(_homeCached); return; }
   if(_homeInCorso){ return; } // evita la doppia fetch simultanea all'avvio
   _homeInCorso = true;

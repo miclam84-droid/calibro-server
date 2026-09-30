@@ -27,11 +27,15 @@
 <link rel="preload" href="/static/fonts/SpaceGrotesk-Bold.ttf" as="font" type="font/ttf" crossorigin>
 <!-- matter.css: SINCRONO (locale, cache attiva, dà subito il layout giusto = niente CLS/salti) -->
 <link rel="stylesheet" href="/static/matter.css?v={{ mb_ver }}">
+<link rel="stylesheet" href="/static/matter-ds.css?v={{ mb_ver }}">
+<link rel="stylesheet" href="/static/matter-home2.css?v={{ mb_ver }}">
 <!-- Phosphor icons: ASINCRONO (era il killer da unpkg, CDN esterno lento) -->
 <link rel="preload" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css"></noscript>
 <!-- matter.js: defer (non blocca il parsing) -->
 <script src="/static/matter.js?v={{ mb_ver }}" defer></script>
+<script src="/static/matter-scala.js?v={{ mb_ver }}" defer></script>
+<script src="/static/matter-home2.js?v={{ mb_ver }}" defer></script>
 <script src="/static/matter-galileo.js?v={{ mb_ver }}" defer onload="window._galileoInit&&window._galileoInit()"></script>
 
 <script>
@@ -99,6 +103,10 @@ if('serviceWorker' in navigator){
 </header>
 <main id="contenuto">
 <div class="screen active" id="screen-scopri">
+  <!-- HOME RIFONDATA (Design v1) -->
+  <div id="home2-host"></div>
+  <!-- VECCHIA HOME (nascosta, tenuta per rollback) -->
+  <div id="home-vecchia" style="display:none">
   <!-- HERO FENOMENO DEL GIORNO — la copertina (Founder Rule #114) -->
   <div class="hero-fen" id="hero-fen" onclick="avviaLezione()">
     <div class="hero-fen-lab">Fenomeno del giorno</div>
@@ -284,6 +292,7 @@ if('serviceWorker' in navigator){
     <div class="princ-body" id="princ-desc"></div>
     <button class="princ-link" onclick="switchTab('mappa')">Vedi il principio nella Mappa →</button>
   </div>
+</div><!-- /home-vecchia -->
 </div>
 
 <!-- ── LEZIONE ─────────────────────────────────────────── -->
