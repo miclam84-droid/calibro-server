@@ -39,3 +39,9 @@
 .diag-fonti{font-family:var(--ds-mono);font-size:10px;color:var(--ds-muted);margin-top:14px;font-style:italic}
 .diag-vuoto,.diag-intro-hint{font-family:var(--ds-body)}
 .diag-vuoto{padding:32px 20px;text-align:center;color:var(--ds-muted);font-size:14px}
+
+/* ═══ Banner memoria — il fossato: Matter ricorda i tuoi esperimenti ═══ */
+.diag-memoria{display:flex;gap:12px;align-items:flex-start;background:var(--ds-grafite);padding:16px;margin-bottom:16px;box-shadow:4px 4px 0 rgba(62,88,113,.2)}
+.diag-mem-ico{font-size:22px;color:#fff;flex-shrink:0;line-height:1.2}
+.diag-mem-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:#A8C4D8;margin-bottom:5px}
+.diag-mem-txt{font-family:var(--ds-display);font-weight:600;font-size:15px;color:#fff;line-height:1.35}

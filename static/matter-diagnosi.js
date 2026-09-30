@@ -21,7 +21,8 @@ window._diagVai=function(){ var i=document.getElementById('diag-input'); var q=i
 
 function _diagCerca(sintomo){
   var box=document.getElementById('diag-esito'); if(box) box.innerHTML='<div class="vista-loading"></div>';
-  fetch('/v1/diagnosi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sintomo:sintomo})})
+  var _dev=(localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon');
+  fetch('/v1/diagnosi',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_dev},body:JSON.stringify({sintomo:sintomo})})
     .then(function(r){return r.json();}).then(function(d){ _diagRender(d, sintomo); })
     .catch(function(){ var b=document.getElementById('diag-esito'); if(b) b.innerHTML='<div class="vista-empty">Errore. Riprova.</div>'; });
 }
@@ -31,10 +32,17 @@ function _diagRender(d, sintomo){
   var cause=(d.cause||[]);
   if(!cause.length){ box.innerHTML='<div class="diag-vuoto">Non ho trovato una causa per "'+e(sintomo)+'". Prova a descrivere il sintomo in modo diverso, o chiedi a Matter.</div>'; return; }
 
+  // ═══ BANNER MEMORIA — "ci sei già passato" (il fossato: Matter ricorda i tuoi esperimenti) ═══
+  var mem=d.memoria_utente||{};
+  var html='';
+  if(mem.gia_affrontato && mem.richiamo){
+    html+='<div class="diag-memoria"><div class="diag-mem-ico">◱</div><div class="diag-mem-body"><div class="diag-mem-lab">DALLA TUA MEMORIA</div><div class="diag-mem-txt">'+e(mem.richiamo)+'</div></div></div>';
+  }
+
   // ═══ TEMPO SERVIZIO (20s) — la causa probabile + fai questo adesso ═══
   var top=cause[0];
   var prob=_PROB[(top.probabilita||'media').toLowerCase()]||_PROB.media;
-  var html='<div class="diag-servizio"><div class="diag-serv-lab">◎ FALLO ADESSO — SERVIZIO</div>'
+  html+='<div class="diag-servizio"><div class="diag-serv-lab">◎ FALLO ADESSO — SERVIZIO</div>'
     + '<div class="diag-causa-top"><span class="diag-prob" style="color:'+prob[1]+';border-color:'+prob[1]+'">'+prob[0]+'</span></div>'
     + '<div class="diag-causa-nome">'+e(top.causa)+'</div>'
     + (top.patch?'<div class="diag-patch"><span class="diag-patch-lab">→ La correzione</span><div class="diag-patch-txt">'+e(top.patch)+'</div></div>':'')
