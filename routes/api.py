@@ -5599,3 +5599,42 @@ def scoperta_molecolare(ingrediente):
                         "nota": "Abbinamenti di scoperta: la scienza suggerisce, la tradizione non li conosce ancora."})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/protocolli")
+def lista_protocolli():
+    """Lista dei protocolli (gli esperimenti). Filtro opzionale per disciplina e ricerca per nome."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    disc = request.args.get("disc", "")
+    q = request.args.get("q", "")
+    limit = min(int(request.args.get("limit", "50")), 200)
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        sql = "SELECT id, name, data FROM nodes WHERE type='Protocollo'"
+        params = []
+        if disc:
+            sql += " AND data->>'disciplina' = %s"; params.append(disc)
+        if q:
+            sql += " AND LOWER(name) LIKE %s"; params.append("%"+q.lower()+"%")
+        sql += " ORDER BY name LIMIT %s"; params.append(limit)
+        cur.execute(sql, params)
+        protocolli = []
+        for pid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            protocolli.append({
+                "id": pid, "nome": nome, "disciplina": dd.get("disciplina",""),
+                "ipotesi": dd.get("ipotesi",""),
+                "variabile_critica": dd.get("variabile_critica",""),
+                "bersaglio": dd.get("bersaglio",{}),
+                "n_reagenti": len(dd.get("reagenti",[])),
+                "fenomeni": [f.get("nome") for f in dd.get("fenomeni",[])],
+                "verificato": dd.get("verificato", None),
+            })
+        # conteggio totale per disciplina
+        cur.execute("SELECT data->>'disciplina' d, COUNT(*) FROM nodes WHERE type='Protocollo' GROUP BY d ORDER BY COUNT(*) DESC")
+        per_disc = {(r[0] or "senza"): r[1] for r in cur.fetchall()}
+        cur.close(); conn.close()
+        return jsonify({"protocolli": protocolli, "totale_mostrati": len(protocolli), "per_disciplina": per_disc})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
