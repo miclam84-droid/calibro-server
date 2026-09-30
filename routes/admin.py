@@ -13109,3 +13109,47 @@ def get_varieta(ingrediente):
         return jsonify({"ingrediente": ingrediente, "varieta": varieta, "n_varieta": len(varieta)})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/protocolli/pulisci-bersagli")
+def admin_pulisci_bersagli():
+    """Rifinitura: pulisce i bersagli mal-formattati dei protocolli ('altagradi Celsius','al denteconsistenza').
+    Separa valore/unita, scarta i non-numerici vaghi ('ottimale','corretta')."""
+    from flask import request, jsonify
+    import os, psycopg2, json, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE type='Protocollo'")
+        puliti = 0; svuotati = 0
+        for pid, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            b = dd.get("bersaglio", {})
+            if not isinstance(b, dict): continue
+            val = str(b.get("valore","")).strip()
+            uni = str(b.get("unita","")).strip()
+            cambiato = False
+            # valori vaghi non-numerici -> svuoto (meglio niente che sbagliato)
+            if val.lower() in ["ottimale","corretta","corretto","variabile","giusta","adeguata","nessuna",""] and not re.search(r'\d', val):
+                if b: dd["bersaglio"] = {}; svuotati += 1; cambiato = True
+            else:
+                # separo numero da unita se attaccati ("altagradi"->rimuovo, "18-20minuti"->18-20 + minuti)
+                m = re.match(r'^([\d\-–,\.]+)\s*(.*)$', val)
+                if m and m.group(1):
+                    nuovo_val = m.group(1).strip()
+                    resto = m.group(2).strip()
+                    nuova_uni = uni if uni and not uni[0].isdigit() else resto
+                    # normalizzo unita comuni
+                    nuova_uni = nuova_uni.replace("gradi Celsius","°C").replace("gradi","°C").replace("minuti","min").replace("consistenza","").strip()
+                    if nuovo_val != val or nuova_uni != uni:
+                        dd["bersaglio"] = {"valore": nuovo_val, "unita": nuova_uni}; puliti += 1; cambiato = True
+                elif not re.search(r'\d', val):
+                    # nessun numero e non vago noto -> svuoto
+                    dd["bersaglio"] = {}; svuotati += 1; cambiato = True
+            if cambiato:
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), pid))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"bersagli_puliti": puliti, "bersagli_svuotati": svuotati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
