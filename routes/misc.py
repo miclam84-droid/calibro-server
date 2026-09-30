@@ -325,8 +325,17 @@ def cerca_universale():
     q = (request.args.get("q") or "").strip()
     if len(q) < 2:
         return jsonify({"query": q, "risultati": [], "nota": "cerca almeno 2 caratteri"})
+    # SINONIMI attrezzature/tecniche: il professionista cerca col nome commerciale, il grafo ha quello tecnico
+    _SINONIMI = {
+        "roner":"sous-vide","bagnomaria termostatico":"sous-vide","termostato":"sous-vide",
+        "rotovapor":"rotavapor","rotovap":"rotavapor","evaporatore rotante":"rotavapor",
+        "gastrovac":"sottovuoto","sifone":"espuma","isi":"espuma","pacojet":"gelato",
+        "bimby":"frullatore","thermomix":"frullatore","abbattitore":"raffreddamento rapido",
+    }
+    _ql = q.lower().strip()
+    if _ql in _SINONIMI:
+        q = _SINONIMI[_ql]  # cerco il termine tecnico
     pat = "%" + q + "%"
-    # tokenizzo: spezzo in parole e costruisco un OR (così "olio cottura" trova "olio" o "cottura")
     parole = [p for p in q.split() if len(p) >= 2]
     if not parole:
         parole = [q]
