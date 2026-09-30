@@ -5215,7 +5215,7 @@ def composer_prossimi():
             "profilo_sensoriale": {k: v for k, v in profilo.items() if v != 0},
             "contrasti_da_bilanciare": [{"proprieta": p, "spiegazione": s} for p, s in contrasti_richiesti],
             "suggeriti_tradizione": tradizione,
-            "suggeriti_analogia": analogia[:6],
+            "suggeriti_analogia": [],  # il molecolare non SUGGERISCE piu (dava slop). Resta come spiegazione.
             "suggeriti_contrasto": contrasto[:6],
         })
     except Exception as e:
@@ -5554,6 +5554,46 @@ _COMPOSTI_SPIEGATI = {
 
 @bp.route("/v1/scoperta/<ingrediente>")
 def scoperta_molecolare(ingrediente):
+    """Il molecolare come SPIEGAZIONE (non suggeritore): se arriva ?con=<altro>, spiega PERCHE quella
+    coppia funziona a livello di composti. Senza, spiega che il molecolare e' la scienza sotto, non un suggeritore."""
+    from flask import request, jsonify
+    import os, psycopg2, json as _js
+    con = request.args.get("con","").strip()
+    if not con:
+        return jsonify({"ingrediente":ingrediente,"spiegazione_disponibile":False,
+                        "nota":"Il molecolare spiega PERCHE due ingredienti funzionano insieme (composti condivisi). Scegli una coppia."})
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # composti dei due
+        def _composti(nome):
+            cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(nome,))
+            r=cur.fetchone()
+            if not r: return None, set()
+            cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'",(r[0],))
+            return r[0], set(x[0] for x in cur.fetchall())
+        id1,c1=_composti(ingrediente); id2,c2=_composti(con)
+        if not c1 or not c2:
+            cur.close(); conn.close()
+            return jsonify({"coppia":[ingrediente,con],"spiegazione_disponibile":False,"nota":"Composti non mappati per questa coppia."})
+        cond=c1&c2
+        # nomi dei composti condivisi + spiegazione
+        spieg=[]
+        for comp_id in list(cond)[:6]:
+            cur.execute("SELECT name FROM nodes WHERE id=%s",(comp_id,))
+            cn=cur.fetchone()
+            if cn:
+                key=cn[0].lower().replace(" ","_").replace("-","_")
+                for k,v in _COMPOSTI_SPIEGATI.items():
+                    if k in key or key in k:
+                        spieg.append(v); break
+        cur.close(); conn.close()
+        return jsonify({"coppia":[ingrediente,con],"spiegazione_disponibile":len(cond)>=2,
+                        "composti_condivisi":len(cond),"perche":spieg[:4],
+                        "nota":"Ecco perche funzionano insieme (a livello di composti aromatici)." if cond else "Pochi composti in comune."})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:120]})
+
+def _scoperta_OLD(ingrediente):
     """La scoperta molecolare SPIEGATA: per un ingrediente, gli abbinamenti di scoperta con il PERCHE
     scientifico (composti condivisi + cosa fanno in cottura). Non una lista muta: conoscenza."""
     from flask import request, jsonify
