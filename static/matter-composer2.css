@@ -1,44 +1,4 @@
-/* ═══ COMPOSER (board 5) — "la materia è la risposta". Tech senza freddo. ═══ */
-#cmp-host{padding-bottom:96px}
-.cmp-hero{background:var(--ds-ink);padding:24px;margin-bottom:20px;box-shadow:5px 5px 0 rgba(20,29,34,.15)}
-.cmp-hero .ds-eyebrow{color:var(--ds-terracotta)}
-.cmp-hero-t{margin:10px 0 10px}
-.cmp-hero-sub{font-family:var(--ds-body);font-size:13px;color:#CBD6DA;line-height:1.5}
-.cmp-sez-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-rame);margin:24px 0 12px}
-/* SIMULA — lo slider è la scala graduata */
-.cmp-simula{background:var(--ds-carta);border:1.5px solid var(--ds-ink);padding:18px}
-.cmp-var-row{margin-bottom:14px}
-.cmp-var-nome{font-family:var(--ds-display);font-weight:700;font-size:18px;color:var(--ds-ink);text-transform:capitalize}
-.cmp-slider-cap{display:flex;justify-content:space-between;font-family:var(--ds-mono);font-size:13px;color:var(--ds-muted);margin-bottom:8px}
-.cmp-slider-cap b{color:var(--ds-ink);font-size:15px}
-.cmp-slider-cap b#cmp-a{color:var(--ds-rame)}
-#cmp-slider{width:100%;-webkit-appearance:none;height:8px;background:var(--ds-carta-scura);border:1px solid var(--ds-ink);outline:none;margin:6px 0 16px}
-#cmp-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:30px;background:var(--ds-rame);border:2px solid var(--ds-ink);cursor:pointer}
-#cmp-slider::-moz-range-thumb{width:22px;height:30px;background:var(--ds-rame);border:2px solid var(--ds-ink);cursor:pointer}
-.cmp-simula-btn{width:100%;min-height:50px;background:var(--ds-rame);color:#fff;border:0;font-family:var(--ds-display);font-weight:700;font-size:15px;cursor:pointer}
-.cmp-simula-btn:active{transform:translate(2px,2px)}
-/* TIMELINE — gli effetti si propagano nel tempo */
-.cmp-tl-head{font-family:var(--ds-mono);font-size:13px;color:var(--ds-ink);margin:20px 0 14px;text-align:center}
-.cmp-tl{position:relative;padding-left:24px}
-.cmp-tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--ds-linea)}
-.cmp-tl-nodo{position:relative;margin-bottom:16px}
-.cmp-tl-marker{position:absolute;left:-24px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--ds-rame);border:2px solid var(--ds-carta)}
-.cmp-tl-quando{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ds-rame);margin-bottom:4px}
-.cmp-tl-effetto{font-family:var(--ds-display);font-weight:600;font-size:15px;color:var(--ds-ink);line-height:1.3;margin-bottom:4px}
-.cmp-tl-perche{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted);line-height:1.45}
-.cmp-fen-lab,.cmp-avv-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin:18px 0 8px}
-.cmp-fen-lab{color:var(--ds-grafite)}
-.cmp-avv-lab{color:var(--ds-ossido)}
-.cmp-fen{display:flex;flex-wrap:wrap;gap:6px}
-.cmp-fen-chip{font-family:var(--ds-body);font-size:12px;background:var(--ds-ink);color:#fff;padding:5px 10px;text-transform:capitalize}
-.cmp-avv{font-family:var(--ds-body);font-size:13px;color:var(--ds-ink);background:rgba(155,59,46,.07);border-left:3px solid var(--ds-ossido);padding:10px 12px;margin-bottom:6px;line-height:1.4}
-.cmp-commit{width:100%;margin-top:20px;min-height:48px;background:var(--ds-grafite);color:#fff;border:0;font-family:var(--ds-display);font-weight:700;font-size:14px;cursor:pointer}
-/* ABBINAMENTI */
-.cmp-abb-grp{margin-bottom:16px}
-.cmp-abb-grp-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ds-muted);margin-bottom:8px}
-.cmp-abb{display:flex;justify-content:space-between;align-items:baseline;gap:10px;background:var(--ds-carta);border:1.5px solid var(--ds-linea);padding:11px 13px;margin-bottom:6px}
-.cmp-abb-trad{border-left:4px solid var(--ds-salvia)}
-.cmp-abb-scop{border-left:4px solid var(--ds-rame)}
-.cmp-abb-nome{font-family:var(--ds-display);font-weight:600;font-size:14px;color:var(--ds-ink);text-transform:capitalize}
-.cmp-abb-piatto,.cmp-abb-motivo{font-family:var(--ds-body);font-size:11px;color:var(--ds-muted);text-align:right}
-.cmp-vuoto{font-family:var(--ds-body);font-size:13px;color:var(--ds-muted);padding:16px 0}
+/* ═══ COMPOSER (board 5) — "la materia è la risposta". Tech senza freddo. ═══ */#cmp-host{padding-bottom:96px}#cmp-host .cmp-hero{background:var(--ds-ink);padding:24px;margin-bottom:20px;box-shadow:5px 5px 0 rgba(20,29,34,.15)}#cmp-host .cmp-hero .ds-eyebrow{color:var(--ds-terracotta)}#cmp-host .cmp-hero-t{margin:10px 0 10px}#cmp-host .cmp-hero-sub{font-family:var(--ds-body);font-size:13px;color:#CBD6DA;line-height:1.5}#cmp-host .cmp-sez-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-rame);margin:24px 0 12px}#cmp-host /* SIMULA — lo slider è la scala graduata */
+.cmp-simula{background:var(--ds-carta);border:1.5px solid var(--ds-ink);padding:18px}#cmp-host .cmp-var-row{margin-bottom:14px}#cmp-host .cmp-var-nome{font-family:var(--ds-display);font-weight:700;font-size:18px;color:var(--ds-ink);text-transform:capitalize}#cmp-host .cmp-slider-cap{display:flex;justify-content:space-between;font-family:var(--ds-mono);font-size:13px;color:var(--ds-muted);margin-bottom:8px}#cmp-host .cmp-slider-cap b{color:var(--ds-ink);font-size:15px}#cmp-host .cmp-slider-cap b#cmp-a{color:var(--ds-rame)}#cmp-host #cmp-slider{width:100%;-webkit-appearance:none;height:8px;background:var(--ds-carta-scura);border:1px solid var(--ds-ink);outline:none;margin:6px 0 16px}#cmp-host #cmp-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:30px;background:var(--ds-rame);border:2px solid var(--ds-ink);cursor:pointer}#cmp-host #cmp-slider::-moz-range-thumb{width:22px;height:30px;background:var(--ds-rame);border:2px solid var(--ds-ink);cursor:pointer}#cmp-host .cmp-simula-btn{width:100%;min-height:50px;background:var(--ds-rame);color:#fff;border:0;font-family:var(--ds-display);font-weight:700;font-size:15px;cursor:pointer}#cmp-host .cmp-simula-btn:active{transform:translate(2px,2px)}#cmp-host /* TIMELINE — gli effetti si propagano nel tempo */
+.cmp-tl-head{font-family:var(--ds-mono);font-size:13px;color:var(--ds-ink);margin:20px 0 14px;text-align:center}#cmp-host .cmp-tl{position:relative;padding-left:24px}#cmp-host .cmp-tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--ds-linea)}#cmp-host .cmp-tl-nodo{position:relative;margin-bottom:16px}#cmp-host .cmp-tl-marker{position:absolute;left:-24px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--ds-rame);border:2px solid var(--ds-carta)}#cmp-host .cmp-tl-quando{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ds-rame);margin-bottom:4px}#cmp-host .cmp-tl-effetto{font-family:var(--ds-display);font-weight:600;font-size:15px;color:var(--ds-ink);line-height:1.3;margin-bottom:4px}#cmp-host .cmp-tl-perche{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted);line-height:1.45}#cmp-host .cmp-fen-lab, #cmp-host .cmp-avv-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin:18px 0 8px}#cmp-host .cmp-fen-lab{color:var(--ds-grafite)}#cmp-host .cmp-avv-lab{color:var(--ds-ossido)}#cmp-host .cmp-fen{display:flex;flex-wrap:wrap;gap:6px}#cmp-host .cmp-fen-chip{font-family:var(--ds-body);font-size:12px;background:var(--ds-ink);color:#fff;padding:5px 10px;text-transform:capitalize}#cmp-host .cmp-avv{font-family:var(--ds-body);font-size:13px;color:var(--ds-ink);background:rgba(155,59,46,.07);border-left:3px solid var(--ds-ossido);padding:10px 12px;margin-bottom:6px;line-height:1.4}#cmp-host .cmp-commit{width:100%;margin-top:20px;min-height:48px;background:var(--ds-grafite);color:#fff;border:0;font-family:var(--ds-display);font-weight:700;font-size:14px;cursor:pointer}#cmp-host /* ABBINAMENTI */
+.cmp-abb-grp{margin-bottom:16px}#cmp-host .cmp-abb-grp-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ds-muted);margin-bottom:8px}#cmp-host .cmp-abb{display:flex;justify-content:space-between;align-items:baseline;gap:10px;background:var(--ds-carta);border:1.5px solid var(--ds-linea);padding:11px 13px;margin-bottom:6px}#cmp-host .cmp-abb-trad{border-left:4px solid var(--ds-salvia)}#cmp-host .cmp-abb-scop{border-left:4px solid var(--ds-rame)}#cmp-host .cmp-abb-nome{font-family:var(--ds-display);font-weight:600;font-size:14px;color:var(--ds-ink);text-transform:capitalize}#cmp-host .cmp-abb-piatto, #cmp-host .cmp-abb-motivo{font-family:var(--ds-body);font-size:11px;color:var(--ds-muted);text-align:right}#cmp-host .cmp-vuoto{font-family:var(--ds-body);font-size:13px;color:var(--ds-muted);padding:16px 0}

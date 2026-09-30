@@ -1,0 +1,10 @@
+/* ═══ MATTER DS RESET (Strada B) — Space Mono + reset leggero degli scope ═══ */
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+
+/* reset leggero: neutralizzo solo l'eredità problematica del vecchio CSS sui
+   contenitori, senza all:revert (che azzerava anche i miei stili DS). Lo scoping
+   dei selettori (#scope .classe nei 6 file) fa vincere il DS sul vecchio. */
+#home2-host, #hub-host, #prot-host, #diag-host, #cmp-host, #qd-host{
+  box-sizing:border-box; font-family:'Inter',system-ui,sans-serif; color:#141D22; line-height:1.5;
+}
+#home2-host *, #hub-host *, #prot-host *, #diag-host *, #cmp-host *, #qd-host *{ box-sizing:border-box }

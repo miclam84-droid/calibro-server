@@ -1,47 +1,5 @@
-/* ═══ DIAGNOSI (board 6) — la schermata che vende. Due tempi. ═══ */
-#diag-host{padding-bottom:90px}
-.diag-intro{background:var(--ds-ink);padding:24px;margin-bottom:20px;box-shadow:5px 5px 0 rgba(20,29,34,.15)}
-.diag-intro .ds-eyebrow{color:var(--ds-terracotta)}
-.diag-intro-t{font-family:var(--ds-display);font-weight:700;font-size:24px;line-height:1.1;color:#fff;margin:10px 0 16px}
-.diag-intro-search{display:flex;gap:8px}
-.diag-intro-search input{flex:1;min-width:0;min-height:50px;border:0;background:var(--ds-carta);padding:0 14px;font-family:var(--ds-body);font-size:14px;color:var(--ds-ink);box-sizing:border-box}
-.diag-intro-search button{flex:0 0 50px;height:50px;background:var(--ds-rame);color:#fff;border:0;font-size:20px;cursor:pointer}
-.diag-intro-hint{font-family:var(--ds-mono);font-size:10px;color:#7FB0C4;margin-top:10px;letter-spacing:.03em}
-/* TEMPO SERVIZIO — la card che salva il banco */
-.diag-servizio{background:var(--ds-carta);border:2px solid var(--ds-ossido);box-shadow:5px 5px 0 rgba(155,59,46,.15);padding:20px;margin-bottom:20px}
-.diag-serv-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-ossido);margin-bottom:12px}
-.diag-causa-top{margin-bottom:8px}
-.diag-prob{display:inline-block;font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border:1px solid}
-.diag-causa-nome{font-family:var(--ds-display);font-weight:700;font-size:19px;line-height:1.2;color:var(--ds-ink);margin-bottom:16px}
-.diag-patch{background:var(--ds-ink);padding:14px}
-.diag-patch-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ds-terracotta);display:block;margin-bottom:6px}
-.diag-patch-txt{font-family:var(--ds-body);font-size:15px;line-height:1.5;color:#fff}
-.diag-sez-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-rame);margin:24px 0 12px}
-.diag-sensori{display:flex;flex-wrap:wrap;gap:8px}
-/* altre cause — il ranking */
-.diag-altre{display:flex;flex-direction:column;gap:10px}
-.diag-altra{background:var(--ds-carta);border:1.5px solid var(--ds-linea);padding:14px}
-.diag-altra-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px}
-.diag-altra-causa{font-family:var(--ds-display);font-weight:600;font-size:14px;color:var(--ds-ink);line-height:1.25}
-.diag-altra-prob{flex-shrink:0;font-family:var(--ds-mono);font-size:9px;font-weight:700;text-transform:uppercase}
-.diag-altra-patch{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted);line-height:1.45}
-/* TEMPO COMPRENSIONE — il perché */
-.diag-comprendi-toggle{width:100%;margin-top:24px;background:none;border:1.5px solid var(--ds-linea);padding:14px;font-family:var(--ds-display);font-weight:600;font-size:14px;color:var(--ds-grafite);cursor:pointer;text-align:left}
-.diag-comprensione{margin-top:12px;padding:18px;background:rgba(62,88,113,.05);border-left:3px solid var(--ds-grafite)}
-.diag-fenomeno{margin-bottom:14px}
-.diag-fen-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ds-grafite);display:block;margin-bottom:4px}
-.diag-fen-nome{font-family:var(--ds-display);font-weight:700;font-size:20px;color:var(--ds-ink);text-transform:capitalize}
-.diag-catena{display:flex;flex-direction:column;gap:8px}
-.diag-cat-riga{display:flex;align-items:baseline;gap:8px;font-family:var(--ds-body);font-size:13px}
-.diag-cat-freccia{font-family:var(--ds-mono);font-weight:700;font-size:15px;flex-shrink:0}
-.diag-cat-verbo{font-family:var(--ds-mono);font-size:10px;text-transform:uppercase;color:var(--ds-muted);flex-shrink:0}
-.diag-cat-fattore{color:var(--ds-ink);text-transform:capitalize}
-.diag-fonti{font-family:var(--ds-mono);font-size:10px;color:var(--ds-muted);margin-top:14px;font-style:italic}
-.diag-vuoto,.diag-intro-hint{font-family:var(--ds-body)}
-.diag-vuoto{padding:32px 20px;text-align:center;color:var(--ds-muted);font-size:14px}
-
-/* ═══ Banner memoria — il fossato: Matter ricorda i tuoi esperimenti ═══ */
-.diag-memoria{display:flex;gap:12px;align-items:flex-start;background:var(--ds-grafite);padding:16px;margin-bottom:16px;box-shadow:4px 4px 0 rgba(62,88,113,.2)}
-.diag-mem-ico{font-size:22px;color:#fff;flex-shrink:0;line-height:1.2}
-.diag-mem-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:#A8C4D8;margin-bottom:5px}
-.diag-mem-txt{font-family:var(--ds-display);font-weight:600;font-size:15px;color:#fff;line-height:1.35}
+/* ═══ DIAGNOSI (board 6) — la schermata che vende. Due tempi. ═══ */#diag-host{padding-bottom:90px}#diag-host .diag-intro{background:var(--ds-ink);padding:24px;margin-bottom:20px;box-shadow:5px 5px 0 rgba(20,29,34,.15)}#diag-host .diag-intro .ds-eyebrow{color:var(--ds-terracotta)}#diag-host .diag-intro-t{font-family:var(--ds-display);font-weight:700;font-size:24px;line-height:1.1;color:#fff;margin:10px 0 16px}#diag-host .diag-intro-search{display:flex;gap:8px}#diag-host .diag-intro-search input{flex:1;min-width:0;min-height:50px;border:0;background:var(--ds-carta);padding:0 14px;font-family:var(--ds-body);font-size:14px;color:var(--ds-ink);box-sizing:border-box}#diag-host .diag-intro-search button{flex:0 0 50px;height:50px;background:var(--ds-rame);color:#fff;border:0;font-size:20px;cursor:pointer}#diag-host .diag-intro-hint{font-family:var(--ds-mono);font-size:10px;color:#7FB0C4;margin-top:10px;letter-spacing:.03em}#diag-host /* TEMPO SERVIZIO — la card che salva il banco */
+.diag-servizio{background:var(--ds-carta);border:2px solid var(--ds-ossido);box-shadow:5px 5px 0 rgba(155,59,46,.15);padding:20px;margin-bottom:20px}#diag-host .diag-serv-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-ossido);margin-bottom:12px}#diag-host .diag-causa-top{margin-bottom:8px}#diag-host .diag-prob{display:inline-block;font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border:1px solid}#diag-host .diag-causa-nome{font-family:var(--ds-display);font-weight:700;font-size:19px;line-height:1.2;color:var(--ds-ink);margin-bottom:16px}#diag-host .diag-patch{background:var(--ds-ink);padding:14px}#diag-host .diag-patch-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ds-terracotta);display:block;margin-bottom:6px}#diag-host .diag-patch-txt{font-family:var(--ds-body);font-size:15px;line-height:1.5;color:#fff}#diag-host .diag-sez-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-rame);margin:24px 0 12px}#diag-host .diag-sensori{display:flex;flex-wrap:wrap;gap:8px}#diag-host /* altre cause — il ranking */
+.diag-altre{display:flex;flex-direction:column;gap:10px}#diag-host .diag-altra{background:var(--ds-carta);border:1.5px solid var(--ds-linea);padding:14px}#diag-host .diag-altra-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px}#diag-host .diag-altra-causa{font-family:var(--ds-display);font-weight:600;font-size:14px;color:var(--ds-ink);line-height:1.25}#diag-host .diag-altra-prob{flex-shrink:0;font-family:var(--ds-mono);font-size:9px;font-weight:700;text-transform:uppercase}#diag-host .diag-altra-patch{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted);line-height:1.45}#diag-host /* TEMPO COMPRENSIONE — il perché */
+.diag-comprendi-toggle{width:100%;margin-top:24px;background:none;border:1.5px solid var(--ds-linea);padding:14px;font-family:var(--ds-display);font-weight:600;font-size:14px;color:var(--ds-grafite);cursor:pointer;text-align:left}#diag-host .diag-comprensione{margin-top:12px;padding:18px;background:rgba(62,88,113,.05);border-left:3px solid var(--ds-grafite)}#diag-host .diag-fenomeno{margin-bottom:14px}#diag-host .diag-fen-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ds-grafite);display:block;margin-bottom:4px}#diag-host .diag-fen-nome{font-family:var(--ds-display);font-weight:700;font-size:20px;color:var(--ds-ink);text-transform:capitalize}#diag-host .diag-catena{display:flex;flex-direction:column;gap:8px}#diag-host .diag-cat-riga{display:flex;align-items:baseline;gap:8px;font-family:var(--ds-body);font-size:13px}#diag-host .diag-cat-freccia{font-family:var(--ds-mono);font-weight:700;font-size:15px;flex-shrink:0}#diag-host .diag-cat-verbo{font-family:var(--ds-mono);font-size:10px;text-transform:uppercase;color:var(--ds-muted);flex-shrink:0}#diag-host .diag-cat-fattore{color:var(--ds-ink);text-transform:capitalize}#diag-host .diag-fonti{font-family:var(--ds-mono);font-size:10px;color:var(--ds-muted);margin-top:14px;font-style:italic}#diag-host .diag-vuoto, #diag-host .diag-intro-hint{font-family:var(--ds-body)}#diag-host .diag-vuoto{padding:32px 20px;text-align:center;color:var(--ds-muted);font-size:14px}#diag-host /* ═══ Banner memoria — il fossato: Matter ricorda i tuoi esperimenti ═══ */
+.diag-memoria{display:flex;gap:12px;align-items:flex-start;background:var(--ds-grafite);padding:16px;margin-bottom:16px;box-shadow:4px 4px 0 rgba(62,88,113,.2)}#diag-host .diag-mem-ico{font-size:22px;color:#fff;flex-shrink:0;line-height:1.2}#diag-host .diag-mem-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:#A8C4D8;margin-bottom:5px}#diag-host .diag-mem-txt{font-family:var(--ds-display);font-weight:600;font-size:15px;color:#fff;line-height:1.35}

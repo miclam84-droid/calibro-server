@@ -1,31 +1,4 @@
-/* ═══ QUADERNO 2.0 (board 4) — il fossato, 2 memorie ═══ */
-#qd-host{padding-bottom:96px}
-.qd-hero{background:var(--ds-ink);padding:24px;margin-bottom:24px;box-shadow:5px 5px 0 rgba(20,29,34,.15)}
-.qd-hero .ds-eyebrow{color:var(--ds-terracotta)}
-.qd-hero-t{color:#fff!important;margin-top:8px}
-.qd-hero-n{font-family:var(--ds-body);font-size:14px;color:#CBD6DA;margin-top:10px}
-.qd-hero-n .ds-data{color:var(--ds-terracotta);font-size:16px}
-.qd-sez-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-rame);margin:24px 0 12px}
-/* L2 maestria — crescita curva non voto */
-.qd-maestria{display:flex;flex-direction:column;gap:12px}
-.qd-mae{background:var(--ds-carta);border:1.5px solid var(--ds-linea);padding:14px}
-.qd-mae-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-.qd-mae-nome{font-family:var(--ds-display);font-weight:700;font-size:15px;color:var(--ds-ink);text-transform:capitalize}
-.qd-mae-stato{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.qd-mae-bar{height:6px;background:var(--ds-carta-scura);overflow:hidden;margin-bottom:6px}
-.qd-mae-fill{height:100%;transition:width .5s}
-.qd-mae-n{font-family:var(--ds-mono);font-size:10px;color:var(--ds-muted)}
-/* L1 commit */
-.qd-commit-lista{display:flex;flex-direction:column;gap:10px}
-.qd-commit{background:var(--ds-carta);border:1.5px solid var(--ds-linea);border-left:4px solid var(--ds-grafite);padding:14px}
-.qd-commit-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
-.qd-commit-nome{font-family:var(--ds-display);font-weight:700;font-size:15px;color:var(--ds-ink)}
-.qd-commit-n{flex-shrink:0;color:var(--ds-grafite)!important;font-size:13px}
-.qd-commit-esito{display:inline-block;font-family:var(--ds-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border:1px solid}
-.qd-commit-note{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted);line-height:1.45;margin-top:6px}
-/* stato vuoto — dignitoso */
-.qd-vuoto{text-align:center;padding:40px 24px;border:1.5px solid var(--ds-linea);margin-top:4px}
-.qd-vuoto-ico{font-size:40px;color:var(--ds-grafite);margin-bottom:16px}
-.qd-vuoto-t{font-family:var(--ds-display);font-weight:700;font-size:19px;color:var(--ds-ink);line-height:1.2;margin-bottom:10px}
-.qd-vuoto-d{font-family:var(--ds-body);font-size:13px;color:var(--ds-muted);line-height:1.55;max-width:320px;margin:0 auto 20px}
-.qd-vuoto-cta{background:var(--ds-rame);color:#fff;border:0;padding:14px 22px;font-family:var(--ds-display);font-weight:700;font-size:14px;cursor:pointer}
+/* ═══ QUADERNO 2.0 (board 4) — il fossato, 2 memorie ═══ */#qd-host{padding-bottom:96px}#qd-host .qd-hero{background:var(--ds-ink);padding:24px;margin-bottom:24px;box-shadow:5px 5px 0 rgba(20,29,34,.15)}#qd-host .qd-hero .ds-eyebrow{color:var(--ds-terracotta)}#qd-host .qd-hero-t{color:#fff!important;margin-top:8px}#qd-host .qd-hero-n{font-family:var(--ds-body);font-size:14px;color:#CBD6DA;margin-top:10px}#qd-host .qd-hero-n .ds-data{color:var(--ds-terracotta);font-size:16px}#qd-host .qd-sez-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-rame);margin:24px 0 12px}#qd-host /* L2 maestria — crescita curva non voto */
+.qd-maestria{display:flex;flex-direction:column;gap:12px}#qd-host .qd-mae{background:var(--ds-carta);border:1.5px solid var(--ds-linea);padding:14px}#qd-host .qd-mae-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}#qd-host .qd-mae-nome{font-family:var(--ds-display);font-weight:700;font-size:15px;color:var(--ds-ink);text-transform:capitalize}#qd-host .qd-mae-stato{font-family:var(--ds-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}#qd-host .qd-mae-bar{height:6px;background:var(--ds-carta-scura);overflow:hidden;margin-bottom:6px}#qd-host .qd-mae-fill{height:100%;transition:width .5s}#qd-host .qd-mae-n{font-family:var(--ds-mono);font-size:10px;color:var(--ds-muted)}#qd-host /* L1 commit */
+.qd-commit-lista{display:flex;flex-direction:column;gap:10px}#qd-host .qd-commit{background:var(--ds-carta);border:1.5px solid var(--ds-linea);border-left:4px solid var(--ds-grafite);padding:14px}#qd-host .qd-commit-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}#qd-host .qd-commit-nome{font-family:var(--ds-display);font-weight:700;font-size:15px;color:var(--ds-ink)}#qd-host .qd-commit-n{flex-shrink:0;color:var(--ds-grafite)!important;font-size:13px}#qd-host .qd-commit-esito{display:inline-block;font-family:var(--ds-mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border:1px solid}#qd-host .qd-commit-note{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted);line-height:1.45;margin-top:6px}#qd-host /* stato vuoto — dignitoso */
+.qd-vuoto{text-align:center;padding:40px 24px;border:1.5px solid var(--ds-linea);margin-top:4px}#qd-host .qd-vuoto-ico{font-size:40px;color:var(--ds-grafite);margin-bottom:16px}#qd-host .qd-vuoto-t{font-family:var(--ds-display);font-weight:700;font-size:19px;color:var(--ds-ink);line-height:1.2;margin-bottom:10px}#qd-host .qd-vuoto-d{font-family:var(--ds-body);font-size:13px;color:var(--ds-muted);line-height:1.55;max-width:320px;margin:0 auto 20px}#qd-host .qd-vuoto-cta{background:var(--ds-rame);color:#fff;border:0;padding:14px 22px;font-family:var(--ds-display);font-weight:700;font-size:14px;cursor:pointer}
