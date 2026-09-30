@@ -25,6 +25,8 @@ window.renderHome2 = function(){
     + '</section>'
     // BLOCCO 3 — Science x Craft (widget)
     + '<section class="h2-sxc" id="h2-sxc"></section>'
+    // BLOCCO — Chiedi a Matter (la chat scientifica: era sparita, rimessa)
+    + '<button class="h2-chat" onclick="switchTab(\'chiedi\')"><span class="h2-chat-ico">◇</span><span class="h2-chat-body"><span class="h2-chat-t">Chiedi a Matter</span><span class="h2-chat-d">La chat scientifica — domande libere sul mestiere</span></span><span class="h2-chat-arr">→</span></button>'
     // BLOCCO 4 — Protocol Hub
     + '<section class="h2-hub"><div class="ds-eyebrow">◎ IL LABORATORIO</div>'
     +   '<div class="h2-hub-titolo">Cerca un esperimento</div>'
