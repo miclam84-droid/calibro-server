@@ -12898,6 +12898,37 @@ def admin_riempitore_stop():
     return jsonify({"fermato": True})
 
 
+# Mappa normalizzazione: nomi-figli nelle ricette -> ingrediente-base nel grafo
+_NORMALIZZA_ING = {
+    # pomodoro e derivati
+    "pomodorini":"pomodoro","pomodorino":"pomodoro","pelati":"pomodoro","passata":"pomodoro",
+    "passata di pomodoro":"pomodoro","concentrato di pomodoro":"pomodoro","pomodori":"pomodoro",
+    "pomodori pelati":"pomodoro","san marzano":"pomodoro","datterini":"pomodoro","ciliegini":"pomodoro",
+    "pomodori ciliegino":"pomodoro","pomodoro san marzano":"pomodoro","polpa di pomodoro":"pomodoro",
+    # cioccolato
+    "cioccolato fondente":"cioccolato","cioccolato al latte":"cioccolato","cacao":"cioccolato",
+    "cacao amaro":"cioccolato","cioccolato bianco":"cioccolato","gocce di cioccolato":"cioccolato",
+    "cioccolato in polvere":"cioccolato",
+    # uovo
+    "uova":"uovo","tuorli":"uovo","tuorlo":"uovo","albumi":"uovo","albume":"uovo","uovo intero":"uovo",
+    # farina
+    "farina 00":"farina","farina 0":"farina","farina manitoba":"farina","farina integrale":"farina",
+    "farina di grano":"farina","farina di semola":"semola","semola rimacinata":"semola",
+    # latte/panna
+    "latte intero":"latte","latte fresco":"latte","panna fresca":"panna","panna liquida":"panna",
+    # formaggi
+    "parmigiano reggiano":"parmigiano","grana":"parmigiano","pecorino romano":"pecorino",
+    "mozzarella di bufala":"mozzarella","fior di latte":"mozzarella",
+    # carne/pesce
+    "guanciale a cubetti":"guanciale","pancetta":"guanciale","manzo macinato":"manzo","carne macinata":"manzo",
+    "salmone fresco":"salmone","salmone affumicato":"salmone","tonno fresco":"tonno",
+    # aromi
+    "basilico fresco":"basilico","prezzemolo fresco":"prezzemolo","aglio fresco":"aglio",
+    "olio extravergine d'oliva":"olio extravergine di oliva","olio evo":"olio extravergine di oliva",
+    "olio d'oliva":"olio extravergine di oliva","limoni":"limone","succo di limone":"limone",
+    "zucchero semolato":"zucchero","zucchero a velo":"zucchero","burro fuso":"burro",
+}
+
 @bp.route("/admin/protocolli/ricollega")
 def admin_ricollega_protocolli():
     """Migliora i collegamenti protocollo->ingrediente con match intelligente (plurale/singolare,
@@ -12917,6 +12948,10 @@ def admin_ricollega_protocolli():
         def _match(nome):
             n = nome.lower().strip()
             if n in ing_map: return ing_map[n]
+            # normalizzazione: nome-figlio -> ingrediente-base
+            if n in _NORMALIZZA_ING:
+                base = _NORMALIZZA_ING[n]
+                if base in ing_map: return ing_map[base]
             # singolare<->plurale semplice
             for suff in ['i','e','o','a']:
                 if n.endswith(suff):
