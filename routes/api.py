@@ -5638,3 +5638,39 @@ def lista_protocolli():
         return jsonify({"protocolli": protocolli, "totale_mostrati": len(protocolli), "per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/ingrediente/<ingrediente>/protocolli")
+def protocolli_di_ingrediente(ingrediente):
+    """PROTOCOL HUB (65C #429): dato un ingrediente, gli ESPERIMENTI che puoi fare con esso.
+    Non una scheda: un laboratorio. Usa gli archi usa_reagente creati coi protocolli."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # trovo il nodo ingrediente
+        cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND LOWER(name)=LOWER(%s) LIMIT 1""", (ingrediente,))
+        r = cur.fetchone()
+        if not r: cur.close(); conn.close(); return jsonify({"errore":"ingrediente non trovato"}), 404
+        ing_id, ing_nome = r
+        # i protocolli che usano questo ingrediente (arco usa_reagente)
+        cur.execute("""SELECT DISTINCT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
+                       WHERE e.to_id=%s AND e.relation='usa_reagente' AND n.type='Protocollo' LIMIT 20""", (ing_id,))
+        esperimenti = []
+        for pid, nome, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            esperimenti.append({
+                "id": pid, "nome": nome, "disciplina": dd.get("disciplina",""),
+                "ipotesi": dd.get("ipotesi",""), "bersaglio": dd.get("bersaglio",{}),
+                "fenomeni": [f.get("nome") for f in dd.get("fenomeni",[])],
+            })
+        cur.close(); conn.close()
+        return jsonify({
+            "ingrediente": ing_nome,
+            "esperimenti": esperimenti,
+            "n_esperimenti": len(esperimenti),
+            "nota": "Gli esperimenti che puoi fare con questo ingrediente. Non una scheda: un laboratorio."
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
