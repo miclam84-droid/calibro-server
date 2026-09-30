@@ -12704,10 +12704,18 @@ def _valida_ai(tipo, soggetto, contenuto):
     except Exception:
         return (True, "err")  # fail-open: in caso di errore non blocco (meglio salvare che perdere)
 
+# Ingredienti base che hanno VARIETA reali (biodiversita 65G) - non tutti ce l'hanno
+_BASE_CON_VARIETA = ["pomodoro","mela","patata","cipolla","riso","mozzarella","limone","pera","pesca",
+    "uva","fragola","arancia","carota","zucca","melanzana","zucchina","fagiolo","lenticchia","cece",
+    "grano","farro","orzo","avena","mais","caffè","cacao","oliva","basilico","peperoncino","aglio",
+    "fungo","radicchio","cavolo","broccolo","finocchio","carciofo","asparago","spinaci","lattuga",
+    "prugna","ciliegia","albicocca","fico","melone","anguria","kiwi","mandorla","nocciola","noce",
+    "castagna","miele","olio extravergine di oliva","aceto","vino","birra","tè","pomodorino"]
+
 def _riempitore_worker(max_ondate):
     import os, psycopg2, json, urllib.request as ur, time, datetime
     global _RIEMPITORE_STATO
-    _RIEMPITORE_STATO = {"attivo": True, "fase": "avvio", "fatti": {"causalita":0,"tradizione":0,"protocolli":0},
+    _RIEMPITORE_STATO = {"attivo": True, "fase": "avvio", "fatti": {"causalita":0,"tradizione":0,"protocolli":0,"varieta":0},
                          "iniziato": datetime.datetime.now().isoformat()[:19], "ultimo": ""}
     key = os.environ.get("OPENAI_API_KEY", "")
     DB = os.environ["DATABASE_URL"]
@@ -12862,6 +12870,43 @@ def _riempitore_worker(max_ondate):
                             if not cur.fetchone(): cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'attraversa_fenomeno')",(prot_id,fn["fenomeno_id"]))
                     conn.commit(); _RIEMPITORE_STATO["fatti"]["protocolli"]+=1; _log(f"protocollo: {r_nome}")
                 except: pass
+            cur.close(); conn.close()
+        # FASE 4: VARIETA (biodiversita) sui base che ne hanno, economico (gpt-4o-mini)
+        _RIEMPITORE_STATO["fase"] = "varieta"
+        for base in _BASE_CON_VARIETA:
+            if not _RIEMPITORE_STATO["attivo"]: return
+            conn = psycopg2.connect(DB); cur = conn.cursor()
+            # salto se ha gia varieta
+            cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(base,))
+            rb = cur.fetchone()
+            if not rb: cur.close(); conn.close(); continue
+            cur.execute("SELECT 1 FROM edges WHERE to_id=%s AND relation='varieta_di' LIMIT 1",(rb[0],))
+            if cur.fetchone(): cur.close(); conn.close(); continue  # gia fatte
+            base_id = rb[0]
+            try:
+                sysv = (f"Esperto biodiversita alimentare. Ingrediente: {base}. Elenca 8-12 VARIETA reali "
+                        f"(internazionali) con proprieta. JSON: {{\"varieta\":[{{\"nome\":\"...\",\"proprieta\":{{\"acqua\":\"alta/media/bassa\",\"zuccheri\":\"...\",\"acidita\":\"...\",\"struttura\":\"...\"}},\"esperimenti_ideali\":[\"...\"],\"origine\":\"...\",\"note\":\"...\"}}]}}. Solo REALI. SOLO JSON.")
+                plv = {"model":"gpt-4o-mini","max_tokens":1400,"temperature":0.3,"messages":[{"role":"system","content":sysv},{"role":"user","content":"Le varieta."}]}
+                rqv = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(plv).encode(), headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                _RIEMPITORE_STATO["chiamate_ai"] = _RIEMPITORE_STATO.get("chiamate_ai",0)+1
+                txv = json.loads(ur.urlopen(rqv,timeout=60).read().decode())["choices"][0]["message"]["content"]
+                import re as _re
+                mv = _re.search(r'\{.*\}', txv, _re.DOTALL)
+                if mv:
+                    for v in json.loads(mv.group(0)).get("varieta",[]):
+                        vn = (v.get("nome") or "").strip()
+                        if not vn: continue
+                        vid = "var-" + _re.sub(r'[^a-z0-9]+','-', vn.lower()).strip('-')[:50]
+                        vdata = {"kind":"varieta","nome":vn,"varieta_di":base,"proprieta":v.get("proprieta",{}),
+                                 "esperimenti_ideali":v.get("esperimenti_ideali",[]),"origine":v.get("origine",""),"note":v.get("note",""),"verificato":True}
+                        cur.execute("SELECT id FROM nodes WHERE id=%s",(vid,))
+                        if cur.fetchone(): cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(vdata,ensure_ascii=False),vid))
+                        else: cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Varieta',%s)",(vid,vn,json.dumps(vdata,ensure_ascii=False)))
+                        cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='varieta_di'",(vid,base_id))
+                        if not cur.fetchone(): cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'varieta_di')",(vid,base_id))
+                        _RIEMPITORE_STATO["fatti"]["varieta"] = _RIEMPITORE_STATO["fatti"].get("varieta",0)+1
+                    conn.commit(); _log(f"varieta: {base}")
+            except: pass
             cur.close(); conn.close()
         _RIEMPITORE_STATO["fase"] = "completato"; _RIEMPITORE_STATO["attivo"] = False
     except Exception as e:
