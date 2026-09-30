@@ -1,0 +1,63 @@
+/* ═══════════════════════════════════════════════════════════════
+   MATTER DESIGN SYSTEM v1 — token congelati (Board Design 1-7)
+   "Linguaggio scientifico del mestiere reso visibile"
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  /* — I 7 COLORI EPISTEMICI (ogni colore è uno stato della conoscenza) — */
+  --ds-ink:#141D22;        /* pensiero — il laboratorio */
+  --ds-carta:#ECEBE5;      /* lavoro — il banco */
+  --ds-terracotta:#C77B3F; /* materia */
+  --ds-rame:#B5651D;       /* operativo — IL colore di Matter (azione scientifica) */
+  --ds-salvia:#6B8E6B;     /* canon — conoscenza consolidata */
+  --ds-ossido:#9B3B2E;     /* rischio */
+  --ds-grafite:#3E5871;    /* evidence — le fonti */
+  /* — derivati di lavoro — */
+  --ds-ink-80:#2A353C;
+  --ds-carta-scura:#DEDCD2;
+  --ds-carta-riga:rgba(20,29,34,.055);   /* la griglia */
+  --ds-muted:#5A6C70;
+  --ds-linea:#C4C0B4;
+  /* — tipografia — */
+  --ds-display:'Space Grotesk',system-ui,sans-serif;  /* titoli */
+  --ds-mono:'Space Mono','IBM Plex Mono',monospace;    /* SOLO i dati/numeri — "sa di strumento" */
+  --ds-body:'Inter',system-ui,sans-serif;              /* corpo lungo */
+  /* — spacing (scala fissa) — */
+  --ds-s1:4px; --ds-s2:8px; --ds-s3:16px; --ds-s4:24px; --ds-s5:40px; --ds-s6:64px;
+}
+
+/* — LA GRIGLIA (identità, strumento di misura — mai invadente) — */
+.ds-grid-bg{background-image:linear-gradient(var(--ds-carta-riga) 1px,transparent 1px),linear-gradient(90deg,var(--ds-carta-riga) 1px,transparent 1px);background-size:24px 24px}
+
+/* — BADGE EPISTEMICI (Canon/Verificato/Scoperta/Esperimento — mai stelline/percentuali) — */
+.ds-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--ds-mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border:1px solid}
+.ds-badge::before{content:"";width:6px;height:6px;border-radius:50%}
+.ds-badge-canon{color:var(--ds-salvia);border-color:var(--ds-salvia)}
+.ds-badge-canon::before{background:var(--ds-salvia)}
+.ds-badge-verificato{color:var(--ds-grafite);border-color:var(--ds-grafite)}
+.ds-badge-verificato::before{background:var(--ds-grafite)}
+.ds-badge-scoperta{color:var(--ds-rame);border-color:var(--ds-rame)}
+.ds-badge-scoperta::before{background:var(--ds-rame);border-radius:0}
+.ds-badge-esperimento{color:var(--ds-muted);border-color:var(--ds-linea)}
+.ds-badge-esperimento::before{background:none;border:1px solid var(--ds-muted);width:5px;height:5px}
+
+/* — LA SCALA GRADUATA (la firma — più importante del logo) — */
+.ds-scala{font-family:var(--ds-mono)}
+.ds-scala-track{position:relative;height:44px;background:var(--ds-carta-scura);border:1px solid var(--ds-ink)}
+.ds-scala-tick{position:absolute;top:0;bottom:0;width:1px;background:rgba(20,29,34,.18)}
+.ds-scala-finestra{position:absolute;top:-3px;bottom:-3px;border:2px solid var(--ds-rame);background:rgba(181,101,29,.1)}
+.ds-scala-valore{position:absolute;top:50%;transform:translate(-50%,-50%);font-family:var(--ds-mono);font-weight:700;font-size:15px;color:var(--ds-ink);white-space:nowrap}
+.ds-scala-cap{display:flex;justify-content:space-between;font-family:var(--ds-mono);font-size:10px;color:var(--ds-muted);margin-top:4px}
+.ds-scala-lab{font-family:var(--ds-mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ds-rame);margin-bottom:6px}
+
+/* — SENSORI come chip (la tastiera di Matter — icone proprietarie) — */
+.ds-sensore{display:inline-flex;align-items:center;gap:6px;font-family:var(--ds-body);font-size:12px;color:var(--ds-ink);background:var(--ds-carta);border:1px solid var(--ds-linea);padding:6px 10px}
+.ds-sensore-ico{font-family:var(--ds-mono);color:var(--ds-rame);font-weight:700}
+
+/* — tipografia sistema (6 token) — */
+.ds-display{font-family:var(--ds-display);font-weight:700;font-size:30px;line-height:1.05;letter-spacing:-.02em;color:var(--ds-ink)}
+.ds-title{font-family:var(--ds-display);font-weight:700;font-size:20px;line-height:1.1;color:var(--ds-ink)}
+.ds-heading{font-family:var(--ds-display);font-weight:600;font-size:15px;color:var(--ds-ink)}
+.ds-body{font-family:var(--ds-body);font-size:14px;line-height:1.55;color:var(--ds-ink)}
+.ds-caption{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted)}
+.ds-data{font-family:var(--ds-mono);font-weight:700;color:var(--ds-ink)}
+.ds-eyebrow{font-family:var(--ds-mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ds-rame)}
