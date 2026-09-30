@@ -12835,7 +12835,7 @@ def _riempitore_worker(max_ondate):
                     ipotesi="";bersaglio={};sensori={};diagnosi=[];variabile_critica=""
                     try:
                         sysp=(f"Preparazione: {r_nome}. Punto critico: {pc}. Estrai JSON: "
-                              f'{{"ipotesi":"1 frase","variabile_critica":"...","bersaglio":{{"valore":"...","unita":"..."}},'
+                              f'{{"ipotesi":"cosa vuoi ottenere con questa preparazione, una frase concreta","variabile_critica":"la variabile che governa il risultato","bersaglio":{{"valore":"...","unita":"..."}},'
                               f'"diagnosi":[{{"sintomo":"...","causa":"...","correzione":"..."}}],"sensori":{{"vista":"...","tatto":"...","olfatto":"..."}}}}. SOLO JSON.')
                         plp={"model":"gpt-4o","max_tokens":500,"temperature":0.2,"messages":[{"role":"system","content":sysp},{"role":"user","content":"Estrai."}]}
                         rqp=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(plp).encode(),headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
@@ -13151,5 +13151,57 @@ def admin_pulisci_bersagli():
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), pid))
         conn.commit(); cur.close(); conn.close()
         return jsonify({"bersagli_puliti": puliti, "bersagli_svuotati": svuotati})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/protocolli/rigenera-ipotesi")
+def admin_rigenera_ipotesi():
+    """Rigenera IPOTESI+sensori+diagnosi dei protocolli con placeholder ('1 frase'/vuoto). Bug fix.
+    A ondate: n protocolli per volta, gpt-4o-mini economico."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = int(request.args.get("n", 10))
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key: return jsonify({"errore":"no key"}), 500
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # protocolli con ipotesi placeholder o vuota
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
+                       AND (data->>'ipotesi' = '1 frase' OR data->>'ipotesi' = '' OR data->>'ipotesi' IS NULL
+                            OR LENGTH(data->>'ipotesi') < 10) LIMIT %s""", (n,))
+        righe = cur.fetchall()
+        fatti = 0
+        for pid, nome, data in righe:
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            pc = dd.get("punto_critico_originale","")
+            try:
+                sysp = (f"Preparazione: {nome}. Punto critico: {pc}. Genera JSON: "
+                        f'{{"ipotesi":"cosa vuoi ottenere, una frase concreta e specifica",'
+                        f'"sensori":{{"vista":"...","tatto":"...","olfatto":"..."}}}}. '
+                        f"Ipotesi concreta come la direbbe un cuoco. SOLO JSON.")
+                pl = {"model":"gpt-4o-mini","max_tokens":300,"temperature":0.3,
+                      "messages":[{"role":"system","content":sysp},{"role":"user","content":"Genera."}]}
+                rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                                headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                tx = json.loads(ur.urlopen(rq, timeout=40).read().decode())["choices"][0]["message"]["content"]
+                m = re.search(r'\{.*\}', tx, re.DOTALL)
+                if m:
+                    est = json.loads(m.group(0))
+                    ip = est.get("ipotesi","").strip()
+                    if ip and ip != "1 frase" and len(ip) > 10:
+                        dd["ipotesi"] = ip
+                        if est.get("sensori") and not dd.get("sensori"): dd["sensori"] = est["sensori"]
+                        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), pid))
+                        conn.commit(); fatti += 1
+            except: pass
+        # quanti ancora placeholder
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type='Protocollo'
+                       AND (data->>'ipotesi'='1 frase' OR data->>'ipotesi'='' OR LENGTH(data->>'ipotesi')<10)""")
+        rimasti = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"rigenerati": fatti, "ancora_placeholder": rimasti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
