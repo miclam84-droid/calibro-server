@@ -33,7 +33,7 @@ window.renderHome2 = function(){
     + '</section>'
     // BLOCCO 5 — Composer + BLOCCO 6 — Esperimenti recenti
     + '<section class="h2-doppia">'
-    +   '<button class="h2-composer" onclick="if(typeof _caricaModulo===\'function\'){_caricaModulo(\'composer\').then(function(){apriComposer&&apriComposer()})}"><span class="h2-comp-ico">◈</span><span class="h2-comp-t">Simula un esperimento</span><span class="h2-comp-d">Costruisci, vedi l\'equilibrio</span></button>'
+    +   '<button class="h2-composer" onclick="if(typeof apriComposer2===\'function\'){apriComposer2()}else if(typeof _caricaModulo===\'function\'){_caricaModulo(\'composer\').then(function(){apriComposer&&apriComposer()})}"><span class="h2-comp-ico">◈</span><span class="h2-comp-t">Simula un esperimento</span><span class="h2-comp-d">Cosa succede se cambio…</span></button>'
     +   '<button class="h2-quaderno" onclick="switchTab(\'quaderno\')"><span class="h2-comp-ico">◱</span><span class="h2-comp-t">Esperimenti recenti</span><span class="h2-comp-d">I tuoi commit</span></button>'
     + '</section>';
   _h2CaricaEsperimento();
