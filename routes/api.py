@@ -5820,3 +5820,64 @@ def diagnosi_interattiva():
         return jsonify(risultato)
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/v1/composer/simula", methods=["POST"])
+def composer_simula():
+    """COMPOSER SIMULA (65E, board 5): 'cosa succede se cambio X'. Attraversa la causalita IN AVANTI:
+    cambi una variabile -> effetti a catena (timeline) + fenomeni attivati + avvertimenti.
+    La materia e' la risposta. Usa la causalita dei fenomeni + la memoria (se c'e' lo storico)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    body = request.get_json(silent=True) or {}
+    prot_id = body.get("protocollo_id","")
+    reagenti = body.get("reagenti",[])
+    variabile = (body.get("variabile") or "").strip()
+    da_valore = body.get("da_valore","")
+    a_valore = body.get("a_valore","")
+    if not variabile: return jsonify({"errore":"manca la variabile da cambiare"}), 400
+    key = os.environ.get("OPENAI_API_KEY","")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # contesto: se c'e' un protocollo, prendo i suoi fenomeni + causalita
+        fenomeni_ctx = []; nome_prep = ""
+        if prot_id:
+            cur.execute("SELECT name, data FROM nodes WHERE id=%s AND type='Protocollo'", (prot_id,))
+            pr = cur.fetchone()
+            if pr:
+                nome_prep = pr[0]
+                pdd = pr[1] if isinstance(pr[1],dict) else json.loads(pr[1])
+                for f in pdd.get("fenomeni",[]):
+                    fid = f.get("fenomeno_id")
+                    if fid:
+                        cur.execute("SELECT data FROM nodes WHERE id=%s", (fid,))
+                        fr = cur.fetchone()
+                        if fr:
+                            fdd = fr[0] if isinstance(fr[0],dict) else json.loads(fr[0])
+                            if fdd.get("causalita"):
+                                fenomeni_ctx.append({"fenomeno":f.get("nome"),"causalita":fdd.get("causalita")})
+        risultato = {"variabile":variabile,"da":da_valore,"a":a_valore,"nome_preparazione":nome_prep,
+                     "effetti_timeline":[],"fenomeni_attivati":[],"avvertimenti":[],"profilo_risultante":""}
+        if key:
+            import urllib.request as ur
+            caus_ctx = json.dumps(fenomeni_ctx[:3],ensure_ascii=False) if fenomeni_ctx else "usa la scienza generale"
+            sys=(f"Esperto simulazione culinaria. Preparazione: {nome_prep or 'generica'}. "
+                 f"CAMBIO: {variabile} da {da_valore} a {a_valore}. Causalita dei fenomeni: {caus_ctx}. "
+                 f"Simula COSA SUCCEDE attraversando la causalita in avanti. JSON: "
+                 f'{{"effetti_timeline":[{{"quando":"subito/30min/cottura/finale","effetto":"...","perche":"quale fenomeno"}}],'
+                 f'"fenomeni_attivati":["..."],"avvertimenti":["rischi concreti"],'
+                 f'"profilo_risultante":"come cambia il risultato finale, concreto"}}. '
+                 f"Effetti a catena reali, non generici. SOLO JSON.")
+            try:
+                pl={"model":"gpt-4o-mini","max_tokens":700,"temperature":0.3,"messages":[{"role":"system","content":sys},{"role":"user","content":"Simula."}]}
+                rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                tx=json.loads(ur.urlopen(rq,timeout=40).read().decode())["choices"][0]["message"]["content"]
+                import re as _re
+                m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+                if m: risultato.update(json.loads(m.group(0)))
+            except: pass
+        risultato["basato_su_causalita"] = len(fenomeni_ctx)
+        cur.close(); conn.close()
+        return jsonify(risultato)
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
