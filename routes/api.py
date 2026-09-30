@@ -5714,7 +5714,50 @@ def leggi_protocollo(pid):
             "diagnosi": dd.get("diagnosi",[]),
             "punto_critico": dd.get("punto_critico_originale",""),
             "verificato": dd.get("verificato"),
+            "stato_epistemico": _stato_epistemico(dd),
             "deriva_da_ricetta": dd.get("deriva_da_ricetta",""),
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
+
+
+def _stato_epistemico(dd, ha_evidence=False):
+    """Calcola il badge epistemico (richiesta frontend): Canon/Verificato/Scoperta/Esperimento."""
+    v = dd.get("verificato")
+    if ha_evidence and v: return "Canon"
+    if v is True: return "Verificato"
+    if v is None: return "Esperimento"
+    return "Esperimento"
+
+@bp.route("/v1/esperimento-del-giorno")
+def esperimento_del_giorno():
+    """La Home apre con UN esperimento COMPLETO (ipotesi+variabile+bersaglio+sensore), rotante sul giorno."""
+    from flask import jsonify
+    import os, psycopg2, json, datetime
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # solo protocolli COMPLETI: ipotesi vera + variabile + bersaglio pieno + sensori
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
+                       AND LENGTH(data->>'ipotesi') > 15 AND data->>'ipotesi' <> '1 frase'
+                       AND LENGTH(COALESCE(data->>'variabile_critica','')) > 5
+                       AND data->'bersaglio'->>'valore' IS NOT NULL
+                       ORDER BY id""")
+        completi = cur.fetchall()
+        if not completi:
+            cur.close(); conn.close()
+            return jsonify({"errore":"nessun protocollo completo ancora"}), 404
+        # rotazione deterministica sul giorno dell'anno
+        giorno = datetime.date.today().toordinal()
+        scelto = completi[giorno % len(completi)]
+        dd = scelto[2] if isinstance(scelto[2], dict) else json.loads(scelto[2])
+        cur.close(); conn.close()
+        return jsonify({
+            "id": scelto[0], "nome": scelto[1],
+            "ipotesi": dd.get("ipotesi"), "variabile_critica": dd.get("variabile_critica"),
+            "bersaglio": dd.get("bersaglio",{}), "sensori": dd.get("sensori",{}),
+            "disciplina": dd.get("disciplina",""),
+            "stato_epistemico": _stato_epistemico(dd),
+            "totale_completi": len(completi),
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
