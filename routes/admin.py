@@ -13374,3 +13374,67 @@ def admin_crea_ingredienti_base():
         return jsonify({"nodi_base_creati":creati,"collegamenti_creati":collegati})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/admin/tradizione-da-ricette")
+def admin_tradizione_da_ricette():
+    """GRATIS (no AI): estrae abbinamenti tradizionali dai CO-INGREDIENTI delle ricette esistenti.
+    Se caffe e cioccolato appaiono insieme in N ricette, e' un abbinamento documentato. Riempie i buchi
+    senza spendere crediti. Risolve i 40 euro: usa cio che e' gia pagato."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # mappa nome-ingrediente -> nodo (per collegare)
+        cur.execute("""SELECT id, LOWER(name) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND COALESCE((data->>'nascosto_utente'),'false')<>'true'""")
+        ing_map = {}
+        for iid, inl in cur.fetchall():
+            ing_map[inl] = iid
+        def _match(nome):
+            n=nome.lower().strip()
+            if n in ing_map: return ing_map[n]
+            prima=n.split()[0] if n.split() else n
+            if len(prima)>3 and prima in ing_map: return ing_map[prima]
+            return None
+        # leggo tutte le ricette e conto le coppie di co-ingredienti
+        cur.execute("SELECT nome, ingredienti FROM ricette")
+        from collections import defaultdict
+        coppie = defaultdict(lambda: {"n":0,"piatti":[]})
+        for nome_ric, ingr in cur.fetchall():
+            if isinstance(ingr,str):
+                try: ingr=json.loads(ingr)
+                except: continue
+            if not isinstance(ingr,list): continue
+            nomi=[]
+            for ig in ingr:
+                inm = ig.get("nome","") if isinstance(ig,dict) else str(ig)
+                iid=_match(inm)
+                if iid: nomi.append((iid,inm))
+            # tutte le coppie in questa ricetta
+            for i in range(len(nomi)):
+                for j in range(i+1,len(nomi)):
+                    a,b=nomi[i],nomi[j]
+                    if a[0]==b[0]: continue
+                    key=tuple(sorted([a[0],b[0]]))
+                    coppie[key]["n"]+=1
+                    if len(coppie[key]["piatti"])<1: coppie[key]["piatti"].append(nome_ric)
+        # creo archi tradizione per le coppie che appaiono in >=2 ricette (documentate)
+        creati=0
+        for (id1,id2),info in coppie.items():
+            if info["n"] < 2: continue  # almeno 2 piatti = documentato
+            piatto = info["piatti"][0] if info["piatti"] else ""
+            for frm,to in [(id1,id2),(id2,id1)]:
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='abbinamento_tradizionale'",(frm,to))
+                if not cur.fetchone():
+                    cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'abbinamento_tradizionale',%s)",
+                                (frm,to,json.dumps({"piatto":piatto,"da_ricette":info["n"],"confidenza":"alta"},ensure_ascii=False)))
+                    creati+=1
+            if creati % 500 == 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"archi_tradizione_creati":creati,"coppie_documentate":sum(1 for v in coppie.values() if v['n']>=2),
+                        "nota":"Estratti dai co-ingredienti delle ricette. Zero spesa AI."})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
