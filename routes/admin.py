@@ -12986,3 +12986,83 @@ def admin_ricollega_protocolli():
         return jsonify({"protocolli": len(prot), "nuovi_collegamenti": nuovi_archi})
     except Exception as e:
         return jsonify({"errore": str(e)[:200]})
+
+
+@bp.route("/admin/varieta/genera")
+def admin_varieta_genera():
+    """FASE D - BIODIVERSITA (65G): genera le VARIETA di un ingrediente base come reagenti diversi
+    (proprieta distintive + esperimenti ideali + origine). Col gate che valida. Territorio come badge."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    base = request.args.get("base", "")  # ingrediente base (pomodoro)
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not base or not key: return jsonify({"errore":"serve base= e OPENAI_API_KEY"}), 400
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # trovo il nodo base
+        cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(base,))
+        rb = cur.fetchone()
+        if not rb: cur.close(); conn.close(); return jsonify({"errore":f"ingrediente base '{base}' non trovato"}), 404
+        base_id = rb[0]
+        sys = (f"Esperto di food science e biodiversita. Ingrediente: {base}. Elenca 8-15 VARIETA reali "
+               f"(anche internazionali) con le PROPRIETA che le rendono reagenti diversi. Per ognuna JSON: "
+               f'{{"varieta":[{{"nome":"...","proprieta":{{"acqua":"alta/media/bassa","zuccheri":"...","acidita":"...","struttura":"..."}},'
+               f'"esperimenti_ideali":["...","..."],"origine":"...","note":"cosa la distingue"}}]}}. '
+               f"Solo varieta REALI, non inventate. SOLO JSON.")
+        pl = {"model":"gpt-4o","max_tokens":1500,"temperature":0.3,"messages":[{"role":"system","content":sys},{"role":"user","content":"Le varieta."}]}
+        rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                        headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+        tx = json.loads(ur.urlopen(rq, timeout=70).read().decode())["choices"][0]["message"]["content"]
+        import re as _re
+        m = _re.search(r'\{.*\}', tx, _re.DOTALL)
+        if not m: cur.close(); conn.close(); return jsonify({"errore":"AI non ha prodotto JSON valido"})
+        varieta = json.loads(m.group(0)).get("varieta", [])
+        creati = 0; dettaglio = []
+        for v in varieta:
+            vnome = (v.get("nome") or "").strip()
+            if not vnome: continue
+            # gate: la varieta e' plausibile?
+            ok, motivo = _valida_ai("tradizione", base, {"ingrediente":vnome,"piatto":f"varieta di {base}: {v.get('note','')}"})
+            if not ok: continue
+            vid = "var-" + _re.sub(r'[^a-z0-9]+','-', vnome.lower()).strip('-')[:50]
+            vdata = {"kind":"varieta","nome":vnome,"varieta_di":base,"proprieta":v.get("proprieta",{}),
+                     "esperimenti_ideali":v.get("esperimenti_ideali",[]),"origine":v.get("origine",""),
+                     "note":v.get("note",""),"verificato":True}
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(vid,))
+            if cur.fetchone():
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(vdata,ensure_ascii=False),vid))
+            else:
+                cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Varieta',%s)",(vid,vnome,json.dumps(vdata,ensure_ascii=False)))
+            # arco varieta -> base
+            cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='varieta_di'",(vid,base_id))
+            if not cur.fetchone():
+                cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'varieta_di')",(vid,base_id))
+            creati += 1; dettaglio.append({"nome":vnome,"origine":v.get("origine","")})
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"base": base, "varieta_create": creati, "dettaglio": dettaglio})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
+
+@bp.route("/v1/ingrediente/<ingrediente>/varieta")
+def get_varieta(ingrediente):
+    """Le varieta di un ingrediente (la biodiversita: reagenti diversi con proprieta diverse)."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(ingrediente,))
+        rb = cur.fetchone()
+        if not rb: cur.close(); conn.close(); return jsonify({"errore":"non trovato"}), 404
+        cur.execute("""SELECT n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
+                       WHERE e.to_id=%s AND e.relation='varieta_di' AND n.type='Varieta'""",(rb[0],))
+        varieta = []
+        for nome, data in cur.fetchall():
+            dd = data if isinstance(data,dict) else json.loads(data)
+            varieta.append({"nome":nome,"proprieta":dd.get("proprieta",{}),"esperimenti_ideali":dd.get("esperimenti_ideali",[]),
+                            "origine":dd.get("origine",""),"note":dd.get("note","")})
+        cur.close(); conn.close()
+        return jsonify({"ingrediente": ingrediente, "varieta": varieta, "n_varieta": len(varieta)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
