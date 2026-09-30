@@ -13326,6 +13326,20 @@ def admin_crea_ingredienti_base():
         "olio": ["olio","olio di semi","olio di girasole","olio di arachidi"],
         "pasta": ["pasta","spaghetti","penne","rigatoni","fusilli","linguine","tagliatelle","maccheroni"],
         "pomodoro": ["pomodoro","pomodori","pomodorini","pelati","passata","concentrato di pomodoro"],
+        "mela": ["mela","mele","mela verde","mela rossa","mela golden"],
+        "zucchina": ["zucchina","zucchine","zucchini"],
+        "peperone": ["peperone","peperoni","peperone rosso","peperone giallo"],
+        "funghi": ["funghi","fungo","champignon","porcini","funghi porcini","funghi champignon"],
+        "gambero": ["gambero","gamberi","gamberetti","gambero rosso","mazzancolle"],
+        "mandorla": ["mandorla","mandorle","farina di mandorle","mandorle tritate"],
+        "formaggio": ["formaggio","formaggi","parmigiano","pecorino","grana","mozzarella","ricotta"],
+        "nocciola": ["nocciola","nocciole","granella di nocciole","pasta di nocciole"],
+        "carota": ["carota","carote"],
+        "cipolla": ["cipolla","cipolle","cipolla rossa","cipolla bianca"],
+        "melanzana": ["melanzana","melanzane"],
+        "pesce": ["pesce","filetto di pesce","pesce bianco","branzino","orata","merluzzo"],
+        "pollo": ["pollo","petto di pollo","coscia di pollo","pollo intero"],
+        "manzo": ["manzo","carne di manzo","filetto di manzo","controfiletto"],
     }
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
