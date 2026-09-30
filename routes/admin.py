@@ -13205,3 +13205,33 @@ def admin_rigenera_ipotesi():
         return jsonify({"rigenerati": fatti, "ancora_placeholder": rimasti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/protocolli/normalizza-discipline")
+def admin_normalizza_discipline():
+    """Accorpa le discipline doppie alla tassonomia pulita (richiesta frontend)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    MAP = {"piatto":"cucina","cocktail":"bar","dolce":"pasticceria","pane":"panificazione",
+           "lievitato":"panificazione","gelato":"gelateria","caffè":"caffetteria","caffe":"caffetteria",
+           "cross":"trasversale","matter":"trasversale"}
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE type='Protocollo'")
+        cambiati = 0
+        for pid, data in cur.fetchall():
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            disc = (dd.get("disciplina","") or "").lower()
+            if disc in MAP:
+                dd["disciplina"] = MAP[disc]
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd,ensure_ascii=False), pid))
+                cambiati += 1
+        conn.commit()
+        cur.execute("SELECT data->>'disciplina' d, COUNT(*) FROM nodes WHERE type='Protocollo' GROUP BY d ORDER BY COUNT(*) DESC")
+        nuove = {r[0]:r[1] for r in cur.fetchall()}
+        cur.close(); conn.close()
+        return jsonify({"cambiati": cambiati, "discipline_ora": nuove})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
