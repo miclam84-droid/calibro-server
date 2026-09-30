@@ -514,7 +514,7 @@ function switchTab(t){
     caricaStrumenti(_disc);
     if(!Matter.disciplina) document.getElementById('mappa-label').textContent = _t('mappa_scegli');
   }
-  if(t==='quaderno') caricaQuaderno();
+  if(t==='quaderno'){ if(typeof apriQuaderno2==='function'){ setTimeout(function(){ apriQuaderno2(); },50); } else { caricaQuaderno(); } }
   // ingresso in sequenza per la schermata attivata (movimento coerente ovunque)
   playIntro('screen-'+t);
   // posizione deterministica: la schermata parte sempre dall'alto
