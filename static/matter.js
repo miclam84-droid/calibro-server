@@ -5856,11 +5856,12 @@ window._aggiornaGalileoFab = function(){
   var inVista = ov && !ov.classList.contains('hidden');
   var scScopri=document.getElementById('screen-scopri');
   var inBanco = scScopri && scScopri.classList.contains('active') && !inVista;
-  // nella chat la ask-bar in basso creerebbe sovrapposizione: nascondo lì
+  // nella chat la ask-bar in basso creerebbe sovrapposizione: nascondo SOLO lì
   var scChiedi=document.getElementById('screen-chiedi');
   var inChat = scChiedi && scChiedi.classList.contains('active') && !inVista;
-  // #6: nel Banco c'è già la card Galileo, in chat c'è la ask-bar -> nascondo (no sovrapposizione)
-  fab.style.display = (inBanco || inChat) ? 'none' : 'flex';
+  // la Home rifondata NON ha più la card Galileo -> il FAB deve esserci nel Banco.
+  // nascondo solo in chat (dove c'è la ask-bar). Altrove sempre visibile.
+  fab.style.display = inChat ? 'none' : 'flex';
 };
 // ═══ ROUTER UNICO (#277): un solo percorso per aprire un luogo, da qualsiasi ingresso ═══
 // #5 Cesso test: UNA sola porta per creare menu (tutti i vecchi ingressi -> workflow unificato)

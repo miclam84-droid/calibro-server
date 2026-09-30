@@ -17,6 +17,8 @@ window.renderHome2 = function(){
   host.innerHTML=''
     // BLOCCO 1 — Esperimento del Giorno (hero) — caricato async
     + '<section class="h2-hero ds-grid-bg" id="h2-hero"><div class="h2-hero-load"><div class="skel-line w40"></div><div class="skel-box"></div></div></section>'
+    // BLOCCO — Chiedi a Matter (chat scientifica) — subito sotto l'hero, ben visibile
+    + '<button class="h2-chat" onclick="switchTab(\'chiedi\')"><span class="h2-chat-ico">◇</span><span class="h2-chat-body"><span class="h2-chat-t">Chiedi a Matter</span><span class="h2-chat-d">La chat scientifica — domande libere sul mestiere</span></span><span class="h2-chat-arr">→</span></button>'
     // BLOCCO 2 — La Diagnosi è il cuore
     + '<section class="h2-diagnosi"><div class="ds-eyebrow">◎ COSA NON FUNZIONA AL BANCO?</div>'
     +   '<div class="h2-diag-titolo">Parti da un problema.<br>Matter risale alla causa.</div>'
@@ -25,8 +27,6 @@ window.renderHome2 = function(){
     + '</section>'
     // BLOCCO 3 — Science x Craft (widget)
     + '<section class="h2-sxc" id="h2-sxc"></section>'
-    // BLOCCO — Chiedi a Matter (la chat scientifica: era sparita, rimessa)
-    + '<button class="h2-chat" onclick="switchTab(\'chiedi\')"><span class="h2-chat-ico">◇</span><span class="h2-chat-body"><span class="h2-chat-t">Chiedi a Matter</span><span class="h2-chat-d">La chat scientifica — domande libere sul mestiere</span></span><span class="h2-chat-arr">→</span></button>'
     // BLOCCO 4 — Protocol Hub
     + '<section class="h2-hub"><div class="ds-eyebrow">◎ IL LABORATORIO</div>'
     +   '<div class="h2-hub-titolo">Cerca un esperimento</div>'
