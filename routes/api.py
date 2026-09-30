@@ -5816,6 +5816,39 @@ def diagnosi_interattiva():
             if fr:
                 fdd=fr[0] if isinstance(fr[0],dict) else json.loads(fr[0])
                 risultato["causalita_fenomeno"]=fdd.get("causalita")
+        # MEMORIA UTENTE (#543): incrocio il fenomeno con lo storico del device
+        device = request.headers.get("X-Device-Id","")
+        if device and fen:
+            fen_l = fen.lower().split()[0] if fen.split() else fen.lower()
+            # trovo gli esperimenti del device i cui protocolli toccano questo fenomeno
+            cur.execute("""SELECT eu.parametri, eu.esito, eu.creato, eu.nome
+                           FROM esperimenti_utente eu
+                           JOIN nodes n ON n.id = eu.protocollo_id
+                           WHERE eu.device_id = %s
+                           AND n.type='Protocollo'
+                           AND EXISTS (
+                             SELECT 1 FROM jsonb_array_elements(n.data->'fenomeni') AS f
+                             WHERE LOWER(f->>'nome') LIKE %s
+                           )
+                           ORDER BY eu.creato DESC""", (device, "%"+fen_l+"%"))
+            storico = cur.fetchall()
+            if storico:
+                n_volte = len(storico)
+                ultimo = storico[0]
+                ultimo_par = ultimo[0] if isinstance(ultimo[0],dict) else (json.loads(ultimo[0]) if ultimo[0] else {})
+                ultimo_esito = ultimo[1]
+                # costruisco il richiamo (proposto, non imposto - #540)
+                par_txt = ""
+                if ultimo_par:
+                    primo_par = list(ultimo_par.items())[0] if ultimo_par else None
+                    if primo_par: par_txt = f" L'ultima volta: {primo_par[0]} {primo_par[1]}."
+                richiamo = f"Ci sei gia passato {n_volte} volte su questo.{par_txt}" if n_volte>1 else f"Ci sei gia passato una volta.{par_txt}"
+                risultato["memoria_utente"] = {
+                    "gia_affrontato": True, "n_volte": n_volte, "ultimo_esito": ultimo_esito,
+                    "ultimo_parametro": ultimo_par, "richiamo": richiamo
+                }
+            else:
+                risultato["memoria_utente"] = {"gia_affrontato": False}
         cur.close(); conn.close()
         risultato["fonti_patrimonio"]=len(cause_trovate)
         return jsonify(risultato)
