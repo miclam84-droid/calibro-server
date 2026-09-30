@@ -12896,3 +12896,58 @@ def admin_riempitore_stop():
         return jsonify({"errore":"non autorizzato"}), 403
     _RIEMPITORE_STATO["attivo"] = False
     return jsonify({"fermato": True})
+
+
+@bp.route("/admin/protocolli/ricollega")
+def admin_ricollega_protocolli():
+    """Migliora i collegamenti protocollo->ingrediente con match intelligente (plurale/singolare,
+    'pomodoro X'->'pomodoro'). Cosi' il Protocol Hub raccoglie tutti gli esperimenti di un ingrediente."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # carico tutti gli ingredienti (nome -> id) per il match
+        cur.execute("""SELECT id, LOWER(name) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND COALESCE((data->>'nascosto_utente'),'false')<>'true'""")
+        ing_map = {}
+        for iid, inl in cur.fetchall():
+            ing_map[inl] = iid
+        def _match(nome):
+            n = nome.lower().strip()
+            if n in ing_map: return ing_map[n]
+            # singolare<->plurale semplice
+            for suff in ['i','e','o','a']:
+                if n.endswith(suff):
+                    for alt_suff in ['o','a','e','i']:
+                        alt = n[:-1]+alt_suff
+                        if alt in ing_map: return ing_map[alt]
+            # "pomodoro san marzano" -> "pomodoro" (prima parola)
+            prima = n.split()[0] if n.split() else n
+            if prima in ing_map and len(prima) > 3: return ing_map[prima]
+            # contenuto: un ingrediente il cui nome e' dentro il nome ricetta
+            for inl, iid in ing_map.items():
+                if len(inl) > 4 and (inl == prima or (inl in n and abs(len(inl)-len(n)) < 6)):
+                    return iid
+            return None
+        # per ogni protocollo, ricollego i reagenti col match migliorato
+        cur.execute("SELECT id, data FROM nodes WHERE type='Protocollo'")
+        prot = cur.fetchall()
+        nuovi_archi = 0
+        for pid, data in prot:
+            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            for rg in dd.get("reagenti", []):
+                nome = rg.get("nome","")
+                if not nome: continue
+                iid = _match(nome)
+                if not iid: continue
+                cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='usa_reagente'",(pid,iid))
+                if cur.fetchone(): continue
+                cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'usa_reagente')",(pid,iid))
+                nuovi_archi += 1
+            if nuovi_archi % 200 == 0 and nuovi_archi > 0: conn.commit()
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"protocolli": len(prot), "nuovi_collegamenti": nuovi_archi})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]})
