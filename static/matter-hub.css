@@ -1,0 +1,37 @@
+/* ═══ PROTOCOL HUB (board 2) — un ingrediente è un portale ═══ */
+#hub-host{padding-bottom:80px}
+.hub-hero{background:var(--ds-ink);padding:24px;margin-bottom:24px;box-shadow:5px 5px 0 rgba(20,29,34,.15)}
+.hub-hero .ds-eyebrow{color:var(--ds-terracotta)}
+.hub-hero-nome{color:#fff!important;margin:8px 0 10px}
+.hub-hero-n{font-family:var(--ds-body);font-size:14px;color:#CBD6DA}
+.hub-hero-n .ds-data{color:var(--ds-terracotta);font-size:16px}
+.hub-sez-lab{font-family:var(--ds-mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ds-rame);margin:24px 0 12px}
+/* esperimenti — il cuore */
+.hub-esp-lista{display:flex;flex-direction:column;gap:10px}
+.hub-esp{display:block;width:100%;text-align:left;background:var(--ds-carta);border:1.5px solid var(--ds-ink);box-shadow:3px 3px 0 rgba(20,29,34,.1);padding:14px;cursor:pointer}
+.hub-esp:active{transform:translate(3px,3px);box-shadow:0 0 0}
+.hub-esp-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px}
+.hub-esp-nome{font-family:var(--ds-display);font-weight:700;font-size:15px;color:var(--ds-ink);line-height:1.15}
+.hub-esp-bers{flex-shrink:0;color:var(--ds-rame)!important;font-size:14px}
+.hub-esp-var{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted)}
+.hub-esp-fen{font-family:var(--ds-mono);font-size:10px;color:var(--ds-grafite);margin-top:5px;text-transform:lowercase}
+/* varietà — carte materiche */
+.hub-var-lista{display:flex;flex-direction:column;gap:10px}
+.hub-var{background:var(--ds-carta);border:1.5px solid var(--ds-linea);border-left:4px solid var(--ds-salvia);padding:14px}
+.hub-var-nome{font-family:var(--ds-display);font-weight:700;font-size:15px;color:var(--ds-ink)}
+.hub-var-orig{font-family:var(--ds-mono);font-size:10px;color:var(--ds-muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.hub-var-barre{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:10px 0 6px}
+.hub-var-barra{display:flex;align-items:center;gap:6px}
+.hub-var-bk{font-family:var(--ds-mono);font-size:9px;color:var(--ds-muted);text-transform:uppercase;flex:0 0 30px}
+.hub-var-bt{flex:1;height:4px;background:var(--ds-carta-scura)}
+.hub-var-bf{height:100%;background:var(--ds-rame)}
+.hub-var-note{font-family:var(--ds-body);font-size:12px;color:var(--ds-muted);line-height:1.4;margin-top:6px;font-style:italic}
+/* ricerca + vuoto */
+.hub-cerca{display:flex;gap:8px;margin-top:24px}
+.hub-cerca input{flex:1;min-width:0;min-height:48px;border:1.5px solid var(--ds-ink);background:var(--ds-carta);padding:0 14px;font-family:var(--ds-mono);font-size:14px;box-sizing:border-box}
+.hub-cerca button{flex:0 0 48px;height:48px;background:var(--ds-ink);color:#fff;border:0;font-size:18px;cursor:pointer}
+.hub-vuoto{text-align:center;padding:56px 24px;border:1.5px solid var(--ds-linea)}
+.hub-vuoto-ico{font-size:36px;color:var(--ds-rame);margin-bottom:14px}
+.hub-vuoto-t{font-family:var(--ds-display);font-weight:700;font-size:24px;color:var(--ds-ink);text-transform:capitalize;margin-bottom:8px}
+.hub-vuoto-d{font-family:var(--ds-body);font-size:13px;color:var(--ds-muted);line-height:1.5;max-width:300px;margin:0 auto 18px}
+.hub-vuoto-cta{background:var(--ds-ink);color:#fff;border:0;padding:13px 20px;font-family:var(--ds-display);font-weight:700;font-size:14px;cursor:pointer}
