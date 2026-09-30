@@ -33,6 +33,13 @@ window.renderHome2 = function(){
     +   '<div class="h2-hub-search"><input id="h2-hub-input" placeholder="pomodoro, maionese, lievitazione…" onkeydown="if(event.key===\'Enter\')_h2Hub()"><button onclick="_h2Hub()">→</button></div>'
     +   '<div class="h2-hub-hint">Ingredienti · preparazioni · esperimenti · fenomeni</div>'
     + '</section>'
+    // BLOCCO STRUMENTI — Atlante, Menu Builder, Foto (riesposti dopo la rifondazione)
+    + '<div class="ds-eyebrow" style="margin:8px 0 12px">◎ STRUMENTI</div>'
+    + '<div class="h2-strumenti">'
+    +   '<button class="h2-strum" onclick="if(typeof _caricaModulo===\'function\'){_caricaModulo(\'scienza\').then(function(){apriSchedeScienza&&apriSchedeScienza()})}"><span class="h2-strum-ico">◈</span><span class="h2-strum-t">Atlante</span><span class="h2-strum-d">Le schede: fenomeni, tecniche</span></button>'
+    +   '<button class="h2-strum" onclick="if(typeof _caricaModulo===\'function\'){_caricaModulo(\'menubuilder\').then(function(){apriMenuBuilderPro&&apriMenuBuilderPro()})}"><span class="h2-strum-ico">▤</span><span class="h2-strum-t">Menu Builder</span><span class="h2-strum-d">Costruisci l\'offerta</span></button>'
+    +   '<button class="h2-strum" onclick="_h2Foto()"><span class="h2-strum-ico">◉</span><span class="h2-strum-t">Da foto</span><span class="h2-strum-d">Fotografa gli ingredienti</span></button>'
+    + '</div>'
     // BLOCCO 5 — Composer + BLOCCO 6 — Esperimenti recenti
     + '<section class="h2-doppia">'
     +   '<button class="h2-composer" onclick="if(typeof apriComposer2===\'function\'){apriComposer2()}else if(typeof _caricaModulo===\'function\'){_caricaModulo(\'composer\').then(function(){apriComposer&&apriComposer()})}"><span class="h2-comp-ico">◈</span><span class="h2-comp-t">Simula un esperimento</span><span class="h2-comp-d">Cosa succede se cambio…</span></button>'
@@ -80,4 +87,5 @@ window._h2ApriProtocollo=function(id){ if(typeof apriProtocollo==='function'){ a
 window._h2Diagnosi=function(testo){ if(typeof apriDiagnosi==='function'){ apriDiagnosi(testo); } else { switchTab('chiedi'); setTimeout(function(){ if(typeof chiediTesto==='function') chiediTesto(testo); },250); } };
 window._h2DiagnosiLibera=function(){ if(typeof apriDiagnosi==='function'){ apriDiagnosi(''); } else { switchTab('chiedi'); } };
 window._h2Hub=function(){ var i=document.getElementById('h2-hub-input'); var q=i?i.value.trim():''; if(!q) return; if(typeof apriHub==='function'){ apriHub(q); } };
+window._h2Foto=function(){ var inp=document.getElementById('foto-input'); if(inp){ switchTab('chiedi'); setTimeout(function(){ inp.click(); },200); } else if(typeof _toast==='function'){ _toast('Funzione foto non disponibile'); } };
 })();
