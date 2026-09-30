@@ -75,7 +75,7 @@ function _h2CaricaScienceCraft(){
 }
 
 window._h2ApriProtocollo=function(id){ if(typeof apriProtocollo==='function'){ apriProtocollo(id); } else if(typeof _caricaModulo==='function'){ _caricaModulo('protocollo').then(function(){ if(window.apriProtocollo) apriProtocollo(id); }); } };
-window._h2Diagnosi=function(testo){ switchTab('chiedi'); setTimeout(function(){ if(typeof chiediTesto==='function') chiediTesto(testo); },250); };
-window._h2DiagnosiLibera=function(){ switchTab('chiedi'); setTimeout(function(){ var i=document.getElementById('q')||document.getElementById('ask-input'); if(i) i.focus(); },250); };
+window._h2Diagnosi=function(testo){ if(typeof apriDiagnosi==='function'){ apriDiagnosi(testo); } else { switchTab('chiedi'); setTimeout(function(){ if(typeof chiediTesto==='function') chiediTesto(testo); },250); } };
+window._h2DiagnosiLibera=function(){ if(typeof apriDiagnosi==='function'){ apriDiagnosi(''); } else { switchTab('chiedi'); } };
 window._h2Hub=function(){ var i=document.getElementById('h2-hub-input'); var q=i?i.value.trim():''; if(!q) return; if(typeof apriHub==='function'){ apriHub(q); } };
 })();

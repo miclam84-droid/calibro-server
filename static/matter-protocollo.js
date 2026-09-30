@@ -71,5 +71,5 @@ function _protRender(d){
   host.innerHTML=html;
 }
 window._protFenomeno=function(slug){ if(typeof apriSchedaScienza==='function'){ chiudiVista&&chiudiVista(); _caricaModulo('scienza').then(function(){ apriSchedaScienza(slug); }); } };
-window._protDiagnosi=function(nome){ chiudiVista&&chiudiVista(); switchTab('chiedi'); setTimeout(function(){ if(typeof chiediTesto==='function') chiediTesto('Ho un problema con: '+nome+'. Aiutami a capire cosa non va.'); },250); };
+window._protDiagnosi=function(nome){ chiudiVista&&chiudiVista(); if(typeof apriDiagnosi==='function'){ apriDiagnosi('problema con '+nome); } else { switchTab('chiedi'); } };
 })();
