@@ -5173,11 +5173,23 @@ def composer_prossimi():
             _cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
             _ncomp = _cur.fetchone()[0]
             if _ncomp > 150 and overlap < 15: continue   # ricco ma legame debole: scarto (hub generico)
-            # CONTRASTO: soddisfa una clausola richiesta?
+            # CONTRASTO: soddisfa una clausola richiesta? MA deve essere culinariamente compatibile
             motivo_contrasto = None
-            for prop_needed, spieg in contrasti_richiesti:
-                if prop.get(prop_needed, 0) >= 6:
-                    motivo_contrasto = spieg; break
+            _cc = (dd.get('categoria','') or '').lower()
+            # scarto acidi/contrasti da bar/cocktail per ingredienti di cucina (shrub, aceti da bere...)
+            _nome_l = nome.lower()
+            _incompat = any(x in _nome_l for x in ['shrub','da bere','al lampone','aromatizzato','cordiale','bitter','tonica','soda'])
+            # compatibilita categoria: se scelte sono cucina e candidato e' bar, salto (e viceversa)
+            _cat_ok = True
+            if _cc and cat_scelte:
+                _bar_cats = {'bar','cocktail','distillato','liquore'}
+                scelte_bar = bool(cat_scelte & _bar_cats)
+                cand_bar = _cc in _bar_cats
+                if scelte_bar != cand_bar: _cat_ok = False  # contesti diversi
+            if not _incompat and _cat_ok:
+                for prop_needed, spieg in contrasti_richiesti:
+                    if prop.get(prop_needed, 0) >= 6:
+                        motivo_contrasto = spieg; break
             if motivo_contrasto:
                 contrasto.append({"id": nid, "nome": nome, "motivo": motivo_contrasto,
                                   "valore": prop.get(prop_needed, 0)})
@@ -5570,8 +5582,24 @@ def scoperta_molecolare(ingrediente):
             composti_cand = set(x[0] for x in cur.fetchall())
             condivisi = composti_ing & composti_cand
             if len(condivisi) < 2: continue
-            # ESCLUDO GLI HUB: se il candidato ha troppi composti totali, si abbina a tutto (te', hub) -> poco informativo
+            # ESCLUDO GLI HUB
             if len(composti_cand) > 150: continue
+            # GOVERNO ANTI-SLOP: escludo stessa categoria (pesce+pesce, carne+carne = inutile)
+            _cand_cat = (cand_data.get('categoria','') or '').lower() if 'cand_data' in dir() else ''
+            # e le assurdita note (caffe+calamaro): se le categorie sono troppo lontane, salto
+            # recupero la categoria del candidato
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (cand_id,))
+            _cd = cur.fetchone()
+            _cdd = (_cd[0] if _cd and isinstance(_cd[0],dict) else (json.loads(_cd[0]) if _cd and _cd[0] else {})) if _cd else {}
+            _cand_cat = (_cdd.get('categoria','') or '').lower()
+            # categoria dell'ingrediente base
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (ing_id,))
+            _bd = cur.fetchone()
+            _bdd = (_bd[0] if _bd and isinstance(_bd[0],dict) else (json.loads(_bd[0]) if _bd and _bd[0] else {})) if _bd else {}
+            _base_cat = (_bdd.get('categoria','') or '').lower()
+            # se stessa categoria -> inutile (pesce con pesci). Escludo.
+            if _cand_cat and _base_cat and _cand_cat == _base_cat and _cand_cat in ['pesce','carne','crostaceo','mollusco']:
+                continue
             # SPECIFICITA (Shannon): un abbinamento e' interessante se i composti condivisi sono una
             # frazione ALTA dei composti del candidato (non se sono tanti in assoluto)
             _specificita = len(condivisi) / max(len(composti_cand), 1)
