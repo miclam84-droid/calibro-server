@@ -5741,6 +5741,7 @@ def esperimento_del_giorno():
                        AND LENGTH(data->>'ipotesi') > 15 AND data->>'ipotesi' <> '1 frase'
                        AND LENGTH(COALESCE(data->>'variabile_critica','')) > 5
                        AND data->'bersaglio'->>'valore' IS NOT NULL
+                       AND LENGTH(COALESCE(data->>'punto_critico_originale','')) > 20
                        ORDER BY id""")
         completi = cur.fetchall()
         if not completi:
