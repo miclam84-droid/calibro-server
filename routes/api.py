@@ -5674,3 +5674,47 @@ def protocolli_di_ingrediente(ingrediente):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/protocollo/<pid>")
+def leggi_protocollo(pid):
+    """La SCHEDA PROTOCOLLO completa (per il frontend, board design 3). Tutti i campi dell'esperimento:
+    ipotesi, variabile critica, bersaglio, reagenti, fenomeni (con causalita), sensori, diagnosi."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE id=%s AND type='Protocollo'", (pid,))
+        r = cur.fetchone()
+        if not r: cur.close(); conn.close(); return jsonify({"errore":"protocollo non trovato"}), 404
+        dd = r[2] if isinstance(r[2], dict) else json.loads(r[2])
+        # arricchisco i fenomeni con la loro causalita (per il Composer/Diagnosi nella scheda)
+        fenomeni_ricchi = []
+        for f in dd.get("fenomeni", []):
+            fid = f.get("fenomeno_id")
+            fen = {"nome": f.get("nome"), "causalita": None}
+            if fid:
+                cur.execute("SELECT data FROM nodes WHERE id=%s", (fid,))
+                fr = cur.fetchone()
+                if fr:
+                    fdd = fr[0] if isinstance(fr[0], dict) else json.loads(fr[0])
+                    fen["causalita"] = fdd.get("causalita")
+                    fen["slug"] = fid
+            fenomeni_ricchi.append(fen)
+        cur.close(); conn.close()
+        return jsonify({
+            "id": r[0], "nome": r[1],
+            "disciplina": dd.get("disciplina",""),
+            "ipotesi": dd.get("ipotesi",""),
+            "variabile_critica": dd.get("variabile_critica",""),
+            "bersaglio": dd.get("bersaglio",{}),
+            "reagenti": dd.get("reagenti",[]),
+            "fenomeni": fenomeni_ricchi,
+            "sensori": dd.get("sensori",{}),
+            "diagnosi": dd.get("diagnosi",[]),
+            "punto_critico": dd.get("punto_critico_originale",""),
+            "verificato": dd.get("verificato"),
+            "deriva_da_ricetta": dd.get("deriva_da_ricetta",""),
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
