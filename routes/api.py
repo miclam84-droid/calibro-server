@@ -5881,3 +5881,84 @@ def composer_simula():
         return jsonify(risultato)
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+# ═══ QUADERNO 2.0: esperimenti come COMMIT + le 3 memorie (65 board 4, il fossato) ═══
+@bp.route("/v1/quaderno/esperimento", methods=["POST"])
+def salva_esperimento():
+    """Salva un esperimento dell'utente come COMMIT (Git per la cucina). Memoria 1: Esperimento.
+    body: {device_id, protocollo_id?, nome, parametri:{...}, risultato, esito(riuscito/rollback/in_corso), note}"""
+    from flask import request, jsonify
+    import os, psycopg2, json, datetime, uuid
+    body = request.get_json(silent=True) or {}
+    device = body.get("device_id") or request.headers.get("X-Device-Id","anon")
+    nome = (body.get("nome") or "").strip()
+    if not nome: return jsonify({"errore":"manca il nome"}), 400
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # creo la tabella se non esiste
+        cur.execute("""CREATE TABLE IF NOT EXISTS esperimenti_utente (
+            id TEXT PRIMARY KEY, device_id TEXT, protocollo_id TEXT, nome TEXT,
+            parametri JSONB, risultato TEXT, esito TEXT, note TEXT,
+            commit_n INTEGER, creato TIMESTAMP DEFAULT NOW())""")
+        # numero commit per questo esperimento (stesso nome, stesso device)
+        cur.execute("SELECT COALESCE(MAX(commit_n),0)+1 FROM esperimenti_utente WHERE device_id=%s AND nome=%s",(device,nome))
+        commit_n = cur.fetchone()[0]
+        eid = str(uuid.uuid4())[:12]
+        cur.execute("""INSERT INTO esperimenti_utente (id,device_id,protocollo_id,nome,parametri,risultato,esito,note,commit_n)
+                       VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+                    (eid, device, body.get("protocollo_id",""), nome, json.dumps(body.get("parametri",{}),ensure_ascii=False),
+                     body.get("risultato",""), body.get("esito","in_corso"), body.get("note",""), commit_n))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"id":eid,"nome":nome,"commit_n":commit_n,"salvato":True})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
+
+@bp.route("/v1/quaderno/esperimenti")
+def lista_esperimenti():
+    """Gli esperimenti dell'utente coi commit (Focaccia 72h #14 [migliorata]...). Memoria 1."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    device = request.args.get("device_id") or request.headers.get("X-Device-Id","anon")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id,nome,protocollo_id,parametri,risultato,esito,note,commit_n,creato
+                       FROM esperimenti_utente WHERE device_id=%s ORDER BY creato DESC LIMIT 100""",(device,))
+        esp=[]
+        for r in cur.fetchall():
+            esp.append({"id":r[0],"nome":r[1],"protocollo_id":r[2],"parametri":r[3],"risultato":r[4],
+                        "esito":r[5],"note":r[6],"commit_n":r[7],"creato":str(r[8])[:16]})
+        cur.close(); conn.close()
+        return jsonify({"esperimenti":esp,"n":len(esp)})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150],"esperimenti":[]})
+
+@bp.route("/v1/quaderno/maneggiare-la-materia")
+def maneggiare_materia():
+    """Memoria 2 (Crescita) + Memoria 3 (Materia): come cresci + come reagisce la TUA materia.
+    Analizza gli esperimenti dell'utente per fenomeno/materia."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    device = request.args.get("device_id") or request.headers.get("X-Device-Id","anon")
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT nome,esito,parametri,creato FROM esperimenti_utente WHERE device_id=%s ORDER BY creato",(device,))
+        righe = cur.fetchall()
+        cur.close(); conn.close()
+        if not righe:
+            return jsonify({"crescita":[],"nota":"Nessun esperimento ancora. Salva i tuoi esperimenti per costruire la tua memoria."})
+        # raggruppo per nome-base, calcolo la crescita (esiti nel tempo)
+        from collections import defaultdict
+        per_esp = defaultdict(list)
+        for nome,esito,par,creato in righe:
+            per_esp[nome].append(esito)
+        crescita=[]
+        for nome,esiti in per_esp.items():
+            riusciti = sum(1 for e in esiti if e=="riuscito")
+            tot = len(esiti)
+            recenti = esiti[-3:]
+            crescita.append({"esperimento":nome,"tentativi":tot,"riusciti":riusciti,
+                             "stato":"consolidato" if riusciti>=3 and recenti.count("riuscito")>=2 else "in crescita" if riusciti>0 else "primi tentativi"})
+        return jsonify({"crescita":crescita,"n_esperimenti":len(per_esp)})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
