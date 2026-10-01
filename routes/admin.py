@@ -13765,3 +13765,69 @@ def admin_crea_mancanti_veri():
         return jsonify({"creati":creati,"dettaglio":dettaglio})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/admin/tassonomia/pulisci")
+def admin_tassonomia_pulisci():
+    """Tassonomia pulita (revisore: critica per il grafo). Marca ogni nodo Fenomeno/Tecnica con livello:
+    FENOMENO (madre, principio fisico) / MANIFESTAZIONE (tecnica specifica) / APPLICAZIONE (uso concreto).
+    Zero AI - usa is_fenomeno_madre + manifestazione_di gia esistenti."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
+        fenomeni=0; manifestazioni=0; applicazioni=0
+        for sid, name, data in cur.fetchall():
+            dd = data if isinstance(data,dict) else (json.loads(data) if data else {})
+            if dd.get("is_fenomeno_madre"):
+                dd["livello_tassonomia"] = "fenomeno"; fenomeni+=1
+            elif dd.get("manifestazione_di"):
+                dd["livello_tassonomia"] = "manifestazione"; manifestazioni+=1
+            else:
+                # chi non e' madre ne' manifestazione: tecnica/applicazione autonoma
+                dd["livello_tassonomia"] = "manifestazione"; manifestazioni+=1
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),sid))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"fenomeni":fenomeni,"manifestazioni":manifestazioni,"applicazioni":applicazioni,
+                        "nota":"ogni nodo ha livello_tassonomia: fenomeno/manifestazione/applicazione"})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
+
+@bp.route("/admin/tecniche/aggiungi-provala")
+def admin_tecniche_provala():
+    """Regola 19: ogni tecnica APPLICABILE puo' generare una PROVA proporzionata al livello di accesso.
+    Aggiunge alle tecniche: livello_accesso (banco/laboratorio) + provabile (true se ha bersaglio+strumento).
+    Zero AI - deriva dai dati esistenti (numero_bersaglio, strumento)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # parole che indicano strumento da laboratorio (non banco)
+    LAB = ["rotovapor","rotavapor","centrifug","sottovuoto","roner","sous-vide","ph-metro","phmetro",
+           "rifrattometro","azoto","sifone","liofil","distillazione","abbattitore","termocircolatore"]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE type='Tecnica'")
+        provabili=0; banco=0; lab=0
+        for sid, name, data in cur.fetchall():
+            dd = data if isinstance(data,dict) else (json.loads(data) if data else {})
+            strumento = (dd.get("strumento","") or "").lower()
+            nome_l = (name or "").lower()
+            # livello accesso: laboratorio se usa strumenti pro
+            e_lab = any(w in strumento or w in nome_l for w in LAB)
+            dd["livello_accesso"] = "laboratorio" if e_lab else "banco"
+            if e_lab: lab+=1
+            else: banco+=1
+            # provabile: ha un bersaglio concreto (si puo' misurare la prova)
+            ha_bersaglio = bool(dd.get("numero_bersaglio"))
+            dd["provabile"] = ha_bersaglio
+            if ha_bersaglio: provabili+=1
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),sid))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"tecniche_provabili":provabili,"da_banco":banco,"da_laboratorio":lab,
+                        "nota":"ogni tecnica ha livello_accesso (banco/laboratorio) + provabile (ha bersaglio)"})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
