@@ -988,6 +988,7 @@ def _fenomeno_a_scheda(dd, nome, nid):
         "gancio": dd.get("gancio") or "",
         "causalita": dd.get("causalita") or None,
         "evidence": dd.get("evidence") or [],
+        "esperienza": cs.get("esperienza") or "",
     }
 
 @bp.route("/v1/scheda-scienza/<slug>", methods=["GET"])
