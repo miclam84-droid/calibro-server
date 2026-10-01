@@ -13461,6 +13461,7 @@ def admin_marca_fenomeni_madre():
         "estrazione": ["estrazion","infusion","macerazion","cold brew","espresso","decotto"],
         "cristallizzazione": ["cristallizz","tempera","nucleazione","sciroppo"],
         "denaturazione proteica": ["denaturazion proteic","montatura albumi","meringa"],
+        "coagulazione proteica": ["coagulazion","cagliata","crema pasticcera","custard","yogurt","uovo cotto"],
         "osmosi": ["osmosi","disidratazion","salamoia","marinatura","cura"],
         "ossidazione": ["ossidazion","imbrunimento enzimatic","irrancidiment"],
         "coagulazione termica": ["coagulazione termic"],
@@ -13478,7 +13479,7 @@ def admin_marca_fenomeni_madre():
         for sid, sname, sdata in schede:
             nl = (sname or "").lower()
             for madre in MADRE:
-                if nl == madre or nl == madre+"i" or nl.replace(" ","") == madre.replace(" ",""):
+                if nl == madre or nl == madre+"i" or nl.replace(" ","") == madre.replace(" ","") or (madre=="coagulazione proteica" and sid=="fen-coagulazione"):
                     madre_id[madre] = sid
         # marco i madre + collego le manifestazioni
         for sid, sname, sdata in schede:
