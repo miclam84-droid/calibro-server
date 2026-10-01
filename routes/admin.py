@@ -13712,3 +13712,48 @@ def admin_genera_schede_vuote():
         return jsonify({"schede_generate":fatti,"ancora_vuote":rimasti})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/admin/fenomeni/crea-mancanti-veri")
+def admin_crea_mancanti_veri():
+    """Crea le 3 tecniche VERE che mancano (sferificazione, espuma, pate a bombe). Scheda completa. gpt-4o-mini."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key: return jsonify({"errore":"no key"}), 500
+    DA_CREARE = {
+        "Sferificazione (alginato e calcio)": {"slug":"tec-sferificazione","cat":"cucina"},
+        "Espuma (schiume al sifone)": {"slug":"tec-espuma","cat":"cucina"},
+        "Pâte à bombe (base montata tuorli e zucchero)": {"slug":"tec-pate-a-bombe","cat":"pasticceria"},
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        creati=0; dettaglio=[]
+        for nome, info in DA_CREARE.items():
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(info["slug"],))
+            if cur.fetchone(): dettaglio.append({nome:"gia esiste"}); continue
+            sysp=(f"Tecnica culinaria: {nome}. Scrivi una scheda scientifica completa per un professionista. JSON: "
+                  f'{{"principio":"principio scientifico 2-3 frasi","esperienza":"cosa vedi/senti al banco, concreto",'
+                  f'"numero_bersaglio":"parametro chiave con valore (es. alginato 0.5-1%)","errori_comuni":"errori tipici",'
+                  f'"strumento":"come si controlla"}}. SOLO JSON.')
+            pl={"model":"gpt-4o-mini","max_tokens":600,"temperature":0.3,"messages":[{"role":"system","content":sysp},{"role":"user","content":"Scrivi."}]}
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            try:
+                tx=json.loads(ur.urlopen(rq,timeout=50).read().decode())["choices"][0]["message"]["content"]
+                m=re.search(r'\{.*\}',tx,re.DOTALL)
+                if not m: continue
+                est=json.loads(m.group(0))
+                data={"nome":nome,"categoria":info["cat"],"stato_editoriale":"ai_generated","stato_maturita":"completa",
+                      "strati":{"fondamenta":True,"operativita":bool(est.get("numero_bersaglio")),"esperienza":True},
+                      "principio":est.get("principio",""),"numero_bersaglio":est.get("numero_bersaglio",""),
+                      "errori_comuni":est.get("errori_comuni",""),"strumento":est.get("strumento",""),
+                      "contenuto_strutturato":{"principio":est.get("principio",""),"esperienza":est.get("esperienza","")}}
+                cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Tecnica',%s)",(info["slug"],nome,json.dumps(data,ensure_ascii=False)))
+                conn.commit(); creati+=1; dettaglio.append({nome:"creato"})
+            except Exception as e2: dettaglio.append({nome:"err "+str(e2)[:40]})
+        cur.close(); conn.close()
+        return jsonify({"creati":creati,"dettaglio":dettaglio})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
