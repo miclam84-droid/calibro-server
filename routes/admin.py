@@ -13567,3 +13567,61 @@ def admin_completa_esperienza():
         return jsonify({"esperienza_completate":fatti,"ancora_da_fare":rimasti})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/admin/fenomeni/crea-madre-mancanti")
+def admin_crea_madre_mancanti():
+    """Crea le schede dei FENOMENI MADRE fondamentali che mancano (Maillard, Gelatinizzazione).
+    Scheda completa (3 strati) + marca madre + collega manifestazioni. gpt-4o-mini."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key: return jsonify({"errore":"no key"}), 500
+    DA_CREARE = {
+        "Reazione di Maillard": {"slug":"fen-maillard","parole":["maillard","rosolatura","crosta","doratura","tostatura","brunitura","sear"]},
+        "Gelatinizzazione dell'amido": {"slug":"fen-gelatinizzazione","parole":["gelatinizz","amido","roux","addensant con amido","besciamella"]},
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        creati = 0; dettaglio = []
+        for nome, info in DA_CREARE.items():
+            slug = info["slug"]
+            cur.execute("SELECT id FROM nodes WHERE id=%s",(slug,))
+            if cur.fetchone(): dettaglio.append({nome:"gia esiste"}); continue
+            # genero la scheda completa
+            sysp = (f"Fenomeno culinario fondamentale: {nome}. Scrivi una scheda scientifica completa. JSON: "
+                    f'{{"principio":"il principio scientifico, 2-3 frasi","esperienza":"cosa vedi/senti al banco, '
+                    f'concreto sensoriale","numero_bersaglio":"il parametro chiave con valore (es. 140-165C)",'
+                    f'"errori_comuni":"gli errori tipici","strumento":"come si misura/controlla"}}. SOLO JSON.')
+            pl = {"model":"gpt-4o-mini","max_tokens":600,"temperature":0.3,
+                  "messages":[{"role":"system","content":sysp},{"role":"user","content":"Scrivi."}]}
+            rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                            headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            try:
+                tx = json.loads(ur.urlopen(rq, timeout=50).read().decode())["choices"][0]["message"]["content"]
+                m = re.search(r'\{.*\}', tx, re.DOTALL)
+                if not m: continue
+                est = json.loads(m.group(0))
+                data = {"nome":nome,"categoria":"trasversale","is_fenomeno_madre":True,
+                        "stato_editoriale":"ai_generated","stato_maturita":"completa",
+                        "strati":{"fondamenta":True,"operativita":True,"esperienza":True},
+                        "principio":est.get("principio",""),"numero_bersaglio":est.get("numero_bersaglio",""),
+                        "errori_comuni":est.get("errori_comuni",""),"strumento":est.get("strumento",""),
+                        "contenuto_strutturato":{"principio":est.get("principio",""),"esperienza":est.get("esperienza","")}}
+                cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Fenomeno',%s)",
+                            (slug,nome,json.dumps(data,ensure_ascii=False)))
+                # collego le manifestazioni (schede con le parole chiave)
+                cur.execute("SELECT id, name FROM nodes WHERE type IN ('Fenomeno','Tecnica') AND id<>%s",(slug,))
+                for mid, mname in cur.fetchall():
+                    if any(pp in (mname or "").lower() for pp in info["parole"]):
+                        cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='manifestazione_di'",(mid,slug))
+                        if not cur.fetchone():
+                            cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'manifestazione_di')",(mid,slug))
+                conn.commit(); creati += 1; dettaglio.append({nome:"creato"})
+            except Exception as e2: dettaglio.append({nome:"errore "+str(e2)[:40]})
+        cur.close(); conn.close()
+        return jsonify({"creati":creati,"dettaglio":dettaglio})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
