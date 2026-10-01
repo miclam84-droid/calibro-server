@@ -13625,3 +13625,90 @@ def admin_crea_madre_mancanti():
         return jsonify({"creati":creati,"dettaglio":dettaglio})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/admin/fenomeni/marca-madre-extra")
+def admin_marca_madre_extra():
+    """Marca come madre i fenomeni fondamentali gia esistenti ma non marcati (maillard, gelatinizzazione)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    EXTRA = {"fen-maillard":["maillard","rosolatura","crosta","doratura","tostatura","brunitura"],
+             "fen-gelatinizzazione":["gelatinizz","amido","roux","besciamella"]}
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        marcati=0; collegati=0
+        for slug, parole in EXTRA.items():
+            cur.execute("SELECT data FROM nodes WHERE id=%s",(slug,))
+            r=cur.fetchone()
+            if not r: continue
+            dd = r[0] if isinstance(r[0],dict) else json.loads(r[0])
+            dd["is_fenomeno_madre"]=True; dd["categoria"]="trasversale"
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),slug))
+            marcati+=1
+            cur.execute("SELECT id,name FROM nodes WHERE type IN ('Fenomeno','Tecnica') AND id<>%s",(slug,))
+            for mid,mname in cur.fetchall():
+                if any(pp in (mname or "").lower() for pp in parole):
+                    cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='manifestazione_di'",(mid,slug))
+                    if not cur.fetchone():
+                        cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'manifestazione_di')",(mid,slug))
+                        collegati+=1
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"marcati":marcati,"manifestazioni_collegate":collegati})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
+
+@bp.route("/admin/schede/genera-vuote")
+def admin_genera_schede_vuote():
+    """Genera le schede INTERE (3 strati) per i fenomeni con scheda vuota. gpt-4o-mini. A ondate."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = int(request.args.get("n", 10))
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key: return jsonify({"errore":"no key"}), 500
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                       AND (data->'strati' IS NULL OR
+                            ((data->'strati'->>'fondamenta')<>'true' AND (data->'strati'->>'operativita')<>'true'))
+                       LIMIT %s""",(n,))
+        righe = cur.fetchall()
+        fatti=0
+        for sid, nome in righe:
+            try:
+                sysp=(f"Fenomeno/tecnica culinaria: {nome}. Scrivi una scheda scientifica completa per un "
+                      f"professionista. JSON: {{\"principio\":\"principio scientifico 2-3 frasi\","
+                      f"\"esperienza\":\"cosa vedi/senti al banco, concreto sensoriale\","
+                      f"\"numero_bersaglio\":\"parametro chiave con valore se esiste, sennò vuoto\","
+                      f"\"errori_comuni\":\"errori tipici\",\"strumento\":\"come si controlla\"}}. SOLO JSON.")
+                pl={"model":"gpt-4o-mini","max_tokens":600,"temperature":0.3,"messages":[{"role":"system","content":sysp},{"role":"user","content":"Scrivi."}]}
+                rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                tx=json.loads(ur.urlopen(rq,timeout=50).read().decode())["choices"][0]["message"]["content"]
+                m=re.search(r'\{.*\}',tx,re.DOTALL)
+                if not m: continue
+                est=json.loads(m.group(0))
+                if not est.get("principio"): continue
+                cur.execute("SELECT data FROM nodes WHERE id=%s",(sid,))
+                dd=cur.fetchone()[0]; dd=dd if isinstance(dd,dict) else (json.loads(dd) if dd else {})
+                dd["principio"]=est.get("principio",""); dd["numero_bersaglio"]=est.get("numero_bersaglio","")
+                dd["errori_comuni"]=est.get("errori_comuni",""); dd["strumento"]=est.get("strumento","")
+                dd["stato_editoriale"]=dd.get("stato_editoriale") or "ai_generated"
+                dd["strati"]={"fondamenta":True,"operativita":bool(est.get("numero_bersaglio")),"esperienza":True}
+                cont=dd.get("contenuto_strutturato",{})
+                if isinstance(cont,str): cont=json.loads(cont) if cont else {}
+                cont["principio"]=est.get("principio",""); cont["esperienza"]=est.get("esperienza","")
+                dd["contenuto_strutturato"]=cont
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),sid))
+                conn.commit(); fatti+=1
+            except: pass
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                       AND (data->'strati' IS NULL OR
+                            ((data->'strati'->>'fondamenta')<>'true' AND (data->'strati'->>'operativita')<>'true'))""")
+        rimasti=cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"schede_generate":fatti,"ancora_vuote":rimasti})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
