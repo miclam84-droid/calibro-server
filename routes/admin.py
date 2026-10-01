@@ -13724,9 +13724,17 @@ def admin_crea_mancanti_veri():
     key = os.environ.get("OPENAI_API_KEY", "")
     if not key: return jsonify({"errore":"no key"}), 500
     DA_CREARE = {
-        "Sferificazione (alginato e calcio)": {"slug":"tec-sferificazione","cat":"cucina"},
-        "Espuma (schiume al sifone)": {"slug":"tec-espuma","cat":"cucina"},
-        "Pâte à bombe (base montata tuorli e zucchero)": {"slug":"tec-pate-a-bombe","cat":"pasticceria"},
+        "Liofilizzazione (essiccazione sublimativa)": {"slug":"tec-liofilizzazione","cat":"cucina"},
+        "Azoto liquido (congelamento istantaneo)": {"slug":"tec-azoto-liquido","cat":"cucina"},
+        "Tempura (pastella fredda e frittura)": {"slug":"tec-tempura","cat":"cucina"},
+        "Cremoso (crema inglese + cioccolato/gelatina)": {"slug":"tec-cremoso","cat":"pasticceria"},
+        "Bavarese (crema inglese + panna + gelatina)": {"slug":"tec-bavarese","cat":"pasticceria"},
+        "Staglio (divisione impasto)": {"slug":"tec-staglio","cat":"panificazione"},
+        "Shrub (sciroppo acidulato alla frutta)": {"slug":"tec-shrub","cat":"bar"},
+        "Oleo Saccharum (estrazione oli da scorze con zucchero)": {"slug":"tec-oleo-saccharum","cat":"bar"},
+        "Cordiale (sciroppo aromatico acidulato)": {"slug":"tec-cordiale","cat":"bar"},
+        "Redistillazione (ridistillare per purezza/aroma)": {"slug":"tec-redistillazione","cat":"bar"},
+        "Moka (estrazione a pressione di vapore)": {"slug":"tec-moka","cat":"caffetteria"},
     }
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
