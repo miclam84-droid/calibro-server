@@ -1019,7 +1019,7 @@ def schede_scienza_lista():
         from db import carica_grafo
         db = carica_grafo()
         def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
-        rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica') ORDER BY name LIMIT 200").fetchall()
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica') ORDER BY name LIMIT 500").fetchall()
         schede = []
         for r in rows:
             dd = _c(r,"data",2); dd = dd if isinstance(dd, dict) else (_j.loads(dd) if dd else {})
