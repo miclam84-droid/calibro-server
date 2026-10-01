@@ -13513,3 +13513,57 @@ def admin_marca_fenomeni_madre():
                         "madri_trovate":list(madre_id.keys()),"dry_run":dry})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/schede/completa-esperienza")
+def admin_completa_esperienza():
+    """Completa lo strato ESPERIENZA delle schede a 2 strati (fondamenta+operativita gia ok).
+    gpt-4o-mini economico. A ondate: n schede per volta. Zero rigenerazione (solo chi manca)."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = int(request.args.get("n", 10))
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key: return jsonify({"errore":"no key"}), 500
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # schede con fondamenta+operativita ma SENZA esperienza
+        cur.execute("""SELECT id, name, data FROM nodes WHERE (data->'strati'->>'esperienza')='false'
+                       AND (data->'strati'->>'fondamenta')='true' LIMIT %s""",(n,))
+        righe = cur.fetchall()
+        fatti = 0
+        for sid, nome, data in righe:
+            dd = data if isinstance(data,dict) else json.loads(data)
+            principio = str(dd.get("principio",""))[:200]
+            try:
+                sysp = (f"Fenomeno culinario: {nome}. Principio: {principio}. "
+                        f"Scrivi lo strato ESPERIENZA: il racconto pratico concreto di cosa VEDI/SENTI al banco "
+                        f"quando questo fenomeno accade o non accade. Come lo riconosce un cuoco esperto. "
+                        f"2-3 frasi concrete, sensoriali, vere. NO teoria (gia c'e'). Solo l'esperienza pratica. "
+                        f'JSON: {{"esperienza":"..."}}. SOLO JSON.')
+                pl = {"model":"gpt-4o-mini","max_tokens":250,"temperature":0.4,
+                      "messages":[{"role":"system","content":sysp},{"role":"user","content":"Scrivi."}]}
+                rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                                headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                tx = json.loads(ur.urlopen(rq, timeout=40).read().decode())["choices"][0]["message"]["content"]
+                m = re.search(r'\{.*\}', tx, re.DOTALL)
+                if m:
+                    esp = json.loads(m.group(0)).get("esperienza","").strip()
+                    if esp and len(esp) > 20:
+                        # salvo l'esperienza + marco lo strato
+                        cont = dd.get("contenuto_strutturato",{})
+                        if isinstance(cont,str): cont=json.loads(cont) if cont else {}
+                        cont["esperienza"] = esp
+                        dd["contenuto_strutturato"] = cont
+                        st = dd.get("strati",{}); st["esperienza"]=True; dd["strati"]=st
+                        cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),sid))
+                        conn.commit(); fatti += 1
+            except: pass
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE (data->'strati'->>'esperienza')='false'
+                       AND (data->'strati'->>'fondamenta')='true'""")
+        rimasti = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"esperienza_completate":fatti,"ancora_da_fare":rimasti})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
