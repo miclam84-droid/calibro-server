@@ -13438,3 +13438,77 @@ def admin_tradizione_da_ricette():
                         "nota":"Estratti dai co-ingredienti delle ricette. Zero spesa AI."})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/fenomeni/marca-madre")
+def admin_marca_fenomeni_madre():
+    """P2 - ATLANTE: marca i ~15-20 FENOMENI MADRE come trasversali e collega le MANIFESTAZIONI.
+    Il fenomeno madre e' uno; le manifestazioni (dry shake, ganache...) puntano ad esso. La disciplina = filtro.
+    Risolve 'Trasversale 0%'. Zero AI - solo riorganizzazione del grafo esistente."""
+    from flask import request, jsonify
+    import os, psycopg2, json, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    dry = request.args.get("dry") == "1"
+    # i fenomeni MADRE (fondamentali, trasversali) + le parole che identificano le loro manifestazioni
+    MADRE = {
+        "emulsione": ["emulsion","dry shake","ganache","maionese","vinaigrette","beurre blanc","aioli"],
+        "fermentazione": ["fermentazion","lievitazion","lievito madre","koji","lacto","malolattica","kombucha","poolish","biga"],
+        "maillard": ["maillard","rosolatura","crosta","doratura","tostatura","brunitura"],
+        "gelatinizzazione": ["gelatinizz","amido","roux","addensant"],
+        "coagulazione": ["coagulazion","denaturazion","cagliata","crema pasticcera","custard"],
+        "caramellizzazione": ["caramellizz","caramello","imbrunimento zuccher"],
+        "estrazione": ["estrazion","infusion","macerazion","cold brew","espresso","decotto"],
+        "cristallizzazione": ["cristallizz","tempera","nucleazione","sciroppo"],
+        "denaturazione proteica": ["denaturazion proteic","montatura albumi","meringa"],
+        "osmosi": ["osmosi","disidratazion","salamoia","marinatura","cura"],
+        "ossidazione": ["ossidazion","imbrunimento enzimatic","irrancidiment"],
+        "coagulazione termica": ["coagulazione termic"],
+        "schiuma": ["schiuma","espuma","aria","montatura panna","foam"],
+        "abbassamento crioscopico": ["crioscop","congelament","pac","sorbetto"],
+        "viscosita": ["viscosit","addensament","gelificazion","gel "],
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, name, data FROM nodes WHERE data ? 'strati' OR id LIKE 'fen-%' OR id LIKE 'tec-%'")
+        schede = cur.fetchall()
+        madri_marcate = 0; manifest_collegate = 0; dettaglio = []
+        # mappa madre -> id del nodo madre (se esiste)
+        madre_id = {}
+        for sid, sname, sdata in schede:
+            nl = (sname or "").lower()
+            for madre in MADRE:
+                if nl == madre or nl == madre+"i" or nl.replace(" ","") == madre.replace(" ",""):
+                    madre_id[madre] = sid
+        # marco i madre + collego le manifestazioni
+        for sid, sname, sdata in schede:
+            dd = sdata if isinstance(sdata,dict) else (json.loads(sdata) if sdata else {})
+            nl = (sname or "").lower()
+            e_madre = sid in madre_id.values()
+            manifesta_di = None
+            if not e_madre:
+                for madre, parole in MADRE.items():
+                    if any(p in nl for p in parole) and madre in madre_id:
+                        manifesta_di = madre; break
+            if e_madre:
+                dd["is_fenomeno_madre"] = True
+                dd["categoria"] = "trasversale"  # i madre sono trasversali
+                if not dry:
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),sid))
+                madri_marcate += 1; dettaglio.append({"madre":sname})
+            elif manifesta_di:
+                dd["manifestazione_di"] = manifesta_di
+                mid = madre_id[manifesta_di]
+                if not dry:
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),sid))
+                    cur.execute("SELECT 1 FROM edges WHERE from_id=%s AND to_id=%s AND relation='manifestazione_di'",(sid,mid))
+                    if not cur.fetchone():
+                        cur.execute("INSERT INTO edges (from_id,to_id,relation) VALUES (%s,%s,'manifestazione_di')",(sid,mid))
+                manifest_collegate += 1
+            if not dry and (madri_marcate+manifest_collegate) % 50 == 0: conn.commit()
+        if not dry: conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"madri_marcate":madri_marcate,"manifestazioni_collegate":manifest_collegate,
+                        "madri_trovate":list(madre_id.keys()),"dry_run":dry})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
