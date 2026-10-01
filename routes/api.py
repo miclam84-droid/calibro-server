@@ -6068,3 +6068,53 @@ def maneggiare_materia():
         return jsonify({"crescita":crescita,"n_esperimenti":len(per_esp)})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/v1/fenomeni-madre")
+def lista_fenomeni_madre():
+    """P2c - ATLANTE nuovo: la lista dei FENOMENI MADRE (solo i veri, is_fenomeno_madre)."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE data->>'is_fenomeno_madre'='true' ORDER BY name""")
+        madre = []
+        for sid, name, data in cur.fetchall():
+            dd = data if isinstance(data,dict) else json.loads(data)
+            cur.execute("SELECT COUNT(*) FROM edges WHERE to_id=%s AND relation='manifestazione_di'",(sid,))
+            n_manif = cur.fetchone()[0]
+            madre.append({"slug":sid,"nome":name,"stato":dd.get("stato_editoriale",""),
+                          "strati":dd.get("strati",{}),"n_manifestazioni":n_manif})
+        cur.close(); conn.close()
+        return jsonify({"fenomeni_madre":madre,"n":len(madre)})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150],"fenomeni_madre":[]})
+
+@bp.route("/v1/fenomeno/<slug>/manifestazioni")
+def fenomeno_manifestazioni(slug):
+    """P2c: le MANIFESTAZIONI di un fenomeno madre + ingredienti collegati."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
+                       WHERE e.to_id=%s AND e.relation='manifestazione_di' ORDER BY n.name""",(slug,))
+        manif = []
+        for mid, mname, mdata in cur.fetchall():
+            dd = mdata if isinstance(mdata,dict) else json.loads(mdata)
+            manif.append({"slug":mid,"nome":mname,"disciplina":dd.get("categoria",""),
+                          "bersaglio":dd.get("numero_bersaglio","")})
+        cur.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+                       WHERE e.from_id=%s AND e.relation='si_manifesta_in'
+                       AND n.type IN ('Ingrediente','Prodotto') LIMIT 12""",(slug,))
+        ingredienti = [r[0] for r in cur.fetchall()]
+        if not ingredienti:
+            cur.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON n.id=e.from_id
+                           WHERE e.to_id=%s AND e.relation IN ('attraversa_fenomeno','si_manifesta_in')
+                           AND n.type IN ('Ingrediente','Prodotto') LIMIT 12""",(slug,))
+            ingredienti = [r[0] for r in cur.fetchall()]
+        cur.close(); conn.close()
+        return jsonify({"fenomeno":slug,"manifestazioni":manif,"n_manifestazioni":len(manif),
+                        "ingredienti_collegati":ingredienti})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
