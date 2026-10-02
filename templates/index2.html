@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════ MATTER 2.0 — CSS PULITO DA ZERO (nessuna eredità) ═══════════════ */
+:root{
+  --carta:#F4F1EA; --ink:#1A1A17; --ink-soft:#6B6B63;
+  --rame:#B8603A; --blu-grafite:#2E3A45; --verde:#6B7F5C; --rosso-oss:#9B4722;
+  --linea:#D9D4C8;
+  --serif:'Fraunces',Georgia,serif; --ui:'Inter',system-ui,sans-serif; --mono:'Space Mono',monospace;
+  --nav-h:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--carta);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased;line-height:1.5}
+body{padding-top:env(safe-area-inset-top,0);padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0))}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.mono{font-family:var(--mono)}
+
+/* HEADER */
+.hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--linea);background:var(--carta);position:sticky;top:0;z-index:50}
+.hd-logo{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);letter-spacing:-.01em}
+.hd-right{display:flex;align-items:center;gap:14px}
+.hd-galileo{width:38px;height:38px;border:1px solid var(--linea);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--ink);transition:.15s}
+.hd-galileo:active{background:var(--rame);color:var(--carta);border-color:var(--rame)}
+.hd-accedi{font-size:13px;color:var(--ink-soft)}
+
+/* CONTENUTO */
+.wrap{padding:0 20px 32px}
+
+/* 1. CLAIM */
+.claim{font-family:var(--serif);font-size:19px;font-weight:400;color:var(--ink);line-height:1.4;margin:28px 0 24px;max-width:300px}
+.claim b{color:var(--rame);font-weight:600}
+
+/* 2. LE 4 PORTE */
+.porte{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px}
+.porta{background:var(--carta);border:1px solid var(--linea);border-radius:6px;padding:18px 16px;text-align:left;transition:.15s;min-height:124px;display:flex;flex-direction:column}
+.porta:active{border-color:var(--rame);transform:scale(.99)}
+.porta-ico{font-size:22px;color:var(--ink);margin-bottom:auto}
+.porta-t{font-family:var(--ui);font-weight:600;font-size:15px;color:var(--ink);margin:14px 0 4px}
+.porta-d{font-family:var(--ui);font-size:12px;color:var(--ink-soft);line-height:1.35}
+
+/* 3. ESPERIMENTO DEL GIORNO */
+.exp{background:var(--blu-grafite);border-radius:8px;padding:22px;color:var(--carta)}
+.exp-lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--rame);display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.exp-badge{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#A8C4D8;border:1px solid #42566b;padding:2px 7px;border-radius:3px}
+.exp-nome{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1.1;color:#fff;margin-bottom:14px}
+.exp-ip-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-right:6px}
+.exp-ip{font-family:var(--ui);font-size:14px;color:#D6D2C8;line-height:1.5;margin-bottom:20px}
+/* scala graduata — la firma */
+.scala-wrap{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:14px;margin-bottom:18px}
+.scala-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-bottom:12px}
+.scala-track{position:relative;height:40px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14)}
+.scala-tick{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.1)}
+.scala-win{position:absolute;top:-2px;bottom:-2px;border:2px solid var(--rame);background:rgba(184,96,58,.18)}
+.scala-val{position:absolute;top:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-weight:700;font-size:16px;color:#fff;white-space:nowrap}
+.scala-val .u{font-size:11px;color:var(--rame);margin-left:2px}
+.scala-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.4);margin-top:5px}
+/* sensori */
+.sens-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#A8C4D8;margin-bottom:10px}
+.sens{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.sens-row{display:flex;align-items:flex-start;gap:8px;font-family:var(--ui);font-size:13px;color:#E4E0D6}
+.sens-ico{color:var(--rame);font-family:var(--mono);flex-shrink:0}
+.exp-cta{width:100%;background:var(--rame);color:var(--carta);font-family:var(--ui);font-weight:600;font-size:15px;padding:15px;border-radius:6px;transition:.15s}
+.exp-cta:active{filter:brightness(.92)}
+
+/* NAV inferiore */
+.nav{position:fixed;left:0;right:0;bottom:0;height:calc(var(--nav-h) + env(safe-area-inset-bottom,0));padding-bottom:env(safe-area-inset-bottom,0);background:var(--carta);border-top:1px solid var(--linea);display:flex;z-index:60;box-shadow:0 -1px 8px rgba(26,26,23,.04)}
+.nav-v{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-soft);transition:.12s}
+.nav-v.on{color:var(--rame)}
+.nav-ico{font-size:18px;line-height:1}
+.nav-lab{font-size:10px;font-family:var(--ui)}
+
+/* skeleton */
+.sk{background:linear-gradient(90deg,rgba(255,255,255,.06) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.06) 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:4px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+</head>
+<body>
+<header class="hd">
+  <div class="hd-logo">Matter</div>
+  <div class="hd-right">
+    <button class="hd-galileo" onclick="apriGalileo()" aria-label="Galileo">◇</button>
+    <a class="hd-accedi" href="#">Accedi</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="claim">La scienza del tuo mestiere.<br><b>Numeri, non opinioni.</b></div>
+
+  <div class="porte">
+    <button class="porta" onclick="vai('banco')"><div class="porta-ico">◎</div><div class="porta-t">Misura</div><div class="porta-d">esperimenti, strumenti, bersagli</div></button>
+    <button class="porta" onclick="vai('causa')"><div class="porta-ico">⟲</div><div class="porta-t">Trova la causa</div><div class="porta-d">qualcosa non torna? risali alla causa</div></button>
+    <button class="porta" onclick="vai('atlante')"><div class="porta-ico">◈</div><div class="porta-t">Esplora</div><div class="porta-d">fenomeni, tecniche, la scienza</div></button>
+    <button class="porta" onclick="vai('menu')"><div class="porta-ico">▤</div><div class="porta-t">Costruisci</div><div class="porta-d">trasforma il lavoro in offerta</div></button>
+  </div>
+
+  <div id="exp-host"><div class="exp"><div class="exp-lab"><span>◎ ESPERIMENTO DEL GIORNO</span></div><div class="sk" style="height:28px;width:70%;margin-bottom:14px"></div><div class="sk" style="height:60px;margin-bottom:14px"></div></div></div>
+</main>
+
+<nav class="nav">
+  <button class="nav-v on" onclick="vai('banco')"><span class="nav-ico">◎</span><span class="nav-lab">Banco</span></button>
+  <button class="nav-v" onclick="vai('causa')"><span class="nav-ico">⟲</span><span class="nav-lab">Causa</span></button>
+  <button class="nav-v" onclick="vai('atlante')"><span class="nav-ico">◈</span><span class="nav-lab">Atlante</span></button>
+  <button class="nav-v" onclick="vai('menu')"><span class="nav-ico">▤</span><span class="nav-lab">Menu</span></button>
+  <button class="nav-v" onclick="vai('quaderno')"><span class="nav-ico">◱</span><span class="nav-lab">Quaderno</span></button>
+</nav>
+
+<script>
+var API='https://web-production-79457.up.railway.app';
+var _RANGE={'°C':[0,120],'%':[0,100],'pH':[0,14],'min':[0,120],'h':[0,72],'°Bx':[0,70]};
+function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':String(s));return d.innerHTML;}
+
+function scala(bers,label){
+  if(!bers||bers.valore==null||bers.valore==='')return '';
+  var u=String(bers.unita||'');
+  var nums=(String(bers.valore).replace(',','.').match(/-?\d+\.?\d*/g)||[]).map(Number);
+  if(!nums.length)return '';
+  var vmin=nums[0],vmax=nums.length>1?nums[1]:nums[0];
+  var r=_RANGE[u]||[0,vmax+Math.abs(vmax||1)];var lo=r[0],hi=r[1],span=(hi-lo)||1;
+  var pMin=Math.max(0,Math.min(100,((vmin-lo)/span)*100));
+  var pMax=Math.max(0,Math.min(100,((vmax-lo)/span)*100));
+  var winL=pMin,winW=Math.max(3,pMax-pMin),centro=winL+winW/2;
+  var ticks='';for(var i=1;i<10;i++)ticks+='<div class="scala-tick" style="left:'+(i*10)+'%"></div>';
+  var valTxt=nums.length>1?(vmin+'–'+vmax):String(vmin);
+  var pos=centro<14?'left:'+(winL+winW)+'%;transform:translate(6px,-50%)':(centro>86?'left:'+winL+'%;transform:translate(-100%,-50%);padding-right:6px':'left:'+centro+'%;transform:translate(-50%,-50%)');
+  return '<div class="scala-wrap"><div class="scala-lab">◎ BERSAGLIO · '+esc(label||'')+'</div>'
+    +'<div class="scala-track">'+ticks+'<div class="scala-win" style="left:'+winL+'%;width:'+winW+'%"></div>'
+    +'<div class="scala-val" style="'+pos+'">'+esc(valTxt)+(u?'<span class="u">'+esc(u)+'</span>':'')+'</div></div>'
+    +'<div class="scala-cap"><span>'+lo+'</span><span>'+hi+(u?' '+esc(u):'')+'</span></div></div>';
+}
+
+function caricaExp(){
+  fetch(API+'/v1/esperimento-del-giorno').then(function(r){return r.json();}).then(function(d){
+    var host=document.getElementById('exp-host');if(!host||!d||!d.nome)return;
+    var sens=d.sensori||{};
+    var sRows=[['◠',sens.vista],['▚',sens.tatto],['∿',sens.olfatto]].filter(function(x){return x[1];})
+      .map(function(x){return '<div class="sens-row"><span class="sens-ico">'+x[0]+'</span><span>'+esc(x[1])+'</span></div>';}).join('');
+    var sc=scala(d.bersaglio,d.variabile_critica);
+    host.innerHTML='<div class="exp">'
+      +'<div class="exp-lab"><span>◎ ESPERIMENTO DEL GIORNO</span>'+(d.stato_epistemico?'<span class="exp-badge">'+esc(d.stato_epistemico)+'</span>':'')+'</div>'
+      +'<div class="exp-nome">'+esc(d.nome)+'</div>'
+      +(d.ipotesi?'<div class="exp-ip"><span class="exp-ip-lab">Ipotesi</span>'+esc(d.ipotesi)+'</div>':'')
+      +sc
+      +(sRows?'<div class="sens-lab">I sensori — cosa osservare</div><div class="sens">'+sRows+'</div>':'')
+      +'<button class="exp-cta" onclick="apriProtocollo(\''+esc(d.id)+'\')">Apri l\'esperimento →</button>'
+      +'</div>';
+  }).catch(function(){});
+}
+
+function vai(dove){ alert('Schermata "'+dove+'" — in costruzione (prossima)'); }
+function apriProtocollo(id){ alert('Protocollo '+id+' — scheda in costruzione'); }
+function apriGalileo(){ alert('Galileo — in costruzione'); }
+
+caricaExp();
+</script>
+</body>
+</html>
