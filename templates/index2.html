@@ -203,6 +203,39 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .ca-compr{margin-top:12px;padding:16px;background:rgba(46,58,69,.04);border-left:3px solid var(--blu-grafite);border-radius:0 6px 6px 0}
 .ca-fen{font-family:var(--serif);font-weight:600;font-size:18px;color:var(--ink);text-transform:capitalize;margin-bottom:10px}
 .ca-fonti{font-family:var(--mono);font-size:10px;color:var(--ink-soft);font-style:italic;margin-top:12px}
+
+/* ═══════════ MENU (flusso: voci → equilibrio → carta vini) ═══════════ */
+.mn-head{margin:28px 0 18px}
+.mn-titolo{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1.1;margin-bottom:6px}
+.mn-sub{font-family:var(--ui);font-size:14px;color:var(--ink-soft)}
+.mn-add{display:flex;gap:8px;margin-bottom:16px}
+.mn-add input{flex:1;min-width:0;border:1.5px solid var(--linea);border-radius:6px;padding:12px;font-family:var(--ui);font-size:14px;background:var(--carta)}
+.mn-add input:focus{outline:none;border-color:var(--rame)}
+.mn-add button{flex:0 0 48px;background:var(--ink);color:var(--carta);border-radius:6px;font-size:20px}
+.mn-voci{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.mn-voce{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--linea);border-radius:6px;padding:12px 14px;background:var(--carta)}
+.mn-voce-nome{font-family:var(--serif);font-weight:500;font-size:16px;color:var(--ink)}
+.mn-voce-x{font-family:var(--ui);font-size:12px;color:var(--ink-soft);padding:4px 8px}
+.mn-vuoto{font-family:var(--ui);font-size:13px;color:var(--ink-soft);text-align:center;padding:24px;border:1px dashed var(--linea);border-radius:6px;margin-bottom:20px}
+.mn-azione{width:100%;background:var(--rame);color:var(--carta);font-family:var(--ui);font-weight:600;font-size:15px;padding:14px;border-radius:6px;margin-bottom:12px}
+.mn-azione:disabled{background:var(--linea);color:var(--ink-soft)}
+.mn-sec{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin:26px 0 12px}
+/* analisi */
+.mn-bil{background:var(--carta);border:1px solid var(--linea);border-radius:6px;padding:16px;margin-bottom:12px}
+.mn-bil-consiglio{font-family:var(--serif);font-size:17px;color:var(--ink);margin-bottom:12px}
+.mn-bil-barre{display:flex;flex-direction:column;gap:6px}
+.mn-bil-row{display:flex;align-items:center;gap:8px}
+.mn-bil-lab{flex:0 0 90px;font-family:var(--ui);font-size:12px;color:var(--ink-soft);text-transform:capitalize}
+.mn-bil-track{flex:1;height:6px;background:var(--linea);border-radius:3px;overflow:hidden}
+.mn-bil-fill{height:100%;background:var(--blu-grafite)}
+.mn-bil-n{flex:0 0 20px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--ink)}
+.mn-mod{font-family:var(--ui);font-size:13px;color:var(--ink);background:rgba(184,96,58,.06);border-left:3px solid var(--rame);padding:10px 12px;margin:6px 0;line-height:1.45;border-radius:0 6px 6px 0}
+/* carta vini */
+.mn-vino{border:1px solid var(--linea);border-radius:6px;padding:16px;margin-bottom:12px}
+.mn-vino-piatto{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--ink);margin-bottom:8px}
+.mn-vino-nota{font-family:var(--ui);font-size:13px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px;font-style:italic}
+.mn-vino-sugg{display:flex;flex-wrap:wrap;gap:6px}
+.mn-vino-chip{font-family:var(--ui);font-size:13px;background:var(--blu-grafite);color:var(--carta);border-radius:20px;padding:6px 12px}
 </style>
 </head>
 <body>
@@ -244,6 +277,21 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
   <!-- VISTA SCHEDA TECNICA -->
   <div class="vista" id="v-scheda">
     <div id="sc-host"></div>
+  </div>
+
+  <!-- VISTA MENU -->
+  <div class="vista" id="v-menu">
+    <div class="mn-head">
+      <div class="mn-titolo">Costruisci il menu</div>
+      <div class="mn-sub">Le voci, l'equilibrio, la carta vini.</div>
+    </div>
+    <div class="mn-add">
+      <input id="mn-input" placeholder="Aggiungi un piatto…" onkeydown="if(event.key==='Enter')aggiungiVoce()">
+      <button onclick="aggiungiVoce()">+</button>
+    </div>
+    <div id="mn-voci-host"></div>
+    <button class="mn-azione" id="mn-analizza-btn" onclick="analizzaMenu()" disabled>Analizza l'equilibrio</button>
+    <div id="mn-esito"></div>
   </div>
 
   <!-- VISTA CAUSA -->
@@ -312,7 +360,7 @@ function caricaExp(){
   }).catch(function(){});
 }
 
-var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa'};
+var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa',menu:'v-menu'};
 var _navIdx={banco:0,causa:1,atlante:2,menu:3,quaderno:4};
 function vai(dove){
   // viste pronte
@@ -324,10 +372,11 @@ function vai(dove){
     window.scrollTo(0,0);
     if(dove==='atlante') caricaAtlante();
     if(dove==='causa') initCausa();
+    if(dove==='menu') initMenu();
     return;
   }
   // viste non ancora costruite
-  var nomi={menu:'Menu',quaderno:'Quaderno'};
+  var nomi={quaderno:'Quaderno'};
   alert((nomi[dove]||dove)+' — in costruzione (prossima schermata)');
 }
 function apriProtocollo(id){ alert('Scheda esperimento '+id+' — in costruzione'); }
@@ -535,6 +584,60 @@ function renderCausa(d, sint){
   box.innerHTML=h;
 }
 function toggleCompr(btn){var c=btn.nextElementSibling;if(c){var v=c.style.display!=='none';c.style.display=v?'none':'block';btn.textContent=(v?'▼':'▲')+' Perché succede';}}
+
+// ═══ MENU (voci → equilibrio → carta vini) ═══
+var _mnVoci=[];
+function initMenu(){ renderVoci(); }
+function aggiungiVoce(){
+  var i=document.getElementById('mn-input'); var v=(i.value||'').trim(); if(!v)return;
+  _mnVoci.push(v); i.value=''; renderVoci();
+}
+function rimuoviVoce(idx){ _mnVoci.splice(idx,1); renderVoci(); }
+function renderVoci(){
+  var box=document.getElementById('mn-voci-host'); if(!box)return;
+  if(!_mnVoci.length){ box.innerHTML='<div class="mn-vuoto">Aggiungi i piatti del tuo menu. Matter analizza l\'equilibrio e costruisce la carta vini.</div>'; }
+  else{ box.innerHTML='<div class="mn-voci">'+_mnVoci.map(function(v,i){return '<div class="mn-voce"><span class="mn-voce-nome">'+esc(v)+'</span><button class="mn-voce-x" onclick="rimuoviVoce('+i+')">rimuovi</button></div>';}).join('')+'</div>'; }
+  var btn=document.getElementById('mn-analizza-btn'); if(btn) btn.disabled=_mnVoci.length<2;
+}
+function analizzaMenu(){
+  if(_mnVoci.length<2)return;
+  var box=document.getElementById('mn-esito'); box.innerHTML='<div class="sk-d" style="height:100px;margin-top:8px;border-radius:6px"></div>';
+  fetch(API+'/v1/menu/analizza',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({voci:_mnVoci})})
+    .then(function(r){return r.json();}).then(function(d){ renderAnalisi(d); })
+    .catch(function(){ box.innerHTML='<div style="padding:20px 0;color:var(--ink-soft)">Non riesco ad analizzare ora. Riprova.</div>'; });
+}
+function renderAnalisi(d){
+  var box=document.getElementById('mn-esito'); if(!box)return;
+  var bil=d.bilanciamento||{};
+  var max=Math.max(1,...Object.keys(bil).map(function(k){return bil[k]||0;}));
+  var barre=Object.keys(bil).map(function(k){return '<div class="mn-bil-row"><span class="mn-bil-lab">'+esc(k)+'</span><span class="mn-bil-track"><span class="mn-bil-fill" style="width:'+((bil[k]||0)/max*100)+'%"></span></span><span class="mn-bil-n">'+(bil[k]||0)+'</span></div>';}).join('');
+  var h='<div class="mn-sec">◎ L\'equilibrio</div><div class="mn-bil">'
+    +(d.consiglio?'<div class="mn-bil-consiglio">'+esc(d.consiglio)+'</div>':'')
+    +'<div class="mn-bil-barre">'+barre+'</div></div>';
+  var mod=(d.modifiche_consigliate||[]);
+  if(mod.length){ h+=mod.map(function(m){return '<div class="mn-mod">'+esc(typeof m==='string'?m:(m.testo||m.consiglio||''))+'</div>';}).join(''); }
+  // carta vini (fase sommelier)
+  h+='<button class="mn-azione" style="margin-top:20px" onclick="cartaVini()">Costruisci la carta vini →</button>';
+  h+='<div id="mn-vini-host"></div>';
+  box.innerHTML=h;
+}
+function cartaVini(){
+  var box=document.getElementById('mn-vini-host'); box.innerHTML='<div class="sk-d" style="height:80px;margin-top:12px;border-radius:6px"></div>';
+  Promise.all(_mnVoci.map(function(v){
+    return fetch(API+'/v1/vino-per-piatto?piatto='+encodeURIComponent(v)).then(function(r){return r.json();}).then(function(d){return {piatto:v,d:d};}).catch(function(){return {piatto:v,d:null};});
+  })).then(function(res){
+    var h='<div class="mn-sec">◎ La carta vini</div>';
+    res.forEach(function(x){
+      if(!x.d)return;
+      var sugg=(x.d.suggerimenti||[]).slice(0,4);
+      h+='<div class="mn-vino"><div class="mn-vino-piatto">'+esc(x.piatto)+'</div>'
+        +(x.d.nota?'<div class="mn-vino-nota">'+esc(x.d.nota)+'</div>':'')
+        +(sugg.length?'<div class="mn-vino-sugg">'+sugg.map(function(s){return '<span class="mn-vino-chip">'+esc(typeof s==='string'?s:(s.nome||s.vino||''))+'</span>';}).join('')+'</div>':'')
+        +'</div>';
+    });
+    box.innerHTML=h;
+  });
+}
 
 caricaExp();
 </script>
