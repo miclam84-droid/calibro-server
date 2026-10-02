@@ -125,6 +125,42 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .at-tec-liv.banco{color:var(--verde);border:1px solid var(--verde)}
 .at-tec-liv.lab{color:var(--blu-grafite);border:1px solid var(--blu-grafite)}
 .at-tec-d{font-family:var(--ui);font-size:12px;color:var(--ink-soft);line-height:1.4}
+
+/* ═══════════ SCHEDA TECNICA (4 blocchi cognitivi) ═══════════ */
+.sc-back{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin:20px 0 8px;display:inline-flex;align-items:center;gap:5px}
+.sc-head-badges{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.sc-bdg{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border-radius:3px;border:1px solid}
+.sc-bdg.madre{color:var(--rame);border-color:var(--rame)}
+.sc-bdg.banco{color:var(--verde);border-color:var(--verde)}
+.sc-bdg.lab{color:var(--blu-grafite);border-color:var(--blu-grafite)}
+.sc-nome{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.08;color:var(--ink);margin-bottom:16px}
+.sc-blocco{margin:28px 0;padding-top:24px;border-top:1px solid var(--linea)}
+.sc-blocco:first-of-type{border-top:0;padding-top:0}
+.sc-blk-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin-bottom:12px}
+.sc-p{font-family:var(--serif);font-size:16px;line-height:1.6;color:var(--ink);margin-bottom:14px;font-weight:400}
+.sc-txt{font-family:var(--ui);font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:12px}
+.sc-sub{font-family:var(--ui);font-weight:600;font-size:13px;color:var(--ink);margin:14px 0 6px}
+/* bersaglio profilo */
+.sc-bers{background:var(--blu-grafite);color:var(--carta);border-radius:6px;padding:14px;margin:14px 0}
+.sc-bers-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-bottom:6px}
+.sc-bers-txt{font-family:var(--ui);font-size:14px;line-height:1.5}
+/* causalità */
+.sc-caus{display:flex;flex-direction:column;gap:7px;margin:12px 0}
+.sc-crow{display:flex;align-items:baseline;gap:8px;font-family:var(--ui);font-size:13px}
+.sc-cfreccia{font-family:var(--mono);font-weight:700;font-size:15px;flex-shrink:0}
+.sc-cverbo{font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--ink-soft);flex-shrink:0}
+.sc-cfat{color:var(--ink);text-transform:capitalize}
+/* errori */
+.sc-err{background:rgba(155,71,34,.06);border-left:3px solid var(--rosso-oss);padding:10px 12px;font-family:var(--ui);font-size:13px;line-height:1.5;color:var(--ink);margin:6px 0}
+/* vado oltre */
+.sc-chat-cta{width:100%;background:var(--carta);border:1.5px solid var(--rame);color:var(--rame);font-family:var(--ui);font-weight:600;font-size:14px;padding:14px;border-radius:6px;margin-bottom:14px}
+.sc-fonti{font-family:var(--ui);font-size:13px;color:var(--ink-soft);line-height:1.5;margin-bottom:14px}
+.sc-fonti b{color:var(--ink);font-weight:600}
+.sc-manif{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.sc-manif-chip{font-family:var(--ui);font-size:12px;background:var(--carta);border:1px solid var(--linea);border-radius:20px;padding:6px 12px;color:var(--ink)}
+/* provala */
+.sc-provala{position:sticky;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0) + 12px);margin:28px 0 8px}
+.sc-provala-btn{width:100%;background:var(--rame);color:var(--carta);font-family:var(--ui);font-weight:600;font-size:16px;padding:16px;border-radius:8px;box-shadow:0 4px 16px rgba(184,96,58,.3)}
 </style>
 </head>
 <body>
@@ -161,6 +197,11 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
       <div class="at-scopri-d">tecniche che allargano il tuo mestiere</div>
       <div id="at-tecniche" class="at-tecniche"></div>
     </div>
+  </div>
+
+  <!-- VISTA SCHEDA TECNICA -->
+  <div class="vista" id="v-scheda">
+    <div id="sc-host"></div>
   </div>
 </main>
 
@@ -280,7 +321,95 @@ function filtraDisc(d,btn){
   if(btn)btn.classList.add('on');
   // (il filtro vero sui madre lo aggiungo quando il backend espone disciplina sui madre)
 }
-function apriScheda(slug){ alert('Scheda '+slug+' — in costruzione (prossima)'); }
+// prende il testo da campo che può essere stringa o {it,en}
+function _t(v){ if(v==null)return ''; if(typeof v==='object')return v.it||v.en||''; return String(v); }
+var _schedaPrec='atlante';
+function apriScheda(slug){
+  _schedaPrec = document.getElementById('v-atlante').classList.contains('on')?'atlante':'banco';
+  document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
+  document.getElementById('v-scheda').classList.add('on');
+  window.scrollTo(0,0);
+  var host=document.getElementById('sc-host');
+  host.innerHTML='<div class="sc-nome"><div class="sk-d" style="height:30px;width:70%"></div></div><div class="sk-d" style="height:80px;margin-top:20px"></div>';
+  fetch(API+'/v1/scheda-scienza/'+encodeURIComponent(slug)).then(function(r){return r.json();}).then(function(d){
+    renderScheda(d, slug);
+  }).catch(function(){ host.innerHTML='<div style="padding:40px 0;color:var(--ink-soft)">Non riesco a caricare questa scheda. Riprova.</div>'; });
+}
+function renderScheda(d, slug){
+  var host=document.getElementById('sc-host'); if(!host)return;
+  var princ=_t(d.principio), cosa=_t(d.cosa_sapere), esec=_t(d.esecuzione), esp=_t(d.esperienza), err=_t(d.errori_comuni);
+  var bers=_t(d.numero_bersaglio), strum=_t(d.strumento);
+  // badge
+  var badges='';
+  if(d.is_fenomeno_madre) badges+='<span class="sc-bdg madre">Fenomeno fondamentale</span>';
+  if(d.livello_accesso==='banco'||d.provabile) badges+='<span class="sc-bdg banco">Da banco</span>';
+  else if(d.livello_accesso==='laboratorio') badges+='<span class="sc-bdg lab">Da laboratorio</span>';
+
+  var h='<button class="sc-back" onclick="vai(_schedaPrec)">‹ Atlante</button>';
+  h+=(badges?'<div class="sc-head-badges">'+badges+'</div>':'');
+  h+='<div class="sc-nome">'+esc(d.nome)+'</div>';
+
+  // (1) CAPISCO
+  h+='<div class="sc-blocco"><div class="sc-blk-lab">Capisco</div>';
+  if(princ) h+='<div class="sc-p">'+esc(princ)+'</div>';
+  if(cosa) h+='<div class="sc-txt">'+esc(cosa)+'</div>';
+  h+='</div>';
+
+  // (2) CAPISCO PERCHÉ — causalità
+  var caus=d.causalita||{};
+  var hasCaus=caus&&((caus.acceleranti||[]).length||(caus.rallentanti||[]).length);
+  if(hasCaus || esp){
+    h+='<div class="sc-blocco"><div class="sc-blk-lab">Capisco perché</div>';
+    if(esp) h+='<div class="sc-txt">'+esc(esp)+'</div>';
+    if(hasCaus){
+      h+='<div class="sc-caus">';
+      (caus.acceleranti||[]).slice(0,4).forEach(function(a){ h+=_crow(a,'accelera','↑','var(--rosso-oss)'); });
+      (caus.rallentanti||[]).slice(0,4).forEach(function(a){ h+=_crow(a,'rallenta','↓','var(--blu-grafite)'); });
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+
+  // (3) LO FACCIO
+  if(esec||bers||strum||err){
+    h+='<div class="sc-blocco"><div class="sc-blk-lab">Lo faccio</div>';
+    if(esec) h+='<div class="sc-txt">'+esc(esec)+'</div>';
+    if(bers) h+='<div class="sc-bers"><div class="sc-bers-lab">◎ I bersagli operativi</div><div class="sc-bers-txt">'+esc(bers)+'</div></div>';
+    if(strum){ h+='<div class="sc-sub">Cosa serve</div><div class="sc-txt">'+esc(strum)+'</div>'; }
+    if(err){ h+='<div class="sc-sub">Cosa evitare</div><div class="sc-err">'+esc(err)+'</div>'; }
+    h+='</div>';
+  }
+
+  // (4) VADO OLTRE
+  h+='<div class="sc-blocco"><div class="sc-blk-lab">Vado oltre</div>';
+  h+='<button class="sc-chat-cta" onclick="chatSu(\''+esc(d.nome)+'\')">Chiedi a Matter su questo →</button>';
+  h+='<div id="sc-manif-host"></div>';
+  h+='</div>';
+
+  // PROVALA (se provabile)
+  if(d.provabile){
+    h+='<div class="sc-provala"><button class="sc-provala-btn" onclick="provala(\''+esc(slug)+'\',\''+esc(d.nome)+'\')">Provala al banco →</button></div>';
+  }
+
+  host.innerHTML=h;
+
+  // connessioni (manifestazioni) se è madre
+  if(d.is_fenomeno_madre){
+    fetch(API+'/v1/fenomeno/'+encodeURIComponent(slug)+'/manifestazioni').then(function(r){return r.json();}).then(function(mf){
+      var box=document.getElementById('sc-manif-host'); if(!box)return;
+      var man=(mf.manifestazioni||[]).slice(0,10);
+      if(!man.length)return;
+      box.innerHTML='<div class="sc-sub">Le sue manifestazioni</div><div class="sc-manif">'+man.map(function(x){var nome=typeof x==='string'?x:(x.nome||'');var sl=typeof x==='object'?(x.slug||''):'';return '<button class="sc-manif-chip" onclick="'+(sl?'apriScheda(\''+esc(sl)+'\')':'')+'">'+esc(nome)+'</button>';}).join('')+'</div>';
+    }).catch(function(){});
+  }
+}
+function _crow(a,verbo,fr,col){
+  var fat=(typeof a==='object')?(a.fattore||a.nome||''):a;
+  var dir=(typeof a==='object'&&a.direzione)?(' '+a.direzione):'';
+  return '<div class="sc-crow"><span class="sc-cfreccia" style="color:'+col+'">'+fr+'</span><span class="sc-cverbo">'+verbo+'</span><span class="sc-cfat">'+esc(fat)+esc(dir)+'</span></div>';
+}
+function chatSu(nome){ alert('Chat su "'+nome+'" — Matter-chat in costruzione'); }
+function provala(slug,nome){ alert('Provala al banco: "'+nome+'" — apre l\'esperimento (Banco in costruzione)'); }
 
 caricaExp();
 </script>
