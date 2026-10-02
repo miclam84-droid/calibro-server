@@ -5855,6 +5855,27 @@ def diagnosi_interattiva():
     sintomo = (body.get("sintomo") or "").strip()
     disciplina = body.get("disciplina","")
     if not sintomo: return jsonify({"errore":"manca il sintomo"}), 400
+    # DEDUCO la disciplina dal sintomo se non fornita (fix routing: "cornicione" e panificazione, non vino)
+    if not disciplina:
+        _sl = sintomo.lower()
+        _MAP = [
+            ("panificazione", ["cornicione","impasto","lievito","lievitazione","pane","pizza","focaccia",
+                                "pasta madre","maglia glutinica","alveolatura","crosta","mollica","staglio",
+                                "incordatura","idratazione","farina","biga","poolish","pieghe","bulk"]),
+            ("pasticceria", ["crema","meringa","ganache","pan di spagna","frolla","choux","caramello","glassa",
+                             "bavarese","mousse","temperaggio","cioccolato","lievitato dolce","pasticcera","zabaione"]),
+            ("bar", ["cocktail","drink","negroni","spritz","sour","shake","diluizione","gin","vermouth",
+                     "amaro","bitter","garnish","espuma albume","clarificazione cocktail"]),
+            ("gelateria", ["gelato","sorbetto","mantecazione","overrun","pac","pod","cristalli ghiaccio","spatolabilita"]),
+            ("caffetteria", ["espresso","caffe","estrazione caffe","macinatura","crema caffe","tds caffe","moka","barista"]),
+            ("vino", ["vino","mosto","vinificazione","fermentazione alcolica vino","svinatura","malolattica","solfiti"]),
+            ("birra", ["birra","mosto birra","luppolo","ammostamento","cotta","fermentazione birra"]),
+            ("cucina", ["carne","pesce","salsa","maionese","brodo","rosolatura","brasato","sous vide","emulsione salsa",
+                        "cottura","fondo","riduzione","soffritto","marinatura","frittura"]),
+        ]
+        for _disc, _parole in _MAP:
+            if any(_p in _sl for _p in _parole):
+                disciplina = _disc; break
     key = os.environ.get("OPENAI_API_KEY","")
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
@@ -5873,7 +5894,12 @@ def diagnosi_interattiva():
         risultato = {"sintomo_interpretato":sintomo,"fenomeno":"","cause":[],"sensori_da_controllare":[]}
         if key:
             import urllib.request as ur
-            sys=(f"Esperto diagnosi cucina. Sintomo del cuoco: '{sintomo}' (disciplina: {disciplina}). "
+            _disc_txt = f"disciplina: {disciplina}" if disciplina else "disciplina: da dedurre dal sintomo"
+            _vincolo = (f"IMPORTANTE: il sintomo appartiene alla disciplina '{disciplina}'. Resta RIGOROSAMENTE in "
+                        f"questo dominio: cause, fenomeno e correzioni devono essere pertinenti a {disciplina}, "
+                        f"NON di altre discipline. Es: un problema di panificazione NON si spiega con la "
+                        f"fermentazione del vino/mosto. ") if disciplina else ""
+            sys=(f"Esperto diagnosi cucina. Sintomo del cuoco: '{sintomo}' ({_disc_txt}). {_vincolo}"
                  f"Cause note dal patrimonio: {cause_ctx}. Genera JSON diagnosi: "
                  f'{{"fenomeno":"UNA parola: il fenomeno scientifico (emulsione/coagulazione/fermentazione/maillard/gelatinizzazione/cristallizzazione/estrazione/montatura...) NON ripetere il sintomo","cause":[{{"causa":"...","probabilita":"alta/media/bassa",'
                  f'"sensore_conferma":"come capire al tatto/vista se e questa","patch":"correzione concreta e immediata"}}],'
