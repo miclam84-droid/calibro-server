@@ -4744,9 +4744,18 @@ def menu_analizza():
     pct_ripetizione = round(len(ripetuti) / max(len(tutti_ing), 1) * 100)
     # bilanciamento: quante voci per tipo (euristica sul nome)
     tipi = {"carne": 0, "pesce": 0, "vegetariano": 0, "dolce": 0}
-    CARNE = ["manzo", "pollo", "maiale", "agnello", "vitello", "carne", "salsiccia", "ragù"]
-    PESCE = ["pesce", "salmone", "tonno", "gambero", "vongole", "cozze", "branzino", "orata", "polpo", "calamaro"]
-    DOLCE = ["torta", "dolce", "gelato", "tiramisu", "crostata", "dessert", "cioccolato"]
+    CARNE = ["manzo", "pollo", "maiale", "agnello", "vitello", "carne", "salsiccia", "ragù", "ragu",
+             "tacchino", "coniglio", "anatra", "faraona", "cinghiale", "capretto", "bistecca", "filetto",
+             "cotoletta", "scaloppina", "arrosto", "brasato", "ossobuco", "trippa", "guanciale", "pancetta",
+             "prosciutto", "speck", "salame", "hamburger", "polpette", "spezzatino", "stracotto"]
+    PESCE = ["pesce", "salmone", "tonno", "gambero", "gamberi", "vongole", "cozze", "branzino", "orata",
+             "polpo", "calamaro", "calamari", "spigola", "dentice", "merluzzo", "baccalà", "baccala",
+             "stoccafisso", "acciuga", "acciughe", "alici", "sardine", "sgombro", "ricciola", "rombo",
+             "sogliola", "triglia", "scampi", "scampo", "aragosta", "astice", "seppia", "seppie", "ostriche",
+             "ostrica", "granchio", "frutti di mare", "pesce spada", "trota", "anguilla", "capesante", "crudo di mare"]
+    DOLCE = ["torta", "dolce", "gelato", "tiramisu", "tiramisù", "crostata", "dessert", "cioccolato",
+             "semifreddo", "panna cotta", "bavarese", "mousse", "sorbetto", "cheesecake", "cannolo",
+             "babà", "baba", "profiterole", "millefoglie", "zuppa inglese", "budino", "creme caramel"]
     for v in voci:
         nl = (v.get("nome", "") + " " + " ".join(str(i) for i in v.get("ingredienti", []))).lower()
         if any(k in nl for k in DOLCE): tipi["dolce"] += 1
