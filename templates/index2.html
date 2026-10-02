@@ -236,6 +236,37 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .mn-vino-nota{font-family:var(--ui);font-size:13px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px;font-style:italic}
 .mn-vino-sugg{display:flex;flex-wrap:wrap;gap:6px}
 .mn-vino-chip{font-family:var(--ui);font-size:13px;background:var(--blu-grafite);color:var(--carta);border-radius:20px;padding:6px 12px}
+
+/* ═══════════ QUADERNO (riepilogo + maestria + commit) ═══════════ */
+.qd-head{margin:28px 0 20px}
+.qd-titolo{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1.1}
+.qd-sub{font-family:var(--ui);font-size:14px;color:var(--ink-soft);margin-top:6px}
+/* riepilogo statistiche */
+.qd-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:28px}
+.qd-stat{border:1px solid var(--linea);border-radius:6px;padding:16px 12px;text-align:center}
+.qd-stat-n{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--rame)}
+.qd-stat-l{font-family:var(--ui);font-size:11px;color:var(--ink-soft);margin-top:4px}
+.qd-sec{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin:24px 0 12px}
+/* maestria */
+.qd-mae{border:1px solid var(--linea);border-radius:6px;padding:14px;margin-bottom:10px}
+.qd-mae-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.qd-mae-nome{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--ink);text-transform:capitalize}
+.qd-mae-stato{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase}
+.qd-mae-bar{height:5px;background:var(--linea);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.qd-mae-fill{height:100%}
+.qd-mae-n{font-family:var(--mono);font-size:10px;color:var(--ink-soft)}
+/* commit */
+.qd-commit{border:1px solid var(--linea);border-left:4px solid var(--blu-grafite);border-radius:6px;padding:14px;margin-bottom:10px}
+.qd-commit-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px}
+.qd-commit-nome{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--ink)}
+.qd-commit-n{flex-shrink:0;font-family:var(--mono);font-size:12px;color:var(--blu-grafite)}
+.qd-commit-esito{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid}
+.qd-commit-note{font-family:var(--ui);font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.45}
+/* vuoto */
+.qd-vuoto{text-align:center;padding:40px 24px;border:1px dashed var(--linea);border-radius:8px}
+.qd-vuoto-ico{font-size:34px;color:var(--rame);margin-bottom:14px}
+.qd-vuoto-t{font-family:var(--serif);font-weight:600;font-size:19px;color:var(--ink);margin-bottom:10px;line-height:1.2}
+.qd-vuoto-d{font-family:var(--ui);font-size:13px;color:var(--ink-soft);line-height:1.55;max-width:300px;margin:0 auto}
 </style>
 </head>
 <body>
@@ -277,6 +308,12 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
   <!-- VISTA SCHEDA TECNICA -->
   <div class="vista" id="v-scheda">
     <div id="sc-host"></div>
+  </div>
+
+  <!-- VISTA QUADERNO -->
+  <div class="vista" id="v-quaderno">
+    <div class="qd-head"><div class="qd-titolo">Il tuo Quaderno</div><div class="qd-sub">La memoria del tuo mestiere.</div></div>
+    <div id="qd-host"><div class="sk-d" style="height:80px;border-radius:6px"></div></div>
   </div>
 
   <!-- VISTA MENU -->
@@ -360,7 +397,7 @@ function caricaExp(){
   }).catch(function(){});
 }
 
-var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa',menu:'v-menu'};
+var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa',menu:'v-menu',quaderno:'v-quaderno'};
 var _navIdx={banco:0,causa:1,atlante:2,menu:3,quaderno:4};
 function vai(dove){
   // viste pronte
@@ -373,11 +410,10 @@ function vai(dove){
     if(dove==='atlante') caricaAtlante();
     if(dove==='causa') initCausa();
     if(dove==='menu') initMenu();
+    if(dove==='quaderno') caricaQuaderno();
     return;
   }
-  // viste non ancora costruite
-  var nomi={quaderno:'Quaderno'};
-  alert((nomi[dove]||dove)+' — in costruzione (prossima schermata)');
+  alert(dove+' — in costruzione');
 }
 function apriProtocollo(id){ alert('Scheda esperimento '+id+' — in costruzione'); }
 function apriGalileo(){ alert('Galileo — in costruzione'); }
@@ -637,6 +673,50 @@ function cartaVini(){
     });
     box.innerHTML=h;
   });
+}
+
+// ═══ QUADERNO (riepilogo + maestria + commit) ═══
+function caricaQuaderno(){
+  var h={'X-Device-Id':_devId()};
+  Promise.all([
+    fetch(API+'/v1/quaderno/riepilogo',{headers:h}).then(function(r){return r.json();}).catch(function(){return{};}),
+    fetch(API+'/v1/quaderno/esperimenti',{headers:h}).then(function(r){return r.json();}).catch(function(){return{esperimenti:[]};}),
+    fetch(API+'/v1/quaderno/maneggiare-la-materia',{headers:h}).then(function(r){return r.json();}).catch(function(){return{crescita:[]};})
+  ]).then(function(res){ renderQuaderno(res[0],res[1].esperimenti||[],res[2].crescita||[]); });
+}
+function renderQuaderno(rie, esp, cresc){
+  var box=document.getElementById('qd-host'); if(!box)return;
+  var nMis=rie.n_misure||0, nDia=rie.n_diagnosi||0, nRic=rie.n_ricette||0;
+  // vuoto
+  if(!esp.length && !cresc.length && !nMis && !nDia && !nRic){
+    box.innerHTML='<div class="qd-vuoto"><div class="qd-vuoto-ico">◱</div><div class="qd-vuoto-t">La memoria si costruisce un esperimento alla volta</div><div class="qd-vuoto-d">Ogni cosa che provi, misuri o risolvi resta qui. Col tempo Matter impara come lavori tu — e questa memoria è tua, non si copia.</div></div>';
+    return;
+  }
+  var h='<div class="qd-stats">'
+    +'<div class="qd-stat"><div class="qd-stat-n">'+(esp.length||nRic)+'</div><div class="qd-stat-l">esperimenti</div></div>'
+    +'<div class="qd-stat"><div class="qd-stat-n">'+nDia+'</div><div class="qd-stat-l">cause risolte</div></div>'
+    +'<div class="qd-stat"><div class="qd-stat-n">'+nMis+'</div><div class="qd-stat-l">misure</div></div>'
+    +'</div>';
+  // maestria
+  if(cresc.length){
+    h+='<div class="qd-sec">◎ Come maneggi la materia</div>';
+    h+=cresc.slice(0,8).map(function(m){
+      var r=m.riusciti||0,t=m.tentativi||0,pct=t>0?Math.round(r/t*100):0;
+      var stato=m.stato||(pct>=75?'consolidato':(pct>=40?'in crescita':'agli inizi'));
+      var col=stato==='consolidato'?'var(--verde)':(stato==='in crescita'?'var(--rame)':'var(--ink-soft)');
+      return '<div class="qd-mae"><div class="qd-mae-top"><span class="qd-mae-nome">'+esc(m.esperimento||m.materia||'')+'</span><span class="qd-mae-stato" style="color:'+col+'">'+esc(stato)+'</span></div><div class="qd-mae-bar"><div class="qd-mae-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="qd-mae-n">'+r+'/'+t+' riusciti</div></div>';
+    }).join('');
+  }
+  // commit
+  if(esp.length){
+    h+='<div class="qd-sec">◎ I tuoi esperimenti</div>';
+    h+=esp.slice(0,20).map(function(x){
+      var es=(x.esito||'').toLowerCase();
+      var col=es.indexOf('riusc')>=0?'var(--verde)':(es.indexOf('roll')>=0||es.indexOf('fall')>=0?'var(--rosso-oss)':'var(--ink-soft)');
+      return '<div class="qd-commit"><div class="qd-commit-top"><span class="qd-commit-nome">'+esc(x.nome||'Esperimento')+'</span>'+(x.commit_n!=null?'<span class="qd-commit-n">#'+esc(x.commit_n)+'</span>':'')+'</div>'+(x.esito?'<span class="qd-commit-esito" style="color:'+col+';border-color:'+col+'">'+esc(x.esito)+'</span>':'')+(x.note?'<div class="qd-commit-note">'+esc(x.note)+'</div>':'')+'</div>';
+    }).join('');
+  }
+  box.innerHTML=h;
 }
 
 caricaExp();
