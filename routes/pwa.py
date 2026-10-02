@@ -35,6 +35,14 @@ def home():
     resp.headers["Expires"] = "0"
     return resp
 
+@bp.route("/app2")
+def home2():
+    """Frontend 2.0 - nuovo da zero, CSS pulito, zero eredita dal vecchio. Serve index2.html.
+    Il vecchio /app resta intatto per rollback finche' /app2 non e' completo e verificato."""
+    resp = make_response(render_template("index2.html", mb_ver=_BUILD_VER))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/manifest.json")
 def manifest():
     """PWA manifest."""
