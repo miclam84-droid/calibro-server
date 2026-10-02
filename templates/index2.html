@@ -495,7 +495,9 @@ function vai(dove){
   }
   alert(dove+' — in costruzione');
 }
-function apriGalileo(){ vai('chat'); }
+var _chatMode='matter'; // 'matter' = /chiedi/stream (scientifica), 'galileo' = assistente impresa/web
+function apriGalileo(){ _chatMode='galileo'; _chInit=false; vai('chat'); }
+function chatMatter(){ _chatMode='matter'; }
 
 // ═══ ATLANTE ═══
 var _DISC=['Tutti','Cucina','Bar','Panificazione','Pasticceria','Gelateria','Caffetteria','Vino','Birra'];
@@ -630,7 +632,7 @@ function _crow(a,verbo,fr,col){
   var dir=(typeof a==='object'&&a.direzione)?(' '+a.direzione):'';
   return '<div class="sc-crow"><span class="sc-cfreccia" style="color:'+col+'">'+fr+'</span><span class="sc-cverbo">'+verbo+'</span><span class="sc-cfat">'+esc(fat)+esc(dir)+'</span></div>';
 }
-function chatSu(nome){ vai('chat'); setTimeout(function(){ inviaChat('Parlami di '+nome+' nel mio mestiere'); },200); }
+function chatSu(nome){ _chatMode='matter'; _chInit=false; vai('chat'); setTimeout(function(){ inviaChat('Parlami di '+nome+' nel mio mestiere'); },200); }
 function provala(slug,nome){
   // cerca un protocollo collegato al fenomeno, altrimenti apre la lista Misura
   vai('misura'); 
@@ -828,11 +830,17 @@ function toast(msg){ var t=document.createElement('div'); t.textContent=msg; t.s
 // ═══ MATTER-CHAT (streaming, testo libero) ═══
 var _CH_ES=['Perché la maionese impazzisce?','Come stabilizzo una emulsione calda?','Cosa succede all\'amido in cottura?'];
 var _chInit=false, _chStreaming=false;
+var _CH_ES_GAL=['Quali bandi ci sono per la ristorazione in Campania?','Come calcolo il break-even del locale?','Scrivi una mail a un fornitore per un ritardo'];
 function initChat(ctx){
   var fl=document.getElementById('ch-flusso');
   if(!_chInit && fl){
     _chInit=true;
-    fl.innerHTML='<div class="ch-intro"><div class="ch-intro-t">Chiedi a Matter</div><div class="ch-intro-d">La scienza del tuo mestiere, in una domanda. Matter cerca nel grafo e risponde.</div><div class="ch-esempi">'+_CH_ES.map(function(q){return '<button class="ch-es" onclick="inviaChat(\''+esc(q).replace(/'/g,"\\'")+'\')">'+esc(q)+'</button>';}).join('')+'</div></div>';
+    var gal=(_chatMode==='galileo');
+    var titolo=gal?'Galileo':'Chiedi a Matter';
+    var desc=gal?'Il tuo assistente d\'impresa. Bandi, conti, fornitori, web — tutto ciò che sta fuori dal banco.':'La scienza del tuo mestiere, in una domanda. Matter cerca nel grafo e risponde.';
+    var es=gal?_CH_ES_GAL:_CH_ES;
+    document.getElementById('ch-input').placeholder = gal?'Chiedi a Galileo…':'Chiedi a Matter…';
+    fl.innerHTML='<div class="ch-intro"><div class="ch-intro-t">'+titolo+'</div><div class="ch-intro-d">'+desc+'</div><div class="ch-esempi">'+es.map(function(q){return '<button class="ch-es" onclick="inviaChat(\''+esc(q).replace(/'/g,"\\'")+'\')">'+esc(q)+'</button>';}).join('')+'</div></div>';
   }
   if(ctx){ var i=document.getElementById('ch-input'); if(i){i.value=ctx;} }
 }
@@ -853,6 +861,19 @@ function inviaChat(pre){
   streamChat(q, sEl, rEl, function(){ _chStreaming=false; if(send)send.disabled=false; rEl.classList.remove('scrivendo'); });
 }
 function streamChat(domanda, sEl, rEl, done){
+  // Galileo (assistente d'impresa): risponde in blocco + indicatore web
+  if(_chatMode==='galileo'){
+    if(sEl)sEl.textContent='Galileo sta cercando, anche sul web…';
+    fetch(API+'/v1/assistente/galileo',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({domanda:domanda})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(sEl&&sEl.parentNode)sEl.remove();
+      rEl.textContent=(d.risposta||d.testo||'');
+      if(d.web){ var w=document.createElement('div'); w.style.cssText='font-family:var(--mono);font-size:10px;color:var(--ink-soft);margin-top:10px;font-style:italic'; w.textContent='◉ cercato sul web'; rEl.parentNode.insertBefore(w,rEl.nextSibling); }
+      done();
+    }).catch(function(){ if(sEl)sEl.textContent='Galileo non è disponibile ora. Riprova.'; done(); });
+    return;
+  }
+  // Matter-chat (scientifica): streaming token-by-token
   fetch(API+'/chiedi/stream',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({domanda:domanda})})
   .then(function(resp){
     if(!resp.body){ // fallback no-stream
