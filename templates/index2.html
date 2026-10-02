@@ -267,6 +267,32 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .qd-vuoto-ico{font-size:34px;color:var(--rame);margin-bottom:14px}
 .qd-vuoto-t{font-family:var(--serif);font-weight:600;font-size:19px;color:var(--ink);margin-bottom:10px;line-height:1.2}
 .qd-vuoto-d{font-family:var(--ui);font-size:13px;color:var(--ink-soft);line-height:1.55;max-width:300px;margin:0 auto}
+
+/* ═══════════ MATTER-CHAT (testo libero, scorre nella pagina — NO contenitore) ═══════════ */
+.ch-wrap{min-height:calc(100vh - var(--nav-h) - 120px);display:flex;flex-direction:column}
+.ch-flusso{flex:1;padding:8px 0 20px}
+/* la domanda dell'utente — discreta, come un titolo di sezione */
+.ch-domanda{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin:22px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--linea)}
+/* lo status — riga leggera che pulsa, poi sparisce */
+.ch-status{font-family:var(--ui);font-size:13px;color:var(--ink-soft);font-style:italic;margin:8px 0;animation:chpulse 1.4s ease-in-out infinite}
+@keyframes chpulse{0%,100%{opacity:.5}50%{opacity:1}}
+/* LA RISPOSTA — testo editoriale che scorre libero, nessun box */
+.ch-risposta{font-family:var(--serif);font-size:18px;line-height:1.7;color:var(--ink);font-weight:400}
+.ch-risposta.scrivendo::after{content:'▍';color:var(--rame);animation:chcaret .9s step-end infinite;margin-left:1px}
+@keyframes chcaret{50%{opacity:0}}
+/* la barra di input — in basso, fissa, pulita */
+.ch-barra{position:sticky;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0) + 10px);display:flex;gap:8px;padding-top:12px;background:linear-gradient(transparent,var(--carta) 20%)}
+.ch-barra input{flex:1;min-width:0;border:1.5px solid var(--linea);border-radius:24px;padding:14px 18px;font-family:var(--ui);font-size:15px;background:var(--carta);color:var(--ink)}
+.ch-barra input:focus{outline:none;border-color:var(--rame)}
+.ch-barra button{flex:0 0 48px;height:48px;background:var(--rame);color:var(--carta);border-radius:50%;font-size:19px}
+.ch-barra button:disabled{background:var(--linea);color:var(--ink-soft)}
+/* intro quando vuota */
+.ch-intro{padding:32px 0 20px}
+.ch-intro-t{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--ink);line-height:1.15;margin-bottom:10px}
+.ch-intro-d{font-family:var(--ui);font-size:14px;color:var(--ink-soft);line-height:1.5;margin-bottom:20px}
+.ch-esempi{display:flex;flex-direction:column;gap:8px}
+.ch-es{text-align:left;border:1px solid var(--linea);border-radius:8px;padding:13px 16px;font-family:var(--ui);font-size:14px;color:var(--ink);background:var(--carta)}
+.ch-es:active{border-color:var(--rame)}
 </style>
 </head>
 <body>
@@ -308,6 +334,17 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
   <!-- VISTA SCHEDA TECNICA -->
   <div class="vista" id="v-scheda">
     <div id="sc-host"></div>
+  </div>
+
+  <!-- VISTA CHAT (Matter-chat / Galileo) -->
+  <div class="vista" id="v-chat">
+    <div class="ch-wrap">
+      <div class="ch-flusso" id="ch-flusso"></div>
+      <div class="ch-barra">
+        <input id="ch-input" placeholder="Chiedi a Matter…" onkeydown="if(event.key==='Enter')inviaChat()">
+        <button id="ch-send" onclick="inviaChat()">→</button>
+      </div>
+    </div>
   </div>
 
   <!-- VISTA QUADERNO -->
@@ -397,7 +434,7 @@ function caricaExp(){
   }).catch(function(){});
 }
 
-var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa',menu:'v-menu',quaderno:'v-quaderno'};
+var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa',menu:'v-menu',quaderno:'v-quaderno',chat:'v-chat'};
 var _navIdx={banco:0,causa:1,atlante:2,menu:3,quaderno:4};
 function vai(dove){
   // viste pronte
@@ -411,12 +448,13 @@ function vai(dove){
     if(dove==='causa') initCausa();
     if(dove==='menu') initMenu();
     if(dove==='quaderno') caricaQuaderno();
+    if(dove==='chat') initChat();
     return;
   }
   alert(dove+' — in costruzione');
 }
 function apriProtocollo(id){ alert('Scheda esperimento '+id+' — in costruzione'); }
-function apriGalileo(){ alert('Galileo — in costruzione'); }
+function apriGalileo(){ vai('chat'); }
 
 // ═══ ATLANTE ═══
 var _DISC=['Tutti','Cucina','Bar','Panificazione','Pasticceria','Gelateria','Caffetteria','Vino','Birra'];
@@ -551,7 +589,7 @@ function _crow(a,verbo,fr,col){
   var dir=(typeof a==='object'&&a.direzione)?(' '+a.direzione):'';
   return '<div class="sc-crow"><span class="sc-cfreccia" style="color:'+col+'">'+fr+'</span><span class="sc-cverbo">'+verbo+'</span><span class="sc-cfat">'+esc(fat)+esc(dir)+'</span></div>';
 }
-function chatSu(nome){ alert('Chat su "'+nome+'" — Matter-chat in costruzione'); }
+function chatSu(nome){ vai('chat'); setTimeout(function(){ inviaChat('Parlami di '+nome+' nel mio mestiere'); },200); }
 function provala(slug,nome){ alert('Provala al banco: "'+nome+'" — apre l\'esperimento (Banco in costruzione)'); }
 
 // ═══ CAUSA (sintomo → causa → correzione) ═══
@@ -676,6 +714,63 @@ function cartaVini(){
 }
 
 // ═══ QUADERNO (riepilogo + maestria + commit) ═══
+// ═══ MATTER-CHAT (streaming, testo libero) ═══
+var _CH_ES=['Perché la maionese impazzisce?','Come stabilizzo una emulsione calda?','Cosa succede all\'amido in cottura?'];
+var _chInit=false, _chStreaming=false;
+function initChat(ctx){
+  var fl=document.getElementById('ch-flusso');
+  if(!_chInit && fl){
+    _chInit=true;
+    fl.innerHTML='<div class="ch-intro"><div class="ch-intro-t">Chiedi a Matter</div><div class="ch-intro-d">La scienza del tuo mestiere, in una domanda. Matter cerca nel grafo e risponde.</div><div class="ch-esempi">'+_CH_ES.map(function(q){return '<button class="ch-es" onclick="inviaChat(\''+esc(q).replace(/'/g,"\\'")+'\')">'+esc(q)+'</button>';}).join('')+'</div></div>';
+  }
+  if(ctx){ var i=document.getElementById('ch-input'); if(i){i.value=ctx;} }
+}
+function inviaChat(pre){
+  if(_chStreaming)return;
+  var i=document.getElementById('ch-input');
+  var q = pre || (i?i.value:''); q=String(q).trim(); if(!q)return;
+  if(i)i.value='';
+  var fl=document.getElementById('ch-flusso');
+  // tolgo l'intro alla prima domanda
+  var intro=fl.querySelector('.ch-intro'); if(intro)intro.remove();
+  // la domanda (discreta) + lo status + la risposta che crescerà
+  var dEl=document.createElement('div'); dEl.className='ch-domanda'; dEl.textContent=q; fl.appendChild(dEl);
+  var sEl=document.createElement('div'); sEl.className='ch-status'; sEl.textContent='…'; fl.appendChild(sEl);
+  var rEl=document.createElement('div'); rEl.className='ch-risposta scrivendo'; fl.appendChild(rEl);
+  window.scrollTo(0,document.body.scrollHeight);
+  _chStreaming=true; var send=document.getElementById('ch-send'); if(send)send.disabled=true;
+  streamChat(q, sEl, rEl, function(){ _chStreaming=false; if(send)send.disabled=false; rEl.classList.remove('scrivendo'); });
+}
+function streamChat(domanda, sEl, rEl, done){
+  fetch(API+'/chiedi/stream',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({domanda:domanda})})
+  .then(function(resp){
+    if(!resp.body){ // fallback no-stream
+      resp.json().then(function(d){ if(sEl)sEl.remove(); rEl.textContent=(d.risposta||d.testo||''); done(); }).catch(done); return;
+    }
+    var reader=resp.body.getReader(), dec=new TextDecoder(), buf='';
+    function pump(){
+      return reader.read().then(function(res){
+        if(res.done){ if(sEl&&sEl.parentNode)sEl.remove(); done(); return; }
+        buf+=dec.decode(res.value,{stream:true});
+        var righe=buf.split('\n'); buf=righe.pop();
+        righe.forEach(function(r){
+          r=r.trim(); if(!r.indexOf('data:')===0 && r.indexOf('data:')!==0)return;
+          if(r.indexOf('data:')!==0)return;
+          var js=r.slice(5).trim(); if(!js)return;
+          try{
+            var o=JSON.parse(js);
+            if(o.tipo==='status'){ if(sEl)sEl.textContent=o.testo||'…'; }
+            else if(o.tipo==='token'){ if(sEl&&sEl.parentNode){sEl.remove();} rEl.textContent+=(o.delta||''); window.scrollTo(0,document.body.scrollHeight); }
+            else if(o.tipo==='fine'||o.tipo==='done'){ /* fine */ }
+          }catch(e){}
+        });
+        return pump();
+      });
+    }
+    return pump();
+  }).catch(function(){ if(sEl)sEl.textContent='Non riesco a rispondere ora. Riprova.'; done(); });
+}
+
 function caricaQuaderno(){
   var h={'X-Device-Id':_devId()};
   Promise.all([
