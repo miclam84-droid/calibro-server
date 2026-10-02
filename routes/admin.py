@@ -13831,3 +13831,69 @@ def admin_tecniche_provala():
                         "nota":"ogni tecnica ha livello_accesso (banco/laboratorio) + provabile (ha bersaglio)"})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/admin/schede/completa-strati-mancanti")
+def admin_completa_strati_mancanti():
+    """Completa QUALUNQUE strato mancante (fondamenta/operativita/esperienza) delle schede < 3 strati.
+    gpt-4o-mini economico. Riempie il/i strato/i che manca/mancano."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur, re
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    n = int(request.args.get("n", 10))
+    key = os.environ.get("OPENAI_API_KEY", "")
+    if not key: return jsonify({"errore":"no key"}), 500
+    PROMPTS = {
+        "fondamenta": "il PRINCIPIO scientifico (cos'e, perche accade, la fisica/chimica). 2-3 frasi.",
+        "operativita": "l'OPERATIVITA: come si controlla al banco, il parametro-bersaglio con valore, lo strumento. 2-3 frasi.",
+        "esperienza": "l'ESPERIENZA: cosa vedi/senti/tocchi al banco quando accade. Concreto, sensoriale. 2-3 frasi.",
+    }
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                       AND (data->'strati' IS NULL
+                            OR (data->'strati'->>'fondamenta')<>'true'
+                            OR (data->'strati'->>'operativita')<>'true'
+                            OR (data->'strati'->>'esperienza')<>'true') LIMIT %s""",(n,))
+        righe = cur.fetchall()
+        fatti = 0
+        for sid, nome, data in righe:
+            dd = data if isinstance(data,dict) else (json.loads(data) if data else {})
+            st = dd.get("strati") or {}
+            cont = dd.get("contenuto_strutturato") or {}
+            if isinstance(cont,str): cont = json.loads(cont) if cont else {}
+            mancanti = [k for k in ["fondamenta","operativita","esperienza"] if not st.get(k)]
+            for strato in mancanti:
+                try:
+                    sysp = (f"Fenomeno/tecnica culinaria: {nome}. Scrivi {PROMPTS[strato]} "
+                            f'SOLO JSON: {{"{strato}":"..."}}')
+                    pl = {"model":"gpt-4o-mini","max_tokens":250,"temperature":0.3,
+                          "messages":[{"role":"system","content":sysp},{"role":"user","content":"Scrivi."}]}
+                    rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                                    headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+                    tx = json.loads(ur.urlopen(rq, timeout=40).read().decode())["choices"][0]["message"]["content"]
+                    m = re.search(r'\{.*\}', tx, re.DOTALL)
+                    if m:
+                        val = json.loads(m.group(0)).get(strato,"").strip()
+                        if val and len(val) > 15:
+                            if strato == "fondamenta":
+                                dd["principio"] = dd.get("principio") or val
+                                cont["principio"] = cont.get("principio") or val
+                            elif strato == "operativita":
+                                dd["esecuzione"] = dd.get("esecuzione") or val
+                            else:
+                                cont["esperienza"] = val
+                            st[strato] = True
+                except: pass
+            dd["strati"] = st; dd["contenuto_strutturato"] = cont
+            cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),sid))
+            conn.commit(); fatti += 1
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Fenomeno','Tecnica')
+                       AND (data->'strati' IS NULL OR (data->'strati'->>'fondamenta')<>'true'
+                            OR (data->'strati'->>'operativita')<>'true' OR (data->'strati'->>'esperienza')<>'true')""")
+        rimasti = cur.fetchone()[0]
+        cur.close(); conn.close()
+        return jsonify({"schede_completate":fatti,"ancora_incomplete":rimasti})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
