@@ -6084,7 +6084,9 @@ def lista_fenomeni_madre():
             cur.execute("SELECT COUNT(*) FROM edges WHERE to_id=%s AND relation='manifestazione_di'",(sid,))
             n_manif = cur.fetchone()[0]
             madre.append({"slug":sid,"nome":name,"stato":dd.get("stato_editoriale",""),
-                          "strati":dd.get("strati",{}),"n_manifestazioni":n_manif})
+                          "strati":dd.get("strati",{}),"n_manifestazioni":n_manif,
+                          "categoria":dd.get("categoria") or "trasversale",
+                          "principio":(dd.get("principio") or "")[:160]})
         cur.close(); conn.close()
         return jsonify({"fenomeni_madre":madre,"n":len(madre)})
     except Exception as e:
