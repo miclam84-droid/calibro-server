@@ -78,7 +78,53 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 
 /* skeleton */
 .sk{background:linear-gradient(90deg,rgba(255,255,255,.06) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.06) 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:4px}
+.sk-d{background:linear-gradient(90deg,rgba(26,26,23,.05) 25%,rgba(26,26,23,.1) 50%,rgba(26,26,23,.05) 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:4px}
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* viste */
+.vista{display:none}
+.vista.on{display:block}
+
+/* ═══════════ ATLANTE (editoriale — pubblicazione scientifica) ═══════════ */
+.at-head{margin:28px 0 8px}
+.at-titolo{font-family:var(--serif);font-weight:600;font-size:34px;color:var(--ink);letter-spacing:-.02em;line-height:1}
+.at-sub{font-family:var(--serif);font-weight:400;font-size:16px;color:var(--ink-soft);font-style:italic;margin-top:4px}
+.at-stato{font-family:var(--ui);font-size:12px;color:var(--ink-soft);margin:18px 0;padding-bottom:16px;border-bottom:1px solid var(--linea)}
+.at-stato-barre{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.at-sbar{display:flex;align-items:center;gap:8px}
+.at-sbar-lab{flex:0 0 86px;font-family:var(--mono);font-size:10px;color:var(--ink-soft);text-transform:capitalize}
+.at-sbar-track{flex:1;height:3px;background:var(--linea)}
+.at-sbar-fill{height:100%;background:var(--rame)}
+.at-sbar-pct{flex:0 0 32px;text-align:right;font-family:var(--mono);font-size:10px;color:var(--ink-soft)}
+/* filtro discipline */
+.at-filtri{display:flex;gap:8px;overflow-x:auto;padding:4px 0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.at-filtri::-webkit-scrollbar{display:none}
+.at-chip{flex:0 0 auto;font-family:var(--ui);font-size:13px;color:var(--ink-soft);border:1px solid var(--linea);border-radius:20px;padding:7px 14px;background:var(--carta);white-space:nowrap}
+.at-chip.on{background:var(--rame);color:var(--carta);border-color:var(--rame)}
+/* fenomeni madre — lista editoriale */
+.at-sez-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);margin:24px 0 4px}
+.at-madre{border-bottom:1px solid var(--linea);padding:22px 0}
+.at-madre:last-child{border-bottom:0}
+.at-madre-nome{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);line-height:1.15;margin-bottom:4px}
+.at-madre-princ{font-family:var(--ui);font-size:14px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px}
+.at-madre-meta{display:flex;align-items:center;gap:12px}
+.at-madre-n{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+.at-strati{display:flex;gap:4px}
+.at-strato{width:7px;height:7px;border-radius:50%;border:1px solid var(--rame)}
+.at-strato.on{background:var(--rame)}
+/* scopri tecniche */
+.at-scopri{margin-top:40px}
+.at-scopri-t{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--rame);margin-bottom:4px}
+.at-scopri-d{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin-bottom:16px}
+.at-tecniche{display:flex;flex-direction:column;gap:10px}
+.at-tec{border:1px solid var(--linea);border-radius:6px;padding:14px;text-align:left;background:var(--carta)}
+.at-tec:active{border-color:var(--rame)}
+.at-tec-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
+.at-tec-nome{font-family:var(--ui);font-weight:600;font-size:15px;color:var(--ink)}
+.at-tec-liv{flex-shrink:0;font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:3px}
+.at-tec-liv.banco{color:var(--verde);border:1px solid var(--verde)}
+.at-tec-liv.lab{color:var(--blu-grafite);border:1px solid var(--blu-grafite)}
+.at-tec-d{font-family:var(--ui);font-size:12px;color:var(--ink-soft);line-height:1.4}
 </style>
 </head>
 <body>
@@ -91,16 +137,31 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 </header>
 
 <main class="wrap">
-  <div class="claim">La scienza del tuo mestiere.<br><b>Numeri, non opinioni.</b></div>
-
-  <div class="porte">
-    <button class="porta" onclick="vai('banco')"><div class="porta-ico">◎</div><div class="porta-t">Misura</div><div class="porta-d">esperimenti, strumenti, bersagli</div></button>
-    <button class="porta" onclick="vai('causa')"><div class="porta-ico">⟲</div><div class="porta-t">Trova la causa</div><div class="porta-d">qualcosa non torna? risali alla causa</div></button>
-    <button class="porta" onclick="vai('atlante')"><div class="porta-ico">◈</div><div class="porta-t">Esplora</div><div class="porta-d">fenomeni, tecniche, la scienza</div></button>
-    <button class="porta" onclick="vai('menu')"><div class="porta-ico">▤</div><div class="porta-t">Costruisci</div><div class="porta-d">trasforma il lavoro in offerta</div></button>
+  <!-- VISTA HOME (Banco) -->
+  <div class="vista on" id="v-banco">
+    <div class="claim">La scienza del tuo mestiere.<br><b>Numeri, non opinioni.</b></div>
+    <div class="porte">
+      <button class="porta" onclick="vai('banco')"><div class="porta-ico">◎</div><div class="porta-t">Misura</div><div class="porta-d">esperimenti, strumenti, bersagli</div></button>
+      <button class="porta" onclick="vai('causa')"><div class="porta-ico">⟲</div><div class="porta-t">Trova la causa</div><div class="porta-d">qualcosa non torna? risali alla causa</div></button>
+      <button class="porta" onclick="vai('atlante')"><div class="porta-ico">◈</div><div class="porta-t">Esplora</div><div class="porta-d">fenomeni, tecniche, la scienza</div></button>
+      <button class="porta" onclick="vai('menu')"><div class="porta-ico">▤</div><div class="porta-t">Costruisci</div><div class="porta-d">trasforma il lavoro in offerta</div></button>
+    </div>
+    <div id="exp-host"><div class="exp"><div class="exp-lab"><span>◎ ESPERIMENTO DEL GIORNO</span></div><div class="sk" style="height:28px;width:70%;margin-bottom:14px"></div><div class="sk" style="height:60px;margin-bottom:14px"></div></div></div>
   </div>
 
-  <div id="exp-host"><div class="exp"><div class="exp-lab"><span>◎ ESPERIMENTO DEL GIORNO</span></div><div class="sk" style="height:28px;width:70%;margin-bottom:14px"></div><div class="sk" style="height:60px;margin-bottom:14px"></div></div></div>
+  <!-- VISTA ATLANTE -->
+  <div class="vista" id="v-atlante">
+    <div class="at-head"><div class="at-titolo">Atlante</div><div class="at-sub">La scienza del mestiere</div></div>
+    <div id="at-stato" class="at-stato">La conoscenza di Matter cresce.</div>
+    <div id="at-filtri" class="at-filtri"></div>
+    <div class="at-sez-lab">I fenomeni fondamentali</div>
+    <div id="at-madre"><div class="at-madre"><div class="sk-d" style="height:24px;width:60%;margin-bottom:8px"></div><div class="sk-d" style="height:14px;width:90%"></div></div></div>
+    <div class="at-scopri">
+      <div class="at-scopri-t">Scopri nuove tecniche</div>
+      <div class="at-scopri-d">tecniche che allargano il tuo mestiere</div>
+      <div id="at-tecniche" class="at-tecniche"></div>
+    </div>
+  </div>
 </main>
 
 <nav class="nav">
@@ -153,9 +214,73 @@ function caricaExp(){
   }).catch(function(){});
 }
 
-function vai(dove){ alert('Schermata "'+dove+'" — in costruzione (prossima)'); }
-function apriProtocollo(id){ alert('Protocollo '+id+' — scheda in costruzione'); }
+var _viste={banco:'v-banco',atlante:'v-atlante'};
+var _navIdx={banco:0,causa:1,atlante:2,menu:3,quaderno:4};
+function vai(dove){
+  // viste pronte
+  if(_viste[dove]){
+    document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
+    var el=document.getElementById(_viste[dove]); if(el)el.classList.add('on');
+    // nav
+    var navs=document.querySelectorAll('.nav-v'); navs.forEach(function(n,i){ n.classList.toggle('on', i===_navIdx[dove]); });
+    window.scrollTo(0,0);
+    if(dove==='atlante') caricaAtlante();
+    return;
+  }
+  // viste non ancora costruite
+  var nomi={causa:'Causa',menu:'Menu',quaderno:'Quaderno'};
+  alert((nomi[dove]||dove)+' — in costruzione (prossima schermata)');
+}
+function apriProtocollo(id){ alert('Scheda esperimento '+id+' — in costruzione'); }
 function apriGalileo(){ alert('Galileo — in costruzione'); }
+
+// ═══ ATLANTE ═══
+var _DISC=['Tutti','Cucina','Bar','Panificazione','Pasticceria','Gelateria','Caffetteria','Vino','Birra'];
+var _discAttiva='Tutti';
+var _atCaricato=false;
+function caricaAtlante(){
+  if(_atCaricato) return; _atCaricato=true;
+  // filtri
+  var fil=document.getElementById('at-filtri');
+  if(fil) fil.innerHTML=_DISC.map(function(d){return '<button class="at-chip'+(d==='Tutti'?' on':'')+'" onclick="filtraDisc(\''+d+'\',this)">'+esc(d)+'</button>';}).join('');
+  // stato conoscenza (copertura)
+  fetch(API+'/v1/atlante/copertura').then(function(r){return r.json();}).then(function(d){
+    var box=document.getElementById('at-stato'); if(!box)return;
+    var pd=(d.per_disciplina||[]).filter(function(x){return (x.pct||0)>0;}).sort(function(a,b){return (b.pct||0)-(a.pct||0);}).slice(0,6);
+    var barre=pd.map(function(x){return '<div class="at-sbar"><span class="at-sbar-lab">'+esc(x.disciplina)+'</span><span class="at-sbar-track"><span class="at-sbar-fill" style="width:'+(x.pct||0)+'%"></span></span><span class="at-sbar-pct">'+(x.pct||0)+'%</span></div>';}).join('');
+    box.innerHTML='La conoscenza di Matter cresce. Matter mostra anche ciò che non sa ancora.'+(barre?'<div class="at-stato-barre">'+barre+'</div>':'');
+  }).catch(function(){});
+  // fenomeni madre
+  fetch(API+'/v1/fenomeni-madre').then(function(r){return r.json();}).then(function(d){
+    var m=Array.isArray(d)?d:(d.fenomeni_madre||d.madre||[]);
+    var box=document.getElementById('at-madre'); if(!box)return;
+    box.innerHTML=m.map(function(f){
+      var st=f.strati||{};
+      var pallini=['fondamenta','operativita','esperienza'].map(function(k){return '<span class="at-strato'+(st[k]?' on':'')+'"></span>';}).join('');
+      return '<div class="at-madre" onclick="apriScheda(\''+esc(f.slug)+'\')">'
+        +'<div class="at-madre-nome">'+esc(f.nome)+'</div>'
+        +'<div class="at-madre-meta"><span class="at-madre-n">'+(f.n_manifestazioni||0)+' manifestazioni</span><span class="at-strati">'+pallini+'</span></div>'
+        +'</div>';
+    }).join('');
+  }).catch(function(){});
+  // scopri tecniche
+  fetch(API+'/v1/schede-scienza').then(function(r){return r.json();}).then(function(d){
+    var s=(d.schede||[]).filter(function(x){return x.livello_tassonomia==='manifestazione';}).slice(0,6);
+    if(!s.length) s=(d.schede||[]).slice(0,6);
+    var box=document.getElementById('at-tecniche'); if(!box)return;
+    box.innerHTML=s.map(function(t){
+      var lab=(t.livello_accesso==='laboratorio')?['lab','da laboratorio']:['banco','da banco'];
+      return '<button class="at-tec" onclick="apriScheda(\''+esc(t.slug)+'\')"><div class="at-tec-top"><span class="at-tec-nome">'+esc(t.nome)+'</span><span class="at-tec-liv '+lab[0]+'">'+lab[1]+'</span></div>'+(t.principio?'<div class="at-tec-d">'+esc(String(t.principio).slice(0,90))+'</div>':'')+'</button>';
+    }).join('');
+  }).catch(function(){});
+}
+function filtraDisc(d,btn){
+  _discAttiva=d;
+  document.querySelectorAll('.at-chip').forEach(function(c){c.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  // (il filtro vero sui madre lo aggiungo quando il backend espone disciplina sui madre)
+}
+function apriScheda(slug){ alert('Scheda '+slug+' — in costruzione (prossima)'); }
 
 caricaExp();
 </script>
