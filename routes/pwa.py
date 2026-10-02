@@ -39,7 +39,8 @@ def home():
 def home2():
     """Frontend 2.0 - nuovo da zero, CSS pulito, zero eredita dal vecchio. Serve index2.html.
     Il vecchio /app resta intatto per rollback finche' /app2 non e' completo e verificato."""
-    resp = make_response(render_template("index2.html", mb_ver=_BUILD_VER))
+    from flask import make_response
+    resp = make_response(render_template("index2.html"))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
