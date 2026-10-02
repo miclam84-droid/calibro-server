@@ -1028,9 +1028,18 @@ def schede_scienza_lista():
         schede = []
         for r in rows:
             dd = _c(r,"data",2); dd = dd if isinstance(dd, dict) else (_j.loads(dd) if dd else {})
+            cs = dd.get("contenuto_strutturato") or {}
+            if isinstance(cs, str):
+                try: cs = _j.loads(cs)
+                except: cs = {}
+            princ = dd.get("principio") or cs.get("principio") or ""
             schede.append({"slug": _c(r,"id",0), "nome": _c(r,"name",1),
                            "categoria": dd.get("categoria") or dd.get("disciplina") or dd.get("dominio") or "trasversale",
-                           "stato_editoriale": dd.get("stato_editoriale") or ""})
+                           "stato_editoriale": dd.get("stato_editoriale") or "",
+                           "principio": (princ[:160] if princ else ""),
+                           "livello_accesso": dd.get("livello_accesso") or "",
+                           "provabile": dd.get("provabile", False),
+                           "is_fenomeno_madre": dd.get("is_fenomeno_madre", False)})
         return jsonify({"schede": schede, "totale": len(schede)})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
