@@ -293,6 +293,41 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .ch-esempi{display:flex;flex-direction:column;gap:8px}
 .ch-es{text-align:left;border:1px solid var(--linea);border-radius:8px;padding:13px 16px;font-family:var(--ui);font-size:14px;color:var(--ink);background:var(--carta)}
 .ch-es:active{border-color:var(--rame)}
+
+/* ═══════════ BANCO / MISURA (lista protocolli + esperimento) ═══════════ */
+.bn-head{margin:28px 0 16px}
+.bn-titolo{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1.1}
+.bn-sub{font-family:var(--ui);font-size:14px;color:var(--ink-soft);margin-top:6px}
+.bn-search{display:flex;gap:8px;margin-bottom:20px}
+.bn-search input{flex:1;min-width:0;border:1.5px solid var(--linea);border-radius:6px;padding:12px 14px;font-family:var(--ui);font-size:14px;background:var(--carta)}
+.bn-search input:focus{outline:none;border-color:var(--rame)}
+.bn-search button{flex:0 0 48px;background:var(--ink);color:var(--carta);border-radius:6px;font-size:18px}
+.bn-lista{display:flex;flex-direction:column;gap:8px}
+.bn-exp{text-align:left;border:1px solid var(--linea);border-radius:6px;padding:14px;background:var(--carta)}
+.bn-exp:active{border-color:var(--rame)}
+.bn-exp-nome{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--ink);line-height:1.2;margin-bottom:4px}
+.bn-exp-meta{font-family:var(--mono);font-size:10px;color:var(--ink-soft);text-transform:uppercase}
+/* esperimento aperto */
+.bn-detail-back{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin:20px 0 8px}
+.bn-dnome{font-family:var(--serif);font-weight:600;font-size:28px;color:var(--ink);line-height:1.1;margin-bottom:14px}
+.bn-dip{font-family:var(--ui);font-size:14px;color:var(--ink);line-height:1.5;margin-bottom:18px}
+.bn-dip-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-right:6px}
+.bn-dsec{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin:24px 0 12px}
+.bn-reag{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--linea);padding:10px 0}
+.bn-reag:last-child{border-bottom:0}
+.bn-reag-nome{font-family:var(--ui);font-size:14px;color:var(--ink);text-transform:capitalize}
+.bn-reag-q{font-family:var(--mono);font-size:13px;color:var(--rame)}
+.bn-sens{display:flex;flex-direction:column;gap:8px}
+.bn-sens-row{display:flex;gap:8px;align-items:flex-start;font-family:var(--ui);font-size:13px;color:var(--ink)}
+.bn-sens-ico{color:var(--rame);font-family:var(--mono);flex-shrink:0}
+.bn-salva{width:100%;background:var(--rame);color:var(--carta);font-family:var(--ui);font-weight:600;font-size:15px;padding:15px;border-radius:8px;margin:24px 0 8px}
+/* scala su carta (nel banco il fondo è chiaro) */
+.bn-scala .scala-wrap{background:var(--carta);border:1px solid var(--linea)}
+.bn-scala .scala-lab{color:var(--rame)}
+.bn-scala .scala-track{background:#E8E3D6;border-color:var(--ink)}
+.bn-scala .scala-val{color:var(--ink)}
+.bn-scala .scala-cap{color:var(--ink-soft)}
+.bn-scala .scala-tick{background:rgba(26,26,23,.12)}
 </style>
 </head>
 <body>
@@ -309,7 +344,7 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
   <div class="vista on" id="v-banco">
     <div class="claim">La scienza del tuo mestiere.<br><b>Numeri, non opinioni.</b></div>
     <div class="porte">
-      <button class="porta" onclick="vai('banco')"><div class="porta-ico">◎</div><div class="porta-t">Misura</div><div class="porta-d">esperimenti, strumenti, bersagli</div></button>
+      <button class="porta" onclick="vai('misura')"><div class="porta-ico">◎</div><div class="porta-t">Misura</div><div class="porta-d">esperimenti, strumenti, bersagli</div></button>
       <button class="porta" onclick="vai('causa')"><div class="porta-ico">⟲</div><div class="porta-t">Trova la causa</div><div class="porta-d">qualcosa non torna? risali alla causa</div></button>
       <button class="porta" onclick="vai('atlante')"><div class="porta-ico">◈</div><div class="porta-t">Esplora</div><div class="porta-d">fenomeni, tecniche, la scienza</div></button>
       <button class="porta" onclick="vai('menu')"><div class="porta-ico">▤</div><div class="porta-t">Costruisci</div><div class="porta-d">trasforma il lavoro in offerta</div></button>
@@ -334,6 +369,11 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
   <!-- VISTA SCHEDA TECNICA -->
   <div class="vista" id="v-scheda">
     <div id="sc-host"></div>
+  </div>
+
+  <!-- VISTA MISURA (Banco: lista protocolli + esperimento) -->
+  <div class="vista" id="v-misura">
+    <div id="mis-host"></div>
   </div>
 
   <!-- VISTA CHAT (Matter-chat / Galileo) -->
@@ -434,7 +474,8 @@ function caricaExp(){
   }).catch(function(){});
 }
 
-var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa',menu:'v-menu',quaderno:'v-quaderno',chat:'v-chat'};
+var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa',menu:'v-menu',quaderno:'v-quaderno',chat:'v-chat',misura:'v-misura'};
+var _navIdxMisura=0; // Misura sta sotto il luogo Banco
 var _navIdx={banco:0,causa:1,atlante:2,menu:3,quaderno:4};
 function vai(dove){
   // viste pronte
@@ -449,11 +490,11 @@ function vai(dove){
     if(dove==='menu') initMenu();
     if(dove==='quaderno') caricaQuaderno();
     if(dove==='chat') initChat();
+    if(dove==='misura') initMisura();
     return;
   }
   alert(dove+' — in costruzione');
 }
-function apriProtocollo(id){ alert('Scheda esperimento '+id+' — in costruzione'); }
 function apriGalileo(){ vai('chat'); }
 
 // ═══ ATLANTE ═══
@@ -590,7 +631,17 @@ function _crow(a,verbo,fr,col){
   return '<div class="sc-crow"><span class="sc-cfreccia" style="color:'+col+'">'+fr+'</span><span class="sc-cverbo">'+verbo+'</span><span class="sc-cfat">'+esc(fat)+esc(dir)+'</span></div>';
 }
 function chatSu(nome){ vai('chat'); setTimeout(function(){ inviaChat('Parlami di '+nome+' nel mio mestiere'); },200); }
-function provala(slug,nome){ alert('Provala al banco: "'+nome+'" — apre l\'esperimento (Banco in costruzione)'); }
+function provala(slug,nome){
+  // cerca un protocollo collegato al fenomeno, altrimenti apre la lista Misura
+  vai('misura'); 
+  setTimeout(function(){
+    fetch(API+'/v1/protocolli?fenomeno='+encodeURIComponent(nome)+'&limit=1').then(function(r){return r.json();}).then(function(d){
+      var p=(d.protocolli||[]);
+      if(p.length){ apriProtocollo(p[0].id); }
+      // se nessun protocollo, resta sulla lista Misura (l'utente sceglie)
+    }).catch(function(){});
+  },150);
+}
 
 // ═══ CAUSA (sintomo → causa → correzione) ═══
 var _CA_ES=['Il cornicione non si apre','Il Negroni è troppo amaro','La crema pasticcera ha i grumi','La carne è dura e stopposa','L\'espresso esce troppo acido'];
@@ -714,6 +765,66 @@ function cartaVini(){
 }
 
 // ═══ QUADERNO (riepilogo + maestria + commit) ═══
+// ═══ BANCO / MISURA (lista protocolli + esperimento) ═══
+var _misInit=false;
+function initMisura(){
+  var host=document.getElementById('mis-host');
+  if(_misInit){ return; } _misInit=true;
+  host.innerHTML='<div class="bn-head"><div class="bn-titolo">Misura</div><div class="bn-sub">Scegli un esperimento. Il bersaglio, i reagenti, i sensori.</div></div>'
+    +'<div class="bn-search"><input id="mis-input" placeholder="Cerca un esperimento…" onkeydown="if(event.key===\'Enter\')cercaMisura()"><button onclick="cercaMisura()">→</button></div>'
+    +'<div id="mis-lista"><div class="sk-d" style="height:60px;margin-bottom:8px;border-radius:6px"></div></div>';
+  caricaProtocolli('');
+}
+function cercaMisura(){ var i=document.getElementById('mis-input'); caricaProtocolli((i?i.value:'').trim()); }
+function caricaProtocolli(q){
+  var box=document.getElementById('mis-lista'); if(box)box.innerHTML='<div class="sk-d" style="height:60px;border-radius:6px"></div>';
+  fetch(API+'/v1/protocolli?limit=30'+(q?'&q='+encodeURIComponent(q):'')).then(function(r){return r.json();}).then(function(d){
+    var p=(d.protocolli||[]);
+    if(!box)return;
+    if(!p.length){ box.innerHTML='<div style="padding:24px 0;color:var(--ink-soft);font-family:var(--ui);font-size:14px">Nessun esperimento per "'+esc(q)+'". Prova un altro termine.</div>'; return; }
+    box.innerHTML='<div class="bn-lista">'+p.map(function(x){
+      var fen=(x.fenomeni||[]).slice(0,2).map(function(f){return typeof f==='string'?f:(f.nome||'');}).join(' · ');
+      return '<button class="bn-exp" onclick="apriProtocollo(\''+esc(x.id)+'\')"><div class="bn-exp-nome">'+esc(x.nome)+'</div><div class="bn-exp-meta">'+esc(x.disciplina||'')+(fen?' — '+esc(fen):'')+'</div></button>';
+    }).join('')+'</div>';
+  }).catch(function(){ if(box)box.innerHTML='<div style="padding:24px 0;color:var(--ink-soft)">Errore. Riprova.</div>'; });
+}
+function apriProtocollo(id){
+  if(!_viste.misura)return;
+  document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
+  document.getElementById('v-misura').classList.add('on');
+  window.scrollTo(0,0);
+  var host=document.getElementById('mis-host');
+  host.innerHTML='<div class="sk-d" style="height:30px;width:70%;margin-top:20px"></div><div class="sk-d" style="height:120px;margin-top:16px;border-radius:6px"></div>';
+  fetch(API+'/v1/protocollo/'+encodeURIComponent(id)).then(function(r){return r.json();}).then(function(d){ renderProtocollo(d,id); })
+    .catch(function(){ host.innerHTML='<div style="padding:30px 0;color:var(--ink-soft)">Non riesco ad aprire l\'esperimento.</div>'; });
+}
+function renderProtocollo(d, id){
+  var host=document.getElementById('mis-host'); if(!host)return;
+  var sens=d.sensori||{};
+  var sRows=[['◠',sens.vista],['▚',sens.tatto],['∿',sens.olfatto]].filter(function(x){return x[1];})
+    .map(function(x){return '<div class="bn-sens-row"><span class="bn-sens-ico">'+x[0]+'</span><span>'+esc(x[1])+'</span></div>';}).join('');
+  var sc=(d.bersaglio&&d.bersaglio.valore)?('<div class="bn-scala">'+scala(d.bersaglio,d.variabile_critica)+'</div>'):'';
+  var reag=(d.reagenti||[]);
+  var h='<button class="bn-detail-back" onclick="_misInit=false;initMisura()">‹ Tutti gli esperimenti</button>'
+    +'<div class="bn-dnome">'+esc(d.nome)+'</div>'
+    +(d.ipotesi?'<div class="bn-dip"><span class="bn-dip-lab">Ipotesi</span>'+esc(d.ipotesi)+'</div>':'')
+    +sc;
+  if(reag.length){
+    h+='<div class="bn-dsec">◎ I reagenti</div>'+reag.map(function(r){
+      var q=(r.quantita!=null?r.quantita:'')+(r.unita?' '+r.unita:'');
+      return '<div class="bn-reag"><span class="bn-reag-nome">'+esc(r.nome)+'</span>'+(q?'<span class="bn-reag-q">'+esc(q)+'</span>':'')+'</div>';
+    }).join('');
+  }
+  if(sRows){ h+='<div class="bn-dsec">◎ I sensori — cosa osservare</div><div class="bn-sens">'+sRows+'</div>'; }
+  h+='<button class="bn-salva" onclick="salvaEsperimentoQ(\''+esc(d.nome)+'\',\''+esc(id)+'\')">◱ Salva nel Quaderno</button>';
+  host.innerHTML=h;
+}
+function salvaEsperimentoQ(nome,id){
+  fetch(API+'/v1/quaderno/esperimento',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({nome:nome,protocollo_id:id,esito:'provato'})})
+    .then(function(r){return r.json();}).then(function(){ toast('Salvato nel Quaderno'); }).catch(function(){ toast('Errore nel salvataggio'); });
+}
+function toast(msg){ var t=document.createElement('div'); t.textContent=msg; t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--carta);padding:12px 20px;border-radius:24px;font-family:var(--ui);font-size:14px;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.2)'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
+
 // ═══ MATTER-CHAT (streaming, testo libero) ═══
 var _CH_ES=['Perché la maionese impazzisce?','Come stabilizzo una emulsione calda?','Cosa succede all\'amido in cottura?'];
 var _chInit=false, _chStreaming=false;
