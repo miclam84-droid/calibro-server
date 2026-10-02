@@ -989,6 +989,11 @@ def _fenomeno_a_scheda(dd, nome, nid):
         "causalita": dd.get("causalita") or None,
         "evidence": dd.get("evidence") or [],
         "esperienza": cs.get("esperienza") or "",
+        "livello_accesso": dd.get("livello_accesso") or "",
+        "provabile": dd.get("provabile", False),
+        "livello_tassonomia": dd.get("livello_tassonomia") or "",
+        "is_fenomeno_madre": dd.get("is_fenomeno_madre", False),
+        "manifestazione_di": dd.get("manifestazione_di") or "",
     }
 
 @bp.route("/v1/scheda-scienza/<slug>", methods=["GET"])
