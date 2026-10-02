@@ -6118,3 +6118,61 @@ def fenomeno_manifestazioni(slug):
                         "ingredienti_collegati":ingredienti})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/v1/chat-multimodale", methods=["POST"])
+def chat_multimodale():
+    """CHAT MULTIMODALE (il wow al banco): orchestra foto + voce + testo in UNA chiamata.
+    Il frontend manda audio e/o foto e/o testo; qui li trasformo (Whisper + Vision) e li unisco in una
+    domanda sola, poi rispondo col motore chat ancorato al grafo. Pro per audio/foto.
+    multipart/form-data: 'testo'(opz), 'audio'(file opz), 'foto'(1+ file opz), 'contesto'(json opz)."""
+    from flask import request, jsonify
+    import json
+    try:
+        testo = (request.form.get("testo","") or "").strip()
+        contesto_raw = request.form.get("contesto","")
+        contesto = json.loads(contesto_raw) if contesto_raw else None
+        pezzi = []
+        if testo: pezzi.append(testo)
+        import ai_gateway as GW
+        # 1. AUDIO -> testo (Whisper)
+        if "audio" in request.files:
+            try:
+                af = request.files["audio"]
+                trascr = GW.route_stt(af.read(), filename=af.filename or "audio.webm", language="it")
+                if trascr: pezzi.append(trascr.strip())
+            except Exception:
+                pass
+        # 2. FOTO -> descrizione (Vision), max 4
+        foto_files = request.files.getlist("foto")
+        n_foto = 0
+        descrizioni = []
+        for f in foto_files[:4]:
+            try:
+                prompt_v = ("Elenca in modo conciso gli ingredienti/alimenti o i parametri visibili in questa "
+                            "immagine. Se e' un'etichetta, gli ingredienti; se piatto/ingredienti, cosa sono. "
+                            "Solo l'elenco, niente commenti.")
+                d = GW.route_vision(f.read(), prompt_v, media_type=f.content_type or "image/jpeg")
+                if d: descrizioni.append(d.strip()); n_foto += 1
+            except Exception:
+                pass
+        if descrizioni:
+            pezzi.append("(Dalla foto: " + "; ".join(descrizioni) + ")")
+        domanda = " ".join(pezzi).strip()
+        if not domanda:
+            return jsonify({"errore":"manda almeno testo, audio o foto"}), 400
+        # 3. risposta col motore chat ancorato al grafo (route_chat del gateway)
+        #    costruisco un prompt che usa il contesto scheda se c'e'
+        sys_ctx = ""
+        if contesto and isinstance(contesto, dict):
+            nome_sch = contesto.get("nome") or contesto.get("slug") or ""
+            if nome_sch: sys_ctx = f"L'utente sta guardando: {nome_sch}. "
+        prompt = (f"Sei Matter, assistente scientifico del mestiere di cucina/bar. {sys_ctx}"
+                  f"Rispondi in modo concreto e operativo, da collega esperto al banco, alla domanda: {domanda}")
+        try:
+            risposta = GW.route_chat(prompt)
+        except Exception:
+            risposta = "(errore nel motore chat)"
+        return jsonify({"risposta": risposta, "domanda_ricostruita": domanda, "foto_lette": n_foto})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]}), 500
