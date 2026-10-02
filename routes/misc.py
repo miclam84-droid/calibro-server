@@ -1032,7 +1032,11 @@ def schede_scienza_lista():
             if isinstance(cs, str):
                 try: cs = _j.loads(cs)
                 except: cs = {}
-            princ = dd.get("principio") or cs.get("principio") or ""
+            princ = cs.get("principio") or dd.get("principio") or dd.get("scheda") or cs.get("spiegazione") or ""
+            # scheda puo essere un dict multilingua {it/en/es}
+            if isinstance(princ, dict):
+                princ = princ.get("it") or princ.get("en") or princ.get("es") or next(iter(princ.values()), "")
+            princ = str(princ) if princ else ""
             schede.append({"slug": _c(r,"id",0), "nome": _c(r,"name",1),
                            "categoria": dd.get("categoria") or dd.get("disciplina") or dd.get("dominio") or "trasversale",
                            "stato_editoriale": dd.get("stato_editoriale") or "",
