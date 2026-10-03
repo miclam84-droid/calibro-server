@@ -14050,10 +14050,14 @@ def admin_ricuratela_converti_punto_ai():
                f"\"segnale_suggerito\":\"...se tipo=segnale, COSA osservare, SOLO se certo dalla pratica culinaria, "
                f"altrimenti stringa vuota...\"}}")
         pl = {"model":"gpt-4o-mini","max_tokens":200,"temperature":0,
-              "messages":[{"role":"system","content":"Sei un esperto di scienza culinaria rigoroso. Distingui un "
-                           "controllo scientifico critico (soglia fisica misurabile e decisiva) da un parametro "
-                           "generico. Nel dubbio rispondi 'dubbio'. NON inventare segnali: suggerisci un segnale "
-                           "SOLO se e' conoscenza culinaria consolidata e certa."},
+              "messages":[{"role":"system","content":"Sei un esperto di scienza culinaria. Distingui un controllo scientifico "
+                           "(soglia fisica/chimica pertinente: temperatura di fermentazione, idratazione, "
+                           "temperatura burro per frolla, temperatura acqua per lievito, estrazione - TIENI questi) "
+                           "da un parametro puramente GENERICO (un tempo di cottura qualsiasi tipo '15 min', una "
+                           "temperatura forno standard '180C' dove conta il risultato visivo - CONVERTI questi in "
+                           "segnale). Se il numero e' una soglia plausibile e pertinente alla preparazione, scegli "
+                           "'bersaglio'. Scegli 'dubbio' SOLO se e' davvero impossibile decidere. NON inventare "
+                           "segnali: suggerisci un segnale SOLO se e' pratica culinaria certa."},
                           {"role":"user","content":dom}]}
         try:
             rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
@@ -14090,8 +14094,14 @@ def admin_ricuratela_converti_punto_ai():
                     punto={"tipo":"segnale","bersaglio":None,"segnale":f"[DA VERIFICARE dalla fonte - non era {val}{unita}]","evidence":[],"_ex_bersaglio":f"{val}{unita}"}
                 convertiti.append({"nome":nome,"da":f"{val}{unita}","a_segnale":seg or "[da verificare]","motivo":g.get("motivo","")[:60]})
             else:
+                punto={"tipo":"da_verificare","bersaglio":bers,"segnale":"","evidence":[],
+                       "_nota":"Michele deve decidere: bersaglio vero o segnale?","_motivo_ai":g.get("motivo","")[:80]}
                 dubbi.append({"nome":nome,"val":f"{val}{unita}","motivo":g.get("motivo","")[:60]})
-                continue  # dubbio -> non tocca
+                if applica:
+                    dd["il_punto"]=punto
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid))
+                    conn.commit()
+                continue
             if applica:
                 dd["il_punto"]=punto
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid))
