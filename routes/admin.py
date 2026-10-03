@@ -14112,3 +14112,39 @@ def admin_ricuratela_converti_punto_ai():
                         "esempi_tenuti":tenuti[:6],"esempi_convertiti":convertiti[:10],"esempi_dubbi":dubbi[:6]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/ricuratela/fix-punto-manuale", methods=["POST"])
+def admin_fix_punto_manuale():
+    """Corregge IL PUNTO di una preparazione specifica, a mano (per i dubbi che Michele ha valutato).
+    Body JSON: {nome|id, tipo (bersaglio/segnale/misto), segnale (testo), valore, unita}."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    body = request.get_json(force=True)
+    nome = body.get("nome",""); pid = body.get("id","")
+    tipo = body.get("tipo","segnale")
+    segnale = body.get("segnale","")
+    valore = body.get("valore",""); unita = body.get("unita","")
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        if pid:
+            cur.execute("SELECT id,data FROM nodes WHERE id=%s",(pid,))
+        else:
+            cur.execute("SELECT id,data FROM nodes WHERE name=%s AND type='Protocollo' LIMIT 1",(nome,))
+        r=cur.fetchone()
+        if not r: cur.close();conn.close(); return jsonify({"errore":f"non trovato: {nome or pid}"}),404
+        dd = r[1] if isinstance(r[1],dict) else json.loads(r[1])
+        if tipo=="segnale":
+            punto={"tipo":"segnale","bersaglio":None,"segnale":segnale,"evidence":[],"_corretto_a_mano":True}
+        elif tipo=="misto":
+            punto={"tipo":"misto","bersaglio":{"valore":valore,"unita":unita},"segnale":segnale,"evidence":[],"_corretto_a_mano":True}
+        else:
+            punto={"tipo":"bersaglio","bersaglio":{"valore":valore,"unita":unita},"segnale":"","evidence":[],"_corretto_a_mano":True}
+        dd["il_punto"]=punto
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),r[0]))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"ok":True,"nome":nome or r[0],"nuovo_punto":punto})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
