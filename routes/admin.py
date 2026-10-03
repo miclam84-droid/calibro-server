@@ -13959,3 +13959,64 @@ def admin_ricuratela_dry_run():
         return jsonify({"dry_run":True, "nota":"NON salvato - mostra cosa farebbe. Michele verifica.", "casi":risultati})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/ricuratela/converti-punto")
+def admin_ricuratela_converti_punto():
+    """RI-CURATELA CONSERVATIVA: converte il_punto dei bersagli CHIARAMENTE finti in segnale.
+    Default = DRY-RUN (mostra, non salva). Con ?applica=1 scrive nel db.
+    REGOLA (contratto epistemico): converte SOLO i casi chiaramente non-scientifici (tempi di cottura,
+    temperatura acqua/forno generica). Nel DUBBIO NON tocca. NON inventa segnali: marca per revisione."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    applica = request.args.get("applica") == "1"
+    limite = int(request.args.get("n", 50))
+    # variabili CHIARAMENTE non-bersaglio (tempo, temp acqua/forno generica)
+    VAR_FINTE = ["tempo di cottura","tempo di","cottura del","temperatura dell'acqua","temperatura dell acqua",
+                 "temperatura del forno","riposo della carne","riposo","tempo di riposo"]
+    # variabili VERE (soglia fisica) - NON toccare
+    VAR_VERE = ["idrataz","coagulaz","estrazione","gelatinizz","emulsion","fermentaz","diluizione","temperaggio",
+                "cristallizz","denaturaz","brix","abv","overrun"]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
+                       AND data->'bersaglio'->>'valore' IS NOT NULL
+                       AND data->'bersaglio'->>'valore' <> '' LIMIT %s""", (limite,))
+        righe = cur.fetchall()
+        convertiti=[]; tenuti=0; saltati=0
+        for pid, nome, data in righe:
+            dd = data if isinstance(data,dict) else json.loads(data)
+            if dd.get("il_punto"):  # gia convertito
+                saltati+=1; continue
+            var = str(dd.get("variabile_critica","")).lower()
+            bers = dd.get("bersaglio",{}) or {}
+            val = str(bers.get("valore","")); unita=str(bers.get("unita",""))
+            e_vero = any(v in var for v in VAR_VERE)
+            e_finto = any(v in var for v in VAR_FINTE) or "min" in unita.lower()
+            if e_vero and not e_finto:
+                # bersaglio VERO -> il_punto tipo bersaglio (tiene)
+                nuovo_punto = {"tipo":"bersaglio","bersaglio":bers,"segnale":"","evidence":[]}
+                tenuti+=1
+                azione="TIENE (bersaglio vero)"
+            elif e_finto:
+                # FINTO -> NON invento segnale, marco per revisione (segnale da trovare dalla fonte)
+                nuovo_punto = {"tipo":"segnale","bersaglio":None,
+                               "segnale":"[DA VERIFICARE: il controllo di questa preparazione e osservazionale, non "
+                                         f"'{val}{unita}'. Serve il segnale vero dalla fonte]","evidence":[],
+                               "_ex_bersaglio_finto":f"{val}{unita} ({var[:30]})"}
+                azione=f"CONVERTE da {val}{unita} a segnale-da-verificare"
+                convertiti.append({"nome":nome,"da":f"{val}{unita}","var":var[:30]})
+            else:
+                saltati+=1; continue  # nel dubbio non tocca
+            if applica:
+                dd["il_punto"]=nuovo_punto
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid))
+                conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN (non salvato)",
+                        "convertiti_finti":len(convertiti),"tenuti_veri":tenuti,"saltati_dubbi":saltati,
+                        "esempi_convertiti":convertiti[:15]})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
