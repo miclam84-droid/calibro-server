@@ -6249,7 +6249,11 @@ def grafo_ego(ingrediente):
         vicini = []
         fenomeni_collegati = []
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT id, data FROM nodes WHERE LOWER(name)=LOWER(%s) AND type='Ingrediente' LIMIT 1", (ingrediente,))
+        # cerco l'ingrediente: nome esatto, poi che contiene, poi per id
+        cur.execute("""SELECT id, data FROM nodes WHERE type='Ingrediente' AND
+                       (LOWER(name)=LOWER(%s) OR LOWER(name) LIKE LOWER(%s) OR id LIKE %s)
+                       ORDER BY LENGTH(name) LIMIT 1""",
+                    (ingrediente, f"%{ingrediente}%", f"ing-{ingrediente.lower()}%"))
         row = cur.fetchone()
         if row:
             ing_id = row[0]
