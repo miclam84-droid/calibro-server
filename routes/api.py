@@ -5699,8 +5699,16 @@ def lista_protocolli():
         protocolli = []
         for pid, nome, data in cur.fetchall():
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            ip = dd.get("il_punto") or {}
             protocolli.append({
                 "id": pid, "nome": nome, "disciplina": dd.get("disciplina",""),
+                # nuovi
+                "cosa_voglio_ottenere": dd.get("cosa_voglio_ottenere") or dd.get("ipotesi",""),
+                "il_punto": ip,
+                "tipo_punto": ip.get("tipo",""),
+                "ingredienti": dd.get("ingredienti") or dd.get("reagenti",[]),
+                "n_ingredienti": len(dd.get("ingredienti") or dd.get("reagenti",[])),
+                # vecchi (compatibilita)
                 "ipotesi": dd.get("ipotesi",""),
                 "variabile_critica": dd.get("variabile_critica",""),
                 "bersaglio": dd.get("bersaglio",{}),
