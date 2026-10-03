@@ -13897,3 +13897,77 @@ def admin_completa_strati_mancanti():
         return jsonify({"schede_completate":fatti,"ancora_incomplete":rimasti})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/admin/ricuratela/dry-run")
+def admin_ricuratela_dry_run():
+    """DRY-RUN AVVERSARIALE (contratto epistemico): Evidence Resolver + Pertinence + Classifier sui casi test.
+    NON salva - mostra cosa FAREBBE. L'AI VERIFICA e ATTRIBUISCE, non inventa. Michele e' il gate."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+        return jsonify({"errore": "non autorizzato"}), 403
+    # i 10 casi avversariali REALI
+    CASI = [
+        "prot-acqua-pazza-alle-vongole",   # numero sospetto (90C) + fenomeni sbagliati -> deve dare segnale o D
+        "prot-vino-bianco",                # vino: dominio giusto del fenomeno
+        "prot-bagel-integrale",            # 75% idratazione: numero VERO -> deve tenerlo (A)
+        "prot-baci-di-dama-al-pistacchio", # 15min tempo cottura: NON e' bersaglio scientifico -> B o rimuovi
+        "prot-acqua-pazza-al-pomodoro",    # senza bersaglio -> non deve inventarne uno
+        "prot-amaretto-sour-rivisitato",   # 3 fenomeni -> deve scegliere la relazione pertinente
+        "prot-anatra-alla-pechinese-rivisitata", # temp forno senza valore -> D o segnale
+    ]
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        risultati = []
+        for pid in CASI:
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (pid,))
+            row = cur.fetchone()
+            if not row: 
+                risultati.append({"preparazione":pid, "errore":"non trovata"}); continue
+            dd = row[0] if isinstance(row[0],dict) else json.loads(row[0])
+            nome = dd.get("nome","")
+            bers = dd.get("bersaglio",{}) or {}
+            val = str(bers.get("valore","")).strip()
+            unita = str(bers.get("unita","")).strip()
+            var = str(dd.get("variabile_critica","")).lower()
+            fenomeni = dd.get("fenomeni",[])
+            fen_nomi = [f.get("nome","") if isinstance(f,dict) else str(f) for f in fenomeni]
+            # FASE 1 - EVIDENCE RESOLVER: il fenomeno ha evidenza (bersaglio/segnale con fonte)?
+            evidenza_trovata = None
+            for f in fenomeni:
+                fid = f.get("fenomeno_id") if isinstance(f,dict) else None
+                if fid:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s", (fid,))
+                    fr = cur.fetchone()
+                    if fr:
+                        fdd = fr[0] if isinstance(fr[0],dict) else json.loads(fr[0])
+                        fbers = fdd.get("numero_bersaglio") or fdd.get("bersaglio")
+                        if fbers: evidenza_trovata = {"fenomeno":f.get("nome"),"evidenza":str(fbers)[:60]}
+            # FASE 2 - PERTINENCE: il numero attuale e' coerente col fenomeno?
+            # euristica dry-run: tempo (min) = sospetto; temp acqua/forno generica = sospetta; idrataz/coagulaz = ok
+            sospetto = ("min" in unita.lower() or "temperatura dell" in var or "temperatura del forno" in var or
+                        "cottura del" in var or "tempo di" in var)
+            vero = any(v in var for v in ["idrataz","coagulaz","estrazione","gelatinizz","emulsion","fermentaz","diluizione"])
+            # FASE 3 - CLASSIFIER + AZIONE (dry-run)
+            if not val:
+                classif = "D-assente"; azione = "nessun bersaglio: cercare segnale dal fenomeno, altrimenti D. NON inventare numero."
+            elif vero and not sospetto:
+                classif = "A"; azione = f"TIENE il bersaglio {val}{unita} (variabile scientifica vera, pertinente)"
+            elif sospetto:
+                classif = "B/D"; azione = f"RIMUOVE {val}{unita} (non e' bersaglio scientifico: e' {var}). Cerca SEGNALE dal fenomeno. Se non c'e -> D. NON inventare."
+            else:
+                classif = "DA-VERIFICARE"; azione = f"{val}{unita} incerto: verificare pertinenza col fenomeno {fen_nomi}"
+            risultati.append({
+                "preparazione": nome,
+                "bersaglio_attuale": f"{val}{unita}" if val else "(nessuno)",
+                "variabile": var[:40],
+                "fenomeni_collegati": fen_nomi,
+                "evidenza_dal_fenomeno": evidenza_trovata or "nessuna evidenza pertinente trovata",
+                "classificazione": classif,
+                "AZIONE_PROPOSTA": azione
+            })
+        cur.close(); conn.close()
+        return jsonify({"dry_run":True, "nota":"NON salvato - mostra cosa farebbe. Michele verifica.", "casi":risultati})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
