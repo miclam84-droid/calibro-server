@@ -6296,3 +6296,64 @@ def grafo_ego(ingrediente):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/cambio-conseguenza/<slug>")
+def cambio_conseguenza(slug):
+    """CAMBIO -> CONSEGUENZA (il motore didattico, contratto epistemico). Data una preparazione o un fenomeno,
+    restituisce 'se cambi X -> succede Y' SOLO dai dati VERI (causalita del fenomeno). Non inventa:
+    ogni relazione ha lo stato (verificato/supportato) dal peso della causalita. Dove non sa -> 'sperimentale'."""
+    from flask import jsonify
+    import os, psycopg2, json
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        # trovo il nodo (preparazione o fenomeno)
+        cur.execute("SELECT id, data FROM nodes WHERE id=%s OR LOWER(name) LIKE LOWER(%s) LIMIT 1", (slug, f"%{slug}%"))
+        row = cur.fetchone()
+        if not row:
+            cur.close(); conn.close()
+            return jsonify({"errore": "non trovato"}), 404
+        dd = row[1] if isinstance(row[1], dict) else json.loads(row[1])
+        relazioni = []
+        # raccolgo la causalita: direttamente dal nodo, o dai fenomeni collegati
+        caus_sources = []
+        if dd.get("causalita"): caus_sources.append(dd["causalita"])
+        for f in dd.get("fenomeni", []):
+            fid = f.get("fenomeno_id") if isinstance(f, dict) else None
+            if fid:
+                cur.execute("SELECT data FROM nodes WHERE id=%s", (fid,))
+                fr = cur.fetchone()
+                if fr:
+                    fdd = fr[0] if isinstance(fr[0], dict) else json.loads(fr[0])
+                    if fdd.get("causalita"): caus_sources.append(fdd["causalita"])
+        # trasformo gli acceleranti/rallentanti in "se cambi X -> Y" con lo stato
+        PESO_STATO = {"alto": "verificato", "medio": "supportato", "basso": "supportato"}
+        for caus in caus_sources:
+            if not isinstance(caus, dict): continue
+            for acc in caus.get("acceleranti", [])[:5]:
+                if isinstance(acc, dict):
+                    dir_txt = "aumenta" if acc.get("direzione")=="su" else "riduce"
+                    relazioni.append({
+                        "se_cambio": acc.get("fattore",""),
+                        "conseguenza": f"{dir_txt} il fenomeno",
+                        "forza": acc.get("peso","medio"),
+                        "stato": PESO_STATO.get(acc.get("peso","medio"), "supportato")
+                    })
+            for ral in caus.get("rallentanti", [])[:5]:
+                if isinstance(ral, dict):
+                    relazioni.append({
+                        "se_cambio": ral.get("fattore",""),
+                        "conseguenza": "rallenta/ostacola il fenomeno",
+                        "forza": ral.get("peso","medio"),
+                        "stato": PESO_STATO.get(ral.get("peso","medio"), "supportato")
+                    })
+        cur.close(); conn.close()
+        return jsonify({
+            "preparazione": dd.get("nome", slug),
+            "relazioni": relazioni,
+            "nota": ("queste relazioni vengono dalla scienza del fenomeno (verificate/supportate). "
+                     "Per cambi non elencati: provalo e registra nel Quaderno (sperimentale)."),
+            "se_vuoto": "nessuna relazione verificata: Matter non inventa. Prova e misura."
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
