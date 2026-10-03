@@ -14362,3 +14362,26 @@ def admin_importa_canonici():
         return jsonify({"creati":creati,"gia_presenti":gia,"totale":len(creati),"errori":errori})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/test-import-uno")
+def admin_test_import_uno():
+    """Test: importa UN canonico semplice per isolare l'errore 500."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        data={"nome":"Roux","kind":"protocollo","tipo":"canonico","disciplina":"cucina",
+              "cosa_voglio_ottenere":"preparare un roux","ingredienti":[{"nome":"burro","quantita":"50g"}],
+              "il_punto":{"tipo":"segnale","bersaglio":None,"segnale":"cuoci la farina"},
+              "fenomeni":[{"nome":"gelatinizzazione","fenomeno_id":None}],"metodo":"test",
+              "verificato":True,"classificazione_qualita":"A"}
+        cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Protocollo',%s) ON CONFLICT (id) DO NOTHING",
+                    ("ric-base-roux-test","Roux Test",json.dumps(data,ensure_ascii=False)))
+        conn.commit()
+        cur.close();conn.close()
+        return jsonify({"ok":True,"nota":"import singolo riuscito"})
+    except Exception as e:
+        return jsonify({"errore_vero":str(e)})
