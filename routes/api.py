@@ -6357,3 +6357,57 @@ def cambio_conseguenza(slug):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/twist", methods=["POST"])
+def twist_dal_canone():
+    """TWIST dal canone (corridoio ESPLORA). Parti da una preparazione, sostituisci un ingrediente,
+    Matter mostra COSA CAMBIA: il profilo prima/dopo + le connessioni del nuovo ingrediente + cosa compensare.
+    Usa i dati veri (composer + grafo). Non inventa: dove non sa -> 'provalo e registra'.
+    Body: {ingredienti:[...], sostituisci:'gin', con:'mezcal'}"""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    try:
+        body = request.get_json(force=True)
+        ingredienti = body.get("ingredienti", [])
+        sostituisci = body.get("sostituisci", "")
+        con = body.get("con", "")
+        if not ingredienti or not sostituisci or not con:
+            return jsonify({"errore": "servono: ingredienti[], sostituisci, con"}), 400
+        # profilo PRIMA
+        base = request.host_url.rstrip('/')
+        H = {"Content-Type":"application/json"}
+        def profilo(ings):
+            try:
+                rq = ur.Request(f"{base}/v1/composer/prossimi", data=json.dumps({"ingredienti":ings}).encode(), headers=H)
+                return json.loads(ur.urlopen(rq, timeout=12).read().decode()).get("profilo_sensoriale", {})
+            except: return {}
+        prof_prima = profilo(ingredienti)
+        nuovi = [con if i.lower()==sostituisci.lower() else i for i in ingredienti]
+        prof_dopo = profilo(nuovi)
+        # cosa cambia nel profilo (le differenze)
+        cambiamenti = []
+        for dim in set(list(prof_prima.keys()) + list(prof_dopo.keys())):
+            v1 = prof_prima.get(dim, 0); v2 = prof_dopo.get(dim, 0)
+            if abs(v2 - v1) >= 0.5:
+                cambiamenti.append({"dimensione": dim, "prima": v1, "dopo": v2,
+                                    "verso": "aumenta" if v2 > v1 else "diminuisce"})
+        # le connessioni del nuovo ingrediente (dal grafo-ego)
+        connessioni_nuovo = []
+        try:
+            rq = ur.Request(f"{base}/v1/grafo-ego/{con}")
+            ego = json.loads(ur.urlopen(rq, timeout=10).read().decode())
+            connessioni_nuovo = [v.get("nome") for v in ego.get("vicini", [])[:5]]
+        except: pass
+        return jsonify({
+            "twist": f"{sostituisci} -> {con}",
+            "ingredienti_nuovi": nuovi,
+            "cosa_cambia": cambiamenti if cambiamenti else [],
+            "connessioni_del_nuovo": connessioni_nuovo,
+            "nota": ("il profilo mostra cosa cambia davvero (dai composti). " +
+                     ("Prova e registra nel Quaderno com'e' venuto." if not cambiamenti else
+                      "Guarda cosa aumenta/diminuisce e bilancia se serve.")),
+            "stato": "supportato" if cambiamenti else "sperimentale"
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
