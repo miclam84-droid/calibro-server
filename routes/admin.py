@@ -14254,7 +14254,8 @@ def admin_ricura_ricette_scienza():
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
         # le ricette stanno nella TABELLA 'ricette', non nei nodes
-        cur.execute("SELECT id,nome,ingredienti,procedimento,punto_critico FROM ricette WHERE punto_critico IS NOT NULL AND TRIM(punto_critico)<>''")
+        MARK = "\u200b"  # zero-width space: marca le curate, invisibile all'utente, rimosso dall'endpoint pulizia
+        cur.execute("SELECT id,nome,ingredienti,procedimento,punto_critico FROM ricette WHERE punto_critico IS NOT NULL AND TRIM(punto_critico)<>'' AND LEFT(punto_critico,1)<>%s",(MARK,))
         righe=cur.fetchall()
         curati=[]; saltati=0; processati=0
         for rid,nome,ingr,proc,pc in righe:
@@ -14265,15 +14266,33 @@ def admin_ricura_ricette_scienza():
                 saltati+=1; continue
             processati+=1
             r=ricura(nome,ingr,proc,pc,{})
-            if not r: continue
-            nuovo_pc=r.get("punto_critico","").strip()
+            nuovo_pc=(r.get("punto_critico","").strip() if r else "")
             if nuovo_pc:
                 curati.append({"nome":nome,"vecchio":str(pc)[:50],"nuovo":nuovo_pc[:60]})
                 if applica:
-                    cur.execute("UPDATE ricette SET punto_critico=%s WHERE id=%s",(nuovo_pc,rid))
-                    conn.commit()
+                    cur.execute("UPDATE ricette SET punto_critico=%s WHERE id=%s",(MARK+nuovo_pc,rid)); conn.commit()
+            elif applica:
+                cur.execute("UPDATE ricette SET punto_critico=%s WHERE id=%s",(MARK+str(pc),rid)); conn.commit()
         cur.close();conn.close()
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","curati":len(curati),
                         "processati":processati,"saltati_non_sospetti":saltati,"esempi":curati[:12]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/ricura-ricette-pulisci-marcatore")
+def admin_ricura_pulisci_marcatore():
+    """Rimuove il marcatore zero-width dalle ricette curate (pulizia finale)."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}),403
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
+        MARK="\u200b"
+        cur.execute("UPDATE ricette SET punto_critico=LTRIM(punto_critico,%s) WHERE LEFT(punto_critico,1)=%s",(MARK,MARK))
+        n=cur.rowcount
+        conn.commit();cur.close();conn.close()
+        return jsonify({"puliti":n})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
