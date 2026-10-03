@@ -14020,3 +14020,85 @@ def admin_ricuratela_converti_punto():
                         "esempi_convertiti":convertiti[:15]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/ricuratela/converti-punto-ai")
+def admin_ricuratela_converti_punto_ai():
+    """RI-CURATELA v2 (contratto epistemico): un'AI giudica OGNI bersaglio sospetto caso per caso.
+    Domanda giusta: 'questo numero e' un controllo scientifico CRITICO di questa preparazione o un parametro
+    generico?'. 3 esiti: TIENE (bersaglio vero) / CONVERTE (finto -> segnale da verificare) / DUBBIO (-> Michele).
+    REGOLA FERREA: nel dubbio NON tocca. NON inventa segnali.
+    Default DRY-RUN. ?applica=1 per scrivere. ?n=N quante."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    applica = request.args.get("applica")=="1"
+    limite = int(request.args.get("n", 30))
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key AI"}), 500
+    def giudica(nome, disciplina, variabile, valore, unita):
+        """L'AI giudica: il bersaglio e' un controllo scientifico critico o un parametro generico?"""
+        dom = (f"Preparazione: '{nome}' (disciplina: {disciplina}). "
+               f"Ha come 'bersaglio' dichiarato: {valore}{unita}, sulla variabile '{variabile}'. "
+               f"DOMANDA: questo numero e' un CONTROLLO SCIENTIFICO CRITICO di questa preparazione "
+               f"(una soglia fisica che se sbagliata rovina il risultato, misurabile con strumento, es. "
+               f"coagulazione tuorlo 65C, idratazione impasto 70%, acqua per lievito 38C, estrazione espresso 25s) "
+               f"OPPURE e' un PARAMETRO GENERICO non-critico (un tempo di cottura qualsiasi, una temperatura "
+               f"forno standard, un tempo di riposo, dove il vero controllo e' OSSERVARE un segnale)? "
+               f"Rispondi SOLO JSON: {{\"tipo\":\"bersaglio\"|\"segnale\"|\"dubbio\", \"motivo\":\"...breve...\", "
+               f"\"segnale_suggerito\":\"...se tipo=segnale, COSA osservare, SOLO se certo dalla pratica culinaria, "
+               f"altrimenti stringa vuota...\"}}")
+        pl = {"model":"gpt-4o-mini","max_tokens":200,"temperature":0,
+              "messages":[{"role":"system","content":"Sei un esperto di scienza culinaria rigoroso. Distingui un "
+                           "controllo scientifico critico (soglia fisica misurabile e decisiva) da un parametro "
+                           "generico. Nel dubbio rispondi 'dubbio'. NON inventare segnali: suggerisci un segnale "
+                           "SOLO se e' conoscenza culinaria consolidata e certa."},
+                          {"role":"user","content":dom}]}
+        try:
+            rq = ur.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(pl).encode(),
+                            headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx = json.loads(ur.urlopen(rq,timeout=30).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0))
+        except: pass
+        return {"tipo":"dubbio","motivo":"errore valutazione","segnale_suggerito":""}
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("""SELECT id,name,data FROM nodes WHERE type='Protocollo'
+                       AND data->'bersaglio'->>'valore' IS NOT NULL
+                       AND data->'bersaglio'->>'valore'<>'' AND data->'il_punto' IS NULL LIMIT %s""",(limite,))
+        righe=cur.fetchall()
+        tenuti=[]; convertiti=[]; dubbi=[]
+        for pid,nome,data in righe:
+            dd=data if isinstance(data,dict) else json.loads(data)
+            bers=dd.get("bersaglio",{}) or {}
+            val=str(bers.get("valore","")); unita=str(bers.get("unita",""))
+            var=str(dd.get("variabile_critica",""))
+            disc=dd.get("disciplina","")
+            g=giudica(nome,disc,var,val,unita)
+            tipo=g.get("tipo","dubbio")
+            if tipo=="bersaglio":
+                punto={"tipo":"bersaglio","bersaglio":bers,"segnale":"","evidence":[]}
+                tenuti.append({"nome":nome,"val":f"{val}{unita}","motivo":g.get("motivo","")[:60]})
+            elif tipo=="segnale":
+                seg=g.get("segnale_suggerito","").strip()
+                if seg:
+                    punto={"tipo":"segnale","bersaglio":None,"segnale":seg,"evidence":[],"_ex_bersaglio":f"{val}{unita}"}
+                else:
+                    punto={"tipo":"segnale","bersaglio":None,"segnale":f"[DA VERIFICARE dalla fonte - non era {val}{unita}]","evidence":[],"_ex_bersaglio":f"{val}{unita}"}
+                convertiti.append({"nome":nome,"da":f"{val}{unita}","a_segnale":seg or "[da verificare]","motivo":g.get("motivo","")[:60]})
+            else:
+                dubbi.append({"nome":nome,"val":f"{val}{unita}","motivo":g.get("motivo","")[:60]})
+                continue  # dubbio -> non tocca
+            if applica:
+                dd["il_punto"]=punto
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid))
+                conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN",
+                        "tenuti_veri":len(tenuti),"convertiti_finti":len(convertiti),"dubbi_a_michele":len(dubbi),
+                        "esempi_tenuti":tenuti[:6],"esempi_convertiti":convertiti[:10],"esempi_dubbi":dubbi[:6]})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
