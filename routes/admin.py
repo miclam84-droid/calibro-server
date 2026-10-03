@@ -14253,37 +14253,27 @@ def admin_ricura_ricette_scienza():
         return None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
-        # prendo ricette con punto_critico sospetto (o tutte)
-        cur.execute("""SELECT id,name,data FROM nodes WHERE type IN ('Ricetta','Protocollo')
-                       AND data->>'punto_critico' IS NOT NULL AND data->'il_punto_ricetta_curato' IS NULL
-                       LIMIT %s""",(limite*3,))
+        # le ricette stanno nella TABELLA 'ricette', non nei nodes
+        cur.execute("SELECT id,nome,ingredienti,procedimento,punto_critico FROM ricette WHERE punto_critico IS NOT NULL AND TRIM(punto_critico)<>''")
         righe=cur.fetchall()
         curati=[]; saltati=0; processati=0
-        for pid,nome,data in righe:
+        for rid,nome,ingr,proc,pc in righe:
             if processati>=limite: break
-            dd=data if isinstance(data,dict) else json.loads(data)
-            pc=str(dd.get("punto_critico","")).lower()
-            sospetto=any(s in pc for s in SOSPETTI)
+            pcl=str(pc).lower()
+            sospetto=any(s in pcl for s in SOSPETTI)
             if solo_sospette and not sospetto:
                 saltati+=1; continue
             processati+=1
-            r=ricura(nome,dd.get("ingredienti",[]),dd.get("procedimento",[]),dd.get("punto_critico",""),dd.get("perche_funziona",{}))
+            r=ricura(nome,ingr,proc,pc,{})
             if not r: continue
             nuovo_pc=r.get("punto_critico","").strip()
-            nuovo_perche=r.get("perche","").strip()
             if nuovo_pc:
-                curati.append({"nome":nome,"vecchio":str(dd.get("punto_critico",""))[:50],"nuovo":nuovo_pc[:60]})
+                curati.append({"nome":nome,"vecchio":str(pc)[:50],"nuovo":nuovo_pc[:60]})
                 if applica:
-                    dd["punto_critico"]=nuovo_pc
-                    if isinstance(dd.get("perche_funziona"),dict):
-                        dd["perche_funziona"]["spiegazione"]=nuovo_perche
-                    else:
-                        dd["perche_funziona"]={"spiegazione":nuovo_perche}
-                    dd["il_punto_ricetta_curato"]=True
-                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid))
+                    cur.execute("UPDATE ricette SET punto_critico=%s WHERE id=%s",(nuovo_pc,rid))
                     conn.commit()
         cur.close();conn.close()
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","curati":len(curati),
-                        "saltati_non_sospetti":saltati,"esempi":curati[:12]})
+                        "processati":processati,"saltati_non_sospetti":saltati,"esempi":curati[:12]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
