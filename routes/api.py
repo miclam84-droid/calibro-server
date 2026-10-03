@@ -6425,3 +6425,59 @@ def twist_dal_canone():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/v1/menu/filo", methods=["POST"])
+def menu_filo_conduttore():
+    """FILO CONDUTTORE del menu (il plus: 10 piatti coerenti). Dato un TEMA e le preparazioni del menu,
+    verifica la coerenza col filo e suggerisce cosa aggiungere per mantenerlo. Il filo puo' essere:
+    ingrediente / fenomeno / tecnica / territorio(disciplina). Usa dati veri.
+    Body: {tema:'pomodoro'|'Maillard'|'cucina napoletana', tipo_filo:'ingrediente'|'fenomeno'|'territorio',
+           preparazioni:[id1,id2...]}"""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    try:
+        body = request.get_json(force=True)
+        tema = body.get("tema", "").strip()
+        tipo_filo = body.get("tipo_filo", "ingrediente")
+        preparazioni = body.get("preparazioni", [])
+        if not tema:
+            return jsonify({"errore": "serve un tema"}), 400
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        coerenti = []; fuori_filo = []
+        for pid in preparazioni:
+            cur.execute("SELECT name, data FROM nodes WHERE id=%s", (pid,))
+            r = cur.fetchone()
+            if not r: continue
+            nome = r[0]
+            dd = r[1] if isinstance(r[1], dict) else json.loads(r[1])
+            # verifico se la preparazione e' nel filo
+            nel_filo = False
+            if tipo_filo == "ingrediente":
+                ings = [str(i.get("nome","") if isinstance(i,dict) else i).lower() for i in (dd.get("ingredienti") or dd.get("reagenti") or [])]
+                nel_filo = any(tema.lower() in i for i in ings)
+            elif tipo_filo == "fenomeno":
+                fens = [str(f.get("nome","") if isinstance(f,dict) else f).lower() for f in dd.get("fenomeni",[])]
+                nel_filo = any(tema.lower() in f for f in fens)
+            elif tipo_filo == "territorio":
+                nel_filo = tema.lower() in str(dd.get("disciplina","")).lower()
+            (coerenti if nel_filo else fuori_filo).append(nome)
+        # suggerimenti: preparazioni col tema, non ancora nel menu
+        suggeriti = []
+        if tipo_filo == "ingrediente":
+            cur.execute("""SELECT name FROM nodes WHERE type='Protocollo'
+                           AND data::text ILIKE %s LIMIT 6""", (f"%{tema}%",))
+            suggeriti = [x[0] for x in cur.fetchall() if x[0] not in coerenti]
+        cur.close(); conn.close()
+        return jsonify({
+            "tema": tema, "tipo_filo": tipo_filo,
+            "coerenti_col_filo": coerenti,
+            "fuori_filo": fuori_filo,
+            "coerenza": f"{len(coerenti)}/{len(coerenti)+len(fuori_filo)}" if (coerenti or fuori_filo) else "menu vuoto",
+            "suggeriti_per_il_filo": suggeriti[:5],
+            "nota": ("Stai costruendo una carta attorno a '" + tema + "'. " +
+                     ("Tutte le preparazioni sono coerenti col filo." if not fuori_filo else
+                      f"{len(fuori_filo)} preparazioni escono dal filo: valuta se tenerle o sostituirle."))
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
