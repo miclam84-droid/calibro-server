@@ -6374,31 +6374,45 @@ def twist_dal_canone():
         con = body.get("con", "")
         if not ingredienti or not sostituisci or not con:
             return jsonify({"errore": "servono: ingredienti[], sostituisci, con"}), 400
-        # profilo PRIMA
-        base = request.host_url.rstrip('/')
-        H = {"Content-Type":"application/json"}
+        # calcolo profilo DIRETTO dal db (no self-HTTP)
+        P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         def profilo(ings):
-            try:
-                rq = ur.Request(f"{base}/v1/composer/prossimi", data=json.dumps({"ingredienti":ings}).encode(), headers=H)
-                return json.loads(ur.urlopen(rq, timeout=12).read().decode()).get("profilo_sensoriale", {})
-            except: return {}
+            prof = {k: 0.0 for k in P}; n = 0
+            for s in ings:
+                cur.execute("""SELECT data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                               AND (LOWER(name)=LOWER(%s) OR id=%s) ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (s, s))
+                r = cur.fetchone()
+                if not r: continue
+                dd = r[0] if isinstance(r[0], dict) else json.loads(r[0])
+                prop = dd.get("proprieta")
+                if prop:
+                    n += 1
+                    for k in P: prof[k] += float(prop.get(k, 0))
+            if n:
+                for k in P: prof[k] = round(prof[k]/n, 1)
+            return prof
         prof_prima = profilo(ingredienti)
         nuovi = [con if i.lower()==sostituisci.lower() else i for i in ingredienti]
         prof_dopo = profilo(nuovi)
-        # cosa cambia nel profilo (le differenze)
         cambiamenti = []
-        for dim in set(list(prof_prima.keys()) + list(prof_dopo.keys())):
+        for dim in P:
             v1 = prof_prima.get(dim, 0); v2 = prof_dopo.get(dim, 0)
             if abs(v2 - v1) >= 0.5:
                 cambiamenti.append({"dimensione": dim, "prima": v1, "dopo": v2,
                                     "verso": "aumenta" if v2 > v1 else "diminuisce"})
-        # le connessioni del nuovo ingrediente (dal grafo-ego)
+        # connessioni del nuovo ingrediente (query diretta, no self-HTTP)
         connessioni_nuovo = []
-        try:
-            rq = ur.Request(f"{base}/v1/grafo-ego/{con}")
-            ego = json.loads(ur.urlopen(rq, timeout=10).read().decode())
-            connessioni_nuovo = [v.get("nome") for v in ego.get("vicini", [])[:5]]
-        except: pass
+        cur.execute("""SELECT id FROM nodes WHERE type='Ingrediente' AND
+                       (LOWER(name)=LOWER(%s) OR LOWER(name) LIKE LOWER(%s)) ORDER BY LENGTH(name) LIMIT 1""",
+                    (con, f"%{con}%"))
+        rr = cur.fetchone()
+        if rr:
+            cur.execute("""SELECT DISTINCT n2.name FROM edges e JOIN nodes n2 ON (n2.id=e.to_id OR n2.id=e.from_id)
+                           WHERE (e.from_id=%s OR e.to_id=%s) AND n2.type='Ingrediente' AND n2.id<>%s LIMIT 5""",
+                        (rr[0], rr[0], rr[0]))
+            connessioni_nuovo = [x[0] for x in cur.fetchall()]
+        cur.close(); conn.close()
         return jsonify({
             "twist": f"{sostituisci} -> {con}",
             "ingredienti_nuovi": nuovi,
