@@ -994,6 +994,25 @@ def _fenomeno_a_scheda(dd, nome, nid):
         "livello_tassonomia": dd.get("livello_tassonomia") or "",
         "is_fenomeno_madre": dd.get("is_fenomeno_madre", False),
         "manifestazione_di": dd.get("manifestazione_di") or "",
+        # I 3 LIVELLI (faccio/capisco/approfondisco) - raggruppa i campi per il frontend
+        "livelli": {
+            "faccio": {
+                "il_punto": cs.get("punto_critico") or dd.get("punto_critico") or "",
+                "numero_bersaglio": dd.get("numero_bersaglio") or cs.get("numero_bersaglio") or "",
+                "cosa_osservare": cs.get("esperienza") or "",
+            },
+            "capisco": {
+                "principio": cs.get("principio") or dd.get("principio") or "",
+                "perche": (cs.get("spiegazione") or dd.get("scheda") or "")[:300],
+                "errori_comuni": dd.get("errori_comuni") or cs.get("errori_comuni") or "",
+            },
+            "approfondisco": {
+                "causalita": dd.get("causalita") or None,
+                "evidence": dd.get("evidence") or [],
+                "fonti": (dd.get("provenienza",{}) or {}).get("fonti") or [],
+                "strumento": dd.get("strumento") or "",
+            },
+        },
     }
 
 @bp.route("/v1/scheda-scienza/<slug>", methods=["GET"])
