@@ -85,6 +85,24 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .vista{display:none}
 .vista.on{display:block}
 
+/* "Il punto" come segnale (frase, non numero) */
+.punto-seg{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:14px;margin-bottom:18px}
+.punto-seg-lab{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-bottom:6px}
+.punto-seg-txt{font-family:var(--serif);font-size:17px;line-height:1.4;color:#fff}
+/* versione su fondo chiaro (Banco) */
+.bn-scala .punto-seg, #mis-host .punto-seg{background:var(--carta);border-color:var(--linea)}
+.bn-scala .punto-seg-txt, #mis-host .punto-seg-txt{color:var(--ink)}
+
+/* ═══ ONBOARDING (dove lavori? → azione contestuale) ═══ */
+.onb{position:fixed;inset:0;background:var(--carta);z-index:300;display:flex;flex-direction:column;justify-content:center;padding:32px 24px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0))}
+.onb-logo{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-bottom:40px}
+.onb-dom{font-family:var(--serif);font-weight:600;font-size:28px;color:var(--ink);line-height:1.15;margin-bottom:8px}
+.onb-sub{font-family:var(--ui);font-size:15px;color:var(--ink-soft);margin-bottom:28px}
+.onb-opts{display:flex;flex-direction:column;gap:10px}
+.onb-opt{text-align:left;border:1.5px solid var(--linea);border-radius:8px;padding:16px 18px;font-family:var(--ui);font-size:16px;color:var(--ink);background:var(--carta);transition:.15s}
+.onb-opt:active{border-color:var(--rame);background:rgba(184,96,58,.04)}
+.onb-skip{margin-top:24px;font-family:var(--ui);font-size:13px;color:var(--ink-soft);text-align:center;background:none}
+
 /* ═══════════ ATLANTE (editoriale — pubblicazione scientifica) ═══════════ */
 .at-head{margin:28px 0 8px}
 .at-titolo{font-family:var(--serif);font-weight:600;font-size:34px;color:var(--ink);letter-spacing:-.02em;line-height:1}
@@ -331,6 +349,22 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 </style>
 </head>
 <body>
+<!-- ONBOARDING (prima apertura) -->
+<div class="onb" id="onb" style="display:none">
+  <div class="onb-logo">Matter</div>
+  <div class="onb-dom">Dove lavori?</div>
+  <div class="onb-sub">Matter si mette al tuo banco.</div>
+  <div class="onb-opts">
+    <button class="onb-opt" onclick="onbScegli('bar')">Bar</button>
+    <button class="onb-opt" onclick="onbScegli('cucina')">Cucina</button>
+    <button class="onb-opt" onclick="onbScegli('panificazione')">Panificazione</button>
+    <button class="onb-opt" onclick="onbScegli('pasticceria')">Pasticceria</button>
+    <button class="onb-opt" onclick="onbScegli('gelateria')">Gelateria</button>
+    <button class="onb-opt" onclick="onbScegli('altro')">Altro</button>
+  </div>
+  <button class="onb-skip" onclick="onbChiudi()">Salta per ora</button>
+</div>
+
 <header class="hd">
   <div class="hd-logo">Matter</div>
   <div class="hd-right">
@@ -450,10 +484,29 @@ function scala(bers,label){
   var ticks='';for(var i=1;i<10;i++)ticks+='<div class="scala-tick" style="left:'+(i*10)+'%"></div>';
   var valTxt=nums.length>1?(vmin+'–'+vmax):String(vmin);
   var pos=centro<14?'left:'+(winL+winW)+'%;transform:translate(6px,-50%)':(centro>86?'left:'+winL+'%;transform:translate(-100%,-50%);padding-right:6px':'left:'+centro+'%;transform:translate(-50%,-50%)');
-  return '<div class="scala-wrap"><div class="scala-lab">◎ BERSAGLIO · '+esc(label||'')+'</div>'
+  return '<div class="scala-wrap"><div class="scala-lab">◎ IL PUNTO'+(label?' · '+esc(label):'')+'</div>'
     +'<div class="scala-track">'+ticks+'<div class="scala-win" style="left:'+winL+'%;width:'+winW+'%"></div>'
     +'<div class="scala-val" style="'+pos+'">'+esc(valTxt)+(u?'<span class="u">'+esc(u)+'</span>':'')+'</div></div>'
     +'<div class="scala-cap"><span>'+lo+'</span><span>'+hi+(u?' '+esc(u):'')+'</span></div></div>';
+}
+
+// "IL PUNTO" (decisione congelata): bersaglio→scala+etichetta, segnale→frase, misto→entrambi.
+// Fallback ai campi vecchi (bersaglio) finché il_punto non è ovunque. Mai mostrare tipo/bersaglio/segnale.
+function ilPunto(d, variabile){
+  var p=d.il_punto;
+  // fallback: niente il_punto → uso il vecchio bersaglio come se fosse tipo:bersaglio
+  if(!p){ if(d.bersaglio&&d.bersaglio.valore) return scala(d.bersaglio, variabile||d.variabile_critica||''); return ''; }
+  var tipo=p.tipo||'', bers=p.bersaglio, seg=p.segnale||'';
+  var out='';
+  if((tipo==='bersaglio'||tipo==='misto') && bers && bers.valore){
+    out+=scala(bers, variabile||d.variabile_critica||'');
+  }
+  if((tipo==='segnale'||tipo==='misto') && seg){
+    out+='<div class="punto-seg"><span class="punto-seg-lab">◎ Il punto</span><span class="punto-seg-txt">'+esc(seg)+'</span></div>';
+  }
+  // tipo bersaglio ma senza valore e con segnale → frase
+  if(!out && seg){ out='<div class="punto-seg"><span class="punto-seg-lab">◎ Il punto</span><span class="punto-seg-txt">'+esc(seg)+'</span></div>'; }
+  return out;
 }
 
 function caricaExp(){
@@ -462,11 +515,12 @@ function caricaExp(){
     var sens=d.sensori||{};
     var sRows=[['◠',sens.vista],['▚',sens.tatto],['∿',sens.olfatto]].filter(function(x){return x[1];})
       .map(function(x){return '<div class="sens-row"><span class="sens-ico">'+x[0]+'</span><span>'+esc(x[1])+'</span></div>';}).join('');
-    var sc=scala(d.bersaglio,d.variabile_critica);
+    var sc=ilPunto(d,d.variabile_critica);
+    var obiettivo=d.cosa_voglio_ottenere||d.ipotesi||'';
     host.innerHTML='<div class="exp">'
       +'<div class="exp-lab"><span>◎ ESPERIMENTO DEL GIORNO</span>'+(d.stato_epistemico?'<span class="exp-badge">'+esc(d.stato_epistemico)+'</span>':'')+'</div>'
       +'<div class="exp-nome">'+esc(d.nome)+'</div>'
-      +(d.ipotesi?'<div class="exp-ip"><span class="exp-ip-lab">Ipotesi</span>'+esc(d.ipotesi)+'</div>':'')
+      +(obiettivo?'<div class="exp-ip"><span class="exp-ip-lab">L\'obiettivo</span>'+esc(obiettivo)+'</div>':'')
       +sc
       +(sRows?'<div class="sens-lab">I sensori — cosa osservare</div><div class="sens">'+sRows+'</div>':'')
       +'<button class="exp-cta" onclick="apriProtocollo(\''+esc(d.id)+'\')">Apri l\'esperimento →</button>'
@@ -946,6 +1000,29 @@ function renderQuaderno(rie, esp, cresc){
   box.innerHTML=h;
 }
 
+// ═══ ONBOARDING ═══
+function onbInit(){
+  try{ if(localStorage.getItem('matter_onb_fatto'))return; }catch(e){return;}
+  var o=document.getElementById('onb'); if(o)o.style.display='flex';
+}
+function onbScegli(disc){
+  try{ localStorage.setItem('matter_onb_fatto','1'); localStorage.setItem('matter_disciplina',disc); }catch(e){}
+  var o=document.getElementById('onb'); if(o)o.style.display='none';
+  // azione contestuale per disciplina (congelato): porta dritto al valore, non tutorial
+  var azioni={
+    bar:['causa','Hai un problema al banco adesso? Dimmelo.'],
+    cucina:['causa','Cosa non sta venendo come dovrebbe?'],
+    panificazione:['misura','Cosa vuoi controllare oggi?'],
+    pasticceria:['causa','Cosa non torna nella preparazione?'],
+    gelateria:['misura','Cosa vuoi misurare oggi?'],
+    altro:['atlante','Scopri cosa Matter sa del tuo mestiere.']
+  };
+  var a=azioni[disc]||azioni.altro;
+  // resta sulla Home (già pronta); l'azione contestuale è un invito soft, non un salto forzato
+}
+function onbChiudi(){ try{ localStorage.setItem('matter_onb_fatto','1'); }catch(e){} var o=document.getElementById('onb'); if(o)o.style.display='none'; }
+
+onbInit();
 caricaExp();
 </script>
 </body>
