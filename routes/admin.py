@@ -14114,37 +14114,63 @@ def admin_ricuratela_converti_punto_ai():
         return jsonify({"errore":str(e)[:200]})
 
 
-@bp.route("/admin/ricuratela/fix-punto-manuale", methods=["POST"])
-def admin_fix_punto_manuale():
-    """Corregge IL PUNTO di una preparazione specifica, a mano (per i dubbi che Michele ha valutato).
-    Body JSON: {nome|id, tipo (bersaglio/segnale/misto), segnale (testo), valore, unita}."""
+@bp.route("/admin/importa-iba-mancanti")
+def admin_importa_iba_mancanti():
+    """Importa i 9 cocktail IBA chiave mancanti, con dosi UFFICIALI IBA, nello schema nuovo (il_punto).
+    Il punto di un cocktail = equilibrio/diluizione (segnale), non un numero inventato."""
     from flask import request, jsonify
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
         return jsonify({"errore":"non autorizzato"}), 403
-    body = request.get_json(force=True)
-    nome = body.get("nome",""); pid = body.get("id","")
-    tipo = body.get("tipo","segnale")
-    segnale = body.get("segnale","")
-    valore = body.get("valore",""); unita = body.get("unita","")
+    # 9 IBA mancanti con ricetta ufficiale (dosi IBA, metodo, il punto come segnale/equilibrio)
+    IBA = [
+      {"slug":"ric-iba-dry-martini","nome":"Dry Martini","ingredienti":[{"nome":"Gin","quantita":"60","unita":"ml"},{"nome":"Vermouth dry","quantita":"10","unita":"ml"}],
+       "metodo":"Versa gli ingredienti in un mixing glass con ghiaccio. Mescola. Filtra in coppa cocktail raffreddata. Guarnisci con oliva o scorza di limone.",
+       "punto":"la giusta diluizione e freddezza: mescola finche e ben freddo ma non annacquato (circa 20-30 rotazioni)","fenomeno":"diluizione"},
+      {"slug":"ric-iba-gin-fizz","nome":"Gin Fizz","ingredienti":[{"nome":"Gin","quantita":"45","unita":"ml"},{"nome":"Succo di limone","quantita":"30","unita":"ml"},{"nome":"Sciroppo di zucchero","quantita":"10","unita":"ml"},{"nome":"Soda","quantita":"80","unita":"ml"}],
+       "metodo":"Shakera gin, limone e sciroppo con ghiaccio. Filtra in tumbler alto. Aggiungi la soda. Mescola delicatamente.",
+       "punto":"l'equilibrio acido-dolce e l'effervescenza: la soda va aggiunta per ultima per mantenere le bollicine","fenomeno":"equilibrio"},
+      {"slug":"ric-iba-john-collins","nome":"John Collins","ingredienti":[{"nome":"Gin","quantita":"45","unita":"ml"},{"nome":"Succo di limone","quantita":"30","unita":"ml"},{"nome":"Sciroppo di zucchero","quantita":"15","unita":"ml"},{"nome":"Soda","quantita":"60","unita":"ml"}],
+       "metodo":"Versa gin, limone e sciroppo in un tumbler alto con ghiaccio. Mescola. Colma con soda. Guarnisci con limone e ciliegia.",
+       "punto":"lungo e dissetante: l'equilibrio tra acido del limone e dolce, allungato dalla soda","fenomeno":"equilibrio"},
+      {"slug":"ric-iba-paper-plane","nome":"Paper Plane","ingredienti":[{"nome":"Bourbon","quantita":"22.5","unita":"ml"},{"nome":"Aperol","quantita":"22.5","unita":"ml"},{"nome":"Amaro Nonino","quantita":"22.5","unita":"ml"},{"nome":"Succo di limone","quantita":"22.5","unita":"ml"}],
+       "metodo":"Shakera tutti gli ingredienti in parti uguali con ghiaccio. Filtra in coppa cocktail.",
+       "punto":"il bilanciamento di quattro parti uguali: amaro, agrumato, dolce-amaro in equilibrio perfetto","fenomeno":"equilibrio"},
+      {"slug":"ric-iba-martinez","nome":"Martinez","ingredienti":[{"nome":"Gin","quantita":"45","unita":"ml"},{"nome":"Vermouth rosso","quantita":"45","unita":"ml"},{"nome":"Maraschino","quantita":"7.5","unita":"ml"},{"nome":"Angostura bitter","quantita":"2","unita":"dash"}],
+       "metodo":"Mescola tutti gli ingredienti in mixing glass con ghiaccio. Filtra in coppa. Guarnisci con scorza di limone.",
+       "punto":"il progenitore del Martini: piu dolce e complesso, l'equilibrio gin-vermouth-maraschino","fenomeno":"diluizione"},
+      {"slug":"ric-iba-alexander","nome":"Alexander","ingredienti":[{"nome":"Cognac","quantita":"30","unita":"ml"},{"nome":"Crema di cacao","quantita":"30","unita":"ml"},{"nome":"Panna fresca","quantita":"30","unita":"ml"}],
+       "metodo":"Shakera tutti gli ingredienti con ghiaccio. Filtra in coppa cocktail. Spolvera con noce moscata.",
+       "punto":"cremoso e vellutato: la panna ben shakerata deve emulsionare per una texture setosa","fenomeno":"emulsione"},
+      {"slug":"ric-iba-hanky-panky","nome":"Hanky Panky","ingredienti":[{"nome":"Gin","quantita":"45","unita":"ml"},{"nome":"Vermouth rosso","quantita":"45","unita":"ml"},{"nome":"Fernet Branca","quantita":"7.5","unita":"ml"}],
+       "metodo":"Mescola in mixing glass con ghiaccio. Filtra in coppa. Guarnisci con scorza d'arancia.",
+       "punto":"il tocco di Fernet da la spinta amara: l'equilibrio gin-vermouth ravvivato dall'amaro","fenomeno":"diluizione"},
+      {"slug":"ric-iba-planters-punch","nome":"Planter's Punch","ingredienti":[{"nome":"Rum scuro giamaicano","quantita":"45","unita":"ml"},{"nome":"Succo d'arancia","quantita":"35","unita":"ml"},{"nome":"Succo d'ananas","quantita":"35","unita":"ml"},{"nome":"Succo di limone","quantita":"20","unita":"ml"},{"nome":"Sciroppo di zucchero","quantita":"10","unita":"ml"},{"nome":"Granatina","quantita":"10","unita":"ml"},{"nome":"Angostura bitter","quantita":"3","unita":"dash"}],
+       "metodo":"Shakera tutti gli ingredienti con ghiaccio. Versa in tumbler alto colmo di ghiaccio. Guarnisci con frutta.",
+       "punto":"tropicale e bilanciato: l'equilibrio tra rum, succhi di frutta e acidita","fenomeno":"equilibrio"},
+      {"slug":"ric-iba-sex-on-the-beach","nome":"Sex on the Beach","ingredienti":[{"nome":"Vodka","quantita":"40","unita":"ml"},{"nome":"Liquore alla pesca","quantita":"20","unita":"ml"},{"nome":"Succo d'arancia","quantita":"40","unita":"ml"},{"nome":"Succo di mirtillo rosso","quantita":"40","unita":"ml"}],
+       "metodo":"Versa tutti gli ingredienti in tumbler alto con ghiaccio. Mescola. Guarnisci con arancia.",
+       "punto":"fruttato e fresco: l'equilibrio tra dolce della pesca e acidita dei succhi","fenomeno":"equilibrio"},
+    ]
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
-        if pid:
-            cur.execute("SELECT id,data FROM nodes WHERE id=%s",(pid,))
-        else:
-            cur.execute("SELECT id,data FROM nodes WHERE name=%s AND type='Protocollo' LIMIT 1",(nome,))
-        r=cur.fetchone()
-        if not r: cur.close();conn.close(); return jsonify({"errore":f"non trovato: {nome or pid}"}),404
-        dd = r[1] if isinstance(r[1],dict) else json.loads(r[1])
-        if tipo=="segnale":
-            punto={"tipo":"segnale","bersaglio":None,"segnale":segnale,"evidence":[],"_corretto_a_mano":True}
-        elif tipo=="misto":
-            punto={"tipo":"misto","bersaglio":{"valore":valore,"unita":unita},"segnale":segnale,"evidence":[],"_corretto_a_mano":True}
-        else:
-            punto={"tipo":"bersaglio","bersaglio":{"valore":valore,"unita":unita},"segnale":"","evidence":[],"_corretto_a_mano":True}
-        dd["il_punto"]=punto
-        cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),r[0]))
-        conn.commit(); cur.close(); conn.close()
-        return jsonify({"ok":True,"nome":nome or r[0],"nuovo_punto":punto})
+        creati=[]; gia=[]
+        for c in IBA:
+            cur.execute("SELECT id FROM nodes WHERE id=%s OR (name=%s AND type='Protocollo')",(c["slug"],c["nome"]))
+            if cur.fetchone(): gia.append(c["nome"]); continue
+            data={
+              "nome":c["nome"],"kind":"protocollo","tipo":"canonico","disciplina":"bar",
+              "cosa_voglio_ottenere":f"preparare un {c['nome']} secondo la ricetta ufficiale IBA, bilanciato",
+              "ingredienti":c["ingredienti"],
+              "il_punto":{"tipo":"segnale","bersaglio":None,"segnale":c["punto"],"evidence":[{"source":"IBA - International Bartenders Association","claim":"ricetta ufficiale"}],"_fonte":"IBA"},
+              "fenomeni":[{"nome":c["fenomeno"],"fenomeno_id":None}],
+              "metodo":c["metodo"],
+              "fonte":"IBA Official Cocktail List","verificato":True,"classificazione_qualita":"A"
+            }
+            cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Protocollo',%s)",
+                        (c["slug"],c["nome"],json.dumps(data,ensure_ascii=False)))
+            conn.commit(); creati.append(c["nome"])
+        cur.close();conn.close()
+        return jsonify({"creati":creati,"gia_presenti":gia,"totale_creati":len(creati)})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
