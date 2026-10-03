@@ -5779,14 +5779,37 @@ def leggi_protocollo(pid):
                     fen["slug"] = fid
             fenomeni_ricchi.append(fen)
         cur.close(); conn.close()
+        # NUOVO SCHEMA (compatibilita: i campi vecchi restano, i nuovi derivano)
+        bers = dd.get("bersaglio",{}) or {}
+        il_punto = dd.get("il_punto")  # se gia convertito, usa quello
+        if not il_punto:
+            # deriva il_punto dal bersaglio vecchio (euristica provvisoria, la ri-curatela lo raffina)
+            val = str(bers.get("valore","")).strip()
+            seg = dd.get("segnale") or (dd.get("sensori",{}) if isinstance(dd.get("sensori"),str) else "")
+            if val and seg:
+                il_punto = {"tipo":"misto","bersaglio":bers,"segnale":seg}
+            elif val:
+                il_punto = {"tipo":"bersaglio","bersaglio":bers,"segnale":""}
+            elif seg:
+                il_punto = {"tipo":"segnale","bersaglio":None,"segnale":seg}
+            else:
+                il_punto = {"tipo":"non_definito","bersaglio":None,"segnale":""}
         return jsonify({
             "id": r[0], "nome": r[1],
             "disciplina": dd.get("disciplina",""),
-            "ipotesi": dd.get("ipotesi",""),
+            # --- NUOVO SCHEMA ---
+            "cosa_voglio_ottenere": dd.get("cosa_voglio_ottenere") or dd.get("ipotesi",""),
+            "principio": dd.get("principio",""),
             "variabile_critica": dd.get("variabile_critica",""),
-            "bersaglio": dd.get("bersaglio",{}),
-            "reagenti": dd.get("reagenti",[]),
+            "il_punto": il_punto,
+            "errori": dd.get("errori",[]),
+            "ingredienti": dd.get("ingredienti") or dd.get("reagenti",[]),
             "fenomeni": fenomeni_ricchi,
+            "classificazione_qualita": dd.get("classificazione_qualita",""),
+            # --- VECCHI (compatibilita, non rompere il frontend attuale) ---
+            "ipotesi": dd.get("ipotesi",""),
+            "bersaglio": bers,
+            "reagenti": dd.get("reagenti",[]),
             "sensori": dd.get("sensori",{}),
             "diagnosi": dd.get("diagnosi",[]),
             "punto_critico": dd.get("punto_critico_originale",""),
