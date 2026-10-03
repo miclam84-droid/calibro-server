@@ -14296,3 +14296,38 @@ def admin_ricura_pulisci_marcatore():
         return jsonify({"puliti":n})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+
+
+@bp.route("/admin/dedup-ricette")
+def admin_dedup_ricette():
+    """Elimina i duplicati ESATTI (stesso nome) nella tabella ricette, tiene il piu completo.
+    Default DRY-RUN. ?applica=1 elimina."""
+    from flask import request, jsonify
+    import os, psycopg2
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}),403
+    applica = request.args.get("applica")=="1"
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
+        # trovo nomi duplicati
+        cur.execute("""SELECT LOWER(TRIM(nome)) nn, COUNT(*) c, array_agg(id) ids
+                       FROM ricette GROUP BY LOWER(TRIM(nome)) HAVING COUNT(*)>1 ORDER BY c DESC""")
+        gruppi=cur.fetchall()
+        da_eliminare=[]; esempi=[]
+        for nn,c,ids in gruppi:
+            # per ogni gruppo, tengo quello con procedimento piu lungo (piu completo), elimino gli altri
+            cur.execute("""SELECT id, LENGTH(COALESCE(procedimento::text,'')) l FROM ricette
+                           WHERE id = ANY(%s) ORDER BY l DESC""",(ids,))
+            ordinati=cur.fetchall()
+            tieni=ordinati[0][0]
+            elimina=[r[0] for r in ordinati[1:]]
+            da_eliminare.extend(elimina)
+            if len(esempi)<12: esempi.append({"nome":nn,"copie":c,"tengo":1,"elimino":len(elimina)})
+        if applica and da_eliminare:
+            cur.execute("DELETE FROM ricette WHERE id = ANY(%s)",(da_eliminare,))
+            conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN",
+                        "gruppi_duplicati":len(gruppi),"ricette_da_eliminare":len(da_eliminare),"esempi":esempi})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
