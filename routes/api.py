@@ -6264,19 +6264,19 @@ def grafo_ego(ingrediente):
                     vicini.append({"nome": a.get("ingrediente") or a.get("nome"), "tipo": "analogia",
                                    "forza": round(a.get("overlap",70)/100.0,2) if a.get("overlap") else 0.7,
                                    "perche": str(a.get("perche",""))[:100]})
-            # 2. vicini dagli archi del grafo
+            # 2. vicini dagli archi del grafo (colonne vere: from_id/to_id)
             if len(vicini) < 5:
                 cur.execute("""SELECT DISTINCT n2.name FROM edges e
-                               JOIN nodes n2 ON (n2.id=e.target OR n2.id=e.source)
-                               WHERE (e.source=%s OR e.target=%s) AND n2.type='Ingrediente' AND n2.id<>%s LIMIT 8""",
+                               JOIN nodes n2 ON (n2.id=e.to_id OR n2.id=e.from_id)
+                               WHERE (e.from_id=%s OR e.to_id=%s) AND n2.type='Ingrediente' AND n2.id<>%s LIMIT 8""",
                             (ing_id, ing_id, ing_id))
                 for (nv,) in cur.fetchall():
                     if nv and not any(v["nome"]==nv for v in vicini):
                         vicini.append({"nome": nv, "tipo": "analogia", "forza": 0.6, "perche": "collegati nel grafo"})
             # 3. fenomeni collegati
             cur.execute("""SELECT DISTINCT n2.id, n2.name FROM edges e
-                           JOIN nodes n2 ON (n2.id=e.target OR n2.id=e.source)
-                           WHERE (e.source=%s OR e.target=%s) AND n2.type='Fenomeno' LIMIT 4""", (ing_id, ing_id))
+                           JOIN nodes n2 ON (n2.id=e.to_id OR n2.id=e.from_id)
+                           WHERE (e.from_id=%s OR e.to_id=%s) AND n2.type='Fenomeno' LIMIT 4""", (ing_id, ing_id))
             for fid, fnome in cur.fetchall():
                 fenomeni_collegati.append({"nome": fnome, "slug": fid})
         cur.close(); conn.close()
