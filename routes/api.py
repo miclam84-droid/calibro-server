@@ -6247,44 +6247,35 @@ def grafo_ego(ingrediente):
     import os, psycopg2, json
     try:
         vicini = []
-        # 1. ANALOGIA (abbinamenti per composti condivisi) - riuso la logica di /v1/abbina
-        import urllib.request as ur
-        base = request.host_url.rstrip('/')
-        try:
-            ab = json.loads(ur.urlopen(f"{base}/v1/abbina/{ingrediente}", timeout=10).read().decode())
-            for a in ab.get("abbinamenti", [])[:5]:
-                vicini.append({
-                    "nome": a.get("ingrediente"),
-                    "tipo": "analogia",
-                    "forza": round(a.get("overlap", 0)/100.0, 2) if a.get("overlap") else 0.7,
-                    "perche": a.get("perche", "")[:100]
-                })
-        except: pass
-        # 2. CONTRASTO
-        try:
-            co = json.loads(ur.urlopen(f"{base}/v1/contrasto/{ingrediente}", timeout=10).read().decode())
-            for c in co.get("contrasti", [])[:3]:
-                nome_c = c.get("ingrediente") if isinstance(c, dict) else c
-                vicini.append({
-                    "nome": nome_c,
-                    "tipo": "contrasto",
-                    "forza": round(c.get("forza", 0.6), 2) if isinstance(c, dict) and c.get("forza") else 0.6,
-                    "perche": (c.get("perche", "") if isinstance(c, dict) else "contrasto che bilancia")[:100]
-                })
-        except: pass
-        # 3. il fenomeno/i collegati all'ingrediente (la catena verso la scienza)
         fenomeni_collegati = []
-        try:
-            conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-            cur.execute("""SELECT n2.id, n2.name FROM nodes n1
-                           JOIN edges e ON (e.source=n1.id OR e.target=n1.id)
-                           JOIN nodes n2 ON (n2.id=e.source OR n2.id=e.target)
-                           WHERE LOWER(n1.name)=LOWER(%s) AND n2.type='Fenomeno' AND n2.id<>n1.id LIMIT 4""",
-                        (ingrediente,))
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE LOWER(name)=LOWER(%s) AND type='Ingrediente' LIMIT 1", (ingrediente,))
+        row = cur.fetchone()
+        if row:
+            ing_id = row[0]
+            dd = row[1] if isinstance(row[1], dict) else json.loads(row[1])
+            # 1. abbinamenti dai dati del nodo (se presenti)
+            for a in (dd.get("abbinamenti") or dd.get("pairings") or [])[:6]:
+                if isinstance(a, dict) and (a.get("ingrediente") or a.get("nome")):
+                    vicini.append({"nome": a.get("ingrediente") or a.get("nome"), "tipo": "analogia",
+                                   "forza": round(a.get("overlap",70)/100.0,2) if a.get("overlap") else 0.7,
+                                   "perche": str(a.get("perche",""))[:100]})
+            # 2. vicini dagli archi del grafo
+            if len(vicini) < 5:
+                cur.execute("""SELECT DISTINCT n2.name FROM edges e
+                               JOIN nodes n2 ON (n2.id=e.target OR n2.id=e.source)
+                               WHERE (e.source=%s OR e.target=%s) AND n2.type='Ingrediente' AND n2.id<>%s LIMIT 8""",
+                            (ing_id, ing_id, ing_id))
+                for (nv,) in cur.fetchall():
+                    if nv and not any(v["nome"]==nv for v in vicini):
+                        vicini.append({"nome": nv, "tipo": "analogia", "forza": 0.6, "perche": "collegati nel grafo"})
+            # 3. fenomeni collegati
+            cur.execute("""SELECT DISTINCT n2.id, n2.name FROM edges e
+                           JOIN nodes n2 ON (n2.id=e.target OR n2.id=e.source)
+                           WHERE (e.source=%s OR e.target=%s) AND n2.type='Fenomeno' LIMIT 4""", (ing_id, ing_id))
             for fid, fnome in cur.fetchall():
                 fenomeni_collegati.append({"nome": fnome, "slug": fid})
-            cur.close(); conn.close()
-        except: pass
+        cur.close(); conn.close()
         return jsonify({
             "centro": ingrediente,
             "vicini": vicini[:8],
