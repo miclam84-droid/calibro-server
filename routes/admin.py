@@ -14203,3 +14203,87 @@ def admin_importa_iba_completo():
         return jsonify({"creati":creati,"gia_presenti":gia,"totale_creati":len(creati)})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/ricura-ricette-scienza")
+def admin_ricura_ricette_scienza():
+    """Ri-cura i campi scienza delle RICETTE (punto_critico, perche_funziona) che hanno 'scienza sopra'.
+    L'AI legge la ricetta VERA (ingredienti+procedimento) e riscrive il punto critico e la spiegazione in modo
+    corretto e ancorato alla preparazione reale. NON inventa numeri. Il punto critico diventa osservazionale
+    dove serve (es. 'togli le vongole appena si aprono' non '90C').
+    Default DRY-RUN. ?applica=1 scrive. ?n=N quante."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}),403
+    applica = request.args.get("applica")=="1"
+    limite = int(request.args.get("n",20))
+    solo_sospette = request.args.get("solo_sospette","1")=="1"
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key"}),500
+    # pattern sospetti nel punto_critico (scienza sopra)
+    SOSPETTI = ["temperatura dell'acqua","temperatura dell acqua","°c per","gradi per","a 90","a 85","a 80",
+                "temperatura del forno","emulsione, gelatinizzazione","gelatinizzazione"]
+    def ricura(nome, ingredienti, procedimento, punto_vecchio, pf_vecchio):
+        ing_txt = ", ".join([i.get("nome","")+" "+str(i.get("quantita","")) for i in ingredienti[:12]]) if isinstance(ingredienti,list) else str(ingredienti)[:200]
+        proc_txt = " ".join([p.get("testo","") if isinstance(p,dict) else str(p) for p in procedimento[:8]]) if isinstance(procedimento,list) else str(procedimento)[:400]
+        dom = (f"Ricetta: '{nome}'. Ingredienti: {ing_txt}. Procedimento: {proc_txt[:400]}. "
+               f"Punto critico attuale (forse SBAGLIATO): {str(punto_vecchio)[:150]}. "
+               f"COMPITO: scrivi il PUNTO CRITICO VERO di questa preparazione - la cosa che conta davvero per "
+               f"farla bene. REGOLE: se c'e' una soglia misurabile REALE (es. temperatura coagulazione, "
+               f"idratazione) usala; altrimenti descrivi il SEGNALE OSSERVABILE (es. 'togli le vongole appena "
+               f"si aprono', 'la crema vela il cucchiaio'). NON inventare numeri (niente '90C' se non e' una "
+               f"soglia scientifica vera). Scrivi anche il PERCHE funziona (la scienza vera, breve). "
+               f"Rispondi SOLO JSON: {{\"punto_critico\":\"...\", \"perche\":\"...spiegazione scientifica vera...\", "
+               f"\"era_sbagliato\":true/false}}")
+        pl={"model":"gpt-4o-mini","max_tokens":350,"temperature":0.2,
+            "messages":[{"role":"system","content":"Sei un esperto di cucina e scienza degli alimenti rigoroso. "
+                        "Scrivi il controllo VERO di una preparazione: numero solo se e' una soglia scientifica "
+                        "reale, altrimenti segnale osservabile. NON inventare precisione. Spiega la scienza vera, "
+                        "concisa e corretta."},
+                        {"role":"user","content":dom}]}
+        try:
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
+                          headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx=json.loads(ur.urlopen(rq,timeout=35).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0))
+        except: pass
+        return None
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
+        # prendo ricette con punto_critico sospetto (o tutte)
+        cur.execute("""SELECT id,name,data FROM nodes WHERE type IN ('Ricetta','Protocollo')
+                       AND data->>'punto_critico' IS NOT NULL AND data->'il_punto_ricetta_curato' IS NULL
+                       LIMIT %s""",(limite*3,))
+        righe=cur.fetchall()
+        curati=[]; saltati=0; processati=0
+        for pid,nome,data in righe:
+            if processati>=limite: break
+            dd=data if isinstance(data,dict) else json.loads(data)
+            pc=str(dd.get("punto_critico","")).lower()
+            sospetto=any(s in pc for s in SOSPETTI)
+            if solo_sospette and not sospetto:
+                saltati+=1; continue
+            processati+=1
+            r=ricura(nome,dd.get("ingredienti",[]),dd.get("procedimento",[]),dd.get("punto_critico",""),dd.get("perche_funziona",{}))
+            if not r: continue
+            nuovo_pc=r.get("punto_critico","").strip()
+            nuovo_perche=r.get("perche","").strip()
+            if nuovo_pc:
+                curati.append({"nome":nome,"vecchio":str(dd.get("punto_critico",""))[:50],"nuovo":nuovo_pc[:60]})
+                if applica:
+                    dd["punto_critico"]=nuovo_pc
+                    if isinstance(dd.get("perche_funziona"),dict):
+                        dd["perche_funziona"]["spiegazione"]=nuovo_perche
+                    else:
+                        dd["perche_funziona"]={"spiegazione":nuovo_perche}
+                    dd["il_punto_ricetta_curato"]=True
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid))
+                    conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","curati":len(curati),
+                        "saltati_non_sospetti":saltati,"esempi":curati[:12]})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
