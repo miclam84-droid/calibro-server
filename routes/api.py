@@ -5761,7 +5761,7 @@ def leggi_protocollo(pid):
     import os, psycopg2, json
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT id, name, data FROM nodes WHERE id=%s AND type='Protocollo'", (pid,))
+        cur.execute("SELECT id, name, data FROM nodes WHERE id=%s", (pid,))
         r = cur.fetchone()
         if not r: cur.close(); conn.close(); return jsonify({"errore":"protocollo non trovato"}), 404
         dd = r[2] if isinstance(r[2], dict) else json.loads(r[2])
