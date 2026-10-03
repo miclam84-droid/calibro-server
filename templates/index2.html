@@ -474,7 +474,7 @@ function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':St
 function scala(bers,label){
   if(!bers||bers.valore==null||bers.valore==='')return '';
   var u=String(bers.unita||'');
-  var nums=(String(bers.valore).replace(',','.').match(/-?\d+\.?\d*/g)||[]).map(Number);
+  var nums=(String(bers.valore).replace(',','.').replace(/[–—]/g,'-').split(/\s*-\s*/).map(function(s){var m=s.match(/-?\d+\.?\d*/);return m?Number(m[0]):null;}).filter(function(x){return x!==null;}));
   if(!nums.length)return '';
   var vmin=nums[0],vmax=nums.length>1?nums[1]:nums[0];
   var r=_RANGE[u]||[0,vmax+Math.abs(vmax||1)];var lo=r[0],hi=r[1],span=(hi-lo)||1;
