@@ -12652,19 +12652,7 @@ def admin_protocollo_genera():
         import traceback
         return jsonify({"errore": str(e)[:200]})
 
-@bp.route("/v1/protocollo/<pid>")
-def get_protocollo(pid):
-    """Legge un protocollo (l'esperimento)."""
-    from flask import jsonify
-    import os, psycopg2, json
-    try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT data FROM nodes WHERE id=%s AND type='Protocollo'", (pid,))
-        r = cur.fetchone(); cur.close(); conn.close()
-        if not r: return jsonify({"errore":"protocollo non trovato"}), 404
-        return jsonify(r[0] if isinstance(r[0],dict) else json.loads(r[0]))
-    except Exception as e:
-        return jsonify({"errore": str(e)[:150]})
+# [RIMOSSA] route /v1/protocollo duplicata - ora la serve routes/api.py (leggi_protocollo, schema nuovo)
 
 
 # ═══ RIEMPITORE AUTOMATICO: macina TUTTE le ondate da solo (causalita, tradizione, protocolli, schede) ═══
