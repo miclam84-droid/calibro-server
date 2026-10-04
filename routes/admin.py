@@ -14600,3 +14600,76 @@ def admin_revisione_prepara():
                         "per_sospetto":dict(per_sospetto)})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/revisione")
+def admin_revisione_pagina():
+    """La pagina di revisione per Michele: un caso alla volta, 4 bottoni. Mobile."""
+    from flask import request, Response
+    import os
+    s = request.args.get("s","")
+    if s != os.environ.get("ADMIN_SECRET",""):
+        return Response("non autorizzato", status=403)
+    html = """<!DOCTYPE html><html lang=it><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Revisione Patrimonio Matter</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,sans-serif;background:#0B0F14;color:#E8EDF2;padding:16px;max-width:600px;margin:0 auto}
+.prog{font-size:13px;color:#7A8694;margin-bottom:16px;font-variant-numeric:tabular-nums}
+.prog b{color:#36E0A8}
+.caso{background:#141A22;border:1px solid #232D3A;border-radius:4px;padding:20px;margin-bottom:20px;min-height:200px}
+.sosp{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:3px;margin-bottom:12px;font-weight:600}
+.sosp.segnale_vago,.sosp.ricetta_punto_vago{background:#3A1F1F;color:#FF8A8A}
+.sosp.numero_senza_fonte{background:#3A341F;color:#FFD88A}
+.sosp.variante_generata{background:#1F2A3A;color:#8AB8FF}
+.sosp.da_verificare{background:#2A1F3A;color:#C88AFF}
+.nome{font-size:22px;font-weight:700;margin-bottom:14px;line-height:1.2}
+.campo{font-size:14px;color:#AEB9C5;margin:6px 0;line-height:1.5}
+.campo b{color:#E8EDF2;font-weight:600}
+.punto{font-size:16px;color:#36E0A8;margin:10px 0;padding:10px;background:#0E1419;border-radius:4px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{padding:18px;font-size:16px;font-weight:700;border:none;border-radius:4px;cursor:pointer;color:#fff}
+.vero{background:#1B7A4B}.falso{background:#A83232}.corr{background:#B8820A}.nonso{background:#3A4654}
+.nota{width:100%;padding:12px;margin-top:12px;background:#0E1419;border:1px solid #232D3A;border-radius:4px;color:#E8EDF2;font-size:14px;display:none}
+.fine{text-align:center;padding:40px;font-size:20px;color:#36E0A8}
+</style></head><body>
+<div class=prog id=prog>Carico...</div>
+<div id=app></div>
+<script>
+const S=new URLSearchParams(location.search).get('s');
+let caso=null;
+async function carica(){
+  const r=await fetch('/admin/revisione/prossimo?s='+encodeURIComponent(S));
+  const d=await r.json();
+  if(d.finito){document.getElementById('app').innerHTML='<div class=fine>Finito! '+d.fatti+' casi giudicati. Grazie.</div>';document.getElementById('prog').innerHTML='';return;}
+  caso=d;
+  document.getElementById('prog').innerHTML='<b>'+d.fatti+'</b> fatti · '+d.rimasti+' rimasti';
+  let c=d.contenuto||{};
+  let dett='';
+  if(c.il_punto){let ip=c.il_punto;let v=ip.bersaglio?(ip.bersaglio.valore+''+(ip.bersaglio.unita||'')):'';
+    dett+='<div class=punto>IL PUNTO: '+(v||ip.segnale||'(vuoto)')+(ip.modo?' ['+ip.modo+']':'')+'</div>';}
+  if(c.punto_critico)dett+='<div class=punto>PUNTO: '+c.punto_critico+'</div>';
+  if(c.disciplina)dett+='<div class=campo><b>disciplina:</b> '+c.disciplina+'</div>';
+  if(c.fenomeni&&c.fenomeni.length)dett+='<div class=campo><b>fenomeni:</b> '+c.fenomeni.join(', ')+'</div>';
+  document.getElementById('app').innerHTML=
+    '<div class=caso><span class="sosp '+d.sospetto+'">'+d.sospetto.replace(/_/g,' ')+'</span>'+
+    '<div class=nome>'+d.nome+'</div><div class=campo><b>origine:</b> '+d.id+'</div>'+dett+'</div>'+
+    '<textarea class=nota id=nota placeholder="nota (opzionale, per correggi)"></textarea>'+
+    '<div class=btns>'+
+    '<button class=vero onclick="giudica(\\'vero\\')">VERO</button>'+
+    '<button class=falso onclick="mostraNota();giudica(\\'falso\\')">FALSO</button>'+
+    '<button class=corr onclick="mostraNota()">DA CORREGGERE</button>'+
+    '<button class=nonso onclick="giudica(\\'non_so\\')">NON SO</button></div>';
+}
+function mostraNota(){document.getElementById('nota').style.display='block';}
+async function giudica(g){
+  let nota=document.getElementById('nota')?document.getElementById('nota').value:'';
+  if(g==='correggi'&&!nota){alert('scrivi la correzione nella nota');return;}
+  await fetch('/admin/revisione/giudica?s='+encodeURIComponent(S),{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({id:caso.id,giudizio:g,nota:nota})});
+  carica();
+}
+document.querySelector('.corr')&&0;
+carica();
+</script></body></html>"""
+    return Response(html, mimetype="text/html")
