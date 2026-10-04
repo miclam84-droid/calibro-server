@@ -14530,3 +14530,73 @@ def admin_classifica_modo_punto():
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","conteggio":risultati,"esempi_limite_range":esempi})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+# ============ SISTEMA DI CURATELA DEL PATRIMONIO ============
+# AI prepara -> Michele giudica -> dato canonico. L'AI NON decide "e' vero".
+
+def _tabella_revisione(cur):
+    cur.execute("""CREATE TABLE IF NOT EXISTS revisione_patrimonio (
+        id TEXT PRIMARY KEY, tipo_oggetto TEXT, nome TEXT, contenuto JSONB,
+        sospetto TEXT, priorita INT DEFAULT 5,
+        giudizio TEXT, nota_michele TEXT, giudicato_il TIMESTAMP)""")
+
+@bp.route("/admin/revisione/prepara")
+def admin_revisione_prepara():
+    """L'AI PREPARA la coda di revisione: raccoglie i contenuti generati-non-verificati, li pre-classifica per
+    SOSPETTO (segnale vago, punto senza fonte, variante generata) e PRIORITA. NON giudica 'e' vero'.
+    ?applica=1 popola la tabella."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    applica = request.args.get("applica")=="1"
+    # pattern di segnale VAGO (fuffa che suona tecnica)
+    VAGHI = ["osservare la","osservare l'","la consistenza","la tenerezza","l'equilibrio del sapore",
+             "il sapore e","e pronto quando","al punto giusto","la giusta consistenza"]
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        _tabella_revisione(cur); conn.commit()
+        casi=[]
+        # 1. PROTOCOLLI: segnali vaghi + punti senza evidence
+        cur.execute("SELECT id,name,data FROM nodes WHERE type='Protocollo'")
+        for pid,nome,data in cur.fetchall():
+            dd=data if isinstance(data,dict) else json.loads(data)
+            ip=dd.get("il_punto",{}) or {}
+            seg=str(ip.get("segnale","")).lower()
+            ev=ip.get("evidence") or []
+            sospetto=None; prio=5
+            if ip.get("tipo")=="segnale" and any(v in seg for v in VAGHI):
+                sospetto="segnale_vago"; prio=1
+            elif ip.get("tipo")=="bersaglio" and not ev:
+                sospetto="numero_senza_fonte"; prio=2
+            elif ip.get("tipo")=="da_verificare":
+                sospetto="da_verificare"; prio=1
+            if sospetto:
+                casi.append({"id":pid,"tipo_oggetto":"protocollo","nome":nome,
+                    "contenuto":{"il_punto":ip,"disciplina":dd.get("disciplina",""),"fenomeni":[f.get("nome") for f in dd.get("fenomeni",[])]},
+                    "sospetto":sospetto,"priorita":prio})
+        # 2. RICETTE generate (fig/gen): variante generata senza fonte
+        cur.execute("SELECT id,nome,punto_critico FROM ricette WHERE id LIKE 'ric-fig%%' OR id LIKE 'ric-gen%%'")
+        for rid,nome,pc in cur.fetchall():
+            pcl=str(pc or "").lower().lstrip(chr(0x200b))
+            prio=3; sospetto="variante_generata"
+            if any(v in pcl for v in VAGHI): sospetto="ricetta_punto_vago"; prio=2
+            casi.append({"id":rid,"tipo_oggetto":"ricetta","nome":nome,
+                "contenuto":{"punto_critico":str(pc or "").lstrip(chr(0x200b))[:200]},
+                "sospetto":sospetto,"priorita":prio})
+        if applica:
+            for c in casi:
+                cur.execute("""INSERT INTO revisione_patrimonio (id,tipo_oggetto,nome,contenuto,sospetto,priorita)
+                    VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET
+                    sospetto=EXCLUDED.sospetto, priorita=EXCLUDED.priorita, contenuto=EXCLUDED.contenuto""",
+                    (c["id"],c["tipo_oggetto"],c["nome"],json.dumps(c["contenuto"],ensure_ascii=False),c["sospetto"],c["priorita"]))
+            conn.commit()
+        # conteggio per sospetto
+        from collections import Counter
+        per_sospetto=Counter(c["sospetto"] for c in casi)
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "ANTEPRIMA","totale_casi":len(casi),
+                        "per_sospetto":dict(per_sospetto)})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
