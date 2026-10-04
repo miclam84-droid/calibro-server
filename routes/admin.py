@@ -14484,14 +14484,16 @@ def admin_classifica_modo_punto():
     if not key: return jsonify({"errore":"no key"}),500
     def giudica(nome, disciplina, valore, unita, segnale):
         dom = (f"Preparazione: '{nome}' ({disciplina}). Ha un punto numerico: {valore}{unita}. "
-               f"Nota: {segnale[:100]}. DOMANDA: questo numero e' un TARGET (da RAGGIUNGERE, es. 'porta il "
-               f"tuorlo a 65C per coagularlo'), un LIMITE (da NON SUPERARE, es. 'olio sotto i 60C sennò la "
-               f"maionese impazzisce', 'non oltre 82C sennò le uova stracciano'), o un RANGE (tra due valori)? "
-               f"Pensa al mestiere: raggiungere X e non-superare-X sono AZIONI OPPOSTE. "
-               f'SOLO JSON: {{"modo":"target"|"limite"|"range", "motivo":"...breve..."}}')
+               f"Nota: {segnale[:100]}. DOMANDA: questo numero e':\n"
+               f"- TARGET (da RAGGIUNGERE: 'porta il tuorlo a 65C per coagularlo')\n"
+               f"- LIMITE_SUP (NON SUPERARE, il pericolo e' SOPRA: 'olio sotto 60C sennò impazzisce')\n"
+               f"- LIMITE_INF (NON SCENDERE SOTTO, il pericolo e' SOTTO: 'conserva sopra 4C', 'servi sopra 55C')\n"
+               f"- RANGE (resta TRA due valori: 60-65% idratazione)?\n"
+               f"Pensa al mestiere: raggiungere X, non-superare X, non-scendere-sotto X sono azioni DIVERSE. "
+               f'SOLO JSON: {{"modo":"target"|"limite_sup"|"limite_inf"|"range", "motivo":"...breve..."}}')
         pl={"model":"gpt-4o-mini","max_tokens":120,"temperature":0,
-            "messages":[{"role":"system","content":"Esperto di cucina/bar. Distingui un numero da RAGGIUNGERE "
-                        "da un numero da NON SUPERARE: sono azioni opposte al banco. Nel dubbio: target."},
+            "messages":[{"role":"system","content":"Esperto di cucina/bar. Distingui: RAGGIUNGERE X / NON SUPERARE X (pericolo sopra) / NON SCENDERE SOTTO X "
+                        "(pericolo sotto) / RESTA TRA X e Y. Sono azioni diverse. Nel dubbio: target."},
                         {"role":"user","content":dom}]}
         try:
             rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
@@ -14507,9 +14509,9 @@ def admin_classifica_modo_punto():
         cur.execute("""SELECT id,name,data FROM nodes WHERE type='Protocollo'
                        AND data->'il_punto'->>'tipo' IN ('bersaglio','misto')
                        AND data->'il_punto'->'bersaglio'->>'valore' IS NOT NULL
-                       AND data->'il_punto'->>'modo' IS NULL LIMIT %s""",(limite,))
+                       AND (data->'il_punto'->>'modo' IS NULL OR data->'il_punto'->>'modo'='limite') LIMIT %s""",(limite,))
         righe=cur.fetchall()
-        risultati={"target":0,"limite":0,"range":0}; esempi=[]
+        risultati={"target":0,"limite_sup":0,"limite_inf":0,"range":0}; esempi=[]
         for pid,nome,data in righe:
             dd=data if isinstance(data,dict) else json.loads(data)
             ip=dd.get("il_punto",{}); bers=ip.get("bersaglio",{}) or {}
@@ -14517,7 +14519,7 @@ def admin_classifica_modo_punto():
             if not g: continue
             modo=g.get("modo","target")
             risultati[modo]=risultati.get(modo,0)+1
-            if modo in ("limite","range") and len(esempi)<12:
+            if modo in ("limite_sup","limite_inf","range") and len(esempi)<12:
                 val_str = str(bers.get('valore',''))+str(bers.get('unita',''))
                 esempi.append({"nome":nome,"valore":val_str,"modo":modo,"motivo":g.get("motivo","")[:50]})
             if applica:
