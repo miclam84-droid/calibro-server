@@ -9,12 +9,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════ MATTER 2.0 — CSS PULITO DA ZERO (nessuna eredità) ═══════════════ */
+/* PALETTE CONGELATA — tema adattivo chiaro/scuro (come Cifra). Verde = funzionale, non decorativo. */
 :root{
-  --carta:#F4F1EA; --ink:#1A1A17; --ink-soft:#6B6B63;
-  --rame:#B8603A; --blu-grafite:#2E3A45; --verde:#6B7F5C; --rosso-oss:#9B4722;
+  /* CHIARO (default / giorno) */
+  --carta:#FAFAF8; --ink:#15181C; --ink-soft:#6B6B63;
+  --rame:#0A7D5A;          /* ACCENTO = verde (nome legacy mantenuto per non rompere le classi) */
+  --verde:#0A7D5A;         /* stato positivo / target / relazione / attivo */
+  --blu-grafite:#2E3A45;   /* superfici dato scure (restano scure in entrambi i temi) */
+  --rosso-oss:#9B4722;     /* errore / fuori finestra */
   --linea:#D9D4C8;
+  --scuro:#0B0F14;         /* fondo scala/grafici — sempre scuro */
+  --dato-bg:#13181F;       /* superficie-dato (esperimento, scala) — sempre scura in entrambi i temi */
+  --dato-ink:#E8EDF2;      /* testo su superficie-dato — sempre chiaro */
+  --dato-ink-soft:#9FB0C0;
   --serif:'Fraunces',Georgia,serif; --ui:'Inter',system-ui,sans-serif; --mono:'Space Mono',monospace;
   --nav-h:64px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --carta:#0B0F14; --ink:#C5CDD6; --ink-soft:#8A939E;
+    --rame:#36E0A8; --verde:#36E0A8;   /* verde che brilla sullo scuro */
+    --blu-grafite:#121820;
+    --linea:#232A33;
+  }
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{background:var(--carta);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased;line-height:1.5}
@@ -46,7 +63,7 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .porta-d{font-family:var(--ui);font-size:12px;color:var(--ink-soft);line-height:1.35}
 
 /* 3. ESPERIMENTO DEL GIORNO */
-.exp{background:var(--blu-grafite);border-radius:8px;padding:22px;color:var(--carta)}
+.exp{background:var(--dato-bg);border-radius:8px;padding:22px;color:var(--dato-ink)}
 .exp-lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--rame);display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .exp-badge{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#A8C4D8;border:1px solid #42566b;padding:2px 7px;border-radius:3px}
 .exp-nome{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1.1;color:#fff;margin-bottom:14px}
