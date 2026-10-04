@@ -354,7 +354,8 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .bn-sens{display:flex;flex-direction:column;gap:8px}
 .bn-sens-row{display:flex;gap:8px;align-items:flex-start;font-family:var(--ui);font-size:13px;color:var(--ink)}
 .bn-sens-ico{color:var(--rame);font-family:var(--mono);flex-shrink:0}
-.bn-salva{width:100%;background:var(--rame);color:var(--carta);font-family:var(--ui);font-weight:600;font-size:15px;padding:15px;border-radius:8px;margin:24px 0 8px}
+.bn-salva{width:100%;background:var(--verde);color:#FAFAF8;font-family:var(--ui);font-weight:600;font-size:15px;padding:15px;border-radius:8px;margin:24px 0 8px}
+.bn-perche{font-family:var(--serif);font-size:16px;line-height:1.6;color:var(--ink)}
 /* scala su carta (nel banco il fondo è chiaro) */
 /* la scala resta SEMPRE scura (condizione congelata: il numero si legge sempre). Nessun override chiaro. */
 </style>
@@ -867,24 +868,42 @@ function apriProtocollo(id){
 }
 function renderProtocollo(d, id){
   var host=document.getElementById('mis-host'); if(!host)return;
+  // gerarchia Banco congelata: nome → L'obiettivo → IL PUNTO → ingredienti → come lo capisci → perché
+  var obiettivo=d.cosa_voglio_ottenere||d.ipotesi||'';
+  var ingr=(d.ingredienti&&d.ingredienti.length)?d.ingredienti:(d.reagenti||[]);
   var sens=d.sensori||{};
   var sRows=[['◠',sens.vista],['▚',sens.tatto],['∿',sens.olfatto]].filter(function(x){return x[1];})
     .map(function(x){return '<div class="bn-sens-row"><span class="bn-sens-ico">'+x[0]+'</span><span>'+esc(x[1])+'</span></div>';}).join('');
-  var sc=(d.bersaglio&&d.bersaglio.valore)?('<div class="bn-scala">'+scala(d.bersaglio,d.variabile_critica)+'</div>'):'';
-  var reag=(d.reagenti||[]);
+  // IL PUNTO (numero+scala o osservazione) via ilPunto()
+  var puntoHtml='<div class="bn-scala">'+ilPunto(d, d.variabile_critica)+'</div>';
+
   var h='<button class="bn-detail-back" onclick="_misInit=false;initMisura()">‹ Tutti gli esperimenti</button>'
     +'<div class="bn-dnome">'+esc(d.nome)+'</div>'
-    +(d.ipotesi?'<div class="bn-dip"><span class="bn-dip-lab">Ipotesi</span>'+esc(d.ipotesi)+'</div>':'')
-    +sc;
-  if(reag.length){
-    h+='<div class="bn-dsec">◎ I reagenti</div>'+reag.map(function(r){
+    +(obiettivo?'<div class="bn-dip"><span class="bn-dip-lab">L\'obiettivo</span>'+esc(obiettivo)+'</div>':'')
+    +puntoHtml;
+  // GLI INGREDIENTI
+  if(ingr.length){
+    h+='<div class="bn-dsec">◎ Gli ingredienti</div>'+ingr.map(function(r){
       var q=(r.quantita!=null?r.quantita:'')+(r.unita?' '+r.unita:'');
       return '<div class="bn-reag"><span class="bn-reag-nome">'+esc(r.nome)+'</span>'+(q?'<span class="bn-reag-q">'+esc(q)+'</span>':'')+'</div>';
     }).join('');
   }
-  if(sRows){ h+='<div class="bn-dsec">◎ I sensori — cosa osservare</div><div class="bn-sens">'+sRows+'</div>'; }
+  // COME LO CAPISCI (i sensori)
+  if(sRows){ h+='<div class="bn-dsec">◎ Come lo capisci</div><div class="bn-sens">'+sRows+'</div>'; }
+  h+='<div id="bn-perche-host"></div>';
   h+='<button class="bn-salva" onclick="salvaEsperimentoQ(\''+esc(d.nome)+'\',\''+esc(id)+'\')">◱ Salva nel Quaderno</button>';
   host.innerHTML=h;
+
+  // PERCHÉ — dalla scheda-scienza del primo fenomeno (livelli.capisco.perche), caricato async
+  var fen=(d.fenomeni||[]);
+  var slug=fen.length?(typeof fen[0]==='object'?fen[0].slug:'') : '';
+  if(slug){
+    fetch(API+'/v1/scheda-scienza/'+encodeURIComponent(slug)).then(function(r){return r.json();}).then(function(sd){
+      var box=document.getElementById('bn-perche-host'); if(!box)return;
+      var L=sd.livelli||{}; var perche=_t((L.capisco||{}).perche)||_t(sd.principio);
+      if(perche){ box.innerHTML='<div class="bn-dsec">◎ Perché</div><div class="bn-perche">'+esc(perche)+'</div>'; }
+    }).catch(function(){});
+  }
 }
 function salvaEsperimentoQ(nome,id){
   fetch(API+'/v1/quaderno/esperimento',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({nome:nome,protocollo_id:id,esito:'provato'})})
