@@ -14402,3 +14402,69 @@ def admin_test_import_uno():
         return jsonify({"ok":True,"nota":"import singolo riuscito"})
     except Exception as e:
         return jsonify({"errore_vero":str(e)})
+
+
+@bp.route("/admin/popola-segnale")
+def admin_popola_segnale():
+    """Popola il_punto.segnale sui protocolli SENZA numero ne segnale (il caso 'senza numero' scoperto).
+    L'AI legge la preparazione e scrive l'OSSERVAZIONE VERA (come capisci che e' a punto). Contratto epistemico:
+    non inventa, se non e certa marca da_verificare. Default DRY-RUN. ?applica=1. ?n=N."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}),403
+    applica = request.args.get("applica")=="1"
+    limite = int(request.args.get("n",20))
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key"}),500
+    def scrivi_segnale(nome, disciplina, ingredienti, metodo):
+        ing = ", ".join([i.get("nome","") if isinstance(i,dict) else str(i) for i in (ingredienti or [])][:10])
+        dom = (f"Preparazione: '{nome}' (disciplina: {disciplina}). Ingredienti: {ing}. Metodo: {str(metodo)[:300]}. "
+               f"COMPITO: scrivi IL SEGNALE OSSERVABILE - la cosa concreta che un professionista GUARDA/SENTE/TOCCA "
+               f"per sapere che e' A PUNTO (es. 'le vongole si aprono', 'l'emulsione vela il cucchiaio', 'il liquido "
+               f"e cristallino senza velature'). NON un numero, NON l'obiettivo generico, NON una frase vaga: "
+               f"l'OSSERVAZIONE CONCRETA del momento giusto. Se per questa preparazione non esiste un segnale "
+               f"osservabile chiaro, rispondi segnale vuoto. "
+               f'SOLO JSON: {{"segnale":"...osservazione concreta o vuoto...", "sicuro":true/false}}')
+        pl={"model":"gpt-4o-mini","max_tokens":180,"temperature":0.3,
+            "messages":[{"role":"system","content":"Esperto di cucina/bar. Scrivi il segnale OSSERVABILE del punto "
+                        "giusto: concreto, sensoriale, vero. Mai un numero, mai l'obiettivo, mai vago. Se non esiste "
+                        "un segnale chiaro, lascia vuoto."},
+                        {"role":"user","content":dom}]}
+        try:
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
+                          headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx=json.loads(ur.urlopen(rq,timeout=30).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0))
+        except: pass
+        return None
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
+        cur.execute("""SELECT id,name,data FROM nodes WHERE type='Protocollo'
+                       AND (data->'il_punto'->>'segnale' IS NULL OR data->'il_punto'->>'segnale'='')
+                       AND (data->'il_punto'->'bersaglio' IS NULL OR data->'il_punto'->'bersaglio'->>'valore' IS NULL)
+                       AND data->'il_punto'->>'_segnale_popolato' IS NULL LIMIT %s""",(limite,))
+        righe=cur.fetchall()
+        popolati=[]; vuoti=[]
+        for pid,nome,data in righe:
+            dd=data if isinstance(data,dict) else json.loads(data)
+            r=scrivi_segnale(nome, dd.get("disciplina",""), dd.get("ingredienti") or dd.get("reagenti",[]), dd.get("metodo",""))
+            if not r: continue
+            seg=r.get("segnale","").strip()
+            ip=dd.get("il_punto") or {}
+            if seg and r.get("sicuro"):
+                ip["tipo"]="segnale"; ip["segnale"]=seg; ip["bersaglio"]=None; ip["_segnale_popolato"]=True
+                popolati.append({"nome":nome,"segnale":seg[:60]})
+            else:
+                ip["tipo"]="da_verificare"; ip["_segnale_popolato"]=True
+                vuoti.append(nome)
+            dd["il_punto"]=ip
+            if applica:
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid)); conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","popolati":len(popolati),
+                        "senza_segnale_chiaro":len(vuoti),"esempi":popolati[:12]})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
