@@ -43,9 +43,9 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--linea);background:var(--carta);position:sticky;top:0;z-index:50}
 .hd-logo{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);letter-spacing:-.01em}
 .hd-right{display:flex;align-items:center;gap:14px}
-.hd-galileo{width:38px;height:38px;border:1px solid var(--linea);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--ink);transition:.15s}
-.hd-galileo:active{background:var(--rame);color:var(--carta);border-color:var(--rame)}
-.hd-accedi{font-size:13px;color:var(--ink-soft)}
+.hd-galileo{font-family:var(--ui);font-size:13px;font-weight:600;color:var(--verde);border:1px solid var(--verde);border-radius:6px;padding:7px 12px;background:transparent}
+.hd-galileo:active{background:var(--verde);color:#FAFAF8}
+.hd-accedi{font-family:var(--ui);font-size:13px;color:var(--ink-soft);background:transparent;padding:7px 4px}
 
 /* CONTENUTO */
 .wrap{padding:0 20px 32px}
@@ -61,6 +61,10 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 .porta-ico{font-size:22px;color:var(--ink);margin-bottom:auto}
 .porta-t{font-family:var(--ui);font-weight:600;font-size:15px;color:var(--ink);margin:14px 0 4px}
 .porta-d{font-family:var(--ui);font-size:12px;color:var(--ink-soft);line-height:1.35}
+
+/* Chiedi a Matter — porta chiara (testo, non glifo) */
+.chiedi-matter{width:100%;margin-top:14px;padding:16px;background:transparent;border:1.5px solid var(--verde);border-radius:8px;color:var(--verde);font-family:var(--ui);font-weight:600;font-size:15px}
+.chiedi-matter:active{background:var(--verde);color:#FAFAF8}
 
 /* 3. ESPERIMENTO DEL GIORNO */
 .exp{background:var(--dato-bg);border-radius:8px;padding:22px;color:var(--dato-ink)}
@@ -380,8 +384,8 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 <header class="hd">
   <div class="hd-logo">Matter</div>
   <div class="hd-right">
-    <button class="hd-galileo" onclick="apriGalileo()" aria-label="Galileo">◇</button>
-    <a class="hd-accedi" href="#">Accedi</a>
+    <button class="hd-galileo" onclick="apriGalileo()">Galileo</button>
+    <button class="hd-accedi" onclick="accedi()">Accedi</button>
   </div>
 </header>
 
@@ -396,6 +400,7 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
       <button class="porta" onclick="vai('menu')"><div class="porta-ico">▤</div><div class="porta-t">Costruisci</div><div class="porta-d">trasforma il lavoro in offerta</div></button>
     </div>
     <div id="exp-host"><div class="exp"><div class="exp-lab"><span>◎ ESPERIMENTO DEL GIORNO</span></div><div class="sk" style="height:28px;width:70%;margin-bottom:14px"></div><div class="sk" style="height:60px;margin-bottom:14px"></div></div></div>
+    <button class="chiedi-matter" onclick="apriMatterChat()">Chiedi a Matter</button>
   </div>
 
   <!-- VISTA ATLANTE -->
@@ -563,7 +568,8 @@ function vai(dove){
 }
 var _chatMode='matter'; // 'matter' = /chiedi/stream (scientifica), 'galileo' = assistente impresa/web
 function apriGalileo(){ _chatMode='galileo'; _chInit=false; vai('chat'); }
-function chatMatter(){ _chatMode='matter'; }
+function apriMatterChat(){ _chatMode='matter'; _chInit=false; vai('chat'); }
+function accedi(){ alert('Accesso e registrazione — in arrivo. Per ora Matter funziona senza login.'); }
 
 // ═══ ATLANTE ═══
 var _DISC=['Tutti','Cucina','Bar','Panificazione','Pasticceria','Gelateria','Caffetteria','Vino','Birra'];
