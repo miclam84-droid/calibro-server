@@ -352,15 +352,29 @@ def cerca_universale():
         db = carica_grafo()
         def _c(r, key, idx):
             return r[key] if hasattr(r, "keys") else r[idx]
-        # RICETTE - cerca su nome con OR sulle parole
-        rows = db.execute(f"SELECT id, nome, disciplina FROM ricette WHERE {_cond('nome')} LIMIT 10", _params()).fetchall()
+        # PRIORITA 1: match sulla FRASE INTERA (q completo) - ovunque. Cosi "san marzano" trova "San Marzano",
+        # non le ricette che contengono solo "san". Le parole singole vengono DOPO, solo se serve riempire.
+        # INGREDIENTI che contengono la frase intera (priorita: le varieta/cultivar)
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND name ILIKE ? AND (data->>'solo_motore') IS NULL LIMIT 12", (pat,)).fetchall()
         for r in rows:
-            risultati.append({"tipo": "ricetta", "id": _c(r,"id",0), "nome": _c(r,"nome",1), "disciplina": _c(r,"disciplina",2)})
+            _dd2 = _c(r,"data",2); _dd2 = _dd2 if isinstance(_dd2,dict) else (__import__("json").loads(_dd2) if _dd2 else {})
+            risultati.append({"tipo":"ingrediente","id":_c(r,"id",0),"nome":_c(r,"name",1),"caratteristica":(_dd2.get("caratteristica","") or "")[:70]})
+        # RICETTE che contengono la frase intera
+        rows = db.execute("SELECT id, nome, disciplina FROM ricette WHERE nome ILIKE ? LIMIT 8", (pat,)).fetchall()
+        for r in rows:
+            risultati.append({"tipo":"ricetta","id":_c(r,"id",0),"nome":_c(r,"nome",1),"disciplina":_c(r,"disciplina",2)})
+        # se la frase intera ha gia dato abbastanza, salto le parole singole (evita "san"->croissant)
+        _frase_basta = len(risultati) >= 4
+        # RICETTE - parole singole SOLO se la frase intera non bastava
+        if not _frase_basta:
+            rows = db.execute(f"SELECT id, nome, disciplina FROM ricette WHERE {_cond('nome')} LIMIT 8", _params()).fetchall()
+            for r in rows:
+                risultati.append({"tipo": "ricetta", "id": _c(r,"id",0), "nome": _c(r,"nome",1), "disciplina": _c(r,"disciplina",2)})
         rows = db.execute(f"SELECT id, name FROM nodes WHERE type='Fenomeno' AND {_cond('name')} LIMIT 6", _params()).fetchall()
         for r in rows:
             risultati.append({"tipo": "fenomeno", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
-        # INGREDIENTI (type Ingrediente E Prodotto) - qui stanno le cultivar/tagli/varieta
-        rows = db.execute(f"SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND {_cond('name')} AND name NOT LIKE '%%(%%' LIMIT 12", _params()).fetchall()
+        # INGREDIENTI parole singole (solo se serve)
+        rows = db.execute(f"SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND {_cond('name')} AND name NOT LIKE '%%(%%' AND (data->>'solo_motore') IS NULL LIMIT 12", _params()).fetchall() if not _frase_basta else []
         for r in rows:
             _data = _c(r,"data",2) if (hasattr(r,'keys') or len(r)>2) else None
             _carat = ''
