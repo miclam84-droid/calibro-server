@@ -1345,9 +1345,18 @@ def scheda_ingrediente_completa(ingrediente_id):
         def pieno(v): return bool(v) and str(v).strip() not in ("", "[]", "{}", "None")
         # SENSO (profilo sensoriale) - c'e
         prop = dd.get("proprieta", {}) or dd.get("proprieta_principali", {})
-        # RELAZIONI (dialoga_con dagli archi)
-        abb = db.execute("SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8", (nid,)).fetchall()
-        dialoga = [_c(x,"name",0) for x in abb]
+        # RELAZIONI col PERCHE (la catena/manifestazione del motore - FASE 1 punto 6)
+        abb = db.execute("""SELECT n.name, e.data FROM edges e JOIN nodes n ON n.id=e.to_id
+                            WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8""", (nid,)).fetchall()
+        dialoga = []
+        for x in abb:
+            nm = _c(x,"name",0)
+            ed = _c(x,"data",1)
+            ed = ed if isinstance(ed, dict) else (_j.loads(ed) if ed else {})
+            ov = ed.get("overlap") or ed.get("peso")
+            dialoga.append({"ingrediente": nm,
+                            "overlap": round(ov,0) if ov else None,
+                            "perche": ed.get("perche","") or ("condividono composti aromatici" if ov else "")})
         # SCIENZA (fenomeni collegati all'ingrediente dagli archi)
         fen = db.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON (n.id=e.to_id OR n.id=e.from_id)
                             WHERE (e.from_id=? OR e.to_id=?) AND n.type='Fenomeno' LIMIT 5""", (nid, nid)).fetchall()
@@ -1362,10 +1371,12 @@ def scheda_ingrediente_completa(ingrediente_id):
                         "caratteristica": dd.get("caratteristica","") or "[da verificare]"},
             "scienza": {"pieno": bool(fenomeni), "fenomeni": fenomeni},
             "senso": {"pieno": pieno(prop), "profilo_sensoriale": prop},
-            "relazioni": {"pieno": bool(dialoga), "dialoga_con": dialoga},
+            "relazioni": {"pieno": bool(dialoga), "dialoga_con": dialoga,
+                          "nota": "ogni relazione ha il suo perche: i composti aromatici condivisi"},
             "mestiere": {"pieno": pieno(dd.get("uso_tipico")),
                          "uso_tipico": dd.get("uso_tipico","") or "[da verificare]"},
-            "creazione": {"pieno": bool(dialoga), "nota": "esplora le relazioni nel grafo per creare" if dialoga else ""},
+            "creazione": {"pieno": bool(dialoga),
+                          "nota": "parti da queste relazioni per creare: le analogie si fondono, i contrasti bilanciano" if dialoga else ""},
             "narrazione": {"pieno": pieno(dd.get("tutela")) or pieno(dd.get("territorio")),
                            "spunto": "la narrazione nasce da storia+territorio+caratteristica (da completare)"},
         }
