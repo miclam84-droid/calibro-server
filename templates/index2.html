@@ -2,1063 +2,145 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Matter</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Matter Bench</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════ MATTER 2.0 — CSS PULITO DA ZERO (nessuna eredità) ═══════════════ */
-/* PALETTE CONGELATA — tema adattivo chiaro/scuro (come Cifra). Verde = funzionale, non decorativo. */
 :root{
-  /* CHIARO (default / giorno) */
-  --carta:#FAFAF8; --ink:#15181C; --ink-soft:#6B6B63;
-  --rame:#0A7D5A;          /* ACCENTO = verde (nome legacy mantenuto per non rompere le classi) */
-  --verde:#0A7D5A;         /* stato positivo / target / relazione / attivo */
-  --blu-grafite:#2E3A45;   /* superfici dato scure (restano scure in entrambi i temi) */
-  --rosso-oss:#9B4722;     /* errore / fuori finestra */
-  --linea:#D9D4C8;
-  --scuro:#0B0F14;         /* fondo scala/grafici — sempre scuro */
-  --dato-bg:#13181F;       /* superficie-dato (esperimento, scala) — sempre scura in entrambi i temi */
-  --dato-ink:#E8EDF2;      /* testo su superficie-dato — sempre chiaro */
-  --dato-ink-soft:#9FB0C0;
-  --serif:'Fraunces',Georgia,serif; --ui:'Inter',system-ui,sans-serif; --mono:'Space Mono',monospace;
-  --nav-h:64px;
+  --fondo:#06211C;--sup:#0B2D26;--bordo:#164038;--bordo2:#215249;
+  --testo:#EAE3C8;--testo2:#9DB5AC;--testo3:#5E7B72;
+  --verde:#2DD4A0;--oro:#D9B451;--rosso:#E0795B;
+  --gro:'Space Grotesk',sans-serif;--inter:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --carta:#0B0F14; --ink:#C5CDD6; --ink-soft:#8A939E;
-    --rame:#36E0A8; --verde:#36E0A8;   /* verde che brilla sullo scuro */
-    --blu-grafite:#121820;
-    --linea:#232A33;
-  }
-}
+@media(prefers-color-scheme:light){:root{
+  --fondo:#ECE8DC;--sup:#F3F0E6;--bordo:#D5CFBC;--bordo2:#C8C1AA;
+  --testo:#1C2B24;--testo2:#5C6B61;--testo3:#8A9389;--verde:#0E6B5C;--oro:#B08828;--rosso:#C0472A;
+}}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{background:var(--carta);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased;line-height:1.5}
-body{padding-top:env(safe-area-inset-top,0);padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0))}
-button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
-.mono{font-family:var(--mono)}
-
-/* HEADER */
-.hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--linea);background:var(--carta);position:sticky;top:0;z-index:50}
-.hd-logo{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);letter-spacing:-.01em}
-.hd-right{display:flex;align-items:center;gap:14px}
-.hd-galileo{font-family:var(--ui);font-size:13px;font-weight:600;color:var(--verde);border:1px solid var(--verde);border-radius:6px;padding:7px 12px;background:transparent}
-.hd-galileo:active{background:var(--verde);color:#FAFAF8}
-.hd-accedi{font-family:var(--ui);font-size:13px;color:var(--ink-soft);background:transparent;padding:7px 4px}
-
-/* CONTENUTO */
-.wrap{padding:0 20px 32px}
-
-/* 1. CLAIM */
-.claim{font-family:var(--serif);font-size:19px;font-weight:400;color:var(--ink);line-height:1.4;margin:28px 0 24px;max-width:300px}
-.claim b{color:var(--rame);font-weight:600}
-
-/* 2. LE 4 PORTE */
-.porte{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px}
-.porta{background:var(--carta);border:1px solid var(--linea);border-radius:6px;padding:18px 16px;text-align:left;transition:.15s;min-height:124px;display:flex;flex-direction:column}
-.porta:active{border-color:var(--rame);transform:scale(.99)}
-.porta-ico{font-size:22px;color:var(--ink);margin-bottom:auto}
-.porta-t{font-family:var(--ui);font-weight:600;font-size:15px;color:var(--ink);margin:14px 0 4px}
-.porta-d{font-family:var(--ui);font-size:12px;color:var(--ink-soft);line-height:1.35}
-
-/* Chiedi a Matter — porta chiara (testo, non glifo) */
-.chiedi-matter{width:100%;margin-top:14px;padding:16px;background:transparent;border:1.5px solid var(--verde);border-radius:8px;color:var(--verde);font-family:var(--ui);font-weight:600;font-size:15px}
-.chiedi-matter:active{background:var(--verde);color:#FAFAF8}
-
-/* 3. ESPERIMENTO DEL GIORNO */
-.exp{background:var(--dato-bg);border-radius:8px;padding:22px;color:var(--dato-ink)}
-.exp-lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--rame);display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.exp-badge{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#A8C4D8;border:1px solid #42566b;padding:2px 7px;border-radius:3px}
-.exp-nome{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1.1;color:#fff;margin-bottom:14px}
-.exp-ip-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-right:6px}
-.exp-ip{font-family:var(--ui);font-size:14px;color:#D6D2C8;line-height:1.5;margin-bottom:20px}
-/* scala graduata — la firma */
-.scala-wrap{background:var(--dato-bg);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:14px;margin-bottom:18px}
-.scala-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--verde);margin-bottom:12px}
-.scala-track{position:relative;height:40px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14)}
-.scala-tick{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.1)}
-.scala-win{position:absolute;top:-2px;bottom:-2px;border:2px solid var(--rame);background:rgba(184,96,58,.18)}
-.scala-val{position:absolute;top:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-weight:700;font-size:16px;color:#fff;white-space:nowrap}
-.scala-val .u{font-size:11px;color:var(--rame);margin-left:2px}
-.scala-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.4);margin-top:5px}
-/* sensori */
-.sens-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#A8C4D8;margin-bottom:10px}
-.sens{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
-.sens-row{display:flex;align-items:flex-start;gap:8px;font-family:var(--ui);font-size:13px;color:#E4E0D6}
-.sens-ico{color:var(--rame);font-family:var(--mono);flex-shrink:0}
-.exp-cta{width:100%;background:var(--rame);color:var(--carta);font-family:var(--ui);font-weight:600;font-size:15px;padding:15px;border-radius:6px;transition:.15s}
-.exp-cta:active{filter:brightness(.92)}
-
-/* NAV inferiore */
-.nav{position:fixed;left:0;right:0;bottom:0;height:calc(var(--nav-h) + env(safe-area-inset-bottom,0));padding-bottom:env(safe-area-inset-bottom,0);background:var(--carta);border-top:1px solid var(--linea);display:flex;z-index:60;box-shadow:0 -1px 8px rgba(26,26,23,.04)}
-.nav-v{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-soft);transition:.12s}
-.nav-v.on{color:var(--rame)}
-.nav-ico{font-size:18px;line-height:1}
-.nav-lab{font-size:10px;font-family:var(--ui)}
-
+body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit-font-smoothing:antialiased}
+.hd{background:var(--verde);display:flex;align-items:center;justify-content:space-between;padding:16px 20px;padding-top:calc(16px + env(safe-area-inset-top,0));position:sticky;top:0;z-index:50}
+.hd-logo{font-family:var(--gro);font-weight:700;font-size:19px;color:#06211C;letter-spacing:-.01em;cursor:pointer}
+.hd-logo .b{font-weight:500;opacity:.7}
+.hd-menu{width:26px;height:18px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+.hd-menu span{height:2px;background:#06211C;border-radius:1px}
+.wrap{padding:24px 20px 60px}
+.vista{display:none}.vista.on{display:block}
+/* ricerca */
+.cerca{display:flex;align-items:center;gap:10px;background:var(--sup);border:1px solid var(--bordo);border-radius:2px;padding:14px 16px}
+.cerca input{flex:1;background:none;border:0;color:var(--testo);font-family:var(--inter);font-size:16px;outline:none}
+.cerca input::placeholder{color:var(--testo3)}
+.cerca-ico{color:var(--verde);font-family:var(--mono);font-size:15px}
+.cerca-hint{font-family:var(--mono);font-size:11px;color:var(--testo3);margin-top:8px}
+/* risultati ricerca */
+.ris{margin-top:16px}
+.ris-item{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--bordo);cursor:pointer}
+.ris-nome{font-family:var(--gro);font-weight:500;font-size:16px;color:var(--testo)}
+.ris-tipo{font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--testo3)}
+/* esperimento */
+.exp-sez{margin-top:40px}
+.exp-k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--verde);margin-bottom:16px}
+.exp-nome{font-family:var(--gro);font-weight:600;font-size:28px;line-height:1.1;letter-spacing:-.02em}
+.exp-sub{font-family:var(--inter);font-size:15px;line-height:1.5;color:var(--testo2);margin-top:12px}
+.exp-vuoto{font-family:var(--inter);font-size:15px;color:var(--testo3);font-style:italic;margin-top:12px}
+.exp-cta{display:inline-flex;gap:8px;font-family:var(--gro);font-weight:500;font-size:15px;color:var(--verde);margin-top:18px;cursor:pointer}
+/* porte */
+.porte{margin-top:46px}
+.porte-k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--testo3);margin-bottom:4px}
+.porta{display:flex;align-items:baseline;gap:16px;padding:18px 0;border-bottom:1px solid var(--bordo);cursor:pointer}
+.porta:last-child{border-bottom:0}
+.porta-n{font-family:var(--mono);font-size:12px;color:var(--testo3)}
+.porta-b{flex:1}
+.porta-nome{font-family:var(--gro);font-weight:600;font-size:20px}
+.porta-desc{font-family:var(--inter);font-size:13px;color:var(--testo2);margin-top:2px}
+.porta-arr{color:var(--verde);font-family:var(--mono)}
+/* intestazione vista generica */
+.vt-back{font-family:var(--inter);font-size:14px;color:var(--testo2);margin:4px 0 20px;cursor:pointer}
+.vt-titolo{font-family:var(--gro);font-weight:600;font-size:26px;margin-bottom:6px}
+.vt-sub{font-family:var(--inter);font-size:14px;color:var(--testo2);margin-bottom:24px}
+.vt-wip{font-family:var(--inter);font-size:14px;color:var(--testo3);font-style:italic;padding:30px 0}
 /* skeleton */
-.sk{background:linear-gradient(90deg,rgba(255,255,255,.06) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.06) 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:4px}
-.sk-d{background:linear-gradient(90deg,rgba(26,26,23,.05) 25%,rgba(26,26,23,.1) 50%,rgba(26,26,23,.05) 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:4px}
-@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* viste */
-.vista{display:none}
-.vista.on{display:block}
-
-/* "Il punto" come segnale (frase, non numero) */
-.punto-seg{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:14px;margin-bottom:18px}
-.punto-seg-lab{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-bottom:6px}
-.punto-seg-txt{font-family:var(--serif);font-size:17px;line-height:1.4;color:#fff}
-/* versione su fondo chiaro (Banco) */
-/* punto-seg segue il tema (niente override chiaro forzato) */
-
-/* ═══ ONBOARDING (dove lavori? → azione contestuale) ═══ */
-.onb{position:fixed;inset:0;background:var(--carta);z-index:300;display:flex;flex-direction:column;justify-content:center;padding:32px 24px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0))}
-.onb-logo{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);margin-bottom:40px}
-.onb-dom{font-family:var(--serif);font-weight:600;font-size:28px;color:var(--ink);line-height:1.15;margin-bottom:8px}
-.onb-sub{font-family:var(--ui);font-size:15px;color:var(--ink-soft);margin-bottom:28px}
-.onb-opts{display:flex;flex-direction:column;gap:10px}
-.onb-opt{text-align:left;border:1.5px solid var(--linea);border-radius:8px;padding:16px 18px;font-family:var(--ui);font-size:16px;color:var(--ink);background:var(--carta);transition:.15s}
-.onb-opt:active{border-color:var(--rame);background:rgba(184,96,58,.04)}
-.onb-skip{margin-top:24px;font-family:var(--ui);font-size:13px;color:var(--ink-soft);text-align:center;background:none}
-
-/* ═══════════ ATLANTE (editoriale — pubblicazione scientifica) ═══════════ */
-.at-head{margin:28px 0 8px}
-.at-titolo{font-family:var(--serif);font-weight:600;font-size:34px;color:var(--ink);letter-spacing:-.02em;line-height:1}
-.at-sub{font-family:var(--serif);font-weight:400;font-size:16px;color:var(--ink-soft);font-style:italic;margin-top:4px}
-.at-stato{font-family:var(--ui);font-size:12px;color:var(--ink-soft);margin:18px 0;padding-bottom:16px;border-bottom:1px solid var(--linea)}
-.at-stato-barre{display:flex;flex-direction:column;gap:5px;margin-top:10px}
-.at-sbar{display:flex;align-items:center;gap:8px}
-.at-sbar-lab{flex:0 0 86px;font-family:var(--mono);font-size:10px;color:var(--ink-soft);text-transform:capitalize}
-.at-sbar-track{flex:1;height:3px;background:var(--linea)}
-.at-sbar-fill{height:100%;background:var(--rame)}
-.at-sbar-pct{flex:0 0 32px;text-align:right;font-family:var(--mono);font-size:10px;color:var(--ink-soft)}
-/* filtro discipline */
-.at-filtri{display:flex;gap:8px;overflow-x:auto;padding:4px 0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.at-filtri::-webkit-scrollbar{display:none}
-.at-chip{flex:0 0 auto;font-family:var(--ui);font-size:13px;color:var(--ink-soft);border:1px solid var(--linea);border-radius:20px;padding:7px 14px;background:var(--carta);white-space:nowrap}
-.at-chip.on{background:var(--rame);color:var(--carta);border-color:var(--rame)}
-/* fenomeni madre — lista editoriale */
-.at-sez-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);margin:24px 0 4px}
-.at-madre{border-bottom:1px solid var(--linea);padding:22px 0}
-.at-madre:last-child{border-bottom:0}
-.at-madre-nome{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);line-height:1.15;margin-bottom:4px}
-.at-madre-princ{font-family:var(--ui);font-size:14px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px}
-.at-madre-meta{display:flex;align-items:center;gap:12px}
-.at-madre-n{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
-.at-strati{display:flex;gap:4px}
-.at-strato{width:7px;height:7px;border-radius:50%;border:1px solid var(--rame)}
-.at-strato.on{background:var(--rame)}
-/* scopri tecniche */
-.at-scopri{margin-top:40px}
-.at-scopri-t{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--rame);margin-bottom:4px}
-.at-scopri-d{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin-bottom:16px}
-.at-tecniche{display:flex;flex-direction:column;gap:10px}
-.at-tec{border:1px solid var(--linea);border-radius:6px;padding:14px;text-align:left;background:var(--carta)}
-.at-tec:active{border-color:var(--rame)}
-.at-tec-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
-.at-tec-nome{font-family:var(--ui);font-weight:600;font-size:15px;color:var(--ink)}
-.at-tec-liv{flex-shrink:0;font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:3px}
-.at-tec-liv.banco{color:var(--verde);border:1px solid var(--verde)}
-.at-tec-liv.lab{color:var(--blu-grafite);border:1px solid var(--blu-grafite)}
-.at-tec-d{font-family:var(--ui);font-size:12px;color:var(--ink-soft);line-height:1.4}
-
-/* ═══════════ SCHEDA TECNICA (4 blocchi cognitivi) ═══════════ */
-.sc-back{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin:20px 0 8px;display:inline-flex;align-items:center;gap:5px}
-.sc-head-badges{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.sc-bdg{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;border-radius:3px;border:1px solid}
-.sc-bdg.madre{color:var(--rame);border-color:var(--rame)}
-.sc-bdg.banco{color:var(--verde);border-color:var(--verde)}
-.sc-bdg.lab{color:var(--blu-grafite);border-color:var(--blu-grafite)}
-.sc-nome{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.08;color:var(--ink);margin-bottom:16px}
-.sc-blocco{margin:28px 0;padding-top:24px;border-top:1px solid var(--linea)}
-.sc-blocco:first-of-type{border-top:0;padding-top:0}
-.sc-blk-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin-bottom:12px}
-.sc-p{font-family:var(--serif);font-size:16px;line-height:1.6;color:var(--ink);margin-bottom:14px;font-weight:400}
-.sc-txt{font-family:var(--ui);font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:12px}
-.sc-sub{font-family:var(--ui);font-weight:600;font-size:13px;color:var(--ink);margin:14px 0 6px}
-/* bersaglio profilo */
-.sc-bers{background:var(--blu-grafite);color:var(--carta);border-radius:6px;padding:14px;margin:14px 0}
-.sc-bers-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-bottom:6px}
-.sc-bers-txt{font-family:var(--ui);font-size:14px;line-height:1.5}
-/* causalità */
-.sc-caus{display:flex;flex-direction:column;gap:7px;margin:12px 0}
-.sc-crow{display:flex;align-items:baseline;gap:8px;font-family:var(--ui);font-size:13px}
-.sc-cfreccia{font-family:var(--mono);font-weight:700;font-size:15px;flex-shrink:0}
-.sc-cverbo{font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--ink-soft);flex-shrink:0}
-.sc-cfat{color:var(--ink);text-transform:capitalize}
-/* errori */
-.sc-err{background:rgba(155,71,34,.06);border-left:3px solid var(--rosso-oss);padding:10px 12px;font-family:var(--ui);font-size:13px;line-height:1.5;color:var(--ink);margin:6px 0}
-/* vado oltre */
-.sc-chat-cta{width:100%;background:var(--carta);border:1.5px solid var(--rame);color:var(--rame);font-family:var(--ui);font-weight:600;font-size:14px;padding:14px;border-radius:6px;margin-bottom:14px}
-.sc-fonti{font-family:var(--ui);font-size:13px;color:var(--ink-soft);line-height:1.5;margin-bottom:14px}
-.sc-fonti b{color:var(--ink);font-weight:600}
-.sc-manif{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
-.sc-manif-chip{font-family:var(--ui);font-size:12px;background:var(--carta);border:1px solid var(--linea);border-radius:20px;padding:6px 12px;color:var(--ink)}
-/* provala */
-.sc-provala{position:sticky;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0) + 12px);margin:28px 0 8px}
-.sc-provala-btn{width:100%;background:var(--rame);color:var(--carta);font-family:var(--ui);font-weight:600;font-size:16px;padding:16px;border-radius:8px;box-shadow:0 4px 16px rgba(184,96,58,.3)}
-
-/* ═══════════ CAUSA (sintomo → causa → correzione) ═══════════ */
-.ca-head{margin:28px 0 18px}
-.ca-titolo{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1.1;margin-bottom:6px}
-.ca-sub{font-family:var(--ui);font-size:14px;color:var(--ink-soft)}
-.ca-search{display:flex;gap:8px;margin-bottom:10px}
-.ca-search input{flex:1;min-width:0;border:1.5px solid var(--linea);border-radius:6px;padding:14px;font-family:var(--ui);font-size:15px;color:var(--ink);background:var(--carta)}
-.ca-search input:focus{outline:none;border-color:var(--rame)}
-.ca-search button{flex:0 0 52px;background:var(--rame);color:var(--carta);border-radius:6px;font-size:20px}
-.ca-hint{font-family:var(--ui);font-size:12px;color:var(--ink-soft);margin-bottom:8px}
-/* esempi */
-.ca-esempi{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-.ca-es{text-align:left;border:1px solid var(--linea);border-radius:6px;padding:12px 14px;font-family:var(--ui);font-size:14px;color:var(--ink);background:var(--carta)}
-.ca-es:active{border-color:var(--rame)}
-/* memoria */
-.ca-mem{display:flex;gap:12px;align-items:flex-start;background:var(--blu-grafite);border-radius:6px;padding:14px;margin-bottom:16px}
-.ca-mem-ico{font-size:20px;color:#A8C4D8;flex-shrink:0}
-.ca-mem-lab{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#A8C4D8;margin-bottom:4px}
-.ca-mem-txt{font-family:var(--serif);font-weight:500;font-size:15px;color:var(--carta);line-height:1.35}
-/* servizio — la causa + correzione */
-.ca-serv{border:2px solid var(--rame);border-radius:8px;padding:18px;margin-bottom:18px}
-.ca-serv-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--rame);margin-bottom:10px}
-.ca-prob{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:3px;border:1px solid;margin-bottom:8px}
-.ca-causa{font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.2;color:var(--ink);margin-bottom:14px}
-.ca-patch{background:var(--blu-grafite);border-radius:6px;padding:14px}
-.ca-patch-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);display:block;margin-bottom:6px}
-.ca-patch-txt{font-family:var(--ui);font-size:15px;line-height:1.5;color:var(--carta)}
-/* sezioni causa */
-.ca-sez{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin:22px 0 10px}
-.ca-sens{display:flex;flex-direction:column;gap:7px}
-.ca-sens-row{display:flex;gap:8px;align-items:flex-start;font-family:var(--ui);font-size:13px;color:var(--ink);background:var(--carta);border:1px solid var(--linea);border-radius:6px;padding:10px 12px}
-.ca-altre{display:flex;flex-direction:column;gap:10px}
-.ca-altra{border:1px solid var(--linea);border-radius:6px;padding:14px}
-.ca-altra-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:4px}
-.ca-altra-causa{font-family:var(--ui);font-weight:600;font-size:14px;color:var(--ink)}
-.ca-altra-prob{flex-shrink:0;font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase}
-.ca-altra-patch{font-family:var(--ui);font-size:12px;color:var(--ink-soft);line-height:1.45}
-/* comprensione */
-.ca-toggle{width:100%;border:1px solid var(--linea);border-radius:6px;padding:14px;font-family:var(--ui);font-weight:600;font-size:14px;color:var(--blu-grafite);text-align:left;margin-top:22px;background:var(--carta)}
-.ca-compr{margin-top:12px;padding:16px;background:rgba(46,58,69,.04);border-left:3px solid var(--blu-grafite);border-radius:0 6px 6px 0}
-.ca-fen{font-family:var(--serif);font-weight:600;font-size:18px;color:var(--ink);text-transform:capitalize;margin-bottom:10px}
-.ca-fonti{font-family:var(--mono);font-size:10px;color:var(--ink-soft);font-style:italic;margin-top:12px}
-
-/* ═══════════ MENU (flusso: voci → equilibrio → carta vini) ═══════════ */
-.mn-head{margin:28px 0 18px}
-.mn-titolo{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1.1;margin-bottom:6px}
-.mn-sub{font-family:var(--ui);font-size:14px;color:var(--ink-soft)}
-.mn-add{display:flex;gap:8px;margin-bottom:16px}
-.mn-add input{flex:1;min-width:0;border:1.5px solid var(--linea);border-radius:6px;padding:12px;font-family:var(--ui);font-size:14px;background:var(--carta)}
-.mn-add input:focus{outline:none;border-color:var(--rame)}
-.mn-add button{flex:0 0 48px;background:var(--ink);color:var(--carta);border-radius:6px;font-size:20px}
-.mn-voci{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
-.mn-voce{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--linea);border-radius:6px;padding:12px 14px;background:var(--carta)}
-.mn-voce-nome{font-family:var(--serif);font-weight:500;font-size:16px;color:var(--ink)}
-.mn-voce-x{font-family:var(--ui);font-size:12px;color:var(--ink-soft);padding:4px 8px}
-.mn-vuoto{font-family:var(--ui);font-size:13px;color:var(--ink-soft);text-align:center;padding:24px;border:1px dashed var(--linea);border-radius:6px;margin-bottom:20px}
-.mn-azione{width:100%;background:var(--rame);color:var(--carta);font-family:var(--ui);font-weight:600;font-size:15px;padding:14px;border-radius:6px;margin-bottom:12px}
-.mn-azione:disabled{background:var(--linea);color:var(--ink-soft)}
-.mn-sec{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin:26px 0 12px}
-/* analisi */
-.mn-bil{background:var(--carta);border:1px solid var(--linea);border-radius:6px;padding:16px;margin-bottom:12px}
-.mn-bil-consiglio{font-family:var(--serif);font-size:17px;color:var(--ink);margin-bottom:12px}
-.mn-bil-barre{display:flex;flex-direction:column;gap:6px}
-.mn-bil-row{display:flex;align-items:center;gap:8px}
-.mn-bil-lab{flex:0 0 90px;font-family:var(--ui);font-size:12px;color:var(--ink-soft);text-transform:capitalize}
-.mn-bil-track{flex:1;height:6px;background:var(--linea);border-radius:3px;overflow:hidden}
-.mn-bil-fill{height:100%;background:var(--blu-grafite)}
-.mn-bil-n{flex:0 0 20px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--ink)}
-.mn-mod{font-family:var(--ui);font-size:13px;color:var(--ink);background:rgba(184,96,58,.06);border-left:3px solid var(--rame);padding:10px 12px;margin:6px 0;line-height:1.45;border-radius:0 6px 6px 0}
-/* carta vini */
-.mn-vino{border:1px solid var(--linea);border-radius:6px;padding:16px;margin-bottom:12px}
-.mn-vino-piatto{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--ink);margin-bottom:8px}
-.mn-vino-nota{font-family:var(--ui);font-size:13px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px;font-style:italic}
-.mn-vino-sugg{display:flex;flex-wrap:wrap;gap:6px}
-.mn-vino-chip{font-family:var(--ui);font-size:13px;background:var(--blu-grafite);color:var(--carta);border-radius:20px;padding:6px 12px}
-
-/* ═══════════ QUADERNO (riepilogo + maestria + commit) ═══════════ */
-.qd-head{margin:28px 0 20px}
-.qd-titolo{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1.1}
-.qd-sub{font-family:var(--ui);font-size:14px;color:var(--ink-soft);margin-top:6px}
-/* riepilogo statistiche */
-.qd-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:28px}
-.qd-stat{border:1px solid var(--linea);border-radius:6px;padding:16px 12px;text-align:center}
-.qd-stat-n{font-family:var(--mono);font-weight:700;font-size:26px;color:var(--rame)}
-.qd-stat-l{font-family:var(--ui);font-size:11px;color:var(--ink-soft);margin-top:4px}
-.qd-sec{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin:24px 0 12px}
-/* maestria */
-.qd-mae{border:1px solid var(--linea);border-radius:6px;padding:14px;margin-bottom:10px}
-.qd-mae-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-.qd-mae-nome{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--ink);text-transform:capitalize}
-.qd-mae-stato{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase}
-.qd-mae-bar{height:5px;background:var(--linea);border-radius:3px;overflow:hidden;margin-bottom:6px}
-.qd-mae-fill{height:100%}
-.qd-mae-n{font-family:var(--mono);font-size:10px;color:var(--ink-soft)}
-/* commit */
-.qd-commit{border:1px solid var(--linea);border-left:4px solid var(--blu-grafite);border-radius:6px;padding:14px;margin-bottom:10px}
-.qd-commit-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px}
-.qd-commit-nome{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--ink)}
-.qd-commit-n{flex-shrink:0;font-family:var(--mono);font-size:12px;color:var(--blu-grafite)}
-.qd-commit-esito{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid}
-.qd-commit-note{font-family:var(--ui);font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.45}
-/* vuoto */
-.qd-vuoto{text-align:center;padding:40px 24px;border:1px dashed var(--linea);border-radius:8px}
-.qd-vuoto-ico{font-size:34px;color:var(--rame);margin-bottom:14px}
-.qd-vuoto-t{font-family:var(--serif);font-weight:600;font-size:19px;color:var(--ink);margin-bottom:10px;line-height:1.2}
-.qd-vuoto-d{font-family:var(--ui);font-size:13px;color:var(--ink-soft);line-height:1.55;max-width:300px;margin:0 auto}
-
-/* ═══════════ MATTER-CHAT (testo libero, scorre nella pagina — NO contenitore) ═══════════ */
-.ch-wrap{min-height:calc(100vh - var(--nav-h) - 120px);display:flex;flex-direction:column}
-.ch-flusso{flex:1;padding:8px 0 20px}
-/* la domanda dell'utente — discreta, come un titolo di sezione */
-.ch-domanda{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin:22px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--linea)}
-/* lo status — riga leggera che pulsa, poi sparisce */
-.ch-status{font-family:var(--ui);font-size:13px;color:var(--ink-soft);font-style:italic;margin:8px 0;animation:chpulse 1.4s ease-in-out infinite}
-@keyframes chpulse{0%,100%{opacity:.5}50%{opacity:1}}
-/* LA RISPOSTA — testo editoriale che scorre libero, nessun box */
-.ch-risposta{font-family:var(--serif);font-size:18px;line-height:1.7;color:var(--ink);font-weight:400}
-.ch-risposta.scrivendo::after{content:'▍';color:var(--rame);animation:chcaret .9s step-end infinite;margin-left:1px}
-@keyframes chcaret{50%{opacity:0}}
-/* la barra di input — in basso, fissa, pulita */
-.ch-barra{position:sticky;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0) + 10px);display:flex;gap:8px;padding-top:12px;background:linear-gradient(transparent,var(--carta) 20%)}
-.ch-barra input{flex:1;min-width:0;border:1.5px solid var(--linea);border-radius:24px;padding:14px 18px;font-family:var(--ui);font-size:15px;background:var(--carta);color:var(--ink)}
-.ch-barra input:focus{outline:none;border-color:var(--rame)}
-.ch-barra button{flex:0 0 48px;height:48px;background:var(--rame);color:var(--carta);border-radius:50%;font-size:19px}
-.ch-barra button:disabled{background:var(--linea);color:var(--ink-soft)}
-/* intro quando vuota */
-.ch-intro{padding:32px 0 20px}
-.ch-intro-t{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--ink);line-height:1.15;margin-bottom:10px}
-.ch-intro-d{font-family:var(--ui);font-size:14px;color:var(--ink-soft);line-height:1.5;margin-bottom:20px}
-.ch-esempi{display:flex;flex-direction:column;gap:8px}
-.ch-es{text-align:left;border:1px solid var(--linea);border-radius:8px;padding:13px 16px;font-family:var(--ui);font-size:14px;color:var(--ink);background:var(--carta)}
-.ch-es:active{border-color:var(--rame)}
-
-/* ═══════════ BANCO / MISURA (lista protocolli + esperimento) ═══════════ */
-.bn-head{margin:28px 0 16px}
-.bn-titolo{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1.1}
-.bn-sub{font-family:var(--ui);font-size:14px;color:var(--ink-soft);margin-top:6px}
-.bn-search{display:flex;gap:8px;margin-bottom:20px}
-.bn-search input{flex:1;min-width:0;border:1.5px solid var(--linea);border-radius:6px;padding:12px 14px;font-family:var(--ui);font-size:14px;background:var(--carta)}
-.bn-search input:focus{outline:none;border-color:var(--rame)}
-.bn-search button{flex:0 0 48px;background:var(--ink);color:var(--carta);border-radius:6px;font-size:18px}
-.bn-lista{display:flex;flex-direction:column;gap:8px}
-.bn-exp{text-align:left;border:1px solid var(--linea);border-radius:6px;padding:14px;background:var(--carta)}
-.bn-exp:active{border-color:var(--rame)}
-.bn-exp-nome{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--ink);line-height:1.2;margin-bottom:4px}
-.bn-exp-meta{font-family:var(--mono);font-size:10px;color:var(--ink-soft);text-transform:uppercase}
-/* esperimento aperto */
-.bn-detail-back{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin:20px 0 8px}
-.bn-dnome{font-family:var(--serif);font-weight:600;font-size:28px;color:var(--ink);line-height:1.1;margin-bottom:14px}
-.bn-dip{font-family:var(--ui);font-size:14px;color:var(--ink);line-height:1.5;margin-bottom:18px}
-.bn-dip-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--rame);margin-right:6px}
-.bn-dsec{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rame);margin:24px 0 12px}
-.bn-reag{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--linea);padding:10px 0}
-.bn-reag:last-child{border-bottom:0}
-.bn-reag-nome{font-family:var(--ui);font-size:14px;color:var(--ink);text-transform:capitalize}
-.bn-reag-q{font-family:var(--mono);font-size:13px;color:var(--rame)}
-.bn-sens{display:flex;flex-direction:column;gap:8px}
-.bn-sens-row{display:flex;gap:8px;align-items:flex-start;font-family:var(--ui);font-size:13px;color:var(--ink)}
-.bn-sens-ico{color:var(--rame);font-family:var(--mono);flex-shrink:0}
-.bn-salva{width:100%;background:var(--verde);color:#FAFAF8;font-family:var(--ui);font-weight:600;font-size:15px;padding:15px;border-radius:8px;margin:24px 0 8px}
-.bn-perche{font-family:var(--serif);font-size:16px;line-height:1.6;color:var(--ink)}
-/* scala su carta (nel banco il fondo è chiaro) */
-/* la scala resta SEMPRE scura (condizione congelata: il numero si legge sempre). Nessun override chiaro. */
+.sk{background:var(--sup);border-radius:2px;animation:pulse 1.3s infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
 </style>
 </head>
 <body>
-<!-- ONBOARDING (prima apertura) -->
-<div class="onb" id="onb" style="display:none">
-  <div class="onb-logo">Matter</div>
-  <div class="onb-dom">Dove lavori?</div>
-  <div class="onb-sub">Matter si mette al tuo banco.</div>
-  <div class="onb-opts">
-    <button class="onb-opt" onclick="onbScegli('bar')">Bar</button>
-    <button class="onb-opt" onclick="onbScegli('cucina')">Cucina</button>
-    <button class="onb-opt" onclick="onbScegli('panificazione')">Panificazione</button>
-    <button class="onb-opt" onclick="onbScegli('pasticceria')">Pasticceria</button>
-    <button class="onb-opt" onclick="onbScegli('gelateria')">Gelateria</button>
-    <button class="onb-opt" onclick="onbScegli('altro')">Altro</button>
+<header class="hd">
+  <div class="hd-logo" onclick="vai('home')">Matter<span class="b"> Bench</span></div>
+  <div class="hd-menu" onclick="vai('home')"><span></span><span></span><span></span></div>
+</header>
+<main class="wrap">
+
+<!-- HOME -->
+<div class="vista on" id="v-home">
+  <div class="cerca"><span class="cerca-ico">⌕</span><input id="cerca-input" placeholder="Cerca un ingrediente o una preparazione" oninput="cercaLive()"></div>
+  <div class="cerca-hint">pomodoro · maionese · lievitazione · emulsione</div>
+  <div class="ris" id="cerca-ris"></div>
+  <div id="home-sotto">
+    <div class="exp-sez"><div class="exp-k">◦ Esperimento del giorno</div><div id="exp-host"><div class="sk" style="height:30px;width:70%;margin-bottom:12px"></div><div class="sk" style="height:16px;width:50%"></div></div></div>
+    <div class="porte">
+      <div class="porte-k">Dove vuoi andare</div>
+      <div class="porta" onclick="vai('atlante')"><span class="porta-n">01</span><span class="porta-b"><div class="porta-nome">Atlante</div><div class="porta-desc">Capisci la scienza sotto il mestiere</div></span><span class="porta-arr">→</span></div>
+      <div class="porta" onclick="vai('banco')"><span class="porta-n">02</span><span class="porta-b"><div class="porta-nome">Banco</div><div class="porta-desc">Applica: il punto, gli ingredienti, il controllo</div></span><span class="porta-arr">→</span></div>
+      <div class="porta" onclick="vai('corridoio')"><span class="porta-n">03</span><span class="porta-b"><div class="porta-nome">Corridoio</div><div class="porta-desc">Crea: collega gli ingredienti, scopri</div></span><span class="porta-arr">→</span></div>
+      <div class="porta" onclick="vai('menu')"><span class="porta-n">04</span><span class="porta-b"><div class="porta-nome">Menu</div><div class="porta-desc">Componi l'offerta</div></span><span class="porta-arr">→</span></div>
+      <div class="porta" onclick="vai('quaderno')"><span class="porta-n">05</span><span class="porta-b"><div class="porta-nome">Quaderno</div><div class="porta-desc">Ricorda le tue prove</div></span><span class="porta-arr">→</span></div>
+    </div>
   </div>
-  <button class="onb-skip" onclick="onbChiudi()">Salta per ora</button>
 </div>
 
-<header class="hd">
-  <div class="hd-logo">Matter</div>
-  <div class="hd-right">
-    <button class="hd-galileo" onclick="apriGalileo()">Galileo</button>
-    <button class="hd-accedi" onclick="accedi()">Accedi</button>
-  </div>
-</header>
+<!-- VISTE PORTE (cablaggi in arrivo, una alla volta) -->
+<div class="vista" id="v-ingrediente"><div id="ingr-host"></div></div>
+<div class="vista" id="v-atlante"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Atlante</div><div class="vt-sub">Capisci la scienza sotto il mestiere</div><div id="atlante-host"></div></div>
+<div class="vista" id="v-banco"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Banco</div><div class="vt-sub">Il punto, gli ingredienti, il controllo</div><div id="banco-host"></div></div>
+<div class="vista" id="v-corridoio"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Corridoio</div><div class="vt-sub">Collega gli ingredienti, scopri</div><div id="corridoio-host"></div></div>
+<div class="vista" id="v-menu"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Menu</div><div class="vt-sub">Componi l'offerta</div><div id="menu-host"></div></div>
+<div class="vista" id="v-quaderno"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Quaderno</div><div class="vt-sub">Ricorda le tue prove</div><div id="quaderno-host"></div></div>
 
-<main class="wrap">
-  <!-- VISTA HOME (Banco) -->
-  <div class="vista on" id="v-banco">
-    <div class="claim">La scienza del tuo mestiere.<br><b>Numeri, non opinioni.</b></div>
-    <div class="porte">
-      <button class="porta" onclick="vai('misura')"><div class="porta-ico">◎</div><div class="porta-t">Misura</div><div class="porta-d">esperimenti, strumenti, bersagli</div></button>
-      <button class="porta" onclick="vai('causa')"><div class="porta-ico">⟲</div><div class="porta-t">Trova la causa</div><div class="porta-d">qualcosa non torna? risali alla causa</div></button>
-      <button class="porta" onclick="vai('atlante')"><div class="porta-ico">◈</div><div class="porta-t">Esplora</div><div class="porta-d">fenomeni, tecniche, la scienza</div></button>
-      <button class="porta" onclick="vai('menu')"><div class="porta-ico">▤</div><div class="porta-t">Costruisci</div><div class="porta-d">trasforma il lavoro in offerta</div></button>
-    </div>
-    <div id="exp-host"><div class="exp"><div class="exp-lab"><span>◎ ESPERIMENTO DEL GIORNO</span></div><div class="sk" style="height:28px;width:70%;margin-bottom:14px"></div><div class="sk" style="height:60px;margin-bottom:14px"></div></div></div>
-    <button class="chiedi-matter" onclick="apriMatterChat()">Chiedi a Matter</button>
-  </div>
-
-  <!-- VISTA ATLANTE -->
-  <div class="vista" id="v-atlante">
-    <div class="at-head"><div class="at-titolo">Atlante</div><div class="at-sub">La scienza del mestiere</div></div>
-    <div id="at-stato" class="at-stato">La conoscenza di Matter cresce.</div>
-    <div id="at-filtri" class="at-filtri"></div>
-    <div class="at-sez-lab">I fenomeni fondamentali</div>
-    <div id="at-madre"><div class="at-madre"><div class="sk-d" style="height:24px;width:60%;margin-bottom:8px"></div><div class="sk-d" style="height:14px;width:90%"></div></div></div>
-    <div class="at-scopri">
-      <div class="at-scopri-t">Scopri nuove tecniche</div>
-      <div class="at-scopri-d">tecniche che allargano il tuo mestiere</div>
-      <div id="at-tecniche" class="at-tecniche"></div>
-    </div>
-  </div>
-
-  <!-- VISTA SCHEDA TECNICA -->
-  <div class="vista" id="v-scheda">
-    <div id="sc-host"></div>
-  </div>
-
-  <!-- VISTA MISURA (Banco: lista protocolli + esperimento) -->
-  <div class="vista" id="v-misura">
-    <div id="mis-host"></div>
-  </div>
-
-  <!-- VISTA CHAT (Matter-chat / Galileo) -->
-  <div class="vista" id="v-chat">
-    <div class="ch-wrap">
-      <div class="ch-flusso" id="ch-flusso"></div>
-      <div class="ch-barra">
-        <input id="ch-input" placeholder="Chiedi a Matter…" onkeydown="if(event.key==='Enter')inviaChat()">
-        <button id="ch-send" onclick="inviaChat()">→</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- VISTA QUADERNO -->
-  <div class="vista" id="v-quaderno">
-    <div class="qd-head"><div class="qd-titolo">Il tuo Quaderno</div><div class="qd-sub">La memoria del tuo mestiere.</div></div>
-    <div id="qd-host"><div class="sk-d" style="height:80px;border-radius:6px"></div></div>
-  </div>
-
-  <!-- VISTA MENU -->
-  <div class="vista" id="v-menu">
-    <div class="mn-head">
-      <div class="mn-titolo">Costruisci il menu</div>
-      <div class="mn-sub">Le voci, l'equilibrio, la carta vini.</div>
-    </div>
-    <div class="mn-add">
-      <input id="mn-input" placeholder="Aggiungi un piatto…" onkeydown="if(event.key==='Enter')aggiungiVoce()">
-      <button onclick="aggiungiVoce()">+</button>
-    </div>
-    <div id="mn-voci-host"></div>
-    <button class="mn-azione" id="mn-analizza-btn" onclick="analizzaMenu()" disabled>Analizza l'equilibrio</button>
-    <div id="mn-esito"></div>
-  </div>
-
-  <!-- VISTA CAUSA -->
-  <div class="vista" id="v-causa">
-    <div class="ca-head">
-      <div class="ca-titolo">Qualcosa non torna?</div>
-      <div class="ca-sub">Dimmi cosa vedi al banco. Matter risale alla causa.</div>
-    </div>
-    <div class="ca-search">
-      <input id="ca-input" placeholder="es. la maionese è impazzita" onkeydown="if(event.key==='Enter')cercaCausa()">
-      <button onclick="cercaCausa()">→</button>
-    </div>
-    <div class="ca-hint">Descrivi il problema come lo diresti a un collega</div>
-    <div class="ca-esempi" id="ca-esempi"></div>
-    <div id="ca-esito"></div>
-  </div>
 </main>
-
-<nav class="nav">
-  <button class="nav-v on" onclick="vai('banco')"><span class="nav-ico">◎</span><span class="nav-lab">Banco</span></button>
-  <button class="nav-v" onclick="vai('causa')"><span class="nav-ico">⟲</span><span class="nav-lab">Causa</span></button>
-  <button class="nav-v" onclick="vai('atlante')"><span class="nav-ico">◈</span><span class="nav-lab">Atlante</span></button>
-  <button class="nav-v" onclick="vai('menu')"><span class="nav-ico">▤</span><span class="nav-lab">Menu</span></button>
-  <button class="nav-v" onclick="vai('quaderno')"><span class="nav-ico">◱</span><span class="nav-lab">Quaderno</span></button>
-</nav>
-
 <script>
 var API='https://web-production-79457.up.railway.app';
-var _RANGE={'°C':[0,120],'%':[0,100],'pH':[0,14],'min':[0,120],'h':[0,72],'°Bx':[0,70]};
 function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':String(s));return d.innerHTML;}
-
-function scala(bers,label){
-  if(!bers||bers.valore==null||bers.valore==='')return '';
-  var u=String(bers.unita||'');
-  var nums=(String(bers.valore).replace(',','.').replace(/[–—]/g,'-').split(/\s*-\s*/).map(function(s){var m=s.match(/-?\d+\.?\d*/);return m?Number(m[0]):null;}).filter(function(x){return x!==null;}));
-  if(!nums.length)return '';
-  var vmin=nums[0],vmax=nums.length>1?nums[1]:nums[0];
-  var r=_RANGE[u]||[0,vmax+Math.abs(vmax||1)];var lo=r[0],hi=r[1],span=(hi-lo)||1;
-  var pMin=Math.max(0,Math.min(100,((vmin-lo)/span)*100));
-  var pMax=Math.max(0,Math.min(100,((vmax-lo)/span)*100));
-  var winL=pMin,winW=Math.max(3,pMax-pMin),centro=winL+winW/2;
-  var ticks='';for(var i=1;i<10;i++)ticks+='<div class="scala-tick" style="left:'+(i*10)+'%"></div>';
-  var valTxt=nums.length>1?(vmin+'–'+vmax):String(vmin);
-  var pos=centro<14?'left:'+(winL+winW)+'%;transform:translate(6px,-50%)':(centro>86?'left:'+winL+'%;transform:translate(-100%,-50%);padding-right:6px':'left:'+centro+'%;transform:translate(-50%,-50%)');
-  return '<div class="scala-wrap"><div class="scala-lab">◎ IL PUNTO'+(label?' · '+esc(label):'')+'</div>'
-    +'<div class="scala-track">'+ticks+'<div class="scala-win" style="left:'+winL+'%;width:'+winW+'%"></div>'
-    +'<div class="scala-val" style="'+pos+'">'+esc(valTxt)+(u?'<span class="u">'+esc(u)+'</span>':'')+'</div></div>'
-    +'<div class="scala-cap"><span>'+lo+'</span><span>'+hi+(u?' '+esc(u):'')+'</span></div></div>';
+var _viste={home:'v-home',ingrediente:'v-ingrediente',atlante:'v-atlante',banco:'v-banco',corridoio:'v-corridoio',menu:'v-menu',quaderno:'v-quaderno'};
+function vai(dove){
+  document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
+  var el=document.getElementById(_viste[dove]||'v-home'); if(el)el.classList.add('on');
+  window.scrollTo(0,0);
+  // i cablaggi delle porte si agganciano man mano (una schermata alla volta)
 }
-
-// "IL PUNTO" (decisione congelata): bersaglio→scala+etichetta, segnale→frase, misto→entrambi.
-// Fallback ai campi vecchi (bersaglio) finché il_punto non è ovunque. Mai mostrare tipo/bersaglio/segnale.
-function ilPunto(d, variabile){
-  var p=d.il_punto;
-  // fallback: niente il_punto → uso il vecchio bersaglio come se fosse tipo:bersaglio
-  if(!p){ if(d.bersaglio&&d.bersaglio.valore) return scala(d.bersaglio, variabile||d.variabile_critica||''); return ''; }
-  var tipo=p.tipo||'', bers=p.bersaglio, seg=p.segnale||'';
-  var out='';
-  if((tipo==='bersaglio'||tipo==='misto') && bers && bers.valore){
-    out+=scala(bers, variabile||d.variabile_critica||'');
-  }
-  if((tipo==='segnale'||tipo==='misto') && seg){
-    out+='<div class="punto-seg"><span class="punto-seg-lab">◎ Il punto</span><span class="punto-seg-txt">'+esc(seg)+'</span></div>';
-  }
-  // tipo bersaglio ma senza valore e con segnale → frase
-  if(!out && seg){ out='<div class="punto-seg"><span class="punto-seg-lab">◎ Il punto</span><span class="punto-seg-txt">'+esc(seg)+'</span></div>'; }
-  return out;
+// RICERCA cablata (/v1/cerca)
+var _ct=null;
+function cercaLive(){
+  var q=(document.getElementById('cerca-input').value||'').trim();
+  var ris=document.getElementById('cerca-ris'), sotto=document.getElementById('home-sotto');
+  if(q.length<2){ ris.innerHTML=''; sotto.style.display='block'; return; }
+  sotto.style.display='none';
+  clearTimeout(_ct);
+  _ct=setTimeout(function(){
+    fetch(API+'/v1/cerca?q='+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(d){
+      var items=(d.risultati||[]).slice(0,12);
+      if(!items.length){ ris.innerHTML='<div class="vt-wip">Niente per "'+esc(q)+'". Prova un altro termine.</div>'; return; }
+      ris.innerHTML=items.map(function(x){
+        return '<div class="ris-item" onclick="apriRisultato(\''+esc(x.nome).replace(/\x27/g,"")+'\',\''+esc(x.tipo)+'\')"><span class="ris-nome">'+esc(x.nome)+'</span><span class="ris-tipo">'+esc(x.tipo)+'</span></div>';
+      }).join('');
+    }).catch(function(){ ris.innerHTML='<div class="vt-wip">Errore ricerca.</div>'; });
+  },250);
 }
-
+function apriRisultato(nome,tipo){
+  // il cablaggio scheda-ingrediente arriva nel prossimo giro; per ora segnalo onesto
+  if(tipo==='ingrediente'){ vai('ingrediente'); document.getElementById('ingr-host').innerHTML='<div class="vt-back" onclick="vai(\'home\')">‹ Home</div><div class="vt-titolo">'+esc(nome)+'</div><div class="vt-wip">Scheda ingrediente — cablaggio in costruzione (prossima schermata).</div>'; }
+  else { vai('banco'); document.getElementById('banco-host').innerHTML='<div class="vt-wip">Preparazione "'+esc(nome)+'" — cablaggio Banco in costruzione.</div>'; }
+}
+// ESPERIMENTO DEL GIORNO cablato (mostra solo se ha contenuto, sennò onesto)
 function caricaExp(){
   fetch(API+'/v1/esperimento-del-giorno').then(function(r){return r.json();}).then(function(d){
-    var host=document.getElementById('exp-host');if(!host||!d||!d.nome)return;
-    var sens=d.sensori||{};
-    var sRows=[['◠',sens.vista],['▚',sens.tatto],['∿',sens.olfatto]].filter(function(x){return x[1];})
-      .map(function(x){return '<div class="sens-row"><span class="sens-ico">'+x[0]+'</span><span>'+esc(x[1])+'</span></div>';}).join('');
-    var sc=ilPunto(d,d.variabile_critica);
-    var obiettivo=d.cosa_voglio_ottenere||d.ipotesi||'';
-    host.innerHTML='<div class="exp">'
-      +'<div class="exp-lab"><span>◎ ESPERIMENTO DEL GIORNO</span>'+(d.stato_epistemico?'<span class="exp-badge">'+esc(d.stato_epistemico)+'</span>':'')+'</div>'
-      +'<div class="exp-nome">'+esc(d.nome)+'</div>'
-      +(obiettivo?'<div class="exp-ip"><span class="exp-ip-lab">L\'obiettivo</span>'+esc(obiettivo)+'</div>':'')
-      +sc
-      +(sRows?'<div class="sens-lab">I sensori — cosa osservare</div><div class="sens">'+sRows+'</div>':'')
-      +'<button class="exp-cta" onclick="apriProtocollo(\''+esc(d.id)+'\')">Apri l\'esperimento →</button>'
-      +'</div>';
-  }).catch(function(){});
+    var h=document.getElementById('exp-host'); if(!h)return;
+    if(!d||!d.nome){ h.innerHTML='<div class="exp-vuoto">Nessun esperimento disponibile ora.</div>'; return; }
+    var p=d.il_punto||{};
+    var haContenuto = d.cosa_voglio_ottenere || (p && (p.bersaglio&&p.bersaglio.valore || p.segnale));
+    h.innerHTML='<div class="exp-nome">'+esc(d.nome)+'</div>'
+      + (haContenuto ? '<div class="exp-sub">'+esc(d.cosa_voglio_ottenere||'')+'</div>' : '<div class="exp-vuoto">La scheda di questo esperimento è in arrivo.</div>');
+  }).catch(function(){ var h=document.getElementById('exp-host'); if(h)h.innerHTML='<div class="exp-vuoto">Non raggiungibile.</div>'; });
 }
-
-var _viste={banco:'v-banco',atlante:'v-atlante',causa:'v-causa',menu:'v-menu',quaderno:'v-quaderno',chat:'v-chat',misura:'v-misura'};
-var _navIdxMisura=0; // Misura sta sotto il luogo Banco
-var _navIdx={banco:0,causa:1,atlante:2,menu:3,quaderno:4};
-function vai(dove){
-  // viste pronte
-  if(_viste[dove]){
-    document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
-    var el=document.getElementById(_viste[dove]); if(el)el.classList.add('on');
-    // nav
-    var navs=document.querySelectorAll('.nav-v'); navs.forEach(function(n,i){ n.classList.toggle('on', i===_navIdx[dove]); });
-    window.scrollTo(0,0);
-    if(dove==='atlante') caricaAtlante();
-    if(dove==='causa') initCausa();
-    if(dove==='menu') initMenu();
-    if(dove==='quaderno') caricaQuaderno();
-    if(dove==='chat') initChat();
-    if(dove==='misura') initMisura();
-    return;
-  }
-  alert(dove+' — in costruzione');
-}
-var _chatMode='matter'; // 'matter' = /chiedi/stream (scientifica), 'galileo' = assistente impresa/web
-function apriGalileo(){ _chatMode='galileo'; _chInit=false; vai('chat'); }
-function apriMatterChat(){ _chatMode='matter'; _chInit=false; vai('chat'); }
-function accedi(){ alert('Accesso e registrazione — in arrivo. Per ora Matter funziona senza login.'); }
-
-// ═══ ATLANTE ═══
-var _DISC=['Tutti','Cucina','Bar','Panificazione','Pasticceria','Gelateria','Caffetteria','Vino','Birra'];
-var _discAttiva='Tutti';
-var _atCaricato=false;
-function caricaAtlante(){
-  if(_atCaricato) return; _atCaricato=true;
-  // filtri
-  var fil=document.getElementById('at-filtri');
-  if(fil) fil.innerHTML=_DISC.map(function(d){return '<button class="at-chip'+(d==='Tutti'?' on':'')+'" onclick="filtraDisc(\''+d+'\',this)">'+esc(d)+'</button>';}).join('');
-  // stato conoscenza (copertura)
-  fetch(API+'/v1/atlante/copertura').then(function(r){return r.json();}).then(function(d){
-    var box=document.getElementById('at-stato'); if(!box)return;
-    var pd=(d.per_disciplina||[]).filter(function(x){return (x.pct||0)>0;}).sort(function(a,b){return (b.pct||0)-(a.pct||0);}).slice(0,6);
-    var barre=pd.map(function(x){return '<div class="at-sbar"><span class="at-sbar-lab">'+esc(x.disciplina)+'</span><span class="at-sbar-track"><span class="at-sbar-fill" style="width:'+(x.pct||0)+'%"></span></span><span class="at-sbar-pct">'+(x.pct||0)+'%</span></div>';}).join('');
-    box.innerHTML='La conoscenza di Matter cresce. Matter mostra anche ciò che non sa ancora.'+(barre?'<div class="at-stato-barre">'+barre+'</div>':'');
-  }).catch(function(){});
-  // fenomeni madre
-  fetch(API+'/v1/fenomeni-madre').then(function(r){return r.json();}).then(function(d){
-    var m=Array.isArray(d)?d:(d.fenomeni_madre||d.madre||[]);
-    var box=document.getElementById('at-madre'); if(!box)return;
-    box.innerHTML=m.map(function(f){
-      var st=f.strati||{};
-      var pallini=['fondamenta','operativita','esperienza'].map(function(k){return '<span class="at-strato'+(st[k]?' on':'')+'"></span>';}).join('');
-      return '<div class="at-madre" onclick="apriScheda(\''+esc(f.slug)+'\')">'
-        +'<div class="at-madre-nome">'+esc(f.nome)+'</div>'
-        +'<div class="at-madre-meta"><span class="at-madre-n">'+(f.n_manifestazioni||0)+' manifestazioni</span><span class="at-strati">'+pallini+'</span></div>'
-        +'</div>';
-    }).join('');
-  }).catch(function(){});
-  // scopri tecniche
-  fetch(API+'/v1/schede-scienza').then(function(r){return r.json();}).then(function(d){
-    var s=(d.schede||[]).filter(function(x){return x.livello_tassonomia==='manifestazione';}).slice(0,6);
-    if(!s.length) s=(d.schede||[]).slice(0,6);
-    var box=document.getElementById('at-tecniche'); if(!box)return;
-    box.innerHTML=s.map(function(t){
-      var lab=(t.livello_accesso==='laboratorio')?['lab','da laboratorio']:['banco','da banco'];
-      return '<button class="at-tec" onclick="apriScheda(\''+esc(t.slug)+'\')"><div class="at-tec-top"><span class="at-tec-nome">'+esc(t.nome)+'</span><span class="at-tec-liv '+lab[0]+'">'+lab[1]+'</span></div>'+(t.principio?'<div class="at-tec-d">'+esc(String(t.principio).slice(0,90))+'</div>':'')+'</button>';
-    }).join('');
-  }).catch(function(){});
-}
-function filtraDisc(d,btn){
-  _discAttiva=d;
-  document.querySelectorAll('.at-chip').forEach(function(c){c.classList.remove('on');});
-  if(btn)btn.classList.add('on');
-  // (il filtro vero sui madre lo aggiungo quando il backend espone disciplina sui madre)
-}
-// prende il testo da campo che può essere stringa o {it,en}
-function _t(v){ if(v==null)return ''; if(typeof v==='object')return v.it||v.en||''; return String(v); }
-var _schedaPrec='atlante';
-function apriScheda(slug){
-  _schedaPrec = document.getElementById('v-atlante').classList.contains('on')?'atlante':'banco';
-  document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
-  document.getElementById('v-scheda').classList.add('on');
-  window.scrollTo(0,0);
-  var host=document.getElementById('sc-host');
-  host.innerHTML='<div class="sc-nome"><div class="sk-d" style="height:30px;width:70%"></div></div><div class="sk-d" style="height:80px;margin-top:20px"></div>';
-  fetch(API+'/v1/scheda-scienza/'+encodeURIComponent(slug)).then(function(r){return r.json();}).then(function(d){
-    renderScheda(d, slug);
-  }).catch(function(){ host.innerHTML='<div style="padding:40px 0;color:var(--ink-soft)">Non riesco a caricare questa scheda. Riprova.</div>'; });
-}
-function renderScheda(d, slug){
-  var host=document.getElementById('sc-host'); if(!host)return;
-  var princ=_t(d.principio), cosa=_t(d.cosa_sapere), esec=_t(d.esecuzione), esp=_t(d.esperienza), err=_t(d.errori_comuni);
-  var bers=_t(d.numero_bersaglio), strum=_t(d.strumento);
-  // badge
-  var badges='';
-  if(d.is_fenomeno_madre) badges+='<span class="sc-bdg madre">Fenomeno fondamentale</span>';
-  if(d.livello_accesso==='banco'||d.provabile) badges+='<span class="sc-bdg banco">Da banco</span>';
-  else if(d.livello_accesso==='laboratorio') badges+='<span class="sc-bdg lab">Da laboratorio</span>';
-
-  var h='<button class="sc-back" onclick="vai(_schedaPrec)">‹ Atlante</button>';
-  h+=(badges?'<div class="sc-head-badges">'+badges+'</div>':'');
-  h+='<div class="sc-nome">'+esc(d.nome)+'</div>';
-
-  // (1) CAPISCO
-  h+='<div class="sc-blocco"><div class="sc-blk-lab">Capisco</div>';
-  if(princ) h+='<div class="sc-p">'+esc(princ)+'</div>';
-  if(cosa) h+='<div class="sc-txt">'+esc(cosa)+'</div>';
-  h+='</div>';
-
-  // (2) CAPISCO PERCHÉ — causalità
-  var caus=d.causalita||{};
-  var hasCaus=caus&&((caus.acceleranti||[]).length||(caus.rallentanti||[]).length);
-  if(hasCaus || esp){
-    h+='<div class="sc-blocco"><div class="sc-blk-lab">Capisco perché</div>';
-    if(esp) h+='<div class="sc-txt">'+esc(esp)+'</div>';
-    if(hasCaus){
-      h+='<div class="sc-caus">';
-      (caus.acceleranti||[]).slice(0,4).forEach(function(a){ h+=_crow(a,'accelera','↑','var(--rosso-oss)'); });
-      (caus.rallentanti||[]).slice(0,4).forEach(function(a){ h+=_crow(a,'rallenta','↓','var(--blu-grafite)'); });
-      h+='</div>';
-    }
-    h+='</div>';
-  }
-
-  // (3) LO FACCIO
-  if(esec||bers||strum||err){
-    h+='<div class="sc-blocco"><div class="sc-blk-lab">Lo faccio</div>';
-    if(esec) h+='<div class="sc-txt">'+esc(esec)+'</div>';
-    if(bers) h+='<div class="sc-bers"><div class="sc-bers-lab">◎ I bersagli operativi</div><div class="sc-bers-txt">'+esc(bers)+'</div></div>';
-    if(strum){ h+='<div class="sc-sub">Cosa serve</div><div class="sc-txt">'+esc(strum)+'</div>'; }
-    if(err){ h+='<div class="sc-sub">Cosa evitare</div><div class="sc-err">'+esc(err)+'</div>'; }
-    h+='</div>';
-  }
-
-  // (4) VADO OLTRE
-  h+='<div class="sc-blocco"><div class="sc-blk-lab">Vado oltre</div>';
-  h+='<button class="sc-chat-cta" onclick="chatSu(\''+esc(d.nome)+'\')">Chiedi a Matter su questo →</button>';
-  h+='<div id="sc-manif-host"></div>';
-  h+='</div>';
-
-  // PROVALA (se provabile)
-  if(d.provabile){
-    h+='<div class="sc-provala"><button class="sc-provala-btn" onclick="provala(\''+esc(slug)+'\',\''+esc(d.nome)+'\')">Provala al banco →</button></div>';
-  }
-
-  host.innerHTML=h;
-
-  // connessioni (manifestazioni) se è madre
-  if(d.is_fenomeno_madre){
-    fetch(API+'/v1/fenomeno/'+encodeURIComponent(slug)+'/manifestazioni').then(function(r){return r.json();}).then(function(mf){
-      var box=document.getElementById('sc-manif-host'); if(!box)return;
-      var man=(mf.manifestazioni||[]).slice(0,10);
-      if(!man.length)return;
-      box.innerHTML='<div class="sc-sub">Le sue manifestazioni</div><div class="sc-manif">'+man.map(function(x){var nome=typeof x==='string'?x:(x.nome||'');var sl=typeof x==='object'?(x.slug||''):'';return '<button class="sc-manif-chip" onclick="'+(sl?'apriScheda(\''+esc(sl)+'\')':'')+'">'+esc(nome)+'</button>';}).join('')+'</div>';
-    }).catch(function(){});
-  }
-}
-function _crow(a,verbo,fr,col){
-  var fat=(typeof a==='object')?(a.fattore||a.nome||''):a;
-  var dir=(typeof a==='object'&&a.direzione)?(' '+a.direzione):'';
-  return '<div class="sc-crow"><span class="sc-cfreccia" style="color:'+col+'">'+fr+'</span><span class="sc-cverbo">'+verbo+'</span><span class="sc-cfat">'+esc(fat)+esc(dir)+'</span></div>';
-}
-function chatSu(nome){ _chatMode='matter'; _chInit=false; vai('chat'); setTimeout(function(){ inviaChat('Parlami di '+nome+' nel mio mestiere'); },200); }
-function provala(slug,nome){
-  // cerca un protocollo collegato al fenomeno, altrimenti apre la lista Misura
-  vai('misura'); 
-  setTimeout(function(){
-    fetch(API+'/v1/protocolli?fenomeno='+encodeURIComponent(nome)+'&limit=1').then(function(r){return r.json();}).then(function(d){
-      var p=(d.protocolli||[]);
-      if(p.length){ apriProtocollo(p[0].id); }
-      // se nessun protocollo, resta sulla lista Misura (l'utente sceglie)
-    }).catch(function(){});
-  },150);
-}
-
-// ═══ CAUSA (sintomo → causa → correzione) ═══
-var _CA_ES=['Il cornicione non si apre','Il Negroni è troppo amaro','La crema pasticcera ha i grumi','La carne è dura e stopposa','L\'espresso esce troppo acido'];
-var _PROBCOL={alta:['Molto probabile','var(--rosso-oss)'],media:['Possibile','var(--rame)'],bassa:['Meno probabile','var(--ink-soft)']};
-var _caInit=false;
-function initCausa(){
-  if(_caInit)return; _caInit=true;
-  var box=document.getElementById('ca-esempi');
-  if(box) box.innerHTML=_CA_ES.map(function(s){return '<button class="ca-es" onclick="cercaCausa(\''+esc(s).replace(/'/g,"\\'")+'\')">'+esc(s)+'</button>';}).join('');
-}
-function _devId(){ try{return localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon';}catch(e){return 'anon';} }
-function cercaCausa(pre){
-  var sint = pre || (document.getElementById('ca-input')||{}).value || '';
-  sint=String(sint).trim(); if(!sint)return;
-  if(pre){ var i=document.getElementById('ca-input'); if(i)i.value=pre; }
-  document.getElementById('ca-esempi').style.display='none';
-  var box=document.getElementById('ca-esito'); box.innerHTML='<div class="sk-d" style="height:120px;margin-top:16px;border-radius:8px"></div>';
-  fetch(API+'/v1/diagnosi',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({sintomo:sint})})
-    .then(function(r){return r.json();}).then(function(d){ renderCausa(d,sint); })
-    .catch(function(){ box.innerHTML='<div style="padding:30px 0;color:var(--ink-soft)">Non riesco a cercare la causa ora. Riprova.</div>'; });
-}
-function renderCausa(d, sint){
-  var box=document.getElementById('ca-esito'); if(!box)return;
-  var cause=(d.cause||[]);
-  if(!cause.length){ box.innerHTML='<div style="padding:30px 0;color:var(--ink-soft)">Non ho ancora una causa per "'+esc(sint)+'". Prova a descriverlo in modo diverso.</div>'; return; }
-  var h='';
-  // memoria
-  var mem=d.memoria_utente||{};
-  if(mem.gia_affrontato&&mem.richiamo){
-    h+='<div class="ca-mem"><span class="ca-mem-ico">◱</span><div><div class="ca-mem-lab">Dalla tua memoria</div><div class="ca-mem-txt">'+esc(mem.richiamo)+'</div></div></div>';
-  }
-  // servizio
-  var top=cause[0]; var pr=_PROBCOL[(top.probabilita||'media').toLowerCase()]||_PROBCOL.media;
-  h+='<div class="ca-serv"><div class="ca-serv-lab">◎ Fallo adesso</div>'
-    +'<span class="ca-prob" style="color:'+pr[1]+';border-color:'+pr[1]+'">'+pr[0]+'</span>'
-    +'<div class="ca-causa">'+esc(top.causa)+'</div>'
-    +(top.patch?'<div class="ca-patch"><span class="ca-patch-lab">La correzione</span><div class="ca-patch-txt">'+esc(top.patch)+'</div></div>':'')
-    +'</div>';
-  // sensori
-  var sens=(d.sensori_da_controllare||[]);
-  if(sens.length){
-    h+='<div class="ca-sez">Controlla al banco</div><div class="ca-sens">'
-      +sens.map(function(s){var t=(typeof s==='object')?(s.domanda||s.sensore):s;return '<div class="ca-sens-row"><span style="color:var(--rame)">◠</span><span>'+esc(t)+'</span></div>';}).join('')+'</div>';
-  }
-  // altre cause
-  if(cause.length>1){
-    h+='<div class="ca-sez">Oppure potrebbe essere</div><div class="ca-altre">'
-      +cause.slice(1).map(function(c){var p=_PROBCOL[(c.probabilita||'media').toLowerCase()]||_PROBCOL.media;return '<div class="ca-altra"><div class="ca-altra-top"><span class="ca-altra-causa">'+esc(c.causa)+'</span><span class="ca-altra-prob" style="color:'+p[1]+'">'+p[0]+'</span></div>'+(c.patch?'<div class="ca-altra-patch">'+esc(c.patch)+'</div>':'')+'</div>';}).join('')+'</div>';
-  }
-  // comprensione
-  var caus=d.causalita_fenomeno||{};
-  var hasCaus=caus&&((caus.acceleranti||[]).length||(caus.rallentanti||[]).length);
-  if(d.fenomeno||hasCaus){
-    h+='<button class="ca-toggle" onclick="toggleCompr(this)">▼ Perché succede</button><div class="ca-compr" style="display:none">';
-    if(d.fenomeno) h+='<div class="ca-fen">'+esc(d.fenomeno)+'</div>';
-    if(hasCaus){
-      h+='<div class="sc-caus">';
-      (caus.acceleranti||[]).slice(0,4).forEach(function(a){h+=_crow(a,'accelera','↑','var(--rosso-oss)');});
-      (caus.rallentanti||[]).slice(0,4).forEach(function(a){h+=_crow(a,'rallenta','↓','var(--blu-grafite)');});
-      h+='</div>';
-    }
-    if(d.fonti_patrimonio) h+='<div class="ca-fonti">Basato su '+d.fonti_patrimonio+' casi verificati del patrimonio Matter</div>';
-    h+='</div>';
-  }
-  box.innerHTML=h;
-}
-function toggleCompr(btn){var c=btn.nextElementSibling;if(c){var v=c.style.display!=='none';c.style.display=v?'none':'block';btn.textContent=(v?'▼':'▲')+' Perché succede';}}
-
-// ═══ MENU (voci → equilibrio → carta vini) ═══
-var _mnVoci=[];
-function initMenu(){ renderVoci(); }
-function aggiungiVoce(){
-  var i=document.getElementById('mn-input'); var v=(i.value||'').trim(); if(!v)return;
-  _mnVoci.push(v); i.value=''; renderVoci();
-}
-function rimuoviVoce(idx){ _mnVoci.splice(idx,1); renderVoci(); }
-function renderVoci(){
-  var box=document.getElementById('mn-voci-host'); if(!box)return;
-  if(!_mnVoci.length){ box.innerHTML='<div class="mn-vuoto">Aggiungi i piatti del tuo menu. Matter analizza l\'equilibrio e costruisce la carta vini.</div>'; }
-  else{ box.innerHTML='<div class="mn-voci">'+_mnVoci.map(function(v,i){return '<div class="mn-voce"><span class="mn-voce-nome">'+esc(v)+'</span><button class="mn-voce-x" onclick="rimuoviVoce('+i+')">rimuovi</button></div>';}).join('')+'</div>'; }
-  var btn=document.getElementById('mn-analizza-btn'); if(btn) btn.disabled=_mnVoci.length<2;
-}
-function analizzaMenu(){
-  if(_mnVoci.length<2)return;
-  var box=document.getElementById('mn-esito'); box.innerHTML='<div class="sk-d" style="height:100px;margin-top:8px;border-radius:6px"></div>';
-  fetch(API+'/v1/menu/analizza',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({voci:_mnVoci})})
-    .then(function(r){return r.json();}).then(function(d){ renderAnalisi(d); })
-    .catch(function(){ box.innerHTML='<div style="padding:20px 0;color:var(--ink-soft)">Non riesco ad analizzare ora. Riprova.</div>'; });
-}
-function renderAnalisi(d){
-  var box=document.getElementById('mn-esito'); if(!box)return;
-  var bil=d.bilanciamento||{};
-  var max=Math.max(1,...Object.keys(bil).map(function(k){return bil[k]||0;}));
-  var barre=Object.keys(bil).map(function(k){return '<div class="mn-bil-row"><span class="mn-bil-lab">'+esc(k)+'</span><span class="mn-bil-track"><span class="mn-bil-fill" style="width:'+((bil[k]||0)/max*100)+'%"></span></span><span class="mn-bil-n">'+(bil[k]||0)+'</span></div>';}).join('');
-  var h='<div class="mn-sec">◎ L\'equilibrio</div><div class="mn-bil">'
-    +(d.consiglio?'<div class="mn-bil-consiglio">'+esc(d.consiglio)+'</div>':'')
-    +'<div class="mn-bil-barre">'+barre+'</div></div>';
-  var mod=(d.modifiche_consigliate||[]);
-  if(mod.length){ h+=mod.map(function(m){return '<div class="mn-mod">'+esc(typeof m==='string'?m:(m.testo||m.consiglio||''))+'</div>';}).join(''); }
-  // carta vini (fase sommelier)
-  h+='<button class="mn-azione" style="margin-top:20px" onclick="cartaVini()">Costruisci la carta vini →</button>';
-  h+='<div id="mn-vini-host"></div>';
-  box.innerHTML=h;
-}
-function cartaVini(){
-  var box=document.getElementById('mn-vini-host'); box.innerHTML='<div class="sk-d" style="height:80px;margin-top:12px;border-radius:6px"></div>';
-  Promise.all(_mnVoci.map(function(v){
-    return fetch(API+'/v1/vino-per-piatto?piatto='+encodeURIComponent(v)).then(function(r){return r.json();}).then(function(d){return {piatto:v,d:d};}).catch(function(){return {piatto:v,d:null};});
-  })).then(function(res){
-    var h='<div class="mn-sec">◎ La carta vini</div>';
-    res.forEach(function(x){
-      if(!x.d)return;
-      var sugg=(x.d.suggerimenti||[]).slice(0,4);
-      h+='<div class="mn-vino"><div class="mn-vino-piatto">'+esc(x.piatto)+'</div>'
-        +(x.d.nota?'<div class="mn-vino-nota">'+esc(x.d.nota)+'</div>':'')
-        +(sugg.length?'<div class="mn-vino-sugg">'+sugg.map(function(s){return '<span class="mn-vino-chip">'+esc(typeof s==='string'?s:(s.nome||s.vino||''))+'</span>';}).join('')+'</div>':'')
-        +'</div>';
-    });
-    box.innerHTML=h;
-  });
-}
-
-// ═══ QUADERNO (riepilogo + maestria + commit) ═══
-// ═══ BANCO / MISURA (lista protocolli + esperimento) ═══
-var _misInit=false;
-function initMisura(){
-  var host=document.getElementById('mis-host');
-  if(_misInit){ return; } _misInit=true;
-  host.innerHTML='<div class="bn-head"><div class="bn-titolo">Misura</div><div class="bn-sub">Scegli un esperimento. Il bersaglio, i reagenti, i sensori.</div></div>'
-    +'<div class="bn-search"><input id="mis-input" placeholder="Cerca un esperimento…" onkeydown="if(event.key===\'Enter\')cercaMisura()"><button onclick="cercaMisura()">→</button></div>'
-    +'<div id="mis-lista"><div class="sk-d" style="height:60px;margin-bottom:8px;border-radius:6px"></div></div>';
-  caricaProtocolli('');
-}
-function cercaMisura(){ var i=document.getElementById('mis-input'); caricaProtocolli((i?i.value:'').trim()); }
-function caricaProtocolli(q){
-  var box=document.getElementById('mis-lista'); if(box)box.innerHTML='<div class="sk-d" style="height:60px;border-radius:6px"></div>';
-  fetch(API+'/v1/protocolli?limit=30'+(q?'&q='+encodeURIComponent(q):'')).then(function(r){return r.json();}).then(function(d){
-    var p=(d.protocolli||[]);
-    if(!box)return;
-    if(!p.length){ box.innerHTML='<div style="padding:24px 0;color:var(--ink-soft);font-family:var(--ui);font-size:14px">Nessun esperimento per "'+esc(q)+'". Prova un altro termine.</div>'; return; }
-    box.innerHTML='<div class="bn-lista">'+p.map(function(x){
-      var fen=(x.fenomeni||[]).slice(0,2).map(function(f){return typeof f==='string'?f:(f.nome||'');}).join(' · ');
-      return '<button class="bn-exp" onclick="apriProtocollo(\''+esc(x.id)+'\')"><div class="bn-exp-nome">'+esc(x.nome)+'</div><div class="bn-exp-meta">'+esc(x.disciplina||'')+(fen?' — '+esc(fen):'')+'</div></button>';
-    }).join('')+'</div>';
-  }).catch(function(){ if(box)box.innerHTML='<div style="padding:24px 0;color:var(--ink-soft)">Errore. Riprova.</div>'; });
-}
-function apriProtocollo(id){
-  if(!_viste.misura)return;
-  document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
-  document.getElementById('v-misura').classList.add('on');
-  window.scrollTo(0,0);
-  var host=document.getElementById('mis-host');
-  host.innerHTML='<div class="sk-d" style="height:30px;width:70%;margin-top:20px"></div><div class="sk-d" style="height:120px;margin-top:16px;border-radius:6px"></div>';
-  fetch(API+'/v1/protocollo/'+encodeURIComponent(id)).then(function(r){return r.json();}).then(function(d){ renderProtocollo(d,id); })
-    .catch(function(){ host.innerHTML='<div style="padding:30px 0;color:var(--ink-soft)">Non riesco ad aprire l\'esperimento.</div>'; });
-}
-function renderProtocollo(d, id){
-  var host=document.getElementById('mis-host'); if(!host)return;
-  // gerarchia Banco congelata: nome → L'obiettivo → IL PUNTO → ingredienti → come lo capisci → perché
-  var obiettivo=d.cosa_voglio_ottenere||d.ipotesi||'';
-  var ingr=(d.ingredienti&&d.ingredienti.length)?d.ingredienti:(d.reagenti||[]);
-  var sens=d.sensori||{};
-  var sRows=[['◠',sens.vista],['▚',sens.tatto],['∿',sens.olfatto]].filter(function(x){return x[1];})
-    .map(function(x){return '<div class="bn-sens-row"><span class="bn-sens-ico">'+x[0]+'</span><span>'+esc(x[1])+'</span></div>';}).join('');
-  // IL PUNTO (numero+scala o osservazione) via ilPunto()
-  var puntoHtml='<div class="bn-scala">'+ilPunto(d, d.variabile_critica)+'</div>';
-
-  var h='<button class="bn-detail-back" onclick="_misInit=false;initMisura()">‹ Tutti gli esperimenti</button>'
-    +'<div class="bn-dnome">'+esc(d.nome)+'</div>'
-    +(obiettivo?'<div class="bn-dip"><span class="bn-dip-lab">L\'obiettivo</span>'+esc(obiettivo)+'</div>':'')
-    +puntoHtml;
-  // GLI INGREDIENTI
-  if(ingr.length){
-    h+='<div class="bn-dsec">◎ Gli ingredienti</div>'+ingr.map(function(r){
-      var q=(r.quantita!=null?r.quantita:'')+(r.unita?' '+r.unita:'');
-      return '<div class="bn-reag"><span class="bn-reag-nome">'+esc(r.nome)+'</span>'+(q?'<span class="bn-reag-q">'+esc(q)+'</span>':'')+'</div>';
-    }).join('');
-  }
-  // COME LO CAPISCI (i sensori)
-  if(sRows){ h+='<div class="bn-dsec">◎ Come lo capisci</div><div class="bn-sens">'+sRows+'</div>'; }
-  h+='<div id="bn-perche-host"></div>';
-  h+='<button class="bn-salva" onclick="salvaEsperimentoQ(\''+esc(d.nome)+'\',\''+esc(id)+'\')">◱ Salva nel Quaderno</button>';
-  host.innerHTML=h;
-
-  // PERCHÉ — dalla scheda-scienza del primo fenomeno (livelli.capisco.perche), caricato async
-  var fen=(d.fenomeni||[]);
-  var slug=fen.length?(typeof fen[0]==='object'?fen[0].slug:'') : '';
-  if(slug){
-    fetch(API+'/v1/scheda-scienza/'+encodeURIComponent(slug)).then(function(r){return r.json();}).then(function(sd){
-      var box=document.getElementById('bn-perche-host'); if(!box)return;
-      var L=sd.livelli||{}; var perche=_t((L.capisco||{}).perche)||_t(sd.principio);
-      if(perche){ box.innerHTML='<div class="bn-dsec">◎ Perché</div><div class="bn-perche">'+esc(perche)+'</div>'; }
-    }).catch(function(){});
-  }
-}
-function salvaEsperimentoQ(nome,id){
-  fetch(API+'/v1/quaderno/esperimento',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({nome:nome,protocollo_id:id,esito:'provato'})})
-    .then(function(r){return r.json();}).then(function(){ toast('Salvato nel Quaderno'); }).catch(function(){ toast('Errore nel salvataggio'); });
-}
-function toast(msg){ var t=document.createElement('div'); t.textContent=msg; t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--carta);padding:12px 20px;border-radius:24px;font-family:var(--ui);font-size:14px;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.2)'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
-
-// ═══ MATTER-CHAT (streaming, testo libero) ═══
-var _CH_ES=['Perché la maionese impazzisce?','Come stabilizzo una emulsione calda?','Cosa succede all\'amido in cottura?'];
-var _chInit=false, _chStreaming=false;
-var _CH_ES_GAL=['Quali bandi ci sono per la ristorazione in Campania?','Come calcolo il break-even del locale?','Scrivi una mail a un fornitore per un ritardo'];
-function initChat(ctx){
-  var fl=document.getElementById('ch-flusso');
-  if(!_chInit && fl){
-    _chInit=true;
-    var gal=(_chatMode==='galileo');
-    var titolo=gal?'Galileo':'Chiedi a Matter';
-    var desc=gal?'Il tuo assistente d\'impresa. Bandi, conti, fornitori, web — tutto ciò che sta fuori dal banco.':'La scienza del tuo mestiere, in una domanda. Matter cerca nel grafo e risponde.';
-    var es=gal?_CH_ES_GAL:_CH_ES;
-    document.getElementById('ch-input').placeholder = gal?'Chiedi a Galileo…':'Chiedi a Matter…';
-    fl.innerHTML='<div class="ch-intro"><div class="ch-intro-t">'+titolo+'</div><div class="ch-intro-d">'+desc+'</div><div class="ch-esempi">'+es.map(function(q){return '<button class="ch-es" onclick="inviaChat(\''+esc(q).replace(/'/g,"\\'")+'\')">'+esc(q)+'</button>';}).join('')+'</div></div>';
-  }
-  if(ctx){ var i=document.getElementById('ch-input'); if(i){i.value=ctx;} }
-}
-function inviaChat(pre){
-  if(_chStreaming)return;
-  var i=document.getElementById('ch-input');
-  var q = pre || (i?i.value:''); q=String(q).trim(); if(!q)return;
-  if(i)i.value='';
-  var fl=document.getElementById('ch-flusso');
-  // tolgo l'intro alla prima domanda
-  var intro=fl.querySelector('.ch-intro'); if(intro)intro.remove();
-  // la domanda (discreta) + lo status + la risposta che crescerà
-  var dEl=document.createElement('div'); dEl.className='ch-domanda'; dEl.textContent=q; fl.appendChild(dEl);
-  var sEl=document.createElement('div'); sEl.className='ch-status'; sEl.textContent='…'; fl.appendChild(sEl);
-  var rEl=document.createElement('div'); rEl.className='ch-risposta scrivendo'; fl.appendChild(rEl);
-  window.scrollTo(0,document.body.scrollHeight);
-  _chStreaming=true; var send=document.getElementById('ch-send'); if(send)send.disabled=true;
-  streamChat(q, sEl, rEl, function(){ _chStreaming=false; if(send)send.disabled=false; rEl.classList.remove('scrivendo'); });
-}
-function streamChat(domanda, sEl, rEl, done){
-  // Galileo (assistente d'impresa): risponde in blocco + indicatore web
-  if(_chatMode==='galileo'){
-    if(sEl)sEl.textContent='Galileo sta cercando, anche sul web…';
-    fetch(API+'/v1/assistente/galileo',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({domanda:domanda})})
-    .then(function(r){return r.json();}).then(function(d){
-      if(sEl&&sEl.parentNode)sEl.remove();
-      rEl.textContent=(d.risposta||d.testo||'');
-      if(d.web){ var w=document.createElement('div'); w.style.cssText='font-family:var(--mono);font-size:10px;color:var(--ink-soft);margin-top:10px;font-style:italic'; w.textContent='◉ cercato sul web'; rEl.parentNode.insertBefore(w,rEl.nextSibling); }
-      done();
-    }).catch(function(){ if(sEl)sEl.textContent='Galileo non è disponibile ora. Riprova.'; done(); });
-    return;
-  }
-  // Matter-chat (scientifica): streaming token-by-token
-  fetch(API+'/chiedi/stream',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},body:JSON.stringify({domanda:domanda})})
-  .then(function(resp){
-    if(!resp.body){ // fallback no-stream
-      resp.json().then(function(d){ if(sEl)sEl.remove(); rEl.textContent=(d.risposta||d.testo||''); done(); }).catch(done); return;
-    }
-    var reader=resp.body.getReader(), dec=new TextDecoder(), buf='';
-    function pump(){
-      return reader.read().then(function(res){
-        if(res.done){ if(sEl&&sEl.parentNode)sEl.remove(); done(); return; }
-        buf+=dec.decode(res.value,{stream:true});
-        var righe=buf.split('\n'); buf=righe.pop();
-        righe.forEach(function(r){
-          r=r.trim(); if(!r.indexOf('data:')===0 && r.indexOf('data:')!==0)return;
-          if(r.indexOf('data:')!==0)return;
-          var js=r.slice(5).trim(); if(!js)return;
-          try{
-            var o=JSON.parse(js);
-            if(o.tipo==='status'){ if(sEl)sEl.textContent=o.testo||'…'; }
-            else if(o.tipo==='token'){ if(sEl&&sEl.parentNode){sEl.remove();} rEl.textContent+=(o.delta||''); window.scrollTo(0,document.body.scrollHeight); }
-            else if(o.tipo==='fine'||o.tipo==='done'){ /* fine */ }
-          }catch(e){}
-        });
-        return pump();
-      });
-    }
-    return pump();
-  }).catch(function(){ if(sEl)sEl.textContent='Non riesco a rispondere ora. Riprova.'; done(); });
-}
-
-function caricaQuaderno(){
-  var h={'X-Device-Id':_devId()};
-  Promise.all([
-    fetch(API+'/v1/quaderno/riepilogo',{headers:h}).then(function(r){return r.json();}).catch(function(){return{};}),
-    fetch(API+'/v1/quaderno/esperimenti',{headers:h}).then(function(r){return r.json();}).catch(function(){return{esperimenti:[]};}),
-    fetch(API+'/v1/quaderno/maneggiare-la-materia',{headers:h}).then(function(r){return r.json();}).catch(function(){return{crescita:[]};})
-  ]).then(function(res){ renderQuaderno(res[0],res[1].esperimenti||[],res[2].crescita||[]); });
-}
-function renderQuaderno(rie, esp, cresc){
-  var box=document.getElementById('qd-host'); if(!box)return;
-  var nMis=rie.n_misure||0, nDia=rie.n_diagnosi||0, nRic=rie.n_ricette||0;
-  // vuoto
-  if(!esp.length && !cresc.length && !nMis && !nDia && !nRic){
-    box.innerHTML='<div class="qd-vuoto"><div class="qd-vuoto-ico">◱</div><div class="qd-vuoto-t">La memoria si costruisce un esperimento alla volta</div><div class="qd-vuoto-d">Ogni cosa che provi, misuri o risolvi resta qui. Col tempo Matter impara come lavori tu — e questa memoria è tua, non si copia.</div></div>';
-    return;
-  }
-  var h='<div class="qd-stats">'
-    +'<div class="qd-stat"><div class="qd-stat-n">'+(esp.length||nRic)+'</div><div class="qd-stat-l">esperimenti</div></div>'
-    +'<div class="qd-stat"><div class="qd-stat-n">'+nDia+'</div><div class="qd-stat-l">cause risolte</div></div>'
-    +'<div class="qd-stat"><div class="qd-stat-n">'+nMis+'</div><div class="qd-stat-l">misure</div></div>'
-    +'</div>';
-  // maestria
-  if(cresc.length){
-    h+='<div class="qd-sec">◎ Come maneggi la materia</div>';
-    h+=cresc.slice(0,8).map(function(m){
-      var r=m.riusciti||0,t=m.tentativi||0,pct=t>0?Math.round(r/t*100):0;
-      var stato=m.stato||(pct>=75?'consolidato':(pct>=40?'in crescita':'agli inizi'));
-      var col=stato==='consolidato'?'var(--verde)':(stato==='in crescita'?'var(--rame)':'var(--ink-soft)');
-      return '<div class="qd-mae"><div class="qd-mae-top"><span class="qd-mae-nome">'+esc(m.esperimento||m.materia||'')+'</span><span class="qd-mae-stato" style="color:'+col+'">'+esc(stato)+'</span></div><div class="qd-mae-bar"><div class="qd-mae-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="qd-mae-n">'+r+'/'+t+' riusciti</div></div>';
-    }).join('');
-  }
-  // commit
-  if(esp.length){
-    h+='<div class="qd-sec">◎ I tuoi esperimenti</div>';
-    h+=esp.slice(0,20).map(function(x){
-      var es=(x.esito||'').toLowerCase();
-      var col=es.indexOf('riusc')>=0?'var(--verde)':(es.indexOf('roll')>=0||es.indexOf('fall')>=0?'var(--rosso-oss)':'var(--ink-soft)');
-      return '<div class="qd-commit"><div class="qd-commit-top"><span class="qd-commit-nome">'+esc(x.nome||'Esperimento')+'</span>'+(x.commit_n!=null?'<span class="qd-commit-n">#'+esc(x.commit_n)+'</span>':'')+'</div>'+(x.esito?'<span class="qd-commit-esito" style="color:'+col+';border-color:'+col+'">'+esc(x.esito)+'</span>':'')+(x.note?'<div class="qd-commit-note">'+esc(x.note)+'</div>':'')+'</div>';
-    }).join('');
-  }
-  box.innerHTML=h;
-}
-
-// ═══ ONBOARDING ═══
-function onbInit(){
-  try{ if(localStorage.getItem('matter_onb_fatto'))return; }catch(e){return;}
-  var o=document.getElementById('onb'); if(o)o.style.display='flex';
-}
-function onbScegli(disc){
-  try{ localStorage.setItem('matter_onb_fatto','1'); localStorage.setItem('matter_disciplina',disc); }catch(e){}
-  var o=document.getElementById('onb'); if(o)o.style.display='none';
-  // azione contestuale per disciplina (congelato): porta dritto al valore, non tutorial
-  var azioni={
-    bar:['causa','Hai un problema al banco adesso? Dimmelo.'],
-    cucina:['causa','Cosa non sta venendo come dovrebbe?'],
-    panificazione:['misura','Cosa vuoi controllare oggi?'],
-    pasticceria:['causa','Cosa non torna nella preparazione?'],
-    gelateria:['misura','Cosa vuoi misurare oggi?'],
-    altro:['atlante','Scopri cosa Matter sa del tuo mestiere.']
-  };
-  var a=azioni[disc]||azioni.altro;
-  // resta sulla Home (già pronta); l'azione contestuale è un invito soft, non un salto forzato
-}
-function onbChiudi(){ try{ localStorage.setItem('matter_onb_fatto','1'); }catch(e){} var o=document.getElementById('onb'); if(o)o.style.display='none'; }
-
-onbInit();
 caricaExp();
 </script>
 </body>
