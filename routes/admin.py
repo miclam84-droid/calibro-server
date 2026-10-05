@@ -14673,3 +14673,55 @@ document.querySelector('.corr')&&0;
 carica();
 </script></body></html>"""
     return Response(html, mimetype="text/html")
+
+
+@bp.route("/admin/revisione/prossimo")
+def admin_revisione_prossimo():
+    """Serve il prossimo caso da giudicare (per priorita, non ancora giudicato)."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("""SELECT id,tipo_oggetto,nome,contenuto,sospetto FROM revisione_patrimonio
+                       WHERE giudizio IS NULL ORDER BY priorita, id LIMIT 1""")
+        r=cur.fetchone()
+        cur.execute("SELECT COUNT(*) FROM revisione_patrimonio WHERE giudizio IS NULL")
+        rimasti=cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM revisione_patrimonio WHERE giudizio IS NOT NULL")
+        fatti=cur.fetchone()[0]
+        cur.close();conn.close()
+        if not r: return jsonify({"finito":True,"fatti":fatti})
+        cont=r[3] if isinstance(r[3],dict) else json.loads(r[3])
+        return jsonify({"id":r[0],"tipo":r[1],"nome":r[2],"contenuto":cont,"sospetto":r[4],
+                        "rimasti":rimasti,"fatti":fatti})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
+
+@bp.route("/admin/revisione/giudica", methods=["POST"])
+def admin_revisione_giudica():
+    """Registra il giudizio di Michele. Se FALSO su punto numerico, NON inventa: rimuove e marca da_verificare."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    body=request.get_json(force=True)
+    cid=body.get("id"); giudizio=body.get("giudizio"); nota=body.get("nota","")
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("UPDATE revisione_patrimonio SET giudizio=%s, nota_michele=%s, giudicato_il=NOW() WHERE id=%s",
+                    (giudizio,nota,cid))
+        if giudizio=="falso":
+            cur.execute("SELECT data FROM nodes WHERE id=%s",(cid,))
+            r=cur.fetchone()
+            if r:
+                dd=r[0] if isinstance(r[0],dict) else json.loads(r[0])
+                if dd.get("il_punto"):
+                    dd["il_punto"]={"tipo":"da_verificare","bersaglio":None,"segnale":"",
+                                    "_rimosso_da_michele":True,"_nota":nota}
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
+        conn.commit(); cur.close();conn.close()
+        return jsonify({"ok":True})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
