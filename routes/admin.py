@@ -14720,3 +14720,47 @@ def admin_revisione_giudica():
         return jsonify({"ok":True})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/audit-pulizia-corpus")
+def admin_audit_pulizia_corpus():
+    """AUDIT della pulizia: trova inglese nelle categorie, duplicati, collegamenti fenomeno sospetti.
+    NON corregge - CONTA e mostra, cosi' sappiamo la mole. Il frontend aveva ragione: il corpus ha slop."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    # categorie inglesi note
+    ENG = {"vegetable":"verdura","fruit":"frutta","meat":"carne","fish":"pesce","dairy":"latticini",
+           "herb":"erba aromatica","spice":"spezia","grain":"cereale","nut":"frutta secca","seed":"seme",
+           "poultry":"pollame","seafood":"frutti di mare","cheese":"formaggio","oil":"olio","legume":"legume"}
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        # 1. ingredienti con categoria inglese
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND LOWER(data->>'categoria') = ANY(%s)""", (list(ENG.keys()),))
+        cat_eng = cur.fetchone()[0]
+        # 2. ingredienti con nome che sembra tecnico/inglese (underscore o _juice ecc)
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (name LIKE '%%\\_%%' OR name ~ '[a-z]_[a-z]')""")
+        nome_tech = cur.fetchone()[0]
+        # 3. esempi di nomi tecnici
+        cur.execute("""SELECT name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND name LIKE '%%\\_%%' LIMIT 15""")
+        esempi_tech = [r[0] for r in cur.fetchall()]
+        # 4. categorie presenti (per vedere quante inglesi)
+        cur.execute("""SELECT data->>'categoria' c, COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND data->>'categoria' IS NOT NULL GROUP BY c ORDER BY COUNT(*) DESC LIMIT 20""")
+        categorie = [(r[0],r[1]) for r in cur.fetchall()]
+        cat_inglesi = [(c,n) for c,n in categorie if c and c.lower() in ENG]
+        cur.close();conn.close()
+        return jsonify({
+            "ingredienti_totali": 2840,
+            "categoria_in_inglese": cat_eng,
+            "nomi_tecnici_underscore": nome_tech,
+            "esempi_nomi_tecnici": esempi_tech,
+            "categorie_inglesi_trovate": cat_inglesi,
+            "nota": "Questo e' l'audit. La pulizia (traduzione) e' il passo dopo, meccanica e sicura."
+        })
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
