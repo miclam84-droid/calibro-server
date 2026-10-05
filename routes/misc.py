@@ -1361,9 +1361,24 @@ def scheda_ingrediente_completa(ingrediente_id):
         fen = db.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON (n.id=e.to_id OR n.id=e.from_id)
                             WHERE (e.from_id=? OR e.to_id=?) AND n.type='Fenomeno' LIMIT 5""", (nid, nid)).fetchall()
         fenomeni = [_c(x,"name",0) for x in fen]
+        # VARIETA per tipo_base (come la scheda normale - il campo dd.varieta e vuoto)
+        varieta_list = []
+        _mytipo = dd.get("tipo_base")
+        if _mytipo:
+            vv = db.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                               AND data->>'tipo_base' = ? AND id != ? LIMIT 30""", (_mytipo, nid)).fetchall()
+            _visti = set([nome.lower()])
+            for _r in vv:
+                _dv = _c(_r,"data",1); _dv = _dv if isinstance(_dv,dict) else (_j.loads(_dv) if _dv else {})
+                if _dv.get("e_preparazione") or _dv.get("solo_motore"): continue
+                _nm = _c(_r,"name",0)
+                if _nm.lower() in _visti: continue
+                _visti.add(_nm.lower())
+                varieta_list.append({"nome":_nm,"territorio":_dv.get("territorio","") or _dv.get("regione",""),
+                                     "caratteristica":(_dv.get("caratteristica","") or "")[:70]})
         livelli = {
             "cos_e": {"pieno": pieno(dd.get("categoria")),
-                      "nome": nome, "categoria": dd.get("categoria",""), "varieta_n": len(dd.get("varieta",[]) or [])},
+                      "nome": nome, "categoria": dd.get("categoria",""), "varieta_n": len(varieta_list), "varieta": varieta_list[:12]},
             "storia": {"pieno": pieno(dd.get("origine")) or pieno(dd.get("territorio")),
                        "origine": dd.get("origine","") or "[da verificare]", "territorio": dd.get("territorio","") or "[da verificare]",
                        "regione": dd.get("regione","") or "[da verificare]"},
