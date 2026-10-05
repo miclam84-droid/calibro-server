@@ -1380,12 +1380,22 @@ def scheda_ingrediente_completa(ingrediente_id):
             "narrazione": {"pieno": pieno(dd.get("tutela")) or pieno(dd.get("territorio")),
                            "spunto": "la narrazione nasce da storia+territorio+caratteristica (da completare)"},
         }
-        completezza = sum(1 for L in livelli.values() if L.get("pieno")) 
+        # VERIFICATO: un flag che dice se UN UMANO del mestiere ha controllato (non "c'e testo").
+        # Di default TUTTO e' non-verificato (il frontend aveva ragione: pieno:true non basta).
+        verificato_globale = bool(dd.get("verificato_da_umano"))
+        for Lk, Lv in livelli.items():
+            Lv["ha_contenuto"] = Lv.pop("pieno", False)  # rinomino: pieno -> ha_contenuto (neutro)
+            Lv["verificato"] = verificato_globale  # per ora globale; poi per-livello con la revisione
+        con_contenuto = sum(1 for L in livelli.values() if L.get("ha_contenuto"))
+        verificati = sum(1 for L in livelli.values() if L.get("verificato"))
         return jsonify({
             "id": nid, "nome": nome,
             "livelli": livelli,
-            "completezza": f"{completezza}/9 livelli pieni",
-            "nota": "I livelli '[da verificare]' vanno riempiti con fonti vere, non generati. Verita > completezza."
+            "ha_contenuto": f"{con_contenuto}/9 livelli con contenuto",
+            "verificati": f"{verificati}/9 livelli verificati da un umano",
+            "verificato_da_umano": verificato_globale,
+            "nota": ("ha_contenuto = c'e del testo. verificato = un umano del mestiere l'ha controllato. "
+                     "Il frontend mostra SOLO verificato:true. Finche non verificato, il contenuto e' sospetto.")
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
