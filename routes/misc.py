@@ -1323,3 +1323,58 @@ def scheda_biblioteca_pub(slug):
                         "nota": "Fonti di questa scheda. Approfondisci nella Biblioteca Matter."})
     except Exception as e:
         return jsonify({"errore": str(e)[:120], "libri": []}), 500
+
+
+@bp.route("/v1/ingrediente/<ingrediente_id>/scheda-completa", methods=["GET"])
+def scheda_ingrediente_completa(ingrediente_id):
+    """Scheda ingrediente ai 8 LIVELLI (decisione prodotto): cos'e, storia, materia, scienza, senso,
+    relazioni, mestiere, creazione, narrazione. ONESTA: ogni livello e' marcato pieno/vuoto. Dove manca
+    verita verificata (storia, territorio) -> 'da_verificare', NON inventato."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r, key, idx): return r[key] if hasattr(r, "keys") else r[idx]
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE (id=? OR LOWER(name)=LOWER(?)) AND type IN ('Ingrediente','Prodotto') LIMIT 1", (ingrediente_id, ingrediente_id)).fetchall()
+        if not rows:
+            return jsonify({"errore": "ingrediente non trovato"}), 404
+        r = rows[0]
+        nid = _c(r,"id",0); nome = _c(r,"name",1); data = _c(r,"data",2)
+        dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
+        def pieno(v): return bool(v) and str(v).strip() not in ("", "[]", "{}", "None")
+        # SENSO (profilo sensoriale) - c'e
+        prop = dd.get("proprieta", {}) or dd.get("proprieta_principali", {})
+        # RELAZIONI (dialoga_con dagli archi)
+        abb = db.execute("SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8", (nid,)).fetchall()
+        dialoga = [_c(x,"name",0) for x in abb]
+        # SCIENZA (fenomeni collegati all'ingrediente dagli archi)
+        fen = db.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON (n.id=e.to_id OR n.id=e.from_id)
+                            WHERE (e.from_id=? OR e.to_id=?) AND n.type='Fenomeno' LIMIT 5""", (nid, nid)).fetchall()
+        fenomeni = [_c(x,"name",0) for x in fen]
+        livelli = {
+            "cos_e": {"pieno": pieno(dd.get("categoria")),
+                      "nome": nome, "categoria": dd.get("categoria",""), "varieta_n": len(dd.get("varieta",[]) or [])},
+            "storia": {"pieno": pieno(dd.get("origine")) or pieno(dd.get("territorio")),
+                       "origine": dd.get("origine","") or "[da verificare]", "territorio": dd.get("territorio","") or "[da verificare]",
+                       "regione": dd.get("regione","") or "[da verificare]"},
+            "materia": {"pieno": pieno(dd.get("caratteristica")),
+                        "caratteristica": dd.get("caratteristica","") or "[da verificare]"},
+            "scienza": {"pieno": bool(fenomeni), "fenomeni": fenomeni},
+            "senso": {"pieno": pieno(prop), "profilo_sensoriale": prop},
+            "relazioni": {"pieno": bool(dialoga), "dialoga_con": dialoga},
+            "mestiere": {"pieno": pieno(dd.get("uso_tipico")),
+                         "uso_tipico": dd.get("uso_tipico","") or "[da verificare]"},
+            "creazione": {"pieno": bool(dialoga), "nota": "esplora le relazioni nel grafo per creare" if dialoga else ""},
+            "narrazione": {"pieno": pieno(dd.get("tutela")) or pieno(dd.get("territorio")),
+                           "spunto": "la narrazione nasce da storia+territorio+caratteristica (da completare)"},
+        }
+        completezza = sum(1 for L in livelli.values() if L.get("pieno")) 
+        return jsonify({
+            "id": nid, "nome": nome,
+            "livelli": livelli,
+            "completezza": f"{completezza}/9 livelli pieni",
+            "nota": "I livelli '[da verificare]' vanno riempiti con fonti vere, non generati. Verita > completezza."
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:150]})
