@@ -14862,3 +14862,68 @@ def admin_conta_ingredienti_stato():
                         "campione_NASCOSTI":nascosti,"campione_VISIBILI":visibili})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/traduci-ingredienti-inglesi")
+def admin_traduci_ingredienti_inglesi():
+    """Traduce i nomi degli ingredienti inglesi (sesame_oil->olio di sesamo) e li rende consultabili
+    (toglie solo_motore). Se il nome e' una pianta latina senza nome comune italiano -> resta solo_motore.
+    L'AI TRADUCE (non inventa contenuto). Default DRY-RUN. ?applica=1. ?n=N."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}),403
+    applica = request.args.get("applica")=="1"
+    limite = int(request.args.get("n",30))
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key"}),500
+    def traduci(nome_eng):
+        nome_pulito = nome_eng.replace("_"," ")
+        dom = (f"Nome ingrediente (database internazionale): '{nome_pulito}'. "
+               f"Qual e' il nome ITALIANO COMUNE con cui un cuoco/barman lo chiamerebbe? "
+               f"Es: 'sesame oil'->'olio di sesamo', 'jamaican rum'->'rum giamaicano', 'red currant'->'ribes rosso'. "
+               f"Se e' una pianta/sostanza SCIENTIFICA senza nome comune italiano (es. 'myrcia acris', "
+               f"'melilotus officinalis'), rispondi nome_italiano VUOTO e scientifico true. "
+               f'SOLO JSON: {{"nome_italiano":"...o vuoto...", "scientifico": true/false}}')
+        pl={"model":"gpt-4o-mini","max_tokens":60,"temperature":0,
+            "messages":[{"role":"system","content":"Traduttore culinario. Dai il nome italiano COMUNE di un "
+                        "ingrediente. Se e' solo un nome scientifico latino senza equivalente comune, lascia vuoto."},
+                        {"role":"user","content":dom}]}
+        try:
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
+                          headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx=json.loads(ur.urlopen(rq,timeout=20).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0))
+        except: pass
+        return None
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("""SELECT id,name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (data->>'solo_motore')='true' AND (data->>'_tradotto') IS NULL LIMIT %s""",(limite,))
+        righe=cur.fetchall()
+        tradotti=[]; restano_scientifici=0
+        for iid,nome in righe:
+            r=traduci(nome)
+            if not r: continue
+            nit=r.get("nome_italiano","").strip()
+            if nit and not r.get("scientifico"):
+                tradotti.append({"da":nome,"a":nit})
+                if applica:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s",(iid,))
+                    dd=cur.fetchone()[0]; dd=dd if isinstance(dd,dict) else json.loads(dd)
+                    dd["nome_italiano"]=nit; dd.pop("solo_motore",None); dd["_tradotto"]=True
+                    cur.execute("UPDATE nodes SET name=%s, data=%s WHERE id=%s",(nit,json.dumps(dd,ensure_ascii=False),iid)); conn.commit()
+            else:
+                restano_scientifici+=1
+                if applica:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s",(iid,))
+                    dd=cur.fetchone()[0]; dd=dd if isinstance(dd,dict) else json.loads(dd)
+                    dd["_tradotto"]=True  # visto, resta solo_motore
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),iid)); conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","tradotti_consultabili":len(tradotti),
+                        "restano_scientifici":restano_scientifici,"esempi":tradotti[:15]})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
