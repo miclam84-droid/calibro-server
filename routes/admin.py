@@ -14708,14 +14708,24 @@ def admin_revisione_giudica():
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         cur.execute("UPDATE revisione_patrimonio SET giudizio=%s, nota_michele=%s, giudicato_il=NOW() WHERE id=%s",(giudizio,nota,cid))
-        if giudizio=="falso":
-            cur.execute("SELECT data FROM nodes WHERE id=%s",(cid,))
-            r=cur.fetchone()
-            if r:
-                dd=r[0] if isinstance(r[0],dict) else json.loads(r[0])
+        cur.execute("SELECT data FROM nodes WHERE id=%s",(cid,))
+        r=cur.fetchone()
+        if r:
+            dd=r[0] if isinstance(r[0],dict) else json.loads(r[0])
+            if giudizio=="vero":
+                # il giudizio di Michele -> il nodo diventa VERIFICATO DA UMANO (appare nella scheda)
+                dd["verificato_da_umano"]=True
+                dd["_verificato_il"]=str(__import__("datetime").date.today())
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
+            elif giudizio=="falso":
+                dd["verificato_da_umano"]=False
+                dd["_bocciato_da_michele"]=True
                 if dd.get("il_punto"):
                     dd["il_punto"]={"tipo":"da_verificare","bersaglio":None,"segnale":"","_rimosso_da_michele":True,"_nota":nota}
-                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
+            elif giudizio=="correggi":
+                dd["_da_correggere"]=True; dd["_nota_correzione"]=nota
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
         conn.commit(); cur.close();conn.close()
         return jsonify({"ok":True})
     except Exception as e:
