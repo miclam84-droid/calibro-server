@@ -14831,3 +14831,34 @@ def admin_segnala_fenomeni_sospetti():
                         "sospetti":len(sospetti),"esempi_sospetti":sospetti[:15]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/conta-ingredienti-stato")
+def admin_conta_ingredienti_stato():
+    """Conta: totali, consultabili (non solo_motore), col profilo pieno, e un campione dei nascosti."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+        tot=cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data->>'solo_motore') IS NULL")
+        consultabili=cur.fetchone()[0]
+        cur.execute("""SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (data->>'solo_motore') IS NULL AND jsonb_typeof(data->'proprieta')='object'
+                       AND (SELECT COUNT(*) FROM jsonb_object_keys(data->'proprieta'))>=10""")
+        col_profilo=cur.fetchone()[0]
+        # campione dei NASCOSTI (solo_motore) - erano tecnici veri o roba utile?
+        cur.execute("SELECT name FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data->>'solo_motore')='true' ORDER BY RANDOM() LIMIT 20")
+        nascosti=[r[0] for r in cur.fetchall()]
+        # campione dei CONSULTABILI (cosa resta visibile)
+        cur.execute("SELECT name FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data->>'solo_motore') IS NULL ORDER BY RANDOM() LIMIT 20")
+        visibili=[r[0] for r in cur.fetchall()]
+        cur.close();conn.close()
+        return jsonify({"totali":tot,"consultabili":consultabili,"nascosti_solo_motore":tot-consultabili,
+                        "col_profilo_pieno":col_profilo,
+                        "campione_NASCOSTI":nascosti,"campione_VISIBILI":visibili})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
