@@ -14708,24 +14708,14 @@ def admin_revisione_giudica():
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         cur.execute("UPDATE revisione_patrimonio SET giudizio=%s, nota_michele=%s, giudicato_il=NOW() WHERE id=%s",(giudizio,nota,cid))
-        cur.execute("SELECT data FROM nodes WHERE id=%s",(cid,))
-        r=cur.fetchone()
-        if r:
-            dd=r[0] if isinstance(r[0],dict) else json.loads(r[0])
-            if giudizio=="vero":
-                # il giudizio di Michele -> il nodo diventa VERIFICATO DA UMANO (appare nella scheda)
-                dd["verificato_da_umano"]=True
-                dd["_verificato_il"]=str(__import__("datetime").date.today())
-                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
-            elif giudizio=="falso":
-                dd["verificato_da_umano"]=False
-                dd["_bocciato_da_michele"]=True
+        if giudizio=="falso":
+            cur.execute("SELECT data FROM nodes WHERE id=%s",(cid,))
+            r=cur.fetchone()
+            if r:
+                dd=r[0] if isinstance(r[0],dict) else json.loads(r[0])
                 if dd.get("il_punto"):
                     dd["il_punto"]={"tipo":"da_verificare","bersaglio":None,"segnale":"","_rimosso_da_michele":True,"_nota":nota}
-                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
-            elif giudizio=="correggi":
-                dd["_da_correggere"]=True; dd["_nota_correzione"]=nota
-                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),cid))
         conn.commit(); cur.close();conn.close()
         return jsonify({"ok":True})
     except Exception as e:
@@ -14773,5 +14763,71 @@ def admin_pulisci_corpus_ingredienti():
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN (conteggio)",
                         "categorie_tradotte":tradotte,"ingredienti_tecnici_marcati_solo_motore":marcati,
                         "nota":"i tecnici restano nel flavor network ma non appaiono come ingredienti consultabili"})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/segnala-fenomeni-sospetti")
+def admin_segnala_fenomeni_sospetti():
+    """Segnala i collegamenti INGREDIENTE-FENOMENO sospetti (es. pomodoro->difetti del vino).
+    L'AI giudica la pertinenza: pertinente/sospetto. NON rimuove - SEGNALA, Michele conferma.
+    Mette i sospetti nella coda di revisione. Default DRY-RUN. ?applica=1 (li aggiunge alla coda)."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}),403
+    applica = request.args.get("applica")=="1"
+    limite = int(request.args.get("n",30))
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key"}),500
+    def pertinente(ingrediente, fenomeno):
+        dom = (f"Ingrediente: '{ingrediente}'. Fenomeno collegato: '{fenomeno}'. "
+               f"Questo fenomeno E PERTINENTE a questo ingrediente nel mestiere F&B? "
+               f"Es: pomodoro+'difetti del vino' = NON pertinente (il pomodoro non c'entra col vino). "
+               f"pomodoro+Maillard = pertinente (si puo rosolare). gin+distillazione = pertinente. "
+               f'SOLO JSON: {{"pertinente": true/false, "motivo":"...breve..."}}')
+        pl={"model":"gpt-4o-mini","max_tokens":80,"temperature":0,
+            "messages":[{"role":"system","content":"Esperto F&B. Giudica se un fenomeno e' davvero pertinente a "
+                        "un ingrediente. Nel dubbio: pertinente (non segnalare troppo)."},
+                        {"role":"user","content":dom}]}
+        try:
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
+                          headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx=json.loads(ur.urlopen(rq,timeout=20).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0))
+        except: pass
+        return None
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        # prendo ingredienti NON solo_motore con fenomeni collegati
+        cur.execute("""SELECT n1.id, n1.name, n2.name FROM nodes n1
+                       JOIN edges e ON (e.from_id=n1.id OR e.to_id=n1.id)
+                       JOIN nodes n2 ON (n2.id=e.to_id OR n2.id=e.from_id)
+                       WHERE n1.type IN ('Ingrediente','Prodotto') AND n2.type='Fenomeno'
+                       AND (n1.data->>'solo_motore') IS NULL AND n1.id<>n2.id LIMIT %s""",(limite,))
+        coppie = cur.fetchall()
+        sospetti=[]; ok=0
+        for iid, inome, fnome in coppie:
+            g=pertinente(inome, fnome)
+            if not g: continue
+            if g.get("pertinente"):
+                ok+=1
+            else:
+                sospetti.append({"ingrediente":inome,"fenomeno":fnome,"motivo":g.get("motivo","")[:60]})
+                if applica:
+                    # aggiungo alla coda di revisione
+                    try:
+                        cur.execute("""INSERT INTO revisione_patrimonio (id,tipo_oggetto,nome,contenuto,sospetto,priorita)
+                            VALUES (%s,'collegamento',%s,%s,'fenomeno_non_pertinente',1)
+                            ON CONFLICT (id) DO NOTHING""",
+                            (f"link-{iid}-{fnome[:20]}", f"{inome} -> {fnome}",
+                             json.dumps({"ingrediente":inome,"fenomeno":fnome,"motivo":g.get("motivo","")},ensure_ascii=False)))
+                        conn.commit()
+                    except: conn.rollback()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","pertinenti":ok,
+                        "sospetti":len(sospetti),"esempi_sospetti":sospetti[:15]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
