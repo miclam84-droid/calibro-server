@@ -14927,3 +14927,50 @@ def admin_traduci_ingredienti_inglesi():
                         "restano_scientifici":restano_scientifici,"esempi":tradotti[:15]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/pulisci-fenomeno-vino")
+def admin_pulisci_fenomeno_vino():
+    """Rimuove gli archi ingrediente->fenomeno 'difetti del vino'/'acidita volatile' dagli ingredienti NON-vino.
+    Questi collegamenti sono errati (il pomodoro non c'entra coi difetti del vino). ?applica=1."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}), 403
+    applica = request.args.get("applica")=="1"
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        # trovo i nodi-fenomeno che parlano di vino/acidita volatile
+        cur.execute("""SELECT id, name FROM nodes WHERE type='Fenomeno'
+                       AND (LOWER(name) LIKE '%%difetti del vino%%' OR LOWER(name) LIKE '%%acidit_ volatile%%'
+                            OR LOWER(name) LIKE '%%acidita volatile%%')""")
+        fen_vino = cur.fetchall()
+        fen_ids = [f[0] for f in fen_vino]
+        if not fen_ids:
+            cur.close();conn.close()
+            return jsonify({"nota":"nessun fenomeno vino trovato come nodo","fenomeni":[]})
+        # quali ingredienti NON-vino sono collegati a questi fenomeni?
+        cur.execute("""SELECT DISTINCT n.id, n.name FROM edges e
+                       JOIN nodes n ON (n.id=e.from_id OR n.id=e.to_id)
+                       WHERE (e.from_id = ANY(%s) OR e.to_id = ANY(%s))
+                       AND n.type IN ('Ingrediente','Prodotto')
+                       AND LOWER(n.name) NOT LIKE '%%vino%%' AND LOWER(n.name) NOT LIKE '%%wine%%'""",
+                    (fen_ids, fen_ids))
+        ing_sbagliati = cur.fetchall()
+        rimossi = 0
+        if applica:
+            # rimuovo gli archi tra questi ingredienti-non-vino e i fenomeni-vino
+            for iid, inome in ing_sbagliati:
+                cur.execute("""DELETE FROM edges WHERE
+                               ((from_id=%s AND to_id=ANY(%s)) OR (to_id=%s AND from_id=ANY(%s)))""",
+                            (iid, fen_ids, iid, fen_ids))
+                rimossi += cur.rowcount
+            conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "ANTEPRIMA",
+                        "fenomeni_vino":[f[1] for f in fen_vino],
+                        "ingredienti_non_vino_collegati":len(ing_sbagliati),
+                        "esempi":[i[1] for i in ing_sbagliati[:15]],
+                        "archi_rimossi":rimossi})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
