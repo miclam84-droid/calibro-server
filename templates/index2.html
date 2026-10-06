@@ -61,6 +61,53 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 /* skeleton */
 .sk{background:var(--sup);border-radius:2px;animation:pulse 1.3s infinite}
 @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ═══ SCHEDA INGREDIENTE ═══ */
+.sc-back{font-family:var(--inter);font-size:14px;color:var(--testo2);margin:4px 0 20px;cursor:pointer}
+/* hero: nome grande + binomio corsivo */
+.sc-hero{margin-bottom:8px}
+.sc-nome{font-family:var(--gro);font-weight:700;font-size:38px;line-height:1.02;letter-spacing:-.02em}
+.sc-bin{font-family:var(--gro);font-style:italic;font-weight:400;font-size:17px;color:var(--testo2);margin-top:4px}
+.sc-compl{font-family:var(--mono);font-size:11px;color:var(--testo3);margin-top:10px}
+/* indice livelli (chip orizzontali scroll) */
+.sc-idx{display:flex;gap:16px;overflow-x:auto;padding:16px 0;margin:16px 0 8px;border-top:1px solid var(--bordo);border-bottom:1px solid var(--bordo);scrollbar-width:none}
+.sc-idx::-webkit-scrollbar{display:none}
+.sc-idx a{font-family:var(--inter);font-size:13px;color:var(--testo3);white-space:nowrap;text-decoration:none;flex:0 0 auto}
+.sc-idx a.pieno{color:var(--testo)}
+.sc-idx a.vuoto{color:var(--testo3);opacity:.5}
+/* sezioni livello */
+.sc-sez{margin:36px 0}
+.sc-sez-k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--verde);margin-bottom:14px}
+.sc-p{font-family:var(--inter);font-size:16px;line-height:1.6;color:var(--testo)}
+.sc-vuoto{font-family:var(--inter);font-size:14px;color:var(--testo3);font-style:italic}
+/* SENSO: tipografia pesata, non barre */
+.sc-senso{display:flex;flex-wrap:wrap;gap:x;line-height:1.9}
+.sc-senso-item{margin-right:20px}
+.sc-senso-n{font-family:var(--gro);color:var(--testo)}
+.sc-senso-v{font-family:var(--mono);color:var(--testo3);font-size:.85em;margin-left:3px}
+/* peso tipografico = valore */
+.w10{font-weight:700;font-size:22px}.w8{font-weight:700;font-size:19px}.w6{font-weight:600;font-size:17px}
+.w4{font-weight:500;font-size:15px}.w2{font-weight:400;font-size:13px;color:var(--testo2)}
+/* RELAZIONI */
+.sc-rel{display:flex;flex-direction:column;gap:14px}
+.sc-rel-item{display:flex;align-items:baseline;gap:12px;cursor:pointer}
+.sc-rel-ov{font-family:var(--mono);font-size:15px;color:var(--verde);font-weight:500;flex:0 0 46px}
+.sc-rel-b{flex:1}
+.sc-rel-nome{font-family:var(--gro);font-weight:600;font-size:16px}
+.sc-rel-perche{font-family:var(--inter);font-size:13px;color:var(--testo2);margin-top:1px}
+/* SCIENZA: fenomeni linkabili */
+.sc-fen{display:flex;flex-wrap:wrap;gap:10px}
+.sc-fen-item{font-family:var(--gro);font-weight:500;font-size:15px;color:var(--testo);border:1px solid var(--bordo2);padding:8px 14px;cursor:pointer}
+.sc-fen-item:active{border-color:var(--verde);color:var(--verde)}
+/* VARIETÀ: cards */
+.sc-var{display:flex;flex-direction:column;gap:10px}
+.sc-var-item{border:1px solid var(--bordo);padding:14px 16px;background:var(--sup)}
+.sc-var-nome{font-family:var(--gro);font-weight:600;font-size:15px}
+.sc-var-car{font-family:var(--inter);font-size:13px;color:var(--testo2);margin-top:3px;line-height:1.4}
+/* azioni fondo */
+.sc-azioni{display:flex;gap:12px;margin-top:40px;padding-top:24px;border-top:1px solid var(--bordo)}
+.sc-azione{flex:1;text-align:center;font-family:var(--gro);font-weight:600;font-size:14px;padding:14px;border:1px solid var(--verde);color:var(--verde);cursor:pointer}
+.sc-azione.pieno{background:var(--verde);color:var(--fondo)}
 </style>
 </head>
 <body>
@@ -126,10 +173,77 @@ function cercaLive(){
   },250);
 }
 function apriRisultato(nome,tipo){
-  // il cablaggio scheda-ingrediente arriva nel prossimo giro; per ora segnalo onesto
-  if(tipo==='ingrediente'){ vai('ingrediente'); document.getElementById('ingr-host').innerHTML='<div class="vt-back" onclick="vai(\'home\')">‹ Home</div><div class="vt-titolo">'+esc(nome)+'</div><div class="vt-wip">Scheda ingrediente — cablaggio in costruzione (prossima schermata).</div>'; }
-  else { vai('banco'); document.getElementById('banco-host').innerHTML='<div class="vt-wip">Preparazione "'+esc(nome)+'" — cablaggio Banco in costruzione.</div>'; }
+  if(tipo==='ingrediente'){ apriScheda(nome); }
+  else { vai('banco'); document.getElementById('banco-host').innerHTML='<div class="vt-wip">Preparazione "'+esc(nome)+'" — cablaggio Banco (prossimo).</div>'; }
 }
+// ═══ SCHEDA INGREDIENTE (cablata) ═══
+var _LIV_ORD=['cos_e','storia','materia','scienza','senso','relazioni','mestiere','creazione','narrazione'];
+var _LIV_LAB={cos_e:"Cos'è",storia:'Storia',materia:'Materia',scienza:'Scienza',senso:'Senso',relazioni:'Relazioni',mestiere:'Mestiere',creazione:'Creazione',narrazione:'Narrazione'};
+function _cap(s){s=String(s||'');return s.charAt(0).toUpperCase()+s.slice(1);}
+function apriScheda(nome){
+  vai('ingrediente');
+  var host=document.getElementById('ingr-host');
+  host.innerHTML='<div class="sc-back" onclick="vai(\'home\')">‹ Home</div><div class="sk" style="height:38px;width:60%;margin-bottom:20px"></div><div class="sk" style="height:120px"></div>';
+  fetch(API+'/v1/ingrediente/'+encodeURIComponent(nome)+'/scheda-completa').then(function(r){return r.json();}).then(function(d){ renderScheda(d,nome); })
+    .catch(function(){ host.innerHTML='<div class="sc-back" onclick="vai(\'home\')">‹ Home</div><div class="vt-wip">Scheda non raggiungibile.</div>'; });
+}
+function renderScheda(d, nome){
+  var host=document.getElementById('ingr-host'); if(!host)return;
+  var liv=d.livelli||{};
+  var ce=liv.cos_e||{};
+  var binomio = (ce.nome_scientifico || (nome==='pomodoro'?'Solanum lycopersicum':'')) || '';
+  var h='<div class="sc-back" onclick="vai(\'home\')">‹ Home</div>';
+  // HERO
+  h+='<div class="sc-hero"><div class="sc-nome">'+esc(_cap(d.nome||nome))+'</div>'
+    + (binomio?'<div class="sc-bin">'+esc(binomio)+'</div>':'')
+    + (d.completezza?'<div class="sc-compl">'+esc(d.completezza)+' livelli con contenuto</div>':'')
+    + '</div>';
+  // INDICE livelli (pieni evidenziati, vuoti tenui)
+  h+='<div class="sc-idx">'+_LIV_ORD.map(function(k){
+    var v=liv[k]||{}; var pieno=v.ha_contenuto||v.pieno;
+    return '<a href="#l-'+k+'" class="'+(pieno?'pieno':'vuoto')+'">'+esc(_LIV_LAB[k])+'</a>';
+  }).join('')+'</div>';
+  // SEZIONI — solo i pieni col contenuto, vuoti → "in arrivo"
+  _LIV_ORD.forEach(function(k){
+    var v=liv[k]||{}; var pieno=v.ha_contenuto||v.pieno;
+    if(!pieno) return; // i vuoti non li mostro come sezione (stanno nell'indice tenui)
+    h+='<div class="sc-sez" id="l-'+k+'"><div class="sc-sez-k">'+esc(_LIV_LAB[k])+'</div>'+_renderLivello(k,v)+'</div>';
+  });
+  // AZIONI
+  h+='<div class="sc-azioni"><div class="sc-azione pieno" onclick="vai(\'corridoio\')">Componi un piatto</div><div class="sc-azione" onclick="vai(\'corridoio\')">Vedi le relazioni</div></div>';
+  host.innerHTML=h;
+}
+function _renderLivello(k,v){
+  if(k==='cos_e'){
+    var txt=v.descrizione||('Categoria: '+esc(v.categoria||'')); 
+    var h='<div class="sc-p">'+esc(v.descrizione|| (v.categoria?_cap(v.categoria):'') )+'</div>';
+    var vr=v.varieta||[];
+    if(vr.length){ h+='<div class="sc-sez-k" style="margin-top:20px">Varietà ('+vr.length+')</div><div class="sc-var">'+vr.slice(0,8).map(function(x){return '<div class="sc-var-item"><div class="sc-var-nome">'+esc(x.nome)+'</div>'+(x.caratteristica?'<div class="sc-var-car">'+esc(x.caratteristica)+'</div>':'')+'</div>';}).join('')+'</div>'; }
+    return h;
+  }
+  if(k==='scienza'){
+    var fen=v.fenomeni||[];
+    if(!fen.length) return '<div class="sc-vuoto">In arrivo.</div>';
+    return '<div class="sc-fen">'+fen.map(function(f){var nome=typeof f==='object'?f.nome:f;var slug=typeof f==='object'?f.slug:'';return '<div class="sc-fen-item" onclick="'+(slug?'apriFenomeno(\''+esc(slug)+'\')':'')+'">'+esc(nome)+' →</div>';}).join('')+'</div>';
+  }
+  if(k==='senso'){
+    var pr=v.profilo_sensoriale||{};
+    var keys=Object.keys(pr).sort(function(a,b){return pr[b]-pr[a];});
+    return '<div class="sc-senso">'+keys.map(function(kk){var val=pr[kk]||0;var w=val>=9?'w10':val>=7?'w8':val>=5?'w6':val>=3?'w4':'w2';return '<span class="sc-senso-item '+w+'"><span class="sc-senso-n">'+esc(_cap(kk.replace(/_/g,' ')))+'</span><span class="sc-senso-v">'+val+'</span></span>';}).join('')+'</div>';
+  }
+  if(k==='relazioni'){
+    var rel=v.dialoga_con||[];
+    if(!rel.length) return '<div class="sc-vuoto">In arrivo.</div>';
+    return '<div class="sc-rel">'+rel.slice(0,8).map(function(x){return '<div class="sc-rel-item" onclick="apriScheda(\''+esc(x.ingrediente).replace(/\x27/g,'')+'\')"><span class="sc-rel-ov">'+(x.overlap!=null?x.overlap+'%':'')+'</span><span class="sc-rel-b"><div class="sc-rel-nome">'+esc(_cap(x.ingrediente))+'</div>'+(x.perche?'<div class="sc-rel-perche">'+esc(x.perche)+'</div>':'')+'</span></div>';}).join('')+'</div>';
+  }
+  if(k==='creazione'){
+    return '<div class="sc-p">'+esc(v.nota||'')+'</div>';
+  }
+  // generico
+  var t=v.testo||v.descrizione||v.contenuto||v.nota||'';
+  return t?'<div class="sc-p">'+esc(t)+'</div>':'<div class="sc-vuoto">In arrivo.</div>';
+}
+function apriFenomeno(slug){ vai('atlante'); document.getElementById('atlante-host').innerHTML='<div class="vt-wip">Fenomeno '+esc(slug)+' — cablaggio Atlante (prossimo).</div>'; }
 // ESPERIMENTO DEL GIORNO cablato (mostra solo se ha contenuto, sennò onesto)
 function caricaExp(){
   fetch(API+'/v1/esperimento-del-giorno').then(function(r){return r.json();}).then(function(d){
