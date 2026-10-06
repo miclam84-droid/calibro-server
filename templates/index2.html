@@ -199,6 +199,41 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 /* perché */
 .ca-perche-tog{width:100%;text-align:left;display:flex;justify-content:space-between;font-family:var(--gro);font-weight:600;font-size:16px;color:var(--testo);background:none;border:0;border-top:1px solid var(--bordo);padding:18px 0;margin-top:14px;cursor:pointer}
 .ca-fen{font-family:var(--gro);font-weight:600;font-size:17px;text-transform:capitalize;margin-bottom:10px;color:var(--testo)}
+
+/* ═══ CORRIDOIO (tavola Matter) ═══ */
+.co-cerca{display:flex;align-items:center;gap:10px;background:var(--sup);border:1px solid var(--bordo);padding:12px 14px;margin-bottom:20px}
+.co-cerca input{flex:1;background:none;border:0;color:var(--testo);font-family:var(--inter);font-size:15px;outline:none}
+.co-cerca input::placeholder{color:var(--testo3)}
+/* centro */
+.co-centro{font-family:var(--gro);font-weight:700;font-size:28px;letter-spacing:-.02em;margin-bottom:4px;text-transform:capitalize}
+.co-centro-sub{font-family:var(--inter);font-size:14px;color:var(--testo2);margin-bottom:24px}
+.co-k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--verde);margin:24px 0 14px}
+/* LA TAVOLA: relazioni pesate per forza (NON pallini uguali) */
+.co-rel{display:flex;flex-direction:column;gap:2px}
+.co-r{display:flex;align-items:baseline;gap:14px;padding:10px 0;border-bottom:1px solid var(--bordo);cursor:pointer}
+.co-r-forza{font-family:var(--mono);font-weight:700;flex:0 0 52px;text-align:right}
+.co-r-b{flex:1}
+.co-r-nome{font-family:var(--gro);font-weight:600;text-transform:capitalize}
+.co-r-perche{font-family:var(--inter);font-size:12px;color:var(--testo2);margin-top:2px}
+.co-r-tipo{font-family:var(--mono);font-size:9px;text-transform:uppercase;color:var(--testo3)}
+/* il peso visivo = forza: forte grande+brillante, debole piccolo+tenue */
+.f-alta .co-r-nome{font-size:21px;color:var(--testo)} .f-alta .co-r-forza{font-size:17px;color:var(--verde)}
+.f-media .co-r-nome{font-size:17px;color:var(--testo)} .f-media .co-r-forza{font-size:14px;color:var(--testo2)}
+.f-bassa .co-r-nome{font-size:14px;color:var(--testo2)} .f-bassa .co-r-forza{font-size:12px;color:var(--testo3)}
+.f-bassa .co-r-perche{display:none}
+/* composer: profilo + ingredienti aggiunti */
+.co-comp-ing{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.co-chip{font-family:var(--gro);font-weight:500;font-size:14px;background:var(--sup);border:1px solid var(--bordo2);padding:7px 12px;text-transform:capitalize}
+.co-chip .x{color:var(--rosso);margin-left:8px;cursor:pointer}
+.co-prof{display:flex;flex-wrap:wrap;line-height:1.9;margin-bottom:8px}
+.co-prof-i{margin-right:18px}
+.co-prof-n{font-family:var(--gro)}.co-prof-v{font-family:var(--mono);color:var(--testo3);font-size:.85em;margin-left:3px}
+/* twist */
+.co-twist{margin-top:14px;padding-top:18px;border-top:1px solid var(--bordo)}
+.co-tw-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--bordo)}
+.co-tw-dim{font-family:var(--inter);font-size:14px;text-transform:capitalize}
+.co-tw-cambio{font-family:var(--mono);font-size:13px}
+.co-tw-cambio.su{color:var(--rosso)}.co-tw-cambio.giu{color:var(--verde)}
 </style>
 </head>
 <body>
@@ -246,7 +281,59 @@ function vai(dove){
   window.scrollTo(0,0);
   if(dove==='atlante' && typeof caricaAtlante==='function') caricaAtlante();
   if(dove==='banco' && typeof caricaBanco==='function') caricaBanco();
+  if(dove==='corridoio' && typeof caricaCorridoio==='function') caricaCorridoio();
 }
+// ═══ CORRIDOIO (cablato) — ingrediente → tavola → composer → twist ═══
+var _coIng=null, _coPiatto=[];
+function caricaCorridoio(ing){
+  var host=document.getElementById('corridoio-host');
+  if(ing){ _coIng=ing; }
+  if(!_coIng){
+    // ingresso: cerca un ingrediente
+    host.innerHTML='<div class="co-cerca"><span style="color:var(--verde);font-family:var(--mono)">⌕</span><input id="co-input" placeholder="Parti da un ingrediente" onkeydown="if(event.key===\'Enter\')coCerca()"></div><div class="vt-wip">Scegli un ingrediente: Matter ti mostra le sue relazioni, poi componi.</div>';
+    return;
+  }
+  // carico grafo-ego + profilo
+  host.innerHTML='<div class="co-centro">'+esc(_coIng)+'</div><div class="sk" style="height:200px"></div>';
+  if(_coPiatto.indexOf(_coIng)<0) _coPiatto=[_coIng];
+  fetch(API+'/v1/grafo-ego/'+encodeURIComponent(_coIng)).then(function(r){return r.json();}).then(function(g){ renderCorridoio(g); });
+}
+function coCerca(){ var q=(document.getElementById('co-input')||{}).value||''; q=q.trim(); if(q){ _coIng=q; _coPiatto=[q]; caricaCorridoio(q); } }
+function renderCorridoio(g){
+  var host=document.getElementById('corridoio-host'); if(!host)return;
+  var vicini=(g.vicini||[]).slice(0,12);
+  var h='<div class="co-centro">'+esc(g.centro||_coIng)+'</div><div class="co-centro-sub">Le sue relazioni — la forza del legame conta</div>';
+  // IL PIATTO (ingredienti aggiunti) + profilo
+  h+='<div id="co-piatto-host"></div>';
+  // LA TAVOLA — relazioni pesate per forza
+  h+='<div class="co-k">◦ Relazioni</div><div class="co-rel">';
+  h+=vicini.map(function(v){
+    var f=v.forza||0;
+    var cls=f>=0.5?'f-alta':(f>=0.2?'f-media':'f-bassa');
+    var pct=Math.round(f*100);
+    var nm=esc(v.nome).replace(/\x27/g,'');
+    return '<div class="co-r '+cls+'"><span class="co-r-forza">'+pct+'</span><span class="co-r-b" onclick="caricaCorridoio(\''+nm+'\')"><div class="co-r-nome">'+esc(v.nome)+'</div><div class="co-r-perche">'+esc(v.perche||'')+' · '+esc(v.tipo||'')+'</div></span><span style="color:var(--verde);font-family:var(--mono);cursor:pointer;font-size:20px" onclick="event.stopPropagation();aggiungiAlPiatto(\''+nm+'\')">+</span></div>';
+  }).join('')+'</div>';
+  host.innerHTML=h;
+  aggiornaPiatto();
+}
+function aggiungiAlPiatto(nome){ if(_coPiatto.indexOf(nome)<0){ _coPiatto.push(nome); aggiornaPiatto(); } }
+function rimuoviDalPiatto(nome){ _coPiatto=_coPiatto.filter(function(x){return x!==nome;}); aggiornaPiatto(); }
+function aggiornaPiatto(){
+  var box=document.getElementById('co-piatto-host'); if(!box)return;
+  var h='<div class="co-k">◦ Il piatto</div><div class="co-comp-ing">'+_coPiatto.map(function(x){return '<span class="co-chip">'+esc(x)+(_coPiatto.length>1?'<span class="x" onclick="event.stopPropagation();rimuoviDalPiatto(\''+esc(x).replace(/\x27/g,'')+'\')">×</span>':'')+'</span>';}).join('')+'</div><div id="co-prof-host"></div>';
+  box.innerHTML=h;
+  // profilo dal composer
+  fetch(API+'/v1/composer/prossimi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingredienti:_coPiatto})}).then(function(r){return r.json();}).then(function(c){
+    var ph=document.getElementById('co-prof-host'); if(!ph)return;
+    var pr=c.profilo_sensoriale||{};
+    var keys=Object.keys(pr).filter(function(k){return pr[k]>0;}).sort(function(a,b){return pr[b]-pr[a];});
+    if(!keys.length){ ph.innerHTML=''; return; }
+    ph.innerHTML='<div class="co-prof">'+keys.map(function(k){var v=pr[k];var w=v>=7?'700':v>=5?'600':'400';var sz=v>=7?'18px':v>=5?'16px':'14px';return '<span class="co-prof-i" style="font-weight:'+w+';font-size:'+sz+'"><span class="co-prof-n">'+esc(_cap(k.replace(/_/g,' ')))+'</span><span class="co-prof-v">'+v+'</span></span>';}).join('')+'</div>';
+  }).catch(function(){});
+}
+// aggancio azioni Scheda: "Componi un piatto" / "Vedi relazioni" portano l'ingrediente nel Corridoio
+function componiDa(nome){ _coIng=nome; _coPiatto=[nome]; vai('corridoio'); }
 // ═══ BANCO (cablato) ═══
 var _bnCaricato=false, _bnCT=null;
 function caricaBanco(){
@@ -394,7 +481,8 @@ function renderScheda(d, nome){
     h+='<div class="sc-sez" id="l-'+k+'"><div class="sc-sez-k">'+esc(_LIV_LAB[k])+'</div>'+_renderLivello(k,v)+'</div>';
   });
   // AZIONI
-  h+='<div class="sc-azioni"><div class="sc-azione pieno" onclick="vai(\'corridoio\')">Componi un piatto</div><div class="sc-azione" onclick="vai(\'corridoio\')">Vedi le relazioni</div></div>';
+  var ingNome=esc(d.nome||nome).replace(/\x27/g,'');
+  h+='<div class="sc-azioni"><div class="sc-azione pieno" onclick="componiDa(\''+ingNome+'\')">Componi un piatto</div><div class="sc-azione" onclick="componiDa(\''+ingNome+'\')">Vedi le relazioni</div></div>';
   host.innerHTML=h;
 }
 function _renderLivello(k,v){
