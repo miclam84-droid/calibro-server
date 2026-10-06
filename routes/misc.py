@@ -1368,7 +1368,19 @@ def scheda_ingrediente_completa(ingrediente_id):
                                  ORDER BY (e.data->>'overlap')::float DESC NULLS LAST LIMIT 10""", (_id,)).fetchall()
         abb = _abbinamenti_da(nid)
         if not abb:
-            # cerco il padre Ahn: il nodo italiano ha 'padre_ahn', o provo l'id ahn_ dal nome
+            # DUPLICATI: ci sono piu nodi con lo stesso nome (es. basilico vs ahn_hoary_basil). Cerco TUTTI
+            # i nodi con questo nome e prendo quello con PIU archi di abbinamento (il nodo "ricco", non il primo a caso).
+            try:
+                alt = db.execute("""SELECT n.id, COUNT(e.from_id) nc FROM nodes n
+                                    LEFT JOIN edges e ON e.from_id=n.id AND e.relation='abbinamento_aromatico'
+                                    WHERE LOWER(n.name)=LOWER(?) AND n.type IN ('Ingrediente','Prodotto')
+                                    GROUP BY n.id ORDER BY nc DESC LIMIT 1""", (nome,)).fetchall()
+                if alt:
+                    best_id = _c(alt[0],"id",0)
+                    if best_id != nid: abb = _abbinamenti_da(best_id)
+            except: pass
+        if not abb:
+            # ultimo tentativo: il padre Ahn via nome
             padre = dd.get("padre_ahn") or dd.get("padre") or ("ahn_" + nome.strip().lower().replace(" ","_"))
             try: abb = _abbinamenti_da(padre)
             except: abb = []
