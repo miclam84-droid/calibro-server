@@ -5114,29 +5114,39 @@ def composer_prossimi():
     try:
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
         # 1. risolvo gli ingredienti scelti (id + proprieta + composti)
+        # MODELLO (deciso dal revisore): NON media. DOMINANTE + MODIFICATORI: ogni dimensione del PROFILO
+        # POTENZIALE e' il MASSIMO tra gli ingredienti (il picco resta visibile - un piatto con limone E' acido,
+        # non "mediamente acido"). Gli ingredienti SENZA profilo NON contano come zero: vengono SEGNALATI.
         ids_scelti = []
         profilo = {k: 0.0 for k in P}
-        n_con_prop = 0
         composti_ricetta = set()
+        senza_profilo = []   # ingredienti di cui non sappiamo il profilo (li segnaliamo, non li trattiamo come neutri)
+        contributi = {k: [] for k in P}  # per ogni dimensione, chi contribuisce (per "cosa introduce")
         for s in scelti:
-            _cur.execute("""SELECT id, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+            _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                             AND (LOWER(name)=LOWER(%s) OR id=%s) ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (s, s))
             r = _cur.fetchone()
-            if not r: continue
-            nid, data = r
+            if not r:
+                senza_profilo.append(s); continue
+            nid, nome_ing, data = r
             ids_scelti.append(nid)
             dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
-            prop = dd.get("proprieta")
-            if prop:
-                n_con_prop += 1
-                for k in P:
-                    profilo[k] += float(prop.get(k, 0))
+            prop = dd.get("proprieta") or {}
+            prop_valida = {k: float(prop.get(k, 0)) for k in P if prop.get(k)}
+            if not prop_valida:
+                # ingrediente senza profilo: NON e' zero, e' SCONOSCIUTO -> segnalo
+                senza_profilo.append(nome_ing)
+            else:
+                # DOMINANTE+MODIFICATORI: ogni dimensione = il MASSIMO (il picco non si spegne)
+                for k, v in prop_valida.items():
+                    if abs(v) > abs(profilo[k]):
+                        profilo[k] = v
+                    if v != 0:
+                        contributi[k].append(nome_ing)
             # composti dell'ingrediente
             _cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
             for cc in _cur.fetchall(): composti_ricetta.add(cc[0])
-        # media del profilo
-        if n_con_prop:
-            for k in P: profilo[k] = round(profilo[k] / n_con_prop, 1)
+        for k in P: profilo[k] = round(profilo[k], 1)
 
         # 2. determino i CONTRASTI necessari (clausole sensoriali)
         contrasti_richiesti = []
@@ -5219,9 +5229,18 @@ def composer_prossimi():
                 _ad = _ed if isinstance(_ed, dict) else (_j.loads(_ed) if _ed else {})
                 tradizione.append({"nome": _nm, "piatto": _ad.get("piatto",""), "fiducia": "alta"})
         _cur.close(); _release_conn(_c)
+        # dimensioni DOMINANTI (>=6) vs SECONDARIE (3-5) - per la UI "cosa caratterizza"
+        prof_pieno = {k: v for k, v in profilo.items() if v != 0}
+        dominanti = {k: v for k, v in prof_pieno.items() if abs(v) >= 6}
         return jsonify({
             "ingredienti_in_ricetta": scelti,
-            "profilo_sensoriale": {k: v for k, v in profilo.items() if v != 0},
+            "profilo_potenziale": prof_pieno,  # il nome corretto: e' POTENZIALE, non previsione del piatto
+            "profilo_sensoriale": prof_pieno,  # compat: stesso dato
+            "dimensioni_dominanti": dominanti,
+            "senza_profilo": senza_profilo,    # ingredienti di cui NON sappiamo il profilo (NON sono neutri)
+            "nota_profilo": ("profilo POTENZIALE dai singoli ingredienti (il picco piu alto per dimensione), "
+                             "non una previsione del gusto del piatto - quello dipende da dosi, matrice e preparazione"
+                             + (f". Attenzione: {', '.join(senza_profilo)} senza profilo noto, non inclusi" if senza_profilo else "")),
             "contrasti_da_bilanciare": [{"proprieta": p, "spiegazione": s} for p, s in contrasti_richiesti],
             "suggeriti_tradizione": tradizione,
             "suggeriti_analogia": [],  # il molecolare non SUGGERISCE piu (dava slop). Resta come spiegazione.
