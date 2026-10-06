@@ -1359,18 +1359,32 @@ def scheda_ingrediente_completa(ingrediente_id):
         def pieno(v): return bool(v) and str(v).strip() not in ("", "[]", "{}", "None")
         # SENSO (profilo sensoriale) - c'e
         prop = dd.get("proprieta", {}) or dd.get("proprieta_principali", {})
-        # RELAZIONI col PERCHE (la catena/manifestazione del motore - FASE 1 punto 6)
-        abb = db.execute("""SELECT n.name, e.data FROM edges e JOIN nodes n ON n.id=e.to_id
-                            WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8""", (nid,)).fetchall()
+        # RELAZIONI col PERCHE - gli abbinamenti stanno sul nodo o sul PADRE AHN (ereditati, come fa /v1/abbina).
+        # Se dal nodo diretto e' vuoto, cerco dal padre scientifico (ahn_...) cosi la scheda mostra le relazioni vere.
+        def _abbinamenti_da(_id):
+            return db.execute("""SELECT n.name, e.data FROM edges e JOIN nodes n ON n.id=e.to_id
+                                 WHERE e.from_id=? AND e.relation='abbinamento_aromatico'
+                                 AND (n.data->>'solo_motore') IS NULL
+                                 ORDER BY (e.data->>'overlap')::float DESC NULLS LAST LIMIT 10""", (_id,)).fetchall()
+        abb = _abbinamenti_da(nid)
+        if not abb:
+            # cerco il padre Ahn: il nodo italiano ha 'padre_ahn', o provo l'id ahn_ dal nome
+            padre = dd.get("padre_ahn") or dd.get("padre") or ("ahn_" + nome.strip().lower().replace(" ","_"))
+            try: abb = _abbinamenti_da(padre)
+            except: abb = []
         dialoga = []
+        _visti_rel = set()
         for x in abb:
             nm = _c(x,"name",0)
+            if not nm or nm.lower() in _visti_rel: continue
+            _visti_rel.add(nm.lower())
             ed = _c(x,"data",1)
             ed = ed if isinstance(ed, dict) else (_j.loads(ed) if ed else {})
             ov = ed.get("overlap") or ed.get("peso")
             dialoga.append({"ingrediente": nm,
                             "overlap": round(ov,0) if ov else None,
                             "perche": ed.get("perche","") or ("condividono composti aromatici" if ov else "")})
+        dialoga = dialoga[:8]
         # SCIENZA (fenomeni collegati all'ingrediente dagli archi)
         fen = db.execute("""SELECT DISTINCT n.id, n.name FROM edges e JOIN nodes n ON (n.id=e.to_id OR n.id=e.from_id)
                             WHERE (e.from_id=? OR e.to_id=?) AND n.type='Fenomeno' LIMIT 5""", (nid, nid)).fetchall()
