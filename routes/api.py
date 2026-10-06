@@ -6290,15 +6290,24 @@ def grafo_ego(ingrediente):
                     vicini.append({"nome": a.get("ingrediente") or a.get("nome"), "tipo": "analogia",
                                    "forza": round(a.get("overlap",70)/100.0,2) if a.get("overlap") else 0.7,
                                    "perche": str(a.get("perche",""))[:100]})
-            # 2. vicini dagli archi del grafo (colonne vere: from_id/to_id)
+            # 2. vicini dagli ARCHI DI ABBINAMENTO (con overlap vero + perche vero dai composti condivisi)
             if len(vicini) < 5:
-                cur.execute("""SELECT DISTINCT n2.name FROM edges e
+                cur.execute("""SELECT n2.name, e.data, e.relation FROM edges e
                                JOIN nodes n2 ON (n2.id=e.to_id OR n2.id=e.from_id)
-                               WHERE (e.from_id=%s OR e.to_id=%s) AND n2.type='Ingrediente' AND n2.id<>%s LIMIT 8""",
+                               WHERE (e.from_id=%s OR e.to_id=%s) AND n2.type IN ('Ingrediente','Prodotto')
+                               AND n2.id<>%s AND (n2.data->>'solo_motore') IS NULL
+                               ORDER BY (e.data->>'overlap')::float DESC NULLS LAST LIMIT 10""",
                             (ing_id, ing_id, ing_id))
-                for (nv,) in cur.fetchall():
-                    if nv and not any(v["nome"]==nv for v in vicini):
-                        vicini.append({"nome": nv, "tipo": "analogia", "forza": 0.6, "perche": "collegati nel grafo"})
+                for nv, edata, rel in cur.fetchall():
+                    if not nv or any(v["nome"]==nv for v in vicini): continue
+                    ed = edata if isinstance(edata, dict) else (json.loads(edata) if edata else {})
+                    ov = ed.get("overlap") or ed.get("peso")
+                    # tipo vero: contrasto se la relazione lo dice, altrimenti analogia
+                    tipo = "contrasto" if (rel and "contrast" in str(rel).lower()) else "analogia"
+                    perche = ed.get("perche","") or ("condividono composti aromatici" if ov else "collegati nel grafo")
+                    vicini.append({"nome": nv, "tipo": tipo,
+                                   "forza": round(ov/100.0,2) if ov else 0.5,
+                                   "perche": str(perche)[:100]})
             # 3. fenomeni collegati
             cur.execute("""SELECT DISTINCT n2.id, n2.name FROM edges e
                            JOIN nodes n2 ON (n2.id=e.to_id OR n2.id=e.from_id)
