@@ -14974,3 +14974,60 @@ def admin_pulisci_fenomeno_vino():
                         "archi_rimossi":rimossi})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/popola-nome-scientifico")
+def admin_popola_nome_scientifico():
+    """Aggiunge nome_scientifico (binomio latino) agli ingredienti consultabili. L'AI lo da SOLO se certa
+    (e' tassonomia verificabile, non opinione); se non e' sicura -> vuoto, NON inventa. Default DRY-RUN. ?applica=1 ?n=N."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+        return jsonify({"errore":"non autorizzato"}),403
+    applica = request.args.get("applica")=="1"
+    limite = int(request.args.get("n",30))
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key"}),500
+    def binomio(nome):
+        dom = (f"Ingrediente alimentare: '{nome}'. Qual e' il suo nome scientifico (binomio latino, genere+specie)? "
+               f"Es: pomodoro->Solanum lycopersicum, basilico->Ocimum basilicum, manzo->Bos taurus. "
+               f"RISPONDI SOLO se sei CERTO del binomio. Se non sei sicuro, o se e' un prodotto composto/lavorato "
+               f"(es. 'brandy di mele', 'olio di sesamo') che non ha UN binomio, rispondi vuoto. "
+               f'SOLO JSON: {{"nome_scientifico":"...Genere specie o vuoto...", "certo": true/false}}')
+        pl={"model":"gpt-4o-mini","max_tokens":50,"temperature":0,
+            "messages":[{"role":"system","content":"Tassonomista. Dai il binomio latino SOLO se certo. "
+                        "Prodotti lavorati/composti non hanno binomio: lascia vuoto. Mai inventare."},
+                        {"role":"user","content":dom}]}
+        try:
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
+                          headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx=json.loads(ur.urlopen(rq,timeout=20).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0))
+        except: pass
+        return None
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("""SELECT id,name,data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                       AND (data->>'solo_motore') IS NULL AND data->>'nome_scientifico' IS NULL
+                       AND data->>'_nome_sci_visto' IS NULL LIMIT %s""",(limite,))
+        righe=cur.fetchall()
+        messi=[]; vuoti=0
+        for iid,nome,data in righe:
+            dd=data if isinstance(data,dict) else json.loads(data)
+            r=binomio(nome)
+            if not r: continue
+            ns=r.get("nome_scientifico","").strip()
+            if ns and r.get("certo"):
+                dd["nome_scientifico"]=ns; messi.append({"nome":nome,"sci":ns})
+            else:
+                vuoti+=1
+            dd["_nome_sci_visto"]=True
+            if applica:
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),iid)); conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","con_binomio":len(messi),
+                        "senza_binomio":vuoti,"esempi":messi[:12]})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})

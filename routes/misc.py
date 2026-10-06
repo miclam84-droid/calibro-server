@@ -1392,7 +1392,7 @@ def scheda_ingrediente_completa(ingrediente_id):
                                      "caratteristica":(_dv.get("caratteristica","") or "")[:70]})
         livelli = {
             "cos_e": {"pieno": pieno(dd.get("categoria")),
-                      "nome": nome, "categoria": dd.get("categoria",""), "varieta_n": len(varieta_list), "varieta": varieta_list[:12]},
+                      "nome": nome, "nome_scientifico": dd.get("nome_scientifico",""), "categoria": dd.get("categoria",""), "varieta_n": len(varieta_list), "varieta": varieta_list[:12]},
             "storia": {"pieno": pieno(dd.get("origine")) or pieno(dd.get("territorio")),
                        "origine": dd.get("origine","") or "[da verificare]", "territorio": dd.get("territorio","") or "[da verificare]",
                        "regione": dd.get("regione","") or "[da verificare]"},
