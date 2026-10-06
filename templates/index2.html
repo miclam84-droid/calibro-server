@@ -135,6 +135,42 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .liv-toggle{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;font-family:var(--gro);font-weight:600;font-size:17px;color:var(--testo);background:none;border:0;border-top:1px solid var(--bordo);padding:20px 0;cursor:pointer}
 .liv-chev{color:var(--verde);font-family:var(--mono);font-size:18px}
 .fen-chat{width:100%;margin-top:28px;font-family:var(--gro);font-weight:600;font-size:15px;padding:16px;border:1px solid var(--verde);color:var(--verde);background:none;cursor:pointer}
+
+/* ═══ BANCO ═══ */
+.bn-cerca{display:flex;align-items:center;gap:10px;background:var(--sup);border:1px solid var(--bordo);padding:12px 14px;margin-bottom:16px}
+.bn-cerca input{flex:1;background:none;border:0;color:var(--testo);font-family:var(--inter);font-size:15px;outline:none}
+.bn-cerca input::placeholder{color:var(--testo3)}
+.bn-item{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--bordo);cursor:pointer}
+.bn-item-nome{font-family:var(--gro);font-weight:500;font-size:16px}
+.bn-item-meta{font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--testo3)}
+/* preparazione */
+.bp-nome{font-family:var(--gro);font-weight:700;font-size:30px;line-height:1.05;letter-spacing:-.02em;margin-bottom:8px}
+.bp-obj{font-family:var(--inter);font-size:15px;line-height:1.5;color:var(--testo2);margin-bottom:28px}
+.bp-k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--verde);margin-bottom:12px}
+/* IL PUNTO numerico */
+.bp-num{font-family:var(--mono);font-weight:700;font-size:72px;line-height:.9;letter-spacing:-.03em}
+.bp-num .u{font-size:28px;color:var(--verde)}
+.bp-dir{font-family:var(--gro);font-weight:700;font-size:15px;letter-spacing:.06em;margin:10px 0 4px}
+.bp-dir.ok{color:var(--verde)} .bp-dir.peri{color:var(--rosso)}
+.bp-ctx{font-family:var(--inter);font-size:13px;color:var(--testo2);margin-bottom:18px}
+/* scala con zona pericolo */
+.bp-scala{margin-bottom:8px}
+.bp-scala svg{width:100%;height:64px;display:block}
+.bp-scala-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--testo3);margin-top:2px}
+/* IL PUNTO osservativo */
+.bp-oss{font-family:var(--gro);font-weight:700;font-size:26px;line-height:1.2;color:var(--testo)}
+.bp-oss-dir{font-family:var(--gro);font-weight:700;font-size:14px;letter-spacing:.06em;color:var(--verde);margin-top:12px}
+/* sezioni banco */
+.bp-sez{margin-top:34px;padding-top:22px;border-top:1px solid var(--bordo)}
+.bp-ing{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--bordo)}
+.bp-ing:last-child{border-bottom:0}
+.bp-ing-nome{font-family:var(--inter);font-size:15px;color:var(--testo);text-transform:capitalize}
+.bp-ing-q{font-family:var(--mono);font-size:14px;color:var(--verde)}
+.bp-come{font-family:var(--inter);font-size:16px;line-height:1.5;color:var(--testo)}
+.bp-azioni{display:flex;gap:12px;margin-top:36px}
+.bp-az{flex:1;text-align:center;font-family:var(--gro);font-weight:600;font-size:14px;padding:14px;cursor:pointer;border:1px solid var(--bordo2)}
+.bp-az.primaria{background:var(--verde);color:var(--fondo);border-color:var(--verde)}
+.bp-az.causa{border-color:var(--rosso);color:var(--rosso)}
 </style>
 </head>
 <body>
@@ -180,6 +216,98 @@ function vai(dove){
   var el=document.getElementById(_viste[dove]||'v-home'); if(el)el.classList.add('on');
   window.scrollTo(0,0);
   if(dove==='atlante' && typeof caricaAtlante==='function') caricaAtlante();
+  if(dove==='banco' && typeof caricaBanco==='function') caricaBanco();
+}
+// ═══ BANCO (cablato) ═══
+var _bnCaricato=false, _bnCT=null;
+function caricaBanco(){
+  var host=document.getElementById('banco-host');
+  if(_bnCaricato && host.querySelector('.bn-item,.bn-cerca')) return;
+  host.innerHTML='<div class="bn-cerca"><span style="color:var(--verde);font-family:var(--mono)">⌕</span><input id="bn-input" placeholder="Cerca una preparazione" oninput="bnCerca()"></div><div id="bn-lista"><div class="sk" style="height:200px"></div></div>';
+  bnLista('');
+}
+function bnCerca(){ clearTimeout(_bnCT); var q=(document.getElementById('bn-input').value||'').trim(); _bnCT=setTimeout(function(){bnLista(q);},250); }
+function bnLista(q){
+  var box=document.getElementById('bn-lista'); if(box)box.innerHTML='<div class="sk" style="height:60px"></div>';
+  fetch(API+'/v1/protocolli?limit=40'+(q?'&q='+encodeURIComponent(q):'')).then(function(r){return r.json();}).then(function(d){
+    var p=(d.protocolli||[]); _bnCaricato=true;
+    if(!box)return;
+    if(!p.length){ box.innerHTML='<div class="vt-wip">Niente per "'+esc(q)+'".</div>'; return; }
+    box.innerHTML=p.map(function(x){
+      return '<div class="bn-item" onclick="apriPrep(\''+esc(x.id)+'\')"><span class="bn-item-nome">'+esc(x.nome)+'</span><span class="bn-item-meta">'+esc(x.disciplina||'')+'</span></div>';
+    }).join('');
+  }).catch(function(){ if(box)box.innerHTML='<div class="vt-wip">Errore.</div>'; });
+}
+function apriPrep(id){
+  vai('banco');
+  var host=document.getElementById('banco-host');
+  host.innerHTML='<div class="sc-back" onclick="_bnCaricato=false;caricaBanco()">‹ Preparazioni</div><div class="sk" style="height:30px;width:60%;margin-bottom:20px"></div><div class="sk" style="height:160px"></div>';
+  fetch(API+'/v1/protocollo/'+encodeURIComponent(id)).then(function(r){return r.json();}).then(function(d){ renderPrep(d,id); })
+    .catch(function(){ host.innerHTML='<div class="sc-back" onclick="caricaBanco()">‹ Preparazioni</div><div class="vt-wip">Non raggiungibile.</div>'; });
+}
+// la scala col MODO (dove è il pericolo)
+function scalaModo(bers, modo){
+  var u=String(bers.unita||'');
+  var raw=String(bers.valore).replace(/pH/gi,'').replace(/[–—]/g,'-').trim();
+  var nums=raw.split(/\s*-\s*/).map(function(s){var m=s.match(/-?\d+\.?\d*/);return m?+m[0]:null;}).filter(function(x){return x!=null;});
+  if(!nums.length) return '';
+  var RANGE={'°C':[0,120],'%':[0,100],'pH':[0,14],'min':[0,120]};
+  var r=RANGE[u]||[0,Math.max(nums[nums.length-1]*1.4,10)];
+  var lo=r[0],hi=r[1],W=350,H=64;
+  function x(v){return (v-lo)/(hi-lo)*W;}
+  var vmin=nums[0],vmax=nums.length>1?nums[1]:nums[0];
+  var s='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
+  // ZONA PERICOLO (rossa) secondo il modo
+  var peri='#E0795B';
+  if(modo==='limite_sup'){ s+='<rect x="'+x(vmax)+'" y="30" width="'+(W-x(vmax))+'" height="16" fill="rgba(224,121,91,.28)"/>'; }
+  else if(modo==='limite_inf'){ s+='<rect x="0" y="30" width="'+x(vmin)+'" height="16" fill="rgba(224,121,91,.28)"/>'; }
+  else if(modo==='range'){ s+='<rect x="'+x(vmin)+'" y="30" width="'+(x(vmax)-x(vmin))+'" height="16" fill="rgba(45,212,160,.25)"/>'; }
+  else { s+='<rect x="'+(x(vmin)-12)+'" y="30" width="24" height="16" fill="rgba(45,212,160,.25)"/>'; } // target
+  // tacche
+  var step=(hi-lo)>60?10:(hi>14?5:1);
+  for(var v=lo;v<=hi;v+=step){var tx=x(v);s+='<line x1="'+tx+'" y1="26" x2="'+tx+'" y2="46" stroke="var(--bordo2)"/>';s+='<text x="'+tx+'" y="18" fill="var(--testo3)" font-family="JetBrains Mono" font-size="8" text-anchor="middle">'+(Math.round(v*10)/10)+'</text>';}
+  s+='<line x1="0" y1="46" x2="'+W+'" y2="46" stroke="var(--bordo2)"/>';
+  // marcatore valore
+  var mx=x(vmin+(vmax-vmin)/2);
+  s+='<line x1="'+mx+'" y1="26" x2="'+mx+'" y2="50" stroke="var(--verde)" stroke-width="2"/><path d="M'+(mx-6)+',26 L'+(mx+6)+',26 L'+mx+',34 Z" fill="var(--verde)"/>';
+  s+='</svg>';
+  return '<div class="bp-scala">'+s+'<div class="bp-scala-cap"><span>'+lo+'</span><span>'+hi+' '+esc(u)+'</span></div></div>';
+}
+var _MODO_DIR={target:['RAGGIUNGI','ok'],limite_sup:['NON SUPERARE','peri'],limite_inf:['NON SCENDERE SOTTO','peri'],range:['RESTA TRA','ok']};
+function renderPrep(d, id){
+  var host=document.getElementById('banco-host'); if(!host)return;
+  var p=d.il_punto||{};
+  var ingr=(d.ingredienti&&d.ingredienti.length)?d.ingredienti:(d.reagenti||[]);
+  var h='<div class="sc-back" onclick="_bnCaricato=false;caricaBanco()">‹ Preparazioni</div>';
+  h+='<div class="bp-nome">'+esc(d.nome)+'</div>';
+  h+=(d.cosa_voglio_ottenere?'<div class="bp-obj">'+esc(d.cosa_voglio_ottenere)+'</div>':'');
+  // IL PUNTO
+  h+='<div class="bp-k">◦ Il punto</div>';
+  if((p.tipo==='bersaglio'||p.tipo==='misto') && p.bersaglio && p.bersaglio.valore){
+    var val=String(p.bersaglio.valore).replace(/pH\s*/i,'');
+    var dir=_MODO_DIR[p.modo]||['','ok'];
+    h+='<div class="bp-num">'+esc(val)+'<span class="u"> '+esc(p.bersaglio.unita||'')+'</span></div>';
+    if(dir[0]) h+='<div class="bp-dir '+dir[1]+'">'+(dir[1]==='peri'?'⚠ ':'▲ ')+dir[0]+'</div>';
+    h+='<div class="bp-ctx">'+esc(d.variabile_critica||'')+'</div>';
+    h+=scalaModo(p.bersaglio, p.modo);
+  } else if(p.segnale){
+    h+='<div class="bp-oss">'+esc(p.segnale)+'</div><div class="bp-oss-dir">● QUANDO LO VEDI, È PRONTO</div>';
+  }
+  // INGREDIENTI
+  if(ingr.length){
+    h+='<div class="bp-sez"><div class="bp-k">◦ Gli ingredienti</div>'+ingr.map(function(r){
+      var q=(r.quantita!=null?r.quantita:'')+(r.unita?' '+r.unita:'');
+      return '<div class="bp-ing"><span class="bp-ing-nome">'+esc(r.nome)+'</span>'+(q?'<span class="bp-ing-q">'+esc(q)+'</span>':'')+'</div>';
+    }).join('')+'</div>';
+  }
+  // PERCHÉ (fenomeni linkabili)
+  var fen=(d.fenomeni||[]);
+  if(fen.length){
+    h+='<div class="bp-sez"><div class="bp-k">◦ Perché</div><div class="sc-fen">'+fen.map(function(f){var nome=typeof f==='object'?f.nome:f;var slug=typeof f==='object'?f.slug:'';return '<div class="sc-fen-item" onclick="'+(slug?'apriFenomeno(\''+esc(slug)+'\')':'')+'">'+esc(nome)+(slug?' →':'')+'</div>';}).join('')+'</div></div>';
+  }
+  // azioni
+  h+='<div class="bp-azioni"><div class="bp-az primaria" onclick="alert(\'Salva nel Quaderno — cablaggio 8\')">Fatto · salva</div><div class="bp-az causa" onclick="alert(\'Causa — cablaggio 5\')">Non torna?</div></div>';
+  host.innerHTML=h;
 }
 // RICERCA cablata (/v1/cerca)
 var _ct=null;
