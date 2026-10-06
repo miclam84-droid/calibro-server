@@ -1443,3 +1443,28 @@ def scheda_ingrediente_completa(ingrediente_id):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+
+
+@bp.route("/admin/ispeziona-nodo-rel/<nome>", methods=["GET"])
+def admin_ispeziona_nodo_rel(nome):
+    """Debug: come fa abbina a trovare le relazioni del basilico? mostra id, padre, e dove stanno gli archi."""
+    from flask import jsonify, request
+    import os, json as _j
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        # il nodo italiano
+        rows=db.execute("SELECT id,name,data FROM nodes WHERE LOWER(name)=LOWER(?) AND type IN ('Ingrediente','Prodotto') LIMIT 3",(nome,)).fetchall()
+        out=[]
+        for r in rows:
+            nid=_c(r,"id",0); dd=_c(r,"data",2); dd=dd if isinstance(dd,dict) else _j.loads(dd)
+            # quanti archi abbinamento da questo id?
+            na=db.execute("SELECT COUNT(*) FROM edges WHERE from_id=? AND relation='abbinamento_aromatico'",(nid,)).fetchall()
+            out.append({"id":nid,"chiavi_data":list(dd.keys())[:15],
+                        "padre_ahn":dd.get("padre_ahn") or dd.get("padre") or dd.get("ahn_id") or dd.get("parent"),
+                        "archi_diretti":_c(na[0],"count",0) if na else 0})
+        return jsonify({"nome":nome,"nodi":out})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
