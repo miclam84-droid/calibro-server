@@ -301,6 +301,24 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .ch-barra button{background:var(--verde);color:var(--fondo);border:0;font-family:var(--mono);font-size:18px;padding:0 18px;cursor:pointer}
 /* FAB chat trasversale */
 .ch-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0));background:var(--verde);color:var(--fondo);font-family:var(--gro);font-weight:700;font-size:14px;padding:14px 20px;border-radius:2px;z-index:60;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+
+/* ═══ CAMBIO-CONSEGUENZA (le leve) ═══ */
+.cc-leva{display:flex;gap:12px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--bordo)}
+.cc-leva:last-child{border-bottom:0}
+.cc-verso{font-family:var(--mono);font-weight:700;font-size:18px;flex:0 0 auto}
+.cc-verso.su{color:var(--rosso)} .cc-verso.giu{color:var(--verde)}
+.cc-b{flex:1}
+.cc-txt{font-family:var(--inter);line-height:1.4}
+.cc-se{color:var(--testo2)} .cc-cosa{font-family:var(--gro);font-weight:600;color:var(--testo);text-transform:capitalize}
+.cc-stato{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+.cc-stato.verif{color:var(--verde)} .cc-stato.supp{color:var(--testo3)}
+/* forza = peso */
+.cc-alto .cc-cosa{font-size:17px} .cc-medio .cc-cosa{font-size:15px} .cc-basso .cc-cosa{font-size:14px;color:var(--testo2)}
+.cc-vuoto{font-family:var(--inter);font-size:14px;color:var(--testo3);font-style:italic}
+/* composer: senza_profilo + nota */
+.co-senza{font-family:var(--inter);font-size:13px;color:var(--oro);margin-top:8px}
+.co-nota{font-family:var(--inter);font-size:11px;color:var(--testo3);font-style:italic;margin-top:10px;line-height:1.4}
+.co-dom-k{font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--testo3);margin:14px 0 8px}
 </style>
 </head>
 <body>
@@ -543,10 +561,19 @@ function aggiornaPiatto(){
   // profilo dal composer
   fetch(API+'/v1/composer/prossimi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingredienti:_coPiatto})}).then(function(r){return r.json();}).then(function(c){
     var ph=document.getElementById('co-prof-host'); if(!ph)return;
-    var pr=c.profilo_sensoriale||{};
-    var keys=Object.keys(pr).filter(function(k){return pr[k]>0;}).sort(function(a,b){return pr[b]-pr[a];});
-    if(!keys.length){ ph.innerHTML=''; return; }
-    ph.innerHTML='<div class="co-prof">'+keys.map(function(k){var v=pr[k];var w=v>=7?'700':v>=5?'600':'400';var sz=v>=7?'18px':v>=5?'16px':'14px';return '<span class="co-prof-i" style="font-weight:'+w+';font-size:'+sz+'"><span class="co-prof-n">'+esc(_cap(k.replace(/_/g,' ')))+'</span><span class="co-prof-v">'+v+'</span></span>';}).join('')+'</div>';
+    // dimensioni_dominanti (>=6) grandi = cosa caratterizza il piatto
+    var dom=c.dimensioni_dominanti||{};
+    var keys=Object.keys(dom).sort(function(a,b){return dom[b]-dom[a];});
+    var h='';
+    if(keys.length){
+      h+='<div class="co-dom-k">Cosa caratterizza il piatto</div><div class="co-prof">'+keys.map(function(k){var v=dom[k];var sz=v>=8?'20px':v>=7?'18px':'16px';return '<span class="co-prof-i" style="font-weight:700;font-size:'+sz+'"><span class="co-prof-n">'+esc(_cap(k.replace(/_/g,' ')))+'</span><span class="co-prof-v">'+v+'</span></span>';}).join('')+'</div>';
+    }
+    // senza_profilo — onesto, non neutro
+    var senza=c.senza_profilo||[];
+    if(senza.length){ h+='<div class="co-senza">⚠ Non conosciamo ancora il profilo di: '+senza.map(esc).join(', ')+'</div>'; }
+    // nota disclaimer (potenziale, non previsione)
+    if(c.nota_profilo){ h+='<div class="co-nota">'+esc(c.nota_profilo)+'</div>'; }
+    ph.innerHTML=h;
   }).catch(function(){});
 }
 // aggancio azioni Scheda: "Componi un piatto" / "Vedi relazioni" portano l'ingrediente nel Corridoio
@@ -638,9 +665,14 @@ function renderPrep(d, id){
   if(fen.length){
     h+='<div class="bp-sez"><div class="bp-k">◦ Perché</div><div class="sc-fen">'+fen.map(function(f){var nome=typeof f==='object'?f.nome:f;var slug=typeof f==='object'?f.slug:'';return '<div class="sc-fen-item" onclick="'+(slug?'apriFenomeno(\''+esc(slug)+'\')':'')+'">'+esc(nome)+(slug?' →':'')+'</div>';}).join('')+'</div></div>';
   }
+  // E SE CAMBIO? (le leve — cambio-conseguenza)
+  if(fen.length){ h+='<div class="bp-sez"><div class="bp-k">◦ E se cambio?</div><div id="cc-host"></div></div>'; }
   // azioni
-  h+='<div class="bp-azioni"><div class="bp-az primaria" onclick="alert(\'Salva nel Quaderno — cablaggio 8\')">Fatto · salva</div><div class="bp-az causa" onclick="apriCausa(\''+esc(id)+'\',\''+esc(d.nome).replace(/\x27/g,'')+'\')">Non torna?</div></div>';
+  h+='<div class="bp-azioni"><div class="bp-az primaria" onclick="salvaQuaderno(\''+esc(d.nome).replace(/\x27/g,'')+'\')">Fatto · salva</div><div class="bp-az causa" onclick="apriCausa(\''+esc(id)+'\',\''+esc(d.nome).replace(/\x27/g,'')+'\')">Non torna?</div></div>';
   host.innerHTML=h;
+  // carico le leve del primo fenomeno
+  var slug0=fen.length?(typeof fen[0]==='object'?fen[0].slug:'') : '';
+  if(slug0) caricaLeve(slug0,'cc-host');
 }
 // RICERCA cablata (/v1/cerca)
 var _ct=null;
@@ -800,6 +832,26 @@ function renderFenomeno(d, slug){
 function _fcrow(x,fr,col){var fat=(typeof x==='object')?(x.fattore||x.nome||''):x;var dir=(typeof x==='object'&&x.direzione)?(' '+x.direzione):'';return '<div class="liv-crow"><span class="liv-cfr" style="color:'+col+'">'+fr+'</span><span>'+esc(_cap(fat))+esc(dir)+'</span></div>';}
 function togFen(btn){var c=btn.nextElementSibling;if(c){var v=c.style.display!=='none';c.style.display=v?'none':'block';var ch=btn.querySelector('.liv-chev');if(ch)ch.textContent=v?'+':'−';}}
 function chatFenomeno(slug,nome){ alert('Chat su "'+nome+'" — cablaggio chat (cablaggio 9, con contesto_nodo='+slug+')'); }
+// ═══ CAMBIO-CONSEGUENZA (le leve) ═══
+function caricaLeve(slug, hostId){
+  var box=document.getElementById(hostId); if(!box)return;
+  box.innerHTML='<div class="sk" style="height:80px"></div>';
+  fetch(API+'/v1/cambio-conseguenza/'+encodeURIComponent(slug)).then(function(r){return r.json();}).then(function(d){
+    var rel=(d.relazioni||[]);
+    if(!rel.length){ box.innerHTML='<div class="cc-vuoto">Non abbiamo ancora le leve di questo fenomeno. Provalo e registra nel Quaderno.</div>'; return; }
+    box.innerHTML=rel.map(function(x){
+      var aum=/aument|cresc|accel|su\b/i.test(String(x.conseguenza||''));
+      var vcls=aum?'su':'giu'; var vsim=aum?'↑':'↓';
+      var fcls=x.forza==='alto'?'cc-alto':(x.forza==='medio'?'cc-medio':'cc-basso');
+      var scls=x.stato==='verificato'?'verif':'supp';
+      return '<div class="cc-leva '+fcls+'"><span class="cc-verso '+vcls+'">'+vsim+'</span><span class="cc-b"><div class="cc-txt"><span class="cc-se">se cambio </span><span class="cc-cosa">'+esc(x.se_cambio)+'</span> <span class="cc-se">→ '+esc(x.conseguenza)+'</span></div><div class="cc-stato '+scls+'">'+esc(x.stato||'')+'</div></span></div>';
+    }).join('');
+  }).catch(function(){ box.innerHTML='<div class="cc-vuoto">Leve non raggiungibili.</div>'; });
+}
+function salvaQuaderno(nome){
+  fetch(API+'/v1/quaderno/esperimento',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_dev()},body:JSON.stringify({nome:nome,risultato:'provato al banco'})})
+    .then(function(r){return r.json();}).then(function(){ alert('Salvato nel Quaderno ✓'); }).catch(function(){ alert('Errore salvataggio'); });
+}
 // ═══ CAUSA (cablata) — due ingressi: dal Banco (mirata) + diretto ═══
 var _CA_ES=['Il cornicione non si apre','La crema ha i grumi','La carne è dura','La maionese è impazzita'];
 var _PROB={alta:['Molto probabile','var(--rosso)'],media:['Possibile','var(--oro)'],bassa:['Meno probabile','var(--testo3)']};
