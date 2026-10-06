@@ -1372,9 +1372,9 @@ def scheda_ingrediente_completa(ingrediente_id):
                             "overlap": round(ov,0) if ov else None,
                             "perche": ed.get("perche","") or ("condividono composti aromatici" if ov else "")})
         # SCIENZA (fenomeni collegati all'ingrediente dagli archi)
-        fen = db.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON (n.id=e.to_id OR n.id=e.from_id)
+        fen = db.execute("""SELECT DISTINCT n.id, n.name FROM edges e JOIN nodes n ON (n.id=e.to_id OR n.id=e.from_id)
                             WHERE (e.from_id=? OR e.to_id=?) AND n.type='Fenomeno' LIMIT 5""", (nid, nid)).fetchall()
-        fenomeni = [_c(x,"name",0) for x in fen]
+        fenomeni = [{"nome": _c(x,"name",1), "slug": _c(x,"id",0)} for x in fen]
         # VARIETA per tipo_base (come la scheda normale - il campo dd.varieta e vuoto)
         varieta_list = []
         _mytipo = dd.get("tipo_base")
@@ -1421,6 +1421,7 @@ def scheda_ingrediente_completa(ingrediente_id):
             "id": nid, "nome": nome,
             "livelli": livelli,
             "ha_contenuto": f"{con_contenuto}/9 livelli con contenuto",
+            "completezza": f"{con_contenuto}/9",
             "verificati": f"{verificati}/9 livelli verificati da un umano",
             "verificato_da_umano": verificato_globale,
             "nota": ("ha_contenuto = c'e del testo. verificato = un umano del mestiere l'ha controllato. "
