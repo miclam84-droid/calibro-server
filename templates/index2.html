@@ -234,6 +234,38 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .co-tw-dim{font-family:var(--inter);font-size:14px;text-transform:capitalize}
 .co-tw-cambio{font-family:var(--mono);font-size:13px}
 .co-tw-cambio.su{color:var(--rosso)}.co-tw-cambio.giu{color:var(--verde)}
+
+/* ═══ MENU ═══ */
+.mn-add{display:flex;gap:10px;margin-bottom:16px}
+.mn-add input{flex:1;background:var(--sup);border:1px solid var(--bordo);color:var(--testo);font-family:var(--inter);font-size:15px;padding:12px 14px;outline:none}
+.mn-add input::placeholder{color:var(--testo3)}
+.mn-add button{background:var(--verde);color:var(--fondo);border:0;font-family:var(--gro);font-weight:700;font-size:20px;padding:0 18px;cursor:pointer}
+.mn-voci{display:flex;flex-direction:column;gap:2px;margin-bottom:20px}
+.mn-voce{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bordo)}
+.mn-voce-nome{font-family:var(--gro);font-weight:500;font-size:16px}
+.mn-voce-x{color:var(--rosso);cursor:pointer;font-family:var(--mono)}
+.mn-vuoto{font-family:var(--inter);font-size:14px;color:var(--testo3);font-style:italic;padding:20px 0;text-align:center}
+.mn-btn{width:100%;background:var(--verde);color:var(--fondo);border:0;font-family:var(--gro);font-weight:600;font-size:15px;padding:15px;cursor:pointer;margin-bottom:12px}
+.mn-btn.sec{background:none;border:1px solid var(--verde);color:var(--verde)}
+.mn-btn:disabled{background:var(--bordo);color:var(--testo3)}
+.mn-k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--verde);margin:28px 0 12px}
+/* equilibrio */
+.mn-consiglio{font-family:var(--gro);font-weight:600;font-size:18px;margin-bottom:14px}
+.mn-bil{display:flex;flex-direction:column;gap:8px}
+.mn-bil-r{display:flex;align-items:center;gap:10px}
+.mn-bil-l{font-family:var(--inter);font-size:13px;color:var(--testo2);flex:0 0 90px;text-transform:capitalize}
+.mn-bil-t{flex:1;height:6px;background:var(--bordo)}
+.mn-bil-f{height:100%;background:var(--verde)}
+.mn-bil-n{font-family:var(--mono);font-size:13px;flex:0 0 20px;text-align:right}
+.mn-mod{font-family:var(--inter);font-size:14px;color:var(--testo);background:var(--sup);border-left:3px solid var(--oro);padding:12px 14px;margin-top:10px;line-height:1.4}
+/* sommelier */
+.mn-vino{border:1px solid var(--bordo);padding:16px;margin-bottom:12px}
+.mn-vino-p{font-family:var(--gro);font-weight:600;font-size:17px;margin-bottom:8px}
+.mn-vino-nota{font-family:var(--inter);font-size:13px;color:var(--testo2);font-style:italic;line-height:1.5;margin-bottom:12px}
+.mn-vino-cat{margin-bottom:10px}
+.mn-vino-cat-n{font-family:var(--gro);font-weight:600;font-size:14px;color:var(--verde)}
+.mn-vino-cat-d{font-family:var(--inter);font-size:12px;color:var(--testo2);margin-top:2px}
+.mn-vino-v{font-family:var(--mono);font-size:12px;color:var(--testo);margin-top:4px}
 </style>
 </head>
 <body>
@@ -282,6 +314,66 @@ function vai(dove){
   if(dove==='atlante' && typeof caricaAtlante==='function') caricaAtlante();
   if(dove==='banco' && typeof caricaBanco==='function') caricaBanco();
   if(dove==='corridoio' && typeof caricaCorridoio==='function') caricaCorridoio();
+  if(dove==='menu' && typeof caricaMenu==='function') caricaMenu();
+}
+// ═══ MENU (cablato) — compongo la carta ═══
+var _mnVoci=[];
+function caricaMenu(){
+  var host=document.getElementById('menu-host');
+  if(host.querySelector('.mn-add')) return; // già renderizzato
+  renderMenuBase();
+}
+function renderMenuBase(){
+  var host=document.getElementById('menu-host');
+  host.innerHTML='<div class="mn-add"><input id="mn-input" placeholder="Aggiungi un piatto alla carta" onkeydown="if(event.key===\'Enter\')mnAgg()"><button onclick="mnAgg()">+</button></div>'
+    +'<div id="mn-voci-host"></div>'
+    +'<button class="mn-btn" id="mn-analizza" onclick="mnAnalizza()" disabled>Analizza la carta</button>'
+    +'<div id="mn-esito"></div>';
+  mnVociRender();
+}
+function mnAgg(){ var i=document.getElementById('mn-input'); var v=(i.value||'').trim(); if(!v)return; _mnVoci.push(v); i.value=''; mnVociRender(); }
+function mnRim(idx){ _mnVoci.splice(idx,1); mnVociRender(); }
+function mnVociRender(){
+  var box=document.getElementById('mn-voci-host'); if(!box)return;
+  if(!_mnVoci.length){ box.innerHTML='<div class="mn-vuoto">Aggiungi i piatti. Matter analizza l\'equilibrio e costruisce la carta vini.</div>'; }
+  else{ box.innerHTML='<div class="mn-voci">'+_mnVoci.map(function(v,i){return '<div class="mn-voce"><span class="mn-voce-nome">'+esc(v)+'</span><span class="mn-voce-x" onclick="mnRim('+i+')">×</span></div>';}).join('')+'</div>'; }
+  var btn=document.getElementById('mn-analizza'); if(btn) btn.disabled=_mnVoci.length<2;
+}
+function mnAnalizza(){
+  if(_mnVoci.length<2)return;
+  var box=document.getElementById('mn-esito'); box.innerHTML='<div class="sk" style="height:120px;margin-top:8px"></div>';
+  fetch(API+'/v1/menu/analizza',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({voci:_mnVoci})})
+    .then(function(r){return r.json();}).then(function(d){ mnRenderAnalisi(d); })
+    .catch(function(){ box.innerHTML='<div class="vt-wip">Errore analisi.</div>'; });
+}
+function mnRenderAnalisi(d){
+  var box=document.getElementById('mn-esito'); if(!box)return;
+  var bil=d.bilanciamento||{};
+  var max=Math.max(1,...Object.keys(bil).map(function(k){return bil[k]||0;}));
+  var h='<div class="mn-k">◦ L\'equilibrio della carta</div>'
+    +(d.consiglio?'<div class="mn-consiglio">'+esc(d.consiglio)+'</div>':'')
+    +'<div class="mn-bil">'+Object.keys(bil).map(function(k){return '<div class="mn-bil-r"><span class="mn-bil-l">'+esc(k)+'</span><span class="mn-bil-t"><span class="mn-bil-f" style="width:'+((bil[k]||0)/max*100)+'%"></span></span><span class="mn-bil-n">'+(bil[k]||0)+'</span></div>';}).join('')+'</div>';
+  var mod=(d.modifiche_consigliate||[]);
+  if(mod.length){ h+=mod.map(function(m){return '<div class="mn-mod">'+esc(typeof m==='string'?m:(m.testo||m.consiglio||''))+'</div>';}).join(''); }
+  h+='<button class="mn-btn sec" style="margin-top:20px" onclick="mnCartaVini()">Costruisci la carta vini →</button><div id="mn-vini-host"></div>';
+  box.innerHTML=h;
+}
+function mnCartaVini(){
+  var box=document.getElementById('mn-vini-host'); box.innerHTML='<div class="sk" style="height:80px;margin-top:12px"></div>';
+  Promise.all(_mnVoci.map(function(v){
+    return fetch(API+'/v1/vino-per-piatto?piatto='+encodeURIComponent(v)).then(function(r){return r.json();}).then(function(d){return {piatto:v,d:d};}).catch(function(){return {piatto:v,d:null};});
+  })).then(function(res){
+    var h='<div class="mn-k">◦ La carta vini</div>';
+    res.forEach(function(x){
+      if(!x.d)return;
+      var sugg=(x.d.suggerimenti||[]).slice(0,2);
+      h+='<div class="mn-vino"><div class="mn-vino-p">'+esc(x.piatto)+'</div>'
+        +(x.d.nota?'<div class="mn-vino-nota">'+esc(x.d.nota)+'</div>':'')
+        +sugg.map(function(s){var vini=(s.vini_consigliati||[]).slice(0,2).map(function(vc){return esc(vc.nome)+(vc.territorio?' ('+esc(vc.territorio)+')':'');}).join(' · ');return '<div class="mn-vino-cat"><div class="mn-vino-cat-n">'+esc(s.categoria||'')+'</div>'+(s.descrizione?'<div class="mn-vino-cat-d">'+esc(s.descrizione)+'</div>':'')+(vini?'<div class="mn-vino-v">'+vini+'</div>':'')+'</div>';}).join('')
+        +'</div>';
+    });
+    box.innerHTML=h;
+  });
 }
 // ═══ CORRIDOIO (cablato) — ingrediente → tavola → composer → twist ═══
 var _coIng=null, _coPiatto=[];
