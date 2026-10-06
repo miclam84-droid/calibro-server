@@ -171,6 +171,34 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .bp-az{flex:1;text-align:center;font-family:var(--gro);font-weight:600;font-size:14px;padding:14px;cursor:pointer;border:1px solid var(--bordo2)}
 .bp-az.primaria{background:var(--verde);color:var(--fondo);border-color:var(--verde)}
 .bp-az.causa{border-color:var(--rosso);color:var(--rosso)}
+
+/* ═══ CAUSA ═══ */
+.ca-intro-t{font-family:var(--gro);font-weight:700;font-size:26px;line-height:1.1;margin-bottom:8px}
+.ca-intro-d{font-family:var(--inter);font-size:15px;color:var(--testo2);margin-bottom:20px}
+.ca-per{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--verde);margin-bottom:16px}
+.ca-box{display:flex;gap:10px;background:var(--sup);border:1px solid var(--bordo);padding:14px 16px;margin-bottom:12px}
+.ca-box input{flex:1;background:none;border:0;color:var(--testo);font-family:var(--inter);font-size:16px;outline:none}
+.ca-box input::placeholder{color:var(--testo3)}
+.ca-vai{font-family:var(--gro);font-weight:600;color:var(--verde);background:none;border:0;cursor:pointer}
+.ca-esempi{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.ca-es{text-align:left;border:1px solid var(--bordo);padding:12px 14px;font-family:var(--inter);font-size:14px;color:var(--testo);background:none;cursor:pointer}
+/* memoria */
+.ca-mem{display:flex;gap:10px;background:var(--bordo);padding:12px 14px;margin-bottom:16px}
+.ca-mem-t{font-family:var(--inter);font-size:14px;color:var(--testo);line-height:1.4}
+/* la correzione (prima!) */
+.ca-serv{border:1px solid var(--verde);padding:18px;margin-bottom:16px}
+.ca-prob{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;padding:2px 8px;border:1px solid;margin-bottom:10px}
+.ca-causa{font-family:var(--gro);font-weight:600;font-size:19px;line-height:1.2;margin-bottom:14px}
+.ca-patch-k{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--verde);margin-bottom:6px}
+.ca-patch{font-family:var(--inter);font-size:16px;line-height:1.5;color:var(--testo)}
+/* altre cause */
+.ca-sez{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--testo3);margin:22px 0 10px}
+.ca-altra{border:1px solid var(--bordo);padding:14px;margin-bottom:10px}
+.ca-altra-c{font-family:var(--gro);font-weight:600;font-size:15px}
+.ca-altra-p{font-family:var(--inter);font-size:13px;color:var(--testo2);margin-top:4px}
+/* perché */
+.ca-perche-tog{width:100%;text-align:left;display:flex;justify-content:space-between;font-family:var(--gro);font-weight:600;font-size:16px;color:var(--testo);background:none;border:0;border-top:1px solid var(--bordo);padding:18px 0;margin-top:14px;cursor:pointer}
+.ca-fen{font-family:var(--gro);font-weight:600;font-size:17px;text-transform:capitalize;margin-bottom:10px;color:var(--testo)}
 </style>
 </head>
 <body>
@@ -202,6 +230,7 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 <div class="vista" id="v-ingrediente"><div id="ingr-host"></div></div>
 <div class="vista" id="v-atlante"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Atlante</div><div class="vt-sub">Capisci la scienza sotto il mestiere</div><div id="atlante-host"></div></div>
 <div class="vista" id="v-banco"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Banco</div><div class="vt-sub">Il punto, gli ingredienti, il controllo</div><div id="banco-host"></div></div>
+<div class="vista" id="v-causa"><div id="causa-host"></div></div>
 <div class="vista" id="v-corridoio"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Corridoio</div><div class="vt-sub">Collega gli ingredienti, scopri</div><div id="corridoio-host"></div></div>
 <div class="vista" id="v-menu"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Menu</div><div class="vt-sub">Componi l'offerta</div><div id="menu-host"></div></div>
 <div class="vista" id="v-quaderno"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Quaderno</div><div class="vt-sub">Ricorda le tue prove</div><div id="quaderno-host"></div></div>
@@ -210,7 +239,7 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 <script>
 var API='https://web-production-79457.up.railway.app';
 function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':String(s));return d.innerHTML;}
-var _viste={home:'v-home',ingrediente:'v-ingrediente',atlante:'v-atlante',banco:'v-banco',corridoio:'v-corridoio',menu:'v-menu',quaderno:'v-quaderno'};
+var _viste={home:'v-home',ingrediente:'v-ingrediente',atlante:'v-atlante',banco:'v-banco',causa:'v-causa',corridoio:'v-corridoio',menu:'v-menu',quaderno:'v-quaderno'};
 function vai(dove){
   document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
   var el=document.getElementById(_viste[dove]||'v-home'); if(el)el.classList.add('on');
@@ -306,7 +335,7 @@ function renderPrep(d, id){
     h+='<div class="bp-sez"><div class="bp-k">◦ Perché</div><div class="sc-fen">'+fen.map(function(f){var nome=typeof f==='object'?f.nome:f;var slug=typeof f==='object'?f.slug:'';return '<div class="sc-fen-item" onclick="'+(slug?'apriFenomeno(\''+esc(slug)+'\')':'')+'">'+esc(nome)+(slug?' →':'')+'</div>';}).join('')+'</div></div>';
   }
   // azioni
-  h+='<div class="bp-azioni"><div class="bp-az primaria" onclick="alert(\'Salva nel Quaderno — cablaggio 8\')">Fatto · salva</div><div class="bp-az causa" onclick="alert(\'Causa — cablaggio 5\')">Non torna?</div></div>';
+  h+='<div class="bp-azioni"><div class="bp-az primaria" onclick="alert(\'Salva nel Quaderno — cablaggio 8\')">Fatto · salva</div><div class="bp-az causa" onclick="apriCausa(\''+esc(id)+'\',\''+esc(d.nome).replace(/\x27/g,'')+'\')">Non torna?</div></div>';
   host.innerHTML=h;
 }
 // RICERCA cablata (/v1/cerca)
@@ -466,6 +495,64 @@ function renderFenomeno(d, slug){
 function _fcrow(x,fr,col){var fat=(typeof x==='object')?(x.fattore||x.nome||''):x;var dir=(typeof x==='object'&&x.direzione)?(' '+x.direzione):'';return '<div class="liv-crow"><span class="liv-cfr" style="color:'+col+'">'+fr+'</span><span>'+esc(_cap(fat))+esc(dir)+'</span></div>';}
 function togFen(btn){var c=btn.nextElementSibling;if(c){var v=c.style.display!=='none';c.style.display=v?'none':'block';var ch=btn.querySelector('.liv-chev');if(ch)ch.textContent=v?'+':'−';}}
 function chatFenomeno(slug,nome){ alert('Chat su "'+nome+'" — cablaggio chat (cablaggio 9, con contesto_nodo='+slug+')'); }
+// ═══ CAUSA (cablata) — due ingressi: dal Banco (mirata) + diretto ═══
+var _CA_ES=['Il cornicione non si apre','La crema ha i grumi','La carne è dura','La maionese è impazzita'];
+var _PROB={alta:['Molto probabile','var(--rosso)'],media:['Possibile','var(--oro)'],bassa:['Meno probabile','var(--testo3)']};
+function apriCausa(protId, prepNome){
+  vai('causa');
+  var host=document.getElementById('causa-host');
+  host.innerHTML='<div class="sc-back" onclick="vai(\'banco\')">‹ Banco</div>'
+    +'<div class="ca-intro-t">Cosa non torna?</div>'
+    +(prepNome?'<div class="ca-per">per: '+esc(prepNome)+'</div>':'<div class="ca-intro-d">Dimmi cosa vedi al banco.</div>')
+    +'<div class="ca-box"><input id="ca-input" placeholder="es. si straccia, è troppo liquida..." onkeydown="if(event.key===\'Enter\')cercaCausa()"><button class="ca-vai" onclick="cercaCausa()">→</button></div>'
+    +(prepNome?'':'<div class="ca-esempi">'+_CA_ES.map(function(s){return '<button class="ca-es" onclick="cercaCausa(\''+esc(s).replace(/\x27/g,'')+'\')">'+esc(s)+'</button>';}).join('')+'</div>')
+    +'<div id="ca-esito"></div>';
+  window._caProtId = protId||'';
+}
+function cercaCausa(pre){
+  var sint=pre||(document.getElementById('ca-input')||{}).value||''; sint=String(sint).trim(); if(!sint)return;
+  if(pre){var i=document.getElementById('ca-input');if(i)i.value=pre;}
+  var es=document.getElementById('ca-esempi'); if(es)es.style.display='none';
+  var box=document.getElementById('ca-esito'); box.innerHTML='<div class="sk" style="height:120px;margin-top:16px"></div>';
+  var body={sintomo:sint}; if(window._caProtId) body.protocollo_id=window._caProtId;
+  fetch(API+'/v1/diagnosi',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_dev()},body:JSON.stringify(body)})
+    .then(function(r){return r.json();}).then(function(d){ renderCausa(d,sint); })
+    .catch(function(){ box.innerHTML='<div class="vt-wip">Non riesco a cercare la causa ora.</div>'; });
+}
+function _dev(){ try{return localStorage.getItem('matter_device')||'anon';}catch(e){return 'anon';} }
+function renderCausa(d, sint){
+  var box=document.getElementById('ca-esito'); if(!box)return;
+  var cause=(d.cause||[]);
+  if(!cause.length){ box.innerHTML='<div class="vt-wip">Non ho ancora una causa per "'+esc(sint)+'". Prova a descriverlo diverso.</div>'; return; }
+  var h='';
+  // memoria
+  var mem=d.memoria_utente||{};
+  if(mem.gia_affrontato){ h+='<div class="ca-mem"><span style="color:var(--verde)">◆</span><span class="ca-mem-t">'+esc(mem.richiamo||'Ci sei già passato con questo problema.')+'</span></div>'; }
+  // LA CORREZIONE (prima!)
+  var top=cause[0]; var pr=_PROB[(top.probabilita||'media').toLowerCase()]||_PROB.media;
+  h+='<div class="ca-serv"><span class="ca-prob" style="color:'+pr[1]+';border-color:'+pr[1]+'">'+pr[0]+'</span>'
+    +'<div class="ca-causa">'+esc(top.causa)+'</div>'
+    +(top.patch?'<div class="ca-patch-k">La correzione</div><div class="ca-patch">'+esc(top.patch)+'</div>':'')+'</div>';
+  // sensori da controllare
+  var sens=(d.sensori_da_controllare||[]);
+  if(sens.length){ h+='<div class="ca-sez">Controlla</div>'+sens.map(function(s){var t=(typeof s==='object')?(s.domanda||s.sensore):s;return '<div class="ca-altra"><div class="ca-altra-c">'+esc(t)+'</div></div>';}).join(''); }
+  // altre cause
+  if(cause.length>1){
+    h+='<div class="ca-sez">Oppure</div>'+cause.slice(1).map(function(c){var p=_PROB[(c.probabilita||'media').toLowerCase()]||_PROB.media;return '<div class="ca-altra"><div class="ca-altra-c">'+esc(c.causa)+'</div>'+(c.patch?'<div class="ca-altra-p">'+esc(c.patch)+'</div>':'')+'</div>';}).join('');
+  }
+  // PERCHÉ (espandibile)
+  var caus=d.causalita_fenomeno||{};
+  var hasCaus=caus&&((caus.acceleranti||[]).length||(caus.rallentanti||[]).length);
+  if(d.fenomeno||hasCaus){
+    h+='<button class="ca-perche-tog" onclick="togCausa(this)"><span>Perché succede</span><span style="color:var(--verde)">+</span></button><div style="display:none">';
+    if(d.fenomeno) h+='<div class="ca-fen">'+esc(d.fenomeno)+'</div>';
+    if(hasCaus){ h+='<div class="liv-caus">'; (caus.acceleranti||[]).slice(0,4).forEach(function(x){h+=_fcrow(x,'↑','var(--rosso)');}); (caus.rallentanti||[]).slice(0,4).forEach(function(x){h+=_fcrow(x,'↓','var(--verde)');}); h+='</div>'; }
+    if(d.fonti_patrimonio) h+='<div class="ca-altra-p" style="margin-top:12px;font-style:italic">Basato su '+d.fonti_patrimonio+' casi verificati</div>';
+    h+='</div>';
+  }
+  box.innerHTML=h;
+}
+function togCausa(btn){var c=btn.nextElementSibling;if(c){var v=c.style.display!=='none';c.style.display=v?'none':'block';btn.querySelector('span:last-child').textContent=v?'+':'−';}}
 // _t helper (campo stringa o {it,en})
 function _t(v){ if(v==null)return ''; if(typeof v==='object')return v.it||v.en||v.testo||''; return String(v); }
 // ESPERIMENTO DEL GIORNO cablato (mostra solo se ha contenuto, sennò onesto)
