@@ -665,14 +665,14 @@ function renderPrep(d, id){
   if(fen.length){
     h+='<div class="bp-sez"><div class="bp-k">◦ Perché</div><div class="sc-fen">'+fen.map(function(f){var nome=typeof f==='object'?f.nome:f;var slug=typeof f==='object'?f.slug:'';return '<div class="sc-fen-item" onclick="'+(slug?'apriFenomeno(\''+esc(slug)+'\')':'')+'">'+esc(nome)+(slug?' →':'')+'</div>';}).join('')+'</div></div>';
   }
-  // E SE CAMBIO? (le leve — cambio-conseguenza)
-  if(fen.length){ h+='<div class="bp-sez"><div class="bp-k">◦ E se cambio?</div><div id="cc-host"></div></div>'; }
+  // E SE CAMBIO? (le leve) — solo se c'è un fenomeno CON slug (collegato all'Atlante)
+  var fenConSlug=fen.filter(function(f){return typeof f==='object' && f.slug;});
+  if(fenConSlug.length){ h+='<div class="bp-sez"><div class="bp-k">◦ E se cambio?</div><div id="cc-host"></div></div>'; }
   // azioni
   h+='<div class="bp-azioni"><div class="bp-az primaria" onclick="salvaQuaderno(\''+esc(d.nome).replace(/\x27/g,'')+'\')">Fatto · salva</div><div class="bp-az causa" onclick="apriCausa(\''+esc(id)+'\',\''+esc(d.nome).replace(/\x27/g,'')+'\')">Non torna?</div></div>';
   host.innerHTML=h;
-  // carico le leve del primo fenomeno
-  var slug0=fen.length?(typeof fen[0]==='object'?fen[0].slug:'') : '';
-  if(slug0) caricaLeve(slug0,'cc-host');
+  // carico le leve del primo fenomeno CHE HA lo slug
+  if(fenConSlug.length) caricaLeve(fenConSlug[0].slug,'cc-host');
 }
 // RICERCA cablata (/v1/cerca)
 var _ct=null;
