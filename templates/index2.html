@@ -108,6 +108,33 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .sc-azioni{display:flex;gap:12px;margin-top:40px;padding-top:24px;border-top:1px solid var(--bordo)}
 .sc-azione{flex:1;text-align:center;font-family:var(--gro);font-weight:600;font-size:14px;padding:14px;border:1px solid var(--verde);color:var(--verde);cursor:pointer}
 .sc-azione.pieno{background:var(--verde);color:var(--fondo)}
+
+/* ═══ ATLANTE ═══ */
+.at-intro{font-family:var(--inter);font-size:15px;line-height:1.5;color:var(--testo2);margin-bottom:28px}
+.at-madre{display:flex;align-items:baseline;gap:14px;padding:18px 0;border-bottom:1px solid var(--bordo);cursor:pointer}
+.at-madre:last-child{border-bottom:0}
+.at-madre-n{font-family:var(--mono);font-size:12px;color:var(--testo3);flex:0 0 46px}
+.at-madre-b{flex:1}
+.at-madre-nome{font-family:var(--gro);font-weight:600;font-size:19px;line-height:1.15}
+.at-madre-meta{font-family:var(--mono);font-size:11px;color:var(--testo3);margin-top:3px}
+.at-madre-arr{color:var(--verde);font-family:var(--mono)}
+/* scheda fenomeno — 3 livelli */
+.fen-nome{font-family:var(--gro);font-weight:700;font-size:32px;line-height:1.05;letter-spacing:-.02em;margin-bottom:8px}
+.fen-cat{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--testo3);margin-bottom:24px}
+/* i 3 livelli come profondità */
+.liv{border-top:1px solid var(--bordo);padding:22px 0}
+.liv-k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--verde);margin-bottom:4px}
+.liv-sub{font-family:var(--inter);font-size:12px;color:var(--testo3);margin-bottom:14px}
+.liv-p{font-family:var(--inter);font-size:16px;line-height:1.6;color:var(--testo);margin-bottom:12px}
+.liv-h{font-family:var(--gro);font-weight:600;font-size:14px;color:var(--testo);margin:14px 0 6px}
+.liv-punto{font-family:var(--gro);font-weight:700;font-size:24px;color:var(--testo);margin-bottom:6px}
+.liv-oss{font-family:var(--inter);font-size:15px;color:var(--testo);line-height:1.5}
+.liv-caus{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.liv-crow{display:flex;gap:8px;align-items:baseline;font-family:var(--inter);font-size:14px}
+.liv-cfr{font-family:var(--mono);font-weight:700}
+.liv-toggle{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;font-family:var(--gro);font-weight:600;font-size:17px;color:var(--testo);background:none;border:0;border-top:1px solid var(--bordo);padding:20px 0;cursor:pointer}
+.liv-chev{color:var(--verde);font-family:var(--mono);font-size:18px}
+.fen-chat{width:100%;margin-top:28px;font-family:var(--gro);font-weight:600;font-size:15px;padding:16px;border:1px solid var(--verde);color:var(--verde);background:none;cursor:pointer}
 </style>
 </head>
 <body>
@@ -152,7 +179,7 @@ function vai(dove){
   document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
   var el=document.getElementById(_viste[dove]||'v-home'); if(el)el.classList.add('on');
   window.scrollTo(0,0);
-  // i cablaggi delle porte si agganciano man mano (una schermata alla volta)
+  if(dove==='atlante' && typeof caricaAtlante==='function') caricaAtlante();
 }
 // RICERCA cablata (/v1/cerca)
 var _ct=null;
@@ -191,7 +218,7 @@ function renderScheda(d, nome){
   var host=document.getElementById('ingr-host'); if(!host)return;
   var liv=d.livelli||{};
   var ce=liv.cos_e||{};
-  var binomio = (ce.nome_scientifico || (nome==='pomodoro'?'Solanum lycopersicum':'')) || '';
+  var binomio = ce.nome_scientifico || '';
   var h='<div class="sc-back" onclick="vai(\'home\')">‹ Home</div>';
   // HERO
   h+='<div class="sc-hero"><div class="sc-nome">'+esc(_cap(d.nome||nome))+'</div>'
@@ -243,7 +270,76 @@ function _renderLivello(k,v){
   var t=v.testo||v.descrizione||v.contenuto||v.nota||'';
   return t?'<div class="sc-p">'+esc(t)+'</div>':'<div class="sc-vuoto">In arrivo.</div>';
 }
-function apriFenomeno(slug){ vai('atlante'); document.getElementById('atlante-host').innerHTML='<div class="vt-wip">Fenomeno '+esc(slug)+' — cablaggio Atlante (prossimo).</div>'; }
+// ═══ ATLANTE (cablato) ═══
+var _atCaricato=false;
+function caricaAtlante(){
+  var host=document.getElementById('atlante-host');
+  if(_atCaricato && host.querySelector('.at-madre')) return; // già lista
+  host.innerHTML='<div class="at-intro">I fenomeni fondamentali che governano la materia. Parti da uno, scendi quanto vuoi.</div><div class="sk" style="height:200px"></div>';
+  fetch(API+'/v1/fenomeni-madre').then(function(r){return r.json();}).then(function(d){
+    var m=Array.isArray(d)?d:(d.fenomeni_madre||d.madre||[]);
+    _atCaricato=true;
+    host.innerHTML='<div class="at-intro">I fenomeni fondamentali che governano la materia. Parti da uno, scendi quanto vuoi.</div>'
+      + m.map(function(f,i){
+        var n=String(i+1).padStart(2,'0');
+        return '<div class="at-madre" onclick="apriFenomeno(\''+esc(f.slug)+'\')"><span class="at-madre-n">'+n+'</span><span class="at-madre-b"><div class="at-madre-nome">'+esc(f.nome)+'</div><div class="at-madre-meta">'+(f.n_manifestazioni||0)+' manifestazioni · '+esc(f.categoria||'')+'</div></span><span class="at-madre-arr">→</span></div>';
+      }).join('');
+  }).catch(function(){ host.innerHTML='<div class="vt-wip">Atlante non raggiungibile.</div>'; });
+}
+function apriFenomeno(slug){
+  vai('atlante');
+  var host=document.getElementById('atlante-host');
+  host.innerHTML='<div class="sc-back" onclick="caricaAtlante()">‹ Atlante</div><div class="sk" style="height:32px;width:60%;margin-bottom:20px"></div><div class="sk" style="height:140px"></div>';
+  fetch(API+'/v1/scheda-scienza/'+encodeURIComponent(slug)).then(function(r){return r.json();}).then(function(d){ renderFenomeno(d,slug); })
+    .catch(function(){ host.innerHTML='<div class="sc-back" onclick="caricaAtlante()">‹ Atlante</div><div class="vt-wip">Fenomeno non raggiungibile.</div>'; });
+}
+function renderFenomeno(d, slug){
+  var host=document.getElementById('atlante-host'); if(!host)return;
+  var L=d.livelli||{};
+  var f=L.faccio||{}, c=L.capisco||{}, a=L.approfondisco||{};
+  var h='<div class="sc-back" onclick="caricaAtlante()">‹ Atlante</div>';
+  h+='<div class="fen-nome">'+esc(d.nome)+'</div>';
+  h+=(d.categoria?'<div class="fen-cat">'+esc(d.categoria)+'</div>':'');
+  // FACCIO (sempre aperto) — il punto + cosa osservare
+  var f_punto=_t(f.il_punto)||_t(f.numero_bersaglio), f_oss=_t(f.cosa_osservare);
+  if(f_punto||f_oss){
+    h+='<div class="liv"><div class="liv-k">Faccio</div><div class="liv-sub">cosa controllo, subito</div>';
+    if(f_punto) h+='<div class="liv-punto">'+esc(f_punto)+'</div>';
+    if(f_oss) h+='<div class="liv-oss">'+esc(f_oss)+'</div>';
+    h+='</div>';
+  }
+  // CAPISCO (espandibile) — principio, perché, errori
+  var c_princ=_t(c.principio)||_t(d.principio), c_perche=_t(c.perche), c_err=_t(c.errori_comuni);
+  if(c_princ||c_perche||c_err){
+    h+='<button class="liv-toggle" onclick="togFen(this)"><span>Capisco</span><span class="liv-chev">+</span></button><div style="display:none">';
+    if(c_princ) h+='<div class="liv-p">'+esc(c_princ)+'</div>';
+    if(c_perche) h+='<div class="liv-p">'+esc(c_perche)+'</div>';
+    if(c_err){ h+='<div class="liv-h">Errori comuni</div><div class="liv-p">'+esc(c_err)+'</div>'; }
+    h+='</div>';
+  }
+  // APPROFONDISCO (espandibile) — causalità, fonti
+  var a_caus=a.causalita||{}, a_fonti=a.fonti||a.evidence||[];
+  var hasCaus=a_caus&&((a_caus.acceleranti||[]).length||(a_caus.rallentanti||[]).length);
+  if(hasCaus||(a_fonti&&a_fonti.length)){
+    h+='<button class="liv-toggle" onclick="togFen(this)"><span>Approfondisco</span><span class="liv-chev">+</span></button><div style="display:none">';
+    if(hasCaus){
+      h+='<div class="liv-h">Cosa cambia il risultato</div><div class="liv-caus">';
+      (a_caus.acceleranti||[]).slice(0,4).forEach(function(x){h+=_fcrow(x,'↑','var(--rosso)');});
+      (a_caus.rallentanti||[]).slice(0,4).forEach(function(x){h+=_fcrow(x,'↓','var(--verde)');});
+      h+='</div>';
+    }
+    if(a_fonti&&a_fonti.length){ h+='<div class="liv-h">Fonti</div><div class="liv-p" style="font-size:14px;color:var(--testo2)">'+a_fonti.slice(0,4).map(function(x){return esc(typeof x==='string'?x:(x.titolo||x.nome||''));}).filter(Boolean).join(' · ')+'</div>'; }
+    h+='</div>';
+  }
+  // chat contestuale
+  h+='<button class="fen-chat" onclick="chatFenomeno(\''+esc(slug)+'\',\''+esc(d.nome)+'\')">Approfondisci in chat →</button>';
+  host.innerHTML=h;
+}
+function _fcrow(x,fr,col){var fat=(typeof x==='object')?(x.fattore||x.nome||''):x;var dir=(typeof x==='object'&&x.direzione)?(' '+x.direzione):'';return '<div class="liv-crow"><span class="liv-cfr" style="color:'+col+'">'+fr+'</span><span>'+esc(_cap(fat))+esc(dir)+'</span></div>';}
+function togFen(btn){var c=btn.nextElementSibling;if(c){var v=c.style.display!=='none';c.style.display=v?'none':'block';var ch=btn.querySelector('.liv-chev');if(ch)ch.textContent=v?'+':'−';}}
+function chatFenomeno(slug,nome){ alert('Chat su "'+nome+'" — cablaggio chat (cablaggio 9, con contesto_nodo='+slug+')'); }
+// _t helper (campo stringa o {it,en})
+function _t(v){ if(v==null)return ''; if(typeof v==='object')return v.it||v.en||v.testo||''; return String(v); }
 // ESPERIMENTO DEL GIORNO cablato (mostra solo se ha contenuto, sennò onesto)
 function caricaExp(){
   fetch(API+'/v1/esperimento-del-giorno').then(function(r){return r.json();}).then(function(d){
