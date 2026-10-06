@@ -5885,6 +5885,22 @@ def diagnosi_interattiva():
     body = request.get_json(silent=True) or {}
     sintomo = (body.get("sintomo") or "").strip()
     disciplina = body.get("disciplina","")
+    protocollo_id = body.get("protocollo_id","")
+    # CONTESTO: se arriva da una preparazione (Banco "Non torna?"), uso la sua disciplina + fenomeni -> diagnosi mirata
+    contesto_prep = None
+    if protocollo_id:
+        try:
+            import os as _os, psycopg2 as _pg, json as _j
+            _c = _pg.connect(_os.environ["DATABASE_URL"]); _cu=_c.cursor()
+            _cu.execute("SELECT name, data FROM nodes WHERE id=%s AND type='Protocollo'", (protocollo_id,))
+            _r=_cu.fetchone()
+            if _r:
+                _dd=_r[1] if isinstance(_r[1],dict) else _j.loads(_r[1])
+                contesto_prep = {"nome":_r[0], "disciplina":_dd.get("disciplina",""),
+                                 "fenomeni":[f.get("nome") if isinstance(f,dict) else f for f in _dd.get("fenomeni",[])]}
+                if not disciplina and _dd.get("disciplina"): disciplina = _dd.get("disciplina")
+            _cu.close();_c.close()
+        except: pass
     if not sintomo: return jsonify({"errore":"manca il sintomo"}), 400
     # DEDUCO la disciplina dal sintomo se non fornita (fix routing: "cornicione" e panificazione, non vino)
     if not disciplina:
@@ -5989,6 +6005,8 @@ def diagnosi_interattiva():
                 risultato["memoria_utente"] = {"gia_affrontato": False}
         cur.close(); conn.close()
         risultato["fonti_patrimonio"]=len(cause_trovate)
+        if contesto_prep:
+            risultato["contesto_preparazione"]=contesto_prep
         return jsonify(risultato)
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
