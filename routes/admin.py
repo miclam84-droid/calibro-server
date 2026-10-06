@@ -15047,6 +15047,7 @@ def admin_popola_profilo_fondamentali():
     # lista chiusa dei fondamentali vuoti (il report prioritario - non generica)
     FOND = ["sale","zucchero","peperoncino","basilico","salvia","alloro","origano","parmigiano","pecorino",
             "zucchina","melanzana","funghi","spinaci","zafferano","campari","vodka","brodo","farina"]
+    limite_n = int(request.args.get("n",4))
     DIM = ["acido","amaro","aroma_caldo","aroma_fresco","astringente","corposita","croccante","dolce",
            "effervescenza","fermentato","grasso","piccante","salato","termico","umami"]
     def profilo_ai(nome):
@@ -15072,14 +15073,17 @@ def admin_popola_profilo_fondamentali():
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         fatti=[]
         for nome in FOND:
+            if len(fatti) >= limite_n: break
             # il nodo con piu abbinamenti (il ricco, non il duplicato vuoto)
-            cur.execute("""SELECT n.id, COUNT(e.from_id) nc FROM nodes n
+            cur.execute("""SELECT n.id, n.data, COUNT(e.from_id) nc FROM nodes n
                            LEFT JOIN edges e ON e.from_id=n.id AND e.relation='abbinamento_aromatico'
                            WHERE LOWER(n.name)=LOWER(%s) AND n.type IN ('Ingrediente','Prodotto')
-                           GROUP BY n.id ORDER BY nc DESC LIMIT 1""",(nome,))
+                           GROUP BY n.id, n.data ORDER BY nc DESC LIMIT 1""",(nome,))
             r=cur.fetchone()
             if not r: continue
             nid=r[0]
+            _dd0 = r[1] if isinstance(r[1],dict) else (json.loads(r[1]) if r[1] else {})
+            if _dd0.get("_profilo_stato"): continue  # gia fatto, skip
             res=profilo_ai(nome)
             if not res or not res.get("profilo"): continue
             prof={k:float(v) for k,v in res["profilo"].items() if k in DIM and v}
