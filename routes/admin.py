@@ -15031,3 +15031,68 @@ def admin_popola_nome_scientifico():
                         "senza_binomio":vuoti,"esempi":messi[:12]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/popola-profilo-fondamentali")
+def admin_popola_profilo_fondamentali():
+    """Popola il profilo sensoriale (15 dim 0-10) dei FONDAMENTALI vuoti. Metodo revisore: l'AI PROPONE con
+    stato epistemico (verificato per gli ovvi, stimato per i dubbi), NON inventa valori a caso. Scrive nel nodo
+    con PIU abbinamenti (il ricco). Default DRY-RUN. ?applica=1."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    applica = request.args.get("applica")=="1"
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key"}),500
+    # lista chiusa dei fondamentali vuoti (il report prioritario - non generica)
+    FOND = ["sale","zucchero","peperoncino","basilico","salvia","alloro","origano","parmigiano","pecorino",
+            "zucchina","melanzana","funghi","spinaci","zafferano","campari","vodka","brodo","farina"]
+    DIM = ["acido","amaro","aroma_caldo","aroma_fresco","astringente","corposita","croccante","dolce",
+           "effervescenza","fermentato","grasso","piccante","salato","termico","umami"]
+    def profilo_ai(nome):
+        dom = (f"Ingrediente: '{nome}'. Dammi il suo PROFILO SENSORIALE su queste 15 dimensioni (scala 0-10): "
+               f"{', '.join(DIM)}. Valori ALTI solo dove e' davvero caratteristico (es. sale: salato 10, resto ~0; "
+               f"peperoncino: piccante 9; zucchero: dolce 10; parmigiano: umami 8, salato 7, grasso 5). "
+               f"Metti 0 dove la dimensione non si applica. Indica 'certezza' alta per i casi ovvi (sale=salato), "
+               f"bassa per i dubbi. SOLO JSON: {{\"profilo\": {{dim: valore...}}, \"certezza\": \"alta\"|\"media\"|\"bassa\"}}")
+        pl={"model":"gpt-4o-mini","max_tokens":350,"temperature":0,
+            "messages":[{"role":"system","content":"Esperto sensoriale di cucina. Dai profili realistici: valori "
+                        "alti solo dove l'ingrediente e' davvero quello (sale=salato, non dolce). Onesto sulla certezza."},
+                        {"role":"user","content":dom}]}
+        try:
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
+                          headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx=json.loads(ur.urlopen(rq,timeout=30).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0))
+        except: pass
+        return None
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        fatti=[]
+        for nome in FOND:
+            # il nodo con piu abbinamenti (il ricco, non il duplicato vuoto)
+            cur.execute("""SELECT n.id, COUNT(e.from_id) nc FROM nodes n
+                           LEFT JOIN edges e ON e.from_id=n.id AND e.relation='abbinamento_aromatico'
+                           WHERE LOWER(n.name)=LOWER(%s) AND n.type IN ('Ingrediente','Prodotto')
+                           GROUP BY n.id ORDER BY nc DESC LIMIT 1""",(nome,))
+            r=cur.fetchone()
+            if not r: continue
+            nid=r[0]
+            res=profilo_ai(nome)
+            if not res or not res.get("profilo"): continue
+            prof={k:float(v) for k,v in res["profilo"].items() if k in DIM and v}
+            cert=res.get("certezza","media")
+            fatti.append({"nome":nome,"dim_attive":len(prof),"certezza":cert,
+                          "picchi":{k:v for k,v in prof.items() if v>=6}})
+            if applica:
+                cur.execute("SELECT data FROM nodes WHERE id=%s",(nid,))
+                dd=cur.fetchone()[0]; dd=dd if isinstance(dd,dict) else json.loads(dd)
+                dd["proprieta"]=prof
+                dd["_profilo_stato"]="stimato" if cert!="alta" else "verificato_ovvio"
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),nid)); conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","fondamentali_processati":len(fatti),"dettaglio":fatti})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
