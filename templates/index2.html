@@ -321,6 +321,18 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .co-senza{font-family:var(--inter);font-size:13px;color:var(--oro);margin-top:8px}
 .co-nota{font-family:var(--inter);font-size:11px;color:var(--testo3);font-style:italic;margin-top:10px;line-height:1.4}
 .co-dom-k{font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--testo3);margin:14px 0 8px}
+/* twist */
+.tw-ctrl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tw-sel,.tw-inp{background:var(--sup);border:1px solid var(--bordo);color:var(--testo);font-family:var(--inter);font-size:14px;padding:10px 12px;outline:none}
+.tw-sel{flex:1;min-width:120px}.tw-inp{flex:1;min-width:100px}
+.tw-con{font-family:var(--inter);font-size:13px;color:var(--testo2)}
+.tw-btn{background:var(--verde);color:var(--fondo);border:0;font-family:var(--mono);font-size:16px;padding:0 16px;height:40px;cursor:pointer}
+.tw-res-k{font-family:var(--gro);font-weight:600;font-size:16px;margin:16px 0 12px;color:var(--testo)}
+.tw-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--bordo)}
+.tw-dim{font-family:var(--inter);font-size:14px;text-transform:capitalize}
+.tw-cambio{font-family:var(--mono);font-size:13px}
+.tw-cambio.su{color:var(--rosso)}.tw-cambio.giu{color:var(--verde)}
+.tw-stato{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--testo3);margin-top:12px}
 </style>
 </head>
 <body>
@@ -561,6 +573,14 @@ function rimuoviDalPiatto(nome){ _coPiatto=_coPiatto.filter(function(x){return x
 function aggiornaPiatto(){
   var box=document.getElementById('co-piatto-host'); if(!box)return;
   var h='<div class="co-k">◦ Il piatto</div><div class="co-comp-ing">'+_coPiatto.map(function(x){return '<span class="co-chip">'+esc(x)+(_coPiatto.length>1?'<span class="x" onclick="event.stopPropagation();rimuoviDalPiatto(\''+esc(x).replace(/\x27/g,'')+'\')">×</span>':'')+'</span>';}).join('')+'</div><div id="co-prof-host"></div>';
+  // TWIST — cosa cambia se sostituisco (da 2+ ingredienti)
+  if(_coPiatto.length>=2){
+    h+='<div class="co-k" style="margin-top:22px">◦ E se sostituisco?</div><div class="tw-ctrl">'
+      +'<select id="tw-sost" class="tw-sel">'+_coPiatto.map(function(x){return '<option>'+esc(x)+'</option>';}).join('')+'</select>'
+      +'<span class="tw-con">con</span>'
+      +'<input id="tw-con" class="tw-inp" placeholder="es. whisky">'
+      +'<button class="tw-btn" onclick="provaTwist()">→</button></div><div id="tw-host"></div>';
+  }
   box.innerHTML=h;
   // profilo dal composer
   fetch(API+'/v1/composer/prossimi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingredienti:_coPiatto})}).then(function(r){return r.json();}).then(function(c){
@@ -582,6 +602,32 @@ function aggiornaPiatto(){
 }
 // aggancio azioni Scheda: "Componi un piatto" / "Vedi relazioni" portano l'ingrediente nel Corridoio
 function componiDa(nome){ _coIng=nome; _coPiatto=[nome]; vai('corridoio'); }
+// TWIST — cosa cambia se sostituisco
+function provaTwist(){
+  var sost=(document.getElementById('tw-sost')||{}).value||'';
+  var con=(document.getElementById('tw-con')||{}).value||''; con=con.trim();
+  if(!sost||!con)return;
+  var box=document.getElementById('tw-host'); box.innerHTML='<div class="sk" style="height:100px;margin-top:12px"></div>';
+  fetch(API+'/v1/twist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingredienti:_coPiatto,sostituisci:sost,con:con})})
+    .then(function(r){return r.json();}).then(function(d){ renderTwist(d,sost,con); })
+    .catch(function(){ box.innerHTML='<div class="cc-vuoto">Non riesco a simulare ora.</div>'; });
+}
+function renderTwist(d, sost, con){
+  var box=document.getElementById('tw-host'); if(!box)return;
+  var cc=(d.cosa_cambia||[]);
+  if(!cc.length){ box.innerHTML='<div class="cc-vuoto">Non abbiamo ancora i dati per questa sostituzione. Provalo e registra nel Quaderno.</div>'; return; }
+  var h='<div class="tw-res-k">'+esc(_cap(sost))+' → '+esc(_cap(con))+'</div>';
+  // ordino per entità del cambiamento
+  cc.sort(function(a,b){ return Math.abs((b.dopo||0)-(b.prima||0))-Math.abs((a.dopo||0)-(a.prima||0)); });
+  h+=cc.slice(0,8).map(function(x){
+    var aum=/aument|cresc|su\b/i.test(String(x.verso||''));
+    var vcls=aum?'su':'giu'; var vsim=aum?'↑':'↓';
+    return '<div class="tw-row"><span class="tw-dim">'+esc(_cap(String(x.dimensione||'').replace(/_/g,' ')))+'</span><span class="tw-cambio '+vcls+'">'+vsim+' '+esc(x.prima)+'→'+esc(x.dopo)+'</span></div>';
+  }).join('');
+  if(d.stato) h+='<div class="tw-stato">'+esc(d.stato)+'</div>';
+  if(d.nota) h+='<div class="co-nota">'+esc(d.nota)+'</div>';
+  box.innerHTML=h;
+}
 // ═══ BANCO (cablato) ═══
 var _bnCaricato=false, _bnCT=null;
 function caricaBanco(){
