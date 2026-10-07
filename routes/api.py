@@ -6508,7 +6508,9 @@ def menu_filo_conduttore():
             nel_filo = False
             if tipo_filo == "ingrediente":
                 ings = [str(i.get("nome","") if isinstance(i,dict) else i).lower() for i in (dd.get("ingredienti") or dd.get("reagenti") or [])]
-                nel_filo = any(tema.lower() in i for i in ings)
+                # match su RADICE: "pomodoro" deve trovare "pomodorini", "pomodori", "passata di pomodoro"
+                radice = tema.lower().rstrip("aeiuo")[:max(4,len(tema)-2)]
+                nel_filo = any(radice in i for i in ings)
             elif tipo_filo == "fenomeno":
                 fens = [str(f.get("nome","") if isinstance(f,dict) else f).lower() for f in dd.get("fenomeni",[])]
                 nel_filo = any(tema.lower() in f for f in fens)
@@ -6527,7 +6529,8 @@ def menu_filo_conduttore():
                 if nm in coerenti: continue
                 ddx = dt if isinstance(dt, dict) else json.loads(dt)
                 ings = [str(i.get("nome","") if isinstance(i,dict) else i).lower() for i in (ddx.get("ingredienti") or ddx.get("reagenti") or [])]
-                if any(tema.lower() in i for i in ings):
+                radice = tema.lower().rstrip("aeiuo")[:max(4,len(tema)-2)]
+                if any(radice in i for i in ings):
                     suggeriti.append(nm)
                 if len(suggeriti) >= 6: break
         elif tipo_filo == "disciplina":
