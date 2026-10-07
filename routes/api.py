@@ -3644,13 +3644,16 @@ def vino_per_piatto():
         suggerimenti.append({
             "categoria": cat,
             "descrizione": dati.get("descrizione", ""),
-            "vini_consigliati": [{"nome": v["nome"], "territorio": v["territorio"], "perche": v["perche"]} for v in vini[:3]],
+            # ogni vino con i link shop (affiliati P2: compaiono nel Menu, contestuali - "cercalo su...")
+            "vini_consigliati": [{"nome": v["nome"], "territorio": v["territorio"], "perche": v["perche"],
+                                  "dove_comprarlo": _link_vino_birra(v["nome"], "vino")} for v in vini[:3]],
         })
     return jsonify({
         "piatto": piatto,
         "categorie_in_dialogo": categorie_suggerite,
         "suggerimenti": suggerimenti,
         "nota": "Il vino dialoga col piatto: l'acidità pulisce il grasso, il tannino sgrassa, la bollicina rinfresca il fritto.",
+        "disclosure": "I link ai negozi sono affiliati: acquistando tramite questi supporti Matter, senza costi aggiuntivi per te.",
     })
 
 
