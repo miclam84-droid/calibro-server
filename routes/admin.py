@@ -15283,3 +15283,35 @@ def admin_rimuovi_fenomeni_falsi():
                         "protocolli_toccati":prot_tocchi,"dettaglio":rimossi[:20]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/correggi-caso-verificato")
+def admin_correggi_caso_verificato():
+    """Corregge UN caso verificato a mano (Michele/Claude hanno controllato con fonti). Toglie i fenomeni FALSI
+    indicati. NON sostituisce. ?prep=<pattern nome> ?togli=fen1,fen2 ?applica=1."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    applica = request.args.get("applica")=="1"
+    pattern = request.args.get("prep","")
+    togli = [t.strip().lower() for t in request.args.get("togli","").split(",") if t.strip()]
+    if not pattern or not togli: return jsonify({"errore":"serve ?prep= e ?togli="}),400
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo' AND LOWER(name) LIKE %s""",
+                    (f'%{pattern.lower()}%',))
+        tocchi=[]
+        for pid, nome, data in cur.fetchall():
+            dd=data if isinstance(data,dict) else json.loads(data)
+            fen=dd.get("fenomeni",[])
+            nuovi=[f for f in fen if (f.get("nome") if isinstance(f,dict) else f).strip().lower() not in togli]
+            if len(nuovi)!=len(fen):
+                tocchi.append({"prep":nome,"prima":[f.get("nome") if isinstance(f,dict) else f for f in fen],
+                               "dopo":[f.get("nome") if isinstance(f,dict) else f for f in nuovi]})
+                if applica:
+                    dd["fenomeni"]=nuovi
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid)); conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","protocolli":tocchi})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
