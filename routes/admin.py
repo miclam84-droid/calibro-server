@@ -15387,36 +15387,3 @@ def admin_vedi_tipo_base(nome):
         return jsonify({"nome":nome,"nodi":out})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
-
-
-@bp.route("/admin/assegna-coagulazione-pesce")
-def admin_assegna_coagulazione_pesce():
-    """Ridai il fenomeno VERO (coagulazione proteica) ai piatti di PESCE/BRODO senza fenomeni (acqua pazza,
-    bouillabaisse, brodetto...). Il pesce cotto nel liquido = coagulazione/denaturazione proteica (verificato con
-    fonti). NON a caso: solo piatti con pesce/crostacei/molluschi tra gli ingredienti. ?applica=1."""
-    from flask import request, jsonify
-    import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
-    applica = request.args.get("applica")=="1"
-    MARK_PESCE = ["pesce","orata","branzino","spigola","dentice","pezzogna","gambero","vongole","cozze","seppie",
-                  "polpo","calamar","scampi","scorfano","merluzzo","baccala","salmone","tonno","sogliola","rombo",
-                  "triglia","crostace","mollusch","frutti di mare","pescatrice","rana pescatrice"]
-    try:
-        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
-        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
-                       AND (data->'fenomeni' IS NULL OR data->'fenomeni' = '[]'::jsonb)""")
-        fatti=[]
-        for pid, nome, data in cur.fetchall():
-            dd=data if isinstance(data,dict) else json.loads(data)
-            # c'e pesce tra gli ingredienti o nel nome?
-            ings=json.dumps(dd.get("ingredienti",[]),ensure_ascii=False).lower() + " " + nome.lower()
-            if not any(m in ings for m in MARK_PESCE): continue
-            # assegno coagulazione proteica (verificata, col suo slug)
-            dd["fenomeni"]=[{"nome":"Coagulazione proteica","slug":"fen-coagulazione"}]
-            fatti.append(nome)
-            if applica:
-                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid)); conn.commit()
-        cur.close();conn.close()
-        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","piatti_pesce_sistemati":len(fatti),"dettaglio":fatti})
-    except Exception as e:
-        return jsonify({"errore":str(e)[:200]})
