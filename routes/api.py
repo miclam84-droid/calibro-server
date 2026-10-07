@@ -5883,6 +5883,10 @@ def esperimento_del_giorno():
                          (LOWER(data->>'variabile_critica') LIKE '%%impasto%%' OR LOWER(data->>'variabile_critica') LIKE '%%ddt%%')
                          AND data->>'disciplina' NOT IN ('panificazione','pasticceria')
                        )
+                       -- R-ESPERIMENTO: solo preparazioni con scheda VERA (canoniche + descrizione piena),
+                       -- cosi il gancio della Home non punta a una scheda "in arrivo"
+                       AND (id LIKE 'ric-cls%%' OR id LIKE 'ric-base%%' OR id LIKE 'ric-iba%%')
+                       AND LENGTH(COALESCE(data->>'procedimento','')) > 40
                        ORDER BY id""")
         completi = cur.fetchall()
         if not completi:
