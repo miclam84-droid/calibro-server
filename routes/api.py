@@ -5734,7 +5734,8 @@ def lista_protocolli():
                 "variabile_critica": dd.get("variabile_critica",""),
                 "bersaglio": dd.get("bersaglio",{}),
                 "n_reagenti": len(dd.get("reagenti",[])),
-                "fenomeni": [f.get("nome") for f in dd.get("fenomeni",[])],
+                "fenomeni": [{"nome": f.get("nome"), "slug": f.get("slug") or f.get("fenomeno_id")} if isinstance(f,dict) else {"nome": f} for f in dd.get("fenomeni",[])],
+                "origine": ("canonica" if any(str(pid).startswith(px) for px in ("ric-cls","ric-base","ric-iba")) else "variante"),
                 "verificato": dd.get("verificato", None),
             })
         # conteggio totale per disciplina
