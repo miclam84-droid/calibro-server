@@ -1096,8 +1096,8 @@ def api_ricette_list():
                 "porzioni":r.get("porzioni") or "",
                 "applicazioni":appl_out,
                 "twist_di":r.get("twist_di") or None,
-                "origine": ("canonica" if str(r.get("id","")).startswith("ric-cls")
-                            else "variante"),  # ric-fig/ric-gen = variante generata (stato epistemico esplicito)
+                "origine": ("canonica" if any(str(r.get("id","")).startswith(px) for px in ("ric-cls","ric-base","ric-iba"))
+                            else "variante"),  # cls/base/iba = canoniche verificate; fig/gen = variante generata
                 "esperimento":esp_out,
                 "limite":lim_out,
                 "twist":tw_out
@@ -5837,7 +5837,7 @@ def leggi_protocollo(pid):
             "errori": dd.get("errori",[]),
             "ingredienti": dd.get("ingredienti") or dd.get("reagenti",[]),
             "fenomeni": fenomeni_ricchi,
-            "origine": ("canonica" if str(pid).startswith("ric-cls") else "variante"),
+            "origine": ("canonica" if any(str(pid).startswith(px) for px in ("ric-cls","ric-base","ric-iba")) else "variante"),
             "classificazione_qualita": dd.get("classificazione_qualita",""),
             # --- VECCHI (compatibilita, non rompere il frontend attuale) ---
             "ipotesi": dd.get("ipotesi",""),
