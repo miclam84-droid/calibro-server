@@ -15100,3 +15100,59 @@ def admin_popola_profilo_fondamentali():
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","fondamentali_processati":len(fatti),"dettaglio":fatti})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/collega-fenomeni-protocolli")
+def admin_collega_fenomeni_protocolli():
+    """Aggiunge lo slug ai fenomeni dei protocolli (match nome->slug sulle schede Atlante esistenti).
+    Accende 'E se cambio?'. Dove non c'e match, lascia il nome senza slug (no link, onesto). ?applica=1."""
+    from flask import request, jsonify
+    import os, psycopg2, json, re, unicodedata
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    applica = request.args.get("applica")=="1"
+    def norm(s):
+        s=unicodedata.normalize('NFD',s.lower().strip())
+        s=''.join(c for c in s if unicodedata.category(c)!='Mn')
+        return re.sub(r'[^a-z0-9]+','-',s).strip('-')
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        # mappa: nome normalizzato -> slug reale delle schede fenomeno
+        cur.execute("SELECT id, name FROM nodes WHERE type='Fenomeno'")
+        mapidx={}
+        for fid, fname in cur.fetchall():
+            mapidx[norm(fname)] = fid
+            # anche lo slug stesso senza fen-
+            if fid.startswith('fen-'): mapidx[fid[4:]] = fid
+        def trova_slug(nome):
+            n=norm(nome)
+            if n in mapidx: return mapidx[n]
+            if ('fen-'+n) in [v for v in mapidx.values()]: return 'fen-'+n
+            # prova il match parziale (il nome contiene o e contenuto in una chiave)
+            for k,v in mapidx.items():
+                if len(n)>4 and (n in k or k in n): return v
+            return None
+        cur.execute("SELECT id, data FROM nodes WHERE type='Protocollo'")
+        righe=cur.fetchall()
+        tot_fen=0; con_slug=0; prot_tocchi=0
+        for pid, data in righe:
+            dd=data if isinstance(data,dict) else json.loads(data)
+            fen=dd.get("fenomeni",[])
+            if not fen: continue
+            nuovi=[]; cambiato=False
+            for f in fen:
+                nome = f if isinstance(f,str) else f.get("nome","")
+                if not nome: continue
+                tot_fen+=1
+                sl = (f.get("slug") if isinstance(f,dict) else None) or trova_slug(nome)
+                if sl: con_slug+=1
+                nuovi.append({"nome":nome,"slug":sl})  # slug None se non matcha (frontend: no link)
+                cambiato=True
+            if cambiato and applica:
+                dd["fenomeni"]=nuovi
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid)); conn.commit()
+                prot_tocchi+=1
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","fenomeni_totali":tot_fen,
+                        "con_slug":con_slug,"senza_match":tot_fen-con_slug,"protocolli_aggiornati":prot_tocchi})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
