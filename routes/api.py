@@ -1997,16 +1997,20 @@ def abbina(ingrediente):
         _AGRUMI=("limone","lime","arancia","pompelmo","mandarino","bergamotto","cedro","clementina")
         _ERBE=("basilico","prezzemolo","rosmarino","timo","salvia","origano","maggiorana","aneto","dragoncello","coriandolo","menta","erba cipollina")
         _DISTILLATI=("gin","vodka","rum","whisky","whiskey","tequila","brandy","cognac","grappa","mezcal","bourbon")
+        _CARNE=("manzo","vitello","maiale","agnello","pollo","tacchino","anatra","coniglio","pancetta",
+                "salsiccia","prosciutto","guanciale","wurstel","speck","bresaola","salame","mortadella")
         _fam_cercato = None
         if any(k in _cercato for k in _DAIRY): _fam_cercato="latticino"
         elif any(k in _cercato for k in _AGRUMI): _fam_cercato="agrume"
         elif any(k in _cercato for k in _ERBE): _fam_cercato="erba"
         elif any(k in _cercato for k in _DISTILLATI): _fam_cercato="distillato"
+        elif any(k in _cercato for k in _CARNE): _fam_cercato="carne"
         def _stessa_fam_del_cercato(nl):
             if _fam_cercato=="latticino": return any(k in nl for k in _DAIRY)
             if _fam_cercato=="agrume": return any(k in nl for k in _AGRUMI)
             if _fam_cercato=="erba": return any(k in nl for k in _ERBE)
             if _fam_cercato=="distillato": return any(k in nl for k in _DISTILLATI)
+            if _fam_cercato=="carne": return any(k in nl for k in _CARNE)
             return False
         for a in sorted(abbinamenti, key=lambda x: -x["overlap"]):
             n_lower = a["ingrediente"].lower().strip()
@@ -6390,10 +6394,19 @@ def grafo_ego(ingrediente):
         # STESSO FILTRO di /v1/abbina (funzione condivisa): scarta auto-varianti, parenti di famiglia,
         # categorie generiche, declassa gli hub. Cosi grafo-ego e abbina sono COERENTI (no parmigiano->formaggi).
         vicini = _pulisci_abbinamenti(vicini, campo="nome", max_famiglia=2, ingrediente_base=ingrediente)
-        # ESCLUDI la stessa famiglia del cercato (parmigiano -> niente formaggi in cima)
-        _fb = _FAMIGLIA.get(ingrediente.strip().lower())
+        # famiglia del cercato - match PER PAROLA (manzo trova "maiale stagionato": controllo ogni parola)
+        def _fam_di(nome):
+            nl = (nome or "").strip().lower()
+            if nl in _FAMIGLIA: return _FAMIGLIA[nl]
+            for parola, fam in _FAMIGLIA.items():
+                if parola in nl: return fam   # "maiale" dentro "maiale stagionato"
+            return None
+        _fb = _fam_di(ingrediente)
         if _fb:
-            vicini = [v for v in vicini if _FAMIGLIA.get((v.get("nome","")).strip().lower()) != _fb]
+            # DECLASSA la stessa famiglia (in fondo) invece di toglierla tutta - cosi il grafo non resta vuoto
+            stessa = [v for v in vicini if _fam_di(v.get("nome","")) == _fb]
+            altri  = [v for v in vicini if _fam_di(v.get("nome","")) != _fb]
+            vicini = altri + stessa[:1]  # gli altri prima, al massimo 1 della stessa famiglia in fondo
         return jsonify({
             "centro": ingrediente,
             "vicini": vicini[:8],
