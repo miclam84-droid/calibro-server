@@ -6512,15 +6512,40 @@ def menu_filo_conduttore():
             elif tipo_filo == "fenomeno":
                 fens = [str(f.get("nome","") if isinstance(f,dict) else f).lower() for f in dd.get("fenomeni",[])]
                 nel_filo = any(tema.lower() in f for f in fens)
-            elif tipo_filo == "territorio":
+            elif tipo_filo == "disciplina":
                 nel_filo = tema.lower() in str(dd.get("disciplina","")).lower()
+            elif tipo_filo == "territorio":
+                # il territorio NON e' un dato affidabile sulle ricette (solo ~5% ce l'ha nel nome, e molti
+                # sono ambigui). NON lo deduciamo per non inventare. Il filo territorio non e' disponibile.
+                nel_filo = False
             (coerenti if nel_filo else fuori_filo).append(nome)
-        # suggerimenti: preparazioni col tema, non ancora nel menu
+        # suggerimenti: preparazioni col tema negli INGREDIENTI veri (non ILIKE su tutto il JSON = troppo largo)
         suggeriti = []
         if tipo_filo == "ingrediente":
+            cur.execute("""SELECT name, data FROM nodes WHERE type='Protocollo' LIMIT 600""")
+            for nm, dt in cur.fetchall():
+                if nm in coerenti: continue
+                ddx = dt if isinstance(dt, dict) else json.loads(dt)
+                ings = [str(i.get("nome","") if isinstance(i,dict) else i).lower() for i in (ddx.get("ingredienti") or ddx.get("reagenti") or [])]
+                if any(tema.lower() in i for i in ings):
+                    suggeriti.append(nm)
+                if len(suggeriti) >= 6: break
+        elif tipo_filo == "disciplina":
             cur.execute("""SELECT name FROM nodes WHERE type='Protocollo'
-                           AND data::text ILIKE %s LIMIT 6""", (f"%{tema}%",))
+                           AND LOWER(data->>'disciplina')=LOWER(%s) LIMIT 6""", (tema,))
             suggeriti = [x[0] for x in cur.fetchall() if x[0] not in coerenti]
+        elif tipo_filo == "fenomeno":
+            cur.execute("""SELECT name, data FROM nodes WHERE type='Protocollo' LIMIT 600""")
+            for nm, dt in cur.fetchall():
+                if nm in coerenti: continue
+                ddx = dt if isinstance(dt, dict) else json.loads(dt)
+                fens = [str(f.get("nome","") if isinstance(f,dict) else f).lower() for f in ddx.get("fenomeni",[])]
+                if any(tema.lower() in f for f in fens):
+                    suggeriti.append(nm)
+                if len(suggeriti) >= 6: break
+        elif tipo_filo == "territorio":
+            # dato non disponibile: nessun suggerimento inventato
+            suggeriti = []
         cur.close(); conn.close()
         return jsonify({
             "tema": tema, "tipo_filo": tipo_filo,
@@ -6528,9 +6553,13 @@ def menu_filo_conduttore():
             "fuori_filo": fuori_filo,
             "coerenza": f"{len(coerenti)}/{len(coerenti)+len(fuori_filo)}" if (coerenti or fuori_filo) else "menu vuoto",
             "suggeriti_per_il_filo": suggeriti[:5],
-            "nota": ("Stai costruendo una carta attorno a '" + tema + "'. " +
-                     ("Tutte le preparazioni sono coerenti col filo." if not fuori_filo else
-                      f"{len(fuori_filo)} preparazioni escono dal filo: valuta se tenerle o sostituirle."))
+            "territorio_non_disponibile": (tipo_filo == "territorio"),
+            "nota": (
+                "Il filo per territorio non e' ancora disponibile: la regione dei piatti non e' un dato verificato nel corpus."
+                if tipo_filo == "territorio" else
+                "Stai costruendo una carta attorno a '" + tema + "'. " +
+                ("Tutte le preparazioni sono coerenti col filo." if not fuori_filo else
+                 f"{len(fuori_filo)} preparazioni escono dal filo: valuta se tenerle o sostituirle."))
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
