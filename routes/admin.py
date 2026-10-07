@@ -15221,3 +15221,65 @@ def admin_segnala_fenomeni_protocolli_sospetti():
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","pertinenti":ok,"sospetti":len(sospetti),"dettaglio":sospetti[:15]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/rimuovi-fenomeni-falsi")
+def admin_rimuovi_fenomeni_falsi():
+    """FASE 1 TRUST: rimuove SOLO i fenomeni FALSI presenti (acqua pazza+emulsione). NON tocca i corretti,
+    NON aggiunge i mancanti, NON sostituisce con plausibili. L'AI giudica solo 'questo fenomeno PRESENTE e'
+    pertinente SI/NO'. Dove NO -> rimosso. Default DRY-RUN. ?applica=1 ?n=N."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    applica = request.args.get("applica")=="1"
+    limite = int(request.args.get("n",20))
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key"}),500
+    def falso(prep, disc, fenomeno):
+        dom = (f"Preparazione: '{prep}' ({disc}). Fenomeno collegato: '{fenomeno}'. "
+               f"Questo fenomeno e' DAVVERO presente in questa preparazione? Rispondi NO solo se e' chiaramente "
+               f"SBAGLIATO (es. 'acqua pazza'+'emulsione'=NO, il pesce in brodo non emulsiona; 'baba'+'emulsione'=NO; "
+               f"'pastiera'+'gelificazione'=NO). Nel dubbio o se e' plausibile, rispondi SI. "
+               f'SOLO JSON: {{"pertinente": true/false}}')
+        pl={"model":"gpt-4o-mini","max_tokens":30,"temperature":0,
+            "messages":[{"role":"system","content":"Esperto scienza cucina. Rimuovi un fenomeno SOLO se chiaramente "
+                        "falso per quella preparazione. Nel dubbio: tienilo (pertinente true)."},
+                        {"role":"user","content":dom}]}
+        try:
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
+                          headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx=json.loads(ur.urlopen(rq,timeout=20).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0)).get("pertinente", True)
+        except: pass
+        return True  # nel dubbio tieni
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
+                       AND data->'fenomeni' IS NOT NULL AND data->>'_fen_puliti' IS NULL LIMIT %s""",(limite,))
+        righe=cur.fetchall()
+        rimossi=[]; prot_tocchi=0
+        for pid, nome, data in righe:
+            dd=data if isinstance(data,dict) else json.loads(data)
+            fen=dd.get("fenomeni",[])
+            if not fen: continue
+            nuovi=[]; qualche_rimosso=False
+            for f in fen:
+                fnome = f.get("nome") if isinstance(f,dict) else f
+                if not fnome: continue
+                if falso(nome, dd.get("disciplina",""), fnome):
+                    nuovi.append(f)  # tengo (pertinente)
+                else:
+                    qualche_rimosso=True
+                    rimossi.append({"prep":nome,"fenomeno_rimosso":fnome})
+            if applica:
+                dd["fenomeni"]=nuovi
+                dd["_fen_puliti"]=True
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid)); conn.commit()
+                if qualche_rimosso: prot_tocchi+=1
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","fenomeni_rimossi":len(rimossi),
+                        "protocolli_toccati":prot_tocchi,"dettaglio":rimossi[:20]})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
