@@ -1973,12 +1973,35 @@ def abbina(ingrediente):
         seen_nomi = set()
         _fam_count = {}  # limita la ridondanza: non 5 formaggi identici, ma max 2 per categoria
         abbinamenti_dedup = []
+        # FAMIGLIA DELL'INGREDIENTE CERCATO: la si ESCLUDE del tutto dagli abbinamenti (un cuoco non vuole
+        # parmigiano->pecorino in cima: sono parenti, overlap altissimo ma gastronomicamente inutile).
+        _DAIRY=("parmigiano","pecorino","mozzarella","gruyère","gruyere","provolone","grana","caciocavallo",
+            "fontina","gorgonzola","ricotta","stracchino","asiago","emmental","cheddar","brie","taleggio",
+            "scamorza","camembert","feta","formaggio","caprino","burrata","mascarpone","robiola","edam","gouda",
+            "manchego","roquefort","stilton","comté","comte","raclette","latte","panna","burro","yogurt","kefir")
+        _AGRUMI=("limone","lime","arancia","pompelmo","mandarino","bergamotto","cedro","clementina")
+        _ERBE=("basilico","prezzemolo","rosmarino","timo","salvia","origano","maggiorana","aneto","dragoncello","coriandolo","menta","erba cipollina")
+        _DISTILLATI=("gin","vodka","rum","whisky","whiskey","tequila","brandy","cognac","grappa","mezcal","bourbon")
+        _fam_cercato = None
+        if any(k in _cercato for k in _DAIRY): _fam_cercato="latticino"
+        elif any(k in _cercato for k in _AGRUMI): _fam_cercato="agrume"
+        elif any(k in _cercato for k in _ERBE): _fam_cercato="erba"
+        elif any(k in _cercato for k in _DISTILLATI): _fam_cercato="distillato"
+        def _stessa_fam_del_cercato(nl):
+            if _fam_cercato=="latticino": return any(k in nl for k in _DAIRY)
+            if _fam_cercato=="agrume": return any(k in nl for k in _AGRUMI)
+            if _fam_cercato=="erba": return any(k in nl for k in _ERBE)
+            if _fam_cercato=="distillato": return any(k in nl for k in _DISTILLATI)
+            return False
         for a in sorted(abbinamenti, key=lambda x: -x["overlap"]):
             n_lower = a["ingrediente"].lower().strip()
             if n_lower in seen_nomi:
                 continue
             # salta se è l'ingrediente stesso (self-match)
             if n_lower == _cercato or n_lower == NOMI_IT.get(_cercato, "").lower():
+                continue
+            # ESCLUDI la stessa famiglia del cercato (parmigiano non mostra altri formaggi)
+            if _fam_cercato and _stessa_fam_del_cercato(n_lower):
                 continue
             # limite di categoria: max 2 abbinamenti della stessa famiglia (evita 5 formaggi uguali)
             _fam = None
