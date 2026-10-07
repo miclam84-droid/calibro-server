@@ -8,7 +8,25 @@ from notifiche import _invia_email_resend
 from config import DATABASE_URL
 from ai import _haiku_raw
 import os, json
+import re as _re_var
 bp = Blueprint("misc", __name__)
+
+# una VARIETA vera e' un cultivar dell'ingrediente, NON: olio/estratto, preparazione/derivato, falso-match di
+# prefisso (melaleuca/melanzane contengono "mela" ma non sono mele). Questo filtro pulisce il raggruppamento tipo_base.
+_PAROLE_NON_VARIETA = ["olio","estratto","essenza","succo","amido","malto","sciroppo","farina di",
+    "fritt', 'fritta","fritto","cotto","cotta","cruda","crudo","sott'olio","sottolio","in salamoia",
+    "tagliat","essiccat","congelat","surgelat","in scatola","conserva","polvere","concentrato","passata",
+    "pure","salsa","aceto ","secco","secca","affumicat","modificat"]
+def _e_vera_varieta(nome_base, nome_cand, dv):
+    if dv.get("e_preparazione"): return False
+    nml = nome_cand.lower()
+    if any(p in nml for p in _PAROLE_NON_VARIETA): return False
+    nb = nome_base.lower().strip()
+    # se il nome del candidato contiene il nome-base, dev'essere come PAROLA INTERA (mela si, melaleuca no)
+    if nb in nml:
+        if not _re_var.search(r'(^|[^a-zà-ÿ])' + _re_var.escape(nb) + r'([^a-zà-ÿ]|$)', nml):
+            return False
+    return True
 
 
 @bp.route("/v1/stripe/checkout", methods=["POST"])
@@ -787,9 +805,9 @@ def scheda_ingrediente(ingrediente_id):
                 for _r in vv:
                     _dv = _c(_r,"data",2)
                     _dv = _dv if isinstance(_dv, dict) else (_j2.loads(_dv) if _dv else {})
-                    if _dv.get("e_preparazione"): continue   # solo cultivar vere, no derivati
                     _nm = _c(_r,"name",1); _nml = _nm.lower()
                     if _nml in _visti_nomi: continue          # dedup per nome
+                    if not _e_vera_varieta(nome, _nm, _dv): continue  # solo cultivar vere (no oli/preparazioni/falsi-match)
                     _visti_nomi.add(_nml)
                     varieta.append({"id": _c(_r,"id",0), "nome": _nm,
                                     "territorio": _dv.get("territorio") or _dv.get("origine") or "",
@@ -866,9 +884,9 @@ def nodo_completo(nodo_id):
                 for _r in vv:
                     _dv = _c(_r,"data",2)
                     _dv = _dv if isinstance(_dv, dict) else (_j2.loads(_dv) if _dv else {})
-                    if _dv.get("e_preparazione"): continue   # solo cultivar vere, no derivati
                     _nm = _c(_r,"name",1); _nml = _nm.lower()
                     if _nml in _visti_nomi: continue          # dedup per nome
+                    if not _e_vera_varieta(nome, _nm, _dv): continue  # solo cultivar vere (no oli/preparazioni/falsi-match)
                     _visti_nomi.add(_nml)
                     varieta.append({"id": _c(_r,"id",0), "nome": _nm,
                                     "territorio": _dv.get("territorio") or _dv.get("origine") or "",
