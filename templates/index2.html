@@ -269,6 +269,25 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .mn-vino-cat-d{font-family:var(--inter);font-size:12px;color:var(--testo2);margin-top:2px}
 .mn-vino-v{font-family:var(--mono);font-size:12px;color:var(--testo);margin-top:4px}
 
+/* ═══ IL FILO (filo conduttore della carta) ═══ */
+.fl-sez{border:1px solid var(--bordo);padding:16px;margin-bottom:24px}
+.fl-k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--verde);margin-bottom:12px}
+.fl-tipi{display:flex;gap:8px;margin-bottom:12px}
+.fl-tipo{font-family:var(--gro);font-weight:500;font-size:13px;color:var(--testo2);border:1px solid var(--bordo);padding:8px 12px;cursor:pointer;background:none}
+.fl-tipo.on{background:var(--verde);color:var(--fondo);border-color:var(--verde)}
+.fl-tipo.off{opacity:.4;cursor:not-allowed}
+.fl-tipo.off::after{content:' · in arrivo';font-size:9px}
+.fl-cerca{display:flex;gap:8px}
+.fl-cerca input{flex:1;background:var(--sup);border:1px solid var(--bordo);color:var(--testo);font-family:var(--inter);font-size:14px;padding:10px 12px;outline:none}
+.fl-cerca button{background:var(--verde);color:var(--fondo);border:0;font-family:var(--mono);font-size:16px;padding:0 16px;cursor:pointer}
+.fl-nota{font-family:var(--inter);font-size:13px;color:var(--testo2);line-height:1.5;margin:16px 0}
+.fl-coer{font-family:var(--mono);font-size:12px;color:var(--testo3);margin-bottom:14px}
+.fl-grp-k{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 8px}
+.fl-grp-k.coe{color:var(--verde)} .fl-grp-k.sug{color:var(--testo3)}
+.fl-item{font-family:var(--inter);font-size:14px;padding:7px 0;border-bottom:1px solid var(--bordo)}
+.fl-item.sug{color:var(--testo2);cursor:pointer}
+.fl-item.sug::before{content:'+ ';color:var(--verde);font-family:var(--mono)}
+
 /* ═══ QUADERNO (taccuino) ═══ */
 .qd-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px}
 .qd-stat{border:1px solid var(--bordo);padding:16px 12px;text-align:center}
@@ -484,12 +503,48 @@ function caricaMenu(){
 }
 function renderMenuBase(){
   var host=document.getElementById('menu-host');
-  host.innerHTML='<div class="mn-add"><input id="mn-input" placeholder="Aggiungi un piatto alla carta" onkeydown="if(event.key===\'Enter\')mnAgg()"><button onclick="mnAgg()">+</button></div>'
+  host.innerHTML='<div class="fl-sez"><div class="fl-k">◦ Il filo della carta</div>'
+    +'<div class="fl-tipi">'
+    +'<button class="fl-tipo on" data-t="ingrediente" onclick="flTipo(this)">Ingrediente</button>'
+    +'<button class="fl-tipo" data-t="disciplina" onclick="flTipo(this)">Disciplina</button>'
+    +'<button class="fl-tipo" data-t="fenomeno" onclick="flTipo(this)">Fenomeno</button>'
+    +'<button class="fl-tipo off" data-t="territorio">Territorio</button>'
+    +'</div>'
+    +'<div class="fl-cerca"><input id="fl-tema" placeholder="es. pomodoro, bar, fermentazione" onkeydown="if(event.key===\'Enter\')cercaFilo()"><button onclick="cercaFilo()">→</button></div>'
+    +'<div id="fl-esito"></div></div>'
+    +'<div class="mn-add"><input id="mn-input" placeholder="Aggiungi un piatto alla carta" onkeydown="if(event.key===\'Enter\')mnAgg()"><button onclick="mnAgg()">+</button></div>'
     +'<div id="mn-voci-host"></div>'
     +'<button class="mn-btn" id="mn-analizza" onclick="mnAnalizza()" disabled>Analizza la carta</button>'
     +'<div id="mn-esito"></div>';
   mnVociRender();
 }
+// ═══ IL FILO ═══
+var _flTipo='ingrediente';
+function flTipo(btn){
+  if(btn.classList.contains('off'))return; // territorio disabilitato
+  document.querySelectorAll('.fl-tipo').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on'); _flTipo=btn.getAttribute('data-t');
+}
+function cercaFilo(){
+  var tema=(document.getElementById('fl-tema')||{}).value||''; tema=tema.trim(); if(!tema)return;
+  var box=document.getElementById('fl-esito'); box.innerHTML='<div class="sk" style="height:100px;margin-top:12px"></div>';
+  fetch(API+'/v1/menu/filo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tema:tema,tipo_filo:_flTipo,preparazioni:_mnVoci})})
+    .then(function(r){return r.json();}).then(function(d){ renderFilo(d); })
+    .catch(function(){ box.innerHTML='<div class="cc-vuoto">Non riesco a costruire il filo ora.</div>'; });
+}
+function renderFilo(d){
+  var box=document.getElementById('fl-esito'); if(!box)return;
+  if(d.territorio_non_disponibile){ box.innerHTML='<div class="fl-nota">'+esc(d.nota||'Il filo per territorio non è ancora disponibile.')+'</div>'; return; }
+  var h='';
+  if(d.nota) h+='<div class="fl-nota">'+esc(d.nota)+'</div>';
+  if(d.coerenza) h+='<div class="fl-coer">Coerenza: '+esc(d.coerenza)+'</div>';
+  var coe=(d.coerenti_col_filo||[]), sug=(d.suggeriti_per_il_filo||[]), fuori=(d.fuori_filo||[]);
+  if(coe.length){ h+='<div class="fl-grp-k coe">Nel filo ('+coe.length+')</div>'+coe.slice(0,10).map(function(x){return '<div class="fl-item">'+esc(x)+'</div>';}).join(''); }
+  if(fuori.length){ h+='<div class="fl-grp-k">Fuori filo — da valutare</div>'+fuori.slice(0,6).map(function(x){return '<div class="fl-item">'+esc(x)+'</div>';}).join(''); }
+  if(sug.length){ h+='<div class="fl-grp-k sug">Da aggiungere per il filo</div>'+sug.slice(0,8).map(function(x){return '<div class="fl-item sug" onclick="flAggiungi(\''+esc(x).replace(/\x27/g,'')+'\')">'+esc(x)+'</div>';}).join(''); }
+  box.innerHTML=h;
+}
+function flAggiungi(nome){ if(_mnVoci.indexOf(nome)<0){ _mnVoci.push(nome); mnVociRender(); } }
 function mnAgg(){ var i=document.getElementById('mn-input'); var v=(i.value||'').trim(); if(!v)return; _mnVoci.push(v); i.value=''; mnVociRender(); }
 function mnRim(idx){ _mnVoci.splice(idx,1); mnVociRender(); }
 function mnVociRender(){
