@@ -15315,3 +15315,49 @@ def admin_correggi_caso_verificato():
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","protocolli":tocchi})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/forza-nomi-scientifici-comuni")
+def admin_forza_nomi_scientifici_comuni():
+    """P1 audit: forza il nome scientifico sui COMUNI importanti che sono vuoti (pomodoro, basilico...).
+    Lista verificata a mano (binomi certi, non AI). ?applica=1."""
+    from flask import request, jsonify
+    import os, psycopg2, json
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    applica = request.args.get("applica")=="1"
+    # binomi VERIFICATI a mano (tassonomia certa, non generata)
+    BINOMI = {
+        "pomodoro":"Solanum lycopersicum","basilico":"Ocimum basilicum","aglio":"Allium sativum",
+        "cipolla":"Allium cepa","carota":"Daucus carota","sedano":"Apium graveolens","prezzemolo":"Petroselinum crispum",
+        "limone":"Citrus limon","arancia":"Citrus sinensis","patata":"Solanum tuberosum","melanzana":"Solanum melongena",
+        "zucchina":"Cucurbita pepo","peperone":"Capsicum annuum","peperoncino":"Capsicum annuum","spinaci":"Spinacia oleracea",
+        "rosmarino":"Salvia rosmarinus","timo":"Thymus vulgaris","origano":"Origanum vulgare","alloro":"Laurus nobilis",
+        "mela":"Malus domestica","pera":"Pyrus communis","fragola":"Fragaria ananassa","uva":"Vitis vinifera",
+        "grano":"Triticum aestivum","riso":"Oryza sativa","mais":"Zea mays","oliva":"Olea europaea",
+        "zenzero":"Zingiber officinale","cannella":"Cinnamomum verum","zafferano":"Crocus sativus","vaniglia":"Vanilla planifolia",
+        "funghi":"Agaricus bisporus","tartufo":"Tuber magnatum","cacao":"Theobroma cacao","caffe":"Coffea arabica",
+        "manzo":"Bos taurus","maiale":"Sus scrofa domesticus","pollo":"Gallus gallus domesticus","agnello":"Ovis aries",
+        "salmone":"Salmo salar","tonno":"Thunnus thynnus","orata":"Sparus aurata","branzino":"Dicentrarchus labrax",
+        "vongole":"Ruditapes decussatus","cozze":"Mytilus galloprovincialis","gambero":"Penaeus","menta":"Mentha",
+    }
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        messi=[]
+        for nome, binomio in BINOMI.items():
+            # il nodo con piu abbinamenti (il ricco)
+            cur.execute("""SELECT n.id, n.data, COUNT(e.from_id) nc FROM nodes n
+                           LEFT JOIN edges e ON e.from_id=n.id AND e.relation='abbinamento_aromatico'
+                           WHERE LOWER(n.name)=LOWER(%s) AND n.type IN ('Ingrediente','Prodotto')
+                           GROUP BY n.id, n.data ORDER BY nc DESC LIMIT 1""",(nome,))
+            r=cur.fetchone()
+            if not r: continue
+            nid=r[0]; dd=r[1] if isinstance(r[1],dict) else json.loads(r[1])
+            if dd.get("nome_scientifico"): continue  # gia c'e
+            dd["nome_scientifico"]=binomio
+            messi.append({"nome":nome,"sci":binomio})
+            if applica:
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),nid)); conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","messi":len(messi),"dettaglio":messi})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
