@@ -15156,3 +15156,68 @@ def admin_collega_fenomeni_protocolli():
                         "con_slug":con_slug,"senza_match":tot_fen-con_slug,"protocolli_aggiornati":prot_tocchi})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/segnala-fenomeni-protocolli-sospetti")
+def admin_segnala_fenomeni_protocolli_sospetti():
+    """L'AI giudica ogni coppia preparazione->fenomeno: pertinente? (es. acqua pazza+emulsione = NO, il pesce
+    non emulsiona). Segnala i sospetti, NON corregge. Michele conferma. Default DRY-RUN. ?applica=1 (coda revisione). ?n=N."""
+    from flask import request, jsonify
+    import os, psycopg2, json, urllib.request as ur
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    applica = request.args.get("applica")=="1"
+    limite = int(request.args.get("n",25))
+    key = os.environ.get("OPENAI_API_KEY","")
+    if not key: return jsonify({"errore":"no key"}),500
+    def giudica(prep, disc, fenomeni):
+        fl = ", ".join(fenomeni)
+        dom = (f"Preparazione: '{prep}' ({disc}). Fenomeni scientifici attualmente collegati: {fl}. "
+               f"Per OGNUNO dimmi se e' VERAMENTE pertinente a questa preparazione. Es: 'acqua pazza' (pesce in "
+               f"brodo) + 'emulsione' = NON pertinente (non si emulsiona nulla); + 'gelatinizzazione' = NON "
+               f"pertinente (non c'e amido); il fenomeno vero sarebbe 'coagulazione proteica' (il pesce). "
+               f"Indica anche se MANCA un fenomeno importante. "
+               f'SOLO JSON: {{"sbagliati":["fenomeno non pertinente",...], "mancante":"fenomeno vero che manca o vuoto"}}')
+        pl={"model":"gpt-4o-mini","max_tokens":150,"temperature":0,
+            "messages":[{"role":"system","content":"Esperto di scienza della cucina. Giudica se un fenomeno e' "
+                        "DAVVERO pertinente a una preparazione. Severo sui fenomeni messi a caso. Nel dubbio: pertinente."},
+                        {"role":"user","content":dom}]}
+        try:
+            rq=ur.Request("https://api.openai.com/v1/chat/completions",data=json.dumps(pl).encode(),
+                          headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"})
+            tx=json.loads(ur.urlopen(rq,timeout=25).read().decode())["choices"][0]["message"]["content"]
+            import re as _re
+            m=_re.search(r'\{.*\}',tx,_re.DOTALL)
+            if m: return json.loads(m.group(0))
+        except: pass
+        return None
+    try:
+        conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
+        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
+                       AND data->'fenomeni' IS NOT NULL AND data->>'_fen_verificati' IS NULL LIMIT %s""",(limite,))
+        righe=cur.fetchall()
+        sospetti=[]; ok=0
+        for pid, nome, data in righe:
+            dd=data if isinstance(data,dict) else json.loads(data)
+            fen=[f.get("nome") if isinstance(f,dict) else f for f in dd.get("fenomeni",[])]
+            if not fen: continue
+            g=giudica(nome, dd.get("disciplina",""), fen)
+            if not g: continue
+            sb=g.get("sbagliati",[]); manca=g.get("mancante","")
+            if sb or manca:
+                sospetti.append({"prep":nome,"sbagliati":sb,"mancante":manca})
+                if applica:
+                    try:
+                        cur.execute("""INSERT INTO revisione_patrimonio (id,tipo_oggetto,nome,contenuto,sospetto,priorita)
+                            VALUES (%s,'fenomeni_protocollo',%s,%s,'fenomeno_non_pertinente',1)
+                            ON CONFLICT (id) DO UPDATE SET contenuto=EXCLUDED.contenuto""",
+                            (f'fenprot-{pid}', nome, json.dumps({"sbagliati":sb,"mancante":manca,"attuali":fen},ensure_ascii=False)))
+                        conn.commit()
+                    except: conn.rollback()
+            else: ok+=1
+            if applica:
+                dd["_fen_verificati"]=True
+                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(dd,ensure_ascii=False),pid)); conn.commit()
+        cur.close();conn.close()
+        return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","pertinenti":ok,"sospetti":len(sospetti),"dettaglio":sospetti[:15]})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:200]})
