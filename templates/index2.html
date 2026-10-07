@@ -298,6 +298,21 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .fc-fonte{font-family:var(--mono);font-size:9px;color:var(--testo3);margin-top:8px;opacity:.7}
 .fc-vuoto{font-family:var(--inter);font-size:13px;color:var(--testo3);font-style:italic}
 
+/* R-LAB: gancio Laboratorio vuoto */
+.lab-come{font-family:var(--inter);font-size:14px;color:var(--testo2);line-height:1.5;margin:16px 0 8px}
+.lab-ganci{display:flex;flex-wrap:wrap;gap:8px}
+.lab-gancio{font-family:var(--gro);font-weight:500;font-size:15px;color:var(--testo);border:1px solid var(--bordo2);padding:10px 16px;background:none;cursor:pointer}
+.lab-gancio:active{border-color:var(--verde);color:var(--verde)}
+/* R-FAB: ogni vista con liste ha spazio per il FAB */
+.vista{padding-bottom:40px}
+
+/* AFFILIATI — piccoli, mono, tenui, dentro Cifra */
+.aff-links{margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.aff-link{font-family:var(--mono);font-size:11px;color:var(--testo3);text-decoration:none;border-bottom:1px solid var(--bordo2)}
+.aff-link:active{color:var(--verde)}
+.aff-sep{color:var(--testo3);opacity:.5;font-size:10px}
+.aff-disc{font-family:var(--inter);font-size:10px;color:var(--testo3);font-style:italic;margin-top:12px;opacity:.7;line-height:1.3}
+
 /* ═══ QUADERNO (taccuino) ═══ */
 .qd-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px}
 .qd-stat{border:1px solid var(--bordo);padding:16px 12px;text-align:center}
@@ -616,7 +631,15 @@ function mnCartaVini(){
       var sugg=(x.d.suggerimenti||[]).slice(0,2);
       h+='<div class="mn-vino"><div class="mn-vino-p">'+esc(x.piatto)+'</div>'
         +(x.d.nota?'<div class="mn-vino-nota">'+esc(x.d.nota)+'</div>':'')
-        +sugg.map(function(s){var vini=(s.vini_consigliati||[]).slice(0,2).map(function(vc){return esc(vc.nome)+(vc.territorio?' ('+esc(vc.territorio)+')':'');}).join(' · ');return '<div class="mn-vino-cat"><div class="mn-vino-cat-n">'+esc(s.categoria||'')+'</div>'+(s.descrizione?'<div class="mn-vino-cat-d">'+esc(s.descrizione)+'</div>':'')+(vini?'<div class="mn-vino-v">'+vini+'</div>':'')+'</div>';}).join('')
+        +sugg.map(function(s){
+          var vc0=(s.vini_consigliati||[])[0]||{};
+          var vini=(s.vini_consigliati||[]).slice(0,2).map(function(vc){return esc(vc.nome)+(vc.territorio?' ('+esc(vc.territorio)+')':'');}).join(' · ');
+          var aff='';
+          var dove=vc0.dove_comprarlo||[];
+          if(dove.length){ aff='<div class="aff-links">'+dove.slice(0,3).map(function(st){return '<a class="aff-link" href="'+esc(st.url)+'" target="_blank" rel="noopener">'+esc(st.store)+'</a>';}).join('<span class="aff-sep">·</span>')+'</div>'; }
+          return '<div class="mn-vino-cat"><div class="mn-vino-cat-n">'+esc(s.categoria||'')+'</div>'+(s.descrizione?'<div class="mn-vino-cat-d">'+esc(s.descrizione)+'</div>':'')+(vini?'<div class="mn-vino-v">'+vini+'</div>':'')+aff+'</div>';
+        }).join('')
+        +(x.d.disclosure?'<div class="aff-disc">'+esc(x.d.disclosure)+'</div>':'')
         +'</div>';
     });
     box.innerHTML=h;
@@ -629,7 +652,11 @@ function caricaCorridoio(ing){
   if(ing){ _coIng=ing; }
   if(!_coIng){
     // ingresso: cerca un ingrediente
-    host.innerHTML='<div class="co-cerca"><span style="color:var(--verde);font-family:var(--mono)">⌕</span><input id="co-input" placeholder="Parti da un ingrediente" onkeydown="if(event.key===\'Enter\')coCerca()"></div><div class="vt-wip">Scegli un ingrediente: Matter ti mostra le sue relazioni, poi componi.</div>';
+    host.innerHTML='<div class="co-cerca"><span style="color:var(--verde);font-family:var(--mono)">⌕</span><input id="co-input" placeholder="Parti da un ingrediente" onkeydown="if(event.key===\'Enter\')coCerca()"></div>'
+      +'<div class="lab-come">Scegli un ingrediente → vedi le sue relazioni → combina → modifica.</div>'
+      +'<div class="co-k">◦ Parti da</div><div class="lab-ganci">'
+      +['pomodoro','aglio','limone','basilico','parmigiano'].map(function(x){return '<button class="lab-gancio" onclick="caricaCorridoio(\''+x+'\')">'+_capNome(x)+'</button>';}).join('')
+      +'</div>';
     return;
   }
   // carico grafo-ego + profilo
@@ -892,7 +919,7 @@ function _renderLivello(k,v){
     var txt=v.descrizione||('Categoria: '+esc(v.categoria||'')); 
     var h='<div class="sc-p">'+esc(v.descrizione|| (v.categoria?_cap(v.categoria):'') )+'</div>';
     var vr=v.varieta||[];
-    if(vr.length){ h+='<div class="sc-sez-k" style="margin-top:20px">Varietà ('+vr.length+')</div><div class="sc-var">'+vr.slice(0,8).map(function(x){return '<div class="sc-var-item"><div class="sc-var-nome">'+esc(x.nome)+'</div>'+(x.caratteristica?'<div class="sc-var-car">'+esc(x.caratteristica)+'</div>':'')+'</div>';}).join('')+'</div>'; }
+    if(vr.length){ h+='<div class="sc-sez-k" style="margin-top:20px">Varietà ('+vr.length+')</div><div class="sc-var">'+vr.slice(0,8).map(function(x){var nm=_capNome(String(x.nome||'').replace(/_/g,' '));return '<div class="sc-var-item"><div class="sc-var-nome">'+esc(nm)+'</div>'+(x.caratteristica?'<div class="sc-var-car">'+esc(x.caratteristica)+'</div>':'')+'</div>';}).join('')+'</div>'; }
     return h;
   }
   if(k==='scienza'){
