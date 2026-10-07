@@ -288,6 +288,16 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .fl-item.sug{color:var(--testo2);cursor:pointer}
 .fl-item.sug::before{content:'+ ';color:var(--verde);font-family:var(--mono)}
 
+/* ═══ FOOD COST (utilità pro — separata dalla parte scientifica) ═══ */
+.fc-box{border:1px solid var(--bordo);background:var(--sup);padding:14px 16px;margin-top:14px}
+.fc-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.fc-lab{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--testo3)}
+.fc-val{font-family:var(--mono);font-weight:700;font-size:22px;color:var(--testo)}
+.fc-val .u{font-size:13px;color:var(--testo2);font-weight:400}
+.fc-parziale{font-family:var(--inter);font-size:12px;color:var(--oro);margin-top:6px}
+.fc-fonte{font-family:var(--mono);font-size:9px;color:var(--testo3);margin-top:8px;opacity:.7}
+.fc-vuoto{font-family:var(--inter);font-size:13px;color:var(--testo3);font-style:italic}
+
 /* ═══ QUADERNO (taccuino) ═══ */
 .qd-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px}
 .qd-stat{border:1px solid var(--bordo);padding:16px 12px;text-align:center}
@@ -569,8 +579,31 @@ function mnRenderAnalisi(d){
     +'<div class="mn-bil">'+Object.keys(bil).map(function(k){return '<div class="mn-bil-r"><span class="mn-bil-l">'+esc(k)+'</span><span class="mn-bil-t"><span class="mn-bil-f" style="width:'+((bil[k]||0)/max*100)+'%"></span></span><span class="mn-bil-n">'+(bil[k]||0)+'</span></div>';}).join('')+'</div>';
   var mod=(d.modifiche_consigliate||[]);
   if(mod.length){ h+=mod.map(function(m){return '<div class="mn-mod">'+esc(typeof m==='string'?m:(m.testo||m.consiglio||''))+'</div>';}).join(''); }
-  h+='<button class="mn-btn sec" style="margin-top:20px" onclick="mnCartaVini()">Costruisci la carta vini →</button><div id="mn-vini-host"></div>';
+  h+='<button class="mn-btn sec" style="margin-top:20px" onclick="mnFoodCost()">Calcola il food cost →</button><div id="mn-fc-host"></div>';
+  h+='<button class="mn-btn sec" style="margin-top:12px" onclick="mnCartaVini()">Costruisci la carta vini →</button><div id="mn-vini-host"></div>';
   box.innerHTML=h;
+}
+function mnFoodCost(){
+  var box=document.getElementById('mn-fc-host'); box.innerHTML='<div class="sk" style="height:60px;margin-top:12px"></div>';
+  // per ogni voce: cerca id → food cost
+  Promise.all(_mnVoci.map(function(v){
+    return fetch(API+'/v1/cerca?q='+encodeURIComponent(v)).then(function(r){return r.json();}).then(function(d){
+      var ric=(d.risultati||[]).filter(function(x){return x.tipo==='ricetta';});
+      if(!ric.length) return {piatto:v,cost:null};
+      return fetch(API+'/v1/ricetta/'+encodeURIComponent(ric[0].id)+'/food-cost').then(function(r){return r.json();}).then(function(fc){return {piatto:v,cost:fc.costo_per_porzione,parz:fc.ingredienti_senza_prezzo||0};}).catch(function(){return {piatto:v,cost:null};});
+    }).catch(function(){return {piatto:v,cost:null};});
+  })).then(function(res){
+    var tot=0,noti=0,senza=0;
+    var righe=res.map(function(x){
+      if(x.cost==null){ senza++; return '<div class="bp-ing"><span class="bp-ing-nome">'+esc(x.piatto)+'</span><span class="fc-lab">—</span></div>'; }
+      tot+=x.cost; noti++;
+      return '<div class="bp-ing"><span class="bp-ing-nome">'+esc(x.piatto)+'</span><span class="bp-ing-q">'+(Math.round(x.cost*100)/100).toFixed(2)+' €</span></div>';
+    }).join('');
+    var h='<div class="fc-box"><div class="fc-top"><span class="fc-lab">◦ Food cost carta</span><span class="fc-val">'+(Math.round(tot*100)/100).toFixed(2)+' €</span></div>';
+    if(senza>0) h+='<div class="fc-parziale">⚠ '+noti+' piatti su '+res.length+' col costo ('+senza+' non nel corpus)</div>';
+    h+='</div>'+righe;
+    document.getElementById('mn-fc-host').innerHTML=h;
+  });
 }
 function mnCartaVini(){
   var box=document.getElementById('mn-vini-host'); box.innerHTML='<div class="sk" style="height:80px;margin-top:12px"></div>';
@@ -772,6 +805,8 @@ function renderPrep(d, id){
   if(fen.length){
     h+='<div class="bp-sez"><div class="bp-k">◦ Perché</div><div class="sc-fen">'+fen.map(function(f){var nome=typeof f==='object'?f.nome:f;var slug=typeof f==='object'?f.slug:'';return '<div class="sc-fen-item" onclick="'+(slug?'apriFenomeno(\''+esc(slug)+'\')':'')+'">'+esc(nome)+(slug?' →':'')+'</div>';}).join('')+'</div></div>';
   }
+  // FOOD COST (utilità pro, sotto gli ingredienti) — via nome→id
+  h+='<div id="fc-host"></div>';
   // E SE CAMBIO? (le leve) — solo se c'è un fenomeno CON slug (collegato all'Atlante)
   var fenConSlug=fen.filter(function(f){return typeof f==='object' && f.slug;});
   if(fenConSlug.length){ h+='<div class="bp-sez"><div class="bp-k">◦ E se cambio?</div><div id="cc-host"></div></div>'; }
@@ -780,6 +815,8 @@ function renderPrep(d, id){
   host.innerHTML=h;
   // carico le leve del primo fenomeno CHE HA lo slug
   if(fenConSlug.length) caricaLeve(fenConSlug[0].slug,'cc-host');
+  // carico il food cost via nome→id
+  caricaFoodCost(d.nome,'fc-host');
 }
 // RICERCA cablata (/v1/cerca)
 var _ct=null;
@@ -963,6 +1000,26 @@ function caricaLeve(slug, hostId){
       return '<div class="cc-leva '+fcls+'"><span class="cc-verso '+vcls+'">'+vsim+'</span><span class="cc-b"><div class="cc-txt"><span class="cc-se">se cambio </span><span class="cc-cosa">'+esc(x.se_cambio)+'</span> <span class="cc-se">→ '+esc(x.conseguenza)+'</span></div><div class="cc-stato '+scls+'">'+esc(x.stato||'')+'</div></span></div>';
     }).join('');
   }).catch(function(){ box.innerHTML='<div class="cc-vuoto">Leve non raggiungibili.</div>'; });
+}
+// ═══ FOOD COST (nome→id ricetta→costo, onesto sul parziale) ═══
+function caricaFoodCost(nome, hostId, totale){
+  var box=document.getElementById(hostId); if(!box)return;
+  // cerco la ricetta per nome
+  fetch(API+'/v1/cerca?q='+encodeURIComponent(nome)).then(function(r){return r.json();}).then(function(d){
+    var ric=(d.risultati||[]).filter(function(x){return x.tipo==='ricetta';});
+    if(!ric.length){ box.innerHTML=''; return; } // nessun match → niente food cost (onesto, non invento)
+    var rid=ric[0].id;
+    fetch(API+'/v1/ricetta/'+encodeURIComponent(rid)+'/food-cost').then(function(r){return r.json();}).then(function(fc){
+      var cpp=fc.costo_per_porzione;
+      if(cpp==null){ box.innerHTML=''; return; }
+      var senza=fc.ingredienti_senza_prezzo||0, voci=(fc.voci||[]).length;
+      var h='<div class="fc-box"><div class="fc-top"><span class="fc-lab">◦ Food cost</span><span class="fc-val">'+(Math.round(cpp*100)/100).toFixed(2)+' €<span class="u">/porz</span></span></div>';
+      if(senza>0){ h+='<div class="fc-parziale">⚠ Costo stimato su '+(voci-senza)+' ingredienti su '+voci+' ('+senza+' senza prezzo)</div>'; }
+      if(fc.fonte){ h+='<div class="fc-fonte">'+esc(fc.fonte)+'</div>'; }
+      h+='</div>';
+      box.innerHTML=h;
+    }).catch(function(){ box.innerHTML=''; });
+  }).catch(function(){ box.innerHTML=''; });
 }
 function salvaQuaderno(nome){
   fetch(API+'/v1/quaderno/esperimento',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_dev()},body:JSON.stringify({nome:nome,risultato:'provato al banco'})})
