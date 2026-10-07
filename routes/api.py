@@ -5873,20 +5873,13 @@ def esperimento_del_giorno():
     import os, psycopg2, json, datetime
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # solo protocolli COMPLETI: ipotesi vera + variabile + bersaglio pieno + sensori
+        # R-ESPERIMENTO (fix): una preparazione CANONICA con il_punto pieno e cosa_voglio_ottenere.
+        # Questi garantiscono una scheda vera (non "in arrivo"). I vecchi campi (ipotesi/procedimento) nel
+        # formato nuovo sono vuoti, per questo il filtro di prima dava 0.
         cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
-                       AND LENGTH(data->>'ipotesi') > 15 AND data->>'ipotesi' <> '1 frase'
-                       AND LENGTH(COALESCE(data->>'variabile_critica','')) > 5
-                       AND data->'bersaglio'->>'valore' IS NOT NULL
-                       AND LENGTH(COALESCE(data->>'punto_critico_originale','')) > 20
-                       AND NOT (
-                         (LOWER(data->>'variabile_critica') LIKE '%%impasto%%' OR LOWER(data->>'variabile_critica') LIKE '%%ddt%%')
-                         AND data->>'disciplina' NOT IN ('panificazione','pasticceria')
-                       )
-                       -- R-ESPERIMENTO: solo preparazioni con scheda VERA (canoniche + descrizione piena),
-                       -- cosi il gancio della Home non punta a una scheda "in arrivo"
                        AND (id LIKE 'ric-cls%%' OR id LIKE 'ric-base%%' OR id LIKE 'ric-iba%%')
-                       AND LENGTH(COALESCE(data->>'procedimento','')) > 40
+                       AND data->'il_punto' IS NOT NULL
+                       AND LENGTH(COALESCE(data->>'cosa_voglio_ottenere','')) > 10
                        ORDER BY id""")
         completi = cur.fetchall()
         if not completi:
@@ -5899,9 +5892,12 @@ def esperimento_del_giorno():
         cur.close(); conn.close()
         return jsonify({
             "id": scelto[0], "nome": scelto[1],
+            "cosa_voglio_ottenere": dd.get("cosa_voglio_ottenere",""),
+            "il_punto": dd.get("il_punto",{}),
             "ipotesi": dd.get("ipotesi"), "variabile_critica": dd.get("variabile_critica"),
             "bersaglio": dd.get("bersaglio",{}), "sensori": dd.get("sensori",{}),
             "disciplina": dd.get("disciplina",""),
+            "origine": "canonica",
             "stato_epistemico": _stato_epistemico(dd),
             "totale_completi": len(completi),
         })
