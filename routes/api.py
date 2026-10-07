@@ -5795,15 +5795,18 @@ def leggi_protocollo(pid):
         # arricchisco i fenomeni con la loro causalita (per il Composer/Diagnosi nella scheda)
         fenomeni_ricchi = []
         for f in dd.get("fenomeni", []):
-            fid = f.get("fenomeno_id")
-            fen = {"nome": f.get("nome"), "causalita": None}
+            if isinstance(f, str):
+                f = {"nome": f}
+            # lo slug puo stare in fenomeno_id (vecchio) o slug (il collegamento nuovo)
+            fid = f.get("fenomeno_id") or f.get("slug")
+            fen = {"nome": f.get("nome"), "causalita": f.get("causalita"), "slug": fid}
             if fid:
                 cur.execute("SELECT data FROM nodes WHERE id=%s", (fid,))
                 fr = cur.fetchone()
                 if fr:
                     fdd = fr[0] if isinstance(fr[0], dict) else json.loads(fr[0])
-                    fen["causalita"] = fdd.get("causalita")
-                    fen["slug"] = fid
+                    if fen["causalita"] is None:
+                        fen["causalita"] = fdd.get("causalita")
             fenomeni_ricchi.append(fen)
         cur.close(); conn.close()
         # NUOVO SCHEMA (compatibilita: i campi vecchi restano, i nuovi derivano)
