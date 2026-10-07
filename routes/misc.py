@@ -1384,6 +1384,34 @@ def scheda_ingrediente_completa(ingrediente_id):
         nid = _c(r,"id",0); nome = _c(r,"name",1); data = _c(r,"data",2)
         dd = data if isinstance(data, dict) else (_j.loads(data) if data else {})
         def pieno(v): return bool(v) and str(v).strip() not in ("", "[]", "{}", "None")
+        # EREDITA DAL GEMELLO RICCO: se il nodo generico e' POVERO (es. "olio", "parmigiano") ma esiste un
+        # gemello piu specifico e ricco (es. "olio extravergine di oliva", "parmigiano reggiano"), eredito i
+        # campi mancanti dal gemello. NON invento - uso dati VERI che gia esistono su un altro nodo.
+        _mio_prof = dd.get("proprieta", {}) or {}
+        _povero = (len([v for v in _mio_prof.values() if v]) < 5) and not dd.get("caratteristica")
+        _ereditato_da = None
+        if _povero:
+            try:
+                # cerco nodi il cui nome CONTIENE il mio (olio -> olio extravergine...) e sono piu ricchi
+                _cand = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                                      AND LOWER(name) LIKE LOWER(?) AND id != ? AND (data->>'solo_motore') IS NULL
+                                      LIMIT 20""", ("%"+nome+"%", nid)).fetchall()
+                _best=None; _best_score=-1
+                for _cr in _cand:
+                    _cdd = _c(_cr,"data",2); _cdd = _cdd if isinstance(_cdd,dict) else (_j.loads(_cdd) if _cdd else {})
+                    _score = len([v for v in (_cdd.get("proprieta",{}) or {}).values() if v]) + (3 if _cdd.get("caratteristica") else 0)
+                    if _score > _best_score:
+                        _best_score=_score; _best=(_c(_cr,"name",0),_cdd)
+                if _best and _best_score >= 5:
+                    _bnome,_bdd = _best
+                    # eredito SOLO i campi che mi mancano
+                    if not _mio_prof and _bdd.get("proprieta"): dd["proprieta"]=_bdd["proprieta"]
+                    if not dd.get("caratteristica") and _bdd.get("caratteristica"): dd["caratteristica"]=_bdd["caratteristica"]
+                    if not dd.get("categoria") and _bdd.get("categoria"): dd["categoria"]=_bdd["categoria"]
+                    if not dd.get("origine") and _bdd.get("origine"): dd["origine"]=_bdd["origine"]
+                    if not dd.get("nome_scientifico") and _bdd.get("nome_scientifico"): dd["nome_scientifico"]=_bdd["nome_scientifico"]
+                    _ereditato_da = _bnome
+            except: pass
         # SENSO (profilo sensoriale) - c'e
         prop = dd.get("proprieta", {}) or dd.get("proprieta_principali", {})
         # RELAZIONI col PERCHE - gli abbinamenti stanno sul nodo o sul PADRE AHN (ereditati, come fa /v1/abbina).
@@ -1473,6 +1501,7 @@ def scheda_ingrediente_completa(ingrediente_id):
         return jsonify({
             "id": nid, "nome": nome,
             "livelli": livelli,
+            "ereditato_da": _ereditato_da,  # se valorizzato, i dati vengono dal gemello ricco (onesto)
             "ha_contenuto": f"{con_contenuto}/9 livelli con contenuto",
             "completezza": f"{con_contenuto}/9",
             "verificati": f"{verificati}/9 livelli verificati da un umano",
