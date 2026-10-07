@@ -6304,10 +6304,15 @@ def grafo_ego(ingrediente):
         vicini = []
         fenomeni_collegati = []
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # cerco l'ingrediente: nome esatto, poi che contiene, poi per id
-        cur.execute("""SELECT id, data FROM nodes WHERE type='Ingrediente' AND
-                       (LOWER(name)=LOWER(%s) OR LOWER(name) LIKE LOWER(%s) OR id LIKE %s)
-                       ORDER BY LENGTH(name) LIMIT 1""",
+        # cerco l'ingrediente: il nodo con PIU archi di abbinamento (il "ricco"), non il nome piu corto.
+        # Cosi il grafo-ego e' coerente con scheda/abbina (che gia prendono il nodo ricco). Era il bug
+        # basilico: grafo 0 vs scheda 6 (prendeva "basilico" povero invece del gemello con gli archi).
+        cur.execute("""SELECT n.id, n.data, COUNT(e.from_id) nc FROM nodes n
+                       LEFT JOIN edges e ON e.from_id=n.id AND e.relation='abbinamento_aromatico'
+                       WHERE n.type IN ('Ingrediente','Prodotto') AND
+                       (LOWER(n.name)=LOWER(%s) OR LOWER(n.name) LIKE LOWER(%s) OR n.id LIKE %s)
+                       AND (n.data->>'solo_motore') IS NULL
+                       GROUP BY n.id, n.data ORDER BY nc DESC, LENGTH(n.name) LIMIT 1""",
                     (ingrediente, f"%{ingrediente}%", f"ing-{ingrediente.lower()}%"))
         row = cur.fetchone()
         if row:
