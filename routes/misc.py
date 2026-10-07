@@ -13,10 +13,10 @@ bp = Blueprint("misc", __name__)
 
 # una VARIETA vera e' un cultivar dell'ingrediente, NON: olio/estratto, preparazione/derivato, falso-match di
 # prefisso (melaleuca/melanzane contengono "mela" ma non sono mele). Questo filtro pulisce il raggruppamento tipo_base.
-_PAROLE_NON_VARIETA = ["olio","estratto","essenza","succo","amido","malto","sciroppo","farina di",
-    "fritt', 'fritta","fritto","cotto","cotta","cruda","crudo","sott'olio","sottolio","in salamoia",
+_PAROLE_NON_VARIETA = ["olio","estratto","essenza","aroma","succo","amido","malto","sciroppo","farina di",
+    "fritt","cotto","cotta","cruda","crudo","sott'olio","sottolio","in salamoia","scorza","buccia","polpa di",
     "tagliat","essiccat","congelat","surgelat","in scatola","conserva","polvere","concentrato","passata",
-    "pure","salsa","aceto ","secco","secca","affumicat","modificat"]
+    "pure","salsa","aceto ","secco","secca","affumicat","modificat","candit","sciroppat","sgocciolat"]
 def _e_vera_varieta(nome_base, nome_cand, dv):
     if dv.get("e_preparazione"): return False
     nml = nome_cand.lower()
