@@ -23,7 +23,7 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .hd-logo .b{font-weight:500;opacity:.7}
 .hd-menu{width:26px;height:18px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
 .hd-menu span{height:2px;background:#06211C;border-radius:1px}
-.wrap{padding:24px 20px 60px}
+.wrap{padding:24px 20px calc(100px + env(safe-area-inset-bottom,0))}
 .vista{display:none}.vista.on{display:block}
 /* ricerca */
 .cerca{display:flex;align-items:center;gap:10px;background:var(--sup);border:1px solid var(--bordo);border-radius:2px;padding:14px 16px}
@@ -36,6 +36,8 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .ris-item{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--bordo);cursor:pointer}
 .ris-nome{font-family:var(--gro);font-weight:500;font-size:16px;color:var(--testo)}
 .ris-tipo{font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--testo3)}
+.ris-orig{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--testo3);margin-left:8px;opacity:.7}
+.bp-orig{display:inline-block;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--testo3);margin-bottom:12px;opacity:.8}
 /* esperimento */
 .exp-sez{margin-top:40px}
 .exp-k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--verde);margin-bottom:16px}
@@ -330,7 +332,7 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 
 <!-- HOME -->
 <div class="vista on" id="v-home">
-  <div class="cerca"><span class="cerca-ico">⌕</span><input id="cerca-input" placeholder="Cerca un ingrediente o una preparazione" oninput="cercaLive()"></div>
+  <div class="cerca"><span class="cerca-ico">⌕</span><input id="cerca-input" placeholder="Cerca ingrediente o preparazione" oninput="cercaLive()"></div>
   <div class="cerca-hint">pomodoro · maionese · lievitazione · emulsione</div>
   <div class="ris" id="cerca-ris"></div>
   <div id="home-sotto">
@@ -368,6 +370,8 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 <script>
 var API='https://web-production-79457.up.railway.app';
 function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':String(s));return d.innerHTML;}
+// capitalizza la prima lettera di ogni parola (normalizza "pomodoro" e "Pomodoro Pizzutello")
+function _capNome(s){ s=String(s||'').trim(); if(!s)return s; var min={'di':1,'e':1,'al':1,'alla':1,'del':1,'della':1,'con':1,'la':1,'il':1,'in':1,'da':1}; return s.split(' ').map(function(w,i){ var lw=w.toLowerCase(); if(i>0&&min[lw])return lw; return w.charAt(0).toUpperCase()+w.slice(1); }).join(' '); }
 var _viste={home:'v-home',ingrediente:'v-ingrediente',atlante:'v-atlante',banco:'v-banco',causa:'v-causa',corridoio:'v-corridoio',menu:'v-menu',quaderno:'v-quaderno'};
 function vai(dove){
   document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
@@ -594,7 +598,8 @@ function bnLista(q){
     if(!box)return;
     if(!p.length){ box.innerHTML='<div class="vt-wip">Niente per "'+esc(q)+'".</div>'; return; }
     box.innerHTML=p.map(function(x){
-      return '<div class="bn-item" onclick="apriPrep(\''+esc(x.id)+'\')"><span class="bn-item-nome">'+esc(x.nome)+'</span><span class="bn-item-meta">'+esc(x.disciplina||'')+'</span></div>';
+      var orig=(x.origine==='variante')?'<span class="ris-orig">variante</span>':'';
+      return '<div class="bn-item" onclick="apriPrep(\''+esc(x.id)+'\')"><span class="bn-item-nome">'+esc(x.nome)+orig+'</span><span class="bn-item-meta">'+esc(x.disciplina||'')+'</span></div>';
     }).join('');
   }).catch(function(){ if(box)box.innerHTML='<div class="vt-wip">Errore.</div>'; });
 }
@@ -640,6 +645,7 @@ function renderPrep(d, id){
   var ingr=(d.ingredienti&&d.ingredienti.length)?d.ingredienti:(d.reagenti||[]);
   var h='<div class="sc-back" onclick="_bnCaricato=false;caricaBanco()">‹ Preparazioni</div>';
   h+='<div class="bp-nome">'+esc(d.nome)+'</div>';
+  h+=(d.origine==='variante'?'<div class="bp-orig">◦ Variante · esplorazione, non tradizionale</div>':'');
   h+=(d.cosa_voglio_ottenere?'<div class="bp-obj">'+esc(d.cosa_voglio_ottenere)+'</div>':'');
   // IL PUNTO
   h+='<div class="bp-k">◦ Il punto</div>';
@@ -684,10 +690,19 @@ function cercaLive(){
   clearTimeout(_ct);
   _ct=setTimeout(function(){
     fetch(API+'/v1/cerca?q='+encodeURIComponent(q)).then(function(r){return r.json();}).then(function(d){
-      var items=(d.risultati||[]).slice(0,12);
+      // dedup per nome visualizzato (stesso nome = una riga) + normalizza capitalizzazione
+      var visti={}, items=[];
+      (d.risultati||[]).forEach(function(x){
+        var chiave=String(x.nome||'').trim().toLowerCase();
+        if(!chiave||visti[chiave])return; visti[chiave]=1;
+        x._nomeVis=_capNome(x.nome);
+        items.push(x);
+      });
+      items=items.slice(0,12);
       if(!items.length){ ris.innerHTML='<div class="vt-wip">Niente per "'+esc(q)+'". Prova un altro termine.</div>'; return; }
       ris.innerHTML=items.map(function(x){
-        return '<div class="ris-item" onclick="apriRisultato(\''+esc(x.nome).replace(/\x27/g,"")+'\',\''+esc(x.tipo)+'\')"><span class="ris-nome">'+esc(x.nome)+'</span><span class="ris-tipo">'+esc(x.tipo)+'</span></div>';
+        var orig=(x.origine==='variante')?'<span class="ris-orig">variante</span>':'';
+        return '<div class="ris-item" onclick="apriRisultato(\''+esc(x.nome).replace(/\x27/g,"")+'\',\''+esc(x.tipo)+'\')"><span class="ris-nome">'+esc(x._nomeVis||x.nome)+orig+'</span><span class="ris-tipo">'+esc(x.tipo)+'</span></div>';
       }).join('');
     }).catch(function(){ ris.innerHTML='<div class="vt-wip">Errore ricerca.</div>'; });
   },250);
