@@ -683,7 +683,17 @@ def libro_affiliato():
             libro = libro_per_disciplina(disciplina)
         if not libro:
             return jsonify({"libro": None})
-        return jsonify({"libro": libro})
+        # aggiungo il link Amazon affiliato (dall'asin, o ricerca per titolo se manca l'asin)
+        import os as _os
+        _tag = _os.environ.get("AMAZON_TAG", "")
+        if not libro.get("url"):
+            if libro.get("asin"):
+                libro["url"] = f"https://www.amazon.it/dp/{libro['asin']}?tag={_tag}"
+            elif libro.get("titolo"):
+                from urllib.parse import quote_plus as _qp
+                libro["url"] = f"https://www.amazon.it/s?k={_qp(libro['titolo'])}&tag={_tag}"
+        return jsonify({"libro": libro,
+                        "disclosure": "Link affiliato Amazon: acquistando tramite questo supporti Matter, senza costi aggiuntivi."})
     except Exception as e:
         return jsonify({"libro": None, "_err": str(e)[:80]})
 
