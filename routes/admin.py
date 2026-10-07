@@ -15361,3 +15361,29 @@ def admin_forza_nomi_scientifici_comuni():
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","messi":len(messi),"dettaglio":messi})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+
+
+@bp.route("/admin/vedi-tipo-base/<nome>")
+def admin_vedi_tipo_base(nome):
+    """Debug varieta: mostra il tipo_base di un nodo e chi altro ce l'ha uguale (per capire i raggruppamenti sbagliati)."""
+    from flask import jsonify, request
+    import os, json as _j
+    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        rows=db.execute("SELECT id,name,data FROM nodes WHERE LOWER(name)=LOWER(?) AND type IN ('Ingrediente','Prodotto') LIMIT 2",(nome,)).fetchall()
+        out=[]
+        for r in rows:
+            dd=_c(r,"data",2); dd=dd if isinstance(dd,dict) else _j.loads(dd)
+            tb=dd.get("tipo_base")
+            # chi altro ha questo tipo_base?
+            altri=[]
+            if tb:
+                ar=db.execute("SELECT name FROM nodes WHERE data->>'tipo_base'=? LIMIT 30",(tb,)).fetchall()
+                altri=[_c(x,"name",0) for x in ar]
+            out.append({"id":_c(r,"id",0),"tipo_base":tb,"altri_con_stesso_tipo_base":altri})
+        return jsonify({"nome":nome,"nodi":out})
+    except Exception as e:
+        return jsonify({"errore":str(e)[:150]})
