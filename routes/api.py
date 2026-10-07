@@ -34,6 +34,21 @@ _FAMIGLIA = {
     "fragola":"frutti_rossi","ribes":"frutti_rossi",
     "basilico":"erbe","menta":"erbe","rosmarino":"erbe","timo":"erbe",
     "prezzemolo":"erbe","salvia":"erbe","origano":"erbe",
+    # LATTICINI (il buco del parmigiano->formaggi): la famiglia non c'era, per questo non filtrava
+    "parmigiano":"latticini","parmigiano reggiano":"latticini","pecorino":"latticini","pecorino romano":"latticini",
+    "mozzarella":"latticini","grana":"latticini","gruyère":"latticini","gruyere":"latticini","provolone":"latticini",
+    "caciocavallo":"latticini","fontina":"latticini","gorgonzola":"latticini","ricotta":"latticini","asiago":"latticini",
+    "emmental":"latticini","cheddar":"latticini","formaggio cheddar":"latticini","brie":"latticini","taleggio":"latticini",
+    "scamorza":"latticini","camembert":"latticini","feta":"latticini","formaggio":"latticini","caprino":"latticini",
+    "burrata":"latticini","mascarpone":"latticini","robiola":"latticini","formaggio erborinato":"latticini",
+    "formaggio cremoso":"latticini","formaggio capra":"latticini","stracchino":"latticini","roquefort":"latticini",
+    "burro":"latticini","panna":"latticini","latte":"latticini","yogurt":"latticini",
+    # CARNE
+    "manzo":"carne","vitello":"carne","maiale":"carne","agnello":"carne","pollo":"carne","tacchino":"carne",
+    "anatra":"carne","coniglio":"carne","pancetta":"carne","salsiccia":"carne","prosciutto":"carne","guanciale":"carne",
+    # DISTILLATI
+    "gin":"distillati","vodka":"distillati","rum":"distillati","whisky":"distillati","whiskey":"distillati",
+    "tequila":"distillati","brandy":"distillati","cognac":"distillati","grappa":"distillati","bourbon":"distillati","mezcal":"distillati",
 }
 # nomi-categoria generici da scartare quando c'è già un ingrediente specifico
 _CATEGORIE_GENERICHE = {"agrumi", "erbe", "frutti rossi", "frutti di bosco",
@@ -6372,6 +6387,13 @@ def grafo_ego(ingrediente):
             for fid, fnome in cur.fetchall():
                 fenomeni_collegati.append({"nome": fnome, "slug": fid})
         cur.close(); conn.close()
+        # STESSO FILTRO di /v1/abbina (funzione condivisa): scarta auto-varianti, parenti di famiglia,
+        # categorie generiche, declassa gli hub. Cosi grafo-ego e abbina sono COERENTI (no parmigiano->formaggi).
+        vicini = _pulisci_abbinamenti(vicini, campo="nome", max_famiglia=2, ingrediente_base=ingrediente)
+        # ESCLUDI la stessa famiglia del cercato (parmigiano -> niente formaggi in cima)
+        _fb = _FAMIGLIA.get(ingrediente.strip().lower())
+        if _fb:
+            vicini = [v for v in vicini if _FAMIGLIA.get((v.get("nome","")).strip().lower()) != _fb]
         return jsonify({
             "centro": ingrediente,
             "vicini": vicini[:8],
