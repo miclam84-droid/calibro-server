@@ -1497,9 +1497,10 @@ def scheda_ingrediente_completa(ingrediente_id):
             _visti = set([nome.lower()])
             for _r in vv:
                 _dv = _c(_r,"data",1); _dv = _dv if isinstance(_dv,dict) else (_j.loads(_dv) if _dv else {})
-                if _dv.get("e_preparazione") or _dv.get("solo_motore"): continue
+                if _dv.get("solo_motore"): continue
                 _nm = _c(_r,"name",0)
                 if _nm.lower() in _visti: continue
+                if not _e_vera_varieta(nome, _nm, _dv): continue  # solo cultivar vere (no oli/preparazioni/falsi-match melaleuca)
                 _visti.add(_nm.lower())
                 varieta_list.append({"nome":_nm,"territorio":_dv.get("territorio","") or _dv.get("regione",""),
                                      "caratteristica":(_dv.get("caratteristica","") or "")[:70]})
