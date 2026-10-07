@@ -352,13 +352,38 @@ def cerca_universale():
         db = carica_grafo()
         def _c(r, key, idx):
             return r[key] if hasattr(r, "keys") else r[idx]
-        # PRIORITA 1: match sulla FRASE INTERA (q completo) - ovunque. Cosi "san marzano" trova "San Marzano",
-        # non le ricette che contengono solo "san". Le parole singole vengono DOPO, solo se serve riempire.
+        # filtro nomi USDA grezzi (inglesi tecnici: "Alcoholic beverage, distilled..." - virgole + parole inglesi)
+        def _usda_grezzo(nm):
+            if not nm: return True
+            low = nm.lower()
+            # nomi USDA tipici: hanno virgole multiple + termini inglesi tecnici
+            marker_en = ["beverage","distilled","alcoholic","raw","cooked","prepared","unprepared","with salt",
+                         "without salt","proof","nfs","ns as to","includes","commercially"]
+            if any(m in low for m in marker_en): return True
+            if nm.count(",") >= 2: return True  # "x, y, z" stile USDA
+            return False
+        # PRIORITA 0: EXACT MATCH (chi si chiama ESATTAMENTE come la query viene PRIMO). "gin" -> il gin, non l'olio.
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(?) AND (data->>'solo_motore') IS NULL LIMIT 5", (q,)).fetchall()
+        for r in rows:
+            nm = _c(r,"name",1)
+            if _usda_grezzo(nm): continue
+            _dd2 = _c(r,"data",2); _dd2 = _dd2 if isinstance(_dd2,dict) else (__import__("json").loads(_dd2) if _dd2 else {})
+            risultati.append({"tipo":"ingrediente","id":_c(r,"id",0),"nome":nm,"caratteristica":(_dd2.get("caratteristica","") or "")[:70]})
+        # PRIORITA 0.5: nome che INIZIA con la query (gin -> ginepro viene prima di chi ha gin in mezzo)
+        rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name) LIKE LOWER(?) AND (data->>'solo_motore') IS NULL LIMIT 8", (q+"%",)).fetchall()
+        for r in rows:
+            nm = _c(r,"name",1)
+            if _usda_grezzo(nm) or any(x.get("nome")==nm for x in risultati): continue
+            _dd2 = _c(r,"data",2); _dd2 = _dd2 if isinstance(_dd2,dict) else (__import__("json").loads(_dd2) if _dd2 else {})
+            risultati.append({"tipo":"ingrediente","id":_c(r,"id",0),"nome":nm,"caratteristica":(_dd2.get("caratteristica","") or "")[:70]})
+        # PRIORITA 1: match sulla FRASE INTERA (q completo) - ovunque.
         # INGREDIENTI che contengono la frase intera (priorita: le varieta/cultivar)
         rows = db.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND name ILIKE ? AND (data->>'solo_motore') IS NULL LIMIT 12", (pat,)).fetchall()
         for r in rows:
+            nm = _c(r,"name",1)
+            if _usda_grezzo(nm) or any(x.get("nome")==nm for x in risultati): continue
             _dd2 = _c(r,"data",2); _dd2 = _dd2 if isinstance(_dd2,dict) else (__import__("json").loads(_dd2) if _dd2 else {})
-            risultati.append({"tipo":"ingrediente","id":_c(r,"id",0),"nome":_c(r,"name",1),"caratteristica":(_dd2.get("caratteristica","") or "")[:70]})
+            risultati.append({"tipo":"ingrediente","id":_c(r,"id",0),"nome":nm,"caratteristica":(_dd2.get("caratteristica","") or "")[:70]})
         # RICETTE che contengono la frase intera
         rows = db.execute("SELECT id, nome, disciplina FROM ricette WHERE nome ILIKE ? LIMIT 8", (pat,)).fetchall()
         for r in rows:
@@ -376,6 +401,8 @@ def cerca_universale():
         # INGREDIENTI parole singole (solo se serve)
         rows = db.execute(f"SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND {_cond('name')} AND name NOT LIKE '%%(%%' AND (data->>'solo_motore') IS NULL LIMIT 12", _params()).fetchall() if not _frase_basta else []
         for r in rows:
+            nm = _c(r,"name",1)
+            if _usda_grezzo(nm) or any(x.get("nome")==nm for x in risultati): continue
             _data = _c(r,"data",2) if (hasattr(r,'keys') or len(r)>2) else None
             _carat = ''
             try:
@@ -383,7 +410,7 @@ def cerca_universale():
                 _dd = _data if isinstance(_data, dict) else (_j.loads(_data) if _data else {})
                 _carat = _dd.get('caratteristica','') or ''
             except: pass
-            risultati.append({"tipo": "ingrediente", "id": _c(r,"id",0), "nome": _c(r,"name",1), "caratteristica": _carat[:70]})
+            risultati.append({"tipo": "ingrediente", "id": _c(r,"id",0), "nome": nm, "caratteristica": _carat[:70]})
         rows = db.execute(f"SELECT id, name FROM nodes WHERE type='Tecnica' AND {_cond('name')} LIMIT 4", _params()).fetchall()
         for r in rows:
             risultati.append({"tipo": "tecnica", "id": _c(r,"id",0), "nome": _c(r,"name",1)})
