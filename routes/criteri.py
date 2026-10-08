@@ -473,3 +473,78 @@ def criteri_orfani_match():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:160]}), 500
+
+
+@bp.route("/v1/criteri/link-fenomeni", methods=["GET"])
+def criteri_link_fenomeni():
+    """DRY-RUN (moat, collegamenti verticali): legge il testo-fenomeni di ogni Protocollo e propone
+    l'arco al nodo Fenomeno giusto (match per radice della parola). NON scrive. Mostra proposte,
+    gia'-linkati, e non-matchati (spesso tecniche, non fenomeni -> arco a Tecnica in un passo dopo).
+    Param opzionale ?ingrediente=pomodoro per limitare ai protocolli di un ingrediente."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import re as _re
+    import json as _json
+    from flask import request
+    filtro_ing = (request.args.get("ingrediente") or "").strip().lower()
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT id, name FROM nodes WHERE type='Fenomeno'")
+            fen = []
+            for fid, fname in cur.fetchall():
+                words = [w for w in _re.sub(r"[^a-zàèéìòù ]", " ", (fname or "").lower()).split() if len(w) >= 5]
+                stems = [w[:7] for w in words]
+                if stems:
+                    fen.append((fid, fname, stems))
+            if filtro_ing:
+                cur.execute("""SELECT DISTINCT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
+                               JOIN nodes i ON i.id=e.to_id
+                               WHERE e.relation='usa_reagente' AND n.type='Protocollo'
+                                 AND LOWER(i.name) LIKE %s AND n.data ? 'fenomeni'""", (f"%{filtro_ing}%",))
+            else:
+                cur.execute("SELECT id, name, data FROM nodes WHERE type='Protocollo' AND data ? 'fenomeni'")
+            prot = cur.fetchall()
+            cur.close()
+        gia_linkati = 0
+        testo_totale = 0
+        proposte = []
+        non_match = []
+        for pid, pname, data in prot:
+            dd = data if isinstance(data, dict) else (_json.loads(data) if data else {})
+            for f in (dd.get("fenomeni") or []):
+                if isinstance(f, dict):
+                    if f.get("slug") or f.get("fenomeno_id"):
+                        gia_linkati += 1
+                        continue
+                    txt = str(f.get("nome", ""))
+                else:
+                    txt = str(f)
+                if not txt.strip():
+                    continue
+                testo_totale += 1
+                tl = txt.lower()
+                best = None  # (stem_len, -len(nome)), fid, fname
+                for fid, fname, stems in fen:
+                    m = max((len(s) for s in stems if s in tl), default=0)
+                    if m > 0:
+                        key = (m, -len(fname))
+                        if best is None or key > best[0]:
+                            best = (key, fid, fname)
+                if best:
+                    proposte.append({"protocollo": pname, "testo": txt, "fenomeno": best[1], "nome_fen": best[2]})
+                else:
+                    non_match.append({"protocollo": pname, "testo": txt})
+        return jsonify({
+            "filtro_ingrediente": filtro_ing or "(tutti)",
+            "protocolli_con_fenomeni": len(prot),
+            "voci_fenomeno_testo": testo_totale,
+            "gia_linkati": gia_linkati,
+            "proposte_arco": len(proposte),
+            "non_matchati": len(non_match),
+            "proposte_campione": proposte[:50],
+            "non_matchati_campione": non_match[:40],
+            "nota": "DRY-RUN: nessuna scrittura. Rivedi prima di materializzare gli archi protocollo->fenomeno.",
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]}), 500
