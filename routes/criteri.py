@@ -334,6 +334,15 @@ def grafo_stato():
             ing_nascosti = cur.fetchone()[0]
             cur.execute("SELECT relation, COUNT(*) FROM edges GROUP BY relation ORDER BY COUNT(*) DESC")
             archi_per_relazione = {(r or "(senza relazione)"): n for r, n in cur.fetchall()}
+            # COPERTURA DATI (per la mappa-dati / moat): quanti ingredienti+prodotti hanno
+            # il profilo organolettico 'proprieta' e quanti hanno almeno un composto.
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
+            ip_totali = cur.fetchone()[0]
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND (data ? 'proprieta')")
+            con_proprieta = cur.fetchone()[0]
+            cur.execute("""SELECT COUNT(DISTINCT from_id) FROM edges
+                           WHERE relation = 'contiene_composto'""")
+            con_composti = cur.fetchone()[0]
             cur.close()
         return jsonify({
             "nodi_per_tipo": nodi_per_tipo,
@@ -341,6 +350,11 @@ def grafo_stato():
             "ingredienti_visibili": ing_visibili,
             "ingredienti_nascosti": ing_nascosti,
             "archi_per_relazione": archi_per_relazione,
+            "copertura_dati": {
+                "ingredienti_prodotti_totali": ip_totali,
+                "con_proprieta_organolettiche": con_proprieta,
+                "nodi_con_composti": con_composti,
+            },
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:160]}), 500
