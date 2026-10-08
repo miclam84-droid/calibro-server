@@ -235,6 +235,59 @@ def _contrasto(cur, ing_id, limit=6):
     return out
 
 
+def _sostituti(cur, ing_id, base_nome, limit=8, min_shared=4):
+    """Criterio sostituti: ingredienti col profilo di composti piu' SIMILE (similarita' di Jaccard).
+    A differenza di base_aromatica, qui NON filtriamo i parenti stretti: un sostituto e' proprio un
+    profilo quasi identico (parmigiano -> pecorino). Ordina per Jaccard = condivisi / unione."""
+    try:
+        cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (ing_id,))
+        tcount = int(cur.fetchone()[0] or 0)
+        if tcount == 0:
+            return []
+        cur.execute(
+            r"""
+            SELECT n.name,
+                   COUNT(DISTINCT b.to_id) AS shared,
+                   (SELECT COUNT(*) FROM edges x WHERE x.from_id = n.id AND x.relation = 'contiene_composto') AS bcount
+            FROM edges a
+            JOIN edges b ON a.to_id = b.to_id AND b.relation = 'contiene_composto'
+            JOIN nodes n ON n.id = b.from_id
+            WHERE a.from_id = %s AND a.relation = 'contiene_composto'
+              AND b.from_id <> %s
+              AND n.type = 'Ingrediente'
+              AND n.padre_ahn_id IS NULL
+              AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+              AND n.name NOT LIKE '%%\_%%'
+              AND LOWER(n.name) NOT LIKE LOWER(%s)
+            GROUP BY n.id, n.name
+            HAVING COUNT(DISTINCT b.to_id) >= %s
+            ORDER BY shared DESC
+            LIMIT 80
+            """,
+            (ing_id, ing_id, f"%{base_nome}%", min_shared),
+        )
+        rows = cur.fetchall()
+    except Exception:
+        return []
+    scored = []
+    for name, shared, bcount in rows:
+        shared = int(shared); bcount = int(bcount or 0)
+        union = tcount + bcount - shared
+        jac = (shared / union) if union > 0 else 0.0
+        scored.append((jac, shared, name))
+    scored.sort(reverse=True)
+    out = []
+    for jac, shared, name in scored[:limit]:
+        out.append({
+            "ingrediente": name,
+            "criterio": "sostituti",
+            "evidenza": {"composti_condivisi": shared, "similarita": round(jac, 2)},
+            "robustezza": "Alta" if jac >= 0.5 else ("Media" if jac >= 0.3 else "Esplorativa"),
+            "perche": f"profilo aromatico simile — {shared} composti in comune (similarita' {round(jac, 2)})",
+        })
+    return out
+
+
 @bp.route("/v1/criteri/<ingrediente>", methods=["GET"])
 def criteri(ingrediente):
     """Relazioni di un ingrediente, per criterio, con evidenza reale. NIENTE percentuale di abbinabilita'."""
@@ -338,3 +391,30 @@ def grafo_stato():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:160]}), 500
+
+
+@bp.route("/v1/criteri/sostituti/<ingrediente>", methods=["GET"])
+def criteri_sostituti(ingrediente):
+    """Sostituti di un ingrediente: profilo di composti piu' simile (Jaccard). 'Cosa uso al posto di X'."""
+    if not DATABASE_URL:
+        return jsonify({"ingrediente": ingrediente, "sostituti": [], "nota": "DB non disponibile"})
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            nodo = _risolvi_nodo(cur, ingrediente)
+            if not nodo:
+                cur.close()
+                return jsonify({"ingrediente": ingrediente, "sostituti": [], "non_riconosciuto": True,
+                                "nota": "Ingrediente non trovato nel grafo con un profilo di composti."})
+            ing_id, ing_nome = nodo
+            sost = _sostituti(cur, ing_id, ing_nome)
+            cur.close()
+        return jsonify({
+            "ingrediente": ing_nome,
+            "nodo_id": ing_id,
+            "regola": "Sostituti per similarita' del profilo aromatico (composti condivisi), non per categoria.",
+            "sostituti": sost,
+            "conteggio": len(sost),
+        })
+    except Exception as e:
+        return jsonify({"ingrediente": ingrediente, "errore": str(e)[:160]}), 500
