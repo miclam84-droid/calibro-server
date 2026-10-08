@@ -88,7 +88,7 @@ def _risolvi_nodo(cur, ingrediente):
     return (nid, nname)
 
 
-def _base_aromatica(cur, ing_id, base_nome, limit=10, min_shared=3):
+def _base_aromatica(cur, ing_id, base_nome, limit=40, min_shared=3):
     """Criterio 1: ingredienti che condividono composti volatili reali.
     Query a specchio del motore 'scoperta' di /v1/possibilita.
     Fix verificati sull'output reale (8 ott):
@@ -180,6 +180,14 @@ def criteri(ingrediente):
         base = _base_aromatica(cur, ing_id, ing_nome)
         trad = _tradizione(cur, ing_id)
         cur.close(); conn.close()
+        # dedup famiglia + declassa hub: riuso il filtro gia' provato di api.py (risolve parmigiano->10 formaggi).
+        # Pesco 40 candidati sopra, poi limito max 2 per famiglia e taglio a 12 -> lista varia, non monofamiglia.
+        try:
+            from routes.api import _pulisci_abbinamenti
+            base = _pulisci_abbinamenti(base, campo="ingrediente", max_famiglia=2, ingrediente_base=ing_nome)
+        except Exception:
+            pass
+        base = base[:12]
         # tradizione in coda, de-duplicata rispetto alla base
         nomi_base = {r["ingrediente"].lower() for r in base}
         trad = [r for r in trad if r["ingrediente"].lower() not in nomi_base]
