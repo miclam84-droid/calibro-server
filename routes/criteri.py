@@ -343,6 +343,16 @@ def grafo_stato():
             cur.execute("""SELECT COUNT(DISTINCT from_id) FROM edges
                            WHERE relation = 'contiene_composto'""")
             con_composti = cur.fetchone()[0]
+            # RECUPERABILITA' composti: chi eredita da un padre Ahn (padre_ahn_id) e
+            # chi e' orfano (ne' composti propri ne' padre) = i candidati-da-collegare / buchi veri.
+            cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND padre_ahn_id IS NOT NULL")
+            con_padre_ahn = cur.fetchone()[0]
+            cur.execute("""SELECT COUNT(*) FROM nodes n
+                           WHERE n.type IN ('Ingrediente','Prodotto')
+                             AND n.padre_ahn_id IS NULL
+                             AND NOT EXISTS (SELECT 1 FROM edges e
+                                             WHERE e.from_id = n.id AND e.relation = 'contiene_composto')""")
+            senza_composti_ne_padre = cur.fetchone()[0]
             cur.close()
         return jsonify({
             "nodi_per_tipo": nodi_per_tipo,
@@ -354,6 +364,8 @@ def grafo_stato():
                 "ingredienti_prodotti_totali": ip_totali,
                 "con_proprieta_organolettiche": con_proprieta,
                 "nodi_con_composti": con_composti,
+                "con_padre_ahn_eredita": con_padre_ahn,
+                "orfani_senza_composti_ne_padre": senza_composti_ne_padre,
             },
         })
     except Exception as e:
