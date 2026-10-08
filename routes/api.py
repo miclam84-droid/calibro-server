@@ -6205,10 +6205,12 @@ def grafo_ego(ingrediente):
     (tap -> nuovo centro). E' la catena ingrediente -> relazione -> (fenomeno) che rende il grafo il moat."""
     from flask import jsonify, request
     import os, psycopg2, json
+    from db import _get_conn, _release_conn
+    conn = None
     try:
         vicini = []
         fenomeni_collegati = []
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         # cerco l'ingrediente: il nodo con PIU archi di abbinamento (il "ricco"), non il nome piu corto.
         # Cosi il grafo-ego e' coerente con scheda/abbina (che gia prendono il nodo ricco). Era il bug
         # basilico: grafo 0 vs scheda 6 (prendeva "basilico" povero invece del gemello con gli archi).
@@ -6253,7 +6255,7 @@ def grafo_ego(ingrediente):
                            WHERE (e.from_id=%s OR e.to_id=%s) AND n2.type='Fenomeno' LIMIT 4""", (ing_id, ing_id))
             for fid, fnome in cur.fetchall():
                 fenomeni_collegati.append({"nome": fnome, "slug": fid})
-        cur.close(); conn.close()
+        cur.close()
         # STESSO FILTRO di /v1/abbina (funzione condivisa): scarta auto-varianti, parenti di famiglia,
         # categorie generiche, declassa gli hub. Cosi grafo-ego e abbina sono COERENTI (no parmigiano->formaggi).
         vicini = _pulisci_abbinamenti(vicini, campo="nome", max_famiglia=2, ingrediente_base=ingrediente)
@@ -6278,6 +6280,11 @@ def grafo_ego(ingrediente):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
 
 
 @bp.route("/v1/cambio-conseguenza/<slug>")
@@ -6287,13 +6294,15 @@ def cambio_conseguenza(slug):
     ogni relazione ha lo stato (verificato/supportato) dal peso della causalita. Dove non sa -> 'sperimentale'."""
     from flask import jsonify
     import os, psycopg2, json
+    from db import _get_conn, _release_conn
+    conn = None
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         # trovo il nodo (preparazione o fenomeno)
         cur.execute("SELECT id, data FROM nodes WHERE id=%s OR LOWER(name) LIKE LOWER(%s) LIMIT 1", (slug, f"%{slug}%"))
         row = cur.fetchone()
         if not row:
-            cur.close(); conn.close()
+            cur.close()
             return jsonify({"errore": "non trovato"}), 404
         dd = row[1] if isinstance(row[1], dict) else json.loads(row[1])
         relazioni = []
@@ -6329,7 +6338,7 @@ def cambio_conseguenza(slug):
                         "forza": ral.get("peso","medio"),
                         "stato": PESO_STATO.get(ral.get("peso","medio"), "supportato")
                     })
-        cur.close(); conn.close()
+        cur.close()
         return jsonify({
             "preparazione": dd.get("nome", slug),
             "relazioni": relazioni,
@@ -6339,6 +6348,11 @@ def cambio_conseguenza(slug):
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
 
 
 @bp.route("/v1/twist", methods=["POST"])
