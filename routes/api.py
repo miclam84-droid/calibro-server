@@ -6363,6 +6363,8 @@ def twist_dal_canone():
     Body: {ingredienti:[...], sostituisci:'gin', con:'mezcal'}"""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
+    from db import _get_conn, _release_conn
+    conn = None
     try:
         body = request.get_json(force=True)
         ingredienti = body.get("ingredienti", [])
@@ -6372,7 +6374,7 @@ def twist_dal_canone():
             return jsonify({"errore": "servono: ingredienti[], sostituisci, con"}), 400
         # calcolo profilo DIRETTO dal db (no self-HTTP)
         P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         def profilo(ings):
             prof = {k: 0.0 for k in P}; n = 0
             for s in ings:
@@ -6408,7 +6410,7 @@ def twist_dal_canone():
                            WHERE (e.from_id=%s OR e.to_id=%s) AND n2.type='Ingrediente' AND n2.id<>%s LIMIT 5""",
                         (rr[0], rr[0], rr[0]))
             connessioni_nuovo = [x[0] for x in cur.fetchall()]
-        cur.close(); conn.close()
+        cur.close()
         return jsonify({
             "twist": f"{sostituisci} -> {con}",
             "ingredienti_nuovi": nuovi,
@@ -6421,6 +6423,11 @@ def twist_dal_canone():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
 
 
 @bp.route("/v1/menu/filo", methods=["POST"])
@@ -6432,6 +6439,8 @@ def menu_filo_conduttore():
            preparazioni:[id1,id2...]}"""
     from flask import request, jsonify
     import os, psycopg2, json
+    from db import _get_conn, _release_conn
+    conn = None
     try:
         body = request.get_json(force=True)
         tema = body.get("tema", "").strip()
@@ -6439,7 +6448,7 @@ def menu_filo_conduttore():
         preparazioni = body.get("preparazioni", [])
         if not tema:
             return jsonify({"errore": "serve un tema"}), 400
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         coerenti = []; fuori_filo = []
         for pid in preparazioni:
             cur.execute("SELECT name, data FROM nodes WHERE id=%s", (pid,))
@@ -6492,7 +6501,7 @@ def menu_filo_conduttore():
         elif tipo_filo == "territorio":
             # dato non disponibile: nessun suggerimento inventato
             suggeriti = []
-        cur.close(); conn.close()
+        cur.close()
         return jsonify({
             "tema": tema, "tipo_filo": tipo_filo,
             "coerenti_col_filo": coerenti,
@@ -6509,3 +6518,8 @@ def menu_filo_conduttore():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
