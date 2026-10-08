@@ -468,9 +468,10 @@ def abbina_esteso(ingrediente):
     except Exception:
         pass
     # 2. ESPLORATIVI: prima cerco in tabella cache abbinamenti_ai, poi genero se manca
+    from db import _get_conn, _release_conn
+    conn = None
     try:
-        import psycopg2
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS abbinamenti_ai (ingrediente TEXT, abbinato TEXT, forza TEXT, PRIMARY KEY(ingrediente,abbinato))")
         cur.execute("SELECT abbinato, forza FROM abbinamenti_ai WHERE ingrediente=%s", (ingrediente.lower(),))
         cached = cur.fetchall()
@@ -487,9 +488,14 @@ def abbina_esteso(ingrediente):
                     pass
             conn.commit()
             risultato["esplorativi"] = [{"ingrediente": g["ingrediente"], "forza": g["forza"]} for g in gen]
-        cur.close(); conn.close()
+        cur.close()
     except Exception as e:
         risultato["_nota_esplorativi"] = str(e)[:80]
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
     risultato["_avviso"] = "Verificati: scienza (Ahn). Esplorativi: stima AI, da provare al banco."
     return jsonify(risultato)
 

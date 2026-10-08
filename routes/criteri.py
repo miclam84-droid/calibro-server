@@ -20,6 +20,7 @@
 
 import os
 from flask import Blueprint, jsonify, request
+from db import connessione
 
 bp = Blueprint("criteri", __name__)
 
@@ -54,9 +55,7 @@ def _nome_composto(cid):
     return s.replace("_", " ").strip()
 
 
-def _conn():
-    import psycopg2
-    return psycopg2.connect(DATABASE_URL)
+# Le connessioni passano dalla porta unica del pool: db.connessione() (vedi PULIZIA-BACKEND-DIARIO).
 
 
 def _risolvi_nodo(cur, ingrediente):
@@ -208,20 +207,19 @@ def criteri(ingrediente):
     """Relazioni di un ingrediente, per criterio, con evidenza reale. NIENTE percentuale di abbinabilita'."""
     if not DATABASE_URL:
         return jsonify({"ingrediente": ingrediente, "relazioni": [], "nota": "DB non disponibile"})
-    conn = None
     try:
-        conn = _conn()
-        cur = conn.cursor()
-        nodo = _risolvi_nodo(cur, ingrediente)
-        if not nodo:
-            cur.close(); conn.close()
-            return jsonify({"ingrediente": ingrediente, "relazioni": [],
-                            "non_riconosciuto": True,
-                            "nota": "Ingrediente non trovato nel grafo con un profilo di composti."})
-        ing_id, ing_nome = nodo
-        base = _base_aromatica(cur, ing_id, ing_nome)
-        trad = _tradizione(cur, ing_id)
-        cur.close(); conn.close()
+        with connessione() as conn:
+            cur = conn.cursor()
+            nodo = _risolvi_nodo(cur, ingrediente)
+            if not nodo:
+                cur.close()
+                return jsonify({"ingrediente": ingrediente, "relazioni": [],
+                                "non_riconosciuto": True,
+                                "nota": "Ingrediente non trovato nel grafo con un profilo di composti."})
+            ing_id, ing_nome = nodo
+            base = _base_aromatica(cur, ing_id, ing_nome)
+            trad = _tradizione(cur, ing_id)
+            cur.close()
         # declassa gli hub generici (riuso il filtro gia' provato di api.py)
         try:
             from routes.api import _pulisci_abbinamenti
@@ -239,9 +237,6 @@ def criteri(ingrediente):
             "conteggio": {"base_aromatica": len(base), "tradizione": len(trad)},
         })
     except Exception as e:
-        if conn:
-            try: conn.close()
-            except Exception: pass
         return jsonify({"ingrediente": ingrediente, "errore": str(e)[:160]}), 500
 
 
@@ -250,21 +245,20 @@ def criteri_diag(ingrediente):
     """Diagnostica: quale nodo e' stato risolto e quanti composti ha."""
     if not DATABASE_URL:
         return jsonify({"nota": "DB non disponibile"})
-    conn = None
     try:
-        conn = _conn()
-        cur = conn.cursor()
-        nodo = _risolvi_nodo(cur, ingrediente)
-        if not nodo:
-            cur.close(); conn.close()
-            return jsonify({"ingrediente": ingrediente, "trovato": False})
-        ing_id, ing_nome = nodo
-        cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (ing_id,))
-        n_comp = cur.fetchone()[0]
-        cur.execute(
-            "SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto' LIMIT 8", (ing_id,))
-        esempi = [_nome_composto(r[0]) for r in cur.fetchall()]
-        cur.close(); conn.close()
+        with connessione() as conn:
+            cur = conn.cursor()
+            nodo = _risolvi_nodo(cur, ingrediente)
+            if not nodo:
+                cur.close()
+                return jsonify({"ingrediente": ingrediente, "trovato": False})
+            ing_id, ing_nome = nodo
+            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (ing_id,))
+            n_comp = cur.fetchone()[0]
+            cur.execute(
+                "SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto' LIMIT 8", (ing_id,))
+            esempi = [_nome_composto(r[0]) for r in cur.fetchall()]
+            cur.close()
         return jsonify({
             "cercato": ingrediente,
             "nodo_risolto": ing_id,
@@ -273,9 +267,6 @@ def criteri_diag(ingrediente):
             "composti_esempio": esempi,
         })
     except Exception as e:
-        if conn:
-            try: conn.close()
-            except Exception: pass
         return jsonify({"errore": str(e)[:160]}), 500
 
 
@@ -284,25 +275,24 @@ def grafo_stato():
     """Inventario reale del grafo: nodi per tipo, composti, ingredienti visibili/nascosti, archi per relazione."""
     if not DATABASE_URL:
         return jsonify({"nota": "DB non disponibile"})
-    conn = None
     try:
-        conn = _conn()
-        cur = conn.cursor()
-        cur.execute("SELECT type, COUNT(*) FROM nodes GROUP BY type ORDER BY COUNT(*) DESC")
-        nodi_per_tipo = {(t or "(senza tipo)"): n for t, n in cur.fetchall()}
-        cur.execute(r"SELECT COUNT(*) FROM nodes WHERE id LIKE 'comp\_%' OR id LIKE 'pub\_%'")
-        composti = cur.fetchone()[0]
-        cur.execute(
-            """SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT type, COUNT(*) FROM nodes GROUP BY type ORDER BY COUNT(*) DESC")
+            nodi_per_tipo = {(t or "(senza tipo)"): n for t, n in cur.fetchall()}
+            cur.execute(r"SELECT COUNT(*) FROM nodes WHERE id LIKE 'comp\_%' OR id LIKE 'pub\_%'")
+            composti = cur.fetchone()[0]
+            cur.execute(
+                """SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                AND (data->>'visibility') IS DISTINCT FROM 'hidden'""")
-        ing_visibili = cur.fetchone()[0]
-        cur.execute(
-            """SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+            ing_visibili = cur.fetchone()[0]
+            cur.execute(
+                """SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                AND (data->>'visibility') = 'hidden'""")
-        ing_nascosti = cur.fetchone()[0]
-        cur.execute("SELECT relation, COUNT(*) FROM edges GROUP BY relation ORDER BY COUNT(*) DESC")
-        archi_per_relazione = {(r or "(senza relazione)"): n for r, n in cur.fetchall()}
-        cur.close(); conn.close()
+            ing_nascosti = cur.fetchone()[0]
+            cur.execute("SELECT relation, COUNT(*) FROM edges GROUP BY relation ORDER BY COUNT(*) DESC")
+            archi_per_relazione = {(r or "(senza relazione)"): n for r, n in cur.fetchall()}
+            cur.close()
         return jsonify({
             "nodi_per_tipo": nodi_per_tipo,
             "composti_totali": composti,
@@ -311,7 +301,4 @@ def grafo_stato():
             "archi_per_relazione": archi_per_relazione,
         })
     except Exception as e:
-        if conn:
-            try: conn.close()
-            except Exception: pass
         return jsonify({"errore": str(e)[:160]}), 500
