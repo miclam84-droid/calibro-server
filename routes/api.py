@@ -1965,17 +1965,6 @@ def abbina(ingrediente):
             if not nome_pulito or nome_pulito == "sconosciuto":
                 continue
             overlap = float(r[2]) if r[2] else 0
-            # ANTI-HUB (revisori): gli ingredienti-hub (tè nero, ecc.) con moltissimi collegamenti
-            # schiacciano gli abbinamenti rari. Penalizzo l'overlap in modo log-inverso alla diffusione.
-            import math as _math
-            try:
-                _to_id = r[0]
-                _n_link = db.execute("SELECT COUNT(*) FROM edges WHERE from_id=? AND relation='abbinamento_aromatico'", (_to_id,)).fetchone()
-                _cnt = (_n_link[0] if _n_link else 0) or 0
-                if _cnt > 250:
-                    overlap = overlap * (1.0 / _math.log10(_cnt))
-            except Exception:
-                pass
             abbinamenti.append({
                 "ingrediente": nome_pulito,
                 "composto": _fascia_affinita(overlap, _lang_out),
@@ -4698,75 +4687,6 @@ def flavour_network(ingrediente):
         "nodi": []
     })
 
-def _flavour_network_OLD(ingrediente):
-    from flask import request, jsonify
-    import psycopg2 as _pg, json as _j
-    n_max = min(int(request.args.get("n", "18")), 30)
-    try:
-        _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
-        _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                        AND LOWER(name) LIKE LOWER(%s)
-                        ORDER BY (LOWER(name)=LOWER(%s)) DESC,
-                        (SELECT COUNT(*) FROM edges e WHERE e.from_id=nodes.id AND e.relation='contiene_composto') DESC,
-                        LENGTH(name) ASC LIMIT 1""", (f"%{ingrediente}%", ingrediente))
-        rc = _cur.fetchone()
-        if not rc:
-            _cur.close(); _release_conn(_c); return jsonify({"centro": ingrediente, "nodi": [], "totale": 0})
-        id_centro, nome_centro, data_centro = rc[0], rc[1], rc[2]
-        dd = data_centro if isinstance(data_centro, dict) else (_j.loads(data_centro) if data_centro else {})
-        tipo_centro = dd.get("tipo_base") or nome_centro.lower().split()[0]
-        cat_centro = (dd.get("categoria") or "").lower()
-        p = dd.get("proprieta", {})
-        nodi = []; visti_tipi = set([tipo_centro])
-
-        # REGOLE DI COSTRUZIONE PIATTO: cosa serve per bilanciare/completare questo ingrediente
-        # (criterio PRIMARIO - questo e' cio' che serve a cucinare, non l'analogia molecolare)
-        bisogni = []  # (proprieta_cercata, soglia, motivo)
-        gr=p.get('grasso',0); sa=p.get('salato',0); um=p.get('umami',0); ac=p.get('acido',0)
-        do=p.get('dolce',0); am=p.get('amaro',0); pi=p.get('piccante',0); af=p.get('aroma_fresco',0)
-        if gr>=6 and ac<5: bisogni.append(('acido',5,'l acidita taglia il grasso e alleggerisce'))
-        if sa>=7 and ac<5: bisogni.append(('acido',5,'l acidita bilancia la sapidita'))
-        if sa>=7 and do<4: bisogni.append(('dolce',5,'una nota dolce contrasta il salato'))
-        if um>=7 and ac<5: bisogni.append(('acido',5,'l acidita ravviva l umami'))
-        if um>=7 and af<4: bisogni.append(('aroma_fresco',5,'una nota fresca alleggerisce l umami'))
-        if pi>=6 and do<4: bisogni.append(('dolce',5,'il dolce calma il piccante'))
-        if do>=7 and (ac<3 and am<3): bisogni.append(('acido',4,'l acido bilancia il dolce'))
-        if am>=6 and gr<4: bisogni.append(('grasso',5,'il grasso addolcisce l amaro'))
-        if af>=7 and gr<4: bisogni.append(('grasso',4,'un elemento grasso da corpo al fresco'))
-        # se non ha bisogni forti (profilo gia equilibrato), cerca complementi generici
-        if not bisogni:
-            if gr<4: bisogni.append(('grasso',5,'un elemento grasso da rotondita'))
-            if ac<4: bisogni.append(('acido',5,'una nota acida da freschezza'))
-
-        # cerco ingredienti che soddisfano i bisogni, ESCLUDENDO la stessa famiglia/categoria
-        _cur.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                        AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 500""")
-        candidati = _cur.fetchall()
-        for prop_t, soglia_t, motivo in bisogni:
-            trovati=[]
-            for nome_i, data_i in candidati:
-                if '_' in nome_i: continue
-                ddi = data_i if isinstance(data_i, dict) else _j.loads(data_i)
-                tipo_i = ddi.get('tipo_base') or nome_i.lower().split()[0]
-                cat_i = (ddi.get('categoria') or '').lower()
-                if tipo_i in visti_tipi: continue
-                if cat_i and cat_i == cat_centro: continue   # NIENTE stessa categoria (no formaggio->formaggio)
-                pv = ddi.get('proprieta',{}).get(prop_t,0)
-                if pv >= soglia_t:
-                    trovati.append((nome_i, tipo_i, pv, motivo))
-            trovati.sort(key=lambda x:-x[2])
-            for nome_i, tipo_i, pv, mot in trovati[:4]:
-                if tipo_i in visti_tipi or len(nodi)>=n_max: continue
-                visti_tipi.add(tipo_i)
-                nodi.append({"nome": nome_i, "forza": min(95, 55+pv*4), "tipo":"costruzione",
-                             "perche": mot})
-        _cur.close(); _release_conn(_c)
-        return jsonify({"centro": ingrediente, "nodi": nodi[:n_max], "totale": len(nodi),
-                        "logica": "costruzione_piatto"})
-    except Exception as e:
-        return jsonify({"centro": ingrediente, "nodi": [], "errore": str(e)[:100]})
-
-
 @bp.route("/v1/menu/analizza", methods=["POST"])
 def menu_analizza():
     """Analizza un menu: equilibrio categorie, ripetizione ingredienti, food cost stimato."""
@@ -5667,82 +5587,6 @@ def scoperta_molecolare(ingrediente):
                         "nota":"Ecco perche funzionano insieme (a livello di composti aromatici)." if cond else "Pochi composti in comune."})
     except Exception as e:
         return jsonify({"errore":str(e)[:120]})
-
-def _scoperta_OLD(ingrediente):
-    """La scoperta molecolare SPIEGATA: per un ingrediente, gli abbinamenti di scoperta con il PERCHE
-    scientifico (composti condivisi + cosa fanno in cottura). Non una lista muta: conoscenza."""
-    from flask import request, jsonify
-    import os, psycopg2, json as _j
-    try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # trovo il nodo ingrediente
-        cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
-                       AND LOWER(name)=LOWER(%s) LIMIT 1""", (ingrediente,))
-        r = cur.fetchone()
-        if not r: return jsonify({"errore": "ingrediente non trovato"}), 404
-        ing_id, ing_nome = r
-        # i composti dell'ingrediente
-        cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (ing_id,))
-        composti_ing = set(x[0] for x in cur.fetchall())
-        if not composti_ing:
-            return jsonify({"ingrediente": ing_nome, "scoperte": [], "nota": "composti non mappati per questo ingrediente"})
-        # gli abbinamenti aromatici (scoperta) con i composti condivisi
-        cur.execute("""SELECT DISTINCT n.id, n.name FROM edges e JOIN nodes n ON n.id=e.to_id
-                       WHERE e.from_id=%s AND e.relation='abbinamento_aromatico'
-                       AND COALESCE((n.data->>'nascosto_utente'),'false') <> 'true' LIMIT 15""", (ing_id,))
-        scoperte = []
-        for cand_id, cand_nome in cur.fetchall():
-            # composti condivisi
-            cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (cand_id,))
-            composti_cand = set(x[0] for x in cur.fetchall())
-            condivisi = composti_ing & composti_cand
-            if len(condivisi) < 2: continue
-            # ESCLUDO GLI HUB
-            if len(composti_cand) > 150: continue
-            # GOVERNO ANTI-SLOP: escludo stessa categoria (pesce+pesce, carne+carne = inutile)
-            _cand_cat = (cand_data.get('categoria','') or '').lower() if 'cand_data' in dir() else ''
-            # e le assurdita note (caffe+calamaro): se le categorie sono troppo lontane, salto
-            # recupero la categoria del candidato
-            cur.execute("SELECT data FROM nodes WHERE id=%s", (cand_id,))
-            _cd = cur.fetchone()
-            _cdd = (_cd[0] if _cd and isinstance(_cd[0],dict) else (json.loads(_cd[0]) if _cd and _cd[0] else {})) if _cd else {}
-            _cand_cat = (_cdd.get('categoria','') or '').lower()
-            # categoria dell'ingrediente base
-            cur.execute("SELECT data FROM nodes WHERE id=%s", (ing_id,))
-            _bd = cur.fetchone()
-            _bdd = (_bd[0] if _bd and isinstance(_bd[0],dict) else (json.loads(_bd[0]) if _bd and _bd[0] else {})) if _bd else {}
-            _base_cat = (_bdd.get('categoria','') or '').lower()
-            # se stessa categoria -> inutile (pesce con pesci). Escludo.
-            if _cand_cat and _base_cat and _cand_cat == _base_cat and _cand_cat in ['pesce','carne','crostaceo','mollusco']:
-                continue
-            # SPECIFICITA (Shannon): un abbinamento e' interessante se i composti condivisi sono una
-            # frazione ALTA dei composti del candidato (non se sono tanti in assoluto)
-            _specificita = len(condivisi) / max(len(composti_cand), 1)
-            # spiego i composti condivisi (quelli che conosco)
-            spiegazioni = []
-            for comp_id in list(condivisi)[:6]:
-                cur.execute("SELECT name FROM nodes WHERE id=%s", (comp_id,))
-                cn = cur.fetchone()
-                if cn:
-                    key = cn[0].lower().replace(" ","_").replace("-","_")
-                    for k, v in _COMPOSTI_SPIEGATI.items():
-                        if k in key or key in k:
-                            spiegazioni.append(v); break
-            scoperte.append({
-                "ingrediente": cand_nome,
-                "composti_condivisi": len(condivisi),
-                "specificita": round(_specificita, 3),
-                "perche": spiegazioni[:3],
-                "fiducia": "scoperta"
-            })
-        # ordino per SPECIFICITA (composti condivisi rispetto al totale), non per quantita grezza
-        scoperte.sort(key=lambda x: -x["specificita"])
-        cur.close(); conn.close()
-        return jsonify({"ingrediente": ing_nome, "scoperte": scoperte[:8],
-                        "nota": "Abbinamenti di scoperta: la scienza suggerisce, la tradizione non li conosce ancora."})
-    except Exception as e:
-        return jsonify({"errore": str(e)[:150]})
-
 
 @bp.route("/v1/protocolli")
 def lista_protocolli():

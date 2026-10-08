@@ -7,7 +7,7 @@ from auth import _utente_da_token, _genera_token
 from cifra_utils import _auth_cifra, _stima_costo_categoria, _calcola_profilo_sicurezza
 from contenuto import _scheda_lang, _numero_bersaglio
 from config import DATABASE_URL
-import os, json, secrets
+import os, json, secrets, uuid
 bp = Blueprint("cifra", __name__)
 
 
