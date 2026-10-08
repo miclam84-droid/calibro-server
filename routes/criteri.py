@@ -402,3 +402,74 @@ def criteri_orfani():
         return jsonify({"per_prefisso_id": per_prefisso, "campione_nomi": campione, "n_campione": len(campione)})
     except Exception as e:
         return jsonify({"errore": str(e)[:160]}), 500
+
+
+@bp.route("/v1/criteri/orfani-match", methods=["GET"])
+def criteri_orfani_match():
+    """DRY-RUN (strategia Ahn): per ogni orfano prova ad agganciarlo a un nodo con composti (futuro
+    padre_ahn). NON scrive niente. Salta i chimici mis-tipati. Mostra cosa collegherebbe e cosa no,
+    coi conteggi per bucket: agganciabili (recupero gratis) / chimici / non-agganciabili (comprare o buco)."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import re as _re
+    _qualif = _re.compile(r"\b(dop|igp|docg|doc|pdo|pgi|igt|stg|tradizionale|riserva|extra|biologico|bio)\b|\d+\s*anni|\d{4}", _re.I)
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute(
+                """SELECT id, lower(name) FROM nodes n
+                   WHERE n.type IN ('Ingrediente','Prodotto')
+                     AND EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')""")
+            padri = {}
+            padri_id = set()
+            for pid, pn in cur.fetchall():
+                padri_id.add(pid)
+                if pn and pn not in padri:
+                    padri[pn] = pid
+            cur.execute(
+                """SELECT id, name FROM nodes n
+                   WHERE n.type IN ('Ingrediente','Prodotto')
+                     AND n.padre_ahn_id IS NULL
+                     AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')""")
+            orfani = cur.fetchall()
+            cur.close()
+        chimici = 0
+        proposte = []
+        non_match = []
+        for oid, onome in orfani:
+            nl = (onome or "").strip().lower()
+            # euristica chimici mis-tipati: underscore, 'acido ...', suffisso oil
+            if (not nl) or ("_" in nl) or nl.startswith("acido ") or nl == "acetaldeide" or nl.endswith(" oil"):
+                chimici += 1
+                continue
+            base = _re.sub(r"\s+", " ", _qualif.sub(" ", nl)).strip()
+            parent = None
+            metodo = None
+            for it_word, ahn in _ALIAS.items():
+                if it_word in base:
+                    cand = "ahn_" + ahn
+                    if cand in padri_id:
+                        parent = cand
+                        metodo = f"alias:{it_word}->{ahn}"
+                        break
+            if not parent:
+                for w in base.split():
+                    if len(w) >= 4 and w in padri:
+                        parent = padri[w]
+                        metodo = f"parola:{w}"
+                        break
+            if parent:
+                proposte.append({"orfano": onome, "padre": parent, "metodo": metodo})
+            else:
+                non_match.append(onome)
+        return jsonify({
+            "totale_orfani": len(orfani),
+            "chimici_mis_tipati": chimici,
+            "agganciabili": len(proposte),
+            "non_agganciabili": len(non_match),
+            "proposte_campione": proposte[:60],
+            "non_agganciabili_campione": non_match[:60],
+            "nota": "DRY-RUN: nessuna scrittura. Rivedi le proposte prima di applicare i link.",
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:160]}), 500
