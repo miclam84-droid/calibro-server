@@ -277,3 +277,41 @@ def criteri_diag(ingrediente):
             try: conn.close()
             except Exception: pass
         return jsonify({"errore": str(e)[:160]}), 500
+
+
+@bp.route("/v1/criteri/grafo-stato", methods=["GET"])
+def grafo_stato():
+    """Inventario reale del grafo: nodi per tipo, composti, ingredienti visibili/nascosti, archi per relazione."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    conn = None
+    try:
+        conn = _conn()
+        cur = conn.cursor()
+        cur.execute("SELECT type, COUNT(*) FROM nodes GROUP BY type ORDER BY COUNT(*) DESC")
+        nodi_per_tipo = {(t or "(senza tipo)"): n for t, n in cur.fetchall()}
+        cur.execute(r"SELECT COUNT(*) FROM nodes WHERE id LIKE 'comp\_%' OR id LIKE 'pub\_%'")
+        composti = cur.fetchone()[0]
+        cur.execute(
+            """SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+               AND (data->>'visibility') IS DISTINCT FROM 'hidden'""")
+        ing_visibili = cur.fetchone()[0]
+        cur.execute(
+            """SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+               AND (data->>'visibility') = 'hidden'""")
+        ing_nascosti = cur.fetchone()[0]
+        cur.execute("SELECT relation, COUNT(*) FROM edges GROUP BY relation ORDER BY COUNT(*) DESC")
+        archi_per_relazione = {(r or "(senza relazione)"): n for r, n in cur.fetchall()}
+        cur.close(); conn.close()
+        return jsonify({
+            "nodi_per_tipo": nodi_per_tipo,
+            "composti_totali": composti,
+            "ingredienti_visibili": ing_visibili,
+            "ingredienti_nascosti": ing_nascosti,
+            "archi_per_relazione": archi_per_relazione,
+        })
+    except Exception as e:
+        if conn:
+            try: conn.close()
+            except Exception: pass
+        return jsonify({"errore": str(e)[:160]}), 500
