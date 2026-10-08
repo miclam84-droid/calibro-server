@@ -4,6 +4,7 @@
 # ============================================================
 import sqlite3
 import json
+import contextlib
 
 from config import DATABASE_URL, GRAFO
 
@@ -142,6 +143,35 @@ def _release_conn(conn):
             p.putconn(conn)
         except Exception:
             pass
+
+
+@contextlib.contextmanager
+def connessione():
+    """La porta UNICA per una connessione dal pool.
+
+    Uso:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute(...)
+            conn.commit()      # per le scritture
+
+    Garantisce che la connessione torni SEMPRE nel pool, anche se dentro
+    il blocco scoppia un'eccezione — elimina i leak del pattern
+    'connect ... close() solo sul percorso buono'. Da preferire a
+    psycopg2.connect() grezzo (che salta il pool e non è limitato).
+    """
+    conn = _get_conn()
+    try:
+        yield conn
+    finally:
+        # lascia la connessione pulita per il prossimo nel pool:
+        # scarta eventuale transazione non committata (le scritture committano
+        # esplicitamente dentro il blocco; qui è un no-op dopo un commit).
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        _release_conn(conn)
 
 
 def _connetti_postgres():
