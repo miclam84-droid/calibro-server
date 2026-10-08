@@ -5362,8 +5362,10 @@ def assistente_galileo():
         return jsonify({"errore": "domanda vuota"}), 400
     BUDGET_TOKEN_GIORNO = 16000
     oggi = datetime.date.today().isoformat()
+    from db import _get_conn, _release_conn
+    conn = None
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         cur.execute("""CREATE TABLE IF NOT EXISTS assistente_uso (
                        account TEXT, giorno TEXT, token_usati INT DEFAULT 0, PRIMARY KEY(account,giorno))""")
         cur.execute("SELECT token_usati FROM assistente_uso WHERE account=%s AND giorno=%s", (account, oggi))
@@ -5371,7 +5373,7 @@ def assistente_galileo():
         usati = r[0] if r else 0
         stima = int(len(domanda) * 0.3) + 400
         if usati + stima > BUDGET_TOKEN_GIORNO:
-            cur.close(); conn.close()
+            cur.close()
             return jsonify({"autorizzato": False, "energia": "esaurita",
                             "messaggio": "Hai esaurito l'energia dell'Assistente per oggi. Si ricarica a mezzanotte. I motori scientifici (Diagnosi, Composer, Atlante) restano attivi al 100%."})
         resto = BUDGET_TOKEN_GIORNO - usati
@@ -5421,7 +5423,7 @@ def assistente_galileo():
         cur.execute("""INSERT INTO assistente_uso (account,giorno,token_usati) VALUES (%s,%s,%s)
                        ON CONFLICT (account,giorno) DO UPDATE SET token_usati=assistente_uso.token_usati+%s""",
                     (account, oggi, token_reali, token_reali))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close()
         out = {"risposta": risposta, "energia": energia, "autorizzato": True, "web": usato_web}
         if di_dominio:
             # Galileo NON rifiuta il dominio: risponde e trasferisce con contesto (#232)
@@ -5432,6 +5434,11 @@ def assistente_galileo():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]}), 500
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
 
 
 @bp.route("/v1/planner/lista-ordini", methods=["POST"])
@@ -5850,8 +5857,10 @@ def diagnosi_interattiva():
             if any(_p in _sl for _p in _parole):
                 disciplina = _disc; break
     key = os.environ.get("OPENAI_API_KEY","")
+    from db import _get_conn, _release_conn
+    conn = None
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         # 1. cerco nelle DIAGNOSI dei protocolli un sintomo simile (patrimonio esistente)
         cur.execute("""SELECT name, data FROM nodes WHERE type='Protocollo' AND data->'diagnosi' IS NOT NULL LIMIT 500""")
         cause_trovate = []
@@ -5929,13 +5938,18 @@ def diagnosi_interattiva():
                 }
             else:
                 risultato["memoria_utente"] = {"gia_affrontato": False}
-        cur.close(); conn.close()
+        cur.close()
         risultato["fonti_patrimonio"]=len(cause_trovate)
         if contesto_prep:
             risultato["contesto_preparazione"]=contesto_prep
         return jsonify(risultato)
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
 
 
 @bp.route("/v1/composer/simula", methods=["POST"])
@@ -5953,8 +5967,10 @@ def composer_simula():
     a_valore = body.get("a_valore","")
     if not variabile: return jsonify({"errore":"manca la variabile da cambiare"}), 400
     key = os.environ.get("OPENAI_API_KEY","")
+    from db import _get_conn, _release_conn
+    conn = None
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         # contesto: se c'e' un protocollo, prendo i suoi fenomeni + causalita
         fenomeni_ctx = []; nome_prep = ""
         if prot_id:
@@ -5993,10 +6009,15 @@ def composer_simula():
                 if m: risultato.update(json.loads(m.group(0)))
             except: pass
         risultato["basato_su_causalita"] = len(fenomeni_ctx)
-        cur.close(); conn.close()
+        cur.close()
         return jsonify(risultato)
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
 
 
 # ═══ QUADERNO 2.0: esperimenti come COMMIT + le 3 memorie (65 board 4, il fossato) ═══
@@ -6010,8 +6031,10 @@ def salva_esperimento():
     device = body.get("device_id") or request.headers.get("X-Device-Id","anon")
     nome = (body.get("nome") or "").strip()
     if not nome: return jsonify({"errore":"manca il nome"}), 400
+    from db import _get_conn, _release_conn
+    conn = None
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        conn = _get_conn(); cur = conn.cursor()
         # creo la tabella se non esiste
         cur.execute("""CREATE TABLE IF NOT EXISTS esperimenti_utente (
             id TEXT PRIMARY KEY, device_id TEXT, protocollo_id TEXT, nome TEXT,
@@ -6025,10 +6048,15 @@ def salva_esperimento():
                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                     (eid, device, body.get("protocollo_id",""), nome, json.dumps(body.get("parametri",{}),ensure_ascii=False),
                      body.get("risultato",""), body.get("esito","in_corso"), body.get("note",""), commit_n))
-        conn.commit(); cur.close(); conn.close()
+        conn.commit(); cur.close()
         return jsonify({"id":eid,"nome":nome,"commit_n":commit_n,"salvato":True})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+    finally:
+        if conn is not None:
+            try: conn.rollback()
+            except Exception: pass
+            _release_conn(conn)
 
 @bp.route("/v1/quaderno/esperimenti")
 def lista_esperimenti():
