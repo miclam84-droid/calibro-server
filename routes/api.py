@@ -6045,12 +6045,14 @@ def maneggiare_materia():
     Analizza gli esperimenti dell'utente per fenomeno/materia."""
     from flask import request, jsonify
     import os, psycopg2, json
+    from db import connessione
     device = request.args.get("device_id") or request.headers.get("X-Device-Id","anon")
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT nome,esito,parametri,creato FROM esperimenti_utente WHERE device_id=%s ORDER BY creato",(device,))
-        righe = cur.fetchall()
-        cur.close(); conn.close()
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT nome,esito,parametri,creato FROM esperimenti_utente WHERE device_id=%s ORDER BY creato",(device,))
+            righe = cur.fetchall()
+            cur.close()
         if not righe:
             return jsonify({"crescita":[],"nota":"Nessun esperimento ancora. Salva i tuoi esperimenti per costruire la tua memoria."})
         # raggruppo per nome-base, calcolo la crescita (esiti nel tempo)
@@ -6076,18 +6078,20 @@ def lista_fenomeni_madre():
     from flask import jsonify
     import os, psycopg2, json
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("""SELECT id, name, data FROM nodes WHERE data->>'is_fenomeno_madre'='true' ORDER BY name""")
-        madre = []
-        for sid, name, data in cur.fetchall():
-            dd = data if isinstance(data,dict) else json.loads(data)
-            cur.execute("SELECT COUNT(*) FROM edges WHERE to_id=%s AND relation='manifestazione_di'",(sid,))
-            n_manif = cur.fetchone()[0]
-            madre.append({"slug":sid,"nome":name,"stato":dd.get("stato_editoriale",""),
-                          "strati":dd.get("strati",{}),"n_manifestazioni":n_manif,
-                          "categoria":dd.get("categoria") or "trasversale",
-                          "principio":(dd.get("principio") or "")[:160]})
-        cur.close(); conn.close()
+        from db import connessione
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("""SELECT id, name, data FROM nodes WHERE data->>'is_fenomeno_madre'='true' ORDER BY name""")
+            madre = []
+            for sid, name, data in cur.fetchall():
+                dd = data if isinstance(data,dict) else json.loads(data)
+                cur.execute("SELECT COUNT(*) FROM edges WHERE to_id=%s AND relation='manifestazione_di'",(sid,))
+                n_manif = cur.fetchone()[0]
+                madre.append({"slug":sid,"nome":name,"stato":dd.get("stato_editoriale",""),
+                              "strati":dd.get("strati",{}),"n_manifestazioni":n_manif,
+                              "categoria":dd.get("categoria") or "trasversale",
+                              "principio":(dd.get("principio") or "")[:160]})
+            cur.close()
         return jsonify({"fenomeni_madre":madre,"n":len(madre)})
     except Exception as e:
         return jsonify({"errore":str(e)[:150],"fenomeni_madre":[]})
@@ -6098,24 +6102,26 @@ def fenomeno_manifestazioni(slug):
     from flask import jsonify
     import os, psycopg2, json
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("""SELECT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
+        from db import connessione
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("""SELECT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
                        WHERE e.to_id=%s AND e.relation='manifestazione_di' ORDER BY n.name""",(slug,))
-        manif = []
-        for mid, mname, mdata in cur.fetchall():
-            dd = mdata if isinstance(mdata,dict) else json.loads(mdata)
-            manif.append({"slug":mid,"nome":mname,"disciplina":dd.get("categoria",""),
-                          "bersaglio":dd.get("numero_bersaglio","")})
-        cur.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
+            manif = []
+            for mid, mname, mdata in cur.fetchall():
+                dd = mdata if isinstance(mdata,dict) else json.loads(mdata)
+                manif.append({"slug":mid,"nome":mname,"disciplina":dd.get("categoria",""),
+                              "bersaglio":dd.get("numero_bersaglio","")})
+            cur.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON n.id=e.to_id
                        WHERE e.from_id=%s AND e.relation='si_manifesta_in'
                        AND n.type IN ('Ingrediente','Prodotto') LIMIT 12""",(slug,))
-        ingredienti = [r[0] for r in cur.fetchall()]
-        if not ingredienti:
-            cur.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON n.id=e.from_id
+            ingredienti = [r[0] for r in cur.fetchall()]
+            if not ingredienti:
+                cur.execute("""SELECT DISTINCT n.name FROM edges e JOIN nodes n ON n.id=e.from_id
                            WHERE e.to_id=%s AND e.relation IN ('attraversa_fenomeno','si_manifesta_in')
                            AND n.type IN ('Ingrediente','Prodotto') LIMIT 12""",(slug,))
-            ingredienti = [r[0] for r in cur.fetchall()]
-        cur.close(); conn.close()
+                ingredienti = [r[0] for r in cur.fetchall()]
+            cur.close()
         return jsonify({"fenomeno":slug,"manifestazioni":manif,"n_manifestazioni":len(manif),
                         "ingredienti_collegati":ingredienti})
     except Exception as e:
