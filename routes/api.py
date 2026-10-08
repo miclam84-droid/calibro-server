@@ -5559,30 +5559,32 @@ def scoperta_molecolare(ingrediente):
         return jsonify({"ingrediente":ingrediente,"spiegazione_disponibile":False,
                         "nota":"Il molecolare spiega PERCHE due ingredienti funzionano insieme (composti condivisi). Scegli una coppia."})
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # composti dei due
-        def _composti(nome):
-            cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(nome,))
-            r=cur.fetchone()
-            if not r: return None, set()
-            cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'",(r[0],))
-            return r[0], set(x[0] for x in cur.fetchall())
-        id1,c1=_composti(ingrediente); id2,c2=_composti(con)
-        if not c1 or not c2:
-            cur.close(); conn.close()
-            return jsonify({"coppia":[ingrediente,con],"spiegazione_disponibile":False,"nota":"Composti non mappati per questa coppia."})
-        cond=c1&c2
-        # nomi dei composti condivisi + spiegazione
-        spieg=[]
-        for comp_id in list(cond)[:6]:
-            cur.execute("SELECT name FROM nodes WHERE id=%s",(comp_id,))
-            cn=cur.fetchone()
-            if cn:
-                key=cn[0].lower().replace(" ","_").replace("-","_")
-                for k,v in _COMPOSTI_SPIEGATI.items():
-                    if k in key or key in k:
-                        spieg.append(v); break
-        cur.close(); conn.close()
+        from db import connessione
+        with connessione() as conn:
+            cur = conn.cursor()
+            # composti dei due
+            def _composti(nome):
+                cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(nome,))
+                r=cur.fetchone()
+                if not r: return None, set()
+                cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'",(r[0],))
+                return r[0], set(x[0] for x in cur.fetchall())
+            id1,c1=_composti(ingrediente); id2,c2=_composti(con)
+            if not c1 or not c2:
+                cur.close()
+                return jsonify({"coppia":[ingrediente,con],"spiegazione_disponibile":False,"nota":"Composti non mappati per questa coppia."})
+            cond=c1&c2
+            # nomi dei composti condivisi + spiegazione
+            spieg=[]
+            for comp_id in list(cond)[:6]:
+                cur.execute("SELECT name FROM nodes WHERE id=%s",(comp_id,))
+                cn=cur.fetchone()
+                if cn:
+                    key=cn[0].lower().replace(" ","_").replace("-","_")
+                    for k,v in _COMPOSTI_SPIEGATI.items():
+                        if k in key or key in k:
+                            spieg.append(v); break
+            cur.close()
         return jsonify({"coppia":[ingrediente,con],"spiegazione_disponibile":len(cond)>=2,
                         "composti_condivisi":len(cond),"perche":spieg[:4],
                         "nota":"Ecco perche funzionano insieme (a livello di composti aromatici)." if cond else "Pochi composti in comune."})
@@ -6035,14 +6037,16 @@ def lista_esperimenti():
     import os, psycopg2, json
     device = request.args.get("device_id") or request.headers.get("X-Device-Id","anon")
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("""SELECT id,nome,protocollo_id,parametri,risultato,esito,note,commit_n,creato
+        from db import connessione
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("""SELECT id,nome,protocollo_id,parametri,risultato,esito,note,commit_n,creato
                        FROM esperimenti_utente WHERE device_id=%s ORDER BY creato DESC LIMIT 100""",(device,))
-        esp=[]
-        for r in cur.fetchall():
-            esp.append({"id":r[0],"nome":r[1],"protocollo_id":r[2],"parametri":r[3],"risultato":r[4],
-                        "esito":r[5],"note":r[6],"commit_n":r[7],"creato":str(r[8])[:16]})
-        cur.close(); conn.close()
+            esp=[]
+            for r in cur.fetchall():
+                esp.append({"id":r[0],"nome":r[1],"protocollo_id":r[2],"parametri":r[3],"risultato":r[4],
+                            "esito":r[5],"note":r[6],"commit_n":r[7],"creato":str(r[8])[:16]})
+            cur.close()
         return jsonify({"esperimenti":esp,"n":len(esp)})
     except Exception as e:
         return jsonify({"errore":str(e)[:150],"esperimenti":[]})
