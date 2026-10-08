@@ -90,6 +90,10 @@ from routes.cron import bp_cron; app.register_blueprint(bp_cron)
 from routes.admin_panel import bp as admin_panel_bp; app.register_blueprint(admin_panel_bp)
 from routes.legal import bp as legal_bp; app.register_blueprint(legal_bp)
 from routes.admin import bp as admin_bp; app.register_blueprint(admin_bp)
+# Migrazioni one-shot (popola-*/genera-*/migra-*/ripara-*): gia eseguite, NON caricate in
+# produzione. Per rilanciarne una: ABILITA_MIGRAZIONI=1 nelle variabili d'ambiente.
+if os.environ.get("ABILITA_MIGRAZIONI") == "1":
+    from routes.admin_migrazioni import bp as admin_mig_bp; app.register_blueprint(admin_mig_bp)
 from routes.auth_routes import bp as auth_routes_bp; app.register_blueprint(auth_routes_bp)
 from routes.api import bp as api_bp; app.register_blueprint(api_bp)
 from routes.lezione import bp as lezione_bp; app.register_blueprint(lezione_bp)
@@ -159,37 +163,11 @@ def _oss_teardown(exc):
 
 # ── Blueprint route ──────────────────────────────────────
 
-# ── Osservabilità: logging errori/lentezze + hook richieste ──
-import time as _time, traceback as _traceback
-import oss
-
-@app.before_request
-def _oss_start():
-    request._t0 = _time.time()
-
-@app.after_request
-def _oss_after(resp):
-    # logga risposte gestite con 5xx o richieste lente (>2s). Mai bloccante.
-    try:
-        dur = int((_time.time() - getattr(request, "_t0", _time.time())) * 1000)
-        if resp.status_code >= 500:
-            oss.log_write("ERROR", request.path, None, f"HTTP {resp.status_code}", None, dur)
-        elif dur > 2000:
-            oss.log_write("WARN", request.path, None, f"lento {dur}ms", None, dur)
-    except Exception:
-        pass
-    return resp
-
-@app.teardown_request
-def _oss_teardown(exc):
-    # cattura le eccezioni non gestite (after_request non gira in quel caso).
-    if exc is not None:
-        try:
-            dur = int((_time.time() - getattr(request, "_t0", _time.time())) * 1000)
-            oss.log_write("ERROR", getattr(request, "path", "?"), None,
-                          str(exc), _traceback.format_exc(), dur)
-        except Exception:
-            pass
+# NOTA PULIZIA: i hook OSS (_oss_start/_oss_after/_oss_teardown) sono gia definiti UNA VOLTA
+# sopra, nella versione COMPLETA (logging + Cache-Control sui file statici + CORS ristretto).
+# Qui c'era un SECONDO blocco con gli stessi nomi ma ridotto (solo logging): Flask registra
+# TUTTI gli hook, non li sovrascrive per nome, quindi ogni errore 5xx e ogni richiesta lenta
+# finiva nei log DUE volte. Rimosso: resta la versione completa di sopra.
 
 
 @app.errorhandler(500)

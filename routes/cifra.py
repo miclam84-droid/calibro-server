@@ -300,7 +300,11 @@ def ricetta_per_cifra(exp_id):
     except Exception as e:
         return jsonify({"errore":str(e)}), 500
 
-@bp.route("/v1/ricette")
+# PULIZIA: era "/v1/ricette" — lo STESSO path di api.py (lista ricette del corpus). api_bp e'
+# registrato PRIMA di cifra_bp in app.py, quindi questo endpoint era IRRAGGIUNGIBILE: Cifra
+# chiedeva gli esperimenti dell'utente e riceveva la lista del corpus. Spostato sotto /v1/cifra/.
+@bp.route("/v1/cifra/ricette")
+@bp.route("/v1/ricette-cifra")  # alias di compatibilita, se Cifra usa ancora il vecchio nome
 def ricette_per_cifra():
     """Lista ricette (esperimenti) dell'utente — endpoint Cifra.
     Cifra passa X-User-Email + MATTER_SERVICE_KEY.
