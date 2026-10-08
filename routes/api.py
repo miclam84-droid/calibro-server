@@ -5598,40 +5598,42 @@ def lista_protocolli():
     q = request.args.get("q", "")
     limit = min(int(request.args.get("limit", "50")), 200)
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        sql = "SELECT id, name, data FROM nodes WHERE type='Protocollo'"
-        params = []
-        if disc:
-            sql += " AND data->>'disciplina' = %s"; params.append(disc)
-        if q:
-            sql += " AND LOWER(name) LIKE %s"; params.append("%"+q.lower()+"%")
-        sql += " ORDER BY name LIMIT %s"; params.append(limit)
-        cur.execute(sql, params)
-        protocolli = []
-        for pid, nome, data in cur.fetchall():
-            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
-            ip = dd.get("il_punto") or {}
-            protocolli.append({
-                "id": pid, "nome": nome, "disciplina": dd.get("disciplina",""),
-                # nuovi
-                "cosa_voglio_ottenere": dd.get("cosa_voglio_ottenere") or dd.get("ipotesi",""),
-                "il_punto": ip,
-                "tipo_punto": ip.get("tipo",""),
-                "ingredienti": dd.get("ingredienti") or dd.get("reagenti",[]),
-                "n_ingredienti": len(dd.get("ingredienti") or dd.get("reagenti",[])),
-                # vecchi (compatibilita)
-                "ipotesi": dd.get("ipotesi",""),
-                "variabile_critica": dd.get("variabile_critica",""),
-                "bersaglio": dd.get("bersaglio",{}),
-                "n_reagenti": len(dd.get("reagenti",[])),
-                "fenomeni": [{"nome": f.get("nome"), "slug": f.get("slug") or f.get("fenomeno_id")} if isinstance(f,dict) else {"nome": f} for f in dd.get("fenomeni",[])],
-                "origine": ("canonica" if any(str(pid).startswith(px) for px in ("ric-cls","ric-base","ric-iba")) else "variante"),
-                "verificato": dd.get("verificato", None),
-            })
-        # conteggio totale per disciplina
-        cur.execute("SELECT data->>'disciplina' d, COUNT(*) FROM nodes WHERE type='Protocollo' GROUP BY d ORDER BY COUNT(*) DESC")
-        per_disc = {(r[0] or "senza"): r[1] for r in cur.fetchall()}
-        cur.close(); conn.close()
+        from db import connessione
+        with connessione() as conn:
+            cur = conn.cursor()
+            sql = "SELECT id, name, data FROM nodes WHERE type='Protocollo'"
+            params = []
+            if disc:
+                sql += " AND data->>'disciplina' = %s"; params.append(disc)
+            if q:
+                sql += " AND LOWER(name) LIKE %s"; params.append("%"+q.lower()+"%")
+            sql += " ORDER BY name LIMIT %s"; params.append(limit)
+            cur.execute(sql, params)
+            protocolli = []
+            for pid, nome, data in cur.fetchall():
+                dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                ip = dd.get("il_punto") or {}
+                protocolli.append({
+                    "id": pid, "nome": nome, "disciplina": dd.get("disciplina",""),
+                    # nuovi
+                    "cosa_voglio_ottenere": dd.get("cosa_voglio_ottenere") or dd.get("ipotesi",""),
+                    "il_punto": ip,
+                    "tipo_punto": ip.get("tipo",""),
+                    "ingredienti": dd.get("ingredienti") or dd.get("reagenti",[]),
+                    "n_ingredienti": len(dd.get("ingredienti") or dd.get("reagenti",[])),
+                    # vecchi (compatibilita)
+                    "ipotesi": dd.get("ipotesi",""),
+                    "variabile_critica": dd.get("variabile_critica",""),
+                    "bersaglio": dd.get("bersaglio",{}),
+                    "n_reagenti": len(dd.get("reagenti",[])),
+                    "fenomeni": [{"nome": f.get("nome"), "slug": f.get("slug") or f.get("fenomeno_id")} if isinstance(f,dict) else {"nome": f} for f in dd.get("fenomeni",[])],
+                    "origine": ("canonica" if any(str(pid).startswith(px) for px in ("ric-cls","ric-base","ric-iba")) else "variante"),
+                    "verificato": dd.get("verificato", None),
+                })
+            # conteggio totale per disciplina
+            cur.execute("SELECT data->>'disciplina' d, COUNT(*) FROM nodes WHERE type='Protocollo' GROUP BY d ORDER BY COUNT(*) DESC")
+            per_disc = {(r[0] or "senza"): r[1] for r in cur.fetchall()}
+            cur.close()
         return jsonify({"protocolli": protocolli, "totale_mostrati": len(protocolli), "per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
@@ -5644,25 +5646,27 @@ def protocolli_di_ingrediente(ingrediente):
     from flask import jsonify
     import os, psycopg2, json
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # trovo il nodo ingrediente
-        cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+        from db import connessione
+        with connessione() as conn:
+            cur = conn.cursor()
+            # trovo il nodo ingrediente
+            cur.execute("""SELECT id, name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                        AND LOWER(name)=LOWER(%s) LIMIT 1""", (ingrediente,))
-        r = cur.fetchone()
-        if not r: cur.close(); conn.close(); return jsonify({"errore":"ingrediente non trovato"}), 404
-        ing_id, ing_nome = r
-        # i protocolli che usano questo ingrediente (arco usa_reagente)
-        cur.execute("""SELECT DISTINCT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
+            r = cur.fetchone()
+            if not r: cur.close(); return jsonify({"errore":"ingrediente non trovato"}), 404
+            ing_id, ing_nome = r
+            # i protocolli che usano questo ingrediente (arco usa_reagente)
+            cur.execute("""SELECT DISTINCT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
                        WHERE e.to_id=%s AND e.relation='usa_reagente' AND n.type='Protocollo' LIMIT 20""", (ing_id,))
-        esperimenti = []
-        for pid, nome, data in cur.fetchall():
-            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
-            esperimenti.append({
-                "id": pid, "nome": nome, "disciplina": dd.get("disciplina",""),
-                "ipotesi": dd.get("ipotesi",""), "bersaglio": dd.get("bersaglio",{}),
-                "fenomeni": [f.get("nome") for f in dd.get("fenomeni",[])],
-            })
-        cur.close(); conn.close()
+            esperimenti = []
+            for pid, nome, data in cur.fetchall():
+                dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+                esperimenti.append({
+                    "id": pid, "nome": nome, "disciplina": dd.get("disciplina",""),
+                    "ipotesi": dd.get("ipotesi",""), "bersaglio": dd.get("bersaglio",{}),
+                    "fenomeni": [f.get("nome") for f in dd.get("fenomeni",[])],
+                })
+            cur.close()
         return jsonify({
             "ingrediente": ing_nome,
             "esperimenti": esperimenti,
@@ -5680,28 +5684,30 @@ def leggi_protocollo(pid):
     from flask import jsonify
     import os, psycopg2, json
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        cur.execute("SELECT id, name, data FROM nodes WHERE id=%s", (pid,))
-        r = cur.fetchone()
-        if not r: cur.close(); conn.close(); return jsonify({"errore":"protocollo non trovato"}), 404
-        dd = r[2] if isinstance(r[2], dict) else json.loads(r[2])
-        # arricchisco i fenomeni con la loro causalita (per il Composer/Diagnosi nella scheda)
-        fenomeni_ricchi = []
-        for f in dd.get("fenomeni", []):
-            if isinstance(f, str):
-                f = {"nome": f}
-            # lo slug puo stare in fenomeno_id (vecchio) o slug (il collegamento nuovo)
-            fid = f.get("fenomeno_id") or f.get("slug")
-            fen = {"nome": f.get("nome"), "causalita": f.get("causalita"), "slug": fid}
-            if fid:
-                cur.execute("SELECT data FROM nodes WHERE id=%s", (fid,))
-                fr = cur.fetchone()
-                if fr:
-                    fdd = fr[0] if isinstance(fr[0], dict) else json.loads(fr[0])
-                    if fen["causalita"] is None:
-                        fen["causalita"] = fdd.get("causalita")
-            fenomeni_ricchi.append(fen)
-        cur.close(); conn.close()
+        from db import connessione
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT id, name, data FROM nodes WHERE id=%s", (pid,))
+            r = cur.fetchone()
+            if not r: cur.close(); return jsonify({"errore":"protocollo non trovato"}), 404
+            dd = r[2] if isinstance(r[2], dict) else json.loads(r[2])
+            # arricchisco i fenomeni con la loro causalita (per il Composer/Diagnosi nella scheda)
+            fenomeni_ricchi = []
+            for f in dd.get("fenomeni", []):
+                if isinstance(f, str):
+                    f = {"nome": f}
+                # lo slug puo stare in fenomeno_id (vecchio) o slug (il collegamento nuovo)
+                fid = f.get("fenomeno_id") or f.get("slug")
+                fen = {"nome": f.get("nome"), "causalita": f.get("causalita"), "slug": fid}
+                if fid:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s", (fid,))
+                    fr = cur.fetchone()
+                    if fr:
+                        fdd = fr[0] if isinstance(fr[0], dict) else json.loads(fr[0])
+                        if fen["causalita"] is None:
+                            fen["causalita"] = fdd.get("causalita")
+                fenomeni_ricchi.append(fen)
+            cur.close()
         # NUOVO SCHEMA (compatibilita: i campi vecchi restano, i nuovi derivano)
         bers = dd.get("bersaglio",{}) or {}
         il_punto = dd.get("il_punto")  # se gia convertito, usa quello
@@ -5759,24 +5765,26 @@ def esperimento_del_giorno():
     from flask import jsonify
     import os, psycopg2, json, datetime
     try:
-        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
-        # R-ESPERIMENTO (fix): una preparazione CANONICA con il_punto pieno e cosa_voglio_ottenere.
-        # Questi garantiscono una scheda vera (non "in arrivo"). I vecchi campi (ipotesi/procedimento) nel
-        # formato nuovo sono vuoti, per questo il filtro di prima dava 0.
-        cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
+        from db import connessione
+        with connessione() as conn:
+            cur = conn.cursor()
+            # R-ESPERIMENTO (fix): una preparazione CANONICA con il_punto pieno e cosa_voglio_ottenere.
+            # Questi garantiscono una scheda vera (non "in arrivo"). I vecchi campi (ipotesi/procedimento) nel
+            # formato nuovo sono vuoti, per questo il filtro di prima dava 0.
+            cur.execute("""SELECT id, name, data FROM nodes WHERE type='Protocollo'
                        AND (id LIKE 'ric-cls%%' OR id LIKE 'ric-base%%' OR id LIKE 'ric-iba%%')
                        AND data->'il_punto' IS NOT NULL
                        AND LENGTH(COALESCE(data->>'cosa_voglio_ottenere','')) > 10
                        ORDER BY id""")
-        completi = cur.fetchall()
-        if not completi:
-            cur.close(); conn.close()
-            return jsonify({"errore":"nessun protocollo completo ancora"}), 404
-        # rotazione deterministica sul giorno dell'anno
-        giorno = datetime.date.today().toordinal()
-        scelto = completi[giorno % len(completi)]
-        dd = scelto[2] if isinstance(scelto[2], dict) else json.loads(scelto[2])
-        cur.close(); conn.close()
+            completi = cur.fetchall()
+            if not completi:
+                cur.close()
+                return jsonify({"errore":"nessun protocollo completo ancora"}), 404
+            # rotazione deterministica sul giorno dell'anno
+            giorno = datetime.date.today().toordinal()
+            scelto = completi[giorno % len(completi)]
+            dd = scelto[2] if isinstance(scelto[2], dict) else json.loads(scelto[2])
+            cur.close()
         return jsonify({
             "id": scelto[0], "nome": scelto[1],
             "cosa_voglio_ottenere": dd.get("cosa_voglio_ottenere",""),
