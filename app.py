@@ -96,6 +96,7 @@ if os.environ.get("ABILITA_MIGRAZIONI") == "1":
     from routes.admin_migrazioni import bp as admin_mig_bp; app.register_blueprint(admin_mig_bp)
 from routes.auth_routes import bp as auth_routes_bp; app.register_blueprint(auth_routes_bp)
 from routes.api import bp as api_bp; app.register_blueprint(api_bp)
+from routes.criteri import bp as criteri_bp; app.register_blueprint(criteri_bp)  # motore criteri Laboratorio (decisioni 8 ott)
 from routes.lezione import bp as lezione_bp; app.register_blueprint(lezione_bp)
 from routes.chat import bp as chat_bp; app.register_blueprint(chat_bp)
 from routes.quiz_engine import bp as quiz_engine_bp; app.register_blueprint(quiz_engine_bp)
