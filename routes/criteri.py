@@ -370,3 +370,35 @@ def grafo_stato():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:160]}), 500
+
+
+@bp.route("/v1/criteri/orfani", methods=["GET"])
+def criteri_orfani():
+    """DIAGNOSTICO (strategia Ahn): ingredienti/prodotti senza composti e senza padre_ahn.
+    Raggruppa per prefisso id e campiona i nomi, per classificarli (varieta' di Ahn / preparazioni /
+    genuinamente nuovi) e capire cosa si recupera gratis col link al padre e cosa no."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute(
+                r"""SELECT regexp_replace(id, '[-_].*$', '') AS pref, COUNT(*)
+                    FROM nodes n
+                    WHERE n.type IN ('Ingrediente','Prodotto')
+                      AND n.padre_ahn_id IS NULL
+                      AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id = n.id AND e.relation = 'contiene_composto')
+                    GROUP BY pref ORDER BY COUNT(*) DESC""")
+            per_prefisso = {(p or "(vuoto)"): c for p, c in cur.fetchall()}
+            cur.execute(
+                r"""SELECT id, name FROM nodes n
+                    WHERE n.type IN ('Ingrediente','Prodotto')
+                      AND n.padre_ahn_id IS NULL
+                      AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id = n.id AND e.relation = 'contiene_composto')
+                    ORDER BY n.name
+                    LIMIT 120""")
+            campione = [{"id": i, "nome": nm} for i, nm in cur.fetchall()]
+            cur.close()
+        return jsonify({"per_prefisso_id": per_prefisso, "campione_nomi": campione, "n_campione": len(campione)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:160]}), 500
