@@ -100,6 +100,21 @@ def _risolvi_nodo(cur, ingrediente):
     r = cur.fetchone()
     if r:
         return (r[0], ingrediente.strip())
+
+    # 3) fallback: nessun nodo con composti (es. melanzana, pochi volatili). Prendo comunque il
+    #    miglior match, così la TRADIZIONE si vede lo stesso. base_aromatica tornerà vuota, onesto.
+    cur.execute(
+        """SELECT n.id, n.name FROM nodes n
+           WHERE n.type IN ('Ingrediente','Prodotto')
+             AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+             AND (LOWER(n.name) = %s OR LOWER(n.name) LIKE %s OR LOWER(n.id) = %s)
+           ORDER BY (LOWER(n.name) = %s) DESC, LENGTH(n.name) ASC
+           LIMIT 1""",
+        (ing, f"%{ing}%", "ahn_" + ing.replace(" ", "_"), ing),
+    )
+    r = cur.fetchone()
+    if r:
+        return (r[0], ingrediente.strip())
     return None
 
 
