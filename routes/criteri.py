@@ -38,8 +38,12 @@ def _banda(n):
 
 
 def _nome_composto(cid):
-    """comp_linalool -> 'linalool'. NON inventa traduzioni italiane: mostra il nome pulito del composto."""
-    return (cid or "").replace("comp_", "").replace("_", " ").strip()
+    """comp_pub_1_octanol -> '1 octanol'. NON inventa traduzioni italiane: mostra il nome chimico pulito.
+    Toglie i prefissi tecnici ('comp_', 'pub_') che sono rumore per il professionista."""
+    s = (cid or "").replace("comp_", "")
+    if s.startswith("pub_"):
+        s = s[4:]
+    return s.replace("_", " ").strip()
 
 
 def _conn():
@@ -84,15 +88,19 @@ def _risolvi_nodo(cur, ingrediente):
     return (nid, nname)
 
 
-def _base_aromatica(cur, ing_id, escludi_id, limit=12, min_shared=2):
+def _base_aromatica(cur, ing_id, base_nome, limit=10, min_shared=3):
     """Criterio 1: ingredienti che condividono composti volatili reali.
-    Query a specchio del motore 'scoperta' di /v1/possibilita (gia' provato sul DB reale).
-    Esclude i nascosti (oli essenziali 95/5) e i nomi-dataset grezzi (con underscore)."""
+    Query a specchio del motore 'scoperta' di /v1/possibilita.
+    Fix verificati sull'output reale (8 ott):
+    - COUNT(DISTINCT ...): il grafo ha archi doppi -> senza DISTINCT il conteggio era gonfiato (144 > 133 totali).
+    - padre_ahn_id <> base: esclude le varianti dello stesso ingrediente (pomodoro datterino, passata...).
+    - name NOT LIKE '%<base>%': backup contro le varianti con lo stesso nome.
+    Esclude anche i nascosti (oli essenziali 95/5) e i nomi-dataset grezzi (con underscore)."""
     cur.execute(
         r"""
         SELECT n.name,
-               COUNT(*) AS shared,
-               (array_agg(a.to_id ORDER BY a.to_id))[1:5] AS compounds
+               COUNT(DISTINCT b.to_id) AS shared,
+               (array_agg(DISTINCT b.to_id))[1:6] AS compounds
         FROM edges a
         JOIN edges b ON a.to_id = b.to_id AND b.relation = 'contiene_composto'
         JOIN nodes n ON n.id = b.from_id
@@ -101,12 +109,14 @@ def _base_aromatica(cur, ing_id, escludi_id, limit=12, min_shared=2):
           AND n.type IN ('Ingrediente','Prodotto')
           AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
           AND n.name NOT LIKE '%%\_%%'
+          AND (n.padre_ahn_id IS DISTINCT FROM %s)
+          AND LOWER(n.name) NOT LIKE LOWER(%s)
         GROUP BY n.name
-        HAVING COUNT(*) >= %s
+        HAVING COUNT(DISTINCT b.to_id) >= %s
         ORDER BY shared DESC, n.name ASC
         LIMIT %s
         """,
-        (ing_id, escludi_id, min_shared, limit),
+        (ing_id, ing_id, ing_id, f"%{base_nome}%", min_shared, limit),
     )
     out = []
     for name, shared, compounds in cur.fetchall():
@@ -167,7 +177,7 @@ def criteri(ingrediente):
                             "non_riconosciuto": True,
                             "nota": "Ingrediente non trovato nel grafo."})
         ing_id, ing_nome = nodo
-        base = _base_aromatica(cur, ing_id, ing_id)
+        base = _base_aromatica(cur, ing_id, ing_nome)
         trad = _tradizione(cur, ing_id)
         cur.close(); conn.close()
         # tradizione in coda, de-duplicata rispetto alla base
