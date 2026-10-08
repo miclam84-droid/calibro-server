@@ -202,6 +202,39 @@ def _tradizione(cur, ing_id, limit=6):
     return out
 
 
+def _contrasto(cur, ing_id, limit=6):
+    """Criterio: contrasto documentato (archi abbinamento_contrasto, bidirezionali).
+    Relazione curata nel grafo, NON l'euristica fisico-chimica (quella richiede dati
+    grassi/ph/amaro oggi non popolati — vedi mappa dati)."""
+    out = []
+    try:
+        cur.execute(
+            r"""
+            SELECT DISTINCT n.name
+            FROM edges e
+            JOIN nodes n ON n.id = CASE WHEN e.from_id = %s THEN e.to_id ELSE e.from_id END
+            WHERE (e.from_id = %s OR e.to_id = %s) AND e.relation = 'abbinamento_contrasto'
+              AND n.id <> %s
+              AND n.type IN ('Ingrediente', 'Prodotto')
+              AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+              AND n.name NOT LIKE '%%\_%%'
+            LIMIT %s
+            """,
+            (ing_id, ing_id, ing_id, ing_id, limit),
+        )
+        for (name,) in cur.fetchall():
+            out.append({
+                "ingrediente": name,
+                "criterio": "contrasto",
+                "evidenza": {"tipo": "documentato"},
+                "robustezza": None,
+                "perche": "contrasto documentato nel grafo (relazione curata, non euristica)",
+            })
+    except Exception:
+        pass
+    return out
+
+
 @bp.route("/v1/criteri/<ingrediente>", methods=["GET"])
 def criteri(ingrediente):
     """Relazioni di un ingrediente, per criterio, con evidenza reale. NIENTE percentuale di abbinabilita'."""
@@ -219,6 +252,7 @@ def criteri(ingrediente):
             ing_id, ing_nome = nodo
             base = _base_aromatica(cur, ing_id, ing_nome)
             trad = _tradizione(cur, ing_id)
+            contr = _contrasto(cur, ing_id)
             cur.close()
         # declassa gli hub generici (riuso il filtro gia' provato di api.py)
         try:
@@ -229,12 +263,14 @@ def criteri(ingrediente):
         base = base[:12]
         nomi_base = {r["ingrediente"].lower() for r in base}
         trad = [r for r in trad if r["ingrediente"].lower() not in nomi_base]
+        gia_visti = nomi_base | {r["ingrediente"].lower() for r in trad}
+        contr = [r for r in contr if r["ingrediente"].lower() not in gia_visti]
         return jsonify({
             "ingrediente": ing_nome,
             "nodo_id": ing_id,
             "regola": "Matter mostra perche' una relazione esiste, non un voto di compatibilita'.",
-            "relazioni": base + trad,
-            "conteggio": {"base_aromatica": len(base), "tradizione": len(trad)},
+            "relazioni": base + trad + contr,
+            "conteggio": {"base_aromatica": len(base), "tradizione": len(trad), "contrasto": len(contr)},
         })
     except Exception as e:
         return jsonify({"ingrediente": ingrediente, "errore": str(e)[:160]}), 500
