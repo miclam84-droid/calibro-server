@@ -4136,7 +4136,7 @@ def composer_prossimi():
     scelti = d.get("ingredienti", [])  # lista di nomi o id gia in ricetta
     if not scelti:
         return jsonify({"errore": "servono ingredienti di partenza"}), 400
-    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato","alcolico"]
     try:
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
         # 1. risolvo gli ingredienti scelti (id + proprieta + composti)
@@ -4303,6 +4303,8 @@ def composer_obiettivo():
         "croccante": ("croccante", "Struttura croccante"),
         "salato": ("salato", "Sapido, deciso"),
         "grasso": ("grasso", "Avvolgente, rotondo"),
+        "alcolico": ("alcolico", "Struttura e spinta del distillato"),
+        "strutturato": ("alcolico", "Corpo alcolico, struttura da distillato"),
     }
     prop_target, descr = OBIETTIVI.get(obiettivo, (None, None))
     if not prop_target:
@@ -4349,7 +4351,7 @@ def composer_diagnosi():
     scelti = d.get("ingredienti", [])
     if not scelti:
         return jsonify({"errore": "servono ingredienti"}), 400
-    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato","alcolico"]
     try:
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
         profilo = {k: 0.0 for k in P}; n = 0; fenomeni = set()
@@ -5459,7 +5461,7 @@ def twist_dal_canone():
         if not ingredienti or not sostituisci or not con:
             return jsonify({"errore": "servono: ingredienti[], sostituisci, con"}), 400
         # calcolo profilo DIRETTO dal db (no self-HTTP)
-        P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+        P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato","alcolico"]
         conn = _get_conn(); cur = conn.cursor()
         def profilo(ings):
             prof = {k: 0.0 for k in P}; n = 0
