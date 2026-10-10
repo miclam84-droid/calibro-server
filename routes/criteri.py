@@ -897,3 +897,81 @@ def criteri_usda_gusti():
         })
     except Exception as e:
         return _errore(e)
+
+
+# --- ACIDO (pH) + UMAMI (glutammato) da dati pubblici, sul core -------------------
+_PH_CORE = {
+    "pomodoro": 4.3, "limone": 2.3, "lime": 2.3, "mela": 3.4, "fragola": 3.4,
+    "parmigiano": 5.4, "latte": 6.7, "miele": 3.9, "aglio": 5.8, "cipolla": 5.5,
+    "carota": 6.0, "patata": 5.7, "spinaci": 5.6,
+}
+_GLU_CORE = {
+    "pomodoro": 240, "parmigiano": 1200, "latte": 2, "aglio": 100, "cipolla": 50,
+    "carota": 40, "spinaci": 50, "patata": 100, "mela": 5, "fragola": 5,
+    "miele": 0, "zucchero": 0, "burro": 5, "olio di oliva": 0, "limone": 3, "lime": 3,
+}
+_ANCORE_ACIDO = [(0, 0), (1.5, 3), (2.5, 5), (3.5, 7), (4.7, 9), (5.2, 10)]
+_ANCORE_UMAMI = [(0, 0), (50, 1.5), (150, 3), (400, 5), (800, 7), (1200, 8.5), (1600, 10)]
+
+
+@bp.route("/v1/criteri/gusti-ph-umami", methods=["GET", "POST"])
+def criteri_gusti_ph_umami():
+    """Caba ACIDO (da pH) e UMAMI (da glutammato) sui nodi del core. DRY-RUN; scrive con ?conferma=applica."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    righe = []
+    scritti = 0
+    nomi = set(list(_PH_CORE.keys()) + list(_GLU_CORE.keys()))
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            for nome_it in sorted(nomi):
+                voce = {"ingrediente": nome_it}
+                fisso = _USDA_NODO_FISSO.get(nome_it)
+                nodo = None
+                if fisso:
+                    cur.execute("SELECT id, name FROM nodes WHERE id=%s", (fisso,))
+                    rr = cur.fetchone()
+                    if rr:
+                        nodo = (rr[0], rr[1])
+                if not nodo:
+                    nodo = _risolvi_nodo(cur, nome_it)
+                if not nodo:
+                    voce["stato"] = "nodo non trovato"
+                    righe.append(voce)
+                    continue
+                voce["nodo"] = nodo[0]
+                ph = _PH_CORE.get(nome_it)
+                glu = _GLU_CORE.get(nome_it)
+                acido = _scala(7 - ph, _ANCORE_ACIDO) if ph is not None else None
+                umami = _scala(glu, _ANCORE_UMAMI) if glu is not None else None
+                voce["grezzo"] = {"pH": ph, "glutammato_mg": glu}
+                voce["derivato"] = {"acido": acido, "umami": umami}
+                if applica:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+                    row = cur.fetchone()
+                    dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                    prop = dd.get("proprieta") or {}
+                    fonti = dd.get("proprieta_fonti") or {}
+                    if acido is not None and "acido" not in prop:
+                        prop["acido"] = acido
+                        fonti["acido"] = {"stato": "derivato", "fonte": "pH FDA/extension", "base": f"pH {ph}"}
+                    if umami is not None and "umami" not in prop:
+                        prop["umami"] = umami
+                        fonti["umami"] = {"stato": "derivato", "fonte": "glutammato letteratura", "base": f"glutammato {glu} mg/100g"}
+                    dd["proprieta"] = prop
+                    dd["proprieta_fonti"] = fonti
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
+                    scritti += 1
+                    voce["stato"] = "scritto"
+                righe.append(voce)
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
+    except Exception as e:
+        return _errore(e)
