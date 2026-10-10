@@ -825,6 +825,7 @@ def _usda_nutrienti(fdc_id, key):
 
 @bp.route("/v1/criteri/usda-gusti", methods=["GET", "POST"])
 def criteri_usda_gusti():
+    return jsonify({"nota": "endpoint deprecato: usa /v1/criteri/usda-gusti-blocco"}), 410
     """Caba dolce/salato/grasso da USDA sui nodi canonici del core. DRY-RUN di default
     (mostra cosa scriverebbe). Scrive solo con ?conferma=applica. Protetto dal secret admin."""
     if not DATABASE_URL:
