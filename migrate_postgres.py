@@ -53,6 +53,12 @@ def main():
     schema_sql = (GRAFO / "schema.sql").read_text(encoding="utf-8")
     cur.execute(schema_sql)
 
+    # schema tabella ricette (separata dal grafo; era creata a mano, ora versionata)
+    _ric = GRAFO / "schema-ricette.sql"
+    if _ric.exists():
+        print("Carico schema-ricette.sql...")
+        cur.execute(_ric.read_text(encoding="utf-8"))
+
     # ── 3b. Cache traduzioni (persistente, NON viene mai truncata) ──
     # Le schede EN vivono qui: il TRUNCATE svuota nodes/edges ma non
     # questa tabella, cosi l'inglese non sparisce piu a ogni reseed.
