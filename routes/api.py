@@ -4367,13 +4367,13 @@ def composer_diagnosi():
             prop = dd.get("proprieta")
             if prop:
                 n += 1
-                for k in P: profilo[k] += float(prop.get(k, 0))
+                for k in P: profilo[k] = max(profilo[k], float(prop.get(k, 0)), key=abs)
             # fenomeni collegati all'ingrediente
             _cur.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
                             WHERE e.from_id=%s AND n2.type='Fenomeno' LIMIT 3""", (nid,))
             for f in _cur.fetchall(): fenomeni.add(f[0])
         if n:
-            for k in P: profilo[k] = round(profilo[k]/n, 1)
+            for k in P: profilo[k] = round(profilo[k], 1)
         _cur.close(); _release_conn(_c)
         # valuto l'equilibrio
         note = []
