@@ -1002,3 +1002,78 @@ _USDA_NODO_FISSO.update({
     "farina": "ing-base-farina",
     "mandorle": "ahn_almond",
 })
+
+# --- USDA gusti A BLOCCHI (fill-only): evita il timeout, completa dolce/salato/grasso sui nuovi ---
+@bp.route("/v1/criteri/usda-gusti-blocco", methods=["GET", "POST"])
+def criteri_usda_gusti_blocco():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    key = os.environ.get("USDA_API_KEY", "")
+    if not key:
+        return jsonify({"errore": "USDA_API_KEY non impostata"}), 503
+    try:
+        da = int(request.args.get("da") or 0)
+        a = int(request.args.get("a") or 12)
+    except ValueError:
+        da, a = 0, 12
+    voci = sorted(_USDA_CORE.items())[da:a]
+    righe = []
+    scritti = 0
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            for nome_it, fdc in voci:
+                r = {"ingrediente": nome_it, "fdc_id": fdc}
+                fisso = _USDA_NODO_FISSO.get(nome_it)
+                nodo = None
+                if fisso:
+                    cur.execute("SELECT id, name FROM nodes WHERE id=%s", (fisso,))
+                    rr = cur.fetchone()
+                    if rr:
+                        nodo = (rr[0], rr[1])
+                if not nodo:
+                    nodo = _risolvi_nodo(cur, nome_it)
+                if not nodo:
+                    r["stato"] = "nodo non trovato"
+                    righe.append(r)
+                    continue
+                r["nodo"] = nodo[0]
+                try:
+                    nutr = _usda_nutrienti(fdc, key)
+                except Exception as e:
+                    r["stato"] = "USDA errore: " + str(e)[:60]
+                    righe.append(r)
+                    continue
+                dolce = _scala(nutr["zuccheri_g"], _ANCORE_DOLCE)
+                salato = _scala(nutr["sodio_mg"], _ANCORE_SALATO)
+                grasso = _scala(nutr["grassi_g"], _ANCORE_GRASSO)
+                r["derivato"] = {"dolce": dolce, "salato": salato, "grasso": grasso}
+                if applica:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+                    row = cur.fetchone()
+                    dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                    prop = dd.get("proprieta") or {}
+                    fonti = dd.get("proprieta_fonti") or {}
+                    for asse, val, base in (("dolce", dolce, f"zuccheri {nutr['zuccheri_g']}g/100g"),
+                                            ("salato", salato, f"sodio {nutr['sodio_mg']}mg/100g"),
+                                            ("grasso", grasso, f"grassi {nutr['grassi_g']}g/100g")):
+                        if val is not None and asse not in prop:
+                            prop[asse] = val
+                            fonti[asse] = {"stato": "derivato", "fonte": f"USDA FDC {fdc}", "base": base}
+                    dd["proprieta"] = prop
+                    dd["proprieta_fonti"] = fonti
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
+                    scritti += 1
+                    r["stato"] = "scritto"
+                righe.append(r)
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "fetta": f"{da}:{a}",
+                        "totale_core": len(_USDA_CORE), "scritti": scritti, "righe": righe})
+    except Exception as e:
+        return _errore(e)
