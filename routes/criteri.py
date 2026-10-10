@@ -121,44 +121,56 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     """Criterio 1: ingredienti che condividono composti volatili reali.
     - solo partner INGREDIENTE canonico (niente nodi 'Prodotto' = varianti/tagli che copiano la chimica);
     - COUNT(DISTINCT): il grafo ha archi doppi;
-    - RANKING NORMALIZZATO: shared / sqrt(profilo_A * profilo_B), non il conteggio grezzo.
-      Il conteggio grezzo premia gli HUB (te', birra = centinaia di volatili) che condividono tanto
-      con tutto. La normalizzazione (cosine sui profili) li demolisce: conta la SOVRAPPOSIZIONE
-      relativa, non quanti composti ha il partner.
-    - filtro firma aromatica: stessa firma di composti = di fatto stessa famiglia -> max 2."""
-    # profilo di A (quanti composti distinti ha l'ingrediente centrale)
+    - RANKING PESATO PER RARITA' (IDF): ogni composto condiviso pesa ln(N/df), dove df = in quanti
+      ingredienti compare. Un composto in 1500 ingredienti (volatile verde generico) pesa ~0; uno in
+      5 e' caratterizzante e pesa tanto. Il conteggio grezzo e la sola normalizzazione lasciavano gli
+      HUB (te', birra) in cima perche' condividono TANTI composti COMUNI. L'IDF li uccide: condividere
+      roba che sta in tutto non vale niente. Poi si normalizza per sqrt(profilo_A*profilo_B).
+    - 'composti' mostra i condivisi piu' RARI (i caratterizzanti), non i primi per id.
+    - filtro firma aromatica: stessa firma di composti rari = stessa famiglia -> max 2."""
     cur.execute(
         "SELECT COUNT(DISTINCT to_id) FROM edges WHERE from_id=%s AND relation='contiene_composto'",
         (ing_id,))
     nA = int((cur.fetchone() or [0])[0]) or 1
     cur.execute(
         r"""
-        WITH cc AS (
+        WITH df AS (
+            SELECT to_id AS comp, COUNT(DISTINCT from_id)::float AS d
+            FROM edges WHERE relation='contiene_composto' GROUP BY to_id
+        ),
+        ntot AS (SELECT GREATEST(COUNT(DISTINCT from_id),2)::float AS n
+                 FROM edges WHERE relation='contiene_composto'),
+        cc AS (
             SELECT from_id, COUNT(DISTINCT to_id) AS n
             FROM edges WHERE relation='contiene_composto' GROUP BY from_id
+        ),
+        shared AS (
+            SELECT DISTINCT n.name AS pname, b.to_id AS comp, cc.n AS nb
+            FROM edges a
+            JOIN edges b ON a.to_id = b.to_id AND b.relation = 'contiene_composto'
+            JOIN nodes n ON n.id = b.from_id
+            JOIN cc ON cc.from_id = n.id
+            WHERE a.from_id = %s AND a.relation = 'contiene_composto'
+              AND b.from_id <> %s
+              AND n.type = 'Ingrediente'
+              AND n.padre_ahn_id IS NULL
+              AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+              AND n.name NOT LIKE '%%\_%%'
+              AND LOWER(n.name) NOT LIKE LOWER(%s)
         )
-        SELECT n.name,
-               COUNT(DISTINCT b.to_id) AS shared,
-               cc.n AS nb,
-               (COUNT(DISTINCT b.to_id)::float / sqrt(%s::float * cc.n)) AS score,
-               (array_agg(DISTINCT b.to_id ORDER BY b.to_id))[1:6] AS compounds
-        FROM edges a
-        JOIN edges b ON a.to_id = b.to_id AND b.relation = 'contiene_composto'
-        JOIN nodes n ON n.id = b.from_id
-        JOIN cc ON cc.from_id = n.id
-        WHERE a.from_id = %s AND a.relation = 'contiene_composto'
-          AND b.from_id <> %s
-          AND n.type = 'Ingrediente'
-          AND n.padre_ahn_id IS NULL
-          AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
-          AND n.name NOT LIKE '%%\_%%'
-          AND LOWER(n.name) NOT LIKE LOWER(%s)
-        GROUP BY n.name, cc.n
-        HAVING COUNT(DISTINCT b.to_id) >= %s
-        ORDER BY score DESC, shared DESC, n.name ASC
+        SELECT s.pname,
+               COUNT(*) AS shared,
+               MAX(s.nb) AS nb,
+               ( SUM( ln( (SELECT n FROM ntot) / GREATEST(df.d,1) ) )
+                 / sqrt(%s::float * MAX(s.nb)) ) AS score,
+               (array_agg(s.comp ORDER BY df.d ASC))[1:6] AS rare_comps
+        FROM shared s JOIN df ON df.comp = s.comp
+        GROUP BY s.pname
+        HAVING COUNT(*) >= %s
+        ORDER BY score DESC, shared DESC, s.pname ASC
         LIMIT %s
         """,
-        (nA, ing_id, ing_id, f"%{base_nome}%", min_shared, pool),
+        (ing_id, ing_id, f"%{base_nome}%", nA, min_shared, pool),
     )
     rows = cur.fetchall()
     if not rows:
@@ -166,8 +178,8 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     max_score = max(float(r[3]) for r in rows) or 1.0
     out = []
     firma_count = {}
-    for name, shared, nb, score, compounds in rows:
-        ids = list(compounds or [])
+    for name, shared, nb, score, rare_comps in rows:
+        ids = list(rare_comps or [])
         firma = tuple(sorted(ids)[:5])
         if firma and firma_count.get(firma, 0) >= 2:
             continue  # stessa firma = stessa famiglia -> max 2
@@ -179,11 +191,11 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
             "ingrediente": name,
             "criterio": "base_aromatica",
             "evidenza": {"composti_condivisi": int(shared), "profilo_partner": int(nb),
-                         "indice_sovrapposizione": round(float(score), 3), "composti": comps},
+                         "indice_rarita": round(float(score), 3), "composti_caratterizzanti": comps},
             "robustezza": banda,
-            "perche": "condivide una base aromatica"
-                      + (f" — {shared} composti su {nb} ({', '.join(comps[:3])})" if comps
-                         else f" — {shared} composti su {nb}"),
+            "perche": "condivide composti caratterizzanti"
+                      + (f" — {', '.join(comps[:3])} (e altri, {shared} in tutto)" if comps
+                         else f" — {shared} composti"),
         })
         if len(out) >= limit:
             break
