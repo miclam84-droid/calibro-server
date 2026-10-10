@@ -8095,7 +8095,7 @@ def _riempitore_worker(max_ondate):
                                 _RIEMPITORE_STATO.setdefault("scartati",{}); _RIEMPITORE_STATO["scartati"]["tradizione"]=_RIEMPITORE_STATO["scartati"].get("tradizione",0)+1
                                 continue
                             cur.execute("INSERT INTO edges (from_id,to_id,relation,data) VALUES (%s,%s,'abbinamento_tradizionale',%s)",
-                                        (nid,rr2[0],json.dumps({"piatto":pt,"tradizione":a.get("tradizione",""),"confidenza":"alta","verificato":True},ensure_ascii=False)))
+                                        (nid,rr2[0],json.dumps({"piatto":pt,"tradizione":a.get("tradizione",""),"confidenza":"alta","verificato":False,"fonte":"ai_validato"},ensure_ascii=False)))
                             _RIEMPITORE_STATO["fatti"]["tradizione"] += 1
                         conn.commit(); _log(f"tradizione: {nome}")
                 except: pass
@@ -8198,7 +8198,8 @@ def _riempitore_worker(max_ondate):
                         if not vn: continue
                         vid = "var-" + _re.sub(r'[^a-z0-9]+','-', vn.lower()).strip('-')[:50]
                         vdata = {"kind":"varieta","nome":vn,"varieta_di":base,"proprieta":v.get("proprieta",{}),
-                                 "esperimenti_ideali":v.get("esperimenti_ideali",[]),"origine":v.get("origine",""),"note":v.get("note",""),"verificato":True}
+                                 "esperimenti_ideali":v.get("esperimenti_ideali",[]),"origine":v.get("origine",""),"note":v.get("note",""),
+                                 "verificato":False,"fonte":"ai_generato","stato":"stimato"}
                         cur.execute("SELECT id FROM nodes WHERE id=%s",(vid,))
                         if cur.fetchone(): cur.execute("UPDATE nodes SET data=%s WHERE id=%s",(json.dumps(vdata,ensure_ascii=False),vid))
                         else: cur.execute("INSERT INTO nodes (id,name,type,data) VALUES (%s,%s,'Varieta',%s)",(vid,vn,json.dumps(vdata,ensure_ascii=False)))
