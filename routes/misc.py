@@ -349,6 +349,7 @@ def cerca_universale():
         "rotovapor":"rotavapor","rotovap":"rotavapor","evaporatore rotante":"rotavapor",
         "gastrovac":"sottovuoto","sifone":"espuma","isi":"espuma","pacojet":"gelato",
         "bimby":"frullatore","thermomix":"frullatore","abbattitore":"raffreddamento rapido",
+        "broccoli di rapa":"friarielli","cima di rapa":"friarielli","yucca":"manioca","cassava":"manioca","gialletti":"finferli","cantarelli":"finferli","chanterelle":"finferli",
     }
     _ql = q.lower().strip()
     if _ql in _SINONIMI:
