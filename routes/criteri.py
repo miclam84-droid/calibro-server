@@ -117,20 +117,35 @@ def _risolvi_nodo(cur, ingrediente):
     return None
 
 
-def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=120):
+def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     """Criterio 1: ingredienti che condividono composti volatili reali.
     - solo partner INGREDIENTE canonico (niente nodi 'Prodotto' = varianti/tagli che copiano la chimica);
     - COUNT(DISTINCT): il grafo ha archi doppi;
-    - filtro firma aromatica: stessa firma di composti = di fatto stessa famiglia -> max 2;
-    - robustezza RELATIVA al miglior risultato di questo ingrediente (la soglia assoluta non ha senso)."""
+    - RANKING NORMALIZZATO: shared / sqrt(profilo_A * profilo_B), non il conteggio grezzo.
+      Il conteggio grezzo premia gli HUB (te', birra = centinaia di volatili) che condividono tanto
+      con tutto. La normalizzazione (cosine sui profili) li demolisce: conta la SOVRAPPOSIZIONE
+      relativa, non quanti composti ha il partner.
+    - filtro firma aromatica: stessa firma di composti = di fatto stessa famiglia -> max 2."""
+    # profilo di A (quanti composti distinti ha l'ingrediente centrale)
+    cur.execute(
+        "SELECT COUNT(DISTINCT to_id) FROM edges WHERE from_id=%s AND relation='contiene_composto'",
+        (ing_id,))
+    nA = int((cur.fetchone() or [0])[0]) or 1
     cur.execute(
         r"""
+        WITH cc AS (
+            SELECT from_id, COUNT(DISTINCT to_id) AS n
+            FROM edges WHERE relation='contiene_composto' GROUP BY from_id
+        )
         SELECT n.name,
                COUNT(DISTINCT b.to_id) AS shared,
+               cc.n AS nb,
+               (COUNT(DISTINCT b.to_id)::float / sqrt(%s::float * cc.n)) AS score,
                (array_agg(DISTINCT b.to_id ORDER BY b.to_id))[1:6] AS compounds
         FROM edges a
         JOIN edges b ON a.to_id = b.to_id AND b.relation = 'contiene_composto'
         JOIN nodes n ON n.id = b.from_id
+        JOIN cc ON cc.from_id = n.id
         WHERE a.from_id = %s AND a.relation = 'contiene_composto'
           AND b.from_id <> %s
           AND n.type = 'Ingrediente'
@@ -138,35 +153,37 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=120):
           AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
           AND n.name NOT LIKE '%%\_%%'
           AND LOWER(n.name) NOT LIKE LOWER(%s)
-        GROUP BY n.name
+        GROUP BY n.name, cc.n
         HAVING COUNT(DISTINCT b.to_id) >= %s
-        ORDER BY shared DESC, n.name ASC
+        ORDER BY score DESC, shared DESC, n.name ASC
         LIMIT %s
         """,
-        (ing_id, ing_id, f"%{base_nome}%", min_shared, pool),
+        (nA, ing_id, ing_id, f"%{base_nome}%", min_shared, pool),
     )
     rows = cur.fetchall()
     if not rows:
         return []
-    max_n = max(int(r[1]) for r in rows) or 1
+    max_score = max(float(r[3]) for r in rows) or 1.0
     out = []
     firma_count = {}
-    for name, shared, compounds in rows:
+    for name, shared, nb, score, compounds in rows:
         ids = list(compounds or [])
         firma = tuple(sorted(ids)[:5])
         if firma and firma_count.get(firma, 0) >= 2:
             continue  # stessa firma = stessa famiglia -> max 2
         firma_count[firma] = firma_count.get(firma, 0) + 1
-        frac = int(shared) / max_n
+        frac = float(score) / max_score
         banda = "Alta" if frac >= 0.6 else ("Media" if frac >= 0.33 else "Esplorativa")
         comps = [_nome_composto(c) for c in ids]
         out.append({
             "ingrediente": name,
             "criterio": "base_aromatica",
-            "evidenza": {"composti_condivisi": int(shared), "composti": comps},
+            "evidenza": {"composti_condivisi": int(shared), "profilo_partner": int(nb),
+                         "indice_sovrapposizione": round(float(score), 3), "composti": comps},
             "robustezza": banda,
             "perche": "condivide una base aromatica"
-                      + (f" — {shared} composti ({', '.join(comps[:3])})" if comps else f" — {shared} composti"),
+                      + (f" — {shared} composti su {nb} ({', '.join(comps[:3])})" if comps
+                         else f" — {shared} composti su {nb}"),
         })
         if len(out) >= limit:
             break
