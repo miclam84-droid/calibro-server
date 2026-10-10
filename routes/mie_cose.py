@@ -392,6 +392,67 @@ def rimuovi_misura():
         _release_conn(conn)
 
 
+@bp_mie.route("/v1/quaderno/misure-tutte", methods=["GET"])
+def misure_tutte():
+    """READER UNIFICATO (SOLA LETTURA): fonde i due store delle misure —
+    misure_banco (Mirino/Banco, Profilo Tecnico) e misure_salvate (Quaderno) —
+    sull'identita' dell'utente. NON scrive, NON migra, NON cancella.
+    Serve a VEDERE tutto insieme: oggi un gesto va in un store, un altro gesto
+    nell'altro, e se ne vede solo meta'. Ogni voce dichiara la provenienza (store)."""
+    try:
+        from routes.stato import _chiave_utente
+    except Exception:
+        try:
+            from stato import _chiave_utente
+        except Exception:
+            _chiave_utente = None
+    tipo, chiave = _chiave_utente() if _chiave_utente else (None, None)
+    dev = _device()
+    per_fen = {}
+    def _agg(fen, valore, unita, quando, fonte):
+        if not fen:
+            return
+        e = per_fen.setdefault(str(fen), {"fenomeno": str(fen), "n_misure": 0,
+                               "ultimo_valore": None, "unita": None, "ultima_data": None, "fonti": set()})
+        e["n_misure"] += 1
+        e["fonti"].add(fonte)
+        _iso = quando.isoformat() if quando else None
+        if _iso and (e["ultima_data"] is None or _iso > e["ultima_data"]):
+            e["ultima_data"] = _iso; e["ultimo_valore"] = valore; e["unita"] = unita
+    conn = _get_conn(); cur = conn.cursor()
+    try:
+        if tipo and chiave:
+            try:
+                cur.execute("""SELECT fenomeno, valore, unita, quando FROM misure_banco
+                               WHERE chiave_tipo=%s AND chiave=%s""", (tipo, str(chiave)))
+                for r in cur.fetchall():
+                    _agg(r[0], r[1], r[2], r[3], "banco")
+            except Exception:
+                conn.rollback()
+        if dev:
+            try:
+                cur.execute("""SELECT fenomeno, valore, unita, creato_il FROM misure_salvate
+                               WHERE device_id=%s""", (dev,))
+                for r in cur.fetchall():
+                    _agg(r[0], r[1], r[2], r[3], "quaderno")
+            except Exception:
+                conn.rollback()
+        fenomeni = []
+        for e in per_fen.values():
+            e["fonti"] = sorted(e["fonti"])
+            fenomeni.append(e)
+        fenomeni.sort(key=lambda x: (x["ultima_data"] or ""), reverse=True)
+        return jsonify({
+            "identita": {"tipo": tipo, "ha_device": bool(dev)},
+            "fenomeni": fenomeni,
+            "n_fenomeni": len(fenomeni),
+            "totale_misure": sum(f["n_misure"] for f in fenomeni),
+            "nota": "reader unificato sola-lettura: fonde Banco (Mirino) e Quaderno; nessun dato modificato"
+        })
+    finally:
+        _release_conn(conn)
+
+
 @bp_mie.route("/v1/miei-dati/export", methods=["GET"])
 def export_dati_utente():
     """GDPR + utilità: esporta TUTTI i dati dell'utente (device_id) in un JSON scaricabile.
