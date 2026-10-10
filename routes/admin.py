@@ -6352,7 +6352,7 @@ def admin_mappa_proprieta_ai():
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "8")), 12)
     key = os.environ.get("ANTHROPIC_API_KEY", "")
-    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato","alcolico"]
 
     def _valuta(nome):
         try:

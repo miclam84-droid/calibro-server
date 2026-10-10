@@ -3661,7 +3661,7 @@ def admin_assegna_proprieta():
     # le 15 proprietà (0-10): dolce, salato, acido, amaro, umami | grasso, corposita, croccante,
     # astringente, piccante | termico(-10 fresco / +10 caldo) | aroma_fresco, aroma_caldo | effervescenza, fermentato
     # mappa-seme: ingredienti-tipo chiave con valori da conoscenza sensoriale
-    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato","alcolico"]
     SEME = {
         "guanciale": [0,7,0,0,6,9,6,2,0,0,3,0,5,0,3],
         "pomodoro": [3,1,6,1,7,0,3,0,0,0,-2,5,1,0,0],
@@ -4269,7 +4269,7 @@ def admin_arricchisci_esistenti():
         "Colatura di alici di Cetara": {"caratteristica":"Liquido ambrato da alici, umami potentissimo","uso_tipico":"spaghetti, insaporire","categoria":"condimento",
                        "proprieta":{"umami":10,"salato":9,"fermentato":6},"operativo":{"yield":100,"allergeni":["pesce"]}},
     }
-    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato"]
+    P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato","alcolico"]
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         arricchiti = 0
