@@ -1526,3 +1526,69 @@ _USDA_NODO_FISSO.update({
     "succo di lime": "fis_lime_juice",
 })
 _BILANCIA["piccante"] = ["grasso", "dolce", "acido"]
+
+
+# --- COPERTURA PICCANTE (7o asse): Scoville per i peperoncini, pungenza stimata per le spezie ---
+_PICCANTE_CORE = {
+    "peperoncino":           {"v": 6.5, "stato": "derivato", "base": "Scoville ~30-50k (medio)",  "nodo": "ai_peperoncino"},
+    "peperoncino habanero":  {"v": 9.0, "stato": "derivato", "base": "Scoville ~150-350k",         "nodo": "ing-peperoncino-habanero"},
+    "peperoncino calabrese": {"v": 6.0, "stato": "derivato", "base": "Scoville ~25-40k",           "nodo": "ing-peperoncino-calabrese"},
+    "pepe nero":             {"v": 3.5, "stato": "stimato",  "base": "piperina, pungenza moderata", "nodo": "ing-pepe-nero-in-pasticceria"},
+    "pepe bianco":           {"v": 3.5, "stato": "stimato",  "base": "piperina",                   "nodo": None},
+    "zenzero":               {"v": 3.0, "stato": "stimato",  "base": "gingerolo",                  "nodo": None},
+    "senape":                {"v": 5.0, "stato": "stimato",  "base": "isotiocianato di allile",    "nodo": None},
+    "rafano":                {"v": 7.0, "stato": "stimato",  "base": "isotiocianato, molto pungente", "nodo": None},
+    "wasabi":                {"v": 7.5, "stato": "stimato",  "base": "isotiocianato",              "nodo": None},
+}
+
+@bp.route("/v1/criteri/piccante", methods=["GET", "POST"])
+def criteri_piccante():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    righe = []
+    scritti = 0
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            for nome_it, info in sorted(_PICCANTE_CORE.items()):
+                r = {"ingrediente": nome_it, "piccante": info["v"], "stato_dato": info["stato"]}
+                nodo = None
+                if info.get("nodo"):
+                    cur.execute("SELECT id, name FROM nodes WHERE id=%s", (info["nodo"],))
+                    rr = cur.fetchone()
+                    if rr:
+                        nodo = (rr[0], rr[1])
+                if not nodo:
+                    nodo = _risolvi_nodo(cur, nome_it)
+                if not nodo:
+                    r["stato"] = "nodo non trovato"
+                    righe.append(r); continue
+                r["nodo"] = nodo[0]
+                if applica:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+                    row = cur.fetchone()
+                    dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                    prop = dd.get("proprieta") or {}
+                    fonti = dd.get("proprieta_fonti") or {}
+                    cur_v = prop.get("piccante")
+                    if not isinstance(cur_v, (int, float)) or cur_v == 0:
+                        prop["piccante"] = info["v"]
+                        fonti["piccante"] = {"stato": info["stato"], "fonte": "Scoville/pungenza", "base": info["base"]}
+                        dd["proprieta"] = prop
+                        dd["proprieta_fonti"] = fonti
+                        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
+                        scritti += 1
+                        r["stato"] = "scritto"
+                    else:
+                        r["stato"] = "gia presente"
+                righe.append(r)
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
+    except Exception as e:
+        return _errore(e)
