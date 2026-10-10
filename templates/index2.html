@@ -377,6 +377,26 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 .tw-cambio{font-family:var(--mono);font-size:13px}
 .tw-cambio.su{color:var(--rosso)}.tw-cambio.giu{color:var(--verde)}
 .tw-stato{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--testo3);margin-top:12px}
+/* vetrina preparazione */
+.pv-hero{margin-bottom:8px}
+.pv-tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--verde);border:1px solid var(--bordo2);padding:3px 8px;margin-bottom:12px}
+.pv-diventa{font-family:var(--inter);font-size:16px;line-height:1.5;color:var(--testo2);margin-top:14px}
+.pv-prof{display:flex;flex-direction:column;gap:2px}
+.pv-row{display:flex;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid var(--bordo)}
+.pv-asse{flex:1;font-family:var(--gro);font-weight:500;font-size:15px;text-transform:capitalize}
+.pv-stato{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em;padding:3px 7px;border-radius:2px;white-space:nowrap}
+.pv-stato.stimato{color:var(--oro);border:1px solid var(--oro)}
+.pv-stato.corretto{color:var(--testo);border:1px solid var(--bordo2)}
+.pv-stato.verificato{color:var(--fondo);background:var(--verde)}
+.pv-nota{font-family:var(--inter);font-size:12px;color:var(--testo3);font-style:italic;margin-top:12px}
+.pv-ric{display:flex;flex-direction:column;gap:0}
+.pv-ing{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--bordo)}
+.pv-ing-n{font-family:var(--inter);font-size:14px;color:var(--testo)}
+.pv-ing-q{font-family:var(--mono);font-size:12px;color:var(--testo3)}
+.pv-meta{font-family:var(--inter);font-size:13px;color:var(--testo2);margin-top:10px;line-height:1.5}
+.pv-critico{font-family:var(--inter);font-size:13px;color:var(--oro);margin-top:12px;line-height:1.5}
+.pv-costo-val{font-family:var(--mono);font-weight:700;font-size:30px;color:var(--testo);letter-spacing:-.01em}
+.pv-costo-val .u{font-size:14px;color:var(--testo3);font-weight:400;margin-left:2px}
 </style>
 </head>
 <body>
@@ -412,6 +432,7 @@ body{background:var(--fondo);color:var(--testo);font-family:var(--inter);-webkit
 <div class="vista" id="v-corridoio"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Laboratorio</div><div class="vt-sub">Sperimenta: collega, combina, modifica</div><div id="corridoio-host"></div></div>
 <div class="vista" id="v-menu"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Menu</div><div class="vt-sub">Componi l'offerta</div><div id="menu-host"></div></div>
 <div class="vista" id="v-quaderno"><div class="vt-back" onclick="vai('home')">‹ Home</div><div class="vt-titolo">Quaderno</div><div class="vt-sub">Registra e ricorda le tue prove</div><div id="quaderno-host"></div></div>
+<div class="vista" id="v-preparazione"><div id="prep-host"></div></div>
 
 </main>
 
@@ -428,7 +449,7 @@ var API='https://web-production-79457.up.railway.app';
 function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':String(s));return d.innerHTML;}
 // capitalizza la prima lettera di ogni parola (normalizza "pomodoro" e "Pomodoro Pizzutello")
 function _capNome(s){ s=String(s||'').trim(); if(!s)return s; var min={'di':1,'e':1,'al':1,'alla':1,'del':1,'della':1,'con':1,'la':1,'il':1,'in':1,'da':1}; return s.split(' ').map(function(w,i){ var lw=w.toLowerCase(); if(i>0&&min[lw])return lw; return w.charAt(0).toUpperCase()+w.slice(1); }).join(' '); }
-var _viste={home:'v-home',ingrediente:'v-ingrediente',atlante:'v-atlante',banco:'v-banco',causa:'v-causa',corridoio:'v-corridoio',menu:'v-menu',quaderno:'v-quaderno'};
+var _viste={home:'v-home',ingrediente:'v-ingrediente',atlante:'v-atlante',banco:'v-banco',causa:'v-causa',corridoio:'v-corridoio',menu:'v-menu',quaderno:'v-quaderno',preparazione:'v-preparazione'};
 function vai(dove){
   document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('on');});
   var el=document.getElementById(_viste[dove]||'v-home'); if(el)el.classList.add('on');
@@ -867,7 +888,11 @@ function cercaLive(){
       if(!items.length){ ris.innerHTML='<div class="vt-wip">Niente per "'+esc(q)+'". Prova un altro termine.</div>'; return; }
       ris.innerHTML=items.map(function(x){
         var orig=(x.origine==='variante')?'<span class="ris-orig">variante</span>':'';
-        return '<div class="ris-item" onclick="apriRisultato(\''+esc(x.nome).replace(/\x27/g,"")+'\',\''+esc(x.tipo)+'\')"><span class="ris-nome">'+esc(x._nomeVis||x.nome)+orig+'</span><span class="ris-tipo">'+esc(x.tipo)+'</span></div>';
+        var isPrep=String(x.id||'').indexOf('prep-')===0;
+        var click=isPrep
+          ? "apriPreparazione('"+esc(x.id).replace(/\x27/g,"")+"','"+esc(x.nome).replace(/\x27/g,"")+"')"
+          : "apriRisultato('"+esc(x.nome).replace(/\x27/g,"")+"','"+esc(x.tipo)+"')";
+        return '<div class="ris-item" onclick="'+click+'"><span class="ris-nome">'+esc(x._nomeVis||x.nome)+orig+'</span><span class="ris-tipo">'+(isPrep?'preparazione':esc(x.tipo))+'</span></div>';
       }).join('');
     }).catch(function(){ ris.innerHTML='<div class="vt-wip">Errore ricerca.</div>'; });
   },250);
@@ -875,6 +900,75 @@ function cercaLive(){
 function apriRisultato(nome,tipo){
   if(tipo==='ingrediente'){ apriScheda(nome); }
   else { vai('banco'); document.getElementById('banco-host').innerHTML='<div class="vt-wip">Preparazione "'+esc(nome)+'" — cablaggio Banco (prossimo).</div>'; }
+}
+// ═══ VETRINA PREPARAZIONE (cablata) — la preparazione che diventa ingrediente ═══
+var _PV_STATO={stimato:'stimato',corretto:'corretto al banco',verificato:'verificato'};
+function apriPreparazione(id,nome){
+  vai('preparazione');
+  var host=document.getElementById('prep-host');
+  host.innerHTML='<div class="sc-back" onclick="vai(\'home\')">‹ Home</div><div class="sk" style="height:38px;width:60%;margin-bottom:20px"></div><div class="sk" style="height:160px"></div>';
+  fetch(API+'/v1/preparazione/'+encodeURIComponent(id)).then(function(r){return r.json();}).then(function(d){
+    if(d.errore){ host.innerHTML='<div class="sc-back" onclick="vai(\'home\')">‹ Home</div><div class="vt-wip">'+esc(d.errore)+'</div>'; return; }
+    renderPreparazione(d,nome);
+  }).catch(function(){ host.innerHTML='<div class="sc-back" onclick="vai(\'home\')">‹ Home</div><div class="vt-wip">Preparazione non raggiungibile.</div>'; });
+}
+function renderPreparazione(d,nomeFallback){
+  var host=document.getElementById('prep-host'); if(!host)return;
+  var nome=d.nome||nomeFallback||'Preparazione';
+  var h='<div class="sc-back" onclick="vai(\'home\')">‹ Home</div>';
+  h+='<div class="pv-hero"><div class="pv-tag">Preparazione</div><div class="sc-nome">'+esc(_cap(nome))+'</div>'
+    +(d.cosa_diventa?'<div class="pv-diventa">'+esc(d.cosa_diventa)+'</div>':'')+'</div>';
+  var prof=d.profilo||[];
+  if(prof.length){
+    h+='<div class="sc-sez"><div class="sc-sez-k">Cosa diventa — profilo</div><div class="pv-prof">'
+      +prof.map(function(p){
+        var v=p.valore||0; var w=v>=9?'w10':v>=7?'w8':v>=5?'w6':v>=3?'w4':'w2'; var st=p.stato||'stimato';
+        return '<div class="pv-row"><span class="pv-asse">'+esc(_cap(String(p.asse).replace(/_/g,' ')))+'</span>'
+          +'<span class="sc-senso-item '+w+'" style="margin:0"><span class="sc-senso-v">'+v+'</span></span>'
+          +'<span class="pv-stato '+esc(st)+'">'+esc(_PV_STATO[st]||st)+'</span></div>';
+      }).join('')
+      +'</div><div class="pv-nota">Valori stimati dalla ricetta, non misurati. Si correggono al banco quando li provi.</div></div>';
+  }
+  var ric=d.ricetta||{};
+  if(ric.ingredienti && ric.ingredienti.length){
+    h+='<div class="sc-sez"><div class="sc-sez-k">Da cosa parte</div><div class="pv-ric">'
+      +ric.ingredienti.slice(0,12).map(function(i){
+        var q=(i.quantita||i['quantità']||''); var u=(i.unita||i['unità']||'');
+        return '<div class="pv-ing"><span class="pv-ing-n">'+esc(i.nome||'')+'</span><span class="pv-ing-q">'+esc((q?q:'')+(u?(' '+u):''))+'</span></div>';
+      }).join('')+'</div>';
+    if(d.resa) h+='<div class="pv-meta">Resa: '+esc(d.resa)+(d.resa_ml?' (~'+d.resa_ml+' ml)':'')+'</div>';
+    else if(d.resa_ml) h+='<div class="pv-meta">Resa: ~'+d.resa_ml+' ml</div>';
+    if(d.condizioni) h+='<div class="pv-meta">Condizioni: '+esc(d.condizioni)+'</div>';
+    if(ric.punto_critico) h+='<div class="pv-critico">⚠ '+esc(ric.punto_critico)+'</div>';
+    h+='</div>';
+  }
+  h+='<div class="sc-sez" id="pv-costo"><div class="sc-sez-k">Costo</div><div class="sk" style="height:40px"></div></div>';
+  var fen=d.fenomeni||[];
+  if(fen.length){
+    h+='<div class="sc-sez"><div class="sc-sez-k">La scienza sotto</div><div class="sc-fen">'
+      +fen.map(function(f){var fn=typeof f==='object'?f.nome:f;var slug=typeof f==='object'?f.slug:'';
+        return '<div class="sc-fen-item" onclick="'+(slug?'apriFenomeno(\''+esc(slug)+'\')':'')+'">'+esc(fn)+(slug?' →':'')+'</div>';}).join('')
+      +'</div></div>';
+  }
+  var nomePulito=esc(nome).replace(/\x27/g,'');
+  h+='<div class="sc-azioni"><div class="sc-azione pieno" onclick="componiDa(\''+nomePulito+'\')">Usala in un drink →</div></div>';
+  host.innerHTML=h;
+  if(d.costo && d.costo.deriva_da_ricetta && d.costo.resa_ml){
+    fetch(API+'/v1/ricetta/'+encodeURIComponent(d.costo.deriva_da_ricetta)+'/food-cost').then(function(r){return r.json();}).then(function(fc){
+      var box=document.getElementById('pv-costo'); if(!box)return;
+      var tot=fc.costo_totale_ingredienti;
+      if(tot==null){ box.innerHTML='<div class="sc-sez-k">Costo</div><div class="pv-meta">Non calcolabile ora.</div>'; return; }
+      var litri=d.costo.resa_ml/1000; var perL=litri>0?(tot/litri):null;
+      var senza=fc.ingredienti_senza_prezzo||0, voci=(fc.voci||[]).length;
+      var h2='<div class="sc-sez-k">Costo</div><div class="pv-costo-val">'+(perL!=null?(Math.round(perL*100)/100).toFixed(2)+' €<span class="u">/litro</span>':'—')+'</div>'
+        +'<div class="pv-meta">'+(Math.round(tot*100)/100).toFixed(2)+' € di ingredienti ÷ '+litri.toFixed(2)+' L di resa</div>';
+      if(senza>0) h2+='<div class="fc-parziale">⚠ '+(voci-senza)+' ingredienti su '+voci+' col prezzo ('+senza+' stimati)</div>';
+      if(fc.fonte) h2+='<div class="fc-fonte">'+esc(fc.fonte)+'</div>';
+      box.innerHTML=h2;
+    }).catch(function(){ var b=document.getElementById('pv-costo'); if(b) b.innerHTML='<div class="sc-sez-k">Costo</div><div class="pv-meta">Non calcolabile ora.</div>'; });
+  } else {
+    var b=document.getElementById('pv-costo'); if(b) b.innerHTML='<div class="sc-sez-k">Costo</div><div class="pv-meta">Resa non impostata: costo per litro non calcolabile.</div>';
+  }
 }
 // ═══ SCHEDA INGREDIENTE (cablata) ═══
 var _LIV_ORD=['cos_e','storia','materia','scienza','senso','relazioni','mestiere','creazione','narrazione'];

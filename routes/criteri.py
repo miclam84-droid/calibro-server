@@ -1890,6 +1890,93 @@ _PH_CORE.update({
     "capperi": 3.4,
 })
 
+# --- VETRINA: la preparazione come ingrediente derivato (sola lettura) ---
+# Serve la card che /app2 mostra quando apri una preparazione: cosa diventa
+# (profilo trasformato + stato di OGNI valore), resa, condizioni, fenomeni,
+# e il rimando alla ricetta d'origine per il costo. Nessun numero inventato:
+# valori e stato vengono dal nodo; il costo lo fa il food-cost della ricetta.
+@bp.route("/v1/preparazione/<nid>", methods=["GET"])
+def preparazione_card(nid):
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT name, data FROM nodes WHERE id=%s", (nid,))
+            row = cur.fetchone()
+            if not row:
+                cur.close()
+                return jsonify({"errore": "preparazione non trovata", "id": nid}), 404
+            nome, data = row[0], row[1]
+            dd = data if isinstance(data, dict) else (_json.loads(data) if data else {})
+            if dd.get("tipo_nodo") != "preparazione" and not nid.startswith("prep-"):
+                cur.close()
+                return jsonify({"errore": "il nodo non e' una preparazione", "id": nid}), 400
+            prop = dd.get("proprieta") or {}
+            fonti = dd.get("proprieta_fonti") or {}
+            prep = dd.get("preparazione") or {}
+            rid = prep.get("deriva_da_ricetta")
+
+            # profilo: ogni asse col suo valore e il suo STATO (stimato/corretto/verificato)
+            profilo = []
+            for asse, val in sorted(prop.items(),
+                                    key=lambda kv: -(kv[1] if isinstance(kv[1], (int, float)) else 0)):
+                f = fonti.get(asse) or {}
+                profilo.append({
+                    "asse": asse,
+                    "valore": val,
+                    "stato": f.get("stato", "stimato"),
+                    "perche": f.get("base") or f.get("fonte") or "",
+                })
+
+            # fenomeni: prima dal blocco preparazione, poi dalla mappa oleo, poi dalla ricetta
+            fenomeni = prep.get("fenomeni") or _PREP_FENOMENI.get(rid) or []
+
+            ricetta = {}
+            if rid:
+                cur.execute("SELECT nome, descrizione, ingredienti, fenomeni, punto_critico, porzioni "
+                            "FROM ricette WHERE id=%s", (rid,))
+                rr = cur.fetchone()
+                if rr:
+                    ing = rr[2] if isinstance(rr[2], list) else (_json.loads(rr[2]) if rr[2] else [])
+                    fen_ric = rr[3] if isinstance(rr[3], list) else (_json.loads(rr[3]) if rr[3] else [])
+                    if not fenomeni:
+                        fenomeni = fen_ric
+                    ricetta = {
+                        "id": rid,
+                        "nome": rr[0],
+                        "descrizione": rr[1] or "",
+                        "ingredienti": ing,
+                        "punto_critico": rr[4] or "",
+                        "porzioni": rr[5] or "",
+                    }
+            cur.close()
+
+        return jsonify({
+            "id": nid,
+            "nome": nome,
+            "tipo": "preparazione",
+            "deriva_da_ricetta": rid,
+            "ricetta": ricetta,
+            "resa_ml": prep.get("resa_ml"),
+            "resa": prep.get("resa", ""),
+            "condizioni": prep.get("condizioni", ""),
+            "versione_processo": prep.get("versione_processo", ""),
+            "cosa_diventa": prep.get("nota_trasformazione", ""),
+            "profilo": profilo,
+            "fenomeni": fenomeni,
+            "costo": {
+                "deriva_da_ricetta": rid,
+                "resa_ml": prep.get("resa_ml"),
+                "food_cost_endpoint": ("/v1/ricetta/%s/food-cost" % rid) if rid else None,
+                "nota": "EUR/L = costo totale ingredienti della ricetta / resa in litri",
+            },
+        })
+    except Exception as e:
+        return _errore(e)
+
+
 # --- DIAGNOSTICO (sola lettura): ingredienti USATI senza prezzo proprio ---
 @bp.route("/v1/criteri/prezzi-da-fare", methods=["GET"])
 def criteri_prezzi_da_fare():
