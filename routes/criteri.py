@@ -773,6 +773,12 @@ _USDA_CORE = {
     "zucchero": 169655, "miele": 169640, "olio di oliva": 171413, "aglio": 169230,
     "cipolla": 170000, "carota": 170393, "patata": 170026, "spinaci": 168462,
 }
+# agganci FISSI dove _risolvi_nodo sbaglia (verificati col dry-run): nodo canonico corretto
+_USDA_NODO_FISSO = {
+    "lime": "ing-lime",            # non kaffir
+    "zucchero": "prod_zucchero",   # zucchero, non lo sciroppo
+    "olio di oliva": "ing-olio-evo",  # l'EVO vero, non il nodo fis_
+}
 # ancoraggi (valore_grezzo_per_100g -> voto 0..10), PROVVISORI
 _ANCORE_DOLCE = [(0, 0), (5, 2), (10, 4), (15, 6), (50, 8), (100, 10)]          # zuccheri g
 _ANCORE_SALATO = [(0, 0), (50, 1), (400, 3), (800, 5), (2500, 8), (38000, 10)]  # sodio mg
@@ -837,7 +843,15 @@ def criteri_usda_gusti():
             cur = conn.cursor()
             for nome_it, fdc in _USDA_CORE.items():
                 voce = {"ingrediente": nome_it, "fdc_id": fdc}
-                nodo = _risolvi_nodo(cur, nome_it)
+                fisso = _USDA_NODO_FISSO.get(nome_it)
+                nodo = None
+                if fisso:
+                    cur.execute("SELECT id, name FROM nodes WHERE id=%s", (fisso,))
+                    rr = cur.fetchone()
+                    if rr:
+                        nodo = (rr[0], rr[1])
+                if not nodo:
+                    nodo = _risolvi_nodo(cur, nome_it)
                 if not nodo:
                     voce["stato"] = "nodo non trovato"
                     righe.append(voce)
