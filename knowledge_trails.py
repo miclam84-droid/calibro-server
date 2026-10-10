@@ -52,14 +52,23 @@ def costruisci_trail(db, ingrediente_start):
                               "dettaglio": f"{_an} è un abbinamento aromatico di {ingrediente_start}: condividono composti chiave."})
         except Exception:
             pass
-    # tappa 4: fenomeno (try isolato)
-    try:
-        _fen = db.execute("SELECT name FROM nodes WHERE type='Fenomeno' ORDER BY RANDOM() LIMIT 1").fetchone()
-        if _fen:
-            trail.append({"tappa": "fenomeno", "nome": _fen[0],
-                          "dettaglio": f"Esplora il fenomeno {_fen[0]}: la scienza che governa questo ingrediente al banco."})
-    except Exception:
-        pass
+    # tappa 4: fenomeno REALE collegato all'ingrediente (mai a caso)
+    if nid:
+        try:
+            _fen = db.execute(
+                "SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.from_id "
+                "WHERE e.to_id=? AND e.relation='si_manifesta_in' AND n2.type='Fenomeno' LIMIT 1",
+                (nid,)).fetchone()
+            if not _fen:
+                _fen = db.execute(
+                    "SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id "
+                    "WHERE e.from_id=? AND e.relation='attraversa_fenomeno' AND n2.type='Fenomeno' LIMIT 1",
+                    (nid,)).fetchone()
+            if _fen:
+                trail.append({"tappa": "fenomeno", "nome": _fen[0],
+                              "dettaglio": f"{ingrediente_start} attraversa il fenomeno {_fen[0]}: la scienza che lo governa al banco."})
+        except Exception:
+            pass
     # tappa 5: ricetta (try isolato)
     try:
         _ric = db.execute("SELECT nome FROM ricette WHERE lower(nome) LIKE ? LIMIT 1", (f"%{ing}%",)).fetchone()

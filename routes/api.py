@@ -1948,7 +1948,7 @@ def admin_crea_colonna_profilo():
     """Crea la colonna profilo_sensoriale UNA VOLTA (non ad ogni richiesta).
     Uso: /admin/crea-colonna-profilo?s=SECRET"""
     import os as _os
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+    if (not _os.environ.get("ADMIN_SECRET")) or request.args.get("s") != _os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore": "non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"ok": True, "nota": "no db"})
@@ -1971,7 +1971,7 @@ def admin_crea_colonna_profilo():
 def admin_diag_profilo():
     """Diagnostica: cattura l'errore esatto dell'endpoint profilo. /admin/diag-profilo?s=SECRET"""
     import os as _os, traceback as _tb
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+    if (not _os.environ.get("ADMIN_SECRET")) or request.args.get("s") != _os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore": "non autorizzato"}), 403
     out = {}
     # test 1: _utente_da_token con token vuoto
@@ -2035,7 +2035,7 @@ def admin_kpi():
     Restituisce conteggi per evento, conversioni tra stadi, e content→paid via UTM.
     NON scrive nulla: sola lettura. Il pannello front-end consumerà questo JSON."""
     import os as _os
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+    if (not _os.environ.get("ADMIN_SECRET")) or request.args.get("s") != _os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore": "non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"ok": True, "nota": "no db"})
@@ -2114,7 +2114,7 @@ def admin_coverage():
     (fenomeni senza prodotti collegati, prodotti orfani, target mancanti).
     Non scrive nulla."""
     import os as _os
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+    if (not _os.environ.get("ADMIN_SECRET")) or request.args.get("s") != _os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore": "non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"ok": True, "nota": "no db"})
@@ -2355,7 +2355,7 @@ def admin_collega_orfani():
     Gli archi sono definiti nel codice (non SQL da fuori = sicuro). Idempotente.
     /admin/collega-orfani?s=SECRET&gruppo=bar"""
     import os as _os, json as _json
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+    if (not _os.environ.get("ADMIN_SECRET")) or request.args.get("s") != _os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore": "non autorizzato"}), 403
     gruppo = request.args.get("gruppo", "bar")
 
@@ -2468,7 +2468,7 @@ def admin_collega_tecniche():
     Archi definiti nel codice = sicuro. Idempotente. Ogni arco ha una nota causale.
     /admin/collega-tecniche?s=SECRET&gruppo=bar"""
     import os as _os, json as _json
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+    if (not _os.environ.get("ADMIN_SECRET")) or request.args.get("s") != _os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore": "non autorizzato"}), 403
     gruppo = request.args.get("gruppo", "bar")
 
@@ -2568,7 +2568,7 @@ def admin_collega_errori():
     È il cuore della longevità/ritenzione: l'utente col problema al banco risale al fenomeno.
     /admin/collega-errori?s=SECRET&gruppo=bar"""
     import os as _os, json as _json
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+    if (not _os.environ.get("ADMIN_SECRET")) or request.args.get("s") != _os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore": "non autorizzato"}), 403
     gruppo = request.args.get("gruppo", "bar")
 
@@ -2621,7 +2621,7 @@ def admin_collega_ponti():
     l'utente scopre che una legge che usa nei cocktail governa anche la pasticceria.
     Ogni ponte ha la spiegazione scientifica del legame. /admin/collega-ponti?s=SECRET"""
     import os as _os, json as _json
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", "4z3IXHDD_EL1nNXDtE82qAwuCSwNwRtv"):
+    if (not _os.environ.get("ADMIN_SECRET")) or request.args.get("s") != _os.environ.get("ADMIN_SECRET"):
         return jsonify({"errore": "non autorizzato"}), 403
 
     # (fenomeno_A, fenomeno_B, legge_condivisa) — i 6 ponti su cui OpenAI+Gemini convergono.
@@ -5242,6 +5242,14 @@ def chat_multimodale():
         testo = (request.form.get("testo","") or "").strip()
         contesto_raw = request.form.get("contesto","")
         contesto = json.loads(contesto_raw) if contesto_raw else None
+        # gate Pro: audio/foto costano (Whisper+Vision) -> solo abbonati; il testo resta libero
+        if ("audio" in request.files) or bool(request.files.getlist("foto")):
+            from utils import _e_pro
+            _tok = (request.form.get("token") or request.args.get("token") or request.headers.get("X-Token","") or "")
+            _uid = _utente_da_token(_tok) if _tok else None
+            if not _e_pro(_uid):
+                return jsonify({"errore": "solo_pro", "solo_pro": True,
+                    "messaggio": "Foto e voce sono funzioni Pro. Abbonati per usarle."}), 402
         pezzi = []
         if testo: pezzi.append(testo)
         import ai_gateway as GW
