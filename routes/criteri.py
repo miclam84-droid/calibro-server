@@ -1441,3 +1441,45 @@ def criteri_nomi_scientifici():
 
 # --- FIX: garofano = spezia Syzygium (nodo ahn_clove), non fiore Dianthus ---
 _USDA_NODO_FISSO["garofano"] = "ahn_clove"
+
+
+# --- DIAGNOSTICO (sola lettura): ingredienti USATI senza profilo gusto ---
+@bp.route("/v1/criteri/gusto-da-fare", methods=["GET"])
+def criteri_gusto_da_fare():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT n.id, n.name, COUNT(e.from_id) AS usi
+                FROM nodes n
+                JOIN edges e ON e.to_id = n.id AND e.relation = 'usa_reagente'
+                WHERE n.type IN ('Ingrediente','Prodotto')
+                GROUP BY n.id, n.name
+                ORDER BY usi DESC
+            """)
+            usati = cur.fetchall()
+            da_fare = []
+            coperti = 0
+            for rid, nome, usi in usati:
+                cur.execute("SELECT data FROM nodes WHERE id=%s", (rid,))
+                row = cur.fetchone()
+                dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                prop = dd.get("proprieta") or {}
+                assi = [k for k in ("dolce","salato","acido","amaro","umami","grasso") if isinstance(prop.get(k),(int,float))]
+                if assi:
+                    coperti += 1
+                else:
+                    da_fare.append({"nodo": rid, "nome": nome, "usato_in": usi})
+            cur.close()
+        return jsonify({
+            "usati_totali": len(usati),
+            "con_gusto": coperti,
+            "senza_gusto": len(da_fare),
+            "da_fare": da_fare[:80],
+            "nota": "Ingredienti usati nei protocolli ma senza gusto, ordinati per frequenza d'uso.",
+        })
+    except Exception as e:
+        return _errore(e)
