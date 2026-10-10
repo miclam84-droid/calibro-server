@@ -1468,7 +1468,7 @@ def criteri_gusto_da_fare():
                 row = cur.fetchone()
                 dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
                 prop = dd.get("proprieta") or {}
-                assi = [k for k in ("dolce","salato","acido","amaro","umami","grasso") if isinstance(prop.get(k),(int,float))]
+                assi = [k for k in ("dolce","salato","acido","amaro","umami","grasso","piccante","alcolico") if isinstance(prop.get(k),(int,float))]
                 if assi:
                     coperti += 1
                 else:
