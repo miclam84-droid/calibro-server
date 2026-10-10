@@ -1176,3 +1176,65 @@ _GLU_CORE.update({
 
 # --- aggancio fisso: nocciole (nodo canonico, non la farina) ---
 _USDA_NODO_FISSO.update({"nocciole": "ahn_hazelnut"})
+
+# --- FASE 2.1: BILANCIO + AROMA (unisce i due strati) ----------
+def _condivisi_con(cur, target_id, partner_nome):
+    cur.execute(
+        """SELECT COUNT(DISTINCT b.to_id)
+           FROM edges a JOIN edges b ON a.to_id=b.to_id AND b.relation='contiene_composto'
+           JOIN nodes n ON n.id=b.from_id
+           WHERE a.from_id=%s AND a.relation='contiene_composto' AND LOWER(n.name)=LOWER(%s)""",
+        (target_id, partner_nome))
+    r = cur.fetchone()
+    return int(r[0]) if r and r[0] else 0
+
+
+@bp.route("/v1/criteri/bilancio-aroma/<ingrediente>", methods=["GET"])
+def criteri_bilancio_aroma(ingrediente):
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            nodo = _risolvi_nodo(cur, ingrediente)
+            if not nodo:
+                cur.close()
+                return jsonify({"errore": f"'{ingrediente}' non trovato"}), 404
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+            row = cur.fetchone()
+            dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+            prop = dd.get("proprieta") or {}
+            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso")
+                    if isinstance(prop.get(k), (int, float))}
+            if not assi:
+                cur.close()
+                return jsonify({"ingrediente": nodo[1], "nota": "nessun profilo gusto"})
+            dominanti = sorted([a for a, v in assi.items() if v >= 6.0], key=lambda a: -assi[a])
+            out = []
+            visti = set()
+            for asse in dominanti:
+                for serve in _BILANCIA.get(asse, []):
+                    if serve in visti:
+                        continue
+                    visti.add(serve)
+                    partner = _alti_in_asse(cur, serve, nodo[0], limite=10)
+                    for p in partner:
+                        p["aroma_condiviso"] = _condivisi_con(cur, nodo[0], p["ingrediente"])
+                    partner.sort(key=lambda x: (-x["aroma_condiviso"], -x["valore"]))
+                    forti = [p for p in partner if p["aroma_condiviso"] > 0][:5]
+                    solo_bil = [p for p in partner if p["aroma_condiviso"] == 0][:4]
+                    out.append({
+                        "perche": f"{nodo[1]} e' {asse} {assi[asse]} -> {serve} per bilanciare",
+                        "bilanciano_e_condividono_aroma": forti,
+                        "bilanciano_soltanto": [p["ingrediente"] for p in solo_bil],
+                    })
+            cur.close()
+        return jsonify({
+            "ingrediente": nodo[1], "nodo": nodo[0], "profilo_gusto": assi,
+            "assi_dominanti": dominanti or ["(nessuno >= 6)"],
+            "bilancio_aroma": out,
+            "nota": "Chi BILANCIA e CONDIVIDE AROMA e' il piu' forte. Ipotesi da verificare, non verdetto.",
+        })
+    except Exception as e:
+        return _errore(e)
