@@ -1671,3 +1671,65 @@ def criteri_alcolico():
         return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
     except Exception as e:
         return _errore(e)
+
+# --- CATENA: PREPARAZIONE -> INGREDIENTE DERIVATO (vertical slice) ---
+_PREPARAZIONI = {
+    "prep-cordiale-al-lime": {
+        "name": "Cordiale al lime (preparazione)",
+        "ricetta": "ric-cls-cordiale-al-lime",
+        "proprieta": {"acido": 6.0, "dolce": 6.5},
+        "fonti": {
+            "acido": {"stato": "stimato", "fonte": "calcolo da ricetta",
+                      "base": "succo di lime pH~2.4 diluito 1:1 con acqua, bilanciato da 100g zucchero/400ml"},
+            "dolce": {"stato": "stimato", "fonte": "calcolo da ricetta",
+                      "base": "100 g zucchero in ~400 ml (~25%)"},
+        },
+        "preparazione": {
+            "deriva_da_ricetta": "ric-cls-cordiale-al-lime",
+            "resa": "~450 ml",
+            "condizioni": "zucchero sciolto a caldo e raffreddato; succo di lime filtrato a crudo",
+            "versione_processo": "v1",
+            "nota_trasformazione": "profilo bilanciato, NON somma: diluizione + zucchero abbassano l'acido del lime da ~9 a ~6",
+        },
+    },
+}
+
+@bp.route("/v1/criteri/preparazione-derivata", methods=["GET", "POST"])
+def criteri_preparazione_derivata():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    righe = []
+    creati = 0
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            for nid, spec in sorted(_PREPARAZIONI.items()):
+                r = {"nodo": nid, "name": spec["name"], "deriva_da": spec["ricetta"], "proprieta": spec["proprieta"]}
+                cur.execute("SELECT 1 FROM ricette WHERE id=%s", (spec["ricetta"],))
+                if not cur.fetchone():
+                    r["stato"] = "ricetta d'origine non trovata"
+                    righe.append(r); continue
+                data = {
+                    "proprieta": spec["proprieta"],
+                    "proprieta_fonti": spec["fonti"],
+                    "preparazione": spec["preparazione"],
+                    "tipo_nodo": "preparazione",
+                }
+                if applica:
+                    cur.execute(
+                        "INSERT INTO nodes (id, name, type, data) VALUES (%s,%s,'Prodotto',%s) "
+                        "ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, data=EXCLUDED.data",
+                        (nid, spec["name"], _json.dumps(data, ensure_ascii=False)))
+                    creati += 1
+                    r["stato"] = "creato/aggiornato"
+                righe.append(r)
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "creati": creati, "righe": righe})
+    except Exception as e:
+        return _errore(e)
