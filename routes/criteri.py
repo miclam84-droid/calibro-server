@@ -1483,3 +1483,17 @@ def criteri_gusto_da_fare():
         })
     except Exception as e:
         return _errore(e)
+
+# --- COPERTURA GUSTO: nodi-base piu usati (USDA verificato, pin esatto) ---
+_USDA_CORE.update({
+    "olio": 171413,
+    "latte intero": 171265,
+    "zucchero a velo": 169655,
+    "destrosio": 169655,
+})
+_USDA_NODO_FISSO.update({
+    "olio": "ing-base-olio",
+    "latte intero": "ing-latte-intero",
+    "zucchero a velo": "ing-zucchero-a-velo",
+    "destrosio": "ing-destrosio",
+})
