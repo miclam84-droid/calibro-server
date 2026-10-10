@@ -1592,3 +1592,8 @@ def criteri_piccante():
         return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
     except Exception as e:
         return _errore(e)
+
+# --- FIX senape: non alliaria (garlic mustard) ma senape vera + semi ---
+_PICCANTE_CORE["senape"]["nodo"] = "ahn_mustard"
+_PICCANTE_CORE["semi di senape nera"]   = {"v": 6.0, "stato": "stimato", "base": "isotiocianato, seme nero", "nodo": "ing-semi-di-senape-nera"}
+_PICCANTE_CORE["semi di senape gialla"] = {"v": 4.0, "stato": "stimato", "base": "isotiocianato, seme giallo", "nodo": "ing-semi-di-senape-gialla"}
