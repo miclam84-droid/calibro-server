@@ -5474,7 +5474,8 @@ def twist_dal_canone():
         P = ["dolce","salato","acido","amaro","umami","grasso","corposita","croccante","astringente","piccante","termico","aroma_fresco","aroma_caldo","effervescenza","fermentato","alcolico"]
         conn = _get_conn(); cur = conn.cursor()
         def profilo(ings):
-            prof = {k: 0.0 for k in P}; n = 0
+            # MASSIMO per dimensione (dominante+modificatori), coerente col composer/diagnosi (NON la media)
+            prof = {k: 0.0 for k in P}
             for s in ings:
                 cur.execute("""SELECT data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                                AND (LOWER(name)=LOWER(%s) OR id=%s) ORDER BY (id LIKE 'ing-%%') DESC LIMIT 1""", (s, s))
@@ -5483,10 +5484,10 @@ def twist_dal_canone():
                 dd = r[0] if isinstance(r[0], dict) else json.loads(r[0])
                 prop = dd.get("proprieta")
                 if prop:
-                    n += 1
-                    for k in P: prof[k] += float(prop.get(k, 0))
-            if n:
-                for k in P: prof[k] = round(prof[k]/n, 1)
+                    for k in P:
+                        try: prof[k] = max(prof[k], float(prop.get(k, 0)))
+                        except Exception: pass
+            for k in P: prof[k] = round(prof[k], 1)
             return prof
         prof_prima = profilo(ingredienti)
         nuovi = [con if i.lower()==sostituisci.lower() else i for i in ingredienti]
