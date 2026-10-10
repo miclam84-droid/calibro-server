@@ -26,6 +26,24 @@ bp = Blueprint("criteri", __name__)
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+_log = __import__("logging").getLogger("criteri")
+
+
+def _errore(e):
+    """Gestione errori regola d'arte: logga il traceback (lo cattura Railway + Sentry),
+    NON espone i dettagli interni al pubblico (solo messaggio generico), ma li mostra
+    all'admin col secret per il debug. Sostituisce i vecchi 'return str(e)'."""
+    import traceback
+    _log.exception("errore endpoint criteri")
+    try:
+        import sentry_sdk
+        sentry_sdk.capture_exception(e)
+    except Exception:
+        pass
+    if _admin_ok():
+        return jsonify({"errore": str(e)[:300], "trace": traceback.format_exc()[-900:]}), 500
+    return jsonify({"errore": "errore interno"}), 500
+
 # IT -> nome Ahn canonico, per i casi che la risoluzione per nome sbagliava.
 _ALIAS = {
     "caffe": "coffee", "caffè": "coffee", "cioccolato": "cocoa", "cacao": "cocoa",
@@ -308,7 +326,7 @@ def criteri(ingrediente):
             "conteggio": {"base_aromatica": len(base), "tradizione": len(trad), "contrasto": len(contr)},
         })
     except Exception as e:
-        return jsonify({"ingrediente": ingrediente, "errore": str(e)[:160]}), 500
+        return _errore(e)
 
 
 @bp.route("/v1/criteri/diag/<ingrediente>", methods=["GET"])
@@ -338,7 +356,7 @@ def criteri_diag(ingrediente):
             "composti_esempio": esempi,
         })
     except Exception as e:
-        return jsonify({"errore": str(e)[:160]}), 500
+        return _errore(e)
 
 
 @bp.route("/v1/criteri/grafo-stato", methods=["GET"])
@@ -398,7 +416,7 @@ def grafo_stato():
             },
         })
     except Exception as e:
-        return jsonify({"errore": str(e)[:160]}), 500
+        return _errore(e)
 
 
 @bp.route("/v1/criteri/orfani", methods=["GET"])
@@ -430,7 +448,7 @@ def criteri_orfani():
             cur.close()
         return jsonify({"per_prefisso_id": per_prefisso, "campione_nomi": campione, "n_campione": len(campione)})
     except Exception as e:
-        return jsonify({"errore": str(e)[:160]}), 500
+        return _errore(e)
 
 
 @bp.route("/v1/criteri/orfani-match", methods=["GET"])
@@ -501,7 +519,7 @@ def criteri_orfani_match():
             "nota": "DRY-RUN: nessuna scrittura. Rivedi le proposte prima di applicare i link.",
         })
     except Exception as e:
-        return jsonify({"errore": str(e)[:160]}), 500
+        return _errore(e)
 
 
 # --- LINK VERTICALI protocollo->fenomeno (moat): matcher STRETTO ---------------
@@ -622,7 +640,7 @@ def criteri_link_fenomeni():
                     "I non-matchati sono quasi tutti passi di cottura generici o tecniche, non fenomeni.",
         })
     except Exception as e:
-        return jsonify({"errore": str(e)[:200]}), 500
+        return _errore(e)
 
 
 def _admin_ok():
@@ -685,7 +703,7 @@ def criteri_link_fenomeni_applica():
             "nota": "Archi slug materializzati. Rilanciare e' sicuro: idempotente.",
         })
     except Exception as e:
-        return jsonify({"errore": str(e)[:200]}), 500
+        return _errore(e)
 
 
 # --- PULIZIA INGREDIENTI (punto 2): classificatore DRY-RUN -----------------------
@@ -739,4 +757,4 @@ def criteri_pulizia_ingredienti():
                     "togliere; non_mappato=ingredienti veri da dichiarare come sezione onesta.",
         })
     except Exception as e:
-        return jsonify({"errore": str(e)[:200]}), 500
+        return _errore(e)
