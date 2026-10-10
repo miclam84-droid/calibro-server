@@ -879,8 +879,7 @@ def criteri_usda_gusti():
                                             ("salato", salato, f"sodio {nutr['sodio_mg']}mg/100g"),
                                             ("grasso", grasso, f"grassi {nutr['grassi_g']}g/100g")):
                         if val is not None:
-                            prop[asse] = {"valore": val, "stato": "derivato",
-                                          "fonte": f"USDA FDC {fdc}", "base": base}
+                            prop[asse] = val
                     dd["proprieta"] = prop
                     cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
                                 (_json.dumps(dd, ensure_ascii=False), nodo[0]))
