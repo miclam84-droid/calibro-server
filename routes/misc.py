@@ -452,20 +452,17 @@ def abbina_esteso(ingrediente):
     from flask import jsonify
     import os
     risultato = {"ingrediente": ingrediente, "verificati": [], "esplorativi": []}
-    # 1. VERIFICATI dal grafo Ahn (la fonte scientifica)
+    # 1. VERIFICATI: motore IDF base_aromatica sul nodo canonico (scienza, col perche)
     try:
-        from db import carica_grafo
-        db = carica_grafo()
-        ing_l = ingrediente.lower()
-        _it_en = {"basilico":"basil","pomodoro":"tomato","limone":"lemon","aglio":"garlic",
-                  "cioccolato":"chocolate","caffè":"coffee","fragola":"strawberry"}
-        ing_en = _it_en.get(ing_l, ing_l)
-        rows = db.execute("""SELECT n2.name FROM nodes n1 JOIN edges e ON e.from_id=n1.id
-                             JOIN nodes n2 ON n2.id=e.to_id
-                             WHERE lower(n1.name)=? AND e.relation='abbinamento_aromatico' LIMIT 20""", (ing_en,)).fetchall()
-        for r in rows:
-            nome = r["name"] if hasattr(r,"keys") else r[0]
-            risultato["verificati"].append(nome.replace("_"," "))
+        from routes.criteri import _base_aromatica, _risolvi_nodo
+        from db import connessione as _conn_idf
+        with _conn_idf() as _cx:
+            _cu = _cx.cursor()
+            _canon = _risolvi_nodo(_cu, ingrediente)
+            if _canon:
+                _ab = _base_aromatica(_cu, _canon[0], _canon[1], limit=12)
+                risultato["verificati"] = [{"ingrediente": a["ingrediente"], "robustezza": a.get("robustezza"), "perche": a.get("perche")} for a in _ab]
+            _cu.close()
     except Exception:
         pass
     # 2. ESPLORATIVI: prima cerco in tabella cache abbinamenti_ai, poi genero se manca
