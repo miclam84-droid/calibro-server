@@ -1121,7 +1121,7 @@ def criteri_bilancio(ingrediente):
             dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
             prop = dd.get("proprieta") or {}
             assi = {}
-            for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante"):
+            for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante", "alcolico"):
                 v = prop.get(k)
                 if isinstance(v, (int, float)):
                     assi[k] = round(float(v), 1)
@@ -1205,7 +1205,7 @@ def criteri_bilancio_aroma(ingrediente):
             row = cur.fetchone()
             dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
             prop = dd.get("proprieta") or {}
-            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante")
+            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante", "alcolico")
                     if isinstance(prop.get(k), (int, float))}
             if not assi:
                 cur.close()
@@ -1256,7 +1256,7 @@ def criteri_costruisci(ingrediente):
             row = cur.fetchone()
             dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
             prop = dd.get("proprieta") or {}
-            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante")
+            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante", "alcolico")
                     if isinstance(prop.get(k), (int, float))}
             try:
                 aroma = _base_aromatica(cur, nodo[0], nodo[1], limit=6)
@@ -1597,3 +1597,77 @@ def criteri_piccante():
 _PICCANTE_CORE["senape"]["nodo"] = "ahn_mustard"
 _PICCANTE_CORE["semi di senape nera"]   = {"v": 6.0, "stato": "stimato", "base": "isotiocianato, seme nero", "nodo": "ing-semi-di-senape-nera"}
 _PICCANTE_CORE["semi di senape gialla"] = {"v": 4.0, "stato": "stimato", "base": "isotiocianato, seme giallo", "nodo": "ing-semi-di-senape-gialla"}
+
+# --- COPERTURA ALCOLICO (8o asse): ABV reale -> 0..10, derivato ---
+_ANCORE_ALCOL = [(0, 0), (5, 2), (12, 4), (20, 6), (40, 8.5), (60, 10)]
+_ABV_CORE = {
+    "rum bianco":     {"abv": 40, "nodo": "ing-rum-bianco"},
+    "rum scuro":      {"abv": 40, "nodo": "ing-rum-scuro"},
+    "bourbon":        {"abv": 40, "nodo": "ing-bourbon"},
+    "vodka":          {"abv": 40, "nodo": "ing-vodka"},
+    "vermouth rosso": {"abv": 16, "nodo": "ing-vermouth-rosso"},
+    "prosecco":       {"abv": 11, "nodo": "ing-prosecco-per-sorbetti"},
+    "gin":            {"abv": 40, "nodo": None},
+    "tequila":        {"abv": 38, "nodo": None},
+    "whisky":         {"abv": 40, "nodo": None},
+    "brandy":         {"abv": 40, "nodo": None},
+    "cognac":         {"abv": 40, "nodo": None},
+    "campari":        {"abv": 25, "nodo": None},
+    "aperol":         {"abv": 11, "nodo": None},
+    "triple sec":     {"abv": 40, "nodo": None},
+    "limoncello":     {"abv": 30, "nodo": None},
+}
+_BILANCIA["alcolico"] = ["dolce", "acido"]
+
+@bp.route("/v1/criteri/alcolico", methods=["GET", "POST"])
+def criteri_alcolico():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    righe = []
+    scritti = 0
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            for nome_it, info in sorted(_ABV_CORE.items()):
+                val = _scala(info["abv"], _ANCORE_ALCOL)
+                r = {"ingrediente": nome_it, "abv": info["abv"], "alcolico": val}
+                nodo = None
+                if info.get("nodo"):
+                    cur.execute("SELECT id, name FROM nodes WHERE id=%s", (info["nodo"],))
+                    rr = cur.fetchone()
+                    if rr:
+                        nodo = (rr[0], rr[1])
+                if not nodo:
+                    nodo = _risolvi_nodo(cur, nome_it)
+                if not nodo:
+                    r["stato"] = "nodo non trovato"
+                    righe.append(r); continue
+                r["nodo"] = nodo[0]
+                if applica:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+                    row = cur.fetchone()
+                    dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                    prop = dd.get("proprieta") or {}
+                    fonti = dd.get("proprieta_fonti") or {}
+                    cur_v = prop.get("alcolico")
+                    if not isinstance(cur_v, (int, float)) or cur_v == 0:
+                        prop["alcolico"] = val
+                        fonti["alcolico"] = {"stato": "derivato", "fonte": "ABV", "base": f"{info['abv']}% vol"}
+                        dd["proprieta"] = prop
+                        dd["proprieta_fonti"] = fonti
+                        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
+                        scritti += 1
+                        r["stato"] = "scritto"
+                    else:
+                        r["stato"] = "gia presente"
+                righe.append(r)
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
+    except Exception as e:
+        return _errore(e)
