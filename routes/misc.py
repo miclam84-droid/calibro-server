@@ -808,11 +808,12 @@ def scheda_ingrediente(ingrediente_id):
         dialoga = []
         dialoga_perche = []
         try:
-            from routes.criteri import _base_aromatica
+            from routes.criteri import _base_aromatica, _risolvi_nodo
             from db import connessione as _conn_idf
             with _conn_idf() as _cx:
                 _cu = _cx.cursor()
-                _ab = _base_aromatica(_cu, nid, nome, limit=8)
+                _canon = _risolvi_nodo(_cu, ingrediente_id) or (nid, nome)
+                _ab = _base_aromatica(_cu, _canon[0], _canon[1], limit=8)
                 _cu.close()
             dialoga = [a["ingrediente"] for a in _ab]
             dialoga_perche = [{"ingrediente": a["ingrediente"], "perche": a.get("perche"), "robustezza": a.get("robustezza")} for a in _ab]
