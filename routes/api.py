@@ -3105,6 +3105,8 @@ _PREZZI_BAR = {  # €/litro per i liquidi da bar (in aggiunta a _PREZZI_FC)
 
 def _prezzo_litro_bar(nome):
     n = (nome or "").lower().strip()
+    _prep = _costo_litro_preparazione(nome)
+    if _prep is not None: return _prep
     if n in _PREZZI_BAR: return _PREZZI_BAR[n]
     best = None; best_len = 0
     for k, v in _PREZZI_BAR.items():
@@ -5611,3 +5613,52 @@ def menu_filo_conduttore():
             try: conn.rollback()
             except Exception: pass
             _release_conn(conn)
+
+
+def _costo_litro_preparazione(nome):
+    """Se 'nome' e' una preparazione derivata (nodo prep- con resa_ml), calcola il suo EUR/litro
+    dal costo reale della ricetta d'origine diviso la resa. Niente prezzo indovinato."""
+    n = (nome or "").lower().strip()
+    if not n:
+        return None
+    try:
+        from db import carica_grafo
+        import json as _j
+        db = carica_grafo()
+        rr = db.execute("""SELECT data FROM nodes WHERE type='Prodotto'
+                           AND LOWER(name) LIKE LOWER(?) AND data->>'tipo_nodo'='preparazione' LIMIT 1""",
+                        (f"%{n}%",)).fetchall()
+        if not rr:
+            return None
+        dd = rr[0]["data"] if hasattr(rr[0], "keys") else rr[0][0]
+        dd = dd if isinstance(dd, dict) else (_j.loads(dd) if dd else {})
+        prep = dd.get("preparazione") or {}
+        rid = prep.get("deriva_da_ricetta")
+        resa_ml = prep.get("resa_ml")
+        if not rid or not resa_ml:
+            return None
+        rows = db.execute("SELECT ingredienti FROM ricette WHERE id=%s", (rid,)).fetchall()
+        if not rows:
+            return None
+        ingr_raw = rows[0]["ingredienti"] if hasattr(rows[0], "keys") else rows[0][0]
+        ingredienti = ingr_raw if isinstance(ingr_raw, list) else (_j.loads(ingr_raw) if ingr_raw else [])
+        tot = 0.0
+        for i in ingredienti:
+            if not isinstance(i, dict):
+                continue
+            kg = _parse_qta(i.get("quantita", "") or i.get("quantità", ""), i.get("unita", "") or i.get("unità", ""))
+            if isinstance(kg, tuple) and kg[0] == "pz":
+                nl = (i.get("nome", "")).lower()
+                pu = None
+                for k, v in _PESO_PEZZO.items():
+                    if k in nl or nl in k:
+                        pu = v; break
+                kg = kg[1] * pu if pu else None
+            pk = _prezzo_kg(i.get("nome", ""))
+            if kg is not None and pk is not None:
+                tot += kg * pk
+        if tot <= 0:
+            return None
+        return round(tot / (float(resa_ml) / 1000.0), 2)
+    except Exception:
+        return None

@@ -1797,3 +1797,7 @@ _PREPARAZIONI["prep-oleo-saccharum"] = {
         "fenomeni": [{"nome": "Osmosi", "slug": "fen-osmosi"}, {"nome": "Estrazione", "slug": "fen-estrazione"}],
     },
 }
+
+# --- resa delle preparazioni (per il costo coerente) ---
+_PREPARAZIONI["prep-cordiale-al-lime"]["preparazione"]["resa_ml"] = 450
+_PREPARAZIONI["prep-oleo-saccharum"]["preparazione"]["resa_ml"] = 250
