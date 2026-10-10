@@ -1925,3 +1925,34 @@ def criteri_prezzi_da_fare():
                         "nota": "Usati senza prezzo_kg sul nodo (il food cost ripiega su ISMEA, ma il prezzo proprio e' meglio)."})
     except Exception as e:
         return _errore(e)
+
+# --- DIAG DEPLOY (sola lettura): schema reale tabella ricette + versioni pacchetti installati ---
+@bp.route("/v1/criteri/diag-deploy", methods=["GET"])
+def criteri_diag_deploy():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    out = {}
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("""SELECT column_name, data_type, is_nullable, column_default
+                           FROM information_schema.columns WHERE table_name='ricette'
+                           ORDER BY ordinal_position""")
+            out["ricette_colonne"] = [{"nome": r[0], "tipo": r[1], "null": r[2], "default": r[3]} for r in cur.fetchall()]
+            cur.execute("SELECT indexdef FROM pg_indexes WHERE tablename='ricette'")
+            out["ricette_indici"] = [r[0] for r in cur.fetchall()]
+            cur.close()
+    except Exception as e:
+        out["ricette_errore"] = str(e)[:150]
+    try:
+        import importlib.metadata as _md
+        pkgs = ["flask", "gunicorn", "psycopg2-binary", "qrcode", "sentry-sdk", "reportlab", "cloudinary", "openai", "anthropic", "requests", "Pillow"]
+        out["versioni"] = {}
+        for p in pkgs:
+            try:
+                out["versioni"][p] = _md.version(p)
+            except Exception:
+                out["versioni"][p] = "(non installato)"
+    except Exception as e:
+        out["versioni_errore"] = str(e)[:150]
+    return jsonify(out)
