@@ -1121,7 +1121,7 @@ def criteri_bilancio(ingrediente):
             dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
             prop = dd.get("proprieta") or {}
             assi = {}
-            for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso"):
+            for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante"):
                 v = prop.get(k)
                 if isinstance(v, (int, float)):
                     assi[k] = round(float(v), 1)
@@ -1205,7 +1205,7 @@ def criteri_bilancio_aroma(ingrediente):
             row = cur.fetchone()
             dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
             prop = dd.get("proprieta") or {}
-            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso")
+            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante")
                     if isinstance(prop.get(k), (int, float))}
             if not assi:
                 cur.close()
@@ -1256,7 +1256,7 @@ def criteri_costruisci(ingrediente):
             row = cur.fetchone()
             dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
             prop = dd.get("proprieta") or {}
-            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso")
+            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso", "piccante")
                     if isinstance(prop.get(k), (int, float))}
             try:
                 aroma = _base_aromatica(cur, nodo[0], nodo[1], limit=6)
@@ -1525,3 +1525,4 @@ _USDA_NODO_FISSO.update({
     "succo di limone": "fis_lemon_juice",
     "succo di lime": "fis_lime_juice",
 })
+_BILANCIA["piccante"] = ["grasso", "dolce", "acido"]
