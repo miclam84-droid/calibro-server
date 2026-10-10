@@ -1840,3 +1840,42 @@ _PREPARAZIONI["prep-vermouth-infuso"] = {
         "fenomeni": [{"nome": "Infusione e macerazione", "slug": "fen-infusione"}],
     },
 }
+
+# --- ESTENSIONE CATENA 3: oleo affumicato (aroma caldo) + vermouth speziato ---
+_PREPARAZIONI["prep-oleo-saccharum-affumicato"] = {
+    "name": "Oleo Saccharum Affumicato (preparazione)",
+    "ricetta": "ric-fig-oleo-saccharum-affumicato",
+    "proprieta": {"dolce": 8.0, "aroma_caldo": 6.0, "aroma_fresco": 5.0},
+    "fonti": {
+        "dolce": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "150 g zucchero saturo di oli estratti"},
+        "aroma_caldo": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "affumicatura (hickory/melo), <60C per non bruciare gli oli (punto critico)"},
+        "aroma_fresco": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "oli agrumati di limone e lime"},
+    },
+    "preparazione": {
+        "deriva_da_ricetta": "ric-fig-oleo-saccharum-affumicato",
+        "resa_ml": 200,
+        "condizioni": "osmosi scorze+zucchero; affumicatura a freddo <60C",
+        "versione_processo": "v1",
+        "nota_trasformazione": "profilo NON somma: l'affumicatura aggiunge aroma caldo che gli ingredienti crudi non hanno",
+        "fenomeni": [{"nome": "Osmosi", "slug": "fen-osmosi"}, {"nome": "Estrazione", "slug": "fen-estrazione"}],
+    },
+}
+_PREPARAZIONI["prep-vermouth-speziato"] = {
+    "name": "Vermouth Infuso Speziato (preparazione)",
+    "ricetta": "ric-fig-vermouth-infuso-speziato",
+    "proprieta": {"alcolico": 4.0, "aroma_caldo": 6.0, "amaro": 4.0, "dolce": 3.0},
+    "fonti": {
+        "alcolico": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "vermouth rosso ~16% diluito con 200ml acqua -> ~12-13%"},
+        "aroma_caldo": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "cannella, chiodi di garofano, cardamomo infusi"},
+        "amaro": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "base vermouth (botaniche)"},
+        "dolce": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "50 g zucchero"},
+    },
+    "preparazione": {
+        "deriva_da_ricetta": "ric-fig-vermouth-infuso-speziato",
+        "resa_ml": 950,
+        "condizioni": "infusione <50-55C per non estrarre amari dalle spezie (punto critico)",
+        "versione_processo": "v1",
+        "nota_trasformazione": "profilo NON somma: le spezie portano aroma caldo; l'acqua abbassa l'alcol del vermouth base",
+        "fenomeni": [{"nome": "Infusione e macerazione", "slug": "fen-infusione"}],
+    },
+}
