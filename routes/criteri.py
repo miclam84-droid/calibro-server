@@ -758,3 +758,129 @@ def criteri_pulizia_ingredienti():
         })
     except Exception as e:
         return _errore(e)
+
+
+# --- CABLAGGIO USDA -> ASSI DEL GUSTO (Fase 2, dati reali) -----------------------
+# Rifa' giusto cio' che il vecchio 'flask import-usda' faceva male (creava nodi usda_ a parte
+# con acqua/proteine). Qui: prende zuccheri/sodio/grassi da USDA (pubblico dominio) per fdc_id
+# verificato, DERIVA dolce/salato/grasso 0-10 e li scrive come `proprieta` SUL NODO CANONICO
+# (pomodoro, non usda_tomato), taggati `derivato` con la fonte. Endpoint (no CLI), protetto, dry-run.
+# Gli ancoraggi 0-10 sono PROVVISORI (vedi SCALE-SENSORIALI): si tarano al banco.
+_USDA_CORE = {
+    # italiano (per _risolvi_nodo) -> fdc_id USDA verificato
+    "pomodoro": 170457, "limone": 167747, "lime": 168195, "mela": 171688,
+    "fragola": 167762, "parmigiano": 173420, "burro": 789828, "latte": 171265,
+    "zucchero": 169655, "miele": 169640, "olio di oliva": 171413, "aglio": 169230,
+    "cipolla": 170000, "carota": 170393, "patata": 170026, "spinaci": 168462,
+}
+# ancoraggi (valore_grezzo_per_100g -> voto 0..10), PROVVISORI
+_ANCORE_DOLCE = [(0, 0), (5, 2), (10, 4), (15, 6), (50, 8), (100, 10)]          # zuccheri g
+_ANCORE_SALATO = [(0, 0), (50, 1), (400, 3), (800, 5), (2500, 8), (38000, 10)]  # sodio mg
+_ANCORE_GRASSO = [(0, 0), (3, 2), (15, 5), (50, 7), (81, 8), (100, 10)]         # grassi g
+
+
+def _scala(v, punti):
+    """Interpolazione lineare a tratti tra gli ancoraggi, con clamp 0..10."""
+    if v is None:
+        return None
+    if v <= punti[0][0]:
+        return 0.0
+    for (x0, y0), (x1, y1) in zip(punti, punti[1:]):
+        if v <= x1:
+            if x1 == x0:
+                return round(y1, 1)
+            return round(y0 + (y1 - y0) * (v - x0) / (x1 - x0), 1)
+    return 10.0
+
+
+def _usda_nutrienti(fdc_id, key):
+    """Prende zuccheri/sodio/grassi (per 100g) da USDA FoodData Central per fdc_id."""
+    import urllib.request as _u, json as _j
+    url = f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}?api_key={key}"
+    req = _u.Request(url, headers={"User-Agent": "Matter/1.0"})
+    with _u.urlopen(req, timeout=30) as r:
+        d = _j.loads(r.read().decode())
+    zuccheri = sodio = grassi = None
+    nome = d.get("description", "")
+    for n in d.get("foodNutrients", []):
+        nm = (n.get("nutrient", {}) or {}).get("name", "") or ""
+        amt = n.get("amount")
+        if amt is None:
+            continue
+        low = nm.lower()
+        if "sugars" in low and "added" not in low and zuccheri is None:
+            zuccheri = float(amt)
+        elif low.startswith("sodium") and sodio is None:
+            sodio = float(amt)
+        elif "total lipid" in low and grassi is None:
+            grassi = float(amt)
+    return {"nome_usda": nome, "zuccheri_g": zuccheri, "sodio_mg": sodio, "grassi_g": grassi}
+
+
+@bp.route("/v1/criteri/usda-gusti", methods=["GET", "POST"])
+def criteri_usda_gusti():
+    """Caba dolce/salato/grasso da USDA sui nodi canonici del core. DRY-RUN di default
+    (mostra cosa scriverebbe). Scrive solo con ?conferma=applica. Protetto dal secret admin."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato (manca il secret admin)"}), 403
+    key = os.environ.get("USDA_API_KEY", "")
+    if not key:
+        return jsonify({"errore": "USDA_API_KEY non impostata su Railway"}), 503
+    righe = []
+    scritti = 0
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            for nome_it, fdc in _USDA_CORE.items():
+                voce = {"ingrediente": nome_it, "fdc_id": fdc}
+                nodo = _risolvi_nodo(cur, nome_it)
+                if not nodo:
+                    voce["stato"] = "nodo non trovato"
+                    righe.append(voce)
+                    continue
+                voce["nodo"] = nodo[0]
+                try:
+                    nutr = _usda_nutrienti(fdc, key)
+                except Exception as e:
+                    voce["stato"] = "USDA errore: " + str(e)[:80]
+                    righe.append(voce)
+                    continue
+                dolce = _scala(nutr["zuccheri_g"], _ANCORE_DOLCE)
+                salato = _scala(nutr["sodio_mg"], _ANCORE_SALATO)
+                grasso = _scala(nutr["grassi_g"], _ANCORE_GRASSO)
+                voce["grezzo"] = {"zuccheri_g": nutr["zuccheri_g"], "sodio_mg": nutr["sodio_mg"],
+                                  "grassi_g": nutr["grassi_g"]}
+                voce["derivato"] = {"dolce": dolce, "salato": salato, "grasso": grasso}
+                if applica:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+                    row = cur.fetchone()
+                    dd = row[0] if (row and isinstance(row[0], dict)) else (
+                        _json.loads(row[0]) if (row and row[0]) else {})
+                    prop = dd.get("proprieta") or {}
+                    for asse, val, base in (("dolce", dolce, f"zuccheri {nutr['zuccheri_g']}g/100g"),
+                                            ("salato", salato, f"sodio {nutr['sodio_mg']}mg/100g"),
+                                            ("grasso", grasso, f"grassi {nutr['grassi_g']}g/100g")):
+                        if val is not None:
+                            prop[asse] = {"valore": val, "stato": "derivato",
+                                          "fonte": f"USDA FDC {fdc}", "base": base}
+                    dd["proprieta"] = prop
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                                (_json.dumps(dd, ensure_ascii=False), nodo[0]))
+                    scritti += 1
+                    voce["stato"] = "scritto"
+                righe.append(voce)
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({
+            "modo": "APPLICATO" if applica else "DRY-RUN (aggiungi ?conferma=applica per scrivere)",
+            "scritti": scritti,
+            "ancoraggi": "PROVVISORI (vedi SCALE-SENSORIALI, si tarano al banco)",
+            "righe": righe,
+        })
+    except Exception as e:
+        return _errore(e)
