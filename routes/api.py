@@ -4442,6 +4442,7 @@ def assistente_galileo():
                       "Rispondi su qualsiasi argomento. Solo testo: non generi immagini, file o codice lungo. "
                       "Se ti chiedono un'immagine, spieghi gentilmente che fai solo testo. Sii diretto.")
         usato_web = False
+        _tin = 0; _tout = 0
         if serve_web:
             # WEB SEARCH via OpenAI Responses API (tool web_search) - Galileo conosce il presente (#231)
             try:
@@ -4457,7 +4458,10 @@ def assistente_galileo():
                         for ct in item.get("content", []):
                             if ct.get("type") == "output_text": risposta += ct.get("text", "")
                 if not risposta: risposta = ddd.get("output_text", "")
-                token_reali = ddd.get("usage", {}).get("total_tokens", stima+300)
+                _u = ddd.get("usage", {})
+                token_reali = _u.get("total_tokens", stima+300)
+                _tin = _u.get("prompt_tokens", 0) or _u.get("input_tokens", 0)
+                _tout = _u.get("completion_tokens", 0) or _u.get("output_tokens", 0)
                 usato_web = bool(risposta)
             except Exception:
                 usato_web = False
@@ -4469,7 +4473,20 @@ def assistente_galileo():
                              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
             rr = ur.urlopen(req, timeout=40); dd = json.loads(rr.read().decode())
             risposta = dd["choices"][0]["message"]["content"]
-            token_reali = dd.get("usage", {}).get("total_tokens", stima)
+            _u = dd.get("usage", {})
+            token_reali = _u.get("total_tokens", stima)
+            _tin = _u.get("prompt_tokens", 0)
+            _tout = _u.get("completion_tokens", 0)
+        # tracciabilita costi: registra la spesa dell'Assistente anche nel registro unico del gateway
+        # (ai_usage_log), altrimenti e' invisibile a /admin/costi e al pannello unico (oss.metriche).
+        try:
+            import ai_gateway as _GW
+            if not (_tin or _tout):
+                _tin = int(token_reali or 0)
+            _GW._log("openai", "gpt-4o-mini", "assistente_galileo", 0,
+                     tokens_in=int(_tin or 0), tokens_out=int(_tout or 0))
+        except Exception:
+            pass
         cur.execute("""INSERT INTO assistente_uso (account,giorno,token_usati) VALUES (%s,%s,%s)
                        ON CONFLICT (account,giorno) DO UPDATE SET token_usati=assistente_uso.token_usati+%s""",
                     (account, oggi, token_reali, token_reali))

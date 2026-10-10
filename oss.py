@@ -5,6 +5,7 @@
 # MAI rompere l'app: ogni funzione è avvolta in try/except e fallisce in
 # silenzio se il DB non è disponibile.
 # ============================================================
+import os
 from datetime import datetime, timezone
 
 from db import _get_conn, _release_conn
@@ -144,6 +145,8 @@ def metriche():
         "prezzo_pro_eur": 19.99,
         "mrr_eur": 0.0,
         "arpu_eur": 0.0,
+        "costi_ai": {"oggi_usd": 0.0, "sett_usd": 0.0, "mese_usd": 0.0, "per_modello_30gg": []},
+        "margine_mese_eur_stimato": 0.0,
     }
     conn = None
     try:
@@ -250,6 +253,32 @@ def metriche():
         except Exception:
             pass
         out["funnel"] = funnel
+
+        # COSTI AI (tabella ai_usage_log del gateway) per il pannello unico: serve il MARGINE, non solo i ricavi
+        costi = {"oggi_usd": 0.0, "sett_usd": 0.0, "mese_usd": 0.0, "per_modello_30gg": []}
+        try:
+            cur.execute("SELECT to_regclass('ai_usage_log')")
+            if cur.fetchone()[0]:
+                def _costo(sql):
+                    try:
+                        cur.execute(sql); r = cur.fetchone()
+                        return round(float(r[0]), 4) if r and r[0] is not None else 0.0
+                    except Exception:
+                        return 0.0
+                costi["oggi_usd"] = _costo("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE")
+                costi["sett_usd"] = _costo("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'")
+                costi["mese_usd"] = _costo("SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '30 days'")
+                try:
+                    cur.execute("SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log "
+                                "WHERE ts > NOW() - INTERVAL '30 days' GROUP BY model ORDER BY SUM(cost_usd) DESC LIMIT 10")
+                    costi["per_modello_30gg"] = [{"modello": r[0], "chiamate": int(r[1]),
+                                                  "costo_usd": round(float(r[2]), 4)} for r in cur.fetchall()]
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        out["costi_ai"] = costi
+        out["margine_mese_eur_stimato"] = round(out.get("mrr_eur", 0.0) - costi["mese_usd"], 2)
 
         cur.close()
     except Exception:
