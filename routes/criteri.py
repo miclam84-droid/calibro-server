@@ -1077,3 +1077,72 @@ def criteri_usda_gusti_blocco():
                         "totale_core": len(_USDA_CORE), "scritti": scritti, "righe": righe})
     except Exception as e:
         return _errore(e)
+
+# --- FASE 2: BILANCIAMENTO (lettura degli assi, non verdetto) ---------------------
+_BILANCIA = {
+    "grasso": ["acido", "amaro"],
+    "acido":  ["dolce", "grasso"],
+    "dolce":  ["acido", "amaro"],
+    "salato": ["acido", "dolce"],
+    "amaro":  ["dolce", "grasso"],
+    "umami":  ["acido"],
+}
+
+
+def _alti_in_asse(cur, asse, escludi_id, soglia=6.0, limite=6):
+    cur.execute(
+        """SELECT n.name, (n.data->'proprieta'->>%s)::float AS v
+           FROM nodes n
+           WHERE n.type IN ('Ingrediente','Prodotto')
+             AND n.id <> %s
+             AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+             AND (n.data->'proprieta' ? %s)
+             AND (n.data->'proprieta'->>%s) ~ '^[0-9.]+$'
+             AND (n.data->'proprieta'->>%s)::float >= %s
+           ORDER BY v DESC LIMIT %s""",
+        (asse, escludi_id, asse, asse, asse, soglia, limite))
+    return [{"ingrediente": r[0], "valore": round(float(r[1]), 1)} for r in cur.fetchall()]
+
+
+@bp.route("/v1/criteri/bilancio/<ingrediente>", methods=["GET"])
+def criteri_bilancio(ingrediente):
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            nodo = _risolvi_nodo(cur, ingrediente)
+            if not nodo:
+                cur.close()
+                return jsonify({"errore": f"ingrediente '{ingrediente}' non trovato"}), 404
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+            row = cur.fetchone()
+            dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+            prop = dd.get("proprieta") or {}
+            assi = {}
+            for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso"):
+                v = prop.get(k)
+                if isinstance(v, (int, float)):
+                    assi[k] = round(float(v), 1)
+            if not assi:
+                cur.close()
+                return jsonify({"ingrediente": nodo[1], "nodo": nodo[0], "nota": "nessun profilo gusto ancora"})
+            dominanti = sorted([a for a, v in assi.items() if v >= 6.0], key=lambda a: -assi[a])
+            bilancio = []
+            visti = set()
+            for asse in dominanti:
+                for serve in _BILANCIA.get(asse, []):
+                    if serve in visti:
+                        continue
+                    visti.add(serve)
+                    partner = _alti_in_asse(cur, serve, nodo[0])
+                    if partner:
+                        bilancio.append({"perche": f"{nodo[1]} e' {asse} {assi[asse]} -> {serve} per bilanciare",
+                                         "asse_che_serve": serve, "partner": partner})
+            cur.close()
+        return jsonify({"ingrediente": nodo[1], "nodo": nodo[0], "profilo_gusto": assi,
+                        "assi_dominanti": dominanti or ["(nessun asse >= 6)"], "bilanciamento": bilancio,
+                        "nota": "Lettura degli assi: ipotesi da verificare al banco, non un verdetto."})
+    except Exception as e:
+        return _errore(e)
