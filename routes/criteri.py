@@ -1173,3 +1173,6 @@ _GLU_CORE.update({
     "aceto di mele": 0, "crauti": 50, "miso": 200, "nocciole": 40, "noci": 40,
     "zenzero": 20, "cannella": 0, "pepe nero": 0,
 })
+
+# --- aggancio fisso: nocciole (nodo canonico, non la farina) ---
+_USDA_NODO_FISSO.update({"nocciole": "ahn_hazelnut"})
