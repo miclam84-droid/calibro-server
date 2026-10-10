@@ -1733,3 +1733,46 @@ def criteri_preparazione_derivata():
         return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "creati": creati, "righe": righe})
     except Exception as e:
         return _errore(e)
+
+# --- FIX FENOMENI PREPARAZIONI (passo 1 revisore): oleo saccharum -> osmosi+estrazione ---
+_PREP_FENOMENI = {
+    "ric-cls-oleo-saccharum-classico":           [{"nome": "Osmosi", "slug": "fen-osmosi"}, {"nome": "Estrazione", "slug": "fen-estrazione"}],
+    "ric-fig-oleo-saccharum-speziato":           [{"nome": "Osmosi", "slug": "fen-osmosi"}, {"nome": "Estrazione", "slug": "fen-estrazione"}],
+    "ric-fig-oleo-saccharum-affumicato":         [{"nome": "Osmosi", "slug": "fen-osmosi"}, {"nome": "Estrazione", "slug": "fen-estrazione"}],
+    "ric-fig-oleo-saccharum-ai-frutti-di-bosco": [{"nome": "Osmosi", "slug": "fen-osmosi"}, {"nome": "Estrazione", "slug": "fen-estrazione"}],
+}
+
+@bp.route("/v1/criteri/prep-fenomeni", methods=["GET", "POST"])
+def criteri_prep_fenomeni():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    righe = []
+    aggiornati = 0
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            for rid, fen in sorted(_PREP_FENOMENI.items()):
+                cur.execute("SELECT fenomeni FROM ricette WHERE id=%s", (rid,))
+                row = cur.fetchone()
+                r = {"ricetta": rid}
+                if not row:
+                    r["stato"] = "ricetta non trovata"
+                    righe.append(r); continue
+                r["vecchio"] = row[0]
+                r["nuovo"] = [f["nome"] for f in fen]
+                if applica:
+                    cur.execute("UPDATE ricette SET fenomeni=%s::jsonb WHERE id=%s",
+                                (_json.dumps(fen, ensure_ascii=False), rid))
+                    aggiornati += 1
+                    r["stato"] = "aggiornato"
+                righe.append(r)
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "aggiornati": aggiornati, "righe": righe})
+    except Exception as e:
+        return _errore(e)
