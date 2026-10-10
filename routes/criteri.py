@@ -647,3 +647,57 @@ def criteri_link_fenomeni_applica():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:200]}), 500
+
+
+# --- PULIZIA INGREDIENTI (punto 2): classificatore DRY-RUN -----------------------
+# Separa i 1740 orfani in tre classi deterministiche, SENZA scrivere:
+#   chimici     = nodi mis-tipati (non sono ingredienti: '_', 'acido ...', ' oil', acetaldeide)
+#   usda_grezzi = doppioni USDA in inglese tecnico (marker USDA o >=2 virgole) di nodi che
+#                 spesso esistono gia' in forma IT/Ahn -> spazzatura da togliere
+#   non_mappati = ingredienti VERI senza profilo chimico (ostriche, seppia, oolong, inulina...)
+#                 -> la sezione "non mappati" onesta, da dichiarare, non da gonfiare
+_MARK_USDA = ["beverage", "distilled", "alcoholic", "raw", "cooked", "prepared", "unprepared",
+              "with salt", "without salt", "proof", "nfs", "ns as to", "includes", "commercially",
+              "broilers", "drained", "unenriched", "flesh and skin"]
+
+
+def _classe_orfano(nome):
+    nl = (nome or "").strip().lower()
+    if (not nl) or ("_" in nl) or nl.startswith("acido ") or nl == "acetaldeide" or nl.endswith(" oil"):
+        return "chimico"
+    if any(m in nl for m in _MARK_USDA) or (nome or "").count(",") >= 2:
+        return "usda_grezzo"
+    return "non_mappato"
+
+
+@bp.route("/v1/criteri/pulizia-ingredienti", methods=["GET"])
+def criteri_pulizia_ingredienti():
+    """DRY-RUN: classifica gli orfani (nodi Ingrediente/Prodotto senza composti ne' padre) in
+    chimici mis-tipati / doppioni USDA grezzi / non-mappati veri. NON scrive. Dai numeri reali
+    si decide cosa togliere (doppioni) e cosa dichiarare (non-mappati veri)."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute(
+                """SELECT id, name FROM nodes n
+                   WHERE n.type IN ('Ingrediente','Prodotto')
+                     AND n.padre_ahn_id IS NULL
+                     AND NOT EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')""")
+            orfani = cur.fetchall()
+            cur.close()
+        classi = {"chimico": [], "usda_grezzo": [], "non_mappato": []}
+        for oid, onome in orfani:
+            classi[_classe_orfano(onome)].append({"id": oid, "nome": onome})
+        return jsonify({
+            "totale_orfani": len(orfani),
+            "conteggio": {k: len(v) for k, v in classi.items()},
+            "chimici_campione": [x["nome"] for x in classi["chimico"][:40]],
+            "usda_grezzi_campione": [x["nome"] for x in classi["usda_grezzo"][:40]],
+            "non_mappati_campione": [x["nome"] for x in classi["non_mappato"][:60]],
+            "nota": "DRY-RUN: nessuna scrittura. chimico=da ri-tipizzare; usda_grezzo=doppioni da "
+                    "togliere; non_mappato=ingredienti veri da dichiarare come sezione onesta.",
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]}), 500
