@@ -1238,3 +1238,54 @@ def criteri_bilancio_aroma(ingrediente):
         })
     except Exception as e:
         return _errore(e)
+
+# --- CREAZIONE UNIFICATA: tutto per costruire attorno a un ingrediente ------------
+@bp.route("/v1/criteri/costruisci/<ingrediente>", methods=["GET"])
+def criteri_costruisci(ingrediente):
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            nodo = _risolvi_nodo(cur, ingrediente)
+            if not nodo:
+                cur.close()
+                return jsonify({"errore": f"'{ingrediente}' non trovato"}), 404
+            cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+            row = cur.fetchone()
+            dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+            prop = dd.get("proprieta") or {}
+            assi = {k: round(float(prop[k]), 1) for k in ("dolce", "salato", "acido", "amaro", "umami", "grasso")
+                    if isinstance(prop.get(k), (int, float))}
+            try:
+                aroma = _base_aromatica(cur, nodo[0], nodo[1], limit=6)
+            except Exception:
+                aroma = []
+            aroma_out = [{"ingrediente": a.get("ingrediente"), "perche": a.get("perche")} for a in aroma]
+            dominanti = sorted([a for a, v in assi.items() if v >= 6.0], key=lambda a: -assi[a])
+            bil = []
+            visti = set()
+            for asse in dominanti:
+                for serve in _BILANCIA.get(asse, []):
+                    if serve in visti:
+                        continue
+                    visti.add(serve)
+                    partner = _alti_in_asse(cur, serve, nodo[0], limite=10)
+                    for p in partner:
+                        p["aroma_condiviso"] = _condivisi_con(cur, nodo[0], p["ingrediente"])
+                    partner.sort(key=lambda x: (-x["aroma_condiviso"], -x["valore"]))
+                    forti = [p["ingrediente"] for p in partner if p["aroma_condiviso"] > 0][:5]
+                    altri = [p["ingrediente"] for p in partner if p["aroma_condiviso"] == 0][:3]
+                    bil.append({"serve": serve, "motivo": f"{asse} {assi[asse]}",
+                                "aroma_e_bilancio": forti, "solo_bilancio": altri})
+            cur.close()
+        return jsonify({
+            "ingrediente": nodo[1], "nodo": nodo[0],
+            "profilo_gusto": assi or "(profilo non ancora mappato)",
+            "partner_aroma": aroma_out,
+            "bilancio": bil,
+            "nota": "Aroma + gusto + bilancio in una vista. Chi torna in entrambi e' il piu' forte. Ipotesi da verificare.",
+        })
+    except Exception as e:
+        return _errore(e)
