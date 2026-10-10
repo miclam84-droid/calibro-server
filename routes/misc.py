@@ -891,10 +891,22 @@ def nodo_completo(nodo_id):
         except Exception: pass
         dialoga = []
         try:
-            abb = db.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
-                                WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8""", (nid,)).fetchall()
-            dialoga = [_c(x,"name",0) for x in abb]
-        except Exception: pass
+            from routes.criteri import _base_aromatica, _risolvi_nodo
+            from db import connessione as _conn_idf
+            with _conn_idf() as _cxn:
+                _cun = _cxn.cursor()
+                _cn = _risolvi_nodo(_cun, nome) or (nid, nome)
+                _abn = _base_aromatica(_cun, _cn[0], _cn[1], limit=8)
+                _cun.close()
+            dialoga = [a["ingrediente"] for a in _abn]
+        except Exception:
+            dialoga = []
+        if not dialoga:
+            try:
+                abb = db.execute("""SELECT n2.name FROM edges e JOIN nodes n2 ON n2.id=e.to_id
+                                    WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8""", (nid,)).fetchall()
+                dialoga = [_c(x,"name",0) for x in abb]
+            except Exception: pass
         ricette = []
         try:
             ric = db.execute("""SELECT DISTINCT nome FROM ricette WHERE LOWER(ingredienti) LIKE LOWER(?) LIMIT 5""", (f"%{nome}%",)).fetchall()
@@ -1502,18 +1514,30 @@ def scheda_ingrediente_completa(ingrediente_id):
             try: abb = _abbinamenti_da(padre)
             except: abb = []
         dialoga = []
-        _visti_rel = set()
-        for x in abb:
-            nm = _c(x,"name",0)
-            if not nm or nm.lower() in _visti_rel: continue
-            _visti_rel.add(nm.lower())
-            ed = _c(x,"data",1)
-            ed = ed if isinstance(ed, dict) else (_j.loads(ed) if ed else {})
-            ov = ed.get("overlap") or ed.get("peso")
-            dialoga.append({"ingrediente": nm,
-                            "overlap": round(ov,0) if ov else None,
-                            "perche": ed.get("perche","") or ("condividono composti aromatici" if ov else "")})
-        dialoga = dialoga[:8]
+        try:
+            from routes.criteri import _base_aromatica, _risolvi_nodo
+            from db import connessione as _conn_idf2
+            with _conn_idf2() as _cx2:
+                _cu2 = _cx2.cursor()
+                _cn2 = _risolvi_nodo(_cu2, nome) or (nid, nome)
+                _ab2 = _base_aromatica(_cu2, _cn2[0], _cn2[1], limit=8)
+                _cu2.close()
+            dialoga = [{"ingrediente": a["ingrediente"], "perche": a.get("perche"), "robustezza": a.get("robustezza")} for a in _ab2]
+        except Exception:
+            dialoga = []
+        if not dialoga:
+            _visti_rel = set()
+            for x in abb:
+                nm = _c(x,"name",0)
+                if not nm or nm.lower() in _visti_rel: continue
+                _visti_rel.add(nm.lower())
+                ed = _c(x,"data",1)
+                ed = ed if isinstance(ed, dict) else (_j.loads(ed) if ed else {})
+                ov = ed.get("overlap") or ed.get("peso")
+                dialoga.append({"ingrediente": nm,
+                                "overlap": round(ov,0) if ov else None,
+                                "perche": ed.get("perche","") or ("condividono composti aromatici" if ov else "")})
+            dialoga = dialoga[:8]
         # SCIENZA (fenomeni collegati all'ingrediente dagli archi)
         fen = db.execute("""SELECT DISTINCT n.id, n.name FROM edges e JOIN nodes n ON (n.id=e.to_id OR n.id=e.from_id)
                             WHERE (e.from_id=? OR e.to_id=?) AND n.type='Fenomeno' LIMIT 5""", (nid, nid)).fetchall()
