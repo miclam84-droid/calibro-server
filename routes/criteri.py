@@ -625,15 +625,25 @@ def criteri_link_fenomeni():
         return jsonify({"errore": str(e)[:200]}), 500
 
 
+def _admin_ok():
+    """Auth scritture: stesso standard del resto (admin.py _admin_ok) — hmac a tempo costante,
+    secret da header X-Admin-Secret (preferito) o ?s=. Nessun endpoint di scrittura senza questo."""
+    import hmac
+    atteso = os.environ.get("ADMIN_SECRET") or ""
+    dato = request.headers.get("X-Admin-Secret", "") or request.args.get("s", "")
+    return bool(atteso) and hmac.compare_digest(str(dato), str(atteso))
+
+
 @bp.route("/v1/criteri/link-fenomeni/applica", methods=["GET", "POST"])
 def criteri_link_fenomeni_applica():
     """APPLICA i link verticali protocollo->fenomeno con le STESSE regole strette del dry-run.
     Scrive slug+fenomeno_id nelle voci-fenomeno sciolte che matchano una regola distintiva.
-    Idempotente (salta le gia'-linkate). Protetto: richiede ?conferma=applica."""
+    Idempotente (salta le gia'-linkate). Protetto: secret admin + ?conferma=applica (intento)."""
     if not DATABASE_URL:
         return jsonify({"nota": "DB non disponibile"})
     import json as _json
-    from flask import request
+    if not _admin_ok():
+        return jsonify({"errore": "non autorizzato"}), 403
     if (request.args.get("conferma") or "") != "applica":
         return jsonify({"nota": "Sicurezza: aggiungi ?conferma=applica per scrivere gli archi."}), 400
     try:
