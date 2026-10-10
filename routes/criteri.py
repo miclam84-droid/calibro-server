@@ -475,15 +475,63 @@ def criteri_orfani_match():
         return jsonify({"errore": str(e)[:160]}), 500
 
 
+# --- LINK VERTICALI protocollo->fenomeno (moat): matcher STRETTO ---------------
+# Il vecchio matcher prendeva OGNI parola >=5 lettere del nome-fenomeno come radice
+# e agganciava su un solo stem: cosi' "La pasta e l'acqua di cottura" catturava
+# qualunque "cottura X" (sundae, tiradito, steak...). Meta' falsi.
+# Qui invece: una lista CURATA di termini DISTINTIVI. Un termine (o una coppia) deve
+# comparire sia nel TESTO del protocollo sia nel NOME del fenomeno, e deve risolvere
+# a UN SOLO fenomeno. Le parole generiche (cottura, conservazione, equilibrio,
+# montatura, latte, zucchero, affinamento) sono fuori di proposito.
+# Principio Matter: un arco falso e' peggio di un testo non collegato. Precisione > copertura.
+# (termini_distintivi, id_fenomeno_esplicito_o_None).
+# id esplicito = confermato dai dati reali (vince sull'ambiguita' di nome: "emulsion"
+# compare sia in "Emulsione" sia in "Ganache (emulsione...)"). id None = risolto per
+# nome solo se UNICO (altrimenti la regola non nasce, nessun falso).
+_TERMINI_FEN_DISTINTIVI = [
+    (("gelatinizz",),     "fen-gelatinizzazione"),
+    (("emulsion",),       "fen-emulsione"),
+    (("amaro", "bitter"), "fen-amaro-bitter"),
+    (("farina", "forza"), "fen-farina-forza"),
+    (("shakera",),        "fen-shakerare-mescolare"),
+    (("maillard",),       None),   # risolto per nome se esiste ed e' unico
+    (("caramellizz",),    None),
+]
+
+
+def _regole_fenomeni(fen):
+    """fen: lista (fid, fname). Ritorna [(termini, fid)]. Con id esplicito: usato se il
+    nodo esiste. Senza id: risolto per nome solo se UNICO. Ambiguo/assente -> regola non nasce."""
+    fen_ids = {fid for fid, _ in fen}
+    regole = []
+    for termini, esplicito in _TERMINI_FEN_DISTINTIVI:
+        if esplicito:
+            if esplicito in fen_ids:
+                regole.append((termini, esplicito))
+        else:
+            cand = [fid for fid, fname in fen if all(t in (fname or "").lower() for t in termini)]
+            if len(cand) == 1:
+                regole.append((termini, cand[0]))
+    return regole
+
+
+def _match_testo_fenomeno(testo, regole):
+    """Prima regola i cui termini sono TUTTI nel testo. Altrimenti None."""
+    tl = (testo or "").lower()
+    for termini, fid in regole:
+        if all(t in tl for t in termini):
+            return fid
+    return None
+
+
 @bp.route("/v1/criteri/link-fenomeni", methods=["GET"])
 def criteri_link_fenomeni():
     """DRY-RUN (moat, collegamenti verticali): legge il testo-fenomeni di ogni Protocollo e propone
-    l'arco al nodo Fenomeno giusto (match per radice della parola). NON scrive. Mostra proposte,
-    gia'-linkati, e non-matchati (spesso tecniche, non fenomeni -> arco a Tecnica in un passo dopo).
-    Param opzionale ?ingrediente=pomodoro per limitare ai protocolli di un ingrediente."""
+    l'arco al nodo Fenomeno giusto, con MATCH STRETTO (termini distintivi, no parole generiche).
+    NON scrive. Mostra proposte (complete), gia'-linkati, e i testi non-matchati distinti (coda lunga:
+    spesso tecniche o passi di cottura generici, non fenomeni). Param opzionale ?ingrediente=pomodoro."""
     if not DATABASE_URL:
         return jsonify({"nota": "DB non disponibile"})
-    import re as _re
     import json as _json
     from flask import request
     filtro_ing = (request.args.get("ingrediente") or "").strip().lower()
@@ -491,12 +539,9 @@ def criteri_link_fenomeni():
         with connessione() as conn:
             cur = conn.cursor()
             cur.execute("SELECT id, name FROM nodes WHERE type='Fenomeno'")
-            fen = []
-            for fid, fname in cur.fetchall():
-                words = [w for w in _re.sub(r"[^a-zàèéìòù ]", " ", (fname or "").lower()).split() if len(w) >= 5]
-                stems = [w[:7] for w in words]
-                if stems:
-                    fen.append((fid, fname, stems))
+            fen = [(r[0], r[1]) for r in cur.fetchall()]
+            regole = _regole_fenomeni(fen)
+            nomi_fen = {fid: fname for fid, fname in fen}
             if filtro_ing:
                 cur.execute("""SELECT DISTINCT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
                                JOIN nodes i ON i.id=e.to_id
@@ -509,7 +554,7 @@ def criteri_link_fenomeni():
         gia_linkati = 0
         testo_totale = 0
         proposte = []
-        non_match = []
+        non_match_conta = {}
         for pid, pname, data in prot:
             dd = data if isinstance(data, dict) else (_json.loads(data) if data else {})
             for f in (dd.get("fenomeni") or []):
@@ -523,28 +568,82 @@ def criteri_link_fenomeni():
                 if not txt.strip():
                     continue
                 testo_totale += 1
-                tl = txt.lower()
-                best = None  # (stem_len, -len(nome)), fid, fname
-                for fid, fname, stems in fen:
-                    m = max((len(s) for s in stems if s in tl), default=0)
-                    if m > 0:
-                        key = (m, -len(fname))
-                        if best is None or key > best[0]:
-                            best = (key, fid, fname)
-                if best:
-                    proposte.append({"protocollo": pname, "testo": txt, "fenomeno": best[1], "nome_fen": best[2]})
+                fid = _match_testo_fenomeno(txt, regole)
+                if fid:
+                    proposte.append({"protocollo": pname, "testo": txt, "fenomeno": fid, "nome_fen": nomi_fen.get(fid)})
                 else:
-                    non_match.append({"protocollo": pname, "testo": txt})
+                    non_match_conta[txt] = non_match_conta.get(txt, 0) + 1
+        # proposte per fenomeno (riepilogo che Michele puo' leggere a colpo d'occhio)
+        per_fen = {}
+        for p in proposte:
+            per_fen[p["nome_fen"]] = per_fen.get(p["nome_fen"], 0) + 1
+        non_match_distinti = sorted(non_match_conta.items(), key=lambda kv: -kv[1])
         return jsonify({
             "filtro_ingrediente": filtro_ing or "(tutti)",
             "protocolli_con_fenomeni": len(prot),
             "voci_fenomeno_testo": testo_totale,
             "gia_linkati": gia_linkati,
+            "regole_attive": [{"termini": list(t), "fenomeno": fid, "nome_fen": nomi_fen.get(fid)} for t, fid in regole],
             "proposte_arco": len(proposte),
-            "non_matchati": len(non_match),
-            "proposte_campione": proposte[:50],
-            "non_matchati_campione": non_match[:40],
-            "nota": "DRY-RUN: nessuna scrittura. Rivedi prima di materializzare gli archi protocollo->fenomeno.",
+            "proposte_per_fenomeno": per_fen,
+            "proposte": proposte,
+            "non_matchati_distinti": len(non_match_distinti),
+            "non_matchati": [{"testo": t, "conta": c} for t, c in non_match_distinti],
+            "nota": "DRY-RUN: nessuna scrittura. Match stretto per termini distintivi. "
+                    "I non-matchati sono quasi tutti passi di cottura generici o tecniche, non fenomeni.",
+        })
+    except Exception as e:
+        return jsonify({"errore": str(e)[:200]}), 500
+
+
+@bp.route("/v1/criteri/link-fenomeni/applica", methods=["GET", "POST"])
+def criteri_link_fenomeni_applica():
+    """APPLICA i link verticali protocollo->fenomeno con le STESSE regole strette del dry-run.
+    Scrive slug+fenomeno_id nelle voci-fenomeno sciolte che matchano una regola distintiva.
+    Idempotente (salta le gia'-linkate). Protetto: richiede ?conferma=applica."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    from flask import request
+    if (request.args.get("conferma") or "") != "applica":
+        return jsonify({"nota": "Sicurezza: aggiungi ?conferma=applica per scrivere gli archi."}), 400
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT id, name FROM nodes WHERE type='Fenomeno'")
+            fen = [(r[0], r[1]) for r in cur.fetchall()]
+            regole = _regole_fenomeni(fen)
+            cur.execute("SELECT id, name, data FROM nodes WHERE type='Protocollo' AND data ? 'fenomeni'")
+            prot = cur.fetchall()
+            scritti = 0
+            protocolli_toccati = 0
+            dettaglio = []
+            for pid, pname, data in prot:
+                dd = data if isinstance(data, dict) else (_json.loads(data) if data else {})
+                cambiato = False
+                for f in (dd.get("fenomeni") or []):
+                    if not isinstance(f, dict):
+                        continue
+                    if f.get("slug") or f.get("fenomeno_id"):
+                        continue
+                    fid = _match_testo_fenomeno(str(f.get("nome", "")), regole)
+                    if fid:
+                        f["slug"] = fid
+                        f["fenomeno_id"] = fid
+                        cambiato = True
+                        scritti += 1
+                        dettaglio.append({"protocollo": pname, "testo": f.get("nome"), "fenomeno": fid})
+                if cambiato:
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                                (_json.dumps(dd, ensure_ascii=False), pid))
+                    protocolli_toccati += 1
+            conn.commit()
+            cur.close()
+        return jsonify({
+            "scritti": scritti,
+            "protocolli_toccati": protocolli_toccati,
+            "dettaglio": dettaglio,
+            "nota": "Archi slug materializzati. Rilanciare e' sicuro: idempotente.",
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:200]}), 500
