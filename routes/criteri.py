@@ -1438,3 +1438,6 @@ def criteri_nomi_scientifici():
         return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
     except Exception as e:
         return _errore(e)
+
+# --- FIX: garofano = spezia Syzygium (nodo ahn_clove), non fiore Dianthus ---
+_USDA_NODO_FISSO["garofano"] = "ahn_clove"
