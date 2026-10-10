@@ -1801,3 +1801,42 @@ _PREPARAZIONI["prep-oleo-saccharum"] = {
 # --- resa delle preparazioni (per il costo coerente) ---
 _PREPARAZIONI["prep-cordiale-al-lime"]["preparazione"]["resa_ml"] = 450
 _PREPARAZIONI["prep-oleo-saccharum"]["preparazione"]["resa_ml"] = 250
+
+# --- ESTENSIONE CATENA 2: shrub (acidulato) + vermouth infuso (alcolico) ---
+_PREPARAZIONI["prep-shrub-frutti-rossi"] = {
+    "name": "Shrub ai frutti rossi (preparazione)",
+    "ricetta": "ric-cls-shrub-ai-frutti-rossi",
+    "proprieta": {"acido": 7.0, "dolce": 6.0, "aroma_fresco": 6.0},
+    "fonti": {
+        "acido": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "aceto di mele (pH~3.5) + acidi dei frutti rossi"},
+        "dolce": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "250 g zucchero, bilanciato dall'aceto"},
+        "aroma_fresco": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "frutti rossi macerati"},
+    },
+    "preparazione": {
+        "deriva_da_ricetta": "ric-cls-shrub-ai-frutti-rossi",
+        "resa_ml": 600,
+        "condizioni": "macerazione; piu' lunga = piu' estrazione aromi (punto critico)",
+        "versione_processo": "v1",
+        "nota_trasformazione": "profilo NON somma: l'aceto porta l'acido, la macerazione estrae gli aromi della frutta",
+        "fenomeni": [{"nome": "Estrazione", "slug": "fen-estrazione"}, {"nome": "Infusione e macerazione", "slug": "fen-infusione"}],
+    },
+}
+_PREPARAZIONI["prep-vermouth-infuso"] = {
+    "name": "Vermouth Infuso (preparazione)",
+    "ricetta": "ric-cls-vermouth-infuso-classico",
+    "proprieta": {"alcolico": 5.0, "amaro": 5.0, "dolce": 3.0, "aroma_caldo": 4.0},
+    "fonti": {
+        "alcolico": {"stato": "stimato", "fonte": "vermouth tipico ~16-18% vol", "base": "ATTENZIONE: la ricetta d'origine (750ml vino + 250ml alcol neutro) darebbe ~30%, quantita alcol DA VERIFICARE"},
+        "amaro": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "botaniche amare: assenzio, genziana"},
+        "dolce": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "100 g zucchero"},
+        "aroma_caldo": {"stato": "stimato", "fonte": "calcolo da ricetta", "base": "erbe aromatiche infuse"},
+    },
+    "preparazione": {
+        "deriva_da_ricetta": "ric-cls-vermouth-infuso-classico",
+        "resa_ml": 1100,
+        "condizioni": "infusione; tempo cruciale per sviluppare gli aromi (punto critico)",
+        "versione_processo": "v1",
+        "nota_trasformazione": "profilo NON somma: le botaniche portano amaro e aroma; l'alcol fortifica il vino",
+        "fenomeni": [{"nome": "Infusione e macerazione", "slug": "fen-infusione"}],
+    },
+}
