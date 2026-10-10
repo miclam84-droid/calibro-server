@@ -3945,14 +3945,48 @@ def planner_genera():
             6: "estate", 7: "estate", 8: "estate", 9: "autunno", 10: "autunno", 11: "autunno"}
     stagione = STAG.get(mese, "")
     try:
+        # helper stagione: riuso la logica di stagione.py (niente calendario duplicato)
+        _stag_fn = None
+        try:
+            from stagione import _stagione_ingrediente as _stag_fn
+        except Exception:
+            try:
+                from routes.stagione import _stagione_ingrediente as _stag_fn
+            except Exception:
+                _stag_fn = None
+        def _nomi_ingredienti(ingr_raw):
+            try:
+                import json as _j
+                lst = ingr_raw if isinstance(ingr_raw, list) else (_j.loads(ingr_raw) if ingr_raw else [])
+                return [(i.get("nome", "") if isinstance(i, dict) else str(i)) for i in lst]
+            except Exception:
+                return []
         _c = _pg.connect(DATABASE_URL); _cur = _c.cursor()
-        # per ogni portata, prendo i piatti disponibili (con eventuale filtro stagione)
+        # per ogni portata: piatti disponibili, con ESCLUSIONI (filtro netto) e STAGIONE (flag per preferenza)
         piatti_per_portata = {}
         for portata in set(slot):
-            _cur.execute("""SELECT id, nome FROM ricette WHERE portata = %s
+            _cur.execute("""SELECT id, nome, ingredienti FROM ricette WHERE portata = %s
                             AND (ingredienti IS NOT NULL AND ingredienti::text NOT IN ('[]','null',''))
                             ORDER BY random() LIMIT 200""", (portata,))
-            piatti_per_portata[portata] = [{"id": r[0], "nome": r[1]} for r in _cur.fetchall()]
+            lista = []
+            for r in _cur.fetchall():
+                nomi = _nomi_ingredienti(r[2])
+                nomi_l = [n.lower() for n in nomi]
+                # esclusioni: scarto il piatto se contiene un ingrediente da evitare
+                if escludi_ing and any(any(e in nl or nl in e for nl in nomi_l) for e in escludi_ing):
+                    continue
+                # fuori stagione: contiene un ingrediente mappato e NON di stagione nel mese scelto
+                fuori = False
+                if _stag_fn:
+                    for n in nomi:
+                        try:
+                            ds, _ = _stag_fn(n, mese)
+                            if ds is False:
+                                fuori = True; break
+                        except Exception:
+                            pass
+                lista.append({"id": r[0], "nome": r[1], "fuori_stagione": fuori})
+            piatti_per_portata[portata] = lista
         _cur.close(); _release_conn(_c)
         # genero il calendario con rotazione (no-ripeti)
         oggi = datetime.date.today()
@@ -3969,10 +4003,15 @@ def planner_genera():
                                         "ricetta_id": lg[portata], "locked": True})
                     continue
                 # pesca un piatto non usato di recente
-                candidati = [p for p in piatti_per_portata.get(portata, [])
+                _pool = piatti_per_portata.get(portata, [])
+                candidati = [p for p in _pool
                              if usati_recenti.get(p["id"], -99) < g - no_ripeti_giorni]
                 if not candidati:
-                    candidati = piatti_per_portata.get(portata, [])
+                    candidati = _pool
+                # preferisci i piatti di stagione, ma non bloccare il menu se non ce ne sono
+                _in_stag = [p for p in candidati if not p.get("fuori_stagione")]
+                if _in_stag:
+                    candidati = _in_stag
                 if candidati:
                     scelto = random.choice(candidati)
                     usati_recenti[scelto["id"]] = g
@@ -3998,7 +4037,8 @@ def planner_genera():
         return jsonify({
             "planner_id": f"plan_{oggi.isoformat()}_{random.randint(100,999)}",
             "meta_config": {"durata_giorni": giorni, "slot": slot, "stagione": stagione,
-                            "no_ripeti_giorni": no_ripeti_giorni},
+                            "no_ripeti_giorni": no_ripeti_giorni,
+                            "stagione_applicata": bool(_stag_fn), "esclusi_ingredienti": escludi_ing},
             "calendario": calendario,
             "analisi": {"n_piatti_totali": len(tutti_piatti),
                         "piatti_unici": len(set(sp.get("ricetta_id") for sp in tutti_piatti)),
@@ -4087,45 +4127,9 @@ def ricetta_sicurezza(ricetta_id):
 
 # ═══ SCORE DI SENSO CULINARIO (Board 65F #452: i composti sono una prova, non un permesso) ═══
 # Combina 4 segnali invece del solo overlap molecolare. Sotto soglia, un abbinamento NON appare.
-_CAT_COMPATIBILI = {
-    # categorie che hanno senso insieme (culinariamente). Fuori da qui = penalita.
-    "carne": {"erbe","spezie","agrumi","verdura","funghi","alcolico","grasso","aromatico","frutta"},
-    "pesce": {"agrumi","erbe","verdura","spezie","aromatico","grasso","alcolico"},
-    "frutta": {"latticino","dolcificante","spezie","erbe","alcolico","frutta secca","agrumi","cioccolato"},
-    "verdura": {"carne","pesce","erbe","spezie","grasso","formaggio","agrumi","legumi","funghi"},
-    "latticino": {"frutta","dolcificante","cioccolato","frutta secca","spezie","agrumi","caffe"},
-    "cioccolato": {"frutta secca","frutta","latticino","spezie","agrumi","caffe","alcolico"},
-    "erbe": {"carne","pesce","verdura","formaggio","agrumi","grasso"},
-    "spezie": {"carne","pesce","frutta","dolce","cioccolato","frutta secca","verdura"},
-    "agrumi": {"pesce","carne","frutta","cioccolato","erbe","dolce","alcolico"},
-}
-def _score_senso(cand_prop, cand_cat, overlap, tot_composti, contrasti_richiesti, cat_scelte):
-    """Ritorna (score 0-100, motivo). Score alto = abbinamento sensato."""
-    score = 0.0; motivi = []
-    # 1. RUOLO (peso alto): il candidato riempie una tensione richiesta?
-    for prop_needed, _sp in contrasti_richiesti:
-        if cand_prop.get(prop_needed, 0) >= 6:
-            score += 45; motivi.append("completa "+prop_needed); break
-    # 2. CATEGORIE COMPATIBILI (peso alto): la categoria del candidato ha senso con quelle scelte?
-    _cc = (cand_cat or "").lower()
-    if _cc and cat_scelte:
-        compatibile = False; nota_cat = False
-        for _cs in cat_scelte:
-            comp = _CAT_COMPATIBILI.get(_cs, set())
-            if _cc in comp or _cc == _cs: compatibile = True; break
-            if _cs in _CAT_COMPATIBILI: nota_cat = True
-        if compatibile: score += 30
-        elif nota_cat: score -= 20  # categoria nota ma lontana: penalita (evita pomodoro+te)
-        # categoria sconosciuta: nessuna penalita (non abbiamo dati per giudicare)
-    else:
-        score += 15  # senza categorie non possiamo giudicare: score neutro, non zero
-    # 3. COMPOSTI (peso basso - una prova, non un permesso #452)
-    if overlap >= 3:
-        _ratio = overlap / max(tot_composti, 1)
-        score += min(20, overlap * 2) * (0.5 if tot_composti > 100 else 1.0)  # hub penalizzati
-    # 4. bonus se ha proprieta sensoriali ricche (ingrediente "utile")
-    if sum(1 for v in cand_prop.values() if v and v >= 5) >= 2: score += 5
-    return max(0, min(100, int(score))), (motivi[0] if motivi else "senso culinario")
+# NOTA: lo score molecolare (_score_senso + _CAT_COMPATIBILI) e' stato rimosso.
+# Dava "slop" e il suo risultato (suggeriti_analogia) era gia disattivato in output:
+# si calcolava ~626 query per scartarle. Il Composer suggerisce per TRADIZIONE e CONTRASTO.
 
 @bp.route("/v1/composer/prossimi", methods=["POST"])
 def composer_prossimi():
@@ -4147,7 +4151,6 @@ def composer_prossimi():
         # non "mediamente acido"). Gli ingredienti SENZA profilo NON contano come zero: vengono SEGNALATI.
         ids_scelti = []
         profilo = {k: 0.0 for k in P}
-        composti_ricetta = set()
         senza_profilo = []   # ingredienti di cui non sappiamo il profilo (li segnaliamo, non li trattiamo come neutri)
         contributi = {k: [] for k in P}  # per ogni dimensione, chi contribuisce (per "cosa introduce")
         for s in scelti:
@@ -4171,9 +4174,6 @@ def composer_prossimi():
                         profilo[k] = v
                     if v != 0:
                         contributi[k].append(nome_ing)
-            # composti dell'ingrediente
-            _cur.execute("SELECT to_id FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
-            for cc in _cur.fetchall(): composti_ricetta.add(cc[0])
         for k in P: profilo[k] = round(profilo[k], 1)
 
         # 2. determino i CONTRASTI necessari (clausole sensoriali)
@@ -4199,7 +4199,7 @@ def composer_prossimi():
         # 3. candidati: ingredienti NON gia scelti, con proprieta o composti
         _cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
                         AND (data ? 'proprieta') AND name NOT LIKE '%%(%%' LIMIT 313""")
-        analogia = []; contrasto = []
+        contrasto = []
         for nid, nome, data in _cur.fetchall():
             if nid in ids_scelti: continue
             dd = data if isinstance(data, dict) else _j.loads(data)
@@ -4212,14 +4212,6 @@ def composer_prossimi():
             if '_' in nome or any(x in nome.lower() for x in ['_tea','_beer','_oil','beer','oleoresin']):
                 continue
             if nome.count(',') >= 2: continue  # nomi USDA lunghi
-            # ANALOGIA: composti condivisi, con metrica adattiva (penalizza i ricchi/hub)
-            _cur.execute("""SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto' AND to_id = ANY(%s)""",
-                         (nid, list(composti_ricetta) or ['']))
-            overlap = _cur.fetchone()[0] if composti_ricetta else 0
-            # quanti composti TOTALI ha il candidato (per la metrica adattiva)
-            _cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (nid,))
-            _ncomp = _cur.fetchone()[0]
-            if _ncomp > 150 and overlap < 15: continue   # ricco ma legame debole: scarto (hub generico)
             # CONTRASTO: soddisfa una clausola richiesta? MA deve essere culinariamente compatibile
             motivo_contrasto = None
             _cc = (dd.get('categoria','') or '').lower()
@@ -4240,13 +4232,6 @@ def composer_prossimi():
             if motivo_contrasto:
                 contrasto.append({"id": nid, "nome": nome, "motivo": motivo_contrasto,
                                   "valore": prop.get(prop_needed, 0)})
-            else:
-                # SCORE DI SENSO (65F): non piu' solo composti, ma senso culinario complessivo
-                _sc, _motivo = _score_senso(prop, dd.get('categoria',''), overlap, _ncomp, contrasti_richiesti, cat_scelte)
-                if _sc >= 22:  # SOGLIA tarata: sotto, non appare
-                    analogia.append({"id": nid, "nome": nome, "indice": _sc, "motivo": _motivo,
-                                     "composti_condivisi": overlap})
-        analogia.sort(key=lambda x: -x["indice"])
         # TRADIZIONE (fiducia alta): abbinamenti documentati degli ingredienti scelti
         tradizione = []
         if ids_scelti:
@@ -4260,6 +4245,8 @@ def composer_prossimi():
         # dimensioni DOMINANTI (>=6) vs SECONDARIE (3-5) - per la UI "cosa caratterizza"
         prof_pieno = {k: v for k, v in profilo.items() if v != 0}
         dominanti = {k: v for k, v in prof_pieno.items() if abs(v) >= 6}
+        # cosa_introduce: per ogni dimensione presente, QUALI ingredienti la portano (profilo vivo)
+        cosa_introduce = {k: contributi[k] for k in prof_pieno if contributi.get(k)}
         return jsonify({
             "ingredienti_in_ricetta": scelti,
             "profilo_potenziale": prof_pieno,  # il nome corretto: e' POTENZIALE, non previsione del piatto
@@ -4270,6 +4257,7 @@ def composer_prossimi():
                              "non una previsione del gusto del piatto - quello dipende da dosi, matrice e preparazione"
                              + (f". Attenzione: {', '.join(senza_profilo)} senza profilo noto, non inclusi" if senza_profilo else "")),
             "contrasti_da_bilanciare": [{"proprieta": p, "spiegazione": s} for p, s in contrasti_richiesti],
+            "cosa_introduce": cosa_introduce,  # profilo vivo: chi porta ogni dimensione
             "suggeriti_tradizione": tradizione,
             "suggeriti_analogia": [],  # il molecolare non SUGGERISCE piu (dava slop). Resta come spiegazione.
             "suggeriti_contrasto": contrasto[:6],
