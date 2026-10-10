@@ -1879,3 +1879,12 @@ _PREPARAZIONI["prep-vermouth-speziato"] = {
         "fenomeni": [{"nome": "Infusione e macerazione", "slug": "fen-infusione"}],
     },
 }
+
+# --- COPERTURA GUSTO 3: peperone (pin al nodo usato) + capperi (acido da pH) ---
+_USDA_NODO_FISSO.update({
+    "peperone": "ing-base-peperone",
+    "capperi": "ing-capperi",
+})
+_PH_CORE.update({
+    "capperi": 3.4,
+})
