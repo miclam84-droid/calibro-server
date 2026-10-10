@@ -1497,3 +1497,31 @@ _USDA_NODO_FISSO.update({
     "zucchero a velo": "ing-zucchero-a-velo",
     "destrosio": "ing-destrosio",
 })
+
+# --- COPERTURA GUSTO 2: nodi usati, riuso valori verificati, pin esatto ---
+_USDA_CORE.update({
+    "cioccolato": 170272,
+    "caffe espresso": 171890,
+    "albumi": 172183,
+    "panna fresca": 2346386,
+    "mandorle intere": 170567,
+})
+_PH_CORE.update({
+    "cioccolato": 5.5, "caffe espresso": 5.0, "albumi": 9.0,
+    "panna fresca": 6.6, "mandorle intere": 6.5,
+    "succo di limone": 2.3, "succo di lime": 2.4,
+})
+_GLU_CORE.update({
+    "cioccolato": 50, "caffe espresso": 20, "albumi": 20,
+    "panna fresca": 5, "mandorle intere": 40,
+    "succo di limone": 3, "succo di lime": 3,
+})
+_USDA_NODO_FISSO.update({
+    "cioccolato": "ing-base-cioccolato",
+    "caffe espresso": "prod_caffe_espresso",
+    "albumi": "ing-albumi",
+    "panna fresca": "ing-panna-fresca-35",
+    "mandorle intere": "ing-mandorle",
+    "succo di limone": "fis_lemon_juice",
+    "succo di lime": "fis_lime_juice",
+})
