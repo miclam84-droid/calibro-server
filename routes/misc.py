@@ -804,9 +804,23 @@ def scheda_ingrediente(ingrediente_id):
         varieta = []
         if cat:
             vr = db.execute("SELECT name FROM nodes WHERE type='Ingrediente' AND json_extract(data,'$.categoria')=? AND id!=? LIMIT 12", (cat, nid)).fetchall() if False else []
-        # con cosa dialoga (abbinamenti aromatici)
-        abb = db.execute("SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8", (nid,)).fetchall()
-        dialoga = [_c(x,"name",0) for x in abb]
+        # con cosa dialoga: motore IDF base_aromatica (mostra il perche) con fallback agli archi vecchi
+        dialoga = []
+        dialoga_perche = []
+        try:
+            from routes.criteri import _base_aromatica
+            from db import connessione as _conn_idf
+            with _conn_idf() as _cx:
+                _cu = _cx.cursor()
+                _ab = _base_aromatica(_cu, nid, nome, limit=8)
+                _cu.close()
+            dialoga = [a["ingrediente"] for a in _ab]
+            dialoga_perche = [{"ingrediente": a["ingrediente"], "perche": a.get("perche"), "robustezza": a.get("robustezza")} for a in _ab]
+        except Exception:
+            dialoga, dialoga_perche = [], []
+        if not dialoga:
+            abb = db.execute("SELECT n.name FROM edges e JOIN nodes n ON n.id=e.to_id WHERE e.from_id=? AND e.relation='abbinamento_aromatico' LIMIT 8", (nid,)).fetchall()
+            dialoga = [_c(x,"name",0) for x in abb]
         prop_alte = {k: v for k, v in prop.items() if abs(v) >= 4} if prop else {}
         # VARIETA: altri nodi con lo stesso tipo_base (San Marzano, Piennolo... per il pomodoro)
         varieta = []
@@ -846,6 +860,7 @@ def scheda_ingrediente(ingrediente_id):
             "origine": dd.get("origine",""),
             "proprieta_principali": prop_alte,
             "dialoga_con": dialoga,
+            "dialoga_con_perche": dialoga_perche,
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:120]}), 500
