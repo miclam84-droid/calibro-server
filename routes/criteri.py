@@ -996,3 +996,9 @@ _GLU_CORE.update({
     "panna": 5, "manzo": 10, "salmone": 20, "funghi": 70, "mandorle": 40,
     "riso": 5, "banana": 15, "arancia": 20, "ananas": 20,
 })
+
+# --- agganci fissi aggiuntivi (nodi canonici corretti, verificati col dry-run) ---
+_USDA_NODO_FISSO.update({
+    "farina": "ing-base-farina",
+    "mandorle": "ahn_almond",
+})
