@@ -1888,3 +1888,39 @@ _USDA_NODO_FISSO.update({
 _PH_CORE.update({
     "capperi": 3.4,
 })
+
+# --- DIAGNOSTICO (sola lettura): ingredienti USATI senza prezzo proprio ---
+@bp.route("/v1/criteri/prezzi-da-fare", methods=["GET"])
+def criteri_prezzi_da_fare():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT n.id, n.name, COUNT(e.from_id) AS usi
+                FROM nodes n
+                JOIN edges e ON e.to_id = n.id AND e.relation = 'usa_reagente'
+                WHERE n.type IN ('Ingrediente','Prodotto')
+                GROUP BY n.id, n.name
+                ORDER BY usi DESC
+            """)
+            usati = cur.fetchall()
+            da_fare = []
+            con = 0
+            for rid, nome, usi in usati:
+                cur.execute("SELECT data FROM nodes WHERE id=%s", (rid,))
+                row = cur.fetchone()
+                dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                pk = dd.get("prezzo_kg")
+                if isinstance(pk, (int, float)) and pk > 0:
+                    con += 1
+                else:
+                    da_fare.append({"nodo": rid, "nome": nome, "usato_in": usi})
+            cur.close()
+        return jsonify({"usati_totali": len(usati), "con_prezzo": con, "senza_prezzo": len(da_fare),
+                        "da_fare": da_fare[:60],
+                        "nota": "Usati senza prezzo_kg sul nodo (il food cost ripiega su ISMEA, ma il prezzo proprio e' meglio)."})
+    except Exception as e:
+        return _errore(e)
