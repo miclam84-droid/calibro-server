@@ -1146,3 +1146,30 @@ def criteri_bilancio(ingrediente):
                         "nota": "Lettura degli assi: ipotesi da verificare al banco, non un verdetto."})
     except Exception as e:
         return _errore(e)
+
+# --- ESTENSIONE CORE 2: altri ingredienti (frutta, latticini, cereali, carni, fermentati) ---
+_USDA_CORE.update({
+    "pompelmo": 169106, "melograno": 169134, "mango": 169910, "pera": 169943,
+    "uva": 174683, "cheddar": 173414, "panna acida": 170862, "farina di segale": 2512375,
+    "farina di avena": 173903, "orzo": 169700, "pollo": 171477, "maiale": 167903,
+    "tonno": 175159, "gamberi": 175178, "acciughe": 174178, "cetriolo": 168409,
+    "peperone": 170108, "sciroppo d'acero": 169661, "aceto di mele": 173468,
+    "crauti": 169279, "miso": 172444, "nocciole": 170581, "noci": 170187,
+    "zenzero": 169231, "cannella": 171320, "pepe nero": 170931,
+})
+_PH_CORE.update({
+    "pompelmo": 3.3, "melograno": 3.0, "mango": 4.6, "pera": 3.9, "uva": 3.5,
+    "cheddar": 5.3, "panna acida": 4.5, "farina di segale": 6.0, "farina di avena": 6.3,
+    "orzo": 6.5, "pollo": 6.0, "maiale": 5.9, "tonno": 5.8, "gamberi": 7.0,
+    "acciughe": 6.0, "cetriolo": 5.5, "peperone": 5.0, "aceto di mele": 3.0,
+    "crauti": 3.5, "miso": 5.0, "nocciole": 6.0, "noci": 5.5, "zenzero": 5.6,
+    "cannella": 5.0, "pepe nero": 6.0, "sciroppo d'acero": 5.5,
+})
+_GLU_CORE.update({
+    "pompelmo": 20, "melograno": 10, "mango": 20, "pera": 10, "uva": 20,
+    "cheddar": 180, "panna acida": 10, "farina di segale": 30, "farina di avena": 20,
+    "orzo": 30, "pollo": 20, "maiale": 10, "tonno": 30, "gamberi": 120,
+    "acciughe": 300, "cetriolo": 30, "peperone": 50, "sciroppo d'acero": 0,
+    "aceto di mele": 0, "crauti": 50, "miso": 200, "nocciole": 40, "noci": 40,
+    "zenzero": 20, "cannella": 0, "pepe nero": 0,
+})
