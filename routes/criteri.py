@@ -1289,3 +1289,44 @@ def criteri_costruisci(ingrediente):
         })
     except Exception as e:
         return _errore(e)
+
+# --- FASE 2.2: SINERGIA UMAMI (glutammato x nucleotidi) ---
+_NUCLEOTIDI = {
+    "manzo": "inosinato", "maiale": "inosinato", "pollo": "inosinato", "salmone": "inosinato",
+    "tonno": "inosinato", "gamberi": "inosinato", "acciughe": "inosinato", "prosciutto": "inosinato",
+    "katsuobushi": "inosinato", "bonito": "inosinato", "sardine": "inosinato",
+    "funghi secchi": "guanilato", "shiitake essiccato": "guanilato", "porcini": "guanilato",
+    "funghi": "guanilato", "shiitake": "guanilato",
+}
+_GLUTAMMATO_RICCHI = {
+    "pomodoro", "parmigiano", "cheddar", "miso", "salsa di soia", "colatura", "kombu",
+    "piselli", "mais", "aglio", "alga",
+}
+
+
+@bp.route("/v1/criteri/umami-sinergia/<ingrediente>", methods=["GET"])
+def criteri_umami_sinergia(ingrediente):
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    il = (ingrediente or "").strip().lower()
+    glu = _GLU_CORE.get(il, 0)
+    e_glutammato = (il in _GLUTAMMATO_RICCHI) or (glu >= 120)
+    e_nucleotide = il in _NUCLEOTIDI
+    partner = []
+    if e_glutammato:
+        partner = [{"ingrediente": k, "tipo": v} for k, v in _NUCLEOTIDI.items()]
+        ruolo = "glutammato"
+        spiega = f"'{ingrediente}' e' ricco di GLUTAMMATO. Abbinalo a una sorgente di NUCLEOTIDI: la sinergia moltiplica l'umami (fino a ~8x)."
+    elif e_nucleotide:
+        partner = [{"ingrediente": k, "tipo": "glutammato"} for k in sorted(_GLUTAMMATO_RICCHI)]
+        ruolo = _NUCLEOTIDI[il]
+        spiega = f"'{ingrediente}' e' ricco di {ruolo.upper()} (nucleotide). Abbinalo a una sorgente di GLUTAMMATO: la sinergia moltiplica l'umami."
+    else:
+        ruolo = "nessuna famiglia forte"
+        spiega = f"'{ingrediente}' non e' sorgente forte di glutammato ne' nucleotidi: la sinergia umami non e' la sua leva."
+    return jsonify({
+        "ingrediente": ingrediente, "famiglia_umami": ruolo, "spiegazione": spiega,
+        "partner_sinergia": partner,
+        "esempi_classici": ["pomodoro+acciuga", "carne+pomodoro (ragu)", "brodo+funghi secchi", "dashi (kombu+katsuobushi)"],
+        "nota": "Sinergia glutammato x nucleotidi: fatto di scienza alimentare. Liste curate da letteratura.",
+    })
