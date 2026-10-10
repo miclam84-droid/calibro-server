@@ -1776,3 +1776,24 @@ def criteri_prep_fenomeni():
         return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "aggiornati": aggiornati, "righe": righe})
     except Exception as e:
         return _errore(e)
+
+# --- ESTENSIONE CATENA: oleo saccharum come ingrediente derivato ---
+_PREPARAZIONI["prep-oleo-saccharum"] = {
+    "name": "Oleo Saccharum (preparazione)",
+    "ricetta": "ric-cls-oleo-saccharum-classico",
+    "proprieta": {"dolce": 8.0, "aroma_fresco": 7.0},
+    "fonti": {
+        "dolce": {"stato": "stimato", "fonte": "calcolo da ricetta",
+                  "base": "sciroppo saturo: lo zucchero scioglie negli oli/acqua estratti dalla scorza"},
+        "aroma_fresco": {"stato": "stimato", "fonte": "calcolo da ricetta",
+                         "base": "oli essenziali agrumati estratti dalla scorza per osmosi"},
+    },
+    "preparazione": {
+        "deriva_da_ricetta": "ric-cls-oleo-saccharum-classico",
+        "resa": "~1 parte sciroppo oleoso per scorza+zucchero",
+        "condizioni": "macerazione 4-6 h; OLTRE estrae oli amari dalla parte bianca (punto critico)",
+        "versione_processo": "v1",
+        "nota_trasformazione": "profilo NON somma: lo zucchero NON e' piu' solo dolce, porta gli oli agrumati estratti",
+        "fenomeni": [{"nome": "Osmosi", "slug": "fen-osmosi"}, {"nome": "Estrazione", "slug": "fen-estrazione"}],
+    },
+}
