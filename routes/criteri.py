@@ -1330,3 +1330,36 @@ def criteri_umami_sinergia(ingrediente):
         "esempi_classici": ["pomodoro+acciuga", "carne+pomodoro (ragu)", "brodo+funghi secchi", "dashi (kombu+katsuobushi)"],
         "nota": "Sinergia glutammato x nucleotidi: fatto di scienza alimentare. Liste curate da letteratura.",
     })
+
+# --- COPERTURA DATI: la mappa dei buchi (read-only) ---
+@bp.route("/v1/criteri/copertura", methods=["GET"])
+def criteri_copertura():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            base = ("FROM nodes n WHERE n.type IN ('Ingrediente','Prodotto') "
+                    "AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'")
+            def c(extra, params=()):
+                cur.execute(f"SELECT COUNT(*) {base} {extra}", params)
+                return cur.fetchone()[0]
+            totale = c("")
+            gusto = c("AND n.data ? 'proprieta' AND (n.data->'proprieta') ?| "
+                      "array['dolce','salato','acido','amaro','umami','grasso']")
+            sci = c("AND n.data ? 'nome_scientifico' AND length(n.data->>'nome_scientifico') > 0")
+            foto = c("AND n.data ? 'immagine' AND length(n.data->>'immagine') > 0")
+            comp = c("AND EXISTS (SELECT 1 FROM edges e WHERE e.from_id=n.id AND e.relation='contiene_composto')")
+            cur.close()
+        def pct(x):
+            return round(100.0 * x / totale, 1) if totale else 0
+        return jsonify({
+            "totale_ingredienti": totale,
+            "profilo_gusto": {"n": gusto, "pct": pct(gusto)},
+            "nome_scientifico": {"n": sci, "pct": pct(sci)},
+            "foto": {"n": foto, "pct": pct(foto)},
+            "composti": {"n": comp, "pct": pct(comp)},
+            "nota": "Mappa di copertura: dove sono i buchi.",
+        })
+    except Exception as e:
+        return _errore(e)
