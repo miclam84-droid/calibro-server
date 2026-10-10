@@ -975,3 +975,24 @@ def criteri_gusti_ph_umami():
         return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
     except Exception as e:
         return _errore(e)
+
+# --- ESTENSIONE CORE (bar + bakery): aggiorna le mappe gusto senza toccare l'esistente ---
+_USDA_CORE.update({
+    "farina": 168944, "uovo": 171287, "tuorlo": 172185, "albume": 172183,
+    "cacao": 169593, "cioccolato fondente": 170272, "caffe": 171890,
+    "aceto balsamico": 172241, "yogurt": 170886, "panna": 2346386,
+    "manzo": 174036, "salmone": 175167, "funghi": 169251, "mandorle": 170567,
+    "riso": 169756, "banana": 173944, "arancia": 169098, "ananas": 169949,
+})
+_PH_CORE.update({
+    "farina": 6.0, "uovo": 7.6, "albume": 9.0, "tuorlo": 6.3, "cacao": 5.8,
+    "cioccolato fondente": 5.5, "caffe": 5.0, "aceto balsamico": 3.0, "yogurt": 4.4,
+    "panna": 6.6, "manzo": 5.6, "salmone": 6.2, "funghi": 6.2, "mandorle": 6.5,
+    "riso": 6.5, "banana": 4.8, "arancia": 3.7, "ananas": 3.5,
+})
+_GLU_CORE.update({
+    "farina": 30, "uovo": 20, "albume": 20, "tuorlo": 10, "cacao": 100,
+    "cioccolato fondente": 50, "caffe": 20, "aceto balsamico": 0, "yogurt": 5,
+    "panna": 5, "manzo": 10, "salmone": 20, "funghi": 70, "mandorle": 40,
+    "riso": 5, "banana": 15, "arancia": 20, "ananas": 20,
+})
