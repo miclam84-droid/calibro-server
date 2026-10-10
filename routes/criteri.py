@@ -1363,3 +1363,78 @@ def criteri_copertura():
         })
     except Exception as e:
         return _errore(e)
+
+# --- COPERTURA: NOMI SCIENTIFICI (binomi certi) ---
+_SCIENTIFICO = {
+    "pomodoro": "Solanum lycopersicum", "limone": "Citrus limon", "lime": "Citrus aurantiifolia",
+    "mela": "Malus domestica", "fragola": "Fragaria x ananassa", "aglio": "Allium sativum",
+    "cipolla": "Allium cepa", "carota": "Daucus carota", "patata": "Solanum tuberosum",
+    "spinaci": "Spinacia oleracea", "basilico": "Ocimum basilicum", "menta": "Mentha",
+    "timo": "Thymus vulgaris", "rosmarino": "Salvia rosmarinus", "salvia": "Salvia officinalis",
+    "origano": "Origanum vulgare", "zafferano": "Crocus sativus", "cardamomo": "Elettaria cardamomum",
+    "cumino": "Cuminum cyminum", "coriandolo": "Coriandrum sativum", "pepe nero": "Piper nigrum",
+    "zenzero": "Zingiber officinale", "cannella": "Cinnamomum verum", "garofano": "Syzygium aromaticum",
+    "noce moscata": "Myristica fragrans", "vaniglia": "Vanilla planifolia", "mandorle": "Prunus dulcis",
+    "nocciole": "Corylus avellana", "noci": "Juglans regia", "cacao": "Theobroma cacao",
+    "caffe": "Coffea arabica", "mango": "Mangifera indica", "pera": "Pyrus communis",
+    "uva": "Vitis vinifera", "banana": "Musa", "arancia": "Citrus sinensis",
+    "pompelmo": "Citrus paradisi", "ananas": "Ananas comosus", "melograno": "Punica granatum",
+    "champignon": "Agaricus bisporus", "shiitake": "Lentinula edodes", "porcini": "Boletus edulis",
+    "finferli": "Cantharellus cibarius", "riso": "Oryza sativa", "orzo": "Hordeum vulgare",
+    "farina": "Triticum aestivum", "farina di segale": "Secale cereale", "farina di avena": "Avena sativa",
+    "manzo": "Bos taurus", "maiale": "Sus scrofa domesticus", "pollo": "Gallus gallus domesticus",
+    "salmone": "Salmo salar", "tonno": "Thunnus", "acciughe": "Engraulis encrasicolus",
+    "olio di oliva": "Olea europaea", "friarielli": "Brassica rapa subsp. sylvestris",
+    "manioca": "Manihot esculenta", "scarola": "Cichorium endivia", "cicoria": "Cichorium intybus",
+    "daikon": "Raphanus sativus", "cetriolo": "Cucumis sativus", "peperone": "Capsicum annuum",
+    "melanzana": "Solanum melongena", "zucchero": "Beta vulgaris / Saccharum officinarum",
+}
+
+
+@bp.route("/v1/criteri/nomi-scientifici", methods=["GET", "POST"])
+def criteri_nomi_scientifici():
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    import json as _json
+    applica = (request.args.get("conferma") or "") == "applica"
+    if applica and not _admin_ok():
+        return jsonify({"errore": "scrittura: non autorizzato"}), 403
+    righe = []
+    scritti = 0
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            for nome_it, binomio in sorted(_SCIENTIFICO.items()):
+                r = {"ingrediente": nome_it, "binomio": binomio}
+                fisso = _USDA_NODO_FISSO.get(nome_it)
+                nodo = None
+                if fisso:
+                    cur.execute("SELECT id, name FROM nodes WHERE id=%s", (fisso,))
+                    rr = cur.fetchone()
+                    if rr:
+                        nodo = (rr[0], rr[1])
+                if not nodo:
+                    nodo = _risolvi_nodo(cur, nome_it)
+                if not nodo:
+                    r["stato"] = "nodo non trovato"
+                    righe.append(r)
+                    continue
+                r["nodo"] = nodo[0]
+                if applica:
+                    cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+                    row = cur.fetchone()
+                    dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                    if not (dd.get("nome_scientifico") or "").strip():
+                        dd["nome_scientifico"] = binomio
+                        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (_json.dumps(dd, ensure_ascii=False), nodo[0]))
+                        scritti += 1
+                        r["stato"] = "scritto"
+                    else:
+                        r["stato"] = "gia presente"
+                righe.append(r)
+            if applica:
+                conn.commit()
+            cur.close()
+        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "scritti": scritti, "righe": righe})
+    except Exception as e:
+        return _errore(e)
