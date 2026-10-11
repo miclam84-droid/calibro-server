@@ -8301,6 +8301,57 @@ def get_varieta(ingrediente):
         return jsonify({"errore": str(e)[:150]})
 
 
+@bp.route("/admin/onesta-dati")
+def admin_onesta_dati():
+    """A3 — rende onesti i dati vecchi che l'AI aveva marcato verificato:true.
+    DEFAULT = DRY RUN: conta + campione, NON scrive niente.
+    Con ?esegui=1: backup (tabelle _backup_onesta_*) + UPDATE in transazione + conteggio prima/dopo.
+    Tocca SOLO righe senza chiave 'fonte' (le curate a mano, che hanno 'fonte', non vengono sfiorate).
+    Idempotente: dopo la correzione le righe hanno 'fonte' e non rientrano piu' nel filtro."""
+    from flask import request, jsonify
+    import os, psycopg2
+    _sec = os.environ.get("ADMIN_SECRET")
+    if not _sec or request.args.get("s") != _sec:
+        return jsonify({"errore": "non autorizzato"}), 403
+    esegui = request.args.get("esegui") == "1"
+    W_VAR = "type='Varieta' AND data->>'verificato'='true' AND (data->>'fonte') IS NULL"
+    W_TRAD = ("relation='abbinamento_tradizionale' AND data->>'verificato'='true' "
+              "AND (data->>'fonte') IS NULL AND data->>'confidenza'='alta'")
+    conn = None
+    try:
+        conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE " + W_VAR); n_var = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM edges WHERE " + W_TRAD); n_trad = cur.fetchone()[0]
+        cur.execute("SELECT name FROM nodes WHERE " + W_VAR + " LIMIT 6"); camp_var = [r[0] for r in cur.fetchall()]
+        if not esegui:
+            cur.close(); conn.close()
+            return jsonify({"dry_run": True,
+                            "varieta_da_correggere": n_var, "tradizione_da_correggere": n_trad,
+                            "campione_varieta": camp_var,
+                            "nota": "DRY RUN: nessun dato modificato. Per eseguire aggiungi &esegui=1 all'URL."})
+        cur.execute("CREATE TABLE IF NOT EXISTS _backup_onesta_varieta (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())")
+        cur.execute("CREATE TABLE IF NOT EXISTS _backup_onesta_tradizione (from_id TEXT, to_id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())")
+        cur.execute("INSERT INTO _backup_onesta_varieta (id, data_old) SELECT id, data FROM nodes WHERE " + W_VAR)
+        cur.execute("INSERT INTO _backup_onesta_tradizione (from_id, to_id, data_old) SELECT from_id, to_id, data FROM edges WHERE " + W_TRAD)
+        cur.execute("UPDATE nodes SET data = data || '{\"verificato\":false,\"fonte\":\"ai_generato\",\"stato\":\"stimato\"}'::jsonb WHERE " + W_VAR)
+        agg_var = cur.rowcount
+        cur.execute("UPDATE edges SET data = data || '{\"verificato\":false,\"fonte\":\"ai_validato\"}'::jsonb WHERE " + W_TRAD)
+        agg_trad = cur.rowcount
+        cur.execute("SELECT COUNT(*) FROM nodes WHERE " + W_VAR); res_var = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM edges WHERE " + W_TRAD); res_trad = cur.fetchone()[0]
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({"eseguito": True,
+                        "varieta_prima": n_var, "varieta_corrette": agg_var, "varieta_residue": res_var,
+                        "tradizione_prima": n_trad, "tradizione_corrette": agg_trad, "tradizione_residue": res_trad,
+                        "backup": "_backup_onesta_varieta + _backup_onesta_tradizione (contengono i dati originali, ripristinabili)",
+                        "nota": "fatto in transazione; righe con 'fonte' (curate) non toccate"})
+    except Exception as e:
+        try:
+            if conn: conn.rollback(); conn.close()
+        except Exception: pass
+        return jsonify({"errore": str(e)[:200]}), 500
+
+
 
 
 
