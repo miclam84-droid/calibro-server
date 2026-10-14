@@ -8,7 +8,8 @@
 #   1) data.nomi.en del nodo stesso   2) _ALIAS_AHN (it->en curato)   altrimenti SALTA.
 # CANCELLO DI CONFIDENZA (un match falso = gusto falso, peggio del buco):
 #   accetta/scrive SOLO se dataType in SR Legacy/Foundation, la testa del nome
-#   combacia e l'overlap >= soglia. I match deboli sono SOLO proposti, mai scritti.
+#   combacia e l'overlap >= soglia (default 0.6: scarta i mezzi-match tipo
+#   "polvere" agganciata a "bevanda"). I match deboli sono SOLO proposti, mai scritti.
 # SICUREZZA identica a deriva_gusti: fill-only, backup, transazione, DRY-RUN di default,
 #   mai varieta'/DOP, mai sovrascrive corretto/verificato. &limite=N per il rate USDA.
 # ============================================================
@@ -26,7 +27,7 @@ from routes.deriva_gusti import _deriva, _nutrienti, _usda_get, _ESCLUDI, FORMUL
 bp_gusti_search = Blueprint("deriva_gusti_search", __name__)
 
 _DATATYPE_OK = ("SR Legacy", "Foundation")
-_SOGLIA = 0.5          # overlap minimo per 'alta'
+_SOGLIA = 0.6          # overlap minimo per 'alta' (regolabile con &soglia=)
 _STOP_IT = {"di", "della", "delle", "del", "dei", "degli", "al", "alla", "con", "e",
             "in", "da", "a", "il", "lo", "la", "i", "gli", "le", "un", "una"}
 
@@ -99,7 +100,7 @@ def _cerca_usda(query_en, key):
 @bp_gusti_search.route("/admin/deriva-gusti-search")
 def deriva_gusti_search():
     """DRY-RUN di default (?s=SECRET). &esegui=1 scrive (fill-only, backup+transazione).
-    &limite=N limita il numero di ricerche USDA (default 30, per il rate 1000/h)."""
+    &limite=N limita le ricerche USDA (default 30). &soglia=0.7 per alzare il cancello."""
     import psycopg2
 
     sec = os.environ.get("ADMIN_SECRET")
@@ -119,6 +120,10 @@ def deriva_gusti_search():
         limite = 30
     if limite <= 0:
         limite = 30
+    try:
+        soglia = float(request.args.get("soglia", _SOGLIA))
+    except Exception:
+        soglia = _SOGLIA
 
     conn = None
     try:
@@ -190,7 +195,7 @@ def deriva_gusti_search():
             sc, testa, food = migliore
             fdc_id = food.get("fdcId")
             descr = food.get("description", "")
-            alta = testa and sc >= _SOGLIA
+            alta = testa and sc >= soglia
 
             voce = {"nodo": nid, "nome": nome_nodo, "query_en": query_en, "fonte_en": fonte_en,
                     "fdc_id": fdc_id, "usda": descr, "dataType": food.get("dataType"),
@@ -248,7 +253,7 @@ def deriva_gusti_search():
         return jsonify({
             "dry_run": (not esegui),
             "formula": FORMULA_VER,
-            "soglia_alta": _SOGLIA,
+            "soglia_alta": soglia,
             "ricerche_usda": ricerche,
             "limite": limite,
             "accettati_alta": len(proposte_alta),
