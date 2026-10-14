@@ -41,7 +41,7 @@ def _interp(x, pts):
 # --- Match curato ingrediente italiano -> USDA fdc_id (fdc_id gia' verificati, SR Legacy/Foundation) ---
 # Solo comuni ad alta confidenza. Le varieta' rare NON entrano qui (si misurano al banco).
 _MATCH = {
-    "succo di limone": 167747, "succo di lime": 168195, "succo d'arancia": 169098,
+    "succo di limone": 167747, "succo di lime": 168156, "succo d'arancia": 169098,
     "pomodoro": 170457, "mela": 171688, "fragola": 167762, "lampone": 2346410,
     "mirtillo": 2346411, "pesca": 169928, "albicocca": 171697, "ciliegia": 171719,
     "mango": 169910, "ananas": 169949, "banana": 173944, "pera": 169943, "uva": 174683,
@@ -138,7 +138,15 @@ def deriva_gusti_usda():
     except Exception:
         limite = 0
 
+    try:
+        offset = int(request.args.get("offset", "0"))
+    except Exception:
+        offset = 0
+    if offset < 0:
+        offset = 0
     coppie = list(_MATCH.items())
+    if offset:
+        coppie = coppie[offset:]
     if limite > 0:
         coppie = coppie[:limite]
 
@@ -231,6 +239,8 @@ def deriva_gusti_usda():
             "dry_run": (not esegui),
             "formula": FORMULA_VER,
             "match_tentati": len(coppie),
+            "offset": offset,
+            "totale_match_curati": len(_MATCH),
             "nodi_non_trovati": saltati_nomatch,
             "saltati_protetti_rari": saltati_protetti,
             "scritti": scritti if esegui else 0,
