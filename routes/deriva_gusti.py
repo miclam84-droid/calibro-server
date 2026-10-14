@@ -44,19 +44,22 @@ _MATCH = {
     "succo di limone": 167747, "succo di lime": 168156, "succo d'arancia": 169098,
     "pomodoro": 170457, "mela": 171688, "fragola": 167762, "lampone": 2346410,
     "mirtillo": 2346411, "pesca": 169928, "albicocca": 171697, "ciliegia": 171719,
-    "mango": 169910, "ananas": 169949, "banana": 173944, "pera": 169943, "uva": 174683,
+    "mango": 169910, "banana": 173944, "uva": 174683,
     "melograno": 169134, "latte": 171265, "panna": 2346386, "burro": 789828,
-    "yogurt": 170886, "parmigiano": 173420, "cheddar": 173414, "albume": 172183,
-    "tuorlo": 172185, "uovo": 171287, "farina": 168944, "farina di segale": 2512375,
+    "yogurt": 170886, "cheddar": 173414, "albume": 172183,
+    "uovo": 171287, "farina": 168944, "farina di segale": 2512375,
     "riso": 169756, "manzo": 174036, "pollo": 171477, "petto di pollo": 171477,
     "salmone": 175167, "maiale": 167903, "agnello": 174404, "tonno": 175159,
-    "gambero": 175178, "aglio": 169230, "cipolla": 170000, "carota": 170393,
+    "aglio": 169230, "cipolla": 170000, "carota": 170393,
     "cetriolo": 168409, "peperone": 170108, "spinaci": 168462, "patata": 170026,
     "olio di oliva": 171413, "olio d'oliva": 171413, "zucchero": 169655, "miele": 169640,
     "sciroppo d'acero": 169661, "cioccolato fondente": 170272, "cacao": 169593,
-    "caffe": 171890, "aceto balsamico": 172241, "salsa di soia": 172234,
+    "caffe": 171890, "aceto balsamico": 172241,
     "champignon": 169251, "mandorla": 170567, "nocciola": 170581, "noce": 170187,
     "zenzero": 169231, "cannella": 171320, "pepe nero": 170931,
+    # RIMOSSI 14/10 (fdc_id curato sbagliato, verificato live su USDA): ananas->Plums,
+    # pera->Persimmons, parmigiano->Feta, tuorlo->Egg omelet, gambero->Cod, salsa di soia->Mustard.
+    # Vanno derivati da /admin/deriva-gusti-search (ricerca live + cancello di confidenza).
 }
 
 # esclusioni di sicurezza: mai derivare un raro/DOP/presidio da un match generico
