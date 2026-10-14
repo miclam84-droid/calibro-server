@@ -115,6 +115,7 @@ from routes.misura_quantita import bp_quantita; app.register_blueprint(bp_quanti
 from routes.motori_calcolo import bp_motori; app.register_blueprint(bp_motori)
 from routes.protocollo import bp_protocollo; app.register_blueprint(bp_protocollo)
 from routes.admin_migra_quaderno import bp_migra_q; app.register_blueprint(bp_migra_q)
+from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(bp_gusti_search)
 from routes.scheda_gusto import bp_scheda; app.register_blueprint(bp_scheda)
 from routes.community import bp_community; app.register_blueprint(bp_community)
 from routes.menu_builder import bp_menu as menu_builder_bp; app.register_blueprint(menu_builder_bp)
