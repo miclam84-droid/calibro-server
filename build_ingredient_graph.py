@@ -2,7 +2,7 @@
 Matter Lab — Ingredient Graph Builder
 ======================================
 Genera il dataset completo di ingredienti F&B con:
-- Composti aromatici (con CAS, soglia, fonte letteratura)
+- Composti aromatici (CAS/soglia come STIMA AI, non verificati, senza fonte inventata)
 - Profilo sensoriale con spiegazione fisica
 - Abbinamenti molecolari + contrasto + congruenza + regionali
 - Collegamento ai fenomeni del grafo
@@ -866,7 +866,7 @@ INGREDIENTI = {
 
 
 # ── PROMPT TEMPLATE ───────────────────────────────────────────────────────────
-PROMPT_TEMPLATE = """Sei un esperto di chimica degli alimenti e scienza sensoriale con accesso alla letteratura scientifica (Food Chemistry, Journal of Agricultural and Food Chemistry, Meat Science, LWT, Flavour and Fragrance Journal, McGee On Food and Cooking).
+PROMPT_TEMPLATE = """Sei un esperto di chimica degli alimenti e scienza sensoriale.
 
 Genera un profilo scientifico completo per l'ingrediente: **{ingrediente}**
 Disciplina principale: {disciplina}
@@ -892,8 +892,7 @@ Rispondi ESCLUSIVAMENTE in JSON valido, senza testo aggiuntivo, con questa strut
       "famiglia_chimica": "<es: terpeni/esteri/aldeidi/fenoli/acidi organici>",
       "soglia_percezione_ppb": <numero o null>,
       "descrittore_olfattivo": "<es: agrumato/floreale/erbaceo/tostato>",
-      "intensita_nel_prodotto": <1-5>,
-      "fonte": "<es: Food Chemistry 2019 / McGee / USDA / stima da letteratura>"
+      "intensita_nel_prodotto": <1-5>
     }}
   ],
   "profilo_sensoriale": {{
@@ -956,7 +955,8 @@ Rispondi ESCLUSIVAMENTE in JSON valido, senza testo aggiuntivo, con questa strut
   "note_professionista": "<consiglio pratico per il professionista F&B, con numero misurabile se possibile>"
 }}
 
-Sii preciso scientificamente. Cita almeno 3-5 composti aromatici reali con CAS quando possibile.
+Elenca 3-5 composti aromatici plausibili per l'ingrediente.
+NON inventare numeri CAS né citazioni bibliografiche: se non sei certo del CAS metti null. Non aggiungere alcun campo "fonte" né riferimenti a letteratura o autori: i dati che produci sono stime, non citazioni verificate.
 Per i profili sensoriali usa valori calibrati su scala 0-10 (0=assente, 10=dominante).
 Gli abbinamenti devono avere una spiegazione fisico-chimica reale, non generica."""
 
@@ -999,10 +999,44 @@ def node_id(ingrediente):
     return f"ing-{clean}"
 
 
+def marca_provenienza_ai(profilo):
+    """Onestà dei dati: marca il profilo come stima AI NON verificata e rimuove
+    qualunque campo 'fonte' prodotto dal modello.
+
+    Il modello (gpt-4o-mini) genera CAS, soglie ppb, parametri fisici e profilo
+    sensoriale: sono stime, non misure né citazioni. Una 'fonte' inventata che
+    sembra autorevole (es. 'Food Chemistry 2019 / McGee') è il buco peggiore,
+    quindi non deve MAI finire nel nodo. Lascia intatti gli altri campi.
+    """
+    if not isinstance(profilo, dict):
+        return profilo
+    # 1) via qualunque 'fonte' di primo livello generata dal modello
+    profilo.pop("fonte", None)
+    # 2) composti aromatici: togli la 'fonte' del modello e tagga ogni voce
+    composti = profilo.get("composti_aromatici")
+    if isinstance(composti, list):
+        for c in composti:
+            if isinstance(c, dict):
+                c.pop("fonte", None)
+                c["stato"] = "stimato_AI"
+    # 3) marcatore di provenienza a livello nodo
+    profilo["provenienza"] = {
+        "stato": "stimato_AI",
+        "modello": "gpt-4o-mini",
+        "nota": "CAS, soglie ppb, parametri fisici e profilo sensoriale generati "
+                "da modello AI, non verificati su fonte primaria",
+    }
+    return profilo
+
+
 def salva_in_grafo(conn, ingrediente, disciplina, profilo):
     """Salva il profilo come nodo Ingrediente + archi nel grafo."""
     cur = conn.cursor()
     nid = node_id(ingrediente)
+
+    # Onestà dei dati: tutto ciò che arriva dall'AI è una stima, mai una fonte
+    profilo = marca_provenienza_ai(profilo)
+
     nome_it = profilo.get("nomi", {}).get("it", ingrediente)
 
     # Inserisci nodo principale
