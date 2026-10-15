@@ -63,6 +63,30 @@ def _prodotto_coerente(nome_it, query_en, descr):
     return True
 
 
+# Ingredienti NON sensoriali: additivi, acidi, amidi, aromi puri. Non hanno un
+# profilo dolce/salato/grasso misurabile da composizione, e la ricerca li aggancia
+# a cibi che li contengono (acido ascorbico -> mela con vit.C; amido di mais -> pane).
+# Si saltano del tutto (match sulla PRIMA parola del nome).
+_NON_SENS = {"acido", "amido", "aroma", "colorante", "addensante", "emulsionante",
+             "stabilizzante", "conservante", "gelificante", "lecitina", "bicarbonato",
+             "maltodestrina", "destrina", "gomma"}
+
+# Descrizioni USDA composte/preparate: se il nome e' un ingrediente semplice ma USDA
+# risponde con un prodotto composto, il profilo non e' quello dell'ingrediente.
+_COMPOSITO_USDA = ("with added", "made with", "seasoning", "fortified", " mix,",
+                   "drink,", "drink mix", "flavor drink", "-flavor drink", "infant formula")
+
+
+def _non_sensoriale(nome_it):
+    p = str(nome_it).lower().split()
+    return bool(p) and p[0] in _NON_SENS
+
+
+def _usda_composito(descr):
+    d = (descr or "").lower()
+    return any(m in d for m in _COMPOSITO_USDA)
+
+
 def _nome_en(nome_it, dd):
     """EN dal nodo (data.nomi.en) o da _ALIAS_AHN; None se non traducibile con certezza."""
     nomi = dd.get("nomi") if isinstance(dd.get("nomi"), dict) else {}
@@ -149,11 +173,11 @@ def deriva_gusti_search():
 
     esegui = request.args.get("esegui") == "1"
     try:
-        limite = int(request.args.get("limite", "30"))
+        limite = int(request.args.get("limite", "12"))
     except Exception:
-        limite = 30
+        limite = 12
     if limite <= 0:
-        limite = 30
+        limite = 12
     try:
         soglia = float(request.args.get("soglia", _SOGLIA))
     except Exception:
@@ -185,6 +209,7 @@ def deriva_gusti_search():
         senza_en = 0
         gia_derivati = 0
         protetti = 0
+        non_sensoriali = 0
         proposte_alta, proposte_bassa = [], []
 
         consumati = 0
@@ -198,6 +223,11 @@ def deriva_gusti_search():
             testo = (str(nome_nodo) + " " + str(dd.get("kind", "")) + " " + str(dd.get("varieta_di", ""))).lower()
             if dd.get("kind") == "varieta" or any(x in testo for x in _ESCLUDI):
                 protetti += 1
+                continue
+
+            # salta additivi/acidi/amidi/aromi: nessun gusto da composizione
+            if _non_sensoriale(nome_nodo):
+                non_sensoriali += 1
                 continue
 
             meta = dict(dd.get("proprieta_meta", {}) or {})
@@ -239,14 +269,16 @@ def deriva_gusti_search():
             fdc_id = food.get("fdcId")
             descr = food.get("description", "")
             prod_ok = _prodotto_coerente(nome_nodo, query_en, descr)
-            # alta SOLO se: testa combacia, overlap >= soglia, e il prodotto dichiarato
-            # (aceto/sciroppo/...) e' confermato dalla descrizione USDA.
-            alta = testa and sc >= soglia and prod_ok
+            comp = _usda_composito(descr)
+            # alta SOLO se: testa combacia, overlap >= soglia, prodotto confermato,
+            # e la descrizione USDA NON e' un cibo composto/preparato (seasoning mix,
+            # with added, drink, ...) che non rappresenta l'ingrediente.
+            alta = testa and sc >= soglia and prod_ok and not comp
 
             voce = {"nodo": nid, "nome": nome_nodo, "query_en": query_en, "fonte_en": fonte_en,
                     "fdc_id": fdc_id, "usda": descr, "dataType": food.get("dataType"),
                     "score": sc, "testa_ok": testa, "prodotto_coerente": prod_ok,
-                    "assi_target": assi_target}
+                    "usda_composito": comp, "assi_target": assi_target}
 
             if not alta:
                 if len(proposte_bassa) < 60:
@@ -312,6 +344,7 @@ def deriva_gusti_search():
             "saltati_senza_nome_en": senza_en,
             "saltati_gia_derivati": gia_derivati,
             "saltati_protetti_rari": protetti,
+            "saltati_non_sensoriali": non_sensoriali,
             "nota": ("DRY RUN: nessuna scrittura. Guarda 'alta_confidenza' (verrebbero scritti) "
                      "e 'bassa_confidenza' (NON scritti, da controllare a occhio). "
                      "Aggiungi &esegui=1 per scrivere SOLO gli alta. Rilancia con &limite piu' alto "
