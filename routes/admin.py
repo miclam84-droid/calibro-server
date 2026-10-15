@@ -679,14 +679,19 @@ def admin_reset_trial():
     if not _admin_ok(request):
         return "Forbidden", 403
     import traceback
+    conn = None
     try:
         conn = _get_conn(); cur = conn.cursor()
         cur.execute("DELETE FROM trial_chat")
         n = cur.rowcount
         conn.commit()
+        cur.close()
         return jsonify({"ok": True, "trial_azzerati": n})
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:300]}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 @bp.route("/admin/coeff-zuccheri")
 def admin_coeff_zuccheri():
@@ -710,6 +715,7 @@ def admin_coeff_zuccheri():
         "ing-maltodestrine": {"nome":"Maltodestrine","pod":10,"pac":20,"solidi":95,
             "nota":"DE basso: POD e PAC molto bassi. Alzano il secco e danno corpo senza dolcificare ne abbassare troppo il congelamento."},
     }
+    conn = None
     try:
         conn = _get_conn(); cur = conn.cursor()
         fatti = []
@@ -731,9 +737,13 @@ def admin_coeff_zuccheri():
                             (nid, "Ingrediente", dati["nome"], "gelateria", _json.dumps(nd, ensure_ascii=False)))
                 fatti.append(f"{nid}: CREATO POD={dati['pod']} PAC={dati['pac']}")
         conn.commit()
+        cur.close()
         return jsonify({"ok": True, "zuccheri": fatti})
     except Exception as e:
         return jsonify({"errore": str(e), "trace": traceback.format_exc()[:400]}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 
