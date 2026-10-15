@@ -127,6 +127,10 @@ def deduci():
     lang = (body.get("lang") or "it").strip().lower()
     if lang not in ("it", "en", "es"):
         lang = "it"
+    # LEGALE: se 'ingredienti' arriva come stringa, iterare sui caratteri produce allergeni
+    # spuri/mancanti in silenzio. Su una funzione di legge va rifiutato esplicitamente.
+    if ingredienti and not isinstance(ingredienti, list):
+        return jsonify({"errore": "'ingredienti' deve essere una lista"}), 400
     if not ingredienti and not nome_piatto:
         return jsonify({"errore": "ingredienti mancanti"}), 400
     ids, warning = deduci_allergeni(ingredienti, nome_piatto=nome_piatto)
@@ -160,7 +164,12 @@ def allergeni_ricetta(rid):
         dettaglio = [{"id": i, "nome": _map[i][lang], "icona": _map[i]["icona"]} for i in ids if i in _map]
         return jsonify({"ricetta_id": rid, "allergeni": ids, "dettaglio": dettaglio, "warning": warning})
     except Exception as e:
-        return jsonify({"errore": str(e)[:120]}), 200
+        # LEGALE (Reg. UE 1169/2011): un errore NON deve mai sembrare "nessun allergene".
+        # Il frontend legge il 200 come lista vuota -> un guasto DB nasconderebbe gli allergeni.
+        # Allergene omesso per un errore = responsabilita' legale. Mai 200 senza allergeni dedotti.
+        return jsonify({"stato": "error",
+                        "errore": "impossibile dedurre gli allergeni (errore interno): riprova",
+                        "dettaglio": str(e)[:120]}), 500
 
 
 # ── FILTRI DIETETICI (come One2One: vegano/vegetariano/senza glutine/senza lattosio) ──
@@ -198,6 +207,8 @@ def dieta_deduci():
     Come One2One ma dagli ingredienti reali. Per i filtri 'Senza glutine/lattosio', 'Vegano'."""
     body = request.json or {}
     ingredienti = body.get("ingredienti", [])
+    if ingredienti and not isinstance(ingredienti, list):
+        return jsonify({"errore": "'ingredienti' deve essere una lista"}), 400
     if not ingredienti:
         return jsonify({"errore": "ingredienti mancanti"}), 400
     dieta = deduci_dieta(ingredienti)

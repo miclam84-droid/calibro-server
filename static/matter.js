@@ -3490,16 +3490,26 @@ function mostraRicettaGen(dati, ricettaIdSalvata){
 }
 // ═══ ALLERGENI — deduzione dagli ingredienti (vantaggio: dal grafo, non da foto) ═══
 var _ALLERGENI_ICONE=['glutine','crostacei','uova','pesce','arachidi','soia','latte','frutta-guscio','sedano','senape','sesamo','solfiti','lupini','molluschi'];
+function _mostraBoxAllerg(inner){
+  var sch=document.querySelector('#vista-body .rg-scheda');
+  if(!sch) return;
+  var sec=sch.querySelector('.rg-sec');
+  if(sec){ sec.insertAdjacentHTML('afterend', inner); }
+  else { sch.insertAdjacentHTML('afterbegin', inner); }
+}
+var _ALLERG_ERR_BOX='<div class="allerg-box allerg-box-err"><div class="allerg-lab">⚠ Allergeni non calcolabili ora</div><div class="allerg-warning">Verificare manualmente gli allergeni prima di servire o pubblicare.</div></div>';
 async function _caricaAllergeniRicetta(dati){
   var ingr=(dati.ingredienti||[]).map(function(x){return typeof x==='string'?x:(x.nome||'');}).filter(Boolean);
   if(!ingr.length) return;
+  var e=_escV;
   try{
     var lang=(typeof _lang!=='undefined'?_lang:'it');
     var r=await fetch('/v1/allergeni/deduci', {method:'POST', headers:_statoHeaders({'Content-Type':'application/json'}), body:JSON.stringify({ingredienti:ingr, lang:lang})});
-    var j=await r.json();
+    var j={}; try{ j=await r.json(); }catch(_){}
+    // LEGALE: un errore NON deve diventare "nessun allergene" silenzioso -> box esplicito.
+    if(!r.ok || j.stato==='error' || j.errore){ _mostraBoxAllerg(_ALLERG_ERR_BOX); return; }
     var dett=j.dettaglio||[];
     if(!dett.length && !(j.allergeni||[]).length) return;
-    var e=_escV;
     var chips=dett.map(function(a){
       var ico=a.icona||_ALLERGENI_ICONE[(a.id||1)-1]||'glutine';
       return '<span class="allerg-chip"><img src="/static/allergeni/'+e(ico)+'.svg" alt=""><span>'+e(a.nome||'')+'</span></span>';
@@ -3508,13 +3518,8 @@ async function _caricaAllergeniRicetta(dati){
       + (j.warning?'<div class="allerg-warning">'+e(j.warning)+'</div>':'')
       + (j.disclaimer?'<div class="allerg-disc">'+e(j.disclaimer)+'</div>':'')
       + '</div>';
-    var sch=document.querySelector('#vista-body .rg-scheda');
-    if(sch){
-      var sec=sch.querySelector('.rg-sec');
-      if(sec){ sec.insertAdjacentHTML('afterend', box); }
-      else { sch.insertAdjacentHTML('afterbegin', box); }
-    }
-  }catch(e){}
+    _mostraBoxAllerg(box);
+  }catch(err){ _mostraBoxAllerg(_ALLERG_ERR_BOX); }
 }
 var _BLUEPRINT_FAMIGLIE=['acidita','affumicatura','coagulazione','conservazione','cristallizzazione','diluizione','distillazione','emulsione','estrazione','fermentazione','gas','gelificazione','impasto','osmosi','ossidazione','reazione-termica'];
 async function _caricaImmagineRicetta(id){
