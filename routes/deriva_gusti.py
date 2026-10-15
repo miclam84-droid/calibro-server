@@ -57,6 +57,13 @@ _MATCH = {
     "caffe": 171890, "aceto balsamico": 172241,
     "champignon": 169251, "mandorla": 170567, "nocciola": 170581, "noce": 170187,
     "zenzero": 169231, "cannella": 171320, "pepe nero": 170931,
+    # RE-INSERITI 15/10 — fdc_id ri-verificato live su USDA, descrizione confermata:
+    "ananas": 169124,       # Pineapple, raw, all varieties
+    "parmigiano": 170848,   # Cheese, parmesan, hard
+    "gambero": 175179,      # Crustaceans, shrimp, raw
+    "kiwi": 168153,         # Kiwifruit, green, raw   (nessun alias EN -> la ricerca non lo prende)
+    "arachidi": 2515376,    # Peanuts, raw            (nessun alias EN -> la ricerca non lo prende)
+    # ANCORA DA RI-VERIFICARE (rate limit DEMO_KEY il 15/10): pera, tuorlo, salsa di soia.
     # RIMOSSI 14/10 (fdc_id curato sbagliato, verificato live su USDA): ananas->Plums,
     # pera->Persimmons, parmigiano->Feta, tuorlo->Egg omelet, gambero->Cod, salsa di soia->Mustard.
     # Vanno derivati da /admin/deriva-gusti-search (ricerca live + cancello di confidenza).
