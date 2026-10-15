@@ -31,6 +31,37 @@ _SOGLIA = 0.6          # overlap minimo per 'alta' (regolabile con &soglia=)
 _STOP_IT = {"di", "della", "delle", "del", "dei", "degli", "al", "alla", "con", "e",
             "in", "da", "a", "il", "lo", "la", "i", "gli", "le", "un", "una"}
 
+# Guardia prodotto-derivato: se il nome IT (o la query EN) dichiara un prodotto
+# trasformato, la composizione del base NON vale. La descrizione USDA DEVE contenere
+# la parola del prodotto, altrimenti e' il base ingredient travestito (es. "aceto di
+# fico d'india" agganciato a "Prickly pears, raw"). 'succo' e 'olio' NON entrano qui:
+# succo/olio sono prodotti che vogliamo DAVVERO derivare e USDA li ha col nome giusto.
+_PRODOTTO = {
+    "aceto": ("vinegar",),
+    "sciroppo": ("syrup",),
+    "confettura": ("jam", "preserve", "marmalade", "jelly"),
+    "marmellata": ("jam", "preserve", "marmalade", "jelly"),
+    "estratto": ("extract",),
+    "essenza": ("extract", "essence"),
+    "polvere": ("powder", "dried", "dehydrated"),
+    "liquore": ("liqueur", "liquor"),
+    "gelatina": ("gelatin", "jelly"),
+    "concentrato": ("concentrate", "concentrated", "paste"),
+    "purea": ("puree", "pureed", "pulp"),
+    "fermentat": ("ferment", "fermented"),
+}
+
+
+def _prodotto_coerente(nome_it, query_en, descr):
+    """False se il nome dichiara un prodotto trasformato ma la descrizione USDA non
+    lo conferma (quindi e' il base ingredient, non il prodotto)."""
+    hay = (str(nome_it) + " " + str(query_en)).lower()
+    d = (descr or "").lower()
+    for marker, parole in _PRODOTTO.items():
+        if marker in hay and not any(p in d for p in parole):
+            return False
+    return True
+
 
 def _nome_en(nome_it, dd):
     """EN dal nodo (data.nomi.en) o da _ALIAS_AHN; None se non traducibile con certezza."""
@@ -100,7 +131,10 @@ def _cerca_usda(query_en, key):
 @bp_gusti_search.route("/admin/deriva-gusti-search")
 def deriva_gusti_search():
     """DRY-RUN di default (?s=SECRET). &esegui=1 scrive (fill-only, backup+transazione).
-    &limite=N limita le ricerche USDA (default 30). &soglia=0.7 per alzare il cancello."""
+    &limite=N limita le ricerche USDA per chiamata (default 30, tienilo <=20 per non
+    sfondare i 120s di gunicorn). &soglia=0.7 per alzare il cancello.
+    &offset=N riparte dal nodo N: la risposta torna 'prossimo_offset' per la chiamata
+    successiva (None quando 'fine' e' true = grafo esaurito). Cosi' si copre tutto a lotti."""
     import psycopg2
 
     sec = os.environ.get("ADMIN_SECRET")
@@ -124,6 +158,12 @@ def deriva_gusti_search():
         soglia = float(request.args.get("soglia", _SOGLIA))
     except Exception:
         soglia = _SOGLIA
+    try:
+        offset = int(request.args.get("offset", "0"))
+    except Exception:
+        offset = 0
+    if offset < 0:
+        offset = 0
 
     conn = None
     try:
@@ -136,7 +176,8 @@ def deriva_gusti_search():
 
         cur.execute("""SELECT id, name, data FROM nodes
                        WHERE type IN ('Ingrediente','Prodotto')
-                       ORDER BY (id LIKE 'ing-%%') DESC, name""")
+                       ORDER BY (id LIKE 'ing-%%') DESC, name
+                       OFFSET %s""", (offset,))
         righe = cur.fetchall()
 
         ricerche = 0
@@ -146,9 +187,11 @@ def deriva_gusti_search():
         protetti = 0
         proposte_alta, proposte_bassa = [], []
 
+        consumati = 0
         for nid, nome_nodo, data in righe:
             if ricerche >= limite:
                 break
+            consumati += 1
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
 
             # salta varieta'/DOP
@@ -195,11 +238,15 @@ def deriva_gusti_search():
             sc, testa, food = migliore
             fdc_id = food.get("fdcId")
             descr = food.get("description", "")
-            alta = testa and sc >= soglia
+            prod_ok = _prodotto_coerente(nome_nodo, query_en, descr)
+            # alta SOLO se: testa combacia, overlap >= soglia, e il prodotto dichiarato
+            # (aceto/sciroppo/...) e' confermato dalla descrizione USDA.
+            alta = testa and sc >= soglia and prod_ok
 
             voce = {"nodo": nid, "nome": nome_nodo, "query_en": query_en, "fonte_en": fonte_en,
                     "fdc_id": fdc_id, "usda": descr, "dataType": food.get("dataType"),
-                    "score": sc, "testa_ok": testa, "assi_target": assi_target}
+                    "score": sc, "testa_ok": testa, "prodotto_coerente": prod_ok,
+                    "assi_target": assi_target}
 
             if not alta:
                 if len(proposte_bassa) < 60:
@@ -256,6 +303,9 @@ def deriva_gusti_search():
             "soglia_alta": soglia,
             "ricerche_usda": ricerche,
             "limite": limite,
+            "offset": offset,
+            "prossimo_offset": (None if consumati >= len(righe) else offset + consumati),
+            "fine": (consumati >= len(righe)),
             "accettati_alta": len(proposte_alta),
             "proposti_bassa_NON_scritti": len(proposte_bassa),
             "scritti": scritti if esegui else 0,
