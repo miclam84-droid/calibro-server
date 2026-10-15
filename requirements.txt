@@ -7,3 +7,4 @@ sentry-sdk[flask]==2.71.0
 reportlab==5.0.1
 cloudinary==1.46.2
 Pillow==12.3.0
+stripe==15.6.1

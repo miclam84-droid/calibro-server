@@ -446,6 +446,16 @@ def chiedi():
             cur_t.close(); _release_conn(conn_t)
         except Exception as _te:
             print(f"[TRIAL] {_te}", flush=True)
+            # rilascia la connessione anche sul percorso d'errore (altrimenti leak del pool)
+            try: cur_t.close()
+            except Exception: pass
+            try: _release_conn(conn_t)
+            except Exception: pass
+            # fail-CLOSED: se non possiamo verificare il trial/piano, NON serviamo la
+            # chat AI gratis (prima cadeva sotto e serviva: DB giù = GPT illimitato gratis).
+            # 503 ritentabile; gli utenti Pro confermati prima dell'errore passano comunque.
+            return jsonify({"errore": "trial_non_verificabile",
+                "messaggio": "Servizio momentaneamente non disponibile, riprova tra poco."}), 503
     # ── FINE TRIAL ──────────────────────────────────────────────────────
 
 

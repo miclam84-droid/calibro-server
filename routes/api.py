@@ -795,19 +795,11 @@ def stt():
     user_id = _utente_da_token(token)
     if not user_id:
         return jsonify({"errore":"autenticazione richiesta"}), 401
-    # verifica piano pro
-    if DATABASE_URL:
-        try:
-            import psycopg2
-            conn_p = _get_conn()
-            cur_p = conn_p.cursor()
-            cur_p.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
-            row_p = cur_p.fetchone()
-            cur_p.close(); _release_conn(conn_p)
-            if not row_p or row_p[0] != "pro":
-                return jsonify({"errore":"Whisper è disponibile nel piano Pro"}), 403
-        except Exception:
-            pass
+    # Pro-only, fail-CLOSED: _e_pro nega su errore DB.
+    # (prima: except:pass → se il DB sbagliava, feature a pagamento gratis.)
+    from utils import _e_pro
+    if not _e_pro(user_id):
+        return jsonify({"errore":"Whisper è disponibile nel piano Pro"}), 403
     if "audio" not in request.files:
         return jsonify({"errore":"file audio mancante"}), 400
     audio_file = request.files["audio"]
@@ -831,18 +823,10 @@ def vision():
     user_id = _utente_da_token(token)
     if not user_id:
         return jsonify({"errore":"autenticazione richiesta"}), 401
-    if DATABASE_URL:
-        try:
-            import psycopg2
-            conn_v = _get_conn()
-            cur_v = conn_v.cursor()
-            cur_v.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
-            row_v = cur_v.fetchone()
-            cur_v.close(); _release_conn(conn_v)
-            if not row_v or row_v[0] != "pro":
-                return jsonify({"errore":"Vision è disponibile nel piano Pro"}), 403
-        except Exception:
-            pass
+    # Pro-only, fail-CLOSED: _e_pro nega su errore DB.
+    from utils import _e_pro
+    if not _e_pro(user_id):
+        return jsonify({"errore":"Vision è disponibile nel piano Pro"}), 403
     if "immagine" not in request.files:
         return jsonify({"errore":"immagine mancante"}), 400
     img_file = request.files["immagine"]

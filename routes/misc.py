@@ -79,23 +79,21 @@ def stripe_webhook():
 
     payload = request.get_data()
 
-    # 1. Verifica firma Stripe se il webhook secret è configurato (sicurezza).
+    # 1. Firma Stripe OBBLIGATORIA quando Stripe è attivo (STRIPE_SECRET_KEY presente).
     webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
-    if webhook_secret:
-        try:
-            import stripe as _stripe
-            sig = request.headers.get("Stripe-Signature", "")
-            event = _stripe.Webhook.construct_event(payload, sig, webhook_secret)
-            data = event  # oggetto verificato
-        except Exception:
-            # firma non valida → rifiuta (non è Stripe o payload manomesso)
-            return jsonify({"errore": "firma non valida"}), 400
-    else:
-        # nessun secret configurato: parsing diretto (modalità test/sandbox)
-        try:
-            data = json.loads(payload)
-        except Exception:
-            return jsonify({"errore": "payload non valido"}), 400
+    if not webhook_secret:
+        # Stripe configurato ma manca il secret del webhook: NON fidarsi di un payload
+        # non firmato (prima: json.loads grezzo + UPDATE piano='pro' dal payload →
+        # chiunque poteva attivarsi Pro gratis). Meglio rifiutare: Stripe riprova.
+        return jsonify({"errore": "webhook non configurato (STRIPE_WEBHOOK_SECRET mancante)"}), 503
+    try:
+        import stripe as _stripe
+        sig = request.headers.get("Stripe-Signature", "")
+        event = _stripe.Webhook.construct_event(payload, sig, webhook_secret)
+        data = event  # oggetto verificato
+    except Exception:
+        # firma non valida → rifiuta (non è Stripe o payload manomesso)
+        return jsonify({"errore": "firma non valida"}), 400
 
     event_id = data.get("id", "")
     event_type = data.get("type", "")
