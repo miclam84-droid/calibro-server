@@ -753,20 +753,6 @@ function _renderCasiPool(){
     return '<button class="hd-problema" onclick="_diagnosiVai(\''+e(c[1]).replace(/'/g,"\\'")+'\')">'+e(c[0])+'</button>';
   }).join('');
 }
-function _renderCasiRotanti_OLD(){
-  var cont=document.getElementById('hd-casi');
-  if(!cont) return;
-  // seed sul giorno dell'anno → 3 casi che ruotano ogni giorno
-  var oggi=new Date();
-  var giorno=Math.floor((oggi - new Date(oggi.getFullYear(),0,0))/86400000);
-  var n=_CASI_POOL.length;
-  var idx=[(giorno*3)%n, (giorno*3+1)%n, (giorno*3+2)%n];
-  var e=_escV;
-  cont.innerHTML = idx.map(function(i){
-    var c=_CASI_POOL[i];
-    return '<button class="hd-problema" onclick="_diagnosiVai(\''+e(c[1]).replace(/'/g,"\\'")+'\')">'+e(c[0])+'</button>';
-  }).join('');
-}
 function renderHome(j){
   _renderCasiRotanti();
   var _fh = (j && j.fenomeno) ? j.fenomeno : {};
@@ -2815,42 +2801,7 @@ async function caricaStrumenti(disciplina) {
   }
 }
 
-/* ── SOMMELIER DIGITALE ─────────────────────────────────── */
-async function caricaProfiloSensoriale() {
-  const div = document.getElementById('profilo-sensoriale');
-  if(!div) return;
-  div.style.display = 'block';
-  div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Caricamento...</div>';
-  try {
-    const token = localStorage.getItem('matter_token') || '';
-    if(!token) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Accedi per vedere il tuo profilo sensoriale.</div>'; return; }
-    const r = await fetch('/v1/profilo-sensoriale', {headers:{'Authorization':'Bearer '+token}});
-    if(!r.ok){ div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Fai qualche valutazione sugli abbinamenti per costruire il tuo profilo.</div>'; return; }
-    const j = await r.json();
-    if(j.errore) { div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Fai qualche valutazione sugli abbinamenti per costruire il tuo profilo.</div>'; return; }
-    // il profilo ha le dimensioni sensoriali (escludo le chiavi interne che iniziano con _)
-    const profilo = j.profilo || {};
-    const dim = {};
-    Object.entries(profilo).forEach(([k,v]) => { if(!k.startsWith('_') && typeof v === 'number') dim[k]=v; });
-    if(Object.keys(dim).length === 0){
-      div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Il tuo profilo si costruisce man mano che valuti gli abbinamenti con 👍 e 👎.</div>';
-      return;
-    }
-    const html = Object.entries(dim).map(([k,v]) => `
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-muted);width:82px;text-transform:uppercase">${esc(k)}</div>
-        <div style="flex:1;background:var(--border);height:8px">
-          <div style="background:var(--accent);width:${Math.round((v/10)*100)}%;height:8px"></div>
-        </div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--accent);width:26px;text-align:right">${Number(v).toFixed(1)}</div>
-      </div>`).join('');
-    div.innerHTML = html;
-  } catch(e) {
-    div.innerHTML = '<div style="color:var(--ink-muted);font-size:13px">Il profilo non è disponibile ora. Riprova tra poco.</div>';
-  }
-}
-
-/* ── FINE STRUMENTI E SOMMELIER ─────────────────────────── */
+/* ── FINE STRUMENTI ─────────────────────────────────────── */
 
 /* ── AZIONI RISPOSTA (copia, PDF) ───────────────────────── */
 function copiaRisposta(btn) {
