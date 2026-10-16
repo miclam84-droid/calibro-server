@@ -331,7 +331,9 @@ def knowledge_trail(ingrediente):
                             "nota": "Percorso non disponibile per questo ingrediente."})
         return jsonify({"ingrediente": ingrediente, "trail": tappe, "n_tappe": len(tappe)})
     except Exception as e:
-        return jsonify({"errore": str(e)[:120], "trail": []}), 200
+        # Onestà dei dati: errore DB/server -> 500, non un 200 con trail vuoto
+        # (indistinguibile dal "percorso non disponibile" valido qui sopra).
+        return jsonify({"errore": str(e)[:120], "trail": []}), 500
 
 
 @bp.route("/v1/cerca", methods=["GET"])
@@ -439,7 +441,9 @@ def cerca_universale():
                 _visti.add(k); _dedup.append(x)
         risultati = _dedup
     except Exception as e:
-        return jsonify({"query": q, "risultati": risultati, "errore": str(e)[:120]})
+        # Onestà dei dati: la ricerca è fallita -> 500, non un 200 che spaccia
+        # risultati parziali per una ricerca completa (manca il campo "totale").
+        return jsonify({"query": q, "risultati": risultati, "errore": str(e)[:120]}), 500
     return jsonify({"query": q, "risultati": risultati, "totale": len(risultati)})
 
 
@@ -697,7 +701,9 @@ def libro_affiliato():
         return jsonify({"libro": libro,
                         "disclosure": "Link affiliato Amazon: acquistando tramite questo supporti Matter, senza costi aggiuntivi."})
     except Exception as e:
-        return jsonify({"libro": None, "_err": str(e)[:80]})
+        # Onestà dei dati: errore -> 500, non un 200 con libro:None
+        # (indistinguibile dal "nessun libro per questa disciplina" valido qui sopra).
+        return jsonify({"libro": None, "_err": str(e)[:80]}), 500
 
 
 @bp.route("/v1/motore/panificazione", methods=["POST"])
@@ -1595,7 +1601,9 @@ def scheda_ingrediente_completa(ingrediente_id):
                      "Il frontend mostra SOLO verificato:true. Finche non verificato, il contenuto e' sospetto.")
         })
     except Exception as e:
-        return jsonify({"errore": str(e)[:150]})
+        # Onestà dei dati: errore DB/server -> 500, non un 200 col solo "errore"
+        # (il "ingrediente non trovato" valido resta 404 qui sopra).
+        return jsonify({"errore": str(e)[:150]}), 500
 
 
 @bp.route("/admin/ispeziona-nodo-rel/<nome>", methods=["GET"])

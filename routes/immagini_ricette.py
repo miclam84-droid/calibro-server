@@ -127,7 +127,9 @@ def immagine_ricetta(rid):
     except Exception as e:
         try: _release_conn(conn)
         except Exception: pass
-        return jsonify({"tipo": "blueprint", "famiglia": _FAMIGLIA_DEFAULT, "errore": str(e)[:80]}), 200
+        # Onestà dei dati: un errore DB/server non si traveste da 200 con il blueprint di default
+        # (indistinguibile da un fallback legittimo). Il "db non disponibile" resta 200 sopra.
+        return jsonify({"tipo": "blueprint", "famiglia": _FAMIGLIA_DEFAULT, "errore": str(e)[:80]}), 500
 
 
 @bp_img.route("/v1/blueprint/famiglie", methods=["GET"])
