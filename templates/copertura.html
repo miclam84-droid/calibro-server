@@ -34,6 +34,10 @@
 .bar button[disabled]{opacity:.5; cursor:default}
 .bar .hint{font-size:13px; color:var(--ink-soft)}
 .ok{background:var(--tint); border:1px solid rgba(47,138,95,.3); color:var(--green-action); border-radius:var(--r); padding:14px 16px; margin-top:16px; font-weight:600}
+.fonti{display:flex; gap:8px; margin-top:16px}
+.fonti button{font-family:var(--sans); font-weight:700; font-size:14px; color:var(--ink-soft); background:var(--card); border:1px solid var(--card-border); border-radius:10px; padding:9px 16px; cursor:pointer}
+.fonti button.on{color:#fff; background:var(--green-action); border-color:var(--green-action)}
+.fonte-nota{margin-top:10px; font-size:13px; color:var(--ink-soft)}
 </style>
 </head>
 <body>
@@ -50,6 +54,12 @@
     <h1>Copertura gusto</h1>
     <p class="regola">Questi sono i gusti <b>derivabili da fonte misurata</b> (USDA), calcolati con la formula del server. Rivedili e, se ti convincono, clicca <b>scrivi</b>: entrano nel grafo taggati <b>derivato</b>, mai sopra un valore già tuo. Il banco resta il giudice.</p>
   </header>
+
+  <div class="fonti">
+    <button id="f-usda" class="on" data-f="usda">USDA · dolce/salato/grasso</button>
+    <button id="f-ciqual" data-f="ciqual">CIQUAL · + acido</button>
+  </div>
+  <div class="fonte-nota" id="fonte-nota"></div>
 
   <div class="cop-sum" id="sum"></div>
   <div class="prog" id="prog" hidden><span id="progtxt"></span><span class="track"><span class="fill" id="progfill" style="width:0%"></span></span></div>
@@ -69,9 +79,16 @@
 
 <script>
 const SEC = {{ sec|tojson }};
-const BASE = '/admin/deriva-gusti-usda';
 const BATCH = 8;
-const ASSI = ['dolce','salato','grasso'];
+const FONTI = {
+  usda:   {base:'/admin/deriva-gusti-usda',   assi:['dolce','salato','grasso'],
+           nota:'Fonte USDA FoodData Central (dominio pubblico). Deriva dolce, salato, grasso.'},
+  ciqual: {base:'/admin/deriva-gusti-ciqual', assi:['dolce','salato','grasso','acido'],
+           nota:'Fonte CIQUAL 2025 (ANSES, Open Licence). Aggiunge l’asse acido, da acidi organici (non pH): entra taggato come tale.'},
+};
+let FONTE = 'usda';
+let BASE = FONTI[FONTE].base;
+let ASSI = FONTI[FONTE].assi;
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
 
@@ -141,6 +158,18 @@ $scrivi.addEventListener('click', async ()=>{
   setTimeout(dryRun, 1500);
 });
 
+function setFonte(f){
+  FONTE=f; BASE=FONTI[f].base; ASSI=FONTI[f].assi;
+  document.getElementById('f-usda').classList.toggle('on', f==='usda');
+  document.getElementById('f-ciqual').classList.toggle('on', f==='ciqual');
+  document.getElementById('fonte-nota').textContent = FONTI[f].nota;
+  $ok.hidden=true; $state.hidden=true;
+  dryRun();
+}
+document.getElementById('f-usda').addEventListener('click', ()=>setFonte('usda'));
+document.getElementById('f-ciqual').addEventListener('click', ()=>setFonte('ciqual'));
+
+document.getElementById('fonte-nota').textContent = FONTI[FONTE].nota;
 dryRun();
 </script>
 </body>
