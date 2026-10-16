@@ -181,7 +181,9 @@ def _trial_consentito(user_id, ip, tipo="varie", limite=5):
             conn.rollback(); _release_conn(conn)
         except Exception:
             pass
-        return True, {"errore_check": True}
+        # fail-CLOSED: se non possiamo verificare il gate, NON concediamo.
+        # (prima restituiva True → DB giù = feature a pagamento gratis.)
+        return False, {"errore_check": True}
 
 
 def _e_pro(user_id):

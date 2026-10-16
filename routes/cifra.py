@@ -427,10 +427,6 @@ def token_generate():
 
     data = request.get_json(silent=True) or {}
     ricetta_id = data.get("ricetta_id")
-    email = data.get("email", "").strip().lower()
-
-    if not email:
-        return jsonify({"errore": "email obbligatoria"}), 400
 
     token = str(uuid.uuid4())
 
@@ -438,6 +434,14 @@ def token_generate():
         import datetime
         conn = _get_conn()
         cur = conn.cursor()
+        # email dall'utente AUTENTICATO, mai dal body: prima chiunque poteva generare
+        # un link identità Cifra per l'email di un altro (spoofing SSO).
+        cur.execute("SELECT email FROM utenti WHERE id=%s", (user_id,))
+        _row_em = cur.fetchone()
+        email = (_row_em[0] if _row_em and _row_em[0] else "").strip().lower()
+        if not email:
+            cur.close(); _release_conn(conn)
+            return jsonify({"errore": "email utente non disponibile"}), 409
         # Crea tabella se non esiste
         cur.execute("""
             CREATE TABLE IF NOT EXISTS sso_tokens (
