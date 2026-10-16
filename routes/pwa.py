@@ -55,6 +55,16 @@ def scopri(ing="limone"):
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/ingrediente/<nome>")
+def scheda_ingrediente(nome):
+    """FRONTEND-2.0 — scheda ingrediente (Atlante): profilo sensoriale con provenienza
+    per asse + teaser abbinamenti. Cablata a /v1/profilo-gusto e /v1/criteri.
+    Pagina nuova e isolata: non tocca /app né /app2."""
+    from flask import make_response
+    resp = make_response(render_template("scheda.html", nome=nome))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/manifest.json")
 def manifest():
     """PWA manifest."""

@@ -159,7 +159,7 @@ async function carica(ing){
 }
 
 document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); carica($q.value); });
-$sez.addEventListener('click', e=>{ const b=e.target.closest('.partner-link'); if(!b) return; carica(b.dataset.ing); window.scrollTo({top:0, behavior:'smooth'}); });
+$sez.addEventListener('click', e=>{ const b=e.target.closest('.partner-link'); if(!b) return; location.href='/ingrediente/'+encodeURIComponent(b.dataset.ing); });
 carica(INIT);
 </script>
 </body>
