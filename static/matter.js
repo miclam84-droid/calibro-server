@@ -2747,35 +2747,6 @@ async function caricaComposti(ingrediente) {
 }
 
 
-/* ── SSO CIFRA ─────────────────────────────────────────── */
-async function importaCifra(ricetta_id) {
-  const token = localStorage.getItem('matter_token');
-  const email = localStorage.getItem('matter_email');
-  if (!token || !email) {
-    alert('Devi essere loggato per importare in Cifra.');
-    switchTab('auth');
-    return;
-  }
-  try {
-    const r = await fetch('/v1/token/generate', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email: email, ricetta_id: ricetta_id || null })
-    });
-    const d = await r.json();
-    if (d.deep_link) {
-      window.open(d.deep_link, '_blank');
-    } else {
-      alert(_L({it:'Errore nella generazione del link: ',en:'Error generating link: ',es:'Error al generar el enlace: '}) + (d.errore || _L({it:'sconosciuto',en:'unknown',es:'desconocido'})));
-    }
-  } catch(e) {
-    alert('Errore di connessione: ' + e.message);
-  }
-}
-
 /* ── STRUMENTI DI MISURA ────────────────────────────────── */
 async function caricaStrumenti(disciplina) {
   const list = document.getElementById('strumenti-list');
