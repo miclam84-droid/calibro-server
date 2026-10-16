@@ -128,7 +128,12 @@ def menu_crea():
             if not v.get("dieta"):
                 v["dieta"] = deduci_dieta(_fonte)
     except Exception:
-        pass
+        # LEGALE (Reg. UE 1169/2011): la deduzione allergeni/dieta qui è best-effort (viene
+        # ricalcolata al render), ma il suo fallimento NON deve sparire in silenzio: un menu
+        # salvato senza allergeni dedotti è un difetto di conformità. Si logga l'errore
+        # (Sentry lo intercetta); non si blocca il salvataggio del menu.
+        _log.error("menu_crea: deduzione allergeni/dieta fallita; voci salvate senza "
+                   "allergeni dedotti, verificare", exc_info=True)
     c = _conn(); cur = c.cursor()
     try:
         cur.execute(
@@ -202,8 +207,15 @@ def menu_qr(mid):
         import qrcode
     except ImportError:
         return jsonify({"errore": "qrcode non installato"}), 500
-    base = os.environ.get("PUBLIC_BASE_URL", "https://web-production-79457.up.railway.app")
-    url = f"{base}/menu/{mid}"
+    # Il QR deve puntare all'URL pubblico REALE del menu. Se PUBLIC_BASE_URL manca,
+    # fail-loud: un QR verso un host fisso errato manderebbe i clienti su un menu
+    # sbagliato/morto, in silenzio. Meglio un errore chiaro che un QR inservibile.
+    base = (os.environ.get("PUBLIC_BASE_URL") or "").strip()
+    if not base:
+        _log.error("PUBLIC_BASE_URL non configurata: impossibile generare un QR corretto "
+                   "per il menu %s. Configurare la variabile d'ambiente.", mid)
+        return jsonify({"errore": "configurazione server incompleta: PUBLIC_BASE_URL mancante"}), 503
+    url = f"{base.rstrip('/')}/menu/{mid}"
     img = qrcode.make(url)
     buf = io.BytesIO()
     img.save(buf, format="PNG")
@@ -481,6 +493,13 @@ def menu_render(mid):
             _vl = ['<b>%d</b> %s' % (x, _ml[x]['it']) for x in sorted(_all_usati) if x in _ml]
             _legenda_all_html = '<div class="menu-allergeni-legenda"><b>ALLERGENI</b><br>' + ' &middot; '.join(_vl) + '<br><span style="opacity:0.7">I numeri accanto a ogni piatto indicano gli allergeni (Reg. UE 1169/2011).</span></div>'
         except Exception:
+            # LEGALE (Reg. UE 1169/2011): la legenda allergeni è obbligatoria anche sul menu
+            # digitale (HTML). Non deve sparire in silenzio: si LOGGA l'errore (Sentry lo
+            # intercetta) invece di ingoiarlo. Non si rilancia per non far fallire l'intera
+            # pagina del menu, ma il difetto di conformità è ora visibile.
+            _log.error("menu %s: impossibile costruire la legenda allergeni HTML "
+                       "(obbligo UE 1169/2011); menu reso SENZA legenda, verificare",
+                       mid, exc_info=True)
             _legenda_all_html = ''
     html = f'''<!DOCTYPE html>
 <html lang="it"><head><meta charset="utf-8">
