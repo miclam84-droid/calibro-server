@@ -178,7 +178,7 @@ def deriva_gusti_usda():
             cur.execute("""CREATE TABLE IF NOT EXISTS _backup_gusti_derivati
                            (id TEXT, data_old JSONB, ts TIMESTAMPTZ DEFAULT NOW())""")
 
-        campione, scritti, saltati_nomatch, saltati_protetti, cache_usda = [], 0, 0, 0, {}
+        campione, scritti, saltati_nomatch, saltati_protetti, saltati_usda, cache_usda = [], 0, 0, 0, 0, {}
 
         for nome_it, fdc_id in coppie:
             # 1) trova il nodo italiano (match esatto sul nome, minuscolo)
@@ -198,11 +198,17 @@ def deriva_gusti_usda():
                 saltati_protetti += 1
                 continue
 
-            # 2) USDA (con cache per fdc_id)
+            # 2) USDA (con cache per fdc_id). Un intoppo su USDA (es. 429 rate-limit) deve
+            #    far SALTARE solo questo ingrediente, non annullare in rollback tutti gli
+            #    altri gia' pronti: niente piu' "tutto o niente" sul batch.
             if fdc_id in cache_usda:
                 nut, nome_usda = cache_usda[fdc_id]
             else:
-                detail = _usda_get(f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}?api_key={urllib.parse.quote(key)}")
+                try:
+                    detail = _usda_get(f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}?api_key={urllib.parse.quote(key)}")
+                except Exception:
+                    saltati_usda += 1
+                    continue
                 nut = _nutrienti(detail)
                 nome_usda = detail.get("description", "")
                 cache_usda[fdc_id] = (nut, nome_usda)
@@ -261,6 +267,7 @@ def deriva_gusti_usda():
             "totale_match_curati": len(_MATCH),
             "nodi_non_trovati": saltati_nomatch,
             "saltati_protetti_rari": saltati_protetti,
+            "saltati_usda": saltati_usda,
             "scritti": scritti if esegui else 0,
             "nota": ("DRY RUN: nessun dato modificato. Aggiungi &esegui=1 per scrivere."
                      if not esegui else
