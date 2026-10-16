@@ -44,6 +44,17 @@ def home2():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/scopri")
+@bp.route("/scopri/<ing>")
+def scopri(ing="limone"):
+    """FRONTEND-2.0 — schermata Scopri ("cosa ci sta bene, e perché").
+    Sistema di design congelato (matter2.css), cablata dal vivo a /v1/criteri.
+    Pagina nuova e isolata: non tocca /app (vecchio) né /app2."""
+    from flask import make_response
+    resp = make_response(render_template("scopri.html", ing=ing))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/manifest.json")
 def manifest():
     """PWA manifest."""

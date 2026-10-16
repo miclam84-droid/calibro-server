@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scopri · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="wordmark">Matter<span class="bench">Bench</span></div>
+    <div class="eyebrow">Scopri</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <form class="search" id="form" autocomplete="off">
+    <input id="q" name="q" type="text" placeholder="Un ingrediente… (es. limone, fragola, basilico)" aria-label="Ingrediente">
+    <button type="submit">Scopri</button>
+  </form>
+
+  <header class="hero">
+    <div class="kind">Cosa ci sta bene, e perché</div>
+    <h1 id="titolo">—</h1>
+    <p class="regola"><b id="regola">Matter mostra perché una relazione esiste, non un voto di compatibilità.</b></p>
+    <div class="sourceline"><span class="dot"></span><span id="src">Dati dal grafo Matter, motore criteri.</span></div>
+  </header>
+
+  <nav class="nav" id="nav" hidden></nav>
+  <main id="sezioni"></main>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    <b>Dati reali dal grafo Matter</b>, motore <code>criteri</code>, in tempo reale. Ogni relazione mostra la sua evidenza e la sua provenienza: molecole condivise per gli aromi, cultura documentata per la tradizione, relazione curata per il contrasto. Niente voto di compatibilità, nessun numero inventato — dove non c'è una misura molecolare, è detto.
+  </footer>
+</div>
+
+<script>
+const INIT = {{ ing|tojson }};
+
+const SEZIONI = [
+  {key:"base_aromatica", id:"aromi", titolo:"Base aromatica", sotto:"Perché condividono le stesse molecole dell'aroma.", ic:'<path d="M9 3h6M10 3v5.5L5.2 17a2 2 0 0 0 1.8 2.9h10a2 2 0 0 0 1.8-2.9L14 8.5V3"/><path d="M7.5 14h9"/>'},
+  {key:"tradizione", id:"tradizione", titolo:"Tradizione", sotto:"Accostamenti documentati dalla cultura — non dalla chimica.", ic:'<path d="M4 19V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 19h16"/><path d="M8 6V4h8v2"/><path d="M12 10v6M9 13h6"/>'},
+  {key:"contrasto", id:"contrasto", titolo:"Contrasto", sotto:"Relazioni curate nel grafo: oppongono, non assomigliano.", ic:'<circle cx="8" cy="12" r="4.5"/><circle cx="16" cy="12" r="4.5"/>'},
+];
+
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+const pulisci = s => String(s).replace(/\s+/g,' ').trim();
+const icon = p => `<svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const uniq = a => { const o=[]; (a||[]).forEach(x=>{ if(!o.includes(x)) o.push(x); }); return o; };
+
+const $nav = document.getElementById('nav');
+const $sez = document.getElementById('sezioni');
+const $state = document.getElementById('state');
+const $titolo = document.getElementById('titolo');
+const $src = document.getElementById('src');
+const $q = document.getElementById('q');
+
+function setState(msg, err){
+  $state.hidden = false; $state.className = 'state' + (err?' err':''); $state.innerHTML = msg;
+}
+function clearState(){ $state.hidden = true; $state.innerHTML = ''; }
+
+function render(d){
+  $nav.innerHTML = ''; $sez.innerHTML = '';
+  const rel = d.relazioni || [];
+  if(!rel.length){
+    $nav.hidden = true;
+    setState(`<b>${esc(cap(d.ingrediente||''))}</b> è nel grafo ma non ha ancora relazioni da mostrare. Non è un errore: è "non ancora mappato".`, false);
+    return;
+  }
+  clearState(); $nav.hidden = false;
+
+  SEZIONI.forEach(sez=>{
+    const items = rel.filter(r=>r.criterio===sez.key);
+    if(!items.length) return;
+
+    const a = document.createElement('a');
+    a.href = '#'+sez.id;
+    a.innerHTML = `${sez.titolo}<span class="n">${items.length}</span>`;
+    $nav.appendChild(a);
+
+    const sec = document.createElement('section');
+    sec.className = 'section'; sec.id = sez.id;
+    sec.innerHTML = `
+      <div class="sechead">${icon(sez.ic)}
+        <div style="min-width:0"><h2>${sez.titolo}</h2><p>${sez.sotto}</p></div>
+        <span class="seccount">${items.length}</span>
+      </div><div class="list"></div>`;
+    const list = sec.querySelector('.list');
+
+    items.forEach(r=>{
+      const ev = r.evidenza || {};
+      const card = document.createElement('article');
+      const molecolare = (ev.composti_condivisi != null);
+      if(molecolare){
+        const rb = (r.robustezza||'').toLowerCase();
+        const cls = rb==='alta'?'alta':rb==='media'?'media':'espl';
+        const comp = uniq(ev.composti_caratterizzanti).slice(0,4).map(c=>`<span class="chip">${esc(pulisci(c))}</span>`).join('');
+        const nComp = uniq(ev.composti_caratterizzanti).length;
+        const extra = (ev.composti_condivisi > nComp) ? `<span class="chip more">+${ev.composti_condivisi-nComp} altri condivisi</span>` : '';
+        const rar = (ev.indice_rarita!=null) ? `<span>indice di rarità <span class="k">${(+ev.indice_rarita).toFixed(2)}</span></span>` : '';
+        const pp = (ev.profilo_partner!=null) ? `<span>composti del partner <span class="k">${ev.profilo_partner}</span></span>` : '';
+        card.className='card';
+        card.innerHTML = `
+          <div class="card-top">
+            <h3 class="partner">${esc(cap(r.ingrediente))}</h3>
+            ${r.robustezza?`<span class="pill ${cls}">Robustezza ${esc(r.robustezza)}</span>`:''}
+          </div>
+          <div class="evidence"><span class="num">${ev.composti_condivisi}</span><span class="lbl">composti aromatici condivisi</span></div>
+          <div class="chips">${comp}${extra}</div>
+          ${(rar||pp)?`<div class="meta">${rar}${pp}</div>`:''}`;
+      } else {
+        const trad = sez.key==='tradizione';
+        card.className='card lite';
+        card.innerHTML = `
+          <h3 class="partner">${esc(cap(r.ingrediente))}</h3>
+          <div class="prov ${trad?'trad':''}"><span class="sq"></span>${trad?'Evidenza culturale — nessun dato molecolare':'Relazione curata nel grafo'}</div>
+          ${r.perche?`<p class="perche">${esc(r.perche)}</p>`:''}`;
+      }
+      list.appendChild(card);
+    });
+    $sez.appendChild(sec);
+  });
+}
+
+async function carica(ing){
+  ing = (ing||'').trim();
+  if(!ing) return;
+  $titolo.textContent = cap(ing);
+  $q.value = ing;
+  $nav.hidden = true; $sez.innerHTML = '';
+  setState('Interrogo il grafo…', false);
+  try{
+    const res = await fetch('/v1/criteri/' + encodeURIComponent(ing), {headers:{'Accept':'application/json'}});
+    if(!res.ok){ setState(`Il grafo ha risposto con un errore (${res.status}). Riprova tra poco.`, true); return; }
+    const d = await res.json();
+    $titolo.textContent = cap(d.ingrediente || ing);
+    if(d.regola) document.getElementById('regola').textContent = d.regola;
+    if(d.non_riconosciuto){
+      setState(`<b>${esc(cap(ing))}</b> non è nel grafo con un profilo di composti. Prova un altro ingrediente.`, false);
+      $nav.hidden = true; return;
+    }
+    const tot = (d.relazioni||[]).length;
+    $src.innerHTML = `<b>${tot} relazioni reali</b> dal grafo · motore <code>criteri</code>, in tempo reale`;
+    render(d);
+    history.replaceState(null,'','/scopri/'+encodeURIComponent(ing));
+  }catch(e){
+    setState('Non riesco a raggiungere il grafo adesso. Controlla la connessione e riprova.', true);
+  }
+}
+
+document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); carica($q.value); });
+carica(INIT);
+</script>
+</body>
+</html>
