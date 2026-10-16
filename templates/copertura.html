@@ -13,6 +13,9 @@
 .cop-sum .b{background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:12px 16px; min-width:120px}
 .cop-sum .n{font-family:var(--display); font-weight:800; font-size:26px; color:var(--green-action); font-variant-numeric:tabular-nums}
 .cop-sum .l{font-size:12px; color:var(--ink-soft)}
+.prog{margin-top:16px; font-size:13.5px; color:var(--ink-soft)}
+.prog .track{height:8px; border-radius:999px; background:var(--rule); overflow:hidden; margin-top:7px}
+.prog .fill{display:block; height:100%; background:var(--green-signal); border-radius:999px; transition:width .25s}
 .ing{background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 16px; margin-top:11px}
 .ing-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
 .ing-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink)}
@@ -45,10 +48,11 @@
   <header class="hero">
     <div class="kind">La scrittura parte dal tuo clic</div>
     <h1>Copertura gusto</h1>
-    <p class="regola">Questi sono i gusti <b>derivabili da fonte misurata</b> (USDA), calcolati con la formula del server. Rivedili e, se ti convincono, clicca <b>scrivi</b>: entrano nel grafo taggati <b>derivato</b>, mai sopra un valore già tuo. Il banco resta il giudice finale.</p>
+    <p class="regola">Questi sono i gusti <b>derivabili da fonte misurata</b> (USDA), calcolati con la formula del server. Rivedili e, se ti convincono, clicca <b>scrivi</b>: entrano nel grafo taggati <b>derivato</b>, mai sopra un valore già tuo. Il banco resta il giudice.</p>
   </header>
 
   <div class="cop-sum" id="sum"></div>
+  <div class="prog" id="prog" hidden><span id="progtxt"></span><span class="track"><span class="fill" id="progfill" style="width:0%"></span></span></div>
   <main id="lista"></main>
   <div class="state" id="state" hidden></div>
   <div class="ok" id="ok" hidden></div>
@@ -59,70 +63,82 @@
   </div>
 
   <footer>
-    Fonte: USDA FoodData Central (dominio pubblico). Ogni valore entra come <b>derivato</b> con il riferimento FDC; "fill-only" significa che non sovrascrive mai un valore che hai già corretto o verificato al banco.
+    Fonte: USDA FoodData Central (dominio pubblico). Ogni valore entra come <b>derivato</b> col riferimento FDC; "fill-only" = non sovrascrive mai un valore che hai già corretto o verificato al banco. Il pannello lavora a piccoli blocchi per non far scadere la richiesta.
   </footer>
 </div>
 
 <script>
 const SEC = {{ sec|tojson }};
 const BASE = '/admin/deriva-gusti-usda';
+const BATCH = 8;
 const ASSI = ['dolce','salato','grasso'];
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
 
 const $sum=document.getElementById('sum'), $lista=document.getElementById('lista'),
       $state=document.getElementById('state'), $bar=document.getElementById('bar'),
-      $hint=document.getElementById('hint'), $scrivi=document.getElementById('scrivi'), $ok=document.getElementById('ok');
+      $hint=document.getElementById('hint'), $scrivi=document.getElementById('scrivi'), $ok=document.getElementById('ok'),
+      $prog=document.getElementById('prog'), $progtxt=document.getElementById('progtxt'), $progfill=document.getElementById('progfill');
 function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
+function showProg(txt,pct){ $prog.hidden=false; $progtxt.textContent=txt; $progfill.style.width=pct+'%'; }
+function hideProg(){ $prog.hidden=true; }
 
-function render(d){
-  const camp = d.campione || [];
-  // conta gli scrivibili
+function render(camp){
   let nScriv=0, nIng=0;
-  camp.forEach(r=>{ const w=ASSI.some(a=>r.assi&&r.assi[a]&&r.assi[a].scrivibile); if(w){nIng++; ASSI.forEach(a=>{ if(r.assi[a]&&r.assi[a].scrivibile) nScriv++; });} });
+  camp.forEach(r=>{ let w=false; ASSI.forEach(a=>{ if(r.assi&&r.assi[a]&&r.assi[a].scrivibile){w=true; nScriv++;} }); if(w) nIng++; });
   $sum.innerHTML = `
     <div class="b"><div class="n">${camp.length}</div><div class="l">ingredienti mappati</div></div>
     <div class="b"><div class="n">${nIng}</div><div class="l">con caselle da riempire</div></div>
     <div class="b"><div class="n">${nScriv}</div><div class="l">valori scrivibili</div></div>`;
-
   $lista.innerHTML = camp.map(r=>{
     const righe = ASSI.map(a=>{
       const x=r.assi&&r.assi[a]; if(!x) return '';
-      const w=x.scrivibile;
-      const vecchio = (x.vecchio===null||x.vecchio===undefined)?'—':x.vecchio;
-      return `<div class="ax"><span class="ax-n">${a}</span>
-        <span class="ax-v">${vecchio}</span><span class="ax-arrow">→</span><span class="ax-new">${x.nuovo_derivato}</span>
-        <span class="ax-tag ${w?'w':'no'}">${w?'scrive':'già fisso'}</span></div>`;
+      const w=x.scrivibile; const vecchio=(x.vecchio===null||x.vecchio===undefined)?'—':x.vecchio;
+      return `<div class="ax"><span class="ax-n">${a}</span><span class="ax-v">${vecchio}</span><span class="ax-arrow">→</span><span class="ax-new">${x.nuovo_derivato}</span><span class="ax-tag ${w?'w':'no'}">${w?'scrive':'già fisso'}</span></div>`;
     }).join('');
     return `<article class="ing"><div class="ing-top"><span class="ing-nome">${esc(cap(r.nome))}</span><span class="ing-usda">${esc(r.nome_usda||'')} · FDC ${r.fdc_id}</span></div>${righe}</article>`;
   }).join('');
+  return nScriv;
+}
 
-  if(nScriv>0){ $bar.hidden=false; $scrivi.textContent=`Scrivi i ${nScriv} valori derivabili`; $hint.textContent='entrano taggati "derivato", con backup'; }
-  else { $bar.hidden=true; setState('<b>Tutto già scritto.</b> Non ci sono caselle nuove da riempire con questi match.', false); }
+// Scorre il grafo a blocchi di BATCH: evita il timeout della richiesta singola su tutti i match.
+async function scorri(esegui, onProg){
+  let offset=0, total=null, camp=[], scritti=0, saltati=0, errori=0;
+  while(total===null || offset<total){
+    const u=`${BASE}?s=${encodeURIComponent(SEC)}&offset=${offset}&limite=${BATCH}${esegui?'&esegui=1':''}`;
+    try{
+      const r=await fetch(u,{headers:{'Accept':'application/json'}});
+      const d=await r.json();
+      if(!r.ok||d.errore){ errori++; }
+      else{
+        if(total===null) total=d.totale_match_curati||0;
+        (d.campione||[]).forEach(x=>camp.push(x));
+        scritti+=d.scritti||0; saltati+=d.saltati_usda||0;
+      }
+    }catch(e){ errori++; if(total===null) total = offset+BATCH; } // se il primo fallisce, non bloccarti
+    offset+=BATCH;
+    const pct = total? Math.min(100, Math.round(offset/total*100)) : 0;
+    if(onProg) onProg(camp, pct, total);
+  }
+  return {camp, scritti, saltati, errori};
 }
 
 async function dryRun(){
-  setState('Interrogo USDA e calcolo i valori… (qualche secondo)', false);
-  $lista.innerHTML=''; $bar.hidden=true; $ok.hidden=true;
-  try{
-    const r = await fetch(`${BASE}?s=${encodeURIComponent(SEC)}&limite=100`, {headers:{'Accept':'application/json'}});
-    if(!r.ok){ setState(`Il server ha risposto ${r.status}. Controlla il link (manca il codice admin?).`, true); return; }
-    const d = await r.json();
-    if(d.errore){ setState('Errore: '+esc(d.errore), true); return; }
-    $state.hidden=true; render(d);
-  }catch(e){ setState('Non riesco a raggiungere il server adesso.', true); }
+  $ok.hidden=true; $bar.hidden=true; $lista.innerHTML=''; $sum.innerHTML='';
+  const res = await scorri(false, (camp,pct,total)=>{ showProg(`Calcolo i valori da USDA… ${pct}%`, pct); render(camp); });
+  hideProg();
+  const nScriv = render(res.camp);
+  if(nScriv>0){ $bar.hidden=false; $scrivi.disabled=false; $scrivi.textContent=`Scrivi i ${nScriv} valori derivabili`; $hint.textContent='entrano taggati "derivato", con backup'; }
+  else setState('<b>Tutto già scritto.</b> Non ci sono caselle nuove da riempire con questi match.', false);
 }
 
 $scrivi.addEventListener('click', async ()=>{
-  $scrivi.disabled=true; $scrivi.textContent='Scrivo…';
-  try{
-    const r = await fetch(`${BASE}?s=${encodeURIComponent(SEC)}&limite=100&esegui=1`, {headers:{'Accept':'application/json'}});
-    const d = await r.json();
-    if(!r.ok || d.errore){ setState('Scrittura non riuscita: '+esc(d.errore||r.status), true); $scrivi.disabled=false; $scrivi.textContent='Riprova'; return; }
-    const salt = d.saltati_usda ? ` (${d.saltati_usda} saltati perché USDA era occupato in quel momento — ripremi tra un minuto per prendere anche quelli)` : '';
-    $ok.hidden=false; $ok.innerHTML = `✓ Scritti <b>${d.scritti}</b> ingredienti nel grafo (derivato USDA, con backup).${salt} Ricarico la lista…`;
-    setTimeout(dryRun, 1400);
-  }catch(e){ setState('Scrittura non riuscita: rete.', true); $scrivi.disabled=false; $scrivi.textContent='Riprova'; }
+  $scrivi.disabled=true; $bar.hidden=true;
+  const res = await scorri(true, (camp,pct)=>{ showProg(`Scrivo nel grafo… ${pct}%`, pct); });
+  hideProg();
+  const salt = res.saltati ? ` ${res.saltati} saltati perché USDA era occupato (ripremi tra un minuto per quelli).` : '';
+  $ok.hidden=false; $ok.innerHTML = `✓ Scritti <b>${res.scritti}</b> ingredienti nel grafo (derivato USDA, con backup).${salt} Aggiorno la lista…`;
+  setTimeout(dryRun, 1500);
 });
 
 dryRun();
