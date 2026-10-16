@@ -1698,22 +1698,6 @@ def menu_tecniche():
         return jsonify({"errore": str(e), "tecniche": []}), 500
 
 
-@bp.route("/v1/profilo-sensoriale", methods=["GET"])
-def get_profilo_sensoriale():
-    """DEPRECATO. La feature Sommelier (like/dislike + profilo gusto) è stata rimossa perché parte da
-    un'opinione, non da una misura (rompe 'Numeri. Non opinioni.'). La sostituirà il Laboratorio Sensoriale.
-    Vedi LABORATORIO-SENSORIALE-DECISIONE.md."""
-    return jsonify({"rimossa": True, "sostituita_da": "Laboratorio Sensoriale",
-                    "nota": "Feature sommelier deprecata."}), 410
-
-@bp.route("/v1/feedback-abbinamento", methods=["POST"])
-def feedback_abbinamento():
-    """DEPRECATO. Il like/dislike sugli abbinamenti è stato rimosso: è raccolta dati che parte da
-    un'opinione, non da una misura (rompe 'Numeri. Non opinioni.'). Lo sostituirà il Laboratorio
-    Sensoriale (osservazioni percettive, non voti). Vedi LABORATORIO-SENSORIALE-DECISIONE.md."""
-    return jsonify({"rimossa": True, "sostituita_da": "Laboratorio Sensoriale",
-                    "nota": "Il like/dislike sugli abbinamenti è stato rimosso."}), 410
-
 @bp.route("/prezzi_mercato/<ingrediente>")
 @bp.route("/prezzi_mercato/<ingrediente>/<area>")
 def prezzi_mercato(ingrediente, area="it"):
