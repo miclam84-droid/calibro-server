@@ -37,7 +37,6 @@ h1{font-size:24px;margin-bottom:8px}h2{font-size:18px;margin-top:32px}p,li{font-
 </body></html>""", 200, {'Content-Type': 'text/html; charset=utf-8'}
 
 @bp.route("/trust")
-@bp.route("/trust-center")
 def trust_center():
     lang = request.args.get("lang","it")
     if lang == "en":
