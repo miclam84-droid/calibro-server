@@ -472,6 +472,9 @@ def mappa(disciplina_nome):
 def fenomeni_avanzati():
     """Restituisce i fenomeni marcati avanzati (data->>'avanzato'='true'), per la sezione
     'Tecniche Avanzate di Laboratorio' dell'Atlante. Ordinati per dominio e nome."""
+    lang = (request.args.get("lang") or "it").strip().lower()
+    if lang not in ("it", "en", "es"):
+        lang = "it"
     db = carica_grafo()
     try:
         rows = db.execute(
@@ -489,8 +492,13 @@ def fenomeni_avanzati():
             "dominio": r["domain"],
             "sommario": (d.get("sommario") or d.get("descrizione") or "")[:160],
         })
+    # titolo = etichetta UI breve, servita secondo ?lang. I nomi/sommari dei fenomeni
+    # restano quelli del dato (nessun campo tradotto in sorgente: vedi nota PR).
+    _TITOLO = {"it": "Tecniche Avanzate di Laboratorio",
+               "en": "Advanced Laboratory Techniques",
+               "es": "Técnicas Avanzadas de Laboratorio"}
     return jsonify({"fenomeni": out, "totale": len(out),
-                    "titolo": "Tecniche Avanzate di Laboratorio"})
+                    "titolo": _TITOLO[lang]})
 
 
 @bp.route("/discipline")

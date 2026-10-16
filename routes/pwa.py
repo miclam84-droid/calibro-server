@@ -84,6 +84,38 @@ def banco_panificazione():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+_FOTO_ING_CACHE = {}  # {nome_lower: {"url":...} }  — cache in memoria, niente scrittura sul grafo
+
+def _foto_resp(dato):
+    r = jsonify(dato)
+    r.headers["Cache-Control"] = "public, max-age=86400"
+    return r
+
+@bp.route("/v1/foto-ingrediente/<path:nome>")
+def foto_ingrediente(nome):
+    """Foto ON-DEMAND per la scheda ingrediente (Atlante). Pesca da stock
+    (Pexels/Unsplash/Pixabay/Wikimedia) con attribuzione; cache in memoria.
+    Nessuna scrittura sul grafo. Se non trova nulla di pertinente torna url:null,
+    così la scheda NON mostra una foto sbagliata (onestà: meglio niente)."""
+    chiave = (nome or "").strip().lower()
+    if not chiave:
+        return _foto_resp({"url": None})
+    if chiave in _FOTO_ING_CACHE:
+        return _foto_resp(_FOTO_ING_CACHE[chiave])
+    res = None
+    try:
+        from immagini import cerca_immagine
+        res = cerca_immagine(query=chiave, ingredienti=[chiave])
+    except Exception:
+        res = None
+    if res and res.get("url"):
+        dato = {"url": res.get("url"), "autore": res.get("autore", ""),
+                "fonte_nome": res.get("fonte_nome", ""), "match": res.get("match", "")}
+    else:
+        dato = {"url": None}
+    _FOTO_ING_CACHE[chiave] = dato
+    return _foto_resp(dato)
+
 @bp.route("/admin/copertura")
 def admin_copertura():
     """FRONTEND-2.0 — pannello admin 'Copertura gusto': rivedi i derivati USDA e scrivi col clic.

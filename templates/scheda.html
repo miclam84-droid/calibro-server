@@ -8,6 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
 <link rel="stylesheet" href="/static/matter2.css">
+<style>
+.ing-foto{margin:0 0 14px; border-radius:14px; overflow:hidden; border:1px solid var(--card-border); box-shadow:var(--shadow); background:var(--card)}
+.ing-foto img{display:block; width:100%; height:190px; object-fit:cover}
+.ing-foto figcaption{font-size:11px; color:var(--ink-soft); padding:6px 11px}
+</style>
 </head>
 <body>
 <div class="topbar">
@@ -19,6 +24,7 @@
 
 <div class="wrap">
   <header class="hero">
+    <figure id="foto" class="ing-foto" hidden><img id="foto-img" alt="" loading="lazy"><figcaption id="foto-cap"></figcaption></figure>
     <div class="kind" id="cat">Ingrediente</div>
     <h1 id="titolo">—</h1>
     <div class="sourceline"><span class="dot"></span><span id="src">Profilo dal grafo Matter.</span></div>
@@ -77,6 +83,20 @@ function barra(label, val, anchor, meta){
     </div>`;
 }
 
+async function caricaFoto(nome){
+  try{
+    const r = await fetch('/v1/foto-ingrediente/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return;
+    const d = await r.json();
+    if(d && d.url){
+      const $fig=document.getElementById('foto'), $img=document.getElementById('foto-img'), $cap=document.getElementById('foto-cap');
+      $img.src=d.url; $img.alt=cap(nome);
+      $cap.textContent = 'Foto: '+(d.fonte_nome||'stock')+(d.autore?(' · '+d.autore):'');
+      $fig.hidden=false;
+    }
+  }catch(e){}
+}
+
 async function carica(nome){
   nome = (nome||'').trim(); if(!nome) return;
   document.getElementById('titolo').textContent = cap(nome);
@@ -94,6 +114,7 @@ async function carica(nome){
     }
     $state.hidden = true;
     document.getElementById('titolo').textContent = cap(pg.nome || nome);
+    caricaFoto(pg.nome || nome);
     document.getElementById('cat').textContent = (pg.kind==='ingredient'?'Ingrediente':(pg.kind||'Ingrediente'));
     const prop = pg.proprieta || {};
     const meta = pg.proprieta_meta || {};
