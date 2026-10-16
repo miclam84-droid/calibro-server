@@ -104,22 +104,25 @@ function render(d){
         const comp = uniq(ev.composti_caratterizzanti).slice(0,4).map(c=>`<span class="chip">${esc(pulisci(c))}</span>`).join('');
         const nComp = uniq(ev.composti_caratterizzanti).length;
         const extra = (ev.composti_condivisi > nComp) ? `<span class="chip more">+${ev.composti_condivisi-nComp} altri condivisi</span>` : '';
-        const rar = (ev.indice_rarita!=null) ? `<span>indice di rarità <span class="k">${(+ev.indice_rarita).toFixed(2)}</span></span>` : '';
-        const pp = (ev.profilo_partner!=null) ? `<span>composti del partner <span class="k">${ev.profilo_partner}</span></span>` : '';
+        const legame = {alta:'Evidenza alta', media:'Evidenza media', espl:'Esplorativa'}[cls] || 'Esplorativa';
+        const quota = (ev.profilo_partner) ? ` su ${ev.profilo_partner} del ${esc(cap(r.ingrediente))}` : '';
         card.className='card';
         card.innerHTML = `
           <div class="card-top">
-            <h3 class="partner">${esc(cap(r.ingrediente))}</h3>
-            ${r.robustezza?`<span class="pill ${cls}">Robustezza ${esc(r.robustezza)}</span>`:''}
+            <button class="partner-link" data-ing="${esc(r.ingrediente)}">${esc(cap(r.ingrediente))}</button>
+            ${r.robustezza?`<span class="pill ${cls}">${legame}</span>`:''}
           </div>
-          <div class="evidence"><span class="num">${ev.composti_condivisi}</span><span class="lbl">composti aromatici condivisi</span></div>
-          <div class="chips">${comp}${extra}</div>
-          ${(rar||pp)?`<div class="meta">${rar}${pp}</div>`:''}`;
+          <p class="point">Stessa impronta aromatica: condividono <b>${ev.composti_condivisi}</b> molecole d'aroma${quota}.</p>
+          <details class="mol">
+            <summary>Mostra le molecole</summary>
+            <div class="chips">${comp}${extra}</div>
+            ${ev.indice_rarita!=null?`<p class="gloss">Indice di rarità <b>${(+ev.indice_rarita).toFixed(2)}</b>: quanto è specifico questo legame — più è alto, più le molecole condivise sono caratteristiche e non banali.</p>`:''}
+          </details>`;
       } else {
         const trad = sez.key==='tradizione';
         card.className='card lite';
         card.innerHTML = `
-          <h3 class="partner">${esc(cap(r.ingrediente))}</h3>
+          <button class="partner-link" data-ing="${esc(r.ingrediente)}">${esc(cap(r.ingrediente))}</button>
           <div class="prov ${trad?'trad':''}"><span class="sq"></span>${trad?'Evidenza culturale — nessun dato molecolare':'Relazione curata nel grafo'}</div>
           ${r.perche?`<p class="perche">${esc(r.perche)}</p>`:''}`;
       }
@@ -156,6 +159,7 @@ async function carica(ing){
 }
 
 document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); carica($q.value); });
+$sez.addEventListener('click', e=>{ const b=e.target.closest('.partner-link'); if(!b) return; carica(b.dataset.ing); window.scrollTo({top:0, behavior:'smooth'}); });
 carica(INIT);
 </script>
 </body>
