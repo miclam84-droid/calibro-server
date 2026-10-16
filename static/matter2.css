@@ -151,6 +151,22 @@ code{font-family:var(--sans); font-size:.92em}
 .state.err{color:var(--oxblood); border-color:rgba(168,80,74,.35)}
 .state b{color:var(--ink)}
 
+/* ---- scheda ingrediente: profilo sensoriale ---- */
+.axes{display:flex; flex-direction:column; gap:16px; margin-top:14px}
+.axis-top{display:flex; align-items:baseline; gap:10px}
+.axis-name{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink)}
+.axis-val{margin-left:auto; font-variant-numeric:tabular-nums; font-weight:700; font-size:16px; color:var(--ink)}
+.axis-max{font-size:12px; color:var(--ink-soft); font-weight:500}
+.track{margin-top:7px; height:8px; border-radius:999px; background:var(--rule); overflow:hidden}
+.fill{display:block; height:100%; border-radius:999px; background:var(--green-signal)}
+.anchor{margin-top:6px; font-size:11.5px; color:var(--ink-soft); line-height:1.4}
+.prov-chip{flex:0 0 auto; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 8px; border-radius:999px}
+.prov-stima{background:rgba(169,128,47,.14); color:var(--ocra)}
+.prov-derivato{background:var(--tint); color:var(--green-signal)}
+.prov-verificato{background:var(--green-action); color:#fff}
+.prov-corretto{background:transparent; color:var(--ink-soft); border:1px solid var(--rule)}
+.cta{display:inline-flex; align-items:center; gap:6px; margin-top:16px; font-weight:600; font-size:14.5px; color:#fff; background:var(--green-action); text-decoration:none; padding:11px 16px; border-radius:12px}
+.cta:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--rule); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
 footer b{color:var(--ink); font-weight:600}
 

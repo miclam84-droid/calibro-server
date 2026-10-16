@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scheda · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Atlante</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind" id="cat">Ingrediente</div>
+    <h1 id="titolo">—</h1>
+    <div class="sourceline"><span class="dot"></span><span id="src">Profilo dal grafo Matter.</span></div>
+  </header>
+
+  <main id="corpo"></main>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    <b>Scheda ingrediente — Atlante.</b> Ogni valore sensoriale mostra la sua provenienza: <span class="prov-chip prov-stima">stima</span> finché non è verificato al banco, <span class="prov-chip prov-derivato">derivato</span> quando viene da una misura esterna (USDA), <span class="prov-chip prov-verificato">verificato</span> quando l'hai provato tu col metodo. Le descrizioni di "cos'è" arriveranno solo da fonti reali, mai inventate.
+  </footer>
+</div>
+
+<script>
+const INIT = {{ nome|tojson }};
+const CORE = [
+  ["acido","Acido","0 acqua · 8 limone · 10 aceto"],
+  ["dolce","Dolce","0 sale · 4 mela · 8 miele · 10 zucchero"],
+  ["salato","Salato","0 frutta · 5 pane · 9 acciughe · 10 sale"],
+  ["amaro","Amaro","0 zucchero · 4 cacao · 8 caffè · 10 china"],
+  ["umami","Umami","0 olio · 4 pomodoro · 8 parmigiano · 10 dashi"],
+  ["grasso","Grasso","0 verdura · 4 mozzarella · 8 burro · 10 olio"],
+];
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+
+const $corpo = document.getElementById('corpo');
+const $state = document.getElementById('state');
+function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
+
+function provChip(meta){
+  const stato = (meta && meta.stato) ? String(meta.stato).toLowerCase() : 'stima';
+  const m = {
+    derivato: ['prov-derivato','Derivato'],
+    verificato:['prov-verificato','Verificato'],
+    corretto: ['prov-corretto','Corretto'],
+    stimato: ['prov-stima','Stima'],
+  };
+  const [cls,lbl] = m[stato] || ['prov-stima','Stima'];
+  const fonte = (meta && meta.fonte) ? ` title="${esc(meta.fonte)}"` : '';
+  return `<span class="prov-chip ${cls}"${fonte}>${lbl}</span>`;
+}
+
+function barra(label, val, anchor, meta){
+  const v = (typeof val === 'number') ? val : parseFloat(val);
+  const pct = Math.max(0, Math.min(100, (isFinite(v)? v:0)*10));
+  return `
+    <div class="axis">
+      <div class="axis-top">
+        <span class="axis-name">${label}</span>
+        <span class="axis-val">${isFinite(v)? (Number.isInteger(v)? v : v.toFixed(1)) : '—'}<span class="axis-max">/10</span></span>
+        ${provChip(meta)}
+      </div>
+      <div class="track"><span class="fill" style="width:${pct}%"></span></div>
+      <div class="anchor">${esc(anchor)}</div>
+    </div>`;
+}
+
+async function carica(nome){
+  nome = (nome||'').trim(); if(!nome) return;
+  document.getElementById('titolo').textContent = cap(nome);
+  setState('Carico la scheda…', false);
+  try{
+    const [pgR, crR] = await Promise.all([
+      fetch('/v1/profilo-gusto/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}}),
+      fetch('/v1/criteri/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}}),
+    ]);
+    const pg = pgR.ok ? await pgR.json() : {};
+    const cr = crR.ok ? await crR.json() : {};
+    if(pg.trovato === false && !(cr.relazioni||[]).length){
+      setState(`<b>${esc(cap(nome))}</b> non è ancora nell'Atlante con un profilo. Non è un errore: è "non ancora mappato".`, false);
+      $corpo.innerHTML=''; return;
+    }
+    $state.hidden = true;
+    document.getElementById('titolo').textContent = cap(pg.nome || nome);
+    document.getElementById('cat').textContent = (pg.kind==='ingredient'?'Ingrediente':(pg.kind||'Ingrediente'));
+    const prop = pg.proprieta || {};
+    const meta = pg.proprieta_meta || {};
+
+    // profilo sensoriale: 6 assi core (scala 0-10 definita)
+    const barre = CORE.filter(([k])=> prop[k]!=null).map(([k,lbl,anc])=> barra(lbl, prop[k], anc, meta[k])).join('');
+    const haProv = CORE.some(([k])=> meta[k] && meta[k].stato);
+    const notaStima = haProv ? '' : `<p class="gloss">Valori ancora da verificare al banco: oggi sono stime. Quando scrivi un dato derivato o lo verifichi, la provenienza qui cambia.</p>`;
+
+    // altri descrittori: scala non ancora definita -> niente barre
+    const altri = Object.entries(prop).filter(([k])=> !CORE.some(([c])=>c===k) && prop[k]!=null && prop[k]!==0);
+    const altriHtml = altri.length ? `
+      <details class="mol" style="margin-top:14px">
+        <summary>Altri descrittori (${altri.length})</summary>
+        <div class="chips" style="margin-top:10px">${altri.map(([k,v])=>`<span class="chip">${esc(k.replace(/_/g,' '))} ${v}</span>`).join('')}</div>
+        <p class="gloss">Scala non ancora definita come i sei gusti base: li mostriamo come riferimento, non come voto 0–10.</p>
+      </details>` : '';
+
+    // cosa ci sta bene: teaser dei primi partner aromatici
+    const base = (cr.relazioni||[]).filter(r=>r.criterio==='base_aromatica').slice(0,3);
+    const teaser = base.length ? `
+      <section class="section">
+        <div class="sechead"><div style="min-width:0"><h2>Cosa ci sta bene</h2><p>I primi per impronta aromatica condivisa.</p></div></div>
+        <div class="chips" style="margin-top:12px">${base.map(r=>`<span class="chip">${esc(cap(r.ingrediente))}</span>`).join('')}</div>
+        <a class="cta" href="/scopri/${encodeURIComponent(pg.nome||nome)}">Vedi tutti gli abbinamenti, e perché →</a>
+      </section>` : `
+      <section class="section">
+        <a class="cta" href="/scopri/${encodeURIComponent(pg.nome||nome)}">Scopri gli abbinamenti →</a>
+      </section>`;
+
+    $corpo.innerHTML = `
+      <section class="section">
+        <div class="sechead"><div style="min-width:0"><h2>Profilo sensoriale</h2><p>I sei gusti base, da 0 a 10, ognuno con la sua provenienza.</p></div></div>
+        <div class="axes">${barre || '<p class="gloss">Nessun profilo sensoriale registrato per questo ingrediente.</p>'}</div>
+        ${notaStima}
+        ${altriHtml}
+      </section>
+      ${teaser}`;
+  }catch(e){
+    setState('Non riesco a caricare la scheda adesso. Riprova tra poco.', true); $corpo.innerHTML='';
+  }
+}
+carica(INIT);
+</script>
+</body>
+</html>
