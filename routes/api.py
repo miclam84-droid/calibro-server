@@ -214,12 +214,23 @@ def _inietta_evidence(response):
             if isinstance(data, dict) and "abbinamenti" in data:
                 _cambiato = locals().get("_tradotto", False)
                 # evidence: aggiungo se manca
+                _ll = _lang_req if _lang_req in ("it", "en", "es") else "it"
                 if "evidence" not in data:
                     _ev = _classifica_evidence(data, _ev)
                     data["evidence"] = _ev
-                    data["evidence_label"] = {"A": "Dato molecolare verificato",
-                        "B": "Profilo ereditato da ingrediente equivalente",
-                        "C": "Suggerimento AI (non verificato molecolarmente)"}.get(_ev, "")
+                    # etichette UI brevi del badge evidence, servite secondo ?lang
+                    _EVIDENCE_LABEL = {
+                        "A": {"it": "Dato molecolare verificato",
+                              "en": "Verified molecular data",
+                              "es": "Dato molecular verificado"},
+                        "B": {"it": "Profilo ereditato da ingrediente equivalente",
+                              "en": "Profile inherited from an equivalent ingredient",
+                              "es": "Perfil heredado de un ingrediente equivalente"},
+                        "C": {"it": "Suggerimento AI (non verificato molecolarmente)",
+                              "en": "AI suggestion (not molecularly verified)",
+                              "es": "Sugerencia de IA (no verificada molecularmente)"},
+                    }
+                    data["evidence_label"] = _EVIDENCE_LABEL.get(_ev, {}).get(_ll, "")
                     _cambiato = True
                 # CONFIDENCE SCORE 0-100: sempre, su ogni abbinamento che non ce l'ha già
                 _ev_finale = data.get("evidence", _ev or "C")
@@ -242,14 +253,21 @@ def _inietta_evidence(response):
                     _cambiato = True
                 # RANKING A 3 LIVELLI (revisori): mai "allarme debole", ma livelli positivi.
                 # A=forte, B=interessante, C=esplorazione creativa (dichiarata, non un difetto).
+                # nome del livello: etichetta UI breve servita secondo ?lang
+                _LIVELLO_NOME = {
+                    "A": {"it": "Compatibilità forte", "en": "Strong compatibility", "es": "Compatibilidad fuerte"},
+                    "B": {"it": "Compatibilità interessante", "en": "Interesting compatibility", "es": "Compatibilidad interesante"},
+                    "C": {"it": "Esplorazione creativa", "en": "Creative exploration", "es": "Exploración creativa"},
+                }
                 for _ab in data.get("abbinamenti", []):
                     _cf = _ab.get("confidence", 50)
                     if _cf >= 55:
-                        _ab["livello"] = "A"; _ab["livello_nome"] = "Compatibilità forte"
+                        _ab["livello"] = "A"
                     elif _cf >= 30:
-                        _ab["livello"] = "B"; _ab["livello_nome"] = "Compatibilità interessante"
+                        _ab["livello"] = "B"
                     else:
-                        _ab["livello"] = "C"; _ab["livello_nome"] = "Esplorazione creativa"
+                        _ab["livello"] = "C"
+                    _ab["livello_nome"] = _LIVELLO_NOME[_ab["livello"]][_ll]
                     _cambiato = True
                 if _cambiato:
                     response.set_data(_je.dumps(data, ensure_ascii=False))
@@ -786,7 +804,7 @@ def strumenti(disciplina=None):
         "vino": [
             {"nome":"pH-metro da banco","misura":"pH","target":"pH vino 3.0-3.8","uso":"Legge l'acidità del vino. Bianchi freschi a pH 3,0-3,4, rossi 3,4-3,6.","amazon":"https://www.amazon.it/s?k=phmetro+enologico+vino","prezzo_approx":"€25-150"},
             {"nome":"Kit acidità volatile","misura":"g/L acido acetico","target":"<0.6 g/L","uso":"Misura l'acido acetico. Sopra 0,6 g/L il vino sa di aceto: difetto da tenere sotto controllo.","amazon":"https://www.amazon.it/s?k=kit+acidita+volatile+vino","prezzo_approx":"€20-80"},
-            {"nome":"Rifrattometro mosto","misura":"°Brix/Babo","target":"maturità uva","uso":"Misura gli zuccheri dell'uva. Dice quando l'uva è matura per la vendemmia.","amazon":"https://www.amazon.it/s?k=rifrattometro+mosto+uva","prezzo_approx":"£15-50"},
+            {"nome":"Rifrattometro mosto","misura":"°Brix/Babo","target":"maturità uva","uso":"Misura gli zuccheri dell'uva. Dice quando l'uva è matura per la vendemmia.","amazon":"https://www.amazon.it/s?k=rifrattometro+mosto+uva","prezzo_approx":"€15-50"},
             {"nome":"Alcoolmetro Gay-Lussac","misura":"ABV%","target":"vino 10-15% vol","uso":"Verifica il grado del vino finito, tipicamente 10-15% vol.","amazon":"https://www.amazon.it/s?k=alcoolmetro+gay+lussac+vino","prezzo_approx":"€10-40"},
             {"nome":"Kit SO2 libera/totale","misura":"mg/L","target":"SO2 libera 20-40 mg/L","uso":"Misura l'anidride solforosa. La SO2 libera va tenuta a 20-40 mg/L per proteggere il vino.","amazon":"https://www.amazon.it/s?k=kit+analisi+so2+vino","prezzo_approx":"€30-100"},
         ],
@@ -877,13 +895,16 @@ def vision():
     img_bytes = img_file.read()
     media_type = img_file.content_type or "image/jpeg"
     lang = request.args.get("lang","it")
+    # lingua della risposta per l'istruzione al modello: lo spagnolo deve arrivare
+    # al prompt, altrimenti es ricadeva nell'inglese.
+    _LINGUA_VISION = {"it": "italiano", "en": "English", "es": "español"}
     prompt = (
         "Sei un esperto di chimica degli alimenti. "
         "Analizza questa immagine e identifica: "
         "1) Se è una scheda tecnica: estrai tutti i parametri fisici (pH, Aw, Brix, ABV, temperatura, ecc.) "
         "2) Se è un piatto/drink: identifica gli ingredienti principali e suggerisci i fenomeni fisici rilevanti "
         "3) Se è un'etichetta: estrai ingredienti, valori nutrizionali, parametri rilevanti. "
-        f"Rispondi in {'italiano' if lang=='it' else 'English'}, in modo sintetico e professionale."
+        f"Rispondi in {_LINGUA_VISION.get(lang, 'English')}, in modo sintetico e professionale."
     )
     try:
         import ai_gateway as GW
