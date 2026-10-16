@@ -25,7 +25,11 @@ def _ensure_tabella():
         _release_conn(conn)
 
 def _device():
-    # header per primo (usato da tutti), poi body json, poi query param
+    # IDENTITÀ NON-LOGGATA. Solo da fonti che NON finiscono in URL/log/Referer:
+    # header X-Device-Id (lo invia tutto il frontend) come primario, body JSON per i POST.
+    # La query string ?device_id= NON è più accettata: un device_id dentro un URL trapela
+    # nei log del server, nella cronologia, nel Referer e nei link condivisi, e chiunque lo
+    # intercetti potrebbe leggere/scrivere i dati personali altrui (IDOR). Vedi routes/stato.py.
     dev = request.headers.get("X-Device-Id")
     if dev:
         return dev
@@ -33,7 +37,7 @@ def _device():
         dev = (request.json or {}).get("device_id")
         if dev:
             return dev
-    return request.args.get("device_id") or ""
+    return ""
 
 @bp_mie.route("/v1/ricette/salva", methods=["POST"])
 def salva_ricetta_utente():

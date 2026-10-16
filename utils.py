@@ -58,8 +58,49 @@ _rate_store = {}  # {ip: [timestamp, ...]}
 _RATE_LIMIT = 120  # max 120 richieste (uso reale: un pro apre più schede di fila, un locale ha più device su stesso IP)
 _RATE_WINDOW = 60  # per minuto
 
+# ── Rate limit DEDICATO e più STRETTO per il LOGIN ──
+# Il login è il bersaglio naturale del brute-force di credenziali: il limite generico
+# (120/min, volutamente largo per chat/atlante dietro NAT) lascia troppo spazio a un
+# attaccante che prova password. Gli diamo un budget separato e molto più stretto, per IP.
+# Store separato: non intacca né è intaccato dagli altri endpoint.
+_rate_store_login = {}    # {ip: [timestamp, ...]}
+_RATE_LIMIT_LOGIN = 10    # max 10 tentativi di login
+_RATE_WINDOW_LOGIN = 60   # al minuto, per IP
+
+# endpoint/paths che devono passare dal limite login stretto (il login chiama _check_rate_limit)
+_LOGIN_ENDPOINTS = ("auth_routes.login",)
+_LOGIN_PATH_SUFFIXES = ("/auth/login",)
+
+def _check_rate_limit_login(ip):
+    """Rate limit stretto, dedicato al login (anti brute-force). True=consentito, False=superato."""
+    now = _time.time()
+    if ip not in _rate_store_login:
+        _rate_store_login[ip] = []
+    _rate_store_login[ip] = [t for t in _rate_store_login[ip] if now - t < _RATE_WINDOW_LOGIN]
+    if len(_rate_store_login[ip]) >= _RATE_LIMIT_LOGIN:
+        return False
+    _rate_store_login[ip].append(now)
+    return True
+
+def _e_richiesta_login():
+    """True se la richiesta corrente è il login. Robusto fuori da un request context."""
+    try:
+        from flask import request as _rq
+        ep = _rq.endpoint or ""
+        path = _rq.path or ""
+    except Exception:
+        return False
+    if ep in _LOGIN_ENDPOINTS:
+        return True
+    return any(path.endswith(sfx) for sfx in _LOGIN_PATH_SUFFIXES)
+
 def _check_rate_limit(ip):
-    """Rate limit per IP: 30 richieste/minuto su endpoint AI costosi."""
+    """Rate limit per IP sugli endpoint che lo chiamano.
+    Sul login applica un limite dedicato molto più stretto (anti brute-force di credenziali),
+    senza toccare l'endpoint: il login passa già di qui."""
+    # il login ha un budget separato e stretto
+    if _e_richiesta_login():
+        return _check_rate_limit_login(ip)
     now = _time.time()
     if ip not in _rate_store:
         _rate_store[ip] = []

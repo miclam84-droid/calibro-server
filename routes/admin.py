@@ -1513,22 +1513,25 @@ def _rigen_worker(disc_filtro, solo_n, solo_senza_numeri=False):
     global _RIGEN_STATO
     try:
         db = carica_grafo()
-        conn = _get_conn(); cur = conn.cursor()
-        if solo_senza_numeri:
-            q = """SELECT id, nome, disciplina FROM ricette
-                   WHERE (numeri IS NULL OR numeri::text = '{}' OR numeri::text = 'null')"""
-        else:
-            q = """SELECT id, nome, disciplina FROM ricette
-                   WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='')"""
-        params = []
-        if disc_filtro:
-            q += " AND disciplina=%s"; params.append(disc_filtro)
-        q += " ORDER BY nome"
-        if solo_n:
-            q += " LIMIT %s"; params.append(solo_n)
-        cur.execute(q, tuple(params))
-        righe = cur.fetchall()
-        _release_conn(conn)
+        conn = _get_conn()
+        try:
+            cur = conn.cursor()
+            if solo_senza_numeri:
+                q = """SELECT id, nome, disciplina FROM ricette
+                       WHERE (numeri IS NULL OR numeri::text = '{}' OR numeri::text = 'null')"""
+            else:
+                q = """SELECT id, nome, disciplina FROM ricette
+                       WHERE (esperimento IS NULL OR esperimento='' OR twist IS NULL OR twist='')"""
+            params = []
+            if disc_filtro:
+                q += " AND disciplina=%s"; params.append(disc_filtro)
+            q += " ORDER BY nome"
+            if solo_n:
+                q += " LIMIT %s"; params.append(solo_n)
+            cur.execute(q, tuple(params))
+            righe = cur.fetchall()
+        finally:
+            _release_conn(conn)
         _RIGEN_STATO.update({"attivo": True, "fatte": 0, "totale": len(righe), "errori": 0, "ultimi": []})
         for row in righe:
             rid, nome, disc = row[0], row[1], row[2]
@@ -1594,22 +1597,25 @@ def _esp_worker(repertorio):
     try:
         db = carica_grafo()
         # calcolo cosa manca: per ogni disciplina, i piatti non ancora presenti
-        conn = _get_conn(); cur = conn.cursor()
-        da_fare = []  # (disc, piatto)
-        for disc, lista in repertorio.items():
-            cur.execute("SELECT LOWER(nome) FROM ricette WHERE disciplina=%s", (disc,))
-            gia = set(r[0] for r in cur.fetchall())
-            def presente(piatto):
-                pl = piatto.lower()
-                for g in gia:
-                    if pl in g: return True
-                    parole = [w for w in pl.split() if len(w) > 3]
-                    if parole and all(w in g for w in parole): return True
-                return False
-            for piatto in lista:
-                if not presente(piatto):
-                    da_fare.append((disc, piatto))
-        _release_conn(conn)
+        conn = _get_conn()
+        try:
+            cur = conn.cursor()
+            da_fare = []  # (disc, piatto)
+            for disc, lista in repertorio.items():
+                cur.execute("SELECT LOWER(nome) FROM ricette WHERE disciplina=%s", (disc,))
+                gia = set(r[0] for r in cur.fetchall())
+                def presente(piatto, gia=gia):
+                    pl = piatto.lower()
+                    for g in gia:
+                        if pl in g: return True
+                        parole = [w for w in pl.split() if len(w) > 3]
+                        if parole and all(w in g for w in parole): return True
+                    return False
+                for piatto in lista:
+                    if not presente(piatto):
+                        da_fare.append((disc, piatto))
+        finally:
+            _release_conn(conn)
         _ESP_STATO.update({"attivo": True, "fatte": 0, "totale": len(da_fare), "errori": 0})
         for disc, piatto in da_fare:
             _ESP_STATO["disc"] = disc; _ESP_STATO["corrente"] = piatto
@@ -1820,19 +1826,25 @@ def _trad_worker():
 
     try:
         # conto totale lavoro (ricette x 2 lingue che mancano)
-        conn = _get_conn(); cur = conn.cursor()
-        cur.execute("""SELECT COUNT(*) FROM ricette WHERE nome_en IS NULL OR esperimento_en IS NULL
-                       OR nome_es IS NULL OR esperimento_es IS NULL""")
-        _TRAD_STATO.update({"attivo": True, "fatte": 0, "totale": cur.fetchone()[0], "errori": 0})
-        _release_conn(conn)
+        conn = _get_conn()
+        try:
+            cur = conn.cursor()
+            cur.execute("""SELECT COUNT(*) FROM ricette WHERE nome_en IS NULL OR esperimento_en IS NULL
+                           OR nome_es IS NULL OR esperimento_es IS NULL""")
+            _TRAD_STATO.update({"attivo": True, "fatte": 0, "totale": cur.fetchone()[0], "errori": 0})
+        finally:
+            _release_conn(conn)
 
         for lang, lname in [("en","English"), ("es","Spanish")]:
             _TRAD_STATO["lingua"] = lang
-            conn = _get_conn(); cur = conn.cursor()
-            cur.execute(f"""SELECT id,nome,descrizione,procedimento,applicazioni,punto_critico,esperimento,limite,twist
-                            FROM ricette WHERE nome_{lang} IS NULL OR esperimento_{lang} IS NULL ORDER BY id""")
-            rows = cur.fetchall()
-            _release_conn(conn)
+            conn = _get_conn()
+            try:
+                cur = conn.cursor()
+                cur.execute(f"""SELECT id,nome,descrizione,procedimento,applicazioni,punto_critico,esperimento,limite,twist
+                                FROM ricette WHERE nome_{lang} IS NULL OR esperimento_{lang} IS NULL ORDER BY id""")
+                rows = cur.fetchall()
+            finally:
+                _release_conn(conn)
             for row in rows:
                 rid, nome, desc, proc, appl, pc, esp, lim, tw = row
                 _TRAD_STATO["corrente"] = f"{nome} [{lang}]"
@@ -2173,8 +2185,7 @@ def admin_stato_madri():
 
 @bp.route("/admin/build")
 def admin_build_page():
-    secret = request.args.get("s","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return "<h2>Secret non valido</h2>", 403
     from flask import send_from_directory
     return send_from_directory("static", "build.html")
@@ -2183,7 +2194,7 @@ def admin_build_page():
 def admin_build_archi():
     """Crea archi abbinamento tra nodi Ingrediente già nel grafo."""
     secret = request.headers.get("X-Admin-Secret","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     import threading
     def _run():
@@ -2200,7 +2211,7 @@ def admin_build_archi():
 def admin_build_targets():
     """Popola target number nei nodi Ingrediente."""
     secret = request.headers.get("X-Admin-Secret","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     import threading
     def _run():
@@ -2220,7 +2231,7 @@ def admin_build_cron():
     Alternativa: chiamarlo in loop dal browser con setInterval.
     """
     secret = request.args.get("s","") or request.headers.get("X-Admin-Secret","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL or not os.environ.get("OPENAI_API_KEY"):
         return jsonify({"ok":False,"errore":"config mancante"}), 503
@@ -2230,13 +2241,16 @@ def admin_build_cron():
         importlib.reload(BIG)
 
         conn = _get_conn()
-        cur = conn.cursor()
         try:
-            cur.execute("SELECT node_id FROM ingredient_build_log")
-            gia_fatti = {r[0] for r in cur.fetchall()}
-        except Exception:
-            gia_fatti = set()
-        cur.close(); _release_conn(conn)
+            cur = conn.cursor()
+            try:
+                cur.execute("SELECT node_id FROM ingredient_build_log")
+                gia_fatti = {r[0] for r in cur.fetchall()}
+            except Exception:
+                gia_fatti = set()
+            cur.close()
+        finally:
+            _release_conn(conn)
 
         # Trova il prossimo
         prossimo = None
@@ -2280,7 +2294,7 @@ def admin_build_continuo():
     Usa threading con loop interno che salva ogni ingrediente.
     """
     secret = request.headers.get("X-Admin-Secret","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL or not os.environ.get("OPENAI_API_KEY"):
         return jsonify({"errore":"DATABASE_URL o OPENAI_API_KEY mancante"}), 503
@@ -2300,6 +2314,7 @@ def admin_build_continuo():
         
         while True:
             # Prendi il prossimo ingrediente non ancora fatto
+            conn = None
             try:
                 conn = _get_conn()
                 cur = conn.cursor()
@@ -2308,11 +2323,14 @@ def admin_build_continuo():
                     gia_fatti = {r[0] for r in cur.fetchall()}
                 except Exception:
                     gia_fatti = set()
-                cur.close(); _release_conn(conn)
+                cur.close()
             except Exception as e:
                 print(f"[BUILD_C] DB error: {e}", flush=True)
                 _time.sleep(5)
                 continue
+            finally:
+                if conn is not None:
+                    _release_conn(conn)
 
             # Trova il prossimo da fare
             prossimo = None
@@ -2357,7 +2375,7 @@ def admin_build_batch():
     Body: {"n": 20, "discipline": ["cucina"]}  # opzionali
     """
     secret = request.headers.get("X-Admin-Secret","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     body = request.json or {}
     n = int(body.get("n", 20))
@@ -2370,13 +2388,16 @@ def admin_build_batch():
         import psycopg2
         # Prendi gli ingredienti non ancora generati
         conn = _get_conn()
-        cur = conn.cursor()
         try:
-            cur.execute("SELECT node_id FROM ingredient_build_log")
-            gia_fatti = {r[0] for r in cur.fetchall()}
-        except Exception:
-            gia_fatti = set()
-        cur.close(); _release_conn(conn)
+            cur = conn.cursor()
+            try:
+                cur.execute("SELECT node_id FROM ingredient_build_log")
+                gia_fatti = {r[0] for r in cur.fetchall()}
+            except Exception:
+                gia_fatti = set()
+            cur.close()
+        finally:
+            _release_conn(conn)
 
         DISC = discipline or list(BIG.INGREDIENTI.keys())
         da_fare = [(d, ing) for d in DISC
@@ -2435,7 +2456,7 @@ def admin_build_ingredienti():
     Controlla lo stato con GET /admin/build-status
     """
     secret = request.headers.get("X-Admin-Secret","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     
     body = request.json or {}
@@ -2463,7 +2484,7 @@ def admin_build_ingredienti():
 def admin_build_status():
     """Stato del dataset ingredienti."""
     secret = request.headers.get("X-Admin-Secret","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"errore":"no db"}), 503
@@ -2714,7 +2735,7 @@ def admin_verifica_errori():
     """Verifica quali errori (fallisce_come) sono collegati ai fenomeni.
     Usa carica_grafo() — funziona anche per fenomeni Pro senza login."""
     secret = request.args.get("s","") or request.headers.get("X-Admin-Secret","")
-    if not hmac.compare_digest(str(secret), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     db = carica_grafo()
     fenomeni = ["fen-diluizione","fen-fat-washing","fen-concentrazione",
@@ -2761,7 +2782,7 @@ def admin_verifica_errori():
 def admin_diag_trial():
     """Diagnostica il gate trial: mostra se _trial_consentito funziona o va in fail-open."""
     import os as _os
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     from utils import _trial_consentito
     out = {}
@@ -2797,7 +2818,7 @@ def admin_diag_trial():
 def admin_diag_ip():
     """Mostra quale IP vede il backend e quante righe trial_uso ci sono per tipo."""
     import os as _os
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     out = {"ip_visto": ip, "x_forwarded_for": request.headers.get("X-Forwarded-For", "(assente)"),
@@ -2823,7 +2844,7 @@ def admin_analizza_target():
     """Analizza tutti i target dei fenomeni: quali sono numeri puliti, quali frasi discorsive.
     Uso: /admin/analizza-target?s=SECRET"""
     import os as _os, re as _re
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -2868,7 +2889,7 @@ def admin_proponi_target():
     Uso: /admin/proponi-target?s=SECRET"""
     import os as _os, re as _re
     import ai_gateway as GW
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     salva = request.args.get("salva", "") == "1"
     solo = request.args.get("solo", "")
@@ -2940,7 +2961,7 @@ def admin_set_target():
     """Imposta manualmente il target di un fenomeno.
     Uso: /admin/set-target?s=SECRET&id=fen-x&target=...(url-encoded)"""
     import os as _os
-    if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     node_id = request.args.get("id", "")
     nuovo = request.args.get("target", "")
@@ -2996,7 +3017,7 @@ def _match_ing_id(nome_ric):
 @bp.route("/admin/diag-costi")
 def admin_diag_costi():
     """Diagnostico: testa ogni query costi isolatamente e riporta quale rompe."""
-    if not hmac.compare_digest(str(request.args.get("s","")), str(os.environ.get("ADMIN_SECRET") or "")):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     import traceback as _tb
     risultati = {}
@@ -3072,13 +3093,16 @@ def _revisione_worker(solo_n, usa_openai=False):
     global _REVISIONE_STATO
     try:
         db = carica_grafo()
-        conn = _get_conn(); cur = conn.cursor()
-        q = "SELECT id, nome, descrizione, punto_critico, esperimento, limite, twist FROM ricette ORDER BY nome"
-        if solo_n:
-            q += f" LIMIT {int(solo_n)}"
-        cur.execute(q)
-        righe = cur.fetchall()
-        _release_conn(conn)
+        conn = _get_conn()
+        try:
+            cur = conn.cursor()
+            q = "SELECT id, nome, descrizione, punto_critico, esperimento, limite, twist FROM ricette ORDER BY nome"
+            if solo_n:
+                q += f" LIMIT {int(solo_n)}"
+            cur.execute(q)
+            righe = cur.fetchall()
+        finally:
+            _release_conn(conn)
         _REVISIONE_STATO.update({"attivo": True, "fatte": 0, "totale": len(righe), "errori": 0, "campioni": []})
         for r in righe:
             rid, nome = r[0], r[1]
@@ -3091,9 +3115,13 @@ def _revisione_worker(solo_n, usa_openai=False):
             if nuovi:
                 sets = ", ".join(f"{k}=%s" for k in nuovi)
                 vals = list(nuovi.values()) + [rid]
-                conn2 = _get_conn(); cur2 = conn2.cursor()
-                cur2.execute(f"UPDATE ricette SET {sets} WHERE id=%s", vals)
-                conn2.commit(); _release_conn(conn2)
+                conn2 = _get_conn()
+                try:
+                    cur2 = conn2.cursor()
+                    cur2.execute(f"UPDATE ricette SET {sets} WHERE id=%s", vals)
+                    conn2.commit()
+                finally:
+                    _release_conn(conn2)
                 if len(_REVISIONE_STATO["campioni"]) < 5:
                     _REVISIONE_STATO["campioni"].append({"ricetta": nome, "campi_corretti": list(nuovi.keys())})
             _REVISIONE_STATO["fatte"] += 1
@@ -3135,17 +3163,20 @@ def _abbina_worker(solo_n, usa_openai=False):
     global _ABBINA_STATO
     try:
         db = carica_grafo()
-        conn = _get_conn(); cur = conn.cursor()
-        # solo CIBO (cucina/pasticceria/panificazione) senza vino_birra
-        q = """SELECT id, nome, disciplina, descrizione FROM ricette
-               WHERE disciplina IN ('cucina','pasticceria','panificazione')
-               AND (vino_birra IS NULL OR vino_birra::text = '' OR vino_birra::text = '{}' OR vino_birra::text = 'null')
-               ORDER BY nome"""
-        if solo_n:
-            q += f" LIMIT {int(solo_n)}"
-        cur.execute(q)
-        righe = cur.fetchall()
-        _release_conn(conn)
+        conn = _get_conn()
+        try:
+            cur = conn.cursor()
+            # solo CIBO (cucina/pasticceria/panificazione) senza vino_birra
+            q = """SELECT id, nome, disciplina, descrizione FROM ricette
+                   WHERE disciplina IN ('cucina','pasticceria','panificazione')
+                   AND (vino_birra IS NULL OR vino_birra::text = '' OR vino_birra::text = '{}' OR vino_birra::text = 'null')
+                   ORDER BY nome"""
+            if solo_n:
+                q += f" LIMIT {int(solo_n)}"
+            cur.execute(q)
+            righe = cur.fetchall()
+        finally:
+            _release_conn(conn)
         _ABBINA_STATO.update({"attivo": True, "fatte": 0, "totale": len(righe), "errori": 0, "campioni": []})
         for r in righe:
             rid, nome, disc, desc = r[0], r[1], r[2], (r[3] or "")
@@ -3169,10 +3200,14 @@ def _abbina_worker(solo_n, usa_openai=False):
                 vb = _json.loads(m.group(0))
                 if not vb.get("vino") or not vb.get("birra"):
                     _ABBINA_STATO["errori"] += 1; _ABBINA_STATO["fatte"] += 1; continue
-                conn2 = _get_conn(); cur2 = conn2.cursor()
-                cur2.execute("UPDATE ricette SET vino_birra=%s WHERE id=%s",
-                             (_json.dumps(vb, ensure_ascii=False), rid))
-                conn2.commit(); _release_conn(conn2)
+                conn2 = _get_conn()
+                try:
+                    cur2 = conn2.cursor()
+                    cur2.execute("UPDATE ricette SET vino_birra=%s WHERE id=%s",
+                                 (_json.dumps(vb, ensure_ascii=False), rid))
+                    conn2.commit()
+                finally:
+                    _release_conn(conn2)
                 if len(_ABBINA_STATO["campioni"]) < 5:
                     _ABBINA_STATO["campioni"].append({"ricetta": nome, "vino": vb["vino"][:60], "birra": vb["birra"][:60]})
                 _ABBINA_STATO["fatte"] += 1
@@ -4659,7 +4694,7 @@ def admin_worker_log():
     """Legge il log del worker genera-da-serbatoio per capire cosa fallisce."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -4684,7 +4719,7 @@ def admin_trova_foto_sospette():
     blueprint ovunque. Zero rischio di foto sbagliate/chirurgiche. Con ?fix=1 applica."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     fix = request.args.get("fix") == "1"
     conn = None
@@ -4721,7 +4756,7 @@ def admin_diag_openai():
     """Verifica se la chiave OpenAI è configurata e funziona (per la verifica foto con vision)."""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     out = {"chiave_presente": bool(key), "prefisso": key[:7] + "..." if key else "NESSUNA"}
@@ -4752,7 +4787,7 @@ def admin_verifica_foto_vision():
     Tiene le giuste, scarta le sbagliate (la chirurgica sparisce). ?n=quante ?fix=1 per applicare."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "10")), 40)
     fix = request.args.get("fix") == "1"
@@ -4826,7 +4861,7 @@ def admin_diag_formato_foto():
     """Vede COME è salvato il campo immagine (per aggiustare la query di verifica)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -4849,7 +4884,7 @@ def admin_verifica_foto_worker():
     """Worker in BACKGROUND: verifica TUTTE le foto con vision, scarta le sbagliate. Gira da solo."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, threading
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     if not key:
@@ -4905,7 +4940,7 @@ def admin_test_dalle():
     """Test generazione immagine con gpt-image-1 (verifica che funzioni)."""
     from flask import request, jsonify
     import os, json, urllib.request as ur, urllib.error
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     if not key:
@@ -4941,7 +4976,7 @@ def admin_test_img_bg():
     """Genera immagine in BACKGROUND (evita timeout Railway). Salva esito in worker_log."""
     from flask import request, jsonify
     import os, json, urllib.request as ur, urllib.error, threading, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     piatto = request.args.get("piatto", "carbonara")
@@ -4987,7 +5022,7 @@ def admin_test_foto_una():
     """Genera UNA foto in background, logga ogni step nel worker-log (evita timeout Railway)."""
     from flask import request, jsonify
     import os, json, urllib.request as ur, psycopg2, base64, threading
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     def _log(txt):
@@ -5040,7 +5075,7 @@ def admin_conta_punto_critico():
     """Conta ESATTAMENTE quante ricette hanno il punto_critico vuoto su tutto il DB."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5068,7 +5103,7 @@ def admin_test_mistral():
     """Testa se chiedi_mistral funziona da solo (per capire perché il worker punto critico genera 0)."""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         from ai import chiedi_mistral
@@ -5088,7 +5123,7 @@ def admin_test_builder_pc():
     """Testa se il builder (genera_ricetta) produce il punto_critico - così so se usarlo per completare le vecchie."""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         from db import carica_grafo
@@ -5110,7 +5145,7 @@ def admin_test_provider():
     """Testa ogni provider AI separatamente per trovare quale è morto (credito/errore)."""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     out = {}
     # Anthropic - con dettaglio 400
@@ -5150,7 +5185,7 @@ def admin_conta_foto():
     """Conta quante ricette hanno foto AI (cloudinary) vs blueprint vs niente."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5182,7 +5217,7 @@ def admin_diag_fonti_foto():
     """Verifica quali fonti foto (Pexels/Pixabay/Unsplash) sono configurate e rispondono."""
     from flask import request, jsonify
     import os, urllib.request as ur, json as _j
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     out = {}
     # Pexels
@@ -5222,7 +5257,7 @@ def admin_conta_ricette_complete():
     """Conta ricette con ingredienti/procedimento vuoti (buchi di qualità come i punti critici)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5256,7 +5291,7 @@ def admin_worker_continuo():
     Un solo avvio, gira fino a completamento (rispettando i limiti)."""
     from flask import request, jsonify
     import os, psycopg2, threading, json, time
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
 
     def _ciclo():
@@ -5303,7 +5338,7 @@ def admin_traduci_continuo():
     """Worker continuo traduzioni: traduce ricette in EN/ES in cicli finché non finisce."""
     from flask import request, jsonify
     import os, psycopg2, threading, json, time
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     lang = request.args.get("lang", "en")
 
@@ -5354,7 +5389,7 @@ def admin_trova_quiz_anisakis():
     """Trova le domande quiz che parlano di anisakis/abbattimento pesce (dato sicurezza da verificare)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5397,7 +5432,7 @@ def admin_foto_definitiva():
     VERIFICA con vision (no insegne/persone/sbagliate), se fallisce genera con gpt-image-1. Salva su Cloudinary."""
     from flask import request, jsonify
     import os, psycopg2, threading, json, urllib.request as ur, urllib.parse, base64
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "6")), 12)
     key_ai = os.environ.get("OPENAI_API_KEY", "")
@@ -5489,7 +5524,7 @@ def admin_mostra_quiz_anisakis():
     """Mostra la domanda anisakis COMPLETA (tutti i campi) per correggere il dato sbagliato."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5511,7 +5546,7 @@ def admin_quiz_22():
     """Mostra il quiz id 22 (anisakis) con TUTTI i campi completi per la correzione."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5535,7 +5570,7 @@ def admin_stato_foto():
     """Stato foto in tempo reale: quante hanno foto vera (verificata) vs blueprint. Per controllo onesto."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5567,7 +5602,7 @@ def admin_verifica_foto_esistenti():
     diversi) le rifà con Pexels+vision o AI. Ogni foto controllata visivamente."""
     from flask import request, jsonify
     import os, psycopg2, threading, json, urllib.request as ur, urllib.parse, base64
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "6")), 12)
     key_ai = os.environ.get("OPENAI_API_KEY", "")
@@ -5677,7 +5712,7 @@ def admin_foto_pexels_diretta():
     Nessuna chiamata AI = nessun rate-limit. Query precisa = foto giuste. Rifà TUTTE le foto."""
     from flask import request, jsonify
     import os, psycopg2, threading, json, urllib.request as ur, urllib.parse
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "20")), 40)
     solo_mancanti = request.args.get("solo_mancanti") == "1"
@@ -5771,7 +5806,7 @@ def admin_conta_traduzioni():
     """Conta quante ricette hanno le traduzioni EN/ES (per sapere se il worker traduzioni ha finito)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5805,7 +5840,7 @@ def admin_categorizza_portate():
     sul nome. Prima passata veloce senza AI (no rate-limit). I casi ambigui restano 'da_rivedere'."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "300")), 1300)
 
@@ -5874,7 +5909,7 @@ def admin_esempi_da_rivedere():
     """Mostra esempi di ricette da_rivedere con la loro disciplina, per capire come categorizzarle."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5898,7 +5933,7 @@ def admin_categorizza_ai():
     """Categorizza i da_rivedere (cucina ambigui) con AI, batch piccolo + pause anti rate-limit."""
     from flask import request, jsonify
     import os, psycopg2, threading, json, urllib.request as ur, time
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "10")), 15)
     key = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -5951,7 +5986,7 @@ def admin_conta_portate():
     """Conta le ricette per portata."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5973,7 +6008,7 @@ def admin_conta_portate():
 def admin_conta_fonti_foto():
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -5995,7 +6030,7 @@ def admin_rifai_wikimedia():
     """Worker DEDICATO: rifà le foto Wikimedia con Pexels. Log dettagliato."""
     from flask import request, jsonify
     import os, psycopg2, threading, json, urllib.request as ur, urllib.parse
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "20")), 50)
     pexels_key = os.environ.get("PEXELS_API_KEY", "")
@@ -6055,7 +6090,7 @@ def admin_diag_duplicati_ingredienti():
     """Conta i duplicati ingredienti (stesso nome, id diversi) per capire la pulizia necessaria."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6086,7 +6121,7 @@ def admin_mappa_grafo():
     """Mappa completa del grafo: unici veri, fonti (ahn vs italiano), struttura abbinamenti."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6133,7 +6168,7 @@ def admin_diag_clausole():
     """Mostra come sono fatte le clausole di abbinamento: analogia vs contrasto, esempi con criteri."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6167,7 +6202,7 @@ def admin_surface_zero_foto():
     Founder Rule #122. Le foto Pexels/Wikimedia vanno via; restano solo eventuali AI verificate."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conferma = request.args.get("conferma") == "SI"
     conn = None
@@ -6198,7 +6233,7 @@ def admin_surface_zero_pubblica():
     (pubblica=true) si vedono nel ricettario pubblico. Le altre restano come dati (Creatore/Planner)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6228,7 +6263,7 @@ def admin_trova_refusi():
     """Trova i refusi comuni nei testi dei fenomeni: c'e/pero/piu senza accento, l'al dente, ecc."""
     from flask import request, jsonify
     import os, psycopg2, json, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # pattern di refuso: parola sbagliata -> quante volte appare
     PATTERN = [
@@ -6276,7 +6311,7 @@ def admin_amplia_contrasto():
     creando archi abbinamento_contrasto tra ingredienti che rispettano le clausole sensoriali."""
     from flask import request, jsonify
     import os, psycopg2, json, itertools
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
 
     # gruppi di ingredienti per marcatore sensoriale (per nome, sul grafo italiano)
@@ -6347,7 +6382,7 @@ def admin_diag_copertura_composti():
     (senza composti = inutili per l'abbinamento aromatico e per il Creatore)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6387,7 +6422,7 @@ def admin_duplicati_anteprima():
     e chi si unirebbe. NON tocca nulla. Serve a decidere prima di unire."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6427,7 +6462,7 @@ def admin_unisci_duplicati():
     sposta gli archi delle copie su di lui, cancella le copie. Batch per non sovraccaricare."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "40")), 80)
     conn = None
@@ -6478,7 +6513,7 @@ def admin_danno_unione():
     """Verifica quanti nodi 'tenuti' dall'unione hanno pochi archi (danneggiati) vs sani."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6516,7 +6551,7 @@ def admin_ingredienti_poveri_composti():
     per sapere dove aggiungere composti PubChem mirati."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6549,7 +6584,7 @@ def admin_top_ingredienti_chiave():
     Sono quelli da mappare per primi con le proprieta (Anello 1)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "300")), 400)
     conn = None
@@ -6581,7 +6616,7 @@ def admin_mappa_proprieta_ai():
     sensoriale nota (caffe amaro, lime acido...), non dati inventati. Sonnet, JSON rigido."""
     from flask import request, jsonify
     import os, psycopg2, threading, json, urllib.request as ur, time
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "8")), 12)
     key = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -6651,7 +6686,7 @@ def admin_vedi_proprieta():
     """Mostra le proprieta di alcuni ingredienti mappati (per verifica)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6681,7 +6716,7 @@ def admin_proprieta_eredita_varianti():
     Match per parola-madre contenuta nel nome. No AI, gratis."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "80")), 150)
     conn = None
@@ -6735,7 +6770,7 @@ def admin_rivedi_varieta():
     caratteristica e proprieta', per la revisione manuale di Michele (correggere errori, aggiungere)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     cat = request.args.get("categoria", "")
     conn = None
@@ -6768,7 +6803,7 @@ def admin_attributi_operativi():
     ingredienti dei 5 domini profondi. Grounding su valori standard (CREA/settore). Carburante per Cifra."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # attributi per CATEGORIA (valori standard di settore, orientativi - Michele affina in dogfooding)
     # yield = resa % dopo pulizia; shelf_life_giorni a frigo; allergeni lista UE
@@ -6826,7 +6861,7 @@ def admin_vedi_data_raw():
     """Mostra il data RAW di un ingrediente per debug (quali chiavi ha davvero)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     nome = request.args.get("nome", "Filetto di manzo")
     conn = None
@@ -6863,7 +6898,7 @@ def admin_operativo_per_categoria_ahn():
     alla famiglia (ingredient_family/domini). Copertura larga per Cifra, valori standard orientativi."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "200")), 400)
     # default per famiglia (yield, shelf_life, allergeni, conservazione)
@@ -6916,7 +6951,7 @@ def admin_anteprima_doppioni_ai():
     NON tocca nulla. Per decidere l'unione."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6946,7 +6981,7 @@ def admin_unisci_doppioni_ai():
     l'ai_. Solo i casi dell'anteprima (pochi, sicuri)."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -6987,7 +7022,7 @@ def admin_hq_crediti_ai():
     quindi si traccia il CONSUMO nostro (token -> euro stimati) come proxy per l'alert."""
     from flask import request, jsonify
     import os, psycopg2, datetime
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # prezzi indicativi per 1M token (input+output medio)
     PREZZI = {"gpt-4o-mini": 0.30, "sonnet": 3.0, "gemini-flash": 0.10}
@@ -7022,7 +7057,7 @@ def admin_hq_stato_ecosistema():
     """PANNELLO GALILEO-HQ: stato di salute dell'ecosistema in un colpo."""
     from flask import request, jsonify
     import os, psycopg2, datetime
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     out = {"timestamp": datetime.datetime.now().isoformat()[:19]}
     conn = None
@@ -7081,7 +7116,7 @@ def admin_debug_analogia():
     """Debug: perche l'analogia (composti condivisi) non esce nel grafo. Passo per passo su pomodoro."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -7122,7 +7157,7 @@ def admin_grafo_gerarchia():
     Es. San Marzano, Piennolo, Datterino -> tipo_base 'pomodoro'. Non e' un algoritmo: e' il modello."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "300")), 500)
     # mappa parola-chiave -> tipo_base (la gerarchia gastronomica)
@@ -7195,7 +7230,7 @@ def admin_conta_gerarchia():
     """Quanti nodi hanno il tipo_base (gerarchia) e verifica su esempi."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -7226,7 +7261,7 @@ def admin_conta_prezzi():
     """Quanti ingredienti hanno un prezzo (per il food cost). Il buco che fa uscire food cost a zero."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -7259,7 +7294,7 @@ def admin_vedi_fenomeno_completo():
     """Mostra il CONTENUTO completo di un fenomeno esistente (per capire cosa c'e' gia' e non duplicare)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     nome = request.args.get("nome", "Emulsione")
     conn = None
@@ -7291,7 +7326,7 @@ def admin_marca_preparazioni():
     Marca i derivati con e_preparazione=true cosi la lista varieta mostra solo le cultivar (ontologia #192)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # parole che indicano una preparazione/derivato, non una cultivar
     PREP = ["concentrato", "passata", "pelato", "pelati", "secco", "secchi", "essiccato",
@@ -7327,7 +7362,7 @@ def admin_prezzi_bar():
     perche' l'ingrediente principale - il distillato - non aveva prezzo). EUR/L all'ingrosso."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     PREZZI = {
         "amaretto":14,"aperol":13,"campari":16,"martini":9,"vermouth bianco":9,"vermouth dry":9,
@@ -7372,7 +7407,7 @@ def admin_target_type_fenomeni():
     (il parametro DOMINANTE) e target_chips (secondari). Il backend espone il significato (#218A)."""
     from flask import request, jsonify
     import os, psycopg2, json, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     def _analizza(nb, nome_fen=""):
         nb = (nb or "").strip()
@@ -7455,7 +7490,7 @@ def admin_calcola_maturita_schede():
     Nessuna scheda 'vuota': ognuna dichiara il suo stato. #282: dichiarata incompleta > finta completa."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -7501,7 +7536,7 @@ def admin_coverage_score():
     Lo score pesa i 3 strati; la provenienza traccia fonti/autore/revisione (metadati invisibili)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -7560,7 +7595,7 @@ def admin_atlas_coda():
     Prima le 'quasi pronte' (score alto ma non 100): massimo impatto, minimo sforzo."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -7600,7 +7635,7 @@ def admin_atlas_salva():
     """Salva il contenuto di uno strato + ricalcola coverage_score."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", ""); strato = d.get("strato", ""); testo = d.get("testo", "")
@@ -7643,7 +7678,7 @@ def admin_atlas_stato():
     """Sposta la scheda tra le colonne pipeline (da_fare->ai_pronta->in_revisione->validata->pubblicata)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", ""); nuovo = d.get("nuovo_stato", "")
@@ -7758,7 +7793,7 @@ def admin_compiler_valida():
     Gate A (sintattico #310): forma. Gate B (semantico #310): fonti Tier 0-2, coerenza numerica."""
     from flask import request, jsonify
     import os, psycopg2, json, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", "")
@@ -7818,7 +7853,7 @@ def admin_compiler_versiona():
     """Versionamento (#312A): salva uno snapshot della scheda prima di modificarla. Reversibile."""
     from flask import request, jsonify
     import os, psycopg2, json, time
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", "")
@@ -7851,7 +7886,7 @@ def admin_knowledge_density():
     Prima i collegamenti, poi i composti (#322): un ingrediente vale per le sue relazioni, non i dati isolati."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     limite = int(request.args.get("limite", "0"))  # 0 = tutti, altrimenti processa N
     conn = None
@@ -7907,7 +7942,7 @@ def admin_atlas_batch():
     Impedisce il 'disastro x300' (#308). Ondate piccole, controllo, stop automatico se errori sopra soglia."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur, time
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     n_ondata = min(int(d.get("n", 6)), 8)  # max 8 per ondata (evita timeout Railway ~55s)
@@ -8004,7 +8039,7 @@ def admin_marca_nodi_grezzi():
     Restano nel grafo per i composti, ma non appaiono in ricerca/abbinamenti (qualita' percepita)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -8037,7 +8072,7 @@ def admin_categorizza_schede():
     """Board #64 #376: nessuna scheda vive in 'Altro'. Assegna una categoria a tutte le schede senza."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # parole chiave -> categoria (tassonomia fissa)
     MAP = {
@@ -8108,7 +8143,7 @@ def admin_evidence_costruisci():
     (che cita quella fonte in modo caotico) al nodo pulito. McGee scritto in 6 modi -> 1 nodo condiviso."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -8226,7 +8261,7 @@ def admin_grafo_governance():
     (Ahn) restano nel layer SCOPERTA (bassa fiducia), mai spacciati per tradizione. Diagnosi del grafo."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -8263,7 +8298,7 @@ def admin_composti_top():
     """Diagnostico: i composti aromatici piu' comuni nel grafo (per ampliare il dizionario spiegazioni)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -8286,7 +8321,7 @@ def admin_leggi_nodo(nid):
     """Legge un nodo per ID esatto (per progettare il Protocollo dalle ricette esistenti)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -8594,7 +8629,7 @@ def _riempitore_worker(max_ondate):
 def admin_riempitore_avvia():
     from flask import request, jsonify
     import os, threading
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     if _RIEMPITORE_STATO.get("attivo"):
         return jsonify({"gia_in_corso": True, "stato": _RIEMPITORE_STATO})
@@ -8607,7 +8642,7 @@ def admin_riempitore_avvia():
 def admin_riempitore_stato():
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     return jsonify(_RIEMPITORE_STATO)
 
@@ -8615,7 +8650,7 @@ def admin_riempitore_stato():
 def admin_riempitore_stop():
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     _RIEMPITORE_STATO["attivo"] = False
     return jsonify({"fermato": True})
@@ -8753,7 +8788,7 @@ def admin_tradizione_da_ricette():
     senza spendere crediti. Risolve i 40 euro: usa cio che e' gia pagato."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     conn = None
     try:
@@ -8821,7 +8856,7 @@ def admin_marca_fenomeni_madre():
     Risolve 'Trasversale 0%'. Zero AI - solo riorganizzazione del grafo esistente."""
     from flask import request, jsonify
     import os, psycopg2, json, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     dry = request.args.get("dry") == "1"
     # i fenomeni MADRE (fondamentali, trasversali) + le parole che identificano le loro manifestazioni
@@ -8902,7 +8937,7 @@ def admin_marca_madre_extra():
     """Marca come madre i fenomeni fondamentali gia esistenti ma non marcati (maillard, gelatinizzazione)."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     EXTRA = {"fen-maillard":["maillard","rosolatura","crosta","doratura","tostatura","brunitura"],
              "fen-gelatinizzazione":["gelatinizz","amido","roux","besciamella"]}
@@ -8948,7 +8983,7 @@ def admin_ricuratela_dry_run():
     NON salva - mostra cosa FAREBBE. L'AI VERIFICA e ATTRIBUISCE, non inventa. Michele e' il gate."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     # i 10 casi avversariali REALI
     CASI = [
@@ -9037,7 +9072,7 @@ def admin_ricura_ricette_scienza():
     Default DRY-RUN. ?applica=1 scrive. ?n=N quante."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}),403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n",20))
@@ -9115,7 +9150,7 @@ def admin_dedup_ricette():
     Default DRY-RUN. ?applica=1 elimina."""
     from flask import request, jsonify
     import os, psycopg2
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}),403
     applica = request.args.get("applica")=="1"
     conn = None
@@ -9155,7 +9190,7 @@ def admin_test_import_uno():
     """Test: importa UN canonico semplice per isolare l'errore 500."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     conn = None
     try:
@@ -9185,7 +9220,7 @@ def admin_classifica_modo_punto():
     L'AI giudica dal mestiere (la maionese 60C = limite, non target). Default DRY-RUN. ?applica=1. ?n=N."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}),403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n",20))
@@ -9261,7 +9296,7 @@ def admin_revisione_prepara():
     ?applica=1 popola la tabella."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     applica = request.args.get("applica")=="1"
     # pattern di segnale VAGO (fuffa che suona tecnica)
@@ -9324,8 +9359,7 @@ def admin_revisione_pagina():
     """La pagina di revisione per Michele: un caso alla volta, 4 bottoni. Mobile."""
     from flask import request, Response
     import os
-    s = request.args.get("s","")
-    if s != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return Response("non autorizzato", status=403)
     html = """<!DOCTYPE html><html lang=it><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
@@ -9396,7 +9430,7 @@ carica();
 def admin_revisione_prossimo():
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     conn = None
     try:
@@ -9422,7 +9456,7 @@ def admin_revisione_prossimo():
 def admin_revisione_giudica():
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     body=request.get_json(force=True)
     cid=body.get("id"); giudizio=body.get("giudizio"); nota=body.get("nota","")
@@ -9456,7 +9490,7 @@ def admin_conta_ingredienti_stato():
     """Conta: totali, consultabili (non solo_motore), col profilo pieno, e un campione dei nascosti."""
     from flask import request, jsonify
     import os, psycopg2, json
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}), 403
     conn = None
     try:
@@ -9493,7 +9527,7 @@ def admin_traduci_ingredienti_inglesi():
     L'AI TRADUCE (non inventa contenuto). Default DRY-RUN. ?applica=1. ?n=N."""
     from flask import request, jsonify
     import os, psycopg2, json, urllib.request as ur
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
+    if not _admin_ok(request):
         return jsonify({"errore":"non autorizzato"}),403
     applica = request.args.get("applica")=="1"
     limite = int(request.args.get("n",30))
@@ -9576,7 +9610,7 @@ def admin_vedi_tipo_base(nome):
     """Debug varieta: mostra il tipo_base di un nodo e chi altro ce l'ha uguale (per capire i raggruppamenti sbagliati)."""
     from flask import jsonify, request
     import os, json as _j
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    if not _admin_ok(request): return jsonify({"e":"no"}),403
     try:
         from db import carica_grafo
         db = carica_grafo()
