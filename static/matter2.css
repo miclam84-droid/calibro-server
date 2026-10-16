@@ -124,6 +124,22 @@ code{font-family:var(--sans); font-size:.92em}
 .perche{margin:11px 0 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5}
 .meta{margin-top:10px; padding-top:10px; border-top:1px solid var(--rule); display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--ink-soft)}
 .meta .k{font-variant-numeric:tabular-nums; color:var(--ink); font-weight:600}
+.point{margin:11px 0 0; font-size:15px; color:var(--ink); line-height:1.5}
+.point b{font-family:var(--display); font-variant-numeric:tabular-nums; font-weight:800; color:var(--green-action)}
+.mol{margin-top:12px}
+.mol summary{cursor:pointer; font-size:13px; font-weight:600; color:var(--green-action); list-style:none; display:inline-flex; align-items:center; gap:6px; padding:3px 0}
+.mol summary::-webkit-details-marker{display:none}
+.mol summary::before{content:"\203A"; display:inline-block; transition:transform .15s; font-size:16px; line-height:1}
+.mol[open] summary::before{transform:rotate(90deg)}
+.mol summary:focus-visible{outline:2px solid var(--green-action); outline-offset:2px; border-radius:4px}
+.gloss{margin:10px 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.5}
+.gloss b{font-variant-numeric:tabular-nums; color:var(--ink); font-weight:600}
+.partner-link{font:inherit; font-family:var(--display); font-weight:700; font-size:19px; letter-spacing:-.01em; color:var(--ink); background:none; border:0; padding:0; margin:0; text-align:left; cursor:pointer; min-width:0; display:inline-flex; align-items:center; gap:6px}
+.partner-link::after{content:"\2197"; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--green-action); opacity:.55}
+.partner-link:hover{color:var(--green-action)}
+.partner-link:hover::after{opacity:1}
+.partner-link:focus-visible{outline:2px solid var(--green-action); outline-offset:2px; border-radius:4px}
+.card.lite .partner-link{font-size:17px}
 .card.lite{padding:14px 16px}
 .card.lite .partner{font-size:17px}
 .prov{display:inline-flex; align-items:center; gap:6px; margin-top:9px; font-size:11.5px; font-weight:600; letter-spacing:.02em; color:var(--ink-soft); border:1px solid var(--rule); background:transparent; padding:4px 9px; border-radius:999px}
