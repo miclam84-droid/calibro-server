@@ -493,8 +493,6 @@ def fenomeni_avanzati():
                     "titolo": "Tecniche Avanzate di Laboratorio"})
 
 
-@bp.route("/discipline-conteggi")
-@bp.route("/v1/discipline-conteggi")
 @bp.route("/discipline")
 @bp.route("/v1/discipline")
 def discipline_conteggi():

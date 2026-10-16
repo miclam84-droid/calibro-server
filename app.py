@@ -112,7 +112,6 @@ from routes.mie_cose import bp_mie as mie_cose_bp; app.register_blueprint(mie_co
 from routes.deriva_gusti import bp_gusti; app.register_blueprint(bp_gusti)
 from routes.quaderno_unico import bp_quaderno2; app.register_blueprint(bp_quaderno2)
 from routes.misura_quantita import bp_quantita; app.register_blueprint(bp_quantita)
-from routes.motori_calcolo import bp_motori; app.register_blueprint(bp_motori)
 from routes.protocollo import bp_protocollo; app.register_blueprint(bp_protocollo)
 from routes.admin_migra_quaderno import bp_migra_q; app.register_blueprint(bp_migra_q)
 from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(bp_gusti_search)
