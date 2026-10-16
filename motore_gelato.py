@@ -1,8 +1,17 @@
 # motore_gelato.py - MOTORE OPERATIVO Gelato Pro.
-# Parte dall'obiettivo (tipo gelato, quantità), calcola il BILANCIAMENTO (zuccheri/grassi/solidi)
-# + PAC (potere anticongelante) + POD (potere dolcificante). Da Modernist/gelato science.
+# Parte dall'obiettivo (tipo gelato, quantita') e calcola:
+#  - il BILANCIAMENTO target (zuccheri/grassi/solidi) come RANGE professionale (niente media spacciata per valore esatto);
+#  - il PAC (potere anticongelante) e il POD (potere dolcificante) del mix zuccheri scelto, calcolati DAVVERO
+#    dalla tabella ZUCCHERI (indici relativi al saccarosio=100) con media pesata sulle proporzioni.
+#
+# ONESTA' DEI DATI:
+#  - PAC/POD indici relativi (saccarosio=100): valori standard del bilanciamento gelato professionale
+#    (destrosio ~190/70, zucchero invertito/miele ~190/130, sciroppo di glucosio DE~60 ~55/50).
+#    La media pesata di questi indici e' l'uso canonico della tabella -> calcolo FONDATO sul dato gia' presente.
+#  - La mappa temperatura-di-vetrina -> "numero PAC bersaglio" NON e' derivabile dalla tabella presente:
+#    resta una REGOLA PRATICA qualitativa, etichettata come tale. Nessun numero di PAC bersaglio inventato.
 
-# valori di riferimento per il bilanciamento (% sul totale miscela) - fonte gelato professionale
+# valori di riferimento per il bilanciamento (% sul totale miscela) - fonte: bilanciamento gelato professionale (range)
 BILANCIAMENTO = {
     "crema": {"zuccheri": (16, 20), "grassi": (6, 10), "solidi_magri_latte": (9, 11), "solidi_totali": (36, 42)},
     "frutta": {"zuccheri": (24, 28), "grassi": (0, 2), "solidi_magri_latte": (0, 3), "solidi_totali": (32, 38)},
@@ -17,26 +26,85 @@ ZUCCHERI = {
     "miele": {"pac": 190, "pod": 130},
 }
 
-def progetta_gelato(tipo="crema", quantita_g=1000, temp_vetrina=-12):
-    """Progetta il bilanciamento del gelato. PAC target dipende dalla temperatura di vetrina voluta."""
+# mix zuccheri di default: regola classica del gelato alla crema (saccarosio + destrosio per alzare il PAC)
+MIX_DEFAULT = {"saccarosio": 0.70, "destrosio": 0.30}
+
+
+def _indici_blend(mix):
+    """Media pesata di PAC e POD del mix zuccheri, usando la tabella ZUCCHERI (saccarosio=100).
+    Ritorna (pac_index, pod_index, mix_normalizzato). Solleva ValueError su zucchero ignoto o proporzioni nulle.
+    """
+    tot = 0.0
+    for nome, prop in mix.items():
+        if nome not in ZUCCHERI:
+            raise ValueError(f"zucchero sconosciuto: {nome}")
+        if prop < 0:
+            raise ValueError(f"proporzione negativa per {nome}")
+        tot += prop
+    if tot <= 0:
+        raise ValueError("mix zuccheri vuoto")
+    pac_index = sum(ZUCCHERI[n]["pac"] * p for n, p in mix.items()) / tot
+    pod_index = sum(ZUCCHERI[n]["pod"] * p for n, p in mix.items()) / tot
+    mix_norm = {n: round(p / tot, 3) for n, p in mix.items()}
+    return pac_index, pod_index, mix_norm
+
+
+def progetta_gelato(tipo="crema", quantita_g=1000, temp_vetrina=-12, mix_zuccheri=None):
+    """Progetta il bilanciamento del gelato.
+    Il BILANCIAMENTO e' dato come range professionale (con centro etichettato, non spacciato per valore esatto).
+    PAC/POD del mix zuccheri sono CALCOLATI dalla tabella ZUCCHERI (media pesata, saccarosio=100).
+    """
     b = BILANCIAMENTO.get(tipo, BILANCIAMENTO["crema"])
-    def mid(rng): return round((rng[0]+rng[1])/2, 1)
-    zuccheri_pct = mid(b["zuccheri"])
-    grassi_pct = mid(b["grassi"])
-    solidi_pct = mid(b["solidi_totali"])
-    # PAC target: più freddo il servizio, più PAC serve (per restare cremoso). ~-12°C = PAC ~26-28
-    pac_target = 27 if temp_vetrina <= -12 else 24
+    mix = mix_zuccheri if mix_zuccheri else dict(MIX_DEFAULT)
+
+    def centro(rng):
+        return round((rng[0] + rng[1]) / 2, 1)
+
+    # massa zuccheri stimata sul centro del range professionale (la base e' il range, non un numero "preciso")
+    zuccheri_centro = centro(b["zuccheri"])
+    massa_zuccheri_g = round(quantita_g * zuccheri_centro / 100)
+
+    # calcolo VERO su tabella: indici PAC/POD del mix e loro equivalente in grammi-di-saccarosio
+    pac_index, pod_index, mix_norm = _indici_blend(mix)
+    # equivalente saccarosio: quanti g di saccarosio "pesano" come anticongelante / dolcificante questo mix
+    antigelo_eq_sacc_g = round(massa_zuccheri_g * pac_index / 100)
+    dolcezza_eq_sacc_g = round(massa_zuccheri_g * pod_index / 100)
+
+    def pct_range(rng):
+        return f"{rng[0]}-{rng[1]}% (centro {centro(rng)}%)"
+
+    mix_desc = " + ".join(f"{round(p * 100)}% {n}" for n, p in mix_norm.items())
+
     return {
         "obiettivo": f"{quantita_g}g di gelato {tipo} · servizio {temp_vetrina}°C",
-        "bilanciamento": {
-            "zuccheri": f"{zuccheri_pct}% ({round(quantita_g*zuccheri_pct/100)}g)",
-            "grassi": f"{grassi_pct}% ({round(quantita_g*grassi_pct/100)}g)",
-            "solidi_totali": f"{solidi_pct}% ({round(quantita_g*solidi_pct/100)}g)",
-            "acqua": f"{round(100-solidi_pct,1)}% ({round(quantita_g*(100-solidi_pct)/100)}g)",
+        "bilanciamento_target": {
+            # RANGE professionale, non un singolo numero: onesto su dove sta il margine
+            "zuccheri": pct_range(b["zuccheri"]),
+            "grassi": pct_range(b["grassi"]),
+            "solidi_magri_latte": pct_range(b["solidi_magri_latte"]),
+            "solidi_totali": pct_range(b["solidi_totali"]),
         },
-        "pac_target": pac_target,
-        "mix_zuccheri_consigliato": "70% saccarosio + 30% destrosio (per PAC bilanciato)",
-        "note": f"PAC target ~{pac_target} per servizio a {temp_vetrina}°C (cremosità senza durezza). "
-                f"Sotto: il gelato è duro in vetrina. Sopra: si scioglie troppo. Il destrosio alza il PAC.",
-        "punto_critico": "Il bilanciamento zuccheri decide la spatolabilità in vetrina. Non solo 'quanto zucchero'.",
+        "mix_zuccheri": {
+            "composizione": mix_desc,
+            "pac_index": round(pac_index, 1),   # saccarosio=100; >100 = piu' anticongelante (gelato piu' morbido)
+            "pod_index": round(pod_index, 1),   # saccarosio=100; <100 = meno dolce a parita' di peso
+            "nota": "PAC/POD = media pesata della tabella ZUCCHERI (saccarosio=100). "
+                    "PAC>100: il mix abbassa il punto di congelamento piu' del solo saccarosio (gelato piu' spatolabile a freddo). "
+                    "POD<100: a parita' di grammi e' meno dolce del saccarosio.",
+        },
+        "stima_su_massa_zuccheri": {
+            "massa_zuccheri_g": f"~{massa_zuccheri_g}g (sul centro {zuccheri_centro}% del range {tipo})",
+            "potere_anticongelante": f"~{antigelo_eq_sacc_g}g equivalenti-saccarosio (PAC)",
+            "potere_dolcificante": f"~{dolcezza_eq_sacc_g}g equivalenti-saccarosio (POD)",
+        },
+        "servizio_vetrina": {
+            # REGOLA PRATICA, non derivata dalla tabella: etichettata come tale, nessun numero-bersaglio inventato
+            "etichetta": "regola pratica (NON calcolata dalla tabella)",
+            "indicazione": f"Per servire a {temp_vetrina}°C il gelato deve restare spatolabile: "
+                           "piu' freddo il servizio, piu' PAC serve (piu' destrosio/invertito nel mix). "
+                           "La direzione e' fondata (PAC piu' alto = punto di congelamento piu' basso); "
+                           "il valore esatto di PAC-bersaglio per ogni temperatura va tarato al banco, non e' in tabella.",
+        },
+        "punto_critico": "Il mix zuccheri (non solo 'quanto zucchero') decide la spatolabilita' in vetrina: "
+                         "stesso zucchero totale, PAC diverso = consistenza diversa.",
     }
