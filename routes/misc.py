@@ -724,7 +724,7 @@ def motore_panificazione_endpoint():
         )
         return jsonify(r)
     except Exception as e:
-        return jsonify({"errore": str(e)[:150]}), 200
+        return jsonify({"errore": str(e)[:150]}), 500
 
 
 @bp.route("/v1/motore/panificazione/sbalzo", methods=["POST"])
@@ -741,7 +741,7 @@ def motore_sbalzo_endpoint():
             float(d.get("ore_rimanenti", 8))
         ))
     except Exception as e:
-        return jsonify({"errore": str(e)[:150]}), 200
+        return jsonify({"errore": str(e)[:150]}), 500
 
 
 @bp.route("/v1/motore/gelato", methods=["POST"])
@@ -752,7 +752,7 @@ def motore_gelato_endpoint():
         from motore_gelato import progetta_gelato
         return jsonify(progetta_gelato(d.get("tipo","crema"), int(d.get("quantita_g",1000)), int(d.get("temp_vetrina",-12))))
     except Exception as e:
-        return jsonify({"errore": str(e)[:150]}), 200
+        return jsonify({"errore": str(e)[:150]}), 500
 
 
 @bp.route("/v1/motore/cocktail", methods=["POST"])
@@ -764,7 +764,7 @@ def motore_cocktail_endpoint():
         return jsonify(progetta_cocktail(int(d.get("volume_finale_ml",90)), float(d.get("gradazione_voluta",22)),
                                          d.get("tecnica","stirred"), float(d.get("gradazione_ingredienti",40))))
     except Exception as e:
-        return jsonify({"errore": str(e)[:150]}), 200
+        return jsonify({"errore": str(e)[:150]}), 500
 
 
 @bp.route("/v1/motore/caffe", methods=["POST"])
@@ -775,7 +775,7 @@ def motore_caffe_endpoint():
         from motore_caffe import progetta_caffe
         return jsonify(progetta_caffe(d.get("metodo","espresso"), int(d.get("dose_g",18))))
     except Exception as e:
-        return jsonify({"errore": str(e)[:150]}), 200
+        return jsonify({"errore": str(e)[:150]}), 500
 
 
 @bp.route("/v1/ingrediente/<ingrediente_id>", methods=["GET"])
