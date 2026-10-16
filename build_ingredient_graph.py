@@ -1090,15 +1090,14 @@ def salva_in_grafo(conn, ingrediente, disciplina, profilo):
             """, (f"%{target_name}%", f"%{target_name.replace(' ','%')}%"))
             row = cur.fetchone()
             if row:
+                # Stessa etichettatura onesta dell'arco creato in build_archi: numero
+                # STIMATO dall'AI in 'overlap_score_ai' + provenienza 'stima_AI', così
+                # l'arco non si confonde col conteggio reale Ahn salvato sotto 'overlap'.
                 cur.execute("""
                     INSERT INTO edges (from_id, to_id, relation, data)
                     VALUES (%s, %s, 'abbinamento_aromatico', %s)
                     ON CONFLICT (from_id, to_id, relation) DO NOTHING
-                """, (nid, row[0], psycopg2.extras.Json({
-                    "overlap": abb.get("overlap_score", 0),
-                    "composti": abb.get("composti_condivisi", []),
-                    "meccanismo": abb.get("meccanismo", "")
-                })))
+                """, (nid, row[0], psycopg2.extras.Json(_dati_arco_molecolare(abb))))
 
     # Log
     cur.execute("""
@@ -1228,9 +1227,17 @@ def _dati_arco_molecolare(abb):
     passato per marca_provenienza_ai), NON provengono da un dataset curato. Perciò
     la provenienza è dichiarata come stima ('fonte': 'stima_AI', 'stato':
     'stimato_AI') e non 'dataset Matter Lab', che sarebbe provenienza gonfiata.
+
+    Chiave separata per la provenienza del numero: 'overlap_score_ai' tiene il punteggio
+    STIMATO dal modello (1-100), distinto dal 'overlap' = conteggio REALE di composti
+    condivisi (dataset Ahn). 'overlap' resta valorizzato per retro-compatibilità con i
+    lettori esistenti, ma lo 'stato: stimato_AI' qui dichiara che per questo arco il numero
+    è una stima AI, non un conteggio misurato.
     """
+    _score = abb.get("overlap_score", 0)
     return {
-        "overlap": abb.get("overlap_score", 0),
+        "overlap": _score,
+        "overlap_score_ai": _score,
         "composti": abb.get("composti_condivisi", []),
         "meccanismo": abb.get("meccanismo", ""),
         "fonte": "stima_AI",
