@@ -1221,6 +1221,38 @@ def build(discipline=None, test=False):
 
 
 
+def _dati_arco_molecolare(abb):
+    """Dati dell'arco di abbinamento molecolare (funzione pura, testabile senza DB).
+
+    Onestà dei dati: gli abbinamenti sono generati dal modello AI (vedi il profilo
+    passato per marca_provenienza_ai), NON provengono da un dataset curato. Perciò
+    la provenienza è dichiarata come stima ('fonte': 'stima_AI', 'stato':
+    'stimato_AI') e non 'dataset Matter Lab', che sarebbe provenienza gonfiata.
+    """
+    return {
+        "overlap": abb.get("overlap_score", 0),
+        "composti": abb.get("composti_condivisi", []),
+        "meccanismo": abb.get("meccanismo", ""),
+        "fonte": "stima_AI",
+        "stato": "stimato_AI",
+    }
+
+
+def _dati_arco_contrasto(abb):
+    """Dati dell'arco di abbinamento per contrasto (funzione pura, testabile senza DB).
+
+    Stessa onestà dell'arco molecolare: dato AI-derivato, provenienza dichiarata
+    come stima e non come 'dataset Matter Lab'.
+    """
+    return {
+        "tipo": abb.get("tipo", ""),
+        "perche": abb.get("perche", ""),
+        "fenomeno": abb.get("fenomeno_matter", ""),
+        "fonte": "stima_AI",
+        "stato": "stimato_AI",
+    }
+
+
 def build_archi():
     """Crea gli archi abbinamento_aromatico tra nodi Ingrediente già nel grafo.
     Va eseguito DOPO la build completa — legge i dati JSON già salvati
@@ -1267,12 +1299,7 @@ def build_archi():
                             INSERT INTO edges (from_id, to_id, relation, data)
                             VALUES (%s, %s, 'abbinamento_aromatico', %s)
                             ON CONFLICT (from_id, to_id, relation) DO NOTHING
-                        """, (nid, row[0], psycopg2.extras.Json({
-                            "overlap": abb.get("overlap_score", 0),
-                            "composti": abb.get("composti_condivisi", []),
-                            "meccanismo": abb.get("meccanismo", ""),
-                            "fonte": "dataset Matter Lab"
-                        })))
+                        """, (nid, row[0], psycopg2.extras.Json(_dati_arco_molecolare(abb))))
                         archi_creati += 1
                         break
                     except Exception:
@@ -1297,12 +1324,7 @@ def build_archi():
                         INSERT INTO edges (from_id, to_id, relation, data)
                         VALUES (%s, %s, 'abbinamento_contrasto', %s)
                         ON CONFLICT (from_id, to_id, relation) DO NOTHING
-                    """, (nid, row[0], psycopg2.extras.Json({
-                        "tipo": abb.get("tipo", ""),
-                        "perche": abb.get("perche", ""),
-                        "fenomeno": abb.get("fenomeno_matter", ""),
-                        "fonte": "dataset Matter Lab"
-                    })))
+                    """, (nid, row[0], psycopg2.extras.Json(_dati_arco_contrasto(abb))))
                     archi_creati += 1
                 except Exception:
                     archi_saltati += 1
