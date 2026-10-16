@@ -92,6 +92,24 @@ _MATCH = {
     # frutta secca / spezie
     "mandorla": 15000, "nocciola": 15004, "noce": 15005,
     "zenzero": 11074, "cannella": 11025, "pepe nero": 11015,
+    # ONDATA 2 — erbe/spezie (forma base, verificata a mano sul nome CIQUAL)
+    "rosmarino": 11068, "timo": 11070, "salvia": 11069, "menta": 11027,
+    "prezzemolo": 11014, "origano": 11035, "alloro": 11053, "noce moscata": 11048,
+    "vaniglia": 11057, "curcuma": 11089, "paprika": 11049, "peperoncino": 20151,
+    # latticini
+    "ricotta": 19585, "mascarpone": 19584, "gorgonzola": 12524, "pecorino": 12122, "feta": 12060,
+    # frutta
+    "pera": 13037, "kiwi": 13021, "ananas": 13002, "fico": 13012, "dattero": 13011,
+    "uvetta": 13046, "pompelmo": 13040, "cocco": 15006, "melone": 13430, "anguria": 13036, "prugna": 13583,
+    # frutta secca / semi
+    "pinoli": 15025, "sesamo": 15010, "arachidi": 15001, "anacardi": 15054,
+    # cereali / farine
+    "avena": 9310, "farro": 9001, "segale": 9390, "grano saraceno": 9380, "mais": 9614,
+    # ortaggi / legumi
+    "zucca": 20044, "sedano": 20023, "porro": 20039, "broccolo": 20057,
+    "cavolfiore": 20016, "ceci": 20516, "lenticchie": 20359,
+    # dolcificanti
+    "sciroppo d'acero": 31034,
 }
 
 _ASSI = ("dolce", "salato", "grasso", "acido")
