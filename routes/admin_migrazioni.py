@@ -4421,6 +4421,11 @@ def admin_aggiungi_prezzi():
             if prezzo is None: continue
             dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
             dd["prezzo_kg"] = prezzo
+            # Onestà dei dati: questo e' un prezzo di listino STIMATO (ingrosso orientativo 2025),
+            # non un prezzo reale da fattura. Si dichiara la provenienza accanto al valore, cosi'
+            # non viene mai presentato come prezzo verificato (Cifra lo sostituira' col reale).
+            dd["prezzo_kg_stato"] = "stima_listino"
+            dd["prezzo_kg_fonte"] = "stima listino ingrosso 2025, non da fattura"
             cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
             assegnati += 1
             if assegnati % 200 == 0: conn.commit()
