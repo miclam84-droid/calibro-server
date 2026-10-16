@@ -8,6 +8,8 @@ import pytest
 
 import routes.ricettario as ricettario
 import routes.quiz_engine as quiz_engine
+import routes.misc as misc
+import motore_cocktail
 
 
 def _app(bp):
@@ -47,4 +49,18 @@ def test_quiz_rispondi_senza_db_non_e_200(monkeypatch):
     resp = client.post("/v1/quiz/rispondi", json={"quiz_id": 1, "risposta": "x"})
     assert resp.status_code != 200
     assert resp.status_code == 503
+    assert "errore" in resp.get_json()
+
+
+def test_motore_cocktail_calcolo_che_scoppia_non_e_200(monkeypatch):
+    # Un motore (calcolatore) il cui calcolo esplode non deve travestirsi da 200:
+    # prima era 200 con {"errore": ...}, ora deve essere 500 con "errore".
+    # Si forza l'errore sostituendo progetta_cocktail; niente DB ne' rete.
+    def _scoppia(*a, **k):
+        raise ValueError("calcolo cocktail esploso")
+    monkeypatch.setattr(motore_cocktail, "progetta_cocktail", _scoppia)
+    client = _app(misc.bp)
+    resp = client.post("/v1/motore/cocktail", json={"volume_finale_ml": 90})
+    assert resp.status_code != 200
+    assert resp.status_code == 500
     assert "errore" in resp.get_json()
