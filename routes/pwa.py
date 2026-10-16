@@ -65,6 +65,16 @@ def scheda_ingrediente(nome):
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/banco")
+@bp.route("/banco/cocktail")
+def banco_cocktail():
+    """FRONTEND-2.0 — Banco: calcolatore cocktail (diluizione/gradazione, metodo Dave Arnold).
+    Cablato a /v1/motore/cocktail. Pagina nuova e isolata: non tocca /app né /app2."""
+    from flask import make_response
+    resp = make_response(render_template("banco.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/manifest.json")
 def manifest():
     """PWA manifest."""
