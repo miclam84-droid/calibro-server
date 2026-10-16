@@ -308,9 +308,10 @@ def _contrasto(cur, ing_id, limit=6):
 #      Li' la "Y" e' l'identita' vera dell'ingrediente, non un regionalismo: accorparli
 #      nasconderebbe un ingrediente DIVERSO. I qualificatori regionali ("della", "al",
 #      "delle"...) NON attivano l'eccezione: "arancia della California" resta "arancia".
-#   3) Di ogni famiglia si tiene UN SOLO rappresentante: composti_condivisi piu' alto;
-#      a parita', robustezza piu' alta (Alta>Media>Esplorativa); a parita' ancora, il
-#      primo apparso (la lista in ingresso e' gia' per rilevanza decrescente).
+#   3) Di ogni famiglia si tiene UN SOLO rappresentante: prima il nome piu' SEMPLICE
+#      (meno parole: "lime" batte "lime kaffir", "arancia" batte "arancia israeliana");
+#      a parita' di parole, composti_condivisi piu' alto; poi robustezza piu' alta
+#      (Alta>Media>Esplorativa); poi il primo apparso (lista gia' per rilevanza decrescente).
 #   4) Se due partner NON condividono la chiave, restano ENTRAMBI. Meglio un duplicato di
 #      troppo che nascondere un ingrediente legittimo e diverso. Nessuna blacklist, nessuno
 #      stemming aggressivo: "mandarino" e "satsuma" (parole diverse) NON vengono accorpati
@@ -363,7 +364,14 @@ def _chiave_famiglia(nome):
 
 def _rappresentante_migliore(a, b):
     """True se 'a' e' un rappresentante migliore di 'b' per la sua famiglia:
-    piu' composti_condivisi; a parita', robustezza piu' alta. Pura."""
+    prima il nome piu' SEMPLICE (meno parole significative: "lime" batte "lime kaffir",
+    "arancia" batte "arancia della California" — un professionista legge il nome base,
+    non la varieta' esotica); a parita' di parole, piu' composti_condivisi; a parita'
+    ancora, robustezza piu' alta. Pura."""
+    na = len(_parole_sig(a.get("ingrediente") or ""))
+    nb = len(_parole_sig(b.get("ingrediente") or ""))
+    if na != nb:
+        return na < nb
     ca = int(((a.get("evidenza") or {}).get("composti_condivisi")) or 0)
     cb = int(((b.get("evidenza") or {}).get("composti_condivisi")) or 0)
     if ca != cb:

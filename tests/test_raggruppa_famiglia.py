@@ -58,16 +58,26 @@ def test_parole_diverse_non_accorpate():
 
 # --- SCELTA DEL RAPPRESENTANTE ---------------------------------------------------
 
+def test_rappresentante_preferisce_nome_semplice():
+    # il nome base vince sulla varieta' esotica ANCHE con meno composti condivisi
+    plain = _rel("lime", 20)
+    variet = _rel("lime kaffir", 99)
+    assert _rappresentante_migliore(plain, variet) is True
+    assert _rappresentante_migliore(variet, plain) is False
+
+
 def test_rappresentante_per_composti_condivisi():
-    a = _rel("lime", 30)
-    b = _rel("lime kaffir", 12)
+    # a parita' di numero di parole, decide composti_condivisi
+    a = _rel("lime kaffir", 30)
+    b = _rel("lime italiano", 12)
     assert _rappresentante_migliore(a, b) is True
     assert _rappresentante_migliore(b, a) is False
 
 
 def test_rappresentante_parita_usa_robustezza():
-    a = _rel("lime", 20, "Alta")
-    b = _rel("lime italiano", 20, "Esplorativa")
+    # stesse parole, stessi composti -> decide la robustezza
+    a = _rel("lime italiano", 20, "Alta")
+    b = _rel("lime kaffir", 20, "Esplorativa")
     assert _rappresentante_migliore(a, b) is True
     assert _rappresentante_migliore(b, a) is False
 
@@ -96,9 +106,10 @@ def test_raggruppa_limone_collassa_le_varieta():
     dopo = _raggruppa_famiglia(_scenario_limone())
     nomi = [r["ingrediente"] for r in dopo]
     # cinque famiglie distinte per prima-parola: lime, arancia, satsuma, mandarino, pompelmo
-    assert nomi == ["lime kaffir", "arancia", "satsuma", "mandarino", "pompelmo"]
-    # il rappresentante di "lime" e' quello con piu' composti_condivisi (lime kaffir, 34)
-    assert dopo[0]["evidenza"]["composti_condivisi"] == 34
+    assert nomi == ["lime", "arancia", "satsuma", "mandarino", "pompelmo"]
+    # il rappresentante di "lime" e' il nome BASE (lime, 31), non la varieta' "lime kaffir" (34)
+    assert dopo[0]["ingrediente"] == "lime"
+    assert dopo[0]["evidenza"]["composti_condivisi"] == 31
     # il rappresentante di "arancia" e' "arancia" (22), non i regionalismi sotto
     assert dopo[1]["ingrediente"] == "arancia"
     assert dopo[1]["evidenza"]["composti_condivisi"] == 22
@@ -131,7 +142,7 @@ def test_raggruppa_order_preserving():
     # l'ordine finale segue la prima comparsa di ogni famiglia (rilevanza decrescente)
     dopo = _raggruppa_famiglia(_scenario_limone())
     nomi = [r["ingrediente"] for r in dopo]
-    assert nomi.index("lime kaffir") < nomi.index("arancia") < nomi.index("mandarino")
+    assert nomi.index("lime") < nomi.index("arancia") < nomi.index("mandarino")
 
 
 def test_raggruppa_lista_vuota():
