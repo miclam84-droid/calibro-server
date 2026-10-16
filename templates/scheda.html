@@ -12,6 +12,10 @@
 .ing-foto{margin:0 0 14px; border-radius:14px; overflow:hidden; border:1px solid var(--card-border); box-shadow:var(--shadow); background:var(--card)}
 .ing-foto img{display:block; width:100%; height:190px; object-fit:cover}
 .ing-foto figcaption{font-size:11px; color:var(--ink-soft); padding:6px 11px}
+.tax-line{margin-top:8px; font-size:13px; color:var(--ink-soft)}
+.tax-line b{color:var(--ink); font-weight:600}
+.tax-line .sci{font-style:italic}
+.tax-line .src{font-size:11px; opacity:.75}
 </style>
 </head>
 <body>
@@ -28,6 +32,7 @@
     <div class="kind" id="cat">Ingrediente</div>
     <h1 id="titolo">—</h1>
     <div class="sourceline"><span class="dot"></span><span id="src">Profilo dal grafo Matter.</span></div>
+    <div id="tax" class="tax-line" hidden></div>
   </header>
 
   <main id="corpo"></main>
@@ -97,6 +102,25 @@ async function caricaFoto(nome){
   }catch(e){}
 }
 
+async function caricaTax(nome){
+  try{
+    const r = await fetch('/v1/tassonomia/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return;
+    const d = await r.json();
+    if(d && d.trovato && d.tassonomia){
+      const t=d.tassonomia, parts=[];
+      if(t.famiglia) parts.push('<b>'+esc(t.famiglia)+'</b>');
+      if(t.nome_scientifico) parts.push('<span class="sci">'+esc(t.nome_scientifico)+'</span>');
+      if(t.origine) parts.push('origine: '+esc(t.origine));
+      if(parts.length){
+        const $t=document.getElementById('tax');
+        $t.innerHTML = parts.join(' · ') + (d.fonte?(' <span class="src">('+esc(d.fonte)+')</span>'):'');
+        $t.hidden=false;
+      }
+    }
+  }catch(e){}
+}
+
 async function carica(nome){
   nome = (nome||'').trim(); if(!nome) return;
   document.getElementById('titolo').textContent = cap(nome);
@@ -115,6 +139,7 @@ async function carica(nome){
     $state.hidden = true;
     document.getElementById('titolo').textContent = cap(pg.nome || nome);
     caricaFoto(pg.nome || nome);
+    caricaTax(pg.nome || nome);
     document.getElementById('cat').textContent = (pg.kind==='ingredient'?'Ingrediente':(pg.kind||'Ingrediente'));
     const prop = pg.proprieta || {};
     const meta = pg.proprieta_meta || {};
