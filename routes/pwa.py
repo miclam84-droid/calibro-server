@@ -75,6 +75,15 @@ def banco_cocktail():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/banco/panificazione")
+def banco_panificazione():
+    """FRONTEND-2.0 — Banco: calcolatore panificazione (dosi, temp acqua, tabella di marcia a ritroso).
+    Cablato a /v1/motore/panificazione (motore Hamelman). Pagina nuova e isolata: non tocca /app né /app2."""
+    from flask import make_response
+    resp = make_response(render_template("banco-panificazione.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 @bp.route("/admin/copertura")
 def admin_copertura():
     """FRONTEND-2.0 — pannello admin 'Copertura gusto': rivedi i derivati USDA e scrivi col clic.

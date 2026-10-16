@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banco · Panificazione · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+/* pezzo-forte: la tabella di marcia a ritroso */
+.obolo{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-top:4px}
+.acqua{margin-top:16px; background:var(--tint); border:1px solid rgba(47,138,95,.28); border-radius:var(--r); padding:16px 18px}
+.acqua .n{font-family:var(--display); font-weight:800; font-size:34px; color:var(--green-action); font-variant-numeric:tabular-nums; line-height:1}
+.acqua .l{font-size:13.5px; color:var(--ink-soft); margin-top:6px}
+.pre{margin-top:16px; background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 16px}
+.pre .h{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); margin-bottom:8px}
+.march{margin-top:8px; position:relative; padding-left:4px}
+.tap{position:relative; display:flex; gap:14px; padding:12px 0 12px 22px; border-left:2px solid var(--rule)}
+.tap:last-child{border-left-color:transparent}
+.tap::before{content:""; position:absolute; left:-7px; top:16px; width:12px; height:12px; border-radius:50%; background:var(--green-signal); box-shadow:0 0 0 4px var(--bg3)}
+.tap.key::before{background:var(--green-action)}
+.tap-ora{min-width:84px; font-variant-numeric:tabular-nums; font-weight:700; color:var(--ink); font-size:14px}
+.tap-b{min-width:0}
+.tap-fase{font-family:var(--display); font-weight:800; letter-spacing:.03em; font-size:13px; color:var(--green-action); text-transform:uppercase}
+.tap-nota{font-size:14px; color:var(--ink-soft); margin-top:2px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Banco · Panificazione</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Panificazione · progetta dall'obiettivo</div>
+    <h1>Dall'ora di sfornata, a ritroso</h1>
+    <p class="regola">Dimmi <b>cosa vuoi e a che ora</b>. Matter calcola dosi, lievito sulla temperatura e la <b>tabella di marcia</b>: a che ora impastare per sfornare in orario. Il lievito segue la regola di Hamelman (×3 ogni 9&nbsp;°C), non un numero fisso.</p>
+  </header>
+
+  <form id="form" class="banco-form" autocomplete="off">
+    <div class="field">
+      <label for="tipo">Cosa</label>
+      <div class="inp"><select id="tipo">
+        <option value="pizza_napoletana">Pizza napoletana</option>
+        <option value="pizza_teglia">Pizza in teglia</option>
+        <option value="pane">Pane</option>
+        <option value="focaccia">Focaccia</option>
+      </select></div>
+    </div>
+    <div class="field">
+      <label for="metodo">Metodo</label>
+      <div class="inp"><select id="metodo">
+        <option value="diretto">Diretto</option>
+        <option value="biga">Biga</option>
+        <option value="poolish">Poolish</option>
+        <option value="madre">Lievito madre</option>
+      </select></div>
+    </div>
+    <div class="field">
+      <label for="n">Quanti panetti</label>
+      <div class="inp"><input id="n" type="number" inputmode="numeric" value="6" min="1" max="60" step="1"></div>
+    </div>
+    <div class="field">
+      <label for="peso">Peso a panetto</label>
+      <div class="inp"><input id="peso" type="number" inputmode="numeric" value="280" min="80" max="1200" step="10"><span class="unit">g</span></div>
+    </div>
+    <div class="field">
+      <label for="idr">Idratazione <span style="color:var(--ink-soft);font-weight:400">(vuoto = da ricetta)</span></label>
+      <div class="inp"><input id="idr" type="number" inputmode="numeric" placeholder="auto" min="50" max="100" step="1"><span class="unit">%</span></div>
+    </div>
+    <div class="field">
+      <label for="tamb">Temperatura ambiente</label>
+      <div class="inp"><input id="tamb" type="number" inputmode="decimal" value="22" min="4" max="38" step="0.5"><span class="unit">°C</span></div>
+    </div>
+    <div class="field">
+      <label for="ore">Ore di lievitazione</label>
+      <div class="inp"><input id="ore" type="number" inputmode="decimal" value="8" min="2" max="72" step="1"><span class="unit">h</span></div>
+    </div>
+    <div class="field">
+      <label for="sfor">Ora di sfornata</label>
+      <div class="inp"><input id="sfor" type="time" value="20:00"></div>
+    </div>
+    <button type="submit" class="calc">Progetta</button>
+  </form>
+
+  <main id="out"></main>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    <b>Metodo: Jeffrey Hamelman — <i>Bread</i>.</b> Il lievito è calcolato sulla temperatura e sulle ore volute (×3 ogni 9&nbsp;°C): più caldo, meno lievito. La temperatura dell'acqua serve a centrare l'impasto finale. Gli orari della marcia sono un piano di partenza — se al banco la temperatura sbalza, i tempi vanno ricalibrati.
+  </footer>
+</div>
+
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $out = document.getElementById('out');
+const $state = document.getElementById('state');
+function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
+const g = n => (n===null||n===undefined||n==='') ? null : (Math.round(n*100)/100);
+function riga(k,v){ return `<div class="res-row"><span class="res-k">${esc(k)}</span><span class="res-v">${esc(v)}</span></div>`; }
+const KEY = new Set(['IMPASTO FINALE','SFORNA','START BIGA','START POOLISH','IMPASTA LIEVITO MADRE']);
+
+function render(d){
+  if(d.errore){ setState('Il motore ha risposto con un errore: '+esc(d.errore), true); $out.innerHTML=''; return; }
+  $state.hidden = true;
+  const o = d.dosi || {};
+  const olio = (o.olio!=null && o.olio!==0) ? riga('Olio', o.olio+' g') : '';
+  const pre = d.prefermento;
+  const preHtml = pre ? `
+    <div class="pre">
+      <div class="h">Prefermento · ${esc(pre.tipo||'')}</div>
+      <div class="res-card">
+        ${riga('Farina nel prefermento', pre.farina+' g')}
+        ${riga('Acqua nel prefermento', pre.acqua+' g')}
+        ${pre.lievito ? riga('Lievito nel prefermento', pre.lievito+' g') : ''}
+        ${pre.tempo ? riga('Riposo', pre.tempo) : ''}
+        ${riga('Farina nell\'impasto finale', pre.farina_impasto_finale+' g')}
+        ${riga('Acqua nell\'impasto finale', pre.acqua_impasto_finale+' g')}
+      </div>
+    </div>` : '';
+  const march = (d.timeline||[]).map(t=>{
+    const k = KEY.has(String(t.fase||'').toUpperCase()) ? ' key' : '';
+    return `<div class="tap${k}"><span class="tap-ora">${esc(t.ora||'')}</span><span class="tap-b"><div class="tap-fase">${esc(t.fase||'')}</div>${t.nota?`<div class="tap-nota">${esc(t.nota)}</div>`:''}</span></div>`;
+  }).join('');
+
+  $out.innerHTML = `
+    <section class="section">
+      <div class="res-head">${esc(d.obiettivo||'')}</div>
+      <div class="res-card">
+        ${riga('Farina', (o.farina??'—')+' g')}
+        ${riga('Acqua', (o.acqua??'—')+' g')}
+        ${riga('Sale', (o.sale??'—')+' g')}
+        ${olio}
+        ${riga('Lievito fresco', (o.lievito_fresco??'—')+' g'+(o.lievito_pct!=null?` · ${o.lievito_pct}%`:''))}
+      </div>
+
+      <div class="acqua">
+        <div class="n">${d.temperatura_acqua!=null ? d.temperatura_acqua+'°C' : '—'}</div>
+        <div class="l">Temperatura dell'acqua, per arrivare a ${d.temp_finale_impasto!=null?d.temp_finale_impasto:'—'}°C di impasto finale.</div>
+      </div>
+
+      ${preHtml}
+
+      <div class="sechead" style="margin-top:22px"><div style="min-width:0"><h2>Tabella di marcia</h2><p>Dall'ora di sfornata, a ritroso: quando fare cosa.</p></div></div>
+      <div class="march">${march || '<p class="gloss">Nessuna tappa calcolata.</p>'}</div>
+
+      ${d.cottura?`<p class="nota"><b>Cottura.</b> ${esc(d.cottura)}</p>`:''}
+      ${d.note?`<p class="nota"><b>Perché questo lievito.</b> ${esc(d.note)}</p>`:''}
+    </section>`;
+}
+
+async function calcola(){
+  setState('Progetto…', false); $out.innerHTML='';
+  const idrRaw = document.getElementById('idr').value;
+  const body = {
+    tipo: document.getElementById('tipo').value,
+    metodo: document.getElementById('metodo').value,
+    n_panetti: +document.getElementById('n').value || 6,
+    peso_panetto: +document.getElementById('peso').value || 280,
+    idratazione: idrRaw==='' ? null : (+idrRaw||null),
+    temp_ambiente: +document.getElementById('tamb').value || 22,
+    ore_lievitazione: +document.getElementById('ore').value || 8,
+    ora_sfornata: document.getElementById('sfor').value || '20:00',
+  };
+  try{
+    const r = await fetch('/v1/motore/panificazione', {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body)});
+    if(!r.ok){ const d=await r.json().catch(()=>({})); setState('Il motore ha risposto con un errore ('+r.status+'). '+esc(d.errore||'Riprova.'), true); return; }
+    render(await r.json());
+  }catch(e){ setState('Non riesco a raggiungere il motore adesso. Riprova tra poco.', true); }
+}
+
+document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); calcola(); });
+calcola();
+</script>
+</body>
+</html>
