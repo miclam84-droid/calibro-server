@@ -210,3 +210,33 @@ def _dati(campo):
     if isinstance(campo, dict):
         return campo
     return json.loads(campo or "{}")
+
+
+# DDL unico e idempotente per worker_log.
+# Oggi questo CREATE TABLE IF NOT EXISTS è copiaincollato in 14+ punti
+# (routes/admin.py, routes/admin_migrazioni.py). Qui c'è l'helper riutilizzabile;
+# il cablaggio dei siti chiamanti è FUORI SCOPE per questa ondata (vedi PR).
+_WORKER_LOG_DDL = (
+    "CREATE TABLE IF NOT EXISTS worker_log "
+    "(id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)"
+)
+
+
+def assicura_worker_log(cur):
+    """Crea la tabella worker_log se non esiste (idempotente).
+
+    Prende un cursor psycopg2 GIÀ APERTO ed esegue il DDL. NON committa:
+    il commit resta responsabilità del chiamante, esattamente come nei
+    siti attuali (che chiamano cur.execute(...) dentro una transazione
+    e committano più avanti). Non apre connessioni né tocca il pool.
+
+    Schema identico a quello già in uso in produzione:
+        worker_log(id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)
+
+    Cablaggio (da fare in un'altra ondata, fuori scope qui): sostituire
+        cur.execute("CREATE TABLE IF NOT EXISTS worker_log (...)")
+    con
+        from db import assicura_worker_log
+        assicura_worker_log(cur)
+    """
+    cur.execute(_WORKER_LOG_DDL)
