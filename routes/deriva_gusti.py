@@ -63,6 +63,14 @@ _MATCH = {
     "gambero": 175179,      # Crustaceans, shrimp, raw
     "kiwi": 168153,         # Kiwifruit, green, raw   (nessun alias EN -> la ricerca non lo prende)
     "arachidi": 2515376,    # Peanuts, raw            (nessun alias EN -> la ricerca non lo prende)
+    # AGGIUNTI 16/10 — fdc_id verificato live, numeri calcolati con formula server e approvati da Michele.
+    # Match "ingrediente giusto": scrivono derivato USDA (provvisorio, il banco sovrascrive).
+    # NON aggiunti per scelta: pasta di pistacchio (crudo != pasta) e ricotta di pecora (vaccina != pecora) -> al banco.
+    "scorza di limone": 167749,   # Lemon peel, raw
+    "coriandolo": 169997,         # Coriander (cilantro) leaves, raw
+    "zucchine": 168565,           # Squash, zucchini, baby, raw
+    "cioccolato bianco": 167571,  # Candies, white chocolate
+    "farina di mandorle": 2261420, # Flour, almond
     # ANCORA DA RI-VERIFICARE (rate limit DEMO_KEY il 15/10): pera, tuorlo, salsa di soia.
     # RIMOSSI 14/10 (fdc_id curato sbagliato, verificato live su USDA): ananas->Plums,
     # pera->Persimmons, parmigiano->Feta, tuorlo->Egg omelet, gambero->Cod, salsa di soia->Mustard.
