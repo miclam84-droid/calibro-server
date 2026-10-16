@@ -119,7 +119,8 @@ $scrivi.addEventListener('click', async ()=>{
     const r = await fetch(`${BASE}?s=${encodeURIComponent(SEC)}&limite=100&esegui=1`, {headers:{'Accept':'application/json'}});
     const d = await r.json();
     if(!r.ok || d.errore){ setState('Scrittura non riuscita: '+esc(d.errore||r.status), true); $scrivi.disabled=false; $scrivi.textContent='Riprova'; return; }
-    $ok.hidden=false; $ok.innerHTML = `✓ Scritti <b>${d.scritti}</b> ingredienti nel grafo (derivato USDA, con backup). Ricarico la lista…`;
+    const salt = d.saltati_usda ? ` (${d.saltati_usda} saltati perché USDA era occupato in quel momento — ripremi tra un minuto per prendere anche quelli)` : '';
+    $ok.hidden=false; $ok.innerHTML = `✓ Scritti <b>${d.scritti}</b> ingredienti nel grafo (derivato USDA, con backup).${salt} Ricarico la lista…`;
     setTimeout(dryRun, 1400);
   }catch(e){ setState('Scrittura non riuscita: rete.', true); $scrivi.disabled=false; $scrivi.textContent='Riprova'; }
 });
