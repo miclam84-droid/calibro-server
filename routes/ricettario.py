@@ -82,7 +82,8 @@ def ricettario_canonico():
         return jsonify({"ricette": out, "totale": len(out),
                         "filtri": {"disciplina": disciplina, "fenomeno": fenomeno, "q": q}})
     except Exception as e:
-        return jsonify({"ricette": [], "errore": str(e)[:100]}), 200
+        # Onestà dei dati: un errore DB/server non si traveste da 200 con lista vuota.
+        return jsonify({"ricette": [], "errore": str(e)[:100]}), 500
 
 
 @bp_ricettario.route("/v1/ricettario/discipline", methods=["GET"])
@@ -95,7 +96,8 @@ def ricettario_discipline():
                  "n": (r["n"] if hasattr(r, "keys") else r[1])} for r in rows]
         return jsonify({"discipline": disc, "totale_ricette": sum(d["n"] for d in disc)})
     except Exception as e:
-        return jsonify({"discipline": [], "errore": str(e)[:100]}), 200
+        # Onestà dei dati: errore DB/server -> 500, non 200 con lista vuota.
+        return jsonify({"discipline": [], "errore": str(e)[:100]}), 500
 
 
 @bp_ricettario.route("/v1/ricetta/<rid>/completa", methods=["GET"])
@@ -177,4 +179,5 @@ def ricetta_completa(rid):
             r["ricette_collegate"] = []
         return jsonify({"ricetta": r})
     except Exception as e:
-        return jsonify({"errore": str(e)[:120]}), 200
+        # Onestà dei dati: errore DB/server -> 500. Il "non trovata" resta 404 (sopra).
+        return jsonify({"errore": str(e)[:120]}), 500

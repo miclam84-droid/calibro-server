@@ -564,6 +564,7 @@ def admin_init():
     _init_account_tables()
     # crea anche la tabella esperimenti
     if DATABASE_URL:
+        conn = None
         try:
             import psycopg2
             conn = _get_conn()
@@ -585,6 +586,9 @@ def admin_init():
             conn.commit(); cur.close(); _release_conn(conn)
         except Exception as e:
             return jsonify({"errore":str(e)}), 500
+        finally:
+            if conn is not None:
+                _release_conn(conn)
     return jsonify({"ok":True,"messaggio":"Tabelle create: utenti, sessioni, esperimenti"})
 
 @bp.route("/admin/sottografo")
@@ -2135,6 +2139,7 @@ def admin_stato_madri():
     import json
     ids = request.args.get("ids", "").split(",")
     ids = [i.strip() for i in ids if i.strip()]
+    conn = None
     try:
         conn = _get_conn(); cur = conn.cursor(); out = []
         for nid in ids:
@@ -2162,6 +2167,9 @@ def admin_stato_madri():
         return jsonify({"madri": out})
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 @bp.route("/admin/build")
 def admin_build_page():
@@ -2459,6 +2467,7 @@ def admin_build_status():
         return jsonify({"errore":"non autorizzato"}), 403
     if not DATABASE_URL:
         return jsonify({"errore":"no db"}), 503
+    conn = None
     try:
         import psycopg2
         conn = _get_conn()
@@ -2481,6 +2490,9 @@ def admin_build_status():
         })
     except Exception as e:
         return jsonify({"errore": str(e)}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 @bp.route("/admin/assistenza")
 def admin_assistenza():
@@ -2490,6 +2502,7 @@ def admin_assistenza():
     if not DATABASE_URL:
         return "<p>DB non disponibile.</p>", 503
     s = request.args.get("s","")
+    conn = None
     try:
         import psycopg2
         conn = _get_conn()
@@ -2517,6 +2530,9 @@ def admin_assistenza():
         cur.close(); _release_conn(conn)
     except Exception as e:
         return f"<p>Errore: {e}</p>", 503
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
     html_sup = ""
     for r in supporti:
@@ -2595,6 +2611,7 @@ def admin_assistenza_utente(user_id):
     if not DATABASE_URL:
         return "<p>DB non disponibile.</p>", 503
     s = request.args.get("s","")
+    conn = None
     try:
         import psycopg2
         conn = _get_conn()
@@ -2610,6 +2627,9 @@ def admin_assistenza_utente(user_id):
         cur.close(); _release_conn(conn)
     except Exception as e:
         return f"<p>Errore: {e}</p>", 503
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
     # Genera risposta Sonnet solo se richiesto (?genera=1)
     risposta_ai = ""
@@ -2757,6 +2777,7 @@ def admin_diag_trial():
     ok4, info4 = _trial_consentito(None, test_ip, tipo="diag", limite=3)
     out["chiamata_4_deve_bloccare"] = {"ok": ok4, "info": info4}
     # conto diretto nel DB per conferma
+    conn = None
     try:
         conn = _get_conn(); cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM trial_uso WHERE ip=%s", (test_ip,))
@@ -2766,6 +2787,9 @@ def admin_diag_trial():
         conn.commit(); cur.close(); _release_conn(conn)
     except Exception as e:
         out["errore_db"] = str(e)
+    finally:
+        if conn is not None:
+            _release_conn(conn)
     return jsonify(out)
 
 
@@ -2778,6 +2802,7 @@ def admin_diag_ip():
     ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
     out = {"ip_visto": ip, "x_forwarded_for": request.headers.get("X-Forwarded-For", "(assente)"),
            "remote_addr": request.remote_addr}
+    conn = None
     try:
         conn = _get_conn(); cur = conn.cursor()
         cur.execute("SELECT tipo, COUNT(*), COUNT(DISTINCT ip) FROM trial_uso GROUP BY tipo")
@@ -2787,6 +2812,9 @@ def admin_diag_ip():
         cur.close(); _release_conn(conn)
     except Exception as e:
         out["errore"] = str(e)
+    finally:
+        if conn is not None:
+            _release_conn(conn)
     return jsonify(out)
 
 
@@ -2797,35 +2825,40 @@ def admin_analizza_target():
     import os as _os, re as _re
     if request.args.get("s") != _os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
-    conn = _get_conn(); cur = conn.cursor()
-    cur.execute("SELECT id, data FROM nodes WHERE id LIKE %s", ("fen-%",))
-    righe = cur.fetchall()
-    puliti = []; sporchi = []; vuoti = []
-    for node_id, data in righe:
-        nd = data if isinstance(data, dict) else (json.loads(data) if data else {})
-        target = nd.get("target", "")
-        if isinstance(target, dict): target = target.get("it", "") or ""
-        nome = nd.get("nome") or node_id
-        if not target:
-            vuoti.append(nome); continue
-        # euristica "sporco": contiene verbi/frasi, "=", "grado di", parole lunghe senza numeri nel primo pezzo
-        primo = _re.split(r"\s*[·;]\s*", target)[0].strip()
-        # sporco se il primo pezzo è lungo (>14 char) E contiene molte lettere senza pattern numerico chiaro
-        ha_numero = bool(_re.search(r"\d", primo))
-        parole = len(primo.split())
-        e_frase = ("=" in target or "grado di" in target.lower() or "indice" in primo.lower()
-                   or (parole > 4) or (not ha_numero and parole > 2))
-        if e_frase:
-            sporchi.append({"id": node_id, "nome": nome, "target": target[:90]})
-        else:
-            puliti.append({"nome": nome, "primo": primo[:40]})
-    cur.close(); _release_conn(conn)
-    return jsonify({
-        "totale": len(righe),
-        "puliti": len(puliti), "sporchi": len(sporchi), "vuoti": len(vuoti),
-        "esempi_sporchi": sporchi[:25],
-        "esempi_puliti": puliti[:10]
-    })
+    conn = None
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("SELECT id, data FROM nodes WHERE id LIKE %s", ("fen-%",))
+        righe = cur.fetchall()
+        puliti = []; sporchi = []; vuoti = []
+        for node_id, data in righe:
+            nd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            target = nd.get("target", "")
+            if isinstance(target, dict): target = target.get("it", "") or ""
+            nome = nd.get("nome") or node_id
+            if not target:
+                vuoti.append(nome); continue
+            # euristica "sporco": contiene verbi/frasi, "=", "grado di", parole lunghe senza numeri nel primo pezzo
+            primo = _re.split(r"\s*[·;]\s*", target)[0].strip()
+            # sporco se il primo pezzo è lungo (>14 char) E contiene molte lettere senza pattern numerico chiaro
+            ha_numero = bool(_re.search(r"\d", primo))
+            parole = len(primo.split())
+            e_frase = ("=" in target or "grado di" in target.lower() or "indice" in primo.lower()
+                       or (parole > 4) or (not ha_numero and parole > 2))
+            if e_frase:
+                sporchi.append({"id": node_id, "nome": nome, "target": target[:90]})
+            else:
+                puliti.append({"nome": nome, "primo": primo[:40]})
+        cur.close(); _release_conn(conn)
+        return jsonify({
+            "totale": len(righe),
+            "puliti": len(puliti), "sporchi": len(sporchi), "vuoti": len(vuoti),
+            "esempi_sporchi": sporchi[:25],
+            "esempi_puliti": puliti[:10]
+        })
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 @bp.route("/admin/proponi-target")
@@ -2840,61 +2873,66 @@ def admin_proponi_target():
     salva = request.args.get("salva", "") == "1"
     solo = request.args.get("solo", "")
 
-    conn = _get_conn(); cur = conn.cursor()
-    if solo:
-        cur.execute("SELECT id, data FROM nodes WHERE id=%s", (solo,))
-    else:
-        cur.execute("SELECT id, data FROM nodes WHERE id LIKE %s", ("fen-%",))
-    righe = cur.fetchall()
+    conn = None
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        if solo:
+            cur.execute("SELECT id, data FROM nodes WHERE id=%s", (solo,))
+        else:
+            cur.execute("SELECT id, data FROM nodes WHERE id LIKE %s", ("fen-%",))
+        righe = cur.fetchall()
 
-    proposte = []
-    for node_id, data in righe:
-        nd = data if isinstance(data, dict) else (json.loads(data) if data else {})
-        target = nd.get("target", "")
-        if isinstance(target, dict): target = target.get("it", "") or ""
-        if not target: continue
-        nome = nd.get("nome") or node_id
-        primo = _re.split(r"\s*[·;]\s*", target)[0].strip()
-        ha_numero = bool(_re.search(r"\d", primo))
-        parole = len(primo.split())
-        e_frase = ("=" in target or "grado di" in target.lower() or "indice" in primo.lower()
-                   or (parole > 4) or (not ha_numero and parole > 2))
-        if not e_frase and not solo:
-            continue
+        proposte = []
+        for node_id, data in righe:
+            nd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+            target = nd.get("target", "")
+            if isinstance(target, dict): target = target.get("it", "") or ""
+            if not target: continue
+            nome = nd.get("nome") or node_id
+            primo = _re.split(r"\s*[·;]\s*", target)[0].strip()
+            ha_numero = bool(_re.search(r"\d", primo))
+            parole = len(primo.split())
+            e_frase = ("=" in target or "grado di" in target.lower() or "indice" in primo.lower()
+                       or (parole > 4) or (not ha_numero and parole > 2))
+            if not e_frase and not solo:
+                continue
 
-        prompt = (
-            f"Fenomeno F&B: '{nome}'. Target grezzo dal database:\n\"{target}\"\n\n"
-            "Riscrivilo secondo questa grammatica RIGIDA per un professionista al banco:\n"
-            "- EROE: il valore che il professionista deve COLPIRE più spesso nel lavoro reale, "
-            "con la sua ETICHETTA CORTA + numero+unità, MASSIMO 16 caratteri "
-            "(es. 'burro 50-60%', 'raddoppio 1-2h', 'AV <0.6 g/L', 'espresso 9 bar'). "
-            "L'etichetta serve a capire COSA è il numero. MAI una frase lunga, MAI verbi, MAI '=', MAI costanti di formula.\n"
-            "- CONDIZIONI: gli altri valori operativi con etichetta corta, separati da ' · ' "
-            "(es. 'brisée 30-40% · riposo 4°C · forno 160-175°C'). Scarta costanti di formula (es. ×131.25) e dati puramente fisici.\n"
-            "Scegli come EROE il caso d'uso PIÙ COMUNE, non il primo della lista.\n"
-            "Rispondi SOLO in JSON: {\"eroe\":\"...\",\"condizioni\":\"... · ...\"}\n"
-            "NON inventare numeri non presenti nel target grezzo."
-        )
-        try:
-            raw = GW._gpt_chat(prompt, max_tokens=120)
-            raw = (raw or "").strip().replace("```json","").replace("```","").strip()
-            prop = json.loads(raw)
-            eroe = (prop.get("eroe") or "").strip()[:60]
-            cond = (prop.get("condizioni") or "").strip()
-            nuovo_target = eroe + (" · " + cond if cond else "")
-            proposte.append({"id": node_id, "nome": nome, "prima": target[:90],
-                             "eroe": eroe, "condizioni": cond, "nuovo": nuovo_target})
-            if salva and eroe:
-                nd["target_originale"] = target  # backup
-                nd["target"] = nuovo_target
-                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
-                            (json.dumps(nd, ensure_ascii=False), node_id))
-        except Exception as e:
-            proposte.append({"id": node_id, "nome": nome, "errore": str(e)[:60], "prima": target[:90]})
+            prompt = (
+                f"Fenomeno F&B: '{nome}'. Target grezzo dal database:\n\"{target}\"\n\n"
+                "Riscrivilo secondo questa grammatica RIGIDA per un professionista al banco:\n"
+                "- EROE: il valore che il professionista deve COLPIRE più spesso nel lavoro reale, "
+                "con la sua ETICHETTA CORTA + numero+unità, MASSIMO 16 caratteri "
+                "(es. 'burro 50-60%', 'raddoppio 1-2h', 'AV <0.6 g/L', 'espresso 9 bar'). "
+                "L'etichetta serve a capire COSA è il numero. MAI una frase lunga, MAI verbi, MAI '=', MAI costanti di formula.\n"
+                "- CONDIZIONI: gli altri valori operativi con etichetta corta, separati da ' · ' "
+                "(es. 'brisée 30-40% · riposo 4°C · forno 160-175°C'). Scarta costanti di formula (es. ×131.25) e dati puramente fisici.\n"
+                "Scegli come EROE il caso d'uso PIÙ COMUNE, non il primo della lista.\n"
+                "Rispondi SOLO in JSON: {\"eroe\":\"...\",\"condizioni\":\"... · ...\"}\n"
+                "NON inventare numeri non presenti nel target grezzo."
+            )
+            try:
+                raw = GW._gpt_chat(prompt, max_tokens=120)
+                raw = (raw or "").strip().replace("```json","").replace("```","").strip()
+                prop = json.loads(raw)
+                eroe = (prop.get("eroe") or "").strip()[:60]
+                cond = (prop.get("condizioni") or "").strip()
+                nuovo_target = eroe + (" · " + cond if cond else "")
+                proposte.append({"id": node_id, "nome": nome, "prima": target[:90],
+                                 "eroe": eroe, "condizioni": cond, "nuovo": nuovo_target})
+                if salva and eroe:
+                    nd["target_originale"] = target  # backup
+                    nd["target"] = nuovo_target
+                    cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                                (json.dumps(nd, ensure_ascii=False), node_id))
+            except Exception as e:
+                proposte.append({"id": node_id, "nome": nome, "errore": str(e)[:60], "prima": target[:90]})
 
-    if salva: conn.commit()
-    cur.close(); _release_conn(conn)
-    return jsonify({"proposte": proposte, "salvate": salva, "totale": len(proposte)})
+        if salva: conn.commit()
+        cur.close(); _release_conn(conn)
+        return jsonify({"proposte": proposte, "salvate": salva, "totale": len(proposte)})
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 @bp.route("/admin/set-target")
@@ -2908,18 +2946,23 @@ def admin_set_target():
     nuovo = request.args.get("target", "")
     if not node_id or not nuovo:
         return jsonify({"errore": "id e target obbligatori"}), 400
-    conn = _get_conn(); cur = conn.cursor()
-    cur.execute("SELECT data FROM nodes WHERE id=%s", (node_id,))
-    row = cur.fetchone()
-    if not row:
-        cur.close(); _release_conn(conn)
-        return jsonify({"errore": "fenomeno non trovato"}), 404
-    nd = row[0] if isinstance(row[0], dict) else json.loads(row[0])
-    vecchio = nd.get("target", "")
-    nd["target"] = nuovo
-    cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nd, ensure_ascii=False), node_id))
-    conn.commit(); cur.close(); _release_conn(conn)
-    return jsonify({"ok": True, "id": node_id, "prima": vecchio[:80], "dopo": nuovo})
+    conn = None
+    try:
+        conn = _get_conn(); cur = conn.cursor()
+        cur.execute("SELECT data FROM nodes WHERE id=%s", (node_id,))
+        row = cur.fetchone()
+        if not row:
+            cur.close(); _release_conn(conn)
+            return jsonify({"errore": "fenomeno non trovato"}), 404
+        nd = row[0] if isinstance(row[0], dict) else json.loads(row[0])
+        vecchio = nd.get("target", "")
+        nd["target"] = nuovo
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(nd, ensure_ascii=False), node_id))
+        conn.commit(); cur.close(); _release_conn(conn)
+        return jsonify({"ok": True, "id": node_id, "prima": vecchio[:80], "dopo": nuovo})
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 # ═══ PONTE FOOD COST — vocabolario ingredienti + arricchimento ricette (Blocco A/B) ═══
@@ -2958,34 +3001,39 @@ def admin_diag_costi():
     import traceback as _tb
     risultati = {}
     from db import _get_conn, _release_conn
-    conn = _get_conn()
-    cur = conn.cursor()
-    test = {
-        "tabella_esiste": "SELECT COUNT(*) FROM ai_usage_log",
-        "colonne": "SELECT column_name FROM information_schema.columns WHERE table_name='ai_usage_log'",
-        "costo_oggi": "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE",
-        "costo_7g": "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'",
-        "per_modello": "SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days' GROUP BY model",
-        "utenti_attivi": "SELECT COUNT(*) FROM utenti WHERE attivo=TRUE",
-        "utenti_pro": "SELECT COUNT(*) FROM utenti WHERE piano='pro'",
-        "log_domande": "SELECT COUNT(*) FROM log_domande",
-        "feedback": "SELECT COUNT(*) FROM log_domande WHERE feedback=1",
-        "nodi": "SELECT COUNT(*) FROM nodes",
-        "archi": "SELECT COUNT(*) FROM edges",
-        "esperimenti": "SELECT COUNT(*) FROM esperimenti",
-        "top_fenomeni": "SELECT fenomeni_trovati, COUNT(*) as n FROM log_domande WHERE fenomeni_trovati IS NOT NULL AND ts > NOW() - INTERVAL '7 days' GROUP BY fenomeni_trovati ORDER BY n DESC LIMIT 5",
-    }
-    for nome, sql in test.items():
-        try:
-            cur.execute(sql)
-            rows = cur.fetchall()
-            risultati[nome] = {"ok": True, "righe": len(rows), "primo": str(rows[0]) if rows else None}
-        except Exception as e:
-            risultati[nome] = {"ok": False, "errore": str(e)[:200]}
-            try: conn.rollback()
-            except Exception: pass
-    cur.close(); _release_conn(conn)
-    return jsonify(risultati)
+    conn = None
+    try:
+        conn = _get_conn()
+        cur = conn.cursor()
+        test = {
+            "tabella_esiste": "SELECT COUNT(*) FROM ai_usage_log",
+            "colonne": "SELECT column_name FROM information_schema.columns WHERE table_name='ai_usage_log'",
+            "costo_oggi": "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts::date = CURRENT_DATE",
+            "costo_7g": "SELECT COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days'",
+            "per_modello": "SELECT model, COUNT(*), COALESCE(SUM(cost_usd),0) FROM ai_usage_log WHERE ts > NOW() - INTERVAL '7 days' GROUP BY model",
+            "utenti_attivi": "SELECT COUNT(*) FROM utenti WHERE attivo=TRUE",
+            "utenti_pro": "SELECT COUNT(*) FROM utenti WHERE piano='pro'",
+            "log_domande": "SELECT COUNT(*) FROM log_domande",
+            "feedback": "SELECT COUNT(*) FROM log_domande WHERE feedback=1",
+            "nodi": "SELECT COUNT(*) FROM nodes",
+            "archi": "SELECT COUNT(*) FROM edges",
+            "esperimenti": "SELECT COUNT(*) FROM esperimenti",
+            "top_fenomeni": "SELECT fenomeni_trovati, COUNT(*) as n FROM log_domande WHERE fenomeni_trovati IS NOT NULL AND ts > NOW() - INTERVAL '7 days' GROUP BY fenomeni_trovati ORDER BY n DESC LIMIT 5",
+        }
+        for nome, sql in test.items():
+            try:
+                cur.execute(sql)
+                rows = cur.fetchall()
+                risultati[nome] = {"ok": True, "righe": len(rows), "primo": str(rows[0]) if rows else None}
+            except Exception as e:
+                risultati[nome] = {"ok": False, "errore": str(e)[:200]}
+                try: conn.rollback()
+                except Exception: pass
+        cur.close(); _release_conn(conn)
+        return jsonify(risultati)
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 
@@ -4147,6 +4195,7 @@ def admin_batch_quiz_raccogli():
     if not batch_id:
         return jsonify({"errore": "batch_id mancante"}), 400
     import ai_gateway as GW, re as _re
+    conn = None
     try:
         stato = GW.batch_stato(batch_id)
         if stato.get("processing_status") != "ended":
@@ -4188,6 +4237,9 @@ def admin_batch_quiz_raccogli():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 # ── NORMALIZZAZIONE FENOMENI: consolida il contenuto in uno schema unico (via i fallback) ──
@@ -4221,6 +4273,9 @@ def admin_setup_madre_figlia():
     except Exception as e:
         conn.rollback(); _release_conn(conn)
         return jsonify({"errore": str(e)}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 
@@ -4296,6 +4351,9 @@ def admin_setup_italian_layer():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 # ── KNOWLEDGE LAYER MULTILINGUA (Opzione B): names {it,en,es} sui nodi ingrediente ──
@@ -4362,6 +4420,9 @@ def admin_traduci_ingredienti():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 # ── CONFIDENCE LAYER: livello di evidenza per ogni ingrediente (A verificato/B ereditato/C stima) ──
@@ -4449,6 +4510,9 @@ def admin_setup_confidence():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 # ── recipe_ingredients: il PONTE ricetta ↔ ingrediente grafo ↔ composti (la tabella più importante dopo nodes) ──
@@ -4513,6 +4577,9 @@ def admin_cerca_foto_ricette():
         conn.rollback(); _release_conn(conn)
         import traceback
         return jsonify({"errore": str(e), "tb": traceback.format_exc()[-300:]}), 500
+    finally:
+        if conn is not None:
+            _release_conn(conn)
 
 
 # ── PONTI UNIFICA tra fenomeni (la navigazione "approfondisci" cross-disciplina) ──
@@ -4594,6 +4661,7 @@ def admin_worker_log():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"])
         cur = conn.cursor()
@@ -4603,6 +4671,9 @@ def admin_worker_log():
         return jsonify({"log": logs})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -4616,6 +4687,7 @@ def admin_trova_foto_sospette():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     fix = request.args.get("fix") == "1"
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # conto quante ricette hanno una foto esterna (pexels/wikimedia/foodiesfeed/unsplash)
@@ -4639,6 +4711,9 @@ def admin_trova_foto_sospette():
                                 else "Aggiungi &fix=1 per staccarle tutte e mettere blueprint."})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/diag-openai")
@@ -4694,6 +4769,7 @@ def admin_verifica_foto_vision():
             return d.get("url", "")
         except Exception:
             return ""
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("""SELECT id, nome, immagine FROM ricette
@@ -4740,6 +4816,9 @@ def admin_verifica_foto_vision():
     except Exception as e:
         import traceback
         return jsonify({"errore": str(e)[:120], "traceback": traceback.format_exc()[-400:]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/diag-formato-foto")
@@ -4749,6 +4828,7 @@ def admin_diag_formato_foto():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, nome, immagine FROM ricette WHERE immagine IS NOT NULL AND immagine::text != 'null' LIMIT 5")
@@ -4759,6 +4839,9 @@ def admin_diag_formato_foto():
         return jsonify({"esempi": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/verifica-foto-worker")
@@ -4773,6 +4856,7 @@ def admin_verifica_foto_worker():
         return jsonify({"errore": "manca OPENAI_API_KEY"})
 
     def _worker():
+        conn = None
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             cur.execute("""SELECT id, nome, immagine FROM ricette
@@ -4808,6 +4892,9 @@ def admin_verifica_foto_worker():
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     threading.Thread(target=_worker, daemon=True).start()
     return jsonify({"avviato": True, "nota": "verifica foto in background - controlla worker-log per il risultato"})
@@ -4878,12 +4965,16 @@ def admin_test_img_bg():
             except: esito = f"HTTP {he.code}"
         except Exception as e:
             esito = f"ERR: {str(e)[:120]}"
+        conn = None
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
             cur.execute("INSERT INTO worker_log (testo) VALUES (%s)", (f"test-img [{modello}] {piatto}: {esito}",))
             conn.commit(); cur.close(); conn.close()
         except: pass
+        finally:
+            if conn is not None:
+                conn.close()
     threading.Thread(target=_w, daemon=True).start()
     return jsonify({"avviato": True, "nota": "generazione in background, controlla worker-log tra 60s"})
 
@@ -4900,6 +4991,7 @@ def admin_test_foto_una():
         return jsonify({"errore": "non autorizzato"}), 403
     key = os.environ.get("OPENAI_API_KEY", "")
     def _log(txt):
+        conn = None
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             cur.execute("CREATE TABLE IF NOT EXISTS worker_log (id SERIAL PRIMARY KEY, ts TIMESTAMP DEFAULT NOW(), testo TEXT)")
@@ -4907,6 +4999,9 @@ def admin_test_foto_una():
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
     def _run():
         try:
             _log("1-inizio generazione")
@@ -4947,6 +5042,7 @@ def admin_conta_punto_critico():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM ricette")
@@ -4962,6 +5058,9 @@ def admin_conta_punto_critico():
                         "percentuale": round(vuoti/tot*100,1) if tot else 0, "per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/test-mistral")
@@ -5053,6 +5152,7 @@ def admin_conta_foto():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM ricette")
@@ -5072,6 +5172,9 @@ def admin_conta_foto():
                         "blueprint": blueprint, "blueprint_per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/diag-fonti-foto")
@@ -5121,6 +5224,7 @@ def admin_conta_ricette_complete():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # vedo le colonne
@@ -5139,6 +5243,9 @@ def admin_conta_ricette_complete():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -5153,6 +5260,7 @@ def admin_worker_continuo():
         return jsonify({"errore": "non autorizzato"}), 403
 
     def _ciclo():
+        conn = None
         try:
             from db import carica_grafo
             from builder import genera_ricetta
@@ -5182,6 +5290,9 @@ def admin_worker_continuo():
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     threading.Thread(target=_ciclo, daemon=True).start()
     return jsonify({"avviato": True, "nota": "worker continuo: processa fino a 250 ricette per avvio. Rilancia se serve."})
@@ -5197,6 +5308,7 @@ def admin_traduci_continuo():
     lang = request.args.get("lang", "en")
 
     def _ciclo(lang):
+        conn = None
         try:
             from ai import chiedi_mistral
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
@@ -5229,6 +5341,9 @@ def admin_traduci_continuo():
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     threading.Thread(target=_ciclo, args=(lang,), daemon=True).start()
     return jsonify({"avviato": True, "lingua": lang})
@@ -5241,6 +5356,7 @@ def admin_trova_quiz_anisakis():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # cerco nelle tabelle quiz
@@ -5270,6 +5386,9 @@ def admin_trova_quiz_anisakis():
         return jsonify(risultati)
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/foto-definitiva")
@@ -5331,6 +5450,7 @@ def admin_foto_definitiva():
 
     def _w(n):
         fatte_pexels = fatte_ai = 0
+        conn = None
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             cur.execute("""SELECT id, nome FROM ricette
@@ -5356,6 +5476,9 @@ def admin_foto_definitiva():
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": "foto definitiva: Pexels+vision, fallback AI. Controlla worker-log."})
@@ -5368,6 +5491,7 @@ def admin_mostra_quiz_anisakis():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT * FROM quiz WHERE domanda ILIKE '%%abbattut%%' OR domanda ILIKE '%%anisak%%' OR domanda ILIKE '%%pesce%%'")
@@ -5377,6 +5501,9 @@ def admin_mostra_quiz_anisakis():
         return jsonify({"trovate": len(righe), "domande": [{k: str(v)[:300] for k, v in r.items()} for r in righe]})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/quiz-22-completo")
@@ -5386,6 +5513,7 @@ def admin_quiz_22():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT * FROM quiz WHERE id = '22' OR id = 22")
@@ -5395,6 +5523,9 @@ def admin_quiz_22():
         return jsonify({"quiz": [{k: str(v)[:500] for k, v in r.items()} for r in righe]})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -5406,6 +5537,7 @@ def admin_stato_foto():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM ricette")
@@ -5424,6 +5556,9 @@ def admin_stato_foto():
                         "percentuale_con_foto": round(con_foto/tot*100, 1) if tot else 0})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/verifica-foto-esistenti")
@@ -5488,6 +5623,7 @@ def admin_verifica_foto_esistenti():
 
     def _w(n):
         ok=0; sostituite=0
+        conn = None
         try:
             conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
             # foto esistenti NON ancora verificate (non su ricette_ok, che è la cartella verificata)
@@ -5526,6 +5662,9 @@ def admin_verifica_foto_esistenti():
             cur.execute("INSERT INTO worker_log (testo) VALUES (%s)",(f"verifica-foto-esistenti: {ok} ok, {sostituite} rifatte su {_nrighe} righe{_et}",))
             conn.commit(); cur.close(); conn.close()
         except Exception: pass
+        finally:
+            if conn is not None:
+                conn.close()
     threading.Thread(target=_w,args=(n,),daemon=True).start()
     return jsonify({"avviato":True,"nota":"verifica VISIVA delle foto esistenti, rifà le sbagliate"})
 
@@ -5582,6 +5721,7 @@ def admin_foto_pexels_diretta():
 
     def _w(n):
         fatte = 0; pex = pix = 0
+        conn = None
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             # PRIMA le ricette senza foto (sistematico, non random - così copre tutto)
@@ -5614,6 +5754,9 @@ def admin_foto_pexels_diretta():
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": "foto da Pexels/Pixabay SENZA vision (no rate-limit). Query precisa."})
@@ -5630,6 +5773,7 @@ def admin_conta_traduzioni():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='ricette'")
@@ -5650,6 +5794,9 @@ def admin_conta_traduzioni():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/categorizza-portate")
@@ -5682,6 +5829,7 @@ def admin_categorizza_portate():
                   "americano", "manhattan", "old fashioned", "gin tonic", "aperol", "bellini", "caffè", "espresso",
                   "cappuccino", "tè ", "tisana", "frappè", "smoothie", "centrifuga"],
     }
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # aggiungo la colonna portata se non esiste
@@ -5716,6 +5864,9 @@ def admin_categorizza_portate():
         return jsonify({"categorizzate": len(righe), "per_portata": conteggi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/esempi-da-rivedere")
@@ -5725,6 +5876,7 @@ def admin_esempi_da_rivedere():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT nome, disciplina FROM ricette WHERE portata='da_rivedere' LIMIT 30")
@@ -5736,6 +5888,9 @@ def admin_esempi_da_rivedere():
         return jsonify({"esempi": esempi, "da_rivedere_per_disciplina": per_disc})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/categorizza-ai")
@@ -5769,6 +5924,7 @@ def admin_categorizza_ai():
 
     def _w(n):
         fatti = 0
+        conn = None
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             cur.execute("SELECT id, nome FROM ricette WHERE portata='da_rivedere' LIMIT %s", (n,))
@@ -5782,6 +5938,9 @@ def admin_categorizza_ai():
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": "categorizza da_rivedere con AI, pause 5s"})
@@ -5794,6 +5953,7 @@ def admin_conta_portate():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT COALESCE(portata,'(vuoto)'), COUNT(*) FROM ricette GROUP BY portata ORDER BY COUNT(*) DESC")
@@ -5802,6 +5962,9 @@ def admin_conta_portate():
         return jsonify({"per_portata": out})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -5812,6 +5975,7 @@ def admin_conta_fonti_foto():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM ricette WHERE immagine::text ILIKE '%%pexels%%'"); pexels = cur.fetchone()[0]
@@ -5821,6 +5985,9 @@ def admin_conta_fonti_foto():
         return jsonify({"pexels_sicure": pexels, "wikimedia_arischio": wiki, "cloudinary_ai": cloud})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/rifai-wikimedia")
@@ -5853,6 +6020,7 @@ def admin_rifai_wikimedia():
 
     def _w(n):
         fatte = 0; nessuna = 0; err = ""
+        conn = None
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             cur.execute("SELECT id, nome FROM ricette WHERE immagine::text ILIKE '%%wik%%' ORDER BY id LIMIT %s", (n,))
@@ -5874,6 +6042,9 @@ def admin_rifai_wikimedia():
                 conn2.commit(); c2.close(); conn2.close()
             except Exception:
                 pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True})
@@ -5886,6 +6057,7 @@ def admin_diag_duplicati_ingredienti():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # ingredienti totali
@@ -5904,6 +6076,9 @@ def admin_diag_duplicati_ingredienti():
         return jsonify({"totale_nodi": tot, "nomi_con_duplicati": n_nomi_dup, "top_duplicati": dup})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/mappa-grafo")
@@ -5913,6 +6088,7 @@ def admin_mappa_grafo():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         out = {}
@@ -5947,6 +6123,9 @@ def admin_mappa_grafo():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/diag-clausole")
@@ -5956,6 +6135,7 @@ def admin_diag_clausole():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         out = {}
@@ -5976,6 +6156,9 @@ def admin_diag_clausole():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/surface-zero-foto")
@@ -5987,6 +6170,7 @@ def admin_surface_zero_foto():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     conferma = request.args.get("conferma") == "SI"
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # conta prima
@@ -6003,6 +6187,9 @@ def admin_surface_zero_foto():
         return jsonify({"foto_stock_tolte": tolte, "nota": "Ricette ora senza foto sbagliate. Meglio vuoto che errato."})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/surface-zero-pubblica")
@@ -6013,6 +6200,7 @@ def admin_surface_zero_pubblica():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='ricette' AND column_name='pubblica'")
@@ -6030,6 +6218,9 @@ def admin_surface_zero_pubblica():
                         "nota": "Tutte nascoste di default. Le specchietto validate si marcano pubblica=true una a una."})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/trova-refusi")
@@ -6055,6 +6246,7 @@ def admin_trova_refusi():
         (r"\bpuo\b", "puo (manca accento: può)"),
         (r"\be'\b", "e' (dovrebbe essere è)"),
     ]
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE type='Fenomeno'")
@@ -6071,6 +6263,9 @@ def admin_trova_refusi():
         return jsonify({"refusi_trovati": conteggi, "esempio_fenomeno": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6117,6 +6312,7 @@ def admin_amplia_contrasto():
         r = cur.fetchone()
         return r[0] if r else None
 
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         creati = 0
@@ -6140,6 +6336,9 @@ def admin_amplia_contrasto():
         return jsonify({"archi_contrasto_creati": creati, "vettori": [v[2] for v in VETTORI]})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/diag-copertura-composti")
@@ -6150,6 +6349,7 @@ def admin_diag_copertura_composti():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # ingredienti totali
@@ -6174,6 +6374,9 @@ def admin_diag_copertura_composti():
                         "italiani_senza_composti": ita_senza, "esempi_vuoti": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6186,6 +6389,7 @@ def admin_duplicati_anteprima():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # nomi con duplicati (type ingrediente/prodotto)
@@ -6212,6 +6416,9 @@ def admin_duplicati_anteprima():
         return jsonify({"nomi_con_duplicati": tot_nomi_dup, "anteprima_primi_12": anteprima})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/unisci-duplicati")
@@ -6223,6 +6430,7 @@ def admin_unisci_duplicati():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "40")), 80)
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("""SELECT LOWER(name) nome FROM nodes
@@ -6260,6 +6468,9 @@ def admin_unisci_duplicati():
         return jsonify({"nomi_uniti": uniti, "copie_rimosse": copie_rimosse, "archi_spostati": archi_spostati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/danno-unione")
@@ -6269,6 +6480,7 @@ def admin_danno_unione():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # ingredienti ahn con POCHI archi (sospetti danneggiati: un ahn dovrebbe averne decine)
@@ -6289,6 +6501,9 @@ def admin_danno_unione():
                         "erano_circa": 4078, "esempi_poveri": poveri})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6303,6 +6518,7 @@ def admin_ingredienti_poveri_composti():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # ingredienti italiani (ing-) con 0 composti - i più rilevanti per il Creatore
@@ -6318,6 +6534,9 @@ def admin_ingredienti_poveri_composti():
         return jsonify({"composti_pubchem": n_pub, "ingredienti_senza_composti": senza})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6333,6 +6552,7 @@ def admin_top_ingredienti_chiave():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "300")), 400)
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # ingredienti ordinati per numero di connessioni (i piu centrali nel grafo)
@@ -6350,6 +6570,9 @@ def admin_top_ingredienti_chiave():
                         "da_mappare_esempi": senza_prop})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/mappa-proprieta-ai")
@@ -6394,6 +6617,7 @@ def admin_mappa_proprieta_ai():
 
     def _w(n):
         fatti = 0; err = ""
+        conn = None
         try:
             conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
             # top per connessioni, senza proprieta
@@ -6414,6 +6638,9 @@ def admin_mappa_proprieta_ai():
             conn.commit(); cur.close(); conn.close()
         except Exception:
             pass
+        finally:
+            if conn is not None:
+                conn.close()
 
     threading.Thread(target=_w, args=(n,), daemon=True).start()
     return jsonify({"avviato": True, "nota": f"mappa {n} ingredienti con AI, pause 4s"})
@@ -6426,6 +6653,7 @@ def admin_vedi_proprieta():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
@@ -6442,6 +6670,9 @@ def admin_vedi_proprieta():
         return jsonify({"totale_con_proprieta": tot, "esempi": out})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/proprieta-eredita-varianti")
@@ -6453,6 +6684,7 @@ def admin_proprieta_eredita_varianti():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     n = min(int(request.args.get("n", "80")), 150)
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # ingredienti CON proprieta (i genitori candidati), nome -> proprieta
@@ -6484,6 +6716,9 @@ def admin_proprieta_eredita_varianti():
         return jsonify({"varianti_ereditate": ereditati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6503,6 +6738,7 @@ def admin_rivedi_varieta():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     cat = request.args.get("categoria", "")
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         if cat:
@@ -6519,6 +6755,9 @@ def admin_rivedi_varieta():
         return jsonify({"totale": len(out), "varieta": out})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6556,6 +6795,7 @@ def admin_attributi_operativi():
         "Mozzarella di Bufala Campana DOP": {"shelf_life_giorni": 5},
         "Ricotta": {"shelf_life_giorni": 4},
     }
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("""SELECT id, name, data FROM nodes WHERE type='Ingrediente'
@@ -6574,6 +6814,9 @@ def admin_attributi_operativi():
         return jsonify({"ingredienti_con_attributi_operativi": aggiornati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6586,6 +6829,7 @@ def admin_vedi_data_raw():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     nome = request.args.get("nome", "Filetto di manzo")
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE LOWER(name)=LOWER(%s) LIMIT 1", (nome,))
@@ -6600,6 +6844,9 @@ def admin_vedi_data_raw():
                         "operativo_valore": dd.get("operativo")})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6635,6 +6882,7 @@ def admin_operativo_per_categoria_ahn():
         "nut": {"yield":95,"shelf_life_giorni":180,"conservazione":"secco","allergeni":["frutta a guscio"]},
         "legume": {"yield":100,"shelf_life_giorni":365,"conservazione":"secco","allergeni":[]},
     }
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
@@ -6657,6 +6905,9 @@ def admin_operativo_per_categoria_ahn():
         return jsonify({"operativo_assegnato": aggiornati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/anteprima-doppioni-ai")
@@ -6667,6 +6918,7 @@ def admin_anteprima_doppioni_ai():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # nomi che hanno SIA un nodo ai_ SIA un nodo ing- con caratteristica
@@ -6683,6 +6935,9 @@ def admin_anteprima_doppioni_ai():
         return jsonify({"totale_doppioni_ai": tot, "esempi": coppie})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/unisci-doppioni-ai")
@@ -6693,6 +6948,7 @@ def admin_unisci_doppioni_ai():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("""SELECT a.id, i.id FROM nodes a JOIN nodes i ON LOWER(a.name)=LOWER(i.name)
@@ -6719,6 +6975,9 @@ def admin_unisci_doppioni_ai():
         return jsonify({"doppioni_uniti": uniti, "archi_spostati": archi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/hq/crediti-ai")
@@ -6732,6 +6991,7 @@ def admin_hq_crediti_ai():
         return jsonify({"errore": "non autorizzato"}), 403
     # prezzi indicativi per 1M token (input+output medio)
     PREZZI = {"gpt-4o-mini": 0.30, "sonnet": 3.0, "gemini-flash": 0.10}
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # consumo assistente per giorno (ultimi 7 giorni)
@@ -6752,6 +7012,9 @@ def admin_hq_crediti_ai():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/hq/stato-ecosistema")
@@ -6762,6 +7025,7 @@ def admin_hq_stato_ecosistema():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     out = {"timestamp": datetime.datetime.now().isoformat()[:19]}
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
@@ -6794,6 +7058,9 @@ def admin_hq_stato_ecosistema():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6816,6 +7083,7 @@ def admin_debug_analogia():
     import os, psycopg2
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         out = {}
@@ -6842,6 +7110,9 @@ def admin_debug_analogia():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/grafo-gerarchia")
@@ -6878,6 +7149,7 @@ def admin_grafo_gerarchia():
         "panna":"latticino","burro":"grasso","gelatina":"addensante","vaniglia":"spezia","pasta di nocciola":"frutta secca",
         "pasta di pistacchio":"frutta secca",
     }
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # processo TUTTI i nodi senza tipo_base (non solo i primi n): scorro a scaglioni con OFFSET
@@ -6913,6 +7185,9 @@ def admin_grafo_gerarchia():
         return jsonify({"tipo_base_assegnati": assegnati, "senza_match": senza_match, "totale_processati": len(righe)})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/conta-gerarchia")
@@ -6922,6 +7197,7 @@ def admin_conta_gerarchia():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
@@ -6940,6 +7216,9 @@ def admin_conta_gerarchia():
         return jsonify({"totale": tot, "con_tipo_base": con, "percentuale": round(con/tot*100,1) if tot else 0, "esempi": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/conta-prezzi")
@@ -6949,6 +7228,7 @@ def admin_conta_prezzi():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
@@ -6967,6 +7247,9 @@ def admin_conta_prezzi():
                         "percentuale": round(con_prezzo/tot*100,1) if tot else 0, "esempi_senza": esempi})
     except Exception as e:
         return jsonify({"errore": str(e)[:120]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -6979,6 +7262,7 @@ def admin_vedi_fenomeno_completo():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     nome = request.args.get("nome", "Emulsione")
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE LOWER(name) LIKE LOWER(%s) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (f"%{nome}%",))
@@ -6994,6 +7278,9 @@ def admin_vedi_fenomeno_completo():
         return jsonify(out)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -7011,6 +7298,7 @@ def admin_marca_preparazioni():
             "conserva", "salsa", "sugo", "in scatola", "sott'olio", "sottolio", "polpa",
             "confettura", "marmellata", "sciroppo", "succo", "purea", "estratto",
             "farina di", "pasta di", "granella", "in polvere", "candito", "disidratato"]
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
@@ -7028,6 +7316,9 @@ def admin_marca_preparazioni():
         return jsonify({"preparazioni_marcate": marcati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/prezzi-bar")
@@ -7048,6 +7339,7 @@ def admin_prezzi_bar():
         "succo di limone":3,"succo di lime":4,"succo d'arancia":2,"soda":1,"acqua tonica":2,
         "ginger beer":3,"ginger ale":2,"albume":4,"albume d'uovo":4,"prosecco doc":8,
     }
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         keys_sorted = sorted(PREZZI.keys(), key=len, reverse=True)
@@ -7069,6 +7361,9 @@ def admin_prezzi_bar():
         return jsonify({"prezzi_bar_assegnati": agg})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/target-type-fenomeni")
@@ -7117,6 +7412,7 @@ def admin_target_type_fenomeni():
         secondari = [c for c in chips if c is not dominante]
         return {"tipo_bersaglio": tipo, "header_bersaglio": dominante["valore"],
                 "header_label": dominante.get("label",""), "target_chips": secondari}
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
@@ -7145,6 +7441,9 @@ def admin_target_type_fenomeni():
         return jsonify({"totale": tot, "numero": n_num, "multiplo": n_multi, "concetto": n_concetto})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -7158,6 +7457,7 @@ def admin_calcola_maturita_schede():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
@@ -7190,6 +7490,9 @@ def admin_calcola_maturita_schede():
                         "indice_copertura_pct": round(completa/tot*100) if tot else 0})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/coverage-score")
@@ -7200,6 +7503,7 @@ def admin_coverage_score():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
@@ -7245,6 +7549,9 @@ def admin_coverage_score():
                         "knowledge_coverage_score": round(somma/tot) if tot else 0})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/atlas-studio/coda")
@@ -7255,6 +7562,7 @@ def admin_atlas_coda():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
@@ -7274,6 +7582,9 @@ def admin_atlas_coda():
                         "coda_completa": schede[:100]})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/atlas-studio")
@@ -7296,6 +7607,7 @@ def admin_atlas_salva():
     fonti_in = d.get("fonti", [])
     if not slug or not strato:
         return jsonify({"errore": "manca slug o strato"}), 400
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, data FROM nodes WHERE id=%s OR LOWER(name) LIKE LOWER(%s) LIMIT 1", (slug, f"%{slug}%"))
@@ -7321,6 +7633,9 @@ def admin_atlas_salva():
         return jsonify({"slug": r[0], "strato": strato, "salvato": True})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/atlas-studio/stato", methods=["POST"])
@@ -7335,6 +7650,7 @@ def admin_atlas_stato():
     validi = ["da_fare", "ai_pronta", "in_revisione", "validata", "pubblicata", "ai_generated", "ai_verified", "curated", "canon"]
     if nuovo not in validi:
         return jsonify({"errore": f"stato non valido, usa: {validi}"}), 400
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, data FROM nodes WHERE id=%s OR LOWER(name) LIKE LOWER(%s) LIMIT 1", (slug, f"%{slug}%"))
@@ -7352,6 +7668,9 @@ def admin_atlas_stato():
         return jsonify({"slug": r[0], "nuovo_stato": nuovo, "spostata": True})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 # ═══ KNOWLEDGE COMPILER (Board #56): versionamento + gate + circuit breaker ═══
@@ -7444,6 +7763,7 @@ def admin_compiler_valida():
     d = request.get_json(force=True) or {}
     slug = d.get("slug", "")
     if not slug: return jsonify({"errore": "manca slug"}), 400
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE (id=%s OR LOWER(name) LIKE LOWER(%s)) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (slug, f"%{slug}%"))
@@ -7488,6 +7808,9 @@ def admin_compiler_valida():
                         "fonti_trovate": len(fonti), "tier_migliore": min(tiers) if tiers else 4})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/compiler/versiona", methods=["POST"])
@@ -7499,6 +7822,7 @@ def admin_compiler_versiona():
         return jsonify({"errore": "non autorizzato"}), 403
     d = request.get_json(force=True) or {}
     slug = d.get("slug", "")
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, data FROM nodes WHERE id=%s OR LOWER(name) LIKE LOWER(%s) LIMIT 1", (slug, f"%{slug}%"))
@@ -7516,6 +7840,9 @@ def admin_compiler_versiona():
         return jsonify({"slug": r[0], "versione_salvata": len(versioni), "versioni_totali": len(dd["_versioni"])})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/knowledge-density")
@@ -7527,6 +7854,7 @@ def admin_knowledge_density():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
     limite = int(request.args.get("limite", "0"))  # 0 = tutti, altrimenti processa N
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         lim = limite if limite else 200  # batch di default 200 (evita timeout)
@@ -7568,6 +7896,9 @@ def admin_knowledge_density():
                         "distribuzione": dist, "esempi_poveri_da_arricchire": poveri[:20]})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/atlas-studio/batch", methods=["POST"])
@@ -7583,6 +7914,7 @@ def admin_atlas_batch():
     soglia_errori = int(d.get("soglia", 3))  # stop se piu' di N falliscono
     solo_dominio = d.get("dominio", "")  # es. "pane" per filtrare
     key = os.environ.get("OPENAI_API_KEY", "")
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # prendo le schede NON ancora complete/verified, direttamente in SQL (coverage < 100 o stato non verified)
@@ -7661,6 +7993,9 @@ def admin_atlas_batch():
                         "nota": "STOP: troppi errori" if interrotto else "Ondata ok, puoi lanciare la successiva"})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/marca-nodi-grezzi")
@@ -7671,6 +8006,7 @@ def admin_marca_nodi_grezzi():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
@@ -7689,6 +8025,9 @@ def admin_marca_nodi_grezzi():
         return jsonify({"nodi_grezzi_nascosti": marcati})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -7711,6 +8050,7 @@ def admin_categorizza_schede():
         "birra": ["birra","ammostamento","mashing","luppolo","dry hop","fermentazione birra","mosto"],
         "vino": ["vino","svinatura","macerazione uve","tannin","solfiti","fermentazione vino"],
     }
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE type IN ('Fenomeno','Tecnica')")
@@ -7732,6 +8072,9 @@ def admin_categorizza_schede():
         return jsonify({"assegnate": assegnate, "gia_categorizzate": gia, "nessuna_in_altro": True})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -7767,6 +8110,7 @@ def admin_evidence_costruisci():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # 1. creo i nodi Evidence (se non esistono)
@@ -7810,12 +8154,16 @@ def admin_evidence_costruisci():
                         "nota": "Evidence Layer costruito: le fonti sono nodi condivisi, i blog scartati."})
     except Exception as e:
         return jsonify({"errore": str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 @bp.route("/v1/evidence/<ev_id>")
 def get_evidence(ev_id):
     """La scheda di una fonte: cosa e', chi la cita, il link Biblioteca."""
     from flask import jsonify
     import os, psycopg2, json
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT data FROM nodes WHERE id=%s AND type='Evidence'", (ev_id,))
@@ -7830,6 +8178,9 @@ def get_evidence(ev_id):
         return jsonify(ev)
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -7838,6 +8189,7 @@ def get_causalita(slug):
     """La causalita di un fenomeno: cosa lo accelera/rallenta + conseguenze."""
     from flask import jsonify
     import os, psycopg2, json
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT data FROM nodes WHERE (id=%s OR data->>'slug'=%s) AND type IN ('Fenomeno','Tecnica') LIMIT 1", (slug, slug))
@@ -7849,6 +8201,9 @@ def get_causalita(slug):
         return jsonify({"slug": slug, "nome": dd.get("nome"), "causalita": caus})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -7873,6 +8228,7 @@ def admin_grafo_governance():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # censimento: quanti archi per tipo
@@ -7896,6 +8252,9 @@ def admin_grafo_governance():
         })
     except Exception as e:
         return jsonify({"errore": str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -7906,6 +8265,7 @@ def admin_composti_top():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # i nodi piu' referenziati come composto (to_id di contiene_composto)
@@ -7916,6 +8276,9 @@ def admin_composti_top():
         return jsonify({"composti_piu_comuni": composti})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/leggi-nodo/<nid>")
@@ -7925,6 +8288,7 @@ def admin_leggi_nodo(nid):
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, type, data FROM nodes WHERE id=%s", (nid,))
@@ -7939,6 +8303,9 @@ def admin_leggi_nodo(nid):
         return jsonify({"id": r[0], "nome": r[1], "type": r[2], "data": dd, "archi_uscita": archi})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -8293,6 +8660,7 @@ def get_varieta(ingrediente):
     """Le varieta di un ingrediente (la biodiversita: reagenti diversi con proprieta diverse)."""
     from flask import jsonify
     import os, psycopg2, json
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND LOWER(name)=LOWER(%s) LIMIT 1",(ingrediente,))
@@ -8309,6 +8677,9 @@ def get_varieta(ingrediente):
         return jsonify({"ingrediente": ingrediente, "varieta": varieta, "n_varieta": len(varieta)})
     except Exception as e:
         return jsonify({"errore": str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/onesta-dati")
@@ -8360,6 +8731,9 @@ def admin_onesta_dati():
             if conn: conn.rollback(); conn.close()
         except Exception: pass
         return jsonify({"errore": str(e)[:200]}), 500
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -8381,6 +8755,7 @@ def admin_tradizione_da_ricette():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
         return jsonify({"errore": "non autorizzato"}), 403
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         # mappa nome-ingrediente -> nodo (per collegare)
@@ -8434,6 +8809,9 @@ def admin_tradizione_da_ricette():
                         "nota":"Estratti dai co-ingredienti delle ricette. Zero spesa AI."})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/fenomeni/marca-madre")
@@ -8465,6 +8843,7 @@ def admin_marca_fenomeni_madre():
         "abbassamento crioscopico": ["crioscop","congelament","pac","sorbetto"],
         "viscosita": ["viscosit","addensament","gelificazion","gel "],
     }
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         cur.execute("SELECT id, name, data FROM nodes WHERE data ? 'strati' OR id LIKE 'fen-%' OR id LIKE 'tec-%'")
@@ -8509,6 +8888,9 @@ def admin_marca_fenomeni_madre():
                         "madri_trovate":list(madre_id.keys()),"dry_run":dry})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -8524,6 +8906,7 @@ def admin_marca_madre_extra():
         return jsonify({"errore": "non autorizzato"}), 403
     EXTRA = {"fen-maillard":["maillard","rosolatura","crosta","doratura","tostatura","brunitura"],
              "fen-gelatinizzazione":["gelatinizz","amido","roux","besciamella"]}
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         marcati=0; collegati=0
@@ -8546,6 +8929,9 @@ def admin_marca_madre_extra():
         return jsonify({"marcati":marcati,"manifestazioni_collegate":collegati})
     except Exception as e:
         return jsonify({"errore":str(e)[:150]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -8574,6 +8960,7 @@ def admin_ricuratela_dry_run():
         "prot-amaretto-sour-rivisitato",   # 3 fenomeni -> deve scegliere la relazione pertinente
         "prot-anatra-alla-pechinese-rivisitata", # temp forno senza valore -> D o segnale
     ]
+    conn = None
     try:
         conn = psycopg2.connect(os.environ["DATABASE_URL"]); cur = conn.cursor()
         risultati = []
@@ -8628,6 +9015,9 @@ def admin_ricuratela_dry_run():
         return jsonify({"dry_run":True, "nota":"NON salvato - mostra cosa farebbe. Michele verifica.", "casi":risultati})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -8684,6 +9074,7 @@ def admin_ricura_ricette_scienza():
             if m: return json.loads(m.group(0))
         except: pass
         return None
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
         # le ricette stanno nella TABELLA 'ricette', non nei nodes
@@ -8711,6 +9102,9 @@ def admin_ricura_ricette_scienza():
                         "processati":processati,"saltati_non_sospetti":saltati,"esempi":curati[:12]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -8724,6 +9118,7 @@ def admin_dedup_ricette():
     if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
         return jsonify({"errore":"non autorizzato"}),403
     applica = request.args.get("applica")=="1"
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
         # trovo nomi duplicati
@@ -8748,6 +9143,9 @@ def admin_dedup_ricette():
                         "gruppi_duplicati":len(gruppi),"ricette_da_eliminare":len(da_eliminare),"esempi":esempi})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -8759,6 +9157,7 @@ def admin_test_import_uno():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
         return jsonify({"errore":"non autorizzato"}), 403
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         data={"nome":"Roux","kind":"protocollo","tipo":"canonico","disciplina":"cucina",
@@ -8773,6 +9172,9 @@ def admin_test_import_uno():
         return jsonify({"ok":True,"nota":"import singolo riuscito"})
     except Exception as e:
         return jsonify({"errore_vero":str(e)})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -8811,6 +9213,7 @@ def admin_classifica_modo_punto():
             if m: return json.loads(m.group(0))
         except: pass
         return None
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]);cur=conn.cursor()
         cur.execute("""SELECT id,name,data FROM nodes WHERE type='Protocollo'
@@ -8837,6 +9240,9 @@ def admin_classifica_modo_punto():
         return jsonify({"modalita":"APPLICATO" if applica else "DRY-RUN","conteggio":risultati,"esempi_limite_range":esempi})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 # ============ SISTEMA DI CURATELA DEL PATRIMONIO ============
@@ -8861,6 +9267,7 @@ def admin_revisione_prepara():
     # pattern di segnale VAGO (fuffa che suona tecnica)
     VAGHI = ["osservare la","osservare l'","la consistenza","la tenerezza","l'equilibrio del sapore",
              "il sapore e","e pronto quando","al punto giusto","la giusta consistenza"]
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         _tabella_revisione(cur); conn.commit()
@@ -8907,6 +9314,9 @@ def admin_revisione_prepara():
                         "per_sospetto":dict(per_sospetto)})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/revisione")
@@ -8988,6 +9398,7 @@ def admin_revisione_prossimo():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
         return jsonify({"errore":"non autorizzato"}), 403
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         cur.execute("SELECT id,tipo_oggetto,nome,contenuto,sospetto FROM revisione_patrimonio WHERE giudizio IS NULL ORDER BY priorita, id LIMIT 1")
@@ -9002,6 +9413,9 @@ def admin_revisione_prossimo():
         return jsonify({"id":r[0],"tipo":r[1],"nome":r[2],"contenuto":cont,"sospetto":r[4],"rimasti":rimasti,"fatti":fatti})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/revisione/giudica", methods=["POST"])
@@ -9012,6 +9426,7 @@ def admin_revisione_giudica():
         return jsonify({"errore":"non autorizzato"}), 403
     body=request.get_json(force=True)
     cid=body.get("id"); giudizio=body.get("giudizio"); nota=body.get("nota","")
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         cur.execute("UPDATE revisione_patrimonio SET giudizio=%s, nota_michele=%s, giudicato_il=NOW() WHERE id=%s",(giudizio,nota,cid))
@@ -9027,6 +9442,9 @@ def admin_revisione_giudica():
         return jsonify({"ok":True})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 
@@ -9040,6 +9458,7 @@ def admin_conta_ingredienti_stato():
     import os, psycopg2, json
     if request.args.get("s") != os.environ.get("ADMIN_SECRET",""):
         return jsonify({"errore":"non autorizzato"}), 403
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         cur.execute("SELECT COUNT(*) FROM nodes WHERE type IN ('Ingrediente','Prodotto')")
@@ -9062,6 +9481,9 @@ def admin_conta_ingredienti_stato():
                         "campione_NASCOSTI":nascosti,"campione_VISIBILI":visibili})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @bp.route("/admin/traduci-ingredienti-inglesi")
@@ -9098,6 +9520,7 @@ def admin_traduci_ingredienti_inglesi():
             if m: return json.loads(m.group(0))
         except: pass
         return None
+    conn = None
     try:
         conn=psycopg2.connect(os.environ["DATABASE_URL"]); cur=conn.cursor()
         cur.execute("""SELECT id,name FROM nodes WHERE type IN ('Ingrediente','Prodotto')
@@ -9127,6 +9550,9 @@ def admin_traduci_ingredienti_inglesi():
                         "restano_scientifici":restano_scientifici,"esempi":tradotti[:15]})
     except Exception as e:
         return jsonify({"errore":str(e)[:200]})
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 

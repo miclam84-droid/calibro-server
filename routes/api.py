@@ -156,6 +156,36 @@ import ai_gateway as GW
 bp = Blueprint("api", __name__)
 
 
+# stati di provenienza che indicano una STIMA (non una misura/citazione verificata):
+# un nodo con questo stato non può valere "A" (Dato molecolare verificato).
+_STATI_STIMA = {"stimato_ai", "stimato"}
+
+
+def _classifica_evidence(data, ev_level):
+    """Classificatore evidence A/B/C — puro e testabile senza Flask/DB.
+
+    - ``ev_level``: livello già rilevato a monte (request.environ) o None.
+    - Onestà dei dati: un nodo la cui provenienza è una stima
+      (``data['provenienza']['stato']`` in _STATI_STIMA, es. 'stimato_AI')
+      NON può essere 'A' ("Dato molecolare verificato"), anche quando manca una
+      ``fonte`` top-level. In quel caso scende a 'C' ("Suggerimento AI non
+      verificato"), il tier più basso già previsto dal contratto.
+    - Per tutti gli altri casi il comportamento resta identico a prima.
+    """
+    d = data if isinstance(data, dict) else {}
+    _fonte = str(d.get("fonte", "")).lower()
+    _stato_prov = str((d.get("provenienza") or {}).get("stato", "")).lower()
+    _e_stima = _stato_prov in _STATI_STIMA
+    if ev_level is None:
+        if _e_stima:
+            return "C"
+        return "C" if ("ai" in _fonte or "matter lab ai" in _fonte) else "A"
+    # livello già rilevato: ma una stima non può spacciarsi per verificata
+    if _e_stima and ev_level == "A":
+        return "C"
+    return ev_level
+
+
 @bp.after_request
 def _inietta_evidence(response):
     """Confidence Layer: aggiunge il badge evidence a TUTTE le risposte del Flavour (/v1/abbina),
@@ -185,9 +215,7 @@ def _inietta_evidence(response):
                 _cambiato = locals().get("_tradotto", False)
                 # evidence: aggiungo se manca
                 if "evidence" not in data:
-                    _fonte = str(data.get("fonte", "")).lower()
-                    if _ev is None:
-                        _ev = "C" if ("ai" in _fonte or "matter lab ai" in _fonte) else "A"
+                    _ev = _classifica_evidence(data, _ev)
                     data["evidence"] = _ev
                     data["evidence_label"] = {"A": "Dato molecolare verificato",
                         "B": "Profilo ereditato da ingrediente equivalente",

@@ -44,6 +44,49 @@ def home2():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/scopri")
+@bp.route("/scopri/<ing>")
+def scopri(ing="limone"):
+    """FRONTEND-2.0 — schermata Scopri ("cosa ci sta bene, e perché").
+    Sistema di design congelato (matter2.css), cablata dal vivo a /v1/criteri.
+    Pagina nuova e isolata: non tocca /app (vecchio) né /app2."""
+    from flask import make_response
+    resp = make_response(render_template("scopri.html", ing=ing))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
+@bp.route("/ingrediente/<nome>")
+def scheda_ingrediente(nome):
+    """FRONTEND-2.0 — scheda ingrediente (Atlante): profilo sensoriale con provenienza
+    per asse + teaser abbinamenti. Cablata a /v1/profilo-gusto e /v1/criteri.
+    Pagina nuova e isolata: non tocca /app né /app2."""
+    from flask import make_response
+    resp = make_response(render_template("scheda.html", nome=nome))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
+@bp.route("/banco")
+@bp.route("/banco/cocktail")
+def banco_cocktail():
+    """FRONTEND-2.0 — Banco: calcolatore cocktail (diluizione/gradazione, metodo Dave Arnold).
+    Cablato a /v1/motore/cocktail. Pagina nuova e isolata: non tocca /app né /app2."""
+    from flask import make_response
+    resp = make_response(render_template("banco.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
+@bp.route("/admin/copertura")
+def admin_copertura():
+    """FRONTEND-2.0 — pannello admin 'Copertura gusto': rivedi i derivati USDA e scrivi col clic.
+    Gate ?s=ADMIN_SECRET (stesso schema degli altri admin). La scrittura parte dal browser admin."""
+    import os as _os, hmac as _hmac
+    from flask import make_response
+    if not _hmac.compare_digest(str(request.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    resp = make_response(render_template("copertura.html", sec=request.args.get("s", "")))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
 @bp.route("/manifest.json")
 def manifest():
     """PWA manifest."""

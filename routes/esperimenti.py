@@ -40,7 +40,8 @@ def get_esperimento(fenomeno_id):
                         "fenomeno_id": fenomeno_id})
     except Exception as e:
         _release_conn(conn)
-        return jsonify({"esperimento": None, "errore": str(e)[:100]}), 200
+        # Onestà dei dati: errore DB/server -> 500 (il "nessun esperimento" valido resta 200 sopra).
+        return jsonify({"esperimento": None, "errore": str(e)[:100]}), 500
 
 
 @bp_exp.route("/v1/esperimento/completa", methods=["POST"])
@@ -48,7 +49,8 @@ def completa_esperimento():
     """Marca un esperimento come completato e lo salva nel Quaderno.
     Body: {fenomeno_id, esito?, nota?}. device_id da header X-Device-Id."""
     if not DATABASE_URL:
-        return jsonify({"errore": "db non disponibile"}), 200
+        # POST che deve scrivere nel Quaderno: senza DB non riesce -> 503, non 200.
+        return jsonify({"errore": "db non disponibile"}), 503
     body = request.json or {}
     fenomeno_id = (body.get("fenomeno_id") or "").strip()
     device_id = (request.headers.get("X-Device-Id", "") or body.get("device_id", "") or "").strip()[:80]
@@ -68,7 +70,8 @@ def completa_esperimento():
         return jsonify({"ok": True, "messaggio": "Esperimento salvato nel Quaderno"})
     except Exception as e:
         conn.rollback(); _release_conn(conn)
-        return jsonify({"errore": str(e)[:100]}), 200
+        # Onestà dei dati: errore DB/server -> 500. Niente finto "ok" su scrittura fallita.
+        return jsonify({"errore": str(e)[:100]}), 500
 
 
 @bp_exp.route("/v1/esperimento/miei", methods=["GET"])
@@ -94,4 +97,5 @@ def miei_esperimenti():
             for r in righe]})
     except Exception as e:
         _release_conn(conn)
-        return jsonify({"esperimenti": [], "errore": str(e)[:100]}), 200
+        # Onestà dei dati: errore DB/server -> 500, non 200 con lista vuota.
+        return jsonify({"esperimenti": [], "errore": str(e)[:100]}), 500

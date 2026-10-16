@@ -120,6 +120,7 @@ from routes.scheda_gusto import bp_scheda; app.register_blueprint(bp_scheda)
 from routes.community import bp_community; app.register_blueprint(bp_community)
 from routes.menu_builder import bp_menu as menu_builder_bp; app.register_blueprint(menu_builder_bp)
 from routes.stato import bp as stato_bp; app.register_blueprint(stato_bp)
+from routes.audit_provenienza import bp_audit_prov; app.register_blueprint(bp_audit_prov)
 
 # ── OSS hooks ───────────────────────────────────────────
 import time as _time, traceback as _traceback
