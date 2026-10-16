@@ -103,7 +103,8 @@ def lista_quiz():
         return jsonify({"quiz": quiz, "totale": len(quiz)})
     except Exception as e:
         conn.rollback(); _release_conn(conn)
-        return jsonify({"quiz": [], "errore": str(e)}), 200
+        # Onestà dei dati: errore DB/server -> 500, non 200 con lista vuota.
+        return jsonify({"quiz": [], "errore": str(e)}), 500
 
 
 @bp.route("/v1/quiz/rispondi", methods=["POST"])
@@ -111,7 +112,8 @@ def rispondi_quiz():
     """Registra la risposta di un utente e dice se è corretta.
     Body: {quiz_id, risposta, device_id?}. device_id anche da header X-Device-Id."""
     if not DATABASE_URL:
-        return jsonify({"errore": "db non disponibile"}), 200
+        # POST che deve scrivere: senza DB l'operazione non riesce -> 503, non 200.
+        return jsonify({"errore": "db non disponibile"}), 503
     body = request.json or {}
     quiz_id = body.get("quiz_id")
     risposta = (body.get("risposta") or "").strip()
@@ -153,7 +155,8 @@ def rispondi_quiz():
         return jsonify({"superato": superato, "risposta_corretta": corretta, "insight": insight})
     except Exception as e:
         conn.rollback(); _release_conn(conn)
-        return jsonify({"errore": str(e)}), 200
+        # Onestà dei dati: errore DB/server -> 500.
+        return jsonify({"errore": str(e)}), 500
 
 
 @bp.route("/v1/quiz/progressi", methods=["GET"])
@@ -183,4 +186,5 @@ def progressi_quiz():
         })
     except Exception as e:
         conn.rollback(); _release_conn(conn)
-        return jsonify({"progressi": {}, "errore": str(e)}), 200
+        # Onestà dei dati: errore DB/server -> 500, non 200 con progressi vuoti.
+        return jsonify({"progressi": {}, "errore": str(e)}), 500
