@@ -304,7 +304,6 @@ def ricetta_per_cifra(exp_id):
 # registrato PRIMA di cifra_bp in app.py, quindi questo endpoint era IRRAGGIUNGIBILE: Cifra
 # chiedeva gli esperimenti dell'utente e riceveva la lista del corpus. Spostato sotto /v1/cifra/.
 @bp.route("/v1/cifra/ricette")
-@bp.route("/v1/ricette-cifra")  # alias di compatibilita, se Cifra usa ancora il vecchio nome
 def ricette_per_cifra():
     """Lista ricette (esperimenti) dell'utente — endpoint Cifra.
     Cifra passa X-User-Email + MATTER_SERVICE_KEY.
@@ -334,7 +333,6 @@ def ricette_per_cifra():
         return jsonify({"errore": str(e)}), 500
 
 @bp.route("/v1/sicurezza", methods=["POST", "GET"])
-@bp.route("/v1/sicurezza/", methods=["POST", "GET"])
 def sicurezza_stateless():
     """SEC15 — Endpoint stateless per Cifra.
     Calcola il profilo di sicurezza da parametri in input,
