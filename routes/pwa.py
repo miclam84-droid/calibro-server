@@ -75,6 +75,18 @@ def banco_cocktail():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/admin/copertura")
+def admin_copertura():
+    """FRONTEND-2.0 — pannello admin 'Copertura gusto': rivedi i derivati USDA e scrivi col clic.
+    Gate ?s=ADMIN_SECRET (stesso schema degli altri admin). La scrittura parte dal browser admin."""
+    import os as _os, hmac as _hmac
+    from flask import make_response
+    if not _hmac.compare_digest(str(request.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    resp = make_response(render_template("copertura.html", sec=request.args.get("s", "")))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
 @bp.route("/manifest.json")
 def manifest():
     """PWA manifest."""

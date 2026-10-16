@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Copertura gusto · Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+.cop-sum{display:flex; gap:18px; flex-wrap:wrap; margin-top:18px}
+.cop-sum .b{background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:12px 16px; min-width:120px}
+.cop-sum .n{font-family:var(--display); font-weight:800; font-size:26px; color:var(--green-action); font-variant-numeric:tabular-nums}
+.cop-sum .l{font-size:12px; color:var(--ink-soft)}
+.ing{background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 16px; margin-top:11px}
+.ing-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+.ing-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink)}
+.ing-usda{font-size:12px; color:var(--ink-soft)}
+.ax{display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--rule); font-size:14px}
+.ax:first-of-type{border-top:0; margin-top:6px}
+.ax-n{width:66px; color:var(--ink-soft)}
+.ax-v{font-variant-numeric:tabular-nums; color:var(--ink); font-weight:600}
+.ax-arrow{color:var(--ink-soft)}
+.ax-new{font-family:var(--display); font-weight:800; color:var(--green-action); font-variant-numeric:tabular-nums}
+.ax-tag{margin-left:auto; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 8px; border-radius:999px}
+.ax-tag.w{background:var(--tint); color:var(--green-signal)}
+.ax-tag.no{background:transparent; color:var(--ink-soft); border:1px solid var(--rule)}
+.bar{position:sticky; bottom:0; margin-top:20px; padding:14px 0; background:linear-gradient(to top, var(--bg3), rgba(211,225,213,.0)); display:flex; gap:12px; align-items:center}
+.bar button{font-family:var(--sans); font-weight:700; font-size:16px; color:#fff; background:var(--green-action); border:0; border-radius:12px; padding:14px 20px; cursor:pointer}
+.bar button[disabled]{opacity:.5; cursor:default}
+.bar .hint{font-size:13px; color:var(--ink-soft)}
+.ok{background:var(--tint); border:1px solid rgba(47,138,95,.3); color:var(--green-action); border-radius:var(--r); padding:14px 16px; margin-top:16px; font-weight:600}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="wordmark">Matter<span class="bench">Bench</span></div>
+    <div class="eyebrow">Admin · Copertura gusto</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">La scrittura parte dal tuo clic</div>
+    <h1>Copertura gusto</h1>
+    <p class="regola">Questi sono i gusti <b>derivabili da fonte misurata</b> (USDA), calcolati con la formula del server. Rivedili e, se ti convincono, clicca <b>scrivi</b>: entrano nel grafo taggati <b>derivato</b>, mai sopra un valore già tuo. Il banco resta il giudice finale.</p>
+  </header>
+
+  <div class="cop-sum" id="sum"></div>
+  <main id="lista"></main>
+  <div class="state" id="state" hidden></div>
+  <div class="ok" id="ok" hidden></div>
+
+  <div class="bar" id="bar" hidden>
+    <button id="scrivi">Scrivi i derivabili</button>
+    <span class="hint" id="hint"></span>
+  </div>
+
+  <footer>
+    Fonte: USDA FoodData Central (dominio pubblico). Ogni valore entra come <b>derivato</b> con il riferimento FDC; "fill-only" significa che non sovrascrive mai un valore che hai già corretto o verificato al banco.
+  </footer>
+</div>
+
+<script>
+const SEC = {{ sec|tojson }};
+const BASE = '/admin/deriva-gusti-usda';
+const ASSI = ['dolce','salato','grasso'];
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+
+const $sum=document.getElementById('sum'), $lista=document.getElementById('lista'),
+      $state=document.getElementById('state'), $bar=document.getElementById('bar'),
+      $hint=document.getElementById('hint'), $scrivi=document.getElementById('scrivi'), $ok=document.getElementById('ok');
+function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
+
+function render(d){
+  const camp = d.campione || [];
+  // conta gli scrivibili
+  let nScriv=0, nIng=0;
+  camp.forEach(r=>{ const w=ASSI.some(a=>r.assi&&r.assi[a]&&r.assi[a].scrivibile); if(w){nIng++; ASSI.forEach(a=>{ if(r.assi[a]&&r.assi[a].scrivibile) nScriv++; });} });
+  $sum.innerHTML = `
+    <div class="b"><div class="n">${camp.length}</div><div class="l">ingredienti mappati</div></div>
+    <div class="b"><div class="n">${nIng}</div><div class="l">con caselle da riempire</div></div>
+    <div class="b"><div class="n">${nScriv}</div><div class="l">valori scrivibili</div></div>`;
+
+  $lista.innerHTML = camp.map(r=>{
+    const righe = ASSI.map(a=>{
+      const x=r.assi&&r.assi[a]; if(!x) return '';
+      const w=x.scrivibile;
+      const vecchio = (x.vecchio===null||x.vecchio===undefined)?'—':x.vecchio;
+      return `<div class="ax"><span class="ax-n">${a}</span>
+        <span class="ax-v">${vecchio}</span><span class="ax-arrow">→</span><span class="ax-new">${x.nuovo_derivato}</span>
+        <span class="ax-tag ${w?'w':'no'}">${w?'scrive':'già fisso'}</span></div>`;
+    }).join('');
+    return `<article class="ing"><div class="ing-top"><span class="ing-nome">${esc(cap(r.nome))}</span><span class="ing-usda">${esc(r.nome_usda||'')} · FDC ${r.fdc_id}</span></div>${righe}</article>`;
+  }).join('');
+
+  if(nScriv>0){ $bar.hidden=false; $scrivi.textContent=`Scrivi i ${nScriv} valori derivabili`; $hint.textContent='entrano taggati "derivato", con backup'; }
+  else { $bar.hidden=true; setState('<b>Tutto già scritto.</b> Non ci sono caselle nuove da riempire con questi match.', false); }
+}
+
+async function dryRun(){
+  setState('Interrogo USDA e calcolo i valori… (qualche secondo)', false);
+  $lista.innerHTML=''; $bar.hidden=true; $ok.hidden=true;
+  try{
+    const r = await fetch(`${BASE}?s=${encodeURIComponent(SEC)}&limite=100`, {headers:{'Accept':'application/json'}});
+    if(!r.ok){ setState(`Il server ha risposto ${r.status}. Controlla il link (manca il codice admin?).`, true); return; }
+    const d = await r.json();
+    if(d.errore){ setState('Errore: '+esc(d.errore), true); return; }
+    $state.hidden=true; render(d);
+  }catch(e){ setState('Non riesco a raggiungere il server adesso.', true); }
+}
+
+$scrivi.addEventListener('click', async ()=>{
+  $scrivi.disabled=true; $scrivi.textContent='Scrivo…';
+  try{
+    const r = await fetch(`${BASE}?s=${encodeURIComponent(SEC)}&limite=100&esegui=1`, {headers:{'Accept':'application/json'}});
+    const d = await r.json();
+    if(!r.ok || d.errore){ setState('Scrittura non riuscita: '+esc(d.errore||r.status), true); $scrivi.disabled=false; $scrivi.textContent='Riprova'; return; }
+    $ok.hidden=false; $ok.innerHTML = `✓ Scritti <b>${d.scritti}</b> ingredienti nel grafo (derivato USDA, con backup). Ricarico la lista…`;
+    setTimeout(dryRun, 1400);
+  }catch(e){ setState('Scrittura non riuscita: rete.', true); $scrivi.disabled=false; $scrivi.textContent='Riprova'; }
+});
+
+dryRun();
+</script>
+</body>
+</html>
