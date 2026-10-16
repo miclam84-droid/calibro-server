@@ -6,7 +6,10 @@
 # L'AI compone, ma i numeri e i fenomeni vengono dal grafo — non inventati.
 # ============================================================
 import json as _j
+import logging
 import random
+
+_log = logging.getLogger(__name__)
 
 
 def _nodi_tecniche(db, disciplina):
@@ -242,11 +245,12 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
         + f"VOCE DEI TESTI (regole obbligatorie):\n"
         f"- OBBLIGATORIO: il JSON DEVE includere SEMPRE i campi 'punto_critico', 'esperimento', "
         f"'limite', 'twist'. Non ometterli MAI, anche se il piatto è semplice. Sono il cuore del metodo.\n"
-        f"- OBBLIGATORIO 'numeri': ogni piatto HA parametri misurabili (temperatura di cottura/servizio, "
-        f"percentuali, tempi, pesi, °Brix, pH, idratazione). Popola SEMPRE 'numeri' con ALMENO 2-3 valori "
-        f"reali e specifici del piatto. Se un numero non è nei dati del grafo, USA LA TUA CONOSCENZA "
-        f"professionale per darlo (es. spuma: temperatura 4°C e 0.5g lecitina/100ml; risotto: mantecatura "
-        f"a 55-60°C). MAI lasciare 'numeri' vuoto o null.\n"
+        f"- 'numeri': popola questo campo SOLO con le cifre presenti nei FENOMENI e TECNICHE qui sopra "
+        f"(temperatura di cottura/servizio, percentuali, tempi, pesi, °Brix, pH, idratazione). "
+        f"Estrai le cifre che trovi in quei dati e mettile qui come coppie parametro→valore. "
+        f"Se un parametro NON ha una cifra nei dati sopra, NON inventarla: descrivilo in modo qualitativo "
+        f"oppure ometti quel parametro. Mai scrivere una cifra non presente nei dati sopra: meglio pochi "
+        f"numeri veri che molti inventati.\n"
         f"- LIEVITATI (pizza, pane, focaccia, brioche): i 'numeri' DEVONO includere SEMPRE il tempo di "
         f"lievitazione REALISTICO e l'idratazione. La lievitazione è il parametro PIÙ importante: una "
         f"pizza napoletana lievita 8-24h (spesso 24-48h con biga/poolish), MAI 2 ore. Il pane 3-24h. "
@@ -404,6 +408,8 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
             pass
         # ── RED TEAM CONTRATTO: verifica che non ci siano tecniche vietate per la famiglia ──
         # (es. 'gratinare' in un tiramisù). Se le trova, marca la ricetta come incoerente.
+        # Onestà: se il controllo non può girare NON si fa passare la ricetta in
+        # silenzio come se fosse coerente — si logga e la si marca come non verificata.
         try:
             from contratto_piatto import valida_coerenza
             _coe = valida_coerenza(richiesta, ricetta)
@@ -411,8 +417,10 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
             if not _coe.get("ok", True):
                 ricetta["_incoerente"] = True
                 ricetta["_motivo_incoerenza"] = _coe.get("problemi", [])
-        except Exception:
-            pass
+        except Exception as _e:
+            _log.warning("red-team contratto non eseguito per %r: %s", richiesta, _e)
+            ricetta["_coerenza"] = {"ok": None, "errore": "controllo non eseguito"}
+            ricetta["_coerenza_non_verificata"] = True
         # FALLBACK: se l'AI ha omesso il punto_critico, lo derivo dal fenomeno principale
         # (non lasciarlo mai vuoto: è il cuore del metodo Matter).
         if not (ricetta.get("punto_critico") or "").strip():
@@ -468,11 +476,22 @@ def genera_ricetta(db, richiesta, disciplina="cucina", lang="it"):
             def _norm_k(k):
                 return "".join(c for c in k.lower() if c.isalpha())
             _chiavi_norm = {_norm_k(k) for k in _num.keys()}
+            _ripiego = []
             for _k, _v in _defaults.items():
                 if _norm_k(_k) not in _chiavi_norm and len(_num) < 4:
                     _num[_k] = _v
                     _chiavi_norm.add(_norm_k(_k))
+                    _ripiego.append(_k)
             ricetta["numeri"] = _num
+            # Onestà dei dati: questi numeri sono ripiego di categoria (range tipici del
+            # mestiere), NON ricavati dai dati del grafo per questo piatto. Si marcano come
+            # tali, così non vengono presentati come verificati accanto ai numeri veri.
+            if _ripiego:
+                ricetta["_numeri_ripiego"] = _ripiego
+                ricetta["_numeri_ripiego_nota"] = (
+                    "Valori orientativi di categoria, non verificati per questo piatto: "
+                    "controllali al banco."
+                )
         return ricetta
     except _j.JSONDecodeError as e:
         return {"errore": f"JSON non valido: {e}", "raw": raw[:300] if 'raw' in dir() else ""}
