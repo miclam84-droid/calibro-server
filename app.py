@@ -116,6 +116,7 @@ from routes.protocollo import bp_protocollo; app.register_blueprint(bp_protocoll
 from routes.admin_migra_quaderno import bp_migra_q; app.register_blueprint(bp_migra_q)
 from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(bp_gusti_search)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
+from routes.tassonomia_wikidata import bp_tax; app.register_blueprint(bp_tax)
 from routes.registra_verifica import bp_verifica; app.register_blueprint(bp_verifica)
 from routes.scheda_gusto import bp_scheda; app.register_blueprint(bp_scheda)
 from routes.community import bp_community; app.register_blueprint(bp_community)

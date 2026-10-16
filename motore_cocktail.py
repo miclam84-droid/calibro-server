@@ -20,6 +20,11 @@ def progetta_cocktail(volume_finale_ml=90, gradazione_voluta=22, tecnica="stirre
     alcol_ml = round(volume_finale_ml * gradazione_voluta/100)
     parte_alcolica = round(alcol_ml / (gradazione_ingredienti/100))
     acqua_diluizione = volume_finale_ml - volume_pre_dil
+    # Conservazione dell'alcol (Dave Arnold, Liquid Intelligence - cap. su proof/diluizione):
+    # la diluizione aggiunge SOLO acqua, l'alcol puro e' invariato. Quindi la gradazione PRIMA della
+    # diluizione e' piu' alta, ricavabile per pura algebra (nessuna costante nuova):
+    #   gradazione_pre = alcol_ml / volume_pre_dil * 100 = gradazione_voluta * volume_finale / volume_pre_dil
+    gradazione_pre_dil = round(alcol_ml / volume_pre_dil * 100, 1) if volume_pre_dil else 0.0
     return {
         "obiettivo": f"{volume_finale_ml}ml a {gradazione_voluta}% vol · tecnica {t['nome']}",
         "tecnica": {"nome": t["nome"], "diluizione": f"{dil}%", "quando": t["quando"]},
@@ -27,6 +32,14 @@ def progetta_cocktail(volume_finale_ml=90, gradazione_voluta=22, tecnica="stirre
             "parte_alcolica": f"~{parte_alcolica}ml (distillati/liquori a {gradazione_ingredienti}%)",
             "acqua_da_diluizione": f"~{acqua_diluizione}ml (dal ghiaccio, NON aggiunta)",
             "volume_finale": f"{volume_finale_ml}ml",
+        },
+        "gradazione": {
+            "finale_voluta": f"{gradazione_voluta}% vol",
+            # fondata su conservazione dell'alcol (tecnica documentata di Arnold), non su un numero inventato
+            "prima_della_diluizione": f"~{gradazione_pre_dil}% vol",
+            "nota": "Costruisci il mix non diluito a ~"
+                    f"{gradazione_pre_dil}% vol: la diluizione ({dil}%) lo porta al {gradazione_voluta}% finale. "
+                    "L'alcol puro non cambia con la diluizione (si aggiunge solo acqua).",
         },
         "ghiaccio": "Cubi grandi e freddi (-18°C) per stirred: diluiscono meno e più lento. Ghiaccio "
                     "piccolo/umido = diluizione incontrollata.",
