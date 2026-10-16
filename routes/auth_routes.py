@@ -2,7 +2,7 @@
 # routes/auth_routes.py — endpoint autenticazione utenti.
 # Dipende da: db, auth, notifiche, utils.
 # ============================================================
-import os, json, secrets
+import os, json, secrets, logging
 from flask import Blueprint, request, jsonify
 
 from db import _get_conn, _release_conn
@@ -14,6 +14,22 @@ from utils import _err, _check_rate_limit
 from config import DATABASE_URL
 
 bp = Blueprint("auth_routes", __name__)
+_log = logging.getLogger(__name__)
+
+
+def _matter_base_url():
+    """Base URL pubblica (MATTER_BASE_URL) per i link di verifica/reset nelle email.
+
+    Fail-loud: se la variabile d'ambiente manca NON si ricade in silenzio su un host
+    fisso (genererebbe link verso il posto sbagliato, bug invisibile). Si logga un
+    errore chiaro e si restituisce None; il chiamante decide se fallire esplicitamente
+    (link essenziale) o saltare l'invio (email accessoria)."""
+    base = (os.environ.get("MATTER_BASE_URL") or "").strip()
+    if not base:
+        _log.error("MATTER_BASE_URL non configurata: impossibile generare link corretti "
+                   "(verifica email / reset password). Configurare la variabile d'ambiente.")
+        return None
+    return base.rstrip("/")
 
 
 @bp.route("/v1/auth/registra", methods=["POST"])
@@ -31,6 +47,11 @@ def registra():
         return jsonify({"errore":"password minimo 8 caratteri"}), 400
     if not DATABASE_URL:
         return jsonify({"errore":"database non disponibile"}), 503
+    # Il link di verifica è ESSENZIALE: senza base URL corretta l'email è inutile.
+    # Fail-loud PRIMA di creare l'account, così non restano utenti orfani senza email.
+    base = _matter_base_url()
+    if not base:
+        return jsonify({"errore":"configurazione server incompleta: MATTER_BASE_URL mancante"}), 503
     try:
         import psycopg2, secrets as _sec
         conn = _get_conn()
@@ -56,7 +77,6 @@ def registra():
                              utm_campaign=_b.get("utm_campaign"), utm_content=_b.get("utm_content"))
         except Exception:
             pass
-        base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
         link = f"{base}/app?verifica={tok}"
         lang_reg = request.json.get("lang","it") if request.json else "it"
         if lang_reg == "en":
@@ -135,7 +155,7 @@ def verifica_email_route():
         conn.commit(); cur.close(); _release_conn(conn)
         # Invia email di benvenuto
         lang_w = request.args.get("lang","it")
-        base_w = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
+        base_w = _matter_base_url()  # accessoria: se manca, loggato e saltata (vedi sotto)
         if lang_w == "en":
             _w_sub  = "Welcome to Matter Lab"
             _w_body = (
@@ -166,10 +186,16 @@ def verifica_email_route():
                 f"border-radius:8px;text-decoration:none;font-family:sans-serif;font-weight:600'>Apri Matter Lab</a></p>"
                 f"<p style='font-family:sans-serif;color:#999;font-size:13px'>Science & Craft</p>"
             )
-        try:
-            _invia_email_resend(to=email, subject=_w_sub, body_html=_w_body)
-        except Exception:
-            pass  # non bloccare il login se l'email di benvenuto fallisce
+        # L'account è già attivo: l'email di benvenuto è accessoria. Se la base URL
+        # manca NON inviamo un link verso un host errato (meglio nessuna email) — il
+        # guasto è già stato loggato da _matter_base_url(), non sparisce in silenzio.
+        if base_w:
+            try:
+                _invia_email_resend(to=email, subject=_w_sub, body_html=_w_body)
+            except Exception:
+                pass  # non bloccare il login se l'email di benvenuto fallisce
+        else:
+            _log.warning("Email di benvenuto non inviata a %s: MATTER_BASE_URL mancante.", email)
         lang_conf = request.args.get("lang", request.json.get("lang","it") if request.json else "it")
         _conf_msg = {"en":"Email confirmed. Welcome to Matter Lab.", "es":"Email confirmado. Bienvenido a Matter Lab."}.get(lang_conf, "Email confermata. Benvenuto in Matter Lab.")
         return jsonify({"ok":True,"token":token_sess,"piano":piano or "free","messaggio":_conf_msg})
@@ -231,6 +257,12 @@ def reset_richiesta():
     email = (body.get("email","")).strip().lower()
     if not email or not DATABASE_URL:
         return jsonify({"ok":True,"messaggio":"Se l'email è registrata riceverai un link."})
+    # Il link di reset è ESSENZIALE. Se la base URL manca, fail-loud con 503: è un
+    # guasto di configurazione indipendente dall'email (il controllo avviene PRIMA di
+    # cercare l'utente, quindi non rivela se l'email è registrata).
+    base = _matter_base_url()
+    if not base:
+        return jsonify({"errore":"configurazione server incompleta: MATTER_BASE_URL mancante"}), 503
     try:
         import psycopg2, secrets as _sec
         conn = _get_conn()
@@ -246,7 +278,6 @@ def reset_richiesta():
             tok = _sec.token_urlsafe(32)
             cur.execute("INSERT INTO reset_token (token,email) VALUES (%s,%s)", (tok, email))
             conn.commit()
-            base = os.environ.get("MATTER_BASE_URL","https://web-production-79457.up.railway.app")
             link = f"{base}/app?reset={tok}"
             _invia_email_resend(
                 to=email,
