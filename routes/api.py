@@ -1061,7 +1061,8 @@ def composti_ingrediente(ingrediente):
         })
     except Exception as e:
         try: _release_conn(conn)
-        except: pass
+        except Exception as _rel_err:
+            print(f"[API _release_conn] rilascio connessione fallito: {_rel_err}", flush=True)
         return jsonify({"errore": str(e), "composti": []}), 500
 
 
@@ -1776,13 +1777,19 @@ def foto_analisi():
         img_bytes = f.read()
         media_type = f.content_type or "image/jpeg"
     elif request.is_json and request.json.get("immagine_b64"):
-        import base64
+        import base64, binascii
         raw_b64 = request.json["immagine_b64"]
+        # input malformato → 400, non 500: il campo deve essere una stringa base64
+        if not isinstance(raw_b64, str):
+            return jsonify({"errore": "'immagine_b64' deve essere una stringa base64"}), 400
         # gestisce sia il raw base64 sia il data-url
         if "," in raw_b64:
             header, raw_b64 = raw_b64.split(",", 1)
             media_type = header.split(":")[1].split(";")[0] if ":" in header else "image/jpeg"
-        img_bytes = base64.b64decode(raw_b64)
+        try:
+            img_bytes = base64.b64decode(raw_b64)
+        except (binascii.Error, ValueError):
+            return jsonify({"errore": "'immagine_b64' non è base64 valido"}), 400
     if not img_bytes:
         return jsonify({"errore": "immagine mancante — invia 'immagine' (multipart) o 'immagine_b64' (base64)"}), 400
 
@@ -1884,12 +1891,22 @@ def riconosci_ingredienti():
             for f in request.files.getlist(key):
                 imgs.append((f.read(), f.content_type or "image/jpeg"))
     elif request.is_json and request.json.get("immagini_b64"):
-        for raw in request.json["immagini_b64"][:6]:
+        import binascii
+        lista_b64 = request.json["immagini_b64"]
+        # input malformato → 400, non 500: deve essere una lista di stringhe base64
+        if not isinstance(lista_b64, list):
+            return jsonify({"errore": "'immagini_b64' deve essere una lista di stringhe base64"}), 400
+        for raw in lista_b64[:6]:
+            if not isinstance(raw, str):
+                return jsonify({"errore": "ogni elemento di 'immagini_b64' deve essere una stringa base64"}), 400
             mt = "image/jpeg"
             if "," in raw:
                 header, raw = raw.split(",", 1)
                 mt = header.split(":")[1].split(";")[0] if ":" in header else "image/jpeg"
-            imgs.append((base64.b64decode(raw), mt))
+            try:
+                imgs.append((base64.b64decode(raw), mt))
+            except (binascii.Error, ValueError):
+                return jsonify({"errore": "'immagini_b64' contiene base64 non valido"}), 400
     imgs = imgs[:6]
     if not imgs:
         return jsonify({"errore": "nessuna immagine — invia 'immagini' (multipart) o 'immagini_b64' (lista base64)"}), 400
@@ -4949,7 +4966,8 @@ def diagnosi_interattiva():
                                  "fenomeni":[f.get("nome") if isinstance(f,dict) else f for f in _dd.get("fenomeni",[])]}
                 if not disciplina and _dd.get("disciplina"): disciplina = _dd.get("disciplina")
             _cu.close();_c.close()
-        except: pass
+        except Exception as _ctx_err:
+            print(f"[API diagnosi] contesto protocollo non caricato: {_ctx_err}", flush=True)
     if not sintomo: return jsonify({"errore":"manca il sintomo"}), 400
     # DEDUCO la disciplina dal sintomo se non fornita (fix routing: "cornicione" e panificazione, non vino)
     if not disciplina:
@@ -5010,7 +5028,8 @@ def diagnosi_interattiva():
                 import re as _re
                 m=_re.search(r'\{.*\}',tx,_re.DOTALL)
                 if m: risultato.update(json.loads(m.group(0)))
-            except: pass
+            except Exception as _ai_err:
+                print(f"[API diagnosi] arricchimento AI fallito: {_ai_err}", flush=True)
         # 3. aggancio la causalita del fenomeno (per il tempo Comprensione)
         fen = (risultato.get("fenomeno","") or "").strip()
         if fen:
@@ -5123,7 +5142,8 @@ def composer_simula():
                 import re as _re
                 m=_re.search(r'\{.*\}',tx,_re.DOTALL)
                 if m: risultato.update(json.loads(m.group(0)))
-            except: pass
+            except Exception as _ai_err:
+                print(f"[API simula] arricchimento AI fallito: {_ai_err}", flush=True)
         risultato["basato_su_causalita"] = len(fenomeni_ctx)
         cur.close()
         return jsonify(risultato)
