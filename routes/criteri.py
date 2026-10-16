@@ -288,6 +288,115 @@ def _contrasto(cur, ing_id, limit=6):
 # sostituti resta nel gruppo bloccato-dai-dati (vedi PULIZIA-BACKEND-DIARIO / mappa dati).
 
 
+# --- RAGGRUPPAMENTO PER FAMIGLIA (rilevanza della sola base_aromatica) -----------
+# PROBLEMA REALE: la base_aromatica di un agrume (es. "limone") tornava affogata di
+# varieta' quasi-duplicate dello stesso ingrediente — lime, lime kaffir, lime italiano,
+# lime messicano, arancia, arancia della California, arancia israeliana, arancia scimmia...
+# Il filtro _pulisci_abbinamenti cappa le famiglie note (_FAMIGLIA) ma riconosce solo i
+# nomi canonici ("lime", "arancia"): i regionalismi/varieta' NON mappati gli sfuggono.
+# Un professionista vuole leggere "lime, arancia, mandarino, pompelmo", non venti
+# regionalismi della stessa famiglia.
+#
+# CRITERIO (puro, dichiarato, CONSERVATIVO — vedi tesi ONESTA' DEI DATI):
+#   1) La CHIAVE DI FAMIGLIA di un partner e' la sua PRIMA PAROLA SIGNIFICATIVA
+#      (minuscola, senza punteggiatura; eventuali articoli/preposizioni iniziali saltati).
+#        "arancia della California", "arancia israeliana", "arancia scimmia" -> "arancia"
+#        "lime", "lime kaffir", "lime italiano", "lime messicano"            -> "lime"
+#   2) ECCEZIONE "X di Y" (conservativa, allarga la chiave => accorpa di MENO): se dopo la
+#      testa c'e' SUBITO un complemento con "di"/"d'" ("olio di oliva", "succo di limone"),
+#      la chiave include anche la parola del complemento ("olio oliva", "succo limone").
+#      Li' la "Y" e' l'identita' vera dell'ingrediente, non un regionalismo: accorparli
+#      nasconderebbe un ingrediente DIVERSO. I qualificatori regionali ("della", "al",
+#      "delle"...) NON attivano l'eccezione: "arancia della California" resta "arancia".
+#   3) Di ogni famiglia si tiene UN SOLO rappresentante: prima il nome piu' SEMPLICE
+#      (meno parole: "lime" batte "lime kaffir", "arancia" batte "arancia israeliana");
+#      a parita' di parole, composti_condivisi piu' alto; poi robustezza piu' alta
+#      (Alta>Media>Esplorativa); poi il primo apparso (lista gia' per rilevanza decrescente).
+#   4) Se due partner NON condividono la chiave, restano ENTRAMBI. Meglio un duplicato di
+#      troppo che nascondere un ingrediente legittimo e diverso. Nessuna blacklist, nessuno
+#      stemming aggressivo: "mandarino" e "satsuma" (parole diverse) NON vengono accorpati
+#      — decidere che sono "la stessa cosa" e' un giudizio che spetta a Michele a mano.
+# Agisce SOLO su base_aromatica (tradizione/contrasto non passano di qui) e NON cambia la
+# forma del JSON: cambiano solo QUALI partner compaiono e il conteggio relativo.
+
+import re as _re_fam
+
+# articoli/preposizioni da saltare per trovare la "testa" (prima parola significativa)
+_FAM_STOP = {
+    "il", "lo", "la", "i", "gli", "le", "l", "un", "uno", "una",
+    "di", "del", "dello", "della", "dei", "degli", "delle", "d",
+    "al", "allo", "alla", "ai", "agli", "alle", "dal", "dalla",
+    "e", "con", "in", "da", "the", "of",
+}
+# connettori che introducono un complemento ESSENZIALE "X di Y" (non un regionalismo)
+_FAM_DI = {"di", "d"}
+# ordine di preferenza della robustezza a parita' di composti condivisi
+_FAM_ROB_RANK = {"Alta": 3, "Media": 2, "Esplorativa": 1}
+
+
+def _parole_sig(nome):
+    """Parole significative (minuscole, senza punteggiatura) di un nome, in ordine.
+    Spezza anche sull'apostrofo: "d'oliva" -> ["d", "oliva"]. Funzione pura."""
+    return _re_fam.findall(r"[a-zàâäèéêëìíîïòóôöùúûü]+", (nome or "").lower())
+
+
+def _chiave_famiglia(nome):
+    """Chiave di famiglia di un partner (vedi criterio sopra). Pura: stesso nome ->
+    stessa chiave, nessun DB. Regionalismi della stessa radice -> stessa chiave;
+    complementi 'X di Y' -> chiave allargata (restano distinti)."""
+    tok = _parole_sig(nome)
+    i = 0
+    while i < len(tok) and tok[i] in _FAM_STOP:
+        i += 1
+    if i >= len(tok):
+        # nome fatto di sole stopword (caso limite): non accorpare, usa il nome grezzo
+        return (nome or "").strip().lower()
+    testa = tok[i]
+    # eccezione "X di Y": il complemento e' l'identita' vera -> entra nella chiave
+    if i + 1 < len(tok) and tok[i + 1] in _FAM_DI:
+        j = i + 2
+        while j < len(tok) and tok[j] in _FAM_STOP:
+            j += 1
+        if j < len(tok):
+            return testa + " " + tok[j]
+    return testa
+
+
+def _rappresentante_migliore(a, b):
+    """True se 'a' e' un rappresentante migliore di 'b' per la sua famiglia:
+    prima il nome piu' SEMPLICE (meno parole significative: "lime" batte "lime kaffir",
+    "arancia" batte "arancia della California" — un professionista legge il nome base,
+    non la varieta' esotica); a parita' di parole, piu' composti_condivisi; a parita'
+    ancora, robustezza piu' alta. Pura."""
+    na = len(_parole_sig(a.get("ingrediente") or ""))
+    nb = len(_parole_sig(b.get("ingrediente") or ""))
+    if na != nb:
+        return na < nb
+    ca = int(((a.get("evidenza") or {}).get("composti_condivisi")) or 0)
+    cb = int(((b.get("evidenza") or {}).get("composti_condivisi")) or 0)
+    if ca != cb:
+        return ca > cb
+    return _FAM_ROB_RANK.get(a.get("robustezza"), 0) > _FAM_ROB_RANK.get(b.get("robustezza"), 0)
+
+
+def _raggruppa_famiglia(relazioni):
+    """Collassa le varieta' della stessa famiglia tenendo il miglior rappresentante.
+    Pura e order-preserving (riemette nell'ordine di prima comparsa di ogni famiglia,
+    che e' gia' per rilevanza decrescente). Vedi criterio nel commento sopra."""
+    migliore = {}   # chiave_famiglia -> relazione scelta
+    pos = {}        # chiave_famiglia -> indice di prima comparsa (per l'ordine finale)
+    for idx, rel in enumerate(relazioni):
+        if not isinstance(rel, dict):
+            continue
+        chiave = _chiave_famiglia(rel.get("ingrediente") or "")
+        if chiave not in migliore:
+            migliore[chiave] = rel
+            pos[chiave] = idx
+        elif _rappresentante_migliore(rel, migliore[chiave]):
+            migliore[chiave] = rel  # tengo la posizione di prima comparsa
+    return [migliore[k] for k in sorted(migliore, key=lambda k: pos[k])]
+
+
 @bp.route("/v1/criteri/<ingrediente>", methods=["GET"])
 def criteri(ingrediente):
     """Relazioni di un ingrediente, per criterio, con evidenza reale. NIENTE percentuale di abbinabilita'."""
@@ -313,6 +422,11 @@ def criteri(ingrediente):
             base = _pulisci_abbinamenti(base, campo="ingrediente", max_famiglia=3, ingrediente_base=ing_nome)
         except Exception:
             pass
+        # RILEVANZA (conservativa): collassa le varieta' quasi-duplicate della stessa
+        # famiglia nella SOLA base_aromatica (lime*, arancia* -> un rappresentante).
+        # Dichiarato e testabile: vedi _raggruppa_famiglia. Non tocca tradizione/contrasto
+        # e non cambia la forma del JSON, solo QUALI partner restano e il conteggio.
+        base = _raggruppa_famiglia(base)
         base = base[:12]
         nomi_base = {r["ingrediente"].lower() for r in base}
         trad = [r for r in trad if r["ingrediente"].lower() not in nomi_base]
