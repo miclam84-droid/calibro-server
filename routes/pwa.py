@@ -116,6 +116,18 @@ def foto_ingrediente(nome):
     _FOTO_ING_CACHE[chiave] = dato
     return _foto_resp(dato)
 
+@bp.route("/admin/tassonomia")
+def admin_tassonomia():
+    """FRONTEND-2.0 — pannello admin 'Tassonomia': classifica gli ingredienti da Wikidata (CC0)
+    a blocchi, col clic. Gate ?s=ADMIN_SECRET. La scrittura parte dal browser admin."""
+    import os as _os, hmac as _hmac
+    from flask import make_response
+    if not _hmac.compare_digest(str(request.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    resp = make_response(render_template("tassonomia.html", sec=request.args.get("s", "")))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
 @bp.route("/admin/copertura")
 def admin_copertura():
     """FRONTEND-2.0 — pannello admin 'Copertura gusto': rivedi i derivati USDA e scrivi col clic.
