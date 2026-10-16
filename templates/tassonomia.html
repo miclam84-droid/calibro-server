@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tassonomia · Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+.sum{display:flex; gap:14px; flex-wrap:wrap; margin-top:16px}
+.sum .b{background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:11px 15px; min-width:110px}
+.sum .n{font-family:var(--display); font-weight:800; font-size:24px; color:var(--green-action); font-variant-numeric:tabular-nums}
+.sum .l{font-size:12px; color:var(--ink-soft)}
+.ing{background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:12px 15px; margin-top:10px}
+.ing-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+.ing-nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink)}
+.ing-qid{font-size:11px; color:var(--ink-soft)}
+.ing-tax{margin-top:5px; font-size:14px; color:var(--ink-soft)}
+.ing-tax b{color:var(--green-action); font-weight:700}
+.ing-tax .sci{font-style:italic}
+.bar{position:sticky; bottom:0; margin-top:20px; padding:14px 0; background:linear-gradient(to top, var(--bg3), rgba(211,225,213,0)); display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.bar button{font-family:var(--sans); font-weight:700; font-size:15px; border-radius:11px; padding:12px 18px; cursor:pointer; border:1px solid var(--card-border); background:var(--card); color:var(--ink)}
+.bar button.primary{color:#fff; background:var(--green-action); border-color:var(--green-action)}
+.bar button[disabled]{opacity:.5; cursor:default}
+.bar .hint{font-size:13px; color:var(--ink-soft)}
+.ok{background:var(--tint); border:1px solid rgba(47,138,95,.3); color:var(--green-action); border-radius:var(--r); padding:13px 16px; margin-top:14px; font-weight:600}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="wordmark">Matter<span class="bench">Bench</span></div>
+    <div class="eyebrow">Admin · Tassonomia</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Classificazione botanica da Wikidata</div>
+    <h1>Tassonomia</h1>
+    <p class="regola">Blocco per blocco: per ogni ingrediente, Matter cerca su <b>Wikidata (CC0)</b> famiglia, nome scientifico e origine. Rivedi il blocco e, se ti convince, <b>scrivi</b>: entra taggato <b>classificato</b>, mai sopra uno già fatto. Fonte pubblica, uso libero.</p>
+  </header>
+
+  <div class="sum">
+    <div class="b"><div class="n" id="s-off">0</div><div class="l">da qui in poi</div></div>
+    <div class="b"><div class="n" id="s-tro">0</div><div class="l">classificati nel blocco</div></div>
+    <div class="b"><div class="n" id="s-tot">0</div><div class="l">scritti finora</div></div>
+  </div>
+  <div class="state" id="state" hidden></div>
+  <main id="lista"></main>
+  <div class="ok" id="ok" hidden></div>
+
+  <div class="bar">
+    <button id="mostra" class="primary">Mostra prossimo blocco</button>
+    <button id="scrivi" disabled>Scrivi questo blocco</button>
+    <button id="salta" disabled>Salta blocco</button>
+    <span class="hint" id="hint">Wikidata è lento: un blocco alla volta (25 ingredienti).</span>
+  </div>
+
+  <footer>
+    Fonte: Wikidata (CC0, dominio pubblico) — uso commerciale libero, nessuna attribuzione obbligatoria. Ogni valore entra come <b>classificato</b> col riferimento QID; "fill-only" = non ritocca un ingrediente già classificato. Si lavora a blocchi perché Wikidata ha un rate-limit.
+  </footer>
+</div>
+
+<script>
+const SEC = {{ sec|tojson }};
+const BASE = '/admin/ingerisci-tassonomia-wikidata';
+const BATCH = 25;
+let OFFSET = 0, totScritti = 0, bloccoCorrente = null;
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+
+const $lista=document.getElementById('lista'), $state=document.getElementById('state'), $ok=document.getElementById('ok'),
+      $mostra=document.getElementById('mostra'), $scrivi=document.getElementById('scrivi'), $salta=document.getElementById('salta'),
+      $hint=document.getElementById('hint'), $off=document.getElementById('s-off'), $tro=document.getElementById('s-tro'), $tot=document.getElementById('s-tot');
+function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
+
+function render(camp){
+  $lista.innerHTML = camp.map(r=>{
+    const t=r.tassonomia||{};
+    const parts=[];
+    if(t.famiglia) parts.push(`<b>${esc(t.famiglia)}</b>`);
+    if(t.nome_scientifico) parts.push(`<span class="sci">${esc(t.nome_scientifico)}</span>`);
+    if(t.genere) parts.push(`genere ${esc(t.genere)}`);
+    if(t.origine) parts.push(`origine: ${esc(t.origine)}`);
+    return `<article class="ing"><div class="ing-top"><span class="ing-nome">${esc(cap(r.nome))}</span><span class="ing-qid">${esc(r.qid||'')}</span></div><div class="ing-tax">${parts.join(' · ')||'—'}</div></article>`;
+  }).join('');
+}
+
+async function chiama(esegui){
+  const u = `${BASE}?s=${encodeURIComponent(SEC)}&offset=${OFFSET}&limite=${BATCH}${esegui?'&esegui=1':''}`;
+  const r = await fetch(u, {headers:{'Accept':'application/json'}});
+  if(!r.ok){ const d=await r.json().catch(()=>({})); throw new Error(d.errore||('HTTP '+r.status)); }
+  return r.json();
+}
+
+document.getElementById('mostra').addEventListener('click', async ()=>{
+  $ok.hidden=true; $scrivi.disabled=true; $salta.disabled=true; $mostra.disabled=true;
+  $off.textContent=OFFSET;
+  setState('Interrogo Wikidata sul blocco… (può richiedere qualche secondo)', false);
+  try{
+    const d = await chiama(false);
+    bloccoCorrente = d;
+    $state.hidden=true;
+    render(d.campione||[]);
+    $tro.textContent = (d.campione||[]).length;
+    const fine = (d.esaminati||0) < BATCH;
+    if((d.campione||[]).length>0){ $scrivi.disabled=false; $hint.textContent=`${d.campione.length} classificati, ${d.gia_classificati||0} già fatti, ${d.senza_match_taxon||0} senza taxon.`; }
+    else setState(`Nessuna classificazione in questo blocco (${d.gia_classificati||0} già fatti, ${d.senza_match_taxon||0} senza taxon su Wikidata).`, false);
+    $salta.disabled=false;
+    if(fine) $hint.textContent += ' — ultimo blocco.';
+  }catch(e){ setState('Errore: '+esc(e.message), true); }
+  $mostra.disabled=false;
+});
+
+document.getElementById('scrivi').addEventListener('click', async ()=>{
+  $scrivi.disabled=true; $salta.disabled=true; $mostra.disabled=true;
+  setState('Scrivo nel grafo…', false);
+  try{
+    const d = await chiama(true);
+    totScritti += (d.scritti||0); $tot.textContent=totScritti;
+    $state.hidden=true;
+    $ok.hidden=false; $ok.innerHTML = `✓ Scritti <b>${d.scritti||0}</b> ingredienti (classificato, Wikidata CC0). Avanzo al blocco successivo…`;
+    OFFSET += BATCH; $off.textContent=OFFSET; $lista.innerHTML='';
+  }catch(e){ setState('Errore in scrittura: '+esc(e.message), true); }
+  $mostra.disabled=false;
+});
+
+document.getElementById('salta').addEventListener('click', ()=>{
+  OFFSET += BATCH; $off.textContent=OFFSET; $lista.innerHTML=''; $ok.hidden=true;
+  $scrivi.disabled=true; $salta.disabled=true; $tro.textContent='0';
+});
+</script>
+</body>
+</html>
