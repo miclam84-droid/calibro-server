@@ -4,10 +4,11 @@ Il "cervello" (proposte dal Flavor Network) è già in routes/api.py (/v1/menu/p
 Qui: salvare un menu creato dall'utente, recuperarlo, generarne il QR.
 V2 (analisi equilibrio del menu-insieme) arriverà come endpoint separato.
 """
-import os, json, io, uuid, time, hmac
+import os, json, io, uuid, time, hmac, logging
 from flask import Blueprint, request, jsonify, send_file
 
 bp_menu = Blueprint("menu_builder", __name__)
+_log = logging.getLogger(__name__)
 
 
 def _conn():
@@ -845,7 +846,9 @@ def menu_pdf(mid):
                 _lr = _clc.fetchone(); _clc.close(); _release(_cl)
                 _lingua_menu = (_lr[0] if _lr and _lr[0] in ("it","en","es") else "it")
             except Exception:
-                pass
+                # fallback non pericoloso: la lingua ricade su "it". Lo si logga comunque
+                # (niente swallow silenzioso), ma non blocca la legenda.
+                _log.debug("menu %s: lingua non determinata, fallback 'it'", mid, exc_info=True)
             _map_leg = {a["id"]: a for a in ALLERGENI_UE}
             _voci_leg = ["<b>%d</b> %s" % (i, _map_leg[i][_lingua_menu]) for i in sorted(_allergeni_usati) if i in _map_leg]
             story.append(Spacer(1, 16))
@@ -862,7 +865,13 @@ def menu_pdf(mid):
                          "es": "Los números junto a cada plato indican los alérgenos presentes (Reg. UE 1169/2011)."}.get(_lingua_menu)
             story.append(Paragraph(_nota_all, st_all))
         except Exception:
-            pass
+            # LEGALE (Reg. UE 1169/2011): la legenda allergeni è obbligatoria. Se la sua
+            # costruzione fallisce NON deve sparire in silenzio: un menu senza legenda è un
+            # difetto di conformità, non un dettaglio estetico. Qui si LOGGA l'errore (Sentry
+            # lo intercetta) invece di ingoiarlo. Scelta conservativa: non si rilancia, per non
+            # far fallire l'intero PDF per un intoppo sulla legenda — ma l'errore è ora visibile.
+            _log.error("menu %s: impossibile costruire la legenda allergeni (obbligo UE 1169/2011); "
+                       "PDF generato SENZA legenda, verificare", mid, exc_info=True)
 
     # firma d'identità discreta: linea + dicitura Matter Bench (fa capire che è una carta progettata
     # con criteri scientifici, senza invadere il menu).
