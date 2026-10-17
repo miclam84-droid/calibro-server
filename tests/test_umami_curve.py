@@ -74,8 +74,20 @@ def test_tabella_parsa_e_scarta_righe_rotte(monkeypatch):
         os.unlink(path)
 
 
-def test_file_reale_e_vuoto_di_dati():
-    # Il CSV versionato nel repo non deve contenere numeri "a memoria".
+def test_file_reale_ha_solo_dati_con_fonte():
+    # Ondata 2: il CSV versionato e' stato popolato da fonte citabile (FSANZ 2003
+    # Tab.1 / Yamaguchi & Ninomiya 1998, riletta anche in DFG-SKLM 2005).
+    # Invariante anti-provenienza-fabbricata: OGNI riga deve avere una fonte non
+    # vuota e un valore 0 <= umami <= 10. Nessun numero "a memoria".
     import routes.deriva_umami as mod
     mod._TBL = None
-    assert mod._tabella() == {}, "data/glutammato.csv deve essere senza dati finche' non arriva una fonte"
+    tbl = mod._tabella()
+    assert tbl, "data/glutammato.csv ora e' popolato da fonte reale"
+    for nome, (mg, fonte) in tbl.items():
+        assert fonte.strip(), f"riga '{nome}' senza fonte citabile"
+        assert "FSANZ" in fonte, f"riga '{nome}': fonte attesa FSANZ 2003"
+        assert 0 <= mod._deriva(mg)["val"] <= 10
+    # Punti noti, verificati sulle fonti consultate nel task (non a memoria):
+    assert tbl["latte"][0] == 2.0          # ancora scala "2 latte"
+    assert tbl["parmigiano"][0] == 1200.0  # ancora scala "8 parmigiano"
+    assert tbl["pomodoro"][0] == 140.0
