@@ -84,6 +84,15 @@ def banco_panificazione():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/banco/calcolatori")
+def banco_calcolatori():
+    """FRONTEND-2.0 — Banco: i calcolatori deterministici (idratazione, estrazione caffè, Q10,
+    sour, teglie, Brix, resa, temp vino…). Cablati a POST /calcola (motore, nessuna AI)."""
+    from flask import make_response
+    resp = make_response(render_template("banco-calcolatori.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 _FOTO_ING_CACHE = {}  # {nome_lower: {"url":...} }  — cache in memoria, niente scrittura sul grafo
 
 def _foto_resp(dato):

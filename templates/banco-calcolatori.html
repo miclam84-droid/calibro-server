@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banco · Calcolatori · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+.disc{font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin:16px 0 6px}
+.calc-grid{display:flex; flex-wrap:wrap; gap:8px}
+.calc-chip{font-family:var(--sans); font-weight:600; font-size:14px; color:var(--ink); background:var(--card); border:1px solid var(--card-border); border-radius:999px; padding:9px 15px; cursor:pointer}
+.calc-chip.on{color:#fff; background:var(--green-action); border-color:var(--green-action)}
+.res-k{color:var(--ink-soft)} .res-v{font-weight:600; font-variant-numeric:tabular-nums}
+.mir{margin-top:14px; background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 16px}
+.mir-top{display:flex; justify-content:space-between; align-items:baseline}
+.mir-val{font-family:var(--display); font-weight:800; font-size:26px; font-variant-numeric:tabular-nums}
+.mir-val.ok{color:var(--green-action)} .mir-val.no{color:#b06a2c}
+.mir-track{position:relative; height:10px; border-radius:999px; background:var(--rule); margin-top:12px}
+.mir-band{position:absolute; top:0; height:100%; background:var(--tint); border-radius:999px}
+.mir-dot{position:absolute; top:-3px; width:16px; height:16px; border-radius:50%; background:var(--green-action); transform:translateX(-50%); box-shadow:0 0 0 3px var(--bg3)}
+.mir-dot.no{background:#b06a2c}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Banco · Calcolatori</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Calcolatori · il motore deterministico</div>
+    <h1>I conti del banco</h1>
+    <p class="regola">Numeri <b>calcolati da formule verificate</b>, non stimati dall'AI. Scegli il calcolatore, metti i tuoi dati, e Matter ti dice il risultato, se sei dentro il bersaglio e la <b>leva d'azione</b> per correggere.</p>
+  </header>
+
+  <div id="menu"></div>
+
+  <form id="form" class="banco-form" autocomplete="off" hidden></form>
+  <main id="out"></main>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    I calcolatori sono <b>deterministici</b>: stesso ingresso, stesso risultato, sempre. Le formule vengono dalla fisica/chimica del mestiere (diluizione: Dave Arnold; estrazione: SCA; idratazione/Q10: Hamelman). Diluizione cocktail e food-cost vivono nei loro flussi dedicati (Banco cocktail, Menu).
+  </footer>
+</div>
+
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CALC = [
+ {id:'idratazione_pane', nome:'Idratazione impasto', disc:'Panificazione', campi:[
+   {k:'farina_g',l:'Farina',u:'g',d:1000},{k:'acqua_g',l:'Acqua',u:'g',d:650}]},
+ {id:'conversione_teglie', nome:'Conversione teglie', disc:'Panificazione', campi:[
+   {k:'base1_cm',l:'Base teglia attuale',u:'cm',d:30},{k:'alt1_cm',l:'Altezza teglia attuale',u:'cm',d:40},
+   {k:'base2_cm',l:'Base teglia nuova',u:'cm',d:20},{k:'alt2_cm',l:'Altezza teglia nuova',u:'cm',d:30}]},
+ {id:'bilanciamento_sour', nome:'Bilanciamento sour', disc:'Bar', campi:[
+   {k:'spirit_vol',l:'Distillato',u:'ml',d:50},{k:'spirit_abv',l:'Gradazione distillato',u:'%',d:40},
+   {k:'agrume_vol',l:'Agrume',u:'ml',d:25},{k:'agrume_acid_perc',l:'Acidità agrume',u:'%',d:6},
+   {k:'sciroppo_vol',l:'Sciroppo',u:'ml',d:20},{k:'sciroppo_brix',l:'Brix sciroppo',u:'°Bx',d:65}]},
+ {id:'pareggia_acidita', nome:'Pareggia acidità', disc:'Bar', campi:[
+   {k:'vol_ml',l:'Volume',u:'ml',d:100},{k:'acido_cur_perc',l:'Acidità attuale',u:'%',d:6},{k:'acido_tgt_perc',l:'Acidità voluta',u:'%',d:5}]},
+ {id:'estrazione_caffe', nome:'Estrazione caffè', disc:'Caffè', campi:[
+   {k:'dose_g',l:'Dose macinato',u:'g',d:18},{k:'bevanda_g',l:'Bevanda in tazza',u:'g',d:288},{k:'tds_perc',l:'TDS misurato',u:'%',d:1.3}]},
+ {id:'q10_fermentazione', nome:'Q10 fermentazione', disc:'Trasversale', campi:[
+   {k:'tempo_base_h',l:'Tempo di riferimento',u:'h',d:8},{k:'temp_ref_c',l:'Temp di riferimento',u:'°C',d:22},{k:'temp_reale_c',l:'Temp reale',u:'°C',d:26}]},
+ {id:'temperatura_servizio_vino', nome:'Temperatura servizio vino', disc:'Vino', campi:[
+   {k:'tipo_vino',l:'Tipo di vino',opts:['rosso_strutturato','rosso_giovane','bianco','rosato','bollicina','dolce','champagne'],d:'bianco'},
+   {k:'temp_attuale_c',l:'Temperatura attuale',u:'°C',d:20},
+   {k:'metodo',l:'Metodo',opts:['secchiello','frigo','abbattitore'],d:'secchiello'}]},
+ {id:'brix_to_abv', nome:'Brix → grado potenziale', disc:'Vino', campi:[
+   {k:'brix',l:'Gradi Brix del mosto',u:'°Bx',d:22}]},
+ {id:'resa_calo_peso', nome:'Resa e calo peso', disc:'Cucina', campi:[
+   {k:'peso_crudo_g',l:'Peso crudo',u:'g',d:1000},{k:'costo_kg',l:'Costo',u:'€/kg',d:12},{k:'calo_perc',l:'Calo in cottura',u:'%',d:25}]},
+];
+const SKIP = new Set(['calcolo','fenomeno_id','interpretazione','leva_azione','bersaglio_min','bersaglio_max','scala_min','scala_max','valore_corrente','unita_mirino','dentro_bersaglio','errore']);
+const umana = k => k.replace(/_/g,' ').replace(/perc/g,'%').replace(/\b\w/g, c=>c.toUpperCase());
+
+const $menu=document.getElementById('menu'), $form=document.getElementById('form'), $out=document.getElementById('out'), $state=document.getElementById('state');
+let attivo=null;
+
+function menu(){
+  const byDisc={}; CALC.forEach(c=>{ (byDisc[c.disc]=byDisc[c.disc]||[]).push(c); });
+  $menu.innerHTML = Object.entries(byDisc).map(([d,cs])=>`
+    <div class="disc">${esc(d)}</div>
+    <div class="calc-grid">${cs.map(c=>`<button class="calc-chip" data-id="${c.id}">${esc(c.nome)}</button>`).join('')}</div>`).join('');
+}
+
+function apri(c){
+  attivo=c; $out.innerHTML=''; $state.hidden=true;
+  document.querySelectorAll('.calc-chip').forEach(b=>b.classList.toggle('on', b.dataset.id===c.id));
+  $form.hidden=false;
+  $form.innerHTML = c.campi.map(f=>{
+    if(f.opts) return `<div class="field"><label>${esc(f.l)}</label><div class="inp"><select data-k="${f.k}">${f.opts.map(o=>`<option value="${o}"${o===f.d?' selected':''}>${esc(o.replace(/_/g,' '))}</option>`).join('')}</select></div></div>`;
+    return `<div class="field"><label>${esc(f.l)}</label><div class="inp"><input data-k="${f.k}" type="number" inputmode="decimal" step="any" value="${f.d}">${f.u?`<span class="unit">${esc(f.u)}</span>`:''}</div></div>`;
+  }).join('') + `<button type="submit" class="calc">Calcola</button>`;
+  calcola();
+}
+
+function render(d){
+  if(d.errore){ $state.hidden=false; $state.className='state err'; $state.innerHTML='Il motore ha risposto: '+esc(d.errore); $out.innerHTML=''; return; }
+  $state.hidden=true;
+  const righe = Object.entries(d).filter(([k,v])=>!SKIP.has(k) && (typeof v==='number'||typeof v==='string')).map(([k,v])=>`<div class="res-row"><span class="res-k">${esc(umana(k))}</span><span class="res-v">${esc(v)}</span></div>`).join('');
+  let mir='';
+  if(d.dentro_bersaglio!==undefined && d.valore_corrente!==undefined){
+    const smin=d.scala_min, smax=d.scala_max, bmin=d.bersaglio_min, bmax=d.bersaglio_max, v=d.valore_corrente, ok=d.dentro_bersaglio;
+    const pct=x=>Math.max(0,Math.min(100,(x-smin)/(smax-smin)*100));
+    mir=`<div class="mir"><div class="mir-top"><span class="res-k">Mirino</span><span class="mir-val ${ok?'ok':'no'}">${v}${esc(d.unita_mirino||'')}</span></div>
+      <div class="mir-track"><span class="mir-band" style="left:${pct(bmin)}%;width:${pct(bmax)-pct(bmin)}%"></span><span class="mir-dot ${ok?'':'no'}" style="left:${pct(v)}%"></span></div>
+      <p class="gloss" style="margin-top:8px">${ok?'Dentro il bersaglio':'Fuori bersaglio'} · finestra ${bmin}–${bmax}${esc(d.unita_mirino||'')}</p></div>`;
+  }
+  $out.innerHTML = `<section class="section">
+    ${mir}
+    <div class="res-card" style="margin-top:14px">${righe||'<p class="gloss">Nessun valore.</p>'}</div>
+    ${d.interpretazione?`<p class="nota"><b>Interpretazione.</b> ${esc(d.interpretazione)}</p>`:''}
+    ${d.leva_azione?`<p class="nota critico"><b>Leva d'azione.</b> ${esc(d.leva_azione)}</p>`:''}
+  </section>`;
+}
+
+async function calcola(){
+  if(!attivo) return;
+  const parametri={};
+  $form.querySelectorAll('[data-k]').forEach(el=>{
+    const v=el.value;
+    parametri[el.dataset.k] = el.tagName==='SELECT' ? v : (v===''?null:parseFloat(v));
+  });
+  $state.hidden=false; $state.className='state'; $state.innerHTML='Calcolo…'; $out.innerHTML='';
+  try{
+    const r=await fetch('/calcola',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({calcolo:attivo.id,parametri})});
+    if(!r.ok){ const d=await r.json().catch(()=>({})); $state.className='state err'; $state.innerHTML='Errore ('+r.status+'). '+esc(d.errore||''); return; }
+    render(await r.json());
+  }catch(e){ $state.className='state err'; $state.innerHTML='Non riesco a raggiungere il motore. Riprova.'; }
+}
+
+$menu.addEventListener('click', e=>{ const b=e.target.closest('.calc-chip'); if(!b) return; apri(CALC.find(c=>c.id===b.dataset.id)); });
+$form.addEventListener('submit', e=>{ e.preventDefault(); calcola(); });
+menu();
+</script>
+</body>
+</html>
