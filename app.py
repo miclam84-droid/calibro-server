@@ -118,6 +118,7 @@ from routes.admin_migra_quaderno import bp_migra_q; app.register_blueprint(bp_mi
 from routes.pagina_menu import bp_pag_menu; app.register_blueprint(bp_pag_menu)
 from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(bp_gusti_search)
 from routes.deriva_umami import bp_umami; app.register_blueprint(bp_umami)
+from routes.deriva_amaro import bp_amaro; app.register_blueprint(bp_amaro)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
 from routes.cottura import bp_cottura; app.register_blueprint(bp_cottura)
 from routes.tassonomia_wikidata import bp_tax; app.register_blueprint(bp_tax)
