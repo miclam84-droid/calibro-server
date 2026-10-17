@@ -54,6 +54,39 @@ def estrai_valori(data):
     return valori
 
 
+# Pannello nutrizionale completo (se persistito dalla pipeline USDA, campo `nutrienti`).
+# Ordine e etichette da etichetta alimentare (Reg. UE 1169/2011).
+PANNELLO_ETICHETTE = [
+    ("energia_kcal",  "Energia"),
+    ("grassi",        "Grassi"),
+    ("grassi_saturi", "di cui acidi grassi saturi"),
+    ("carboidrati",   "Carboidrati"),
+    ("zuccheri",      "di cui zuccheri"),
+    ("fibre",         "Fibre"),
+    ("proteine",      "Proteine"),
+    ("sodio",         "Sodio"),
+]
+
+
+def estrai_pannello(data):
+    """Funzione PURA: dal `data` del nodo estrae il pannello nutrizionale completo
+    (campo `nutrienti`, scritto dalla pipeline USDA con la sua fonte). Lista vuota
+    se il nodo non ha il pannello: nessun valore inventato."""
+    dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+    nutr = dd.get("nutrienti") or {}
+    if not isinstance(nutr, dict) or not nutr:
+        return [], None
+    meta = dd.get("nutrienti_meta", {}) or {}
+    fonte = meta.get("fonte")
+    righe = []
+    for chiave, etichetta in PANNELLO_ETICHETTE:
+        v = nutr.get(chiave)
+        if isinstance(v, dict) and v.get("valore") is not None and fonte:
+            righe.append({"campo": etichetta, "chiave": chiave,
+                          "valore": v.get("valore"), "unita": v.get("unita"), "fonte": fonte})
+    return righe, fonte
+
+
 def _deduci_allergeni_da_nome(nome):
     """Allergeni dedotti dal NOME dell'ingrediente (non memorizzati sul nodo).
     Deterministico, Reg. UE 1169/2011. Riusa la logica legale di routes/allergeni.py."""
@@ -76,17 +109,29 @@ _NOTA = ("Pannello onesto: i valori nutrizionali mostrati sono gli UNICI "
          "(Reg. UE 1169/2011), non sono un campo del nodo: il professionista "
          "verifica e conferma.")
 
+_NOTA_PANNELLO = ("Pannello nutrizionale derivato da USDA FoodData Central (dominio "
+                  "pubblico), per 100 g di prodotto, con la fonte citata. I valori "
+                  "compositivi degli assi del gusto restano elencati a parte. Gli "
+                  "allergeni sono dedotti in modo deterministico dal nome "
+                  "(Reg. UE 1169/2011), non sono un campo del nodo: il professionista "
+                  "verifica e conferma. Dove un dato non c'è si legge “—”, non si "
+                  "inventa uno zero.")
+
 
 def costruisci_scheda(nome_reale, data):
     """Compone il payload completo da nome + data del nodo. Pura, testabile."""
     valori = estrai_valori(data)
+    pannello, fonte_pannello = estrai_pannello(data)
     allergeni = _deduci_allergeni_da_nome(nome_reale)
+    nota = _NOTA_PANNELLO if pannello else _NOTA
     return {
         "trovato": True,
         "nome": nome_reale,
-        "valori": valori,
+        "pannello": pannello,          # pannello nutrizionale completo (se presente)
+        "fonte_pannello": fonte_pannello,
+        "valori": valori,              # grezzi compositivi degli assi del gusto
         "allergeni": allergeni,
-        "note_onesta": _NOTA,
+        "note_onesta": nota,
     }
 
 

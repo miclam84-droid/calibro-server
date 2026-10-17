@@ -83,6 +83,16 @@ function render(d){
   setState("");
   $titolo.textContent = cap(d.nome);
 
+  const pann = (d.pannello && d.pannello.length)
+    ? ('<div class="card"><div class="sez-tit">Pannello nutrizionale · per 100 g</div>' +
+        d.pannello.map(function(v){
+          return '<div class="nrow"><div class="campo">' + esc(v.campo) + '</div>' +
+                 '<div class="val">' + esc(v.valore) +
+                 ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">' + esc(v.unita) + '</span></div></div>';
+        }).join('') +
+        '<div class="fonte">fonte: ' + esc(d.fonte_pannello || '—') + '</div></div>')
+    : '';
+
   const valori = (d.valori || []).map(function(v){
     const ha = v.valore !== null && v.valore !== undefined;
     const val = ha ? (esc(v.valore) + ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">' + esc(v.unita) + '</span>') : '—';
@@ -98,7 +108,8 @@ function render(d){
     : '<div class="fonte"><span class="mancante">Nessun allergene dedotto dal nome. Verifica sempre al banco.</span></div>';
 
   $corpo.innerHTML =
-    '<div class="card"><div class="sez-tit">Valori nutrizionali</div>' + valori + '</div>' +
+    pann +
+    '<div class="card"><div class="sez-tit">Valori compositivi del gusto</div>' + valori + '</div>' +
     '<div class="card"><div class="sez-tit">Allergeni (dedotti dal nome · Reg. UE 1169/2011)</div>' + all + '</div>' +
     (d.note_onesta ? '<div class="nota">' + esc(d.note_onesta) + '</div>' : '');
 }
