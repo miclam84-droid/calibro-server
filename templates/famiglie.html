@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Per famiglia botanica · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+/* bit specifici di questa pagina — riusano le variabili del design congelato */
+.fam-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; margin-top:4px}
+.fam-card{display:flex; flex-direction:column; gap:4px; text-align:left; width:100%;
+  font:inherit; cursor:pointer; background:var(--card); border:1px solid var(--card-border);
+  border-radius:13px; padding:13px 14px; box-shadow:var(--shadow); color:var(--ink);
+  transition:border-color .12s ease, transform .12s ease}
+.fam-card:hover{border-color:var(--ink-soft); transform:translateY(-1px)}
+.fam-card.vuota{opacity:.78}
+.fam-card .f-nome{font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:700; font-size:16px}
+.fam-card .f-nome.nc{font-style:italic; font-weight:600; color:var(--ink-soft)}
+.fam-card .f-cont{font-size:12px; color:var(--ink-soft); letter-spacing:.02em}
+.ing-list{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; margin-top:4px}
+.ing-card{display:block; text-align:left; width:100%; font:inherit; cursor:pointer; text-decoration:none;
+  background:var(--card); border:1px solid var(--card-border); border-radius:11px; padding:11px 13px;
+  box-shadow:var(--shadow); color:var(--ink); text-transform:capitalize;
+  transition:border-color .12s ease, transform .12s ease}
+.ing-card:hover{border-color:var(--ink-soft); transform:translateY(-1px)}
+.backbar{display:flex; align-items:center; gap:10px; margin:0 0 12px}
+.backbar button{font:inherit; font-weight:600; cursor:pointer; padding:8px 14px; border-radius:10px;
+  border:1px solid var(--card-border); background:var(--card); color:var(--ink)}
+.backbar h2{margin:0; font-size:18px; text-transform:capitalize}
+.backbar .n{color:var(--ink-soft); font-weight:500; text-transform:none}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Famiglie</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Gli ingredienti per famiglia botanica</div>
+    <h1>Per famiglia</h1>
+    <p class="regola"><b>Solanacee, cucurbitacee, lamiacee… la parentela botanica reale, letta dal grafo. Dove un ingrediente non ha una famiglia classificata, è detto: "Non classificato", mai inventata.</b></p>
+    <div class="sourceline"><span class="dot"></span><span>Famiglia da Wikidata (CC0), endpoint <code>/v1/famiglie</code>, in tempo reale.</span></div>
+  </header>
+
+  <main>
+    <!-- VISTA 1: elenco famiglie -->
+    <section class="section" id="vista-famiglie">
+      <div class="sechead">
+        <div style="min-width:0"><h2>Famiglie botaniche</h2><p>Tocca una famiglia per vederne gli ingredienti.</p></div>
+      </div>
+      <div id="o-famiglie"><div class="state">Interrogo il grafo…</div></div>
+    </section>
+
+    <!-- VISTA 2: ingredienti di una famiglia -->
+    <section class="section" id="vista-ingredienti" hidden>
+      <div class="backbar">
+        <button type="button" id="back">← Famiglie</button>
+        <h2 id="fam-titolo">—</h2>
+      </div>
+      <div id="o-ingredienti"></div>
+    </section>
+  </main>
+
+  <footer>
+    <b>Dati reali dal grafo Matter.</b> La famiglia botanica di ogni ingrediente arriva da <b>Wikidata (CC0)</b>, scritta sui nodi e qui solo letta. I conteggi sono quelli veri del grafo. Gli ingredienti ancora privi di classificazione non ricevono una famiglia di comodo: stanno in <b>Non classificato</b>, onesti.
+  </footer>
+</div>
+
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dash = v => (v===null || v===undefined || v==='') ? '—' : v;
+
+const vFam = document.getElementById('vista-famiglie');
+const vIng = document.getElementById('vista-ingredienti');
+const oFam = document.getElementById('o-famiglie');
+const oIng = document.getElementById('o-ingredienti');
+const titolo = document.getElementById('fam-titolo');
+
+function setOut(el, msg, err){ el.innerHTML = `<div class="state${err?' err':''}">${msg}</div>`; }
+
+async function chiama(url){
+  const res = await fetch(url, {headers:{'Accept':'application/json'}});
+  let d = {};
+  try{ d = await res.json(); }catch(e){ d = {}; }
+  return {ok: res.ok, status: res.status, d};
+}
+
+function mostraFamiglie(){
+  vIng.hidden = true; vFam.hidden = false;
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+// ── VISTA 1: elenco famiglie ─────────────────────────────────────────
+async function caricaFamiglie(){
+  try{
+    const {ok, status, d} = await chiama('/v1/famiglie');
+    if(!ok){ setOut(oFam, `Il grafo ha risposto con un errore (${status}).`, true); return; }
+    const fam = d.famiglie || [];
+    if(!fam.length){ setOut(oFam, esc(d.nota || 'Nessuna famiglia nel grafo.'), false); return; }
+    const cards = fam.map(f=>{
+      const nc = !f.classificata;
+      return `<button type="button" class="fam-card${nc?' vuota':''}" data-slug="${esc(f.slug)}" data-nome="${esc(f.famiglia)}">
+        <span class="f-nome${nc?' nc':''}">${esc(f.famiglia)}</span>
+        <span class="f-cont">${dash(f.conteggio)} ${f.conteggio===1?'ingrediente':'ingredienti'}</span>
+      </button>`;
+    }).join('');
+    const riga = `<p class="gloss">${dash(d.totale_famiglie)} famiglie · ${dash(d.totale_ingredienti)} ingredienti${d.non_classificati?` · ${d.non_classificati} non classificati`:''}</p>`;
+    oFam.innerHTML = riga + `<div class="fam-grid">${cards}</div>`;
+    oFam.querySelectorAll('.fam-card').forEach(b=>{
+      b.addEventListener('click', ()=> apriFamiglia(b.dataset.slug, b.dataset.nome));
+    });
+  }catch(e){ setOut(oFam, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
+}
+
+// ── VISTA 2: ingredienti di una famiglia ─────────────────────────────
+async function apriFamiglia(slug, nome){
+  vFam.hidden = true; vIng.hidden = false;
+  titolo.innerHTML = `${esc(nome)} <span class="n">· carico…</span>`;
+  setOut(oIng, 'Interrogo il grafo…', false);
+  window.scrollTo({top:0, behavior:'instant'});
+  try{
+    const {ok, status, d} = await chiama('/v1/famiglia/'+encodeURIComponent(slug));
+    if(!ok){ titolo.textContent = nome; setOut(oIng, `Il grafo ha risposto con un errore (${status}).`, true); return; }
+    const ing = d.ingredienti || [];
+    titolo.innerHTML = `${esc(d.famiglia || nome)} <span class="n">· ${dash(d.conteggio)} ${d.conteggio===1?'ingrediente':'ingredienti'}</span>`;
+    if(!ing.length){ setOut(oIng, esc(d.nota || 'Nessun ingrediente in questa famiglia.'), false); return; }
+    const cards = ing.map(n=>`<a class="ing-card" href="/ingrediente/${encodeURIComponent(n)}">${esc(n)}</a>`).join('');
+    const nota = d.nota ? `<p class="gloss">${esc(d.nota)}</p>` : '';
+    oIng.innerHTML = nota + `<div class="ing-list">${cards}</div>`;
+  }catch(e){ titolo.textContent = nome; setOut(oIng, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
+}
+
+document.getElementById('back').addEventListener('click', mostraFamiglie);
+caricaFamiglie();
+</script>
+</body>
+</html>
