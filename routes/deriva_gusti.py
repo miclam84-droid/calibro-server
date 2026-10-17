@@ -106,6 +106,48 @@ def _nutrienti(detail):
     return out
 
 
+# Pannello nutrizionale standard (etichetta). Nome USDA -> (chiave, unità).
+# L'energia si prende SOLO in kcal (unitName KCAL), mai convertita dai kJ.
+_PANNELLO = [
+    ("proteine",      ["Protein"],                              "g/100g"),
+    ("carboidrati",   ["Carbohydrate, by difference"],          "g/100g"),
+    ("fibre",         ["Fiber, total dietary"],                 "g/100g"),
+    ("grassi",        ["Total lipid (fat)"],                    "g/100g"),
+    ("grassi_saturi", ["Fatty acids, total saturated"],         "g/100g"),
+    ("zuccheri",      ["Sugars, total including NLEA", "Total Sugars"], "g/100g"),
+    ("sodio",         ["Sodium, Na"],                           "mg/100g"),
+]
+
+
+def _pannello_nutrienti(detail):
+    """Funzione PURA: dal dettaglio USDA estrae il pannello nutrizionale standard
+    (energia/proteine/carboidrati/fibre/grassi/saturi/zuccheri/sodio). Include SOLO
+    i campi realmente presenti con un valore: niente zero inventato, niente conversioni.
+    Energia presa solo se c'è in kcal."""
+    fn = detail.get("foodNutrients", []) or []
+    # indice nome->valore per i campi semplici (ultimo vince, come il resto della pipeline)
+    per_nome = {}
+    energia_kcal = None
+    for n in fn:
+        nutr = n.get("nutrient", {}) or {}
+        nome = nutr.get("name")
+        amount = n.get("amount")
+        if not nome or amount is None:
+            continue
+        if nome == "Energy" and (nutr.get("unitName") or "").upper() == "KCAL":
+            energia_kcal = float(amount)
+        per_nome[nome] = float(amount)
+    out = {}
+    if energia_kcal is not None:
+        out["energia_kcal"] = {"valore": round(energia_kcal, 1), "unita": "kcal/100g"}
+    for chiave, nomi, unita in _PANNELLO:
+        for nm in nomi:
+            if nm in per_nome:
+                out[chiave] = {"valore": round(per_nome[nm], 2), "unita": unita}
+                break
+    return out
+
+
 def _deriva(nut):
     """Da nutrienti USDA -> (dolce, salato, grasso) + grezzi + via dolce."""
     # dolce: se c'e' la scomposizione degli zuccheri, equivalente-dolce pesato; altrimenti totali
@@ -202,7 +244,7 @@ def deriva_gusti_usda():
             #    far SALTARE solo questo ingrediente, non annullare in rollback tutti gli
             #    altri gia' pronti: niente piu' "tutto o niente" sul batch.
             if fdc_id in cache_usda:
-                nut, nome_usda = cache_usda[fdc_id]
+                nut, nome_usda, nutri = cache_usda[fdc_id]
             else:
                 try:
                     detail = _usda_get(f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}?api_key={urllib.parse.quote(key)}")
@@ -211,7 +253,8 @@ def deriva_gusti_usda():
                     continue
                 nut = _nutrienti(detail)
                 nome_usda = detail.get("description", "")
-                cache_usda[fdc_id] = (nut, nome_usda)
+                nutri = _pannello_nutrienti(detail)  # pannello nutrizionale completo (quel che prima si buttava)
+                cache_usda[fdc_id] = (nut, nome_usda, nutri)
                 time.sleep(0.3)  # rate limit USDA (1000/h)
 
             der = _deriva(nut)
@@ -235,11 +278,17 @@ def deriva_gusti_usda():
                 if scrivibile:
                     cambi[asse] = (nuovo, der[asse])
 
+            # pannello nutrizionale: fill-only, mai sopra un blocco corretto a mano
+            nutr_meta_vecchio = dd.get("nutrienti_meta", {}) or {}
+            nutr_scrivibile = bool(nutri) and (nutr_meta_vecchio.get("stato") in (None, "derivato", "stimato"))
+            riga["nutrienti"] = nutri
+            riga["nutrienti_scrivibile"] = nutr_scrivibile
+
             if len(campione) < 40:
                 campione.append(riga)
 
             # 3) scrittura (solo con esegui=1)
-            if esegui and cambi:
+            if esegui and (cambi or nutr_scrivibile):
                 cur.execute("INSERT INTO _backup_gusti_derivati (id, data_old) VALUES (%s, %s)",
                             (nid, json.dumps(dd, ensure_ascii=False)))
                 for asse, (nuovo, info) in cambi.items():
@@ -251,6 +300,10 @@ def deriva_gusti_usda():
                     meta[asse] = m
                 dd["proprieta"] = prop
                 dd["proprieta_meta"] = meta
+                if nutr_scrivibile:
+                    dd["nutrienti"] = nutri
+                    dd["nutrienti_meta"] = {"stato": "derivato", "fonte": f"USDA FDC {fdc_id}",
+                                            "formula": FORMULA_VER}
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
                 scritti += 1
 
