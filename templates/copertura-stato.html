@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Copertura · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+.tot-wrap{display:flex; align-items:baseline; gap:12px; margin:2px 0 4px}
+.tot-num{font-family:var(--display); font-weight:800; font-size:44px; line-height:1;
+  font-variant-numeric:tabular-nums; color:var(--ink)}
+.tot-lab{font-size:13.5px; color:var(--ink-soft); font-weight:600}
+.sez-tit{font-family:var(--display); font-weight:700; font-size:13px; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--green-action); margin:0 0 10px}
+.row{display:grid; grid-template-columns:86px 1fr auto; align-items:center; gap:12px;
+  padding:11px 0; border-bottom:1px solid var(--card-border)}
+.row:last-child{border-bottom:none}
+.row .nome{font-weight:600; color:var(--ink); text-transform:capitalize}
+.bar{position:relative; height:9px; border-radius:999px; background:var(--card-strong); overflow:hidden}
+.bar > i{position:absolute; inset:0 auto 0 0; border-radius:999px; background:var(--green-action)}
+.bar > i.mis{background:var(--oxblood,#A8504A); opacity:.9}
+.cnt{font-variant-numeric:tabular-nums; font-weight:800; font-family:var(--display);
+  font-size:16px; text-align:right; white-space:nowrap}
+.cnt .pct{font-size:12px; font-weight:600; color:var(--ink-soft); margin-left:6px}
+.cnt.zero{color:var(--ink-soft); font-weight:700}
+.legenda{display:flex; flex-wrap:wrap; gap:14px; font-size:12px; color:var(--ink-soft); margin:2px 0 14px}
+.legenda span{display:inline-flex; align-items:center; gap:6px}
+.dotc{width:10px; height:10px; border-radius:3px; display:inline-block}
+.dotc.v{background:var(--green-action)}
+.dotc.m{background:var(--oxblood,#A8504A)}
+.fonti-wrap{display:flex; flex-wrap:wrap; gap:8px; margin-top:2px}
+.fonte-chip{font-size:13px; font-weight:600; background:var(--card-strong); color:var(--ink);
+  border:1px solid var(--card-border); padding:7px 13px; border-radius:999px;
+  display:inline-flex; align-items:baseline; gap:8px}
+.fonte-chip b{font-family:var(--display); font-variant-numeric:tabular-nums}
+.pann-big{display:flex; align-items:baseline; gap:12px}
+.pann-big .n{font-family:var(--display); font-weight:800; font-size:30px; line-height:1;
+  font-variant-numeric:tabular-nums; color:var(--ink)}
+.pann-big .p{font-size:13px; color:var(--ink-soft); font-weight:600}
+.nota{font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin-top:12px}
+.card + .card{margin-top:16px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Copertura</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Stato del grafo</div>
+    <h1>Numero di copertura</h1>
+    <div class="sourceline"><span class="dot"></span><span id="src">Conteggi veri dal grafo, in sola lettura.</span></div>
+  </header>
+
+  <main id="corpo"></main>
+  <div class="state" id="state">Carico…</div>
+
+  <footer>
+    <b>Numero onesto.</b> I conteggi sono quelli veri del grafo. Un asse con <i>valore</i> può essere
+    ancora una stima AI; <i>misurato</i> significa grezzo compositivo reale con fonte citata. Dove un
+    conteggio è <b>0</b>, 0 è la risposta: dice cosa resta da coprire, non lo nasconde.
+  </footer>
+</div>
+
+<script>
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $corpo = document.getElementById('corpo');
+const $state = document.getElementById('state');
+function setState(msg){ $state.hidden = !msg; $state.textContent = msg || ""; }
+
+function rigaAsse(nome, cnt, pct, cntMis, pctMis, tot){
+  const wv = tot ? Math.round(100*cnt/tot) : 0;
+  const wm = tot ? Math.round(100*cntMis/tot) : 0;
+  const z = cnt === 0 ? ' zero' : '';
+  return '<div class="row">' +
+    '<div class="nome">' + esc(nome) + '</div>' +
+    '<div class="bar"><i style="width:' + wv + '%"></i><i class="mis" style="width:' + wm + '%"></i></div>' +
+    '<div class="cnt' + z + '">' + cnt + '<span class="pct">' + pct + '%</span>' +
+      '<div class="pct" style="text-align:right">mis. ' + cntMis + ' · ' + pctMis + '%</div>' +
+    '</div></div>';
+}
+
+function render(d){
+  if(!d || d.errore){
+    $corpo.innerHTML = "";
+    setState('Errore: ' + esc((d && d.errore) || 'nessun dato') + '.');
+    return;
+  }
+  setState("");
+  const tot = d.totale_ingredienti || 0;
+  const pa = d.per_asse || {}, pam = d.per_asse_misurato || {};
+  const pct = (d.percentuali || {}), pctA = pct.per_asse || {}, pctM = pct.per_asse_misurato || {};
+  const assi = d.assi || Object.keys(pa);
+
+  const totale =
+    '<div class="card">' +
+      '<div class="tot-wrap"><div class="tot-num">' + tot + '</div>' +
+      '<div class="tot-lab">ingredienti e prodotti nel grafo</div></div>' +
+    '</div>';
+
+  const assiHtml =
+    '<div class="card"><div class="sez-tit">Copertura per asse del gusto</div>' +
+    '<div class="legenda">' +
+      '<span><i class="dotc v"></i> ha un valore (anche stima)</span>' +
+      '<span><i class="dotc m"></i> misurato (grezzo + fonte)</span>' +
+    '</div>' +
+    assi.map(function(a){
+      return rigaAsse(a, pa[a]||0, pctA[a]||0, pam[a]||0, pctM[a]||0, tot);
+    }).join('') +
+    '</div>';
+
+  const pann =
+    '<div class="card"><div class="sez-tit">Pannello nutrizionale completo</div>' +
+      '<div class="pann-big"><div class="n">' + (d.con_pannello_nutrienti||0) + '</div>' +
+      '<div class="p">ingredienti con pannello · ' + (pct.con_pannello_nutrienti||0) + '% del totale</div></div>' +
+    '</div>';
+
+  const fonti = d.per_fonte || {};
+  const chiavi = Object.keys(fonti);
+  const fontiHtml =
+    '<div class="card"><div class="sez-tit">Dati per fonte</div>' +
+    (chiavi.length
+      ? '<div class="fonti-wrap">' + chiavi.map(function(k){
+          return '<span class="fonte-chip">' + esc(k) + ' <b>' + fonti[k] + '</b></span>';
+        }).join('') + '</div>'
+      : '<div class="nota">Nessun dato con fonte citata nel grafo. 0 è la risposta vera.</div>') +
+    '</div>';
+
+  $corpo.innerHTML = totale + assiHtml + pann + fontiHtml +
+    (d.nota ? '<div class="nota">' + esc(d.nota) + '</div>' : '');
+}
+
+fetch('/v1/copertura-stato')
+  .then(r => r.json()).then(render)
+  .catch(() => setState("Errore di rete."));
+</script>
+</body>
+</html>
