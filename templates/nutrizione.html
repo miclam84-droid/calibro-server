@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nutrizionale · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+.cerca{display:flex; gap:9px; margin:10px 0 22px}
+.cerca input{flex:1; font-family:inherit; font-size:14.5px; padding:11px 14px; border-radius:12px;
+  border:1px solid var(--card-border); background:var(--card-strong); color:var(--ink)}
+.cerca button{font-family:var(--display); font-weight:700; font-size:14px; color:#fff;
+  background:var(--green-action); border:none; border-radius:12px; padding:0 18px; cursor:pointer}
+.nrow{display:grid; grid-template-columns:1fr auto; align-items:baseline; gap:12px;
+  padding:13px 0; border-bottom:1px solid var(--card-border)}
+.nrow:last-child{border-bottom:none}
+.nrow .campo{font-weight:600; color:var(--ink)}
+.nrow .val{font-variant-numeric:tabular-nums; font-weight:800; font-family:var(--display); font-size:18px; text-align:right}
+.nrow .val.vuoto{color:var(--ink-soft); font-weight:600}
+.nrow .fonte{grid-column:1 / 3; font-size:11.5px; color:var(--ink-soft); margin-top:3px}
+.nrow .fonte .mancante{font-style:italic}
+.all-wrap{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px}
+.all-chip{font-size:12.5px; font-weight:600; background:rgba(168,80,74,.12); color:var(--oxblood,#A8504A);
+  border:1px solid rgba(168,80,74,.2); padding:5px 11px; border-radius:999px}
+.sez-tit{font-family:var(--display); font-weight:700; font-size:13px; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--green-action); margin:0 0 4px}
+.nota{font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin-top:12px}
+.card + .card{margin-top:16px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Nutrizionale</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Valori &amp; allergeni</div>
+    <h1 id="titolo">—</h1>
+    <div class="sourceline"><span class="dot"></span><span id="src">Solo dati realmente presenti sul nodo.</span></div>
+  </header>
+
+  <div class="cerca">
+    <input id="q" placeholder="cerca un ingrediente (es. parmigiano)" autocomplete="off">
+    <button id="go" type="button">Cerca</button>
+  </div>
+
+  <main id="corpo"></main>
+  <div class="state" id="state">Scrivi un ingrediente e premi Cerca.</div>
+
+  <footer>
+    <b>Pannello onesto.</b> I valori nutrizionali sono gli unici misurati e salvati sul nodo (il
+    <i>grezzo</i> compositivo degli assi derivati), ognuno con la sua fonte. Il grafo non contiene un
+    pannello USDA completo: dove non c'è un dato si legge <b>—</b>, non si inventa uno zero. Gli allergeni
+    sono dedotti in modo deterministico dal nome (Reg. UE 1169/2011): il professionista verifica e conferma.
+  </footer>
+</div>
+
+<script>
+const INIT = {{ nome|tojson }};
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+const $corpo = document.getElementById('corpo');
+const $state = document.getElementById('state');
+const $titolo = document.getElementById('titolo');
+const $q = document.getElementById('q');
+
+function setState(msg){ $state.hidden = !msg; $state.textContent = msg || ""; }
+
+function render(d){
+  if(!d || d.trovato === false){
+    $titolo.textContent = "—";
+    $corpo.innerHTML = "";
+    setState('Nessun ingrediente trovato per "' + esc((d && d.nome_cercato) || "") + '".');
+    return;
+  }
+  setState("");
+  $titolo.textContent = cap(d.nome);
+
+  const valori = (d.valori || []).map(function(v){
+    const ha = v.valore !== null && v.valore !== undefined;
+    const val = ha ? (esc(v.valore) + ' <span style="font-size:12px;font-weight:600;color:var(--ink-soft)">' + esc(v.unita) + '</span>') : '—';
+    const fonte = ha
+      ? '<div class="fonte">fonte: ' + esc(v.fonte) + (v.stato ? ' · ' + esc(v.stato) : '') + '</div>'
+      : '<div class="fonte"><span class="mancante">non presente sul nodo</span></div>';
+    return '<div class="nrow"><div class="campo">' + esc(v.campo) + '</div>' +
+           '<div class="val' + (ha ? '' : ' vuoto') + '">' + val + '</div>' + fonte + '</div>';
+  }).join('');
+
+  const all = (d.allergeni && d.allergeni.length)
+    ? '<div class="all-wrap">' + d.allergeni.map(function(a){ return '<span class="all-chip">' + esc(a.nome) + '</span>'; }).join('') + '</div>'
+    : '<div class="fonte"><span class="mancante">Nessun allergene dedotto dal nome. Verifica sempre al banco.</span></div>';
+
+  $corpo.innerHTML =
+    '<div class="card"><div class="sez-tit">Valori nutrizionali</div>' + valori + '</div>' +
+    '<div class="card"><div class="sez-tit">Allergeni (dedotti dal nome · Reg. UE 1169/2011)</div>' + all + '</div>' +
+    (d.note_onesta ? '<div class="nota">' + esc(d.note_onesta) + '</div>' : '');
+}
+
+function vai(){
+  const v = $q.value.trim();
+  if(!v) return;
+  location.hash = encodeURIComponent(v);
+}
+function carica(){
+  const h = decodeURIComponent((location.hash || "").replace(/^#/, ""));
+  if(!h) return;
+  $q.value = h;
+  setState("Carico…");
+  fetch('/v1/nutrizionale/' + encodeURIComponent(h))
+    .then(r => r.json()).then(render)
+    .catch(() => setState("Errore di rete."));
+}
+
+document.getElementById('go').addEventListener('click', vai);
+$q.addEventListener('keydown', e => { if(e.key === 'Enter') vai(); });
+window.addEventListener('hashchange', carica);
+
+if(INIT){ location.hash = encodeURIComponent(INIT); }
+carica();
+</script>
+</body>
+</html>
