@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
 <link rel="stylesheet" href="/static/matter2.css">
 <style>
+/* Tutto costruito sui token di matter2.css (design congelato). Niente colori nuovi. */
 .ing-foto{margin:0 0 14px; border-radius:14px; overflow:hidden; border:1px solid var(--card-border); box-shadow:var(--shadow); background:var(--card)}
 .ing-foto img{display:block; width:100%; height:190px; object-fit:cover}
 .ing-foto figcaption{font-size:11px; color:var(--ink-soft); padding:6px 11px}
@@ -27,6 +28,27 @@
 .cott-tec .cott-tec-dom{font-size:11px; color:var(--ink-soft); margin-left:6px}
 .cott-tec .cott-tec-via{margin-top:4px; font-size:12px; color:var(--ink-soft)}
 .cott-tec .cott-tec-nota{margin-top:4px; font-size:12px; color:var(--ink-soft); font-style:italic}
+/* Pannello nutrizionale — tabella etichetta per 100 g */
+.nutri-card{margin-top:14px; background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:4px 16px}
+.nutri-row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--rule)}
+.nutri-row:last-child{border-bottom:0}
+.nutri-row.sub{padding-left:14px}
+.nutri-row.sub .nutri-k{color:var(--ink-soft); font-size:13px}
+.nutri-k{font-size:14px; color:var(--ink-soft); min-width:0}
+.nutri-v{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+.nutri-v .u{font-size:11px; color:var(--ink-soft); font-weight:500; margin-left:3px}
+.nutri-v.vuoto{color:var(--ink-soft); font-weight:600}
+.allerg-tit{margin:16px 0 0; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); font-weight:600}
+/* Scienza collegata — esperimenti dal grafo */
+.exp-card{margin-top:11px; background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 16px}
+.exp-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+.exp-nome{font-family:var(--display); font-weight:700; font-size:16px; letter-spacing:-.01em; color:var(--ink); min-width:0}
+.exp-disc{flex:0 0 auto; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px; background:var(--tint); color:var(--green-action); white-space:nowrap}
+.exp-ipotesi{margin:9px 0 0; font-size:13px; color:var(--ink-soft); line-height:1.5}
+/* Abbinamenti — gruppi per criterio */
+.abb-grp + .abb-grp{margin-top:16px}
+.abb-grp-tit{display:flex; align-items:center; gap:8px; margin:0 0 2px; font-size:13px; font-weight:700; color:var(--ink)}
+.abb-grp-sub{margin:0 0 8px; font-size:12px; color:var(--ink-soft)}
 </style>
 </head>
 <body>
@@ -46,12 +68,18 @@
     <div id="tax" class="tax-line" hidden></div>
   </header>
 
-  <main id="corpo"></main>
+  <!-- Ordine delle sezioni (pezzo 5): identità → profilo → nutrizione → abbinamenti → cottura → scienza.
+       Ogni sezione ha il suo contenitore e si riempie da un fetch non bloccante: se un dato manca,
+       la sezione resta vuota (o dichiara l'assenza), ma la pagina non si rompe. -->
+  <div id="sez-profilo"></div>
+  <div id="sez-nutri"></div>
+  <div id="sez-abbina"></div>
   <div id="cottura"></div>
+  <div id="sez-scienza"></div>
   <div class="state" id="state" hidden></div>
 
   <footer>
-    <b>Scheda ingrediente — Atlante.</b> Ogni valore sensoriale mostra la sua provenienza: <span class="prov-chip prov-stima">stima</span> finché non è verificato al banco, <span class="prov-chip prov-derivato">derivato</span> quando viene da una misura esterna (USDA), <span class="prov-chip prov-verificato">verificato</span> quando l'hai provato tu col metodo. Le descrizioni di "cos'è" arriveranno solo da fonti reali, mai inventate.
+    <b>Scheda ingrediente — Atlante.</b> Ogni valore mostra la sua provenienza: <span class="prov-chip prov-stima">stima</span> finché non è verificato al banco, <span class="prov-chip prov-derivato">derivato</span> quando viene da una misura esterna (USDA), <span class="prov-chip prov-verificato">verificato</span> quando l'hai provato tu col metodo. Dove un dato non c'è si legge “—” o “non ancora misurato al banco”: mai uno zero inventato, mai una fonte inventata.
   </footer>
 </div>
 
@@ -67,8 +95,9 @@ const CORE = [
 ];
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+const VUOTO = '—';  // stato vuoto onesto, uniforme su tutta la scheda
 
-const $corpo = document.getElementById('corpo');
+const $corpo = document.getElementById('sez-profilo');
 const $state = document.getElementById('state');
 function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
 
@@ -92,7 +121,7 @@ function barra(label, val, anchor, meta){
     <div class="axis">
       <div class="axis-top">
         <span class="axis-name">${label}</span>
-        <span class="axis-val">${isFinite(v)? (Number.isInteger(v)? v : v.toFixed(1)) : '—'}<span class="axis-max">/10</span></span>
+        <span class="axis-val">${isFinite(v)? (Number.isInteger(v)? v : v.toFixed(1)) : VUOTO}<span class="axis-max">/10</span></span>
         ${provChip(meta)}
       </div>
       <div class="track"><span class="fill" style="width:${pct}%"></span></div>
@@ -133,6 +162,108 @@ async function caricaTax(nome){
   }catch(e){}
 }
 
+/* ---------- PEZZO 1: Pannello nutrizionale + allergeni, dentro la scheda ---------- */
+function nutriRiga(campo, valore, unita, sub){
+  const cls = sub ? 'nutri-row sub' : 'nutri-row';
+  if(valore == null || valore === ''){
+    return `<div class="${cls}"><span class="nutri-k">${esc(campo)}</span><span class="nutri-v vuoto">${VUOTO}</span></div>`;
+  }
+  const u = unita ? `<span class="u">${esc(unita)}</span>` : '';
+  return `<div class="${cls}"><span class="nutri-k">${esc(campo)}</span><span class="nutri-v">${esc(String(valore))}${u}</span></div>`;
+}
+
+async function caricaNutri(nome){
+  const $n = document.getElementById('sez-nutri');
+  try{
+    const r = await fetch('/v1/nutrizionale/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return;                       // ingrediente non trovato: nessuna sezione, nessun rumore
+    const d = await r.json();
+    if(!d || d.errore || d.trovato === false) return;
+
+    const pannello = Array.isArray(d.pannello) ? d.pannello : [];
+    const valori = Array.isArray(d.valori) ? d.valori.filter(v=>v && v.valore != null) : [];
+    const allergeni = Array.isArray(d.allergeni) ? d.allergeni : [];
+
+    // Le voci "di cui ..." (saturi, zuccheri) rientrano sotto il padre.
+    const SUB = {grassi_saturi:1, zuccheri:1};
+    let corpoHtml = '';
+    if(pannello.length){
+      corpoHtml = `<div class="nutri-card">${
+        pannello.map(p=>nutriRiga(p.campo, p.valore, p.unita, SUB[p.chiave])).join('')
+      }</div>
+      <p class="gloss">Per 100 g · fonte: <b>${esc(d.fonte_pannello || 'USDA FoodData Central')}</b>.</p>`;
+    } else {
+      // Nessun pannello USDA sul nodo: lo diciamo, non inventiamo uno zero.
+      corpoHtml = `<div class="nutri-card">
+        <div class="nutri-row"><span class="nutri-k">Pannello nutrizionale completo</span><span class="nutri-v vuoto">${VUOTO}</span></div>
+      </div>
+      <p class="gloss">Nessun pannello nutrizionale completo (energia, proteine, carboidrati, fibre) è ancora persistito su questo nodo: non lo inventiamo.</p>`;
+    }
+
+    // Misure compositive degli assi del gusto (i grezzi, con la loro fonte): sempre elencate,
+    // "—" dove manca. Onesto e separato dal pannello etichetta.
+    const compDett = valori.length ? `
+      <details class="mol" style="margin-top:12px">
+        <summary>Misure compositive degli assi (${valori.length})</summary>
+        <div class="nutri-card" style="margin-top:10px">
+          ${valori.map(v=>`<div class="nutri-row"><span class="nutri-k">${esc(v.campo)}</span><span class="nutri-v">${esc(String(v.valore))}<span class="u">${esc(v.unita||'')}</span></span></div>`).join('')}
+        </div>
+        <p class="gloss">Grezzi compositivi usati per derivare gli assi del gusto, ognuno con la sua fonte. Non sono una misura sensoriale diretta.</p>
+      </details>` : '';
+
+    // Allergeni: dedotti dal nome (Reg. UE 1169/2011), non sono un campo del nodo.
+    const allergHtml = `
+      <p class="allerg-tit">Allergeni (dedotti dal nome · Reg. UE 1169/2011)</p>
+      ${allergeni.length
+        ? `<div class="chips" style="margin-top:8px">${allergeni.map(a=>`<span class="chip">${esc(a.nome)}</span>`).join('')}</div>`
+        : `<p class="gloss">Nessun allergene UE dedotto dal nome. Il professionista verifica e conferma.</p>`}`;
+
+    $n.innerHTML = `
+      <section class="section">
+        <div class="sechead"><div style="min-width:0"><h2>Valori nutrizionali</h2><p>Per 100 g, con la fonte. Allergeni dedotti dal nome.</p></div></div>
+        ${corpoHtml}
+        ${compDett}
+        ${allergHtml}
+        ${d.note_onesta ? `<p class="gloss">${esc(d.note_onesta)}</p>` : ''}
+      </section>`;
+  }catch(e){ /* silenzioso: la sezione nutrizionale non deve rompere la scheda */ }
+}
+
+/* ---------- PEZZO 2: Scienza collegata — SOLO il legame reale ingrediente→esperimenti/fenomeni.
+   Dal grafo (archi usa_reagente), via /v1/ingrediente/<nome>/protocolli. Niente "3 livelli" finti:
+   i 3 livelli (faccio/capisco/approfondisco) vivono sui protocolli/fenomeni, non per-ingrediente. ---------- */
+async function caricaScienza(nome){
+  const $s = document.getElementById('sez-scienza');
+  try{
+    const r = await fetch('/v1/ingrediente/'+encodeURIComponent(nome)+'/protocolli', {headers:{'Accept':'application/json'}});
+    if(!r.ok) return;                       // 404 = nessun esperimento collegato: niente sezione
+    const d = await r.json();
+    const exp = (d && Array.isArray(d.esperimenti)) ? d.esperimenti : [];
+    if(!exp.length) return;                 // meglio niente che una sezione finta
+
+    const cards = exp.map(e=>{
+      const disc = e.disciplina ? `<span class="exp-disc">${esc(e.disciplina)}</span>` : '';
+      const ip = e.ipotesi ? `<p class="exp-ipotesi">${esc(e.ipotesi)}</p>` : '';
+      const fen = (Array.isArray(e.fenomeni) ? e.fenomeni.filter(Boolean) : []);
+      const fenHtml = fen.length
+        ? `<div class="chips" style="margin-top:10px">${fen.map(f=>`<span class="chip">${esc(cap(f))}</span>`).join('')}</div>`
+        : '';
+      return `<div class="exp-card">
+          <div class="exp-top"><span class="exp-nome">${esc(cap(e.nome||''))}</span>${disc}</div>
+          ${ip}${fenHtml}
+        </div>`;
+    }).join('');
+
+    $s.innerHTML = `
+      <section class="section">
+        <div class="sechead"><div style="min-width:0"><h2>Scienza collegata</h2><p>Gli esperimenti del grafo che usano questo ingrediente, e i fenomeni che mettono in gioco.</p></div><span class="seccount">${exp.length}</span></div>
+        ${cards}
+        <p class="gloss">Legame reale dal grafo (archi <b>usa_reagente</b>): non una spiegazione a livelli per l'ingrediente — quella vive sulla scheda del singolo esperimento.</p>
+        <a class="cta" href="/scopri/${encodeURIComponent(nome)}">Apri il laboratorio di ${esc(cap(nome))} →</a>
+      </section>`;
+  }catch(e){ /* silenzioso */ }
+}
+
 function cotturaTecVoce(v, mostraVia){
   const dom = v.dominio ? `<span class="cott-tec-dom">${esc(v.dominio)}</span>` : '';
   const via = (mostraVia && (v.via_fenomeni||[]).length)
@@ -155,7 +286,7 @@ async function caricaCottura(nome){
     const vuoto = (cc.stato === 'vuoto') || (cc.valore == null || cc.valore === '');
     let consHtml;
     if(vuoto){
-      const testo = cc.nota || 'Nessuna cottura provata al banco, per ora.';
+      const testo = cc.nota || 'Non ancora misurato al banco.';
       consHtml = `<div class="cott-consigliata vuoto">
           <div class="cott-stato">${provChip({stato:'stima'})}<span>${esc(testo)}</span></div>
         </div>`;
@@ -198,6 +329,53 @@ async function caricaCottura(nome){
   }catch(e){ /* silenzioso: il blocco cottura non deve rompere la scheda */ }
 }
 
+/* ---------- PEZZO 3: Abbinamenti — su /v1/criteri, resi più chiari, provenienza visibile ---------- */
+function abbCard(r){
+  const rob = r.robustezza;
+  const pillCls = rob === 'Alta' ? 'pill alta' : (rob === 'Media' ? 'pill media' : 'pill espl');
+  const pill = rob ? `<span class="${pillCls}">${esc(rob)}</span>` : '';
+  const comps = (r.evidenza && Array.isArray(r.evidenza.composti_caratterizzanti)) ? r.evidenza.composti_caratterizzanti : [];
+  const chips = comps.length ? `<div class="chips">${comps.slice(0,5).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>` : '';
+  const perche = r.perche ? `<p class="perche">${esc(r.perche)}</p>` : '';
+  return `<div class="card lite">
+      <div class="card-top"><h3 class="partner">${esc(cap(r.ingrediente))}</h3>${pill}</div>
+      ${perche}${chips}
+    </div>`;
+}
+
+function abbGruppo(titolo, sub, rels){
+  if(!rels.length) return '';
+  return `<div class="abb-grp">
+      <p class="abb-grp-tit">${esc(titolo)}</p>
+      <p class="abb-grp-sub">${esc(sub)}</p>
+      <div class="list">${rels.map(abbCard).join('')}</div>
+    </div>`;
+}
+
+function renderAbbinamenti(cr, nome){
+  const $a = document.getElementById('sez-abbina');
+  const rel = (cr && Array.isArray(cr.relazioni)) ? cr.relazioni : [];
+  const base = rel.filter(r=>r.criterio==='base_aromatica').slice(0,6);
+  const trad = rel.filter(r=>r.criterio==='tradizione').slice(0,4);
+  const contr = rel.filter(r=>r.criterio==='contrasto').slice(0,4);
+
+  const gruppi =
+    abbGruppo('Cosa ci sta bene', 'Chimica: composti aromatici realmente condivisi. La banda (Alta/Media/Esplorativa) è relativa al miglior risultato di questo ingrediente, non un voto assoluto.', base) +
+    abbGruppo('Per tradizione', 'Cultura: accostamenti documentati, non chimica.', trad) +
+    abbGruppo('Per contrasto', 'Relazione curata nel grafo, non un’euristica.', contr);
+
+  const corpo = gruppi
+    ? gruppi
+    : `<p class="gloss">Nessun abbinamento ancora collegato a questo ingrediente nel grafo. Non è un errore: è “non ancora mappato”.</p>`;
+
+  $a.innerHTML = `
+    <section class="section">
+      <div class="sechead"><div style="min-width:0"><h2>Abbinamenti e sostituzioni</h2><p>Perché una relazione esiste — mai un voto di compatibilità.</p></div></div>
+      ${corpo}
+      <a class="cta" href="/scopri/${encodeURIComponent(nome)}">Vedi tutti gli abbinamenti, e perché →</a>
+    </section>`;
+}
+
 async function carica(nome){
   nome = (nome||'').trim(); if(!nome) return;
   document.getElementById('titolo').textContent = cap(nome);
@@ -211,13 +389,17 @@ async function carica(nome){
     const cr = crR.ok ? await crR.json() : {};
     if(pg.trovato === false && !(cr.relazioni||[]).length){
       setState(`<b>${esc(cap(nome))}</b> non è ancora nell'Atlante con un profilo. Non è un errore: è "non ancora mappato".`, false);
-      $corpo.innerHTML=''; document.getElementById('cottura').innerHTML=''; return;
+      $corpo.innerHTML=''; return;
     }
     $state.hidden = true;
-    document.getElementById('titolo').textContent = cap(pg.nome || nome);
-    caricaFoto(pg.nome || nome);
-    caricaTax(pg.nome || nome);
-    caricaCottura(pg.nome || nome);
+    const nomeReale = pg.nome || nome;
+    document.getElementById('titolo').textContent = cap(nomeReale);
+    // Sezioni non bloccanti: ognuna si riempie da sola, un errore non ferma le altre.
+    caricaFoto(nomeReale);
+    caricaTax(nomeReale);
+    caricaNutri(nomeReale);
+    caricaCottura(nomeReale);
+    caricaScienza(nomeReale);
     document.getElementById('cat').textContent = (pg.kind==='ingredient'?'Ingrediente':(pg.kind||'Ingrediente'));
     const prop = pg.proprieta || {};
     const meta = pg.proprieta_meta || {};
@@ -236,28 +418,19 @@ async function carica(nome){
         <p class="gloss">Scala non ancora definita come i sei gusti base: li mostriamo come riferimento, non come voto 0–10.</p>
       </details>` : '';
 
-    // cosa ci sta bene: teaser dei primi partner aromatici
-    const base = (cr.relazioni||[]).filter(r=>r.criterio==='base_aromatica').slice(0,3);
-    const teaser = base.length ? `
-      <section class="section">
-        <div class="sechead"><div style="min-width:0"><h2>Cosa ci sta bene</h2><p>I primi per impronta aromatica condivisa.</p></div></div>
-        <div class="chips" style="margin-top:12px">${base.map(r=>`<span class="chip">${esc(cap(r.ingrediente))}</span>`).join('')}</div>
-        <a class="cta" href="/scopri/${encodeURIComponent(pg.nome||nome)}">Vedi tutti gli abbinamenti, e perché →</a>
-      </section>` : `
-      <section class="section">
-        <a class="cta" href="/scopri/${encodeURIComponent(pg.nome||nome)}">Scopri gli abbinamenti →</a>
-      </section>`;
-
     $corpo.innerHTML = `
       <section class="section">
         <div class="sechead"><div style="min-width:0"><h2>Profilo sensoriale</h2><p>I sei gusti base, da 0 a 10, ognuno con la sua provenienza.</p></div></div>
         <div class="axes">${barre || '<p class="gloss">Nessun profilo sensoriale registrato per questo ingrediente.</p>'}</div>
         ${notaStima}
         ${altriHtml}
-      </section>
-      ${teaser}`;
+      </section>`;
+
+    // abbinamenti (pezzo 3): dal risultato /v1/criteri già scaricato
+    renderAbbinamenti(cr, nomeReale);
   }catch(e){
-    setState('Non riesco a caricare la scheda adesso. Riprova tra poco.', true); $corpo.innerHTML=''; document.getElementById('cottura').innerHTML='';
+    setState('Non riesco a caricare la scheda adesso. Riprova tra poco.', true);
+    $corpo.innerHTML=''; document.getElementById('cottura').innerHTML='';
   }
 }
 carica(INIT);
