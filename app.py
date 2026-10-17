@@ -116,6 +116,7 @@ from routes.protocollo import bp_protocollo; app.register_blueprint(bp_protocoll
 from routes.admin_migra_quaderno import bp_migra_q; app.register_blueprint(bp_migra_q)
 from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(bp_gusti_search)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
+from routes.cottura import bp_cottura; app.register_blueprint(bp_cottura)
 from routes.tassonomia_wikidata import bp_tax; app.register_blueprint(bp_tax)
 from routes.laboratorio_sensoriale import bp_lab; app.register_blueprint(bp_lab)  # Laboratorio Sensoriale V1 (sola lettura, rete aromatica reale)
 from routes.registra_verifica import bp_verifica; app.register_blueprint(bp_verifica)
