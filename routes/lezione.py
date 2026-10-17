@@ -501,7 +501,7 @@ def fenomeni_avanzati():
                     "titolo": _TITOLO[lang]})
 
 
-@bp.route("/discipline")
+# Alias non-versionato "/discipline" rimosso (wave6): nessun chiamante (frontend usa /v1/discipline, vedi static/matter.js). Route canonica: /v1/discipline.
 @bp.route("/v1/discipline")
 def discipline_conteggi():
     """Le 8 discipline con conteggio fenomeni (per la griglia Home col Bar dominante di Gemini).
