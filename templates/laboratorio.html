@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laboratorio Sensoriale · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+/* bit specifici di questa pagina — riusano le variabili del design congelato */
+.lab-form{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 14px}
+.lab-form input{flex:1 1 140px; min-width:0; font:inherit; padding:11px 13px;
+  border:1px solid var(--card-border); border-radius:11px; background:var(--card); color:var(--ink)}
+.lab-form button{flex:0 0 auto; font:inherit; font-weight:600; padding:11px 18px;
+  border:0; border-radius:11px; cursor:pointer}
+.lab-out{margin-top:4px}
+.lab-metrics{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0}
+.metric{background:var(--card); border:1px solid var(--card-border); border-radius:11px;
+  padding:8px 12px; box-shadow:var(--shadow)}
+.metric .m-k{display:block; font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em}
+.metric .m-v{font-weight:700; font-size:18px; color:var(--ink)}
+.cmp{width:100%; border-collapse:collapse; margin:8px 0}
+.cmp th,.cmp td{padding:7px 9px; text-align:right; font-variant-numeric:tabular-nums}
+.cmp th:first-child,.cmp td:first-child{text-align:left; text-transform:capitalize}
+.cmp thead th{font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--card-border)}
+.cmp tbody tr+tr td{border-top:1px solid var(--card-border)}
+.sub-h{font-weight:600; margin:14px 0 6px; font-size:14px}
+.sub-h .n{color:var(--ink-soft); font-weight:500}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Laboratorio</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Il laboratorio sensoriale</div>
+    <h1>Perché funziona</h1>
+    <p class="regola"><b>Ogni affermazione viene dalla rete aromatica reale del grafo. Dove non c'è un ponte molecolare, è detto: nessun legame inventato.</b></p>
+    <div class="sourceline"><span class="dot"></span><span>Dati dal grafo Matter, endpoint <code>/v1/laboratorio</code>, in tempo reale.</span></div>
+  </header>
+
+  <main>
+    <!-- 1. PERCHÉ FUNZIONA -->
+    <section class="section" id="perche">
+      <div class="sechead">
+        <div style="min-width:0"><h2>Perché funziona</h2><p>I composti aromatici realmente condivisi tra due ingredienti.</p></div>
+      </div>
+      <form class="lab-form" id="f-perche" autocomplete="off">
+        <input id="p-a" type="text" placeholder="Primo ingrediente (es. fragola)" aria-label="Primo ingrediente">
+        <input id="p-b" type="text" placeholder="Secondo ingrediente (es. basilico)" aria-label="Secondo ingrediente">
+        <button type="submit">Analizza</button>
+      </form>
+      <div class="lab-out" id="o-perche"></div>
+    </section>
+
+    <!-- 2. SOSTITUISCI -->
+    <section class="section" id="sostituisci">
+      <div class="sechead">
+        <div style="min-width:0"><h2>Sostituisci</h2><p>Gli ingredienti più vicini nella rete aromatica, col perché.</p></div>
+      </div>
+      <form class="lab-form" id="f-sost" autocomplete="off">
+        <input id="s-ing" type="text" placeholder="Un ingrediente (es. limone)" aria-label="Ingrediente da sostituire">
+        <button type="submit">Trova sostituti</button>
+      </form>
+      <div class="lab-out" id="o-sost"></div>
+    </section>
+
+    <!-- 3. CONFRONTA -->
+    <section class="section" id="confronta">
+      <div class="sechead">
+        <div style="min-width:0"><h2>Confronta</h2><p>Profili sensoriali affiancati, più i composti condivisi e quelli distinti.</p></div>
+      </div>
+      <form class="lab-form" id="f-conf" autocomplete="off">
+        <input id="c-a" type="text" placeholder="Primo ingrediente" aria-label="Primo ingrediente">
+        <input id="c-b" type="text" placeholder="Secondo ingrediente" aria-label="Secondo ingrediente">
+        <button type="submit">Confronta</button>
+      </form>
+      <div class="lab-out" id="o-conf"></div>
+    </section>
+  </main>
+
+  <footer>
+    <b>Dati reali dal grafo Matter</b>, endpoints <code>/v1/laboratorio</code>, in tempo reale. Il <b>perché</b> di ogni accostamento arriva dal backend — i composti condivisi, i caratterizzanti (i più rari), la robustezza dell'evidenza. La robustezza è la forza dell'evidenza molecolare, non un voto di compatibilità. Dove un valore non è ancora misurato resta <b>—</b>, mai un numero inventato.
+  </footer>
+</div>
+
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? String(s).charAt(0).toUpperCase()+String(s).slice(1) : s;
+// "—" onesto: null/undefined/'' diventano trattino, mai un valore inventato
+const dash = v => (v===null || v===undefined || v==='') ? '—' : v;
+const num = v => (typeof v==='number' && isFinite(v)) ? (Number.isInteger(v)? v : v.toFixed(2)) : '—';
+
+// mappa la banda di robustezza REALE del backend ('Alta'|'Media'|'Esplorativa'|null) alle classi pill
+function pill(rob){
+  if(!rob) return '';
+  const r = String(rob).toLowerCase();
+  const cls = r==='alta' ? 'alta' : r==='media' ? 'media' : 'espl';
+  return `<span class="pill ${cls}">${esc(rob)}</span>`;
+}
+function chips(arr){
+  const a = (arr||[]).filter(Boolean);
+  if(!a.length) return '<span class="gloss">—</span>';
+  return '<div class="chips">'+a.map(c=>`<span class="chip">${esc(String(c))}</span>`).join('')+'</div>';
+}
+function setOut(el, msg, err){ el.innerHTML = `<div class="state${err?' err':''}">${msg}</div>`; }
+
+async function chiama(url){
+  const res = await fetch(url, {headers:{'Accept':'application/json'}});
+  let d = {};
+  try{ d = await res.json(); }catch(e){ d = {}; }
+  return {ok: res.ok, status: res.status, d};
+}
+
+// ── 1. PERCHÉ FUNZIONA ───────────────────────────────────────────────
+async function perche(a, b){
+  const el = document.getElementById('o-perche');
+  a=(a||'').trim(); b=(b||'').trim();
+  if(!a || !b){ setOut(el, 'Inserisci due ingredienti.', false); return; }
+  setOut(el, 'Interrogo il grafo…', false);
+  try{
+    const {ok, status, d} = await chiama('/v1/laboratorio/perche/'+encodeURIComponent(a)+'/'+encodeURIComponent(b));
+    if(d.non_riconosciuto){
+      setOut(el, `Non trovo nel grafo: <b>${esc((d.non_riconosciuto||[]).map(cap).join(', '))}</b>. ${esc(d.nota||'')}`, false);
+      return;
+    }
+    if(!ok && status!==400){ setOut(el, `Il grafo ha risposto con un errore (${status}). ${esc(d.nota||'')}`, true); return; }
+    // stesso nodo (400) o altra nota senza esito
+    if(d.condividono === undefined){ setOut(el, esc(d.nota || 'Confronto non applicabile.'), false); return; }
+
+    const na = cap(d.a||a), nb = cap(d.b||b);
+    if(d.condividono === false){
+      el.innerHTML = `
+        <div class="card lite">
+          <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b></div>
+          <div class="prov trad"><span class="sq"></span>Nessun ponte molecolare reale</div>
+          <p class="perche">${esc(d.perche||'')}</p>
+          ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
+        </div>`;
+      return;
+    }
+    const prof = d.profilo || {};
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b>${pill(d.robustezza)}</div>
+        <p class="point">${esc(d.perche||'')}</p>
+        <div class="lab-metrics">
+          <div class="metric"><span class="m-k">Composti condivisi</span><span class="m-v">${dash(d.composti_condivisi)}</span></div>
+          <div class="metric"><span class="m-k">Indice rarità</span><span class="m-v">${num(d.indice_rarita)}</span></div>
+          <div class="metric"><span class="m-k">Robustezza</span><span class="m-v">${esc(dash(d.robustezza))}</span></div>
+          <div class="metric"><span class="m-k">Composti ${esc(na)}</span><span class="m-v">${dash(prof.composti_a)}</span></div>
+          <div class="metric"><span class="m-k">Composti ${esc(nb)}</span><span class="m-v">${dash(prof.composti_b)}</span></div>
+        </div>
+        <div class="sub-h">Composti caratterizzanti <span class="n">(i più rari)</span></div>
+        ${chips(d.composti_caratterizzanti)}
+        ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
+      </div>`;
+  }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
+}
+
+// ── 2. SOSTITUISCI ───────────────────────────────────────────────────
+async function sostituisci(ing){
+  const el = document.getElementById('o-sost');
+  ing=(ing||'').trim();
+  if(!ing){ setOut(el, 'Inserisci un ingrediente.', false); return; }
+  setOut(el, 'Interrogo il grafo…', false);
+  try{
+    const {ok, status, d} = await chiama('/v1/laboratorio/sostituisci/'+encodeURIComponent(ing));
+    if(d.non_riconosciuto){ setOut(el, `<b>${esc(cap(ing))}</b> non è nel grafo con un profilo di composti. ${esc(d.nota||'')}`, false); return; }
+    if(!ok){ setOut(el, `Il grafo ha risposto con un errore (${status}). ${esc(d.nota||'')}`, true); return; }
+    const sost = d.sostituti || [];
+    const nome = cap(d.ingrediente || ing);
+    if(!sost.length){ setOut(el, `${esc(d.nota || 'Nessun sostituto con composti condivisi sufficienti.')}`, false); return; }
+    const cards = sost.map(v=>`
+      <article class="card">
+        <div class="card-top"><b>${esc(cap(v.ingrediente||''))}</b>${pill(v.robustezza)}</div>
+        <p class="point">${esc(v.perche||'')}</p>
+        <div class="lab-metrics">
+          <div class="metric"><span class="m-k">Composti condivisi</span><span class="m-v">${dash(v.composti_condivisi)}</span></div>
+          <div class="metric"><span class="m-k">Indice rarità</span><span class="m-v">${num(v.indice_rarita)}</span></div>
+        </div>
+        <div class="sub-h">Caratterizzanti</div>
+        ${chips(v.composti_caratterizzanti)}
+      </article>`).join('');
+    el.innerHTML = `
+      <p class="gloss">Sostituti di <b>${esc(nome)}</b> · ${dash(d.conteggio)} trovati</p>
+      <div class="list">${cards}</div>
+      ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}`;
+  }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
+}
+
+// ── 3. CONFRONTA ─────────────────────────────────────────────────────
+async function confronta(a, b){
+  const el = document.getElementById('o-conf');
+  a=(a||'').trim(); b=(b||'').trim();
+  if(!a || !b){ setOut(el, 'Inserisci due ingredienti.', false); return; }
+  setOut(el, 'Interrogo il grafo…', false);
+  try{
+    const {ok, status, d} = await chiama('/v1/laboratorio/confronta/'+encodeURIComponent(a)+'/'+encodeURIComponent(b));
+    if(d.non_riconosciuto){ setOut(el, `Non trovo nel grafo: <b>${esc((d.non_riconosciuto||[]).map(cap).join(', '))}</b>. ${esc(d.nota||'')}`, false); return; }
+    if(!ok){ setOut(el, `Il grafo ha risposto con un errore (${status}). ${esc(d.nota||'')}`, true); return; }
+    const na = cap(d.a||a), nb = cap(d.b||b);
+    const assi = d.profilo_sensoriale || [];
+    let tab;
+    if(d.assi_assenti || !assi.length){
+      tab = `<p class="gloss">Nessun profilo sensoriale misurato per questa coppia: non lo inventiamo.</p>`;
+    } else {
+      const righe = assi.map(r=>`
+        <tr><td>${esc(r.asse||'')}</td><td>${dash(r.a)}</td><td>${dash(r.b)}</td><td>${('delta' in r)? dash(r.delta) : '—'}</td></tr>`).join('');
+      tab = `<table class="cmp">
+        <thead><tr><th>Asse</th><th>${esc(na)}</th><th>${esc(nb)}</th><th>Δ</th></tr></thead>
+        <tbody>${righe}</tbody></table>`;
+    }
+    const c = d.composti || {};
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b></div>
+        <div class="sub-h">Profilo sensoriale <span class="n">(0–10, Δ = ${esc(na)} − ${esc(nb)})</span></div>
+        ${tab}
+        <div class="sub-h">Composti condivisi <span class="n">(${dash(c.condivisi)})</span></div>
+        ${chips(c.condivisi_caratterizzanti)}
+        <div class="sub-h">Solo ${esc(na)} <span class="n">(${dash(c.solo_a)})</span></div>
+        ${chips(c.solo_a_caratterizzanti)}
+        <div class="sub-h">Solo ${esc(nb)} <span class="n">(${dash(c.solo_b)})</span></div>
+        ${chips(c.solo_b_caratterizzanti)}
+        ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
+      </div>`;
+  }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
+}
+
+document.getElementById('f-perche').addEventListener('submit', e=>{ e.preventDefault(); perche(document.getElementById('p-a').value, document.getElementById('p-b').value); });
+document.getElementById('f-sost').addEventListener('submit', e=>{ e.preventDefault(); sostituisci(document.getElementById('s-ing').value); });
+document.getElementById('f-conf').addEventListener('submit', e=>{ e.preventDefault(); confronta(document.getElementById('c-a').value, document.getElementById('c-b').value); });
+</script>
+</body>
+</html>
