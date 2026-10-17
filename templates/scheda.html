@@ -16,6 +16,17 @@
 .tax-line b{color:var(--ink); font-weight:600}
 .tax-line .sci{font-style:italic}
 .tax-line .src{font-size:11px; opacity:.75}
+/* Blocco Cottura — coerente con le altre section */
+.cott-consigliata{margin-top:4px; padding:12px 13px; border-radius:12px; border:1px solid var(--card-border); background:var(--card)}
+.cott-consigliata.vuoto{background:transparent; border-style:dashed}
+.cott-consigliata .cott-stato{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft)}
+.cott-consigliata .cott-val{margin-top:6px; color:var(--ink); font-weight:600}
+.cott-tec{margin-top:6px; padding:9px 11px; border-radius:10px; border:1px solid var(--card-border); background:var(--card)}
+.cott-tec + .cott-tec{margin-top:8px}
+.cott-tec .cott-tec-nome{font-weight:600; color:var(--ink)}
+.cott-tec .cott-tec-dom{font-size:11px; color:var(--ink-soft); margin-left:6px}
+.cott-tec .cott-tec-via{margin-top:4px; font-size:12px; color:var(--ink-soft)}
+.cott-tec .cott-tec-nota{margin-top:4px; font-size:12px; color:var(--ink-soft); font-style:italic}
 </style>
 </head>
 <body>
@@ -36,6 +47,7 @@
   </header>
 
   <main id="corpo"></main>
+  <div id="cottura"></div>
   <div class="state" id="state" hidden></div>
 
   <footer>
@@ -121,6 +133,71 @@ async function caricaTax(nome){
   }catch(e){}
 }
 
+function cotturaTecVoce(v, mostraVia){
+  const dom = v.dominio ? `<span class="cott-tec-dom">${esc(v.dominio)}</span>` : '';
+  const via = (mostraVia && (v.via_fenomeni||[]).length)
+    ? `<div class="cott-tec-via">via: ${v.via_fenomeni.map(f=>esc(f)).join(' · ')}</div>` : '';
+  const nota = v.nota ? `<div class="cott-tec-nota">${esc(v.nota)}</div>` : '';
+  return `<div class="cott-tec"><span class="cott-tec-nome">${esc(cap(v.nome||''))}</span>${dom}${via}${nota}</div>`;
+}
+
+async function caricaCottura(nome){
+  const $c = document.getElementById('cottura');
+  $c.innerHTML = '';
+  try{
+    const r = await fetch('/v1/cottura/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return; // 404 = ingrediente non nel grafo: niente blocco, nessun rumore
+    const d = await r.json();
+    if(!d || d.errore) return;
+
+    // Campo curato: onesto. Se vuoto, usiamo l'etichetta/nota che arriva dal backend.
+    const cc = d.cottura_consigliata || {};
+    const vuoto = (cc.stato === 'vuoto') || (cc.valore == null || cc.valore === '');
+    let consHtml;
+    if(vuoto){
+      const testo = cc.nota || 'Nessuna cottura provata al banco, per ora.';
+      consHtml = `<div class="cott-consigliata vuoto">
+          <div class="cott-stato">${provChip({stato:'stima'})}<span>${esc(testo)}</span></div>
+        </div>`;
+    } else {
+      const val = Array.isArray(cc.valore) ? cc.valore.map(x=>esc(String(x))).join(' · ') : esc(String(cc.valore));
+      consHtml = `<div class="cott-consigliata">
+          <div class="cott-stato">${provChip({stato:cc.stato, fonte:cc.fonte})}<span>Cottura consigliata — curata.</span></div>
+          <div class="cott-val">${val}</div>
+        </div>`;
+    }
+
+    const tc = d.tecniche_collegate || {};
+    const td = d.tecniche_disciplina || {};
+    const vociTc = tc.voci || [];
+    const vociTd = td.voci || [];
+
+    const bloccoTc = vociTc.length ? `
+      <div style="margin-top:12px">
+        <p class="gloss" style="margin:0 0 8px">${esc(tc.etichetta || 'tecniche collegate nel grafo')} (${tc.conteggio||vociTc.length})</p>
+        ${vociTc.map(v=>cotturaTecVoce(v, true)).join('')}
+      </div>` : '';
+
+    const bloccoTd = vociTd.length ? `
+      <details class="mol" style="margin-top:12px">
+        <summary>${esc(td.etichetta || 'tecniche della disciplina')} (${td.conteggio||vociTd.length})</summary>
+        <div style="margin-top:10px">${vociTd.map(v=>cotturaTecVoce(v, false)).join('')}</div>
+      </details>` : '';
+
+    const nulla = (!vociTc.length && !vociTd.length)
+      ? `<p class="gloss">Il grafo non collega ancora tecniche a questo ingrediente.</p>` : '';
+
+    $c.innerHTML = `
+      <section class="section">
+        <div class="sechead"><div style="min-width:0"><h2>Cottura</h2><p>${esc(d.onesta || '')}</p></div></div>
+        ${consHtml}
+        ${bloccoTc}
+        ${bloccoTd}
+        ${nulla}
+      </section>`;
+  }catch(e){ /* silenzioso: il blocco cottura non deve rompere la scheda */ }
+}
+
 async function carica(nome){
   nome = (nome||'').trim(); if(!nome) return;
   document.getElementById('titolo').textContent = cap(nome);
@@ -134,12 +211,13 @@ async function carica(nome){
     const cr = crR.ok ? await crR.json() : {};
     if(pg.trovato === false && !(cr.relazioni||[]).length){
       setState(`<b>${esc(cap(nome))}</b> non è ancora nell'Atlante con un profilo. Non è un errore: è "non ancora mappato".`, false);
-      $corpo.innerHTML=''; return;
+      $corpo.innerHTML=''; document.getElementById('cottura').innerHTML=''; return;
     }
     $state.hidden = true;
     document.getElementById('titolo').textContent = cap(pg.nome || nome);
     caricaFoto(pg.nome || nome);
     caricaTax(pg.nome || nome);
+    caricaCottura(pg.nome || nome);
     document.getElementById('cat').textContent = (pg.kind==='ingredient'?'Ingrediente':(pg.kind||'Ingrediente'));
     const prop = pg.proprieta || {};
     const meta = pg.proprieta_meta || {};
@@ -179,7 +257,7 @@ async function carica(nome){
       </section>
       ${teaser}`;
   }catch(e){
-    setState('Non riesco a caricare la scheda adesso. Riprova tra poco.', true); $corpo.innerHTML='';
+    setState('Non riesco a caricare la scheda adesso. Riprova tra poco.', true); $corpo.innerHTML=''; document.getElementById('cottura').innerHTML='';
   }
 }
 carica(INIT);
