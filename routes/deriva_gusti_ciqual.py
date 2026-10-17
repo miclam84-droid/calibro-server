@@ -7,6 +7,9 @@
 # Match CURATO a mano (il match automatico su CIQUAL sbaglia ~50%: ciliegia->pomodoro,
 # burro->fagiolo, miele->melone). Dati locali: data/ciqual2025_norm.csv (niente rete).
 # Fonte obbligatoria da licenza Open Licence ANSES: "Anses. 2025. Ciqual..."
+# Oltre agli assi del gusto persiste anche il PANNELLO nutrizionale (dd["nutrienti"]/
+# ["nutrienti_meta"], fill-only) con i SOLI campi che la tabella CIQUAL normalizzata
+# contiene davvero — vedi _pannello_nutrienti() per quali e perché.
 # ============================================================
 import os
 import csv
@@ -130,6 +133,35 @@ def _deriva(row):
     return out
 
 
+# Pannello nutrizionale standard (etichetta) dai campi CIQUAL realmente presenti.
+# ONESTÀ: la tabella CIQUAL normalizzata (data/ciqual2025_norm.csv) espone SOLO le
+# colonne nutrizionali zuccheri_g, grasso_g, sodio_mg, sale_g, acidi_organici_g.
+# Quindi il pannello può contenere soltanto grassi/zuccheri/sodio: energia (kcal),
+# proteine, carboidrati, fibre e grassi saturi NON esistono nella tabella e NON si
+# scrivono mai (niente zero inventato, nessuna conversione). Mappatura
+# chiave_pannello -> (chiave riga interna = colonna CIQUAL reale, unità).
+_PANNELLO = [
+    ("grassi",   "grasso",   "g/100g"),    # colonna CIQUAL: grasso_g
+    ("zuccheri", "zuccheri", "g/100g"),    # colonna CIQUAL: zuccheri_g
+    ("sodio",    "sodio",    "mg/100g"),   # colonna CIQUAL: sodio_mg
+]
+
+
+def _pannello_nutrienti(row):
+    """Funzione PURA: da una riga CIQUAL normalizzata estrae il pannello
+    nutrizionale standard, includendo SOLO i campi con un valore realmente
+    presente (non None). La tabella CIQUAL normalizzata non contiene energia/
+    proteine/carboidrati/fibre/grassi saturi: quei campi non vengono mai scritti
+    (niente zero inventato). Stessa forma d'uscita del pannello USDA:
+    {chiave: {"valore": x, "unita": u}}."""
+    out = {}
+    for chiave, kriga, unita in _PANNELLO:
+        v = (row or {}).get(kriga)
+        if v is not None:
+            out[chiave] = {"valore": round(float(v), 2), "unita": unita}
+    return out
+
+
 @bp_gusti_ciqual.route("/admin/deriva-gusti-ciqual")
 def deriva_gusti_ciqual():
     """DRY-RUN di default (?s=SECRET). Con &esegui=1 scrive (fill-only, backup+transazione).
@@ -224,11 +256,19 @@ def deriva_gusti_ciqual():
                 if scrivibile:
                     cambi[asse] = (der[asse]["val"], der[asse])
 
+            # pannello nutrizionale completo (solo campi CIQUAL realmente presenti):
+            # fill-only, mai sopra un blocco con stato diverso da derivato/stimato/assente.
+            nutri = _pannello_nutrienti(cq)
+            nutr_meta_vecchio = dd.get("nutrienti_meta", {}) or {}
+            nutr_scrivibile = bool(nutri) and (nutr_meta_vecchio.get("stato") in (None, "derivato", "stimato"))
+            riga["nutrienti"] = nutri
+            riga["nutrienti_scrivibile"] = nutr_scrivibile
+
             if len(campione) < 40:
                 campione.append(riga)
 
             # 2) scrittura (solo con esegui=1)
-            if esegui and cambi:
+            if esegui and (cambi or nutr_scrivibile):
                 cur.execute("INSERT INTO _backup_gusti_derivati (id, data_old) VALUES (%s, %s)",
                             (nid, json.dumps(dd, ensure_ascii=False)))
                 for asse, (nuovo, info) in cambi.items():
@@ -240,6 +280,10 @@ def deriva_gusti_ciqual():
                     meta[asse] = m
                 dd["proprieta"] = prop
                 dd["proprieta_meta"] = meta
+                if nutr_scrivibile:
+                    dd["nutrienti"] = nutri
+                    dd["nutrienti_meta"] = {"stato": "derivato", "fonte": f"{FONTE} #{code}",
+                                            "formula": FORMULA_VER}
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s", (json.dumps(dd, ensure_ascii=False), nid))
                 scritti += 1
 
@@ -263,7 +307,8 @@ def deriva_gusti_ciqual():
             "nota": ("DRY RUN: nessun dato modificato. Aggiungi &esegui=1 per scrivere."
                      if not esegui else
                      "ESEGUITO: fill-only in transazione; backup in _backup_gusti_derivati; "
-                     "assi dolce/salato/grasso/acido, mai sovrascritto corretto/verificato/derivato-USDA. "
+                     "assi dolce/salato/grasso/acido + pannello nutrienti (grassi/zuccheri/sodio, "
+                     "gli unici campi presenti nella tabella CIQUAL), mai sovrascritto corretto/verificato. "
                      "Fonte: Anses. 2025. Ciqual French food composition table."),
             "campione": campione,
         })
