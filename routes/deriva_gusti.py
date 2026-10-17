@@ -75,6 +75,108 @@ _MATCH = {
     # RIMOSSI 14/10 (fdc_id curato sbagliato, verificato live su USDA): ananas->Plums,
     # pera->Persimmons, parmigiano->Feta, tuorlo->Egg omelet, gambero->Cod, salsa di soia->Mustard.
     # Vanno derivati da /admin/deriva-gusti-search (ricerca live + cancello di confidenza).
+    # ============================================================================
+    # ONDATA 2 — PROPOSTA (aggiunti 18/10). fdc_id VERIFICATI live in questo task
+    # sul dataset ufficiale USDA SR Legacy (FoodData_Central_sr_legacy_food_csv_2018-04,
+    # food.csv): tutti data_type = sr_legacy_food (nessun Branded). La `description`
+    # USDA e' riportata a fianco. Sono match "ingrediente giusto" generici: scrivono
+    # un derivato provvisorio, il banco sovrascrive. Risolti anche due pendenti del
+    # 15/10: pera (169118) e salsa di soia (174277). 'tuorlo' resta da fare.
+    # ----- ortaggi -----
+    "melanzana": 169228,          # Eggplant, raw
+    "zucca": 170489,              # Squash, winter, all varieties, raw (= zucca delica/butternut)
+    "broccoli": 170379,           # Broccoli, raw
+    "cavolfiore": 169986,         # Cauliflower, raw
+    "finocchio": 169385,          # Fennel, bulb, raw
+    "sedano": 169988,             # Celery, raw
+    "lattuga": 169247,            # Lettuce, cos or romaine, raw
+    "rucola": 169387,             # Arugula, raw
+    "cavolo": 169975,             # Cabbage, raw
+    "porro": 169246,              # Leeks, (bulb and lower leaf-portion), raw
+    "asparagi": 168389,           # Asparagus, raw
+    "carciofo": 169205,           # Artichokes, (globe or french), raw
+    "barbabietola": 169145,       # Beets, raw
+    "ravanello": 169276,          # Radishes, raw
+    "scalogno": 170499,           # Shallots, raw
+    "rapa": 170465,               # Turnips, raw
+    "fagiolini": 169961,          # Beans, snap, green, raw
+    "peperoncino": 170106,        # Peppers, hot chili, red, raw
+    # ----- frutta -----
+    "pera": 169118,               # Pears, raw
+    "prugna": 169949,             # Plums, raw
+    "fico": 173021,               # Figs, raw
+    "anguria": 167765,            # Watermelon, raw
+    "melone": 169092,             # Melons, cantaloupe, raw
+    "pompelmo": 173033,           # Grapefruit, raw, pink and red and white, all areas
+    "mandarino": 169105,          # Tangerines, (mandarin oranges), raw
+    "arancia": 169097,            # Oranges, raw, all commercial varieties
+    "avocado": 171705,            # Avocados, raw, all commercial varieties
+    "cocco": 170169,              # Nuts, coconut meat, raw
+    "mora": 173946,               # Blackberries, raw
+    "cachi": 169941,              # Persimmons, japanese, raw
+    "mirtillo rosso": 171722,     # Cranberries, raw  (distinto da 'mirtillo' = blueberry)
+    "ribes": 173964,              # Currants, red and white, raw
+    # ----- erbe aromatiche -----
+    "basilico": 172232,           # Basil, fresh
+    "prezzemolo": 170416,         # Parsley, fresh
+    "rosmarino": 173473,          # Rosemary, fresh
+    "timo": 173470,               # Thyme, fresh
+    "menta": 173474,              # Peppermint, fresh
+    "aneto": 172233,              # Dill weed, fresh
+    # ----- legumi -----
+    "lenticchie": 172420,         # Lentils, raw
+    "ceci": 173756,               # Chickpeas (garbanzo beans, bengal gram), mature seeds, raw
+    "fagioli cannellini": 175202, # Beans, white, mature seeds, raw
+    "fagioli rossi": 173744,      # Beans, kidney, red, mature seeds, raw
+    "piselli": 170419,            # Peas, green, raw
+    "fave": 175205,               # Broadbeans (fava beans), mature seeds, raw
+    "soia": 174270,               # Soybeans, mature seeds, raw
+    # ----- formaggi -----
+    "mozzarella": 170845,         # Cheese, mozzarella, whole milk
+    "ricotta": 170851,            # Cheese, ricotta, whole milk (vaccina; la 'di pecora' resta al banco)
+    "pecorino": 171249,           # Cheese, romano (= pecorino romano)
+    "provolone": 170850,          # Cheese, provolone
+    # ----- pesci e molluschi -----
+    "merluzzo": 171955,           # Fish, cod, Atlantic, raw
+    "sgombro": 175119,            # Fish, mackerel, Atlantic, raw
+    "acciuga": 174182,            # Fish, anchovy, european, raw
+    "trota": 173717,              # Fish, trout, rainbow, farmed, raw
+    "branzino": 175142,           # Fish, sea bass, mixed species, raw
+    "polpo": 174218,              # Mollusks, octopus, common, raw
+    "calamaro": 174223,           # Mollusks, squid, mixed species, raw
+    "cozze": 174216,              # Mollusks, mussel, blue, raw
+    "vongole": 174214,            # Mollusks, clam, mixed species, raw
+    # ----- carni -----
+    "tacchino": 171098,           # Turkey, whole, breast, meat only, raw
+    "vitello": 173815,            # Veal, composite of trimmed retail cuts, separable lean and fat, raw
+    "coniglio": 172521,           # Game meat, rabbit, domesticated, composite of cuts, raw
+    "anatra": 172410,             # Duck, domesticated, meat only, raw
+    # ----- frutta secca e semi -----
+    "pistacchio": 170184,         # Nuts, pistachio nuts, raw  (la 'pasta di pistacchio' resta al banco)
+    "anacardi": 170162,           # Nuts, cashew nuts, raw
+    "pinoli": 170591,             # Nuts, pine nuts, dried
+    "castagna": 170574,           # Nuts, chestnuts, european, raw, unpeeled
+    "semi di sesamo": 170150,     # Seeds, sesame seeds, whole, dried
+    "semi di zucca": 170556,      # Seeds, pumpkin and squash seed kernels, dried
+    "semi di girasole": 170562,   # Seeds, sunflower seed kernels, dried
+    # ----- cereali e pseudocereali -----
+    "avena": 169705,              # Oats
+    "orzo": 170284,               # Barley, pearled, raw
+    "mais": 169998,               # Corn, sweet, yellow, raw
+    "grano saraceno": 170286,     # Buckwheat
+    "farro": 169745,              # Spelt, uncooked
+    "quinoa": 168874,             # Quinoa, uncooked
+    # ----- condimenti -----
+    "senape": 172234,             # Mustard, prepared, yellow
+    "salsa di soia": 174277,      # Soy sauce made from soy and wheat (shoyu)
+    # ============================================================================
+    # DA APPROVARE — fdc_id verificato su SR Legacy, ma la corrispondenza NON e'
+    # pulita: decide Michele se tenerli o mandarli al banco. (Commentati: NON entrano
+    # finche' non approvati.)
+    #   "salvia": 170935,         # Spices, sage, ground — DA APPROVARE — dubbio: su SR Legacy c'e' solo salvia SECCA/MACINATA, non la foglia fresca; grasso/sodio concentrati, profilo inadatto alla salvia fresca.
+    #   "gorgonzola": 172175,     # Cheese, blue — DA APPROVARE — dubbio: USDA ha solo "blue cheese" generico, non gorgonzola (erborinato simile ma non la stessa cosa).
+    #   "mascarpone": 173418,     # Cheese, cream — DA APPROVARE — dubbio: il cream cheese ha ~34% grassi, il mascarpone ~47%; il grasso derivato verrebbe sottostimato.
+    #   "sardina": 175139,        # Fish, sardine, Atlantic, canned in oil, drained solids with bone — DA APPROVARE — dubbio: solo sardina IN SCATOLA sott'olio, non fresca; olio e sale alterano grasso/sodio.
 }
 
 # esclusioni di sicurezza: mai derivare un raro/DOP/presidio da un match generico
