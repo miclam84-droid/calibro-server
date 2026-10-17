@@ -1,0 +1,10 @@
+# TABELLA GLUTAMMATO LIBERO — da FONTE CITABILE, niente numeri a memoria.
+# La macchina (routes/deriva_umami.py) legge QUESTO file e deriva l'asse umami 0-10.
+# Finche' e' vuoto, /admin/deriva-umami risponde "tabella vuota" e NON scrive nulla.
+# Per riempirlo servono dati di glutammato libero (acido glutammico libero, mg/100g)
+# da una fonte verificabile: Ninomiya K. (1998) "Natural occurrence" o
+# Umami Information Center (SOLO se la licenza e' verificata — per ora e' incerta).
+# Colonne: nome (italiano, come il nodo nel grafo), glutammato_mg_100g, fonte
+# Le righe che iniziano con # sono ignorate. Esempio di formato (NON e' un dato reale):
+# pomodoro_maturo,246,Ninomiya1998
+nome,glutammato_mg_100g,fonte
