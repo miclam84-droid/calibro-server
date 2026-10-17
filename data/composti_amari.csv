@@ -1,0 +1,41 @@
+# REGISTRO COMPOSTI AMARI — marcatori molecolari dell'amaro, SOLO da fonte citabile.
+# La macchina (routes/deriva_amaro.py) legge QUESTO file: per ogni nodo conta quanti
+# dei suoi `composti_aromatici` sono marcatori amari noti e ne deriva un INDICE amaro 0-10.
+# È una STIMA da marcatori molecolari (presenza di composti amari documentati),
+# NON una misura al banco. Taggata come tale nel grafo.
+#
+# REGOLA ASSOLUTA: nessun composto "a memoria". Ogni riga è attribuita a una fonte
+# reale consultata nel task 2026-10-18. CAS dai record pubblici PubChem (dominio pubblico, NLM).
+# Il match sui nodi avviene per CAS (robusto, indipendente dalla lingua) o per nome.
+# Righe che iniziano con # ignorate. Colonne: compound, cas, classe, fonte
+#
+# ---- Fonti (tutte consultate e verificate il 2026-10-18) ----
+# [Wang2023]  Wang R. et al. (2023) "Naringin, neohesperidin and their corresponding
+#             dihydrochalcones...", Food Quality and Safety 7:fyad036. CC BY. doi:10.1093/fqsafe/fyad036
+# [Luo2019]   Luo M. et al. (2019) "Toward the Identification of Extra-Oral TAS2R Agonists...",
+#             Front. Physiol. 10:861. CC BY. doi:10.3389/fphys.2019.00861
+# [Fabela2024] Fabela-Morón M.F. (2024) "Bioactive compounds, sensory attributes, and flavor
+#             perceptions... in fruits and vegetables", Front. Nutr. 11:1427857. CC BY. doi:10.3389/fnut.2024.1427857
+# [Protsenko2020] Protsenko L. et al. (2020) "Influence of alpha acids hop homologues on beer
+#             quality", Ukrainian Food Journal 9(2). doi:10.24263/2304-974X-2020-9-2-13
+# [Antoniadi2024] Antoniadi L. et al. (2024) "Gentiopicroside — An Insight into Its Pharmacological
+#             Significance...", Cells 13(1):70. CC BY 3.0. doi:10.3390/cells13010070
+# [PubChem] PubChem Compound (NLM/NIH, dominio pubblico) — SOLO per i numeri CAS.
+compound,cas,classe,fonte
+caffeine,58-08-2,metilxantina (alcaloide),Wang2023 (amaro del caffè) + Luo2019 (TAS2R, caffè); CAS PubChem
+caffeina,58-08-2,metilxantina (alcaloide),Wang2023 + Luo2019 (sinonimo IT di caffeine); CAS PubChem
+quinine,130-95-0,alcaloide chinolinico,Luo2019 (composto amaro prototipico); CAS PubChem
+chinina,130-95-0,alcaloide chinolinico,Luo2019 (sinonimo IT di quinine); CAS PubChem
+naringin,10236-47-2,flavanone glicoside,Wang2023 + Luo2019 (amaro degli agrumi); CAS PubChem
+naringina,10236-47-2,flavanone glicoside,Wang2023 + Luo2019 (sinonimo IT di naringin); CAS PubChem
+neohesperidin,13241-33-3,flavanone glicoside,Wang2023 + Fabela2024 (amaro degli agrumi); CAS PubChem
+neoesperidina,13241-33-3,flavanone glicoside,Wang2023 + Fabela2024 (sinonimo IT); CAS PubChem
+limonin,1180-71-8,limonoide (triterpenoide),Wang2023 (amaro tipico degli agrumi/limone); CAS PubChem
+limonina,1180-71-8,limonoide (triterpenoide),Wang2023 (sinonimo IT di limonin); CAS PubChem
+nomilin,1063-77-0,limonoide (triterpenoide),Wang2023 (amaro degli agrumi); CAS PubChem
+humulone,26472-41-3,alfa-acido del luppolo,Protsenko2020 (alfa-acidi del luppolo, base dell'amaro); CAS PubChem
+isohumulone,25522-96-7,iso-alfa-acido del luppolo,Protsenko2020 (iso-alfa-acidi = 90-95% dell'amaro della birra); CAS PubChem
+cucurbitacin b,6199-67-3,cucurbitacina (triterpenoide),Fabela2024 (cucurbitacine = triterpenoidi amari); CAS PubChem
+cucurbitacin e,18444-66-1,cucurbitacina (triterpenoide),Fabela2024 (cucurbitacine = triterpenoidi amari); CAS PubChem
+gentiopicroside,20831-76-9,secoiridoide glucoside,Antoniadi2024 (principio amaro della genziana); CAS PubChem
+spermine,71-44-3,poliammina,Fabela2024 (amaro del goji); CAS PubChem
