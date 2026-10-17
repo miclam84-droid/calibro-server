@@ -1,10 +1,33 @@
-# TABELLA GLUTAMMATO LIBERO — da FONTE CITABILE, niente numeri a memoria.
-# La macchina (routes/deriva_umami.py) legge QUESTO file e deriva l'asse umami 0-10.
-# Finche' e' vuoto, /admin/deriva-umami risponde "tabella vuota" e NON scrive nulla.
-# Per riempirlo servono dati di glutammato libero (acido glutammico libero, mg/100g)
-# da una fonte verificabile: Ninomiya K. (1998) "Natural occurrence" o
-# Umami Information Center (SOLO se la licenza e' verificata — per ora e' incerta).
-# Colonne: nome (italiano, come il nodo nel grafo), glutammato_mg_100g, fonte
-# Le righe che iniziano con # sono ignorate. Esempio di formato (NON e' un dato reale):
-# pomodoro_maturo,246,Ninomiya1998
 nome,glutammato_mg_100g,fonte
+# TABELLA GLUTAMMATO LIBERO — da FONTE CITABILE, niente numeri a memoria.
+# L'header (riga 1) deve restare la PRIMA riga: csv.DictReader la usa come intestazione.
+# Le righe che iniziano con # sono ignorate dal parser (routes/deriva_umami.py).
+# Colonne: nome (italiano, come il nodo nel grafo), glutammato_mg_100g, fonte.
+#
+# ---- DATI REALI (ondata 2, 2026-10-18) ----
+# Fonte primaria: FSANZ (2003) "Monosodium Glutamate: A Safety Assessment",
+#   Technical Report Series No. 20, Tab.1 "Naturally occurring glutamate in various
+#   foods" (p.14), che cita Yamaguchi & Ninomiya 1998.
+#   https://www.foodstandards.gov.au/sites/default/files/publications/Documents/MSG%20Technical%20Report.pdf
+# Righe "FSANZ2003 TR20 p14": lette direttamente dalla Tab.1 del PDF FSANZ.
+# Verdure: lette nella riproduzione ufficiale della stessa Tab.1 FSANZ 2003 dentro
+#   DFG-SKLM (2005) "Opinion on monosodium glutamate", Tab.1.
+#   https://www.dfg.de/resource/blob/169090/56fb70f1c9bf591806fad4c45ef53098/sklm-glutamat-2005-en-data.pdf
+# Valori sovrapposti (latte, latte materno, uova, manzo, salmone) coincidono tra le
+#   due fonti: verifica incrociata superata. Nessun numero scritto a memoria.
+latte,2,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+latte materno,22,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+parmigiano,1200,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+uova,23,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+pollo,44,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+anatra,69,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+manzo,33,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+maiale,23,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+merluzzo,9,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+sgombro,36,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+salmone,20,FSANZ2003 TR20 Tab.1 p14 (da Yamaguchi&Ninomiya1998) foodstandards.gov.au/MSG-Technical-Report.pdf
+pomodoro,140,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-2005-en-data.pdf
+patate,180,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-2005-en-data.pdf
+piselli,200,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-2005-en-data.pdf
+carote,33,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-2005-en-data.pdf
+spinaci,39,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-2005-en-data.pdf
