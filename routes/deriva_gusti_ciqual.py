@@ -162,6 +162,25 @@ def _pannello_nutrienti(row):
     return out
 
 
+def _nutri_da_scrivere(nutri, nutrienti_vecchio, nutr_meta_vecchio):
+    """Decide (PURO) se persistere il pannello CIQUAL `nutri`. Regole:
+    - niente da scrivere se il nuovo pannello è vuoto;
+    - fill-only: mai sopra un blocco con stato diverso da derivato/stimato/assente;
+    - NO-DOWNGRADE: se il nodo ha GIÀ un blocco nutrienti, si scrive solo se il
+      nuovo pannello ha PIÙ campi di quello esistente. Così un pannello più ricco
+      (es. USDA a 8 campi) non viene mai sostituito da uno più povero (CIQUAL a 3).
+    La `fonte` resta UNICA per blocco (nessuna provenienza per-campo)."""
+    if not nutri:
+        return False
+    stato = (nutr_meta_vecchio or {}).get("stato")
+    if stato not in (None, "derivato", "stimato"):
+        return False
+    vecchio = nutrienti_vecchio if isinstance(nutrienti_vecchio, dict) else {}
+    if vecchio and len(nutri) <= len(vecchio):
+        return False  # no-downgrade: non sostituire un pannello uguale o più ricco
+    return True
+
+
 @bp_gusti_ciqual.route("/admin/deriva-gusti-ciqual")
 def deriva_gusti_ciqual():
     """DRY-RUN di default (?s=SECRET). Con &esegui=1 scrive (fill-only, backup+transazione).
@@ -257,10 +276,9 @@ def deriva_gusti_ciqual():
                     cambi[asse] = (der[asse]["val"], der[asse])
 
             # pannello nutrizionale completo (solo campi CIQUAL realmente presenti):
-            # fill-only, mai sopra un blocco con stato diverso da derivato/stimato/assente.
+            # fill-only + no-downgrade (mai sostituire un pannello esistente più ricco).
             nutri = _pannello_nutrienti(cq)
-            nutr_meta_vecchio = dd.get("nutrienti_meta", {}) or {}
-            nutr_scrivibile = bool(nutri) and (nutr_meta_vecchio.get("stato") in (None, "derivato", "stimato"))
+            nutr_scrivibile = _nutri_da_scrivere(nutri, dd.get("nutrienti"), dd.get("nutrienti_meta", {}))
             riga["nutrienti"] = nutri
             riga["nutrienti_scrivibile"] = nutr_scrivibile
 
