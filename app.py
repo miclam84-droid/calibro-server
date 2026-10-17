@@ -115,6 +115,7 @@ from routes.misura_quantita import bp_quantita; app.register_blueprint(bp_quanti
 from routes.protocollo import bp_protocollo; app.register_blueprint(bp_protocollo)
 from routes.pagina_laboratorio import bp_pag_lab; app.register_blueprint(bp_pag_lab)
 from routes.admin_migra_quaderno import bp_migra_q; app.register_blueprint(bp_migra_q)
+from routes.pagina_menu import bp_pag_menu; app.register_blueprint(bp_pag_menu)
 from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(bp_gusti_search)
 from routes.deriva_umami import bp_umami; app.register_blueprint(bp_umami)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
