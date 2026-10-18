@@ -173,7 +173,7 @@
 <header class="topbar">
   <div class="topbar-in">
     <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">componi</span>
+    <span class="eyebrow" data-i18n="eyebrow_componi">componi</span>
   </div>
 </header>
 
@@ -181,33 +181,33 @@
 
   <section class="componi-testa">
     <span class="eyebrow">Laboratorio</span>
-    <h1>Componi una preparazione</h1>
-    <p class="componi-sub">Aggiungi i componenti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.</p>
+    <h1 data-i18n="titolo">Componi una preparazione</h1>
+    <p class="componi-sub" data-i18n="sub">Aggiungi i componenti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.</p>
   </section>
 
   <!-- C2.a — BANNER SEMPRE VISIBILE SOPRA IL PROFILO -->
-  <div class="banner-limite" role="note">
+  <div class="banner-limite" role="note" data-i18n-html="banner">
     <strong>Stima derivata, non una misura al banco.</strong> Il profilo combinato assume <strong>semplice miscelazione</strong>: una trasformazione (macerazione, cottura, estrazione, fermentazione) cambia il profilo in modo che <strong>non</strong> è una somma. Verifica al banco.
   </div>
 
   <!-- COSTRUTTORE -->
   <section class="costruttore" aria-labelledby="h-comp">
-    <span class="eyebrow" id="h-comp" style="display:block; margin-bottom:10px">I componenti</span>
+    <span class="eyebrow" id="h-comp" style="display:block; margin-bottom:10px" data-i18n="h_comp">I componenti</span>
 
     <form class="srch" id="srch" role="search" onsubmit="return false" style="margin-top:0">
-      <input type="search" id="q" name="q" placeholder="Aggiungi un ingrediente (es. limone)" aria-label="Aggiungi un ingrediente alla preparazione" autocomplete="off">
-      <button type="submit">Aggiungi</button>
+      <input type="search" id="q" name="q" placeholder="Aggiungi un ingrediente (es. limone)" aria-label="Aggiungi un ingrediente alla preparazione" autocomplete="off" data-i18n-ph="agg_ph" data-i18n-aria="agg_aria">
+      <button type="submit" data-i18n="agg_btn">Aggiungi</button>
     </form>
     <p id="srch-msg" class="nota-esempio" hidden></p>
 
-    <div class="vuoto" id="vuoto">Nessun componente. Aggiungi un ingrediente per vedere il profilo.</div>
+    <div class="vuoto" id="vuoto" data-i18n="vuoto">Nessun componente. Aggiungi un ingrediente per vedere il profilo.</div>
     <ul class="lista-comp" id="lista" hidden></ul>
   </section>
 
   <!-- PROFILO VIVO -->
   <section class="profilo" aria-labelledby="h-prof">
     <div class="profilo-head">
-      <span class="eyebrow" id="h-prof">Profilo vivo</span>
+      <span class="eyebrow" id="h-prof" data-i18n="h_prof">Profilo vivo</span>
       <span class="profilo-stato" id="profilo-stato">—</span>
     </div>
     <div class="assi" id="assi"></div>
@@ -216,29 +216,29 @@
   <!-- AZIONI R4 — Capisci + Salva: chiudono il corridoio fino al Quaderno,
        nello STESSO oggetto di lavoro. Visibili solo con ≥1 componente con profilo. -->
   <section class="azioni" id="azioni" hidden aria-labelledby="h-azioni">
-    <span class="eyebrow" id="h-azioni">Chiudi il giro</span>
+    <span class="eyebrow" id="h-azioni" data-i18n="h_azioni">Chiudi il giro</span>
 
     <button class="btn btn--ghost btn--block azione-btn" id="btn-capisci" type="button"
-            aria-expanded="false" aria-controls="capisci">Capisci perché</button>
+            aria-expanded="false" aria-controls="capisci" data-i18n="btn_capisci">Capisci perché</button>
 
     <div class="capisci" id="capisci" hidden>
-      <p class="capisci-intro">Dietro questa preparazione ci sono alcuni fenomeni e relazioni note.</p>
+      <p class="capisci-intro" data-i18n="capisci_intro">Dietro questa preparazione ci sono alcuni fenomeni e relazioni note.</p>
       <div class="capisci-fenomeni" id="capisci-fenomeni"></div>
       <div class="capisci-cc" id="capisci-cc"></div>
     </div>
 
     <div class="salva" id="salva">
       <label class="salva-campo" for="salva-titolo">
-        <span>Titolo</span>
+        <span data-i18n="campo_titolo">Titolo</span>
         <input type="text" id="salva-titolo" maxlength="140"
-               placeholder="Preparazione — (oggi, se lasci vuoto)" autocomplete="off">
+               placeholder="Preparazione — (oggi, se lasci vuoto)" autocomplete="off" data-i18n-ph="titolo_ph">
       </label>
       <label class="salva-campo" for="salva-nota">
-        <span>Nota di laboratorio — facoltativa</span>
+        <span data-i18n="campo_nota">Nota di laboratorio — facoltativa</span>
         <textarea id="salva-nota" rows="2" maxlength="600"
-                  placeholder="es. provato al banco: ..."></textarea>
+                  placeholder="es. provato al banco: ..." data-i18n-ph="nota_ph"></textarea>
       </label>
-      <button class="btn btn--block" id="btn-salva" type="button">Salva nel Quaderno</button>
+      <button class="btn btn--block" id="btn-salva" type="button" data-i18n="btn_salva">Salva nel Quaderno</button>
       <div class="salva-esito" id="salva-esito" hidden></div>
     </div>
   </section>
@@ -251,11 +251,39 @@
     <div class="sheet-presa" aria-hidden="true"></div>
     <h2 id="sheet-h">Asse</h2>
     <div class="sheet-corpo" id="sheet-corpo"></div>
-    <button class="btn btn--block sheet-chiudi" id="sheet-chiudi" type="button">Chiudi</button>
+    <button class="btn btn--block sheet-chiudi" id="sheet-chiudi" type="button" data-i18n="chiudi">Chiudi</button>
   </div>
 </div>
 
 <script src="/static/corridoio.js"></script>
+
+<!-- i18n (it · en · es) — dizionario di pagina + motore condiviso (prima dell'IIFE: serve _L) -->
+<script>
+window.I18N_TITLE = {it:"Componi — Matter Bench", en:"Compose — Matter Bench", es:"Compón — Matter Bench"};
+window.I18N_DICT = {
+  eyebrow_componi: {it:"componi", en:"compose", es:"compón"},
+  titolo: {it:"Componi una preparazione", en:"Compose a preparation", es:"Compón una preparación"},
+  sub: {it:"Aggiungi i componenti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.", en:"Add the components: the taste profile recomputes live on every change. It's the average of the single ingredients' profiles — with the provenance, axis by axis.", es:"Añade los componentes: el perfil de sabor se recalcula en vivo con cada cambio. Es el promedio de los perfiles de cada ingrediente — con la procedencia, eje por eje."},
+  banner: {it:"<strong>Stima derivata, non una misura al banco.</strong> Il profilo combinato assume <strong>semplice miscelazione</strong>: una trasformazione (macerazione, cottura, estrazione, fermentazione) cambia il profilo in modo che <strong>non</strong> è una somma. Verifica al banco.", en:"<strong>A derived estimate, not a measurement at the bench.</strong> The combined profile assumes <strong>simple mixing</strong>: a transformation (maceration, cooking, extraction, fermentation) changes the profile in a way that is <strong>not</strong> a sum. Verify at the bench.", es:"<strong>Una estimación derivada, no una medición en la mesa de trabajo.</strong> El perfil combinado asume una <strong>mezcla simple</strong>: una transformación (maceración, cocción, extracción, fermentación) cambia el perfil de forma que <strong>no</strong> es una suma. Verifica en la mesa de trabajo."},
+  h_comp: {it:"I componenti", en:"The components", es:"Los componentes"},
+  agg_ph: {it:"Aggiungi un ingrediente (es. limone)", en:"Add an ingredient (e.g. lemon)", es:"Añade un ingrediente (p. ej. limón)"},
+  agg_aria: {it:"Aggiungi un ingrediente alla preparazione", en:"Add an ingredient to the preparation", es:"Añade un ingrediente a la preparación"},
+  agg_btn: {it:"Aggiungi", en:"Add", es:"Añadir"},
+  vuoto: {it:"Nessun componente. Aggiungi un ingrediente per vedere il profilo.", en:"No components. Add an ingredient to see the profile.", es:"Ningún componente. Añade un ingrediente para ver el perfil."},
+  h_prof: {it:"Profilo vivo", en:"Live profile", es:"Perfil vivo"},
+  h_azioni: {it:"Chiudi il giro", en:"Close the loop", es:"Cierra el círculo"},
+  btn_capisci: {it:"Capisci perché", en:"Understand why", es:"Entiende por qué"},
+  capisci_intro: {it:"Dietro questa preparazione ci sono alcuni fenomeni e relazioni note.", en:"Behind this preparation there are some known phenomena and relations.", es:"Detrás de esta preparación hay algunos fenómenos y relaciones conocidos."},
+  campo_titolo: {it:"Titolo", en:"Title", es:"Título"},
+  titolo_ph: {it:"Preparazione — (oggi, se lasci vuoto)", en:"Preparation — (today, if left blank)", es:"Preparación — (hoy, si lo dejas vacío)"},
+  campo_nota: {it:"Nota di laboratorio — facoltativa", en:"Lab note — optional", es:"Nota de laboratorio — opcional"},
+  nota_ph: {it:"es. provato al banco: ...", en:"e.g. tested at the bench: ...", es:"p. ej. probado en la mesa de trabajo: ..."},
+  btn_salva: {it:"Salva nel Quaderno", en:"Save to the Quaderno", es:"Guardar en el Quaderno"},
+  chiudi: {it:"Chiudi", en:"Close", es:"Cerrar"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
 <script>
 (function(){
   "use strict";
@@ -264,7 +292,18 @@
   var INIZIALE = {{ iniziale|tojson }};
 
   // I 6 gusti del profilo vivo, scala 0-10.
+  // NB: i valori di ASSI sono CHIAVI dati (lette da proprieta/meta e inviate al
+  // backend nel salvataggio): NON si traducono. Si traduce solo l'etichetta a video.
   var ASSI = ["dolce","salato","acido","amaro","umami","grasso"];
+  var ASSI_LAB = {
+    dolce:  {it:"dolce",  en:"sweet",  es:"dulce"},
+    salato: {it:"salato", en:"salty",  es:"salado"},
+    acido:  {it:"acido",  en:"sour",   es:"ácido"},
+    amaro:  {it:"amaro",  en:"bitter", es:"amargo"},
+    umami:  {it:"umami",  en:"umami",  es:"umami"},
+    grasso: {it:"grasso", en:"fatty",  es:"graso"}
+  };
+  function labAsse(a){ return _L(ASSI_LAB[a] || {it:a, en:a, es:a}); }
 
   // Stato: lista dei componenti della preparazione.
   // ogni voce: {nome, quantita:null|number, trovato:bool, proprieta:{}, meta:{}}
@@ -350,7 +389,7 @@
       if (!c.trovato){
         var nd = document.createElement("span");
         nd.className = "comp-nd";
-        nd.textContent = "profilo non disponibile — non contribuisce ai numeri";
+        nd.textContent = _L({it:"profilo non disponibile — non contribuisce ai numeri", en:"profile not available — does not contribute to the numbers", es:"perfil no disponible — no contribuye a los números"});
         nome.appendChild(nd);
       }
       li.appendChild(nome);
@@ -360,7 +399,7 @@
         var qta = document.createElement("label");
         qta.className = "comp-qta";
         qta.innerHTML = '<input type="number" inputmode="decimal" min="0" step="any" '+
-                        'placeholder="q.tà" aria-label="Quantità di '+esc(c.nome)+' in grammi o millilitri" '+
+                        'placeholder="'+esc(_L({it:"q.tà", en:"qty", es:"cant."}))+'" aria-label="'+esc(_L({it:"Quantità di ", en:"Quantity of ", es:"Cantidad de "})+c.nome+_L({it:" in grammi o millilitri", en:" in grams or millilitres", es:" en gramos o mililitros"}))+'" '+
                         'value="'+(c.quantita != null ? esc(String(c.quantita)) : "")+'"><span>g/ml</span>';
         var inp = qta.querySelector("input");
         inp.addEventListener("input", function(){
@@ -377,14 +416,14 @@
         var sch = document.createElement("a");
         sch.className = "comp-scheda";
         sch.href = "/scheda-gusto/" + encodeURIComponent(c.nome);
-        sch.textContent = "scheda";
-        sch.setAttribute("aria-label", "Apri la scheda del gusto di " + cap(c.nome));
+        sch.textContent = _L({it:"scheda", en:"sheet", es:"ficha"});
+        sch.setAttribute("aria-label", _L({it:"Apri la scheda del gusto di ", en:"Open the taste sheet of ", es:"Abre la ficha de sabor de "}) + cap(c.nome));
         az.appendChild(sch);
       }
       var x = document.createElement("button");
       x.type = "button";
       x.className = "comp-x";
-      x.setAttribute("aria-label", "Rimuovi " + cap(c.nome));
+      x.setAttribute("aria-label", _L({it:"Rimuovi ", en:"Remove ", es:"Quitar "}) + cap(c.nome));
       x.textContent = "✕";
       x.addEventListener("click", function(){
         componenti.splice(idx, 1);
@@ -419,14 +458,14 @@
 
       var nome = document.createElement("span");
       nome.className = "asse-nome";
-      nome.textContent = asse;
+      nome.textContent = labAsse(asse);
       top.appendChild(nome);
 
       var info = document.createElement("button");
       info.type = "button";
       info.className = "asse-info";
       info.textContent = "i";
-      info.setAttribute("aria-label", "Cosa significa e come è calcolato l'asse " + asse);
+      info.setAttribute("aria-label", _L({it:"Cosa significa e come è calcolato l'asse ", en:"What it means and how the axis is computed: ", es:"Qué significa y cómo se calcula el eje "}) + labAsse(asse));
       info.addEventListener("click", function(){ apriInfo(asse, comb); });
       top.appendChild(info);
 
@@ -436,7 +475,7 @@
 
         var prov = document.createElement("span");
         prov.className = "prov sm asse-prov " + (comb.provenienza === "derivato" ? "prov-derivato" : "prov-stimato");
-        prov.textContent = comb.provenienza;
+        prov.textContent = _V(comb.provenienza);
         top.appendChild(prov);
 
         var val = document.createElement("span");
@@ -464,7 +503,7 @@
 
         var manca = document.createElement("div");
         manca.className = "asse-manca";
-        manca.textContent = "dato non disponibile per nessun componente";
+        manca.textContent = _L({it:"dato non disponibile per nessun componente", en:"data not available for any component", es:"dato no disponible para ningún componente"});
         row.appendChild(manca);
       }
 
@@ -473,9 +512,9 @@
 
     // stato globale del profilo: SEMPRE derivato o stimato, MAI verificato.
     if (!qualcheAsse){
-      statoBox.textContent = conProfilo ? "nessun gusto mappato" : "—";
+      statoBox.textContent = conProfilo ? _L({it:"nessun gusto mappato", en:"no taste mapped", es:"ningún sabor mapeado"}) : "—";
     } else {
-      statoBox.textContent = qualcheStimato ? "stima derivata" : "derivato";
+      statoBox.textContent = qualcheStimato ? _L({it:"stima derivata", en:"derived estimate", es:"estimación derivada"}) : _V("derivato");
     }
 
     renderAzioni();  // R4: mostra/aggiorna Capisci + Salva
@@ -487,23 +526,35 @@
   var sheetCorpo = document.getElementById("sheet-corpo");
 
   function apriInfo(asse, comb){
-    sheetH.textContent = asse;
+    sheetH.textContent = labAsse(asse);
+    var al = esc(labAsse(asse));
     var html = "";
-    html += '<p><span class="k">Cosa rappresenta.</span> L\'intensità percepita di <b>'+esc(asse)+'</b> su una scala da 0 a 10.</p>';
-    html += '<p><span class="k">Come è calcolato.</span> È la media dei profili dei singoli componenti; '+
-            'ogni componente deriva dai suoi dati — USDA, formula v1. ';
+    html += '<p><span class="k">'+_L({it:"Cosa rappresenta.", en:"What it represents.", es:"Qué representa."})+'</span> '+
+            _L({it:"L'intensità percepita di ", en:"The perceived intensity of ", es:"La intensidad percibida de "})+'<b>'+al+'</b>'+
+            _L({it:" su una scala da 0 a 10.", en:" on a 0 to 10 scale.", es:" en una escala de 0 a 10."})+'</p>';
+    html += '<p><span class="k">'+_L({it:"Come è calcolato.", en:"How it is computed.", es:"Cómo se calcula."})+'</span> '+
+            _L({it:"È la media dei profili dei singoli componenti; ogni componente deriva dai suoi dati — USDA, formula v1. ",
+                en:"It is the average of the single components' profiles; each component is derived from its data — USDA, formula v1. ",
+                es:"Es el promedio de los perfiles de cada componente; cada componente deriva de sus datos — USDA, fórmula v1. "});
     if (comb){
       html += comb.pesato
-        ? 'Qui la media è <b>pesata per la quantità</b> che hai indicato per ogni componente.'
-        : 'Qui è una <b>media semplice</b>: non tutti i componenti hanno una quantità, e non inventiamo pesi.';
-      html += ' La provenienza combinata è <b>'+esc(comb.provenienza)+'</b>: è la peggiore tra gli input — '+
-              'basta un solo componente <b>stimato</b> perché il combinato sia stimato.';
+        ? _L({it:"Qui la media è <b>pesata per la quantità</b> che hai indicato per ogni componente.",
+              en:"Here the average is <b>weighted by the quantity</b> you entered for each component.",
+              es:"Aquí el promedio está <b>ponderado por la cantidad</b> que has indicado para cada componente."})
+        : _L({it:"Qui è una <b>media semplice</b>: non tutti i componenti hanno una quantità, e non inventiamo pesi.",
+              en:"Here it is a <b>simple average</b>: not all components have a quantity, and we don't invent weights.",
+              es:"Aquí es un <b>promedio simple</b>: no todos los componentes tienen cantidad, y no inventamos pesos."});
+      html += _L({it:" La provenienza combinata è <b>"+esc(_V(comb.provenienza))+"</b>: è la peggiore tra gli input — basta un solo componente <b>stimato</b> perché il combinato sia stimato.",
+                  en:" The combined provenance is <b>"+esc(_V(comb.provenienza))+"</b>: it is the worst among the inputs — a single <b>estimated</b> component is enough to make the combination estimated.",
+                  es:" La procedencia combinada es <b>"+esc(_V(comb.provenienza))+"</b>: es la peor entre las entradas — basta un solo componente <b>estimado</b> para que la combinación sea estimada."});
     } else {
-      html += 'Per ora nessun componente porta questo asse.';
+      html += _L({it:"Per ora nessun componente porta questo asse.", en:"For now no component carries this axis.", es:"Por ahora ningún componente aporta este eje."});
     }
     html += '</p>';
-    html += '<p><span class="k">Un trattino (—)</span> vuol dire dato non disponibile per nessun componente: '+
-            'non mettiamo uno zero al suo posto.</p>';
+    html += '<p><span class="k">'+_L({it:"Un trattino (—)", en:"A dash (—)", es:"Un guion (—)"})+'</span> '+
+            _L({it:"vuol dire dato non disponibile per nessun componente: non mettiamo uno zero al suo posto.",
+                en:"means data not available for any component: we don't put a zero in its place.",
+                es:"significa dato no disponible para ningún componente: no ponemos un cero en su lugar."})+'</p>';
     sheetCorpo.innerHTML = html;
     velo.setAttribute("data-aperto", "1");
   }
@@ -551,10 +602,18 @@
     nome = String(nome || "").trim();
     if (!nome) return Promise.resolve();
     if (giaPresente(nome)){
-      if (!silenzioso) messaggio("<strong>"+esc(cap(nome))+"</strong> è già nella preparazione.", false);
+      if (!silenzioso) messaggio(_L({
+        it:"<strong>"+esc(cap(nome))+"</strong> è già nella preparazione.",
+        en:"<strong>"+esc(cap(nome))+"</strong> is already in the preparation.",
+        es:"<strong>"+esc(cap(nome))+"</strong> ya está en la preparación."
+      }), false);
       return Promise.resolve();
     }
-    if (!silenzioso) messaggio("Cerco il profilo di <strong>"+esc(cap(nome))+"</strong>…", false);
+    if (!silenzioso) messaggio(_L({
+      it:"Cerco il profilo di <strong>"+esc(cap(nome))+"</strong>…",
+      en:"Looking up the profile of <strong>"+esc(cap(nome))+"</strong>…",
+      es:"Buscando el perfil de <strong>"+esc(cap(nome))+"</strong>…"
+    }), false);
 
     return fetch("/v1/profilo-gusto/" + encodeURIComponent(nome), {headers:{"Accept":"application/json"}})
       .then(function(r){ return r.json().catch(function(){ return {}; }); })
@@ -576,8 +635,11 @@
           // NON contribuisce ai numeri. Nessun dato inventato.
           c = { nome: nome, quantita: null, trovato: false, proprieta: {}, meta: {} };
           if (!silenzioso){
-            messaggio("<strong>"+esc(cap(nome))+"</strong>: profilo non disponibile. "+
-                      "Resta nella lista ma non entra nei numeri.", false);
+            messaggio(_L({
+              it:"<strong>"+esc(cap(nome))+"</strong>: profilo non disponibile. Resta nella lista ma non entra nei numeri.",
+              en:"<strong>"+esc(cap(nome))+"</strong>: profile not available. It stays in the list but does not enter the numbers.",
+              es:"<strong>"+esc(cap(nome))+"</strong>: perfil no disponible. Permanece en la lista pero no entra en los números."
+            }), false);
           }
         }
         componenti.push(c);
@@ -587,7 +649,11 @@
         // rete / endpoint non raggiungibile: lo teniamo onesto, profilo non disponibile
         componenti.push({ nome: nome, quantita: null, trovato: false, proprieta: {}, meta: {} });
         renderLista(); renderProfilo(); persisti();
-        if (!silenzioso) messaggio("Profilo non raggiungibile ora: <strong>"+esc(cap(nome))+"</strong> resta senza numeri.", true);
+        if (!silenzioso) messaggio(_L({
+          it:"Profilo non raggiungibile ora: <strong>"+esc(cap(nome))+"</strong> resta senza numeri.",
+          en:"Profile not reachable now: <strong>"+esc(cap(nome))+"</strong> stays without numbers.",
+          es:"Perfil no disponible ahora: <strong>"+esc(cap(nome))+"</strong> permanece sin números."
+        }), true);
       });
   }
 
@@ -698,8 +764,8 @@
     capisciFirma = firma;
 
     // FENOMENI — unione dei fenomeni di TUTTI i componenti (grafo-ego)
-    capFenomeni.innerHTML = '<div class="cap-lab">Fenomeni in gioco</div>'
-      + '<div class="cap-attesa">cerco i fenomeni collegati…</div>';
+    capFenomeni.innerHTML = '<div class="cap-lab">'+_L({it:"Fenomeni in gioco", en:"Phenomena at play", es:"Fenómenos en juego"})+'</div>'
+      + '<div class="cap-attesa">'+_L({it:"cerco i fenomeni collegati…", en:"looking for the connected phenomena…", es:"buscando los fenómenos conectados…"})+'</div>';
     var visti = {}, fenomeni = [];
     Promise.all(comps.map(function(c){
       return fetch("/v1/grafo-ego/" + encodeURIComponent(c.nome), {headers:{"Accept":"application/json"}})
@@ -721,8 +787,8 @@
     });
 
     // CAUSA → CONSEGUENZA — solo per il componente principale (il seme)
-    capCC.innerHTML = '<div class="cap-lab">Causa → conseguenza · ' + esc(cap(principale)) + '</div>'
-      + '<div class="cap-attesa">cerco le relazioni note…</div>';
+    capCC.innerHTML = '<div class="cap-lab">'+_L({it:"Causa → conseguenza · ", en:"Cause → consequence · ", es:"Causa → consecuencia · "}) + esc(cap(principale)) + '</div>'
+      + '<div class="cap-attesa">'+_L({it:"cerco le relazioni note…", en:"looking for the known relations…", es:"buscando las relaciones conocidas…"})+'</div>';
     fetch("/v1/cambio-conseguenza/" + encodeURIComponent(principale), {headers:{"Accept":"application/json"}})
       .then(function(r){ return r.json().catch(function(){ return {}; }); })
       .then(function(d){ if (capisciFirma === firma) renderCC(principale, d || {}); })
@@ -730,10 +796,13 @@
   }
 
   function renderFenomeni(fenomeni){
-    var h = '<div class="cap-lab">Fenomeni in gioco</div>';
+    var h = '<div class="cap-lab">'+_L({it:"Fenomeni in gioco", en:"Phenomena at play", es:"Fenómenos en juego"})+'</div>';
     if (!fenomeni.length){
-      h += '<p class="cap-onesto">Nessun fenomeno collegato nel grafo per questi componenti. '
-         + 'Matter non ne inventa: provalo al banco e registra cosa osservi.</p>';
+      h += '<p class="cap-onesto">'+_L({
+        it:"Nessun fenomeno collegato nel grafo per questi componenti. Matter non ne inventa: provalo al banco e registra cosa osservi.",
+        en:"No phenomenon connected in the graph for these components. Matter doesn't invent any: test it at the bench and record what you observe.",
+        es:"Ningún fenómeno conectado en el grafo para estos componentes. Matter no los inventa: pruébalo en la mesa de trabajo y registra lo que observes."
+      })+'</p>';
       capFenomeni.innerHTML = h;
       return;
     }
@@ -754,22 +823,26 @@
   function apriDettaglioFenomeno(f){
     sheetH.textContent = f.nome;
     var html = '';
-    html += '<p><span class="k">Fenomeno collegato.</span> <b>' + esc(cap(f.nome))
-          + '</b> compare nel grafo di uno dei tuoi componenti.</p>';
-    html += '<p>Non c\'è ancora una scheda-pagina di questo fenomeno nel laboratorio: '
-          + 'per onestà non ti mando a un link morto. La relazione però esiste nel grafo — '
-          + 'mettila alla prova al banco.</p>';
+    html += '<p><span class="k">'+_L({it:"Fenomeno collegato.", en:"Connected phenomenon.", es:"Fenómeno conectado."})+'</span> <b>' + esc(cap(f.nome))
+          + '</b> '+_L({it:"compare nel grafo di uno dei tuoi componenti.", en:"appears in the graph of one of your components.", es:"aparece en el grafo de uno de tus componentes."})+'</p>';
+    html += '<p>'+_L({
+      it:"Non c'è ancora una scheda-pagina di questo fenomeno nel laboratorio: per onestà non ti mando a un link morto. La relazione però esiste nel grafo — mettila alla prova al banco.",
+      en:"There is no page yet for this phenomenon in the lab: to be honest I won't send you to a dead link. The relation does exist in the graph though — put it to the test at the bench.",
+      es:"Todavía no hay una ficha-página de este fenómeno en el laboratorio: por honestidad no te mando a un enlace muerto. Pero la relación existe en el grafo — ponla a prueba en la mesa de trabajo."
+    })+'</p>';
     sheetCorpo.innerHTML = html;
     velo.setAttribute("data-aperto", "1");
   }
 
   function renderCC(principale, d){
     var rel = (d && Array.isArray(d.relazioni)) ? d.relazioni : [];
-    var h = '<div class="cap-lab">Causa → conseguenza · ' + esc(cap(principale)) + '</div>';
+    var h = '<div class="cap-lab">'+_L({it:"Causa → conseguenza · ", en:"Cause → consequence · ", es:"Causa → consecuencia · "}) + esc(cap(principale)) + '</div>';
     if (!rel.length){
       // VUOTO: testo onesto del server (se_vuoto) o fallback del contratto. MAI inventare.
       var vuoto = (d && d.se_vuoto) ? d.se_vuoto
-                : "nessuna relazione verificata: Matter non inventa. Prova e misura.";
+                : _L({it:"nessuna relazione verificata: Matter non inventa. Prova e misura.",
+                      en:"no verified relation: Matter doesn't invent. Test and measure.",
+                      es:"ninguna relación verificada: Matter no inventa. Prueba y mide."});
       h += '<p class="cap-onesto">' + esc(vuoto) + '</p>';
       capCC.innerHTML = h;
       return;
@@ -785,13 +858,13 @@
          + '<span class="cap-rel-se">' + esc(cap(se)) + '</span>'
          + '<span class="cap-rel-fr">→</span>'
          + '<span class="cap-rel-co">' + esc(cons) + '</span>'
-         + (stato ? ' <span class="prov sm ' + cls + '">' + esc(stato) + '</span>' : '')
+         + (stato ? ' <span class="prov sm ' + cls + '">' + esc(_V(stato)) + '</span>' : '')
          + '</li>';
     });
     h += '</ul>';
     // nota di provenienza — sotto un gesto (D4), non in faccia
     if (d && d.nota){
-      h += '<button type="button" class="cap-piu" id="cap-piu-cc" aria-expanded="false">Da dove viene?</button>';
+      h += '<button type="button" class="cap-piu" id="cap-piu-cc" aria-expanded="false">'+_L({it:"Da dove viene?", en:"Where does it come from?", es:"¿De dónde viene?"})+'</button>';
       h += '<p class="cap-nota" id="cap-nota-cc" hidden>' + esc(d.nota) + '</p>';
     }
     capCC.innerHTML = h;
@@ -836,12 +909,12 @@
     salvaEsito.innerHTML = testo;
   }
   function confermaSalvato(id, titolo){
-    var h = '<div class="esito-t">✓ Salvato nel Quaderno</div>';
-    h += '<p class="esito-d">“' + esc(titolo) + '” è nel tuo Quaderno'
+    var h = '<div class="esito-t">✓ '+_L({it:"Salvato nel Quaderno", en:"Saved to the Quaderno", es:"Guardado en el Quaderno"})+'</div>';
+    h += '<p class="esito-d">“' + esc(titolo) + '” '+_L({it:"è nel tuo Quaderno", en:"is in your Quaderno", es:"está en tu Quaderno"})
        + (id ? ' <span class="esito-id">' + esc(id) + '</span>' : '') + '.</p>';
     h += '<div class="esito-az">';
-    h += '<a class="btn btn--ghost" href="/quaderno">Apri il Quaderno</a>';
-    h += '<a class="btn btn--ghost" href="/menu-nuovo">Porta nel Menu</a>';  // R4b: /menu-nuovo ora esiste → link legittimo
+    h += '<a class="btn btn--ghost" href="/quaderno">'+_L({it:"Apri il Quaderno", en:"Open the Quaderno", es:"Abre el Quaderno"})+'</a>';
+    h += '<a class="btn btn--ghost" href="/menu-nuovo">'+_L({it:"Porta nel Menu", en:"Take to the Menu", es:"Llevar al Menu"})+'</a>';  // R4b: /menu-nuovo ora esiste → link legittimo
     h += '</div>';
     salvaEsito.hidden = false;
     salvaEsito.className = "salva-esito esito-ok";
@@ -853,7 +926,7 @@
     if (salvaInCorso) return;
     var comps = conProfiloList();
     if (!comps.length){
-      mostraEsito("Aggiungi almeno un componente con profilo prima di salvare.", "err");
+      mostraEsito(_L({it:"Aggiungi almeno un componente con profilo prima di salvare.", en:"Add at least one component with a profile before saving.", es:"Añade al menos un componente con perfil antes de guardar."}), "err");
       return;
     }
     var titolo = (inpTitolo.value || "").trim() || ("Preparazione — " + dataOggi());
@@ -881,7 +954,7 @@
     salvaInCorso = true;
     btnSalva.disabled = true;
     var testoOrig = btnSalva.textContent;
-    btnSalva.textContent = "Salvo…";
+    btnSalva.textContent = _L({it:"Salvo…", en:"Saving…", es:"Guardando…"});
     mostraEsito("", "pulisci");
 
     fetch("/v1/quaderno2/salva", {
@@ -906,16 +979,16 @@
         // ONESTÀ: nessun finto successo
         var msg;
         if (res.status === 401)
-          msg = "Identità mancante: il Quaderno non ti ha riconosciuto. Riprova.";
+          msg = _L({it:"Identità mancante: il Quaderno non ti ha riconosciuto. Riprova.", en:"Missing identity: the Quaderno didn't recognise you. Try again.", es:"Identidad ausente: el Quaderno no te ha reconocido. Inténtalo de nuevo."});
         else if (d && d.errore)
-          msg = "Non salvato: " + esc(String(d.errore));
+          msg = _L({it:"Non salvato: ", en:"Not saved: ", es:"No guardado: "}) + esc(String(d.errore));
         else
-          msg = "Non salvato (errore " + res.status + "). Riprova.";
+          msg = _L({it:"Non salvato (errore "+res.status+"). Riprova.", en:"Not saved (error "+res.status+"). Try again.", es:"No guardado (error "+res.status+"). Inténtalo de nuevo."});
         mostraEsito(msg, "err");
       }
     })
     .catch(function(){
-      mostraEsito("Non salvato: il server non è raggiungibile ora. Nessun dato è stato scritto.", "err");
+      mostraEsito(_L({it:"Non salvato: il server non è raggiungibile ora. Nessun dato è stato scritto.", en:"Not saved: the server is unreachable now. No data was written.", es:"No guardado: el servidor no está disponible ahora. No se escribió ningún dato."}), "err");
     })
     .then(function(){
       salvaInCorso = false;
@@ -923,6 +996,16 @@
       btnSalva.textContent = testoOrig;
     });
   });
+
+  // ri-traduce il contenuto generato da JS al cambio lingua (salta la prima
+  // invocazione, che coincide con avvio() qui sotto).
+  var _primaI18n = true;
+  window.onI18nApply = function(){
+    if (_primaI18n){ _primaI18n = false; return; }
+    capisciFirma = null;   // forza il refresh delle etichette di "Capisci perché"
+    renderLista();
+    renderProfilo();       // -> renderAzioni -> se Capisci è aperto, ricarica
+  };
 
   avvio();
 })();

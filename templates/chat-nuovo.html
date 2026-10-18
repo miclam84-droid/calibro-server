@@ -105,26 +105,40 @@
 <header class="topbar">
   <div class="topbar-in">
     <span class="wm">Matter<span class="bench">Bench</span></span>
-    <span class="eyebrow">la scienza del mestiere</span>
+    <span class="eyebrow" data-i18n="tagline">la scienza del mestiere</span>
   </div>
 </header>
 
 <div class="chat-shell">
 
-  <div class="chat-intro">
+  <div class="chat-intro" data-i18n-html="intro">
     <strong>Chiedi a Matter</strong> — risponde sulla scienza del mestiere, ancorato al grafo. È un aiuto, non un oracolo.
   </div>
 
-  <div class="chat-lista" id="lista" role="log" aria-live="polite" aria-label="Conversazione con Matter"></div>
+  <div class="chat-lista" id="lista" role="log" aria-live="polite" aria-label="Conversazione con Matter" data-i18n-aria="lista_aria"></div>
 
   <div class="chat-barra">
     <form class="chat-form" id="form" autocomplete="off">
-      <textarea id="domanda" name="domanda" rows="1" placeholder="Scrivi la tua domanda…" aria-label="La tua domanda" enterkeyhint="send"></textarea>
-      <button class="chat-invia" id="invia" type="submit">Chiedi</button>
+      <textarea id="domanda" name="domanda" rows="1" placeholder="Scrivi la tua domanda…" aria-label="La tua domanda" enterkeyhint="send" data-i18n-ph="domanda_ph" data-i18n-aria="domanda_aria"></textarea>
+      <button class="chat-invia" id="invia" type="submit" data-i18n="invia">Chiedi</button>
     </form>
   </div>
 
 </div>
+
+<!-- i18n (it · en · es) — dizionario di pagina + motore condiviso (prima dell'IIFE: serve _L) -->
+<script>
+window.I18N_TITLE = {it:"Chiedi a Matter", en:"Ask Matter", es:"Pregunta a Matter"};
+window.I18N_DICT = {
+  tagline: {it:"la scienza del mestiere", en:"the science behind the craft", es:"la ciencia del oficio"},
+  intro: {it:"<strong>Chiedi a Matter</strong> — risponde sulla scienza del mestiere, ancorato al grafo. È un aiuto, non un oracolo.", en:"<strong>Ask Matter</strong> — it answers on the science of the craft, anchored to the graph. It's a help, not an oracle.", es:"<strong>Pregunta a Matter</strong> — responde sobre la ciencia del oficio, anclado al grafo. Es una ayuda, no un oráculo."},
+  lista_aria: {it:"Conversazione con Matter", en:"Conversation with Matter", es:"Conversación con Matter"},
+  domanda_ph: {it:"Scrivi la tua domanda…", en:"Write your question…", es:"Escribe tu pregunta…"},
+  domanda_aria: {it:"La tua domanda", en:"Your question", es:"Tu pregunta"},
+  invia: {it:"Chiedi", en:"Ask", es:"Preguntar"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
 
 <script>
 (function(){
@@ -187,7 +201,7 @@
   function mostraPensa(){
     var el = document.createElement("div");
     el.className = "pensa";
-    el.setAttribute("aria-label", "Matter sta pensando");
+    el.setAttribute("aria-label", _L({it:"Matter sta pensando", en:"Matter is thinking", es:"Matter está pensando"}));
     el.innerHTML = "<span></span><span></span><span></span>";
     lista.appendChild(el);
     scrollGiu();
@@ -231,7 +245,7 @@
     // solo gli ultimi ~6 scambi (il backend ne usa comunque pochi)
     var payload = {
       domanda: domanda,
-      lang: "it",
+      lang: (window._lang || "it"),   // i18n: la risposta segue la lingua scelta (param già previsto dall'endpoint)
       history: history.slice(-6)
     };
 
@@ -256,7 +270,7 @@
 
       // ── 429: troppe richieste → mostra il messaggio d'attesa onesto ──
       if(res.status === 429){
-        aggiungiErrore(d.messaggio || "Troppe domande in poco tempo. Attendi un minuto e riprova.");
+        aggiungiErrore(d.messaggio || _L({it:"Troppe domande in poco tempo. Attendi un minuto e riprova.", en:"Too many questions in a short time. Wait a minute and try again.", es:"Demasiadas preguntas en poco tiempo. Espera un minuto e inténtalo de nuevo."}));
         bloccaInvio(false);
         input.focus();
         return;
@@ -270,7 +284,7 @@
           input.focus();
           return;
         }
-        aggiungiErrore("Il servizio di risposta non è disponibile in questo momento.");
+        aggiungiErrore(_L({it:"Il servizio di risposta non è disponibile in questo momento.", en:"The answering service is not available right now.", es:"El servicio de respuesta no está disponible en este momento."}));
         bloccaInvio(false);
         input.focus();
         return;
@@ -283,7 +297,7 @@
         aggiungiBolla(risposta, "matter");
       } else {
         // 200 ma senza testo: non inventiamo nulla
-        aggiungiErrore("Il servizio di risposta non è disponibile in questo momento.");
+        aggiungiErrore(_L({it:"Il servizio di risposta non è disponibile in questo momento.", en:"The answering service is not available right now.", es:"El servicio de respuesta no está disponible en este momento."}));
         bloccaInvio(false);
         input.focus();
         return;
@@ -291,7 +305,7 @@
 
       // ── azione crea_ricetta: mostriamo la risposta + nota onesta, NON generiamo qui ──
       if(d._azione === "crea_ricetta"){
-        aggiungiNota("La creazione delle ricette è nel Laboratorio.");
+        aggiungiNota(_L({it:"La creazione delle ricette è nel Laboratorio.", en:"Recipe creation lives in the Laboratorio.", es:"La creación de recetas está en el Laboratorio."}));
       }
 
       // aggiorna la history lato client (coppia {q, r})
@@ -302,7 +316,7 @@
     }).catch(function(){
       // rete giù / fetch fallito → onesto
       if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
-      aggiungiErrore("Il servizio di risposta non è disponibile in questo momento.");
+      aggiungiErrore(_L({it:"Il servizio di risposta non è disponibile in questo momento.", en:"The answering service is not available right now.", es:"El servicio de respuesta no está disponible en este momento."}));
       bloccaInvio(false);
       input.focus();
     });
