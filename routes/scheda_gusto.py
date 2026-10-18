@@ -155,6 +155,7 @@ function caricaFoto(nome){
 }
 function carica(){
   var h=decodeURIComponent((location.hash||'').replace(/^#/,''));
+  if(!h){var m=location.pathname.match(/\\/scheda-gusto\\/(.+)$/);if(m&&m[1]){h=decodeURIComponent(m[1]);}}
   if(!h){return;}
   document.getElementById('q').value=h;
   document.getElementById('out').innerHTML='<div class="ph">Carico...</div>';
