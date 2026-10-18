@@ -149,7 +149,7 @@
 
   var SVGNS = "http://www.w3.org/2000/svg";
   var svg = document.getElementById("svg");
-  var VB_W = 400, VB_H = 460, CX = 200, CY = 226, RADIO = 142;
+  var VB_W = 400, VB_H = 460, CX = 200, CY = 226, RADIO = 132;
   var MAX_VICINI = 10;
 
   function el(tag, attrs){
@@ -291,10 +291,13 @@
       var g = el("g", {"class": "nodo", tabindex: "0", role: "link"});
       g.setAttribute("aria-label", "Centra su " + cap(rel.ingrediente));
       g.appendChild(el("circle", {"class": "nodo-disco", cx: x, cy: y, r: 26}));
-      var ancora = Math.abs(Math.cos(ang)) < 0.35 ? "middle" : (Math.cos(ang) > 0 ? "start" : "end");
-      var dx = ancora === "middle" ? 0 : (ancora === "start" ? 30 : -30);
-      var te = el("text", {"class": "nodo-et", x: x + dx, y: y + (ancora==="middle" ? (Math.sin(ang) > 0 ? 42 : -32) : 4), "text-anchor": ancora});
-      te.textContent = tronca(cap(rel.ingrediente), 13);
+      // etichetta SEMPRE centrata sopra/sotto il nodo (mai ai lati: sforerebbe il grafo),
+      // con x bloccata dentro i margini cosi nessun nome viene tagliato.
+      var sopra = Math.sin(ang) < -0.05;
+      var lx = Math.max(46, Math.min(VB_W - 46, x));
+      var ly = y + (sopra ? -(26 + 10) : (26 + 18));
+      var te = el("text", {"class": "nodo-et", x: lx, y: ly, "text-anchor": "middle"});
+      te.textContent = tronca(cap(rel.ingrediente), 12);
       g.appendChild(te);
       function go(){ location.href = "/scopri-nuovo/" + encodeURIComponent(rel.ingrediente); }
       g.addEventListener("click", go);
