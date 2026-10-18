@@ -134,6 +134,7 @@ from routes.ponte_aromatico import bp_ponte; app.register_blueprint(bp_ponte)  #
 from routes.nutrizionale import bp_nutri; app.register_blueprint(bp_nutri)
 from routes.community import bp_community; app.register_blueprint(bp_community)
 from routes.home_nuova import bp_home_nuova; app.register_blueprint(bp_home_nuova)  # FRONTEND R1: Home ricomposta /nuovo (sistema design A, isolata)
+from routes.scopri_nuovo import bp_scopri_nuovo; app.register_blueprint(bp_scopri_nuovo)  # FRONTEND R2: grafo vero in Scopri /scopri-nuovo (spessore = composti condivisi, isolata)
 from routes.pagina_quaderno import bp_pag_quaderno; app.register_blueprint(bp_pag_quaderno)  # Ondata 4: schermo Quaderno (archivio unico)  # Ondata 4: schermo Quaderno (archivio unico)
 from routes.menu_builder import bp_menu as menu_builder_bp; app.register_blueprint(menu_builder_bp)
 from routes.stato import bp as stato_bp; app.register_blueprint(stato_bp)
