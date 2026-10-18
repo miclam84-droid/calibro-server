@@ -9,6 +9,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
 <link rel="stylesheet" href="/static/matter3.css">
+<style>
+  /* R4b — link discreto al percorso diagnostico (Causa), sotto le porte */
+  .causa-link{
+    display:inline-block; margin-top:14px; font-family:var(--sans); font-weight:600;
+    font-size:13px; color:var(--ink-soft); text-decoration:none;
+  }
+  .causa-link:hover{color:var(--verde); text-decoration:underline}
+  .causa-link:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+</style>
 </head>
 <body>
 
@@ -72,7 +81,7 @@
         <span class="porta-freccia" aria-hidden="true">→</span>
       </a>
 
-      <a class="porta" href="/menu">
+      <a class="porta" href="/menu-nuovo">
         <span class="porta-num">04</span>
         <span class="porta-testo">
           <span class="porta-nome">Menu</span>
@@ -91,6 +100,7 @@
       </a>
 
     </nav>
+    <a class="causa-link" href="/causa-nuovo">Non torna qualcosa? Parti dal problema →</a>
   </section>
 
   <!-- CHIEDI A MATTER -->
