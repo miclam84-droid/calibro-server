@@ -1428,8 +1428,13 @@ def criteri_copertura():
     try:
         with connessione() as conn:
             cur = conn.cursor()
+            # Universo onesto: esclude le scorie `solo_motore` (voci tecniche del
+            # flavor network, es. "bell_pepper", che hanno composti ma mai gusto).
+            # Tenute dentro gonfiano il denominatore e diluiscono la %. Si tiene solo
+            # quando il campo è NULL (chiave assente o valore JSON null).
             base = ("FROM nodes n WHERE n.type IN ('Ingrediente','Prodotto') "
-                    "AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'")
+                    "AND (n.data->>'visibility') IS DISTINCT FROM 'hidden' "
+                    "AND (n.data->>'solo_motore') IS NULL")
             def c(extra, params=()):
                 cur.execute(f"SELECT COUNT(*) {base} {extra}", params)
                 return cur.fetchone()[0]
@@ -1449,6 +1454,8 @@ def criteri_copertura():
             "foto": {"n": foto, "pct": pct(foto)},
             "composti": {"n": comp, "pct": pct(comp)},
             "nota": "Mappa di copertura: dove sono i buchi.",
+            "nota_denominatore": ("esclusi i nodi solo_motore (voci tecniche non "
+                                  "consultabili): non entrano nel denominatore, così la % è onesta."),
         })
     except Exception as e:
         return _errore(e)

@@ -4,7 +4,10 @@ Verificano l'onestà del numero di copertura: i conteggi sono quelli veri,
 sono mai gonfiate (sempre sul totale reale)."""
 import json
 
-from routes.copertura_stato import aggrega_copertura, ASSI, _famiglia_fonte
+from routes.copertura_stato import (
+    aggrega_copertura, ASSI, _famiglia_fonte, _e_solo_motore,
+    NOTA_DENOMINATORE, COND_NO_SOLO_MOTORE,
+)
 
 
 def _nodo_valore(asse, val):
@@ -114,3 +117,39 @@ def test_famiglia_fonte_sconosciuta_e_altro_vuota_e_none():
     assert _famiglia_fonte("") is None
     assert _famiglia_fonte(None) is None
     assert _famiglia_fonte("USDA FDC 123") == "USDA"
+
+
+# --- DENOMINATORE ONESTO: esclusione scorie solo_motore ---
+
+def test_solo_motore_predicato_rispecchia_sql_is_null():
+    # valorizzato (anche false) -> fuori universo; NULL/assente -> dentro
+    assert _e_solo_motore({"solo_motore": True}) is True
+    assert _e_solo_motore({"solo_motore": "true"}) is True
+    assert _e_solo_motore({"solo_motore": False}) is True   # valorizzato, non NULL
+    assert _e_solo_motore({"solo_motore": None}) is False    # = JSON null -> dentro
+    assert _e_solo_motore({}) is False                       # assente -> dentro
+    assert _e_solo_motore("non-dict") is False
+
+
+def test_solo_motore_escluso_dal_denominatore():
+    nodi = [
+        {"proprieta": {"dolce": 5}},                          # conta
+        {"proprieta": {"salato": 3}},                         # conta
+        {"solo_motore": True, "proprieta": {"dolce": 9}},     # scoria tecnica: fuori
+        {"solo_motore": "true"},                              # scoria tecnica: fuori
+    ]
+    r = aggrega_copertura(nodi)
+    assert r["totale_ingredienti"] == 2            # non 4: le scorie non gonfiano
+    assert r["per_asse"]["dolce"] == 1             # la scoria con dolce non è contata
+
+
+def test_copertura_include_nota_denominatore():
+    r = aggrega_copertura([{}])
+    assert "nota_denominatore" in r
+    assert r["nota_denominatore"] == NOTA_DENOMINATORE
+    assert "solo_motore" in r["nota_denominatore"]
+
+
+def test_clausola_sql_esclude_solo_motore_valorizzato():
+    # la clausola tiene SOLO i NULL (chiave assente o valore null)
+    assert COND_NO_SOLO_MOTORE == "(data->>'solo_motore') IS NULL"
