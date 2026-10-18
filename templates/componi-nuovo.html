@@ -107,6 +107,65 @@
   .sheet-corpo p{margin:0 0 10px}
   .sheet-corpo .k{font-weight:700; color:var(--verde)}
   .sheet-chiudi{margin-top:12px}
+
+  /* ═══ R4 — AZIONI: Capisci + Salva (chiusura del corridoio fino al Quaderno) ═══ */
+  .azioni{margin-top:34px; padding-top:22px; border-top:1px solid var(--riga)}
+  .azioni > .eyebrow{display:block; margin-bottom:12px}
+  .azione-btn{margin-bottom:0}
+
+  /* CAPISCI PERCHÉ */
+  .capisci{
+    margin-top:12px; background:var(--panel); border:1px solid var(--riga);
+    border-radius:var(--r); padding:16px;
+  }
+  .capisci-intro{margin:0; font-size:13.5px; color:var(--ink); line-height:1.5}
+  .cap-lab{font-family:var(--sans); font-weight:700; font-size:11px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-soft); margin:16px 0 8px}
+  .cap-attesa{font-size:12.5px; color:var(--ink-soft); font-style:italic}
+  .cap-onesto{margin:0; font-size:13px; color:var(--ink-soft); line-height:1.5; font-style:italic}
+  .cap-chips{display:flex; flex-wrap:wrap; gap:8px}
+  .cap-chip{
+    font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde);
+    background:var(--surface); border:1px solid var(--verde); border-radius:var(--r-pill);
+    padding:7px 13px; cursor:pointer; text-transform:capitalize;
+  }
+  .cap-chip:hover{background:var(--tint)}
+  .cap-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .cap-rel{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}
+  .cap-rel-li{
+    display:flex; align-items:center; flex-wrap:wrap; gap:7px;
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:10px 12px; font-size:13.5px; color:var(--ink);
+  }
+  .cap-rel-se{font-weight:700; text-transform:capitalize}
+  .cap-rel-fr{color:var(--verde); font-weight:700}
+  .cap-rel-co{color:var(--ink-soft)}
+  .cap-rel-li .prov{margin-left:auto}
+  .cap-piu{
+    margin-top:10px; font-family:var(--sans); font-weight:600; font-size:12.5px;
+    color:var(--verde); background:transparent; border:0; padding:4px 0; cursor:pointer; text-decoration:underline;
+  }
+  .cap-piu:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .cap-nota{margin:6px 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.5}
+
+  /* SALVA NEL QUADERNO */
+  .salva{margin-top:14px}
+  .salva-campo{display:block; margin-bottom:12px}
+  .salva-campo > span{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px}
+  .salva-campo input, .salva-campo textarea{
+    width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:11px 13px; box-shadow:var(--shadow-sm); resize:vertical;
+  }
+  .salva-campo input:focus, .salva-campo textarea:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+  .salva-esito{margin-top:14px; border-radius:var(--r); padding:14px 15px; font-size:13.5px; line-height:1.5}
+  .salva-esito.esito-ok{background:var(--tint); border:1px solid rgba(47,138,95,.3); color:var(--ink)}
+  .salva-esito.esito-err{background:rgba(168,80,74,.10); border:1px solid rgba(168,80,74,.32); color:var(--ink)}
+  .esito-t{font-family:var(--display); font-weight:800; font-size:16px; color:var(--verde)}
+  .esito-d{margin:6px 0 0}
+  .esito-id{font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--ink-soft)}
+  .esito-az{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+  .esito-az .btn{flex:1 1 auto}
 </style>
 </head>
 <body>
@@ -152,6 +211,36 @@
       <span class="profilo-stato" id="profilo-stato">—</span>
     </div>
     <div class="assi" id="assi"></div>
+  </section>
+
+  <!-- AZIONI R4 — Capisci + Salva: chiudono il corridoio fino al Quaderno,
+       nello STESSO oggetto di lavoro. Visibili solo con ≥1 componente con profilo. -->
+  <section class="azioni" id="azioni" hidden aria-labelledby="h-azioni">
+    <span class="eyebrow" id="h-azioni">Chiudi il giro</span>
+
+    <button class="btn btn--ghost btn--block azione-btn" id="btn-capisci" type="button"
+            aria-expanded="false" aria-controls="capisci">Capisci perché</button>
+
+    <div class="capisci" id="capisci" hidden>
+      <p class="capisci-intro">Dietro questa preparazione ci sono alcuni fenomeni e relazioni note.</p>
+      <div class="capisci-fenomeni" id="capisci-fenomeni"></div>
+      <div class="capisci-cc" id="capisci-cc"></div>
+    </div>
+
+    <div class="salva" id="salva">
+      <label class="salva-campo" for="salva-titolo">
+        <span>Titolo</span>
+        <input type="text" id="salva-titolo" maxlength="140"
+               placeholder="Preparazione — (oggi, se lasci vuoto)" autocomplete="off">
+      </label>
+      <label class="salva-campo" for="salva-nota">
+        <span>Nota di laboratorio — facoltativa</span>
+        <textarea id="salva-nota" rows="2" maxlength="600"
+                  placeholder="es. provato al banco: ..."></textarea>
+      </label>
+      <button class="btn btn--block" id="btn-salva" type="button">Salva nel Quaderno</button>
+      <div class="salva-esito" id="salva-esito" hidden></div>
+    </div>
   </section>
 
 </main>
@@ -388,6 +477,8 @@
     } else {
       statoBox.textContent = qualcheStimato ? "stima derivata" : "derivato";
     }
+
+    renderAzioni();  // R4: mostra/aggiorna Capisci + Salva
   }
 
   // ---- INFO ASSE (C2.b) ----
@@ -534,6 +625,304 @@
       return catena.then(function(){ return aggiungi(s.nome, s.qta, true); });
     }, Promise.resolve());
   }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // R4 — CAPISCI PERCHÉ + SALVA NEL QUADERNO
+  // Chiude il corridoio: dalla preparazione al "perché" (fenomeni + relazioni
+  // note) e al Quaderno. Onestà vincolante: Capisci NON inventa fenomeni o
+  // relazioni assenti; Salva NON dichiara successo senza {ok:true} dal server.
+  // Tutto dentro lo STESSO oggetto di lavoro (nessuna pagina nuova).
+  // ═══════════════════════════════════════════════════════════════════════
+  var azioniBox    = document.getElementById("azioni");
+  var btnCapisci   = document.getElementById("btn-capisci");
+  var capisciBox   = document.getElementById("capisci");
+  var capFenomeni  = document.getElementById("capisci-fenomeni");
+  var capCC        = document.getElementById("capisci-cc");
+  var btnSalva     = document.getElementById("btn-salva");
+  var inpTitolo    = document.getElementById("salva-titolo");
+  var inpNota      = document.getElementById("salva-nota");
+  var salvaEsito   = document.getElementById("salva-esito");
+
+  // identità del dispositivo — stesso pattern di static/matter-quaderno2.js:
+  // localStorage 'matter_device_id' || 'matter_token'; se assente genera un uuid e lo salva.
+  function devId(){
+    try{
+      var d = localStorage.getItem("matter_device_id") || localStorage.getItem("matter_token");
+      if (!d){
+        d = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : ("dev-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2, 10));
+        localStorage.setItem("matter_device_id", d);
+      }
+      return d;
+    } catch(e){ return "anon"; }
+  }
+
+  function conProfiloList(){ return componenti.filter(function(c){ return c.trovato; }); }
+
+  // mostra/nascondi le azioni: visibili con ≥1 componente con profilo
+  function renderAzioni(){
+    if (!azioniBox) return;
+    var attive = conProfiloList().length >= 1;
+    azioniBox.hidden = !attive;
+    if (!attive){
+      capisciBox.hidden = true;
+      btnCapisci.setAttribute("aria-expanded", "false");
+      capisciFirma = null;
+      return;
+    }
+    // se Capisci è aperto e la composizione è cambiata, aggiorna (la firma evita fetch inutili)
+    if (!capisciBox.hidden) caricaCapisci();
+  }
+
+  // ---- CAPISCI: toggle + fetch dei dati vivi ----
+  var capisciFirma = null;  // firma dei componenti già caricati (per non rifare le fetch)
+
+  btnCapisci.addEventListener("click", function(){
+    if (!capisciBox.hidden){
+      capisciBox.hidden = true;
+      btnCapisci.setAttribute("aria-expanded", "false");
+      return;
+    }
+    capisciBox.hidden = false;
+    btnCapisci.setAttribute("aria-expanded", "true");
+    caricaCapisci();
+  });
+
+  function caricaCapisci(){
+    var comps = conProfiloList();
+    if (!comps.length) return;
+    var principale = comps[0].nome;  // il primo con profilo = il seme
+    var firma = comps.map(function(c){ return c.nome; }).join("|");
+    if (capisciFirma === firma) return;  // niente è cambiato: non rifare le fetch
+    capisciFirma = firma;
+
+    // FENOMENI — unione dei fenomeni di TUTTI i componenti (grafo-ego)
+    capFenomeni.innerHTML = '<div class="cap-lab">Fenomeni in gioco</div>'
+      + '<div class="cap-attesa">cerco i fenomeni collegati…</div>';
+    var visti = {}, fenomeni = [];
+    Promise.all(comps.map(function(c){
+      return fetch("/v1/grafo-ego/" + encodeURIComponent(c.nome), {headers:{"Accept":"application/json"}})
+        .then(function(r){ return r.json().catch(function(){ return {}; }); })
+        .then(function(d){
+          ((d && d.fenomeni) ? d.fenomeni : []).forEach(function(f){
+            var nome = f && f.nome ? f.nome : null;
+            if (!nome) return;
+            var k = String(f.slug || nome).toLowerCase();
+            if (visti[k]) return;
+            visti[k] = true;
+            fenomeni.push({ nome: nome, slug: f.slug || null });
+          });
+        })
+        .catch(function(){ /* onesto: a vuoto resta vuoto, niente inventato */ });
+    })).then(function(){
+      // se nel frattempo la composizione è cambiata, non sovrascrivere
+      if (capisciFirma === firma) renderFenomeni(fenomeni);
+    });
+
+    // CAUSA → CONSEGUENZA — solo per il componente principale (il seme)
+    capCC.innerHTML = '<div class="cap-lab">Causa → conseguenza · ' + esc(cap(principale)) + '</div>'
+      + '<div class="cap-attesa">cerco le relazioni note…</div>';
+    fetch("/v1/cambio-conseguenza/" + encodeURIComponent(principale), {headers:{"Accept":"application/json"}})
+      .then(function(r){ return r.json().catch(function(){ return {}; }); })
+      .then(function(d){ if (capisciFirma === firma) renderCC(principale, d || {}); })
+      .catch(function(){ if (capisciFirma === firma) renderCC(principale, {}); });
+  }
+
+  function renderFenomeni(fenomeni){
+    var h = '<div class="cap-lab">Fenomeni in gioco</div>';
+    if (!fenomeni.length){
+      h += '<p class="cap-onesto">Nessun fenomeno collegato nel grafo per questi componenti. '
+         + 'Matter non ne inventa: provalo al banco e registra cosa osservi.</p>';
+      capFenomeni.innerHTML = h;
+      return;
+    }
+    h += '<div class="cap-chips">';
+    fenomeni.forEach(function(f, i){
+      // nessuna pagina-fenomeno esiste nel FE (solo endpoint): chip che apre il dettaglio
+      // onesto a un gesto (D4), NON un link morto.
+      h += '<button type="button" class="cap-chip" data-i="' + i + '">' + esc(cap(f.nome)) + '</button>';
+    });
+    h += '</div>';
+    capFenomeni.innerHTML = h;
+    capFenomeni.querySelectorAll(".cap-chip").forEach(function(btn){
+      btn.addEventListener("click", function(){ apriDettaglioFenomeno(fenomeni[+btn.getAttribute("data-i")]); });
+    });
+  }
+
+  // D4 — dettaglio del fenomeno sotto tap (riusa il bottom-sheet)
+  function apriDettaglioFenomeno(f){
+    sheetH.textContent = f.nome;
+    var html = '';
+    html += '<p><span class="k">Fenomeno collegato.</span> <b>' + esc(cap(f.nome))
+          + '</b> compare nel grafo di uno dei tuoi componenti.</p>';
+    html += '<p>Non c\'è ancora una scheda-pagina di questo fenomeno nel laboratorio: '
+          + 'per onestà non ti mando a un link morto. La relazione però esiste nel grafo — '
+          + 'mettila alla prova al banco.</p>';
+    sheetCorpo.innerHTML = html;
+    velo.setAttribute("data-aperto", "1");
+  }
+
+  function renderCC(principale, d){
+    var rel = (d && Array.isArray(d.relazioni)) ? d.relazioni : [];
+    var h = '<div class="cap-lab">Causa → conseguenza · ' + esc(cap(principale)) + '</div>';
+    if (!rel.length){
+      // VUOTO: testo onesto del server (se_vuoto) o fallback del contratto. MAI inventare.
+      var vuoto = (d && d.se_vuoto) ? d.se_vuoto
+                : "nessuna relazione verificata: Matter non inventa. Prova e misura.";
+      h += '<p class="cap-onesto">' + esc(vuoto) + '</p>';
+      capCC.innerHTML = h;
+      return;
+    }
+    h += '<ul class="cap-rel">';
+    rel.forEach(function(r){
+      var se = r.se_cambio || r.se || "";
+      var cons = r.conseguenza || "";
+      var stato = String(r.stato || "").toLowerCase();
+      var cls = stato === "verificato" ? "prov-verificato"
+              : (stato === "supportato" ? "prov-fonte" : "prov-proposta");
+      h += '<li class="cap-rel-li">'
+         + '<span class="cap-rel-se">' + esc(cap(se)) + '</span>'
+         + '<span class="cap-rel-fr">→</span>'
+         + '<span class="cap-rel-co">' + esc(cons) + '</span>'
+         + (stato ? ' <span class="prov sm ' + cls + '">' + esc(stato) + '</span>' : '')
+         + '</li>';
+    });
+    h += '</ul>';
+    // nota di provenienza — sotto un gesto (D4), non in faccia
+    if (d && d.nota){
+      h += '<button type="button" class="cap-piu" id="cap-piu-cc" aria-expanded="false">Da dove viene?</button>';
+      h += '<p class="cap-nota" id="cap-nota-cc" hidden>' + esc(d.nota) + '</p>';
+    }
+    capCC.innerHTML = h;
+    var piu = document.getElementById("cap-piu-cc");
+    if (piu){
+      piu.addEventListener("click", function(){
+        var nota = document.getElementById("cap-nota-cc");
+        var ap = !nota.hidden;
+        nota.hidden = ap;
+        piu.setAttribute("aria-expanded", ap ? "false" : "true");
+      });
+    }
+  }
+
+  // ---- SALVA: profilo + provenienza per-asse, POST con X-Device-Id ----
+  function profiloArray(){
+    var out = [];
+    ASSI.forEach(function(asse){
+      var comb = combinaAsse(asse);
+      out.push({
+        asse: asse,
+        valore: comb ? Number(comb.valore.toFixed(1)) : null,       // null dove non c'è
+        provenienza: comb ? comb.provenienza : "—"
+      });
+    });
+    return out;
+  }
+  // stato_dato = il PEGGIORE tra gli assi presenti: basta uno "stimato".
+  function statoDatoPeggiore(){
+    var visti = profiloArray().filter(function(a){ return a.valore !== null; });
+    if (!visti.length) return "stimato";
+    return visti.every(function(a){ return a.provenienza === "derivato"; }) ? "derivato" : "stimato";
+  }
+  function dataOggi(){
+    var dt = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
+    return dt.getFullYear() + "-" + z(dt.getMonth() + 1) + "-" + z(dt.getDate());
+  }
+  function mostraEsito(testo, tipo){
+    if (tipo === "pulisci"){ salvaEsito.hidden = true; salvaEsito.innerHTML = ""; salvaEsito.className = "salva-esito"; return; }
+    salvaEsito.hidden = false;
+    salvaEsito.className = "salva-esito " + (tipo === "ok" ? "esito-ok" : "esito-err");
+    salvaEsito.innerHTML = testo;
+  }
+  function confermaSalvato(id, titolo){
+    var h = '<div class="esito-t">✓ Salvato nel Quaderno</div>';
+    h += '<p class="esito-d">“' + esc(titolo) + '” è nel tuo Quaderno'
+       + (id ? ' <span class="esito-id">' + esc(id) + '</span>' : '') + '.</p>';
+    h += '<div class="esito-az">';
+    h += '<a class="btn btn--ghost" href="/quaderno">Apri il Quaderno</a>';
+    h += '<a class="btn btn--ghost" href="/menu">Porta nel Menu</a>';  // /menu esiste → link legittimo
+    h += '</div>';
+    salvaEsito.hidden = false;
+    salvaEsito.className = "salva-esito esito-ok";
+    salvaEsito.innerHTML = h;
+  }
+
+  var salvaInCorso = false;
+  btnSalva.addEventListener("click", function(){
+    if (salvaInCorso) return;
+    var comps = conProfiloList();
+    if (!comps.length){
+      mostraEsito("Aggiungi almeno un componente con profilo prima di salvare.", "err");
+      return;
+    }
+    var titolo = (inpTitolo.value || "").trim() || ("Preparazione — " + dataOggi());
+    var nota = (inpNota.value || "").trim();
+
+    var payload = {
+      porta: "laboratorio",
+      funzione: "composer",
+      tipo: "ricetta",
+      titolo: titolo,
+      stato_input: {
+        componenti: componenti.map(function(c){
+          return { nome: c.nome, quantita: (typeof c.quantita === "number" ? c.quantita : null) };
+        })
+      },
+      stato_output: { profilo: profiloArray() },
+      provenienza: {
+        versione_motore: "componi-1.0",
+        metodo: "media dei profili dei componenti (semplice/pesata)",
+        stato_dato: statoDatoPeggiore()
+      }
+    };
+    if (nota) payload.note_lab = nota;
+
+    salvaInCorso = true;
+    btnSalva.disabled = true;
+    var testoOrig = btnSalva.textContent;
+    btnSalva.textContent = "Salvo…";
+    mostraEsito("", "pulisci");
+
+    fetch("/v1/quaderno2/salva", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json", "X-Device-Id": devId() },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(d){ return { status: r.status, body: d }; });
+    })
+    .then(function(res){
+      var d = res.body || {};
+      if (res.status >= 200 && res.status < 300 && d.ok === true){
+        confermaSalvato(d.id, titolo);
+        // corridoio coerente: incolla l'id del record salvato nello stato corrente
+        if (window.corridoio){
+          var stato = corridoio.get() || {};
+          stato.salvato = { id: d.id, titolo: titolo };
+          corridoio.set(stato);
+        }
+      } else {
+        // ONESTÀ: nessun finto successo
+        var msg;
+        if (res.status === 401)
+          msg = "Identità mancante: il Quaderno non ti ha riconosciuto. Riprova.";
+        else if (d && d.errore)
+          msg = "Non salvato: " + esc(String(d.errore));
+        else
+          msg = "Non salvato (errore " + res.status + "). Riprova.";
+        mostraEsito(msg, "err");
+      }
+    })
+    .catch(function(){
+      mostraEsito("Non salvato: il server non è raggiungibile ora. Nessun dato è stato scritto.", "err");
+    })
+    .then(function(){
+      salvaInCorso = false;
+      btnSalva.disabled = false;
+      btnSalva.textContent = testoOrig;
+    });
+  });
 
   avvio();
 })();
