@@ -38,6 +38,28 @@ NOTA = (
 )
 
 
+# Clausola SQL per escludere le scorie `solo_motore` dall'universo: voci tecniche
+# del flavor network (es. "bell_pepper") che hanno composti ma mai gusto. Tenute
+# dentro gonfiano il denominatore e diluiscono la %. Stessa clausola usata ovunque
+# nel codice (misc.py, api.py, admin.py). Esclude se il campo è valorizzato (anche
+# false): si tiene solo quando è NULL (= chiave assente o valore JSON null).
+COND_NO_SOLO_MOTORE = "(data->>'solo_motore') IS NULL"
+
+NOTA_DENOMINATORE = (
+    "esclusi i nodi solo_motore (voci tecniche del flavor network non consultabili "
+    "come ingredienti): non entrano nel denominatore, così la % è onesta."
+)
+
+
+def _e_solo_motore(dd):
+    """True se il nodo è una scoria `solo_motore` (campo valorizzato, anche false).
+    Rispecchia la semantica SQL di COND_NO_SOLO_MOTORE: valorizzato -> fuori universo,
+    NULL/assente -> dentro. Funzione pura, nessun DB."""
+    if not isinstance(dd, dict):
+        return False
+    return dd.get("solo_motore") is not None
+
+
 def _coerce_data(row):
     """Estrae il `data` del nodo da una riga, tollerante al formato.
     row può essere il data diretto (dict o stringa JSON) oppure una tupla/lista
@@ -94,6 +116,10 @@ def aggrega_copertura(nodi):
 
     for row in nodi:
         dd = _coerce_data(row)
+        # fuori universo: scorie solo_motore (voci tecniche, mai gusto) — non contano
+        # nel denominatore. Onestà: tolgono rumore, non gonfiano la %.
+        if _e_solo_motore(dd):
+            continue
         tot += 1
 
         prop = dd.get("proprieta")
@@ -145,6 +171,7 @@ def aggrega_copertura(nodi):
         },
         "assi": list(ASSI),
         "nota": NOTA,
+        "nota_denominatore": NOTA_DENOMINATORE,
     }
 
 
@@ -157,7 +184,8 @@ def copertura_stato_json():
         with connessione() as conn:
             cur = conn.cursor()
             cur.execute(
-                "SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')"
+                "SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto') "
+                "AND " + COND_NO_SOLO_MOTORE
             )
             righe = cur.fetchall()
             cur.close()

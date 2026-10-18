@@ -19,6 +19,7 @@
 #  - COUNT(DISTINCT) + filtro firma + padre<>base: restano (archi doppi, varianti dello stesso ingrediente).
 
 import os
+import json
 from flask import Blueprint, jsonify, request
 from db import connessione
 
@@ -220,13 +221,60 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     return out
 
 
+def _classifica_tradizione(edge_data):
+    """ONESTA' DEI DATI (funzione pura, testabile senza DB).
+    Distingue un accostamento tradizionale DOCUMENTATO (da fonte reale: ricette vere)
+    da una PROPOSTA AI (da verificare). Non spacciare mai un'invenzione per un dato.
+
+    Input: `edge_data` = il JSONB `data` dell'arco (dict) o None. Campi possibili:
+      piatto, da_ricette (int), confidenza, tradizione, verificato (bool), fonte.
+    Output: dict con evidenza/provenienza/perche ONESTI.
+      - DOCUMENTATO: da_ricette presente e >= 2, e NON (verificato is False o fonte=="ai_validato").
+      - PROPOSTA: fonte=="ai_validato" OPPURE verificato is False OPPURE nessun segnale di ricette reali.
+    MAI la parola "documentato" per un arco AI.
+    """
+    d = edge_data if isinstance(edge_data, dict) else {}
+    piatto = d.get("piatto")
+    da_ricette = d.get("da_ricette")
+    verificato = d.get("verificato")
+    fonte = d.get("fonte")
+
+    # segnale di ricette reali: da_ricette intero >= 2
+    try:
+        n_ricette = int(da_ricette) if da_ricette is not None else None
+    except (TypeError, ValueError):
+        n_ricette = None
+    ha_ricette = n_ricette is not None and n_ricette >= 2
+
+    is_ai = (fonte == "ai_validato") or (verificato is False)
+    documentato = ha_ricette and not is_ai
+
+    evidenza = {"tipo": "documentato" if documentato else "proposta"}
+    if piatto:
+        evidenza["piatto"] = piatto
+    if n_ricette is not None:
+        evidenza["da_ricette"] = n_ricette
+
+    suffisso_piatto = f": {piatto}" if piatto else ""
+    if documentato:
+        provenienza = "da fonte"
+        perche = f"accostamento tradizionale da {n_ricette} ricette{suffisso_piatto}"
+    else:
+        provenienza = "proposta"
+        perche = f"accostamento proposto, da verificare{suffisso_piatto}"
+
+    return {"evidenza": evidenza, "provenienza": provenienza, "perche": perche}
+
+
 def _tradizione(cur, ing_id, limit=6):
-    """Criterio 4: accostamenti documentati. Etichettati come CULTURA, non come chimica."""
+    """Criterio 4: accostamenti tradizionali. Etichettati come CULTURA, non come chimica.
+    ONESTA' DEI DATI: distingue gli archi DOCUMENTATI (da ricette reali) dalle PROPOSTE AI
+    (da verificare) leggendo il `data` dell'arco — mai spacciare un'invenzione per un dato."""
     out = []
     try:
         cur.execute(
             r"""
-            SELECT DISTINCT n.name
+            SELECT DISTINCT n.name, e.data
             FROM edges e
             JOIN nodes n ON n.id = e.to_id
             WHERE e.from_id = %s AND e.relation = 'abbinamento_tradizionale'
@@ -236,13 +284,16 @@ def _tradizione(cur, ing_id, limit=6):
             """,
             (ing_id, limit),
         )
-        for (name,) in cur.fetchall():
+        for (name, edata) in cur.fetchall():
+            d = edata if isinstance(edata, dict) else (json.loads(edata) if edata else {})
+            cls = _classifica_tradizione(d)
             out.append({
                 "ingrediente": name,
                 "criterio": "tradizione",
-                "evidenza": {"tipo": "documentato"},
+                "evidenza": cls["evidenza"],
+                "provenienza": cls["provenienza"],
                 "robustezza": None,
-                "perche": "accostamento tradizionale documentato (cultura, non chimica)",
+                "perche": cls["perche"],
             })
     except Exception:
         pass
@@ -1377,8 +1428,13 @@ def criteri_copertura():
     try:
         with connessione() as conn:
             cur = conn.cursor()
+            # Universo onesto: esclude le scorie `solo_motore` (voci tecniche del
+            # flavor network, es. "bell_pepper", che hanno composti ma mai gusto).
+            # Tenute dentro gonfiano il denominatore e diluiscono la %. Si tiene solo
+            # quando il campo è NULL (chiave assente o valore JSON null).
             base = ("FROM nodes n WHERE n.type IN ('Ingrediente','Prodotto') "
-                    "AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'")
+                    "AND (n.data->>'visibility') IS DISTINCT FROM 'hidden' "
+                    "AND (n.data->>'solo_motore') IS NULL")
             def c(extra, params=()):
                 cur.execute(f"SELECT COUNT(*) {base} {extra}", params)
                 return cur.fetchone()[0]
@@ -1398,6 +1454,8 @@ def criteri_copertura():
             "foto": {"n": foto, "pct": pct(foto)},
             "composti": {"n": comp, "pct": pct(comp)},
             "nota": "Mappa di copertura: dove sono i buchi.",
+            "nota_denominatore": ("esclusi i nodi solo_motore (voci tecniche non "
+                                  "consultabili): non entrano nel denominatore, così la % è onesta."),
         })
     except Exception as e:
         return _errore(e)

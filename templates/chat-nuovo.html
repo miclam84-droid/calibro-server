@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chiedi a Matter</title>
+<meta name="description" content="Chiedi a Matter — risponde sulla scienza del mestiere, ancorato al grafo. Un aiuto, non un oracolo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  /* La chat occupa l'altezza piena: colonna con lista scrollabile + barra input fissa in basso.
+     Mobile-first, niente scroll orizzontale a 390px. Usa SOLO i token di matter3.css. */
+  html,body{height:100%}
+  body{display:flex; flex-direction:column; min-height:100dvh}
+
+  .chat-shell{
+    flex:1 1 auto; display:flex; flex-direction:column; min-height:0;
+    max-width:var(--maxw); width:100%; margin:0 auto;
+    padding-left:max(16px,env(safe-area-inset-left,0px));
+    padding-right:max(16px,env(safe-area-inset-right,0px));
+  }
+
+  /* intestazione onesta */
+  .chat-intro{
+    background:var(--panel); border:1px solid var(--riga); border-radius:var(--r);
+    padding:13px 14px; margin:14px 0 0; font-size:13px; color:var(--ink); line-height:1.5;
+  }
+  .chat-intro strong{font-family:var(--display); font-weight:700}
+
+  /* lista messaggi: l'unica parte che scorre */
+  .chat-lista{
+    flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden;
+    display:flex; flex-direction:column; gap:10px;
+    padding:16px 0 12px;
+  }
+
+  .bolla{
+    max-width:84%; padding:11px 14px; border-radius:var(--r);
+    font-size:15px; line-height:1.5; color:var(--ink);
+    white-space:pre-wrap; word-wrap:break-word; overflow-wrap:anywhere;
+  }
+  /* utente a destra, verde identità, testo bianco */
+  .bolla--utente{
+    align-self:flex-end; background:var(--verde); color:#fff;
+    border-bottom-right-radius:var(--r-sm);
+  }
+  /* Matter a sinistra, superficie */
+  .bolla--matter{
+    align-self:flex-start; background:var(--surface); border:1px solid var(--riga);
+    border-bottom-left-radius:var(--r-sm);
+  }
+  /* nota onesta sotto una risposta (es. crea_ricetta, errori) */
+  .bolla--nota{
+    align-self:flex-start; background:var(--tint); border:1px solid var(--riga);
+    color:var(--ink-soft); font-size:13px; max-width:84%;
+    padding:10px 13px; border-radius:var(--r); line-height:1.45;
+  }
+  /* errore onesto: contrasto attenzione */
+  .bolla--errore{
+    align-self:flex-start; background:#fff; border:1px solid var(--oxblood);
+    color:var(--oxblood); font-size:14px; max-width:84%;
+    padding:11px 14px; border-radius:var(--r); line-height:1.45;
+  }
+
+  /* puntini "sto pensando" */
+  .pensa{align-self:flex-start; display:inline-flex; gap:5px; padding:14px 16px;
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+    border-bottom-left-radius:var(--r-sm)}
+  .pensa span{width:7px; height:7px; border-radius:50%; background:var(--ink-soft);
+    opacity:.4; animation:pensa 1s infinite ease-in-out}
+  .pensa span:nth-child(2){animation-delay:.16s}
+  .pensa span:nth-child(3){animation-delay:.32s}
+  @keyframes pensa{0%,80%,100%{opacity:.3; transform:translateY(0)}40%{opacity:.9; transform:translateY(-3px)}}
+  @media (prefers-reduced-motion:reduce){.pensa span{animation:none}}
+
+  /* barra input fissa in basso */
+  .chat-barra{
+    flex:0 0 auto; position:sticky; bottom:0;
+    background:linear-gradient(to top, var(--bg) 60%, transparent);
+    padding-top:8px;
+    padding-bottom:max(12px,env(safe-area-inset-bottom,0px));
+  }
+  .chat-form{display:flex; gap:10px; align-items:flex-end}
+  .chat-form textarea{
+    flex:1 1 auto; min-width:0; resize:none; font-family:var(--sans); font-size:16px;
+    color:var(--ink); background:var(--surface); border:1px solid var(--riga);
+    border-radius:12px; padding:11px 14px; line-height:1.4; max-height:120px;
+  }
+  .chat-form textarea::placeholder{color:var(--ink-soft)}
+  .chat-form textarea:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+  .chat-invia{
+    flex:0 0 auto; background:var(--verde); color:#fff; border:0; border-radius:12px;
+    padding:0 18px; height:46px; cursor:pointer; font-family:var(--sans);
+    font-weight:600; font-size:15px;
+  }
+  .chat-invia:hover:not(:disabled){filter:brightness(1.06)}
+  .chat-invia:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .chat-invia:disabled{opacity:.5; cursor:not-allowed}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <span class="wm">Matter<span class="bench">Bench</span></span>
+    <span class="eyebrow">la scienza del mestiere</span>
+  </div>
+</header>
+
+<div class="chat-shell">
+
+  <div class="chat-intro">
+    <strong>Chiedi a Matter</strong> — risponde sulla scienza del mestiere, ancorato al grafo. È un aiuto, non un oracolo.
+  </div>
+
+  <div class="chat-lista" id="lista" role="log" aria-live="polite" aria-label="Conversazione con Matter"></div>
+
+  <div class="chat-barra">
+    <form class="chat-form" id="form" autocomplete="off">
+      <textarea id="domanda" name="domanda" rows="1" placeholder="Scrivi la tua domanda…" aria-label="La tua domanda" enterkeyhint="send"></textarea>
+      <button class="chat-invia" id="invia" type="submit">Chiedi</button>
+    </form>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var lista   = document.getElementById("lista");
+  var form    = document.getElementById("form");
+  var input   = document.getElementById("domanda");
+  var invia   = document.getElementById("invia");
+
+  // history lato client: coppie {q, r} — il backend /chiedi legge h.q / h.r.
+  var history = [];
+  var inVolo  = false;
+
+  // ── device id: UUID stabile in localStorage (riusa quello già salvato da altre pagine) ──
+  function devId(){
+    var id = null;
+    try{
+      id = localStorage.getItem("matter_device_id") || localStorage.getItem("matter_token");
+    }catch(e){ /* storage non disponibile */ }
+    if(!id){
+      id = (window.crypto && crypto.randomUUID)
+             ? crypto.randomUUID()
+             : ("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(c){
+                 var r = Math.random()*16|0, v = c==="x" ? r : (r&0x3|0x8);
+                 return v.toString(16);
+               }));
+      try{ localStorage.setItem("matter_device_id", id); }catch(e){ /* pazienza */ }
+    }
+    return id;
+  }
+
+  function scrollGiu(){ lista.scrollTop = lista.scrollHeight; }
+
+  function aggiungiBolla(testo, tipo){
+    var el = document.createElement("div");
+    el.className = "bolla bolla--" + tipo;
+    el.textContent = testo;
+    lista.appendChild(el);
+    scrollGiu();
+    return el;
+  }
+
+  function aggiungiNota(testo){
+    var el = document.createElement("div");
+    el.className = "bolla--nota";
+    el.textContent = testo;
+    lista.appendChild(el);
+    scrollGiu();
+  }
+
+  function aggiungiErrore(testo){
+    var el = document.createElement("div");
+    el.className = "bolla--errore";
+    el.textContent = testo;
+    lista.appendChild(el);
+    scrollGiu();
+  }
+
+  function mostraPensa(){
+    var el = document.createElement("div");
+    el.className = "pensa";
+    el.setAttribute("aria-label", "Matter sta pensando");
+    el.innerHTML = "<span></span><span></span><span></span>";
+    lista.appendChild(el);
+    scrollGiu();
+    return el;
+  }
+
+  function autosize(){
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 120) + "px";
+  }
+  input.addEventListener("input", autosize);
+
+  // Invio con Enter (Shift+Enter = a capo)
+  input.addEventListener("keydown", function(e){
+    if(e.key === "Enter" && !e.shiftKey){
+      e.preventDefault();
+      form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", {cancelable:true}));
+    }
+  });
+
+  function bloccaInvio(b){
+    inVolo = b;
+    invia.disabled = b;
+    input.disabled = b;
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(inVolo) return;
+
+    var domanda = (input.value || "").trim();
+    if(!domanda) return;
+
+    aggiungiBolla(domanda, "utente");
+    input.value = "";
+    autosize();
+    bloccaInvio(true);
+
+    var pensa = mostraPensa();
+
+    // solo gli ultimi ~6 scambi (il backend ne usa comunque pochi)
+    var payload = {
+      domanda: domanda,
+      lang: "it",
+      history: history.slice(-6)
+    };
+
+    fetch("/chiedi", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Device-Id": devId()
+      },
+      body: JSON.stringify(payload)
+    }).then(function(resp){
+      // prova a leggere il JSON anche sugli errori (il backend manda {errore,messaggio})
+      return resp.json().then(function(dati){
+        return {ok: resp.ok, status: resp.status, dati: dati};
+      }).catch(function(){
+        return {ok: resp.ok, status: resp.status, dati: null};
+      });
+    }).then(function(res){
+      if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
+
+      var d = res.dati || {};
+
+      // ── 429: troppe richieste → mostra il messaggio d'attesa onesto ──
+      if(res.status === 429){
+        aggiungiErrore(d.messaggio || "Troppe domande in poco tempo. Attendi un minuto e riprova.");
+        bloccaInvio(false);
+        input.focus();
+        return;
+      }
+
+      // ── servizio AI giù / altri errori di servizio → onesto, niente risposta inventata ──
+      if(!res.ok || !d || d.errore){
+        if(d && d.errore === "domanda_vuota"){
+          // non dovrebbe capitare (già filtrato), ma restiamo onesti
+          bloccaInvio(false);
+          input.focus();
+          return;
+        }
+        aggiungiErrore("Il servizio di risposta non è disponibile in questo momento.");
+        bloccaInvio(false);
+        input.focus();
+        return;
+      }
+
+      // ── risposta valida ──
+      var risposta = (d.risposta || "").trim();
+
+      if(risposta){
+        aggiungiBolla(risposta, "matter");
+      } else {
+        // 200 ma senza testo: non inventiamo nulla
+        aggiungiErrore("Il servizio di risposta non è disponibile in questo momento.");
+        bloccaInvio(false);
+        input.focus();
+        return;
+      }
+
+      // ── azione crea_ricetta: mostriamo la risposta + nota onesta, NON generiamo qui ──
+      if(d._azione === "crea_ricetta"){
+        aggiungiNota("La creazione delle ricette è nel Laboratorio.");
+      }
+
+      // aggiorna la history lato client (coppia {q, r})
+      history.push({q: domanda, r: risposta});
+
+      bloccaInvio(false);
+      input.focus();
+    }).catch(function(){
+      // rete giù / fetch fallito → onesto
+      if(pensa && pensa.parentNode) pensa.parentNode.removeChild(pensa);
+      aggiungiErrore("Il servizio di risposta non è disponibile in questo momento.");
+      bloccaInvio(false);
+      input.focus();
+    });
+  });
+
+  // genera/recupera il device id all'avvio
+  devId();
+})();
+</script>
+</body>
+</html>

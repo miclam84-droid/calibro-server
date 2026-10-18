@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Causa — Matter Bench</title>
+<meta name="description" content="Percorso diagnostico: parti dal problema, restringi le ipotesi. Non una causa certa — verifica al banco.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  /* --- CAUSA NUOVO: solo lo stretto necessario oltre matter3.css --- */
+  .causa-testa{margin-top:22px}
+  .causa-testa h1{font-size:24px; font-family:var(--display); font-weight:800; letter-spacing:-.01em}
+  .causa-sub{font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.45}
+
+  /* form del problema */
+  .campo{display:block; margin-top:18px}
+  .campo > span{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px}
+  .campo input, .campo select{
+    width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:11px 13px; box-shadow:var(--shadow-sm);
+  }
+  .campo input:focus, .campo select:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+
+  /* banner fermo (requisito revisore) */
+  .banner-limite{
+    margin-top:18px; background:rgba(169,128,47,.10); border:1px solid rgba(169,128,47,.30);
+    border-radius:var(--r); padding:13px 15px; font-size:12.5px; color:var(--ink); line-height:1.5;
+  }
+  .banner-limite strong{color:#8a6a28; font-weight:700}
+
+  /* stati */
+  .stato{
+    margin-top:14px; background:var(--panel); border:1px dashed var(--riga);
+    border-radius:var(--r); padding:18px 16px; font-size:13.5px; color:var(--ink-soft);
+    text-align:center; line-height:1.5;
+  }
+  .stato.stato-err{border-style:solid; border-color:rgba(168,80,74,.32); background:rgba(168,80,74,.08); color:var(--ink)}
+
+  /* intestazione risultati */
+  .ris-testa{margin-top:26px}
+  .ris-fenomeno{font-family:var(--display); font-weight:800; font-size:18px; color:var(--ink); text-transform:capitalize}
+  .ris-interpret{font-size:13px; color:var(--ink-soft); margin-top:4px; line-height:1.45}
+
+  /* ipotesi (cause) */
+  .ipotesi{list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:12px}
+  .ipo{
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+    box-shadow:var(--shadow-sm); padding:14px 15px;
+  }
+  .ipo-top{display:flex; align-items:center; gap:9px; flex-wrap:wrap}
+  .ipo-causa{flex:1 1 auto; min-width:0; font-family:var(--display); font-weight:700; font-size:15.5px; color:var(--ink)}
+  /* pallino probabilita */
+  .prob{display:inline-flex; align-items:center; gap:5px; font-family:var(--sans); font-weight:600; font-size:11px;
+    letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:var(--r-pill); border:1px solid transparent}
+  .prob::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor}
+  .prob-alta{color:var(--oxblood); background:rgba(168,80,74,.10); border-color:rgba(168,80,74,.28)}
+  .prob-media{color:var(--ocra); background:rgba(169,128,47,.12); border-color:rgba(169,128,47,.28)}
+  .prob-bassa{color:var(--ink-soft); background:var(--panel); border-color:var(--riga)}
+  .ipo-riga{margin-top:10px}
+  .ipo-lab{font-family:var(--sans); font-weight:700; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); display:block; margin-bottom:3px}
+  .ipo-txt{font-size:13.5px; color:var(--ink); line-height:1.5}
+  .ipo-prov{margin-top:12px}
+
+  /* sensori da controllare */
+  .sensori{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:9px}
+  .sens{
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:10px 12px; font-size:13.5px; color:var(--ink);
+  }
+  .sens-s{font-weight:700; text-transform:capitalize}
+  .sens-d{color:var(--ink-soft)}
+
+  /* approfondimento fenomeno (D4 — sotto un gesto) */
+  .appr{margin-top:16px}
+  .appr-btn{
+    font-family:var(--sans); font-weight:600; font-size:12.5px; color:var(--verde);
+    background:transparent; border:0; padding:4px 0; cursor:pointer; text-decoration:underline;
+  }
+  .appr-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .appr-corpo{margin-top:10px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r);
+    padding:14px 15px; font-size:13.5px; color:var(--ink); line-height:1.55}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">causa</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="causa-testa">
+    <span class="eyebrow">Causa</span>
+    <h1>Parti dal problema</h1>
+    <p class="causa-sub">Descrivi cosa non torna. Matter restringe le ipotesi e ti dice come verificarle al banco — non ti da' una causa certa.</p>
+  </section>
+
+  <form id="form-causa" onsubmit="return false">
+    <label class="campo" for="sintomo">
+      <span>Qual e' il problema?</span>
+      <input type="text" id="sintomo" maxlength="200" autocomplete="off"
+             placeholder="es. il cornicione non cresce · il drink e' troppo dolce">
+    </label>
+    <label class="campo" for="disciplina">
+      <span>Disciplina — facoltativa</span>
+      <select id="disciplina">
+        <option value="">La deduco dal problema</option>
+        <option value="bar">Bar</option>
+        <option value="panificazione">Panificazione</option>
+        <option value="pasticceria">Pasticceria</option>
+        <option value="gelateria">Gelateria</option>
+        <option value="caffetteria">Caffetteria</option>
+        <option value="cucina">Cucina</option>
+        <option value="vino">Vino</option>
+        <option value="birra">Birra</option>
+      </select>
+    </label>
+    <button class="btn btn--block" id="btn-diagnosi" type="submit" style="margin-top:16px">Restringi le ipotesi</button>
+  </form>
+
+  <!-- stato di lavoro / errore -->
+  <div class="stato" id="stato" hidden></div>
+
+  <!-- RISULTATI -->
+  <section id="risultati" hidden aria-live="polite">
+
+    <!-- BANNER FERMO in cima ai risultati (requisito del revisore) -->
+    <div class="banner-limite" role="note">
+      <strong>Percorso diagnostico: restringe le ipotesi, NON da' una causa certa.</strong> Verifica al banco.
+    </div>
+
+    <div class="ris-testa">
+      <div class="ris-fenomeno" id="ris-fenomeno"></div>
+      <div class="ris-interpret" id="ris-interpret"></div>
+    </div>
+
+    <!-- IPOTESI o stato onesto -->
+    <div id="ipotesi-wrap">
+      <span class="eyebrow" id="h-ipotesi" style="display:block; margin-top:22px; margin-bottom:0">Ipotesi</span>
+      <ul class="ipotesi" id="ipotesi"></ul>
+    </div>
+
+    <!-- COSA CONTROLLARE -->
+    <div id="sensori-wrap" hidden>
+      <span class="eyebrow" style="display:block; margin-top:24px; margin-bottom:0">Cosa controllare</span>
+      <ul class="sensori" id="sensori"></ul>
+    </div>
+
+    <!-- APPROFONDIMENTO FENOMENO (D4) -->
+    <div class="appr" id="appr" hidden>
+      <button type="button" class="appr-btn" id="appr-btn" aria-expanded="false" aria-controls="appr-corpo">Perche' succede?</button>
+      <div class="appr-corpo" id="appr-corpo" hidden></div>
+    </div>
+
+  </section>
+
+</main>
+
+<script src="/static/corridoio.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ─── identita' del dispositivo — stesso pattern di componi-nuovo / matter-quaderno2.js ───
+  // localStorage 'matter_device_id' || 'matter_token'; se assente genera un UUID valido
+  // (36 char: il backend accetta SOLO UUID da 36 char) e lo salva. Header X-Device-Id.
+  function devId(){
+    try{
+      var d = localStorage.getItem("matter_device_id") || localStorage.getItem("matter_token");
+      if (!d){
+        d = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){
+              var r = Math.random()*16|0, v = c === "x" ? r : (r&0x3|0x8);
+              return v.toString(16);
+            });
+        localStorage.setItem("matter_device_id", d);
+      }
+      return d;
+    } catch(e){ return "anon"; }
+  }
+
+  function cap(s){ s = String(s||""); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  var form        = document.getElementById("form-causa");
+  var inpSintomo  = document.getElementById("sintomo");
+  var selDisc     = document.getElementById("disciplina");
+  var btn         = document.getElementById("btn-diagnosi");
+  var stato       = document.getElementById("stato");
+  var risultati   = document.getElementById("risultati");
+  var risFenomeno = document.getElementById("ris-fenomeno");
+  var risInterpret = document.getElementById("ris-interpret");
+  var ipotesiWrap = document.getElementById("ipotesi-wrap");
+  var ipotesiBox  = document.getElementById("ipotesi");
+  var hIpotesi    = document.getElementById("h-ipotesi");
+  var sensoriWrap = document.getElementById("sensori-wrap");
+  var sensoriBox  = document.getElementById("sensori");
+  var appr        = document.getElementById("appr");
+  var apprBtn     = document.getElementById("appr-btn");
+  var apprCorpo   = document.getElementById("appr-corpo");
+
+  function mostraStato(testo, errore){
+    stato.hidden = false;
+    stato.className = "stato" + (errore ? " stato-err" : "");
+    stato.textContent = testo;
+  }
+  function pulisciStato(){ stato.hidden = true; stato.textContent = ""; }
+
+  // probabilita' -> classe
+  function classeProb(p){
+    p = String(p || "").toLowerCase();
+    if (p === "alta") return "prob-alta";
+    if (p === "media") return "prob-media";
+    if (p === "bassa") return "prob-bassa";
+    return "prob-bassa";
+  }
+  // ordinamento per probabilita'
+  function rangoProb(p){
+    p = String(p || "").toLowerCase();
+    return p === "alta" ? 0 : (p === "media" ? 1 : 2);
+  }
+
+  // ─── RENDER cause (ipotesi) ───
+  function renderIpotesi(cause){
+    ipotesiBox.innerHTML = "";
+    if (!cause.length){
+      // STATO ONESTO: niente cause inventate
+      hIpotesi.hidden = true;
+      var vuoto = document.createElement("div");
+      vuoto.className = "stato";
+      vuoto.innerHTML = "Nessuna ipotesi nel patrimonio per questo sintomo. "
+        + "Matter non inventa: prova, misura e registra nel Quaderno.";
+      ipotesiWrap.appendChild(vuoto);
+      return;
+    }
+    hIpotesi.hidden = false;
+
+    cause.slice().sort(function(a, b){ return rangoProb(a.probabilita) - rangoProb(b.probabilita); })
+      .forEach(function(c){
+        var li = document.createElement("li");
+        li.className = "ipo";
+
+        var top = document.createElement("div");
+        top.className = "ipo-top";
+
+        var causa = document.createElement("span");
+        causa.className = "ipo-causa";
+        causa.textContent = cap(c.causa || "ipotesi");
+        top.appendChild(causa);
+
+        if (c.probabilita){
+          var prob = document.createElement("span");
+          prob.className = "prob " + classeProb(c.probabilita);
+          prob.textContent = String(c.probabilita);
+          top.appendChild(prob);
+        }
+        li.appendChild(top);
+
+        // come verificarla = sensore_conferma
+        if (c.sensore_conferma){
+          var r1 = document.createElement("div");
+          r1.className = "ipo-riga";
+          r1.innerHTML = '<span class="ipo-lab">Come verificarla</span>'
+            + '<span class="ipo-txt">' + esc(c.sensore_conferma) + '</span>';
+          li.appendChild(r1);
+        }
+        // cosa provare = patch
+        if (c.patch){
+          var r2 = document.createElement("div");
+          r2.className = "ipo-riga";
+          r2.innerHTML = '<span class="ipo-lab">Cosa provare</span>'
+            + '<span class="ipo-txt">' + esc(c.patch) + '</span>';
+          li.appendChild(r2);
+        }
+
+        // PROVENIENZA: da fonte (da_protocollo) vs proposta (arricchita da AI)
+        var prov = document.createElement("span");
+        if (c.da_protocollo){
+          prov.className = "prov ipo-prov prov-fonte";
+          prov.textContent = "da fonte: " + c.da_protocollo;
+        } else {
+          prov.className = "prov ipo-prov prov-proposta";
+          prov.textContent = "proposta — da verificare";
+        }
+        li.appendChild(prov);
+
+        ipotesiBox.appendChild(li);
+      });
+  }
+
+  // ─── RENDER sensori da controllare ───
+  function renderSensori(sensori){
+    sensoriBox.innerHTML = "";
+    if (!sensori.length){ sensoriWrap.hidden = true; return; }
+    sensoriWrap.hidden = false;
+    sensori.forEach(function(s){
+      var li = document.createElement("li");
+      li.className = "sens";
+      var testo = '<span class="sens-s">' + esc(cap(s.sensore || "")) + '</span>';
+      if (s.domanda) testo += ' — <span class="sens-d">' + esc(s.domanda) + '</span>';
+      li.innerHTML = testo;
+      sensoriBox.appendChild(li);
+    });
+  }
+
+  // ─── RENDER approfondimento fenomeno (D4) ───
+  function renderAppr(causalita){
+    if (!causalita){ appr.hidden = true; apprCorpo.hidden = true; return; }
+    appr.hidden = false;
+    apprCorpo.hidden = true;
+    apprBtn.setAttribute("aria-expanded", "false");
+    var testo;
+    if (typeof causalita === "string"){
+      testo = causalita;
+    } else {
+      try { testo = JSON.stringify(causalita, null, 2); } catch(e){ testo = String(causalita); }
+    }
+    apprCorpo.textContent = testo;
+  }
+  apprBtn.addEventListener("click", function(){
+    var ap = !apprCorpo.hidden;
+    apprCorpo.hidden = ap;
+    apprBtn.setAttribute("aria-expanded", ap ? "false" : "true");
+  });
+
+  // pulisce i risultati precedenti (anche lo stato onesto iniettato)
+  function resetRisultati(){
+    var ex = ipotesiWrap.querySelector(".stato");
+    if (ex) ex.remove();
+    ipotesiBox.innerHTML = "";
+    sensoriBox.innerHTML = "";
+    apprCorpo.textContent = "";
+    apprCorpo.hidden = true;
+  }
+
+  // ─── DIAGNOSI ───
+  var inCorso = false;
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if (inCorso) return;
+    var sintomo = (inpSintomo.value || "").trim();
+    if (!sintomo){
+      mostraStato("Scrivi prima qual e' il problema.", true);
+      return;
+    }
+    var body = { sintomo: sintomo };
+    var disc = selDisc.value;
+    if (disc) body.disciplina = disc;
+
+    inCorso = true;
+    btn.disabled = true;
+    var testoOrig = btn.textContent;
+    btn.textContent = "Restringo…";
+    risultati.hidden = true;
+    mostraStato("Cerco le ipotesi per “" + sintomo + "”…", false);
+
+    fetch("/v1/diagnosi", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json", "X-Device-Id": devId() },
+      body: JSON.stringify(body)
+    })
+    .then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(d){ return { status: r.status, body: d }; });
+    })
+    .then(function(res){
+      var d = res.body || {};
+      if (res.status < 200 || res.status >= 300 || d.errore){
+        mostraStato(d.errore ? ("Diagnosi non riuscita: " + d.errore)
+                             : ("Diagnosi non riuscita (errore " + res.status + ")."), true);
+        return;
+      }
+      pulisciStato();
+      resetRisultati();
+
+      var fen = (d.fenomeno || "").trim();
+      risFenomeno.textContent = fen || "Percorso diagnostico";
+      var interp = (d.sintomo_interpretato || sintomo || "").trim();
+      risInterpret.textContent = interp ? ("Problema: " + interp) : "";
+
+      renderIpotesi(Array.isArray(d.cause) ? d.cause : []);
+      renderSensori(Array.isArray(d.sensori_da_controllare) ? d.sensori_da_controllare : []);
+      renderAppr(d.causalita_fenomeno || null);
+
+      risultati.hidden = false;
+    })
+    .catch(function(){
+      mostraStato("Il server non e' raggiungibile ora. Riprova tra poco.", true);
+    })
+    .then(function(){
+      inCorso = false;
+      btn.disabled = false;
+      btn.textContent = testoOrig;
+    });
+  });
+
+})();
+</script>
+</body>
+</html>

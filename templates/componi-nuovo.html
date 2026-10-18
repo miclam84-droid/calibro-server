@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Componi — Matter Bench</title>
+<meta name="description" content="Il profilo vivo di una preparazione: la media dei profili dei componenti, con la provenienza di ogni gusto. Una stima derivata, non una misura al banco.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  /* --- COMPONI NUOVO: solo lo stretto necessario oltre matter3.css --- */
+  .componi-testa{margin-top:22px}
+  .componi-testa h1{font-size:24px; font-family:var(--display); font-weight:800; letter-spacing:-.01em}
+  .componi-sub{font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.45}
+
+  /* BANNER C2 — sempre visibile sopra il profilo */
+  .banner-limite{
+    margin-top:18px; background:rgba(169,128,47,.10); border:1px solid rgba(169,128,47,.30);
+    border-radius:var(--r); padding:13px 15px; font-size:12.5px; color:var(--ink); line-height:1.5;
+  }
+  .banner-limite strong{color:#8a6a28; font-weight:700}
+
+  /* COSTRUTTORE */
+  .costruttore{margin-top:22px}
+  .vuoto{
+    margin-top:12px; background:var(--panel); border:1px dashed var(--riga);
+    border-radius:var(--r); padding:18px 16px; font-size:13.5px; color:var(--ink-soft);
+    text-align:center; line-height:1.5;
+  }
+  .lista-comp{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:10px}
+  .comp{
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+    box-shadow:var(--shadow-sm); padding:12px 13px;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .comp-nome{font-family:var(--display); font-weight:700; font-size:15.5px; color:var(--ink); text-transform:capitalize; flex:1 1 auto; min-width:0}
+  .comp-nd{font-family:var(--sans); font-weight:600; font-size:11px; color:var(--ocra); display:block; margin-top:2px; text-transform:none; letter-spacing:.01em}
+  .comp-qta{display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--ink-soft)}
+  .comp-qta input{
+    width:64px; font-family:var(--sans); font-size:15px; color:var(--ink); text-align:right;
+    background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:7px 8px; -moz-appearance:textfield;
+  }
+  .comp-qta input::-webkit-outer-spin-button,
+  .comp-qta input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
+  .comp-qta input:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+  .comp-az{display:inline-flex; align-items:center; gap:4px; margin-left:auto}
+  .comp-scheda{font-family:var(--sans); font-weight:600; font-size:12px; color:var(--verde); text-decoration:none; padding:6px 8px; border-radius:var(--r-sm)}
+  .comp-scheda:hover{background:var(--tint)}
+  .comp-x{
+    flex:0 0 auto; width:30px; height:30px; border-radius:var(--r-pill);
+    border:1px solid var(--riga); background:var(--surface); color:var(--ink-soft);
+    font-size:15px; line-height:1; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+  }
+  .comp-x:hover{border-color:var(--oxblood); color:var(--oxblood)}
+  .comp-x:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+  /* PROFILO VIVO */
+  .profilo{margin-top:30px}
+  .profilo-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:4px}
+  .profilo-stato{font-family:var(--sans); font-weight:600; font-size:12px; color:var(--ink-soft)}
+  .assi{margin-top:14px; display:flex; flex-direction:column; gap:4px}
+  .asse{padding:11px 0; border-bottom:1px solid var(--riga)}
+  .asse:last-child{border-bottom:none}
+  .asse-top{display:flex; align-items:center; gap:8px}
+  .asse-nome{font-family:var(--display); font-weight:700; font-size:14px; color:var(--ink); text-transform:capitalize}
+  .asse-info{
+    flex:0 0 auto; width:19px; height:19px; border-radius:var(--r-pill);
+    border:1px solid var(--riga); background:transparent; color:var(--ink-soft);
+    font-size:11px; font-weight:700; line-height:1; cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center; font-family:var(--sans);
+  }
+  .asse-info:hover{border-color:var(--verde); color:var(--verde)}
+  .asse-info:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .asse-prov{margin-left:auto}
+  .asse-valore{font-family:var(--display); font-weight:800; font-size:17px; color:var(--ink); font-variant-numeric:tabular-nums; min-width:34px; text-align:right}
+  .asse-valore.vuoto-val{color:var(--ink-soft); font-weight:700}
+  .asse-barra{margin-top:9px; height:9px; border-radius:var(--r-pill); background:rgba(29,42,34,.08); overflow:hidden}
+  .asse-fill{height:100%; border-radius:var(--r-pill); width:0; transition:width .18s ease}
+  .asse-fill.derivato{background:var(--segnale)}
+  .asse-fill.stimato{background:var(--ocra); opacity:.6}
+  .asse-manca{margin-top:7px; font-size:12px; color:var(--ink-soft); font-style:italic}
+
+  /* badge provenienza asse (riusa .prov di matter3) */
+  .prov.sm{font-size:10.5px; padding:3px 8px}
+
+  /* pannello info (bottom sheet, come scopri) */
+  .sheet-velo{
+    position:fixed; inset:0; background:rgba(29,42,34,.38); z-index:40;
+    opacity:0; pointer-events:none; transition:opacity .18s ease;
+  }
+  .sheet-velo[data-aperto="1"]{opacity:1; pointer-events:auto}
+  .sheet{
+    position:fixed; left:0; right:0; bottom:0; z-index:41;
+    max-width:var(--maxw); margin:0 auto;
+    background:var(--surface); border:1px solid var(--riga);
+    border-radius:var(--r) var(--r) 0 0; box-shadow:var(--shadow);
+    padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));
+    transform:translateY(102%); transition:transform .2s ease;
+  }
+  .sheet-velo[data-aperto="1"] .sheet{transform:translateY(0)}
+  .sheet-presa{width:40px; height:4px; border-radius:var(--r-pill); background:var(--riga); margin:0 auto 12px}
+  .sheet h2{font-size:18px; font-family:var(--display); font-weight:800; text-transform:capitalize}
+  .sheet-corpo{margin-top:10px; font-size:13.5px; color:var(--ink); line-height:1.55}
+  .sheet-corpo p{margin:0 0 10px}
+  .sheet-corpo .k{font-weight:700; color:var(--verde)}
+  .sheet-chiudi{margin-top:12px}
+
+  /* ═══ R4 — AZIONI: Capisci + Salva (chiusura del corridoio fino al Quaderno) ═══ */
+  .azioni{margin-top:34px; padding-top:22px; border-top:1px solid var(--riga)}
+  .azioni > .eyebrow{display:block; margin-bottom:12px}
+  .azione-btn{margin-bottom:0}
+
+  /* CAPISCI PERCHÉ */
+  .capisci{
+    margin-top:12px; background:var(--panel); border:1px solid var(--riga);
+    border-radius:var(--r); padding:16px;
+  }
+  .capisci-intro{margin:0; font-size:13.5px; color:var(--ink); line-height:1.5}
+  .cap-lab{font-family:var(--sans); font-weight:700; font-size:11px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-soft); margin:16px 0 8px}
+  .cap-attesa{font-size:12.5px; color:var(--ink-soft); font-style:italic}
+  .cap-onesto{margin:0; font-size:13px; color:var(--ink-soft); line-height:1.5; font-style:italic}
+  .cap-chips{display:flex; flex-wrap:wrap; gap:8px}
+  .cap-chip{
+    font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde);
+    background:var(--surface); border:1px solid var(--verde); border-radius:var(--r-pill);
+    padding:7px 13px; cursor:pointer; text-transform:capitalize;
+  }
+  .cap-chip:hover{background:var(--tint)}
+  .cap-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .cap-rel{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}
+  .cap-rel-li{
+    display:flex; align-items:center; flex-wrap:wrap; gap:7px;
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:10px 12px; font-size:13.5px; color:var(--ink);
+  }
+  .cap-rel-se{font-weight:700; text-transform:capitalize}
+  .cap-rel-fr{color:var(--verde); font-weight:700}
+  .cap-rel-co{color:var(--ink-soft)}
+  .cap-rel-li .prov{margin-left:auto}
+  .cap-piu{
+    margin-top:10px; font-family:var(--sans); font-weight:600; font-size:12.5px;
+    color:var(--verde); background:transparent; border:0; padding:4px 0; cursor:pointer; text-decoration:underline;
+  }
+  .cap-piu:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .cap-nota{margin:6px 0 0; font-size:12.5px; color:var(--ink-soft); line-height:1.5}
+
+  /* SALVA NEL QUADERNO */
+  .salva{margin-top:14px}
+  .salva-campo{display:block; margin-bottom:12px}
+  .salva-campo > span{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px}
+  .salva-campo input, .salva-campo textarea{
+    width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:11px 13px; box-shadow:var(--shadow-sm); resize:vertical;
+  }
+  .salva-campo input:focus, .salva-campo textarea:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+  .salva-esito{margin-top:14px; border-radius:var(--r); padding:14px 15px; font-size:13.5px; line-height:1.5}
+  .salva-esito.esito-ok{background:var(--tint); border:1px solid rgba(47,138,95,.3); color:var(--ink)}
+  .salva-esito.esito-err{background:rgba(168,80,74,.10); border:1px solid rgba(168,80,74,.32); color:var(--ink)}
+  .esito-t{font-family:var(--display); font-weight:800; font-size:16px; color:var(--verde)}
+  .esito-d{margin:6px 0 0}
+  .esito-id{font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--ink-soft)}
+  .esito-az{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+  .esito-az .btn{flex:1 1 auto}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">componi</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="componi-testa">
+    <span class="eyebrow">Laboratorio</span>
+    <h1>Componi una preparazione</h1>
+    <p class="componi-sub">Aggiungi i componenti: il profilo del gusto si ricalcola dal vivo a ogni modifica. È la media dei profili dei singoli ingredienti — con la provenienza, asse per asse.</p>
+  </section>
+
+  <!-- C2.a — BANNER SEMPRE VISIBILE SOPRA IL PROFILO -->
+  <div class="banner-limite" role="note">
+    <strong>Stima derivata, non una misura al banco.</strong> Il profilo combinato assume <strong>semplice miscelazione</strong>: una trasformazione (macerazione, cottura, estrazione, fermentazione) cambia il profilo in modo che <strong>non</strong> è una somma. Verifica al banco.
+  </div>
+
+  <!-- COSTRUTTORE -->
+  <section class="costruttore" aria-labelledby="h-comp">
+    <span class="eyebrow" id="h-comp" style="display:block; margin-bottom:10px">I componenti</span>
+
+    <form class="srch" id="srch" role="search" onsubmit="return false" style="margin-top:0">
+      <input type="search" id="q" name="q" placeholder="Aggiungi un ingrediente (es. limone)" aria-label="Aggiungi un ingrediente alla preparazione" autocomplete="off">
+      <button type="submit">Aggiungi</button>
+    </form>
+    <p id="srch-msg" class="nota-esempio" hidden></p>
+
+    <div class="vuoto" id="vuoto">Nessun componente. Aggiungi un ingrediente per vedere il profilo.</div>
+    <ul class="lista-comp" id="lista" hidden></ul>
+  </section>
+
+  <!-- PROFILO VIVO -->
+  <section class="profilo" aria-labelledby="h-prof">
+    <div class="profilo-head">
+      <span class="eyebrow" id="h-prof">Profilo vivo</span>
+      <span class="profilo-stato" id="profilo-stato">—</span>
+    </div>
+    <div class="assi" id="assi"></div>
+  </section>
+
+  <!-- AZIONI R4 — Capisci + Salva: chiudono il corridoio fino al Quaderno,
+       nello STESSO oggetto di lavoro. Visibili solo con ≥1 componente con profilo. -->
+  <section class="azioni" id="azioni" hidden aria-labelledby="h-azioni">
+    <span class="eyebrow" id="h-azioni">Chiudi il giro</span>
+
+    <button class="btn btn--ghost btn--block azione-btn" id="btn-capisci" type="button"
+            aria-expanded="false" aria-controls="capisci">Capisci perché</button>
+
+    <div class="capisci" id="capisci" hidden>
+      <p class="capisci-intro">Dietro questa preparazione ci sono alcuni fenomeni e relazioni note.</p>
+      <div class="capisci-fenomeni" id="capisci-fenomeni"></div>
+      <div class="capisci-cc" id="capisci-cc"></div>
+    </div>
+
+    <div class="salva" id="salva">
+      <label class="salva-campo" for="salva-titolo">
+        <span>Titolo</span>
+        <input type="text" id="salva-titolo" maxlength="140"
+               placeholder="Preparazione — (oggi, se lasci vuoto)" autocomplete="off">
+      </label>
+      <label class="salva-campo" for="salva-nota">
+        <span>Nota di laboratorio — facoltativa</span>
+        <textarea id="salva-nota" rows="2" maxlength="600"
+                  placeholder="es. provato al banco: ..."></textarea>
+      </label>
+      <button class="btn btn--block" id="btn-salva" type="button">Salva nel Quaderno</button>
+      <div class="salva-esito" id="salva-esito" hidden></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- PANNELLO INFO ASSE (C2.b) -->
+<div class="sheet-velo" id="velo" data-aperto="0">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h" id="sheet">
+    <div class="sheet-presa" aria-hidden="true"></div>
+    <h2 id="sheet-h">Asse</h2>
+    <div class="sheet-corpo" id="sheet-corpo"></div>
+    <button class="btn btn--block sheet-chiudi" id="sheet-chiudi" type="button">Chiudi</button>
+  </div>
+</div>
+
+<script src="/static/corridoio.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // Seme eventuale dall'URL /componi-nuovo/<iniziale>
+  var INIZIALE = {{ iniziale|tojson }};
+
+  // I 6 gusti del profilo vivo, scala 0-10.
+  var ASSI = ["dolce","salato","acido","amaro","umami","grasso"];
+
+  // Stato: lista dei componenti della preparazione.
+  // ogni voce: {nome, quantita:null|number, trovato:bool, proprieta:{}, meta:{}}
+  var componenti = [];
+
+  var lista = document.getElementById("lista");
+  var vuoto = document.getElementById("vuoto");
+  var assiBox = document.getElementById("assi");
+  var statoBox = document.getElementById("profilo-stato");
+  var srchMsg = document.getElementById("srch-msg");
+
+  function cap(s){ s = String(s||""); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  // numero asse valido per un componente? (asse presente e numerico finito)
+  function valoreAsse(c, asse){
+    if (!c.trovato) return null;
+    var p = c.proprieta || {};
+    if (!(asse in p)) return null;
+    var v = p[asse];
+    return (typeof v === "number" && isFinite(v)) ? v : null;
+  }
+  // provenienza dichiarata di un asse per un componente; default PEGGIORE ("stimato")
+  function statoAsse(c, asse){
+    var m = c.meta || {};
+    return (m[asse] && m[asse].stato === "derivato") ? "derivato" : "stimato";
+  }
+  function qtaValida(c){
+    return (typeof c.quantita === "number" && isFinite(c.quantita) && c.quantita > 0);
+  }
+
+  // ---- CALCOLO COMBINATO per un asse ----
+  // Ritorna {valore, provenienza, pesato} oppure null se nessun componente ha l'asse.
+  function combinaAsse(asse){
+    var contrib = [];
+    componenti.forEach(function(c){
+      var v = valoreAsse(c, asse);
+      if (v === null) return;
+      contrib.push({ val: v, qta: qtaValida(c) ? c.quantita : null, stato: statoAsse(c, asse) });
+    });
+    if (!contrib.length) return null; // nessun dato -> "—", niente zero inventato
+
+    // pesata per quantità SOLO se TUTTI i contributori hanno una quantità valida;
+    // altrimenti media semplice (non inventiamo pesi).
+    var tuttiConQta = contrib.every(function(x){ return x.qta !== null; });
+    var valore;
+    if (tuttiConQta) {
+      var somma = 0, pesi = 0;
+      contrib.forEach(function(x){ somma += x.val * x.qta; pesi += x.qta; });
+      valore = pesi > 0 ? (somma / pesi) : 0;
+    } else {
+      var acc = 0;
+      contrib.forEach(function(x){ acc += x.val; });
+      valore = acc / contrib.length;
+    }
+
+    // provenienza combinata = PEGGIORE degli input:
+    // basta un solo "stimato" perché il combinato sia "stimato".
+    var provenienza = contrib.every(function(x){ return x.stato === "derivato"; }) ? "derivato" : "stimato";
+
+    return { valore: valore, provenienza: provenienza, pesato: tuttiConQta };
+  }
+
+  // ---- RENDER LISTA COMPONENTI ----
+  function renderLista(){
+    lista.innerHTML = "";
+    if (!componenti.length){
+      vuoto.hidden = false; lista.hidden = true; return;
+    }
+    vuoto.hidden = true; lista.hidden = false;
+
+    componenti.forEach(function(c, idx){
+      var li = document.createElement("li");
+      li.className = "comp";
+
+      var nome = document.createElement("div");
+      nome.className = "comp-nome";
+      nome.textContent = cap(c.nome);
+      if (!c.trovato){
+        var nd = document.createElement("span");
+        nd.className = "comp-nd";
+        nd.textContent = "profilo non disponibile — non contribuisce ai numeri";
+        nome.appendChild(nd);
+      }
+      li.appendChild(nome);
+
+      // quantità (opzionale) solo per i componenti con profilo
+      if (c.trovato){
+        var qta = document.createElement("label");
+        qta.className = "comp-qta";
+        qta.innerHTML = '<input type="number" inputmode="decimal" min="0" step="any" '+
+                        'placeholder="q.tà" aria-label="Quantità di '+esc(c.nome)+' in grammi o millilitri" '+
+                        'value="'+(c.quantita != null ? esc(String(c.quantita)) : "")+'"><span>g/ml</span>';
+        var inp = qta.querySelector("input");
+        inp.addEventListener("input", function(){
+          var v = parseFloat(inp.value);
+          c.quantita = (isFinite(v) && v >= 0) ? v : null;
+          renderProfilo(); persisti();
+        });
+        li.appendChild(qta);
+      }
+
+      var az = document.createElement("div");
+      az.className = "comp-az";
+      if (c.trovato){
+        var sch = document.createElement("a");
+        sch.className = "comp-scheda";
+        sch.href = "/scheda-gusto/" + encodeURIComponent(c.nome);
+        sch.textContent = "scheda";
+        sch.setAttribute("aria-label", "Apri la scheda del gusto di " + cap(c.nome));
+        az.appendChild(sch);
+      }
+      var x = document.createElement("button");
+      x.type = "button";
+      x.className = "comp-x";
+      x.setAttribute("aria-label", "Rimuovi " + cap(c.nome));
+      x.textContent = "✕";
+      x.addEventListener("click", function(){
+        componenti.splice(idx, 1);
+        renderLista(); renderProfilo(); persisti();
+      });
+      az.appendChild(x);
+      li.appendChild(az);
+
+      lista.appendChild(li);
+    });
+  }
+
+  // ---- RENDER PROFILO VIVO ----
+  function renderProfilo(){
+    assiBox.innerHTML = "";
+
+    var conProfilo = componenti.filter(function(c){ return c.trovato; }).length;
+    if (!conProfilo){
+      statoBox.textContent = "—";
+    }
+
+    var qualcheStimato = false, qualcheDerivato = false, qualcheAsse = false;
+
+    ASSI.forEach(function(asse){
+      var comb = combinaAsse(asse);
+
+      var row = document.createElement("div");
+      row.className = "asse";
+
+      var top = document.createElement("div");
+      top.className = "asse-top";
+
+      var nome = document.createElement("span");
+      nome.className = "asse-nome";
+      nome.textContent = asse;
+      top.appendChild(nome);
+
+      var info = document.createElement("button");
+      info.type = "button";
+      info.className = "asse-info";
+      info.textContent = "i";
+      info.setAttribute("aria-label", "Cosa significa e come è calcolato l'asse " + asse);
+      info.addEventListener("click", function(){ apriInfo(asse, comb); });
+      top.appendChild(info);
+
+      if (comb){
+        qualcheAsse = true;
+        if (comb.provenienza === "derivato") qualcheDerivato = true; else qualcheStimato = true;
+
+        var prov = document.createElement("span");
+        prov.className = "prov sm asse-prov " + (comb.provenienza === "derivato" ? "prov-derivato" : "prov-stimato");
+        prov.textContent = comb.provenienza;
+        top.appendChild(prov);
+
+        var val = document.createElement("span");
+        val.className = "asse-valore";
+        val.textContent = comb.valore.toFixed(1);
+        top.appendChild(val);
+
+        row.appendChild(top);
+
+        var barra = document.createElement("div");
+        barra.className = "asse-barra";
+        var fill = document.createElement("div");
+        fill.className = "asse-fill " + (comb.provenienza === "derivato" ? "derivato" : "stimato");
+        var pct = Math.max(0, Math.min(100, (comb.valore / 10) * 100));
+        fill.style.width = pct + "%";
+        barra.appendChild(fill);
+        row.appendChild(barra);
+      } else {
+        // NESSUN componente ha questo asse: "—", niente barra, niente zero inventato
+        var dash = document.createElement("span");
+        dash.className = "asse-valore vuoto-val asse-prov";
+        dash.textContent = "—";
+        top.appendChild(dash);
+        row.appendChild(top);
+
+        var manca = document.createElement("div");
+        manca.className = "asse-manca";
+        manca.textContent = "dato non disponibile per nessun componente";
+        row.appendChild(manca);
+      }
+
+      assiBox.appendChild(row);
+    });
+
+    // stato globale del profilo: SEMPRE derivato o stimato, MAI verificato.
+    if (!qualcheAsse){
+      statoBox.textContent = conProfilo ? "nessun gusto mappato" : "—";
+    } else {
+      statoBox.textContent = qualcheStimato ? "stima derivata" : "derivato";
+    }
+
+    renderAzioni();  // R4: mostra/aggiorna Capisci + Salva
+  }
+
+  // ---- INFO ASSE (C2.b) ----
+  var velo = document.getElementById("velo");
+  var sheetH = document.getElementById("sheet-h");
+  var sheetCorpo = document.getElementById("sheet-corpo");
+
+  function apriInfo(asse, comb){
+    sheetH.textContent = asse;
+    var html = "";
+    html += '<p><span class="k">Cosa rappresenta.</span> L\'intensità percepita di <b>'+esc(asse)+'</b> su una scala da 0 a 10.</p>';
+    html += '<p><span class="k">Come è calcolato.</span> È la media dei profili dei singoli componenti; '+
+            'ogni componente deriva dai suoi dati — USDA, formula v1. ';
+    if (comb){
+      html += comb.pesato
+        ? 'Qui la media è <b>pesata per la quantità</b> che hai indicato per ogni componente.'
+        : 'Qui è una <b>media semplice</b>: non tutti i componenti hanno una quantità, e non inventiamo pesi.';
+      html += ' La provenienza combinata è <b>'+esc(comb.provenienza)+'</b>: è la peggiore tra gli input — '+
+              'basta un solo componente <b>stimato</b> perché il combinato sia stimato.';
+    } else {
+      html += 'Per ora nessun componente porta questo asse.';
+    }
+    html += '</p>';
+    html += '<p><span class="k">Un trattino (—)</span> vuol dire dato non disponibile per nessun componente: '+
+            'non mettiamo uno zero al suo posto.</p>';
+    sheetCorpo.innerHTML = html;
+    velo.setAttribute("data-aperto", "1");
+  }
+  function chiudiInfo(){ velo.setAttribute("data-aperto", "0"); }
+  document.getElementById("sheet-chiudi").addEventListener("click", chiudiInfo);
+  velo.addEventListener("click", function(e){ if (e.target === velo) chiudiInfo(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") chiudiInfo(); });
+
+  // ---- PERSISTENZA (corridoio) ----
+  function profiloCombinato(){
+    var out = {};
+    ASSI.forEach(function(asse){
+      var comb = combinaAsse(asse);
+      out[asse] = comb ? { valore: Number(comb.valore.toFixed(1)), provenienza: comb.provenienza } : null;
+    });
+    return out;
+  }
+  function persisti(){
+    if (!window.corridoio) return;
+    corridoio.set({
+      ingrediente: componenti.length ? componenti[0].nome : null,
+      preparazione: componenti.map(function(c){
+        return { nome: c.nome, quantita: c.quantita, trovato: c.trovato };
+      }),
+      profilo: profiloCombinato()
+    });
+  }
+
+  // ---- AGGIUNTA / FETCH ----
+  function giaPresente(nome){
+    var k = String(nome).toLowerCase().trim();
+    return componenti.some(function(c){ return String(c.nome).toLowerCase().trim() === k; });
+  }
+
+  function messaggio(testo, errore){
+    srchMsg.hidden = false;
+    srchMsg.innerHTML = testo;
+    srchMsg.style.color = errore ? "var(--oxblood)" : "var(--ink-soft)";
+  }
+  function pulisciMsg(){ srchMsg.hidden = true; srchMsg.innerHTML = ""; }
+
+  // Aggiunge un ingrediente: fetch del profilo vivo, poi in lista.
+  // qtaIniziale e silenzioso servono al ripristino dal corridoio.
+  function aggiungi(nome, qtaIniziale, silenzioso){
+    nome = String(nome || "").trim();
+    if (!nome) return Promise.resolve();
+    if (giaPresente(nome)){
+      if (!silenzioso) messaggio("<strong>"+esc(cap(nome))+"</strong> è già nella preparazione.", false);
+      return Promise.resolve();
+    }
+    if (!silenzioso) messaggio("Cerco il profilo di <strong>"+esc(cap(nome))+"</strong>…", false);
+
+    return fetch("/v1/profilo-gusto/" + encodeURIComponent(nome), {headers:{"Accept":"application/json"}})
+      .then(function(r){ return r.json().catch(function(){ return {}; }); })
+      .then(function(d){
+        d = d || {};
+        var c;
+        if (d.trovato){
+          c = {
+            nome: d.nome || nome,
+            quantita: (typeof qtaIniziale === "number" && isFinite(qtaIniziale)) ? qtaIniziale : null,
+            trovato: true,
+            proprieta: d.proprieta || {},
+            meta: d.proprieta_meta || {}
+          };
+          if (giaPresente(c.nome)){ if (!silenzioso) pulisciMsg(); return; }
+          if (!silenzioso) pulisciMsg();
+        } else {
+          // non trovato o DB spento: elencato come "profilo non disponibile",
+          // NON contribuisce ai numeri. Nessun dato inventato.
+          c = { nome: nome, quantita: null, trovato: false, proprieta: {}, meta: {} };
+          if (!silenzioso){
+            messaggio("<strong>"+esc(cap(nome))+"</strong>: profilo non disponibile. "+
+                      "Resta nella lista ma non entra nei numeri.", false);
+          }
+        }
+        componenti.push(c);
+        renderLista(); renderProfilo(); persisti();
+      })
+      .catch(function(){
+        // rete / endpoint non raggiungibile: lo teniamo onesto, profilo non disponibile
+        componenti.push({ nome: nome, quantita: null, trovato: false, proprieta: {}, meta: {} });
+        renderLista(); renderProfilo(); persisti();
+        if (!silenzioso) messaggio("Profilo non raggiungibile ora: <strong>"+esc(cap(nome))+"</strong> resta senza numeri.", true);
+      });
+  }
+
+  // submit ricerca -> aggiungi
+  document.getElementById("srch").addEventListener("submit", function(e){
+    e.preventDefault();
+    var q = document.getElementById("q");
+    var v = (q.value || "").trim();
+    if (!v) return;
+    aggiungi(v).then(function(){ q.value = ""; q.focus(); });
+  });
+
+  // ---- RIPRISTINO INIZIALE ----
+  // Precarica dal corridoio (preparazione in corso) e/o dal seme <iniziale>.
+  function avvio(){
+    renderLista(); renderProfilo();
+
+    var semi = [];
+    var stato = window.corridoio ? corridoio.get() : null;
+    if (stato && Array.isArray(stato.preparazione)){
+      stato.preparazione.forEach(function(p){
+        if (p && p.nome) semi.push({ nome: p.nome, qta: (typeof p.quantita === "number" ? p.quantita : null) });
+      });
+    }
+    // seme dall'URL: in testa se non già presente
+    if (INIZIALE){
+      var k = String(INIZIALE).toLowerCase().trim();
+      if (!semi.some(function(s){ return String(s.nome).toLowerCase().trim() === k; })){
+        semi.unshift({ nome: INIZIALE, qta: null });
+      }
+    }
+
+    // carica in sequenza, in modo silenzioso (ripristino, non azione utente)
+    semi.reduce(function(catena, s){
+      return catena.then(function(){ return aggiungi(s.nome, s.qta, true); });
+    }, Promise.resolve());
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // R4 — CAPISCI PERCHÉ + SALVA NEL QUADERNO
+  // Chiude il corridoio: dalla preparazione al "perché" (fenomeni + relazioni
+  // note) e al Quaderno. Onestà vincolante: Capisci NON inventa fenomeni o
+  // relazioni assenti; Salva NON dichiara successo senza {ok:true} dal server.
+  // Tutto dentro lo STESSO oggetto di lavoro (nessuna pagina nuova).
+  // ═══════════════════════════════════════════════════════════════════════
+  var azioniBox    = document.getElementById("azioni");
+  var btnCapisci   = document.getElementById("btn-capisci");
+  var capisciBox   = document.getElementById("capisci");
+  var capFenomeni  = document.getElementById("capisci-fenomeni");
+  var capCC        = document.getElementById("capisci-cc");
+  var btnSalva     = document.getElementById("btn-salva");
+  var inpTitolo    = document.getElementById("salva-titolo");
+  var inpNota      = document.getElementById("salva-nota");
+  var salvaEsito   = document.getElementById("salva-esito");
+
+  // identità del dispositivo — stesso pattern di static/matter-quaderno2.js:
+  // localStorage 'matter_device_id' || 'matter_token'; se assente genera un uuid e lo salva.
+  function devId(){
+    try{
+      var d = localStorage.getItem("matter_device_id") || localStorage.getItem("matter_token");
+      if (!d){
+        d = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : ("dev-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2, 10));
+        localStorage.setItem("matter_device_id", d);
+      }
+      return d;
+    } catch(e){ return "anon"; }
+  }
+
+  function conProfiloList(){ return componenti.filter(function(c){ return c.trovato; }); }
+
+  // mostra/nascondi le azioni: visibili con ≥1 componente con profilo
+  function renderAzioni(){
+    if (!azioniBox) return;
+    var attive = conProfiloList().length >= 1;
+    azioniBox.hidden = !attive;
+    if (!attive){
+      capisciBox.hidden = true;
+      btnCapisci.setAttribute("aria-expanded", "false");
+      capisciFirma = null;
+      return;
+    }
+    // se Capisci è aperto e la composizione è cambiata, aggiorna (la firma evita fetch inutili)
+    if (!capisciBox.hidden) caricaCapisci();
+  }
+
+  // ---- CAPISCI: toggle + fetch dei dati vivi ----
+  var capisciFirma = null;  // firma dei componenti già caricati (per non rifare le fetch)
+
+  btnCapisci.addEventListener("click", function(){
+    if (!capisciBox.hidden){
+      capisciBox.hidden = true;
+      btnCapisci.setAttribute("aria-expanded", "false");
+      return;
+    }
+    capisciBox.hidden = false;
+    btnCapisci.setAttribute("aria-expanded", "true");
+    caricaCapisci();
+  });
+
+  function caricaCapisci(){
+    var comps = conProfiloList();
+    if (!comps.length) return;
+    var principale = comps[0].nome;  // il primo con profilo = il seme
+    var firma = comps.map(function(c){ return c.nome; }).join("|");
+    if (capisciFirma === firma) return;  // niente è cambiato: non rifare le fetch
+    capisciFirma = firma;
+
+    // FENOMENI — unione dei fenomeni di TUTTI i componenti (grafo-ego)
+    capFenomeni.innerHTML = '<div class="cap-lab">Fenomeni in gioco</div>'
+      + '<div class="cap-attesa">cerco i fenomeni collegati…</div>';
+    var visti = {}, fenomeni = [];
+    Promise.all(comps.map(function(c){
+      return fetch("/v1/grafo-ego/" + encodeURIComponent(c.nome), {headers:{"Accept":"application/json"}})
+        .then(function(r){ return r.json().catch(function(){ return {}; }); })
+        .then(function(d){
+          ((d && d.fenomeni) ? d.fenomeni : []).forEach(function(f){
+            var nome = f && f.nome ? f.nome : null;
+            if (!nome) return;
+            var k = String(f.slug || nome).toLowerCase();
+            if (visti[k]) return;
+            visti[k] = true;
+            fenomeni.push({ nome: nome, slug: f.slug || null });
+          });
+        })
+        .catch(function(){ /* onesto: a vuoto resta vuoto, niente inventato */ });
+    })).then(function(){
+      // se nel frattempo la composizione è cambiata, non sovrascrivere
+      if (capisciFirma === firma) renderFenomeni(fenomeni);
+    });
+
+    // CAUSA → CONSEGUENZA — solo per il componente principale (il seme)
+    capCC.innerHTML = '<div class="cap-lab">Causa → conseguenza · ' + esc(cap(principale)) + '</div>'
+      + '<div class="cap-attesa">cerco le relazioni note…</div>';
+    fetch("/v1/cambio-conseguenza/" + encodeURIComponent(principale), {headers:{"Accept":"application/json"}})
+      .then(function(r){ return r.json().catch(function(){ return {}; }); })
+      .then(function(d){ if (capisciFirma === firma) renderCC(principale, d || {}); })
+      .catch(function(){ if (capisciFirma === firma) renderCC(principale, {}); });
+  }
+
+  function renderFenomeni(fenomeni){
+    var h = '<div class="cap-lab">Fenomeni in gioco</div>';
+    if (!fenomeni.length){
+      h += '<p class="cap-onesto">Nessun fenomeno collegato nel grafo per questi componenti. '
+         + 'Matter non ne inventa: provalo al banco e registra cosa osservi.</p>';
+      capFenomeni.innerHTML = h;
+      return;
+    }
+    h += '<div class="cap-chips">';
+    fenomeni.forEach(function(f, i){
+      // nessuna pagina-fenomeno esiste nel FE (solo endpoint): chip che apre il dettaglio
+      // onesto a un gesto (D4), NON un link morto.
+      h += '<button type="button" class="cap-chip" data-i="' + i + '">' + esc(cap(f.nome)) + '</button>';
+    });
+    h += '</div>';
+    capFenomeni.innerHTML = h;
+    capFenomeni.querySelectorAll(".cap-chip").forEach(function(btn){
+      btn.addEventListener("click", function(){ apriDettaglioFenomeno(fenomeni[+btn.getAttribute("data-i")]); });
+    });
+  }
+
+  // D4 — dettaglio del fenomeno sotto tap (riusa il bottom-sheet)
+  function apriDettaglioFenomeno(f){
+    sheetH.textContent = f.nome;
+    var html = '';
+    html += '<p><span class="k">Fenomeno collegato.</span> <b>' + esc(cap(f.nome))
+          + '</b> compare nel grafo di uno dei tuoi componenti.</p>';
+    html += '<p>Non c\'è ancora una scheda-pagina di questo fenomeno nel laboratorio: '
+          + 'per onestà non ti mando a un link morto. La relazione però esiste nel grafo — '
+          + 'mettila alla prova al banco.</p>';
+    sheetCorpo.innerHTML = html;
+    velo.setAttribute("data-aperto", "1");
+  }
+
+  function renderCC(principale, d){
+    var rel = (d && Array.isArray(d.relazioni)) ? d.relazioni : [];
+    var h = '<div class="cap-lab">Causa → conseguenza · ' + esc(cap(principale)) + '</div>';
+    if (!rel.length){
+      // VUOTO: testo onesto del server (se_vuoto) o fallback del contratto. MAI inventare.
+      var vuoto = (d && d.se_vuoto) ? d.se_vuoto
+                : "nessuna relazione verificata: Matter non inventa. Prova e misura.";
+      h += '<p class="cap-onesto">' + esc(vuoto) + '</p>';
+      capCC.innerHTML = h;
+      return;
+    }
+    h += '<ul class="cap-rel">';
+    rel.forEach(function(r){
+      var se = r.se_cambio || r.se || "";
+      var cons = r.conseguenza || "";
+      var stato = String(r.stato || "").toLowerCase();
+      var cls = stato === "verificato" ? "prov-verificato"
+              : (stato === "supportato" ? "prov-fonte" : "prov-proposta");
+      h += '<li class="cap-rel-li">'
+         + '<span class="cap-rel-se">' + esc(cap(se)) + '</span>'
+         + '<span class="cap-rel-fr">→</span>'
+         + '<span class="cap-rel-co">' + esc(cons) + '</span>'
+         + (stato ? ' <span class="prov sm ' + cls + '">' + esc(stato) + '</span>' : '')
+         + '</li>';
+    });
+    h += '</ul>';
+    // nota di provenienza — sotto un gesto (D4), non in faccia
+    if (d && d.nota){
+      h += '<button type="button" class="cap-piu" id="cap-piu-cc" aria-expanded="false">Da dove viene?</button>';
+      h += '<p class="cap-nota" id="cap-nota-cc" hidden>' + esc(d.nota) + '</p>';
+    }
+    capCC.innerHTML = h;
+    var piu = document.getElementById("cap-piu-cc");
+    if (piu){
+      piu.addEventListener("click", function(){
+        var nota = document.getElementById("cap-nota-cc");
+        var ap = !nota.hidden;
+        nota.hidden = ap;
+        piu.setAttribute("aria-expanded", ap ? "false" : "true");
+      });
+    }
+  }
+
+  // ---- SALVA: profilo + provenienza per-asse, POST con X-Device-Id ----
+  function profiloArray(){
+    var out = [];
+    ASSI.forEach(function(asse){
+      var comb = combinaAsse(asse);
+      out.push({
+        asse: asse,
+        valore: comb ? Number(comb.valore.toFixed(1)) : null,       // null dove non c'è
+        provenienza: comb ? comb.provenienza : "—"
+      });
+    });
+    return out;
+  }
+  // stato_dato = il PEGGIORE tra gli assi presenti: basta uno "stimato".
+  function statoDatoPeggiore(){
+    var visti = profiloArray().filter(function(a){ return a.valore !== null; });
+    if (!visti.length) return "stimato";
+    return visti.every(function(a){ return a.provenienza === "derivato"; }) ? "derivato" : "stimato";
+  }
+  function dataOggi(){
+    var dt = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
+    return dt.getFullYear() + "-" + z(dt.getMonth() + 1) + "-" + z(dt.getDate());
+  }
+  function mostraEsito(testo, tipo){
+    if (tipo === "pulisci"){ salvaEsito.hidden = true; salvaEsito.innerHTML = ""; salvaEsito.className = "salva-esito"; return; }
+    salvaEsito.hidden = false;
+    salvaEsito.className = "salva-esito " + (tipo === "ok" ? "esito-ok" : "esito-err");
+    salvaEsito.innerHTML = testo;
+  }
+  function confermaSalvato(id, titolo){
+    var h = '<div class="esito-t">✓ Salvato nel Quaderno</div>';
+    h += '<p class="esito-d">“' + esc(titolo) + '” è nel tuo Quaderno'
+       + (id ? ' <span class="esito-id">' + esc(id) + '</span>' : '') + '.</p>';
+    h += '<div class="esito-az">';
+    h += '<a class="btn btn--ghost" href="/quaderno">Apri il Quaderno</a>';
+    h += '<a class="btn btn--ghost" href="/menu-nuovo">Porta nel Menu</a>';  // R4b: /menu-nuovo ora esiste → link legittimo
+    h += '</div>';
+    salvaEsito.hidden = false;
+    salvaEsito.className = "salva-esito esito-ok";
+    salvaEsito.innerHTML = h;
+  }
+
+  var salvaInCorso = false;
+  btnSalva.addEventListener("click", function(){
+    if (salvaInCorso) return;
+    var comps = conProfiloList();
+    if (!comps.length){
+      mostraEsito("Aggiungi almeno un componente con profilo prima di salvare.", "err");
+      return;
+    }
+    var titolo = (inpTitolo.value || "").trim() || ("Preparazione — " + dataOggi());
+    var nota = (inpNota.value || "").trim();
+
+    var payload = {
+      porta: "laboratorio",
+      funzione: "composer",
+      tipo: "ricetta",
+      titolo: titolo,
+      stato_input: {
+        componenti: componenti.map(function(c){
+          return { nome: c.nome, quantita: (typeof c.quantita === "number" ? c.quantita : null) };
+        })
+      },
+      stato_output: { profilo: profiloArray() },
+      provenienza: {
+        versione_motore: "componi-1.0",
+        metodo: "media dei profili dei componenti (semplice/pesata)",
+        stato_dato: statoDatoPeggiore()
+      }
+    };
+    if (nota) payload.note_lab = nota;
+
+    salvaInCorso = true;
+    btnSalva.disabled = true;
+    var testoOrig = btnSalva.textContent;
+    btnSalva.textContent = "Salvo…";
+    mostraEsito("", "pulisci");
+
+    fetch("/v1/quaderno2/salva", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json", "X-Device-Id": devId() },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(d){ return { status: r.status, body: d }; });
+    })
+    .then(function(res){
+      var d = res.body || {};
+      if (res.status >= 200 && res.status < 300 && d.ok === true){
+        confermaSalvato(d.id, titolo);
+        // corridoio coerente: incolla l'id del record salvato nello stato corrente
+        if (window.corridoio){
+          var stato = corridoio.get() || {};
+          stato.salvato = { id: d.id, titolo: titolo };
+          corridoio.set(stato);
+        }
+      } else {
+        // ONESTÀ: nessun finto successo
+        var msg;
+        if (res.status === 401)
+          msg = "Identità mancante: il Quaderno non ti ha riconosciuto. Riprova.";
+        else if (d && d.errore)
+          msg = "Non salvato: " + esc(String(d.errore));
+        else
+          msg = "Non salvato (errore " + res.status + "). Riprova.";
+        mostraEsito(msg, "err");
+      }
+    })
+    .catch(function(){
+      mostraEsito("Non salvato: il server non è raggiungibile ora. Nessun dato è stato scritto.", "err");
+    })
+    .then(function(){
+      salvaInCorso = false;
+      btnSalva.disabled = false;
+      btnSalva.textContent = testoOrig;
+    });
+  });
+
+  avvio();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Menu — Matter Bench</title>
+<meta name="description" content="Componi l'offerta assemblando le preparazioni che hai gia' salvato. Nessuna voce inventata: solo le tue preparazioni reali.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  /* --- MENU NUOVO: solo lo stretto necessario oltre matter3.css --- */
+  .menu-testa{margin-top:22px}
+  .menu-testa h1{font-size:24px; font-family:var(--display); font-weight:800; letter-spacing:-.01em}
+  .menu-sub{font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.45}
+
+  /* stato di caricamento / vuoto / errore */
+  .stato{
+    margin-top:14px; background:var(--panel); border:1px dashed var(--riga);
+    border-radius:var(--r); padding:18px 16px; font-size:13.5px; color:var(--ink-soft);
+    text-align:center; line-height:1.5;
+  }
+  .stato .btn{margin-top:14px; display:inline-flex; width:auto}
+  .stato.stato-err{border-style:solid; border-color:rgba(168,80,74,.32); background:rgba(168,80,74,.08); color:var(--ink)}
+
+  /* lista preparazioni disponibili */
+  .disp{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:10px}
+  .prep{
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+    box-shadow:var(--shadow-sm); padding:12px 13px;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .prep-corpo{flex:1 1 auto; min-width:0}
+  .prep-nome{font-family:var(--display); font-weight:700; font-size:15.5px; color:var(--ink); text-transform:capitalize}
+  .prep-meta{font-family:var(--sans); font-weight:500; font-size:11.5px; color:var(--ink-soft); display:block; margin-top:2px}
+  .prep-add{
+    flex:0 0 auto; font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde);
+    background:var(--surface); border:1px solid var(--verde); border-radius:var(--r-pill);
+    padding:7px 13px; cursor:pointer;
+  }
+  .prep-add:hover{background:var(--tint)}
+  .prep-add:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .prep-add[disabled]{opacity:.5; cursor:default; border-color:var(--riga); color:var(--ink-soft); background:var(--panel)}
+
+  /* IL TUO MENU */
+  .mio{margin-top:30px}
+  .mio-campo{display:block; margin-bottom:14px}
+  .mio-campo > span{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px}
+  .mio-campo input{
+    width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:11px 13px; box-shadow:var(--shadow-sm);
+  }
+  .mio-campo input:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+  .mio-vuoto{
+    margin-top:12px; background:var(--panel); border:1px dashed var(--riga);
+    border-radius:var(--r); padding:16px; font-size:13px; color:var(--ink-soft);
+    text-align:center; line-height:1.5;
+  }
+  .voci{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:10px}
+  .voce{
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+    box-shadow:var(--shadow-sm); padding:12px 13px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .voce-nome{flex:1 1 auto; min-width:0; font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink); text-transform:capitalize}
+  .voce-x{
+    flex:0 0 auto; width:30px; height:30px; border-radius:var(--r-pill);
+    border:1px solid var(--riga); background:var(--surface); color:var(--ink-soft);
+    font-size:15px; line-height:1; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+  }
+  .voce-x:hover{border-color:var(--oxblood); color:var(--oxblood)}
+  .voce-x:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+  /* salva */
+  .salva{margin-top:22px}
+  .salva-esito{margin-top:14px; border-radius:var(--r); padding:14px 15px; font-size:13.5px; line-height:1.5}
+  .salva-esito.esito-ok{background:var(--tint); border:1px solid rgba(47,138,95,.3); color:var(--ink)}
+  .salva-esito.esito-err{background:rgba(168,80,74,.10); border:1px solid rgba(168,80,74,.32); color:var(--ink)}
+  .esito-t{font-family:var(--display); font-weight:800; font-size:16px; color:var(--verde)}
+  .esito-d{margin:6px 0 0}
+  .esito-id{font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--ink-soft)}
+  .esito-az{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+  .esito-az .btn{flex:1 1 auto}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">menu</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="menu-testa">
+    <span class="eyebrow">Menu</span>
+    <h1>Componi l'offerta</h1>
+    <p class="menu-sub">Il menu si assembla dalle preparazioni che hai gia' salvato. Niente nomi o abbinamenti inventati: solo le tue preparazioni reali.</p>
+  </section>
+
+  <!-- PREPARAZIONI DISPONIBILI (funzione="composer" dal Quaderno) -->
+  <section class="section" aria-labelledby="h-disp">
+    <span class="eyebrow" id="h-disp">Le tue preparazioni</span>
+    <div class="stato" id="disp-stato">Carico le tue preparazioni salvate…</div>
+    <ul class="disp" id="disp" hidden></ul>
+  </section>
+
+  <!-- IL TUO MENU -->
+  <section class="mio" aria-labelledby="h-mio">
+    <span class="eyebrow" id="h-mio" style="display:block; margin-bottom:12px">Il tuo menu</span>
+
+    <label class="mio-campo" for="menu-nome">
+      <span>Nome del menu</span>
+      <input type="text" id="menu-nome" maxlength="140" placeholder="Menu — (oggi, se lasci vuoto)" autocomplete="off">
+    </label>
+
+    <div class="mio-vuoto" id="mio-vuoto">Nessuna voce ancora. Aggiungi una preparazione dall'elenco qui sopra.</div>
+    <ul class="voci" id="voci" hidden></ul>
+
+    <div class="salva" id="salva">
+      <button class="btn btn--block" id="btn-salva" type="button" disabled>Salva il menu</button>
+      <div class="salva-esito" id="salva-esito" hidden></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="/static/corridoio.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ─── identita' del dispositivo — stesso pattern di componi-nuovo / matter-quaderno2.js ───
+  // localStorage 'matter_device_id' || 'matter_token'; se assente genera un UUID valido
+  // (36 char: il backend accetta SOLO UUID da 36 char) e lo salva. Header X-Device-Id.
+  function devId(){
+    try{
+      var d = localStorage.getItem("matter_device_id") || localStorage.getItem("matter_token");
+      if (!d){
+        d = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){
+              var r = Math.random()*16|0, v = c === "x" ? r : (r&0x3|0x8);
+              return v.toString(16);
+            });
+        localStorage.setItem("matter_device_id", d);
+      }
+      return d;
+    } catch(e){ return "anon"; }
+  }
+
+  function cap(s){ s = String(s||""); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function dataOggi(){
+    var dt = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
+    return dt.getFullYear() + "-" + z(dt.getMonth() + 1) + "-" + z(dt.getDate());
+  }
+
+  // Stato: preparazioni disponibili e voci scelte per il menu.
+  var disponibili = [];   // [{id, titolo}]
+  var voci = [];          // [{id, titolo}]
+
+  var dispStato = document.getElementById("disp-stato");
+  var dispBox   = document.getElementById("disp");
+  var mioVuoto  = document.getElementById("mio-vuoto");
+  var vociBox   = document.getElementById("voci");
+  var btnSalva  = document.getElementById("btn-salva");
+  var inpNome   = document.getElementById("menu-nome");
+  var salvaEsito = document.getElementById("salva-esito");
+
+  function scelta(id){ return voci.some(function(v){ return v.id === id; }); }
+
+  // ─── RENDER: preparazioni disponibili ───
+  function renderDisp(){
+    dispBox.innerHTML = "";
+    if (!disponibili.length){ return; }
+    disponibili.forEach(function(p){
+      var li = document.createElement("li");
+      li.className = "prep";
+
+      var corpo = document.createElement("div");
+      corpo.className = "prep-corpo";
+      var nome = document.createElement("div");
+      nome.className = "prep-nome";
+      nome.textContent = cap(p.titolo);
+      corpo.appendChild(nome);
+      if (p.creato){
+        var meta = document.createElement("span");
+        meta.className = "prep-meta";
+        meta.textContent = "preparazione · " + p.creato;
+        corpo.appendChild(meta);
+      }
+      li.appendChild(corpo);
+
+      var add = document.createElement("button");
+      add.type = "button";
+      add.className = "prep-add";
+      var dentro = scelta(p.id);
+      add.textContent = dentro ? "nel menu ✓" : "+ nel menu";
+      add.disabled = dentro;
+      add.setAttribute("aria-label", (dentro ? "Gia' nel menu: " : "Aggiungi al menu: ") + cap(p.titolo));
+      add.addEventListener("click", function(){
+        if (scelta(p.id)) return;
+        voci.push({ id: p.id, titolo: p.titolo });
+        renderDisp(); renderVoci();
+      });
+      li.appendChild(add);
+
+      dispBox.appendChild(li);
+    });
+  }
+
+  // ─── RENDER: il tuo menu ───
+  function renderVoci(){
+    vociBox.innerHTML = "";
+    if (!voci.length){
+      mioVuoto.hidden = false; vociBox.hidden = true;
+      btnSalva.disabled = true;
+      return;
+    }
+    mioVuoto.hidden = true; vociBox.hidden = false;
+    btnSalva.disabled = false;
+
+    voci.forEach(function(v, idx){
+      var li = document.createElement("li");
+      li.className = "voce";
+      var nome = document.createElement("span");
+      nome.className = "voce-nome";
+      nome.textContent = cap(v.titolo);
+      li.appendChild(nome);
+
+      var x = document.createElement("button");
+      x.type = "button";
+      x.className = "voce-x";
+      x.textContent = "✕";
+      x.setAttribute("aria-label", "Togli dal menu " + cap(v.titolo));
+      x.addEventListener("click", function(){
+        voci.splice(idx, 1);
+        renderDisp(); renderVoci();
+      });
+      li.appendChild(x);
+
+      vociBox.appendChild(li);
+    });
+  }
+
+  // ─── FETCH: preparazioni salvate (funzione="composer") ───
+  function caricaDisponibili(){
+    fetch("/v1/quaderno2/lista", {
+      headers: { "Accept": "application/json", "X-Device-Id": devId() }
+    })
+    .then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(d){ return { status: r.status, body: d }; });
+    })
+    .then(function(res){
+      var d = res.body || {};
+      if (res.status === 401){
+        statoVuotoOnesto("Il Quaderno non ti ha riconosciuto. Ricarica la pagina e riprova.");
+        return;
+      }
+      if (res.status < 200 || res.status >= 300 || d.errore){
+        statoErrore(d.errore ? ("Non sono riuscito a leggere le preparazioni: " + d.errore) :
+                               ("Non sono riuscito a leggere le preparazioni (errore " + res.status + ")."));
+        return;
+      }
+      // il contratto vero di /v1/quaderno2/lista: { identita, n, record:[...] }
+      var record = Array.isArray(d.record) ? d.record : (Array.isArray(d) ? d : []);
+      disponibili = record
+        .filter(function(r){ return r && r.funzione === "composer"; })
+        .map(function(r){
+          return {
+            id: r.id,
+            titolo: r.titolo || "(senza titolo)",
+            creato: (r.creato_at || "").slice(0, 10) || null
+          };
+        });
+      if (!disponibili.length){
+        statoVuotoOnesto(null);
+        return;
+      }
+      dispStato.hidden = true;
+      dispBox.hidden = false;
+      renderDisp();
+    })
+    .catch(function(){
+      statoErrore("Il server non e' raggiungibile ora. Nessuna preparazione caricata.");
+    });
+  }
+
+  // vuoto onesto: nessuna preparazione -> invita a Componi, niente voci inventate
+  function statoVuotoOnesto(testoExtra){
+    dispBox.hidden = true;
+    dispStato.hidden = false;
+    dispStato.className = "stato";
+    var h = testoExtra
+      ? esc(testoExtra)
+      : "Non hai ancora preparazioni salvate. Componine una.";
+    h += '<br><a class="btn btn--ghost" href="/componi-nuovo">Vai a Componi</a>';
+    dispStato.innerHTML = h;
+  }
+  function statoErrore(testo){
+    dispBox.hidden = true;
+    dispStato.hidden = false;
+    dispStato.className = "stato stato-err";
+    dispStato.textContent = testo;
+  }
+
+  // ─── ESITO salvataggio ───
+  function mostraEsito(testo, tipo){
+    if (tipo === "pulisci"){ salvaEsito.hidden = true; salvaEsito.innerHTML = ""; salvaEsito.className = "salva-esito"; return; }
+    salvaEsito.hidden = false;
+    salvaEsito.className = "salva-esito " + (tipo === "ok" ? "esito-ok" : "esito-err");
+    salvaEsito.innerHTML = testo;
+  }
+  function confermaSalvato(id, titolo){
+    var h = '<div class="esito-t">✓ Menu salvato</div>';
+    h += '<p class="esito-d">“' + esc(titolo) + '” e\' nel tuo Quaderno'
+       + (id ? ' <span class="esito-id">' + esc(id) + '</span>' : '') + '.</p>';
+    h += '<div class="esito-az"><a class="btn btn--ghost" href="/quaderno">Apri il Quaderno</a></div>';
+    salvaEsito.hidden = false;
+    salvaEsito.className = "salva-esito esito-ok";
+    salvaEsito.innerHTML = h;
+  }
+
+  // ─── SALVA: POST /v1/quaderno2/salva — conferma SOLO su {ok:true} ───
+  var salvaInCorso = false;
+  btnSalva.addEventListener("click", function(){
+    if (salvaInCorso) return;
+    if (!voci.length){
+      mostraEsito("Aggiungi almeno una preparazione al menu prima di salvare.", "err");
+      return;
+    }
+    var titolo = (inpNome.value || "").trim() || ("Menu — " + dataOggi());
+    var listaVoci = voci.map(function(v){ return { id: v.id, titolo: v.titolo }; });
+
+    var payload = {
+      porta: "menu",
+      funzione: "menu",
+      tipo: "menu",
+      titolo: titolo,
+      stato_input:  { voci: listaVoci },
+      stato_output: { voci: listaVoci }
+    };
+
+    salvaInCorso = true;
+    btnSalva.disabled = true;
+    var testoOrig = btnSalva.textContent;
+    btnSalva.textContent = "Salvo…";
+    mostraEsito("", "pulisci");
+
+    fetch("/v1/quaderno2/salva", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json", "X-Device-Id": devId() },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(d){ return { status: r.status, body: d }; });
+    })
+    .then(function(res){
+      var d = res.body || {};
+      if (res.status >= 200 && res.status < 300 && d.ok === true){
+        confermaSalvato(d.id, titolo);
+      } else {
+        var msg;
+        if (res.status === 401)
+          msg = "Identita' mancante: il Quaderno non ti ha riconosciuto. Riprova.";
+        else if (d && d.errore)
+          msg = "Non salvato: " + esc(String(d.errore));
+        else
+          msg = "Non salvato (errore " + res.status + "). Riprova.";
+        mostraEsito(msg, "err");
+      }
+    })
+    .catch(function(){
+      mostraEsito("Non salvato: il server non e' raggiungibile ora. Nessun dato e' stato scritto.", "err");
+    })
+    .then(function(){
+      salvaInCorso = false;
+      btnSalva.disabled = (voci.length === 0);
+      btnSalva.textContent = testoOrig;
+    });
+  });
+
+  // avvio
+  renderVoci();
+  caricaDisponibili();
+})();
+</script>
+</body>
+</html>
