@@ -110,6 +110,7 @@
     <span class="eyebrow">Al centro del grafo</span>
     <h1 class="scopri-centro" id="centro-nome">…</h1>
     <p class="scopri-sub" id="centro-sub">Lo spessore di un legame è il numero di composti aromatici che i due ingredienti condividono davvero. Tocca un vicino per ricentrare, tocca un legame per vederne la prova.</p>
+    <a class="btn btn--ghost" id="vai-componi" href="/componi-nuovo" style="margin-top:14px">Componi con questo ingrediente →</a>
   </section>
 
   <div class="grafo-tela" id="tela" aria-label="Grafo ego-centrico dell'ingrediente">
@@ -318,8 +319,16 @@
   function nascondiOnesto(){ var o = document.getElementById("onesto"); o.hidden = true; o.innerHTML = ""; }
 
   // ---- CARICAMENTO ----
+  function cablaComponi(centro){
+    var a = document.getElementById("vai-componi");
+    if (!a) return;
+    a.href = "/componi-nuovo/" + encodeURIComponent(centro);
+    a.textContent = "Componi con " + cap(centro) + " →";
+  }
+
   function carica(ing){
     document.getElementById("centro-nome").textContent = cap(ing);
+    cablaComponi(ing);
     nascondiOnesto();
     fetch("/v1/criteri/" + encodeURIComponent(ing), {headers: {"Accept": "application/json"}})
       .then(function(r){ return r.json(); })
@@ -332,6 +341,7 @@
 
   function render(ing, d){
     d = d || {};
+    cablaComponi(d.ingrediente || ing);
     var rel = Array.isArray(d.relazioni) ? d.relazioni : [];
 
     // DB spento / sorgente non disponibile
