@@ -186,6 +186,34 @@ def _classifica_evidence(data, ev_level):
     return ev_level
 
 
+# parole vuote (non discriminano il sintomo): evitano che "troppo"/"poco" matchino tutto il patrimonio
+_STOP_SINTOMO = {
+    "troppo","troppa","troppi","troppe","poco","poca","pochi","poche","molto","molta","molti","molte",
+    "tanto","tanta","tanti","tante","meno","piu","più","quando","come","dove","perche","perché",
+    "della","dello","delle","degli","dell","questa","questo","questi","queste","essere","viene","vengono",
+    "fare","cosa","senza","sempre","dopo","prima","bene","male","tutto","tutta","nella","nello","negli",
+    "con","per","che","non","una","uno","gli","delle","mio","mia","miei","sono","resta","risulta","viene"
+}
+
+
+def _parole_sintomo(sintomo):
+    """Parole di CONTENUTO di un sintomo (>3 lettere, non stopword). Funzione pura."""
+    return set(w for w in (sintomo or "").lower().split() if len(w) > 3 and w not in _STOP_SINTOMO)
+
+
+def _rilevanza_patrimonio(parole, sintomo_protocollo):
+    """Punteggio di rilevanza (int) tra le parole di contenuto del sintomo utente e il sintomo di un
+    protocollo. Funzione pura, testabile senza DB. 0 = nessun match (da scartare).
+    Match forte = token di contenuto condivisi; match debole = parola lunga (>=5) contenuta nel sintomo."""
+    if not parole:
+        return 0
+    s = (sintomo_protocollo or "").lower()
+    comuni = parole & set(s.split())
+    if comuni:
+        return len(comuni) * 2  # match su token esatti pesa di piu'
+    return sum(1 for p in parole if len(p) >= 5 and p in s)  # match debole per contenimento
+
+
 def _fondi_cause(patrimonio, ai):
     """ONESTA' DEI DATI (funzione pura, testabile senza DB/Flask).
     Fonde le cause del PATRIMONIO (da fonte: protocolli con diagnosi, hanno `da_protocollo`)
@@ -5014,15 +5042,27 @@ def diagnosi_interattiva():
         conn = _get_conn(); cur = conn.cursor()
         # 1. cerco nelle DIAGNOSI dei protocolli un sintomo simile (patrimonio esistente)
         cur.execute("""SELECT name, data FROM nodes WHERE type='Protocollo' AND data->'diagnosi' IS NOT NULL LIMIT 500""")
-        cause_trovate = []
+        # Match col patrimonio: RILEVANTE e LIMITATO. Prima togliamo le parole vuote ("troppo"/"poco"
+        # matchavano tutto → 150+ cause-spazzatura), poi ordiniamo per rilevanza, dedup e cap a 5.
         sint_l = sintomo.lower()
-        parole = set(w for w in sint_l.split() if len(w)>3)
+        parole = _parole_sintomo(sint_l)
+        _scored = []
         for nome, data in cur.fetchall():
             dd = data if isinstance(data,dict) else json.loads(data)
             for dg in dd.get("diagnosi",[]):
                 s = str(dg.get("sintomo","")).lower()
-                if parole & set(s.split()) or any(p in s for p in parole):
-                    cause_trovate.append({"causa":dg.get("causa",""),"correzione":dg.get("correzione",""),"da_protocollo":nome})
+                score = _rilevanza_patrimonio(parole, s)
+                if score > 0:
+                    _scored.append((score, {"causa":dg.get("causa",""),"correzione":dg.get("correzione",""),"da_protocollo":nome}))
+        _scored.sort(key=lambda t: -t[0])
+        cause_trovate = []
+        _visti_c = set()
+        for _sc, _c in _scored:
+            _k = (_c.get("causa") or "").strip().lower()
+            if _k and _k not in _visti_c:
+                _visti_c.add(_k); cause_trovate.append(_c)
+            if len(cause_trovate) >= 5:
+                break
         cause_ctx = json.dumps(cause_trovate[:5],ensure_ascii=False) if cause_trovate else "nessuna nel patrimonio"
         risultato = {"sintomo_interpretato":sintomo,"fenomeno":"","cause":[],"sensori_da_controllare":[]}
         # ONESTA' DEI DATI: le cause del PATRIMONIO (da fonte) vanno SEMPRE nella risposta, anche
