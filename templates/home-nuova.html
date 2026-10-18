@@ -21,8 +21,8 @@
 
 <main class="wrap">
 
-  <!-- RICERCA -->
-  <form class="srch" role="search" action="/ingrediente/" onsubmit="return false">
+  <!-- RICERCA → porta al grafo vero (/scopri-nuovo) -->
+  <form class="srch" role="search" action="/scopri-nuovo" onsubmit="var v=(this.q.value||'').trim(); if(v){location.href='/scopri-nuovo/'+encodeURIComponent(v);} return false;">
     <input type="search" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off">
     <button type="submit">Cerca</button>
   </form>
