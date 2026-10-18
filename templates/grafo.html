@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grafo · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+  /* Poche regole locali: il resto viene da matter2.css (congelato). */
+  .gf-top-actions{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap}
+  .gf-btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:14.5px; cursor:pointer; border-radius:12px; padding:11px 16px; border:1px solid var(--rule); background:var(--card); color:var(--ink); text-decoration:none}
+  .gf-btn.ghost{background:transparent}
+  .gf-btn:focus-visible{outline:2px solid var(--green-action); outline-offset:2px}
+
+  /* Tela del grafo: SVG puro, nessuna libreria. */
+  .gf-stage{position:relative; margin-top:22px; background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden}
+  .gf-stage svg{display:block; width:100%; height:auto; touch-action:manipulation}
+  .gf-edge{stroke:var(--green-signal); stroke-linecap:round; transition:stroke-opacity .15s}
+  .gf-edge.contrasto{stroke:var(--oxblood)}
+  .gf-node{cursor:pointer}
+  .gf-node:focus-visible{outline:none}
+  .gf-node:focus-visible .gf-ring{stroke:var(--ink); stroke-width:3}
+  .gf-disc{fill:var(--card-strong); stroke:var(--green-signal); stroke-width:2}
+  .gf-disc.contrasto{stroke:var(--oxblood)}
+  .gf-center-disc{fill:var(--green-action); stroke:var(--green-action)}
+  .gf-label{font-family:var(--sans); font-weight:600; fill:var(--ink); text-anchor:middle; dominant-baseline:middle; pointer-events:none}
+  .gf-label.center{fill:#fff; font-family:var(--display)}
+  .gf-forza{font-family:var(--sans); font-size:10px; fill:var(--ink-soft); text-anchor:middle; pointer-events:none}
+
+  /* Legenda */
+  .gf-legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:12.5px; color:var(--ink-soft)}
+  .gf-legend span{display:inline-flex; align-items:center; gap:6px}
+  .gf-dot{width:11px; height:3px; border-radius:2px; display:inline-block}
+  .gf-dot.an{background:var(--green-signal)} .gf-dot.co{background:var(--oxblood)}
+
+  /* Lista legami (accessibile, sempre leggibile anche senza toccare lo SVG) */
+  .gf-list{display:flex; flex-direction:column; gap:10px; margin-top:22px}
+  .gf-item{display:block; width:100%; text-align:left; background:var(--card); border:1px solid var(--card-border); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 16px; cursor:pointer; font-family:var(--sans)}
+  .gf-item:focus-visible{outline:2px solid var(--green-action); outline-offset:2px}
+  .gf-item-h{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .gf-item-n{font-weight:600; font-size:16px; color:var(--ink)}
+  .gf-item-t{font-size:11px; letter-spacing:.06em; text-transform:uppercase; border-radius:999px; padding:2px 9px; border:1px solid var(--rule)}
+  .gf-item-t.analogia{color:var(--green-signal); border-color:rgba(47,138,95,.4)}
+  .gf-item-t.contrasto{color:var(--oxblood); border-color:rgba(168,80,74,.4)}
+  .gf-item-f{margin-left:auto; font-size:12.5px; color:var(--ink-soft)}
+  .gf-item-p{margin-top:6px; font-size:14px; color:var(--ink-soft); line-height:1.5}
+  .gf-bar{height:4px; border-radius:2px; background:var(--rule); margin-top:9px; overflow:hidden}
+  .gf-bar > i{display:block; height:100%; background:var(--green-signal)}
+  .gf-item.contrasto .gf-bar > i{background:var(--oxblood)}
+  .gf-fen{margin-top:22px}
+  .gf-fen h2{font-family:var(--display); font-size:15px; margin:0 0 10px}
+  .gf-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Grafo</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">La rete del gusto</div>
+    <h1 id="h-titolo">Grafo</h1>
+    <p class="regola"><b>Un ingrediente al centro, i suoi legami intorno.</b> Tocca un vicino per rimetterlo al centro ed esplorare. Ogni legame mostra forza, tipo e perché — dai dati veri, niente nodi inventati.</p>
+    <div class="sourceline"><span class="dot"></span><span id="src">Grafo molecolare, in tempo reale.</span></div>
+  </header>
+
+  <div class="gf-top-actions">
+    <a class="gf-btn ghost" href="/scopri">← Scopri</a>
+    <button class="gf-btn ghost" id="btn-ricarica" type="button">Ricarica</button>
+  </div>
+
+  <!-- TELA DEL GRAFO -->
+  <div class="gf-stage" id="stage" hidden>
+    <svg id="svg" viewBox="0 0 360 320" role="img" aria-labelledby="svg-title">
+      <title id="svg-title">Grafo ego-centrico</title>
+      <g id="g-edges"></g>
+      <g id="g-nodes"></g>
+    </svg>
+  </div>
+  <div class="gf-legend" id="legend" hidden>
+    <span><i class="gf-dot an"></i> analogia (affinità)</span>
+    <span><i class="gf-dot co"></i> contrasto</span>
+    <span>spessore = forza del legame</span>
+  </div>
+
+  <!-- LISTA LEGAMI -->
+  <div class="gf-list" id="lista"></div>
+
+  <!-- FENOMENI COLLEGATI -->
+  <div class="gf-fen" id="fenomeni" hidden>
+    <h2>Fenomeni collegati</h2>
+    <div class="chips" id="fen-chips"></div>
+  </div>
+
+  <div class="state" id="stato" hidden></div>
+
+  <footer>
+    <b>Grafo ego-centrico, cablato al vivo.</b> Se un ingrediente ha pochi legami molecolari, il grafo lo dice: Matter non riempie la scena con nodi finti.
+  </footer>
+</div>
+
+<script>
+// ─── ingrediente iniziale (dal server) ───
+var CENTRO = {{ ingrediente|tojson }};
+
+// ─── identità: solo X-Device-Id (coerente con le altre pagine FE-2.0) ───
+function _uuid(){
+  try{ if(crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){}
+  return 'dev-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+}
+function _dev(){
+  try{
+    var d = localStorage.getItem('matter_device_id') || localStorage.getItem('matter_token');
+    if(!d){ d = _uuid(); try{ localStorage.setItem('matter_device_id', d); }catch(e){} }
+    return d;
+  }catch(e){ return 'anon'; }
+}
+
+var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+var SVGNS = "http://www.w3.org/2000/svg";
+function svgEl(tag, attrs){
+  var e = document.createElementNS(SVGNS, tag);
+  if(attrs) for(var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+// ─── navigazione: metti un vicino al centro (cambia URL, niente reload pesante) ───
+function vaiA(nome){
+  if(!nome) return;
+  var url = '/grafo/' + encodeURIComponent(nome);
+  try{ history.pushState({centro:nome}, '', url); }catch(e){}
+  CENTRO = nome;
+  carica();
+}
+window.addEventListener('popstate', function(ev){
+  var parts = location.pathname.split('/');
+  var n = parts[2] ? decodeURIComponent(parts[2]) : CENTRO;
+  CENTRO = n; carica();
+});
+
+// ─── disegno del grafo (SVG puro) ───
+function disegna(centro, vicini){
+  var W=360, H=320, cx=W/2, cy=H/2, R=112;
+  var gE = document.getElementById('g-edges'); gE.textContent='';
+  var gN = document.getElementById('g-nodes'); gN.textContent='';
+  var svg = document.getElementById('svg');
+  svg.setAttribute('viewBox', '0 0 '+W+' '+H);
+
+  var n = vicini.length;
+  // archi + nodi vicini
+  vicini.forEach(function(v, i){
+    var ang = (-Math.PI/2) + (2*Math.PI * i / Math.max(n,1));
+    var x = cx + R*Math.cos(ang), y = cy + R*Math.sin(ang);
+    var forza = Math.max(0, Math.min(1, Number(v.forza)||0.5));
+    var contr = (v.tipo === 'contrasto');
+    // arco: spessore = forza
+    var edge = svgEl('line', {x1:cx, y1:cy, x2:x, y2:y,
+      'stroke-width': (1.5 + forza*5).toFixed(2),
+      'stroke-opacity': (0.35 + forza*0.5).toFixed(2),
+      'class': 'gf-edge' + (contr ? ' contrasto' : '')});
+    gE.appendChild(edge);
+
+    // nodo vicino: gruppo navigabile
+    var g = svgEl('g', {'class':'gf-node', tabindex:'0', role:'button',
+      'aria-label': v.nome + ', ' + (v.tipo||'analogia') + ', forza ' + Math.round(forza*100) + ' percento. Tocca per centrare.'});
+    g.appendChild(svgEl('circle', {cx:x, cy:y, r:30, 'class':'gf-disc gf-ring'+(contr?' contrasto':'')}));
+    var lbl = svgEl('text', {x:x, y:y-3, 'class':'gf-label', 'font-size': labelSize(v.nome)});
+    lbl.textContent = tronca(v.nome, 12);
+    g.appendChild(lbl);
+    var fz = svgEl('text', {x:x, y:y+12, 'class':'gf-forza'});
+    fz.textContent = Math.round(forza*100) + '%';
+    g.appendChild(fz);
+    (function(nome){
+      g.addEventListener('click', function(){ vaiA(nome); });
+      g.addEventListener('keydown', function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); vaiA(nome); } });
+    })(v.nome);
+    gN.appendChild(g);
+  });
+
+  // nodo centrale (sopra gli archi)
+  var gc = svgEl('g');
+  gc.appendChild(svgEl('circle', {cx:cx, cy:cy, r:40, 'class':'gf-disc gf-center-disc'}));
+  var lc = svgEl('text', {x:cx, y:cy, 'class':'gf-label center', 'font-size': labelSize(centro, true)});
+  lc.textContent = tronca(centro, 14);
+  gc.appendChild(lc);
+  gN.appendChild(gc);
+}
+function tronca(s, n){ s=String(s||''); return s.length>n ? s.slice(0,n-1)+'…' : s; }
+function labelSize(s, center){ var L=String(s||'').length; var base=center?15:13; if(L>10) base-=2; if(L>13) base-=1; return base+'px'; }
+
+// ─── lista legami (testo, sempre leggibile) ───
+function listaLegami(vicini){
+  var box = document.getElementById('lista');
+  box.textContent = '';
+  vicini.forEach(function(v){
+    var forza = Math.max(0, Math.min(1, Number(v.forza)||0.5));
+    var contr = (v.tipo==='contrasto');
+    var b = document.createElement('button');
+    b.type='button';
+    b.className = 'gf-item' + (contr?' contrasto':'');
+    b.setAttribute('aria-label', 'Centra ' + v.nome);
+    b.innerHTML =
+      '<div class="gf-item-h">'+
+        '<span class="gf-item-n">'+esc(v.nome)+'</span>'+
+        '<span class="gf-item-t '+(contr?'contrasto':'analogia')+'">'+esc(v.tipo||'analogia')+'</span>'+
+        '<span class="gf-item-f">forza '+Math.round(forza*100)+'%</span>'+
+      '</div>'+
+      (v.perche ? '<div class="gf-item-p">'+esc(v.perche)+'</div>' : '')+
+      '<div class="gf-bar"><i style="width:'+Math.round(forza*100)+'%"></i></div>';
+    (function(nome){ b.addEventListener('click', function(){ vaiA(nome); }); })(v.nome);
+    box.appendChild(b);
+  });
+}
+
+// ─── fenomeni collegati ───
+function fenomeni(fen){
+  var wrap = document.getElementById('fenomeni');
+  var chips = document.getElementById('fen-chips');
+  chips.textContent='';
+  if(!fen || !fen.length){ wrap.hidden = true; return; }
+  fen.forEach(function(f){
+    var c = document.createElement('span');
+    c.className='chip';
+    c.textContent = f.nome || f.slug || '';
+    chips.appendChild(c);
+  });
+  wrap.hidden = false;
+}
+
+function mostraStato(msg, err){
+  var s = document.getElementById('stato');
+  s.className = 'state' + (err ? ' err' : '');
+  s.innerHTML = msg;
+  s.hidden = false;
+}
+function nascondiStato(){ document.getElementById('stato').hidden = true; }
+
+// ─── carica dal vivo ───
+function carica(){
+  document.getElementById('h-titolo').textContent = CENTRO;
+  document.title = CENTRO + ' · Grafo · Matter Bench';
+  document.getElementById('stage').hidden = true;
+  document.getElementById('legend').hidden = true;
+  document.getElementById('lista').textContent = '';
+  document.getElementById('fenomeni').hidden = true;
+  mostraStato('Carico il grafo di <b>'+esc(CENTRO)+'</b>…');
+
+  fetch('/v1/grafo-ego/' + encodeURIComponent(CENTRO), {
+    headers: {'Accept':'application/json', 'X-Device-Id':_dev()}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d && d.errore){ mostraStato('<b>Non riesco a caricare questo ingrediente.</b><br>'+esc(d.errore), true); return; }
+    var centro = (d && d.centro) || CENTRO;
+    var vicini = (d && d.vicini) || [];
+    if(!vicini.length){
+      // ONESTÀ: niente nodi finti. Mostra il centro da solo e dillo.
+      disegna(centro, []);
+      document.getElementById('stage').hidden = false;
+      document.getElementById('legend').hidden = true;
+      fenomeni(d && d.fenomeni);
+      mostraStato('<b>Pochi legami molecolari per «'+esc(centro)+'».</b><br>'+
+        'Il grafo non inventa vicini: per questo ingrediente la rete è scarsa o non ancora mappata.' +
+        ((d && d.fenomeni && d.fenomeni.length) ? ' Restano però i fenomeni collegati, qui sotto.' : ''));
+      return;
+    }
+    nascondiStato();
+    disegna(centro, vicini);
+    document.getElementById('stage').hidden = false;
+    document.getElementById('legend').hidden = false;
+    listaLegami(vicini);
+    fenomeni(d && d.fenomeni);
+  })
+  .catch(function(e){
+    mostraStato('<b>Rete non raggiungibile.</b><br>Riprova fra poco.', true);
+  });
+}
+
+document.getElementById('btn-ricarica').addEventListener('click', carica);
+carica();
+</script>
+</body>
+</html>
