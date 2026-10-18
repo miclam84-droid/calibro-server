@@ -1,0 +1,226 @@
+/* ============================================================
+   matter3.css — SISTEMA DI DESIGN FRONTEND (congelato 14 ott 2026)
+   Fonte: decisioni di prodotto "pelle A" — verde-bianco, pulito, editoriale.
+   Schibsted Grotesk (display) + Hanken Grotesk (testo/numeri tabulari).
+   Tema chiaro: è l'identità, non una preferenza.
+   VIETATI: blu, crema, rame/terracotta. NIENTE font mono.
+   NON ereditare nulla dal vecchio frontend (index.html/index2.html/app/app2).
+   Pagina nuova e isolata (strangler-fig).
+   ============================================================ */
+
+:root{
+  color-scheme: light;
+
+  /* ---- palette (token d'identità) ---- */
+  --ink:#1D2A22;          /* testo e struttura */
+  --ink-soft:#4A5B50;     /* secondario, didascalie, etichette */
+  --verde:#1E593C;        /* AZIONE / IDENTITÀ: bottoni, link, accento */
+  --segnale:#2F8A5F;      /* fill "dentro zona" — mai testo bianco sopra */
+  --ocra:#A9802F;         /* stimato / proposta / interpretazione */
+  --oxblood:#A8504A;      /* attenzione / contrasto / fuori norma */
+  --tint:rgba(47,138,95,.10);
+  --riga:rgba(29,42,34,.12);
+
+  /* ---- superfici ---- */
+  --surface:#FCFEFB;
+  --panel:#F1F6EE;
+
+  /* ---- sfondo pagina (sfumatura congelata) ---- */
+  --bg:linear-gradient(165deg,#F3F5EF 0%,#E7EFE5 52%,#D3E1D5 100%);
+
+  /* ---- raggi coerenti ---- */
+  --r:15px;       /* card */
+  --r-sm:11px;    /* campi, badge, bottoni interni */
+  --r-pill:999px;
+  --maxw:720px;
+
+  --shadow:0 1px 2px rgba(29,42,34,.05), 0 8px 24px rgba(29,42,34,.06);
+  --shadow-sm:0 1px 2px rgba(29,42,34,.06);
+
+  /* ---- font ---- */
+  --sans:"Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Schibsted Grotesk", var(--sans);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--sans); color:var(--ink);
+  background:var(--bg);
+  background-attachment:fixed; min-height:100vh;
+  line-height:1.5; -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+img{max-width:100%; display:block}
+a{color:var(--verde); text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* i numeri usano SEMPRE cifre tabulari (stesso Hanken, niente mono) */
+.num, .mono, [data-num]{font-variant-numeric:tabular-nums}
+
+/* ---- display / titoli ---- */
+h1,h2,h3,.display{font-family:var(--display); letter-spacing:-.01em; color:var(--ink); margin:0}
+h1{font-weight:800; font-size:26px; line-height:1.15}
+h2{font-weight:700; font-size:19px}
+h3{font-weight:600; font-size:16px}
+.eyebrow{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); font-weight:600}
+
+/* ============================================================
+   WORDMARK (.wm) — "Matter" in --ink + "Bench" BIANCO su rettangolo
+   --verde SQUADRATO (angoli vivi, border-radius 0).
+   ============================================================ */
+.wm{display:inline-flex; align-items:baseline; gap:5px; font-family:var(--display);
+    font-weight:700; font-size:18px; letter-spacing:-.01em; color:var(--ink)}
+.wm .bench{background:var(--verde); color:#fff; padding:2px 8px; border-radius:0; font-weight:700}
+
+/* ---- topbar ---- */
+.topbar{
+  position:sticky; top:0; z-index:30;
+  background:linear-gradient(to bottom, rgba(243,245,239,.96), rgba(243,245,239,.80));
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--riga);
+}
+.topbar-in{
+  max-width:var(--maxw); margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:12px;
+  display:flex; align-items:center; gap:12px; justify-content:space-between;
+}
+
+/* ---- contenitore ---- */
+.wrap{
+  max-width:var(--maxw); margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 56px;
+}
+
+/* ============================================================
+   BOTTONE AZIONE (.btn) — verde, testo bianco.
+   ============================================================ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:var(--sans); font-weight:600; font-size:15px; color:#fff;
+  background:var(--verde); border:0; border-radius:var(--r-sm);
+  padding:12px 18px; cursor:pointer; text-decoration:none; line-height:1;
+}
+.btn:hover{text-decoration:none; filter:brightness(1.06)}
+.btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.btn--block{display:flex; width:100%}
+.btn--ghost{background:transparent; color:var(--verde); border:1px solid var(--verde)}
+.btn--ghost:hover{background:var(--tint); filter:none}
+
+/* ============================================================
+   CARD morbide a raggio coerente.
+   ============================================================ */
+.card{
+  background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+  box-shadow:var(--shadow); padding:16px;
+}
+.card--panel{background:var(--panel)}
+.section{margin-top:26px}
+.section > .eyebrow{margin-bottom:12px; display:block}
+
+/* ============================================================
+   CAMPO RICERCA (.srch)
+   ============================================================ */
+.srch{display:flex; gap:9px; margin-top:22px}
+.srch input{
+  flex:1; min-width:0; font-family:var(--sans); font-size:16px; color:var(--ink);
+  background:var(--surface); border:1px solid var(--riga); border-radius:12px;
+  padding:12px 14px; box-shadow:var(--shadow-sm);
+}
+.srch input::placeholder{color:var(--ink-soft)}
+.srch input:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+.srch button{
+  flex:0 0 auto; font-family:var(--sans); font-weight:600; font-size:15px; color:#fff;
+  background:var(--verde); border:0; border-radius:12px; padding:0 18px; cursor:pointer;
+}
+.srch button:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+/* ============================================================
+   BLOCCO GESTO / DATO (.gesto) — 2 colonne.
+   Sinistra: il gesto (parole del mestiere). Destra: il dato misurabile.
+   ============================================================ */
+.gesto{
+  display:grid; grid-template-columns:1fr auto; gap:14px 18px; align-items:center;
+  background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+  box-shadow:var(--shadow); padding:16px 18px;
+}
+.gesto .gesto-testo{font-family:var(--display); font-weight:500; font-size:17px; line-height:1.3; color:var(--ink)}
+.gesto .gesto-dato{text-align:right}
+.gesto .gesto-dato .valore{font-family:var(--display); font-weight:700; font-size:22px; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1}
+.gesto .gesto-dato .unita{font-size:12px; color:var(--ink-soft); font-weight:600}
+.gesto .gesto-dato .zona{display:block; margin-top:4px; font-size:11px; color:var(--ink-soft)}
+@media (max-width:460px){
+  .gesto{grid-template-columns:1fr; gap:10px}
+  .gesto .gesto-dato{text-align:left}
+}
+
+/* ============================================================
+   MIRINO / NUMERO PER IL BANCO — numero grande display, unità,
+   scala con zona-finestra (quanto sei dentro la finestra).
+   ============================================================ */
+.mirino{
+  background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+  box-shadow:var(--shadow); padding:18px;
+}
+.mirino .mirino-num{font-family:var(--display); font-weight:800; font-size:44px; line-height:1;
+  color:var(--ink); font-variant-numeric:tabular-nums}
+.mirino .mirino-unita{font-size:14px; color:var(--ink-soft); font-weight:600; margin-left:6px}
+.mirino .mirino-etichetta{margin-top:6px; font-size:12px; color:var(--ink-soft); letter-spacing:.02em}
+/* scala con finestra-zona: barra con banda "dentro zona" in --segnale */
+.mirino .scala{position:relative; height:8px; border-radius:var(--r-pill); background:var(--riga); margin-top:14px}
+.mirino .scala .finestra{position:absolute; top:0; bottom:0; background:var(--tint); border-radius:var(--r-pill)}
+.mirino .scala .cursore{position:absolute; top:50%; width:12px; height:12px; border-radius:50%;
+  transform:translate(-50%,-50%); background:var(--segnale); box-shadow:0 0 0 3px #fff}
+.mirino .scala .cursore[data-fuori="1"]{background:var(--oxblood)}
+.mirino .scala-note{display:flex; justify-content:space-between; margin-top:6px; font-size:11px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+
+/* ============================================================
+   LE 5 PORTE (.porta) — numero + nome display + descrizione + freccia.
+   ============================================================ */
+.porte{display:grid; gap:10px; margin-top:12px}
+.porta{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px;
+  background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+  box-shadow:var(--shadow-sm); padding:14px 16px; cursor:pointer; text-decoration:none; color:var(--ink);
+}
+.porta:hover{text-decoration:none; border-color:var(--verde); box-shadow:var(--shadow)}
+.porta:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+.porta .porta-num{font-family:var(--display); font-weight:700; font-size:14px; color:var(--verde);
+  font-variant-numeric:tabular-nums; min-width:22px}
+.porta .porta-testo .porta-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.2}
+.porta .porta-testo .porta-desc{font-size:13px; color:var(--ink-soft); margin-top:2px}
+.porta .porta-freccia{color:var(--verde); font-size:18px; line-height:1}
+
+/* ============================================================
+   BADGE PROVENIENZA — 5 STATI (tassonomia del revisore).
+   Leggibili ANCHE senza colore grazie all'etichetta esplicita.
+   verificato-al-banco  ≠  da-fonte.
+   ============================================================ */
+.prov{
+  display:inline-flex; align-items:center; gap:5px; vertical-align:middle;
+  font-family:var(--sans); font-weight:600; font-size:11.5px; line-height:1;
+  padding:4px 9px; border-radius:var(--r-pill); border:1px solid transparent;
+  letter-spacing:.01em; white-space:nowrap;
+}
+.prov::before{content:""; width:7px; height:7px; border-radius:50%; flex:0 0 auto; background:currentColor}
+/* 1) verificato al banco — verde pieno */
+.prov-verificato{background:var(--verde); color:#fff; border-color:var(--verde)}
+.prov-verificato::before{background:#fff}
+/* 2) da fonte — outline verde */
+.prov-fonte{background:transparent; color:var(--verde); border-color:var(--verde)}
+/* 3) derivato — tint verde */
+.prov-derivato{background:var(--tint); color:var(--verde); border-color:transparent}
+/* 4) stimato — ocra pieno (tenue) */
+.prov-stimato{background:rgba(169,128,47,.14); color:var(--ocra); border-color:transparent}
+/* 5) proposta — ocra outline */
+.prov-proposta{background:transparent; color:var(--ocra); border-color:var(--ocra)}
+
+/* ---- utilità ---- */
+.muted{color:var(--ink-soft)}
+.nota-esempio{font-size:12px; color:var(--ink-soft); margin-top:8px}
+.nota-esempio strong{color:var(--ocra); font-weight:600}

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matter Bench</title>
+<meta name="description" content="Matter Bench — la scienza sotto il mestiere. Atlante, Banco, Laboratorio, Menu, Quaderno.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <span class="wm">Matter<span class="bench">Bench</span></span>
+    <span class="eyebrow">la scienza del mestiere</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- RICERCA -->
+  <form class="srch" role="search" action="/ingrediente/" onsubmit="return false">
+    <input type="search" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off">
+    <button type="submit">Cerca</button>
+  </form>
+
+  <!-- IL BANCO DI OGGI -->
+  <section class="section" aria-labelledby="h-oggi">
+    <span class="eyebrow" id="h-oggi">Il banco di oggi</span>
+    <div class="gesto">
+      <div class="gesto-testo">Il sour è pronto quando l'acido pulisce e non graffia</div>
+      <div class="gesto-dato">
+        <span class="valore num">6.8</span><span class="unita"> g/L</span>
+        <span class="zona">acidità · dentro la finestra 6–8</span>
+      </div>
+    </div>
+    <p class="nota-esempio">Esempio da bar. <strong>Dato d'esempio</strong>, non una misura verificata al tuo banco.</p>
+  </section>
+
+  <!-- DOVE VUOI ANDARE -->
+  <section class="section" aria-labelledby="h-porte">
+    <span class="eyebrow" id="h-porte">Dove vuoi andare</span>
+    <nav class="porte" aria-label="Sezioni di Matter Bench">
+
+      <a class="porta" href="/ingrediente/limone">
+        <span class="porta-num">01</span>
+        <span class="porta-testo">
+          <span class="porta-nome">Atlante</span>
+          <span class="porta-desc">la scienza sotto il mestiere</span>
+        </span>
+        <span class="porta-freccia" aria-hidden="true">→</span>
+      </a>
+
+      <a class="porta" href="/banco">
+        <span class="porta-num">02</span>
+        <span class="porta-testo">
+          <span class="porta-nome">Banco</span>
+          <span class="porta-desc">il punto, gli ingredienti, il controllo</span>
+        </span>
+        <span class="porta-freccia" aria-hidden="true">→</span>
+      </a>
+
+      <a class="porta" href="/laboratorio">
+        <span class="porta-num">03</span>
+        <span class="porta-testo">
+          <span class="porta-nome">Laboratorio</span>
+          <span class="porta-desc">collega, combina, modifica</span>
+        </span>
+        <span class="porta-freccia" aria-hidden="true">→</span>
+      </a>
+
+      <a class="porta" href="/menu">
+        <span class="porta-num">04</span>
+        <span class="porta-testo">
+          <span class="porta-nome">Menu</span>
+          <span class="porta-desc">componi l'offerta</span>
+        </span>
+        <span class="porta-freccia" aria-hidden="true">→</span>
+      </a>
+
+      <a class="porta" href="/quaderno">
+        <span class="porta-num">05</span>
+        <span class="porta-testo">
+          <span class="porta-nome">Quaderno</span>
+          <span class="porta-desc">registra e ricorda le tue prove</span>
+        </span>
+        <span class="porta-freccia" aria-hidden="true">→</span>
+      </a>
+
+    </nav>
+  </section>
+
+  <!-- CHIEDI A MATTER -->
+  <section class="section">
+    <a class="btn btn--block" href="/laboratorio">Chiedi a Matter</a>
+  </section>
+
+</main>
+
+<script src="/static/corridoio.js"></script>
+</body>
+</html>
