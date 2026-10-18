@@ -186,6 +186,39 @@ def _classifica_evidence(data, ev_level):
     return ev_level
 
 
+def _fondi_cause(patrimonio, ai):
+    """ONESTA' DEI DATI (funzione pura, testabile senza DB/Flask).
+    Fonde le cause del PATRIMONIO (da fonte: protocolli con diagnosi, hanno `da_protocollo`)
+    con quelle prodotte dall'AI (proposta). Le cause del patrimonio vanno SEMPRE PRIMA.
+    Dedup per testo della causa, case-insensitive: se l'AI ripropone una causa già nel
+    patrimonio, si tiene quella del patrimonio (è da fonte) e si scarta il duplicato AI.
+    Con AI vuota/None torna solo il patrimonio.
+    """
+    out = []
+    visti = set()
+
+    def _chiave(c):
+        return str((c or {}).get("causa", "")).strip().lower()
+
+    for c in (patrimonio or []):
+        if not isinstance(c, dict):
+            continue
+        k = _chiave(c)
+        if not k or k in visti:
+            continue
+        visti.add(k)
+        out.append(c)
+    for c in (ai or []):
+        if not isinstance(c, dict):
+            continue
+        k = _chiave(c)
+        if not k or k in visti:
+            continue
+        visti.add(k)
+        out.append(c)
+    return out
+
+
 @bp.after_request
 def _inietta_evidence(response):
     """Confidence Layer: aggiunge il badge evidence a TUTTE le risposte del Flavour (/v1/abbina),
@@ -4992,6 +5025,14 @@ def diagnosi_interattiva():
                     cause_trovate.append({"causa":dg.get("causa",""),"correzione":dg.get("correzione",""),"da_protocollo":nome})
         cause_ctx = json.dumps(cause_trovate[:5],ensure_ascii=False) if cause_trovate else "nessuna nel patrimonio"
         risultato = {"sintomo_interpretato":sintomo,"fenomeno":"","cause":[],"sensori_da_controllare":[]}
+        # ONESTA' DEI DATI: le cause del PATRIMONIO (da fonte) vanno SEMPRE nella risposta, anche
+        # senza AI. Mappo ogni diagnosi del protocollo nel contratto cause del frontend; `da_protocollo`
+        # accende il badge "da fonte" (causa-nuovo.html). La probabilita resta "—" (non la inventiamo).
+        cause_patrimonio = [
+            {"causa": c.get("causa",""), "probabilita": "—", "sensore_conferma": "",
+             "patch": c.get("correzione",""), "da_protocollo": c.get("da_protocollo","")}
+            for c in cause_trovate if (c.get("causa") or "").strip()
+        ]
         if key:
             import urllib.request as ur
             _disc_txt = f"disciplina: {disciplina}" if disciplina else "disciplina: da dedurre dal sintomo"
@@ -5014,6 +5055,11 @@ def diagnosi_interattiva():
                 if m: risultato.update(json.loads(m.group(0)))
             except Exception as _ai_err:
                 print(f"[API diagnosi] arricchimento AI fallito: {_ai_err}", flush=True)
+        # ONESTA' DEI DATI: fondo patrimonio (da fonte, SEMPRE presente) + AI (proposta), dedup
+        # per testo causa. Patrimonio PRIMA. Senza AI (o se fallisce) la Causa non e' mai vuota se
+        # il patrimonio ha diagnosi pertinenti. `risultato["cause"]` qui contiene le cause AI (o []).
+        cause_ai = risultato.get("cause") if isinstance(risultato.get("cause"), list) else []
+        risultato["cause"] = _fondi_cause(cause_patrimonio, cause_ai)
         # 3. aggancio la causalita del fenomeno (per il tempo Comprensione)
         fen = (risultato.get("fenomeno","") or "").strip()
         if fen:
