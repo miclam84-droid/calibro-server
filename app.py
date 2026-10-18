@@ -135,6 +135,7 @@ from routes.nutrizionale import bp_nutri; app.register_blueprint(bp_nutri)
 from routes.community import bp_community; app.register_blueprint(bp_community)
 from routes.pagina_quaderno import bp_pag_quaderno; app.register_blueprint(bp_pag_quaderno)  # Ondata 4: schermo Quaderno (archivio unico)
 from routes.menu_builder import bp_menu as menu_builder_bp; app.register_blueprint(menu_builder_bp)
+from routes.pagina_didattica import bp_pag_didattica; app.register_blueprint(bp_pag_didattica)  # Ondata 5: schermo Didattica (3 livelli faccio/capisco/approfondisco)
 from routes.stato import bp as stato_bp; app.register_blueprint(stato_bp)
 from routes.audit_provenienza import bp_audit_prov; app.register_blueprint(bp_audit_prov)
 
