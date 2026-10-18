@@ -17,9 +17,77 @@
   }
   .causa-link:hover{color:var(--verde); text-decoration:underline}
   .causa-link:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+  /* R5 — ONBOARDING primo accesso: overlay dismissibile, non bloccante */
+  .onb-velo{
+    position:fixed; inset:0; background:rgba(29,42,34,.42); z-index:60;
+    display:flex; align-items:flex-end; justify-content:center;
+    padding:0; opacity:0; pointer-events:none; transition:opacity .18s ease;
+  }
+  .onb-velo[data-aperto="1"]{opacity:1; pointer-events:auto}
+  .onb{
+    width:100%; max-width:var(--maxw); background:var(--surface);
+    border:1px solid var(--riga); border-radius:var(--r) var(--r) 0 0;
+    box-shadow:var(--shadow);
+    padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px));
+    transform:translateY(103%); transition:transform .22s ease;
+    max-height:90vh; overflow:auto;
+  }
+  .onb-velo[data-aperto="1"] .onb{transform:translateY(0)}
+  .onb h2{font-family:var(--display); font-weight:800; font-size:22px; margin:6px 0 2px}
+  .onb .onb-kick{color:var(--segnale)}
+  .onb p{font-size:14px; color:var(--ink); line-height:1.5; margin:10px 0 0}
+  .onb .onb-porte{list-style:none; margin:14px 0 0; padding:0}
+  .onb .onb-porte li{font-size:13.5px; color:var(--ink); padding:5px 0; border-bottom:1px solid var(--riga); line-height:1.4}
+  .onb .onb-porte li:last-child{border-bottom:none}
+  .onb .onb-porte b{font-family:var(--display); font-weight:700}
+  .onb-onesta{
+    margin-top:14px; background:var(--panel); border:1px solid var(--riga);
+    border-radius:var(--r); padding:13px 14px; font-size:13px; color:var(--ink); line-height:1.5;
+  }
+  .onb-prov{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px}
+  .onb-prov .pv{font-family:var(--sans); font-size:11px; font-weight:600; color:var(--ink-soft);
+    background:var(--tint); border-radius:var(--r-pill); padding:3px 9px; line-height:1}
+  .onb-azioni{display:flex; gap:10px; align-items:center; margin-top:18px}
+  .onb-salta{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--ink-soft);
+    background:none; border:none; cursor:pointer; padding:10px 6px}
+  .onb-salta:hover{color:var(--verde)}
 </style>
 </head>
 <body>
+
+<!-- R5 — ONBOARDING primo accesso (dismissibile, non bloccante). Acceso via JS solo se il flag manca. -->
+<div class="onb-velo" id="onb-velo" data-aperto="0" aria-hidden="true">
+  <div class="onb" role="dialog" aria-modal="true" aria-labelledby="onb-h">
+    <span class="eyebrow onb-kick">Benvenuto</span>
+    <h2 id="onb-h">Matter, la scienza del mestiere</h2>
+    <p>Matter mette la scienza sotto il mestiere: ingredienti, profili e legami per capire perché una preparazione funziona e correggerla al banco. Un attrezzo da esplorare, non un libro di verità.</p>
+
+    <ul class="onb-porte" aria-label="Le cinque porte">
+      <li><b>Atlante</b> — la scienza sotto il mestiere</li>
+      <li><b>Banco</b> — il punto, gli ingredienti, il controllo</li>
+      <li><b>Laboratorio</b> — collega, combina, modifica</li>
+      <li><b>Menu</b> — componi l'offerta</li>
+      <li><b>Quaderno</b> — registra e ricorda le tue prove</li>
+    </ul>
+
+    <div class="onb-onesta">
+      <strong>Onestà.</strong> Ogni numero mostra da dove viene — e dove non c'è dato, Matter lo dice invece di inventarlo.
+      <div class="onb-prov" aria-hidden="true">
+        <span class="pv">verificato</span>
+        <span class="pv">da fonte</span>
+        <span class="pv">derivato</span>
+        <span class="pv">stimato</span>
+        <span class="pv">proposta</span>
+      </div>
+    </div>
+
+    <div class="onb-azioni">
+      <button class="btn" id="onb-inizia" type="button">Inizia</button>
+      <button class="onb-salta" id="onb-salta" type="button">Salta</button>
+    </div>
+  </div>
+</div>
 
 <header class="topbar">
   <div class="topbar-in">
@@ -111,5 +179,42 @@
 </main>
 
 <script src="/static/corridoio.js"></script>
+<script>
+// ONBOARDING primo accesso: mostra l'intro solo se il flag manca. Dismissibile, non blocca.
+(function(){
+  "use strict";
+  var FLAG = "matter_onboard_v1";
+  var velo = document.getElementById("onb-velo");
+  if (!velo) return;
+
+  function giaVisto(){
+    try { return localStorage.getItem(FLAG) === "1"; } catch(e){ return false; }
+  }
+  function segnaVisto(){
+    try { localStorage.setItem(FLAG, "1"); } catch(e){ /* storage non disponibile: pazienza */ }
+  }
+  function chiudi(){
+    velo.setAttribute("data-aperto", "0");
+    velo.setAttribute("aria-hidden", "true");
+    segnaVisto();
+  }
+  function apri(){
+    velo.setAttribute("data-aperto", "1");
+    velo.setAttribute("aria-hidden", "false");
+  }
+
+  var inizia = document.getElementById("onb-inizia");
+  var salta = document.getElementById("onb-salta");
+  if (inizia) inizia.addEventListener("click", chiudi);
+  if (salta) salta.addEventListener("click", chiudi);
+  velo.addEventListener("click", function(e){ if (e.target === velo) chiudi(); });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && velo.getAttribute("data-aperto") === "1") chiudi();
+  });
+
+  // chi è già entrato NON lo rivede
+  if (!giaVisto()) apri();
+})();
+</script>
 </body>
 </html>
