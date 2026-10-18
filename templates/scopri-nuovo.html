@@ -103,7 +103,7 @@
 <header class="topbar">
   <div class="topbar-in">
     <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">scopri</span>
+    <span class="eyebrow" data-i18n="eyebrow_scopri">scopri</span>
   </div>
 </header>
 
@@ -111,35 +111,35 @@
 
   <!-- RICERCA: ricentra il grafo su un altro ingrediente -->
   <form class="srch" id="srch" role="search" onsubmit="return false">
-    <input type="search" id="q" name="q" placeholder="Centra su un ingrediente (es. pomodoro)" aria-label="Centra il grafo su un ingrediente" autocomplete="off">
-    <button type="submit">Centra</button>
+    <input type="search" id="q" name="q" placeholder="Centra su un ingrediente (es. pomodoro)" aria-label="Centra il grafo su un ingrediente" autocomplete="off" data-i18n-ph="centra_ph" data-i18n-aria="centra_aria">
+    <button type="submit" data-i18n="centra_btn">Centra</button>
   </form>
 
   <section class="scopri-testa">
     <div class="scopri-intesta">
       <div class="scopri-foto-wrap" id="centro-foto-wrap" hidden>
-        <img class="scopri-foto" id="centro-foto" alt="" tabindex="0" role="button" aria-label="Mostra la fonte della foto">
+        <img class="scopri-foto" id="centro-foto" alt="" tabindex="0" role="button" aria-label="Mostra la fonte della foto" data-i18n-aria="foto_fonte_aria">
       </div>
       <div class="scopri-intesta-testo">
-        <span class="eyebrow">Al centro del grafo</span>
+        <span class="eyebrow" data-i18n="al_centro">Al centro del grafo</span>
         <h1 class="scopri-centro" id="centro-nome">…</h1>
       </div>
     </div>
-    <p class="scopri-sub" id="centro-sub">Lo spessore di un legame è il numero di composti aromatici che i due ingredienti condividono davvero. Tocca un vicino per ricentrare, tocca un legame per vederne la prova.</p>
+    <p class="scopri-sub" id="centro-sub" data-i18n="scopri_sub">Lo spessore di un legame è il numero di composti aromatici che i due ingredienti condividono davvero. Tocca un vicino per ricentrare, tocca un legame per vederne la prova.</p>
     <div class="scopri-foto-cred" id="centro-foto-cred" hidden></div>
     <a class="btn btn--ghost" id="vai-componi" href="/componi-nuovo" style="margin-top:14px">Componi con questo ingrediente →</a>
   </section>
 
-  <div class="grafo-tela" id="tela" aria-label="Grafo ego-centrico dell'ingrediente">
+  <div class="grafo-tela" id="tela" aria-label="Grafo ego-centrico dell'ingrediente" data-i18n-aria="tela_aria">
     <svg id="svg" viewBox="0 0 400 460" role="img" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
 
   <div class="scopri-onesto" id="onesto" hidden></div>
 
   <div class="legenda" aria-hidden="true">
-    <span class="lg lg-base"><i></i> parentela aromatica</span>
-    <span class="lg lg-contr"><i></i> contrasto</span>
-    <span class="lg lg-trad"><i></i> tradizione</span>
+    <span class="lg lg-base"><i></i> <span data-i18n="lg_base">parentela aromatica</span></span>
+    <span class="lg lg-contr"><i></i> <span data-i18n="lg_contr">contrasto</span></span>
+    <span class="lg lg-trad"><i></i> <span data-i18n="lg_trad">tradizione</span></span>
   </div>
 
 </main>
@@ -149,13 +149,34 @@
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h" id="sheet">
     <div class="sheet-presa" aria-hidden="true"></div>
     <div class="sheet-titolo">
-      <h2 id="sheet-h">Legame</h2>
+      <h2 id="sheet-h" data-i18n="legame_h">Legame</h2>
     </div>
     <p class="sheet-coppia" id="sheet-coppia"></p>
     <div id="sheet-corpo"></div>
-    <button class="btn btn--block sheet-chiudi" id="sheet-chiudi" type="button">Chiudi</button>
+    <button class="btn btn--block sheet-chiudi" id="sheet-chiudi" type="button" data-i18n="chiudi">Chiudi</button>
   </div>
 </div>
+
+<!-- i18n (it · en · es) — dizionario di pagina + motore condiviso (prima dell'IIFE: serve _L) -->
+<script>
+window.I18N_TITLE = {it:"Scopri — Matter Bench", en:"Discover — Matter Bench", es:"Descubrir — Matter Bench"};
+window.I18N_DICT = {
+  eyebrow_scopri: {it:"scopri", en:"discover", es:"descubrir"},
+  centra_ph:  {it:"Centra su un ingrediente (es. pomodoro)", en:"Centre on an ingredient (e.g. tomato)", es:"Centra en un ingrediente (p. ej. tomate)"},
+  centra_aria:{it:"Centra il grafo su un ingrediente", en:"Centre the graph on an ingredient", es:"Centra el grafo en un ingrediente"},
+  centra_btn: {it:"Centra", en:"Centre", es:"Centrar"},
+  al_centro:  {it:"Al centro del grafo", en:"At the centre of the graph", es:"En el centro del grafo"},
+  scopri_sub: {it:"Lo spessore di un legame è il numero di composti aromatici che i due ingredienti condividono davvero. Tocca un vicino per ricentrare, tocca un legame per vederne la prova.", en:"The thickness of a link is the number of aroma compounds the two ingredients really share. Tap a neighbour to re-centre, tap a link to see its evidence.", es:"El grosor de un vínculo es el número de compuestos aromáticos que los dos ingredientes comparten de verdad. Toca un vecino para recentrar, toca un vínculo para ver su evidencia."},
+  lg_base:    {it:"parentela aromatica", en:"aromatic kinship", es:"parentesco aromático"},
+  lg_contr:   {it:"contrasto", en:"contrast", es:"contraste"},
+  lg_trad:    {it:"tradizione", en:"tradition", es:"tradición"},
+  legame_h:   {it:"Legame", en:"Link", es:"Vínculo"},
+  chiudi:     {it:"Chiudi", en:"Close", es:"Cerrar"},
+  foto_fonte_aria: {it:"Mostra la fonte della foto", en:"Show the photo source", es:"Muestra la fuente de la foto"},
+  tela_aria: {it:"Grafo ego-centrico dell'ingrediente", en:"Ego-centric graph of the ingredient", es:"Grafo egocéntrico del ingrediente"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
 
 <script>
 (function(){
@@ -163,7 +184,11 @@
 
   var INGREDIENTE = {{ ingrediente|tojson }};
   var FONTE = "Ahn et al. 2011";
-  var LIMITE = "Condividere molecole volatili suggerisce una parentela aromatica — non prova che l'abbinamento piaccia. È un ponte da esplorare, non un voto.";
+  function LIMITE(){ return _L({
+    it:"Condividere molecole volatili suggerisce una parentela aromatica — non prova che l'abbinamento piaccia. È un ponte da esplorare, non un voto.",
+    en:"Sharing volatile molecules suggests an aromatic kinship — it doesn't prove the pairing will please. It's a bridge to explore, not a verdict.",
+    es:"Compartir moléculas volátiles sugiere un parentesco aromático — no prueba que el maridaje guste. Es un puente para explorar, no un veredicto."
+  }); }
 
   var SVGNS = "http://www.w3.org/2000/svg";
   var svg = document.getElementById("svg");
@@ -208,25 +233,34 @@
     if (crit === "base_aromatica" && n !== null) {
       var comps = dedup((rel.evidenza || {}).composti_caratterizzanti);
       html += '<div class="sheet-numero"><span class="valore num">' + n + '</span>' +
-              '<span class="etichetta">composti aromatici condivisi</span></div>';
+              '<span class="etichetta">' + _L({it:"composti aromatici condivisi", en:"shared aroma compounds", es:"compuestos aromáticos compartidos"}) + '</span></div>';
       if (comps.length) {
-        html += '<div class="sheet-comps"><span class="eyebrow">Composti caratterizzanti</span>' +
+        html += '<div class="sheet-comps"><span class="eyebrow">' + _L({it:"Composti caratterizzanti", en:"Characterising compounds", es:"Compuestos caracterizantes"}) + '</span>' +
                 '<div class="comp-chips">';
         comps.forEach(function(c){ html += '<span class="comp-chip">' + esc(c) + '</span>'; });
         html += '</div></div>';
       }
       html += '<div class="sheet-prov"><span class="prov prov-fonte">' + esc(FONTE) + '</span></div>';
     } else if (crit === "tradizione") {
-      html += '<p class="sheet-coppia" style="margin-top:12px">Relazione di <strong>tradizione</strong>: ' +
-              'accostamento documentato dalla cultura, <strong>non</strong> un legame molecolare. ' +
-              'Qui il grafo non conta composti condivisi.</p>';
+      html += '<p class="sheet-coppia" style="margin-top:12px">' + _L({
+        it:"Relazione di <strong>tradizione</strong>: accostamento documentato dalla cultura, <strong>non</strong> un legame molecolare. Qui il grafo non conta composti condivisi.",
+        en:"A <strong>tradition</strong> relation: a pairing documented by culture, <strong>not</strong> a molecular link. Here the graph counts no shared compounds.",
+        es:"Relación de <strong>tradición</strong>: una combinación documentada por la cultura, <strong>no</strong> un vínculo molecular. Aquí el grafo no cuenta compuestos compartidos."
+      }) + '</p>';
     } else if (crit === "contrasto") {
-      html += '<p class="sheet-coppia" style="margin-top:12px">Relazione di <strong>contrasto</strong> ' +
-              'documentata nel grafo (relazione curata). ' +
-              (n !== null ? '' : 'Senza un conteggio di composti condivisi: non è un legame molecolare misurato.') + '</p>';
+      html += '<p class="sheet-coppia" style="margin-top:12px">' + _L({
+        it:"Relazione di <strong>contrasto</strong> documentata nel grafo (relazione curata). ",
+        en:"A <strong>contrast</strong> relation documented in the graph (a curated relation). ",
+        es:"Relación de <strong>contraste</strong> documentada en el grafo (relación curada). "
+      }) +
+              (n !== null ? '' : _L({
+                it:"Senza un conteggio di composti condivisi: non è un legame molecolare misurato.",
+                en:"Without a count of shared compounds: it is not a measured molecular link.",
+                es:"Sin un recuento de compuestos compartidos: no es un vínculo molecular medido."
+              })) + '</p>';
     }
 
-    html += '<p class="sheet-limite"><strong>Il limite.</strong> ' + esc(LIMITE) + '</p>';
+    html += '<p class="sheet-limite"><strong>' + _L({it:"Il limite.", en:"The limit.", es:"El límite."}) + '</strong> ' + esc(LIMITE()) + '</p>';
     corpo.innerHTML = html;
     velo.setAttribute("data-aperto", "1");
   }
@@ -287,7 +321,7 @@
       var hit = el("line", {"class": "legame-hit", x1: CX, y1: CY, x2: x, y2: y});
       var dot = el("circle", {"class": "legame-dot", cx: mx, cy: my, r: 7, tabindex: "0", role: "button"});
       dot.style.fill = st.colore;
-      dot.setAttribute("aria-label", "Prova del legame con " + cap(rel.ingrediente));
+      dot.setAttribute("aria-label", _L({it:"Prova del legame con ", en:"Evidence of the link with ", es:"Evidencia del vínculo con "}) + cap(rel.ingrediente));
       function openLink(e){ e.stopPropagation(); apriPannello(centro, rel); }
       hit.addEventListener("click", openLink);
       dot.addEventListener("click", openLink);
@@ -301,13 +335,13 @@
         lt.setAttribute("font-size", "9.5");
         lt.setAttribute("fill", "var(--ink-soft)");
         lt.setAttribute("font-weight", "600");
-        lt.textContent = "tradizione";
+        lt.textContent = _L({it:"tradizione", en:"tradition", es:"tradición"});
         svg.appendChild(lt);
       }
 
       // nodo vicino (tap -> ricentra)
       var g = el("g", {"class": "nodo", tabindex: "0", role: "link"});
-      g.setAttribute("aria-label", "Centra su " + cap(rel.ingrediente));
+      g.setAttribute("aria-label", _L({it:"Centra su ", en:"Centre on ", es:"Centra en "}) + cap(rel.ingrediente));
       g.appendChild(el("circle", {"class": "nodo-disco", cx: x, cy: y, r: 26}));
       // etichetta SEMPRE centrata sopra/sotto il nodo (mai ai lati: sforerebbe il grafo),
       // con x bloccata dentro i margini cosi nessun nome viene tagliato.
@@ -340,7 +374,7 @@
     var a = document.getElementById("vai-componi");
     if (!a) return;
     a.href = "/componi-nuovo/" + encodeURIComponent(centro);
-    a.textContent = "Componi con " + cap(centro) + " →";
+    a.textContent = _L({it:"Componi con ", en:"Compose with ", es:"Compón con "}) + cap(centro) + " →";
   }
 
   // FOTO tonda del centro: SUPPORTO discreto. Esce solo se trovata davvero; credito a un tap.
@@ -383,7 +417,11 @@
       .then(function(d){ render(ing, d); })
       .catch(function(){
         soloCentro(ing);
-        mostraOnesto("Il grafo non è raggiungibile in questo momento. Riprova più tardi.");
+        mostraOnesto(_L({
+          it:"Il grafo non è raggiungibile in questo momento. Riprova più tardi.",
+          en:"The graph is not reachable right now. Try again later.",
+          es:"El grafo no está disponible en este momento. Inténtalo más tarde."
+        }));
       });
   }
 
@@ -395,15 +433,22 @@
     // DB spento / sorgente non disponibile
     if (!rel.length && d.nota) {
       soloCentro(d.ingrediente || ing);
-      mostraOnesto("Il grafo non ha dati da mostrare ora (<strong>" + esc(d.nota) + "</strong>). Nessun nodo o numero inventato.");
+      mostraOnesto(_L({
+        it:"Il grafo non ha dati da mostrare ora (<strong>" + esc(d.nota) + "</strong>). Nessun nodo o numero inventato.",
+        en:"The graph has no data to show now (<strong>" + esc(d.nota) + "</strong>). No node or number invented.",
+        es:"El grafo no tiene datos que mostrar ahora (<strong>" + esc(d.nota) + "</strong>). Ningún nodo ni número inventado."
+      }));
       return;
     }
 
     // non riconosciuto dalla sorgente
     if (d.non_riconosciuto) {
       soloCentro(d.ingrediente || ing);
-      mostraOnesto("<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non è riconosciuto nel grafo: " +
-                   "non ci sono composti né relazioni documentate. Non invento nodi né numeri per riempire lo spazio.");
+      mostraOnesto(_L({
+        it:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non è riconosciuto nel grafo: non ci sono composti né relazioni documentate. Non invento nodi né numeri per riempire lo spazio.",
+        en:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> is not recognised in the graph: there are no documented compounds or relations. I don't invent nodes or numbers to fill the space.",
+        es:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> no se reconoce en el grafo: no hay compuestos ni relaciones documentadas. No invento nodos ni números para rellenar el espacio."
+      }));
       return;
     }
 
@@ -420,8 +465,11 @@
 
     if (!rel.length) {
       soloCentro(d.ingrediente || ing);
-      mostraOnesto("<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non ha relazioni nel grafo. " +
-                   "Non invento nodi né numeri.");
+      mostraOnesto(_L({
+        it:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non ha relazioni nel grafo. Non invento nodi né numeri.",
+        en:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> has no relations in the graph. I don't invent nodes or numbers.",
+        es:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> no tiene relaciones en el grafo. No invento nodos ni números."
+      }));
       return;
     }
 
@@ -430,9 +478,11 @@
 
     // onestà: nessun legame molecolare, solo tradizione/contrasto
     if (nBase === 0) {
-      mostraOnesto("Questo ingrediente <strong>non ha un profilo di composti</strong> nel grafo: " +
-                   "qui vedi solo relazioni di tradizione o contrasto, <strong>non legami molecolari</strong>. " +
-                   "Lo spessore non misura composti condivisi.");
+      mostraOnesto(_L({
+        it:"Questo ingrediente <strong>non ha un profilo di composti</strong> nel grafo: qui vedi solo relazioni di tradizione o contrasto, <strong>non legami molecolari</strong>. Lo spessore non misura composti condivisi.",
+        en:"This ingredient <strong>has no compound profile</strong> in the graph: here you only see tradition or contrast relations, <strong>not molecular links</strong>. Thickness does not measure shared compounds.",
+        es:"Este ingrediente <strong>no tiene un perfil de compuestos</strong> en el grafo: aquí solo ves relaciones de tradición o contraste, <strong>no vínculos moleculares</strong>. El grosor no mide compuestos compartidos."
+      }));
     }
   }
 
@@ -442,6 +492,14 @@
     var v = (document.getElementById("q").value || "").trim();
     if (v) location.href = "/scopri-nuovo/" + encodeURIComponent(v);
   });
+
+  // ri-traduce il contenuto generato da JS quando si cambia lingua.
+  // salta la prima invocazione (coincide col carica iniziale qui sotto).
+  var _primaI18n = true;
+  window.onI18nApply = function(){
+    if (_primaI18n){ _primaI18n = false; return; }
+    if (INGREDIENTE) carica(INGREDIENTE);
+  };
 
   carica(INGREDIENTE);
 })();

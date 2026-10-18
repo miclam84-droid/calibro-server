@@ -90,7 +90,7 @@
 <header class="topbar">
   <div class="topbar-in">
     <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">menu</span>
+    <span class="eyebrow" data-i18n="eyebrow_menu">menu</span>
   </div>
 </header>
 
@@ -98,31 +98,31 @@
 
   <section class="menu-testa">
     <span class="eyebrow">Menu</span>
-    <h1>Componi l'offerta</h1>
-    <p class="menu-sub">Il menu si assembla dalle preparazioni che hai gia' salvato. Niente nomi o abbinamenti inventati: solo le tue preparazioni reali.</p>
+    <h1 data-i18n="titolo">Componi l'offerta</h1>
+    <p class="menu-sub" data-i18n="sub">Il menu si assembla dalle preparazioni che hai gia' salvato. Niente nomi o abbinamenti inventati: solo le tue preparazioni reali.</p>
   </section>
 
   <!-- PREPARAZIONI DISPONIBILI (funzione="composer" dal Quaderno) -->
   <section class="section" aria-labelledby="h-disp">
-    <span class="eyebrow" id="h-disp">Le tue preparazioni</span>
+    <span class="eyebrow" id="h-disp" data-i18n="h_disp">Le tue preparazioni</span>
     <div class="stato" id="disp-stato">Carico le tue preparazioni salvate…</div>
     <ul class="disp" id="disp" hidden></ul>
   </section>
 
   <!-- IL TUO MENU -->
   <section class="mio" aria-labelledby="h-mio">
-    <span class="eyebrow" id="h-mio" style="display:block; margin-bottom:12px">Il tuo menu</span>
+    <span class="eyebrow" id="h-mio" style="display:block; margin-bottom:12px" data-i18n="h_mio">Il tuo menu</span>
 
     <label class="mio-campo" for="menu-nome">
-      <span>Nome del menu</span>
-      <input type="text" id="menu-nome" maxlength="140" placeholder="Menu — (oggi, se lasci vuoto)" autocomplete="off">
+      <span data-i18n="nome_menu">Nome del menu</span>
+      <input type="text" id="menu-nome" maxlength="140" placeholder="Menu — (oggi, se lasci vuoto)" autocomplete="off" data-i18n-ph="nome_ph">
     </label>
 
-    <div class="mio-vuoto" id="mio-vuoto">Nessuna voce ancora. Aggiungi una preparazione dall'elenco qui sopra.</div>
+    <div class="mio-vuoto" id="mio-vuoto" data-i18n="mio_vuoto">Nessuna voce ancora. Aggiungi una preparazione dall'elenco qui sopra.</div>
     <ul class="voci" id="voci" hidden></ul>
 
     <div class="salva" id="salva">
-      <button class="btn btn--block" id="btn-salva" type="button" disabled>Salva il menu</button>
+      <button class="btn btn--block" id="btn-salva" type="button" disabled data-i18n="btn_salva">Salva il menu</button>
       <div class="salva-esito" id="salva-esito" hidden></div>
     </div>
   </section>
@@ -130,6 +130,24 @@
 </main>
 
 <script src="/static/corridoio.js"></script>
+
+<!-- i18n (it · en · es) — dizionario di pagina + motore condiviso (prima dell'IIFE: serve _L) -->
+<script>
+window.I18N_TITLE = {it:"Menu — Matter Bench", en:"Menu — Matter Bench", es:"Menú — Matter Bench"};
+window.I18N_DICT = {
+  eyebrow_menu: {it:"menu", en:"menu", es:"menú"},
+  titolo: {it:"Componi l'offerta", en:"Compose your offering", es:"Compón tu oferta"},
+  sub: {it:"Il menu si assembla dalle preparazioni che hai gia' salvato. Niente nomi o abbinamenti inventati: solo le tue preparazioni reali.", en:"The menu is assembled from the preparations you've already saved. No invented names or pairings: only your real preparations.", es:"El menú se arma a partir de las preparaciones que ya has guardado. Sin nombres ni maridajes inventados: solo tus preparaciones reales."},
+  h_disp: {it:"Le tue preparazioni", en:"Your preparations", es:"Tus preparaciones"},
+  h_mio: {it:"Il tuo menu", en:"Your menu", es:"Tu menú"},
+  nome_menu: {it:"Nome del menu", en:"Menu name", es:"Nombre del menú"},
+  nome_ph: {it:"Menu — (oggi, se lasci vuoto)", en:"Menu — (today, if left blank)", es:"Menú — (hoy, si lo dejas vacío)"},
+  mio_vuoto: {it:"Nessuna voce ancora. Aggiungi una preparazione dall'elenco qui sopra.", en:"No items yet. Add a preparation from the list above.", es:"Aún no hay elementos. Añade una preparación de la lista de arriba."},
+  btn_salva: {it:"Salva il menu", en:"Save the menu", es:"Guardar el menú"}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+
 <script>
 (function(){
   "use strict";
@@ -195,7 +213,7 @@
       if (p.creato){
         var meta = document.createElement("span");
         meta.className = "prep-meta";
-        meta.textContent = "preparazione · " + p.creato;
+        meta.textContent = _L({it:"preparazione · ", en:"preparation · ", es:"preparación · "}) + p.creato;
         corpo.appendChild(meta);
       }
       li.appendChild(corpo);
@@ -204,9 +222,9 @@
       add.type = "button";
       add.className = "prep-add";
       var dentro = scelta(p.id);
-      add.textContent = dentro ? "nel menu ✓" : "+ nel menu";
+      add.textContent = dentro ? _L({it:"nel menu ✓", en:"in the menu ✓", es:"en el menú ✓"}) : _L({it:"+ nel menu", en:"+ to menu", es:"+ al menú"});
       add.disabled = dentro;
-      add.setAttribute("aria-label", (dentro ? "Gia' nel menu: " : "Aggiungi al menu: ") + cap(p.titolo));
+      add.setAttribute("aria-label", (dentro ? _L({it:"Gia' nel menu: ", en:"Already in the menu: ", es:"Ya en el menú: "}) : _L({it:"Aggiungi al menu: ", en:"Add to the menu: ", es:"Añadir al menú: "})) + cap(p.titolo));
       add.addEventListener("click", function(){
         if (scelta(p.id)) return;
         voci.push({ id: p.id, titolo: p.titolo });
@@ -241,7 +259,7 @@
       x.type = "button";
       x.className = "voce-x";
       x.textContent = "✕";
-      x.setAttribute("aria-label", "Togli dal menu " + cap(v.titolo));
+      x.setAttribute("aria-label", _L({it:"Togli dal menu ", en:"Remove from the menu ", es:"Quitar del menú "}) + cap(v.titolo));
       x.addEventListener("click", function(){
         voci.splice(idx, 1);
         renderDisp(); renderVoci();
@@ -252,8 +270,44 @@
     });
   }
 
+  // stato corrente dell'area "disponibili": una chiusura che si ridisegna
+  // nella lingua corrente (così il cambio lingua ri-traduce anche gli stati).
+  function mostraCaricamento(){
+    dispBox.hidden = true;
+    dispStato.hidden = false;
+    dispStato.className = "stato";
+    dispStato.textContent = _L({it:"Carico le tue preparazioni salvate…", en:"Loading your saved preparations…", es:"Cargando tus preparaciones guardadas…"});
+  }
+  function mostraLista(){
+    dispStato.hidden = true;
+    dispBox.hidden = false;
+    renderDisp();
+  }
+  // vuoto onesto: nessuna preparazione -> invita a Componi, niente voci inventate.
+  // fnExtra() ritorna un eventuale testo extra NELLA lingua corrente (o null).
+  function mostraVuoto(fnExtra){
+    dispBox.hidden = true;
+    dispStato.hidden = false;
+    dispStato.className = "stato";
+    var extra = fnExtra ? fnExtra() : null;
+    var h = extra ? esc(extra)
+                  : _L({it:"Non hai ancora preparazioni salvate. Componine una.", en:"You have no saved preparations yet. Compose one.", es:"Aún no tienes preparaciones guardadas. Compón una."});
+    h += '<br><a class="btn btn--ghost" href="/componi-nuovo">' + _L({it:"Vai a Componi", en:"Go to Compose", es:"Ir a Componer"}) + '</a>';
+    dispStato.innerHTML = h;
+  }
+  function mostraErrore(fnTesto){
+    dispBox.hidden = true;
+    dispStato.hidden = false;
+    dispStato.className = "stato stato-err";
+    dispStato.textContent = fnTesto();
+  }
+
+  // _dispRender: ridisegna l'area "disponibili" nello stato attuale.
+  var _dispRender = mostraCaricamento;
+
   // ─── FETCH: preparazioni salvate (funzione="composer") ───
   function caricaDisponibili(){
+    _dispRender = mostraCaricamento; _dispRender();
     fetch("/v1/quaderno2/lista", {
       headers: { "Accept": "application/json", "X-Device-Id": devId() }
     })
@@ -263,12 +317,17 @@
     .then(function(res){
       var d = res.body || {};
       if (res.status === 401){
-        statoVuotoOnesto("Il Quaderno non ti ha riconosciuto. Ricarica la pagina e riprova.");
+        _dispRender = function(){ mostraVuoto(function(){ return _L({it:"Il Quaderno non ti ha riconosciuto. Ricarica la pagina e riprova.", en:"The Quaderno didn't recognise you. Reload the page and try again.", es:"El Quaderno no te ha reconocido. Recarga la página e inténtalo de nuevo."}); }); };
+        _dispRender();
         return;
       }
       if (res.status < 200 || res.status >= 300 || d.errore){
-        statoErrore(d.errore ? ("Non sono riuscito a leggere le preparazioni: " + d.errore) :
-                               ("Non sono riuscito a leggere le preparazioni (errore " + res.status + ")."));
+        var errRaw = d.errore, st = res.status;
+        _dispRender = function(){ mostraErrore(function(){
+          return errRaw ? (_L({it:"Non sono riuscito a leggere le preparazioni: ", en:"I couldn't read the preparations: ", es:"No he podido leer las preparaciones: "}) + errRaw)
+                        : _L({it:"Non sono riuscito a leggere le preparazioni (errore "+st+").", en:"I couldn't read the preparations (error "+st+").", es:"No he podido leer las preparaciones (error "+st+")."});
+        }); };
+        _dispRender();
         return;
       }
       // il contratto vero di /v1/quaderno2/lista: { identita, n, record:[...] }
@@ -278,39 +337,22 @@
         .map(function(r){
           return {
             id: r.id,
-            titolo: r.titolo || "(senza titolo)",
+            titolo: r.titolo || _L({it:"(senza titolo)", en:"(untitled)", es:"(sin título)"}),
             creato: (r.creato_at || "").slice(0, 10) || null
           };
         });
       if (!disponibili.length){
-        statoVuotoOnesto(null);
+        _dispRender = function(){ mostraVuoto(null); };
+        _dispRender();
         return;
       }
-      dispStato.hidden = true;
-      dispBox.hidden = false;
-      renderDisp();
+      _dispRender = mostraLista;
+      _dispRender();
     })
     .catch(function(){
-      statoErrore("Il server non e' raggiungibile ora. Nessuna preparazione caricata.");
+      _dispRender = function(){ mostraErrore(function(){ return _L({it:"Il server non e' raggiungibile ora. Nessuna preparazione caricata.", en:"The server is unreachable now. No preparation loaded.", es:"El servidor no está disponible ahora. No se cargó ninguna preparación."}); }); };
+      _dispRender();
     });
-  }
-
-  // vuoto onesto: nessuna preparazione -> invita a Componi, niente voci inventate
-  function statoVuotoOnesto(testoExtra){
-    dispBox.hidden = true;
-    dispStato.hidden = false;
-    dispStato.className = "stato";
-    var h = testoExtra
-      ? esc(testoExtra)
-      : "Non hai ancora preparazioni salvate. Componine una.";
-    h += '<br><a class="btn btn--ghost" href="/componi-nuovo">Vai a Componi</a>';
-    dispStato.innerHTML = h;
-  }
-  function statoErrore(testo){
-    dispBox.hidden = true;
-    dispStato.hidden = false;
-    dispStato.className = "stato stato-err";
-    dispStato.textContent = testo;
   }
 
   // ─── ESITO salvataggio ───
@@ -321,10 +363,10 @@
     salvaEsito.innerHTML = testo;
   }
   function confermaSalvato(id, titolo){
-    var h = '<div class="esito-t">✓ Menu salvato</div>';
-    h += '<p class="esito-d">“' + esc(titolo) + '” e\' nel tuo Quaderno'
+    var h = '<div class="esito-t">✓ '+_L({it:"Menu salvato", en:"Menu saved", es:"Menú guardado"})+'</div>';
+    h += '<p class="esito-d">“' + esc(titolo) + '” '+_L({it:"e' nel tuo Quaderno", en:"is in your Quaderno", es:"está en tu Quaderno"})
        + (id ? ' <span class="esito-id">' + esc(id) + '</span>' : '') + '.</p>';
-    h += '<div class="esito-az"><a class="btn btn--ghost" href="/quaderno">Apri il Quaderno</a></div>';
+    h += '<div class="esito-az"><a class="btn btn--ghost" href="/quaderno">'+_L({it:"Apri il Quaderno", en:"Open the Quaderno", es:"Abre el Quaderno"})+'</a></div>';
     salvaEsito.hidden = false;
     salvaEsito.className = "salva-esito esito-ok";
     salvaEsito.innerHTML = h;
@@ -335,7 +377,7 @@
   btnSalva.addEventListener("click", function(){
     if (salvaInCorso) return;
     if (!voci.length){
-      mostraEsito("Aggiungi almeno una preparazione al menu prima di salvare.", "err");
+      mostraEsito(_L({it:"Aggiungi almeno una preparazione al menu prima di salvare.", en:"Add at least one preparation to the menu before saving.", es:"Añade al menos una preparación al menú antes de guardar."}), "err");
       return;
     }
     var titolo = (inpNome.value || "").trim() || ("Menu — " + dataOggi());
@@ -353,7 +395,7 @@
     salvaInCorso = true;
     btnSalva.disabled = true;
     var testoOrig = btnSalva.textContent;
-    btnSalva.textContent = "Salvo…";
+    btnSalva.textContent = _L({it:"Salvo…", en:"Saving…", es:"Guardando…"});
     mostraEsito("", "pulisci");
 
     fetch("/v1/quaderno2/salva", {
@@ -371,16 +413,16 @@
       } else {
         var msg;
         if (res.status === 401)
-          msg = "Identita' mancante: il Quaderno non ti ha riconosciuto. Riprova.";
+          msg = _L({it:"Identita' mancante: il Quaderno non ti ha riconosciuto. Riprova.", en:"Missing identity: the Quaderno didn't recognise you. Try again.", es:"Identidad ausente: el Quaderno no te ha reconocido. Inténtalo de nuevo."});
         else if (d && d.errore)
-          msg = "Non salvato: " + esc(String(d.errore));
+          msg = _L({it:"Non salvato: ", en:"Not saved: ", es:"No guardado: "}) + esc(String(d.errore));
         else
-          msg = "Non salvato (errore " + res.status + "). Riprova.";
+          msg = _L({it:"Non salvato (errore "+res.status+"). Riprova.", en:"Not saved (error "+res.status+"). Try again.", es:"No guardado (error "+res.status+"). Inténtalo de nuevo."});
         mostraEsito(msg, "err");
       }
     })
     .catch(function(){
-      mostraEsito("Non salvato: il server non e' raggiungibile ora. Nessun dato e' stato scritto.", "err");
+      mostraEsito(_L({it:"Non salvato: il server non e' raggiungibile ora. Nessun dato e' stato scritto.", en:"Not saved: the server is unreachable now. No data was written.", es:"No guardado: el servidor no está disponible ahora. No se escribió ningún dato."}), "err");
     })
     .then(function(){
       salvaInCorso = false;
@@ -388,6 +430,15 @@
       btnSalva.textContent = testoOrig;
     });
   });
+
+  // ri-traduce il contenuto generato da JS al cambio lingua (salta la prima
+  // invocazione, che coincide con l'avvio qui sotto).
+  var _primaI18n = true;
+  window.onI18nApply = function(){
+    if (_primaI18n){ _primaI18n = false; return; }
+    renderVoci();
+    _dispRender();   // ridisegna l'area "disponibili" nello stato attuale
+  };
 
   // avvio
   renderVoci();
