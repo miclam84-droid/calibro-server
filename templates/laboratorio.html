@@ -28,6 +28,15 @@
 .cmp tbody tr+tr td{border-top:1px solid var(--card-border)}
 .sub-h{font-weight:600; margin:14px 0 6px; font-size:14px}
 .sub-h .n{color:var(--ink-soft); font-weight:500}
+/* Azione discreta "Salva nel Quaderno" — outline, coerente con la scheda */
+.btn-salva{display:inline-flex; align-items:center; gap:7px; margin-top:12px; font:inherit; font-weight:600;
+  font-size:13.5px; color:var(--green-action); background:transparent; border:1px solid var(--card-border);
+  border-radius:11px; padding:9px 14px; cursor:pointer}
+.btn-salva:hover{border-color:var(--green-action)}
+.btn-salva:focus-visible{outline:2px solid var(--green-action); outline-offset:1px}
+.btn-salva[disabled]{cursor:default; opacity:.8}
+.btn-salva.ok{color:var(--green-action); border-color:var(--green-action); background:var(--tint)}
+.btn-salva.ko{color:var(--oxblood); border-color:rgba(168,80,74,.4)}
 </style>
 </head>
 <body>
@@ -112,6 +121,36 @@ function chips(arr){
 }
 function setOut(el, msg, err){ el.innerHTML = `<div class="state${err?' err':''}">${msg}</div>`; }
 
+/* ---------- Salva nel Quaderno (archivio unico /v1/quaderno2/salva) ----------
+   Identità come nel resto dell'app: X-Device-Id da localStorage. Salviamo SOLO
+   il risultato realmente mostrato dal grafo: niente inventato, feedback non bloccante. */
+function _devId(){ try{ return localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon'; }catch(e){ return 'anon'; } }
+async function salvaQuaderno(record, btn){
+  if(btn){ btn.disabled=true; btn.classList.remove('ok','ko'); btn.textContent='Salvo…'; }
+  try{
+    const r = await fetch('/v1/quaderno2/salva', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Device-Id':_devId()},
+      body: JSON.stringify(record)
+    });
+    let d = {}; try{ d = await r.json(); }catch(e){}
+    if(r.ok && d && d.ok){ if(btn){ btn.textContent='Salvato nel Quaderno ✓'; btn.classList.add('ok'); } return true; }
+    const msg = (d && d.errore) ? String(d.errore) : ('errore '+r.status);
+    if(btn){ btn.disabled=false; btn.classList.add('ko'); btn.textContent='Non salvato — '+msg+' · riprova'; }
+    return false;
+  }catch(e){
+    if(btn){ btn.disabled=false; btn.classList.add('ko'); btn.textContent='Non salvato — rete assente · riprova'; }
+    return false;
+  }
+}
+// Aggiunge il pulsante "Salva nel Quaderno" in coda a un risultato già reso, col record catturato in closure.
+function appendSalva(el, record){
+  const b = document.createElement('button');
+  b.type='button'; b.className='btn-salva'; b.textContent='＋ Salva nel Quaderno';
+  b.addEventListener('click', ()=>salvaQuaderno(record, b));
+  el.appendChild(b);
+}
+
 async function chiama(url){
   const res = await fetch(url, {headers:{'Accept':'application/json'}});
   let d = {};
@@ -144,6 +183,13 @@ async function perche(a, b){
           <p class="perche">${esc(d.perche||'')}</p>
           ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
         </div>`;
+      appendSalva(el, {
+        porta:'laboratorio', funzione:'laboratorio_perche', tipo:'calcolo',
+        titolo:'Perché: '+na+' · '+nb,
+        stato_input:{a:d.a||a, b:d.b||b},
+        stato_output:{condividono:false, perche:d.perche||null, nota:d.nota||null},
+        provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/perche'}
+      });
       return;
     }
     const prof = d.profilo || {};
@@ -162,6 +208,22 @@ async function perche(a, b){
         ${chips(d.composti_caratterizzanti)}
         ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
       </div>`;
+    // Salva l'abbinamento mostrato: solo i campi reali tornati dal grafo.
+    appendSalva(el, {
+      porta:'laboratorio', funzione:'laboratorio_perche', tipo:'calcolo',
+      titolo:'Perché: '+na+' · '+nb,
+      stato_input:{a:d.a||a, b:d.b||b},
+      stato_output:{
+        condividono:true,
+        composti_condivisi:(d.composti_condivisi!=null?d.composti_condivisi:null),
+        indice_rarita:(d.indice_rarita!=null?d.indice_rarita:null),
+        robustezza:d.robustezza||null,
+        composti_caratterizzanti:Array.isArray(d.composti_caratterizzanti)?d.composti_caratterizzanti:[],
+        profilo:{composti_a:(prof.composti_a!=null?prof.composti_a:null), composti_b:(prof.composti_b!=null?prof.composti_b:null)},
+        perche:d.perche||null
+      },
+      provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/perche'}
+    });
   }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
 }
 
@@ -193,6 +255,25 @@ async function sostituisci(ing){
       <p class="gloss">Sostituti di <b>${esc(nome)}</b> · ${dash(d.conteggio)} trovati</p>
       <div class="list">${cards}</div>
       ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}`;
+    // Salva la lista di sostituti mostrata: solo i campi reali di ciascuno.
+    appendSalva(el, {
+      porta:'laboratorio', funzione:'laboratorio_sostituisci', tipo:'calcolo',
+      titolo:'Sostituti di '+nome,
+      stato_input:{ingrediente:d.ingrediente||ing},
+      stato_output:{
+        ingrediente:d.ingrediente||ing,
+        conteggio:(d.conteggio!=null?d.conteggio:sost.length),
+        sostituti:sost.map(v=>({
+          ingrediente:v.ingrediente||null,
+          composti_condivisi:(v.composti_condivisi!=null?v.composti_condivisi:null),
+          indice_rarita:(v.indice_rarita!=null?v.indice_rarita:null),
+          robustezza:v.robustezza||null,
+          composti_caratterizzanti:Array.isArray(v.composti_caratterizzanti)?v.composti_caratterizzanti:[],
+          perche:v.perche||null
+        }))
+      },
+      provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/sostituisci'}
+    });
   }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
 }
 
@@ -232,6 +313,26 @@ async function confronta(a, b){
         ${chips(c.solo_b_caratterizzanti)}
         ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
       </div>`;
+    // Salva il confronto mostrato: profilo sensoriale (se c'è) + composti reali.
+    appendSalva(el, {
+      porta:'laboratorio', funzione:'laboratorio_confronta', tipo:'calcolo',
+      titolo:'Confronto: '+na+' · '+nb,
+      stato_input:{a:d.a||a, b:d.b||b},
+      stato_output:{
+        a:d.a||a, b:d.b||b,
+        profilo_sensoriale:(d.assi_assenti||!assi.length)?[]:assi,
+        assi_assenti:!!d.assi_assenti,
+        composti:{
+          condivisi:(c.condivisi!=null?c.condivisi:null),
+          condivisi_caratterizzanti:Array.isArray(c.condivisi_caratterizzanti)?c.condivisi_caratterizzanti:[],
+          solo_a:(c.solo_a!=null?c.solo_a:null),
+          solo_a_caratterizzanti:Array.isArray(c.solo_a_caratterizzanti)?c.solo_a_caratterizzanti:[],
+          solo_b:(c.solo_b!=null?c.solo_b:null),
+          solo_b_caratterizzanti:Array.isArray(c.solo_b_caratterizzanti)?c.solo_b_caratterizzanti:[]
+        }
+      },
+      provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/confronta'}
+    });
   }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
 }
 

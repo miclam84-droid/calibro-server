@@ -14,7 +14,9 @@
 # ============================================================
 import os
 import json
+import hmac
 import hashlib
+from datetime import datetime
 
 from flask import Blueprint, request, jsonify
 
@@ -24,8 +26,9 @@ bp_migra_q = Blueprint("admin_migra_quaderno", __name__)
 
 
 def _auth():
+    # Gate HMAC (confronto a tempo costante), stesso schema di pwa.admin_copertura.
     atteso = os.environ.get("ADMIN_SECRET") or ""
-    return bool(atteso) and request.args.get("s", "") == atteso
+    return bool(atteso) and hmac.compare_digest(str(request.args.get("s", "")), str(atteso))
 
 
 def _mid(prefix, *parti):
@@ -105,38 +108,57 @@ def _da_chat(r):
 
 
 _PIANO = [
-    ("ricette_salvate", "SELECT device_id, ricetta_id, nome, dati, creato_il FROM ricette_salvate", _da_ricette, "_backup_mig_ricette"),
-    ("misure_salvate",  "SELECT id, device_id, fenomeno, fenomeno_id, valore, unita, bersaglio, nota, creato_il FROM misure_salvate", _da_misure, "_backup_mig_misure"),
-    ("chat_salvate",    "SELECT id, device_id, titolo, messaggi, tag, creato_il FROM chat_salvate", _da_chat, "_backup_mig_chat"),
+    ("ricette_salvate", "SELECT device_id, ricetta_id, nome, dati, creato_il FROM ricette_salvate", _da_ricette),
+    ("misure_salvate",  "SELECT id, device_id, fenomeno, fenomeno_id, valore, unita, bersaglio, nota, creato_il FROM misure_salvate", _da_misure),
+    ("chat_salvate",    "SELECT id, device_id, titolo, messaggi, tag, creato_il FROM chat_salvate", _da_chat),
 ]
+
+
+def _gia_presenti(cur, ids):
+    """Quanti di questi id esistono gia' in quaderno_record (per il conteggio dei saltati)."""
+    if not ids:
+        return 0
+    cur.execute("SELECT COUNT(*) FROM quaderno_record WHERE id = ANY(%s)", (list(ids),))
+    row = cur.fetchone()
+    return int(row[0]) if row else 0
 
 
 @bp_migra_q.route("/admin/migra-quaderno", methods=["GET"])
 def migra_quaderno():
-    """Dry-run di default. ?s=<ADMIN_SECRET>  [&esegui=1 per scrivere davvero]."""
+    """Dry-run di default. ?s=<ADMIN_SECRET>  [&esegui=1 per scrivere davvero].
+
+    Garanzie: ADDITIVO (solo INSERT ... ON CONFLICT DO NOTHING; mai DELETE/UPDATE,
+    i 3 store vecchi NON vengono toccati), idempotente (id deterministico qr-mig-...),
+    annullabile (DELETE ... WHERE id LIKE 'qr-mig-%'), backup del destinatario
+    quaderno_record prima di scrivere, tutto in un'unica transazione.
+    """
     if not _auth():
         return jsonify({"errore": "non autorizzato"}), 401
     esegui = request.args.get("esegui", "") == "1"
     conn = _get_conn()
     report = {"modalita": "esegui" if esegui else "dry-run (nessuna scrittura)",
-              "store": {}, "totale_sorgente": 0, "totale_scritti": 0, "backup": []}
+              "store": {}, "totale_sorgente": 0, "totale_scritti": 0,
+              "totale_saltati": 0, "backup": []}
     try:
         cur = conn.cursor()
         _init_quaderno(cur)
-        for nome, query, mapper, backup in _PIANO:
+        # Backup del DESTINATARIO (quaderno_record) prima di qualsiasi scrittura.
+        # Copia congelata, non distruttiva (nome con timestamp: non sovrascrive backup precedenti).
+        if esegui:
+            backup = "_backup_mig_quaderno_record_%s" % datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+            cur.execute('CREATE TABLE "%s" AS SELECT * FROM quaderno_record' % backup)
+            report["backup"].append(backup)
+        for nome, query, mapper in _PIANO:
             if not _esiste(cur, nome):
-                report["store"][nome] = {"presente": False, "righe": 0, "scritti": 0}
+                report["store"][nome] = {"presente": False, "righe": 0, "scritti": 0, "saltati": 0}
                 continue
             cur.execute(query)
             righe = cur.fetchall()
             report["totale_sorgente"] += len(righe)
             scritti = 0
+            saltati = 0
             esempi = []
             if esegui:
-                # backup congelato della sorgente (foto, idempotente: drop+ricrea)
-                cur.execute("DROP TABLE IF EXISTS %s" % backup)
-                cur.execute("CREATE TABLE %s AS SELECT * FROM %s" % (backup, nome))
-                report["backup"].append(backup)
                 for r in righe:
                     t = mapper(r)
                     cur.execute("""INSERT INTO quaderno_record
@@ -145,12 +167,19 @@ def migra_quaderno():
                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                         ON CONFLICT (id) DO NOTHING""", t)
                     scritti += cur.rowcount
+                saltati = len(righe) - scritti  # gia' presenti -> non duplicati
                 report["totale_scritti"] += scritti
             else:
+                # Dry-run: nessuna scrittura. Conta quanti sarebbero gia' presenti
+                # (saltati) interrogando il destinatario, e mostra un campione.
+                ids = [mapper(r)[0] for r in righe]
+                saltati = _gia_presenti(cur, ids)
                 for r in righe[:3]:
                     t = mapper(r)
                     esempi.append({"id": t[0], "titolo": t[7], "porta": t[4]})
-            report["store"][nome] = {"presente": True, "righe": len(righe), "scritti": scritti,
+            report["totale_saltati"] += saltati
+            report["store"][nome] = {"presente": True, "righe": len(righe),
+                                     "scritti": scritti, "saltati": saltati,
                                      "esempi": esempi}
         if esegui:
             conn.commit()
