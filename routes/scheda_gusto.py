@@ -90,6 +90,9 @@ text-transform:uppercase;padding:2px 7px;border-radius:6px;margin-left:7px;verti
 .nota{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.5}
 .src{font-size:10.5px;color:var(--muted)}
 .ph{color:var(--muted);text-align:center;padding:30px 0}
+.foto-box{margin:2px 0 16px}
+.foto-box img{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:var(--r);border:1px solid rgba(29,42,34,.08)}
+.foto-cred{font-size:10.5px;color:var(--muted);margin-top:5px}
 .search{display:flex;gap:8px;margin-bottom:18px}
 .search input{flex:1;font-family:var(--read);font-size:14px;padding:10px 13px;border-radius:var(--r-sm);
 border:1px solid rgba(29,42,34,.15);background:rgba(255,255,255,.7)}
@@ -129,11 +132,26 @@ function render(d){
   out.innerHTML='<div class="top"><span class="kick">Profilo del gusto</span></div>'+
     '<h1>'+d.nome+'</h1>'+
     '<div class="sub">'+(d.origine?('origine: '+d.origine+' \\u00b7 '):'')+'scala 0-10 \\u00b7 termico da -10 a +10</div>'+
+    '<div class="foto-box" id="foto-box"></div>'+
     '<div class="card">'+righe+'</div>'+
     '<div class="legend"><span><i class="dot" style="background:#2F8A5F"></i>derivato (da misura USDA)</span>'+
     '<span><i class="dot" style="background:#A9802F;opacity:.5"></i>stimato (modello AI)</span>'+
     '<span><i class="dot" style="background:rgba(29,42,34,.12)"></i>non mappato</span></div>'+
     '<div class="nota">I valori <b>derivati</b> sono calcolati da una formula dichiarata sulla composizione misurata (USDA), non sono una misura sensoriale diretta: sono un indice compositivo, correggibile al banco. I valori <b>stimati</b> sono una valutazione del modello. Dove non c\\'e dato, si dichiara - non si inventa uno zero.</div>';
+  caricaFoto(d.nome);
+}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+// FOTO editoriale: SUPPORTO, non sostituisce nome/provenienza. Esce solo se trovata davvero,
+// col credito sempre visibile. Se url null -> nessun box foto (niente placeholder finto).
+function caricaFoto(nome){
+  var box=document.getElementById('foto-box'); if(!box){return;}
+  fetch('/v1/foto-ingrediente-nuovo/'+encodeURIComponent(nome)).then(function(r){return r.json();})
+    .then(function(f){
+      if(f&&f.url){
+        var cr=f.credito?('<div class="foto-cred">'+esc(f.credito)+'</div>'):'';
+        box.innerHTML='<img src="'+esc(f.url)+'" alt="'+esc(nome)+'" loading="lazy">'+cr;
+      }
+    }).catch(function(){});
 }
 function carica(){
   var h=decodeURIComponent((location.hash||'').replace(/^#/,''));

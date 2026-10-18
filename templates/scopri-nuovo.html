@@ -16,6 +16,15 @@
   .scopri-testa .scopri-centro{font-family:var(--display); font-weight:800}
   .scopri-sub{font-size:13px; color:var(--ink-soft); margin-top:6px}
 
+  /* foto tonda discreta accanto al titolo (SUPPORTO: se manca, resta il disco verde) */
+  .scopri-intesta{display:flex; align-items:center; gap:14px}
+  .scopri-intesta-testo{min-width:0}
+  .scopri-foto-wrap{flex:0 0 auto}
+  .scopri-foto{width:58px; height:58px; border-radius:50%; object-fit:cover;
+    border:2px solid var(--verde); display:block; cursor:pointer}
+  .scopri-foto:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .scopri-foto-cred{font-size:11px; color:var(--ink-soft); margin-top:8px}
+
   /* tela del grafo */
   .grafo-tela{
     margin-top:18px; background:var(--surface); border:1px solid var(--riga);
@@ -107,9 +116,17 @@
   </form>
 
   <section class="scopri-testa">
-    <span class="eyebrow">Al centro del grafo</span>
-    <h1 class="scopri-centro" id="centro-nome">…</h1>
+    <div class="scopri-intesta">
+      <div class="scopri-foto-wrap" id="centro-foto-wrap" hidden>
+        <img class="scopri-foto" id="centro-foto" alt="" tabindex="0" role="button" aria-label="Mostra la fonte della foto">
+      </div>
+      <div class="scopri-intesta-testo">
+        <span class="eyebrow">Al centro del grafo</span>
+        <h1 class="scopri-centro" id="centro-nome">…</h1>
+      </div>
+    </div>
     <p class="scopri-sub" id="centro-sub">Lo spessore di un legame è il numero di composti aromatici che i due ingredienti condividono davvero. Tocca un vicino per ricentrare, tocca un legame per vederne la prova.</p>
+    <div class="scopri-foto-cred" id="centro-foto-cred" hidden></div>
     <a class="btn btn--ghost" id="vai-componi" href="/componi-nuovo" style="margin-top:14px">Componi con questo ingrediente →</a>
   </section>
 
@@ -326,10 +343,41 @@
     a.textContent = "Componi con " + cap(centro) + " →";
   }
 
+  // FOTO tonda del centro: SUPPORTO discreto. Esce solo se trovata davvero; credito a un tap.
+  // Se null -> resta il disco verde col nome come ora (nessun placeholder).
+  function nascondiCentroFoto(){
+    var w = document.getElementById("centro-foto-wrap");
+    var c = document.getElementById("centro-foto-cred");
+    if (w) w.hidden = true;
+    if (c) { c.hidden = true; c.textContent = ""; }
+  }
+  function caricaCentroFoto(centro){
+    nascondiCentroFoto();
+    fetch("/v1/foto-ingrediente-nuovo/" + encodeURIComponent(centro), {headers: {"Accept": "application/json"}})
+      .then(function(r){ return r.json(); })
+      .then(function(f){
+        if (!f || !f.url) return; // nessuna foto: resta il disco verde
+        var img = document.getElementById("centro-foto");
+        var wrap = document.getElementById("centro-foto-wrap");
+        var cred = document.getElementById("centro-foto-cred");
+        if (!img || !wrap) return;
+        img.src = f.url;
+        img.alt = cap(centro);
+        wrap.hidden = false;
+        if (f.credito && cred) {
+          function toggle(){ cred.hidden = !cred.hidden; if (!cred.hidden) cred.textContent = f.credito; }
+          img.onclick = toggle;
+          img.onkeydown = function(e){ if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } };
+        }
+      })
+      .catch(function(){ /* rete giù: resta il disco verde, nessun box foto */ });
+  }
+
   function carica(ing){
     document.getElementById("centro-nome").textContent = cap(ing);
     cablaComponi(ing);
     nascondiOnesto();
+    nascondiCentroFoto();
     fetch("/v1/criteri/" + encodeURIComponent(ing), {headers: {"Accept": "application/json"}})
       .then(function(r){ return r.json(); })
       .then(function(d){ render(ing, d); })
@@ -378,6 +426,7 @@
     }
 
     disegna(d.ingrediente || ing, rel);
+    caricaCentroFoto(d.ingrediente || ing);
 
     // onestà: nessun legame molecolare, solo tradizione/contrasto
     if (nBase === 0) {
