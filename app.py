@@ -137,6 +137,7 @@ from routes.pagina_quaderno import bp_pag_quaderno; app.register_blueprint(bp_pa
 from routes.menu_builder import bp_menu as menu_builder_bp; app.register_blueprint(menu_builder_bp)
 from routes.stato import bp as stato_bp; app.register_blueprint(stato_bp)
 from routes.audit_provenienza import bp_audit_prov; app.register_blueprint(bp_audit_prov)
+from routes.pagina_community import bp_pag_community; app.register_blueprint(bp_pag_community)  # Ondata 5: schermo Community (Vetrina del Banco) nel nuovo FE
 
 # ── OSS hooks ───────────────────────────────────────────
 import time as _time, traceback as _traceback

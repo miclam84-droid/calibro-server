@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Community · Vetrina del Banco · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+/* bit specifici di questa pagina — riusano le variabili del design congelato */
+.tabbar{display:flex; gap:8px; margin:0 0 14px; flex-wrap:wrap}
+.tabbar button{font:inherit; font-weight:600; cursor:pointer; padding:9px 15px; border-radius:11px;
+  border:1px solid var(--card-border); background:var(--card); color:var(--ink);
+  transition:border-color .12s ease, transform .12s ease}
+.tabbar button:hover{border-color:var(--ink-soft); transform:translateY(-1px)}
+.tabbar button.on{border-color:var(--ink-soft); font-weight:700}
+
+.feed{display:grid; gap:12px; margin-top:4px}
+.contrib{display:flex; flex-direction:column; gap:8px; text-align:left; width:100%;
+  background:var(--card); border:1px solid var(--card-border); border-radius:14px;
+  padding:15px 16px; box-shadow:var(--shadow); color:var(--ink)}
+.contrib .c-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.contrib .c-nome{font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:700; font-size:17px; min-width:0}
+.contrib .c-badge{font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  padding:3px 8px; border-radius:999px; border:1px solid var(--card-border); color:var(--ink-soft); white-space:nowrap}
+.contrib .c-autore{font-size:13px; color:var(--ink-soft)}
+.contrib .c-autore b{color:var(--ink); font-weight:600}
+.contrib .c-testo{font-size:14px; line-height:1.5; white-space:pre-wrap; margin:0}
+.contrib .c-azioni{display:flex; gap:8px; flex-wrap:wrap; margin-top:2px}
+.contrib .c-azioni button{font:inherit; font-size:13px; font-weight:600; cursor:pointer; padding:7px 13px;
+  border-radius:10px; border:1px solid var(--card-border); background:transparent; color:var(--ink);
+  transition:border-color .12s ease}
+.contrib .c-azioni button:hover{border-color:var(--ink-soft)}
+.contrib .c-data{font-size:12px; color:var(--ink-soft)}
+
+.form-field{display:flex; flex-direction:column; gap:5px; margin-bottom:13px}
+.form-field label{font-size:13px; font-weight:600; color:var(--ink-soft)}
+.form-field input, .form-field select, .form-field textarea{
+  font:inherit; font-size:15px; color:var(--ink); background:var(--card);
+  border:1px solid var(--card-border); border-radius:11px; padding:11px 13px; width:100%; box-sizing:border-box}
+.form-field textarea{min-height:110px; resize:vertical; line-height:1.5}
+.form-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:4px}
+.btn-primario{font:inherit; font-weight:700; cursor:pointer; padding:11px 18px; border-radius:11px;
+  border:1px solid var(--ink); background:var(--ink); color:var(--card)}
+.btn-primario:hover{opacity:.9}
+.btn-primario:disabled{opacity:.5; cursor:default}
+
+.backbar{display:flex; align-items:center; gap:10px; margin:0 0 14px}
+.backbar button{font:inherit; font-weight:600; cursor:pointer; padding:8px 14px; border-radius:10px;
+  border:1px solid var(--card-border); background:var(--card); color:var(--ink)}
+.backbar h2{margin:0; font-size:18px}
+.prof-contatto{display:inline-block; margin-top:6px; font-weight:600; text-decoration:none;
+  color:var(--ink); border:1px solid var(--card-border); border-radius:10px; padding:8px 14px}
+.prof-contatto:hover{border-color:var(--ink-soft)}
+.msg-ok{color:var(--ink); font-weight:600; font-size:14px; margin-top:8px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="/scopri" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <div class="eyebrow">Community</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">La Vetrina del Banco</div>
+    <h1>Community</h1>
+    <p class="regola"><b>Contributi resi pubblici dai colleghi del banco. Solo due gesti: <i>clona</i> nel tuo Quaderno, <i>connetti</i> col profilo. Il contatto avviene fuori dall'app — nessuna chat, nessun like.</b></p>
+    <div class="sourceline"><span class="dot"></span><span>Feed reale dall'endpoint <code>/v1/community/feed</code>, in tempo reale.</span></div>
+  </header>
+
+  <div class="tabbar">
+    <button type="button" id="tab-feed" class="on">Feed</button>
+    <button type="button" id="tab-pubblica">Pubblica</button>
+    <button type="button" id="tab-profilo">Il mio profilo</button>
+  </div>
+
+  <main>
+    <!-- VISTA 1: feed dei contributi -->
+    <section class="section" id="vista-feed">
+      <div class="sechead">
+        <div style="min-width:0"><h2>Contributi</h2><p>I più recenti per primi. Tocca "Clona" per copiarne uno nel tuo Quaderno.</p></div>
+      </div>
+      <div id="o-feed"><div class="state">Carico il feed…</div></div>
+    </section>
+
+    <!-- VISTA 2: pubblica un contributo -->
+    <section class="section" id="vista-pubblica" hidden>
+      <div class="sechead">
+        <div style="min-width:0"><h2>Pubblica un contributo</h2><p>Rendi pubblico qualcosa del tuo banco. Resta visibile a tutti nel feed.</p></div>
+      </div>
+      <div class="form-field">
+        <label for="p-nome">Titolo del contributo *</label>
+        <input id="p-nome" type="text" maxlength="140" placeholder="Es. Focaccia a lunga maturazione">
+      </div>
+      <div class="form-field">
+        <label for="p-testo">Cosa vuoi condividere</label>
+        <textarea id="p-testo" placeholder="Descrivi il contributo: procedimento, note dal banco, accorgimenti…"></textarea>
+      </div>
+      <div class="form-field">
+        <label for="p-autore">Il tuo nome (come appari nel feed)</label>
+        <input id="p-autore" type="text" maxlength="80" placeholder="Es. Michele">
+      </div>
+      <div class="form-field">
+        <label for="p-postazione">Postazione / locale (facoltativo)</label>
+        <input id="p-postazione" type="text" maxlength="80" placeholder="Es. Bucolico, Napoli">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-primario" id="p-invia">Pubblica nella Vetrina</button>
+      </div>
+      <div id="p-esito" class="state" hidden></div>
+    </section>
+
+    <!-- VISTA 3: il mio profilo -->
+    <section class="section" id="vista-profilo" hidden>
+      <div class="sechead">
+        <div style="min-width:0"><h2>Il mio profilo</h2><p>Un profilo leggero: nome, postazione e un contatto esterno. Il contatto apre WhatsApp/Telegram/LinkedIn/Instagram fuori dall'app.</p></div>
+      </div>
+      <div class="form-field">
+        <label for="pr-nome">Nome</label>
+        <input id="pr-nome" type="text" maxlength="80" placeholder="Es. Michele">
+      </div>
+      <div class="form-field">
+        <label for="pr-postazione">Postazione / locale</label>
+        <input id="pr-postazione" type="text" maxlength="80" placeholder="Es. Bucolico, Napoli">
+      </div>
+      <div class="form-field">
+        <label for="pr-ctipo">Come ti contattano</label>
+        <select id="pr-ctipo">
+          <option value="">— nessun contatto —</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="telegram">Telegram</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="instagram">Instagram</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="pr-cvalore">Numero o handle</label>
+        <input id="pr-cvalore" type="text" maxlength="160" placeholder="Es. +39 333 1234567 oppure @ilmiohandle">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-primario" id="pr-salva">Salva profilo</button>
+      </div>
+      <div id="pr-esito" class="state" hidden></div>
+    </section>
+
+    <!-- VISTA 4: profilo di un autore (sola lettura) -->
+    <section class="section" id="vista-autore" hidden>
+      <div class="backbar">
+        <button type="button" id="autore-back">← Feed</button>
+        <h2 id="autore-titolo">Profilo</h2>
+      </div>
+      <div id="o-autore"><div class="state">Carico il profilo…</div></div>
+    </section>
+  </main>
+
+  <footer>
+    <b>Vetrina a bassa manutenzione.</b> Nessun commento, nessun like, nessuna chat interna: solo feed, <b>clona</b> e <b>connetti</b>. Il contatto avviene fuori dall'app, con un link esterno che scegli tu. Gli stati vuoti sono onesti: se non c'è ancora nulla, lo diciamo.
+  </footer>
+</div>
+
+<script>
+// ─── identità: X-Device-Id da localStorage, come il resto della PWA. ───
+function _uuid(){
+  try{ if(crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){}
+  return 'dev-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+}
+function _dev(){
+  try{
+    var d = localStorage.getItem('matter_device_id') || localStorage.getItem('matter_token');
+    if(!d){ d = _uuid(); try{ localStorage.setItem('matter_device_id', d); }catch(e){} }
+    return d;
+  }catch(e){ return 'anon'; }
+}
+function _h(extra){
+  var h = {'Accept':'application/json','X-Device-Id':_dev()};
+  if(extra) for(var k in extra) h[k]=extra[k];
+  return h;
+}
+
+// ─── util ───
+var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+function dataIt(iso){
+  if(!iso) return '';
+  try{
+    var d = new Date((iso||'').replace(' ','T'));
+    if(isNaN(d)) return '';
+    return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+  }catch(e){ return ''; }
+}
+function testoDati(dati){
+  if(!dati || typeof dati!=='object') return '';
+  return dati.testo || dati.descrizione || dati.nota || '';
+}
+var $ = function(id){ return document.getElementById(id); };
+
+// ─── viste / tab ───
+var VISTE = {feed:$('vista-feed'), pubblica:$('vista-pubblica'), profilo:$('vista-profilo'), autore:$('vista-autore')};
+var TAB = {feed:$('tab-feed'), pubblica:$('tab-pubblica'), profilo:$('tab-profilo')};
+function mostra(nome){
+  for(var k in VISTE) VISTE[k].hidden = (k!==nome);
+  for(var t in TAB) TAB[t].classList.toggle('on', t===nome);
+  window.scrollTo(0,0);
+}
+function stato(elId, msg, err){
+  var el=$(elId); el.hidden=false; el.className='state'+(err?' err':''); el.innerHTML=msg;
+}
+
+async function chiama(url, opt){
+  var res = await fetch(url, opt||{});
+  var d = {};
+  try{ d = await res.json(); }catch(e){ d = {}; }
+  return {ok: res.ok, status: res.status, d: d};
+}
+
+// ─── FEED ───
+async function caricaFeed(){
+  $('o-feed').innerHTML = '<div class="state">Carico il feed…</div>';
+  try{
+    var r = await chiama('/v1/community/feed?lingua=it', {headers:_h()});
+    if(!r.ok){ $('o-feed').innerHTML = '<div class="state err">Il feed ha risposto con un errore ('+r.status+').</div>'; return; }
+    var ric = (r.d && r.d.ricette) || [];
+    if(!ric.length){
+      $('o-feed').innerHTML = '<div class="state">Ancora nessun contributo nella Vetrina. Pubblica il primo dalla scheda "Pubblica".</div>';
+      return;
+    }
+    var html = '<div class="feed">' + ric.map(function(c){
+      var testo = testoDati(c.dati);
+      var badge = c.dal_team ? '<span class="c-badge">dal Team</span>' : '';
+      var autore = esc(c.autore || 'Anonimo') + (c.postazione ? ' · <span>'+esc(c.postazione)+'</span>' : '');
+      var profBtn = (c.autore_device && !c.dal_team)
+        ? '<button type="button" data-prof="'+esc(c.autore_device)+'" data-nome="'+esc(c.autore||'')+'">Vedi profilo</button>' : '';
+      return '<article class="contrib">'
+        + '<div class="c-top"><div class="c-nome">'+esc(c.nome)+'</div>'+badge+'</div>'
+        + '<div class="c-autore">di <b>'+autore+'</b></div>'
+        + (testo ? '<p class="c-testo">'+esc(testo)+'</p>' : '')
+        + '<div class="c-azioni">'
+        +   '<button type="button" data-clona="'+esc(c.id)+'">Clona nel Quaderno</button>'
+        +   profBtn
+        + '</div>'
+        + (c.creato_il ? '<div class="c-data">'+esc(dataIt(c.creato_il))+'</div>' : '')
+        + '</article>';
+    }).join('') + '</div>';
+    $('o-feed').innerHTML = html;
+    $('o-feed').querySelectorAll('[data-clona]').forEach(function(b){
+      b.addEventListener('click', function(){ clona(b.dataset.clona, b); });
+    });
+    $('o-feed').querySelectorAll('[data-prof]').forEach(function(b){
+      b.addEventListener('click', function(){ apriProfiloAutore(b.dataset.prof, b.dataset.nome); });
+    });
+  }catch(e){ $('o-feed').innerHTML = '<div class="state err">Non riesco a raggiungere il feed adesso. Riprova tra poco.</div>'; }
+}
+
+// ─── CLONA ───
+async function clona(id, btn){
+  if(!id) return;
+  var old = btn.textContent; btn.disabled = true; btn.textContent = 'Clono…';
+  try{
+    var r = await chiama('/v1/community/clona', {
+      method:'POST', headers:_h({'Content-Type':'application/json'}),
+      body: JSON.stringify({id_pubblica: id})
+    });
+    if(r.ok && r.d && r.d.ok){ btn.textContent = '✓ Nel Quaderno'; }
+    else{ btn.disabled = false; btn.textContent = old; alert((r.d && r.d.errore) || 'Non è stato possibile clonare.'); }
+  }catch(e){ btn.disabled = false; btn.textContent = old; alert('Non riesco a clonare adesso. Riprova tra poco.'); }
+}
+
+// ─── PUBBLICA ───
+async function pubblica(){
+  var nome = ($('p-nome').value||'').trim();
+  if(!nome){ stato('p-esito', 'Serve almeno un titolo per il contributo.', true); return; }
+  var testo = ($('p-testo').value||'').trim();
+  var autore = ($('p-autore').value||'').trim() || 'Anonimo';
+  var postazione = ($('p-postazione').value||'').trim();
+  var btn = $('p-invia'); btn.disabled = true; var old = btn.textContent; btn.textContent = 'Pubblico…';
+  try{
+    var r = await chiama('/v1/community/pubblica', {
+      method:'POST', headers:_h({'Content-Type':'application/json'}),
+      body: JSON.stringify({
+        nome: nome,
+        dati: testo ? {testo: testo} : {},
+        autore_nome: autore,
+        autore_postazione: postazione,
+        lingua: 'it'
+      })
+    });
+    btn.disabled = false; btn.textContent = old;
+    if(r.ok && r.d && r.d.ok){
+      stato('p-esito', esc(r.d.messaggio || 'Contributo pubblicato.'), false);
+      $('p-nome').value=''; $('p-testo').value='';
+      caricaFeed();
+    }else{
+      stato('p-esito', esc((r.d && r.d.errore) || 'Non è stato possibile pubblicare.'), true);
+    }
+  }catch(e){ btn.disabled = false; btn.textContent = old; stato('p-esito', 'Non riesco a pubblicare adesso. Riprova tra poco.', true); }
+}
+
+// ─── MIO PROFILO (GET usa ?device_id=, POST usa X-Device-Id) ───
+async function caricaMioProfilo(){
+  try{
+    var r = await chiama('/v1/community/profilo?device_id='+encodeURIComponent(_dev()), {headers:_h()});
+    if(r.ok && r.d && r.d.trovato){
+      $('pr-nome').value = r.d.nome || '';
+      $('pr-postazione').value = r.d.postazione || '';
+      $('pr-ctipo').value = r.d.contatto_tipo || '';
+    }
+  }catch(e){ /* profilo non ancora creato: lasciamo i campi vuoti, onesto */ }
+}
+async function salvaProfilo(){
+  var btn = $('pr-salva'); btn.disabled = true; var old = btn.textContent; btn.textContent = 'Salvo…';
+  try{
+    var r = await chiama('/v1/community/profilo', {
+      method:'POST', headers:_h({'Content-Type':'application/json'}),
+      body: JSON.stringify({
+        nome: ($('pr-nome').value||'').trim(),
+        postazione: ($('pr-postazione').value||'').trim(),
+        contatto_tipo: $('pr-ctipo').value || '',
+        contatto_valore: ($('pr-cvalore').value||'').trim()
+      })
+    });
+    btn.disabled = false; btn.textContent = old;
+    if(r.ok && r.d && r.d.ok){ stato('pr-esito', 'Profilo salvato.', false); }
+    else{ stato('pr-esito', esc((r.d && r.d.errore) || 'Non è stato possibile salvare.'), true); }
+  }catch(e){ btn.disabled = false; btn.textContent = old; stato('pr-esito', 'Non riesco a salvare adesso. Riprova tra poco.', true); }
+}
+
+// ─── PROFILO DI UN AUTORE (sola lettura, con link esterno) ───
+async function apriProfiloAutore(dev, nome){
+  mostra('autore');
+  $('autore-titolo').textContent = nome ? ('Profilo · '+nome) : 'Profilo';
+  $('o-autore').innerHTML = '<div class="state">Carico il profilo…</div>';
+  try{
+    var r = await chiama('/v1/community/profilo?device_id='+encodeURIComponent(dev), {headers:_h()});
+    if(!r.ok){ $('o-autore').innerHTML = '<div class="state err">Errore nel caricare il profilo ('+r.status+').</div>'; return; }
+    if(!r.d || !r.d.trovato){
+      $('o-autore').innerHTML = '<div class="state">Questo autore non ha ancora un profilo pubblico.</div>';
+      return;
+    }
+    var p = r.d;
+    var html = '<div class="contrib">'
+      + '<div class="c-nome">'+esc(p.nome || nome || 'Autore')+'</div>'
+      + (p.postazione ? '<div class="c-autore">'+esc(p.postazione)+'</div>' : '');
+    if(p.contatto_link){
+      var etichetta = {whatsapp:'Scrivi su WhatsApp', telegram:'Scrivi su Telegram', linkedin:'Apri LinkedIn', instagram:'Apri Instagram'}[p.contatto_tipo] || 'Contatta';
+      html += '<a class="prof-contatto" href="'+esc(p.contatto_link)+'" target="_blank" rel="noopener">'+esc(etichetta)+' ↗</a>';
+    }else{
+      html += '<div class="c-data">Questo autore non ha indicato un contatto esterno.</div>';
+    }
+    html += '</div>';
+    $('o-autore').innerHTML = html;
+  }catch(e){ $('o-autore').innerHTML = '<div class="state err">Non riesco a caricare il profilo adesso. Riprova tra poco.</div>'; }
+}
+
+// ─── wiring ───
+$('tab-feed').addEventListener('click', function(){ mostra('feed'); });
+$('tab-pubblica').addEventListener('click', function(){ mostra('pubblica'); });
+$('tab-profilo').addEventListener('click', function(){ mostra('profilo'); });
+$('autore-back').addEventListener('click', function(){ mostra('feed'); });
+$('p-invia').addEventListener('click', pubblica);
+$('pr-salva').addEventListener('click', salvaProfilo);
+
+caricaFeed();
+caricaMioProfilo();
+</script>
+</body>
+</html>
