@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Didattica · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter2.css">
+<style>
+  /* Piccole aggiunte locali: usano i token di matter2.css, niente colori nuovi. */
+  .tabs{display:flex; gap:8px; margin:22px -4px 4px; padding:6px 4px; overflow-x:auto; scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto; font:inherit; font-size:13.5px; font-weight:600; color:var(--ink);
+       background:var(--card-strong); border:1px solid var(--rule); padding:7px 15px; border-radius:999px;
+       cursor:pointer; display:flex; align-items:center; gap:7px; box-shadow:var(--shadow)}
+  .tab[aria-selected="true"]{background:var(--green-action); color:#fff; border-color:transparent}
+  .tab .n{font-variant-numeric:tabular-nums; font-size:12px; opacity:.75}
+  .card-apri{cursor:pointer; text-align:left; width:100%; font:inherit; color:inherit; display:block}
+  .card-apri:focus-visible{outline:2px solid var(--green-action); outline-offset:2px}
+  .cardtitle{font-family:var(--display); font-weight:700; font-size:19px; letter-spacing:-.01em; margin:0; color:var(--ink)}
+  .back{font:inherit; background:none; border:0; padding:6px 0; margin:16px 0 0; cursor:pointer;
+        color:var(--green-action); font-weight:600; font-size:14px; display:inline-flex; align-items:center; gap:6px}
+  .back:focus-visible{outline:2px solid var(--green-action); outline-offset:2px; border-radius:4px}
+  .liv{margin-top:14px}
+  .liv-head{display:flex; align-items:baseline; gap:10px; margin:0 0 2px}
+  .liv-badge{font-family:var(--display); font-weight:800; font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+             color:var(--green-action); background:var(--tint); padding:3px 10px; border-radius:999px}
+  .liv-sub{font-size:12.5px; color:var(--ink-soft)}
+  .field{margin:12px 0 0}
+  .field-k{font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 3px}
+  .field-v{font-size:14.5px; color:var(--ink); line-height:1.5; margin:0}
+  .field-v ul{margin:4px 0 0; padding-left:18px}
+  .field-v li{margin:3px 0}
+  .vuoto{color:var(--ink-soft); font-style:italic}
+  .quiz-opt{display:block; width:100%; text-align:left; font:inherit; font-size:14px; color:var(--ink);
+            background:var(--card-strong); border:1px solid var(--rule); border-radius:10px; padding:10px 12px;
+            margin-top:8px; cursor:pointer}
+  .quiz-opt:disabled{cursor:default}
+  .quiz-opt.giusta{border-color:var(--green-action); background:var(--tint); color:var(--green-action); font-weight:600}
+  .quiz-opt.sbagliata{border-color:rgba(168,80,74,.5); background:rgba(168,80,74,.08); color:var(--oxblood)}
+  .quiz-esito{margin-top:10px; font-size:13.5px; line-height:1.5}
+  .quiz-esito.ok{color:var(--green-action)} .quiz-esito.ko{color:var(--oxblood)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="wordmark">Matter<span class="bench">Bench</span></div>
+    <div class="eyebrow">Didattica</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">La scienza del mestiere</div>
+    <h1>Didattica</h1>
+    <p class="regola"><b>Fenomeni e principi reali del grafo Matter.</b> Apri un fenomeno e trovi i tre livelli: cosa fare al banco, perché funziona, da dove viene.</p>
+    <div class="sourceline"><span class="dot"></span><span id="src">Dati dal grafo Matter — fenomeni, principi, manifestazioni.</span></div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" hidden>
+    <button class="tab" role="tab" id="tab-fen" aria-selected="true" data-vista="fenomeni">Fenomeni <span class="n" id="n-fen"></span></button>
+    <button class="tab" role="tab" id="tab-pri" aria-selected="false" data-vista="principi">Principi <span class="n" id="n-pri"></span></button>
+  </nav>
+
+  <form class="search" id="form-filtro" autocomplete="off" hidden style="margin-top:14px">
+    <input id="filtro" type="text" placeholder="Filtra per nome…" aria-label="Filtra">
+  </form>
+
+  <main id="lista"></main>
+  <section id="dettaglio" hidden></section>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    <b>Dati reali dal grafo Matter.</b> I tre livelli (Faccio / Capisco / Approfondisco) e le fonti sono quelli presenti sulla scheda del fenomeno: dove un livello o un campo non è ancora compilato, lo diciamo con un trattino — niente contenuto inventato. L'autoverifica compare solo per i fenomeni che hanno già domande nel motore quiz.
+  </footer>
+</div>
+
+<script>
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+const icon = p => `<svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+const $tabs = document.getElementById('tabs');
+const $lista = document.getElementById('lista');
+const $dett = document.getElementById('dettaglio');
+const $state = document.getElementById('state');
+const $src = document.getElementById('src');
+const $formFiltro = document.getElementById('form-filtro');
+const $filtro = document.getElementById('filtro');
+
+let DATI = { fenomeni: null, principi: null };
+let VISTA = 'fenomeni';
+
+function setState(msg, err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=msg; }
+function clearState(){ $state.hidden=true; $state.innerHTML=''; }
+
+// device id stabile per il tracciamento progressi del motore quiz (facoltativo)
+function deviceId(){
+  try{ let id=localStorage.getItem('matter_device_id');
+       if(!id){ id='d-'+Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('matter_device_id',id); }
+       return id; }catch(e){ return ''; }
+}
+
+// Render onesto di un valore sconosciuto (stringa/numero/lista/oggetto) senza inventare nulla.
+function vuotoVal(v){
+  if(v==null) return true;
+  if(typeof v==='string') return v.trim()==='';
+  if(Array.isArray(v)) return v.length===0;
+  if(typeof v==='object') return Object.keys(v).length===0;
+  return false;
+}
+function renderVal(v){
+  if(vuotoVal(v)) return '<span class="vuoto">—</span>';
+  if(typeof v==='string' || typeof v==='number') return esc(v);
+  if(Array.isArray(v)) return '<ul>'+v.map(x=>'<li>'+renderValInline(x)+'</li>').join('')+'</ul>';
+  if(typeof v==='object') return renderValInline(v);
+  return esc(String(v));
+}
+function renderValInline(x){
+  if(x==null) return '<span class="vuoto">—</span>';
+  if(typeof x==='string' || typeof x==='number') return esc(x);
+  if(Array.isArray(x)) return x.map(renderValInline).join(', ');
+  if(typeof x==='object'){
+    // prova i campi più comuni delle fonti/evidence del grafo
+    const t = x.titolo || x.nome || x.testo || x.descrizione || x.fonte || x.label || x.citazione;
+    const url = x.url || x.link || x.doi;
+    if(t && url) return `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(t)}</a>`;
+    if(t) return esc(t);
+    if(url) return `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a>`;
+    // nessun campo noto: mostro le coppie chiave/valore così come sono
+    return Object.entries(x).map(([k,val])=>`<b>${esc(k)}</b>: ${renderValInline(val)}`).join(' · ');
+  }
+  return esc(String(x));
+}
+function campo(label, v){
+  return `<div class="field"><p class="field-k">${esc(label)}</p><div class="field-v">${renderVal(v)}</div></div>`;
+}
+
+/* ---------------- LISTE ---------------- */
+function listaCorrente(){
+  if(VISTA==='fenomeni') return (DATI.fenomeni && DATI.fenomeni.fenomeni_madre) || [];
+  return (DATI.principi && DATI.principi.principi) || [];
+}
+function renderLista(){
+  const q = ($filtro.value||'').trim().toLowerCase();
+  const tutti = listaCorrente();
+  const items = q ? tutti.filter(x=> (x.nome||'').toLowerCase().includes(q)) : tutti;
+  $lista.innerHTML=''; clearState();
+
+  if(!tutti.length){
+    setState(VISTA==='fenomeni'
+      ? 'Nessun fenomeno madre nel grafo in questo momento.'
+      : 'Nessun principio nel grafo in questo momento.', false);
+    return;
+  }
+  if(!items.length){ setState('Nessun risultato per <b>'+esc(q)+'</b>.', false); return; }
+
+  const sec = document.createElement('section'); sec.className='section';
+  const list = document.createElement('div'); list.className='list';
+
+  if(VISTA==='fenomeni'){
+    items.forEach(f=>{
+      const card=document.createElement('article'); card.className='card';
+      card.innerHTML = `
+        <button class="card-apri" data-slug="${esc(f.slug)}">
+          <div class="card-top">
+            <span class="cardtitle">${esc(cap(f.nome||f.slug))}</span>
+            ${f.n_manifestazioni ? `<span class="pill espl">${f.n_manifestazioni} manifestazioni</span>`:''}
+          </div>
+          ${f.principio ? `<p class="perche">${esc(f.principio)}</p>`:''}
+          <div class="meta">
+            ${f.categoria?`<span>${esc(f.categoria)}</span>`:''}
+            ${f.stato?`<span class="k">${esc(f.stato)}</span>`:''}
+          </div>
+        </button>`;
+      list.appendChild(card);
+    });
+  } else {
+    items.forEach(p=>{
+      const card=document.createElement('article'); card.className='card';
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="cardtitle">${esc(cap(p.nome||p.id))}</span>
+          ${p.formula?`<span class="chip">${esc(p.formula)}</span>`:''}
+        </div>
+        ${p.descrizione?`<p class="perche">${esc(p.descrizione)}</p>`
+                       :`<p class="perche vuoto">Descrizione non ancora compilata per questo principio.</p>`}`;
+      list.appendChild(card);
+    });
+  }
+  sec.appendChild(list); $lista.appendChild(sec);
+}
+
+function mostraLista(){
+  $dett.hidden=true; $dett.innerHTML='';
+  $lista.hidden=false; $formFiltro.hidden=false;
+  renderLista();
+  window.scrollTo(0,0);
+}
+
+/* ---------------- DETTAGLIO FENOMENO ---------------- */
+function render3Livelli(liv){
+  liv = liv || {};
+  const f = liv.faccio||{}, c = liv.capisco||{}, a = liv.approfondisco||{};
+  const vuoto = o => Object.values(o||{}).every(vuotoVal);
+
+  const blkFaccio = vuoto(f)
+    ? `<p class="field-v vuoto">Questo livello non è ancora compilato per questa scheda.</p>`
+    : campo('Il punto', f.il_punto) + campo('Numero bersaglio', f.numero_bersaglio) + campo('Cosa osservare', f.cosa_osservare);
+
+  const blkCapisco = vuoto(c)
+    ? `<p class="field-v vuoto">Questo livello non è ancora compilato per questa scheda.</p>`
+    : campo('Principio', c.principio) + campo('Perché', c.perche) + campo('Errori comuni', c.errori_comuni);
+
+  const blkAppro = vuoto(a)
+    ? `<p class="field-v vuoto">Questo livello non è ancora compilato per questa scheda.</p>`
+    : campo('Causalità', a.causalita) + campo('Evidenza', a.evidence) + campo('Fonti', a.fonti) + campo('Strumento', a.strumento);
+
+  return `
+    <div class="liv"><div class="liv-head"><span class="liv-badge">Faccio</span><span class="liv-sub">cosa fare al banco</span></div>${blkFaccio}</div>
+    <div class="liv"><div class="liv-head"><span class="liv-badge">Capisco</span><span class="liv-sub">perché funziona</span></div>${blkCapisco}</div>
+    <div class="liv"><div class="liv-head"><span class="liv-badge">Approfondisco</span><span class="liv-sub">da dove viene</span></div>${blkAppro}</div>`;
+}
+
+function renderManifestazioni(m){
+  const arr = (m && m.manifestazioni) || [];
+  const ingr = (m && m.ingredienti_collegati) || [];
+  if(!arr.length && !ingr.length) return '';
+  let h = `<div class="section"><div class="sechead">${icon('<path d="M12 3v18M3 12h18"/>')}
+      <div style="min-width:0"><h2>Manifestazioni</h2><p>Dove questo fenomeno si manifesta nel mestiere.</p></div>
+      ${arr.length?`<span class="seccount">${arr.length}</span>`:''}</div><div class="list">`;
+  if(arr.length){
+    arr.forEach(x=>{
+      h += `<article class="card lite"><button class="card-apri" data-slug="${esc(x.slug)}">
+        <span class="partner-link">${esc(cap(x.nome||x.slug))}</span></button>
+        <div class="meta">${x.disciplina?`<span>${esc(x.disciplina)}</span>`:''}${x.bersaglio?`<span class="k">${esc(x.bersaglio)}</span>`:''}</div></article>`;
+    });
+  } else {
+    h += `<p class="field-v vuoto">Nessuna manifestazione collegata nel grafo.</p>`;
+  }
+  h += `</div>`;
+  if(ingr.length){
+    h += `<div class="chips" style="margin-top:14px"><span class="field-k" style="width:100%">Ingredienti collegati</span>`
+       + ingr.map(i=>`<span class="chip">${esc(cap(i))}</span>`).join('') + `</div>`;
+  }
+  h += `</div>`;
+  return h;
+}
+
+function renderQuiz(q){
+  // Onestà: niente quiz finto. Mostro l'autoverifica SOLO se il motore ha domande per questo fenomeno.
+  const arr = (q && q.quiz) || [];
+  if(!arr.length) return '';
+  let h = `<div class="section"><div class="sechead">${icon('<path d="M12 17h.01"/><path d="M12 13a2.5 2.5 0 1 0-2.5-2.5"/><circle cx="12" cy="12" r="9"/>')}
+      <div style="min-width:0"><h2>Mettiti alla prova</h2><p>Domande reali dal motore quiz di Matter.</p></div>
+      <span class="seccount">${arr.length}</span></div><div class="list">`;
+  arr.forEach((qz,qi)=>{
+    const opts = (qz.opzioni||[]).map((o,oi)=>
+      `<button class="quiz-opt" data-qid="${esc(qz.id)}" data-idx="${oi}" data-qi="${qi}">${esc(o)}</button>`).join('');
+    h += `<article class="card"><p class="point" style="font-size:15px">${esc(qz.domanda)}</p>
+      <div data-opts="${qi}">${opts}</div>
+      <div class="quiz-esito" id="esito-${qi}" hidden></div></article>`;
+  });
+  h += `</div></div>`;
+  return h;
+}
+
+async function apriFenomeno(slug){
+  $lista.hidden=true; $formFiltro.hidden=true; $dett.hidden=false;
+  $dett.innerHTML = `<button class="back" id="btn-back">← Torna all'elenco</button>
+                     <div class="state">Carico la scheda…</div>`;
+  window.scrollTo(0,0);
+
+  // scheda-scienza è il pezzo chiave; manifestazioni e quiz sono complementari e tollerano l'assenza.
+  const [schedaR, manifR, quizR] = await Promise.allSettled([
+    fetch('/v1/scheda-scienza/'+encodeURIComponent(slug), {headers:{'Accept':'application/json'}}),
+    fetch('/v1/fenomeno/'+encodeURIComponent(slug)+'/manifestazioni', {headers:{'Accept':'application/json'}}),
+    fetch('/v1/quiz?limit=4&fenomeno_id='+encodeURIComponent(slug), {headers:{'Accept':'application/json'}}),
+  ]);
+
+  let scheda=null, errScheda=null;
+  if(schedaR.status==='fulfilled' && schedaR.value.ok){ scheda = await schedaR.value.json(); }
+  else if(schedaR.status==='fulfilled'){ errScheda = schedaR.value.status; }
+  else { errScheda = 'rete'; }
+
+  if(!scheda || scheda.errore){
+    $dett.innerHTML = `<button class="back" id="btn-back">← Torna all'elenco</button>
+      <div class="state err">Non riesco a caricare la scheda di questo fenomeno${errScheda?` (${esc(errScheda)})`:''}${scheda&&scheda.errore?`: ${esc(scheda.errore)}`:''}.</div>`;
+    document.getElementById('btn-back').onclick = mostraLista;
+    return;
+  }
+
+  let manif=null;
+  if(manifR.status==='fulfilled' && manifR.value.ok){ const j=await manifR.value.json(); if(!j.errore) manif=j; }
+
+  let quiz=null, quizErr=false;
+  if(quizR.status==='fulfilled'){
+    if(quizR.value.ok){ const j=await quizR.value.json(); if(!j.errore) quiz=j; else quizErr=true; }
+    else { quizErr=true; }
+  } else { quizErr=true; }
+
+  // header meta onesto
+  const metaBits=[];
+  if(scheda.categoria) metaBits.push(`<span>${esc(scheda.categoria)}</span>`);
+  if(scheda.stato_editoriale) metaBits.push(`<span class="k">${esc(scheda.stato_editoriale)}</span>`);
+  if(scheda.confidenza) metaBits.push(`<span>confidenza: ${esc(scheda.confidenza)}</span>`);
+  const nFonti = (scheda.fonti||[]).length;
+  if(nFonti) metaBits.push(`<span>${nFonti} fonti</span>`);
+
+  const bersaglio = scheda.numero_bersaglio;
+  const bersHead = bersaglio
+    ? `<p class="point">${scheda.header_label?esc(scheda.header_label)+': ':'Numero bersaglio: '}<b>${esc(bersaglio)}</b></p>` : '';
+
+  let html = `<button class="back" id="btn-back">← Torna all'elenco</button>
+    <header class="hero" style="padding-block:14px 4px">
+      <div class="kind">Fenomeno</div>
+      <h1 style="font-size:clamp(30px,8vw,42px)">${esc(cap(scheda.nome||slug))}</h1>
+      ${scheda.principio?`<p class="regola"><b>${esc(scheda.principio)}</b></p>`:''}
+      ${bersHead}
+      ${metaBits.length?`<div class="meta">${metaBits.join('')}</div>`:''}
+    </header>
+    ${render3Livelli(scheda.livelli)}
+    ${renderManifestazioni(manif)}
+    ${renderQuiz(quiz)}`;
+  if(quizErr){
+    html += `<p class="gloss" style="margin-top:14px">Autoverifica non disponibile adesso (il motore quiz non ha risposto). Nessuna domanda inventata.</p>`;
+  }
+  $dett.innerHTML = html;
+  document.getElementById('btn-back').onclick = mostraLista;
+}
+
+/* ---------------- QUIZ: risposta dal vivo ---------------- */
+$dett.addEventListener('click', async e=>{
+  const opt = e.target.closest('.quiz-opt');
+  if(!opt) return;
+  const box = opt.parentElement;
+  const qi = opt.dataset.qi;
+  const esito = document.getElementById('esito-'+qi);
+  [...box.querySelectorAll('.quiz-opt')].forEach(b=>b.disabled=true);
+  try{
+    const res = await fetch('/v1/quiz/rispondi', {
+      method:'POST', headers:{'Content-Type':'application/json','X-Device-Id':deviceId()},
+      body: JSON.stringify({quiz_id: opt.dataset.qid, indice: parseInt(opt.dataset.idx,10)})
+    });
+    if(!res.ok){ esito.hidden=false; esito.className='quiz-esito ko'; esito.textContent='Verifica non riuscita adesso. Riprova tra poco.';
+                 [...box.querySelectorAll('.quiz-opt')].forEach(b=>b.disabled=false); return; }
+    const d = await res.json();
+    opt.classList.add(d.superato?'giusta':'sbagliata');
+    if(!d.superato && d.risposta_corretta){
+      [...box.querySelectorAll('.quiz-opt')].forEach(b=>{ if(b.textContent===d.risposta_corretta) b.classList.add('giusta'); });
+    }
+    esito.hidden=false; esito.className='quiz-esito '+(d.superato?'ok':'ko');
+    esito.innerHTML = (d.superato?'<b>Giusto.</b> ':'<b>Non ci siamo.</b> ')+(d.insight?esc(d.insight):'');
+  }catch(err){
+    esito.hidden=false; esito.className='quiz-esito ko'; esito.textContent='Non riesco a raggiungere il motore quiz adesso.';
+    [...box.querySelectorAll('.quiz-opt')].forEach(b=>b.disabled=false);
+  }
+});
+
+/* ---------------- liste: apri un elemento ---------------- */
+$lista.addEventListener('click', e=>{
+  const b = e.target.closest('.card-apri'); if(!b) return;
+  apriFenomeno(b.dataset.slug);
+});
+$dett.addEventListener('click', e=>{
+  const b = e.target.closest('.card-apri'); if(!b) return;
+  apriFenomeno(b.dataset.slug);
+});
+
+/* ---------------- tabs + filtro ---------------- */
+$tabs.addEventListener('click', e=>{
+  const t = e.target.closest('.tab'); if(!t) return;
+  VISTA = t.dataset.vista;
+  document.getElementById('tab-fen').setAttribute('aria-selected', VISTA==='fenomeni');
+  document.getElementById('tab-pri').setAttribute('aria-selected', VISTA==='principi');
+  $filtro.value='';
+  mostraLista();
+});
+$formFiltro.addEventListener('submit', e=>e.preventDefault());
+$filtro.addEventListener('input', ()=>{ if(!$lista.hidden) renderLista(); });
+
+/* ---------------- avvio ---------------- */
+async function avvia(){
+  setState('Carico fenomeni e principi dal grafo…', false);
+  const [fenR, priR] = await Promise.allSettled([
+    fetch('/v1/fenomeni-madre', {headers:{'Accept':'application/json'}}),
+    fetch('/v1/principi', {headers:{'Accept':'application/json'}}),
+  ]);
+  if(fenR.status==='fulfilled' && fenR.value.ok) DATI.fenomeni = await fenR.value.json();
+  if(priR.status==='fulfilled' && priR.value.ok) DATI.principi = await priR.value.json();
+
+  const nFen = (DATI.fenomeni && DATI.fenomeni.fenomeni_madre || []).length;
+  const nPri = (DATI.principi && DATI.principi.principi || []).length;
+  document.getElementById('n-fen').textContent = nFen||'';
+  document.getElementById('n-pri').textContent = nPri||'';
+  $src.innerHTML = `<b>${nFen} fenomeni madre</b> · <b>${nPri} principi</b> dal grafo Matter`;
+
+  if(!DATI.fenomeni && !DATI.principi){
+    setState('Non riesco a raggiungere il grafo adesso. Controlla la connessione e riprova.', true);
+    return;
+  }
+  $tabs.hidden=false;
+  mostraLista();
+}
+avvia();
+</script>
+</body>
+</html>
