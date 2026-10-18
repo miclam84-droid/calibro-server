@@ -152,6 +152,178 @@ def _cerca_usda(query_en, key):
     return data.get("foods", []) or []
 
 
+def _elabora_nodo(nid, nome_nodo, data, key, soglia, cur, esegui):
+    """Elabora UN nodo: parsing -> filtri -> ricerca USDA -> match/soglia ->
+    dettaglio -> derivazione -> scrittura (fill-only + backup). Funzione estratta
+    per isolare il crash di UN nodo storto (prima faceva cadere l'intero lotto).
+
+    PUO' SOLLEVARE: un nodo con dati storti (json rotto, dettaglio USDA malformato,
+    derivazione impossibile) solleva qui dentro; il chiamante (_sweep_nodi) lo cattura,
+    rollback al savepoint, conta 'saltati_errore' e CONTINUA col nodo dopo.
+
+    Ritorna un dict:
+      {"categoria": "protetto"|"non_sensoriale"|"gia_derivati"|"senza_en"|"bassa"|"alta",
+       "ricerca_fatta": bool, "voce": dict|None, "scritto": bool}
+    La logica di match/soglia e la semantica fill-only+backup sono INVARIATE."""
+    dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
+
+    # salta varieta'/DOP
+    testo = (str(nome_nodo) + " " + str(dd.get("kind", "")) + " " + str(dd.get("varieta_di", ""))).lower()
+    if dd.get("kind") == "varieta" or any(x in testo for x in _ESCLUDI):
+        return {"categoria": "protetto", "ricerca_fatta": False, "voce": None, "scritto": False}
+
+    # salta additivi/acidi/amidi/aromi: nessun gusto da composizione
+    if _non_sensoriale(nome_nodo):
+        return {"categoria": "non_sensoriale", "ricerca_fatta": False, "voce": None, "scritto": False}
+
+    meta = dict(dd.get("proprieta_meta", {}) or {})
+    assi_target = [a for a in ("dolce", "salato", "grasso")
+                   if (meta.get(a, {}) or {}).get("stato") != "derivato"]
+    if not assi_target:
+        return {"categoria": "gia_derivati", "ricerca_fatta": False, "voce": None, "scritto": False}
+
+    query_en, fonte_en = _nome_en(nome_nodo, dd)
+    if not query_en:
+        return {"categoria": "senza_en", "ricerca_fatta": False, "voce": None, "scritto": False}
+
+    # --- ricerca USDA (1 chiamata) ---
+    try:
+        cand = _cerca_usda(query_en, key)
+    except Exception as e:
+        time.sleep(0.3)
+        return {"categoria": "bassa", "ricerca_fatta": True, "scritto": False,
+                "voce": {"nodo": nid, "nome": nome_nodo, "query_en": query_en,
+                         "errore_usda": str(e)[:80]}}
+    time.sleep(0.3)
+
+    migliore = None
+    for f in cand:
+        if f.get("dataType") not in _DATATYPE_OK:
+            continue
+        sc, testa = _score(query_en, f.get("description", ""))
+        if migliore is None or sc > migliore[0]:
+            migliore = (sc, testa, f)
+    if not migliore:
+        return {"categoria": "bassa", "ricerca_fatta": True, "scritto": False,
+                "voce": {"nodo": nid, "nome": nome_nodo, "query_en": query_en,
+                         "esito": "nessun candidato SR Legacy/Foundation"}}
+
+    sc, testa, food = migliore
+    fdc_id = food.get("fdcId")
+    descr = food.get("description", "")
+    prod_ok = _prodotto_coerente(nome_nodo, query_en, descr)
+    comp = _usda_composito(descr)
+    # alta SOLO se: testa combacia, overlap >= soglia, prodotto confermato,
+    # e la descrizione USDA NON e' un cibo composto/preparato.
+    alta = testa and sc >= soglia and prod_ok and not comp
+
+    voce = {"nodo": nid, "nome": nome_nodo, "query_en": query_en, "fonte_en": fonte_en,
+            "fdc_id": fdc_id, "usda": descr, "dataType": food.get("dataType"),
+            "score": sc, "testa_ok": testa, "prodotto_coerente": prod_ok,
+            "usda_composito": comp, "assi_target": assi_target}
+
+    if not alta:
+        return {"categoria": "bassa", "ricerca_fatta": True, "voce": voce, "scritto": False}
+
+    # --- alta confidenza: dettaglio /food per nutrienti accurati ---
+    try:
+        detail = _usda_get("https://api.nal.usda.gov/fdc/v1/food/%s?api_key=%s"
+                           % (fdc_id, urllib.parse.quote(key)))
+        time.sleep(0.3)
+    except Exception as e:
+        voce["errore_dettaglio"] = str(e)[:80]
+        return {"categoria": "bassa", "ricerca_fatta": True, "voce": voce, "scritto": False}
+    # NB: la derivazione sotto NON e' protetta: su un dettaglio USDA storto solleva
+    # e il nodo viene saltato (saltati_errore), senza abbattere il lotto.
+    der = _deriva(_nutrienti(detail))
+
+    prop = dict(dd.get("proprieta", {}) or {})
+    cambi = {}
+    voce["derivati"] = {}
+    for asse in assi_target:
+        nuovo = der[asse]["val"]
+        voce["derivati"][asse] = {"vecchio": prop.get(asse), "nuovo": nuovo,
+                                  "grezzo": der[asse]["grezzo"]}
+        cambi[asse] = (nuovo, der[asse])
+
+    scritto = False
+    if esegui and cambi:
+        cur.execute("INSERT INTO _backup_gusti_derivati (id, data_old) VALUES (%s,%s)",
+                    (nid, json.dumps(dd, ensure_ascii=False)))
+        for asse, (nuovo, info) in cambi.items():
+            prop[asse] = nuovo
+            m = {"stato": "derivato", "fonte": "USDA FDC %s (match ricerca)" % fdc_id,
+                 "formula": FORMULA_VER, "grezzo": info["grezzo"], "match_score": sc}
+            if asse == "dolce":
+                m["via"] = info.get("via")
+            meta[asse] = m
+        dd["proprieta"] = prop
+        dd["proprieta_meta"] = meta
+        cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
+                    (json.dumps(dd, ensure_ascii=False), nid))
+        scritto = True
+        voce["scritto"] = True
+
+    return {"categoria": "alta", "ricerca_fatta": True, "voce": voce, "scritto": scritto}
+
+
+def _sweep_nodi(righe, key, soglia, limite, cur, esegui):
+    """Orchestratore resiliente del lotto. Per OGNI nodo: SAVEPOINT -> _elabora_nodo
+    -> RELEASE; su eccezione del singolo nodo: log (print flush), ROLLBACK TO SAVEPOINT
+    (la transazione resta sana per i nodi successivi), conta 'saltati_errore' e CONTINUA.
+    Un nodo rotto NON fa piu' 500 ne' abbatte il lotto.
+    Ritorna (contatori, proposte_alta, proposte_bassa, errori)."""
+    cont = {"ricerche": 0, "scritti": 0, "senza_en": 0, "gia_derivati": 0,
+            "protetti": 0, "non_sensoriali": 0, "saltati_errore": 0, "consumati": 0}
+    proposte_alta, proposte_bassa, errori = [], [], []
+
+    def _sp(sql):
+        # Savepoint utili solo in transazione viva; il cursore finto nei test li ignora.
+        try:
+            cur.execute(sql)
+        except Exception:
+            pass
+
+    for nid, nome_nodo, data in righe:
+        if cont["ricerche"] >= limite:
+            break
+        cont["consumati"] += 1
+        _sp("SAVEPOINT sp_nodo")
+        try:
+            ris = _elabora_nodo(nid, nome_nodo, data, key, soglia, cur, esegui)
+            _sp("RELEASE SAVEPOINT sp_nodo")
+        except Exception as e:
+            print("[deriva-gusti-search] nodo %r (%s) saltato per errore: %s"
+                  % (nid, nome_nodo, e), flush=True)
+            _sp("ROLLBACK TO SAVEPOINT sp_nodo")
+            cont["saltati_errore"] += 1
+            if len(errori) < 60:
+                errori.append({"nodo": nid, "nome": nome_nodo, "errore": str(e)[:120]})
+            continue
+
+        if ris.get("ricerca_fatta"):
+            cont["ricerche"] += 1
+        cat = ris.get("categoria")
+        if cat == "protetto":
+            cont["protetti"] += 1
+        elif cat == "non_sensoriale":
+            cont["non_sensoriali"] += 1
+        elif cat == "gia_derivati":
+            cont["gia_derivati"] += 1
+        elif cat == "senza_en":
+            cont["senza_en"] += 1
+        elif cat == "bassa":
+            if ris.get("voce") and len(proposte_bassa) < 60:
+                proposte_bassa.append(ris["voce"])
+        elif cat == "alta":
+            if ris.get("scritto"):
+                cont["scritti"] += 1
+            if ris.get("voce") and len(proposte_alta) < 60:
+                proposte_alta.append(ris["voce"])
+
+    return cont, proposte_alta, proposte_bassa, errori
+
+
 @bp_gusti_search.route("/admin/deriva-gusti-search")
 def deriva_gusti_search():
     """DRY-RUN di default (?s=SECRET). &esegui=1 scrive (fill-only, backup+transazione).
@@ -204,126 +376,9 @@ def deriva_gusti_search():
                        OFFSET %s""", (offset,))
         righe = cur.fetchall()
 
-        ricerche = 0
-        scritti = 0
-        senza_en = 0
-        gia_derivati = 0
-        protetti = 0
-        non_sensoriali = 0
-        proposte_alta, proposte_bassa = [], []
-
-        consumati = 0
-        for nid, nome_nodo, data in righe:
-            if ricerche >= limite:
-                break
-            consumati += 1
-            dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
-
-            # salta varieta'/DOP
-            testo = (str(nome_nodo) + " " + str(dd.get("kind", "")) + " " + str(dd.get("varieta_di", ""))).lower()
-            if dd.get("kind") == "varieta" or any(x in testo for x in _ESCLUDI):
-                protetti += 1
-                continue
-
-            # salta additivi/acidi/amidi/aromi: nessun gusto da composizione
-            if _non_sensoriale(nome_nodo):
-                non_sensoriali += 1
-                continue
-
-            meta = dict(dd.get("proprieta_meta", {}) or {})
-            assi_target = [a for a in ("dolce", "salato", "grasso")
-                           if (meta.get(a, {}) or {}).get("stato") != "derivato"]
-            if not assi_target:
-                gia_derivati += 1
-                continue
-
-            query_en, fonte_en = _nome_en(nome_nodo, dd)
-            if not query_en:
-                senza_en += 1
-                continue
-
-            # --- ricerca USDA (1 chiamata) ---
-            ricerche += 1
-            try:
-                cand = _cerca_usda(query_en, key)
-            except Exception as e:
-                proposte_bassa.append({"nodo": nid, "nome": nome_nodo, "query_en": query_en,
-                                       "errore_usda": str(e)[:80]})
-                time.sleep(0.3)
-                continue
-            time.sleep(0.3)
-
-            migliore = None
-            for f in cand:
-                if f.get("dataType") not in _DATATYPE_OK:
-                    continue
-                sc, testa = _score(query_en, f.get("description", ""))
-                if migliore is None or sc > migliore[0]:
-                    migliore = (sc, testa, f)
-            if not migliore:
-                proposte_bassa.append({"nodo": nid, "nome": nome_nodo, "query_en": query_en,
-                                       "esito": "nessun candidato SR Legacy/Foundation"})
-                continue
-
-            sc, testa, food = migliore
-            fdc_id = food.get("fdcId")
-            descr = food.get("description", "")
-            prod_ok = _prodotto_coerente(nome_nodo, query_en, descr)
-            comp = _usda_composito(descr)
-            # alta SOLO se: testa combacia, overlap >= soglia, prodotto confermato,
-            # e la descrizione USDA NON e' un cibo composto/preparato (seasoning mix,
-            # with added, drink, ...) che non rappresenta l'ingrediente.
-            alta = testa and sc >= soglia and prod_ok and not comp
-
-            voce = {"nodo": nid, "nome": nome_nodo, "query_en": query_en, "fonte_en": fonte_en,
-                    "fdc_id": fdc_id, "usda": descr, "dataType": food.get("dataType"),
-                    "score": sc, "testa_ok": testa, "prodotto_coerente": prod_ok,
-                    "usda_composito": comp, "assi_target": assi_target}
-
-            if not alta:
-                if len(proposte_bassa) < 60:
-                    proposte_bassa.append(voce)
-                continue
-
-            # --- alta confidenza: dettaglio /food per nutrienti accurati ---
-            try:
-                detail = _usda_get("https://api.nal.usda.gov/fdc/v1/food/%s?api_key=%s"
-                                   % (fdc_id, urllib.parse.quote(key)))
-                time.sleep(0.3)
-            except Exception as e:
-                voce["errore_dettaglio"] = str(e)[:80]
-                proposte_bassa.append(voce)
-                continue
-            der = _deriva(_nutrienti(detail))
-
-            prop = dict(dd.get("proprieta", {}) or {})
-            cambi = {}
-            voce["derivati"] = {}
-            for asse in assi_target:
-                nuovo = der[asse]["val"]
-                voce["derivati"][asse] = {"vecchio": prop.get(asse), "nuovo": nuovo,
-                                          "grezzo": der[asse]["grezzo"]}
-                cambi[asse] = (nuovo, der[asse])
-
-            if esegui and cambi:
-                cur.execute("INSERT INTO _backup_gusti_derivati (id, data_old) VALUES (%s,%s)",
-                            (nid, json.dumps(dd, ensure_ascii=False)))
-                for asse, (nuovo, info) in cambi.items():
-                    prop[asse] = nuovo
-                    m = {"stato": "derivato", "fonte": "USDA FDC %s (match ricerca)" % fdc_id,
-                         "formula": FORMULA_VER, "grezzo": info["grezzo"], "match_score": sc}
-                    if asse == "dolce":
-                        m["via"] = info.get("via")
-                    meta[asse] = m
-                dd["proprieta"] = prop
-                dd["proprieta_meta"] = meta
-                cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
-                            (json.dumps(dd, ensure_ascii=False), nid))
-                scritti += 1
-                voce["scritto"] = True
-
-            if len(proposte_alta) < 60:
-                proposte_alta.append(voce)
+        cont, proposte_alta, proposte_bassa, errori = _sweep_nodi(
+            righe, key, soglia, limite, cur, esegui)
+        consumati = cont["consumati"]
 
         if esegui:
             conn.commit()
@@ -333,18 +388,20 @@ def deriva_gusti_search():
             "dry_run": (not esegui),
             "formula": FORMULA_VER,
             "soglia_alta": soglia,
-            "ricerche_usda": ricerche,
+            "ricerche_usda": cont["ricerche"],
             "limite": limite,
             "offset": offset,
             "prossimo_offset": (None if consumati >= len(righe) else offset + consumati),
             "fine": (consumati >= len(righe)),
             "accettati_alta": len(proposte_alta),
             "proposti_bassa_NON_scritti": len(proposte_bassa),
-            "scritti": scritti if esegui else 0,
-            "saltati_senza_nome_en": senza_en,
-            "saltati_gia_derivati": gia_derivati,
-            "saltati_protetti_rari": protetti,
-            "saltati_non_sensoriali": non_sensoriali,
+            "scritti": cont["scritti"] if esegui else 0,
+            "saltati_senza_nome_en": cont["senza_en"],
+            "saltati_gia_derivati": cont["gia_derivati"],
+            "saltati_protetti_rari": cont["protetti"],
+            "saltati_non_sensoriali": cont["non_sensoriali"],
+            "saltati_errore": cont["saltati_errore"],
+            "errori": errori,
             "nota": ("DRY RUN: nessuna scrittura. Guarda 'alta_confidenza' (verrebbero scritti) "
                      "e 'bassa_confidenza' (NON scritti, da controllare a occhio). "
                      "Aggiungi &esegui=1 per scrivere SOLO gli alta. Rilancia con &limite piu' alto "
