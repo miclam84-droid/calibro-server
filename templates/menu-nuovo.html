@@ -4,25 +4,65 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Menu — Matter Bench</title>
-<meta name="description" content="Componi l'offerta assemblando le preparazioni che hai gia' salvato. Nessuna voce inventata: solo le tue preparazioni reali.">
+<meta name="description" content="Crea la carta del tuo locale — pizze, drink, vini, food — con voci libere o agganciate alle tue preparazioni profilate. Template, logo, colore e PDF scaricabile.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
 <link rel="stylesheet" href="/static/matter3.css">
 <style>
-  /* --- MENU NUOVO: solo lo stretto necessario oltre matter3.css --- */
+  /* --- MENU NUOVO / CREATORE DI CARTE: solo lo stretto necessario oltre matter3.css --- */
   .menu-testa{margin-top:22px}
   .menu-testa h1{font-size:24px; font-family:var(--display); font-weight:800; letter-spacing:-.01em}
   .menu-sub{font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.45}
 
+  /* selettore tipo carta (segmented) */
+  .seg{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .seg-b{
+    font-family:var(--sans); font-weight:600; font-size:14px; color:var(--verde);
+    background:var(--surface); border:1px solid var(--verde); border-radius:var(--r-pill);
+    padding:8px 15px; cursor:pointer; -webkit-appearance:none; appearance:none;
+  }
+  .seg-b:hover{background:var(--tint)}
+  .seg-b.is-on{background:var(--verde); color:#fff}
+  .seg-b:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+  /* campi generici */
+  .campo{display:block; margin-bottom:14px}
+  .campo > span{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px}
+  .campo input, .campo textarea{
+    width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:11px 13px; box-shadow:var(--shadow-sm);
+  }
+  .campo textarea{resize:vertical; min-height:62px; line-height:1.45}
+  .campo input:focus, .campo textarea:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+
+  /* form voce libera */
+  .libera{margin-top:12px}
+  .libera-griglia{display:grid; grid-template-columns:1fr; gap:0}
+  @media(min-width:520px){ .libera-due{display:grid; grid-template-columns:1fr 150px; gap:0 14px} }
+  .libera-err{margin:2px 0 10px; font-size:12.5px; color:var(--oxblood); font-weight:600}
+
+  /* preparazioni profilate (accordion) */
+  .disp-toggle{
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-family:var(--sans); font-weight:600; font-size:14px; color:var(--ink);
+    background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:12px 14px; cursor:pointer; -webkit-appearance:none; appearance:none; text-align:left;
+  }
+  .disp-toggle:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .disp-toggle .chev{color:var(--verde); font-size:13px; transition:transform .15s ease}
+  .disp-toggle.is-open .chev{transform:rotate(180deg)}
+  .disp-intro{font-size:12.5px; color:var(--ink-soft); margin:10px 2px 0; line-height:1.45}
+
   /* stato di caricamento / vuoto / errore */
   .stato{
-    margin-top:14px; background:var(--panel); border:1px dashed var(--riga);
-    border-radius:var(--r); padding:18px 16px; font-size:13.5px; color:var(--ink-soft);
+    margin-top:12px; background:var(--panel); border:1px dashed var(--riga);
+    border-radius:var(--r); padding:16px; font-size:13px; color:var(--ink-soft);
     text-align:center; line-height:1.5;
   }
-  .stato .btn{margin-top:14px; display:inline-flex; width:auto}
   .stato.stato-err{border-style:solid; border-color:rgba(168,80,74,.32); background:rgba(168,80,74,.08); color:var(--ink)}
+  .stato .lk{color:var(--verde); font-weight:600}
 
   /* lista preparazioni disponibili */
   .disp{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:10px}
@@ -32,7 +72,7 @@
     display:flex; align-items:center; gap:10px; flex-wrap:wrap;
   }
   .prep-corpo{flex:1 1 auto; min-width:0}
-  .prep-nome{font-family:var(--display); font-weight:700; font-size:15.5px; color:var(--ink); text-transform:capitalize}
+  .prep-nome{font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink); text-transform:capitalize}
   .prep-meta{font-family:var(--sans); font-weight:500; font-size:11.5px; color:var(--ink-soft); display:block; margin-top:2px}
   .prep-add{
     flex:0 0 auto; font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde);
@@ -43,16 +83,8 @@
   .prep-add:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   .prep-add[disabled]{opacity:.5; cursor:default; border-color:var(--riga); color:var(--ink-soft); background:var(--panel)}
 
-  /* IL TUO MENU */
+  /* LA TUA CARTA */
   .mio{margin-top:30px}
-  .mio-campo{display:block; margin-bottom:14px}
-  .mio-campo > span{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px}
-  .mio-campo input{
-    width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
-    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
-    padding:11px 13px; box-shadow:var(--shadow-sm);
-  }
-  .mio-campo input:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
   .mio-vuoto{
     margin-top:12px; background:var(--panel); border:1px dashed var(--riga);
     border-radius:var(--r); padding:16px; font-size:13px; color:var(--ink-soft);
@@ -62,16 +94,29 @@
   .voce{
     background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
     box-shadow:var(--shadow-sm); padding:12px 13px;
-    display:flex; align-items:center; gap:10px;
+    display:flex; align-items:flex-start; gap:10px;
   }
-  .voce-nome{flex:1 1 auto; min-width:0; font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink); text-transform:capitalize}
-  .voce-x{
-    flex:0 0 auto; width:30px; height:30px; border-radius:var(--r-pill);
+  .voce-corpo{flex:1 1 auto; min-width:0}
+  .voce-riga{display:flex; align-items:baseline; gap:10px}
+  .voce-nome{flex:1 1 auto; min-width:0; font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink)}
+  .voce-prezzo{flex:0 0 auto; font-family:var(--display); font-weight:700; font-size:15px; color:var(--verde)}
+  .voce-meta{margin-top:4px; font-size:12px; color:var(--ink-soft); line-height:1.45}
+  .voce-meta .sep{opacity:.5}
+  .voce-meta .voce-desc{font-style:italic}
+  .voce-meta .tag-prof{
+    display:inline-block; font-size:10.5px; font-weight:600; color:var(--verde);
+    background:var(--tint); border-radius:var(--r-pill); padding:1px 8px; letter-spacing:.02em;
+  }
+  .voce-ctrl{flex:0 0 auto; display:flex; gap:6px; align-items:center}
+  .voce-mv, .voce-x{
+    width:30px; height:30px; border-radius:var(--r-pill);
     border:1px solid var(--riga); background:var(--surface); color:var(--ink-soft);
-    font-size:15px; line-height:1; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+    font-size:14px; line-height:1; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
   }
+  .voce-mv:hover{border-color:var(--verde); color:var(--verde)}
+  .voce-mv[disabled]{opacity:.35; cursor:default}
   .voce-x:hover{border-color:var(--oxblood); color:var(--oxblood)}
-  .voce-x:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .voce-mv:focus-visible, .voce-x:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 
   /* salva */
   .salva{margin-top:22px}
@@ -80,9 +125,54 @@
   .salva-esito.esito-err{background:rgba(168,80,74,.10); border:1px solid rgba(168,80,74,.32); color:var(--ink)}
   .esito-t{font-family:var(--display); font-weight:800; font-size:16px; color:var(--verde)}
   .esito-d{margin:6px 0 0}
-  .esito-id{font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--ink-soft)}
-  .esito-az{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-  .esito-az .btn{flex:1 1 auto}
+  .esito-id{font-variant-numeric:tabular-nums; font-size:11.5px; color:var(--ink-soft); margin:6px 0 0}
+
+  /* DESIGN & ESPORT */
+  .design{margin-top:34px; border-top:1px solid var(--riga); padding-top:24px}
+  .design.is-stale .design-stale{display:block}
+  .design-stale{display:none; margin:0 0 14px; font-size:12.5px; color:var(--oxblood); font-weight:600}
+  .ds-block{margin-top:16px}
+  .ds-block > .lab{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:8px}
+  .tpl{display:flex; flex-wrap:wrap; gap:8px}
+  .tpl-b{
+    font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde);
+    background:var(--surface); border:1px solid var(--verde); border-radius:var(--r-pill);
+    padding:7px 13px; cursor:pointer; -webkit-appearance:none; appearance:none;
+  }
+  .tpl-b:hover{background:var(--tint)}
+  .tpl-b.is-on{background:var(--verde); color:#fff}
+  .tpl-b:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .ds-riga{display:flex; flex-wrap:wrap; gap:16px 20px; align-items:flex-end}
+  .ds-col{flex:1 1 auto; min-width:140px}
+  .ds-col.ds-accent{flex:0 0 auto}
+  input[type=color]#ds-accent{
+    width:52px; height:40px; padding:3px; border:1px solid var(--riga); border-radius:var(--r-sm);
+    background:var(--surface); cursor:pointer;
+  }
+  select#ds-font{
+    width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm);
+    padding:10px 12px; box-shadow:var(--shadow-sm); -webkit-appearance:none; appearance:none;
+  }
+  .ds-logo-wrap{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .ds-logo-btn{
+    font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde);
+    background:var(--surface); border:1px solid var(--verde); border-radius:var(--r-sm);
+    padding:9px 14px; cursor:pointer; display:inline-flex;
+  }
+  .ds-logo-btn:hover{background:var(--tint)}
+  .ds-logo-stato{font-size:12px; color:var(--ink-soft)}
+  .ds-logo-stato.ok{color:var(--verde); font-weight:600}
+  .ds-logo-stato.err{color:var(--oxblood); font-weight:600}
+  #ds-logo-prev{max-height:44px; width:auto; border-radius:6px; border:1px solid var(--riga)}
+  .ds-azioni{display:flex; gap:10px; flex-wrap:wrap; margin-top:20px}
+  .ds-azioni .btn{flex:1 1 auto}
+  .ds-preview{margin-top:18px}
+  #preview-frame{
+    width:100%; height:62vh; min-height:380px; border:1px solid var(--riga);
+    border-radius:var(--r); background:#fff; box-shadow:var(--shadow-sm);
+  }
+  .link-render{display:inline-block; margin-top:10px; font-size:13px; font-weight:600; color:var(--verde)}
 </style>
 </head>
 <body>
@@ -98,32 +188,132 @@
 
   <section class="menu-testa">
     <span class="eyebrow">Menu</span>
-    <h1 data-i18n="titolo">Componi l'offerta</h1>
-    <p class="menu-sub" data-i18n="sub">Il menu si assembla dalle preparazioni che hai gia' salvato. Niente nomi o abbinamenti inventati: solo le tue preparazioni reali.</p>
+    <h1 data-i18n="titolo">Crea la tua carta</h1>
+    <p class="menu-sub" data-i18n="sub">Scrivi liberamente ogni voce — nome, prezzo, descrizione, sezione. Se una voce è una tua preparazione profilata, puoi agganciarla. Poi scegli grafica, logo e colore e scarichi il PDF.</p>
   </section>
 
-  <!-- PREPARAZIONI DISPONIBILI (funzione="composer" dal Quaderno) -->
-  <section class="section" aria-labelledby="h-disp">
-    <span class="eyebrow" id="h-disp" data-i18n="h_disp">Le tue preparazioni</span>
-    <div class="stato" id="disp-stato">Carico le tue preparazioni salvate…</div>
-    <ul class="disp" id="disp" hidden></ul>
+  <!-- 1 · TIPO DI CARTA -->
+  <section class="section" aria-labelledby="h-tipo">
+    <span class="eyebrow" id="h-tipo" data-i18n="h_tipo">Tipo di carta</span>
+    <div class="seg" id="seg-tipo" role="group" aria-label="Tipo di carta"></div>
   </section>
 
-  <!-- IL TUO MENU -->
-  <section class="mio" aria-labelledby="h-mio">
-    <span class="eyebrow" id="h-mio" style="display:block; margin-bottom:12px" data-i18n="h_mio">Il tuo menu</span>
-
-    <label class="mio-campo" for="menu-nome">
-      <span data-i18n="nome_menu">Nome del menu</span>
-      <input type="text" id="menu-nome" maxlength="140" placeholder="Menu — (oggi, se lasci vuoto)" autocomplete="off" data-i18n-ph="nome_ph">
+  <!-- 2 · DATI DELLA CARTA -->
+  <section class="section" aria-labelledby="h-dati">
+    <span class="eyebrow" id="h-dati" data-i18n="h_dati">Intestazione</span>
+    <label class="campo" for="menu-nome" style="margin-top:12px">
+      <span data-i18n="nome_menu">Nome della carta</span>
+      <input type="text" id="menu-nome" maxlength="140" placeholder="Carta — (oggi, se lasci vuoto)" autocomplete="off" data-i18n-ph="nome_ph">
     </label>
+    <label class="campo" for="menu-locale">
+      <span data-i18n="locale_lab">Nome del locale (facoltativo)</span>
+      <input type="text" id="menu-locale" maxlength="120" placeholder="Il tuo locale" autocomplete="off" data-i18n-ph="locale_ph">
+    </label>
+  </section>
 
-    <div class="mio-vuoto" id="mio-vuoto" data-i18n="mio_vuoto">Nessuna voce ancora. Aggiungi una preparazione dall'elenco qui sopra.</div>
+  <!-- 3 · AGGIUNGI UNA VOCE LIBERA -->
+  <section class="section" aria-labelledby="h-libera">
+    <span class="eyebrow" id="h-libera" data-i18n="h_libera">Aggiungi una voce</span>
+    <div class="libera">
+      <label class="campo" for="vl-nome">
+        <span data-i18n="vl_nome">Nome *</span>
+        <input type="text" id="vl-nome" maxlength="160" placeholder="es. Margherita del fossato" autocomplete="off" data-i18n-ph="vl_nome_ph">
+      </label>
+      <div class="libera-due">
+        <label class="campo" for="vl-sezione">
+          <span data-i18n="vl_sezione">Sezione</span>
+          <input type="text" id="vl-sezione" maxlength="80" placeholder="es. Antipasti, Primi, Dolci" autocomplete="off" data-i18n-ph="vl_sezione_ph">
+        </label>
+        <label class="campo" for="vl-prezzo">
+          <span data-i18n="vl_prezzo">Prezzo</span>
+          <input type="text" id="vl-prezzo" maxlength="24" placeholder="es. 8,00 €" autocomplete="off" inputmode="decimal" data-i18n-ph="vl_prezzo_ph">
+        </label>
+      </div>
+      <label class="campo" for="vl-desc">
+        <span data-i18n="vl_desc">Descrizione</span>
+        <textarea id="vl-desc" maxlength="500" placeholder="ingredienti, note… (facoltativo)" data-i18n-ph="vl_desc_ph"></textarea>
+      </label>
+      <div class="libera-err" id="vl-err" hidden></div>
+      <button class="btn btn--block" id="vl-add" type="button" data-i18n="vl_add">+ Aggiungi alla carta</button>
+    </div>
+  </section>
+
+  <!-- 4 · DALLE PREPARAZIONI PROFILATE (il tocco scientifico) -->
+  <section class="section" aria-labelledby="h-prof">
+    <span class="eyebrow" id="h-prof" data-i18n="h_prof">Dalle tue preparazioni profilate</span>
+    <p class="disp-intro" data-i18n="prof_intro">Facoltativo: aggancia una voce a una preparazione che hai già profilato al banco. Gli allergeni verranno dedotti dai suoi ingredienti.</p>
+    <button class="disp-toggle" id="disp-toggle" type="button" aria-expanded="false" style="margin-top:10px">
+      <span data-i18n="disp_toggle">Mostra le mie preparazioni profilate</span>
+      <span class="chev">▼</span>
+    </button>
+    <div id="disp-wrap" hidden>
+      <div class="stato" id="disp-stato">Carico le tue preparazioni salvate…</div>
+      <ul class="disp" id="disp" hidden></ul>
+    </div>
+  </section>
+
+  <!-- 5 · LA TUA CARTA -->
+  <section class="mio" aria-labelledby="h-mio">
+    <span class="eyebrow" id="h-mio" style="display:block; margin-bottom:12px" data-i18n="h_mio">La tua carta</span>
+    <div class="mio-vuoto" id="mio-vuoto" data-i18n="mio_vuoto">Nessuna voce ancora. Scrivi una voce qui sopra, oppure agganciane una dalle tue preparazioni.</div>
     <ul class="voci" id="voci" hidden></ul>
 
     <div class="salva" id="salva">
-      <button class="btn btn--block" id="btn-salva" type="button" disabled data-i18n="btn_salva">Salva il menu</button>
+      <button class="btn btn--block" id="btn-salva" type="button" disabled data-i18n="btn_salva">Salva la carta</button>
       <div class="salva-esito" id="salva-esito" hidden></div>
+    </div>
+  </section>
+
+  <!-- 6 · DESIGN & ESPORT (dopo il salvataggio) -->
+  <section class="design" id="design" aria-labelledby="h-design" hidden>
+    <span class="eyebrow" id="h-design" data-i18n="h_design">Design & esport</span>
+    <p class="design-stale" data-i18n="design_stale">Hai modificato la carta: ri-salvala per aggiornare anteprima e PDF.</p>
+
+    <div class="ds-block">
+      <span class="lab" data-i18n="ds_template">Template grafico</span>
+      <div class="tpl" id="ds-template" role="group" aria-label="Template"></div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-riga">
+        <div class="ds-col ds-accent">
+          <span class="lab" data-i18n="ds_accent">Colore accento</span>
+          <input type="color" id="ds-accent" value="#1E593C" aria-label="Colore accento">
+        </div>
+        <div class="ds-col">
+          <span class="lab" data-i18n="ds_font">Carattere</span>
+          <select id="ds-font">
+            <option value="auto" data-i18n="ds_font_auto">Predefinito del template</option>
+            <option value="sans" data-i18n="ds_font_sans">Sans-serif</option>
+            <option value="serif" data-i18n="ds_font_serif">Serif</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <span class="lab" data-i18n="ds_footer">Piè di pagina (facoltativo)</span>
+      <input class="campo" style="margin:0" type="text" id="ds-footer" maxlength="160" placeholder="es. Coperto 2 € · Wi-Fi: fossato" autocomplete="off" data-i18n-ph="ds_footer_ph">
+    </div>
+
+    <div class="ds-block">
+      <span class="lab" data-i18n="ds_logo">Logo (facoltativo, max 3MB)</span>
+      <div class="ds-logo-wrap">
+        <label class="ds-logo-btn" for="ds-logo-input" data-i18n="ds_logo_btn">Scegli un'immagine</label>
+        <input type="file" id="ds-logo-input" accept="image/*" hidden>
+        <img id="ds-logo-prev" alt="logo" hidden>
+        <span class="ds-logo-stato" id="ds-logo-stato" hidden></span>
+      </div>
+    </div>
+
+    <div class="ds-azioni">
+      <button class="btn btn--ghost" id="btn-anteprima" type="button" data-i18n="btn_anteprima">Aggiorna anteprima</button>
+      <button class="btn" id="btn-pdf" type="button" data-i18n="btn_pdf">Scarica il PDF</button>
+    </div>
+
+    <div class="ds-preview">
+      <iframe id="preview-frame" title="Anteprima della carta" hidden></iframe>
+      <a class="link-render" id="link-render" href="#" target="_blank" rel="noopener" hidden data-i18n="link_render">Apri l'anteprima in una nuova scheda ↗</a>
     </div>
   </section>
 
@@ -136,314 +326,48 @@
 window.I18N_TITLE = {it:"Menu — Matter Bench", en:"Menu — Matter Bench", es:"Menú — Matter Bench"};
 window.I18N_DICT = {
   eyebrow_menu: {it:"menu", en:"menu", es:"menú"},
-  titolo: {it:"Componi l'offerta", en:"Compose your offering", es:"Compón tu oferta"},
-  sub: {it:"Il menu si assembla dalle preparazioni che hai gia' salvato. Niente nomi o abbinamenti inventati: solo le tue preparazioni reali.", en:"The menu is assembled from the preparations you've already saved. No invented names or pairings: only your real preparations.", es:"El menú se arma a partir de las preparaciones que ya has guardado. Sin nombres ni maridajes inventados: solo tus preparaciones reales."},
-  h_disp: {it:"Le tue preparazioni", en:"Your preparations", es:"Tus preparaciones"},
-  h_mio: {it:"Il tuo menu", en:"Your menu", es:"Tu menú"},
-  nome_menu: {it:"Nome del menu", en:"Menu name", es:"Nombre del menú"},
-  nome_ph: {it:"Menu — (oggi, se lasci vuoto)", en:"Menu — (today, if left blank)", es:"Menú — (hoy, si lo dejas vacío)"},
-  mio_vuoto: {it:"Nessuna voce ancora. Aggiungi una preparazione dall'elenco qui sopra.", en:"No items yet. Add a preparation from the list above.", es:"Aún no hay elementos. Añade una preparación de la lista de arriba."},
-  btn_salva: {it:"Salva il menu", en:"Save the menu", es:"Guardar el menú"}
+  titolo: {it:"Crea la tua carta", en:"Build your menu card", es:"Crea tu carta"},
+  sub: {it:"Scrivi liberamente ogni voce — nome, prezzo, descrizione, sezione. Se una voce è una tua preparazione profilata, puoi agganciarla. Poi scegli grafica, logo e colore e scarichi il PDF.", en:"Write every item freely — name, price, description, section. If an item is one of your profiled preparations, you can link it. Then pick the design, logo and colour, and download the PDF.", es:"Escribe cada elemento libremente — nombre, precio, descripción, sección. Si un elemento es una preparación tuya perfilada, puedes vincularla. Luego eliges diseño, logo y color, y descargas el PDF."},
+  h_tipo: {it:"Tipo di carta", en:"Card type", es:"Tipo de carta"},
+  h_dati: {it:"Intestazione", en:"Header", es:"Encabezado"},
+  nome_menu: {it:"Nome della carta", en:"Card name", es:"Nombre de la carta"},
+  nome_ph: {it:"Carta — (oggi, se lasci vuoto)", en:"Card — (today, if left blank)", es:"Carta — (hoy, si lo dejas vacío)"},
+  locale_lab: {it:"Nome del locale (facoltativo)", en:"Venue name (optional)", es:"Nombre del local (opcional)"},
+  locale_ph: {it:"Il tuo locale", en:"Your venue", es:"Tu local"},
+  h_libera: {it:"Aggiungi una voce", en:"Add an item", es:"Añade un elemento"},
+  vl_nome: {it:"Nome *", en:"Name *", es:"Nombre *"},
+  vl_nome_ph: {it:"es. Margherita del fossato", en:"e.g. Garden Margherita", es:"p.ej. Margarita del foso"},
+  vl_sezione: {it:"Sezione", en:"Section", es:"Sección"},
+  vl_sezione_ph: {it:"es. Antipasti, Primi, Dolci", en:"e.g. Starters, Mains, Desserts", es:"p.ej. Entrantes, Principales, Postres"},
+  vl_prezzo: {it:"Prezzo", en:"Price", es:"Precio"},
+  vl_prezzo_ph: {it:"es. 8,00 €", en:"e.g. €8.00", es:"p.ej. 8,00 €"},
+  vl_desc: {it:"Descrizione", en:"Description", es:"Descripción"},
+  vl_desc_ph: {it:"ingredienti, note… (facoltativo)", en:"ingredients, notes… (optional)", es:"ingredientes, notas… (opcional)"},
+  vl_add: {it:"+ Aggiungi alla carta", en:"+ Add to the card", es:"+ Añadir a la carta"},
+  h_prof: {it:"Dalle tue preparazioni profilate", en:"From your profiled preparations", es:"Desde tus preparaciones perfiladas"},
+  prof_intro: {it:"Facoltativo: aggancia una voce a una preparazione che hai già profilato al banco. Gli allergeni verranno dedotti dai suoi ingredienti.", en:"Optional: link an item to a preparation you've already profiled at the bench. Allergens will be deduced from its ingredients.", es:"Opcional: vincula un elemento a una preparación que ya hayas perfilado en el banco. Los alérgenos se deducirán de sus ingredientes."},
+  disp_toggle: {it:"Mostra le mie preparazioni profilate", en:"Show my profiled preparations", es:"Mostrar mis preparaciones perfiladas"},
+  h_mio: {it:"La tua carta", en:"Your card", es:"Tu carta"},
+  mio_vuoto: {it:"Nessuna voce ancora. Scrivi una voce qui sopra, oppure agganciane una dalle tue preparazioni.", en:"No items yet. Write an item above, or link one from your preparations.", es:"Aún no hay elementos. Escribe un elemento arriba, o vincula uno de tus preparaciones."},
+  btn_salva: {it:"Salva la carta", en:"Save the card", es:"Guardar la carta"},
+  h_design: {it:"Design & esport", en:"Design & export", es:"Diseño y exportación"},
+  design_stale: {it:"Hai modificato la carta: ri-salvala per aggiornare anteprima e PDF.", en:"You changed the card: save it again to refresh the preview and PDF.", es:"Has modificado la carta: guárdala de nuevo para actualizar la vista previa y el PDF."},
+  ds_template: {it:"Template grafico", en:"Graphic template", es:"Plantilla gráfica"},
+  ds_accent: {it:"Colore accento", en:"Accent colour", es:"Color de acento"},
+  ds_font: {it:"Carattere", en:"Typeface", es:"Tipografía"},
+  ds_font_auto: {it:"Predefinito del template", en:"Template default", es:"Predeterminado de la plantilla"},
+  ds_font_sans: {it:"Sans-serif", en:"Sans-serif", es:"Sans-serif"},
+  ds_font_serif: {it:"Serif", en:"Serif", es:"Serif"},
+  ds_footer: {it:"Piè di pagina (facoltativo)", en:"Footer (optional)", es:"Pie de página (opcional)"},
+  ds_footer_ph: {it:"es. Coperto 2 € · Wi-Fi: fossato", en:"e.g. Cover €2 · Wi-Fi: garden", es:"p.ej. Cubierto 2 € · Wi-Fi: foso"},
+  ds_logo: {it:"Logo (facoltativo, max 3MB)", en:"Logo (optional, max 3MB)", es:"Logo (opcional, máx 3MB)"},
+  ds_logo_btn: {it:"Scegli un'immagine", en:"Choose an image", es:"Elige una imagen"},
+  btn_anteprima: {it:"Aggiorna anteprima", en:"Refresh preview", es:"Actualizar vista previa"},
+  btn_pdf: {it:"Scarica il PDF", en:"Download the PDF", es:"Descargar el PDF"},
+  link_render: {it:"Apri l'anteprima in una nuova scheda ↗", en:"Open the preview in a new tab ↗", es:"Abre la vista previa en una pestaña nueva ↗"}
 };
 </script>
 <script src="/static/i18n-nuovo.js"></script>
-
-<script>
-(function(){
-  "use strict";
-
-  // ─── identita' del dispositivo — stesso pattern di componi-nuovo / matter-quaderno2.js ───
-  // localStorage 'matter_device_id' || 'matter_token'; se assente genera un UUID valido
-  // (36 char: il backend accetta SOLO UUID da 36 char) e lo salva. Header X-Device-Id.
-  function devId(){
-    try{
-      var d = localStorage.getItem("matter_device_id") || localStorage.getItem("matter_token");
-      if (!d){
-        d = (window.crypto && crypto.randomUUID)
-          ? crypto.randomUUID()
-          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){
-              var r = Math.random()*16|0, v = c === "x" ? r : (r&0x3|0x8);
-              return v.toString(16);
-            });
-        localStorage.setItem("matter_device_id", d);
-      }
-      return d;
-    } catch(e){ return "anon"; }
-  }
-
-  function cap(s){ s = String(s||""); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-  function esc(s){
-    return String(s).replace(/[&<>"']/g, function(c){
-      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
-    });
-  }
-  function dataOggi(){
-    var dt = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
-    return dt.getFullYear() + "-" + z(dt.getMonth() + 1) + "-" + z(dt.getDate());
-  }
-
-  // Stato: preparazioni disponibili e voci scelte per il menu.
-  var disponibili = [];   // [{id, titolo}]
-  var voci = [];          // [{id, titolo}]
-
-  var dispStato = document.getElementById("disp-stato");
-  var dispBox   = document.getElementById("disp");
-  var mioVuoto  = document.getElementById("mio-vuoto");
-  var vociBox   = document.getElementById("voci");
-  var btnSalva  = document.getElementById("btn-salva");
-  var inpNome   = document.getElementById("menu-nome");
-  var salvaEsito = document.getElementById("salva-esito");
-
-  function scelta(id){ return voci.some(function(v){ return v.id === id; }); }
-
-  // ─── RENDER: preparazioni disponibili ───
-  function renderDisp(){
-    dispBox.innerHTML = "";
-    if (!disponibili.length){ return; }
-    disponibili.forEach(function(p){
-      var li = document.createElement("li");
-      li.className = "prep";
-
-      var corpo = document.createElement("div");
-      corpo.className = "prep-corpo";
-      var nome = document.createElement("div");
-      nome.className = "prep-nome";
-      nome.textContent = cap(p.titolo);
-      corpo.appendChild(nome);
-      if (p.creato){
-        var meta = document.createElement("span");
-        meta.className = "prep-meta";
-        meta.textContent = _L({it:"preparazione · ", en:"preparation · ", es:"preparación · "}) + p.creato;
-        corpo.appendChild(meta);
-      }
-      li.appendChild(corpo);
-
-      var add = document.createElement("button");
-      add.type = "button";
-      add.className = "prep-add";
-      var dentro = scelta(p.id);
-      add.textContent = dentro ? _L({it:"nel menu ✓", en:"in the menu ✓", es:"en el menú ✓"}) : _L({it:"+ nel menu", en:"+ to menu", es:"+ al menú"});
-      add.disabled = dentro;
-      add.setAttribute("aria-label", (dentro ? _L({it:"Gia' nel menu: ", en:"Already in the menu: ", es:"Ya en el menú: "}) : _L({it:"Aggiungi al menu: ", en:"Add to the menu: ", es:"Añadir al menú: "})) + cap(p.titolo));
-      add.addEventListener("click", function(){
-        if (scelta(p.id)) return;
-        voci.push({ id: p.id, titolo: p.titolo });
-        renderDisp(); renderVoci();
-      });
-      li.appendChild(add);
-
-      dispBox.appendChild(li);
-    });
-  }
-
-  // ─── RENDER: il tuo menu ───
-  function renderVoci(){
-    vociBox.innerHTML = "";
-    if (!voci.length){
-      mioVuoto.hidden = false; vociBox.hidden = true;
-      btnSalva.disabled = true;
-      return;
-    }
-    mioVuoto.hidden = true; vociBox.hidden = false;
-    btnSalva.disabled = false;
-
-    voci.forEach(function(v, idx){
-      var li = document.createElement("li");
-      li.className = "voce";
-      var nome = document.createElement("span");
-      nome.className = "voce-nome";
-      nome.textContent = cap(v.titolo);
-      li.appendChild(nome);
-
-      var x = document.createElement("button");
-      x.type = "button";
-      x.className = "voce-x";
-      x.textContent = "✕";
-      x.setAttribute("aria-label", _L({it:"Togli dal menu ", en:"Remove from the menu ", es:"Quitar del menú "}) + cap(v.titolo));
-      x.addEventListener("click", function(){
-        voci.splice(idx, 1);
-        renderDisp(); renderVoci();
-      });
-      li.appendChild(x);
-
-      vociBox.appendChild(li);
-    });
-  }
-
-  // stato corrente dell'area "disponibili": una chiusura che si ridisegna
-  // nella lingua corrente (così il cambio lingua ri-traduce anche gli stati).
-  function mostraCaricamento(){
-    dispBox.hidden = true;
-    dispStato.hidden = false;
-    dispStato.className = "stato";
-    dispStato.textContent = _L({it:"Carico le tue preparazioni salvate…", en:"Loading your saved preparations…", es:"Cargando tus preparaciones guardadas…"});
-  }
-  function mostraLista(){
-    dispStato.hidden = true;
-    dispBox.hidden = false;
-    renderDisp();
-  }
-  // vuoto onesto: nessuna preparazione -> invita a Componi, niente voci inventate.
-  // fnExtra() ritorna un eventuale testo extra NELLA lingua corrente (o null).
-  function mostraVuoto(fnExtra){
-    dispBox.hidden = true;
-    dispStato.hidden = false;
-    dispStato.className = "stato";
-    var extra = fnExtra ? fnExtra() : null;
-    var h = extra ? esc(extra)
-                  : _L({it:"Non hai ancora preparazioni salvate. Componine una.", en:"You have no saved preparations yet. Compose one.", es:"Aún no tienes preparaciones guardadas. Compón una."});
-    h += '<br><a class="btn btn--ghost" href="/componi-nuovo">' + _L({it:"Vai a Componi", en:"Go to Compose", es:"Ir a Componer"}) + '</a>';
-    dispStato.innerHTML = h;
-  }
-  function mostraErrore(fnTesto){
-    dispBox.hidden = true;
-    dispStato.hidden = false;
-    dispStato.className = "stato stato-err";
-    dispStato.textContent = fnTesto();
-  }
-
-  // _dispRender: ridisegna l'area "disponibili" nello stato attuale.
-  var _dispRender = mostraCaricamento;
-
-  // ─── FETCH: preparazioni salvate (funzione="composer") ───
-  function caricaDisponibili(){
-    _dispRender = mostraCaricamento; _dispRender();
-    fetch("/v1/quaderno2/lista", {
-      headers: { "Accept": "application/json", "X-Device-Id": devId() }
-    })
-    .then(function(r){
-      return r.json().catch(function(){ return {}; }).then(function(d){ return { status: r.status, body: d }; });
-    })
-    .then(function(res){
-      var d = res.body || {};
-      if (res.status === 401){
-        _dispRender = function(){ mostraVuoto(function(){ return _L({it:"Il Quaderno non ti ha riconosciuto. Ricarica la pagina e riprova.", en:"The Quaderno didn't recognise you. Reload the page and try again.", es:"El Quaderno no te ha reconocido. Recarga la página e inténtalo de nuevo."}); }); };
-        _dispRender();
-        return;
-      }
-      if (res.status < 200 || res.status >= 300 || d.errore){
-        var errRaw = d.errore, st = res.status;
-        _dispRender = function(){ mostraErrore(function(){
-          return errRaw ? (_L({it:"Non sono riuscito a leggere le preparazioni: ", en:"I couldn't read the preparations: ", es:"No he podido leer las preparaciones: "}) + errRaw)
-                        : _L({it:"Non sono riuscito a leggere le preparazioni (errore "+st+").", en:"I couldn't read the preparations (error "+st+").", es:"No he podido leer las preparaciones (error "+st+")."});
-        }); };
-        _dispRender();
-        return;
-      }
-      // il contratto vero di /v1/quaderno2/lista: { identita, n, record:[...] }
-      var record = Array.isArray(d.record) ? d.record : (Array.isArray(d) ? d : []);
-      disponibili = record
-        .filter(function(r){ return r && r.funzione === "composer"; })
-        .map(function(r){
-          return {
-            id: r.id,
-            titolo: r.titolo || _L({it:"(senza titolo)", en:"(untitled)", es:"(sin título)"}),
-            creato: (r.creato_at || "").slice(0, 10) || null
-          };
-        });
-      if (!disponibili.length){
-        _dispRender = function(){ mostraVuoto(null); };
-        _dispRender();
-        return;
-      }
-      _dispRender = mostraLista;
-      _dispRender();
-    })
-    .catch(function(){
-      _dispRender = function(){ mostraErrore(function(){ return _L({it:"Il server non e' raggiungibile ora. Nessuna preparazione caricata.", en:"The server is unreachable now. No preparation loaded.", es:"El servidor no está disponible ahora. No se cargó ninguna preparación."}); }); };
-      _dispRender();
-    });
-  }
-
-  // ─── ESITO salvataggio ───
-  function mostraEsito(testo, tipo){
-    if (tipo === "pulisci"){ salvaEsito.hidden = true; salvaEsito.innerHTML = ""; salvaEsito.className = "salva-esito"; return; }
-    salvaEsito.hidden = false;
-    salvaEsito.className = "salva-esito " + (tipo === "ok" ? "esito-ok" : "esito-err");
-    salvaEsito.innerHTML = testo;
-  }
-  function confermaSalvato(id, titolo){
-    var h = '<div class="esito-t">✓ '+_L({it:"Menu salvato", en:"Menu saved", es:"Menú guardado"})+'</div>';
-    h += '<p class="esito-d">“' + esc(titolo) + '” '+_L({it:"e' nel tuo Quaderno", en:"is in your Quaderno", es:"está en tu Quaderno"})
-       + (id ? ' <span class="esito-id">' + esc(id) + '</span>' : '') + '.</p>';
-    h += '<div class="esito-az"><a class="btn btn--ghost" href="/quaderno">'+_L({it:"Apri il Quaderno", en:"Open the Quaderno", es:"Abre el Quaderno"})+'</a></div>';
-    salvaEsito.hidden = false;
-    salvaEsito.className = "salva-esito esito-ok";
-    salvaEsito.innerHTML = h;
-  }
-
-  // ─── SALVA: POST /v1/quaderno2/salva — conferma SOLO su {ok:true} ───
-  var salvaInCorso = false;
-  btnSalva.addEventListener("click", function(){
-    if (salvaInCorso) return;
-    if (!voci.length){
-      mostraEsito(_L({it:"Aggiungi almeno una preparazione al menu prima di salvare.", en:"Add at least one preparation to the menu before saving.", es:"Añade al menos una preparación al menú antes de guardar."}), "err");
-      return;
-    }
-    var titolo = (inpNome.value || "").trim() || ("Menu — " + dataOggi());
-    var listaVoci = voci.map(function(v){ return { id: v.id, titolo: v.titolo }; });
-
-    var payload = {
-      porta: "menu",
-      funzione: "menu",
-      tipo: "menu",
-      titolo: titolo,
-      stato_input:  { voci: listaVoci },
-      stato_output: { voci: listaVoci }
-    };
-
-    salvaInCorso = true;
-    btnSalva.disabled = true;
-    var testoOrig = btnSalva.textContent;
-    btnSalva.textContent = _L({it:"Salvo…", en:"Saving…", es:"Guardando…"});
-    mostraEsito("", "pulisci");
-
-    fetch("/v1/quaderno2/salva", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json", "X-Device-Id": devId() },
-      body: JSON.stringify(payload)
-    })
-    .then(function(r){
-      return r.json().catch(function(){ return {}; }).then(function(d){ return { status: r.status, body: d }; });
-    })
-    .then(function(res){
-      var d = res.body || {};
-      if (res.status >= 200 && res.status < 300 && d.ok === true){
-        confermaSalvato(d.id, titolo);
-      } else {
-        var msg;
-        if (res.status === 401)
-          msg = _L({it:"Identita' mancante: il Quaderno non ti ha riconosciuto. Riprova.", en:"Missing identity: the Quaderno didn't recognise you. Try again.", es:"Identidad ausente: el Quaderno no te ha reconocido. Inténtalo de nuevo."});
-        else if (d && d.errore)
-          msg = _L({it:"Non salvato: ", en:"Not saved: ", es:"No guardado: "}) + esc(String(d.errore));
-        else
-          msg = _L({it:"Non salvato (errore "+res.status+"). Riprova.", en:"Not saved (error "+res.status+"). Try again.", es:"No guardado (error "+res.status+"). Inténtalo de nuevo."});
-        mostraEsito(msg, "err");
-      }
-    })
-    .catch(function(){
-      mostraEsito(_L({it:"Non salvato: il server non e' raggiungibile ora. Nessun dato e' stato scritto.", en:"Not saved: the server is unreachable now. No data was written.", es:"No guardado: el servidor no está disponible ahora. No se escribió ningún dato."}), "err");
-    })
-    .then(function(){
-      salvaInCorso = false;
-      btnSalva.disabled = (voci.length === 0);
-      btnSalva.textContent = testoOrig;
-    });
-  });
-
-  // ri-traduce il contenuto generato da JS al cambio lingua (salta la prima
-  // invocazione, che coincide con l'avvio qui sotto).
-  var _primaI18n = true;
-  window.onI18nApply = function(){
-    if (_primaI18n){ _primaI18n = false; return; }
-    renderVoci();
-    _dispRender();   // ridisegna l'area "disponibili" nello stato attuale
-  };
-
-  // avvio
-  renderVoci();
-  caricaDisponibili();
-})();
-</script>
+<script src="/static/menu-nuovo.js"></script>
 </body>
 </html>
