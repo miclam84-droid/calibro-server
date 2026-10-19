@@ -1385,10 +1385,19 @@ _BIBLIO_LIBRI = {
     "il cibo e la cucina": {"autore":"Harold McGee","titolo":"Il cibo e la cucina","anno":2019,"tier":1,"asin":"8865207108"},
     "modernist bread": {"autore":"Nathan Myhrvold","titolo":"Modernist Bread","anno":2017,"tier":1,"asin":"0982761015"},
     "modernist cuisine": {"autore":"Nathan Myhrvold","titolo":"Modernist Cuisine","anno":2011,"tier":1,"asin":"0982761007"},
-    "bread": {"autore":"Jeffrey Hamelman","titolo":"Bread","anno":2004,"tier":2,"asin":"1118132718"},
+    "hamelman": {"autore":"Jeffrey Hamelman","titolo":"Bread","anno":2004,"tier":2,"asin":"1118132718"},
     "advanced bread and pastry": {"autore":"Michel Suas","titolo":"Advanced Bread and Pastry","anno":2008,"tier":2,"asin":"1418011694"},
     "liquid intelligence": {"autore":"Dave Arnold","titolo":"Liquid Intelligence","anno":2014,"tier":2,"asin":"0393089037"},
     "the professional chef": {"autore":"CIA","titolo":"The Professional Chef","anno":2011,"tier":2,"asin":"0470421355"},
+    # Riferimenti canonici di dominio (aggiunti per completare la provenienza dell'Atlante).
+    # ASIN omesso dove non verificato: la citazione resta completa, manca solo il link Amazon.
+    "fennema": {"autore":"Damodaran & Parkin","titolo":"Fennema's Food Chemistry","anno":2017,"tier":1,"asin":""},
+    "principles and practices of winemaking": {"autore":"Boulton, Singleton, Bisson & Kunkee","titolo":"Principles and Practices of Winemaking","anno":1999,"tier":1,"asin":""},
+    "craft and science of coffee": {"autore":"Britta Folmer (a cura di)","titolo":"The Craft and Science of Coffee","anno":2017,"tier":1,"asin":""},
+    "science of ice cream": {"autore":"Chris Clarke","titolo":"The Science of Ice Cream","anno":2012,"tier":1,"asin":""},
+    "los secretos del helado": {"autore":"Angelo Corvitto","titolo":"Los secretos del helado","anno":2011,"tier":2,"asin":""},
+    "art of fermentation": {"autore":"Sandor Ellix Katz","titolo":"The Art of Fermentation","anno":2012,"tier":1,"asin":""},
+    "how to brew": {"autore":"John Palmer","titolo":"How to Brew","anno":2017,"tier":2,"asin":""},
 }
 
 def _pulisci_fonti(fonti_raw):
