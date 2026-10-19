@@ -406,7 +406,11 @@ def costruisci_prompt(domanda, contesto, lang="it"):
         )
     elif lang == "es":
         import datetime as _dt
-        _oggi = _dt.date.today()
+        try:
+            from zoneinfo import ZoneInfo as _ZoneInfo
+            _oggi = _dt.datetime.now(_ZoneInfo("Europe/Rome")).date()
+        except Exception:
+            _oggi = _dt.date.today()
         _mese = _oggi.month
         _stagione_es = (
             "invierno (diciembre-febrero)" if _mese in (12,1,2) else
@@ -447,7 +451,11 @@ def costruisci_prompt(domanda, contesto, lang="it"):
         )
     else:
         import datetime as _dt
-        _oggi = _dt.date.today()
+        try:
+            from zoneinfo import ZoneInfo as _ZoneInfo
+            _oggi = _dt.datetime.now(_ZoneInfo("Europe/Rome")).date()
+        except Exception:
+            _oggi = _dt.date.today()
         _mese = _oggi.month
         _stagione = (
             "inverno (dicembre-febbraio)" if _mese in (12,1,2) else
