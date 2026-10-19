@@ -91,7 +91,7 @@ _PAGINA = r"""<!doctype html>
   // così funziona identico su staging e su prod.
   var SEC = new URLSearchParams(location.search).get("s") || "";
 
-  var LIMITE = 12;        // ricerche USDA per lotto (l'endpoint va in timeout oltre ~15)
+  var LIMITE = 8;         // ricerche USDA per lotto: tenuto basso per stare dentro il timeout worker (120s) anche con qualche chiamata USDA lenta
   var PAUSA_MS = 4000;    // pausa anti-rate tra un lotto e l'altro
 
   var elAvvia = document.getElementById("avvia");

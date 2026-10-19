@@ -184,11 +184,16 @@ _ESCLUDI = ("dop", "igp", "presidio", "bufala", "san marzano", "podolic", "caste
             "menaica", "maracuoccio", "pertosa", "bagnoles", "conciato", "nocellara")
 
 
-def _usda_get(url, retries=3):
+def _usda_get(url, retries=2, timeout=15):
+    # Tempo massimo per chiamata tenuto BASSO di proposito: nel runner (deriva-gusti-search)
+    # molte chiamate in un lotto sommate al timeout del worker Gunicorn (120s) facevano
+    # saltare l'intero lotto con un 500 grezzo. Con retries=2 e timeout=15, il caso
+    # peggiore per nodo è ~15+2+15 = ~32s: un nodo lento fallisce in fretta e diventa
+    # "bassa confidenza" (fill-only, riprovabile dopo), senza mai far cadere il lotto.
     for i in range(retries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "Matter/1.0"})
-            r = urllib.request.urlopen(req, timeout=30)
+            r = urllib.request.urlopen(req, timeout=timeout)
             return json.loads(r.read().decode())
         except Exception:
             if i < retries - 1:
