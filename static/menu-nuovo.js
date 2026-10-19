@@ -53,6 +53,7 @@
   var voci = [];            // [{uid, tipo:'libera'|'profilata', nome, prezzo, descrizione, sezione, ricetta_id?, ingredienti?, prep_id?}]
   var disponibili = [];     // [{id, titolo, creato}]
   var _uidSeq = 0;
+  var editUid = null;       // uid della voce in modifica in-place (null = nessuna)
   var stato = {
     tipoUI: "food",         // food | pizze | drink | vini
     mid: null,              // id del menu salvato
@@ -232,6 +233,12 @@
     btnSalva.disabled = false;
 
     voci.forEach(function (v, idx) {
+      // voce in modifica in-place: mostro il form precompilato al posto della riga
+      if (editUid === v.uid) {
+        lista.appendChild(formModifica(v, idx));
+        return;
+      }
+
       var li = document.createElement("li");
       li.className = "voce";
 
@@ -265,9 +272,14 @@
 
       li.appendChild(corpo);
 
-      // controlli: su / giu / elimina
+      // controlli: modifica / su / giu / elimina
       var ctrl = document.createElement("div");
       ctrl.className = "voce-ctrl";
+      var ed = document.createElement("button");
+      ed.type = "button"; ed.className = "voce-mv"; ed.textContent = "✎";
+      ed.setAttribute("aria-label", L({ it: "Modifica", en: "Edit", es: "Editar" }) + ": " + v.nome);
+      ed.addEventListener("click", function () { apriModifica(v.uid); });
+      ctrl.appendChild(ed);
       var up = document.createElement("button");
       up.type = "button"; up.className = "voce-mv"; up.textContent = "↑";
       up.disabled = idx === 0;
@@ -296,6 +308,123 @@
     if (j < 0 || j >= voci.length) return;
     var t = voci[idx]; voci[idx] = voci[j]; voci[j] = t;
     renderVoci(); invalidaSalvataggio();
+  }
+
+  /* ─── MODIFICA IN-PLACE di una voce già nella carta ───
+     Riusa i campi e le validazioni del form di aggiunta (nome obbligatorio;
+     sezione/prezzo/descrizione facoltativi). Per una voce PROFILATA cambia solo
+     il testo visibile: uid, tipo, ricetta_id, ingredienti e prep_id restano
+     intatti, così l'aggancio scientifico e gli allergeni dedotti non si perdono. */
+  function campoText(id, etichetta, valore, maxlen) {
+    var lab = document.createElement("label");
+    lab.className = "campo"; lab.setAttribute("for", id);
+    var sp = document.createElement("span"); sp.textContent = etichetta; lab.appendChild(sp);
+    var inp = document.createElement("input");
+    inp.type = "text"; inp.id = id; inp.maxLength = maxlen;
+    inp.setAttribute("autocomplete", "off");
+    inp.value = valore || "";
+    lab.appendChild(inp);
+    return lab;
+  }
+  function campoArea(id, etichetta, valore, maxlen) {
+    var lab = document.createElement("label");
+    lab.className = "campo"; lab.setAttribute("for", id);
+    var sp = document.createElement("span"); sp.textContent = etichetta; lab.appendChild(sp);
+    var ta = document.createElement("textarea");
+    ta.id = id; ta.maxLength = maxlen;
+    ta.value = valore || "";
+    lab.appendChild(ta);
+    return lab;
+  }
+  function apriModifica(uid) {
+    editUid = uid;
+    renderVoci();
+    var f = $("vm-nome-" + uid);
+    if (f) { try { f.focus(); var n = f.value.length; f.setSelectionRange(n, n); } catch (e) {} }
+  }
+  function annullaModifica() {
+    editUid = null;
+    renderVoci();
+  }
+  function salvaModifica(v) {
+    var campoNome = $("vm-nome-" + v.uid);
+    if (!campoNome) { editUid = null; renderVoci(); return; }
+    var nome = (campoNome.value || "").trim();
+    var errBox = $("vm-err-" + v.uid);
+    if (!nome) {
+      if (errBox) {
+        errBox.hidden = false;
+        errBox.textContent = L({ it: "Il nome della voce è obbligatorio.", en: "The item name is required.", es: "El nombre del elemento es obligatorio." });
+      }
+      try { campoNome.focus(); } catch (e) {}
+      return;
+    }
+    // aggiorno SOLO il testo visibile; conservo gli altri campi (incl. ricetta_id/ingredienti/prep_id)
+    v.nome = nome;
+    v.prezzo = (($("vm-prezzo-" + v.uid) || {}).value || "").trim();
+    v.descrizione = (($("vm-desc-" + v.uid) || {}).value || "").trim();
+    v.sezione = (($("vm-sezione-" + v.uid) || {}).value || "").trim();
+    editUid = null;
+    renderVoci();
+    invalidaSalvataggio();
+  }
+  function formModifica(v) {
+    var li = document.createElement("li");
+    li.className = "voce voce-edit";
+
+    var box = document.createElement("div");
+    box.className = "voce-corpo";
+    box.style.width = "100%";
+
+    var nomeLab = campoText("vm-nome-" + v.uid, L({ it: "Nome *", en: "Name *", es: "Nombre *" }), v.nome, 160);
+    box.appendChild(nomeLab);
+    var nomeInp = nomeLab.querySelector("input");
+    if (nomeInp) {
+      nomeInp.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); salvaModifica(v); }
+        else if (e.key === "Escape") { e.preventDefault(); annullaModifica(); }
+      });
+    }
+
+    var due = document.createElement("div");
+    due.className = "libera-due";
+    due.appendChild(campoText("vm-sezione-" + v.uid, L({ it: "Sezione", en: "Section", es: "Sección" }), v.sezione, 80));
+    due.appendChild(campoText("vm-prezzo-" + v.uid, L({ it: "Prezzo", en: "Price", es: "Precio" }), v.prezzo, 24));
+    box.appendChild(due);
+
+    box.appendChild(campoArea("vm-desc-" + v.uid, L({ it: "Descrizione", en: "Description", es: "Descripción" }), v.descrizione, 500));
+
+    // promemoria: per le voci profilate l'aggancio scientifico resta collegato
+    if (v.tipo === "profilata") {
+      var nota = document.createElement("p");
+      nota.className = "voce-meta";
+      nota.style.margin = "2px 0 10px";
+      nota.innerHTML = '<span class="tag-prof">' + L({ it: "profilata", en: "profiled", es: "perfilada" }) + "</span> " +
+        esc(L({ it: "l'aggancio alla preparazione e gli allergeni restano collegati.", en: "the link to the preparation and its allergens stay connected.", es: "el vínculo con la preparación y sus alérgenos se mantienen." }));
+      box.appendChild(nota);
+    }
+
+    var err = document.createElement("div");
+    err.className = "libera-err";
+    err.id = "vm-err-" + v.uid;
+    err.hidden = true;
+    box.appendChild(err);
+
+    var az = document.createElement("div");
+    az.style.display = "flex"; az.style.gap = "10px"; az.style.flexWrap = "wrap";
+    var bSalva = document.createElement("button");
+    bSalva.type = "button"; bSalva.className = "btn"; bSalva.style.flex = "1 1 auto";
+    bSalva.textContent = L({ it: "Salva modifica", en: "Save change", es: "Guardar cambio" });
+    bSalva.addEventListener("click", function () { salvaModifica(v); });
+    var bAnnulla = document.createElement("button");
+    bAnnulla.type = "button"; bAnnulla.className = "btn btn--ghost"; bAnnulla.style.flex = "1 1 auto";
+    bAnnulla.textContent = L({ it: "Annulla", en: "Cancel", es: "Cancelar" });
+    bAnnulla.addEventListener("click", annullaModifica);
+    az.appendChild(bSalva); az.appendChild(bAnnulla);
+    box.appendChild(az);
+
+    li.appendChild(box);
+    return li;
   }
 
   /* se cambio il menu dopo averlo salvato, nascondo il passo esport finché non ri-salvo */
