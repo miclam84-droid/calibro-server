@@ -98,6 +98,45 @@
   .chat-invia:hover:not(:disabled){filter:brightness(1.06)}
   .chat-invia:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   .chat-invia:disabled{opacity:.5; cursor:not-allowed}
+
+  /* microfono nella barra chat — icona quadrata, stessa altezza del tasto invia */
+  .chat-mic{
+    flex:0 0 auto; width:46px; height:46px; display:inline-flex; align-items:center; justify-content:center;
+    background:transparent; color:var(--verde); border:1px solid var(--verde); border-radius:12px; cursor:pointer;
+  }
+  .chat-mic:hover{background:var(--tint)}
+  .chat-mic:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .chat-mic svg{width:19px; height:19px}
+  .chat-mic.rec{background:var(--oxblood); border-color:var(--oxblood); color:#fff}
+  .chat-mic.busy{opacity:.55; cursor:progress}
+
+  /* riga messaggio stato vocale (sopra la barra) */
+  .media-msg{margin:0 0 8px; font-size:12.5px; line-height:1.45; color:var(--ink-soft);
+    background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); padding:9px 12px}
+  .media-msg.err{color:var(--oxblood); border-color:rgba(168,80,74,.32); background:rgba(168,80,74,.08)}
+  .media-msg.ok{color:var(--verde); border-color:var(--verde); background:var(--tint)}
+  .media-msg a{color:inherit; text-decoration:underline; font-weight:600}
+
+  /* ===== foglio di LOGIN minimo (solo accesso) — solo token matter3.css ===== */
+  .ms-scrim{position:fixed; inset:0; z-index:60; background:rgba(29,42,34,.38);
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+    display:flex; align-items:flex-end; justify-content:center}
+  @media (min-width:560px){.ms-scrim{align-items:center}}
+  .ms-card{width:100%; max-width:420px; background:var(--surface); border:1px solid var(--riga);
+    border-radius:var(--r) var(--r) 0 0; box-shadow:var(--shadow);
+    padding:20px 18px max(20px,env(safe-area-inset-bottom,0px))}
+  @media (min-width:560px){.ms-card{border-radius:var(--r); margin:0 16px}}
+  .ms-card h2{font-family:var(--display); font-weight:800; font-size:20px; margin:0; color:var(--ink)}
+  .ms-sub{font-size:13px; color:var(--ink-soft); margin:6px 0 0; line-height:1.45}
+  .ms-field{display:block; margin-top:14px}
+  .ms-field span{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px}
+  .ms-field input{width:100%; font-family:var(--sans); font-size:16px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); padding:11px 13px}
+  .ms-field input:focus{outline:2px solid var(--verde); outline-offset:1px; border-color:transparent}
+  .ms-msg{margin-top:12px; font-size:12.5px; line-height:1.4; color:var(--oxblood); min-height:1px}
+  .ms-actions{display:flex; gap:10px; margin-top:16px}
+  .ms-note{margin-top:14px; font-size:12px; color:var(--ink-soft); line-height:1.45; text-align:center}
+  .ms-note a{color:var(--verde); text-decoration:underline; font-weight:600}
 </style>
 </head>
 <body>
@@ -118,8 +157,12 @@
   <div class="chat-lista" id="lista" role="log" aria-live="polite" aria-label="Conversazione con Matter" data-i18n-aria="lista_aria"></div>
 
   <div class="chat-barra">
+    <div class="media-msg" id="media-msg" role="status" aria-live="polite" hidden></div>
     <form class="chat-form" id="form" autocomplete="off">
       <textarea id="domanda" name="domanda" rows="1" placeholder="Scrivi la tua domanda…" aria-label="La tua domanda" enterkeyhint="send" data-i18n-ph="domanda_ph" data-i18n-aria="domanda_aria"></textarea>
+      <button class="chat-mic" id="btn-mic" type="button" aria-label="Parla al banco" title="Parla al banco" data-i18n-aria="mic_aria" data-i18n-title="mic_title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      </button>
       <button class="chat-invia" id="invia" type="submit" data-i18n="invia">Chiedi</button>
     </form>
   </div>
@@ -135,7 +178,9 @@ window.I18N_DICT = {
   lista_aria: {it:"Conversazione con Matter", en:"Conversation with Matter", es:"Conversación con Matter"},
   domanda_ph: {it:"Scrivi la tua domanda…", en:"Write your question…", es:"Escribe tu pregunta…"},
   domanda_aria: {it:"La tua domanda", en:"Your question", es:"Tu pregunta"},
-  invia: {it:"Chiedi", en:"Ask", es:"Preguntar"}
+  invia: {it:"Chiedi", en:"Ask", es:"Preguntar"},
+  mic_aria: {it:"Parla: detta la domanda", en:"Speak: dictate your question", es:"Habla: dicta tu pregunta"},
+  mic_title: {it:"Parla al banco", en:"Speak to the bench", es:"Habla al banco"}
 };
 </script>
 <script src="/static/i18n-nuovo.js"></script>
@@ -324,6 +369,338 @@ window.I18N_DICT = {
 
   // genera/recupera il device id all'avvio
   devId();
+})();
+</script>
+
+<!-- VOCALE (STT) + VISION (foto): gating Pro+login fedele al vecchio FE, solo token matter3.css -->
+<script>
+/* ============================================================================
+   VOCALE (STT /v1/stt) + VISION (/v1/vision) per il NUOVO frontend.
+   Fedele al vecchio FE (static/matter.js): stesso gating Pro+login, stessi
+   contratti. Solo token di matter3.css, nessuna dipendenza nuova.
+   Un UNICO blocco identico per causa-nuovo.html e chat-nuovo.html: si cabla
+   da solo in base agli elementi presenti nella pagina.
+   ========================================================================== */
+(function(){
+  "use strict";
+
+  var OLDFE = "/app"; // FE vecchio: registrazione e upgrade Pro vivono lì
+
+  function LL(o){ return (typeof window._L === "function") ? window._L(o) : (o[(window._lang||"it")] || o.it); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+  function getTok(){ try{ return localStorage.getItem("matter_token") || ""; }catch(e){ return ""; } }
+  function getPiano(){ try{ return localStorage.getItem("matter_piano") || ""; }catch(e){ return ""; } }
+  function isPro(){ return !!getTok() && getPiano() === "pro"; }
+
+  // device id: stesso pattern delle altre pagine nuove (serve al merge anonimo->account)
+  function devId(){
+    try{
+      var d = localStorage.getItem("matter_device_id") || localStorage.getItem("matter_token");
+      if(!d){
+        d = (window.crypto && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){ var r=Math.random()*16|0, v=c==="x"?r:(r&0x3|0x8); return v.toString(16); });
+        localStorage.setItem("matter_device_id", d);
+      }
+      return d;
+    }catch(e){ return "anon"; }
+  }
+
+  // ---------- area messaggi (sotto i bottoni) ----------
+  var msgEl = null;
+  function showMsg(txt, kind){ if(!msgEl) return; msgEl.hidden=false; msgEl.className="media-msg"+(kind?(" "+kind):""); msgEl.textContent=txt; }
+  function showMsgHtml(html, kind){ if(!msgEl) return; msgEl.hidden=false; msgEl.className="media-msg"+(kind?(" "+kind):""); msgEl.innerHTML=html; }
+  function clearMsg(){ if(msgEl){ msgEl.hidden=true; msgEl.textContent=""; msgEl.className="media-msg"; } }
+
+  function proMsg(){
+    showMsgHtml(
+      LL({it:"Questa funzione è disponibile nel piano <b>Pro</b>. ", en:"This feature is available on the <b>Pro</b> plan. ", es:"Esta función está disponible en el plan <b>Pro</b>. "})
+      + '<a href="'+OLDFE+'">'+LL({it:"Fai l'upgrade nell'app", en:"Upgrade in the app", es:"Mejora tu plan en la app"})+'</a>.',
+      "err"
+    );
+  }
+
+  // ---------- foglio di LOGIN minimo (solo accesso) ----------
+  var sheet=null, sheetEls=null, onOk=null;
+
+  function buildSheet(){
+    if(sheet) return;
+    var scrim=document.createElement("div");
+    scrim.className="ms-scrim"; scrim.hidden=true;
+    scrim.setAttribute("role","dialog"); scrim.setAttribute("aria-modal","true"); scrim.setAttribute("aria-label","Login");
+    scrim.innerHTML =
+      '<div class="ms-card" role="document">'
+      + '<h2 class="ms-title"></h2>'
+      + '<p class="ms-sub"></p>'
+      + '<form class="ms-form" autocomplete="on" novalidate>'
+      +   '<label class="ms-field"><span class="ms-l-email"></span>'
+      +     '<input type="email" class="ms-email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false"></label>'
+      +   '<label class="ms-field"><span class="ms-l-pw"></span>'
+      +     '<input type="password" class="ms-pw" autocomplete="current-password"></label>'
+      +   '<div class="ms-msg" aria-live="polite"></div>'
+      +   '<div class="ms-actions">'
+      +     '<button type="button" class="btn btn--ghost ms-cancel" style="flex:1"></button>'
+      +     '<button type="submit" class="btn ms-submit" style="flex:1"></button>'
+      +   '</div>'
+      + '</form>'
+      + '<p class="ms-note"></p>'
+      + '</div>';
+    document.body.appendChild(scrim);
+    sheet=scrim;
+    sheetEls={
+      card: scrim.querySelector(".ms-card"),
+      title: scrim.querySelector(".ms-title"),
+      sub: scrim.querySelector(".ms-sub"),
+      form: scrim.querySelector(".ms-form"),
+      lEmail: scrim.querySelector(".ms-l-email"),
+      lPw: scrim.querySelector(".ms-l-pw"),
+      email: scrim.querySelector(".ms-email"),
+      pw: scrim.querySelector(".ms-pw"),
+      msg: scrim.querySelector(".ms-msg"),
+      cancel: scrim.querySelector(".ms-cancel"),
+      submit: scrim.querySelector(".ms-submit"),
+      note: scrim.querySelector(".ms-note")
+    };
+    // chiusura: click sullo scrim, Esc, bottone annulla
+    scrim.addEventListener("click", function(e){ if(e.target===scrim) closeLogin(); });
+    sheetEls.cancel.addEventListener("click", closeLogin);
+    document.addEventListener("keydown", function(e){ if(e.key==="Escape" && sheet && !sheet.hidden) closeLogin(); });
+    sheetEls.form.addEventListener("submit", function(e){ e.preventDefault(); doLogin(); });
+    labelSheet();
+  }
+
+  function labelSheet(){
+    if(!sheetEls) return;
+    sheetEls.title.textContent = LL({it:"Accedi a Matter", en:"Sign in to Matter", es:"Inicia sesión en Matter"});
+    sheetEls.sub.textContent   = LL({it:"Vocale e foto sono funzioni Pro: accedi per usarle.", en:"Voice and photo are Pro features: sign in to use them.", es:"Voz y foto son funciones Pro: inicia sesión para usarlas."});
+    sheetEls.lEmail.textContent= LL({it:"Email", en:"Email", es:"Correo"});
+    sheetEls.lPw.textContent   = LL({it:"Password", en:"Password", es:"Contraseña"});
+    sheetEls.cancel.textContent= LL({it:"Annulla", en:"Cancel", es:"Cancelar"});
+    sheetEls.submit.textContent= LL({it:"Accedi", en:"Sign in", es:"Entrar"});
+    sheetEls.email.setAttribute("placeholder", LL({it:"tu@email.it", en:"you@email.com", es:"tu@email.com"}));
+    sheetEls.pw.setAttribute("placeholder", "••••••••");
+    sheetEls.note.innerHTML = LL({it:"Non hai un account o il piano Pro? ", en:"No account or Pro plan yet? ", es:"¿Aún no tienes cuenta o plan Pro? "})
+      + '<a href="'+OLDFE+'">'+LL({it:"Registrati o fai l'upgrade nell'app", en:"Register or upgrade in the app", es:"Regístrate o mejora tu plan en la app"})+'</a>.';
+  }
+
+  function openLogin(cb){
+    buildSheet();
+    onOk = (typeof cb==="function") ? cb : null;
+    labelSheet();
+    sheetEls.msg.textContent=""; sheetEls.msg.className="ms-msg";
+    sheet.hidden=false;
+    try{ sheetEls.email.focus(); }catch(e){}
+  }
+  function closeLogin(){ if(sheet){ sheet.hidden=true; } }
+
+  function doLogin(){
+    var email=(sheetEls.email.value||"").trim();
+    var pw=sheetEls.pw.value||"";
+    if(!email || !pw){
+      sheetEls.msg.textContent = LL({it:"Inserisci email e password.", en:"Enter email and password.", es:"Introduce correo y contraseña."});
+      return;
+    }
+    sheetEls.submit.disabled=true;
+    var orig=sheetEls.submit.textContent;
+    sheetEls.submit.textContent = LL({it:"Accesso…", en:"Signing in…", es:"Entrando…"});
+    sheetEls.msg.className="ms-msg"; sheetEls.msg.textContent="";
+    fetch("/v1/auth/login", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "X-Device-Id": devId() },
+      body: JSON.stringify({ email:email, password:pw, lang:(window._lang||"it") })
+    }).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(j){ return {status:r.status, ok:r.ok, j:j}; });
+    }).then(function(res){
+      sheetEls.submit.disabled=false; sheetEls.submit.textContent=orig;
+      var j=res.j||{};
+      if(res.ok && j.token){
+        try{ localStorage.setItem("matter_token", j.token); }catch(e){}
+        try{ if(j.piano) localStorage.setItem("matter_piano", j.piano); }catch(e){}
+        closeLogin();
+        if(isPro()){
+          showMsg(LL({it:"Accesso riuscito.", en:"Signed in.", es:"Sesión iniciada."}), "ok");
+        } else {
+          proMsg();
+        }
+        try{ if(onOk) onOk(); }catch(e){}
+      } else if(res.status===429){
+        sheetEls.msg.textContent = j.errore || LL({it:"Troppi tentativi. Attendi un minuto.", en:"Too many attempts. Wait a minute.", es:"Demasiados intentos. Espera un minuto."});
+      } else {
+        sheetEls.msg.textContent = j.errore || LL({it:"Accesso non riuscito. Controlla le credenziali.", en:"Sign-in failed. Check your credentials.", es:"Error de acceso. Revisa tus credenciales."});
+      }
+    }).catch(function(){
+      sheetEls.submit.disabled=false; sheetEls.submit.textContent=orig;
+      sheetEls.msg.textContent = LL({it:"Rete non raggiungibile. Riprova.", en:"Network unreachable. Try again.", es:"Red no disponible. Inténtalo de nuevo."});
+    });
+  }
+
+  // ---------- gate dei 3 stati ----------
+  // ritorna true se può procedere; altrimenti gestisce lo stato (login / Pro) e ritorna false
+  function gate(retry){
+    if(!getTok()){ openLogin(retry); return false; }   // non loggato -> foglio di login
+    if(!isPro()){ proMsg(); return false; }             // loggato ma non Pro
+    return true;                                         // Pro
+  }
+
+  // ---------- VOCALE (STT) ----------
+  var rec=null, chunks=[];
+  function fileName(blob){
+    var t=(blob && blob.type) || "";
+    if(t.indexOf("mp4")>=0) return "audio.mp4";
+    if(t.indexOf("m4a")>=0 || t.indexOf("x-m4a")>=0) return "audio.m4a";
+    if(t.indexOf("wav")>=0) return "audio.wav";
+    if(t.indexOf("ogg")>=0) return "audio.ogg";
+    return "audio.webm";
+  }
+
+  function onMicClick(btn, target, isChat){
+    if(rec && rec.state==="recording"){ stopRec(btn); return; }
+    clearMsg();
+    if(!gate(function(){ onMicClick(btn, target, isChat); })) return;
+    startRec(btn, target, isChat);
+  }
+
+  function startRec(btn, target, isChat){
+    if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || typeof MediaRecorder==="undefined"){
+      showMsg(LL({it:"Registrazione non supportata su questo dispositivo.", en:"Recording isn't supported on this device.", es:"La grabación no es compatible con este dispositivo."}), "err");
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      chunks=[];
+      try{ rec=new MediaRecorder(stream, {mimeType:"audio/webm"}); }
+      catch(e){ try{ rec=new MediaRecorder(stream); }catch(e2){ stream.getTracks().forEach(function(t){t.stop();}); showMsg(LL({it:"Registrazione non disponibile.", en:"Recording unavailable.", es:"Grabación no disponible."}), "err"); return; } }
+      rec.ondataavailable=function(e){ if(e.data && e.data.size>0) chunks.push(e.data); };
+      rec.onstop=function(){
+        stream.getTracks().forEach(function(t){ t.stop(); });
+        btn.classList.remove("rec"); btn.setAttribute("aria-pressed","false");
+        var blob=new Blob(chunks, {type:(rec && rec.mimeType) || "audio/webm"});
+        uploadStt(blob, btn, target, isChat);
+      };
+      rec.start();
+      btn.classList.add("rec"); btn.setAttribute("aria-pressed","true");
+      showMsg(LL({it:"Sto ascoltando… tocca di nuovo per fermare.", en:"Listening… tap again to stop.", es:"Escuchando… toca de nuevo para parar."}), "");
+    }).catch(function(){
+      showMsg(LL({it:"Microfono non disponibile o permesso negato.", en:"Microphone unavailable or permission denied.", es:"Micrófono no disponible o permiso denegado."}), "err");
+    });
+  }
+
+  function stopRec(btn){
+    try{ if(rec && rec.state==="recording") rec.stop(); }catch(e){}
+    btn.classList.remove("rec"); btn.classList.add("busy"); btn.setAttribute("aria-pressed","false");
+    showMsg(LL({it:"Trascrivo…", en:"Transcribing…", es:"Transcribiendo…"}), "");
+  }
+
+  function uploadStt(blob, btn, target, isChat){
+    btn.classList.add("busy");
+    var fd=new FormData(); fd.append("audio", blob, fileName(blob));
+    fetch("/v1/stt?lang="+(window._lang||"it"), { method:"POST", headers:{ "X-Token": getTok() }, body: fd })
+    .then(function(r){
+      if(r.status===401){ btn.classList.remove("busy"); openLogin(function(){ onMicClick(btn, target, isChat); }); return null; }
+      if(r.status===403){ btn.classList.remove("busy"); proMsg(); return null; }
+      return r.json().catch(function(){ return {}; });
+    }).then(function(j){
+      if(j===null) return;
+      btn.classList.remove("busy");
+      if(j.trascrizione){ fillInto(target, j.trascrizione, isChat); clearMsg(); }
+      else if(j.errore && j.errore.indexOf("Pro")>=0){ proMsg(); }
+      else { showMsg(j.errore || LL({it:"Trascrizione non riuscita.", en:"Transcription failed.", es:"Transcripción fallida."}), "err"); }
+    }).catch(function(){
+      btn.classList.remove("busy");
+      showMsg(LL({it:"Errore di rete durante la trascrizione.", en:"Network error during transcription.", es:"Error de red durante la transcripción."}), "err");
+    });
+  }
+
+  function fillInto(target, testo, isChat){
+    if(!target) return;
+    target.value = testo;
+    try{ target.focus(); }catch(e){}
+    if(isChat){ try{ target.dispatchEvent(new Event("input", {bubbles:true})); }catch(e){} }
+  }
+
+  // ---------- VISION (foto) ----------
+  function onFotoClick(input){
+    clearMsg();
+    if(!gate(function(){ try{ input.click(); }catch(e){} })) return;
+    try{ input.click(); }catch(e){}
+  }
+
+  function sendFoto(file, outEl){
+    if(!file) return;
+    if(!gate(function(){ sendFoto(file, outEl); })) return;
+    var previewUrl=null;
+    try{ previewUrl=URL.createObjectURL(file); }catch(e){}
+    if(outEl){
+      outEl.hidden=false; outEl.className="vision-out busy";
+      outEl.innerHTML = (previewUrl?('<img src="'+previewUrl+'" alt="">'):"")
+        + '<span class="vo-lab">'+esc(LL({it:"Analisi foto", en:"Photo analysis", es:"Análisis de foto"}))+'</span>'
+        + '<div class="vo-txt">'+esc(LL({it:"Analizzo l'immagine…", en:"Analysing the image…", es:"Analizando la imagen…"}))+'</div>';
+    }
+    var fd=new FormData(); fd.append("immagine", file);
+    fetch("/v1/vision?lang="+(window._lang||"it"), { method:"POST", headers:{ "X-Token": getTok() }, body: fd })
+    .then(function(r){
+      if(r.status===401){ if(outEl){ outEl.hidden=true; } openLogin(function(){ sendFoto(file, outEl); }); return null; }
+      if(r.status===403){ if(outEl){ outEl.hidden=true; } proMsg(); return null; }
+      return r.json().catch(function(){ return {}; });
+    }).then(function(j){
+      if(j===null) return;
+      if(!outEl) return;
+      outEl.className="vision-out";
+      if(j.analisi){
+        outEl.innerHTML = (previewUrl?('<img src="'+previewUrl+'" alt="">'):"")
+          + '<span class="vo-lab">'+esc(LL({it:"Analisi foto", en:"Photo analysis", es:"Análisis de foto"}))+'</span>'
+          + '<div class="vo-txt">'+esc(j.analisi)+'</div>';
+      } else if(j.errore && j.errore.indexOf("Pro")>=0){
+        outEl.hidden=true; proMsg();
+      } else {
+        outEl.innerHTML = (previewUrl?('<img src="'+previewUrl+'" alt="">'):"")
+          + '<span class="vo-lab">'+esc(LL({it:"Analisi foto", en:"Photo analysis", es:"Análisis de foto"}))+'</span>'
+          + '<div class="vo-txt">'+esc(j.errore || LL({it:"Analisi non riuscita.", en:"Analysis failed.", es:"Análisis fallido."}))+'</div>';
+      }
+    }).catch(function(){
+      if(outEl){
+        outEl.className="vision-out";
+        outEl.innerHTML = '<span class="vo-lab">'+esc(LL({it:"Analisi foto", en:"Photo analysis", es:"Análisis de foto"}))+'</span>'
+          + '<div class="vo-txt">'+esc(LL({it:"Errore di rete durante l'analisi.", en:"Network error during analysis.", es:"Error de red durante el análisis."}))+'</div>';
+      }
+    });
+  }
+
+  // ---------- cablaggio (identico per entrambe le pagine) ----------
+  function wire(){
+    msgEl = document.getElementById("media-msg");
+    var sintomo = document.getElementById("sintomo");
+    var domanda = document.getElementById("domanda");
+    var target  = sintomo || domanda;
+    var isChat  = !sintomo && !!domanda;
+
+    var btnMic = document.getElementById("btn-mic");
+    if(btnMic){
+      btnMic.setAttribute("aria-pressed","false");
+      btnMic.addEventListener("click", function(){ onMicClick(btnMic, target, isChat); });
+    }
+
+    var btnFoto  = document.getElementById("btn-foto");
+    var fotoInput= document.getElementById("foto-input");
+    var visionOut= document.getElementById("vision-out");
+    if(btnFoto && fotoInput){
+      btnFoto.addEventListener("click", function(){ onFotoClick(fotoInput); });
+      fotoInput.addEventListener("change", function(){
+        if(fotoInput.files && fotoInput.files[0]){ sendFoto(fotoInput.files[0], visionOut); }
+        fotoInput.value="";
+      });
+    }
+
+    // ri-etichetta il foglio di login al cambio lingua, senza rompere l'hook esistente
+    var prevApply = window.onI18nApply;
+    window.onI18nApply = function(l){
+      if(typeof prevApply==="function"){ try{ prevApply(l); }catch(e){} }
+      if(sheet && !sheet.hidden) labelSheet();
+    };
+  }
+
+  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", wire); }
+  else { wire(); }
 })();
 </script>
 </body>
