@@ -185,6 +185,22 @@ def _oss_after(resp):
                 resp.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
                 resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Admin-Secret'
     except Exception: pass
+    # Header di sicurezza: prudenti, applicati a tutte le risposte, senza mai far fallire
+    # la risposta. NIENTE Content-Security-Policy bloccante (script inline, font Google,
+    # immagini Pexels/Pixabay/Cloudinary/Wikimedia romperebbero). Microfono e fotocamera
+    # restano a 'self' perche' STT vocale e Vision li usano.
+    try:
+        _sec = {
+            'X-Content-Type-Options': 'nosniff',
+            'X-Frame-Options': 'SAMEORIGIN',
+            'Referrer-Policy': 'strict-origin-when-cross-origin',
+            'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+            'Permissions-Policy': 'camera=(self), microphone=(self), geolocation=(), payment=()',
+        }
+        for _h, _v in _sec.items():
+            if _h not in resp.headers:
+                resp.headers[_h] = _v
+    except Exception: pass
     return resp
 
 @app.teardown_request
