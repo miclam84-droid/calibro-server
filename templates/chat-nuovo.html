@@ -29,6 +29,15 @@
   }
   .chat-intro strong{font-family:var(--display); font-weight:700}
 
+  /* chip di domande d'esempio: all'apertura la chat non è più un vuoto bianco.
+     Al tap precompilano l'input (non inviano). Spariscono al primo messaggio. */
+  .chat-esempi{display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0}
+  .chat-chip{font-family:var(--sans); font-size:13px; color:var(--verde); background:var(--tint);
+    border:1px solid var(--verde); border-radius:var(--r-pill); padding:7px 13px; cursor:pointer;
+    line-height:1.25; text-align:left}
+  .chat-chip:hover{background:var(--surface)}
+  .chat-chip:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
   /* lista messaggi: l'unica parte che scorre */
   .chat-lista{
     flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden;
@@ -154,6 +163,12 @@
     <strong>Chiedi a Matter</strong> — risponde sulla scienza del mestiere, ancorato al grafo. È un aiuto, non un oracolo.
   </div>
 
+  <div class="chat-esempi" id="chat-esempi" aria-label="Domande di esempio" data-i18n-aria="esempi_aria">
+    <button type="button" class="chat-chip" data-i18n="chip1">Perché il mio sour è troppo dolce?</button>
+    <button type="button" class="chat-chip" data-i18n="chip2">Cosa si abbina al pomodoro?</button>
+    <button type="button" class="chat-chip" data-i18n="chip3">Acidità o asprezza?</button>
+  </div>
+
   <div class="chat-lista" id="lista" role="log" aria-live="polite" aria-label="Conversazione con Matter" data-i18n-aria="lista_aria"></div>
 
   <div class="chat-barra">
@@ -180,7 +195,11 @@ window.I18N_DICT = {
   domanda_aria: {it:"La tua domanda", en:"Your question", es:"Tu pregunta"},
   invia: {it:"Chiedi", en:"Ask", es:"Preguntar"},
   mic_aria: {it:"Parla: detta la domanda", en:"Speak: dictate your question", es:"Habla: dicta tu pregunta"},
-  mic_title: {it:"Parla al banco", en:"Speak to the bench", es:"Habla al banco"}
+  mic_title: {it:"Parla al banco", en:"Speak to the bench", es:"Habla al banco"},
+  esempi_aria: {it:"Domande di esempio", en:"Example questions", es:"Preguntas de ejemplo"},
+  chip1: {it:"Perché il mio sour è troppo dolce?", en:"Why is my sour too sweet?", es:"¿Por qué mi sour está demasiado dulce?"},
+  chip2: {it:"Cosa si abbina al pomodoro?", en:"What pairs with tomato?", es:"¿Con qué marida el tomate?"},
+  chip3: {it:"Acidità o asprezza?", en:"Acidity or sourness?", es:"¿Acidez o aspereza?"}
 };
 </script>
 <script src="/static/i18n-nuovo.js"></script>
@@ -273,6 +292,19 @@ window.I18N_DICT = {
     input.disabled = b;
   }
 
+  // chip di esempio: al tap precompilano l'input (non inviano). Spariscono al primo messaggio.
+  var esempi = document.getElementById("chat-esempi");
+  function nascondiEsempi(){ if(esempi){ esempi.hidden = true; } }
+  if(esempi){
+    esempi.addEventListener("click", function(e){
+      var b = e.target && e.target.closest ? e.target.closest(".chat-chip") : null;
+      if(!b) return;
+      input.value = (b.textContent || "").trim();
+      autosize();
+      try{ input.focus(); }catch(_){}
+    });
+  }
+
   form.addEventListener("submit", function(e){
     e.preventDefault();
     if(inVolo) return;
@@ -280,6 +312,7 @@ window.I18N_DICT = {
     var domanda = (input.value || "").trim();
     if(!domanda) return;
 
+    nascondiEsempi();
     aggiungiBolla(domanda, "utente");
     input.value = "";
     autosize();

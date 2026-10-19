@@ -33,9 +33,24 @@
   }
   .grafo-tela svg{display:block; width:100%; height:auto; touch-action:manipulation}
 
+  /* stato vuoto DENTRO la card (vicoli ciechi): mai una scatola bianca muta */
+  .grafo-vuoto{display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px 22px; min-height:220px}
+  .grafo-vuoto .gv-disco{width:72px; height:72px; border-radius:50%; background:var(--panel);
+    border:2px solid var(--segnale); color:var(--verde); display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-weight:800; font-size:26px; margin-bottom:14px; text-transform:uppercase}
+  .grafo-vuoto .gv-titolo{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink);
+    text-transform:capitalize; margin-bottom:6px}
+  .grafo-vuoto .gv-msg{font-size:14px; color:var(--ink); line-height:1.5; max-width:320px}
+  .grafo-vuoto .gv-msg strong{font-weight:700}
+  .grafo-vuoto .gv-nota{font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin-top:8px; max-width:320px}
+
   /* nodi e legami SVG */
   .nodo{cursor:pointer}
-  .nodo .nodo-disco{fill:var(--surface); stroke:var(--riga); stroke-width:1.5}
+  /* vicini: disco verde chiaro PIENO + sigla, così il grafo sembra finito (non cerchi vuoti) */
+  .nodo .nodo-disco{fill:var(--panel); stroke:var(--segnale); stroke-width:1.5}
+  .nodo .nodo-sigla{font-family:var(--display); font-weight:700; font-size:15px; fill:var(--verde);
+    text-anchor:middle; pointer-events:none}
   .nodo .nodo-et{font-family:var(--sans); font-weight:600; font-size:12px; fill:var(--ink)}
   .nodo:focus-visible{outline:none}
   .nodo:focus-visible .nodo-disco{stroke:var(--verde); stroke-width:2.5}
@@ -132,6 +147,7 @@
 
   <div class="grafo-tela" id="tela" aria-label="Grafo ego-centrico dell'ingrediente" data-i18n-aria="tela_aria">
     <svg id="svg" viewBox="0 0 400 460" role="img" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="grafo-vuoto" id="grafo-vuoto" hidden></div>
   </div>
 
   <div class="scopri-onesto" id="onesto" hidden></div>
@@ -192,7 +208,11 @@ window.I18N_DICT = {
 
   var SVGNS = "http://www.w3.org/2000/svg";
   var svg = document.getElementById("svg");
-  var VB_W = 400, VB_H = 460, CX = 200, CY = 226, RADIO = 132;
+  var VB_W = 400, VB_H = 460, CX = 200, CY = 226;
+  // la DISTANZA dal centro codifica la FORZA del match: più vicino = match più forte.
+  // RMIN = il più vicino (forza 1), RMAX = il più lontano (forza 0). Scelti per restare
+  // leggibili a 390px: niente sovrapposizione col nodo centrale (r 38) né coi bordi.
+  var RMIN = 90, RMID = 132, RMAX = 152, NODO_R = 23;
   var MAX_VICINI = 10;
 
   function el(tag, attrs){
@@ -202,6 +222,40 @@ window.I18N_DICT = {
   }
   function tronca(s, n){ s = String(s); return s.length > n ? s.slice(0, n-1) + "…" : s; }
   function cap(s){ s = String(s||""); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+  // SIGLA per riempire il disco del vicino: 1 parola -> iniziale; 2+ parole -> due iniziali.
+  function sigla(nome){
+    var p = String(nome || "").trim().split(/\\s+/).filter(Boolean);
+    if (!p.length) return "·";
+    if (p.length === 1) return p[0].charAt(0).toUpperCase();
+    return (p[0].charAt(0) + p[1].charAt(0)).toUpperCase();
+  }
+
+  // ETICHETTA del nodo: niente più troncamenti aggressivi. Se il nome è lungo va a capo su
+  // 2 righe (quando c'è spazio), altrimenti si tronca a un limite alto. Sempre centrata
+  // sopra/sotto il disco, con x bloccata nei margini così non sfora il grafo.
+  function etichettaNodo(parent, nome, lx, y, sopra){
+    var full = cap(nome);
+    var lines;
+    if (full.length <= 15) {
+      lines = [full];
+    } else {
+      var mid = Math.ceil(full.length / 2);
+      var sp = full.lastIndexOf(" ", mid + 4);
+      if (sp < 3) sp = full.indexOf(" ");
+      if (sp > 2) { lines = [tronca(full.slice(0, sp), 16), tronca(full.slice(sp + 1), 16)]; }
+      else { lines = [tronca(full, 18)]; }
+    }
+    var lh = 13;
+    var y0 = sopra ? (y - (NODO_R + 8) - (lines.length - 1) * lh) : (y + NODO_R + 15);
+    var te = el("text", {"class": "nodo-et", x: lx, "text-anchor": "middle"});
+    lines.forEach(function(ln, idx){
+      var ts = el("tspan", {x: lx, y: y0 + idx * lh});
+      ts.textContent = ln;
+      te.appendChild(ts);
+    });
+    parent.appendChild(te);
+  }
 
   // dedup preservando l'ordine (la sorgente ha doppioni nei composti)
   function dedup(arr){
@@ -294,16 +348,41 @@ window.I18N_DICT = {
   }
 
   function disegna(centro, relazioni){
+    cardPiena();
     svg.innerHTML = "";
-    // scala spessore: 2..11 sul massimo dei composti_condivisi VERI tra le base_aromatica
+    // scala SPESSORE (invariata): 2..11 sul massimo dei composti_condivisi VERI tra le base_aromatica
     var maxN = 1;
-    relazioni.forEach(function(r){ var n = composti(r); if (r.criterio === "base_aromatica" && n && n > maxN) maxN = n; });
+    // scala RAGGIO (nuova): sull'INDICE DI RARITÀ tra le base_aromatica — la stessa grandezza
+    // da cui nasce la banda Alta/Media/Esplorativa. È la forza del match molecolare.
+    // Normalizzazione min–max sui soli vicini aromatici, così lo spread è leggibile a colpo
+    // d'occhio anche quando i punteggi sono vicini. Parentela aromatica -> anello interno
+    // [RMIN..RMID] (più forte = più vicino). Tradizione/contrasto non hanno una magnitudine
+    // di match molecolare -> anello esterno RMAX (il colore dice già il tipo).
+    var maxR = -Infinity, minR = Infinity;
+    relazioni.forEach(function(r){
+      var n = composti(r);
+      if (r.criterio === "base_aromatica" && n && n > maxN) maxN = n;
+      if (r.criterio === "base_aromatica") {
+        var ir = r.evidenza && r.evidenza.indice_rarita;
+        if (typeof ir === "number" && isFinite(ir)) { if (ir > maxR) maxR = ir; if (ir < minR) minR = ir; }
+      }
+    });
+    var spanR = (maxR > minR) ? (maxR - minR) : 0;
+    function raggioDi(rel){
+      if (rel.criterio !== "base_aromatica") return RMAX;
+      var ir = rel.evidenza && rel.evidenza.indice_rarita;
+      if (typeof ir !== "number" || !isFinite(ir)) return RMAX;
+      var f = (spanR > 0) ? (ir - minR) / spanR : 1;  // 1 = match più forte
+      return RMIN + (1 - f) * (RMID - RMIN);
+    }
 
     var N = relazioni.length;
     relazioni.forEach(function(rel, i){
       var ang = (-Math.PI/2) + (2*Math.PI * i / Math.max(N,1));
-      var x = CX + RADIO * Math.cos(ang);
-      var y = CY + RADIO * Math.sin(ang);
+      // DISTANZA = FORZA: match più forte -> raggio piccolo (vicino al centro); più debole -> lontano.
+      var raggio = raggioDi(rel);
+      var x = CX + raggio * Math.cos(ang);
+      var y = CY + raggio * Math.sin(ang);
       var st = stileLegame(rel);
 
       // spessore: vero se abbiamo composti, altrimenti linea sottile (nessun numero finto)
@@ -342,15 +421,15 @@ window.I18N_DICT = {
       // nodo vicino (tap -> ricentra)
       var g = el("g", {"class": "nodo", tabindex: "0", role: "link"});
       g.setAttribute("aria-label", _L({it:"Centra su ", en:"Centre on ", es:"Centra en "}) + cap(rel.ingrediente));
-      g.appendChild(el("circle", {"class": "nodo-disco", cx: x, cy: y, r: 26}));
-      // etichetta SEMPRE centrata sopra/sotto il nodo (mai ai lati: sforerebbe il grafo),
-      // con x bloccata dentro i margini cosi nessun nome viene tagliato.
+      g.appendChild(el("circle", {"class": "nodo-disco", cx: x, cy: y, r: NODO_R}));
+      // SIGLA dentro il disco: lo riempie (niente più cerchi bianchi "rotti"), coerente col centro.
+      var sg = el("text", {"class": "nodo-sigla", x: x, y: y + 5, "text-anchor": "middle"});
+      sg.textContent = sigla(rel.ingrediente);
+      g.appendChild(sg);
+      // etichetta col nome: centrata sopra/sotto (mai ai lati), x bloccata nei margini, wrap a 2 righe se lungo.
       var sopra = Math.sin(ang) < -0.05;
       var lx = Math.max(46, Math.min(VB_W - 46, x));
-      var ly = y + (sopra ? -(26 + 10) : (26 + 18));
-      var te = el("text", {"class": "nodo-et", x: lx, y: ly, "text-anchor": "middle"});
-      te.textContent = tronca(cap(rel.ingrediente), 12);
-      g.appendChild(te);
+      etichettaNodo(g, rel.ingrediente, lx, y, sopra);
       function go(){ location.href = "/scopri-nuovo/" + encodeURIComponent(rel.ingrediente); }
       g.addEventListener("click", go);
       g.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
@@ -360,7 +439,26 @@ window.I18N_DICT = {
     nodoCentrale(centro); // sopra i legami
   }
 
-  function soloCentro(centro){ svg.innerHTML = ""; nodoCentrale(centro); }
+  function soloCentro(centro){ cardPiena(); svg.innerHTML = ""; nodoCentrale(centro); }
+
+  // ---- STATO ESPLICITO DENTRO LA CARD (mai una scatola bianca muta) ----
+  function cardPiena(){
+    if (svg) svg.style.display = "";
+    var box = document.getElementById("grafo-vuoto");
+    if (box) { box.hidden = true; box.innerHTML = ""; }
+  }
+  function cardStato(nome, msgHtml, notaHtml){
+    nascondiOnesto();
+    if (svg) svg.style.display = "none";
+    var box = document.getElementById("grafo-vuoto");
+    if (!box) return;
+    box.innerHTML =
+      '<div class="gv-disco">' + esc(sigla(nome)) + '</div>' +
+      '<div class="gv-titolo">' + esc(cap(nome)) + '</div>' +
+      '<div class="gv-msg">' + msgHtml + '</div>' +
+      (notaHtml ? ('<div class="gv-nota">' + notaHtml + '</div>') : '');
+    box.hidden = false;
+  }
 
   function mostraOnesto(testo){
     var o = document.getElementById("onesto");
@@ -416,12 +514,14 @@ window.I18N_DICT = {
       .then(function(r){ return r.json(); })
       .then(function(d){ render(ing, d); })
       .catch(function(){
-        soloCentro(ing);
-        mostraOnesto(_L({
-          it:"Il grafo non è raggiungibile in questo momento. Riprova più tardi.",
-          en:"The graph is not reachable right now. Try again later.",
-          es:"El grafo no está disponible en este momento. Inténtalo más tarde."
-        }));
+        cardStato(ing,
+          _L({
+            it:"Il grafo non è raggiungibile in questo momento.",
+            en:"The graph is not reachable right now.",
+            es:"El grafo no está disponible en este momento."
+          }),
+          _L({it:"Riprova più tardi.", en:"Try again later.", es:"Inténtalo más tarde."})
+        );
       });
   }
 
@@ -432,23 +532,27 @@ window.I18N_DICT = {
 
     // DB spento / sorgente non disponibile
     if (!rel.length && d.nota) {
-      soloCentro(d.ingrediente || ing);
-      mostraOnesto(_L({
-        it:"Il grafo non ha dati da mostrare ora (<strong>" + esc(d.nota) + "</strong>). Nessun nodo o numero inventato.",
-        en:"The graph has no data to show now (<strong>" + esc(d.nota) + "</strong>). No node or number invented.",
-        es:"El grafo no tiene datos que mostrar ahora (<strong>" + esc(d.nota) + "</strong>). Ningún nodo ni número inventado."
-      }));
+      cardStato(d.ingrediente || ing,
+        _L({
+          it:"Il grafo non ha dati da mostrare ora (<strong>" + esc(d.nota) + "</strong>).",
+          en:"The graph has no data to show now (<strong>" + esc(d.nota) + "</strong>).",
+          es:"El grafo no tiene datos que mostrar ahora (<strong>" + esc(d.nota) + "</strong>)."
+        }),
+        _L({it:"Nessun nodo o numero inventato.", en:"No node or number invented.", es:"Ningún nodo ni número inventado."})
+      );
       return;
     }
 
     // non riconosciuto dalla sorgente
     if (d.non_riconosciuto) {
-      soloCentro(d.ingrediente || ing);
-      mostraOnesto(_L({
-        it:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non è riconosciuto nel grafo: non ci sono composti né relazioni documentate. Non invento nodi né numeri per riempire lo spazio.",
-        en:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> is not recognised in the graph: there are no documented compounds or relations. I don't invent nodes or numbers to fill the space.",
-        es:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> no se reconoce en el grafo: no hay compuestos ni relaciones documentadas. No invento nodos ni números para rellenar el espacio."
-      }));
+      cardStato(d.ingrediente || ing,
+        _L({
+          it:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non è riconosciuto nel grafo: non ci sono composti né relazioni documentate.",
+          en:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> is not recognised in the graph: there are no documented compounds or relations.",
+          es:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> no se reconoce en el grafo: no hay compuestos ni relaciones documentadas."
+        }),
+        _L({it:"Non invento nodi né numeri per riempire lo spazio.", en:"I don't invent nodes or numbers to fill the space.", es:"No invento nodos ni números para rellenar el espacio."})
+      );
       return;
     }
 
@@ -464,12 +568,15 @@ window.I18N_DICT = {
     var nBase = rel.filter(function(r){ return r.criterio === "base_aromatica"; }).length;
 
     if (!rel.length) {
-      soloCentro(d.ingrediente || ing);
-      mostraOnesto(_L({
-        it:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non ha relazioni nel grafo. Non invento nodi né numeri.",
-        en:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> has no relations in the graph. I don't invent nodes or numbers.",
-        es:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> no tiene relaciones en el grafo. No invento nodos ni números."
-      }));
+      var _n = cap(d.ingrediente || ing);
+      cardStato(d.ingrediente || ing,
+        _L({
+          it:"Nessun legame aromatico mappato per <strong>" + esc(_n) + "</strong> — prova un altro ingrediente.",
+          en:"No aromatic link mapped for <strong>" + esc(_n) + "</strong> — try another ingredient.",
+          es:"Ningún vínculo aromático mapeado para <strong>" + esc(_n) + "</strong> — prueba otro ingrediente."
+        }),
+        _L({it:"Non invento nodi né numeri.", en:"I don't invent nodes or numbers.", es:"No invento nodos ni números."})
+      );
       return;
     }
 
