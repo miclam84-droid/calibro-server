@@ -80,6 +80,15 @@ _PAGINA = r"""<!doctype html>
     </div>
   </div>
 
+  <div class="card">
+    <h1 style="font-size:1.1rem;margin:0 0 4px;">Cita Atlante</h1>
+    <p class="sub" style="margin:0 0 12px;">Riempie le fonti (bibliografia canonica) su tutte le schede scienza che non ne hanno. Non tocca quelle già citate. Prima "Anteprima" (non scrive), poi "Scrivi".</p>
+    <button id="cita-anteprima" style="background:transparent;border-color:#2f6f4f;color:#2f6f4f;">Anteprima</button>
+    <button id="cita-scrivi" style="background:#2f6f4f;color:#fff;margin-left:8px;">Scrivi le fonti</button>
+    <div id="cita-stato" style="font-weight:600;margin-top:12px;min-height:1.4em;"></div>
+    <div id="cita-log" style="margin-top:10px;font-size:.82rem;"></div>
+  </div>
+
   <div id="log"></div>
   <p class="avviso">Pausa ~4s tra un lotto e l'altro per rispettare il limite USDA (1000 ricerche/ora). Lotti da 12 ricerche. Se un lotto fallisce, il runner si ferma e mostra l'errore — niente loop infinito.</p>
 
@@ -217,6 +226,42 @@ _PAGINA = r"""<!doctype html>
 
   elAvvia.addEventListener("click", avvia);
   elFerma.addEventListener("click", ferma);
+
+  // ── Cita Atlante: chiama /admin/cita-atlante col secret già in pagina ──
+  var cAnt = document.getElementById("cita-anteprima");
+  var cScr = document.getElementById("cita-scrivi");
+  var cStato = document.getElementById("cita-stato");
+  var cLog = document.getElementById("cita-log");
+
+  async function citaAtlante(scrivi) {
+    if (!SEC) { cStato.textContent = "Manca il secret nell'URL (?s=...)."; cStato.style.color = "#b5452f"; return; }
+    cAnt.disabled = true; cScr.disabled = true;
+    cStato.style.color = ""; cStato.textContent = scrivi ? "Scrivo le fonti…" : "Anteprima in corso…";
+    cLog.innerHTML = "";
+    try {
+      var url = "/admin/cita-atlante?s=" + encodeURIComponent(SEC) + (scrivi ? "&esegui=1" : "");
+      var resp = await fetch(url, { headers: { "Accept": "application/json" } });
+      var d = await resp.json();
+      if (!resp.ok || d.errore) throw new Error(d.errore || ("HTTP " + resp.status));
+      var scritte = (d.scritte !== undefined) ? d.scritte : d.da_scrivere;
+      cStato.style.color = "#2f6f4f";
+      cStato.textContent = (scrivi ? "Fatto: scritte " : "Anteprima: da scrivere ")
+        + scritte + " schede · già citate " + d.gia_citate + " su " + d.totale_schede + ".";
+      var perCat = d.per_categoria || {};
+      var righe = Object.keys(perCat).sort().map(function (k) { return k + ": " + perCat[k]; });
+      cLog.innerHTML = '<div class="riga-log">' + (righe.join(" · ") || "nulla da fare") + "</div>"
+        + (d.esempi || []).slice(0, 6).map(function (e) {
+            return '<div class="riga-log">' + e.nome + " → " + (e.fonti || []).length + " fonti</div>";
+          }).join("");
+    } catch (e) {
+      cStato.style.color = "#b5452f";
+      cStato.textContent = "Errore: " + e.message;
+    } finally {
+      cAnt.disabled = false; cScr.disabled = false;
+    }
+  }
+  cAnt.addEventListener("click", function () { citaAtlante(false); });
+  cScr.addEventListener("click", function () { citaAtlante(true); });
 })();
 </script>
 </body>
