@@ -376,6 +376,11 @@ _TEMPLATE_MENU = {
         "font": "Georgia, 'Times New Roman', serif",
         "bg": "#F7F3EA", "ink": "#2A2018", "accent": "#7A2E2E", "linea": "#C77B3F",
     },
+    # ── Palette congelata di Matter (verde) — opzionale via ?template=matter-verde ──
+    "matter-verde": {
+        "font": "'Space Grotesk', 'Helvetica Neue', Arial, sans-serif",
+        "bg": "#F3F5EF", "ink": "#1D2A22", "accent": "#1E593C", "linea": "#1E593C",
+    },
 }
 
 @bp_menu.route("/v1/menu/<mid>/render", methods=["GET"])
