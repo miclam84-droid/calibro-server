@@ -146,14 +146,14 @@
   <section class="causa-testa">
     <span class="eyebrow" data-i18n="causa_lab">Causa</span>
     <h1 data-i18n="titolo">Parti dal problema</h1>
-    <p class="causa-sub" data-i18n="sub">Descrivi cosa non torna. Matter restringe le ipotesi e ti dice come verificarle al banco — non ti da' una causa certa.</p>
+    <p class="causa-sub" data-i18n="sub">Descrivi cosa non torna. Matter restringe le ipotesi e ti dice come verificarle al banco — non ti dà una causa certa.</p>
   </section>
 
   <form id="form-causa" onsubmit="return false">
     <label class="campo" for="sintomo">
-      <span data-i18n="q_problema">Qual e' il problema?</span>
+      <span data-i18n="q_problema">Qual è il problema?</span>
       <input type="text" id="sintomo" maxlength="200" autocomplete="off"
-             placeholder="es. il cornicione non cresce · il drink e' troppo dolce" data-i18n-ph="sintomo_ph">
+             placeholder="es. il cornicione non cresce · il drink è troppo dolce" data-i18n-ph="sintomo_ph">
     </label>
 
     <!-- VOCALE (detta il sintomo) + VISION (foto del problema) -->
@@ -200,7 +200,7 @@
 
     <!-- BANNER FERMO in cima ai risultati (requisito del revisore) -->
     <div class="banner-limite" role="note" data-i18n-html="banner">
-      <strong>Percorso diagnostico: restringe le ipotesi, NON da' una causa certa.</strong> Verifica al banco.
+      <strong>Percorso diagnostico: restringe le ipotesi, NON dà una causa certa.</strong> Verifica al banco.
     </div>
 
     <div class="ris-testa">
@@ -222,7 +222,7 @@
 
     <!-- APPROFONDIMENTO FENOMENO (D4) -->
     <div class="appr" id="appr" hidden>
-      <button type="button" class="appr-btn" id="appr-btn" aria-expanded="false" aria-controls="appr-corpo" data-i18n="appr_btn">Perche' succede?</button>
+      <button type="button" class="appr-btn" id="appr-btn" aria-expanded="false" aria-controls="appr-corpo" data-i18n="appr_btn">Perché succede?</button>
       <div class="appr-corpo" id="appr-corpo" hidden></div>
     </div>
 
@@ -239,9 +239,9 @@ window.I18N_DICT = {
   eyebrow_causa: {it:"causa", en:"cause", es:"causa"},
   causa_lab: {it:"Causa", en:"Cause", es:"Causa"},
   titolo: {it:"Parti dal problema", en:"Start from the problem", es:"Empieza por el problema"},
-  sub: {it:"Descrivi cosa non torna. Matter restringe le ipotesi e ti dice come verificarle al banco — non ti da' una causa certa.", en:"Describe what's off. Matter narrows the hypotheses and tells you how to verify them at the bench — it doesn't give you a certain cause.", es:"Describe qué no cuadra. Matter acota las hipótesis y te dice cómo verificarlas en la mesa de trabajo — no te da una causa segura."},
-  q_problema: {it:"Qual e' il problema?", en:"What's the problem?", es:"¿Cuál es el problema?"},
-  sintomo_ph: {it:"es. il cornicione non cresce · il drink e' troppo dolce", en:"e.g. the crust won't rise · the drink is too sweet", es:"p. ej. el borde no crece · el trago es demasiado dulce"},
+  sub: {it:"Descrivi cosa non torna. Matter restringe le ipotesi e ti dice come verificarle al banco — non ti dà una causa certa.", en:"Describe what's off. Matter narrows the hypotheses and tells you how to verify them at the bench — it doesn't give you a certain cause.", es:"Describe qué no cuadra. Matter acota las hipótesis y te dice cómo verificarlas en la mesa de trabajo — no te da una causa segura."},
+  q_problema: {it:"Qual è il problema?", en:"What's the problem?", es:"¿Cuál es el problema?"},
+  sintomo_ph: {it:"es. il cornicione non cresce · il drink è troppo dolce", en:"e.g. the crust won't rise · the drink is too sweet", es:"p. ej. el borde no crece · el trago es demasiado dulce"},
   disc_lab: {it:"Disciplina — facoltativa", en:"Discipline — optional", es:"Disciplina — opcional"},
   disc_auto: {it:"La deduco dal problema", en:"Infer it from the problem", es:"La deduzco del problema"},
   disc_bar: {it:"Bar", en:"Bar", es:"Bar"},
@@ -253,10 +253,10 @@ window.I18N_DICT = {
   disc_vino: {it:"Vino", en:"Wine", es:"Vino"},
   disc_birra: {it:"Birra", en:"Beer", es:"Cerveza"},
   btn_diagnosi: {it:"Restringi le ipotesi", en:"Narrow the hypotheses", es:"Acota las hipótesis"},
-  banner: {it:"<strong>Percorso diagnostico: restringe le ipotesi, NON da' una causa certa.</strong> Verifica al banco.", en:"<strong>A diagnostic path: it narrows the hypotheses, it does NOT give a certain cause.</strong> Verify at the bench.", es:"<strong>Ruta diagnóstica: acota las hipótesis, NO da una causa segura.</strong> Verifica en la mesa de trabajo."},
+  banner: {it:"<strong>Percorso diagnostico: restringe le ipotesi, NON dà una causa certa.</strong> Verifica al banco.", en:"<strong>A diagnostic path: it narrows the hypotheses, it does NOT give a certain cause.</strong> Verify at the bench.", es:"<strong>Ruta diagnóstica: acota las hipótesis, NO da una causa segura.</strong> Verifica en la mesa de trabajo."},
   h_ipotesi: {it:"Ipotesi", en:"Hypotheses", es:"Hipótesis"},
   h_sensori: {it:"Cosa controllare", en:"What to check", es:"Qué comprobar"},
-  appr_btn: {it:"Perche' succede?", en:"Why does it happen?", es:"¿Por qué sucede?"},
+  appr_btn: {it:"Perché succede?", en:"Why does it happen?", es:"¿Por qué sucede?"},
   mic_label: {it:"Parla", en:"Speak", es:"Habla"},
   mic_aria: {it:"Parla: detta il problema", en:"Speak: dictate the problem", es:"Habla: dicta el problema"},
   mic_title: {it:"Parla: detta il problema", en:"Speak: dictate the problem", es:"Habla: dicta el problema"},
@@ -271,7 +271,7 @@ window.I18N_DICT = {
 (function(){
   "use strict";
 
-  // ─── identita' del dispositivo — stesso pattern di componi-nuovo / matter-quaderno2.js ───
+  // ─── identità del dispositivo — stesso pattern di componi-nuovo / matter-quaderno2.js ───
   // localStorage 'matter_device_id' || 'matter_token'; se assente genera un UUID valido
   // (36 char: il backend accetta SOLO UUID da 36 char) e lo salva. Header X-Device-Id.
   function devId(){
@@ -321,7 +321,7 @@ window.I18N_DICT = {
   }
   function pulisciStato(){ stato.hidden = true; stato.textContent = ""; }
 
-  // probabilita' -> classe
+  // probabilità -> classe
   function classeProb(p){
     p = String(p || "").toLowerCase();
     if (p === "alta") return "prob-alta";
@@ -329,7 +329,7 @@ window.I18N_DICT = {
     if (p === "bassa") return "prob-bassa";
     return "prob-bassa";
   }
-  // ordinamento per probabilita'
+  // ordinamento per probabilità
   function rangoProb(p){
     p = String(p || "").toLowerCase();
     return p === "alta" ? 0 : (p === "media" ? 1 : 2);
@@ -472,7 +472,7 @@ window.I18N_DICT = {
     if (inCorso) return;
     var sintomo = (inpSintomo.value || "").trim();
     if (!sintomo){
-      mostraStato(_L({it:"Scrivi prima qual e' il problema.", en:"Write what the problem is first.", es:"Escribe primero cuál es el problema."}), true);
+      mostraStato(_L({it:"Scrivi prima qual è il problema.", en:"Write what the problem is first.", es:"Escribe primero cuál es el problema."}), true);
       return;
     }
     var body = { sintomo: sintomo };
@@ -506,7 +506,7 @@ window.I18N_DICT = {
       mostraRisultati(sintomo, d);
     })
     .catch(function(){
-      mostraStato(_L({it:"Il server non e' raggiungibile ora. Riprova tra poco.", en:"The server is unreachable now. Try again shortly.", es:"El servidor no está disponible ahora. Inténtalo en un momento."}), true);
+      mostraStato(_L({it:"Il server non è raggiungibile ora. Riprova tra poco.", en:"The server is unreachable now. Try again shortly.", es:"El servidor no está disponible ahora. Inténtalo en un momento."}), true);
     })
     .then(function(){
       inCorso = false;
