@@ -80,12 +80,14 @@
      ]},
 
     {"ingrediente": "basilico", "nodo_target": "ing-basilico", "specie": "Ocimum basilicum", "dominio": "cucina",
+     "fonte_ingrediente": "Murarikova et al. 2017, \"Characterization of Essential Oil Composition in Different Basil Species and Pot Cultures by a GC-MS Method\", Molecules 22(7):1221, DOI 10.3390/molecules22071221.",
+     "nota": "Chemotipi diversi: cultivar a linalolo vs a metil-eugenolo vs a 1,8-cineolo. Il profilo varia con varieta' e stagione.",
      "composti": [
-       {"composto": "linalool", "descrittore": "floreale, fresco, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "estragole (methyl chavicol)", "descrittore": "anice, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "eugenol", "descrittore": "chiodo di garofano, speziato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "1,8-cineole", "descrittore": "eucalipto, fresco", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "methyl eugenol", "descrittore": "speziato, dolce-legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+       {"composto": "linalool", "descrittore": "floreale, fresco, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"},
+       {"composto": "estragole (methyl chavicol)", "descrittore": "anice, dolce", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"},
+       {"composto": "eugenol", "descrittore": "chiodo di garofano, speziato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"},
+       {"composto": "methyl eugenol", "descrittore": "speziato, dolce-legnoso", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"},
+       {"composto": "1,8-cineole (eucalyptol)", "descrittore": "eucalipto, fresco", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"}
      ]},
 
     {"ingrediente": "rosmarino", "nodo_target": "ing-rosmarino", "specie": "Rosmarinus officinalis", "dominio": "cucina",
@@ -143,11 +145,13 @@
      ]},
 
     {"ingrediente": "cannella", "nodo_target": "ing-cannella", "specie": "Cinnamomum (verum/cassia)", "dominio": "cucina",
+     "fonte_ingrediente": "Olio di corteccia di Cinnamomum verum, analisi GC/GC-MS (SciELO, Food Sci. Technol.): cinnamaldeide 54.7-58.4% nella corteccia; l'olio di foglia e' invece dominato da eugenolo (~94%).",
+     "nota": "Distinzione chiave: CORTECCIA = cinnamaldeide; FOGLIA = eugenolo. La cassia porta anche cumarina.",
      "composti": [
-       {"composto": "cinnamaldehyde", "descrittore": "cannella, dolce-speziato, caldo", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "eugenol", "descrittore": "chiodo di garofano, speziato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "cinnamyl acetate", "descrittore": "dolce-balsamico, floreale", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "coumarin", "descrittore": "fieno, dolce (soprattutto cassia)", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+       {"composto": "cinnamaldehyde", "descrittore": "cannella, dolce-speziato, caldo", "ruolo": "firma", "concentrazione": "~54.7-58.4% (corteccia)", "stato": "da_fonte", "fonte": "SciELO Food Sci. Technol. (corteccia C. verum)"},
+       {"composto": "eugenol", "descrittore": "chiodo di garofano, speziato", "ruolo": "caratterizzante", "concentrazione": "dominante nella foglia (~94%)", "stato": "da_fonte", "fonte": "SciELO Food Sci. Technol."},
+       {"composto": "cinnamyl acetate", "descrittore": "dolce-balsamico, floreale", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "coumarin", "descrittore": "fieno, dolce (soprattutto cassia)", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
      ]},
 
     {"ingrediente": "chiodi di garofano", "nodo_target": "ing-chiodi-di-garofano", "specie": "Syzygium aromaticum", "dominio": "cucina",
