@@ -125,6 +125,7 @@ from routes.admin_cita_atlante import bp_cita_atlante; app.register_blueprint(bp
 from routes.deriva_umami import bp_umami; app.register_blueprint(bp_umami)
 from routes.deriva_amaro import bp_amaro; app.register_blueprint(bp_amaro)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
+from routes.pagina_grafo import bp_pag_grafo; app.register_blueprint(bp_pag_grafo)  # Ondata 5: schermo Grafo ego-centrico nel nuovo FE (isolato, cablato a /v1/grafo-ego)
 from routes.cottura import bp_cottura; app.register_blueprint(bp_cottura)
 from routes.tassonomia_wikidata import bp_tax; app.register_blueprint(bp_tax)
 from routes.copertura_stato import bp_cop_stato; app.register_blueprint(bp_cop_stato)
