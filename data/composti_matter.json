@@ -11,14 +11,15 @@
 
     {"ingrediente": "ginepro", "nodo_target": "ing-ginepro", "specie": "Juniperus communis", "dominio": "bar",
      "CORREGGE": "Nel grafo 'ginepro' risolveva su ahn_juniperus_sabina (specie ornamentale/tossica) con 0 composti. La bacca da gin e' Juniperus communis.",
+     "fonte_ingrediente": "Hoferl et al. 2014, \"Chemical Composition and Antioxidant Properties of Juniper Berry (Juniperus communis L.) Essential Oil\", Antioxidants 3(1):81-98, DOI 10.3390/antiox3010081.",
      "composti": [
-       {"composto": "alpha-pinene", "descrittore": "pino, resinoso, fresco", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "beta-pinene", "descrittore": "pino, secco, erbaceo", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "sabinene", "descrittore": "legnoso, speziato, pepe", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "myrcene", "descrittore": "balsamico, resinoso", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "limonene", "descrittore": "agrume, fresco", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "terpinen-4-ol", "descrittore": "terroso, legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "germacrene D", "descrittore": "legnoso, speziato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+       {"composto": "alpha-pinene", "descrittore": "pino, resinoso, fresco", "ruolo": "firma", "concentrazione": "~51.4% olio essenziale", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
+       {"composto": "myrcene", "descrittore": "balsamico, resinoso", "ruolo": "caratterizzante", "concentrazione": "~8.3%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
+       {"composto": "sabinene", "descrittore": "legnoso, speziato, pepe", "ruolo": "caratterizzante", "concentrazione": "~5.8%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
+       {"composto": "limonene", "descrittore": "agrume, fresco", "ruolo": "di_supporto", "concentrazione": "~5.1%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
+       {"composto": "beta-pinene", "descrittore": "pino, secco, erbaceo", "ruolo": "caratterizzante", "concentrazione": "~5.0%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
+       {"composto": "terpinen-4-ol", "descrittore": "terroso, legnoso", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
+       {"composto": "germacrene D", "descrittore": "legnoso, speziato", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"}
      ]},
 
     {"ingrediente": "limone", "nodo_target": "ing-limone", "specie": "Citrus limon (scorza)", "dominio": "bar",
@@ -174,12 +175,13 @@
      ]},
 
     {"ingrediente": "caffe", "nodo_target": "ing-caffe", "specie": "Coffea (tostato)", "dominio": "caffe",
+     "fonte_ingrediente": "Review su odoranti attivi del caffe: Frontiers in Nutrition 2023, DOI 10.3389/fnut.2023.1196816 (+ letteratura GC-O/AEDA/OAV).",
      "composti": [
-       {"composto": "2-furfurylthiol", "descrittore": "caffe tostato (impatto, soglia bassissima)", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "guaiacol", "descrittore": "fumo, speziato-fenolico", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "4-vinylguaiacol", "descrittore": "speziato, chiodo-fumo", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "furaneol (HDMF)", "descrittore": "caramello, dolce-bruciato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+       {"composto": "2-furfurylthiol", "descrittore": "caffe tostato (impatto, soglia bassissima)", "ruolo": "firma", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"},
+       {"composto": "guaiacol", "descrittore": "fumo, speziato-fenolico", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"},
+       {"composto": "4-vinylguaiacol", "descrittore": "speziato, chiodo-fumo", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"},
+       {"composto": "furaneol (HDMF)", "descrittore": "caramello, dolce-bruciato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"},
+       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"}
      ]},
 
     {"ingrediente": "nocciola", "nodo_target": "ing-nocciola", "specie": "Corylus avellana (tostata)", "dominio": "pasticceria",
