@@ -1,0 +1,46 @@
+{
+  "_schema": {
+    "descrizione": "Dataset composti aromatici proprietario di Matter. Costruito a mano, ingrediente per ingrediente, dai domini reali (bar + panificazione). Ogni associazione ingrediente->composto porta la sua provenienza. NON copia una banca dati altrui: ricompila fatti da letteratura, con stato dichiarato.",
+    "stati_provenienza": ["verificato_al_banco", "da_fonte", "derivato", "stimato", "proposta"],
+    "campi_associazione": {
+      "composto": "nome del composto (inglese, allineabile a PubChem)",
+      "pubchem_cid": "CID PubChem (identita' chimica, fatto pubblico) — 'da_verificare' finche' non confermato alla fonte",
+      "descrittore": "descrittore olfattivo principale",
+      "ruolo": "caratterizzante | di supporto | tracce",
+      "concentrazione_range": "quando la fonte la da' (altrimenti null)",
+      "soglia_odore": "soglia di percezione quando nota (altrimenti null)",
+      "stato": "uno degli stati_provenienza",
+      "fonte": "riferimento (DOI/URL/libro) — 'da_raffinare' dove serve il DOI preciso"
+    },
+    "nota_onesta": "Dove c'e' scritto da_verificare / da_raffinare, il fatto e' solido ma la citazione puntuale va chiusa prima di marcarlo come verificato. Non si spaccia nulla per piu' solido di quanto sia."
+  },
+
+  "ingredienti": [
+
+    {
+      "ingrediente": "ginepro",
+      "nodo_target": "ing-ginepro",
+      "specie": "Juniperus communis",
+      "CORREGGE": "Nel grafo 'ginepro' risolveva su ahn_juniperus_sabina (Juniperus sabina, ginepro sabina, ornamentale/tossico) con 0 composti. La bacca da gin e' Juniperus communis. Questo blocco la rimappa e le da' i composti reali.",
+      "dominio": "bar",
+      "composti": [
+        {"composto": "alpha-pinene",     "pubchem_cid": "da_verificare", "descrittore": "pino, resinoso, fresco", "ruolo": "caratterizzante", "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare (letteratura olio essenziale Juniperus communis)"},
+        {"composto": "beta-pinene",      "pubchem_cid": "da_verificare", "descrittore": "pino, secco, erbaceo",  "ruolo": "caratterizzante", "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare (letteratura olio essenziale Juniperus communis)"},
+        {"composto": "myrcene",          "pubchem_cid": "da_verificare", "descrittore": "balsamico, resinoso",   "ruolo": "caratterizzante", "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
+        {"composto": "limonene",         "pubchem_cid": "da_verificare", "descrittore": "agrume, fresco",        "ruolo": "di supporto",     "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
+        {"composto": "sabinene",         "pubchem_cid": "da_verificare", "descrittore": "legnoso, speziato, pepe","ruolo": "caratterizzante","concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
+        {"composto": "terpinen-4-ol",    "pubchem_cid": "da_verificare", "descrittore": "terroso, legnoso",      "ruolo": "di supporto",     "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
+        {"composto": "germacrene D",     "pubchem_cid": "da_verificare", "descrittore": "legnoso, speziato",     "ruolo": "di supporto",     "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
+        {"composto": "beta-caryophyllene","pubchem_cid": "da_verificare","descrittore": "legnoso, pepato",       "ruolo": "di supporto",     "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"}
+      ]
+    }
+
+  ],
+
+  "_prossimi": [
+    "Rifinire i DOI puntuali su ginepro e marcare verificato dove confermato.",
+    "Prossimi ingredienti bar: angelica, coriandolo, agrumi (scorza), cardamomo, china.",
+    "Prossimi forno: lievito madre (profilo fermentativo), vaniglia (vanillina+range), cacao, nocciola tostata.",
+    "Dove Ahn ha gia' i composti, il valore del fossato = aggiungere descrittore + ruolo + soglia (Ahn e' binario)."
+  ]
+}
