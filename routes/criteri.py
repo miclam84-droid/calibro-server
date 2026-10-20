@@ -483,12 +483,24 @@ def criteri(ingrediente):
         trad = [r for r in trad if r["ingrediente"].lower() not in nomi_base]
         gia_visti = nomi_base | {r["ingrediente"].lower() for r in trad}
         contr = [r for r in contr if r["ingrediente"].lower() not in gia_visti]
+        # ATTRIBUZIONE (CC-BY): base_aromatica e contrasto poggiano sui composti aromatici
+        # del dataset Ahn et al. 2011, rilasciato dagli autori come CC-BY-4.0 su Zenodo.
+        # La licenza RICHIEDE la citazione: la esponiamo sempre che ci siano relazioni da composti.
+        fonte = {}
+        if base or contr:
+            fonte["composti"] = ("Composti aromatici: Ahn, Ahnert, Bagrow, Barabasi (2011), "
+                                 "\"Flavor network and the principles of food pairing\", Scientific Reports. "
+                                 "Dataset CC-BY-4.0 (Zenodo 10.5281/zenodo.11449657).")
+            fonte["licenza"] = "CC-BY-4.0"
+        if trad:
+            fonte["tradizione"] = "Abbinamenti per tradizione: compilazione Matter (proposti, da verificare)."
         return jsonify({
             "ingrediente": ing_nome,
             "nodo_id": ing_id,
             "regola": "Matter mostra perche' una relazione esiste, non un voto di compatibilita'.",
             "relazioni": base + trad + contr,
             "conteggio": {"base_aromatica": len(base), "tradizione": len(trad), "contrasto": len(contr)},
+            "fonte": fonte,
         })
     except Exception as e:
         return _errore(e)
