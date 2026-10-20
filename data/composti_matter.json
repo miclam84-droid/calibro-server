@@ -1,46 +1,232 @@
 {
   "_schema": {
-    "descrizione": "Dataset composti aromatici proprietario di Matter. Costruito a mano, ingrediente per ingrediente, dai domini reali (bar + panificazione). Ogni associazione ingrediente->composto porta la sua provenienza. NON copia una banca dati altrui: ricompila fatti da letteratura, con stato dichiarato.",
+    "descrizione": "Dataset composti aromatici proprietario di Matter. Costruito a mano dai domini reali (bar + panificazione). Ogni associazione ingrediente->composto porta descrittore olfattivo, ruolo e provenienza. NON copia una banca dati altrui: ricompila i composti caratterizzanti noti in letteratura, con stato dichiarato. Il valore sul dato di Ahn (binario, senza descrittori): qui c'e' il descrittore, il ruolo (firma/caratterizzante/supporto) e la provenienza per riga.",
     "stati_provenienza": ["verificato_al_banco", "da_fonte", "derivato", "stimato", "proposta"],
-    "campi_associazione": {
-      "composto": "nome del composto (inglese, allineabile a PubChem)",
-      "pubchem_cid": "CID PubChem (identita' chimica, fatto pubblico) — 'da_verificare' finche' non confermato alla fonte",
-      "descrittore": "descrittore olfattivo principale",
-      "ruolo": "caratterizzante | di supporto | tracce",
-      "concentrazione_range": "quando la fonte la da' (altrimenti null)",
-      "soglia_odore": "soglia di percezione quando nota (altrimenti null)",
-      "stato": "uno degli stati_provenienza",
-      "fonte": "riferimento (DOI/URL/libro) — 'da_raffinare' dove serve il DOI preciso"
-    },
-    "nota_onesta": "Dove c'e' scritto da_verificare / da_raffinare, il fatto e' solido ma la citazione puntuale va chiusa prima di marcarlo come verificato. Non si spaccia nulla per piu' solido di quanto sia."
+    "ruoli": ["firma (compound d'impatto che DEFINISCE l'ingrediente)", "caratterizzante", "di_supporto"],
+    "campi": "composto, descrittore, ruolo, stato, fonte. Concentrazione e soglia odore = strato successivo (si aggiungono dove il paper le da').",
+    "nota_onesta": "stato=da_fonte: associazione solida, nota in letteratura GC-MS/GC-O. fonte=da_raffinare: il fatto e' consolidato ma il DOI puntuale va chiuso prima di marcare 'verificato'. Nessun numero/DOI inventato; dove non e' confermato alla fonte resta dichiarato tale."
   },
 
   "ingredienti": [
 
-    {
-      "ingrediente": "ginepro",
-      "nodo_target": "ing-ginepro",
-      "specie": "Juniperus communis",
-      "CORREGGE": "Nel grafo 'ginepro' risolveva su ahn_juniperus_sabina (Juniperus sabina, ginepro sabina, ornamentale/tossico) con 0 composti. La bacca da gin e' Juniperus communis. Questo blocco la rimappa e le da' i composti reali.",
-      "dominio": "bar",
-      "composti": [
-        {"composto": "alpha-pinene",     "pubchem_cid": "da_verificare", "descrittore": "pino, resinoso, fresco", "ruolo": "caratterizzante", "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare (letteratura olio essenziale Juniperus communis)"},
-        {"composto": "beta-pinene",      "pubchem_cid": "da_verificare", "descrittore": "pino, secco, erbaceo",  "ruolo": "caratterizzante", "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare (letteratura olio essenziale Juniperus communis)"},
-        {"composto": "myrcene",          "pubchem_cid": "da_verificare", "descrittore": "balsamico, resinoso",   "ruolo": "caratterizzante", "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-        {"composto": "limonene",         "pubchem_cid": "da_verificare", "descrittore": "agrume, fresco",        "ruolo": "di supporto",     "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-        {"composto": "sabinene",         "pubchem_cid": "da_verificare", "descrittore": "legnoso, speziato, pepe","ruolo": "caratterizzante","concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-        {"composto": "terpinen-4-ol",    "pubchem_cid": "da_verificare", "descrittore": "terroso, legnoso",      "ruolo": "di supporto",     "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-        {"composto": "germacrene D",     "pubchem_cid": "da_verificare", "descrittore": "legnoso, speziato",     "ruolo": "di supporto",     "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-        {"composto": "beta-caryophyllene","pubchem_cid": "da_verificare","descrittore": "legnoso, pepato",       "ruolo": "di supporto",     "concentrazione_range": null, "soglia_odore": null, "stato": "da_fonte", "fonte": "da_raffinare"}
-      ]
-    }
+    {"ingrediente": "ginepro", "nodo_target": "ing-ginepro", "specie": "Juniperus communis", "dominio": "bar",
+     "CORREGGE": "Nel grafo 'ginepro' risolveva su ahn_juniperus_sabina (specie ornamentale/tossica) con 0 composti. La bacca da gin e' Juniperus communis.",
+     "composti": [
+       {"composto": "alpha-pinene", "descrittore": "pino, resinoso, fresco", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "beta-pinene", "descrittore": "pino, secco, erbaceo", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "sabinene", "descrittore": "legnoso, speziato, pepe", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "myrcene", "descrittore": "balsamico, resinoso", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "limonene", "descrittore": "agrume, fresco", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "terpinen-4-ol", "descrittore": "terroso, legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "germacrene D", "descrittore": "legnoso, speziato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "limone", "nodo_target": "ing-limone", "specie": "Citrus limon (scorza)", "dominio": "bar",
+     "composti": [
+       {"composto": "limonene", "descrittore": "agrume, dolce, fresco", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "beta-pinene", "descrittore": "pino, verde", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "gamma-terpinene", "descrittore": "agrume, legnoso", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "geranial (citrale)", "descrittore": "limone intenso, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "neral (citrale)", "descrittore": "limone, meno aspro", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "linalool", "descrittore": "floreale, fresco", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "lime", "nodo_target": "ing-lime", "specie": "Citrus x latifolia (scorza)", "dominio": "bar",
+     "CORREGGE": "Nel grafo 'lime' risolveva su ahn_kaffir_lime (varieta' diversa). Qui il lime comune da bar.",
+     "composti": [
+       {"composto": "limonene", "descrittore": "agrume, fresco", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "gamma-terpinene", "descrittore": "agrume, legnoso", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "geranial (citrale)", "descrittore": "agrume intenso", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "beta-pinene", "descrittore": "pino, verde", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "terpinolene", "descrittore": "fresco, dolce-legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "alpha-terpineol", "descrittore": "lillà, legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "arancia", "nodo_target": "ing-arancia", "specie": "Citrus sinensis (scorza)", "dominio": "bar",
+     "composti": [
+       {"composto": "limonene", "descrittore": "arancia, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "myrcene", "descrittore": "balsamico, dolce", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "linalool", "descrittore": "floreale, agrumato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "octanal", "descrittore": "agrume, grasso, fresco", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "decanal", "descrittore": "scorza, aldeidico", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "valencene", "descrittore": "agrume, legnoso-dolce", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "pompelmo", "nodo_target": "ing-pompelmo", "specie": "Citrus paradisi (scorza)", "dominio": "bar",
+     "composti": [
+       {"composto": "limonene", "descrittore": "agrume", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "1-p-menthene-8-thiol", "descrittore": "pompelmo autentico, solforato (soglia bassissima)", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "nootkatone", "descrittore": "pompelmo, amaro-agrumato", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "myrcene", "descrittore": "balsamico", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "beta-pinene", "descrittore": "pino, verde", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "bergamotto", "nodo_target": "ing-bergamotto", "specie": "Citrus bergamia", "dominio": "bar",
+     "composti": [
+       {"composto": "linalyl acetate", "descrittore": "floreale, bergamotto, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "limonene", "descrittore": "agrume", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "linalool", "descrittore": "floreale, fresco", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "gamma-terpinene", "descrittore": "agrume, legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "menta", "nodo_target": "ing-menta", "specie": "Mentha x piperita", "dominio": "bar",
+     "composti": [
+       {"composto": "menthol", "descrittore": "menta, fresco, rinfrescante", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "menthone", "descrittore": "menta, erbaceo", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "menthyl acetate", "descrittore": "menta, dolce-fruttato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "1,8-cineole", "descrittore": "eucalipto, fresco", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "isomenthone", "descrittore": "menta, canforato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "basilico", "nodo_target": "ing-basilico", "specie": "Ocimum basilicum", "dominio": "cucina",
+     "composti": [
+       {"composto": "linalool", "descrittore": "floreale, fresco, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "estragole (methyl chavicol)", "descrittore": "anice, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "eugenol", "descrittore": "chiodo di garofano, speziato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "1,8-cineole", "descrittore": "eucalipto, fresco", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "methyl eugenol", "descrittore": "speziato, dolce-legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "rosmarino", "nodo_target": "ing-rosmarino", "specie": "Rosmarinus officinalis", "dominio": "cucina",
+     "composti": [
+       {"composto": "1,8-cineole", "descrittore": "eucalipto, canforato, fresco", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "alpha-pinene", "descrittore": "pino, resinoso", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "camphor", "descrittore": "canfora, pungente", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "camphene", "descrittore": "canforato, legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "borneol", "descrittore": "canforato, balsamico", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "verbenone", "descrittore": "erbaceo, canforato-mentolato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "timo", "nodo_target": "ing-timo", "specie": "Thymus vulgaris", "dominio": "cucina",
+     "composti": [
+       {"composto": "thymol", "descrittore": "timo, medicinale, speziato", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "carvacrol", "descrittore": "origano, caldo-speziato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "p-cymene", "descrittore": "agrume-legnoso, solvente", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "gamma-terpinene", "descrittore": "agrume, legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "linalool", "descrittore": "floreale, fresco", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "zenzero", "nodo_target": "ing-zenzero", "specie": "Zingiber officinale", "dominio": "bar",
+     "nota": "I gingeroli/shogaoli danno la pungenza ma NON sono volatili aromatici: qui i volatili dell'aroma.",
+     "composti": [
+       {"composto": "zingiberene", "descrittore": "zenzero, caldo-speziato, legnoso", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "beta-sesquiphellandrene", "descrittore": "legnoso, speziato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "ar-curcumene", "descrittore": "legnoso, speziato-secco", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "camphene", "descrittore": "canforato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "geranial (citrale)", "descrittore": "agrume, fresco", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "cardamomo", "nodo_target": "ing-cardamomo", "specie": "Elettaria cardamomum", "dominio": "bar",
+     "composti": [
+       {"composto": "alpha-terpinyl acetate", "descrittore": "cardamomo, floreale-speziato", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "1,8-cineole", "descrittore": "eucalipto, fresco, canforato", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "linalool", "descrittore": "floreale, fresco", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "limonene", "descrittore": "agrume", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "coriandolo", "nodo_target": "ing-coriandolo", "specie": "Coriandrum sativum (seme)", "dominio": "bar",
+     "composti": [
+       {"composto": "linalool", "descrittore": "floreale, dolce, agrumato", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "alpha-pinene", "descrittore": "pino, fresco", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "camphor", "descrittore": "canfora", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "geranyl acetate", "descrittore": "floreale, rosa-fruttato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "gamma-terpinene", "descrittore": "agrume, legnoso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "anice stellato", "nodo_target": "ing-anice-stellato", "specie": "Illicium verum", "dominio": "bar",
+     "composti": [
+       {"composto": "trans-anethole", "descrittore": "anice, dolce, liquirizia", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "estragole (methyl chavicol)", "descrittore": "anice, dolce", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "foeniculin", "descrittore": "anice-floreale", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "limonene", "descrittore": "agrume", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "cannella", "nodo_target": "ing-cannella", "specie": "Cinnamomum (verum/cassia)", "dominio": "cucina",
+     "composti": [
+       {"composto": "cinnamaldehyde", "descrittore": "cannella, dolce-speziato, caldo", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "eugenol", "descrittore": "chiodo di garofano, speziato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "cinnamyl acetate", "descrittore": "dolce-balsamico, floreale", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "coumarin", "descrittore": "fieno, dolce (soprattutto cassia)", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "chiodi di garofano", "nodo_target": "ing-chiodi-di-garofano", "specie": "Syzygium aromaticum", "dominio": "cucina",
+     "composti": [
+       {"composto": "eugenol", "descrittore": "chiodo di garofano, caldo-speziato, medicinale", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "eugenyl acetate", "descrittore": "speziato, balsamico, dolce", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "beta-caryophyllene", "descrittore": "legnoso, pepato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "vaniglia", "nodo_target": "ing-vaniglia", "specie": "Vanilla planifolia", "dominio": "pasticceria",
+     "composti": [
+       {"composto": "vanillin", "descrittore": "vaniglia, dolce, balsamico", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "p-hydroxybenzaldehyde", "descrittore": "dolce-balsamico leggero", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "guaiacol", "descrittore": "fumo, speziato-fenolico", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "vanillic acid", "descrittore": "balsamico, leggermente fenolico", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "cacao", "nodo_target": "ing-cacao", "specie": "Theobroma cacao (tostato)", "dominio": "pasticceria",
+     "composti": [
+       {"composto": "tetramethylpyrazine", "descrittore": "tostato, nocciola-cacao", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "trimethylpyrazine", "descrittore": "tostato, terroso", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "2-phenylethanol", "descrittore": "rosa, miele, dolce", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "isoamyl acetate", "descrittore": "banana, fruttato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "isovaleric acid", "descrittore": "formaggio-stantio, acido (nota fermentativa)", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "caffe", "nodo_target": "ing-caffe", "specie": "Coffea (tostato)", "dominio": "caffe",
+     "composti": [
+       {"composto": "2-furfurylthiol", "descrittore": "caffe tostato (impatto, soglia bassissima)", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "guaiacol", "descrittore": "fumo, speziato-fenolico", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "4-vinylguaiacol", "descrittore": "speziato, chiodo-fumo", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "furaneol (HDMF)", "descrittore": "caramello, dolce-bruciato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "nocciola", "nodo_target": "ing-nocciola", "specie": "Corylus avellana (tostata)", "dominio": "pasticceria",
+     "composti": [
+       {"composto": "filbertone (5-methyl-(E)-2-hepten-4-one)", "descrittore": "nocciola tostata (impatto)", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "2-phenylethanol", "descrittore": "rosa, dolce-miele", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "2,5-dimethylpyrazine", "descrittore": "tostato, nocciola", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "mandorla amara", "nodo_target": "ing-mandorla", "specie": "Prunus dulcis var. amara", "dominio": "pasticceria",
+     "composti": [
+       {"composto": "benzaldehyde", "descrittore": "mandorla, marzapane (impatto)", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "burro", "nodo_target": "ing-burro", "specie": "burro (latte)", "dominio": "pasticceria",
+     "composti": [
+       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso (impatto)", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "acetoin", "descrittore": "burroso-cremoso, dolce", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "delta-decalactone", "descrittore": "cremoso, cocco-pesca", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "butyric acid", "descrittore": "burro-rancido, formaggio", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "delta-dodecalactone", "descrittore": "grasso-cremoso, pesca", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "pane (crosta / lievito madre)", "nodo_target": "ing-pane", "specie": "impasto fermentato + Maillard crosta", "dominio": "panificazione",
+     "composti": [
+       {"composto": "2-acetyl-1-pyrroline", "descrittore": "crosta di pane, pop-corn (impatto crosta)", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "ethyl acetate", "descrittore": "fruttato-solvente (fermentazione)", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "3-methyl-1-butanol (isoamyl alcohol)", "descrittore": "maltato, alcolico (fermentazione)", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "acetic acid", "descrittore": "acido, aceto (lievito madre)", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]},
+
+    {"ingrediente": "caramello", "nodo_target": "ing-caramello", "specie": "zucchero caramellizzato", "dominio": "pasticceria",
+     "composti": [
+       {"composto": "furaneol (HDMF)", "descrittore": "caramello, zucchero bruciato, dolce", "ruolo": "firma", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "maltol", "descrittore": "caramello-zucchero filato, dolce", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "cyclotene", "descrittore": "acero, caramello-tostato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "da_raffinare"},
+       {"composto": "2-acetylfuran", "descrittore": "dolce-balsamico, tostato", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "da_raffinare"}
+     ]}
 
   ],
 
   "_prossimi": [
-    "Rifinire i DOI puntuali su ginepro e marcare verificato dove confermato.",
-    "Prossimi ingredienti bar: angelica, coriandolo, agrumi (scorza), cardamomo, china.",
-    "Prossimi forno: lievito madre (profilo fermentativo), vaniglia (vanillina+range), cacao, nocciola tostata.",
-    "Dove Ahn ha gia' i composti, il valore del fossato = aggiungere descrittore + ruolo + soglia (Ahn e' binario)."
+    "Chiudere i DOI puntuali per ingrediente (preferendo open access/PMC) e passare le righe da da_raffinare a verificato dove confermato.",
+    "Aggiungere concentrazione/soglia dove il paper le da' (lo strato quantitativo che Ahn non ha).",
+    "Strato 'verificato_al_banco': dove l'esperienza sensoriale di Bucopertuso/Bucolico conferma.",
+    "Altri ingredienti bar: angelica, china, genziana (amari), agrumi canditi, tonica/china.",
+    "Altri forno: lievito madre profilo esteso, agrumi scorza, frutta secca tostata, spezie da panettone."
   ]
 }
