@@ -44,6 +44,7 @@
   .grafo-vuoto .gv-msg{font-size:14px; color:var(--ink); line-height:1.5; max-width:320px}
   .grafo-vuoto .gv-msg strong{font-weight:700}
   .grafo-vuoto .gv-nota{font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin-top:8px; max-width:320px}
+  .grafo-credito{font-size:11.5px; color:var(--ink-soft); line-height:1.45; margin:10px auto 0; max-width:360px; text-align:center; opacity:.85}
 
   /* nodi e legami SVG */
   .nodo{cursor:pointer}
@@ -151,6 +152,8 @@
   </div>
 
   <div class="scopri-onesto" id="onesto" hidden></div>
+
+  <div class="grafo-credito" id="grafo-credito" hidden></div>
 
   <div class="legenda" aria-hidden="true">
     <span class="lg lg-base"><i></i> <span data-i18n="lg_base">parentela aromatica</span></span>
@@ -582,6 +585,14 @@ window.I18N_DICT = {
 
     disegna(d.ingrediente || ing, rel);
     caricaCentroFoto(d.ingrediente || ing);
+
+    // CREDITO fonte dei composti (CC-BY: l'attribuzione deve vedersi)
+    var elCred = document.getElementById("grafo-credito");
+    if (elCred) {
+      var credTxt = (d.fonte && d.fonte.composti) ? String(d.fonte.composti) : "";
+      if (credTxt) { elCred.textContent = credTxt; elCred.hidden = false; }
+      else { elCred.textContent = ""; elCred.hidden = true; }
+    }
 
     // onestà: nessun legame molecolare, solo tradizione/contrasto
     if (nBase === 0) {
