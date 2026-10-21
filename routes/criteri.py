@@ -82,6 +82,20 @@ def _risolvi_nodo(cur, ingrediente):
     nodo ahn_, match esatto di nome, e con composti veri (nc>0). Ritorna (id, nome_mostrato) o None."""
     ing = (ingrediente or "").strip().lower()
 
+    # 0) override Matter: ingredienti il cui nodo Ahn e' sbagliato/vuoto, corretti dal dataset
+    #    proprietario (ginepro -> ing-ginepro, lime -> ing-lime). Vale SOLO se il nodo esiste
+    #    gia' con composti (cioe' dopo l'import); altrimenti si prosegue con la risoluzione normale.
+    _OVERRIDE = {"ginepro": "ing-ginepro", "lime": "ing-lime"}
+    _ov = _OVERRIDE.get(ing)
+    if _ov:
+        cur.execute(
+            """SELECT n.id, n.name, COUNT(e.to_id) nc
+               FROM nodes n LEFT JOIN edges e ON e.from_id=n.id AND e.relation='contiene_composto'
+               WHERE n.id=%s GROUP BY n.id, n.name""", (_ov,))
+        r = cur.fetchone()
+        if r and (r[2] or 0) > 0:
+            return (r[0], ingrediente.strip())
+
     # 1) alias diretto -> ahn_<name>, se esiste e ha composti
     alias = _ALIAS.get(ing)
     if alias:
