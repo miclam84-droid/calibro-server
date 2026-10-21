@@ -122,6 +122,7 @@ from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(b
 from routes.travaso_nomi import bp_travaso_nomi; app.register_blueprint(bp_travaso_nomi)  # travasa nomi EN da ingredienti_nomi nei nodi (sblocca il search USDA)
 from routes.gusti_runner import bp_gusti_runner; app.register_blueprint(bp_gusti_runner)  # pagina admin: gira deriva-gusti-search a lotti (1 clic, non 150)
 from routes.admin_cita_atlante import bp_cita_atlante; app.register_blueprint(bp_cita_atlante)  # popola provenienza.fonti delle schede scienza (fonti canoniche, fill-only, dry-run)
+from routes.importa_composti import bp_importa_composti; app.register_blueprint(bp_importa_composti)  # porta il dataset composti proprietario nel grafo (dry-run, aggancia ai nodi Composto esistenti)
 from routes.deriva_umami import bp_umami; app.register_blueprint(bp_umami)
 from routes.deriva_amaro import bp_amaro; app.register_blueprint(bp_amaro)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
