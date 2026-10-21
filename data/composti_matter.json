@@ -221,8 +221,7 @@
      "fonte_ingrediente": "Vichi et al. 2020, \"Chemical Markers to Distinguish the Bitter Genotype in Sweet Almond Kernels\", Foods 9(6):747, DOI 10.3390/foods9060747 (open access CC BY). Benzaldeide legata all'amigdalina (precursore della nota amara).",
      "composti": [
        {"composto": "benzaldehyde", "descrittore": "mandorla amara, marzapane, ciliegia (impatto)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods9060747"},
-       {"composto": "benzyl alcohol", "descrittore": "floreale, mandorla", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "HCN (acido cianidrico, in traccia)", "descrittore": "nota di sicurezza, co-prodotto da amigdalina", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
+       {"composto": "benzyl alcohol", "descrittore": "floreale, mandorla", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
      ]},
 
     {"ingrediente": "burro", "nodo_target": "ing-burro", "specie": "burro (latte)", "dominio": "pasticceria",

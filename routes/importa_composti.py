@@ -50,21 +50,60 @@ def _slug(s):
     return re.sub(r"-+", "-", s).strip("-")
 
 
+# sinonimi comune -> forma come salvata nel grafo (nomi sistematici verificati nel vocabolario reale)
+_SINONIMI = {
+    "furaneol": "4 hydroxy 2 5 dimethyl 3 2h furanone",
+    "hdmf": "4 hydroxy 2 5 dimethyl 3 2h furanone",
+    "eucalyptol": "1 8 cineole",
+    "diacetyl": "2 3 butanedione",
+    "raspberry ketone": "4 4 hydroxyphenyl butan 2 one",
+    "citral": "geranial",
+}
+
+
+def _candidati(nome):
+    """Genera i nomi-candidato normalizzati per un composto: gestisce nomi combinati
+    (2-/3-, 'a / b'), sinonimi, e la forma base. Ritorna una lista ordinata, piu' specifico prima."""
+    cand = []
+    def add(x):
+        x = _norm(x)
+        if x and x not in cand:
+            cand.append(x)
+    grezzo = (nome or "").lower()
+    # 1) nome pieno normalizzato
+    add(nome)
+    # 2) split su ' / '  (es. "delta-octalactone / gamma-nonalactone")
+    for p in re.split(r"\s*/\s*", nome):
+        add(p)
+    # 3) combinati "2-/3-metilX" -> "2 metilX" e "3 metilX"
+    m = re.match(r"\s*([0-9]+)\s*[-,/]\s*([0-9]+)\s*[- ](.+)", grezzo)
+    if m:
+        add(m.group(1) + " " + m.group(3))
+        add(m.group(2) + " " + m.group(3))
+    # 4) sinonimi (match sulla forma normalizzata del nome pieno o del primo pezzo)
+    nfull = _norm(nome)
+    for k, v in _SINONIMI.items():
+        if k in nfull:
+            add(v)
+    return cand
+
+
 def _trova_composto(cur, nome):
-    """Trova il nodo Composto esistente che matcha questo nome. Ritorna id o None."""
-    n = _norm(nome)
-    if not n:
-        return None
-    # 1) match esatto sul name normalizzato
-    cur.execute("""SELECT id FROM nodes WHERE type='Composto'
-                   AND regexp_replace(lower(name), '[^a-z0-9 ]', ' ', 'g') ~ ('(^| )' || %s || '( |$)')
-                   ORDER BY length(name) ASC LIMIT 1""", (re.escape(n),))
-    r = cur.fetchone()
-    if r:
-        return r[0]
-    # 2) primo token significativo (es. "limonene", "linalool") come fallback prudente
-    primo = n.split(",")[0].split(" ")[0]
-    if len(primo) >= 5:
+    """Trova il nodo Composto esistente che matcha questo nome, provando piu' candidati.
+    Ritorna id o None."""
+    for n in _candidati(nome):
+        if len(n) < 3:
+            continue
+        # match a parola intera sul name normalizzato del nodo
+        cur.execute("""SELECT id FROM nodes WHERE type='Composto'
+                       AND regexp_replace(lower(name), '[^a-z0-9 ]', ' ', 'g') ~ ('(^| )' || %s || '( |$)')
+                       ORDER BY length(name) ASC LIMIT 1""", (re.escape(n),))
+        r = cur.fetchone()
+        if r:
+            return r[0]
+    # fallback prudente: primo token lungo del nome principale
+    primo = _norm(nome).split(" ")[0]
+    if len(primo) >= 6:
         cur.execute("""SELECT id FROM nodes WHERE type='Composto' AND lower(name) LIKE %s
                        ORDER BY length(name) ASC LIMIT 1""", (primo + "%",))
         r = cur.fetchone()
