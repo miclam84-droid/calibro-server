@@ -4834,9 +4834,394 @@
           "fonte": "Kaffir lime/combava (Citrus hystrix, foglia): citronellale marcatore, citronellolo, nerolo (JTBB UGM 66061; PMC5660901; premierepeau kaffir lime)."
         }
       ]
+    },
+    {
+      "ingrediente": "mirtillo",
+      "nodo_target": "ing-mirtillo",
+      "specie": "Vaccinium corymbosum",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Mirtillo (Vaccinium corymbosum/augustifolium) GC-O: linalolo, (E)-2-esenale, geraniolo, 1,8-cineolo (PMC9407621 'Volatile Compounds... Blueberry GC-Olfactometry'; MDPI Foods 11/16/2516).",
+      "composti": [
+        {
+          "composto": "linalool",
+          "descrittore": "floreale (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo (Vaccinium corymbosum/augustifolium) GC-O: linalolo, (E)-2-esenale, geraniolo, 1,8-cineolo (PMC9407621 'Volatile Compounds... Blueberry GC-Olfactometry'; MDPI Foods 11/16/2516)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo (Vaccinium corymbosum/augustifolium) GC-O: linalolo, (E)-2-esenale, geraniolo, 1,8-cineolo (PMC9407621 'Volatile Compounds... Blueberry GC-Olfactometry'; MDPI Foods 11/16/2516)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo (Vaccinium corymbosum/augustifolium) GC-O: linalolo, (E)-2-esenale, geraniolo, 1,8-cineolo (PMC9407621 'Volatile Compounds... Blueberry GC-Olfactometry'; MDPI Foods 11/16/2516)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "balsamico-eucalipto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo (Vaccinium corymbosum/augustifolium) GC-O: linalolo, (E)-2-esenale, geraniolo, 1,8-cineolo (PMC9407621 'Volatile Compounds... Blueberry GC-Olfactometry'; MDPI Foods 11/16/2516)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo (Vaccinium corymbosum/augustifolium) GC-O: linalolo, (E)-2-esenale, geraniolo, 1,8-cineolo (PMC9407621 'Volatile Compounds... Blueberry GC-Olfactometry'; MDPI Foods 11/16/2516)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "melone",
+      "nodo_target": "ing-melone",
+      "specie": "Cucumis melo",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Melone (Cucumis melo) odoranti chiave: (Z)-6-nonenale (melone verde), esteri etilici, (Z)-3-esenale (Sigma tech 457809; Pherobase J/22389).",
+      "composti": [
+        {
+          "composto": "(Z)-6-nonenal",
+          "descrittore": "melone verde (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melone (Cucumis melo) odoranti chiave: (Z)-6-nonenale (melone verde), esteri etilici, (Z)-3-esenale (Sigma tech 457809; Pherobase J/22389)."
+        },
+        {
+          "composto": "ethyl 2-methylpropanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melone (Cucumis melo) odoranti chiave: (Z)-6-nonenale (melone verde), esteri etilici, (Z)-3-esenale (Sigma tech 457809; Pherobase J/22389)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde tagliato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melone (Cucumis melo) odoranti chiave: (Z)-6-nonenale (melone verde), esteri etilici, (Z)-3-esenale (Sigma tech 457809; Pherobase J/22389)."
+        },
+        {
+          "composto": "benzyl acetate",
+          "descrittore": "floreale-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melone (Cucumis melo) odoranti chiave: (Z)-6-nonenale (melone verde), esteri etilici, (Z)-3-esenale (Sigma tech 457809; Pherobase J/22389)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melone (Cucumis melo) odoranti chiave: (Z)-6-nonenale (melone verde), esteri etilici, (Z)-3-esenale (Sigma tech 457809; Pherobase J/22389)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "anguria",
+      "nodo_target": "ing-anguria",
+      "specie": "Citrullus lanatus",
+      "dominio": "bar",
+      "fonte_ingrediente": "Anguria (Citrullus lanatus) volatili: (Z,Z)-3,6-nonadienale marcatore, (E,Z)-2,6-nonadienale (Korean J Food Sci JAKO199903042090883; ISHS 944_24; Pherobase 353).",
+      "composti": [
+        {
+          "composto": "(Z,Z)-3,6-nonadienal",
+          "descrittore": "anguria verde (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anguria (Citrullus lanatus) volatili: (Z,Z)-3,6-nonadienale marcatore, (E,Z)-2,6-nonadienale (Korean J Food Sci JAKO199903042090883; ISHS 944_24; Pherobase 353)."
+        },
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo-melone",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anguria (Citrullus lanatus) volatili: (Z,Z)-3,6-nonadienale marcatore, (E,Z)-2,6-nonadienale (Korean J Food Sci JAKO199903042090883; ISHS 944_24; Pherobase 353)."
+        },
+        {
+          "composto": "(E)-2-nonenal",
+          "descrittore": "grasso-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anguria (Citrullus lanatus) volatili: (Z,Z)-3,6-nonadienale marcatore, (E,Z)-2,6-nonadienale (Korean J Food Sci JAKO199903042090883; ISHS 944_24; Pherobase 353)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anguria (Citrullus lanatus) volatili: (Z,Z)-3,6-nonadienale marcatore, (E,Z)-2,6-nonadienale (Korean J Food Sci JAKO199903042090883; ISHS 944_24; Pherobase 353)."
+        },
+        {
+          "composto": "(Z,Z)-3,6-nonadien-1-ol",
+          "descrittore": "verde-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anguria (Citrullus lanatus) volatili: (Z,Z)-3,6-nonadienale marcatore, (E,Z)-2,6-nonadienale (Korean J Food Sci JAKO199903042090883; ISHS 944_24; Pherobase 353)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sciroppo d'acero",
+      "nodo_target": "ing-sciroppo-acero",
+      "specie": "Acer saccharum",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Sciroppo d'acero (Acer saccharum): sotolon marcatore (come fieno greco), ciclotene (metil ciclopentenolone), maltolo (premierepeau maple; TGSC methyl cyclopentenolone; letteratura aroma acero).",
+      "composti": [
+        {
+          "composto": "sotolon",
+          "descrittore": "acero-curry (marcatore, come fieno greco)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sciroppo d'acero (Acer saccharum): sotolon marcatore (come fieno greco), ciclotene (metil ciclopentenolone), maltolo (premierepeau maple; TGSC methyl cyclopentenolone; letteratura aroma acero)."
+        },
+        {
+          "composto": "cyclotene",
+          "descrittore": "caramello-acero (metil ciclopentenolone)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sciroppo d'acero (Acer saccharum): sotolon marcatore (come fieno greco), ciclotene (metil ciclopentenolone), maltolo (premierepeau maple; TGSC methyl cyclopentenolone; letteratura aroma acero)."
+        },
+        {
+          "composto": "maltol",
+          "descrittore": "caramello-zucchero cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sciroppo d'acero (Acer saccharum): sotolon marcatore (come fieno greco), ciclotene (metil ciclopentenolone), maltolo (premierepeau maple; TGSC methyl cyclopentenolone; letteratura aroma acero)."
+        },
+        {
+          "composto": "vanillin",
+          "descrittore": "vaniglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sciroppo d'acero (Acer saccharum): sotolon marcatore (come fieno greco), ciclotene (metil ciclopentenolone), maltolo (premierepeau maple; TGSC methyl cyclopentenolone; letteratura aroma acero)."
+        },
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-fragola",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sciroppo d'acero (Acer saccharum): sotolon marcatore (come fieno greco), ciclotene (metil ciclopentenolone), maltolo (premierepeau maple; TGSC methyl cyclopentenolone; letteratura aroma acero)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "galanga",
+      "nodo_target": "ing-galanga",
+      "specie": "Alpinia galanga",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Galanga (Alpinia galanga) olio del rizoma: 1,8-cineolo, acetato di chavicolo (marcatore), alpha-terpineolo, alpha-pinene (RSC d1ra07370b; PROSEA Alpinia galanga; TGSC).",
+      "composti": [
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "balsamico-eucalipto (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Galanga (Alpinia galanga) olio del rizoma: 1,8-cineolo, acetato di chavicolo (marcatore), alpha-terpineolo, alpha-pinene (RSC d1ra07370b; PROSEA Alpinia galanga; TGSC)."
+        },
+        {
+          "composto": "chavicol acetate",
+          "descrittore": "speziato-anice (marcatore galanga)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Galanga (Alpinia galanga) olio del rizoma: 1,8-cineolo, acetato di chavicolo (marcatore), alpha-terpineolo, alpha-pinene (RSC d1ra07370b; PROSEA Alpinia galanga; TGSC)."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "lillà",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Galanga (Alpinia galanga) olio del rizoma: 1,8-cineolo, acetato di chavicolo (marcatore), alpha-terpineolo, alpha-pinene (RSC d1ra07370b; PROSEA Alpinia galanga; TGSC)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "pino-resinoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Galanga (Alpinia galanga) olio del rizoma: 1,8-cineolo, acetato di chavicolo (marcatore), alpha-terpineolo, alpha-pinene (RSC d1ra07370b; PROSEA Alpinia galanga; TGSC)."
+        },
+        {
+          "composto": "camphor",
+          "descrittore": "canforato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Galanga (Alpinia galanga) olio del rizoma: 1,8-cineolo, acetato di chavicolo (marcatore), alpha-terpineolo, alpha-pinene (RSC d1ra07370b; PROSEA Alpinia galanga; TGSC)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "erba cipollina",
+      "nodo_target": "ing-erba-cipollina",
+      "specie": "Allium schoenoprasum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Erba cipollina (Allium schoenoprasum) olio essenziale: solfuri — dimetil disolfuro, dipropil disolfuro, metil propil disolfuro (Gernot-Katzer Alli_sch; FUPhysChemTech 4317; Springer BF01100215).",
+      "composti": [
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "allium-cavolo (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Erba cipollina (Allium schoenoprasum) olio essenziale: solfuri — dimetil disolfuro, dipropil disolfuro, metil propil disolfuro (Gernot-Katzer Alli_sch; FUPhysChemTech 4317; Springer BF01100215)."
+        },
+        {
+          "composto": "dipropyl disulfide",
+          "descrittore": "cipolla",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Erba cipollina (Allium schoenoprasum) olio essenziale: solfuri — dimetil disolfuro, dipropil disolfuro, metil propil disolfuro (Gernot-Katzer Alli_sch; FUPhysChemTech 4317; Springer BF01100215)."
+        },
+        {
+          "composto": "methyl propyl disulfide",
+          "descrittore": "cipolla verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Erba cipollina (Allium schoenoprasum) olio essenziale: solfuri — dimetil disolfuro, dipropil disolfuro, metil propil disolfuro (Gernot-Katzer Alli_sch; FUPhysChemTech 4317; Springer BF01100215)."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "allium intenso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Erba cipollina (Allium schoenoprasum) olio essenziale: solfuri — dimetil disolfuro, dipropil disolfuro, metil propil disolfuro (Gernot-Katzer Alli_sch; FUPhysChemTech 4317; Springer BF01100215)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "papaya",
+      "nodo_target": "ing-papaya",
+      "specie": "Carica papaya",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Papaya (Carica papaya) odoranti: benzil isotiocianato marcatore, linalolo, esteri (PMC9040031 t15; Pherobase C/23389 'papaya Red Maradol'; Griffith green papaya).",
+      "composti": [
+        {
+          "composto": "benzyl isothiocyanate",
+          "descrittore": "pungente-crescione (marcatore papaya)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Papaya (Carica papaya) odoranti: benzil isotiocianato marcatore, linalolo, esteri (PMC9040031 t15; Pherobase C/23389 'papaya Red Maradol'; Griffith green papaya)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Papaya (Carica papaya) odoranti: benzil isotiocianato marcatore, linalolo, esteri (PMC9040031 t15; Pherobase C/23389 'papaya Red Maradol'; Griffith green papaya)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Papaya (Carica papaya) odoranti: benzil isotiocianato marcatore, linalolo, esteri (PMC9040031 t15; Pherobase C/23389 'papaya Red Maradol'; Griffith green papaya)."
+        },
+        {
+          "composto": "methyl butanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Papaya (Carica papaya) odoranti: benzil isotiocianato marcatore, linalolo, esteri (PMC9040031 t15; Pherobase C/23389 'papaya Red Maradol'; Griffith green papaya)."
+        },
+        {
+          "composto": "(E)-beta-ocimene",
+          "descrittore": "floreale-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Papaya (Carica papaya) odoranti: benzil isotiocianato marcatore, linalolo, esteri (PMC9040031 t15; Pherobase C/23389 'papaya Red Maradol'; Griffith green papaya)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "chinotto",
+      "nodo_target": "ing-chinotto",
+      "specie": "Citrus myrtifolia",
+      "dominio": "bar",
+      "fonte_ingrediente": "Chinotto (Citrus myrtifolia) olio scorza: limonene dominante, linalolo, mircene (PMC6024861 'Chinotto Citrus myrtifolia Essential Oils'; iris.unical 284077; agris.fao 65df7e2c).",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume (dominante)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chinotto (Citrus myrtifolia) olio scorza: limonene dominante, linalolo, mircene (PMC6024861 'Chinotto Citrus myrtifolia Essential Oils'; iris.unical 284077; agris.fao 65df7e2c)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chinotto (Citrus myrtifolia) olio scorza: limonene dominante, linalolo, mircene (PMC6024861 'Chinotto Citrus myrtifolia Essential Oils'; iris.unical 284077; agris.fao 65df7e2c)."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "resinoso-balsamico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chinotto (Citrus myrtifolia) olio scorza: limonene dominante, linalolo, mircene (PMC6024861 'Chinotto Citrus myrtifolia Essential Oils'; iris.unical 284077; agris.fao 65df7e2c)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chinotto (Citrus myrtifolia) olio scorza: limonene dominante, linalolo, mircene (PMC6024861 'Chinotto Citrus myrtifolia Essential Oils'; iris.unical 284077; agris.fao 65df7e2c)."
+        },
+        {
+          "composto": "linalyl acetate",
+          "descrittore": "floreale-bergamotto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chinotto (Citrus myrtifolia) olio scorza: limonene dominante, linalolo, mircene (PMC6024861 'Chinotto Citrus myrtifolia Essential Oils'; iris.unical 284077; agris.fao 65df7e2c)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 23/10 (m): +8 (mirtillo, melone, anguria, sciroppo d'acero, galanga, erba cipollina, papaya, chinotto). Marcatori-firma verificati su fonte reale. Connettivita': nonenale/nonadienali (melone/anguria<->cetriolo/kiwi), sotolon (sciroppo d'acero<->fieno greco), maltolo/furaneolo (acero<->caramello/fragola), 1,8-cineolo (galanga<->alloro/curcuma/cardamomo), solfuri allium (erba cipollina<->aglio/cipolla), terpeni agrumi (chinotto<->agrumi).",
     "Ondata 23/10 (l): +8 (funghi, barbabietola, cetriolo, peperone, pandan, guava, arachide tostata, kaffir lime). Marcatori-firma verificati su fonte reale. Terreno nuovo (terroso/verde/salato/asiatico): apre pirazine (arachide/peperone/barbabietola<->nocciola tostata/caffe/cacao/fieno greco), nonadienali (cetriolo<->kiwi), citronellale (kaffir<->melissa/citronella/cedro/verbena), 2-AP (pandan<->pane crosta).",
     "Ondata 23/10 (k): +8 (fiori d'arancio, gelsomino, verbena odorosa, mora, kiwi, fieno greco, tiglio, uva fragola). Marcatori-firma verificati su fonte reale. Connettivita': metil antranilato (neroli/gelsomino/uva fragola<->mandarino), cis-jasmone/indolo (gelsomino<->te verde), citrale (verbena<->limone/citronella/melissa), furaneolo (mora/uva fragola<->fragola/ananas), beta-ionone (mora<->lampone/te nero), 2-feniletanolo/farnesolo (tiglio<->rosa/camomilla).",
     "Ondata 23/10 (j): +8 (mandarino, cedro, citronella, melissa, te verde, ananas, litchi, cumino). Marcatori-firma verificati su fonte reale. Forte condivisione: citrale (cedro/citronella/melissa<->limone), cis-rose oxide (litchi<->uva moscato), furaneolo (ananas<->fragola), beta-damascenone (litchi<->mela/pera/cotogna), p-cimene/gamma-terpinene (cumino/mandarino<->agrumi) -> molti archi nuovi.",
