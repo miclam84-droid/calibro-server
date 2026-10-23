@@ -558,25 +558,9 @@ def route_chat(prompt, tools=None, history=None):
     except Exception as e:
         print(f"[GW] GPT fallback fallito: {e}", flush=True)
 
-    # Fallback 2: Mistral
-    try:
-        out, _ = _mistral_call(prompt)
-        if out:
-            return _sanitize(out)
-        print(f"[GW] Mistral returned empty", flush=True)
-    except Exception as e:
-        import traceback
-        print(f"[GW] Mistral fallito: {e}", flush=True)
-        print(f"[GW] Mistral traceback: {traceback.format_exc()[-300:]}", flush=True)
-
-    # Fallback 3: Gemini (piano free) — ultima rete di sicurezza gratuita
-    try:
-        out, _ = _gemini_call(prompt)
-        if out:
-            print("[GW] fallback Gemini ok", flush=True)
-            return _sanitize(out)
-    except Exception as e:
-        print(f"[GW] Gemini fallito: {e}", flush=True)
+    # Mistral e Gemini RIMOSSI dalla catena: chiavi revocate (richiedono fatturazione).
+    # Sonnet (primario) + GPT-4o-mini (sopra) coprono la chat. Gli adapter _mistral_call/
+    # _gemini_call restano nel file: se si attiva la fatturazione basta riagganciarli qui.
     return None
 
 
@@ -609,12 +593,12 @@ def route_fast(prompt, max_tokens=600, temperature=0):
             if attempt == 0:
                 time.sleep(2)
 
-    # Fallback Mistral
+    # Fallback GPT-4o-mini (OpenAI, live). Mistral rimosso: chiave revocata (serve fatturazione).
     try:
-        out, _ = _mistral_call(prompt, max_tokens=max_tokens)
+        out = _gpt_chat(prompt, max_tokens=max_tokens)
         return _sanitize(out) if out else None
     except Exception as e:
-        print(f"[GW] route_fast Mistral fallito: {e}", flush=True)
+        print(f"[GW] route_fast GPT fallito: {e}", flush=True)
         return None
 
 
@@ -644,24 +628,12 @@ def route_quality(prompt, max_tokens=600, temperature=0):
 
 
 def route_free(prompt, max_tokens=600):
-    """Route SOLO su provider gratuiti (Mistral free → Gemini free).
-    Per compiti economici/non critici (es. completamento abbinamenti) dove non
-    vale la pena consumare crediti a pagamento. Ritorna testo o None."""
-    # prova Mistral free
-    try:
-        out, _ = _mistral_call(prompt, max_tokens=max_tokens)
-        if out:
-            return _sanitize(out)
-    except Exception as e:
-        print(f"[GW] route_free Mistral fallito: {e}", flush=True)
-    # poi Gemini free
-    try:
-        out, _ = _gemini_call(prompt, max_tokens=max_tokens)
-        if out:
-            return _sanitize(out)
-    except Exception as e:
-        print(f"[GW] route_free Gemini fallito: {e}", flush=True)
-    return None
+    """Compiti economici/non critici (es. completamento abbinamenti).
+    Storicamente Mistral free → Gemini free, entrambi ora spenti (chiavi revocate,
+    richiedono fatturazione). Ripuntato su route_fast (Haiku → GPT-4o-mini): il costo
+    è trascurabile e il servizio è sempre disponibile. Gli adapter Mistral/Gemini
+    restano nel file: se si attiva la fatturazione basta riagganciarli."""
+    return route_fast(prompt, max_tokens=max_tokens)
 
 
 def route_embeddings(texts):
