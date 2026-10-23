@@ -87,7 +87,8 @@ def _risolvi_nodo(cur, ingrediente):
     #    gia' con composti (cioe' dopo l'import); altrimenti si prosegue con la risoluzione normale.
     _OVERRIDE = {"ginepro": "ing-ginepro", "lime": "ing-lime",
                  "uva moscato": "ing-uva-moscato", "uva moscata": "ing-uva-moscato",
-                 "te verde": "ing-te-verde", "tè verde": "ing-te-verde"}
+                 "te verde": "ing-te-verde", "tè verde": "ing-te-verde",
+                 "malto": "ing-malto", "pandan": "ing-pandan"}
     _ov = _OVERRIDE.get(ing)
     if _ov:
         cur.execute(
