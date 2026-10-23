@@ -5218,9 +5218,378 @@
           "fonte": "Chinotto (Citrus myrtifolia) olio scorza: limonene dominante, linalolo, mircene (PMC6024861 'Chinotto Citrus myrtifolia Essential Oils'; iris.unical 284077; agris.fao 65df7e2c)."
         }
       ]
+    },
+    {
+      "ingrediente": "tartufo bianco",
+      "nodo_target": "ing-tartufo-bianco",
+      "specie": "Tuber magnatum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Tartufo bianco (Tuber magnatum): bis(metiltio)metano marcatore distintivo (Leibniz-LSB/TUM 'key aroma compounds in white Alba truffle'; PMC11066859; ITJFS bis(methyl-thio)methane).",
+      "composti": [
+        {
+          "composto": "bis(methylthio)methane",
+          "descrittore": "aglio-tartufo (marcatore distintivo)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tartufo bianco (Tuber magnatum): bis(metiltio)metano marcatore distintivo (Leibniz-LSB/TUM 'key aroma compounds in white Alba truffle'; PMC11066859; ITJFS bis(methyl-thio)methane)."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "marino-cavolo cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tartufo bianco (Tuber magnatum): bis(metiltio)metano marcatore distintivo (Leibniz-LSB/TUM 'key aroma compounds in white Alba truffle'; PMC11066859; ITJFS bis(methyl-thio)methane)."
+        },
+        {
+          "composto": "2-methylbutanal",
+          "descrittore": "maltato-cioccolato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tartufo bianco (Tuber magnatum): bis(metiltio)metano marcatore distintivo (Leibniz-LSB/TUM 'key aroma compounds in white Alba truffle'; PMC11066859; ITJFS bis(methyl-thio)methane)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tartufo bianco (Tuber magnatum): bis(metiltio)metano marcatore distintivo (Leibniz-LSB/TUM 'key aroma compounds in white Alba truffle'; PMC11066859; ITJFS bis(methyl-thio)methane)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tartufo bianco (Tuber magnatum): bis(metiltio)metano marcatore distintivo (Leibniz-LSB/TUM 'key aroma compounds in white Alba truffle'; PMC11066859; ITJFS bis(methyl-thio)methane)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "miso",
+      "nodo_target": "ing-miso",
+      "specie": "Glycine max (fermentato)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Miso (soia fermentata): HEMF marcatore, 4-etilguaiacolo, maltolo (Iwate Univ nskg v45n5p323-329; letteratura aroma miso GC-O).",
+      "composti": [
+        {
+          "composto": "HEMF",
+          "descrittore": "caramello-brodo (marcatore, 4-idrossi-2,5-dimetil-etil-furanone)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Miso (soia fermentata): HEMF marcatore, 4-etilguaiacolo, maltolo (Iwate Univ nskg v45n5p323-329; letteratura aroma miso GC-O)."
+        },
+        {
+          "composto": "4-ethylguaiacol",
+          "descrittore": "speziato-fume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Miso (soia fermentata): HEMF marcatore, 4-etilguaiacolo, maltolo (Iwate Univ nskg v45n5p323-329; letteratura aroma miso GC-O)."
+        },
+        {
+          "composto": "maltol",
+          "descrittore": "caramello-zucchero cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Miso (soia fermentata): HEMF marcatore, 4-etilguaiacolo, maltolo (Iwate Univ nskg v45n5p323-329; letteratura aroma miso GC-O)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Miso (soia fermentata): HEMF marcatore, 4-etilguaiacolo, maltolo (Iwate Univ nskg v45n5p323-329; letteratura aroma miso GC-O)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata cotta-brodo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Miso (soia fermentata): HEMF marcatore, 4-etilguaiacolo, maltolo (Iwate Univ nskg v45n5p323-329; letteratura aroma miso GC-O)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "salsa di soia",
+      "nodo_target": "ing-salsa-soia",
+      "specie": "shoyu (fermentato)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Salsa di soia (shoyu): HEMF, 4-etilguaiacolo, 4-vinilguaiacolo, metionolo (Leibniz-LSB/TUM 'key aroma compounds in soy sauce'; Frontiers Microbiology 2020 579808; Pherobase C/9399).",
+      "composti": [
+        {
+          "composto": "HEMF",
+          "descrittore": "caramello-brodo (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salsa di soia (shoyu): HEMF, 4-etilguaiacolo, 4-vinilguaiacolo, metionolo (Leibniz-LSB/TUM 'key aroma compounds in soy sauce'; Frontiers Microbiology 2020 579808; Pherobase C/9399)."
+        },
+        {
+          "composto": "4-ethylguaiacol",
+          "descrittore": "speziato-fume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salsa di soia (shoyu): HEMF, 4-etilguaiacolo, 4-vinilguaiacolo, metionolo (Leibniz-LSB/TUM 'key aroma compounds in soy sauce'; Frontiers Microbiology 2020 579808; Pherobase C/9399)."
+        },
+        {
+          "composto": "4-vinylguaiacol",
+          "descrittore": "chiodi-fume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salsa di soia (shoyu): HEMF, 4-etilguaiacolo, 4-vinilguaiacolo, metionolo (Leibniz-LSB/TUM 'key aroma compounds in soy sauce'; Frontiers Microbiology 2020 579808; Pherobase C/9399)."
+        },
+        {
+          "composto": "methionol",
+          "descrittore": "brodo-patata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salsa di soia (shoyu): HEMF, 4-etilguaiacolo, 4-vinilguaiacolo, metionolo (Leibniz-LSB/TUM 'key aroma compounds in soy sauce'; Frontiers Microbiology 2020 579808; Pherobase C/9399)."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa-miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salsa di soia (shoyu): HEMF, 4-etilguaiacolo, 4-vinilguaiacolo, metionolo (Leibniz-LSB/TUM 'key aroma compounds in soy sauce'; Frontiers Microbiology 2020 579808; Pherobase C/9399)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "aneto",
+      "nodo_target": "ing-aneto",
+      "specie": "Anethum graveolens",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Aneto (Anethum graveolens) olio essenziale: carvone, dill ether (etere dell'aneto), alpha-fellandrene, limonene (Iowa State 'Essential Oil of Dill'; PROSEA Anethum graveolens).",
+      "composti": [
+        {
+          "composto": "carvone",
+          "descrittore": "menta-cumino (chiave aneto)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aneto (Anethum graveolens) olio essenziale: carvone, dill ether (etere dell'aneto), alpha-fellandrene, limonene (Iowa State 'Essential Oil of Dill'; PROSEA Anethum graveolens)."
+        },
+        {
+          "composto": "dill ether",
+          "descrittore": "aneto fresco (marcatore, 3,9-epossi-p-menta-1,8-diene)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aneto (Anethum graveolens) olio essenziale: carvone, dill ether (etere dell'aneto), alpha-fellandrene, limonene (Iowa State 'Essential Oil of Dill'; PROSEA Anethum graveolens)."
+        },
+        {
+          "composto": "alpha-phellandrene",
+          "descrittore": "agrume-pepe",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aneto (Anethum graveolens) olio essenziale: carvone, dill ether (etere dell'aneto), alpha-fellandrene, limonene (Iowa State 'Essential Oil of Dill'; PROSEA Anethum graveolens)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aneto (Anethum graveolens) olio essenziale: carvone, dill ether (etere dell'aneto), alpha-fellandrene, limonene (Iowa State 'Essential Oil of Dill'; PROSEA Anethum graveolens)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "prezzemolo",
+      "nodo_target": "ing-prezzemolo",
+      "specie": "Petroselinum crispum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Prezzemolo (Petroselinum crispum): p-menta-1,3,8-triene marcatore, miristicina, beta-fellandrene (Korean 'Volatile Components of Parsley' JAKO199003042940939; TGSC; MDPI Molecules 27/00934).",
+      "composti": [
+        {
+          "composto": "p-mentha-1,3,8-triene",
+          "descrittore": "prezzemolo verde (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prezzemolo (Petroselinum crispum): p-menta-1,3,8-triene marcatore, miristicina, beta-fellandrene (Korean 'Volatile Components of Parsley' JAKO199003042940939; TGSC; MDPI Molecules 27/00934)."
+        },
+        {
+          "composto": "myristicin",
+          "descrittore": "speziato-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prezzemolo (Petroselinum crispum): p-menta-1,3,8-triene marcatore, miristicina, beta-fellandrene (Korean 'Volatile Components of Parsley' JAKO199003042940939; TGSC; MDPI Molecules 27/00934)."
+        },
+        {
+          "composto": "beta-phellandrene",
+          "descrittore": "agrume-erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prezzemolo (Petroselinum crispum): p-menta-1,3,8-triene marcatore, miristicina, beta-fellandrene (Korean 'Volatile Components of Parsley' JAKO199003042940939; TGSC; MDPI Molecules 27/00934)."
+        },
+        {
+          "composto": "apiole",
+          "descrittore": "speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prezzemolo (Petroselinum crispum): p-menta-1,3,8-triene marcatore, miristicina, beta-fellandrene (Korean 'Volatile Components of Parsley' JAKO199003042940939; TGSC; MDPI Molecules 27/00934)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde tagliato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prezzemolo (Petroselinum crispum): p-menta-1,3,8-triene marcatore, miristicina, beta-fellandrene (Korean 'Volatile Components of Parsley' JAKO199003042940939; TGSC; MDPI Molecules 27/00934)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "wasabi",
+      "nodo_target": "ing-wasabi",
+      "specie": "Wasabia japonica",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Wasabi/rafano (Wasabia japonica / Armoracia rusticana): allil isotiocianato marcatore + altri isotiocianati (agris 'flavour compounds in wasabi and horseradish' 647760bc; Lincoln isothiocyanates wasabi).",
+      "composti": [
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-senape (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wasabi/rafano (Wasabia japonica / Armoracia rusticana): allil isotiocianato marcatore + altri isotiocianati (agris 'flavour compounds in wasabi and horseradish' 647760bc; Lincoln isothiocyanates wasabi)."
+        },
+        {
+          "composto": "2-phenylethyl isothiocyanate",
+          "descrittore": "pungente-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wasabi/rafano (Wasabia japonica / Armoracia rusticana): allil isotiocianato marcatore + altri isotiocianati (agris 'flavour compounds in wasabi and horseradish' 647760bc; Lincoln isothiocyanates wasabi)."
+        },
+        {
+          "composto": "3-butenyl isothiocyanate",
+          "descrittore": "pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wasabi/rafano (Wasabia japonica / Armoracia rusticana): allil isotiocianato marcatore + altri isotiocianati (agris 'flavour compounds in wasabi and horseradish' 647760bc; Lincoln isothiocyanates wasabi)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wasabi/rafano (Wasabia japonica / Armoracia rusticana): allil isotiocianato marcatore + altri isotiocianati (agris 'flavour compounds in wasabi and horseradish' 647760bc; Lincoln isothiocyanates wasabi)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "malto",
+      "nodo_target": "ing-malto",
+      "specie": "Hordeum vulgare (maltato)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Malto d'orzo (barley malt): maltolo, 4-vinilguaiacolo, furaneolo, pirazine (Leibniz-LSB/TUM 'key odorants in barley malt caramalt'; mediatum TUM 1686454).",
+      "composti": [
+        {
+          "composto": "maltol",
+          "descrittore": "caramello-zucchero cotto (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malto d'orzo (barley malt): maltolo, 4-vinilguaiacolo, furaneolo, pirazine (Leibniz-LSB/TUM 'key odorants in barley malt caramalt'; mediatum TUM 1686454)."
+        },
+        {
+          "composto": "4-vinylguaiacol",
+          "descrittore": "chiodi-cereale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malto d'orzo (barley malt): maltolo, 4-vinilguaiacolo, furaneolo, pirazine (Leibniz-LSB/TUM 'key odorants in barley malt caramalt'; mediatum TUM 1686454)."
+        },
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-fragola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malto d'orzo (barley malt): maltolo, 4-vinilguaiacolo, furaneolo, pirazine (Leibniz-LSB/TUM 'key odorants in barley malt caramalt'; mediatum TUM 1686454)."
+        },
+        {
+          "composto": "2-acetylpyrazine",
+          "descrittore": "tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malto d'orzo (barley malt): maltolo, 4-vinilguaiacolo, furaneolo, pirazine (Leibniz-LSB/TUM 'key odorants in barley malt caramalt'; mediatum TUM 1686454)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malto d'orzo (barley malt): maltolo, 4-vinilguaiacolo, furaneolo, pirazine (Leibniz-LSB/TUM 'key odorants in barley malt caramalt'; mediatum TUM 1686454)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "capperi",
+      "nodo_target": "ing-capperi",
+      "specie": "Capparis spinosa",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Capperi (Capparis spinosa): metil isotiocianato marcatore (da glucocapparina), isotiocianati (iris.unime 3053972; Gernot-Katzer Capparis spinosa).",
+      "composti": [
+        {
+          "composto": "methyl isothiocyanate",
+          "descrittore": "pungente-senape (marcatore, da glucocapparina)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Capperi (Capparis spinosa): metil isotiocianato marcatore (da glucocapparina), isotiocianati (iris.unime 3053972; Gernot-Katzer Capparis spinosa)."
+        },
+        {
+          "composto": "isopropyl isothiocyanate",
+          "descrittore": "pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Capperi (Capparis spinosa): metil isotiocianato marcatore (da glucocapparina), isotiocianati (iris.unime 3053972; Gernot-Katzer Capparis spinosa)."
+        },
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Capperi (Capparis spinosa): metil isotiocianato marcatore (da glucocapparina), isotiocianati (iris.unime 3053972; Gernot-Katzer Capparis spinosa)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Capperi (Capparis spinosa): metil isotiocianato marcatore (da glucocapparina), isotiocianati (iris.unime 3053972; Gernot-Katzer Capparis spinosa)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 23/10 (n): +8 (tartufo bianco, miso, salsa di soia, aneto, prezzemolo, wasabi, malto, capperi). Marcatori-firma verificati su fonte reale. Ondata savory/umami/pungenti: bis(metiltio)metano (tartufo bianco, unico), HEMF/4-etilguaiacolo (miso<->salsa di soia), maltolo/furaneolo (malto<->sciroppo d'acero/caramello), isotiocianati (wasabi/capperi<->papaya), 1-octen-3-olo (tartufo<->funghi), carvone/fellandrene (aneto<->cumino).",
     "Ondata 23/10 (m): +8 (mirtillo, melone, anguria, sciroppo d'acero, galanga, erba cipollina, papaya, chinotto). Marcatori-firma verificati su fonte reale. Connettivita': nonenale/nonadienali (melone/anguria<->cetriolo/kiwi), sotolon (sciroppo d'acero<->fieno greco), maltolo/furaneolo (acero<->caramello/fragola), 1,8-cineolo (galanga<->alloro/curcuma/cardamomo), solfuri allium (erba cipollina<->aglio/cipolla), terpeni agrumi (chinotto<->agrumi).",
     "Ondata 23/10 (l): +8 (funghi, barbabietola, cetriolo, peperone, pandan, guava, arachide tostata, kaffir lime). Marcatori-firma verificati su fonte reale. Terreno nuovo (terroso/verde/salato/asiatico): apre pirazine (arachide/peperone/barbabietola<->nocciola tostata/caffe/cacao/fieno greco), nonadienali (cetriolo<->kiwi), citronellale (kaffir<->melissa/citronella/cedro/verbena), 2-AP (pandan<->pane crosta).",
     "Ondata 23/10 (k): +8 (fiori d'arancio, gelsomino, verbena odorosa, mora, kiwi, fieno greco, tiglio, uva fragola). Marcatori-firma verificati su fonte reale. Connettivita': metil antranilato (neroli/gelsomino/uva fragola<->mandarino), cis-jasmone/indolo (gelsomino<->te verde), citrale (verbena<->limone/citronella/melissa), furaneolo (mora/uva fragola<->fragola/ananas), beta-ionone (mora<->lampone/te nero), 2-feniletanolo/farnesolo (tiglio<->rosa/camomilla).",
