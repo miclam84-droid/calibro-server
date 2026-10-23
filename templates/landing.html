@@ -1,475 +1,315 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#131C21">
-<title>Matter Bench — Science & Craft</title>
-<meta name="description" content="La fisica e la chimica sotto ogni gesto al banco. Per chi sa già fare e vuole capire perché.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Matter Bench — la scienza del mestiere. Calcoli, abbinamenti e diagnosi per il banco, con la provenienza del dato dichiarata.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Matter Bench</title>
 <style>
-:root{
-  --bg:#CBD4D4;--surface:#E8EDED;
-  --ink:#131C21;--muted:rgba(19,28,33,.58);--faint:rgba(19,28,33,.36);--border:#B7C3C3;
-  --teal:#12545D;--terra:#C77B3F;--dato:#245979;--grano:#245979;
-  --serif:'Space Grotesk','Inter',sans-serif;--sans:'Inter',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6;}
+  /* Layout: landing a sezioni full-width, ognuna con wrapper centrato max 1080px.
+     Palette mono-verde approvata (SISTEMA-TIPOGRAFICO-MATTER). L'unico elemento "duro"
+     nell'app morbida è il calibro (barra piatta, tacche nette). */
+  :root{
+    --bg1:#F3F5EF; --bg2:#E4EDE3; --bg3:#D3E1D5;
+    --ink:#1D2A22; --ink-tenue:#4A5B50;
+    --verde:#1E593C; --verde-segnale:#2F8A5F;
+    --ocra-testo:#71551F; --oxblood:#A8504A;
+    --card:#FBFCFA; --line:rgba(29,42,34,.10); --tint:rgba(47,138,95,.10);
+    --btn-fg:#ffffff;
+    --disp:"Schibsted Grotesk",system-ui,sans-serif;
+    --text:"Hanken Grotesk",system-ui,sans-serif;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --bg1:#131B16; --bg2:#172019; --bg3:#1D281F;
+    --ink:#EAF1EA; --ink-tenue:#A6B9AD;
+    --verde:#57B583; --verde-segnale:#3E9E6E;
+    --ocra-testo:#D8B466; --oxblood:#E0837B;
+    --card:#1A241C; --line:rgba(234,241,234,.12); --tint:rgba(87,181,131,.12);
+    --btn-fg:#0E1611; color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --bg1:#131B16; --bg2:#172019; --bg3:#1D281F;
+    --ink:#EAF1EA; --ink-tenue:#A6B9AD;
+    --verde:#57B583; --verde-segnale:#3E9E6E;
+    --ocra-testo:#D8B466; --oxblood:#E0837B;
+    --card:#1A241C; --line:rgba(234,241,234,.12); --tint:rgba(87,181,131,.12);
+    --btn-fg:#0E1611; color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:linear-gradient(168deg,var(--bg1) 0%,var(--bg2) 52%,var(--bg3) 100%);
+    background-attachment:fixed; color:var(--ink); font-family:var(--text);
+    font-size:17px; line-height:1.55; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px; margin:0 auto;
+    padding-left:max(20px,env(safe-area-inset-left,0px));
+    padding-right:max(20px,env(safe-area-inset-right,0px));}
+  a{color:var(--verde); text-decoration:none}
+  h1,h2,h3{font-family:var(--disp); font-weight:800; letter-spacing:-.02em; text-wrap:balance; margin:0}
+  .num{font-variant-numeric:tabular-nums}
 
-/* NAV */
-nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
-.n-brand{display:flex;flex-direction:column;gap:1px;}
-.n-name{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1;letter-spacing:-.02em;color:var(--ink);}
-.n-pay{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);}
-.n-cta{background:var(--teal);color:#fff;font-family:var(--sans);font-weight:500;font-size:13px;padding:9px 18px;border-radius:8px;text-decoration:none;letter-spacing:.01em;}
+  /* header */
+  header{position:sticky; top:env(safe-area-inset-top,0px); z-index:20;
+    background:color-mix(in srgb,var(--bg1) 86%,transparent); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px);
+    z-index:21; background:var(--bg1)}
+  .hbar{display:flex; align-items:center; justify-content:space-between; padding-block:14px; gap:16px}
+  .mark{font-family:var(--disp); font-weight:800; font-size:22px; letter-spacing:-.02em; display:inline-flex; align-items:center; color:var(--ink)}
+  .mark b{color:#fff; background:var(--verde); padding:1px 9px 3px; margin-left:7px; font-weight:800}
+  :root[data-theme="dark"] .mark b, :root:not([data-theme="light"]) .mark b{color:var(--btn-fg)}
+  .btn{font-family:var(--disp); font-weight:700; font-size:15px; background:var(--verde); color:var(--btn-fg);
+    border:none; border-radius:12px; padding:11px 18px; cursor:pointer; display:inline-block; white-space:nowrap}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent; color:var(--verde); border:1.5px solid var(--verde)}
+  .btn.lg{font-size:17px; padding:15px 26px; border-radius:14px}
 
-/* HERO */
-.hero{max-width:680px;margin:0 auto;padding:96px 28px 56px;text-align:center;}
-.h-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:24px;}
-.hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(38px,6vw,64px);line-height:1.05;letter-spacing:-.03em;margin-bottom:22px;}
-.hero h1 em{font-style:italic;color:var(--teal);}
-.h-sub{font-size:clamp(15px,2vw,17px);color:var(--muted);max-width:440px;margin:0 auto 38px;line-height:1.7;}
-.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.btn-p{background:var(--teal);color:#fff;font-family:var(--sans);font-weight:500;font-size:15px;padding:15px 30px;border-radius:10px;text-decoration:none;letter-spacing:.01em;}
-.install-row{display:flex;flex-direction:column;align-items:center;gap:10px;margin:-20px 0 40px;}
-.btn-install{display:none;background:var(--ink,#131C21);color:#EAF1F3;font-family:var(--sans);font-weight:600;font-size:15px;padding:14px 30px;border-radius:10px;border:none;cursor:pointer;letter-spacing:.01em;}
-.btn-install:active{transform:scale(.98);}
-.install-hint{display:none;font-size:13px;color:var(--muted);max-width:340px;text-align:center;line-height:1.5;}
-.btn-p:hover{background:#245a52;}
-.btn-s{background:transparent;color:var(--ink);font-family:var(--sans);font-weight:500;font-size:15px;padding:15px 30px;border-radius:10px;text-decoration:none;border:1.5px solid var(--border);}
-.h-note{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:14px;letter-spacing:.02em;}
+  /* hero */
+  .hero{padding-block:62px 40px}
+  .eyebrow{font-family:var(--disp); font-weight:600; font-size:13px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-tenue); margin-bottom:18px}
+  .hero h1{font-size:clamp(38px,6.2vw,66px); line-height:1.02}
+  .hero .lead{font-size:clamp(18px,2.3vw,22px); color:var(--ink-tenue); margin-top:22px; max-width:30ch}
+  .cta-row{display:flex; flex-wrap:wrap; gap:14px; margin-top:32px; align-items:center}
+  .cta-note{font-size:14px; color:var(--ink-tenue)}
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center}
 
-/* APP SHELL PREVIEW */
-.preview{max-width:560px;margin:0 auto 96px;padding:0 28px;}
-.shell{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 4px 6px rgba(26,26,24,.04),0 24px 64px -20px rgba(26,26,24,.14);}
-.sh-top{background:var(--ink);padding:14px 18px 11px;display:flex;justify-content:space-between;align-items:baseline;}
-.sh-name{font-family:var(--serif);font-weight:700;font-size:16px;color:#fff;letter-spacing:-.02em;}
-.sh-pay{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);}
-.sh-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg);}
-.sh-tab{flex:1;padding:11px 6px;text-align:center;font-size:12px;color:var(--muted);font-family:var(--sans);}
-.sh-tab.on{color:var(--teal);border-bottom:2px solid var(--teal);font-weight:600;}
-.sh-body{padding:18px 16px;}
-.fen-card{background:var(--ink);border-radius:12px;padding:18px;color:#fff;margin-bottom:14px;}
-.fen-ey{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--grano);opacity:.7;margin-bottom:8px;}
-.fen-h{font-family:var(--serif);font-weight:700;font-size:17px;line-height:1.3;margin-bottom:9px;letter-spacing:-.01em;}
-.fen-b{font-size:13px;color:rgba(255,255,255,.65);line-height:1.55;margin-bottom:14px;}
-.fen-num{background:rgba(44,110,99,.25);border:1px solid rgba(44,110,99,.4);border-radius:8px;padding:10px 14px;display:flex;align-items:baseline;gap:8px;}
-.fen-n{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--grano);}
-.fen-u{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.45);}
-.disc-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;}
-.disc-r{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--ink);}
-.disc-r:last-child{border-bottom:none;}
-.disc-l{display:flex;align-items:center;gap:10px;}
-.disc-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
-.disc-m{font-family:var(--mono);font-size:11px;color:var(--terra);}
+  /* calcolatore demo */
+  .demo{background:var(--card); border:1px solid var(--line); border-radius:22px; padding:26px; box-shadow:0 1px 0 rgba(29,42,34,.03)}
+  .demo .tag{font-family:var(--disp); font-weight:600; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--verde-segnale)}
+  .demo h3{font-size:24px; margin:8px 0 18px; color:var(--ink)}
+  .field{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--line)}
+  .field label{font-size:15px; color:var(--ink-tenue)}
+  .field .inp{display:flex; align-items:center; gap:7px}
+  .field input{width:76px; font-family:var(--text); font-weight:600; font-size:19px; color:var(--ink);
+    background:transparent; border:none; border-bottom:2px solid var(--line); text-align:right; padding:3px 2px;
+    font-variant-numeric:tabular-nums}
+  .field input:focus{outline:none; border-bottom-color:var(--verde)}
+  .field .u{font-size:13px; color:var(--ink-tenue); width:22px}
 
-/* DOMANDE */
-.domande{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:88px 28px;}
-.d-in{max-width:580px;margin:0 auto;}
-.sec-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:20px;}
-.domande h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.15;letter-spacing:-.02em;margin-bottom:32px;}
-.d-list{display:flex;flex-direction:column;gap:12px;}
-.d-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;gap:14px;align-items:flex-start;}
-.d-q{font-family:var(--mono);font-size:18px;color:var(--terra);opacity:.5;line-height:1;margin-top:2px;flex-shrink:0;}
-.d-t{font-size:15px;line-height:1.55;}
-.d-t strong{font-weight:600;}
-.d-t span{display:block;font-size:13px;color:var(--muted);margin-top:5px;line-height:1.6;}
+  /* calibro — l'unico elemento duro */
+  .calibro{margin-top:22px}
+  .calibro .track{position:relative; height:16px; background:var(--tint); margin:14px 0 8px}
+  .calibro .zone{position:absolute; top:0; bottom:0; background:var(--verde-segnale); opacity:.32}
+  .calibro .tick{position:absolute; top:-5px; bottom:-5px; width:1px; background:var(--ink-tenue)}
+  .calibro .mark-pos{position:absolute; top:-7px; bottom:-7px; width:3px; background:var(--ink)}
+  .calibro .scale{display:flex; justify-content:space-between; font-size:11px; color:var(--ink-tenue); font-family:var(--disp); font-variant-numeric:tabular-nums}
+  .verdict{margin-top:18px; padding:14px 16px; border-radius:12px; background:var(--tint)}
+  .verdict .v{font-family:var(--disp); font-weight:800; font-size:18px; color:var(--ink)}
+  .verdict .v.ok{color:var(--verde)}
+  .verdict .v.warn{color:var(--oxblood)}
+  .verdict .fix{font-size:14.5px; color:var(--ink-tenue); margin-top:5px}
+  .demo .src{font-size:12.5px; color:var(--ink-tenue); margin-top:14px}
+  .demo .src b{color:var(--ocra-testo); font-weight:700}
 
-/* DENTRO */
-.dentro{padding:88px 28px;max-width:860px;margin:0 auto;}
-.dentro h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4vw,38px);line-height:1.15;letter-spacing:-.02em;margin-bottom:8px;}
-.dentro-sub{font-size:15px;color:var(--muted);margin-bottom:40px;max-width:480px;line-height:1.65;}
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
-.feat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;}
-.feat-ico{width:32px;height:32px;border-radius:8px;background:#EEF6F4;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:12px;color:var(--teal);}
-.feat-h{font-family:var(--serif);font-weight:700;font-size:16px;margin-bottom:6px;letter-spacing:-.01em;}
-.feat-b{font-size:13px;color:var(--muted);line-height:1.6;}
+  /* bande */
+  .band{padding-block:56px; border-top:1px solid var(--line)}
+  .band h2{font-size:clamp(28px,4vw,40px); line-height:1.05}
+  .band .sub{color:var(--ink-tenue); margin-top:14px; max-width:52ch}
 
-/* LEGGE */
-.legge{background:var(--ink);color:#fff;padding:88px 28px;}
-.l-in{max-width:600px;margin:0 auto;}
-.legge .sec-lbl{color:var(--grano);opacity:.7;}
-.legge h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.15;letter-spacing:-.02em;margin-bottom:12px;}
-.l-sub{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:36px;line-height:1.7;max-width:460px;}
-.p-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;margin-bottom:10px;}
-.p-ey{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);opacity:.8;margin-bottom:7px;}
-.p-h{font-family:var(--serif);font-weight:700;font-size:17px;margin-bottom:7px;letter-spacing:-.01em;}
-.p-b{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:12px;}
-.p-tags{display:flex;gap:6px;flex-wrap:wrap;}
-.p-tag{font-family:var(--mono);font-size:10px;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;color:rgba(255,255,255,.55);}
+  /* onestà / badge */
+  .badges{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px}
+  .pill{font-family:var(--disp); font-weight:600; font-size:13.5px; padding:8px 15px; border-radius:999px; border:1px solid var(--line); color:var(--ink)}
+  .pill.ok{background:var(--tint); border-color:transparent; color:var(--verde)}
+  .pill.est{border-color:var(--ocra-testo); color:var(--ocra-testo)}
 
-/* PRICING */
-.pricing{padding:88px 28px;max-width:560px;margin:0 auto;text-align:center;}
-.pricing h2{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin-bottom:8px;}
-.pr-sub{font-size:15px;color:var(--muted);margin-bottom:36px;line-height:1.65;}
-.plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
-@media(max-width:480px){.plans{grid-template-columns:1fr;}}
-.plan{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 20px;text-align:left;}
-.plan.pro{background:var(--teal);border-color:var(--teal);color:#fff;}
-.pl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-.plan.pro .pl{color:rgba(255,255,255,.55);}
-.pp{font-family:var(--mono);font-size:30px;font-weight:500;margin-bottom:2px;letter-spacing:-.02em;}
-.ppe{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:18px;}
-.plan.pro .ppe{color:rgba(255,255,255,.45);}
-.plan ul{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
-.plan li{font-size:13px;display:flex;gap:8px;align-items:flex-start;line-height:1.45;}
-.plan li::before{content:'✓';font-size:11px;color:var(--teal);margin-top:1px;flex-shrink:0;}
-.plan.pro li::before{color:var(--grano);}
-.plan li.no::before{content:'○';color:var(--faint);}
-.plan.pro li.no::before{color:rgba(255,255,255,.25);}
-.pb{display:block;text-align:center;text-decoration:none;font-family:var(--sans);font-weight:500;font-size:14px;padding:12px;border-radius:8px;background:var(--bg);color:var(--ink);border:1px solid var(--border);}
-.plan.pro .pb{background:#fff;color:var(--teal);border:none;}
-.pr-note{font-family:var(--mono);font-size:11px;color:var(--faint);}
+  /* porte */
+  .porte{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:30px}
+  .porta{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px}
+  .porta .n{font-family:var(--disp); font-weight:700; font-size:13px; color:var(--verde-segnale); letter-spacing:.04em}
+  .porta h3{font-size:21px; margin:8px 0 7px; color:var(--ink)}
+  .porta p{font-size:15px; color:var(--ink-tenue); margin:0}
 
-/* FOOTER */
-footer{border-top:1px solid var(--border);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.ft-b{font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:-.01em;}
-.ft-links{display:flex;gap:20px;}
-.ft-links a{font-size:12px;color:var(--muted);text-decoration:none;}
-.ft-note{font-family:var(--mono);font-size:10px;color:var(--faint);width:100%;line-height:1.65;margin-top:6px;}
+  /* chi */
+  .chips{display:flex; flex-wrap:wrap; gap:10px; margin-top:22px}
+  .chip{font-family:var(--disp); font-weight:600; font-size:15px; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 16px}
 
-@media(max-width:600px){
-  .hero{padding:60px 20px 40px;}
-  .domande,.dentro,.legge,.pricing{padding:60px 20px;}
-  nav,footer{padding:14px 20px;}
-  .preview{padding:0 20px;}
-}
+  /* prezzo */
+  .price-wrap{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:30px; max-width:720px}
+  .plan{border:1px solid var(--line); border-radius:20px; padding:26px; background:var(--card)}
+  .plan.pro{background:var(--verde); color:#fff; border-color:transparent}
+  :root[data-theme="dark"] .plan.pro, :root:not([data-theme="light"]) .plan.pro{color:var(--btn-fg)}
+  .plan .pname{font-family:var(--disp); font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase; opacity:.8}
+  .plan .amount{font-family:var(--disp); font-weight:800; font-size:40px; margin:8px 0 2px; font-variant-numeric:tabular-nums}
+  .plan .per{font-size:14px; opacity:.75}
+  .plan ul{list-style:none; padding:0; margin:18px 0 0; font-size:15px}
+  .plan li{padding:6px 0; display:flex; gap:9px}
+  .plan li::before{content:"→"; opacity:.6}
+  .plan .btn{margin-top:20px; width:100%; text-align:center}
+  .plan.pro .btn{background:#fff; color:var(--verde)}
 
-/* ── SCROLL REVEAL ── */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-delay-1{transition-delay:.1s}
-.reveal-delay-2{transition-delay:.2s}
-.reveal-delay-3{transition-delay:.3s}
-.reveal-delay-4{transition-delay:.4s}
+  footer{padding-block:40px; border-top:1px solid var(--line); color:var(--ink-tenue); font-size:14px}
+  .foot-mark{font-family:var(--disp); font-weight:600; color:var(--ink)}
 
+  @media (max-width:760px){
+    .hero-grid{grid-template-columns:1fr; gap:30px}
+    .porte{grid-template-columns:1fr}
+    .price-wrap{grid-template-columns:1fr}
+    .hero{padding-block:40px 24px}
+  }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="n-brand">
-    <span class="n-name">Matter Bench</span>
-    <span class="n-pay">Science &amp; Craft</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <div style="display:flex;gap:4px">
-      <button onclick="setLang('it')" id="l-it" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">IT</button>
-      <button onclick="setLang('en')" id="l-en" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">EN</button>
-      <button onclick="setLang('es')" id="l-es" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;cursor:pointer;color:var(--ink)">ES</button>
-    </div>
-    <a href="/app" class="n-cta" id="nav-cta">Prova gratis</a>
-  </div>
-</nav>
 
-<section class="hero reveal">
-  <span class="h-kicker" id="l-kicker">Bar · Bakery · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra</span>
-  <h1 id="l-h1">Sai <em>farlo.</em><br>Ora capisci perché.</h1>
-  <p class="h-sub" id="l-sub">La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa ogni giorno.</p>
-  <div class="cta-row">
-    <a href="/app" class="btn-p" id="l-cta1">Studia gratis — nessuna carta</a>
-    <a href="#domande" class="btn-s" id="l-cta2">Come funziona</a>
+<header>
+  <div class="wrap hbar">
+    <span class="mark">Matter<b>Bench</b></span>
+    <a class="btn" href="#prezzo">Entra · €19,99/mese</a>
   </div>
-  <p class="h-note" id="l-note">5 domande in chat gratis. Nessuna registrazione per iniziare.</p>
-</section>
+</header>
 
-<div class="preview">
-  <div class="shell">
-    <div class="sh-top">
-      <span class="sh-name">Matter Bench</span>
-      <span class="sh-pay">Science &amp; Craft</span>
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">la scienza del mestiere</div>
+        <h1>Smetti di indovinare le dosi al banco.</h1>
+        <p class="lead">Calcola le dosi, esplora gli abbinamenti, analizza cosa non ha funzionato. Per ogni dato sai se viene da una fonte, da un calcolo o da una stima.</p>
+        <div class="cta-row">
+          <a class="btn lg" href="#prezzo">Prova gratis per 7 giorni</a>
+          <a class="btn ghost lg" href="#demo">Prova il calcolatore</a>
+        </div>
+        <p class="cta-note" style="margin-top:14px">Nessuna carta per iniziare · bar · panificazione · pasticceria · cucina</p>
+      </div>
+
+      <div class="demo" id="demo" aria-label="Calcolatore di equilibrio del sour">
+        <div class="tag">Al banco, adesso</div>
+        <h3>Cambia una dose. Guarda come cambia il calcolo.</h3>
+        <div class="field"><label for="d">Distillato</label><span class="inp"><input id="d" type="number" value="60" min="0" step="5"><span class="u">ml</span></span></div>
+        <div class="field"><label for="a">Succo / acido</label><span class="inp"><input id="a" type="number" value="30" min="0" step="2.5"><span class="u">ml</span></span></div>
+        <div class="field"><label for="z">Sciroppo / zucchero</label><span class="inp"><input id="z" type="number" value="20" min="0" step="2.5"><span class="u">ml</span></span></div>
+
+        <div class="calibro">
+          <div class="track" id="track">
+            <div class="zone" id="zone"></div>
+            <div class="tick" id="t1"></div>
+            <div class="tick" id="t2"></div>
+            <div class="mark-pos" id="pos"></div>
+          </div>
+          <div class="scale"><span>più aspro</span><span>equilibrio</span><span>più dolce</span></div>
+        </div>
+
+        <div class="verdict">
+          <div class="v" id="vtext">—</div>
+          <div class="fix" id="vfix"></div>
+        </div>
+        <p class="src">Il calcolo <b>orienta la prova</b>; l'assaggio resta indispensabile. È un punto di partenza sulle proporzioni, non un verdetto sensoriale.</p>
+      </div>
     </div>
-    <div class="sh-tabs">
-      <div class="sh-tab on">Scopri</div>
-      <div class="sh-tab">Lezione</div>
-      <div class="sh-tab">Mappa</div>
-      <div class="sh-tab">Chiedi</div>
+  </section>
+
+  <section class="band" id="onesta">
+    <div class="wrap">
+      <h2>Se il dato manca, te lo diciamo.</h2>
+      <p class="sub">Un dato da fonte, un risultato derivato, una stima e una proposta non sono la stessa cosa. Matter Bench ne dichiara la provenienza e segnala quando l'informazione disponibile non basta.</p>
+      <div class="badges">
+        <span class="pill ok">verificato al banco</span>
+        <span class="pill">da fonte</span>
+        <span class="pill">derivato</span>
+        <span class="pill est">stimato</span>
+        <span class="pill est">proposta</span>
+      </div>
     </div>
-    <div class="sh-body">
-      <div class="fen-card">
-        <div class="fen-ey">Fenomeno · Fermentazione lattica</div>
-        <div class="fen-h">La madre matura.<br>Non la madre attiva.</div>
-        <div class="fen-b">Sembrano uguali in superficie, ma il pH le separa: a 4,1 sei nel momento giusto. A 3,6 il glutine è già indebolito dalla proteolisi acida — il pane non svilupperà in forno.</div>
-        <div class="fen-num">
-          <span class="fen-n">4,0–4,1</span>
-          <span class="fen-u">pH · finestra di utilizzo madre</span>
+  </section>
+
+  <section class="band" id="porte">
+    <div class="wrap">
+      <h2>Quattro strumenti per lavorare meglio al banco.</h2>
+      <p class="sub">Dosare, abbinare, capire cosa non ha funzionato, tenere memoria delle prove. Gli stessi fenomeni fisici attraversano bar, forno, pasticceria e cucina.</p>
+      <div class="porte">
+        <div class="porta"><div class="n">BANCO</div><h3>Calcola. Confronta. Assaggia.</h3><p>Diluizione, acidità, idratazione e temperatura: usa i calcolatori come punto di partenza per una prova più consapevole.</p></div>
+        <div class="porta"><div class="n">GRAFO</div><h3>Scopri cosa collega due ingredienti</h3><p>Esplora le relazioni tra ingredienti attraverso i composti aromatici del grafo. Consulta la fonte e tratta il collegamento come un indizio da verificare.</p></div>
+        <div class="porta"><div class="n">CAUSA</div><h3>Dal problema a una prova verificabile</h3><p>Descrivi cosa non ha funzionato: Matter propone ipotesi e controlli da fare al banco per distinguere le possibili cause.</p></div>
+        <div class="porta"><div class="n">QUADERNO</div><h3>Registra cosa provi. Ritrova cosa impari.</h3><p>Annota preparazioni, modifiche e osservazioni per ritrovare le prove e confrontare i risultati.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="chi">
+    <div class="wrap">
+      <h2>Per chi prepara, misura e corregge ogni giorno.</h2>
+      <p class="sub">Partiamo dai bartender: calcoli di diluizione e relazioni tra ingredienti sono il primo campo di lavoro di Matter Bench. Gli strumenti si estendono a panificazione, pasticceria e cucina. Disponibile in italiano, inglese e spagnolo.</p>
+      <div class="chips"><span class="chip">Bartender</span><span class="chip">Panificatori</span><span class="chip">Pasticceri</span><span class="chip">Cuochi</span></div>
+    </div>
+  </section>
+
+  <section class="band" id="prezzo">
+    <div class="wrap">
+      <h2>Comincia gratis. Passa a Pro quando ti serve di più.</h2>
+      <p class="sub">Inizia col piano gratuito e prova gli strumenti disponibili. Con Pro accedi alle funzioni incluse nell'abbonamento.</p>
+      <div class="price-wrap">
+        <div class="plan">
+          <div class="pname">Free</div>
+          <div class="amount num">€0</div>
+          <div class="per">per cominciare</div>
+          <ul>
+            <li>Calcolatori del banco</li>
+            <li>Grafo di abbinamento</li>
+            <li>Prime consultazioni</li>
+          </ul>
+          <a class="btn ghost" href="/nuovo">Inizia gratis</a>
+        </div>
+        <div class="plan pro">
+          <div class="pname">Pro</div>
+          <div class="amount num">€19,99</div>
+          <div class="per">al mese · prova 7 giorni</div>
+          <ul>
+            <li>Grafo completo e Atlante</li>
+            <li>Causa — diagnosi al banco</li>
+            <li>Quaderno + carte/menu con allergeni UE</li>
+            <li>Voce e foto come input</li>
+          </ul>
+          <a class="btn" href="/nuovo">Prova 7 giorni gratis</a>
         </div>
       </div>
-      <div class="disc-lbl">Scegli la tua disciplina</div>
-      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Bar</div><span class="disc-m">26 fenomeni ›</span></div>
-      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Panificazione</div><span class="disc-m">26 fenomeni ›</span></div>
-      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Cucina</div><span class="disc-m">30 fenomeni ›</span></div>
-      <div class="disc-r"><div class="disc-l"><div class="disc-dot"></div>Caffè · Pasticceria · e altri</div><span class="disc-m">52 fenomeni totali ›</span></div>
     </div>
-  </div>
-</div>
-
-<section class="domande reveal" id="domande">
-  <div class="d-in">
-    <span class="sec-lbl">Le domande che ti porti al banco da anni</span>
-    <h2>Non è la ricetta che cambia.<br>È la fisica sotto.</h2>
-    <div class="d-list">
-      <div class="d-item">
-        <span class="d-q">?</span>
-        <div class="d-t">
-          <strong>Il tuo whiskey sour ha un sapore diverso ogni sera.</strong>
-          <span>Stessa ricetta, stesso lime. Il pH del lime varia di quasi un punto tra lotti diversi. Un punto di pH è sei volte più acido. E la diluizione dello shake cambia con il ghiaccio.</span>
-        </div>
-      </div>
-      <div class="d-item">
-        <span class="d-q">?</span>
-        <div class="d-t">
-          <strong>L'impasto d'estate fermenta in metà tempo.</strong>
-          <span>Ogni 8°C in più, il lievito lavora il doppio. Si chiama Q10 — la stessa equazione governa il cold brew, la pastorizzazione e la cella di lievitazione.</span>
-        </div>
-      </div>
-      <div class="d-item">
-        <span class="d-q">?</span>
-        <div class="d-t">
-          <strong>La ganache si separa sempre quando la riscaldi.</strong>
-          <span>Sopra i 40°C la fase grassa si separa. Sopra i 55°C le proteine del siero si denaturano e l'emulsione non torna. Il numero governa tutto.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="dentro reveal">
-  <span class="sec-lbl">Cosa c'è dentro</span>
-  <h2>3.005 nodi. 52 fenomeni.<br>Un grafo di conoscenza F&B.</h2>
-  <p class="dentro-sub">Funziona nel browser, si installa come app. Nessun App Store necessario.</p>
-  <div class="install-row" id="install-row">
-    <button class="btn-install" id="btn-install" onclick="installaApp()">Installa l'app</button>
-    <span class="install-hint" id="install-hint"></span>
-  </div>
-  <div class="feat-grid">
-    <div class="feat reveal reveal-delay-1">
-      <div class="feat-ico">◎</div>
-      <div class="feat-h">Scopri</div>
-      <div class="feat-b">Il fenomeno del giorno dalla tua disciplina. Un principio fisico o chimico con il numero-bersaglio misurabile al banco.</div>
-    </div>
-    <div class="feat reveal reveal-delay-2">
-      <div class="feat-ico">✎</div>
-      <div class="feat-h">Lezione</div>
-      <div class="feat-b">Percorso strutturato per fenomeno. Scheda, numero bersaglio, principio fisico, quiz generato da AI. Si avanza passo per passo.</div>
-    </div>
-    <div class="feat reveal reveal-delay-3">
-      <div class="feat-ico">⊞</div>
-      <div class="feat-h">Flavor Network</div>
-      <div class="feat-b">Abbinamenti per composti aromatici condivisi (dataset Ahn 2011). E abbinamenti per contrasto fisico-percettivo: acido/grasso, dolce/amaro.</div>
-    </div>
-    <div class="feat reveal reveal-delay-4">
-      <div class="feat-ico">◻</div>
-      <div class="feat-h">Chiedi</div>
-      <div class="feat-b">Chat AI che naviga il grafo. Risposta ancorata alla fisica, non alle opinioni. Con calcolatori deterministici: sour, diluizione, Q10, TDS caffè.</div>
-    </div>
-  </div>
-</section>
-
-<section class="legge">
-  <div class="l-in">
-    <span class="sec-lbl">La legge sotto</span>
-    <h2>La stessa fisica<br>in stanze diverse.</h2>
-    <p class="l-sub">La fermentazione del pane, l'estrazione del caffè, la carbonatazione di un cocktail — non sono mestieri separati. Seguono le stesse leggi. Matter Bench le mostra tutte.</p>
-    <div class="p-card">
-      <div class="p-ey">Principio · kT</div>
-      <div class="p-h">Energia termica — Boltzmann</div>
-      <div class="p-b">La temperatura non è caldo o freddo: è la misura di quanto le molecole si agitano. Più si agitano, più si urtano, più ogni reazione corre — l'estrazione, la fermentazione, il gas che resta in un liquido, la regola del +10°C. Una sola causa, quattro mestieri.</div>
-      <div class="p-tags">
-        <span class="p-tag">Fermentazione</span>
-        <span class="p-tag">Estrazione caffè</span>
-        <span class="p-tag">Carbonatazione</span>
-        <span class="p-tag">Cristallizzazione</span>
-      </div>
-    </div>
-    <div class="p-card">
-      <div class="p-ey">Flavor Network · Ahn 2011</div>
-      <div class="p-h">Abbinamenti per composti aromatici condivisi</div>
-      <div class="p-b">Whiskey e Jamaican Rum condividono 79 composti. Cioccolato e caffè 73. Lime e coriandolo la stessa famiglia di terpeni. La scienza che permette di creare, non solo di replicare.</div>
-      <div class="p-tags">
-        <span class="p-tag">whiskey + rum (79 composti)</span>
-        <span class="p-tag">caffè + cardamomo</span>
-        <span class="p-tag">lime + coriandolo</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="pricing" id="pricing">
-  <span class="sec-lbl">Inizia gratis</span>
-  <h2>Nessuna carta.<br>Studia subito.</h2>
-  <p class="pr-sub">Entra, scegli la disciplina, usa le 5 chat di prova. Passi a Pro quando vuoi tutto illimitato.</p>
-  <div class="plans">
-    <div class="plan">
-      <div class="pl">Free — sempre</div>
-      <div class="pp">€0</div>
-      <div class="ppe">nessuna scadenza</div>
-      <ul>
-        <li>Fenomeno del giorno</li>
-        <li>Prima lezione per ogni disciplina</li>
-        <li>5 chat di prova al primo accesso</li>
-        <li class="no">Chat illimitata</li>
-        <li class="no">Flavor Network interattivo</li>
-        <li class="no">Quaderno misure fisiche</li>
-        <li class="no">Sicurezza alimentare</li>
-      </ul>
-      <a href="/app" class="pb">Inizia gratis</a>
-    </div>
-    <div class="plan pro">
-      <div class="pl">Pro</div>
-      <div class="pp">€11,99</div>
-      <div class="ppe">al mese · o €89,99/anno</div>
-      <ul>
-        <li>Tutte le lezioni complete</li>
-        <li>Chat illimitata con calcolatori</li>
-        <li>Flavor Network interattivo</li>
-        <li>Abbinamenti per contrasto</li>
-        <li>Quaderno misure fisiche</li>
-        <li>Sicurezza alimentare Pro</li>
-        <li>IT + EN</li>
-      </ul>
-      <a href="/app" class="pb">Prova 7 giorni gratis</a>
-    </div>
-  </div>
-  <p class="pr-note">Stripe · cancelli quando vuoi · primi 100 utenti a €7,99/mese</p>
-</section>
+  </section>
+</main>
 
 <footer>
-  <span class="ft-b">Matter Bench</span>
-  <div class="ft-links">
-    <a href="/privacy">Privacy</a>
-    <a href="/termini">Termini</a>
-    <a href="/cookie-policy">Cookie Policy</a>
-    <a href="/trust">Trust Center</a>
-    <a href="/come-funziona-ai">AI</a>
+  <div class="wrap">
+    <span class="foot-mark">Matter Bench</span> — la scienza del mestiere.<br>
+    <span style="font-size:13px">Strumenti, dati e ipotesi per capire meglio ciò che succede al banco.</span>
   </div>
-  <p class="ft-note">Matter Bench usa intelligenza artificiale per navigare il grafo di conoscenza F&B. Stai interagendo con un sistema AI — art. 50 EU AI Act. Le risposte sono generate da Anthropic/Mistral e possono contenere errori.</p>
 </footer>
 
-
 <script>
-var _TEXTS = {
-  it: {
-    kicker: "Bar · Bakery · Cucina · Caffè · Pasticceria · Gelateria · Vino · Birra",
-    h1: "Sai <em>farlo.</em><br>Ora capisci perché.",
-    sub: "La fisica e la chimica sotto ogni gesto al banco. Per chi ha già anni di mestiere e vuole capire le leggi che governano quello che fa ogni giorno.",
-    cta1: "Studia gratis — nessuna carta",
-    cta2: "Come funziona",
-    note: "5 domande in chat gratis. Nessuna registrazione per iniziare.",
-    navcta: "Prova gratis"
-  },
-  en: {
-    kicker: "Bar · Bakery · Kitchen · Coffee · Pastry · Gelato · Wine · Beer",
-    h1: "You know <em>how.</em><br>Now understand why.",
-    sub: "The physics and chemistry behind every professional gesture. For those who already have years of craft and want to understand the laws governing what they do every day.",
-    cta1: "Study free — no credit card",
-    cta2: "How it works",
-    note: "5 free chat questions. No registration to start.",
-    navcta: "Try free"
-  },
-  es: {
-    kicker: "Bar · Panadería · Cocina · Café · Pastelería · Heladería · Vino · Cerveza",
-    h1: "Sabes <em>hacerlo.</em><br>Ahora entiende por qué.",
-    sub: "La física y la química detrás de cada gesto profesional. Para quienes ya tienen años de oficio y quieren entender las leyes que gobiernan lo que hacen cada día.",
-    cta1: "Estudia gratis — sin tarjeta",
-    cta2: "Cómo funciona",
-    note: "5 preguntas de chat gratis. Sin registro para empezar.",
-    navcta: "Probar gratis"
+  var d=document.getElementById('d'),a=document.getElementById('a'),z=document.getElementById('z');
+  var vtext=document.getElementById('vtext'),vfix=document.getElementById('vfix');
+  var pos=document.getElementById('pos'),zone=document.getElementById('zone'),t1=document.getElementById('t1'),t2=document.getElementById('t2');
+  // scala del rapporto zucchero/acido mostrata sul calibro: 0.4 (aspro) -> 1.6 (dolce)
+  var LO=0.4, HI=1.6, ZL=0.8, ZH=1.3; // zona equilibrio
+  function pct(r){ return Math.max(0,Math.min(100, (r-LO)/(HI-LO)*100)); }
+  function round5(x){ return Math.round(x*2)/2; }
+  function calc(){
+    var D=parseFloat(d.value)||0, A=parseFloat(a.value)||0, Z=parseFloat(z.value)||0;
+    zone.style.left=pct(ZL)+'%'; zone.style.width=(pct(ZH)-pct(ZL))+'%';
+    t1.style.left=pct(ZL)+'%'; t2.style.left=pct(ZH)+'%';
+    if(A<=0 && Z<=0){ vtext.textContent='Inserisci le dosi'; vtext.className='v'; vfix.textContent=''; pos.style.left='50%'; return; }
+    var r = A>0 ? Z/A : 2; // zucchero/acido
+    pos.style.left=pct(r)+'%';
+    var s = (A+Z)>0 ? D/(A+Z) : 0; // struttura
+    if(r < ZL){
+      vtext.textContent='Un po’ troppo aspro'; vtext.className='v warn';
+      vfix.textContent='Porta lo sciroppo a ~'+round5(A)+' ml, oppure riduci il succo a ~'+round5(Z/ZL)+' ml.';
+    } else if(r > ZH){
+      vtext.textContent='Un po’ troppo dolce'; vtext.className='v warn';
+      vfix.textContent='Porta il succo a ~'+round5(Z)+' ml, oppure riduci lo sciroppo a ~'+round5(A*ZH)+' ml.';
+    } else if(s < 1.1){
+      vtext.textContent='Poco strutturato'; vtext.className='v warn';
+      vfix.textContent='Acido e zucchero sono in rapporto, ma il distillato è poco: alzalo o riduci i modificatori.';
+    } else if(s > 2.4){
+      vtext.textContent='Troppo forte'; vtext.className='v warn';
+      vfix.textContent='Il distillato domina: bilancia con un filo più di acido e zucchero.';
+    } else {
+      vtext.textContent='In equilibrio'; vtext.className='v ok';
+      vfix.textContent='Acido e zucchero si pareggiano e il distillato regge. Assaggia e aggiusta di un grammo.';
+    }
   }
-};
-var _lang = localStorage.getItem('ml_lang_landing') || 'it';
-if(!_TEXTS[_lang]) _lang = 'it';
-
-function setLang(l) {
-  _lang = l;
-  localStorage.setItem('ml_lang_landing', l);
-  var t = _TEXTS[l];
-  document.getElementById('l-kicker').textContent = t.kicker;
-  document.getElementById('l-h1').innerHTML = t.h1;
-  document.getElementById('l-sub').textContent = t.sub;
-  document.getElementById('l-cta1').textContent = t.cta1;
-  document.getElementById('l-cta2').textContent = t.cta2;
-  document.getElementById('l-note').textContent = t.note;
-  document.getElementById('nav-cta').textContent = t.navcta;
-  ['it','en','es'].forEach(function(x){
-    var btn = document.getElementById('l-'+x);
-    if(btn) btn.style.background = x===l ? 'var(--teal)' : 'transparent';
-    if(btn) btn.style.color = x===l ? '#fff' : 'var(--ink)';
-    if(btn) btn.style.borderColor = x===l ? 'var(--teal)' : 'var(--border)';
-  });
-}
-setLang(_lang);
+  [d,a,z].forEach(function(el){ el.addEventListener('input',calc); });
+  calc();
 </script>
 
-<script>
-(function(){
-  var io=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');}});
-  },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
-  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
-})();
-
-// ─── Installa l'app (PWA) ───
-(function(){
-  var deferredPrompt = null;
-  var btn = document.getElementById('btn-install');
-  var hint = document.getElementById('install-hint');
-  var row = document.getElementById('install-row');
-  if(!btn) return;
-
-  // già installata (standalone)? nascondo tutto
-  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  if(isStandalone){ if(row) row.style.display='none'; return; }
-
-  // iOS Safari non supporta beforeinstallprompt → istruzioni manuali
-  var ua = window.navigator.userAgent.toLowerCase();
-  var isIOS = /iphone|ipad|ipod/.test(ua);
-  var isSafari = isIOS && !/crios|fxios|edgios/.test(ua);
-
-  // Chrome/Edge/Android: cattura l'evento
-  window.addEventListener('beforeinstallprompt', function(e){
-    e.preventDefault();
-    deferredPrompt = e;
-    btn.style.display = '';
-  });
-
-  // se dopo l'installazione
-  window.addEventListener('appinstalled', function(){
-    if(row) row.style.display='none';
-  });
-
-  if(isIOS){
-    // su iOS il pulsante mostra le istruzioni (niente prompt automatico)
-    btn.style.display = '';
-    window.installaApp = function(){
-      if(hint){
-        hint.textContent = isSafari
-          ? 'Tocca Condividi ⎋ in basso, poi "Aggiungi a schermata Home".'
-          : 'Apri questa pagina in Safari, poi Condividi → "Aggiungi a schermata Home".';
-        hint.style.display = 'block';
-      }
-    };
-  } else {
-    // Android/desktop: se l'evento non è ancora arrivato, il pulsante resta visibile
-    // e al click proviamo comunque; se non c'è prompt, diamo istruzioni generiche
-    btn.style.display = '';
-    window.installaApp = function(){
-      if(deferredPrompt){
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function(choice){
-          if(choice.outcome === 'accepted' && row){ row.style.display='none'; }
-          deferredPrompt = null;
-        });
-      } else if(hint){
-        hint.textContent = 'Nel menu del browser (⋮) scegli "Installa app" o "Aggiungi a schermata Home".';
-        hint.style.display = 'block';
-      }
-    };
-  }
-})();
-</script>
 </body>
 </html>
