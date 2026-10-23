@@ -2965,10 +2965,92 @@
           "fonte": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto."
         }
       ]
+    },
+    {
+      "ingrediente": "dragoncello",
+      "nodo_target": "ing-dragoncello",
+      "specie": "Artemisia dracunculus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877).",
+      "composti": [
+        {
+          "composto": "estragolo (metil chavicolo)",
+          "descrittore": "anice-basilico, dolce-erbaceo (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877)."
+        },
+        {
+          "composto": "(E)-beta-ocimene",
+          "descrittore": "floreale-erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877)."
+        },
+        {
+          "composto": "metileugenolo",
+          "descrittore": "speziato-anice",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "frutto della passione",
+      "nodo_target": "ing-frutto-della-passione",
+      "specie": "Passiflora edulis",
+      "dominio": "bar",
+      "fonte_ingrediente": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano.",
+      "composti": [
+        {
+          "composto": "2-metil-4-propil-1,3-ossatiano",
+          "descrittore": "passion fruit, sulfureo-tropicale (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano."
+        },
+        {
+          "composto": "etil esanoato",
+          "descrittore": "fruttato, ananas",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano."
+        },
+        {
+          "composto": "etil butanoato",
+          "descrittore": "fruttato dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta, floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano."
+        }
+      ]
     }
   ],
   "_prossimi": [
-    "Ondata 23/10 (f): +3 (ribes nero, banana, peperoncino). Marcatori chiari (tiolo cassis, acetato isoamile, metossipirazina). Piccante peperoncino = capsaicina non-volatile.",
+    "Ondata 23/10 (g): +2 (dragoncello, frutto della passione). SALTATO melone (nessun paper GC-MS serio nei risultati, solo forum). Sessione 23/10: da 50 a 66 ingredienti.",
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
     "Secondo giro %: chiudere i 'n.d. (da raffinare)' con tabelle GC dedicate (cipolla, miele, noce moscata, arancia aldeidi).",
     "Strato 'verificato_al_banco': dove l'assaggio Bucopertuso/Bucolico conferma.",
