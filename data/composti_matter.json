@@ -4458,9 +4458,386 @@
           "fonte": "Uva fragola/Concord (Vitis labrusca): metil antranilato marcatore 'foxy', 2-amminoacetofenone (PMC7166211 'foxy aroma gene... Concord'; Cornell ecommons; Hortic Res 10.1038/s41438-020-0304-6)."
         }
       ]
+    },
+    {
+      "ingrediente": "funghi",
+      "nodo_target": "ing-funghi",
+      "specie": "Agaricus bisporus / Boletus edulis",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Funghi (Agaricus/Boletus) odoranti d'impatto: 1-octen-3-olo marcatore, 3-ottanone, 1-octen-3-one (EPA hero 3044603 'Character Impact Odorants in Edible Mushrooms'; utupub 'aroma of edible mushrooms'; actapol 5_1_2009).",
+      "composti": [
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo (marcatore chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Funghi (Agaricus/Boletus) odoranti d'impatto: 1-octen-3-olo marcatore, 3-ottanone, 1-octen-3-one (EPA hero 3044603 'Character Impact Odorants in Edible Mushrooms'; utupub 'aroma of edible mushrooms'; actapol 5_1_2009)."
+        },
+        {
+          "composto": "3-octanone",
+          "descrittore": "fungo-fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Funghi (Agaricus/Boletus) odoranti d'impatto: 1-octen-3-olo marcatore, 3-ottanone, 1-octen-3-one (EPA hero 3044603 'Character Impact Odorants in Edible Mushrooms'; utupub 'aroma of edible mushrooms'; actapol 5_1_2009)."
+        },
+        {
+          "composto": "3-octanol",
+          "descrittore": "fungo erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Funghi (Agaricus/Boletus) odoranti d'impatto: 1-octen-3-olo marcatore, 3-ottanone, 1-octen-3-one (EPA hero 3044603 'Character Impact Odorants in Edible Mushrooms'; utupub 'aroma of edible mushrooms'; actapol 5_1_2009)."
+        },
+        {
+          "composto": "1-octen-3-one",
+          "descrittore": "fungo metallico intenso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Funghi (Agaricus/Boletus) odoranti d'impatto: 1-octen-3-olo marcatore, 3-ottanone, 1-octen-3-one (EPA hero 3044603 'Character Impact Odorants in Edible Mushrooms'; utupub 'aroma of edible mushrooms'; actapol 5_1_2009)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Funghi (Agaricus/Boletus) odoranti d'impatto: 1-octen-3-olo marcatore, 3-ottanone, 1-octen-3-one (EPA hero 3044603 'Character Impact Odorants in Edible Mushrooms'; utupub 'aroma of edible mushrooms'; actapol 5_1_2009)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Funghi (Agaricus/Boletus) odoranti d'impatto: 1-octen-3-olo marcatore, 3-ottanone, 1-octen-3-one (EPA hero 3044603 'Character Impact Odorants in Edible Mushrooms'; utupub 'aroma of edible mushrooms'; actapol 5_1_2009)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "barbabietola",
+      "nodo_target": "ing-barbabietola",
+      "specie": "Beta vulgaris",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Barbabietola (Beta vulgaris) aroma: geosmin marcatore terroso, metossipirazine (ZHAW Cantergiani 2001 Eur Food Res Technol 'Characterisation of the aroma'; ASHS JASHS 144/6/429; foodpairing).",
+      "composti": [
+        {
+          "composto": "geosmin",
+          "descrittore": "terroso (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Barbabietola (Beta vulgaris) aroma: geosmin marcatore terroso, metossipirazine (ZHAW Cantergiani 2001 Eur Food Res Technol 'Characterisation of the aroma'; ASHS JASHS 144/6/429; foodpairing)."
+        },
+        {
+          "composto": "2-isobutyl-3-methoxypyrazine",
+          "descrittore": "terroso-verde, pisello",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Barbabietola (Beta vulgaris) aroma: geosmin marcatore terroso, metossipirazine (ZHAW Cantergiani 2001 Eur Food Res Technol 'Characterisation of the aroma'; ASHS JASHS 144/6/429; foodpairing)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Barbabietola (Beta vulgaris) aroma: geosmin marcatore terroso, metossipirazine (ZHAW Cantergiani 2001 Eur Food Res Technol 'Characterisation of the aroma'; ASHS JASHS 144/6/429; foodpairing)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Barbabietola (Beta vulgaris) aroma: geosmin marcatore terroso, metossipirazine (ZHAW Cantergiani 2001 Eur Food Res Technol 'Characterisation of the aroma'; ASHS JASHS 144/6/429; foodpairing)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cetriolo",
+      "nodo_target": "ing-cetriolo",
+      "specie": "Cucumis sativus",
+      "dominio": "bar",
+      "fonte_ingrediente": "Cetriolo (Cucumis sativus) odoranti potenti: (E,Z)-2,6-nonadienale marcatore, (E)-2-nonenale (Leibniz-LSB/TUM 'potent odorants in cucumbers'; PMC4370779 t1).",
+      "composti": [
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo verde (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cetriolo (Cucumis sativus) odoranti potenti: (E,Z)-2,6-nonadienale marcatore, (E)-2-nonenale (Leibniz-LSB/TUM 'potent odorants in cucumbers'; PMC4370779 t1)."
+        },
+        {
+          "composto": "(E)-2-nonenal",
+          "descrittore": "grasso-verde, cetriolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cetriolo (Cucumis sativus) odoranti potenti: (E,Z)-2,6-nonadienale marcatore, (E)-2-nonenale (Leibniz-LSB/TUM 'potent odorants in cucumbers'; PMC4370779 t1)."
+        },
+        {
+          "composto": "(Z)-6-nonenal",
+          "descrittore": "verde-melone",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cetriolo (Cucumis sativus) odoranti potenti: (E,Z)-2,6-nonadienale marcatore, (E)-2-nonenale (Leibniz-LSB/TUM 'potent odorants in cucumbers'; PMC4370779 t1)."
+        },
+        {
+          "composto": "(E,Z)-2,6-nonadien-1-ol",
+          "descrittore": "cetriolo fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cetriolo (Cucumis sativus) odoranti potenti: (E,Z)-2,6-nonadienale marcatore, (E)-2-nonenale (Leibniz-LSB/TUM 'potent odorants in cucumbers'; PMC4370779 t1)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cetriolo (Cucumis sativus) odoranti potenti: (E,Z)-2,6-nonadienale marcatore, (E)-2-nonenale (Leibniz-LSB/TUM 'potent odorants in cucumbers'; PMC4370779 t1)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "peperone",
+      "nodo_target": "ing-peperone",
+      "specie": "Capsicum annuum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Peperone verde (Capsicum annuum): 2-isobutil-3-metossipirazina marcatore (IBMP) (Sigma tech 224846; OENO One; winewiki herbal green).",
+      "composti": [
+        {
+          "composto": "2-isobutyl-3-methoxypyrazine",
+          "descrittore": "peperone verde (marcatore, IBMP)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Peperone verde (Capsicum annuum): 2-isobutil-3-metossipirazina marcatore (IBMP) (Sigma tech 224846; OENO One; winewiki herbal green)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Peperone verde (Capsicum annuum): 2-isobutil-3-metossipirazina marcatore (IBMP) (Sigma tech 224846; OENO One; winewiki herbal green)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Peperone verde (Capsicum annuum): 2-isobutil-3-metossipirazina marcatore (IBMP) (Sigma tech 224846; OENO One; winewiki herbal green)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde tagliato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Peperone verde (Capsicum annuum): 2-isobutil-3-metossipirazina marcatore (IBMP) (Sigma tech 224846; OENO One; winewiki herbal green)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Peperone verde (Capsicum annuum): 2-isobutil-3-metossipirazina marcatore (IBMP) (Sigma tech 224846; OENO One; winewiki herbal green)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pandan",
+      "nodo_target": "ing-pandan",
+      "specie": "Pandanus amaryllifolius",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Pandan (Pandanus amaryllifolius): 2-acetil-1-pirrolina marcatore (basmati-popcorn, stesso dei risi aromatici) (PMC8269274; thaiscience TKJN 10471400; repository.pertanian 25993 '2-Acetyl-1-Pyrroline').",
+      "composti": [
+        {
+          "composto": "2-acetyl-1-pyrroline",
+          "descrittore": "basmati-popcorn, pandan (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pandan (Pandanus amaryllifolius): 2-acetil-1-pirrolina marcatore (basmati-popcorn, stesso dei risi aromatici) (PMC8269274; thaiscience TKJN 10471400; repository.pertanian 25993 '2-Acetyl-1-Pyrroline')."
+        },
+        {
+          "composto": "2-acetylpyrrole",
+          "descrittore": "tostato-nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pandan (Pandanus amaryllifolius): 2-acetil-1-pirrolina marcatore (basmati-popcorn, stesso dei risi aromatici) (PMC8269274; thaiscience TKJN 10471400; repository.pertanian 25993 '2-Acetyl-1-Pyrroline')."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pandan (Pandanus amaryllifolius): 2-acetil-1-pirrolina marcatore (basmati-popcorn, stesso dei risi aromatici) (PMC8269274; thaiscience TKJN 10471400; repository.pertanian 25993 '2-Acetyl-1-Pyrroline')."
+        }
+      ]
+    },
+    {
+      "ingrediente": "guava",
+      "nodo_target": "ing-guava",
+      "specie": "Psidium guajava",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Guava (Psidium guajava) aroma active: 3-sulfanilesile acetato (tiolo tropicale), etil butanoato, (Z)-3-esenale (Leibniz-LSB/TUM 'aroma active compounds in pink guava'; Sigma 352891; Pherobase B/28134).",
+      "composti": [
+        {
+          "composto": "3-sulfanylhexyl acetate",
+          "descrittore": "tropicale-passion (tiolo marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Guava (Psidium guajava) aroma active: 3-sulfanilesile acetato (tiolo tropicale), etil butanoato, (Z)-3-esenale (Leibniz-LSB/TUM 'aroma active compounds in pink guava'; Sigma 352891; Pherobase B/28134)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Guava (Psidium guajava) aroma active: 3-sulfanilesile acetato (tiolo tropicale), etil butanoato, (Z)-3-esenale (Leibniz-LSB/TUM 'aroma active compounds in pink guava'; Sigma 352891; Pherobase B/28134)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde tagliato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Guava (Psidium guajava) aroma active: 3-sulfanilesile acetato (tiolo tropicale), etil butanoato, (Z)-3-esenale (Leibniz-LSB/TUM 'aroma active compounds in pink guava'; Sigma 352891; Pherobase B/28134)."
+        },
+        {
+          "composto": "cinnamyl acetate",
+          "descrittore": "balsamico-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Guava (Psidium guajava) aroma active: 3-sulfanilesile acetato (tiolo tropicale), etil butanoato, (Z)-3-esenale (Leibniz-LSB/TUM 'aroma active compounds in pink guava'; Sigma 352891; Pherobase B/28134)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Guava (Psidium guajava) aroma active: 3-sulfanilesile acetato (tiolo tropicale), etil butanoato, (Z)-3-esenale (Leibniz-LSB/TUM 'aroma active compounds in pink guava'; Sigma 352891; Pherobase B/28134)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "arachide tostata",
+      "nodo_target": "ing-arachide-tostata",
+      "specie": "Arachis hypogaea (tostata)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Arachide tostata (Arachis hypogaea): pirazine da Maillard — 2,5-dimetilpirazina, metilpirazina, 2-etil-3,5-dimetilpirazina (PMC8701944 'Key Aroma Compounds of Peanut Oil'; uoregon JAFC 2010 peanut aroma).",
+      "composti": [
+        {
+          "composto": "2,5-dimetilpirazina",
+          "descrittore": "tostato-nocciola (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Arachide tostata (Arachis hypogaea): pirazine da Maillard — 2,5-dimetilpirazina, metilpirazina, 2-etil-3,5-dimetilpirazina (PMC8701944 'Key Aroma Compounds of Peanut Oil'; uoregon JAFC 2010 peanut aroma)."
+        },
+        {
+          "composto": "metilpirazina",
+          "descrittore": "tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Arachide tostata (Arachis hypogaea): pirazine da Maillard — 2,5-dimetilpirazina, metilpirazina, 2-etil-3,5-dimetilpirazina (PMC8701944 'Key Aroma Compounds of Peanut Oil'; uoregon JAFC 2010 peanut aroma)."
+        },
+        {
+          "composto": "2-etil-3,5-dimetilpirazina",
+          "descrittore": "nocciola-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Arachide tostata (Arachis hypogaea): pirazine da Maillard — 2,5-dimetilpirazina, metilpirazina, 2-etil-3,5-dimetilpirazina (PMC8701944 'Key Aroma Compounds of Peanut Oil'; uoregon JAFC 2010 peanut aroma)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Arachide tostata (Arachis hypogaea): pirazine da Maillard — 2,5-dimetilpirazina, metilpirazina, 2-etil-3,5-dimetilpirazina (PMC8701944 'Key Aroma Compounds of Peanut Oil'; uoregon JAFC 2010 peanut aroma)."
+        },
+        {
+          "composto": "2-furfuriltiolo",
+          "descrittore": "caffe-tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Arachide tostata (Arachis hypogaea): pirazine da Maillard — 2,5-dimetilpirazina, metilpirazina, 2-etil-3,5-dimetilpirazina (PMC8701944 'Key Aroma Compounds of Peanut Oil'; uoregon JAFC 2010 peanut aroma)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "kaffir lime",
+      "nodo_target": "ing-kaffir-lime",
+      "specie": "Citrus hystrix (foglia)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Kaffir lime/combava (Citrus hystrix, foglia): citronellale marcatore, citronellolo, nerolo (JTBB UGM 66061; PMC5660901; premierepeau kaffir lime).",
+      "composti": [
+        {
+          "composto": "citronellal",
+          "descrittore": "citrico-verde (marcatore foglia)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kaffir lime/combava (Citrus hystrix, foglia): citronellale marcatore, citronellolo, nerolo (JTBB UGM 66061; PMC5660901; premierepeau kaffir lime)."
+        },
+        {
+          "composto": "citronellol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kaffir lime/combava (Citrus hystrix, foglia): citronellale marcatore, citronellolo, nerolo (JTBB UGM 66061; PMC5660901; premierepeau kaffir lime)."
+        },
+        {
+          "composto": "nerol",
+          "descrittore": "rosa dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kaffir lime/combava (Citrus hystrix, foglia): citronellale marcatore, citronellolo, nerolo (JTBB UGM 66061; PMC5660901; premierepeau kaffir lime)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kaffir lime/combava (Citrus hystrix, foglia): citronellale marcatore, citronellolo, nerolo (JTBB UGM 66061; PMC5660901; premierepeau kaffir lime)."
+        },
+        {
+          "composto": "isopulegol",
+          "descrittore": "menta-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kaffir lime/combava (Citrus hystrix, foglia): citronellale marcatore, citronellolo, nerolo (JTBB UGM 66061; PMC5660901; premierepeau kaffir lime)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 23/10 (l): +8 (funghi, barbabietola, cetriolo, peperone, pandan, guava, arachide tostata, kaffir lime). Marcatori-firma verificati su fonte reale. Terreno nuovo (terroso/verde/salato/asiatico): apre pirazine (arachide/peperone/barbabietola<->nocciola tostata/caffe/cacao/fieno greco), nonadienali (cetriolo<->kiwi), citronellale (kaffir<->melissa/citronella/cedro/verbena), 2-AP (pandan<->pane crosta).",
     "Ondata 23/10 (k): +8 (fiori d'arancio, gelsomino, verbena odorosa, mora, kiwi, fieno greco, tiglio, uva fragola). Marcatori-firma verificati su fonte reale. Connettivita': metil antranilato (neroli/gelsomino/uva fragola<->mandarino), cis-jasmone/indolo (gelsomino<->te verde), citrale (verbena<->limone/citronella/melissa), furaneolo (mora/uva fragola<->fragola/ananas), beta-ionone (mora<->lampone/te nero), 2-feniletanolo/farnesolo (tiglio<->rosa/camomilla).",
     "Ondata 23/10 (j): +8 (mandarino, cedro, citronella, melissa, te verde, ananas, litchi, cumino). Marcatori-firma verificati su fonte reale. Forte condivisione: citrale (cedro/citronella/melissa<->limone), cis-rose oxide (litchi<->uva moscato), furaneolo (ananas<->fragola), beta-damascenone (litchi<->mela/pera/cotogna), p-cimene/gamma-terpinene (cumino/mandarino<->agrumi) -> molti archi nuovi.",
     "Ondata 23/10 (i): +8 (yuzu, nocciola tostata, uva moscato, prugna, camomilla, te nero, mela cotogna, curcuma). Marcatori-firma verificati su fonte reale. Buona condivisione composti col grafo (limonene/linalolo/geraniolo/beta-damascenone/zingiberene/pirazine/(E)-2-hexenal) -> nuovi archi di abbinamento.",
