@@ -3610,9 +3610,450 @@
           "fonte": "Curcuma (Curcuma longa) olio del rizoma GC-MS: ar-turmerone/alpha-/beta-turmerone, zingiberene, alpha-fellandrene, 1,8-cineolo (PMC9332366 'Volatile Constituents in Curcuma longa'; PMC8510441)."
         }
       ]
+    },
+    {
+      "ingrediente": "mandarino",
+      "nodo_target": "ing-mandarino",
+      "specie": "Citrus reticulata",
+      "dominio": "bar",
+      "fonte_ingrediente": "Mandarino (Citrus reticulata) olio scorza GC-MS: metil N-metilantranilato marcatore distintivo; limonene/gamma-terpinene/alpha-sinensale (acgpubs RNP-0907-130; real.mtak.hu 47659; Citrus reticulata peel EO).",
+      "composti": [
+        {
+          "composto": "methyl N-methylanthranilate",
+          "descrittore": "mandarino dolce-uva (marcatore distintivo)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandarino (Citrus reticulata) olio scorza GC-MS: metil N-metilantranilato marcatore distintivo; limonene/gamma-terpinene/alpha-sinensale (acgpubs RNP-0907-130; real.mtak.hu 47659; Citrus reticulata peel EO)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandarino (Citrus reticulata) olio scorza GC-MS: metil N-metilantranilato marcatore distintivo; limonene/gamma-terpinene/alpha-sinensale (acgpubs RNP-0907-130; real.mtak.hu 47659; Citrus reticulata peel EO)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandarino (Citrus reticulata) olio scorza GC-MS: metil N-metilantranilato marcatore distintivo; limonene/gamma-terpinene/alpha-sinensale (acgpubs RNP-0907-130; real.mtak.hu 47659; Citrus reticulata peel EO)."
+        },
+        {
+          "composto": "alpha-sinensal",
+          "descrittore": "agrume dolce aldeidico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandarino (Citrus reticulata) olio scorza GC-MS: metil N-metilantranilato marcatore distintivo; limonene/gamma-terpinene/alpha-sinensale (acgpubs RNP-0907-130; real.mtak.hu 47659; Citrus reticulata peel EO)."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "resinoso-balsamico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandarino (Citrus reticulata) olio scorza GC-MS: metil N-metilantranilato marcatore distintivo; limonene/gamma-terpinene/alpha-sinensale (acgpubs RNP-0907-130; real.mtak.hu 47659; Citrus reticulata peel EO)."
+        },
+        {
+          "composto": "thymol",
+          "descrittore": "fenolico-speziato (foglia)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandarino (Citrus reticulata) olio scorza GC-MS: metil N-metilantranilato marcatore distintivo; limonene/gamma-terpinene/alpha-sinensale (acgpubs RNP-0907-130; real.mtak.hu 47659; Citrus reticulata peel EO)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cedro",
+      "nodo_target": "ing-cedro",
+      "specie": "Citrus medica",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Cedro (Citrus medica) olio scorza GC-MS: limonene dominante, citrale (geraniale+nerale) (PMC6273413; pharmacy.mahidol 2008.57-61; 17 citron cultivars EO).",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume fresco (dominante)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro (Citrus medica) olio scorza GC-MS: limonene dominante, citrale (geraniale+nerale) (PMC6273413; pharmacy.mahidol 2008.57-61; 17 citron cultivars EO)."
+        },
+        {
+          "composto": "geranial",
+          "descrittore": "agrume-citrico (citrale A)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro (Citrus medica) olio scorza GC-MS: limonene dominante, citrale (geraniale+nerale) (PMC6273413; pharmacy.mahidol 2008.57-61; 17 citron cultivars EO)."
+        },
+        {
+          "composto": "neral",
+          "descrittore": "agrume-citrico (citrale B)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro (Citrus medica) olio scorza GC-MS: limonene dominante, citrale (geraniale+nerale) (PMC6273413; pharmacy.mahidol 2008.57-61; 17 citron cultivars EO)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "erbaceo-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro (Citrus medica) olio scorza GC-MS: limonene dominante, citrale (geraniale+nerale) (PMC6273413; pharmacy.mahidol 2008.57-61; 17 citron cultivars EO)."
+        },
+        {
+          "composto": "nerol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro (Citrus medica) olio scorza GC-MS: limonene dominante, citrale (geraniale+nerale) (PMC6273413; pharmacy.mahidol 2008.57-61; 17 citron cultivars EO)."
+        },
+        {
+          "composto": "citronellal",
+          "descrittore": "citrico fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro (Citrus medica) olio scorza GC-MS: limonene dominante, citrale (geraniale+nerale) (PMC6273413; pharmacy.mahidol 2008.57-61; 17 citron cultivars EO)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "citronella",
+      "nodo_target": "ing-citronella",
+      "specie": "Cymbopogon citratus",
+      "dominio": "bar",
+      "fonte_ingrediente": "Citronella/lemongrass (Cymbopogon citratus) olio essenziale GC-MS: citrale (geraniale+nerale) marcatore, citronellale (PMC9863348 Cymbopogon Nepal; iris.unibas 200316).",
+      "composti": [
+        {
+          "composto": "geranial",
+          "descrittore": "limone-citrico (citrale A, marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Citronella/lemongrass (Cymbopogon citratus) olio essenziale GC-MS: citrale (geraniale+nerale) marcatore, citronellale (PMC9863348 Cymbopogon Nepal; iris.unibas 200316)."
+        },
+        {
+          "composto": "neral",
+          "descrittore": "limone-citrico (citrale B)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Citronella/lemongrass (Cymbopogon citratus) olio essenziale GC-MS: citrale (geraniale+nerale) marcatore, citronellale (PMC9863348 Cymbopogon Nepal; iris.unibas 200316)."
+        },
+        {
+          "composto": "citronellal",
+          "descrittore": "citrico-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Citronella/lemongrass (Cymbopogon citratus) olio essenziale GC-MS: citrale (geraniale+nerale) marcatore, citronellale (PMC9863348 Cymbopogon Nepal; iris.unibas 200316)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Citronella/lemongrass (Cymbopogon citratus) olio essenziale GC-MS: citrale (geraniale+nerale) marcatore, citronellale (PMC9863348 Cymbopogon Nepal; iris.unibas 200316)."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "resinoso-balsamico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Citronella/lemongrass (Cymbopogon citratus) olio essenziale GC-MS: citrale (geraniale+nerale) marcatore, citronellale (PMC9863348 Cymbopogon Nepal; iris.unibas 200316)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "melissa",
+      "nodo_target": "ing-melissa",
+      "specie": "Melissa officinalis",
+      "dominio": "bar",
+      "fonte_ingrediente": "Melissa (Melissa officinalis) olio essenziale GC-MS: citronellale, citrale (geraniale+nerale), beta-cariofillene (PMC4464394; jmpb.areeo 123119; lemon balm EO).",
+      "composti": [
+        {
+          "composto": "citronellal",
+          "descrittore": "citrico-verde (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melissa (Melissa officinalis) olio essenziale GC-MS: citronellale, citrale (geraniale+nerale), beta-cariofillene (PMC4464394; jmpb.areeo 123119; lemon balm EO)."
+        },
+        {
+          "composto": "geranial",
+          "descrittore": "limone-citrico (citrale)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melissa (Melissa officinalis) olio essenziale GC-MS: citronellale, citrale (geraniale+nerale), beta-cariofillene (PMC4464394; jmpb.areeo 123119; lemon balm EO)."
+        },
+        {
+          "composto": "neral",
+          "descrittore": "limone-citrico (citrale)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melissa (Melissa officinalis) olio essenziale GC-MS: citronellale, citrale (geraniale+nerale), beta-cariofillene (PMC4464394; jmpb.areeo 123119; lemon balm EO)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melissa (Melissa officinalis) olio essenziale GC-MS: citronellale, citrale (geraniale+nerale), beta-cariofillene (PMC4464394; jmpb.areeo 123119; lemon balm EO)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melissa (Melissa officinalis) olio essenziale GC-MS: citronellale, citrale (geraniale+nerale), beta-cariofillene (PMC4464394; jmpb.areeo 123119; lemon balm EO)."
+        },
+        {
+          "composto": "citronellol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melissa (Melissa officinalis) olio essenziale GC-MS: citronellale, citrale (geraniale+nerale), beta-cariofillene (PMC4464394; jmpb.areeo 123119; lemon balm EO)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "te verde",
+      "nodo_target": "ing-te-verde",
+      "specie": "Camellia sinensis (non fermentato)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Te verde (Camellia sinensis, non fermentato) key odorants GC-O: cis-jasmone, linalolo, geraniolo, dimetil solfuro, indolo (spkx.net.cn 2024 V45/I21; PMC11087968; JIRCAS 12-4-205).",
+      "composti": [
+        {
+          "composto": "cis-jasmone",
+          "descrittore": "floreale-gelsomino (marcatore te verde)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te verde (Camellia sinensis, non fermentato) key odorants GC-O: cis-jasmone, linalolo, geraniolo, dimetil solfuro, indolo (spkx.net.cn 2024 V45/I21; PMC11087968; JIRCAS 12-4-205)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te verde (Camellia sinensis, non fermentato) key odorants GC-O: cis-jasmone, linalolo, geraniolo, dimetil solfuro, indolo (spkx.net.cn 2024 V45/I21; PMC11087968; JIRCAS 12-4-205)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te verde (Camellia sinensis, non fermentato) key odorants GC-O: cis-jasmone, linalolo, geraniolo, dimetil solfuro, indolo (spkx.net.cn 2024 V45/I21; PMC11087968; JIRCAS 12-4-205)."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "verde cotto, marino (nota te verde)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te verde (Camellia sinensis, non fermentato) key odorants GC-O: cis-jasmone, linalolo, geraniolo, dimetil solfuro, indolo (spkx.net.cn 2024 V45/I21; PMC11087968; JIRCAS 12-4-205)."
+        },
+        {
+          "composto": "indole",
+          "descrittore": "floreale-animalico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te verde (Camellia sinensis, non fermentato) key odorants GC-O: cis-jasmone, linalolo, geraniolo, dimetil solfuro, indolo (spkx.net.cn 2024 V45/I21; PMC11087968; JIRCAS 12-4-205)."
+        },
+        {
+          "composto": "(E,E)-2,4-heptadienal",
+          "descrittore": "verde-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te verde (Camellia sinensis, non fermentato) key odorants GC-O: cis-jasmone, linalolo, geraniolo, dimetil solfuro, indolo (spkx.net.cn 2024 V45/I21; PMC11087968; JIRCAS 12-4-205)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "ananas",
+      "nodo_target": "ing-ananas",
+      "specie": "Ananas comosus",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Ananas (Ananas comosus) aroma GC-O: etil 2-metilbutanoato, metil 2-metilbutanoato, furaneolo, delta-ottalattone, esteri (PMC3397533 'Aroma Volatile Compounds from Two Fresh Pineapple Varieties'; BBB 69/7/1323).",
+      "composti": [
+        {
+          "composto": "ethyl 2-methylbutanoate",
+          "descrittore": "fruttato-mela intenso (marcatore ananas)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ananas (Ananas comosus) aroma GC-O: etil 2-metilbutanoato, metil 2-metilbutanoato, furaneolo, delta-ottalattone, esteri (PMC3397533 'Aroma Volatile Compounds from Two Fresh Pineapple Varieties'; BBB 69/7/1323)."
+        },
+        {
+          "composto": "methyl 2-methylbutanoate",
+          "descrittore": "fruttato-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ananas (Ananas comosus) aroma GC-O: etil 2-metilbutanoato, metil 2-metilbutanoato, furaneolo, delta-ottalattone, esteri (PMC3397533 'Aroma Volatile Compounds from Two Fresh Pineapple Varieties'; BBB 69/7/1323)."
+        },
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-fragola (HDMF)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ananas (Ananas comosus) aroma GC-O: etil 2-metilbutanoato, metil 2-metilbutanoato, furaneolo, delta-ottalattone, esteri (PMC3397533 'Aroma Volatile Compounds from Two Fresh Pineapple Varieties'; BBB 69/7/1323)."
+        },
+        {
+          "composto": "delta-octalactone",
+          "descrittore": "cocco-cremoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ananas (Ananas comosus) aroma GC-O: etil 2-metilbutanoato, metil 2-metilbutanoato, furaneolo, delta-ottalattone, esteri (PMC3397533 'Aroma Volatile Compounds from Two Fresh Pineapple Varieties'; BBB 69/7/1323)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "ananas-mela",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ananas (Ananas comosus) aroma GC-O: etil 2-metilbutanoato, metil 2-metilbutanoato, furaneolo, delta-ottalattone, esteri (PMC3397533 'Aroma Volatile Compounds from Two Fresh Pineapple Varieties'; BBB 69/7/1323)."
+        },
+        {
+          "composto": "methyl hexanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ananas (Ananas comosus) aroma GC-O: etil 2-metilbutanoato, metil 2-metilbutanoato, furaneolo, delta-ottalattone, esteri (PMC3397533 'Aroma Volatile Compounds from Two Fresh Pineapple Varieties'; BBB 69/7/1323)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "litchi",
+      "nodo_target": "ing-litchi",
+      "specie": "Litchi chinensis",
+      "dominio": "bar",
+      "fonte_ingrediente": "Litchi (Litchi chinensis) aroma GC-MS/GC-O: cis-rose oxide marcatore distintivo, geraniolo, linalolo, beta-damascenone (PMC8565214; thaiscience 10011926).",
+      "composti": [
+        {
+          "composto": "cis-rose oxide",
+          "descrittore": "rosa-litchi (marcatore distintivo)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Litchi (Litchi chinensis) aroma GC-MS/GC-O: cis-rose oxide marcatore distintivo, geraniolo, linalolo, beta-damascenone (PMC8565214; thaiscience 10011926)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Litchi (Litchi chinensis) aroma GC-MS/GC-O: cis-rose oxide marcatore distintivo, geraniolo, linalolo, beta-damascenone (PMC8565214; thaiscience 10011926)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Litchi (Litchi chinensis) aroma GC-MS/GC-O: cis-rose oxide marcatore distintivo, geraniolo, linalolo, beta-damascenone (PMC8565214; thaiscience 10011926)."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "rosa-mela cotta, miele",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Litchi (Litchi chinensis) aroma GC-MS/GC-O: cis-rose oxide marcatore distintivo, geraniolo, linalolo, beta-damascenone (PMC8565214; thaiscience 10011926)."
+        },
+        {
+          "composto": "nerol",
+          "descrittore": "rosa dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Litchi (Litchi chinensis) aroma GC-MS/GC-O: cis-rose oxide marcatore distintivo, geraniolo, linalolo, beta-damascenone (PMC8565214; thaiscience 10011926)."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa-miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Litchi (Litchi chinensis) aroma GC-MS/GC-O: cis-rose oxide marcatore distintivo, geraniolo, linalolo, beta-damascenone (PMC8565214; thaiscience 10011926)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cumino",
+      "nodo_target": "ing-cumino",
+      "specie": "Cuminum cyminum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cumino (Cuminum cyminum) aroma active GC-MS/GC-O: cuminaldeide, p-menta-1,3-dien-7-al, p-cimene, gamma-terpinene (agris.fao 65de20a 'Characterization of Aroma Active Compounds of Cumin'; jmpb.areeo 108735).",
+      "composti": [
+        {
+          "composto": "cuminaldehyde",
+          "descrittore": "cumino, verde-speziato (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cumino (Cuminum cyminum) aroma active GC-MS/GC-O: cuminaldeide, p-menta-1,3-dien-7-al, p-cimene, gamma-terpinene (agris.fao 65de20a 'Characterization of Aroma Active Compounds of Cumin'; jmpb.areeo 108735)."
+        },
+        {
+          "composto": "p-mentha-1,3-dien-7-al",
+          "descrittore": "cumino verde intenso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cumino (Cuminum cyminum) aroma active GC-MS/GC-O: cuminaldeide, p-menta-1,3-dien-7-al, p-cimene, gamma-terpinene (agris.fao 65de20a 'Characterization of Aroma Active Compounds of Cumin'; jmpb.areeo 108735)."
+        },
+        {
+          "composto": "p-cymene",
+          "descrittore": "speziato-agrume secco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cumino (Cuminum cyminum) aroma active GC-MS/GC-O: cuminaldeide, p-menta-1,3-dien-7-al, p-cimene, gamma-terpinene (agris.fao 65de20a 'Characterization of Aroma Active Compounds of Cumin'; jmpb.areeo 108735)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "erbaceo-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cumino (Cuminum cyminum) aroma active GC-MS/GC-O: cuminaldeide, p-menta-1,3-dien-7-al, p-cimene, gamma-terpinene (agris.fao 65de20a 'Characterization of Aroma Active Compounds of Cumin'; jmpb.areeo 108735)."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cumino (Cuminum cyminum) aroma active GC-MS/GC-O: cuminaldeide, p-menta-1,3-dien-7-al, p-cimene, gamma-terpinene (agris.fao 65de20a 'Characterization of Aroma Active Compounds of Cumin'; jmpb.areeo 108735)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 23/10 (j): +8 (mandarino, cedro, citronella, melissa, te verde, ananas, litchi, cumino). Marcatori-firma verificati su fonte reale. Forte condivisione: citrale (cedro/citronella/melissa<->limone), cis-rose oxide (litchi<->uva moscato), furaneolo (ananas<->fragola), beta-damascenone (litchi<->mela/pera/cotogna), p-cimene/gamma-terpinene (cumino/mandarino<->agrumi) -> molti archi nuovi.",
     "Ondata 23/10 (i): +8 (yuzu, nocciola tostata, uva moscato, prugna, camomilla, te nero, mela cotogna, curcuma). Marcatori-firma verificati su fonte reale. Buona condivisione composti col grafo (limonene/linalolo/geraniolo/beta-damascenone/zingiberene/pirazine/(E)-2-hexenal) -> nuovi archi di abbinamento.",
     "Ondata 23/10 (h): +3 (maggiorana, sedano, mango). Marcatori chiari. Sessione 23/10: da 50 a 69.",
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
