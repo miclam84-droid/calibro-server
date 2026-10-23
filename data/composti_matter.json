@@ -1,417 +1,2389 @@
 {
-  "_schema": {
-    "descrizione": "Dataset composti aromatici proprietario di Matter. Costruito a mano dai domini reali (bar + panificazione). Ogni associazione ingrediente->composto porta descrittore olfattivo, ruolo e provenienza. NON copia una banca dati altrui: ricompila i composti caratterizzanti da letteratura GC-MS/GC-O, una fonte reale per ingrediente, con stato dichiarato. Il valore sul dato di Ahn (binario, senza descrittori): qui c'e' il descrittore, il ruolo (firma/caratterizzante/supporto), la percentuale area GC quando il paper la da', e la provenienza per riga.",
-    "stati_provenienza": ["verificato_al_banco", "da_fonte", "derivato", "stimato", "proposta"],
-    "ruoli": ["firma (compound d'impatto che DEFINISCE l'ingrediente)", "caratterizzante", "di_supporto"],
-    "nota_percentuali": "Le % sono 'relative area %' GC-MS/FID: variano con cultivar, maturazione e metodo (idrodistillazione vs spremitura a freddo). Indicata la fonte per ingrediente.",
-    "nota_onesta": "fonte con DOI/PMID = paper reale aperto e verificato, % trascritte dalla tabella. fonte=da_raffinare = composto noto in letteratura ma non quantificato in quella fonte: va chiuso prima di marcare 'verificato'. Nessun numero/DOI inventato."
-  },
-
-  "ingredienti": [
-
-    {"ingrediente": "ginepro", "nodo_target": "ing-ginepro", "specie": "Juniperus communis", "dominio": "bar",
-     "CORREGGE": "Nel grafo 'ginepro' risolveva su ahn_juniperus_sabina (specie ornamentale/tossica) con 0 composti. La bacca da gin e' Juniperus communis.",
-     "fonte_ingrediente": "Hoferl et al. 2014, Antioxidants 3(1):81-98, DOI 10.3390/antiox3010081.",
-     "composti": [
-       {"composto": "alpha-pinene", "descrittore": "pino, resinoso, fresco", "ruolo": "firma", "concentrazione": "~51.4%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
-       {"composto": "myrcene", "descrittore": "balsamico, resinoso", "ruolo": "caratterizzante", "concentrazione": "~8.3%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
-       {"composto": "sabinene", "descrittore": "legnoso, speziato, pepe", "ruolo": "caratterizzante", "concentrazione": "~5.8%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
-       {"composto": "limonene", "descrittore": "agrume, fresco", "ruolo": "di_supporto", "concentrazione": "~5.1%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
-       {"composto": "beta-pinene", "descrittore": "pino, secco, erbaceo", "ruolo": "caratterizzante", "concentrazione": "~5.0%", "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
-       {"composto": "terpinen-4-ol", "descrittore": "terroso, legnoso", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"},
-       {"composto": "germacrene D", "descrittore": "legnoso, speziato", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/antiox3010081"}
-     ]},
-
-    {"ingrediente": "limone", "nodo_target": "ing-limone", "specie": "Citrus limon (scorza)", "dominio": "bar",
-     "fonte_ingrediente": "Lu, Huang, Peng, Zhu, Pan 2019, \"Peel oils from three Citrus species...\", J. Food Science and Technology 56(10):4492-4502, DOI 10.1007/s13197-019-03937-w (cv. Eureka, idrodistillazione).",
-     "nota": "Il citrale (impronta 'limone') e' basso in % ma e' il composto d'impatto; il limonene fa volume, non carattere.",
-     "composti": [
-       {"composto": "limonene", "descrittore": "agrume, dolce, fresco (corpo)", "ruolo": "caratterizzante", "concentrazione": "~51.2%", "stato": "da_fonte", "fonte": "DOI 10.1007/s13197-019-03937-w"},
-       {"composto": "citral (geranial+neral)", "descrittore": "limone intenso, dolce-pungente (impronta)", "ruolo": "firma", "concentrazione": "~1.7% (geranial ~1.3%)", "stato": "da_fonte", "fonte": "DOI 10.1007/s13197-019-03937-w"},
-       {"composto": "beta-pinene", "descrittore": "resinoso, verde", "ruolo": "di_supporto", "concentrazione": "~9.8%", "stato": "da_fonte", "fonte": "DOI 10.1007/s13197-019-03937-w"},
-       {"composto": "gamma-terpinene", "descrittore": "agrume-erbaceo, oleoso", "ruolo": "di_supporto", "concentrazione": "~9.7%", "stato": "da_fonte", "fonte": "DOI 10.1007/s13197-019-03937-w"},
-       {"composto": "alpha-terpineol", "descrittore": "floreale, lilla", "ruolo": "di_supporto", "concentrazione": "~9.1%", "stato": "da_fonte", "fonte": "DOI 10.1007/s13197-019-03937-w"}
-     ]},
-
-    {"ingrediente": "lime", "nodo_target": "ing-lime", "specie": "Citrus aurantifolia (scorza)", "dominio": "bar",
-     "CORREGGE": "Nel grafo 'lime' risolveva su ahn_kaffir_lime (varieta' diversa). Qui il lime da bar.",
-     "fonte_ingrediente": "Ebadati Esfahani & Moradi 2017, Herba Polonica 63(1):32-42, DOI 10.1515/hepo-2017-0003. ATTENZIONE SPECIE: campione su C. aurantifolia (lime messicano/Key), non C. latifolia (lime di Persia); il messicano e' piu' ricco di citrale. Range su 3 stadi di maturazione.",
-     "composti": [
-       {"composto": "limonene", "descrittore": "agrume, fresco", "ruolo": "caratterizzante", "concentrazione": "~32.8-39.4%", "stato": "da_fonte", "fonte": "DOI 10.1515/hepo-2017-0003"},
-       {"composto": "geranial", "descrittore": "limone deciso (meta' del citrale)", "ruolo": "firma", "concentrazione": "~9.3-14.3%", "stato": "da_fonte", "fonte": "DOI 10.1515/hepo-2017-0003"},
-       {"composto": "neral", "descrittore": "limone dolce morbido (altra meta' del citrale)", "ruolo": "firma", "concentrazione": "~7.0-11.0%", "stato": "da_fonte", "fonte": "DOI 10.1515/hepo-2017-0003"},
-       {"composto": "beta-pinene", "descrittore": "pino/verde fresco (distingue il lime dal limone)", "ruolo": "caratterizzante", "concentrazione": "~17.8-24.3%", "stato": "da_fonte", "fonte": "DOI 10.1515/hepo-2017-0003"},
-       {"composto": "gamma-terpinene", "descrittore": "agrume-erbaceo", "ruolo": "di_supporto", "concentrazione": "~3.8-8.9%", "stato": "da_fonte", "fonte": "DOI 10.1515/hepo-2017-0003"}
-     ]},
-
-    {"ingrediente": "arancia", "nodo_target": "ing-arancia", "specie": "Citrus sinensis (scorza)", "dominio": "bar",
-     "fonte_ingrediente": "Bozova et al. 2025, AIMS Agriculture and Food 10(1):40-57, DOI 10.3934/agrfood.2025003 (5 cultivar, piu' raccolti).",
-     "nota": "Il carattere lo fanno le aldeidi (octanale/decanale) a frazioni di percento; il limonene e' quasi tutto il volume ma e' il corpo, non la firma.",
-     "composti": [
-       {"composto": "limonene", "descrittore": "arancia dolce, scorza (corpo)", "ruolo": "caratterizzante", "concentrazione": "~94.9-96.4%", "stato": "da_fonte", "fonte": "DOI 10.3934/agrfood.2025003"},
-       {"composto": "octanal", "descrittore": "aldeide agrumato-grasso, 'arancia fresca'", "ruolo": "firma", "concentrazione": "~0.1-0.3%", "stato": "da_fonte", "fonte": "DOI 10.3934/agrfood.2025003"},
-       {"composto": "decanal", "descrittore": "aldeide cerosa, buccia d'arancia", "ruolo": "firma", "concentrazione": "~0.1-0.2%", "stato": "da_fonte", "fonte": "DOI 10.3934/agrfood.2025003"},
-       {"composto": "myrcene", "descrittore": "balsamico-erbaceo dolce", "ruolo": "di_supporto", "concentrazione": "~1.9-2.0%", "stato": "da_fonte", "fonte": "DOI 10.3934/agrfood.2025003"},
-       {"composto": "linalool", "descrittore": "floreale", "ruolo": "di_supporto", "concentrazione": "~0.1-0.6%", "stato": "da_fonte", "fonte": "DOI 10.3934/agrfood.2025003"}
-     ]},
-
-    {"ingrediente": "pompelmo", "nodo_target": "ing-pompelmo", "specie": "Citrus paradisi (scorza)", "dominio": "bar",
-     "fonte_ingrediente": "Ayache et al. 2020, J. Microbiol. Biotechnol. Food Sci. 9(6):1093-1098, DOI 10.15414/jmbfs.2020.9.6.1093-1098 (Algeria, idrodistillazione).",
-     "nota": "Nootkatone + 1-p-menthene-8-thiol fanno 'pompelmo'; il tiolo soprattutto (soglia a ppt) ma non compare mai nelle % GC-MS standard. Qui la nootkatone e' davvero quantificata (raro).",
-     "composti": [
-       {"composto": "limonene", "descrittore": "agrume (corpo)", "ruolo": "caratterizzante", "concentrazione": "~87.5%", "stato": "da_fonte", "fonte": "DOI 10.15414/jmbfs.2020.9.6.1093-1098"},
-       {"composto": "nootkatone", "descrittore": "pompelmo caratteristico, amaro-legnoso", "ruolo": "firma", "concentrazione": "~1.78%", "stato": "da_fonte", "fonte": "DOI 10.15414/jmbfs.2020.9.6.1093-1098"},
-       {"composto": "myrcene", "descrittore": "erbaceo dolce", "ruolo": "di_supporto", "concentrazione": "~2.99%", "stato": "da_fonte", "fonte": "DOI 10.15414/jmbfs.2020.9.6.1093-1098"},
-       {"composto": "beta-pinene", "descrittore": "pineo", "ruolo": "di_supporto", "concentrazione": "~1.06%", "stato": "da_fonte", "fonte": "DOI 10.15414/jmbfs.2020.9.6.1093-1098"},
-       {"composto": "1-p-menthene-8-thiol", "descrittore": "sulfureo, 'pompelmo' purissimo, soglia bassissima (ppt)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare (noto in letteratura, troppo in traccia per le % GC-MS; serve fonte dedicata)"}
-     ]},
-
-    {"ingrediente": "bergamotto", "nodo_target": "ing-bergamotto", "specie": "Citrus bergamia (scorza)", "dominio": "bar",
-     "fonte_ingrediente": "Cebi & Erarslan 2023, Foods 12(1):203, DOI 10.3390/foods12010203. AVVERTENZA: questo campione e' linalool-dominante (46%), atipico; il cold-pressed classico (Reggio Calabria) ha di norma limonene ~30-45% e linalyl acetate ~20-35%. Firma resta il linalyl acetate.",
-     "composti": [
-       {"composto": "linalyl acetate", "descrittore": "floreale-fruttato, 'bergamotto/Earl Grey', lavanda dolce", "ruolo": "firma", "concentrazione": "~17.7% (campione atipico)", "stato": "da_fonte", "fonte": "DOI 10.3390/foods12010203"},
-       {"composto": "linalool", "descrittore": "floreale, legno di rosa/lavanda", "ruolo": "caratterizzante", "concentrazione": "~46.3% (campione atipico)", "stato": "da_fonte", "fonte": "DOI 10.3390/foods12010203"},
-       {"composto": "limonene", "descrittore": "agrume fresco", "ruolo": "caratterizzante", "concentrazione": "~17.1%", "stato": "da_fonte", "fonte": "DOI 10.3390/foods12010203"},
-       {"composto": "gamma-terpinene", "descrittore": "agrume-erbaceo", "ruolo": "di_supporto", "concentrazione": "~4.1%", "stato": "da_fonte", "fonte": "DOI 10.3390/foods12010203"}
-     ]},
-
-    {"ingrediente": "menta", "nodo_target": "ing-menta", "specie": "Mentha x piperita", "dominio": "bar",
-     "fonte_ingrediente": "Pereira et al. 2021, \"Analysis of Essential Oil from Brazilian Mentha x piperita Commercial Samples\", Revista Virtual de Quimica, DOI 10.21577/1984-6835.20210112 (campioni commerciali, chemotipo mentolo).",
-     "nota": "1,8-cineolo e menthofuran non quantificati chiaramente in questa fonte.",
-     "composti": [
-       {"composto": "menthol", "descrittore": "menta, fresco, rinfrescante", "ruolo": "firma", "concentrazione": "~49.3-82.0%", "stato": "da_fonte", "fonte": "DOI 10.21577/1984-6835.20210112"},
-       {"composto": "menthone", "descrittore": "menta, legnoso-amaro", "ruolo": "caratterizzante", "concentrazione": "~2.0-14.4%", "stato": "da_fonte", "fonte": "DOI 10.21577/1984-6835.20210112"},
-       {"composto": "menthyl acetate", "descrittore": "dolce, fruttato-mentolato (fondo)", "ruolo": "caratterizzante", "concentrazione": "~2.7-11.8%", "stato": "da_fonte", "fonte": "DOI 10.21577/1984-6835.20210112"},
-       {"composto": "isomenthone", "descrittore": "menta, erbaceo", "ruolo": "di_supporto", "concentrazione": "~3.5-8.9%", "stato": "da_fonte", "fonte": "DOI 10.21577/1984-6835.20210112"}
-     ]},
-
-    {"ingrediente": "basilico", "nodo_target": "ing-basilico", "specie": "Ocimum basilicum", "dominio": "cucina",
-     "fonte_ingrediente": "Murarikova et al. 2017, Molecules 22(7):1221, DOI 10.3390/molecules22071221.",
-     "nota": "Chemotipi diversi: cultivar a linalolo vs a metil-eugenolo vs a 1,8-cineolo. Il profilo varia con varieta' e stagione.",
-     "composti": [
-       {"composto": "linalool", "descrittore": "floreale, fresco, dolce", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"},
-       {"composto": "estragole (methyl chavicol)", "descrittore": "anice, dolce", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"},
-       {"composto": "eugenol", "descrittore": "chiodo di garofano, speziato", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"},
-       {"composto": "methyl eugenol", "descrittore": "speziato, dolce-legnoso", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"},
-       {"composto": "1,8-cineole (eucalyptol)", "descrittore": "eucalipto, fresco", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules22071221"}
-     ]},
-
-    {"ingrediente": "rosmarino", "nodo_target": "ing-rosmarino", "specie": "Rosmarinus officinalis", "dominio": "cucina",
-     "fonte_ingrediente": "Al-Maharik et al. 2022, Separations 9(11):339, DOI 10.3390/separations9110339 (5 siti, Palestina; range tra i siti).",
-     "composti": [
-       {"composto": "1,8-cineole", "descrittore": "eucalipto, fresco, canforato", "ruolo": "firma", "concentrazione": "~4.8-37.8%", "stato": "da_fonte", "fonte": "DOI 10.3390/separations9110339"},
-       {"composto": "alpha-pinene", "descrittore": "pino, resinoso, fresco", "ruolo": "caratterizzante", "concentrazione": "~13.1-51.4%", "stato": "da_fonte", "fonte": "DOI 10.3390/separations9110339"},
-       {"composto": "camphor", "descrittore": "canfora, pungente, medicinale", "ruolo": "caratterizzante", "concentrazione": "~12.0-24.3%", "stato": "da_fonte", "fonte": "DOI 10.3390/separations9110339"},
-       {"composto": "camphene", "descrittore": "canforato, legnoso", "ruolo": "di_supporto", "concentrazione": "~6.7-11.6%", "stato": "da_fonte", "fonte": "DOI 10.3390/separations9110339"},
-       {"composto": "borneol", "descrittore": "canforato, balsamico", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "verbenone", "descrittore": "erbaceo, canforato-mentolato", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
-     ]},
-
-    {"ingrediente": "timo", "nodo_target": "ing-timo", "specie": "Thymus vulgaris", "dominio": "cucina",
-     "fonte_ingrediente": "Boruga et al. 2014, J. Medicine and Life 7(Spec 3):56-60, PMID 25870697 / PMC4391421 (chemotipo timolo; rivista senza DOI).",
-     "nota": "Chemotipo timolo: il carvacrol NON e' maggioritario qui; in altri chemotipi puo' dominare.",
-     "composti": [
-       {"composto": "thymol", "descrittore": "fenolico, caldo, erbaceo-speziato", "ruolo": "firma", "concentrazione": "~47.6%", "stato": "da_fonte", "fonte": "PMID 25870697"},
-       {"composto": "gamma-terpinene", "descrittore": "erbaceo, legnoso, agrumato leggero", "ruolo": "di_supporto", "concentrazione": "~30.9%", "stato": "da_fonte", "fonte": "PMID 25870697"},
-       {"composto": "p-cymene", "descrittore": "precursore del timolo, nota solvente/agrumata", "ruolo": "caratterizzante", "concentrazione": "~8.4%", "stato": "da_fonte", "fonte": "PMID 25870697"},
-       {"composto": "carvacrol", "descrittore": "origano, caldo-speziato", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare (chemotipo carvacrolo)"}
-     ]},
-
-    {"ingrediente": "zenzero", "nodo_target": "ing-zenzero", "specie": "Zingiber officinale", "dominio": "bar",
-     "fonte_ingrediente": "Food Science & Nutrition 2015, 4(4):521-533, DOI 10.1002/fsn3.314 (olio, area %; studio su congelamento/scongelamento, le % variano col trattamento).",
-     "nota": "I gingeroli/shogaoli danno la pungenza ma NON sono volatili. Il zingerone (~18.3% nel paper) e' insolitamente alto per un distillato: riportato fedelmente, da verificare con un profilo 'pulito'.",
-     "composti": [
-       {"composto": "zingiberene", "descrittore": "zenzero, caldo-speziato, agrumato-legnoso", "ruolo": "firma", "concentrazione": "~35.5% (17.6-36% col trattamento)", "stato": "da_fonte", "fonte": "DOI 10.1002/fsn3.314"},
-       {"composto": "beta-sesquiphellandrene", "descrittore": "legnoso-speziato", "ruolo": "caratterizzante", "concentrazione": "~11.3%", "stato": "da_fonte", "fonte": "DOI 10.1002/fsn3.314"},
-       {"composto": "beta-bisabolene", "descrittore": "balsamico, legnoso", "ruolo": "di_supporto", "concentrazione": "~6.4%", "stato": "da_fonte", "fonte": "DOI 10.1002/fsn3.314"},
-       {"composto": "ar-curcumene", "descrittore": "legnoso secco", "ruolo": "di_supporto", "concentrazione": "~4.6%", "stato": "da_fonte", "fonte": "DOI 10.1002/fsn3.314"}
-     ]},
-
-    {"ingrediente": "cardamomo", "nodo_target": "ing-cardamomo", "specie": "Elettaria cardamomum", "dominio": "bar",
-     "fonte_ingrediente": "Auti & Kulkarni 2019, Frontiers in Neurology 10:399, DOI 10.3389/fneur.2019.00399 (tabella GC-MS completa).",
-     "composti": [
-       {"composto": "alpha-terpinyl acetate", "descrittore": "cardamomo, dolce erbaceo-floreale, legnoso-speziato", "ruolo": "firma", "concentrazione": "~42.9%", "stato": "da_fonte", "fonte": "DOI 10.3389/fneur.2019.00399"},
-       {"composto": "1,8-cineole", "descrittore": "eucalipto, fresco, canforato", "ruolo": "firma", "concentrazione": "~31.1%", "stato": "da_fonte", "fonte": "DOI 10.3389/fneur.2019.00399"},
-       {"composto": "alpha-terpineol", "descrittore": "floreale, lilla", "ruolo": "di_supporto", "concentrazione": "~6.5%", "stato": "da_fonte", "fonte": "DOI 10.3389/fneur.2019.00399"},
-       {"composto": "linalool", "descrittore": "floreale, fresco", "ruolo": "caratterizzante", "concentrazione": "~5.7%", "stato": "da_fonte", "fonte": "DOI 10.3389/fneur.2019.00399"},
-       {"composto": "limonene", "descrittore": "agrume", "ruolo": "di_supporto", "concentrazione": "~3.0%", "stato": "da_fonte", "fonte": "DOI 10.3389/fneur.2019.00399"}
-     ]},
-
-    {"ingrediente": "coriandolo", "nodo_target": "ing-coriandolo", "specie": "Coriandrum sativum (seme)", "dominio": "bar",
-     "fonte_ingrediente": "Bhuiyan, Begum & Sultana 2009, Bangladesh J. Pharmacology 4(2):150-153, DOI 10.3329/bjp.v4i2.2800 (olio di seme).",
-     "composti": [
-       {"composto": "linalool", "descrittore": "floreale, dolce, 'coriandolo fresco'", "ruolo": "firma", "concentrazione": "~37.7%", "stato": "da_fonte", "fonte": "DOI 10.3329/bjp.v4i2.2800"},
-       {"composto": "geranyl acetate", "descrittore": "floreale-fruttato, rosa", "ruolo": "caratterizzante", "concentrazione": "~17.6%", "stato": "da_fonte", "fonte": "DOI 10.3329/bjp.v4i2.2800"},
-       {"composto": "gamma-terpinene", "descrittore": "erbaceo, legnoso", "ruolo": "di_supporto", "concentrazione": "~14.4%", "stato": "da_fonte", "fonte": "DOI 10.3329/bjp.v4i2.2800"},
-       {"composto": "alpha-pinene", "descrittore": "pino, fresco", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "camphor", "descrittore": "canfora", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
-     ]},
-
-    {"ingrediente": "anice stellato", "nodo_target": "ing-anice-stellato", "specie": "Illicium verum", "dominio": "bar",
-     "fonte_ingrediente": "Noumi et al. 2023, Molecules 28(23):7691, DOI 10.3390/molecules28237691. Nota: campione da parti aeree, non dal frutto (pericarpo) commerciale: le % minori possono differire.",
-     "composti": [
-       {"composto": "trans-anethole", "descrittore": "anice, dolce, liquirizia", "ruolo": "firma", "concentrazione": "~83.7%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules28237691"},
-       {"composto": "limonene", "descrittore": "agrume", "ruolo": "di_supporto", "concentrazione": "~3.2%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules28237691"},
-       {"composto": "estragole (methyl chavicol)", "descrittore": "anice, dolce", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare (tipico del frutto)"},
-       {"composto": "foeniculin", "descrittore": "anice-floreale", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
-     ]},
-
-    {"ingrediente": "cannella", "nodo_target": "ing-cannella", "specie": "Cinnamomum (verum/cassia)", "dominio": "cucina",
-     "fonte_ingrediente": "Olio di corteccia di Cinnamomum verum, GC/GC-MS (SciELO, Food Sci. Technol.): cinnamaldeide 54.7-58.4% corteccia; olio di foglia dominato da eugenolo (~94%).",
-     "nota": "Distinzione chiave: CORTECCIA = cinnamaldeide; FOGLIA = eugenolo. La cassia porta anche cumarina.",
-     "composti": [
-       {"composto": "cinnamaldehyde", "descrittore": "cannella, dolce-speziato, caldo", "ruolo": "firma", "concentrazione": "~54.7-58.4% (corteccia)", "stato": "da_fonte", "fonte": "SciELO Food Sci. Technol."},
-       {"composto": "eugenol", "descrittore": "chiodo di garofano, speziato", "ruolo": "caratterizzante", "concentrazione": "dominante nella foglia (~94%)", "stato": "da_fonte", "fonte": "SciELO Food Sci. Technol."},
-       {"composto": "cinnamyl acetate", "descrittore": "dolce-balsamico, floreale", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"},
-       {"composto": "coumarin", "descrittore": "fieno, dolce (soprattutto cassia)", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
-     ]},
-
-    {"ingrediente": "chiodi di garofano", "nodo_target": "ing-chiodi-di-garofano", "specie": "Syzygium aromaticum", "dominio": "cucina",
-     "fonte_ingrediente": "Kacaniova et al. 2021, Plants 10(10):2185, DOI 10.3390/plants10102185 (area %, totale 99.7%).",
-     "composti": [
-       {"composto": "eugenol", "descrittore": "chiodo di garofano, caldo, speziato, fenolico", "ruolo": "firma", "concentrazione": "~82.4%", "stato": "da_fonte", "fonte": "DOI 10.3390/plants10102185"},
-       {"composto": "beta-caryophyllene", "descrittore": "legnoso, pepato-speziato", "ruolo": "caratterizzante", "concentrazione": "~14.0%", "stato": "da_fonte", "fonte": "DOI 10.3390/plants10102185"},
-       {"composto": "alpha-humulene", "descrittore": "legnoso, luppolato", "ruolo": "di_supporto", "concentrazione": "~1.8%", "stato": "da_fonte", "fonte": "DOI 10.3390/plants10102185"},
-       {"composto": "eugenyl acetate", "descrittore": "dolce, speziato-balsamico", "ruolo": "di_supporto", "concentrazione": "~0.9%", "stato": "da_fonte", "fonte": "DOI 10.3390/plants10102185"}
-     ]},
-
-    {"ingrediente": "vaniglia", "nodo_target": "ing-vaniglia", "specie": "Vanilla planifolia", "dominio": "pasticceria",
-     "fonte_ingrediente": "Shigeto, Hachisuka, Kumazawa 2016, \"Characterization of Potent Odorants in Three Different Cultivars of Vanilla Bean by AEDA\", Food Science and Technology Research 22(6):811-816, DOI 10.3136/fstr.22.811 (studio AEDA, niente OAV).",
-     "composti": [
-       {"composto": "vanillin", "descrittore": "vaniglia, dolce, balsamico", "ruolo": "firma", "concentrazione": "~6201-8053 ug/g", "stato": "da_fonte", "fonte": "DOI 10.3136/fstr.22.811"},
-       {"composto": "guaiacol", "descrittore": "bruciato, affumicato", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3136/fstr.22.811"},
-       {"composto": "3-hydroxy-4,5-dimethyl-2(5H)-furanone (sotolon-simile)", "descrittore": "caramello", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3136/fstr.22.811"},
-       {"composto": "eugenol", "descrittore": "speziato, chiodo di garofano", "ruolo": "di_supporto", "concentrazione": "~0.6-0.7 ug/g", "stato": "da_fonte", "fonte": "DOI 10.3136/fstr.22.811"},
-       {"composto": "ethyl cinnamate", "descrittore": "fruttato, fragola", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3136/fstr.22.811"},
-       {"composto": "gamma-nonalactone", "descrittore": "dolce, cocco", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3136/fstr.22.811"}
-     ]},
-
-    {"ingrediente": "cacao", "nodo_target": "ing-cacao", "specie": "Theobroma cacao (tostato / cioccolato fondente)", "dominio": "pasticceria",
-     "fonte_ingrediente": "Deuscher et al. 2020, \"Key Aroma Compounds of Dark Chocolates: A GC-O Comparative Study\", Molecules 25(8):1809, DOI 10.3390/molecules25081809 (GC-O a frequenza di rilevamento NIF%, niente OAV).",
-     "nota": "Tetramethylpyrazine e' nota in letteratura come pirazina del cacao ma NON e' tra i marker di questa fonte: resta da_raffinare.",
-     "composti": [
-       {"composto": "2-/3-methylbutanal (aldeidi di Strecker)", "descrittore": "cacao, cioccolato, maltato", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules25081809"},
-       {"composto": "2,5-dimethylpyrazine", "descrittore": "tostato, cioccolato", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules25081809"},
-       {"composto": "trimethylpyrazine", "descrittore": "tostato, terroso, vegetale", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules25081809"},
-       {"composto": "methanethiol", "descrittore": "sulfureo, cavolo (impatto)", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules25081809"},
-       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/molecules25081809"}
-     ]},
-
-    {"ingrediente": "caffe", "nodo_target": "ing-caffe", "specie": "Coffea (tostato)", "dominio": "caffe",
-     "fonte_ingrediente": "Review odoranti attivi del caffe: Frontiers in Nutrition 2023, DOI 10.3389/fnut.2023.1196816 (+ letteratura GC-O/AEDA/OAV).",
-     "composti": [
-       {"composto": "2-furfurylthiol", "descrittore": "caffe tostato (impatto, soglia bassissima)", "ruolo": "firma", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"},
-       {"composto": "guaiacol", "descrittore": "fumo, speziato-fenolico", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"},
-       {"composto": "4-vinylguaiacol", "descrittore": "speziato, chiodo-fumo", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"},
-       {"composto": "furaneol (HDMF)", "descrittore": "caramello, dolce-bruciato", "ruolo": "caratterizzante", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"},
-       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso", "ruolo": "di_supporto", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2023.1196816"}
-     ]},
-
-    {"ingrediente": "nocciola", "nodo_target": "ing-nocciola", "specie": "Corylus avellana (tostata)", "dominio": "pasticceria",
-     "fonte_ingrediente": "Artik et al. 2021, Acta Sci. Pol. Hortorum Cultus 20(5):85-96, DOI 10.24326/asphc.2021.5.8 (SPME-GC/MS, % area di picco).",
-     "nota": "Il filbertone e' citato dalla fonte come l'odorante caratteristico piu' importante della nocciola tostata, ma NON compare nelle tabelle quantitative (serve una AEDA dedicata per il numero).",
-     "composti": [
-       {"composto": "filbertone (5-methyl-(E)-2-hepten-4-one)", "descrittore": "nocciola, dolce tostato (impatto)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.24326/asphc.2021.5.8 (qualitativo)"},
-       {"composto": "3,5- e 3,6-dimethyl-2-ethylpyrazine", "descrittore": "tostato, terroso, nocciola", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.24326/asphc.2021.5.8"},
-       {"composto": "gamma-octalactone", "descrittore": "oleoso, nocciola", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.24326/asphc.2021.5.8"},
-       {"composto": "hexanal", "descrittore": "verde, erbaceo", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.24326/asphc.2021.5.8"}
-     ]},
-
-    {"ingrediente": "mandorla amara", "nodo_target": "ing-mandorla", "specie": "Prunus dulcis var. amara", "dominio": "pasticceria",
-     "fonte_ingrediente": "Vichi et al. 2020, \"Chemical Markers to Distinguish the Bitter Genotype in Sweet Almond Kernels\", Foods 9(6):747, DOI 10.3390/foods9060747 (open access CC BY). Benzaldeide legata all'amigdalina (precursore della nota amara).",
-     "composti": [
-       {"composto": "benzaldehyde", "descrittore": "mandorla amara, marzapane, ciliegia (impatto)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods9060747"},
-       {"composto": "benzyl alcohol", "descrittore": "floreale, mandorla", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
-     ]},
-
-    {"ingrediente": "burro", "nodo_target": "ing-burro", "specie": "burro (latte)", "dominio": "pasticceria",
-     "fonte_ingrediente": "Mallia, Escher, Schlichtherle-Cerny 2008, \"Aroma-active compounds of butter: a review\", Eur. Food Res. Technol. 226:315-325, DOI 10.1007/s00217-006-0555-y (review; letto abstract). Conferma lattoni + acidi + diacetyl.",
-     "composti": [
-       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso (impatto)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1007/s00217-006-0555-y"},
-       {"composto": "delta-decalactone", "descrittore": "cremoso, cocco-pesca", "ruolo": "firma", "concentrazione": "ROAV>1", "stato": "da_fonte", "fonte": "DOI 10.1007/s00217-006-0555-y"},
-       {"composto": "gamma-dodecalactone", "descrittore": "grasso, pesca, cremoso", "ruolo": "caratterizzante", "concentrazione": "ROAV>1", "stato": "da_fonte", "fonte": "DOI 10.1007/s00217-006-0555-y"},
-       {"composto": "butanoic acid (butirrico)", "descrittore": "formaggio, pungente", "ruolo": "caratterizzante", "concentrazione": "ROAV>1", "stato": "da_fonte", "fonte": "DOI 10.1007/s00217-006-0555-y"},
-       {"composto": "delta-octalactone", "descrittore": "cremoso, cocco", "ruolo": "di_supporto", "concentrazione": "ROAV>1", "stato": "da_fonte", "fonte": "DOI 10.1007/s00217-006-0555-y"}
-     ]},
-
-    {"ingrediente": "pane (crosta)", "nodo_target": "ing-pane", "specie": "impasto fermentato + Maillard crosta", "dominio": "panificazione",
-     "fonte_ingrediente": "Cho & Peterson 2010, \"Chemistry of bread aroma: A review\", Food Science and Biotechnology 19(3):575-582, DOI 10.1007/s10068-010-0081-3 (review).",
-     "nota": "2-acetiltetraidropiridina ('roasty, bready'), altro marker tipico della crosta, non nominato in questa fonte: resta da_raffinare.",
-     "composti": [
-       {"composto": "2-acetyl-1-pyrroline", "descrittore": "cracker, pop-corn, tostato (impatto crosta)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1007/s10068-010-0081-3"},
-       {"composto": "methional", "descrittore": "patata lessa, maltato", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1007/s10068-010-0081-3"},
-       {"composto": "3-methylbutanal", "descrittore": "maltato, cacao", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1007/s10068-010-0081-3"},
-       {"composto": "2,3-butanedione (diacetyl)", "descrittore": "burroso", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1007/s10068-010-0081-3"},
-       {"composto": "(E)-2-nonenal", "descrittore": "grasso, verde, cartone", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1007/s10068-010-0081-3"}
-     ]},
-
-    {"ingrediente": "caramello", "nodo_target": "ing-caramello", "specie": "zucchero caramellizzato", "dominio": "pasticceria",
-     "fonte_ingrediente": "Rogner, Mall, Steinhaus 2021, Eur. Food Res. Technol. 247:1263-1275, DOI 10.1007/s00217-021-03707-z (open access). CAVEAT: la fonte e' su ESTRATTO DI MALTO, non zucchero puro caramellizzato; la chimica (degradazione termica -> maltol/HDMF/furanoni) e' la stessa ma va dichiarato. Fonte ideale su zucchero: Liu et al. 2021, Food Chem 345:128826, DOI 10.1016/j.foodchem.2020.128826 (paywall, da confermare).",
-     "composti": [
-       {"composto": "maltol", "descrittore": "caramello, zucchero filato, dolce-bruciato", "ruolo": "firma", "concentrazione": "OAV ~120 (estratto scuro)", "stato": "da_fonte", "fonte": "DOI 10.1007/s00217-021-03707-z (estratto di malto)"},
-       {"composto": "furaneol / HDMF (4-hydroxy-2,5-dimethyl-3(2H)-furanone)", "descrittore": "caramello, zucchero bruciato, dolce", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1007/s00217-021-03707-z (estratto di malto)"},
-       {"composto": "dihydromaltol", "descrittore": "caramello, dolce", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1007/s00217-021-03707-z (estratto di malto)"}
-     ]},
-
-    {"ingrediente": "rosa", "nodo_target": "ing-rosa", "specie": "Rosa damascena", "dominio": "bar",
-     "fonte_ingrediente": "Horticulturae 9(8):946, 2023, DOI 10.3390/horticulturae9080946 (9 genotipi, ug/g peso fresco petali).",
-     "composti": [
-       {"composto": "2-phenylethanol", "descrittore": "rosa-miele, floreale pieno", "ruolo": "firma", "concentrazione": "~1148-2777 ug/g", "stato": "da_fonte", "fonte": "DOI 10.3390/horticulturae9080946"},
-       {"composto": "citronellol", "descrittore": "rosa-agrumato", "ruolo": "caratterizzante", "concentrazione": "~88-207 ug/g", "stato": "da_fonte", "fonte": "DOI 10.3390/horticulturae9080946"},
-       {"composto": "geraniol", "descrittore": "rosa-geranio dolce", "ruolo": "caratterizzante", "concentrazione": "~69-171 ug/g", "stato": "da_fonte", "fonte": "DOI 10.3390/horticulturae9080946"},
-       {"composto": "nerol", "descrittore": "rosa fresco-agrumato", "ruolo": "di_supporto", "concentrazione": "~27-65 ug/g", "stato": "da_fonte", "fonte": "DOI 10.3390/horticulturae9080946"},
-       {"composto": "beta-damascenone", "descrittore": "rosa cotta, mela-miele (potentissimo in traccia)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare (key-odorant noto, non in questa fonte)"}
-     ]},
-
-    {"ingrediente": "lavanda", "nodo_target": "ing-lavanda", "specie": "Lavandula angustifolia", "dominio": "bar",
-     "fonte_ingrediente": "Pokajewicz et al. 2021, Molecules 26(18):5681, DOI 10.3390/molecules26185681 (13 cultivar, % GC-MS).",
-     "composti": [
-       {"composto": "linalool", "descrittore": "floreale fresco", "ruolo": "firma", "concentrazione": "~11.4-46.7%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules26185681"},
-       {"composto": "linalyl acetate", "descrittore": "fruttato-bergamotto dolce", "ruolo": "firma", "concentrazione": "~7.4-44.2%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules26185681"},
-       {"composto": "terpinen-4-ol", "descrittore": "terroso-speziato", "ruolo": "di_supporto", "concentrazione": "~1.2-18.7%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules26185681"},
-       {"composto": "lavandulyl acetate", "descrittore": "erbaceo-lavanda", "ruolo": "caratterizzante", "concentrazione": "~2.7-6%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules26185681"}
-     ]},
-
-    {"ingrediente": "fiori di sambuco", "nodo_target": "ing-sambuco", "specie": "Sambucus nigra (elderflower)", "dominio": "bar",
-     "fonte_ingrediente": "Agalar et al. 2017, Records of Natural Products 11(5):491-496, DOI 10.25135/rnp.63.16.08.058 (% area FID; olio essenziale).",
-     "nota": "L'olio e' dominato da alcani (non odorosi); gli odoranti floreali sono minoritari ma determinanti.",
-     "composti": [
-       {"composto": "cis-rose oxide", "descrittore": "floreale verde-rosato (marker elderflower)", "ruolo": "firma", "concentrazione": "~2.2%", "stato": "da_fonte", "fonte": "DOI 10.25135/rnp.63.16.08.058"},
-       {"composto": "hotrienol", "descrittore": "floreale-tiglio dolce", "ruolo": "firma", "concentrazione": "~2.7%", "stato": "da_fonte", "fonte": "DOI 10.25135/rnp.63.16.08.058"},
-       {"composto": "trans-rose oxide", "descrittore": "floreale rosato", "ruolo": "caratterizzante", "concentrazione": "~1.1%", "stato": "da_fonte", "fonte": "DOI 10.25135/rnp.63.16.08.058"},
-       {"composto": "nerol oxide", "descrittore": "floreale, contributore odore sambuco", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare (non quantificato qui)"}
-     ]},
-
-    {"ingrediente": "pepe nero", "nodo_target": "ing-pepe-nero", "specie": "Piper nigrum", "dominio": "cucina",
-     "fonte_ingrediente": "Dosoky et al. 2019, Molecules 24(23):4244, DOI 10.3390/molecules24234244 (% olio essenziale, Madagascar + cultivar).",
-     "nota": "La piperina (piccantezza) e' non-volatile: fuori dalla frazione aromatica.",
-     "composti": [
-       {"composto": "limonene", "descrittore": "agrumato fresco", "ruolo": "firma", "concentrazione": "~15.1-38.1%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules24234244"},
-       {"composto": "beta-caryophyllene", "descrittore": "legnoso-speziato, pepato caldo", "ruolo": "firma", "concentrazione": "~0.7-25.6%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules24234244"},
-       {"composto": "beta-pinene", "descrittore": "pino-resinoso", "ruolo": "caratterizzante", "concentrazione": "~9.1-48.0%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules24234244"},
-       {"composto": "alpha-pinene", "descrittore": "pino fresco", "ruolo": "caratterizzante", "concentrazione": "~5.1-28.7%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules24234244"},
-       {"composto": "sabinene", "descrittore": "legnoso-speziato", "ruolo": "di_supporto", "concentrazione": "~0.1-13.9%", "stato": "da_fonte", "fonte": "DOI 10.3390/molecules24234244"}
-     ]},
-
-    {"ingrediente": "noce moscata", "nodo_target": "ing-noce-moscata", "specie": "Myristica fragrans", "dominio": "cucina",
-     "fonte_ingrediente": "Trifan et al. 2023, Plants 12(9):1741, DOI 10.3390/plants12091741 (% olio essenziale GC-MS).",
-     "composti": [
-       {"composto": "sabinene", "descrittore": "legnoso-terpenico fresco", "ruolo": "firma", "concentrazione": "~21.7%", "stato": "da_fonte", "fonte": "DOI 10.3390/plants12091741"},
-       {"composto": "myristicin", "descrittore": "speziato caldo dolce (fenilpropanoide marker)", "ruolo": "firma", "concentrazione": "~13.4%", "stato": "da_fonte", "fonte": "DOI 10.3390/plants12091741"},
-       {"composto": "alpha-pinene", "descrittore": "pino fresco", "ruolo": "caratterizzante", "concentrazione": "~15.8%", "stato": "da_fonte", "fonte": "DOI 10.3390/plants12091741"},
-       {"composto": "beta-pinene", "descrittore": "pino-resinoso", "ruolo": "caratterizzante", "concentrazione": "~12.7%", "stato": "da_fonte", "fonte": "DOI 10.3390/plants12091741"},
-       {"composto": "terpinen-4-ol", "descrittore": "terroso-speziato", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
-     ]},
-
-    {"ingrediente": "zafferano", "nodo_target": "ing-zafferano", "specie": "Crocus sativus", "dominio": "cucina",
-     "fonte_ingrediente": "Mohammadhosseini 2025, Trends in Phytochemical Research 9(4):223-235, DOI 10.57647/tpr.2025.0904.19 (% area). CAVEAT: parti aeree, non solo stimmi; per il solo stimma la fonte-oro e' Amanpour et al. 2015 (GC-O, non aperto).",
-     "composti": [
-       {"composto": "safranal", "descrittore": "fieno-zafferano pungente (dominante)", "ruolo": "firma", "concentrazione": "~37-63%", "stato": "da_fonte", "fonte": "DOI 10.57647/tpr.2025.0904.19"},
-       {"composto": "4-ketoisophorone", "descrittore": "dolce-tabacco floreale", "ruolo": "caratterizzante", "concentrazione": "~2.5-11%", "stato": "da_fonte", "fonte": "DOI 10.57647/tpr.2025.0904.19"},
-       {"composto": "(E)-beta-ionone", "descrittore": "violetta-legnoso", "ruolo": "caratterizzante", "concentrazione": "~0.1-3.4%", "stato": "da_fonte", "fonte": "DOI 10.57647/tpr.2025.0904.19"},
-       {"composto": "isophorone", "descrittore": "canforaceo dolce", "ruolo": "di_supporto", "concentrazione": "~1.5-3.0%", "stato": "da_fonte", "fonte": "DOI 10.57647/tpr.2025.0904.19"}
-     ]},
-
-    {"ingrediente": "pistacchio", "nodo_target": "ing-pistacchio", "specie": "Pistacia vera (tostato)", "dominio": "pasticceria",
-     "fonte_ingrediente": "Sonmezdag, Kelebek, Selli 2019, J. Sci. Food Agric. 99(10):4702-4711, DOI 10.1002/jsfa.9711 (AEDA; SOLO abstract aperto, full-text paywall). Pirazine = firma tostato-Maillard note; OAV nel full-text non accessibile.",
-     "composti": [
-       {"composto": "2,3-dimethylpyrazine", "descrittore": "tostato-nocciolato terroso", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1002/jsfa.9711 (abstract)"},
-       {"composto": "trimethylpyrazine", "descrittore": "tostato-nocciola", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1002/jsfa.9711 (abstract)"},
-       {"composto": "2-ethyl-3,5-dimethylpyrazine", "descrittore": "tostato-terroso potente", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.1002/jsfa.9711 (abstract)"}
-     ]},
-
-    {"ingrediente": "cocco", "nodo_target": "ing-cocco", "specie": "Cocos nucifera", "dominio": "pasticceria",
-     "fonte_ingrediente": "Guo et al. 2022, Metabolites 12(8):691, DOI 10.3390/metabo12080691 (polpa fresca, HS-SPME, aree relative).",
-     "nota": "CAVEAT: i lattoni (delta-ottalattone, gamma-nonalattone, delta-decalattone, 6-pentil-alpha-pirone) sono la vera FIRMA 'cocco' da pasticceria ma NON compaiono nella polpa fresca di questo studio (dominata da esteri); emergono nel cocco essiccato/riscaldato. Servono come firma ma la fonte quantitativa resta da confermare.",
-     "composti": [
-       {"composto": "delta-octalactone / gamma-nonalactone (lattoni cocco)", "descrittore": "cocco, cremoso-dolce (firma classica)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare (lattoni del cocco essiccato, fonte dedicata)"},
-       {"composto": "benzaldehyde", "descrittore": "mandorla-dolce", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/metabo12080691"},
-       {"composto": "ethyl octanoate", "descrittore": "fruttato-dolce ceroso", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/metabo12080691"},
-       {"composto": "2,3-butanediol", "descrittore": "cremoso-burroso", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/metabo12080691"}
-     ]},
-
-    {"ingrediente": "fragola", "nodo_target": "ing-fragola", "specie": "Fragaria x ananassa", "dominio": "pasticceria",
-     "fonte_ingrediente": "Jetti et al. 2007, J. Food Science 72(7):S487-S496, DOI 10.1111/j.1750-3841.2007.00445.x (HS-SPME, OAV).",
-     "composti": [
-       {"composto": "furaneol / HDMF", "descrittore": "dolce, caramello, 'fragola'", "ruolo": "firma", "concentrazione": "OAV non quantificato (SPME lo recupera male)", "stato": "da_fonte", "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"},
-       {"composto": "mesifurane (2,5-dimethyl-4-methoxy-3(2H)-furanone)", "descrittore": "dolce, caramello", "ruolo": "firma", "concentrazione": "0.01-1.19 mg/kg, OAV 333-39670", "stato": "da_fonte", "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"},
-       {"composto": "ethyl butanoate", "descrittore": "fruttato", "ruolo": "firma", "concentrazione": "OAV 14-3331", "stato": "da_fonte", "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"},
-       {"composto": "ethyl hexanoate", "descrittore": "fruttato", "ruolo": "caratterizzante", "concentrazione": "OAV 49-2080", "stato": "da_fonte", "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"},
-       {"composto": "linalool", "descrittore": "fruttato-agrumato", "ruolo": "di_supporto", "concentrazione": "OAV 3-72", "stato": "da_fonte", "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"}
-     ]},
-
-    {"ingrediente": "lampone", "nodo_target": "ing-lampone", "specie": "Rubus idaeus", "dominio": "pasticceria",
-     "fonte_ingrediente": "Ljujic et al. 2025, Foods 14(21):3599, DOI 10.3390/foods14213599 (HS-SPME, qualitativo, niente OAV).",
-     "composti": [
-       {"composto": "raspberry ketone (4-(4-hydroxyphenyl)butan-2-one)", "descrittore": "lampone dolce tipico", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods14213599"},
-       {"composto": "alpha-ionone", "descrittore": "floreale, violetta", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods14213599"},
-       {"composto": "beta-ionone", "descrittore": "floreale, violetta", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods14213599"},
-       {"composto": "linalool", "descrittore": "floreale-fruttato", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods14213599"},
-       {"composto": "(Z)-3-hexenol", "descrittore": "fresco, verde, foglia", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods14213599"}
-     ]},
-
-    {"ingrediente": "pesca", "nodo_target": "ing-pesca", "specie": "Prunus persica", "dominio": "pasticceria",
-     "fonte_ingrediente": "Sun et al. 2022, Frontiers in Nutrition 9:965796, DOI 10.3389/fnut.2022.965796 (GC-MS/GC-IMS, % area + rOAV).",
-     "composti": [
-       {"composto": "gamma-decalactone", "descrittore": "pesca cremosa fruttata (firma)", "ruolo": "firma", "concentrazione": "% area 1.36-2.94", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2022.965796"},
-       {"composto": "gamma-dodecalactone", "descrittore": "grasso, pesca dolce", "ruolo": "caratterizzante", "concentrazione": "% area 0.13-2.50", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2022.965796"},
-       {"composto": "beta-ionone", "descrittore": "floreale, violetta", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2022.965796"},
-       {"composto": "(E,E)-2,6-nonadienal", "descrittore": "cetriolo, verde", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2022.965796"},
-       {"composto": "(E)-2-hexenal", "descrittore": "verde, banana, grasso", "ruolo": "di_supporto", "concentrazione": "rOAV 1.2-811", "stato": "da_fonte", "fonte": "DOI 10.3389/fnut.2022.965796"}
-     ]},
-
-    {"ingrediente": "albicocca", "nodo_target": "ing-albicocca", "specie": "Prunus armeniaca", "dominio": "pasticceria",
-     "fonte_ingrediente": "Zhao et al. 2022, Foods 11(15):2297, DOI 10.3390/foods11152297 (studio su biomarker, niente OAV).",
-     "nota": "I lattoni (gamma-decalattone ecc.), firma classica dell'albicocca matura, NON sono in questa fonte: noti in letteratura, da confermare.",
-     "composti": [
-       {"composto": "linalool", "descrittore": "agrume, limone, dolce", "ruolo": "caratterizzante", "concentrazione": ">=190 ug/kg (3 cv su 4)", "stato": "da_fonte", "fonte": "DOI 10.3390/foods11152297"},
-       {"composto": "alpha-terpineol", "descrittore": "floreale, lilla", "ruolo": "caratterizzante", "concentrazione": ">=190 ug/kg", "stato": "da_fonte", "fonte": "DOI 10.3390/foods11152297"},
-       {"composto": "beta-damascenone", "descrittore": "mela cotta, miele (potente in traccia)", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods11152297"},
-       {"composto": "gamma-decalactone (lattoni albicocca)", "descrittore": "pesca/albicocca cremosa (firma matura)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare (noto in letteratura, fonte dedicata)"}
-     ]},
-
-    {"ingrediente": "mela", "nodo_target": "ing-mela", "specie": "Malus domestica", "dominio": "pasticceria",
-     "fonte_ingrediente": "Jesenko et al. 2025, Foods 14(6):930, DOI 10.3390/foods14060930 (cv Gala; 9 VOC con OAV>1).",
-     "composti": [
-       {"composto": "hexyl acetate", "descrittore": "dolce, fruttato, floreale (mela)", "ruolo": "firma", "concentrazione": "46.6-608.7 ug/kg/h, OAV>1", "stato": "da_fonte", "fonte": "DOI 10.3390/foods14060930"},
-       {"composto": "ethyl 2-methylbutanoate", "descrittore": "fruttato (soglia bassissima)", "ruolo": "firma", "concentrazione": "OAV>1", "stato": "da_fonte", "fonte": "DOI 10.3390/foods14060930"},
-       {"composto": "2-methylbutyl acetate", "descrittore": "fruttato", "ruolo": "caratterizzante", "concentrazione": "25.0-62.2 ug/kg/h, OAV>1", "stato": "da_fonte", "fonte": "DOI 10.3390/foods14060930"},
-       {"composto": "butyl acetate", "descrittore": "fruttato, mela", "ruolo": "caratterizzante", "concentrazione": "6.3-65.6 ug/kg/h, OAV>1", "stato": "da_fonte", "fonte": "DOI 10.3390/foods14060930"}
-     ]},
-
-    {"ingrediente": "pera", "nodo_target": "ing-pera", "specie": "Pyrus communis", "dominio": "pasticceria",
-     "fonte_ingrediente": "Wang et al. 2025, Frontiers in Plant Science 16:1559012, DOI 10.3389/fpls.2025.1559012 (esteri, ng/g).",
-     "nota": "Il 'pear ester' (ethyl/methyl (2E,4Z)-decadienoato), firma classica della pera matura, NON e' in questa fonte: noto in letteratura, da confermare.",
-     "composti": [
-       {"composto": "hexyl acetate", "descrittore": "mela, banana, erba, pera (soglia bassa)", "ruolo": "firma", "concentrazione": "fino a ~20374 ng/g", "stato": "da_fonte", "fonte": "DOI 10.3389/fpls.2025.1559012"},
-       {"composto": "ethyl 2-methylbutyrate", "descrittore": "mela verde, kiwi, fragola", "ruolo": "firma", "concentrazione": "fino a ~1812 ng/g", "stato": "da_fonte", "fonte": "DOI 10.3389/fpls.2025.1559012"},
-       {"composto": "butyl acetate", "descrittore": "mela, banana", "ruolo": "caratterizzante", "concentrazione": "fino a ~5699 ng/g", "stato": "da_fonte", "fonte": "DOI 10.3389/fpls.2025.1559012"},
-       {"composto": "ethyl/methyl (2E,4Z)-decadienoate (pear ester)", "descrittore": "pera matura (firma classica)", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare (noto in letteratura, fonte dedicata)"}
-     ]},
-
-    {"ingrediente": "ciliegia", "nodo_target": "ing-ciliegia", "specie": "Prunus avium", "dominio": "pasticceria",
-     "fonte_ingrediente": "Nunes et al. 2022, Foods 11(5):751, DOI 10.3390/foods11050751 (profilo VOC; letto solo metadata di repository, niente conc./OAV).",
-     "composti": [
-       {"composto": "benzaldehyde", "descrittore": "mandorla amara, ciliegia", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods11050751 (metadata)"},
-       {"composto": "4-methylbenzaldehyde", "descrittore": "mandorlato", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods11050751 (metadata)"},
-       {"composto": "hexanal", "descrittore": "verde", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.3390/foods11050751 (metadata)"}
-     ]},
-
-    {"ingrediente": "fico", "nodo_target": "ing-fico", "specie": "Ficus carica", "dominio": "pasticceria",
-     "fonte_ingrediente": "Gozlekci et al. 2011, Not. Bot. Horti Agrobot. Cluj-Napoca 39(2):105-108, DOI 10.15835/nbha3926261 (HS-GC-MS; letto solo abstract). Fonte debole per uso bar/pasticceria: il fico fresco in letteratura e' piu' verde/erbaceo che fruttato.",
-     "composti": [
-       {"composto": "beta-caryophyllene", "descrittore": "legnoso, speziato", "ruolo": "firma", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.15835/nbha3926261 (abstract)"},
-       {"composto": "hexanal", "descrittore": "verde (alto nella polpa)", "ruolo": "caratterizzante", "concentrazione": null, "stato": "da_fonte", "fonte": "DOI 10.15835/nbha3926261 (abstract)"},
-       {"composto": "germacrene D", "descrittore": "legnoso, erbaceo", "ruolo": "di_supporto", "concentrazione": null, "stato": "da_fonte", "fonte": "da_raffinare"}
-     ]}
-
+ "_schema": {
+  "descrizione": "Dataset composti aromatici proprietario di Matter. Costruito a mano dai domini reali (bar + panificazione). Ogni associazione ingrediente->composto porta descrittore olfattivo, ruolo e provenienza. NON copia una banca dati altrui: ricompila i composti caratterizzanti da letteratura GC-MS/GC-O, una fonte reale per ingrediente, con stato dichiarato. Il valore sul dato di Ahn (binario, senza descrittori): qui c'e' il descrittore, il ruolo (firma/caratterizzante/supporto), la percentuale area GC quando il paper la da', e la provenienza per riga.",
+  "stati_provenienza": [
+   "verificato_al_banco",
+   "da_fonte",
+   "derivato",
+   "stimato",
+   "proposta"
   ],
-
-  "_prossimi": [
-    "19 righe ancora 'da_raffinare' (firme note ma non quantificate nella fonte scelta): beta-damascenone (rosa), tiolo del pompelmo, lattoni dell'albicocca e del cocco, pear-ester della pera, carvacrol del timo, ecc. Chiudere con una 2a fonte dedicata.",
-    "Caveat di matrice da sistemare: lime = C. aurantifolia (serve C. latifolia), zafferano = parti aeree (serve stimma, Amanpour 2015), pistacchio/fico = solo abstract.",
-    "Strato 'verificato_al_banco': dove l'esperienza sensoriale di Bucopertuso/Bucolico conferma.",
-    "Costruire l'endpoint di import (dry-run prima): aggancia ogni composto al nodo-composto esistente del grafo e ri-mappa ginepro/lime.",
-    "Altri ingredienti: amari (angelica, china, genziana), agrumi canditi, frutta secca, spezie da panettone, erbe aromatiche mancanti."
-  ]
+  "ruoli": [
+   "firma (compound d'impatto che DEFINISCE l'ingrediente)",
+   "caratterizzante",
+   "di_supporto"
+  ],
+  "nota_percentuali": "Le % sono 'relative area %' GC-MS/FID: variano con cultivar, maturazione e metodo (idrodistillazione vs spremitura a freddo). Indicata la fonte per ingrediente.",
+  "nota_onesta": "fonte con DOI/PMID = paper reale aperto e verificato, % trascritte dalla tabella. fonte=da_raffinare = composto noto in letteratura ma non quantificato in quella fonte: va chiuso prima di marcare 'verificato'. Nessun numero/DOI inventato."
+ },
+ "ingredienti": [
+  {
+   "ingrediente": "ginepro",
+   "nodo_target": "ing-ginepro",
+   "specie": "Juniperus communis",
+   "dominio": "bar",
+   "CORREGGE": "Nel grafo 'ginepro' risolveva su ahn_juniperus_sabina (specie ornamentale/tossica) con 0 composti. La bacca da gin e' Juniperus communis.",
+   "fonte_ingrediente": "Hoferl et al. 2014, Antioxidants 3(1):81-98, DOI 10.3390/antiox3010081.",
+   "composti": [
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino, resinoso, fresco",
+     "ruolo": "firma",
+     "concentrazione": "~51.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/antiox3010081"
+    },
+    {
+     "composto": "myrcene",
+     "descrittore": "balsamico, resinoso",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~8.3%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/antiox3010081"
+    },
+    {
+     "composto": "sabinene",
+     "descrittore": "legnoso, speziato, pepe",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~5.8%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/antiox3010081"
+    },
+    {
+     "composto": "limonene",
+     "descrittore": "agrume, fresco",
+     "ruolo": "di_supporto",
+     "concentrazione": "~5.1%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/antiox3010081"
+    },
+    {
+     "composto": "beta-pinene",
+     "descrittore": "pino, secco, erbaceo",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~5.0%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/antiox3010081"
+    },
+    {
+     "composto": "terpinen-4-ol",
+     "descrittore": "terroso, legnoso",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/antiox3010081"
+    },
+    {
+     "composto": "germacrene D",
+     "descrittore": "legnoso, speziato",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/antiox3010081"
+    }
+   ]
+  },
+  {
+   "ingrediente": "limone",
+   "nodo_target": "ing-limone",
+   "specie": "Citrus limon (scorza)",
+   "dominio": "bar",
+   "fonte_ingrediente": "Lu, Huang, Peng, Zhu, Pan 2019, \"Peel oils from three Citrus species...\", J. Food Science and Technology 56(10):4492-4502, DOI 10.1007/s13197-019-03937-w (cv. Eureka, idrodistillazione).",
+   "nota": "Il citrale (impronta 'limone') e' basso in % ma e' il composto d'impatto; il limonene fa volume, non carattere.",
+   "composti": [
+    {
+     "composto": "limonene",
+     "descrittore": "agrume, dolce, fresco (corpo)",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~51.2%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s13197-019-03937-w"
+    },
+    {
+     "composto": "citral (geranial+neral)",
+     "descrittore": "limone intenso, dolce-pungente (impronta)",
+     "ruolo": "firma",
+     "concentrazione": "~1.7% (geranial ~1.3%)",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s13197-019-03937-w"
+    },
+    {
+     "composto": "beta-pinene",
+     "descrittore": "resinoso, verde",
+     "ruolo": "di_supporto",
+     "concentrazione": "~9.8%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s13197-019-03937-w"
+    },
+    {
+     "composto": "gamma-terpinene",
+     "descrittore": "agrume-erbaceo, oleoso",
+     "ruolo": "di_supporto",
+     "concentrazione": "~9.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s13197-019-03937-w"
+    },
+    {
+     "composto": "alpha-terpineol",
+     "descrittore": "floreale, lilla",
+     "ruolo": "di_supporto",
+     "concentrazione": "~9.1%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s13197-019-03937-w"
+    }
+   ]
+  },
+  {
+   "ingrediente": "lime",
+   "nodo_target": "ing-lime",
+   "specie": "Citrus aurantifolia (scorza)",
+   "dominio": "bar",
+   "CORREGGE": "Nel grafo 'lime' risolveva su ahn_kaffir_lime (varieta' diversa). Qui il lime da bar.",
+   "fonte_ingrediente": "Ebadati Esfahani & Moradi 2017, Herba Polonica 63(1):32-42, DOI 10.1515/hepo-2017-0003. ATTENZIONE SPECIE: campione su C. aurantifolia (lime messicano/Key), non C. latifolia (lime di Persia); il messicano e' piu' ricco di citrale. Range su 3 stadi di maturazione.",
+   "composti": [
+    {
+     "composto": "limonene",
+     "descrittore": "agrume, fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~32.8-39.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1515/hepo-2017-0003"
+    },
+    {
+     "composto": "geranial",
+     "descrittore": "limone deciso (meta' del citrale)",
+     "ruolo": "firma",
+     "concentrazione": "~9.3-14.3%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1515/hepo-2017-0003"
+    },
+    {
+     "composto": "neral",
+     "descrittore": "limone dolce morbido (altra meta' del citrale)",
+     "ruolo": "firma",
+     "concentrazione": "~7.0-11.0%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1515/hepo-2017-0003"
+    },
+    {
+     "composto": "beta-pinene",
+     "descrittore": "pino/verde fresco (distingue il lime dal limone)",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~17.8-24.3%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1515/hepo-2017-0003"
+    },
+    {
+     "composto": "gamma-terpinene",
+     "descrittore": "agrume-erbaceo",
+     "ruolo": "di_supporto",
+     "concentrazione": "~3.8-8.9%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1515/hepo-2017-0003"
+    }
+   ]
+  },
+  {
+   "ingrediente": "arancia",
+   "nodo_target": "ing-arancia",
+   "specie": "Citrus sinensis (scorza)",
+   "dominio": "bar",
+   "fonte_ingrediente": "Bozova et al. 2025, AIMS Agriculture and Food 10(1):40-57, DOI 10.3934/agrfood.2025003 (5 cultivar, piu' raccolti).",
+   "nota": "Il carattere lo fanno le aldeidi (octanale/decanale) a frazioni di percento; il limonene e' quasi tutto il volume ma e' il corpo, non la firma.",
+   "composti": [
+    {
+     "composto": "limonene",
+     "descrittore": "arancia dolce, scorza (corpo)",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~94.9-96.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3934/agrfood.2025003"
+    },
+    {
+     "composto": "octanal",
+     "descrittore": "aldeide agrumato-grasso, 'arancia fresca'",
+     "ruolo": "firma",
+     "concentrazione": "~0.1-0.3%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3934/agrfood.2025003"
+    },
+    {
+     "composto": "decanal",
+     "descrittore": "aldeide cerosa, buccia d'arancia",
+     "ruolo": "firma",
+     "concentrazione": "~0.1-0.2%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3934/agrfood.2025003"
+    },
+    {
+     "composto": "myrcene",
+     "descrittore": "balsamico-erbaceo dolce",
+     "ruolo": "di_supporto",
+     "concentrazione": "~1.9-2.0%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3934/agrfood.2025003"
+    },
+    {
+     "composto": "linalool",
+     "descrittore": "floreale",
+     "ruolo": "di_supporto",
+     "concentrazione": "~0.1-0.6%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3934/agrfood.2025003"
+    }
+   ]
+  },
+  {
+   "ingrediente": "pompelmo",
+   "nodo_target": "ing-pompelmo",
+   "specie": "Citrus paradisi (scorza)",
+   "dominio": "bar",
+   "fonte_ingrediente": "Ayache et al. 2020, J. Microbiol. Biotechnol. Food Sci. 9(6):1093-1098, DOI 10.15414/jmbfs.2020.9.6.1093-1098 (Algeria, idrodistillazione).",
+   "nota": "Nootkatone + 1-p-menthene-8-thiol fanno 'pompelmo'; il tiolo soprattutto (soglia a ppt) ma non compare mai nelle % GC-MS standard. Qui la nootkatone e' davvero quantificata (raro).",
+   "composti": [
+    {
+     "composto": "limonene",
+     "descrittore": "agrume (corpo)",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~87.5%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.15414/jmbfs.2020.9.6.1093-1098"
+    },
+    {
+     "composto": "nootkatone",
+     "descrittore": "pompelmo caratteristico, amaro-legnoso",
+     "ruolo": "firma",
+     "concentrazione": "~1.78%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.15414/jmbfs.2020.9.6.1093-1098"
+    },
+    {
+     "composto": "myrcene",
+     "descrittore": "erbaceo dolce",
+     "ruolo": "di_supporto",
+     "concentrazione": "~2.99%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.15414/jmbfs.2020.9.6.1093-1098"
+    },
+    {
+     "composto": "beta-pinene",
+     "descrittore": "pineo",
+     "ruolo": "di_supporto",
+     "concentrazione": "~1.06%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.15414/jmbfs.2020.9.6.1093-1098"
+    },
+    {
+     "composto": "1-p-menthene-8-thiol",
+     "descrittore": "sulfureo, 'pompelmo' purissimo, soglia bassissima (ppt)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare (noto in letteratura, troppo in traccia per le % GC-MS; serve fonte dedicata)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "bergamotto",
+   "nodo_target": "ing-bergamotto",
+   "specie": "Citrus bergamia (scorza)",
+   "dominio": "bar",
+   "fonte_ingrediente": "Cebi & Erarslan 2023, Foods 12(1):203, DOI 10.3390/foods12010203. AVVERTENZA: questo campione e' linalool-dominante (46%), atipico; il cold-pressed classico (Reggio Calabria) ha di norma limonene ~30-45% e linalyl acetate ~20-35%. Firma resta il linalyl acetate.",
+   "composti": [
+    {
+     "composto": "linalyl acetate",
+     "descrittore": "floreale-fruttato, 'bergamotto/Earl Grey', lavanda dolce",
+     "ruolo": "firma",
+     "concentrazione": "~17.7% (campione atipico)",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods12010203"
+    },
+    {
+     "composto": "linalool",
+     "descrittore": "floreale, legno di rosa/lavanda",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~46.3% (campione atipico)",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods12010203"
+    },
+    {
+     "composto": "limonene",
+     "descrittore": "agrume fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~17.1%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods12010203"
+    },
+    {
+     "composto": "gamma-terpinene",
+     "descrittore": "agrume-erbaceo",
+     "ruolo": "di_supporto",
+     "concentrazione": "~4.1%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods12010203"
+    }
+   ]
+  },
+  {
+   "ingrediente": "menta",
+   "nodo_target": "ing-menta",
+   "specie": "Mentha x piperita",
+   "dominio": "bar",
+   "fonte_ingrediente": "Pereira et al. 2021, \"Analysis of Essential Oil from Brazilian Mentha x piperita Commercial Samples\", Revista Virtual de Quimica, DOI 10.21577/1984-6835.20210112 (campioni commerciali, chemotipo mentolo).",
+   "nota": "1,8-cineolo e menthofuran non quantificati chiaramente in questa fonte.",
+   "composti": [
+    {
+     "composto": "menthol",
+     "descrittore": "menta, fresco, rinfrescante",
+     "ruolo": "firma",
+     "concentrazione": "~49.3-82.0%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.21577/1984-6835.20210112"
+    },
+    {
+     "composto": "menthone",
+     "descrittore": "menta, legnoso-amaro",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~2.0-14.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.21577/1984-6835.20210112"
+    },
+    {
+     "composto": "menthyl acetate",
+     "descrittore": "dolce, fruttato-mentolato (fondo)",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~2.7-11.8%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.21577/1984-6835.20210112"
+    },
+    {
+     "composto": "isomenthone",
+     "descrittore": "menta, erbaceo",
+     "ruolo": "di_supporto",
+     "concentrazione": "~3.5-8.9%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.21577/1984-6835.20210112"
+    }
+   ]
+  },
+  {
+   "ingrediente": "basilico",
+   "nodo_target": "ing-basilico",
+   "specie": "Ocimum basilicum",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Murarikova et al. 2017, Molecules 22(7):1221, DOI 10.3390/molecules22071221.",
+   "nota": "Chemotipi diversi: cultivar a linalolo vs a metil-eugenolo vs a 1,8-cineolo. Il profilo varia con varieta' e stagione.",
+   "composti": [
+    {
+     "composto": "linalool",
+     "descrittore": "floreale, fresco, dolce",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules22071221"
+    },
+    {
+     "composto": "estragole (methyl chavicol)",
+     "descrittore": "anice, dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules22071221"
+    },
+    {
+     "composto": "eugenol",
+     "descrittore": "chiodo di garofano, speziato",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules22071221"
+    },
+    {
+     "composto": "methyl eugenol",
+     "descrittore": "speziato, dolce-legnoso",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules22071221"
+    },
+    {
+     "composto": "1,8-cineole (eucalyptol)",
+     "descrittore": "eucalipto, fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules22071221"
+    }
+   ]
+  },
+  {
+   "ingrediente": "rosmarino",
+   "nodo_target": "ing-rosmarino",
+   "specie": "Rosmarinus officinalis",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Al-Maharik et al. 2022, Separations 9(11):339, DOI 10.3390/separations9110339 (5 siti, Palestina; range tra i siti).",
+   "composti": [
+    {
+     "composto": "1,8-cineole",
+     "descrittore": "eucalipto, fresco, canforato",
+     "ruolo": "firma",
+     "concentrazione": "~4.8-37.8%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/separations9110339"
+    },
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino, resinoso, fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~13.1-51.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/separations9110339"
+    },
+    {
+     "composto": "camphor",
+     "descrittore": "canfora, pungente, medicinale",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~12.0-24.3%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/separations9110339"
+    },
+    {
+     "composto": "camphene",
+     "descrittore": "canforato, legnoso",
+     "ruolo": "di_supporto",
+     "concentrazione": "~6.7-11.6%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/separations9110339"
+    },
+    {
+     "composto": "borneol",
+     "descrittore": "canforato, balsamico",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    },
+    {
+     "composto": "verbenone",
+     "descrittore": "erbaceo, canforato-mentolato",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    }
+   ]
+  },
+  {
+   "ingrediente": "timo",
+   "nodo_target": "ing-timo",
+   "specie": "Thymus vulgaris",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Boruga et al. 2014, J. Medicine and Life 7(Spec 3):56-60, PMID 25870697 / PMC4391421 (chemotipo timolo; rivista senza DOI).",
+   "nota": "Chemotipo timolo: il carvacrol NON e' maggioritario qui; in altri chemotipi puo' dominare.",
+   "composti": [
+    {
+     "composto": "thymol",
+     "descrittore": "fenolico, caldo, erbaceo-speziato",
+     "ruolo": "firma",
+     "concentrazione": "~47.6%",
+     "stato": "da_fonte",
+     "fonte": "PMID 25870697"
+    },
+    {
+     "composto": "gamma-terpinene",
+     "descrittore": "erbaceo, legnoso, agrumato leggero",
+     "ruolo": "di_supporto",
+     "concentrazione": "~30.9%",
+     "stato": "da_fonte",
+     "fonte": "PMID 25870697"
+    },
+    {
+     "composto": "p-cymene",
+     "descrittore": "precursore del timolo, nota solvente/agrumata",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~8.4%",
+     "stato": "da_fonte",
+     "fonte": "PMID 25870697"
+    },
+    {
+     "composto": "carvacrol",
+     "descrittore": "origano, caldo-speziato",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare (chemotipo carvacrolo)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "zenzero",
+   "nodo_target": "ing-zenzero",
+   "specie": "Zingiber officinale",
+   "dominio": "bar",
+   "fonte_ingrediente": "Food Science & Nutrition 2015, 4(4):521-533, DOI 10.1002/fsn3.314 (olio, area %; studio su congelamento/scongelamento, le % variano col trattamento).",
+   "nota": "I gingeroli/shogaoli danno la pungenza ma NON sono volatili. Il zingerone (~18.3% nel paper) e' insolitamente alto per un distillato: riportato fedelmente, da verificare con un profilo 'pulito'.",
+   "composti": [
+    {
+     "composto": "zingiberene",
+     "descrittore": "zenzero, caldo-speziato, agrumato-legnoso",
+     "ruolo": "firma",
+     "concentrazione": "~35.5% (17.6-36% col trattamento)",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1002/fsn3.314"
+    },
+    {
+     "composto": "beta-sesquiphellandrene",
+     "descrittore": "legnoso-speziato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~11.3%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1002/fsn3.314"
+    },
+    {
+     "composto": "beta-bisabolene",
+     "descrittore": "balsamico, legnoso",
+     "ruolo": "di_supporto",
+     "concentrazione": "~6.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1002/fsn3.314"
+    },
+    {
+     "composto": "ar-curcumene",
+     "descrittore": "legnoso secco",
+     "ruolo": "di_supporto",
+     "concentrazione": "~4.6%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1002/fsn3.314"
+    }
+   ]
+  },
+  {
+   "ingrediente": "cardamomo",
+   "nodo_target": "ing-cardamomo",
+   "specie": "Elettaria cardamomum",
+   "dominio": "bar",
+   "fonte_ingrediente": "Auti & Kulkarni 2019, Frontiers in Neurology 10:399, DOI 10.3389/fneur.2019.00399 (tabella GC-MS completa).",
+   "composti": [
+    {
+     "composto": "alpha-terpinyl acetate",
+     "descrittore": "cardamomo, dolce erbaceo-floreale, legnoso-speziato",
+     "ruolo": "firma",
+     "concentrazione": "~42.9%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fneur.2019.00399"
+    },
+    {
+     "composto": "1,8-cineole",
+     "descrittore": "eucalipto, fresco, canforato",
+     "ruolo": "firma",
+     "concentrazione": "~31.1%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fneur.2019.00399"
+    },
+    {
+     "composto": "alpha-terpineol",
+     "descrittore": "floreale, lilla",
+     "ruolo": "di_supporto",
+     "concentrazione": "~6.5%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fneur.2019.00399"
+    },
+    {
+     "composto": "linalool",
+     "descrittore": "floreale, fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~5.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fneur.2019.00399"
+    },
+    {
+     "composto": "limonene",
+     "descrittore": "agrume",
+     "ruolo": "di_supporto",
+     "concentrazione": "~3.0%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fneur.2019.00399"
+    }
+   ]
+  },
+  {
+   "ingrediente": "coriandolo",
+   "nodo_target": "ing-coriandolo",
+   "specie": "Coriandrum sativum (seme)",
+   "dominio": "bar",
+   "fonte_ingrediente": "Bhuiyan, Begum & Sultana 2009, Bangladesh J. Pharmacology 4(2):150-153, DOI 10.3329/bjp.v4i2.2800 (olio di seme).",
+   "composti": [
+    {
+     "composto": "linalool",
+     "descrittore": "floreale, dolce, 'coriandolo fresco'",
+     "ruolo": "firma",
+     "concentrazione": "~37.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3329/bjp.v4i2.2800"
+    },
+    {
+     "composto": "geranyl acetate",
+     "descrittore": "floreale-fruttato, rosa",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~17.6%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3329/bjp.v4i2.2800"
+    },
+    {
+     "composto": "gamma-terpinene",
+     "descrittore": "erbaceo, legnoso",
+     "ruolo": "di_supporto",
+     "concentrazione": "~14.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3329/bjp.v4i2.2800"
+    },
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino, fresco",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    },
+    {
+     "composto": "camphor",
+     "descrittore": "canfora",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    }
+   ]
+  },
+  {
+   "ingrediente": "anice stellato",
+   "nodo_target": "ing-anice-stellato",
+   "specie": "Illicium verum",
+   "dominio": "bar",
+   "fonte_ingrediente": "Noumi et al. 2023, Molecules 28(23):7691, DOI 10.3390/molecules28237691. Nota: campione da parti aeree, non dal frutto (pericarpo) commerciale: le % minori possono differire.",
+   "composti": [
+    {
+     "composto": "trans-anethole",
+     "descrittore": "anice, dolce, liquirizia",
+     "ruolo": "firma",
+     "concentrazione": "~83.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules28237691"
+    },
+    {
+     "composto": "limonene",
+     "descrittore": "agrume",
+     "ruolo": "di_supporto",
+     "concentrazione": "~3.2%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules28237691"
+    },
+    {
+     "composto": "estragole (methyl chavicol)",
+     "descrittore": "anice, dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare (tipico del frutto)"
+    },
+    {
+     "composto": "foeniculin",
+     "descrittore": "anice-floreale",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    }
+   ]
+  },
+  {
+   "ingrediente": "cannella",
+   "nodo_target": "ing-cannella",
+   "specie": "Cinnamomum (verum/cassia)",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Olio di corteccia di Cinnamomum verum, GC/GC-MS (SciELO, Food Sci. Technol.): cinnamaldeide 54.7-58.4% corteccia; olio di foglia dominato da eugenolo (~94%).",
+   "nota": "Distinzione chiave: CORTECCIA = cinnamaldeide; FOGLIA = eugenolo. La cassia porta anche cumarina.",
+   "composti": [
+    {
+     "composto": "cinnamaldehyde",
+     "descrittore": "cannella, dolce-speziato, caldo",
+     "ruolo": "firma",
+     "concentrazione": "~54.7-58.4% (corteccia)",
+     "stato": "da_fonte",
+     "fonte": "SciELO Food Sci. Technol."
+    },
+    {
+     "composto": "eugenol",
+     "descrittore": "chiodo di garofano, speziato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "dominante nella foglia (~94%)",
+     "stato": "da_fonte",
+     "fonte": "SciELO Food Sci. Technol."
+    },
+    {
+     "composto": "cinnamyl acetate",
+     "descrittore": "dolce-balsamico, floreale",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    },
+    {
+     "composto": "coumarin",
+     "descrittore": "fieno, dolce (soprattutto cassia)",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    }
+   ]
+  },
+  {
+   "ingrediente": "chiodi di garofano",
+   "nodo_target": "ing-chiodi-di-garofano",
+   "specie": "Syzygium aromaticum",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Kacaniova et al. 2021, Plants 10(10):2185, DOI 10.3390/plants10102185 (area %, totale 99.7%).",
+   "composti": [
+    {
+     "composto": "eugenol",
+     "descrittore": "chiodo di garofano, caldo, speziato, fenolico",
+     "ruolo": "firma",
+     "concentrazione": "~82.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/plants10102185"
+    },
+    {
+     "composto": "beta-caryophyllene",
+     "descrittore": "legnoso, pepato-speziato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~14.0%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/plants10102185"
+    },
+    {
+     "composto": "alpha-humulene",
+     "descrittore": "legnoso, luppolato",
+     "ruolo": "di_supporto",
+     "concentrazione": "~1.8%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/plants10102185"
+    },
+    {
+     "composto": "eugenyl acetate",
+     "descrittore": "dolce, speziato-balsamico",
+     "ruolo": "di_supporto",
+     "concentrazione": "~0.9%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/plants10102185"
+    }
+   ]
+  },
+  {
+   "ingrediente": "vaniglia",
+   "nodo_target": "ing-vaniglia",
+   "specie": "Vanilla planifolia",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Shigeto, Hachisuka, Kumazawa 2016, \"Characterization of Potent Odorants in Three Different Cultivars of Vanilla Bean by AEDA\", Food Science and Technology Research 22(6):811-816, DOI 10.3136/fstr.22.811 (studio AEDA, niente OAV).",
+   "composti": [
+    {
+     "composto": "vanillin",
+     "descrittore": "vaniglia, dolce, balsamico",
+     "ruolo": "firma",
+     "concentrazione": "~6201-8053 ug/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3136/fstr.22.811"
+    },
+    {
+     "composto": "guaiacol",
+     "descrittore": "bruciato, affumicato",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3136/fstr.22.811"
+    },
+    {
+     "composto": "3-hydroxy-4,5-dimethyl-2(5H)-furanone (sotolon-simile)",
+     "descrittore": "caramello",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3136/fstr.22.811"
+    },
+    {
+     "composto": "eugenol",
+     "descrittore": "speziato, chiodo di garofano",
+     "ruolo": "di_supporto",
+     "concentrazione": "~0.6-0.7 ug/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3136/fstr.22.811"
+    },
+    {
+     "composto": "ethyl cinnamate",
+     "descrittore": "fruttato, fragola",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3136/fstr.22.811"
+    },
+    {
+     "composto": "gamma-nonalactone",
+     "descrittore": "dolce, cocco",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3136/fstr.22.811"
+    }
+   ]
+  },
+  {
+   "ingrediente": "cacao",
+   "nodo_target": "ing-cacao",
+   "specie": "Theobroma cacao (tostato / cioccolato fondente)",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Deuscher et al. 2020, \"Key Aroma Compounds of Dark Chocolates: A GC-O Comparative Study\", Molecules 25(8):1809, DOI 10.3390/molecules25081809 (GC-O a frequenza di rilevamento NIF%, niente OAV).",
+   "nota": "Tetramethylpyrazine e' nota in letteratura come pirazina del cacao ma NON e' tra i marker di questa fonte: resta da_raffinare.",
+   "composti": [
+    {
+     "composto": "2-/3-methylbutanal (aldeidi di Strecker)",
+     "descrittore": "cacao, cioccolato, maltato",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules25081809"
+    },
+    {
+     "composto": "2,5-dimethylpyrazine",
+     "descrittore": "tostato, cioccolato",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules25081809"
+    },
+    {
+     "composto": "trimethylpyrazine",
+     "descrittore": "tostato, terroso, vegetale",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules25081809"
+    },
+    {
+     "composto": "methanethiol",
+     "descrittore": "sulfureo, cavolo (impatto)",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules25081809"
+    },
+    {
+     "composto": "2,3-butanedione (diacetyl)",
+     "descrittore": "burroso",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules25081809"
+    }
+   ]
+  },
+  {
+   "ingrediente": "caffe",
+   "nodo_target": "ing-caffe",
+   "specie": "Coffea (tostato)",
+   "dominio": "caffe",
+   "fonte_ingrediente": "Review odoranti attivi del caffe: Frontiers in Nutrition 2023, DOI 10.3389/fnut.2023.1196816 (+ letteratura GC-O/AEDA/OAV).",
+   "composti": [
+    {
+     "composto": "2-furfurylthiol",
+     "descrittore": "caffe tostato (impatto, soglia bassissima)",
+     "ruolo": "firma",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2023.1196816"
+    },
+    {
+     "composto": "guaiacol",
+     "descrittore": "fumo, speziato-fenolico",
+     "ruolo": "caratterizzante",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2023.1196816"
+    },
+    {
+     "composto": "4-vinylguaiacol",
+     "descrittore": "speziato, chiodo-fumo",
+     "ruolo": "caratterizzante",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2023.1196816"
+    },
+    {
+     "composto": "furaneol (HDMF)",
+     "descrittore": "caramello, dolce-bruciato",
+     "ruolo": "caratterizzante",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2023.1196816"
+    },
+    {
+     "composto": "2,3-butanedione (diacetyl)",
+     "descrittore": "burroso",
+     "ruolo": "di_supporto",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2023.1196816"
+    }
+   ]
+  },
+  {
+   "ingrediente": "nocciola",
+   "nodo_target": "ing-nocciola",
+   "specie": "Corylus avellana (tostata)",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Artik et al. 2021, Acta Sci. Pol. Hortorum Cultus 20(5):85-96, DOI 10.24326/asphc.2021.5.8 (SPME-GC/MS, % area di picco).",
+   "nota": "Il filbertone e' citato dalla fonte come l'odorante caratteristico piu' importante della nocciola tostata, ma NON compare nelle tabelle quantitative (serve una AEDA dedicata per il numero).",
+   "composti": [
+    {
+     "composto": "filbertone (5-methyl-(E)-2-hepten-4-one)",
+     "descrittore": "nocciola, dolce tostato (impatto)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.24326/asphc.2021.5.8 (qualitativo)"
+    },
+    {
+     "composto": "3,5- e 3,6-dimethyl-2-ethylpyrazine",
+     "descrittore": "tostato, terroso, nocciola",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.24326/asphc.2021.5.8"
+    },
+    {
+     "composto": "gamma-octalactone",
+     "descrittore": "oleoso, nocciola",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.24326/asphc.2021.5.8"
+    },
+    {
+     "composto": "hexanal",
+     "descrittore": "verde, erbaceo",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.24326/asphc.2021.5.8"
+    }
+   ]
+  },
+  {
+   "ingrediente": "mandorla amara",
+   "nodo_target": "ing-mandorla",
+   "specie": "Prunus dulcis var. amara",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Vichi et al. 2020, \"Chemical Markers to Distinguish the Bitter Genotype in Sweet Almond Kernels\", Foods 9(6):747, DOI 10.3390/foods9060747 (open access CC BY). Benzaldeide legata all'amigdalina (precursore della nota amara).",
+   "composti": [
+    {
+     "composto": "benzaldehyde",
+     "descrittore": "mandorla amara, marzapane, ciliegia (impatto)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods9060747"
+    },
+    {
+     "composto": "benzyl alcohol",
+     "descrittore": "floreale, mandorla",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    }
+   ]
+  },
+  {
+   "ingrediente": "burro",
+   "nodo_target": "ing-burro",
+   "specie": "burro (latte)",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Mallia, Escher, Schlichtherle-Cerny 2008, \"Aroma-active compounds of butter: a review\", Eur. Food Res. Technol. 226:315-325, DOI 10.1007/s00217-006-0555-y (review; letto abstract). Conferma lattoni + acidi + diacetyl.",
+   "composti": [
+    {
+     "composto": "2,3-butanedione (diacetyl)",
+     "descrittore": "burroso (impatto)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s00217-006-0555-y"
+    },
+    {
+     "composto": "delta-decalactone",
+     "descrittore": "cremoso, cocco-pesca",
+     "ruolo": "firma",
+     "concentrazione": "ROAV>1",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s00217-006-0555-y"
+    },
+    {
+     "composto": "gamma-dodecalactone",
+     "descrittore": "grasso, pesca, cremoso",
+     "ruolo": "caratterizzante",
+     "concentrazione": "ROAV>1",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s00217-006-0555-y"
+    },
+    {
+     "composto": "butanoic acid (butirrico)",
+     "descrittore": "formaggio, pungente",
+     "ruolo": "caratterizzante",
+     "concentrazione": "ROAV>1",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s00217-006-0555-y"
+    },
+    {
+     "composto": "delta-octalactone",
+     "descrittore": "cremoso, cocco",
+     "ruolo": "di_supporto",
+     "concentrazione": "ROAV>1",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s00217-006-0555-y"
+    }
+   ]
+  },
+  {
+   "ingrediente": "pane (crosta)",
+   "nodo_target": "ing-pane",
+   "specie": "impasto fermentato + Maillard crosta",
+   "dominio": "panificazione",
+   "fonte_ingrediente": "Cho & Peterson 2010, \"Chemistry of bread aroma: A review\", Food Science and Biotechnology 19(3):575-582, DOI 10.1007/s10068-010-0081-3 (review).",
+   "nota": "2-acetiltetraidropiridina ('roasty, bready'), altro marker tipico della crosta, non nominato in questa fonte: resta da_raffinare.",
+   "composti": [
+    {
+     "composto": "2-acetyl-1-pyrroline",
+     "descrittore": "cracker, pop-corn, tostato (impatto crosta)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s10068-010-0081-3"
+    },
+    {
+     "composto": "methional",
+     "descrittore": "patata lessa, maltato",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s10068-010-0081-3"
+    },
+    {
+     "composto": "3-methylbutanal",
+     "descrittore": "maltato, cacao",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s10068-010-0081-3"
+    },
+    {
+     "composto": "2,3-butanedione (diacetyl)",
+     "descrittore": "burroso",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s10068-010-0081-3"
+    },
+    {
+     "composto": "(E)-2-nonenal",
+     "descrittore": "grasso, verde, cartone",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s10068-010-0081-3"
+    }
+   ]
+  },
+  {
+   "ingrediente": "caramello",
+   "nodo_target": "ing-caramello",
+   "specie": "zucchero caramellizzato",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Rogner, Mall, Steinhaus 2021, Eur. Food Res. Technol. 247:1263-1275, DOI 10.1007/s00217-021-03707-z (open access). CAVEAT: la fonte e' su ESTRATTO DI MALTO, non zucchero puro caramellizzato; la chimica (degradazione termica -> maltol/HDMF/furanoni) e' la stessa ma va dichiarato. Fonte ideale su zucchero: Liu et al. 2021, Food Chem 345:128826, DOI 10.1016/j.foodchem.2020.128826 (paywall, da confermare).",
+   "composti": [
+    {
+     "composto": "maltol",
+     "descrittore": "caramello, zucchero filato, dolce-bruciato",
+     "ruolo": "firma",
+     "concentrazione": "OAV ~120 (estratto scuro)",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s00217-021-03707-z (estratto di malto)"
+    },
+    {
+     "composto": "furaneol / HDMF (4-hydroxy-2,5-dimethyl-3(2H)-furanone)",
+     "descrittore": "caramello, zucchero bruciato, dolce",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s00217-021-03707-z (estratto di malto)"
+    },
+    {
+     "composto": "dihydromaltol",
+     "descrittore": "caramello, dolce",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1007/s00217-021-03707-z (estratto di malto)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "rosa",
+   "nodo_target": "ing-rosa",
+   "specie": "Rosa damascena",
+   "dominio": "bar",
+   "fonte_ingrediente": "Horticulturae 9(8):946, 2023, DOI 10.3390/horticulturae9080946 (9 genotipi, ug/g peso fresco petali).",
+   "composti": [
+    {
+     "composto": "2-phenylethanol",
+     "descrittore": "rosa-miele, floreale pieno",
+     "ruolo": "firma",
+     "concentrazione": "~1148-2777 ug/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/horticulturae9080946"
+    },
+    {
+     "composto": "citronellol",
+     "descrittore": "rosa-agrumato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~88-207 ug/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/horticulturae9080946"
+    },
+    {
+     "composto": "geraniol",
+     "descrittore": "rosa-geranio dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~69-171 ug/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/horticulturae9080946"
+    },
+    {
+     "composto": "nerol",
+     "descrittore": "rosa fresco-agrumato",
+     "ruolo": "di_supporto",
+     "concentrazione": "~27-65 ug/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/horticulturae9080946"
+    },
+    {
+     "composto": "beta-damascenone",
+     "descrittore": "rosa cotta, mela-miele (potentissimo in traccia)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare (key-odorant noto, non in questa fonte)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "lavanda",
+   "nodo_target": "ing-lavanda",
+   "specie": "Lavandula angustifolia",
+   "dominio": "bar",
+   "fonte_ingrediente": "Pokajewicz et al. 2021, Molecules 26(18):5681, DOI 10.3390/molecules26185681 (13 cultivar, % GC-MS).",
+   "composti": [
+    {
+     "composto": "linalool",
+     "descrittore": "floreale fresco",
+     "ruolo": "firma",
+     "concentrazione": "~11.4-46.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules26185681"
+    },
+    {
+     "composto": "linalyl acetate",
+     "descrittore": "fruttato-bergamotto dolce",
+     "ruolo": "firma",
+     "concentrazione": "~7.4-44.2%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules26185681"
+    },
+    {
+     "composto": "terpinen-4-ol",
+     "descrittore": "terroso-speziato",
+     "ruolo": "di_supporto",
+     "concentrazione": "~1.2-18.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules26185681"
+    },
+    {
+     "composto": "lavandulyl acetate",
+     "descrittore": "erbaceo-lavanda",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~2.7-6%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules26185681"
+    }
+   ]
+  },
+  {
+   "ingrediente": "fiori di sambuco",
+   "nodo_target": "ing-sambuco",
+   "specie": "Sambucus nigra (elderflower)",
+   "dominio": "bar",
+   "fonte_ingrediente": "Agalar et al. 2017, Records of Natural Products 11(5):491-496, DOI 10.25135/rnp.63.16.08.058 (% area FID; olio essenziale).",
+   "nota": "L'olio e' dominato da alcani (non odorosi); gli odoranti floreali sono minoritari ma determinanti.",
+   "composti": [
+    {
+     "composto": "cis-rose oxide",
+     "descrittore": "floreale verde-rosato (marker elderflower)",
+     "ruolo": "firma",
+     "concentrazione": "~2.2%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.25135/rnp.63.16.08.058"
+    },
+    {
+     "composto": "hotrienol",
+     "descrittore": "floreale-tiglio dolce",
+     "ruolo": "firma",
+     "concentrazione": "~2.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.25135/rnp.63.16.08.058"
+    },
+    {
+     "composto": "trans-rose oxide",
+     "descrittore": "floreale rosato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~1.1%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.25135/rnp.63.16.08.058"
+    },
+    {
+     "composto": "nerol oxide",
+     "descrittore": "floreale, contributore odore sambuco",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare (non quantificato qui)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "pepe nero",
+   "nodo_target": "ing-pepe-nero",
+   "specie": "Piper nigrum",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Dosoky et al. 2019, Molecules 24(23):4244, DOI 10.3390/molecules24234244 (% olio essenziale, Madagascar + cultivar).",
+   "nota": "La piperina (piccantezza) e' non-volatile: fuori dalla frazione aromatica.",
+   "composti": [
+    {
+     "composto": "limonene",
+     "descrittore": "agrumato fresco",
+     "ruolo": "firma",
+     "concentrazione": "~15.1-38.1%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules24234244"
+    },
+    {
+     "composto": "beta-caryophyllene",
+     "descrittore": "legnoso-speziato, pepato caldo",
+     "ruolo": "firma",
+     "concentrazione": "~0.7-25.6%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules24234244"
+    },
+    {
+     "composto": "beta-pinene",
+     "descrittore": "pino-resinoso",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~9.1-48.0%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules24234244"
+    },
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~5.1-28.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules24234244"
+    },
+    {
+     "composto": "sabinene",
+     "descrittore": "legnoso-speziato",
+     "ruolo": "di_supporto",
+     "concentrazione": "~0.1-13.9%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/molecules24234244"
+    }
+   ]
+  },
+  {
+   "ingrediente": "noce moscata",
+   "nodo_target": "ing-noce-moscata",
+   "specie": "Myristica fragrans",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Trifan et al. 2023, Plants 12(9):1741, DOI 10.3390/plants12091741 (% olio essenziale GC-MS).",
+   "composti": [
+    {
+     "composto": "sabinene",
+     "descrittore": "legnoso-terpenico fresco",
+     "ruolo": "firma",
+     "concentrazione": "~21.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/plants12091741"
+    },
+    {
+     "composto": "myristicin",
+     "descrittore": "speziato caldo dolce (fenilpropanoide marker)",
+     "ruolo": "firma",
+     "concentrazione": "~13.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/plants12091741"
+    },
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~15.8%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/plants12091741"
+    },
+    {
+     "composto": "beta-pinene",
+     "descrittore": "pino-resinoso",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~12.7%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/plants12091741"
+    },
+    {
+     "composto": "terpinen-4-ol",
+     "descrittore": "terroso-speziato",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    }
+   ]
+  },
+  {
+   "ingrediente": "zafferano",
+   "nodo_target": "ing-zafferano",
+   "specie": "Crocus sativus",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Mohammadhosseini 2025, Trends in Phytochemical Research 9(4):223-235, DOI 10.57647/tpr.2025.0904.19 (% area). CAVEAT: parti aeree, non solo stimmi; per il solo stimma la fonte-oro e' Amanpour et al. 2015 (GC-O, non aperto).",
+   "composti": [
+    {
+     "composto": "safranal",
+     "descrittore": "fieno-zafferano pungente (dominante)",
+     "ruolo": "firma",
+     "concentrazione": "~37-63%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.57647/tpr.2025.0904.19"
+    },
+    {
+     "composto": "4-ketoisophorone",
+     "descrittore": "dolce-tabacco floreale",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~2.5-11%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.57647/tpr.2025.0904.19"
+    },
+    {
+     "composto": "(E)-beta-ionone",
+     "descrittore": "violetta-legnoso",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~0.1-3.4%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.57647/tpr.2025.0904.19"
+    },
+    {
+     "composto": "isophorone",
+     "descrittore": "canforaceo dolce",
+     "ruolo": "di_supporto",
+     "concentrazione": "~1.5-3.0%",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.57647/tpr.2025.0904.19"
+    }
+   ]
+  },
+  {
+   "ingrediente": "pistacchio",
+   "nodo_target": "ing-pistacchio",
+   "specie": "Pistacia vera (tostato)",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Sonmezdag, Kelebek, Selli 2019, J. Sci. Food Agric. 99(10):4702-4711, DOI 10.1002/jsfa.9711 (AEDA; SOLO abstract aperto, full-text paywall). Pirazine = firma tostato-Maillard note; OAV nel full-text non accessibile.",
+   "composti": [
+    {
+     "composto": "2,3-dimethylpyrazine",
+     "descrittore": "tostato-nocciolato terroso",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1002/jsfa.9711 (abstract)"
+    },
+    {
+     "composto": "trimethylpyrazine",
+     "descrittore": "tostato-nocciola",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1002/jsfa.9711 (abstract)"
+    },
+    {
+     "composto": "2-ethyl-3,5-dimethylpyrazine",
+     "descrittore": "tostato-terroso potente",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1002/jsfa.9711 (abstract)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "cocco",
+   "nodo_target": "ing-cocco",
+   "specie": "Cocos nucifera",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Guo et al. 2022, Metabolites 12(8):691, DOI 10.3390/metabo12080691 (polpa fresca, HS-SPME, aree relative).",
+   "nota": "CAVEAT: i lattoni (delta-ottalattone, gamma-nonalattone, delta-decalattone, 6-pentil-alpha-pirone) sono la vera FIRMA 'cocco' da pasticceria ma NON compaiono nella polpa fresca di questo studio (dominata da esteri); emergono nel cocco essiccato/riscaldato. Servono come firma ma la fonte quantitativa resta da confermare.",
+   "composti": [
+    {
+     "composto": "delta-octalactone / gamma-nonalactone (lattoni cocco)",
+     "descrittore": "cocco, cremoso-dolce (firma classica)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare (lattoni del cocco essiccato, fonte dedicata)"
+    },
+    {
+     "composto": "benzaldehyde",
+     "descrittore": "mandorla-dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/metabo12080691"
+    },
+    {
+     "composto": "ethyl octanoate",
+     "descrittore": "fruttato-dolce ceroso",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/metabo12080691"
+    },
+    {
+     "composto": "2,3-butanediol",
+     "descrittore": "cremoso-burroso",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/metabo12080691"
+    }
+   ]
+  },
+  {
+   "ingrediente": "fragola",
+   "nodo_target": "ing-fragola",
+   "specie": "Fragaria x ananassa",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Jetti et al. 2007, J. Food Science 72(7):S487-S496, DOI 10.1111/j.1750-3841.2007.00445.x (HS-SPME, OAV).",
+   "composti": [
+    {
+     "composto": "furaneol / HDMF",
+     "descrittore": "dolce, caramello, 'fragola'",
+     "ruolo": "firma",
+     "concentrazione": "OAV non quantificato (SPME lo recupera male)",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"
+    },
+    {
+     "composto": "mesifurane (2,5-dimethyl-4-methoxy-3(2H)-furanone)",
+     "descrittore": "dolce, caramello",
+     "ruolo": "firma",
+     "concentrazione": "0.01-1.19 mg/kg, OAV 333-39670",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"
+    },
+    {
+     "composto": "ethyl butanoate",
+     "descrittore": "fruttato",
+     "ruolo": "firma",
+     "concentrazione": "OAV 14-3331",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"
+    },
+    {
+     "composto": "ethyl hexanoate",
+     "descrittore": "fruttato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "OAV 49-2080",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"
+    },
+    {
+     "composto": "linalool",
+     "descrittore": "fruttato-agrumato",
+     "ruolo": "di_supporto",
+     "concentrazione": "OAV 3-72",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.1111/j.1750-3841.2007.00445.x"
+    }
+   ]
+  },
+  {
+   "ingrediente": "lampone",
+   "nodo_target": "ing-lampone",
+   "specie": "Rubus idaeus",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Ljujic et al. 2025, Foods 14(21):3599, DOI 10.3390/foods14213599 (HS-SPME, qualitativo, niente OAV).",
+   "composti": [
+    {
+     "composto": "raspberry ketone (4-(4-hydroxyphenyl)butan-2-one)",
+     "descrittore": "lampone dolce tipico",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14213599"
+    },
+    {
+     "composto": "alpha-ionone",
+     "descrittore": "floreale, violetta",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14213599"
+    },
+    {
+     "composto": "beta-ionone",
+     "descrittore": "floreale, violetta",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14213599"
+    },
+    {
+     "composto": "linalool",
+     "descrittore": "floreale-fruttato",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14213599"
+    },
+    {
+     "composto": "(Z)-3-hexenol",
+     "descrittore": "fresco, verde, foglia",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14213599"
+    }
+   ]
+  },
+  {
+   "ingrediente": "pesca",
+   "nodo_target": "ing-pesca",
+   "specie": "Prunus persica",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Sun et al. 2022, Frontiers in Nutrition 9:965796, DOI 10.3389/fnut.2022.965796 (GC-MS/GC-IMS, % area + rOAV).",
+   "composti": [
+    {
+     "composto": "gamma-decalactone",
+     "descrittore": "pesca cremosa fruttata (firma)",
+     "ruolo": "firma",
+     "concentrazione": "% area 1.36-2.94",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2022.965796"
+    },
+    {
+     "composto": "gamma-dodecalactone",
+     "descrittore": "grasso, pesca dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": "% area 0.13-2.50",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2022.965796"
+    },
+    {
+     "composto": "beta-ionone",
+     "descrittore": "floreale, violetta",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2022.965796"
+    },
+    {
+     "composto": "(E,E)-2,6-nonadienal",
+     "descrittore": "cetriolo, verde",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2022.965796"
+    },
+    {
+     "composto": "(E)-2-hexenal",
+     "descrittore": "verde, banana, grasso",
+     "ruolo": "di_supporto",
+     "concentrazione": "rOAV 1.2-811",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fnut.2022.965796"
+    }
+   ]
+  },
+  {
+   "ingrediente": "albicocca",
+   "nodo_target": "ing-albicocca",
+   "specie": "Prunus armeniaca",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Zhao et al. 2022, Foods 11(15):2297, DOI 10.3390/foods11152297 (studio su biomarker, niente OAV).",
+   "nota": "I lattoni (gamma-decalattone ecc.), firma classica dell'albicocca matura, NON sono in questa fonte: noti in letteratura, da confermare.",
+   "composti": [
+    {
+     "composto": "linalool",
+     "descrittore": "agrume, limone, dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": ">=190 ug/kg (3 cv su 4)",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods11152297"
+    },
+    {
+     "composto": "alpha-terpineol",
+     "descrittore": "floreale, lilla",
+     "ruolo": "caratterizzante",
+     "concentrazione": ">=190 ug/kg",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods11152297"
+    },
+    {
+     "composto": "beta-damascenone",
+     "descrittore": "mela cotta, miele (potente in traccia)",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods11152297"
+    },
+    {
+     "composto": "gamma-decalactone (lattoni albicocca)",
+     "descrittore": "pesca/albicocca cremosa (firma matura)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare (noto in letteratura, fonte dedicata)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "mela",
+   "nodo_target": "ing-mela",
+   "specie": "Malus domestica",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Jesenko et al. 2025, Foods 14(6):930, DOI 10.3390/foods14060930 (cv Gala; 9 VOC con OAV>1).",
+   "composti": [
+    {
+     "composto": "hexyl acetate",
+     "descrittore": "dolce, fruttato, floreale (mela)",
+     "ruolo": "firma",
+     "concentrazione": "46.6-608.7 ug/kg/h, OAV>1",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14060930"
+    },
+    {
+     "composto": "ethyl 2-methylbutanoate",
+     "descrittore": "fruttato (soglia bassissima)",
+     "ruolo": "firma",
+     "concentrazione": "OAV>1",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14060930"
+    },
+    {
+     "composto": "2-methylbutyl acetate",
+     "descrittore": "fruttato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "25.0-62.2 ug/kg/h, OAV>1",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14060930"
+    },
+    {
+     "composto": "butyl acetate",
+     "descrittore": "fruttato, mela",
+     "ruolo": "caratterizzante",
+     "concentrazione": "6.3-65.6 ug/kg/h, OAV>1",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods14060930"
+    }
+   ]
+  },
+  {
+   "ingrediente": "pera",
+   "nodo_target": "ing-pera",
+   "specie": "Pyrus communis",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Wang et al. 2025, Frontiers in Plant Science 16:1559012, DOI 10.3389/fpls.2025.1559012 (esteri, ng/g).",
+   "nota": "Il 'pear ester' (ethyl/methyl (2E,4Z)-decadienoato), firma classica della pera matura, NON e' in questa fonte: noto in letteratura, da confermare.",
+   "composti": [
+    {
+     "composto": "hexyl acetate",
+     "descrittore": "mela, banana, erba, pera (soglia bassa)",
+     "ruolo": "firma",
+     "concentrazione": "fino a ~20374 ng/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fpls.2025.1559012"
+    },
+    {
+     "composto": "ethyl 2-methylbutyrate",
+     "descrittore": "mela verde, kiwi, fragola",
+     "ruolo": "firma",
+     "concentrazione": "fino a ~1812 ng/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fpls.2025.1559012"
+    },
+    {
+     "composto": "butyl acetate",
+     "descrittore": "mela, banana",
+     "ruolo": "caratterizzante",
+     "concentrazione": "fino a ~5699 ng/g",
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3389/fpls.2025.1559012"
+    },
+    {
+     "composto": "ethyl/methyl (2E,4Z)-decadienoate (pear ester)",
+     "descrittore": "pera matura (firma classica)",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare (noto in letteratura, fonte dedicata)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "ciliegia",
+   "nodo_target": "ing-ciliegia",
+   "specie": "Prunus avium",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Nunes et al. 2022, Foods 11(5):751, DOI 10.3390/foods11050751 (profilo VOC; letto solo metadata di repository, niente conc./OAV).",
+   "composti": [
+    {
+     "composto": "benzaldehyde",
+     "descrittore": "mandorla amara, ciliegia",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods11050751 (metadata)"
+    },
+    {
+     "composto": "4-methylbenzaldehyde",
+     "descrittore": "mandorlato",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods11050751 (metadata)"
+    },
+    {
+     "composto": "hexanal",
+     "descrittore": "verde",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.3390/foods11050751 (metadata)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "fico",
+   "nodo_target": "ing-fico",
+   "specie": "Ficus carica",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Gozlekci et al. 2011, Not. Bot. Horti Agrobot. Cluj-Napoca 39(2):105-108, DOI 10.15835/nbha3926261 (HS-GC-MS; letto solo abstract). Fonte debole per uso bar/pasticceria: il fico fresco in letteratura e' piu' verde/erbaceo che fruttato.",
+   "composti": [
+    {
+     "composto": "beta-caryophyllene",
+     "descrittore": "legnoso, speziato",
+     "ruolo": "firma",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.15835/nbha3926261 (abstract)"
+    },
+    {
+     "composto": "hexanal",
+     "descrittore": "verde (alto nella polpa)",
+     "ruolo": "caratterizzante",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "DOI 10.15835/nbha3926261 (abstract)"
+    },
+    {
+     "composto": "germacrene D",
+     "descrittore": "legnoso, erbaceo",
+     "ruolo": "di_supporto",
+     "concentrazione": null,
+     "stato": "da_fonte",
+     "fonte": "da_raffinare"
+    }
+   ]
+  },
+  {
+   "ingrediente": "origano",
+   "nodo_target": "ing-origano",
+   "specie": "Origanum vulgare",
+   "dominio": "panificazione",
+   "fonte_ingrediente": "Origanum vulgare essential oil composition (chemiotipi carvacrolo/timolo), rassegna GC-MS PMC6823331",
+   "composti": [
+    {
+     "composto": "carvacrolo",
+     "descrittore": "fenolico, caldo, origano secco, pungente",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Origanum vulgare essential oil composition (chemiotipi carvacrolo/timolo), rassegna GC-MS PMC6823331"
+    },
+    {
+     "composto": "timolo",
+     "descrittore": "fenolico, medicinale, nota di timo",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Origanum vulgare essential oil composition (chemiotipi carvacrolo/timolo), rassegna GC-MS PMC6823331"
+    },
+    {
+     "composto": "gamma-terpinene",
+     "descrittore": "erbaceo, agrume leggero",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Origanum vulgare essential oil composition (chemiotipi carvacrolo/timolo), rassegna GC-MS PMC6823331"
+    },
+    {
+     "composto": "p-cimene",
+     "descrittore": "legnoso, agrume secco",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Origanum vulgare essential oil composition (chemiotipi carvacrolo/timolo), rassegna GC-MS PMC6823331"
+    },
+    {
+     "composto": "beta-cariofillene",
+     "descrittore": "speziato, legnoso, pepe",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Origanum vulgare essential oil composition (chemiotipi carvacrolo/timolo), rassegna GC-MS PMC6823331"
+    },
+    {
+     "composto": "linalolo",
+     "descrittore": "floreale, fresco",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Origanum vulgare essential oil composition (chemiotipi carvacrolo/timolo), rassegna GC-MS PMC6823331"
+    }
+   ]
+  },
+  {
+   "ingrediente": "alloro",
+   "nodo_target": "ing-alloro",
+   "specie": "Laurus nobilis",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Laurus nobilis: Composition of Essential Oil and Its Biological Activities, PMID 28587201 / PMC6152719",
+   "composti": [
+    {
+     "composto": "1,8-cineolo (eucaliptolo)",
+     "descrittore": "eucalipto, fresco, canforato",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Laurus nobilis: Composition of Essential Oil and Its Biological Activities, PMID 28587201 / PMC6152719"
+    },
+    {
+     "composto": "acetato di alpha-terpinile",
+     "descrittore": "floreale, erbaceo dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Laurus nobilis: Composition of Essential Oil and Its Biological Activities, PMID 28587201 / PMC6152719"
+    },
+    {
+     "composto": "sabinene",
+     "descrittore": "legnoso, speziato, terpenico",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Laurus nobilis: Composition of Essential Oil and Its Biological Activities, PMID 28587201 / PMC6152719"
+    },
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino, resinoso",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Laurus nobilis: Composition of Essential Oil and Its Biological Activities, PMID 28587201 / PMC6152719"
+    },
+    {
+     "composto": "linalolo",
+     "descrittore": "floreale, fresco",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Laurus nobilis: Composition of Essential Oil and Its Biological Activities, PMID 28587201 / PMC6152719"
+    },
+    {
+     "composto": "metileugenolo",
+     "descrittore": "speziato, chiodo di garofano",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Laurus nobilis: Composition of Essential Oil and Its Biological Activities, PMID 28587201 / PMC6152719"
+    }
+   ]
+  },
+  {
+   "ingrediente": "salvia",
+   "nodo_target": "ing-salvia",
+   "specie": "Salvia officinalis",
+   "dominio": "cucina",
+   "fonte_ingrediente": "The Chemotaxonomy of Common Sage (Salvia officinalis) Based on the Volatile Constituents, PMC5622382",
+   "composti": [
+    {
+     "composto": "alpha-tujone",
+     "descrittore": "erbaceo, mentolato-canforato, pungente",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "The Chemotaxonomy of Common Sage (Salvia officinalis) Based on the Volatile Constituents, PMC5622382"
+    },
+    {
+     "composto": "beta-tujone",
+     "descrittore": "erbaceo, canforato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "The Chemotaxonomy of Common Sage (Salvia officinalis) Based on the Volatile Constituents, PMC5622382"
+    },
+    {
+     "composto": "canfora",
+     "descrittore": "canforato, fresco, pungente",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "The Chemotaxonomy of Common Sage (Salvia officinalis) Based on the Volatile Constituents, PMC5622382"
+    },
+    {
+     "composto": "1,8-cineolo",
+     "descrittore": "eucalipto, fresco",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "The Chemotaxonomy of Common Sage (Salvia officinalis) Based on the Volatile Constituents, PMC5622382"
+    },
+    {
+     "composto": "canfene",
+     "descrittore": "pino, canforato",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "The Chemotaxonomy of Common Sage (Salvia officinalis) Based on the Volatile Constituents, PMC5622382"
+    },
+    {
+     "composto": "borneolo",
+     "descrittore": "canforato, legnoso, terroso",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "The Chemotaxonomy of Common Sage (Salvia officinalis) Based on the Volatile Constituents, PMC5622382"
+    }
+   ]
+  },
+  {
+   "ingrediente": "olio extravergine d'oliva",
+   "nodo_target": "ing-olio-oliva",
+   "specie": "Olea europaea",
+   "dominio": "panificazione",
+   "fonte_ingrediente": "Kalua et al. 2007, Food Chemistry — Olive oil volatile compounds, flavour development and quality: a critical review (via LOX, C6)",
+   "composti": [
+    {
+     "composto": "(E)-2-esenale",
+     "descrittore": "verde, foglia tagliata, mela verde",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Kalua et al. 2007, Food Chemistry — Olive oil volatile compounds, flavour development and quality: a critical review (via LOX, C6)"
+    },
+    {
+     "composto": "esanale",
+     "descrittore": "verde, erba, mela",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Kalua et al. 2007, Food Chemistry — Olive oil volatile compounds, flavour development and quality: a critical review (via LOX, C6)"
+    },
+    {
+     "composto": "(Z)-3-esen-1-olo",
+     "descrittore": "verde intenso, erba fresca",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Kalua et al. 2007, Food Chemistry — Olive oil volatile compounds, flavour development and quality: a critical review (via LOX, C6)"
+    },
+    {
+     "composto": "(E)-2-esen-1-olo",
+     "descrittore": "verde, mandorla verde",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Kalua et al. 2007, Food Chemistry — Olive oil volatile compounds, flavour development and quality: a critical review (via LOX, C6)"
+    },
+    {
+     "composto": "1-esanolo",
+     "descrittore": "verde, dolce leggero",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Kalua et al. 2007, Food Chemistry — Olive oil volatile compounds, flavour development and quality: a critical review (via LOX, C6)"
+    },
+    {
+     "composto": "acetato di (Z)-3-esenile",
+     "descrittore": "verde, fruttato",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Kalua et al. 2007, Food Chemistry — Olive oil volatile compounds, flavour development and quality: a critical review (via LOX, C6)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "finocchio",
+   "nodo_target": "ing-finocchio",
+   "specie": "Foeniculum vulgare",
+   "dominio": "bar",
+   "fonte_ingrediente": "Foeniculum vulgare essential oil composition, rassegna GC-MS PMC12086306",
+   "composti": [
+    {
+     "composto": "(E)-anetolo",
+     "descrittore": "anice, dolce, liquirizia",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Foeniculum vulgare essential oil composition, rassegna GC-MS PMC12086306"
+    },
+    {
+     "composto": "fenchone",
+     "descrittore": "canforato, amaro, mentolato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Foeniculum vulgare essential oil composition, rassegna GC-MS PMC12086306"
+    },
+    {
+     "composto": "estragolo (metilchavicolo)",
+     "descrittore": "anice, erbaceo dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Foeniculum vulgare essential oil composition, rassegna GC-MS PMC12086306"
+    },
+    {
+     "composto": "limonene",
+     "descrittore": "agrume, fresco",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Foeniculum vulgare essential oil composition, rassegna GC-MS PMC12086306"
+    },
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino, resinoso",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Foeniculum vulgare essential oil composition, rassegna GC-MS PMC12086306"
+    }
+   ]
+  },
+  {
+   "ingrediente": "aglio",
+   "nodo_target": "ing-aglio",
+   "specie": "Allium sativum",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Profiling of Volatile Sulfur Compounds in Garlic (Allium sativum), PMC5575638 / letteratura GC-MS",
+   "composti": [
+    {
+     "composto": "diallil disolfuro",
+     "descrittore": "aglio pungente, solforoso",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Profiling of Volatile Sulfur Compounds in Garlic (Allium sativum), PMC5575638 / letteratura GC-MS"
+    },
+    {
+     "composto": "diallil trisolfuro",
+     "descrittore": "aglio intenso, cotto",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Profiling of Volatile Sulfur Compounds in Garlic (Allium sativum), PMC5575638 / letteratura GC-MS"
+    },
+    {
+     "composto": "allil metil trisolfuro",
+     "descrittore": "aglio, solforoso",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Profiling of Volatile Sulfur Compounds in Garlic (Allium sativum), PMC5575638 / letteratura GC-MS"
+    },
+    {
+     "composto": "diallil solfuro",
+     "descrittore": "aglio dolce, cotto",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Profiling of Volatile Sulfur Compounds in Garlic (Allium sativum), PMC5575638 / letteratura GC-MS"
+    },
+    {
+     "composto": "allil metil disolfuro",
+     "descrittore": "aglio, solforoso leggero",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Profiling of Volatile Sulfur Compounds in Garlic (Allium sativum), PMC5575638 / letteratura GC-MS"
+    }
+   ]
+  },
+  {
+   "ingrediente": "pomodoro",
+   "nodo_target": "ing-pomodoro",
+   "specie": "Solanum lycopersicum",
+   "dominio": "cucina",
+   "fonte_ingrediente": "Tomato key aroma odorants, rassegna GC-MS/GC-O PMC6170352",
+   "composti": [
+    {
+     "composto": "(Z)-3-esenale",
+     "descrittore": "verde, pomodoro fresco, foglia",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Tomato key aroma odorants, rassegna GC-MS/GC-O PMC6170352"
+    },
+    {
+     "composto": "esanale",
+     "descrittore": "verde, erba, mela",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Tomato key aroma odorants, rassegna GC-MS/GC-O PMC6170352"
+    },
+    {
+     "composto": "2-isobutiltiazolo",
+     "descrittore": "verde, foglia di pomodoro, terroso",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Tomato key aroma odorants, rassegna GC-MS/GC-O PMC6170352"
+    },
+    {
+     "composto": "beta-ionone",
+     "descrittore": "floreale, violetta, fruttato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Tomato key aroma odorants, rassegna GC-MS/GC-O PMC6170352"
+    },
+    {
+     "composto": "beta-damascenone",
+     "descrittore": "fruttato, mela cotta, miele",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Tomato key aroma odorants, rassegna GC-MS/GC-O PMC6170352"
+    },
+    {
+     "composto": "1-penten-3-one",
+     "descrittore": "pungente, verde",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Tomato key aroma odorants, rassegna GC-MS/GC-O PMC6170352"
+    },
+    {
+     "composto": "6-metil-5-epten-2-one",
+     "descrittore": "fruttato, agrume, fungino",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Tomato key aroma odorants, rassegna GC-MS/GC-O PMC6170352"
+    }
+   ]
+  },
+  {
+   "ingrediente": "sesamo tostato",
+   "nodo_target": "ing-sesamo",
+   "specie": "Sesamum indicum",
+   "dominio": "panificazione",
+   "fonte_ingrediente": "Volatile flavor compounds of roasted sesame oil, GC-MS (koreascience JAKO200003042111662; Food Science and Human Wellness 2023)",
+   "composti": [
+    {
+     "composto": "2-furilmetantiolo (furfuril mercaptano)",
+     "descrittore": "tostato, caffe, carne",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Volatile flavor compounds of roasted sesame oil, GC-MS (koreascience JAKO200003042111662; Food Science and Human Wellness 2023)"
+    },
+    {
+     "composto": "guaiacolo",
+     "descrittore": "fume, tostato, speziato",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Volatile flavor compounds of roasted sesame oil, GC-MS (koreascience JAKO200003042111662; Food Science and Human Wellness 2023)"
+    },
+    {
+     "composto": "4-vinilguaiacolo",
+     "descrittore": "speziato, chiodo, fume",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Volatile flavor compounds of roasted sesame oil, GC-MS (koreascience JAKO200003042111662; Food Science and Human Wellness 2023)"
+    },
+    {
+     "composto": "2,5-dimetilpirazina",
+     "descrittore": "nocciola tostata, terroso",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Volatile flavor compounds of roasted sesame oil, GC-MS (koreascience JAKO200003042111662; Food Science and Human Wellness 2023)"
+    },
+    {
+     "composto": "furfurale",
+     "descrittore": "mandorla tostata, pane",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Volatile flavor compounds of roasted sesame oil, GC-MS (koreascience JAKO200003042111662; Food Science and Human Wellness 2023)"
+    },
+    {
+     "composto": "2-metilpirazina",
+     "descrittore": "nocciola, tostato",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Volatile flavor compounds of roasted sesame oil, GC-MS (koreascience JAKO200003042111662; Food Science and Human Wellness 2023)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "mirto",
+   "nodo_target": "ing-mirto",
+   "specie": "Myrtus communis",
+   "dominio": "bar",
+   "fonte_ingrediente": "Myrtus communis essential oil composition, GC-MS PMC6255092",
+   "composti": [
+    {
+     "composto": "1,8-cineolo",
+     "descrittore": "eucalipto, fresco",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Myrtus communis essential oil composition, GC-MS PMC6255092"
+    },
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino, resinoso, fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Myrtus communis essential oil composition, GC-MS PMC6255092"
+    },
+    {
+     "composto": "limonene",
+     "descrittore": "agrume, fresco",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Myrtus communis essential oil composition, GC-MS PMC6255092"
+    },
+    {
+     "composto": "acetato di mirtenile",
+     "descrittore": "erbaceo, legnoso dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Myrtus communis essential oil composition, GC-MS PMC6255092"
+    },
+    {
+     "composto": "linalolo",
+     "descrittore": "floreale, fresco",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Myrtus communis essential oil composition, GC-MS PMC6255092"
+    },
+    {
+     "composto": "acetato di geranile",
+     "descrittore": "floreale, rosa, fruttato",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Myrtus communis essential oil composition, GC-MS PMC6255092"
+    }
+   ]
+  },
+  {
+   "ingrediente": "angelica",
+   "nodo_target": "ing-angelica",
+   "specie": "Angelica archangelica (radice)",
+   "dominio": "bar",
+   "fonte_ingrediente": "Angelica archangelica root essential oil + lattoni macrociclici (muscolide), PMID 17191826; Chem. composition root EO (cer.ihtm.bg.ac.rs)",
+   "composti": [
+    {
+     "composto": "beta-fellandrene",
+     "descrittore": "agrume-pepato, terpenico fresco",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Angelica archangelica root essential oil + lattoni macrociclici (muscolide), PMID 17191826; Chem. composition root EO (cer.ihtm.bg.ac.rs)"
+    },
+    {
+     "composto": "cyclopentadecanolide (lattone macrociclico)",
+     "descrittore": "muschiato, caldo, pelle",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Angelica archangelica root essential oil + lattoni macrociclici (muscolide), PMID 17191826; Chem. composition root EO (cer.ihtm.bg.ac.rs)"
+    },
+    {
+     "composto": "alpha-pinene",
+     "descrittore": "pino, resinoso",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Angelica archangelica root essential oil + lattoni macrociclici (muscolide), PMID 17191826; Chem. composition root EO (cer.ihtm.bg.ac.rs)"
+    },
+    {
+     "composto": "delta-3-carene",
+     "descrittore": "resinoso, pino dolce, agrume",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Angelica archangelica root essential oil + lattoni macrociclici (muscolide), PMID 17191826; Chem. composition root EO (cer.ihtm.bg.ac.rs)"
+    },
+    {
+     "composto": "limonene",
+     "descrittore": "agrume, fresco",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Angelica archangelica root essential oil + lattoni macrociclici (muscolide), PMID 17191826; Chem. composition root EO (cer.ihtm.bg.ac.rs)"
+    },
+    {
+     "composto": "p-cimene",
+     "descrittore": "legnoso, agrume secco",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Angelica archangelica root essential oil + lattoni macrociclici (muscolide), PMID 17191826; Chem. composition root EO (cer.ihtm.bg.ac.rs)"
+    }
+   ]
+  }
+ ],
+ "_prossimi": [
+  "19 righe ancora 'da_raffinare' (firme note ma non quantificate nella fonte scelta): beta-damascenone (rosa), tiolo del pompelmo, lattoni dell'albicocca e del cocco, pear-ester della pera, carvacrol del timo, ecc. Chiudere con una 2a fonte dedicata.",
+  "Caveat di matrice da sistemare: lime = C. aurantifolia (serve C. latifolia), zafferano = parti aeree (serve stimma, Amanpour 2015), pistacchio/fico = solo abstract.",
+  "Strato 'verificato_al_banco': dove l'esperienza sensoriale di Bucopertuso/Bucolico conferma.",
+  "Costruire l'endpoint di import (dry-run prima): aggancia ogni composto al nodo-composto esistente del grafo e ri-mappa ginepro/lime.",
+  "Altri ingredienti: amari (angelica, china, genziana), agrumi canditi, frutta secca, spezie da panettone, erbe aromatiche mancanti.",
+  "Ondata 22/10: +6 ingredienti (origano, alloro, salvia, olio EVO, finocchio, aglio) = focaccia Bucolico + amari/botaniche Bucopertuso. Composti caratterizzanti da fonti reali (PMC/PMID citati); % 'da raffinare' nel 2o giro sulle tabelle GC, come le altre 19.",
+  "Ondata 22/10 (b): +4 (pomodoro, sesamo tostato, mirto, angelica) = focaccia rossa+topping Bucolico e botaniche liquore Bucopertuso. Fonti reali citate; % da raffinare. Prossimi: cipolla, miele, genziana/china, spezie panettone; poi strato verificato_al_banco."
+ ]
 }
