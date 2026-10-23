@@ -2653,10 +2653,141 @@
           "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
         }
       ]
+    },
+    {
+      "ingrediente": "luppolo",
+      "nodo_target": "ing-luppolo",
+      "specie": "Humulus lupulus (coni)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto.",
+      "composti": [
+        {
+          "composto": "mircene",
+          "descrittore": "erbaceo-resinoso, agrumato (firma del luppolo fresco)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "alfa-umulene",
+          "descrittore": "legnoso, luppolo nobile",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "beta-cariofillene",
+          "descrittore": "pepato, secco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "linalolo",
+          "descrittore": "floreale-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "geraniolo",
+          "descrittore": "rosa, agrume dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "assenzio",
+      "nodo_target": "ing-assenzio",
+      "specie": "Artemisia absinthium",
+      "dominio": "bar",
+      "fonte_ingrediente": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto.",
+      "composti": [
+        {
+          "composto": "alfa-tujone",
+          "descrittore": "mentolo-canfora, erbaceo pungente (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "beta-tujone",
+          "descrittore": "canforato, erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "terpenico, pepe-legno fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "camazulene",
+          "descrittore": "erbaceo-balsamico (blu)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "carciofo",
+      "nodo_target": "ing-carciofo",
+      "specie": "Cynara cardunculus var. scolymus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenolo",
+          "descrittore": "verde, erbaceo tagliato (firma vegetale)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "1-octen-3-olo",
+          "descrittore": "fungo, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "beta-selinene",
+          "descrittore": "legnoso-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
+        }
+      ]
     }
   ],
   "_prossimi": [
-    "Ondata 23/10 (c): +3 (parmigiano, colatura di alici, tartufo nero) = sorgenti umami/savory per il flavour network. Fonti GC-O/GC-MS reali.",
+    "Ondata 23/10 (d): +3 (luppolo, assenzio, carciofo) = botaniche amare Bucopertuso (amari/vermouth). Aroma da GC-MS reale; l'AMARO di questi e' non-volatile (alfa-acidi/absintina/cinaropicrina) -> va derivato sul lato gusto, non qui.",
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
     "Secondo giro %: chiudere i 'n.d. (da raffinare)' con tabelle GC dedicate (cipolla, miele, noce moscata, arancia aldeidi).",
     "Strato 'verificato_al_banco': dove l'assaggio Bucopertuso/Bucolico conferma.",
