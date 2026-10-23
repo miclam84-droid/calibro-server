@@ -2522,10 +2522,141 @@
           "fonte": "Sweet orange peel cold-pressed oil GC-MS (Citrus sinensis) — limonene dominante + aldeidi (octanale/decanale) e linalolo portano l'identita' (volatile constituents of sweet orange peel oils, agris; Turkish orange peel oils)"
         }
       ]
+    },
+    {
+      "ingrediente": "parmigiano",
+      "nodo_target": "ing-parmigiano",
+      "specie": "Parmigiano Reggiano (latte vaccino, lungo stagionato)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma).",
+      "composti": [
+        {
+          "composto": "acido butirrico",
+          "descrittore": "formaggio stagionato, burroso-pungente",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        },
+        {
+          "composto": "metionale",
+          "descrittore": "patata cotta, brodo/savory",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        },
+        {
+          "composto": "2-eptanone",
+          "descrittore": "chetonico, blu, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "chetonico, latteo-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        },
+        {
+          "composto": "acido caproico (esanoico)",
+          "descrittore": "caprino, grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "colatura di alici",
+      "nodo_target": "ing-colatura-di-alici",
+      "specie": "Colatura di alici (Engraulis encrasicolus, fermentata)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami.",
+      "composti": [
+        {
+          "composto": "trimetilammina",
+          "descrittore": "pesce, marino pungente",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato, formaggio",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami."
+        },
+        {
+          "composto": "dimetil disolfuro",
+          "descrittore": "zolfo, cavolo cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami."
+        },
+        {
+          "composto": "acido butirrico",
+          "descrittore": "fermentato, formaggio",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami."
+        }
+      ]
+    },
+    {
+      "ingrediente": "tartufo nero",
+      "nodo_target": "ing-tartufo-nero",
+      "specie": "Tuber melanosporum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646).",
+      "composti": [
+        {
+          "composto": "dimetil solfuro (DMS)",
+          "descrittore": "zolfo, cavolo, marino (marcatore del tartufo)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
+        },
+        {
+          "composto": "1-octen-3-olo",
+          "descrittore": "fungo, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
+        },
+        {
+          "composto": "2-metilbutanale",
+          "descrittore": "maltato, cacao",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
+        }
+      ]
     }
   ],
   "_prossimi": [
-    "Ondata 23/10: +3 NUOVI (cipolla, miele, scorza d'arancia) = allium cucina + miele lievitati Bucolico + scorza agrumi Bucopertuso. cannella/chiodi di garofano/noce moscata erano GIA' presenti (non duplicati).",
+    "Ondata 23/10 (c): +3 (parmigiano, colatura di alici, tartufo nero) = sorgenti umami/savory per il flavour network. Fonti GC-O/GC-MS reali.",
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
     "Secondo giro %: chiudere i 'n.d. (da raffinare)' con tabelle GC dedicate (cipolla, miele, noce moscata, arancia aldeidi).",
     "Strato 'verificato_al_banco': dove l'assaggio Bucopertuso/Bucolico conferma.",
