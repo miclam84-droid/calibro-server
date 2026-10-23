@@ -729,8 +729,19 @@ def chiedi():
     # FRASE-GUIDA (revisori): se la domanda era ambigua e non c'è una risposta vera ma solo
     # suggerimenti connessi, aggiungo una frase che guida l'utente invece di dare card "a caso".
     if (not risposta or len(risposta.strip()) < 20) and connessi:
-        risposta = ("La domanda è generica e la fisica richiede un bersaglio esatto. Seleziona la "
-                    "tecnica specifica che stai eseguendo adesso al banco per smontare il fenomeno:")
+        # Primo contatto accogliente: non un muro ("la domanda è generica"), ma accolgo,
+        # dichiaro cosa mi serve per essere preciso, e propongo da dove partire (i suggerimenti
+        # qui sotto). Il rigore resta: per dare numeri servono una tecnica/un punto esatti.
+        risposta = {
+            "it": ("Posso aiutarti. Per darti numeri precisi e non a caso, dimmi la tecnica o il "
+                   "punto esatto su cui stai lavorando adesso al banco. Intanto, ecco da dove partire:"),
+            "en": ("I can help. To give you precise numbers instead of guesses, tell me the exact "
+                   "technique or step you're working on at the bench right now. Meanwhile, here's where to start:"),
+            "es": ("Puedo ayudarte. Para darte números precisos y no al azar, dime la técnica o el punto "
+                   "exacto en el que estás trabajando ahora en la mesa. Mientras tanto, aquí puedes empezar:"),
+        }.get(lang, None) or (
+            "Posso aiutarti. Per darti numeri precisi e non a caso, dimmi la tecnica o il "
+            "punto esatto su cui stai lavorando adesso al banco. Intanto, ecco da dove partire:")
 
     return jsonify({
         "trovato": [f["name"] for f in contesto["fenomeni"]],
