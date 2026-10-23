@@ -329,7 +329,7 @@ def quaderno_insight():
     except Exception as e:
         try: _release_conn(conn)
         except Exception: pass
-        return jsonify({"insight": [], "errore": str(e)[:80]}), 200
+        return jsonify({"insight": [], "errore": str(e)[:80]}), 500
 
 
 @bp_mie.route("/v1/misure/storico", methods=["GET"])
@@ -503,7 +503,7 @@ def export_dati_utente():
     except Exception as e:
         try: _release_conn(conn)
         except Exception: pass
-        return jsonify({"errore": str(e)[:120]}), 200
+        return jsonify({"errore": str(e)[:120]}), 500
 
 
 @bp_mie.route("/v1/chat/salva", methods=["POST"])
@@ -557,7 +557,7 @@ def salva_conversazione():
         return jsonify({"ok": True, "id": cid, "titolo": titolo, "tag": tag})
     except Exception as e:
         conn.rollback(); _release_conn(conn)
-        return jsonify({"errore": str(e)[:120]}), 200
+        return jsonify({"errore": str(e)[:120]}), 500
 
 
 @bp_mie.route("/v1/chat/mie", methods=["GET"])
@@ -595,7 +595,7 @@ def leggi_conversazione(cid):
     except Exception as e:
         try: _release_conn(conn)
         except Exception: pass
-        return jsonify({"errore": str(e)[:100]}), 200
+        return jsonify({"errore": str(e)[:100]}), 500
 
 
 @bp_mie.route("/v1/dna-professionale", methods=["GET"])
@@ -689,7 +689,7 @@ def dna_professionale():
         try: _release_conn(conn)
         except Exception: pass
         import traceback
-        return jsonify({"errore": str(e)[:120], "tb": traceback.format_exc()[-200:]}), 200
+        return jsonify({"errore": str(e)[:120], "tb": traceback.format_exc()[-200:]}), 500
 
 
 @bp_mie.route("/v1/dna-contesto", methods=["GET"])

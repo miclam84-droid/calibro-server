@@ -3,7 +3,7 @@
 # Dipende da: db, auth, notifiche.
 from flask import Blueprint, request, jsonify
 from db import _get_conn, _release_conn
-from auth import _utente_da_token
+from auth import _utente_da_token, _admin_autenticato
 from notifiche import _invia_email_resend
 from config import DATABASE_URL
 from ai import _haiku_raw
@@ -506,7 +506,7 @@ def admin_aggiungi_ingrediente(ingrediente):
     chimici). Poi il grafo trova gli abbinamenti DA SOLO dai composti condivisi. Il modo GIUSTO."""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_autenticato():
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         from db import carica_grafo
@@ -545,7 +545,7 @@ def admin_diag_composti():
     """Diagnostica: come sono nominati i composti nel grafo (per allineare l'aggiunta ingredienti)."""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_autenticato():
         return jsonify({"errore": "non autorizzato"}), 403
     try:
         from db import carica_grafo
@@ -565,7 +565,7 @@ def admin_diag_composti():
 def admin_diag_composti2():
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_autenticato():
         return jsonify({"errore": "non autorizzato"}), 403
     out = {}
     try:
@@ -593,7 +593,7 @@ def admin_diag_aggancio(ingrediente):
     sono condivisi con gli ingredienti Ahn (per capire perché gli abbinamenti non emergono)."""
     from flask import request, jsonify
     import os, re
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_autenticato():
         return jsonify({"errore": "non autorizzato"}), 403
     out = {"ingrediente": ingrediente}
     try:
@@ -625,7 +625,7 @@ def admin_diag_ahn(ingrediente):
     """Mostra a quali comp_id è collegato un ingrediente AHN (per vedere il formato reale)."""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_autenticato():
         return jsonify({"errore": "non autorizzato"}), 403
     out = {"ingrediente": ingrediente}
     try:
@@ -654,7 +654,7 @@ def admin_diag_grafo_conta():
     """Conta i nodi che vede carica_grafo() - per capire se è il grafo completo o parziale."""
     from flask import request, jsonify
     import os
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_autenticato():
         return jsonify({"errore": "non autorizzato"}), 403
     out = {}
     try:
@@ -1620,7 +1620,7 @@ def admin_ispeziona_nodo_rel(nome):
     """Debug: come fa abbina a trovare le relazioni del basilico? mostra id, padre, e dove stanno gli archi."""
     from flask import jsonify, request
     import os, json as _j
-    if request.args.get("s") != os.environ.get("ADMIN_SECRET",""): return jsonify({"e":"no"}),403
+    if not _admin_autenticato(): return jsonify({"e":"no"}),403
     try:
         from db import carica_grafo
         db = carica_grafo()
