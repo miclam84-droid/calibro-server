@@ -904,17 +904,22 @@ def stt():
         return jsonify({"errore":"autenticazione richiesta"}), 401
     # verifica piano pro
     if DATABASE_URL:
+        conn_p = None
         try:
             import psycopg2
             conn_p = _get_conn()
             cur_p = conn_p.cursor()
             cur_p.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
             row_p = cur_p.fetchone()
-            cur_p.close(); _release_conn(conn_p)
+            cur_p.close()
             if not row_p or row_p[0] != "pro":
                 return jsonify({"errore":"Whisper è disponibile nel piano Pro"}), 403
         except Exception:
-            pass
+            # fail-closed: se il check piano non gira (DB giù), NON concedere la feature Pro gratis
+            return jsonify({"errore":"verifica piano non disponibile, riprova"}), 503
+        finally:
+            if conn_p is not None:
+                _release_conn(conn_p)
     if "audio" not in request.files:
         return jsonify({"errore":"file audio mancante"}), 400
     audio_file = request.files["audio"]
@@ -939,17 +944,22 @@ def vision():
     if not user_id:
         return jsonify({"errore":"autenticazione richiesta"}), 401
     if DATABASE_URL:
+        conn_v = None
         try:
             import psycopg2
             conn_v = _get_conn()
             cur_v = conn_v.cursor()
             cur_v.execute("SELECT piano FROM utenti WHERE id=%s", (user_id,))
             row_v = cur_v.fetchone()
-            cur_v.close(); _release_conn(conn_v)
+            cur_v.close()
             if not row_v or row_v[0] != "pro":
                 return jsonify({"errore":"Vision è disponibile nel piano Pro"}), 403
         except Exception:
-            pass
+            # fail-closed: se il check piano non gira (DB giù), NON concedere la feature Pro gratis
+            return jsonify({"errore":"verifica piano non disponibile, riprova"}), 503
+        finally:
+            if conn_v is not None:
+                _release_conn(conn_v)
     if "immagine" not in request.files:
         return jsonify({"errore":"immagine mancante"}), 400
     img_file = request.files["immagine"]

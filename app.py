@@ -55,7 +55,7 @@ app = Flask(__name__)
 #    Protetta da admin secret (nessun utente la trova). Uso: /admin/test-sentry?s=SECRET
 @app.route("/admin/test-sentry")
 def _test_sentry():
-    if request.args.get("s", "") != os.environ.get("ADMIN_SECRET", ""):
+    if not _admin_autenticato():
         return "Forbidden", 403
     _ = 1 / 0  # errore volontario → deve comparire su Sentry
     return "non arriva mai qui"

@@ -16,7 +16,8 @@
   --ink-soft:#4A5B50;     /* secondario, didascalie, etichette */
   --verde:#1E593C;        /* AZIONE / IDENTITÀ: bottoni, link, accento */
   --segnale:#2F8A5F;      /* fill "dentro zona" — mai testo bianco sopra */
-  --ocra:#A9802F;         /* stimato / proposta / interpretazione */
+  --ocra:#A9802F;         /* stimato / proposta — fill, bordo, grafica (3:1) */
+  --ocra-testo:#71551F;   /* ocra per TESTO: WCAG AA 4.5:1 su tutto il gradiente */
   --oxblood:#A8504A;      /* attenzione / contrasto / fuori norma */
   --tint:rgba(47,138,95,.10);
   --riga:rgba(29,42,34,.12);
@@ -216,11 +217,11 @@ h3{font-weight:600; font-size:16px}
 /* 3) derivato — tint verde */
 .prov-derivato{background:var(--tint); color:var(--verde); border-color:transparent}
 /* 4) stimato — ocra pieno (tenue) */
-.prov-stimato{background:rgba(169,128,47,.14); color:var(--ocra); border-color:transparent}
+.prov-stimato{background:rgba(169,128,47,.14); color:var(--ocra-testo); border-color:transparent}
 /* 5) proposta — ocra outline */
-.prov-proposta{background:transparent; color:var(--ocra); border-color:var(--ocra)}
+.prov-proposta{background:transparent; color:var(--ocra-testo); border-color:var(--ocra)}
 
 /* ---- utilità ---- */
 .muted{color:var(--ink-soft)}
 .nota-esempio{font-size:12px; color:var(--ink-soft); margin-top:8px}
-.nota-esempio strong{color:var(--ocra); font-weight:600}
+.nota-esempio strong{color:var(--ocra-testo); font-weight:600}
