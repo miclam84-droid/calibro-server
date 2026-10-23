@@ -80,6 +80,18 @@ def deduci_allergeni(ingredienti, nome_piatto=""):
     for ing in (ingredienti or []):
         nome = ing.get("nome", "") if isinstance(ing, dict) else str(ing)
         testo += " " + nome.lower()
+    # FALSE-FRIEND: nomi composti che contengono una sottostringa-allergene ma NON sono quell'allergene
+    # (Reg. UE 1169/2011 Allegato II). Neutralizzati PRIMA del match a sottostringa, preservando
+    # l'allergene vero dove c'è ("latte di mandorla" resta frutta a guscio; "noce moscata" = spezia).
+    _FALSE_FRIEND = {
+        "noce moscata": " spezia ", "noce di cocco": " cocco ", "latte di cocco": " cocco ",
+        "acqua di cocco": " cocco ", "latte di mandorla": " mandorla ", "latte di mandorle": " mandorle ",
+        "latte di soia": " soia ", "latte di avena": " avena ", "latte di riso": " riso ",
+        "latte di nocciola": " nocciola ", "burro di arachidi": " arachidi ", "burro di cacao": " cacao ",
+        "burro di karite": " karite ", "burro di karité": " karite ",
+    }
+    for _ff, _repl in _FALSE_FRIEND.items():
+        testo = testo.replace(_ff, _repl)
     for aid, chiavi in _MAPPA.items():
         if any(k in testo for k in chiavi):
             trovati.add(aid)
