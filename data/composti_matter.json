@@ -2522,10 +2522,658 @@
           "fonte": "Sweet orange peel cold-pressed oil GC-MS (Citrus sinensis) — limonene dominante + aldeidi (octanale/decanale) e linalolo portano l'identita' (volatile constituents of sweet orange peel oils, agris; Turkish orange peel oils)"
         }
       ]
+    },
+    {
+      "ingrediente": "parmigiano",
+      "nodo_target": "ing-parmigiano",
+      "specie": "Parmigiano Reggiano (latte vaccino, lungo stagionato)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma).",
+      "composti": [
+        {
+          "composto": "acido butirrico",
+          "descrittore": "formaggio stagionato, burroso-pungente",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        },
+        {
+          "composto": "metionale",
+          "descrittore": "patata cotta, brodo/savory",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        },
+        {
+          "composto": "2-eptanone",
+          "descrittore": "chetonico, blu, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "chetonico, latteo-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        },
+        {
+          "composto": "acido caproico (esanoico)",
+          "descrittore": "caprino, grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Parmigiano-Reggiano key aroma GC-O (identification/quantification of aroma compounds by GC-olfactometry, UMN/Oregon State; PMC5456476). Glutammato libero = umami (gusto, non aroma)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "colatura di alici",
+      "nodo_target": "ing-colatura-di-alici",
+      "specie": "Colatura di alici (Engraulis encrasicolus, fermentata)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami.",
+      "composti": [
+        {
+          "composto": "trimetilammina",
+          "descrittore": "pesce, marino pungente",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato, formaggio",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami."
+        },
+        {
+          "composto": "dimetil disolfuro",
+          "descrittore": "zolfo, cavolo cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami."
+        },
+        {
+          "composto": "acido butirrico",
+          "descrittore": "fermentato, formaggio",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Italian anchovy sauce (colatura, Engraulis encrasicolus) volatiles + free amino acids, PMC9818933; colatura GC-MS (foods, iris.unipa 10447/584000). Glutammato libero = umami."
+        }
+      ]
+    },
+    {
+      "ingrediente": "tartufo nero",
+      "nodo_target": "ing-tartufo-nero",
+      "specie": "Tuber melanosporum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646).",
+      "composti": [
+        {
+          "composto": "dimetil solfuro (DMS)",
+          "descrittore": "zolfo, cavolo, marino (marcatore del tartufo)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
+        },
+        {
+          "composto": "1-octen-3-olo",
+          "descrittore": "fungo, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
+        },
+        {
+          "composto": "2-metilbutanale",
+          "descrittore": "maltato, cacao",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Black truffle (Tuber melanosporum) aroma volatiles GC-MS (J. Fungi 2024, jof-10-00354; ripening markers iris.unica 11584/414646)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "luppolo",
+      "nodo_target": "ing-luppolo",
+      "specie": "Humulus lupulus (coni)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto.",
+      "composti": [
+        {
+          "composto": "mircene",
+          "descrittore": "erbaceo-resinoso, agrumato (firma del luppolo fresco)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "alfa-umulene",
+          "descrittore": "legnoso, luppolo nobile",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "beta-cariofillene",
+          "descrittore": "pepato, secco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "linalolo",
+          "descrittore": "floreale-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "geraniolo",
+          "descrittore": "rosa, agrume dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Hops (Humulus lupulus) aroma volatiles GC-MS (BMC Plant Biology 2023 s12870-023-04283-y; Cascade/Chinook aroma characterization). Amaro = alfa-acidi (umulone/lupulone), NON volatile -> lato gusto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "assenzio",
+      "nodo_target": "ing-assenzio",
+      "specie": "Artemisia absinthium",
+      "dominio": "bar",
+      "fonte_ingrediente": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto.",
+      "composti": [
+        {
+          "composto": "alfa-tujone",
+          "descrittore": "mentolo-canfora, erbaceo pungente (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "beta-tujone",
+          "descrittore": "canforato, erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "terpenico, pepe-legno fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "camazulene",
+          "descrittore": "erbaceo-balsamico (blu)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artemisia absinthium (assenzio) essential oil GC-MS (Proc. Estonian Acad. Sci. Chem. 2006 kirj.ee; Records of Natural Products). Amaro = absintina, NON volatile -> lato gusto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "carciofo",
+      "nodo_target": "ing-carciofo",
+      "specie": "Cynara cardunculus var. scolymus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenolo",
+          "descrittore": "verde, erbaceo tagliato (firma vegetale)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "1-octen-3-olo",
+          "descrittore": "fungo, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
+        },
+        {
+          "composto": "beta-selinene",
+          "descrittore": "legnoso-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "arancia amara",
+      "nodo_target": "ing-arancia-amara",
+      "specie": "Citrus aurantium (scorza, Siviglia)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume, scorza fresca (base dominante)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "linalolo",
+          "descrittore": "floreale, neroli-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "mircene",
+          "descrittore": "balsamico, terpenico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "decanale",
+          "descrittore": "scorza ceroso-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "fava tonka",
+      "nodo_target": "ing-fava-tonka",
+      "specie": "Dipteryx odorata (seme)",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Tonka bean (Dipteryx odorata) volatiles GC-MS (fcht.upce.cz 39879710; scielo qn). Cumarina = marcatore (vietata come additivo puro in UE sopra soglia; qui come profilo aromatico).",
+      "composti": [
+        {
+          "composto": "cumarina",
+          "descrittore": "fieno falciato, mandorla-vaniglia, caldo (marcatore della tonka)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tonka bean (Dipteryx odorata) volatiles GC-MS (fcht.upce.cz 39879710; scielo qn). Cumarina = marcatore (vietata come additivo puro in UE sopra soglia; qui come profilo aromatico)."
+        },
+        {
+          "composto": "diidrocumarina",
+          "descrittore": "dolce-erbaceo, lattoneo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tonka bean (Dipteryx odorata) volatiles GC-MS (fcht.upce.cz 39879710; scielo qn). Cumarina = marcatore (vietata come additivo puro in UE sopra soglia; qui come profilo aromatico)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "ribes nero",
+      "nodo_target": "ing-ribes-nero",
+      "specie": "Ribes nigrum (cassis)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818).",
+      "composti": [
+        {
+          "composto": "4-metossi-2-metil-2-butantiolo",
+          "descrittore": "cassis, catty-sulfurato, ribes (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "terpenico, pepe-legno fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818)."
+        },
+        {
+          "composto": "delta-3-carene",
+          "descrittore": "resinoso, agrume-pino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818)."
+        },
+        {
+          "composto": "(Z)-beta-ocimene",
+          "descrittore": "floreale-erbaceo dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "banana",
+      "nodo_target": "ing-banana",
+      "specie": "Musa (frutto maturo)",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner).",
+      "composti": [
+        {
+          "composto": "acetato di isoamile (3-metilbutil acetato)",
+          "descrittore": "banana matura (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner)."
+        },
+        {
+          "composto": "acetato di isobutile",
+          "descrittore": "fruttato dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner)."
+        },
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde (banana acerba)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner)."
+        },
+        {
+          "composto": "eugenolo",
+          "descrittore": "speziato (banana molto matura)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "peperoncino",
+      "nodo_target": "ing-peperoncino",
+      "specie": "Capsicum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto.",
+      "composti": [
+        {
+          "composto": "3-isobutil-2-metossipirazina",
+          "descrittore": "peperone verde, vegetale pungente (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto."
+        },
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde tagliato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "dragoncello",
+      "nodo_target": "ing-dragoncello",
+      "specie": "Artemisia dracunculus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877).",
+      "composti": [
+        {
+          "composto": "estragolo (metil chavicolo)",
+          "descrittore": "anice-basilico, dolce-erbaceo (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877)."
+        },
+        {
+          "composto": "(E)-beta-ocimene",
+          "descrittore": "floreale-erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877)."
+        },
+        {
+          "composto": "metileugenolo",
+          "descrittore": "speziato-anice",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tarragon (Artemisia dracunculus) essential oil GC-MS (Proc. YSU Chem&Biol 2018; A. dracunculus EO composition, Stoin; Jundishapur J Microbiol 10.5812/jjm.7877)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "frutto della passione",
+      "nodo_target": "ing-frutto-della-passione",
+      "specie": "Passiflora edulis",
+      "dominio": "bar",
+      "fonte_ingrediente": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano.",
+      "composti": [
+        {
+          "composto": "2-metil-4-propil-1,3-ossatiano",
+          "descrittore": "passion fruit, sulfureo-tropicale (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano."
+        },
+        {
+          "composto": "etil esanoato",
+          "descrittore": "fruttato, ananas",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano."
+        },
+        {
+          "composto": "etil butanoato",
+          "descrittore": "fruttato dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta, floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Passion fruit (Passiflora edulis) aroma volatiles GC-MS (UNESP acervodigital 11449/116649; scielo cr). Nota sulfurea tipica = 2-metil-4-propil-1,3-ossatiano."
+        }
+      ]
+    },
+    {
+      "ingrediente": "maggiorana",
+      "nodo_target": "ing-maggiorana",
+      "specie": "Origanum majorana",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Marjoram (Origanum majorana) essential oil GC-MS (PMC9183178; comparative chem. analysis, FUPhysChemTech 13301).",
+      "composti": [
+        {
+          "composto": "terpinen-4-olo",
+          "descrittore": "legnoso-speziato, caldo (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Marjoram (Origanum majorana) essential oil GC-MS (PMC9183178; comparative chem. analysis, FUPhysChemTech 13301)."
+        },
+        {
+          "composto": "cis-idrato di sabinene",
+          "descrittore": "erbaceo-fresco, maggiorana",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Marjoram (Origanum majorana) essential oil GC-MS (PMC9183178; comparative chem. analysis, FUPhysChemTech 13301)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Marjoram (Origanum majorana) essential oil GC-MS (PMC9183178; comparative chem. analysis, FUPhysChemTech 13301)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "terpenico, pepe-legno",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Marjoram (Origanum majorana) essential oil GC-MS (PMC9183178; comparative chem. analysis, FUPhysChemTech 13301)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sedano",
+      "nodo_target": "ing-sedano",
+      "specie": "Apium graveolens",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Celery (Apium graveolens) aroma volatiles GC-MS (Food Chemistry X 2024; PMC8584909; Reading harvest-maturity study). Ftalidi (3-n-butilftalide, sedanolide) = marcatori.",
+      "composti": [
+        {
+          "composto": "3-n-butilftalide",
+          "descrittore": "sedano, verde-aromatico (marcatore ftalide)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Celery (Apium graveolens) aroma volatiles GC-MS (Food Chemistry X 2024; PMC8584909; Reading harvest-maturity study). Ftalidi (3-n-butilftalide, sedanolide) = marcatori."
+        },
+        {
+          "composto": "sedanolide",
+          "descrittore": "sedano caldo, speziato",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Celery (Apium graveolens) aroma volatiles GC-MS (Food Chemistry X 2024; PMC8584909; Reading harvest-maturity study). Ftalidi (3-n-butilftalide, sedanolide) = marcatori."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Celery (Apium graveolens) aroma volatiles GC-MS (Food Chemistry X 2024; PMC8584909; Reading harvest-maturity study). Ftalidi (3-n-butilftalide, sedanolide) = marcatori."
+        },
+        {
+          "composto": "beta-selinene",
+          "descrittore": "legnoso-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Celery (Apium graveolens) aroma volatiles GC-MS (Food Chemistry X 2024; PMC8584909; Reading harvest-maturity study). Ftalidi (3-n-butilftalide, sedanolide) = marcatori."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mango",
+      "nodo_target": "ing-mango",
+      "specie": "Mangifera indica",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Mango (Mangifera indica) aroma volatiles GC-MS (PMC5718421; redalyc 47551304; mango germplasm profiling pherobase 43832).",
+      "composti": [
+        {
+          "composto": "terpinolene",
+          "descrittore": "pino-agrume, mango (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mango (Mangifera indica) aroma volatiles GC-MS (PMC5718421; redalyc 47551304; mango germplasm profiling pherobase 43832)."
+        },
+        {
+          "composto": "(E)-beta-ocimene",
+          "descrittore": "floreale-erbaceo dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mango (Mangifera indica) aroma volatiles GC-MS (PMC5718421; redalyc 47551304; mango germplasm profiling pherobase 43832)."
+        },
+        {
+          "composto": "delta-3-carene",
+          "descrittore": "resinoso, agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mango (Mangifera indica) aroma volatiles GC-MS (PMC5718421; redalyc 47551304; mango germplasm profiling pherobase 43832)."
+        },
+        {
+          "composto": "gamma-decalattone",
+          "descrittore": "pesca, cremoso tropicale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mango (Mangifera indica) aroma volatiles GC-MS (PMC5718421; redalyc 47551304; mango germplasm profiling pherobase 43832)."
+        }
+      ]
     }
   ],
   "_prossimi": [
-    "Ondata 23/10: +3 NUOVI (cipolla, miele, scorza d'arancia) = allium cucina + miele lievitati Bucolico + scorza agrumi Bucopertuso. cannella/chiodi di garofano/noce moscata erano GIA' presenti (non duplicati).",
+    "Ondata 23/10 (h): +3 (maggiorana, sedano, mango). Marcatori chiari. Sessione 23/10: da 50 a 69.",
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
     "Secondo giro %: chiudere i 'n.d. (da raffinare)' con tabelle GC dedicate (cipolla, miele, noce moscata, arancia aldeidi).",
     "Strato 'verificato_al_banco': dove l'assaggio Bucopertuso/Bucolico conferma.",
