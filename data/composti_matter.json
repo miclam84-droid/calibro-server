@@ -4050,9 +4050,418 @@
           "fonte": "Cumino (Cuminum cyminum) aroma active GC-MS/GC-O: cuminaldeide, p-menta-1,3-dien-7-al, p-cimene, gamma-terpinene (agris.fao 65de20a 'Characterization of Aroma Active Compounds of Cumin'; jmpb.areeo 108735)."
         }
       ]
+    },
+    {
+      "ingrediente": "fiori d'arancio",
+      "nodo_target": "ing-fiori-arancio",
+      "specie": "Citrus aurantium (flos)",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Neroli / fiori d'arancio (Citrus aurantium flos) olio essenziale: linalolo, acetato di linalile, metil antranilato, nerolidolo (ChemicalBook CAS 8016-38-4; scent.vn neroli bigarade; bioshop neroli EO).",
+      "composti": [
+        {
+          "composto": "linalool",
+          "descrittore": "floreale (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Neroli / fiori d'arancio (Citrus aurantium flos) olio essenziale: linalolo, acetato di linalile, metil antranilato, nerolidolo (ChemicalBook CAS 8016-38-4; scent.vn neroli bigarade; bioshop neroli EO)."
+        },
+        {
+          "composto": "linalyl acetate",
+          "descrittore": "floreale-fruttato, bergamotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Neroli / fiori d'arancio (Citrus aurantium flos) olio essenziale: linalolo, acetato di linalile, metil antranilato, nerolidolo (ChemicalBook CAS 8016-38-4; scent.vn neroli bigarade; bioshop neroli EO)."
+        },
+        {
+          "composto": "methyl anthranilate",
+          "descrittore": "fiori d'arancio-uva",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Neroli / fiori d'arancio (Citrus aurantium flos) olio essenziale: linalolo, acetato di linalile, metil antranilato, nerolidolo (ChemicalBook CAS 8016-38-4; scent.vn neroli bigarade; bioshop neroli EO)."
+        },
+        {
+          "composto": "nerolidol",
+          "descrittore": "legnoso-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Neroli / fiori d'arancio (Citrus aurantium flos) olio essenziale: linalolo, acetato di linalile, metil antranilato, nerolidolo (ChemicalBook CAS 8016-38-4; scent.vn neroli bigarade; bioshop neroli EO)."
+        },
+        {
+          "composto": "nerol",
+          "descrittore": "rosa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Neroli / fiori d'arancio (Citrus aurantium flos) olio essenziale: linalolo, acetato di linalile, metil antranilato, nerolidolo (ChemicalBook CAS 8016-38-4; scent.vn neroli bigarade; bioshop neroli EO)."
+        },
+        {
+          "composto": "indole",
+          "descrittore": "floreale-animalico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Neroli / fiori d'arancio (Citrus aurantium flos) olio essenziale: linalolo, acetato di linalile, metil antranilato, nerolidolo (ChemicalBook CAS 8016-38-4; scent.vn neroli bigarade; bioshop neroli EO)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "gelsomino",
+      "nodo_target": "ing-gelsomino",
+      "specie": "Jasminum grandiflorum",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Gelsomino (Jasminum grandiflorum/sambac) assoluta: acetato di benzile, cis-jasmone, indolo, linalolo, metil antranilato (SCC library v064n06/79; perfumersworld jasmine; scent.vn jasmine absolute).",
+      "composti": [
+        {
+          "composto": "benzyl acetate",
+          "descrittore": "floreale-fruttato, gelsomino (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gelsomino (Jasminum grandiflorum/sambac) assoluta: acetato di benzile, cis-jasmone, indolo, linalolo, metil antranilato (SCC library v064n06/79; perfumersworld jasmine; scent.vn jasmine absolute)."
+        },
+        {
+          "composto": "cis-jasmone",
+          "descrittore": "gelsomino-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gelsomino (Jasminum grandiflorum/sambac) assoluta: acetato di benzile, cis-jasmone, indolo, linalolo, metil antranilato (SCC library v064n06/79; perfumersworld jasmine; scent.vn jasmine absolute)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gelsomino (Jasminum grandiflorum/sambac) assoluta: acetato di benzile, cis-jasmone, indolo, linalolo, metil antranilato (SCC library v064n06/79; perfumersworld jasmine; scent.vn jasmine absolute)."
+        },
+        {
+          "composto": "indole",
+          "descrittore": "floreale-animalico (gelsomino)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gelsomino (Jasminum grandiflorum/sambac) assoluta: acetato di benzile, cis-jasmone, indolo, linalolo, metil antranilato (SCC library v064n06/79; perfumersworld jasmine; scent.vn jasmine absolute)."
+        },
+        {
+          "composto": "methyl anthranilate",
+          "descrittore": "floreale-uva",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gelsomino (Jasminum grandiflorum/sambac) assoluta: acetato di benzile, cis-jasmone, indolo, linalolo, metil antranilato (SCC library v064n06/79; perfumersworld jasmine; scent.vn jasmine absolute)."
+        },
+        {
+          "composto": "benzyl benzoate",
+          "descrittore": "balsamico dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gelsomino (Jasminum grandiflorum/sambac) assoluta: acetato di benzile, cis-jasmone, indolo, linalolo, metil antranilato (SCC library v064n06/79; perfumersworld jasmine; scent.vn jasmine absolute)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "verbena odorosa",
+      "nodo_target": "ing-verbena-odorosa",
+      "specie": "Aloysia citrodora",
+      "dominio": "bar",
+      "fonte_ingrediente": "Verbena odorosa/cedrina (Aloysia citrodora) olio essenziale: citrale (geraniale+nerale), limonene (PMC10254266; MDPI Molecules 28/11/4528; SID 19696).",
+      "composti": [
+        {
+          "composto": "geranial",
+          "descrittore": "limone-citrico (citrale A, chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verbena odorosa/cedrina (Aloysia citrodora) olio essenziale: citrale (geraniale+nerale), limonene (PMC10254266; MDPI Molecules 28/11/4528; SID 19696)."
+        },
+        {
+          "composto": "neral",
+          "descrittore": "limone-citrico (citrale B)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verbena odorosa/cedrina (Aloysia citrodora) olio essenziale: citrale (geraniale+nerale), limonene (PMC10254266; MDPI Molecules 28/11/4528; SID 19696)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verbena odorosa/cedrina (Aloysia citrodora) olio essenziale: citrale (geraniale+nerale), limonene (PMC10254266; MDPI Molecules 28/11/4528; SID 19696)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verbena odorosa/cedrina (Aloysia citrodora) olio essenziale: citrale (geraniale+nerale), limonene (PMC10254266; MDPI Molecules 28/11/4528; SID 19696)."
+        },
+        {
+          "composto": "nerol",
+          "descrittore": "rosa dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verbena odorosa/cedrina (Aloysia citrodora) olio essenziale: citrale (geraniale+nerale), limonene (PMC10254266; MDPI Molecules 28/11/4528; SID 19696)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mora",
+      "nodo_target": "ing-mora",
+      "specie": "Rubus fruticosus",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Mora (Rubus fruticosus) volatili GC-MS: furaneolo, 2-eptanone, esteri, beta-ionone (uoregon 1988 Food Chem 'Chemicals in blackberry juice'; PMC4327056 sensors t2; Andean blackberry CIRAD 558141).",
+      "composti": [
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-fragola (HDMF)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mora (Rubus fruticosus) volatili GC-MS: furaneolo, 2-eptanone, esteri, beta-ionone (uoregon 1988 Food Chem 'Chemicals in blackberry juice'; PMC4327056 sensors t2; Andean blackberry CIRAD 558141)."
+        },
+        {
+          "composto": "2-heptanone",
+          "descrittore": "fruttato-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mora (Rubus fruticosus) volatili GC-MS: furaneolo, 2-eptanone, esteri, beta-ionone (uoregon 1988 Food Chem 'Chemicals in blackberry juice'; PMC4327056 sensors t2; Andean blackberry CIRAD 558141)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato, ananas-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mora (Rubus fruticosus) volatili GC-MS: furaneolo, 2-eptanone, esteri, beta-ionone (uoregon 1988 Food Chem 'Chemicals in blackberry juice'; PMC4327056 sensors t2; Andean blackberry CIRAD 558141)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mora (Rubus fruticosus) volatili GC-MS: furaneolo, 2-eptanone, esteri, beta-ionone (uoregon 1988 Food Chem 'Chemicals in blackberry juice'; PMC4327056 sensors t2; Andean blackberry CIRAD 558141)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mora (Rubus fruticosus) volatili GC-MS: furaneolo, 2-eptanone, esteri, beta-ionone (uoregon 1988 Food Chem 'Chemicals in blackberry juice'; PMC4327056 sensors t2; Andean blackberry CIRAD 558141)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mora (Rubus fruticosus) volatili GC-MS: furaneolo, 2-eptanone, esteri, beta-ionone (uoregon 1988 Food Chem 'Chemicals in blackberry juice'; PMC4327056 sensors t2; Andean blackberry CIRAD 558141)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "kiwi",
+      "nodo_target": "ing-kiwi",
+      "specie": "Actinidia deliciosa",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Kiwi (Actinidia deliciosa) aroma GC-MS: etil butanoato, (E,Z)-2,6-nonadienale (cetriolo-verde), (E)-2-esenale (PMC8306980 'Aroma Chemical Composition of Kiwifruit Cultivars'; Food Science 2021 42/16/118).",
+      "composti": [
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-mela (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kiwi (Actinidia deliciosa) aroma GC-MS: etil butanoato, (E,Z)-2,6-nonadienale (cetriolo-verde), (E)-2-esenale (PMC8306980 'Aroma Chemical Composition of Kiwifruit Cultivars'; Food Science 2021 42/16/118)."
+        },
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo-verde (marcatore kiwi)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kiwi (Actinidia deliciosa) aroma GC-MS: etil butanoato, (E,Z)-2,6-nonadienale (cetriolo-verde), (E)-2-esenale (PMC8306980 'Aroma Chemical Composition of Kiwifruit Cultivars'; Food Science 2021 42/16/118)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kiwi (Actinidia deliciosa) aroma GC-MS: etil butanoato, (E,Z)-2,6-nonadienale (cetriolo-verde), (E)-2-esenale (PMC8306980 'Aroma Chemical Composition of Kiwifruit Cultivars'; Food Science 2021 42/16/118)."
+        },
+        {
+          "composto": "ethyl 2-methylbutanoate",
+          "descrittore": "fruttato intenso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kiwi (Actinidia deliciosa) aroma GC-MS: etil butanoato, (E,Z)-2,6-nonadienale (cetriolo-verde), (E)-2-esenale (PMC8306980 'Aroma Chemical Composition of Kiwifruit Cultivars'; Food Science 2021 42/16/118)."
+        },
+        {
+          "composto": "methyl benzoate",
+          "descrittore": "floreale-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kiwi (Actinidia deliciosa) aroma GC-MS: etil butanoato, (E,Z)-2,6-nonadienale (cetriolo-verde), (E)-2-esenale (PMC8306980 'Aroma Chemical Composition of Kiwifruit Cultivars'; Food Science 2021 42/16/118)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "fieno greco",
+      "nodo_target": "ing-fieno-greco",
+      "specie": "Trigonella foenum-graecum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Fieno greco (Trigonella foenum-graecum): sotolon marcatore di carattere (acero/curry), pirazine da tostatura (Wikipedia Sotolon; caperfume fenugreek; premierepeau fenugreek).",
+      "composti": [
+        {
+          "composto": "sotolon",
+          "descrittore": "acero-curry (marcatore unico)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fieno greco (Trigonella foenum-graecum): sotolon marcatore di carattere (acero/curry), pirazine da tostatura (Wikipedia Sotolon; caperfume fenugreek; premierepeau fenugreek)."
+        },
+        {
+          "composto": "2,5-dimetilpirazina",
+          "descrittore": "tostato-nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fieno greco (Trigonella foenum-graecum): sotolon marcatore di carattere (acero/curry), pirazine da tostatura (Wikipedia Sotolon; caperfume fenugreek; premierepeau fenugreek)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fieno greco (Trigonella foenum-graecum): sotolon marcatore di carattere (acero/curry), pirazine da tostatura (Wikipedia Sotolon; caperfume fenugreek; premierepeau fenugreek)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "tiglio",
+      "nodo_target": "ing-tiglio",
+      "specie": "Tilia sp.",
+      "dominio": "bar",
+      "fonte_ingrediente": "Fiori di tiglio (Tilia sp.) aroma: farnesolo, linalolo, geraniolo, 2-feniletanolo (doi 10.1007/BF01028316; MDPI Horticulturae 9/2/286; USDA phytochem Tilia sp.).",
+      "composti": [
+        {
+          "composto": "farnesol",
+          "descrittore": "floreale-dolce, muguet (chiave tiglio)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di tiglio (Tilia sp.) aroma: farnesolo, linalolo, geraniolo, 2-feniletanolo (doi 10.1007/BF01028316; MDPI Horticulturae 9/2/286; USDA phytochem Tilia sp.)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di tiglio (Tilia sp.) aroma: farnesolo, linalolo, geraniolo, 2-feniletanolo (doi 10.1007/BF01028316; MDPI Horticulturae 9/2/286; USDA phytochem Tilia sp.)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di tiglio (Tilia sp.) aroma: farnesolo, linalolo, geraniolo, 2-feniletanolo (doi 10.1007/BF01028316; MDPI Horticulturae 9/2/286; USDA phytochem Tilia sp.)."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa-miele",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di tiglio (Tilia sp.) aroma: farnesolo, linalolo, geraniolo, 2-feniletanolo (doi 10.1007/BF01028316; MDPI Horticulturae 9/2/286; USDA phytochem Tilia sp.)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di tiglio (Tilia sp.) aroma: farnesolo, linalolo, geraniolo, 2-feniletanolo (doi 10.1007/BF01028316; MDPI Horticulturae 9/2/286; USDA phytochem Tilia sp.)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di tiglio (Tilia sp.) aroma: farnesolo, linalolo, geraniolo, 2-feniletanolo (doi 10.1007/BF01028316; MDPI Horticulturae 9/2/286; USDA phytochem Tilia sp.)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "uva fragola",
+      "nodo_target": "ing-uva-fragola",
+      "specie": "Vitis labrusca",
+      "dominio": "bar",
+      "fonte_ingrediente": "Uva fragola/Concord (Vitis labrusca): metil antranilato marcatore 'foxy', 2-amminoacetofenone (PMC7166211 'foxy aroma gene... Concord'; Cornell ecommons; Hortic Res 10.1038/s41438-020-0304-6).",
+      "composti": [
+        {
+          "composto": "methyl anthranilate",
+          "descrittore": "'foxy', uva fragola-fiori d'arancio (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva fragola/Concord (Vitis labrusca): metil antranilato marcatore 'foxy', 2-amminoacetofenone (PMC7166211 'foxy aroma gene... Concord'; Cornell ecommons; Hortic Res 10.1038/s41438-020-0304-6)."
+        },
+        {
+          "composto": "2-aminoacetophenone",
+          "descrittore": "foxy-uva (co-marcatore labrusca)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva fragola/Concord (Vitis labrusca): metil antranilato marcatore 'foxy', 2-amminoacetofenone (PMC7166211 'foxy aroma gene... Concord'; Cornell ecommons; Hortic Res 10.1038/s41438-020-0304-6)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva fragola/Concord (Vitis labrusca): metil antranilato marcatore 'foxy', 2-amminoacetofenone (PMC7166211 'foxy aroma gene... Concord'; Cornell ecommons; Hortic Res 10.1038/s41438-020-0304-6)."
+        },
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-fragola",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva fragola/Concord (Vitis labrusca): metil antranilato marcatore 'foxy', 2-amminoacetofenone (PMC7166211 'foxy aroma gene... Concord'; Cornell ecommons; Hortic Res 10.1038/s41438-020-0304-6)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva fragola/Concord (Vitis labrusca): metil antranilato marcatore 'foxy', 2-amminoacetofenone (PMC7166211 'foxy aroma gene... Concord'; Cornell ecommons; Hortic Res 10.1038/s41438-020-0304-6)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 23/10 (k): +8 (fiori d'arancio, gelsomino, verbena odorosa, mora, kiwi, fieno greco, tiglio, uva fragola). Marcatori-firma verificati su fonte reale. Connettivita': metil antranilato (neroli/gelsomino/uva fragola<->mandarino), cis-jasmone/indolo (gelsomino<->te verde), citrale (verbena<->limone/citronella/melissa), furaneolo (mora/uva fragola<->fragola/ananas), beta-ionone (mora<->lampone/te nero), 2-feniletanolo/farnesolo (tiglio<->rosa/camomilla).",
     "Ondata 23/10 (j): +8 (mandarino, cedro, citronella, melissa, te verde, ananas, litchi, cumino). Marcatori-firma verificati su fonte reale. Forte condivisione: citrale (cedro/citronella/melissa<->limone), cis-rose oxide (litchi<->uva moscato), furaneolo (ananas<->fragola), beta-damascenone (litchi<->mela/pera/cotogna), p-cimene/gamma-terpinene (cumino/mandarino<->agrumi) -> molti archi nuovi.",
     "Ondata 23/10 (i): +8 (yuzu, nocciola tostata, uva moscato, prugna, camomilla, te nero, mela cotogna, curcuma). Marcatori-firma verificati su fonte reale. Buona condivisione composti col grafo (limonene/linalolo/geraniolo/beta-damascenone/zingiberene/pirazine/(E)-2-hexenal) -> nuovi archi di abbinamento.",
     "Ondata 23/10 (h): +3 (maggiorana, sedano, mango). Marcatori chiari. Sessione 23/10: da 50 a 69.",
