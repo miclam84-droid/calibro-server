@@ -885,13 +885,27 @@ def strumenti(disciplina=None):
         ],
     }
 
+    # i18n: traduce solo i campi utente-facing (nome/misura/target/uso) via cache DB;
+    # amazon e prezzo_approx restano invariati. Fallback all'italiano se la traduzione fallisce.
+    lang = (request.args.get("lang") or "it").strip().lower()
+    if lang not in ("it", "en", "es"):
+        lang = "it"
+    _campi_tr = ["nome", "misura", "target", "uso"]
+    def _tr_lista(lista):
+        if lang == "it":
+            return lista
+        from traduzioni import traduci_dict
+        return [traduci_dict(s, lang, _campi_tr) for s in lista]
+
     if disciplina:
         disc_norm = disciplina.lower().replace("caffetteria","caffe")
         strumenti_disc = STRUMENTI_DB.get(disc_norm, [])
-        return jsonify({"disciplina":disciplina,"strumenti":strumenti_disc})
+        return jsonify({"disciplina":disciplina,"strumenti":_tr_lista(strumenti_disc)})
 
     # Tutti
-    return jsonify({"strumenti":STRUMENTI_DB})
+    if lang == "it":
+        return jsonify({"strumenti":STRUMENTI_DB})
+    return jsonify({"strumenti":{k:_tr_lista(v) for k,v in STRUMENTI_DB.items()}})
 
 @bp.route("/v1/stt", methods=["POST"])
 def stt():
