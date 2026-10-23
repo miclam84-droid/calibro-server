@@ -891,21 +891,37 @@ def strumenti(disciplina=None):
     if lang not in ("it", "en", "es"):
         lang = "it"
     _campi_tr = ["nome", "misura", "target", "uso"]
-    def _tr_lista(lista):
+    def _tr_lista(lista, solo_cache=False):
+        # Traduzione BATCH: una sola SELECT per tutta la lista (via traduci_molti).
+        # solo_cache=True -> non traduce mai dal vivo (fallback IT per i mancanti): zero timeout,
+        # usato per la lista COMPLETA (grande). Per-disciplina (piccola) traduce dal vivo e
+        # riscalda la cache, così la lista completa si popola progressivamente.
         if lang == "it":
             return lista
-        from traduzioni import traduci_dict
-        return [traduci_dict(s, lang, _campi_tr) for s in lista]
+        from traduzioni import traduci_molti
+        testi = [s[k] for s in lista for k in _campi_tr if isinstance(s.get(k), str) and s[k].strip()]
+        tmap = traduci_molti(testi, lang, solo_cache=solo_cache)
+        out = []
+        for s in lista:
+            d = dict(s)
+            for k in _campi_tr:
+                v = s.get(k)
+                if isinstance(v, str) and v.strip():
+                    d[k] = tmap.get(v, v)
+            out.append(d)
+        return out
 
     if disciplina:
         disc_norm = disciplina.lower().replace("caffetteria","caffe")
         strumenti_disc = STRUMENTI_DB.get(disc_norm, [])
-        return jsonify({"disciplina":disciplina,"strumenti":_tr_lista(strumenti_disc)})
+        # per-disciplina: lista corta -> traduzione dal vivo (riscalda la cache), rientra nel timeout
+        return jsonify({"disciplina":disciplina,"strumenti":_tr_lista(strumenti_disc, solo_cache=False)})
 
     # Tutti
     if lang == "it":
         return jsonify({"strumenti":STRUMENTI_DB})
-    return jsonify({"strumenti":{k:_tr_lista(v) for k,v in STRUMENTI_DB.items()}})
+    # lista COMPLETA: cache-only -> mai timeout; i mancanti restano IT finché la cache si riscalda
+    return jsonify({"strumenti":{k:_tr_lista(v, solo_cache=True) for k,v in STRUMENTI_DB.items()}})
 
 @bp.route("/v1/stt", methods=["POST"])
 def stt():
