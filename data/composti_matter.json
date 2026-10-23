@@ -2850,10 +2850,125 @@
           "fonte": "Tonka bean (Dipteryx odorata) volatiles GC-MS (fcht.upce.cz 39879710; scielo qn). Cumarina = marcatore (vietata come additivo puro in UE sopra soglia; qui come profilo aromatico)."
         }
       ]
+    },
+    {
+      "ingrediente": "ribes nero",
+      "nodo_target": "ing-ribes-nero",
+      "specie": "Ribes nigrum (cassis)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818).",
+      "composti": [
+        {
+          "composto": "4-metossi-2-metil-2-butantiolo",
+          "descrittore": "cassis, catty-sulfurato, ribes (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "terpenico, pepe-legno fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818)."
+        },
+        {
+          "composto": "delta-3-carene",
+          "descrittore": "resinoso, agrume-pino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818)."
+        },
+        {
+          "composto": "(Z)-beta-ocimene",
+          "descrittore": "floreale-erbaceo dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Blackcurrant (Ribes nigrum) aroma volatiles GC-MS/GC-O (Eur Food Res Technol 2025 s00217-025-04666-5; volatile constituents pherobase 13818)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "banana",
+      "nodo_target": "ing-banana",
+      "specie": "Musa (frutto maturo)",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner).",
+      "composti": [
+        {
+          "composto": "acetato di isoamile (3-metilbutil acetato)",
+          "descrittore": "banana matura (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner)."
+        },
+        {
+          "composto": "acetato di isobutile",
+          "descrittore": "fruttato dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner)."
+        },
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde (banana acerba)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner)."
+        },
+        {
+          "composto": "eugenolo",
+          "descrittore": "speziato (banana molto matura)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Banana aroma key volatiles GC-MS/GC-O (comparative volatile study PMC6222428; aromatic profile banana essence GC-O, Goodner)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "peperoncino",
+      "nodo_target": "ing-peperoncino",
+      "specie": "Capsicum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto.",
+      "composti": [
+        {
+          "composto": "3-isobutil-2-metossipirazina",
+          "descrittore": "peperone verde, vegetale pungente (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto."
+        },
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde tagliato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Chili/Capsicum volatile fraction GC-MS (volatile & capsaicinoid composition TUM; Food Chemistry X 2024). Piccantezza = capsaicina, NON volatile -> trigeminale, lato gusto."
+        }
+      ]
     }
   ],
   "_prossimi": [
-    "Ondata 23/10 (e): +2 (arancia amara, fava tonka). SALTATA liquirizia: aroma della radice incerto in letteratura (la nota 'liquirizia' e' spesso anetolo aggiunto) -> meglio niente che un dato finto.",
+    "Ondata 23/10 (f): +3 (ribes nero, banana, peperoncino). Marcatori chiari (tiolo cassis, acetato isoamile, metossipirazina). Piccante peperoncino = capsaicina non-volatile.",
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
     "Secondo giro %: chiudere i 'n.d. (da raffinare)' con tabelle GC dedicate (cipolla, miele, noce moscata, arancia aldeidi).",
     "Strato 'verificato_al_banco': dove l'assaggio Bucopertuso/Bucolico conferma.",
