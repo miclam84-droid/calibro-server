@@ -2784,10 +2784,76 @@
           "fonte": "Artichoke/cardoon (Cynara) volatiles GC-MS (Molecules 2025 30-02649; iris.unife 11392/2613874). Amaro = cinaropicrina/cinarina, NON volatile -> lato gusto."
         }
       ]
+    },
+    {
+      "ingrediente": "arancia amara",
+      "nodo_target": "ing-arancia-amara",
+      "specie": "Citrus aurantium (scorza, Siviglia)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume, scorza fresca (base dominante)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "linalolo",
+          "descrittore": "floreale, neroli-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "mircene",
+          "descrittore": "balsamico, terpenico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto."
+        },
+        {
+          "composto": "decanale",
+          "descrittore": "scorza ceroso-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bitter orange (Citrus aurantium) peel essential oil GC-MS (volatile constituents of peel/flowers/leaf oils, PMC6270488). Amaro = naringina/neoesperidina (flavanoni), NON volatile -> lato gusto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "fava tonka",
+      "nodo_target": "ing-fava-tonka",
+      "specie": "Dipteryx odorata (seme)",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Tonka bean (Dipteryx odorata) volatiles GC-MS (fcht.upce.cz 39879710; scielo qn). Cumarina = marcatore (vietata come additivo puro in UE sopra soglia; qui come profilo aromatico).",
+      "composti": [
+        {
+          "composto": "cumarina",
+          "descrittore": "fieno falciato, mandorla-vaniglia, caldo (marcatore della tonka)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tonka bean (Dipteryx odorata) volatiles GC-MS (fcht.upce.cz 39879710; scielo qn). Cumarina = marcatore (vietata come additivo puro in UE sopra soglia; qui come profilo aromatico)."
+        },
+        {
+          "composto": "diidrocumarina",
+          "descrittore": "dolce-erbaceo, lattoneo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tonka bean (Dipteryx odorata) volatiles GC-MS (fcht.upce.cz 39879710; scielo qn). Cumarina = marcatore (vietata come additivo puro in UE sopra soglia; qui come profilo aromatico)."
+        }
+      ]
     }
   ],
   "_prossimi": [
-    "Ondata 23/10 (d): +3 (luppolo, assenzio, carciofo) = botaniche amare Bucopertuso (amari/vermouth). Aroma da GC-MS reale; l'AMARO di questi e' non-volatile (alfa-acidi/absintina/cinaropicrina) -> va derivato sul lato gusto, non qui.",
+    "Ondata 23/10 (e): +2 (arancia amara, fava tonka). SALTATA liquirizia: aroma della radice incerto in letteratura (la nota 'liquirizia' e' spesso anetolo aggiunto) -> meglio niente che un dato finto.",
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
     "Secondo giro %: chiudere i 'n.d. (da raffinare)' con tabelle GC dedicate (cipolla, miele, noce moscata, arancia aldeidi).",
     "Strato 'verificato_al_banco': dove l'assaggio Bucopertuso/Bucolico conferma.",
