@@ -3170,9 +3170,450 @@
           "fonte": "Mango (Mangifera indica) aroma volatiles GC-MS (PMC5718421; redalyc 47551304; mango germplasm profiling pherobase 43832)."
         }
       ]
+    },
+    {
+      "ingrediente": "yuzu",
+      "nodo_target": "ing-yuzu",
+      "specie": "Citrus junos",
+      "dominio": "bar",
+      "fonte_ingrediente": "Yuzu (Citrus junos) scorza, aroma GC-MS/GC-O (Food Chemistry, kochi.repo.nii.ac.jp/record/1734); yuzunone marcatore (BBB 86/2/170, academic.oup.com); descrittori Pherobase/TGSC.",
+      "composti": [
+        {
+          "composto": "yuzunone",
+          "descrittore": "agrume verde, yuzu (marcatore distintivo)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yuzu (Citrus junos) scorza, aroma GC-MS/GC-O (Food Chemistry, kochi.repo.nii.ac.jp/record/1734); yuzunone marcatore (BBB 86/2/170, academic.oup.com); descrittori Pherobase/TGSC."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yuzu (Citrus junos) scorza, aroma GC-MS/GC-O (Food Chemistry, kochi.repo.nii.ac.jp/record/1734); yuzunone marcatore (BBB 86/2/170, academic.oup.com); descrittori Pherobase/TGSC."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yuzu (Citrus junos) scorza, aroma GC-MS/GC-O (Food Chemistry, kochi.repo.nii.ac.jp/record/1734); yuzunone marcatore (BBB 86/2/170, academic.oup.com); descrittori Pherobase/TGSC."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yuzu (Citrus junos) scorza, aroma GC-MS/GC-O (Food Chemistry, kochi.repo.nii.ac.jp/record/1734); yuzunone marcatore (BBB 86/2/170, academic.oup.com); descrittori Pherobase/TGSC."
+        },
+        {
+          "composto": "(E)-beta-farnesene",
+          "descrittore": "legnoso dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yuzu (Citrus junos) scorza, aroma GC-MS/GC-O (Food Chemistry, kochi.repo.nii.ac.jp/record/1734); yuzunone marcatore (BBB 86/2/170, academic.oup.com); descrittori Pherobase/TGSC."
+        },
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "verde fresco tagliato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yuzu (Citrus junos) scorza, aroma GC-MS/GC-O (Food Chemistry, kochi.repo.nii.ac.jp/record/1734); yuzunone marcatore (BBB 86/2/170, academic.oup.com); descrittori Pherobase/TGSC."
+        }
+      ]
+    },
+    {
+      "ingrediente": "nocciola tostata",
+      "nodo_target": "ing-nocciola-tostata",
+      "specie": "Corylus avellana (tostata)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Nocciola tostata (Corylus avellana): key odorants (Leibniz-LSB/TUM, 'key odorants of Italian hazelnuts'); filbertone marcatore (Bristol MOTM; Guntert); pirazine da tostatura (Maillard).",
+      "composti": [
+        {
+          "composto": "filbertone",
+          "descrittore": "nocciola tostata (marcatore, 5-metil-(E)-2-epten-4-one)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nocciola tostata (Corylus avellana): key odorants (Leibniz-LSB/TUM, 'key odorants of Italian hazelnuts'); filbertone marcatore (Bristol MOTM; Guntert); pirazine da tostatura (Maillard)."
+        },
+        {
+          "composto": "2,3-dimetilpirazina",
+          "descrittore": "tostato, nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nocciola tostata (Corylus avellana): key odorants (Leibniz-LSB/TUM, 'key odorants of Italian hazelnuts'); filbertone marcatore (Bristol MOTM; Guntert); pirazine da tostatura (Maillard)."
+        },
+        {
+          "composto": "2-acetilpirazina",
+          "descrittore": "tostato, popcorn",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nocciola tostata (Corylus avellana): key odorants (Leibniz-LSB/TUM, 'key odorants of Italian hazelnuts'); filbertone marcatore (Bristol MOTM; Guntert); pirazine da tostatura (Maillard)."
+        },
+        {
+          "composto": "5-metilfurfurale",
+          "descrittore": "caramello-mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nocciola tostata (Corylus avellana): key odorants (Leibniz-LSB/TUM, 'key odorants of Italian hazelnuts'); filbertone marcatore (Bristol MOTM; Guntert); pirazine da tostatura (Maillard)."
+        },
+        {
+          "composto": "2,3-pentanedione",
+          "descrittore": "burroso dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nocciola tostata (Corylus avellana): key odorants (Leibniz-LSB/TUM, 'key odorants of Italian hazelnuts'); filbertone marcatore (Bristol MOTM; Guntert); pirazine da tostatura (Maillard)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "uva moscato",
+      "nodo_target": "ing-uva-moscato",
+      "specie": "Vitis vinifera (Muscat)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Uva Moscato (Vitis vinifera) monoterpeni liberi: rose oxide marcatore (Pherobase B/48186, 'Prediction of Muscat aroma by rose oxide'); linalolo/geraniolo/nerolo (OENO One; Muscat Hamburg ripening, agris.fao).",
+      "composti": [
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-agrume (marcatore moscato)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva Moscato (Vitis vinifera) monoterpeni liberi: rose oxide marcatore (Pherobase B/48186, 'Prediction of Muscat aroma by rose oxide'); linalolo/geraniolo/nerolo (OENO One; Muscat Hamburg ripening, agris.fao)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva Moscato (Vitis vinifera) monoterpeni liberi: rose oxide marcatore (Pherobase B/48186, 'Prediction of Muscat aroma by rose oxide'); linalolo/geraniolo/nerolo (OENO One; Muscat Hamburg ripening, agris.fao)."
+        },
+        {
+          "composto": "nerol",
+          "descrittore": "rosa dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva Moscato (Vitis vinifera) monoterpeni liberi: rose oxide marcatore (Pherobase B/48186, 'Prediction of Muscat aroma by rose oxide'); linalolo/geraniolo/nerolo (OENO One; Muscat Hamburg ripening, agris.fao)."
+        },
+        {
+          "composto": "cis-rose oxide",
+          "descrittore": "rosa-litchi (marcatore moscato)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva Moscato (Vitis vinifera) monoterpeni liberi: rose oxide marcatore (Pherobase B/48186, 'Prediction of Muscat aroma by rose oxide'); linalolo/geraniolo/nerolo (OENO One; Muscat Hamburg ripening, agris.fao)."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "lilla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva Moscato (Vitis vinifera) monoterpeni liberi: rose oxide marcatore (Pherobase B/48186, 'Prediction of Muscat aroma by rose oxide'); linalolo/geraniolo/nerolo (OENO One; Muscat Hamburg ripening, agris.fao)."
+        },
+        {
+          "composto": "hotrienol",
+          "descrittore": "floreale, tiglio",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva Moscato (Vitis vinifera) monoterpeni liberi: rose oxide marcatore (Pherobase B/48186, 'Prediction of Muscat aroma by rose oxide'); linalolo/geraniolo/nerolo (OENO One; Muscat Hamburg ripening, agris.fao)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "prugna",
+      "nodo_target": "ing-prugna",
+      "specie": "Prunus domestica",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Prugna (Prunus domestica) volatili GC-MS (scielo.br/j/cta; PMC7492728 tab.2; redalyc 395940112012); gamma-decalattone/benzaldeide/linalolo marcatori drupacea.",
+      "composti": [
+        {
+          "composto": "gamma-decalactone",
+          "descrittore": "pesca-cocco cremoso (lattone chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prugna (Prunus domestica) volatili GC-MS (scielo.br/j/cta; PMC7492728 tab.2; redalyc 395940112012); gamma-decalattone/benzaldeide/linalolo marcatori drupacea."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla-ciliegia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prugna (Prunus domestica) volatili GC-MS (scielo.br/j/cta; PMC7492728 tab.2; redalyc 395940112012); gamma-decalattone/benzaldeide/linalolo marcatori drupacea."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prugna (Prunus domestica) volatili GC-MS (scielo.br/j/cta; PMC7492728 tab.2; redalyc 395940112012); gamma-decalattone/benzaldeide/linalolo marcatori drupacea."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde, mela",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prugna (Prunus domestica) volatili GC-MS (scielo.br/j/cta; PMC7492728 tab.2; redalyc 395940112012); gamma-decalattone/benzaldeide/linalolo marcatori drupacea."
+        },
+        {
+          "composto": "gamma-octalactone",
+          "descrittore": "cocco dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prugna (Prunus domestica) volatili GC-MS (scielo.br/j/cta; PMC7492728 tab.2; redalyc 395940112012); gamma-decalattone/benzaldeide/linalolo marcatori drupacea."
+        },
+        {
+          "composto": "ethyl nonanoate",
+          "descrittore": "fruttato floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prugna (Prunus domestica) volatili GC-MS (scielo.br/j/cta; PMC7492728 tab.2; redalyc 395940112012); gamma-decalattone/benzaldeide/linalolo marcatori drupacea."
+        }
+      ]
+    },
+    {
+      "ingrediente": "camomilla",
+      "nodo_target": "ing-camomilla",
+      "specie": "Matricaria chamomilla",
+      "dominio": "bar",
+      "fonte_ingrediente": "Camomilla comune (Matricaria chamomilla/recutita) olio essenziale: alpha-bisabololo e ossidi, camazulene (da matricina), (E)-beta-farnesene, spiroetere (iris.unito.it 2318/2029614; orientjchem.org/download/26896; ugr.es Matricaria recutita).",
+      "composti": [
+        {
+          "composto": "alpha-bisabolol",
+          "descrittore": "floreale-dolce erbaceo (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camomilla comune (Matricaria chamomilla/recutita) olio essenziale: alpha-bisabololo e ossidi, camazulene (da matricina), (E)-beta-farnesene, spiroetere (iris.unito.it 2318/2029614; orientjchem.org/download/26896; ugr.es Matricaria recutita)."
+        },
+        {
+          "composto": "chamazulene",
+          "descrittore": "erbaceo-balsamico, blu (da matricina)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camomilla comune (Matricaria chamomilla/recutita) olio essenziale: alpha-bisabololo e ossidi, camazulene (da matricina), (E)-beta-farnesene, spiroetere (iris.unito.it 2318/2029614; orientjchem.org/download/26896; ugr.es Matricaria recutita)."
+        },
+        {
+          "composto": "bisabolol oxide A",
+          "descrittore": "erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camomilla comune (Matricaria chamomilla/recutita) olio essenziale: alpha-bisabololo e ossidi, camazulene (da matricina), (E)-beta-farnesene, spiroetere (iris.unito.it 2318/2029614; orientjchem.org/download/26896; ugr.es Matricaria recutita)."
+        },
+        {
+          "composto": "(E)-beta-farnesene",
+          "descrittore": "legnoso dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camomilla comune (Matricaria chamomilla/recutita) olio essenziale: alpha-bisabololo e ossidi, camazulene (da matricina), (E)-beta-farnesene, spiroetere (iris.unito.it 2318/2029614; orientjchem.org/download/26896; ugr.es Matricaria recutita)."
+        },
+        {
+          "composto": "cis-spiroether",
+          "descrittore": "erbaceo caratteristico (en-in-dicicloetere)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camomilla comune (Matricaria chamomilla/recutita) olio essenziale: alpha-bisabololo e ossidi, camazulene (da matricina), (E)-beta-farnesene, spiroetere (iris.unito.it 2318/2029614; orientjchem.org/download/26896; ugr.es Matricaria recutita)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "te nero",
+      "nodo_target": "ing-te-nero",
+      "specie": "Camellia sinensis (fermentato)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Te nero (Camellia sinensis) key odorants GC-O (PMC9222254, 'Key Odor-Active Compounds in Sun-Dried Black Tea'); linalolo/geraniolo/metil salicilato/beta-ionone/hotrienol.",
+      "composti": [
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-agrume",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero (Camellia sinensis) key odorants GC-O (PMC9222254, 'Key Odor-Active Compounds in Sun-Dried Black Tea'); linalolo/geraniolo/metil salicilato/beta-ionone/hotrienol."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero (Camellia sinensis) key odorants GC-O (PMC9222254, 'Key Odor-Active Compounds in Sun-Dried Black Tea'); linalolo/geraniolo/metil salicilato/beta-ionone/hotrienol."
+        },
+        {
+          "composto": "methyl salicylate",
+          "descrittore": "balsamico, wintergreen",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero (Camellia sinensis) key odorants GC-O (PMC9222254, 'Key Odor-Active Compounds in Sun-Dried Black Tea'); linalolo/geraniolo/metil salicilato/beta-ionone/hotrienol."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero (Camellia sinensis) key odorants GC-O (PMC9222254, 'Key Odor-Active Compounds in Sun-Dried Black Tea'); linalolo/geraniolo/metil salicilato/beta-ionone/hotrienol."
+        },
+        {
+          "composto": "hotrienol",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero (Camellia sinensis) key odorants GC-O (PMC9222254, 'Key Odor-Active Compounds in Sun-Dried Black Tea'); linalolo/geraniolo/metil salicilato/beta-ionone/hotrienol."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero (Camellia sinensis) key odorants GC-O (PMC9222254, 'Key Odor-Active Compounds in Sun-Dried Black Tea'); linalolo/geraniolo/metil salicilato/beta-ionone/hotrienol."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mela cotogna",
+      "nodo_target": "ing-mela-cotogna",
+      "specie": "Cydonia oblonga",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Mela cotogna (Cydonia oblonga) aroma: marmelo lattone/ossido marcatore (Winterhalter & Schreier); theaspirano, beta-damascenone (flore.unifi.it 2158/1128405; research.unite.it; oaj.fupress AHS 32/1 2018).",
+      "composti": [
+        {
+          "composto": "marmelo lactone",
+          "descrittore": "cotogna cotta (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mela cotogna (Cydonia oblonga) aroma: marmelo lattone/ossido marcatore (Winterhalter & Schreier); theaspirano, beta-damascenone (flore.unifi.it 2158/1128405; research.unite.it; oaj.fupress AHS 32/1 2018)."
+        },
+        {
+          "composto": "theaspirane",
+          "descrittore": "canfora-frutta, cotogna",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mela cotogna (Cydonia oblonga) aroma: marmelo lattone/ossido marcatore (Winterhalter & Schreier); theaspirano, beta-damascenone (flore.unifi.it 2158/1128405; research.unite.it; oaj.fupress AHS 32/1 2018)."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-rosa, miele",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mela cotogna (Cydonia oblonga) aroma: marmelo lattone/ossido marcatore (Winterhalter & Schreier); theaspirano, beta-damascenone (flore.unifi.it 2158/1128405; research.unite.it; oaj.fupress AHS 32/1 2018)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato, ananas-mela",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mela cotogna (Cydonia oblonga) aroma: marmelo lattone/ossido marcatore (Winterhalter & Schreier); theaspirano, beta-damascenone (flore.unifi.it 2158/1128405; research.unite.it; oaj.fupress AHS 32/1 2018)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mela cotogna (Cydonia oblonga) aroma: marmelo lattone/ossido marcatore (Winterhalter & Schreier); theaspirano, beta-damascenone (flore.unifi.it 2158/1128405; research.unite.it; oaj.fupress AHS 32/1 2018)."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "lilla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mela cotogna (Cydonia oblonga) aroma: marmelo lattone/ossido marcatore (Winterhalter & Schreier); theaspirano, beta-damascenone (flore.unifi.it 2158/1128405; research.unite.it; oaj.fupress AHS 32/1 2018)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "curcuma",
+      "nodo_target": "ing-curcuma",
+      "specie": "Curcuma longa",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Curcuma (Curcuma longa) olio del rizoma GC-MS: ar-turmerone/alpha-/beta-turmerone, zingiberene, alpha-fellandrene, 1,8-cineolo (PMC9332366 'Volatile Constituents in Curcuma longa'; PMC8510441).",
+      "composti": [
+        {
+          "composto": "ar-turmerone",
+          "descrittore": "legnoso-speziato, curcuma (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Curcuma (Curcuma longa) olio del rizoma GC-MS: ar-turmerone/alpha-/beta-turmerone, zingiberene, alpha-fellandrene, 1,8-cineolo (PMC9332366 'Volatile Constituents in Curcuma longa'; PMC8510441)."
+        },
+        {
+          "composto": "alpha-turmerone",
+          "descrittore": "legnoso-erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Curcuma (Curcuma longa) olio del rizoma GC-MS: ar-turmerone/alpha-/beta-turmerone, zingiberene, alpha-fellandrene, 1,8-cineolo (PMC9332366 'Volatile Constituents in Curcuma longa'; PMC8510441)."
+        },
+        {
+          "composto": "beta-turmerone",
+          "descrittore": "legnoso (curlone)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Curcuma (Curcuma longa) olio del rizoma GC-MS: ar-turmerone/alpha-/beta-turmerone, zingiberene, alpha-fellandrene, 1,8-cineolo (PMC9332366 'Volatile Constituents in Curcuma longa'; PMC8510441)."
+        },
+        {
+          "composto": "zingiberene",
+          "descrittore": "zenzero-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Curcuma (Curcuma longa) olio del rizoma GC-MS: ar-turmerone/alpha-/beta-turmerone, zingiberene, alpha-fellandrene, 1,8-cineolo (PMC9332366 'Volatile Constituents in Curcuma longa'; PMC8510441)."
+        },
+        {
+          "composto": "alpha-phellandrene",
+          "descrittore": "agrume-pepe",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Curcuma (Curcuma longa) olio del rizoma GC-MS: ar-turmerone/alpha-/beta-turmerone, zingiberene, alpha-fellandrene, 1,8-cineolo (PMC9332366 'Volatile Constituents in Curcuma longa'; PMC8510441)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "balsamico fresco, eucalipto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Curcuma (Curcuma longa) olio del rizoma GC-MS: ar-turmerone/alpha-/beta-turmerone, zingiberene, alpha-fellandrene, 1,8-cineolo (PMC9332366 'Volatile Constituents in Curcuma longa'; PMC8510441)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 23/10 (i): +8 (yuzu, nocciola tostata, uva moscato, prugna, camomilla, te nero, mela cotogna, curcuma). Marcatori-firma verificati su fonte reale. Buona condivisione composti col grafo (limonene/linalolo/geraniolo/beta-damascenone/zingiberene/pirazine/(E)-2-hexenal) -> nuovi archi di abbinamento.",
     "Ondata 23/10 (h): +3 (maggiorana, sedano, mango). Marcatori chiari. Sessione 23/10: da 50 a 69.",
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
     "Secondo giro %: chiudere i 'n.d. (da raffinare)' con tabelle GC dedicate (cipolla, miele, noce moscata, arancia aldeidi).",
