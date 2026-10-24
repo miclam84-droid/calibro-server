@@ -13446,9 +13446,841 @@
           "fonte": "Calamansi: firma limonene + citronellale (il citronellale lo distingue dagli altri agrumi). Husni, Yeni & Dachriyanus, Proc. ICCSCP 2021, Atlantis Press (DOI 10.2991/ahsr.k.211105.046). NOTA ONESTA: olio essenziale, paper ad orientamento antibatterico, nessun descrittore sensoriale — la composizione GC-MS è comunque reale."
         }
       ]
+    },
+    {
+      "ingrediente": "tè nero",
+      "nodo_target": "ing-te-nero-infuso",
+      "specie": "Camellia sinensis, infuso ossidato",
+      "dominio": "bar",
+      "fonte_ingrediente": "Tè nero (infuso): firma geraniolo + linalolo (OAV più alti, primi nei test di omissione = carattere floreale-fruttato). Wang S. et al. 2025, Frontiers in Nutrition 12:1577302 (DOI 10.3389/fnut.2025.1577302, MDGC-MS/O + OAV). NOTA: campioni Congou Sichuan, ma i marcatori coincidono col profilo classico del tè nero.",
+      "composti": [
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa-dolce-fiorito (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè nero (infuso): firma geraniolo + linalolo (OAV più alti, primi nei test di omissione = carattere floreale-fruttato). Wang S. et al. 2025, Frontiers in Nutrition 12:1577302 (DOI 10.3389/fnut.2025.1577302, MDGC-MS/O + OAV). NOTA: campioni Congou Sichuan, ma i marcatori coincidono col profilo classico del tè nero."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "fiorito-agrumato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè nero (infuso): firma geraniolo + linalolo (OAV più alti, primi nei test di omissione = carattere floreale-fruttato). Wang S. et al. 2025, Frontiers in Nutrition 12:1577302 (DOI 10.3389/fnut.2025.1577302, MDGC-MS/O + OAV). NOTA: campioni Congou Sichuan, ma i marcatori coincidono col profilo classico del tè nero."
+        },
+        {
+          "composto": "methyl salicylate",
+          "descrittore": "verde-balsamico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè nero (infuso): firma geraniolo + linalolo (OAV più alti, primi nei test di omissione = carattere floreale-fruttato). Wang S. et al. 2025, Frontiers in Nutrition 12:1577302 (DOI 10.3389/fnut.2025.1577302, MDGC-MS/O + OAV). NOTA: campioni Congou Sichuan, ma i marcatori coincidono col profilo classico del tè nero."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "fiorito-mielato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè nero (infuso): firma geraniolo + linalolo (OAV più alti, primi nei test di omissione = carattere floreale-fruttato). Wang S. et al. 2025, Frontiers in Nutrition 12:1577302 (DOI 10.3389/fnut.2025.1577302, MDGC-MS/O + OAV). NOTA: campioni Congou Sichuan, ma i marcatori coincidono col profilo classico del tè nero."
+        },
+        {
+          "composto": "beta-myrcene",
+          "descrittore": "legnoso-resinoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè nero (infuso): firma geraniolo + linalolo (OAV più alti, primi nei test di omissione = carattere floreale-fruttato). Wang S. et al. 2025, Frontiers in Nutrition 12:1577302 (DOI 10.3389/fnut.2025.1577302, MDGC-MS/O + OAV). NOTA: campioni Congou Sichuan, ma i marcatori coincidono col profilo classico del tè nero."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè nero (infuso): firma geraniolo + linalolo (OAV più alti, primi nei test di omissione = carattere floreale-fruttato). Wang S. et al. 2025, Frontiers in Nutrition 12:1577302 (DOI 10.3389/fnut.2025.1577302, MDGC-MS/O + OAV). NOTA: campioni Congou Sichuan, ma i marcatori coincidono col profilo classico del tè nero."
+        }
+      ]
+    },
+    {
+      "ingrediente": "tè verde",
+      "nodo_target": "ing-te-verde-infuso",
+      "specie": "Camellia sinensis, infuso non ossidato",
+      "dominio": "bar",
+      "fonte_ingrediente": "Tè verde (infuso): firma linalolo (OAV ~70, impatto floreale dominante) + DMS (la 'freschezza' che distingue il verde dal nero). Ma L.-L. et al. 2019, Turkish J. Agric. Forestry 43:451-463 (DOI 10.3906/tar-1807-155, GC-MS + OAV).",
+      "composti": [
+        {
+          "composto": "linalool",
+          "descrittore": "fiorito-fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè verde (infuso): firma linalolo (OAV ~70, impatto floreale dominante) + DMS (la 'freschezza' che distingue il verde dal nero). Ma L.-L. et al. 2019, Turkish J. Agric. Forestry 43:451-463 (DOI 10.3906/tar-1807-155, GC-MS + OAV)."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "verde-fresco (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè verde (infuso): firma linalolo (OAV ~70, impatto floreale dominante) + DMS (la 'freschezza' che distingue il verde dal nero). Ma L.-L. et al. 2019, Turkish J. Agric. Forestry 43:451-463 (DOI 10.3906/tar-1807-155, GC-MS + OAV)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-fiorito",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè verde (infuso): firma linalolo (OAV ~70, impatto floreale dominante) + DMS (la 'freschezza' che distingue il verde dal nero). Ma L.-L. et al. 2019, Turkish J. Agric. Forestry 43:451-463 (DOI 10.3906/tar-1807-155, GC-MS + OAV)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa-fiorito",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè verde (infuso): firma linalolo (OAV ~70, impatto floreale dominante) + DMS (la 'freschezza' che distingue il verde dal nero). Ma L.-L. et al. 2019, Turkish J. Agric. Forestry 43:451-463 (DOI 10.3906/tar-1807-155, GC-MS + OAV)."
+        },
+        {
+          "composto": "decanal",
+          "descrittore": "agrumato-arancia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè verde (infuso): firma linalolo (OAV ~70, impatto floreale dominante) + DMS (la 'freschezza' che distingue il verde dal nero). Ma L.-L. et al. 2019, Turkish J. Agric. Forestry 43:451-463 (DOI 10.3906/tar-1807-155, GC-MS + OAV)."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "verde-rosaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tè verde (infuso): firma linalolo (OAV ~70, impatto floreale dominante) + DMS (la 'freschezza' che distingue il verde dal nero). Ma L.-L. et al. 2019, Turkish J. Agric. Forestry 43:451-463 (DOI 10.3906/tar-1807-155, GC-MS + OAV)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "caffè",
+      "nodo_target": "ing-caffe-tostato",
+      "specie": "Coffea, tostato/espresso",
+      "dominio": "bar",
+      "fonte_ingrediente": "Caffè tostato: firma 4-vinilguaiacolo (OAV più alto, 340-761) + furaneolo (FD max 2187) + guaiacolo (FD max). Chen X. et al. 2025, Foods 14(18):3192 (DOI 10.3390/foods14183192, GC-O/AEDA + OAV + omissione, 4 arabiche tostatura media).",
+      "composti": [
+        {
+          "composto": "4-vinylguaiacol",
+          "descrittore": "affumicato-speziato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Caffè tostato: firma 4-vinilguaiacolo (OAV più alto, 340-761) + furaneolo (FD max 2187) + guaiacolo (FD max). Chen X. et al. 2025, Foods 14(18):3192 (DOI 10.3390/foods14183192, GC-O/AEDA + OAV + omissione, 4 arabiche tostatura media)."
+        },
+        {
+          "composto": "4-hydroxy-2,5-dimethyl-3(2H)-furanone",
+          "descrittore": "caramello-fragola (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Caffè tostato: firma 4-vinilguaiacolo (OAV più alto, 340-761) + furaneolo (FD max 2187) + guaiacolo (FD max). Chen X. et al. 2025, Foods 14(18):3192 (DOI 10.3390/foods14183192, GC-O/AEDA + OAV + omissione, 4 arabiche tostatura media)."
+        },
+        {
+          "composto": "guaiacol",
+          "descrittore": "legnoso-affumicato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Caffè tostato: firma 4-vinilguaiacolo (OAV più alto, 340-761) + furaneolo (FD max 2187) + guaiacolo (FD max). Chen X. et al. 2025, Foods 14(18):3192 (DOI 10.3390/foods14183192, GC-O/AEDA + OAV + omissione, 4 arabiche tostatura media)."
+        },
+        {
+          "composto": "2,3,5-trimethylpyrazine",
+          "descrittore": "tostato-cacao-nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Caffè tostato: firma 4-vinilguaiacolo (OAV più alto, 340-761) + furaneolo (FD max 2187) + guaiacolo (FD max). Chen X. et al. 2025, Foods 14(18):3192 (DOI 10.3390/foods14183192, GC-O/AEDA + OAV + omissione, 4 arabiche tostatura media)."
+        },
+        {
+          "composto": "2-furfurylthiol",
+          "descrittore": "zolfo-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Caffè tostato: firma 4-vinilguaiacolo (OAV più alto, 340-761) + furaneolo (FD max 2187) + guaiacolo (FD max). Chen X. et al. 2025, Foods 14(18):3192 (DOI 10.3390/foods14183192, GC-O/AEDA + OAV + omissione, 4 arabiche tostatura media)."
+        },
+        {
+          "composto": "3-methylbutanoic acid",
+          "descrittore": "acido-pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Caffè tostato: firma 4-vinilguaiacolo (OAV più alto, 340-761) + furaneolo (FD max 2187) + guaiacolo (FD max). Chen X. et al. 2025, Foods 14(18):3192 (DOI 10.3390/foods14183192, GC-O/AEDA + OAV + omissione, 4 arabiche tostatura media)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "vino bianco",
+      "nodo_target": "ing-vino-bianco",
+      "specie": "vino bianco giovane secco",
+      "dominio": "bar",
+      "fonte_ingrediente": "Vino bianco giovane: firma esteri etilici (ethyl hexanoate, ethyl butanoate) + isoamil acetato + beta-damascenone = scheletro fruttato; linalolo è firma solo nelle varietà aromatiche (moscato/traminer). Guth H. 1997, J. Agric. Food Chem. 45(8):3027-3032 (DOI 10.1021/jf970280a, OAV + ricostituzione, riferimento storico). NOTA: beta-damascenone come top da Guth; review più recenti confermano il set con OAV >1 non numerici.",
+      "composti": [
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "ananas-mela (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino bianco giovane: firma esteri etilici (ethyl hexanoate, ethyl butanoate) + isoamil acetato + beta-damascenone = scheletro fruttato; linalolo è firma solo nelle varietà aromatiche (moscato/traminer). Guth H. 1997, J. Agric. Food Chem. 45(8):3027-3032 (DOI 10.1021/jf970280a, OAV + ricostituzione, riferimento storico). NOTA: beta-damascenone come top da Guth; review più recenti confermano il set con OAV >1 non numerici."
+        },
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino bianco giovane: firma esteri etilici (ethyl hexanoate, ethyl butanoate) + isoamil acetato + beta-damascenone = scheletro fruttato; linalolo è firma solo nelle varietà aromatiche (moscato/traminer). Guth H. 1997, J. Agric. Food Chem. 45(8):3027-3032 (DOI 10.1021/jf970280a, OAV + ricostituzione, riferimento storico). NOTA: beta-damascenone come top da Guth; review più recenti confermano il set con OAV >1 non numerici."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-fragola (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino bianco giovane: firma esteri etilici (ethyl hexanoate, ethyl butanoate) + isoamil acetato + beta-damascenone = scheletro fruttato; linalolo è firma solo nelle varietà aromatiche (moscato/traminer). Guth H. 1997, J. Agric. Food Chem. 45(8):3027-3032 (DOI 10.1021/jf970280a, OAV + ricostituzione, riferimento storico). NOTA: beta-damascenone come top da Guth; review più recenti confermano il set con OAV >1 non numerici."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-fiorito",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino bianco giovane: firma esteri etilici (ethyl hexanoate, ethyl butanoate) + isoamil acetato + beta-damascenone = scheletro fruttato; linalolo è firma solo nelle varietà aromatiche (moscato/traminer). Guth H. 1997, J. Agric. Food Chem. 45(8):3027-3032 (DOI 10.1021/jf970280a, OAV + ricostituzione, riferimento storico). NOTA: beta-damascenone come top da Guth; review più recenti confermano il set con OAV >1 non numerici."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa-miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino bianco giovane: firma esteri etilici (ethyl hexanoate, ethyl butanoate) + isoamil acetato + beta-damascenone = scheletro fruttato; linalolo è firma solo nelle varietà aromatiche (moscato/traminer). Guth H. 1997, J. Agric. Food Chem. 45(8):3027-3032 (DOI 10.1021/jf970280a, OAV + ricostituzione, riferimento storico). NOTA: beta-damascenone come top da Guth; review più recenti confermano il set con OAV >1 non numerici."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "fiorito (varietà aromatiche)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino bianco giovane: firma esteri etilici (ethyl hexanoate, ethyl butanoate) + isoamil acetato + beta-damascenone = scheletro fruttato; linalolo è firma solo nelle varietà aromatiche (moscato/traminer). Guth H. 1997, J. Agric. Food Chem. 45(8):3027-3032 (DOI 10.1021/jf970280a, OAV + ricostituzione, riferimento storico). NOTA: beta-damascenone come top da Guth; review più recenti confermano il set con OAV >1 non numerici."
+        }
+      ]
+    },
+    {
+      "ingrediente": "birra lager",
+      "nodo_target": "ing-birra-lager",
+      "specie": "pale lager, bassa fermentazione",
+      "dominio": "bar",
+      "fonte_ingrediente": "Birra lager chiara: firma esteri fruttati (isoamil acetato banana + ethyl hexanoate/octanoate mela-pera) + DMS (mais cotto, nota tipica della lager), luppolo leggero (linalolo). Schieberle P. 1991, Z. Lebensm.-Unters. Forsch. 193(6):558-565 (DOI 10.1007/BF01190873, AEDA/FD, studio classico pale lager) + Hong J. et al. 2025, Foods 14(10):1702 (DOI 10.3390/foods14101702, OAV).",
+      "composti": [
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra lager chiara: firma esteri fruttati (isoamil acetato banana + ethyl hexanoate/octanoate mela-pera) + DMS (mais cotto, nota tipica della lager), luppolo leggero (linalolo). Schieberle P. 1991, Z. Lebensm.-Unters. Forsch. 193(6):558-565 (DOI 10.1007/BF01190873, AEDA/FD, studio classico pale lager) + Hong J. et al. 2025, Foods 14(10):1702 (DOI 10.3390/foods14101702, OAV)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "mela-pera (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra lager chiara: firma esteri fruttati (isoamil acetato banana + ethyl hexanoate/octanoate mela-pera) + DMS (mais cotto, nota tipica della lager), luppolo leggero (linalolo). Schieberle P. 1991, Z. Lebensm.-Unters. Forsch. 193(6):558-565 (DOI 10.1007/BF01190873, AEDA/FD, studio classico pale lager) + Hong J. et al. 2025, Foods 14(10):1702 (DOI 10.3390/foods14101702, OAV)."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "mais cotto-verdura (firma lager)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra lager chiara: firma esteri fruttati (isoamil acetato banana + ethyl hexanoate/octanoate mela-pera) + DMS (mais cotto, nota tipica della lager), luppolo leggero (linalolo). Schieberle P. 1991, Z. Lebensm.-Unters. Forsch. 193(6):558-565 (DOI 10.1007/BF01190873, AEDA/FD, studio classico pale lager) + Hong J. et al. 2025, Foods 14(10):1702 (DOI 10.3390/foods14101702, OAV)."
+        },
+        {
+          "composto": "ethyl octanoate",
+          "descrittore": "fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra lager chiara: firma esteri fruttati (isoamil acetato banana + ethyl hexanoate/octanoate mela-pera) + DMS (mais cotto, nota tipica della lager), luppolo leggero (linalolo). Schieberle P. 1991, Z. Lebensm.-Unters. Forsch. 193(6):558-565 (DOI 10.1007/BF01190873, AEDA/FD, studio classico pale lager) + Hong J. et al. 2025, Foods 14(10):1702 (DOI 10.3390/foods14101702, OAV)."
+        },
+        {
+          "composto": "2-phenylethyl acetate",
+          "descrittore": "rosa-miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra lager chiara: firma esteri fruttati (isoamil acetato banana + ethyl hexanoate/octanoate mela-pera) + DMS (mais cotto, nota tipica della lager), luppolo leggero (linalolo). Schieberle P. 1991, Z. Lebensm.-Unters. Forsch. 193(6):558-565 (DOI 10.1007/BF01190873, AEDA/FD, studio classico pale lager) + Hong J. et al. 2025, Foods 14(10):1702 (DOI 10.3390/foods14101702, OAV)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "fiorito-agrumato (luppolo)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra lager chiara: firma esteri fruttati (isoamil acetato banana + ethyl hexanoate/octanoate mela-pera) + DMS (mais cotto, nota tipica della lager), luppolo leggero (linalolo). Schieberle P. 1991, Z. Lebensm.-Unters. Forsch. 193(6):558-565 (DOI 10.1007/BF01190873, AEDA/FD, studio classico pale lager) + Hong J. et al. 2025, Foods 14(10):1702 (DOI 10.3390/foods14101702, OAV)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "spumante metodo classico",
+      "nodo_target": "ing-spumante-metodo-classico",
+      "specie": "vino spumante, rifermentazione in bottiglia",
+      "dominio": "bar",
+      "fonte_ingrediente": "Spumante metodo classico: firma fruttata-floreale (ethyl isobutyrate + isoamil acetato + ethyl hexanoate + 2-feniletanolo); firma di metodo/sur lie = diethyl succinate + vitispirane (salgono con la permanenza sui lieviti). Úbeda C. et al. 2019, Food Research International 119:554-563 (DOI 10.1016/j.foodres.2018.10.032, GC-O + SPME-GC-MS). NOTA: metrica Modified Frequency (GC-O), non OAV; spumante metodo tradizionale non-Champagne, stesso meccanismo autolitico.",
+      "composti": [
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "anice-fragola-fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spumante metodo classico: firma fruttata-floreale (ethyl isobutyrate + isoamil acetato + ethyl hexanoate + 2-feniletanolo); firma di metodo/sur lie = diethyl succinate + vitispirane (salgono con la permanenza sui lieviti). Úbeda C. et al. 2019, Food Research International 119:554-563 (DOI 10.1016/j.foodres.2018.10.032, GC-O + SPME-GC-MS). NOTA: metrica Modified Frequency (GC-O), non OAV; spumante metodo tradizionale non-Champagne, stesso meccanismo autolitico."
+        },
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spumante metodo classico: firma fruttata-floreale (ethyl isobutyrate + isoamil acetato + ethyl hexanoate + 2-feniletanolo); firma di metodo/sur lie = diethyl succinate + vitispirane (salgono con la permanenza sui lieviti). Úbeda C. et al. 2019, Food Research International 119:554-563 (DOI 10.1016/j.foodres.2018.10.032, GC-O + SPME-GC-MS). NOTA: metrica Modified Frequency (GC-O), non OAV; spumante metodo tradizionale non-Champagne, stesso meccanismo autolitico."
+        },
+        {
+          "composto": "ethyl isobutyrate",
+          "descrittore": "fragola (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spumante metodo classico: firma fruttata-floreale (ethyl isobutyrate + isoamil acetato + ethyl hexanoate + 2-feniletanolo); firma di metodo/sur lie = diethyl succinate + vitispirane (salgono con la permanenza sui lieviti). Úbeda C. et al. 2019, Food Research International 119:554-563 (DOI 10.1016/j.foodres.2018.10.032, GC-O + SPME-GC-MS). NOTA: metrica Modified Frequency (GC-O), non OAV; spumante metodo tradizionale non-Champagne, stesso meccanismo autolitico."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa-fiorito",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spumante metodo classico: firma fruttata-floreale (ethyl isobutyrate + isoamil acetato + ethyl hexanoate + 2-feniletanolo); firma di metodo/sur lie = diethyl succinate + vitispirane (salgono con la permanenza sui lieviti). Úbeda C. et al. 2019, Food Research International 119:554-563 (DOI 10.1016/j.foodres.2018.10.032, GC-O + SPME-GC-MS). NOTA: metrica Modified Frequency (GC-O), non OAV; spumante metodo tradizionale non-Champagne, stesso meccanismo autolitico."
+        },
+        {
+          "composto": "diethyl succinate",
+          "descrittore": "fermentato-lattico (sur lie)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spumante metodo classico: firma fruttata-floreale (ethyl isobutyrate + isoamil acetato + ethyl hexanoate + 2-feniletanolo); firma di metodo/sur lie = diethyl succinate + vitispirane (salgono con la permanenza sui lieviti). Úbeda C. et al. 2019, Food Research International 119:554-563 (DOI 10.1016/j.foodres.2018.10.032, GC-O + SPME-GC-MS). NOTA: metrica Modified Frequency (GC-O), non OAV; spumante metodo tradizionale non-Champagne, stesso meccanismo autolitico."
+        },
+        {
+          "composto": "vitispirane",
+          "descrittore": "canfora-eucalipto (affinamento)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spumante metodo classico: firma fruttata-floreale (ethyl isobutyrate + isoamil acetato + ethyl hexanoate + 2-feniletanolo); firma di metodo/sur lie = diethyl succinate + vitispirane (salgono con la permanenza sui lieviti). Úbeda C. et al. 2019, Food Research International 119:554-563 (DOI 10.1016/j.foodres.2018.10.032, GC-O + SPME-GC-MS). NOTA: metrica Modified Frequency (GC-O), non OAV; spumante metodo tradizionale non-Champagne, stesso meccanismo autolitico."
+        }
+      ]
+    },
+    {
+      "ingrediente": "vino porto",
+      "nodo_target": "ing-vino-porto",
+      "specie": "Porto, vino fortificato ossidativo",
+      "dominio": "bar",
+      "fonte_ingrediente": "Vino porto (invecchiato ossidativo): firma sotolon = marcatore d'impatto dell'aroma 'madeirizzato/rancio' (soglia 19 µg/L; nel porto 10 anni 91 µg/L, OAV ~4.8; assente nel Ruby 4 anni). Silva Ferreira A.C., Barbe J.C., Bertrand A. 2003, J. Agric. Food Chem. 51(15):4356-4363. NOTA: questa fonte isola il sotolon; damascenone/methional/fenilacetaldeide da letteratura separata sul porto.",
+      "composti": [
+        {
+          "composto": "sotolon",
+          "descrittore": "noce-curry-ossidativo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino porto (invecchiato ossidativo): firma sotolon = marcatore d'impatto dell'aroma 'madeirizzato/rancio' (soglia 19 µg/L; nel porto 10 anni 91 µg/L, OAV ~4.8; assente nel Ruby 4 anni). Silva Ferreira A.C., Barbe J.C., Bertrand A. 2003, J. Agric. Food Chem. 51(15):4356-4363. NOTA: questa fonte isola il sotolon; damascenone/methional/fenilacetaldeide da letteratura separata sul porto."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-fiorito",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino porto (invecchiato ossidativo): firma sotolon = marcatore d'impatto dell'aroma 'madeirizzato/rancio' (soglia 19 µg/L; nel porto 10 anni 91 µg/L, OAV ~4.8; assente nel Ruby 4 anni). Silva Ferreira A.C., Barbe J.C., Bertrand A. 2003, J. Agric. Food Chem. 51(15):4356-4363. NOTA: questa fonte isola il sotolon; damascenone/methional/fenilacetaldeide da letteratura separata sul porto."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata cotta",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino porto (invecchiato ossidativo): firma sotolon = marcatore d'impatto dell'aroma 'madeirizzato/rancio' (soglia 19 µg/L; nel porto 10 anni 91 µg/L, OAV ~4.8; assente nel Ruby 4 anni). Silva Ferreira A.C., Barbe J.C., Bertrand A. 2003, J. Agric. Food Chem. 51(15):4356-4363. NOTA: questa fonte isola il sotolon; damascenone/methional/fenilacetaldeide da letteratura separata sul porto."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-fiorito",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino porto (invecchiato ossidativo): firma sotolon = marcatore d'impatto dell'aroma 'madeirizzato/rancio' (soglia 19 µg/L; nel porto 10 anni 91 µg/L, OAV ~4.8; assente nel Ruby 4 anni). Silva Ferreira A.C., Barbe J.C., Bertrand A. 2003, J. Agric. Food Chem. 51(15):4356-4363. NOTA: questa fonte isola il sotolon; damascenone/methional/fenilacetaldeide da letteratura separata sul porto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "manzo",
+      "nodo_target": "ing-manzo",
+      "specie": "carne bovina cotta (arrosto/griglia)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Manzo cotto: firma DOPPIA — ramo carneo Maillard (2-methyl-3-furanthiol, bis(2-methyl-3-furyl)disulfide = carne arrosto/brodo, character-impact classico Gasser & Grosch) + ramo ossidazione lipidica (1-octen-3-olo, nonanale, (E,E)-2,4-decadienale). Il ramo lipidico da Wang, Luo & Wang 2022, Frontiers in Nutrition (DOI 10.3389/fnut.2022.978622, GC-MS + OAV); il ramo tiolico carneo da letteratura classica cooked-beef.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Manzo cotto: firma DOPPIA — ramo carneo Maillard (2-methyl-3-furanthiol, bis(2-methyl-3-furyl)disulfide = carne arrosto/brodo, character-impact classico Gasser & Grosch) + ramo ossidazione lipidica (1-octen-3-olo, nonanale, (E,E)-2,4-decadienale). Il ramo lipidico da Wang, Luo & Wang 2022, Frontiers in Nutrition (DOI 10.3389/fnut.2022.978622, GC-MS + OAV); il ramo tiolico carneo da letteratura classica cooked-beef."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Manzo cotto: firma DOPPIA — ramo carneo Maillard (2-methyl-3-furanthiol, bis(2-methyl-3-furyl)disulfide = carne arrosto/brodo, character-impact classico Gasser & Grosch) + ramo ossidazione lipidica (1-octen-3-olo, nonanale, (E,E)-2,4-decadienale). Il ramo lipidico da Wang, Luo & Wang 2022, Frontiers in Nutrition (DOI 10.3389/fnut.2022.978622, GC-MS + OAV); il ramo tiolico carneo da letteratura classica cooked-beef."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Manzo cotto: firma DOPPIA — ramo carneo Maillard (2-methyl-3-furanthiol, bis(2-methyl-3-furyl)disulfide = carne arrosto/brodo, character-impact classico Gasser & Grosch) + ramo ossidazione lipidica (1-octen-3-olo, nonanale, (E,E)-2,4-decadienale). Il ramo lipidico da Wang, Luo & Wang 2022, Frontiers in Nutrition (DOI 10.3389/fnut.2022.978622, GC-MS + OAV); il ramo tiolico carneo da letteratura classica cooked-beef."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Manzo cotto: firma DOPPIA — ramo carneo Maillard (2-methyl-3-furanthiol, bis(2-methyl-3-furyl)disulfide = carne arrosto/brodo, character-impact classico Gasser & Grosch) + ramo ossidazione lipidica (1-octen-3-olo, nonanale, (E,E)-2,4-decadienale). Il ramo lipidico da Wang, Luo & Wang 2022, Frontiers in Nutrition (DOI 10.3389/fnut.2022.978622, GC-MS + OAV); il ramo tiolico carneo da letteratura classica cooked-beef."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Manzo cotto: firma DOPPIA — ramo carneo Maillard (2-methyl-3-furanthiol, bis(2-methyl-3-furyl)disulfide = carne arrosto/brodo, character-impact classico Gasser & Grosch) + ramo ossidazione lipidica (1-octen-3-olo, nonanale, (E,E)-2,4-decadienale). Il ramo lipidico da Wang, Luo & Wang 2022, Frontiers in Nutrition (DOI 10.3389/fnut.2022.978622, GC-MS + OAV); il ramo tiolico carneo da letteratura classica cooked-beef."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Manzo cotto: firma DOPPIA — ramo carneo Maillard (2-methyl-3-furanthiol, bis(2-methyl-3-furyl)disulfide = carne arrosto/brodo, character-impact classico Gasser & Grosch) + ramo ossidazione lipidica (1-octen-3-olo, nonanale, (E,E)-2,4-decadienale). Il ramo lipidico da Wang, Luo & Wang 2022, Frontiers in Nutrition (DOI 10.3389/fnut.2022.978622, GC-MS + OAV); il ramo tiolico carneo da letteratura classica cooked-beef."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pollo",
+      "nodo_target": "ing-pollo",
+      "specie": "carne di pollo cotta (arrosto)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Pollo cotto: firma (E,E)-2,4-decadienale (marcatore classico del grasso di pollo) + tioli solforati/pirazine (carneo-tostato). 'Characterization of key aroma compounds in roasted chicken', Food Chemistry: X 2024 (SPME-SAFE-GC-O-GC/MS, AEDA, OAV, omissione + sensoriale).",
+      "composti": [
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "grasso-di-pollo-carneo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pollo cotto: firma (E,E)-2,4-decadienale (marcatore classico del grasso di pollo) + tioli solforati/pirazine (carneo-tostato). 'Characterization of key aroma compounds in roasted chicken', Food Chemistry: X 2024 (SPME-SAFE-GC-O-GC/MS, AEDA, OAV, omissione + sensoriale)."
+        },
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carneo-arrosto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pollo cotto: firma (E,E)-2,4-decadienale (marcatore classico del grasso di pollo) + tioli solforati/pirazine (carneo-tostato). 'Characterization of key aroma compounds in roasted chicken', Food Chemistry: X 2024 (SPME-SAFE-GC-O-GC/MS, AEDA, OAV, omissione + sensoriale)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pollo cotto: firma (E,E)-2,4-decadienale (marcatore classico del grasso di pollo) + tioli solforati/pirazine (carneo-tostato). 'Characterization of key aroma compounds in roasted chicken', Food Chemistry: X 2024 (SPME-SAFE-GC-O-GC/MS, AEDA, OAV, omissione + sensoriale)."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforoso-zolfo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pollo cotto: firma (E,E)-2,4-decadienale (marcatore classico del grasso di pollo) + tioli solforati/pirazine (carneo-tostato). 'Characterization of key aroma compounds in roasted chicken', Food Chemistry: X 2024 (SPME-SAFE-GC-O-GC/MS, AEDA, OAV, omissione + sensoriale)."
+        },
+        {
+          "composto": "3-ethyl-2,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pollo cotto: firma (E,E)-2,4-decadienale (marcatore classico del grasso di pollo) + tioli solforati/pirazine (carneo-tostato). 'Characterization of key aroma compounds in roasted chicken', Food Chemistry: X 2024 (SPME-SAFE-GC-O-GC/MS, AEDA, OAV, omissione + sensoriale)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pollo cotto: firma (E,E)-2,4-decadienale (marcatore classico del grasso di pollo) + tioli solforati/pirazine (carneo-tostato). 'Characterization of key aroma compounds in roasted chicken', Food Chemistry: X 2024 (SPME-SAFE-GC-O-GC/MS, AEDA, OAV, omissione + sensoriale)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "maiale",
+      "nodo_target": "ing-maiale",
+      "specie": "carne suina cotta (arrosto)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Maiale cotto: firma alchil-pirazine (3-ethyl-2,5-dimethylpyrazine = roasty/Maillard, discriminante) + dimethyl trisulfide (zolfo, ROAV alto); base di aldeidi da ossidazione lipidica. Studio roasted pork GCxGC-MS + GC-O-MS, 31 composti ROAV>1 (PMC12519136). NOTA ONESTA: DOI/rivista da verificare prima della stampa; cautela sui valori ROAV (possibile refuso nel paper).",
+      "composti": [
+        {
+          "composto": "3-ethyl-2,5-dimethylpyrazine",
+          "descrittore": "tostato-roasty (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Maiale cotto: firma alchil-pirazine (3-ethyl-2,5-dimethylpyrazine = roasty/Maillard, discriminante) + dimethyl trisulfide (zolfo, ROAV alto); base di aldeidi da ossidazione lipidica. Studio roasted pork GCxGC-MS + GC-O-MS, 31 composti ROAV>1 (PMC12519136). NOTA ONESTA: DOI/rivista da verificare prima della stampa; cautela sui valori ROAV (possibile refuso nel paper)."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforoso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Maiale cotto: firma alchil-pirazine (3-ethyl-2,5-dimethylpyrazine = roasty/Maillard, discriminante) + dimethyl trisulfide (zolfo, ROAV alto); base di aldeidi da ossidazione lipidica. Studio roasted pork GCxGC-MS + GC-O-MS, 31 composti ROAV>1 (PMC12519136). NOTA ONESTA: DOI/rivista da verificare prima della stampa; cautela sui valori ROAV (possibile refuso nel paper)."
+        },
+        {
+          "composto": "2-ethyl-3-methylpyrazine",
+          "descrittore": "tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Maiale cotto: firma alchil-pirazine (3-ethyl-2,5-dimethylpyrazine = roasty/Maillard, discriminante) + dimethyl trisulfide (zolfo, ROAV alto); base di aldeidi da ossidazione lipidica. Studio roasted pork GCxGC-MS + GC-O-MS, 31 composti ROAV>1 (PMC12519136). NOTA ONESTA: DOI/rivista da verificare prima della stampa; cautela sui valori ROAV (possibile refuso nel paper)."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "carneo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Maiale cotto: firma alchil-pirazine (3-ethyl-2,5-dimethylpyrazine = roasty/Maillard, discriminante) + dimethyl trisulfide (zolfo, ROAV alto); base di aldeidi da ossidazione lipidica. Studio roasted pork GCxGC-MS + GC-O-MS, 31 composti ROAV>1 (PMC12519136). NOTA ONESTA: DOI/rivista da verificare prima della stampa; cautela sui valori ROAV (possibile refuso nel paper)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Maiale cotto: firma alchil-pirazine (3-ethyl-2,5-dimethylpyrazine = roasty/Maillard, discriminante) + dimethyl trisulfide (zolfo, ROAV alto); base di aldeidi da ossidazione lipidica. Studio roasted pork GCxGC-MS + GC-O-MS, 31 composti ROAV>1 (PMC12519136). NOTA ONESTA: DOI/rivista da verificare prima della stampa; cautela sui valori ROAV (possibile refuso nel paper)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Maiale cotto: firma alchil-pirazine (3-ethyl-2,5-dimethylpyrazine = roasty/Maillard, discriminante) + dimethyl trisulfide (zolfo, ROAV alto); base di aldeidi da ossidazione lipidica. Studio roasted pork GCxGC-MS + GC-O-MS, 31 composti ROAV>1 (PMC12519136). NOTA ONESTA: DOI/rivista da verificare prima della stampa; cautela sui valori ROAV (possibile refuso nel paper)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mozzarella",
+      "nodo_target": "ing-mozzarella",
+      "specie": "fiordilatte vaccino fresco",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Mozzarella (fiordilatte vaccino): firma 3-metilbutanale (indicato dagli autori come key compound più rilevante) + diacetile (burroso) + ethyl acetate (fruttato, marcatore del tradizionale con sieroinnesto). Natrella et al. 2020, Journal of Dairy Science 103(3):2089-2097 (DOI 10.3168/jds.2019-17059, OAV).",
+      "composti": [
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "fruttato-mela-malty (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mozzarella (fiordilatte vaccino): firma 3-metilbutanale (indicato dagli autori come key compound più rilevante) + diacetile (burroso) + ethyl acetate (fruttato, marcatore del tradizionale con sieroinnesto). Natrella et al. 2020, Journal of Dairy Science 103(3):2089-2097 (DOI 10.3168/jds.2019-17059, OAV)."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burroso-panna (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mozzarella (fiordilatte vaccino): firma 3-metilbutanale (indicato dagli autori come key compound più rilevante) + diacetile (burroso) + ethyl acetate (fruttato, marcatore del tradizionale con sieroinnesto). Natrella et al. 2020, Journal of Dairy Science 103(3):2089-2097 (DOI 10.3168/jds.2019-17059, OAV)."
+        },
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "fruttato-ananas",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mozzarella (fiordilatte vaccino): firma 3-metilbutanale (indicato dagli autori come key compound più rilevante) + diacetile (burroso) + ethyl acetate (fruttato, marcatore del tradizionale con sieroinnesto). Natrella et al. 2020, Journal of Dairy Science 103(3):2089-2097 (DOI 10.3168/jds.2019-17059, OAV)."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mozzarella (fiordilatte vaccino): firma 3-metilbutanale (indicato dagli autori come key compound più rilevante) + diacetile (burroso) + ethyl acetate (fruttato, marcatore del tradizionale con sieroinnesto). Natrella et al. 2020, Journal of Dairy Science 103(3):2089-2097 (DOI 10.3168/jds.2019-17059, OAV)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mozzarella (fiordilatte vaccino): firma 3-metilbutanale (indicato dagli autori come key compound più rilevante) + diacetile (burroso) + ethyl acetate (fruttato, marcatore del tradizionale con sieroinnesto). Natrella et al. 2020, Journal of Dairy Science 103(3):2089-2097 (DOI 10.3168/jds.2019-17059, OAV)."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "cavolo-solforoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mozzarella (fiordilatte vaccino): firma 3-metilbutanale (indicato dagli autori come key compound più rilevante) + diacetile (burroso) + ethyl acetate (fruttato, marcatore del tradizionale con sieroinnesto). Natrella et al. 2020, Journal of Dairy Science 103(3):2089-2097 (DOI 10.3168/jds.2019-17059, OAV)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "provolone",
+      "nodo_target": "ing-provolone",
+      "specie": "pasta filata vaccina stagionata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Provolone (pasta filata stagionata): firma acidi grassi liberi (esanoico/ottanoico) da lipolisi = nota piccante-pungente, con ethyl hexanoate (fruttato). NOTA ONESTA: fonte è Ziino et al. 2005, Int. Dairy Journal 15(6):585-593 su 'Provola dei Nebrodi' (SPME-GC/MS, 60 volatili) = proxy di matrice pasta-filata, NON provolone propriamente detto, e senza GC-O/OAV. Serve un paper sul provolone vero per confermare.",
+      "composti": [
+        {
+          "composto": "hexanoic acid",
+          "descrittore": "pungente-caprino (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Provolone (pasta filata stagionata): firma acidi grassi liberi (esanoico/ottanoico) da lipolisi = nota piccante-pungente, con ethyl hexanoate (fruttato). NOTA ONESTA: fonte è Ziino et al. 2005, Int. Dairy Journal 15(6):585-593 su 'Provola dei Nebrodi' (SPME-GC/MS, 60 volatili) = proxy di matrice pasta-filata, NON provolone propriamente detto, e senza GC-O/OAV. Serve un paper sul provolone vero per confermare."
+        },
+        {
+          "composto": "octanoic acid",
+          "descrittore": "ceroso-saponoso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Provolone (pasta filata stagionata): firma acidi grassi liberi (esanoico/ottanoico) da lipolisi = nota piccante-pungente, con ethyl hexanoate (fruttato). NOTA ONESTA: fonte è Ziino et al. 2005, Int. Dairy Journal 15(6):585-593 su 'Provola dei Nebrodi' (SPME-GC/MS, 60 volatili) = proxy di matrice pasta-filata, NON provolone propriamente detto, e senza GC-O/OAV. Serve un paper sul provolone vero per confermare."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Provolone (pasta filata stagionata): firma acidi grassi liberi (esanoico/ottanoico) da lipolisi = nota piccante-pungente, con ethyl hexanoate (fruttato). NOTA ONESTA: fonte è Ziino et al. 2005, Int. Dairy Journal 15(6):585-593 su 'Provola dei Nebrodi' (SPME-GC/MS, 60 volatili) = proxy di matrice pasta-filata, NON provolone propriamente detto, e senza GC-O/OAV. Serve un paper sul provolone vero per confermare."
+        },
+        {
+          "composto": "2-heptanone",
+          "descrittore": "metil-chetone-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Provolone (pasta filata stagionata): firma acidi grassi liberi (esanoico/ottanoico) da lipolisi = nota piccante-pungente, con ethyl hexanoate (fruttato). NOTA ONESTA: fonte è Ziino et al. 2005, Int. Dairy Journal 15(6):585-593 su 'Provola dei Nebrodi' (SPME-GC/MS, 60 volatili) = proxy di matrice pasta-filata, NON provolone propriamente detto, e senza GC-O/OAV. Serve un paper sul provolone vero per confermare."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "floreale-caldo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Provolone (pasta filata stagionata): firma acidi grassi liberi (esanoico/ottanoico) da lipolisi = nota piccante-pungente, con ethyl hexanoate (fruttato). NOTA ONESTA: fonte è Ziino et al. 2005, Int. Dairy Journal 15(6):585-593 su 'Provola dei Nebrodi' (SPME-GC/MS, 60 volatili) = proxy di matrice pasta-filata, NON provolone propriamente detto, e senza GC-O/OAV. Serve un paper sul provolone vero per confermare."
+        }
+      ]
+    },
+    {
+      "ingrediente": "camembert",
+      "nodo_target": "ing-camembert",
+      "specie": "formaggio a crosta fiorita",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Camembert (crosta fiorita): firma methanethiol + solfuri (crosta/ammoniacale) + 1-octen-3-olo (fungo). Review Compounds 2025, 5(2):19 (DOI 10.3390/compounds5020019) su classici Kubícková & Grosch 1998 (AEDA) e Molimard & Spinnler 1996. NOTA: la review segnala che AEDA/OAV sono stati applicati poco al camembert.",
+      "composti": [
+        {
+          "composto": "methanethiol",
+          "descrittore": "zolfo-cavolo-crosta (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camembert (crosta fiorita): firma methanethiol + solfuri (crosta/ammoniacale) + 1-octen-3-olo (fungo). Review Compounds 2025, 5(2):19 (DOI 10.3390/compounds5020019) su classici Kubícková & Grosch 1998 (AEDA) e Molimard & Spinnler 1996. NOTA: la review segnala che AEDA/OAV sono stati applicati poco al camembert."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforoso-ammoniacale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camembert (crosta fiorita): firma methanethiol + solfuri (crosta/ammoniacale) + 1-octen-3-olo (fungo). Review Compounds 2025, 5(2):19 (DOI 10.3390/compounds5020019) su classici Kubícková & Grosch 1998 (AEDA) e Molimard & Spinnler 1996. NOTA: la review segnala che AEDA/OAV sono stati applicati poco al camembert."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camembert (crosta fiorita): firma methanethiol + solfuri (crosta/ammoniacale) + 1-octen-3-olo (fungo). Review Compounds 2025, 5(2):19 (DOI 10.3390/compounds5020019) su classici Kubícková & Grosch 1998 (AEDA) e Molimard & Spinnler 1996. NOTA: la review segnala che AEDA/OAV sono stati applicati poco al camembert."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camembert (crosta fiorita): firma methanethiol + solfuri (crosta/ammoniacale) + 1-octen-3-olo (fungo). Review Compounds 2025, 5(2):19 (DOI 10.3390/compounds5020019) su classici Kubícková & Grosch 1998 (AEDA) e Molimard & Spinnler 1996. NOTA: la review segnala che AEDA/OAV sono stati applicati poco al camembert."
+        },
+        {
+          "composto": "3-methylbutanoic acid",
+          "descrittore": "formaggioso-acre",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camembert (crosta fiorita): firma methanethiol + solfuri (crosta/ammoniacale) + 1-octen-3-olo (fungo). Review Compounds 2025, 5(2):19 (DOI 10.3390/compounds5020019) su classici Kubícková & Grosch 1998 (AEDA) e Molimard & Spinnler 1996. NOTA: la review segnala che AEDA/OAV sono stati applicati poco al camembert."
+        },
+        {
+          "composto": "2-undecanone",
+          "descrittore": "floreale-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Camembert (crosta fiorita): firma methanethiol + solfuri (crosta/ammoniacale) + 1-octen-3-olo (fungo). Review Compounds 2025, 5(2):19 (DOI 10.3390/compounds5020019) su classici Kubícková & Grosch 1998 (AEDA) e Molimard & Spinnler 1996. NOTA: la review segnala che AEDA/OAV sono stati applicati poco al camembert."
+        }
+      ]
+    },
+    {
+      "ingrediente": "soia",
+      "nodo_target": "ing-soia",
+      "specie": "Glycine max, fagioli di soia cotti",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Soia (cotta): firma 'beany' da ossidazione di acido linoleico/linolenico — hexanal + 2-pentilfurano + 1-octen-3-olo; in isolato proteico il top odorant AEDA è dimethyl trisulfide. Zhou et al. 2026, Frontiers in Nutrition 13 (GC-O, 55 volatili) + Boatright & Lei 1999, J. Food Sci. 64(4):667-670 (AEDA su SPI). NOTA ONESTA: fonti su farina/isolato, non fagioli interi cotti puri; la firma beany regge trasversalmente.",
+      "composti": [
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba tagliata (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Soia (cotta): firma 'beany' da ossidazione di acido linoleico/linolenico — hexanal + 2-pentilfurano + 1-octen-3-olo; in isolato proteico il top odorant AEDA è dimethyl trisulfide. Zhou et al. 2026, Frontiers in Nutrition 13 (GC-O, 55 volatili) + Boatright & Lei 1999, J. Food Sci. 64(4):667-670 (AEDA su SPI). NOTA ONESTA: fonti su farina/isolato, non fagioli interi cotti puri; la firma beany regge trasversalmente."
+        },
+        {
+          "composto": "2-pentylfuran",
+          "descrittore": "fagiolo-verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Soia (cotta): firma 'beany' da ossidazione di acido linoleico/linolenico — hexanal + 2-pentilfurano + 1-octen-3-olo; in isolato proteico il top odorant AEDA è dimethyl trisulfide. Zhou et al. 2026, Frontiers in Nutrition 13 (GC-O, 55 volatili) + Boatright & Lei 1999, J. Food Sci. 64(4):667-670 (AEDA su SPI). NOTA ONESTA: fonti su farina/isolato, non fagioli interi cotti puri; la firma beany regge trasversalmente."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Soia (cotta): firma 'beany' da ossidazione di acido linoleico/linolenico — hexanal + 2-pentilfurano + 1-octen-3-olo; in isolato proteico il top odorant AEDA è dimethyl trisulfide. Zhou et al. 2026, Frontiers in Nutrition 13 (GC-O, 55 volatili) + Boatright & Lei 1999, J. Food Sci. 64(4):667-670 (AEDA su SPI). NOTA ONESTA: fonti su farina/isolato, non fagioli interi cotti puri; la firma beany regge trasversalmente."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Soia (cotta): firma 'beany' da ossidazione di acido linoleico/linolenico — hexanal + 2-pentilfurano + 1-octen-3-olo; in isolato proteico il top odorant AEDA è dimethyl trisulfide. Zhou et al. 2026, Frontiers in Nutrition 13 (GC-O, 55 volatili) + Boatright & Lei 1999, J. Food Sci. 64(4):667-670 (AEDA su SPI). NOTA ONESTA: fonti su farina/isolato, non fagioli interi cotti puri; la firma beany regge trasversalmente."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "grasso-fritto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Soia (cotta): firma 'beany' da ossidazione di acido linoleico/linolenico — hexanal + 2-pentilfurano + 1-octen-3-olo; in isolato proteico il top odorant AEDA è dimethyl trisulfide. Zhou et al. 2026, Frontiers in Nutrition 13 (GC-O, 55 volatili) + Boatright & Lei 1999, J. Food Sci. 64(4):667-670 (AEDA su SPI). NOTA ONESTA: fonti su farina/isolato, non fagioli interi cotti puri; la firma beany regge trasversalmente."
+        },
+        {
+          "composto": "(E,E)-2,4-nonadienal",
+          "descrittore": "grasso-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Soia (cotta): firma 'beany' da ossidazione di acido linoleico/linolenico — hexanal + 2-pentilfurano + 1-octen-3-olo; in isolato proteico il top odorant AEDA è dimethyl trisulfide. Zhou et al. 2026, Frontiers in Nutrition 13 (GC-O, 55 volatili) + Boatright & Lei 1999, J. Food Sci. 64(4):667-670 (AEDA su SPI). NOTA ONESTA: fonti su farina/isolato, non fagioli interi cotti puri; la firma beany regge trasversalmente."
+        }
+      ]
+    },
+    {
+      "ingrediente": "burro di arachidi",
+      "nodo_target": "ing-burro-di-arachidi",
+      "specie": "crema di arachidi tostate",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Burro di arachidi (arachidi tostate): firma spostata verso pirazine tostate + 2-acetil-1-pirrolina (popcorn/roasty, FD più alti) e furaneolo (caramello); methanethiol OAV più alto nella farina tostata. Chetschik, Granvogl, Schieberle 2010, J. Agric. Food Chem. 58:11018-11026 (DOI 10.1021/jf1026636, quantificazione + OAV; gruppo Schieberle). NOTA: nel burro il livello di alchil-pirazine è ~3× più alto, OAV calcolati sulla farina non sul burro.",
+      "composti": [
+        {
+          "composto": "2-acetyl-1-pyrroline",
+          "descrittore": "popcorn-roasty (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burro di arachidi (arachidi tostate): firma spostata verso pirazine tostate + 2-acetil-1-pirrolina (popcorn/roasty, FD più alti) e furaneolo (caramello); methanethiol OAV più alto nella farina tostata. Chetschik, Granvogl, Schieberle 2010, J. Agric. Food Chem. 58:11018-11026 (DOI 10.1021/jf1026636, quantificazione + OAV; gruppo Schieberle). NOTA: nel burro il livello di alchil-pirazine è ~3× più alto, OAV calcolati sulla farina non sul burro."
+        },
+        {
+          "composto": "4-hydroxy-2,5-dimethyl-3(2H)-furanone",
+          "descrittore": "caramello (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burro di arachidi (arachidi tostate): firma spostata verso pirazine tostate + 2-acetil-1-pirrolina (popcorn/roasty, FD più alti) e furaneolo (caramello); methanethiol OAV più alto nella farina tostata. Chetschik, Granvogl, Schieberle 2010, J. Agric. Food Chem. 58:11018-11026 (DOI 10.1021/jf1026636, quantificazione + OAV; gruppo Schieberle). NOTA: nel burro il livello di alchil-pirazine è ~3× più alto, OAV calcolati sulla farina non sul burro."
+        },
+        {
+          "composto": "2-ethyl-3,5-dimethylpyrazine",
+          "descrittore": "tostato-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burro di arachidi (arachidi tostate): firma spostata verso pirazine tostate + 2-acetil-1-pirrolina (popcorn/roasty, FD più alti) e furaneolo (caramello); methanethiol OAV più alto nella farina tostata. Chetschik, Granvogl, Schieberle 2010, J. Agric. Food Chem. 58:11018-11026 (DOI 10.1021/jf1026636, quantificazione + OAV; gruppo Schieberle). NOTA: nel burro il livello di alchil-pirazine è ~3× più alto, OAV calcolati sulla farina non sul burro."
+        },
+        {
+          "composto": "methanethiol",
+          "descrittore": "solforoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burro di arachidi (arachidi tostate): firma spostata verso pirazine tostate + 2-acetil-1-pirrolina (popcorn/roasty, FD più alti) e furaneolo (caramello); methanethiol OAV più alto nella farina tostata. Chetschik, Granvogl, Schieberle 2010, J. Agric. Food Chem. 58:11018-11026 (DOI 10.1021/jf1026636, quantificazione + OAV; gruppo Schieberle). NOTA: nel burro il livello di alchil-pirazine è ~3× più alto, OAV calcolati sulla farina non sul burro."
+        },
+        {
+          "composto": "2,3-pentanedione",
+          "descrittore": "burroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burro di arachidi (arachidi tostate): firma spostata verso pirazine tostate + 2-acetil-1-pirrolina (popcorn/roasty, FD più alti) e furaneolo (caramello); methanethiol OAV più alto nella farina tostata. Chetschik, Granvogl, Schieberle 2010, J. Agric. Food Chem. 58:11018-11026 (DOI 10.1021/jf1026636, quantificazione + OAV; gruppo Schieberle). NOTA: nel burro il livello di alchil-pirazine è ~3× più alto, OAV calcolati sulla farina non sul burro."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burro di arachidi (arachidi tostate): firma spostata verso pirazine tostate + 2-acetil-1-pirrolina (popcorn/roasty, FD più alti) e furaneolo (caramello); methanethiol OAV più alto nella farina tostata. Chetschik, Granvogl, Schieberle 2010, J. Agric. Food Chem. 58:11018-11026 (DOI 10.1021/jf1026636, quantificazione + OAV; gruppo Schieberle). NOTA: nel burro il livello di alchil-pirazine è ~3× più alto, OAV calcolati sulla farina non sul burro."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (ee, +15 teste di categoria): tè nero, tè verde, caffè, vino bianco, birra lager, spumante metodo classico, vino porto, manzo, pollo, maiale, mozzarella, provolone, camembert, soia, burro di arachidi. Primo blocco del CANCELLO 1 (diagnostico copertura-proprietaria): ingredienti-base ad alto traffico finora solo su Ahn grezzo, ora con firma verificata per CATEGORIA (non per variante). Fonti reali GC-O/OAV/AEDA. FORTI: caffè, tè verde, lager, porto, mozzarella, camembert, burro di arachidi, pollo, tè nero. Caveat oneste in riga: manzo (firma doppia, ramo carneo da letteratura classica), maiale (DOI da verificare), provolone (proxy Provola dei Nebrodi), soia (matrice isolato/farina), vino bianco/spumante (OAV non numerici/non-Champagne). TOLTA uva: l'agente ha verificato il moscato (già coperto), il nodo scoperto è l'uva generica con altra firma — rimandata a un passaggio cultivar. Ponti: tioli furanici carnei (manzo/pollo<->brodo/katsuobushi), fenoli+furani tostati (caffè<->cacao/orzo tostato/stout), esteri fruttati (vino bianco/spumante/lager<->sakè/sidro), sotolon (porto<->sherry/mirin/fieno greco), FFA (provolone<->pecorino/feta), metantiolo+solfuri (camembert<->cheddar/cavolfiore), beany (soia<->pisello/ceci).",
     "Ondata 24/10 (dd, +15 erbe/fiori/semi/frutti): menta piperita, timo limonato, fiori di acacia, fiori di zucca, nasturzio, malva, semi di girasole tostati, quinoa tostata, sorgo, cherimoya, tamarillo, pomelo, rambutan, acerola, calamansi. Verificati da agente: 14 solidi + calamansi (nota: EO, composizione reale ma senza descrittori sensoriali). SCARTATI senza inventare: papavero/amaranto/miglio (nessuna firma vera, solo ossidazione lipidica comune a tutti i semi), lino (fonte è una review non dataset primario), longan (atti di convegno, descrittori presi in prestito). Ponti: beta-damascenone (malva/sorgo<->rosa/osmanthus/uva/tè), pirazine+furfurali (girasole/quinoa<->caffè/orzo tostato/pane), isotiocianati (nasturzio<->cavolfiore/broccolo/senape/rafano), esteri fruttati (cherimoya/acerola<->ananas/mela/banana), limonene+citronellale (pomelo/calamansi<->agrumi), mentolo (menta piperita<->menta), geraniolo+citrale (timo limonato<->citronella/melissa/verbena), methional (tamarillo<->patata/pane), metossibenzeni (fiori di zucca<->pu-erh shou/melanzana affumicata).",
     "Ondata 24/10 (cc, +19 tè/fermentati/alcolici): pu-erh, oolong, yerba mate, karkadè, matcha, rum invecchiato, whisky torbato, sakè, kefir, latticello, panna acida, birra stout, cognac, vino rosso invecchiato, sidro di mele, aceto di riso, mirin, gochujang, doubanjiang. Tutti con fonte GC-MS/GC-O reale; firme con OAV dove il paper le dà (doubanjiang, oolong, matcha, pu-erh). Caveat oneste in riga: pu-erh=sheng (shou diverso), oolong=tostato Dong Ding, matcha=cinese (DMS per il JP), whisky=fonte datata, cognac/vino/mirin/latticello=fonti indirette, gochujang=GC-MS non-OAV. SCARTATA senza inventare: grappa (solo Flash-GC/FID, nessun odorant aroma-attivo verificato). Ponti: fenoli del fumo (whisky torbato/stout<->scamorza/salmone affumicato/mezcal/katsuobushi), esteri fruttati (sakè/gochujang/sidro<->mela/ananas/banana), diacetile+acetoino (kefir/latticello/panna acida<->burro/yogurt), damascenone+whisky lattone (rum/cognac/doubanjiang<->botte/uva), sotolon (vino invecchiato/mirin/sherry<->fieno greco/acero/melassa), furfurale+furanoni (karkadè/mirin/stout<->caffè/caramello), norisoprenoidi (yerba mate/pu-erh<->tè/osmanthus/zafferano), acido acetico (aceto di riso<->aceti/kombucha).",
     "Ondata 24/10 (bb, +15 formaggi/salumi/mare): cheddar, groviera, comté, feta, halloumi, scamorza affumicata, provola affumicata, ricotta forte, mascarpone, speck, prosciutto crudo, acciuga salata, salmone affumicato, ostrica, cozza. Verificati da agente di ricerca: 10 con fonte GC-MS/GC-O reale LETTA (cheddar, mascarpone, acciuga, salmone, ostrica[GC-IMS], prosciutto crudo, halloumi, ricotta forte, scamorza/provola, feta); 4 con fonte reale confermata ma non letta in sessione per blocco bot/captcha, note oneste in riga (groviera=Rychlik&Bosset 2001, comté=famiglia alpina, speck=PMID 29223014, cozza=PMC9562662). SCARTATI senza inventare: fontina (nessuno studio-firma), guanciale (nessun GC-MS, solo fonti commerciali), bresaola (solo analogo manzo dry-cured), nero di seppia inchiostro (nessuno studio volatili), riccio di mare (GC-O di riferimento bloccato, firma non determinata), ricotta fresca (solo dato sulla forte). Ponti: composti solforati volatili (cheddar/groviera/comté<->cavolfiore/allium/parmigiano), fenoli del fumo (scamorza/provola/speck/salmone affumicato<->cluster fumo mezcal/katsuobushi/melanzana affumicata), acidi grassi corti (feta/ricotta forte<->pecorino/taleggio), methional+aldeidi ramificate (groviera/prosciutto crudo<->pane/patata/malto), 1-octen-3-olo marino (ostrica/cozza<->funghi), 2-eptanone (mascarpone<->melograno/formaggi), DMS marino (cozza/ostrica<->kombu/nori).",
