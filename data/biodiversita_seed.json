@@ -1,0 +1,11 @@
+[
+  {"nome": "San Marzano dell'Agro Sarnese-Nocerino", "regione": "Campania", "territorio": "Agro Sarnese-Nocerino", "tutela": "DOP", "categoria": "pomodoro"},
+  {"nome": "Pomodorino del Piennolo del Vesuvio", "regione": "Campania", "territorio": "pendici del Vesuvio", "tutela": "DOP", "categoria": "pomodoro"},
+  {"nome": "Limone di Sorrento", "regione": "Campania", "territorio": "penisola sorrentina", "tutela": "IGP", "categoria": "agrume"},
+  {"nome": "Limone Costa d'Amalfi", "regione": "Campania", "territorio": "costiera amalfitana", "tutela": "IGP", "categoria": "agrume"},
+  {"nome": "Nocciola di Giffoni", "regione": "Campania", "territorio": "Monti Picentini", "tutela": "IGP", "categoria": "frutta secca"},
+  {"nome": "Provolone del Monaco", "regione": "Campania", "territorio": "Monti Lattari / penisola sorrentina", "tutela": "DOP", "categoria": "formaggio"},
+  {"nome": "Mozzarella di Bufala Campana", "regione": "Campania", "territorio": "Piana del Sele e Caserta", "tutela": "DOP", "categoria": "formaggio"},
+  {"nome": "Colatura di Alici di Cetara", "regione": "Campania", "territorio": "Cetara", "tutela": "DOP", "categoria": "conserva ittica"},
+  {"nome": "Carciofo di Paestum", "regione": "Campania", "territorio": "Piana del Sele", "tutela": "IGP", "categoria": "ortaggio"}
+]
