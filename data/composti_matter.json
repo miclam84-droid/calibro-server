@@ -5954,9 +5954,363 @@
           "fonte": "Aceto balsamico (Modena): acido acetico, siringolo (da botte), furaneolo, sotolon (iris.unife 2525531; Pherobase B/35089; agris 65df35947)."
         }
       ]
+    },
+    {
+      "ingrediente": "carota",
+      "nodo_target": "ing-carota",
+      "specie": "Daucus carota",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Carota (Daucus carota): sintasi terpeniche -> carotolo, terpinolene, beta-cariofillene, sabinene (NCBI PMC7305226, 'terpene synthases in carrot aroma').",
+      "composti": [
+        {
+          "composto": "terpinolene",
+          "descrittore": "terrosa-dolce-carota (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carota (Daucus carota): sintasi terpeniche -> carotolo, terpinolene, beta-cariofillene, sabinene (NCBI PMC7305226, 'terpene synthases in carrot aroma')."
+        },
+        {
+          "composto": "carotol",
+          "descrittore": "legnoso-carota (marcatore varietale)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carota (Daucus carota): sintasi terpeniche -> carotolo, terpinolene, beta-cariofillene, sabinene (NCBI PMC7305226, 'terpene synthases in carrot aroma')."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carota (Daucus carota): sintasi terpeniche -> carotolo, terpinolene, beta-cariofillene, sabinene (NCBI PMC7305226, 'terpene synthases in carrot aroma')."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carota (Daucus carota): sintasi terpeniche -> carotolo, terpinolene, beta-cariofillene, sabinene (NCBI PMC7305226, 'terpene synthases in carrot aroma')."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carota (Daucus carota): sintasi terpeniche -> carotolo, terpinolene, beta-cariofillene, sabinene (NCBI PMC7305226, 'terpene synthases in carrot aroma')."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carota (Daucus carota): sintasi terpeniche -> carotolo, terpinolene, beta-cariofillene, sabinene (NCBI PMC7305226, 'terpene synthases in carrot aroma')."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pimento",
+      "nodo_target": "ing-pimento",
+      "specie": "Pimenta dioica (allspice / pepe della Giamaica)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Pimento / pepe della Giamaica (Pimenta dioica): eugenolo dominante, metil eugenolo, beta-cariofillene, 1,8-cineolo (IntechOpen cap. 80859).",
+      "composti": [
+        {
+          "composto": "eugenol",
+          "descrittore": "chiodo di garofano-balsamico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pimento / pepe della Giamaica (Pimenta dioica): eugenolo dominante, metil eugenolo, beta-cariofillene, 1,8-cineolo (IntechOpen cap. 80859)."
+        },
+        {
+          "composto": "methyl eugenol",
+          "descrittore": "speziato-anice-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pimento / pepe della Giamaica (Pimenta dioica): eugenolo dominante, metil eugenolo, beta-cariofillene, 1,8-cineolo (IntechOpen cap. 80859)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pimento / pepe della Giamaica (Pimenta dioica): eugenolo dominante, metil eugenolo, beta-cariofillene, 1,8-cineolo (IntechOpen cap. 80859)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pimento / pepe della Giamaica (Pimenta dioica): eugenolo dominante, metil eugenolo, beta-cariofillene, 1,8-cineolo (IntechOpen cap. 80859)."
+        },
+        {
+          "composto": "alpha-humulene",
+          "descrittore": "luppolo-legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pimento / pepe della Giamaica (Pimenta dioica): eugenolo dominante, metil eugenolo, beta-cariofillene, 1,8-cineolo (IntechOpen cap. 80859)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "liquirizia",
+      "nodo_target": "ing-liquirizia",
+      "specie": "Glycyrrhiza glabra",
+      "dominio": "bar",
+      "fonte_ingrediente": "Liquirizia (Glycyrrhiza glabra): aroma dominato da (E)-anetolo con estragolo; la dolcezza viene dalla glicirrizina (non volatile, nessun arco aromatico). (Chemistry World 'secret of liquorice smell'; TUM Leibniz, key aroma raw licorice; TheGoodScents fl1599401).",
+      "composti": [
+        {
+          "composto": "trans-anethole",
+          "descrittore": "anice-dolce-liquirizia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Liquirizia (Glycyrrhiza glabra): aroma dominato da (E)-anetolo con estragolo; la dolcezza viene dalla glicirrizina (non volatile, nessun arco aromatico). (Chemistry World 'secret of liquorice smell'; TUM Leibniz, key aroma raw licorice; TheGoodScents fl1599401)."
+        },
+        {
+          "composto": "estragole",
+          "descrittore": "anice-verde-dragoncello",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Liquirizia (Glycyrrhiza glabra): aroma dominato da (E)-anetolo con estragolo; la dolcezza viene dalla glicirrizina (non volatile, nessun arco aromatico). (Chemistry World 'secret of liquorice smell'; TUM Leibniz, key aroma raw licorice; TheGoodScents fl1599401)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "rafano",
+      "nodo_target": "ing-rafano",
+      "specie": "Armoracia rusticana",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Rafano (Armoracia rusticana): allil isotiocianato dominante (pungenza), 2-feniletil isotiocianato (NCBI PMC6696319; Frontiers in Chemistry 2018).",
+      "composti": [
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-nasale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rafano (Armoracia rusticana): allil isotiocianato dominante (pungenza), 2-feniletil isotiocianato (NCBI PMC6696319; Frontiers in Chemistry 2018)."
+        },
+        {
+          "composto": "2-phenylethyl isothiocyanate",
+          "descrittore": "pungente-rafano",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rafano (Armoracia rusticana): allil isotiocianato dominante (pungenza), 2-feniletil isotiocianato (NCBI PMC6696319; Frontiers in Chemistry 2018)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "carvi",
+      "nodo_target": "ing-carvi",
+      "specie": "Carum carvi",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Carvi / cumino dei prati (Carum carvi): (S)-(+)-carvone ~50-65% e limonene come coppia dominante (Hort. Sci. Prague 2014, DOI 10.17221/248/2013-HORTSCI; NCBI PMC9032858).",
+      "composti": [
+        {
+          "composto": "carvone",
+          "descrittore": "carvi-menta-aneto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carvi / cumino dei prati (Carum carvi): (S)-(+)-carvone ~50-65% e limonene come coppia dominante (Hort. Sci. Prague 2014, DOI 10.17221/248/2013-HORTSCI; NCBI PMC9032858)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carvi / cumino dei prati (Carum carvi): (S)-(+)-carvone ~50-65% e limonene come coppia dominante (Hort. Sci. Prague 2014, DOI 10.17221/248/2013-HORTSCI; NCBI PMC9032858)."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "balsamico-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carvi / cumino dei prati (Carum carvi): (S)-(+)-carvone ~50-65% e limonene come coppia dominante (Hort. Sci. Prague 2014, DOI 10.17221/248/2013-HORTSCI; NCBI PMC9032858)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carvi / cumino dei prati (Carum carvi): (S)-(+)-carvone ~50-65% e limonene come coppia dominante (Hort. Sci. Prague 2014, DOI 10.17221/248/2013-HORTSCI; NCBI PMC9032858)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "noce",
+      "nodo_target": "ing-noce",
+      "specie": "Juglans regia (gheriglio)",
+      "dominio": "cucina",
+      "CORREGGE": "'noce' qui e' il gheriglio (Juglans regia), NON la noce moscata (ahn_nutmeg). Nodo dedicato ing-noce.",
+      "fonte_ingrediente": "Noce (Juglans regia): headspace da ossidazione lipidica -> esanale, pentanale, (E,E)-2,4-decadienale, 1-octen-3-olo; l'amaro viene dal juglone (non volatile). (Univ. Reading centaur 13442 'headspace aroma compounds of walnuts'; NCBI PMC10176575).",
+      "composti": [
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-noce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Noce (Juglans regia): headspace da ossidazione lipidica -> esanale, pentanale, (E,E)-2,4-decadienale, 1-octen-3-olo; l'amaro viene dal juglone (non volatile). (Univ. Reading centaur 13442 'headspace aroma compounds of walnuts'; NCBI PMC10176575)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Noce (Juglans regia): headspace da ossidazione lipidica -> esanale, pentanale, (E,E)-2,4-decadienale, 1-octen-3-olo; l'amaro viene dal juglone (non volatile). (Univ. Reading centaur 13442 'headspace aroma compounds of walnuts'; NCBI PMC10176575)."
+        },
+        {
+          "composto": "pentanal",
+          "descrittore": "verde-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Noce (Juglans regia): headspace da ossidazione lipidica -> esanale, pentanale, (E,E)-2,4-decadienale, 1-octen-3-olo; l'amaro viene dal juglone (non volatile). (Univ. Reading centaur 13442 'headspace aroma compounds of walnuts'; NCBI PMC10176575)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Noce (Juglans regia): headspace da ossidazione lipidica -> esanale, pentanale, (E,E)-2,4-decadienale, 1-octen-3-olo; l'amaro viene dal juglone (non volatile). (Univ. Reading centaur 13442 'headspace aroma compounds of walnuts'; NCBI PMC10176575)."
+        },
+        {
+          "composto": "(E)-2-heptenal",
+          "descrittore": "grasso-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Noce (Juglans regia): headspace da ossidazione lipidica -> esanale, pentanale, (E,E)-2,4-decadienale, 1-octen-3-olo; l'amaro viene dal juglone (non volatile). (Univ. Reading centaur 13442 'headspace aroma compounds of walnuts'; NCBI PMC10176575)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cachi",
+      "nodo_target": "ing-cachi",
+      "specie": "Diospyros kaki",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cachi (Diospyros kaki): (E)-2-esenale ed esanale maggioritari, corredo terpenico (limonene, linalolo) ed esteri, acetoino cremoso (Embrapa/ScienceDirect S0308814624034472, 'volatile compounds mesocarp persimmons').",
+      "composti": [
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia (firma, maggiore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cachi (Diospyros kaki): (E)-2-esenale ed esanale maggioritari, corredo terpenico (limonene, linalolo) ed esteri, acetoino cremoso (Embrapa/ScienceDirect S0308814624034472, 'volatile compounds mesocarp persimmons')."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cachi (Diospyros kaki): (E)-2-esenale ed esanale maggioritari, corredo terpenico (limonene, linalolo) ed esteri, acetoino cremoso (Embrapa/ScienceDirect S0308814624034472, 'volatile compounds mesocarp persimmons')."
+        },
+        {
+          "composto": "6-methyl-5-hepten-2-one",
+          "descrittore": "verde-agrume-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cachi (Diospyros kaki): (E)-2-esenale ed esanale maggioritari, corredo terpenico (limonene, linalolo) ed esteri, acetoino cremoso (Embrapa/ScienceDirect S0308814624034472, 'volatile compounds mesocarp persimmons')."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-lavanda",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cachi (Diospyros kaki): (E)-2-esenale ed esanale maggioritari, corredo terpenico (limonene, linalolo) ed esteri, acetoino cremoso (Embrapa/ScienceDirect S0308814624034472, 'volatile compounds mesocarp persimmons')."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cachi (Diospyros kaki): (E)-2-esenale ed esanale maggioritari, corredo terpenico (limonene, linalolo) ed esteri, acetoino cremoso (Embrapa/ScienceDirect S0308814624034472, 'volatile compounds mesocarp persimmons')."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "cremoso-yogurt-burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cachi (Diospyros kaki): (E)-2-esenale ed esanale maggioritari, corredo terpenico (limonene, linalolo) ed esteri, acetoino cremoso (Embrapa/ScienceDirect S0308814624034472, 'volatile compounds mesocarp persimmons')."
+        }
+      ]
+    },
+    {
+      "ingrediente": "santoreggia",
+      "nodo_target": "ing-santoreggia",
+      "specie": "Satureja hortensis",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Santoreggia (Satureja hortensis): carvacrolo dominante con gamma-terpinene e p-cimene (precursori), timolo variabile (MDPI Molecules 23:2458; NCBI PMC3330183).",
+      "composti": [
+        {
+          "composto": "carvacrol",
+          "descrittore": "origano-fenolico-caldo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Santoreggia (Satureja hortensis): carvacrolo dominante con gamma-terpinene e p-cimene (precursori), timolo variabile (MDPI Molecules 23:2458; NCBI PMC3330183)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "erbaceo-agrume (precursore)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Santoreggia (Satureja hortensis): carvacrolo dominante con gamma-terpinene e p-cimene (precursori), timolo variabile (MDPI Molecules 23:2458; NCBI PMC3330183)."
+        },
+        {
+          "composto": "p-cymene",
+          "descrittore": "legnoso-agrume (precursore)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Santoreggia (Satureja hortensis): carvacrolo dominante con gamma-terpinene e p-cimene (precursori), timolo variabile (MDPI Molecules 23:2458; NCBI PMC3330183)."
+        },
+        {
+          "composto": "thymol",
+          "descrittore": "timo-fenolico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Santoreggia (Satureja hortensis): carvacrolo dominante con gamma-terpinene e p-cimene (precursori), timolo variabile (MDPI Molecules 23:2458; NCBI PMC3330183)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Santoreggia (Satureja hortensis): carvacrolo dominante con gamma-terpinene e p-cimene (precursori), timolo variabile (MDPI Molecules 23:2458; NCBI PMC3330183)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (p): +8 (carota, pimento/allspice, liquirizia, rafano, carvi, noce, cachi, santoreggia). Marcatori-firma verificati su fonte reale. Terreno: radici/spezie calde/anice/pungenti/nut/frutto/erba. Ponti: terpeni ombrellifere (carota<->coriandolo/cumino/aneto/sedano), eugenolo (pimento<->chiodi di garofano/alloro/cannella), anetolo+estragolo (liquirizia<->anice stellato/finocchio/dragoncello), allil isotiocianato (rafano<->wasabi/capperi), carvone (carvi<->aneto/menta), aldeidi grasse+1-octen-3-olo (noce<->funghi/tartufo), (E)-2-esenale (cachi<->mela/kiwi/cetriolo), carvacrolo/timolo (santoreggia<->origano/timo). Scartato mirtillo rosso: unica fonte solida era su VINO non sul frutto (fonte debole, come genziana/china).",
     "Ondata 24/10 (o): +8 (formaggio erborinato, yogurt, asparago, zucca, rooibos, pepe rosa, uvetta, aceto balsamico). Marcatori-firma verificati su fonte reale. Dairy/vegetali/tisane: metil chetoni (erborinato<->mora), diacetile (yogurt<->burro/nocciola tostata), solfuri (asparago<->tartufo/erba cipollina), beta-ionone/damascenone (zucca/rooibos/uvetta<->lampone/mela/litchi), sotolon/furaneolo (aceto balsamico<->fieno greco/sciroppo d'acero), fellandrene (pepe rosa<->cumino/aneto).",
     "Ondata 23/10 (n): +8 (tartufo bianco, miso, salsa di soia, aneto, prezzemolo, wasabi, malto, capperi). Marcatori-firma verificati su fonte reale. Ondata savory/umami/pungenti: bis(metiltio)metano (tartufo bianco, unico), HEMF/4-etilguaiacolo (miso<->salsa di soia), maltolo/furaneolo (malto<->sciroppo d'acero/caramello), isotiocianati (wasabi/capperi<->papaya), 1-octen-3-olo (tartufo<->funghi), carvone/fellandrene (aneto<->cumino).",
     "Ondata 23/10 (m): +8 (mirtillo, melone, anguria, sciroppo d'acero, galanga, erba cipollina, papaya, chinotto). Marcatori-firma verificati su fonte reale. Connettivita': nonenale/nonadienali (melone/anguria<->cetriolo/kiwi), sotolon (sciroppo d'acero<->fieno greco), maltolo/furaneolo (acero<->caramello/fragola), 1,8-cineolo (galanga<->alloro/curcuma/cardamomo), solfuri allium (erba cipollina<->aglio/cipolla), terpeni agrumi (chinotto<->agrumi).",
