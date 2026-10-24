@@ -33,7 +33,8 @@ _PATH = os.path.join(os.path.dirname(__file__), "..", "data", "composti_matter.j
 # Lime: il nodo attuale (ahn_kaffir_lime) e' una varieta' diversa.
 _FORZA_NODO = {"ginepro": "ing-ginepro", "lime": "ing-lime",
                "issopo": "ing-issopo",  # Hyssopus officinalis != ahn_anise_hyssop (Agastache, specie diversa)
-               "mirtillo rosso": "ing-mirtillo-rosso"}  # Vaccinium macrocarpon != ahn_european_cranberry (specie diversa)
+               "mirtillo rosso": "ing-mirtillo-rosso",  # Vaccinium macrocarpon != ahn_european_cranberry (specie diversa)
+               "fava": "ing-fava"}  # Vicia faba != fava tonka (ahn_tonka_bean_seed): evita collisione per substring
 
 
 def _norm(s):
