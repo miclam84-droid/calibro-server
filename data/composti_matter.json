@@ -6692,9 +6692,354 @@
           "fonte": "Orzo tostato (Hordeum vulgare, caffe d'orzo / mugicha): da Maillard -> pirazine (2-etil-3,5-dimetilpirazina, 2,5-dimetilpirazina), maltolo, furfurale, guaiacolo (NCBI PMC9498828; TUM Leibniz key odorants mugi-cha; boricha agris 64745bfb)."
         }
       ]
+    },
+    {
+      "ingrediente": "senape",
+      "nodo_target": "ing-senape",
+      "specie": "Brassica juncea / Sinapis alba",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Senape (Brassica juncea / Sinapis alba): allil isotiocianato (senape bruna) e p-idrossibenzil isotiocianato / sinalbina (senape gialla) (air.unipr S0023643822011562; Czech J. Food Sci. 1995).",
+      "composti": [
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-nasale (firma, senape bruna)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Senape (Brassica juncea / Sinapis alba): allil isotiocianato (senape bruna) e p-idrossibenzil isotiocianato / sinalbina (senape gialla) (air.unipr S0023643822011562; Czech J. Food Sci. 1995)."
+        },
+        {
+          "composto": "p-hydroxybenzyl isothiocyanate",
+          "descrittore": "pungente-senape gialla",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Senape (Brassica juncea / Sinapis alba): allil isotiocianato (senape bruna) e p-idrossibenzil isotiocianato / sinalbina (senape gialla) (air.unipr S0023643822011562; Czech J. Food Sci. 1995)."
+        },
+        {
+          "composto": "3-butenyl isothiocyanate",
+          "descrittore": "pungente-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Senape (Brassica juncea / Sinapis alba): allil isotiocianato (senape bruna) e p-idrossibenzil isotiocianato / sinalbina (senape gialla) (air.unipr S0023643822011562; Czech J. Food Sci. 1995)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "crescione",
+      "nodo_target": "ing-crescione",
+      "specie": "Nasturtium officinale",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Crescione (Nasturtium officinale): 2-feniletil isotiocianato (da gluconasturtiina) come marcatore, con isotiocianati minori (NCBI PMC9706002; TheGoodScents rs1672651).",
+      "composti": [
+        {
+          "composto": "2-phenylethyl isothiocyanate",
+          "descrittore": "pungente-crescione (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Crescione (Nasturtium officinale): 2-feniletil isotiocianato (da gluconasturtiina) come marcatore, con isotiocianati minori (NCBI PMC9706002; TheGoodScents rs1672651)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Crescione (Nasturtium officinale): 2-feniletil isotiocianato (da gluconasturtiina) come marcatore, con isotiocianati minori (NCBI PMC9706002; TheGoodScents rs1672651)."
+        },
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-senape",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Crescione (Nasturtium officinale): 2-feniletil isotiocianato (da gluconasturtiina) come marcatore, con isotiocianati minori (NCBI PMC9706002; TheGoodScents rs1672651)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "achillea",
+      "nodo_target": "ing-achillea",
+      "specie": "Achillea millefolium",
+      "dominio": "bar",
+      "fonte_ingrediente": "Achillea / millefoglio (Achillea millefolium): camazulene (blu), con beta-pinene, sabinene, 1,8-cineolo, beta-cariofillene (agris Estonia 65dfb19f; Studia UBB Chemia).",
+      "composti": [
+        {
+          "composto": "chamazulene",
+          "descrittore": "blu-erbaceo-amaro (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Achillea / millefoglio (Achillea millefolium): camazulene (blu), con beta-pinene, sabinene, 1,8-cineolo, beta-cariofillene (agris Estonia 65dfb19f; Studia UBB Chemia)."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Achillea / millefoglio (Achillea millefolium): camazulene (blu), con beta-pinene, sabinene, 1,8-cineolo, beta-cariofillene (agris Estonia 65dfb19f; Studia UBB Chemia)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Achillea / millefoglio (Achillea millefolium): camazulene (blu), con beta-pinene, sabinene, 1,8-cineolo, beta-cariofillene (agris Estonia 65dfb19f; Studia UBB Chemia)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Achillea / millefoglio (Achillea millefolium): camazulene (blu), con beta-pinene, sabinene, 1,8-cineolo, beta-cariofillene (agris Estonia 65dfb19f; Studia UBB Chemia)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Achillea / millefoglio (Achillea millefolium): camazulene (blu), con beta-pinene, sabinene, 1,8-cineolo, beta-cariofillene (agris Estonia 65dfb19f; Studia UBB Chemia)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "nepitella",
+      "nodo_target": "ing-nepitella",
+      "specie": "Calamintha nepeta",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Nepitella / mentuccia (Calamintha nepeta): pulegone e mentone dominanti, con piperitenone ossido e isomentone (NCBI PMC6155801; Trop. J. Nat. Prod. Res.).",
+      "composti": [
+        {
+          "composto": "pulegone",
+          "descrittore": "menta-canforato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nepitella / mentuccia (Calamintha nepeta): pulegone e mentone dominanti, con piperitenone ossido e isomentone (NCBI PMC6155801; Trop. J. Nat. Prod. Res.)."
+        },
+        {
+          "composto": "menthone",
+          "descrittore": "menta-fresca",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nepitella / mentuccia (Calamintha nepeta): pulegone e mentone dominanti, con piperitenone ossido e isomentone (NCBI PMC6155801; Trop. J. Nat. Prod. Res.)."
+        },
+        {
+          "composto": "piperitenone oxide",
+          "descrittore": "menta-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nepitella / mentuccia (Calamintha nepeta): pulegone e mentone dominanti, con piperitenone ossido e isomentone (NCBI PMC6155801; Trop. J. Nat. Prod. Res.)."
+        },
+        {
+          "composto": "isomenthone",
+          "descrittore": "menta-legnosa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nepitella / mentuccia (Calamintha nepeta): pulegone e mentone dominanti, con piperitenone ossido e isomentone (NCBI PMC6155801; Trop. J. Nat. Prod. Res.)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nepitella / mentuccia (Calamintha nepeta): pulegone e mentone dominanti, con piperitenone ossido e isomentone (NCBI PMC6155801; Trop. J. Nat. Prod. Res.)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "grani del paradiso",
+      "nodo_target": "ing-grani-del-paradiso",
+      "specie": "Aframomum melegueta",
+      "dominio": "bar",
+      "fonte_ingrediente": "Grani del paradiso (Aframomum melegueta): la pungenza viene da 6-paradolo / 6-gingerolo (non volatili, nessun arco aromatico); volatili dominati da umulene, beta-cariofillene, (E)-nerolidolo (CSIRO Aust. J. Chem. CH9700369 'the paradols'; caps.ncbs GRAYU).",
+      "composti": [
+        {
+          "composto": "alpha-humulene",
+          "descrittore": "luppolo-legnoso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): la pungenza viene da 6-paradolo / 6-gingerolo (non volatili, nessun arco aromatico); volatili dominati da umulene, beta-cariofillene, (E)-nerolidolo (CSIRO Aust. J. Chem. CH9700369 'the paradols'; caps.ncbs GRAYU)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): la pungenza viene da 6-paradolo / 6-gingerolo (non volatili, nessun arco aromatico); volatili dominati da umulene, beta-cariofillene, (E)-nerolidolo (CSIRO Aust. J. Chem. CH9700369 'the paradols'; caps.ncbs GRAYU)."
+        },
+        {
+          "composto": "(E)-nerolidol",
+          "descrittore": "floreale-legnoso-fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): la pungenza viene da 6-paradolo / 6-gingerolo (non volatili, nessun arco aromatico); volatili dominati da umulene, beta-cariofillene, (E)-nerolidolo (CSIRO Aust. J. Chem. CH9700369 'the paradols'; caps.ncbs GRAYU)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): la pungenza viene da 6-paradolo / 6-gingerolo (non volatili, nessun arco aromatico); volatili dominati da umulene, beta-cariofillene, (E)-nerolidolo (CSIRO Aust. J. Chem. CH9700369 'the paradols'; caps.ncbs GRAYU)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pisello",
+      "nodo_target": "ing-pisello",
+      "specie": "Pisum sativum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Pisello (Pisum sativum): 3-isopropil-2-metossipirazina come marcatore 'pisello verde', con esanale ed esanolo da lipossigenasi (NCBI PMC8834122 sensomics pea; agris blanched green peas).",
+      "composti": [
+        {
+          "composto": "3-isopropyl-2-methoxypyrazine",
+          "descrittore": "pisello verde-terroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pisello (Pisum sativum): 3-isopropil-2-metossipirazina come marcatore 'pisello verde', con esanale ed esanolo da lipossigenasi (NCBI PMC8834122 sensomics pea; agris blanched green peas)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pisello (Pisum sativum): 3-isopropil-2-metossipirazina come marcatore 'pisello verde', con esanale ed esanolo da lipossigenasi (NCBI PMC8834122 sensomics pea; agris blanched green peas)."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pisello (Pisum sativum): 3-isopropil-2-metossipirazina come marcatore 'pisello verde', con esanale ed esanolo da lipossigenasi (NCBI PMC8834122 sensomics pea; agris blanched green peas)."
+        },
+        {
+          "composto": "1-hexanol",
+          "descrittore": "verde-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pisello (Pisum sativum): 3-isopropil-2-metossipirazina come marcatore 'pisello verde', con esanale ed esanolo da lipossigenasi (NCBI PMC8834122 sensomics pea; agris blanched green peas)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "patata",
+      "nodo_target": "ing-patata",
+      "specie": "Solanum tuberosum (lessata)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Patata lessata (Solanum tuberosum): methional (firma 'patata cotta'), con metantiolo, dimetil solfuro, aldeidi di Strecker (jstage FSTR 27:933; Methional odorante-patata).",
+      "composti": [
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa-solforato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata lessata (Solanum tuberosum): methional (firma 'patata cotta'), con metantiolo, dimetil solfuro, aldeidi di Strecker (jstage FSTR 27:933; Methional odorante-patata)."
+        },
+        {
+          "composto": "methanethiol",
+          "descrittore": "solforato-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata lessata (Solanum tuberosum): methional (firma 'patata cotta'), con metantiolo, dimetil solfuro, aldeidi di Strecker (jstage FSTR 27:933; Methional odorante-patata)."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "cavolo-mare",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata lessata (Solanum tuberosum): methional (firma 'patata cotta'), con metantiolo, dimetil solfuro, aldeidi di Strecker (jstage FSTR 27:933; Methional odorante-patata)."
+        },
+        {
+          "composto": "2-methylbutanal",
+          "descrittore": "maltato-cioccolato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata lessata (Solanum tuberosum): methional (firma 'patata cotta'), con metantiolo, dimetil solfuro, aldeidi di Strecker (jstage FSTR 27:933; Methional odorante-patata)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata lessata (Solanum tuberosum): methional (firma 'patata cotta'), con metantiolo, dimetil solfuro, aldeidi di Strecker (jstage FSTR 27:933; Methional odorante-patata)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "anacardo",
+      "nodo_target": "ing-anacardo",
+      "specie": "Anacardium occidentale (tostato)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Anacardo tostato (Anacardium occidentale): da Maillard -> pirazine (2,5-dimetilpirazina, 2-etil-3,5-dimetilpirazina), aldeidi di Strecker e furani (EBSCO cashew roasting odor; Croatian J. Food Sci. Tech. 2019).",
+      "composti": [
+        {
+          "composto": "2,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anacardo tostato (Anacardium occidentale): da Maillard -> pirazine (2,5-dimetilpirazina, 2-etil-3,5-dimetilpirazina), aldeidi di Strecker e furani (EBSCO cashew roasting odor; Croatian J. Food Sci. Tech. 2019)."
+        },
+        {
+          "composto": "2-ethyl-3,5-dimethylpyrazine",
+          "descrittore": "tostato-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anacardo tostato (Anacardium occidentale): da Maillard -> pirazine (2,5-dimetilpirazina, 2-etil-3,5-dimetilpirazina), aldeidi di Strecker e furani (EBSCO cashew roasting odor; Croatian J. Food Sci. Tech. 2019)."
+        },
+        {
+          "composto": "2-methylbutanal",
+          "descrittore": "maltato-cioccolato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anacardo tostato (Anacardium occidentale): da Maillard -> pirazine (2,5-dimetilpirazina, 2-etil-3,5-dimetilpirazina), aldeidi di Strecker e furani (EBSCO cashew roasting odor; Croatian J. Food Sci. Tech. 2019)."
+        },
+        {
+          "composto": "furfural",
+          "descrittore": "mandorla-pane tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anacardo tostato (Anacardium occidentale): da Maillard -> pirazine (2,5-dimetilpirazina, 2-etil-3,5-dimetilpirazina), aldeidi di Strecker e furani (EBSCO cashew roasting odor; Croatian J. Food Sci. Tech. 2019)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anacardo tostato (Anacardium occidentale): da Maillard -> pirazine (2,5-dimetilpirazina, 2-etil-3,5-dimetilpirazina), aldeidi di Strecker e furani (EBSCO cashew roasting odor; Croatian J. Food Sci. Tech. 2019)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (r): +8 (senape, crescione, achillea, nepitella, grani del paradiso, pisello, patata, anacardo). Marcatori-firma verificati su fonte reale. Terreno: brassiche/isotiocianati, botaniche amaro, spezia pungente, verdure verdi-pirazina, nut tostato. Ponti: isotiocianati (senape/crescione<->wasabi/rafano/cavolfiore/capperi), camazulene (achillea<->camomilla), pulegone/mentone (nepitella<->menta), umulene/cariofillene (grani del paradiso<->luppolo/pepe), metossipirazina+esanale (pisello<->peperone), methional+solfuri (patata<->cavolfiore/asparago/pane), pirazine (anacardo<->arachide/nocciola tostata/cacao/caffe/castagna/orzo tostato). In questa ondata anche fix resolver: issopo forzato a ing-issopo (Hyssopus officinalis, non il nodo ahn_anise_hyssop = Agastache).",
     "Ondata 24/10 (q): +8 (pepe di sichuan, porro, cavolfiore, issopo, mastiha, castagna, feijoa, orzo tostato). Marcatori-firma verificati su fonte reale. Terreno: spezia pungente/solforati salati/erbe/resina/tostati Maillard/tropicale. Ponti: limonene+linalolo (sichuan<->agrumi/coriandolo), solfuri allium (porro<->aglio/cipolla/erba cipollina), dimetil solfuri+isotiocianati (cavolfiore<->asparago/wasabi/rafano/porro), pinocanfone+1,8-cineolo (issopo<->rosmarino/alloro), alpha-pinene+verbenone (mastiha<->ginepro/rosmarino), furfurale+maltolo+pirazine (castagna/orzo tostato<->caffe/malto/pane/cacao/arachide tostata), esteri+(E)-2-esenale (feijoa<->ananas/mela/fragola).",
     "Ondata 24/10 (p): +8 (carota, pimento/allspice, liquirizia, rafano, carvi, noce, cachi, santoreggia). Marcatori-firma verificati su fonte reale. Terreno: radici/spezie calde/anice/pungenti/nut/frutto/erba. Ponti: terpeni ombrellifere (carota<->coriandolo/cumino/aneto/sedano), eugenolo (pimento<->chiodi di garofano/alloro/cannella), anetolo+estragolo (liquirizia<->anice stellato/finocchio/dragoncello), allil isotiocianato (rafano<->wasabi/capperi), carvone (carvi<->aneto/menta), aldeidi grasse+1-octen-3-olo (noce<->funghi/tartufo), (E)-2-esenale (cachi<->mela/kiwi/cetriolo), carvacrolo/timolo (santoreggia<->origano/timo). Scartato mirtillo rosso: unica fonte solida era su VINO non sul frutto (fonte debole, come genziana/china).",
     "Ondata 24/10 (o): +8 (formaggio erborinato, yogurt, asparago, zucca, rooibos, pepe rosa, uvetta, aceto balsamico). Marcatori-firma verificati su fonte reale. Dairy/vegetali/tisane: metil chetoni (erborinato<->mora), diacetile (yogurt<->burro/nocciola tostata), solfuri (asparago<->tartufo/erba cipollina), beta-ionone/damascenone (zucca/rooibos/uvetta<->lampone/mela/litchi), sotolon/furaneolo (aceto balsamico<->fieno greco/sciroppo d'acero), fellandrene (pepe rosa<->cumino/aneto).",
