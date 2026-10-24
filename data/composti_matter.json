@@ -10349,9 +10349,738 @@
           "fonte": "Bottarga (uova di muggine essiccate): odoranti delle uova -> methional (firma), acido esanoico, acido acetico, feniletanale (Liu & Fang 2022, Food Chemistry 385:132736, DOI 10.1016/j.foodchem.2022.132736). NOTA: fonte su uova di muggine (stesso materiale)."
         }
       ]
+    },
+    {
+      "ingrediente": "sudachi",
+      "nodo_target": "ing-sudachi",
+      "specie": "Citrus sudachi",
+      "dominio": "bar",
+      "fonte_ingrediente": "Sudachi (Citrus sudachi): limonene/gamma-terpinene in massa; aroma-attivi dill ether e cuminaldeide (Mookdasanit et al. 2003, Food Sci. Technol. Res. 9(1):54, DOI 10.3136/fstr.9.54).",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume-fresco (firma massa)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi): limonene/gamma-terpinene in massa; aroma-attivi dill ether e cuminaldeide (Mookdasanit et al. 2003, Food Sci. Technol. Res. 9(1):54, DOI 10.3136/fstr.9.54)."
+        },
+        {
+          "composto": "dill ether",
+          "descrittore": "aneto-fresco (aroma-attivo)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi): limonene/gamma-terpinene in massa; aroma-attivi dill ether e cuminaldeide (Mookdasanit et al. 2003, Food Sci. Technol. Res. 9(1):54, DOI 10.3136/fstr.9.54)."
+        },
+        {
+          "composto": "cuminaldehyde",
+          "descrittore": "cumino-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi): limonene/gamma-terpinene in massa; aroma-attivi dill ether e cuminaldeide (Mookdasanit et al. 2003, Food Sci. Technol. Res. 9(1):54, DOI 10.3136/fstr.9.54)."
+        },
+        {
+          "composto": "(E,E)-alpha-farnesene",
+          "descrittore": "floreale-legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi): limonene/gamma-terpinene in massa; aroma-attivi dill ether e cuminaldeide (Mookdasanit et al. 2003, Food Sci. Technol. Res. 9(1):54, DOI 10.3136/fstr.9.54)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume-legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi): limonene/gamma-terpinene in massa; aroma-attivi dill ether e cuminaldeide (Mookdasanit et al. 2003, Food Sci. Technol. Res. 9(1):54, DOI 10.3136/fstr.9.54)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "finger lime",
+      "nodo_target": "ing-finger-lime",
+      "specie": "Citrus australasica",
+      "dominio": "bar",
+      "fonte_ingrediente": "Finger lime / caviale di limone (Citrus australasica): D-limonene dominante (63-66%) con beta-fellandrene, gamma-terpinene, beta-citronellolo (Cozzolino et al. 2022, Molecules 27(22):7846, DOI 10.3390/molecules27227846).",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume-fresco (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime / caviale di limone (Citrus australasica): D-limonene dominante (63-66%) con beta-fellandrene, gamma-terpinene, beta-citronellolo (Cozzolino et al. 2022, Molecules 27(22):7846, DOI 10.3390/molecules27227846)."
+        },
+        {
+          "composto": "beta-phellandrene",
+          "descrittore": "agrume-resinoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime / caviale di limone (Citrus australasica): D-limonene dominante (63-66%) con beta-fellandrene, gamma-terpinene, beta-citronellolo (Cozzolino et al. 2022, Molecules 27(22):7846, DOI 10.3390/molecules27227846)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime / caviale di limone (Citrus australasica): D-limonene dominante (63-66%) con beta-fellandrene, gamma-terpinene, beta-citronellolo (Cozzolino et al. 2022, Molecules 27(22):7846, DOI 10.3390/molecules27227846)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime / caviale di limone (Citrus australasica): D-limonene dominante (63-66%) con beta-fellandrene, gamma-terpinene, beta-citronellolo (Cozzolino et al. 2022, Molecules 27(22):7846, DOI 10.3390/molecules27227846)."
+        },
+        {
+          "composto": "beta-citronellol",
+          "descrittore": "rosa-citrino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime / caviale di limone (Citrus australasica): D-limonene dominante (63-66%) con beta-fellandrene, gamma-terpinene, beta-citronellolo (Cozzolino et al. 2022, Molecules 27(22):7846, DOI 10.3390/molecules27227846)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "porcino",
+      "nodo_target": "ing-porcino",
+      "specie": "Boletus edulis",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Porcino (Boletus edulis): 1-octen-3-olo (alcol del fungo) firma, con methional (nota vegetale, marker), 1-octen-3-one, 3-ottanone (Li et al. 2024, Food Chemistry: X 23:101601).",
+      "composti": [
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Porcino (Boletus edulis): 1-octen-3-olo (alcol del fungo) firma, con methional (nota vegetale, marker), 1-octen-3-one, 3-ottanone (Li et al. 2024, Food Chemistry: X 23:101601)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa-vegetale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Porcino (Boletus edulis): 1-octen-3-olo (alcol del fungo) firma, con methional (nota vegetale, marker), 1-octen-3-one, 3-ottanone (Li et al. 2024, Food Chemistry: X 23:101601)."
+        },
+        {
+          "composto": "1-octen-3-one",
+          "descrittore": "fungo-metallico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Porcino (Boletus edulis): 1-octen-3-olo (alcol del fungo) firma, con methional (nota vegetale, marker), 1-octen-3-one, 3-ottanone (Li et al. 2024, Food Chemistry: X 23:101601)."
+        },
+        {
+          "composto": "3-octanone",
+          "descrittore": "fungo-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Porcino (Boletus edulis): 1-octen-3-olo (alcol del fungo) firma, con methional (nota vegetale, marker), 1-octen-3-one, 3-ottanone (Li et al. 2024, Food Chemistry: X 23:101601)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "finferli",
+      "nodo_target": "ing-finferli",
+      "specie": "Cantharellus cibarius",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Finferli / gallinaccio (Cantharellus cibarius): 1-octen-3-olo firma (massimo tra le specie), 1-octen-3-one, 1-esanolo (Aisala et al. 2019, Food Chemistry 283:566, DOI 10.1016/j.foodchem.2019.01.053).",
+      "composti": [
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finferli / gallinaccio (Cantharellus cibarius): 1-octen-3-olo firma (massimo tra le specie), 1-octen-3-one, 1-esanolo (Aisala et al. 2019, Food Chemistry 283:566, DOI 10.1016/j.foodchem.2019.01.053)."
+        },
+        {
+          "composto": "1-octen-3-one",
+          "descrittore": "fungo-metallico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finferli / gallinaccio (Cantharellus cibarius): 1-octen-3-olo firma (massimo tra le specie), 1-octen-3-one, 1-esanolo (Aisala et al. 2019, Food Chemistry 283:566, DOI 10.1016/j.foodchem.2019.01.053)."
+        },
+        {
+          "composto": "1-hexanol",
+          "descrittore": "erba-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finferli / gallinaccio (Cantharellus cibarius): 1-octen-3-olo firma (massimo tra le specie), 1-octen-3-one, 1-esanolo (Aisala et al. 2019, Food Chemistry 283:566, DOI 10.1016/j.foodchem.2019.01.053)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cime di rapa",
+      "nodo_target": "ing-cime-di-rapa",
+      "specie": "Brassica rapa subsp. sylvestris",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cime di rapa / broccoletti (Brassica rapa): 3-butenil isotiocianato (da gluconapina) firma + isotiocianati/solforati (Taveira et al. 2009, Microchemical J. 93(2):140). NOTA: dato su B. rapa var. rapa (stessa specie, parente prossimo), non su sylvestris.",
+      "composti": [
+        {
+          "composto": "3-butenyl isothiocyanate",
+          "descrittore": "pungente-cavolo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cime di rapa / broccoletti (Brassica rapa): 3-butenil isotiocianato (da gluconapina) firma + isotiocianati/solforati (Taveira et al. 2009, Microchemical J. 93(2):140). NOTA: dato su B. rapa var. rapa (stessa specie, parente prossimo), non su sylvestris."
+        },
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-senape",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cime di rapa / broccoletti (Brassica rapa): 3-butenil isotiocianato (da gluconapina) firma + isotiocianati/solforati (Taveira et al. 2009, Microchemical J. 93(2):140). NOTA: dato su B. rapa var. rapa (stessa specie, parente prossimo), non su sylvestris."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "cavolo-solforato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cime di rapa / broccoletti (Brassica rapa): 3-butenil isotiocianato (da gluconapina) firma + isotiocianati/solforati (Taveira et al. 2009, Microchemical J. 93(2):140). NOTA: dato su B. rapa var. rapa (stessa specie, parente prossimo), non su sylvestris."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforato-allium",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cime di rapa / broccoletti (Brassica rapa): 3-butenil isotiocianato (da gluconapina) firma + isotiocianati/solforati (Taveira et al. 2009, Microchemical J. 93(2):140). NOTA: dato su B. rapa var. rapa (stessa specie, parente prossimo), non su sylvestris."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cime di rapa / broccoletti (Brassica rapa): 3-butenil isotiocianato (da gluconapina) firma + isotiocianati/solforati (Taveira et al. 2009, Microchemical J. 93(2):140). NOTA: dato su B. rapa var. rapa (stessa specie, parente prossimo), non su sylvestris."
+        }
+      ]
+    },
+    {
+      "ingrediente": "kimchi",
+      "nodo_target": "ing-kimchi",
+      "specie": "cavolo fermentato lattico",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Kimchi (cavolo fermentato lattico): dimetil trisolfuro firma (log3FD piu' alto), allil metil trisolfuro, dimetil tetrasolfuro, 3-(metiltio)butanale (Seo/You/Baek 2024, Food Sci. Biotechnol. 33:1623, DOI 10.1007/s10068-023-01469-w).",
+      "composti": [
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "cavolo-solforato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kimchi (cavolo fermentato lattico): dimetil trisolfuro firma (log3FD piu' alto), allil metil trisolfuro, dimetil tetrasolfuro, 3-(metiltio)butanale (Seo/You/Baek 2024, Food Sci. Biotechnol. 33:1623, DOI 10.1007/s10068-023-01469-w)."
+        },
+        {
+          "composto": "allyl methyl trisulfide",
+          "descrittore": "aglio-solforato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kimchi (cavolo fermentato lattico): dimetil trisolfuro firma (log3FD piu' alto), allil metil trisolfuro, dimetil tetrasolfuro, 3-(metiltio)butanale (Seo/You/Baek 2024, Food Sci. Biotechnol. 33:1623, DOI 10.1007/s10068-023-01469-w)."
+        },
+        {
+          "composto": "dimethyl tetrasulfide",
+          "descrittore": "solforato-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kimchi (cavolo fermentato lattico): dimetil trisolfuro firma (log3FD piu' alto), allil metil trisolfuro, dimetil tetrasolfuro, 3-(metiltio)butanale (Seo/You/Baek 2024, Food Sci. Biotechnol. 33:1623, DOI 10.1007/s10068-023-01469-w)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erba-tagliata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kimchi (cavolo fermentato lattico): dimetil trisolfuro firma (log3FD piu' alto), allil metil trisolfuro, dimetil tetrasolfuro, 3-(metiltio)butanale (Seo/You/Baek 2024, Food Sci. Biotechnol. 33:1623, DOI 10.1007/s10068-023-01469-w)."
+        },
+        {
+          "composto": "3-(methylthio)butanal",
+          "descrittore": "solforato-patata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kimchi (cavolo fermentato lattico): dimetil trisolfuro firma (log3FD piu' alto), allil metil trisolfuro, dimetil tetrasolfuro, 3-(metiltio)butanale (Seo/You/Baek 2024, Food Sci. Biotechnol. 33:1623, DOI 10.1007/s10068-023-01469-w)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "crauti",
+      "nodo_target": "ing-crauti",
+      "specie": "cavolo fermentato",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Crauti / sauerkraut (cavolo fermentato): dimetil trisolfuro firma (correla col flavor solforato), metil metantiosolfonato (caratteristico crauti), allil isotiocianato, dimetil disolfuro (Johanningsmeier et al. 2005, J. Food Sci. 70(5):S343).",
+      "composti": [
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "crauti-solforato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Crauti / sauerkraut (cavolo fermentato): dimetil trisolfuro firma (correla col flavor solforato), metil metantiosolfonato (caratteristico crauti), allil isotiocianato, dimetil disolfuro (Johanningsmeier et al. 2005, J. Food Sci. 70(5):S343)."
+        },
+        {
+          "composto": "methyl methanethiosulfonate",
+          "descrittore": "crauti-caratteristico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Crauti / sauerkraut (cavolo fermentato): dimetil trisolfuro firma (correla col flavor solforato), metil metantiosolfonato (caratteristico crauti), allil isotiocianato, dimetil disolfuro (Johanningsmeier et al. 2005, J. Food Sci. 70(5):S343)."
+        },
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "senape-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Crauti / sauerkraut (cavolo fermentato): dimetil trisolfuro firma (correla col flavor solforato), metil metantiosolfonato (caratteristico crauti), allil isotiocianato, dimetil disolfuro (Johanningsmeier et al. 2005, J. Food Sci. 70(5):S343)."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "cavolo-solforato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Crauti / sauerkraut (cavolo fermentato): dimetil trisolfuro firma (correla col flavor solforato), metil metantiosolfonato (caratteristico crauti), allil isotiocianato, dimetil disolfuro (Johanningsmeier et al. 2005, J. Food Sci. 70(5):S343)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "tempeh",
+      "nodo_target": "ing-tempeh",
+      "specie": "soia fermentata (Rhizopus)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Tempeh (soia fermentata, Rhizopus): 2-acetil-1-pirrolina firma (FD 1024, OAV 1380), 2-etil-3,5-dimetilpirazina, dimetil trisolfuro, methional, (E,E)-2,4-decadienale (Jelen et al. 2013, Food Chemistry 141(1):459, DOI 10.1016/j.foodchem.2013.03.047).",
+      "composti": [
+        {
+          "composto": "2-acetyl-1-pyrroline",
+          "descrittore": "pane-popcorn tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tempeh (soia fermentata, Rhizopus): 2-acetil-1-pirrolina firma (FD 1024, OAV 1380), 2-etil-3,5-dimetilpirazina, dimetil trisolfuro, methional, (E,E)-2,4-decadienale (Jelen et al. 2013, Food Chemistry 141(1):459, DOI 10.1016/j.foodchem.2013.03.047)."
+        },
+        {
+          "composto": "2-ethyl-3,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tempeh (soia fermentata, Rhizopus): 2-acetil-1-pirrolina firma (FD 1024, OAV 1380), 2-etil-3,5-dimetilpirazina, dimetil trisolfuro, methional, (E,E)-2,4-decadienale (Jelen et al. 2013, Food Chemistry 141(1):459, DOI 10.1016/j.foodchem.2013.03.047)."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tempeh (soia fermentata, Rhizopus): 2-acetil-1-pirrolina firma (FD 1024, OAV 1380), 2-etil-3,5-dimetilpirazina, dimetil trisolfuro, methional, (E,E)-2,4-decadienale (Jelen et al. 2013, Food Chemistry 141(1):459, DOI 10.1016/j.foodchem.2013.03.047)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata cotta",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tempeh (soia fermentata, Rhizopus): 2-acetil-1-pirrolina firma (FD 1024, OAV 1380), 2-etil-3,5-dimetilpirazina, dimetil trisolfuro, methional, (E,E)-2,4-decadienale (Jelen et al. 2013, Food Chemistry 141(1):459, DOI 10.1016/j.foodchem.2013.03.047)."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tempeh (soia fermentata, Rhizopus): 2-acetil-1-pirrolina firma (FD 1024, OAV 1380), 2-etil-3,5-dimetilpirazina, dimetil trisolfuro, methional, (E,E)-2,4-decadienale (Jelen et al. 2013, Food Chemistry 141(1):459, DOI 10.1016/j.foodchem.2013.03.047)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "avena",
+      "nodo_target": "ing-avena",
+      "specie": "Avena sativa (cotta)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Avena (Avena sativa): (E,E,Z)-2,4,6-nonatrienale (marker 'oat-like') firma, con 2-acetil-1-pirrolina, methional, vanillina (Dach & Schieberle 2021, J. Agric. Food Chem. 69(5):1578, DOI 10.1021/acs.jafc.0c07498). NOTA: dato da impasto di avena cotto.",
+      "composti": [
+        {
+          "composto": "(E,E,Z)-2,4,6-nonatrienal",
+          "descrittore": "avena-cereale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Avena (Avena sativa): (E,E,Z)-2,4,6-nonatrienale (marker 'oat-like') firma, con 2-acetil-1-pirrolina, methional, vanillina (Dach & Schieberle 2021, J. Agric. Food Chem. 69(5):1578, DOI 10.1021/acs.jafc.0c07498). NOTA: dato da impasto di avena cotto."
+        },
+        {
+          "composto": "2-acetyl-1-pyrroline",
+          "descrittore": "popcorn-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Avena (Avena sativa): (E,E,Z)-2,4,6-nonatrienale (marker 'oat-like') firma, con 2-acetil-1-pirrolina, methional, vanillina (Dach & Schieberle 2021, J. Agric. Food Chem. 69(5):1578, DOI 10.1021/acs.jafc.0c07498). NOTA: dato da impasto di avena cotto."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata cotta",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Avena (Avena sativa): (E,E,Z)-2,4,6-nonatrienale (marker 'oat-like') firma, con 2-acetil-1-pirrolina, methional, vanillina (Dach & Schieberle 2021, J. Agric. Food Chem. 69(5):1578, DOI 10.1021/acs.jafc.0c07498). NOTA: dato da impasto di avena cotto."
+        },
+        {
+          "composto": "vanillin",
+          "descrittore": "vaniglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Avena (Avena sativa): (E,E,Z)-2,4,6-nonatrienale (marker 'oat-like') firma, con 2-acetil-1-pirrolina, methional, vanillina (Dach & Schieberle 2021, J. Agric. Food Chem. 69(5):1578, DOI 10.1021/acs.jafc.0c07498). NOTA: dato da impasto di avena cotto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "semi di zucca",
+      "nodo_target": "ing-semi-di-zucca",
+      "specie": "Cucurbita pepo (semi tostati)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Semi di zucca tostati (Cucurbita pepo, olio stiriano): 2-acetil-1-pirrolina + 2-propionil-1-pirrolina firma, 2,3-dietil-5-metilpirazina, 2-metossi-4-vinilfenolo, feniletanale (Poehlmann & Schieberle 2013, J. Agric. Food Chem. 61(12):2933, DOI 10.1021/jf400314j).",
+      "composti": [
+        {
+          "composto": "2-acetyl-1-pyrroline",
+          "descrittore": "popcorn-tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di zucca tostati (Cucurbita pepo, olio stiriano): 2-acetil-1-pirrolina + 2-propionil-1-pirrolina firma, 2,3-dietil-5-metilpirazina, 2-metossi-4-vinilfenolo, feniletanale (Poehlmann & Schieberle 2013, J. Agric. Food Chem. 61(12):2933, DOI 10.1021/jf400314j)."
+        },
+        {
+          "composto": "2-propionyl-1-pyrroline",
+          "descrittore": "popcorn-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di zucca tostati (Cucurbita pepo, olio stiriano): 2-acetil-1-pirrolina + 2-propionil-1-pirrolina firma, 2,3-dietil-5-metilpirazina, 2-metossi-4-vinilfenolo, feniletanale (Poehlmann & Schieberle 2013, J. Agric. Food Chem. 61(12):2933, DOI 10.1021/jf400314j)."
+        },
+        {
+          "composto": "2,3-diethyl-5-methylpyrazine",
+          "descrittore": "patata arrosto-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di zucca tostati (Cucurbita pepo, olio stiriano): 2-acetil-1-pirrolina + 2-propionil-1-pirrolina firma, 2,3-dietil-5-metilpirazina, 2-metossi-4-vinilfenolo, feniletanale (Poehlmann & Schieberle 2013, J. Agric. Food Chem. 61(12):2933, DOI 10.1021/jf400314j)."
+        },
+        {
+          "composto": "2-methoxy-4-vinylphenol",
+          "descrittore": "chiodo di garofano",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di zucca tostati (Cucurbita pepo, olio stiriano): 2-acetil-1-pirrolina + 2-propionil-1-pirrolina firma, 2,3-dietil-5-metilpirazina, 2-metossi-4-vinilfenolo, feniletanale (Poehlmann & Schieberle 2013, J. Agric. Food Chem. 61(12):2933, DOI 10.1021/jf400314j)."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di zucca tostati (Cucurbita pepo, olio stiriano): 2-acetil-1-pirrolina + 2-propionil-1-pirrolina firma, 2,3-dietil-5-metilpirazina, 2-metossi-4-vinilfenolo, feniletanale (Poehlmann & Schieberle 2013, J. Agric. Food Chem. 61(12):2933, DOI 10.1021/jf400314j)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mezcal",
+      "nodo_target": "ing-mezcal",
+      "specie": "agave affumicato",
+      "dominio": "bar",
+      "fonte_ingrediente": "Mezcal (agave affumicato): o-cresolo firma affumicata (100% campioni), o-etilfenolo, etil 3-furoato, p-etilfenolo, timolo (Lazo et al. 2025, Foods 14(3):402, DOI 10.3390/foods14030402).",
+      "composti": [
+        {
+          "composto": "o-cresol",
+          "descrittore": "fumo-fenolico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mezcal (agave affumicato): o-cresolo firma affumicata (100% campioni), o-etilfenolo, etil 3-furoato, p-etilfenolo, timolo (Lazo et al. 2025, Foods 14(3):402, DOI 10.3390/foods14030402)."
+        },
+        {
+          "composto": "o-ethylphenol",
+          "descrittore": "legnoso-affumicato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mezcal (agave affumicato): o-cresolo firma affumicata (100% campioni), o-etilfenolo, etil 3-furoato, p-etilfenolo, timolo (Lazo et al. 2025, Foods 14(3):402, DOI 10.3390/foods14030402)."
+        },
+        {
+          "composto": "ethyl 3-furoate",
+          "descrittore": "bruciato-affumicato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mezcal (agave affumicato): o-cresolo firma affumicata (100% campioni), o-etilfenolo, etil 3-furoato, p-etilfenolo, timolo (Lazo et al. 2025, Foods 14(3):402, DOI 10.3390/foods14030402)."
+        },
+        {
+          "composto": "p-ethylphenol",
+          "descrittore": "legnoso-stalla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mezcal (agave affumicato): o-cresolo firma affumicata (100% campioni), o-etilfenolo, etil 3-furoato, p-etilfenolo, timolo (Lazo et al. 2025, Foods 14(3):402, DOI 10.3390/foods14030402)."
+        },
+        {
+          "composto": "thymol",
+          "descrittore": "timo-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mezcal (agave affumicato): o-cresolo firma affumicata (100% campioni), o-etilfenolo, etil 3-furoato, p-etilfenolo, timolo (Lazo et al. 2025, Foods 14(3):402, DOI 10.3390/foods14030402)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "rabarbaro",
+      "nodo_target": "ing-rabarbaro",
+      "specie": "Rheum rhabarbarum (gambo)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Rabarbaro (Rheum rhabarbarum, gambo): (Z)-3-esenale e (E)-2-esenale (frazione C6 >65%, 'gambo appena pelato') firma, con acido 2-metilbutirrico e 4-metilesanoico (metil-ramificati tipici) (TU Munchen, J. Agric. Food Chem., mediatum.ub.tum.de id 603443).",
+      "composti": [
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde-foglia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rabarbaro (Rheum rhabarbarum, gambo): (Z)-3-esenale e (E)-2-esenale (frazione C6 >65%, 'gambo appena pelato') firma, con acido 2-metilbutirrico e 4-metilesanoico (metil-ramificati tipici) (TU Munchen, J. Agric. Food Chem., mediatum.ub.tum.de id 603443)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-mela acerba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rabarbaro (Rheum rhabarbarum, gambo): (Z)-3-esenale e (E)-2-esenale (frazione C6 >65%, 'gambo appena pelato') firma, con acido 2-metilbutirrico e 4-metilesanoico (metil-ramificati tipici) (TU Munchen, J. Agric. Food Chem., mediatum.ub.tum.de id 603443)."
+        },
+        {
+          "composto": "2-methylbutyric acid",
+          "descrittore": "formaggio-acido",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rabarbaro (Rheum rhabarbarum, gambo): (Z)-3-esenale e (E)-2-esenale (frazione C6 >65%, 'gambo appena pelato') firma, con acido 2-metilbutirrico e 4-metilesanoico (metil-ramificati tipici) (TU Munchen, J. Agric. Food Chem., mediatum.ub.tum.de id 603443)."
+        },
+        {
+          "composto": "4-methylhexanoic acid",
+          "descrittore": "grasso-caprino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rabarbaro (Rheum rhabarbarum, gambo): (Z)-3-esenale e (E)-2-esenale (frazione C6 >65%, 'gambo appena pelato') firma, con acido 2-metilbutirrico e 4-metilesanoico (metil-ramificati tipici) (TU Munchen, J. Agric. Food Chem., mediatum.ub.tum.de id 603443)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "nashi",
+      "nodo_target": "ing-nashi",
+      "specie": "Pyrus pyrifolia",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Nashi / pera asiatica (Pyrus pyrifolia, cv Kosui): etil 2-metilbutanoato firma (FD 256), etil butanoato, etil esanoato, (Z)-3-esenale (Katayama/Ohe/Sugawara 2013, Breeding Science 63(1):86, DOI 10.1270/jsbbs.63.86).",
+      "composti": [
+        {
+          "composto": "ethyl 2-methylbutanoate",
+          "descrittore": "ananas-fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nashi / pera asiatica (Pyrus pyrifolia, cv Kosui): etil 2-metilbutanoato firma (FD 256), etil butanoato, etil esanoato, (Z)-3-esenale (Katayama/Ohe/Sugawara 2013, Breeding Science 63(1):86, DOI 10.1270/jsbbs.63.86)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nashi / pera asiatica (Pyrus pyrifolia, cv Kosui): etil 2-metilbutanoato firma (FD 256), etil butanoato, etil esanoato, (Z)-3-esenale (Katayama/Ohe/Sugawara 2013, Breeding Science 63(1):86, DOI 10.1270/jsbbs.63.86)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "mela-fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nashi / pera asiatica (Pyrus pyrifolia, cv Kosui): etil 2-metilbutanoato firma (FD 256), etil butanoato, etil esanoato, (Z)-3-esenale (Katayama/Ohe/Sugawara 2013, Breeding Science 63(1):86, DOI 10.1270/jsbbs.63.86)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nashi / pera asiatica (Pyrus pyrifolia, cv Kosui): etil 2-metilbutanoato firma (FD 256), etil butanoato, etil esanoato, (Z)-3-esenale (Katayama/Ohe/Sugawara 2013, Breeding Science 63(1):86, DOI 10.1270/jsbbs.63.86)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "kombucha",
+      "nodo_target": "ing-kombucha",
+      "specie": "te fermentato",
+      "dominio": "bar",
+      "fonte_ingrediente": "Kombucha (te fermentato): acido acetico firma (Acetobacter), etil acetato (lieviti), 2-feniletil acetato (rosa-miele), acido isovalerico, 1-octen-3-olo (Tran et al. 2022, Front. Microbiol. 13:836617, DOI 10.3389/fmicb.2022.836617).",
+      "composti": [
+        {
+          "composto": "acetic acid",
+          "descrittore": "aceto-pungente (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombucha (te fermentato): acido acetico firma (Acetobacter), etil acetato (lieviti), 2-feniletil acetato (rosa-miele), acido isovalerico, 1-octen-3-olo (Tran et al. 2022, Front. Microbiol. 13:836617, DOI 10.3389/fmicb.2022.836617)."
+        },
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "solvente-fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombucha (te fermentato): acido acetico firma (Acetobacter), etil acetato (lieviti), 2-feniletil acetato (rosa-miele), acido isovalerico, 1-octen-3-olo (Tran et al. 2022, Front. Microbiol. 13:836617, DOI 10.3389/fmicb.2022.836617)."
+        },
+        {
+          "composto": "2-phenylethyl acetate",
+          "descrittore": "rosa-miele",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombucha (te fermentato): acido acetico firma (Acetobacter), etil acetato (lieviti), 2-feniletil acetato (rosa-miele), acido isovalerico, 1-octen-3-olo (Tran et al. 2022, Front. Microbiol. 13:836617, DOI 10.3389/fmicb.2022.836617)."
+        },
+        {
+          "composto": "isovaleric acid",
+          "descrittore": "formaggio-rancido",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombucha (te fermentato): acido acetico firma (Acetobacter), etil acetato (lieviti), 2-feniletil acetato (rosa-miele), acido isovalerico, 1-octen-3-olo (Tran et al. 2022, Front. Microbiol. 13:836617, DOI 10.3389/fmicb.2022.836617)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "terroso-fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombucha (te fermentato): acido acetico firma (Acetobacter), etil acetato (lieviti), 2-feniletil acetato (rosa-miele), acido isovalerico, 1-octen-3-olo (Tran et al. 2022, Front. Microbiol. 13:836617, DOI 10.3389/fmicb.2022.836617)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sommacco",
+      "nodo_target": "ing-sommacco",
+      "specie": "Rhus coriaria",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Sommacco / sumac (Rhus coriaria): alpha-pinene (terpene principale del frutto) firma, con limonene, (E)-cariofillene, mircene, nonanale (Arena/Trovato/Cacciola 2022, Molecules 27(5):1727, DOI 10.3390/molecules27051727).",
+      "composti": [
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "pino-resinoso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sommacco / sumac (Rhus coriaria): alpha-pinene (terpene principale del frutto) firma, con limonene, (E)-cariofillene, mircene, nonanale (Arena/Trovato/Cacciola 2022, Molecules 27(5):1727, DOI 10.3390/molecules27051727)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sommacco / sumac (Rhus coriaria): alpha-pinene (terpene principale del frutto) firma, con limonene, (E)-cariofillene, mircene, nonanale (Arena/Trovato/Cacciola 2022, Molecules 27(5):1727, DOI 10.3390/molecules27051727)."
+        },
+        {
+          "composto": "(E)-caryophyllene",
+          "descrittore": "legnoso-pepato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sommacco / sumac (Rhus coriaria): alpha-pinene (terpene principale del frutto) firma, con limonene, (E)-cariofillene, mircene, nonanale (Arena/Trovato/Cacciola 2022, Molecules 27(5):1727, DOI 10.3390/molecules27051727)."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "balsamico-resinoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sommacco / sumac (Rhus coriaria): alpha-pinene (terpene principale del frutto) firma, con limonene, (E)-cariofillene, mircene, nonanale (Arena/Trovato/Cacciola 2022, Molecules 27(5):1727, DOI 10.3390/molecules27051727)."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "agrume-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sommacco / sumac (Rhus coriaria): alpha-pinene (terpene principale del frutto) firma, con limonene, (E)-cariofillene, mircene, nonanale (Arena/Trovato/Cacciola 2022, Molecules 27(5):1727, DOI 10.3390/molecules27051727)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "melograno",
+      "nodo_target": "ing-melograno",
+      "specie": "Punica granatum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Melograno (Punica granatum, arilli/succo): 1-esanolo volatile dominante firma, con (Z)-3-esen-1-olo, alpha-terpineolo, 2-nonanone, gamma-butirrolattone (Budiene et al. 2021, Foods 10(7):1497, DOI 10.3390/foods10071497).",
+      "composti": [
+        {
+          "composto": "1-hexanol",
+          "descrittore": "erba-verde-fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melograno (Punica granatum, arilli/succo): 1-esanolo volatile dominante firma, con (Z)-3-esen-1-olo, alpha-terpineolo, 2-nonanone, gamma-butirrolattone (Budiene et al. 2021, Foods 10(7):1497, DOI 10.3390/foods10071497)."
+        },
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "erba-tagliata",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melograno (Punica granatum, arilli/succo): 1-esanolo volatile dominante firma, con (Z)-3-esen-1-olo, alpha-terpineolo, 2-nonanone, gamma-butirrolattone (Budiene et al. 2021, Foods 10(7):1497, DOI 10.3390/foods10071497)."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "lilla-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melograno (Punica granatum, arilli/succo): 1-esanolo volatile dominante firma, con (Z)-3-esen-1-olo, alpha-terpineolo, 2-nonanone, gamma-butirrolattone (Budiene et al. 2021, Foods 10(7):1497, DOI 10.3390/foods10071497)."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "fruttato-formaggio",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melograno (Punica granatum, arilli/succo): 1-esanolo volatile dominante firma, con (Z)-3-esen-1-olo, alpha-terpineolo, 2-nonanone, gamma-butirrolattone (Budiene et al. 2021, Foods 10(7):1497, DOI 10.3390/foods10071497)."
+        },
+        {
+          "composto": "gamma-butyrolactone",
+          "descrittore": "dolce-caramello",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melograno (Punica granatum, arilli/succo): 1-esanolo volatile dominante firma, con (Z)-3-esen-1-olo, alpha-terpineolo, 2-nonanone, gamma-butirrolattone (Budiene et al. 2021, Foods 10(7):1497, DOI 10.3390/foods10071497)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (aa, +16): sudachi, finger lime, porcino, finferli, cime di rapa, kimchi, crauti, tempeh, avena, semi di zucca, mezcal, rabarbaro, nashi, kombucha, sommacco, melograno. Fonti verificate da agente: 15 solide + cime di rapa (nota: B. rapa var. rapa). SCARTATI a fonte debole, non inventati: grano arso, farro, noce di cola; nepeta tenuta fuori (fonte conferma solo nepetalattone, nodo isolato). Ponti: agrumi (sudachi/finger lime/sommacco<->limone/agrumi), 1-octen-3-olo (porcino/finferli<->funghi/tartufo), solfuri (cime di rapa/kimchi/crauti<->brassiche/allium), 2-acetil-1-pirrolina (tempeh/avena/semi di zucca<->riso/pandan/pane), fenoli affumicati (mezcal<->te affumicato/cluster fumo), esteri etilici (nashi<->mela/ananas), acidi+esteri (kombucha<->aceti). Fix resolver bundlati: finger lime, cime di rapa, semi di zucca forzati a nodo proprio (collisione substring con lime/rapa/zucca).",
     "Ondata 24/10 (z, FORTE +12): broccolo, rapa, fava, grano saraceno, segale, pepe di timut, natto, pecorino, corbezzolo, cavolini di bruxelles, biancospino, bottarga. Fonti verificate da agente di ricerca: 9 solide + 3 con nota onesta (cavolini=classe, biancospino=pooled, bottarga=uova). SCARTATI per fonte debole (non inventati): pinoli, pepe tasmania, mangostano, violetta, radicchio, fico d'india, rosa canina, topinambur. Ponti: brassiche/isotiocianati (broccolo/rapa/cavolini<->cavolfiore/verza/cavolo nero/senape), aldeidi verdi (fava/corbezzolo<->cluster verde), salicilaldeide (grano saraceno, marcatore), methional+maltato (segale/bottarga<->pane/patata/katsuobushi), tioli pompelmo (timut<->pompelmo/frutto passione), pirazine (natto<->caffe/orzo tostato/lievito), acidi grassi (pecorino<->parmigiano/taleggio), benzaldeide (biancospino<->amarena/mandorla). Fix resolver bundlato: fava forzata a ing-fava (Vicia faba != fava tonka ahn_tonka_bean_seed).",
     "Ondata 24/10 (y): +8 (patata dolce, riso, taleggio, melassa, tamarindo, cavolo nero, vetiver, kumquat) -> supera i 200. Marcatori-firma verificati su fonte reale. Terreno: tubero dolce, cereale, formaggio a crosta lavata, zuccheri cotti, sour-dolce, brassica, radice da bar, agrume. Ponti: maltolo+ionone (patata dolce<->caramello/zucca/giaggiolo), 2-acetil-1-pirrolina (riso<->pandan/pane/mais), metantiolo+tioesteri (taleggio<->cavolfiore/parmigiano), furaneol+sotolon (melassa<->fragola/acero/sherry), furfurale (tamarindo<->caffe/castagna), DTS+isotiocianati (cavolo nero<->cavolfiore/verza/senape), khusimolo (vetiver, terroso nuovo), limonene (kumquat<->agrumi). Fix resolver bundlato: mirtillo rosso forzato a ing-mirtillo-rosso (Vaccinium macrocarpon != ahn_european_cranberry). Nodo distinto: patata dolce != patata.",
     "Ondata 24/10 (x): +8 (mirtillo rosso, nespola, melanzana, kombu, lievito, incenso, ceci, sambuco bacche). Marcatori-firma verificati su fonte reale. Terreno: 3 frutti, verdura affumicata, 2 umami (marino/lievito), resina, legume. Ponti: benzaldeide (mirtillo rosso<->amarena/ciliegia/mandorla), esteri (nespola<->mela/ananas), guaiacolo (melanzana<->te affumicato/katsuobushi/cluster fumo), DMS+nonadienale (kombu<->nori/cetriolo/zucchina), HEMF+methional (lievito<->miso/salsa di soia/patata), alpha-pinene+incensolo (incenso<->ginepro/mastiha resina), pirazine legume (ceci<->pisello/peperone), ossidi di linalolo (sambuco bacche, distinto dal fiore). Nodi distinti: mirtillo rosso != mirtillo, sambuco bacche != fiori di sambuco. Mirtillo rosso ora con fonte sul FRUTTO (non vino).",
