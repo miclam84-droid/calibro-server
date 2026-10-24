@@ -7830,9 +7830,404 @@
           "fonte": "Carruba tostata (Ceratonia siliqua): acidi a catena corta -> acido isovalerico e isobutirrico (nota formaggio-dolce), con pirazine e aldeidi di Strecker da Maillard (NCBI PMC5435580; Frontiers Nutr. 2021 fnut.789169)."
         }
       ]
+    },
+    {
+      "ingrediente": "amarena",
+      "nodo_target": "ing-amarena",
+      "specie": "Prunus cerasus",
+      "dominio": "bar",
+      "fonte_ingrediente": "Amarena / visciola (Prunus cerasus): benzaldeide (mandorla-nocciolo) marcatore, con esteri (esil acetato), benzil alcol ed eugenolo (Springer BF01844236 sour cherry volatiles; TheGoodScents cherry).",
+      "composti": [
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla-nocciolo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Amarena / visciola (Prunus cerasus): benzaldeide (mandorla-nocciolo) marcatore, con esteri (esil acetato), benzil alcol ed eugenolo (Springer BF01844236 sour cherry volatiles; TheGoodScents cherry)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Amarena / visciola (Prunus cerasus): benzaldeide (mandorla-nocciolo) marcatore, con esteri (esil acetato), benzil alcol ed eugenolo (Springer BF01844236 sour cherry volatiles; TheGoodScents cherry)."
+        },
+        {
+          "composto": "hexyl acetate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Amarena / visciola (Prunus cerasus): benzaldeide (mandorla-nocciolo) marcatore, con esteri (esil acetato), benzil alcol ed eugenolo (Springer BF01844236 sour cherry volatiles; TheGoodScents cherry)."
+        },
+        {
+          "composto": "benzyl alcohol",
+          "descrittore": "floreale-mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Amarena / visciola (Prunus cerasus): benzaldeide (mandorla-nocciolo) marcatore, con esteri (esil acetato), benzil alcol ed eugenolo (Springer BF01844236 sour cherry volatiles; TheGoodScents cherry)."
+        },
+        {
+          "composto": "eugenol",
+          "descrittore": "chiodo di garofano-balsamico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Amarena / visciola (Prunus cerasus): benzaldeide (mandorla-nocciolo) marcatore, con esteri (esil acetato), benzil alcol ed eugenolo (Springer BF01844236 sour cherry volatiles; TheGoodScents cherry)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "jackfruit",
+      "nodo_target": "ing-jackfruit",
+      "specie": "Artocarpus heterophyllus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Jackfruit (Artocarpus heterophyllus): esteri 'juicy fruit' -> etil isovalerato, isoamil isovalerato, etil butanoato come marcatori (academia 15454779; Food Science 2014 35:63).",
+      "composti": [
+        {
+          "composto": "ethyl isovalerate",
+          "descrittore": "frutta-caramella (firma, juicy fruit)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Jackfruit (Artocarpus heterophyllus): esteri 'juicy fruit' -> etil isovalerato, isoamil isovalerato, etil butanoato come marcatori (academia 15454779; Food Science 2014 35:63)."
+        },
+        {
+          "composto": "isoamyl isovalerate",
+          "descrittore": "frutta-mela matura",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Jackfruit (Artocarpus heterophyllus): esteri 'juicy fruit' -> etil isovalerato, isoamil isovalerato, etil butanoato come marcatori (academia 15454779; Food Science 2014 35:63)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-ananas",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Jackfruit (Artocarpus heterophyllus): esteri 'juicy fruit' -> etil isovalerato, isoamil isovalerato, etil butanoato come marcatori (academia 15454779; Food Science 2014 35:63)."
+        },
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Jackfruit (Artocarpus heterophyllus): esteri 'juicy fruit' -> etil isovalerato, isoamil isovalerato, etil butanoato come marcatori (academia 15454779; Food Science 2014 35:63)."
+        },
+        {
+          "composto": "butyl acetate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Jackfruit (Artocarpus heterophyllus): esteri 'juicy fruit' -> etil isovalerato, isoamil isovalerato, etil butanoato come marcatori (academia 15454779; Food Science 2014 35:63)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "zucchina",
+      "nodo_target": "ing-zucchina",
+      "specie": "Cucurbita pepo",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Zucchina (Cucurbita pepo): aldeidi verdi -> (E,Z)-2,6-nonadienale e (E)-2-nonenale (cetriolo), con esanale (J. Chem. Ecol. 2005 s10886-005-7103-2; NCBI PMC12258172 vegetable aromas).",
+      "composti": [
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo-verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucchina (Cucurbita pepo): aldeidi verdi -> (E,Z)-2,6-nonadienale e (E)-2-nonenale (cetriolo), con esanale (J. Chem. Ecol. 2005 s10886-005-7103-2; NCBI PMC12258172 vegetable aromas)."
+        },
+        {
+          "composto": "(E)-2-nonenal",
+          "descrittore": "grasso-cetriolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucchina (Cucurbita pepo): aldeidi verdi -> (E,Z)-2,6-nonadienale e (E)-2-nonenale (cetriolo), con esanale (J. Chem. Ecol. 2005 s10886-005-7103-2; NCBI PMC12258172 vegetable aromas)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucchina (Cucurbita pepo): aldeidi verdi -> (E,Z)-2,6-nonadienale e (E)-2-nonenale (cetriolo), con esanale (J. Chem. Ecol. 2005 s10886-005-7103-2; NCBI PMC12258172 vegetable aromas)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucchina (Cucurbita pepo): aldeidi verdi -> (E,Z)-2,6-nonadienale e (E)-2-nonenale (cetriolo), con esanale (J. Chem. Ecol. 2005 s10886-005-7103-2; NCBI PMC12258172 vegetable aromas)."
+        },
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "verde-foglia tagliata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucchina (Cucurbita pepo): aldeidi verdi -> (E,Z)-2,6-nonadienale e (E)-2-nonenale (cetriolo), con esanale (J. Chem. Ecol. 2005 s10886-005-7103-2; NCBI PMC12258172 vegetable aromas)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pepe di cubebe",
+      "nodo_target": "ing-pepe-di-cubebe",
+      "specie": "Piper cubeba",
+      "dominio": "bar",
+      "CORREGGE": "'pepe di cubebe' (Piper cubeba) e' nodo distinto da pepe nero e pepe lungo.",
+      "fonte_ingrediente": "Pepe di cubebe (Piper cubeba): sabinene, 1,8-cineolo, cubebene (sesquiterpene marcatore), con beta-cariofillene (NCBI PMC7696487; chemicalbook 8007-87-2).",
+      "composti": [
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-pepato-fresco (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di cubebe (Piper cubeba): sabinene, 1,8-cineolo, cubebene (sesquiterpene marcatore), con beta-cariofillene (NCBI PMC7696487; chemicalbook 8007-87-2)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto-fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di cubebe (Piper cubeba): sabinene, 1,8-cineolo, cubebene (sesquiterpene marcatore), con beta-cariofillene (NCBI PMC7696487; chemicalbook 8007-87-2)."
+        },
+        {
+          "composto": "cubebene",
+          "descrittore": "legnoso-pepato (marcatore)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di cubebe (Piper cubeba): sabinene, 1,8-cineolo, cubebene (sesquiterpene marcatore), con beta-cariofillene (NCBI PMC7696487; chemicalbook 8007-87-2)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di cubebe (Piper cubeba): sabinene, 1,8-cineolo, cubebene (sesquiterpene marcatore), con beta-cariofillene (NCBI PMC7696487; chemicalbook 8007-87-2)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di cubebe (Piper cubeba): sabinene, 1,8-cineolo, cubebene (sesquiterpene marcatore), con beta-cariofillene (NCBI PMC7696487; chemicalbook 8007-87-2)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "macis",
+      "nodo_target": "ing-macis",
+      "specie": "Myristica fragrans (arillo)",
+      "dominio": "cucina",
+      "CORREGGE": "'macis' e' l'arillo di Myristica fragrans: stessa pianta della noce moscata (seme), prodotto distinto, nodo ing-macis.",
+      "fonte_ingrediente": "Macis (arillo di Myristica fragrans): miristicina, sabinene, alpha-pinene, 4-terpineolo; stessa pianta della noce moscata (seme) ma prodotto distinto (NCBI PMC9541156 nutmeg/mace EO review; scent.vn mace 403).",
+      "composti": [
+        {
+          "composto": "myristicin",
+          "descrittore": "noce moscata-speziato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Macis (arillo di Myristica fragrans): miristicina, sabinene, alpha-pinene, 4-terpineolo; stessa pianta della noce moscata (seme) ma prodotto distinto (NCBI PMC9541156 nutmeg/mace EO review; scent.vn mace 403)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Macis (arillo di Myristica fragrans): miristicina, sabinene, alpha-pinene, 4-terpineolo; stessa pianta della noce moscata (seme) ma prodotto distinto (NCBI PMC9541156 nutmeg/mace EO review; scent.vn mace 403)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Macis (arillo di Myristica fragrans): miristicina, sabinene, alpha-pinene, 4-terpineolo; stessa pianta della noce moscata (seme) ma prodotto distinto (NCBI PMC9541156 nutmeg/mace EO review; scent.vn mace 403)."
+        },
+        {
+          "composto": "terpinen-4-ol",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Macis (arillo di Myristica fragrans): miristicina, sabinene, alpha-pinene, 4-terpineolo; stessa pianta della noce moscata (seme) ma prodotto distinto (NCBI PMC9541156 nutmeg/mace EO review; scent.vn mace 403)."
+        },
+        {
+          "composto": "elemicin",
+          "descrittore": "speziato-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Macis (arillo di Myristica fragrans): miristicina, sabinene, alpha-pinene, 4-terpineolo; stessa pianta della noce moscata (seme) ma prodotto distinto (NCBI PMC9541156 nutmeg/mace EO review; scent.vn mace 403)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "aceto di vino",
+      "nodo_target": "ing-aceto-di-vino",
+      "specie": "aceto di vino",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Aceto di vino (Spanish PDO wine vinegar): acido acetico dominante, etil acetato, diacetile e acetoino, con 2-feniletanolo residuo del vino (redalyc 181662291003; Pherobase vinegar C/24828).",
+      "composti": [
+        {
+          "composto": "acetic acid",
+          "descrittore": "pungente-aceto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di vino (Spanish PDO wine vinegar): acido acetico dominante, etil acetato, diacetile e acetoino, con 2-feniletanolo residuo del vino (redalyc 181662291003; Pherobase vinegar C/24828)."
+        },
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "solvente-fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di vino (Spanish PDO wine vinegar): acido acetico dominante, etil acetato, diacetile e acetoino, con 2-feniletanolo residuo del vino (redalyc 181662291003; Pherobase vinegar C/24828)."
+        },
+        {
+          "composto": "diacetyl",
+          "descrittore": "burroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di vino (Spanish PDO wine vinegar): acido acetico dominante, etil acetato, diacetile e acetoino, con 2-feniletanolo residuo del vino (redalyc 181662291003; Pherobase vinegar C/24828)."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "cremoso-burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di vino (Spanish PDO wine vinegar): acido acetico dominante, etil acetato, diacetile e acetoino, con 2-feniletanolo residuo del vino (redalyc 181662291003; Pherobase vinegar C/24828)."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "miele-rosa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di vino (Spanish PDO wine vinegar): acido acetico dominante, etil acetato, diacetile e acetoino, con 2-feniletanolo residuo del vino (redalyc 181662291003; Pherobase vinegar C/24828)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cerfoglio",
+      "nodo_target": "ing-cerfoglio",
+      "specie": "Anthriscus cerefolium",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cerfoglio (Anthriscus cerefolium): estragolo (metilchavicolo) dominante, con 1-allil-2,4-dimetossibenzene e beta-fellandrene (ISHS 344_6; avesis chervil Turkey; chemicalbook 1338-80-3).",
+      "composti": [
+        {
+          "composto": "estragole",
+          "descrittore": "anice-dragoncello (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cerfoglio (Anthriscus cerefolium): estragolo (metilchavicolo) dominante, con 1-allil-2,4-dimetossibenzene e beta-fellandrene (ISHS 344_6; avesis chervil Turkey; chemicalbook 1338-80-3)."
+        },
+        {
+          "composto": "1-allyl-2,4-dimethoxybenzene",
+          "descrittore": "anice-speziato (marcatore cerfoglio)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cerfoglio (Anthriscus cerefolium): estragolo (metilchavicolo) dominante, con 1-allil-2,4-dimetossibenzene e beta-fellandrene (ISHS 344_6; avesis chervil Turkey; chemicalbook 1338-80-3)."
+        },
+        {
+          "composto": "beta-phellandrene",
+          "descrittore": "verde-menta-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cerfoglio (Anthriscus cerefolium): estragolo (metilchavicolo) dominante, con 1-allil-2,4-dimetossibenzene e beta-fellandrene (ISHS 344_6; avesis chervil Turkey; chemicalbook 1338-80-3)."
+        },
+        {
+          "composto": "(Z)-beta-ocimene",
+          "descrittore": "verde-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cerfoglio (Anthriscus cerefolium): estragolo (metilchavicolo) dominante, con 1-allil-2,4-dimetossibenzene e beta-fellandrene (ISHS 344_6; avesis chervil Turkey; chemicalbook 1338-80-3)."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "balsamico-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cerfoglio (Anthriscus cerefolium): estragolo (metilchavicolo) dominante, con 1-allil-2,4-dimetossibenzene e beta-fellandrene (ISHS 344_6; avesis chervil Turkey; chemicalbook 1338-80-3)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "verza",
+      "nodo_target": "ing-verza",
+      "specie": "Brassica oleracea var. capitata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Verza / cavolo cappuccio (Brassica oleracea var. capitata): dimetil solfuro, dimetil trisolfuro, allil isotiocianato e metantiolo (NCBI PMC9824104 Brassicaceae volatilome; PMC6304465).",
+      "composti": [
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "cavolo cotto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verza / cavolo cappuccio (Brassica oleracea var. capitata): dimetil solfuro, dimetil trisolfuro, allil isotiocianato e metantiolo (NCBI PMC9824104 Brassicaceae volatilome; PMC6304465)."
+        },
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-senape",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verza / cavolo cappuccio (Brassica oleracea var. capitata): dimetil solfuro, dimetil trisolfuro, allil isotiocianato e metantiolo (NCBI PMC9824104 Brassicaceae volatilome; PMC6304465)."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforato-cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verza / cavolo cappuccio (Brassica oleracea var. capitata): dimetil solfuro, dimetil trisolfuro, allil isotiocianato e metantiolo (NCBI PMC9824104 Brassicaceae volatilome; PMC6304465)."
+        },
+        {
+          "composto": "methanethiol",
+          "descrittore": "solforato-pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verza / cavolo cappuccio (Brassica oleracea var. capitata): dimetil solfuro, dimetil trisolfuro, allil isotiocianato e metantiolo (NCBI PMC9824104 Brassicaceae volatilome; PMC6304465)."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforato-allium",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Verza / cavolo cappuccio (Brassica oleracea var. capitata): dimetil solfuro, dimetil trisolfuro, allil isotiocianato e metantiolo (NCBI PMC9824104 Brassicaceae volatilome; PMC6304465)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (u): +8 (amarena, jackfruit, zucchina, pepe di cubebe, macis, aceto di vino, cerfoglio, verza). Marcatori-firma verificati su fonte reale. Terreno: 2 frutti, verdura verde, 2 spezie Piper/Myristica, acido, erba anice, brassica. Ponti: benzaldeide (amarena<->ciliegia/mandorla amara/dattero), esteri juicy (jackfruit<->ananas/physalis), nonadienale (zucchina<->cetriolo/borragine/nori), 1,8-cineolo+sabinene (cubebe<->cardamomo/alloro), miristicina (macis<->noce moscata/pastinaca), acido acetico (aceto di vino<->aceto balsamico/aceto di mele), estragolo (cerfoglio<->dragoncello/liquirizia), DMS+isotiocianati (verza<->cavolfiore/senape/mais dolce). macis = arillo, nodo distinto dalla noce moscata (seme).",
     "Ondata 24/10 (t): +8 (nori, asafoetida, elicriso, pepe lungo, physalis, borragine, genepi, carruba). Marcatori-firma verificati su fonte reale. Terreno NUOVO: marino (bromofenoli/DMS), disolfuri organici, italidioni-curry, Piper longum, esteri physalis, cetriolo-borragine, tujone-genepi, acidi-carruba. Ponti: DMS+nonadienale (nori<->mais dolce/cetriolo/borragine), disolfuri (asafoetida<->aglio/porro/cavolfiore), cariofillene+zingiberene (pepe lungo<->pepe nero/zenzero/luppolo), esteri etilici (physalis<->ananas/mela/feijoa), tujone (genepi<->assenzio), pirazine+acidi (carruba<->cacao/caffe/cluster tostato). Nota: pastinaca (ondata s) e' risolta su ahn_parsnip_fruit (stessa specie, parte frutto): accettato, non e' mismatch di specie.",
     "Ondata 24/10 (s): +8 (levistico, shiso, pastinaca, dattero, aceto di mele, cicoria tostata, ruta, mais dolce). Marcatori-firma verificati su fonte reale. Terreno: Apiacee, erba distintiva, radice dolce, frutto dolce, acido, tostato, botanica a metilchetoni, cereale solforato. Ponti: ligustilide/sotolon (levistico<->sedano/fieno greco), perillaldeide (shiso, distintivo), terpinolene/miristicina (pastinaca<->carota/noce moscata/prezzemolo), gamma-butirrolattone+benzaldeide (dattero<->mandorla/miele/rosa), acido acetico+esteri (aceto di mele<->aceto balsamico/mela), furfurale+pirazine+diidroactinidiolide (cicoria tostata<->caffe/te nero/rooibos/cluster tostato), metilchetoni (ruta, distintivo), dimetil solfuro+2-acetil-1-pirrolina (mais dolce<->pomodoro/patata/pandan/pane).",
     "Ondata 24/10 (r): +8 (senape, crescione, achillea, nepitella, grani del paradiso, pisello, patata, anacardo). Marcatori-firma verificati su fonte reale. Terreno: brassiche/isotiocianati, botaniche amaro, spezia pungente, verdure verdi-pirazina, nut tostato. Ponti: isotiocianati (senape/crescione<->wasabi/rafano/cavolfiore/capperi), camazulene (achillea<->camomilla), pulegone/mentone (nepitella<->menta), umulene/cariofillene (grani del paradiso<->luppolo/pepe), metossipirazina+esanale (pisello<->peperone), methional+solfuri (patata<->cavolfiore/asparago/pane), pirazine (anacardo<->arachide/nocciola tostata/cacao/caffe/castagna/orzo tostato). In questa ondata anche fix resolver: issopo forzato a ing-issopo (Hyssopus officinalis, non il nodo ahn_anise_hyssop = Agastache).",
