@@ -71,7 +71,7 @@ def banco_cocktail():
     """FRONTEND-2.0 — Banco: calcolatore cocktail (diluizione/gradazione, metodo Dave Arnold).
     Cablato a /v1/motore/cocktail. Pagina nuova e isolata: non tocca /app né /app2."""
     from flask import make_response
-    resp = make_response(render_template("banco.html"))
+    resp = make_response(render_template("banco-cocktail-nuovo.html"))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
@@ -80,7 +80,7 @@ def banco_panificazione():
     """FRONTEND-2.0 — Banco: calcolatore panificazione (dosi, temp acqua, tabella di marcia a ritroso).
     Cablato a /v1/motore/panificazione (motore Hamelman). Pagina nuova e isolata: non tocca /app né /app2."""
     from flask import make_response
-    resp = make_response(render_template("banco-panificazione.html"))
+    resp = make_response(render_template("banco-panificazione-nuovo.html"))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 

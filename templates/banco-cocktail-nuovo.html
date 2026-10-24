@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banco · Cocktail — Matter Bench</title>
+<meta name="description" content="Progetta il drink dall'obiettivo: volume e gradazione nel bicchiere, Matter dà le proporzioni. Diluizione dalla tecnica, metodo Dave Arnold.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  .regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  .regola b{color:var(--ink); font-weight:600}
+  .banco-form{display:grid; gap:12px; margin-top:22px}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:5px}
+  .inp{display:flex; align-items:center; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); box-shadow:var(--shadow-sm); overflow:hidden}
+  .inp input,.inp select{flex:1; min-width:0; font-family:var(--sans); font-size:16px; color:var(--ink); background:transparent; border:0; padding:12px 14px; font-variant-numeric:tabular-nums}
+  .inp input:focus,.inp select:focus{outline:2px solid var(--verde); outline-offset:-2px}
+  .inp .unit{flex:0 0 auto; padding:0 14px; font-size:13px; color:var(--ink-soft); font-weight:600}
+  .res-head{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); margin:8px 0 10px}
+  .res-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:2px 16px}
+  .res-row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--riga)}
+  .res-row:last-child{border-bottom:0}
+  .res-k{font-size:14px; color:var(--ink-soft)}
+  .res-v{font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); font-variant-numeric:tabular-nums; text-align:right}
+  .tecnica-card{margin-top:14px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r); padding:14px 16px}
+  .tec-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .tec-nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink)}
+  .tec-dil{font-size:12.5px; color:var(--verde); font-weight:600; font-variant-numeric:tabular-nums}
+  .tec-quando{margin:6px 0 0; font-size:13px; color:var(--ink-soft); line-height:1.5}
+  .nota{margin-top:14px; font-size:13px; color:var(--ink-soft); line-height:1.55}
+  .nota b{color:var(--ink); font-weight:600}
+  .nota.critico b{color:var(--oxblood)}
+  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink)}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  footer{margin-top:32px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  footer b{color:var(--ink); font-weight:600}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Banco · Cocktail</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <header style="margin-top:22px">
+    <span class="eyebrow">Cocktail · progetta dall'obiettivo</span>
+    <h1 style="margin-top:4px">Diluizione &amp; gradazione</h1>
+    <p class="regola">Parti da <b>cosa vuoi nel bicchiere</b> — volume e gradazione — e Matter ti dà le proporzioni. La diluizione viene dalla <b>tecnica</b>, non dal tempo.</p>
+  </header>
+
+  <form id="form" class="banco-form" autocomplete="off">
+    <div class="field"><label for="vol">Volume finale</label>
+      <div class="inp"><input id="vol" type="number" inputmode="numeric" value="90" min="20" max="500" step="5"><span class="unit">ml</span></div></div>
+    <div class="field"><label for="grad">Gradazione voluta</label>
+      <div class="inp"><input id="grad" type="number" inputmode="decimal" value="22" min="0" max="60" step="0.5"><span class="unit">% vol</span></div></div>
+    <div class="field"><label for="tec">Tecnica</label>
+      <div class="inp"><select id="tec">
+        <option value="stirred">Mescolato (stirred)</option>
+        <option value="shaken">Shakerato (shaken)</option>
+        <option value="thrown">Lanciato (thrown)</option>
+        <option value="built">Costruito nel bicchiere</option>
+      </select></div></div>
+    <div class="field"><label for="gradi">Gradazione dei distillati</label>
+      <div class="inp"><input id="gradi" type="number" inputmode="decimal" value="40" min="10" max="96" step="1"><span class="unit">% vol</span></div></div>
+    <button type="submit" class="btn btn--block">Calcola</button>
+  </form>
+
+  <div id="out"></div>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    <b>Metodo: Dave Arnold — <i>Liquid Intelligence</i>.</b> La diluizione dipende dalla tecnica e dalla superficie del ghiaccio, non dal tempo. I valori sono un punto di partenza calcolato: il banco (il tuo assaggio) resta il giudice.
+  </footer>
+</main>
+
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $out = document.getElementById('out');
+const $state = document.getElementById('state');
+function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
+function riga(k,v){ return `<div class="res-row"><span class="res-k">${esc(k)}</span><span class="res-v">${esc(v)}</span></div>`; }
+
+function render(d){
+  if(d.errore){ setState('Il motore ha risposto con un errore: '+esc(d.errore), true); $out.innerHTML=''; return; }
+  $state.hidden = true;
+  const p = d.proporzioni || {}, t = d.tecnica || {};
+  $out.innerHTML = `
+    <section class="section">
+      <div class="res-head">${esc(d.obiettivo||'')}</div>
+      <div class="res-card">
+        ${riga('Parte alcolica', p.parte_alcolica||'—')}
+        ${riga('Acqua da diluizione', p.acqua_da_diluizione||'—')}
+        ${riga('Volume finale', p.volume_finale||'—')}
+      </div>
+      <div class="tecnica-card">
+        <div class="tec-top"><span class="tec-nome">${esc(t.nome||'')}</span><span class="tec-dil">diluizione ${esc(t.diluizione||'')}</span></div>
+        <p class="tec-quando">${esc(t.quando||'')}</p>
+      </div>
+      ${d.ghiaccio?`<p class="nota"><b>Ghiaccio.</b> ${esc(d.ghiaccio)}</p>`:''}
+      ${d.punto_critico?`<p class="nota critico"><b>Punto critico.</b> ${esc(d.punto_critico)}</p>`:''}
+    </section>`;
+}
+
+async function calcola(){
+  setState('Calcolo…', false); $out.innerHTML='';
+  const body = {
+    volume_finale_ml: +document.getElementById('vol').value || 90,
+    gradazione_voluta: +document.getElementById('grad').value || 22,
+    tecnica: document.getElementById('tec').value,
+    gradazione_ingredienti: +document.getElementById('gradi').value || 40,
+  };
+  try{
+    const r = await fetch('/v1/motore/cocktail', {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body)});
+    if(!r.ok){ setState('Il motore ha risposto con un errore ('+r.status+'). Riprova.', true); return; }
+    render(await r.json());
+  }catch(e){ setState('Non riesco a raggiungere il motore adesso. Riprova tra poco.', true); }
+}
+document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); calcola(); });
+calcola();
+</script>
+</body>
+</html>
