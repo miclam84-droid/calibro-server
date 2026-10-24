@@ -32,7 +32,8 @@ _PATH = os.path.join(os.path.dirname(__file__), "..", "data", "composti_matter.j
 # Ginepro: il nodo attuale (ahn_juniperus_sabina) e' la specie sbagliata e vuoto.
 # Lime: il nodo attuale (ahn_kaffir_lime) e' una varieta' diversa.
 _FORZA_NODO = {"ginepro": "ing-ginepro", "lime": "ing-lime",
-               "issopo": "ing-issopo"}  # Hyssopus officinalis != ahn_anise_hyssop (Agastache, specie diversa)
+               "issopo": "ing-issopo",  # Hyssopus officinalis != ahn_anise_hyssop (Agastache, specie diversa)
+               "mirtillo rosso": "ing-mirtillo-rosso"}  # Vaccinium macrocarpon != ahn_european_cranberry (specie diversa)
 
 
 def _norm(s):
