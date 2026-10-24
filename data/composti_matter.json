@@ -8618,9 +8618,405 @@
           "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
         }
       ]
+    },
+    {
+      "ingrediente": "giaggiolo",
+      "nodo_target": "ing-giaggiolo",
+      "specie": "Iris pallida (radice)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Giaggiolo / radice di iris (Iris pallida): irones -> alpha-irone e gamma-irone (violetta-polveroso-legnoso, firma gin/vermouth), con beta-ionone e miristato di metile (NCBI PMC11397506 Iris GC-MS; turkjps Iris pallida Ukraine).",
+      "composti": [
+        {
+          "composto": "alpha-irone",
+          "descrittore": "violetta-polveroso-legnoso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giaggiolo / radice di iris (Iris pallida): irones -> alpha-irone e gamma-irone (violetta-polveroso-legnoso, firma gin/vermouth), con beta-ionone e miristato di metile (NCBI PMC11397506 Iris GC-MS; turkjps Iris pallida Ukraine)."
+        },
+        {
+          "composto": "gamma-irone",
+          "descrittore": "violetta-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giaggiolo / radice di iris (Iris pallida): irones -> alpha-irone e gamma-irone (violetta-polveroso-legnoso, firma gin/vermouth), con beta-ionone e miristato di metile (NCBI PMC11397506 Iris GC-MS; turkjps Iris pallida Ukraine)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giaggiolo / radice di iris (Iris pallida): irones -> alpha-irone e gamma-irone (violetta-polveroso-legnoso, firma gin/vermouth), con beta-ionone e miristato di metile (NCBI PMC11397506 Iris GC-MS; turkjps Iris pallida Ukraine)."
+        },
+        {
+          "composto": "methyl myristate",
+          "descrittore": "ceroso-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giaggiolo / radice di iris (Iris pallida): irones -> alpha-irone e gamma-irone (violetta-polveroso-legnoso, firma gin/vermouth), con beta-ionone e miristato di metile (NCBI PMC11397506 Iris GC-MS; turkjps Iris pallida Ukraine)."
+        },
+        {
+          "composto": "decanal",
+          "descrittore": "agrume-ceroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giaggiolo / radice di iris (Iris pallida): irones -> alpha-irone e gamma-irone (violetta-polveroso-legnoso, firma gin/vermouth), con beta-ionone e miristato di metile (NCBI PMC11397506 Iris GC-MS; turkjps Iris pallida Ukraine)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "osmanthus",
+      "nodo_target": "ing-osmanthus",
+      "specie": "Osmanthus fragrans",
+      "dominio": "bar",
+      "fonte_ingrediente": "Osmanthus (Osmanthus fragrans): beta-ionone e diidro-beta-ionone (violetta), gamma-decalattone (albicocca-pesca), con beta-damascenone e linalolo (Pherobase Osmanthus fragrans; Food Science 2024 45:151).",
+      "composti": [
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-floreale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Osmanthus (Osmanthus fragrans): beta-ionone e diidro-beta-ionone (violetta), gamma-decalattone (albicocca-pesca), con beta-damascenone e linalolo (Pherobase Osmanthus fragrans; Food Science 2024 45:151)."
+        },
+        {
+          "composto": "dihydro-beta-ionone",
+          "descrittore": "violetta-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Osmanthus (Osmanthus fragrans): beta-ionone e diidro-beta-ionone (violetta), gamma-decalattone (albicocca-pesca), con beta-damascenone e linalolo (Pherobase Osmanthus fragrans; Food Science 2024 45:151)."
+        },
+        {
+          "composto": "gamma-decalactone",
+          "descrittore": "pesca-albicocca-cremoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Osmanthus (Osmanthus fragrans): beta-ionone e diidro-beta-ionone (violetta), gamma-decalattone (albicocca-pesca), con beta-damascenone e linalolo (Pherobase Osmanthus fragrans; Food Science 2024 45:151)."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-miele-rosa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Osmanthus (Osmanthus fragrans): beta-ionone e diidro-beta-ionone (violetta), gamma-decalattone (albicocca-pesca), con beta-damascenone e linalolo (Pherobase Osmanthus fragrans; Food Science 2024 45:151)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Osmanthus (Osmanthus fragrans): beta-ionone e diidro-beta-ionone (violetta), gamma-decalattone (albicocca-pesca), con beta-damascenone e linalolo (Pherobase Osmanthus fragrans; Food Science 2024 45:151)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "geranio",
+      "nodo_target": "ing-geranio",
+      "specie": "Pelargonium graveolens",
+      "dominio": "bar",
+      "fonte_ingrediente": "Geranio odoroso / rose geranium (Pelargonium graveolens): citronellolo e geraniolo (rosa) con isomentone e cis-rose oxide (litchi-rosa) (grasasyaceites CSIC; agris 685152f9).",
+      "composti": [
+        {
+          "composto": "citronellol",
+          "descrittore": "rosa-agrume (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Geranio odoroso / rose geranium (Pelargonium graveolens): citronellolo e geraniolo (rosa) con isomentone e cis-rose oxide (litchi-rosa) (grasasyaceites CSIC; agris 685152f9)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Geranio odoroso / rose geranium (Pelargonium graveolens): citronellolo e geraniolo (rosa) con isomentone e cis-rose oxide (litchi-rosa) (grasasyaceites CSIC; agris 685152f9)."
+        },
+        {
+          "composto": "isomenthone",
+          "descrittore": "menta-legnosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Geranio odoroso / rose geranium (Pelargonium graveolens): citronellolo e geraniolo (rosa) con isomentone e cis-rose oxide (litchi-rosa) (grasasyaceites CSIC; agris 685152f9)."
+        },
+        {
+          "composto": "cis-rose oxide",
+          "descrittore": "rosa-litchi (marcatore)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Geranio odoroso / rose geranium (Pelargonium graveolens): citronellolo e geraniolo (rosa) con isomentone e cis-rose oxide (litchi-rosa) (grasasyaceites CSIC; agris 685152f9)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Geranio odoroso / rose geranium (Pelargonium graveolens): citronellolo e geraniolo (rosa) con isomentone e cis-rose oxide (litchi-rosa) (grasasyaceites CSIC; agris 685152f9)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cassia",
+      "nodo_target": "ing-cassia",
+      "specie": "Cinnamomum cassia",
+      "dominio": "cucina",
+      "CORREGGE": "'cassia' (Cinnamomum cassia) e' nodo distinto dalla cannella di Ceylon (ahn_cinnamon): piu' cinnamaldeide + cumarina.",
+      "fonte_ingrediente": "Cassia (Cinnamomum cassia): (E)-cinnamaldeide dominante (piu' della cannella di Ceylon), con cumarina, cinnamil acetato e o-metossicinnamaldeide (Studia Univ. 'EO 25 Cinnamomum species'; krishi.icar 82747).",
+      "composti": [
+        {
+          "composto": "(E)-cinnamaldehyde",
+          "descrittore": "cannella-dolce-piccante (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cassia (Cinnamomum cassia): (E)-cinnamaldeide dominante (piu' della cannella di Ceylon), con cumarina, cinnamil acetato e o-metossicinnamaldeide (Studia Univ. 'EO 25 Cinnamomum species'; krishi.icar 82747)."
+        },
+        {
+          "composto": "coumarin",
+          "descrittore": "fieno-vaniglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cassia (Cinnamomum cassia): (E)-cinnamaldeide dominante (piu' della cannella di Ceylon), con cumarina, cinnamil acetato e o-metossicinnamaldeide (Studia Univ. 'EO 25 Cinnamomum species'; krishi.icar 82747)."
+        },
+        {
+          "composto": "cinnamyl acetate",
+          "descrittore": "cannella-balsamico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cassia (Cinnamomum cassia): (E)-cinnamaldeide dominante (piu' della cannella di Ceylon), con cumarina, cinnamil acetato e o-metossicinnamaldeide (Studia Univ. 'EO 25 Cinnamomum species'; krishi.icar 82747)."
+        },
+        {
+          "composto": "2-methoxycinnamaldehyde",
+          "descrittore": "cannella-speziato (marcatore cassia)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cassia (Cinnamomum cassia): (E)-cinnamaldeide dominante (piu' della cannella di Ceylon), con cumarina, cinnamil acetato e o-metossicinnamaldeide (Studia Univ. 'EO 25 Cinnamomum species'; krishi.icar 82747)."
+        },
+        {
+          "composto": "eugenol",
+          "descrittore": "chiodo di garofano",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cassia (Cinnamomum cassia): (E)-cinnamaldeide dominante (piu' della cannella di Ceylon), con cumarina, cinnamil acetato e o-metossicinnamaldeide (Studia Univ. 'EO 25 Cinnamomum species'; krishi.icar 82747)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "nigella",
+      "nodo_target": "ing-nigella",
+      "specie": "Nigella sativa",
+      "dominio": "cucina",
+      "CORREGGE": "'nigella / cumino nero' (Nigella sativa, Ranunculaceae) NON e' il cumino (Cuminum, Apiaceae): nodo distinto ing-nigella.",
+      "fonte_ingrediente": "Nigella / cumino nero (Nigella sativa, Ranunculaceae - NON il cumino): timochinone marcatore (amaro-speziato) con p-cimene, alpha-tujene, gamma-terpinene (Heliyon 2020; OCL 2021; NCBI PMC10975171).",
+      "composti": [
+        {
+          "composto": "thymoquinone",
+          "descrittore": "amaro-speziato-fenolico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nigella / cumino nero (Nigella sativa, Ranunculaceae - NON il cumino): timochinone marcatore (amaro-speziato) con p-cimene, alpha-tujene, gamma-terpinene (Heliyon 2020; OCL 2021; NCBI PMC10975171)."
+        },
+        {
+          "composto": "p-cymene",
+          "descrittore": "legnoso-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nigella / cumino nero (Nigella sativa, Ranunculaceae - NON il cumino): timochinone marcatore (amaro-speziato) con p-cimene, alpha-tujene, gamma-terpinene (Heliyon 2020; OCL 2021; NCBI PMC10975171)."
+        },
+        {
+          "composto": "alpha-thujene",
+          "descrittore": "legnoso-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nigella / cumino nero (Nigella sativa, Ranunculaceae - NON il cumino): timochinone marcatore (amaro-speziato) con p-cimene, alpha-tujene, gamma-terpinene (Heliyon 2020; OCL 2021; NCBI PMC10975171)."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "erbaceo-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nigella / cumino nero (Nigella sativa, Ranunculaceae - NON il cumino): timochinone marcatore (amaro-speziato) con p-cimene, alpha-tujene, gamma-terpinene (Heliyon 2020; OCL 2021; NCBI PMC10975171)."
+        },
+        {
+          "composto": "carvone",
+          "descrittore": "carvi-menta",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nigella / cumino nero (Nigella sativa, Ranunculaceae - NON il cumino): timochinone marcatore (amaro-speziato) con p-cimene, alpha-tujene, gamma-terpinene (Heliyon 2020; OCL 2021; NCBI PMC10975171)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "katsuobushi",
+      "nodo_target": "ing-katsuobushi",
+      "specie": "Katsuwonus pelamis (affumicato-fermentato)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Katsuobushi (tonnetto affumicato-fermentato): fenoli del fumo (guaiacolo, 4-metilguaiacolo), aldeidi grasse e methional; umami da inosinato (non volatile) (koreascience JAKO198922105973769; Agric. Biol. Chem. 46(2):419).",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato-fenolico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Katsuobushi (tonnetto affumicato-fermentato): fenoli del fumo (guaiacolo, 4-metilguaiacolo), aldeidi grasse e methional; umami da inosinato (non volatile) (koreascience JAKO198922105973769; Agric. Biol. Chem. 46(2):419)."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Katsuobushi (tonnetto affumicato-fermentato): fenoli del fumo (guaiacolo, 4-metilguaiacolo), aldeidi grasse e methional; umami da inosinato (non volatile) (koreascience JAKO198922105973769; Agric. Biol. Chem. 46(2):419)."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "grasso-fritto-pesce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Katsuobushi (tonnetto affumicato-fermentato): fenoli del fumo (guaiacolo, 4-metilguaiacolo), aldeidi grasse e methional; umami da inosinato (non volatile) (koreascience JAKO198922105973769; Agric. Biol. Chem. 46(2):419)."
+        },
+        {
+          "composto": "4-ethylguaiacol",
+          "descrittore": "affumicato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Katsuobushi (tonnetto affumicato-fermentato): fenoli del fumo (guaiacolo, 4-metilguaiacolo), aldeidi grasse e methional; umami da inosinato (non volatile) (koreascience JAKO198922105973769; Agric. Biol. Chem. 46(2):419)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "solforato-brodo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Katsuobushi (tonnetto affumicato-fermentato): fenoli del fumo (guaiacolo, 4-metilguaiacolo), aldeidi grasse e methional; umami da inosinato (non volatile) (koreascience JAKO198922105973769; Agric. Biol. Chem. 46(2):419)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sherry",
+      "nodo_target": "ing-sherry",
+      "specie": "vino di Jerez (oloroso/flor)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Sherry oloroso / flor (vino di Jerez ossidativo): sotolon (noce-curry-ossidativo, marcatore) con acetaldeide e 2-feniletanolo (dial.uclouvain 'odorants Jura flor-sherry'; AWRI Technical Review 208).",
+      "composti": [
+        {
+          "composto": "sotolon",
+          "descrittore": "noce-curry-ossidativo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sherry oloroso / flor (vino di Jerez ossidativo): sotolon (noce-curry-ossidativo, marcatore) con acetaldeide e 2-feniletanolo (dial.uclouvain 'odorants Jura flor-sherry'; AWRI Technical Review 208)."
+        },
+        {
+          "composto": "acetaldehyde",
+          "descrittore": "ossidativo-mela verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sherry oloroso / flor (vino di Jerez ossidativo): sotolon (noce-curry-ossidativo, marcatore) con acetaldeide e 2-feniletanolo (dial.uclouvain 'odorants Jura flor-sherry'; AWRI Technical Review 208)."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "miele-rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sherry oloroso / flor (vino di Jerez ossidativo): sotolon (noce-curry-ossidativo, marcatore) con acetaldeide e 2-feniletanolo (dial.uclouvain 'odorants Jura flor-sherry'; AWRI Technical Review 208)."
+        },
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "solvente-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sherry oloroso / flor (vino di Jerez ossidativo): sotolon (noce-curry-ossidativo, marcatore) con acetaldeide e 2-feniletanolo (dial.uclouvain 'odorants Jura flor-sherry'; AWRI Technical Review 208)."
+        },
+        {
+          "composto": "diacetyl",
+          "descrittore": "burroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sherry oloroso / flor (vino di Jerez ossidativo): sotolon (noce-curry-ossidativo, marcatore) con acetaldeide e 2-feniletanolo (dial.uclouvain 'odorants Jura flor-sherry'; AWRI Technical Review 208)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "ribes rosso",
+      "nodo_target": "ing-ribes-rosso",
+      "specie": "Ribes rubrum",
+      "dominio": "cucina",
+      "CORREGGE": "'ribes rosso' (Ribes rubrum) e' nodo distinto dal ribes nero (ahn_black_currant).",
+      "fonte_ingrediente": "Ribes rosso (Ribes rubrum): esteri (etil/metil butanoato), (E)-2-esenale verde e linalolo, profilo acidulo-fruttato; distinto dal ribes nero (dspace.vut c20517df; scielo currant Ribes Turkey).",
+      "composti": [
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-ananas (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ribes rosso (Ribes rubrum): esteri (etil/metil butanoato), (E)-2-esenale verde e linalolo, profilo acidulo-fruttato; distinto dal ribes nero (dspace.vut c20517df; scielo currant Ribes Turkey)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ribes rosso (Ribes rubrum): esteri (etil/metil butanoato), (E)-2-esenale verde e linalolo, profilo acidulo-fruttato; distinto dal ribes nero (dspace.vut c20517df; scielo currant Ribes Turkey)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ribes rosso (Ribes rubrum): esteri (etil/metil butanoato), (E)-2-esenale verde e linalolo, profilo acidulo-fruttato; distinto dal ribes nero (dspace.vut c20517df; scielo currant Ribes Turkey)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ribes rosso (Ribes rubrum): esteri (etil/metil butanoato), (E)-2-esenale verde e linalolo, profilo acidulo-fruttato; distinto dal ribes nero (dspace.vut c20517df; scielo currant Ribes Turkey)."
+        },
+        {
+          "composto": "methyl butanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ribes rosso (Ribes rubrum): esteri (etil/metil butanoato), (E)-2-esenale verde e linalolo, profilo acidulo-fruttato; distinto dal ribes nero (dspace.vut c20517df; scielo currant Ribes Turkey)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (w): +8 (giaggiolo, osmanthus, geranio, cassia, nigella, katsuobushi, sherry, ribes rosso). Marcatori-firma verificati su fonte reale. Terreno: botaniche/florali da bar, spezie da forno, umami affumicato, vino ossidativo, frutto. Ponti NUOVI: irones (giaggiolo, violetta polverosa), beta-ionone+gamma-decalattone (osmanthus<->lampone/pesca/albicocca), cis-rose oxide (geranio<->litchi/uva moscato/rosa), cinnamaldeide+cumarina (cassia<->cannella/fava tonka/meliloto), timochinone (nigella, firma unica), guaiacolo (katsuobushi<->te affumicato/cardamomo nero cluster fumo), sotolon (sherry<->fieno greco/acero/levistico/aceto balsamico). Nodi distinti: cassia != cannella Ceylon, nigella != cumino, ribes rosso != ribes nero.",
     "Ondata 24/10 (v): +8 (cardamomo nero, semi di sedano, uva spina, durian, meliloto, aglio nero, te affumicato, spinaci). Marcatori-firma verificati su fonte reale. Terreno: spezia affumicata, seme-ftalidi, 2 frutti, cumarina, fermentato, te affumicato, verdura verde. Ponti: 1,8-cineolo+guaiacolo (cardamomo nero<->cardamomo/alloro + cluster fumo), ftalidi (semi di sedano<->levistico/sedano), esteri (uva spina<->ananas/physalis/jackfruit), solfuri+esteri (durian<->aglio/cipolla/asafoetida), cumarina (meliloto<->fava tonka), furani+solfuri ridotti (aglio nero<->aglio + cluster Maillard), guaiacolo+longifolene (te affumicato<->caffe/rooibos/cardamomo nero), aldeidi verdi (spinaci<->cluster verde). Nodi distinti: cardamomo nero != cardamomo verde, aglio nero != aglio fresco.",
     "Ondata 24/10 (u): +8 (amarena, jackfruit, zucchina, pepe di cubebe, macis, aceto di vino, cerfoglio, verza). Marcatori-firma verificati su fonte reale. Terreno: 2 frutti, verdura verde, 2 spezie Piper/Myristica, acido, erba anice, brassica. Ponti: benzaldeide (amarena<->ciliegia/mandorla amara/dattero), esteri juicy (jackfruit<->ananas/physalis), nonadienale (zucchina<->cetriolo/borragine/nori), 1,8-cineolo+sabinene (cubebe<->cardamomo/alloro), miristicina (macis<->noce moscata/pastinaca), acido acetico (aceto di vino<->aceto balsamico/aceto di mele), estragolo (cerfoglio<->dragoncello/liquirizia), DMS+isotiocianati (verza<->cavolfiore/senape/mais dolce). macis = arillo, nodo distinto dalla noce moscata (seme).",
     "Ondata 24/10 (t): +8 (nori, asafoetida, elicriso, pepe lungo, physalis, borragine, genepi, carruba). Marcatori-firma verificati su fonte reale. Terreno NUOVO: marino (bromofenoli/DMS), disolfuri organici, italidioni-curry, Piper longum, esteri physalis, cetriolo-borragine, tujone-genepi, acidi-carruba. Ponti: DMS+nonadienale (nori<->mais dolce/cetriolo/borragine), disolfuri (asafoetida<->aglio/porro/cavolfiore), cariofillene+zingiberene (pepe lungo<->pepe nero/zenzero/luppolo), esteri etilici (physalis<->ananas/mela/feijoa), tujone (genepi<->assenzio), pirazine+acidi (carruba<->cacao/caffe/cluster tostato). Nota: pastinaca (ondata s) e' risolta su ahn_parsnip_fruit (stessa specie, parte frutto): accettato, non e' mismatch di specie.",
