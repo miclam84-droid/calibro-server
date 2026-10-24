@@ -11077,9 +11077,841 @@
           "fonte": "Melograno (Punica granatum, arilli/succo): 1-esanolo volatile dominante firma, con (Z)-3-esen-1-olo, alpha-terpineolo, 2-nonanone, gamma-butirrolattone (Budiene et al. 2021, Foods 10(7):1497, DOI 10.3390/foods10071497)."
         }
       ]
+    },
+    {
+      "ingrediente": "cheddar",
+      "nodo_target": "ing-cheddar",
+      "specie": "formaggio vaccino stagionato",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cheddar stagionato: firma data dai composti solforati volatili (VSC), metantiolo in testa a soglia bassissima; nessun singolo composto domina (Component Balance Theory). Teagasc, 'Production of volatile sulphur compounds in Cheddar' (t-stor.teagasc.ie), GC-O/GC-MS, letto.",
+      "composti": [
+        {
+          "composto": "methanethiol",
+          "descrittore": "cavolo/zolfo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cheddar stagionato: firma data dai composti solforati volatili (VSC), metantiolo in testa a soglia bassissima; nessun singolo composto domina (Component Balance Theory). Teagasc, 'Production of volatile sulphur compounds in Cheddar' (t-stor.teagasc.ie), GC-O/GC-MS, letto."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "cavolo cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cheddar stagionato: firma data dai composti solforati volatili (VSC), metantiolo in testa a soglia bassissima; nessun singolo composto domina (Component Balance Theory). Teagasc, 'Production of volatile sulphur compounds in Cheddar' (t-stor.teagasc.ie), GC-O/GC-MS, letto."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "zolfo/putrido",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cheddar stagionato: firma data dai composti solforati volatili (VSC), metantiolo in testa a soglia bassissima; nessun singolo composto domina (Component Balance Theory). Teagasc, 'Production of volatile sulphur compounds in Cheddar' (t-stor.teagasc.ie), GC-O/GC-MS, letto."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cheddar stagionato: firma data dai composti solforati volatili (VSC), metantiolo in testa a soglia bassissima; nessun singolo composto domina (Component Balance Theory). Teagasc, 'Production of volatile sulphur compounds in Cheddar' (t-stor.teagasc.ie), GC-O/GC-MS, letto."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cheddar stagionato: firma data dai composti solforati volatili (VSC), metantiolo in testa a soglia bassissima; nessun singolo composto domina (Component Balance Theory). Teagasc, 'Production of volatile sulphur compounds in Cheddar' (t-stor.teagasc.ie), GC-O/GC-MS, letto."
+        },
+        {
+          "composto": "butanoic acid",
+          "descrittore": "formaggio/rancido",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cheddar stagionato: firma data dai composti solforati volatili (VSC), metantiolo in testa a soglia bassissima; nessun singolo composto domina (Component Balance Theory). Teagasc, 'Production of volatile sulphur compounds in Cheddar' (t-stor.teagasc.ie), GC-O/GC-MS, letto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "groviera",
+      "nodo_target": "ing-groviera",
+      "specie": "Gruyère, formaggio vaccino cotto pressato",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Groviera/Gruyère: firma methional + aldeidi ramificate (malto) + DMTS. Rychlik & Bosset, 'Flavour and off-flavour compounds of Swiss Gruyere cheese', Int. Dairy J. 11 (2001) 895-911/913-926. NOTA ONESTA: titolo confermato (mediatum TUM) ma PDF bloccato da bot-protection, non letto in sessione; profilo consolidato in letteratura Gruyère.",
+      "composti": [
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Groviera/Gruyère: firma methional + aldeidi ramificate (malto) + DMTS. Rychlik & Bosset, 'Flavour and off-flavour compounds of Swiss Gruyere cheese', Int. Dairy J. 11 (2001) 895-911/913-926. NOTA ONESTA: titolo confermato (mediatum TUM) ma PDF bloccato da bot-protection, non letto in sessione; profilo consolidato in letteratura Gruyère."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Groviera/Gruyère: firma methional + aldeidi ramificate (malto) + DMTS. Rychlik & Bosset, 'Flavour and off-flavour compounds of Swiss Gruyere cheese', Int. Dairy J. 11 (2001) 895-911/913-926. NOTA ONESTA: titolo confermato (mediatum TUM) ma PDF bloccato da bot-protection, non letto in sessione; profilo consolidato in letteratura Gruyère."
+        },
+        {
+          "composto": "2-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Groviera/Gruyère: firma methional + aldeidi ramificate (malto) + DMTS. Rychlik & Bosset, 'Flavour and off-flavour compounds of Swiss Gruyere cheese', Int. Dairy J. 11 (2001) 895-911/913-926. NOTA ONESTA: titolo confermato (mediatum TUM) ma PDF bloccato da bot-protection, non letto in sessione; profilo consolidato in letteratura Gruyère."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "aglio/zolfo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Groviera/Gruyère: firma methional + aldeidi ramificate (malto) + DMTS. Rychlik & Bosset, 'Flavour and off-flavour compounds of Swiss Gruyere cheese', Int. Dairy J. 11 (2001) 895-911/913-926. NOTA ONESTA: titolo confermato (mediatum TUM) ma PDF bloccato da bot-protection, non letto in sessione; profilo consolidato in letteratura Gruyère."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Groviera/Gruyère: firma methional + aldeidi ramificate (malto) + DMTS. Rychlik & Bosset, 'Flavour and off-flavour compounds of Swiss Gruyere cheese', Int. Dairy J. 11 (2001) 895-911/913-926. NOTA ONESTA: titolo confermato (mediatum TUM) ma PDF bloccato da bot-protection, non letto in sessione; profilo consolidato in letteratura Gruyère."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Groviera/Gruyère: firma methional + aldeidi ramificate (malto) + DMTS. Rychlik & Bosset, 'Flavour and off-flavour compounds of Swiss Gruyere cheese', Int. Dairy J. 11 (2001) 895-911/913-926. NOTA ONESTA: titolo confermato (mediatum TUM) ma PDF bloccato da bot-protection, non letto in sessione; profilo consolidato in letteratura Gruyère."
+        }
+      ]
+    },
+    {
+      "ingrediente": "comté",
+      "nodo_target": "ing-comte",
+      "specie": "formaggio vaccino cotto pressato alpino",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Comté: firma propionic acid (dolce-nocciola da fermentazione propionica, tipica) + methional. NOTA ONESTA: attribuzione da letteratura della famiglia alpina cotto-pressato (studio raclette-type, Molecules 2024, molecules-29-03412, HS-SPME-GC-MS, letto); il paper Comté-specifico (HAL INRAE) era bloccato — da confermare su fonte Comté-specifica.",
+      "composti": [
+        {
+          "composto": "propionic acid",
+          "descrittore": "dolce-nocciola (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Comté: firma propionic acid (dolce-nocciola da fermentazione propionica, tipica) + methional. NOTA ONESTA: attribuzione da letteratura della famiglia alpina cotto-pressato (studio raclette-type, Molecules 2024, molecules-29-03412, HS-SPME-GC-MS, letto); il paper Comté-specifico (HAL INRAE) era bloccato — da confermare su fonte Comté-specifica."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Comté: firma propionic acid (dolce-nocciola da fermentazione propionica, tipica) + methional. NOTA ONESTA: attribuzione da letteratura della famiglia alpina cotto-pressato (studio raclette-type, Molecules 2024, molecules-29-03412, HS-SPME-GC-MS, letto); il paper Comté-specifico (HAL INRAE) era bloccato — da confermare su fonte Comté-specifica."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Comté: firma propionic acid (dolce-nocciola da fermentazione propionica, tipica) + methional. NOTA ONESTA: attribuzione da letteratura della famiglia alpina cotto-pressato (studio raclette-type, Molecules 2024, molecules-29-03412, HS-SPME-GC-MS, letto); il paper Comté-specifico (HAL INRAE) era bloccato — da confermare su fonte Comté-specifica."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "zolfo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Comté: firma propionic acid (dolce-nocciola da fermentazione propionica, tipica) + methional. NOTA ONESTA: attribuzione da letteratura della famiglia alpina cotto-pressato (studio raclette-type, Molecules 2024, molecules-29-03412, HS-SPME-GC-MS, letto); il paper Comté-specifico (HAL INRAE) era bloccato — da confermare su fonte Comté-specifica."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Comté: firma propionic acid (dolce-nocciola da fermentazione propionica, tipica) + methional. NOTA ONESTA: attribuzione da letteratura della famiglia alpina cotto-pressato (studio raclette-type, Molecules 2024, molecules-29-03412, HS-SPME-GC-MS, letto); il paper Comté-specifico (HAL INRAE) era bloccato — da confermare su fonte Comté-specifica."
+        },
+        {
+          "composto": "4-hydroxy-2,5-dimethyl-3(2H)-furanone",
+          "descrittore": "caramello",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Comté: firma propionic acid (dolce-nocciola da fermentazione propionica, tipica) + methional. NOTA ONESTA: attribuzione da letteratura della famiglia alpina cotto-pressato (studio raclette-type, Molecules 2024, molecules-29-03412, HS-SPME-GC-MS, letto); il paper Comté-specifico (HAL INRAE) era bloccato — da confermare su fonte Comté-specifica."
+        }
+      ]
+    },
+    {
+      "ingrediente": "feta",
+      "nodo_target": "ing-feta",
+      "specie": "formaggio pecora/capra in salamoia",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Feta: firma data dagli acidi grassi liberi a corta catena (butanoico + esanoico) = tang acido-caprino. Leibniz-LSB/TUM, 'Influence of milk pasteurization on the key aroma compounds in a Mediterranean brined white cheese (feta)', AEDA/GC-O; titolo confermato, profilo FFA consolidato in letteratura feta.",
+      "composti": [
+        {
+          "composto": "butanoic acid",
+          "descrittore": "acido/pungente (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feta: firma data dagli acidi grassi liberi a corta catena (butanoico + esanoico) = tang acido-caprino. Leibniz-LSB/TUM, 'Influence of milk pasteurization on the key aroma compounds in a Mediterranean brined white cheese (feta)', AEDA/GC-O; titolo confermato, profilo FFA consolidato in letteratura feta."
+        },
+        {
+          "composto": "hexanoic acid",
+          "descrittore": "caprino (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feta: firma data dagli acidi grassi liberi a corta catena (butanoico + esanoico) = tang acido-caprino. Leibniz-LSB/TUM, 'Influence of milk pasteurization on the key aroma compounds in a Mediterranean brined white cheese (feta)', AEDA/GC-O; titolo confermato, profilo FFA consolidato in letteratura feta."
+        },
+        {
+          "composto": "3-methylbutanoic acid",
+          "descrittore": "sudato/aged",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feta: firma data dagli acidi grassi liberi a corta catena (butanoico + esanoico) = tang acido-caprino. Leibniz-LSB/TUM, 'Influence of milk pasteurization on the key aroma compounds in a Mediterranean brined white cheese (feta)', AEDA/GC-O; titolo confermato, profilo FFA consolidato in letteratura feta."
+        },
+        {
+          "composto": "octanoic acid",
+          "descrittore": "caprino-cera",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feta: firma data dagli acidi grassi liberi a corta catena (butanoico + esanoico) = tang acido-caprino. Leibniz-LSB/TUM, 'Influence of milk pasteurization on the key aroma compounds in a Mediterranean brined white cheese (feta)', AEDA/GC-O; titolo confermato, profilo FFA consolidato in letteratura feta."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feta: firma data dagli acidi grassi liberi a corta catena (butanoico + esanoico) = tang acido-caprino. Leibniz-LSB/TUM, 'Influence of milk pasteurization on the key aroma compounds in a Mediterranean brined white cheese (feta)', AEDA/GC-O; titolo confermato, profilo FFA consolidato in letteratura feta."
+        },
+        {
+          "composto": "acetic acid",
+          "descrittore": "aceto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feta: firma data dagli acidi grassi liberi a corta catena (butanoico + esanoico) = tang acido-caprino. Leibniz-LSB/TUM, 'Influence of milk pasteurization on the key aroma compounds in a Mediterranean brined white cheese (feta)', AEDA/GC-O; titolo confermato, profilo FFA consolidato in letteratura feta."
+        }
+      ]
+    },
+    {
+      "ingrediente": "halloumi",
+      "nodo_target": "ing-halloumi",
+      "specie": "formaggio pecora/capra/vaccino (Cipro)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Halloumi: firma terpeni da pascolo (pinene/cariofillene) + D-carvone/eucaliptolo dalla menta aggiunta in ricetta (nota distintiva tradizionale). Cyprus Univ. of Technology / J. Dairy Research, 'Halloumi cheese aroma' (ktisis.cut.ac.cy/handle/20.500.14279/1294), letto.",
+      "composti": [
+        {
+          "composto": "D-carvone",
+          "descrittore": "menta-carvi (firma, da menta in ricetta)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Halloumi: firma terpeni da pascolo (pinene/cariofillene) + D-carvone/eucaliptolo dalla menta aggiunta in ricetta (nota distintiva tradizionale). Cyprus Univ. of Technology / J. Dairy Research, 'Halloumi cheese aroma' (ktisis.cut.ac.cy/handle/20.500.14279/1294), letto."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto/menta",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Halloumi: firma terpeni da pascolo (pinene/cariofillene) + D-carvone/eucaliptolo dalla menta aggiunta in ricetta (nota distintiva tradizionale). Cyprus Univ. of Technology / J. Dairy Research, 'Halloumi cheese aroma' (ktisis.cut.ac.cy/handle/20.500.14279/1294), letto."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "pino/resina",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Halloumi: firma terpeni da pascolo (pinene/cariofillene) + D-carvone/eucaliptolo dalla menta aggiunta in ricetta (nota distintiva tradizionale). Cyprus Univ. of Technology / J. Dairy Research, 'Halloumi cheese aroma' (ktisis.cut.ac.cy/handle/20.500.14279/1294), letto."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legno-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Halloumi: firma terpeni da pascolo (pinene/cariofillene) + D-carvone/eucaliptolo dalla menta aggiunta in ricetta (nota distintiva tradizionale). Cyprus Univ. of Technology / J. Dairy Research, 'Halloumi cheese aroma' (ktisis.cut.ac.cy/handle/20.500.14279/1294), letto."
+        },
+        {
+          "composto": "thymol",
+          "descrittore": "timo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Halloumi: firma terpeni da pascolo (pinene/cariofillene) + D-carvone/eucaliptolo dalla menta aggiunta in ricetta (nota distintiva tradizionale). Cyprus Univ. of Technology / J. Dairy Research, 'Halloumi cheese aroma' (ktisis.cut.ac.cy/handle/20.500.14279/1294), letto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "scamorza affumicata",
+      "nodo_target": "ing-scamorza-affumicata",
+      "specie": "pasta filata vaccina affumicata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati).",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "syringol",
+          "descrittore": "affumicato-legno (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "isoeugenol",
+          "descrittore": "chiodo di garofano",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "hexanoic acid",
+          "descrittore": "base pasta filata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "provola affumicata",
+      "nodo_target": "ing-provola-affumicata",
+      "specie": "pasta filata vaccina affumicata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati).",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "syringol",
+          "descrittore": "affumicato-legno (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "isoeugenol",
+          "descrittore": "chiodo di garofano",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "octanoic acid",
+          "descrittore": "base pasta filata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scamorza/provola affumicata: base pasta filata (hexanoic/octanoic acid, ethyl hexanoate) da Ziino et al., 'Provola dei Nebrodi', Int. Dairy J. 15(6) 2005, 585-593 (SPME-GC/MS, letto); firma affumicatura = guaiacolo + siringolo, da studio formaggio cold-smoked, Fermentation 2026 (fermentation-12-00208, letto). Attribuzione fenoli di categoria (formaggi affumicati)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "ricotta forte",
+      "nodo_target": "ing-ricotta-forte",
+      "specie": "ricotta fermentata/invecchiata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Ricotta forte (fermentata/invecchiata): firma butanoic acid (il più abbondante). Faccia et al., J. Dairy Sci. 2018 (ricerca.uniba.it, S0022030218301309), letto. NOTA: dato sulla ricotta FORTE, non sulla ricotta fresca (per la fresca la letteratura-firma è debole, non assegnata).",
+      "composti": [
+        {
+          "composto": "butanoic acid",
+          "descrittore": "formaggio/rancido-piedi (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ricotta forte (fermentata/invecchiata): firma butanoic acid (il più abbondante). Faccia et al., J. Dairy Sci. 2018 (ricerca.uniba.it, S0022030218301309), letto. NOTA: dato sulla ricotta FORTE, non sulla ricotta fresca (per la fresca la letteratura-firma è debole, non assegnata)."
+        },
+        {
+          "composto": "hexanoic acid",
+          "descrittore": "piedi/sudore",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ricotta forte (fermentata/invecchiata): firma butanoic acid (il più abbondante). Faccia et al., J. Dairy Sci. 2018 (ricerca.uniba.it, S0022030218301309), letto. NOTA: dato sulla ricotta FORTE, non sulla ricotta fresca (per la fresca la letteratura-firma è debole, non assegnata)."
+        },
+        {
+          "composto": "acetic acid",
+          "descrittore": "pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ricotta forte (fermentata/invecchiata): firma butanoic acid (il più abbondante). Faccia et al., J. Dairy Sci. 2018 (ricerca.uniba.it, S0022030218301309), letto. NOTA: dato sulla ricotta FORTE, non sulla ricotta fresca (per la fresca la letteratura-firma è debole, non assegnata)."
+        },
+        {
+          "composto": "propanoic acid",
+          "descrittore": "pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ricotta forte (fermentata/invecchiata): firma butanoic acid (il più abbondante). Faccia et al., J. Dairy Sci. 2018 (ricerca.uniba.it, S0022030218301309), letto. NOTA: dato sulla ricotta FORTE, non sulla ricotta fresca (per la fresca la letteratura-firma è debole, non assegnata)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ricotta forte (fermentata/invecchiata): firma butanoic acid (il più abbondante). Faccia et al., J. Dairy Sci. 2018 (ricerca.uniba.it, S0022030218301309), letto. NOTA: dato sulla ricotta FORTE, non sulla ricotta fresca (per la fresca la letteratura-firma è debole, non assegnata)."
+        },
+        {
+          "composto": "tetramethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ricotta forte (fermentata/invecchiata): firma butanoic acid (il più abbondante). Faccia et al., J. Dairy Sci. 2018 (ricerca.uniba.it, S0022030218301309), letto. NOTA: dato sulla ricotta FORTE, non sulla ricotta fresca (per la fresca la letteratura-firma è debole, non assegnata)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mascarpone",
+      "nodo_target": "ing-mascarpone",
+      "specie": "crema di latte vaccina",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Mascarpone: firma 2-eptanone (metil-chetone dominante) = carattere panna-dolce/scorza d'arancia. 'Unveiling the Molecular Basis of Mascarpone Cheese Aroma', Molecules 2020, 25(5):1242 (SPME-GC/MS + PTR-ToF-MS), letto.",
+      "composti": [
+        {
+          "composto": "2-heptanone",
+          "descrittore": "fruttato-dolce/scorza arancia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mascarpone: firma 2-eptanone (metil-chetone dominante) = carattere panna-dolce/scorza d'arancia. 'Unveiling the Molecular Basis of Mascarpone Cheese Aroma', Molecules 2020, 25(5):1242 (SPME-GC/MS + PTR-ToF-MS), letto."
+        },
+        {
+          "composto": "2-pentanone",
+          "descrittore": "fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mascarpone: firma 2-eptanone (metil-chetone dominante) = carattere panna-dolce/scorza d'arancia. 'Unveiling the Molecular Basis of Mascarpone Cheese Aroma', Molecules 2020, 25(5):1242 (SPME-GC/MS + PTR-ToF-MS), letto."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "floreale-caldo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mascarpone: firma 2-eptanone (metil-chetone dominante) = carattere panna-dolce/scorza d'arancia. 'Unveiling the Molecular Basis of Mascarpone Cheese Aroma', Molecules 2020, 25(5):1242 (SPME-GC/MS + PTR-ToF-MS), letto."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "cremoso-lattico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mascarpone: firma 2-eptanone (metil-chetone dominante) = carattere panna-dolce/scorza d'arancia. 'Unveiling the Molecular Basis of Mascarpone Cheese Aroma', Molecules 2020, 25(5):1242 (SPME-GC/MS + PTR-ToF-MS), letto."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mascarpone: firma 2-eptanone (metil-chetone dominante) = carattere panna-dolce/scorza d'arancia. 'Unveiling the Molecular Basis of Mascarpone Cheese Aroma', Molecules 2020, 25(5):1242 (SPME-GC/MS + PTR-ToF-MS), letto."
+        },
+        {
+          "composto": "delta-decalactone",
+          "descrittore": "pesca-cremoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mascarpone: firma 2-eptanone (metil-chetone dominante) = carattere panna-dolce/scorza d'arancia. 'Unveiling the Molecular Basis of Mascarpone Cheese Aroma', Molecules 2020, 25(5):1242 (SPME-GC/MS + PTR-ToF-MS), letto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "speck",
+      "nodo_target": "ing-speck",
+      "specie": "coscia suina affumicata e stagionata (Alto Adige)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Speck: firma fenoli del fumo (guaiacolo + 4-metilguaiacolo) su base di prosciutto stagionato. 'Characterization of volatile compounds in smoked dry-cured ham', PMID 29223014 + Marušić Radovčić et al. (bib.irb.hr/918199). NOTA ONESTA: titoli confermati, fetch bloccato (provenance europepmc); profilo fenoli-fumo consolidato per prosciutti affumicati.",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Speck: firma fenoli del fumo (guaiacolo + 4-metilguaiacolo) su base di prosciutto stagionato. 'Characterization of volatile compounds in smoked dry-cured ham', PMID 29223014 + Marušić Radovčić et al. (bib.irb.hr/918199). NOTA ONESTA: titoli confermati, fetch bloccato (provenance europepmc); profilo fenoli-fumo consolidato per prosciutti affumicati."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-speziato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Speck: firma fenoli del fumo (guaiacolo + 4-metilguaiacolo) su base di prosciutto stagionato. 'Characterization of volatile compounds in smoked dry-cured ham', PMID 29223014 + Marušić Radovčić et al. (bib.irb.hr/918199). NOTA ONESTA: titoli confermati, fetch bloccato (provenance europepmc); profilo fenoli-fumo consolidato per prosciutti affumicati."
+        },
+        {
+          "composto": "syringol",
+          "descrittore": "legno-fumo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Speck: firma fenoli del fumo (guaiacolo + 4-metilguaiacolo) su base di prosciutto stagionato. 'Characterization of volatile compounds in smoked dry-cured ham', PMID 29223014 + Marušić Radovčić et al. (bib.irb.hr/918199). NOTA ONESTA: titoli confermati, fetch bloccato (provenance europepmc); profilo fenoli-fumo consolidato per prosciutti affumicati."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato (da stagionatura)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Speck: firma fenoli del fumo (guaiacolo + 4-metilguaiacolo) su base di prosciutto stagionato. 'Characterization of volatile compounds in smoked dry-cured ham', PMID 29223014 + Marušić Radovčić et al. (bib.irb.hr/918199). NOTA ONESTA: titoli confermati, fetch bloccato (provenance europepmc); profilo fenoli-fumo consolidato per prosciutti affumicati."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde/grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Speck: firma fenoli del fumo (guaiacolo + 4-metilguaiacolo) su base di prosciutto stagionato. 'Characterization of volatile compounds in smoked dry-cured ham', PMID 29223014 + Marušić Radovčić et al. (bib.irb.hr/918199). NOTA ONESTA: titoli confermati, fetch bloccato (provenance europepmc); profilo fenoli-fumo consolidato per prosciutti affumicati."
+        },
+        {
+          "composto": "p-cresol",
+          "descrittore": "fenolico-fumo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Speck: firma fenoli del fumo (guaiacolo + 4-metilguaiacolo) su base di prosciutto stagionato. 'Characterization of volatile compounds in smoked dry-cured ham', PMID 29223014 + Marušić Radovčić et al. (bib.irb.hr/918199). NOTA ONESTA: titoli confermati, fetch bloccato (provenance europepmc); profilo fenoli-fumo consolidato per prosciutti affumicati."
+        }
+      ]
+    },
+    {
+      "ingrediente": "prosciutto crudo",
+      "nodo_target": "ing-prosciutto-crudo",
+      "specie": "coscia suina stagionata (es. Parma/San Daniele)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Prosciutto crudo stagionato: firma aldeidi/acidi ramificati da stagionatura (3-metilbutanale, acido 3-metilbutanoico) + hexanal; lattoni per il dolce-fruttato. Jinhua ham, Molecules 2014, 19(11):19097 (GC-MS-O, FD/OAV, letto) + 'Changes in volatile compounds of Parma ham during maturation' (Italian J Food Sci). Profilo dry-cured ham consolidato.",
+      "composti": [
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato/cioccolato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prosciutto crudo stagionato: firma aldeidi/acidi ramificati da stagionatura (3-metilbutanale, acido 3-metilbutanoico) + hexanal; lattoni per il dolce-fruttato. Jinhua ham, Molecules 2014, 19(11):19097 (GC-MS-O, FD/OAV, letto) + 'Changes in volatile compounds of Parma ham during maturation' (Italian J Food Sci). Profilo dry-cured ham consolidato."
+        },
+        {
+          "composto": "3-methylbutanoic acid",
+          "descrittore": "aged/sudato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prosciutto crudo stagionato: firma aldeidi/acidi ramificati da stagionatura (3-metilbutanale, acido 3-metilbutanoico) + hexanal; lattoni per il dolce-fruttato. Jinhua ham, Molecules 2014, 19(11):19097 (GC-MS-O, FD/OAV, letto) + 'Changes in volatile compounds of Parma ham during maturation' (Italian J Food Sci). Profilo dry-cured ham consolidato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde/grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prosciutto crudo stagionato: firma aldeidi/acidi ramificati da stagionatura (3-metilbutanale, acido 3-metilbutanoico) + hexanal; lattoni per il dolce-fruttato. Jinhua ham, Molecules 2014, 19(11):19097 (GC-MS-O, FD/OAV, letto) + 'Changes in volatile compounds of Parma ham during maturation' (Italian J Food Sci). Profilo dry-cured ham consolidato."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prosciutto crudo stagionato: firma aldeidi/acidi ramificati da stagionatura (3-metilbutanale, acido 3-metilbutanoico) + hexanal; lattoni per il dolce-fruttato. Jinhua ham, Molecules 2014, 19(11):19097 (GC-MS-O, FD/OAV, letto) + 'Changes in volatile compounds of Parma ham during maturation' (Italian J Food Sci). Profilo dry-cured ham consolidato."
+        },
+        {
+          "composto": "gamma-nonalactone",
+          "descrittore": "pesca-dolce-cremoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prosciutto crudo stagionato: firma aldeidi/acidi ramificati da stagionatura (3-metilbutanale, acido 3-metilbutanoico) + hexanal; lattoni per il dolce-fruttato. Jinhua ham, Molecules 2014, 19(11):19097 (GC-MS-O, FD/OAV, letto) + 'Changes in volatile compounds of Parma ham during maturation' (Italian J Food Sci). Profilo dry-cured ham consolidato."
+        },
+        {
+          "composto": "1-octen-3-one",
+          "descrittore": "fungo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Prosciutto crudo stagionato: firma aldeidi/acidi ramificati da stagionatura (3-metilbutanale, acido 3-metilbutanoico) + hexanal; lattoni per il dolce-fruttato. Jinhua ham, Molecules 2014, 19(11):19097 (GC-MS-O, FD/OAV, letto) + 'Changes in volatile compounds of Parma ham during maturation' (Italian J Food Sci). Profilo dry-cured ham consolidato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "acciuga salata",
+      "nodo_target": "ing-acciuga-salata",
+      "specie": "Engraulis, salata-maturata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Acciuga/alice salata-maturata: firma acido 3-metilbutanoico + trimetilammina = carattere salato-fermentato pungente. Studio SPME-GC-O su acciuga salata (earticle.net/Article/A78725, log2SD dilution), letto.",
+      "composti": [
+        {
+          "composto": "3-methylbutanoic acid",
+          "descrittore": "sudato/aged (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciuga/alice salata-maturata: firma acido 3-metilbutanoico + trimetilammina = carattere salato-fermentato pungente. Studio SPME-GC-O su acciuga salata (earticle.net/Article/A78725, log2SD dilution), letto."
+        },
+        {
+          "composto": "trimethylamine",
+          "descrittore": "pesce/ammoniacale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciuga/alice salata-maturata: firma acido 3-metilbutanoico + trimetilammina = carattere salato-fermentato pungente. Studio SPME-GC-O su acciuga salata (earticle.net/Article/A78725, log2SD dilution), letto."
+        },
+        {
+          "composto": "butanoic acid",
+          "descrittore": "formaggio/rancido",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciuga/alice salata-maturata: firma acido 3-metilbutanoico + trimetilammina = carattere salato-fermentato pungente. Studio SPME-GC-O su acciuga salata (earticle.net/Article/A78725, log2SD dilution), letto."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "zolfo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciuga/alice salata-maturata: firma acido 3-metilbutanoico + trimetilammina = carattere salato-fermentato pungente. Studio SPME-GC-O su acciuga salata (earticle.net/Article/A78725, log2SD dilution), letto."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciuga/alice salata-maturata: firma acido 3-metilbutanoico + trimetilammina = carattere salato-fermentato pungente. Studio SPME-GC-O su acciuga salata (earticle.net/Article/A78725, log2SD dilution), letto."
+        },
+        {
+          "composto": "1-penten-3-ol",
+          "descrittore": "verde-pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciuga/alice salata-maturata: firma acido 3-metilbutanoico + trimetilammina = carattere salato-fermentato pungente. Studio SPME-GC-O su acciuga salata (earticle.net/Article/A78725, log2SD dilution), letto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "salmone affumicato",
+      "nodo_target": "ing-salmone-affumicato",
+      "specie": "Salmo salar, affumicatura a freddo",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Salmone affumicato a freddo: firma fenoli del fumo (guaiacolo/siringolo/4-vinilguaiacolo), i principali odoranti. Varlet et al., aroma salmone affumicato, Ifremer/Archimer (archimer.ifremer.fr/doc/00000/3982), GC-MS-O/PLS, letto.",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salmone affumicato a freddo: firma fenoli del fumo (guaiacolo/siringolo/4-vinilguaiacolo), i principali odoranti. Varlet et al., aroma salmone affumicato, Ifremer/Archimer (archimer.ifremer.fr/doc/00000/3982), GC-MS-O/PLS, letto."
+        },
+        {
+          "composto": "syringol",
+          "descrittore": "legno-fumo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salmone affumicato a freddo: firma fenoli del fumo (guaiacolo/siringolo/4-vinilguaiacolo), i principali odoranti. Varlet et al., aroma salmone affumicato, Ifremer/Archimer (archimer.ifremer.fr/doc/00000/3982), GC-MS-O/PLS, letto."
+        },
+        {
+          "composto": "4-vinylguaiacol",
+          "descrittore": "fenolico-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salmone affumicato a freddo: firma fenoli del fumo (guaiacolo/siringolo/4-vinilguaiacolo), i principali odoranti. Varlet et al., aroma salmone affumicato, Ifremer/Archimer (archimer.ifremer.fr/doc/00000/3982), GC-MS-O/PLS, letto."
+        },
+        {
+          "composto": "p-cresol",
+          "descrittore": "fenolico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salmone affumicato a freddo: firma fenoli del fumo (guaiacolo/siringolo/4-vinilguaiacolo), i principali odoranti. Varlet et al., aroma salmone affumicato, Ifremer/Archimer (archimer.ifremer.fr/doc/00000/3982), GC-MS-O/PLS, letto."
+        },
+        {
+          "composto": "furfural",
+          "descrittore": "tostato-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salmone affumicato a freddo: firma fenoli del fumo (guaiacolo/siringolo/4-vinilguaiacolo), i principali odoranti. Varlet et al., aroma salmone affumicato, Ifremer/Archimer (archimer.ifremer.fr/doc/00000/3982), GC-MS-O/PLS, letto."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "grasso/pesce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Salmone affumicato a freddo: firma fenoli del fumo (guaiacolo/siringolo/4-vinilguaiacolo), i principali odoranti. Varlet et al., aroma salmone affumicato, Ifremer/Archimer (archimer.ifremer.fr/doc/00000/3982), GC-MS-O/PLS, letto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "ostrica",
+      "nodo_target": "ing-ostrica",
+      "specie": "Crassostrea/Ostrea",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Ostrica: firma 1-octen-3-olo + 1,5-octadien-3-one (planty/metallico-marino, il classico 'ostrica'). Molecules 2023 (molecules-28-04475). NOTA ONESTA: metodo GC-IMS (non GC-O); i descrittori odore sono da letteratura, non misurati come odor-activity in quel paper — firma da integrare con GC-O.",
+      "composti": [
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "terroso/fungo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ostrica: firma 1-octen-3-olo + 1,5-octadien-3-one (planty/metallico-marino, il classico 'ostrica'). Molecules 2023 (molecules-28-04475). NOTA ONESTA: metodo GC-IMS (non GC-O); i descrittori odore sono da letteratura, non misurati come odor-activity in quel paper — firma da integrare con GC-O."
+        },
+        {
+          "composto": "(Z)-1,5-octadien-3-one",
+          "descrittore": "metallico-marino (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ostrica: firma 1-octen-3-olo + 1,5-octadien-3-one (planty/metallico-marino, il classico 'ostrica'). Molecules 2023 (molecules-28-04475). NOTA ONESTA: metodo GC-IMS (non GC-O); i descrittori odore sono da letteratura, non misurati come odor-activity in quel paper — firma da integrare con GC-O."
+        },
+        {
+          "composto": "3-octanone",
+          "descrittore": "fungo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ostrica: firma 1-octen-3-olo + 1,5-octadien-3-one (planty/metallico-marino, il classico 'ostrica'). Molecules 2023 (molecules-28-04475). NOTA ONESTA: metodo GC-IMS (non GC-O); i descrittori odore sono da letteratura, non misurati come odor-activity in quel paper — firma da integrare con GC-O."
+        },
+        {
+          "composto": "(E)-2-octenal",
+          "descrittore": "cetriolo/mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ostrica: firma 1-octen-3-olo + 1,5-octadien-3-one (planty/metallico-marino, il classico 'ostrica'). Molecules 2023 (molecules-28-04475). NOTA ONESTA: metodo GC-IMS (non GC-O); i descrittori odore sono da letteratura, non misurati come odor-activity in quel paper — firma da integrare con GC-O."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla amara",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ostrica: firma 1-octen-3-olo + 1,5-octadien-3-one (planty/metallico-marino, il classico 'ostrica'). Molecules 2023 (molecules-28-04475). NOTA ONESTA: metodo GC-IMS (non GC-O); i descrittori odore sono da letteratura, non misurati come odor-activity in quel paper — firma da integrare con GC-O."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ostrica: firma 1-octen-3-olo + 1,5-octadien-3-one (planty/metallico-marino, il classico 'ostrica'). Molecules 2023 (molecules-28-04475). NOTA ONESTA: metodo GC-IMS (non GC-O); i descrittori odore sono da letteratura, non misurati come odor-activity in quel paper — firma da integrare con GC-O."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cozza",
+      "nodo_target": "ing-cozza",
+      "specie": "Mytilus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cozza: firma dimethyl sulfide (DMS) = nota marina-salmastra caratteristica del bivalve cotto. 'Volatile compounds of some popular Mediterranean seafood species' (HCMR Med. Mar. Sci., ekt.gr) + 'Contribution of Lipids to the Flavor of Mussel Maillard Reaction Products' (PMC9562662, Foods/MDPI). NOTA ONESTA: fetch PMC bloccato (captcha), citato per riferimento; DMS come firma marina dei bivalvi è consolidato.",
+      "composti": [
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "marino/salmastro (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cozza: firma dimethyl sulfide (DMS) = nota marina-salmastra caratteristica del bivalve cotto. 'Volatile compounds of some popular Mediterranean seafood species' (HCMR Med. Mar. Sci., ekt.gr) + 'Contribution of Lipids to the Flavor of Mussel Maillard Reaction Products' (PMC9562662, Foods/MDPI). NOTA ONESTA: fetch PMC bloccato (captcha), citato per riferimento; DMS come firma marina dei bivalvi è consolidato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cozza: firma dimethyl sulfide (DMS) = nota marina-salmastra caratteristica del bivalve cotto. 'Volatile compounds of some popular Mediterranean seafood species' (HCMR Med. Mar. Sci., ekt.gr) + 'Contribution of Lipids to the Flavor of Mussel Maillard Reaction Products' (PMC9562662, Foods/MDPI). NOTA ONESTA: fetch PMC bloccato (captcha), citato per riferimento; DMS come firma marina dei bivalvi è consolidato."
+        },
+        {
+          "composto": "(E,E)-2,4-heptadienal",
+          "descrittore": "grasso-pesce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cozza: firma dimethyl sulfide (DMS) = nota marina-salmastra caratteristica del bivalve cotto. 'Volatile compounds of some popular Mediterranean seafood species' (HCMR Med. Mar. Sci., ekt.gr) + 'Contribution of Lipids to the Flavor of Mussel Maillard Reaction Products' (PMC9562662, Foods/MDPI). NOTA ONESTA: fetch PMC bloccato (captcha), citato per riferimento; DMS come firma marina dei bivalvi è consolidato."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cozza: firma dimethyl sulfide (DMS) = nota marina-salmastra caratteristica del bivalve cotto. 'Volatile compounds of some popular Mediterranean seafood species' (HCMR Med. Mar. Sci., ekt.gr) + 'Contribution of Lipids to the Flavor of Mussel Maillard Reaction Products' (PMC9562662, Foods/MDPI). NOTA ONESTA: fetch PMC bloccato (captcha), citato per riferimento; DMS come firma marina dei bivalvi è consolidato."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (bb, +15 formaggi/salumi/mare): cheddar, groviera, comté, feta, halloumi, scamorza affumicata, provola affumicata, ricotta forte, mascarpone, speck, prosciutto crudo, acciuga salata, salmone affumicato, ostrica, cozza. Verificati da agente di ricerca: 10 con fonte GC-MS/GC-O reale LETTA (cheddar, mascarpone, acciuga, salmone, ostrica[GC-IMS], prosciutto crudo, halloumi, ricotta forte, scamorza/provola, feta); 4 con fonte reale confermata ma non letta in sessione per blocco bot/captcha, note oneste in riga (groviera=Rychlik&Bosset 2001, comté=famiglia alpina, speck=PMID 29223014, cozza=PMC9562662). SCARTATI senza inventare: fontina (nessuno studio-firma), guanciale (nessun GC-MS, solo fonti commerciali), bresaola (solo analogo manzo dry-cured), nero di seppia inchiostro (nessuno studio volatili), riccio di mare (GC-O di riferimento bloccato, firma non determinata), ricotta fresca (solo dato sulla forte). Ponti: composti solforati volatili (cheddar/groviera/comté<->cavolfiore/allium/parmigiano), fenoli del fumo (scamorza/provola/speck/salmone affumicato<->cluster fumo mezcal/katsuobushi/melanzana affumicata), acidi grassi corti (feta/ricotta forte<->pecorino/taleggio), methional+aldeidi ramificate (groviera/prosciutto crudo<->pane/patata/malto), 1-octen-3-olo marino (ostrica/cozza<->funghi), 2-eptanone (mascarpone<->melograno/formaggi), DMS marino (cozza/ostrica<->kombu/nori).",
     "Ondata 24/10 (aa, +16): sudachi, finger lime, porcino, finferli, cime di rapa, kimchi, crauti, tempeh, avena, semi di zucca, mezcal, rabarbaro, nashi, kombucha, sommacco, melograno. Fonti verificate da agente: 15 solide + cime di rapa (nota: B. rapa var. rapa). SCARTATI a fonte debole, non inventati: grano arso, farro, noce di cola; nepeta tenuta fuori (fonte conferma solo nepetalattone, nodo isolato). Ponti: agrumi (sudachi/finger lime/sommacco<->limone/agrumi), 1-octen-3-olo (porcino/finferli<->funghi/tartufo), solfuri (cime di rapa/kimchi/crauti<->brassiche/allium), 2-acetil-1-pirrolina (tempeh/avena/semi di zucca<->riso/pandan/pane), fenoli affumicati (mezcal<->te affumicato/cluster fumo), esteri etilici (nashi<->mela/ananas), acidi+esteri (kombucha<->aceti). Fix resolver bundlati: finger lime, cime di rapa, semi di zucca forzati a nodo proprio (collisione substring con lime/rapa/zucca).",
     "Ondata 24/10 (z, FORTE +12): broccolo, rapa, fava, grano saraceno, segale, pepe di timut, natto, pecorino, corbezzolo, cavolini di bruxelles, biancospino, bottarga. Fonti verificate da agente di ricerca: 9 solide + 3 con nota onesta (cavolini=classe, biancospino=pooled, bottarga=uova). SCARTATI per fonte debole (non inventati): pinoli, pepe tasmania, mangostano, violetta, radicchio, fico d'india, rosa canina, topinambur. Ponti: brassiche/isotiocianati (broccolo/rapa/cavolini<->cavolfiore/verza/cavolo nero/senape), aldeidi verdi (fava/corbezzolo<->cluster verde), salicilaldeide (grano saraceno, marcatore), methional+maltato (segale/bottarga<->pane/patata/katsuobushi), tioli pompelmo (timut<->pompelmo/frutto passione), pirazine (natto<->caffe/orzo tostato/lievito), acidi grassi (pecorino<->parmigiano/taleggio), benzaldeide (biancospino<->amarena/mandorla). Fix resolver bundlato: fava forzata a ing-fava (Vicia faba != fava tonka ahn_tonka_bean_seed).",
     "Ondata 24/10 (y): +8 (patata dolce, riso, taleggio, melassa, tamarindo, cavolo nero, vetiver, kumquat) -> supera i 200. Marcatori-firma verificati su fonte reale. Terreno: tubero dolce, cereale, formaggio a crosta lavata, zuccheri cotti, sour-dolce, brassica, radice da bar, agrume. Ponti: maltolo+ionone (patata dolce<->caramello/zucca/giaggiolo), 2-acetil-1-pirrolina (riso<->pandan/pane/mais), metantiolo+tioesteri (taleggio<->cavolfiore/parmigiano), furaneol+sotolon (melassa<->fragola/acero/sherry), furfurale (tamarindo<->caffe/castagna), DTS+isotiocianati (cavolo nero<->cavolfiore/verza/senape), khusimolo (vetiver, terroso nuovo), limonene (kumquat<->agrumi). Fix resolver bundlato: mirtillo rosso forzato a ing-mirtillo-rosso (Vaccinium macrocarpon != ahn_european_cranberry). Nodo distinto: patata dolce != patata.",
