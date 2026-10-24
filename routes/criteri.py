@@ -85,7 +85,14 @@ def _risolvi_nodo(cur, ingrediente):
     # 0) override Matter: ingredienti il cui nodo Ahn e' sbagliato/vuoto, corretti dal dataset
     #    proprietario (ginepro -> ing-ginepro, lime -> ing-lime). Vale SOLO se il nodo esiste
     #    gia' con composti (cioe' dopo l'import); altrimenti si prosegue con la risoluzione normale.
-    _OVERRIDE = {"ginepro": "ing-ginepro", "lime": "ing-lime"}
+    _OVERRIDE = {"ginepro": "ing-ginepro", "lime": "ing-lime",
+                 "uva moscato": "ing-uva-moscato", "uva moscata": "ing-uva-moscato",
+                 "te verde": "ing-te-verde", "tè verde": "ing-te-verde",
+                 "malto": "ing-malto", "pandan": "ing-pandan",
+                 "issopo": "ing-issopo", "mirtillo rosso": "ing-mirtillo-rosso",
+                 "fava": "ing-fava",
+                 "finger lime": "ing-finger-lime", "cime di rapa": "ing-cime-di-rapa",
+                 "semi di zucca": "ing-semi-di-zucca"}
     _ov = _OVERRIDE.get(ing)
     if _ov:
         cur.execute(

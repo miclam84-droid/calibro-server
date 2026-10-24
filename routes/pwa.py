@@ -3,7 +3,7 @@
 # Route spostate da app.py senza modifiche di comportamento
 # (@app.route -> @bp.route). Dipende solo da flask + db.
 # ============================================================
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, redirect
 import os as _os, time as _time
 # versione build per cache-busting dei moduli lazy (Railway espone il commit, fallback a timestamp d'avvio)
 _BUILD_VER = (_os.environ.get("RAILWAY_GIT_COMMIT_SHA") or _os.environ.get("RAILWAY_DEPLOYMENT_ID") or str(int(_time.time())))[:12]
@@ -61,7 +61,7 @@ def scheda_ingrediente(nome):
     per asse + teaser abbinamenti. Cablata a /v1/profilo-gusto e /v1/criteri.
     Pagina nuova e isolata: non tocca /app né /app2."""
     from flask import make_response
-    resp = make_response(render_template("scheda.html", nome=nome))
+    resp = make_response(render_template("scheda-nuovo.html", nome=nome))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
@@ -175,6 +175,19 @@ def assetlinks():
             "sha256_cert_fingerprints": ["SOSTITUIRE_CON_SHA256_DEL_KEYSTORE"]
         }
     }])
+
+@bp.route("/favicon.ico")
+def favicon():
+    """Evita il 404 di /favicon.ico su ogni pagina (errore console Lighthouse):
+    il browser lo richiede sempre, lo reindirizziamo all'icona PWA esistente."""
+    return redirect("/static/icons/icon-96.png", code=302)
+
+
+@bp.route("/apple-touch-icon.png")
+@bp.route("/apple-touch-icon-precomposed.png")
+def apple_touch_icon():
+    return redirect("/static/icons/icon-152.png", code=302)
+
 
 @bp.route("/health")
 def health():

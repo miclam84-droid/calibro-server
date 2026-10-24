@@ -31,7 +31,13 @@ _PATH = os.path.join(os.path.dirname(__file__), "..", "data", "composti_matter.j
 # Ingredienti che NON vanno agganciati a un nodo esistente ma creati/corretti ( id forzato).
 # Ginepro: il nodo attuale (ahn_juniperus_sabina) e' la specie sbagliata e vuoto.
 # Lime: il nodo attuale (ahn_kaffir_lime) e' una varieta' diversa.
-_FORZA_NODO = {"ginepro": "ing-ginepro", "lime": "ing-lime"}
+_FORZA_NODO = {"ginepro": "ing-ginepro", "lime": "ing-lime",
+               "issopo": "ing-issopo",  # Hyssopus officinalis != ahn_anise_hyssop (Agastache, specie diversa)
+               "mirtillo rosso": "ing-mirtillo-rosso",  # Vaccinium macrocarpon != ahn_european_cranberry (specie diversa)
+               "fava": "ing-fava",  # Vicia faba != fava tonka (ahn_tonka_bean_seed): evita collisione per substring
+               "finger lime": "ing-finger-lime",   # contiene 'lime' -> evita collisione con ing-lime
+               "cime di rapa": "ing-cime-di-rapa", # contiene 'rapa' -> evita collisione con ing-rapa
+               "semi di zucca": "ing-semi-di-zucca"}  # contiene 'zucca' -> evita collisione con ahn_pumpkin
 
 
 def _norm(s):

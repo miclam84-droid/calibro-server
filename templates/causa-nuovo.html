@@ -366,7 +366,8 @@ window.I18N_DICT = {
         causa.textContent = cap(c.causa || _L({it:"ipotesi", en:"hypothesis", es:"hipótesis"}));
         top.appendChild(causa);
 
-        if (c.probabilita){
+        // onestà: niente pallino quando la probabilità non è un dato (vuota o "—")
+        if (c.probabilita && String(c.probabilita).trim() !== "—"){
           var prob = document.createElement("span");
           prob.className = "prob " + classeProb(c.probabilita);
           prob.textContent = _V(c.probabilita);
