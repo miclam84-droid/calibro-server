@@ -11908,9 +11908,925 @@
           "fonte": "Cozza: firma dimethyl sulfide (DMS) = nota marina-salmastra caratteristica del bivalve cotto. 'Volatile compounds of some popular Mediterranean seafood species' (HCMR Med. Mar. Sci., ekt.gr) + 'Contribution of Lipids to the Flavor of Mussel Maillard Reaction Products' (PMC9562662, Foods/MDPI). NOTA ONESTA: fetch PMC bloccato (captcha), citato per riferimento; DMS come firma marina dei bivalvi è consolidato."
         }
       ]
+    },
+    {
+      "ingrediente": "pu-erh",
+      "nodo_target": "ing-pu-erh",
+      "specie": "Camellia sinensis, tè post-fermentato",
+      "dominio": "bar",
+      "fonte_ingrediente": "Pu-erh (sheng/floreale-fruttato): firma (E,Z)-2,6-nonadienale (OAV ~906) + beta-ionone, con blocco floreale confermato da omission test. Foods 2025, 14, 3223 (DOI 10.3390/foods14183223, GC-O-MS + ricombinazione). NOTA: il pu-erh scuro/ripe (shou) ha firma diversa (metossibenzeni terrosi) — questa riga è per lo sheng.",
+      "composti": [
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "grasso-verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pu-erh (sheng/floreale-fruttato): firma (E,Z)-2,6-nonadienale (OAV ~906) + beta-ionone, con blocco floreale confermato da omission test. Foods 2025, 14, 3223 (DOI 10.3390/foods14183223, GC-O-MS + ricombinazione). NOTA: il pu-erh scuro/ripe (shou) ha firma diversa (metossibenzeni terrosi) — questa riga è per lo sheng."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale-viola (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pu-erh (sheng/floreale-fruttato): firma (E,Z)-2,6-nonadienale (OAV ~906) + beta-ionone, con blocco floreale confermato da omission test. Foods 2025, 14, 3223 (DOI 10.3390/foods14183223, GC-O-MS + ricombinazione). NOTA: il pu-erh scuro/ripe (shou) ha firma diversa (metossibenzeni terrosi) — questa riga è per lo sheng."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pu-erh (sheng/floreale-fruttato): firma (E,Z)-2,6-nonadienale (OAV ~906) + beta-ionone, con blocco floreale confermato da omission test. Foods 2025, 14, 3223 (DOI 10.3390/foods14183223, GC-O-MS + ricombinazione). NOTA: il pu-erh scuro/ripe (shou) ha firma diversa (metossibenzeni terrosi) — questa riga è per lo sheng."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pu-erh (sheng/floreale-fruttato): firma (E,Z)-2,6-nonadienale (OAV ~906) + beta-ionone, con blocco floreale confermato da omission test. Foods 2025, 14, 3223 (DOI 10.3390/foods14183223, GC-O-MS + ricombinazione). NOTA: il pu-erh scuro/ripe (shou) ha firma diversa (metossibenzeni terrosi) — questa riga è per lo sheng."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa-miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pu-erh (sheng/floreale-fruttato): firma (E,Z)-2,6-nonadienale (OAV ~906) + beta-ionone, con blocco floreale confermato da omission test. Foods 2025, 14, 3223 (DOI 10.3390/foods14183223, GC-O-MS + ricombinazione). NOTA: il pu-erh scuro/ripe (shou) ha firma diversa (metossibenzeni terrosi) — questa riga è per lo sheng."
+        },
+        {
+          "composto": "2-phenylethyl acetate",
+          "descrittore": "rosa-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pu-erh (sheng/floreale-fruttato): firma (E,Z)-2,6-nonadienale (OAV ~906) + beta-ionone, con blocco floreale confermato da omission test. Foods 2025, 14, 3223 (DOI 10.3390/foods14183223, GC-O-MS + ricombinazione). NOTA: il pu-erh scuro/ripe (shou) ha firma diversa (metossibenzeni terrosi) — questa riga è per lo sheng."
+        }
+      ]
+    },
+    {
+      "ingrediente": "oolong",
+      "nodo_target": "ing-oolong",
+      "specie": "Camellia sinensis, tè semi-ossidato",
+      "dominio": "bar",
+      "fonte_ingrediente": "Oolong (tostato, Dong Ding): firma 2,3-dietil-5-metilpirazina (OAV 1406) + blocco pirazine = nota caramello-tostata (omission test). Foods 2023, 12, 3158 (DOI 10.3390/foods12173158, sensomics). NOTA: un oolong leggero/floreale avrebbe firma su lattoni/terpeni, non pirazine.",
+      "composti": [
+        {
+          "composto": "2,3-diethyl-5-methylpyrazine",
+          "descrittore": "tostato-caramello (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Oolong (tostato, Dong Ding): firma 2,3-dietil-5-metilpirazina (OAV 1406) + blocco pirazine = nota caramello-tostata (omission test). Foods 2023, 12, 3158 (DOI 10.3390/foods12173158, sensomics). NOTA: un oolong leggero/floreale avrebbe firma su lattoni/terpeni, non pirazine."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "agrumato-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Oolong (tostato, Dong Ding): firma 2,3-dietil-5-metilpirazina (OAV 1406) + blocco pirazine = nota caramello-tostata (omission test). Foods 2023, 12, 3158 (DOI 10.3390/foods12173158, sensomics). NOTA: un oolong leggero/floreale avrebbe firma su lattoni/terpeni, non pirazine."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "dolce-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Oolong (tostato, Dong Ding): firma 2,3-dietil-5-metilpirazina (OAV 1406) + blocco pirazine = nota caramello-tostata (omission test). Foods 2023, 12, 3158 (DOI 10.3390/foods12173158, sensomics). NOTA: un oolong leggero/floreale avrebbe firma su lattoni/terpeni, non pirazine."
+        },
+        {
+          "composto": "cis-jasmone",
+          "descrittore": "legnoso-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Oolong (tostato, Dong Ding): firma 2,3-dietil-5-metilpirazina (OAV 1406) + blocco pirazine = nota caramello-tostata (omission test). Foods 2023, 12, 3158 (DOI 10.3390/foods12173158, sensomics). NOTA: un oolong leggero/floreale avrebbe firma su lattoni/terpeni, non pirazine."
+        },
+        {
+          "composto": "linalool oxide",
+          "descrittore": "verde-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Oolong (tostato, Dong Ding): firma 2,3-dietil-5-metilpirazina (OAV 1406) + blocco pirazine = nota caramello-tostata (omission test). Foods 2023, 12, 3158 (DOI 10.3390/foods12173158, sensomics). NOTA: un oolong leggero/floreale avrebbe firma su lattoni/terpeni, non pirazine."
+        }
+      ]
+    },
+    {
+      "ingrediente": "yerba mate",
+      "nodo_target": "ing-yerba-mate",
+      "specie": "Ilex paraguariensis",
+      "dominio": "bar",
+      "fonte_ingrediente": "Yerba mate: firma norisoprenoidi (ioni + beta-ciclocitrale) + aldeidi da degradazione acidi grassi. Food Research International 2013, 53(2) (DOI 10.1016/j.foodres.2013.02.016, GC-O + GC-MS). NOTA: descrittori per singolo composto non riportati nel record, composti da GC-O + PCA — fonte reale, precisione media.",
+      "composti": [
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-legnoso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yerba mate: firma norisoprenoidi (ioni + beta-ciclocitrale) + aldeidi da degradazione acidi grassi. Food Research International 2013, 53(2) (DOI 10.1016/j.foodres.2013.02.016, GC-O + GC-MS). NOTA: descrittori per singolo composto non riportati nel record, composti da GC-O + PCA — fonte reale, precisione media."
+        },
+        {
+          "composto": "beta-cyclocitral",
+          "descrittore": "erbaceo-fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yerba mate: firma norisoprenoidi (ioni + beta-ciclocitrale) + aldeidi da degradazione acidi grassi. Food Research International 2013, 53(2) (DOI 10.1016/j.foodres.2013.02.016, GC-O + GC-MS). NOTA: descrittori per singolo composto non riportati nel record, composti da GC-O + PCA — fonte reale, precisione media."
+        },
+        {
+          "composto": "alpha-ionone",
+          "descrittore": "violetta",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yerba mate: firma norisoprenoidi (ioni + beta-ciclocitrale) + aldeidi da degradazione acidi grassi. Food Research International 2013, 53(2) (DOI 10.1016/j.foodres.2013.02.016, GC-O + GC-MS). NOTA: descrittori per singolo composto non riportati nel record, composti da GC-O + PCA — fonte reale, precisione media."
+        },
+        {
+          "composto": "octanal",
+          "descrittore": "agrumato-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yerba mate: firma norisoprenoidi (ioni + beta-ciclocitrale) + aldeidi da degradazione acidi grassi. Food Research International 2013, 53(2) (DOI 10.1016/j.foodres.2013.02.016, GC-O + GC-MS). NOTA: descrittori per singolo composto non riportati nel record, composti da GC-O + PCA — fonte reale, precisione media."
+        },
+        {
+          "composto": "(E,E)-2,4-heptadienal",
+          "descrittore": "grasso-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yerba mate: firma norisoprenoidi (ioni + beta-ciclocitrale) + aldeidi da degradazione acidi grassi. Food Research International 2013, 53(2) (DOI 10.1016/j.foodres.2013.02.016, GC-O + GC-MS). NOTA: descrittori per singolo composto non riportati nel record, composti da GC-O + PCA — fonte reale, precisione media."
+        }
+      ]
+    },
+    {
+      "ingrediente": "karkadè",
+      "nodo_target": "ing-karkade",
+      "specie": "Hibiscus sabdariffa",
+      "dominio": "bar",
+      "fonte_ingrediente": "Karkadè/ibisco: firma odorosa furfural + 5-metilfurfurale (FD più alti, 22-23 key odorants). Food Research International 2020, 133, 109133 (DOI 10.1016/j.foodres.2020.109133, key odorants, FD). NOTA: l'acidità/asprezza del karkadè è non-volatile (acido ibiscico/citrico/malico), non aromatica.",
+      "composti": [
+        {
+          "composto": "furfural",
+          "descrittore": "caramello-pane (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Karkadè/ibisco: firma odorosa furfural + 5-metilfurfurale (FD più alti, 22-23 key odorants). Food Research International 2020, 133, 109133 (DOI 10.1016/j.foodres.2020.109133, key odorants, FD). NOTA: l'acidità/asprezza del karkadè è non-volatile (acido ibiscico/citrico/malico), non aromatica."
+        },
+        {
+          "composto": "5-methylfurfural",
+          "descrittore": "caramello-tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Karkadè/ibisco: firma odorosa furfural + 5-metilfurfurale (FD più alti, 22-23 key odorants). Food Research International 2020, 133, 109133 (DOI 10.1016/j.foodres.2020.109133, key odorants, FD). NOTA: l'acidità/asprezza del karkadè è non-volatile (acido ibiscico/citrico/malico), non aromatica."
+        },
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Karkadè/ibisco: firma odorosa furfural + 5-metilfurfurale (FD più alti, 22-23 key odorants). Food Research International 2020, 133, 109133 (DOI 10.1016/j.foodres.2020.109133, key odorants, FD). NOTA: l'acidità/asprezza del karkadè è non-volatile (acido ibiscico/citrico/malico), non aromatica."
+        }
+      ]
+    },
+    {
+      "ingrediente": "matcha",
+      "nodo_target": "ing-matcha",
+      "specie": "Camellia sinensis, tè in polvere",
+      "dominio": "bar",
+      "fonte_ingrediente": "Matcha: firma 3-metil-2-butene-1-tiolo (OAV 2316, dominante nell'alta qualità). Foods 2022, 11, 2964 (DOI 10.3390/foods11192964, HS-SPME + SAFE-GC-MS, OAV). NOTA: studio su matcha cinese; per il matcha giapponese la firma classica è il dimetilsolfuro (DMS), non rilevato qui per tostatura più alta.",
+      "composti": [
+        {
+          "composto": "3-methyl-2-butene-1-thiol",
+          "descrittore": "sulfureo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Matcha: firma 3-metil-2-butene-1-tiolo (OAV 2316, dominante nell'alta qualità). Foods 2022, 11, 2964 (DOI 10.3390/foods11192964, HS-SPME + SAFE-GC-MS, OAV). NOTA: studio su matcha cinese; per il matcha giapponese la firma classica è il dimetilsolfuro (DMS), non rilevato qui per tostatura più alta."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "mare-cavolo cotto (firma matcha JP)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Matcha: firma 3-metil-2-butene-1-tiolo (OAV 2316, dominante nell'alta qualità). Foods 2022, 11, 2964 (DOI 10.3390/foods11192964, HS-SPME + SAFE-GC-MS, OAV). NOTA: studio su matcha cinese; per il matcha giapponese la firma classica è il dimetilsolfuro (DMS), non rilevato qui per tostatura più alta."
+        },
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "verde-cetriolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Matcha: firma 3-metil-2-butene-1-tiolo (OAV 2316, dominante nell'alta qualità). Foods 2022, 11, 2964 (DOI 10.3390/foods11192964, HS-SPME + SAFE-GC-MS, OAV). NOTA: studio su matcha cinese; per il matcha giapponese la firma classica è il dimetilsolfuro (DMS), non rilevato qui per tostatura più alta."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Matcha: firma 3-metil-2-butene-1-tiolo (OAV 2316, dominante nell'alta qualità). Foods 2022, 11, 2964 (DOI 10.3390/foods11192964, HS-SPME + SAFE-GC-MS, OAV). NOTA: studio su matcha cinese; per il matcha giapponese la firma classica è il dimetilsolfuro (DMS), non rilevato qui per tostatura più alta."
+        },
+        {
+          "composto": "(E,E)-2,4-nonadienal",
+          "descrittore": "grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Matcha: firma 3-metil-2-butene-1-tiolo (OAV 2316, dominante nell'alta qualità). Foods 2022, 11, 2964 (DOI 10.3390/foods11192964, HS-SPME + SAFE-GC-MS, OAV). NOTA: studio su matcha cinese; per il matcha giapponese la firma classica è il dimetilsolfuro (DMS), non rilevato qui per tostatura più alta."
+        }
+      ]
+    },
+    {
+      "ingrediente": "rum invecchiato",
+      "nodo_target": "ing-rum-invecchiato",
+      "specie": "distillato di canna invecchiato in botte",
+      "dominio": "bar",
+      "fonte_ingrediente": "Rum invecchiato: firma vanillina + whisky lattone (dalla botte) su base di esteri fermentativi + beta-damascenone. Ickes & Cadwallader (GC-O/AEDA, 51 odorant) + Franitza, Granvogl & Schieberle, J. Agric. Food Chem. 2016 (sensomics). Marcatori aroma-attivi documentati, non l'elenco completo.",
+      "composti": [
+        {
+          "composto": "vanillin",
+          "descrittore": "vaniglia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum invecchiato: firma vanillina + whisky lattone (dalla botte) su base di esteri fermentativi + beta-damascenone. Ickes & Cadwallader (GC-O/AEDA, 51 odorant) + Franitza, Granvogl & Schieberle, J. Agric. Food Chem. 2016 (sensomics). Marcatori aroma-attivi documentati, non l'elenco completo."
+        },
+        {
+          "composto": "whiskey lactone",
+          "descrittore": "cocco-legno (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum invecchiato: firma vanillina + whisky lattone (dalla botte) su base di esteri fermentativi + beta-damascenone. Ickes & Cadwallader (GC-O/AEDA, 51 odorant) + Franitza, Granvogl & Schieberle, J. Agric. Food Chem. 2016 (sensomics). Marcatori aroma-attivi documentati, non l'elenco completo."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-miele",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum invecchiato: firma vanillina + whisky lattone (dalla botte) su base di esteri fermentativi + beta-damascenone. Ickes & Cadwallader (GC-O/AEDA, 51 odorant) + Franitza, Granvogl & Schieberle, J. Agric. Food Chem. 2016 (sensomics). Marcatori aroma-attivi documentati, non l'elenco completo."
+        },
+        {
+          "composto": "ethyl vanillin",
+          "descrittore": "vaniglia dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum invecchiato: firma vanillina + whisky lattone (dalla botte) su base di esteri fermentativi + beta-damascenone. Ickes & Cadwallader (GC-O/AEDA, 51 odorant) + Franitza, Granvogl & Schieberle, J. Agric. Food Chem. 2016 (sensomics). Marcatori aroma-attivi documentati, non l'elenco completo."
+        },
+        {
+          "composto": "3-methyl-1-butanol",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum invecchiato: firma vanillina + whisky lattone (dalla botte) su base di esteri fermentativi + beta-damascenone. Ickes & Cadwallader (GC-O/AEDA, 51 odorant) + Franitza, Granvogl & Schieberle, J. Agric. Food Chem. 2016 (sensomics). Marcatori aroma-attivi documentati, non l'elenco completo."
+        },
+        {
+          "composto": "syringaldehyde",
+          "descrittore": "legno tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum invecchiato: firma vanillina + whisky lattone (dalla botte) su base di esteri fermentativi + beta-damascenone. Ickes & Cadwallader (GC-O/AEDA, 51 odorant) + Franitza, Granvogl & Schieberle, J. Agric. Food Chem. 2016 (sensomics). Marcatori aroma-attivi documentati, non l'elenco completo."
+        }
+      ]
+    },
+    {
+      "ingrediente": "whisky torbato",
+      "nodo_target": "ing-whisky-torbato",
+      "specie": "single malt scotch affumicato con torba",
+      "dominio": "bar",
+      "fonte_ingrediente": "Whisky torbato: firma guaiacolo + 4-metilguaiacolo + cresoli = nota torbata/fenolica (dal fumo di torba sul malto); i cresoli distinguono lo Scotch. Lehtonen, 'Phenols in whisky', Chromatographia 1982, 16:201-203 (DOI 10.1007/BF02258900). NOTA: fonte autorevole ma datata, senza descrittori/soglie GC-O; i fenoli sono il marcatore universale della torba.",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "fumo-medicinale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Whisky torbato: firma guaiacolo + 4-metilguaiacolo + cresoli = nota torbata/fenolica (dal fumo di torba sul malto); i cresoli distinguono lo Scotch. Lehtonen, 'Phenols in whisky', Chromatographia 1982, 16:201-203 (DOI 10.1007/BF02258900). NOTA: fonte autorevole ma datata, senza descrittori/soglie GC-O; i fenoli sono il marcatore universale della torba."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-torba (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Whisky torbato: firma guaiacolo + 4-metilguaiacolo + cresoli = nota torbata/fenolica (dal fumo di torba sul malto); i cresoli distinguono lo Scotch. Lehtonen, 'Phenols in whisky', Chromatographia 1982, 16:201-203 (DOI 10.1007/BF02258900). NOTA: fonte autorevole ma datata, senza descrittori/soglie GC-O; i fenoli sono il marcatore universale della torba."
+        },
+        {
+          "composto": "p-cresol",
+          "descrittore": "fenolico-stalla",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Whisky torbato: firma guaiacolo + 4-metilguaiacolo + cresoli = nota torbata/fenolica (dal fumo di torba sul malto); i cresoli distinguono lo Scotch. Lehtonen, 'Phenols in whisky', Chromatographia 1982, 16:201-203 (DOI 10.1007/BF02258900). NOTA: fonte autorevole ma datata, senza descrittori/soglie GC-O; i fenoli sono il marcatore universale della torba."
+        },
+        {
+          "composto": "phenol",
+          "descrittore": "medicinale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Whisky torbato: firma guaiacolo + 4-metilguaiacolo + cresoli = nota torbata/fenolica (dal fumo di torba sul malto); i cresoli distinguono lo Scotch. Lehtonen, 'Phenols in whisky', Chromatographia 1982, 16:201-203 (DOI 10.1007/BF02258900). NOTA: fonte autorevole ma datata, senza descrittori/soglie GC-O; i fenoli sono il marcatore universale della torba."
+        },
+        {
+          "composto": "eugenol",
+          "descrittore": "chiodo di garofano",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Whisky torbato: firma guaiacolo + 4-metilguaiacolo + cresoli = nota torbata/fenolica (dal fumo di torba sul malto); i cresoli distinguono lo Scotch. Lehtonen, 'Phenols in whisky', Chromatographia 1982, 16:201-203 (DOI 10.1007/BF02258900). NOTA: fonte autorevole ma datata, senza descrittori/soglie GC-O; i fenoli sono il marcatore universale della torba."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sakè",
+      "nodo_target": "ing-sake",
+      "specie": "vino di riso fermentato (koji)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Sakè: firma isoamil acetato (banana) + etil esanoato (pesca-mela) = i due marcatori 'ginjo-ka'. Gong et al., Biosci. Biotechnol. Biochem. 2025, 89(6):910 (DOI 10.1093/bbb/zbaf029); profilo esteri confermato da ACS Food Sci. Technol. 2025, 5(7):2628.",
+      "composti": [
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sakè: firma isoamil acetato (banana) + etil esanoato (pesca-mela) = i due marcatori 'ginjo-ka'. Gong et al., Biosci. Biotechnol. Biochem. 2025, 89(6):910 (DOI 10.1093/bbb/zbaf029); profilo esteri confermato da ACS Food Sci. Technol. 2025, 5(7):2628."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "pesca-mela (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sakè: firma isoamil acetato (banana) + etil esanoato (pesca-mela) = i due marcatori 'ginjo-ka'. Gong et al., Biosci. Biotechnol. Biochem. 2025, 89(6):910 (DOI 10.1093/bbb/zbaf029); profilo esteri confermato da ACS Food Sci. Technol. 2025, 5(7):2628."
+        },
+        {
+          "composto": "ethyl decanoate",
+          "descrittore": "fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sakè: firma isoamil acetato (banana) + etil esanoato (pesca-mela) = i due marcatori 'ginjo-ka'. Gong et al., Biosci. Biotechnol. Biochem. 2025, 89(6):910 (DOI 10.1093/bbb/zbaf029); profilo esteri confermato da ACS Food Sci. Technol. 2025, 5(7):2628."
+        },
+        {
+          "composto": "hexyl hexanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sakè: firma isoamil acetato (banana) + etil esanoato (pesca-mela) = i due marcatori 'ginjo-ka'. Gong et al., Biosci. Biotechnol. Biochem. 2025, 89(6):910 (DOI 10.1093/bbb/zbaf029); profilo esteri confermato da ACS Food Sci. Technol. 2025, 5(7):2628."
+        },
+        {
+          "composto": "3-methyl-1-butanol",
+          "descrittore": "fruttato (in eccesso pungente)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sakè: firma isoamil acetato (banana) + etil esanoato (pesca-mela) = i due marcatori 'ginjo-ka'. Gong et al., Biosci. Biotechnol. Biochem. 2025, 89(6):910 (DOI 10.1093/bbb/zbaf029); profilo esteri confermato da ACS Food Sci. Technol. 2025, 5(7):2628."
+        }
+      ]
+    },
+    {
+      "ingrediente": "kefir",
+      "nodo_target": "ing-kefir",
+      "specie": "latte fermentato (grani di kefir)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Kefir: firma diacetile (burroso) + acetaldeide in rapporto bilanciato; l'etanolo (dal lievito) lo distingue dallo yogurt. Affane et al., J. Microbiol. Biotechnol. Food Sci. 2016, 5(4):364 (DOI 10.15414/jmbfs.2016.5.4.364-368). NOTA: acetoino non quantificato in questa fonte (canonico nel kefir); rivista minore ma peer-reviewed con dati reali.",
+      "composti": [
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kefir: firma diacetile (burroso) + acetaldeide in rapporto bilanciato; l'etanolo (dal lievito) lo distingue dallo yogurt. Affane et al., J. Microbiol. Biotechnol. Food Sci. 2016, 5(4):364 (DOI 10.15414/jmbfs.2016.5.4.364-368). NOTA: acetoino non quantificato in questa fonte (canonico nel kefir); rivista minore ma peer-reviewed con dati reali."
+        },
+        {
+          "composto": "acetaldehyde",
+          "descrittore": "pungente-verde/yogurt (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kefir: firma diacetile (burroso) + acetaldeide in rapporto bilanciato; l'etanolo (dal lievito) lo distingue dallo yogurt. Affane et al., J. Microbiol. Biotechnol. Food Sci. 2016, 5(4):364 (DOI 10.15414/jmbfs.2016.5.4.364-368). NOTA: acetoino non quantificato in questa fonte (canonico nel kefir); rivista minore ma peer-reviewed con dati reali."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "burro-crema",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kefir: firma diacetile (burroso) + acetaldeide in rapporto bilanciato; l'etanolo (dal lievito) lo distingue dallo yogurt. Affane et al., J. Microbiol. Biotechnol. Food Sci. 2016, 5(4):364 (DOI 10.15414/jmbfs.2016.5.4.364-368). NOTA: acetoino non quantificato in questa fonte (canonico nel kefir); rivista minore ma peer-reviewed con dati reali."
+        },
+        {
+          "composto": "acetic acid",
+          "descrittore": "acido",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kefir: firma diacetile (burroso) + acetaldeide in rapporto bilanciato; l'etanolo (dal lievito) lo distingue dallo yogurt. Affane et al., J. Microbiol. Biotechnol. Food Sci. 2016, 5(4):364 (DOI 10.15414/jmbfs.2016.5.4.364-368). NOTA: acetoino non quantificato in questa fonte (canonico nel kefir); rivista minore ma peer-reviewed con dati reali."
+        }
+      ]
+    },
+    {
+      "ingrediente": "latticello",
+      "nodo_target": "ing-latticello",
+      "specie": "buttermilk, latte fermentato",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Latticello/buttermilk: firma diacetile (carattere 'burro' cultured). Molecules 2021, PMC8537768 (DOI 10.3390/molecules26206194, SAFE-GC-O); difetto metallico noto = (E,Z)-2,6-nonadienale + 1-octen-3-one (Leibniz-LSB). NOTA: la fonte PMC riguarda aromi da Galactomyces su latticello, non il latticello puro; il diacetile come firma è consolidato.",
+      "composti": [
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latticello/buttermilk: firma diacetile (carattere 'burro' cultured). Molecules 2021, PMC8537768 (DOI 10.3390/molecules26206194, SAFE-GC-O); difetto metallico noto = (E,Z)-2,6-nonadienale + 1-octen-3-one (Leibniz-LSB). NOTA: la fonte PMC riguarda aromi da Galactomyces su latticello, non il latticello puro; il diacetile come firma è consolidato."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "burro-crema",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latticello/buttermilk: firma diacetile (carattere 'burro' cultured). Molecules 2021, PMC8537768 (DOI 10.3390/molecules26206194, SAFE-GC-O); difetto metallico noto = (E,Z)-2,6-nonadienale + 1-octen-3-one (Leibniz-LSB). NOTA: la fonte PMC riguarda aromi da Galactomyces su latticello, non il latticello puro; il diacetile come firma è consolidato."
+        },
+        {
+          "composto": "acetaldehyde",
+          "descrittore": "fresco-yogurt",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latticello/buttermilk: firma diacetile (carattere 'burro' cultured). Molecules 2021, PMC8537768 (DOI 10.3390/molecules26206194, SAFE-GC-O); difetto metallico noto = (E,Z)-2,6-nonadienale + 1-octen-3-one (Leibniz-LSB). NOTA: la fonte PMC riguarda aromi da Galactomyces su latticello, non il latticello puro; il diacetile come firma è consolidato."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "cotto-sulfureo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latticello/buttermilk: firma diacetile (carattere 'burro' cultured). Molecules 2021, PMC8537768 (DOI 10.3390/molecules26206194, SAFE-GC-O); difetto metallico noto = (E,Z)-2,6-nonadienale + 1-octen-3-one (Leibniz-LSB). NOTA: la fonte PMC riguarda aromi da Galactomyces su latticello, non il latticello puro; il diacetile come firma è consolidato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "panna acida",
+      "nodo_target": "ing-panna-acida",
+      "specie": "sour cream, crema fermentata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Panna acida/sour cream: firma diacetile + acetoino (nota burrosa del fermentato) su base di lattoni cremosi del grasso. Food Science (Cina) 2023, 44(16):267 (DOI 10.7506/spkx1002-6630-20221012-117, GC-MS). Rivista cinese peer-reviewed (Shipin Kexue).",
+      "composti": [
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna acida/sour cream: firma diacetile + acetoino (nota burrosa del fermentato) su base di lattoni cremosi del grasso. Food Science (Cina) 2023, 44(16):267 (DOI 10.7506/spkx1002-6630-20221012-117, GC-MS). Rivista cinese peer-reviewed (Shipin Kexue)."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "burro-crema (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna acida/sour cream: firma diacetile + acetoino (nota burrosa del fermentato) su base di lattoni cremosi del grasso. Food Science (Cina) 2023, 44(16):267 (DOI 10.7506/spkx1002-6630-20221012-117, GC-MS). Rivista cinese peer-reviewed (Shipin Kexue)."
+        },
+        {
+          "composto": "acetic acid",
+          "descrittore": "acido",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna acida/sour cream: firma diacetile + acetoino (nota burrosa del fermentato) su base di lattoni cremosi del grasso. Food Science (Cina) 2023, 44(16):267 (DOI 10.7506/spkx1002-6630-20221012-117, GC-MS). Rivista cinese peer-reviewed (Shipin Kexue)."
+        },
+        {
+          "composto": "2-heptanone",
+          "descrittore": "latteo-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna acida/sour cream: firma diacetile + acetoino (nota burrosa del fermentato) su base di lattoni cremosi del grasso. Food Science (Cina) 2023, 44(16):267 (DOI 10.7506/spkx1002-6630-20221012-117, GC-MS). Rivista cinese peer-reviewed (Shipin Kexue)."
+        },
+        {
+          "composto": "delta-decalactone",
+          "descrittore": "cremoso-cocco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna acida/sour cream: firma diacetile + acetoino (nota burrosa del fermentato) su base di lattoni cremosi del grasso. Food Science (Cina) 2023, 44(16):267 (DOI 10.7506/spkx1002-6630-20221012-117, GC-MS). Rivista cinese peer-reviewed (Shipin Kexue)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "birra stout",
+      "nodo_target": "ing-birra-stout",
+      "specie": "birra scura a malto tostato",
+      "dominio": "bar",
+      "fonte_ingrediente": "Birra stout/scura tostata: firma 2-furfuriltiolo (caffè tostato) + guaiacolo + furani = carattere malto scuro, oltre a esteri/alcoli di fermentazione. Review PMC12732517 + PMC11173443 (key odor-active, molecular sensory science). NOTA: review sulla birra in generale; i marker tostati sono quelli specifici del malto scuro/stout.",
+      "composti": [
+        {
+          "composto": "2-furfurylthiol",
+          "descrittore": "caffè tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra stout/scura tostata: firma 2-furfuriltiolo (caffè tostato) + guaiacolo + furani = carattere malto scuro, oltre a esteri/alcoli di fermentazione. Review PMC12732517 + PMC11173443 (key odor-active, molecular sensory science). NOTA: review sulla birra in generale; i marker tostati sono quelli specifici del malto scuro/stout."
+        },
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato-fenolico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra stout/scura tostata: firma 2-furfuriltiolo (caffè tostato) + guaiacolo + furani = carattere malto scuro, oltre a esteri/alcoli di fermentazione. Review PMC12732517 + PMC11173443 (key odor-active, molecular sensory science). NOTA: review sulla birra in generale; i marker tostati sono quelli specifici del malto scuro/stout."
+        },
+        {
+          "composto": "furfural",
+          "descrittore": "caramello-mandorla",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra stout/scura tostata: firma 2-furfuriltiolo (caffè tostato) + guaiacolo + furani = carattere malto scuro, oltre a esteri/alcoli di fermentazione. Review PMC12732517 + PMC11173443 (key odor-active, molecular sensory science). NOTA: review sulla birra in generale; i marker tostati sono quelli specifici del malto scuro/stout."
+        },
+        {
+          "composto": "2-acetylpyrazine",
+          "descrittore": "tostato-nocciola",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra stout/scura tostata: firma 2-furfuriltiolo (caffè tostato) + guaiacolo + furani = carattere malto scuro, oltre a esteri/alcoli di fermentazione. Review PMC12732517 + PMC11173443 (key odor-active, molecular sensory science). NOTA: review sulla birra in generale; i marker tostati sono quelli specifici del malto scuro/stout."
+        },
+        {
+          "composto": "sotolon",
+          "descrittore": "tostato-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Birra stout/scura tostata: firma 2-furfuriltiolo (caffè tostato) + guaiacolo + furani = carattere malto scuro, oltre a esteri/alcoli di fermentazione. Review PMC12732517 + PMC11173443 (key odor-active, molecular sensory science). NOTA: review sulla birra in generale; i marker tostati sono quelli specifici del malto scuro/stout."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cognac",
+      "nodo_target": "ing-cognac",
+      "specie": "brandy di vino invecchiato in rovere",
+      "dominio": "bar",
+      "fonte_ingrediente": "Cognac/brandy: firma whisky lattone (botte di rovere) + beta-damascenone; vinilfenoli per lo speziato. Ma et al., Foods 2024, 13(1), 27 (DOI 10.3390/foods13010027, HS-SPME GC-O/GC-MS + sensoriale). NOTA: il record dà concentrazioni non OAV; esiste anche il sensomics Leibniz-LSB 'combinatorial aroma code of a commercial Cognac' come fonte più forte su OAV.",
+      "composti": [
+        {
+          "composto": "whiskey lactone",
+          "descrittore": "cocco-legno (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cognac/brandy: firma whisky lattone (botte di rovere) + beta-damascenone; vinilfenoli per lo speziato. Ma et al., Foods 2024, 13(1), 27 (DOI 10.3390/foods13010027, HS-SPME GC-O/GC-MS + sensoriale). NOTA: il record dà concentrazioni non OAV; esiste anche il sensomics Leibniz-LSB 'combinatorial aroma code of a commercial Cognac' come fonte più forte su OAV."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-miele (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cognac/brandy: firma whisky lattone (botte di rovere) + beta-damascenone; vinilfenoli per lo speziato. Ma et al., Foods 2024, 13(1), 27 (DOI 10.3390/foods13010027, HS-SPME GC-O/GC-MS + sensoriale). NOTA: il record dà concentrazioni non OAV; esiste anche il sensomics Leibniz-LSB 'combinatorial aroma code of a commercial Cognac' come fonte più forte su OAV."
+        },
+        {
+          "composto": "4-vinylguaiacol",
+          "descrittore": "speziato-chiodo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cognac/brandy: firma whisky lattone (botte di rovere) + beta-damascenone; vinilfenoli per lo speziato. Ma et al., Foods 2024, 13(1), 27 (DOI 10.3390/foods13010027, HS-SPME GC-O/GC-MS + sensoriale). NOTA: il record dà concentrazioni non OAV; esiste anche il sensomics Leibniz-LSB 'combinatorial aroma code of a commercial Cognac' come fonte più forte su OAV."
+        },
+        {
+          "composto": "ethyl octanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cognac/brandy: firma whisky lattone (botte di rovere) + beta-damascenone; vinilfenoli per lo speziato. Ma et al., Foods 2024, 13(1), 27 (DOI 10.3390/foods13010027, HS-SPME GC-O/GC-MS + sensoriale). NOTA: il record dà concentrazioni non OAV; esiste anche il sensomics Leibniz-LSB 'combinatorial aroma code of a commercial Cognac' come fonte più forte su OAV."
+        },
+        {
+          "composto": "ethyl dodecanoate",
+          "descrittore": "fruttato-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cognac/brandy: firma whisky lattone (botte di rovere) + beta-damascenone; vinilfenoli per lo speziato. Ma et al., Foods 2024, 13(1), 27 (DOI 10.3390/foods13010027, HS-SPME GC-O/GC-MS + sensoriale). NOTA: il record dà concentrazioni non OAV; esiste anche il sensomics Leibniz-LSB 'combinatorial aroma code of a commercial Cognac' come fonte più forte su OAV."
+        }
+      ]
+    },
+    {
+      "ingrediente": "vino rosso invecchiato",
+      "nodo_target": "ing-vino-rosso-invecchiato",
+      "specie": "vino rosso da invecchiamento ossidativo",
+      "dominio": "bar",
+      "fonte_ingrediente": "Vino rosso invecchiato: firma aldeidi di Strecker (metionale, fenilacetaldeide, 3-metilbutanale) + sotolon = note di 'frutta secca'/ossidazione; acetali come marker ossidativi. Aragón-Capone et al., Eur. Food Res. Technol. 2025, 251:3591 (DOI 10.1007/s00217-025-04865-0, GC-O). NOTA: ossidazione accelerata (35°C, 28 gg); gli odorant sono però i marker documentati dell'aging ossidativo.",
+      "composti": [
+        {
+          "composto": "sotolon",
+          "descrittore": "curry-tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso invecchiato: firma aldeidi di Strecker (metionale, fenilacetaldeide, 3-metilbutanale) + sotolon = note di 'frutta secca'/ossidazione; acetali come marker ossidativi. Aragón-Capone et al., Eur. Food Res. Technol. 2025, 251:3591 (DOI 10.1007/s00217-025-04865-0, GC-O). NOTA: ossidazione accelerata (35°C, 28 gg); gli odorant sono però i marker documentati dell'aging ossidativo."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "verdura cotta (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso invecchiato: firma aldeidi di Strecker (metionale, fenilacetaldeide, 3-metilbutanale) + sotolon = note di 'frutta secca'/ossidazione; acetali come marker ossidativi. Aragón-Capone et al., Eur. Food Res. Technol. 2025, 251:3591 (DOI 10.1007/s00217-025-04865-0, GC-O). NOTA: ossidazione accelerata (35°C, 28 gg); gli odorant sono però i marker documentati dell'aging ossidativo."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso invecchiato: firma aldeidi di Strecker (metionale, fenilacetaldeide, 3-metilbutanale) + sotolon = note di 'frutta secca'/ossidazione; acetali come marker ossidativi. Aragón-Capone et al., Eur. Food Res. Technol. 2025, 251:3591 (DOI 10.1007/s00217-025-04865-0, GC-O). NOTA: ossidazione accelerata (35°C, 28 gg); gli odorant sono però i marker documentati dell'aging ossidativo."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "solvente-liquore",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso invecchiato: firma aldeidi di Strecker (metionale, fenilacetaldeide, 3-metilbutanale) + sotolon = note di 'frutta secca'/ossidazione; acetali come marker ossidativi. Aragón-Capone et al., Eur. Food Res. Technol. 2025, 251:3591 (DOI 10.1007/s00217-025-04865-0, GC-O). NOTA: ossidazione accelerata (35°C, 28 gg); gli odorant sono però i marker documentati dell'aging ossidativo."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso invecchiato: firma aldeidi di Strecker (metionale, fenilacetaldeide, 3-metilbutanale) + sotolon = note di 'frutta secca'/ossidazione; acetali come marker ossidativi. Aragón-Capone et al., Eur. Food Res. Technol. 2025, 251:3591 (DOI 10.1007/s00217-025-04865-0, GC-O). NOTA: ossidazione accelerata (35°C, 28 gg); gli odorant sono però i marker documentati dell'aging ossidativo."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sidro di mele",
+      "nodo_target": "ing-sidro-di-mele",
+      "specie": "mela fermentata (Brettanomyces)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Sidro di mele: gli odorant più potenti sono 2-feniletanolo, 4-etilguaiacolo e 4-etilfenolo (testuale); 4-EG/4-EP = marchio del sidro (Brettanomyces). Antón et al., J. Food Sci. 2014, 79(1) (DOI 10.1111/1750-3841.12323, quantitativa + GC-O/AEDA + sensoriale). Fonte forte.",
+      "composti": [
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sidro di mele: gli odorant più potenti sono 2-feniletanolo, 4-etilguaiacolo e 4-etilfenolo (testuale); 4-EG/4-EP = marchio del sidro (Brettanomyces). Antón et al., J. Food Sci. 2014, 79(1) (DOI 10.1111/1750-3841.12323, quantitativa + GC-O/AEDA + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "4-ethylguaiacol",
+          "descrittore": "dolce-speziato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sidro di mele: gli odorant più potenti sono 2-feniletanolo, 4-etilguaiacolo e 4-etilfenolo (testuale); 4-EG/4-EP = marchio del sidro (Brettanomyces). Antón et al., J. Food Sci. 2014, 79(1) (DOI 10.1111/1750-3841.12323, quantitativa + GC-O/AEDA + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "4-ethylphenol",
+          "descrittore": "cuoio-stalla (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sidro di mele: gli odorant più potenti sono 2-feniletanolo, 4-etilguaiacolo e 4-etilfenolo (testuale); 4-EG/4-EP = marchio del sidro (Brettanomyces). Antón et al., J. Food Sci. 2014, 79(1) (DOI 10.1111/1750-3841.12323, quantitativa + GC-O/AEDA + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "2-methylbutanoic acid",
+          "descrittore": "formaggio-rancido",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sidro di mele: gli odorant più potenti sono 2-feniletanolo, 4-etilguaiacolo e 4-etilfenolo (testuale); 4-EG/4-EP = marchio del sidro (Brettanomyces). Antón et al., J. Food Sci. 2014, 79(1) (DOI 10.1111/1750-3841.12323, quantitativa + GC-O/AEDA + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "sotolon",
+          "descrittore": "curry-affumicato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sidro di mele: gli odorant più potenti sono 2-feniletanolo, 4-etilguaiacolo e 4-etilfenolo (testuale); 4-EG/4-EP = marchio del sidro (Brettanomyces). Antón et al., J. Food Sci. 2014, 79(1) (DOI 10.1111/1750-3841.12323, quantitativa + GC-O/AEDA + sensoriale). Fonte forte."
+        }
+      ]
+    },
+    {
+      "ingrediente": "aceto di riso",
+      "nodo_target": "ing-aceto-di-riso",
+      "specie": "aceto fermentato di riso",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Aceto di riso: firma acido acetico (>90% degli acidi) + acetoino = biomarker della fase di acetificazione; etanolo/feniletanolo biomarker della fase alcolica. Food Research International 2019, 119:398 (DOI 10.1016/j.foodres.2019.02.008, HS-SPME-GC-MS). NOTA: tetrametilpirazina canonica negli aceti di cereali invecchiati ma non nominata in questa fonte.",
+      "composti": [
+        {
+          "composto": "acetic acid",
+          "descrittore": "acido pungente (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di riso: firma acido acetico (>90% degli acidi) + acetoino = biomarker della fase di acetificazione; etanolo/feniletanolo biomarker della fase alcolica. Food Research International 2019, 119:398 (DOI 10.1016/j.foodres.2019.02.008, HS-SPME-GC-MS). NOTA: tetrametilpirazina canonica negli aceti di cereali invecchiati ma non nominata in questa fonte."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "burro-crema (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di riso: firma acido acetico (>90% degli acidi) + acetoino = biomarker della fase di acetificazione; etanolo/feniletanolo biomarker della fase alcolica. Food Research International 2019, 119:398 (DOI 10.1016/j.foodres.2019.02.008, HS-SPME-GC-MS). NOTA: tetrametilpirazina canonica negli aceti di cereali invecchiati ma non nominata in questa fonte."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di riso: firma acido acetico (>90% degli acidi) + acetoino = biomarker della fase di acetificazione; etanolo/feniletanolo biomarker della fase alcolica. Food Research International 2019, 119:398 (DOI 10.1016/j.foodres.2019.02.008, HS-SPME-GC-MS). NOTA: tetrametilpirazina canonica negli aceti di cereali invecchiati ma non nominata in questa fonte."
+        },
+        {
+          "composto": "3-methyl-1-butanol",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di riso: firma acido acetico (>90% degli acidi) + acetoino = biomarker della fase di acetificazione; etanolo/feniletanolo biomarker della fase alcolica. Food Research International 2019, 119:398 (DOI 10.1016/j.foodres.2019.02.008, HS-SPME-GC-MS). NOTA: tetrametilpirazina canonica negli aceti di cereali invecchiati ma non nominata in questa fonte."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mirin",
+      "nodo_target": "ing-mirin",
+      "specie": "condimento dolce di riso fermentato (koji)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Mirin: firma furanoni (HEMF/HDMF/sotolon) = nota caramello-dolce caratteristica. Kaneko & Kumazawa, Food Sci. Technol. Res. 2020, 26(6):725 (DOI 10.3136/fstr.26.725, AEDA). NOTA: lo studio analizza una salsa condita con mirin, riscaldata (nitsuke), non mirin puro; i furanoni sono però tipici del mirin (Maillard/koji).",
+      "composti": [
+        {
+          "composto": "4-hydroxy-2-ethyl-5-methyl-3(2H)-furanone",
+          "descrittore": "caramello-zucchero bruciato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirin: firma furanoni (HEMF/HDMF/sotolon) = nota caramello-dolce caratteristica. Kaneko & Kumazawa, Food Sci. Technol. Res. 2020, 26(6):725 (DOI 10.3136/fstr.26.725, AEDA). NOTA: lo studio analizza una salsa condita con mirin, riscaldata (nitsuke), non mirin puro; i furanoni sono però tipici del mirin (Maillard/koji)."
+        },
+        {
+          "composto": "sotolon",
+          "descrittore": "speziato-condimento (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirin: firma furanoni (HEMF/HDMF/sotolon) = nota caramello-dolce caratteristica. Kaneko & Kumazawa, Food Sci. Technol. Res. 2020, 26(6):725 (DOI 10.3136/fstr.26.725, AEDA). NOTA: lo studio analizza una salsa condita con mirin, riscaldata (nitsuke), non mirin puro; i furanoni sono però tipici del mirin (Maillard/koji)."
+        },
+        {
+          "composto": "4-hydroxy-2,5-dimethyl-3(2H)-furanone",
+          "descrittore": "caramello-fragola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirin: firma furanoni (HEMF/HDMF/sotolon) = nota caramello-dolce caratteristica. Kaneko & Kumazawa, Food Sci. Technol. Res. 2020, 26(6):725 (DOI 10.3136/fstr.26.725, AEDA). NOTA: lo studio analizza una salsa condita con mirin, riscaldata (nitsuke), non mirin puro; i furanoni sono però tipici del mirin (Maillard/koji)."
+        },
+        {
+          "composto": "dihydromaltol",
+          "descrittore": "caramello",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirin: firma furanoni (HEMF/HDMF/sotolon) = nota caramello-dolce caratteristica. Kaneko & Kumazawa, Food Sci. Technol. Res. 2020, 26(6):725 (DOI 10.3136/fstr.26.725, AEDA). NOTA: lo studio analizza una salsa condita con mirin, riscaldata (nitsuke), non mirin puro; i furanoni sono però tipici del mirin (Maillard/koji)."
+        },
+        {
+          "composto": "vanillin",
+          "descrittore": "vaniglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirin: firma furanoni (HEMF/HDMF/sotolon) = nota caramello-dolce caratteristica. Kaneko & Kumazawa, Food Sci. Technol. Res. 2020, 26(6):725 (DOI 10.3136/fstr.26.725, AEDA). NOTA: lo studio analizza una salsa condita con mirin, riscaldata (nitsuke), non mirin puro; i furanoni sono però tipici del mirin (Maillard/koji)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "gochujang",
+      "nodo_target": "ing-gochujang",
+      "specie": "pasta di peperoncino fermentata (koji)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Gochujang: firma esteri etilici (etil acetato/butirrato) + alcoli di fermentazione, nota fermentata-fruttata su base koji. Choi & Lee, Applied Biological Chemistry 2003, 46(3):207 + PMC8834593. NOTA ONESTA: fonti prevalentemente compositive (GC-MS), non AEDA/OAV con descrittori — composti reali e quantificati, ma firma aroma-attiva non rankata per OAV.",
+      "composti": [
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "solvente-fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gochujang: firma esteri etilici (etil acetato/butirrato) + alcoli di fermentazione, nota fermentata-fruttata su base koji. Choi & Lee, Applied Biological Chemistry 2003, 46(3):207 + PMC8834593. NOTA ONESTA: fonti prevalentemente compositive (GC-MS), non AEDA/OAV con descrittori — composti reali e quantificati, ma firma aroma-attiva non rankata per OAV."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-ananas (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gochujang: firma esteri etilici (etil acetato/butirrato) + alcoli di fermentazione, nota fermentata-fruttata su base koji. Choi & Lee, Applied Biological Chemistry 2003, 46(3):207 + PMC8834593. NOTA ONESTA: fonti prevalentemente compositive (GC-MS), non AEDA/OAV con descrittori — composti reali e quantificati, ma firma aroma-attiva non rankata per OAV."
+        },
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gochujang: firma esteri etilici (etil acetato/butirrato) + alcoli di fermentazione, nota fermentata-fruttata su base koji. Choi & Lee, Applied Biological Chemistry 2003, 46(3):207 + PMC8834593. NOTA ONESTA: fonti prevalentemente compositive (GC-MS), non AEDA/OAV con descrittori — composti reali e quantificati, ma firma aroma-attiva non rankata per OAV."
+        },
+        {
+          "composto": "3-methyl-1-butanol",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gochujang: firma esteri etilici (etil acetato/butirrato) + alcoli di fermentazione, nota fermentata-fruttata su base koji. Choi & Lee, Applied Biological Chemistry 2003, 46(3):207 + PMC8834593. NOTA ONESTA: fonti prevalentemente compositive (GC-MS), non AEDA/OAV con descrittori — composti reali e quantificati, ma firma aroma-attiva non rankata per OAV."
+        },
+        {
+          "composto": "2-methyl-1-propanol",
+          "descrittore": "alcolico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gochujang: firma esteri etilici (etil acetato/butirrato) + alcoli di fermentazione, nota fermentata-fruttata su base koji. Choi & Lee, Applied Biological Chemistry 2003, 46(3):207 + PMC8834593. NOTA ONESTA: fonti prevalentemente compositive (GC-MS), non AEDA/OAV con descrittori — composti reali e quantificati, ma firma aroma-attiva non rankata per OAV."
+        }
+      ]
+    },
+    {
+      "ingrediente": "doubanjiang",
+      "nodo_target": "ing-doubanjiang",
+      "specie": "pasta di fave/soia fermentata piccante",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Doubanjiang: firma etil 3-metilbutanoato (OAV 6229) + beta-damascenone (OAV 3345) + IBMP (OAV 2490) + sotolon (OAV 1602). Li et al., Molecules 2019, 24(17), 3107 (DOI 10.3390/molecules24173107, AEDA + OAV + sensoriale). Fonte forte.",
+      "composti": [
+        {
+          "composto": "ethyl 3-methylbutanoate",
+          "descrittore": "mela-ananas (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Doubanjiang: firma etil 3-metilbutanoato (OAV 6229) + beta-damascenone (OAV 3345) + IBMP (OAV 2490) + sotolon (OAV 1602). Li et al., Molecules 2019, 24(17), 3107 (DOI 10.3390/molecules24173107, AEDA + OAV + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "frutta-uva-floreale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Doubanjiang: firma etil 3-metilbutanoato (OAV 6229) + beta-damascenone (OAV 3345) + IBMP (OAV 2490) + sotolon (OAV 1602). Li et al., Molecules 2019, 24(17), 3107 (DOI 10.3390/molecules24173107, AEDA + OAV + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "3-isobutyl-2-methoxypyrazine",
+          "descrittore": "peperone verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Doubanjiang: firma etil 3-metilbutanoato (OAV 6229) + beta-damascenone (OAV 3345) + IBMP (OAV 2490) + sotolon (OAV 1602). Li et al., Molecules 2019, 24(17), 3107 (DOI 10.3390/molecules24173107, AEDA + OAV + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "sotolon",
+          "descrittore": "soia-condimento",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Doubanjiang: firma etil 3-metilbutanoato (OAV 6229) + beta-damascenone (OAV 3345) + IBMP (OAV 2490) + sotolon (OAV 1602). Li et al., Molecules 2019, 24(17), 3107 (DOI 10.3390/molecules24173107, AEDA + OAV + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata cotta",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Doubanjiang: firma etil 3-metilbutanoato (OAV 6229) + beta-damascenone (OAV 3345) + IBMP (OAV 2490) + sotolon (OAV 1602). Li et al., Molecules 2019, 24(17), 3107 (DOI 10.3390/molecules24173107, AEDA + OAV + sensoriale). Fonte forte."
+        },
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Doubanjiang: firma etil 3-metilbutanoato (OAV 6229) + beta-damascenone (OAV 3345) + IBMP (OAV 2490) + sotolon (OAV 1602). Li et al., Molecules 2019, 24(17), 3107 (DOI 10.3390/molecules24173107, AEDA + OAV + sensoriale). Fonte forte."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (cc, +19 tè/fermentati/alcolici): pu-erh, oolong, yerba mate, karkadè, matcha, rum invecchiato, whisky torbato, sakè, kefir, latticello, panna acida, birra stout, cognac, vino rosso invecchiato, sidro di mele, aceto di riso, mirin, gochujang, doubanjiang. Tutti con fonte GC-MS/GC-O reale; firme con OAV dove il paper le dà (doubanjiang, oolong, matcha, pu-erh). Caveat oneste in riga: pu-erh=sheng (shou diverso), oolong=tostato Dong Ding, matcha=cinese (DMS per il JP), whisky=fonte datata, cognac/vino/mirin/latticello=fonti indirette, gochujang=GC-MS non-OAV. SCARTATA senza inventare: grappa (solo Flash-GC/FID, nessun odorant aroma-attivo verificato). Ponti: fenoli del fumo (whisky torbato/stout<->scamorza/salmone affumicato/mezcal/katsuobushi), esteri fruttati (sakè/gochujang/sidro<->mela/ananas/banana), diacetile+acetoino (kefir/latticello/panna acida<->burro/yogurt), damascenone+whisky lattone (rum/cognac/doubanjiang<->botte/uva), sotolon (vino invecchiato/mirin/sherry<->fieno greco/acero/melassa), furfurale+furanoni (karkadè/mirin/stout<->caffè/caramello), norisoprenoidi (yerba mate/pu-erh<->tè/osmanthus/zafferano), acido acetico (aceto di riso<->aceti/kombucha).",
     "Ondata 24/10 (bb, +15 formaggi/salumi/mare): cheddar, groviera, comté, feta, halloumi, scamorza affumicata, provola affumicata, ricotta forte, mascarpone, speck, prosciutto crudo, acciuga salata, salmone affumicato, ostrica, cozza. Verificati da agente di ricerca: 10 con fonte GC-MS/GC-O reale LETTA (cheddar, mascarpone, acciuga, salmone, ostrica[GC-IMS], prosciutto crudo, halloumi, ricotta forte, scamorza/provola, feta); 4 con fonte reale confermata ma non letta in sessione per blocco bot/captcha, note oneste in riga (groviera=Rychlik&Bosset 2001, comté=famiglia alpina, speck=PMID 29223014, cozza=PMC9562662). SCARTATI senza inventare: fontina (nessuno studio-firma), guanciale (nessun GC-MS, solo fonti commerciali), bresaola (solo analogo manzo dry-cured), nero di seppia inchiostro (nessuno studio volatili), riccio di mare (GC-O di riferimento bloccato, firma non determinata), ricotta fresca (solo dato sulla forte). Ponti: composti solforati volatili (cheddar/groviera/comté<->cavolfiore/allium/parmigiano), fenoli del fumo (scamorza/provola/speck/salmone affumicato<->cluster fumo mezcal/katsuobushi/melanzana affumicata), acidi grassi corti (feta/ricotta forte<->pecorino/taleggio), methional+aldeidi ramificate (groviera/prosciutto crudo<->pane/patata/malto), 1-octen-3-olo marino (ostrica/cozza<->funghi), 2-eptanone (mascarpone<->melograno/formaggi), DMS marino (cozza/ostrica<->kombu/nori).",
     "Ondata 24/10 (aa, +16): sudachi, finger lime, porcino, finferli, cime di rapa, kimchi, crauti, tempeh, avena, semi di zucca, mezcal, rabarbaro, nashi, kombucha, sommacco, melograno. Fonti verificate da agente: 15 solide + cime di rapa (nota: B. rapa var. rapa). SCARTATI a fonte debole, non inventati: grano arso, farro, noce di cola; nepeta tenuta fuori (fonte conferma solo nepetalattone, nodo isolato). Ponti: agrumi (sudachi/finger lime/sommacco<->limone/agrumi), 1-octen-3-olo (porcino/finferli<->funghi/tartufo), solfuri (cime di rapa/kimchi/crauti<->brassiche/allium), 2-acetil-1-pirrolina (tempeh/avena/semi di zucca<->riso/pandan/pane), fenoli affumicati (mezcal<->te affumicato/cluster fumo), esteri etilici (nashi<->mela/ananas), acidi+esteri (kombucha<->aceti). Fix resolver bundlati: finger lime, cime di rapa, semi di zucca forzati a nodo proprio (collisione substring con lime/rapa/zucca).",
     "Ondata 24/10 (z, FORTE +12): broccolo, rapa, fava, grano saraceno, segale, pepe di timut, natto, pecorino, corbezzolo, cavolini di bruxelles, biancospino, bottarga. Fonti verificate da agente di ricerca: 9 solide + 3 con nota onesta (cavolini=classe, biancospino=pooled, bottarga=uova). SCARTATI per fonte debole (non inventati): pinoli, pepe tasmania, mangostano, violetta, radicchio, fico d'india, rosa canina, topinambur. Ponti: brassiche/isotiocianati (broccolo/rapa/cavolini<->cavolfiore/verza/cavolo nero/senape), aldeidi verdi (fava/corbezzolo<->cluster verde), salicilaldeide (grano saraceno, marcatore), methional+maltato (segale/bottarga<->pane/patata/katsuobushi), tioli pompelmo (timut<->pompelmo/frutto passione), pirazine (natto<->caffe/orzo tostato/lievito), acidi grassi (pecorino<->parmigiano/taleggio), benzaldeide (biancospino<->amarena/mandorla). Fix resolver bundlato: fava forzata a ing-fava (Vicia faba != fava tonka ahn_tonka_bean_seed).",
