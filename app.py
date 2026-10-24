@@ -123,6 +123,7 @@ from routes.travaso_nomi import bp_travaso_nomi; app.register_blueprint(bp_trava
 from routes.gusti_runner import bp_gusti_runner; app.register_blueprint(bp_gusti_runner)  # pagina admin: gira deriva-gusti-search a lotti (1 clic, non 150)
 from routes.admin_cita_atlante import bp_cita_atlante; app.register_blueprint(bp_cita_atlante)  # popola provenienza.fonti delle schede scienza (fonti canoniche, fill-only, dry-run)
 from routes.importa_composti import bp_importa_composti; app.register_blueprint(bp_importa_composti)  # porta il dataset composti proprietario nel grafo (dry-run, aggancia ai nodi Composto esistenti)
+from routes.importa_biodiversita import bp_importa_biodiversita; app.register_blueprint(bp_importa_biodiversita)  # porta il seed biodiversita (DOP/IGP/presidi/PAT) nel grafo: crea i nodi mancanti, alimenta l'Atlante regioni (dry-run, &esegui=1)
 from routes.deriva_umami import bp_umami; app.register_blueprint(bp_umami)
 from routes.deriva_amaro import bp_amaro; app.register_blueprint(bp_amaro)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
