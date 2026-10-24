@@ -14277,9 +14277,687 @@
           "fonte": "Burro di arachidi (arachidi tostate): firma spostata verso pirazine tostate + 2-acetil-1-pirrolina (popcorn/roasty, FD più alti) e furaneolo (caramello); methanethiol OAV più alto nella farina tostata. Chetschik, Granvogl, Schieberle 2010, J. Agric. Food Chem. 58:11018-11026 (DOI 10.1021/jf1026636, quantificazione + OAV; gruppo Schieberle). NOTA: nel burro il livello di alchil-pirazine è ~3× più alto, OAV calcolati sulla farina non sul burro."
         }
       ]
+    },
+    {
+      "ingrediente": "latte",
+      "nodo_target": "ing-latte",
+      "specie": "latte vaccino fresco/pastorizzato",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Latte vaccino pastorizzato: firma dimethyl sulfone (indicato come 'the most important odorant' del pastorizzato); nel crudo emergono esteri etilici fruttati che spariscono col calore. Moio, Etievant et al., J. Dairy Research 61(3):385-394, 1994 (DOI 10.1017/S0022029900030806, AEDA). NOTA: l'aroma del latte fresco è intrinsecamente tenue.",
+      "composti": [
+        {
+          "composto": "dimethyl sulfone",
+          "descrittore": "zolfo-cotto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latte vaccino pastorizzato: firma dimethyl sulfone (indicato come 'the most important odorant' del pastorizzato); nel crudo emergono esteri etilici fruttati che spariscono col calore. Moio, Etievant et al., J. Dairy Research 61(3):385-394, 1994 (DOI 10.1017/S0022029900030806, AEDA). NOTA: l'aroma del latte fresco è intrinsecamente tenue."
+        },
+        {
+          "composto": "2-heptanone",
+          "descrittore": "chetonico-latteo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latte vaccino pastorizzato: firma dimethyl sulfone (indicato come 'the most important odorant' del pastorizzato); nel crudo emergono esteri etilici fruttati che spariscono col calore. Moio, Etievant et al., J. Dairy Research 61(3):385-394, 1994 (DOI 10.1017/S0022029900030806, AEDA). NOTA: l'aroma del latte fresco è intrinsecamente tenue."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "chetonico-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latte vaccino pastorizzato: firma dimethyl sulfone (indicato come 'the most important odorant' del pastorizzato); nel crudo emergono esteri etilici fruttati che spariscono col calore. Moio, Etievant et al., J. Dairy Research 61(3):385-394, 1994 (DOI 10.1017/S0022029900030806, AEDA). NOTA: l'aroma del latte fresco è intrinsecamente tenue."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latte vaccino pastorizzato: firma dimethyl sulfone (indicato come 'the most important odorant' del pastorizzato); nel crudo emergono esteri etilici fruttati che spariscono col calore. Moio, Etievant et al., J. Dairy Research 61(3):385-394, 1994 (DOI 10.1017/S0022029900030806, AEDA). NOTA: l'aroma del latte fresco è intrinsecamente tenue."
+        },
+        {
+          "composto": "delta-decalactone",
+          "descrittore": "cremoso-pesca",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latte vaccino pastorizzato: firma dimethyl sulfone (indicato come 'the most important odorant' del pastorizzato); nel crudo emergono esteri etilici fruttati che spariscono col calore. Moio, Etievant et al., J. Dairy Research 61(3):385-394, 1994 (DOI 10.1017/S0022029900030806, AEDA). NOTA: l'aroma del latte fresco è intrinsecamente tenue."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erba tagliata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Latte vaccino pastorizzato: firma dimethyl sulfone (indicato come 'the most important odorant' del pastorizzato); nel crudo emergono esteri etilici fruttati che spariscono col calore. Moio, Etievant et al., J. Dairy Research 61(3):385-394, 1994 (DOI 10.1017/S0022029900030806, AEDA). NOTA: l'aroma del latte fresco è intrinsecamente tenue."
+        }
+      ]
+    },
+    {
+      "ingrediente": "panna",
+      "nodo_target": "ing-panna",
+      "specie": "crema di latte vaccino",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Panna fresca: firma famiglia dei delta/gamma-lattoni = carattere cremoso (delta-tetradecalactone dimostrato enhancer del gusto cremoso). Schlutt, Moran, Schieberle, Hofmann, J. Agric. Food Chem. 55(23):9634-9645, 2007 (DOI 10.1021/jf0721545, AEDA + ricombinazione). NOTA: paper mirato ai volatili 'creaminess-enhancing', i lattoni sono la firma cremosa.",
+      "composti": [
+        {
+          "composto": "delta-decalactone",
+          "descrittore": "cremoso-cocco (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna fresca: firma famiglia dei delta/gamma-lattoni = carattere cremoso (delta-tetradecalactone dimostrato enhancer del gusto cremoso). Schlutt, Moran, Schieberle, Hofmann, J. Agric. Food Chem. 55(23):9634-9645, 2007 (DOI 10.1021/jf0721545, AEDA + ricombinazione). NOTA: paper mirato ai volatili 'creaminess-enhancing', i lattoni sono la firma cremosa."
+        },
+        {
+          "composto": "gamma-dodecalactone",
+          "descrittore": "pesca-burroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna fresca: firma famiglia dei delta/gamma-lattoni = carattere cremoso (delta-tetradecalactone dimostrato enhancer del gusto cremoso). Schlutt, Moran, Schieberle, Hofmann, J. Agric. Food Chem. 55(23):9634-9645, 2007 (DOI 10.1021/jf0721545, AEDA + ricombinazione). NOTA: paper mirato ai volatili 'creaminess-enhancing', i lattoni sono la firma cremosa."
+        },
+        {
+          "composto": "delta-dodecalactone",
+          "descrittore": "cremoso-grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna fresca: firma famiglia dei delta/gamma-lattoni = carattere cremoso (delta-tetradecalactone dimostrato enhancer del gusto cremoso). Schlutt, Moran, Schieberle, Hofmann, J. Agric. Food Chem. 55(23):9634-9645, 2007 (DOI 10.1021/jf0721545, AEDA + ricombinazione). NOTA: paper mirato ai volatili 'creaminess-enhancing', i lattoni sono la firma cremosa."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna fresca: firma famiglia dei delta/gamma-lattoni = carattere cremoso (delta-tetradecalactone dimostrato enhancer del gusto cremoso). Schlutt, Moran, Schieberle, Hofmann, J. Agric. Food Chem. 55(23):9634-9645, 2007 (DOI 10.1021/jf0721545, AEDA + ricombinazione). NOTA: paper mirato ai volatili 'creaminess-enhancing', i lattoni sono la firma cremosa."
+        },
+        {
+          "composto": "3-methylindole",
+          "descrittore": "animale (tracce)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Panna fresca: firma famiglia dei delta/gamma-lattoni = carattere cremoso (delta-tetradecalactone dimostrato enhancer del gusto cremoso). Schlutt, Moran, Schieberle, Hofmann, J. Agric. Food Chem. 55(23):9634-9645, 2007 (DOI 10.1021/jf0721545, AEDA + ricombinazione). NOTA: paper mirato ai volatili 'creaminess-enhancing', i lattoni sono la firma cremosa."
+        }
+      ]
+    },
+    {
+      "ingrediente": "uovo cotto",
+      "nodo_target": "ing-uovo-cotto",
+      "specie": "uovo di gallina, tuorlo cotto",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Uovo cotto (tuorlo): a calore secco (fritto) la firma GC-O sono le pirazine (tostato/nocciola) + nonanale; nel tuorlo bollito gli autori NON rilevano aromi d'impatto al GC-O (aroma tenue). Zhou et al. 2024, Foods 13(2):226 (DOI 10.3390/foods13020226). NOTA ONESTA: la 'firma solforosa' attesa del sodo (H2S) non è confermata in questa fonte — serve fonte dedicata.",
+      "composti": [
+        {
+          "composto": "2-ethyl-3,5-dimethylpyrazine",
+          "descrittore": "tostato-dolce (firma, tuorlo a calore secco)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uovo cotto (tuorlo): a calore secco (fritto) la firma GC-O sono le pirazine (tostato/nocciola) + nonanale; nel tuorlo bollito gli autori NON rilevano aromi d'impatto al GC-O (aroma tenue). Zhou et al. 2024, Foods 13(2):226 (DOI 10.3390/foods13020226). NOTA ONESTA: la 'firma solforosa' attesa del sodo (H2S) non è confermata in questa fonte — serve fonte dedicata."
+        },
+        {
+          "composto": "3-ethyl-2,5-dimethylpyrazine",
+          "descrittore": "tostato-nocciola (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uovo cotto (tuorlo): a calore secco (fritto) la firma GC-O sono le pirazine (tostato/nocciola) + nonanale; nel tuorlo bollito gli autori NON rilevano aromi d'impatto al GC-O (aroma tenue). Zhou et al. 2024, Foods 13(2):226 (DOI 10.3390/foods13020226). NOTA ONESTA: la 'firma solforosa' attesa del sodo (H2S) non è confermata in questa fonte — serve fonte dedicata."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uovo cotto (tuorlo): a calore secco (fritto) la firma GC-O sono le pirazine (tostato/nocciola) + nonanale; nel tuorlo bollito gli autori NON rilevano aromi d'impatto al GC-O (aroma tenue). Zhou et al. 2024, Foods 13(2):226 (DOI 10.3390/foods13020226). NOTA ONESTA: la 'firma solforosa' attesa del sodo (H2S) non è confermata in questa fonte — serve fonte dedicata."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erba-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uovo cotto (tuorlo): a calore secco (fritto) la firma GC-O sono le pirazine (tostato/nocciola) + nonanale; nel tuorlo bollito gli autori NON rilevano aromi d'impatto al GC-O (aroma tenue). Zhou et al. 2024, Foods 13(2):226 (DOI 10.3390/foods13020226). NOTA ONESTA: la 'firma solforosa' attesa del sodo (H2S) non è confermata in questa fonte — serve fonte dedicata."
+        },
+        {
+          "composto": "2-pentylfuran",
+          "descrittore": "burroso-fagiolino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uovo cotto (tuorlo): a calore secco (fritto) la firma GC-O sono le pirazine (tostato/nocciola) + nonanale; nel tuorlo bollito gli autori NON rilevano aromi d'impatto al GC-O (aroma tenue). Zhou et al. 2024, Foods 13(2):226 (DOI 10.3390/foods13020226). NOTA ONESTA: la 'firma solforosa' attesa del sodo (H2S) non è confermata in questa fonte — serve fonte dedicata."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "malto-mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uovo cotto (tuorlo): a calore secco (fritto) la firma GC-O sono le pirazine (tostato/nocciola) + nonanale; nel tuorlo bollito gli autori NON rilevano aromi d'impatto al GC-O (aroma tenue). Zhou et al. 2024, Foods 13(2):226 (DOI 10.3390/foods13020226). NOTA ONESTA: la 'firma solforosa' attesa del sodo (H2S) non è confermata in questa fonte — serve fonte dedicata."
+        }
+      ]
+    },
+    {
+      "ingrediente": "vino rosso",
+      "nodo_target": "ing-vino-rosso",
+      "specie": "vino rosso giovane fermentato",
+      "dominio": "bar",
+      "fonte_ingrediente": "Vino rosso giovane: firma (da omission test p<=0.01) esteri etilici + 3-isobutil-2-metossipirazina + furaneolo; beta-damascenone ha l'OAV singolo più alto. 'Key Aroma Compounds in Marselan Wine', Molecules 24(16):2978, 2019 (DOI 10.3390/molecules24162978, sensomica completa: GC-O + quantificazione + ricombinazione + omissione).",
+      "composti": [
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "miele-fruttato (firma, OAV più alto)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso giovane: firma (da omission test p<=0.01) esteri etilici + 3-isobutil-2-metossipirazina + furaneolo; beta-damascenone ha l'OAV singolo più alto. 'Key Aroma Compounds in Marselan Wine', Molecules 24(16):2978, 2019 (DOI 10.3390/molecules24162978, sensomica completa: GC-O + quantificazione + ricombinazione + omissione)."
+        },
+        {
+          "composto": "ethyl 2-methylpropanoate",
+          "descrittore": "fragola (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso giovane: firma (da omission test p<=0.01) esteri etilici + 3-isobutil-2-metossipirazina + furaneolo; beta-damascenone ha l'OAV singolo più alto. 'Key Aroma Compounds in Marselan Wine', Molecules 24(16):2978, 2019 (DOI 10.3390/molecules24162978, sensomica completa: GC-O + quantificazione + ricombinazione + omissione)."
+        },
+        {
+          "composto": "ethyl 3-methylbutanoate",
+          "descrittore": "mirtillo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso giovane: firma (da omission test p<=0.01) esteri etilici + 3-isobutil-2-metossipirazina + furaneolo; beta-damascenone ha l'OAV singolo più alto. 'Key Aroma Compounds in Marselan Wine', Molecules 24(16):2978, 2019 (DOI 10.3390/molecules24162978, sensomica completa: GC-O + quantificazione + ricombinazione + omissione)."
+        },
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso giovane: firma (da omission test p<=0.01) esteri etilici + 3-isobutil-2-metossipirazina + furaneolo; beta-damascenone ha l'OAV singolo più alto. 'Key Aroma Compounds in Marselan Wine', Molecules 24(16):2978, 2019 (DOI 10.3390/molecules24162978, sensomica completa: GC-O + quantificazione + ricombinazione + omissione)."
+        },
+        {
+          "composto": "3-isobutyl-2-methoxypyrazine",
+          "descrittore": "peperone verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso giovane: firma (da omission test p<=0.01) esteri etilici + 3-isobutil-2-metossipirazina + furaneolo; beta-damascenone ha l'OAV singolo più alto. 'Key Aroma Compounds in Marselan Wine', Molecules 24(16):2978, 2019 (DOI 10.3390/molecules24162978, sensomica completa: GC-O + quantificazione + ricombinazione + omissione)."
+        },
+        {
+          "composto": "4-hydroxy-2,5-dimethyl-3(2H)-furanone",
+          "descrittore": "caramello-confettura",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vino rosso giovane: firma (da omission test p<=0.01) esteri etilici + 3-isobutil-2-metossipirazina + furaneolo; beta-damascenone ha l'OAV singolo più alto. 'Key Aroma Compounds in Marselan Wine', Molecules 24(16):2978, 2019 (DOI 10.3390/molecules24162978, sensomica completa: GC-O + quantificazione + ricombinazione + omissione)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "rum",
+      "nodo_target": "ing-rum",
+      "specie": "rum giovane (bianco/dorato, non invecchiato in botte)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Rum giovane: firma (E)-beta-damascenone (OAV 3280, di gran lunga il più alto, già nella melassa) + esteri etilici di fermentazione. Franitza, Granvogl, Schieberle, J. Agric. Food Chem. 64(47):9041-9053, 2016 (DOI 10.1021/acs.jafc.6b04046, OAV). NOTA: i fenoli da legno (vanillina, 4-etilfenolo, guaiacolo) derivano dalla BOTTE — esclusi qui, sono firma del ramo invecchiato.",
+      "composti": [
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "miele-mela cotta (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum giovane: firma (E)-beta-damascenone (OAV 3280, di gran lunga il più alto, già nella melassa) + esteri etilici di fermentazione. Franitza, Granvogl, Schieberle, J. Agric. Food Chem. 64(47):9041-9053, 2016 (DOI 10.1021/acs.jafc.6b04046, OAV). NOTA: i fenoli da legno (vanillina, 4-etilfenolo, guaiacolo) derivano dalla BOTTE — esclusi qui, sono firma del ramo invecchiato."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum giovane: firma (E)-beta-damascenone (OAV 3280, di gran lunga il più alto, già nella melassa) + esteri etilici di fermentazione. Franitza, Granvogl, Schieberle, J. Agric. Food Chem. 64(47):9041-9053, 2016 (DOI 10.1021/acs.jafc.6b04046, OAV). NOTA: i fenoli da legno (vanillina, 4-etilfenolo, guaiacolo) derivano dalla BOTTE — esclusi qui, sono firma del ramo invecchiato."
+        },
+        {
+          "composto": "ethyl octanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum giovane: firma (E)-beta-damascenone (OAV 3280, di gran lunga il più alto, già nella melassa) + esteri etilici di fermentazione. Franitza, Granvogl, Schieberle, J. Agric. Food Chem. 64(47):9041-9053, 2016 (DOI 10.1021/acs.jafc.6b04046, OAV). NOTA: i fenoli da legno (vanillina, 4-etilfenolo, guaiacolo) derivano dalla BOTTE — esclusi qui, sono firma del ramo invecchiato."
+        },
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum giovane: firma (E)-beta-damascenone (OAV 3280, di gran lunga il più alto, già nella melassa) + esteri etilici di fermentazione. Franitza, Granvogl, Schieberle, J. Agric. Food Chem. 64(47):9041-9053, 2016 (DOI 10.1021/acs.jafc.6b04046, OAV). NOTA: i fenoli da legno (vanillina, 4-etilfenolo, guaiacolo) derivano dalla BOTTE — esclusi qui, sono firma del ramo invecchiato."
+        },
+        {
+          "composto": "ethyl 3-methylbutanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rum giovane: firma (E)-beta-damascenone (OAV 3280, di gran lunga il più alto, già nella melassa) + esteri etilici di fermentazione. Franitza, Granvogl, Schieberle, J. Agric. Food Chem. 64(47):9041-9053, 2016 (DOI 10.1021/acs.jafc.6b04046, OAV). NOTA: i fenoli da legno (vanillina, 4-etilfenolo, guaiacolo) derivano dalla BOTTE — esclusi qui, sono firma del ramo invecchiato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cioccolato fondente",
+      "nodo_target": "ing-cioccolato-fondente",
+      "specie": "cacao tostato e conciato",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cioccolato fondente: firma aldeidi di Strecker (2-metilpropanale, 2-/3-metilbutanale = nota cacao/cioccolato) + pirazine (trimetilpirazina = tostato); methional e acidi ramificati per la complessità. Deuscher et al., 'Key Aroma Compounds of Dark Chocolates', Molecules 25(8):1809, 2020 (DOI 10.3390/molecules25081809, GC-O). NOTA: metodo cDFA (frequenza di rilevazione), non OAV — non una graduatoria di potenza assoluta.",
+      "composti": [
+        {
+          "composto": "2-methylpropanal",
+          "descrittore": "cioccolato-tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cioccolato fondente: firma aldeidi di Strecker (2-metilpropanale, 2-/3-metilbutanale = nota cacao/cioccolato) + pirazine (trimetilpirazina = tostato); methional e acidi ramificati per la complessità. Deuscher et al., 'Key Aroma Compounds of Dark Chocolates', Molecules 25(8):1809, 2020 (DOI 10.3390/molecules25081809, GC-O). NOTA: metodo cDFA (frequenza di rilevazione), non OAV — non una graduatoria di potenza assoluta."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "cacao-malto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cioccolato fondente: firma aldeidi di Strecker (2-metilpropanale, 2-/3-metilbutanale = nota cacao/cioccolato) + pirazine (trimetilpirazina = tostato); methional e acidi ramificati per la complessità. Deuscher et al., 'Key Aroma Compounds of Dark Chocolates', Molecules 25(8):1809, 2020 (DOI 10.3390/molecules25081809, GC-O). NOTA: metodo cDFA (frequenza di rilevazione), non OAV — non una graduatoria di potenza assoluta."
+        },
+        {
+          "composto": "2-methylbutanal",
+          "descrittore": "cacao-cioccolato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cioccolato fondente: firma aldeidi di Strecker (2-metilpropanale, 2-/3-metilbutanale = nota cacao/cioccolato) + pirazine (trimetilpirazina = tostato); methional e acidi ramificati per la complessità. Deuscher et al., 'Key Aroma Compounds of Dark Chocolates', Molecules 25(8):1809, 2020 (DOI 10.3390/molecules25081809, GC-O). NOTA: metodo cDFA (frequenza di rilevazione), non OAV — non una graduatoria di potenza assoluta."
+        },
+        {
+          "composto": "trimethylpyrazine",
+          "descrittore": "tostato-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cioccolato fondente: firma aldeidi di Strecker (2-metilpropanale, 2-/3-metilbutanale = nota cacao/cioccolato) + pirazine (trimetilpirazina = tostato); methional e acidi ramificati per la complessità. Deuscher et al., 'Key Aroma Compounds of Dark Chocolates', Molecules 25(8):1809, 2020 (DOI 10.3390/molecules25081809, GC-O). NOTA: metodo cDFA (frequenza di rilevazione), non OAV — non una graduatoria di potenza assoluta."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata-cotto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cioccolato fondente: firma aldeidi di Strecker (2-metilpropanale, 2-/3-metilbutanale = nota cacao/cioccolato) + pirazine (trimetilpirazina = tostato); methional e acidi ramificati per la complessità. Deuscher et al., 'Key Aroma Compounds of Dark Chocolates', Molecules 25(8):1809, 2020 (DOI 10.3390/molecules25081809, GC-O). NOTA: metodo cDFA (frequenza di rilevazione), non OAV — non una graduatoria di potenza assoluta."
+        },
+        {
+          "composto": "vanillin",
+          "descrittore": "vaniglia-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cioccolato fondente: firma aldeidi di Strecker (2-metilpropanale, 2-/3-metilbutanale = nota cacao/cioccolato) + pirazine (trimetilpirazina = tostato); methional e acidi ramificati per la complessità. Deuscher et al., 'Key Aroma Compounds of Dark Chocolates', Molecules 25(8):1809, 2020 (DOI 10.3390/molecules25081809, GC-O). NOTA: metodo cDFA (frequenza di rilevazione), non OAV — non una graduatoria di potenza assoluta."
+        }
+      ]
+    },
+    {
+      "ingrediente": "emmental",
+      "nodo_target": "ing-emmental",
+      "specie": "formaggio svizzero a fermentazione propionica",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Emmental: firma acido propionico (marcatore identitario, da Propionibacterium freudenreichii) + profilo dolce-nocciola-fruttato (aldeidi ramificate + esteri etilici). Pluta-Kubica et al. 2017, 'Compounds forming odour of emmental cheese', Żywność. Nauka. Technologia. Jakość 24(113), GC-O (13 odoranti-chiave). NOTA: lista GC-O esplicita, manca OAV numerico/DOI; via propionica confermata da Thierry et al. (INRAE).",
+      "composti": [
+        {
+          "composto": "propionic acid",
+          "descrittore": "acido-pungente-nocciola (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Emmental: firma acido propionico (marcatore identitario, da Propionibacterium freudenreichii) + profilo dolce-nocciola-fruttato (aldeidi ramificate + esteri etilici). Pluta-Kubica et al. 2017, 'Compounds forming odour of emmental cheese', Żywność. Nauka. Technologia. Jakość 24(113), GC-O (13 odoranti-chiave). NOTA: lista GC-O esplicita, manca OAV numerico/DOI; via propionica confermata da Thierry et al. (INRAE)."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burro",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Emmental: firma acido propionico (marcatore identitario, da Propionibacterium freudenreichii) + profilo dolce-nocciola-fruttato (aldeidi ramificate + esteri etilici). Pluta-Kubica et al. 2017, 'Compounds forming odour of emmental cheese', Żywność. Nauka. Technologia. Jakość 24(113), GC-O (13 odoranti-chiave). NOTA: lista GC-O esplicita, manca OAV numerico/DOI; via propionica confermata da Thierry et al. (INRAE)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Emmental: firma acido propionico (marcatore identitario, da Propionibacterium freudenreichii) + profilo dolce-nocciola-fruttato (aldeidi ramificate + esteri etilici). Pluta-Kubica et al. 2017, 'Compounds forming odour of emmental cheese', Żywność. Nauka. Technologia. Jakość 24(113), GC-O (13 odoranti-chiave). NOTA: lista GC-O esplicita, manca OAV numerico/DOI; via propionica confermata da Thierry et al. (INRAE)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Emmental: firma acido propionico (marcatore identitario, da Propionibacterium freudenreichii) + profilo dolce-nocciola-fruttato (aldeidi ramificate + esteri etilici). Pluta-Kubica et al. 2017, 'Compounds forming odour of emmental cheese', Żywność. Nauka. Technologia. Jakość 24(113), GC-O (13 odoranti-chiave). NOTA: lista GC-O esplicita, manca OAV numerico/DOI; via propionica confermata da Thierry et al. (INRAE)."
+        },
+        {
+          "composto": "1-octen-3-one",
+          "descrittore": "fungo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Emmental: firma acido propionico (marcatore identitario, da Propionibacterium freudenreichii) + profilo dolce-nocciola-fruttato (aldeidi ramificate + esteri etilici). Pluta-Kubica et al. 2017, 'Compounds forming odour of emmental cheese', Żywność. Nauka. Technologia. Jakość 24(113), GC-O (13 odoranti-chiave). NOTA: lista GC-O esplicita, manca OAV numerico/DOI; via propionica confermata da Thierry et al. (INRAE)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Emmental: firma acido propionico (marcatore identitario, da Propionibacterium freudenreichii) + profilo dolce-nocciola-fruttato (aldeidi ramificate + esteri etilici). Pluta-Kubica et al. 2017, 'Compounds forming odour of emmental cheese', Żywność. Nauka. Technologia. Jakość 24(113), GC-O (13 odoranti-chiave). NOTA: lista GC-O esplicita, manca OAV numerico/DOI; via propionica confermata da Thierry et al. (INRAE)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "tonno",
+      "nodo_target": "ing-tonno",
+      "specie": "Thunnus, pesce azzurro grasso (crudo)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Tonno crudo: firma aldeidi lineari C8-C10 (decanale, nonanale, octanale) + (E)-2-nonenale = profilo marino-cetriolo pulito ('the predominant odorants in raw samples'). Zhang, Ma, Dai, J. Food Process Preserv. (DOI 10.1111/jfpp.14111, GC-MS, campione crudo).",
+      "composti": [
+        {
+          "composto": "decanal",
+          "descrittore": "buccia d'arancia-ceroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tonno crudo: firma aldeidi lineari C8-C10 (decanale, nonanale, octanale) + (E)-2-nonenale = profilo marino-cetriolo pulito ('the predominant odorants in raw samples'). Zhang, Ma, Dai, J. Food Process Preserv. (DOI 10.1111/jfpp.14111, GC-MS, campione crudo)."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tonno crudo: firma aldeidi lineari C8-C10 (decanale, nonanale, octanale) + (E)-2-nonenale = profilo marino-cetriolo pulito ('the predominant odorants in raw samples'). Zhang, Ma, Dai, J. Food Process Preserv. (DOI 10.1111/jfpp.14111, GC-MS, campione crudo)."
+        },
+        {
+          "composto": "octanal",
+          "descrittore": "agrumato-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tonno crudo: firma aldeidi lineari C8-C10 (decanale, nonanale, octanale) + (E)-2-nonenale = profilo marino-cetriolo pulito ('the predominant odorants in raw samples'). Zhang, Ma, Dai, J. Food Process Preserv. (DOI 10.1111/jfpp.14111, GC-MS, campione crudo)."
+        },
+        {
+          "composto": "(E)-2-nonenal",
+          "descrittore": "cetriolo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tonno crudo: firma aldeidi lineari C8-C10 (decanale, nonanale, octanale) + (E)-2-nonenale = profilo marino-cetriolo pulito ('the predominant odorants in raw samples'). Zhang, Ma, Dai, J. Food Process Preserv. (DOI 10.1111/jfpp.14111, GC-MS, campione crudo)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "gambero",
+      "nodo_target": "ing-gambero",
+      "specie": "gambero/mazzancolla cotto",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Gambero cotto: firma 2-acetil-1-pirrolina + (Z)-1,5-octadien-3-one = 'the most potent odor-active compounds' (per OAV). Mall & Schieberle 2017, J. Agric. Food Chem. 65(13):2776-2783 (DOI 10.1021/acs.jafc.7b00636, AEDA + OAV). NOTA: firma del COTTO (sbollentato/fritto); il gambero crudo è molto tenue (TMA + aldeidi).",
+      "composti": [
+        {
+          "composto": "2-acetyl-1-pyrroline",
+          "descrittore": "cracker-popcorn-pane (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gambero cotto: firma 2-acetil-1-pirrolina + (Z)-1,5-octadien-3-one = 'the most potent odor-active compounds' (per OAV). Mall & Schieberle 2017, J. Agric. Food Chem. 65(13):2776-2783 (DOI 10.1021/acs.jafc.7b00636, AEDA + OAV). NOTA: firma del COTTO (sbollentato/fritto); il gambero crudo è molto tenue (TMA + aldeidi)."
+        },
+        {
+          "composto": "(Z)-1,5-octadien-3-one",
+          "descrittore": "metallico-geranio-marino (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gambero cotto: firma 2-acetil-1-pirrolina + (Z)-1,5-octadien-3-one = 'the most potent odor-active compounds' (per OAV). Mall & Schieberle 2017, J. Agric. Food Chem. 65(13):2776-2783 (DOI 10.1021/acs.jafc.7b00636, AEDA + OAV). NOTA: firma del COTTO (sbollentato/fritto); il gambero crudo è molto tenue (TMA + aldeidi)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gambero cotto: firma 2-acetil-1-pirrolina + (Z)-1,5-octadien-3-one = 'the most potent odor-active compounds' (per OAV). Mall & Schieberle 2017, J. Agric. Food Chem. 65(13):2776-2783 (DOI 10.1021/acs.jafc.7b00636, AEDA + OAV). NOTA: firma del COTTO (sbollentato/fritto); il gambero crudo è molto tenue (TMA + aldeidi)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gambero cotto: firma 2-acetil-1-pirrolina + (Z)-1,5-octadien-3-one = 'the most potent odor-active compounds' (per OAV). Mall & Schieberle 2017, J. Agric. Food Chem. 65(13):2776-2783 (DOI 10.1021/acs.jafc.7b00636, AEDA + OAV). NOTA: firma del COTTO (sbollentato/fritto); il gambero crudo è molto tenue (TMA + aldeidi)."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gambero cotto: firma 2-acetil-1-pirrolina + (Z)-1,5-octadien-3-one = 'the most potent odor-active compounds' (per OAV). Mall & Schieberle 2017, J. Agric. Food Chem. 65(13):2776-2783 (DOI 10.1021/acs.jafc.7b00636, AEDA + OAV). NOTA: firma del COTTO (sbollentato/fritto); il gambero crudo è molto tenue (TMA + aldeidi)."
+        },
+        {
+          "composto": "2,3-diethyl-5-methylpyrazine",
+          "descrittore": "tostato (nel fritto)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gambero cotto: firma 2-acetil-1-pirrolina + (Z)-1,5-octadien-3-one = 'the most potent odor-active compounds' (per OAV). Mall & Schieberle 2017, J. Agric. Food Chem. 65(13):2776-2783 (DOI 10.1021/acs.jafc.7b00636, AEDA + OAV). NOTA: firma del COTTO (sbollentato/fritto); il gambero crudo è molto tenue (TMA + aldeidi)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "merluzzo",
+      "nodo_target": "ing-merluzzo",
+      "specie": "Gadus/Merluccius, pesce bianco magro",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Merluzzo/nasello: firma aldeidi C6-C9 + 1-octen-3-olo per il crudo fresco (profilo dolce-marino tenue); (Z)-4-eptenale = composto d'impatto del pesce bianco cotto/lesso. Olafsdottir et al. 2005, J. Agric. Food Chem. 53(26):10140 (DOI 10.1021/jf0517804, Gadus morhua); (Z)-4-eptenale top-FD da Cayhan & Selli 2011 (analogo pesce bianco lesso, DOI 10.1021/jf103471h).",
+      "composti": [
+        {
+          "composto": "(Z)-4-heptenal",
+          "descrittore": "pesce cotto (firma, lesso)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Merluzzo/nasello: firma aldeidi C6-C9 + 1-octen-3-olo per il crudo fresco (profilo dolce-marino tenue); (Z)-4-eptenale = composto d'impatto del pesce bianco cotto/lesso. Olafsdottir et al. 2005, J. Agric. Food Chem. 53(26):10140 (DOI 10.1021/jf0517804, Gadus morhua); (Z)-4-eptenale top-FD da Cayhan & Selli 2011 (analogo pesce bianco lesso, DOI 10.1021/jf103471h)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erba-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Merluzzo/nasello: firma aldeidi C6-C9 + 1-octen-3-olo per il crudo fresco (profilo dolce-marino tenue); (Z)-4-eptenale = composto d'impatto del pesce bianco cotto/lesso. Olafsdottir et al. 2005, J. Agric. Food Chem. 53(26):10140 (DOI 10.1021/jf0517804, Gadus morhua); (Z)-4-eptenale top-FD da Cayhan & Selli 2011 (analogo pesce bianco lesso, DOI 10.1021/jf103471h)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Merluzzo/nasello: firma aldeidi C6-C9 + 1-octen-3-olo per il crudo fresco (profilo dolce-marino tenue); (Z)-4-eptenale = composto d'impatto del pesce bianco cotto/lesso. Olafsdottir et al. 2005, J. Agric. Food Chem. 53(26):10140 (DOI 10.1021/jf0517804, Gadus morhua); (Z)-4-eptenale top-FD da Cayhan & Selli 2011 (analogo pesce bianco lesso, DOI 10.1021/jf103471h)."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "dolce-burroso (freschissimo)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Merluzzo/nasello: firma aldeidi C6-C9 + 1-octen-3-olo per il crudo fresco (profilo dolce-marino tenue); (Z)-4-eptenale = composto d'impatto del pesce bianco cotto/lesso. Olafsdottir et al. 2005, J. Agric. Food Chem. 53(26):10140 (DOI 10.1021/jf0517804, Gadus morhua); (Z)-4-eptenale top-FD da Cayhan & Selli 2011 (analogo pesce bianco lesso, DOI 10.1021/jf103471h)."
+        },
+        {
+          "composto": "decanal",
+          "descrittore": "ceroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Merluzzo/nasello: firma aldeidi C6-C9 + 1-octen-3-olo per il crudo fresco (profilo dolce-marino tenue); (Z)-4-eptenale = composto d'impatto del pesce bianco cotto/lesso. Olafsdottir et al. 2005, J. Agric. Food Chem. 53(26):10140 (DOI 10.1021/jf0517804, Gadus morhua); (Z)-4-eptenale top-FD da Cayhan & Selli 2011 (analogo pesce bianco lesso, DOI 10.1021/jf103471h)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "vongola",
+      "nodo_target": "ing-vongola",
+      "specie": "Ruditapes, bivalve cotto",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Vongola cotta: firma note C8 (1-octen-3-olo, 1,5-ottadien-3-olo) + DMS marino. Int. J. Food Sci. Technol. 2023 (DOI 10.1111/ijfs.16753, Ruditapes philippinarum) + supporto su Veneridae affini (Fratini 2011; Chen 2016). NOTA: le pirazine compaiono solo con cottura spinta (140°C), non nella vongola lessata; DMS dedotto da letteratura bivalvi.",
+      "composti": [
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vongola cotta: firma note C8 (1-octen-3-olo, 1,5-ottadien-3-olo) + DMS marino. Int. J. Food Sci. Technol. 2023 (DOI 10.1111/ijfs.16753, Ruditapes philippinarum) + supporto su Veneridae affini (Fratini 2011; Chen 2016). NOTA: le pirazine compaiono solo con cottura spinta (140°C), non nella vongola lessata; DMS dedotto da letteratura bivalvi."
+        },
+        {
+          "composto": "1,5-octadien-3-ol",
+          "descrittore": "verde-marino-fungo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vongola cotta: firma note C8 (1-octen-3-olo, 1,5-ottadien-3-olo) + DMS marino. Int. J. Food Sci. Technol. 2023 (DOI 10.1111/ijfs.16753, Ruditapes philippinarum) + supporto su Veneridae affini (Fratini 2011; Chen 2016). NOTA: le pirazine compaiono solo con cottura spinta (140°C), non nella vongola lessata; DMS dedotto da letteratura bivalvi."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "ostrica-marea",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vongola cotta: firma note C8 (1-octen-3-olo, 1,5-ottadien-3-olo) + DMS marino. Int. J. Food Sci. Technol. 2023 (DOI 10.1111/ijfs.16753, Ruditapes philippinarum) + supporto su Veneridae affini (Fratini 2011; Chen 2016). NOTA: le pirazine compaiono solo con cottura spinta (140°C), non nella vongola lessata; DMS dedotto da letteratura bivalvi."
+        },
+        {
+          "composto": "(E,E)-2,4-heptadienal",
+          "descrittore": "grasso-pesce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vongola cotta: firma note C8 (1-octen-3-olo, 1,5-ottadien-3-olo) + DMS marino. Int. J. Food Sci. Technol. 2023 (DOI 10.1111/ijfs.16753, Ruditapes philippinarum) + supporto su Veneridae affini (Fratini 2011; Chen 2016). NOTA: le pirazine compaiono solo con cottura spinta (140°C), non nella vongola lessata; DMS dedotto da letteratura bivalvi."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vongola cotta: firma note C8 (1-octen-3-olo, 1,5-ottadien-3-olo) + DMS marino. Int. J. Food Sci. Technol. 2023 (DOI 10.1111/ijfs.16753, Ruditapes philippinarum) + supporto su Veneridae affini (Fratini 2011; Chen 2016). NOTA: le pirazine compaiono solo con cottura spinta (140°C), non nella vongola lessata; DMS dedotto da letteratura bivalvi."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sgombro",
+      "nodo_target": "ing-sgombro",
+      "specie": "Scomber scombrus, pesce azzurro grasso (fresco)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Sgombro fresco: firma prodotti di ossidazione dei PUFA n-3 — aldeidi/alcoli C6-C9 (nota marina-verde-cetriolo del pesce azzurro). Alasalvar, Quantick & Grigor 1997, ACS Symp. Ser. 674 cap. 5 (DOI 10.1021/bk-1997-0674.ch005, headspace GC-MS). NOTA: la fonte dà conteggi per classe, i singoli composti sono marcatori standard del pesce azzurro.",
+      "composti": [
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo-melone (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sgombro fresco: firma prodotti di ossidazione dei PUFA n-3 — aldeidi/alcoli C6-C9 (nota marina-verde-cetriolo del pesce azzurro). Alasalvar, Quantick & Grigor 1997, ACS Symp. Ser. 674 cap. 5 (DOI 10.1021/bk-1997-0674.ch005, headspace GC-MS). NOTA: la fonte dà conteggi per classe, i singoli composti sono marcatori standard del pesce azzurro."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sgombro fresco: firma prodotti di ossidazione dei PUFA n-3 — aldeidi/alcoli C6-C9 (nota marina-verde-cetriolo del pesce azzurro). Alasalvar, Quantick & Grigor 1997, ACS Symp. Ser. 674 cap. 5 (DOI 10.1021/bk-1997-0674.ch005, headspace GC-MS). NOTA: la fonte dà conteggi per classe, i singoli composti sono marcatori standard del pesce azzurro."
+        },
+        {
+          "composto": "(Z)-4-heptenal",
+          "descrittore": "pesce cotto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sgombro fresco: firma prodotti di ossidazione dei PUFA n-3 — aldeidi/alcoli C6-C9 (nota marina-verde-cetriolo del pesce azzurro). Alasalvar, Quantick & Grigor 1997, ACS Symp. Ser. 674 cap. 5 (DOI 10.1021/bk-1997-0674.ch005, headspace GC-MS). NOTA: la fonte dà conteggi per classe, i singoli composti sono marcatori standard del pesce azzurro."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sgombro fresco: firma prodotti di ossidazione dei PUFA n-3 — aldeidi/alcoli C6-C9 (nota marina-verde-cetriolo del pesce azzurro). Alasalvar, Quantick & Grigor 1997, ACS Symp. Ser. 674 cap. 5 (DOI 10.1021/bk-1997-0674.ch005, headspace GC-MS). NOTA: la fonte dà conteggi per classe, i singoli composti sono marcatori standard del pesce azzurro."
+        },
+        {
+          "composto": "1-penten-3-ol",
+          "descrittore": "verde-pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sgombro fresco: firma prodotti di ossidazione dei PUFA n-3 — aldeidi/alcoli C6-C9 (nota marina-verde-cetriolo del pesce azzurro). Alasalvar, Quantick & Grigor 1997, ACS Symp. Ser. 674 cap. 5 (DOI 10.1021/bk-1997-0674.ch005, headspace GC-MS). NOTA: la fonte dà conteggi per classe, i singoli composti sono marcatori standard del pesce azzurro."
+        }
+      ]
+    },
+    {
+      "ingrediente": "branzino",
+      "nodo_target": "ing-branzino",
+      "specie": "Dicentrarchus labrax, pesce bianco semigrasso (fresco)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Branzino/spigola fresco: firma aldeidi C6-C9 + 1-octen-3-olo + nonadienale = profilo tenue marino-verde-cetriolo. Vidal et al. 2016, J. Sci. Food Agric. 96(4):1181-1193 (DOI 10.1002/jsfa.7201, SPME-GC/MS, crudo fresco). NOTA: la fonte elenca per classi, i singoli composti sono marcatori standard del pesce bianco.",
+      "composti": [
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Branzino/spigola fresco: firma aldeidi C6-C9 + 1-octen-3-olo + nonadienale = profilo tenue marino-verde-cetriolo. Vidal et al. 2016, J. Sci. Food Agric. 96(4):1181-1193 (DOI 10.1002/jsfa.7201, SPME-GC/MS, crudo fresco). NOTA: la fonte elenca per classi, i singoli composti sono marcatori standard del pesce bianco."
+        },
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Branzino/spigola fresco: firma aldeidi C6-C9 + 1-octen-3-olo + nonadienale = profilo tenue marino-verde-cetriolo. Vidal et al. 2016, J. Sci. Food Agric. 96(4):1181-1193 (DOI 10.1002/jsfa.7201, SPME-GC/MS, crudo fresco). NOTA: la fonte elenca per classi, i singoli composti sono marcatori standard del pesce bianco."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Branzino/spigola fresco: firma aldeidi C6-C9 + 1-octen-3-olo + nonadienale = profilo tenue marino-verde-cetriolo. Vidal et al. 2016, J. Sci. Food Agric. 96(4):1181-1193 (DOI 10.1002/jsfa.7201, SPME-GC/MS, crudo fresco). NOTA: la fonte elenca per classi, i singoli composti sono marcatori standard del pesce bianco."
+        },
+        {
+          "composto": "heptanal",
+          "descrittore": "grasso-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Branzino/spigola fresco: firma aldeidi C6-C9 + 1-octen-3-olo + nonadienale = profilo tenue marino-verde-cetriolo. Vidal et al. 2016, J. Sci. Food Agric. 96(4):1181-1193 (DOI 10.1002/jsfa.7201, SPME-GC/MS, crudo fresco). NOTA: la fonte elenca per classi, i singoli composti sono marcatori standard del pesce bianco."
+        },
+        {
+          "composto": "1-penten-3-ol",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Branzino/spigola fresco: firma aldeidi C6-C9 + 1-octen-3-olo + nonadienale = profilo tenue marino-verde-cetriolo. Vidal et al. 2016, J. Sci. Food Agric. 96(4):1181-1193 (DOI 10.1002/jsfa.7201, SPME-GC/MS, crudo fresco). NOTA: la fonte elenca per classi, i singoli composti sono marcatori standard del pesce bianco."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (ff, +13 teste di categoria, cancello 1): latte, panna, uovo cotto, vino rosso, rum, cioccolato fondente, emmental, tonno, gambero, merluzzo, vongola, sgombro, branzino. Secondo blocco mirato dal diagnostico copertura: basi ad alto traffico finora solo su Ahn grezzo, ora con firma verificata per categoria. FORTI: latte, panna, vino rosso, rum, emmental, gambero. MEDIE con caveat in riga: uovo cotto (il sodo non ha impatto GC-O, firma dal tuorlo a calore secco; H2S non confermato), cioccolato fondente (cDFA non OAV), tonno/merluzzo/sgombro/branzino/vongola (GC-MS reale, descrittori standard; (Z)-4-eptenale è del cotto). SCARTATI senza inventare: champagne (nessuna fonte GC-O dedicata, solo spumante generico), polpo e calamaro fresco (nessuna firma GC-O pubblica per i cefalopodi). Ponti: lattoni cremosi (latte/panna<->burro/cocco/mascarpone), damascenone+esteri (vino rosso/rum<->vino bianco/sidro), aldeidi di Strecker+pirazine (cioccolato fondente/uovo cotto<->cacao/caffè), acido propionico (emmental<->comté/groviera), aldeidi C6-C9 marine+1-octen-3-olo (tonno/merluzzo/sgombro/branzino/vongola<->ostrica/cozza/kombu), 2-acetil-1-pirrolina (gambero<->riso/pandan/pane).",
     "Ondata 24/10 (ee, +15 teste di categoria): tè nero, tè verde, caffè, vino bianco, birra lager, spumante metodo classico, vino porto, manzo, pollo, maiale, mozzarella, provolone, camembert, soia, burro di arachidi. Primo blocco del CANCELLO 1 (diagnostico copertura-proprietaria): ingredienti-base ad alto traffico finora solo su Ahn grezzo, ora con firma verificata per CATEGORIA (non per variante). Fonti reali GC-O/OAV/AEDA. FORTI: caffè, tè verde, lager, porto, mozzarella, camembert, burro di arachidi, pollo, tè nero. Caveat oneste in riga: manzo (firma doppia, ramo carneo da letteratura classica), maiale (DOI da verificare), provolone (proxy Provola dei Nebrodi), soia (matrice isolato/farina), vino bianco/spumante (OAV non numerici/non-Champagne). TOLTA uva: l'agente ha verificato il moscato (già coperto), il nodo scoperto è l'uva generica con altra firma — rimandata a un passaggio cultivar. Ponti: tioli furanici carnei (manzo/pollo<->brodo/katsuobushi), fenoli+furani tostati (caffè<->cacao/orzo tostato/stout), esteri fruttati (vino bianco/spumante/lager<->sakè/sidro), sotolon (porto<->sherry/mirin/fieno greco), FFA (provolone<->pecorino/feta), metantiolo+solfuri (camembert<->cheddar/cavolfiore), beany (soia<->pisello/ceci).",
     "Ondata 24/10 (dd, +15 erbe/fiori/semi/frutti): menta piperita, timo limonato, fiori di acacia, fiori di zucca, nasturzio, malva, semi di girasole tostati, quinoa tostata, sorgo, cherimoya, tamarillo, pomelo, rambutan, acerola, calamansi. Verificati da agente: 14 solidi + calamansi (nota: EO, composizione reale ma senza descrittori sensoriali). SCARTATI senza inventare: papavero/amaranto/miglio (nessuna firma vera, solo ossidazione lipidica comune a tutti i semi), lino (fonte è una review non dataset primario), longan (atti di convegno, descrittori presi in prestito). Ponti: beta-damascenone (malva/sorgo<->rosa/osmanthus/uva/tè), pirazine+furfurali (girasole/quinoa<->caffè/orzo tostato/pane), isotiocianati (nasturzio<->cavolfiore/broccolo/senape/rafano), esteri fruttati (cherimoya/acerola<->ananas/mela/banana), limonene+citronellale (pomelo/calamansi<->agrumi), mentolo (menta piperita<->menta), geraniolo+citrale (timo limonato<->citronella/melissa/verbena), methional (tamarillo<->patata/pane), metossibenzeni (fiori di zucca<->pu-erh shou/melanzana affumicata).",
     "Ondata 24/10 (cc, +19 tè/fermentati/alcolici): pu-erh, oolong, yerba mate, karkadè, matcha, rum invecchiato, whisky torbato, sakè, kefir, latticello, panna acida, birra stout, cognac, vino rosso invecchiato, sidro di mele, aceto di riso, mirin, gochujang, doubanjiang. Tutti con fonte GC-MS/GC-O reale; firme con OAV dove il paper le dà (doubanjiang, oolong, matcha, pu-erh). Caveat oneste in riga: pu-erh=sheng (shou diverso), oolong=tostato Dong Ding, matcha=cinese (DMS per il JP), whisky=fonte datata, cognac/vino/mirin/latticello=fonti indirette, gochujang=GC-MS non-OAV. SCARTATA senza inventare: grappa (solo Flash-GC/FID, nessun odorant aroma-attivo verificato). Ponti: fenoli del fumo (whisky torbato/stout<->scamorza/salmone affumicato/mezcal/katsuobushi), esteri fruttati (sakè/gochujang/sidro<->mela/ananas/banana), diacetile+acetoino (kefir/latticello/panna acida<->burro/yogurt), damascenone+whisky lattone (rum/cognac/doubanjiang<->botte/uva), sotolon (vino invecchiato/mirin/sherry<->fieno greco/acero/melassa), furfurale+furanoni (karkadè/mirin/stout<->caffè/caramello), norisoprenoidi (yerba mate/pu-erh<->tè/osmanthus/zafferano), acido acetico (aceto di riso<->aceti/kombucha).",
