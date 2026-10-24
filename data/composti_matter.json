@@ -5586,9 +5586,378 @@
           "fonte": "Capperi (Capparis spinosa): metil isotiocianato marcatore (da glucocapparina), isotiocianati (iris.unime 3053972; Gernot-Katzer Capparis spinosa)."
         }
       ]
+    },
+    {
+      "ingrediente": "formaggio erborinato",
+      "nodo_target": "ing-formaggio-erborinato",
+      "specie": "gorgonzola/Roquefort",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Formaggio erborinato (gorgonzola/Roquefort): metil chetoni — 2-eptanone, 2-nonanone, 2-pentanone marcatori (Korean fermented cheese flavor JAKO199511920153952; Bristol MOTM heptan-2-one; Clemson theses 1436).",
+      "composti": [
+        {
+          "composto": "2-heptanone",
+          "descrittore": "formaggio blu, muffa (marcatore metil chetone)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Formaggio erborinato (gorgonzola/Roquefort): metil chetoni — 2-eptanone, 2-nonanone, 2-pentanone marcatori (Korean fermented cheese flavor JAKO199511920153952; Bristol MOTM heptan-2-one; Clemson theses 1436)."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "fruttato-muffa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Formaggio erborinato (gorgonzola/Roquefort): metil chetoni — 2-eptanone, 2-nonanone, 2-pentanone marcatori (Korean fermented cheese flavor JAKO199511920153952; Bristol MOTM heptan-2-one; Clemson theses 1436)."
+        },
+        {
+          "composto": "2-pentanone",
+          "descrittore": "dolce-acetone",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Formaggio erborinato (gorgonzola/Roquefort): metil chetoni — 2-eptanone, 2-nonanone, 2-pentanone marcatori (Korean fermented cheese flavor JAKO199511920153952; Bristol MOTM heptan-2-one; Clemson theses 1436)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Formaggio erborinato (gorgonzola/Roquefort): metil chetoni — 2-eptanone, 2-nonanone, 2-pentanone marcatori (Korean fermented cheese flavor JAKO199511920153952; Bristol MOTM heptan-2-one; Clemson theses 1436)."
+        },
+        {
+          "composto": "butyric acid",
+          "descrittore": "rancido-formaggio",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Formaggio erborinato (gorgonzola/Roquefort): metil chetoni — 2-eptanone, 2-nonanone, 2-pentanone marcatori (Korean fermented cheese flavor JAKO199511920153952; Bristol MOTM heptan-2-one; Clemson theses 1436)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "yogurt",
+      "nodo_target": "ing-yogurt",
+      "specie": "latte fermentato",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Yogurt: acetaldeide, diacetile, 2,3-pentandione marcatori (IntechOpen 'yoghurt aroma compounds' 42314; MDPI Foods 10/3/573; PMC7374201).",
+      "composti": [
+        {
+          "composto": "acetaldehyde",
+          "descrittore": "fresco-pungente verde (marcatore yogurt)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yogurt: acetaldeide, diacetile, 2,3-pentandione marcatori (IntechOpen 'yoghurt aroma compounds' 42314; MDPI Foods 10/3/573; PMC7374201)."
+        },
+        {
+          "composto": "diacetyl",
+          "descrittore": "burroso (marcatore)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yogurt: acetaldeide, diacetile, 2,3-pentandione marcatori (IntechOpen 'yoghurt aroma compounds' 42314; MDPI Foods 10/3/573; PMC7374201)."
+        },
+        {
+          "composto": "2,3-pentanedione",
+          "descrittore": "burroso-nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yogurt: acetaldeide, diacetile, 2,3-pentandione marcatori (IntechOpen 'yoghurt aroma compounds' 42314; MDPI Foods 10/3/573; PMC7374201)."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "cremoso-burroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Yogurt: acetaldeide, diacetile, 2,3-pentandione marcatori (IntechOpen 'yoghurt aroma compounds' 42314; MDPI Foods 10/3/573; PMC7374201)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "asparago",
+      "nodo_target": "ing-asparago",
+      "specie": "Asparagus officinalis",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Asparago cotto (Asparagus officinalis): dimetil solfuro, metantiolo, dimetil disolfuro (WUR edepot 582968; Gerstel aroma research asparagus).",
+      "composti": [
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "cavolo-marino cotto (marcatore asparago)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asparago cotto (Asparagus officinalis): dimetil solfuro, metantiolo, dimetil disolfuro (WUR edepot 582968; Gerstel aroma research asparagus)."
+        },
+        {
+          "composto": "methanethiol",
+          "descrittore": "zolfo-cavolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asparago cotto (Asparagus officinalis): dimetil solfuro, metantiolo, dimetil disolfuro (WUR edepot 582968; Gerstel aroma research asparagus)."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "allium-cavolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asparago cotto (Asparagus officinalis): dimetil solfuro, metantiolo, dimetil disolfuro (WUR edepot 582968; Gerstel aroma research asparagus)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde tagliato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asparago cotto (Asparagus officinalis): dimetil solfuro, metantiolo, dimetil disolfuro (WUR edepot 582968; Gerstel aroma research asparagus)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "zucca",
+      "nodo_target": "ing-zucca",
+      "specie": "Cucurbita",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Zucca (Cucurbita): (E,E)-2,4-decadienale, beta-ionone (da carotenoidi), esanale (RAFA2019 poster pumpkin; TGSC pumpkin; Pherobase C/3555).",
+      "composti": [
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso, zucca cotta (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucca (Cucurbita): (E,E)-2,4-decadienale, beta-ionone (da carotenoidi), esanale (RAFA2019 poster pumpkin; TGSC pumpkin; Pherobase C/3555)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-dolce (da carotenoidi)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucca (Cucurbita): (E,E)-2,4-decadienale, beta-ionone (da carotenoidi), esanale (RAFA2019 poster pumpkin; TGSC pumpkin; Pherobase C/3555)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucca (Cucurbita): (E,E)-2,4-decadienale, beta-ionone (da carotenoidi), esanale (RAFA2019 poster pumpkin; TGSC pumpkin; Pherobase C/3555)."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Zucca (Cucurbita): (E,E)-2,4-decadienale, beta-ionone (da carotenoidi), esanale (RAFA2019 poster pumpkin; TGSC pumpkin; Pherobase C/3555)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "rooibos",
+      "nodo_target": "ing-rooibos",
+      "specie": "Aspalathus linearis",
+      "dominio": "bar",
+      "fonte_ingrediente": "Rooibos (Aspalathus linearis): guaiacolo, 6-metil-5-epten-2-one, geraniolo (PMC7231271 herbal teas; JBNU rooibos volatiles; Stellenbosch rooibos aroma lexicon).",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "fume-dolce, rooibos (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rooibos (Aspalathus linearis): guaiacolo, 6-metil-5-epten-2-one, geraniolo (PMC7231271 herbal teas; JBNU rooibos volatiles; Stellenbosch rooibos aroma lexicon)."
+        },
+        {
+          "composto": "6-methyl-5-hepten-2-one",
+          "descrittore": "fruttato-fieno",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rooibos (Aspalathus linearis): guaiacolo, 6-metil-5-epten-2-one, geraniolo (PMC7231271 herbal teas; JBNU rooibos volatiles; Stellenbosch rooibos aroma lexicon)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rooibos (Aspalathus linearis): guaiacolo, 6-metil-5-epten-2-one, geraniolo (PMC7231271 herbal teas; JBNU rooibos volatiles; Stellenbosch rooibos aroma lexicon)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rooibos (Aspalathus linearis): guaiacolo, 6-metil-5-epten-2-one, geraniolo (PMC7231271 herbal teas; JBNU rooibos volatiles; Stellenbosch rooibos aroma lexicon)."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rooibos (Aspalathus linearis): guaiacolo, 6-metil-5-epten-2-one, geraniolo (PMC7231271 herbal teas; JBNU rooibos volatiles; Stellenbosch rooibos aroma lexicon)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pepe rosa",
+      "nodo_target": "ing-pepe-rosa",
+      "specie": "Schinus molle",
+      "dominio": "bar",
+      "fonte_ingrediente": "Pepe rosa (Schinus molle): alpha-fellandrene, limonene, mircene, pineni (uevora Schinus molle EO 10174/7653; TGSC; premierepeau pink pepper).",
+      "composti": [
+        {
+          "composto": "alpha-phellandrene",
+          "descrittore": "agrume-pepe-menta (chiave)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe rosa (Schinus molle): alpha-fellandrene, limonene, mircene, pineni (uevora Schinus molle EO 10174/7653; TGSC; premierepeau pink pepper)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe rosa (Schinus molle): alpha-fellandrene, limonene, mircene, pineni (uevora Schinus molle EO 10174/7653; TGSC; premierepeau pink pepper)."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "resinoso-balsamico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe rosa (Schinus molle): alpha-fellandrene, limonene, mircene, pineni (uevora Schinus molle EO 10174/7653; TGSC; premierepeau pink pepper)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe rosa (Schinus molle): alpha-fellandrene, limonene, mircene, pineni (uevora Schinus molle EO 10174/7653; TGSC; premierepeau pink pepper)."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe rosa (Schinus molle): alpha-fellandrene, limonene, mircene, pineni (uevora Schinus molle EO 10174/7653; TGSC; premierepeau pink pepper)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "uvetta",
+      "nodo_target": "ing-uvetta",
+      "specie": "Vitis vinifera (essiccata)",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Uvetta/uva passa (Vitis vinifera essiccata): beta-damascenone, furaneolo, beta-ionone (PMC7998674 'Drying Treatments Fresh to Dried Grapes'; MDPI Foods 10/3/559).",
+      "composti": [
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-rosa, uva passa (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uvetta/uva passa (Vitis vinifera essiccata): beta-damascenone, furaneolo, beta-ionone (PMC7998674 'Drying Treatments Fresh to Dried Grapes'; MDPI Foods 10/3/559)."
+        },
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-fragola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uvetta/uva passa (Vitis vinifera essiccata): beta-damascenone, furaneolo, beta-ionone (PMC7998674 'Drying Treatments Fresh to Dried Grapes'; MDPI Foods 10/3/559)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uvetta/uva passa (Vitis vinifera essiccata): beta-damascenone, furaneolo, beta-ionone (PMC7998674 'Drying Treatments Fresh to Dried Grapes'; MDPI Foods 10/3/559)."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "rosa-miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uvetta/uva passa (Vitis vinifera essiccata): beta-damascenone, furaneolo, beta-ionone (PMC7998674 'Drying Treatments Fresh to Dried Grapes'; MDPI Foods 10/3/559)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uvetta/uva passa (Vitis vinifera essiccata): beta-damascenone, furaneolo, beta-ionone (PMC7998674 'Drying Treatments Fresh to Dried Grapes'; MDPI Foods 10/3/559)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "aceto balsamico",
+      "nodo_target": "ing-aceto-balsamico",
+      "specie": "aceto di mosto d'uva",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Aceto balsamico (Modena): acido acetico, siringolo (da botte), furaneolo, sotolon (iris.unife 2525531; Pherobase B/35089; agris 65df35947).",
+      "composti": [
+        {
+          "composto": "acetic acid",
+          "descrittore": "pungente-aceto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto balsamico (Modena): acido acetico, siringolo (da botte), furaneolo, sotolon (iris.unife 2525531; Pherobase B/35089; agris 65df35947)."
+        },
+        {
+          "composto": "syringol",
+          "descrittore": "fume-legnoso (da botte, marcatore)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto balsamico (Modena): acido acetico, siringolo (da botte), furaneolo, sotolon (iris.unife 2525531; Pherobase B/35089; agris 65df35947)."
+        },
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-fragola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto balsamico (Modena): acido acetico, siringolo (da botte), furaneolo, sotolon (iris.unife 2525531; Pherobase B/35089; agris 65df35947)."
+        },
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "solvente-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto balsamico (Modena): acido acetico, siringolo (da botte), furaneolo, sotolon (iris.unife 2525531; Pherobase B/35089; agris 65df35947)."
+        },
+        {
+          "composto": "sotolon",
+          "descrittore": "acero-fieno greco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto balsamico (Modena): acido acetico, siringolo (da botte), furaneolo, sotolon (iris.unife 2525531; Pherobase B/35089; agris 65df35947)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (o): +8 (formaggio erborinato, yogurt, asparago, zucca, rooibos, pepe rosa, uvetta, aceto balsamico). Marcatori-firma verificati su fonte reale. Dairy/vegetali/tisane: metil chetoni (erborinato<->mora), diacetile (yogurt<->burro/nocciola tostata), solfuri (asparago<->tartufo/erba cipollina), beta-ionone/damascenone (zucca/rooibos/uvetta<->lampone/mela/litchi), sotolon/furaneolo (aceto balsamico<->fieno greco/sciroppo d'acero), fellandrene (pepe rosa<->cumino/aneto).",
     "Ondata 23/10 (n): +8 (tartufo bianco, miso, salsa di soia, aneto, prezzemolo, wasabi, malto, capperi). Marcatori-firma verificati su fonte reale. Ondata savory/umami/pungenti: bis(metiltio)metano (tartufo bianco, unico), HEMF/4-etilguaiacolo (miso<->salsa di soia), maltolo/furaneolo (malto<->sciroppo d'acero/caramello), isotiocianati (wasabi/capperi<->papaya), 1-octen-3-olo (tartufo<->funghi), carvone/fellandrene (aneto<->cumino).",
     "Ondata 23/10 (m): +8 (mirtillo, melone, anguria, sciroppo d'acero, galanga, erba cipollina, papaya, chinotto). Marcatori-firma verificati su fonte reale. Connettivita': nonenale/nonadienali (melone/anguria<->cetriolo/kiwi), sotolon (sciroppo d'acero<->fieno greco), maltolo/furaneolo (acero<->caramello/fragola), 1,8-cineolo (galanga<->alloro/curcuma/cardamomo), solfuri allium (erba cipollina<->aglio/cipolla), terpeni agrumi (chinotto<->agrumi).",
     "Ondata 23/10 (l): +8 (funghi, barbabietola, cetriolo, peperone, pandan, guava, arachide tostata, kaffir lime). Marcatori-firma verificati su fonte reale. Terreno nuovo (terroso/verde/salato/asiatico): apre pirazine (arachide/peperone/barbabietola<->nocciola tostata/caffe/cacao/fieno greco), nonadienali (cetriolo<->kiwi), citronellale (kaffir<->melissa/citronella/cedro/verbena), 2-AP (pandan<->pane crosta).",
