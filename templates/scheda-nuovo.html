@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scheda ingrediente — Matter Bench</title>
+<meta name="description" content="Atlante: il profilo di un ingrediente dal grafo Matter — gusto, nutrizione, abbinamenti, cottura — ogni dato con la sua provenienza.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  /* SCHEDA INGREDIENTE (Atlante) — solo lo stretto necessario oltre matter3.css, sui token congelati. */
+  .hero{margin-top:22px}
+  .hero .kind{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); font-weight:600}
+  .hero h1{margin-top:4px}
+  .hero .srcline{display:flex; align-items:center; gap:7px; margin-top:8px; font-size:13px; color:var(--ink-soft)}
+  .hero .srcline .dot{width:7px; height:7px; border-radius:50%; background:var(--segnale); flex:0 0 auto}
+  .tax-line{margin-top:8px; font-size:13px; color:var(--ink-soft)}
+  .tax-line b{color:var(--ink); font-weight:600}
+  .tax-line .sci{font-style:italic}
+  .tax-line .src{font-size:11px; opacity:.8}
+
+  .ing-foto{margin:16px 0 0; border-radius:var(--r); overflow:hidden; border:1px solid var(--riga); box-shadow:var(--shadow); background:var(--surface)}
+  .ing-foto img{display:block; width:100%; height:200px; object-fit:cover}
+  .ing-foto figcaption{font-size:11px; color:var(--ink-soft); padding:7px 12px}
+
+  .sechead h2{font-size:19px}
+  .sechead p{margin:2px 0 0; font-size:13px; color:var(--ink-soft)}
+  .seccount{float:right; font-family:var(--display); font-weight:700; color:var(--verde); font-variant-numeric:tabular-nums}
+
+  /* assi del gusto: barra piatta, fill --segnale su traccia --riga */
+  .axes{display:grid; gap:14px; margin-top:4px}
+  .axis .axis-top{display:flex; align-items:baseline; gap:8px}
+  .axis .axis-name{font-family:var(--display); font-weight:600; font-size:15px; color:var(--ink)}
+  .axis .axis-val{margin-left:auto; font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .axis .axis-max{font-size:11px; color:var(--ink-soft); font-weight:600; margin-left:1px}
+  .axis .track{position:relative; height:8px; border-radius:var(--r-pill); background:var(--riga); margin-top:7px; overflow:hidden}
+  .axis .track .fill{position:absolute; left:0; top:0; bottom:0; background:var(--segnale); border-radius:var(--r-pill)}
+  .axis .anchor{margin-top:5px; font-size:11.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+
+  /* chip composti / allergeni */
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px}
+  .chip{font-family:var(--sans); font-size:12.5px; color:var(--verde); background:var(--tint); border-radius:var(--r-pill); padding:5px 11px; line-height:1}
+
+  /* abbinamenti */
+  .abb-grp + .abb-grp{margin-top:18px}
+  .abb-grp-tit{margin:0 0 2px; font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink)}
+  .abb-grp-sub{margin:0 0 10px; font-size:12.5px; color:var(--ink-soft); line-height:1.45}
+  .abb-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); box-shadow:var(--shadow-sm); padding:13px 15px}
+  .abb-card + .abb-card{margin-top:9px}
+  .abb-card .card-top{display:flex; align-items:center; gap:8px}
+  .abb-card .partner{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); margin:0}
+  .abb-card .perche{margin:7px 0 0; font-size:13px; color:var(--ink-soft); line-height:1.5}
+  .pill{margin-left:auto; font-size:11px; font-weight:700; letter-spacing:.02em; padding:3px 9px; border-radius:var(--r-pill); white-space:nowrap}
+  .pill.alta{background:var(--verde); color:#fff}
+  .pill.media{background:var(--tint); color:var(--verde)}
+  .pill.espl{background:transparent; color:var(--ocra-testo); border:1px solid var(--ocra)}
+
+  /* cottura */
+  .cott{margin-top:4px; padding:13px 14px; border-radius:var(--r-sm); border:1px solid var(--riga); background:var(--surface)}
+  .cott.vuoto{background:transparent; border-style:dashed}
+  .cott .stato{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft)}
+  .cott .val{margin-top:6px; color:var(--ink); font-weight:600}
+  .cott-tec{margin-top:8px; padding:10px 12px; border-radius:var(--r-sm); border:1px solid var(--riga); background:var(--surface)}
+  .cott-tec .nome{font-family:var(--display); font-weight:600; color:var(--ink)}
+  .cott-tec .dom{font-size:11px; color:var(--ink-soft); margin-left:6px}
+  .cott-tec .via,.cott-tec .nota{margin-top:4px; font-size:12px; color:var(--ink-soft)}
+  .cott-tec .nota{font-style:italic}
+
+  /* scienza collegata */
+  .exp-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); box-shadow:var(--shadow-sm); padding:13px 15px}
+  .exp-card + .exp-card{margin-top:9px}
+  .exp-top{display:flex; align-items:flex-start; gap:10px}
+  .exp-nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); min-width:0}
+  .exp-disc{margin-left:auto; flex:0 0 auto; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:var(--r-pill); background:var(--tint); color:var(--verde); white-space:nowrap}
+  .exp-ipotesi{margin:8px 0 0; font-size:13px; color:var(--ink-soft); line-height:1.5}
+
+  /* nutrizione */
+  .nutri-card{margin-top:4px; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:2px 16px}
+  .nutri-row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid var(--riga)}
+  .nutri-row:last-child{border-bottom:0}
+  .nutri-row.sub{padding-left:14px}
+  .nutri-row.sub .nutri-k{font-size:13px}
+  .nutri-k{font-size:14px; color:var(--ink-soft); min-width:0}
+  .nutri-v{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+  .nutri-v .u{font-size:11px; color:var(--ink-soft); font-weight:500; margin-left:3px}
+  .nutri-v.vuoto{color:var(--ink-soft)}
+  .allerg-tit{margin:16px 0 0; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); font-weight:600}
+
+  .gloss{font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin-top:10px}
+  details.mol summary{cursor:pointer; font-size:13px; color:var(--verde); font-weight:600}
+  .cta{display:inline-flex; margin-top:14px}
+  .state{margin-top:22px; padding:16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Atlante</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <form class="srch" id="srch" role="search" onsubmit="return false">
+    <input type="search" id="q" placeholder="Cerca un ingrediente (es. pomodoro)" aria-label="Cerca un ingrediente" autocomplete="off">
+    <button type="submit">Apri</button>
+  </form>
+
+  <header class="hero">
+    <div class="kind" id="cat">Ingrediente</div>
+    <h1 id="titolo">—</h1>
+    <div class="srcline"><span class="dot"></span><span id="src">Profilo dal grafo Matter.</span></div>
+    <div id="tax" class="tax-line" hidden></div>
+    <figure id="foto" class="ing-foto" hidden><img id="foto-img" alt="" loading="lazy"><figcaption id="foto-cap"></figcaption></figure>
+    <a class="btn btn--ghost cta" id="btn-salva" hidden>＋ Salva nel Quaderno</a>
+  </header>
+
+  <div id="sez-profilo"></div>
+  <div id="sez-nutri"></div>
+  <div id="sez-abbina"></div>
+  <div id="cottura"></div>
+  <div id="sez-scienza"></div>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    <strong>Scheda ingrediente — Atlante.</strong> Ogni valore mostra la sua provenienza:
+    <span class="prov prov-stimato">stima</span> finché non è verificato al banco,
+    <span class="prov prov-derivato">derivato</span> da una misura esterna (USDA),
+    <span class="prov prov-verificato">verificato</span> quando l'hai provato tu col metodo.
+    Dove un dato non c'è si legge "—" o "non ancora misurato al banco": mai uno zero inventato, mai una fonte inventata.
+  </footer>
+</main>
+
+<script>
+const INIT = {{ nome|tojson }};
+const CORE = [
+  ["acido","Acido","0 acqua · 8 limone · 10 aceto"],
+  ["dolce","Dolce","0 sale · 4 mela · 8 miele · 10 zucchero"],
+  ["salato","Salato","0 frutta · 5 pane · 9 acciughe · 10 sale"],
+  ["amaro","Amaro","0 zucchero · 4 cacao · 8 caffè · 10 china"],
+  ["umami","Umami","0 olio · 4 pomodoro · 8 parmigiano · 10 dashi"],
+  ["grasso","Grasso","0 verdura · 4 mozzarella · 8 burro · 10 olio"],
+];
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+const VUOTO = '—';
+
+const $corpo = document.getElementById('sez-profilo');
+const $state = document.getElementById('state');
+function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
+
+/* ---- Salva nel Quaderno (identità X-Device-Id, salva solo dati reali) ---- */
+function _devId(){ try{ return localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon'; }catch(e){ return 'anon'; } }
+let _scheda = null;
+const $btnSalva = document.getElementById('btn-salva');
+
+async function salvaQuaderno(record, btn){
+  if(btn){ btn.setAttribute('aria-disabled','true'); btn.textContent='Salvo…'; }
+  try{
+    const r = await fetch('/v1/quaderno2/salva', {method:'POST', headers:{'Content-Type':'application/json','X-Device-Id':_devId()}, body: JSON.stringify(record)});
+    let d = {}; try{ d = await r.json(); }catch(e){}
+    if(r.ok && d && d.ok){ if(btn){ btn.textContent='Salvato nel Quaderno ✓'; } return true; }
+    const msg = (d && d.errore) ? String(d.errore) : ('errore '+r.status);
+    if(btn){ btn.removeAttribute('aria-disabled'); btn.textContent='Non salvato — '+msg+' · riprova'; }
+    return false;
+  }catch(e){ if(btn){ btn.removeAttribute('aria-disabled'); btn.textContent='Non salvato — rete assente · riprova'; } return false; }
+}
+function _salvaScheda(e){
+  if(e) e.preventDefault();
+  if(!_scheda) return;
+  salvaQuaderno({
+    porta:'atlante', funzione:'scheda_ingrediente', tipo:'grafo',
+    titolo: cap(_scheda.nome)+' — profilo',
+    stato_input:{ nome:_scheda.nome },
+    stato_output:{ nome:_scheda.nome, kind:_scheda.kind||null, proprieta:_scheda.proprieta },
+    provenienza:{ fonte:'grafo Matter', endpoint:'/v1/profilo-gusto', meta:_scheda.proprieta_meta||{} }
+  }, $btnSalva);
+}
+$btnSalva.addEventListener('click', _salvaScheda);
+
+/* badge provenienza -> 5 stati matter3 */
+function provChip(meta){
+  const stato = (meta && meta.stato) ? String(meta.stato).toLowerCase() : 'stima';
+  const m = {
+    verificato:['prov-verificato','Verificato'], verificato_al_banco:['prov-verificato','Verificato'],
+    da_fonte:['prov-fonte','Da fonte'], fonte:['prov-fonte','Da fonte'],
+    derivato:['prov-derivato','Derivato'], corretto:['prov-derivato','Corretto'],
+    stimato:['prov-stimato','Stima'], stima:['prov-stimato','Stima'],
+    proposta:['prov-proposta','Proposta'],
+  };
+  const [cls,lbl] = m[stato] || ['prov-stimato','Stima'];
+  const fonte = (meta && meta.fonte) ? ` title="${esc(meta.fonte)}"` : '';
+  return `<span class="prov ${cls}"${fonte}>${lbl}</span>`;
+}
+
+function barra(label, val, anchor, meta){
+  const v = (typeof val === 'number') ? val : parseFloat(val);
+  const pct = Math.max(0, Math.min(100, (isFinite(v)? v:0)*10));
+  return `<div class="axis">
+      <div class="axis-top"><span class="axis-name">${label}</span>
+        <span class="axis-val">${isFinite(v)? (Number.isInteger(v)? v : v.toFixed(1)) : VUOTO}<span class="axis-max">/10</span></span>
+        ${provChip(meta)}</div>
+      <div class="track"><span class="fill" style="width:${pct}%"></span></div>
+      <div class="anchor">${esc(anchor)}</div>
+    </div>`;
+}
+
+async function caricaFoto(nome){
+  try{
+    const r = await fetch('/v1/foto-ingrediente/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return; const d = await r.json();
+    if(d && d.url){
+      const $fig=document.getElementById('foto'), $img=document.getElementById('foto-img'), $cap=document.getElementById('foto-cap');
+      $img.src=d.url; $img.alt=cap(nome);
+      $cap.textContent = 'Foto: '+(d.fonte_nome||'stock')+(d.autore?(' · '+d.autore):'');
+      $fig.hidden=false;
+    }
+  }catch(e){}
+}
+async function caricaTax(nome){
+  try{
+    const r = await fetch('/v1/tassonomia/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return; const d = await r.json();
+    if(d && d.trovato && d.tassonomia){
+      const t=d.tassonomia, parts=[];
+      if(t.famiglia) parts.push('<b>'+esc(t.famiglia)+'</b>');
+      if(t.nome_scientifico) parts.push('<span class="sci">'+esc(t.nome_scientifico)+'</span>');
+      if(t.origine) parts.push('origine: '+esc(t.origine));
+      if(parts.length){ const $t=document.getElementById('tax'); $t.innerHTML=parts.join(' · ')+(d.fonte?(' <span class="src">('+esc(d.fonte)+')</span>'):''); $t.hidden=false; }
+    }
+  }catch(e){}
+}
+
+/* nutrizione + allergeni */
+function nutriRiga(campo, valore, unita, sub){
+  const cls = sub ? 'nutri-row sub' : 'nutri-row';
+  if(valore == null || valore === '') return `<div class="${cls}"><span class="nutri-k">${esc(campo)}</span><span class="nutri-v vuoto">${VUOTO}</span></div>`;
+  const u = unita ? `<span class="u">${esc(unita)}</span>` : '';
+  return `<div class="${cls}"><span class="nutri-k">${esc(campo)}</span><span class="nutri-v">${esc(String(valore))}${u}</span></div>`;
+}
+async function caricaNutri(nome){
+  const $n = document.getElementById('sez-nutri');
+  try{
+    const r = await fetch('/v1/nutrizionale/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return; const d = await r.json();
+    if(!d || d.errore || d.trovato === false) return;
+    const pannello = Array.isArray(d.pannello) ? d.pannello : [];
+    const valori = Array.isArray(d.valori) ? d.valori.filter(v=>v && v.valore != null) : [];
+    const allergeni = Array.isArray(d.allergeni) ? d.allergeni : [];
+    const SUB = {grassi_saturi:1, zuccheri:1};
+    let corpoHtml;
+    if(pannello.length){
+      corpoHtml = `<div class="nutri-card">${pannello.map(p=>nutriRiga(p.campo,p.valore,p.unita,SUB[p.chiave])).join('')}</div>
+        <p class="gloss">Per 100 g · fonte: <b>${esc(d.fonte_pannello || 'USDA FoodData Central')}</b>.</p>`;
+    } else {
+      corpoHtml = `<div class="nutri-card"><div class="nutri-row"><span class="nutri-k">Pannello nutrizionale completo</span><span class="nutri-v vuoto">${VUOTO}</span></div></div>
+        <p class="gloss">Nessun pannello nutrizionale completo è ancora persistito su questo nodo: non lo inventiamo.</p>`;
+    }
+    const compDett = valori.length ? `<details class="mol" style="margin-top:12px"><summary>Misure compositive degli assi (${valori.length})</summary>
+        <div class="nutri-card" style="margin-top:10px">${valori.map(v=>`<div class="nutri-row"><span class="nutri-k">${esc(v.campo)}</span><span class="nutri-v">${esc(String(v.valore))}<span class="u">${esc(v.unita||'')}</span></span></div>`).join('')}</div>
+        <p class="gloss">Grezzi compositivi usati per derivare gli assi, ognuno con la sua fonte. Non una misura sensoriale diretta.</p></details>` : '';
+    const allergHtml = `<p class="allerg-tit">Allergeni (dedotti dal nome · Reg. UE 1169/2011)</p>
+      ${allergeni.length ? `<div class="chips">${allergeni.map(a=>`<span class="chip">${esc(a.nome)}</span>`).join('')}</div>` : `<p class="gloss">Nessun allergene UE dedotto dal nome. Il professionista verifica e conferma.</p>`}`;
+    $n.innerHTML = `<section class="section"><span class="eyebrow">Valori nutrizionali</span>
+      <div class="sechead" style="margin-bottom:10px"><p>Per 100 g, con la fonte. Allergeni dedotti dal nome.</p></div>
+      ${corpoHtml}${compDett}${allergHtml}${d.note_onesta ? `<p class="gloss">${esc(d.note_onesta)}</p>` : ''}</section>`;
+  }catch(e){}
+}
+
+/* scienza collegata */
+async function caricaScienza(nome){
+  const $s = document.getElementById('sez-scienza');
+  try{
+    const r = await fetch('/v1/ingrediente/'+encodeURIComponent(nome)+'/protocolli', {headers:{'Accept':'application/json'}});
+    if(!r.ok) return; const d = await r.json();
+    const exp = (d && Array.isArray(d.esperimenti)) ? d.esperimenti : [];
+    if(!exp.length) return;
+    const cards = exp.map(e=>{
+      const disc = e.disciplina ? `<span class="exp-disc">${esc(e.disciplina)}</span>` : '';
+      const ip = e.ipotesi ? `<p class="exp-ipotesi">${esc(e.ipotesi)}</p>` : '';
+      const fen = (Array.isArray(e.fenomeni) ? e.fenomeni.filter(Boolean) : []);
+      const fenHtml = fen.length ? `<div class="chips">${fen.map(f=>`<span class="chip">${esc(cap(f))}</span>`).join('')}</div>` : '';
+      return `<div class="exp-card"><div class="exp-top"><span class="exp-nome">${esc(cap(e.nome||''))}</span>${disc}</div>${ip}${fenHtml}</div>`;
+    }).join('');
+    $s.innerHTML = `<section class="section"><span class="eyebrow">Scienza collegata</span>
+      <div class="sechead" style="margin-bottom:10px"><p>Gli esperimenti del grafo che usano questo ingrediente, e i fenomeni che mettono in gioco.</p></div>
+      ${cards}
+      <p class="gloss">Legame reale dal grafo (archi <b>usa_reagente</b>): non una spiegazione a livelli per l'ingrediente — quella vive sulla scheda del singolo esperimento.</p>
+      <a class="btn btn--ghost cta" href="/scopri-nuovo/${encodeURIComponent(nome)}">Apri il grafo di ${esc(cap(nome))} →</a></section>`;
+  }catch(e){}
+}
+
+/* cottura */
+function cotturaTec(v, mostraVia){
+  const dom = v.dominio ? `<span class="dom">${esc(v.dominio)}</span>` : '';
+  const via = (mostraVia && (v.via_fenomeni||[]).length) ? `<div class="via">via: ${v.via_fenomeni.map(f=>esc(f)).join(' · ')}</div>` : '';
+  const nota = v.nota ? `<div class="nota">${esc(v.nota)}</div>` : '';
+  return `<div class="cott-tec"><span class="nome">${esc(cap(v.nome||''))}</span>${dom}${via}${nota}</div>`;
+}
+async function caricaCottura(nome){
+  const $c = document.getElementById('cottura'); $c.innerHTML='';
+  try{
+    const r = await fetch('/v1/cottura/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
+    if(!r.ok) return; const d = await r.json();
+    if(!d || d.errore) return;
+    const cc = d.cottura_consigliata || {};
+    const vuoto = (cc.stato === 'vuoto') || (cc.valore == null || cc.valore === '');
+    let consHtml;
+    if(vuoto){
+      consHtml = `<div class="cott vuoto"><div class="stato">${provChip({stato:'stima'})}<span>${esc(cc.nota || 'Non ancora misurato al banco.')}</span></div></div>`;
+    } else {
+      const val = Array.isArray(cc.valore) ? cc.valore.map(x=>esc(String(x))).join(' · ') : esc(String(cc.valore));
+      consHtml = `<div class="cott"><div class="stato">${provChip({stato:cc.stato, fonte:cc.fonte})}<span>Cottura consigliata — curata.</span></div><div class="val">${val}</div></div>`;
+    }
+    const tc = d.tecniche_collegate || {}, td = d.tecniche_disciplina || {};
+    const vTc = tc.voci || [], vTd = td.voci || [];
+    const bloccoTc = vTc.length ? `<div style="margin-top:12px"><p class="gloss" style="margin:0 0 8px">${esc(tc.etichetta || 'tecniche collegate nel grafo')} (${tc.conteggio||vTc.length})</p>${vTc.map(v=>cotturaTec(v,true)).join('')}</div>` : '';
+    const bloccoTd = vTd.length ? `<details class="mol" style="margin-top:12px"><summary>${esc(td.etichetta || 'tecniche della disciplina')} (${td.conteggio||vTd.length})</summary><div style="margin-top:10px">${vTd.map(v=>cotturaTec(v,false)).join('')}</div></details>` : '';
+    const nulla = (!vTc.length && !vTd.length) ? `<p class="gloss">Il grafo non collega ancora tecniche a questo ingrediente.</p>` : '';
+    $c.innerHTML = `<section class="section"><span class="eyebrow">Cottura</span>
+      <div class="sechead" style="margin-bottom:10px"><p>${esc(d.onesta || '')}</p></div>${consHtml}${bloccoTc}${bloccoTd}${nulla}</section>`;
+  }catch(e){}
+}
+
+/* abbinamenti */
+function abbCard(r){
+  const rob = r.robustezza;
+  const pillCls = rob === 'Alta' ? 'pill alta' : (rob === 'Media' ? 'pill media' : 'pill espl');
+  const pill = rob ? `<span class="${pillCls}">${esc(rob)}</span>` : '';
+  const comps = (r.evidenza && Array.isArray(r.evidenza.composti_caratterizzanti)) ? r.evidenza.composti_caratterizzanti : [];
+  const chips = comps.length ? `<div class="chips">${comps.slice(0,5).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>` : '';
+  const perche = r.perche ? `<p class="perche">${esc(r.perche)}</p>` : '';
+  return `<div class="abb-card"><div class="card-top"><h3 class="partner">${esc(cap(r.ingrediente))}</h3>${pill}</div>${perche}${chips}</div>`;
+}
+function abbGruppo(titolo, sub, rels){
+  if(!rels.length) return '';
+  return `<div class="abb-grp"><p class="abb-grp-tit">${esc(titolo)}</p><p class="abb-grp-sub">${esc(sub)}</p><div class="list">${rels.map(abbCard).join('')}</div></div>`;
+}
+function renderAbbinamenti(cr, nome){
+  const $a = document.getElementById('sez-abbina');
+  const rel = (cr && Array.isArray(cr.relazioni)) ? cr.relazioni : [];
+  const base = rel.filter(r=>r.criterio==='base_aromatica').slice(0,6);
+  const trad = rel.filter(r=>r.criterio==='tradizione').slice(0,4);
+  const contr = rel.filter(r=>r.criterio==='contrasto').slice(0,4);
+  const gruppi =
+    abbGruppo('Cosa ci sta bene', 'Chimica: composti aromatici realmente condivisi. La banda (Alta/Media/Esplorativa) è relativa al miglior risultato di questo ingrediente, non un voto assoluto.', base) +
+    abbGruppo('Per tradizione', 'Cultura: accostamenti documentati, non chimica.', trad) +
+    abbGruppo('Per contrasto', 'Relazione curata nel grafo, non un’euristica.', contr);
+  const corpo = gruppi || `<p class="gloss">Nessun abbinamento ancora collegato a questo ingrediente nel grafo. Non è un errore: è "non ancora mappato".</p>`;
+  $a.innerHTML = `<section class="section"><span class="eyebrow">Abbinamenti e sostituzioni</span>
+    <div class="sechead" style="margin-bottom:12px"><p>Perché una relazione esiste — mai un voto di compatibilità.</p></div>
+    ${corpo}<a class="btn btn--ghost cta" href="/scopri-nuovo/${encodeURIComponent(nome)}">Vedi tutti gli abbinamenti, e perché →</a></section>`;
+}
+
+async function carica(nome){
+  nome = (nome||'').trim(); if(!nome) return;
+  document.getElementById('titolo').textContent = cap(nome);
+  setState('Carico la scheda…', false);
+  try{
+    const [pgR, crR] = await Promise.all([
+      fetch('/v1/profilo-gusto/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}}),
+      fetch('/v1/criteri/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}}),
+    ]);
+    const pg = pgR.ok ? await pgR.json() : {};
+    const cr = crR.ok ? await crR.json() : {};
+    if(pg.trovato === false && !(cr.relazioni||[]).length){
+      setState(`<b>${esc(cap(nome))}</b> non è ancora nell'Atlante con un profilo. Non è un errore: è "non ancora mappato".`, false);
+      $corpo.innerHTML=''; return;
+    }
+    $state.hidden = true;
+    const nomeReale = pg.nome || nome;
+    document.getElementById('titolo').textContent = cap(nomeReale);
+    caricaFoto(nomeReale); caricaTax(nomeReale); caricaNutri(nomeReale); caricaCottura(nomeReale); caricaScienza(nomeReale);
+    document.getElementById('cat').textContent = (pg.kind==='ingredient'?'Ingrediente':(pg.kind||'Ingrediente'));
+    const prop = pg.proprieta || {}, meta = pg.proprieta_meta || {};
+    const barre = CORE.filter(([k])=> prop[k]!=null).map(([k,lbl,anc])=> barra(lbl, prop[k], anc, meta[k])).join('');
+    const haProv = CORE.some(([k])=> meta[k] && meta[k].stato);
+    const notaStima = haProv ? '' : `<p class="gloss">Valori ancora da verificare al banco: oggi sono stime. Quando scrivi un dato derivato o lo verifichi, la provenienza qui cambia.</p>`;
+    const altri = Object.entries(prop).filter(([k])=> !CORE.some(([c])=>c===k) && prop[k]!=null && prop[k]!==0);
+    const altriHtml = altri.length ? `<details class="mol" style="margin-top:14px"><summary>Altri descrittori (${altri.length})</summary>
+      <div class="chips">${altri.map(([k,v])=>`<span class="chip">${esc(k.replace(/_/g,' '))} ${v}</span>`).join('')}</div>
+      <p class="gloss">Scala non ancora definita come i sei gusti base: riferimento, non voto 0–10.</p></details>` : '';
+    $corpo.innerHTML = `<section class="section"><span class="eyebrow">Profilo sensoriale</span>
+      <div class="sechead" style="margin-bottom:12px"><p>I sei gusti base, da 0 a 10, ognuno con la sua provenienza.</p></div>
+      <div class="axes">${barre || '<p class="gloss">Nessun profilo sensoriale registrato per questo ingrediente.</p>'}</div>
+      ${notaStima}${altriHtml}</section>`;
+    renderAbbinamenti(cr, nomeReale);
+    const propReali = {}; Object.entries(prop).forEach(([k,v])=>{ if(v!=null && v!=='') propReali[k]=v; });
+    if(Object.keys(propReali).length){
+      _scheda = { nome:nomeReale, kind:pg.kind||null, proprieta:propReali, proprieta_meta:meta };
+      $btnSalva.hidden=false; $btnSalva.removeAttribute('aria-disabled'); $btnSalva.textContent='＋ Salva nel Quaderno';
+    } else { _scheda=null; $btnSalva.hidden=true; }
+  }catch(e){
+    setState('Non riesco a caricare la scheda adesso. Riprova tra poco.', true);
+    $corpo.innerHTML=''; document.getElementById('cottura').innerHTML=''; _scheda=null; $btnSalva.hidden=true;
+  }
+}
+
+document.getElementById('srch').addEventListener('submit', function(e){
+  e.preventDefault();
+  const v = (document.getElementById('q').value || '').trim();
+  if(v) location.href = '/ingrediente/' + encodeURIComponent(v);
+});
+carica(INIT);
+</script>
+</body>
+</html>
