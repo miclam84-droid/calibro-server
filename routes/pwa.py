@@ -61,7 +61,7 @@ def scheda_ingrediente(nome):
     per asse + teaser abbinamenti. Cablata a /v1/profilo-gusto e /v1/criteri.
     Pagina nuova e isolata: non tocca /app né /app2."""
     from flask import make_response
-    resp = make_response(render_template("scheda.html", nome=nome))
+    resp = make_response(render_template("scheda-nuovo.html", nome=nome))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
