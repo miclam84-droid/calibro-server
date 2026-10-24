@@ -6307,9 +6307,395 @@
           "fonte": "Santoreggia (Satureja hortensis): carvacrolo dominante con gamma-terpinene e p-cimene (precursori), timolo variabile (MDPI Molecules 23:2458; NCBI PMC3330183)."
         }
       ]
+    },
+    {
+      "ingrediente": "pepe di sichuan",
+      "nodo_target": "ing-pepe-di-sichuan",
+      "specie": "Zanthoxylum spp.",
+      "dominio": "bar",
+      "fonte_ingrediente": "Pepe di Sichuan (Zanthoxylum spp.): volatili dominati da limonene, linalolo, beta-fellandrene, sabinene, geraniolo; il formicolio viene dall'idrossi-alfa-sanshool (non volatile, nessun arco aromatico) (MDPI Molecules 30:3366; Foods 14:627).",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume-pungente (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Sichuan (Zanthoxylum spp.): volatili dominati da limonene, linalolo, beta-fellandrene, sabinene, geraniolo; il formicolio viene dall'idrossi-alfa-sanshool (non volatile, nessun arco aromatico) (MDPI Molecules 30:3366; Foods 14:627)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-coriandolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Sichuan (Zanthoxylum spp.): volatili dominati da limonene, linalolo, beta-fellandrene, sabinene, geraniolo; il formicolio viene dall'idrossi-alfa-sanshool (non volatile, nessun arco aromatico) (MDPI Molecules 30:3366; Foods 14:627)."
+        },
+        {
+          "composto": "beta-phellandrene",
+          "descrittore": "verde-menta-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Sichuan (Zanthoxylum spp.): volatili dominati da limonene, linalolo, beta-fellandrene, sabinene, geraniolo; il formicolio viene dall'idrossi-alfa-sanshool (non volatile, nessun arco aromatico) (MDPI Molecules 30:3366; Foods 14:627)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Sichuan (Zanthoxylum spp.): volatili dominati da limonene, linalolo, beta-fellandrene, sabinene, geraniolo; il formicolio viene dall'idrossi-alfa-sanshool (non volatile, nessun arco aromatico) (MDPI Molecules 30:3366; Foods 14:627)."
+        },
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Sichuan (Zanthoxylum spp.): volatili dominati da limonene, linalolo, beta-fellandrene, sabinene, geraniolo; il formicolio viene dall'idrossi-alfa-sanshool (non volatile, nessun arco aromatico) (MDPI Molecules 30:3366; Foods 14:627)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "porro",
+      "nodo_target": "ing-porro",
+      "specie": "Allium porrum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Porro (Allium porrum): solfuri dell'allium -> dipropil disolfuro, dipropil trisolfuro, metil propil disolfuro (MDPI Molecules 25:2082; bib.irb 927079 'volatile sulfur compounds leek').",
+      "composti": [
+        {
+          "composto": "dipropyl disulfide",
+          "descrittore": "allium-cipolla cotta (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Porro (Allium porrum): solfuri dell'allium -> dipropil disolfuro, dipropil trisolfuro, metil propil disolfuro (MDPI Molecules 25:2082; bib.irb 927079 'volatile sulfur compounds leek')."
+        },
+        {
+          "composto": "dipropyl trisulfide",
+          "descrittore": "allium-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Porro (Allium porrum): solfuri dell'allium -> dipropil disolfuro, dipropil trisolfuro, metil propil disolfuro (MDPI Molecules 25:2082; bib.irb 927079 'volatile sulfur compounds leek')."
+        },
+        {
+          "composto": "methyl propyl disulfide",
+          "descrittore": "cipolla-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Porro (Allium porrum): solfuri dell'allium -> dipropil disolfuro, dipropil trisolfuro, metil propil disolfuro (MDPI Molecules 25:2082; bib.irb 927079 'volatile sulfur compounds leek')."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforato-cavolo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Porro (Allium porrum): solfuri dell'allium -> dipropil disolfuro, dipropil trisolfuro, metil propil disolfuro (MDPI Molecules 25:2082; bib.irb 927079 'volatile sulfur compounds leek')."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cavolfiore",
+      "nodo_target": "ing-cavolfiore",
+      "specie": "Brassica oleracea var. botrytis",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cavolfiore (Brassica oleracea var. botrytis): dimetil trisolfuro, dimetil disolfuro, metantiolo e isotiocianati (NCBI PMC6304465; TUM Leibniz, key odorants brassica/kohlrabi).",
+      "composti": [
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "cavolo cotto-solforato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolfiore (Brassica oleracea var. botrytis): dimetil trisolfuro, dimetil disolfuro, metantiolo e isotiocianati (NCBI PMC6304465; TUM Leibniz, key odorants brassica/kohlrabi)."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforato-allium",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolfiore (Brassica oleracea var. botrytis): dimetil trisolfuro, dimetil disolfuro, metantiolo e isotiocianati (NCBI PMC6304465; TUM Leibniz, key odorants brassica/kohlrabi)."
+        },
+        {
+          "composto": "methanethiol",
+          "descrittore": "solforato-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolfiore (Brassica oleracea var. botrytis): dimetil trisolfuro, dimetil disolfuro, metantiolo e isotiocianati (NCBI PMC6304465; TUM Leibniz, key odorants brassica/kohlrabi)."
+        },
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-senape",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolfiore (Brassica oleracea var. botrytis): dimetil trisolfuro, dimetil disolfuro, metantiolo e isotiocianati (NCBI PMC6304465; TUM Leibniz, key odorants brassica/kohlrabi)."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "cavolo-mare",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolfiore (Brassica oleracea var. botrytis): dimetil trisolfuro, dimetil disolfuro, metantiolo e isotiocianati (NCBI PMC6304465; TUM Leibniz, key odorants brassica/kohlrabi)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "issopo",
+      "nodo_target": "ing-issopo",
+      "specie": "Hyssopus officinalis",
+      "dominio": "bar",
+      "fonte_ingrediente": "Issopo (Hyssopus officinalis): pinocanfone e isopinocanfone come coppia dominante, con beta-pinene e 1,8-cineolo (agris 65df3fbf; De Gruyter chem-2018-0032).",
+      "composti": [
+        {
+          "composto": "pinocamphone",
+          "descrittore": "canforato-erbaceo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Issopo (Hyssopus officinalis): pinocanfone e isopinocanfone come coppia dominante, con beta-pinene e 1,8-cineolo (agris 65df3fbf; De Gruyter chem-2018-0032)."
+        },
+        {
+          "composto": "isopinocamphone",
+          "descrittore": "canforato-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Issopo (Hyssopus officinalis): pinocanfone e isopinocanfone come coppia dominante, con beta-pinene e 1,8-cineolo (agris 65df3fbf; De Gruyter chem-2018-0032)."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Issopo (Hyssopus officinalis): pinocanfone e isopinocanfone come coppia dominante, con beta-pinene e 1,8-cineolo (agris 65df3fbf; De Gruyter chem-2018-0032)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Issopo (Hyssopus officinalis): pinocanfone e isopinocanfone come coppia dominante, con beta-pinene e 1,8-cineolo (agris 65df3fbf; De Gruyter chem-2018-0032)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Issopo (Hyssopus officinalis): pinocanfone e isopinocanfone come coppia dominante, con beta-pinene e 1,8-cineolo (agris 65df3fbf; De Gruyter chem-2018-0032)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mastiha",
+      "nodo_target": "ing-mastiha",
+      "specie": "Pistacia lentiscus var. chia",
+      "dominio": "bar",
+      "fonte_ingrediente": "Mastiha / lentisco di Chios (Pistacia lentiscus var. chia): alpha-pinene dominante, con beta-mircene, verbenone e beta-cariofillene (J. Agric. Food Chem. 2005, 53(20):7681; ANU cb1276b2).",
+      "composti": [
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastiha / lentisco di Chios (Pistacia lentiscus var. chia): alpha-pinene dominante, con beta-mircene, verbenone e beta-cariofillene (J. Agric. Food Chem. 2005, 53(20):7681; ANU cb1276b2)."
+        },
+        {
+          "composto": "beta-myrcene",
+          "descrittore": "balsamico-erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastiha / lentisco di Chios (Pistacia lentiscus var. chia): alpha-pinene dominante, con beta-mircene, verbenone e beta-cariofillene (J. Agric. Food Chem. 2005, 53(20):7681; ANU cb1276b2)."
+        },
+        {
+          "composto": "verbenone",
+          "descrittore": "canforato-resinoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastiha / lentisco di Chios (Pistacia lentiscus var. chia): alpha-pinene dominante, con beta-mircene, verbenone e beta-cariofillene (J. Agric. Food Chem. 2005, 53(20):7681; ANU cb1276b2)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastiha / lentisco di Chios (Pistacia lentiscus var. chia): alpha-pinene dominante, con beta-mircene, verbenone e beta-cariofillene (J. Agric. Food Chem. 2005, 53(20):7681; ANU cb1276b2)."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastiha / lentisco di Chios (Pistacia lentiscus var. chia): alpha-pinene dominante, con beta-mircene, verbenone e beta-cariofillene (J. Agric. Food Chem. 2005, 53(20):7681; ANU cb1276b2)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "castagna",
+      "nodo_target": "ing-castagna",
+      "specie": "Castanea sativa (tostata)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Castagna tostata (Castanea sativa): da reazione di Maillard -> furfurale, 5-metilfurfurale, maltolo, 2,5-dimetilpirazina, con note verdi residue (MDPI Foods 14:1931; spgykj chestnut GC-MS/e-nose).",
+      "composti": [
+        {
+          "composto": "furfural",
+          "descrittore": "mandorla-pane tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Castagna tostata (Castanea sativa): da reazione di Maillard -> furfurale, 5-metilfurfurale, maltolo, 2,5-dimetilpirazina, con note verdi residue (MDPI Foods 14:1931; spgykj chestnut GC-MS/e-nose)."
+        },
+        {
+          "composto": "5-methylfurfural",
+          "descrittore": "caramello-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Castagna tostata (Castanea sativa): da reazione di Maillard -> furfurale, 5-metilfurfurale, maltolo, 2,5-dimetilpirazina, con note verdi residue (MDPI Foods 14:1931; spgykj chestnut GC-MS/e-nose)."
+        },
+        {
+          "composto": "maltol",
+          "descrittore": "caramello-zucchero cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Castagna tostata (Castanea sativa): da reazione di Maillard -> furfurale, 5-metilfurfurale, maltolo, 2,5-dimetilpirazina, con note verdi residue (MDPI Foods 14:1931; spgykj chestnut GC-MS/e-nose)."
+        },
+        {
+          "composto": "2,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Castagna tostata (Castanea sativa): da reazione di Maillard -> furfurale, 5-metilfurfurale, maltolo, 2,5-dimetilpirazina, con note verdi residue (MDPI Foods 14:1931; spgykj chestnut GC-MS/e-nose)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Castagna tostata (Castanea sativa): da reazione di Maillard -> furfurale, 5-metilfurfurale, maltolo, 2,5-dimetilpirazina, con note verdi residue (MDPI Foods 14:1931; spgykj chestnut GC-MS/e-nose)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "feijoa",
+      "nodo_target": "ing-feijoa",
+      "specie": "Acca sellowiana",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Feijoa (Acca sellowiana): esteri caratterizzanti -> metil benzoato, etil butanoato, metil (E)-cinnamato, con (E)-2-esenale verde (Univ. Auckland researchspace 52753; Pherobase C/36181).",
+      "composti": [
+        {
+          "composto": "methyl benzoate",
+          "descrittore": "feijoa-fenolico-dolce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feijoa (Acca sellowiana): esteri caratterizzanti -> metil benzoato, etil butanoato, metil (E)-cinnamato, con (E)-2-esenale verde (Univ. Auckland researchspace 52753; Pherobase C/36181)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-ananas",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feijoa (Acca sellowiana): esteri caratterizzanti -> metil benzoato, etil butanoato, metil (E)-cinnamato, con (E)-2-esenale verde (Univ. Auckland researchspace 52753; Pherobase C/36181)."
+        },
+        {
+          "composto": "methyl cinnamate",
+          "descrittore": "balsamico-fragola-cannella",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feijoa (Acca sellowiana): esteri caratterizzanti -> metil benzoato, etil butanoato, metil (E)-cinnamato, con (E)-2-esenale verde (Univ. Auckland researchspace 52753; Pherobase C/36181)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feijoa (Acca sellowiana): esteri caratterizzanti -> metil benzoato, etil butanoato, metil (E)-cinnamato, con (E)-2-esenale verde (Univ. Auckland researchspace 52753; Pherobase C/36181)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Feijoa (Acca sellowiana): esteri caratterizzanti -> metil benzoato, etil butanoato, metil (E)-cinnamato, con (E)-2-esenale verde (Univ. Auckland researchspace 52753; Pherobase C/36181)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "orzo tostato",
+      "nodo_target": "ing-orzo-tostato",
+      "specie": "Hordeum vulgare (tostato)",
+      "dominio": "bar",
+      "CORREGGE": "'orzo tostato' (caffe d'orzo) e' Hordeum tostato, NODO distinto da 'malto' (ing-malto).",
+      "fonte_ingrediente": "Orzo tostato (Hordeum vulgare, caffe d'orzo / mugicha): da Maillard -> pirazine (2-etil-3,5-dimetilpirazina, 2,5-dimetilpirazina), maltolo, furfurale, guaiacolo (NCBI PMC9498828; TUM Leibniz key odorants mugi-cha; boricha agris 64745bfb).",
+      "composti": [
+        {
+          "composto": "2-ethyl-3,5-dimethylpyrazine",
+          "descrittore": "tostato-terroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Orzo tostato (Hordeum vulgare, caffe d'orzo / mugicha): da Maillard -> pirazine (2-etil-3,5-dimetilpirazina, 2,5-dimetilpirazina), maltolo, furfurale, guaiacolo (NCBI PMC9498828; TUM Leibniz key odorants mugi-cha; boricha agris 64745bfb)."
+        },
+        {
+          "composto": "2,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Orzo tostato (Hordeum vulgare, caffe d'orzo / mugicha): da Maillard -> pirazine (2-etil-3,5-dimetilpirazina, 2,5-dimetilpirazina), maltolo, furfurale, guaiacolo (NCBI PMC9498828; TUM Leibniz key odorants mugi-cha; boricha agris 64745bfb)."
+        },
+        {
+          "composto": "maltol",
+          "descrittore": "caramello-zucchero cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Orzo tostato (Hordeum vulgare, caffe d'orzo / mugicha): da Maillard -> pirazine (2-etil-3,5-dimetilpirazina, 2,5-dimetilpirazina), maltolo, furfurale, guaiacolo (NCBI PMC9498828; TUM Leibniz key odorants mugi-cha; boricha agris 64745bfb)."
+        },
+        {
+          "composto": "furfural",
+          "descrittore": "mandorla-pane tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Orzo tostato (Hordeum vulgare, caffe d'orzo / mugicha): da Maillard -> pirazine (2-etil-3,5-dimetilpirazina, 2,5-dimetilpirazina), maltolo, furfurale, guaiacolo (NCBI PMC9498828; TUM Leibniz key odorants mugi-cha; boricha agris 64745bfb)."
+        },
+        {
+          "composto": "guaiacol",
+          "descrittore": "fumo-tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Orzo tostato (Hordeum vulgare, caffe d'orzo / mugicha): da Maillard -> pirazine (2-etil-3,5-dimetilpirazina, 2,5-dimetilpirazina), maltolo, furfurale, guaiacolo (NCBI PMC9498828; TUM Leibniz key odorants mugi-cha; boricha agris 64745bfb)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (q): +8 (pepe di sichuan, porro, cavolfiore, issopo, mastiha, castagna, feijoa, orzo tostato). Marcatori-firma verificati su fonte reale. Terreno: spezia pungente/solforati salati/erbe/resina/tostati Maillard/tropicale. Ponti: limonene+linalolo (sichuan<->agrumi/coriandolo), solfuri allium (porro<->aglio/cipolla/erba cipollina), dimetil solfuri+isotiocianati (cavolfiore<->asparago/wasabi/rafano/porro), pinocanfone+1,8-cineolo (issopo<->rosmarino/alloro), alpha-pinene+verbenone (mastiha<->ginepro/rosmarino), furfurale+maltolo+pirazine (castagna/orzo tostato<->caffe/malto/pane/cacao/arachide tostata), esteri+(E)-2-esenale (feijoa<->ananas/mela/fragola).",
     "Ondata 24/10 (p): +8 (carota, pimento/allspice, liquirizia, rafano, carvi, noce, cachi, santoreggia). Marcatori-firma verificati su fonte reale. Terreno: radici/spezie calde/anice/pungenti/nut/frutto/erba. Ponti: terpeni ombrellifere (carota<->coriandolo/cumino/aneto/sedano), eugenolo (pimento<->chiodi di garofano/alloro/cannella), anetolo+estragolo (liquirizia<->anice stellato/finocchio/dragoncello), allil isotiocianato (rafano<->wasabi/capperi), carvone (carvi<->aneto/menta), aldeidi grasse+1-octen-3-olo (noce<->funghi/tartufo), (E)-2-esenale (cachi<->mela/kiwi/cetriolo), carvacrolo/timolo (santoreggia<->origano/timo). Scartato mirtillo rosso: unica fonte solida era su VINO non sul frutto (fonte debole, come genziana/china).",
     "Ondata 24/10 (o): +8 (formaggio erborinato, yogurt, asparago, zucca, rooibos, pepe rosa, uvetta, aceto balsamico). Marcatori-firma verificati su fonte reale. Dairy/vegetali/tisane: metil chetoni (erborinato<->mora), diacetile (yogurt<->burro/nocciola tostata), solfuri (asparago<->tartufo/erba cipollina), beta-ionone/damascenone (zucca/rooibos/uvetta<->lampone/mela/litchi), sotolon/furaneolo (aceto balsamico<->fieno greco/sciroppo d'acero), fellandrene (pepe rosa<->cumino/aneto).",
     "Ondata 23/10 (n): +8 (tartufo bianco, miso, salsa di soia, aneto, prezzemolo, wasabi, malto, capperi). Marcatori-firma verificati su fonte reale. Ondata savory/umami/pungenti: bis(metiltio)metano (tartufo bianco, unico), HEMF/4-etilguaiacolo (miso<->salsa di soia), maltolo/furaneolo (malto<->sciroppo d'acero/caramello), isotiocianati (wasabi/capperi<->papaya), 1-octen-3-olo (tartufo<->funghi), carvone/fellandrene (aneto<->cumino).",
