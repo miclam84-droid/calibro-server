@@ -9800,9 +9800,559 @@
           "fonte": "Kumquat (Fortunella margarita): limonene dominante con mircene, alpha-pinene ed etil acetato; si mangia con la buccia (avesis inonu kumquat; jmpb 113157)."
         }
       ]
+    },
+    {
+      "ingrediente": "broccolo",
+      "nodo_target": "ing-broccolo",
+      "specie": "Brassica oleracea var. italica",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398).",
+      "composti": [
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "cavolo-solforato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+        },
+        {
+          "composto": "hexyl isothiocyanate",
+          "descrittore": "pungente-broccolo (marcatore)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "aglio-solforato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+        },
+        {
+          "composto": "2-isobutyl-3-methoxypyrazine",
+          "descrittore": "verde-peperone",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "rapa",
+      "nodo_target": "ing-rapa",
+      "specie": "Brassica rapa",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Rapa (Brassica rapa): isotiocianati dominanti (pungenza da glucosinolati); 2-feniletil isotiocianato marcatore (Hong & Kim 2008, Food Sci Technol Res 14(4):377, DOI 10.3136/fstr.14.377). NOTA: lo studio quantifica solo isotiocianati.",
+      "composti": [
+        {
+          "composto": "2-phenylethyl isothiocyanate",
+          "descrittore": "pungente-senape (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rapa (Brassica rapa): isotiocianati dominanti (pungenza da glucosinolati); 2-feniletil isotiocianato marcatore (Hong & Kim 2008, Food Sci Technol Res 14(4):377, DOI 10.3136/fstr.14.377). NOTA: lo studio quantifica solo isotiocianati."
+        },
+        {
+          "composto": "3-butenyl isothiocyanate",
+          "descrittore": "pungente-cavolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rapa (Brassica rapa): isotiocianati dominanti (pungenza da glucosinolati); 2-feniletil isotiocianato marcatore (Hong & Kim 2008, Food Sci Technol Res 14(4):377, DOI 10.3136/fstr.14.377). NOTA: lo studio quantifica solo isotiocianati."
+        },
+        {
+          "composto": "4-pentenyl isothiocyanate",
+          "descrittore": "pungente-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rapa (Brassica rapa): isotiocianati dominanti (pungenza da glucosinolati); 2-feniletil isotiocianato marcatore (Hong & Kim 2008, Food Sci Technol Res 14(4):377, DOI 10.3136/fstr.14.377). NOTA: lo studio quantifica solo isotiocianati."
+        }
+      ]
+    },
+    {
+      "ingrediente": "fava",
+      "nodo_target": "ing-fava",
+      "specie": "Vicia faba",
+      "dominio": "cucina",
+      "CORREGGE": "'fava' (Vicia faba) e' nodo distinto dalla fava tonka (ahn_tonka_bean_seed).",
+      "fonte_ingrediente": "Fava (Vicia faba): aldeidi C5-C7 dominanti (~57% area), nota verde-beany (Oomah/Razafindrainibe/Drover 2014, J Sci Food Agric 94(3):473, DOI 10.1002/jsfa.6272).",
+      "composti": [
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba-beany (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fava (Vicia faba): aldeidi C5-C7 dominanti (~57% area), nota verde-beany (Oomah/Razafindrainibe/Drover 2014, J Sci Food Agric 94(3):473, DOI 10.1002/jsfa.6272)."
+        },
+        {
+          "composto": "pentanal",
+          "descrittore": "verde-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fava (Vicia faba): aldeidi C5-C7 dominanti (~57% area), nota verde-beany (Oomah/Razafindrainibe/Drover 2014, J Sci Food Agric 94(3):473, DOI 10.1002/jsfa.6272)."
+        },
+        {
+          "composto": "(E)-2-heptenal",
+          "descrittore": "grasso-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fava (Vicia faba): aldeidi C5-C7 dominanti (~57% area), nota verde-beany (Oomah/Razafindrainibe/Drover 2014, J Sci Food Agric 94(3):473, DOI 10.1002/jsfa.6272)."
+        },
+        {
+          "composto": "1-hexanol",
+          "descrittore": "verde-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fava (Vicia faba): aldeidi C5-C7 dominanti (~57% area), nota verde-beany (Oomah/Razafindrainibe/Drover 2014, J Sci Food Agric 94(3):473, DOI 10.1002/jsfa.6272)."
+        },
+        {
+          "composto": "2-pentylfuran",
+          "descrittore": "fagiolo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fava (Vicia faba): aldeidi C5-C7 dominanti (~57% area), nota verde-beany (Oomah/Razafindrainibe/Drover 2014, J Sci Food Agric 94(3):473, DOI 10.1002/jsfa.6272)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "grano saraceno",
+      "nodo_target": "ing-grano-saraceno",
+      "specie": "Fagopyrum esculentum",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Grano saraceno (Fagopyrum esculentum): salicilaldeide marcatore caratteristico della specie (OAV~75), con (E,E)-2,4-decadienale e (E)-2-nonenale (Janes & Kreft 2008, Food Chemistry 109(2):293).",
+      "composti": [
+        {
+          "composto": "salicylaldehyde",
+          "descrittore": "mandorla-fieno (firma, marcatore specie)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grano saraceno (Fagopyrum esculentum): salicilaldeide marcatore caratteristico della specie (OAV~75), con (E,E)-2,4-decadienale e (E)-2-nonenale (Janes & Kreft 2008, Food Chemistry 109(2):293)."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grano saraceno (Fagopyrum esculentum): salicilaldeide marcatore caratteristico della specie (OAV~75), con (E,E)-2,4-decadienale e (E)-2-nonenale (Janes & Kreft 2008, Food Chemistry 109(2):293)."
+        },
+        {
+          "composto": "(E)-2-nonenal",
+          "descrittore": "verde-cetriolo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grano saraceno (Fagopyrum esculentum): salicilaldeide marcatore caratteristico della specie (OAV~75), con (E,E)-2,4-decadienale e (E)-2-nonenale (Janes & Kreft 2008, Food Chemistry 109(2):293)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grano saraceno (Fagopyrum esculentum): salicilaldeide marcatore caratteristico della specie (OAV~75), con (E,E)-2,4-decadienale e (E)-2-nonenale (Janes & Kreft 2008, Food Chemistry 109(2):293)."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grano saraceno (Fagopyrum esculentum): salicilaldeide marcatore caratteristico della specie (OAV~75), con (E,E)-2,4-decadienale e (E)-2-nonenale (Janes & Kreft 2008, Food Chemistry 109(2):293)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "segale",
+      "nodo_target": "ing-segale",
+      "specie": "Secale cereale (crosta)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Segale / crosta di pane di segale (Secale cereale): odoranti potenti AEDA -> methional e 3-metilbutanale, con (E)-2-nonenale (Schieberle & Grosch 1994, Z Lebensm Unters Forsch 198:292). NOTA: la segale NON ha 2-acetil-1-pirrolina dominante.",
+      "composti": [
+        {
+          "composto": "methional",
+          "descrittore": "crosta-patata lessa (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Segale / crosta di pane di segale (Secale cereale): odoranti potenti AEDA -> methional e 3-metilbutanale, con (E)-2-nonenale (Schieberle & Grosch 1994, Z Lebensm Unters Forsch 198:292). NOTA: la segale NON ha 2-acetil-1-pirrolina dominante."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato-cioccolato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Segale / crosta di pane di segale (Secale cereale): odoranti potenti AEDA -> methional e 3-metilbutanale, con (E)-2-nonenale (Schieberle & Grosch 1994, Z Lebensm Unters Forsch 198:292). NOTA: la segale NON ha 2-acetil-1-pirrolina dominante."
+        },
+        {
+          "composto": "(E)-2-nonenal",
+          "descrittore": "verde-sego",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Segale / crosta di pane di segale (Secale cereale): odoranti potenti AEDA -> methional e 3-metilbutanale, con (E)-2-nonenale (Schieberle & Grosch 1994, Z Lebensm Unters Forsch 198:292). NOTA: la segale NON ha 2-acetil-1-pirrolina dominante."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Segale / crosta di pane di segale (Secale cereale): odoranti potenti AEDA -> methional e 3-metilbutanale, con (E)-2-nonenale (Schieberle & Grosch 1994, Z Lebensm Unters Forsch 198:292). NOTA: la segale NON ha 2-acetil-1-pirrolina dominante."
+        },
+        {
+          "composto": "acetic acid",
+          "descrittore": "acido-pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Segale / crosta di pane di segale (Secale cereale): odoranti potenti AEDA -> methional e 3-metilbutanale, con (E)-2-nonenale (Schieberle & Grosch 1994, Z Lebensm Unters Forsch 198:292). NOTA: la segale NON ha 2-acetil-1-pirrolina dominante."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pepe di timut",
+      "nodo_target": "ing-pepe-di-timut",
+      "specie": "Zanthoxylum armatum",
+      "dominio": "bar",
+      "fonte_ingrediente": "Pepe di Timut (Zanthoxylum armatum): tioli tipo pompelmo -> 4-mercapto-4-metilpentan-2-one (firma), 3-mercaptoesil acetato, 1-p-mentene-8-tiolo, con limonene e linalolo (Flavour Fragr. J. 2017, 32(5):317, DOI 10.1002/ffj.3381).",
+      "composti": [
+        {
+          "composto": "4-mercapto-4-methylpentan-2-one",
+          "descrittore": "pompelmo-tropicale (firma, tiolo)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Timut (Zanthoxylum armatum): tioli tipo pompelmo -> 4-mercapto-4-metilpentan-2-one (firma), 3-mercaptoesil acetato, 1-p-mentene-8-tiolo, con limonene e linalolo (Flavour Fragr. J. 2017, 32(5):317, DOI 10.1002/ffj.3381)."
+        },
+        {
+          "composto": "3-mercaptohexyl acetate",
+          "descrittore": "frutto della passione-tropicale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Timut (Zanthoxylum armatum): tioli tipo pompelmo -> 4-mercapto-4-metilpentan-2-one (firma), 3-mercaptoesil acetato, 1-p-mentene-8-tiolo, con limonene e linalolo (Flavour Fragr. J. 2017, 32(5):317, DOI 10.1002/ffj.3381)."
+        },
+        {
+          "composto": "1-p-menthene-8-thiol",
+          "descrittore": "pompelmo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Timut (Zanthoxylum armatum): tioli tipo pompelmo -> 4-mercapto-4-metilpentan-2-one (firma), 3-mercaptoesil acetato, 1-p-mentene-8-tiolo, con limonene e linalolo (Flavour Fragr. J. 2017, 32(5):317, DOI 10.1002/ffj.3381)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Timut (Zanthoxylum armatum): tioli tipo pompelmo -> 4-mercapto-4-metilpentan-2-one (firma), 3-mercaptoesil acetato, 1-p-mentene-8-tiolo, con limonene e linalolo (Flavour Fragr. J. 2017, 32(5):317, DOI 10.1002/ffj.3381)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di Timut (Zanthoxylum armatum): tioli tipo pompelmo -> 4-mercapto-4-metilpentan-2-one (firma), 3-mercaptoesil acetato, 1-p-mentene-8-tiolo, con limonene e linalolo (Flavour Fragr. J. 2017, 32(5):317, DOI 10.1002/ffj.3381)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "natto",
+      "nodo_target": "ing-natto",
+      "specie": "soia fermentata (Bacillus subtilis)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Natto (soia fermentata, Bacillus subtilis): pirazine dominanti (~54%); 2,3,5-trimetilpirazina marcatore (ROAV 100), con 2-etil-3,5-dimetilpirazina (Guo/Peng/He 2024, Foods 13(3):415, DOI 10.3390/foods13030415).",
+      "composti": [
+        {
+          "composto": "2,3,5-trimethylpyrazine",
+          "descrittore": "tostato-patata (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natto (soia fermentata, Bacillus subtilis): pirazine dominanti (~54%); 2,3,5-trimetilpirazina marcatore (ROAV 100), con 2-etil-3,5-dimetilpirazina (Guo/Peng/He 2024, Foods 13(3):415, DOI 10.3390/foods13030415)."
+        },
+        {
+          "composto": "2-ethyl-3,5-dimethylpyrazine",
+          "descrittore": "tostato-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natto (soia fermentata, Bacillus subtilis): pirazine dominanti (~54%); 2,3,5-trimetilpirazina marcatore (ROAV 100), con 2-etil-3,5-dimetilpirazina (Guo/Peng/He 2024, Foods 13(3):415, DOI 10.3390/foods13030415)."
+        },
+        {
+          "composto": "2-ethyl-5-methylpyrazine",
+          "descrittore": "dolce-fruttato-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natto (soia fermentata, Bacillus subtilis): pirazine dominanti (~54%); 2,3,5-trimetilpirazina marcatore (ROAV 100), con 2-etil-3,5-dimetilpirazina (Guo/Peng/He 2024, Foods 13(3):415, DOI 10.3390/foods13030415)."
+        },
+        {
+          "composto": "2,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natto (soia fermentata, Bacillus subtilis): pirazine dominanti (~54%); 2,3,5-trimetilpirazina marcatore (ROAV 100), con 2-etil-3,5-dimetilpirazina (Guo/Peng/He 2024, Foods 13(3):415, DOI 10.3390/foods13030415)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natto (soia fermentata, Bacillus subtilis): pirazine dominanti (~54%); 2,3,5-trimetilpirazina marcatore (ROAV 100), con 2-etil-3,5-dimetilpirazina (Guo/Peng/He 2024, Foods 13(3):415, DOI 10.3390/foods13030415)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pecorino",
+      "nodo_target": "ing-pecorino",
+      "specie": "formaggio di pecora stagionato",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Pecorino / formaggio di pecora stagionato: acidi grassi liberi volatili -> acido butirrico (firma), caproico, caprilico, caprico (Pinho/Ferreira 2002, Anal. Chem., DOI 10.1021/ac020296m). NOTA: fonte 'ewe cheese' generico, 4 FFA maggiori.",
+      "composti": [
+        {
+          "composto": "butyric acid",
+          "descrittore": "formaggio-rancido-pungente (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pecorino / formaggio di pecora stagionato: acidi grassi liberi volatili -> acido butirrico (firma), caproico, caprilico, caprico (Pinho/Ferreira 2002, Anal. Chem., DOI 10.1021/ac020296m). NOTA: fonte 'ewe cheese' generico, 4 FFA maggiori."
+        },
+        {
+          "composto": "hexanoic acid",
+          "descrittore": "caprino-formaggio",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pecorino / formaggio di pecora stagionato: acidi grassi liberi volatili -> acido butirrico (firma), caproico, caprilico, caprico (Pinho/Ferreira 2002, Anal. Chem., DOI 10.1021/ac020296m). NOTA: fonte 'ewe cheese' generico, 4 FFA maggiori."
+        },
+        {
+          "composto": "octanoic acid",
+          "descrittore": "cera-rancido",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pecorino / formaggio di pecora stagionato: acidi grassi liberi volatili -> acido butirrico (firma), caproico, caprilico, caprico (Pinho/Ferreira 2002, Anal. Chem., DOI 10.1021/ac020296m). NOTA: fonte 'ewe cheese' generico, 4 FFA maggiori."
+        },
+        {
+          "composto": "decanoic acid",
+          "descrittore": "cera-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pecorino / formaggio di pecora stagionato: acidi grassi liberi volatili -> acido butirrico (firma), caproico, caprilico, caprico (Pinho/Ferreira 2002, Anal. Chem., DOI 10.1021/ac020296m). NOTA: fonte 'ewe cheese' generico, 4 FFA maggiori."
+        }
+      ]
+    },
+    {
+      "ingrediente": "corbezzolo",
+      "nodo_target": "ing-corbezzolo",
+      "specie": "Arbutus unedo (frutto)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Corbezzolo (Arbutus unedo, frutto): alcoli/aldeidi verdi via LOX -> (Z)-3-esen-1-olo (firma), 1-esanolo, esanale (Oliveira/Guedes de Pinho 2011, Food Chemistry 128(3):667, DOI 10.1016/j.foodchem.2011.03.084).",
+      "composti": [
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "verde-foglia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Corbezzolo (Arbutus unedo, frutto): alcoli/aldeidi verdi via LOX -> (Z)-3-esen-1-olo (firma), 1-esanolo, esanale (Oliveira/Guedes de Pinho 2011, Food Chemistry 128(3):667, DOI 10.1016/j.foodchem.2011.03.084)."
+        },
+        {
+          "composto": "1-hexanol",
+          "descrittore": "verde-erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Corbezzolo (Arbutus unedo, frutto): alcoli/aldeidi verdi via LOX -> (Z)-3-esen-1-olo (firma), 1-esanolo, esanale (Oliveira/Guedes de Pinho 2011, Food Chemistry 128(3):667, DOI 10.1016/j.foodchem.2011.03.084)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Corbezzolo (Arbutus unedo, frutto): alcoli/aldeidi verdi via LOX -> (Z)-3-esen-1-olo (firma), 1-esanolo, esanale (Oliveira/Guedes de Pinho 2011, Food Chemistry 128(3):667, DOI 10.1016/j.foodchem.2011.03.084)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-mela acerba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Corbezzolo (Arbutus unedo, frutto): alcoli/aldeidi verdi via LOX -> (Z)-3-esen-1-olo (firma), 1-esanolo, esanale (Oliveira/Guedes de Pinho 2011, Food Chemistry 128(3):667, DOI 10.1016/j.foodchem.2011.03.084)."
+        },
+        {
+          "composto": "hexyl acetate",
+          "descrittore": "fruttato-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Corbezzolo (Arbutus unedo, frutto): alcoli/aldeidi verdi via LOX -> (Z)-3-esen-1-olo (firma), 1-esanolo, esanale (Oliveira/Guedes de Pinho 2011, Food Chemistry 128(3):667, DOI 10.1016/j.foodchem.2011.03.084)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cavolini di bruxelles",
+      "nodo_target": "ing-cavolini-bruxelles",
+      "specie": "Brassica oleracea var. gemmifera",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cavolini di Bruxelles (Brassica oleracea var. gemmifera): solforati (dimetil solfuro/trisolfuro) + isotiocianati + nitrili (Wieczorek & Jelen 2019, Molecules 24(3):391; Park 2024, Front Nutr 11:1409008). NOTA: fonti a livello di CLASSE, nessun composto-firma isolato per l'ingrediente.",
+      "composti": [
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "cavolo-solforato (firma, classe)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolini di Bruxelles (Brassica oleracea var. gemmifera): solforati (dimetil solfuro/trisolfuro) + isotiocianati + nitrili (Wieczorek & Jelen 2019, Molecules 24(3):391; Park 2024, Front Nutr 11:1409008). NOTA: fonti a livello di CLASSE, nessun composto-firma isolato per l'ingrediente."
+        },
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "cavolo-mare",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolini di Bruxelles (Brassica oleracea var. gemmifera): solforati (dimetil solfuro/trisolfuro) + isotiocianati + nitrili (Wieczorek & Jelen 2019, Molecules 24(3):391; Park 2024, Front Nutr 11:1409008). NOTA: fonti a livello di CLASSE, nessun composto-firma isolato per l'ingrediente."
+        },
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-senape",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolini di Bruxelles (Brassica oleracea var. gemmifera): solforati (dimetil solfuro/trisolfuro) + isotiocianati + nitrili (Wieczorek & Jelen 2019, Molecules 24(3):391; Park 2024, Front Nutr 11:1409008). NOTA: fonti a livello di CLASSE, nessun composto-firma isolato per l'ingrediente."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforato-allium",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolini di Bruxelles (Brassica oleracea var. gemmifera): solforati (dimetil solfuro/trisolfuro) + isotiocianati + nitrili (Wieczorek & Jelen 2019, Molecules 24(3):391; Park 2024, Front Nutr 11:1409008). NOTA: fonti a livello di CLASSE, nessun composto-firma isolato per l'ingrediente."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolini di Bruxelles (Brassica oleracea var. gemmifera): solforati (dimetil solfuro/trisolfuro) + isotiocianati + nitrili (Wieczorek & Jelen 2019, Molecules 24(3):391; Park 2024, Front Nutr 11:1409008). NOTA: fonti a livello di CLASSE, nessun composto-firma isolato per l'ingrediente."
+        }
+      ]
+    },
+    {
+      "ingrediente": "biancospino",
+      "nodo_target": "ing-biancospino",
+      "specie": "Crataegus monogyna (fiore)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Biancospino (Crataegus monogyna, fiore): benzaldeide dominante (~82%), con butanale e (E)-2-esenale (Ozderin/Fakir/Donmez 2016, Sumarski list 140(7-8):369, DOI 10.31298/sl.140.7-8.5). NOTA: dati foglia+fiore pooled su 7 taxa.",
+      "composti": [
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Biancospino (Crataegus monogyna, fiore): benzaldeide dominante (~82%), con butanale e (E)-2-esenale (Ozderin/Fakir/Donmez 2016, Sumarski list 140(7-8):369, DOI 10.31298/sl.140.7-8.5). NOTA: dati foglia+fiore pooled su 7 taxa."
+        },
+        {
+          "composto": "butanal",
+          "descrittore": "maltato-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Biancospino (Crataegus monogyna, fiore): benzaldeide dominante (~82%), con butanale e (E)-2-esenale (Ozderin/Fakir/Donmez 2016, Sumarski list 140(7-8):369, DOI 10.31298/sl.140.7-8.5). NOTA: dati foglia+fiore pooled su 7 taxa."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Biancospino (Crataegus monogyna, fiore): benzaldeide dominante (~82%), con butanale e (E)-2-esenale (Ozderin/Fakir/Donmez 2016, Sumarski list 140(7-8):369, DOI 10.31298/sl.140.7-8.5). NOTA: dati foglia+fiore pooled su 7 taxa."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Biancospino (Crataegus monogyna, fiore): benzaldeide dominante (~82%), con butanale e (E)-2-esenale (Ozderin/Fakir/Donmez 2016, Sumarski list 140(7-8):369, DOI 10.31298/sl.140.7-8.5). NOTA: dati foglia+fiore pooled su 7 taxa."
+        }
+      ]
+    },
+    {
+      "ingrediente": "bottarga",
+      "nodo_target": "ing-bottarga",
+      "specie": "uova di muggine essiccate",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Bottarga (uova di muggine essiccate): odoranti delle uova -> methional (firma), acido esanoico, acido acetico, feniletanale (Liu & Fang 2022, Food Chemistry 385:132736, DOI 10.1016/j.foodchem.2022.132736). NOTA: fonte su uova di muggine (stesso materiale).",
+      "composti": [
+        {
+          "composto": "methional",
+          "descrittore": "marino-brodo-patata (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bottarga (uova di muggine essiccate): odoranti delle uova -> methional (firma), acido esanoico, acido acetico, feniletanale (Liu & Fang 2022, Food Chemistry 385:132736, DOI 10.1016/j.foodchem.2022.132736). NOTA: fonte su uova di muggine (stesso materiale)."
+        },
+        {
+          "composto": "hexanoic acid",
+          "descrittore": "formaggio-rancido",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bottarga (uova di muggine essiccate): odoranti delle uova -> methional (firma), acido esanoico, acido acetico, feniletanale (Liu & Fang 2022, Food Chemistry 385:132736, DOI 10.1016/j.foodchem.2022.132736). NOTA: fonte su uova di muggine (stesso materiale)."
+        },
+        {
+          "composto": "acetic acid",
+          "descrittore": "acido-aceto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bottarga (uova di muggine essiccate): odoranti delle uova -> methional (firma), acido esanoico, acido acetico, feniletanale (Liu & Fang 2022, Food Chemistry 385:132736, DOI 10.1016/j.foodchem.2022.132736). NOTA: fonte su uova di muggine (stesso materiale)."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Bottarga (uova di muggine essiccate): odoranti delle uova -> methional (firma), acido esanoico, acido acetico, feniletanale (Liu & Fang 2022, Food Chemistry 385:132736, DOI 10.1016/j.foodchem.2022.132736). NOTA: fonte su uova di muggine (stesso materiale)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (z, FORTE +12): broccolo, rapa, fava, grano saraceno, segale, pepe di timut, natto, pecorino, corbezzolo, cavolini di bruxelles, biancospino, bottarga. Fonti verificate da agente di ricerca: 9 solide + 3 con nota onesta (cavolini=classe, biancospino=pooled, bottarga=uova). SCARTATI per fonte debole (non inventati): pinoli, pepe tasmania, mangostano, violetta, radicchio, fico d'india, rosa canina, topinambur. Ponti: brassiche/isotiocianati (broccolo/rapa/cavolini<->cavolfiore/verza/cavolo nero/senape), aldeidi verdi (fava/corbezzolo<->cluster verde), salicilaldeide (grano saraceno, marcatore), methional+maltato (segale/bottarga<->pane/patata/katsuobushi), tioli pompelmo (timut<->pompelmo/frutto passione), pirazine (natto<->caffe/orzo tostato/lievito), acidi grassi (pecorino<->parmigiano/taleggio), benzaldeide (biancospino<->amarena/mandorla). Fix resolver bundlato: fava forzata a ing-fava (Vicia faba != fava tonka ahn_tonka_bean_seed).",
     "Ondata 24/10 (y): +8 (patata dolce, riso, taleggio, melassa, tamarindo, cavolo nero, vetiver, kumquat) -> supera i 200. Marcatori-firma verificati su fonte reale. Terreno: tubero dolce, cereale, formaggio a crosta lavata, zuccheri cotti, sour-dolce, brassica, radice da bar, agrume. Ponti: maltolo+ionone (patata dolce<->caramello/zucca/giaggiolo), 2-acetil-1-pirrolina (riso<->pandan/pane/mais), metantiolo+tioesteri (taleggio<->cavolfiore/parmigiano), furaneol+sotolon (melassa<->fragola/acero/sherry), furfurale (tamarindo<->caffe/castagna), DTS+isotiocianati (cavolo nero<->cavolfiore/verza/senape), khusimolo (vetiver, terroso nuovo), limonene (kumquat<->agrumi). Fix resolver bundlato: mirtillo rosso forzato a ing-mirtillo-rosso (Vaccinium macrocarpon != ahn_european_cranberry). Nodo distinto: patata dolce != patata.",
     "Ondata 24/10 (x): +8 (mirtillo rosso, nespola, melanzana, kombu, lievito, incenso, ceci, sambuco bacche). Marcatori-firma verificati su fonte reale. Terreno: 3 frutti, verdura affumicata, 2 umami (marino/lievito), resina, legume. Ponti: benzaldeide (mirtillo rosso<->amarena/ciliegia/mandorla), esteri (nespola<->mela/ananas), guaiacolo (melanzana<->te affumicato/katsuobushi/cluster fumo), DMS+nonadienale (kombu<->nori/cetriolo/zucchina), HEMF+methional (lievito<->miso/salsa di soia/patata), alpha-pinene+incensolo (incenso<->ginepro/mastiha resina), pirazine legume (ceci<->pisello/peperone), ossidi di linalolo (sambuco bacche, distinto dal fiore). Nodi distinti: mirtillo rosso != mirtillo, sambuco bacche != fiori di sambuco. Mirtillo rosso ora con fonte sul FRUTTO (non vino).",
     "Ondata 24/10 (w): +8 (giaggiolo, osmanthus, geranio, cassia, nigella, katsuobushi, sherry, ribes rosso). Marcatori-firma verificati su fonte reale. Terreno: botaniche/florali da bar, spezie da forno, umami affumicato, vino ossidativo, frutto. Ponti NUOVI: irones (giaggiolo, violetta polverosa), beta-ionone+gamma-decalattone (osmanthus<->lampone/pesca/albicocca), cis-rose oxide (geranio<->litchi/uva moscato/rosa), cinnamaldeide+cumarina (cassia<->cannella/fava tonka/meliloto), timochinone (nigella, firma unica), guaiacolo (katsuobushi<->te affumicato/cardamomo nero cluster fumo), sotolon (sherry<->fieno greco/acero/levistico/aceto balsamico). Nodi distinti: cassia != cannella Ceylon, nigella != cumino, ribes rosso != ribes nero.",

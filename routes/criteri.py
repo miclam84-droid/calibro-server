@@ -89,7 +89,8 @@ def _risolvi_nodo(cur, ingrediente):
                  "uva moscato": "ing-uva-moscato", "uva moscata": "ing-uva-moscato",
                  "te verde": "ing-te-verde", "tè verde": "ing-te-verde",
                  "malto": "ing-malto", "pandan": "ing-pandan",
-                 "issopo": "ing-issopo", "mirtillo rosso": "ing-mirtillo-rosso"}
+                 "issopo": "ing-issopo", "mirtillo rosso": "ing-mirtillo-rosso",
+                 "fava": "ing-fava"}
     _ov = _OVERRIDE.get(ing)
     if _ov:
         cur.execute(
