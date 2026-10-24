@@ -9407,9 +9407,403 @@
           "fonte": "Sambuco - bacche (Sambucus nigra, frutto): ossidi di linalolo, hotrienolo e (E,Z)-2,6-nonadienale; distinto dal fiore (Springer s00217-005-0122-y elderberry; fch.vut 73639)."
         }
       ]
+    },
+    {
+      "ingrediente": "patata dolce",
+      "nodo_target": "ing-patata-dolce",
+      "specie": "Ipomoea batatas (cotta)",
+      "dominio": "cucina",
+      "CORREGGE": "'patata dolce' (Ipomoea batatas) e' nodo distinto dalla patata (ahn_potato, Solanum).",
+      "fonte_ingrediente": "Patata dolce (Ipomoea batatas, cotta): maltolo e furani (caramello) con beta-ionone e beta-damascenone (carotenoidi) e furfurale (NCBI PMC8620389 roasted sweet potato; MDPI Foods 10:2602).",
+      "composti": [
+        {
+          "composto": "maltol",
+          "descrittore": "caramello-zucchero cotto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata dolce (Ipomoea batatas, cotta): maltolo e furani (caramello) con beta-ionone e beta-damascenone (carotenoidi) e furfurale (NCBI PMC8620389 roasted sweet potato; MDPI Foods 10:2602)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata dolce (Ipomoea batatas, cotta): maltolo e furani (caramello) con beta-ionone e beta-damascenone (carotenoidi) e furfurale (NCBI PMC8620389 roasted sweet potato; MDPI Foods 10:2602)."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "mela cotta-miele",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata dolce (Ipomoea batatas, cotta): maltolo e furani (caramello) con beta-ionone e beta-damascenone (carotenoidi) e furfurale (NCBI PMC8620389 roasted sweet potato; MDPI Foods 10:2602)."
+        },
+        {
+          "composto": "furfural",
+          "descrittore": "mandorla-tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata dolce (Ipomoea batatas, cotta): maltolo e furani (caramello) con beta-ionone e beta-damascenone (carotenoidi) e furfurale (NCBI PMC8620389 roasted sweet potato; MDPI Foods 10:2602)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Patata dolce (Ipomoea batatas, cotta): maltolo e furani (caramello) con beta-ionone e beta-damascenone (carotenoidi) e furfurale (NCBI PMC8620389 roasted sweet potato; MDPI Foods 10:2602)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "riso",
+      "nodo_target": "ing-riso",
+      "specie": "Oryza sativa (aromatico, cotto)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Riso aromatico cotto (Oryza sativa, basmati/jasmine): 2-acetil-1-pirrolina marcatore (pop corn/pandan) con esanale e 2-acetilpirrolo (Food Chemistry 2014 fragrant rice GC-O; pubmed 31619638 jasmine rice).",
+      "composti": [
+        {
+          "composto": "2-acetyl-1-pyrroline",
+          "descrittore": "pop corn-pandan-pane (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Riso aromatico cotto (Oryza sativa, basmati/jasmine): 2-acetil-1-pirrolina marcatore (pop corn/pandan) con esanale e 2-acetilpirrolo (Food Chemistry 2014 fragrant rice GC-O; pubmed 31619638 jasmine rice)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Riso aromatico cotto (Oryza sativa, basmati/jasmine): 2-acetil-1-pirrolina marcatore (pop corn/pandan) con esanale e 2-acetilpirrolo (Food Chemistry 2014 fragrant rice GC-O; pubmed 31619638 jasmine rice)."
+        },
+        {
+          "composto": "2-acetylpyrrole",
+          "descrittore": "nocciola-pane",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Riso aromatico cotto (Oryza sativa, basmati/jasmine): 2-acetil-1-pirrolina marcatore (pop corn/pandan) con esanale e 2-acetilpirrolo (Food Chemistry 2014 fragrant rice GC-O; pubmed 31619638 jasmine rice)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Riso aromatico cotto (Oryza sativa, basmati/jasmine): 2-acetil-1-pirrolina marcatore (pop corn/pandan) con esanale e 2-acetilpirrolo (Food Chemistry 2014 fragrant rice GC-O; pubmed 31619638 jasmine rice)."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Riso aromatico cotto (Oryza sativa, basmati/jasmine): 2-acetil-1-pirrolina marcatore (pop corn/pandan) con esanale e 2-acetilpirrolo (Food Chemistry 2014 fragrant rice GC-O; pubmed 31619638 jasmine rice)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "taleggio",
+      "nodo_target": "ing-taleggio",
+      "specie": "formaggio a crosta lavata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Taleggio (formaggio a crosta lavata): composti solforati -> metantiolo, dimetil disolfuro, S-metil tioacetato (pungente-crosta) con acidi grassi liberi (air.unimi 8744; Pherobase Tilsit J/9099).",
+      "composti": [
+        {
+          "composto": "methanethiol",
+          "descrittore": "solforato-crosta (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Taleggio (formaggio a crosta lavata): composti solforati -> metantiolo, dimetil disolfuro, S-metil tioacetato (pungente-crosta) con acidi grassi liberi (air.unimi 8744; Pherobase Tilsit J/9099)."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforato-allium",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Taleggio (formaggio a crosta lavata): composti solforati -> metantiolo, dimetil disolfuro, S-metil tioacetato (pungente-crosta) con acidi grassi liberi (air.unimi 8744; Pherobase Tilsit J/9099)."
+        },
+        {
+          "composto": "S-methyl thioacetate",
+          "descrittore": "formaggio-solforato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Taleggio (formaggio a crosta lavata): composti solforati -> metantiolo, dimetil disolfuro, S-metil tioacetato (pungente-crosta) con acidi grassi liberi (air.unimi 8744; Pherobase Tilsit J/9099)."
+        },
+        {
+          "composto": "butyric acid",
+          "descrittore": "formaggio-rancido",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Taleggio (formaggio a crosta lavata): composti solforati -> metantiolo, dimetil disolfuro, S-metil tioacetato (pungente-crosta) con acidi grassi liberi (air.unimi 8744; Pherobase Tilsit J/9099)."
+        },
+        {
+          "composto": "2-heptanone",
+          "descrittore": "formaggio-blu",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Taleggio (formaggio a crosta lavata): composti solforati -> metantiolo, dimetil disolfuro, S-metil tioacetato (pungente-crosta) con acidi grassi liberi (air.unimi 8744; Pherobase Tilsit J/9099)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "melassa",
+      "nodo_target": "ing-melassa",
+      "specie": "melassa di canna",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Melassa (di canna): furaneol e maltolo (caramello-bruciato) con sotolon e guaiacolo (hal.univ-reunion 01282079; Springer s00217-021-03707-z; RSC d0ra05963c).",
+      "composti": [
+        {
+          "composto": "furaneol",
+          "descrittore": "caramello-fragola bruciata (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melassa (di canna): furaneol e maltolo (caramello-bruciato) con sotolon e guaiacolo (hal.univ-reunion 01282079; Springer s00217-021-03707-z; RSC d0ra05963c)."
+        },
+        {
+          "composto": "maltol",
+          "descrittore": "caramello-zucchero cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melassa (di canna): furaneol e maltolo (caramello-bruciato) con sotolon e guaiacolo (hal.univ-reunion 01282079; Springer s00217-021-03707-z; RSC d0ra05963c)."
+        },
+        {
+          "composto": "sotolon",
+          "descrittore": "acero-fieno greco-curry",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melassa (di canna): furaneol e maltolo (caramello-bruciato) con sotolon e guaiacolo (hal.univ-reunion 01282079; Springer s00217-021-03707-z; RSC d0ra05963c)."
+        },
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato-fenolico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melassa (di canna): furaneol e maltolo (caramello-bruciato) con sotolon e guaiacolo (hal.univ-reunion 01282079; Springer s00217-021-03707-z; RSC d0ra05963c)."
+        },
+        {
+          "composto": "2-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melassa (di canna): furaneol e maltolo (caramello-bruciato) con sotolon e guaiacolo (hal.univ-reunion 01282079; Springer s00217-021-03707-z; RSC d0ra05963c)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "tamarindo",
+      "nodo_target": "ing-tamarindo",
+      "specie": "Tamarindus indica",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Tamarindo (Tamarindus indica, polpa): furfurale e 2-furanmetanolo (da zuccheri) con metil salicilato; l'acidita' viene dall'acido tartarico (non volatile) (biblat.unam UNACAR 2009; Pherobase Tamarindus).",
+      "composti": [
+        {
+          "composto": "furfural",
+          "descrittore": "mandorla-caramello-tamarindo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tamarindo (Tamarindus indica, polpa): furfurale e 2-furanmetanolo (da zuccheri) con metil salicilato; l'acidita' viene dall'acido tartarico (non volatile) (biblat.unam UNACAR 2009; Pherobase Tamarindus)."
+        },
+        {
+          "composto": "2-furanmethanol",
+          "descrittore": "bruciato-caramello",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tamarindo (Tamarindus indica, polpa): furfurale e 2-furanmetanolo (da zuccheri) con metil salicilato; l'acidita' viene dall'acido tartarico (non volatile) (biblat.unam UNACAR 2009; Pherobase Tamarindus)."
+        },
+        {
+          "composto": "methyl salicylate",
+          "descrittore": "balsamico-wintergreen",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tamarindo (Tamarindus indica, polpa): furfurale e 2-furanmetanolo (da zuccheri) con metil salicilato; l'acidita' viene dall'acido tartarico (non volatile) (biblat.unam UNACAR 2009; Pherobase Tamarindus)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tamarindo (Tamarindus indica, polpa): furfurale e 2-furanmetanolo (da zuccheri) con metil salicilato; l'acidita' viene dall'acido tartarico (non volatile) (biblat.unam UNACAR 2009; Pherobase Tamarindus)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tamarindo (Tamarindus indica, polpa): furfurale e 2-furanmetanolo (da zuccheri) con metil salicilato; l'acidita' viene dall'acido tartarico (non volatile) (biblat.unam UNACAR 2009; Pherobase Tamarindus)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cavolo nero",
+      "nodo_target": "ing-cavolo-nero",
+      "specie": "Brassica oleracea var. acephala",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cavolo nero / kale (Brassica oleracea var. acephala): dimetil trisolfuro, allil isotiocianato e dimetil disolfuro con esanale (ipb bibliotecadigital 'Volatile Constituents Brassica oleracea acephala').",
+      "composti": [
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "cavolo cotto-solforato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolo nero / kale (Brassica oleracea var. acephala): dimetil trisolfuro, allil isotiocianato e dimetil disolfuro con esanale (ipb bibliotecadigital 'Volatile Constituents Brassica oleracea acephala')."
+        },
+        {
+          "composto": "allyl isothiocyanate",
+          "descrittore": "pungente-senape",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolo nero / kale (Brassica oleracea var. acephala): dimetil trisolfuro, allil isotiocianato e dimetil disolfuro con esanale (ipb bibliotecadigital 'Volatile Constituents Brassica oleracea acephala')."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforato-allium",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolo nero / kale (Brassica oleracea var. acephala): dimetil trisolfuro, allil isotiocianato e dimetil disolfuro con esanale (ipb bibliotecadigital 'Volatile Constituents Brassica oleracea acephala')."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolo nero / kale (Brassica oleracea var. acephala): dimetil trisolfuro, allil isotiocianato e dimetil disolfuro con esanale (ipb bibliotecadigital 'Volatile Constituents Brassica oleracea acephala')."
+        },
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "verde-foglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cavolo nero / kale (Brassica oleracea var. acephala): dimetil trisolfuro, allil isotiocianato e dimetil disolfuro con esanale (ipb bibliotecadigital 'Volatile Constituents Brassica oleracea acephala')."
+        }
+      ]
+    },
+    {
+      "ingrediente": "vetiver",
+      "nodo_target": "ing-vetiver",
+      "specie": "Chrysopogon zizanioides (radice)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Vetiver (Chrysopogon zizanioides, radice): khusimolo e isovalencenolo (sesquiterpenoli, terroso-legnoso-radice) con alpha/beta-vetivone (agris 'commercial Vetiveria zizanioides oils'; ijpsonline review).",
+      "composti": [
+        {
+          "composto": "khusimol",
+          "descrittore": "terroso-legnoso-radice (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vetiver (Chrysopogon zizanioides, radice): khusimolo e isovalencenolo (sesquiterpenoli, terroso-legnoso-radice) con alpha/beta-vetivone (agris 'commercial Vetiveria zizanioides oils'; ijpsonline review)."
+        },
+        {
+          "composto": "isovalencenol",
+          "descrittore": "legnoso-radice",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vetiver (Chrysopogon zizanioides, radice): khusimolo e isovalencenolo (sesquiterpenoli, terroso-legnoso-radice) con alpha/beta-vetivone (agris 'commercial Vetiveria zizanioides oils'; ijpsonline review)."
+        },
+        {
+          "composto": "alpha-vetivone",
+          "descrittore": "legnoso-balsamico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vetiver (Chrysopogon zizanioides, radice): khusimolo e isovalencenolo (sesquiterpenoli, terroso-legnoso-radice) con alpha/beta-vetivone (agris 'commercial Vetiveria zizanioides oils'; ijpsonline review)."
+        },
+        {
+          "composto": "beta-vetivone",
+          "descrittore": "legnoso-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vetiver (Chrysopogon zizanioides, radice): khusimolo e isovalencenolo (sesquiterpenoli, terroso-legnoso-radice) con alpha/beta-vetivone (agris 'commercial Vetiveria zizanioides oils'; ijpsonline review)."
+        },
+        {
+          "composto": "khusimone",
+          "descrittore": "terroso-legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vetiver (Chrysopogon zizanioides, radice): khusimolo e isovalencenolo (sesquiterpenoli, terroso-legnoso-radice) con alpha/beta-vetivone (agris 'commercial Vetiveria zizanioides oils'; ijpsonline review)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "kumquat",
+      "nodo_target": "ing-kumquat",
+      "specie": "Fortunella margarita",
+      "dominio": "bar",
+      "fonte_ingrediente": "Kumquat (Fortunella margarita): limonene dominante con mircene, alpha-pinene ed etil acetato; si mangia con la buccia (avesis inonu kumquat; jmpb 113157).",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume-dolce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kumquat (Fortunella margarita): limonene dominante con mircene, alpha-pinene ed etil acetato; si mangia con la buccia (avesis inonu kumquat; jmpb 113157)."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "balsamico-erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kumquat (Fortunella margarita): limonene dominante con mircene, alpha-pinene ed etil acetato; si mangia con la buccia (avesis inonu kumquat; jmpb 113157)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kumquat (Fortunella margarita): limonene dominante con mircene, alpha-pinene ed etil acetato; si mangia con la buccia (avesis inonu kumquat; jmpb 113157)."
+        },
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "solvente-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kumquat (Fortunella margarita): limonene dominante con mircene, alpha-pinene ed etil acetato; si mangia con la buccia (avesis inonu kumquat; jmpb 113157)."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kumquat (Fortunella margarita): limonene dominante con mircene, alpha-pinene ed etil acetato; si mangia con la buccia (avesis inonu kumquat; jmpb 113157)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (y): +8 (patata dolce, riso, taleggio, melassa, tamarindo, cavolo nero, vetiver, kumquat) -> supera i 200. Marcatori-firma verificati su fonte reale. Terreno: tubero dolce, cereale, formaggio a crosta lavata, zuccheri cotti, sour-dolce, brassica, radice da bar, agrume. Ponti: maltolo+ionone (patata dolce<->caramello/zucca/giaggiolo), 2-acetil-1-pirrolina (riso<->pandan/pane/mais), metantiolo+tioesteri (taleggio<->cavolfiore/parmigiano), furaneol+sotolon (melassa<->fragola/acero/sherry), furfurale (tamarindo<->caffe/castagna), DTS+isotiocianati (cavolo nero<->cavolfiore/verza/senape), khusimolo (vetiver, terroso nuovo), limonene (kumquat<->agrumi). Fix resolver bundlato: mirtillo rosso forzato a ing-mirtillo-rosso (Vaccinium macrocarpon != ahn_european_cranberry). Nodo distinto: patata dolce != patata.",
     "Ondata 24/10 (x): +8 (mirtillo rosso, nespola, melanzana, kombu, lievito, incenso, ceci, sambuco bacche). Marcatori-firma verificati su fonte reale. Terreno: 3 frutti, verdura affumicata, 2 umami (marino/lievito), resina, legume. Ponti: benzaldeide (mirtillo rosso<->amarena/ciliegia/mandorla), esteri (nespola<->mela/ananas), guaiacolo (melanzana<->te affumicato/katsuobushi/cluster fumo), DMS+nonadienale (kombu<->nori/cetriolo/zucchina), HEMF+methional (lievito<->miso/salsa di soia/patata), alpha-pinene+incensolo (incenso<->ginepro/mastiha resina), pirazine legume (ceci<->pisello/peperone), ossidi di linalolo (sambuco bacche, distinto dal fiore). Nodi distinti: mirtillo rosso != mirtillo, sambuco bacche != fiori di sambuco. Mirtillo rosso ora con fonte sul FRUTTO (non vino).",
     "Ondata 24/10 (w): +8 (giaggiolo, osmanthus, geranio, cassia, nigella, katsuobushi, sherry, ribes rosso). Marcatori-firma verificati su fonte reale. Terreno: botaniche/florali da bar, spezie da forno, umami affumicato, vino ossidativo, frutto. Ponti NUOVI: irones (giaggiolo, violetta polverosa), beta-ionone+gamma-decalattone (osmanthus<->lampone/pesca/albicocca), cis-rose oxide (geranio<->litchi/uva moscato/rosa), cinnamaldeide+cumarina (cassia<->cannella/fava tonka/meliloto), timochinone (nigella, firma unica), guaiacolo (katsuobushi<->te affumicato/cardamomo nero cluster fumo), sotolon (sherry<->fieno greco/acero/levistico/aceto balsamico). Nodi distinti: cassia != cannella Ceylon, nigella != cumino, ribes rosso != ribes nero.",
     "Ondata 24/10 (v): +8 (cardamomo nero, semi di sedano, uva spina, durian, meliloto, aglio nero, te affumicato, spinaci). Marcatori-firma verificati su fonte reale. Terreno: spezia affumicata, seme-ftalidi, 2 frutti, cumarina, fermentato, te affumicato, verdura verde. Ponti: 1,8-cineolo+guaiacolo (cardamomo nero<->cardamomo/alloro + cluster fumo), ftalidi (semi di sedano<->levistico/sedano), esteri (uva spina<->ananas/physalis/jackfruit), solfuri+esteri (durian<->aglio/cipolla/asafoetida), cumarina (meliloto<->fava tonka), furani+solfuri ridotti (aglio nero<->aglio + cluster Maillard), guaiacolo+longifolene (te affumicato<->caffe/rooibos/cardamomo nero), aldeidi verdi (spinaci<->cluster verde). Nodi distinti: cardamomo nero != cardamomo verde, aglio nero != aglio fresco.",
