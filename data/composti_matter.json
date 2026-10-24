@@ -14954,9 +14954,2183 @@
           "fonte": "Branzino/spigola fresco: firma aldeidi C6-C9 + 1-octen-3-olo + nonadienale = profilo tenue marino-verde-cetriolo. Vidal et al. 2016, J. Sci. Food Agric. 96(4):1181-1193 (DOI 10.1002/jsfa.7201, SPME-GC/MS, crudo fresco). NOTA: la fonte elenca per classi, i singoli composti sono marcatori standard del pesce bianco."
         }
       ]
+    },
+    {
+      "ingrediente": "Brisket (petto)",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Cappello del prete",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Controfiletto di manzo",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Costata di manzo",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Filetto di manzo",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Fiorentina",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Guancia di manzo",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Ossobuco",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Picanha (codone)",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Reale di manzo",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Scamone di manzo",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Tomahawk",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-methyl-3-furanthiol",
+          "descrittore": "carne arrosto-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "bis(2-methyl-3-furyl) disulfide",
+          "descrittore": "carneo intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "nonanal",
+          "descrittore": "grasso-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "erbaceo-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Concentrato di pomodoro",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Passata di pomodoro",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro Ciliegino",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro Corbarino",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro Costoluto Fiorentino",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro Cuore di Bue",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro Datterino",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro del Piennolo del Vesuvio DOP",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro Marinda (Camone)",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro Pelato (conserva)",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro Pizzutello",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Pomodoro San Marzano DOP",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, pomodoro fresco, foglia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "2-isobutiltiazolo",
+          "descrittore": "verde, foglia di pomodoro, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "fruttato, mela cotta, miele",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "1-penten-3-one",
+          "descrittore": "pungente, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fruttato, agrume, fungino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Limone di Amalfi (sfusato)",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume, dolce, fresco (corpo)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        },
+        {
+          "composto": "citral (geranial+neral)",
+          "descrittore": "limone intenso, dolce-pungente (impronta)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume-erbaceo, oleoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "floreale, lilla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Limone di Sorrento IGP",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume, dolce, fresco (corpo)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        },
+        {
+          "composto": "citral (geranial+neral)",
+          "descrittore": "limone intenso, dolce-pungente (impronta)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume-erbaceo, oleoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "floreale, lilla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Prosciutto di Parma DOP",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato/cioccolato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "3-methylbutanoic acid",
+          "descrittore": "aged/sudato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde/grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "gamma-nonalactone",
+          "descrittore": "pesca-dolce-cremoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-one",
+          "descrittore": "fungo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Prosciutto di San Daniele DOP",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato/cioccolato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "3-methylbutanoic acid",
+          "descrittore": "aged/sudato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde/grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "gamma-nonalactone",
+          "descrittore": "pesca-dolce-cremoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-one",
+          "descrittore": "fungo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Speck Alto Adige IGP",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria SPECK propagata (scelta a): lo Speck Alto Adige IGP è il prodotto di categoria 'speck' (fenoli del fumo su base crudo stagionato). Provenienza: prosciutto affumicato. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria SPECK propagata (scelta a): lo Speck Alto Adige IGP è il prodotto di categoria 'speck' (fenoli del fumo su base crudo stagionato). Provenienza: prosciutto affumicato. Stato=derivato."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-speziato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria SPECK propagata (scelta a): lo Speck Alto Adige IGP è il prodotto di categoria 'speck' (fenoli del fumo su base crudo stagionato). Provenienza: prosciutto affumicato. Stato=derivato."
+        },
+        {
+          "composto": "syringol",
+          "descrittore": "legno-fumo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria SPECK propagata (scelta a): lo Speck Alto Adige IGP è il prodotto di categoria 'speck' (fenoli del fumo su base crudo stagionato). Provenienza: prosciutto affumicato. Stato=derivato."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato (da stagionatura)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria SPECK propagata (scelta a): lo Speck Alto Adige IGP è il prodotto di categoria 'speck' (fenoli del fumo su base crudo stagionato). Provenienza: prosciutto affumicato. Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde/grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria SPECK propagata (scelta a): lo Speck Alto Adige IGP è il prodotto di categoria 'speck' (fenoli del fumo su base crudo stagionato). Provenienza: prosciutto affumicato. Stato=derivato."
+        },
+        {
+          "composto": "p-cresol",
+          "descrittore": "fenolico-fumo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria SPECK propagata (scelta a): lo Speck Alto Adige IGP è il prodotto di categoria 'speck' (fenoli del fumo su base crudo stagionato). Provenienza: prosciutto affumicato. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Olio EVO coratina",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde, foglia tagliata, mela verde",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "(Z)-3-esen-1-olo",
+          "descrittore": "verde intenso, erba fresca",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "(E)-2-esen-1-olo",
+          "descrittore": "verde, mandorla verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "1-esanolo",
+          "descrittore": "verde, dolce leggero",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "acetato di (Z)-3-esenile",
+          "descrittore": "verde, fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Olio EVO taggiasca",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde, foglia tagliata, mela verde",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "(Z)-3-esen-1-olo",
+          "descrittore": "verde intenso, erba fresca",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "(E)-2-esen-1-olo",
+          "descrittore": "verde, mandorla verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "1-esanolo",
+          "descrittore": "verde, dolce leggero",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "acetato di (Z)-3-esenile",
+          "descrittore": "verde, fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "olive denocciolate",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde, foglia tagliata, mela verde",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "(Z)-3-esen-1-olo",
+          "descrittore": "verde intenso, erba fresca",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "(E)-2-esen-1-olo",
+          "descrittore": "verde, mandorla verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "1-esanolo",
+          "descrittore": "verde, dolce leggero",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "acetato di (Z)-3-esenile",
+          "descrittore": "verde, fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "olive taggiasche",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde, foglia tagliata, mela verde",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "(Z)-3-esen-1-olo",
+          "descrittore": "verde intenso, erba fresca",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "(E)-2-esen-1-olo",
+          "descrittore": "verde, mandorla verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "1-esanolo",
+          "descrittore": "verde, dolce leggero",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        },
+        {
+          "composto": "acetato di (Z)-3-esenile",
+          "descrittore": "verde, fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Peperone di Carmagnola",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-isobutyl-3-methoxypyrazine",
+          "descrittore": "peperone verde (marcatore, IBMP)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde tagliato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Friggitello",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato.",
+      "composti": [
+        {
+          "composto": "2-isobutyl-3-methoxypyrazine",
+          "descrittore": "peperone verde (marcatore, IBMP)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde tagliato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Fagiolo borlotto",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba tagliata (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "2-pentylfuran",
+          "descrittore": "fagiolo-verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "grasso-fritto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-nonadienal",
+          "descrittore": "grasso-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        }
+      ]
+    },
+    {
+      "ingrediente": "Fagiolo cannellino",
+      "nodo_target": "(nodo esistente per nome)",
+      "specie": "",
+      "dominio": "",
+      "fonte_ingrediente": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato.",
+      "composti": [
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba tagliata (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "2-pentylfuran",
+          "descrittore": "fagiolo-verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "grasso-fritto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        },
+        {
+          "composto": "(E,E)-2,4-nonadienal",
+          "descrittore": "grasso-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (derivato da categoria)",
+          "stato": "derivato",
+          "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (gg, +37 propagazione categoria, scelta a): firme di categoria VERIFICATE propagate ai nodi-varietà clonati, marcate stato=derivato (onesto: profilo condiviso di categoria, non fonte sul singolo). Cluster: 12 tagli di manzo<-manzo, 12 cultivar pomodoro<-pomodoro, 2 limoni IGP<-limone, 2 prosciutti DOP<-prosciutto crudo, 1 speck IGP<-speck, 4 oli/olive<-olio evo, 2 peperoni freschi<-peperone, 2 fagioli<-soia(beany). LASCIATI FUORI apposta: 6 salumi (prodotti distinti, non cloni di una categoria -> ricerca per-prodotto), 12 farine (nessun aroma reale), peperone crusco (essiccato != fresco), radicchi (amaro non-volatile). Ogni varietà ora eredita il profilo di categoria e condivide i composti nel pairing; la provenienza dichiara 'derivato', distinta dalle righe da_fonte.",
     "Ondata 24/10 (ff, +13 teste di categoria, cancello 1): latte, panna, uovo cotto, vino rosso, rum, cioccolato fondente, emmental, tonno, gambero, merluzzo, vongola, sgombro, branzino. Secondo blocco mirato dal diagnostico copertura: basi ad alto traffico finora solo su Ahn grezzo, ora con firma verificata per categoria. FORTI: latte, panna, vino rosso, rum, emmental, gambero. MEDIE con caveat in riga: uovo cotto (il sodo non ha impatto GC-O, firma dal tuorlo a calore secco; H2S non confermato), cioccolato fondente (cDFA non OAV), tonno/merluzzo/sgombro/branzino/vongola (GC-MS reale, descrittori standard; (Z)-4-eptenale è del cotto). SCARTATI senza inventare: champagne (nessuna fonte GC-O dedicata, solo spumante generico), polpo e calamaro fresco (nessuna firma GC-O pubblica per i cefalopodi). Ponti: lattoni cremosi (latte/panna<->burro/cocco/mascarpone), damascenone+esteri (vino rosso/rum<->vino bianco/sidro), aldeidi di Strecker+pirazine (cioccolato fondente/uovo cotto<->cacao/caffè), acido propionico (emmental<->comté/groviera), aldeidi C6-C9 marine+1-octen-3-olo (tonno/merluzzo/sgombro/branzino/vongola<->ostrica/cozza/kombu), 2-acetil-1-pirrolina (gambero<->riso/pandan/pane).",
     "Ondata 24/10 (ee, +15 teste di categoria): tè nero, tè verde, caffè, vino bianco, birra lager, spumante metodo classico, vino porto, manzo, pollo, maiale, mozzarella, provolone, camembert, soia, burro di arachidi. Primo blocco del CANCELLO 1 (diagnostico copertura-proprietaria): ingredienti-base ad alto traffico finora solo su Ahn grezzo, ora con firma verificata per CATEGORIA (non per variante). Fonti reali GC-O/OAV/AEDA. FORTI: caffè, tè verde, lager, porto, mozzarella, camembert, burro di arachidi, pollo, tè nero. Caveat oneste in riga: manzo (firma doppia, ramo carneo da letteratura classica), maiale (DOI da verificare), provolone (proxy Provola dei Nebrodi), soia (matrice isolato/farina), vino bianco/spumante (OAV non numerici/non-Champagne). TOLTA uva: l'agente ha verificato il moscato (già coperto), il nodo scoperto è l'uva generica con altra firma — rimandata a un passaggio cultivar. Ponti: tioli furanici carnei (manzo/pollo<->brodo/katsuobushi), fenoli+furani tostati (caffè<->cacao/orzo tostato/stout), esteri fruttati (vino bianco/spumante/lager<->sakè/sidro), sotolon (porto<->sherry/mirin/fieno greco), FFA (provolone<->pecorino/feta), metantiolo+solfuri (camembert<->cheddar/cavolfiore), beany (soia<->pisello/ceci).",
     "Ondata 24/10 (dd, +15 erbe/fiori/semi/frutti): menta piperita, timo limonato, fiori di acacia, fiori di zucca, nasturzio, malva, semi di girasole tostati, quinoa tostata, sorgo, cherimoya, tamarillo, pomelo, rambutan, acerola, calamansi. Verificati da agente: 14 solidi + calamansi (nota: EO, composizione reale ma senza descrittori sensoriali). SCARTATI senza inventare: papavero/amaranto/miglio (nessuna firma vera, solo ossidazione lipidica comune a tutti i semi), lino (fonte è una review non dataset primario), longan (atti di convegno, descrittori presi in prestito). Ponti: beta-damascenone (malva/sorgo<->rosa/osmanthus/uva/tè), pirazine+furfurali (girasole/quinoa<->caffè/orzo tostato/pane), isotiocianati (nasturzio<->cavolfiore/broccolo/senape/rafano), esteri fruttati (cherimoya/acerola<->ananas/mela/banana), limonene+citronellale (pomelo/calamansi<->agrumi), mentolo (menta piperita<->menta), geraniolo+citrale (timo limonato<->citronella/melissa/verbena), methional (tamarillo<->patata/pane), metossibenzeni (fiori di zucca<->pu-erh shou/melanzana affumicata).",
