@@ -7036,9 +7036,411 @@
           "fonte": "Anacardo tostato (Anacardium occidentale): da Maillard -> pirazine (2,5-dimetilpirazina, 2-etil-3,5-dimetilpirazina), aldeidi di Strecker e furani (EBSCO cashew roasting odor; Croatian J. Food Sci. Tech. 2019)."
         }
       ]
+    },
+    {
+      "ingrediente": "levistico",
+      "nodo_target": "ing-levistico",
+      "specie": "Levisticum officinale",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Levistico (Levisticum officinale): ligustilide e ftalidi (sedano/maggi) come marcatori, con sotolon e beta-fellandrene (agris 64724363; Planta Med 1982 44:207).",
+      "composti": [
+        {
+          "composto": "(Z)-ligustilide",
+          "descrittore": "sedano-maggi (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Levistico (Levisticum officinale): ligustilide e ftalidi (sedano/maggi) come marcatori, con sotolon e beta-fellandrene (agris 64724363; Planta Med 1982 44:207)."
+        },
+        {
+          "composto": "sotolon",
+          "descrittore": "fieno greco-curry-acero",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Levistico (Levisticum officinale): ligustilide e ftalidi (sedano/maggi) come marcatori, con sotolon e beta-fellandrene (agris 64724363; Planta Med 1982 44:207)."
+        },
+        {
+          "composto": "beta-phellandrene",
+          "descrittore": "verde-menta-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Levistico (Levisticum officinale): ligustilide e ftalidi (sedano/maggi) come marcatori, con sotolon e beta-fellandrene (agris 64724363; Planta Med 1982 44:207)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Levistico (Levisticum officinale): ligustilide e ftalidi (sedano/maggi) come marcatori, con sotolon e beta-fellandrene (agris 64724363; Planta Med 1982 44:207)."
+        },
+        {
+          "composto": "3-butylphthalide",
+          "descrittore": "sedano-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Levistico (Levisticum officinale): ligustilide e ftalidi (sedano/maggi) come marcatori, con sotolon e beta-fellandrene (agris 64724363; Planta Med 1982 44:207)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "shiso",
+      "nodo_target": "ing-shiso",
+      "specie": "Perilla frutescens",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Shiso / perilla (Perilla frutescens, chemotipo PA): perillaldeide marcatore, con limonene, beta-cariofillene, linalolo (NCBI PMC11988686; Food Science 2010 31:159).",
+      "composti": [
+        {
+          "composto": "perillaldehyde",
+          "descrittore": "shiso-cumino-verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Shiso / perilla (Perilla frutescens, chemotipo PA): perillaldeide marcatore, con limonene, beta-cariofillene, linalolo (NCBI PMC11988686; Food Science 2010 31:159)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Shiso / perilla (Perilla frutescens, chemotipo PA): perillaldeide marcatore, con limonene, beta-cariofillene, linalolo (NCBI PMC11988686; Food Science 2010 31:159)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Shiso / perilla (Perilla frutescens, chemotipo PA): perillaldeide marcatore, con limonene, beta-cariofillene, linalolo (NCBI PMC11988686; Food Science 2010 31:159)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Shiso / perilla (Perilla frutescens, chemotipo PA): perillaldeide marcatore, con limonene, beta-cariofillene, linalolo (NCBI PMC11988686; Food Science 2010 31:159)."
+        },
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "verde-foglia tagliata",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Shiso / perilla (Perilla frutescens, chemotipo PA): perillaldeide marcatore, con limonene, beta-cariofillene, linalolo (NCBI PMC11988686; Food Science 2010 31:159)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pastinaca",
+      "nodo_target": "ing-pastinaca",
+      "specie": "Pastinaca sativa",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Pastinaca (Pastinaca sativa): terpinolene e miristicina come marcatori, con beta-fellandrene, limonene e apiolo (iris.unipa Molecules 30:3033; Pherobase Pastinaca sativa).",
+      "composti": [
+        {
+          "composto": "terpinolene",
+          "descrittore": "terrosa-dolce-radice (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pastinaca (Pastinaca sativa): terpinolene e miristicina come marcatori, con beta-fellandrene, limonene e apiolo (iris.unipa Molecules 30:3033; Pherobase Pastinaca sativa)."
+        },
+        {
+          "composto": "myristicin",
+          "descrittore": "noce moscata-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pastinaca (Pastinaca sativa): terpinolene e miristicina come marcatori, con beta-fellandrene, limonene e apiolo (iris.unipa Molecules 30:3033; Pherobase Pastinaca sativa)."
+        },
+        {
+          "composto": "beta-phellandrene",
+          "descrittore": "verde-menta-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pastinaca (Pastinaca sativa): terpinolene e miristicina come marcatori, con beta-fellandrene, limonene e apiolo (iris.unipa Molecules 30:3033; Pherobase Pastinaca sativa)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pastinaca (Pastinaca sativa): terpinolene e miristicina come marcatori, con beta-fellandrene, limonene e apiolo (iris.unipa Molecules 30:3033; Pherobase Pastinaca sativa)."
+        },
+        {
+          "composto": "apiole",
+          "descrittore": "prezzemolo-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pastinaca (Pastinaca sativa): terpinolene e miristicina come marcatori, con beta-fellandrene, limonene e apiolo (iris.unipa Molecules 30:3033; Pherobase Pastinaca sativa)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "dattero",
+      "nodo_target": "ing-dattero",
+      "specie": "Phoenix dactylifera",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Dattero maturo (Phoenix dactylifera): gamma-butirrolattone (dolce, prominente nel frutto), con benzaldeide (mandorla), 3-metilbutanale (maltato), etil acetato, 2-feniletanolo (miele-rosa), acetaldeide (MDPI Molecules 30:3029; aroma ripe date fruits Algeria, core 45706051).",
+      "composti": [
+        {
+          "composto": "gamma-butyrolactone",
+          "descrittore": "dolce-lattico (firma, frutto)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Dattero maturo (Phoenix dactylifera): gamma-butirrolattone (dolce, prominente nel frutto), con benzaldeide (mandorla), 3-metilbutanale (maltato), etil acetato, 2-feniletanolo (miele-rosa), acetaldeide (MDPI Molecules 30:3029; aroma ripe date fruits Algeria, core 45706051)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla-zucchero bruciato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Dattero maturo (Phoenix dactylifera): gamma-butirrolattone (dolce, prominente nel frutto), con benzaldeide (mandorla), 3-metilbutanale (maltato), etil acetato, 2-feniletanolo (miele-rosa), acetaldeide (MDPI Molecules 30:3029; aroma ripe date fruits Algeria, core 45706051)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato-cioccolato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Dattero maturo (Phoenix dactylifera): gamma-butirrolattone (dolce, prominente nel frutto), con benzaldeide (mandorla), 3-metilbutanale (maltato), etil acetato, 2-feniletanolo (miele-rosa), acetaldeide (MDPI Molecules 30:3029; aroma ripe date fruits Algeria, core 45706051)."
+        },
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "solvente-ananas",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Dattero maturo (Phoenix dactylifera): gamma-butirrolattone (dolce, prominente nel frutto), con benzaldeide (mandorla), 3-metilbutanale (maltato), etil acetato, 2-feniletanolo (miele-rosa), acetaldeide (MDPI Molecules 30:3029; aroma ripe date fruits Algeria, core 45706051)."
+        },
+        {
+          "composto": "2-phenylethanol",
+          "descrittore": "miele-rosa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Dattero maturo (Phoenix dactylifera): gamma-butirrolattone (dolce, prominente nel frutto), con benzaldeide (mandorla), 3-metilbutanale (maltato), etil acetato, 2-feniletanolo (miele-rosa), acetaldeide (MDPI Molecules 30:3029; aroma ripe date fruits Algeria, core 45706051)."
+        },
+        {
+          "composto": "acetaldehyde",
+          "descrittore": "verde-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Dattero maturo (Phoenix dactylifera): gamma-butirrolattone (dolce, prominente nel frutto), con benzaldeide (mandorla), 3-metilbutanale (maltato), etil acetato, 2-feniletanolo (miele-rosa), acetaldeide (MDPI Molecules 30:3029; aroma ripe date fruits Algeria, core 45706051)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "aceto di mele",
+      "nodo_target": "ing-aceto-di-mele",
+      "specie": "aceto di sidro di mela",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Aceto di mele (apple cider vinegar): acido acetico dominante, etil acetato, con esteri di mela residui (etil esanoato, isoamil acetato) e acetoino (NCBI PMC7763333; Pherobase vinegar C/23038).",
+      "composti": [
+        {
+          "composto": "acetic acid",
+          "descrittore": "pungente-aceto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di mele (apple cider vinegar): acido acetico dominante, etil acetato, con esteri di mela residui (etil esanoato, isoamil acetato) e acetoino (NCBI PMC7763333; Pherobase vinegar C/23038)."
+        },
+        {
+          "composto": "ethyl acetate",
+          "descrittore": "solvente-fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di mele (apple cider vinegar): acido acetico dominante, etil acetato, con esteri di mela residui (etil esanoato, isoamil acetato) e acetoino (NCBI PMC7763333; Pherobase vinegar C/23038)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di mele (apple cider vinegar): acido acetico dominante, etil acetato, con esteri di mela residui (etil esanoato, isoamil acetato) e acetoino (NCBI PMC7763333; Pherobase vinegar C/23038)."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "cremoso-burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di mele (apple cider vinegar): acido acetico dominante, etil acetato, con esteri di mela residui (etil esanoato, isoamil acetato) e acetoino (NCBI PMC7763333; Pherobase vinegar C/23038)."
+        },
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aceto di mele (apple cider vinegar): acido acetico dominante, etil acetato, con esteri di mela residui (etil esanoato, isoamil acetato) e acetoino (NCBI PMC7763333; Pherobase vinegar C/23038)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cicoria tostata",
+      "nodo_target": "ing-cicoria-tostata",
+      "specie": "Cichorium intybus (radice tostata)",
+      "dominio": "bar",
+      "CORREGGE": "'cicoria tostata' (surrogato caffe) e' la radice tostata, nodo distinto da eventuale cicoria fresca.",
+      "fonte_ingrediente": "Cicoria tostata (Cichorium intybus, radice): da Maillard -> furfurale, pirazine, con diidroactinidiolide e maltolo (J. Agric. Food Chem. 2019 'Aromas of chicory coffee', uoregon; agris pirazine cicoria tostata).",
+      "composti": [
+        {
+          "composto": "furfural",
+          "descrittore": "mandorla-pane tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cicoria tostata (Cichorium intybus, radice): da Maillard -> furfurale, pirazine, con diidroactinidiolide e maltolo (J. Agric. Food Chem. 2019 'Aromas of chicory coffee', uoregon; agris pirazine cicoria tostata)."
+        },
+        {
+          "composto": "2,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cicoria tostata (Cichorium intybus, radice): da Maillard -> furfurale, pirazine, con diidroactinidiolide e maltolo (J. Agric. Food Chem. 2019 'Aromas of chicory coffee', uoregon; agris pirazine cicoria tostata)."
+        },
+        {
+          "composto": "dihydroactinidiolide",
+          "descrittore": "te-tabacco-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cicoria tostata (Cichorium intybus, radice): da Maillard -> furfurale, pirazine, con diidroactinidiolide e maltolo (J. Agric. Food Chem. 2019 'Aromas of chicory coffee', uoregon; agris pirazine cicoria tostata)."
+        },
+        {
+          "composto": "maltol",
+          "descrittore": "caramello-zucchero cotto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cicoria tostata (Cichorium intybus, radice): da Maillard -> furfurale, pirazine, con diidroactinidiolide e maltolo (J. Agric. Food Chem. 2019 'Aromas of chicory coffee', uoregon; agris pirazine cicoria tostata)."
+        },
+        {
+          "composto": "5-methylfurfural",
+          "descrittore": "caramello-tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cicoria tostata (Cichorium intybus, radice): da Maillard -> furfurale, pirazine, con diidroactinidiolide e maltolo (J. Agric. Food Chem. 2019 'Aromas of chicory coffee', uoregon; agris pirazine cicoria tostata)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "ruta",
+      "nodo_target": "ing-ruta",
+      "specie": "Ruta graveolens",
+      "dominio": "bar",
+      "fonte_ingrediente": "Ruta (Ruta graveolens): metilchetoni a catena lunga -> 2-undecanone e 2-nonanone dominanti (grappa alla ruta), con 2-nonile acetato (NCBI PMC6891472; chemicalbook 8014-29-7).",
+      "composti": [
+        {
+          "composto": "2-undecanone",
+          "descrittore": "rutaceo-erbaceo-grasso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ruta (Ruta graveolens): metilchetoni a catena lunga -> 2-undecanone e 2-nonanone dominanti (grappa alla ruta), con 2-nonile acetato (NCBI PMC6891472; chemicalbook 8014-29-7)."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "erbaceo-formaggio-grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ruta (Ruta graveolens): metilchetoni a catena lunga -> 2-undecanone e 2-nonanone dominanti (grappa alla ruta), con 2-nonile acetato (NCBI PMC6891472; chemicalbook 8014-29-7)."
+        },
+        {
+          "composto": "2-nonyl acetate",
+          "descrittore": "verde-fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ruta (Ruta graveolens): metilchetoni a catena lunga -> 2-undecanone e 2-nonanone dominanti (grappa alla ruta), con 2-nonile acetato (NCBI PMC6891472; chemicalbook 8014-29-7)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ruta (Ruta graveolens): metilchetoni a catena lunga -> 2-undecanone e 2-nonanone dominanti (grappa alla ruta), con 2-nonile acetato (NCBI PMC6891472; chemicalbook 8014-29-7)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ruta (Ruta graveolens): metilchetoni a catena lunga -> 2-undecanone e 2-nonanone dominanti (grappa alla ruta), con 2-nonile acetato (NCBI PMC6891472; chemicalbook 8014-29-7)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mais dolce",
+      "nodo_target": "ing-mais-dolce",
+      "specie": "Zea mays",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Mais dolce (Zea mays): dimetil solfuro marcatore 'mais cotto', con 2-acetil-1-pirrolina (pop/tostato) ed esanale (agris sweet corn aroma 65de4490; Frontiers in Chemistry 2022 fchem.725208).",
+      "composti": [
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "mais cotto-dolce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mais dolce (Zea mays): dimetil solfuro marcatore 'mais cotto', con 2-acetil-1-pirrolina (pop/tostato) ed esanale (agris sweet corn aroma 65de4490; Frontiers in Chemistry 2022 fchem.725208)."
+        },
+        {
+          "composto": "2-acetyl-1-pyrroline",
+          "descrittore": "pop corn-pane tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mais dolce (Zea mays): dimetil solfuro marcatore 'mais cotto', con 2-acetil-1-pirrolina (pop/tostato) ed esanale (agris sweet corn aroma 65de4490; Frontiers in Chemistry 2022 fchem.725208)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mais dolce (Zea mays): dimetil solfuro marcatore 'mais cotto', con 2-acetil-1-pirrolina (pop/tostato) ed esanale (agris sweet corn aroma 65de4490; Frontiers in Chemistry 2022 fchem.725208)."
+        },
+        {
+          "composto": "2-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mais dolce (Zea mays): dimetil solfuro marcatore 'mais cotto', con 2-acetil-1-pirrolina (pop/tostato) ed esanale (agris sweet corn aroma 65de4490; Frontiers in Chemistry 2022 fchem.725208)."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mais dolce (Zea mays): dimetil solfuro marcatore 'mais cotto', con 2-acetil-1-pirrolina (pop/tostato) ed esanale (agris sweet corn aroma 65de4490; Frontiers in Chemistry 2022 fchem.725208)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (s): +8 (levistico, shiso, pastinaca, dattero, aceto di mele, cicoria tostata, ruta, mais dolce). Marcatori-firma verificati su fonte reale. Terreno: Apiacee, erba distintiva, radice dolce, frutto dolce, acido, tostato, botanica a metilchetoni, cereale solforato. Ponti: ligustilide/sotolon (levistico<->sedano/fieno greco), perillaldeide (shiso, distintivo), terpinolene/miristicina (pastinaca<->carota/noce moscata/prezzemolo), gamma-butirrolattone+benzaldeide (dattero<->mandorla/miele/rosa), acido acetico+esteri (aceto di mele<->aceto balsamico/mela), furfurale+pirazine+diidroactinidiolide (cicoria tostata<->caffe/te nero/rooibos/cluster tostato), metilchetoni (ruta, distintivo), dimetil solfuro+2-acetil-1-pirrolina (mais dolce<->pomodoro/patata/pandan/pane).",
     "Ondata 24/10 (r): +8 (senape, crescione, achillea, nepitella, grani del paradiso, pisello, patata, anacardo). Marcatori-firma verificati su fonte reale. Terreno: brassiche/isotiocianati, botaniche amaro, spezia pungente, verdure verdi-pirazina, nut tostato. Ponti: isotiocianati (senape/crescione<->wasabi/rafano/cavolfiore/capperi), camazulene (achillea<->camomilla), pulegone/mentone (nepitella<->menta), umulene/cariofillene (grani del paradiso<->luppolo/pepe), metossipirazina+esanale (pisello<->peperone), methional+solfuri (patata<->cavolfiore/asparago/pane), pirazine (anacardo<->arachide/nocciola tostata/cacao/caffe/castagna/orzo tostato). In questa ondata anche fix resolver: issopo forzato a ing-issopo (Hyssopus officinalis, non il nodo ahn_anise_hyssop = Agastache).",
     "Ondata 24/10 (q): +8 (pepe di sichuan, porro, cavolfiore, issopo, mastiha, castagna, feijoa, orzo tostato). Marcatori-firma verificati su fonte reale. Terreno: spezia pungente/solforati salati/erbe/resina/tostati Maillard/tropicale. Ponti: limonene+linalolo (sichuan<->agrumi/coriandolo), solfuri allium (porro<->aglio/cipolla/erba cipollina), dimetil solfuri+isotiocianati (cavolfiore<->asparago/wasabi/rafano/porro), pinocanfone+1,8-cineolo (issopo<->rosmarino/alloro), alpha-pinene+verbenone (mastiha<->ginepro/rosmarino), furfurale+maltolo+pirazine (castagna/orzo tostato<->caffe/malto/pane/cacao/arachide tostata), esteri+(E)-2-esenale (feijoa<->ananas/mela/fragola).",
     "Ondata 24/10 (p): +8 (carota, pimento/allspice, liquirizia, rafano, carvi, noce, cachi, santoreggia). Marcatori-firma verificati su fonte reale. Terreno: radici/spezie calde/anice/pungenti/nut/frutto/erba. Ponti: terpeni ombrellifere (carota<->coriandolo/cumino/aneto/sedano), eugenolo (pimento<->chiodi di garofano/alloro/cannella), anetolo+estragolo (liquirizia<->anice stellato/finocchio/dragoncello), allil isotiocianato (rafano<->wasabi/capperi), carvone (carvi<->aneto/menta), aldeidi grasse+1-octen-3-olo (noce<->funghi/tartufo), (E)-2-esenale (cachi<->mela/kiwi/cetriolo), carvacrolo/timolo (santoreggia<->origano/timo). Scartato mirtillo rosso: unica fonte solida era su VINO non sul frutto (fonte debole, come genziana/china).",
