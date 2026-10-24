@@ -12823,9 +12823,633 @@
           "fonte": "Doubanjiang: firma etil 3-metilbutanoato (OAV 6229) + beta-damascenone (OAV 3345) + IBMP (OAV 2490) + sotolon (OAV 1602). Li et al., Molecules 2019, 24(17), 3107 (DOI 10.3390/molecules24173107, AEDA + OAV + sensoriale). Fonte forte."
         }
       ]
+    },
+    {
+      "ingrediente": "menta piperita",
+      "nodo_target": "ing-menta-piperita",
+      "specie": "Mentha x piperita",
+      "dominio": "bar",
+      "fonte_ingrediente": "Menta piperita: firma mentolo (~45% dell'idrodistillato). Taherpour et al., J. Anal. Sci. Technol. 2017, 8:11 (DOI 10.1186/s40543-017-0122-0).",
+      "composti": [
+        {
+          "composto": "menthol",
+          "descrittore": "mentolato-fresco-freddo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Menta piperita: firma mentolo (~45% dell'idrodistillato). Taherpour et al., J. Anal. Sci. Technol. 2017, 8:11 (DOI 10.1186/s40543-017-0122-0)."
+        },
+        {
+          "composto": "menthone",
+          "descrittore": "mentolato legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Menta piperita: firma mentolo (~45% dell'idrodistillato). Taherpour et al., J. Anal. Sci. Technol. 2017, 8:11 (DOI 10.1186/s40543-017-0122-0)."
+        },
+        {
+          "composto": "menthofuran",
+          "descrittore": "muschiato-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Menta piperita: firma mentolo (~45% dell'idrodistillato). Taherpour et al., J. Anal. Sci. Technol. 2017, 8:11 (DOI 10.1186/s40543-017-0122-0)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Menta piperita: firma mentolo (~45% dell'idrodistillato). Taherpour et al., J. Anal. Sci. Technol. 2017, 8:11 (DOI 10.1186/s40543-017-0122-0)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "timo limonato",
+      "nodo_target": "ing-timo-limonato",
+      "specie": "Thymus citriodorus (chemotipo citrato)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Timo limonato: firma geraniolo (38,5%) + citrale/neral (29,2%) = carattere limone. Duman & Özcan, J. Essent. Oil Bear. Plants 2017, 20(5):1310 (DOI 10.1080/0972060X.2017.1388751). NOTA: chemotipo variabile — altri campioni (Toncer et al. 2017) sono a terpinolene senza limone; serve la pianta giusta.",
+      "composti": [
+        {
+          "composto": "geraniol",
+          "descrittore": "rosa-agrume (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Timo limonato: firma geraniolo (38,5%) + citrale/neral (29,2%) = carattere limone. Duman & Özcan, J. Essent. Oil Bear. Plants 2017, 20(5):1310 (DOI 10.1080/0972060X.2017.1388751). NOTA: chemotipo variabile — altri campioni (Toncer et al. 2017) sono a terpinolene senza limone; serve la pianta giusta."
+        },
+        {
+          "composto": "neral",
+          "descrittore": "limone (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Timo limonato: firma geraniolo (38,5%) + citrale/neral (29,2%) = carattere limone. Duman & Özcan, J. Essent. Oil Bear. Plants 2017, 20(5):1310 (DOI 10.1080/0972060X.2017.1388751). NOTA: chemotipo variabile — altri campioni (Toncer et al. 2017) sono a terpinolene senza limone; serve la pianta giusta."
+        },
+        {
+          "composto": "nerol",
+          "descrittore": "floreale-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Timo limonato: firma geraniolo (38,5%) + citrale/neral (29,2%) = carattere limone. Duman & Özcan, J. Essent. Oil Bear. Plants 2017, 20(5):1310 (DOI 10.1080/0972060X.2017.1388751). NOTA: chemotipo variabile — altri campioni (Toncer et al. 2017) sono a terpinolene senza limone; serve la pianta giusta."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Timo limonato: firma geraniolo (38,5%) + citrale/neral (29,2%) = carattere limone. Duman & Özcan, J. Essent. Oil Bear. Plants 2017, 20(5):1310 (DOI 10.1080/0972060X.2017.1388751). NOTA: chemotipo variabile — altri campioni (Toncer et al. 2017) sono a terpinolene senza limone; serve la pianta giusta."
+        }
+      ]
+    },
+    {
+      "ingrediente": "fiori di acacia",
+      "nodo_target": "ing-fiori-di-acacia",
+      "specie": "Robinia pseudoacacia (fiore)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Fiori di acacia/robinia: firma linalolo (20,4%). Kicel et al., Acta Pol. Pharm. 2015, 72(6):1217 (idrodistillato, dichiarato preliminare; nessuna benzaldeide nonostante attesa).",
+      "composti": [
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-lavanda (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di acacia/robinia: firma linalolo (20,4%). Kicel et al., Acta Pol. Pharm. 2015, 72(6):1217 (idrodistillato, dichiarato preliminare; nessuna benzaldeide nonostante attesa)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di acacia/robinia: firma linalolo (20,4%). Kicel et al., Acta Pol. Pharm. 2015, 72(6):1217 (idrodistillato, dichiarato preliminare; nessuna benzaldeide nonostante attesa)."
+        },
+        {
+          "composto": "hexahydrofarnesyl acetone",
+          "descrittore": "gelsomino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di acacia/robinia: firma linalolo (20,4%). Kicel et al., Acta Pol. Pharm. 2015, 72(6):1217 (idrodistillato, dichiarato preliminare; nessuna benzaldeide nonostante attesa)."
+        },
+        {
+          "composto": "linalool oxide",
+          "descrittore": "floreale-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di acacia/robinia: firma linalolo (20,4%). Kicel et al., Acta Pol. Pharm. 2015, 72(6):1217 (idrodistillato, dichiarato preliminare; nessuna benzaldeide nonostante attesa)."
+        },
+        {
+          "composto": "methyl anthranilate",
+          "descrittore": "fiore d'arancio (tracce)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di acacia/robinia: firma linalolo (20,4%). Kicel et al., Acta Pol. Pharm. 2015, 72(6):1217 (idrodistillato, dichiarato preliminare; nessuna benzaldeide nonostante attesa)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "fiori di zucca",
+      "nodo_target": "ing-fiori-di-zucca",
+      "specie": "Cucurbita pepo (fiore)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Fiori di zucca: firma 1,4-dimetossibenzene (principale sorgente d'odore, dal nettare). Mena Granero et al., J. Chem. Ecol. 2005, 31(10):2309 (DOI 10.1007/s10886-005-7103-2, HS-SPME-GC-MS/MS su fiore di zucchino).",
+      "composti": [
+        {
+          "composto": "1,4-dimethoxybenzene",
+          "descrittore": "dolce-floreale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di zucca: firma 1,4-dimetossibenzene (principale sorgente d'odore, dal nettare). Mena Granero et al., J. Chem. Ecol. 2005, 31(10):2309 (DOI 10.1007/s10886-005-7103-2, HS-SPME-GC-MS/MS su fiore di zucchino)."
+        },
+        {
+          "composto": "1,2,4-trimethoxybenzene",
+          "descrittore": "floreale-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Fiori di zucca: firma 1,4-dimetossibenzene (principale sorgente d'odore, dal nettare). Mena Granero et al., J. Chem. Ecol. 2005, 31(10):2309 (DOI 10.1007/s10886-005-7103-2, HS-SPME-GC-MS/MS su fiore di zucchino)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "nasturzio",
+      "nodo_target": "ing-nasturzio",
+      "specie": "Tropaeolum majus (fiore)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Nasturzio/cappuccina: firma benzil isotiocianato = 95% del profilo volatile del fiore. Perestrelo et al., Life 2025, 15:1053 (DOI 10.3390/life15071053, molto recente).",
+      "composti": [
+        {
+          "composto": "benzyl isothiocyanate",
+          "descrittore": "pungente-cavolo-rafano (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nasturzio/cappuccina: firma benzil isotiocianato = 95% del profilo volatile del fiore. Perestrelo et al., Life 2025, 15:1053 (DOI 10.3390/life15071053, molto recente)."
+        },
+        {
+          "composto": "benzonitrile",
+          "descrittore": "mandorla amara",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nasturzio/cappuccina: firma benzil isotiocianato = 95% del profilo volatile del fiore. Perestrelo et al., Life 2025, 15:1053 (DOI 10.3390/life15071053, molto recente)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nasturzio/cappuccina: firma benzil isotiocianato = 95% del profilo volatile del fiore. Perestrelo et al., Life 2025, 15:1053 (DOI 10.3390/life15071053, molto recente)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nasturzio/cappuccina: firma benzil isotiocianato = 95% del profilo volatile del fiore. Perestrelo et al., Life 2025, 15:1053 (DOI 10.3390/life15071053, molto recente)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "malva",
+      "nodo_target": "ing-malva",
+      "specie": "Malva sylvestris (fiore secco)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Malva: firma beta-damascenone (OAV 50.700, FD più alto). Usami et al., J. Oleo Sci. 2013, 62(8):563 (DOI 10.5650/jos.62.563, GC-MS-O con OAV).",
+      "composti": [
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "dolce-mela cotta (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malva: firma beta-damascenone (OAV 50.700, FD più alto). Usami et al., J. Oleo Sci. 2013, 62(8):563 (DOI 10.5650/jos.62.563, GC-MS-O con OAV)."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malva: firma beta-damascenone (OAV 50.700, FD più alto). Usami et al., J. Oleo Sci. 2013, 62(8):563 (DOI 10.5650/jos.62.563, GC-MS-O con OAV)."
+        },
+        {
+          "composto": "(E)-beta-ocimene",
+          "descrittore": "speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malva: firma beta-damascenone (OAV 50.700, FD più alto). Usami et al., J. Oleo Sci. 2013, 62(8):563 (DOI 10.5650/jos.62.563, GC-MS-O con OAV)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Malva: firma beta-damascenone (OAV 50.700, FD più alto). Usami et al., J. Oleo Sci. 2013, 62(8):563 (DOI 10.5650/jos.62.563, GC-MS-O con OAV)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "semi di girasole tostati",
+      "nodo_target": "ing-semi-di-girasole-tostati",
+      "specie": "Helianthus annuus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Semi di girasole tostati: firma pirazine (nota nocciolato-tostato da Maillard). Guo et al., Food Mater. Res. 2024, 4:e012 (DOI 10.48130/fmr-0024-0004, HS-SPME-GC-MS su seme germinato tostato).",
+      "composti": [
+        {
+          "composto": "2,5-dimethylpyrazine",
+          "descrittore": "nocciolato-tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di girasole tostati: firma pirazine (nota nocciolato-tostato da Maillard). Guo et al., Food Mater. Res. 2024, 4:e012 (DOI 10.48130/fmr-0024-0004, HS-SPME-GC-MS su seme germinato tostato)."
+        },
+        {
+          "composto": "2-ethyl-3,5-dimethylpyrazine",
+          "descrittore": "tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di girasole tostati: firma pirazine (nota nocciolato-tostato da Maillard). Guo et al., Food Mater. Res. 2024, 4:e012 (DOI 10.48130/fmr-0024-0004, HS-SPME-GC-MS su seme germinato tostato)."
+        },
+        {
+          "composto": "furfural",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di girasole tostati: firma pirazine (nota nocciolato-tostato da Maillard). Guo et al., Food Mater. Res. 2024, 4:e012 (DOI 10.48130/fmr-0024-0004, HS-SPME-GC-MS su seme germinato tostato)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato (Strecker)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di girasole tostati: firma pirazine (nota nocciolato-tostato da Maillard). Guo et al., Food Mater. Res. 2024, 4:e012 (DOI 10.48130/fmr-0024-0004, HS-SPME-GC-MS su seme germinato tostato)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "quinoa tostata",
+      "nodo_target": "ing-quinoa-tostata",
+      "specie": "Chenopodium quinoa",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Quinoa tostata: firma furfurali/pirazine da tostatura (caramello-cacao-nocciola). Zheng et al., Food Chem. X 2024, 22:101441 (tostatura/germinazione) + Yang et al., Food Chem. 2021, 348:129086 (DOI 10.1016/j.foodchem.2021.129086). NOTA: composti elencati dallo studio cotto 2021.",
+      "composti": [
+        {
+          "composto": "furfural",
+          "descrittore": "caramello (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Quinoa tostata: firma furfurali/pirazine da tostatura (caramello-cacao-nocciola). Zheng et al., Food Chem. X 2024, 22:101441 (tostatura/germinazione) + Yang et al., Food Chem. 2021, 348:129086 (DOI 10.1016/j.foodchem.2021.129086). NOTA: composti elencati dallo studio cotto 2021."
+        },
+        {
+          "composto": "5-methylfurfural",
+          "descrittore": "caramello-tostato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Quinoa tostata: firma furfurali/pirazine da tostatura (caramello-cacao-nocciola). Zheng et al., Food Chem. X 2024, 22:101441 (tostatura/germinazione) + Yang et al., Food Chem. 2021, 348:129086 (DOI 10.1016/j.foodchem.2021.129086). NOTA: composti elencati dallo studio cotto 2021."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Quinoa tostata: firma furfurali/pirazine da tostatura (caramello-cacao-nocciola). Zheng et al., Food Chem. X 2024, 22:101441 (tostatura/germinazione) + Yang et al., Food Chem. 2021, 348:129086 (DOI 10.1016/j.foodchem.2021.129086). NOTA: composti elencati dallo studio cotto 2021."
+        },
+        {
+          "composto": "(E)-2-octenal",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Quinoa tostata: firma furfurali/pirazine da tostatura (caramello-cacao-nocciola). Zheng et al., Food Chem. X 2024, 22:101441 (tostatura/germinazione) + Yang et al., Food Chem. 2021, 348:129086 (DOI 10.1016/j.foodchem.2021.129086). NOTA: composti elencati dallo studio cotto 2021."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sorgo",
+      "nodo_target": "ing-sorgo",
+      "specie": "Sorghum bicolor (cotto)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Sorgo cotto: firma beta-damascenone per potenza (soglia 0,002 ng/L); hexanoic acid/benzaldeide/alpha-cedrene per intensità GC-O. Chen et al., Molecules 2021, 26(16):4796 (DOI 10.3390/molecules26164796, GCxGC-TOF-MS + GC-O).",
+      "composti": [
+        {
+          "composto": "beta-damascenone",
+          "descrittore": "miele-dolce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sorgo cotto: firma beta-damascenone per potenza (soglia 0,002 ng/L); hexanoic acid/benzaldeide/alpha-cedrene per intensità GC-O. Chen et al., Molecules 2021, 26(16):4796 (DOI 10.3390/molecules26164796, GCxGC-TOF-MS + GC-O)."
+        },
+        {
+          "composto": "hexanoic acid",
+          "descrittore": "formaggio-sudore",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sorgo cotto: firma beta-damascenone per potenza (soglia 0,002 ng/L); hexanoic acid/benzaldeide/alpha-cedrene per intensità GC-O. Chen et al., Molecules 2021, 26(16):4796 (DOI 10.3390/molecules26164796, GCxGC-TOF-MS + GC-O)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sorgo cotto: firma beta-damascenone per potenza (soglia 0,002 ng/L); hexanoic acid/benzaldeide/alpha-cedrene per intensità GC-O. Chen et al., Molecules 2021, 26(16):4796 (DOI 10.3390/molecules26164796, GCxGC-TOF-MS + GC-O)."
+        },
+        {
+          "composto": "alpha-cedrene",
+          "descrittore": "verde-cipresso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sorgo cotto: firma beta-damascenone per potenza (soglia 0,002 ng/L); hexanoic acid/benzaldeide/alpha-cedrene per intensità GC-O. Chen et al., Molecules 2021, 26(16):4796 (DOI 10.3390/molecules26164796, GCxGC-TOF-MS + GC-O)."
+        },
+        {
+          "composto": "4-vinylguaiacol",
+          "descrittore": "affumicato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sorgo cotto: firma beta-damascenone per potenza (soglia 0,002 ng/L); hexanoic acid/benzaldeide/alpha-cedrene per intensità GC-O. Chen et al., Molecules 2021, 26(16):4796 (DOI 10.3390/molecules26164796, GCxGC-TOF-MS + GC-O)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cherimoya",
+      "nodo_target": "ing-cherimoya",
+      "specie": "Annona cherimola",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cherimoya/annona: firma esteri butanoati (profilo fruttato-dolce). Ferreira, Perestrelo & Câmara, Talanta 2009, 77(3):1087 (DOI 10.1016/j.talanta.2008.08.011, SPME-GC-qMS; nessun descrittore sensoriale assegnato nel paper).",
+      "composti": [
+        {
+          "composto": "methyl butanoate",
+          "descrittore": "fruttato-mela (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cherimoya/annona: firma esteri butanoati (profilo fruttato-dolce). Ferreira, Perestrelo & Câmara, Talanta 2009, 77(3):1087 (DOI 10.1016/j.talanta.2008.08.011, SPME-GC-qMS; nessun descrittore sensoriale assegnato nel paper)."
+        },
+        {
+          "composto": "butyl butanoate",
+          "descrittore": "fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cherimoya/annona: firma esteri butanoati (profilo fruttato-dolce). Ferreira, Perestrelo & Câmara, Talanta 2009, 77(3):1087 (DOI 10.1016/j.talanta.2008.08.011, SPME-GC-qMS; nessun descrittore sensoriale assegnato nel paper)."
+        },
+        {
+          "composto": "3-methylbutyl butanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cherimoya/annona: firma esteri butanoati (profilo fruttato-dolce). Ferreira, Perestrelo & Câmara, Talanta 2009, 77(3):1087 (DOI 10.1016/j.talanta.2008.08.011, SPME-GC-qMS; nessun descrittore sensoriale assegnato nel paper)."
+        },
+        {
+          "composto": "3-methylbutyl 3-methylbutanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cherimoya/annona: firma esteri butanoati (profilo fruttato-dolce). Ferreira, Perestrelo & Câmara, Talanta 2009, 77(3):1087 (DOI 10.1016/j.talanta.2008.08.011, SPME-GC-qMS; nessun descrittore sensoriale assegnato nel paper)."
+        },
+        {
+          "composto": "5-hydroxymethylfurfural",
+          "descrittore": "caramello",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cherimoya/annona: firma esteri butanoati (profilo fruttato-dolce). Ferreira, Perestrelo & Câmara, Talanta 2009, 77(3):1087 (DOI 10.1016/j.talanta.2008.08.011, SPME-GC-qMS; nessun descrittore sensoriale assegnato nel paper)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "tamarillo",
+      "nodo_target": "ing-tamarillo",
+      "specie": "Solanum betaceum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Tamarillo: firma methional (principale contributore d'aroma, polpa e buccia). Diep et al., Foods 2021, 10(9):2212 (DOI 10.3390/foods10092212).",
+      "composti": [
+        {
+          "composto": "methional",
+          "descrittore": "patata cotta (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tamarillo: firma methional (principale contributore d'aroma, polpa e buccia). Diep et al., Foods 2021, 10(9):2212 (DOI 10.3390/foods10092212)."
+        },
+        {
+          "composto": "methyl hexanoate",
+          "descrittore": "fruttato (polpa)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tamarillo: firma methional (principale contributore d'aroma, polpa e buccia). Diep et al., Foods 2021, 10(9):2212 (DOI 10.3390/foods10092212)."
+        },
+        {
+          "composto": "(E)-3-hexen-1-ol",
+          "descrittore": "verde (buccia)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Tamarillo: firma methional (principale contributore d'aroma, polpa e buccia). Diep et al., Foods 2021, 10(9):2212 (DOI 10.3390/foods10092212)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pomelo",
+      "nodo_target": "ing-pomelo",
+      "specie": "Citrus maxima",
+      "dominio": "bar",
+      "fonte_ingrediente": "Pomelo: firma limonene (buccia); hexanal + esenoli (polpa). Zhang et al., Fruit Research 2023, 3:6 (DOI 10.48130/FruRes-2023-0006). NOTA ONESTA: la nootkatone NON è stata trovata in questo studio (solo citata in intro) — non attribuirla al pomelo come firma.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume-fresco (firma buccia)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pomelo: firma limonene (buccia); hexanal + esenoli (polpa). Zhang et al., Fruit Research 2023, 3:6 (DOI 10.48130/FruRes-2023-0006). NOTA ONESTA: la nootkatone NON è stata trovata in questo studio (solo citata in intro) — non attribuirla al pomelo come firma."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde (firma polpa)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pomelo: firma limonene (buccia); hexanal + esenoli (polpa). Zhang et al., Fruit Research 2023, 3:6 (DOI 10.48130/FruRes-2023-0006). NOTA ONESTA: la nootkatone NON è stata trovata in questo studio (solo citata in intro) — non attribuirla al pomelo come firma."
+        },
+        {
+          "composto": "beta-myrcene",
+          "descrittore": "terroso-umido",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pomelo: firma limonene (buccia); hexanal + esenoli (polpa). Zhang et al., Fruit Research 2023, 3:6 (DOI 10.48130/FruRes-2023-0006). NOTA ONESTA: la nootkatone NON è stata trovata in questo studio (solo citata in intro) — non attribuirla al pomelo come firma."
+        },
+        {
+          "composto": "octanal",
+          "descrittore": "agrume-fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pomelo: firma limonene (buccia); hexanal + esenoli (polpa). Zhang et al., Fruit Research 2023, 3:6 (DOI 10.48130/FruRes-2023-0006). NOTA ONESTA: la nootkatone NON è stata trovata in questo studio (solo citata in intro) — non attribuirla al pomelo come firma."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pomelo: firma limonene (buccia); hexanal + esenoli (polpa). Zhang et al., Fruit Research 2023, 3:6 (DOI 10.48130/FruRes-2023-0006). NOTA ONESTA: la nootkatone NON è stata trovata in questo studio (solo citata in intro) — non attribuirla al pomelo come firma."
+        }
+      ]
+    },
+    {
+      "ingrediente": "rambutan",
+      "nodo_target": "ing-rambutan",
+      "specie": "Nephelium lappaceum (polpa)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Rambutan (polpa fresca): firma isocitronellolo (volatile più abbondante, cv Rong-rien); storicamente beta-damascenone (Ong et al. 1998, cv Jitlee). Laohakunjit et al., HortScience 2007, 42(2):309 (HS-SPME-GC-MS). NOTA ONESTA: il paper recente Zhou et al. 2024 è sull'OLIO DI SEMI (parte diversa) — non usarlo come firma del frutto.",
+      "composti": [
+        {
+          "composto": "isocitronellol",
+          "descrittore": "floreale-rosa (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rambutan (polpa fresca): firma isocitronellolo (volatile più abbondante, cv Rong-rien); storicamente beta-damascenone (Ong et al. 1998, cv Jitlee). Laohakunjit et al., HortScience 2007, 42(2):309 (HS-SPME-GC-MS). NOTA ONESTA: il paper recente Zhou et al. 2024 è sull'OLIO DI SEMI (parte diversa) — non usarlo come firma del frutto."
+        },
+        {
+          "composto": "acetoin",
+          "descrittore": "burroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rambutan (polpa fresca): firma isocitronellolo (volatile più abbondante, cv Rong-rien); storicamente beta-damascenone (Ong et al. 1998, cv Jitlee). Laohakunjit et al., HortScience 2007, 42(2):309 (HS-SPME-GC-MS). NOTA ONESTA: il paper recente Zhou et al. 2024 è sull'OLIO DI SEMI (parte diversa) — non usarlo come firma del frutto."
+        },
+        {
+          "composto": "delta-decalactone",
+          "descrittore": "pesca-cocco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rambutan (polpa fresca): firma isocitronellolo (volatile più abbondante, cv Rong-rien); storicamente beta-damascenone (Ong et al. 1998, cv Jitlee). Laohakunjit et al., HortScience 2007, 42(2):309 (HS-SPME-GC-MS). NOTA ONESTA: il paper recente Zhou et al. 2024 è sull'OLIO DI SEMI (parte diversa) — non usarlo come firma del frutto."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rambutan (polpa fresca): firma isocitronellolo (volatile più abbondante, cv Rong-rien); storicamente beta-damascenone (Ong et al. 1998, cv Jitlee). Laohakunjit et al., HortScience 2007, 42(2):309 (HS-SPME-GC-MS). NOTA ONESTA: il paper recente Zhou et al. 2024 è sull'OLIO DI SEMI (parte diversa) — non usarlo come firma del frutto."
+        }
+      ]
+    },
+    {
+      "ingrediente": "acerola",
+      "nodo_target": "ing-acerola",
+      "specie": "Malpighia emarginata (frutto)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Acerola: firma ethyl hexanoate + esteri (profilo fruttato); gli esteri 3-metil-3-butenilici sono caratteristici. Rondan-Sanabria et al., Rev. Ciências Agrárias 2019, 42(1):266 (DOI 10.19084/RCA18065, HS-SPME-GC-MS). NOTA: scartate fonti anomale (cumene/o-xilene = artefatto; redalyc = aceto di acerola, prodotto diverso).",
+      "composti": [
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato-dolce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acerola: firma ethyl hexanoate + esteri (profilo fruttato); gli esteri 3-metil-3-butenilici sono caratteristici. Rondan-Sanabria et al., Rev. Ciências Agrárias 2019, 42(1):266 (DOI 10.19084/RCA18065, HS-SPME-GC-MS). NOTA: scartate fonti anomale (cumene/o-xilene = artefatto; redalyc = aceto di acerola, prodotto diverso)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato (possibile contributore principale)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acerola: firma ethyl hexanoate + esteri (profilo fruttato); gli esteri 3-metil-3-butenilici sono caratteristici. Rondan-Sanabria et al., Rev. Ciências Agrárias 2019, 42(1):266 (DOI 10.19084/RCA18065, HS-SPME-GC-MS). NOTA: scartate fonti anomale (cumene/o-xilene = artefatto; redalyc = aceto di acerola, prodotto diverso)."
+        },
+        {
+          "composto": "3-methyl-3-butenyl acetate",
+          "descrittore": "fruttato (caratteristico acerola)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acerola: firma ethyl hexanoate + esteri (profilo fruttato); gli esteri 3-metil-3-butenilici sono caratteristici. Rondan-Sanabria et al., Rev. Ciências Agrárias 2019, 42(1):266 (DOI 10.19084/RCA18065, HS-SPME-GC-MS). NOTA: scartate fonti anomale (cumene/o-xilene = artefatto; redalyc = aceto di acerola, prodotto diverso)."
+        },
+        {
+          "composto": "methyl hexanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acerola: firma ethyl hexanoate + esteri (profilo fruttato); gli esteri 3-metil-3-butenilici sono caratteristici. Rondan-Sanabria et al., Rev. Ciências Agrárias 2019, 42(1):266 (DOI 10.19084/RCA18065, HS-SPME-GC-MS). NOTA: scartate fonti anomale (cumene/o-xilene = artefatto; redalyc = aceto di acerola, prodotto diverso)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "calamansi",
+      "nodo_target": "ing-calamansi",
+      "specie": "Citrus microcarpa",
+      "dominio": "bar",
+      "fonte_ingrediente": "Calamansi: firma limonene + citronellale (il citronellale lo distingue dagli altri agrumi). Husni, Yeni & Dachriyanus, Proc. ICCSCP 2021, Atlantis Press (DOI 10.2991/ahsr.k.211105.046). NOTA ONESTA: olio essenziale, paper ad orientamento antibatterico, nessun descrittore sensoriale — la composizione GC-MS è comunque reale.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Calamansi: firma limonene + citronellale (il citronellale lo distingue dagli altri agrumi). Husni, Yeni & Dachriyanus, Proc. ICCSCP 2021, Atlantis Press (DOI 10.2991/ahsr.k.211105.046). NOTA ONESTA: olio essenziale, paper ad orientamento antibatterico, nessun descrittore sensoriale — la composizione GC-MS è comunque reale."
+        },
+        {
+          "composto": "citronellal",
+          "descrittore": "agrume-citronella (firma, distingue il calamansi)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Calamansi: firma limonene + citronellale (il citronellale lo distingue dagli altri agrumi). Husni, Yeni & Dachriyanus, Proc. ICCSCP 2021, Atlantis Press (DOI 10.2991/ahsr.k.211105.046). NOTA ONESTA: olio essenziale, paper ad orientamento antibatterico, nessun descrittore sensoriale — la composizione GC-MS è comunque reale."
+        },
+        {
+          "composto": "citronellol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Calamansi: firma limonene + citronellale (il citronellale lo distingue dagli altri agrumi). Husni, Yeni & Dachriyanus, Proc. ICCSCP 2021, Atlantis Press (DOI 10.2991/ahsr.k.211105.046). NOTA ONESTA: olio essenziale, paper ad orientamento antibatterico, nessun descrittore sensoriale — la composizione GC-MS è comunque reale."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume-legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Calamansi: firma limonene + citronellale (il citronellale lo distingue dagli altri agrumi). Husni, Yeni & Dachriyanus, Proc. ICCSCP 2021, Atlantis Press (DOI 10.2991/ahsr.k.211105.046). NOTA ONESTA: olio essenziale, paper ad orientamento antibatterico, nessun descrittore sensoriale — la composizione GC-MS è comunque reale."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (dd, +15 erbe/fiori/semi/frutti): menta piperita, timo limonato, fiori di acacia, fiori di zucca, nasturzio, malva, semi di girasole tostati, quinoa tostata, sorgo, cherimoya, tamarillo, pomelo, rambutan, acerola, calamansi. Verificati da agente: 14 solidi + calamansi (nota: EO, composizione reale ma senza descrittori sensoriali). SCARTATI senza inventare: papavero/amaranto/miglio (nessuna firma vera, solo ossidazione lipidica comune a tutti i semi), lino (fonte è una review non dataset primario), longan (atti di convegno, descrittori presi in prestito). Ponti: beta-damascenone (malva/sorgo<->rosa/osmanthus/uva/tè), pirazine+furfurali (girasole/quinoa<->caffè/orzo tostato/pane), isotiocianati (nasturzio<->cavolfiore/broccolo/senape/rafano), esteri fruttati (cherimoya/acerola<->ananas/mela/banana), limonene+citronellale (pomelo/calamansi<->agrumi), mentolo (menta piperita<->menta), geraniolo+citrale (timo limonato<->citronella/melissa/verbena), methional (tamarillo<->patata/pane), metossibenzeni (fiori di zucca<->pu-erh shou/melanzana affumicata).",
     "Ondata 24/10 (cc, +19 tè/fermentati/alcolici): pu-erh, oolong, yerba mate, karkadè, matcha, rum invecchiato, whisky torbato, sakè, kefir, latticello, panna acida, birra stout, cognac, vino rosso invecchiato, sidro di mele, aceto di riso, mirin, gochujang, doubanjiang. Tutti con fonte GC-MS/GC-O reale; firme con OAV dove il paper le dà (doubanjiang, oolong, matcha, pu-erh). Caveat oneste in riga: pu-erh=sheng (shou diverso), oolong=tostato Dong Ding, matcha=cinese (DMS per il JP), whisky=fonte datata, cognac/vino/mirin/latticello=fonti indirette, gochujang=GC-MS non-OAV. SCARTATA senza inventare: grappa (solo Flash-GC/FID, nessun odorant aroma-attivo verificato). Ponti: fenoli del fumo (whisky torbato/stout<->scamorza/salmone affumicato/mezcal/katsuobushi), esteri fruttati (sakè/gochujang/sidro<->mela/ananas/banana), diacetile+acetoino (kefir/latticello/panna acida<->burro/yogurt), damascenone+whisky lattone (rum/cognac/doubanjiang<->botte/uva), sotolon (vino invecchiato/mirin/sherry<->fieno greco/acero/melassa), furfurale+furanoni (karkadè/mirin/stout<->caffè/caramello), norisoprenoidi (yerba mate/pu-erh<->tè/osmanthus/zafferano), acido acetico (aceto di riso<->aceti/kombucha).",
     "Ondata 24/10 (bb, +15 formaggi/salumi/mare): cheddar, groviera, comté, feta, halloumi, scamorza affumicata, provola affumicata, ricotta forte, mascarpone, speck, prosciutto crudo, acciuga salata, salmone affumicato, ostrica, cozza. Verificati da agente di ricerca: 10 con fonte GC-MS/GC-O reale LETTA (cheddar, mascarpone, acciuga, salmone, ostrica[GC-IMS], prosciutto crudo, halloumi, ricotta forte, scamorza/provola, feta); 4 con fonte reale confermata ma non letta in sessione per blocco bot/captcha, note oneste in riga (groviera=Rychlik&Bosset 2001, comté=famiglia alpina, speck=PMID 29223014, cozza=PMC9562662). SCARTATI senza inventare: fontina (nessuno studio-firma), guanciale (nessun GC-MS, solo fonti commerciali), bresaola (solo analogo manzo dry-cured), nero di seppia inchiostro (nessuno studio volatili), riccio di mare (GC-O di riferimento bloccato, firma non determinata), ricotta fresca (solo dato sulla forte). Ponti: composti solforati volatili (cheddar/groviera/comté<->cavolfiore/allium/parmigiano), fenoli del fumo (scamorza/provola/speck/salmone affumicato<->cluster fumo mezcal/katsuobushi/melanzana affumicata), acidi grassi corti (feta/ricotta forte<->pecorino/taleggio), methional+aldeidi ramificate (groviera/prosciutto crudo<->pane/patata/malto), 1-octen-3-olo marino (ostrica/cozza<->funghi), 2-eptanone (mascarpone<->melograno/formaggi), DMS marino (cozza/ostrica<->kombu/nori).",
     "Ondata 24/10 (aa, +16): sudachi, finger lime, porcino, finferli, cime di rapa, kimchi, crauti, tempeh, avena, semi di zucca, mezcal, rabarbaro, nashi, kombucha, sommacco, melograno. Fonti verificate da agente: 15 solide + cime di rapa (nota: B. rapa var. rapa). SCARTATI a fonte debole, non inventati: grano arso, farro, noce di cola; nepeta tenuta fuori (fonte conferma solo nepetalattone, nodo isolato). Ponti: agrumi (sudachi/finger lime/sommacco<->limone/agrumi), 1-octen-3-olo (porcino/finferli<->funghi/tartufo), solfuri (cime di rapa/kimchi/crauti<->brassiche/allium), 2-acetil-1-pirrolina (tempeh/avena/semi di zucca<->riso/pandan/pane), fenoli affumicati (mezcal<->te affumicato/cluster fumo), esteri etilici (nashi<->mela/ananas), acidi+esteri (kombucha<->aceti). Fix resolver bundlati: finger lime, cime di rapa, semi di zucca forzati a nodo proprio (collisione substring con lime/rapa/zucca).",
