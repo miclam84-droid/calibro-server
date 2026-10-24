@@ -8224,9 +8224,404 @@
           "fonte": "Verza / cavolo cappuccio (Brassica oleracea var. capitata): dimetil solfuro, dimetil trisolfuro, allil isotiocianato e metantiolo (NCBI PMC9824104 Brassicaceae volatilome; PMC6304465)."
         }
       ]
+    },
+    {
+      "ingrediente": "cardamomo nero",
+      "nodo_target": "ing-cardamomo-nero",
+      "specie": "Amomum subulatum",
+      "dominio": "cucina",
+      "CORREGGE": "'cardamomo nero' (Amomum subulatum, affumicato) e' nodo distinto dal cardamomo verde (ahn_cardamom, Elettaria).",
+      "fonte_ingrediente": "Cardamomo nero (Amomum subulatum): 1,8-cineolo dominante con nota affumicata (guaiacolo, 4-metilguaiacolo) dall'essiccazione al fuoco (NCBI PMC6278479; Orient. J. Chem. 39(6)).",
+      "composti": [
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto-canforato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cardamomo nero (Amomum subulatum): 1,8-cineolo dominante con nota affumicata (guaiacolo, 4-metilguaiacolo) dall'essiccazione al fuoco (NCBI PMC6278479; Orient. J. Chem. 39(6))."
+        },
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato-fenolico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cardamomo nero (Amomum subulatum): 1,8-cineolo dominante con nota affumicata (guaiacolo, 4-metilguaiacolo) dall'essiccazione al fuoco (NCBI PMC6278479; Orient. J. Chem. 39(6))."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cardamomo nero (Amomum subulatum): 1,8-cineolo dominante con nota affumicata (guaiacolo, 4-metilguaiacolo) dall'essiccazione al fuoco (NCBI PMC6278479; Orient. J. Chem. 39(6))."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "floreale-lilla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cardamomo nero (Amomum subulatum): 1,8-cineolo dominante con nota affumicata (guaiacolo, 4-metilguaiacolo) dall'essiccazione al fuoco (NCBI PMC6278479; Orient. J. Chem. 39(6))."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cardamomo nero (Amomum subulatum): 1,8-cineolo dominante con nota affumicata (guaiacolo, 4-metilguaiacolo) dall'essiccazione al fuoco (NCBI PMC6278479; Orient. J. Chem. 39(6))."
+        }
+      ]
+    },
+    {
+      "ingrediente": "semi di sedano",
+      "nodo_target": "ing-semi-di-sedano",
+      "specie": "Apium graveolens (seme)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Semi di sedano (Apium graveolens, seme): 3-butilftalide e sedanolide (ftalidi, firma sedano) con limonene e beta-selinene (scent.vn celery seed 177; cyberleninka Apium graveolens).",
+      "composti": [
+        {
+          "composto": "3-butylphthalide",
+          "descrittore": "sedano-maggi (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di sedano (Apium graveolens, seme): 3-butilftalide e sedanolide (ftalidi, firma sedano) con limonene e beta-selinene (scent.vn celery seed 177; cyberleninka Apium graveolens)."
+        },
+        {
+          "composto": "sedanolide",
+          "descrittore": "sedano-cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di sedano (Apium graveolens, seme): 3-butilftalide e sedanolide (ftalidi, firma sedano) con limonene e beta-selinene (scent.vn celery seed 177; cyberleninka Apium graveolens)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di sedano (Apium graveolens, seme): 3-butilftalide e sedanolide (ftalidi, firma sedano) con limonene e beta-selinene (scent.vn celery seed 177; cyberleninka Apium graveolens)."
+        },
+        {
+          "composto": "beta-selinene",
+          "descrittore": "legnoso-sedano",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di sedano (Apium graveolens, seme): 3-butilftalide e sedanolide (ftalidi, firma sedano) con limonene e beta-selinene (scent.vn celery seed 177; cyberleninka Apium graveolens)."
+        },
+        {
+          "composto": "(Z)-ligustilide",
+          "descrittore": "sedano-maggi",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Semi di sedano (Apium graveolens, seme): 3-butilftalide e sedanolide (ftalidi, firma sedano) con limonene e beta-selinene (scent.vn celery seed 177; cyberleninka Apium graveolens)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "uva spina",
+      "nodo_target": "ing-uva-spina",
+      "specie": "Ribes uva-crispa",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Uva spina (Ribes uva-crispa): esteri (etil butanoato, etil esanoato) con (E)-2-esenale verde e linalolo (Pherobase E/11626 'gooseberry volatiles'; TUM mediatum 1183254).",
+      "composti": [
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-ananas (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva spina (Ribes uva-crispa): esteri (etil butanoato, etil esanoato) con (E)-2-esenale verde e linalolo (Pherobase E/11626 'gooseberry volatiles'; TUM mediatum 1183254)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva spina (Ribes uva-crispa): esteri (etil butanoato, etil esanoato) con (E)-2-esenale verde e linalolo (Pherobase E/11626 'gooseberry volatiles'; TUM mediatum 1183254)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva spina (Ribes uva-crispa): esteri (etil butanoato, etil esanoato) con (E)-2-esenale verde e linalolo (Pherobase E/11626 'gooseberry volatiles'; TUM mediatum 1183254)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva spina (Ribes uva-crispa): esteri (etil butanoato, etil esanoato) con (E)-2-esenale verde e linalolo (Pherobase E/11626 'gooseberry volatiles'; TUM mediatum 1183254)."
+        },
+        {
+          "composto": "methyl butanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Uva spina (Ribes uva-crispa): esteri (etil butanoato, etil esanoato) con (E)-2-esenale verde e linalolo (Pherobase E/11626 'gooseberry volatiles'; TUM mediatum 1183254)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "durian",
+      "nodo_target": "ing-durian",
+      "specie": "Durio zibethinus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Durian (Durio zibethinus): esteri + composti solforati -> etil 2-metilbutanoato, 1-(etiltio)etantiolo e dietil disolfuro (odore caratteristico) (TUM Leibniz 'key compounds of durian'; chromatographyonline).",
+      "composti": [
+        {
+          "composto": "ethyl 2-methylbutanoate",
+          "descrittore": "fruttato-intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Durian (Durio zibethinus): esteri + composti solforati -> etil 2-metilbutanoato, 1-(etiltio)etantiolo e dietil disolfuro (odore caratteristico) (TUM Leibniz 'key compounds of durian'; chromatographyonline)."
+        },
+        {
+          "composto": "1-(ethylthio)ethanethiol",
+          "descrittore": "solforato-cipolla (marcatore durian)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Durian (Durio zibethinus): esteri + composti solforati -> etil 2-metilbutanoato, 1-(etiltio)etantiolo e dietil disolfuro (odore caratteristico) (TUM Leibniz 'key compounds of durian'; chromatographyonline)."
+        },
+        {
+          "composto": "diethyl disulfide",
+          "descrittore": "solforato-aglio",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Durian (Durio zibethinus): esteri + composti solforati -> etil 2-metilbutanoato, 1-(etiltio)etantiolo e dietil disolfuro (odore caratteristico) (TUM Leibniz 'key compounds of durian'; chromatographyonline)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-ananas",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Durian (Durio zibethinus): esteri + composti solforati -> etil 2-metilbutanoato, 1-(etiltio)etantiolo e dietil disolfuro (odore caratteristico) (TUM Leibniz 'key compounds of durian'; chromatographyonline)."
+        },
+        {
+          "composto": "ethyl propanoate",
+          "descrittore": "fruttato-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Durian (Durio zibethinus): esteri + composti solforati -> etil 2-metilbutanoato, 1-(etiltio)etantiolo e dietil disolfuro (odore caratteristico) (TUM Leibniz 'key compounds of durian'; chromatographyonline)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "meliloto",
+      "nodo_target": "ing-meliloto",
+      "specie": "Melilotus officinalis",
+      "dominio": "bar",
+      "fonte_ingrediente": "Meliloto / trifoglio dolce (Melilotus officinalis): cumarina dominante (fieno-vaniglia), con benzaldeide e vanillina (NCBI PMC6155788; MDPI Molecules 22:138).",
+      "composti": [
+        {
+          "composto": "coumarin",
+          "descrittore": "fieno-vaniglia-mandorla (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Meliloto / trifoglio dolce (Melilotus officinalis): cumarina dominante (fieno-vaniglia), con benzaldeide e vanillina (NCBI PMC6155788; MDPI Molecules 22:138)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Meliloto / trifoglio dolce (Melilotus officinalis): cumarina dominante (fieno-vaniglia), con benzaldeide e vanillina (NCBI PMC6155788; MDPI Molecules 22:138)."
+        },
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "verde-erba tagliata",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Meliloto / trifoglio dolce (Melilotus officinalis): cumarina dominante (fieno-vaniglia), con benzaldeide e vanillina (NCBI PMC6155788; MDPI Molecules 22:138)."
+        },
+        {
+          "composto": "vanillin",
+          "descrittore": "vaniglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Meliloto / trifoglio dolce (Melilotus officinalis): cumarina dominante (fieno-vaniglia), con benzaldeide e vanillina (NCBI PMC6155788; MDPI Molecules 22:138)."
+        },
+        {
+          "composto": "methyl salicylate",
+          "descrittore": "balsamico-wintergreen",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Meliloto / trifoglio dolce (Melilotus officinalis): cumarina dominante (fieno-vaniglia), con benzaldeide e vanillina (NCBI PMC6155788; MDPI Molecules 22:138)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "aglio nero",
+      "nodo_target": "ing-aglio-nero",
+      "specie": "Allium sativum (fermentato)",
+      "dominio": "cucina",
+      "CORREGGE": "'aglio nero' e' aglio fermentato (profilo Maillard dolce-balsamico), nodo distinto dall'aglio fresco (ahn_garlic).",
+      "fonte_ingrediente": "Aglio nero (Allium sativum fermentato): da Maillard -> furani (2-acetilfurano, furfurale), aldeidi di Strecker e solfuri ridotti; piu' dolce-balsamico del fresco (agris 647391d9 'volatile flavor compounds black garlic'; avesis GC-MS-O).",
+      "composti": [
+        {
+          "composto": "2-acetylfuran",
+          "descrittore": "dolce-caramello-balsamico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aglio nero (Allium sativum fermentato): da Maillard -> furani (2-acetilfurano, furfurale), aldeidi di Strecker e solfuri ridotti; piu' dolce-balsamico del fresco (agris 647391d9 'volatile flavor compounds black garlic'; avesis GC-MS-O)."
+        },
+        {
+          "composto": "furfural",
+          "descrittore": "mandorla-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aglio nero (Allium sativum fermentato): da Maillard -> furani (2-acetilfurano, furfurale), aldeidi di Strecker e solfuri ridotti; piu' dolce-balsamico del fresco (agris 647391d9 'volatile flavor compounds black garlic'; avesis GC-MS-O)."
+        },
+        {
+          "composto": "allyl methyl sulfide",
+          "descrittore": "aglio-ridotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aglio nero (Allium sativum fermentato): da Maillard -> furani (2-acetilfurano, furfurale), aldeidi di Strecker e solfuri ridotti; piu' dolce-balsamico del fresco (agris 647391d9 'volatile flavor compounds black garlic'; avesis GC-MS-O)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aglio nero (Allium sativum fermentato): da Maillard -> furani (2-acetilfurano, furfurale), aldeidi di Strecker e solfuri ridotti; piu' dolce-balsamico del fresco (agris 647391d9 'volatile flavor compounds black garlic'; avesis GC-MS-O)."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforato-allium",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Aglio nero (Allium sativum fermentato): da Maillard -> furani (2-acetilfurano, furfurale), aldeidi di Strecker e solfuri ridotti; piu' dolce-balsamico del fresco (agris 647391d9 'volatile flavor compounds black garlic'; avesis GC-MS-O)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "te affumicato",
+      "nodo_target": "ing-te-affumicato",
+      "specie": "Camellia sinensis (lapsang souchong)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Te nero affumicato / lapsang souchong (Camellia sinensis, fumo di pino): guaiacolo e 4-metilguaiacolo (fenoli del fumo), longifolene (resina di pino), con linalolo residuo del te (MDPI Foods 13:3433).",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato-fenolico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero affumicato / lapsang souchong (Camellia sinensis, fumo di pino): guaiacolo e 4-metilguaiacolo (fenoli del fumo), longifolene (resina di pino), con linalolo residuo del te (MDPI Foods 13:3433)."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero affumicato / lapsang souchong (Camellia sinensis, fumo di pino): guaiacolo e 4-metilguaiacolo (fenoli del fumo), longifolene (resina di pino), con linalolo residuo del te (MDPI Foods 13:3433)."
+        },
+        {
+          "composto": "longifolene",
+          "descrittore": "resina-pino (fumo di pino)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero affumicato / lapsang souchong (Camellia sinensis, fumo di pino): guaiacolo e 4-metilguaiacolo (fenoli del fumo), longifolene (resina di pino), con linalolo residuo del te (MDPI Foods 13:3433)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-te",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero affumicato / lapsang souchong (Camellia sinensis, fumo di pino): guaiacolo e 4-metilguaiacolo (fenoli del fumo), longifolene (resina di pino), con linalolo residuo del te (MDPI Foods 13:3433)."
+        },
+        {
+          "composto": "4-ethylguaiacol",
+          "descrittore": "affumicato-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Te nero affumicato / lapsang souchong (Camellia sinensis, fumo di pino): guaiacolo e 4-metilguaiacolo (fenoli del fumo), longifolene (resina di pino), con linalolo residuo del te (MDPI Foods 13:3433)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "spinaci",
+      "nodo_target": "ing-spinaci",
+      "specie": "Spinacia oleracea",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312).",
+      "composti": [
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde-foglia tagliata",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+        },
+        {
+          "composto": "(E,E)-2,4-heptadienal",
+          "descrittore": "grasso-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+        },
+        {
+          "composto": "(Z)-3-hexen-1-ol",
+          "descrittore": "verde-foglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (v): +8 (cardamomo nero, semi di sedano, uva spina, durian, meliloto, aglio nero, te affumicato, spinaci). Marcatori-firma verificati su fonte reale. Terreno: spezia affumicata, seme-ftalidi, 2 frutti, cumarina, fermentato, te affumicato, verdura verde. Ponti: 1,8-cineolo+guaiacolo (cardamomo nero<->cardamomo/alloro + cluster fumo), ftalidi (semi di sedano<->levistico/sedano), esteri (uva spina<->ananas/physalis/jackfruit), solfuri+esteri (durian<->aglio/cipolla/asafoetida), cumarina (meliloto<->fava tonka), furani+solfuri ridotti (aglio nero<->aglio + cluster Maillard), guaiacolo+longifolene (te affumicato<->caffe/rooibos/cardamomo nero), aldeidi verdi (spinaci<->cluster verde). Nodi distinti: cardamomo nero != cardamomo verde, aglio nero != aglio fresco.",
     "Ondata 24/10 (u): +8 (amarena, jackfruit, zucchina, pepe di cubebe, macis, aceto di vino, cerfoglio, verza). Marcatori-firma verificati su fonte reale. Terreno: 2 frutti, verdura verde, 2 spezie Piper/Myristica, acido, erba anice, brassica. Ponti: benzaldeide (amarena<->ciliegia/mandorla amara/dattero), esteri juicy (jackfruit<->ananas/physalis), nonadienale (zucchina<->cetriolo/borragine/nori), 1,8-cineolo+sabinene (cubebe<->cardamomo/alloro), miristicina (macis<->noce moscata/pastinaca), acido acetico (aceto di vino<->aceto balsamico/aceto di mele), estragolo (cerfoglio<->dragoncello/liquirizia), DMS+isotiocianati (verza<->cavolfiore/senape/mais dolce). macis = arillo, nodo distinto dalla noce moscata (seme).",
     "Ondata 24/10 (t): +8 (nori, asafoetida, elicriso, pepe lungo, physalis, borragine, genepi, carruba). Marcatori-firma verificati su fonte reale. Terreno NUOVO: marino (bromofenoli/DMS), disolfuri organici, italidioni-curry, Piper longum, esteri physalis, cetriolo-borragine, tujone-genepi, acidi-carruba. Ponti: DMS+nonadienale (nori<->mais dolce/cetriolo/borragine), disolfuri (asafoetida<->aglio/porro/cavolfiore), cariofillene+zingiberene (pepe lungo<->pepe nero/zenzero/luppolo), esteri etilici (physalis<->ananas/mela/feijoa), tujone (genepi<->assenzio), pirazine+acidi (carruba<->cacao/caffe/cluster tostato). Nota: pastinaca (ondata s) e' risolta su ahn_parsnip_fruit (stessa specie, parte frutto): accettato, non e' mismatch di specie.",
     "Ondata 24/10 (s): +8 (levistico, shiso, pastinaca, dattero, aceto di mele, cicoria tostata, ruta, mais dolce). Marcatori-firma verificati su fonte reale. Terreno: Apiacee, erba distintiva, radice dolce, frutto dolce, acido, tostato, botanica a metilchetoni, cereale solforato. Ponti: ligustilide/sotolon (levistico<->sedano/fieno greco), perillaldeide (shiso, distintivo), terpinolene/miristicina (pastinaca<->carota/noce moscata/prezzemolo), gamma-butirrolattone+benzaldeide (dattero<->mandorla/miele/rosa), acido acetico+esteri (aceto di mele<->aceto balsamico/mela), furfurale+pirazine+diidroactinidiolide (cicoria tostata<->caffe/te nero/rooibos/cluster tostato), metilchetoni (ruta, distintivo), dimetil solfuro+2-acetil-1-pirrolina (mais dolce<->pomodoro/patata/pandan/pane).",
