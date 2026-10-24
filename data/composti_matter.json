@@ -9013,9 +9013,404 @@
           "fonte": "Ribes rosso (Ribes rubrum): esteri (etil/metil butanoato), (E)-2-esenale verde e linalolo, profilo acidulo-fruttato; distinto dal ribes nero (dspace.vut c20517df; scielo currant Ribes Turkey)."
         }
       ]
+    },
+    {
+      "ingrediente": "mirtillo rosso",
+      "nodo_target": "ing-mirtillo-rosso",
+      "specie": "Vaccinium macrocarpon",
+      "dominio": "cucina",
+      "CORREGGE": "'mirtillo rosso' (cranberry, Vaccinium macrocarpon) e' nodo distinto dal mirtillo (ahn_blueberry).",
+      "fonte_ingrediente": "Mirtillo rosso / cranberry (Vaccinium macrocarpon, frutto): benzaldeide, alpha-terpineolo, con metil benzoato e (E)-2-esenale (Univ. Auckland researchspace 50943; MDPI Molecules 30:2047).",
+      "composti": [
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla-ciliegia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / cranberry (Vaccinium macrocarpon, frutto): benzaldeide, alpha-terpineolo, con metil benzoato e (E)-2-esenale (Univ. Auckland researchspace 50943; MDPI Molecules 30:2047)."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "floreale-lilla-pino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / cranberry (Vaccinium macrocarpon, frutto): benzaldeide, alpha-terpineolo, con metil benzoato e (E)-2-esenale (Univ. Auckland researchspace 50943; MDPI Molecules 30:2047)."
+        },
+        {
+          "composto": "methyl benzoate",
+          "descrittore": "fenolico-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / cranberry (Vaccinium macrocarpon, frutto): benzaldeide, alpha-terpineolo, con metil benzoato e (E)-2-esenale (Univ. Auckland researchspace 50943; MDPI Molecules 30:2047)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / cranberry (Vaccinium macrocarpon, frutto): benzaldeide, alpha-terpineolo, con metil benzoato e (E)-2-esenale (Univ. Auckland researchspace 50943; MDPI Molecules 30:2047)."
+        },
+        {
+          "composto": "benzyl alcohol",
+          "descrittore": "floreale-mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / cranberry (Vaccinium macrocarpon, frutto): benzaldeide, alpha-terpineolo, con metil benzoato e (E)-2-esenale (Univ. Auckland researchspace 50943; MDPI Molecules 30:2047)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "nespola",
+      "nodo_target": "ing-nespola",
+      "specie": "Eriobotrya japonica",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Nespola (Eriobotrya japonica): esteri (esil/etil esanoato), (E)-2-esenale verde, con linalolo e nerolidolo (iris.unipa 'aroma nine loquat cultivars Sicily'; Food Chem X 2023).",
+      "composti": [
+        {
+          "composto": "hexyl hexanoate",
+          "descrittore": "fruttato-verde-dolce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nespola (Eriobotrya japonica): esteri (esil/etil esanoato), (E)-2-esenale verde, con linalolo e nerolidolo (iris.unipa 'aroma nine loquat cultivars Sicily'; Food Chem X 2023)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nespola (Eriobotrya japonica): esteri (esil/etil esanoato), (E)-2-esenale verde, con linalolo e nerolidolo (iris.unipa 'aroma nine loquat cultivars Sicily'; Food Chem X 2023)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nespola (Eriobotrya japonica): esteri (esil/etil esanoato), (E)-2-esenale verde, con linalolo e nerolidolo (iris.unipa 'aroma nine loquat cultivars Sicily'; Food Chem X 2023)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nespola (Eriobotrya japonica): esteri (esil/etil esanoato), (E)-2-esenale verde, con linalolo e nerolidolo (iris.unipa 'aroma nine loquat cultivars Sicily'; Food Chem X 2023)."
+        },
+        {
+          "composto": "(E)-nerolidol",
+          "descrittore": "floreale-legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nespola (Eriobotrya japonica): esteri (esil/etil esanoato), (E)-2-esenale verde, con linalolo e nerolidolo (iris.unipa 'aroma nine loquat cultivars Sicily'; Food Chem X 2023)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "melanzana",
+      "nodo_target": "ing-melanzana",
+      "specie": "Solanum melongena (grigliata)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Melanzana grigliata (Solanum melongena): nota affumicata da guaiacolo e fenoli, con esanale e (E,E)-2,4-decadienale (iris.unipa 218893; NCBI PMC6017423 fenoli affumicati).",
+      "composti": [
+        {
+          "composto": "guaiacol",
+          "descrittore": "affumicato-fenolico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melanzana grigliata (Solanum melongena): nota affumicata da guaiacolo e fenoli, con esanale e (E,E)-2,4-decadienale (iris.unipa 218893; NCBI PMC6017423 fenoli affumicati)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melanzana grigliata (Solanum melongena): nota affumicata da guaiacolo e fenoli, con esanale e (E,E)-2,4-decadienale (iris.unipa 218893; NCBI PMC6017423 fenoli affumicati)."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienal",
+          "descrittore": "fritto-grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melanzana grigliata (Solanum melongena): nota affumicata da guaiacolo e fenoli, con esanale e (E,E)-2,4-decadienale (iris.unipa 218893; NCBI PMC6017423 fenoli affumicati)."
+        },
+        {
+          "composto": "4-methylguaiacol",
+          "descrittore": "affumicato-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melanzana grigliata (Solanum melongena): nota affumicata da guaiacolo e fenoli, con esanale e (E,E)-2,4-decadienale (iris.unipa 218893; NCBI PMC6017423 fenoli affumicati)."
+        },
+        {
+          "composto": "phenylacetaldehyde",
+          "descrittore": "miele-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Melanzana grigliata (Solanum melongena): nota affumicata da guaiacolo e fenoli, con esanale e (E,E)-2,4-decadienale (iris.unipa 218893; NCBI PMC6017423 fenoli affumicati)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "kombu",
+      "nodo_target": "ing-kombu",
+      "specie": "Saccharina japonica (alga)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Kombu (Saccharina japonica): dimetil solfuro e volatili marini; l'umami viene dal glutammato (non volatile, nessun arco aromatico) (NCBI PMC11241180; ku.dk 'umami free amino acid volatile kombu').",
+      "composti": [
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "marino-mare (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombu (Saccharina japonica): dimetil solfuro e volatili marini; l'umami viene dal glutammato (non volatile, nessun arco aromatico) (NCBI PMC11241180; ku.dk 'umami free amino acid volatile kombu')."
+        },
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo-marino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombu (Saccharina japonica): dimetil solfuro e volatili marini; l'umami viene dal glutammato (non volatile, nessun arco aromatico) (NCBI PMC11241180; ku.dk 'umami free amino acid volatile kombu')."
+        },
+        {
+          "composto": "(E,E)-2,4-heptadienal",
+          "descrittore": "grasso-marino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombu (Saccharina japonica): dimetil solfuro e volatili marini; l'umami viene dal glutammato (non volatile, nessun arco aromatico) (NCBI PMC11241180; ku.dk 'umami free amino acid volatile kombu')."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombu (Saccharina japonica): dimetil solfuro e volatili marini; l'umami viene dal glutammato (non volatile, nessun arco aromatico) (NCBI PMC11241180; ku.dk 'umami free amino acid volatile kombu')."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Kombu (Saccharina japonica): dimetil solfuro e volatili marini; l'umami viene dal glutammato (non volatile, nessun arco aromatico) (NCBI PMC11241180; ku.dk 'umami free amino acid volatile kombu')."
+        }
+      ]
+    },
+    {
+      "ingrediente": "lievito",
+      "nodo_target": "ing-lievito",
+      "specie": "Saccharomyces (estratto)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Lievito / estratto di lievito (Saccharomyces): HEMF (caramello-brodo), methional e pirazine da Maillard (Pherobase C/31562 'aroma-active four yeast extracts'; TUM key odorants thermal).",
+      "composti": [
+        {
+          "composto": "HEMF",
+          "descrittore": "caramello-brodo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lievito / estratto di lievito (Saccharomyces): HEMF (caramello-brodo), methional e pirazine da Maillard (Pherobase C/31562 'aroma-active four yeast extracts'; TUM key odorants thermal)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata-brodo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lievito / estratto di lievito (Saccharomyces): HEMF (caramello-brodo), methional e pirazine da Maillard (Pherobase C/31562 'aroma-active four yeast extracts'; TUM key odorants thermal)."
+        },
+        {
+          "composto": "2-ethyl-3,5-dimethylpyrazine",
+          "descrittore": "tostato-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lievito / estratto di lievito (Saccharomyces): HEMF (caramello-brodo), methional e pirazine da Maillard (Pherobase C/31562 'aroma-active four yeast extracts'; TUM key odorants thermal)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lievito / estratto di lievito (Saccharomyces): HEMF (caramello-brodo), methional e pirazine da Maillard (Pherobase C/31562 'aroma-active four yeast extracts'; TUM key odorants thermal)."
+        },
+        {
+          "composto": "2-acetylpyrrole",
+          "descrittore": "nocciola-pane",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lievito / estratto di lievito (Saccharomyces): HEMF (caramello-brodo), methional e pirazine da Maillard (Pherobase C/31562 'aroma-active four yeast extracts'; TUM key odorants thermal)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "incenso",
+      "nodo_target": "ing-incenso",
+      "specie": "Boswellia sacra",
+      "dominio": "bar",
+      "fonte_ingrediente": "Incenso / olibano (Boswellia): alpha-pinene e octil acetato dominanti, con incensolo e limonene; resina da amaro/vermouth (NCBI PMC3606720 Boswellia EO; aromaticplant 211043727).",
+      "composti": [
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino-incenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Incenso / olibano (Boswellia): alpha-pinene e octil acetato dominanti, con incensolo e limonene; resina da amaro/vermouth (NCBI PMC3606720 Boswellia EO; aromaticplant 211043727)."
+        },
+        {
+          "composto": "octyl acetate",
+          "descrittore": "fruttato-arancia-ceroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Incenso / olibano (Boswellia): alpha-pinene e octil acetato dominanti, con incensolo e limonene; resina da amaro/vermouth (NCBI PMC3606720 Boswellia EO; aromaticplant 211043727)."
+        },
+        {
+          "composto": "incensole",
+          "descrittore": "balsamico-ambrato (marcatore)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Incenso / olibano (Boswellia): alpha-pinene e octil acetato dominanti, con incensolo e limonene; resina da amaro/vermouth (NCBI PMC3606720 Boswellia EO; aromaticplant 211043727)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Incenso / olibano (Boswellia): alpha-pinene e octil acetato dominanti, con incensolo e limonene; resina da amaro/vermouth (NCBI PMC3606720 Boswellia EO; aromaticplant 211043727)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Incenso / olibano (Boswellia): alpha-pinene e octil acetato dominanti, con incensolo e limonene; resina da amaro/vermouth (NCBI PMC3606720 Boswellia EO; aromaticplant 211043727)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "ceci",
+      "nodo_target": "ing-ceci",
+      "specie": "Cicer arietinum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Ceci (Cicer arietinum): esanale e (E)-2-esenale (verdi/legume) con 3-isopropil-2-metossipirazina e 1-otten-3-olo (TUM 'volatile components of chickpea'; NCBI PMC10900400).",
+      "composti": [
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-legume (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ceci (Cicer arietinum): esanale e (E)-2-esenale (verdi/legume) con 3-isopropil-2-metossipirazina e 1-otten-3-olo (TUM 'volatile components of chickpea'; NCBI PMC10900400)."
+        },
+        {
+          "composto": "3-isopropyl-2-methoxypyrazine",
+          "descrittore": "legume-terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ceci (Cicer arietinum): esanale e (E)-2-esenale (verdi/legume) con 3-isopropil-2-metossipirazina e 1-otten-3-olo (TUM 'volatile components of chickpea'; NCBI PMC10900400)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ceci (Cicer arietinum): esanale e (E)-2-esenale (verdi/legume) con 3-isopropil-2-metossipirazina e 1-otten-3-olo (TUM 'volatile components of chickpea'; NCBI PMC10900400)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo-terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ceci (Cicer arietinum): esanale e (E)-2-esenale (verdi/legume) con 3-isopropil-2-metossipirazina e 1-otten-3-olo (TUM 'volatile components of chickpea'; NCBI PMC10900400)."
+        },
+        {
+          "composto": "2,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Ceci (Cicer arietinum): esanale e (E)-2-esenale (verdi/legume) con 3-isopropil-2-metossipirazina e 1-otten-3-olo (TUM 'volatile components of chickpea'; NCBI PMC10900400)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sambuco bacche",
+      "nodo_target": "ing-sambuco-bacche",
+      "specie": "Sambucus nigra (frutto)",
+      "dominio": "bar",
+      "CORREGGE": "'sambuco bacche' (frutto di Sambucus nigra) e' nodo distinto dai fiori di sambuco (ahn_elder_flower).",
+      "fonte_ingrediente": "Sambuco - bacche (Sambucus nigra, frutto): ossidi di linalolo, hotrienolo e (E,Z)-2,6-nonadienale; distinto dal fiore (Springer s00217-005-0122-y elderberry; fch.vut 73639).",
+      "composti": [
+        {
+          "composto": "linalool oxide",
+          "descrittore": "floreale-fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sambuco - bacche (Sambucus nigra, frutto): ossidi di linalolo, hotrienolo e (E,Z)-2,6-nonadienale; distinto dal fiore (Springer s00217-005-0122-y elderberry; fch.vut 73639)."
+        },
+        {
+          "composto": "hotrienol",
+          "descrittore": "floreale-dolce-sambuco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sambuco - bacche (Sambucus nigra, frutto): ossidi di linalolo, hotrienolo e (E,Z)-2,6-nonadienale; distinto dal fiore (Springer s00217-005-0122-y elderberry; fch.vut 73639)."
+        },
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo-verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sambuco - bacche (Sambucus nigra, frutto): ossidi di linalolo, hotrienolo e (E,Z)-2,6-nonadienale; distinto dal fiore (Springer s00217-005-0122-y elderberry; fch.vut 73639)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sambuco - bacche (Sambucus nigra, frutto): ossidi di linalolo, hotrienolo e (E,Z)-2,6-nonadienale; distinto dal fiore (Springer s00217-005-0122-y elderberry; fch.vut 73639)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sambuco - bacche (Sambucus nigra, frutto): ossidi di linalolo, hotrienolo e (E,Z)-2,6-nonadienale; distinto dal fiore (Springer s00217-005-0122-y elderberry; fch.vut 73639)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (x): +8 (mirtillo rosso, nespola, melanzana, kombu, lievito, incenso, ceci, sambuco bacche). Marcatori-firma verificati su fonte reale. Terreno: 3 frutti, verdura affumicata, 2 umami (marino/lievito), resina, legume. Ponti: benzaldeide (mirtillo rosso<->amarena/ciliegia/mandorla), esteri (nespola<->mela/ananas), guaiacolo (melanzana<->te affumicato/katsuobushi/cluster fumo), DMS+nonadienale (kombu<->nori/cetriolo/zucchina), HEMF+methional (lievito<->miso/salsa di soia/patata), alpha-pinene+incensolo (incenso<->ginepro/mastiha resina), pirazine legume (ceci<->pisello/peperone), ossidi di linalolo (sambuco bacche, distinto dal fiore). Nodi distinti: mirtillo rosso != mirtillo, sambuco bacche != fiori di sambuco. Mirtillo rosso ora con fonte sul FRUTTO (non vino).",
     "Ondata 24/10 (w): +8 (giaggiolo, osmanthus, geranio, cassia, nigella, katsuobushi, sherry, ribes rosso). Marcatori-firma verificati su fonte reale. Terreno: botaniche/florali da bar, spezie da forno, umami affumicato, vino ossidativo, frutto. Ponti NUOVI: irones (giaggiolo, violetta polverosa), beta-ionone+gamma-decalattone (osmanthus<->lampone/pesca/albicocca), cis-rose oxide (geranio<->litchi/uva moscato/rosa), cinnamaldeide+cumarina (cassia<->cannella/fava tonka/meliloto), timochinone (nigella, firma unica), guaiacolo (katsuobushi<->te affumicato/cardamomo nero cluster fumo), sotolon (sherry<->fieno greco/acero/levistico/aceto balsamico). Nodi distinti: cassia != cannella Ceylon, nigella != cumino, ribes rosso != ribes nero.",
     "Ondata 24/10 (v): +8 (cardamomo nero, semi di sedano, uva spina, durian, meliloto, aglio nero, te affumicato, spinaci). Marcatori-firma verificati su fonte reale. Terreno: spezia affumicata, seme-ftalidi, 2 frutti, cumarina, fermentato, te affumicato, verdura verde. Ponti: 1,8-cineolo+guaiacolo (cardamomo nero<->cardamomo/alloro + cluster fumo), ftalidi (semi di sedano<->levistico/sedano), esteri (uva spina<->ananas/physalis/jackfruit), solfuri+esteri (durian<->aglio/cipolla/asafoetida), cumarina (meliloto<->fava tonka), furani+solfuri ridotti (aglio nero<->aglio + cluster Maillard), guaiacolo+longifolene (te affumicato<->caffe/rooibos/cardamomo nero), aldeidi verdi (spinaci<->cluster verde). Nodi distinti: cardamomo nero != cardamomo verde, aglio nero != aglio fresco.",
     "Ondata 24/10 (u): +8 (amarena, jackfruit, zucchina, pepe di cubebe, macis, aceto di vino, cerfoglio, verza). Marcatori-firma verificati su fonte reale. Terreno: 2 frutti, verdura verde, 2 spezie Piper/Myristica, acido, erba anice, brassica. Ponti: benzaldeide (amarena<->ciliegia/mandorla amara/dattero), esteri juicy (jackfruit<->ananas/physalis), nonadienale (zucchina<->cetriolo/borragine/nori), 1,8-cineolo+sabinene (cubebe<->cardamomo/alloro), miristicina (macis<->noce moscata/pastinaca), acido acetico (aceto di vino<->aceto balsamico/aceto di mele), estragolo (cerfoglio<->dragoncello/liquirizia), DMS+isotiocianati (verza<->cavolfiore/senape/mais dolce). macis = arillo, nodo distinto dalla noce moscata (seme).",
