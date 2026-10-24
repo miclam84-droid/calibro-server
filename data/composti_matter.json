@@ -7437,9 +7437,403 @@
           "fonte": "Mais dolce (Zea mays): dimetil solfuro marcatore 'mais cotto', con 2-acetil-1-pirrolina (pop/tostato) ed esanale (agris sweet corn aroma 65de4490; Frontiers in Chemistry 2022 fchem.725208)."
         }
       ]
+    },
+    {
+      "ingrediente": "nori",
+      "nodo_target": "ing-nori",
+      "specie": "Porphyra / Pyropia (alga rossa)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Nori / alga (Porphyra-Pyropia): dimetil solfuro (marino), (E,Z)-2,6-nonadienale (cetriolo-marino) e bromofenoli (iodato) come marcatori (cora.ucc 10468/10663; agris 'volatile compounds six edible seaweed').",
+      "composti": [
+        {
+          "composto": "dimethyl sulfide",
+          "descrittore": "marino-mare (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nori / alga (Porphyra-Pyropia): dimetil solfuro (marino), (E,Z)-2,6-nonadienale (cetriolo-marino) e bromofenoli (iodato) come marcatori (cora.ucc 10468/10663; agris 'volatile compounds six edible seaweed')."
+        },
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo-marino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nori / alga (Porphyra-Pyropia): dimetil solfuro (marino), (E,Z)-2,6-nonadienale (cetriolo-marino) e bromofenoli (iodato) come marcatori (cora.ucc 10468/10663; agris 'volatile compounds six edible seaweed')."
+        },
+        {
+          "composto": "2-bromophenol",
+          "descrittore": "iodato-marino (marcatore alga)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nori / alga (Porphyra-Pyropia): dimetil solfuro (marino), (E,Z)-2,6-nonadienale (cetriolo-marino) e bromofenoli (iodato) come marcatori (cora.ucc 10468/10663; agris 'volatile compounds six edible seaweed')."
+        },
+        {
+          "composto": "(E)-2-nonenal",
+          "descrittore": "grasso-cetriolo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nori / alga (Porphyra-Pyropia): dimetil solfuro (marino), (E,Z)-2,6-nonadienale (cetriolo-marino) e bromofenoli (iodato) come marcatori (cora.ucc 10468/10663; agris 'volatile compounds six edible seaweed')."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Nori / alga (Porphyra-Pyropia): dimetil solfuro (marino), (E,Z)-2,6-nonadienale (cetriolo-marino) e bromofenoli (iodato) come marcatori (cora.ucc 10468/10663; agris 'volatile compounds six edible seaweed')."
+        }
+      ]
+    },
+    {
+      "ingrediente": "asafoetida",
+      "nodo_target": "ing-asafoetida",
+      "specie": "Ferula assa-foetida",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Asafoetida / hing (Ferula assa-foetida): disolfuri organici -> sec-butil propenil disolfuro e di-sec-butil disolfuro come marcatori solforati (ResearchGate Ferula assa-foetida fruits W Iran; fsct.modares 72641).",
+      "composti": [
+        {
+          "composto": "sec-butyl propenyl disulfide",
+          "descrittore": "allium-aglio-pungente (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asafoetida / hing (Ferula assa-foetida): disolfuri organici -> sec-butil propenil disolfuro e di-sec-butil disolfuro come marcatori solforati (ResearchGate Ferula assa-foetida fruits W Iran; fsct.modares 72641)."
+        },
+        {
+          "composto": "di-sec-butyl disulfide",
+          "descrittore": "solforato-pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asafoetida / hing (Ferula assa-foetida): disolfuri organici -> sec-butil propenil disolfuro e di-sec-butil disolfuro come marcatori solforati (ResearchGate Ferula assa-foetida fruits W Iran; fsct.modares 72641)."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforato-cotto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asafoetida / hing (Ferula assa-foetida): disolfuri organici -> sec-butil propenil disolfuro e di-sec-butil disolfuro come marcatori solforati (ResearchGate Ferula assa-foetida fruits W Iran; fsct.modares 72641)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asafoetida / hing (Ferula assa-foetida): disolfuri organici -> sec-butil propenil disolfuro e di-sec-butil disolfuro come marcatori solforati (ResearchGate Ferula assa-foetida fruits W Iran; fsct.modares 72641)."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Asafoetida / hing (Ferula assa-foetida): disolfuri organici -> sec-butil propenil disolfuro e di-sec-butil disolfuro come marcatori solforati (ResearchGate Ferula assa-foetida fruits W Iran; fsct.modares 72641)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "elicriso",
+      "nodo_target": "ing-elicriso",
+      "specie": "Helichrysum italicum",
+      "dominio": "bar",
+      "fonte_ingrediente": "Elicriso / immortelle (Helichrysum italicum): neril acetato dominante, con italidioni (beta-dichetoni, marcatore curry), alpha-pinene e nerolo (Turkish J. Agri. Forest. 44(4); NCBI PMC6264769).",
+      "composti": [
+        {
+          "composto": "neryl acetate",
+          "descrittore": "fruttato-salvia-curry (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso / immortelle (Helichrysum italicum): neril acetato dominante, con italidioni (beta-dichetoni, marcatore curry), alpha-pinene e nerolo (Turkish J. Agri. Forest. 44(4); NCBI PMC6264769)."
+        },
+        {
+          "composto": "italidione",
+          "descrittore": "curry-fieno greco (marcatore)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso / immortelle (Helichrysum italicum): neril acetato dominante, con italidioni (beta-dichetoni, marcatore curry), alpha-pinene e nerolo (Turkish J. Agri. Forest. 44(4); NCBI PMC6264769)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso / immortelle (Helichrysum italicum): neril acetato dominante, con italidioni (beta-dichetoni, marcatore curry), alpha-pinene e nerolo (Turkish J. Agri. Forest. 44(4); NCBI PMC6264769)."
+        },
+        {
+          "composto": "nerol",
+          "descrittore": "rosa-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso / immortelle (Helichrysum italicum): neril acetato dominante, con italidioni (beta-dichetoni, marcatore curry), alpha-pinene e nerolo (Turkish J. Agri. Forest. 44(4); NCBI PMC6264769)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso / immortelle (Helichrysum italicum): neril acetato dominante, con italidioni (beta-dichetoni, marcatore curry), alpha-pinene e nerolo (Turkish J. Agri. Forest. 44(4); NCBI PMC6264769)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pepe lungo",
+      "nodo_target": "ing-pepe-lungo",
+      "specie": "Piper longum",
+      "dominio": "bar",
+      "CORREGGE": "'pepe lungo' (Piper longum) e' nodo distinto dal pepe nero (ahn_black_pepper, Piper nigrum).",
+      "fonte_ingrediente": "Pepe lungo (Piper longum): volatili dominati da beta-cariofillene, zingiberene, beta-bisabolene; la pungenza viene dalla piperina (non volatile, nessun arco aromatico) (ir.cftri 3364; Christ College EO Piper longum).",
+      "composti": [
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-speziato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe lungo (Piper longum): volatili dominati da beta-cariofillene, zingiberene, beta-bisabolene; la pungenza viene dalla piperina (non volatile, nessun arco aromatico) (ir.cftri 3364; Christ College EO Piper longum)."
+        },
+        {
+          "composto": "zingiberene",
+          "descrittore": "zenzero-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe lungo (Piper longum): volatili dominati da beta-cariofillene, zingiberene, beta-bisabolene; la pungenza viene dalla piperina (non volatile, nessun arco aromatico) (ir.cftri 3364; Christ College EO Piper longum)."
+        },
+        {
+          "composto": "beta-bisabolene",
+          "descrittore": "balsamico-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe lungo (Piper longum): volatili dominati da beta-cariofillene, zingiberene, beta-bisabolene; la pungenza viene dalla piperina (non volatile, nessun arco aromatico) (ir.cftri 3364; Christ College EO Piper longum)."
+        },
+        {
+          "composto": "alpha-humulene",
+          "descrittore": "luppolo-legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe lungo (Piper longum): volatili dominati da beta-cariofillene, zingiberene, beta-bisabolene; la pungenza viene dalla piperina (non volatile, nessun arco aromatico) (ir.cftri 3364; Christ College EO Piper longum)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe lungo (Piper longum): volatili dominati da beta-cariofillene, zingiberene, beta-bisabolene; la pungenza viene dalla piperina (non volatile, nessun arco aromatico) (ir.cftri 3364; Christ College EO Piper longum)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "physalis",
+      "nodo_target": "ing-physalis",
+      "specie": "Physalis peruviana",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Physalis / alchechengi (Physalis peruviana): esteri etilici fruttati -> etil ottanoato, etil butanoato, etil esanoato come odor-active, con beta-ionone (NCBI PMC7024259 'odor active compounds in Physalis peruviana').",
+      "composti": [
+        {
+          "composto": "ethyl octanoate",
+          "descrittore": "fruttato-dolce-cera (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Physalis / alchechengi (Physalis peruviana): esteri etilici fruttati -> etil ottanoato, etil butanoato, etil esanoato come odor-active, con beta-ionone (NCBI PMC7024259 'odor active compounds in Physalis peruviana')."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato-ananas",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Physalis / alchechengi (Physalis peruviana): esteri etilici fruttati -> etil ottanoato, etil butanoato, etil esanoato come odor-active, con beta-ionone (NCBI PMC7024259 'odor active compounds in Physalis peruviana')."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "fruttato-mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Physalis / alchechengi (Physalis peruviana): esteri etilici fruttati -> etil ottanoato, etil butanoato, etil esanoato come odor-active, con beta-ionone (NCBI PMC7024259 'odor active compounds in Physalis peruviana')."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta-floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Physalis / alchechengi (Physalis peruviana): esteri etilici fruttati -> etil ottanoato, etil butanoato, etil esanoato come odor-active, con beta-ionone (NCBI PMC7024259 'odor active compounds in Physalis peruviana')."
+        },
+        {
+          "composto": "2-methylbutyl acetate",
+          "descrittore": "fruttato-banana",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Physalis / alchechengi (Physalis peruviana): esteri etilici fruttati -> etil ottanoato, etil butanoato, etil esanoato come odor-active, con beta-ionone (NCBI PMC7024259 'odor active compounds in Physalis peruviana')."
+        }
+      ]
+    },
+    {
+      "ingrediente": "borragine",
+      "nodo_target": "ing-borragine",
+      "specie": "Borago officinalis",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Borragine (Borago officinalis): (E,Z)-2,6-nonadienale (cetriolo) ed esanale/(E)-2-esenale come marcatori verdi (agris 65de3b75 'volatiles leaves flowers borage'; NCBI PMC4370779).",
+      "composti": [
+        {
+          "composto": "(E,Z)-2,6-nonadienal",
+          "descrittore": "cetriolo-verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Borragine (Borago officinalis): (E,Z)-2,6-nonadienale (cetriolo) ed esanale/(E)-2-esenale come marcatori verdi (agris 65de3b75 'volatiles leaves flowers borage'; NCBI PMC4370779)."
+        },
+        {
+          "composto": "(E)-2-hexenal",
+          "descrittore": "verde-foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Borragine (Borago officinalis): (E,Z)-2,6-nonadienale (cetriolo) ed esanale/(E)-2-esenale come marcatori verdi (agris 65de3b75 'volatiles leaves flowers borage'; NCBI PMC4370779)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Borragine (Borago officinalis): (E,Z)-2,6-nonadienale (cetriolo) ed esanale/(E)-2-esenale come marcatori verdi (agris 65de3b75 'volatiles leaves flowers borage'; NCBI PMC4370779)."
+        },
+        {
+          "composto": "(E)-2-nonenal",
+          "descrittore": "grasso-cetriolo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Borragine (Borago officinalis): (E,Z)-2,6-nonadienale (cetriolo) ed esanale/(E)-2-esenale come marcatori verdi (agris 65de3b75 'volatiles leaves flowers borage'; NCBI PMC4370779)."
+        },
+        {
+          "composto": "1-hexanol",
+          "descrittore": "verde-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Borragine (Borago officinalis): (E,Z)-2,6-nonadienale (cetriolo) ed esanale/(E)-2-esenale come marcatori verdi (agris 65de3b75 'volatiles leaves flowers borage'; NCBI PMC4370779)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "genepi",
+      "nodo_target": "ing-genepi",
+      "specie": "Artemisia umbelliformis / A. genepi",
+      "dominio": "bar",
+      "fonte_ingrediente": "Genepì (Artemisia umbelliformis / A. genepi): aroma alpino con alfa/beta-tujone come marcatori, con canfora e 1,8-cineolo (iris.unito 'Artemisia umbelliformis, ingrediente del liquore Genepì'; avesis Rhaetian Alps).",
+      "composti": [
+        {
+          "composto": "alpha-thujone",
+          "descrittore": "amaro-canforato-assenzio (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Genepì (Artemisia umbelliformis / A. genepi): aroma alpino con alfa/beta-tujone come marcatori, con canfora e 1,8-cineolo (iris.unito 'Artemisia umbelliformis, ingrediente del liquore Genepì'; avesis Rhaetian Alps)."
+        },
+        {
+          "composto": "beta-thujone",
+          "descrittore": "canforato-amaro",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Genepì (Artemisia umbelliformis / A. genepi): aroma alpino con alfa/beta-tujone come marcatori, con canfora e 1,8-cineolo (iris.unito 'Artemisia umbelliformis, ingrediente del liquore Genepì'; avesis Rhaetian Alps)."
+        },
+        {
+          "composto": "camphor",
+          "descrittore": "canforato-fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Genepì (Artemisia umbelliformis / A. genepi): aroma alpino con alfa/beta-tujone come marcatori, con canfora e 1,8-cineolo (iris.unito 'Artemisia umbelliformis, ingrediente del liquore Genepì'; avesis Rhaetian Alps)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "eucalipto-fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Genepì (Artemisia umbelliformis / A. genepi): aroma alpino con alfa/beta-tujone come marcatori, con canfora e 1,8-cineolo (iris.unito 'Artemisia umbelliformis, ingrediente del liquore Genepì'; avesis Rhaetian Alps)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Genepì (Artemisia umbelliformis / A. genepi): aroma alpino con alfa/beta-tujone come marcatori, con canfora e 1,8-cineolo (iris.unito 'Artemisia umbelliformis, ingrediente del liquore Genepì'; avesis Rhaetian Alps)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "carruba",
+      "nodo_target": "ing-carruba",
+      "specie": "Ceratonia siliqua (tostata)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Carruba tostata (Ceratonia siliqua): acidi a catena corta -> acido isovalerico e isobutirrico (nota formaggio-dolce), con pirazine e aldeidi di Strecker da Maillard (NCBI PMC5435580; Frontiers Nutr. 2021 fnut.789169).",
+      "composti": [
+        {
+          "composto": "isovaleric acid",
+          "descrittore": "formaggio-dolce-sudore (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carruba tostata (Ceratonia siliqua): acidi a catena corta -> acido isovalerico e isobutirrico (nota formaggio-dolce), con pirazine e aldeidi di Strecker da Maillard (NCBI PMC5435580; Frontiers Nutr. 2021 fnut.789169)."
+        },
+        {
+          "composto": "isobutyric acid",
+          "descrittore": "burroso-acido",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carruba tostata (Ceratonia siliqua): acidi a catena corta -> acido isovalerico e isobutirrico (nota formaggio-dolce), con pirazine e aldeidi di Strecker da Maillard (NCBI PMC5435580; Frontiers Nutr. 2021 fnut.789169)."
+        },
+        {
+          "composto": "2,5-dimethylpyrazine",
+          "descrittore": "nocciola-tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carruba tostata (Ceratonia siliqua): acidi a catena corta -> acido isovalerico e isobutirrico (nota formaggio-dolce), con pirazine e aldeidi di Strecker da Maillard (NCBI PMC5435580; Frontiers Nutr. 2021 fnut.789169)."
+        },
+        {
+          "composto": "2-methylbutanal",
+          "descrittore": "maltato-cioccolato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carruba tostata (Ceratonia siliqua): acidi a catena corta -> acido isovalerico e isobutirrico (nota formaggio-dolce), con pirazine e aldeidi di Strecker da Maillard (NCBI PMC5435580; Frontiers Nutr. 2021 fnut.789169)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Carruba tostata (Ceratonia siliqua): acidi a catena corta -> acido isovalerico e isobutirrico (nota formaggio-dolce), con pirazine e aldeidi di Strecker da Maillard (NCBI PMC5435580; Frontiers Nutr. 2021 fnut.789169)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 24/10 (t): +8 (nori, asafoetida, elicriso, pepe lungo, physalis, borragine, genepi, carruba). Marcatori-firma verificati su fonte reale. Terreno NUOVO: marino (bromofenoli/DMS), disolfuri organici, italidioni-curry, Piper longum, esteri physalis, cetriolo-borragine, tujone-genepi, acidi-carruba. Ponti: DMS+nonadienale (nori<->mais dolce/cetriolo/borragine), disolfuri (asafoetida<->aglio/porro/cavolfiore), cariofillene+zingiberene (pepe lungo<->pepe nero/zenzero/luppolo), esteri etilici (physalis<->ananas/mela/feijoa), tujone (genepi<->assenzio), pirazine+acidi (carruba<->cacao/caffe/cluster tostato). Nota: pastinaca (ondata s) e' risolta su ahn_parsnip_fruit (stessa specie, parte frutto): accettato, non e' mismatch di specie.",
     "Ondata 24/10 (s): +8 (levistico, shiso, pastinaca, dattero, aceto di mele, cicoria tostata, ruta, mais dolce). Marcatori-firma verificati su fonte reale. Terreno: Apiacee, erba distintiva, radice dolce, frutto dolce, acido, tostato, botanica a metilchetoni, cereale solforato. Ponti: ligustilide/sotolon (levistico<->sedano/fieno greco), perillaldeide (shiso, distintivo), terpinolene/miristicina (pastinaca<->carota/noce moscata/prezzemolo), gamma-butirrolattone+benzaldeide (dattero<->mandorla/miele/rosa), acido acetico+esteri (aceto di mele<->aceto balsamico/mela), furfurale+pirazine+diidroactinidiolide (cicoria tostata<->caffe/te nero/rooibos/cluster tostato), metilchetoni (ruta, distintivo), dimetil solfuro+2-acetil-1-pirrolina (mais dolce<->pomodoro/patata/pandan/pane).",
     "Ondata 24/10 (r): +8 (senape, crescione, achillea, nepitella, grani del paradiso, pisello, patata, anacardo). Marcatori-firma verificati su fonte reale. Terreno: brassiche/isotiocianati, botaniche amaro, spezia pungente, verdure verdi-pirazina, nut tostato. Ponti: isotiocianati (senape/crescione<->wasabi/rafano/cavolfiore/capperi), camazulene (achillea<->camomilla), pulegone/mentone (nepitella<->menta), umulene/cariofillene (grani del paradiso<->luppolo/pepe), metossipirazina+esanale (pisello<->peperone), methional+solfuri (patata<->cavolfiore/asparago/pane), pirazine (anacardo<->arachide/nocciola tostata/cacao/caffe/castagna/orzo tostato). In questa ondata anche fix resolver: issopo forzato a ing-issopo (Hyssopus officinalis, non il nodo ahn_anise_hyssop = Agastache).",
     "Ondata 24/10 (q): +8 (pepe di sichuan, porro, cavolfiore, issopo, mastiha, castagna, feijoa, orzo tostato). Marcatori-firma verificati su fonte reale. Terreno: spezia pungente/solforati salati/erbe/resina/tostati Maillard/tropicale. Ponti: limonene+linalolo (sichuan<->agrumi/coriandolo), solfuri allium (porro<->aglio/cipolla/erba cipollina), dimetil solfuri+isotiocianati (cavolfiore<->asparago/wasabi/rafano/porro), pinocanfone+1,8-cineolo (issopo<->rosmarino/alloro), alpha-pinene+verbenone (mastiha<->ginepro/rosmarino), furfurale+maltolo+pirazine (castagna/orzo tostato<->caffe/malto/pane/cacao/arachide tostata), esteri+(E)-2-esenale (feijoa<->ananas/mela/fragola).",
