@@ -17814,6 +17814,114 @@
           "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
         }
       ]
+    },
+    {
+      "ingrediente": "mahleb",
+      "nodo_target": "bio-mahleb",
+      "specie": "Prunus mahaleb",
+      "dominio": "pasticceria",
+      "fonte_ingrediente": "Mahleb (Prunus mahaleb): semi HS-SPME-GC-MS - coumarin ~19.8%, benzaldehyde fino ~18.7% (da amigdalina, crolla con la tostatura), (E)-cinnamaldehyde ~11-12%, herniarin ~1.4%; coumarin confermata anche nel miele monoflora. Farag et al., Foods 2021 10(4):728 (10.3390/foods10040728); Jerkovic et al., Molecules 2011 16(3):2507 (10.3390/molecules16032507).",
+      "composti": [
+        {
+          "composto": "coumarin",
+          "descrittore": "fieno dolce-vaniglia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mahleb (Prunus mahaleb): semi HS-SPME-GC-MS - coumarin ~19.8%, benzaldehyde fino ~18.7% (da amigdalina, crolla con la tostatura), (E)-cinnamaldehyde ~11-12%, herniarin ~1.4%; coumarin confermata anche nel miele monoflora. Farag et al., Foods 2021 10(4):728 (10.3390/foods10040728); Jerkovic et al., Molecules 2011 16(3):2507 (10.3390/molecules16032507)."
+        },
+        {
+          "composto": "benzaldehyde",
+          "descrittore": "mandorla amara-ciliegia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mahleb (Prunus mahaleb): semi HS-SPME-GC-MS - coumarin ~19.8%, benzaldehyde fino ~18.7% (da amigdalina, crolla con la tostatura), (E)-cinnamaldehyde ~11-12%, herniarin ~1.4%; coumarin confermata anche nel miele monoflora. Farag et al., Foods 2021 10(4):728 (10.3390/foods10040728); Jerkovic et al., Molecules 2011 16(3):2507 (10.3390/molecules16032507)."
+        },
+        {
+          "composto": "(E)-cinnamaldehyde",
+          "descrittore": "cannella",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mahleb (Prunus mahaleb): semi HS-SPME-GC-MS - coumarin ~19.8%, benzaldehyde fino ~18.7% (da amigdalina, crolla con la tostatura), (E)-cinnamaldehyde ~11-12%, herniarin ~1.4%; coumarin confermata anche nel miele monoflora. Farag et al., Foods 2021 10(4):728 (10.3390/foods10040728); Jerkovic et al., Molecules 2011 16(3):2507 (10.3390/molecules16032507)."
+        },
+        {
+          "composto": "herniarin",
+          "descrittore": "erbaceo-dolce (7-metossicumarina)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mahleb (Prunus mahaleb): semi HS-SPME-GC-MS - coumarin ~19.8%, benzaldehyde fino ~18.7% (da amigdalina, crolla con la tostatura), (E)-cinnamaldehyde ~11-12%, herniarin ~1.4%; coumarin confermata anche nel miele monoflora. Farag et al., Foods 2021 10(4):728 (10.3390/foods10040728); Jerkovic et al., Molecules 2011 16(3):2507 (10.3390/molecules16032507)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "epazote",
+      "nodo_target": "ing-epazote",
+      "specie": "Dysphania ambrosioides",
+      "dominio": "cucina",
+      "CORREGGE": "L'ascaridolo e' chemotipo-dipendente: dominante (~80%) nel chemotipo messicano/sudamericano, ma in Argentina dominano limonene/alpha-pinene/beta-fellandrene e in Bulgaria thymol-carvacrol. Gli archi via ascaridolo valgono per il chemotipo messicano, quello d'uso culinario.",
+      "fonte_ingrediente": "Epazote (Dysphania ambrosioides), chemotipo messicano ascaridolo-dominante: ascaridole ~80% (Z+E), p-cymene 2-8%, alpha-terpinene minore. Profilo CHEMOTIPO-DIPENDENTE (vedi CORREGGE). Jardim et al., J Chem Ecol 2008 34(9):1213; Torres et al., FACENA 2003 19:27; Molecules 2026 31(6):946 (10.3390/molecules31060946). Ascaridolo termolabile e neurotossico ad alte dosi: uso in tracce.",
+      "composti": [
+        {
+          "composto": "ascaridole",
+          "descrittore": "resinoso-canforaceo (firma, chemotipo messicano)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Epazote (Dysphania ambrosioides), chemotipo messicano ascaridolo-dominante: ascaridole ~80% (Z+E), p-cymene 2-8%, alpha-terpinene minore. Profilo CHEMOTIPO-DIPENDENTE (vedi CORREGGE). Jardim et al., J Chem Ecol 2008 34(9):1213; Torres et al., FACENA 2003 19:27; Molecules 2026 31(6):946 (10.3390/molecules31060946). Ascaridolo termolabile e neurotossico ad alte dosi: uso in tracce."
+        },
+        {
+          "composto": "p-cymene",
+          "descrittore": "agrumato-legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Epazote (Dysphania ambrosioides), chemotipo messicano ascaridolo-dominante: ascaridole ~80% (Z+E), p-cymene 2-8%, alpha-terpinene minore. Profilo CHEMOTIPO-DIPENDENTE (vedi CORREGGE). Jardim et al., J Chem Ecol 2008 34(9):1213; Torres et al., FACENA 2003 19:27; Molecules 2026 31(6):946 (10.3390/molecules31060946). Ascaridolo termolabile e neurotossico ad alte dosi: uso in tracce."
+        },
+        {
+          "composto": "alpha-terpinene",
+          "descrittore": "erbaceo-terpenico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Epazote (Dysphania ambrosioides), chemotipo messicano ascaridolo-dominante: ascaridole ~80% (Z+E), p-cymene 2-8%, alpha-terpinene minore. Profilo CHEMOTIPO-DIPENDENTE (vedi CORREGGE). Jardim et al., J Chem Ecol 2008 34(9):1213; Torres et al., FACENA 2003 19:27; Molecules 2026 31(6):946 (10.3390/molecules31060946). Ascaridolo termolabile e neurotossico ad alte dosi: uso in tracce."
+        }
+      ]
+    },
+    {
+      "ingrediente": "timur",
+      "nodo_target": "bio-timur",
+      "specie": "Zanthoxylum armatum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Timur (Zanthoxylum armatum): aroma OLFATTIVO dominato da linalool (72% frutto / 62% foglie), NON limonene (8% / 3.75%); sabinene 6.77%. Il formicolio viene da hydroxy-alpha-sanshool (alcilamide NON volatile, pungente trigeminale TRPA1/TRPV1): resta fuori dagli archi aromatici. geraniolo non quantificato, escluso. Ma et al., Separations 2023 10(8):420 (10.3390/separations10080420); Chi et al., RSC Adv 2021 11:4547 (10.1039/d0ra09234g).",
+      "composti": [
+        {
+          "composto": "linalool",
+          "descrittore": "agrume floreale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Timur (Zanthoxylum armatum): aroma OLFATTIVO dominato da linalool (72% frutto / 62% foglie), NON limonene (8% / 3.75%); sabinene 6.77%. Il formicolio viene da hydroxy-alpha-sanshool (alcilamide NON volatile, pungente trigeminale TRPA1/TRPV1): resta fuori dagli archi aromatici. geraniolo non quantificato, escluso. Ma et al., Separations 2023 10(8):420 (10.3390/separations10080420); Chi et al., RSC Adv 2021 11:4547 (10.1039/d0ra09234g)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume-pompelmo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Timur (Zanthoxylum armatum): aroma OLFATTIVO dominato da linalool (72% frutto / 62% foglie), NON limonene (8% / 3.75%); sabinene 6.77%. Il formicolio viene da hydroxy-alpha-sanshool (alcilamide NON volatile, pungente trigeminale TRPA1/TRPV1): resta fuori dagli archi aromatici. geraniolo non quantificato, escluso. Ma et al., Separations 2023 10(8):420 (10.3390/separations10080420); Chi et al., RSC Adv 2021 11:4547 (10.1039/d0ra09234g)."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-terpenico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Timur (Zanthoxylum armatum): aroma OLFATTIVO dominato da linalool (72% frutto / 62% foglie), NON limonene (8% / 3.75%); sabinene 6.77%. Il formicolio viene da hydroxy-alpha-sanshool (alcilamide NON volatile, pungente trigeminale TRPA1/TRPV1): resta fuori dagli archi aromatici. geraniolo non quantificato, escluso. Ma et al., Separations 2023 10(8):420 (10.3390/separations10080420); Chi et al., RSC Adv 2021 11:4547 (10.1039/d0ra09234g)."
+        }
+      ]
     }
   ],
   "_prossimi": [
@@ -17847,6 +17955,8 @@
     "SALTATI per ora (fonte debole o fuori modello aromatico): genziana (il review da' solo classi, non composti nominati per la radice) e china/cinchona (amaro da chinino = alcaloide non volatile, non e' un profilo aromatico).",
     "Secondo giro %: chiudere i 'n.d. (da raffinare)' con tabelle GC dedicate (cipolla, miele, noce moscata, arancia aldeidi).",
     "Strato 'verificato_al_banco': dove l'assaggio Bucopertuso/Bucolico conferma.",
-    "Prossimi ingredienti: agrumi canditi, frutta secca (nocciola/mandorla tostata), caffe' (se non gia' coperto), erbe aromatiche mancanti."
+    "Prossimi ingredienti: agrumi canditi, frutta secca (nocciola/mandorla tostata), caffe' (se non gia' coperto), erbe aromatiche mancanti.",
+    "hoja santa (safrolo, ◐ da confermare su full-text GC-MS; additivo vietato puro)",
+    "mountain pepper (poligodiale e' pungente trigeminale, aroma olfattivo ◐ non verificato)"
   ]
 }
