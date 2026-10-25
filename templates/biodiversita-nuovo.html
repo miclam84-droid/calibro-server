@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atlante della biodiversità — Matter Bench</title>
+<meta name="description" content="La biodiversità gastronomica per territorio: Italia regione per regione, Mondo per macro-area. Apri un territorio, scopri le varietà a rischio. Una mappa che si rivela man mano.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E593C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matter Bench">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js"></script>
+<style>
+  .lede{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  .lede b{color:var(--ink); font-weight:600}
+  /* toggle livello Italia / Mondo */
+  .seg{display:inline-flex; margin-top:18px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-pill); padding:4px; gap:4px}
+  .seg button{font-family:var(--sans); font-weight:600; font-size:14px; color:var(--ink-soft); background:transparent; border:0; border-radius:var(--r-pill); padding:8px 18px; cursor:pointer}
+  .seg button[aria-selected="true"]{background:var(--verde); color:#fff}
+  .seg button:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+  /* progresso */
+  .prog{margin-top:16px; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:15px 16px}
+  .prog-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+  .prog-n{font-family:var(--display); font-weight:800; font-size:22px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .prog-n small{font-size:13px; color:var(--ink-soft); font-weight:600}
+  .prog-reg{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+  .prog-bar{position:relative; height:8px; border-radius:var(--r-pill); background:var(--riga); margin-top:12px; overflow:hidden}
+  .prog-bar .fill{position:absolute; left:0; top:0; bottom:0; background:var(--segnale); border-radius:var(--r-pill); transition:width .4s ease}
+  /* territori */
+  .mappa{display:flex; flex-direction:column; gap:12px; margin-top:22px}
+  .regione{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); overflow:hidden}
+  .regione.aperta{box-shadow:var(--shadow); border-color:var(--verde)}
+  .reg-head{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px; padding:15px 16px; cursor:pointer; width:100%; text-align:left; background:transparent; border:0; font-family:var(--sans)}
+  .reg-head:focus-visible{outline:2px solid var(--verde); outline-offset:-2px}
+  .reg-disco{width:40px; height:40px; border-radius:50%; background:var(--panel); border:2px solid var(--segnale); color:var(--verde); display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:800; font-size:14px; font-variant-numeric:tabular-nums; flex:0 0 auto}
+  .regione.aperta .reg-disco{background:var(--verde); border-color:var(--verde); color:#fff}
+  .reg-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.2}
+  .reg-conta{margin-top:3px; font-size:12.5px; color:var(--ink-soft)}
+  .reg-tutele{display:inline-flex; gap:6px; flex-wrap:wrap; margin-top:5px}
+  .reg-freccia{color:var(--verde); font-size:18px; transition:transform .2s ease}
+  .regione.aperta .reg-freccia{transform:rotate(90deg)}
+  .reg-body{padding:0 16px 16px; display:none}
+  .regione.aperta .reg-body{display:block}
+  .var-grid{display:flex; flex-wrap:wrap; gap:8px}
+  .var-chip{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--ink); background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-pill); padding:7px 13px; cursor:pointer}
+  .var-chip:hover{border-color:var(--verde)}
+  .var-chip:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+  .var-chip.scoperta{background:var(--tint); color:var(--verde); border-color:transparent}
+  .var-chip.scoperta::before{content:"✓ "; font-weight:700}
+  .var-det{margin-top:10px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); padding:12px 14px; font-size:13.5px; color:var(--ink); line-height:1.5}
+  .var-det .vt{font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink)}
+  .var-det .vm{margin-top:5px; color:var(--ink-soft); font-size:12.5px}
+  .reg-body .gloss{margin-top:10px; font-size:12px; color:var(--ink-soft)}
+  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  footer b{color:var(--ink); font-weight:600}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Biodiversità</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <header style="margin-top:22px">
+    <span class="eyebrow">Atlante per territorio</span>
+    <h1 style="margin-top:4px">La biodiversità, territorio per territorio</h1>
+    <p class="lede">Apri un territorio e <b>scopri le sue varietà</b> a rischio — prodotti dimenticati, Presìdi, DOP e IGP. La mappa si rivela man mano che esplori.</p>
+    <div class="seg" role="tablist" aria-label="Livello della mappa">
+      <button role="tab" id="tab-italia" aria-selected="true">Italia</button>
+      <button role="tab" id="tab-mondo" aria-selected="false">Mondo</button>
+    </div>
+  </header>
+
+  <div class="prog" id="prog" hidden>
+    <div class="prog-top">
+      <span class="prog-n"><span id="prog-scoperte">0</span><small> / <span id="prog-tot">0</span> varietà scoperte</small></span>
+      <span class="prog-reg"><span id="prog-regioni">0</span> / <span id="prog-regioni-tot">0</span> <span id="prog-reg-label">territori</span></span>
+    </div>
+    <div class="prog-bar"><span class="fill" id="prog-fill" style="width:0%"></span></div>
+  </div>
+
+  <div class="mappa" id="mappa"></div>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    <b>Atlante della biodiversità.</b> I dati (territorio, tutela, categoria) vengono dal grafo Matter, dove sono stati inseriti con la loro provenienza. Il <b>livello Mondo</b> raccoglie le varietà fuori Italia per macro-area; lo status di tutela delle voci-mondo è da riverificare, quindi lì non mostriamo bollini. Il tuo <b>avanzamento di scoperta</b> è salvato solo in questo browser, su questo dispositivo: personale, non condiviso, non lascia Matter.
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+  var cap = function(s){ s=String(s||''); return s? s.charAt(0).toUpperCase()+s.slice(1): s; };
+  var $ = function(id){ return document.getElementById(id); };
+
+  // ---------- configurazione dei due livelli ----------
+  var ORDINE_ITA = ["Trentino-Alto Adige","Valle d'Aosta","Piemonte","Lombardia","Veneto","Friuli-Venezia Giulia",
+    "Liguria","Emilia-Romagna","Toscana","Marche","Umbria","Abruzzo","Lazio","Molise","Campania",
+    "Puglia","Basilicata","Calabria","Sicilia","Sardegna"];
+  var ORDINE_MONDO = ["Europa (non Italia)","Medio Oriente e Levante","Africa","Asia e Pacifico","Americhe"];
+
+  var LIVELLI = {
+    italia: {
+      lista: "/v1/biodiversita/regioni", chiaveLista: "regioni", campoNome: "regione",
+      dettaglio: function(n){ return "/v1/biodiversita/regione/" + encodeURIComponent(n); },
+      chiaveDett: "varieta", ordine: ORDINE_ITA, etichettaTerritori: "regioni",
+      lsScoperte: "matter_bio_scoperte", lsAperte: "matter_bio_regioni", conTutele: true
+    },
+    mondo: {
+      lista: "/v1/biodiversita/aree", chiaveLista: "aree", campoNome: "area",
+      dettaglio: function(n){ return "/v1/biodiversita/area/" + encodeURIComponent(n); },
+      chiaveDett: "varieta", ordine: ORDINE_MONDO, etichettaTerritori: "aree",
+      lsScoperte: "matter_bio_scoperte_mondo", lsAperte: "matter_bio_aree_mondo", conTutele: false
+    }
+  };
+
+  function loadSet(k){ try{ return new Set(JSON.parse(localStorage.getItem(k)||'[]')); }catch(e){ return new Set(); } }
+  function saveSet(k,s){ try{ localStorage.setItem(k, JSON.stringify(Array.from(s))); }catch(e){} }
+
+  // stato per-livello
+  var STATO = { italia:{}, mondo:{} };
+  var attivo = "italia";
+  try{ var mem = localStorage.getItem("matter_bio_livello"); if(mem==="mondo"||mem==="italia") attivo = mem; }catch(e){}
+
+  function ordina(items, cfg){
+    return items.slice().sort(function(a,b){
+      var ia=cfg.ordine.indexOf(a[cfg.campoNome]), ib=cfg.ordine.indexOf(b[cfg.campoNome]);
+      if(ia<0) ia=99; if(ib<0) ib=99;
+      if(ia!==ib) return ia-ib;
+      return String(a[cfg.campoNome]).localeCompare(b[cfg.campoNome]);
+    });
+  }
+
+  function aggiornaProg(){
+    var st = STATO[attivo], cfg = LIVELLI[attivo];
+    $('prog').hidden = false;
+    $('prog-scoperte').textContent = st.scoperte.size;
+    $('prog-tot').textContent = st.totVar;
+    $('prog-regioni').textContent = st.aperte.size;
+    $('prog-regioni-tot').textContent = st.totTerr;
+    $('prog-reg-label').textContent = cfg.etichettaTerritori;
+    var pct = st.totVar ? Math.round(100*st.scoperte.size/st.totVar) : 0;
+    $('prog-fill').style.width = pct + '%';
+  }
+
+  function tutelaChips(r){
+    var out=[];
+    if(r.presidi) out.push('<span class="prov prov-verificato">'+r.presidi+' Presìdi</span>');
+    if(r.dop) out.push('<span class="prov prov-fonte">'+r.dop+' DOP</span>');
+    if(r.igp) out.push('<span class="prov prov-derivato">'+r.igp+' IGP</span>');
+    return out.join(' ');
+  }
+
+  function render(items){
+    var cfg = LIVELLI[attivo], st = STATO[attivo];
+    var mappa = $('mappa'); mappa.innerHTML='';
+    ordina(items, cfg).forEach(function(r){
+      var nome = r[cfg.campoNome];
+      var aperta = st.aperte.has(nome);
+      var sotto = cfg.campoNome==="area"
+        ? ((r.varieta||0) + ' varietà · ' + (r.paesi||0) + ' paesi')
+        : ((r.varieta||0) + ' varietà nel territorio');
+      var el = document.createElement('section');
+      el.className = 'regione' + (aperta?' aperta':'');
+      el.innerHTML =
+        '<button class="reg-head" type="button" aria-expanded="'+(aperta?'true':'false')+'">'+
+          '<span class="reg-disco">'+ (r.varieta||0) +'</span>'+
+          '<span><span class="reg-nome">'+esc(nome)+'</span>'+
+            '<span class="reg-conta">'+ sotto +'</span>'+
+            (cfg.conTutele ? '<span class="reg-tutele">'+ tutelaChips(r) +'</span>' : '') +'</span>'+
+          '<span class="reg-freccia">›</span>'+
+        '</button>'+
+        '<div class="reg-body"><div class="var-grid"></div><p class="gloss">Tocca una varietà per scoprirla.</p></div>';
+      mappa.appendChild(el);
+      el.querySelector('.reg-head').addEventListener('click', function(){ toggle(el, nome); });
+      if(aperta) caricaVarieta(el, nome);
+    });
+  }
+
+  function toggle(el, nome){
+    var st = STATO[attivo];
+    var ora = el.classList.toggle('aperta');
+    el.querySelector('.reg-head').setAttribute('aria-expanded', ora?'true':'false');
+    if(ora){ st.aperte.add(nome); caricaVarieta(el, nome); }
+    else { st.aperte.delete(nome); }
+    saveSet(LIVELLI[attivo].lsAperte, st.aperte);
+    aggiornaProg();
+  }
+
+  function caricaVarieta(el, nome){
+    var cfg = LIVELLI[attivo], st = STATO[attivo];
+    var grid = el.querySelector('.var-grid');
+    if(grid.dataset.caricata==='1') return;
+    grid.innerHTML = '<span class="gloss">Apro il territorio…</span>';
+    fetch(cfg.dettaglio(nome), {headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var vs = (d && d[cfg.chiaveDett]) || [];
+        grid.dataset.caricata='1';
+        if(!vs.length){ grid.innerHTML = '<span class="gloss">Nessuna varietà registrata qui per ora. Non la inventiamo.</span>'; return; }
+        grid.innerHTML = '';
+        vs.forEach(function(vv){
+          var chip = document.createElement('button');
+          chip.type='button';
+          chip.className = 'var-chip' + (st.scoperte.has(vv.id)?' scoperta':'');
+          chip.textContent = cap(vv.nome);
+          chip.addEventListener('click', function(){ scopri(el, chip, vv); });
+          grid.appendChild(chip);
+        });
+      })
+      .catch(function(){ grid.innerHTML = '<span class="gloss">Territorio non raggiungibile adesso. Riprova.</span>'; });
+  }
+
+  function scopri(el, chip, vv){
+    var cfg = LIVELLI[attivo], st = STATO[attivo];
+    if(!chip.classList.contains('scoperta')){
+      chip.classList.add('scoperta');
+      st.scoperte.add(vv.id); saveSet(cfg.lsScoperte, st.scoperte); aggiornaProg();
+    }
+    var body = el.querySelector('.reg-body');
+    var old = body.querySelector('.var-det[data-id="'+CSS.escape(vv.id)+'"]');
+    if(old){ old.remove(); return; }
+    var meta = [];
+    if(cfg.campoNome==="area" && vv.paese) meta.push(esc(vv.paese));
+    if(vv.territorio) meta.push(esc(vv.territorio));
+    if(cfg.conTutele && vv.tutela) meta.push(esc(String(vv.tutela).toUpperCase()));
+    if(vv.categoria) meta.push(esc(vv.categoria));
+    var det = document.createElement('div');
+    det.className='var-det'; det.setAttribute('data-id', vv.id);
+    det.innerHTML = '<div class="vt">'+esc(cap(vv.nome))+'</div>'+ (meta.length?'<div class="vm">'+meta.join(' · ')+'</div>':'') +
+      '<a class="btn btn--ghost" style="margin-top:10px" href="/ingrediente/'+encodeURIComponent(vv.nome)+'">Apri la scheda →</a>';
+    body.appendChild(det);
+  }
+
+  // ---------- caricamento di un livello (una volta, poi cache) ----------
+  function caricaLivello(){
+    var cfg = LIVELLI[attivo], st = STATO[attivo];
+    $('state').hidden = true; $('state').className='state';
+    if(st.items){ render(st.items); aggiornaProg(); return; }  // già in cache
+    st.scoperte = loadSet(cfg.lsScoperte);
+    st.aperte = loadSet(cfg.lsAperte);
+    $('mappa').innerHTML = '';
+    fetch(cfg.lista, {headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var items = (d && d[cfg.chiaveLista]) || [];
+        if(!items.length){
+          st.items = []; st.totTerr = 0; st.totVar = 0; aggiornaProg();
+          $('state').hidden=false;
+          $('state').innerHTML = attivo==="mondo"
+            ? '<b>Livello Mondo ancora vuoto.</b> Le voci-mondo entrano con l’ondata dati dedicata; appena importate, compaiono qui.'
+            : '<b>Atlante Italia ancora vuoto.</b> Nessuna varietà con regione nel grafo per ora.';
+          return;
+        }
+        st.items = items;
+        st.totTerr = items.length;
+        st.totVar = items.reduce(function(s,r){ return s + (r.varieta||0); }, 0);
+        aggiornaProg();
+        render(items);
+      })
+      .catch(function(){ $('state').hidden=false; $('state').className='state err'; $('state').innerHTML='Non riesco a caricare questo livello adesso. Riprova tra poco.'; });
+  }
+
+  function cambiaLivello(nuovo){
+    if(nuovo===attivo) return;
+    attivo = nuovo;
+    try{ localStorage.setItem("matter_bio_livello", attivo); }catch(e){}
+    $('tab-italia').setAttribute('aria-selected', attivo==="italia"?'true':'false');
+    $('tab-mondo').setAttribute('aria-selected', attivo==="mondo"?'true':'false');
+    caricaLivello();
+  }
+
+  $('tab-italia').addEventListener('click', function(){ cambiaLivello("italia"); });
+  $('tab-mondo').addEventListener('click', function(){ cambiaLivello("mondo"); });
+  // riflette il livello memorizzato all'avvio
+  $('tab-italia').setAttribute('aria-selected', attivo==="italia"?'true':'false');
+  $('tab-mondo').setAttribute('aria-selected', attivo==="mondo"?'true':'false');
+  caricaLivello();
+})();
+</script>
+</body>
+</html>

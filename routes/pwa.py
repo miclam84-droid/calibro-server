@@ -83,6 +83,18 @@ def banco_calcolatori():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
+@bp.route("/biodiversita")
+@bp.route("/atlante")
+def biodiversita():
+    """FRONTEND-2.0 — Atlante della biodiversità: territori nord→sud, ogni regione si apre
+    e rivela le sue varietà a rischio (Presìdi/DOP/IGP). Cablato dal vivo a
+    /v1/biodiversita/regioni + /v1/biodiversita/regione/<x>. Lo stato di scoperta
+    è solo nel browser (localStorage), per-dispositivo. Pagina nuova e isolata."""
+    from flask import make_response
+    resp = make_response(render_template("biodiversita-nuovo.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
 _FOTO_ING_CACHE = {}  # {nome_lower: {"url":...} }  — cache in memoria, niente scrittura sul grafo
 
 def _foto_resp(dato):
