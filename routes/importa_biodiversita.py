@@ -73,17 +73,27 @@ def importa_biodiversita():
         for v in voci:
             nome = (v.get("nome") or "").strip()
             regione = (v.get("regione") or "").strip()
-            if not nome or not regione:
+            area = (v.get("area") or "").strip()      # macro-regione del mondo (Africa, Americhe, Asia...)
+            paese = (v.get("paese") or "").strip()     # paese (Perù, Messico, Etiopia...)
+            # Accetta una voce ITALIANA (ha regione) OPPURE una voce MONDO (ha area).
+            # I due assi restano separati: le voci-mondo non hanno 'regione', quindi
+            # NON inquinano la mappa Italia (/v1/biodiversita/regioni).
+            if not nome or (not regione and not area):
                 saltati += 1
                 continue
             tutela = _norm_tutela(v.get("tutela"))
             payload = {
-                "regione": regione,
                 "territorio": (v.get("territorio") or "").strip(),
                 "tutela": tutela,
                 "categoria": (v.get("categoria") or "").strip(),
                 "origine": "biodiversita_seed",
             }
+            if regione:
+                payload["regione"] = regione
+            if area:
+                payload["area"] = area
+            if paese:
+                payload["paese"] = paese
             pj = json.dumps(payload, ensure_ascii=False)
 
             # nodo esistente con lo stesso nome? (arricchisci, non duplicare)
@@ -112,8 +122,11 @@ def importa_biodiversita():
                     )
                     creati += 1
 
-            per_regione[regione] = per_regione.get(regione, 0) + 1
-            per_voce.append({"nome": nome, "regione": regione, "tutela": tutela or "(nessuna)",
+            chiave = regione or area   # raggruppa per territorio (regione IT o area mondo)
+            per_regione[chiave] = per_regione.get(chiave, 0) + 1
+            per_voce.append({"nome": nome, "territorio_geo": chiave,
+                             "asse": "italia" if regione else "mondo",
+                             "paese": paese, "tutela": tutela or "(nessuna)",
                              "categoria": payload["categoria"], "nodo": nid, "azione": azione})
 
         if esegui:
@@ -124,10 +137,10 @@ def importa_biodiversita():
             "voci_totali": len(voci),
             "creati_nuovi": creati,
             "arricchiti_esistenti": arricchiti,
-            "saltati_senza_nome_o_regione": saltati,
-            "per_regione": dict(sorted(per_regione.items(), key=lambda x: -x[1])),
+            "saltati_senza_nome_o_territorio": saltati,
+            "per_territorio": dict(sorted(per_regione.items(), key=lambda x: -x[1])),
             "per_voce": per_voce,
-            "nota": "La mappa /v1/biodiversita/regioni conta dop/igp/presidio; pat/stg/(nessuna) restano varieta' non conteggiate ma visibili.",
+            "nota": "Voci con 'regione' -> mappa Italia (/v1/biodiversita/regioni). Voci con 'area' -> mappa Mondo (/v1/biodiversita/aree). DOP/IGP/presidio contati sull'Italia; il mondo si conta per varieta' e paesi.",
         })
     except Exception as e:
         try:
