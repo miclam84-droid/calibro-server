@@ -2,10 +2,10 @@
   "name": "Matter Bench",
   "short_name": "Matter Bench",
   "description": "La scienza del mestiere F&B — Science & Craft",
-  "start_url": "/app",
+  "start_url": "/nuovo",
   "display": "standalone",
-  "background_color": "#CBD4D4",
-  "theme_color": "#131C21",
+  "background_color": "#F3F5EF",
+  "theme_color": "#1E593C",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -57,5 +57,6 @@
     "productivity"
   ],
   "lang": "it",
-  "dir": "ltr"
+  "dir": "ltr",
+  "scope": "/"
 }
