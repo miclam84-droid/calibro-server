@@ -17127,9 +17127,697 @@
           "fonte": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato."
         }
       ]
+    },
+    {
+      "ingrediente": "pawpaw",
+      "nodo_target": "ing-pawpaw",
+      "specie": "Asimina triloba",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Pawpaw (Asimina triloba): firma esteri etilici + lattoni + homofuraneolo = profilo mango-ananas-banana dolce-cremoso (44 composti odor-active, alti FD). J. Food Research 2022, 11(4):13 (DOI 10.5539/jfr.v11n4p13).",
+      "composti": [
+        {
+          "composto": "4-hydroxy-2-ethyl-5-methyl-3(2H)-furanone",
+          "descrittore": "caramello-dolce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pawpaw (Asimina triloba): firma esteri etilici + lattoni + homofuraneolo = profilo mango-ananas-banana dolce-cremoso (44 composti odor-active, alti FD). J. Food Research 2022, 11(4):13 (DOI 10.5539/jfr.v11n4p13)."
+        },
+        {
+          "composto": "ethyl hexanoate",
+          "descrittore": "frutta tropicale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pawpaw (Asimina triloba): firma esteri etilici + lattoni + homofuraneolo = profilo mango-ananas-banana dolce-cremoso (44 composti odor-active, alti FD). J. Food Research 2022, 11(4):13 (DOI 10.5539/jfr.v11n4p13)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pawpaw (Asimina triloba): firma esteri etilici + lattoni + homofuraneolo = profilo mango-ananas-banana dolce-cremoso (44 composti odor-active, alti FD). J. Food Research 2022, 11(4):13 (DOI 10.5539/jfr.v11n4p13)."
+        },
+        {
+          "composto": "gamma-octalactone",
+          "descrittore": "cocco-cremoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pawpaw (Asimina triloba): firma esteri etilici + lattoni + homofuraneolo = profilo mango-ananas-banana dolce-cremoso (44 composti odor-active, alti FD). J. Food Research 2022, 11(4):13 (DOI 10.5539/jfr.v11n4p13)."
+        },
+        {
+          "composto": "delta-octalactone",
+          "descrittore": "cremoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pawpaw (Asimina triloba): firma esteri etilici + lattoni + homofuraneolo = profilo mango-ananas-banana dolce-cremoso (44 composti odor-active, alti FD). J. Food Research 2022, 11(4):13 (DOI 10.5539/jfr.v11n4p13)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata-maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pawpaw (Asimina triloba): firma esteri etilici + lattoni + homofuraneolo = profilo mango-ananas-banana dolce-cremoso (44 composti odor-active, alti FD). J. Food Research 2022, 11(4):13 (DOI 10.5539/jfr.v11n4p13)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "finger lime",
+      "nodo_target": "ing-finger-lime",
+      "specie": "Citrus australasica",
+      "dominio": "bar",
+      "fonte_ingrediente": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume-fresco (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso-agrumato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
+        },
+        {
+          "composto": "bicyclogermacrene",
+          "descrittore": "legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
+        },
+        {
+          "composto": "beta-phellandrene",
+          "descrittore": "resinoso (cv Faustrime)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
+        }
+      ]
+    },
+    {
+      "ingrediente": "paccasassi",
+      "nodo_target": "ing-paccasassi",
+      "specie": "Crithmum maritimum",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Paccasassi / finocchio di mare (Crithmum maritimum): DUE chemotipi — francese dillapiolo-dominante (62%), croato sabinene(51%)/limonene(36%). Dichiarare sempre il chemotipo. Foods 2024, 13(5):695 (DOI 10.3390/foods13050695). Alofita di falesia (Conero), in salamoia; progetto UE di coltivazione.",
+      "composti": [
+        {
+          "composto": "dillapiole",
+          "descrittore": "anice-legnoso-speziato (firma, chemotipo FR)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Paccasassi / finocchio di mare (Crithmum maritimum): DUE chemotipi — francese dillapiolo-dominante (62%), croato sabinene(51%)/limonene(36%). Dichiarare sempre il chemotipo. Foods 2024, 13(5):695 (DOI 10.3390/foods13050695). Alofita di falesia (Conero), in salamoia; progetto UE di coltivazione."
+        },
+        {
+          "composto": "sabinene",
+          "descrittore": "legnoso (firma, chemotipo HR)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Paccasassi / finocchio di mare (Crithmum maritimum): DUE chemotipi — francese dillapiolo-dominante (62%), croato sabinene(51%)/limonene(36%). Dichiarare sempre il chemotipo. Foods 2024, 13(5):695 (DOI 10.3390/foods13050695). Alofita di falesia (Conero), in salamoia; progetto UE di coltivazione."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Paccasassi / finocchio di mare (Crithmum maritimum): DUE chemotipi — francese dillapiolo-dominante (62%), croato sabinene(51%)/limonene(36%). Dichiarare sempre il chemotipo. Foods 2024, 13(5):695 (DOI 10.3390/foods13050695). Alofita di falesia (Conero), in salamoia; progetto UE di coltivazione."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Paccasassi / finocchio di mare (Crithmum maritimum): DUE chemotipi — francese dillapiolo-dominante (62%), croato sabinene(51%)/limonene(36%). Dichiarare sempre il chemotipo. Foods 2024, 13(5):695 (DOI 10.3390/foods13050695). Alofita di falesia (Conero), in salamoia; progetto UE di coltivazione."
+        },
+        {
+          "composto": "p-cymene",
+          "descrittore": "secco-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Paccasassi / finocchio di mare (Crithmum maritimum): DUE chemotipi — francese dillapiolo-dominante (62%), croato sabinene(51%)/limonene(36%). Dichiarare sempre il chemotipo. Foods 2024, 13(5):695 (DOI 10.3390/foods13050695). Alofita di falesia (Conero), in salamoia; progetto UE di coltivazione."
+        }
+      ]
+    },
+    {
+      "ingrediente": "miele di corbezzolo",
+      "nodo_target": "ing-miele-di-corbezzolo",
+      "specie": "miele monoflora da Arbutus unedo",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Miele di corbezzolo (Sardegna, Presidio): firma acido omogentisico = marcatore d'autenticità e responsabile dell'amaro caratteristico. Cabras et al., J. Agric. Food Chem. 1999, 47(10):4064 (DOI 10.1021/jf990141o). NOTA ONESTA: è un acido fenolico NON volatile (marcatore gustativo/analitico, non odorante GC-O); sul fronte volatile il miele porta norisoprenoidi non specificati in questa fonte.",
+      "composti": [
+        {
+          "composto": "homogentisic acid",
+          "descrittore": "amaro-marcatore d'autenticità (non volatile)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Miele di corbezzolo (Sardegna, Presidio): firma acido omogentisico = marcatore d'autenticità e responsabile dell'amaro caratteristico. Cabras et al., J. Agric. Food Chem. 1999, 47(10):4064 (DOI 10.1021/jf990141o). NOTA ONESTA: è un acido fenolico NON volatile (marcatore gustativo/analitico, non odorante GC-O); sul fronte volatile il miele porta norisoprenoidi non specificati in questa fonte."
+        }
+      ]
+    },
+    {
+      "ingrediente": "grani del paradiso",
+      "nodo_target": "ai_grani_del_paradiso",
+      "specie": "Aframomum melegueta",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029).",
+      "composti": [
+        {
+          "composto": "eugenol",
+          "descrittore": "chiodo di garofano (firma aroma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "balsamico-eucalipto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        },
+        {
+          "composto": "beta-caryophyllene",
+          "descrittore": "legnoso-pepato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        },
+        {
+          "composto": "alpha-humulene",
+          "descrittore": "legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        },
+        {
+          "composto": "6-paradol",
+          "descrittore": "pungente-bruciante (trigeminale, non olfattivo)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "olivello spinoso",
+      "nodo_target": "ing-olivello-spinoso",
+      "specie": "Hippophae rhamnoides",
+      "dominio": "bar",
+      "fonte_ingrediente": "Olivello spinoso (Hippophae rhamnoides): firma esteri etilici ramificati (ethyl 2-metilbutanoato + ethyl 3-metilbutanoato, OAV più alti) = carattere fruttato-intenso. Frontiers in Nutrition 2023, 10:1268633 (DOI 10.3389/fnut.2023.1268633).",
+      "composti": [
+        {
+          "composto": "ethyl 2-methylbutanoate",
+          "descrittore": "mela verde-fruttato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Olivello spinoso (Hippophae rhamnoides): firma esteri etilici ramificati (ethyl 2-metilbutanoato + ethyl 3-metilbutanoato, OAV più alti) = carattere fruttato-intenso. Frontiers in Nutrition 2023, 10:1268633 (DOI 10.3389/fnut.2023.1268633)."
+        },
+        {
+          "composto": "ethyl 3-methylbutanoate",
+          "descrittore": "ananas-mela (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Olivello spinoso (Hippophae rhamnoides): firma esteri etilici ramificati (ethyl 2-metilbutanoato + ethyl 3-metilbutanoato, OAV più alti) = carattere fruttato-intenso. Frontiers in Nutrition 2023, 10:1268633 (DOI 10.3389/fnut.2023.1268633)."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Olivello spinoso (Hippophae rhamnoides): firma esteri etilici ramificati (ethyl 2-metilbutanoato + ethyl 3-metilbutanoato, OAV più alti) = carattere fruttato-intenso. Frontiers in Nutrition 2023, 10:1268633 (DOI 10.3389/fnut.2023.1268633)."
+        },
+        {
+          "composto": "isoamyl acetate",
+          "descrittore": "banana",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Olivello spinoso (Hippophae rhamnoides): firma esteri etilici ramificati (ethyl 2-metilbutanoato + ethyl 3-metilbutanoato, OAV più alti) = carattere fruttato-intenso. Frontiers in Nutrition 2023, 10:1268633 (DOI 10.3389/fnut.2023.1268633)."
+        },
+        {
+          "composto": "octanal",
+          "descrittore": "grasso-agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Olivello spinoso (Hippophae rhamnoides): firma esteri etilici ramificati (ethyl 2-metilbutanoato + ethyl 3-metilbutanoato, OAV più alti) = carattere fruttato-intenso. Frontiers in Nutrition 2023, 10:1268633 (DOI 10.3389/fnut.2023.1268633)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Olivello spinoso (Hippophae rhamnoides): firma esteri etilici ramificati (ethyl 2-metilbutanoato + ethyl 3-metilbutanoato, OAV più alti) = carattere fruttato-intenso. Frontiers in Nutrition 2023, 10:1268633 (DOI 10.3389/fnut.2023.1268633)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mirtillo rosso",
+      "nodo_target": "ing-mirtillo-rosso",
+      "specie": "Vaccinium vitis-idaea",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Mirtillo rosso / lingon (Vaccinium vitis-idaea): firma acido 2-metilbutanoico + aldeidi C6 + metil benzoato (Marsol-Vall et al.). Food Research International 2023, 167:112738 (DOI 10.1016/j.foodres.2023.112738).",
+      "composti": [
+        {
+          "composto": "2-methylbutanoic acid",
+          "descrittore": "acido-formaggio (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / lingon (Vaccinium vitis-idaea): firma acido 2-metilbutanoico + aldeidi C6 + metil benzoato (Marsol-Vall et al.). Food Research International 2023, 167:112738 (DOI 10.1016/j.foodres.2023.112738)."
+        },
+        {
+          "composto": "hexanal",
+          "descrittore": "verde-erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / lingon (Vaccinium vitis-idaea): firma acido 2-metilbutanoico + aldeidi C6 + metil benzoato (Marsol-Vall et al.). Food Research International 2023, 167:112738 (DOI 10.1016/j.foodres.2023.112738)."
+        },
+        {
+          "composto": "(Z)-3-hexenal",
+          "descrittore": "verde tagliato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / lingon (Vaccinium vitis-idaea): firma acido 2-metilbutanoico + aldeidi C6 + metil benzoato (Marsol-Vall et al.). Food Research International 2023, 167:112738 (DOI 10.1016/j.foodres.2023.112738)."
+        },
+        {
+          "composto": "methyl benzoate",
+          "descrittore": "dolce-fenolico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / lingon (Vaccinium vitis-idaea): firma acido 2-metilbutanoico + aldeidi C6 + metil benzoato (Marsol-Vall et al.). Food Research International 2023, 167:112738 (DOI 10.1016/j.foodres.2023.112738)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / lingon (Vaccinium vitis-idaea): firma acido 2-metilbutanoico + aldeidi C6 + metil benzoato (Marsol-Vall et al.). Food Research International 2023, 167:112738 (DOI 10.1016/j.foodres.2023.112738)."
+        },
+        {
+          "composto": "2,3-butanedione",
+          "descrittore": "burroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mirtillo rosso / lingon (Vaccinium vitis-idaea): firma acido 2-metilbutanoico + aldeidi C6 + metil benzoato (Marsol-Vall et al.). Food Research International 2023, 167:112738 (DOI 10.1016/j.foodres.2023.112738)."
+        }
+      ],
+      "CORREGGE": "Firma aggiornata su fonte GC-O: l'acido benzoico (assegnato prima) è il conservante naturale NON volatile del lingon, non la firma d'aroma. Firma reale = acido 2-metilbutanoico + aldeidi C6 + metil benzoato."
+    },
+    {
+      "ingrediente": "surströmming",
+      "nodo_target": "ing-surstromming",
+      "specie": "aringa del Baltico fermentata",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Surströmming (aringa fermentata): firma trimetilammina (TMA) + polisolfuri (dimetil di/trisolfuro). Food Microbiology 2020 (DOI 10.1016/j.fm.2020.103503). NOTA ONESTA: nello studio NON compaiono H2S né acidi grassi liberi C1-C5 — la firma è ammine + solfuri.",
+      "composti": [
+        {
+          "composto": "trimethylamine",
+          "descrittore": "pesce-ammoniacale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Surströmming (aringa fermentata): firma trimetilammina (TMA) + polisolfuri (dimetil di/trisolfuro). Food Microbiology 2020 (DOI 10.1016/j.fm.2020.103503). NOTA ONESTA: nello studio NON compaiono H2S né acidi grassi liberi C1-C5 — la firma è ammine + solfuri."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "fecale-cavolo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Surströmming (aringa fermentata): firma trimetilammina (TMA) + polisolfuri (dimetil di/trisolfuro). Food Microbiology 2020 (DOI 10.1016/j.fm.2020.103503). NOTA ONESTA: nello studio NON compaiono H2S né acidi grassi liberi C1-C5 — la firma è ammine + solfuri."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Surströmming (aringa fermentata): firma trimetilammina (TMA) + polisolfuri (dimetil di/trisolfuro). Food Microbiology 2020 (DOI 10.1016/j.fm.2020.103503). NOTA ONESTA: nello studio NON compaiono H2S né acidi grassi liberi C1-C5 — la firma è ammine + solfuri."
+        },
+        {
+          "composto": "1,2,4-trithiolane",
+          "descrittore": "shiitake-solforoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Surströmming (aringa fermentata): firma trimetilammina (TMA) + polisolfuri (dimetil di/trisolfuro). Food Microbiology 2020 (DOI 10.1016/j.fm.2020.103503). NOTA ONESTA: nello studio NON compaiono H2S né acidi grassi liberi C1-C5 — la firma è ammine + solfuri."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "carneo-maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Surströmming (aringa fermentata): firma trimetilammina (TMA) + polisolfuri (dimetil di/trisolfuro). Food Microbiology 2020 (DOI 10.1016/j.fm.2020.103503). NOTA ONESTA: nello studio NON compaiono H2S né acidi grassi liberi C1-C5 — la firma è ammine + solfuri."
+        },
+        {
+          "composto": "ethyl butanoate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Surströmming (aringa fermentata): firma trimetilammina (TMA) + polisolfuri (dimetil di/trisolfuro). Food Microbiology 2020 (DOI 10.1016/j.fm.2020.103503). NOTA ONESTA: nello studio NON compaiono H2S né acidi grassi liberi C1-C5 — la firma è ammine + solfuri."
+        }
+      ]
+    },
+    {
+      "ingrediente": "époisses",
+      "nodo_target": "ing-epoisses",
+      "specie": "formaggio francese a crosta lavata (marc de Bourgogne)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Époisses (crosta lavata, Brevibacterium linens): firma methanethiol (character-impact, dal catabolismo della metionina) + dimetil di/trisolfuro + tioesteri S-metilici. Bonnarme et al., Appl. Environ. Microbiol. 2000, 66(12):5514 (DOI 10.1128/AEM.66.12.5514). Firma di categoria delle croste lavate (Munster/Herve/Puzzone).",
+      "composti": [
+        {
+          "composto": "methanethiol",
+          "descrittore": "cavolo cotto-aglio (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Époisses (crosta lavata, Brevibacterium linens): firma methanethiol (character-impact, dal catabolismo della metionina) + dimetil di/trisolfuro + tioesteri S-metilici. Bonnarme et al., Appl. Environ. Microbiol. 2000, 66(12):5514 (DOI 10.1128/AEM.66.12.5514). Firma di categoria delle croste lavate (Munster/Herve/Puzzone)."
+        },
+        {
+          "composto": "dimethyl trisulfide",
+          "descrittore": "solforoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Époisses (crosta lavata, Brevibacterium linens): firma methanethiol (character-impact, dal catabolismo della metionina) + dimetil di/trisolfuro + tioesteri S-metilici. Bonnarme et al., Appl. Environ. Microbiol. 2000, 66(12):5514 (DOI 10.1128/AEM.66.12.5514). Firma di categoria delle croste lavate (Munster/Herve/Puzzone)."
+        },
+        {
+          "composto": "dimethyl disulfide",
+          "descrittore": "solforoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Époisses (crosta lavata, Brevibacterium linens): firma methanethiol (character-impact, dal catabolismo della metionina) + dimetil di/trisolfuro + tioesteri S-metilici. Bonnarme et al., Appl. Environ. Microbiol. 2000, 66(12):5514 (DOI 10.1128/AEM.66.12.5514). Firma di categoria delle croste lavate (Munster/Herve/Puzzone)."
+        },
+        {
+          "composto": "S-methyl thioacetate",
+          "descrittore": "tioestere-formaggio",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Époisses (crosta lavata, Brevibacterium linens): firma methanethiol (character-impact, dal catabolismo della metionina) + dimetil di/trisolfuro + tioesteri S-metilici. Bonnarme et al., Appl. Environ. Microbiol. 2000, 66(12):5514 (DOI 10.1128/AEM.66.12.5514). Firma di categoria delle croste lavate (Munster/Herve/Puzzone)."
+        },
+        {
+          "composto": "3-methylbutanal",
+          "descrittore": "maltato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Époisses (crosta lavata, Brevibacterium linens): firma methanethiol (character-impact, dal catabolismo della metionina) + dimetil di/trisolfuro + tioesteri S-metilici. Bonnarme et al., Appl. Environ. Microbiol. 2000, 66(12):5514 (DOI 10.1128/AEM.66.12.5514). Firma di categoria delle croste lavate (Munster/Herve/Puzzone)."
+        },
+        {
+          "composto": "methional",
+          "descrittore": "patata lessa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Époisses (crosta lavata, Brevibacterium linens): firma methanethiol (character-impact, dal catabolismo della metionina) + dimetil di/trisolfuro + tioesteri S-metilici. Bonnarme et al., Appl. Environ. Microbiol. 2000, 66(12):5514 (DOI 10.1128/AEM.66.12.5514). Firma di categoria delle croste lavate (Munster/Herve/Puzzone)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "lemon myrtle",
+      "nodo_target": "ing-lemon-myrtle",
+      "specie": "Backhousia citriodora",
+      "dominio": "bar",
+      "fonte_ingrediente": "Lemon myrtle (Backhousia citriodora): firma citrale 89,8% (geraniale + nerale) = limone purissimo. Molecules 2022, 27(15):4895 (DOI 10.3390/molecules27154895).",
+      "composti": [
+        {
+          "composto": "geranial",
+          "descrittore": "limone intenso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lemon myrtle (Backhousia citriodora): firma citrale 89,8% (geraniale + nerale) = limone purissimo. Molecules 2022, 27(15):4895 (DOI 10.3390/molecules27154895)."
+        },
+        {
+          "composto": "neral",
+          "descrittore": "limone-dolce (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lemon myrtle (Backhousia citriodora): firma citrale 89,8% (geraniale + nerale) = limone purissimo. Molecules 2022, 27(15):4895 (DOI 10.3390/molecules27154895)."
+        },
+        {
+          "composto": "6-methyl-5-hepten-2-one",
+          "descrittore": "agrume-verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lemon myrtle (Backhousia citriodora): firma citrale 89,8% (geraniale + nerale) = limone purissimo. Molecules 2022, 27(15):4895 (DOI 10.3390/molecules27154895)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lemon myrtle (Backhousia citriodora): firma citrale 89,8% (geraniale + nerale) = limone purissimo. Molecules 2022, 27(15):4895 (DOI 10.3390/molecules27154895)."
+        },
+        {
+          "composto": "rosefuran",
+          "descrittore": "erbaceo-dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Lemon myrtle (Backhousia citriodora): firma citrale 89,8% (geraniale + nerale) = limone purissimo. Molecules 2022, 27(15):4895 (DOI 10.3390/molecules27154895)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "mastiha",
+      "nodo_target": "ing-mastiha",
+      "specie": "Pistacia lentiscus var. chia (resina)",
+      "dominio": "bar",
+      "fonte_ingrediente": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo.",
+      "composti": [
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso-pino (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "balsamico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo."
+        },
+        {
+          "composto": "beta-pinene",
+          "descrittore": "resinoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo."
+        },
+        {
+          "composto": "verbenone",
+          "descrittore": "canfora-legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo."
+        }
+      ]
+    },
+    {
+      "ingrediente": "sudachi",
+      "nodo_target": "ai_sudachi",
+      "specie": "Citrus sudachi",
+      "dominio": "bar",
+      "fonte_ingrediente": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156).",
+      "composti": [
+        {
+          "composto": "decanal",
+          "descrittore": "agrume-ceroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
+        },
+        {
+          "composto": "citronellal",
+          "descrittore": "verde-citrico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pepe di timut",
+      "nodo_target": "ing-pepe-di-timut",
+      "specie": "Zanthoxylum armatum",
+      "dominio": "bar",
+      "fonte_ingrediente": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020.",
+      "composti": [
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-fresco (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "methyl cinnamate",
+          "descrittore": "balsamico-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "balsamico",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "terpinen-4-ol",
+          "descrittore": "terroso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "hydroxy-alpha-sanshool",
+          "descrittore": "formicolio (trigeminale, non olfattivo)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        }
+      ]
+    },
+    {
+      "ingrediente": "elicriso",
+      "nodo_target": "ing-elicriso",
+      "specie": "Helichrysum italicum",
+      "dominio": "bar",
+      "fonte_ingrediente": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista.",
+      "composti": [
+        {
+          "composto": "neryl acetate",
+          "descrittore": "fruttato-floreale (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
+        },
+        {
+          "composto": "italidione",
+          "descrittore": "curry-fieno (firma, specie-specifico)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
+        },
+        {
+          "composto": "neryl propionate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 25/10 (hh, +14 firme verificate dalla ricerca biodiversità): pawpaw, finger lime, paccasassi, miele di corbezzolo, grani del paradiso, olivello spinoso, mirtillo rosso (CORREGGE), surströmming, époisses, lemon myrtle, mastiha, sudachi, pepe di timut, elicriso. Tutti con fonte GC-MS/GC-O reale + DOI. Correzioni di metodo incorporate: (a) marcatori TRIGEMINALI non-olfattivi separati dall'aroma (6-paradol in grani del paradiso, idrossi-alfa-sanshool in pepe di timut); (b) mirtillo rosso CORRETTO (acido benzoico = conservante, non firma); (c) surströmming = TMA+polisolfuri (non H2S+acidi); (d) finger lime senza isomentone; (e) miele di corbezzolo marcatore non-volatile dichiarato; (f) paccasassi con chemotipo dichiarato. 6 arricchiscono nodi esistenti (grani del paradiso, mirtillo rosso, mastiha, sudachi, pepe di timut, elicriso, finger lime), il resto nuovi. SCARTATI dalla ricerca per firma assente: prugnolo, kakadu plum, davidson plum, quandong, wattleseed, bush tomato, sea grape, gac. Ponti: esteri fruttati (pawpaw/olivello<->ananas/mela), citrale (lemon myrtle<->citronella/timo limonato), croste lavate (époisses<->camembert/taleggio), TMA+solfuri (surströmming<->acciuga salata/colatura), alpha-pinene resinoso (mastiha<->ginepro/incenso).",
     "Ondata 24/10 (gg, +37 propagazione categoria, scelta a): firme di categoria VERIFICATE propagate ai nodi-varietà clonati, marcate stato=derivato (onesto: profilo condiviso di categoria, non fonte sul singolo). Cluster: 12 tagli di manzo<-manzo, 12 cultivar pomodoro<-pomodoro, 2 limoni IGP<-limone, 2 prosciutti DOP<-prosciutto crudo, 1 speck IGP<-speck, 4 oli/olive<-olio evo, 2 peperoni freschi<-peperone, 2 fagioli<-soia(beany). LASCIATI FUORI apposta: 6 salumi (prodotti distinti, non cloni di una categoria -> ricerca per-prodotto), 12 farine (nessun aroma reale), peperone crusco (essiccato != fresco), radicchi (amaro non-volatile). Ogni varietà ora eredita il profilo di categoria e condivide i composti nel pairing; la provenienza dichiara 'derivato', distinta dalle righe da_fonte.",
     "Ondata 24/10 (ff, +13 teste di categoria, cancello 1): latte, panna, uovo cotto, vino rosso, rum, cioccolato fondente, emmental, tonno, gambero, merluzzo, vongola, sgombro, branzino. Secondo blocco mirato dal diagnostico copertura: basi ad alto traffico finora solo su Ahn grezzo, ora con firma verificata per categoria. FORTI: latte, panna, vino rosso, rum, emmental, gambero. MEDIE con caveat in riga: uovo cotto (il sodo non ha impatto GC-O, firma dal tuorlo a calore secco; H2S non confermato), cioccolato fondente (cDFA non OAV), tonno/merluzzo/sgombro/branzino/vongola (GC-MS reale, descrittori standard; (Z)-4-eptenale è del cotto). SCARTATI senza inventare: champagne (nessuna fonte GC-O dedicata, solo spumante generico), polpo e calamaro fresco (nessuna firma GC-O pubblica per i cefalopodi). Ponti: lattoni cremosi (latte/panna<->burro/cocco/mascarpone), damascenone+esteri (vino rosso/rum<->vino bianco/sidro), aldeidi di Strecker+pirazine (cioccolato fondente/uovo cotto<->cacao/caffè), acido propionico (emmental<->comté/groviera), aldeidi C6-C9 marine+1-octen-3-olo (tonno/merluzzo/sgombro/branzino/vongola<->ostrica/cozza/kombu), 2-acetil-1-pirrolina (gambero<->riso/pandan/pane).",
     "Ondata 24/10 (ee, +15 teste di categoria): tè nero, tè verde, caffè, vino bianco, birra lager, spumante metodo classico, vino porto, manzo, pollo, maiale, mozzarella, provolone, camembert, soia, burro di arachidi. Primo blocco del CANCELLO 1 (diagnostico copertura-proprietaria): ingredienti-base ad alto traffico finora solo su Ahn grezzo, ora con firma verificata per CATEGORIA (non per variante). Fonti reali GC-O/OAV/AEDA. FORTI: caffè, tè verde, lager, porto, mozzarella, camembert, burro di arachidi, pollo, tè nero. Caveat oneste in riga: manzo (firma doppia, ramo carneo da letteratura classica), maiale (DOI da verificare), provolone (proxy Provola dei Nebrodi), soia (matrice isolato/farina), vino bianco/spumante (OAV non numerici/non-Champagne). TOLTA uva: l'agente ha verificato il moscato (già coperto), il nodo scoperto è l'uva generica con altra firma — rimandata a un passaggio cultivar. Ponti: tioli furanici carnei (manzo/pollo<->brodo/katsuobushi), fenoli+furani tostati (caffè<->cacao/orzo tostato/stout), esteri fruttati (vino bianco/spumante/lager<->sakè/sidro), sotolon (porto<->sherry/mirin/fieno greco), FFA (provolone<->pecorino/feta), metantiolo+solfuri (camembert<->cheddar/cavolfiore), beany (soia<->pisello/ceci).",
