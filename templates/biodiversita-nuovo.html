@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atlante della biodiversità — Matter Bench</title>
+<meta name="description" content="La biodiversità gastronomica per territorio: apri una regione, scopri le sue varietà a rischio. Una mappa che si rivela man mano che esplori.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E593C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matter Bench">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js"></script>
+<style>
+  .lede{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  .lede b{color:var(--ink); font-weight:600}
+  /* progresso di scoperta */
+  .prog{margin-top:18px; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:15px 16px}
+  .prog-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+  .prog-n{font-family:var(--display); font-weight:800; font-size:22px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .prog-n small{font-size:13px; color:var(--ink-soft); font-weight:600}
+  .prog-reg{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+  .prog-bar{position:relative; height:8px; border-radius:var(--r-pill); background:var(--riga); margin-top:12px; overflow:hidden}
+  .prog-bar .fill{position:absolute; left:0; top:0; bottom:0; background:var(--segnale); border-radius:var(--r-pill); transition:width .4s ease}
+  /* la "mappa": territori nord->sud, ognuno una zona che si apre */
+  .mappa{display:flex; flex-direction:column; gap:12px; margin-top:22px}
+  .regione{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); overflow:hidden}
+  .regione.aperta{box-shadow:var(--shadow); border-color:var(--verde)}
+  .reg-head{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px; padding:15px 16px; cursor:pointer; width:100%; text-align:left; background:transparent; border:0; font-family:var(--sans)}
+  .reg-head:focus-visible{outline:2px solid var(--verde); outline-offset:-2px}
+  .reg-disco{width:40px; height:40px; border-radius:50%; background:var(--panel); border:2px solid var(--segnale); color:var(--verde); display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:800; font-size:14px; font-variant-numeric:tabular-nums}
+  .regione.aperta .reg-disco{background:var(--verde); border-color:var(--verde); color:#fff}
+  .reg-nome{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); line-height:1.2}
+  .reg-conta{margin-top:3px; font-size:12.5px; color:var(--ink-soft)}
+  .reg-tutele{display:inline-flex; gap:6px; flex-wrap:wrap; margin-top:5px}
+  .reg-freccia{color:var(--verde); font-size:18px; transition:transform .2s ease}
+  .regione.aperta .reg-freccia{transform:rotate(90deg)}
+  .reg-body{padding:0 16px 16px; display:none}
+  .regione.aperta .reg-body{display:block}
+  .var-grid{display:flex; flex-wrap:wrap; gap:8px}
+  .var-chip{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--ink); background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-pill); padding:7px 13px; cursor:pointer}
+  .var-chip:hover{border-color:var(--verde)}
+  .var-chip:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+  .var-chip.scoperta{background:var(--tint); color:var(--verde); border-color:transparent}
+  .var-chip.scoperta::before{content:"✓ "; font-weight:700}
+  .var-det{margin-top:10px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); padding:12px 14px; font-size:13.5px; color:var(--ink); line-height:1.5}
+  .var-det .vt{font-family:var(--display); font-weight:700; font-size:15px; color:var(--ink)}
+  .var-det .vm{margin-top:5px; color:var(--ink-soft); font-size:12.5px}
+  .reg-body .gloss{margin-top:10px; font-size:12px; color:var(--ink-soft)}
+  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  footer b{color:var(--ink); font-weight:600}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Biodiversità</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <header style="margin-top:22px">
+    <span class="eyebrow">Atlante per territorio</span>
+    <h1 style="margin-top:4px">La biodiversità, regione per regione</h1>
+    <p class="lede">Apri un territorio e <b>scopri le sue varietà</b> a rischio — prodotti dimenticati, Presìdi, DOP e IGP. La mappa si rivela man mano che esplori.</p>
+  </header>
+
+  <div class="prog" id="prog" hidden>
+    <div class="prog-top">
+      <span class="prog-n"><span id="prog-scoperte">0</span><small> / <span id="prog-tot">0</span> varietà scoperte</small></span>
+      <span class="prog-reg"><span id="prog-regioni">0</span> / <span id="prog-regioni-tot">0</span> territori</span>
+    </div>
+    <div class="prog-bar"><span class="fill" id="prog-fill" style="width:0%"></span></div>
+  </div>
+
+  <div class="mappa" id="mappa"></div>
+  <div class="state" id="state" hidden></div>
+
+  <footer>
+    <b>Atlante della biodiversità.</b> I dati (regione, tutela, categoria) vengono dal grafo Matter, dove sono stati inseriti con la loro provenienza. Il tuo <b>avanzamento di scoperta</b> è salvato solo in questo browser, su questo dispositivo: è personale, non condiviso, e non lascia Matter.
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+  var cap = function(s){ s=String(s||''); return s? s.charAt(0).toUpperCase()+s.slice(1): s; };
+
+  // ordine geografico nord -> sud (latitudine vera, non coordinate finte)
+  var ORDINE = ["Trentino-Alto Adige","Valle d'Aosta","Piemonte","Lombardia","Veneto","Friuli-Venezia Giulia",
+    "Liguria","Emilia-Romagna","Toscana","Marche","Umbria","Abruzzo","Lazio","Molise","Campania",
+    "Puglia","Basilicata","Calabria","Sicilia","Sardegna"];
+  function ordina(regioni){
+    return regioni.slice().sort(function(a,b){
+      var ia=ORDINE.indexOf(a.regione), ib=ORDINE.indexOf(b.regione);
+      if(ia<0) ia=99; if(ib<0) ib=99;
+      if(ia!==ib) return ia-ib;
+      return String(a.regione).localeCompare(b.regione);
+    });
+  }
+
+  // ---- stato di scoperta: solo localStorage, per-dispositivo, best-effort ----
+  function loadSet(k){ try{ return new Set(JSON.parse(localStorage.getItem(k)||'[]')); }catch(e){ return new Set(); } }
+  function saveSet(k,s){ try{ localStorage.setItem(k, JSON.stringify(Array.from(s))); }catch(e){} }
+  var SCOPERTE = loadSet('matter_bio_scoperte');   // id varietà di cui hai aperto il dettaglio
+  var APERTE   = loadSet('matter_bio_regioni');    // regioni aperte
+
+  var TOT_VAR = 0, TOT_REG = 0;
+  var $ = function(id){ return document.getElementById(id); };
+
+  function aggiornaProg(){
+    $('prog').hidden = false;
+    $('prog-scoperte').textContent = SCOPERTE.size;
+    $('prog-tot').textContent = TOT_VAR;
+    $('prog-regioni').textContent = APERTE.size;
+    $('prog-regioni-tot').textContent = TOT_REG;
+    var pct = TOT_VAR ? Math.round(100*SCOPERTE.size/TOT_VAR) : 0;
+    $('prog-fill').style.width = pct + '%';
+  }
+
+  function tutelaChips(r){
+    var out=[];
+    if(r.presidi) out.push('<span class="prov prov-verificato">'+r.presidi+' Presìdi</span>');
+    if(r.dop) out.push('<span class="prov prov-fonte">'+r.dop+' DOP</span>');
+    if(r.igp) out.push('<span class="prov prov-derivato">'+r.igp+' IGP</span>');
+    return out.join(' ');
+  }
+
+  function render(regioni){
+    var mappa = $('mappa'); mappa.innerHTML='';
+    ordina(regioni).forEach(function(r){
+      var aperta = APERTE.has(r.regione);
+      var el = document.createElement('section');
+      el.className = 'regione' + (aperta?' aperta':'');
+      el.innerHTML =
+        '<button class="reg-head" type="button" aria-expanded="'+(aperta?'true':'false')+'">'+
+          '<span class="reg-disco">'+ (r.varieta||0) +'</span>'+
+          '<span><span class="reg-nome">'+esc(r.regione)+'</span>'+
+            '<span class="reg-conta">'+ (r.varieta||0) +' varietà nel territorio</span>'+
+            '<span class="reg-tutele">'+ tutelaChips(r) +'</span></span>'+
+          '<span class="reg-freccia">›</span>'+
+        '</button>'+
+        '<div class="reg-body" data-reg="'+esc(r.regione)+'"><div class="var-grid"></div><p class="gloss">Tocca una varietà per scoprirla.</p></div>';
+      mappa.appendChild(el);
+
+      var head = el.querySelector('.reg-head');
+      head.addEventListener('click', function(){ toggleRegione(el, r.regione); });
+      if(aperta) caricaVarieta(el, r.regione); // ripristina le aperte da sessioni precedenti
+    });
+  }
+
+  function toggleRegione(el, regione){
+    var ora = el.classList.toggle('aperta');
+    el.querySelector('.reg-head').setAttribute('aria-expanded', ora?'true':'false');
+    if(ora){ APERTE.add(regione); saveSet('matter_bio_regioni', APERTE); caricaVarieta(el, regione); }
+    else { APERTE.delete(regione); saveSet('matter_bio_regioni', APERTE); }
+    aggiornaProg();
+  }
+
+  function caricaVarieta(el, regione){
+    var grid = el.querySelector('.var-grid');
+    if(grid.dataset.caricata==='1') return;
+    grid.innerHTML = '<span class="gloss">Apro il territorio…</span>';
+    fetch('/v1/biodiversita/regione/'+encodeURIComponent(regione), {headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var vs = (d && d.varieta) || [];
+        grid.dataset.caricata='1';
+        if(!vs.length){ grid.innerHTML = '<span class="gloss">Nessuna varietà registrata qui per ora. Non la inventiamo.</span>'; return; }
+        grid.innerHTML = '';
+        vs.forEach(function(v){
+          var chip = document.createElement('button');
+          chip.type='button';
+          chip.className = 'var-chip' + (SCOPERTE.has(v.id)?' scoperta':'');
+          chip.textContent = cap(v.nome);
+          chip.addEventListener('click', function(){ scopri(el, chip, v); });
+          grid.appendChild(chip);
+        });
+      })
+      .catch(function(){ grid.innerHTML = '<span class="gloss">Territorio non raggiungibile adesso. Riprova.</span>'; });
+  }
+
+  function scopri(el, chip, v){
+    if(!chip.classList.contains('scoperta')){
+      chip.classList.add('scoperta');
+      SCOPERTE.add(v.id); saveSet('matter_bio_scoperte', SCOPERTE); aggiornaProg();
+    }
+    // dettaglio sotto la chip (toggle)
+    var body = el.querySelector('.reg-body');
+    var old = body.querySelector('.var-det[data-id="'+CSS.escape(v.id)+'"]');
+    if(old){ old.remove(); return; }
+    var meta = [];
+    if(v.territorio) meta.push(esc(v.territorio));
+    if(v.tutela) meta.push(esc(v.tutela.toUpperCase()));
+    if(v.categoria) meta.push(esc(v.categoria));
+    var det = document.createElement('div');
+    det.className='var-det'; det.setAttribute('data-id', v.id);
+    det.innerHTML = '<div class="vt">'+esc(cap(v.nome))+'</div>'+ (meta.length?'<div class="vm">'+meta.join(' · ')+'</div>':'') +
+      '<a class="btn btn--ghost" style="margin-top:10px" href="/ingrediente/'+encodeURIComponent(v.nome)+'">Apri la scheda →</a>';
+    body.appendChild(det);
+  }
+
+  // ---- avvio ----
+  fetch('/v1/biodiversita/regioni', {headers:{'Accept':'application/json'}})
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var regioni = (d && d.regioni) || [];
+      if(!regioni.length){ $('state').hidden=false; $('state').innerHTML='<b>Atlante ancora vuoto.</b> Nessuna varietà con territorio nel grafo per ora.'; return; }
+      TOT_REG = regioni.length;
+      TOT_VAR = regioni.reduce(function(s,r){ return s + (r.varieta||0); }, 0);
+      aggiornaProg();
+      render(regioni);
+    })
+    .catch(function(){ $('state').hidden=false; $('state').className='state err'; $('state').innerHTML='Non riesco a caricare l’atlante adesso. Riprova tra poco.'; });
+})();
+</script>
+</body>
+</html>
