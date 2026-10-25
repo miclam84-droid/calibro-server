@@ -1227,6 +1227,65 @@ def biodiversita_regione(regione):
         return jsonify({"errore": str(e)[:120]}), 500
 
 
+@bp.route("/v1/biodiversita/aree", methods=["GET"])
+def biodiversita_aree():
+    """ATLANTE BIODIVERSITA — livello MONDO: le varieta raggruppate per macro-area
+    (Africa, Americhe, Asia...), coi conteggi di varieta e paesi. Speculare a
+    /v1/biodiversita/regioni ma sull'asse 'area' invece che 'regione', cosi' le
+    voci-mondo non inquinano la mappa Italia e viceversa."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        rows = db.execute("""SELECT name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                             AND data->>'area' IS NOT NULL AND data->>'area' != ''""").fetchall()
+        aree = {}
+        for r in rows:
+            dd = _c(r,"data",1); dd = dd if isinstance(dd,dict) else (_j.loads(dd) if dd else {})
+            area = (dd.get("area") or "").strip()
+            if not area: continue
+            if area not in aree:
+                aree[area] = {"area": area, "varieta": 0, "paesi": set(), "presidi": 0, "esempi": []}
+            aree[area]["varieta"] += 1
+            paese = (dd.get("paese") or "").strip()
+            if paese: aree[area]["paesi"].add(paese)
+            if (dd.get("tutela") or "").lower() == "presidio": aree[area]["presidi"] += 1
+            if len(aree[area]["esempi"]) < 6:
+                aree[area]["esempi"].append(_c(r,"name",0))
+        lista = []
+        for a in aree.values():
+            a["paesi"] = len(a["paesi"])
+            lista.append(a)
+        lista.sort(key=lambda x: -x["varieta"])
+        return jsonify({"aree": lista, "totale_aree": len(lista)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
+
+
+@bp.route("/v1/biodiversita/area/<area>", methods=["GET"])
+def biodiversita_area(area):
+    """Le varieta di una macro-area del mondo (dettaglio quando apri Africa, Americhe...)."""
+    from flask import jsonify
+    import json as _j
+    try:
+        from db import carica_grafo
+        db = carica_grafo()
+        def _c(r,k,i): return r[k] if hasattr(r,"keys") else r[i]
+        rows = db.execute("""SELECT id, name, data FROM nodes WHERE type IN ('Ingrediente','Prodotto')
+                             AND LOWER(data->>'area') = LOWER(?)""", (area,)).fetchall()
+        varieta = []
+        for r in rows:
+            dd = _c(r,"data",2); dd = dd if isinstance(dd,dict) else (_j.loads(dd) if dd else {})
+            varieta.append({"id": _c(r,"id",0), "nome": _c(r,"name",1),
+                            "paese": dd.get("paese",""), "territorio": dd.get("territorio",""),
+                            "tutela": dd.get("tutela",""), "categoria": dd.get("categoria","")})
+        return jsonify({"area": area, "varieta": varieta, "totale": len(varieta)})
+    except Exception as e:
+        return jsonify({"errore": str(e)[:120]}), 500
+
+
 @bp.route("/v1/galileo/riconosci-decisione", methods=["POST"])
 def galileo_riconosci_decisione():
     """#236: riconosce se una conversazione merita una DECISIONE STRATEGICA (Galileo DI) e la famiglia.
