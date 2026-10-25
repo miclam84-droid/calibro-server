@@ -2,21 +2,21 @@
 # ============================================================
 # DEDUP NODI — migrazione di pulizia del grafo (nodi duplicati legacy).
 #
-# Due operazioni, entrambe in DRY-RUN di default (scrivono solo con &esegui=1):
-#   1) NORMALIZZA REGIONI: porta le grafie abbreviate note alla forma piena
-#      (Trentino-A.A. -> Trentino-Alto Adige, Friuli -> Friuli-Venezia Giulia).
-#      Solo queste due, esplicite: niente euristiche sui nomi regione.
-#   2) FONDE DOPPIONI: nodi Ingrediente/Prodotto con STESSO nome (lower, trim).
-#      SICUREZZA: fonde un gruppo solo se le specie dichiarate sono compatibili
-#      (stessa specie, o specie assente). Se due membri hanno specie DIVERSE
-#      (es. "mirtillo rosso" = Vaccinium macrocarpon vs vitis-idaea) il gruppo
-#      viene SEGNALATO e NON toccato. Il canonico e' il nodo con piu' archi
-#      (tiebreak: non-ahn/non-ai, poi id piu' corto). Gli archi dei doppioni
-#      vengono ri-puntati sul canonico (ON CONFLICT DO NOTHING -> niente doppi),
-#      i self-loop rimossi, i nodi assorbiti cancellati. Tutto in UNA transazione.
+# ATTENZIONE (lezione della dry-run del 25/10): il merge AUTOMATICO per nome e'
+# PERICOLOSO. Il grafo ha decine di omonimi italiani che sono entita' botaniche
+# DIVERSE (es. "valeriana" = Valeriana officinalis vs songino; "foglie di limone"
+# = Litsea/Lindera/Backhousia). I nodi ahn_ non hanno il campo specie, quindi un
+# controllo per-specie non li protegge. Percio' QUI non si fonde per nome.
 #
-# Sicurezza: _admin_ok, dry-run di default, max 6 membri per gruppo (sanity),
-# solo type IN ('Ingrediente','Prodotto'). Rollback su qualsiasi errore.
+# Due operazioni, DRY-RUN di default (scrivono solo con &esegui=1, in transazione):
+#   1) NORMALIZZA REGIONI: grafie abbreviate NOTE -> forma piena. Esplicite.
+#   2) FONDE SOLO i gruppi in MERGE_ALLOWLIST: coppie verificate A MANO, stessa
+#      entita'. Nessun altro nodo viene toccato. Per ogni voce: archi degli
+#      assorbiti ri-puntati sul canonico (ON CONFLICT DO NOTHING), self-loop
+#      rimossi, assorbiti cancellati.
+# La dry-run mostra anche, SOLO IN LETTURA, quanti gruppi-omonimi restano fuori
+# dall'allowlist ("da rivedere"), senza toccarli.
+#
 # Uso:  /admin/dedup-nodi?s=SECRET            (anteprima, NON scrive)
 #       /admin/dedup-nodi?s=SECRET&esegui=1   (scrive, in transazione)
 # ============================================================
@@ -34,11 +34,14 @@ REGION_CANON = {
     "friuli": "Friuli-Venezia Giulia",
 }
 
-MAX_MEMBRI = 6  # sanity: non fondere gruppi anomali
-
-
-def _spec(d):
-    return (d.get("specie") or "").strip().lower() if isinstance(d, dict) else ""
+# FUSIONI VERIFICATE A MANO — solo entita' identiche, controllate una a una.
+# Formato: {"canonico": id_che_resta, "assorbiti": [id_da_fondere...], "perche": "..."}
+# Si aggiunge una voce SOLO dopo aver confermato che e' davvero lo stesso ingrediente.
+MERGE_ALLOWLIST = [
+    {"canonico": "ing-speck-alto-adige-igp",
+     "assorbiti": ["ing-it-speck-alto-adige"],
+     "perche": "stesso prodotto (Speck Alto Adige IGP) su due nodi; chiude la regione-fantasma Trentino-A.A."},
+]
 
 
 def _parse(v):
@@ -50,15 +53,6 @@ def _parse(v):
         return {}
 
 
-def _scegli_canonico(membri):
-    # membri: list di dict {id, archi, specie, data}. Canonico = piu' archi;
-    # tiebreak: penalizza id ahn_/ai_ (dato Ahn da ritirare), poi id piu' corto, poi alfabetico.
-    def rank(m):
-        legacy = m["id"].startswith("ahn_") or m["id"].startswith("ai_")
-        return (-m["archi"], 1 if legacy else 0, len(m["id"]), m["id"])
-    return sorted(membri, key=rank)[0]
-
-
 @bp_dedup.route("/admin/dedup-nodi")
 def dedup_nodi():
     if not _admin_ok(request):
@@ -67,22 +61,6 @@ def dedup_nodi():
     conn = _get_conn()
     try:
         cur = conn.cursor()
-
-        # ---------- raccolta: tutti i nodi Ingrediente/Prodotto con conteggio archi ----------
-        cur.execute("""
-            SELECT n.id, n.name, n.data,
-                   (SELECT COUNT(*) FROM edges e WHERE e.from_id=n.id OR e.to_id=n.id) AS archi
-            FROM nodes n
-            WHERE n.type IN ('Ingrediente','Prodotto')
-        """)
-        righe = cur.fetchall()
-        per_nome = {}
-        for nid, name, data, archi in righe:
-            k = (name or "").strip().lower()
-            if not k:
-                continue
-            per_nome.setdefault(k, []).append(
-                {"id": nid, "nome": name, "data": _parse(data), "archi": archi})
 
         # ---------- 1) normalizzazione regioni ----------
         regioni_norm = []
@@ -95,50 +73,49 @@ def dedup_nodi():
                         "UPDATE nodes SET data = jsonb_set(COALESCE(data,'{}'::jsonb),'{regione}', to_jsonb(%s::text)) WHERE id=%s",
                         (canon, nid))
 
-        # ---------- 2) dedup per nome ----------
-        gruppi_merge = []
-        gruppi_flag = []
-        for k, membri in per_nome.items():
-            if len(membri) < 2:
-                continue
-            if len(membri) > MAX_MEMBRI:
-                gruppi_flag.append({"nome": membri[0]["nome"], "motivo": f"gruppo anomalo ({len(membri)} nodi)",
-                                    "nodi": [m["id"] for m in membri]})
-                continue
-            specie = {_spec(m["data"]) for m in membri if _spec(m["data"])}
-            if len(specie) > 1:
-                gruppi_flag.append({"nome": membri[0]["nome"], "motivo": "specie diverse (non fuso)",
-                                    "nodi": [{"id": m["id"], "specie": _spec(m["data"])} for m in membri]})
-                continue
-            canon = _scegli_canonico(membri)
-            assorbiti = [m for m in membri if m["id"] != canon["id"]]
-            gruppi_merge.append({
-                "nome": membri[0]["nome"],
-                "canonico": {"id": canon["id"], "archi": canon["archi"]},
-                "assorbiti": [{"id": m["id"], "archi": m["archi"]} for m in assorbiti],
-            })
-            if esegui:
-                for m in assorbiti:
-                    dup = m["id"]; c = canon["id"]
-                    # out-edges dup -> canon (niente doppi)
+        # ---------- 2) fusioni da allowlist (SOLO queste) ----------
+        def archi(nid):
+            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s OR to_id=%s", (nid, nid))
+            return cur.fetchone()[0]
+        def esiste(nid):
+            cur.execute("SELECT 1 FROM nodes WHERE id=%s", (nid,))
+            return cur.fetchone() is not None
+
+        fusioni = []
+        for voce in MERGE_ALLOWLIST:
+            c = voce["canonico"]
+            rep = {"canonico": c, "perche": voce["perche"], "assorbiti": [], "saltati": []}
+            if not esiste(c):
+                rep["saltati"].append({"id": c, "motivo": "canonico inesistente"})
+                fusioni.append(rep); continue
+            for dup in voce["assorbiti"]:
+                if not esiste(dup):
+                    rep["saltati"].append({"id": dup, "motivo": "assorbito inesistente (gia' fuso?)"})
+                    continue
+                rep["assorbiti"].append({"id": dup, "archi": archi(dup)})
+                if esegui:
                     cur.execute("""INSERT INTO edges (from_id,to_id,relation,data)
                                    SELECT %s, to_id, relation, data FROM edges WHERE from_id=%s
                                    ON CONFLICT (from_id,to_id,relation) DO NOTHING""", (c, dup))
                     cur.execute("DELETE FROM edges WHERE from_id=%s", (dup,))
-                    # in-edges dup -> canon
                     cur.execute("""INSERT INTO edges (from_id,to_id,relation,data)
                                    SELECT from_id, %s, relation, data FROM edges WHERE to_id=%s
                                    ON CONFLICT (from_id,to_id,relation) DO NOTHING""", (c, dup))
                     cur.execute("DELETE FROM edges WHERE to_id=%s", (dup,))
-                    # il canonico eredita i campi che non ha (il canonico vince sui conflitti)
                     cur.execute("""UPDATE nodes SET data =
                                      COALESCE((SELECT data FROM nodes WHERE id=%s),'{}'::jsonb)
-                                     || COALESCE(data,'{}'::jsonb)
-                                   WHERE id=%s""", (dup, c))
-                    # cancella il nodo assorbito
+                                     || COALESCE(data,'{}'::jsonb) WHERE id=%s""", (dup, c))
                     cur.execute("DELETE FROM nodes WHERE id=%s", (dup,))
-                # togli eventuali self-loop creati
-                cur.execute("DELETE FROM edges WHERE from_id=to_id AND from_id=%s", (canon["id"],))
+            if esegui:
+                cur.execute("DELETE FROM edges WHERE from_id=to_id AND from_id=%s", (c,))
+            fusioni.append(rep)
+
+        # ---------- lettura informativa: quanti omonimi restano fuori (NON toccati) ----------
+        cur.execute("""SELECT lower(trim(name)) k, COUNT(*) n
+                       FROM nodes WHERE type IN ('Ingrediente','Prodotto') AND name IS NOT NULL
+                       GROUP BY 1 HAVING COUNT(*) > 1 ORDER BY n DESC""")
+        omonimi = cur.fetchall()
+        in_allow = {a for v in MERGE_ALLOWLIST for a in (v["assorbiti"] + [v["canonico"]])}
 
         if esegui:
             conn.commit()
@@ -146,10 +123,14 @@ def dedup_nodi():
         return jsonify({
             "modo": "SCRITTO" if esegui else "DRY-RUN (anteprima, aggiungi &esegui=1 per scrivere)",
             "1_regioni_normalizzate": {"totale": len(regioni_norm), "dettaglio": regioni_norm},
-            "2_gruppi_da_fondere": {"totale": len(gruppi_merge), "dettaglio": gruppi_merge},
-            "2_gruppi_SEGNALATI_non_fusi": {"totale": len(gruppi_flag), "dettaglio": gruppi_flag},
-            "nota": "I gruppi SEGNALATI (specie diverse, es. mirtillo rosso) NON sono stati toccati: "
-                    "vanno rinominati a mano, non fusi.",
+            "2_fusioni_allowlist": {"totale": len(fusioni), "dettaglio": fusioni},
+            "3_omonimi_da_rivedere_NON_toccati": {
+                "totale_gruppi": len(omonimi),
+                "nota": "Gruppi di nodi con lo stesso nome ancora nel grafo. NON fusi: molti sono "
+                        "entita' diverse con lo stesso nome italiano (es. valeriana vs songino). "
+                        "Vanno aggiunti a MERGE_ALLOWLIST uno a uno, solo dopo verifica botanica.",
+                "primi_20": [{"nome": k, "nodi": n} for k, n in omonimi[:20]],
+            },
         })
     except Exception as e:
         try:
