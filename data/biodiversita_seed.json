@@ -1991,5 +1991,96 @@
     "territorio": "altopiano di Navelli",
     "categoria": "spezia",
     "tutela": "dop"
+  },
+  {
+    "nome": "Prosciutto di San Daniele",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "San Daniele del Friuli",
+    "categoria": "salume",
+    "tutela": "dop"
+  },
+  {
+    "nome": "Formaggio Montasio",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "Alpi Giulie e Carniche",
+    "categoria": "formaggio",
+    "tutela": "dop"
+  },
+  {
+    "nome": "Pitina",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "Val Tramontina (polpetta affumicata)",
+    "categoria": "salume",
+    "tutela": "igp"
+  },
+  {
+    "nome": "Aglio di Resia",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "Val Resia (strok)",
+    "categoria": "ortaggio",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Pan di sorc",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "Gemonese (mais cinquantino)",
+    "categoria": "prodotto da forno",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Fava di Sauris",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "Sauris",
+    "categoria": "legume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Rosa di Gorizia",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "Gorizia (radicchio da forzatura)",
+    "categoria": "ortaggio",
+    "tutela": ""
+  },
+  {
+    "nome": "Formadi Frant",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "Carnia (formaggio rilavorato)",
+    "categoria": "formaggio",
+    "tutela": ""
+  },
+  {
+    "nome": "Signora di Conca Casale",
+    "regione": "Molise",
+    "territorio": "Conca Casale (insaccato raro)",
+    "categoria": "salume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Caciocavallo di Agnone",
+    "regione": "Molise",
+    "territorio": "Agnone, alto Molise",
+    "categoria": "formaggio",
+    "tutela": ""
+  },
+  {
+    "nome": "Stracciata di Agnone",
+    "regione": "Molise",
+    "territorio": "Agnone (pasta filata a nastro)",
+    "categoria": "formaggio",
+    "tutela": ""
+  },
+  {
+    "nome": "Olio Molise",
+    "regione": "Molise",
+    "territorio": "",
+    "categoria": "olio",
+    "tutela": "dop"
+  },
+  {
+    "nome": "Tartufo bianco dell'Alto Molise",
+    "regione": "Molise",
+    "territorio": "alto Molise",
+    "categoria": "fungo",
+    "tutela": ""
   }
 ]
