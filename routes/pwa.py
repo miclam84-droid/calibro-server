@@ -39,14 +39,11 @@ def home2():
 
 @bp.route("/scopri")
 @bp.route("/scopri/<ing>")
-def scopri(ing="limone"):
-    """FRONTEND-2.0 — schermata Scopri ("cosa ci sta bene, e perché").
-    Sistema di design congelato (matter2.css), cablata dal vivo a /v1/criteri.
-    Pagina nuova e isolata: non tocca /app (vecchio) né /app2."""
-    from flask import make_response
-    resp = make_response(render_template("scopri.html", ing=ing))
-    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    return resp
+def scopri(ing=None):
+    """BONIFICA (25/10): /scopri (matter2) è superato da /scopri-nuovo (matter3, il
+    grafo vero cablato a /v1/criteri). Redirect per non perdere vecchi link;
+    il template scopri.html è stato rimosso. L'ingrediente viene conservato."""
+    return redirect("/scopri-nuovo/" + ing if ing else "/scopri-nuovo")
 
 @bp.route("/ingrediente/<nome>")
 def scheda_ingrediente(nome):
