@@ -19,7 +19,7 @@ def quaderno():
     Lista i record (/lista), ne apre uno (/<rid>), crea un appunto (/salva),
     lo modifica o lo archivia (/<rid>/aggiorna). Cablata al vivo, zero dati finti.
     Pagina isolata: non tocca /app né /app2."""
-    resp = make_response(render_template("quaderno.html"))
+    resp = make_response(render_template("quaderno-nuovo.html"))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     resp.headers["Pragma"] = "no-cache"
     resp.headers["Expires"] = "0"
