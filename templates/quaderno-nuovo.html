@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quaderno — Matter Bench</title>
+<meta name="description" content="La tua memoria del mestiere: un solo archivio. Ogni appunto, misura o ricetta resta qui, riapribile e tuo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  .lede{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  .lede b{color:var(--ink); font-weight:600}
+  .srcline{display:flex; align-items:center; gap:7px; margin-top:8px; font-size:13px; color:var(--ink-soft)}
+  .srcline .dot{width:7px; height:7px; border-radius:50%; background:var(--segnale); flex:0 0 auto}
+  .qd-actions{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap}
+  .qd-btn{display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:14.5px; cursor:pointer; border-radius:var(--r-sm); padding:11px 16px; border:1px solid var(--riga); background:var(--surface); color:var(--ink); text-decoration:none}
+  .qd-btn:hover{border-color:var(--verde)}
+  .qd-btn.primary{background:var(--verde); color:#fff; border-color:transparent}
+  .qd-btn.ghost{background:transparent}
+  .qd-btn.danger{color:var(--oxblood); border-color:rgba(168,80,74,.4)}
+  .qd-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .qd-list{display:flex; flex-direction:column; gap:12px; margin-top:22px}
+  .qd-item{display:block; width:100%; text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:15px 16px; cursor:pointer; font-family:var(--sans)}
+  .qd-item:hover{border-color:var(--verde)}
+  .qd-item:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+  .qd-item-t{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); line-height:1.3}
+  .qd-item-m{margin-top:6px; font-size:12.5px; color:var(--ink-soft); display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .qd-tag{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--verde); background:var(--tint); border-radius:var(--r-pill); padding:3px 9px}
+  .banco-form{display:grid; gap:14px; margin-top:22px}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:5px}
+  .inp{display:flex; align-items:center; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); box-shadow:var(--shadow-sm); overflow:hidden}
+  .inp input,.inp textarea{flex:1; min-width:0; width:100%; font-family:var(--sans); font-size:16px; color:var(--ink); background:transparent; border:0; padding:12px 14px}
+  .inp textarea{resize:vertical; min-height:130px; line-height:1.55}
+  .inp input:focus,.inp textarea:focus{outline:2px solid var(--verde); outline-offset:-2px}
+  .res-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:16px 18px}
+  .res-head .qd-item-t{font-size:19px}
+  .qd-det-body{white-space:pre-wrap; line-height:1.6; font-size:15.5px; color:var(--ink); margin:14px 0}
+  .qd-det-note{margin-top:12px; padding:12px 14px; background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); font-size:14px; color:var(--ink-soft); white-space:pre-wrap; line-height:1.55}
+  .qd-det-note b{color:var(--ink); display:block; font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px}
+  .qd-pre{white-space:pre-wrap; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:var(--ink-soft); background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-sm); padding:12px 14px; margin-top:8px; overflow-x:auto}
+  .gloss{font-size:12.5px; color:var(--ink-soft); line-height:1.5}
+  .gloss b{color:var(--ink); font-weight:600}
+  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  .state b{font-weight:600}
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  footer b{color:var(--ink); font-weight:600}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Quaderno</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <header style="margin-top:22px">
+    <span class="eyebrow">La tua memoria del mestiere</span>
+    <h1 style="margin-top:4px" id="h-titolo">Quaderno</h1>
+    <p class="lede" id="h-regola"><b>Un solo archivio.</b> Ogni cosa che salvi — un appunto, una misura, una ricetta — resta qui, riapribile e tua.</p>
+    <div class="srcline"><span class="dot"></span><span id="src">Archivio unico, in tempo reale.</span></div>
+  </header>
+
+  <!-- VISTA: LISTA -->
+  <section id="vista-lista">
+    <div class="qd-actions">
+      <button class="qd-btn primary" id="btn-nuovo" type="button">+ Nuovo appunto</button>
+      <button class="qd-btn ghost" id="btn-ricarica" type="button">Ricarica</button>
+    </div>
+    <div class="qd-list" id="lista"></div>
+    <div class="state" id="lista-state" hidden></div>
+  </section>
+
+  <!-- VISTA: EDITOR -->
+  <section id="vista-editor" hidden>
+    <form class="banco-form" id="form-editor" autocomplete="off">
+      <div class="field">
+        <label for="f-titolo">Titolo</label>
+        <div class="inp"><input id="f-titolo" type="text" maxlength="200" placeholder="Es. Idea per il sour di casa" required></div>
+      </div>
+      <div class="field">
+        <label for="f-testo">Appunto</label>
+        <div class="inp"><textarea id="f-testo" placeholder="Scrivi qui. Niente di finto: quello che serve a te."></textarea></div>
+      </div>
+      <div class="field">
+        <label for="f-note">Nota di laboratorio <span class="muted" style="font-weight:400">(facoltativa — l'evidenza al banco)</span></label>
+        <div class="inp"><input id="f-note" type="text" maxlength="500" placeholder="Es. provato il 18/10, acidità troppo alta"></div>
+      </div>
+      <button class="btn btn--block" type="submit" id="btn-salva">Salva nel Quaderno</button>
+      <button class="qd-btn ghost" type="button" id="btn-annulla-editor" style="align-self:flex-start">← Annulla</button>
+    </form>
+    <div class="state" id="editor-state" hidden></div>
+  </section>
+
+  <!-- VISTA: DETTAGLIO -->
+  <section id="vista-dettaglio" hidden>
+    <button class="qd-btn ghost" id="btn-indietro" type="button" style="margin-top:18px">← Tutti gli appunti</button>
+    <div class="res-card" id="dettaglio" style="margin-top:16px"></div>
+    <div class="qd-actions">
+      <button class="qd-btn" id="btn-modifica" type="button">Modifica</button>
+      <button class="qd-btn danger" id="btn-archivia" type="button">Archivia</button>
+    </div>
+    <div class="state" id="dettaglio-state" hidden></div>
+  </section>
+
+  <footer>
+    <b>Archivio unico del Quaderno.</b> L'identità è la tua (account o dispositivo): i tuoi appunti non si incrociano con quelli di nessun altro. Niente dati finti — se non c'è ancora nulla, lo dice.
+  </footer>
+</main>
+
+<script>
+// ─── identità: solo X-Device-Id. Il backend decide user vs device. ───
+function _uuid(){
+  try{ if(crypto&&crypto.randomUUID) return crypto.randomUUID(); }catch(e){}
+  return 'dev-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+}
+function _dev(){
+  try{
+    var d = localStorage.getItem('matter_device_id') || localStorage.getItem('matter_token');
+    if(!d){ d = _uuid(); try{ localStorage.setItem('matter_device_id', d); }catch(e){} }
+    return d;
+  }catch(e){ return 'anon'; }
+}
+function _h(extra){
+  var h = {'Accept':'application/json','X-Device-Id':_dev()};
+  if(extra) for(var k in extra) h[k]=extra[k];
+  return h;
+}
+
+var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+function dataIt(iso){
+  if(!iso) return '';
+  try{
+    var d = new Date(iso);
+    if(isNaN(d)) return '';
+    return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
+           d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){ return ''; }
+}
+
+var $ = function(id){ return document.getElementById(id); };
+var VISTE = {lista:$('vista-lista'), editor:$('vista-editor'), dettaglio:$('vista-dettaglio')};
+function mostra(nome){
+  for(var k in VISTE) VISTE[k].hidden = (k!==nome);
+  window.scrollTo(0,0);
+}
+function stato(elId, msg, err){
+  var el=$(elId); el.hidden=false; el.className='state'+(err?' err':''); el.innerHTML=msg;
+}
+function pulisciStato(elId){ var el=$(elId); el.hidden=true; el.innerHTML=''; }
+
+var MODIFICA = null;
+
+// ─── LISTA ───
+function caricaLista(){
+  pulisciStato('lista-state');
+  $('lista').innerHTML='';
+  stato('lista-state','Apro il Quaderno…', false);
+  fetch('/v1/quaderno2/lista', {headers:_h()})
+    .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+    .then(function(d){
+      var rec = (d && d.record) || [];
+      if(!rec.length){
+        stato('lista-state','<b>Nessun appunto ancora.</b> Il Quaderno si costruisce un appunto alla volta: premi <b>+ Nuovo appunto</b> per iniziare.', false);
+        return;
+      }
+      pulisciStato('lista-state');
+      $('lista').innerHTML = rec.map(function(x){
+        var meta = [];
+        if(x.funzione) meta.push('<span class="qd-tag">'+esc(x.funzione)+'</span>');
+        if(x.tipo && x.tipo!==x.funzione) meta.push('<span class="qd-tag">'+esc(x.tipo)+'</span>');
+        var dt = dataIt(x.modificato_at || x.creato_at);
+        if(dt) meta.push('<span>'+esc(dt)+'</span>');
+        return '<button class="qd-item" type="button" data-id="'+esc(x.id)+'">'+
+                 '<div class="qd-item-t">'+esc(x.titolo||'(senza titolo)')+'</div>'+
+                 '<div class="qd-item-m">'+meta.join('')+'</div>'+
+               '</button>';
+      }).join('');
+    })
+    .catch(function(){ stato('lista-state','Non riesco a raggiungere il Quaderno adesso. Controlla la connessione e riprova.', true); });
+}
+
+$('lista').addEventListener('click', function(e){
+  var b = e.target.closest('.qd-item'); if(!b) return;
+  apriDettaglio(b.dataset.id);
+});
+$('btn-ricarica').addEventListener('click', caricaLista);
+
+// ─── DETTAGLIO ───
+var RECORD_CORRENTE = null;
+function apriDettaglio(rid){
+  mostra('dettaglio');
+  pulisciStato('dettaglio-state');
+  $('dettaglio').innerHTML='';
+  stato('dettaglio-state','Apro l’appunto…', false);
+  fetch('/v1/quaderno2/'+encodeURIComponent(rid), {headers:_h()})
+    .then(function(r){
+      if(r.status===404) throw new Error('404');
+      if(!r.ok) throw new Error('http '+r.status);
+      return r.json();
+    })
+    .then(function(d){
+      if(!d || !d.trovato || !d.record) throw new Error('404');
+      pulisciStato('dettaglio-state');
+      RECORD_CORRENTE = d.record;
+      renderDettaglio(d.record);
+    })
+    .catch(function(err){
+      if(String(err.message)==='404'){
+        stato('dettaglio-state','Questo appunto non esiste (più) per la tua identità.', true);
+      }else{
+        stato('dettaglio-state','Non riesco ad aprire l’appunto adesso. Riprova tra poco.', true);
+      }
+    });
+}
+function testoDa(rec){
+  var o = rec.stato_output;
+  if(o && typeof o==='object' && typeof o.testo==='string') return o.testo;
+  return null;
+}
+function renderDettaglio(rec){
+  var meta = [];
+  if(rec.funzione) meta.push('<span class="qd-tag">'+esc(rec.funzione)+'</span>');
+  if(rec.tipo && rec.tipo!==rec.funzione) meta.push('<span class="qd-tag">'+esc(rec.tipo)+'</span>');
+  var dt = dataIt(rec.modificato_at || rec.creato_at);
+  var html = '<div class="res-head"><div class="qd-item-t">'+esc(rec.titolo||'(senza titolo)')+'</div>'+
+             '<div class="qd-item-m" style="margin-top:8px">'+meta.join('')+(dt?'<span>'+esc(dt)+'</span>':'')+'</div></div>';
+  var testo = testoDa(rec);
+  if(testo!=null){
+    html += '<div class="qd-det-body">'+esc(testo)+'</div>';
+  }else{
+    html += '<p class="gloss" style="margin-top:14px">Questo record viene da <b>'+esc(rec.funzione||'un’altra funzione')+'</b>: il suo contenuto è strutturato, non un testo libero.</p>';
+    try{ html += '<div class="qd-pre">'+esc(JSON.stringify(rec.stato_output, null, 2))+'</div>'; }catch(e){}
+  }
+  if(rec.note_lab){
+    html += '<div class="qd-det-note"><b>Nota di laboratorio</b>'+esc(rec.note_lab)+'</div>';
+  }
+  $('dettaglio').innerHTML = html;
+  $('btn-modifica').textContent = (testo!=null) ? 'Modifica' : 'Modifica titolo e nota';
+}
+$('btn-indietro').addEventListener('click', function(){ mostra('lista'); caricaLista(); });
+$('btn-modifica').addEventListener('click', function(){ if(RECORD_CORRENTE) apriEditor(RECORD_CORRENTE); });
+$('btn-archivia').addEventListener('click', function(){
+  if(!RECORD_CORRENTE) return;
+  if(!window.confirm('Archiviare “'+(RECORD_CORRENTE.titolo||'questo appunto')+'”? Sparisce dalla lista (non è cancellato).')) return;
+  stato('dettaglio-state','Archivio…', false);
+  fetch('/v1/quaderno2/'+encodeURIComponent(RECORD_CORRENTE.id)+'/aggiorna', {
+    method:'POST', headers:_h({'Content-Type':'application/json'}),
+    body: JSON.stringify({archiviato:true})
+  }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+    .then(function(res){
+      if(res.ok && res.j && res.j.ok){ mostra('lista'); caricaLista(); }
+      else stato('dettaglio-state','Non sono riuscito ad archiviare: '+esc((res.j&&(res.j.nota||res.j.errore))||'errore'), true);
+    })
+    .catch(function(){ stato('dettaglio-state','Rete non disponibile. Riprova.', true); });
+});
+
+// ─── EDITOR ───
+function apriEditor(rec){
+  MODIFICA = rec ? {id:rec.id, record:rec} : null;
+  pulisciStato('editor-state');
+  var testoEditabile = rec ? (testoDa(rec)!=null) : true;
+  $('f-titolo').value = rec ? (rec.titolo||'') : '';
+  $('f-testo').value  = rec ? (testoDa(rec)||'') : '';
+  $('f-note').value   = rec ? (rec.note_lab||'') : '';
+  var wrapTesto = $('f-testo').closest('.field');
+  wrapTesto.style.display = testoEditabile ? '' : 'none';
+  $('btn-salva').textContent = rec ? 'Salva le modifiche' : 'Salva nel Quaderno';
+  mostra('editor');
+  $('f-titolo').focus();
+}
+$('btn-nuovo').addEventListener('click', function(){ apriEditor(null); });
+$('btn-annulla-editor').addEventListener('click', function(){
+  if(MODIFICA) apriDettaglio(MODIFICA.id); else { mostra('lista'); caricaLista(); }
+});
+
+$('form-editor').addEventListener('submit', function(e){
+  e.preventDefault();
+  var titolo = $('f-titolo').value.trim();
+  var testo  = $('f-testo').value;
+  var note   = $('f-note').value.trim();
+  if(!titolo){ stato('editor-state','Serve almeno un titolo.', true); $('f-titolo').focus(); return; }
+  $('btn-salva').disabled = true;
+  stato('editor-state','Salvo…', false);
+
+  if(MODIFICA){
+    var body = {titolo:titolo};
+    var rec = MODIFICA.record;
+    if(testoDa(rec)!=null){
+      var out = {};
+      try{ if(rec.stato_output && typeof rec.stato_output==='object') for(var k in rec.stato_output) out[k]=rec.stato_output[k]; }catch(e){}
+      out.testo = testo;
+      body.stato_output = out;
+    }
+    body.note_lab = note;
+    fetch('/v1/quaderno2/'+encodeURIComponent(rec.id)+'/aggiorna', {
+      method:'POST', headers:_h({'Content-Type':'application/json'}), body: JSON.stringify(body)
+    }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+      .then(function(res){
+        $('btn-salva').disabled = false;
+        if(res.ok && res.j && res.j.ok){ apriDettaglio(rec.id); }
+        else stato('editor-state','Non salvato: '+esc((res.j&&(res.j.nota||res.j.errore))||'errore'), true);
+      })
+      .catch(function(){ $('btn-salva').disabled=false; stato('editor-state','Rete non disponibile. Riprova.', true); });
+  }else{
+    var payload = {
+      porta:'quaderno', funzione:'appunto', tipo:'nota', titolo:titolo, lingua:'it',
+      stato_input:{}, stato_output:{testo:testo}
+    };
+    if(note) payload.note_lab = note;
+    fetch('/v1/quaderno2/salva', {
+      method:'POST', headers:_h({'Content-Type':'application/json'}), body: JSON.stringify(payload)
+    }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+      .then(function(res){
+        $('btn-salva').disabled = false;
+        if(res.ok && res.j && res.j.ok && res.j.id){ apriDettaglio(res.j.id); }
+        else stato('editor-state','Non salvato: '+esc((res.j&&(res.j.errore||(res.j.mancanti&&('mancano '+res.j.mancanti.join(', ')))))||'errore'), true);
+      })
+      .catch(function(){ $('btn-salva').disabled=false; stato('editor-state','Rete non disponibile. Riprova.', true); });
+  }
+});
+
+caricaLista();
+</script>
+</body>
+</html>
