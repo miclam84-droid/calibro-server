@@ -1993,13 +1993,6 @@
     "tutela": "dop"
   },
   {
-    "nome": "Prosciutto di San Daniele",
-    "regione": "Friuli-Venezia Giulia",
-    "territorio": "San Daniele del Friuli",
-    "categoria": "salume",
-    "tutela": "dop"
-  },
-  {
     "nome": "Formaggio Montasio",
     "regione": "Friuli-Venezia Giulia",
     "territorio": "Alpi Giulie e Carniche",
@@ -2082,5 +2075,19 @@
     "territorio": "alto Molise",
     "categoria": "fungo",
     "tutela": ""
+  },
+  {
+    "nome": "Prosciutto di San Daniele DOP",
+    "regione": "Friuli-Venezia Giulia",
+    "territorio": "San Daniele del Friuli",
+    "categoria": "salume",
+    "tutela": "dop"
+  },
+  {
+    "nome": "Speck Alto Adige IGP",
+    "regione": "Trentino-Alto Adige",
+    "territorio": "Alto Adige",
+    "categoria": "salume",
+    "tutela": "igp"
   }
 ]
