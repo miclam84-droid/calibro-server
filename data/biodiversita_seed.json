@@ -1690,5 +1690,306 @@
     "territorio": "terfezia (uova del lampo)",
     "categoria": "fungo",
     "tutela": ""
+  },
+  {
+    "nome": "Cece nero della Murgia Carsica",
+    "regione": "Puglia",
+    "territorio": "Murgia",
+    "categoria": "legume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Ceci lisci di Cassano delle Murge",
+    "regione": "Puglia",
+    "territorio": "Murgia",
+    "categoria": "legume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Roveja di Civita di Cascia",
+    "regione": "Umbria",
+    "territorio": "Valnerina",
+    "categoria": "legume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Cicerchia di Serra de' Conti",
+    "regione": "Marche",
+    "territorio": "",
+    "categoria": "legume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Fagiolina del Trasimeno",
+    "regione": "Umbria",
+    "territorio": "lago Trasimeno",
+    "categoria": "legume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Fagiolo Zolfino",
+    "regione": "Toscana",
+    "territorio": "Pratomagno",
+    "categoria": "legume",
+    "tutela": ""
+  },
+  {
+    "nome": "Badda di Polizzi",
+    "regione": "Sicilia",
+    "territorio": "Polizzi Generosa",
+    "categoria": "legume",
+    "tutela": ""
+  },
+  {
+    "nome": "Gialet",
+    "regione": "Veneto",
+    "territorio": "Valbelluna",
+    "categoria": "legume",
+    "tutela": ""
+  },
+  {
+    "nome": "Timilia",
+    "regione": "Sicilia",
+    "territorio": "grano antico (pane di Castelvetrano)",
+    "categoria": "cereale",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Russello",
+    "regione": "Sicilia",
+    "territorio": "grano antico",
+    "categoria": "cereale",
+    "tutela": ""
+  },
+  {
+    "nome": "Perciasacchi",
+    "regione": "Sicilia",
+    "territorio": "grano antico",
+    "categoria": "cereale",
+    "tutela": ""
+  },
+  {
+    "nome": "Maiorca",
+    "regione": "Sicilia",
+    "territorio": "grano antico tenero",
+    "categoria": "cereale",
+    "tutela": ""
+  },
+  {
+    "nome": "Solina",
+    "regione": "Abruzzo",
+    "territorio": "grano d'altura appenninico",
+    "categoria": "cereale",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Mais Ottofile della Garfagnana",
+    "regione": "Toscana",
+    "territorio": "Garfagnana",
+    "categoria": "cereale",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Miele amaro di corbezzolo",
+    "regione": "Sardegna",
+    "territorio": "da Arbutus unedo",
+    "categoria": "miele",
+    "tutela": ""
+  },
+  {
+    "nome": "Giuggiole",
+    "regione": "Veneto",
+    "territorio": "Arqua Petrarca",
+    "categoria": "frutto",
+    "tutela": ""
+  },
+  {
+    "nome": "Pera Cocomerina",
+    "regione": "Emilia-Romagna",
+    "territorio": "Appennino cesenate",
+    "categoria": "frutto",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Mela Rosa dei Sibillini",
+    "regione": "Marche",
+    "territorio": "Monti Sibillini",
+    "categoria": "frutto",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Pera Angelica di Serrungarina",
+    "regione": "Marche",
+    "territorio": "Serrungarina",
+    "categoria": "frutto",
+    "tutela": ""
+  },
+  {
+    "nome": "Fichi di Carmignano",
+    "regione": "Toscana",
+    "territorio": "Carmignano",
+    "categoria": "frutto",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Puzzone di Moena",
+    "regione": "Trentino-Alto Adige",
+    "territorio": "val di Fassa (crosta lavata)",
+    "categoria": "formaggio",
+    "tutela": "dop"
+  },
+  {
+    "nome": "Castelmagno di alpeggio",
+    "regione": "Piemonte",
+    "territorio": "valli Grana/Stura",
+    "categoria": "formaggio",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Bitto Storico",
+    "regione": "Lombardia",
+    "territorio": "valli del Bitto",
+    "categoria": "formaggio",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Bleu del Moncenisio",
+    "regione": "Piemonte",
+    "territorio": "alta val di Susa",
+    "categoria": "formaggio",
+    "tutela": ""
+  },
+  {
+    "nome": "Cevrin di Coazze",
+    "regione": "Piemonte",
+    "territorio": "val Sangone",
+    "categoria": "formaggio",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Robiola di Roccaverano",
+    "regione": "Piemonte",
+    "territorio": "Langa Astigiana",
+    "categoria": "formaggio",
+    "tutela": "dop"
+  },
+  {
+    "nome": "Casizolu",
+    "regione": "Sardegna",
+    "territorio": "Montiferru",
+    "categoria": "formaggio",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Fiore Sardo",
+    "regione": "Sardegna",
+    "territorio": "",
+    "categoria": "formaggio",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Mosciame di tonno",
+    "regione": "Liguria",
+    "territorio": "tonno essiccato",
+    "categoria": "conserva ittica",
+    "tutela": ""
+  },
+  {
+    "nome": "Acciughe del Mar Ligure",
+    "regione": "Liguria",
+    "territorio": "",
+    "categoria": "conserva ittica",
+    "tutela": "igp"
+  },
+  {
+    "nome": "Capocollo di Martina Franca",
+    "regione": "Puglia",
+    "territorio": "affumicato con fragno",
+    "categoria": "salume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Violino di capra della Valchiavenna",
+    "regione": "Lombardia",
+    "territorio": "Valchiavenna",
+    "categoria": "salume",
+    "tutela": ""
+  },
+  {
+    "nome": "Mocetta valdostana",
+    "regione": "Valle d'Aosta",
+    "territorio": "",
+    "categoria": "salume",
+    "tutela": ""
+  },
+  {
+    "nome": "Pezzente materano",
+    "regione": "Basilicata",
+    "territorio": "Matera",
+    "categoria": "salume",
+    "tutela": ""
+  },
+  {
+    "nome": "Biroldo della Garfagnana",
+    "regione": "Toscana",
+    "territorio": "sanguinaccio",
+    "categoria": "salume",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Suino Nero Casertano",
+    "regione": "Campania",
+    "territorio": "",
+    "categoria": "razza suina",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Suino Nero dei Nebrodi",
+    "regione": "Sicilia",
+    "territorio": "Nebrodi",
+    "categoria": "razza suina",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Cinta Senese",
+    "regione": "Toscana",
+    "territorio": "",
+    "categoria": "razza suina",
+    "tutela": "dop"
+  },
+  {
+    "nome": "Mora Romagnola",
+    "regione": "Emilia-Romagna",
+    "territorio": "",
+    "categoria": "razza suina",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Cappero di Salina",
+    "regione": "Sicilia",
+    "territorio": "isola di Salina",
+    "categoria": "conserva",
+    "tutela": "presidio"
+  },
+  {
+    "nome": "Elicriso",
+    "regione": "Sardegna",
+    "territorio": "nota curry-liquirizia",
+    "categoria": "erba",
+    "tutela": ""
+  },
+  {
+    "nome": "Mirto",
+    "regione": "Sardegna",
+    "territorio": "bacche",
+    "categoria": "erba",
+    "tutela": ""
+  },
+  {
+    "nome": "Zafferano dell'Aquila",
+    "regione": "Abruzzo",
+    "territorio": "altopiano di Navelli",
+    "categoria": "spezia",
+    "tutela": "dop"
   }
 ]
