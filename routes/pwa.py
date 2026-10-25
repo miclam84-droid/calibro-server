@@ -26,23 +26,16 @@ def help_page():
 
 @bp.route("/app")
 def home():
-    """PWA principale — serve index.html. Anti-cache sull'HTML: il browser rivalida sempre
-    l'app-shell, cosi' gli utenti prendono la nav aggiornata (Sprint Routing #51)."""
-    from flask import make_response
-    resp = make_response(render_template("index.html", mb_ver=_BUILD_VER))
-    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    resp.headers["Pragma"] = "no-cache"
-    resp.headers["Expires"] = "0"
-    return resp
+    """SWITCHOVER (25/10): /app è ora il frontend nuovo (design congelato matter3).
+    Redirect al nuovo hub /nuovo. Il vecchio index.html resta su disco per rollback:
+    per ripristinarlo basta rimettere qui il render di 'index.html'."""
+    return redirect("/nuovo")
 
 @bp.route("/app2")
 def home2():
-    """Frontend 2.0 - nuovo da zero, CSS pulito, zero eredita dal vecchio. Serve index2.html.
-    Il vecchio /app resta intatto per rollback finche' /app2 non e' completo e verificato."""
-    from flask import make_response
-    resp = make_response(render_template("index2.html"))
-    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    return resp
+    """SWITCHOVER (25/10): anche /app2 (vecchia iterazione index2.html) redirige al nuovo hub.
+    index2.html resta su disco per rollback."""
+    return redirect("/nuovo")
 
 @bp.route("/scopri")
 @bp.route("/scopri/<ing>")
