@@ -11,18 +11,14 @@
 #   GET  /v1/menu/<id>/qr       QR PNG (richiede PUBLIC_BASE_URL lato server)
 #   GET  /v1/menu/templates     elenco temi grafici
 # ============================================================
-from flask import Blueprint, render_template, make_response
+from flask import Blueprint, render_template, make_response, redirect
 
 bp_pag_menu = Blueprint("pagina_menu", __name__)
 
 
 @bp_pag_menu.route("/menu")
 def pagina_menu():
-    """FRONTEND-2.0 — schermata Menu: crea un menu, aggiungi voci, anteprima/PDF/QR.
-    Sistema di design congelato (matter2.css), cablata dal vivo al menu builder
-    (routes/menu_builder.py). Pagina nuova e isolata: non tocca /app né /app2."""
-    resp = make_response(render_template("menu.html"))
-    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    resp.headers["Pragma"] = "no-cache"
-    resp.headers["Expires"] = "0"
-    return resp
+    """BONIFICA (25/10): /menu (matter2) è superato da /menu-nuovo (matter3, linkato
+    dall'hub /nuovo). Redirect per non perdere vecchi link; menu.html rimosso.
+    Gli endpoint /v1/menu/* del builder restano intatti."""
+    return redirect("/menu-nuovo")
