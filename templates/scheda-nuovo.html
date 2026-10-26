@@ -375,7 +375,7 @@ function renderAbbinamenti(cr, nome){
   const corpo = gruppi || `<p class="gloss">Nessun abbinamento ancora collegato a questo ingrediente nel grafo. Non è un errore: è "non ancora mappato".</p>`;
   $a.innerHTML = `<section class="section"><span class="eyebrow">Abbinamenti e sostituzioni</span>
     <div class="sechead" style="margin-bottom:12px"><p>Perché una relazione esiste — mai un voto di compatibilità.</p></div>
-    ${corpo}<a class="btn btn--ghost cta" href="/scopri-nuovo/${encodeURIComponent(nome)}">Vedi tutti gli abbinamenti, e perché →</a></section>`;
+    ${corpo}${gruppi ? `<p class="gloss" style="margin-top:14px">Mostriamo le relazioni per cui abbiamo dati. L’assenza di un collegamento non significa che due ingredienti non stiano bene insieme: significa “non ancora mappato”.</p>` : ''}<a class="btn btn--ghost cta" href="/scopri-nuovo/${encodeURIComponent(nome)}">Vedi tutti gli abbinamenti, e perché →</a></section>`;
 }
 
 async function carica(nome){
