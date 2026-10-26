@@ -17889,9 +17889,214 @@
           "fonte": "Epazote (Dysphania ambrosioides), chemotipo messicano ascaridolo-dominante: ascaridole ~80% (Z+E), p-cymene 2-8%, alpha-terpinene minore. Profilo CHEMOTIPO-DIPENDENTE (vedi CORREGGE). Jardim et al., J Chem Ecol 2008 34(9):1213; Torres et al., FACENA 2003 19:27; Molecules 2026 31(6):946 (10.3390/molecules31060946). Ascaridolo termolabile e neurotossico ad alte dosi: uso in tracce."
         }
       ]
+    },
+    {
+      "ingrediente": "mandorla tostata",
+      "nodo_target": "ing-mandorla-tostata",
+      "specie": "Prunus dulcis (tostata)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Mandorla tostata (Prunus dulcis): key odorants GC-MS/GC-O — Franklin & Mitchell, 'Understanding the Chemistry of Almond Flavor' (UC Davis); benzaldeide = firma marzapane; 2-/3-metilbutanale e 2,5-dimetilpirazina da tostatura (Strecker/Maillard); furfurale.",
+      "composti": [
+        {
+          "composto": "benzaldeide",
+          "descrittore": "mandorla, marzapane, ciliegia",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandorla tostata (Prunus dulcis): key odorants GC-MS/GC-O — Franklin & Mitchell, 'Understanding the Chemistry of Almond Flavor' (UC Davis); benzaldeide = firma marzapane; 2-/3-metilbutanale e 2,5-dimetilpirazina da tostatura (Strecker/Maillard); furfurale."
+        },
+        {
+          "composto": "2-metilbutanale",
+          "descrittore": "cioccolato, maltato, nocciola, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandorla tostata (Prunus dulcis): key odorants GC-MS/GC-O — Franklin & Mitchell, 'Understanding the Chemistry of Almond Flavor' (UC Davis); benzaldeide = firma marzapane; 2-/3-metilbutanale e 2,5-dimetilpirazina da tostatura (Strecker/Maillard); furfurale."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato, cioccolato, nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandorla tostata (Prunus dulcis): key odorants GC-MS/GC-O — Franklin & Mitchell, 'Understanding the Chemistry of Almond Flavor' (UC Davis); benzaldeide = firma marzapane; 2-/3-metilbutanale e 2,5-dimetilpirazina da tostatura (Strecker/Maillard); furfurale."
+        },
+        {
+          "composto": "2,5-dimetilpirazina",
+          "descrittore": "tostato, nocciola, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandorla tostata (Prunus dulcis): key odorants GC-MS/GC-O — Franklin & Mitchell, 'Understanding the Chemistry of Almond Flavor' (UC Davis); benzaldeide = firma marzapane; 2-/3-metilbutanale e 2,5-dimetilpirazina da tostatura (Strecker/Maillard); furfurale."
+        },
+        {
+          "composto": "furfurale",
+          "descrittore": "pane, dolce, mandorla, legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Mandorla tostata (Prunus dulcis): key odorants GC-MS/GC-O — Franklin & Mitchell, 'Understanding the Chemistry of Almond Flavor' (UC Davis); benzaldeide = firma marzapane; 2-/3-metilbutanale e 2,5-dimetilpirazina da tostatura (Strecker/Maillard); furfurale."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pistacchio tostato",
+      "nodo_target": "ing-pistacchio-tostato",
+      "specie": "Pistacia vera (tostata)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Pistacchio tostato (Pistacia vera): componenti aromatici DHA/GC-MS — α-pinene, terpinolene, limonene, β-mircene dominanti (Int. J. Food Properties, 2018); pirazine da tostatura (Maillard).",
+      "composti": [
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "pino, resinoso, fresco",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pistacchio tostato (Pistacia vera): componenti aromatici DHA/GC-MS — α-pinene, terpinolene, limonene, β-mircene dominanti (Int. J. Food Properties, 2018); pirazine da tostatura (Maillard)."
+        },
+        {
+          "composto": "terpinolene",
+          "descrittore": "pino, erbaceo, legnoso-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pistacchio tostato (Pistacia vera): componenti aromatici DHA/GC-MS — α-pinene, terpinolene, limonene, β-mircene dominanti (Int. J. Food Properties, 2018); pirazine da tostatura (Maillard)."
+        },
+        {
+          "composto": "2,5-dimetilpirazina",
+          "descrittore": "tostato, nocciola, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pistacchio tostato (Pistacia vera): componenti aromatici DHA/GC-MS — α-pinene, terpinolene, limonene, β-mircene dominanti (Int. J. Food Properties, 2018); pirazine da tostatura (Maillard)."
+        },
+        {
+          "composto": "limonene",
+          "descrittore": "agrume, fresco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pistacchio tostato (Pistacia vera): componenti aromatici DHA/GC-MS — α-pinene, terpinolene, limonene, β-mircene dominanti (Int. J. Food Properties, 2018); pirazine da tostatura (Maillard)."
+        },
+        {
+          "composto": "beta-mircene",
+          "descrittore": "balsamico, resinoso, erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pistacchio tostato (Pistacia vera): componenti aromatici DHA/GC-MS — α-pinene, terpinolene, limonene, β-mircene dominanti (Int. J. Food Properties, 2018); pirazine da tostatura (Maillard)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "scorza d'arancia candita",
+      "nodo_target": "ing-scorza-arancia-candita",
+      "specie": "Citrus x sinensis (scorza, candita)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Scorza d'arancia candita (Citrus sinensis): olio di scorza d'arancia dolce — limonene dominante, sinensali = marcatori d'arancia, linalolo/decanale/ottanale (letteratura GC-MS olio di scorza d'arancia dolce). Note caramellate da CANDITURA (zuccheri cotti) stimate, da verificare al banco.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume, arancia, fresco",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scorza d'arancia candita (Citrus sinensis): olio di scorza d'arancia dolce — limonene dominante, sinensali = marcatori d'arancia, linalolo/decanale/ottanale (letteratura GC-MS olio di scorza d'arancia dolce). Note caramellate da CANDITURA (zuccheri cotti) stimate, da verificare al banco."
+        },
+        {
+          "composto": "alpha-sinensale",
+          "descrittore": "arancia, scorza dolce (marcatore)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scorza d'arancia candita (Citrus sinensis): olio di scorza d'arancia dolce — limonene dominante, sinensali = marcatori d'arancia, linalolo/decanale/ottanale (letteratura GC-MS olio di scorza d'arancia dolce). Note caramellate da CANDITURA (zuccheri cotti) stimate, da verificare al banco."
+        },
+        {
+          "composto": "linalolo",
+          "descrittore": "floreale, agrume",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scorza d'arancia candita (Citrus sinensis): olio di scorza d'arancia dolce — limonene dominante, sinensali = marcatori d'arancia, linalolo/decanale/ottanale (letteratura GC-MS olio di scorza d'arancia dolce). Note caramellate da CANDITURA (zuccheri cotti) stimate, da verificare al banco."
+        },
+        {
+          "composto": "decanale",
+          "descrittore": "arancia, scorza, aldeidico-grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scorza d'arancia candita (Citrus sinensis): olio di scorza d'arancia dolce — limonene dominante, sinensali = marcatori d'arancia, linalolo/decanale/ottanale (letteratura GC-MS olio di scorza d'arancia dolce). Note caramellate da CANDITURA (zuccheri cotti) stimate, da verificare al banco."
+        },
+        {
+          "composto": "ottanale",
+          "descrittore": "agrume, scorza, pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scorza d'arancia candita (Citrus sinensis): olio di scorza d'arancia dolce — limonene dominante, sinensali = marcatori d'arancia, linalolo/decanale/ottanale (letteratura GC-MS olio di scorza d'arancia dolce). Note caramellate da CANDITURA (zuccheri cotti) stimate, da verificare al banco."
+        },
+        {
+          "composto": "maltolo",
+          "descrittore": "caramello, zucchero cotto (da canditura)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "stimato",
+          "fonte": "Scorza d'arancia candita (Citrus sinensis): olio di scorza d'arancia dolce — limonene dominante, sinensali = marcatori d'arancia, linalolo/decanale/ottanale (letteratura GC-MS olio di scorza d'arancia dolce). Note caramellate da CANDITURA (zuccheri cotti) stimate, da verificare al banco."
+        }
+      ]
+    },
+    {
+      "ingrediente": "cedro candito",
+      "nodo_target": "ing-cedro-candito",
+      "specie": "Citrus medica (scorza, candita)",
+      "dominio": "panificazione",
+      "fonte_ingrediente": "Cedro candito (Citrus medica): olio di scorza di cedro — limonene e γ-terpinene dominanti, citrale, cumarine (citropten/limettina) (letteratura GC-MS olio di scorza di cedro). Note caramellate da CANDITURA stimate, da verificare al banco.",
+      "composti": [
+        {
+          "composto": "limonene",
+          "descrittore": "agrume, fresco",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro candito (Citrus medica): olio di scorza di cedro — limonene e γ-terpinene dominanti, citrale, cumarine (citropten/limettina) (letteratura GC-MS olio di scorza di cedro). Note caramellate da CANDITURA stimate, da verificare al banco."
+        },
+        {
+          "composto": "gamma-terpinene",
+          "descrittore": "agrume, legnoso-fresco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro candito (Citrus medica): olio di scorza di cedro — limonene e γ-terpinene dominanti, citrale, cumarine (citropten/limettina) (letteratura GC-MS olio di scorza di cedro). Note caramellate da CANDITURA stimate, da verificare al banco."
+        },
+        {
+          "composto": "citrale (geraniale+nerale)",
+          "descrittore": "limone, agrume intenso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro candito (Citrus medica): olio di scorza di cedro — limonene e γ-terpinene dominanti, citrale, cumarine (citropten/limettina) (letteratura GC-MS olio di scorza di cedro). Note caramellate da CANDITURA stimate, da verificare al banco."
+        },
+        {
+          "composto": "citropten (limettina)",
+          "descrittore": "fresco, cumarinico, dolce-erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cedro candito (Citrus medica): olio di scorza di cedro — limonene e γ-terpinene dominanti, citrale, cumarine (citropten/limettina) (letteratura GC-MS olio di scorza di cedro). Note caramellate da CANDITURA stimate, da verificare al banco."
+        },
+        {
+          "composto": "maltolo",
+          "descrittore": "caramello, zucchero cotto (da canditura)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "stimato",
+          "fonte": "Cedro candito (Citrus medica): olio di scorza di cedro — limonene e γ-terpinene dominanti, citrale, cumarine (citropten/limettina) (letteratura GC-MS olio di scorza di cedro). Note caramellate da CANDITURA stimate, da verificare al banco."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 26/10 (ii, +4 panificazione Bucolico): mandorla tostata, pistacchio tostato, scorza d'arancia candita, cedro candito. Firme da fonte reale (UC Davis almond flavor; DHA/GC-MS pistacchio IJFP 2018; olio di scorza agrumi). Note di CANDITURA (maltolo) marcate stato=stimato, da verificare al banco. Preparata nella sessione motore-onesto 26/10.",
     "Ondata 25/10 (hh, +14 firme verificate dalla ricerca biodiversità): pawpaw, finger lime, paccasassi, miele di corbezzolo, grani del paradiso, olivello spinoso, mirtillo rosso (CORREGGE), surströmming, époisses, lemon myrtle, mastiha, sudachi, pepe di timut, elicriso. Tutti con fonte GC-MS/GC-O reale + DOI. Correzioni di metodo incorporate: (a) marcatori TRIGEMINALI non-olfattivi separati dall'aroma (6-paradol in grani del paradiso, idrossi-alfa-sanshool in pepe di timut); (b) mirtillo rosso CORRETTO (acido benzoico = conservante, non firma); (c) surströmming = TMA+polisolfuri (non H2S+acidi); (d) finger lime senza isomentone; (e) miele di corbezzolo marcatore non-volatile dichiarato; (f) paccasassi con chemotipo dichiarato. 6 arricchiscono nodi esistenti (grani del paradiso, mirtillo rosso, mastiha, sudachi, pepe di timut, elicriso, finger lime), il resto nuovi. SCARTATI dalla ricerca per firma assente: prugnolo, kakadu plum, davidson plum, quandong, wattleseed, bush tomato, sea grape, gac. Ponti: esteri fruttati (pawpaw/olivello<->ananas/mela), citrale (lemon myrtle<->citronella/timo limonato), croste lavate (époisses<->camembert/taleggio), TMA+solfuri (surströmming<->acciuga salata/colatura), alpha-pinene resinoso (mastiha<->ginepro/incenso).",
     "Ondata 24/10 (gg, +37 propagazione categoria, scelta a): firme di categoria VERIFICATE propagate ai nodi-varietà clonati, marcate stato=derivato (onesto: profilo condiviso di categoria, non fonte sul singolo). Cluster: 12 tagli di manzo<-manzo, 12 cultivar pomodoro<-pomodoro, 2 limoni IGP<-limone, 2 prosciutti DOP<-prosciutto crudo, 1 speck IGP<-speck, 4 oli/olive<-olio evo, 2 peperoni freschi<-peperone, 2 fagioli<-soia(beany). LASCIATI FUORI apposta: 6 salumi (prodotti distinti, non cloni di una categoria -> ricerca per-prodotto), 12 farine (nessun aroma reale), peperone crusco (essiccato != fresco), radicchi (amaro non-volatile). Ogni varietà ora eredita il profilo di categoria e condivide i composti nel pairing; la provenienza dichiara 'derivato', distinta dalle righe da_fonte.",
     "Ondata 24/10 (ff, +13 teste di categoria, cancello 1): latte, panna, uovo cotto, vino rosso, rum, cioccolato fondente, emmental, tonno, gambero, merluzzo, vongola, sgombro, branzino. Secondo blocco mirato dal diagnostico copertura: basi ad alto traffico finora solo su Ahn grezzo, ora con firma verificata per categoria. FORTI: latte, panna, vino rosso, rum, emmental, gambero. MEDIE con caveat in riga: uovo cotto (il sodo non ha impatto GC-O, firma dal tuorlo a calore secco; H2S non confermato), cioccolato fondente (cDFA non OAV), tonno/merluzzo/sgombro/branzino/vongola (GC-MS reale, descrittori standard; (Z)-4-eptenale è del cotto). SCARTATI senza inventare: champagne (nessuna fonte GC-O dedicata, solo spumante generico), polpo e calamaro fresco (nessuna firma GC-O pubblica per i cefalopodi). Ponti: lattoni cremosi (latte/panna<->burro/cocco/mascarpone), damascenone+esteri (vino rosso/rum<->vino bianco/sidro), aldeidi di Strecker+pirazine (cioccolato fondente/uovo cotto<->cacao/caffè), acido propionico (emmental<->comté/groviera), aldeidi C6-C9 marine+1-octen-3-olo (tonno/merluzzo/sgombro/branzino/vongola<->ostrica/cozza/kombu), 2-acetil-1-pirrolina (gambero<->riso/pandan/pane).",
