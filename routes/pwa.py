@@ -115,8 +115,8 @@ def foto_ingrediente(nome):
         return _foto_resp(_FOTO_ING_CACHE[chiave])
     res = None
     try:
-        from immagini import cerca_immagine
-        res = cerca_immagine(query=chiave, ingredienti=[chiave])
+        from immagini import cerca_immagine_ingrediente
+        res = cerca_immagine_ingrediente(chiave)
     except Exception:
         res = None
     if res and res.get("url"):
