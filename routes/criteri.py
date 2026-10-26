@@ -222,7 +222,7 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
                MAX(s.nb) AS nb,
                ( SUM( ln( (SELECT n FROM ntot) / GREATEST(df.d,1) ) )
                  / sqrt(%s::float * MAX(s.nb)) ) AS score,
-               (array_agg(s.comp ORDER BY df.d ASC))[1:6] AS rare_comps
+               (array_agg(s.comp ORDER BY df.d ASC))[1:16] AS rare_comps
         FROM shared s JOIN df ON df.comp = s.comp
         GROUP BY s.pname
         HAVING COUNT(*) >= %s
@@ -239,7 +239,7 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     tutti_ids = set()
     for name, shared, nb, score, rare_comps in rows:
         ids = list(rare_comps or [])
-        firma = tuple(sorted(ids)[:5])
+        firma = tuple(sorted(ids[:6])[:5])  # chiave-famiglia sui 6 piu' rari (invariata col pool piu' ampio)
         if firma and firma_count.get(firma, 0) >= 2:
             continue  # stessa firma = stessa famiglia -> max 2
         firma_count[firma] = firma_count.get(firma, 0) + 1
@@ -284,7 +284,13 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
             elif not per_nome[nm]["odore"] and info.get("odore"):
                 per_nome[nm].update({"odore": info.get("odore"), "ruolo": info.get("ruolo"),
                                      "fonte": info.get("fonte")})
-        dettaglio = [per_nome[nm] for nm in ordine]
+        tutti_dett = [per_nome[nm] for nm in ordine]
+        # priorita' all'ARGOMENTO leggibile: prima i composti di cui sappiamo l'odore (le firme
+        # dell'ingrediente base), poi gli altri per rarita'. Restano tutti composti DAVVERO
+        # condivisi: cambia solo l'ordine di presentazione, al massimo 6 in scheda.
+        con_odore = [d for d in tutti_dett if d["odore"]]
+        senza = [d for d in tutti_dett if not d["odore"]]
+        dettaglio = (con_odore + senza)[:6]
         nomi = [d["nome"] for d in dettaglio]
         r["evidenza"]["composti_dettaglio"] = dettaglio
         r["evidenza"]["composti_caratterizzanti"] = nomi
