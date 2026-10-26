@@ -244,17 +244,14 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
             continue  # stessa firma = stessa famiglia -> max 2
         firma_count[firma] = firma_count.get(firma, 0) + 1
         banda = _banda_molecolare(float(score))
-        comps = [_nome_composto(c) for c in ids]
         out.append({
             "ingrediente": name,
             "criterio": "base_aromatica",
             "_ids": ids,
+            "_shared": int(shared),
             "evidenza": {"composti_condivisi": int(shared), "profilo_partner": int(nb),
-                         "indice_rarita": round(float(score), 3), "composti_caratterizzanti": comps},
+                         "indice_rarita": round(float(score), 3)},
             "robustezza": banda,
-            "perche": "condivide composti caratterizzanti"
-                      + (f" — {', '.join(comps[:3])} (e altri, {shared} in tutto)" if comps
-                         else f" — {shared} composti"),
         })
         tutti_ids.update(ids)
         if len(out) >= limit:
@@ -273,12 +270,27 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
             dett[cid] = {"odore": odore, "ruolo": ruolo, "fonte": fonte}
     for r in out:
         ids = r.pop("_ids", [])
-        r["evidenza"]["composti_dettaglio"] = [
-            {"nome": _nome_composto(c),
-             "odore": (dett.get(c) or {}).get("odore"),
-             "ruolo": (dett.get(c) or {}).get("ruolo"),
-             "fonte": (dett.get(c) or {}).get("fonte")}
-            for c in ids]
+        shared = r.pop("_shared", 0)
+        # il grafo ha nodi-composto DUPLICATI (stesso composto, id diversi) -> dedup per NOME,
+        # tenendo il primo per rarita'; ma se un omonimo piu' avanti ha l'odore curato, prendo quello.
+        per_nome, ordine = {}, []
+        for c in ids:
+            nm = _nome_composto(c)
+            info = dett.get(c) or {}
+            if nm not in per_nome:
+                per_nome[nm] = {"nome": nm, "odore": info.get("odore"),
+                                "ruolo": info.get("ruolo"), "fonte": info.get("fonte")}
+                ordine.append(nm)
+            elif not per_nome[nm]["odore"] and info.get("odore"):
+                per_nome[nm].update({"odore": info.get("odore"), "ruolo": info.get("ruolo"),
+                                     "fonte": info.get("fonte")})
+        dettaglio = [per_nome[nm] for nm in ordine]
+        nomi = [d["nome"] for d in dettaglio]
+        r["evidenza"]["composti_dettaglio"] = dettaglio
+        r["evidenza"]["composti_caratterizzanti"] = nomi
+        r["perche"] = ("condivide composti caratterizzanti"
+                       + (f" — {', '.join(nomi[:3])} (e altri, {shared} in tutto)" if nomi
+                          else f" — {shared} composti"))
     return out
 
 
