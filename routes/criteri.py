@@ -157,6 +157,25 @@ def _risolvi_nodo(cur, ingrediente):
     return None
 
 
+# Soglie GLOBALI di forza del legame molecolare (percentile sull'intero grafo, NON relative al
+# singolo ingrediente). Calibrate 2026-10-26 su 30 ingredienti comuni / 291 legami base_aromatica:
+# distribuzione score min=0.29 mediana=1.25 p85=1.73 max=4.32. Dicono quanto il legame CHIMICO e'
+# forte/raro, NON quanto l'abbinamento piace in cucina: quello si valida al banco. Provvisorie,
+# da ricalibrare quando ci saranno prove reali (vedi briefing OpenAI 2026-10-26, punti 2 e 7).
+_BANDA_MARCATO = 1.727
+_BANDA_MODERATO = 1.247
+
+
+def _banda_molecolare(score):
+    """Banda descrittiva della forza del legame molecolare, su scala globale del grafo.
+    Non e' un voto sull'abbinamento. Pura."""
+    if score >= _BANDA_MARCATO:
+        return "marcato"
+    if score >= _BANDA_MODERATO:
+        return "moderato"
+    return "debole"
+
+
 def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     """Criterio 1: ingredienti che condividono composti volatili reali.
     - solo partner INGREDIENTE canonico (niente nodi 'Prodotto' = varianti/tagli che copiano la chimica);
@@ -215,7 +234,6 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     rows = cur.fetchall()
     if not rows:
         return []
-    max_score = max(float(r[3]) for r in rows) or 1.0
     out = []
     firma_count = {}
     for name, shared, nb, score, rare_comps in rows:
@@ -224,8 +242,7 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
         if firma and firma_count.get(firma, 0) >= 2:
             continue  # stessa firma = stessa famiglia -> max 2
         firma_count[firma] = firma_count.get(firma, 0) + 1
-        frac = float(score) / max_score
-        banda = "Alta" if frac >= 0.6 else ("Media" if frac >= 0.33 else "Esplorativa")
+        banda = _banda_molecolare(float(score))
         comps = [_nome_composto(c) for c in ids]
         out.append({
             "ingrediente": name,
@@ -402,8 +419,8 @@ _FAM_STOP = {
 }
 # connettori che introducono un complemento ESSENZIALE "X di Y" (non un regionalismo)
 _FAM_DI = {"di", "d"}
-# ordine di preferenza della robustezza a parita' di composti condivisi
-_FAM_ROB_RANK = {"Alta": 3, "Media": 2, "Esplorativa": 1}
+# ordine di preferenza della banda molecolare a parita' di composti condivisi
+_FAM_ROB_RANK = {"marcato": 3, "moderato": 2, "debole": 1}
 
 
 def _parole_sig(nome):

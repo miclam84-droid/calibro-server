@@ -337,8 +337,8 @@ async function caricaCottura(nome){
 /* abbinamenti */
 function abbCard(r){
   const rob = r.robustezza;
-  const pillCls = rob === 'Alta' ? 'pill alta' : (rob === 'Media' ? 'pill media' : 'pill espl');
-  const pill = rob ? `<span class="${pillCls}">${esc(rob)}</span>` : '';
+  const pillCls = rob === 'marcato' ? 'pill alta' : (rob === 'moderato' ? 'pill media' : 'pill espl');
+  const pill = rob ? `<span class="${pillCls}">legame ${esc(rob)}</span>` : '';
   const comps = (r.evidenza && Array.isArray(r.evidenza.composti_caratterizzanti)) ? r.evidenza.composti_caratterizzanti : [];
   const chips = comps.length ? `<div class="chips">${comps.slice(0,5).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>` : '';
   const perche = r.perche ? `<p class="perche">${esc(r.perche)}</p>` : '';
@@ -355,7 +355,7 @@ function renderAbbinamenti(cr, nome){
   const trad = rel.filter(r=>r.criterio==='tradizione').slice(0,4);
   const contr = rel.filter(r=>r.criterio==='contrasto').slice(0,4);
   const gruppi =
-    abbGruppo('Cosa ci sta bene', 'Chimica: composti aromatici realmente condivisi. La banda (Alta/Media/Esplorativa) è relativa al miglior risultato di questo ingrediente, non un voto assoluto.', base) +
+    abbGruppo('Cosa ci sta bene', 'Chimica: composti aromatici realmente condivisi. La banda (legame marcato/moderato/debole) misura quanto è forte il legame molecolare sul grafo — non quanto l’abbinamento piace in cucina: quello si prova al banco.', base) +
     abbGruppo('Per tradizione', 'Cultura: accostamenti documentati, non chimica.', trad) +
     abbGruppo('Per contrasto', 'Relazione curata nel grafo, non un’euristica.', contr);
   const corpo = gruppi || `<p class="gloss">Nessun abbinamento ancora collegato a questo ingrediente nel grafo. Non è un errore: è "non ancora mappato".</p>`;
