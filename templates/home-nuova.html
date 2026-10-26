@@ -105,6 +105,74 @@
 
 <main class="wrap">
 
+  <!-- INSTALLA PWA (bar dismissibile; si auto-nasconde se gia' installata) -->
+  <style>
+    .pwa-bar{display:flex; align-items:center; gap:12px; margin-top:16px; padding:12px 14px;
+      background:var(--surface); border:1px solid var(--verde); border-radius:var(--r);
+      box-shadow:var(--shadow-sm)}
+    .pwa-bar .pwa-txt{flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.3}
+    .pwa-bar .btn{flex:0 0 auto; padding:9px 16px; font-size:14px}
+    .pwa-x{flex:0 0 auto; width:30px; height:30px; border:0; background:transparent; color:var(--ink-soft);
+      font-size:16px; cursor:pointer; border-radius:50%}
+    .pwa-x:hover{background:var(--panel); color:var(--ink)}
+    .pwa-ios{position:fixed; inset:0; z-index:50; display:flex; align-items:flex-end; justify-content:center;
+      background:rgba(29,42,34,.45); padding:16px}
+    .pwa-ios-card{position:relative; width:100%; max-width:var(--maxw); background:var(--surface);
+      border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:20px 18px}
+    .pwa-ios-card b{color:var(--ink)}
+    .pwa-ios-card .pwa-ios-h{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); margin-bottom:8px}
+    .pwa-ios-card p{font-size:14px; color:var(--ink-soft); line-height:1.5; margin:0}
+    .pwa-ios-x{position:absolute; top:12px; right:12px; width:30px; height:30px; border:0; background:var(--panel);
+      color:var(--ink-soft); font-size:15px; cursor:pointer; border-radius:50%}
+  </style>
+  <div class="pwa-bar" id="pwa-bar" hidden>
+    <span class="pwa-txt" data-i18n="pwa_txt">Installa Matter Bench sul telefono</span>
+    <button class="btn" id="pwa-btn" type="button" data-i18n="pwa_btn">Installa</button>
+    <button class="pwa-x" id="pwa-x" type="button" aria-label="Chiudi" data-i18n-aria="pwa_chiudi">✕</button>
+  </div>
+  <div class="pwa-ios" id="pwa-ios" hidden role="dialog" aria-modal="true" aria-labelledby="pwa-ios-h">
+    <div class="pwa-ios-card">
+      <button class="pwa-ios-x" id="pwa-ios-x" type="button" aria-label="Chiudi" data-i18n-aria="pwa_chiudi">✕</button>
+      <div class="pwa-ios-h" id="pwa-ios-h" data-i18n="pwa_ios_titolo">Installa sull'iPhone</div>
+      <p data-i18n-html="pwa_ios_txt">Apri questa pagina in <b>Safari</b>, tocca <b>Condividi</b> (il quadrato con la freccia) in basso, poi <b>«Aggiungi a Home»</b>.</p>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var bar=document.getElementById('pwa-bar'), btn=document.getElementById('pwa-btn'),
+        x=document.getElementById('pwa-x'), sheet=document.getElementById('pwa-ios'),
+        sheetX=document.getElementById('pwa-ios-x');
+    var deferred=null;
+    function installata(){
+      try{ if(window.matchMedia('(display-mode: standalone)').matches) return true; }catch(e){}
+      return window.navigator.standalone===true; // iOS Safari installata
+    }
+    function chiusa(){ try{ return localStorage.getItem('pwa_install_dismiss')==='1'; }catch(e){ return false; } }
+    function chiudi(){ try{ localStorage.setItem('pwa_install_dismiss','1'); }catch(e){} if(bar) bar.hidden=true; }
+    var isiOS=/iphone|ipad|ipod/i.test(navigator.userAgent||'') && !window.MSStream;
+    if(x) x.addEventListener('click', chiudi);
+    if(sheetX) sheetX.addEventListener('click', function(){ sheet.hidden=true; });
+    if(sheet) sheet.addEventListener('click', function(e){ if(e.target===sheet) sheet.hidden=true; });
+    window.addEventListener('appinstalled', function(){ if(bar) bar.hidden=true; if(sheet) sheet.hidden=true; });
+
+    if(installata() || chiusa()) return;
+    if(isiOS){
+      // Safari iOS: nessun prompt programmatico -> bottone che apre le istruzioni
+      if(btn) btn.textContent=(window.I18N_DICT&&I18N_DICT.pwa_btn_ios&&I18N_DICT.pwa_btn_ios.it)||'Come si installa';
+      if(btn) btn.setAttribute('data-i18n','pwa_btn_ios');
+      if(bar) bar.hidden=false;
+      if(btn) btn.addEventListener('click', function(){ if(sheet) sheet.hidden=false; });
+    } else {
+      window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred=e; if(bar) bar.hidden=false; });
+      if(btn) btn.addEventListener('click', function(){
+        if(!deferred) return;
+        deferred.prompt();
+        deferred.userChoice.then(function(){ deferred=null; if(bar) bar.hidden=true; });
+      });
+    }
+  })();
+  </script>
+
   <!-- RICERCA → porta al grafo vero (/scopri-nuovo) -->
   <form class="srch" role="search" action="/scopri-nuovo" onsubmit="var v=(this.q.value||'').trim(); if(v){location.href='/scopri-nuovo/'+encodeURIComponent(v);} return false;">
     <input type="search" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
@@ -276,7 +344,14 @@ window.I18N_DICT = {
   pv_stimato:    {it:"stimato", en:"estimated", es:"estimado"},
   pv_proposta:   {it:"proposta", en:"proposal", es:"propuesta"},
   onb_inizia: {it:"Inizia", en:"Start", es:"Empezar"},
-  onb_salta:  {it:"Salta", en:"Skip", es:"Saltar"}
+  onb_salta:  {it:"Salta", en:"Skip", es:"Saltar"},
+  // installazione PWA
+  pwa_txt:     {it:"Installa Matter Bench sul telefono", en:"Install Matter Bench on your phone", es:"Instala Matter Bench en tu teléfono"},
+  pwa_btn:     {it:"Installa", en:"Install", es:"Instalar"},
+  pwa_btn_ios: {it:"Come si installa", en:"How to install", es:"Cómo instalar"},
+  pwa_ios_titolo: {it:"Installa sull'iPhone", en:"Install on iPhone", es:"Instalar en iPhone"},
+  pwa_ios_txt: {it:"Apri questa pagina in <b>Safari</b>, tocca <b>Condividi</b> (il quadrato con la freccia) in basso, poi <b>«Aggiungi a Home»</b>.", en:"Open this page in <b>Safari</b>, tap <b>Share</b> (the square with an arrow) at the bottom, then <b>“Add to Home Screen”</b>.", es:"Abre esta página en <b>Safari</b>, toca <b>Compartir</b> (el cuadrado con la flecha) abajo, y luego <b>«Añadir a inicio»</b>."},
+  pwa_chiudi:  {it:"Chiudi", en:"Close", es:"Cerrar"}
 };
 </script>
 <script src="/static/i18n-nuovo.js"></script>
