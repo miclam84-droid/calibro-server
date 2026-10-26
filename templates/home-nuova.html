@@ -107,6 +107,8 @@
 
   <!-- INSTALLA PWA (bar dismissibile; si auto-nasconde se gia' installata) -->
   <style>
+    /* l'attributo hidden deve vincere sul display:flex qui sotto */
+    .pwa-bar[hidden], .pwa-ios[hidden]{display:none !important}
     .pwa-bar{display:flex; align-items:center; gap:12px; margin-top:16px; padding:12px 14px;
       background:var(--surface); border:1px solid var(--verde); border-radius:var(--r);
       box-shadow:var(--shadow-sm)}
