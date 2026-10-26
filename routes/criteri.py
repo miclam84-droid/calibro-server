@@ -236,6 +236,7 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
         return []
     out = []
     firma_count = {}
+    tutti_ids = set()
     for name, shared, nb, score, rare_comps in rows:
         ids = list(rare_comps or [])
         firma = tuple(sorted(ids)[:5])
@@ -247,6 +248,7 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
         out.append({
             "ingrediente": name,
             "criterio": "base_aromatica",
+            "_ids": ids,
             "evidenza": {"composti_condivisi": int(shared), "profilo_partner": int(nb),
                          "indice_rarita": round(float(score), 3), "composti_caratterizzanti": comps},
             "robustezza": banda,
@@ -254,8 +256,29 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
                       + (f" — {', '.join(comps[:3])} (e altri, {shared} in tutto)" if comps
                          else f" — {shared} composti"),
         })
+        tutti_ids.update(ids)
         if len(out) >= limit:
             break
+    # ARGOMENTO del legame: odore, ruolo e fonte di ogni composto condiviso, presi dall'arco
+    # dell'ingrediente BASE verso il composto (il descrittore dipende dall'ingrediente). Dove c'e'
+    # il dato curato (proprietario, da_fonte) esce odore+fonte; dove c'e' solo Ahn resta il solo
+    # nome -> quella differenza E' la provenienza, onesta e automatica. Una query sola per tutti.
+    dett = {}
+    if tutti_ids:
+        cur.execute(
+            """SELECT to_id, data->>'descrittore', data->>'ruolo', data->>'fonte'
+               FROM edges WHERE from_id=%s AND relation='contiene_composto' AND to_id = ANY(%s)""",
+            (ing_id, list(tutti_ids)))
+        for cid, odore, ruolo, fonte in cur.fetchall():
+            dett[cid] = {"odore": odore, "ruolo": ruolo, "fonte": fonte}
+    for r in out:
+        ids = r.pop("_ids", [])
+        r["evidenza"]["composti_dettaglio"] = [
+            {"nome": _nome_composto(c),
+             "odore": (dett.get(c) or {}).get("odore"),
+             "ruolo": (dett.get(c) or {}).get("ruolo"),
+             "fonte": (dett.get(c) or {}).get("fonte")}
+            for c in ids]
     return out
 
 

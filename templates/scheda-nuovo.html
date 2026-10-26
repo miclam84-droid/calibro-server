@@ -41,7 +41,10 @@
 
   /* chip composti / allergeni */
   .chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px}
-  .chip{font-family:var(--sans); font-size:12.5px; color:var(--verde); background:var(--tint); border-radius:var(--r-pill); padding:5px 11px; line-height:1}
+  .chip{font-family:var(--sans); font-size:12.5px; color:var(--verde); background:var(--tint); border-radius:var(--r-pill); padding:5px 11px; line-height:1.3}
+  .chip .chip-od{color:var(--grigio,#6b7280); font-weight:400}
+  .chip.is-firma{background:var(--verde); color:#fff}
+  .chip.is-firma .chip-od{color:rgba(255,255,255,.82)}
 
   /* abbinamenti */
   .abb-grp + .abb-grp{margin-top:18px}
@@ -339,8 +342,19 @@ function abbCard(r){
   const rob = r.robustezza;
   const pillCls = rob === 'marcato' ? 'pill alta' : (rob === 'moderato' ? 'pill media' : 'pill espl');
   const pill = rob ? `<span class="${pillCls}">legame ${esc(rob)}</span>` : '';
-  const comps = (r.evidenza && Array.isArray(r.evidenza.composti_caratterizzanti)) ? r.evidenza.composti_caratterizzanti : [];
-  const chips = comps.length ? `<div class="chips">${comps.slice(0,5).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>` : '';
+  const dett = (r.evidenza && Array.isArray(r.evidenza.composti_dettaglio)) ? r.evidenza.composti_dettaglio : null;
+  let chips = '';
+  if (dett && dett.length){
+    chips = `<div class="chips">${dett.slice(0,5).map(d=>{
+      const firma = d.ruolo === 'firma' ? ' is-firma' : '';
+      const od = d.odore ? ` <span class="chip-od">· ${esc(d.odore)}</span>` : '';
+      const ti = d.fonte ? ` title="${esc(d.fonte)}"` : '';
+      return `<span class="chip${firma}"${ti}>${esc(d.nome)}${od}</span>`;
+    }).join('')}</div>`;
+  } else {
+    const comps = (r.evidenza && Array.isArray(r.evidenza.composti_caratterizzanti)) ? r.evidenza.composti_caratterizzanti : [];
+    chips = comps.length ? `<div class="chips">${comps.slice(0,5).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>` : '';
+  }
   const perche = r.perche ? `<p class="perche">${esc(r.perche)}</p>` : '';
   return `<div class="abb-card"><div class="card-top"><h3 class="partner">${esc(cap(r.ingrediente))}</h3>${pill}</div>${perche}${chips}</div>`;
 }
