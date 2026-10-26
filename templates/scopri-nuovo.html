@@ -34,6 +34,7 @@
   .grafo-tela svg{display:block; width:100%; height:auto; touch-action:manipulation}
 
   /* stato vuoto DENTRO la card (vicoli ciechi): mai una scatola bianca muta */
+  .grafo-vuoto[hidden]{display:none !important}  /* hidden deve vincere sul display:flex sotto */
   .grafo-vuoto{display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:40px 22px; min-height:220px}
   .grafo-vuoto .gv-disco{width:72px; height:72px; border-radius:50%; background:var(--panel);
@@ -447,9 +448,27 @@ window.I18N_DICT = {
     });
 
     nodoCentrale(centro); // sopra i legami
+    fitViewBox();         // stringe la cornice sul grafo: niente scatola vuota sotto
   }
 
-  function soloCentro(centro){ cardPiena(); svg.innerHTML = ""; nodoCentrale(centro); }
+  // Adatta il viewBox al contenuto REALE (nodi + etichette), con un margine.
+  // Era fisso a 400x460: se i nodi non riempivano i 460, restava un buco bianco sotto.
+  function fitViewBox(){
+    try {
+      var bb = svg.getBBox();
+      if (bb && bb.width > 0 && bb.height > 0) {
+        var pad = 12;
+        var w = bb.width + 2 * pad, h = bb.height + 2 * pad;
+        svg.setAttribute("viewBox", (bb.x - pad) + " " + (bb.y - pad) + " " + w + " " + h);
+        // height:auto dell'SVG non si ricalcola in modo affidabile: impongo l'altezza in pixel
+        // = larghezza resa * aspetto del contenuto. Niente buco bianco sotto il grafo.
+        var rw = svg.getBoundingClientRect().width || svg.clientWidth;
+        if (rw) svg.style.height = (rw * h / w) + "px";
+      }
+    } catch (e) { /* getBBox non disponibile: resta il viewBox di default */ }
+  }
+
+  function soloCentro(centro){ cardPiena(); svg.innerHTML = ""; nodoCentrale(centro); fitViewBox(); }
 
   // ---- STATO ESPLICITO DENTRO LA CARD (mai una scatola bianca muta) ----
   function cardPiena(){
