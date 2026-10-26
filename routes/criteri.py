@@ -157,6 +157,25 @@ def _risolvi_nodo(cur, ingrediente):
     return None
 
 
+# Soglie GLOBALI di forza del legame molecolare (percentile sull'intero grafo, NON relative al
+# singolo ingrediente). Calibrate 2026-10-26 su 30 ingredienti comuni / 291 legami base_aromatica:
+# distribuzione score min=0.29 mediana=1.25 p85=1.73 max=4.32. Dicono quanto il legame CHIMICO e'
+# forte/raro, NON quanto l'abbinamento piace in cucina: quello si valida al banco. Provvisorie,
+# da ricalibrare quando ci saranno prove reali (vedi briefing OpenAI 2026-10-26, punti 2 e 7).
+_BANDA_MARCATO = 1.727
+_BANDA_MODERATO = 1.247
+
+
+def _banda_molecolare(score):
+    """Banda descrittiva della forza del legame molecolare, su scala globale del grafo.
+    Non e' un voto sull'abbinamento. Pura."""
+    if score >= _BANDA_MARCATO:
+        return "marcato"
+    if score >= _BANDA_MODERATO:
+        return "moderato"
+    return "debole"
+
+
 def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     """Criterio 1: ingredienti che condividono composti volatili reali.
     - solo partner INGREDIENTE canonico (niente nodi 'Prodotto' = varianti/tagli che copiano la chimica);
@@ -215,21 +234,21 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
     rows = cur.fetchall()
     if not rows:
         return []
-    max_score = max(float(r[3]) for r in rows) or 1.0
     out = []
     firma_count = {}
+    tutti_ids = set()
     for name, shared, nb, score, rare_comps in rows:
         ids = list(rare_comps or [])
         firma = tuple(sorted(ids)[:5])
         if firma and firma_count.get(firma, 0) >= 2:
             continue  # stessa firma = stessa famiglia -> max 2
         firma_count[firma] = firma_count.get(firma, 0) + 1
-        frac = float(score) / max_score
-        banda = "Alta" if frac >= 0.6 else ("Media" if frac >= 0.33 else "Esplorativa")
+        banda = _banda_molecolare(float(score))
         comps = [_nome_composto(c) for c in ids]
         out.append({
             "ingrediente": name,
             "criterio": "base_aromatica",
+            "_ids": ids,
             "evidenza": {"composti_condivisi": int(shared), "profilo_partner": int(nb),
                          "indice_rarita": round(float(score), 3), "composti_caratterizzanti": comps},
             "robustezza": banda,
@@ -237,8 +256,29 @@ def _base_aromatica(cur, ing_id, base_nome, limit=12, min_shared=3, pool=200):
                       + (f" — {', '.join(comps[:3])} (e altri, {shared} in tutto)" if comps
                          else f" — {shared} composti"),
         })
+        tutti_ids.update(ids)
         if len(out) >= limit:
             break
+    # ARGOMENTO del legame: odore, ruolo e fonte di ogni composto condiviso, presi dall'arco
+    # dell'ingrediente BASE verso il composto (il descrittore dipende dall'ingrediente). Dove c'e'
+    # il dato curato (proprietario, da_fonte) esce odore+fonte; dove c'e' solo Ahn resta il solo
+    # nome -> quella differenza E' la provenienza, onesta e automatica. Una query sola per tutti.
+    dett = {}
+    if tutti_ids:
+        cur.execute(
+            """SELECT to_id, data->>'descrittore', data->>'ruolo', data->>'fonte'
+               FROM edges WHERE from_id=%s AND relation='contiene_composto' AND to_id = ANY(%s)""",
+            (ing_id, list(tutti_ids)))
+        for cid, odore, ruolo, fonte in cur.fetchall():
+            dett[cid] = {"odore": odore, "ruolo": ruolo, "fonte": fonte}
+    for r in out:
+        ids = r.pop("_ids", [])
+        r["evidenza"]["composti_dettaglio"] = [
+            {"nome": _nome_composto(c),
+             "odore": (dett.get(c) or {}).get("odore"),
+             "ruolo": (dett.get(c) or {}).get("ruolo"),
+             "fonte": (dett.get(c) or {}).get("fonte")}
+            for c in ids]
     return out
 
 
@@ -402,8 +442,8 @@ _FAM_STOP = {
 }
 # connettori che introducono un complemento ESSENZIALE "X di Y" (non un regionalismo)
 _FAM_DI = {"di", "d"}
-# ordine di preferenza della robustezza a parita' di composti condivisi
-_FAM_ROB_RANK = {"Alta": 3, "Media": 2, "Esplorativa": 1}
+# ordine di preferenza della banda molecolare a parita' di composti condivisi
+_FAM_ROB_RANK = {"marcato": 3, "moderato": 2, "debole": 1}
 
 
 def _parole_sig(nome):

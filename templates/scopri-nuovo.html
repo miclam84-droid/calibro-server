@@ -104,9 +104,14 @@
   .comp-chips{display:flex; flex-wrap:wrap; gap:7px}
   .comp-chip{
     font-family:var(--sans); font-size:12.5px; color:var(--verde); background:var(--tint);
-    border-radius:var(--r-pill); padding:5px 11px; line-height:1;
+    border-radius:var(--r-pill); padding:5px 11px; line-height:1.3;
   }
+  .comp-chip .comp-od{color:var(--ink-soft,#6b7280); font-weight:400}
+  .comp-chip.is-firma{background:var(--verde); color:#fff}
+  .comp-chip.is-firma .comp-od{color:rgba(255,255,255,.82)}
   .sheet-prov{margin-top:14px}
+  .prov-curato{background:var(--verde); color:#fff; border-radius:var(--r-pill); padding:3px 9px; font-size:11.5px; font-weight:600}
+  .prov-src{font-size:11.5px; color:var(--ink-soft); margin-left:6px}
   .sheet-limite{
     margin-top:14px; border-top:1px solid var(--riga); padding-top:12px;
     font-size:13px; color:var(--ink-soft); line-height:1.5;
@@ -299,13 +304,34 @@ window.I18N_DICT = {
       var comps = dedup((rel.evidenza || {}).composti_caratterizzanti);
       html += '<div class="sheet-numero"><span class="valore num">' + n + '</span>' +
               '<span class="etichetta">' + _L({it:"composti aromatici condivisi", en:"shared aroma compounds", es:"compuestos aromáticos compartidos"}) + '</span></div>';
-      if (comps.length) {
+      var dett = (rel.evidenza || {}).composti_dettaglio;
+      if (Array.isArray(dett) && dett.length) {
+        html += '<div class="sheet-comps"><span class="eyebrow">' + _L({it:"Composti caratterizzanti", en:"Characterising compounds", es:"Compuestos caracterizantes"}) + '</span>' +
+                '<div class="comp-chips">';
+        dett.slice(0,8).forEach(function(d){
+          var od = d.odore ? '<span class="comp-od"> · ' + esc(d.odore) + '</span>' : '';
+          var fir = d.ruolo === 'firma' ? ' is-firma' : '';
+          html += '<span class="comp-chip' + fir + '">' + esc(d.nome) + od + '</span>';
+        });
+        html += '</div></div>';
+        var fonti = dett.map(function(d){ return d.fonte; }).filter(function(f){ return f; });
+        var uniq = fonti.filter(function(f, i){ return fonti.indexOf(f) === i; }).slice(0, 3);
+        if (uniq.length) {
+          html += '<div class="sheet-prov"><span class="prov prov-curato">' +
+                  _L({it:"Dato curato", en:"Curated data", es:"Dato curado"}) + '</span> ' +
+                  '<span class="prov-src">' + esc(uniq.join(' · ')) + '</span></div>';
+        } else {
+          html += '<div class="sheet-prov"><span class="prov prov-fonte">' + esc(FONTE) + '</span></div>';
+        }
+      } else if (comps.length) {
         html += '<div class="sheet-comps"><span class="eyebrow">' + _L({it:"Composti caratterizzanti", en:"Characterising compounds", es:"Compuestos caracterizantes"}) + '</span>' +
                 '<div class="comp-chips">';
         comps.forEach(function(c){ html += '<span class="comp-chip">' + esc(c) + '</span>'; });
         html += '</div></div>';
+        html += '<div class="sheet-prov"><span class="prov prov-fonte">' + esc(FONTE) + '</span></div>';
+      } else {
+        html += '<div class="sheet-prov"><span class="prov prov-fonte">' + esc(FONTE) + '</span></div>';
       }
-      html += '<div class="sheet-prov"><span class="prov prov-fonte">' + esc(FONTE) + '</span></div>';
     } else if (crit === "tradizione") {
       html += '<p class="sheet-coppia" style="margin-top:12px">' + _L({
         it:"Relazione di <strong>tradizione</strong>: accostamento documentato dalla cultura, <strong>non</strong> un legame molecolare. Qui il grafo non conta composti condivisi.",
@@ -364,7 +390,7 @@ window.I18N_DICT = {
     // scala SPESSORE (invariata): 2..11 sul massimo dei composti_condivisi VERI tra le base_aromatica
     var maxN = 1;
     // scala RAGGIO (nuova): sull'INDICE DI RARITÀ tra le base_aromatica — la stessa grandezza
-    // da cui nasce la banda Alta/Media/Esplorativa. È la forza del match molecolare.
+    // da cui nasce la banda legame marcato/moderato/debole. È la forza del match molecolare.
     // Normalizzazione min–max sui soli vicini aromatici, così lo spread è leggibile a colpo
     // d'occhio anche quando i punteggi sono vicini. Parentela aromatica -> anello interno
     // [RMIN..RMID] (più forte = più vicino). Tradizione/contrasto non hanno una magnitudine
