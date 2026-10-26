@@ -477,6 +477,94 @@ def cerca_immagine(query, lang="it", disciplina=None, nome=None, rank=0, ingredi
                 return res
     return None
 
+# ── INGREDIENTI SINGOLI IT->EN (per la scheda Atlante). Solo nomi-ingrediente, non piatti.
+#    Termini inglesi >=4 lettere cosi' il filtro di pertinenza (parola nel testo foto) funziona. ──
+_KW_ING_IT_EN = {
+    # agrumi e frutta
+    "limone": "lemon", "lime": "lime fruit", "arancia": "orange fruit", "mandarino": "mandarin",
+    "clementina": "clementine", "clementine": "clementine", "pompelmo": "grapefruit", "cedro": "citron fruit",
+    "bergamotto": "bergamot fruit", "chinotto": "chinotto citrus", "mela": "apple", "pera": "pear",
+    "pesca": "peach fruit", "albicocca": "apricot", "ciliegia": "cherries", "ciliegie": "cherries",
+    "prugna": "plum fruit", "susina": "plum fruit", "uva": "grapes", "fragola": "strawberry", "fragole": "strawberries",
+    "lampone": "raspberries", "mirtillo": "blueberries", "mora": "blackberries", "ribes": "currant berries",
+    "fico": "figs", "melograno": "pomegranate", "melone": "melon fruit", "anguria": "watermelon",
+    "kiwi": "kiwi fruit", "banana": "banana", "ananas": "pineapple", "mango": "mango fruit",
+    "cocco": "coconut", "dattero": "dates fruit", "cachi": "persimmon", "nespola": "loquat",
+    "corbezzolo": "arbutus berries", "giuggiola": "jujube fruit", "cotogna": "quince fruit",
+    # ortaggi
+    "pomodoro": "tomato", "pomodorino": "cherry tomatoes", "melanzana": "eggplant", "zucchina": "zucchini",
+    "zucca": "pumpkin", "peperone": "bell pepper", "peperoncino": "chili pepper", "cipolla": "onion",
+    "cipollotto": "scallions", "aglio": "garlic", "porro": "leek", "carota": "carrot", "sedano": "celery",
+    "patata": "potato", "patata dolce": "sweet potato", "topinambur": "jerusalem artichoke", "rapa": "turnip",
+    "barbabietola": "beetroot", "cavolo": "cabbage", "cavolfiore": "cauliflower", "broccolo": "broccoli",
+    "finocchio": "fennel bulb", "carciofo": "artichoke", "asparago": "asparagus", "spinaci": "spinach",
+    "radicchio": "radicchio", "rucola": "arugula", "lattuga": "lettuce", "zafferano": "saffron",
+    "cardo": "cardoon", "fava": "fava beans", "pisello": "green peas", "fagiolo": "beans", "fagiolino": "green beans",
+    "cece": "chickpeas", "lenticchia": "lentils", "cicerchia": "grass pea", "soia": "soybeans",
+    # erbe e spezie
+    "basilico": "basil", "prezzemolo": "parsley", "menta": "mint leaves", "salvia": "sage herb",
+    "rosmarino": "rosemary", "timo": "thyme herb", "origano": "oregano", "maggiorana": "marjoram",
+    "alloro": "bay leaves", "aneto": "dill herb", "coriandolo": "coriander", "erba cipollina": "chives",
+    "dragoncello": "tarragon", "nepitella": "calamint", "mirto": "myrtle berries", "ginepro": "juniper berries",
+    "pepe": "black pepper", "cannella": "cinnamon", "chiodi di garofano": "cloves spice", "noce moscata": "nutmeg",
+    "cardamomo": "cardamom", "curcuma": "turmeric", "zenzero": "ginger root", "vaniglia": "vanilla",
+    "anice": "anise star", "finocchietto": "fennel seeds", "cumino": "cumin seeds", "sommacco": "sumac spice",
+    "paprika": "paprika", "sesamo": "sesame seeds", "senape": "mustard seeds",
+    # frutta secca / cereali
+    "mandorla": "almonds", "nocciola": "hazelnuts", "noce": "walnuts", "pistacchio": "pistachios",
+    "pinolo": "pine nuts", "arachide": "peanuts", "castagna": "chestnuts", "marrone": "chestnuts",
+    "grano": "wheat", "farro": "spelt grain", "orzo": "barley grain", "avena": "oats", "segale": "rye grain",
+    "mais": "corn", "riso": "rice grain", "miglio": "millet grain", "grano saraceno": "buckwheat",
+    "quinoa": "quinoa", "amaranto": "amaranth grain",
+    # latticini / formaggi
+    "mozzarella": "mozzarella cheese", "burrata": "burrata cheese", "ricotta": "ricotta cheese",
+    "parmigiano": "parmesan cheese", "pecorino": "pecorino cheese", "gorgonzola": "blue cheese",
+    "caciocavallo": "caciocavallo cheese", "provolone": "provolone cheese", "formaggio": "cheese wheel",
+    "burro": "butter", "latte": "milk glass", "panna": "cream dairy", "yogurt": "yogurt bowl",
+    "miele": "honey jar",
+    # carne / pesce
+    "manzo": "beef meat", "maiale": "pork meat", "agnello": "lamb meat", "pollo": "chicken meat",
+    "coniglio": "rabbit meat", "prosciutto": "prosciutto ham", "salame": "salami", "guanciale": "guanciale pork",
+    "pancetta": "bacon", "speck": "speck ham", "mortadella": "mortadella",
+    "tonno": "tuna fish", "salmone": "salmon fish", "orata": "sea bream", "branzino": "sea bass",
+    "sgombro": "mackerel fish", "acciuga": "anchovies", "alice": "anchovies", "sardina": "sardines",
+    "baccala": "salt cod", "polpo": "octopus", "calamaro": "squid", "gambero": "shrimp",
+    "cozza": "mussels", "vongola": "clams", "ostrica": "oysters", "bottarga": "bottarga roe",
+    # funghi / vari
+    "fungo": "mushrooms", "funghi": "mushrooms", "porcino": "porcini mushrooms", "tartufo": "truffle",
+    "oliva": "olives", "olio": "olive oil", "aceto": "vinegar bottle", "cacao": "cocoa", "cioccolato": "chocolate",
+    "caffe": "coffee beans", "the": "tea leaves", "vino": "wine glass", "birra": "beer glass",
+}
+
+
+def cerca_immagine_ingrediente(nome_it):
+    """Foto per la scheda Atlante di UN ingrediente. SEVERA: traduce in inglese, cerca SOLO stock
+    (Pexels/Unsplash/Pixabay) col filtro di pertinenza. MAI Wikimedia (e' li' che vivono i nomi di
+    luogo tipo 'Limone sul Garda') e MAI fallback no_filtro. None se non traducibile o niente di
+    sicuro: la scheda mostra 'nessuna foto' invece di una sbagliata (onesta': meglio niente)."""
+    base = (nome_it or "").strip().lower()
+    if not base:
+        return None
+    en = _KW_ING_IT_EN.get(base)
+    if not en:
+        # prova il nome specifico sul termine-testa (es. "limone di sorrento" -> "limone")
+        parti = base.split()
+        if parti:
+            en = _KW_ING_IT_EN.get(parti[0])
+    if not en:
+        return None  # non traducibile con sicurezza -> niente foto (meglio che una sbagliata)
+    for _rk in range(0, 4):
+        for fonte in (_pexels, _unsplash, _pixabay):
+            try:
+                r = fonte(en, _rk)  # filtro di pertinenza ATTIVO (no_filtro=False)
+            except Exception:
+                r = None
+            if r and r.get("url"):
+                r["match"] = "ingrediente"
+                return r
+    return None
+
+
 def credito_immagine(autore, fonte_nome="Pexels"):
     if autore:
         return f"Foto: {autore} / {fonte_nome}"
