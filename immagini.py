@@ -248,7 +248,12 @@ def _norm(url, autore, fonte, fonte_nome):
 _BLACKLIST_FOTO = {"wallpaper", "sfondo", "background", "texture", "growing", "raw meat",
                    "raw beef", "uncooked", "landscape", "paesaggio", "abstract", "astratto",
                    "carne cruda", "field", "campo", "farm", "fattoria", "bottle", "bottiglia",
-                   "still life", "market", "mercato", "grocery", "supermarket"}
+                   "still life", "market", "mercato", "grocery", "supermarket",
+                   # fauna e scene naturali: il salmone NON e' l'orso che lo pesca
+                   "bear", "orso", "wildlife", "wild animal", "animale", "safari", "jungle",
+                   "giungla", "bird", "uccello", "deer", "river bank",
+                   # funghi velenosi/da fiaba: NON vanno sulla scheda "funghi"
+                   "toadstool", "amanita", "fly agaric", "poisonous", "velenoso", "fairy"}
 
 def _foto_pertinente(testo_foto, query):
     """La foto e' GIUSTA per il piatto? La query ora e' precisa (piatto+ingredienti in inglese).
@@ -507,7 +512,7 @@ _KW_ING_IT_EN = {
     "alloro": "bay leaves", "aneto": "dill herb", "coriandolo": "coriander", "erba cipollina": "chives",
     "dragoncello": "tarragon", "nepitella": "calamint", "mirto": "myrtle berries", "ginepro": "juniper berries",
     "pepe": "black pepper", "cannella": "cinnamon", "chiodi di garofano": "cloves spice", "noce moscata": "nutmeg",
-    "cardamomo": "cardamom", "curcuma": "turmeric", "zenzero": "ginger root", "vaniglia": "vanilla",
+    "cardamomo": "cardamom", "curcuma": "turmeric", "zenzero": "ginger root", "vaniglia": "vanilla pods",
     "anice": "anise star", "finocchietto": "fennel seeds", "cumino": "cumin seeds", "sommacco": "sumac spice",
     "paprika": "paprika", "sesamo": "sesame seeds", "senape": "mustard seeds",
     # frutta secca / cereali
@@ -526,12 +531,13 @@ _KW_ING_IT_EN = {
     "manzo": "beef meat", "maiale": "pork meat", "agnello": "lamb meat", "pollo": "chicken meat",
     "coniglio": "rabbit meat", "prosciutto": "prosciutto ham", "salame": "salami", "guanciale": "guanciale pork",
     "pancetta": "bacon", "speck": "speck ham", "mortadella": "mortadella",
-    "tonno": "tuna fish", "salmone": "salmon fish", "orata": "sea bream", "branzino": "sea bass",
+    "tonno": "tuna steak", "salmone": "raw salmon fillet", "orata": "sea bream", "branzino": "sea bass",
     "sgombro": "mackerel fish", "acciuga": "anchovies", "alice": "anchovies", "sardina": "sardines",
     "baccala": "salt cod", "polpo": "octopus", "calamaro": "squid", "gambero": "shrimp",
     "cozza": "mussels", "vongola": "clams", "ostrica": "oysters", "bottarga": "bottarga roe",
     # funghi / vari
-    "fungo": "mushrooms", "funghi": "mushrooms", "porcino": "porcini mushrooms", "tartufo": "truffle",
+    "fungo": "fresh mushrooms", "funghi": "fresh mushrooms", "porcino": "porcini mushrooms", "tartufo": "truffle",
+    "aglio nero": "black garlic", "mela cotogna": "quince fruit",
     "oliva": "olives", "olio": "olive oil", "aceto": "vinegar bottle", "cacao": "cocoa", "cioccolato": "chocolate",
     "caffe": "coffee beans", "the": "tea leaves", "vino": "wine glass", "birra": "beer glass",
 }
@@ -547,10 +553,16 @@ def cerca_immagine_ingrediente(nome_it):
         return None
     en = _KW_ING_IT_EN.get(base)
     if not en:
-        # prova il nome specifico sul termine-testa (es. "limone di sorrento" -> "limone")
-        parti = base.split()
-        if parti:
-            en = _KW_ING_IT_EN.get(parti[0])
+        # prova ogni parola dalla PIU' SPECIFICA (coda) alla testa: "mela cotogna" -> "cotogna"
+        # (quince), non "mela" (apple); "limone di sorrento" -> "limone". Il qualificatore di coda
+        # e' spesso l'identita' vera. Salto le parole-ponte senza significato d'ingrediente.
+        _PONTE = {"di", "del", "della", "dei", "degli", "delle", "da", "al", "alla", "in", "con", "e", "a"}
+        for parola in reversed(base.split()):
+            if parola in _PONTE:
+                continue
+            en = _KW_ING_IT_EN.get(parola)
+            if en:
+                break
     if not en:
         return None  # non traducibile con sicurezza -> niente foto (meglio che una sbagliata)
     for _rk in range(0, 4):
