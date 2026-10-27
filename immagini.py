@@ -512,7 +512,7 @@ _KW_ING_IT_EN = {
     "alloro": "bay leaves", "aneto": "dill herb", "coriandolo": "coriander", "erba cipollina": "chives",
     "dragoncello": "tarragon", "nepitella": "calamint", "mirto": "myrtle berries", "ginepro": "juniper berries",
     "pepe": "black pepper", "cannella": "cinnamon", "chiodi di garofano": "cloves spice", "noce moscata": "nutmeg",
-    "cardamomo": "cardamom", "curcuma": "turmeric", "zenzero": "ginger root", "vaniglia": "vanilla pods",
+    "cardamomo": "cardamom", "curcuma": "turmeric", "zenzero": "ginger root", "vaniglia": "vanilla beans sticks",
     "anice": "anise star", "finocchietto": "fennel seeds", "cumino": "cumin seeds", "sommacco": "sumac spice",
     "paprika": "paprika", "sesamo": "sesame seeds", "senape": "mustard seeds",
     # frutta secca / cereali
@@ -537,7 +537,7 @@ _KW_ING_IT_EN = {
     "cozza": "mussels", "vongola": "clams", "ostrica": "oysters", "bottarga": "bottarga roe",
     # funghi / vari
     "fungo": "fresh mushrooms", "funghi": "fresh mushrooms", "porcino": "porcini mushrooms", "tartufo": "truffle",
-    "aglio nero": "black garlic", "mela cotogna": "quince fruit",
+    "aglio nero": "black garlic cloves", "mela cotogna": "quince fruit",
     "oliva": "olives", "olio": "olive oil", "aceto": "vinegar bottle", "cacao": "cocoa", "cioccolato": "chocolate",
     "caffe": "coffee beans", "the": "tea leaves", "vino": "wine glass", "birra": "beer glass",
 }
