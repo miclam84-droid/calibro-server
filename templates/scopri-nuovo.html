@@ -469,10 +469,26 @@ window.I18N_DICT = {
       var g = el("g", {"class": "nodo", tabindex: "0", role: "link"});
       g.setAttribute("aria-label", _L({it:"Centra su ", en:"Centre on ", es:"Centra en "}) + cap(rel.ingrediente));
       g.appendChild(el("circle", {"class": "nodo-disco", cx: x, cy: y, r: NODO_R}));
-      // SIGLA dentro il disco: lo riempie (niente più cerchi bianchi "rotti"), coerente col centro.
-      var sg = el("text", {"class": "nodo-sigla", x: x, y: y + 5, "text-anchor": "middle"});
-      sg.textContent = sigla(rel.ingrediente);
-      g.appendChild(sg);
+      // FOTO dell'ingrediente dentro il nodo, ritagliata a cerchio (niente più sigle-wireframe).
+      // Fallback: il disco pieno resta pulito se la foto manca.
+      var cid = "c" + Math.random().toString(36).slice(2, 9);
+      var cp = el("clipPath", {id: cid});
+      cp.appendChild(el("circle", {cx: x, cy: y, r: NODO_R - 1.5}));
+      g.appendChild(cp);
+      var rr = NODO_R - 1.5;
+      var img = el("image", {"class": "nodo-foto", "clip-path": "url(#" + cid + ")",
+                             x: x - rr, y: y - rr, width: 2 * rr, height: 2 * rr,
+                             preserveAspectRatio: "xMidYMid slice"});
+      img.style.opacity = "0";
+      g.appendChild(img);
+      (function(nome, imgEl){
+        fetch("/v1/foto-ingrediente/" + encodeURIComponent(nome), {headers:{Accept:"application/json"}})
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){ if (d && d.url) {
+            imgEl.setAttributeNS("http://www.w3.org/1999/xlink", "href", d.url);
+            imgEl.setAttribute("href", d.url); imgEl.style.opacity = "1"; } })
+          .catch(function(){});
+      })(rel.ingrediente, img);
       // etichetta spinta RADIALMENTE fuori dal nodo (lato per i laterali, sopra/sotto per i verticali):
       // i nodi vicini non accavallano piu' i nomi. fitViewBox allarga la cornice per includerle.
       etichettaNodo(g, rel.ingrediente, x, y, x - CX, y - CY);
