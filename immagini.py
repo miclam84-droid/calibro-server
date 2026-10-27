@@ -512,7 +512,7 @@ _KW_ING_IT_EN = {
     "alloro": "bay leaves", "aneto": "dill herb", "coriandolo": "coriander", "erba cipollina": "chives",
     "dragoncello": "tarragon", "nepitella": "calamint", "mirto": "myrtle berries", "ginepro": "juniper berries",
     "pepe": "black pepper", "cannella": "cinnamon", "chiodi di garofano": "cloves spice", "noce moscata": "nutmeg",
-    "cardamomo": "cardamom", "curcuma": "turmeric", "zenzero": "ginger root", "vaniglia": "vanilla beans sticks",
+    "cardamomo": "cardamom", "curcuma": "turmeric", "zenzero": "ginger root", "vaniglia": "vanilla beans",
     "anice": "anise star", "finocchietto": "fennel seeds", "cumino": "cumin seeds", "sommacco": "sumac spice",
     "paprika": "paprika", "sesamo": "sesame seeds", "senape": "mustard seeds",
     # frutta secca / cereali

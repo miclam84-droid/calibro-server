@@ -24,6 +24,11 @@
   .ing-foto{margin:16px 0 0; border-radius:var(--r); overflow:hidden; border:1px solid var(--riga); box-shadow:var(--shadow); background:var(--surface)}
   .ing-foto img{display:block; width:100%; height:200px; object-fit:cover}
   .ing-foto figcaption{font-size:11px; color:var(--ink-soft); padding:7px 12px}
+  /* skeleton: lo spazio foto e' riservato dal primo paint -> quando la foto carica NON sposta
+     footer/profilo (era il CLS 0.33). Se non c'e' foto, la figure collassa (un solo micro-scatto). */
+  .ing-foto.is-skel{background:var(--tint)}
+  .ing-foto.is-skel img{visibility:hidden}
+  .ing-foto.is-skel figcaption{display:none}
 
   .sechead h2{font-size:19px}
   .sechead p{margin:2px 0 0; font-size:13px; color:var(--ink-soft)}
@@ -126,7 +131,7 @@
     <h1 id="titolo">—</h1>
     <div class="srcline"><span class="dot"></span><span id="src">Profilo dal grafo Matter.</span></div>
     <div id="tax" class="tax-line" hidden></div>
-    <figure id="foto" class="ing-foto" hidden><img id="foto-img" alt="" loading="lazy"><figcaption id="foto-cap"></figcaption></figure>
+    <figure id="foto" class="ing-foto is-skel"><img id="foto-img" alt="" loading="eager"><figcaption id="foto-cap"></figcaption></figure>
     <a class="btn btn--ghost cta" id="btn-salva" hidden>＋ Salva nel Quaderno</a>
   </header>
 
@@ -221,16 +226,20 @@ function barra(label, val, anchor, meta){
 }
 
 async function caricaFoto(nome){
+  const $fig=document.getElementById('foto');
   try{
     const r = await fetch('/v1/foto-ingrediente/'+encodeURIComponent(nome), {headers:{'Accept':'application/json'}});
-    if(!r.ok) return; const d = await r.json();
+    const d = r.ok ? await r.json() : null;
     if(d && d.url){
-      const $fig=document.getElementById('foto'), $img=document.getElementById('foto-img'), $cap=document.getElementById('foto-cap');
-      $img.src=d.url; $img.alt=cap(nome);
+      const $img=document.getElementById('foto-img'), $cap=document.getElementById('foto-cap');
       $cap.textContent = 'Foto: '+(d.fonte_nome||'stock')+(d.autore?(' · '+d.autore):'');
-      $fig.hidden=false;
+      // lo spazio e' gia' riservato (is-skel): tolgo lo skeleton solo a immagine caricata -> zero shift
+      $img.onload=function(){ $fig.classList.remove('is-skel'); };
+      $img.src=d.url; $img.alt=cap(nome);
+      return;
     }
   }catch(e){}
+  $fig.hidden=true;  // niente foto -> collasso lo spazio riservato (un solo micro-scatto, solo qui)
 }
 async function caricaTax(nome){
   try{
