@@ -263,7 +263,9 @@ window.I18N_DICT = {
       else { lines = [tronca(full, 16)]; }
     }
     var lh = 13, gap = NODO_R + 7, anchor, tx, y0;
-    if (Math.abs(dx) >= Math.abs(dy)) {
+    // bias verso i LATI: solo i nodi davvero in cima/fondo tengono l'etichetta sopra/sotto,
+    // gli altri vanno a lato -> la cima e il fondo non si affollano piu'.
+    if (Math.abs(dx) >= Math.abs(dy) * 0.5) {
       // nodo laterale -> etichetta a lato (sx/dx), centrata in verticale: non si accavalla coi vicini sopra/sotto
       anchor = dx >= 0 ? "start" : "end";
       tx = x + (dx >= 0 ? gap : -gap);
