@@ -95,7 +95,9 @@ def biodiversita():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
-_FOTO_ING_CACHE = {}  # {nome_lower: {"url":...} }  — cache in memoria, niente scrittura sul grafo
+_FOTO_ING_CACHE = {}  # {nome_lower: {"dato":{...}, "t":epoch}} — cache in memoria, niente scrittura sul grafo
+_FOTO_EMPTY_TTL = 3 * 3600  # un "niente foto" si RIPROVA dopo 3h: Pexels puo' fallire per quota o transitorio,
+                            # e non vogliamo che un buco temporaneo blanchi per sempre un ingrediente.
 
 def _foto_resp(dato):
     r = jsonify(dato)
@@ -111,8 +113,10 @@ def foto_ingrediente(nome):
     chiave = (nome or "").strip().lower()
     if not chiave:
         return _foto_resp({"url": None})
-    if chiave in _FOTO_ING_CACHE:
-        return _foto_resp(_FOTO_ING_CACHE[chiave])
+    import time as _t
+    hit = _FOTO_ING_CACHE.get(chiave)
+    if hit and (hit["dato"].get("url") or (_t.time() - hit["t"]) < _FOTO_EMPTY_TTL):
+        return _foto_resp(hit["dato"])  # successo: per sempre; vuoto: solo finche' non scade il TTL
     res = None
     try:
         from immagini import cerca_immagine_ingrediente
@@ -124,7 +128,7 @@ def foto_ingrediente(nome):
                 "fonte_nome": res.get("fonte_nome", ""), "match": res.get("match", "")}
     else:
         dato = {"url": None}
-    _FOTO_ING_CACHE[chiave] = dato
+    _FOTO_ING_CACHE[chiave] = {"dato": dato, "t": _t.time()}
     return _foto_resp(dato)
 
 @bp.route("/admin/tassonomia")
