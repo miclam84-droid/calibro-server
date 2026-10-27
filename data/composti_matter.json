@@ -18093,9 +18093,488 @@
           "fonte": "Cedro candito (Citrus medica): olio di scorza di cedro — limonene e γ-terpinene dominanti, citrale, cumarine (citropten/limettina) (letteratura GC-MS olio di scorza di cedro). Note caramellate da CANDITURA stimate, da verificare al banco."
         }
       ]
+    },
+    {
+      "ingrediente": "cardoncelli",
+      "nodo_target": "ing-cardoncelli",
+      "specie": "Pleurotus eryngii",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Cardoncello (Pleurotus eryngii): 1-octen-3-olo (alcol del fungo) firma + 3-ottanone + benzaldeide (letteratura GC-MS Pleurotus).",
+      "composti": [
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo, terroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cardoncello (Pleurotus eryngii): 1-octen-3-olo (alcol del fungo) firma + 3-ottanone + benzaldeide (letteratura GC-MS Pleurotus)."
+        },
+        {
+          "composto": "3-ottanone",
+          "descrittore": "fungo, erbaceo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cardoncello (Pleurotus eryngii): 1-octen-3-olo (alcol del fungo) firma + 3-ottanone + benzaldeide (letteratura GC-MS Pleurotus)."
+        },
+        {
+          "composto": "benzaldeide",
+          "descrittore": "mandorla, dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Cardoncello (Pleurotus eryngii): 1-octen-3-olo (alcol del fungo) firma + 3-ottanone + benzaldeide (letteratura GC-MS Pleurotus)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "champignon",
+      "nodo_target": "ing-champignon",
+      "specie": "Agaricus bisporus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Champignon (Agaricus bisporus): 1-octen-3-olo firma + 1-octen-3-one (metallico-fungo) + 3-ottanolo (GC-O Agaricus).",
+      "composti": [
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo, terroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Champignon (Agaricus bisporus): 1-octen-3-olo firma + 1-octen-3-one (metallico-fungo) + 3-ottanolo (GC-O Agaricus)."
+        },
+        {
+          "composto": "1-octen-3-one",
+          "descrittore": "fungo, metallico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Champignon (Agaricus bisporus): 1-octen-3-olo firma + 1-octen-3-one (metallico-fungo) + 3-ottanolo (GC-O Agaricus)."
+        },
+        {
+          "composto": "3-ottanolo",
+          "descrittore": "fungo, muschiato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Champignon (Agaricus bisporus): 1-octen-3-olo firma + 1-octen-3-one (metallico-fungo) + 3-ottanolo (GC-O Agaricus)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "shiitake",
+      "nodo_target": "ing-shiitake",
+      "specie": "Lentinula edodes",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Shiitake (Lentinula edodes): lentionina (solforato ciclico, firma dello shiitake) + 1-octen-3-olo + dimetiltrisolfuro (Morita & Kobayashi; GC-O shiitake).",
+      "composti": [
+        {
+          "composto": "lentionina",
+          "descrittore": "solforato, aglio, fungo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Shiitake (Lentinula edodes): lentionina (solforato ciclico, firma dello shiitake) + 1-octen-3-olo + dimetiltrisolfuro (Morita & Kobayashi; GC-O shiitake)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Shiitake (Lentinula edodes): lentionina (solforato ciclico, firma dello shiitake) + 1-octen-3-olo + dimetiltrisolfuro (Morita & Kobayashi; GC-O shiitake)."
+        },
+        {
+          "composto": "dimetiltrisolfuro",
+          "descrittore": "solforato, aglio cotto",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Shiitake (Lentinula edodes): lentionina (solforato ciclico, firma dello shiitake) + 1-octen-3-olo + dimetiltrisolfuro (Morita & Kobayashi; GC-O shiitake)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "avocado",
+      "nodo_target": "ing-avocado",
+      "specie": "Persea americana",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Avocado (Persea americana): volatili verdi C6 ((E)-2-esenale, esanale) dominanti, profilo delicato-burroso (letteratura GC-MS avocado).",
+      "composti": [
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde, foglia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Avocado (Persea americana): volatili verdi C6 ((E)-2-esenale, esanale) dominanti, profilo delicato-burroso (letteratura GC-MS avocado)."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Avocado (Persea americana): volatili verdi C6 ((E)-2-esenale, esanale) dominanti, profilo delicato-burroso (letteratura GC-MS avocado)."
+        },
+        {
+          "composto": "1-esanolo",
+          "descrittore": "verde, erbaceo-burroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Avocado (Persea americana): volatili verdi C6 ((E)-2-esenale, esanale) dominanti, profilo delicato-burroso (letteratura GC-MS avocado)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "rucola",
+      "nodo_target": "ing-rucola",
+      "specie": "Eruca sativa",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Rucola (Eruca sativa): isotiocianati (4-metiltiobutil ITC, da erucina) = firma pungente-senape; aldeidi verdi C6 (letteratura glucosinolati/GC-MS Eruca).",
+      "composti": [
+        {
+          "composto": "4-(metiltio)butil isotiocianato",
+          "descrittore": "pungente, senape, verde (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rucola (Eruca sativa): isotiocianati (4-metiltiobutil ITC, da erucina) = firma pungente-senape; aldeidi verdi C6 (letteratura glucosinolati/GC-MS Eruca)."
+        },
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rucola (Eruca sativa): isotiocianati (4-metiltiobutil ITC, da erucina) = firma pungente-senape; aldeidi verdi C6 (letteratura glucosinolati/GC-MS Eruca)."
+        },
+        {
+          "composto": "eptanitrile",
+          "descrittore": "verde-pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Rucola (Eruca sativa): isotiocianati (4-metiltiobutil ITC, da erucina) = firma pungente-senape; aldeidi verdi C6 (letteratura glucosinolati/GC-MS Eruca)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "radicchio",
+      "nodo_target": "ing-radicchio",
+      "specie": "Cichorium intybus",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Radicchio (Cichorium intybus): volatili verdi C6 (firma leggera); l'amaro (lattucopicrina/lattucina) e' NON volatile, dichiarato come marcatore gustativo.",
+      "composti": [
+        {
+          "composto": "(Z)-3-esen-1-olo",
+          "descrittore": "verde, foglia (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Radicchio (Cichorium intybus): volatili verdi C6 (firma leggera); l'amaro (lattucopicrina/lattucina) e' NON volatile, dichiarato come marcatore gustativo."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Radicchio (Cichorium intybus): volatili verdi C6 (firma leggera); l'amaro (lattucopicrina/lattucina) e' NON volatile, dichiarato come marcatore gustativo."
+        },
+        {
+          "composto": "lattucopicrina",
+          "descrittore": "amaro (NON volatile, marcatore gustativo)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "stimato",
+          "fonte": "Radicchio (Cichorium intybus): volatili verdi C6 (firma leggera); l'amaro (lattucopicrina/lattucina) e' NON volatile, dichiarato come marcatore gustativo."
+        }
+      ]
+    },
+    {
+      "ingrediente": "agnello",
+      "nodo_target": "ing-agnello",
+      "specie": "Ovis aries",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Agnello (Ovis aries): acidi grassi ramificati a catena media (4-metilottanoico/4-metilnonanoico) = firma 'ovina' specie-specifica; skatolo; 2,4-decadienale da cottura (Ha & Lindsay; Wong et al., GC-O lamb).",
+      "composti": [
+        {
+          "composto": "acido 4-metilottanoico",
+          "descrittore": "ovino, grasso di pecora (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Agnello (Ovis aries): acidi grassi ramificati a catena media (4-metilottanoico/4-metilnonanoico) = firma 'ovina' specie-specifica; skatolo; 2,4-decadienale da cottura (Ha & Lindsay; Wong et al., GC-O lamb)."
+        },
+        {
+          "composto": "acido 4-metilnonanoico",
+          "descrittore": "ovino, caratteristico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Agnello (Ovis aries): acidi grassi ramificati a catena media (4-metilottanoico/4-metilnonanoico) = firma 'ovina' specie-specifica; skatolo; 2,4-decadienale da cottura (Ha & Lindsay; Wong et al., GC-O lamb)."
+        },
+        {
+          "composto": "skatolo",
+          "descrittore": "animale, fecale in traccia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Agnello (Ovis aries): acidi grassi ramificati a catena media (4-metilottanoico/4-metilnonanoico) = firma 'ovina' specie-specifica; skatolo; 2,4-decadienale da cottura (Ha & Lindsay; Wong et al., GC-O lamb)."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienale",
+          "descrittore": "grasso, fritto (da cottura)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Agnello (Ovis aries): acidi grassi ramificati a catena media (4-metilottanoico/4-metilnonanoico) = firma 'ovina' specie-specifica; skatolo; 2,4-decadienale da cottura (Ha & Lindsay; Wong et al., GC-O lamb)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "anatra",
+      "nodo_target": "ing-anatra",
+      "specie": "Anas platyrhynchos (cotta)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Anatra cotta (Anas platyrhynchos): 2,4-decadienale (lipidico, pollame) firma + esanale + tioli di Maillard (2-metil-3-furantiolo) (letteratura GC-O pollame/anatra).",
+      "composti": [
+        {
+          "composto": "(E,E)-2,4-decadienale",
+          "descrittore": "grasso, pollame fritto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anatra cotta (Anas platyrhynchos): 2,4-decadienale (lipidico, pollame) firma + esanale + tioli di Maillard (2-metil-3-furantiolo) (letteratura GC-O pollame/anatra)."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "grasso, verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anatra cotta (Anas platyrhynchos): 2,4-decadienale (lipidico, pollame) firma + esanale + tioli di Maillard (2-metil-3-furantiolo) (letteratura GC-O pollame/anatra)."
+        },
+        {
+          "composto": "2-metil-3-furantiolo",
+          "descrittore": "carnoso, brodo (Maillard)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Anatra cotta (Anas platyrhynchos): 2,4-decadienale (lipidico, pollame) firma + esanale + tioli di Maillard (2-metil-3-furantiolo) (letteratura GC-O pollame/anatra)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "polpo",
+      "nodo_target": "ing-polpo",
+      "specie": "Octopus vulgaris",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Polpo (Octopus vulgaris, bollito): bromofenoli (2,6-dibromofenolo) = nota marina-iodata firma dei prodotti ittici + trimetilammina + dimetilsolfuro (letteratura GC-O molluschi/bromofenoli).",
+      "composti": [
+        {
+          "composto": "2,6-dibromofenolo",
+          "descrittore": "marino, iodato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Polpo (Octopus vulgaris, bollito): bromofenoli (2,6-dibromofenolo) = nota marina-iodata firma dei prodotti ittici + trimetilammina + dimetilsolfuro (letteratura GC-O molluschi/bromofenoli)."
+        },
+        {
+          "composto": "trimetilammina",
+          "descrittore": "pesce, marino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Polpo (Octopus vulgaris, bollito): bromofenoli (2,6-dibromofenolo) = nota marina-iodata firma dei prodotti ittici + trimetilammina + dimetilsolfuro (letteratura GC-O molluschi/bromofenoli)."
+        },
+        {
+          "composto": "dimetilsolfuro",
+          "descrittore": "marino, mollusco",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Polpo (Octopus vulgaris, bollito): bromofenoli (2,6-dibromofenolo) = nota marina-iodata firma dei prodotti ittici + trimetilammina + dimetilsolfuro (letteratura GC-O molluschi/bromofenoli)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "calamaro",
+      "nodo_target": "ing-calamaro",
+      "specie": "Loligo spp.",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Calamaro (Loligo spp.): bromofenoli marini (iodato) + trimetilammina + DMS (letteratura GC-O cefalopodi).",
+      "composti": [
+        {
+          "composto": "2,6-dibromofenolo",
+          "descrittore": "marino, iodato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Calamaro (Loligo spp.): bromofenoli marini (iodato) + trimetilammina + DMS (letteratura GC-O cefalopodi)."
+        },
+        {
+          "composto": "trimetilammina",
+          "descrittore": "pesce, marino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Calamaro (Loligo spp.): bromofenoli marini (iodato) + trimetilammina + DMS (letteratura GC-O cefalopodi)."
+        },
+        {
+          "composto": "dimetilsolfuro",
+          "descrittore": "marino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Calamaro (Loligo spp.): bromofenoli marini (iodato) + trimetilammina + DMS (letteratura GC-O cefalopodi)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "capesante",
+      "nodo_target": "ing-capesante",
+      "specie": "Pecten spp.",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Capesante (Pecten/Placopecten): dimetilsolfuro (marino dolce) firma + bromofenoli; dolcezza/umami da glicina-glutammato NON volatili (dichiarato).",
+      "composti": [
+        {
+          "composto": "dimetilsolfuro",
+          "descrittore": "marino, dolce-cotto (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Capesante (Pecten/Placopecten): dimetilsolfuro (marino dolce) firma + bromofenoli; dolcezza/umami da glicina-glutammato NON volatili (dichiarato)."
+        },
+        {
+          "composto": "2,6-dibromofenolo",
+          "descrittore": "marino, iodato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Capesante (Pecten/Placopecten): dimetilsolfuro (marino dolce) firma + bromofenoli; dolcezza/umami da glicina-glutammato NON volatili (dichiarato)."
+        },
+        {
+          "composto": "glicina+glutammato",
+          "descrittore": "dolce, umami (NON volatili, dichiarati)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "stimato",
+          "fonte": "Capesante (Pecten/Placopecten): dimetilsolfuro (marino dolce) firma + bromofenoli; dolcezza/umami da glicina-glutammato NON volatili (dichiarato)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "burrata",
+      "nodo_target": "ing-burrata",
+      "specie": "Latte vaccino (fresca)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Burrata (latte vaccino, fresca): diacetile/acetoino (burroso-lattico) firma + lattoni cremosi (delta-decalattone) (letteratura GC-O latticini freschi).",
+      "composti": [
+        {
+          "composto": "diacetile",
+          "descrittore": "burro, panna (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burrata (latte vaccino, fresca): diacetile/acetoino (burroso-lattico) firma + lattoni cremosi (delta-decalattone) (letteratura GC-O latticini freschi)."
+        },
+        {
+          "composto": "acetoino",
+          "descrittore": "burroso, lattico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burrata (latte vaccino, fresca): diacetile/acetoino (burroso-lattico) firma + lattoni cremosi (delta-decalattone) (letteratura GC-O latticini freschi)."
+        },
+        {
+          "composto": "delta-decalattone",
+          "descrittore": "cremoso, lattico-pesca",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Burrata (latte vaccino, fresca): diacetile/acetoino (burroso-lattico) firma + lattoni cremosi (delta-decalattone) (letteratura GC-O latticini freschi)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "gorgonzola",
+      "nodo_target": "ing-gorgonzola",
+      "specie": "Latte vaccino + Penicillium roqueforti",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Gorgonzola (Penicillium roqueforti): metil-chetoni (2-eptanone/2-nonanone) = firma del blu + 1-octen-3-olo (muffa) + acidi grassi liberi (butirrico) (letteratura GC-O blue cheese).",
+      "composti": [
+        {
+          "composto": "2-eptanone",
+          "descrittore": "blu, piccante (firma, metil-chetone)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gorgonzola (Penicillium roqueforti): metil-chetoni (2-eptanone/2-nonanone) = firma del blu + 1-octen-3-olo (muffa) + acidi grassi liberi (butirrico) (letteratura GC-O blue cheese)."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "blu, floreale-grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gorgonzola (Penicillium roqueforti): metil-chetoni (2-eptanone/2-nonanone) = firma del blu + 1-octen-3-olo (muffa) + acidi grassi liberi (butirrico) (letteratura GC-O blue cheese)."
+        },
+        {
+          "composto": "1-octen-3-ol",
+          "descrittore": "fungo, muffa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gorgonzola (Penicillium roqueforti): metil-chetoni (2-eptanone/2-nonanone) = firma del blu + 1-octen-3-olo (muffa) + acidi grassi liberi (butirrico) (letteratura GC-O blue cheese)."
+        },
+        {
+          "composto": "acido butirrico",
+          "descrittore": "formaggio, pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Gorgonzola (Penicillium roqueforti): metil-chetoni (2-eptanone/2-nonanone) = firma del blu + 1-octen-3-olo (muffa) + acidi grassi liberi (butirrico) (letteratura GC-O blue cheese)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "paprika",
+      "nodo_target": "ing-paprika",
+      "specie": "Capsicum annuum (polvere)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Paprika dolce (Capsicum annuum, polvere): 2-isobutil-3-metossipirazina (peperone-terroso) firma + beta-ionone (da carotenoidi) (letteratura GC-O paprika).",
+      "composti": [
+        {
+          "composto": "2-isobutil-3-metossipirazina",
+          "descrittore": "peperone, verde-terroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Paprika dolce (Capsicum annuum, polvere): 2-isobutil-3-metossipirazina (peperone-terroso) firma + beta-ionone (da carotenoidi) (letteratura GC-O paprika)."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "floreale, violetta (da carotenoidi)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Paprika dolce (Capsicum annuum, polvere): 2-isobutil-3-metossipirazina (peperone-terroso) firma + beta-ionone (da carotenoidi) (letteratura GC-O paprika)."
+        },
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Paprika dolce (Capsicum annuum, polvere): 2-isobutil-3-metossipirazina (peperone-terroso) firma + beta-ionone (da carotenoidi) (letteratura GC-O paprika)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 27/10 (jj, +14 buchi importanti): cardoncelli, champignon, shiitake, avocado, rucola, radicchio, agnello, anatra, polpo, calamaro, capesante, burrata, gorgonzola, paprika. Firme da letteratura GC-MS/GC-O (alcoli dei funghi, lentionina, ITC rucola, acidi ramificati agnello, bromofenoli marini, metil-chetoni gorgonzola, metossipirazina paprika). Note non-volatili (amaro radicchio, umami capesante) dichiarate. Da rivedere prima dell'import.",
     "Ondata 26/10 (ii, +4 panificazione Bucolico): mandorla tostata, pistacchio tostato, scorza d'arancia candita, cedro candito. Firme da fonte reale (UC Davis almond flavor; DHA/GC-MS pistacchio IJFP 2018; olio di scorza agrumi). Note di CANDITURA (maltolo) marcate stato=stimato, da verificare al banco. Preparata nella sessione motore-onesto 26/10.",
     "Ondata 25/10 (hh, +14 firme verificate dalla ricerca biodiversità): pawpaw, finger lime, paccasassi, miele di corbezzolo, grani del paradiso, olivello spinoso, mirtillo rosso (CORREGGE), surströmming, époisses, lemon myrtle, mastiha, sudachi, pepe di timut, elicriso. Tutti con fonte GC-MS/GC-O reale + DOI. Correzioni di metodo incorporate: (a) marcatori TRIGEMINALI non-olfattivi separati dall'aroma (6-paradol in grani del paradiso, idrossi-alfa-sanshool in pepe di timut); (b) mirtillo rosso CORRETTO (acido benzoico = conservante, non firma); (c) surströmming = TMA+polisolfuri (non H2S+acidi); (d) finger lime senza isomentone; (e) miele di corbezzolo marcatore non-volatile dichiarato; (f) paccasassi con chemotipo dichiarato. 6 arricchiscono nodi esistenti (grani del paradiso, mirtillo rosso, mastiha, sudachi, pepe di timut, elicriso, finger lime), il resto nuovi. SCARTATI dalla ricerca per firma assente: prugnolo, kakadu plum, davidson plum, quandong, wattleseed, bush tomato, sea grape, gac. Ponti: esteri fruttati (pawpaw/olivello<->ananas/mela), citrale (lemon myrtle<->citronella/timo limonato), croste lavate (époisses<->camembert/taleggio), TMA+solfuri (surströmming<->acciuga salata/colatura), alpha-pinene resinoso (mastiha<->ginepro/incenso).",
     "Ondata 24/10 (gg, +37 propagazione categoria, scelta a): firme di categoria VERIFICATE propagate ai nodi-varietà clonati, marcate stato=derivato (onesto: profilo condiviso di categoria, non fonte sul singolo). Cluster: 12 tagli di manzo<-manzo, 12 cultivar pomodoro<-pomodoro, 2 limoni IGP<-limone, 2 prosciutti DOP<-prosciutto crudo, 1 speck IGP<-speck, 4 oli/olive<-olio evo, 2 peperoni freschi<-peperone, 2 fagioli<-soia(beany). LASCIATI FUORI apposta: 6 salumi (prodotti distinti, non cloni di una categoria -> ricerca per-prodotto), 12 farine (nessun aroma reale), peperone crusco (essiccato != fresco), radicchi (amaro non-volatile). Ogni varietà ora eredita il profilo di categoria e condivide i composti nel pairing; la provenienza dichiara 'derivato', distinta dalle righe da_fonte.",

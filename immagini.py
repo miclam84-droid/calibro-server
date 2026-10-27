@@ -514,7 +514,7 @@ _KW_ING_IT_EN = {
     "pepe": "black pepper", "cannella": "cinnamon", "chiodi di garofano": "cloves spice", "noce moscata": "nutmeg",
     "cardamomo": "cardamom", "curcuma": "turmeric", "zenzero": "ginger root", "vaniglia": "vanilla beans",
     "anice": "anise star", "finocchietto": "fennel seeds", "cumino": "cumin seeds", "sommacco": "sumac spice",
-    "paprika": "paprika", "sesamo": "sesame seeds", "senape": "mustard seeds",
+    "paprika": "paprika powder", "sesamo": "sesame seeds", "senape": "mustard seeds",
     # frutta secca / cereali
     "mandorla": "almonds", "nocciola": "hazelnuts", "noce": "walnuts", "pistacchio": "pistachios",
     "pinolo": "pine nuts", "arachide": "peanuts", "castagna": "chestnuts", "marrone": "chestnuts",
@@ -583,6 +583,11 @@ _KW_ING_IT_EN = {
     "merluzzo": "cod fillet", "Brisket (petto)": "beef brisket", "Cappello del prete": "beef chuck",
     "Fiorentina": "t-bone steak", "Picanha (codone)": "picanha steak", "Tomahawk": "tomahawk steak",
     "pane (crosta)": "bread crust",
+    # --- ondata jj 27/10: ingredienti importanti aggiunti (termini verificati su Pexels) ---
+    "champignon": "button mushrooms", "shiitake": "shiitake mushrooms", "avocado": "avocado",
+    "rucola": "arugula rocket", "radicchio": "radicchio vegetable", "anatra": "duck breast raw",
+    "polpo": "cooked octopus dish", "calamaro": "squid rings calamari", "capesante": "scallops seafood",
+    "burrata": "burrata cheese", "gorgonzola": "gorgonzola cheese",
 }
 
 
