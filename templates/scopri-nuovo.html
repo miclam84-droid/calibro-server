@@ -250,23 +250,35 @@ window.I18N_DICT = {
   // ETICHETTA del nodo: niente più troncamenti aggressivi. Se il nome è lungo va a capo su
   // 2 righe (quando c'è spazio), altrimenti si tronca a un limite alto. Sempre centrata
   // sopra/sotto il disco, con x bloccata nei margini così non sfora il grafo.
-  function etichettaNodo(parent, nome, lx, y, sopra){
+  function etichettaNodo(parent, nome, x, y, dx, dy){
     var full = cap(nome);
     var lines;
-    if (full.length <= 15) {
+    if (full.length <= 14) {
       lines = [full];
     } else {
       var mid = Math.ceil(full.length / 2);
       var sp = full.lastIndexOf(" ", mid + 4);
       if (sp < 3) sp = full.indexOf(" ");
-      if (sp > 2) { lines = [tronca(full.slice(0, sp), 16), tronca(full.slice(sp + 1), 16)]; }
-      else { lines = [tronca(full, 18)]; }
+      if (sp > 2) { lines = [tronca(full.slice(0, sp), 15), tronca(full.slice(sp + 1), 15)]; }
+      else { lines = [tronca(full, 16)]; }
     }
-    var lh = 13;
-    var y0 = sopra ? (y - (NODO_R + 8) - (lines.length - 1) * lh) : (y + NODO_R + 15);
-    var te = el("text", {"class": "nodo-et", x: lx, "text-anchor": "middle"});
+    var lh = 13, gap = NODO_R + 7, anchor, tx, y0;
+    // bias verso i LATI: solo i nodi davvero in cima/fondo tengono l'etichetta sopra/sotto,
+    // gli altri vanno a lato -> la cima e il fondo non si affollano piu'.
+    if (Math.abs(dx) >= Math.abs(dy) * 0.5) {
+      // nodo laterale -> etichetta a lato (sx/dx), centrata in verticale: non si accavalla coi vicini sopra/sotto
+      anchor = dx >= 0 ? "start" : "end";
+      tx = x + (dx >= 0 ? gap : -gap);
+      y0 = y - (lines.length - 1) * lh / 2 + 4;
+    } else {
+      // nodo in alto/basso -> etichetta sopra/sotto, centrata
+      anchor = "middle";
+      tx = x;
+      y0 = dy < 0 ? (y - gap - (lines.length - 1) * lh) : (y + gap + 6);
+    }
+    var te = el("text", {"class": "nodo-et", x: tx, "text-anchor": anchor});
     lines.forEach(function(ln, idx){
-      var ts = el("tspan", {x: lx, y: y0 + idx * lh});
+      var ts = el("tspan", {x: tx, y: y0 + idx * lh});
       ts.textContent = ln;
       te.appendChild(ts);
     });
@@ -459,14 +471,29 @@ window.I18N_DICT = {
       var g = el("g", {"class": "nodo", tabindex: "0", role: "link"});
       g.setAttribute("aria-label", _L({it:"Centra su ", en:"Centre on ", es:"Centra en "}) + cap(rel.ingrediente));
       g.appendChild(el("circle", {"class": "nodo-disco", cx: x, cy: y, r: NODO_R}));
-      // SIGLA dentro il disco: lo riempie (niente più cerchi bianchi "rotti"), coerente col centro.
-      var sg = el("text", {"class": "nodo-sigla", x: x, y: y + 5, "text-anchor": "middle"});
-      sg.textContent = sigla(rel.ingrediente);
-      g.appendChild(sg);
-      // etichetta col nome: centrata sopra/sotto (mai ai lati), x bloccata nei margini, wrap a 2 righe se lungo.
-      var sopra = Math.sin(ang) < -0.05;
-      var lx = Math.max(46, Math.min(VB_W - 46, x));
-      etichettaNodo(g, rel.ingrediente, lx, y, sopra);
+      // FOTO dell'ingrediente dentro il nodo, ritagliata a cerchio (niente più sigle-wireframe).
+      // Fallback: il disco pieno resta pulito se la foto manca.
+      var cid = "c" + Math.random().toString(36).slice(2, 9);
+      var cp = el("clipPath", {id: cid});
+      cp.appendChild(el("circle", {cx: x, cy: y, r: NODO_R - 1.5}));
+      g.appendChild(cp);
+      var rr = NODO_R - 1.5;
+      var img = el("image", {"class": "nodo-foto", "clip-path": "url(#" + cid + ")",
+                             x: x - rr, y: y - rr, width: 2 * rr, height: 2 * rr,
+                             preserveAspectRatio: "xMidYMid slice"});
+      img.style.opacity = "0";
+      g.appendChild(img);
+      (function(nome, imgEl){
+        fetch("/v1/foto-ingrediente/" + encodeURIComponent(nome), {headers:{Accept:"application/json"}})
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){ if (d && d.url) {
+            imgEl.setAttributeNS("http://www.w3.org/1999/xlink", "href", d.url);
+            imgEl.setAttribute("href", d.url); imgEl.style.opacity = "1"; } })
+          .catch(function(){});
+      })(rel.ingrediente, img);
+      // etichetta spinta RADIALMENTE fuori dal nodo (lato per i laterali, sopra/sotto per i verticali):
+      // i nodi vicini non accavallano piu' i nomi. fitViewBox allarga la cornice per includerle.
+      etichettaNodo(g, rel.ingrediente, x, y, x - CX, y - CY);
       function go(){ location.href = "/scopri-nuovo/" + encodeURIComponent(rel.ingrediente); }
       g.addEventListener("click", go);
       g.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
