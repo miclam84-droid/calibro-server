@@ -103,7 +103,7 @@ def _risolvi_nodo(cur, ingrediente):
                  # post-dedup 2026-10-28: dopo la fusione dei doppioni il nome risolveva su un
                  # nodo-ombra magro (es. rosmarino -> ahn_tunisian_rosemary); forzo il canonico
                  # ricco dove ora vive la chimica consolidata. La guardia ">0 composti" protegge.
-                 "rosmarino": "ing-rosmarino", "barbabietola": "ai_barbabietola"}
+                 "rosmarino": "ing-rosmarino", "barbabietola": "ai_barbabietola"}  # deploy-marker 2026-10-28: forza build Railway (override live)
     _ov = _OVERRIDE.get(ing)
     if _ov:
         cur.execute(
