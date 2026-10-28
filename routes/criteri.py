@@ -103,7 +103,11 @@ def _risolvi_nodo(cur, ingrediente):
                  # post-dedup 2026-10-28: dopo la fusione dei doppioni il nome risolveva su un
                  # nodo-ombra magro (es. rosmarino -> ahn_tunisian_rosemary); forzo il canonico
                  # ricco dove ora vive la chimica consolidata. La guardia ">0 composti" protegge.
-                 "rosmarino": "ing-rosmarino", "barbabietola": "ai_barbabietola"}  # deploy-marker 2026-10-28: forza build Railway (override live)
+                 "rosmarino": "ing-rosmarino", "barbabietola": "ai_barbabietola",
+                 # mis-risoluzioni trovate nell'audit copertura 2026-10-28 (nome -> pianta sbagliata/magra):
+                 "senape": "ahn_mustard",      # era ahn_garlic_mustard (altra pianta); ahn_mustard ha 21 composti
+                 "carvi": "ahn_caraway",       # era ahn_lippia_carviodora (1); caraway corretto
+                 "sommacco": "ai_sommacco"}    # era ahn_rhus_cotinus_leaf (1); ai_sommacco ha 18 composti
     _ov = _OVERRIDE.get(ing)
     if _ov:
         cur.execute(
