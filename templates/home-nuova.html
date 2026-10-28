@@ -52,6 +52,20 @@
   .onb-salta{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--ink-soft);
     background:none; border:none; cursor:pointer; padding:10px 6px}
   .onb-salta:hover{color:var(--verde)}
+  /* porte raggruppate per famiglia (Esplora / Crea / Organizza) */
+  .gruppo{margin-top:22px}
+  .gruppo:first-child{margin-top:14px}
+  .gruppo-h{font-family:var(--sans); font-weight:700; font-size:11.5px; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--ink-soft); display:flex; align-items:center; gap:12px; margin:0 0 10px}
+  .gruppo-h::after{content:""; flex:1; height:1px; background:var(--riga)}
+  .gruppo .porta{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px;
+    background:var(--surface); border:1px solid var(--riga); border-radius:var(--r);
+    box-shadow:var(--shadow-sm); padding:14px 16px; text-decoration:none; color:var(--ink); margin-top:9px}
+  .gruppo .porta:first-of-type{margin-top:0}
+  .gruppo .porta:hover{border-color:var(--verde); box-shadow:var(--shadow)}
+  .porta-dot{width:9px; height:9px; min-width:9px; border-radius:50%; background:var(--verde)}
+  .g-crea .porta-dot{background:var(--segnale)}
+  .g-org .porta-dot{background:var(--ocra)}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E593C">
@@ -197,79 +211,83 @@
   <!-- DOVE VUOI ANDARE -->
   <section class="section" aria-labelledby="h-porte">
     <span class="eyebrow" id="h-porte" data-i18n="porte_titolo">Dove vuoi andare</span>
-    <nav class="porte" aria-label="Sezioni di Matter Bench" data-i18n-aria="porte_aria">
+    <nav aria-label="Sezioni di Matter Bench" data-i18n-aria="porte_aria">
 
-      <a class="porta" href="/scopri-nuovo">
-        <span class="porta-num">01</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_atlante">Atlante</span>
-          <span class="porta-desc" data-i18n="d_atlante">la scienza sotto il mestiere</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
+      <div class="gruppo g-esp">
+        <div class="gruppo-h" data-i18n="grp_esplora">Esplora · capire</div>
+        <a class="porta" href="/scopri-nuovo">
+          <span class="porta-dot" aria-hidden="true"></span>
+          <span class="porta-testo">
+            <span class="porta-nome" data-i18n="n_atlante">Atlante</span>
+            <span class="porta-desc" data-i18n="d_atlante">la scienza sotto il mestiere</span>
+          </span>
+          <span class="porta-freccia" aria-hidden="true">→</span>
+        </a>
+        <a class="porta" href="/laboratorio">
+          <span class="porta-dot" aria-hidden="true"></span>
+          <span class="porta-testo">
+            <span class="porta-nome" data-i18n="n_analizza">Analizza</span>
+            <span class="porta-desc" data-i18n="d_analizza">perché un abbinamento funziona, cosa sostituire, confronta</span>
+          </span>
+          <span class="porta-freccia" aria-hidden="true">→</span>
+        </a>
+        <a class="porta" href="/biodiversita">
+          <span class="porta-dot" aria-hidden="true"></span>
+          <span class="porta-testo">
+            <span class="porta-nome" data-i18n="n_biodiversita">Biodiversità</span>
+            <span class="porta-desc" data-i18n="d_biodiversita">l'atlante dei prodotti a rischio, territorio per territorio</span>
+          </span>
+          <span class="porta-freccia" aria-hidden="true">→</span>
+        </a>
+      </div>
 
-      <a class="porta" href="/banco">
-        <span class="porta-num">02</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_banco">Banco</span>
-          <span class="porta-desc" data-i18n="d_banco">il punto, gli ingredienti, il controllo</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
+      <div class="gruppo g-crea">
+        <div class="gruppo-h" data-i18n="grp_crea">Crea · fare al banco</div>
+        <a class="porta" href="/componi-nuovo">
+          <span class="porta-dot" aria-hidden="true"></span>
+          <span class="porta-testo">
+            <span class="porta-nome" data-i18n="n_lab">Componi</span>
+            <span class="porta-desc" data-i18n="d_lab">collega, combina, modifica</span>
+          </span>
+          <span class="porta-freccia" aria-hidden="true">→</span>
+        </a>
+        <a class="porta" href="/banco">
+          <span class="porta-dot" aria-hidden="true"></span>
+          <span class="porta-testo">
+            <span class="porta-nome" data-i18n="n_banco">Banco</span>
+            <span class="porta-desc" data-i18n="d_banco">il punto, gli ingredienti, il controllo</span>
+          </span>
+          <span class="porta-freccia" aria-hidden="true">→</span>
+        </a>
+        <a class="porta" href="/menu-nuovo">
+          <span class="porta-dot" aria-hidden="true"></span>
+          <span class="porta-testo">
+            <span class="porta-nome" data-i18n="n_menu">Menu</span>
+            <span class="porta-desc" data-i18n="d_menu">componi l'offerta</span>
+          </span>
+          <span class="porta-freccia" aria-hidden="true">→</span>
+        </a>
+      </div>
 
-      <a class="porta" href="/componi-nuovo">
-        <span class="porta-num">03</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_lab">Componi</span>
-          <span class="porta-desc" data-i18n="d_lab">collega, combina, modifica</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/menu-nuovo">
-        <span class="porta-num">04</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_menu">Menu</span>
-          <span class="porta-desc" data-i18n="d_menu">componi l'offerta</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/quaderno">
-        <span class="porta-num">05</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_quaderno">Quaderno</span>
-          <span class="porta-desc" data-i18n="d_quaderno">registra e ricorda le tue prove</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/biodiversita">
-        <span class="porta-num">06</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_biodiversita">Biodiversità</span>
-          <span class="porta-desc" data-i18n="d_biodiversita">l'atlante dei prodotti a rischio, territorio per territorio</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/laboratorio">
-        <span class="porta-num">07</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_analizza">Analizza</span>
-          <span class="porta-desc" data-i18n="d_analizza">perché un abbinamento funziona, cosa sostituire, confronta</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
-
-      <a class="porta" href="/impara">
-        <span class="porta-num">08</span>
-        <span class="porta-testo">
-          <span class="porta-nome" data-i18n="n_impara">Impara</span>
-          <span class="porta-desc" data-i18n="d_impara">la palestra del mestiere: lezioni per disciplina e quiz</span>
-        </span>
-        <span class="porta-freccia" aria-hidden="true">→</span>
-      </a>
+      <div class="gruppo g-org">
+        <div class="gruppo-h" data-i18n="grp_org">Organizza e impara</div>
+        <a class="porta" href="/quaderno">
+          <span class="porta-dot" aria-hidden="true"></span>
+          <span class="porta-testo">
+            <span class="porta-nome" data-i18n="n_quaderno">Quaderno</span>
+            <span class="porta-desc" data-i18n="d_quaderno">registra e ricorda le tue prove</span>
+          </span>
+          <span class="porta-freccia" aria-hidden="true">→</span>
+        </a>
+        <a class="porta" href="/impara">
+          <span class="porta-dot" aria-hidden="true"></span>
+          <span class="porta-testo">
+            <span class="porta-nome" data-i18n="n_impara">Impara</span>
+            <span class="porta-desc" data-i18n="d_impara">la palestra del mestiere: lezioni per disciplina e quiz</span>
+          </span>
+          <span class="porta-freccia" aria-hidden="true">→</span>
+        </a>
+      </div>
 
     </nav>
     <a class="causa-link" href="/causa-nuovo" data-i18n="causa_link">Non torna qualcosa? Parti dal problema →</a>
@@ -333,6 +351,9 @@ window.I18N_DICT = {
   gesto_zona: {it:"acidità · dentro la finestra 6–8", en:"acidity · within the 6–8 window", es:"acidez · dentro de la ventana 6–8"},
   nota_esempio: {it:"Esempio da bar. <strong>Dato d'esempio</strong>, non una misura verificata al tuo banco.", en:"A bar example. <strong>Sample figure</strong>, not a measurement verified at your bench.", es:"Ejemplo de coctelería. <strong>Dato de ejemplo</strong>, no una medición verificada en tu mesa de trabajo."},
   porte_titolo: {it:"Dove vuoi andare", en:"Where do you want to go", es:"Adónde quieres ir"},
+  grp_esplora: {it:"Esplora · capire", en:"Explore · understand", es:"Explora · entender"},
+  grp_crea: {it:"Crea · fare al banco", en:"Create · at the bench", es:"Crea · en la mesa"},
+  grp_org: {it:"Organizza e impara", en:"Organise & learn", es:"Organiza y aprende"},
   porte_aria: {it:"Sezioni di Matter Bench", en:"Matter Bench sections", es:"Secciones de Matter Bench"},
   n_atlante:  {it:"Atlante", en:"Atlas", es:"Atlas"},
   n_banco:    {it:"Banco", en:"Bench", es:"Banco"},
