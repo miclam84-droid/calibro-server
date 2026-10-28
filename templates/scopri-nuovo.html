@@ -638,6 +638,28 @@ window.I18N_DICT = {
       return;
     }
 
+    // PROFILO MAGRO: troppi pochi composti sul centro per un grafo affidabile. Mostro uno stato
+    // onesto con la firma, invece di un legame solo (spesso assurdo) spacciato per verdetto.
+    if (d.profilo_magro) {
+      var nmM = cap(d.ingrediente || ing);
+      var nC = d.composti_centro || 0;
+      var firme = Array.isArray(d.composti_centro_esempio) ? d.composti_centro_esempio : [];
+      var firmeTxt = firme.length ? firme.join(", ") : "";
+      cardStato(d.ingrediente || ing,
+        _L({
+          it:"Profilo ancora in costruzione: solo <strong>" + nC + "</strong> composti documentati per " + esc(nmM) + "." + (firmeTxt ? " Firma finora: <em>" + esc(firmeTxt) + "</em>." : ""),
+          en:"Profile still being built: only <strong>" + nC + "</strong> documented compounds for " + esc(nmM) + "." + (firmeTxt ? " Signature so far: <em>" + esc(firmeTxt) + "</em>." : ""),
+          es:"Perfil aún en construcción: solo <strong>" + nC + "</strong> compuestos documentados para " + esc(nmM) + "." + (firmeTxt ? " Firma hasta ahora: <em>" + esc(firmeTxt) + "</em>." : "")
+        }),
+        _L({
+          it:"I legami nel grafo arrivano quando il profilo è completo. Non mostro un legame solo come se fosse il verdetto.",
+          en:"Graph links appear once the profile is complete. I don't show a single link as if it were the verdict.",
+          es:"Los enlaces del grafo aparecen cuando el perfil está completo. No muestro un solo enlace como si fuera el veredicto."
+        })
+      );
+      return;
+    }
+
     // ordina: prima parentela aromatica (con più composti), poi contrasto, poi tradizione
     var peso = {base_aromatica: 0, contrasto: 1, tradizione: 2};
     rel = rel.slice().sort(function(a, b){
