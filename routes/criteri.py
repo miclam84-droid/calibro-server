@@ -92,6 +92,8 @@ def _risolvi_nodo(cur, ingrediente):
                  "issopo": "ing-issopo", "mirtillo rosso": "ing-mirtillo-rosso",
                  "mirtillo rosso europeo": "ing-mirtillo-rosso-europeo",
                  "grani del paradiso": "ing-grani-del-paradiso", "sudachi": "ing-sudachi",
+                 "champignon": "ahn_mushroom",  # Agaricus = il fungo generico: nodo Ahn ricco (105 comp) invece dei 3 proprietari
+                 "chiodi di garofano": "ahn_clove",  # = clove: nodo Ahn ricco (40 comp) invece dei 4 proprietari
                  "friarielli": "ing-cime-di-rapa",  # friarielli = cime di rapa (nome napoletano, stessa pianta)
                  "olio di oliva": "ing-olio-evo-coratina",  # il nodo ricco (15 comp); evita l'ombra di fis_olive_oil_refined (vuoto)
                  "olio extravergine": "ing-olio-evo-coratina", "olio evo": "ing-olio-evo-coratina",
