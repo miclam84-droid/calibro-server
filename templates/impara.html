@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Impara — Matter Bench</title>
+<meta name="description" content="La palestra del mestiere: lezioni per disciplina, un fenomeno alla volta, con quiz per metterti alla prova. Cucina, panificazione, bar, pasticceria e altro.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E593C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matter Bench">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js"></script>
+<style>
+  .lede{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+  .lede b{color:var(--ink); font-weight:600}
+  .sec-h{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); margin:26px 0 4px}
+  .sec-p{font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px}
+  /* griglia discipline */
+  .disc-grid{display:flex; flex-direction:column; gap:10px}
+  .disc{display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; width:100%; text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); padding:15px 16px; cursor:pointer; font-family:var(--sans)}
+  .disc:hover{border-color:var(--verde); box-shadow:var(--shadow)}
+  .disc:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+  .disc-nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink)}
+  .disc-n{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums; flex:0 0 auto}
+  /* vista lezione */
+  .lez-top{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:6px}
+  .lez-back{font-family:var(--sans); font-weight:600; font-size:13px; color:var(--verde); background:transparent; border:0; cursor:pointer; padding:6px 0}
+  .lez-back:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+  .lez-prog{font-size:12.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+  .lez-card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow); padding:18px 18px 20px; margin-top:12px}
+  .lez-gancio{font-family:var(--display); font-weight:600; font-size:14px; color:var(--verde); line-height:1.4}
+  .lez-nome{font-family:var(--display); font-weight:800; font-size:21px; color:var(--ink); margin-top:8px; line-height:1.15}
+  .lez-dominio{display:inline-block; margin-top:8px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); background:var(--panel); border:1px solid var(--riga); border-radius:var(--r-pill); padding:4px 10px}
+  .lez-scheda{margin-top:14px; font-size:14.5px; color:var(--ink); line-height:1.62}
+  .lez-scheda p{margin:0 0 12px}
+  .lez-scheda p:last-child{margin-bottom:0}
+  .scava{margin-top:16px; padding-top:14px; border-top:1px solid var(--riga)}
+  .scava-h{font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px}
+  .scava-chips{display:flex; flex-wrap:wrap; gap:7px}
+  .scava-chip{font-family:var(--sans); font-weight:600; font-size:12.5px; color:var(--ink); background:var(--tint); border:1px solid transparent; border-radius:var(--r-pill); padding:6px 12px}
+  /* quiz */
+  .quiz-wrap{margin-top:14px}
+  .btn-quiz{width:100%}
+  .quiz-card{background:var(--panel); border:1px solid var(--riga); border-radius:var(--r); padding:16px; margin-top:4px}
+  .quiz-dom{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); line-height:1.35}
+  .quiz-opts{display:flex; flex-direction:column; gap:9px; margin-top:14px}
+  .quiz-opt{font-family:var(--sans); font-size:14.5px; color:var(--ink); text-align:left; background:var(--surface); border:1px solid var(--riga); border-radius:var(--r-sm); padding:12px 14px; cursor:pointer; line-height:1.4}
+  .quiz-opt:hover{border-color:var(--verde)}
+  .quiz-opt:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+  .quiz-opt.giusta{border-color:var(--segnale); background:var(--tint); color:var(--verde); font-weight:600}
+  .quiz-opt.sbagliata{border-color:var(--oxblood); background:#faf0ef; color:var(--oxblood)}
+  .quiz-opt[disabled]{cursor:default}
+  .quiz-esito{margin-top:12px; font-size:13.5px; line-height:1.55; color:var(--ink)}
+  .quiz-esito b{font-weight:700}
+  .quiz-esito .ok{color:var(--verde)}
+  .quiz-esito .ko{color:var(--oxblood)}
+  .lez-nav{display:flex; gap:10px; margin-top:16px}
+  .lez-nav button{flex:1}
+  .state{margin-top:18px; padding:14px 16px; border-radius:var(--r); background:var(--panel); border:1px solid var(--riga); font-size:14px; color:var(--ink); line-height:1.5}
+  .state.err{border-color:var(--oxblood); color:var(--oxblood)}
+  footer{margin-top:34px; padding-top:16px; border-top:1px solid var(--riga); font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  footer b{color:var(--ink); font-weight:600}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow" data-i18n="bar">Impara</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <header style="margin-top:22px">
+    <span class="eyebrow" data-i18n="eyebrow">La palestra del mestiere</span>
+    <h1 style="margin-top:4px" data-i18n="h1">Impara, un fenomeno alla volta</h1>
+    <p class="lede" data-i18n-html="lede">Scegli una disciplina e <b>studia i fenomeni uno a uno</b>: il perché dietro il gesto, poi un quiz per metterti alla prova. I contenuti vengono dal grafo Matter, con la loro provenienza.</p>
+  </header>
+
+  <!-- scelta disciplina -->
+  <section id="vista-discipline">
+    <div class="sec-h" data-i18n="disc_h">Scegli una disciplina</div>
+    <p class="sec-p" data-i18n="disc_p">Ogni disciplina è un percorso di lezioni, dalla più importante in giù.</p>
+    <div class="disc-grid" id="disc-grid"></div>
+    <div class="state" id="disc-state" hidden></div>
+  </section>
+
+  <!-- vista lezione (nascosta finché non scegli) -->
+  <section id="vista-lezione" hidden>
+    <div class="lez-top">
+      <button class="lez-back" id="lez-back" type="button">&larr; <span data-i18n="back">Tutte le discipline</span></button>
+      <span class="lez-prog" id="lez-prog"></span>
+    </div>
+    <div id="lez-body"></div>
+    <div class="state" id="lez-state" hidden></div>
+  </section>
+
+  <footer data-i18n-html="footer">
+    <b>La palestra del mestiere.</b> Le lezioni e i quiz vengono dal grafo Matter, con la loro provenienza. Spieghiamo il <b>perché</b> dei fenomeni, non diamo ricette da seguire a memoria: il banco (il tuo assaggio) resta il giudice.
+  </footer>
+</main>
+
+<script>
+window.I18N_TITLE = {it:"Impara — Matter Bench", en:"Learn — Matter Bench", es:"Aprende — Matter Bench"};
+window.I18N_DICT = {
+  bar:      {it:"Impara", en:"Learn", es:"Aprende"},
+  eyebrow:  {it:"La palestra del mestiere", en:"The craft gym", es:"El gimnasio del oficio"},
+  h1:       {it:"Impara, un fenomeno alla volta", en:"Learn, one phenomenon at a time", es:"Aprende, un fenómeno a la vez"},
+  lede:     {it:"Scegli una disciplina e <b>studia i fenomeni uno a uno</b>: il perché dietro il gesto, poi un quiz per metterti alla prova. I contenuti vengono dal grafo Matter, con la loro provenienza.", en:"Pick a discipline and <b>study the phenomena one by one</b>: the why behind the gesture, then a quiz to test yourself. The content comes from the Matter graph, with its provenance.", es:"Elige una disciplina y <b>estudia los fenómenos uno a uno</b>: el porqué detrás del gesto, luego un test para ponerte a prueba. El contenido proviene del grafo Matter, con su procedencia."},
+  disc_h:   {it:"Scegli una disciplina", en:"Pick a discipline", es:"Elige una disciplina"},
+  disc_p:   {it:"Ogni disciplina è un percorso di lezioni, dalla più importante in giù.", en:"Each discipline is a path of lessons, from the most important down.", es:"Cada disciplina es un recorrido de lecciones, de la más importante hacia abajo."},
+  back:     {it:"Tutte le discipline", en:"All disciplines", es:"Todas las disciplinas"},
+  footer:   {it:"<b>La palestra del mestiere.</b> Le lezioni e i quiz vengono dal grafo Matter, con la loro provenienza. Spieghiamo il <b>perché</b> dei fenomeni, non diamo ricette da seguire a memoria: il banco (il tuo assaggio) resta il giudice.", en:"<b>The craft gym.</b> Lessons and quizzes come from the Matter graph, with their provenance. We explain the <b>why</b> of phenomena, not recipes to follow by rote: the bench (your tasting) stays the judge.", es:"<b>El gimnasio del oficio.</b> Las lecciones y los test provienen del grafo Matter, con su procedencia. Explicamos el <b>porqué</b> de los fenómenos, no recetas que seguir de memoria: la mesa (tu cata) sigue siendo el juez."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+<script>
+(function(){
+  "use strict";
+  var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  var $ = function(id){ return document.getElementById(id); };
+
+  // stringhe generate da JS (etichette fisse; i contenuti delle lezioni sono dati dal backend e non si traducono)
+  function L(k){
+    var D = {
+      caricamento:{it:"Carico…", en:"Loading…", es:"Cargando…"},
+      disc_err:{it:"Non riesco a caricare le discipline adesso. Riprova tra poco.", en:"I can't load the disciplines right now. Try again shortly.", es:"No puedo cargar las disciplinas ahora. Inténtalo de nuevo en un momento."},
+      lez_err:{it:"Non riesco a caricare questa lezione adesso. Riprova tra poco.", en:"I can't load this lesson right now. Try again shortly.", es:"No puedo cargar esta lección ahora. Inténtalo de nuevo en un momento."},
+      vuoto:{it:"Nessuna lezione qui per ora.", en:"No lessons here yet.", es:"Ninguna lección aquí por ahora."},
+      lezioni:{it:"lezioni", en:"lessons", es:"lecciones"},
+      lezione:{it:"Lezione", en:"Lesson", es:"Lección"},
+      di:{it:"di", en:"of", es:"de"},
+      scava:{it:"Collegato a", en:"Connected to", es:"Conectado a"},
+      mettiti:{it:"Mettiti alla prova", en:"Test yourself", es:"Ponte a prueba"},
+      quiz_no:{it:"Nessun quiz per questo fenomeno, per ora.", en:"No quiz for this phenomenon yet.", es:"Ningún test para este fenómeno por ahora."},
+      quiz_err:{it:"Quiz non raggiungibile adesso. Riprova.", en:"Quiz unreachable right now. Try again.", es:"Test no accesible ahora. Inténtalo de nuevo."},
+      giusto:{it:"Giusto.", en:"Correct.", es:"Correcto."},
+      sbagliato:{it:"Non ci siamo.", en:"Not quite.", es:"No del todo."},
+      prec:{it:"← Precedente", en:"← Previous", es:"← Anterior"},
+      succ:{it:"Successiva →", en:"Next →", es:"Siguiente →"}
+    };
+    var o = D[k]; return o ? (o[window._lang] != null ? o[window._lang] : o.it) : k;
+  }
+
+  var discipline = [];     // [{id,nome,n_lezioni}]
+  var discAttiva = null;   // id disciplina corrente
+  var step = 0;            // passo corrente
+  var lezCorrente = null;  // ultimo payload /lezione
+
+  // ---------- discipline ----------
+  function caricaDiscipline(){
+    $('disc-state').hidden = true;
+    fetch('/v1/discipline', {headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        discipline = (d && d.discipline) || [];
+        renderDiscipline();
+      })
+      .catch(function(){ $('disc-state').hidden=false; $('disc-state').className='state err'; $('disc-state').textContent = L('disc_err'); });
+  }
+  function renderDiscipline(){
+    var g = $('disc-grid'); g.innerHTML = '';
+    discipline.forEach(function(dd){
+      var b = document.createElement('button');
+      b.className = 'disc'; b.type = 'button';
+      b.innerHTML = '<span class="disc-nome">'+esc(dd.nome)+'</span>'+
+        '<span class="disc-n">'+ (dd.n_lezioni||0) +' '+ esc(L('lezioni')) +'</span>';
+      b.addEventListener('click', function(){ apriDisciplina(dd.id); });
+      g.appendChild(b);
+    });
+  }
+
+  // ---------- lezione ----------
+  function apriDisciplina(id){
+    discAttiva = id; step = 0;
+    $('vista-discipline').hidden = true;
+    $('vista-lezione').hidden = false;
+    try{ window.scrollTo(0,0); }catch(e){}
+    caricaLezione();
+  }
+  function tornaDiscipline(){
+    $('vista-lezione').hidden = true;
+    $('vista-discipline').hidden = false;
+    try{ window.scrollTo(0,0); }catch(e){}
+  }
+  function caricaLezione(){
+    $('lez-state').hidden = true;
+    $('lez-body').innerHTML = '<div class="state">'+esc(L('caricamento'))+'</div>';
+    fetch('/lezione/'+encodeURIComponent(discAttiva)+'/'+step, {headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d || d.errore || !d.fenomeno){ $('lez-body').innerHTML=''; $('lez-state').hidden=false; $('lez-state').className='state'; $('lez-state').textContent=L('vuoto'); return; }
+        lezCorrente = d;
+        renderLezione(d);
+      })
+      .catch(function(){ $('lez-body').innerHTML=''; $('lez-state').hidden=false; $('lez-state').className='state err'; $('lez-state').textContent=L('lez_err'); });
+  }
+  function paragrafi(testo){
+    return String(testo||'').split(/\n{1,}/).map(function(p){ p=p.trim(); return p?('<p>'+esc(p)+'</p>'):''; }).join('');
+  }
+  function renderLezione(d){
+    var f = d.fenomeno || {};
+    var tot = d.totale_passi || (discipline.filter(function(x){return x.id===discAttiva;})[0]||{}).n_lezioni || 0;
+    $('lez-prog').textContent = L('lezione')+' '+((d.step||step)+1)+' '+L('di')+' '+tot;
+
+    var scava = '';
+    if(d.scava && d.scava.connessioni && d.scava.connessioni.length){
+      var chips = d.scava.connessioni.slice(0,8).map(function(c){ return '<span class="scava-chip">'+esc(c.nome||'')+'</span>'; }).join('');
+      scava = '<div class="scava"><div class="scava-h">'+esc(L('scava'))+'</div><div class="scava-chips">'+chips+'</div></div>';
+    }
+
+    $('lez-body').innerHTML =
+      '<div class="lez-card">'+
+        (f.gancio?'<div class="lez-gancio">'+esc(f.gancio)+'</div>':'')+
+        '<div class="lez-nome">'+esc(f.nome||'')+'</div>'+
+        (f.dominio?'<span class="lez-dominio">'+esc(f.dominio)+'</span>':'')+
+        '<div class="lez-scheda">'+paragrafi(f.scheda)+'</div>'+
+        scava+
+        '<div class="quiz-wrap" id="quiz-wrap">'+
+          '<button class="btn btn--block btn-quiz" id="btn-quiz" type="button">'+esc(L('mettiti'))+'</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="lez-nav">'+
+        (d.ha_precedente?'<button class="btn btn--ghost" id="btn-prec" type="button">'+esc(L('prec'))+'</button>':'')+
+        (d.ha_successivo?'<button class="btn" id="btn-succ" type="button">'+esc(L('succ'))+'</button>':'')+
+      '</div>';
+
+    var bq = $('btn-quiz'); if(bq) bq.addEventListener('click', function(){ caricaQuiz(f.id, bq); });
+    var bp = $('btn-prec'); if(bp) bp.addEventListener('click', function(){ if(step>0){ step--; caricaLezione(); try{window.scrollTo(0,0);}catch(e){} } });
+    var bs = $('btn-succ'); if(bs) bs.addEventListener('click', function(){ step++; caricaLezione(); try{window.scrollTo(0,0);}catch(e){} });
+  }
+
+  // ---------- quiz ----------
+  function caricaQuiz(fenId, btn){
+    if(!fenId) return;
+    btn.setAttribute('disabled','true'); btn.textContent = L('caricamento');
+    fetch('/quiz/'+encodeURIComponent(fenId), {headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var q = d && d.quiz;
+        if(!q || !q.opzioni || !q.opzioni.length){ renderQuizVuoto(L('quiz_no')); return; }
+        renderQuiz(q);
+      })
+      .catch(function(){ renderQuizVuoto(L('quiz_err'), true); });
+  }
+  function renderQuizVuoto(msg, err){
+    var w = $('quiz-wrap'); if(!w) return;
+    w.innerHTML = '<div class="state'+(err?' err':'')+'">'+esc(msg)+'</div>';
+  }
+  function renderQuiz(q){
+    var w = $('quiz-wrap'); if(!w) return;
+    var opts = q.opzioni.map(function(o,i){ return '<button class="quiz-opt" type="button" data-i="'+i+'">'+esc(o)+'</button>'; }).join('');
+    w.innerHTML = '<div class="quiz-card">'+
+      '<div class="quiz-dom">'+esc(q.domanda||'')+'</div>'+
+      '<div class="quiz-opts" id="quiz-opts">'+opts+'</div>'+
+      '<div class="quiz-esito" id="quiz-esito" hidden></div>'+
+    '</div>';
+    var corretta = (typeof q.corretta==='number') ? q.corretta : -1;
+    var risposto = false;
+    Array.prototype.forEach.call(w.querySelectorAll('.quiz-opt'), function(b){
+      b.addEventListener('click', function(){
+        if(risposto) return; risposto = true;
+        var scelta = parseInt(b.getAttribute('data-i'),10);
+        Array.prototype.forEach.call(w.querySelectorAll('.quiz-opt'), function(x,i){
+          x.setAttribute('disabled','true');
+          if(i===corretta) x.classList.add('giusta');
+          if(i===scelta && scelta!==corretta) x.classList.add('sbagliata');
+        });
+        var ok = (scelta===corretta);
+        var e = $('quiz-esito'); e.hidden=false;
+        e.innerHTML = '<b class="'+(ok?'ok':'ko')+'">'+esc(ok?L('giusto'):L('sbagliato'))+'</b> '+esc(q.spiegazione||'');
+      });
+    });
+  }
+
+  // ---------- cambio lingua: ridisegna le etichette fisse mantenendo i dati ----------
+  window.onI18nApply = function(){
+    if(discipline.length) renderDiscipline();
+    if(!$('vista-lezione').hidden && lezCorrente) renderLezione(lezCorrente);
+  };
+
+  caricaDiscipline();
+  $('lez-back').addEventListener('click', tornaDiscipline);
+})();
+</script>
+</body>
+</html>
