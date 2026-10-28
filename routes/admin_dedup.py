@@ -41,6 +41,50 @@ MERGE_ALLOWLIST = [
     {"canonico": "ing-speck-alto-adige-igp",
      "assorbiti": ["ing-it-speck-alto-adige"],
      "perche": "stesso prodotto (Speck Alto Adige IGP) su due nodi; chiude la regione-fantasma Trentino-A.A."},
+
+    # ---- Batch 1 (2026-10-28): doppioni IT/EN verificati a mano dall'hard-test robustezza.
+    # Fonte: dry-run /v1/criteri/dedup-nodi (55 coppie). Qui SOLO le 36 in cui ahn_/ai_ e ing-
+    # sono con certezza lo STESSO ingrediente (traduzione/sinonimo/grafia). Escluse a monte le
+    # specie-ambigue: valeriana (officinalis vs songino), sgombro (Scomber vs Trachurus),
+    # issopo (Hyssopus vs Agastache), mela cotogna (Cydonia vs Pseudocydonia), orata (seabream
+    # diverso), citronella (lemongrass vs citronella), timo zygis, origano floribundum, curcuma
+    # aromatica, cherimoya reticulata, passiflora mollissima, ecc. — restano "da rivedere".
+    {"canonico": "ahn_laurel_leaf", "assorbiti": ["ahn_bay", "ahn_bay_laurel"], "perche": "alloro — Laurus nobilis, nomi EN/latino"},
+    {"canonico": "ahn_pineapple", "assorbiti": ["ahn_ananas_sativus"], "perche": "ananas — Ananas comosus, nome latino"},
+    {"canonico": "ai_barbabietola", "assorbiti": ["ahn_beet_root"], "perche": "barbabietola — beet root IT/EN"},
+    {"canonico": "ahn_basil", "assorbiti": ["ahn_sweet_basil"], "perche": "basilico — sweet basil (Ocimum basilicum); hoary basil ESCLUSO (specie diversa)"},
+    {"canonico": "ing-bergamotto", "assorbiti": ["ahn_bergamot"], "perche": "bergamotto — Citrus bergamia IT/EN"},
+    {"canonico": "ahn_cherry", "assorbiti": ["ahn_pinus_avium_fruit"], "perche": "ciliegia — Prunus avium (id con refuso 'pinus')"},
+    {"canonico": "ing-cime-di-rapa", "assorbiti": ["ai_cime_di_rapa"], "perche": "cime di rapa — stesso nodo IT duplicato"},
+    {"canonico": "ahn_eucalyptus_citridora", "assorbiti": ["ahn_eucalyptus_citriodora"], "perche": "eucalipto limone — grafia citridora/citriodora"},
+    {"canonico": "ahn_snap_bean", "assorbiti": ["ahn_french_bean"], "perche": "fagiolino — Phaseolus vulgaris, snap/french bean"},
+    {"canonico": "ahn_red_kidney_bean", "assorbiti": ["ahn_kidney_bean", "ahn_red_bean"], "perche": "fagiolo rosso — kidney/red bean"},
+    {"canonico": "ing-farina-di-segale", "assorbiti": ["ahn_rye_flour"], "perche": "farina di segale — rye flour IT/EN"},
+    {"canonico": "ai_fava_tonka", "assorbiti": ["ahn_tonka_bean_seed"], "perche": "fava tonka — Dipteryx odorata IT/EN"},
+    {"canonico": "ahn_jasmine", "assorbiti": ["ahn_jasminum_grandiflorum"], "perche": "gelsomino — Jasminum grandiflorum"},
+    {"canonico": "ing-ginepro", "assorbiti": ["ai_ginepro"], "perche": "ginepro — stesso nodo IT duplicato; juniperus_sabina ESCLUSO (specie diversa)"},
+    {"canonico": "ing-grani-del-paradiso", "assorbiti": ["ai_grani_del_paradiso"], "perche": "grani del paradiso — stesso nodo IT duplicato"},
+    {"canonico": "ahn_helichrysum_italicum", "assorbiti": ["ahn_helichrysum_angustifolium"], "perche": "immortelle — H. italicum = angustifolium (sinonimi)"},
+    {"canonico": "ahn_lovage", "assorbiti": ["ahn_lovage_leaf"], "perche": "levistico — Levisticum officinale, foglia stessa pianta"},
+    {"canonico": "ahn_kaffir_lime", "assorbiti": ["ai_lime_kaffir"], "perche": "lime kaffir — stesso ingrediente IT/EN"},
+    {"canonico": "ahn_lemon_balm", "assorbiti": ["ahn_balm"], "perche": "melissa — Melissa officinalis, lemon balm/balm"},
+    {"canonico": "ahn_japanese_peppermint", "assorbiti": ["ahn_japanese_mint"], "perche": "menta giapponese — Mentha arvensis; agastache_rugosa ESCLUSO"},
+    {"canonico": "ahn_peppermint", "assorbiti": ["ahn_american_peppermint"], "perche": "menta piperita — Mentha x piperita"},
+    {"canonico": "ahn_scotch_spearmint", "assorbiti": ["ahn_mentha_viridis"], "perche": "menta verde — Mentha spicata/viridis"},
+    {"canonico": "ing-mirtillo-rosso", "assorbiti": ["ahn_european_cranberry", "ahn_cranberry"], "perche": "mirtillo rosso — cranberry; consolida la chimica sul nodo IT e toglie il duplicato gonfio che inquinava le classifiche agrumi"},
+    {"canonico": "ing-pepe-di-sichuan", "assorbiti": ["ahn_zanthoxylum_piperitum"], "perche": "pepe di sichuan — Zanthoxylum piperitum"},
+    {"canonico": "ahn_long_pepper", "assorbiti": ["ai_pepe_lungo"], "perche": "pepe lungo — Piper longum; piper_officinarum ESCLUSO (specie diversa)"},
+    {"canonico": "ahn_bell_pepper", "assorbiti": ["ahn_capsicum_annuum"], "perche": "peperone — Capsicum annuum"},
+    {"canonico": "ahn_radish", "assorbiti": ["ahn_rafanus_sativus_root"], "perche": "ravanello — Raphanus sativus"},
+    {"canonico": "ing-rosmarino", "assorbiti": ["ahn_rosemary"], "perche": "rosmarino — Salvia rosmarinus; consolida chimica + archi sul nodo IT"},
+    {"canonico": "ing-salmone", "assorbiti": ["ahn_salmon"], "perche": "salmone — salmon IT/EN"},
+    {"canonico": "ing-salvia", "assorbiti": ["ahn_sage"], "perche": "salvia — Salvia officinalis; consolida chimica sul nodo IT"},
+    {"canonico": "ahn_clary_sage", "assorbiti": ["ahn_bulgarian_clary_sage"], "perche": "salvia sclarea — Salvia sclarea"},
+    {"canonico": "ahn_elderberry", "assorbiti": ["ahn_elderberry_fruit"], "perche": "sambuco — Sambucus nigra, frutto stessa pianta"},
+    {"canonico": "ai_sedano_rapa", "assorbiti": ["ahn_celery_root"], "perche": "sedano rapa — celeriac IT/EN"},
+    {"canonico": "ing-sudachi", "assorbiti": ["ai_sudachi"], "perche": "sudachi — stesso nodo IT duplicato"},
+    {"canonico": "ahn_tea", "assorbiti": ["ahn_brewed_tea"], "perche": "tè — Camellia sinensis, tea/brewed tea"},
+    {"canonico": "ahn_malt_whiskey", "assorbiti": ["ahn_scotch_whiskey"], "perche": "whisky scozzese — malt/scotch whiskey"},
 ]
 
 
