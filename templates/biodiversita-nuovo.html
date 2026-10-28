@@ -67,24 +67,24 @@
 <header class="topbar">
   <div class="topbar-in">
     <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">Biodiversità</span>
+    <span class="eyebrow" data-i18n="bar">Biodiversità</span>
   </div>
 </header>
 
 <main class="wrap">
   <header style="margin-top:22px">
-    <span class="eyebrow">Atlante per territorio</span>
-    <h1 style="margin-top:4px">La biodiversità, territorio per territorio</h1>
-    <p class="lede">Apri un territorio e <b>scopri le sue varietà</b> a rischio — prodotti dimenticati, Presìdi, DOP e IGP. La mappa si rivela man mano che esplori.</p>
-    <div class="seg" role="tablist" aria-label="Livello della mappa">
-      <button role="tab" id="tab-italia" aria-selected="true">Italia</button>
-      <button role="tab" id="tab-mondo" aria-selected="false">Mondo</button>
+    <span class="eyebrow" data-i18n="eyebrow">Atlante per territorio</span>
+    <h1 style="margin-top:4px" data-i18n="h1">La biodiversità, territorio per territorio</h1>
+    <p class="lede" data-i18n-html="lede">Apri un territorio e <b>scopri le sue varietà</b> a rischio — prodotti dimenticati, Presìdi, DOP e IGP. La mappa si rivela man mano che esplori.</p>
+    <div class="seg" role="tablist" aria-label="Livello della mappa" data-i18n-aria="map_level">
+      <button role="tab" id="tab-italia" aria-selected="true" data-i18n="tab_italia">Italia</button>
+      <button role="tab" id="tab-mondo" aria-selected="false" data-i18n="tab_mondo">Mondo</button>
     </div>
   </header>
 
   <div class="prog" id="prog" hidden>
     <div class="prog-top">
-      <span class="prog-n"><span id="prog-scoperte">0</span><small> / <span id="prog-tot">0</span> varietà scoperte</small></span>
+      <span class="prog-n"><span id="prog-scoperte">0</span><small> / <span id="prog-tot">0</span> <span data-i18n="var_scoperte">varietà scoperte</span></small></span>
       <span class="prog-reg"><span id="prog-regioni">0</span> / <span id="prog-regioni-tot">0</span> <span id="prog-reg-label">territori</span></span>
     </div>
     <div class="prog-bar"><span class="fill" id="prog-fill" style="width:0%"></span></div>
@@ -93,11 +93,26 @@
   <div class="mappa" id="mappa"></div>
   <div class="state" id="state" hidden></div>
 
-  <footer>
+  <footer data-i18n-html="footer">
     <b>Atlante della biodiversità.</b> I dati (territorio, tutela, categoria) vengono dal grafo Matter, dove sono stati inseriti con la loro provenienza. Il <b>livello Mondo</b> raccoglie le varietà fuori Italia per macro-area; lo status di tutela delle voci-mondo è da riverificare, quindi lì non mostriamo bollini. Il tuo <b>avanzamento di scoperta</b> è salvato solo in questo browser, su questo dispositivo: personale, non condiviso, non lascia questo dispositivo.
   </footer>
 </main>
 
+<script>
+window.I18N_TITLE = {it:"Atlante della biodiversità — Matter Bench", en:"Biodiversity Atlas — Matter Bench", es:"Atlas de la biodiversidad — Matter Bench"};
+window.I18N_DICT = {
+  bar:        {it:"Biodiversità", en:"Biodiversity", es:"Biodiversidad"},
+  eyebrow:    {it:"Atlante per territorio", en:"Atlas by territory", es:"Atlas por territorio"},
+  h1:         {it:"La biodiversità, territorio per territorio", en:"Biodiversity, territory by territory", es:"La biodiversidad, territorio por territorio"},
+  lede:       {it:"Apri un territorio e <b>scopri le sue varietà</b> a rischio — prodotti dimenticati, Presìdi, DOP e IGP. La mappa si rivela man mano che esplori.", en:"Open a territory and <b>discover its varieties</b> at risk — forgotten products, Slow Food Presidia, DOP and IGP. The map reveals itself as you explore.", es:"Abre un territorio y <b>descubre sus variedades</b> en riesgo — productos olvidados, Baluartes Slow Food, DOP e IGP. El mapa se revela a medida que exploras."},
+  map_level:  {it:"Livello della mappa", en:"Map level", es:"Nivel del mapa"},
+  tab_italia: {it:"Italia", en:"Italy", es:"Italia"},
+  tab_mondo:  {it:"Mondo", en:"World", es:"Mundo"},
+  var_scoperte:{it:"varietà scoperte", en:"varieties discovered", es:"variedades descubiertas"},
+  footer:     {it:"<b>Atlante della biodiversità.</b> I dati (territorio, tutela, categoria) vengono dal grafo Matter, dove sono stati inseriti con la loro provenienza. Il <b>livello Mondo</b> raccoglie le varietà fuori Italia per macro-area; lo status di tutela delle voci-mondo è da riverificare, quindi lì non mostriamo bollini. Il tuo <b>avanzamento di scoperta</b> è salvato solo in questo browser, su questo dispositivo: personale, non condiviso, non lascia questo dispositivo.", en:"<b>Biodiversity atlas.</b> The data (territory, protection, category) comes from the Matter graph, where it was entered with its provenance. The <b>World level</b> gathers varieties outside Italy by macro-area; the protection status of world entries is yet to be re-verified, so no badges are shown there. Your <b>discovery progress</b> is saved only in this browser, on this device: personal, not shared, it never leaves this device.", es:"<b>Atlas de la biodiversidad.</b> Los datos (territorio, protección, categoría) provienen del grafo Matter, donde se introdujeron con su procedencia. El <b>nivel Mundo</b> reúne las variedades fuera de Italia por macro-área; el estado de protección de las entradas del mundo está por reverificar, por eso allí no mostramos distintivos. Tu <b>avance de descubrimiento</b> se guarda solo en este navegador, en este dispositivo: personal, no compartido, no sale de este dispositivo."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
 <script>
 (function(){
   "use strict";
@@ -150,7 +165,9 @@
     $('prog-tot').textContent = st.totVar;
     $('prog-regioni').textContent = st.aperte.size;
     $('prog-regioni-tot').textContent = st.totTerr;
-    $('prog-reg-label').textContent = cfg.etichettaTerritori;
+    $('prog-reg-label').textContent = _L(attivo==="italia"
+      ? {it:"regioni", en:"regions", es:"regiones"}
+      : {it:"aree", en:"areas", es:"áreas"});
     var pct = st.totVar ? Math.round(100*st.scoperte.size/st.totVar) : 0;
     $('prog-fill').style.width = pct + '%';
   }
@@ -169,9 +186,10 @@
     ordina(items, cfg).forEach(function(r){
       var nome = r[cfg.campoNome];
       var aperta = st.aperte.has(nome);
+      var nv = (r.varieta||0), np = (r.paesi||0);
       var sotto = cfg.campoNome==="area"
-        ? ((r.varieta||0) + ' varietà · ' + (r.paesi||0) + ' paesi')
-        : ((r.varieta||0) + ' varietà nel territorio');
+        ? _L({it:nv+' varietà · '+np+' paesi', en:nv+' varieties · '+np+' countries', es:nv+' variedades · '+np+' países'})
+        : _L({it:nv+' varietà nel territorio', en:nv+' varieties in this territory', es:nv+' variedades en el territorio'});
       var el = document.createElement('section');
       el.className = 'regione' + (aperta?' aperta':'');
       el.innerHTML =
@@ -182,7 +200,7 @@
             (cfg.conTutele ? '<span class="reg-tutele">'+ tutelaChips(r) +'</span>' : '') +'</span>'+
           '<span class="reg-freccia">›</span>'+
         '</button>'+
-        '<div class="reg-body"><div class="var-grid"></div><p class="gloss">Tocca una varietà per scoprirla.</p></div>';
+        '<div class="reg-body"><div class="var-grid"></div><p class="gloss">'+_L({it:"Tocca una varietà per scoprirla.", en:"Tap a variety to discover it.", es:"Toca una variedad para descubrirla."})+'</p></div>';
       mappa.appendChild(el);
       el.querySelector('.reg-head').addEventListener('click', function(){ toggle(el, nome); });
       if(aperta) caricaVarieta(el, nome);
@@ -203,13 +221,13 @@
     var cfg = LIVELLI[attivo], st = STATO[attivo];
     var grid = el.querySelector('.var-grid');
     if(grid.dataset.caricata==='1') return;
-    grid.innerHTML = '<span class="gloss">Apro il territorio…</span>';
+    grid.innerHTML = '<span class="gloss">'+_L({it:"Apro il territorio…", en:"Opening the territory…", es:"Abriendo el territorio…"})+'</span>';
     fetch(cfg.dettaglio(nome), {headers:{'Accept':'application/json'}})
       .then(function(r){ return r.json(); })
       .then(function(d){
         var vs = (d && d[cfg.chiaveDett]) || [];
         grid.dataset.caricata='1';
-        if(!vs.length){ grid.innerHTML = '<span class="gloss">Nessuna varietà registrata qui per ora. Non la inventiamo.</span>'; return; }
+        if(!vs.length){ grid.innerHTML = '<span class="gloss">'+_L({it:"Nessuna varietà registrata qui per ora. Non la inventiamo.", en:"No varieties recorded here yet. We don't make them up.", es:"Ninguna variedad registrada aquí por ahora. No la inventamos."})+'</span>'; return; }
         grid.innerHTML = '';
         vs.forEach(function(vv){
           var chip = document.createElement('button');
@@ -220,7 +238,7 @@
           grid.appendChild(chip);
         });
       })
-      .catch(function(){ grid.innerHTML = '<span class="gloss">Territorio non raggiungibile adesso. Riprova.</span>'; });
+      .catch(function(){ grid.innerHTML = '<span class="gloss">'+_L({it:"Territorio non raggiungibile adesso. Riprova.", en:"Territory unreachable right now. Try again.", es:"Territorio no accesible ahora. Inténtalo de nuevo."})+'</span>'; });
   }
 
   function scopri(el, chip, vv){
@@ -240,7 +258,7 @@
     var det = document.createElement('div');
     det.className='var-det'; det.setAttribute('data-id', vv.id);
     det.innerHTML = '<div class="vt">'+esc(cap(vv.nome))+'</div>'+ (meta.length?'<div class="vm">'+meta.join(' · ')+'</div>':'') +
-      '<a class="btn btn--ghost" style="margin-top:10px" href="/ingrediente/'+encodeURIComponent(vv.nome)+'">Apri la scheda →</a>';
+      '<a class="btn btn--ghost" style="margin-top:10px" href="/ingrediente/'+encodeURIComponent(vv.nome)+'">'+_L({it:"Apri la scheda →", en:"Open the card →", es:"Abre la ficha →"})+'</a>';
     body.appendChild(det);
   }
 
@@ -260,8 +278,8 @@
           st.items = []; st.totTerr = 0; st.totVar = 0; aggiornaProg();
           $('state').hidden=false;
           $('state').innerHTML = attivo==="mondo"
-            ? '<b>Livello Mondo ancora vuoto.</b> Le voci-mondo entrano con l’ondata dati dedicata; appena importate, compaiono qui.'
-            : '<b>Atlante Italia ancora vuoto.</b> Nessuna varietà con regione nel grafo per ora.';
+            ? _L({it:"<b>Livello Mondo ancora vuoto.</b> Le voci-mondo entrano con l’ondata dati dedicata; appena importate, compaiono qui.", en:"<b>World level still empty.</b> World entries arrive with their dedicated data wave; once imported, they appear here.", es:"<b>Nivel Mundo todavía vacío.</b> Las entradas del mundo llegan con su oleada de datos dedicada; una vez importadas, aparecen aquí."})
+            : _L({it:"<b>Atlante Italia ancora vuoto.</b> Nessuna varietà con regione nel grafo per ora.", en:"<b>Italy atlas still empty.</b> No variety with a region in the graph yet.", es:"<b>Atlas Italia todavía vacío.</b> Ninguna variedad con región en el grafo por ahora."});
           return;
         }
         st.items = items;
@@ -270,7 +288,7 @@
         aggiornaProg();
         render(items);
       })
-      .catch(function(){ $('state').hidden=false; $('state').className='state err'; $('state').innerHTML='Non riesco a caricare questo livello adesso. Riprova tra poco.'; });
+      .catch(function(){ $('state').hidden=false; $('state').className='state err'; $('state').innerHTML=_L({it:"Non riesco a caricare questo livello adesso. Riprova tra poco.", en:"I can't load this level right now. Try again shortly.", es:"No puedo cargar este nivel ahora. Inténtalo de nuevo en un momento."}); });
   }
 
   function cambiaLivello(nuovo){
@@ -287,6 +305,14 @@
   // riflette il livello memorizzato all'avvio
   $('tab-italia').setAttribute('aria-selected', attivo==="italia"?'true':'false');
   $('tab-mondo').setAttribute('aria-selected', attivo==="mondo"?'true':'false');
+
+  // ri-render dei contenuti generati da JS quando cambia la lingua
+  window.onI18nApply = function(){
+    var st = STATO[attivo];
+    if(st && st.items && st.items.length){ render(st.items); }
+    if(st && st.scoperte){ aggiornaProg(); }
+  };
+
   caricaLivello();
 })();
 </script>
