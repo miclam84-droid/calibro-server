@@ -110,8 +110,25 @@ const CALC = [
  {id:'resa_calo_peso', nome:'Resa e calo peso', disc:'Cucina', campi:[
    {k:'peso_crudo_g',l:'Peso crudo',u:'g',d:1000},{k:'costo_kg',l:'Costo',u:'€/kg',d:12},{k:'calo_perc',l:'Calo in cottura',u:'%',d:25}]},
 ];
-const SKIP = new Set(['calcolo','fenomeno_id','interpretazione','leva_azione','bersaglio_min','bersaglio_max','scala_min','scala_max','valore_corrente','unita_mirino','dentro_bersaglio','errore']);
-const umana = k => k.replace(/_/g,' ').replace(/perc/g,'%').replace(/\b\w/g, c=>c.toUpperCase());
+const SKIP = new Set(['calcolo','fenomeno_id','interpretazione','leva_azione','spiegazione','bersaglio_min','bersaglio_max','scala_min','scala_max','valore_corrente','unita_mirino','dentro_bersaglio','errore']);
+const _ACR = {abv:'ABV', tds:'TDS', ph:'pH', q10:'Q10'};
+const _UNIT = {g:'g', kg:'kg', ml:'ml', cl:'cl', cm:'cm', c:'°C', h:'h'};
+const ETICH_OUT = {
+  abv_potenziale_perc:'Grado potenziale (% vol)',
+  efficienza:'Efficienza (ABV per °Bx)',
+  costo_g_crudo:'Costo al grammo (crudo)',
+  costo_g_finito:'Costo al grammo (finito)',
+  costo_totale:'Costo totale (€)',
+  temp_target_c:'Temperatura di servizio (°C)',
+  temp_attuale_c:'Temperatura attuale (°C)'
+};
+function umana(k){
+  if(ETICH_OUT[k]) return ETICH_OUT[k];
+  const parts = k.split('_'); const last = parts[parts.length-1]; let unit='';
+  if(_UNIT[last] && parts.length>1){ unit=' ('+_UNIT[last]+')'; parts.pop(); }
+  const label = parts.map((w,i)=> w==='perc' ? '%' : (_ACR[w] || (i===0 ? (w.charAt(0).toUpperCase()+w.slice(1)) : w))).join(' ');
+  return label + unit;
+}
 
 const $menu=document.getElementById('menu'), $form=document.getElementById('form'), $out=document.getElementById('out'), $state=document.getElementById('state');
 let attivo=null;
@@ -149,6 +166,7 @@ function render(d){
   $out.innerHTML = `<section class="section">
     ${mir}
     <div class="res-card" style="margin-top:14px">${righe||'<p class="gloss">Nessun valore.</p>'}</div>
+    ${d.spiegazione?`<p class="nota">${esc(d.spiegazione)}</p>`:''}
     ${d.interpretazione?`<p class="nota"><b>Interpretazione.</b> ${esc(d.interpretazione)}</p>`:''}
     ${d.leva_azione?`<p class="nota critico"><b>Leva d'azione.</b> ${esc(d.leva_azione)}</p>`:''}
   </section>`;
@@ -164,7 +182,7 @@ async function calcola(){
   $state.hidden=false; $state.className='state'; $state.innerHTML='Calcolo…'; $out.innerHTML='';
   try{
     const r=await fetch('/calcola',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({calcolo:attivo.id,parametri})});
-    if(!r.ok){ const d=await r.json().catch(()=>({})); $state.className='state err'; $state.innerHTML='Errore ('+r.status+'). '+esc(d.errore||''); return; }
+    if(!r.ok){ const d=await r.json().catch(()=>({})); $state.className='state err'; $state.innerHTML=esc(d.errore||'Il motore non ha risposto. Riprova tra poco.'); return; }
     render(await r.json());
   }catch(e){ $state.className='state err'; $state.innerHTML='Non riesco a raggiungere il motore. Riprova.'; }
 }

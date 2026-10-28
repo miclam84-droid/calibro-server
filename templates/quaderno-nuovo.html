@@ -69,7 +69,7 @@
     <span class="eyebrow">La tua memoria del mestiere</span>
     <h1 style="margin-top:4px" id="h-titolo">Quaderno</h1>
     <p class="lede" id="h-regola"><b>Un solo archivio.</b> Ogni cosa che salvi — un appunto, una misura, una ricetta — resta qui, riapribile e tua.</p>
-    <div class="srcline"><span class="dot"></span><span id="src">Archivio unico, in tempo reale.</span></div>
+    <div class="srcline"><span class="dot"></span><span id="src">Archivio unico, sempre aggiornato.</span></div>
   </header>
 
   <!-- VISTA: LISTA -->
@@ -139,6 +139,17 @@ function _h(extra){
 }
 
 var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+var _ETICH_FUNZIONE = {
+  'appunto':'Appunto',
+  'scheda_ingrediente':'Scheda ingrediente',
+  'laboratorio_perche':'Perché funziona',
+  'laboratorio_sostituisci':'Sostituzioni',
+  'laboratorio_confronta':'Confronto',
+  'composer':'Composizione'
+};
+var _ETICH_TIPO = { 'calcolo':'Calcolo', 'grafo':'Grafo', 'nota':'Nota' };
+function etichFunzione(c){ if(!c) return ''; return _ETICH_FUNZIONE[c] || (String(c).charAt(0).toUpperCase()+String(c).slice(1).replace(/_/g,' ')); }
+function etichTipo(c){ if(!c) return ''; return _ETICH_TIPO[c] || (String(c).charAt(0).toUpperCase()+String(c).slice(1)); }
 function dataIt(iso){
   if(!iso) return '';
   try{
@@ -178,8 +189,8 @@ function caricaLista(){
       pulisciStato('lista-state');
       $('lista').innerHTML = rec.map(function(x){
         var meta = [];
-        if(x.funzione) meta.push('<span class="qd-tag">'+esc(x.funzione)+'</span>');
-        if(x.tipo && x.tipo!==x.funzione) meta.push('<span class="qd-tag">'+esc(x.tipo)+'</span>');
+        if(x.funzione) meta.push('<span class="qd-tag">'+esc(etichFunzione(x.funzione))+'</span>');
+        if(x.tipo && x.tipo!==x.funzione) meta.push('<span class="qd-tag">'+esc(etichTipo(x.tipo))+'</span>');
         var dt = dataIt(x.modificato_at || x.creato_at);
         if(dt) meta.push('<span>'+esc(dt)+'</span>');
         return '<button class="qd-item" type="button" data-id="'+esc(x.id)+'">'+
@@ -231,8 +242,8 @@ function testoDa(rec){
 }
 function renderDettaglio(rec){
   var meta = [];
-  if(rec.funzione) meta.push('<span class="qd-tag">'+esc(rec.funzione)+'</span>');
-  if(rec.tipo && rec.tipo!==rec.funzione) meta.push('<span class="qd-tag">'+esc(rec.tipo)+'</span>');
+  if(rec.funzione) meta.push('<span class="qd-tag">'+esc(etichFunzione(rec.funzione))+'</span>');
+  if(rec.tipo && rec.tipo!==rec.funzione) meta.push('<span class="qd-tag">'+esc(etichTipo(rec.tipo))+'</span>');
   var dt = dataIt(rec.modificato_at || rec.creato_at);
   var html = '<div class="res-head"><div class="qd-item-t">'+esc(rec.titolo||'(senza titolo)')+'</div>'+
              '<div class="qd-item-m" style="margin-top:8px">'+meta.join('')+(dt?'<span>'+esc(dt)+'</span>':'')+'</div></div>';
@@ -240,8 +251,7 @@ function renderDettaglio(rec){
   if(testo!=null){
     html += '<div class="qd-det-body">'+esc(testo)+'</div>';
   }else{
-    html += '<p class="gloss" style="margin-top:14px">Questo record viene da <b>'+esc(rec.funzione||'un’altra funzione')+'</b>: il suo contenuto è strutturato, non un testo libero.</p>';
-    try{ html += '<div class="qd-pre">'+esc(JSON.stringify(rec.stato_output, null, 2))+'</div>'; }catch(e){}
+    html += '<p class="gloss" style="margin-top:14px">Questo record arriva da <b>'+esc(etichFunzione(rec.funzione)||'un’altra funzione')+'</b>: il suo contenuto è strutturato e si riapre nella funzione che l’ha creato.</p>';
   }
   if(rec.note_lab){
     html += '<div class="qd-det-note"><b>Nota di laboratorio</b>'+esc(rec.note_lab)+'</div>';
