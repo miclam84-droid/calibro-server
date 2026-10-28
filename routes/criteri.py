@@ -92,6 +92,9 @@ def _risolvi_nodo(cur, ingrediente):
                  "issopo": "ing-issopo", "mirtillo rosso": "ing-mirtillo-rosso",
                  "mirtillo rosso europeo": "ing-mirtillo-rosso-europeo",
                  "grani del paradiso": "ing-grani-del-paradiso", "sudachi": "ing-sudachi",
+                 "friarielli": "ing-cime-di-rapa",  # friarielli = cime di rapa (nome napoletano, stessa pianta)
+                 "olio di oliva": "ing-olio-evo-coratina",  # il nodo ricco (15 comp); evita l'ombra di fis_olive_oil_refined (vuoto)
+                 "olio extravergine": "ing-olio-evo-coratina", "olio evo": "ing-olio-evo-coratina",
                  "fava": "ing-fava",
                  "finger lime": "ing-finger-lime", "cime di rapa": "ing-cime-di-rapa",
                  "semi di zucca": "ing-semi-di-zucca"}
@@ -156,7 +159,88 @@ def _risolvi_nodo(cur, ingrediente):
     r = cur.fetchone()
     if r:
         return (r[0], ingrediente.strip())
+
+    # 4) RICERCA CHE PERDONA: il nome cercato e' una FRASE che contiene il nodo
+    #    ("funghi cardoncelli" -> "cardoncelli", "melanzane lunghe" -> "melanzana").
+    #    Il resolver sopra fa LIKE %termine%: trova nodi che CONTENGONO il termine, non il
+    #    contrario. Qui provo sotto-frasi del termine come nomi di nodo, SOLO match esatto
+    #    su nome o id (niente fuzzy: un nodo sbagliato e' peggio di nessuno). Singolarizzo
+    #    il plurale italiano (melanzane->melanzana, funghi->fungo).
+    for cand in _candidati_forgiving(ing):
+        if cand == ing:
+            continue  # gia' provato sopra
+        cur.execute(
+            r"""SELECT n.id, n.name,
+                       (CASE WHEN n.id LIKE 'ahn_%%' THEN 0 ELSE 1 END) AS noncanon,
+                       COUNT(e.to_id) AS nc
+                FROM nodes n
+                LEFT JOIN edges e ON e.from_id = n.id AND e.relation = 'contiene_composto'
+                WHERE n.type IN ('Ingrediente','Prodotto')
+                  AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+                  AND (LOWER(n.name) = %s OR LOWER(n.id) = %s)
+                GROUP BY n.id, n.name
+                ORDER BY (COUNT(e.to_id) > 0) DESC, noncanon ASC, nc DESC, LENGTH(n.name) ASC
+                LIMIT 1""",
+            (cand, "ing-" + _slug_ing(cand)),
+        )
+        r = cur.fetchone()
+        if r:
+            # mostra il nome REALE del nodo trovato (trasparente: cosa ho abbinato)
+            return (r[0], r[1])
     return None
+
+
+# parole-categoria generiche da scartare in testa a una frase ("funghi cardoncelli")
+_GENERICI_TESTA = {"funghi", "fungo", "fiori", "fiore", "foglie", "foglia", "semi", "seme",
+                   "germogli", "germoglio", "cime", "cima", "radice", "radici", "polvere",
+                   "salsa", "crema", "purea", "filetto", "filetti", "polpa", "scorza", "buccia"}
+_STOP_FORGIVING = {"di", "del", "della", "dei", "delle", "al", "alla", "con", "e", "la", "il",
+                   "lo", "gli", "le", "un", "una", "in", "da"}
+
+
+def _slug_ing(s):
+    import re as _re
+    return _re.sub(r"[^a-z0-9]+", "-", (s or "").strip().lower()).strip("-")
+
+
+def _singolari_it(w):
+    """Varianti al singolare per una parola italiana al plurale (grezzo ma sicuro)."""
+    out = []
+    if len(w) > 4 and w.endswith("e"):
+        out.append(w[:-1] + "a")   # melanzane->melanzana, zucchine->zucchina, patate->patata
+    if len(w) > 4 and w.endswith("i"):
+        out.append(w[:-1] + "o")   # funghi->fungo, porcini->porcino, friarielli->friariello
+        out.append(w[:-1] + "e")   # casi rari (-i->-e)
+    return out
+
+
+def _candidati_forgiving(ing):
+    """Sotto-frasi del termine cercato da provare come nome di nodo, dalla piu' specifica.
+    Include le varianti al singolare. Conservativo: niente fuzzy, solo candidati whole-word."""
+    parole = [p for p in ing.split() if p]
+    cand = []
+    def _add(x):
+        x = x.strip()
+        if x and x not in _STOP_FORGIVING and x not in cand:
+            cand.append(x)
+    testa_generica = bool(parole) and parole[0] in _GENERICI_TESTA
+    if testa_generica and len(parole) > 1:
+        # "funghi cardoncelli" -> "cardoncelli": tolgo la categoria, NON riduco oltre
+        # (evita "fiori di zucca" -> "zucca", che sarebbe un nodo sbagliato)
+        _add(" ".join(parole[1:]))
+    elif len(parole) > 1:
+        # genitivo/qualificatore vero ("petto di pollo" -> "pollo"): scansione a destra
+        for i in range(len(parole) - 1, -1, -1):
+            _add(" ".join(parole[i:]))
+    # prima parola da sola ("melanzane lunghe" -> "melanzane")
+    if parole:
+        _add(parole[0])
+    # singolari di ogni singola parola non-stop (melanzane->melanzana, pomodori->pomodoro)
+    for p in parole:
+        if p not in _STOP_FORGIVING:
+            for s in _singolari_it(p):
+                _add(s)
+    return cand
 
 
 # Soglie GLOBALI di forza del legame molecolare (percentile sull'intero grafo, NON relative al

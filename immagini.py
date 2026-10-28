@@ -253,7 +253,12 @@ _BLACKLIST_FOTO = {"wallpaper", "sfondo", "background", "texture", "growing", "r
                    "bear", "orso", "wildlife", "wild animal", "animale", "safari", "jungle",
                    "giungla", "bird", "uccello", "deer", "river bank",
                    # funghi velenosi/da fiaba: NON vanno sulla scheda "funghi"
-                   "toadstool", "amanita", "fly agaric", "poisonous", "velenoso", "fairy"}
+                   "toadstool", "amanita", "fly agaric", "poisonous", "velenoso", "fairy",
+                   # piatti-forma: per un ingrediente CRUDO non va bene la foto del piatto cucinato
+                   # (es. 'pomodoro' -> non la pasta al pomodoro). Nessuno di questi e' un nodo-ingrediente.
+                   "spaghetti", "fusilli", "penne", "rigatoni", "tagliatelle", "lasagna",
+                   "risotto", "pizza", "carbonara", "bruschetta", "parmigiana", "burger",
+                   "sandwich", "pasta dish", "pasta with", "noodles"}
 
 def _foto_pertinente(testo_foto, query):
     """La foto e' GIUSTA per il piatto? La query ora e' precisa (piatto+ingredienti in inglese).
@@ -497,7 +502,7 @@ _KW_ING_IT_EN = {
     "cocco": "coconut halves", "dattero": "dates fruit", "cachi": "persimmon", "nespola": "loquat",
     "corbezzolo": "arbutus berries", "giuggiola": "jujube fruit", "cotogna": "quince fruit",
     # ortaggi
-    "pomodoro": "tomato", "pomodorino": "cherry tomatoes", "melanzana": "eggplant", "zucchina": "zucchini",
+    "pomodoro": "fresh tomatoes", "pomodorino": "cherry tomatoes", "melanzana": "eggplant", "zucchina": "zucchini",
     "zucca": "pumpkin", "peperone": "bell pepper", "peperoncino": "chili pepper", "cipolla": "onion",
     "cipollotto": "scallions", "aglio": "garlic", "porro": "leek", "carota": "carrot", "sedano": "celery",
     "patata": "potato", "patata dolce": "sweet potato", "topinambur": "jerusalem artichoke", "rapa": "turnip root",
@@ -588,6 +593,13 @@ _KW_ING_IT_EN = {
     "rucola": "arugula rocket", "radicchio": "radicchio vegetable", "anatra": "duck breast raw",
     "polpo": "cooked octopus dish", "calamaro": "squid rings calamari", "capesante": "scallops seafood",
     "burrata": "burrata cheese", "gorgonzola": "gorgonzola cheese",
+    # --- 28/10: basi italiane scoperte (smoke-test) + foto sbagliate/mancanti viste in app ---
+    "mirtillo rosso": "cranberries", "mirtillo rosso europeo": "lingonberries",
+    "cardoncelli": "king oyster mushrooms", "porcini": "porcini mushrooms",
+    "broccoli": "broccoli florets", "cozze": "mussels", "vongole": "clams",
+    "acciughe": "anchovies", "pinoli": "pine nuts", "fiori di zucca": "zucchini blossoms",
+    "farina": "flour", "uova": "eggs", "zucchero": "sugar", "friarielli": "broccoli rabe",
+    "scarola": "escarole", "sedano": "celery stalks",
 }
 
 

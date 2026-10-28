@@ -18405,9 +18405,158 @@
           "fonte": "Paprika dolce (Capsicum annuum, polvere): 2-isobutil-3-metossipirazina (peperone-terroso) firma + beta-ionone (da carotenoidi) (letteratura GC-O paprika)."
         }
       ]
+    },
+    {
+      "ingrediente": "scarola",
+      "nodo_target": "ing-scarola",
+      "specie": "Cichorium endivia",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Scarola (Cichorium endivia): volatili verdi C6 (firma leggera, via lipossigenasi); l'amaro (lattucopicrina) e' NON volatile, dichiarato come marcatore gustativo (letteratura GC-MS Cichorium).",
+      "composti": [
+        {
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde, foglia tagliata (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scarola (Cichorium endivia): volatili verdi C6 (firma leggera, via lipossigenasi); l'amaro (lattucopicrina) e' NON volatile, dichiarato come marcatore gustativo (letteratura GC-MS Cichorium)."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scarola (Cichorium endivia): volatili verdi C6 (firma leggera, via lipossigenasi); l'amaro (lattucopicrina) e' NON volatile, dichiarato come marcatore gustativo (letteratura GC-MS Cichorium)."
+        },
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde, mela-foglia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Scarola (Cichorium endivia): volatili verdi C6 (firma leggera, via lipossigenasi); l'amaro (lattucopicrina) e' NON volatile, dichiarato come marcatore gustativo (letteratura GC-MS Cichorium)."
+        },
+        {
+          "composto": "lattucopicrina",
+          "descrittore": "amaro (NON volatile, marcatore gustativo)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "stimato",
+          "fonte": "Scarola (Cichorium endivia): volatili verdi C6 (firma leggera, via lipossigenasi); l'amaro (lattucopicrina) e' NON volatile, dichiarato come marcatore gustativo (letteratura GC-MS Cichorium)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "pinoli",
+      "nodo_target": "ing-pinoli",
+      "specie": "Pinus pinea",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Pinoli (Pinus pinea): profilo olfattivo DEBOLE (sono grasso); esanale e, da tostatura, 2,4-decadienale (nocciola-fritto) + traccia di alpha-pinene resinoso (letteratura GC-MS frutta secca/pinoli). Dichiarato: aroma tenue.",
+      "composti": [
+        {
+          "composto": "esanale",
+          "descrittore": "verde-grasso (firma debole)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pinoli (Pinus pinea): profilo olfattivo DEBOLE (sono grasso); esanale e, da tostatura, 2,4-decadienale (nocciola-fritto) + traccia di alpha-pinene resinoso (letteratura GC-MS frutta secca/pinoli). Dichiarato: aroma tenue."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienale",
+          "descrittore": "nocciola, fritto (da tostatura)",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pinoli (Pinus pinea): profilo olfattivo DEBOLE (sono grasso); esanale e, da tostatura, 2,4-decadienale (nocciola-fritto) + traccia di alpha-pinene resinoso (letteratura GC-MS frutta secca/pinoli). Dichiarato: aroma tenue."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso, pino (traccia)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pinoli (Pinus pinea): profilo olfattivo DEBOLE (sono grasso); esanale e, da tostatura, 2,4-decadienale (nocciola-fritto) + traccia di alpha-pinene resinoso (letteratura GC-MS frutta secca/pinoli). Dichiarato: aroma tenue."
+        }
+      ]
+    },
+    {
+      "ingrediente": "acciughe",
+      "nodo_target": "ing-acciughe",
+      "specie": "Engraulis encrasicolus (sotto sale)",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato).",
+      "composti": [
+        {
+          "composto": "(Z)-4-eptenale",
+          "descrittore": "pesce, marino-freddo (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato)."
+        },
+        {
+          "composto": "trimetilammina",
+          "descrittore": "pesce, salmastro",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato)."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde-grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato)."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato (da stagionatura)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato)."
+        }
+      ]
+    },
+    {
+      "ingrediente": "vongole",
+      "nodo_target": "ing-vongole",
+      "specie": "Ruditapes spp.",
+      "dominio": "cucina",
+      "fonte_ingrediente": "Vongole (Ruditapes spp.): bromofenoli (2,6-dibromofenolo) = nota marina-iodata firma dei molluschi + dimetilsolfuro + trimetilammina (letteratura GC-O molluschi/bromofenoli).",
+      "composti": [
+        {
+          "composto": "2,6-dibromofenolo",
+          "descrittore": "marino, iodato (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vongole (Ruditapes spp.): bromofenoli (2,6-dibromofenolo) = nota marina-iodata firma dei molluschi + dimetilsolfuro + trimetilammina (letteratura GC-O molluschi/bromofenoli)."
+        },
+        {
+          "composto": "dimetilsolfuro",
+          "descrittore": "marino, mollusco",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vongole (Ruditapes spp.): bromofenoli (2,6-dibromofenolo) = nota marina-iodata firma dei molluschi + dimetilsolfuro + trimetilammina (letteratura GC-O molluschi/bromofenoli)."
+        },
+        {
+          "composto": "trimetilammina",
+          "descrittore": "pesce, marino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Vongole (Ruditapes spp.): bromofenoli (2,6-dibromofenolo) = nota marina-iodata firma dei molluschi + dimetilsolfuro + trimetilammina (letteratura GC-O molluschi/bromofenoli)."
+        }
+      ]
     }
   ],
   "_prossimi": [
+    "Ondata 28/10 (basi scoperte dallo smoke-test, +4): scarola, pinoli, acciughe, vongole. Firme da letteratura (verdi C6 scarola, esanale/decadienale pinoli, (Z)-4-eptenale acciughe, bromofenoli vongole). Non-volatili (amaro scarola) dichiarate. vodka (neutra) e vermouth (troppo variabile per prodotto) esclusi di proposito: meglio vuoto che inventato. friarielli e olio di oliva risolti via alias (cime di rapa / olio-evo-coratina), non dati nuovi.",
     "Dedup 28/10 (Fase 2): fuse 6 righe doppie (mastiha, elicriso, pepe di timut, finger lime = stesso nodo; grani del paradiso, sudachi = nodi ing-/ai_ doppi consolidati su ing-, l'importer ora li pinna via _FORZA_NODO). Separato 'mirtillo rosso europeo' (Vaccinium vitis-idaea) da 'mirtillo rosso' (V. macrocarpon): erano specie diverse sullo stesso nodo. Rietichettate varianti di forma: tè nero/verde (infuso), caffè tostato — nodi distinti, nomi ora non ambigui. La migrazione del grafo in prod (unire gli archi di ai_ su ing- e togliere i nodi doppi gia' esistenti) e' separata, da dry-run prima dell'esecuzione.",
     "Ondata 27/10 (jj, +14 buchi importanti): cardoncelli, champignon, shiitake, avocado, rucola, radicchio, agnello, anatra, polpo, calamaro, capesante, burrata, gorgonzola, paprika. Firme da letteratura GC-MS/GC-O (alcoli dei funghi, lentionina, ITC rucola, acidi ramificati agnello, bromofenoli marini, metil-chetoni gorgonzola, metossipirazina paprika). Note non-volatili (amaro radicchio, umami capesante) dichiarate. Da rivedere prima dell'import.",
     "Ondata 26/10 (ii, +4 panificazione Bucolico): mandorla tostata, pistacchio tostato, scorza d'arancia candita, cedro candito. Firme da fonte reale (UC Davis almond flavor; DHA/GC-MS pistacchio IJFP 2018; olio di scorza agrumi). Note di CANDITURA (maltolo) marcate stato=stimato, da verificare al banco. Preparata nella sessione motore-onesto 26/10.",
