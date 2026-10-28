@@ -274,11 +274,12 @@ def _candidati_forgiving(ing):
 _BANDA_MARCATO = 1.727
 _BANDA_MODERATO = 1.247
 
-# Sotto questa soglia di composti sul nodo centrato il grafo pairing NON e' affidabile:
-# con pochi composti si trovano solo 1-2 vicini per coincidenza (es. cardoncelli 3 composti
-# -> unico legame con lo sgombro). Il frontend mostra uno stato "profilo in costruzione"
-# invece di un legame solo spacciato per verdetto. Tarabile.
-_SOGLIA_PROFILO_MAGRO = 8
+# Un profilo e' "magro" quando produce TROPPI POCHI LEGAMI (non quando ha pochi composti:
+# la melanzana ha 5 composti ma 8 legami veri, e' ricca). Sotto 2 legami il grafo mostrerebbe
+# un legame solo (spesso assurdo: cardoncelli->sgombro) o nulla -> il frontend mostra invece
+# uno stato onesto "profilo in costruzione". Tarabile. Il conteggio composti resta solo
+# informativo nella card.
+_SOGLIA_LEGAMI_MAGRO = 2
 
 
 def _banda_molecolare(score):
@@ -705,7 +706,7 @@ def criteri(ingrediente):
             "relazioni": base + trad + contr,
             "conteggio": {"base_aromatica": len(base), "tradizione": len(trad), "contrasto": len(contr)},
             "composti_centro": n_comp_centro,
-            "profilo_magro": n_comp_centro < _SOGLIA_PROFILO_MAGRO,
+            "profilo_magro": len(base) < _SOGLIA_LEGAMI_MAGRO,
             "composti_centro_esempio": comp_centro_ex,
             "fonte": fonte,
         })
