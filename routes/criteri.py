@@ -274,6 +274,12 @@ def _candidati_forgiving(ing):
 _BANDA_MARCATO = 1.727
 _BANDA_MODERATO = 1.247
 
+# Sotto questa soglia di composti sul nodo centrato il grafo pairing NON e' affidabile:
+# con pochi composti si trovano solo 1-2 vicini per coincidenza (es. cardoncelli 3 composti
+# -> unico legame con lo sgombro). Il frontend mostra uno stato "profilo in costruzione"
+# invece di un legame solo spacciato per verdetto. Tarabile.
+_SOGLIA_PROFILO_MAGRO = 8
+
 
 def _banda_molecolare(score):
     """Banda descrittiva della forza del legame molecolare, su scala globale del grafo.
@@ -651,6 +657,16 @@ def criteri(ingrediente):
                                 "non_riconosciuto": True,
                                 "nota": "Ingrediente non trovato nel grafo con un profilo di composti."})
             ing_id, ing_nome = nodo
+            # composti del nodo CENTRATO: sotto soglia il grafo pairing non e' affidabile
+            # (3 composti -> 1 legame spesso assurdo). Serve a mostrare uno stato onesto.
+            cur.execute("SELECT COUNT(*) FROM edges WHERE from_id=%s AND relation='contiene_composto'", (ing_id,))
+            n_comp_centro = cur.fetchone()[0] or 0
+            cur.execute(
+                """SELECT c.name FROM edges e JOIN nodes c ON c.id=e.to_id
+                   WHERE e.from_id=%s AND e.relation='contiene_composto'
+                   ORDER BY (e.data->>'ruolo' = 'firma') DESC NULLS LAST, c.name ASC LIMIT 6""",
+                (ing_id,))
+            comp_centro_ex = [r[0] for r in cur.fetchall()]
             base = _base_aromatica(cur, ing_id, ing_nome)
             trad = _tradizione(cur, ing_id)
             contr = _contrasto(cur, ing_id)
@@ -688,6 +704,9 @@ def criteri(ingrediente):
             "regola": "Matter mostra perche' una relazione esiste, non un voto di compatibilita'.",
             "relazioni": base + trad + contr,
             "conteggio": {"base_aromatica": len(base), "tradizione": len(trad), "contrasto": len(contr)},
+            "composti_centro": n_comp_centro,
+            "profilo_magro": n_comp_centro < _SOGLIA_PROFILO_MAGRO,
+            "composti_centro_esempio": comp_centro_ex,
             "fonte": fonte,
         })
     except Exception as e:
