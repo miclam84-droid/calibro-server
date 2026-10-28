@@ -66,21 +66,21 @@
 <div class="wrap">
   <header class="hero">
     <div class="kind">Analizza</div>
-    <h1>Il laboratorio sensoriale</h1>
-    <p class="regola"><b>Ogni affermazione viene dalla rete aromatica reale del grafo. Dove non c'è un ponte molecolare, è detto: nessun legame inventato.</b></p>
-    <div class="sourceline"><span class="dot"></span><span>Dati reali dal grafo Matter.</span></div>
+    <h1 data-i18n="h1">Il laboratorio sensoriale</h1>
+    <p class="regola" data-i18n-html="regola"><b>Ogni affermazione viene dalla rete aromatica reale del grafo. Dove non c'è un ponte molecolare, è detto: nessun legame inventato.</b></p>
+    <div class="sourceline"><span class="dot"></span><span data-i18n="sourceline">Dati reali dal grafo Matter.</span></div>
   </header>
 
   <main>
     <!-- 1. PERCHÉ FUNZIONA -->
     <section class="section" id="perche">
       <div class="sechead">
-        <div style="min-width:0"><h2>Perché funziona</h2><p>I composti aromatici realmente condivisi tra due ingredienti.</p></div>
+        <div style="min-width:0"><h2 data-i18n="perche_h">Perché funziona</h2><p data-i18n="perche_p">I composti aromatici realmente condivisi tra due ingredienti.</p></div>
       </div>
       <form class="lab-form" id="f-perche" autocomplete="off">
-        <input id="p-a" type="text" placeholder="Primo ingrediente (es. fragola)" aria-label="Primo ingrediente">
-        <input id="p-b" type="text" placeholder="Secondo ingrediente (es. basilico)" aria-label="Secondo ingrediente">
-        <button type="submit">Analizza</button>
+        <input id="p-a" type="text" placeholder="Primo ingrediente (es. fragola)" data-i18n-ph="ph_primo" aria-label="Primo ingrediente" data-i18n-aria="aria_primo">
+        <input id="p-b" type="text" placeholder="Secondo ingrediente (es. basilico)" data-i18n-ph="ph_secondo" aria-label="Secondo ingrediente" data-i18n-aria="aria_secondo">
+        <button type="submit" data-i18n="btn_analizza">Analizza</button>
       </form>
       <div class="lab-out" id="o-perche"></div>
     </section>
@@ -88,11 +88,11 @@
     <!-- 2. SOSTITUISCI -->
     <section class="section" id="sostituisci">
       <div class="sechead">
-        <div style="min-width:0"><h2>Sostituisci</h2><p>Gli ingredienti più vicini nella rete aromatica, col perché.</p></div>
+        <div style="min-width:0"><h2 data-i18n="sost_h">Sostituisci</h2><p data-i18n="sost_p">Gli ingredienti più vicini nella rete aromatica, col perché.</p></div>
       </div>
       <form class="lab-form" id="f-sost" autocomplete="off">
-        <input id="s-ing" type="text" placeholder="Un ingrediente (es. limone)" aria-label="Ingrediente da sostituire">
-        <button type="submit">Trova sostituti</button>
+        <input id="s-ing" type="text" placeholder="Un ingrediente (es. limone)" data-i18n-ph="ph_sost" aria-label="Ingrediente da sostituire" data-i18n-aria="aria_sost">
+        <button type="submit" data-i18n="btn_sost">Trova sostituti</button>
       </form>
       <div class="lab-out" id="o-sost"></div>
     </section>
@@ -100,35 +100,103 @@
     <!-- 3. CONFRONTA -->
     <section class="section" id="confronta">
       <div class="sechead">
-        <div style="min-width:0"><h2>Confronta</h2><p>Profili sensoriali affiancati, più i composti condivisi e quelli distinti.</p></div>
+        <div style="min-width:0"><h2 data-i18n="conf_h">Confronta</h2><p data-i18n="conf_p">Profili sensoriali affiancati, più i composti condivisi e quelli distinti.</p></div>
       </div>
       <form class="lab-form" id="f-conf" autocomplete="off">
-        <input id="c-a" type="text" placeholder="Primo ingrediente" aria-label="Primo ingrediente">
-        <input id="c-b" type="text" placeholder="Secondo ingrediente" aria-label="Secondo ingrediente">
-        <button type="submit">Confronta</button>
+        <input id="c-a" type="text" placeholder="Primo ingrediente" data-i18n-ph="aria_primo" aria-label="Primo ingrediente" data-i18n-aria="aria_primo">
+        <input id="c-b" type="text" placeholder="Secondo ingrediente" data-i18n-ph="aria_secondo" aria-label="Secondo ingrediente" data-i18n-aria="aria_secondo">
+        <button type="submit" data-i18n="btn_conf">Confronta</button>
       </form>
       <div class="lab-out" id="o-conf"></div>
     </section>
   </main>
 
-  <footer>
+  <footer data-i18n-html="footer">
     <b>Dati reali dal grafo Matter.</b> Il <b>perché</b> di ogni accostamento nasce dai composti condivisi, dai caratterizzanti (i più rari) e dalla robustezza dell'evidenza. La robustezza è la forza dell'evidenza molecolare, non un voto di compatibilità. Dove un valore non è ancora misurato resta <b>—</b>, mai un numero inventato.
   </footer>
 </div>
 
 <script>
+/* ── i18n: dizionario statico + <title>. DEVE stare PRIMA di i18n-nuovo.js ── */
+window.I18N_TITLE = {
+  it:"Laboratorio Sensoriale · Matter Bench",
+  en:"Sensory Lab · Matter Bench",
+  es:"Laboratorio Sensorial · Matter Bench"
+};
+window.I18N_DICT = {
+  h1:          {it:"Il laboratorio sensoriale", en:"The sensory lab", es:"El laboratorio sensorial"},
+  regola:      {it:"<b>Ogni affermazione viene dalla rete aromatica reale del grafo. Dove non c'è un ponte molecolare, è detto: nessun legame inventato.</b>", en:"<b>Every statement comes from the real aromatic network of the graph. Where there is no molecular bridge, it is said so: no bond is invented.</b>", es:"<b>Cada afirmación proviene de la red aromática real del grafo. Donde no hay un puente molecular, se dice: ningún enlace inventado.</b>"},
+  sourceline:  {it:"Dati reali dal grafo Matter.", en:"Real data from the Matter graph.", es:"Datos reales del grafo Matter."},
+  perche_h:    {it:"Perché funziona", en:"Why it works", es:"Por qué funciona"},
+  perche_p:    {it:"I composti aromatici realmente condivisi tra due ingredienti.", en:"The aromatic compounds actually shared between two ingredients.", es:"Los compuestos aromáticos realmente compartidos entre dos ingredientes."},
+  sost_h:      {it:"Sostituisci", en:"Substitute", es:"Sustituir"},
+  sost_p:      {it:"Gli ingredienti più vicini nella rete aromatica, col perché.", en:"The closest ingredients in the aromatic network, with the reason why.", es:"Los ingredientes más cercanos en la red aromática, con el porqué."},
+  conf_h:      {it:"Confronta", en:"Compare", es:"Comparar"},
+  conf_p:      {it:"Profili sensoriali affiancati, più i composti condivisi e quelli distinti.", en:"Sensory profiles side by side, plus the shared compounds and the distinct ones.", es:"Perfiles sensoriales en paralelo, más los compuestos compartidos y los distintos."},
+  ph_primo:    {it:"Primo ingrediente (es. fragola)", en:"First ingredient (e.g. strawberry)", es:"Primer ingrediente (ej. fresa)"},
+  ph_secondo:  {it:"Secondo ingrediente (es. basilico)", en:"Second ingredient (e.g. basil)", es:"Segundo ingrediente (ej. albahaca)"},
+  aria_primo:  {it:"Primo ingrediente", en:"First ingredient", es:"Primer ingrediente"},
+  aria_secondo:{it:"Secondo ingrediente", en:"Second ingredient", es:"Segundo ingrediente"},
+  ph_sost:     {it:"Un ingrediente (es. limone)", en:"An ingredient (e.g. lemon)", es:"Un ingrediente (ej. limón)"},
+  aria_sost:   {it:"Ingrediente da sostituire", en:"Ingredient to substitute", es:"Ingrediente a sustituir"},
+  btn_analizza:{it:"Analizza", en:"Analyze", es:"Analizar"},
+  btn_sost:    {it:"Trova sostituti", en:"Find substitutes", es:"Buscar sustitutos"},
+  btn_conf:    {it:"Confronta", en:"Compare", es:"Comparar"},
+  footer:      {it:"<b>Dati reali dal grafo Matter.</b> Il <b>perché</b> di ogni accostamento nasce dai composti condivisi, dai caratterizzanti (i più rari) e dalla robustezza dell'evidenza. La robustezza è la forza dell'evidenza molecolare, non un voto di compatibilità. Dove un valore non è ancora misurato resta <b>—</b>, mai un numero inventato.", en:"<b>Real data from the Matter graph.</b> The <b>why</b> of each pairing comes from the shared compounds, the characterizing ones (the rarest) and the robustness of the evidence. Robustness is the strength of the molecular evidence, not a compatibility score. Where a value is not yet measured it stays <b>—</b>, never an invented number.", es:"<b>Datos reales del grafo Matter.</b> El <b>porqué</b> de cada combinación nace de los compuestos compartidos, de los caracterizantes (los más raros) y de la robustez de la evidencia. La robustez es la fuerza de la evidencia molecular, no una puntuación de compatibilidad. Donde un valor aún no está medido queda <b>—</b>, nunca un número inventado."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+<script>
+(function(){
+"use strict";
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cap = s => s ? String(s).charAt(0).toUpperCase()+String(s).slice(1) : s;
 // "—" onesto: null/undefined/'' diventano trattino, mai un valore inventato
 const dash = v => (v===null || v===undefined || v==='') ? '—' : v;
 const num = v => (typeof v==='number' && isFinite(v)) ? (Number.isInteger(v)? v : v.toFixed(2)) : '—';
 
-// mappa la banda di robustezza REALE del backend ('Alta'|'Media'|'Esplorativa'|null) alle classi pill
+/* ── etichette fisse JS (le stringhe-dato dal backend NON passano di qui) ── */
+const T = {
+  due_ingredienti: {it:"Inserisci due ingredienti.", en:"Enter two ingredients.", es:"Introduce dos ingredientes."},
+  un_ingrediente:  {it:"Inserisci un ingrediente.", en:"Enter an ingredient.", es:"Introduce un ingrediente."},
+  interrogo:       {it:"Interrogo il grafo…", en:"Querying the graph…", es:"Consultando el grafo…"},
+  irraggiungibile: {it:"Non riesco a raggiungere il grafo adesso. Riprova tra poco.", en:"I can't reach the graph right now. Try again shortly.", es:"No puedo acceder al grafo ahora. Inténtalo de nuevo en un momento."},
+  non_trovo:       {it:"Non trovo nel grafo:", en:"Not found in the graph:", es:"No lo encuentro en el grafo:"},
+  errore_grafo:    {it:"Il grafo ha risposto con un errore", en:"The graph returned an error", es:"El grafo respondió con un error"},
+  non_applicabile: {it:"Confronto non applicabile.", en:"Comparison not applicable.", es:"Comparación no aplicable."},
+  nessun_ponte:    {it:"Nessun ponte molecolare reale", en:"No real molecular bridge", es:"Ningún puente molecular real"},
+  composti_cond:   {it:"Composti condivisi", en:"Shared compounds", es:"Compuestos compartidos"},
+  indice_rarita:   {it:"Indice rarità", en:"Rarity index", es:"Índice de rareza"},
+  robustezza:      {it:"Robustezza", en:"Robustness", es:"Robustez"},
+  composti:        {it:"Composti", en:"Compounds", es:"Compuestos"},
+  caratt_titolo:   {it:"Composti caratterizzanti", en:"Characterizing compounds", es:"Compuestos caracterizantes"},
+  piu_rari:        {it:"(i più rari)", en:"(the rarest)", es:"(los más raros)"},
+  caratterizzanti: {it:"Caratterizzanti", en:"Characterizing", es:"Caracterizantes"},
+  non_profilo:     {it:"non è nel grafo con un profilo di composti.", en:"is not in the graph with a compound profile.", es:"no está en el grafo con un perfil de compuestos."},
+  nessun_sost:     {it:"Nessun sostituto con composti condivisi sufficienti.", en:"No substitute with enough shared compounds.", es:"Ningún sustituto con suficientes compuestos compartidos."},
+  sostituti_di:    {it:"Sostituti di", en:"Substitutes for", es:"Sustitutos de"},
+  trovati:         {it:"trovati", en:"found", es:"encontrados"},
+  nessun_profilo:  {it:"Nessun profilo sensoriale misurato per questa coppia: non lo inventiamo.", en:"No sensory profile measured for this pair: we don't make it up.", es:"Ningún perfil sensorial medido para esta pareja: no lo inventamos."},
+  asse:            {it:"Asse", en:"Axis", es:"Eje"},
+  profilo_sens:    {it:"Profilo sensoriale", en:"Sensory profile", es:"Perfil sensorial"},
+  solo:            {it:"Solo", en:"Only", es:"Solo"},
+  // Salva nel Quaderno (Quaderno = nome proprio, non si traduce)
+  salva:           {it:"＋ Salva nel Quaderno", en:"＋ Save to Quaderno", es:"＋ Guardar en Quaderno"},
+  salvo:           {it:"Salvo…", en:"Saving…", es:"Guardando…"},
+  salvato:         {it:"Salvato nel Quaderno ✓", en:"Saved to Quaderno ✓", es:"Guardado en Quaderno ✓"},
+  non_salvato:     {it:"Non salvato — ", en:"Not saved — ", es:"No guardado — "},
+  riprova:         {it:" · riprova", en:" · try again", es:" · reintentar"},
+  rete_assente:    {it:"rete assente", en:"network unavailable", es:"red no disponible"},
+  errore:          {it:"errore ", en:"error ", es:"error "}
+};
+
+// banda di robustezza REALE del backend ('Alta'|'Media'|'Esplorativa'|null) -> classe pill.
+// La CLASSE resta sul valore grezzo; l'ETICHETTA passa da _V (provenienza/stato).
 function pill(rob){
   if(!rob) return '';
   const r = String(rob).toLowerCase();
   const cls = r==='alta' ? 'alta' : r==='media' ? 'media' : 'espl';
-  return `<span class="pill ${cls}">${esc(rob)}</span>`;
+  return `<span class="pill ${cls}">${esc(_V(rob))}</span>`;
 }
 function chips(arr){
   const a = (arr||[]).filter(Boolean);
@@ -142,7 +210,7 @@ function setOut(el, msg, err){ el.innerHTML = `<div class="state${err?' err':''}
    il risultato realmente mostrato dal grafo: niente inventato, feedback non bloccante. */
 function _devId(){ try{ return localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon'; }catch(e){ return 'anon'; } }
 async function salvaQuaderno(record, btn){
-  if(btn){ btn.disabled=true; btn.classList.remove('ok','ko'); btn.textContent='Salvo…'; }
+  if(btn){ btn.disabled=true; btn.classList.remove('ok','ko'); btn.textContent=_L(T.salvo); }
   try{
     const r = await fetch('/v1/quaderno2/salva', {
       method:'POST',
@@ -150,19 +218,19 @@ async function salvaQuaderno(record, btn){
       body: JSON.stringify(record)
     });
     let d = {}; try{ d = await r.json(); }catch(e){}
-    if(r.ok && d && d.ok){ if(btn){ btn.textContent='Salvato nel Quaderno ✓'; btn.classList.add('ok'); } return true; }
-    const msg = (d && d.errore) ? String(d.errore) : ('errore '+r.status);
-    if(btn){ btn.disabled=false; btn.classList.add('ko'); btn.textContent='Non salvato — '+msg+' · riprova'; }
+    if(r.ok && d && d.ok){ if(btn){ btn.textContent=_L(T.salvato); btn.classList.add('ok'); } return true; }
+    const msg = (d && d.errore) ? String(d.errore) : (_L(T.errore)+r.status);
+    if(btn){ btn.disabled=false; btn.classList.add('ko'); btn.textContent=_L(T.non_salvato)+msg+_L(T.riprova); }
     return false;
   }catch(e){
-    if(btn){ btn.disabled=false; btn.classList.add('ko'); btn.textContent='Non salvato — rete assente · riprova'; }
+    if(btn){ btn.disabled=false; btn.classList.add('ko'); btn.textContent=_L(T.non_salvato)+_L(T.rete_assente)+_L(T.riprova); }
     return false;
   }
 }
 // Aggiunge il pulsante "Salva nel Quaderno" in coda a un risultato già reso, col record catturato in closure.
 function appendSalva(el, record){
   const b = document.createElement('button');
-  b.type='button'; b.className='btn-salva'; b.textContent='＋ Salva nel Quaderno';
+  b.type='button'; b.className='btn-salva'; b.textContent=_L(T.salva);
   b.addEventListener('click', ()=>salvaQuaderno(record, b));
   el.appendChild(b);
 }
@@ -174,187 +242,224 @@ async function chiama(url){
   return {ok: res.ok, status: res.status, d};
 }
 
+/* Ultimo esito per strumento: serve a ridisegnare al cambio lingua senza rifare
+   la fetch. Conserva SOLO i dati reali già ottenuti dal grafo. */
+const LAST = {perche:null, sost:null, conf:null};
+
 // ── 1. PERCHÉ FUNZIONA ───────────────────────────────────────────────
 async function perche(a, b){
   const el = document.getElementById('o-perche');
   a=(a||'').trim(); b=(b||'').trim();
-  if(!a || !b){ setOut(el, 'Inserisci due ingredienti.', false); return; }
-  setOut(el, 'Interrogo il grafo…', false);
+  if(!a || !b){ LAST.perche=null; setOut(el, _L(T.due_ingredienti), false); return; }
+  setOut(el, _L(T.interrogo), false);
   try{
     const {ok, status, d} = await chiama('/v1/laboratorio/perche/'+encodeURIComponent(a)+'/'+encodeURIComponent(b));
-    if(d.non_riconosciuto){
-      setOut(el, `Non trovo nel grafo: <b>${esc((d.non_riconosciuto||[]).map(cap).join(', '))}</b>. ${esc(d.nota||'')}`, false);
-      return;
-    }
-    if(!ok && status!==400){ setOut(el, `Il grafo ha risposto con un errore (${status}). ${esc(d.nota||'')}`, true); return; }
-    // stesso nodo (400) o altra nota senza esito
-    if(d.condividono === undefined){ setOut(el, esc(d.nota || 'Confronto non applicabile.'), false); return; }
+    LAST.perche = {a, b, ok, status, d};
+    renderPerche();
+  }catch(e){ LAST.perche = {neterr:true}; renderPerche(); }
+}
+function renderPerche(){
+  const el = document.getElementById('o-perche');
+  const S = LAST.perche; if(!S) return;
+  if(S.neterr){ setOut(el, _L(T.irraggiungibile), true); return; }
+  const {a, b, ok, status, d} = S;
+  if(d.non_riconosciuto){
+    setOut(el, `${_L(T.non_trovo)} <b>${esc((d.non_riconosciuto||[]).map(cap).join(', '))}</b>. ${esc(d.nota||'')}`, false);
+    return;
+  }
+  if(!ok && status!==400){ setOut(el, `${_L(T.errore_grafo)} (${status}). ${esc(d.nota||'')}`, true); return; }
+  // stesso nodo (400) o altra nota senza esito
+  if(d.condividono === undefined){ setOut(el, d.nota? esc(d.nota) : _L(T.non_applicabile), false); return; }
 
-    const na = cap(d.a||a), nb = cap(d.b||b);
-    if(d.condividono === false){
-      el.innerHTML = `
-        <div class="card lite">
-          <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b></div>
-          <div class="prov trad"><span class="sq"></span>Nessun ponte molecolare reale</div>
-          <p class="perche">${esc(d.perche||'')}</p>
-          ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
-        </div>`;
-      appendSalva(el, {
-        porta:'laboratorio', funzione:'laboratorio_perche', tipo:'calcolo',
-        titolo:'Perché: '+na+' · '+nb,
-        stato_input:{a:d.a||a, b:d.b||b},
-        stato_output:{condividono:false, perche:d.perche||null, nota:d.nota||null},
-        provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/perche'}
-      });
-      return;
-    }
-    const prof = d.profilo || {};
+  const na = cap(d.a||a), nb = cap(d.b||b);
+  if(d.condividono === false){
     el.innerHTML = `
-      <div class="card">
-        <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b>${pill(d.robustezza)}</div>
-        <p class="point">${esc(d.perche||'')}</p>
-        <div class="lab-metrics">
-          <div class="metric"><span class="m-k">Composti condivisi</span><span class="m-v">${dash(d.composti_condivisi)}</span></div>
-          <div class="metric"><span class="m-k">Indice rarità</span><span class="m-v">${num(d.indice_rarita)}</span></div>
-          <div class="metric"><span class="m-k">Robustezza</span><span class="m-v">${esc(dash(d.robustezza))}</span></div>
-          <div class="metric"><span class="m-k">Composti ${esc(na)}</span><span class="m-v">${dash(prof.composti_a)}</span></div>
-          <div class="metric"><span class="m-k">Composti ${esc(nb)}</span><span class="m-v">${dash(prof.composti_b)}</span></div>
-        </div>
-        <div class="sub-h">Composti caratterizzanti <span class="n">(i più rari)</span></div>
-        ${chips(d.composti_caratterizzanti)}
+      <div class="card lite">
+        <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b></div>
+        <div class="prov trad"><span class="sq"></span>${_L(T.nessun_ponte)}</div>
+        <p class="perche">${esc(d.perche||'')}</p>
         ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
       </div>`;
-    // Salva l'abbinamento mostrato: solo i campi reali tornati dal grafo.
     appendSalva(el, {
       porta:'laboratorio', funzione:'laboratorio_perche', tipo:'calcolo',
       titolo:'Perché: '+na+' · '+nb,
       stato_input:{a:d.a||a, b:d.b||b},
-      stato_output:{
-        condividono:true,
-        composti_condivisi:(d.composti_condivisi!=null?d.composti_condivisi:null),
-        indice_rarita:(d.indice_rarita!=null?d.indice_rarita:null),
-        robustezza:d.robustezza||null,
-        composti_caratterizzanti:Array.isArray(d.composti_caratterizzanti)?d.composti_caratterizzanti:[],
-        profilo:{composti_a:(prof.composti_a!=null?prof.composti_a:null), composti_b:(prof.composti_b!=null?prof.composti_b:null)},
-        perche:d.perche||null
-      },
+      stato_output:{condividono:false, perche:d.perche||null, nota:d.nota||null},
       provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/perche'}
     });
-  }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
+    return;
+  }
+  const prof = d.profilo || {};
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b>${pill(d.robustezza)}</div>
+      <p class="point">${esc(d.perche||'')}</p>
+      <div class="lab-metrics">
+        <div class="metric"><span class="m-k">${_L(T.composti_cond)}</span><span class="m-v">${dash(d.composti_condivisi)}</span></div>
+        <div class="metric"><span class="m-k">${_L(T.indice_rarita)}</span><span class="m-v">${num(d.indice_rarita)}</span></div>
+        <div class="metric"><span class="m-k">${_L(T.robustezza)}</span><span class="m-v">${esc(dash(_V(d.robustezza)))}</span></div>
+        <div class="metric"><span class="m-k">${_L(T.composti)} ${esc(na)}</span><span class="m-v">${dash(prof.composti_a)}</span></div>
+        <div class="metric"><span class="m-k">${_L(T.composti)} ${esc(nb)}</span><span class="m-v">${dash(prof.composti_b)}</span></div>
+      </div>
+      <div class="sub-h">${_L(T.caratt_titolo)} <span class="n">${_L(T.piu_rari)}</span></div>
+      ${chips(d.composti_caratterizzanti)}
+      ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
+    </div>`;
+  // Salva l'abbinamento mostrato: solo i campi reali tornati dal grafo.
+  appendSalva(el, {
+    porta:'laboratorio', funzione:'laboratorio_perche', tipo:'calcolo',
+    titolo:'Perché: '+na+' · '+nb,
+    stato_input:{a:d.a||a, b:d.b||b},
+    stato_output:{
+      condividono:true,
+      composti_condivisi:(d.composti_condivisi!=null?d.composti_condivisi:null),
+      indice_rarita:(d.indice_rarita!=null?d.indice_rarita:null),
+      robustezza:d.robustezza||null,
+      composti_caratterizzanti:Array.isArray(d.composti_caratterizzanti)?d.composti_caratterizzanti:[],
+      profilo:{composti_a:(prof.composti_a!=null?prof.composti_a:null), composti_b:(prof.composti_b!=null?prof.composti_b:null)},
+      perche:d.perche||null
+    },
+    provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/perche'}
+  });
 }
 
 // ── 2. SOSTITUISCI ───────────────────────────────────────────────────
 async function sostituisci(ing){
   const el = document.getElementById('o-sost');
   ing=(ing||'').trim();
-  if(!ing){ setOut(el, 'Inserisci un ingrediente.', false); return; }
-  setOut(el, 'Interrogo il grafo…', false);
+  if(!ing){ LAST.sost=null; setOut(el, _L(T.un_ingrediente), false); return; }
+  setOut(el, _L(T.interrogo), false);
   try{
     const {ok, status, d} = await chiama('/v1/laboratorio/sostituisci/'+encodeURIComponent(ing));
-    if(d.non_riconosciuto){ setOut(el, `<b>${esc(cap(ing))}</b> non è nel grafo con un profilo di composti. ${esc(d.nota||'')}`, false); return; }
-    if(!ok){ setOut(el, `Il grafo ha risposto con un errore (${status}). ${esc(d.nota||'')}`, true); return; }
-    const sost = d.sostituti || [];
-    const nome = cap(d.ingrediente || ing);
-    if(!sost.length){ setOut(el, `${esc(d.nota || 'Nessun sostituto con composti condivisi sufficienti.')}`, false); return; }
-    const cards = sost.map(v=>`
-      <article class="card">
-        <div class="card-top"><b>${esc(cap(v.ingrediente||''))}</b>${pill(v.robustezza)}</div>
-        <p class="point">${esc(v.perche||'')}</p>
-        <div class="lab-metrics">
-          <div class="metric"><span class="m-k">Composti condivisi</span><span class="m-v">${dash(v.composti_condivisi)}</span></div>
-          <div class="metric"><span class="m-k">Indice rarità</span><span class="m-v">${num(v.indice_rarita)}</span></div>
-        </div>
-        <div class="sub-h">Caratterizzanti</div>
-        ${chips(v.composti_caratterizzanti)}
-      </article>`).join('');
-    el.innerHTML = `
-      <p class="gloss">Sostituti di <b>${esc(nome)}</b> · ${dash(d.conteggio)} trovati</p>
-      <div class="list">${cards}</div>
-      ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}`;
-    // Salva la lista di sostituti mostrata: solo i campi reali di ciascuno.
-    appendSalva(el, {
-      porta:'laboratorio', funzione:'laboratorio_sostituisci', tipo:'calcolo',
-      titolo:'Sostituti di '+nome,
-      stato_input:{ingrediente:d.ingrediente||ing},
-      stato_output:{
-        ingrediente:d.ingrediente||ing,
-        conteggio:(d.conteggio!=null?d.conteggio:sost.length),
-        sostituti:sost.map(v=>({
-          ingrediente:v.ingrediente||null,
-          composti_condivisi:(v.composti_condivisi!=null?v.composti_condivisi:null),
-          indice_rarita:(v.indice_rarita!=null?v.indice_rarita:null),
-          robustezza:v.robustezza||null,
-          composti_caratterizzanti:Array.isArray(v.composti_caratterizzanti)?v.composti_caratterizzanti:[],
-          perche:v.perche||null
-        }))
-      },
-      provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/sostituisci'}
-    });
-  }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
+    LAST.sost = {ing, ok, status, d};
+    renderSost();
+  }catch(e){ LAST.sost = {neterr:true}; renderSost(); }
+}
+function renderSost(){
+  const el = document.getElementById('o-sost');
+  const S = LAST.sost; if(!S) return;
+  if(S.neterr){ setOut(el, _L(T.irraggiungibile), true); return; }
+  const {ing, ok, status, d} = S;
+  if(d.non_riconosciuto){ setOut(el, `<b>${esc(cap(ing))}</b> ${_L(T.non_profilo)} ${esc(d.nota||'')}`, false); return; }
+  if(!ok){ setOut(el, `${_L(T.errore_grafo)} (${status}). ${esc(d.nota||'')}`, true); return; }
+  const sost = d.sostituti || [];
+  const nome = cap(d.ingrediente || ing);
+  if(!sost.length){ setOut(el, d.nota? esc(d.nota) : _L(T.nessun_sost), false); return; }
+  const cards = sost.map(v=>`
+    <article class="card">
+      <div class="card-top"><b>${esc(cap(v.ingrediente||''))}</b>${pill(v.robustezza)}</div>
+      <p class="point">${esc(v.perche||'')}</p>
+      <div class="lab-metrics">
+        <div class="metric"><span class="m-k">${_L(T.composti_cond)}</span><span class="m-v">${dash(v.composti_condivisi)}</span></div>
+        <div class="metric"><span class="m-k">${_L(T.indice_rarita)}</span><span class="m-v">${num(v.indice_rarita)}</span></div>
+      </div>
+      <div class="sub-h">${_L(T.caratterizzanti)}</div>
+      ${chips(v.composti_caratterizzanti)}
+    </article>`).join('');
+  el.innerHTML = `
+    <p class="gloss">${_L(T.sostituti_di)} <b>${esc(nome)}</b> · ${dash(d.conteggio)} ${_L(T.trovati)}</p>
+    <div class="list">${cards}</div>
+    ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}`;
+  // Salva la lista di sostituti mostrata: solo i campi reali di ciascuno.
+  appendSalva(el, {
+    porta:'laboratorio', funzione:'laboratorio_sostituisci', tipo:'calcolo',
+    titolo:'Sostituti di '+nome,
+    stato_input:{ingrediente:d.ingrediente||ing},
+    stato_output:{
+      ingrediente:d.ingrediente||ing,
+      conteggio:(d.conteggio!=null?d.conteggio:sost.length),
+      sostituti:sost.map(v=>({
+        ingrediente:v.ingrediente||null,
+        composti_condivisi:(v.composti_condivisi!=null?v.composti_condivisi:null),
+        indice_rarita:(v.indice_rarita!=null?v.indice_rarita:null),
+        robustezza:v.robustezza||null,
+        composti_caratterizzanti:Array.isArray(v.composti_caratterizzanti)?v.composti_caratterizzanti:[],
+        perche:v.perche||null
+      }))
+    },
+    provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/sostituisci'}
+  });
 }
 
 // ── 3. CONFRONTA ─────────────────────────────────────────────────────
 async function confronta(a, b){
   const el = document.getElementById('o-conf');
   a=(a||'').trim(); b=(b||'').trim();
-  if(!a || !b){ setOut(el, 'Inserisci due ingredienti.', false); return; }
-  setOut(el, 'Interrogo il grafo…', false);
+  if(!a || !b){ LAST.conf=null; setOut(el, _L(T.due_ingredienti), false); return; }
+  setOut(el, _L(T.interrogo), false);
   try{
     const {ok, status, d} = await chiama('/v1/laboratorio/confronta/'+encodeURIComponent(a)+'/'+encodeURIComponent(b));
-    if(d.non_riconosciuto){ setOut(el, `Non trovo nel grafo: <b>${esc((d.non_riconosciuto||[]).map(cap).join(', '))}</b>. ${esc(d.nota||'')}`, false); return; }
-    if(!ok){ setOut(el, `Il grafo ha risposto con un errore (${status}). ${esc(d.nota||'')}`, true); return; }
-    const na = cap(d.a||a), nb = cap(d.b||b);
-    const assi = d.profilo_sensoriale || [];
-    let tab;
-    if(d.assi_assenti || !assi.length){
-      tab = `<p class="gloss">Nessun profilo sensoriale misurato per questa coppia: non lo inventiamo.</p>`;
-    } else {
-      const righe = assi.map(r=>`
-        <tr><td>${esc(r.asse||'')}</td><td>${dash(r.a)}</td><td>${dash(r.b)}</td><td>${('delta' in r)? dash(r.delta) : '—'}</td></tr>`).join('');
-      tab = `<table class="cmp">
-        <thead><tr><th>Asse</th><th>${esc(na)}</th><th>${esc(nb)}</th><th>Δ</th></tr></thead>
-        <tbody>${righe}</tbody></table>`;
-    }
-    const c = d.composti || {};
-    el.innerHTML = `
-      <div class="card">
-        <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b></div>
-        <div class="sub-h">Profilo sensoriale <span class="n">(0–10, Δ = ${esc(na)} − ${esc(nb)})</span></div>
-        ${tab}
-        <div class="sub-h">Composti condivisi <span class="n">(${dash(c.condivisi)})</span></div>
-        ${chips(c.condivisi_caratterizzanti)}
-        <div class="sub-h">Solo ${esc(na)} <span class="n">(${dash(c.solo_a)})</span></div>
-        ${chips(c.solo_a_caratterizzanti)}
-        <div class="sub-h">Solo ${esc(nb)} <span class="n">(${dash(c.solo_b)})</span></div>
-        ${chips(c.solo_b_caratterizzanti)}
-        ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
-      </div>`;
-    // Salva il confronto mostrato: profilo sensoriale (se c'è) + composti reali.
-    appendSalva(el, {
-      porta:'laboratorio', funzione:'laboratorio_confronta', tipo:'calcolo',
-      titolo:'Confronto: '+na+' · '+nb,
-      stato_input:{a:d.a||a, b:d.b||b},
-      stato_output:{
-        a:d.a||a, b:d.b||b,
-        profilo_sensoriale:(d.assi_assenti||!assi.length)?[]:assi,
-        assi_assenti:!!d.assi_assenti,
-        composti:{
-          condivisi:(c.condivisi!=null?c.condivisi:null),
-          condivisi_caratterizzanti:Array.isArray(c.condivisi_caratterizzanti)?c.condivisi_caratterizzanti:[],
-          solo_a:(c.solo_a!=null?c.solo_a:null),
-          solo_a_caratterizzanti:Array.isArray(c.solo_a_caratterizzanti)?c.solo_a_caratterizzanti:[],
-          solo_b:(c.solo_b!=null?c.solo_b:null),
-          solo_b_caratterizzanti:Array.isArray(c.solo_b_caratterizzanti)?c.solo_b_caratterizzanti:[]
-        }
-      },
-      provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/confronta'}
-    });
-  }catch(e){ setOut(el, 'Non riesco a raggiungere il grafo adesso. Riprova tra poco.', true); }
+    LAST.conf = {a, b, ok, status, d};
+    renderConf();
+  }catch(e){ LAST.conf = {neterr:true}; renderConf(); }
+}
+function renderConf(){
+  const el = document.getElementById('o-conf');
+  const S = LAST.conf; if(!S) return;
+  if(S.neterr){ setOut(el, _L(T.irraggiungibile), true); return; }
+  const {a, b, ok, status, d} = S;
+  if(d.non_riconosciuto){ setOut(el, `${_L(T.non_trovo)} <b>${esc((d.non_riconosciuto||[]).map(cap).join(', '))}</b>. ${esc(d.nota||'')}`, false); return; }
+  if(!ok){ setOut(el, `${_L(T.errore_grafo)} (${status}). ${esc(d.nota||'')}`, true); return; }
+  const na = cap(d.a||a), nb = cap(d.b||b);
+  const assi = d.profilo_sensoriale || [];
+  let tab;
+  if(d.assi_assenti || !assi.length){
+    tab = `<p class="gloss">${_L(T.nessun_profilo)}</p>`;
+  } else {
+    const righe = assi.map(r=>`
+      <tr><td>${esc(r.asse||'')}</td><td>${dash(r.a)}</td><td>${dash(r.b)}</td><td>${('delta' in r)? dash(r.delta) : '—'}</td></tr>`).join('');
+    tab = `<table class="cmp">
+      <thead><tr><th>${_L(T.asse)}</th><th>${esc(na)}</th><th>${esc(nb)}</th><th>Δ</th></tr></thead>
+      <tbody>${righe}</tbody></table>`;
+  }
+  const c = d.composti || {};
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-top"><b>${esc(na)} · ${esc(nb)}</b></div>
+      <div class="sub-h">${_L(T.profilo_sens)} <span class="n">(0–10, Δ = ${esc(na)} − ${esc(nb)})</span></div>
+      ${tab}
+      <div class="sub-h">${_L(T.composti_cond)} <span class="n">(${dash(c.condivisi)})</span></div>
+      ${chips(c.condivisi_caratterizzanti)}
+      <div class="sub-h">${_L(T.solo)} ${esc(na)} <span class="n">(${dash(c.solo_a)})</span></div>
+      ${chips(c.solo_a_caratterizzanti)}
+      <div class="sub-h">${_L(T.solo)} ${esc(nb)} <span class="n">(${dash(c.solo_b)})</span></div>
+      ${chips(c.solo_b_caratterizzanti)}
+      ${d.nota?`<p class="gloss">${esc(d.nota)}</p>`:''}
+    </div>`;
+  // Salva il confronto mostrato: profilo sensoriale (se c'è) + composti reali.
+  appendSalva(el, {
+    porta:'laboratorio', funzione:'laboratorio_confronta', tipo:'calcolo',
+    titolo:'Confronto: '+na+' · '+nb,
+    stato_input:{a:d.a||a, b:d.b||b},
+    stato_output:{
+      a:d.a||a, b:d.b||b,
+      profilo_sensoriale:(d.assi_assenti||!assi.length)?[]:assi,
+      assi_assenti:!!d.assi_assenti,
+      composti:{
+        condivisi:(c.condivisi!=null?c.condivisi:null),
+        condivisi_caratterizzanti:Array.isArray(c.condivisi_caratterizzanti)?c.condivisi_caratterizzanti:[],
+        solo_a:(c.solo_a!=null?c.solo_a:null),
+        solo_a_caratterizzanti:Array.isArray(c.solo_a_caratterizzanti)?c.solo_a_caratterizzanti:[],
+        solo_b:(c.solo_b!=null?c.solo_b:null),
+        solo_b_caratterizzanti:Array.isArray(c.solo_b_caratterizzanti)?c.solo_b_caratterizzanti:[]
+      }
+    },
+    provenienza:{fonte:'grafo Matter', endpoint:'/v1/laboratorio/confronta'}
+  });
 }
 
 document.getElementById('f-perche').addEventListener('submit', e=>{ e.preventDefault(); perche(document.getElementById('p-a').value, document.getElementById('p-b').value); });
 document.getElementById('f-sost').addEventListener('submit', e=>{ e.preventDefault(); sostituisci(document.getElementById('s-ing').value); });
 document.getElementById('f-conf').addEventListener('submit', e=>{ e.preventDefault(); confronta(document.getElementById('c-a').value, document.getElementById('c-b').value); });
+
+// Al cambio lingua: ridisegna l'ultimo risultato di ogni strumento dai dati già
+// in memoria (nessuna nuova fetch). Le etichette statiche le fa il motore i18n.
+window.onI18nApply = function(){
+  if(LAST.perche) renderPerche();
+  if(LAST.sost)   renderSost();
+  if(LAST.conf)   renderConf();
+};
+})();
 </script>
 </body>
 </html>

@@ -66,17 +66,17 @@
 
 <main class="wrap">
   <header style="margin-top:22px">
-    <span class="eyebrow">La tua memoria del mestiere</span>
+    <span class="eyebrow" data-i18n="eyebrow">La tua memoria del mestiere</span>
     <h1 style="margin-top:4px" id="h-titolo">Quaderno</h1>
-    <p class="lede" id="h-regola"><b>Un solo archivio.</b> Ogni cosa che salvi — un appunto, una misura, una ricetta — resta qui, riapribile e tua.</p>
-    <div class="srcline"><span class="dot"></span><span id="src">Archivio unico, sempre aggiornato.</span></div>
+    <p class="lede" id="h-regola" data-i18n-html="lede"><b>Un solo archivio.</b> Ogni cosa che salvi — un appunto, una misura, una ricetta — resta qui, riapribile e tua.</p>
+    <div class="srcline"><span class="dot"></span><span id="src" data-i18n="src">Archivio unico, sempre aggiornato.</span></div>
   </header>
 
   <!-- VISTA: LISTA -->
   <section id="vista-lista">
     <div class="qd-actions">
-      <button class="qd-btn primary" id="btn-nuovo" type="button">+ Nuovo appunto</button>
-      <button class="qd-btn ghost" id="btn-ricarica" type="button">Ricarica</button>
+      <button class="qd-btn primary" id="btn-nuovo" type="button" data-i18n="btn_nuovo">+ Nuovo appunto</button>
+      <button class="qd-btn ghost" id="btn-ricarica" type="button" data-i18n="btn_ricarica">Ricarica</button>
     </div>
     <div class="qd-list" id="lista"></div>
     <div class="state" id="lista-state" hidden></div>
@@ -86,39 +86,62 @@
   <section id="vista-editor" hidden>
     <form class="banco-form" id="form-editor" autocomplete="off">
       <div class="field">
-        <label for="f-titolo">Titolo</label>
-        <div class="inp"><input id="f-titolo" type="text" maxlength="200" placeholder="Es. Idea per il sour di casa" required></div>
+        <label for="f-titolo" data-i18n="lbl_titolo">Titolo</label>
+        <div class="inp"><input id="f-titolo" type="text" maxlength="200" data-i18n-ph="ph_titolo" placeholder="Es. Idea per il sour di casa" required></div>
       </div>
       <div class="field">
-        <label for="f-testo">Appunto</label>
-        <div class="inp"><textarea id="f-testo" placeholder="Scrivi qui. Niente di finto: quello che serve a te."></textarea></div>
+        <label for="f-testo" data-i18n="lbl_appunto">Appunto</label>
+        <div class="inp"><textarea id="f-testo" data-i18n-ph="ph_testo" placeholder="Scrivi qui. Niente di finto: quello che serve a te."></textarea></div>
       </div>
       <div class="field">
-        <label for="f-note">Nota di laboratorio <span class="muted" style="font-weight:400">(facoltativa — l'evidenza al banco)</span></label>
-        <div class="inp"><input id="f-note" type="text" maxlength="500" placeholder="Es. provato il 18/10, acidità troppo alta"></div>
+        <label for="f-note" data-i18n-html="lbl_note">Nota di laboratorio <span class="muted" style="font-weight:400">(facoltativa — l'evidenza al banco)</span></label>
+        <div class="inp"><input id="f-note" type="text" maxlength="500" data-i18n-ph="ph_note" placeholder="Es. provato il 18/10, acidità troppo alta"></div>
       </div>
-      <button class="btn btn--block" type="submit" id="btn-salva">Salva nel Quaderno</button>
-      <button class="qd-btn ghost" type="button" id="btn-annulla-editor" style="align-self:flex-start">← Annulla</button>
+      <button class="btn btn--block" type="submit" id="btn-salva" data-i18n="btn_salva">Salva nel Quaderno</button>
+      <button class="qd-btn ghost" type="button" id="btn-annulla-editor" style="align-self:flex-start" data-i18n="btn_annulla">← Annulla</button>
     </form>
     <div class="state" id="editor-state" hidden></div>
   </section>
 
   <!-- VISTA: DETTAGLIO -->
   <section id="vista-dettaglio" hidden>
-    <button class="qd-btn ghost" id="btn-indietro" type="button" style="margin-top:18px">← Tutti gli appunti</button>
+    <button class="qd-btn ghost" id="btn-indietro" type="button" style="margin-top:18px" data-i18n="btn_indietro">← Tutti gli appunti</button>
     <div class="res-card" id="dettaglio" style="margin-top:16px"></div>
     <div class="qd-actions">
-      <button class="qd-btn" id="btn-modifica" type="button">Modifica</button>
-      <button class="qd-btn danger" id="btn-archivia" type="button">Archivia</button>
+      <button class="qd-btn" id="btn-modifica" type="button" data-i18n="btn_modifica">Modifica</button>
+      <button class="qd-btn danger" id="btn-archivia" type="button" data-i18n="btn_archivia">Archivia</button>
     </div>
     <div class="state" id="dettaglio-state" hidden></div>
   </section>
 
-  <footer>
+  <footer data-i18n-html="footer">
     <b>Archivio unico del Quaderno.</b> L'identità è la tua (account o dispositivo): i tuoi appunti non si incrociano con quelli di nessun altro. Niente dati finti — se non c'è ancora nulla, lo dice.
   </footer>
 </main>
 
+<script>
+window.I18N_TITLE = {it:"Quaderno — Matter Bench", en:"Quaderno — Matter Bench", es:"Quaderno — Matter Bench"};
+window.I18N_DICT = {
+  eyebrow:      {it:"La tua memoria del mestiere", en:"Your memory of the craft", es:"Tu memoria del oficio"},
+  lede:         {it:"<b>Un solo archivio.</b> Ogni cosa che salvi — un appunto, una misura, una ricetta — resta qui, riapribile e tua.", en:"<b>One single archive.</b> Everything you save — a note, a measurement, a recipe — stays here, reopenable and yours.", es:"<b>Un solo archivo.</b> Todo lo que guardas — una nota, una medida, una receta — se queda aquí, reabrible y tuyo."},
+  src:          {it:"Archivio unico, sempre aggiornato.", en:"A single archive, always up to date.", es:"Un archivo único, siempre actualizado."},
+  btn_nuovo:    {it:"+ Nuovo appunto", en:"+ New note", es:"+ Nueva nota"},
+  btn_ricarica: {it:"Ricarica", en:"Reload", es:"Recargar"},
+  lbl_titolo:   {it:"Titolo", en:"Title", es:"Título"},
+  ph_titolo:    {it:"Es. Idea per il sour di casa", en:"E.g. Idea for the house sour", es:"Ej. Idea para el sour de la casa"},
+  lbl_appunto:  {it:"Appunto", en:"Note", es:"Nota"},
+  ph_testo:     {it:"Scrivi qui. Niente di finto: quello che serve a te.", en:"Write here. Nothing fake: what you actually need.", es:"Escribe aquí. Nada falso: lo que de verdad te sirve."},
+  lbl_note:     {it:'Nota di laboratorio <span class="muted" style="font-weight:400">(facoltativa — l\'evidenza al banco)</span>', en:'Lab note <span class="muted" style="font-weight:400">(optional — the evidence at the bench)</span>', es:'Nota de laboratorio <span class="muted" style="font-weight:400">(opcional — la evidencia en la mesa)</span>'},
+  ph_note:      {it:"Es. provato il 18/10, acidità troppo alta", en:"E.g. tried on 18/10, acidity too high", es:"Ej. probado el 18/10, acidez demasiado alta"},
+  btn_salva:    {it:"Salva nel Quaderno", en:"Save to the Quaderno", es:"Guardar en el Quaderno"},
+  btn_annulla:  {it:"← Annulla", en:"← Cancel", es:"← Cancelar"},
+  btn_indietro: {it:"← Tutti gli appunti", en:"← All notes", es:"← Todas las notas"},
+  btn_modifica: {it:"Modifica", en:"Edit", es:"Editar"},
+  btn_archivia: {it:"Archivia", en:"Archive", es:"Archivar"},
+  footer:       {it:"<b>Archivio unico del Quaderno.</b> L'identità è la tua (account o dispositivo): i tuoi appunti non si incrociano con quelli di nessun altro. Niente dati finti — se non c'è ancora nulla, lo dice.", en:"<b>The Quaderno's single archive.</b> The identity is yours (account or device): your notes never cross with anyone else's. No fake data — if there's nothing yet, it says so.", es:"<b>Archivo único del Quaderno.</b> La identidad es la tuya (cuenta o dispositivo): tus notas no se cruzan con las de nadie más. Nada de datos falsos — si todavía no hay nada, lo dice."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
 <script>
 // ─── identità: solo X-Device-Id. Il backend decide user vs device. ───
 function _uuid(){
@@ -139,24 +162,41 @@ function _h(extra){
 }
 
 var esc = function(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+
+// etichette trilingui (le CHIAVI/codici interni restano invariati; traduco solo il testo mostrato)
 var _ETICH_FUNZIONE = {
-  'appunto':'Appunto',
-  'scheda_ingrediente':'Scheda ingrediente',
-  'laboratorio_perche':'Perché funziona',
-  'laboratorio_sostituisci':'Sostituzioni',
-  'laboratorio_confronta':'Confronto',
-  'composer':'Composizione'
+  'appunto':             {it:"Appunto", en:"Note", es:"Nota"},
+  'scheda_ingrediente':  {it:"Scheda ingrediente", en:"Ingredient card", es:"Ficha de ingrediente"},
+  'laboratorio_perche':  {it:"Perché funziona", en:"Why it works", es:"Por qué funciona"},
+  'laboratorio_sostituisci': {it:"Sostituzioni", en:"Substitutions", es:"Sustituciones"},
+  'laboratorio_confronta':   {it:"Confronto", en:"Comparison", es:"Comparación"},
+  'composer':            {it:"Composizione", en:"Composition", es:"Composición"}
 };
-var _ETICH_TIPO = { 'calcolo':'Calcolo', 'grafo':'Grafo', 'nota':'Nota' };
-function etichFunzione(c){ if(!c) return ''; return _ETICH_FUNZIONE[c] || (String(c).charAt(0).toUpperCase()+String(c).slice(1).replace(/_/g,' ')); }
-function etichTipo(c){ if(!c) return ''; return _ETICH_TIPO[c] || (String(c).charAt(0).toUpperCase()+String(c).slice(1)); }
+var _ETICH_TIPO = {
+  'calcolo': {it:"Calcolo", en:"Calculation", es:"Cálculo"},
+  'grafo':   {it:"Grafo", en:"Graph", es:"Grafo"},
+  'nota':    {it:"Nota", en:"Note", es:"Nota"}
+};
+function etichFunzione(c){ if(!c) return ''; return _ETICH_FUNZIONE[c] ? _L(_ETICH_FUNZIONE[c]) : (String(c).charAt(0).toUpperCase()+String(c).slice(1).replace(/_/g,' ')); }
+function etichTipo(c){ if(!c) return ''; return _ETICH_TIPO[c] ? _L(_ETICH_TIPO[c]) : (String(c).charAt(0).toUpperCase()+String(c).slice(1)); }
+
+// etichette JS riusate anche da onI18nApply
+var L_SALVA_NEW = {it:"Salva nel Quaderno", en:"Save to the Quaderno", es:"Guardar en el Quaderno"};
+var L_SALVA_MOD = {it:"Salva le modifiche", en:"Save changes", es:"Guardar los cambios"};
+var L_MODIF     = {it:"Modifica", en:"Edit", es:"Editar"};
+var L_MODIF_TN  = {it:"Modifica titolo e nota", en:"Edit title and note", es:"Editar título y nota"};
+var L_SENZA_TIT = {it:"(senza titolo)", en:"(untitled)", es:"(sin título)"};
+var L_RETE      = {it:"Rete non disponibile. Riprova.", en:"Network unavailable. Try again.", es:"Red no disponible. Inténtalo de nuevo."};
+var L_ERRORE    = {it:"errore", en:"error", es:"error"};
+
 function dataIt(iso){
   if(!iso) return '';
   try{
     var d = new Date(iso);
     if(isNaN(d)) return '';
-    return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
-           d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    var loc = (_lang==='en') ? 'en-GB' : (_lang==='es' ? 'es-ES' : 'it-IT');
+    return d.toLocaleDateString(loc,{day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
+           d.toLocaleTimeString(loc,{hour:'2-digit',minute:'2-digit'});
   }catch(e){ return ''; }
 }
 
@@ -174,32 +214,40 @@ function pulisciStato(elId){ var el=$(elId); el.hidden=true; el.innerHTML=''; }
 var MODIFICA = null;
 
 // ─── LISTA ───
+var RECORD_LISTA = null;
+function renderLista(){
+  var rec = RECORD_LISTA;
+  if(!rec) return;
+  if(!rec.length){
+    $('lista').innerHTML='';
+    stato('lista-state', _L({it:"<b>Nessun appunto ancora.</b> Il Quaderno si costruisce un appunto alla volta: premi <b>+ Nuovo appunto</b> per iniziare.", en:"<b>No notes yet.</b> The Quaderno is built one note at a time: press <b>+ New note</b> to begin.", es:"<b>Ninguna nota todavía.</b> El Quaderno se construye una nota a la vez: pulsa <b>+ Nueva nota</b> para empezar."}), false);
+    return;
+  }
+  pulisciStato('lista-state');
+  $('lista').innerHTML = rec.map(function(x){
+    var meta = [];
+    if(x.funzione) meta.push('<span class="qd-tag">'+esc(etichFunzione(x.funzione))+'</span>');
+    if(x.tipo && x.tipo!==x.funzione) meta.push('<span class="qd-tag">'+esc(etichTipo(x.tipo))+'</span>');
+    var dt = dataIt(x.modificato_at || x.creato_at);
+    if(dt) meta.push('<span>'+esc(dt)+'</span>');
+    return '<button class="qd-item" type="button" data-id="'+esc(x.id)+'">'+
+             '<div class="qd-item-t">'+esc(x.titolo||_L(L_SENZA_TIT))+'</div>'+
+             '<div class="qd-item-m">'+meta.join('')+'</div>'+
+           '</button>';
+  }).join('');
+}
 function caricaLista(){
   pulisciStato('lista-state');
   $('lista').innerHTML='';
-  stato('lista-state','Apro il Quaderno…', false);
+  RECORD_LISTA = null;
+  stato('lista-state', _L({it:"Apro il Quaderno…", en:"Opening the Quaderno…", es:"Abriendo el Quaderno…"}), false);
   fetch('/v1/quaderno2/lista', {headers:_h()})
     .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
     .then(function(d){
-      var rec = (d && d.record) || [];
-      if(!rec.length){
-        stato('lista-state','<b>Nessun appunto ancora.</b> Il Quaderno si costruisce un appunto alla volta: premi <b>+ Nuovo appunto</b> per iniziare.', false);
-        return;
-      }
-      pulisciStato('lista-state');
-      $('lista').innerHTML = rec.map(function(x){
-        var meta = [];
-        if(x.funzione) meta.push('<span class="qd-tag">'+esc(etichFunzione(x.funzione))+'</span>');
-        if(x.tipo && x.tipo!==x.funzione) meta.push('<span class="qd-tag">'+esc(etichTipo(x.tipo))+'</span>');
-        var dt = dataIt(x.modificato_at || x.creato_at);
-        if(dt) meta.push('<span>'+esc(dt)+'</span>');
-        return '<button class="qd-item" type="button" data-id="'+esc(x.id)+'">'+
-                 '<div class="qd-item-t">'+esc(x.titolo||'(senza titolo)')+'</div>'+
-                 '<div class="qd-item-m">'+meta.join('')+'</div>'+
-               '</button>';
-      }).join('');
+      RECORD_LISTA = (d && d.record) || [];
+      renderLista();
     })
-    .catch(function(){ stato('lista-state','Non riesco a raggiungere il Quaderno adesso. Controlla la connessione e riprova.', true); });
+    .catch(function(){ stato('lista-state', _L({it:"Non riesco a raggiungere il Quaderno adesso. Controlla la connessione e riprova.", en:"I can't reach the Quaderno right now. Check your connection and try again.", es:"No puedo acceder al Quaderno ahora. Revisa la conexión e inténtalo de nuevo."}), true); });
 }
 
 $('lista').addEventListener('click', function(e){
@@ -214,7 +262,7 @@ function apriDettaglio(rid){
   mostra('dettaglio');
   pulisciStato('dettaglio-state');
   $('dettaglio').innerHTML='';
-  stato('dettaglio-state','Apro l’appunto…', false);
+  stato('dettaglio-state', _L({it:"Apro l’appunto…", en:"Opening the note…", es:"Abriendo la nota…"}), false);
   fetch('/v1/quaderno2/'+encodeURIComponent(rid), {headers:_h()})
     .then(function(r){
       if(r.status===404) throw new Error('404');
@@ -229,9 +277,9 @@ function apriDettaglio(rid){
     })
     .catch(function(err){
       if(String(err.message)==='404'){
-        stato('dettaglio-state','Questo appunto non esiste (più) per la tua identità.', true);
+        stato('dettaglio-state', _L({it:"Questo appunto non esiste (più) per la tua identità.", en:"This note no longer exists for your identity.", es:"Esta nota ya no existe para tu identidad."}), true);
       }else{
-        stato('dettaglio-state','Non riesco ad aprire l’appunto adesso. Riprova tra poco.', true);
+        stato('dettaglio-state', _L({it:"Non riesco ad aprire l’appunto adesso. Riprova tra poco.", en:"I can't open the note right now. Try again shortly.", es:"No puedo abrir la nota ahora. Inténtalo de nuevo en un momento."}), true);
       }
     });
 }
@@ -245,35 +293,45 @@ function renderDettaglio(rec){
   if(rec.funzione) meta.push('<span class="qd-tag">'+esc(etichFunzione(rec.funzione))+'</span>');
   if(rec.tipo && rec.tipo!==rec.funzione) meta.push('<span class="qd-tag">'+esc(etichTipo(rec.tipo))+'</span>');
   var dt = dataIt(rec.modificato_at || rec.creato_at);
-  var html = '<div class="res-head"><div class="qd-item-t">'+esc(rec.titolo||'(senza titolo)')+'</div>'+
+  var html = '<div class="res-head"><div class="qd-item-t">'+esc(rec.titolo||_L(L_SENZA_TIT))+'</div>'+
              '<div class="qd-item-m" style="margin-top:8px">'+meta.join('')+(dt?'<span>'+esc(dt)+'</span>':'')+'</div></div>';
   var testo = testoDa(rec);
   if(testo!=null){
     html += '<div class="qd-det-body">'+esc(testo)+'</div>';
   }else{
-    html += '<p class="gloss" style="margin-top:14px">Questo record arriva da <b>'+esc(etichFunzione(rec.funzione)||'un’altra funzione')+'</b>: il suo contenuto è strutturato e si riapre nella funzione che l’ha creato.</p>';
+    var fn = esc(etichFunzione(rec.funzione) || _L({it:"un’altra funzione", en:"another function", es:"otra función"}));
+    html += '<p class="gloss" style="margin-top:14px">'+_L({
+      it:"Questo record arriva da <b>"+fn+"</b>: il suo contenuto è strutturato e si riapre nella funzione che l’ha creato.",
+      en:"This record comes from <b>"+fn+"</b>: its content is structured and reopens in the function that created it.",
+      es:"Este registro proviene de <b>"+fn+"</b>: su contenido es estructurado y se reabre en la función que lo creó."
+    })+'</p>';
   }
   if(rec.note_lab){
-    html += '<div class="qd-det-note"><b>Nota di laboratorio</b>'+esc(rec.note_lab)+'</div>';
+    html += '<div class="qd-det-note"><b>'+_L({it:"Nota di laboratorio", en:"Lab note", es:"Nota de laboratorio"})+'</b>'+esc(rec.note_lab)+'</div>';
   }
   $('dettaglio').innerHTML = html;
-  $('btn-modifica').textContent = (testo!=null) ? 'Modifica' : 'Modifica titolo e nota';
+  $('btn-modifica').textContent = _L((testo!=null) ? L_MODIF : L_MODIF_TN);
 }
 $('btn-indietro').addEventListener('click', function(){ mostra('lista'); caricaLista(); });
 $('btn-modifica').addEventListener('click', function(){ if(RECORD_CORRENTE) apriEditor(RECORD_CORRENTE); });
 $('btn-archivia').addEventListener('click', function(){
   if(!RECORD_CORRENTE) return;
-  if(!window.confirm('Archiviare “'+(RECORD_CORRENTE.titolo||'questo appunto')+'”? Sparisce dalla lista (non è cancellato).')) return;
-  stato('dettaglio-state','Archivio…', false);
+  var tit = RECORD_CORRENTE.titolo || _L({it:"questo appunto", en:"this note", es:"esta nota"});
+  if(!window.confirm(_L({
+    it:"Archiviare “"+tit+"”? Sparisce dalla lista (non è cancellato).",
+    en:"Archive “"+tit+"”? It disappears from the list (it is not deleted).",
+    es:"¿Archivar “"+tit+"”? Desaparece de la lista (no se elimina)."
+  }))) return;
+  stato('dettaglio-state', _L({it:"Archivio…", en:"Archiving…", es:"Archivando…"}), false);
   fetch('/v1/quaderno2/'+encodeURIComponent(RECORD_CORRENTE.id)+'/aggiorna', {
     method:'POST', headers:_h({'Content-Type':'application/json'}),
     body: JSON.stringify({archiviato:true})
   }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
     .then(function(res){
       if(res.ok && res.j && res.j.ok){ mostra('lista'); caricaLista(); }
-      else stato('dettaglio-state','Non sono riuscito ad archiviare: '+esc((res.j&&(res.j.nota||res.j.errore))||'errore'), true);
+      else stato('dettaglio-state', _L({it:"Non sono riuscito ad archiviare: ", en:"I couldn't archive: ", es:"No pude archivar: "})+esc((res.j&&(res.j.nota||res.j.errore))||_L(L_ERRORE)), true);
     })
-    .catch(function(){ stato('dettaglio-state','Rete non disponibile. Riprova.', true); });
+    .catch(function(){ stato('dettaglio-state', _L(L_RETE), true); });
 });
 
 // ─── EDITOR ───
@@ -286,7 +344,7 @@ function apriEditor(rec){
   $('f-note').value   = rec ? (rec.note_lab||'') : '';
   var wrapTesto = $('f-testo').closest('.field');
   wrapTesto.style.display = testoEditabile ? '' : 'none';
-  $('btn-salva').textContent = rec ? 'Salva le modifiche' : 'Salva nel Quaderno';
+  $('btn-salva').textContent = _L(rec ? L_SALVA_MOD : L_SALVA_NEW);
   mostra('editor');
   $('f-titolo').focus();
 }
@@ -300,9 +358,9 @@ $('form-editor').addEventListener('submit', function(e){
   var titolo = $('f-titolo').value.trim();
   var testo  = $('f-testo').value;
   var note   = $('f-note').value.trim();
-  if(!titolo){ stato('editor-state','Serve almeno un titolo.', true); $('f-titolo').focus(); return; }
+  if(!titolo){ stato('editor-state', _L({it:"Serve almeno un titolo.", en:"At least a title is needed.", es:"Hace falta al menos un título."}), true); $('f-titolo').focus(); return; }
   $('btn-salva').disabled = true;
-  stato('editor-state','Salvo…', false);
+  stato('editor-state', _L({it:"Salvo…", en:"Saving…", es:"Guardando…"}), false);
 
   if(MODIFICA){
     var body = {titolo:titolo};
@@ -320,12 +378,12 @@ $('form-editor').addEventListener('submit', function(e){
       .then(function(res){
         $('btn-salva').disabled = false;
         if(res.ok && res.j && res.j.ok){ apriDettaglio(rec.id); }
-        else stato('editor-state','Non salvato: '+esc((res.j&&(res.j.nota||res.j.errore))||'errore'), true);
+        else stato('editor-state', _L({it:"Non salvato: ", en:"Not saved: ", es:"No guardado: "})+esc((res.j&&(res.j.nota||res.j.errore))||_L(L_ERRORE)), true);
       })
-      .catch(function(){ $('btn-salva').disabled=false; stato('editor-state','Rete non disponibile. Riprova.', true); });
+      .catch(function(){ $('btn-salva').disabled=false; stato('editor-state', _L(L_RETE), true); });
   }else{
     var payload = {
-      porta:'quaderno', funzione:'appunto', tipo:'nota', titolo:titolo, lingua:'it',
+      porta:'quaderno', funzione:'appunto', tipo:'nota', titolo:titolo, lingua:(window._lang||'it'),
       stato_input:{}, stato_output:{testo:testo}
     };
     if(note) payload.note_lab = note;
@@ -335,11 +393,18 @@ $('form-editor').addEventListener('submit', function(e){
       .then(function(res){
         $('btn-salva').disabled = false;
         if(res.ok && res.j && res.j.ok && res.j.id){ apriDettaglio(res.j.id); }
-        else stato('editor-state','Non salvato: '+esc((res.j&&(res.j.errore||(res.j.mancanti&&('mancano '+res.j.mancanti.join(', ')))))||'errore'), true);
+        else stato('editor-state', _L({it:"Non salvato: ", en:"Not saved: ", es:"No guardado: "})+esc((res.j&&(res.j.errore||(res.j.mancanti&&(_L({it:"mancano ", en:"missing ", es:"faltan "})+res.j.mancanti.join(', ')))))||_L(L_ERRORE)), true);
       })
-      .catch(function(){ $('btn-salva').disabled=false; stato('editor-state','Rete non disponibile. Riprova.', true); });
+      .catch(function(){ $('btn-salva').disabled=false; stato('editor-state', _L(L_RETE), true); });
   }
 });
+
+// ri-disegno al cambio lingua: lista in cache, dettaglio aperto, label dell'editor
+window.onI18nApply = function(){
+  if(!VISTE.lista.hidden && RECORD_LISTA){ renderLista(); }
+  if(!VISTE.dettaglio.hidden && RECORD_CORRENTE){ renderDettaglio(RECORD_CORRENTE); }
+  if(!VISTE.editor.hidden){ $('btn-salva').textContent = _L(MODIFICA ? L_SALVA_MOD : L_SALVA_NEW); }
+};
 
 caricaLista();
 </script>

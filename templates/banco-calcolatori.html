@@ -56,7 +56,7 @@ footer b{color:var(--ink); font-weight:600}
 <header class="topbar">
   <div class="topbar-in">
     <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">Banco · Calcolatori</span>
+    <span class="eyebrow" data-i18n="eyebrow_top">Banco · Calcolatori</span>
   </div>
 </header>
 
@@ -67,9 +67,9 @@ footer b{color:var(--ink); font-weight:600}
     <a href="/banco/calcolatori" aria-current="page">Calcolatori</a>
   </nav>
   <header class="hero">
-    <div class="kind">Calcolatori · il motore deterministico</div>
-    <h1>I conti del banco</h1>
-    <p class="regola">Numeri <b>calcolati da formule verificate</b>, non stimati dall'AI. Scegli il calcolatore, metti i tuoi dati, e Matter ti dice il risultato, se sei dentro il bersaglio e la <b>leva d'azione</b> per correggere.</p>
+    <div class="kind" data-i18n="kind">Calcolatori · il motore deterministico</div>
+    <h1 data-i18n="h1">I conti del banco</h1>
+    <p class="regola" data-i18n-html="regola">Numeri <b>calcolati da formule verificate</b>, non stimati dall'AI. Scegli il calcolatore, metti i tuoi dati, e Matter ti dice il risultato, se sei dentro il bersaglio e la <b>leva d'azione</b> per correggere.</p>
   </header>
 
   <div id="menu"></div>
@@ -78,52 +78,114 @@ footer b{color:var(--ink); font-weight:600}
   <main id="out"></main>
   <div class="state" id="state" hidden></div>
 
-  <footer>
+  <footer data-i18n-html="footer">
     I calcolatori sono <b>deterministici</b>: stesso ingresso, stesso risultato, sempre. Le formule vengono dalla fisica/chimica del mestiere (diluizione: Dave Arnold; estrazione: SCA; idratazione/Q10: Hamelman). Diluizione cocktail e food-cost vivono nei loro flussi dedicati (Banco cocktail, Menu).
   </footer>
 </div>
 
 <script>
+window.I18N_TITLE = {
+  it:"Banco · Calcolatori · Matter Bench",
+  en:"Banco · Calculators · Matter Bench",
+  es:"Banco · Calculadoras · Matter Bench"
+};
+window.I18N_DICT = {
+  eyebrow_top:{it:"Banco · Calcolatori", en:"Banco · Calculators", es:"Banco · Calculadoras"},
+  kind:{it:"Calcolatori · il motore deterministico", en:"Calculators · the deterministic engine", es:"Calculadoras · el motor determinista"},
+  h1:{it:"I conti del banco", en:"The bench's numbers", es:"Los números de la mesa"},
+  regola:{
+    it:"Numeri <b>calcolati da formule verificate</b>, non stimati dall'AI. Scegli il calcolatore, metti i tuoi dati, e Matter ti dice il risultato, se sei dentro il bersaglio e la <b>leva d'azione</b> per correggere.",
+    en:"Numbers <b>calculated from verified formulas</b>, not estimated by AI. Choose the calculator, enter your data, and Matter tells you the result, whether you're within the target, and the <b>action lever</b> to correct it.",
+    es:"Números <b>calculados con fórmulas verificadas</b>, no estimados por la IA. Elige la calculadora, introduce tus datos, y Matter te dice el resultado, si estás dentro del objetivo y la <b>palanca de acción</b> para corregir."
+  },
+  footer:{
+    it:"I calcolatori sono <b>deterministici</b>: stesso ingresso, stesso risultato, sempre. Le formule vengono dalla fisica/chimica del mestiere (diluizione: Dave Arnold; estrazione: SCA; idratazione/Q10: Hamelman). Diluizione cocktail e food-cost vivono nei loro flussi dedicati (Banco cocktail, Menu).",
+    en:"The calculators are <b>deterministic</b>: same input, same result, always. The formulas come from the physics/chemistry of the craft (dilution: Dave Arnold; extraction: SCA; hydration/Q10: Hamelman). Cocktail dilution and food-cost live in their own dedicated flows (Banco cocktail, Menu).",
+    es:"Las calculadoras son <b>deterministas</b>: misma entrada, mismo resultado, siempre. Las fórmulas vienen de la física/química del oficio (dilución: Dave Arnold; extracción: SCA; hidratación/Q10: Hamelman). La dilución de cócteles y el food-cost viven en sus propios flujos dedicados (Banco cocktail, Menu)."
+  }
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+<script>
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// Discipline (chiave = valore italiano usato per il raggruppamento; display tradotto)
+const DISC = {
+  'Panificazione':{it:'Panificazione', en:'Baking',       es:'Panificación'},
+  'Bar':          {it:'Bar',           en:'Bar',          es:'Bar'},
+  'Caffè':        {it:'Caffè',         en:'Coffee',       es:'Café'},
+  'Trasversale':  {it:'Trasversale',   en:'Cross-cutting',es:'Transversal'},
+  'Vino':         {it:'Vino',          en:'Wine',         es:'Vino'},
+  'Cucina':       {it:'Cucina',        en:'Kitchen',      es:'Cocina'}
+};
+// Etichette di scelta dei select: la CHIAVE (valore inviato al backend) resta invariata, solo il display è tradotto
+const OPT_L = {
+  rosso_strutturato:{it:'rosso strutturato', en:'structured red', es:'tinto estructurado'},
+  rosso_giovane:    {it:'rosso giovane',     en:'young red',      es:'tinto joven'},
+  bianco:           {it:'bianco',            en:'white',          es:'blanco'},
+  rosato:           {it:'rosato',            en:'rosé',           es:'rosado'},
+  bollicina:        {it:'bollicina',         en:'sparkling',      es:'espumoso'},
+  dolce:            {it:'dolce',             en:'sweet',          es:'dulce'},
+  champagne:        {it:'champagne',         en:'champagne',      es:'champagne'},
+  secchiello:       {it:'secchiello',        en:'ice bucket',     es:'cubitera'},
+  frigo:            {it:'frigo',             en:'fridge',         es:'nevera'},
+  abbattitore:      {it:'abbattitore',       en:'blast chiller',  es:'abatidor'}
+};
+// Messaggi ed etichette fisse dell'interfaccia (stringhe JS)
+const LBL = {
+  calcola:        {it:'Calcola',        en:'Calculate',   es:'Calcular'},
+  calcolo:        {it:'Calcolo…',       en:'Calculating…',es:'Calculando…'},
+  noResp:         {it:'Il motore non ha risposto. Riprova tra poco.', en:"The engine didn't respond. Try again shortly.", es:'El motor no respondió. Inténtalo de nuevo en un momento.'},
+  noReach:        {it:'Non riesco a raggiungere il motore. Riprova.', en:"I can't reach the engine. Try again.", es:'No puedo alcanzar el motor. Inténtalo de nuevo.'},
+  risposto:       {it:'Il motore ha risposto: ', en:'The engine responded: ', es:'El motor respondió: '},
+  noVal:          {it:'Nessun valore.', en:'No value.',   es:'Ningún valor.'},
+  mirino:         {it:'Mirino',         en:'Gauge',       es:'Indicador'},
+  dentro:         {it:'Dentro il bersaglio', en:'Within target', es:'Dentro del objetivo'},
+  fuori:          {it:'Fuori bersaglio',en:'Off target',  es:'Fuera del objetivo'},
+  finestra:       {it:'finestra',       en:'window',      es:'ventana'},
+  interpretazione:{it:'Interpretazione.', en:'Interpretation.', es:'Interpretación.'},
+  leva:           {it:"Leva d'azione.", en:'Action lever.', es:'Palanca de acción.'}
+};
+
 const CALC = [
- {id:'idratazione_pane', nome:'Idratazione impasto', disc:'Panificazione', campi:[
-   {k:'farina_g',l:'Farina',u:'g',d:1000},{k:'acqua_g',l:'Acqua',u:'g',d:650}]},
- {id:'conversione_teglie', nome:'Conversione teglie', disc:'Panificazione', campi:[
-   {k:'base1_cm',l:'Base teglia attuale',u:'cm',d:30},{k:'alt1_cm',l:'Altezza teglia attuale',u:'cm',d:40},
-   {k:'base2_cm',l:'Base teglia nuova',u:'cm',d:20},{k:'alt2_cm',l:'Altezza teglia nuova',u:'cm',d:30}]},
- {id:'bilanciamento_sour', nome:'Bilanciamento sour', disc:'Bar', campi:[
-   {k:'spirit_vol',l:'Distillato',u:'ml',d:50},{k:'spirit_abv',l:'Gradazione distillato',u:'%',d:40},
-   {k:'agrume_vol',l:'Agrume',u:'ml',d:25},{k:'agrume_acid_perc',l:'Acidità agrume',u:'%',d:6},
-   {k:'sciroppo_vol',l:'Sciroppo',u:'ml',d:20},{k:'sciroppo_brix',l:'Brix sciroppo',u:'°Bx',d:65}]},
- {id:'pareggia_acidita', nome:'Pareggia acidità', disc:'Bar', campi:[
-   {k:'vol_ml',l:'Volume',u:'ml',d:100},{k:'acido_cur_perc',l:'Acidità attuale',u:'%',d:6},{k:'acido_tgt_perc',l:'Acidità voluta',u:'%',d:5}]},
- {id:'estrazione_caffe', nome:'Estrazione caffè', disc:'Caffè', campi:[
-   {k:'dose_g',l:'Dose macinato',u:'g',d:18},{k:'bevanda_g',l:'Bevanda in tazza',u:'g',d:288},{k:'tds_perc',l:'TDS misurato',u:'%',d:1.3}]},
- {id:'q10_fermentazione', nome:'Q10 fermentazione', disc:'Trasversale', campi:[
-   {k:'tempo_base_h',l:'Tempo di riferimento',u:'h',d:8},{k:'temp_ref_c',l:'Temp di riferimento',u:'°C',d:22},{k:'temp_reale_c',l:'Temp reale',u:'°C',d:26}]},
- {id:'temperatura_servizio_vino', nome:'Temperatura servizio vino', disc:'Vino', campi:[
-   {k:'tipo_vino',l:'Tipo di vino',opts:['rosso_strutturato','rosso_giovane','bianco','rosato','bollicina','dolce','champagne'],d:'bianco'},
-   {k:'temp_attuale_c',l:'Temperatura attuale',u:'°C',d:20},
-   {k:'metodo',l:'Metodo',opts:['secchiello','frigo','abbattitore'],d:'secchiello'}]},
- {id:'brix_to_abv', nome:'Brix → grado potenziale', disc:'Vino', campi:[
-   {k:'brix',l:'Gradi Brix del mosto',u:'°Bx',d:22}]},
- {id:'resa_calo_peso', nome:'Resa e calo peso', disc:'Cucina', campi:[
-   {k:'peso_crudo_g',l:'Peso crudo',u:'g',d:1000},{k:'costo_kg',l:'Costo',u:'€/kg',d:12},{k:'calo_perc',l:'Calo in cottura',u:'%',d:25}]},
+ {id:'idratazione_pane', nome:{it:'Idratazione impasto', en:'Dough hydration', es:'Hidratación de masa'}, disc:'Panificazione', campi:[
+   {k:'farina_g',l:{it:'Farina',en:'Flour',es:'Harina'},u:'g',d:1000},{k:'acqua_g',l:{it:'Acqua',en:'Water',es:'Agua'},u:'g',d:650}]},
+ {id:'conversione_teglie', nome:{it:'Conversione teglie', en:'Pan conversion', es:'Conversión de moldes'}, disc:'Panificazione', campi:[
+   {k:'base1_cm',l:{it:'Base teglia attuale',en:'Current pan base',es:'Base del molde actual'},u:'cm',d:30},{k:'alt1_cm',l:{it:'Altezza teglia attuale',en:'Current pan height',es:'Alto del molde actual'},u:'cm',d:40},
+   {k:'base2_cm',l:{it:'Base teglia nuova',en:'New pan base',es:'Base del molde nuevo'},u:'cm',d:20},{k:'alt2_cm',l:{it:'Altezza teglia nuova',en:'New pan height',es:'Alto del molde nuevo'},u:'cm',d:30}]},
+ {id:'bilanciamento_sour', nome:{it:'Bilanciamento sour', en:'Sour balancing', es:'Equilibrio del sour'}, disc:'Bar', campi:[
+   {k:'spirit_vol',l:{it:'Distillato',en:'Spirit',es:'Destilado'},u:'ml',d:50},{k:'spirit_abv',l:{it:'Gradazione distillato',en:'Spirit strength',es:'Graduación del destilado'},u:'%',d:40},
+   {k:'agrume_vol',l:{it:'Agrume',en:'Citrus',es:'Cítrico'},u:'ml',d:25},{k:'agrume_acid_perc',l:{it:'Acidità agrume',en:'Citrus acidity',es:'Acidez del cítrico'},u:'%',d:6},
+   {k:'sciroppo_vol',l:{it:'Sciroppo',en:'Syrup',es:'Jarabe'},u:'ml',d:20},{k:'sciroppo_brix',l:{it:'Brix sciroppo',en:'Syrup Brix',es:'Brix del jarabe'},u:'°Bx',d:65}]},
+ {id:'pareggia_acidita', nome:{it:'Pareggia acidità', en:'Match acidity', es:'Igualar acidez'}, disc:'Bar', campi:[
+   {k:'vol_ml',l:{it:'Volume',en:'Volume',es:'Volumen'},u:'ml',d:100},{k:'acido_cur_perc',l:{it:'Acidità attuale',en:'Current acidity',es:'Acidez actual'},u:'%',d:6},{k:'acido_tgt_perc',l:{it:'Acidità voluta',en:'Target acidity',es:'Acidez deseada'},u:'%',d:5}]},
+ {id:'estrazione_caffe', nome:{it:'Estrazione caffè', en:'Coffee extraction', es:'Extracción de café'}, disc:'Caffè', campi:[
+   {k:'dose_g',l:{it:'Dose macinato',en:'Ground dose',es:'Dosis de molido'},u:'g',d:18},{k:'bevanda_g',l:{it:'Bevanda in tazza',en:'Beverage in cup',es:'Bebida en taza'},u:'g',d:288},{k:'tds_perc',l:{it:'TDS misurato',en:'Measured TDS',es:'TDS medido'},u:'%',d:1.3}]},
+ {id:'q10_fermentazione', nome:{it:'Q10 fermentazione', en:'Q10 fermentation', es:'Fermentación Q10'}, disc:'Trasversale', campi:[
+   {k:'tempo_base_h',l:{it:'Tempo di riferimento',en:'Reference time',es:'Tiempo de referencia'},u:'h',d:8},{k:'temp_ref_c',l:{it:'Temp di riferimento',en:'Reference temp',es:'Temp de referencia'},u:'°C',d:22},{k:'temp_reale_c',l:{it:'Temp reale',en:'Actual temp',es:'Temp real'},u:'°C',d:26}]},
+ {id:'temperatura_servizio_vino', nome:{it:'Temperatura servizio vino', en:'Wine serving temperature', es:'Temperatura de servicio del vino'}, disc:'Vino', campi:[
+   {k:'tipo_vino',l:{it:'Tipo di vino',en:'Wine type',es:'Tipo de vino'},opts:['rosso_strutturato','rosso_giovane','bianco','rosato','bollicina','dolce','champagne'],d:'bianco'},
+   {k:'temp_attuale_c',l:{it:'Temperatura attuale',en:'Current temperature',es:'Temperatura actual'},u:'°C',d:20},
+   {k:'metodo',l:{it:'Metodo',en:'Method',es:'Método'},opts:['secchiello','frigo','abbattitore'],d:'secchiello'}]},
+ {id:'brix_to_abv', nome:{it:'Brix → grado potenziale', en:'Brix → potential strength', es:'Brix → grado potencial'}, disc:'Vino', campi:[
+   {k:'brix',l:{it:'Gradi Brix del mosto',en:'Must Brix degrees',es:'Grados Brix del mosto'},u:'°Bx',d:22}]},
+ {id:'resa_calo_peso', nome:{it:'Resa e calo peso', en:'Yield and weight loss', es:'Rendimiento y merma'}, disc:'Cucina', campi:[
+   {k:'peso_crudo_g',l:{it:'Peso crudo',en:'Raw weight',es:'Peso crudo'},u:'g',d:1000},{k:'costo_kg',l:{it:'Costo',en:'Cost',es:'Costo'},u:'€/kg',d:12},{k:'calo_perc',l:{it:'Calo in cottura',en:'Cooking loss',es:'Merma en cocción'},u:'%',d:25}]},
 ];
 const SKIP = new Set(['calcolo','fenomeno_id','interpretazione','leva_azione','spiegazione','bersaglio_min','bersaglio_max','scala_min','scala_max','valore_corrente','unita_mirino','dentro_bersaglio','errore']);
 const _ACR = {abv:'ABV', tds:'TDS', ph:'pH', q10:'Q10'};
 const _UNIT = {g:'g', kg:'kg', ml:'ml', cl:'cl', cm:'cm', c:'°C', h:'h'};
 const ETICH_OUT = {
-  abv_potenziale_perc:'Grado potenziale (% vol)',
-  efficienza:'Efficienza (ABV per °Bx)',
-  costo_g_crudo:'Costo al grammo (crudo)',
-  costo_g_finito:'Costo al grammo (finito)',
-  costo_totale:'Costo totale (€)',
-  temp_target_c:'Temperatura di servizio (°C)',
-  temp_attuale_c:'Temperatura attuale (°C)'
+  abv_potenziale_perc:{it:'Grado potenziale (% vol)', en:'Potential strength (% vol)', es:'Grado potencial (% vol)'},
+  efficienza:{it:'Efficienza (ABV per °Bx)', en:'Efficiency (ABV per °Bx)', es:'Eficiencia (ABV por °Bx)'},
+  costo_g_crudo:{it:'Costo al grammo (crudo)', en:'Cost per gram (raw)', es:'Costo por gramo (crudo)'},
+  costo_g_finito:{it:'Costo al grammo (finito)', en:'Cost per gram (finished)', es:'Costo por gramo (terminado)'},
+  costo_totale:{it:'Costo totale (€)', en:'Total cost (€)', es:'Costo total (€)'},
+  temp_target_c:{it:'Temperatura di servizio (°C)', en:'Serving temperature (°C)', es:'Temperatura de servicio (°C)'},
+  temp_attuale_c:{it:'Temperatura attuale (°C)', en:'Current temperature (°C)', es:'Temperatura actual (°C)'}
 };
 function umana(k){
-  if(ETICH_OUT[k]) return ETICH_OUT[k];
+  if(ETICH_OUT[k]) return _L(ETICH_OUT[k]);
   const parts = k.split('_'); const last = parts[parts.length-1]; let unit='';
   if(_UNIT[last] && parts.length>1){ unit=' ('+_UNIT[last]+')'; parts.pop(); }
   const label = parts.map((w,i)=> w==='perc' ? '%' : (_ACR[w] || (i===0 ? (w.charAt(0).toUpperCase()+w.slice(1)) : w))).join(' ');
@@ -131,44 +193,55 @@ function umana(k){
 }
 
 const $menu=document.getElementById('menu'), $form=document.getElementById('form'), $out=document.getElementById('out'), $state=document.getElementById('state');
-let attivo=null;
+let attivo=null, ultimoRisultato=null;
 
 function menu(){
   const byDisc={}; CALC.forEach(c=>{ (byDisc[c.disc]=byDisc[c.disc]||[]).push(c); });
   $menu.innerHTML = Object.entries(byDisc).map(([d,cs])=>`
-    <div class="disc">${esc(d)}</div>
-    <div class="calc-grid">${cs.map(c=>`<button class="calc-chip" data-id="${c.id}">${esc(c.nome)}</button>`).join('')}</div>`).join('');
+    <div class="disc">${esc(DISC[d]?_L(DISC[d]):d)}</div>
+    <div class="calc-grid">${cs.map(c=>`<button class="calc-chip" data-id="${c.id}">${esc(_L(c.nome))}</button>`).join('')}</div>`).join('');
+  if(attivo) document.querySelectorAll('.calc-chip').forEach(b=>b.classList.toggle('on', b.dataset.id===attivo.id));
 }
 
-function apri(c){
-  attivo=c; $out.innerHTML=''; $state.hidden=true;
+// disegna/ridisegna il form del calcolatore corrente, conservando i valori già inseriti (vals: {chiave:valore})
+function disegnaForm(c, vals){
+  attivo=c;
   document.querySelectorAll('.calc-chip').forEach(b=>b.classList.toggle('on', b.dataset.id===c.id));
   $form.hidden=false;
   $form.innerHTML = c.campi.map(f=>{
-    if(f.opts) return `<div class="field"><label>${esc(f.l)}</label><div class="inp"><select data-k="${f.k}">${f.opts.map(o=>`<option value="${o}"${o===f.d?' selected':''}>${esc(o.replace(/_/g,' '))}</option>`).join('')}</select></div></div>`;
-    return `<div class="field"><label>${esc(f.l)}</label><div class="inp"><input data-k="${f.k}" type="number" inputmode="decimal" step="any" value="${f.d}">${f.u?`<span class="unit">${esc(f.u)}</span>`:''}</div></div>`;
-  }).join('') + `<button type="submit" class="calc">Calcola</button>`;
+    const lab = esc(_L(f.l));
+    if(f.opts) return `<div class="field"><label>${lab}</label><div class="inp"><select data-k="${f.k}">${f.opts.map(o=>`<option value="${o}"${o===f.d?' selected':''}>${esc(OPT_L[o]?_L(OPT_L[o]):o.replace(/_/g,' '))}</option>`).join('')}</select></div></div>`;
+    return `<div class="field"><label>${lab}</label><div class="inp"><input data-k="${f.k}" type="number" inputmode="decimal" step="any" value="${f.d}">${f.u?`<span class="unit">${esc(f.u)}</span>`:''}</div></div>`;
+  }).join('') + `<button type="submit" class="calc">${esc(_L(LBL.calcola))}</button>`;
+  if(vals){ $form.querySelectorAll('[data-k]').forEach(el=>{ if(vals[el.dataset.k]!==undefined && vals[el.dataset.k]!=='') el.value=vals[el.dataset.k]; }); }
+}
+
+function apri(c){
+  $out.innerHTML=''; $state.hidden=true; ultimoRisultato=null;
+  disegnaForm(c);
   calcola();
 }
 
 function render(d){
-  if(d.errore){ $state.hidden=false; $state.className='state err'; $state.innerHTML='Il motore ha risposto: '+esc(d.errore); $out.innerHTML=''; return; }
+  ultimoRisultato=d;
+  if(d.errore){ $state.hidden=false; $state.className='state err'; $state.innerHTML=_L(LBL.risposto)+esc(d.errore); $out.innerHTML=''; return; }
   $state.hidden=true;
   const righe = Object.entries(d).filter(([k,v])=>!SKIP.has(k) && (typeof v==='number'||typeof v==='string')).map(([k,v])=>`<div class="res-row"><span class="res-k">${esc(umana(k))}</span><span class="res-v">${esc(v)}</span></div>`).join('');
   let mir='';
   if(d.dentro_bersaglio!==undefined && d.valore_corrente!==undefined){
     const smin=d.scala_min, smax=d.scala_max, bmin=d.bersaglio_min, bmax=d.bersaglio_max, v=d.valore_corrente, ok=d.dentro_bersaglio;
     const pct=x=>Math.max(0,Math.min(100,(x-smin)/(smax-smin)*100));
-    mir=`<div class="mir"><div class="mir-top"><span class="res-k">Mirino</span><span class="mir-val ${ok?'ok':'no'}">${v}${esc(d.unita_mirino||'')}</span></div>
+    const um=esc(d.unita_mirino||'');
+    mir=`<div class="mir"><div class="mir-top"><span class="res-k">${esc(_L(LBL.mirino))}</span><span class="mir-val ${ok?'ok':'no'}">${v}${um}</span></div>
       <div class="mir-track"><span class="mir-band" style="left:${pct(bmin)}%;width:${pct(bmax)-pct(bmin)}%"></span><span class="mir-dot ${ok?'':'no'}" style="left:${pct(v)}%"></span></div>
-      <p class="gloss" style="margin-top:8px">${ok?'Dentro il bersaglio':'Fuori bersaglio'} · finestra ${bmin}–${bmax}${esc(d.unita_mirino||'')}</p></div>`;
+      <p class="gloss" style="margin-top:8px">${ok?esc(_L(LBL.dentro)):esc(_L(LBL.fuori))} · ${esc(_L(LBL.finestra))} ${bmin}–${bmax}${um}</p></div>`;
   }
   $out.innerHTML = `<section class="section">
     ${mir}
-    <div class="res-card" style="margin-top:14px">${righe||'<p class="gloss">Nessun valore.</p>'}</div>
+    <div class="res-card" style="margin-top:14px">${righe||`<p class="gloss">${esc(_L(LBL.noVal))}</p>`}</div>
     ${d.spiegazione?`<p class="nota">${esc(d.spiegazione)}</p>`:''}
-    ${d.interpretazione?`<p class="nota"><b>Interpretazione.</b> ${esc(d.interpretazione)}</p>`:''}
-    ${d.leva_azione?`<p class="nota critico"><b>Leva d'azione.</b> ${esc(d.leva_azione)}</p>`:''}
+    ${d.interpretazione?`<p class="nota"><b>${esc(_L(LBL.interpretazione))}</b> ${esc(d.interpretazione)}</p>`:''}
+    ${d.leva_azione?`<p class="nota critico"><b>${esc(_L(LBL.leva))}</b> ${esc(d.leva_azione)}</p>`:''}
   </section>`;
 }
 
@@ -179,16 +252,27 @@ async function calcola(){
     const v=el.value;
     parametri[el.dataset.k] = el.tagName==='SELECT' ? v : (v===''?null:parseFloat(v));
   });
-  $state.hidden=false; $state.className='state'; $state.innerHTML='Calcolo…'; $out.innerHTML='';
+  $state.hidden=false; $state.className='state'; $state.innerHTML=esc(_L(LBL.calcolo)); $out.innerHTML='';
   try{
     const r=await fetch('/calcola',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({calcolo:attivo.id,parametri})});
-    if(!r.ok){ const d=await r.json().catch(()=>({})); $state.className='state err'; $state.innerHTML=esc(d.errore||'Il motore non ha risposto. Riprova tra poco.'); return; }
+    if(!r.ok){ const d=await r.json().catch(()=>({})); $state.className='state err'; $state.innerHTML=esc(d.errore||_L(LBL.noResp)); return; }
     render(await r.json());
-  }catch(e){ $state.className='state err'; $state.innerHTML='Non riesco a raggiungere il motore. Riprova.'; }
+  }catch(e){ $state.className='state err'; $state.innerHTML=esc(_L(LBL.noReach)); }
 }
 
 $menu.addEventListener('click', e=>{ const b=e.target.closest('.calc-chip'); if(!b) return; apri(CALC.find(c=>c.id===b.dataset.id)); });
 $form.addEventListener('submit', e=>{ e.preventDefault(); calcola(); });
+
+// al cambio lingua: ridisegna menu e, se un calcolatore è aperto, il form (conservando i valori) e l'ultimo risultato
+window.onI18nApply = function(){
+  menu();
+  if(attivo){
+    const vals={}; $form.querySelectorAll('[data-k]').forEach(el=>{ vals[el.dataset.k]=el.value; });
+    disegnaForm(attivo, vals);
+    if(ultimoRisultato) render(ultimoRisultato);
+  }
+};
+
 menu();
 </script>
 </body>
