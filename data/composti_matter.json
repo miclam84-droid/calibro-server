@@ -8615,47 +8615,215 @@
       "nodo_target": "ing-spinaci",
       "specie": "Spinacia oleracea",
       "dominio": "cucina",
-      "fonte_ingrediente": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312).",
+      "fonte_ingrediente": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021.",
       "composti": [
         {
-          "composto": "hexanal",
-          "descrittore": "verde-erba (firma)",
+          "composto": "(Z)-3-esenale",
+          "descrittore": "verde intenso, foglia appena tagliata",
           "ruolo": "firma",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
         },
         {
-          "composto": "(Z)-3-hexenal",
-          "descrittore": "verde-foglia tagliata",
+          "composto": "(E,Z)-2,6-nonadienale",
+          "descrittore": "cetriolo, verde, acquoso",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "(Z)-3-esen-1-olo",
+          "descrittore": "erba tagliata, verde fresco",
           "ruolo": "caratterizzante",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
         },
         {
-          "composto": "(E,E)-2,4-heptadienal",
-          "descrittore": "grasso-verde",
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde, mela acerba",
           "ruolo": "caratterizzante",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
         },
         {
-          "composto": "1-octen-3-ol",
-          "descrittore": "fungo-terroso",
+          "composto": "esanale",
+          "descrittore": "verde, erboso, grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "geosmina",
+          "descrittore": "terra bagnata, barbabietola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "beta-ionone",
+          "descrittore": "violetta, floreale, legnoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "beta-ciclocitrale",
+          "descrittore": "erbaceo, leggermente terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "safranale",
+          "descrittore": "zafferano, erbaceo-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "1-octen-3-olo",
+          "descrittore": "fungo, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "fenilacetaldeide",
+          "descrittore": "miele, floreale, giacinto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "2-metossi-4-vinilfenolo",
+          "descrittore": "chiodo di garofano, fenolico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "nonanale",
+          "descrittore": "grasso, agrumato, ceroso",
           "ruolo": "di_supporto",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
         },
         {
-          "composto": "(Z)-3-hexen-1-ol",
-          "descrittore": "verde-foglia",
+          "composto": "ottanale",
+          "descrittore": "agrumato, aldeidico",
           "ruolo": "di_supporto",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Spinaci (Spinacia oleracea): aldeidi verdi da lipossigenasi -> esanale, (Z)-3-esenale, (E,E)-2,4-eptadienale, con 1-otten-3-olo (dspace.umh 31414; NCBI PMC5843312)."
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "eptanale",
+          "descrittore": "grasso, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "(E)-2-eptenale",
+          "descrittore": "grasso, verde, mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "(E)-2-ottenale",
+          "descrittore": "grasso, nocciola, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "(E)-2-decenale",
+          "descrittore": "grasso, sego, agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienale",
+          "descrittore": "fritto, grasso, oleoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "1-esanolo",
+          "descrittore": "verde, erbaceo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "1-penten-3-olo",
+          "descrittore": "verde, pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "benzaldeide",
+          "descrittore": "mandorla amara, dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "acetofenone",
+          "descrittore": "dolce, floreale, mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "geranilacetone",
+          "descrittore": "floreale, verde, magnolia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato, cioccolato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
+        },
+        {
+          "composto": "2-pentanone",
+          "descrittore": "etereo, fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Naef & Velluz (2000), Flavour Fragr. J. 15(5):329-334 (spinaci cotti); note verdi crudo conf. Soga 2021."
         }
       ]
     },
@@ -9846,47 +10014,215 @@
       "nodo_target": "ing-broccolo",
       "specie": "Brassica oleracea var. italica",
       "dominio": "cucina",
-      "fonte_ingrediente": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398).",
+      "fonte_ingrediente": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati).",
       "composti": [
         {
-          "composto": "dimethyl trisulfide",
-          "descrittore": "cavolo-solforato (firma)",
+          "composto": "dimetiltrisolfuro",
+          "descrittore": "cavolo, zolfo intenso",
           "ruolo": "firma",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
         },
         {
-          "composto": "hexyl isothiocyanate",
-          "descrittore": "pungente-broccolo (marcatore)",
+          "composto": "esil isotiocianato",
+          "descrittore": "broccolo, pungente-senape",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "metionale",
+          "descrittore": "patata lessa, zolfo",
           "ruolo": "caratterizzante",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
         },
         {
-          "composto": "dimethyl disulfide",
-          "descrittore": "aglio-solforato",
+          "composto": "dimetilsolfuro",
+          "descrittore": "cavolo cotto, verdura bollita",
           "ruolo": "caratterizzante",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
         },
         {
-          "composto": "methional",
-          "descrittore": "patata lessa",
+          "composto": "metantiolo",
+          "descrittore": "zolfo, cavolo, uovo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "metil tiocianato",
+          "descrittore": "aglio, pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "dimetildisolfuro",
+          "descrittore": "aglio, cavolo, zolfo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "2-isopropil-3-metossipirazina",
+          "descrittore": "pisello, terroso, verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "2-isobutil-3-metossipirazina",
+          "descrittore": "peperone verde, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "2-etil-3,5-dimetilpirazina",
+          "descrittore": "terroso, tostato, nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "2-acetil-1-pirrolina",
+          "descrittore": "popcorn, pane tostato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "1,5-ottadien-3-one",
+          "descrittore": "geranio, metallico",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "(E,E)-2,4-decadienale",
+          "descrittore": "fritto, grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "(E)-2-nonenale",
+          "descrittore": "cetriolo, grasso, cartone",
           "ruolo": "di_supporto",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
         },
         {
-          "composto": "2-isobutyl-3-methoxypyrazine",
-          "descrittore": "verde-peperone",
+          "composto": "(E)-2-decenale",
+          "descrittore": "grasso, minestra",
           "ruolo": "di_supporto",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Broccolo (Brassica oleracea var. italica): isotiocianati + solforati; hexil isotiocianato (nota broccolo) e dimetil trisolfuro dominanti (Wieczorek/Majcher/Jelen 2020, Foods 9(4):398, DOI 10.3390/foods9040398)."
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erboso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "(Z)-3-esen-1-olo",
+          "descrittore": "erba tagliata, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "(Z)-4-eptenale",
+          "descrittore": "rancido, pesce, grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "2,3-butandione",
+          "descrittore": "burro",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "2,3-pentandione",
+          "descrittore": "burroso, dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato, zolfo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "acido 3-metilbutanoico",
+          "descrittore": "formaggio, cavolo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "fenilacetaldeide",
+          "descrittore": "miele, floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "2-sec-butil-3-metossipirazina",
+          "descrittore": "terroso, tostato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "S-metil metantiosolfinato",
+          "descrittore": "cavolo, zolfo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
+        },
+        {
+          "composto": "S-metil metantiosolfonato",
+          "descrittore": "crauti, zolfo",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Wieczorek, Majcher & Jelen (2020), Foods 9(4):398, DOI 10.3390/foods9040398 (GC-O, 26 identificati)."
         }
       ]
     },
@@ -13080,23 +13416,79 @@
       "nodo_target": "ing-fiori-di-zucca",
       "specie": "Cucurbita pepo (fiore)",
       "dominio": "cucina",
-      "fonte_ingrediente": "Fiori di zucca: firma 1,4-dimetossibenzene (principale sorgente d'odore, dal nettare). Mena Granero et al., J. Chem. Ecol. 2005, 31(10):2309 (DOI 10.1007/s10886-005-7103-2, HS-SPME-GC-MS/MS su fiore di zucchino).",
+      "fonte_ingrediente": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2.",
       "composti": [
         {
-          "composto": "1,4-dimethoxybenzene",
-          "descrittore": "dolce-floreale (firma)",
+          "composto": "1,4-dimetossibenzene",
+          "descrittore": "dolce, anisato-floreale, legnoso",
           "ruolo": "firma",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Fiori di zucca: firma 1,4-dimetossibenzene (principale sorgente d'odore, dal nettare). Mena Granero et al., J. Chem. Ecol. 2005, 31(10):2309 (DOI 10.1007/s10886-005-7103-2, HS-SPME-GC-MS/MS su fiore di zucchino)."
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
         },
         {
-          "composto": "1,2,4-trimethoxybenzene",
-          "descrittore": "floreale-speziato",
+          "composto": "1,2,4-trimetossibenzene",
+          "descrittore": "anisato, dolce-speziato",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
+        },
+        {
+          "composto": "2-feniletanolo",
+          "descrittore": "rosa, floreale, miele",
           "ruolo": "caratterizzante",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Fiori di zucca: firma 1,4-dimetossibenzene (principale sorgente d'odore, dal nettare). Mena Granero et al., J. Chem. Ecol. 2005, 31(10):2309 (DOI 10.1007/s10886-005-7103-2, HS-SPME-GC-MS/MS su fiore di zucchino)."
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
+        },
+        {
+          "composto": "alcol anisico",
+          "descrittore": "floreale dolce, anice",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
+        },
+        {
+          "composto": "alcol cinnamico",
+          "descrittore": "balsamico, giacinto, dolce-speziato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
+        },
+        {
+          "composto": "indolo",
+          "descrittore": "floreale-animalico, gelsomino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
+        },
+        {
+          "composto": "(E)-nerolidolo",
+          "descrittore": "floreale, legnoso, mela verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
+        },
+        {
+          "composto": "alcol benzilico",
+          "descrittore": "floreale leggero, dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
+        },
+        {
+          "composto": "1-pentadecene",
+          "descrittore": "ceroso, idrocarburo leggero",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Andersen & Metcalf (1987), J. Chem. Ecol. 13:681-699; conf. Granero et al. (2005), DOI 10.1007/s10886-005-7103-2."
         }
       ]
     },
@@ -18302,33 +18694,249 @@
     {
       "ingrediente": "burrata",
       "nodo_target": "ing-burrata",
-      "specie": "Latte vaccino (fresca)",
+      "specie": "Latte vaccino (pasta filata fresca + panna)",
       "dominio": "cucina",
-      "fonte_ingrediente": "Burrata (latte vaccino, fresca): diacetile/acetoino (burroso-lattico) firma + lattoni cremosi (delta-decalattone) (letteratura GC-O latticini freschi).",
+      "fonte_ingrediente": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging).",
       "composti": [
         {
-          "composto": "diacetile",
-          "descrittore": "burro, panna (firma)",
+          "composto": "acetoino",
+          "descrittore": "burro, panna, yogurt",
           "ruolo": "firma",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Burrata (latte vaccino, fresca): diacetile/acetoino (burroso-lattico) firma + lattoni cremosi (delta-decalattone) (letteratura GC-O latticini freschi)."
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
         },
         {
-          "composto": "acetoino",
-          "descrittore": "burroso, lattico",
+          "composto": "diacetile",
+          "descrittore": "burro, latticino, nocciola",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "acido butirrico",
+          "descrittore": "formaggio, burro, acido",
           "ruolo": "caratterizzante",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Burrata (latte vaccino, fresca): diacetile/acetoino (burroso-lattico) firma + lattoni cremosi (delta-decalattone) (letteratura GC-O latticini freschi)."
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
         },
         {
-          "composto": "delta-decalattone",
-          "descrittore": "cremoso, lattico-pesca",
+          "composto": "acido esanoico",
+          "descrittore": "formaggio, grasso, caprino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "acido ottanoico",
+          "descrittore": "grasso, caprino",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "acido acetico",
+          "descrittore": "aceto, acido pungente",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "2,3-pentandione",
+          "descrittore": "burroso, cremoso, nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "2-eptanone",
+          "descrittore": "formaggio blu, piccante, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "3-metilbutanale",
+          "descrittore": "maltato, formaggio fresco, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "3-metil-1-butanolo",
+          "descrittore": "maltato, whisky, fruttato",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "2-feniletanolo",
+          "descrittore": "rosa, miele, floreale",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "acetato di etile",
+          "descrittore": "fruttato, ananas, etereo",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "dimetilsolfuro",
+          "descrittore": "cavolo, marino, solforoso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "verde, erba, grasso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "etanolo",
+          "descrittore": "alcolico, dolce",
           "ruolo": "di_supporto",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Burrata (latte vaccino, fresca): diacetile/acetoino (burroso-lattico) firma + lattoni cremosi (delta-decalattone) (letteratura GC-O latticini freschi)."
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "2-butanone",
+          "descrittore": "etereo, dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "eptanale",
+          "descrittore": "grasso, fruttato, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "ottanale",
+          "descrittore": "agrumi, grasso, fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "nonanale",
+          "descrittore": "grasso, agrumi, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "decanale",
+          "descrittore": "floreale, grasso, buccia d'arancia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "furfurale",
+          "descrittore": "pane, mandorla, caramello",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "latteo, fruttato, floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "2-undecanone",
+          "descrittore": "ceroso, fruttato, rosa",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "6-metil-5-epten-2-one",
+          "descrittore": "fungo, agrumi, verde",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "geranilacetone",
+          "descrittore": "floreale, verde, magnolia",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "1-pentanolo",
+          "descrittore": "balsamico, fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "esanolo",
+          "descrittore": "verde, erba, resina",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "alcol furfurilico",
+          "descrittore": "pane, bruciato, dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "acido decanoico",
+          "descrittore": "grasso, caprino",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
+        },
+        {
+          "composto": "d-limonene",
+          "descrittore": "agrumi, limone",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Natrella, Faccia, Lorenzo, De Palo & Gambacorta (2020), J. Dairy Science 103(3):2089-2097, DOI 10.3168/jds.2019-17059 (profilo mozzarella alta umidita', stessa base; esclusi i picchi da packaging)."
         }
       ]
     },
@@ -18483,41 +19091,209 @@
     {
       "ingrediente": "acciughe",
       "nodo_target": "ing-acciughe",
-      "specie": "Engraulis encrasicolus (sotto sale)",
+      "specie": "Engraulis encrasicolus",
       "dominio": "cucina",
-      "fonte_ingrediente": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato).",
+      "fonte_ingrediente": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma).",
       "composti": [
         {
-          "composto": "(Z)-4-eptenale",
-          "descrittore": "pesce, marino-freddo (firma)",
+          "composto": "(E)-4-heptenal",
+          "descrittore": "pesce, crema, grasso di pesce, marino",
           "ruolo": "firma",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato)."
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
         },
         {
-          "composto": "trimetilammina",
-          "descrittore": "pesce, salmastro",
-          "ruolo": "caratterizzante",
+          "composto": "(E,Z)-2,6-nonadienale",
+          "descrittore": "cetriolo, verde, melone, marino fresco",
+          "ruolo": "firma",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato)."
-        },
-        {
-          "composto": "esanale",
-          "descrittore": "verde-grasso",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato)."
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
         },
         {
           "composto": "3-metilbutanale",
-          "descrittore": "maltato (da stagionatura)",
+          "descrittore": "maltato, cacao, mandorla",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "2-metilbutanale",
+          "descrittore": "maltato, cacao, nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "2,3-pentandione",
+          "descrittore": "burroso, cremoso, nocciola",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "acetoino",
+          "descrittore": "burro, panna, yogurt",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "esanale",
+          "descrittore": "erba tagliata, verde, mela",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "benzaldeide",
+          "descrittore": "mandorla amara, ciliegia",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "2-pentilfurano",
+          "descrittore": "fagiolino verde, terroso",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "ottanale",
+          "descrittore": "agrumi, grasso, verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "(E,E)-2,4-eptadienale",
+          "descrittore": "grasso, nocciola, pesce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "fenilacetaldeide",
+          "descrittore": "miele, floreale, giacinto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "nonanale",
+          "descrittore": "agrumi, sego, cera, verde",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "1-penten-3-olo",
+          "descrittore": "erbaceo, verde pungente",
           "ruolo": "di_supporto",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Acciughe sotto sale (Engraulis encrasicolus): (Z)-4-eptenale = nota 'pesce freddo' firma dei prodotti ittici conservati + trimetilammina; la stagionatura aggiunge aldeidi di Strecker (3-metilbutanale) (letteratura GC-O pesce azzurro/stagionato)."
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "2-pentanone",
+          "descrittore": "etereo, fruttato dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "pentanale",
+          "descrittore": "maltato, verde, pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "2-etilfurano",
+          "descrittore": "dolce, bruciato, terroso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "(Z)-2-pentenale",
+          "descrittore": "verde, fruttato, pungente",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "(E)-2-penten-1-olo",
+          "descrittore": "verde, grasso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "furfurale",
+          "descrittore": "pane, mandorla, caramello",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "(E)-2-esenale",
+          "descrittore": "verde, mela, mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "2-acetilfurano",
+          "descrittore": "dolce, balsamico, mandorla",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "2-tiofencarbossaldeide",
+          "descrittore": "solforoso, bruciato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "2-nonanone",
+          "descrittore": "floreale, grasso, fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
+        },
+        {
+          "composto": "4-etilbenzaldeide",
+          "descrittore": "mandorla, dolce",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Giogios, Kalogeropoulos & Grigorakis (2013), Mediterranean Marine Science 14(2):343-352, DOI 10.12681/mms.342 (Tab.3). Filtrati gli idrocarburi/solventi da packaging (non-aroma)."
         }
       ]
     },
@@ -18556,6 +19332,7 @@
     }
   ],
   "_prossimi": [
+    "Profondita 28/10: profili VOLATILI COMPLETI (da studi GC-MS/GC-O aperti) per 5 nodi magri comuni -> acciughe (25, Giogios 2013), burrata (30, Natrella 2020 mozzarella), spinaci (26, Naef 2000), broccolo (26, Wieczorek 2020 GC-O), fiori di zucca (9, Andersen 1987/Granero 2005). Sostituiscono le firme sottili: ora producono grafi veri. zucchina/scarola/polpo/pinoli/baccala NON arricchiti: nessun profilo pubblicato accessibile (paywall/inesistente) -> restano onestamente 'in costruzione'.",
     "Ondata 28/10 (basi scoperte dallo smoke-test, +4): scarola, pinoli, acciughe, vongole. Firme da letteratura (verdi C6 scarola, esanale/decadienale pinoli, (Z)-4-eptenale acciughe, bromofenoli vongole). Non-volatili (amaro scarola) dichiarate. vodka (neutra) e vermouth (troppo variabile per prodotto) esclusi di proposito: meglio vuoto che inventato. friarielli e olio di oliva risolti via alias (cime di rapa / olio-evo-coratina), non dati nuovi.",
     "Dedup 28/10 (Fase 2): fuse 6 righe doppie (mastiha, elicriso, pepe di timut, finger lime = stesso nodo; grani del paradiso, sudachi = nodi ing-/ai_ doppi consolidati su ing-, l'importer ora li pinna via _FORZA_NODO). Separato 'mirtillo rosso europeo' (Vaccinium vitis-idaea) da 'mirtillo rosso' (V. macrocarpon): erano specie diverse sullo stesso nodo. Rietichettate varianti di forma: tè nero/verde (infuso), caffè tostato — nodi distinti, nomi ora non ambigui. La migrazione del grafo in prod (unire gli archi di ai_ su ing- e togliere i nodi doppi gia' esistenti) e' separata, da dry-run prima dell'esecuzione.",
     "Ondata 27/10 (jj, +14 buchi importanti): cardoncelli, champignon, shiitake, avocado, rucola, radicchio, agnello, anatra, polpo, calamaro, capesante, burrata, gorgonzola, paprika. Firme da letteratura GC-MS/GC-O (alcoli dei funghi, lentionina, ITC rucola, acidi ramificati agnello, bromofenoli marini, metil-chetoni gorgonzola, metossipirazina paprika). Note non-volatili (amaro radicchio, umami capesante) dichiarate. Da rivedere prima dell'import.",
