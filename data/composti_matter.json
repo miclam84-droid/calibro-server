@@ -887,7 +887,7 @@
       ]
     },
     {
-      "ingrediente": "caffe",
+      "ingrediente": "caffè",
       "nodo_target": "ing-caffe",
       "specie": "Coffea (tostato)",
       "dominio": "caffe",
@@ -3441,7 +3441,7 @@
       ]
     },
     {
-      "ingrediente": "te nero",
+      "ingrediente": "tè nero",
       "nodo_target": "ing-te-nero",
       "specie": "Camellia sinensis (fermentato)",
       "dominio": "bar",
@@ -3832,7 +3832,7 @@
       ]
     },
     {
-      "ingrediente": "te verde",
+      "ingrediente": "tè verde",
       "nodo_target": "ing-te-verde",
       "specie": "Camellia sinensis (non fermentato)",
       "dominio": "bar",
@@ -6895,6 +6895,38 @@
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
           "fonte": "Grani del paradiso (Aframomum melegueta): la pungenza viene da 6-paradolo / 6-gingerolo (non volatili, nessun arco aromatico); volatili dominati da umulene, beta-cariofillene, (E)-nerolidolo (CSIRO Aust. J. Chem. CH9700369 'the paradols'; caps.ncbs GRAYU)."
+        },
+        {
+          "composto": "eugenol",
+          "descrittore": "chiodo di garofano (firma aroma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        },
+        {
+          "composto": "1,8-cineole",
+          "descrittore": "balsamico-eucalipto",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        },
+        {
+          "composto": "alpha-terpineol",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
+        },
+        {
+          "composto": "6-paradol",
+          "descrittore": "pungente-bruciante (trigeminale, non olfattivo)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
         }
       ]
     },
@@ -7553,11 +7585,11 @@
         },
         {
           "composto": "italidione",
-          "descrittore": "curry-fieno greco (marcatore)",
-          "ruolo": "caratterizzante",
+          "descrittore": "curry-fieno (firma, specie-specifico)",
+          "ruolo": "firma",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Elicriso / immortelle (Helichrysum italicum): neril acetato dominante, con italidioni (beta-dichetoni, marcatore curry), alpha-pinene e nerolo (Turkish J. Agri. Forest. 44(4); NCBI PMC6264769)."
+          "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
         },
         {
           "composto": "alpha-pinene",
@@ -7582,6 +7614,14 @@
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
           "fonte": "Elicriso / immortelle (Helichrysum italicum): neril acetato dominante, con italidioni (beta-dichetoni, marcatore curry), alpha-pinene e nerolo (Turkish J. Agri. Forest. 44(4); NCBI PMC6264769)."
+        },
+        {
+          "composto": "neryl propionate",
+          "descrittore": "fruttato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
         }
       ]
     },
@@ -10072,11 +10112,43 @@
         },
         {
           "composto": "linalool",
-          "descrittore": "floreale",
+          "descrittore": "floreale-fresco (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "methyl cinnamate",
+          "descrittore": "balsamico-dolce",
+          "ruolo": "caratterizzante",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "myrcene",
+          "descrittore": "balsamico",
           "ruolo": "di_supporto",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Pepe di Timut (Zanthoxylum armatum): tioli tipo pompelmo -> 4-mercapto-4-metilpentan-2-one (firma), 3-mercaptoesil acetato, 1-p-mentene-8-tiolo, con limonene e linalolo (Flavour Fragr. J. 2017, 32(5):317, DOI 10.1002/ffj.3381)."
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "terpinen-4-ol",
+          "descrittore": "terroso-speziato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
+        },
+        {
+          "composto": "hydroxy-alpha-sanshool",
+          "descrittore": "formicolio (trigeminale, non olfattivo)",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
         }
       ]
     },
@@ -10396,6 +10468,38 @@
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
           "fonte": "Sudachi (Citrus sudachi): limonene/gamma-terpinene in massa; aroma-attivi dill ether e cuminaldeide (Mookdasanit et al. 2003, Food Sci. Technol. Res. 9(1):54, DOI 10.3136/fstr.9.54)."
+        },
+        {
+          "composto": "decanal",
+          "descrittore": "agrume-ceroso (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
+        },
+        {
+          "composto": "citronellal",
+          "descrittore": "verde-citrico (firma)",
+          "ruolo": "firma",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
+        },
+        {
+          "composto": "alpha-pinene",
+          "descrittore": "resinoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
         }
       ]
     },
@@ -10432,11 +10536,11 @@
         },
         {
           "composto": "sabinene",
-          "descrittore": "legnoso-speziato",
-          "ruolo": "di_supporto",
+          "descrittore": "legnoso-agrumato",
+          "ruolo": "caratterizzante",
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
-          "fonte": "Finger lime / caviale di limone (Citrus australasica): D-limonene dominante (63-66%) con beta-fellandrene, gamma-terpinene, beta-citronellolo (Cozzolino et al. 2022, Molecules 27(22):7846, DOI 10.3390/molecules27227846)."
+          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
         },
         {
           "composto": "beta-citronellol",
@@ -10445,6 +10549,22 @@
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
           "fonte": "Finger lime / caviale di limone (Citrus australasica): D-limonene dominante (63-66%) con beta-fellandrene, gamma-terpinene, beta-citronellolo (Cozzolino et al. 2022, Molecules 27(22):7846, DOI 10.3390/molecules27227846)."
+        },
+        {
+          "composto": "bicyclogermacrene",
+          "descrittore": "legnoso",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
+        },
+        {
+          "composto": "linalool",
+          "descrittore": "floreale-agrumato",
+          "ruolo": "di_supporto",
+          "concentrazione": "n.d. (da raffinare)",
+          "stato": "da_fonte",
+          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
         }
       ]
     },
@@ -13448,7 +13568,7 @@
       ]
     },
     {
-      "ingrediente": "tè nero",
+      "ingrediente": "tè nero (infuso)",
       "nodo_target": "ing-te-nero-infuso",
       "specie": "Camellia sinensis, infuso ossidato",
       "dominio": "bar",
@@ -13505,7 +13625,7 @@
       ]
     },
     {
-      "ingrediente": "tè verde",
+      "ingrediente": "tè verde (infuso)",
       "nodo_target": "ing-te-verde-infuso",
       "specie": "Camellia sinensis, infuso non ossidato",
       "dominio": "bar",
@@ -13562,7 +13682,7 @@
       ]
     },
     {
-      "ingrediente": "caffè",
+      "ingrediente": "caffè tostato",
       "nodo_target": "ing-caffe-tostato",
       "specie": "Coffea, tostato/espresso",
       "dominio": "bar",
@@ -17186,55 +17306,6 @@
       ]
     },
     {
-      "ingrediente": "finger lime",
-      "nodo_target": "ing-finger-lime",
-      "specie": "Citrus australasica",
-      "dominio": "bar",
-      "fonte_ingrediente": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma.",
-      "composti": [
-        {
-          "composto": "limonene",
-          "descrittore": "agrume-fresco (firma)",
-          "ruolo": "firma",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
-        },
-        {
-          "composto": "sabinene",
-          "descrittore": "legnoso-agrumato",
-          "ruolo": "caratterizzante",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
-        },
-        {
-          "composto": "bicyclogermacrene",
-          "descrittore": "legnoso",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
-        },
-        {
-          "composto": "beta-phellandrene",
-          "descrittore": "resinoso (cv Faustrime)",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
-        },
-        {
-          "composto": "linalool",
-          "descrittore": "floreale-agrumato",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Finger lime (caviale di agrumi): firma limonene 63-66% su fondo terpenico 'lime floreale'; cv Faustrime alto beta-fellandrene. Molecules 2022, 27(22):7846 (DOI 10.3390/molecules27227846). NOTA: l'isomentone NON è nella fonte, tolto dalla firma."
-        }
-      ]
-    },
-    {
       "ingrediente": "paccasassi",
       "nodo_target": "ing-paccasassi",
       "specie": "Crithmum maritimum",
@@ -17301,63 +17372,6 @@
       ]
     },
     {
-      "ingrediente": "grani del paradiso",
-      "nodo_target": "ai_grani_del_paradiso",
-      "specie": "Aframomum melegueta",
-      "dominio": "cucina",
-      "fonte_ingrediente": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029).",
-      "composti": [
-        {
-          "composto": "eugenol",
-          "descrittore": "chiodo di garofano (firma aroma)",
-          "ruolo": "firma",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
-        },
-        {
-          "composto": "1,8-cineole",
-          "descrittore": "balsamico-eucalipto",
-          "ruolo": "caratterizzante",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
-        },
-        {
-          "composto": "beta-caryophyllene",
-          "descrittore": "legnoso-pepato",
-          "ruolo": "caratterizzante",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
-        },
-        {
-          "composto": "alpha-humulene",
-          "descrittore": "legnoso",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
-        },
-        {
-          "composto": "alpha-terpineol",
-          "descrittore": "floreale",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
-        },
-        {
-          "composto": "6-paradol",
-          "descrittore": "pungente-bruciante (trigeminale, non olfattivo)",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Grani del paradiso (Aframomum melegueta): aroma da olio essenziale (eugenolo + cineolo + cariofilleni); la piccantezza viene dal 6-paradol, marcatore TRIGEMINALE non volatile (campo pungenza, separato dall'aroma). J. Oleo Science 2017, 66(1):51 (DOI 10.5650/jos.ess16029)."
-        }
-      ]
-    },
-    {
       "ingrediente": "olivello spinoso",
       "nodo_target": "ing-olivello-spinoso",
       "specie": "Hippophae rhamnoides",
@@ -17415,8 +17429,8 @@
       ]
     },
     {
-      "ingrediente": "mirtillo rosso",
-      "nodo_target": "ing-mirtillo-rosso",
+      "ingrediente": "mirtillo rosso europeo",
+      "nodo_target": "ing-mirtillo-rosso-europeo",
       "specie": "Vaccinium vitis-idaea",
       "dominio": "cucina",
       "fonte_ingrediente": "Mirtillo rosso / lingon (Vaccinium vitis-idaea): firma acido 2-metilbutanoico + aldeidi C6 + metil benzoato (Marsol-Vall et al.). Food Research International 2023, 167:112738 (DOI 10.1016/j.foodres.2023.112738).",
@@ -17632,186 +17646,6 @@
           "concentrazione": "n.d. (da raffinare)",
           "stato": "da_fonte",
           "fonte": "Lemon myrtle (Backhousia citriodora): firma citrale 89,8% (geraniale + nerale) = limone purissimo. Molecules 2022, 27(15):4895 (DOI 10.3390/molecules27154895)."
-        }
-      ]
-    },
-    {
-      "ingrediente": "mastiha",
-      "nodo_target": "ing-mastiha",
-      "specie": "Pistacia lentiscus var. chia (resina)",
-      "dominio": "bar",
-      "fonte_ingrediente": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo.",
-      "composti": [
-        {
-          "composto": "alpha-pinene",
-          "descrittore": "resinoso-pino (firma)",
-          "ruolo": "firma",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo."
-        },
-        {
-          "composto": "myrcene",
-          "descrittore": "balsamico",
-          "ruolo": "caratterizzante",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo."
-        },
-        {
-          "composto": "beta-pinene",
-          "descrittore": "resinoso",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo."
-        },
-        {
-          "composto": "verbenone",
-          "descrittore": "canfora-legnoso",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Mastice di Chios (Pistacia lentiscus var. chia, PDO): firma alpha-pinene (Chios ~72%) + myrcene ~16%. Molecules 2020, 25(9):2136 (DOI 10.3390/molecules25092136). Resina commestibile monosito al mondo."
-        }
-      ]
-    },
-    {
-      "ingrediente": "sudachi",
-      "nodo_target": "ai_sudachi",
-      "specie": "Citrus sudachi",
-      "dominio": "bar",
-      "fonte_ingrediente": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156).",
-      "composti": [
-        {
-          "composto": "decanal",
-          "descrittore": "agrume-ceroso (firma)",
-          "ruolo": "firma",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
-        },
-        {
-          "composto": "citronellal",
-          "descrittore": "verde-citrico (firma)",
-          "ruolo": "firma",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
-        },
-        {
-          "composto": "limonene",
-          "descrittore": "agrume",
-          "ruolo": "caratterizzante",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
-        },
-        {
-          "composto": "linalool",
-          "descrittore": "floreale",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
-        },
-        {
-          "composto": "alpha-pinene",
-          "descrittore": "resinoso",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Sudachi (Citrus sudachi, Tokushima): firma decanale + citronellale + linalolo su base limonene (li distinguono dagli altri agrumi giapponesi). Food Sci. Technol. Res. 1999, 5(2):156 (DOI 10.3136/fstr.5.156)."
-        }
-      ]
-    },
-    {
-      "ingrediente": "pepe di timut",
-      "nodo_target": "ing-pepe-di-timut",
-      "specie": "Zanthoxylum armatum",
-      "dominio": "bar",
-      "fonte_ingrediente": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020.",
-      "composti": [
-        {
-          "composto": "linalool",
-          "descrittore": "floreale-fresco (firma)",
-          "ruolo": "firma",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
-        },
-        {
-          "composto": "methyl cinnamate",
-          "descrittore": "balsamico-dolce",
-          "ruolo": "caratterizzante",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
-        },
-        {
-          "composto": "limonene",
-          "descrittore": "agrume",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
-        },
-        {
-          "composto": "myrcene",
-          "descrittore": "balsamico",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
-        },
-        {
-          "composto": "terpinen-4-ol",
-          "descrittore": "terroso-speziato",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
-        },
-        {
-          "composto": "hydroxy-alpha-sanshool",
-          "descrittore": "formicolio (trigeminale, non olfattivo)",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Pepe di timut / timur (Zanthoxylum armatum, Himalaya): aroma firma linalolo 44-74% + metil cinnamato; il formicolio è idrossi-alfa-sanshool, marcatore TRIGEMINALE non volatile (campo tingling, separato dall'aroma). Int. J. Food Properties 2020."
-        }
-      ]
-    },
-    {
-      "ingrediente": "elicriso",
-      "nodo_target": "ing-elicriso",
-      "specie": "Helichrysum italicum",
-      "dominio": "bar",
-      "fonte_ingrediente": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista.",
-      "composti": [
-        {
-          "composto": "neryl acetate",
-          "descrittore": "fruttato-floreale (firma)",
-          "ruolo": "firma",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
-        },
-        {
-          "composto": "italidione",
-          "descrittore": "curry-fieno (firma, specie-specifico)",
-          "ruolo": "firma",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
-        },
-        {
-          "composto": "neryl propionate",
-          "descrittore": "fruttato",
-          "ruolo": "di_supporto",
-          "concentrazione": "n.d. (da raffinare)",
-          "stato": "da_fonte",
-          "fonte": "Elicriso (Helichrysum italicum): firma neril acetato (≥30%) + italidioni (beta-diketoni, nota curry/fieno tipici della specie). NOTA: composizione consolidata in letteratura; fonte letta = abstract congresso (ISEO), da agganciare a un DOI di rivista."
         }
       ]
     },
@@ -18574,6 +18408,7 @@
     }
   ],
   "_prossimi": [
+    "Dedup 28/10 (Fase 2): fuse 6 righe doppie (mastiha, elicriso, pepe di timut, finger lime = stesso nodo; grani del paradiso, sudachi = nodi ing-/ai_ doppi consolidati su ing-, l'importer ora li pinna via _FORZA_NODO). Separato 'mirtillo rosso europeo' (Vaccinium vitis-idaea) da 'mirtillo rosso' (V. macrocarpon): erano specie diverse sullo stesso nodo. Rietichettate varianti di forma: tè nero/verde (infuso), caffè tostato — nodi distinti, nomi ora non ambigui. La migrazione del grafo in prod (unire gli archi di ai_ su ing- e togliere i nodi doppi gia' esistenti) e' separata, da dry-run prima dell'esecuzione.",
     "Ondata 27/10 (jj, +14 buchi importanti): cardoncelli, champignon, shiitake, avocado, rucola, radicchio, agnello, anatra, polpo, calamaro, capesante, burrata, gorgonzola, paprika. Firme da letteratura GC-MS/GC-O (alcoli dei funghi, lentionina, ITC rucola, acidi ramificati agnello, bromofenoli marini, metil-chetoni gorgonzola, metossipirazina paprika). Note non-volatili (amaro radicchio, umami capesante) dichiarate. Da rivedere prima dell'import.",
     "Ondata 26/10 (ii, +4 panificazione Bucolico): mandorla tostata, pistacchio tostato, scorza d'arancia candita, cedro candito. Firme da fonte reale (UC Davis almond flavor; DHA/GC-MS pistacchio IJFP 2018; olio di scorza agrumi). Note di CANDITURA (maltolo) marcate stato=stimato, da verificare al banco. Preparata nella sessione motore-onesto 26/10.",
     "Ondata 25/10 (hh, +14 firme verificate dalla ricerca biodiversità): pawpaw, finger lime, paccasassi, miele di corbezzolo, grani del paradiso, olivello spinoso, mirtillo rosso (CORREGGE), surströmming, époisses, lemon myrtle, mastiha, sudachi, pepe di timut, elicriso. Tutti con fonte GC-MS/GC-O reale + DOI. Correzioni di metodo incorporate: (a) marcatori TRIGEMINALI non-olfattivi separati dall'aroma (6-paradol in grani del paradiso, idrossi-alfa-sanshool in pepe di timut); (b) mirtillo rosso CORRETTO (acido benzoico = conservante, non firma); (c) surströmming = TMA+polisolfuri (non H2S+acidi); (d) finger lime senza isomentone; (e) miele di corbezzolo marcatore non-volatile dichiarato; (f) paccasassi con chemotipo dichiarato. 6 arricchiscono nodi esistenti (grani del paradiso, mirtillo rosso, mastiha, sudachi, pepe di timut, elicriso, finger lime), il resto nuovi. SCARTATI dalla ricerca per firma assente: prugnolo, kakadu plum, davidson plum, quandong, wattleseed, bush tomato, sea grape, gac. Ponti: esteri fruttati (pawpaw/olivello<->ananas/mela), citrale (lemon myrtle<->citronella/timo limonato), croste lavate (époisses<->camembert/taleggio), TMA+solfuri (surströmming<->acciuga salata/colatura), alpha-pinene resinoso (mastiha<->ginepro/incenso).",

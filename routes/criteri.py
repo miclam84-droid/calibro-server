@@ -90,6 +90,8 @@ def _risolvi_nodo(cur, ingrediente):
                  "te verde": "ing-te-verde", "tè verde": "ing-te-verde",
                  "malto": "ing-malto", "pandan": "ing-pandan",
                  "issopo": "ing-issopo", "mirtillo rosso": "ing-mirtillo-rosso",
+                 "mirtillo rosso europeo": "ing-mirtillo-rosso-europeo",
+                 "grani del paradiso": "ing-grani-del-paradiso", "sudachi": "ing-sudachi",
                  "fava": "ing-fava",
                  "finger lime": "ing-finger-lime", "cime di rapa": "ing-cime-di-rapa",
                  "semi di zucca": "ing-semi-di-zucca"}
@@ -610,6 +612,80 @@ def criteri_diag(ingrediente):
             "nome_mostrato": ing_nome,
             "composti_totali": n_comp,
             "composti_esempio": esempi,
+        })
+    except Exception as e:
+        return _errore(e)
+
+
+@bp.route("/v1/criteri/dedup-nodi", methods=["GET"])
+def criteri_dedup_nodi():
+    """DRY-RUN (solo lettura): trova i nodi-ingrediente DOPPI — stesso nome, due id diversi, entrambi
+    con composti (il caso ai_/ing- che frammenta i pairing). Per ogni coppia indica il nodo canonico
+    (preferisce 'ing-'), lo scarto, e quali composti dello scarto NON sono ancora sul canonico (cioe'
+    cosa si perde oggi e cosa una fusione sposterebbe). NON scrive nulla. Serve a decidere la
+    migrazione del grafo PRIMA di eseguirla."""
+    if not DATABASE_URL:
+        return jsonify({"nota": "DB non disponibile"})
+    try:
+        with connessione() as conn:
+            cur = conn.cursor()
+            # gruppi di nodi ingrediente/prodotto con stesso nome e >=2 id, ciascuno con composti
+            cur.execute(
+                """SELECT LOWER(n.name) nome, n.id,
+                          COUNT(e.to_id) FILTER (WHERE e.relation='contiene_composto') nc
+                   FROM nodes n
+                   LEFT JOIN edges e ON e.from_id=n.id
+                   WHERE n.type IN ('Ingrediente','Prodotto')
+                     AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+                   GROUP BY LOWER(n.name), n.id
+                   HAVING COUNT(e.to_id) FILTER (WHERE e.relation='contiene_composto') > 0""")
+            per_nome = {}
+            for nome, nid, nc in cur.fetchall():
+                per_nome.setdefault(nome, []).append({"id": nid, "composti": nc})
+            doppi = {k: v for k, v in per_nome.items() if len(v) > 1}
+
+            piani = []
+            for nome, nodi in sorted(doppi.items()):
+                # canonico: preferisci id che inizia per 'ing-', poi piu' composti
+                nodi_ord = sorted(nodi, key=lambda x: (0 if x["id"].startswith("ing-") else 1, -x["composti"]))
+                canonico = nodi_ord[0]
+                scarti = nodi_ord[1:]
+                # composti del canonico (per nome)
+                cur.execute(
+                    """SELECT c.name FROM edges e JOIN nodes c ON c.id=e.to_id
+                       WHERE e.from_id=%s AND e.relation='contiene_composto'""", (canonico["id"],))
+                comp_can = {(r[0] or "").lower() for r in cur.fetchall()}
+                dettaglio_scarti = []
+                for s in scarti:
+                    cur.execute(
+                        """SELECT c.name FROM edges e JOIN nodes c ON c.id=e.to_id
+                           WHERE e.from_id=%s AND e.relation='contiene_composto'""", (s["id"],))
+                    comp_s = [(r[0] or "") for r in cur.fetchall()]
+                    da_spostare = [x for x in comp_s if x.lower() not in comp_can]
+                    # archi entranti verso lo scarto (abbinamenti che punterebbero al nodo sbagliato)
+                    cur.execute("SELECT COUNT(*) FROM edges WHERE to_id=%s", (s["id"],))
+                    archi_entranti = cur.fetchone()[0]
+                    dettaglio_scarti.append({
+                        "id": s["id"], "composti": s["composti"],
+                        "composti_unici_da_spostare": da_spostare,
+                        "archi_entranti_da_ricollegare": archi_entranti,
+                    })
+                piani.append({
+                    "nome": nome,
+                    "canonico": canonico["id"],
+                    "composti_canonico": canonico["composti"],
+                    "scarti_da_fondere": dettaglio_scarti,
+                })
+            cur.close()
+        return jsonify({
+            "modo": "DRY-RUN (solo lettura) — nessuna scrittura",
+            "coppie_doppie": len(piani),
+            "piani": piani,
+            "nota": "Per ogni nome: 'canonico' e' il nodo da tenere (ing-), 'scarti' i doppioni. "
+                    "'composti_unici_da_spostare' = chimica che OGGI vive solo sullo scarto e quindi "
+                    "l'utente non vede quando la ricerca pesca il canonico (o viceversa). Una migrazione "
+                    "sposterebbe questi archi sul canonico e cancellerebbe lo scarto. Esecuzione separata, "
+                    "dopo revisione di questo output.",
         })
     except Exception as e:
         return _errore(e)
