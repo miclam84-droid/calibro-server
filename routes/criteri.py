@@ -99,7 +99,11 @@ def _risolvi_nodo(cur, ingrediente):
                  "olio extravergine": "ing-olio-evo-coratina", "olio evo": "ing-olio-evo-coratina",
                  "fava": "ing-fava",
                  "finger lime": "ing-finger-lime", "cime di rapa": "ing-cime-di-rapa",
-                 "semi di zucca": "ing-semi-di-zucca"}
+                 "semi di zucca": "ing-semi-di-zucca",
+                 # post-dedup 2026-10-28: dopo la fusione dei doppioni il nome risolveva su un
+                 # nodo-ombra magro (es. rosmarino -> ahn_tunisian_rosemary); forzo il canonico
+                 # ricco dove ora vive la chimica consolidata. La guardia ">0 composti" protegge.
+                 "rosmarino": "ing-rosmarino", "barbabietola": "ai_barbabietola"}
     _ov = _OVERRIDE.get(ing)
     if _ov:
         cur.execute(
