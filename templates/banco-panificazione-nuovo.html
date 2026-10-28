@@ -63,83 +63,111 @@
 <header class="topbar">
   <div class="topbar-in">
     <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
-    <span class="eyebrow">Banco · Panificazione</span>
+    <span class="eyebrow" data-i18n="bar">Banco · Panificazione</span>
   </div>
 </header>
 
 <main class="wrap">
-  <nav style="display:flex;gap:8px;margin-top:18px" aria-label="Sezioni del Banco">
+  <nav style="display:flex;gap:8px;margin-top:18px" aria-label="Sezioni del Banco" data-i18n-aria="nav_sezioni">
     <a href="/banco/cocktail" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C">Cocktail</a>
     <a href="/banco/panificazione" aria-current="page" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:700;text-decoration:none;background:#1E593C;color:#EEF0EA">Panificazione</a>
     <a href="/banco/calcolatori" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C">Calcolatori</a>
   </nav>
   <header style="margin-top:22px">
-    <span class="eyebrow">Panificazione · progetta dall'obiettivo</span>
-    <h1 style="margin-top:4px">Dall'ora di sfornata, a ritroso</h1>
-    <p class="regola">Dimmi <b>cosa vuoi e a che ora</b>. Matter calcola dosi, lievito sulla temperatura e la <b>tabella di marcia</b>: a che ora impastare per sfornare in orario. Il lievito segue la regola di Hamelman (×3 ogni 9&nbsp;°C), non un numero fisso.</p>
+    <span class="eyebrow" data-i18n="eyebrow_head">Panificazione · progetta dall'obiettivo</span>
+    <h1 style="margin-top:4px" data-i18n="h1">Dall'ora di sfornata, a ritroso</h1>
+    <p class="regola" data-i18n-html="lede">Dimmi <b>cosa vuoi e a che ora</b>. Matter calcola dosi, lievito sulla temperatura e la <b>tabella di marcia</b>: a che ora impastare per sfornare in orario. Il lievito segue la regola di Hamelman (×3 ogni 9&nbsp;°C), non un numero fisso.</p>
   </header>
 
   <form id="form" class="banco-form" autocomplete="off">
-    <div class="field"><label for="tipo">Cosa</label>
+    <div class="field"><label for="tipo" data-i18n="lbl_cosa">Cosa</label>
       <div class="inp"><select id="tipo">
-        <option value="pizza_napoletana">Pizza napoletana</option>
-        <option value="pizza_teglia">Pizza in teglia</option>
-        <option value="pane">Pane</option>
+        <option value="pizza_napoletana" data-i18n="opt_pizza_nap">Pizza napoletana</option>
+        <option value="pizza_teglia" data-i18n="opt_pizza_teglia">Pizza in teglia</option>
+        <option value="pane" data-i18n="opt_pane">Pane</option>
         <option value="focaccia">Focaccia</option>
       </select></div></div>
-    <div class="field"><label for="metodo">Metodo</label>
+    <div class="field"><label for="metodo" data-i18n="lbl_metodo">Metodo</label>
       <div class="inp"><select id="metodo">
-        <option value="diretto">Diretto</option>
+        <option value="diretto" data-i18n="opt_diretto">Diretto</option>
         <option value="biga">Biga</option>
         <option value="poolish">Poolish</option>
-        <option value="madre">Lievito madre</option>
+        <option value="madre" data-i18n="opt_madre">Lievito madre</option>
       </select></div></div>
-    <div class="field"><label for="n">Quanti panetti</label>
+    <div class="field"><label for="n" data-i18n="lbl_panetti">Quanti panetti</label>
       <div class="inp"><input id="n" type="number" inputmode="numeric" value="6" min="1" max="60" step="1"></div></div>
-    <div class="field"><label for="peso">Peso a panetto</label>
+    <div class="field"><label for="peso" data-i18n="lbl_peso">Peso a panetto</label>
       <div class="inp"><input id="peso" type="number" inputmode="numeric" value="280" min="80" max="1200" step="10"><span class="unit">g</span></div></div>
-    <div class="field"><label for="idr">Idratazione <span class="muted">(vuoto = da ricetta)</span></label>
+    <div class="field"><label for="idr" data-i18n-html="lbl_idr">Idratazione <span class="muted">(vuoto = da ricetta)</span></label>
       <div class="inp"><input id="idr" type="number" inputmode="numeric" placeholder="auto" min="50" max="100" step="1"><span class="unit">%</span></div></div>
-    <div class="field"><label for="tamb">Temperatura ambiente</label>
+    <div class="field"><label for="tamb" data-i18n="lbl_tamb">Temperatura ambiente</label>
       <div class="inp"><input id="tamb" type="number" inputmode="decimal" value="22" min="4" max="38" step="0.5"><span class="unit">°C</span></div></div>
-    <div class="field"><label for="ore">Ore di lievitazione</label>
+    <div class="field"><label for="ore" data-i18n="lbl_ore">Ore di lievitazione</label>
       <div class="inp"><input id="ore" type="number" inputmode="decimal" value="8" min="2" max="72" step="1"><span class="unit">h</span></div></div>
-    <div class="field"><label for="sfor">Ora di sfornata</label>
+    <div class="field"><label for="sfor" data-i18n="lbl_sfor">Ora di sfornata</label>
       <div class="inp"><input id="sfor" type="time" value="20:00"></div></div>
-    <button type="submit" class="btn btn--block">Progetta</button>
+    <button type="submit" class="btn btn--block" data-i18n="btn_progetta">Progetta</button>
   </form>
 
   <div id="out"></div>
   <div class="state" id="state" hidden></div>
 
-  <footer>
+  <footer data-i18n-html="footer">
     <b>Metodo: Jeffrey Hamelman — <i>Bread</i>.</b> Il lievito è calcolato sulla temperatura e sulle ore volute (×3 ogni 9&nbsp;°C): più caldo, meno lievito. La temperatura dell'acqua serve a centrare l'impasto finale. Gli orari della marcia sono un piano di partenza — se al banco la temperatura sbalza, i tempi vanno ricalibrati.
   </footer>
 </main>
 
 <script>
+window.I18N_TITLE = {it:"Banco · Panificazione — Matter Bench", en:"Banco · Bread baking — Matter Bench", es:"Banco · Panificación — Matter Bench"};
+window.I18N_DICT = {
+  bar:             {it:"Banco · Panificazione", en:"Banco · Bread baking", es:"Banco · Panificación"},
+  nav_sezioni:     {it:"Sezioni del Banco", en:"Banco sections", es:"Secciones del Banco"},
+  eyebrow_head:    {it:"Panificazione · progetta dall'obiettivo", en:"Bread baking · plan from the goal", es:"Panificación · planifica desde el objetivo"},
+  h1:              {it:"Dall'ora di sfornata, a ritroso", en:"From the bake-out time, backwards", es:"Desde la hora de horneado, hacia atrás"},
+  lede:            {it:"Dimmi <b>cosa vuoi e a che ora</b>. Matter calcola dosi, lievito sulla temperatura e la <b>tabella di marcia</b>: a che ora impastare per sfornare in orario. Il lievito segue la regola di Hamelman (×3 ogni 9&nbsp;°C), non un numero fisso.", en:"Tell me <b>what you want and when</b>. Matter works out the doses, the yeast from the temperature and the <b>timeline</b>: what time to mix so you bake on schedule. The yeast follows Hamelman's rule (×3 every 9&nbsp;°C), not a fixed number.", es:"Dime <b>qué quieres y a qué hora</b>. Matter calcula las dosis, la levadura según la temperatura y la <b>hoja de ruta</b>: a qué hora amasar para hornear a tiempo. La levadura sigue la regla de Hamelman (×3 cada 9&nbsp;°C), no un número fijo."},
+  lbl_cosa:        {it:"Cosa", en:"What", es:"Qué"},
+  opt_pizza_nap:   {it:"Pizza napoletana", en:"Neapolitan pizza", es:"Pizza napolitana"},
+  opt_pizza_teglia:{it:"Pizza in teglia", en:"Pan pizza", es:"Pizza en bandeja"},
+  opt_pane:        {it:"Pane", en:"Bread", es:"Pan"},
+  lbl_metodo:      {it:"Metodo", en:"Method", es:"Método"},
+  opt_diretto:     {it:"Diretto", en:"Direct", es:"Directo"},
+  opt_madre:       {it:"Lievito madre", en:"Sourdough starter", es:"Masa madre"},
+  lbl_panetti:     {it:"Quanti panetti", en:"How many dough balls", es:"Cuántas bolas de masa"},
+  lbl_peso:        {it:"Peso a panetto", en:"Weight per ball", es:"Peso por bola"},
+  lbl_idr:         {it:"Idratazione <span class=\"muted\">(vuoto = da ricetta)</span>", en:"Hydration <span class=\"muted\">(empty = from recipe)</span>", es:"Hidratación <span class=\"muted\">(vacío = de la receta)</span>"},
+  lbl_tamb:        {it:"Temperatura ambiente", en:"Room temperature", es:"Temperatura ambiente"},
+  lbl_ore:         {it:"Ore di lievitazione", en:"Rising hours", es:"Horas de fermentación"},
+  lbl_sfor:        {it:"Ora di sfornata", en:"Bake-out time", es:"Hora de horneado"},
+  btn_progetta:    {it:"Progetta", en:"Plan", es:"Planifica"},
+  footer:          {it:"<b>Metodo: Jeffrey Hamelman — <i>Bread</i>.</b> Il lievito è calcolato sulla temperatura e sulle ore volute (×3 ogni 9&nbsp;°C): più caldo, meno lievito. La temperatura dell'acqua serve a centrare l'impasto finale. Gli orari della marcia sono un piano di partenza — se al banco la temperatura sbalza, i tempi vanno ricalibrati.", en:"<b>Method: Jeffrey Hamelman — <i>Bread</i>.</b> The yeast is worked out from the temperature and the hours you want (×3 every 9&nbsp;°C): warmer means less yeast. The water temperature is there to hit the final dough temperature. The schedule times are a starting plan — if the temperature swings at the bench, the times need recalibrating.", es:"<b>Método: Jeffrey Hamelman — <i>Bread</i>.</b> La levadura se calcula según la temperatura y las horas deseadas (×3 cada 9&nbsp;°C): más calor, menos levadura. La temperatura del agua sirve para acertar la temperatura final de la masa. Los horarios de la hoja de ruta son un plan de partida — si en la mesa la temperatura varía, los tiempos se recalibran."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+<script>
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const $out = document.getElementById('out');
 const $state = document.getElementById('state');
+let ultimoD = null;
 function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
 function riga(k,v){ return `<div class="res-row"><span class="res-k">${esc(k)}</span><span class="res-v">${esc(v)}</span></div>`; }
 const KEY = new Set(['IMPASTO FINALE','SFORNA','START BIGA','START POOLISH','IMPASTA LIEVITO MADRE']);
 
 function render(d){
-  if(d.errore){ setState('Il motore ha risposto con un errore: '+esc(d.errore), true); $out.innerHTML=''; return; }
+  ultimoD = d;
+  if(d.errore){ setState(_L({it:'Il motore ha risposto con un errore: ', en:'The engine returned an error: ', es:'El motor respondió con un error: '})+esc(d.errore), true); $out.innerHTML=''; return; }
   $state.hidden = true;
   const o = d.dosi || {};
-  const olio = (o.olio!=null && o.olio!==0) ? riga('Olio', o.olio+' g') : '';
+  const olio = (o.olio!=null && o.olio!==0) ? riga(_L({it:'Olio', en:'Oil', es:'Aceite'}), o.olio+' g') : '';
   const pre = d.prefermento;
   const preHtml = pre ? `
-    <div class="pre"><div class="h">Prefermento · ${esc(pre.tipo||'')}</div>
+    <div class="pre"><div class="h">${_L({it:'Prefermento', en:'Preferment', es:'Prefermento'})} · ${esc(pre.tipo||'')}</div>
       <div class="res-card">
-        ${riga('Farina nel prefermento', pre.farina+' g')}
-        ${riga('Acqua nel prefermento', pre.acqua+' g')}
-        ${pre.lievito ? riga('Lievito nel prefermento', pre.lievito+' g') : ''}
-        ${pre.tempo ? riga('Riposo', pre.tempo) : ''}
-        ${riga('Farina nell\'impasto finale', pre.farina_impasto_finale+' g')}
-        ${riga('Acqua nell\'impasto finale', pre.acqua_impasto_finale+' g')}
+        ${riga(_L({it:'Farina nel prefermento', en:'Flour in the preferment', es:'Harina en el prefermento'}), pre.farina+' g')}
+        ${riga(_L({it:'Acqua nel prefermento', en:'Water in the preferment', es:'Agua en el prefermento'}), pre.acqua+' g')}
+        ${pre.lievito ? riga(_L({it:'Lievito nel prefermento', en:'Yeast in the preferment', es:'Levadura en el prefermento'}), pre.lievito+' g') : ''}
+        ${pre.tempo ? riga(_L({it:'Riposo', en:'Rest', es:'Reposo'}), pre.tempo) : ''}
+        ${riga(_L({it:'Farina nell\'impasto finale', en:'Flour in the final dough', es:'Harina en la masa final'}), pre.farina_impasto_finale+' g')}
+        ${riga(_L({it:'Acqua nell\'impasto finale', en:'Water in the final dough', es:'Agua en la masa final'}), pre.acqua_impasto_finale+' g')}
       </div></div>` : '';
   const march = (d.timeline||[]).map(t=>{
     const k = KEY.has(String(t.fase||'').toUpperCase()) ? ' key' : '';
@@ -150,26 +178,26 @@ function render(d){
     <section class="section">
       <div class="res-head">${esc(d.obiettivo||'')}</div>
       <div class="res-card">
-        ${riga('Farina', (o.farina??'—')+' g')}
-        ${riga('Acqua', (o.acqua??'—')+' g')}
-        ${riga('Sale', (o.sale??'—')+' g')}
+        ${riga(_L({it:'Farina', en:'Flour', es:'Harina'}), (o.farina??'—')+' g')}
+        ${riga(_L({it:'Acqua', en:'Water', es:'Agua'}), (o.acqua??'—')+' g')}
+        ${riga(_L({it:'Sale', en:'Salt', es:'Sal'}), (o.sale??'—')+' g')}
         ${olio}
-        ${riga('Lievito fresco', (o.lievito_fresco??'—')+' g'+(o.lievito_pct!=null?` · ${o.lievito_pct}%`:''))}
+        ${riga(_L({it:'Lievito fresco', en:'Fresh yeast', es:'Levadura fresca'}), (o.lievito_fresco??'—')+' g'+(o.lievito_pct!=null?` · ${o.lievito_pct}%`:''))}
       </div>
       <div class="acqua">
         <div class="n">${d.temperatura_acqua!=null ? d.temperatura_acqua+'°C' : '—'}</div>
-        <div class="l">Temperatura dell'acqua, per arrivare a ${d.temp_finale_impasto!=null?d.temp_finale_impasto:'—'}°C di impasto finale.</div>
+        <div class="l">${_L({it:'Temperatura dell\'acqua, per arrivare a ', en:'Water temperature, to reach ', es:'Temperatura del agua, para llegar a '})}${d.temp_finale_impasto!=null?d.temp_finale_impasto:'—'}${_L({it:'°C di impasto finale.', en:'°C of final dough.', es:'°C de masa final.'})}</div>
       </div>
       ${preHtml}
-      <div class="sechead" style="margin-top:22px"><h2>Tabella di marcia</h2><p>Dall'ora di sfornata, a ritroso: quando fare cosa.</p></div>
-      <div class="march">${march || '<p class="gloss">Nessuna tappa calcolata.</p>'}</div>
-      ${d.cottura?`<p class="nota"><b>Cottura.</b> ${esc(d.cottura)}</p>`:''}
-      ${d.note?`<p class="nota"><b>Perché questo lievito.</b> ${esc(d.note)}</p>`:''}
+      <div class="sechead" style="margin-top:22px"><h2>${_L({it:'Tabella di marcia', en:'Timeline', es:'Hoja de ruta'})}</h2><p>${_L({it:'Dall\'ora di sfornata, a ritroso: quando fare cosa.', en:'From the bake-out time, backwards: when to do what.', es:'Desde la hora de horneado, hacia atrás: cuándo hacer qué.'})}</p></div>
+      <div class="march">${march || '<p class="gloss">'+_L({it:'Nessuna tappa calcolata.', en:'No step calculated.', es:'Ningún paso calculado.'})+'</p>'}</div>
+      ${d.cottura?`<p class="nota"><b>${_L({it:'Cottura.', en:'Baking.', es:'Cocción.'})}</b> ${esc(d.cottura)}</p>`:''}
+      ${d.note?`<p class="nota"><b>${_L({it:'Perché questo lievito.', en:'Why this yeast.', es:'Por qué esta levadura.'})}</b> ${esc(d.note)}</p>`:''}
     </section>`;
 }
 
 async function calcola(){
-  setState('Progetto…', false); $out.innerHTML='';
+  setState(_L({it:'Progetto…', en:'Planning…', es:'Planificando…'}), false); $out.innerHTML='';
   const idrRaw = document.getElementById('idr').value;
   const body = {
     tipo: document.getElementById('tipo').value,
@@ -183,11 +211,12 @@ async function calcola(){
   };
   try{
     const r = await fetch('/v1/motore/panificazione', {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body)});
-    if(!r.ok){ const d=await r.json().catch(()=>({})); setState('Il motore ha risposto con un errore ('+r.status+'). '+esc(d.errore||'Riprova.'), true); return; }
+    if(!r.ok){ const d=await r.json().catch(()=>({})); setState(_L({it:'Il motore ha risposto con un errore (', en:'The engine returned an error (', es:'El motor respondió con un error ('})+r.status+'). '+esc(d.errore||_L({it:'Riprova.', en:'Try again.', es:'Inténtalo de nuevo.'})), true); return; }
     render(await r.json());
-  }catch(e){ setState('Non riesco a raggiungere il motore adesso. Riprova tra poco.', true); }
+  }catch(e){ setState(_L({it:'Non riesco a raggiungere il motore adesso. Riprova tra poco.', en:"I can't reach the engine right now. Try again shortly.", es:'No puedo contactar con el motor ahora. Inténtalo de nuevo en un momento.'}), true); }
 }
 document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); calcola(); });
+window.onI18nApply = function(){ if(ultimoD) render(ultimoD); };
 calcola();
 </script>
 </body>

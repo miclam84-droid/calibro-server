@@ -54,72 +54,95 @@
 </header>
 
 <main class="wrap">
-  <nav style="display:flex;gap:8px;margin-top:18px" aria-label="Sezioni del Banco">
+  <nav style="display:flex;gap:8px;margin-top:18px" aria-label="Sezioni del Banco" data-i18n-aria="nav_aria">
     <a href="/banco/cocktail" aria-current="page" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:700;text-decoration:none;background:#1E593C;color:#EEF0EA">Cocktail</a>
     <a href="/banco/panificazione" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C">Panificazione</a>
     <a href="/banco/calcolatori" style="flex:1;text-align:center;padding:10px 12px;border-radius:999px;font-weight:600;text-decoration:none;background:rgba(30,89,60,.08);color:#1E593C">Calcolatori</a>
   </nav>
   <header style="margin-top:22px">
-    <span class="eyebrow">Cocktail · progetta dall'obiettivo</span>
-    <h1 style="margin-top:4px">Diluizione &amp; gradazione</h1>
-    <p class="regola">Parti da <b>cosa vuoi nel bicchiere</b> — volume e gradazione — e Matter ti dà le proporzioni. La diluizione viene dalla <b>tecnica</b>, non dal tempo.</p>
+    <span class="eyebrow" data-i18n="eyebrow">Cocktail · progetta dall'obiettivo</span>
+    <h1 style="margin-top:4px" data-i18n="h1">Diluizione &amp; gradazione</h1>
+    <p class="regola" data-i18n-html="regola">Parti da <b>cosa vuoi nel bicchiere</b> — volume e gradazione — e Matter ti dà le proporzioni. La diluizione viene dalla <b>tecnica</b>, non dal tempo.</p>
   </header>
 
   <form id="form" class="banco-form" autocomplete="off">
-    <div class="field"><label for="vol">Volume finale</label>
+    <div class="field"><label for="vol" data-i18n="lbl_vol">Volume finale</label>
       <div class="inp"><input id="vol" type="number" inputmode="numeric" value="90" min="20" max="500" step="5"><span class="unit">ml</span></div></div>
-    <div class="field"><label for="grad">Gradazione voluta</label>
+    <div class="field"><label for="grad" data-i18n="lbl_grad">Gradazione voluta</label>
       <div class="inp"><input id="grad" type="number" inputmode="decimal" value="22" min="0" max="60" step="0.5"><span class="unit">% vol</span></div></div>
-    <div class="field"><label for="tec">Tecnica</label>
+    <div class="field"><label for="tec" data-i18n="lbl_tec">Tecnica</label>
       <div class="inp"><select id="tec">
-        <option value="stirred">Mescolato (stirred)</option>
-        <option value="shaken">Shakerato (shaken)</option>
-        <option value="thrown">Lanciato (thrown)</option>
-        <option value="built">Costruito nel bicchiere</option>
+        <option value="stirred" data-i18n="tec_stirred">Mescolato (stirred)</option>
+        <option value="shaken" data-i18n="tec_shaken">Shakerato (shaken)</option>
+        <option value="thrown" data-i18n="tec_thrown">Lanciato (thrown)</option>
+        <option value="built" data-i18n="tec_built">Costruito nel bicchiere</option>
       </select></div></div>
-    <div class="field"><label for="gradi">Gradazione dei distillati</label>
+    <div class="field"><label for="gradi" data-i18n="lbl_gradi">Gradazione dei distillati</label>
       <div class="inp"><input id="gradi" type="number" inputmode="decimal" value="40" min="10" max="96" step="1"><span class="unit">% vol</span></div></div>
-    <button type="submit" class="btn btn--block">Calcola</button>
+    <button type="submit" class="btn btn--block" data-i18n="btn_calcola">Calcola</button>
   </form>
 
   <div id="out"></div>
   <div class="state" id="state" hidden></div>
 
-  <footer>
+  <footer data-i18n-html="footer">
     <b>Metodo: Dave Arnold — <i>Liquid Intelligence</i>.</b> La diluizione dipende dalla tecnica e dalla superficie del ghiaccio, non dal tempo. I valori sono un punto di partenza calcolato: il banco (il tuo assaggio) resta il giudice.
   </footer>
 </main>
 
 <script>
+window.I18N_TITLE = {it:"Banco · Cocktail — Matter Bench", en:"Banco · Cocktail — Matter Bench", es:"Banco · Cocktail — Matter Bench"};
+window.I18N_DICT = {
+  nav_aria:    {it:"Sezioni del Banco", en:"Banco sections", es:"Secciones del Banco"},
+  eyebrow:     {it:"Cocktail · progetta dall'obiettivo", en:"Cocktail · design from the goal", es:"Cocktail · diseña desde el objetivo"},
+  h1:          {it:"Diluizione & gradazione", en:"Dilution & strength", es:"Dilución y graduación"},
+  regola:      {it:"Parti da <b>cosa vuoi nel bicchiere</b> — volume e gradazione — e Matter ti dà le proporzioni. La diluizione viene dalla <b>tecnica</b>, non dal tempo.", en:"Start from <b>what you want in the glass</b> — volume and strength — and Matter gives you the proportions. Dilution comes from the <b>technique</b>, not from time.", es:"Parte de <b>lo que quieres en el vaso</b> — volumen y graduación — y Matter te da las proporciones. La dilución viene de la <b>técnica</b>, no del tiempo."},
+  lbl_vol:     {it:"Volume finale", en:"Final volume", es:"Volumen final"},
+  lbl_grad:    {it:"Gradazione voluta", en:"Target strength", es:"Graduación deseada"},
+  lbl_tec:     {it:"Tecnica", en:"Technique", es:"Técnica"},
+  tec_stirred: {it:"Mescolato (stirred)", en:"Stirred", es:"Removido (stirred)"},
+  tec_shaken:  {it:"Shakerato (shaken)", en:"Shaken", es:"Agitado (shaken)"},
+  tec_thrown:  {it:"Lanciato (thrown)", en:"Thrown", es:"Lanzado (thrown)"},
+  tec_built:   {it:"Costruito nel bicchiere", en:"Built in the glass", es:"Construido en el vaso"},
+  lbl_gradi:   {it:"Gradazione dei distillati", en:"Spirits strength", es:"Graduación de los destilados"},
+  btn_calcola: {it:"Calcola", en:"Calculate", es:"Calcular"},
+  footer:      {it:"<b>Metodo: Dave Arnold — <i>Liquid Intelligence</i>.</b> La diluizione dipende dalla tecnica e dalla superficie del ghiaccio, non dal tempo. I valori sono un punto di partenza calcolato: il banco (il tuo assaggio) resta il giudice.", en:"<b>Method: Dave Arnold — <i>Liquid Intelligence</i>.</b> Dilution depends on the technique and the ice surface, not on time. The values are a calculated starting point: the bench (your own tasting) remains the judge.", es:"<b>Método: Dave Arnold — <i>Liquid Intelligence</i>.</b> La dilución depende de la técnica y de la superficie del hielo, no del tiempo. Los valores son un punto de partida calculado: la mesa (tu propia cata) sigue siendo el juez."}
+};
+</script>
+<script src="/static/i18n-nuovo.js"></script>
+<script>
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const $out = document.getElementById('out');
 const $state = document.getElementById('state');
+// ultima azione da ripetere quando cambia la lingua (ridisegna messaggi/risultati generati da JS)
+let redraw = null;
 function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
 function riga(k,v){ return `<div class="res-row"><span class="res-k">${esc(k)}</span><span class="res-v">${esc(v)}</span></div>`; }
 
 function render(d){
-  if(d.errore){ setState('Il motore ha risposto con un errore: '+esc(d.errore), true); $out.innerHTML=''; return; }
+  redraw = function(){ render(d); };
+  if(d.errore){ setState(_L({it:"Il motore ha risposto con un errore: ", en:"The engine replied with an error: ", es:"El motor respondió con un error: "})+esc(d.errore), true); $out.innerHTML=''; return; }
   $state.hidden = true;
   const p = d.proporzioni || {}, t = d.tecnica || {};
   $out.innerHTML = `
     <section class="section">
       <div class="res-head">${esc(d.obiettivo||'')}</div>
       <div class="res-card">
-        ${riga('Parte alcolica', p.parte_alcolica||'—')}
-        ${riga('Acqua da diluizione', p.acqua_da_diluizione||'—')}
-        ${riga('Volume finale', p.volume_finale||'—')}
+        ${riga(_L({it:"Parte alcolica", en:"Alcoholic part", es:"Parte alcohólica"}), p.parte_alcolica||'—')}
+        ${riga(_L({it:"Acqua da diluizione", en:"Dilution water", es:"Agua de dilución"}), p.acqua_da_diluizione||'—')}
+        ${riga(_L({it:"Volume finale", en:"Final volume", es:"Volumen final"}), p.volume_finale||'—')}
       </div>
       <div class="tecnica-card">
-        <div class="tec-top"><span class="tec-nome">${esc(t.nome||'')}</span><span class="tec-dil">diluizione ${esc(t.diluizione||'')}</span></div>
+        <div class="tec-top"><span class="tec-nome">${esc(t.nome||'')}</span><span class="tec-dil">${_L({it:"diluizione", en:"dilution", es:"dilución"})} ${esc(t.diluizione||'')}</span></div>
         <p class="tec-quando">${esc(t.quando||'')}</p>
       </div>
-      ${d.ghiaccio?`<p class="nota"><b>Ghiaccio.</b> ${esc(d.ghiaccio)}</p>`:''}
-      ${d.punto_critico?`<p class="nota critico"><b>Punto critico.</b> ${esc(d.punto_critico)}</p>`:''}
+      ${d.ghiaccio?`<p class="nota"><b>${_L({it:"Ghiaccio.", en:"Ice.", es:"Hielo."})}</b> ${esc(d.ghiaccio)}</p>`:''}
+      ${d.punto_critico?`<p class="nota critico"><b>${_L({it:"Punto critico.", en:"Critical point.", es:"Punto crítico."})}</b> ${esc(d.punto_critico)}</p>`:''}
     </section>`;
 }
 
 async function calcola(){
-  setState('Calcolo…', false); $out.innerHTML='';
+  setState(_L({it:"Calcolo…", en:"Calculating…", es:"Calculando…"}), false); $out.innerHTML='';
   const body = {
     volume_finale_ml: +document.getElementById('vol').value || 90,
     gradazione_voluta: +document.getElementById('grad').value || 22,
@@ -128,10 +151,14 @@ async function calcola(){
   };
   try{
     const r = await fetch('/v1/motore/cocktail', {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body)});
-    if(!r.ok){ setState('Il motore ha risposto con un errore ('+r.status+'). Riprova.', true); return; }
+    if(!r.ok){ const st=r.status; redraw=function(){ setState(_L({it:"Il motore ha risposto con un errore (", en:"The engine replied with an error (", es:"El motor respondió con un error ("})+st+_L({it:"). Riprova.", en:"). Try again.", es:"). Inténtalo de nuevo."}), true); }; redraw(); return; }
     render(await r.json());
-  }catch(e){ setState('Non riesco a raggiungere il motore adesso. Riprova tra poco.', true); }
+  }catch(e){ redraw=function(){ setState(_L({it:"Non riesco a raggiungere il motore adesso. Riprova tra poco.", en:"I can't reach the engine right now. Try again shortly.", es:"No puedo acceder al motor ahora. Inténtalo de nuevo en un momento."}), true); }; redraw(); }
 }
+
+// ri-render del contenuto generato da JS quando cambia la lingua
+window.onI18nApply = function(){ if(typeof redraw==="function"){ redraw(); } };
+
 document.getElementById('form').addEventListener('submit', e=>{ e.preventDefault(); calcola(); });
 calcola();
 </script>
