@@ -19,3 +19,5 @@ jobs:
           pip install pytest
       - name: Esegui i test
         run: pytest -q tests/
+      - name: Audit integrita' dataset (nomi doppi, firme, template)
+        run: python3 tests/audit_suite.py

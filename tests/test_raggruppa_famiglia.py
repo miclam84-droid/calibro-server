@@ -11,7 +11,7 @@ from routes.criteri import (
 )
 
 
-def _rel(nome, condivisi, robustezza="Media"):
+def _rel(nome, condivisi, robustezza="moderato"):
     """Costruisce una relazione base_aromatica finta con la forma reale dell'endpoint."""
     return {
         "ingrediente": nome,
@@ -76,8 +76,8 @@ def test_rappresentante_per_composti_condivisi():
 
 def test_rappresentante_parita_usa_robustezza():
     # stesse parole, stessi composti -> decide la robustezza
-    a = _rel("lime italiano", 20, "Alta")
-    b = _rel("lime kaffir", 20, "Esplorativa")
+    a = _rel("lime italiano", 20, "marcato")
+    b = _rel("lime kaffir", 20, "debole")
     assert _rappresentante_migliore(a, b) is True
     assert _rappresentante_migliore(b, a) is False
 
@@ -88,17 +88,17 @@ def _scenario_limone():
     """La base_aromatica di 'limone' PRIMA del raggruppamento: affogata di agrumi
     quasi-duplicati. (Numeri plausibili, ordinati per rilevanza decrescente.)"""
     return [
-        _rel("lime kaffir", 34, "Alta"),
-        _rel("lime", 31, "Alta"),
-        _rel("lime italiano", 28, "Media"),
-        _rel("lime messicano", 25, "Media"),
-        _rel("arancia", 22, "Media"),
-        _rel("arancia della California", 20, "Media"),
-        _rel("arancia israeliana", 18, "Esplorativa"),
-        _rel("arancia scimmia", 16, "Esplorativa"),
-        _rel("satsuma", 14, "Esplorativa"),
-        _rel("mandarino", 13, "Media"),
-        _rel("pompelmo", 11, "Media"),
+        _rel("lime kaffir", 34, "marcato"),
+        _rel("lime", 31, "marcato"),
+        _rel("lime italiano", 28, "moderato"),
+        _rel("lime messicano", 25, "moderato"),
+        _rel("arancia", 22, "moderato"),
+        _rel("arancia della California", 20, "moderato"),
+        _rel("arancia israeliana", 18, "debole"),
+        _rel("arancia scimmia", 16, "debole"),
+        _rel("satsuma", 14, "debole"),
+        _rel("mandarino", 13, "moderato"),
+        _rel("pompelmo", 11, "moderato"),
     ]
 
 
