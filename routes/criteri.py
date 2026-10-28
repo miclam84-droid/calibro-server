@@ -121,6 +121,29 @@ def _risolvi_nodo(cur, ingrediente):
         if r and (r[2] or 0) > 0:
             return (r[0], ingrediente.strip())
 
+    # 1.6) PLURALE -> SINGOLARE esatto, PRIMA della LIKE greedy di sotto. Senza questo
+    #      "pomodori" (LIKE %pomodori%) pescava "pomodori secchi" invece di "pomodoro".
+    #      Solo parola singola e solo match ESATTO su nome/id (sicuro).
+    if " " not in ing:
+        for sing in _singolari_it(ing):
+            if sing == ing:
+                continue
+            cur.execute(
+                r"""SELECT n.id, n.name, COUNT(e.to_id) nc
+                    FROM nodes n LEFT JOIN edges e ON e.from_id=n.id AND e.relation='contiene_composto'
+                    WHERE n.type IN ('Ingrediente','Prodotto')
+                      AND (n.data->>'visibility') IS DISTINCT FROM 'hidden'
+                      AND (LOWER(n.name) = %s OR LOWER(n.id) = %s)
+                    GROUP BY n.id, n.name
+                    HAVING COUNT(e.to_id) > 0
+                    ORDER BY (n.id LIKE 'ing-%%') DESC, nc DESC, LENGTH(n.name) ASC
+                    LIMIT 1""",
+                (sing, "ing-" + _slug_ing(sing)),
+            )
+            r = cur.fetchone()
+            if r:
+                return (r[0], r[1])
+
     # 2) ricerca per nome/id, preferendo: non-preparato, canonico ahn_, match esatto, piu' ricco.
     cur.execute(
         r"""
