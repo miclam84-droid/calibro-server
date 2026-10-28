@@ -211,6 +211,23 @@
     <ul class="lista-comp" id="lista" hidden></ul>
   </section>
 
+  <!-- STA BENE CON — abbinamenti dal grafo, tappabili per aggiungere -->
+  <style>
+    .abbina{margin-top:18px}
+    .abbina .eyebrow{display:block; margin-bottom:10px}
+    .abbina-chips{display:flex; flex-wrap:wrap; gap:8px}
+    .abbina-chip{font-family:var(--sans); font-weight:600; font-size:14px; color:var(--verde);
+      background:var(--tint); border:1px solid transparent; border-radius:var(--r-pill);
+      padding:8px 14px; cursor:pointer; line-height:1}
+    .abbina-chip:hover{border-color:var(--verde); background:var(--surface)}
+    .abbina-chip:focus-visible{outline:2px solid var(--verde); outline-offset:2px}
+    .abbina-attesa{font-size:13px; color:var(--ink-soft)}
+  </style>
+  <section class="abbina" id="abbina" hidden aria-labelledby="h-abbina">
+    <span class="eyebrow" id="h-abbina" data-i18n="abbina_titolo">Sta bene con · dal grafo</span>
+    <div class="abbina-chips" id="abbina-chips"></div>
+  </section>
+
   <!-- PROFILO VIVO -->
   <section class="profilo" aria-labelledby="h-prof">
     <div class="profilo-head">
@@ -279,6 +296,7 @@ window.I18N_DICT = {
   agg_btn: {it:"Aggiungi", en:"Add", es:"Añadir"},
   vuoto: {it:"Nessun componente. Aggiungi un ingrediente per vedere il profilo.", en:"No components. Add an ingredient to see the profile.", es:"Ningún componente. Añade un ingrediente para ver el perfil."},
   h_prof: {it:"Profilo vivo", en:"Live profile", es:"Perfil vivo"},
+  abbina_titolo: {it:"Sta bene con · dal grafo", en:"Pairs well with · from the graph", es:"Combina con · del grafo"},
   h_azioni: {it:"Chiudi il giro", en:"Close the loop", es:"Cierra el círculo"},
   btn_capisci: {it:"Capisci perché", en:"Understand why", es:"Entiende por qué"},
   capisci_intro: {it:"Dietro questa preparazione ci sono alcuni fenomeni e relazioni note.", en:"Behind this preparation there are some known phenomena and relations.", es:"Detrás de esta preparación hay algunos fenómenos y relaciones conocidos."},
@@ -442,6 +460,7 @@ window.I18N_DICT = {
 
       lista.appendChild(li);
     });
+    aggiornaSuggerimenti();
   }
 
   // ---- RENDER PROFILO VIVO ----
@@ -733,6 +752,40 @@ window.I18N_DICT = {
   }
 
   function conProfiloList(){ return componenti.filter(function(c){ return c.trovato; }); }
+
+  // ---- STA BENE CON: abbinamenti dal grafo (base_aromatica) del componente-seme, tappabili ----
+  var abbinaFirma = null;
+  function aggiornaSuggerimenti(){
+    var box = document.getElementById("abbina");
+    var chipsEl = document.getElementById("abbina-chips");
+    if (!box || !chipsEl) return;
+    if (!componenti.length){ box.hidden = true; abbinaFirma = null; chipsEl.innerHTML = ""; return; }
+    var principale = componenti[0].nome;
+    var firma = componenti.map(function(c){ return c.nome; }).join("|");
+    if (abbinaFirma === firma) return;   // niente è cambiato: non rifare la fetch
+    abbinaFirma = firma;
+    box.hidden = false;
+    chipsEl.innerHTML = '<span class="abbina-attesa">'+_L({it:"cerco gli abbinamenti…", en:"looking for pairings…", es:"buscando las combinaciones…"})+'</span>';
+    fetch("/v1/criteri/" + encodeURIComponent(principale), {headers:{"Accept":"application/json"}})
+      .then(function(r){ return r.json().catch(function(){ return {}; }); })
+      .then(function(d){
+        if (abbinaFirma !== firma) return;  // composizione cambiata nel frattempo
+        var rel = (d && d.relazioni) ? d.relazioni.filter(function(x){ return x.criterio === "base_aromatica"; }) : [];
+        var out = [];
+        rel.forEach(function(r){ var n = r.ingrediente; if (n && !giaPresente(n)) out.push(n); });
+        out = out.slice(0, 10);
+        if (!out.length){ chipsEl.innerHTML = '<span class="abbina-attesa">'+_L({it:"nessun abbinamento dal grafo per ora.", en:"no pairings from the graph yet.", es:"ninguna combinación del grafo por ahora."})+'</span>'; return; }
+        chipsEl.innerHTML = "";
+        out.forEach(function(n){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "abbina-chip";
+          b.innerHTML = "+ " + esc(cap(n));
+          b.addEventListener("click", function(){ aggiungi(n); });
+          chipsEl.appendChild(b);
+        });
+      })
+      .catch(function(){ if (abbinaFirma === firma) chipsEl.innerHTML = '<span class="abbina-attesa">'+_L({it:"abbinamenti non raggiungibili ora.", en:"pairings unreachable now.", es:"combinaciones no accesibles ahora."})+'</span>'; });
+  }
 
   // mostra/nascondi le azioni: visibili con ≥1 componente con profilo
   function renderAzioni(){
