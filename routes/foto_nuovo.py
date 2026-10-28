@@ -62,15 +62,16 @@ def foto_ingrediente(nome):
     payload = {"url": None}
     try:
         import immagini
-        # nome=nome come da specifica; ingredienti=[nome] abilita il fallback-ingrediente
-        # (raggiunge anche Wikimedia, fonte libera senza chiave): per una foto di INGREDIENTE
-        # e' la via piu' robusta, la stessa che usa l'endpoint foto esistente.
-        img = immagini.cerca_immagine(nome, nome=nome, ingredienti=[nome])
+        # FOTO DI INGREDIENTE -> ricerca SEVERA (cerca_immagine_ingrediente), la STESSA
+        # dei nodi del grafo: solo stock pertinente, niente Wikimedia, niente piatti.
+        # Prima l'hero usava cerca_immagine (editoriale, lasca) e pescava i piatti
+        # (es. 'pomodoro' -> pasta al pomodoro). Ora hero e nodi sono coerenti.
+        img = immagini.cerca_immagine_ingrediente(nome)
         if img and img.get("url"):
             payload = {
                 "url": img["url"],
                 "credito": immagini.credito_immagine(
-                    img.get("autore", ""), img.get("fonte_nome", "")
+                    img.get("autore", ""), img.get("fonte_nome", "") or "Pexels"
                 ),
                 "fonte": img.get("fonte_nome", ""),
             }
