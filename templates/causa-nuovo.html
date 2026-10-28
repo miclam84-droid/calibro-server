@@ -506,7 +506,7 @@ window.I18N_DICT = {
       var d = res.body || {};
       if (res.status < 200 || res.status >= 300 || d.errore){
         mostraStato(d.errore ? (_L({it:"Diagnosi non riuscita: ", en:"Diagnosis failed: ", es:"Diagnóstico fallido: "}) + d.errore)
-                             : _L({it:"Diagnosi non riuscita (errore "+res.status+").", en:"Diagnosis failed (error "+res.status+").", es:"Diagnóstico fallido (error "+res.status+")."}), true);
+                             : _L({it:"La diagnosi non è riuscita. Riprova tra poco.", en:"The diagnosis didn't go through. Try again shortly.", es:"El diagnóstico no funcionó. Inténtalo de nuevo en un momento."}), true);
         return;
       }
       pulisciStato();

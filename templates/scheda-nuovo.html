@@ -180,8 +180,8 @@ async function salvaQuaderno(record, btn){
     const r = await fetch('/v1/quaderno2/salva', {method:'POST', headers:{'Content-Type':'application/json','X-Device-Id':_devId()}, body: JSON.stringify(record)});
     let d = {}; try{ d = await r.json(); }catch(e){}
     if(r.ok && d && d.ok){ if(btn){ btn.textContent='Salvato nel Quaderno ✓'; } return true; }
-    const msg = (d && d.errore) ? String(d.errore) : ('errore '+r.status);
-    if(btn){ btn.removeAttribute('aria-disabled'); btn.textContent='Non salvato — '+msg+' · riprova'; }
+    const msg = (d && d.errore) ? String(d.errore) : '';
+    if(btn){ btn.removeAttribute('aria-disabled'); btn.textContent = msg ? ('Non salvato — '+msg) : 'Non salvato — riprova tra poco'; }
     return false;
   }catch(e){ if(btn){ btn.removeAttribute('aria-disabled'); btn.textContent='Non salvato — rete assente · riprova'; } return false; }
 }
@@ -278,7 +278,7 @@ async function caricaNutri(nome){
         <p class="gloss">Per 100 g · fonte: <b>${esc(d.fonte_pannello || 'USDA FoodData Central')}</b>.</p>`;
     } else {
       corpoHtml = `<div class="nutri-card"><div class="nutri-row"><span class="nutri-k">Pannello nutrizionale completo</span><span class="nutri-v vuoto">${VUOTO}</span></div></div>
-        <p class="gloss">Nessun pannello nutrizionale completo è ancora persistito su questo nodo: non lo inventiamo.</p>`;
+        <p class="gloss">Per questo ingrediente non abbiamo ancora un pannello nutrizionale completo: non lo inventiamo.</p>`;
     }
     const compDett = valori.length ? `<details class="mol" style="margin-top:12px"><summary>Misure compositive degli assi (${valori.length})</summary>
         <div class="nutri-card" style="margin-top:10px">${valori.map(v=>`<div class="nutri-row"><span class="nutri-k">${esc(v.campo)}</span><span class="nutri-v">${esc(String(v.valore))}<span class="u">${esc(v.unita||'')}</span></span></div>`).join('')}</div>
@@ -309,7 +309,7 @@ async function caricaScienza(nome){
     $s.innerHTML = `<section class="section"><span class="eyebrow">Scienza collegata</span>
       <div class="sechead" style="margin-bottom:10px"><p>Gli esperimenti del grafo che usano questo ingrediente, e i fenomeni che mettono in gioco.</p></div>
       ${cards}
-      <p class="gloss">Legame reale dal grafo (archi <b>usa_reagente</b>): non una spiegazione a livelli per l'ingrediente — quella vive sulla scheda del singolo esperimento.</p>
+      <p class="gloss">Legame reale: questi esperimenti usano davvero l'ingrediente — non una spiegazione a livelli per l'ingrediente, quella vive sulla scheda del singolo esperimento.</p>
       <a class="btn btn--ghost cta" href="/scopri-nuovo/${encodeURIComponent(nome)}">Apri il grafo di ${esc(cap(nome))} →</a></section>`;
   }catch(e){}
 }
@@ -406,7 +406,7 @@ async function carica(nome){
     const nomeReale = pg.nome || nome;
     document.getElementById('titolo').textContent = cap(nomeReale);
     caricaFoto(nomeReale); caricaTax(nomeReale); caricaNutri(nomeReale); caricaCottura(nomeReale); caricaScienza(nomeReale);
-    document.getElementById('cat').textContent = (pg.kind==='ingredient'?'Ingrediente':(pg.kind||'Ingrediente'));
+    document.getElementById('cat').textContent = (pg.kind==='experiment'?'Esperimento':'Ingrediente');
     const prop = pg.proprieta || {}, meta = pg.proprieta_meta || {};
     const barre = CORE.filter(([k])=> prop[k]!=null).map(([k,lbl,anc])=> barra(lbl, prop[k], anc, meta[k])).join('');
     const haProv = CORE.some(([k])=> meta[k] && meta[k].stato);
