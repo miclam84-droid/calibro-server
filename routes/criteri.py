@@ -107,7 +107,10 @@ def _risolvi_nodo(cur, ingrediente):
                  # mis-risoluzioni trovate nell'audit copertura 2026-10-28 (nome -> pianta sbagliata/magra):
                  "senape": "ahn_mustard",      # era ahn_garlic_mustard (altra pianta); ahn_mustard ha 21 composti
                  "carvi": "ahn_caraway",       # era ahn_lippia_carviodora (1); caraway corretto
-                 "sommacco": "ai_sommacco"}    # era ahn_rhus_cotinus_leaf (1); ai_sommacco ha 18 composti
+                 "sommacco": "ai_sommacco",    # era ahn_rhus_cotinus_leaf (1); ai_sommacco ha 18 composti
+                 # pasticceria 2026-10-29: ricotta (siero) e' prodotto diverso da ahn_cottage_cheese
+                 # (cagliata); forzo il nodo proprio con la firma ricercata (Bergamaschi 2018)
+                 "ricotta": "ing-ricotta"}
     _ov = _OVERRIDE.get(ing)
     if _ov:
         cur.execute(
