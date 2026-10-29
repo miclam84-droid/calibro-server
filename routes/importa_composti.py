@@ -41,7 +41,8 @@ _FORZA_NODO = {"ginepro": "ing-ginepro", "lime": "ing-lime",
                "grani del paradiso": "ing-grani-del-paradiso",  # pinna su ing-: esisteva anche ai_grani_del_paradiso (nodo doppio, frammentava i pairing)
                "sudachi": "ing-sudachi",  # pinna su ing-: esisteva anche ai_sudachi (nodo doppio)
                "semi di zucca": "ing-semi-di-zucca",  # contiene 'zucca' -> evita collisione con ahn_pumpkin
-               "farina di castagne": "ing-farina-di-castagne"}  # flour != flower: evita il match su ahn_chestnut_flower (fiore di castagno, specie/parte diversa)
+               "farina di castagne": "ing-farina-di-castagne",  # flour != flower: evita il match su ahn_chestnut_flower (fiore di castagno, specie/parte diversa)
+               "ricotta": "ing-ricotta"}  # ricotta (siero) != ahn_cottage_cheese (cagliata): prodotti diversi, nodo proprio per la pasticceria
 
 
 def _norm(s):
