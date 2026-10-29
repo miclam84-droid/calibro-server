@@ -140,6 +140,10 @@ def importa_composti():
     if not _admin_ok(request):
         return jsonify({"errore": "non autorizzato"}), 403
     esegui = request.args.get("esegui") in ("1", "true", "si", "yes")
+    # &solo=nome1,nome2 -> importa SOLO quegli ingredienti (per import mirati senza
+    # ritoccare i nodi gia' fusi/consolidati). Omesso = tutti (comportamento storico).
+    _solo_raw = (request.args.get("solo") or "").strip()
+    solo_set = {x.strip().lower() for x in _solo_raw.split(",") if x.strip()} if _solo_raw else None
     try:
         dati = json.load(open(_PATH, encoding="utf-8"))
     except Exception as e:
@@ -158,6 +162,8 @@ def importa_composti():
 
         for ing in dati.get("ingredienti", []):
             nome = ing.get("ingrediente", "")
+            if solo_set is not None and nome.lower() not in solo_set:
+                continue
             composti = ing.get("composti", [])
             # --- nodo ingrediente target ---
             forzato = _FORZA_NODO.get(nome.lower())
