@@ -15471,7 +15471,7 @@
    "ingrediente": "Brisket (petto)",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15528,7 +15528,7 @@
    "ingrediente": "Cappello del prete",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15585,7 +15585,7 @@
    "ingrediente": "Controfiletto di manzo",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15642,7 +15642,7 @@
    "ingrediente": "Costata di manzo",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15699,7 +15699,7 @@
    "ingrediente": "Filetto di manzo",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15756,7 +15756,7 @@
    "ingrediente": "Fiorentina",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15813,7 +15813,7 @@
    "ingrediente": "Guancia di manzo",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15870,7 +15870,7 @@
    "ingrediente": "Ossobuco",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15927,7 +15927,7 @@
    "ingrediente": "Picanha (codone)",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -15984,7 +15984,7 @@
    "ingrediente": "Reale di manzo",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -16041,7 +16041,7 @@
    "ingrediente": "Scamone di manzo",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -16098,7 +16098,7 @@
    "ingrediente": "Tomahawk",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria MANZO propagata (scelta a): i tagli condividono il profilo volatile del manzo cotto; la differenza taglio-a-taglio è grasso/struttura/cottura, non i marcatori d'aroma. Provenienza categoria: manzo cotto (ramo carneo Maillard 2-metil-3-furantiolo + ramo ossidazione lipidica). Stato=derivato.",
    "composti": [
     {
@@ -16155,7 +16155,7 @@
    "ingrediente": "Concentrato di pomodoro",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16220,7 +16220,7 @@
    "ingrediente": "Passata di pomodoro",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16285,7 +16285,7 @@
    "ingrediente": "Pomodoro Ciliegino",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16350,7 +16350,7 @@
    "ingrediente": "Pomodoro Corbarino",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16415,7 +16415,7 @@
    "ingrediente": "Pomodoro Costoluto Fiorentino",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16480,7 +16480,7 @@
    "ingrediente": "Pomodoro Cuore di Bue",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16545,7 +16545,7 @@
    "ingrediente": "Pomodoro Datterino",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16610,7 +16610,7 @@
    "ingrediente": "Pomodoro del Piennolo del Vesuvio DOP",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16675,7 +16675,7 @@
    "ingrediente": "Pomodoro Marinda (Camone)",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16740,7 +16740,7 @@
    "ingrediente": "Pomodoro Pelato (conserva)",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16805,7 +16805,7 @@
    "ingrediente": "Pomodoro Pizzutello",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16870,7 +16870,7 @@
    "ingrediente": "Pomodoro San Marzano DOP",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria POMODORO propagata (scelta a): le cultivar condividono il profilo volatile del pomodoro (aldeidi/alcoli C6 verdi + isobutiltiazolo + norisoprenoidi); la differenza cultivar-a-cultivar è quantitativa (zucchero/acido/intensità), non di marcatori. Le forme lavorate (concentrato/passata/pelato) spostano il profilo verso il cotto (meno note verdi fresche). Provenienza: rassegna key aroma pomodoro. Stato=derivato.",
    "composti": [
     {
@@ -16935,7 +16935,7 @@
    "ingrediente": "Limone di Amalfi (sfusato)",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato.",
    "composti": [
     {
@@ -16984,7 +16984,7 @@
    "ingrediente": "Limone di Sorrento IGP",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria LIMONE propagata (scelta a): i limoni territoriali condividono il profilo dell'olio di buccia (limonene + citrale impronta); la differenza è quantitativa/di cultivar, non di marcatori. Provenienza: oli di buccia Citrus. Stato=derivato.",
    "composti": [
     {
@@ -17033,7 +17033,7 @@
    "ingrediente": "Prosciutto di Parma DOP",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato.",
    "composti": [
     {
@@ -17090,7 +17090,7 @@
    "ingrediente": "Prosciutto di San Daniele DOP",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria PROSCIUTTO CRUDO propagata (scelta a): Parma e San Daniele DOP condividono il profilo del crudo stagionato (aldeidi/acidi ramificati + lattoni); la differenza è di stagionatura/sale, non di marcatori. Provenienza: dry-cured ham. Stato=derivato.",
    "composti": [
     {
@@ -17147,7 +17147,7 @@
    "ingrediente": "Speck Alto Adige IGP",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria SPECK propagata (scelta a): lo Speck Alto Adige IGP è il prodotto di categoria 'speck' (fenoli del fumo su base crudo stagionato). Provenienza: prosciutto affumicato. Stato=derivato.",
    "composti": [
     {
@@ -17204,7 +17204,7 @@
    "ingrediente": "Olio EVO coratina",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato.",
    "composti": [
     {
@@ -17261,7 +17261,7 @@
    "ingrediente": "Olio EVO taggiasca",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato.",
    "composti": [
     {
@@ -17318,7 +17318,7 @@
    "ingrediente": "olive denocciolate",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato.",
    "composti": [
     {
@@ -17375,7 +17375,7 @@
    "ingrediente": "olive taggiasche",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria OLIO EXTRAVERGINE propagata (scelta a): cultivar e olive condividono il profilo verde dei C6 (aldeidi/alcoli da via LOX); la differenza cultivar-a-cultivar è quantitativa (amaro/piccante/fruttato), non di marcatori. Provenienza: volatili olio d'oliva (via LOX). Stato=derivato.",
    "composti": [
     {
@@ -17432,7 +17432,7 @@
    "ingrediente": "Peperone di Carmagnola",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato.",
    "composti": [
     {
@@ -17481,7 +17481,7 @@
    "ingrediente": "Friggitello",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria PEPERONE propagata (scelta a): Carmagnola e friggitello (peperoni freschi) condividono il marcatore IBMP (2-isobutil-3-metossipirazina) + C6 verdi. Il peperone crusco (essiccato) è lasciato fuori: la disidratazione cambia il profilo (Maillard), non è lo stesso. Provenienza: Capsicum annuum. Stato=derivato.",
    "composti": [
     {
@@ -17530,7 +17530,7 @@
    "ingrediente": "Fagiolo borlotto",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato.",
    "composti": [
     {
@@ -17587,7 +17587,7 @@
    "ingrediente": "Fagiolo cannellino",
    "nodo_target": "(nodo esistente per nome)",
    "specie": "",
-   "dominio": "",
+   "dominio": "cucina",
    "fonte_ingrediente": "Firma di categoria LEGUME/FAGIOLO propagata (scelta a): borlotto e cannellino cotti condividono il profilo 'beany' da ossidazione lipidica (hexanal + 2-pentilfurano + 1-octen-3-olo), comune ai legumi cotti. Provenienza: profilo beany (via soia/legumi). Stato=derivato.",
    "composti": [
     {
@@ -20233,9 +20233,250 @@
      "fonte": "Cantini et al. (2021), Rivista di Agraria.org"
     }
    ]
+  },
+  {
+   "ingrediente": "mandorla",
+   "specie": "Prunus dulcis",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Xiao et al. 2014 — HS-SPME-GC/MS mandorle dolci crude e tostate; descrittori integrati dalla rassegna UC Davis (Mitchell 2017)",
+   "composti": [
+    {
+     "composto": "benzaldeide",
+     "descrittore": "dolce, marzapane, mandorla",
+     "ruolo": "firma",
+     "concentrazione": "~2935 ppb (crudo)",
+     "stato": "da_fonte",
+     "fonte": "Xiao L. et al. (2014), Food Chemistry 151:31-39, DOI:10.1016/j.foodchem.2013.11.052"
+    },
+    {
+     "composto": "2,5-dimetilpirazina",
+     "descrittore": "tostato, nocciola",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare); solo nel tostato",
+     "stato": "da_fonte",
+     "fonte": "Xiao L. et al. (2014), Food Chemistry 151:31-39, DOI:10.1016/j.foodchem.2013.11.052"
+    },
+    {
+     "composto": "3-metilbutanale",
+     "descrittore": "maltato, cioccolato, nocciola (Strecker)",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Mitchell A.E. (2017), Understanding the Chemistry of Almond Flavor, UC Davis / VII Int. Symp. Almonds & Pistachios (rassegna)"
+    },
+    {
+     "composto": "2-feniletanolo",
+     "descrittore": "floreale, rosa, miele",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Xiao L. et al. (2014), Food Chemistry 151:31-39, DOI:10.1016/j.foodchem.2013.11.052"
+    },
+    {
+     "composto": "esanale",
+     "descrittore": "verde, erbaceo, grasso",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Xiao L. et al. (2014), Food Chemistry 151:31-39, DOI:10.1016/j.foodchem.2013.11.052"
+    },
+    {
+     "composto": "furfurale",
+     "descrittore": "dolce, pane, mandorla tostata",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare); nel tostato",
+     "stato": "da_fonte",
+     "fonte": "Mitchell A.E. (2017), Understanding the Chemistry of Almond Flavor, UC Davis / VII Int. Symp. Almonds & Pistachios (rassegna)"
+    }
+   ]
+  },
+  {
+   "ingrediente": "sesamo",
+   "specie": "Sesamum indicum",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Tamura et al. 2010 (semi bianchi tostati, AEDA/GC-O) + Schieberle 1996 (sesamo moderatamente tostato, GC-O/AEDA)",
+   "composti": [
+    {
+     "composto": "2-furfuriltiolo",
+     "descrittore": "caffè tostato, sulfureo",
+     "ruolo": "firma",
+     "concentrazione": "n.d. (da raffinare); FD tra i più alti",
+     "stato": "da_fonte",
+     "fonte": "Tamura H. et al. (2010), J. Agric. Food Chem. 58(12):7368-7375, DOI:10.1021/jf100623a"
+    },
+    {
+     "composto": "4-idrossi-2,5-dimetil-3(2H)-furanone",
+     "descrittore": "caramello, dolce",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare); FD elevato",
+     "stato": "da_fonte",
+     "fonte": "Tamura H. et al. (2010), J. Agric. Food Chem. 58(12):7368-7375, DOI:10.1021/jf100623a"
+    },
+    {
+     "composto": "2-metossi-4-vinilfenolo",
+     "descrittore": "chiodi di garofano, speziato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "n.d. (da raffinare); FD elevato",
+     "stato": "da_fonte",
+     "fonte": "Tamura H. et al. (2010), J. Agric. Food Chem. 58(12):7368-7375, DOI:10.1021/jf100623a"
+    },
+    {
+     "composto": "guaiacolo",
+     "descrittore": "fumè, speziato, fenolico",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare); FD 128-2048",
+     "stato": "da_fonte",
+     "fonte": "Schieberle P. (1996), Food Chemistry 55(2):145-152, DOI:10.1016/0308-8146(95)00095-X"
+    },
+    {
+     "composto": "2-etil-3,5-dimetilpirazina",
+     "descrittore": "terroso, tostato, nocciola",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare); FD 128-2048",
+     "stato": "da_fonte",
+     "fonte": "Schieberle P. (1996), Food Chemistry 55(2):145-152, DOI:10.1016/0308-8146(95)00095-X"
+    },
+    {
+     "composto": "2-acetil-1-pirrolina",
+     "descrittore": "tostato, popcorn",
+     "ruolo": "di_supporto",
+     "concentrazione": "n.d. (da raffinare); FD 128-2048",
+     "stato": "da_fonte",
+     "fonte": "Schieberle P. (1996), Food Chemistry 55(2):145-152, DOI:10.1016/0308-8146(95)00095-X"
+    }
+   ]
+  },
+  {
+   "ingrediente": "arachidi",
+   "specie": "Arachis hypogaea",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Chetschik et al. 2010 — quantificazione odoranti chiave in arachidi crude e farina tostata, con OAV",
+   "composti": [
+    {
+     "composto": "2-acetil-1-pirrolina",
+     "descrittore": "tostato, popcorn",
+     "ruolo": "firma",
+     "concentrazione": "OAV 89 (8,9 µg/kg)",
+     "stato": "da_fonte",
+     "fonte": "Chetschik I., Granvogl M., Schieberle P. (2010), J. Agric. Food Chem. 58(20):11018-11026, DOI:10.1021/jf1026636"
+    },
+    {
+     "composto": "metionale",
+     "descrittore": "patata lessa, cotto",
+     "ruolo": "caratterizzante",
+     "concentrazione": "OAV 200 (40 µg/kg)",
+     "stato": "da_fonte",
+     "fonte": "Chetschik I., Granvogl M., Schieberle P. (2010), J. Agric. Food Chem. 58(20):11018-11026, DOI:10.1021/jf1026636"
+    },
+    {
+     "composto": "2,3-dietil-5-metilpirazina",
+     "descrittore": "terroso, tostato",
+     "ruolo": "caratterizzante",
+     "concentrazione": "OAV 27 (13 µg/kg)",
+     "stato": "da_fonte",
+     "fonte": "Chetschik I., Granvogl M., Schieberle P. (2010), J. Agric. Food Chem. 58(20):11018-11026, DOI:10.1021/jf1026636"
+    },
+    {
+     "composto": "3-metilbutanale",
+     "descrittore": "maltato (Strecker)",
+     "ruolo": "di_supporto",
+     "concentrazione": "OAV 118 (637 µg/kg)",
+     "stato": "da_fonte",
+     "fonte": "Chetschik I., Granvogl M., Schieberle P. (2010), J. Agric. Food Chem. 58(20):11018-11026, DOI:10.1021/jf1026636"
+    },
+    {
+     "composto": "2-metilbutanale",
+     "descrittore": "maltato (Strecker)",
+     "ruolo": "di_supporto",
+     "concentrazione": "OAV 97 (971 µg/kg)",
+     "stato": "da_fonte",
+     "fonte": "Chetschik I., Granvogl M., Schieberle P. (2010), J. Agric. Food Chem. 58(20):11018-11026, DOI:10.1021/jf1026636"
+    },
+    {
+     "composto": "2,3-pentandione",
+     "descrittore": "burroso",
+     "ruolo": "di_supporto",
+     "concentrazione": "OAV 286 (83 µg/kg)",
+     "stato": "da_fonte",
+     "fonte": "Chetschik I., Granvogl M., Schieberle P. (2010), J. Agric. Food Chem. 58(20):11018-11026, DOI:10.1021/jf1026636"
+    },
+    {
+     "composto": "4-idrossi-2,5-dimetil-3(2H)-furanone",
+     "descrittore": "caramello",
+     "ruolo": "di_supporto",
+     "concentrazione": "OAV 78 (1953 µg/kg)",
+     "stato": "da_fonte",
+     "fonte": "Chetschik I., Granvogl M., Schieberle P. (2010), J. Agric. Food Chem. 58(20):11018-11026, DOI:10.1021/jf1026636"
+    }
+   ]
+  },
+  {
+   "ingrediente": "ricotta",
+   "specie": "",
+   "dominio": "pasticceria",
+   "fonte_ingrediente": "Bergamaschi & Bittante (2018) — ricotta fresca vaccina (alpeggio estivo), VOC via HS-SPME-GC-MS; valori semiquantitativi (ln-LSM µg/kg eq. 4-MP)",
+   "composti": [
+    {
+     "composto": "2-eptanone",
+     "descrittore": "fruttato, chetonico, formaggio",
+     "ruolo": "firma",
+     "concentrazione": "~34 µg/kg (semiquant., da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Bergamaschi M., Bittante G. (2018), Journal of Dairy Science 101(5):3918-3934, DOI:10.3168/jds.2017-13573"
+    },
+    {
+     "composto": "2-butanone",
+     "descrittore": "etereo, dolciastro",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~46 µg/kg (semiquant., da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Bergamaschi M., Bittante G. (2018), Journal of Dairy Science 101(5):3918-3934, DOI:10.3168/jds.2017-13573"
+    },
+    {
+     "composto": "2-nonanone",
+     "descrittore": "floreale, latteo, grasso caldo",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~14 µg/kg (semiquant., da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Bergamaschi M., Bittante G. (2018), Journal of Dairy Science 101(5):3918-3934, DOI:10.3168/jds.2017-13573"
+    },
+    {
+     "composto": "esanale",
+     "descrittore": "verde, erba tagliata (ossidazione lipidica)",
+     "ruolo": "caratterizzante",
+     "concentrazione": "~1720 µg/kg (semiquant., da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Bergamaschi M., Bittante G. (2018), Journal of Dairy Science 101(5):3918-3934, DOI:10.3168/jds.2017-13573"
+    },
+    {
+     "composto": "acido esanoico",
+     "descrittore": "grasso, formaggio, acido",
+     "ruolo": "di_supporto",
+     "concentrazione": "~11 µg/kg (semiquant., da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Bergamaschi M., Bittante G. (2018), Journal of Dairy Science 101(5):3918-3934, DOI:10.3168/jds.2017-13573"
+    },
+    {
+     "composto": "acido butanoico",
+     "descrittore": "burro, formaggio, rancido",
+     "ruolo": "di_supporto",
+     "concentrazione": "~3 µg/kg (semiquant., da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Bergamaschi M., Bittante G. (2018), Journal of Dairy Science 101(5):3918-3934, DOI:10.3168/jds.2017-13573"
+    },
+    {
+     "composto": "gamma-butirrolattone",
+     "descrittore": "dolce, cocco/caramello debole",
+     "ruolo": "di_supporto",
+     "concentrazione": "~2 µg/kg (semiquant., da raffinare)",
+     "stato": "da_fonte",
+     "fonte": "Bergamaschi M., Bittante G. (2018), Journal of Dairy Science 101(5):3918-3934, DOI:10.3168/jds.2017-13573"
+    }
+   ]
   }
  ],
  "_prossimi": [
+  "Ondata pasticceria 29/10 (+4): mandorla (dolce), sesamo, arachidi, ricotta. Fonti GC-MS/GC-O/AEDA peer-reviewed con DOI verificati su Crossref (Xiao 2014, Tamura 2010, Schieberle 1996, Chetschik 2010, Bergamaschi 2018). Scartati onestamente: anacardi e macadamia (nessun GC-MS sul seme), noce pecan (solo tesi non peer-reviewed su olio, descrittori non da fonte), latte condensato (nessun GC-MS a livello di composto). Inoltre: 37 ingredienti senza dominio ri-taggati 'cucina' (tagli manzo, pomodori, salumi, olio EVO, olive, peperoni, fagioli).",
   "Ondata panificazione 29/10 (+18): semi di lino/girasole/papavero, fichi secchi, noci, anice, finocchietto, lievito madre, malto d'orzo, orzo, germe di grano, farina di grano tenero/integrale/grano duro, semola rimacinata, farina di mais/ceci/castagne. Tutte fonti GC-MS/GC-O aperte (DOI verificati). Scartati onestamente: malto diastasico, crusca di frumento, farina di farro (nessun GC-MS accessibile - meglio vuoto che inventato). Import mirato via &solo= per non ri-duplicare i 34 nodi gia' fusi.",
   "Profondita 28/10: profili VOLATILI COMPLETI (da studi GC-MS/GC-O aperti) per 5 nodi magri comuni -> acciughe (25, Giogios 2013), burrata (30, Natrella 2020 mozzarella), spinaci (26, Naef 2000), broccolo (26, Wieczorek 2020 GC-O), fiori di zucca (9, Andersen 1987/Granero 2005). Sostituiscono le firme sottili: ora producono grafi veri. zucchina/scarola/polpo/pinoli/baccala NON arricchiti: nessun profilo pubblicato accessibile (paywall/inesistente) -> restano onestamente 'in costruzione'.",
   "Ondata 28/10 (basi scoperte dallo smoke-test, +4): scarola, pinoli, acciughe, vongole. Firme da letteratura (verdi C6 scarola, esanale/decadienale pinoli, (Z)-4-eptenale acciughe, bromofenoli vongole). Non-volatili (amaro scarola) dichiarate. vodka (neutra) e vermouth (troppo variabile per prodotto) esclusi di proposito: meglio vuoto che inventato. friarielli e olio di oliva risolti via alias (cime di rapa / olio-evo-coratina), non dati nuovi.",
