@@ -85,6 +85,13 @@ MERGE_ALLOWLIST = [
     {"canonico": "ing-sudachi", "assorbiti": ["ai_sudachi"], "perche": "sudachi — stesso nodo IT duplicato"},
     {"canonico": "ahn_tea", "assorbiti": ["ahn_brewed_tea"], "perche": "tè — Camellia sinensis, tea/brewed tea"},
     {"canonico": "ahn_malt_whiskey", "assorbiti": ["ahn_scotch_whiskey"], "perche": "whisky scozzese — malt/scotch whiskey"},
+
+    # ---- Batch 2 (2026-10-29): orfani creati dall'import pasticceria. Il resolver risolve
+    # sesamo/arachidi su ahn_ (via _ALIAS) ma l'importer li ha creati come ing- nuovi: i composti
+    # proprietari (firma + provenienza) erano su nodi non raggiungibili. Fondo gli ing- orfani sui
+    # nodi ahn_ ricchi e canonici (la query li raggiunge gia'). Verificato: stesso ingrediente.
+    {"canonico": "ahn_sesame_seed", "assorbiti": ["ing-sesamo"], "perche": "sesamo — sesame seed IT/EN; migra la firma proprietaria (2-furfuriltiolo ecc.) sul nodo ahn ricco (18 comp) che il resolver raggiunge"},
+    {"canonico": "ahn_peanut", "assorbiti": ["ing-arachidi"], "perche": "arachidi — peanut IT/EN; migra la firma proprietaria (2-acetil-1-pirrolina ecc.) sul nodo ahn ricco (94 comp) che il resolver raggiunge"},
 ]
 
 
