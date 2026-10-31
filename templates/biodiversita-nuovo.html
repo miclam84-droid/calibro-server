@@ -94,7 +94,7 @@
   <div class="state" id="state" hidden></div>
 
   <footer data-i18n-html="footer">
-    <b>Atlante della biodiversità.</b> I dati (territorio, tutela, categoria) vengono dal grafo Matter, dove sono stati inseriti con la loro provenienza. Il <b>livello Mondo</b> raccoglie le varietà fuori Italia per macro-area; lo status di tutela delle voci-mondo è da riverificare, quindi lì non mostriamo bollini. Il tuo <b>avanzamento di scoperta</b> è salvato solo in questo browser, su questo dispositivo: personale, non condiviso, non lascia questo dispositivo.
+    <b>Atlante della biodiversità.</b> I dati (territorio, tutela, categoria) provengono dall'archivio di Matter, dove sono stati inseriti con la loro provenienza. Il <b>livello Mondo</b> raccoglie le varietà fuori Italia per macro-area; lo status di tutela delle voci-mondo è da riverificare, quindi lì non mostriamo bollini. Il tuo <b>avanzamento di scoperta</b> è salvato solo in questo browser, su questo dispositivo: personale, non condiviso, non lascia questo dispositivo.
   </footer>
 </main>
 
@@ -109,7 +109,7 @@ window.I18N_DICT = {
   tab_italia: {it:"Italia", en:"Italy", es:"Italia"},
   tab_mondo:  {it:"Mondo", en:"World", es:"Mundo"},
   var_scoperte:{it:"varietà scoperte", en:"varieties discovered", es:"variedades descubiertas"},
-  footer:     {it:"<b>Atlante della biodiversità.</b> I dati (territorio, tutela, categoria) vengono dal grafo Matter, dove sono stati inseriti con la loro provenienza. Il <b>livello Mondo</b> raccoglie le varietà fuori Italia per macro-area; lo status di tutela delle voci-mondo è da riverificare, quindi lì non mostriamo bollini. Il tuo <b>avanzamento di scoperta</b> è salvato solo in questo browser, su questo dispositivo: personale, non condiviso, non lascia questo dispositivo.", en:"<b>Biodiversity atlas.</b> The data (territory, protection, category) comes from the Matter graph, where it was entered with its provenance. The <b>World level</b> gathers varieties outside Italy by macro-area; the protection status of world entries is yet to be re-verified, so no badges are shown there. Your <b>discovery progress</b> is saved only in this browser, on this device: personal, not shared, it never leaves this device.", es:"<b>Atlas de la biodiversidad.</b> Los datos (territorio, protección, categoría) provienen del grafo Matter, donde se introdujeron con su procedencia. El <b>nivel Mundo</b> reúne las variedades fuera de Italia por macro-área; el estado de protección de las entradas del mundo está por reverificar, por eso allí no mostramos distintivos. Tu <b>avance de descubrimiento</b> se guarda solo en este navegador, en este dispositivo: personal, no compartido, no sale de este dispositivo."}
+  footer:     {it:"<b>Atlante della biodiversità.</b> I dati (territorio, tutela, categoria) provengono dall'archivio di Matter, dove sono stati inseriti con la loro provenienza. Il <b>livello Mondo</b> raccoglie le varietà fuori Italia per macro-area; lo status di tutela delle voci-mondo è da riverificare, quindi lì non mostriamo bollini. Il tuo <b>avanzamento di scoperta</b> è salvato solo in questo browser, su questo dispositivo: personale, non condiviso, non lascia questo dispositivo.", en:"<b>Biodiversity atlas.</b> The data (territory, protection, category) comes from Matter's archive, where it was entered with its provenance. The <b>World level</b> gathers varieties outside Italy by macro-area; the protection status of world entries is yet to be re-verified, so no badges are shown there. Your <b>discovery progress</b> is saved only in this browser, on this device: personal, not shared, it never leaves this device.", es:"<b>Atlas de la biodiversidad.</b> Los datos (territorio, protección, categoría) provienen del archivo de Matter, donde se introdujeron con su procedencia. El <b>nivel Mundo</b> reúne las variedades fuera de Italia por macro-área; el estado de protección de las entradas del mundo está por reverificar, por eso allí no mostramos distintivos. Tu <b>avance de descubrimiento</b> se guarda solo en este navegador, en este dispositivo: personal, no compartido, no sale de este dispositivo."}
 };
 </script>
 <script src="/static/i18n-nuovo.js"></script>
@@ -279,7 +279,7 @@ window.I18N_DICT = {
           $('state').hidden=false;
           $('state').innerHTML = attivo==="mondo"
             ? _L({it:"<b>Livello Mondo ancora vuoto.</b> Le voci-mondo entrano con l’ondata dati dedicata; appena importate, compaiono qui.", en:"<b>World level still empty.</b> World entries arrive with their dedicated data wave; once imported, they appear here.", es:"<b>Nivel Mundo todavía vacío.</b> Las entradas del mundo llegan con su oleada de datos dedicada; una vez importadas, aparecen aquí."})
-            : _L({it:"<b>Atlante Italia ancora vuoto.</b> Nessuna varietà con regione nel grafo per ora.", en:"<b>Italy atlas still empty.</b> No variety with a region in the graph yet.", es:"<b>Atlas Italia todavía vacío.</b> Ninguna variedad con región en el grafo por ahora."});
+            : _L({it:"<b>Atlante Italia ancora vuoto.</b> Nessuna varietà con regione nell'archivio per ora.", en:"<b>Italy atlas still empty.</b> No variety with a region in the archive yet.", es:"<b>Atlas Italia todavía vacío.</b> Ninguna variedad con región en el archivo por ahora."});
           return;
         }
         st.items = items;
