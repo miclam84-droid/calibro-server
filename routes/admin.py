@@ -7103,10 +7103,15 @@ def admin_hq_stato_ecosistema():
 @bp.route("/hq")
 def hq_panel():
     """Serve la pagina del pannello Galileo-HQ (monitoraggio ecosistema).
-    La pagina si auto-protegge col secret (gate lato client contro gli endpoint /admin/hq/*)."""
-    from flask import render_template
+    Gate server-side ?s=ADMIN_SECRET (oltre al gate client-side sugli endpoint /admin/hq/*)."""
+    import os as _os, hmac as _hmac
+    from flask import render_template, make_response
+    if not _hmac.compare_digest(str(request.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
     try:
-        return render_template("hq.html")
+        resp = make_response(render_template("hq.html"))
+        resp.headers["Cache-Control"] = "no-store"
+        return resp
     except Exception as e:
         return f"Pannello HQ non disponibile: {str(e)[:100]}", 500
 
@@ -7624,8 +7629,14 @@ def admin_atlas_coda():
 
 @bp.route("/atlas-studio")
 def atlas_studio():
-    """Atlas Studio (#300): il laboratorio editoriale interno. Serve la pagina (auto-protetta col secret)."""
-    return render_template("atlas-studio.html")
+    """Atlas Studio (#300): il laboratorio editoriale interno. Gate server-side ?s=ADMIN_SECRET."""
+    import os as _os, hmac as _hmac
+    from flask import make_response
+    if not _hmac.compare_digest(str(request.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    resp = make_response(render_template("atlas-studio.html"))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
 
 
 
