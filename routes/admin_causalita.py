@@ -113,6 +113,9 @@ def causalita_specifica():
                 cur.execute("UPDATE nodes SET data=%s WHERE id=%s",
                             (json.dumps(nuovo, ensure_ascii=False), pid))
             report.append(info)
-        # il commit avviene all'uscita del context manager (db.connessione, solo se niente eccezioni)
+        # IMPORTANTE: db.connessione() fa ROLLBACK in uscita — il commit è
+        # responsabilità del chiamante, va fatto QUI o la scrittura si perde.
+        if esegui:
+            conn.commit()
         cur.close()
     return jsonify({"esegui": esegui, "n_protocolli": len(CAUSALITA_SPECIFICA), "report": report})
