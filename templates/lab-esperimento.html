@@ -255,7 +255,7 @@
     var ob=p.cosa_voglio_ottenere||p.ipotesi||""; if(ob) h+='<div class="ai">'+esc(ob)+'</div>';
 
     var b=p.bersaglio||{}; var fen=p.fenomeni||[]; var f0=fen[0];
-    var haNumeri = !!(b&&b.valore), haCausa = !!(f0&&f0.causalita);
+    var haNumeri = !!(b&&b.valore), haCausa = fen.some(function(f){return f&&f.causalita;});
 
     if(haNumeri || f0){
       h+='<div class="card"><div class="ct">Il bersaglio</div><div class="bers-big">';
@@ -277,13 +277,14 @@
       if(ri) h+='<div class="card"><div class="ct">Cosa ci va</div><ul class="reag">'+ri+'</ul></div>';
     }
 
-    if(haCausa){
-      var c=f0.causalita;
-      h+='<div class="card"><div class="ct">Perché accade — '+esc(f0.nome||"")+'</div><div class="causa">';
+    // tutti i fenomeni che hanno una causalità (un esperimento può averne più d'uno)
+    fen.forEach(function(ff){
+      var c=ff&&ff.causalita; if(!c) return;
+      h+='<div class="card"><div class="ct">Perché accade — '+esc(ff.nome||"")+'</div><div class="causa">';
       if(c.acceleranti&&c.acceleranti.length) h+='<div class="riga"><div class="k su">accelera</div><ul>'+c.acceleranti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
       if(c.rallentanti&&c.rallentanti.length) h+='<div class="riga"><div class="k giu">frena</div><ul>'+c.rallentanti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
       h+='</div></div>';
-    }
+    });
 
     // card operativa: variabile / osservazione / correzione / attrezzo — solo righe con contenuto
     var righe="";
