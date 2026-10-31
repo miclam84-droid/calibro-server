@@ -27,12 +27,32 @@ bp_causalita = Blueprint("admin_causalita", __name__)
 # ── Allowlist: id-protocollo -> {"fenomeni": [{"nome", "causalita"}]} ──
 # causalita=None  -> reverte quel fenomeno al generico ereditato (fallback onesto).
 CAUSALITA_SPECIFICA = {
-    # Focaccia barese: la ricetta del protocollo è grano tenero + lievito madre
-    # (NON semola/patata come la classica che avevo sorgentato). Non essendo
-    # sicuro della sua causalità specifica, REVERTO al generico onesto.
+    # Focaccia barese (Bucolico). Ricetta protocollo VERIFICATA (live): grano
+    # tenero 1kg + acqua 650ml (~65%) + lievito madre 200g + olio EVO, pomodorini,
+    # olive — NON semola/patata. Bersaglio 70-80% idratazione, mollica morbida.
+    # Causalità scritta su QUESTA ricetta (grano tenero + pasta madre, alta idratazione).
     "prot-focaccia-barese": {
         "fenomeni": [
-            {"nome": "idratazione dell'impasto", "causalita": None},
+            {
+                "nome": "idratazione dell'impasto",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Idratazione alta (~65-70% contando l'acqua del lievito madre) — vapore in cottura, alveolatura aperta, mollica morbida"},
+                        {"fattore": "Lievito madre maturo — fermentazione lunga: estensibilità e ritenzione d'acqua, focaccia soffice e morbida più a lungo"},
+                        {"fattore": "Pieghe e riposi invece dell'impasto aggressivo — sviluppano la maglia glutinica in un impasto molle senza scaldarlo"},
+                        {"fattore": "Olio EVO nell'impasto e in superficie — mollica tenera e crosta che non si asciuga"},
+                        {"fattore": "Grano tenero (più debole del duro) — impasto estensibile, mollica più soffice della semola"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Poca acqua — mollica densa, chiusa e asciutta: non è la barese morbida"},
+                        {"fattore": "Troppa acqua per la forza del grano tenero — impasto che non tiene, si spande, mollica gommosa senza struttura"},
+                        {"fattore": "Troppa farina sul banco in formatura — abbassa l'idratazione reale e indurisce"},
+                        {"fattore": "Cottura corta — centro gommoso e umido scambiato per 'ben idratato'"},
+                        {"fattore": "Pomodorini non scolati o troppo bagnati — rilasciano acqua in cottura: zone slavate sotto"},
+                    ],
+                    "fonte": "panificazione della focaccia barese a lievito madre e grano tenero, alta idratazione — tecnica di panificazione stabilita; da validare al banco",
+                },
+            },
         ],
     },
     # Bloody Mary (Bucopertuso). Tecnica classica DOCUMENTATA: si costruisce e
@@ -245,6 +265,241 @@ CAUSALITA_SPECIFICA = {
                         {"fattore": "Base calda o champagne poco freddo — la CO2 esce subito in schiuma"},
                     ],
                     "fonte": "ritenzione della CO2 nei cocktail con top di spumante (French 75) — tecnica di bar documentata; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # ── ONDA 2 ────────────────────────────────────────────────────────────
+    # Nuove preparazioni (bar Bucopertuso + forno Bucolico). Ogni causalità è
+    # scritta SOLO sui fenomeni che il protocollo ha DAVVERO (verificati live) e
+    # da tecnica stabilita, non inventata. "fonte" chiude con "; da validare al banco".
+
+    # Daiquiri Floridita (Bucopertuso). Ricetta: rum bianco + succo di lime +
+    # sciroppo di zucchero. Sour agrumato: si SHAKERA forte. Unico fenomeno: 'shaken'.
+    "prot-daiquiri-floridita": {
+        "fenomeni": [
+            {
+                "nome": "shaken",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Shake forte e breve (8-12s) con ghiaccio solido — il sour agrumato va aerato e raffreddato in fretta: texture serica, schiumetta fine, servizio ghiacciato in coppetta"},
+                        {"fattore": "Ghiaccio grande e freddo nello shaker — raffredda dando diluizione misurata mentre si monta"},
+                        {"fattore": "Doppio-strain in coppetta pre-raffreddata — trattiene le schegge di ghiaccio e serve il drink limpido e freddo"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Mescolare invece di shakerare — un sour con lime resta piatto, caldo e non integrato: sbagliato per il daiquiri"},
+                        {"fattore": "Shake troppo lungo o ghiaccio piccolo/tritato — sovra-diluizione: daiquiri acquoso e slavato"},
+                    ],
+                    "fonte": "tecnica classica del daiquiri (hard shake dei sour agrumati) — Difford's / Liquid Intelligence; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Mint Julep (Bucopertuso). Ricetta: bourbon + zucchero + acqua + menta fresca
+    # + ghiaccio tritato. Fenomeni: 'infusione' (menta) e 'diluizione' (tritato).
+    "prot-mint-julep-rivisitato": {
+        "fenomeni": [
+            {
+                "nome": "infusione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Menta schiaffeggiata (spanking) o premuta gentilmente nello sciroppo — libera gli oli essenziali dalla superficie senza rompere le foglie: aroma pulito"},
+                        {"fattore": "Breve contatto menta-sciroppo-bourbon prima del ghiaccio — estrae l'aroma volatile al punto giusto"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Pestare/triturare la menta (muddling aggressivo) — rilascia clorofilla e note amare/erbacee: aroma 'verde' sporco"},
+                        {"fattore": "Contatto troppo prolungato con l'alcol — estrae l'amaro dalle nervature"},
+                    ],
+                    "fonte": "gestione della menta nel julep (espressione, non pestatura) — bartending classico; da validare al banco",
+                },
+            },
+            {
+                "nome": "diluizione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Ghiaccio tritato abbondante che scioglie lentamente nel tempo — la diluizione progressiva è il cuore del julep: ammorbidisce il bourbon e crea la brina sul metallo"},
+                        {"fattore": "Mug di metallo ghiacciato — favorisce brina e raffreddamento continuo"},
+                        {"fattore": "Churn (rimescolo col cucchiaio nel tritato) — raffredda e diluisce in modo uniforme"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Cubi grandi al posto del tritato — poca superficie: non diluisce né ghiaccia come deve, niente brina"},
+                        {"fattore": "Troppa acqua aggiunta a monte — con il tritato che scioglie il drink diventa acquoso"},
+                    ],
+                    "fonte": "ruolo del ghiaccio tritato nel mint julep (diluizione progressiva e brina) — bartending classico; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Negroni in batch (Bucopertuso). Ricetta: gin + Campari + vermut rosso +
+    # ACQUA pre-calcolata. Fenomeno unico: 'Batch cocktail (diluizione pre-calcolata)'.
+    "prot-negroni-batch": {
+        "fenomeni": [
+            {
+                "nome": "Batch cocktail (diluizione pre-calcolata)",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Acqua pre-calcolata (~20-25% del volume degli alcolici) aggiunta al batch — simula la diluizione dello stir: ogni drink esce bilanciato come un Negroni mescolato al momento"},
+                        {"fattore": "Batch raffreddato in frigo/freezer prima del servizio — serve meno ghiaccio nel bicchiere, meno diluizione extra incontrollata"},
+                        {"fattore": "Volumi misurati sulla gradazione reale (gin 40-47%, Campari 25%, vermut 16-18%) — la gradazione media determina quanta acqua aggiungere"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Zero acqua nel batch e servizio su ghiaccio come fosse mescolato al momento — troppo forte e 'caldo', oppure incoerente da un drink all'altro"},
+                        {"fattore": "Acqua di troppo — Negroni piatto e slavato, amaro del Campari spento"},
+                        {"fattore": "Ghiaccio piccolo nel bicchiere dopo un batch già diluito — doppia diluizione: drink acquoso"},
+                    ],
+                    "fonte": "tecnica di batching dei cocktail mescolati (diluizione pre-calcolata) — Morgenthaler / Liquid Intelligence; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Penicillin (Bucopertuso). Ricetta: whisky torbato + succo di limone + miele
+    # + scotch affumicato (float) + ghiaccio. Sour con float: si SHAKERA la base,
+    # il float affumicato NON si shakera. Fenomeni: 'Diluizione', 'Shakerare vs mescolare'.
+    "prot-penicillin-rivisitata": {
+        "fenomeni": [
+            {
+                "nome": "Shakerare vs mescolare",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Shakerare la base con ghiaccio — limone + miele (sour) richiedono aerazione e raffreddamento rapido per integrare il miele denso e dare texture"},
+                        {"fattore": "Ghiaccio solido e freddo nello shaker — raffredda e monta in 8-12s"},
+                        {"fattore": "Float di scotch affumicato aggiunto DOPO, non shakerato — preserva il naso torbato/di fumo in superficie"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Mescolare invece di shakerare — il miele resta stratificato e il sour non si integra: drink squilibrato e poco freddo"},
+                        {"fattore": "Shakerare anche il float affumicato — disperde l'aroma di fumo che deve colpire al naso"},
+                    ],
+                    "fonte": "costruzione del Penicillin (sour shakerato + float affumicato non shakerato) — ricetta classica Sam Ross; da validare al banco",
+                },
+            },
+            {
+                "nome": "Diluizione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Servizio su un ghiaccio grande fresco dopo lo shake — diluizione lenta che tiene il drink freddo senza annacquarlo"},
+                        {"fattore": "Shake breve e deciso — porta la diluizione giusta a smussare limone e torba"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Ghiaccio tritato o molti cubetti piccoli nel bicchiere — sciolgono in fretta: miele e limone si slavano"},
+                        {"fattore": "Shake troppo lungo — sovra-diluizione: la torba del whisky si spegne"},
+                    ],
+                    "fonte": "equilibrio e diluizione del Penicillin — bartending contemporaneo; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Sazerac (Bucopertuso). Ricetta: rye + zucchero + Peychaud's bitters + assenzio
+    # (rinse) + scorza di limone. Drink tutto-alcolico: si MESCOLA e si serve liscio.
+    # Fenomeni: 'diluizione', 'amaro e bitter'.
+    "prot-sazerac-rivisitato": {
+        "fenomeni": [
+            {
+                "nome": "diluizione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Mescolare (stir) con ghiaccio, non shakerare — drink interamente alcolico (rye + zucchero + bitter): lo stir raffredda e diluisce senza aerare, texture setosa e limpida"},
+                        {"fattore": "Ghiaccio grande e freddo mescolato 20-30s — porta la diluizione che ammorbidisce il rye ad alta gradazione"},
+                        {"fattore": "Servizio liscio nel tumbler freddo senza ghiaccio — la diluizione è tutta nello stir, calibrata a monte"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Shakerare — aera e intorbida un drink che deve essere cristallino: sbagliato per il Sazerac"},
+                        {"fattore": "Stir troppo breve o ghiaccio bagnato/piccolo — rye tagliente e alcolico, oppure acquoso"},
+                    ],
+                    "fonte": "tecnica classica del Sazerac (build mescolato, servito liscio) — Difford's; da validare al banco",
+                },
+            },
+            {
+                "nome": "amaro e bitter",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Peychaud's bitters in dose decisa — è la firma aromatica del Sazerac (anice/floreale), definisce il drink"},
+                        {"fattore": "Rinse del bicchiere con assenzio e scarto dell'eccesso — vela di anice al naso senza coprire"},
+                        {"fattore": "Scorza di limone espressa sugli oli e scartata — agrumi in superficie che sollevano il bitter"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppo assenzio lasciato nel bicchiere — l'anice domina e copre il Peychaud's"},
+                        {"fattore": "Poco bitter — Sazerac anonimo, manca la spina dorsale aromatica"},
+                        {"fattore": "Scorza strofinata sul bordo o lasciata dentro — amaro bianco dell'albedo"},
+                    ],
+                    "fonte": "ruolo di Peychaud's e assenzio nel Sazerac — ricetta classica New Orleans; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Pane di Altamura con lievito madre (Bucolico). Ricetta VERIFICATA (live):
+    # semola di grano duro rimacinata 1000g + lievito madre 200g + acqua 600g (~60%)
+    # + sale. Fenomeni: 'idratazione dell'impasto', 'lievito madre'.
+    "prot-pane-di-altamura-con-lievito-madre": {
+        "fenomeni": [
+            {
+                "nome": "idratazione dell'impasto",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Idratazione ~60% adatta alla semola rimacinata di grano duro — assorbe più acqua del tenero: mollica gialla fitta ma non secca"},
+                        {"fattore": "Assorbimento lento della semola con riposo/autolisi — l'acqua entra nei granuli: impasto più lavorabile e mollica uniforme"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppa poca acqua — mollica compatta e asciutta, crosta troppo dura"},
+                        {"fattore": "Troppa acqua per la semola — impasto colloso, alveolatura irregolare e appiattita"},
+                    ],
+                    "fonte": "idratazione del pane di Altamura (semola di grano duro rimacinata) — tecnica di panificazione stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "lievito madre",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Lievito madre maturo al picco (raddoppiato, profumo lattico-dolce) — spinta e aroma tipici, acidità che conserva"},
+                        {"fattore": "Fermentazione lunga con pasta madre — sviluppo aromatico e durata (il pane di Altamura si conserva giorni)"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Lievito madre troppo maturo/acido — eccesso acetico: mollica gommosa e sapore pungente"},
+                        {"fattore": "Lievito madre debole o fuori picco — poca spinta: pane basso e denso"},
+                    ],
+                    "fonte": "gestione del lievito madre nel pane di Altamura — tecnica di panificazione stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Pizza napoletana (Bucolico). Ricetta VERIFICATA (live): farina W300-340 1000g
+    # + acqua 650g (~65%) + sale 25g + lievito fresco 3g, DDT target ~28°C. Fenomeni:
+    # 'fermentazione', 'idratazione'.
+    "prot-pizza-napoletana": {
+        "fenomeni": [
+            {
+                "nome": "fermentazione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Poco lievito (3g su 1kg) + fermentazione lunga — maglia matura, cornicione leggero e digeribile"},
+                        {"fattore": "Temperatura impasto a fine lavorazione ~28°C (DDT) — cinetica di lievitazione corretta e costante"},
+                        {"fattore": "Appretto/staglio con tempi adeguati — alveolatura del cornicione"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppo lievito o fermentazione troppo corta — cornicione pesante, poco sviluppo, meno digeribile"},
+                        {"fattore": "Impasto troppo caldo o troppo freddo rispetto al DDT — lievitazione fuori controllo (troppo veloce o bloccata)"},
+                    ],
+                    "fonte": "fermentazione della pizza napoletana (basso lievito, lunga maturazione, DDT) — tecnica STG stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "idratazione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Idratazione ~65% su farina forte (W300-340) — la farina regge l'acqua: impasto estensibile, cornicione alveolato"},
+                        {"fattore": "Farina di forza adeguata alla lunga fermentazione — trattiene i gas senza smagliarsi"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Idratazione alta su farina debole — l'impasto non tiene i tempi lunghi, si smaglia"},
+                        {"fattore": "Idratazione troppo bassa — disco rigido, cornicione secco e poco sviluppato"},
+                    ],
+                    "fonte": "idratazione/forza farina nella pizza napoletana ad alta temperatura — tecnica di panificazione stabilita; da validare al banco",
                 },
             },
         ],
