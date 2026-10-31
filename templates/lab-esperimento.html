@@ -70,6 +70,10 @@
 .btn-block{display:flex; width:100%; align-items:center; justify-content:center; gap:8px; font-family:var(--sans);
   font-weight:600; font-size:15px; color:#fff; background:var(--verde); border:0; border-radius:var(--r-sm);
   padding:14px 18px; cursor:pointer; margin-top:16px; text-decoration:none}
+.btn-ghost{display:flex; width:100%; align-items:center; justify-content:center; gap:8px; font-family:var(--sans);
+  font-weight:600; font-size:14px; color:var(--verde); background:transparent; border:1.5px solid var(--verde);
+  border-radius:var(--r-sm); padding:12px 18px; cursor:pointer; margin-top:10px; text-decoration:none}
+.cantiere-nota{margin-top:-2px}
 .vuoto{font-size:13px; color:var(--ink-soft); line-height:1.5}
 .muted-src{font-size:11px; color:var(--ink-soft); margin-top:10px}
 .loading{font-size:13px; color:var(--ink-soft); padding:30px 0; text-align:center}
@@ -191,10 +195,15 @@
     if(!esps||!esps.length){ h+='<p class="sub">Nessun esperimento collegato ancora.</p></section>'; el("vista-lista").innerHTML=h; return; }
     h+='<p class="sub">Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.</p>';
 
-    var radice=radiceIng(nome), prota=[], comp=[];
-    esps.forEach(function(e){ (eProtagonista(DETT[e.id],radice)?prota:comp).push(e); });
+    var radice=radiceIng(nome), prota=[], comp=[], cantiere=[];
+    esps.forEach(function(e){
+      var d=DETT[e.id]||{}; var fen=d.fenomeni||[];
+      var pronto=!!(fen[0]&&fen[0].causalita);   // "pronto" = ha il perché (la causalità), il valore vero
+      if(!pronto){ cantiere.push(e); return; }
+      (eProtagonista(d,radice)?prota:comp).push(e);
+    });
     function byRicc(a,b){ return ricchezza(DETT[b.id])-ricchezza(DETT[a.id]); }
-    prota.sort(byRicc); comp.sort(byRicc);
+    prota.sort(byRicc); comp.sort(byRicc); cantiere.sort(byRicc);
 
     function cardExp(e){
       var b=(e.bersaglio)||{};
@@ -212,6 +221,11 @@
     }
     h+=gruppo("Il "+esc((nome||"").toLowerCase())+" è protagonista", prota, false);
     h+=gruppo("Ci entra anche", comp, true);
+    if(cantiere.length){
+      h+='<div class="disc comp">Ancora in costruzione</div>';
+      h+='<p class="sub cantiere-nota">Questi esperimenti esistono ma non hanno ancora il perché collegato. Matter non li inventa: li completa quando c\'è una fonte o una prova al banco.</p>';
+      h+='<div class="esperimenti">'+cantiere.map(cardExp).join('')+'</div>';
+    }
     h+='</section>';
     el("vista-lista").innerHTML=h;
     Array.prototype.forEach.call(document.querySelectorAll(".esp"),function(btn){
@@ -272,7 +286,12 @@
       h+='<p class="thin-nota">Il <b>perché</b> — cosa accelera e cosa frena questo fenomeno — non è ancora collegato a questo esperimento. Matter non lo inventa: lo aggiunge quando c\'è una fonte o una prova al banco.</p>';
     }
 
-    h+='<a class="btn-block" id="salva">Salva nel Quaderno e provalo al banco</a>';
+    var dom='Dammi i passaggi e le dosi per «'+(p.nome||ING)+'»';
+    if(ob) dom+='. Obiettivo: '+String(ob).replace(/[.\s]+$/,'');
+    if(haNumeri) dom+='. Bersaglio: '+b.valore+(b.unita||'');
+    dom+='. Spiega anche perché, passo per passo.';
+    h+='<a class="btn-block" href="/chiedi-nuovo?q='+encodeURIComponent(dom)+'">Chiedi a Matter i passaggi e le dosi →</a>';
+    h+='<a class="btn-ghost" id="salva">Salva nel Quaderno e provalo al banco</a>';
     if(p.stato_epistemico) h+='<p class="muted-src">Stato: '+esc(p.stato_epistemico)+'. Matter non inventa: dove un dato manca, lo dice.</p>';
     h+='</div>';
     el("vista-det").innerHTML=h; bindBack();

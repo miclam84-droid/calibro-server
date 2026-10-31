@@ -428,6 +428,18 @@ window.I18N_DICT = {
 
   // genera/recupera il device id all'avvio
   devId();
+
+  // AVVIO SEMINATO: se arrivi da un esperimento (/chiedi-nuovo?q=...), Matter parte
+  // già con quella domanda — stesso percorso dell'invio manuale, nessun endpoint nuovo.
+  try{
+    var _seme=(new URLSearchParams(location.search||"")).get("q");
+    if(_seme && _seme.trim()){
+      input.value=_seme.trim().slice(0,600);
+      try{ autosize(); }catch(_e){}
+      if(form.requestSubmit){ form.requestSubmit(); }
+      else { form.dispatchEvent(new Event("submit",{cancelable:true,bubbles:true})); }
+    }
+  }catch(_e){}
 })();
 </script>
 
