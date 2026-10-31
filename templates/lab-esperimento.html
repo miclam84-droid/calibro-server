@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ ingrediente }} — Laboratorio — Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+.lab-cap{display:grid; grid-template-columns:72px 1fr; gap:14px; align-items:center; padding:22px 0 12px}
+.lab-cap .foto{width:72px; height:72px; border-radius:16px; background:var(--panel); overflow:hidden;
+  display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm)}
+.lab-cap .foto img{width:100%; height:100%; object-fit:cover}
+.lab-cap .foto .ph{font-size:30px}
+.lab-cap h1{font-family:var(--display); font-weight:800; font-size:26px; line-height:1.05; letter-spacing:-.02em; margin:0; text-transform:capitalize}
+.lab-cap .tipo{font-size:13px; color:var(--ink-soft); margin-top:3px}
+.cosz{font-size:14px; color:var(--ink); margin:2px 0 0; line-height:1.45}
+.firma{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
+.gchip{display:inline-flex; align-items:baseline; gap:5px; background:var(--surface); border:1px solid var(--riga);
+  border-radius:var(--r-pill); padding:6px 11px; box-shadow:var(--shadow-sm)}
+.gchip b{font-family:var(--display); font-weight:700; font-size:14px; color:var(--ink); font-variant-numeric:tabular-nums}
+.gchip .lab{font-size:12px; color:var(--ink-soft)}
+.gchip .src{font-size:10px; color:var(--segnale); font-weight:600}
+.gchip .src.stim{color:var(--ocra-testo)}
+.firma-nota{font-size:11.5px; color:var(--ink-soft); margin-top:8px}
+.blocco{margin-top:26px}
+.blocco h2{font-family:var(--display); font-weight:700; font-size:20px; margin:0 0 2px; letter-spacing:-.01em}
+.blocco .sub{font-size:13px; color:var(--ink-soft); margin:0 0 12px}
+.disc{font-family:var(--display); font-weight:700; font-size:12.5px; color:var(--segnale); margin:16px 0 8px}
+.disc.comp{color:var(--ink-soft)}
+.esperimenti{display:grid; gap:9px}
+.esp{display:grid; grid-template-columns:1fr auto; gap:3px 12px; background:var(--surface); border:1px solid var(--riga);
+  border-radius:var(--r); box-shadow:var(--shadow-sm); padding:14px 15px; cursor:pointer; text-align:left; width:100%; font:inherit; color:var(--ink)}
+.esp:hover{border-color:var(--verde); box-shadow:var(--shadow)}
+.esp .nome{font-family:var(--display); font-weight:700; font-size:16px; color:var(--ink); line-height:1.15}
+.esp .ipo{grid-column:1/2; font-size:12.5px; color:var(--ink-soft); line-height:1.35; margin-top:2px}
+.esp .bers{grid-row:1/2; grid-column:2/3; align-self:start; text-align:right; white-space:nowrap}
+.esp .bers .v{font-family:var(--display); font-weight:800; font-size:15px; color:var(--verde); font-variant-numeric:tabular-nums}
+.esp .bers .vl{display:block; font-size:10px; color:var(--ink-soft)}
+.esp .tags{grid-column:1/3; display:flex; flex-wrap:wrap; gap:5px; margin-top:8px}
+.tag{font-size:11px; color:var(--ink-soft); background:var(--panel); border-radius:var(--r-pill); padding:3px 8px}
+.det{margin-top:10px}
+.det-back{font-size:13px; color:var(--ink-soft); font-weight:600; background:none; border:0; cursor:pointer; padding:8px 0}
+.det .ah{font-family:var(--display); font-weight:800; font-size:22px; margin:6px 0 0; line-height:1.1}
+.det .ai{font-size:14px; color:var(--ink); margin:6px 0 0}
+.card{background:var(--surface); border:1px solid var(--riga); border-radius:var(--r); box-shadow:var(--shadow-sm); padding:15px 16px; margin-top:12px}
+.card .ct{font-family:var(--display); font-weight:700; font-size:12.5px; color:var(--segnale); margin:0 0 8px}
+.bers-big{display:flex; align-items:baseline; gap:8px}
+.bers-big .v{font-family:var(--display); font-weight:800; font-size:30px; color:var(--ink); font-variant-numeric:tabular-nums}
+.bers-big .u{font-size:14px; color:var(--ink-soft); font-weight:600}
+.bers-big .f{font-size:12.5px; color:var(--ink-soft); margin-left:auto; text-align:right; max-width:55%}
+.causa{display:grid; gap:10px}
+.causa .riga{display:grid; grid-template-columns:72px 1fr; gap:10px; align-items:start}
+.causa .k{font-size:12px; font-weight:700; padding-top:2px}
+.causa .k.su{color:var(--oxblood)} .causa .k.giu{color:var(--verde)}
+.causa ul{margin:0; padding-left:0; list-style:none; font-size:13px; color:var(--ink); line-height:1.5}
+.causa li{padding:1px 0}
+.riga-s{display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--riga)}
+.riga-s:last-child{border-bottom:none}
+.riga-s .ic{width:28px; height:28px; flex:0 0 auto; border-radius:8px; background:var(--tint); color:var(--verde); display:flex; align-items:center; justify-content:center; font-size:14px}
+.riga-s .tt{flex:1; min-width:0}
+.riga-s .t1{font-size:13.5px; font-weight:600; color:var(--ink)}
+.riga-s .t2{font-size:12.5px; color:var(--ink-soft); margin-top:1px; line-height:1.4}
+.btn-block{display:flex; width:100%; align-items:center; justify-content:center; gap:8px; font-family:var(--sans);
+  font-weight:600; font-size:15px; color:#fff; background:var(--verde); border:0; border-radius:var(--r-sm);
+  padding:14px 18px; cursor:pointer; margin-top:16px; text-decoration:none}
+.vuoto{font-size:13px; color:var(--ink-soft); line-height:1.5}
+.muted-src{font-size:11px; color:var(--ink-soft); margin-top:10px}
+.loading{font-size:13px; color:var(--ink-soft); padding:30px 0; text-align:center}
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E593C">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" style="text-decoration:none">Matter<span class="bench">Bench</span></a>
+    <a href="/nuovo" class="eyebrow" style="text-decoration:none">← cerca</a>
+  </div>
+</header>
+
+<main class="wrap" id="wrap">
+  <div id="vista-lista"><div class="loading">Apro il banco di lavoro…</div></div>
+  <div id="vista-det" style="display:none"></div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var ING = {{ ingrediente|tojson }};
+  var FIX = window.__FIX__ || null;   // gancio per test offline con dati reali
+  var DETT = {};                      // id -> protocollo dettaglio
+
+  function getJSON(ep){
+    if (FIX && FIX[ep] !== undefined) return Promise.resolve(FIX[ep]);
+    return fetch(ep).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
+  }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>]/g,function(c){return c==="&"?"&amp;":c==="<"?"&lt;":"&gt;";}); }
+  function el(id){ return document.getElementById(id); }
+  function cap(s){ s=String(s||""); return s.charAt(0).toUpperCase()+s.slice(1); }
+
+  var ASSE_LABEL = {dolce:"dolce",salato:"salato",acido:"acido",amaro:"amaro",umami:"umami",grasso:"grasso",
+    corposita:"corpo",aroma_fresco:"fresco–erbaceo",aroma_caldo:"caldo–speziato",piccante:"piccante",
+    astringente:"astringente",croccante:"croccante",effervescenza:"effervescenza",fermentato:"fermentato",alcolico:"alcolico",termico:"termico"};
+  function fonteBreve(meta){
+    if(!meta) return null;
+    var f=(meta.fonte||"").toUpperCase();
+    if(f.indexOf("USDA")>=0) return {t:"USDA",stim:false};
+    if(f.indexOf("CIQUAL")>=0) return {t:"CIQUAL",stim:false};
+    if(f.indexOf("GLUTAMM")>=0||f.indexOf("FSANZ")>=0) return {t:"da glutammato",stim:false};
+    if(f.indexOf("MARCATOR")>=0) return {t:"da marcatori",stim:false};
+    if((meta.stato||"")==="stimato") return {t:"stima",stim:true};
+    if((meta.stato||"")==="derivato") return {t:"derivato",stim:false};
+    return null;
+  }
+
+  function radiceIng(nome){
+    var n=(nome||"").toLowerCase().trim();
+    return n.replace(/[oaei]$/,"");
+  }
+  // massa normalizzata a g/ml (confronto solo tra unità omogenee)
+  function massaG(q,u){
+    var n=parseFloat(String(q==null?"":q).replace(",","."));
+    if(isNaN(n)) return null;
+    u=(u||"").toLowerCase();
+    if(u==="g"||u==="ml") return n;
+    if(u==="kg"||u==="l") return n*1000;
+    return null;
+  }
+  // RILEVANZA: l'ingrediente è PROTAGONISTA se è il reagente #1 per massa (g/ml).
+  // Se nessuna massa confrontabile, fallback sul nome. Trasparente, v1.
+  function eProtagonista(det, radice){
+    if(!det) return false;
+    var rg=det.reagenti||[];
+    var masse=[];
+    rg.forEach(function(r){ var m=massaG(r.quantita,r.unita); if(m!=null) masse.push({nome:(r.nome||"").toLowerCase(), m:m}); });
+    if(!masse.length){
+      return radice.length>=3 && (((det.nome||"")+" "+(det.ipotesi||"")).toLowerCase().indexOf(radice)>=0);
+    }
+    var maxM=0; masse.forEach(function(x){ if(x.m>maxM) maxM=x.m; });
+    var ingM=0; masse.forEach(function(x){ if(x.nome.indexOf(radice)>=0 && x.m>ingM) ingM=x.m; });
+    return ingM>0 && ingM>=maxM-0.0001;
+  }
+  function ricchezza(det){
+    if(!det) return 0; var s=0; var b=det.bersaglio||{};
+    if(b.valore) s+=2;
+    var f=det.fenomeni||[]; if(f.length) s+=2; if(f[0]&&f[0].causalita) s+=2;
+    if(det.variabile_critica) s+=1;
+    return s;
+  }
+
+  // ---------- VISTA LISTA ----------
+  function renderLista(ingr, gusto, esps){
+    var h="";
+    var nome=(ingr&&ingr.nome)||ING, cat=(ingr&&ingr.categoria)||"";
+    var vLinea="";
+    if(ingr&&ingr.varieta&&ingr.varieta.length){
+      var v0=null; for(var i=0;i<ingr.varieta.length;i++){ if((ingr.varieta[i].caratteristica||"").length){v0=ingr.varieta[i];break;} }
+      if(v0) vLinea=esc(v0.caratteristica);
+    }
+    h+='<section class="lab-cap"><div class="foto"><span class="ph">🧪</span></div>';
+    h+='<div><h1>'+esc(nome)+'</h1>'+(cat?'<div class="tipo">'+esc(cat)+'</div>':'')+'</div></section>';
+    if(vLinea) h+='<p class="cosz">'+vLinea+'</p>';
+
+    if(gusto&&gusto.proprieta){
+      var pr=gusto.proprieta, meta=gusto.proprieta_meta||{};
+      var assi=[]; for(var k in pr){ if(pr[k]!=null && pr[k]>0 && ASSE_LABEL[k]) assi.push(k); }
+      assi.sort(function(a,b){return pr[b]-pr[a];}); assi=assi.slice(0,4);
+      if(assi.length){
+        h+='<div class="firma">';
+        assi.forEach(function(k){ var fb=fonteBreve(meta[k]);
+          h+='<span class="gchip"><b>'+esc(pr[k])+'</b><span class="lab">'+esc(ASSE_LABEL[k])+'</span>'+
+             (fb?'<span class="src'+(fb.stim?' stim':'')+'">· '+esc(fb.t)+'</span>':'')+'</span>'; });
+        h+='</div><p class="firma-nota">Ogni numero dice da dove viene. Dove non c\'è una misura, resta vuoto invece di essere inventato.</p>';
+      }
+    }
+
+    h+='<section class="blocco"><h2>Cosa ci fai</h2>';
+    if(!esps||!esps.length){ h+='<p class="sub">Nessun esperimento collegato ancora.</p></section>'; el("vista-lista").innerHTML=h; return; }
+    h+='<p class="sub">Ogni preparazione è un esperimento, con il suo obiettivo e il suo numero da controllare.</p>';
+
+    var radice=radiceIng(nome), prota=[], comp=[];
+    esps.forEach(function(e){ (eProtagonista(DETT[e.id],radice)?prota:comp).push(e); });
+    function byRicc(a,b){ return ricchezza(DETT[b.id])-ricchezza(DETT[a.id]); }
+    prota.sort(byRicc); comp.sort(byRicc);
+
+    function cardExp(e){
+      var b=(e.bersaglio)||{};
+      var bers="";
+      if(b&&b.valore){ var piccola=(b.unita&&b.unita.length<4); bers='<span class="bers"><span class="v">'+esc(b.valore)+(piccola?esc(b.unita):'')+'</span><span class="vl">'+esc(piccola?'bersaglio':(b.unita||'bersaglio'))+'</span></span>'; }
+      else bers='<span class="bers"></span>';
+      var ipo=(e.ipotesi||"").replace(/^Voglio ottenere\s+/i,"").replace(/^ottenere\s+/i,"");
+      var tags=((e.fenomeni)||[]).slice(0,2).map(function(f){var n=(typeof f==="string")?f:(f&&f.nome);return n?'<span class="tag">'+esc(n)+'</span>':'';}).join('');
+      return '<button class="esp" data-id="'+esc(e.id)+'"><span class="nome">'+esc(e.nome)+'</span>'+bers+
+             (ipo?'<span class="ipo">'+esc(cap(ipo))+'</span>':'')+(tags?'<span class="tags">'+tags+'</span>':'')+'</button>';
+    }
+    function gruppo(tit,list,isComp){
+      if(!list.length) return "";
+      return '<div class="disc'+(isComp?' comp':'')+'">'+esc(tit)+'</div><div class="esperimenti">'+list.map(cardExp).join('')+'</div>';
+    }
+    h+=gruppo("Il "+esc((nome||"").toLowerCase())+" è protagonista", prota, false);
+    h+=gruppo("Ci entra anche", comp, true);
+    h+='</section>';
+    el("vista-lista").innerHTML=h;
+    Array.prototype.forEach.call(document.querySelectorAll(".esp"),function(btn){
+      btn.addEventListener("click",function(){ apriEsperimento(btn.getAttribute("data-id")); });
+    });
+  }
+
+  // ---------- VISTA DETTAGLIO ----------
+  function attrezzoPerBersaglio(b){
+    var u=((b&&b.unita)||"").toLowerCase();
+    if(u.indexOf("°c")>=0||u==="c") return "Termometro a sonda — per tenere la temperatura nella finestra giusta";
+    if(u.indexOf("idrat")>=0) return "Bilancia — per calcolare l'idratazione in percentuale";
+    if(u.indexOf("%")>=0) return "Bilancia di precisione — per pesare le proporzioni";
+    if(u.indexOf("min")>=0) return "Timer — per rispettare i tempi";
+    return null;
+  }
+  function apriEsperimento(id){
+    el("vista-lista").style.display="none"; el("vista-det").style.display="block"; window.scrollTo(0,0);
+    var p=DETT[id];
+    var h='<div class="det"><button class="det-back" id="bk">← torna agli esperimenti</button>';
+    if(!p){ h+='<div class="vuoto" style="margin-top:14px">Esperimento non disponibile.</div></div>'; el("vista-det").innerHTML=h; bindBack(); return; }
+    h+='<div class="ah">'+esc(p.nome||"")+'</div>';
+    var ob=p.cosa_voglio_ottenere||p.ipotesi||""; if(ob) h+='<div class="ai">'+esc(ob)+'</div>';
+
+    var b=p.bersaglio||{}; var fen=p.fenomeni||[]; var f0=fen[0];
+    var haNumeri = !!(b&&b.valore), haCausa = !!(f0&&f0.causalita);
+
+    if(haNumeri || f0){
+      h+='<div class="card"><div class="ct">Il bersaglio</div><div class="bers-big">';
+      if(haNumeri) h+='<span class="v">'+esc(b.valore)+'</span><span class="u">'+esc(b.unita||"")+'</span>';
+      else h+='<span class="u">numero-bersaglio da fissare al banco</span>';
+      if(f0&&f0.nome) h+='<span class="f">'+esc(f0.nome)+'</span>';
+      h+='</div></div>';
+    }
+    if(haCausa){
+      var c=f0.causalita;
+      h+='<div class="card"><div class="ct">Perché accade — '+esc(f0.nome||"")+'</div><div class="causa">';
+      if(c.acceleranti&&c.acceleranti.length) h+='<div class="riga"><div class="k su">accelera</div><ul>'+c.acceleranti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
+      if(c.rallentanti&&c.rallentanti.length) h+='<div class="riga"><div class="k giu">frena</div><ul>'+c.rallentanti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
+      h+='</div></div>';
+    }
+
+    // card operativa: variabile / osservazione / correzione / attrezzo — solo righe con contenuto
+    var righe="";
+    if(p.variabile_critica) righe+='<div class="riga-s"><div class="ic">🎚</div><div class="tt"><div class="t1">La variabile da tenere d\'occhio</div><div class="t2">'+esc(p.variabile_critica)+'</div></div></div>';
+    var sTxt = (typeof p.sensori==="string")?p.sensori:(Array.isArray(p.sensori)?p.sensori.map(function(s){return s.nome||s;}).join(", "):"");
+    if(sTxt && sTxt.length>1) righe+='<div class="riga-s"><div class="ic">👁</div><div class="tt"><div class="t1">Come capisci se funziona</div><div class="t2">'+esc(sTxt)+'</div></div></div>';
+    var err=p.errori||p.diagnosi;
+    var eTxt=(typeof err==="string")?err:(Array.isArray(err)?err.map(function(x){return x.nome||x.descrizione||x;}).join("; "):"");
+    if(eTxt && eTxt.length>1) righe+='<div class="riga-s"><div class="ic">🛟</div><div class="tt"><div class="t1">Se non viene</div><div class="t2">'+esc(eTxt.slice(0,220))+'</div></div></div>';
+    var attr=attrezzoPerBersaglio(b);
+    if(attr) righe+='<div class="riga-s"><div class="ic">🛠</div><div class="tt"><div class="t1">Ti serve</div><div class="t2">'+esc(attr)+'</div></div></div>';
+    if(righe) h+='<div class="card">'+righe+'</div>';
+
+    if(!haNumeri && !haCausa && !righe){
+      h+='<div class="card"><div class="vuoto">Questo esperimento ha l\'obiettivo ma non ancora i numeri e i fenomeni collegati. Matter non li inventa: li aggiunge quando c\'è una fonte o una prova al banco.</div></div>';
+    }
+
+    h+='<a class="btn-block" id="salva">Salva nel Quaderno e provalo al banco</a>';
+    if(p.stato_epistemico) h+='<p class="muted-src">Stato: '+esc(p.stato_epistemico)+'. Matter non inventa: dove un dato manca, lo dice.</p>';
+    h+='</div>';
+    el("vista-det").innerHTML=h; bindBack();
+  }
+  function bindBack(){ var bk=el("bk"); if(bk) bk.addEventListener("click",function(){ el("vista-det").style.display="none"; el("vista-lista").style.display="block"; window.scrollTo(0,0); }); }
+
+  // ---------- AVVIO ----------
+  getJSON("/v1/ingrediente/"+encodeURIComponent(ING)).then(function(ingr){
+    getJSON("/v1/profilo-gusto/"+encodeURIComponent(ING)).then(function(gusto){
+      getJSON("/v1/ingrediente/"+encodeURIComponent(ING)+"/protocolli").then(function(prot){
+        var esps=(prot&&prot.esperimenti)||[];
+        Promise.all(esps.map(function(e){
+          return getJSON("/v1/protocollo/"+encodeURIComponent(e.id)).then(function(d){ DETT[e.id]=d; });
+        })).then(function(){ renderLista(ingr, gusto, esps); });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
