@@ -4869,9 +4869,32 @@ def lista_protocolli():
 @bp.route("/v1/ingrediente/<ingrediente>/protocolli")
 def protocolli_di_ingrediente(ingrediente):
     """PROTOCOL HUB (65C #429): dato un ingrediente, gli ESPERIMENTI che puoi fare con esso.
-    Non una scheda: un laboratorio. Usa gli archi usa_reagente creati coi protocolli."""
+    Ordinati per RILEVANZA: prima dove l'ingrediente è PROTAGONISTA (reagente #1 per massa),
+    poi gli altri. Non una scheda: un laboratorio. Usa gli archi usa_reagente."""
     from flask import jsonify
-    import os, psycopg2, json
+    import json, re
+    def _massa_g(q, u):
+        try: v = float(str(q).replace(",", "."))
+        except Exception: return 0.0
+        u = (u or "").strip().lower()
+        if u in ("kg", "l"): return v * 1000.0
+        if u in ("g", "ml"): return v
+        return 0.0  # spicchi/gambo/pizzico: non contano per la massa dominante
+    def _radice(s):
+        s = re.sub(r"[^a-zàèéìòù ]", "", (s or "").lower()).strip()
+        return s[:6] if len(s) >= 6 else s
+    def _protagonista(ing_nome, reagenti):
+        if not reagenti: return False
+        rad = _radice(ing_nome); masse = []; mia = -1.0
+        for rr in reagenti:
+            nm = (rr.get("nome") if isinstance(rr, dict) else rr) or ""
+            m = _massa_g(rr.get("quantita") if isinstance(rr, dict) else None,
+                         rr.get("unita") if isinstance(rr, dict) else None)
+            masse.append(m)
+            rn = _radice(nm)
+            if rad and (rad in nm.lower() or (rn and rn in (ing_nome or "").lower())):
+                mia = max(mia, m)
+        return mia > 0 and masse and mia >= max(masse)
     try:
         from db import connessione
         with connessione() as conn:
@@ -4882,22 +4905,30 @@ def protocolli_di_ingrediente(ingrediente):
             r = cur.fetchone()
             if not r: cur.close(); return jsonify({"errore":"ingrediente non trovato"}), 404
             ing_id, ing_nome = r
-            # i protocolli che usano questo ingrediente (arco usa_reagente)
+            # candidati (ordinati per nome, cap ampio); la rilevanza si calcola sotto
             cur.execute("""SELECT DISTINCT n.id, n.name, n.data FROM edges e JOIN nodes n ON n.id=e.from_id
-                       WHERE e.to_id=%s AND e.relation='usa_reagente' AND n.type='Protocollo' LIMIT 20""", (ing_id,))
-            esperimenti = []
+                       WHERE e.to_id=%s AND e.relation='usa_reagente' AND n.type='Protocollo'
+                       ORDER BY n.name LIMIT 150""", (ing_id,))
+            cand = []
             for pid, nome, data in cur.fetchall():
                 dd = data if isinstance(data, dict) else (json.loads(data) if data else {})
-                esperimenti.append({
+                try: prot = _protagonista(ing_nome, dd.get("reagenti") or dd.get("ingredienti") or [])
+                except Exception: prot = False
+                cand.append((prot, (nome or "").lower(), {
                     "id": pid, "nome": nome, "disciplina": dd.get("disciplina",""),
                     "ipotesi": dd.get("ipotesi",""), "bersaglio": dd.get("bersaglio",{}),
-                    "fenomeni": [f.get("nome") for f in dd.get("fenomeni",[])],
-                })
+                    "fenomeni": [ (f.get("nome") if isinstance(f, dict) else f) for f in dd.get("fenomeni",[]) ],
+                    "protagonista": prot,
+                }))
             cur.close()
+        # protagonisti prima, poi per nome; cap a 32 (il client fa un fetch-dettaglio per ognuno)
+        cand.sort(key=lambda t: (0 if t[0] else 1, t[1]))
+        esperimenti = [c[2] for c in cand[:32]]
         return jsonify({
             "ingrediente": ing_nome,
             "esperimenti": esperimenti,
             "n_esperimenti": len(esperimenti),
+            "n_totali": len(cand),
             "nota": "Gli esperimenti che puoi fare con questo ingrediente. Non una scheda: un laboratorio."
         })
     except Exception as e:
