@@ -196,5 +196,11 @@ def copertura_stato_json():
 
 @bp_cop_stato.route("/copertura-stato")
 def copertura_stato_page():
-    """Pagina isolata (riusa matter2.css) che rende il numero di copertura."""
-    return render_template("copertura-stato.html")
+    """Pagina interna (ops) col numero di copertura. Gate server-side ?s=ADMIN_SECRET."""
+    import os as _os, hmac as _hmac
+    from flask import request as _req, make_response
+    if not _hmac.compare_digest(str(_req.args.get("s", "")), str(_os.environ.get("ADMIN_SECRET") or "")):
+        return jsonify({"errore": "non autorizzato"}), 403
+    resp = make_response(render_template("copertura-stato.html"))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
