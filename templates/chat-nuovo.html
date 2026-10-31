@@ -244,10 +244,29 @@ window.I18N_DICT = {
 
   function scrollGiu(){ lista.scrollTop = lista.scrollHeight; }
 
+  function _escHtml(s){
+    return String(s == null ? "" : s).replace(/[&<>]/g, function(c){
+      return c === "&" ? "&amp;" : c === "<" ? "&lt;" : "&gt;";
+    });
+  }
+  // markdown minimo e SICURO (escape-first) per le risposte di Matter:
+  // grassetto, corsivo, intestazioni, link, elenchi, a-capo.
+  function mdToHtml(s){
+    var t = _escHtml(s);
+    t = t.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    t = t.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>");
+    t = t.replace(/^#{1,6}\s*(.+)$/gm, "<strong>$1</strong>");
+    t = t.replace(/^[\-•]\s+(.+)$/gm, "• $1");
+    t = t.replace(/\n/g, "<br>");
+    return t;
+  }
+
   function aggiungiBolla(testo, tipo){
     var el = document.createElement("div");
     el.className = "bolla bolla--" + tipo;
-    el.textContent = testo;
+    if (tipo === "matter") { el.innerHTML = mdToHtml(testo); }
+    else { el.textContent = testo; }
     lista.appendChild(el);
     scrollGiu();
     return el;
