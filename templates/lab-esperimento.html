@@ -74,6 +74,10 @@
   font-weight:600; font-size:14px; color:var(--verde); background:transparent; border:1.5px solid var(--verde);
   border-radius:var(--r-sm); padding:12px 18px; cursor:pointer; margin-top:10px; text-decoration:none}
 .cantiere-nota{margin-top:-2px}
+.reag{list-style:none; margin:0; padding:0}
+.reag li{display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:7px 0; border-bottom:1px solid rgba(0,0,0,.07); font-size:14px}
+.reag li:last-child{border-bottom:0}
+.reag .rq{color:var(--ink-soft); font-variant-numeric:tabular-nums; white-space:nowrap; font-size:13px}
 .vuoto{font-size:13px; color:var(--ink-soft); line-height:1.5}
 .muted-src{font-size:11px; color:var(--ink-soft); margin-top:10px}
 .loading{font-size:13px; color:var(--ink-soft); padding:30px 0; text-align:center}
@@ -260,6 +264,19 @@
       if(f0&&f0.nome) h+='<span class="f">'+esc(f0.nome)+'</span>';
       h+='</div></div>';
     }
+
+    // CARD "Cosa ci va" — i reagenti reali con le quantità (dato dell'esperimento, non inventato)
+    var reag = Array.isArray(p.reagenti) ? p.reagenti : [];
+    if(reag.length){
+      var ri = reag.map(function(x){
+        var nm = esc((x && x.nome) || x || "");
+        if(!nm) return "";
+        var q = (x && x.quantita!=null && String(x.quantita).length) ? esc(String(x.quantita))+(x.unita?(' '+esc(x.unita)):'') : '';
+        return '<li><span class="rn">'+nm+'</span>'+(q?'<span class="rq">'+q+'</span>':'')+'</li>';
+      }).join('');
+      if(ri) h+='<div class="card"><div class="ct">Cosa ci va</div><ul class="reag">'+ri+'</ul></div>';
+    }
+
     if(haCausa){
       var c=f0.causalita;
       h+='<div class="card"><div class="ct">Perché accade — '+esc(f0.nome||"")+'</div><div class="causa">';
