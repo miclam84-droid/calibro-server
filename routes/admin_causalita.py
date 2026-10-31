@@ -504,6 +504,289 @@ CAUSALITA_SPECIFICA = {
             },
         ],
     },
+
+    # ── ONDA 3 ────────────────────────────────────────────────────────────
+    # Cucina napoletana/italiana (dominio del fondatore). Ogni causalità è
+    # scritta SOLO sui fenomeni che il protocollo ha DAVVERO (verificati live su
+    # /v1/protocollo/<id>) e sui reagenti REALI della ricetta; tecnica di cucina
+    # stabilita, non inventata. "fonte" chiude con "; da validare al banco".
+
+    # Cacio e pepe (cucina). Reagenti live: tonnarelli, pecorino romano, pepe nero,
+    # sale, acqua. Bersaglio ~65°C. Fenomeni: 'emulsione', "gelatinizzazione dell'amido".
+    "prot-cacio-e-pepe": {
+        "fenomeni": [
+            {
+                "nome": "emulsione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Crema di pecorino sciolta con acqua di cottura TIEPIDA (non bollente) — l'amido disciolto nell'acqua fa da legante e stabilizza l'emulsione formaggio-grasso-acqua"},
+                        {"fattore": "Acqua di cottura ben amidacea (poca acqua, poco sale) — più amido = emulsione più stabile e cremosa"},
+                        {"fattore": "Mantecatura energica fuori o a fuoco spento, aggiungendo liquido poco per volta — monta la crema senza spezzarla"},
+                        {"fattore": "Pepe tostato a secco e macinato al momento — rilascia oli aromatici che profumano senza interferire con la legatura"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Pecorino unito ad acqua o padella troppo calde (>65°C) — la caseina coagula: grumi filanti e separazione del grasso invece della crema"},
+                        {"fattore": "Acqua troppo salata o troppo abbondante — poco amido e sale in eccesso: emulsione slegata e piatto sapido"},
+                        {"fattore": "Aggiungere tutto il formaggio in un colpo sul caldo — shock termico: palla di cacio appiccicata"},
+                    ],
+                    "fonte": "emulsione della cacio e pepe (crema di pecorino + acqua amidacea sotto i 65°C) — tecnica di cucina romana stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "gelatinizzazione dell'amido",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Cottura della pasta in poca acqua (risottata o quasi) — l'acqua si carica di amido che serve poi all'emulsione"},
+                        {"fattore": "Tonnarello ruvido e poroso — rilascia e trattiene più amido superficiale, lega meglio la crema"},
+                        {"fattore": "Scolare al dente tenendo da parte l'acqua amidacea — l'amido gelatinizzato è il legante del piatto"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppa acqua di cottura — amido diluito: acqua inefficace come legante, crema che non tiene"},
+                        {"fattore": "Pasta scotta — amido sfaldato in eccesso: collosità e perdita di struttura, non cremosità"},
+                    ],
+                    "fonte": "ruolo dell'amido della pasta nella cacio e pepe (acqua amidacea come legante) — tecnica di cucina stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Risotto (cucina). Reagenti live: riso Carnaroli/Arborio, brodo caldo, burro
+    # freddo, parmigiano, vino bianco. Fenomeni: 'Gelatinizzazione amido', 'Mantecatura'.
+    "prot-risotto": {
+        "fenomeni": [
+            {
+                "nome": "Gelatinizzazione amido",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Riso ad alto tenore di amilopectina (Carnaroli/Arborio) — rilascia amido in cottura: è ciò che rende cremoso il risotto senza panna"},
+                        {"fattore": "Brodo caldo aggiunto poco per volta, mescolando — lo sfregamento dei chicchi libera amido in modo graduale e uniforme"},
+                        {"fattore": "Tostatura iniziale del riso — sigilla il chicco così l'amido esce regolato e il cuore resta al dente"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Brodo freddo versato tutto insieme — abbassa la temperatura, cottura disomogenea, amido rilasciato male: riso slegato o impastato"},
+                        {"fattore": "Non mescolare — l'amido resta nel chicco: risotto che non lega, acquoso"},
+                        {"fattore": "Lavare il riso prima — via l'amido superficiale: addio cremosità"},
+                    ],
+                    "fonte": "gelatinizzazione dell'amido nel risotto (varietà, tostatura, brodo caldo a mestoli) — tecnica di cucina italiana stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "Mantecatura",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Burro FREDDO e parmigiano a fuoco SPENTO, mescolando con energia — emulsiona grasso e amido: onda cremosa e lucida (all'onda)"},
+                        {"fattore": "Riposo di un minuto e mantecatura vigorosa — l'emulsione si monta e il risotto 'si allarga'"},
+                        {"fattore": "Giusta umidità residua prima di mantecare — serve un velo di fondo liquido per legare burro e formaggio"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Mantecare a fuoco acceso o con burro a temperatura ambiente — il grasso si separa: risotto unto, non cremoso"},
+                        {"fattore": "Risotto troppo asciutto prima della mantecatura — niente da emulsionare: resta compatto e colloso"},
+                        {"fattore": "Troppo parmigiano — sapore squilibrato e tendenza al collant/filante"},
+                    ],
+                    "fonte": "mantecatura all'onda del risotto (burro freddo + formaggio fuori fuoco) — tecnica di cucina italiana stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Polpette al sugo (cucina napoletana). Reagenti live: carne macinata, pane
+    # grattugiato, latte, uova, parmigiano, sale, pepe, olio d'oliva, passata di
+    # pomodoro, cipolla. Fenomeni: 'Reazione di Strecker', 'Il riposo della carne', 'Il soffritto'.
+    "prot-polpette-al-sugo": {
+        "fenomeni": [
+            {
+                "nome": "Reazione di Strecker",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Rosolare le polpette in olio ben caldo prima del sugo — crosta dorata: la degradazione di Strecker sviluppa gli aromi tostati della carne"},
+                        {"fattore": "Superficie delle polpette asciutta e non sovraffollata in padella — la temperatura resta alta e la doratura parte subito"},
+                        {"fattore": "Fondo di cottura recuperato nel sugo — i composti aromatici della rosolatura passano alla salsa"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Padella fredda o affollata — le polpette bollono nei loro liquidi: niente crosta, niente aroma di Strecker, carne grigia"},
+                        {"fattore": "Cuocere le polpette solo nel sugo senza rosolarle — saltano i composti tostati, risultato piatto"},
+                        {"fattore": "Rosolatura spinta fino al bruciato — note amare al posto di quelle tostate"},
+                    ],
+                    "fonte": "doratura delle polpette (Maillard/Strecker in rosolatura prima del sugo) — tecnica di cucina stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "Il riposo della carne",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Impasto fatto riposare in frigo prima di formare le polpette — pane e latte idratano e legano, la carne si compatta: polpette che tengono la forma"},
+                        {"fattore": "Panatura (pane + latte) ammollata e strizzata bene — distribuisce umidità uniforme: morbidezza senza sfaldarsi"},
+                        {"fattore": "Riposo a crudo che lascia ridistribuire i succhi — cottura più uniforme e polpetta più succosa"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Formare e cuocere subito l'impasto appena fatto — poco legato: le polpette si aprono in cottura"},
+                        {"fattore": "Impasto troppo lavorato e scaldato dalle mani — grasso spalmato: polpette gommose e asciutte"},
+                    ],
+                    "fonte": "riposo dell'impasto delle polpette (idratazione panatura, legatura, succosità) — tecnica di cucina stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "Il soffritto",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Cipolla a fuoco dolce in olio fino a trasparenza e dolcezza — base aromatica del sugo di accompagnamento, senza nota pungente di crudo"},
+                        {"fattore": "Soffritto non bruciato, appena biondo — zuccheri della cipolla che addolciscono la passata"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Cipolla a fuoco alto che brucia — amaro che rovina tutto il sugo"},
+                        {"fattore": "Passata aggiunta sulla cipolla ancora cruda/pungente — sugo sbilanciato e aggressivo"},
+                    ],
+                    "fonte": "soffritto di cipolla per il sugo delle polpette — tecnica di cucina stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Genovese di melanzane (cucina napoletana). Reagenti live: cipolle, manzo,
+    # pasta ziti, olio EVO, sale, melanzane. Bersaglio 40 min. Fenomeni: 'il soffritto', 'la rosolatura'.
+    "prot-genovese-di-melanzane": {
+        "fenomeni": [
+            {
+                "nome": "il soffritto",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Grande quantità di cipolle a fuoco bassissimo e lungo — è il cuore della genovese: le cipolle si sfaldano e caramellano negli zuccheri propri, dolcezza bruna"},
+                        {"fattore": "Coperchio nelle prime fasi e poca acqua — le cipolle sudano e stufano senza bruciare, poi si asciugano in crema"},
+                        {"fattore": "Tempo lungo (ben oltre i 40 min di base per la versione classica) — la cipolla passa da pungente a dolce e ambrata"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Fuoco alto per accorciare i tempi — cipolle bruciate fuori e crude dentro: amaro, niente dolcezza genovese"},
+                        {"fattore": "Poche cipolle — manca la massa che fa la salsa, genovese magra e slavata"},
+                    ],
+                    "fonte": "soffritto/stufatura delle cipolle nella genovese napoletana (massa di cipolle, fuoco lento e lungo) — tecnica di cucina napoletana stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "la rosolatura",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Manzo rosolato bene in olio caldo prima di unirlo alle cipolle — crosta Maillard che dà fondo e profondità alla genovese"},
+                        {"fattore": "Carne asciutta e padella non affollata — doratura vera invece di bollitura nei succhi"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Carne messa fredda e bagnata in padella non abbastanza calda — rilascia acqua, lessa invece di rosolare: genovese piatta"},
+                        {"fattore": "Rosolatura bruciata — amaro che sporca il dolce delle cipolle"},
+                    ],
+                    "fonte": "rosolatura del manzo nella genovese (Maillard per il fondo di sapore) — tecnica di cucina napoletana stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Tagliatelle al ragù (cucina italiana). Reagenti live: tagliatelle fresche,
+    # carne macinata di manzo, carota, cipolla, sedano, pomodori pelati, vino rosso,
+    # olio EVO, sale, pepe. Bersaglio 150-180°C. Fenomeni: 'Soffritto', 'Rosolatura'.
+    "prot-tagliatelle-al-ragu": {
+        "fenomeni": [
+            {
+                "nome": "Soffritto",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Trito di carota, cipolla e sedano (battuto) a fuoco dolce in olio — base aromatica del ragù: dolcezza e profondità prima della carne"},
+                        {"fattore": "Soffritto appassito lentamente fino a morbido e dorato chiaro — zuccheri delle verdure che bilanciano l'acidità del pomodoro"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Soffritto bruciato o a fuoco troppo alto — amaro che resta nel ragù fino alla fine"},
+                        {"fattore": "Verdure tagliate grosse e poco cotte — base aromatica debole e pezzi crudi nel sugo"},
+                    ],
+                    "fonte": "battuto/soffritto del ragù (carota-cipolla-sedano a fuoco dolce) — tecnica di cucina italiana stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "Rosolatura",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Carne rosolata a fuoco vivo (~150-180°C in padella) fino a doratura — Maillard che costruisce il fondo di sapore del ragù"},
+                        {"fattore": "Carne asciutta, aggiunta in più riprese senza affollare — resta la temperatura alta e la carne dora invece di lessare"},
+                        {"fattore": "Sfumatura col vino rosso DOPO la rosolatura — deglassa il fondo bruno e lega i composti aromatici"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppa carne tutta insieme in padella — crolla la temperatura: la carne rilascia acqua e bolle, grigia e insapore"},
+                        {"fattore": "Pomodoro aggiunto prima di aver rosolato — l'acidità e l'acqua bloccano la Maillard"},
+                    ],
+                    "fonte": "rosolatura della carne del ragù (Maillard a 150-180°C, poi sfumatura col vino) — tecnica di cucina italiana stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Pasta al pomodoro (cucina). Reagenti live: pasta, pomodori pelati, aglio, olio
+    # EVO, basilico, sale. Fenomeni: 'Amido gelatinizza da fuori a dentro', 'Emulsione della salsa'.
+    "prot-pasta-al-pomodoro-rivisitata": {
+        "fenomeni": [
+            {
+                "nome": "Amido gelatinizza da fuori a dentro",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Acqua in abbondante ebollizione e pasta al dente — l'amido gelatinizza dall'esterno mentre il cuore resta sodo: tenuta e rilascio di amido per legare"},
+                        {"fattore": "Ultima parte di cottura della pasta direttamente nel sugo con un po' d'acqua di cottura — l'amido che esce lega pasta e salsa (risottatura)"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Pasta scotta — amido completamente gelatinizzato e sfaldato: collosa, non lega, si spappola"},
+                        {"fattore": "Poca acqua o acqua non bollente all'immissione — cottura irregolare e pasta appiccicata"},
+                    ],
+                    "fonte": "gelatinizzazione dell'amido della pasta (al dente, risottatura nel sugo) — tecnica di cucina stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "Emulsione della salsa",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Olio EVO + acqua di cottura amidacea mantecati col pomodoro a fuoco vivace — l'amido emulsiona grasso e acqua: salsa lucida che vela la pasta"},
+                        {"fattore": "Mantecatura in padella saltando la pasta — il movimento monta l'emulsione e fa aderire il sugo"},
+                        {"fattore": "Aglio in olio a freddo/dolce — aromatizza l'olio che è la fase grassa dell'emulsione"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Olio e acqua senza amido e senza mantecatura — si separano: pasta 'asciutta' con sugo che cola sotto"},
+                        {"fattore": "Troppo olio rispetto all'acqua amidacea — emulsione che si rompe, piatto unto"},
+                    ],
+                    "fonte": "emulsione della salsa al pomodoro (olio + acqua amidacea mantecati) — tecnica di cucina stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
+
+    # Pasta alla Norma (cucina). Reagenti live: pasta, melanzane, pomodori pelati,
+    # ricotta salata, basilico, olio EVO, sale. Fenomeni: 'amido gelatinizza da fuori
+    # a dentro', 'acqua amidacea emulsionante'.
+    "prot-pasta-alla-norma": {
+        "fenomeni": [
+            {
+                "nome": "amido gelatinizza da fuori a dentro",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Pasta scolata al dente — l'amido gelatinizza in superficie mentre il cuore tiene: struttura che regge la mantecatura col sugo di melanzane"},
+                        {"fattore": "Breve saltatura finale nel sugo con acqua di cottura — l'amido rilasciato lega pasta, pomodoro e olio delle melanzane"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Pasta scotta — amido sfaldato: si impasta col sugo e perde mordente"},
+                        {"fattore": "Scolare troppo asciutto senza tenere acqua di cottura — niente amido per legare, sugo che scivola"},
+                    ],
+                    "fonte": "gelatinizzazione dell'amido nella pasta alla Norma (al dente, saltata nel sugo) — tecnica di cucina siciliana stabilita; da validare al banco",
+                },
+            },
+            {
+                "nome": "acqua amidacea emulsionante",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Acqua di cottura ricca di amido aggiunta al sugo con l'olio delle melanzane — emulsiona grasso e acqua: salsa cremosa che avvolge la pasta"},
+                        {"fattore": "Mantecatura saltando in padella — monta l'emulsione e fa aderire pomodoro e olio alla pasta"},
+                        {"fattore": "Ricotta salata grattugiata a fine piatto — sapidità e corpo senza spezzare l'emulsione (fuori dal fuoco vivace)"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Acqua povera di amido o niente mantecatura — olio e pomodoro restano separati, pasta slegata"},
+                        {"fattore": "Melanzane troppo cariche d'olio senza acqua amidacea a bilanciare — piatto unto e salsa che non lega"},
+                    ],
+                    "fonte": "acqua amidacea come emulsionante nella pasta alla Norma — tecnica di cucina siciliana stabilita; da validare al banco",
+                },
+            },
+        ],
+    },
 }
 
 
