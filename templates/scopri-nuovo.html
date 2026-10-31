@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Scopri — Matter Bench</title>
-<meta name="description" content="Il grafo vero: lo spessore del legame è il numero di composti aromatici condivisi. Una parentela da esplorare, non un voto.">
+<meta name="description" content="La parentela aromatica tra due ingredienti: lo spessore del legame è quanti composti aromatici hanno in comune. Una parentela da esplorare, non un voto.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
@@ -140,7 +140,7 @@
 
   <!-- RICERCA: ricentra il grafo su un altro ingrediente -->
   <form class="srch" id="srch" role="search" onsubmit="return false">
-    <input type="search" id="q" name="q" placeholder="Centra su un ingrediente (es. pomodoro)" aria-label="Centra il grafo su un ingrediente" autocomplete="off" data-i18n-ph="centra_ph" data-i18n-aria="centra_aria">
+    <input type="search" id="q" name="q" placeholder="Centra su un ingrediente (es. pomodoro)" aria-label="Centra la vista su un ingrediente" autocomplete="off" data-i18n-ph="centra_ph" data-i18n-aria="centra_aria">
     <button type="submit" data-i18n="centra_btn">Centra</button>
   </form>
 
@@ -150,7 +150,7 @@
         <img class="scopri-foto" id="centro-foto" alt="" tabindex="0" role="button" aria-label="Mostra la fonte della foto" data-i18n-aria="foto_fonte_aria">
       </div>
       <div class="scopri-intesta-testo">
-        <span class="eyebrow" data-i18n="al_centro">Al centro del grafo</span>
+        <span class="eyebrow" data-i18n="al_centro">Al centro della rete</span>
         <h1 class="scopri-centro" id="centro-nome">…</h1>
       </div>
     </div>
@@ -159,7 +159,7 @@
     <a class="btn btn--ghost" id="vai-componi" href="/componi-nuovo" style="margin-top:14px">Componi con questo ingrediente →</a>
   </section>
 
-  <div class="grafo-tela" id="tela" aria-label="Grafo ego-centrico dell'ingrediente" data-i18n-aria="tela_aria">
+  <div class="grafo-tela" id="tela" aria-label="Rete dei sapori dell'ingrediente" data-i18n-aria="tela_aria">
     <svg id="svg" viewBox="0 0 400 460" role="img" preserveAspectRatio="xMidYMid meet"></svg>
     <div class="grafo-vuoto" id="grafo-vuoto" hidden></div>
   </div>
@@ -195,9 +195,9 @@ window.I18N_TITLE = {it:"Scopri — Matter Bench", en:"Discover — Matter Bench
 window.I18N_DICT = {
   eyebrow_scopri: {it:"scopri", en:"discover", es:"descubrir"},
   centra_ph:  {it:"Centra su un ingrediente (es. pomodoro)", en:"Centre on an ingredient (e.g. tomato)", es:"Centra en un ingrediente (p. ej. tomate)"},
-  centra_aria:{it:"Centra il grafo su un ingrediente", en:"Centre the graph on an ingredient", es:"Centra el grafo en un ingrediente"},
+  centra_aria:{it:"Centra la vista su un ingrediente", en:"Centre the view on an ingredient", es:"Centra la vista en un ingrediente"},
   centra_btn: {it:"Centra", en:"Centre", es:"Centrar"},
-  al_centro:  {it:"Al centro del grafo", en:"At the centre of the graph", es:"En el centro del grafo"},
+  al_centro:  {it:"Al centro della rete", en:"At the centre of the map", es:"En el centro de la red"},
   scopri_sub: {it:"Lo spessore di un legame è il numero di composti aromatici che i due ingredienti condividono davvero. Tocca un vicino per ricentrare, tocca un legame per vederne la prova. Mostriamo le relazioni documentate finora: l’assenza di un legame non è una bocciatura.", en:"The thickness of a link is the number of aroma compounds the two ingredients really share. Tap a neighbour to re-centre, tap a link to see its evidence. We show the relations documented so far: a missing link is not a rejection.", es:"El grosor de un vínculo es el número de compuestos aromáticos que los dos ingredientes comparten de verdad. Toca un vecino para recentrar, toca un vínculo para ver su evidencia. Mostramos las relaciones documentadas hasta ahora: la ausencia de un vínculo no es un rechazo."},
   lg_base:    {it:"parentela aromatica", en:"aromatic kinship", es:"parentesco aromático"},
   lg_contr:   {it:"contrasto", en:"contrast", es:"contraste"},
@@ -205,7 +205,7 @@ window.I18N_DICT = {
   legame_h:   {it:"Legame", en:"Link", es:"Vínculo"},
   chiudi:     {it:"Chiudi", en:"Close", es:"Cerrar"},
   foto_fonte_aria: {it:"Mostra la fonte della foto", en:"Show the photo source", es:"Muestra la fuente de la foto"},
-  tela_aria: {it:"Grafo ego-centrico dell'ingrediente", en:"Ego-centric graph of the ingredient", es:"Grafo egocéntrico del ingrediente"}
+  tela_aria: {it:"Rete dei sapori dell'ingrediente", en:"Flavour map of the ingredient", es:"Red de sabores del ingrediente"}
 };
 </script>
 <script src="/static/i18n-nuovo.js"></script>
@@ -346,20 +346,20 @@ window.I18N_DICT = {
       }
     } else if (crit === "tradizione") {
       html += '<p class="sheet-coppia" style="margin-top:12px">' + _L({
-        it:"Relazione di <strong>tradizione</strong>: accostamento documentato dalla cultura, <strong>non</strong> un legame molecolare. Qui il grafo non conta composti condivisi.",
-        en:"A <strong>tradition</strong> relation: a pairing documented by culture, <strong>not</strong> a molecular link. Here the graph counts no shared compounds.",
-        es:"Relación de <strong>tradición</strong>: una combinación documentada por la cultura, <strong>no</strong> un vínculo molecular. Aquí el grafo no cuenta compuestos compartidos."
+        it:"Relazione di <strong>tradizione</strong>: accostamento documentato dalla cultura, <strong>non</strong> un legame molecolare. Qui non contiamo sostanze in comune.",
+        en:"A <strong>tradition</strong> relation: a pairing documented by culture, <strong>not</strong> a molecular link. Here we count no substances in common.",
+        es:"Relación de <strong>tradición</strong>: una combinación documentada por la cultura, <strong>no</strong> un vínculo molecular. Aquí no contamos sustancias en común."
       }) + '</p>';
     } else if (crit === "contrasto") {
       html += '<p class="sheet-coppia" style="margin-top:12px">' + _L({
-        it:"Relazione di <strong>contrasto</strong> documentata nel grafo (relazione curata). ",
-        en:"A <strong>contrast</strong> relation documented in the graph (a curated relation). ",
-        es:"Relación de <strong>contraste</strong> documentada en el grafo (relación curada). "
+        it:"Relazione di <strong>contrasto</strong> documentata e curata a mano. ",
+        en:"A <strong>contrast</strong> relation, documented and hand-curated. ",
+        es:"Relación de <strong>contraste</strong> documentada y curada a mano. "
       }) +
               (n !== null ? '' : _L({
-                it:"Senza un conteggio di composti condivisi: non è un legame molecolare misurato.",
-                en:"Without a count of shared compounds: it is not a measured molecular link.",
-                es:"Sin un recuento de compuestos compartidos: no es un vínculo molecular medido."
+                it:"Senza un conteggio di sostanze in comune: non è un legame molecolare misurato.",
+                en:"Without a count of substances in common: it is not a measured molecular link.",
+                es:"Sin un recuento de sustancias en común: no es un vínculo molecular medido."
               })) + '</p>';
     }
 
@@ -598,9 +598,9 @@ window.I18N_DICT = {
       .catch(function(){
         cardStato(ing,
           _L({
-            it:"Il grafo non è raggiungibile in questo momento.",
-            en:"The graph is not reachable right now.",
-            es:"El grafo no está disponible en este momento."
+            it:"La rete dei sapori non è raggiungibile in questo momento.",
+            en:"The flavour map is not reachable right now.",
+            es:"La red de sabores no está disponible en este momento."
           }),
           _L({it:"Riprova più tardi.", en:"Try again later.", es:"Inténtalo más tarde."})
         );
@@ -616,11 +616,11 @@ window.I18N_DICT = {
     if (!rel.length && d.nota) {
       cardStato(d.ingrediente || ing,
         _L({
-          it:"Il grafo non ha dati da mostrare ora (<strong>" + esc(d.nota) + "</strong>).",
-          en:"The graph has no data to show now (<strong>" + esc(d.nota) + "</strong>).",
-          es:"El grafo no tiene datos que mostrar ahora (<strong>" + esc(d.nota) + "</strong>)."
+          it:"La rete dei sapori non ha dati da mostrare ora (<strong>" + esc(d.nota) + "</strong>).",
+          en:"The flavour map has no data to show now (<strong>" + esc(d.nota) + "</strong>).",
+          es:"La red de sabores no tiene datos que mostrar ahora (<strong>" + esc(d.nota) + "</strong>)."
         }),
-        _L({it:"Nessun nodo o numero inventato.", en:"No node or number invented.", es:"Ningún nodo ni número inventado."})
+        _L({it:"Nessuna voce o numero inventato.", en:"No entry or number invented.", es:"Ninguna entrada ni número inventado."})
       );
       return;
     }
@@ -629,11 +629,11 @@ window.I18N_DICT = {
     if (d.non_riconosciuto) {
       cardStato(d.ingrediente || ing,
         _L({
-          it:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non è riconosciuto nel grafo: non ci sono composti né relazioni documentate.",
-          en:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> is not recognised in the graph: there are no documented compounds or relations.",
-          es:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> no se reconoce en el grafo: no hay compuestos ni relaciones documentadas."
+          it:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> non è riconosciuto nella rete dei sapori: non ci sono composti né relazioni documentate.",
+          en:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> is not recognised in the flavour map: there are no documented compounds or relations.",
+          es:"<strong>" + esc(cap(d.ingrediente || ing)) + "</strong> no se reconoce en la red de sabores: no hay compuestos ni relaciones documentadas."
         }),
-        _L({it:"Non invento nodi né numeri per riempire lo spazio.", en:"I don't invent nodes or numbers to fill the space.", es:"No invento nodos ni números para rellenar el espacio."})
+        _L({it:"Non invento voci né numeri per riempire lo spazio.", en:"I don't invent entries or numbers to fill the space.", es:"No invento entradas ni números para rellenar el espacio."})
       );
       return;
     }
@@ -652,9 +652,9 @@ window.I18N_DICT = {
           es:"Perfil aún en construcción: solo <strong>" + nC + "</strong> compuestos documentados para " + esc(nmM) + "." + (firmeTxt ? " Firma hasta ahora: <em>" + esc(firmeTxt) + "</em>." : "")
         }),
         _L({
-          it:"I legami nel grafo arrivano quando il profilo è completo. Non mostro un legame solo come se fosse il verdetto.",
-          en:"Graph links appear once the profile is complete. I don't show a single link as if it were the verdict.",
-          es:"Los enlaces del grafo aparecen cuando el perfil está completo. No muestro un solo enlace como si fuera el veredicto."
+          it:"I legami arrivano quando il profilo è completo. Non mostro un legame solo come se fosse il verdetto.",
+          en:"The links appear once the profile is complete. I don't show a single link as if it were the verdict.",
+          es:"Los enlaces aparecen cuando el perfil está completo. No muestro un solo enlace como si fuera el veredicto."
         })
       );
       return;
@@ -679,7 +679,7 @@ window.I18N_DICT = {
           en:"No aromatic link mapped for <strong>" + esc(_n) + "</strong> — try another ingredient.",
           es:"Ningún vínculo aromático mapeado para <strong>" + esc(_n) + "</strong> — prueba otro ingrediente."
         }),
-        _L({it:"Non invento nodi né numeri.", en:"I don't invent nodes or numbers.", es:"No invento nodos ni números."})
+        _L({it:"Non invento voci né numeri.", en:"I don't invent entries or numbers.", es:"No invento entradas ni números."})
       );
       return;
     }
@@ -698,9 +698,9 @@ window.I18N_DICT = {
     // onestà: nessun legame molecolare, solo tradizione/contrasto
     if (nBase === 0) {
       mostraOnesto(_L({
-        it:"Questo ingrediente <strong>non ha un profilo di composti</strong> nel grafo: qui vedi solo relazioni di tradizione o contrasto, <strong>non legami molecolari</strong>. Lo spessore non misura composti condivisi.",
-        en:"This ingredient <strong>has no compound profile</strong> in the graph: here you only see tradition or contrast relations, <strong>not molecular links</strong>. Thickness does not measure shared compounds.",
-        es:"Este ingrediente <strong>no tiene un perfil de compuestos</strong> en el grafo: aquí solo ves relaciones de tradición o contraste, <strong>no vínculos moleculares</strong>. El grosor no mide compuestos compartidos."
+        it:"Questo ingrediente <strong>non ha un profilo di composti</strong>: qui vedi solo relazioni di tradizione o contrasto, <strong>non legami molecolari</strong>. Lo spessore non misura sostanze in comune.",
+        en:"This ingredient <strong>has no compound profile</strong>: here you only see tradition or contrast relations, <strong>not molecular links</strong>. Thickness does not measure substances in common.",
+        es:"Este ingrediente <strong>no tiene un perfil de compuestos</strong>: aquí solo ves relaciones de tradición o contraste, <strong>no vínculos moleculares</strong>. El grosor no mide sustancias en común."
       }));
     }
   }

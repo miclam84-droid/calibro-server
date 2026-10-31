@@ -224,7 +224,7 @@
     .abbina-attesa{font-size:13px; color:var(--ink-soft)}
   </style>
   <section class="abbina" id="abbina" hidden aria-labelledby="h-abbina">
-    <span class="eyebrow" id="h-abbina" data-i18n="abbina_titolo">Sta bene con · dal grafo</span>
+    <span class="eyebrow" id="h-abbina" data-i18n="abbina_titolo">Sta bene con</span>
     <div class="abbina-chips" id="abbina-chips"></div>
   </section>
 
@@ -296,7 +296,7 @@ window.I18N_DICT = {
   agg_btn: {it:"Aggiungi", en:"Add", es:"Añadir"},
   vuoto: {it:"Nessun componente. Aggiungi un ingrediente per vedere il profilo.", en:"No components. Add an ingredient to see the profile.", es:"Ningún componente. Añade un ingrediente para ver el perfil."},
   h_prof: {it:"Profilo vivo", en:"Live profile", es:"Perfil vivo"},
-  abbina_titolo: {it:"Sta bene con · dal grafo", en:"Pairs well with · from the graph", es:"Combina con · del grafo"},
+  abbina_titolo: {it:"Sta bene con", en:"Pairs well with", es:"Combina con"},
   h_azioni: {it:"Chiudi il giro", en:"Close the loop", es:"Cierra el círculo"},
   btn_capisci: {it:"Capisci perché", en:"Understand why", es:"Entiende por qué"},
   capisci_intro: {it:"Dietro questa preparazione ci sono alcuni fenomeni e relazioni note.", en:"Behind this preparation there are some known phenomena and relations.", es:"Detrás de esta preparación hay algunos fenómenos y relaciones conocidos."},
@@ -774,7 +774,7 @@ window.I18N_DICT = {
         var out = [];
         rel.forEach(function(r){ var n = r.ingrediente; if (n && !giaPresente(n)) out.push(n); });
         out = out.slice(0, 10);
-        if (!out.length){ chipsEl.innerHTML = '<span class="abbina-attesa">'+_L({it:"nessun abbinamento dal grafo per ora.", en:"no pairings from the graph yet.", es:"ninguna combinación del grafo por ahora."})+'</span>'; return; }
+        if (!out.length){ chipsEl.innerHTML = '<span class="abbina-attesa">'+_L({it:"nessun abbinamento per ora.", en:"no pairings yet.", es:"ninguna combinación por ahora."})+'</span>'; return; }
         chipsEl.innerHTML = "";
         out.forEach(function(n){
           var b = document.createElement("button");
@@ -860,9 +860,9 @@ window.I18N_DICT = {
     var h = '<div class="cap-lab">'+_L({it:"Fenomeni in gioco", en:"Phenomena at play", es:"Fenómenos en juego"})+'</div>';
     if (!fenomeni.length){
       h += '<p class="cap-onesto">'+_L({
-        it:"Nessun fenomeno collegato nel grafo per questi componenti. Matter non ne inventa: provalo al banco e registra cosa osservi.",
-        en:"No phenomenon connected in the graph for these components. Matter doesn't invent any: test it at the bench and record what you observe.",
-        es:"Ningún fenómeno conectado en el grafo para estos componentes. Matter no los inventa: pruébalo en la mesa de trabajo y registra lo que observes."
+        it:"Nessun fenomeno collegato per questi componenti. Matter non ne inventa: provalo al banco e registra cosa osservi.",
+        en:"No phenomenon connected for these components. Matter doesn't invent any: test it at the bench and record what you observe.",
+        es:"Ningún fenómeno conectado para estos componentes. Matter no los inventa: pruébalo en la mesa de trabajo y registra lo que observes."
       })+'</p>';
       capFenomeni.innerHTML = h;
       return;
@@ -885,11 +885,11 @@ window.I18N_DICT = {
     sheetH.textContent = f.nome;
     var html = '';
     html += '<p><span class="k">'+_L({it:"Fenomeno collegato.", en:"Connected phenomenon.", es:"Fenómeno conectado."})+'</span> <b>' + esc(cap(f.nome))
-          + '</b> '+_L({it:"compare nel grafo di uno dei tuoi componenti.", en:"appears in the graph of one of your components.", es:"aparece en el grafo de uno de tus componentes."})+'</p>';
+          + '</b> '+_L({it:"è collegato a uno dei tuoi componenti.", en:"is linked to one of your components.", es:"está vinculado a uno de tus componentes."})+'</p>';
     html += '<p>'+_L({
-      it:"Non c'è ancora una scheda-pagina di questo fenomeno nel laboratorio: per onestà non ti mando a un link morto. La relazione però esiste nel grafo — mettila alla prova al banco.",
-      en:"There is no page yet for this phenomenon in the lab: to be honest I won't send you to a dead link. The relation does exist in the graph though — put it to the test at the bench.",
-      es:"Todavía no hay una ficha-página de este fenómeno en el laboratorio: por honestidad no te mando a un enlace muerto. Pero la relación existe en el grafo — ponla a prueba en la mesa de trabajo."
+      it:"Non c'è ancora una scheda-pagina di questo fenomeno nel laboratorio: per onestà non ti mando a un link morto. La relazione però esiste — mettila alla prova al banco.",
+      en:"There is no page yet for this phenomenon in the lab: to be honest I won't send you to a dead link. The relation does exist though — put it to the test at the bench.",
+      es:"Todavía no hay una ficha-página de este fenómeno en el laboratorio: por honestidad no te mando a un enlace muerto. Pero la relación existe — ponla a prueba en la mesa de trabajo."
     })+'</p>';
     sheetCorpo.innerHTML = html;
     velo.setAttribute("data-aperto", "1");
