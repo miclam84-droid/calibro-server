@@ -309,24 +309,23 @@ def chiedi():
     # NON la scienza. Riconosco l'intento "come + verbo d'uso + oggetto dell'app".
     _vuole_guida = any(k in _dl for k in ["come ", "dove ", "come si", "in quest'app", "in questa app", "nell'app", "su quest'app"])
     _guide = {
-        "menu": ("Per costruire un menu qui: apri **Menu Lab** dalla home. "
-                 "Scegli la disciplina (cucina, bar, ecc.), inserisci gli ingredienti che hai "
-                 "(o fotografali), e l'app ti propone le voci di menu con i piatti fattibili, "
-                 "la tecnica e il perché scientifico. Puoi poi salvare il menu e generare il PDF con il tuo logo."),
-        "ricett": ("Per creare una ricetta qui: hai tre strade. 1) Da **Flavour Network**: scegli un "
-                   "ingrediente, tocca un abbinamento e premi 'Crea ricetta'. 2) Scrivendo in chat "
-                   "'fammi una ricetta con X e Y'. 3) Dal **Menu Lab**. In tutti i casi ottieni una "
-                   "scheda con ingredienti, dosi e procedimento, che puoi salvare nel Quaderno."),
-        "salv": ("Per salvare una ricetta: quando la generi, in fondo alla scheda c'è il bottone "
-                 "**Salva**. La ricetta va nel **Quaderno**, sezione 'Le mie Ricette', dove la ritrovi sempre."),
-        "trov": ("Le tue ricette salvate sono nel **Quaderno**, sezione 'Le mie Ricette'. "
-                 "Lì trovi tutte le ricette che hai salvato, e puoi riaprirle quando vuoi."),
-        "misur": ("Per misurare: apri un fenomeno e usa il suo numero-bersaglio come riferimento. "
-                  "Puoi registrare le tue misure nel **Quaderno**, sezione Misure, per costruire lo storico."),
-        "foto": ("Per usare le foto: nel Menu Lab o negli strumenti, tocca l'icona fotocamera. "
-                 "Fotografa gli ingredienti o una bottiglia, e l'app riconosce cosa c'è e propone abbinamenti e fenomeni."),
-        "food cost": ("Per il food cost: apri una ricetta e cerca il food cost — l'app calcola il costo per "
-                  "porzione (grammature × prezzi ISMEA) e l'incidenza sul prezzo di vendita."),
+        "menu": ("Per costruire un menu qui: apri **Menu** dalla home. "
+                 "Parti dalle preparazioni che hai salvato nel Quaderno, componi le voci, "
+                 "e puoi salvare il menu e generare il PDF con il tuo logo."),
+        "ricett": ("Per creare una preparazione qui: hai due strade. 1) In **Componi**: parti da un "
+                   "ingrediente e costruisci la preparazione, vedendo il profilo e gli abbinamenti. "
+                   "2) Scrivendo qui in chat 'fammi una ricetta con X e Y'. In entrambi i casi puoi "
+                   "salvare nel **Quaderno**."),
+        "salv": ("Per salvare: quando componi o generi qualcosa, c'è il bottone **Salva nel Quaderno**. "
+                 "Lo ritrovi sempre nel **Quaderno**."),
+        "trov": ("Quello che hai salvato è nel **Quaderno**: preparazioni, misure e appunti, "
+                 "tutto in un posto solo."),
+        "misur": ("Per misurare: apri il **Banco** (calcolatori e numeri da controllare — diluizione, "
+                  "idratazione, acidità, ecc.) e registra le tue misure nel **Quaderno** per lo storico."),
+        "foto": ("Per usare le foto: qui in chat tocca l'icona fotocamera e allega la foto di un "
+                 "ingrediente — Matter riconosce cosa c'è e risponde di conseguenza."),
+        "food cost": ("Per il food cost: nel **Banco**, sezione calcolatori, trovi il costo per "
+                  "porzione (grammature × prezzi) e l'incidenza sul prezzo di vendita."),
     }
     if _vuole_guida:
         # ordine importa: prima le azioni specifiche (salva, trova, cost), poi le generiche
