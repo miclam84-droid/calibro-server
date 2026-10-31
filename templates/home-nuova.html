@@ -18,6 +18,16 @@
   .causa-link:hover{color:var(--verde); text-decoration:underline}
   .causa-link:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 
+  /* ENTRATA FOTO — invito pieno sotto la ricerca, porta al riconoscimento e al lab */
+  .foto-entrata{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    margin-top:12px; padding:14px 18px; box-sizing:border-box;
+    font-family:var(--sans); font-weight:700; font-size:15px; color:#fff;
+    background:var(--verde); border-radius:var(--r-sm); text-decoration:none; line-height:1.2;
+  }
+  .foto-entrata:hover{filter:brightness(1.06); text-decoration:none}
+  .foto-entrata:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
   /* R5 — ONBOARDING primo accesso: overlay dismissibile, non bloccante */
   .onb-velo{
     position:fixed; inset:0; background:rgba(29,42,34,.42); z-index:60;
@@ -180,6 +190,9 @@
     <input type="search" name="q" placeholder="Cerca ingrediente o preparazione" aria-label="Cerca ingrediente o preparazione" autocomplete="off" data-i18n-ph="cerca_ph" data-i18n-aria="cerca_ph">
     <button type="submit" data-i18n="cerca_btn">Cerca</button>
   </form>
+
+  <!-- ENTRATA FOTO → riconosce gli ingredienti e apre il loro laboratorio (/foto-nuovo, isolata) -->
+  <a class="foto-entrata" href="/foto-nuovo" data-i18n="foto_entrata">📷 Fotografa cosa hai sul banco</a>
 
   <!-- IL BANCO DI OGGI -->
   <section class="section" aria-labelledby="h-oggi">

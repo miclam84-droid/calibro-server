@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fotografa il banco — Matter Bench</title>
+<meta name="description" content="Fotografa cosa hai sul banco: Matter riconosce gli ingredienti e ti porta nel laboratorio di ognuno. Il riconoscimento è gratuito.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+  /* --- FOTO NUOVO: solo lo stretto necessario oltre matter3.css --- */
+  .foto-testa{margin-top:22px}
+  .foto-testa h1{font-size:24px; line-height:1.15}
+  .foto-sub{font-size:14px; color:var(--ink-soft); margin-top:8px; line-height:1.5}
+
+  /* zona di presa foto */
+  .foto-presa{
+    margin-top:18px; background:var(--surface); border:1.5px dashed var(--segnale);
+    border-radius:var(--r); padding:26px 20px; text-align:center; cursor:pointer;
+    display:block; width:100%; font-family:var(--sans);
+  }
+  .foto-presa:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .foto-presa .fp-ico{font-size:34px; line-height:1}
+  .foto-presa .fp-titolo{font-family:var(--display); font-weight:700; font-size:17px; color:var(--ink); margin-top:10px}
+  .foto-presa .fp-nota{font-size:12.5px; color:var(--ink-soft); margin-top:6px}
+  .foto-presa input[type=file]{position:absolute; width:1px; height:1px; opacity:0; pointer-events:none}
+
+  /* anteprime */
+  .foto-thumbs{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
+  .foto-thumb{position:relative; width:72px; height:72px; border-radius:var(--r-sm); overflow:hidden; border:1px solid var(--riga)}
+  .foto-thumb img{width:100%; height:100%; object-fit:cover; display:block}
+  .foto-thumb button{
+    position:absolute; top:3px; right:3px; width:22px; height:22px; border:0; border-radius:50%;
+    background:rgba(29,42,34,.72); color:#fff; font-size:14px; line-height:22px; padding:0; cursor:pointer;
+  }
+  .foto-azioni{margin-top:16px; display:flex; gap:10px; flex-wrap:wrap}
+  .foto-contatore{font-size:12.5px; color:var(--ink-soft); margin-top:10px}
+
+  /* loading */
+  .foto-load{margin-top:22px; text-align:center; padding:20px}
+  .foto-load .fl-spin{
+    width:34px; height:34px; border-radius:50%; border:3px solid var(--riga);
+    border-top-color:var(--verde); margin:0 auto 14px; animation:fl-rot .8s linear infinite;
+  }
+  @keyframes fl-rot{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){ .foto-load .fl-spin{animation:none} }
+  .foto-load .fl-txt{font-size:14px; color:var(--ink-soft)}
+
+  /* messaggio onesto */
+  .foto-msg{
+    margin-top:16px; background:var(--panel); border:1px solid var(--riga);
+    border-radius:var(--r); padding:14px 16px; font-size:14px; color:var(--ink); line-height:1.5;
+  }
+
+  /* esito: ingredienti → link al lab */
+  .foto-sez{margin-top:22px}
+  .foto-sez .eyebrow{display:block; margin-bottom:10px}
+  .ing-lista{display:flex; flex-direction:column; gap:8px}
+  .ing-riga{
+    display:flex; align-items:center; gap:12px; background:var(--surface);
+    border:1px solid var(--riga); border-radius:var(--r-sm); padding:13px 15px;
+    text-decoration:none; color:var(--ink); transition:border-color .12s ease;
+  }
+  .ing-riga:hover{border-color:var(--verde); text-decoration:none}
+  .ing-riga:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .ing-nome{font-family:var(--display); font-weight:700; font-size:16px; text-transform:capitalize; flex:1 1 auto; min-width:0}
+  .ing-cat{font-size:11.5px; color:var(--ink-soft); font-weight:600; text-transform:lowercase}
+  .ing-freccia{color:var(--verde); font-weight:700; flex:0 0 auto}
+
+  /* da confermare: più tenui, stessa destinazione */
+  .ing-riga--incerto{border-style:dashed}
+  .foto-sez-nota{font-size:12.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5}
+
+  .foto-rifai{margin-top:20px}
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E593C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Matter Bench">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<script defer src="/static/pwa-reg.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">foto</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="foto-testa">
+    <h1>📷 Fotografa cosa hai sul banco</h1>
+    <p class="foto-sub">Scatta o carica fino a 6 foto degli ingredienti. Matter li riconosce e ti porta nel laboratorio di ognuno. Il riconoscimento è gratuito.</p>
+  </section>
+
+  <!-- FASE 1: presa foto -->
+  <div id="fase-presa">
+    <label class="foto-presa" id="fp-label">
+      <span class="fp-ico" aria-hidden="true">📷</span>
+      <span class="fp-titolo">Scatta o scegli le foto</span>
+      <span class="fp-nota">Frutta, verdura, bottiglie, erbe… ciò che hai davanti</span>
+      <input type="file" id="fp-input" accept="image/*" capture="environment" multiple>
+    </label>
+
+    <div class="foto-thumbs" id="fp-thumbs" hidden></div>
+    <div class="foto-contatore" id="fp-contatore" hidden></div>
+
+    <div class="foto-azioni" id="fp-azioni" hidden>
+      <button type="button" class="btn btn--block" id="fp-analizza">Riconosci gli ingredienti</button>
+    </div>
+  </div>
+
+  <!-- FASE 2: loading -->
+  <div class="foto-load" id="fase-load" hidden>
+    <div class="fl-spin" aria-hidden="true"></div>
+    <div class="fl-txt">Sto guardando le foto…</div>
+  </div>
+
+  <!-- FASE 3: esito -->
+  <div id="fase-esito" hidden>
+    <div class="foto-msg" id="es-msg" hidden></div>
+
+    <section class="foto-sez" id="es-sicuri" hidden>
+      <span class="eyebrow">Riconosciuti · tocca per aprire il laboratorio</span>
+      <div class="ing-lista" id="es-sicuri-lista"></div>
+    </section>
+
+    <section class="foto-sez" id="es-incerti" hidden>
+      <span class="eyebrow">Forse questi — controlla tu</span>
+      <div class="ing-lista" id="es-incerti-lista"></div>
+      <p class="foto-sez-nota">Questi li ho visti con meno sicurezza. Aprili solo se sono corretti.</p>
+    </section>
+
+    <div class="foto-rifai">
+      <button type="button" class="btn btn--ghost btn--block" id="es-rifai">Fotografa di nuovo</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+"use strict";
+(function(){
+  var MAX = 6;
+  var files = [];            // File[] selezionati
+  var input = document.getElementById('fp-input');
+  var thumbs = document.getElementById('fp-thumbs');
+  var contatore = document.getElementById('fp-contatore');
+  var azioni = document.getElementById('fp-azioni');
+  var btnAnalizza = document.getElementById('fp-analizza');
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  function mostraFase(n){
+    document.getElementById('fase-presa').hidden = (n!=='presa');
+    document.getElementById('fase-load').hidden  = (n!=='load');
+    document.getElementById('fase-esito').hidden = (n!=='esito');
+  }
+
+  function renderThumbs(){
+    thumbs.innerHTML = '';
+    files.forEach(function(f, i){
+      var url = URL.createObjectURL(f);
+      var cell = document.createElement('div');
+      cell.className = 'foto-thumb';
+      var img = document.createElement('img');
+      img.src = url; img.alt = ''; img.onload = function(){ URL.revokeObjectURL(url); };
+      var x = document.createElement('button');
+      x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label','Rimuovi foto');
+      x.addEventListener('click', function(){ files.splice(i,1); renderThumbs(); });
+      cell.appendChild(img); cell.appendChild(x);
+      thumbs.appendChild(cell);
+    });
+    var ci = files.length > 0;
+    thumbs.hidden = !ci;
+    azioni.hidden = !ci;
+    contatore.hidden = !ci;
+    if(ci){ contatore.textContent = files.length + ' di ' + MAX + ' foto'; }
+  }
+
+  input.addEventListener('change', function(){
+    var scelti = Array.prototype.slice.call(input.files || []);
+    scelti.forEach(function(f){
+      if(files.length < MAX && f && /^image\//.test(f.type||'')) files.push(f);
+    });
+    input.value = '';   // permette di riscegliere lo stesso file
+    renderThumbs();
+  });
+
+  function toB64(f){
+    return new Promise(function(res, rej){
+      var r = new FileReader();
+      r.onload = function(){ res(r.result); };
+      r.onerror = function(){ rej(new Error('lettura fallita')); };
+      r.readAsDataURL(f);
+    });
+  }
+
+  function labHref(nome){ return '/lab/' + encodeURIComponent(String(nome||'').trim()); }
+
+  function rigaIngrediente(ing, incerto){
+    var nome = (typeof ing === 'string') ? ing : (ing && ing.nome);
+    if(!nome) return '';
+    var cat = (typeof ing === 'object' && ing.categoria) ? ing.categoria : '';
+    return '<a class="ing-riga' + (incerto?' ing-riga--incerto':'') + '" href="' + esc(labHref(nome)) + '">'
+      + '<span class="ing-nome">' + esc(nome) + '</span>'
+      + (cat ? '<span class="ing-cat">' + esc(cat) + '</span>' : '')
+      + '<span class="ing-freccia" aria-hidden="true">→</span></a>';
+  }
+
+  function renderEsito(j){
+    var sicuri = (j && (j.sicuri || j.ingredienti)) || [];
+    var incerti = (j && j.da_confermare) || [];
+    var msg = (j && j.messaggio) || '';
+
+    var elMsg = document.getElementById('es-msg');
+    if(msg){ elMsg.textContent = msg; elMsg.hidden = false; } else { elMsg.hidden = true; }
+
+    var secS = document.getElementById('es-sicuri');
+    var listaS = document.getElementById('es-sicuri-lista');
+    if(sicuri.length){
+      listaS.innerHTML = sicuri.map(function(x){ return rigaIngrediente(x, false); }).join('');
+      secS.hidden = false;
+    } else { secS.hidden = true; }
+
+    var secI = document.getElementById('es-incerti');
+    var listaI = document.getElementById('es-incerti-lista');
+    if(incerti.length){
+      listaI.innerHTML = incerti.map(function(x){ return rigaIngrediente(x, true); }).join('');
+      secI.hidden = false;
+    } else { secI.hidden = true; }
+
+    // nessun ingrediente e nessun messaggio dal server: messaggio onesto di fallback
+    if(!sicuri.length && !incerti.length && !msg){
+      elMsg.textContent = 'Non ho riconosciuto ingredienti. Prova con una foto più nitida e più luce.';
+      elMsg.hidden = false;
+    }
+    mostraFase('esito');
+  }
+
+  btnAnalizza.addEventListener('click', function(){
+    if(!files.length) return;
+    mostraFase('load');
+    var tok = '';
+    try { tok = localStorage.getItem('matter_token') || ''; } catch(e){}
+    Promise.all(files.map(toB64)).then(function(b64s){
+      return fetch('/v1/menu/riconosci-ingredienti', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ immagini_b64: b64s, token: tok })
+      });
+    }).then(function(r){ return r.json(); })
+      .then(function(j){ renderEsito(j); })
+      .catch(function(){
+        // mai vicolo cieco: mostro un esito onesto con invito a riprovare
+        renderEsito({ messaggio: 'Non sono riuscito a leggere le foto in questo momento. Controlla la connessione e riprova.' });
+      });
+  });
+
+  document.getElementById('es-rifai').addEventListener('click', function(){
+    files = [];
+    renderThumbs();
+    mostraFase('presa');
+    window.scrollTo(0,0);
+  });
+
+  mostraFase('presa');
+})();
+</script>
+
+</body>
+</html>
