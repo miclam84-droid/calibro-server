@@ -237,6 +237,16 @@
     <div class="assi" id="assi"></div>
   </section>
 
+  <!-- HANDOFF CHAT (Costituzione #7) — dopo la composizione → vai in chat coi
+       passaggi/dosi. Riusa l'AVVIO SEMINATO di chat-nuovo.html: un <a> verso
+       /chiedi-nuovo?q=<domanda> che fa partire la chat da sola. Nessun backend
+       nuovo. Visibile SOLO con ≥1 ingrediente; la domanda si ricostruisce a
+       ogni modifica della composizione. -->
+  <section class="chat-handoff" id="chat-handoff" hidden style="margin-top:22px">
+    <a class="btn btn--block" id="chat-handoff-link" href="/chiedi-nuovo"
+       data-i18n="chiedi_passaggi">Chiedi a Matter i passaggi e le dosi →</a>
+  </section>
+
   <!-- AZIONI R4 — Capisci + Salva: chiudono il corridoio fino al Quaderno,
        nello STESSO oggetto di lavoro. Visibili solo con ≥1 componente con profilo. -->
   <section class="azioni" id="azioni" hidden aria-labelledby="h-azioni">
@@ -305,6 +315,7 @@ window.I18N_DICT = {
   campo_nota: {it:"Nota di laboratorio — facoltativa", en:"Lab note — optional", es:"Nota de laboratorio — opcional"},
   nota_ph: {it:"es. provato al banco: ...", en:"e.g. tested at the bench: ...", es:"p. ej. probado en la mesa de trabajo: ..."},
   btn_salva: {it:"Salva nel Quaderno", en:"Save to the Quaderno", es:"Guardar en el Quaderno"},
+  chiedi_passaggi: {it:"Chiedi a Matter i passaggi e le dosi →", en:"Ask Matter for the steps and doses →", es:"Pide a Matter los pasos y las dosis →"},
   chiudi: {it:"Chiudi", en:"Close", es:"Cerrar"}
 };
 </script>
@@ -340,6 +351,8 @@ window.I18N_DICT = {
   var assiBox = document.getElementById("assi");
   var statoBox = document.getElementById("profilo-stato");
   var srchMsg = document.getElementById("srch-msg");
+  var handoffBox  = document.getElementById("chat-handoff");
+  var handoffLink = document.getElementById("chat-handoff-link");
 
   function cap(s){ s = String(s||""); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
   function esc(s){
@@ -397,8 +410,28 @@ window.I18N_DICT = {
     return { valore: valore, provenienza: provenienza, pesato: tuttiConQta };
   }
 
+  // ---- HANDOFF VERSO LA CHAT (Costituzione #7) ----
+  // Costruisce la domanda dagli ingredienti composti e la passa all'AVVIO
+  // SEMINATO di chat-nuovo.html via /chiedi-nuovo?q=... (encodeURIComponent).
+  // Visibile SOLO con ≥1 ingrediente; si ricostruisce a ogni modifica.
+  function renderHandoff(){
+    if (!handoffBox || !handoffLink) return;
+    var nomi = componenti.map(function(c){ return String(c.nome || "").trim(); })
+                         .filter(function(n){ return !!n; });
+    if (!nomi.length){ handoffBox.hidden = true; return; }
+    var elenco = nomi.join(", ");
+    var domanda = _L({
+      it:"Dammi i passaggi e le dosi per una preparazione con: " + elenco + ". Spiega anche il perché, passo per passo.",
+      en:"Give me the steps and doses for a preparation with: " + elenco + ". Also explain why, step by step.",
+      es:"Dame los pasos y las dosis para una preparación con: " + elenco + ". Explica también el porqué, paso a paso."
+    });
+    handoffLink.href = "/chiedi-nuovo?q=" + encodeURIComponent(domanda);
+    handoffBox.hidden = false;
+  }
+
   // ---- RENDER LISTA COMPONENTI ----
   function renderLista(){
+    renderHandoff();   // aggiorna/mostra il pulsante "Chiedi a Matter" a ogni modifica
     lista.innerHTML = "";
     if (!componenti.length){
       vuoto.hidden = false; lista.hidden = true; return;
