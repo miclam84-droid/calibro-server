@@ -71,6 +71,184 @@ CAUSALITA_SPECIFICA = {
             },
         ],
     },
+    # Boulevardier (Bucopertuso). Ricetta protocollo: bourbon 30 / vermouth rosso
+    # 30 / bitter Campari 30 — equal-parts, spirit-forward, SENZA agrumi. Tecnica
+    # classica: si MESCOLA nel mixing glass, non si shakera (texture setosa).
+    "prot-boulevardier-classico": {
+        "fenomeni": [
+            {
+                "nome": "Diluizione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Mescolare 20-30s nel mixing glass con ghiaccio grande — porta ~20-25% d'acqua che smussa l'alcol del bourbon"},
+                        {"fattore": "Vermouth rosso e Campari (già bassa gradazione e zuccherini) abbassano la gradazione media — serve meno acqua che per un drink di solo distillato"},
+                        {"fattore": "Ghiaccio asciutto da freezer — raffredda cedendo poca acqua: diluizione fine e controllabile"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Shakerare — qui dà microbolle e velo: il Boulevardier equal-parts va mescolato, non agitato"},
+                        {"fattore": "Ghiaccio piccolo/bagnato o mescolata troppo lunga — troppa acqua: amaro del Campari e corpo del vermouth si appiattiscono"},
+                    ],
+                    "fonte": "tecnica classica degli stirred spirit-forward equal-parts (Boulevardier) — Difford's Guide / Regan; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Americano (Bucopertuso). Ricetta protocollo: vermouth rosso 30 / bitter 30 /
+    # acqua frizzante 60 — long drink COSTRUITO nel bicchiere e allungato con soda.
+    "prot-americano-rivisitato": {
+        "fenomeni": [
+            {
+                "nome": "diluizione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Build diretto sul ghiaccio con mescolata breve — basta a integrare vermouth e bitter: la soda fa già da allungo"},
+                        {"fattore": "Ghiaccio grande e abbondante — raffredda cedendo poca acqua: la diluizione la porta la soda, non lo scioglimento"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Mescolata lunga o ghiaccio piccolo — aggiunge acqua di troppo sopra ai 60 ml di soda: drink slavato, bitter spento"},
+                        {"fattore": "Ghiaccio scarso in un drink lungo — scioglie in fretta e si scalda: diluizione incontrollata"},
+                    ],
+                    "fonte": "tecnica classica dell'Americano (build sul ghiaccio, allungato con soda) — Difford's Guide; da validare al banco",
+                },
+            },
+            {
+                "nome": "carbonatazione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Soda fredda versata per ultima e piano sul ghiaccio — trattiene più CO2: perlage fine e persistente"},
+                        {"fattore": "Soda e bicchiere ben freddi — a bassa temperatura la CO2 resta più disciolta"},
+                        {"fattore": "Una sola mescolata minima dal basso dopo la soda — integra senza sbattere fuori le bolle"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Versare la soda di getto o mescolare con energia — sbatte fuori la CO2: drink piatto in pochi minuti"},
+                        {"fattore": "Soda a temperatura ambiente — perde gas subito al contatto col ghiaccio"},
+                    ],
+                    "fonte": "comportamento della CO2 nei long drink allungati con soda — tecnica di bar documentata; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Old Fashioned (Bucopertuso). Ricetta protocollo: bourbon/rye 60 / sciroppo di
+    # zucchero 10 / Angostura 3 dash / scorza d'arancia — stirred, servito su rock.
+    "prot-old-fashioned": {
+        "fenomeni": [
+            {
+                "nome": "diluizione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Mescolare a lungo (30-40s) su ghiaccio grande — un drink quasi di solo distillato (60 ml) chiede più acqua per aprirsi"},
+                        {"fattore": "Servire su un cubo grande singolo — continua a diluire lentamente nel bicchiere, tenendo l'equilibrio nel tempo"},
+                        {"fattore": "Ghiaccio molto freddo e asciutto — consente mescolate lunghe senza annacquare di colpo"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Servire quasi senza diluizione (mescolata breve) — il bourbon resta spigoloso e alcolico, lo zucchero non si lega"},
+                        {"fattore": "Ghiaccio tritato — scioglie troppo: perde subito corpo e diventa acquoso"},
+                    ],
+                    "fonte": "tecnica classica dell'Old Fashioned (stir, big rock, ~25-30% diluizione) — Liquid Intelligence (Arnold) / Difford's; da validare al banco",
+                },
+            },
+            {
+                "nome": "equilibrio del cocktail",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "~10 ml di sciroppo contro 60 di distillato — zucchero appena sufficiente ad arrotondare senza dolcificare"},
+                        {"fattore": "3 dash di Angostura — amaro e spezia che legano zucchero e whiskey"},
+                        {"fattore": "Olio della scorza d'arancia espresso sopra — profuma e bilancia la dolcezza senza aggiungere acidità"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppo sciroppo — drink stucchevole, perde il carattere del whiskey"},
+                        {"fattore": "Spremere la parte bianca (albedo) della scorza — note amare/verdi fuori posto"},
+                    ],
+                    "fonte": "equilibrio classico dell'Old Fashioned (distillato-zucchero-bitter) — Regan / Difford's; da validare al banco",
+                },
+            },
+        ],
+    },
+    # Whiskey Sour (Bucopertuso). Ricetta protocollo: bourbon 60 / succo di limone
+    # 30 / sciroppo 1:1 20 / albume 20 — sour CON albume, SHAKERATO (serve aria).
+    "prot-whiskey-sour": {
+        "fenomeni": [
+            {
+                "nome": "shakerare vs mescolare",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Shakerare con forza — emulsiona l'albume e integra il limone: senza aria non c'è la schiuma setosa del sour"},
+                        {"fattore": "Dry shake (prima senza ghiaccio, poi con) — monta l'albume e dà la testa cremosa e stabile"},
+                        {"fattore": "Ghiaccio solido nello shake — raffredda e diluisce al punto giusto mentre si aera"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Mescolare invece di shakerare — niente emulsione: albume slegato, drink piatto e sbilanciato sull'acido"},
+                        {"fattore": "Shake troppo breve — schiuma scarsa e instabile, collassa nel bicchiere"},
+                    ],
+                    "fonte": "tecnica classica del sour con albume (shake / dry shake per l'emulsione) — Difford's / Liquid Intelligence; da validare al banco",
+                },
+            },
+            {
+                "nome": "diluizione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Shake energico ~10-15s con ghiaccio grande — porta l'acqua che bilancia l'acidità del limone e la gradazione del bourbon"},
+                        {"fattore": "Ghiaccio abbondante e duro — raffredda in fretta diluendo il giusto durante lo shake"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Shake troppo lungo o ghiaccio già bagnato — troppa acqua: il sour diventa debole e slavato"},
+                        {"fattore": "Ghiaccio tritato — eccesso di diluizione in pochi secondi"},
+                    ],
+                    "fonte": "diluizione nello shake dei sour — Liquid Intelligence (Arnold); da validare al banco",
+                },
+            },
+            {
+                "nome": "equilibrio del cocktail",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Rapporto ~60/30/20 (bourbon/limone/sciroppo) — struttura classica del sour: acido e zucchero in tensione sul distillato"},
+                        {"fattore": "Succo di limone fresco — acidità viva che taglia dolcezza e gradazione"},
+                        {"fattore": "Albume — non cambia il gusto ma arrotonda e lega acido e zucchero in bocca"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Troppo sciroppo o poco limone — drink dolce e piatto, perde la spinta 'sour'"},
+                        {"fattore": "Succo di limone vecchio/ossidato — acidità spenta e amara, squilibrio"},
+                    ],
+                    "fonte": "equilibrio acido-zucchero-distillato del Whiskey Sour — Regan / Difford's; da validare al banco",
+                },
+            },
+        ],
+    },
+    # French 75 (Bucopertuso). Ricetta protocollo: gin 30 / succo di limone 15 /
+    # sciroppo 15 / champagne 60 — base shakerata, top di champagne, servito in flute.
+    "prot-french-75-classico": {
+        "fenomeni": [
+            {
+                "nome": "diluizione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Shakerare brevemente la base gin-limone-zucchero con ghiaccio — raffredda e diluisce la parte alcolica prima dello champagne"},
+                        {"fattore": "Champagne ben freddo versato per ultimo — allunga e raffredda senza bisogno d'altra acqua o ghiaccio nel flute"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Shake troppo lungo della base — troppa acqua: con l'aggiunta dello champagne il drink è già slavato"},
+                        {"fattore": "Ghiaccio nel flute con lo champagne — diluisce e scalda inutilmente, smorza le bolle"},
+                    ],
+                    "fonte": "tecnica classica del French 75 (base shakerata, top di champagne, flute senza ghiaccio) — Difford's Guide; da validare al banco",
+                },
+            },
+            {
+                "nome": "carbonatazione",
+                "causalita": {
+                    "acceleranti": [
+                        {"fattore": "Champagne freddissimo aggiunto alla fine e versato piano sulla base già fredda — trattiene la CO2: bollicine fini e durature"},
+                        {"fattore": "Base gin-limone pre-raffreddata — meno shock termico allo champagne, meno gas perso"},
+                        {"fattore": "Flute stretto — riduce la superficie e rallenta la perdita di bolle"},
+                    ],
+                    "rallentanti": [
+                        {"fattore": "Versare lo champagne di getto o mescolare dopo — sbatte fuori la CO2: drink piatto"},
+                        {"fattore": "Base calda o champagne poco freddo — la CO2 esce subito in schiuma"},
+                    ],
+                    "fonte": "ritenzione della CO2 nei cocktail con top di spumante (French 75) — tecnica di bar documentata; da validare al banco",
+                },
+            },
+        ],
+    },
 }
 
 
