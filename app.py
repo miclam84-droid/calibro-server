@@ -118,6 +118,7 @@ from routes.pagina_laboratorio import bp_pag_lab; app.register_blueprint(bp_pag_
 from routes.pagina_impara import bp_pag_impara; app.register_blueprint(bp_pag_impara)
 from routes.admin_migra_quaderno import bp_migra_q; app.register_blueprint(bp_migra_q)
 from routes.pagina_famiglia import bp_famiglia; app.register_blueprint(bp_famiglia)
+from routes.lab_esperimento import bp_lab; app.register_blueprint(bp_lab)  # perno forma-esperimento (prototipo /lab/<ingrediente>)
 from routes.pagina_menu import bp_pag_menu; app.register_blueprint(bp_pag_menu)
 from routes.deriva_gusti_search import bp_gusti_search; app.register_blueprint(bp_gusti_search)
 from routes.travaso_nomi import bp_travaso_nomi; app.register_blueprint(bp_travaso_nomi)  # travasa nomi EN da ingredienti_nomi nei nodi (sblocca il search USDA)
