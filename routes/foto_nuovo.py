@@ -21,9 +21,26 @@
 # Isolato: non tocca nessuna pagina/endpoint esistente, registrato con una riga sola.
 import time
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template, make_response
 
 bp_foto_nuovo = Blueprint("foto_nuovo", __name__)
+
+
+@bp_foto_nuovo.route("/foto-nuovo", methods=["GET"])
+def foto_nuovo_pagina():
+    """ENTRATA FOTO — "Fotografa cosa hai sul banco" (strangler-fig, isolata).
+
+    Pagina nuova nel sistema di design congelato (matter3.css). Fa fetch
+    client-side di POST /v1/menu/riconosci-ingredienti (routes/api.py): carichi
+    fino a 6 foto, il riconoscimento è gratuito, gli ingredienti riconosciuti
+    diventano link a /lab/<ingrediente>. Nessuna logica dati qui.
+    NON tocca nessuna pagina/endpoint del FE esistente. Stesso pattern delle
+    altre viste *-nuovo: render_template + header anti-cache."""
+    resp = make_response(render_template("foto-nuovo.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
 
 # cache a livello di modulo: nome(lower) -> {"ts": epoch, "payload": {...}}
 _CACHE = {}
