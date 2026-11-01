@@ -37,7 +37,7 @@ _FORZA_NODO = {"ginepro": "ing-ginepro", "lime": "ing-lime",
                "mirtillo rosso europeo": "ing-mirtillo-rosso-europeo",  # Vaccinium vitis-idaea (lingonberry): nodo distinto, specie diversa da macrocarpon
                "fava": "ing-fava",  # Vicia faba != fava tonka (ahn_tonka_bean_seed): evita collisione per substring
                "finger lime": "ing-finger-lime",   # contiene 'lime' -> evita collisione con ing-lime
-               "cime di rapa": "ing-cime-di-rapa", # contiene 'rapa' -> evita collisione con ing-rapa
+               "cime di rapa": "ing-it-friarielli", # fuso in 'friarielli' (batch 3); contiene 'rapa' -> evita collisione con ing-rapa
                "grani del paradiso": "ing-grani-del-paradiso",  # pinna su ing-: esisteva anche ai_grani_del_paradiso (nodo doppio, frammentava i pairing)
                "sudachi": "ing-sudachi",  # pinna su ing-: esisteva anche ai_sudachi (nodo doppio)
                "semi di zucca": "ing-semi-di-zucca",  # contiene 'zucca' -> evita collisione con ahn_pumpkin

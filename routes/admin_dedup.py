@@ -92,6 +92,15 @@ MERGE_ALLOWLIST = [
     # nodi ahn_ ricchi e canonici (la query li raggiunge gia'). Verificato: stesso ingrediente.
     {"canonico": "ahn_sesame_seed", "assorbiti": ["ing-sesamo"], "perche": "sesamo — sesame seed IT/EN; migra la firma proprietaria (2-furfuriltiolo ecc.) sul nodo ahn ricco (18 comp) che il resolver raggiunge"},
     {"canonico": "ahn_peanut", "assorbiti": ["ing-arachidi"], "perche": "arachidi — peanut IT/EN; migra la firma proprietaria (2-acetil-1-pirrolina ecc.) sul nodo ahn ricco (94 comp) che il resolver raggiunge"},
+
+    # ---- Batch 3 (2026-11-01): verificate live una a una (audit fusione nodi). SOLO le sicure.
+    # friarielli: canonico = il nodo-NOME 'Friarielli' (tiene il nome campano di Michele), assorbe
+    # il generico ing-cime-di-rapa (che aveva amaro + abbinamenti). I 3 riferimenti hardcoded a
+    # ing-cime-di-rapa (criteri._OVERRIDE x2, importa_composti._FORZA_NODO x1) sono ripuntati a
+    # ing-it-friarielli nella STESSA PR, quindi la cancellazione non rompe il resolver.
+    {"canonico": "ing-it-friarielli", "assorbiti": ["ing-cime-di-rapa"], "perche": "friarielli = cime di rapa (Brassica rapa), nome campano; tiene il nome 'friarielli', assorbe i dati del generico (amaro, abbinamenti)"},
+    {"canonico": "ai_anice_stellato", "assorbiti": ["ahn_star_anise", "ahn_chinese_star_anise"], "perche": "anice stellato — tutti Illicium verum (star anise = chinese star anise); verificato live. NON japanese star anise (tossico, assente). 0 riferimenti nel codice"},
+    {"canonico": "ahn_passion_fruit", "assorbiti": ["ahn_passiflora_edulis"], "perche": "frutto della passione — Passiflora edulis; verificato live. passiflora_mollissima (curuba) ESCLUSO (specie diversa). 0 riferimenti nel codice"},
 ]
 
 
