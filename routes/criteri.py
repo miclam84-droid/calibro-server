@@ -1268,6 +1268,29 @@ _USDA_CORE.update({
     "lattuga": 169247, "rucola": 169387, "sedano": 169988, "finocchio": 2747655,
     "caffè": 171891,
 })
+# --- +58 mappature USDA (ondata 2, 2026-11-01): fdc_id dai dataset ufficiali USDA
+#     (SR Legacy 2018 + Foundation 2025), valori chiave confermati. Focus bar/forno/
+#     pasticceria. Proxy segnalati: sciroppo di glucosio=corn syrup, gorgonzola=blue,
+#     provola=provolone, cavolo nero=kale, scarola=endive. Esclusi i Branded e i doppioni.
+_USDA_CORE.update({
+    "lievito di birra": 175043, "bicarbonato": 175040, "zucchero di canna": 168833,
+    "sciroppo di glucosio": 168837, "burro di cacao": 171421, "vaniglia": 173471,
+    "noce moscata": 171326, "semi di sesamo": 170150, "semi di girasole": 170562,
+    "semi di zucca": 170556, "uvetta": 168165, "fichi secchi": 174665,
+    "albicocche secche": 173941, "datteri": 168191, "cocco": 170169,
+    "farina di mandorle": 170568, "farina integrale": 168893, "farina di mais": 170290,
+    "avena": 173904, "succo d'arancia": 169098, "succo di pompelmo": 173039,
+    "succo di mirtillo rosso": 168117, "scorza d'agrume": 169103, "menta": 173474,
+    "salsa piccante": 174527, "olive": 169094, "gorgonzola": 172175, "pecorino": 171249,
+    "fontina": 170843, "gruviera": 171242, "feta": 173420, "provola": 170850,
+    "caprino": 173435, "salame": 174603, "mortadella": 174573, "sgombro": 175119,
+    "baccalà": 174190, "polpo": 174218, "calamaro": 174223, "seppia": 174215,
+    "vongole": 174214, "capesante": 174220, "cavolo": 169975, "cavolo nero": 168421,
+    "verza": 170388, "bietola": 169991, "radicchio": 168564, "cicoria": 169992,
+    "scarola": 168412, "topinambur": 169236, "carciofo": 169205, "asparago": 168389,
+    "porro": 169246, "scalogno": 170499, "timo": 173470, "origano": 171328,
+    "salvia": 170935, "alloro": 170917,
+})
 # agganci FISSI dove _risolvi_nodo sbaglia (verificati col dry-run): nodo canonico corretto
 _USDA_NODO_FISSO = {
     "lime": "ing-lime",            # non kaffir
@@ -1354,6 +1377,12 @@ _PH_CORE.update({
     "succo di mela": 3.7, "succo di pompelmo": 3.1, "sidro": 3.5, "kombucha": 3.2,
     "acqua tonica": 2.5, "latte di mandorla": 8.2, "latte di soia": 7.5,
     "soda al limone": 2.7, "energy drink": 3.4, "sherry": 3.37,
+})
+# --- +12 pH (ondata 2, 2026-11-01): FDA/CFSAN "Approximate pH of Foods" 2007 ---
+_PH_CORE.update({
+    "olive": 6.75, "salsa piccante": 3.24, "gruviera": 6.15, "gorgonzola": 5.54,
+    "albicocche secche": 4.05, "uvetta": 3.95, "fichi secchi": 5.52, "carciofo": 5.75,
+    "topinambur": 5.97, "verza": 6.30, "cicoria": 5.98, "scalogno": 5.50,
 })
 # Fonte per-ingrediente per l'asse acido. Dove assente, il runner usa il default
 # "pH FDA/extension" (vero per frutta/verdura/condimenti della tabella FDA/Clemson).
