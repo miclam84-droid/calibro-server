@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Provalo al banco · Matter Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/matter3.css">
+<style>
+:root{--card:var(--surface); --card-border:var(--riga); --green-action:var(--verde)}
+.hero{margin-top:22px}
+.kind{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+.hero h1{font-family:var(--display); font-weight:800; font-size:30px; color:var(--ink); margin:4px 0 0}
+.regola{margin-top:10px; font-size:14px; color:var(--ink-soft); line-height:1.55}
+.regola b{color:var(--ink); font-weight:600}
+.section{margin-top:26px}
+.eyebrow{font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+.sechead{margin:4px 0 12px}
+.sechead p{margin:4px 0 0; font-size:13.5px; color:var(--ink-soft); line-height:1.5}
+.pick{display:flex; gap:4px; flex-direction:column}
+.pick label{font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em}
+.pick input{font:inherit; padding:12px 14px; border:1px solid var(--card-border); border-radius:12px; background:var(--panel); color:var(--ink)}
+.card{background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:18px; box-shadow:var(--shadow); margin-top:14px}
+.card.hidden{display:none}
+.exp h4{font-family:var(--display); font-size:16px; color:var(--ink); margin:14px 0 6px}
+.exp h4:first-child{margin-top:0}
+.exp p{margin:6px 0; font-size:14px; line-height:1.6; color:var(--ink)}
+.exp ol{margin:6px 0 6px 20px; font-size:14px; line-height:1.6}
+.exp li{margin:3px 0}
+.disc{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); background:var(--panel); border:1px solid var(--card-border); border-radius:999px; padding:2px 9px; margin-bottom:10px}
+.prova{margin-top:16px; border-top:1px solid var(--card-border); padding-top:14px}
+.prova .f{display:flex; flex-direction:column; gap:4px; margin-bottom:8px}
+.prova label{font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em}
+.prova input,.prova textarea{font:inherit; padding:11px 13px; border:1px solid var(--card-border); border-radius:11px; background:var(--panel); color:var(--ink); width:100%}
+.prova textarea{resize:vertical; min-height:60px}
+.prova button{font:inherit; font-weight:600; padding:11px 20px; border:0; border-radius:11px; background:var(--verde); color:#fff; cursor:pointer}
+.prova button[disabled]{opacity:.6; cursor:default}
+.prova .hint{font-size:12.5px; color:var(--ink-soft); margin-left:10px}
+.empty{background:var(--panel); border:1px dashed var(--card-border); border-radius:12px; padding:16px; color:var(--ink-soft); font-size:14px; line-height:1.55}
+.empty b{color:var(--ink)}
+.mio{background:var(--card); border:1px solid var(--card-border); border-radius:12px; padding:13px 16px; margin-bottom:10px}
+.mio .top{display:flex; justify-content:space-between; gap:12px; align-items:baseline}
+.mio .fen{font-weight:600; color:var(--ink)}
+.mio .data{font-size:12px; color:var(--ink-soft); white-space:nowrap}
+.mio .esito{font-size:13px; color:var(--verde); font-weight:600; margin-top:3px}
+.mio .nota{font-size:13.5px; color:var(--ink-soft); margin-top:3px; line-height:1.5}
+.backlink{display:inline-block; margin-top:22px; font-size:13.5px; color:var(--green-action)}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="wm" href="/nuovo" aria-label="Matter Bench — home"><span>Matter</span><span class="bench">Bench</span></a>
+    <span class="eyebrow">Impara</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="kind">Impara · provalo</div>
+    <h1>Provalo al banco</h1>
+    <p class="regola"><b>Capire un fenomeno non basta: va visto succedere.</b> Scegli un fenomeno, fai l'esperimento stasera, e segna com'è andato. Quello che osservi resta nel tuo Quaderno — è la differenza tra leggere la gelatinizzazione e averla vista gelatinizzare.</p>
+  </header>
+
+  <section class="section">
+    <span class="eyebrow">Scegli un fenomeno da provare</span>
+    <div class="sechead"><p>Settantotto fenomeni hanno un esperimento pratico pronto.</p></div>
+    <div class="pick">
+      <label for="sel">Fenomeno</label>
+      <input id="sel" list="provabili" placeholder="es. Reazione di Maillard" autocomplete="off">
+      <datalist id="provabili"></datalist>
+    </div>
+
+    <div class="card hidden" id="card">
+      <span class="disc" id="disc"></span>
+      <div class="exp" id="exp"></div>
+      <div class="prova">
+        <div class="f"><label for="esito">Com'è andata?</label>
+          <input id="esito" placeholder="es. riuscito · troppo veloce · da rifare" autocomplete="off">
+        </div>
+        <div class="f"><label for="nota">Cosa hai osservato (facoltativo)</label>
+          <textarea id="nota" placeholder="Quello che hai visto, misurato, cambiato…"></textarea>
+        </div>
+        <div style="display:flex; align-items:center; flex-wrap:wrap">
+          <button id="fatto">L'ho provato → salva nel Quaderno</button>
+          <span class="hint" id="hint"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="eyebrow">I tuoi esperimenti</span>
+    <div class="sechead"><p>Quello che hai provato e osservato. Vive su questo dispositivo finché non accedi.</p></div>
+    <div id="miei"></div>
+  </section>
+
+  <a class="backlink" href="/impara">← Torna a Impara</a>
+</div>
+
+<script>
+function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
+function deviceId(){ try{ var d=localStorage.getItem('matter_device_id'); if(!d||!/^[0-9a-fA-F-]{36}$/.test(d)){d=_uuid();localStorage.setItem('matter_device_id',d);} return d; }catch(e){ if(!window._v)window._v=_uuid(); return window._v; } }
+function H(){ return {'X-Device-Id':deviceId(),'Content-Type':'application/json','Accept':'application/json'}; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+var $=function(id){return document.getElementById(id);};
+
+// markdown leggero e sicuro (il testo "Provalo stasera" usa #, ** e passi numerati)
+function mdLight(t){
+  if(!t) return '';
+  var lines=esc(t).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').split(/\r?\n/);
+  var out=[], inList=false;
+  lines.forEach(function(ln){
+    var l=ln.trim();
+    if(l===''){ if(inList){out.push('</ol>');inList=false;} return; }
+    var h=l.match(/^#{1,3}\s+(.*)$/);
+    if(h){ if(inList){out.push('</ol>');inList=false;} out.push('<h4>'+h[1]+'</h4>'); return; }
+    var num=l.match(/^\d+[.)]\s+(.*)$/);
+    if(num){ if(!inList){out.push('<ol>');inList=true;} out.push('<li>'+num[1]+'</li>'); return; }
+    if(inList){out.push('</ol>');inList=false;}
+    out.push('<p>'+l+'</p>');
+  });
+  if(inList) out.push('</ol>');
+  return out.join('');
+}
+
+var SLUG = {};   // nome -> slug
+var _curSlug = null;
+
+fetch('/v1/schede-scienza', {headers:{'Accept':'application/json'}})
+  .then(function(r){ return r.ok?r.json():{schede:[]}; })
+  .then(function(d){
+    var dl=$('provabili');
+    (d.schede||[]).filter(function(s){return s.provabile;}).forEach(function(s){
+      SLUG[s.nome]=s.slug; var o=document.createElement('option'); o.value=s.nome; dl.appendChild(o);
+    });
+  }).catch(function(){});
+
+function apriEsperimento(nome){
+  var slug=SLUG[nome]; if(!slug) return;
+  _curSlug=slug;
+  $('card').className='card'; $('disc').textContent='carico…'; $('exp').innerHTML=''; $('hint').textContent=''; $('esito').value=''; $('nota').value='';
+  fetch('/v1/esperimento/'+encodeURIComponent(slug), {headers:{'Accept':'application/json'}})
+    .then(function(r){ return r.ok?r.json():{}; })
+    .then(function(d){
+      if(!d.esperimento){ $('disc').textContent=''; $('exp').innerHTML='<div class="empty">Questo fenomeno non ha ancora un esperimento pratico scritto.</div>'; return; }
+      $('disc').textContent=(d.disciplina||'')+(d.quantitativo?' · quantitativo':'');
+      $('exp').innerHTML=mdLight(d.esperimento);
+    }).catch(function(){ $('disc').textContent=''; $('exp').innerHTML='<div class="empty">Non riesco a caricare l\'esperimento adesso.</div>'; });
+}
+
+function salvaFatto(){
+  if(!_curSlug){ return; }
+  var esito=($('esito').value||'').trim();
+  $('fatto').disabled=true; $('hint').textContent='Salvo…';
+  fetch('/v1/esperimento/completa', {method:'POST', headers:H(), body:JSON.stringify({
+      fenomeno_id:_curSlug, esito:esito, nota:($('nota').value||'').trim()
+  })}).then(function(r){ return r.json().then(function(j){return {ok:r.ok,j:j};}); })
+    .then(function(res){
+      $('fatto').disabled=false;
+      if(!res.ok){ $('hint').textContent=(res.j&&res.j.errore)||'Non sono riuscito a salvare.'; return; }
+      $('hint').textContent='Salvato nel Quaderno ✓';
+      caricaMiei();
+    }).catch(function(){ $('fatto').disabled=false; $('hint').textContent='Errore di rete. Riprova.'; });
+}
+
+function caricaMiei(){
+  fetch('/v1/esperimento/miei', {headers:H()})
+    .then(function(r){ return r.ok?r.json():{esperimenti:[]}; })
+    .then(function(d){
+      var m=d.esperimenti||[];
+      if(!m.length){ $('miei').innerHTML='<div class="empty">Ancora niente. <b>Prova un fenomeno</b> e segnalo: comparirà qui, nel tuo Quaderno.</div>'; return; }
+      $('miei').innerHTML=m.map(function(e){
+        var data=e.data?new Date(e.data).toLocaleDateString('it-IT',{day:'2-digit',month:'short'}):'';
+        var nome=e.fenomeno||e.fenomeno_id;
+        return '<div class="mio"><div class="top"><span class="fen">'+esc(nome)+'</span><span class="data">'+esc(data)+'</span></div>'+
+          (e.esito?'<div class="esito">'+esc(e.esito)+'</div>':'')+
+          (e.nota?'<div class="nota">'+esc(e.nota)+'</div>':'')+'</div>';
+      }).join('');
+    }).catch(function(){ $('miei').innerHTML='<div class="empty">Non riesco a caricare i tuoi esperimenti adesso.</div>'; });
+}
+
+$('sel').addEventListener('change', function(){ apriEsperimento(this.value.trim()); });
+$('fatto').addEventListener('click', salvaFatto);
+caricaMiei();
+</script>
+</body>
+</html>
