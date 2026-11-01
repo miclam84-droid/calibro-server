@@ -77,7 +77,7 @@ def registra():
                              utm_campaign=_b.get("utm_campaign"), utm_content=_b.get("utm_content"))
         except Exception:
             pass
-        link = f"{base}/app?verifica={tok}"
+        link = f"{base}/account?verifica={tok}"  # /account (FE nuovo) sa gestire ?verifica= ; /app (FE vecchio) no
         lang_reg = request.json.get("lang","it") if request.json else "it"
         if lang_reg == "en":
             _subj = "Confirm your email — Matter Lab"
@@ -278,7 +278,7 @@ def reset_richiesta():
             tok = _sec.token_urlsafe(32)
             cur.execute("INSERT INTO reset_token (token,email) VALUES (%s,%s)", (tok, email))
             conn.commit()
-            link = f"{base}/app?reset={tok}"
+            link = f"{base}/account?reset={tok}"  # /account (FE nuovo) sa gestire ?reset= ; /app (FE vecchio) no
             _invia_email_resend(
                 to=email,
                 subject="Reimposta la tua password — Matter",
