@@ -9,7 +9,7 @@
 import os
 import json
 
-from flask import Blueprint, jsonify, Response
+from flask import Blueprint, jsonify, Response, redirect
 
 bp_scheda = Blueprint("scheda_gusto", __name__)
 
@@ -245,4 +245,11 @@ window.addEventListener('hashchange',carica); carica();
 @bp_scheda.route("/scheda-gusto/", defaults={"nome": ""})
 @bp_scheda.route("/scheda-gusto/<path:nome>")
 def scheda_gusto_page(nome):
-    return Response(_PAGE, mimetype="text/html")
+    # Pagina orfana dopo PR #266 (Componi ricollegato al lab): la vecchia scheda
+    # con skin propria e zero navigazione di ritorno era una trappola. Il perno
+    # ora e' il dettaglio-ingrediente /lab/<nome>. Reindirizziamo la', senza
+    # toccare l'endpoint dati /v1/profilo-gusto/<nome>, ancora usato da Componi.
+    nome = (nome or "").strip()
+    if not nome:
+        return redirect("/nuovo", code=302)
+    return redirect("/lab/" + nome, code=302)
