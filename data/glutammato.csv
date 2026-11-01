@@ -31,3 +31,37 @@ patate,180,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-
 piselli,200,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-2005-en-data.pdf
 carote,33,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-2005-en-data.pdf
 spinaci,39,FSANZ2003 Tab.1 (riletta in DFG-SKLM2005 Tab.1) dfg.de/sklm-glutamat-2005-en-data.pdf
+#
+# ---- DATI REALI (ondata 3, 2026-11-01) ----
+# Glutammato libero verificato su Umami Information Center (umamiinfo.com, pagine
+#   verdure/funghi/seafood) e sulla tabella FSANZ 2003 Tab.1 ripresa nel riepilogo
+#   "Glutamate flavoring". Dove la fonte riporta un range, uso il valore centrale e
+#   lo annoto nella colonna fonte. Righe escluse per onesta: katsuobushi (umami
+#   guidato dall'inosinato, non dal glutammato: il proxy lo sottostima); squid
+#   (discrepanza fonti 20-146 troppo ampia). Nessun numero scritto a memoria.
+kombu,3190,UIC umamiinfo.com + FSANZ2003 Tab.1 (altri tipi 1344-2286)
+nori,1378,UIC umamiinfo.com seafood + FSANZ2003 Tab.1 (range 170-1350)
+roquefort,1280,UIC umamiinfo.com + FSANZ2003 Tab.1
+salsa di pesce,1383,UIC umamiinfo.com + FSANZ2003 Tab.1
+salsa di soia,782,UIC umamiinfo.com + FSANZ2003 Tab.1 (cinese 926 / coreana 1264)
+salsa di ostriche,900,UIC umamiinfo.com
+shiitake secchi,1060,UIC umamiinfo.com (funghi; guanilato 150 in sinergia)
+shiitake,70,UIC umamiinfo.com (funghi freschi)
+shimeji,140,UIC umamiinfo.com (funghi)
+enoki,90,UIC umamiinfo.com (funghi)
+champignon,75,UIC umamiinfo.com (funghi; range 40-110)
+tartufo,70,UIC umamiinfo.com (funghi; range 60-80)
+pomodoro secco,895,UIC umamiinfo.com (verdure; range 650-1140)
+prosciutto crudo,337,UIC umamiinfo.com + FSANZ2003 Tab.1
+acciughe,630,UIC umamiinfo.com seafood
+sardina,280,FSANZ2003 Tab.1 (prob. conservata; UIC fresca piu bassa)
+vongola,208,UIC umamiinfo.com + FSANZ2003 Tab.1
+capasanta,159,UIC umamiinfo.com + FSANZ2003 Tab.1
+ostrica,137,UIC umamiinfo.com + FSANZ2003 Tab.1 (range 40-150)
+cozza,105,UIC umamiinfo.com + FSANZ2003 Tab.1
+gambero,120,UIC umamiinfo.com seafood (inosinato ~90)
+mais,130,UIC umamiinfo.com + FSANZ2003 Tab.1 (range 70-130)
+aglio,100,UIC umamiinfo.com (verdure)
+broccolo,45,UIC umamiinfo.com (verdure; range 30-60)
+fava,70,UIC umamiinfo.com (verdure; range 60-80)
+te verde,668,UIC umamiinfo.com + FSANZ2003 Tab.1 (gyokuro piu alto)
