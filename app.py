@@ -131,6 +131,7 @@ from routes.copertura_proprietaria import bp_copertura_proprietaria; app.registe
 from routes.admin_dedup import bp_dedup; app.register_blueprint(bp_dedup)  # migrazione pulizia: fonde nodi duplicati legacy + normalizza regioni (dry-run, &esegui=1)
 from routes.deriva_umami import bp_umami; app.register_blueprint(bp_umami)
 from routes.deriva_amaro import bp_amaro; app.register_blueprint(bp_amaro)
+from routes.amaro_riferimenti import bp_amaro_riferimenti; app.register_blueprint(bp_amaro_riferimenti)  # amaro da letteratura (misurato/stimato) sui bitter noti; precede i marcatori, non il banco (dry-run, &esegui=1)
 from routes.deriva_gusti_ciqual import bp_gusti_ciqual; app.register_blueprint(bp_gusti_ciqual)
 from routes.cottura import bp_cottura; app.register_blueprint(bp_cottura)
 from routes.tassonomia_wikidata import bp_tax; app.register_blueprint(bp_tax)
