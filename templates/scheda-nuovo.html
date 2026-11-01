@@ -70,6 +70,11 @@
   .comp-list .comp-nome{color:var(--ink); font-weight:600}
   .comp-list .comp-odore{color:var(--ink-soft)}
   .comp-list .comp-fonte{display:inline; margin-left:4px; font-size:11px; color:var(--verde); opacity:.85}
+  .verif-form{display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:4px}
+  .verif-form select,.verif-form input{font:inherit; font-size:13px; padding:8px 10px; border:1px solid var(--riga); border-radius:9px; background:var(--surface); color:var(--ink)}
+  .verif-form input#vf-val{width:84px}
+  .btn-verif{font:inherit; font-weight:600; font-size:13px; padding:8px 14px; border:0; border-radius:9px; background:var(--verde); color:#fff; cursor:pointer}
+  .btn-verif[aria-disabled="true"]{opacity:.6; cursor:default}
   .pill{margin-left:auto; font-size:11px; font-weight:700; letter-spacing:.02em; padding:3px 9px; border-radius:var(--r-pill); white-space:nowrap}
   .pill.alta{background:var(--verde); color:#fff}
   .pill.media{background:var(--tint); color:var(--verde)}
@@ -197,8 +202,13 @@ const $state = document.getElementById('state');
 function setState(m,err){ $state.hidden=false; $state.className='state'+(err?' err':''); $state.innerHTML=m; }
 
 /* ---- Salva nel Quaderno (identità X-Device-Id, salva solo dati reali) ---- */
-function _devId(){ try{ return localStorage.getItem('matter_device_id')||localStorage.getItem('matter_token')||'anon'; }catch(e){ return 'anon'; } }
+// identità per-dispositivo: UUID in localStorage, uguale alle pagine Banco/Esperimenti
+// (così Quaderno, verifiche e Memoria del Banco condividono la stessa identità, e al login si fondono).
+function _uuid(){ if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); }
+function _devId(){ try{ var d=localStorage.getItem('matter_device_id'); if(!d||!/^[0-9a-fA-F-]{36}$/.test(d)){d=_uuid();localStorage.setItem('matter_device_id',d);} return d; }catch(e){ if(!window._vid)window._vid=_uuid(); return window._vid; } }
 let _scheda = null;
+let _nodoId = null;
 const $btnSalva = document.getElementById('btn-salva');
 
 async function salvaQuaderno(record, btn){
@@ -482,6 +492,27 @@ async function caricaPonte(nome){
   }catch(e){}
 }
 
+// VERIFICA AL BANCO (il "fossato"): registra una correzione/verifica di un asse sensoriale.
+// Overlay per-identità (X-Device-Id), NON muta il grafo condiviso. Al salvataggio ricarico la scheda.
+async function registraVerifica(){
+  if(!_nodoId) return;
+  const asse=document.getElementById('vf-asse').value;
+  const val=parseFloat(document.getElementById('vf-val').value);
+  const stato=document.getElementById('vf-stato').value;
+  const metodo=(document.getElementById('vf-metodo').value||'').trim();
+  const hint=document.getElementById('vf-hint'), btn=document.getElementById('vf-go');
+  if(!isFinite(val)||val<0||val>10){ if(hint)hint.textContent=_L({it:'Serve un valore tra 0 e 10.', en:'Need a value between 0 and 10.', es:'Se necesita un valor entre 0 y 10.'}); return; }
+  if(btn)btn.setAttribute('aria-disabled','true'); if(hint)hint.textContent=_L({it:'Registro…', en:'Recording…', es:'Registrando…'});
+  try{
+    const r=await fetch('/v1/registra-verifica',{method:'POST',headers:{'Content-Type':'application/json','X-Device-Id':_devId()},
+      body:JSON.stringify({nodo_id:_nodoId, asse:asse, valore:val, stato:stato, metodo:metodo||null})});
+    const j=await r.json().catch(()=>({}));
+    if(btn)btn.removeAttribute('aria-disabled');
+    if(r.ok&&j.ok){ if(hint)hint.textContent=_L({it:'Verificato ✓', en:'Verified ✓', es:'Verificado ✓'}); carica(_nomeCorrente); }
+    else if(hint)hint.textContent=(j&&j.errore)?String(j.errore):_L({it:'Non registrato. Riprova.', en:'Not recorded. Try again.', es:'No registrado. Inténtalo de nuevo.'});
+  }catch(e){ if(btn)btn.removeAttribute('aria-disabled'); if(hint)hint.textContent=_L({it:'Errore di rete. Riprova.', en:'Network error. Try again.', es:'Error de red. Inténtalo de nuevo.'}); }
+}
+
 async function carica(nome){
   nome = (nome||'').trim(); if(!nome) return;
   _nomeCorrente = nome;
@@ -505,6 +536,18 @@ async function carica(nome){
     caricaFoto(nomeReale); caricaTax(nomeReale); caricaNutri(nomeReale); caricaCottura(nomeReale); caricaScienza(nomeReale);
     document.getElementById('cat').textContent = (pg.kind==='experiment'? _L({it:'Esperimento', en:'Experiment', es:'Experimento'}) : _L({it:'Ingrediente', en:'Ingredient', es:'Ingrediente'}));
     const prop = pg.proprieta || {}, meta = pg.proprieta_meta || {};
+    // OVERLAY VERIFICHE: le mie correzioni/verifiche al banco vincono sulla base del sistema.
+    // Per identità (X-Device-Id), append-only: NON toccano il nodo condiviso del grafo.
+    _nodoId = (cr && cr.nodo_id) || null;
+    if(_nodoId){
+      try{
+        const vr = await fetch('/v1/verifiche/'+encodeURIComponent(_nodoId), {headers:{'X-Device-Id':_devId(),'Accept':'application/json'}});
+        if(vr.ok){ const vj = await vr.json(); const ov = (vj && vj.verifiche) || {};
+          Object.keys(ov).forEach(function(asse){ const voce=ov[asse]; if(voce && voce.valore!=null){
+            prop[asse]=voce.valore; meta[asse]={stato:voce.stato, fonte:(voce.metodo||voce.base||'')}; } });
+        }
+      }catch(e){}
+    }
     const barre = CORE.filter(([k])=> prop[k]!=null).map(([k,lbl,anc])=> barra(_L(lbl), prop[k], _L(anc), meta[k])).join('');
     const haProv = CORE.some(([k])=> meta[k] && meta[k].stato);
     const notaStima = haProv ? '' : `<p class="gloss">${_L({it:'Valori ancora da verificare al banco: oggi sono stime. Quando scrivi un dato derivato o lo verifichi, la provenienza qui cambia.', en:'Values still to be verified at the bench: today they are estimates. When you write a derived value or verify it, the provenance here changes.', es:'Valores aún por verificar en la mesa: hoy son estimaciones. Cuando escribes un dato derivado o lo verificas, la procedencia aquí cambia.'})}</p>`;
@@ -512,10 +555,21 @@ async function carica(nome){
     const altriHtml = altri.length ? `<details class="mol" style="margin-top:14px"><summary>${_L({it:'Altri descrittori', en:'Other descriptors', es:'Otros descriptores'})} (${altri.length})</summary>
       <div class="chips">${altri.map(([k,v])=>`<span class="chip">${esc(k.replace(/_/g,' '))} ${v}</span>`).join('')}</div>
       <p class="gloss">${_L({it:'Scala non ancora definita come i sei gusti base: riferimento, non voto 0–10.', en:'Scale not yet defined like the six basic tastes: a reference, not a 0–10 score.', es:'Escala aún no definida como los seis sabores básicos: referencia, no una puntuación 0–10.'})}</p></details>` : '';
+    const verifForm = _nodoId ? `<details class="mol" style="margin-top:14px"><summary>${_L({it:'Verifica al banco', en:'Verify at the bench', es:'Verificar en la mesa'})}</summary>
+      <p class="gloss" style="margin:8px 0">${_L({it:'Hai misurato o assaggiato un asse? Registra il tuo valore: resta tuo, non cambia il dato condiviso del grafo, lo sovrascrive solo per te.', en:'Measured or tasted an axis? Record your value: it stays yours, it does not change the shared graph data, it only overrides it for you.', es:'¿Mediste o probaste un eje? Registra tu valor: es tuyo, no cambia el dato compartido del grafo, solo lo sobrescribe para ti.'})}</p>
+      <div class="verif-form">
+        <select id="vf-asse" aria-label="asse">${CORE.map(([k,lbl])=>`<option value="${k}">${esc(_L(lbl))}</option>`).join('')}</select>
+        <input id="vf-val" type="number" min="0" max="10" step="any" placeholder="0–10" aria-label="valore">
+        <select id="vf-stato" aria-label="stato"><option value="verificato">${_L({it:'verificato', en:'verified', es:'verificado'})}</option><option value="corretto">${_L({it:'corretto', en:'corrected', es:'corregido'})}</option></select>
+        <input id="vf-metodo" placeholder="${_L({it:'metodo (assaggio, rifrattometro…)', en:'method (tasting, refractometer…)', es:'método (cata, refractómetro…)'})}" aria-label="metodo">
+        <button id="vf-go" type="button" class="btn-verif">${_L({it:'Registra', en:'Record', es:'Registrar'})}</button>
+      </div>
+      <span class="gloss" id="vf-hint"></span></details>` : '';
     $corpo.innerHTML = `<section class="section"><span class="eyebrow">${_L({it:'Profilo sensoriale', en:'Sensory profile', es:'Perfil sensorial'})}</span>
       <div class="sechead" style="margin-bottom:12px"><p>${_L({it:'I sei gusti base, da 0 a 10, ognuno con la sua provenienza.', en:'The six basic tastes, from 0 to 10, each with its provenance.', es:'Los seis sabores básicos, de 0 a 10, cada uno con su procedencia.'})}</p></div>
       <div class="axes">${barre || '<p class="gloss">'+_L({it:'Profilo sensoriale in costruzione: questo ingrediente è nell\'archivio ma non ha ancora gli assi del gusto misurati. Non è un errore — arriva quando il profilo viene completato.', en:'Sensory profile under construction: this ingredient is in the archive but its taste axes are not measured yet. It is not an error — it arrives when the profile is completed.', es:'Perfil sensorial en construcción: este ingrediente está en el archivo pero sus ejes de sabor aún no están medidos. No es un error — llega cuando se completa el perfil.'})+'</p>'}</div>
-      ${notaStima}${altriHtml}</section>`;
+      ${notaStima}${altriHtml}${verifForm}</section>`;
+    { const _vfGo=document.getElementById('vf-go'); if(_vfGo) _vfGo.addEventListener('click', registraVerifica); }
     renderAbbinamenti(cr, nomeReale);
     if(!(cr.partner||[]).length){ caricaPonte(nomeReale); }
     const propReali = {}; Object.entries(prop).forEach(([k,v])=>{ if(v!=null && v!=='') propReali[k]=v; });
