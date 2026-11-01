@@ -61,6 +61,8 @@
 .causa .k.su{color:var(--oxblood)} .causa .k.giu{color:var(--verde)}
 .causa ul{margin:0; padding-left:0; list-style:none; font-size:13px; color:var(--ink); line-height:1.5}
 .causa li{padding:1px 0}
+.impara-link{display:inline-block; margin-top:10px; font-size:12.5px; font-weight:600; color:var(--verde); text-decoration:none}
+.impara-link:hover{text-decoration:underline}
 .riga-s{display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--riga)}
 .riga-s:last-child{border-bottom:none}
 .riga-s .ic{width:28px; height:28px; flex:0 0 auto; border-radius:8px; background:var(--tint); color:var(--verde); display:flex; align-items:center; justify-content:center; font-size:14px}
@@ -293,7 +295,10 @@
       h+='<div class="card"><div class="ct">Perché accade — '+esc(ff.nome||"")+'</div><div class="causa">';
       if(c.acceleranti&&c.acceleranti.length) h+='<div class="riga"><div class="k su">accelera</div><ul>'+c.acceleranti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
       if(c.rallentanti&&c.rallentanti.length) h+='<div class="riga"><div class="k giu">frena</div><ul>'+c.rallentanti.slice(0,4).map(function(x){return '<li>'+esc(x.fattore||"")+'</li>';}).join('')+'</ul></div>';
-      h+='</div></div>';
+      h+='</div>';
+      // slot per il link "impara questo fenomeno": riempito dopo, SOLO se la lezione esiste davvero
+      if(ff.slug) h+='<span class="impara-slot" id="impara-slot-'+esc(ff.slug)+'"></span>';
+      h+='</div>';
     });
 
     // card operativa: variabile / osservazione / correzione / attrezzo — solo righe con contenuto
@@ -305,8 +310,8 @@
     var eTxt=(typeof err==="string")?err:(Array.isArray(err)?err.map(function(x){return x.nome||x.descrizione||x;}).join("; "):"");
     if(eTxt && eTxt.length>1) righe+='<div class="riga-s"><div class="ic">🛟</div><div class="tt"><div class="t1">Se non viene</div><div class="t2">'+esc(eTxt.slice(0,220))+'</div></div></div>';
     var attr=attrezzoPerBersaglio(b);
-    if(attr) righe+='<div class="riga-s"><div class="ic">🛠</div><div class="tt"><div class="t1">Ti serve</div><div class="t2">'+esc(attr)+'</div></div></div>';
-    if(righe) h+='<div class="card">'+righe+'</div>';
+    if(attr) righe+='<div class="riga-s" id="serve-row"><div class="ic">🛠</div><div class="tt"><div class="t1">Ti serve</div><div class="t2" id="serve-txt">'+esc(attr)+'</div></div></div>';
+    if(righe) h+='<div class="card" id="card-operativa">'+righe+'</div>';
 
     if(!haNumeri && !haCausa && !righe){
       h+='<div class="card"><div class="vuoto">Questo esperimento ha l\'obiettivo ma non ancora i numeri e i fenomeni collegati. Matter non li inventa: li aggiunge quando c\'è una fonte o una prova al banco.</div></div>';
@@ -327,8 +332,58 @@
     if(p.stato_epistemico) h+='<p class="muted-src">Stato: '+esc(p.stato_epistemico)+'. Matter non inventa: dove un dato manca, lo dice.</p>';
     h+='</div>';
     el("vista-det").innerHTML=h; bindBack();
+    // "impara questo fenomeno" e attrezzi reali: ricollegati dentro l'esperimento dove servono.
+    innestaImpara(p, fen);
+    innestaAttrezzi(p, fen);
     // è un PIATTO? disciplina "cucina" + reagenti da cibo. I cocktail (disciplina "bar") sono già bevande: niente card.
     if((p.disciplina||"").toLowerCase()==="cucina" && reag.length){ innestaBevanda(p, reag); }
+  }
+
+  // "Impara questo fenomeno": link alla palestra (/impara), SOLO se il fenomeno ha
+  // davvero una lezione nella sua disciplina (stesso dato che /impara usa per costruirle).
+  // Niente link morti: se non c'è la lezione, lo slot resta vuoto.
+  function innestaImpara(p, fen){
+    var disc=((p&&p.disciplina)||"").toLowerCase().trim();
+    if(!disc) return;
+    if(!document.querySelector(".impara-slot")) return;  // nessun fenomeno con causalità/slug
+    getJSON("/disciplina/"+encodeURIComponent(disc)).then(function(resp){
+      if(!resp || resp.non_disponibile) return;
+      var lez={};
+      (resp.fenomeni||[]).forEach(function(f){
+        if(f&&f.id) lez[f.id]=1;
+        if(f&&Array.isArray(f.applicazioni)) f.applicazioni.forEach(function(a){ if(a&&a.id) lez[a.id]=1; });
+      });
+      (resp.casi||[]).forEach(function(c){ if(c&&c.id) lez[c.id]=1; });
+      fen.forEach(function(ff){
+        if(!ff || !ff.slug || !ff.causalita || !lez[ff.slug]) return;
+        var sl=el("impara-slot-"+ff.slug); if(!sl) return;
+        sl.innerHTML='<a class="impara-link" href="/impara">impara '+esc(ff.nome||"questo fenomeno")+' →</a>';
+      });
+    });
+  }
+
+  // Attrezzi reali: provo il dizionario tecniche (/v1/attrezzatura) con le parole-chiave
+  // del nome + fenomeni. Il server fa il match (tadka, koji, shake, vapore-bao...). Mostro
+  // SOLO i nomi come testo — MAI i link affiliati/Amazon (niente e-commerce finché OFF).
+  // Se nessun attrezzo specifico matcha, resta l'euristica sull'unità del bersaglio.
+  function innestaAttrezzi(p, fen){
+    var parti=[(p&&p.nome)||""];
+    (fen||[]).forEach(function(f){ if(f&&f.nome) parti.push(f.nome); });
+    var blob=parti.join(" ").toLowerCase().replace(/\//g," ").replace(/\s+/g," ").trim();
+    if(!blob) return;
+    getJSON("/v1/attrezzatura/"+encodeURIComponent(blob)).then(function(resp){
+      var lista=(resp&&Array.isArray(resp.attrezzatura))?resp.attrezzatura:[];
+      var nomi=lista.map(function(a){ return (a&&a.nome)?String(a.nome):""; }).filter(Boolean);
+      if(!nomi.length) return;  // nessun attrezzo specifico → resta l'euristica (o niente)
+      var txt=nomi.slice(0,4).join(" · ");
+      var st=el("serve-txt");
+      if(st){ st.textContent=txt; return; }  // sostituisco l'euristica con gli attrezzi reali (solo testo)
+      var riga='<div class="riga-s" id="serve-row"><div class="ic">🛠</div><div class="tt"><div class="t1">Ti serve</div><div class="t2" id="serve-txt">'+esc(txt)+'</div></div></div>';
+      var card=el("card-operativa");
+      if(card){ card.insertAdjacentHTML("beforeend", riga); return; }
+      var slot=el("bevanda-slot");
+      if(slot) slot.insertAdjacentHTML("beforebegin", '<div class="card" id="card-operativa">'+riga+'</div>');
+    });
   }
 
   // "La bevanda per questo piatto": abbinamento vino, mai link affiliati (flag e-commerce OFF).
