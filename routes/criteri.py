@@ -1682,18 +1682,31 @@ def criteri_usda_gusti_blocco():
     key = os.environ.get("USDA_API_KEY", "")
     if not key:
         return jsonify({"errore": "USDA_API_KEY non impostata"}), 503
+    # tutto=1: un link solo. Processa l'intero core ma SALTA chi ha gia' i 3 assi
+    # (niente chiamata USDA), con un tetto di tempo per non andare in timeout. Se avanza
+    # roba, basta ricliccare lo STESSO link: i gia'-fatti si saltano e riprende dai mancanti.
+    import time as _time
+    tutto = (request.args.get("tutto") or "") in ("1", "true", "si")
     try:
         da = int(request.args.get("da") or 0)
         a = int(request.args.get("a") or 12)
     except ValueError:
         da, a = 0, 12
-    voci = sorted(_USDA_CORE.items())[da:a]
+    voci_sorted = sorted(_USDA_CORE.items())
+    voci = voci_sorted if tutto else voci_sorted[da:a]
     righe = []
     scritti = 0
+    saltati_completi = 0
+    rimasti_per_tempo = 0
+    t0 = _time.time()
+    BUDGET = 35  # secondi
     try:
         with connessione() as conn:
             cur = conn.cursor()
-            for nome_it, fdc in voci:
+            for i, (nome_it, fdc) in enumerate(voci):
+                if tutto and _time.time() - t0 > BUDGET:
+                    rimasti_per_tempo = len(voci) - i
+                    break
                 r = {"ingrediente": nome_it, "fdc_id": fdc}
                 fisso = _USDA_NODO_FISSO.get(nome_it)
                 nodo = None
@@ -1709,6 +1722,14 @@ def criteri_usda_gusti_blocco():
                     righe.append(r)
                     continue
                 r["nodo"] = nodo[0]
+                # SALTA i gia' completi PRIMA della chiamata USDA (e' la parte lenta)
+                cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
+                row = cur.fetchone()
+                dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
+                prop = dd.get("proprieta") or {}
+                if tutto and all(k in prop for k in ("dolce", "salato", "grasso")):
+                    saltati_completi += 1
+                    continue
                 try:
                     nutr = _usda_nutrienti(fdc, key)
                 except Exception as e:
@@ -1720,10 +1741,6 @@ def criteri_usda_gusti_blocco():
                 grasso = _scala(nutr["grassi_g"], _ANCORE_GRASSO)
                 r["derivato"] = {"dolce": dolce, "salato": salato, "grasso": grasso}
                 if applica:
-                    cur.execute("SELECT data FROM nodes WHERE id=%s", (nodo[0],))
-                    row = cur.fetchone()
-                    dd = row[0] if (row and isinstance(row[0], dict)) else (_json.loads(row[0]) if (row and row[0]) else {})
-                    prop = dd.get("proprieta") or {}
                     fonti = dd.get("proprieta_fonti") or {}
                     for asse, val, base in (("dolce", dolce, f"zuccheri {nutr['zuccheri_g']}g/100g"),
                                             ("salato", salato, f"sodio {nutr['sodio_mg']}mg/100g"),
@@ -1740,8 +1757,17 @@ def criteri_usda_gusti_blocco():
             if applica:
                 conn.commit()
             cur.close()
-        return jsonify({"modo": "APPLICATO" if applica else "DRY-RUN", "fetta": f"{da}:{a}",
-                        "totale_core": len(_USDA_CORE), "scritti": scritti, "righe": righe})
+        out = {"modo": "APPLICATO" if applica else "DRY-RUN",
+               "fetta": "tutto" if tutto else f"{da}:{a}",
+               "totale_core": len(_USDA_CORE), "scritti": scritti,
+               "gia_completi_saltati": saltati_completi, "righe": righe}
+        if tutto:
+            if rimasti_per_tempo:
+                out["rimasti"] = rimasti_per_tempo
+                out["continua"] = "Riclicca lo STESSO link per finire i rimasti."
+            else:
+                out["completato"] = "Finito: nessun ingrediente mancante."
+        return jsonify(out)
     except Exception as e:
         return _errore(e)
 
