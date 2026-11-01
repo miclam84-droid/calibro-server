@@ -1596,6 +1596,73 @@ _GLU_CORE.update({
     "panna": 5, "manzo": 10, "salmone": 20, "funghi": 70, "mandorle": 40,
     "riso": 5, "banana": 15, "arancia": 20, "ananas": 20,
 })
+# --- +42 mappature USDA (ondata gusti-da-fare, 2026-11-01): fdc_id per gli ingredienti
+# USATI nei protocolli ma senza gusto (da /v1/criteri/gusto-da-fare). Riempie dolce/salato/
+# grasso al prossimo run USDA. fdc_id verificati su USDA FoodData Central (API + mirror);
+# il DRY-RUN del runner resta il controllo finale sui valori derivati. Saltati di proposito:
+# distillati, luppoli, malti, bitter di marca (nessun generico USDA pulito -> meglio vuoto).
+_USDA_CORE.update({
+    "Lievito di birra": 175043,          # Leavening agents, yeast, baker's, active dry
+    "lievito di birra fresco": 175042,   # Leavening agents, yeast, baker's, compressed
+    "Gelatina in fogli": 169599,         # Gelatins, dry powder, unsweetened
+    "Pasta di pistacchio": 170184,       # Nuts, pistachio nuts, raw (base pistacchio)
+    "coriandolo fresco": 169997,         # Coriander (cilantro) leaves, raw
+    "semolino": 169715,                  # Semolina, enriched
+    "ricotta di pecora": 170851,         # Cheese, ricotta, whole milk (generico, pecora assente in USDA)
+    "latte in polvere scremato": 170877, # Milk, dry, nonfat, regular
+    "olio di arachide": 171410,          # Oil, peanut, salad or cooking
+    "olio di sesamo": 171016,            # Oil, sesame, salad or cooking
+    "tuorlo d'uovo": 172184,             # Egg, yolk, raw, fresh
+    "amido di mais": 169698,             # Cornstarch
+    "ceci secchi": 173756,               # Chickpeas, mature seeds, raw
+    "latte intero fresco": 172217,       # Milk, whole, 3.25% milkfat
+    "succo di lime fresco": 168156,      # Lime juice, raw
+    "cavolo cinese": 169979,             # Cabbage, chinese (pe-tsai), raw
+    "cipollotto": 170005,                # Onions, spring or scallions, raw
+    "Riso Carnaroli": 169760,            # Rice, white, medium-grain, raw (generico chicco medio)
+    "succo di ananas": 168187,           # Pineapple juice, unsweetened
+    "fave secche": 175205,               # Broadbeans (fava), mature seeds, raw
+    "olio di girasole": 171025,          # Oil, sunflower
+    "miele millefiori": 169640,          # Honey
+    "semi di lino": 169414,              # Seeds, flaxseed
+    "farina di riso": 169714,            # Rice flour, white, unenriched
+    "brodo di pollo": 172884,            # Soup, stock, chicken, home-prepared
+    "strutto": 171401,                   # Lard
+    "Riso Basmati": 169756,              # Rice, white, long-grain, raw
+    "spalla di maiale": 167843,          # Pork, fresh, shoulder, whole, raw
+    "farina 0": 169761,                  # Wheat flour, white, all-purpose, unenriched
+    "cardamomo verde": 170919,           # Spices, cardamom
+    "buttermilk": 170874,                # Milk, buttermilk, cultured, lowfat
+    "latte di cocco": 170172,            # Nuts, coconut milk, raw
+    "Succo di pompelmo": 173039,         # Grapefruit juice, white, raw
+    "cipolla rossa": 790577,             # Onions, red, raw (Foundation)
+    "riso Arborio": 169760,              # Rice, white, medium-grain, raw (generico chicco medio)
+    "Espresso": 171891,                  # Beverages, coffee, espresso
+    "semi di papavero": 171330,          # Spices, poppy seed
+    "finocchietto (semi di finocchio)": 171323,  # Spices, fennel seed
+    "uvetta sultanina": 168164,          # Raisins, golden, seedless
+    "salsa hoisin": 172886,              # Sauce, hoisin, ready-to-serve
+    "Riso per sushi": 168931,            # Rice, white, short-grain, raw
+})
+# --- acido (pH) per gli stessi ingredienti, 2026-11-01. Valori rappresentativi da fonti
+# canoniche aperte (tabella pH FDA, Clemson, EngineeringToolbox). Oli/grassi puri esclusi
+# (nessun pH acquoso). Saltati dove la fonte dava range troppo ampi o mancava.
+_PH_CORE.update({
+    "Lievito di birra": 5.65, "lievito di birra fresco": 5.65, "Gelatina in fogli": 6.1,
+    "gamberi": 6.8, "tuorlo d'uovo": 6.1, "ceci secchi": 6.5, "latte intero fresco": 6.6,
+    "succo di lime fresco": 2.2, "cipollotto": 6.2, "Riso Carnaroli": 6.4, "Riso Basmati": 6.4,
+    "riso Arborio": 6.4, "Riso per sushi": 6.4, "farina di riso": 6.3, "succo di ananas": 3.5,
+    "miele millefiori": 3.9, "brodo di pollo": 5.8, "farina 0": 6.2, "semolino": 6.2,
+    "buttermilk": 4.6, "latte di cocco": 6.6, "Succo di pompelmo": 3.1, "cipolla rossa": 5.5,
+    "Espresso": 5.0, "uvetta sultanina": 3.9, "spalla di maiale": 5.6,
+})
+# --- umami (glutammato libero, mg/100g), 2026-11-01. Da Umami Information Center + White
+# Paper (Ninomiya). Solo valori documentati; 0 sui grassi puri (nessun amminoacido libero).
+_GLU_CORE.update({
+    "gamberi": 120, "cavolo cinese": 50, "cipollotto": 30, "cipolla rossa": 30,
+    "tuorlo d'uovo": 46, "latte intero fresco": 1, "spalla di maiale": 10,
+    "olio di arachide": 0, "olio di sesamo": 0, "olio di girasole": 0, "strutto": 0,
+})
 
 # --- agganci fissi aggiuntivi (nodi canonici corretti, verificati col dry-run) ---
 _USDA_NODO_FISSO.update({
